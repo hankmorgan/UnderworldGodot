@@ -32,6 +32,19 @@ public partial class imageloader : Sprite2D
 		material.TextureFilter=BaseMaterial3D.TextureFilterEnum.Nearest;
 
 
+		GRLoader gr = new GRLoader(20);
+		var imggr = gr.LoadImageAt(0);
+		spr.TextureFilter=BaseMaterial3D.TextureFilterEnum.Nearest;
+		sprX.TextureFilter=CanvasItem.TextureFilterEnum.Nearest;
+		Debug.Print ("H" + imggr.GetHeight());
+		ImageTexture texgr=new();	
+
+		texgr.SetImage(imggr);
+	
+		Debug.Print ("A" + texgr.HasAlpha());
+		sprX.Texture = texgr;
+
+		spr.Texture=texgr;
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.

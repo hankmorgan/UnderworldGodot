@@ -63,6 +63,7 @@ expand_mode = 2
 [node name="Sprite2DX" type="Sprite2D" parent="CanvasLayer"]
 material = SubResource("ShaderMaterial_owlev")
 position = Vector2(207, 277)
+scale = Vector2(4, 4)
 texture = ExtResource("1_d3x74")
 
 [node name="sphere" type="MeshInstance3D" parent="."]
@@ -74,7 +75,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_hicra")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.7047)
 
 [node name="Sprite3D" type="Sprite3D" parent="."]
-transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 1, 0, 0, -1.90155)
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, -1.90155)
 texture = ExtResource("4_rlge0")
 
 [connection signal="pressed" from="Button" to="TextureButton" method="_on_button_pressed"]
