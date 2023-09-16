@@ -17,22 +17,22 @@ public partial class imageloader : Sprite2D
 
 	public override void _Ready()
 	{
-		PaletteLoader.LoadPalettes("C:/Games/UW1/game/UW/data/pals.dat");
+		PaletteLoader.LoadPalettes("C:\\Games\\UW1\\game\\UW\\data\\pals.dat");
 		var byt = new Underworld.BytLoader();
 		var img =  byt.LoadImageAt(1);
-
+		Debug.Print("Format of the sprite is " + spr.Texture.GetImage().GetFormat());
+		
 		// create the texture for the mesh
 		ImageTexture tex=new();
-		tex.SetImage(img); 
+		tex.SetImage(img);
+		
 		//update the mesh with a new material.
 		var material = mesh.GetActiveMaterial(0) as StandardMaterial3D; // or your shader...
 		material!.AlbedoTexture = tex; // shader parameter, etc.
-		material.TextureFilter=BaseMaterial3D.TextureFilterEnum.Linear;
-		sprX.Texture=tex;
-		spr.Texture=tex;
-		
-	
-		}
+		material.TextureFilter=BaseMaterial3D.TextureFilterEnum.Nearest;
+
+
+	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)

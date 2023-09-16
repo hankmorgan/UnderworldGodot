@@ -1,9 +1,9 @@
 [gd_scene load_steps=8 format=3 uid="uid://13uofwemp67y"]
 
-[ext_resource type="Texture2D" uid="uid://e3cd4b3kb81n" path="res://a.png" id="1_1rc7f"]
+[ext_resource type="Texture2D" uid="uid://e3cd4b3kb81n" path="res://resources/a.png" id="1_d3x74"]
 [ext_resource type="Script" path="res://TextureButton.cs" id="2_v34lh"]
 [ext_resource type="Script" path="res://imageloader.cs" id="3_4tl8d"]
-[ext_resource type="Texture2D" uid="uid://dedvyeljhjeax" path="res://icon.svg" id="4_x6ty0"]
+[ext_resource type="Texture2D" uid="uid://dedvyeljhjeax" path="res://resources/icon.svg" id="4_rlge0"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_owlev"]
 
@@ -21,7 +21,7 @@ offset_top = 535.0
 offset_right = 1020.0
 offset_bottom = 579.0
 scale = Vector2(8, 8)
-texture_normal = ExtResource("1_1rc7f")
+texture_normal = ExtResource("1_d3x74")
 script = ExtResource("2_v34lh")
 
 [node name="Label" type="Label" parent="."]
@@ -57,14 +57,13 @@ offset_top = 775.0
 offset_right = -657.0
 offset_bottom = 975.0
 scale = Vector2(1.57537, 1.65972)
-texture = ExtResource("1_1rc7f")
+texture = ExtResource("1_d3x74")
 expand_mode = 2
 
 [node name="Sprite2DX" type="Sprite2D" parent="CanvasLayer"]
 material = SubResource("ShaderMaterial_owlev")
-position = Vector2(50, 50)
-scale = Vector2(10, 10)
-texture = ExtResource("1_1rc7f")
+position = Vector2(207, 277)
+texture = ExtResource("1_d3x74")
 
 [node name="sphere" type="MeshInstance3D" parent="."]
 transform = Transform3D(16, 0, 0, 0, 16, 0, 0, 0, 16, -1.03591, 0.591425, -12.2531)
@@ -76,6 +75,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.7047)
 
 [node name="Sprite3D" type="Sprite3D" parent="."]
 transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 1, 0, 0, -1.90155)
-texture = ExtResource("4_x6ty0")
+texture = ExtResource("4_rlge0")
 
 [connection signal="pressed" from="Button" to="TextureButton" method="_on_button_pressed"]

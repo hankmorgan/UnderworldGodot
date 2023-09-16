@@ -9,10 +9,10 @@ public partial class TextureButton : Godot.TextureButton
 
 	public override void _Process(double delta)
 	{
-		return;
-		Rotation += _angularSpeed * (float)delta;
-		var velocity = Vector2.Up.Rotated(Rotation) * _speed;
-		Position += velocity * (float)delta;	
+		// return;
+		// Rotation += _angularSpeed * (float)delta;
+		// var velocity = Vector2.Up.Rotated(Rotation) * _speed;
+		// Position += velocity * (float)delta;	
 			
 	}
 

@@ -98,12 +98,15 @@ namespace Underworld
     public static Image Image(byte[] databuffer, long dataOffSet, int width, int height, string imageName, Palette pal, bool Alpha, bool useXFER)
     {
         //Image image = new Godot.Image();// width, height, TextureFormat.ARGB32, false);
-        Godot.
-        Color[] imageColors = new Color[width * height];
-        long counter = 0;
+       
+       // Color[] imageColors = new Color[width * height];
+        var img = Godot.Image.Create(width, height, false, Godot.Image.Format.Rgba4444);
+       
+        //long counter = 0;
        // for (int iRow = height - 1; iRow >= 0; iRow--)
         for (int iRow = 0; iRow <= height - 1; iRow++)
         {
+            int iCol=0;
             for (int j = (iRow * width); j < (iRow * width) + width; j++)
             {
                 byte pixel = (byte)getValAtAddress(databuffer, dataOffSet + j, 8);
@@ -113,44 +116,50 @@ namespace Underworld
                     int p = pixel;
                     switch (p)
                     {
-                         case 0xf9:
-                         case 0xf0://red
-                             imageColors[counter++] = new Color(252, 56, 76, 40); break;
-                         case 0xf4://blue
-                             imageColors[counter++] = new Color(92, 92, 252, 40); break;
-                         case 0xf8://green
-                             imageColors[counter++] = new Color(96, 172, 84, 40); break;
-                         case 0xfb://used by shadow beast?                        
-                             imageColors[counter++] = new Color(4, 4, 4, 40); break;
-                         case 0xfc://white
-                             imageColors[counter++] = new Color(204, 204, 220, 40); break;
-                         case 0xfd://black???
-                             imageColors[counter++] = new Color(4, 4, 4, 40); break;
-                         case 0:
-                             imageColors[counter++] = pal.ColorAtPixel(pixel, Alpha); break;
-                        default:                            
-                            imageColors[counter++] = pal.ColorAtPixel(pixel, Alpha); break;
+                        //  case 0xf9:
+                        //  case 0xf0://red
+                        //      imageColors[counter++] = new Color(252, 56, 76, 40); break;
+                        //  case 0xf4://blue
+                        //      imageColors[counter++] = new Color(92, 92, 252, 40); break;
+                        //  case 0xf8://green
+                        //      imageColors[counter++] = new Color(96, 172, 84, 40); break;
+                        //  case 0xfb://used by shadow beast?                        
+                        //      imageColors[counter++] = new Color(4, 4, 4, 40); break;
+                        //  case 0xfc://white
+                        //      imageColors[counter++] = new Color(204, 204, 220, 40); break;
+                        //  case 0xfd://black???
+                        //      imageColors[counter++] = new Color(4, 4, 4, 40); break;
+                        //  case 0:
+                        //      imageColors[counter++] = pal.ColorAtPixel(pixel, Alpha); break;
+                        default:         
+                             img.SetPixel(iCol,iRow, pal.ColorAtPixel(pixel, Alpha)); break;                      
+                            //imageColors[counter++] = pal.ColorAtPixel(pixel, Alpha); break;
                     }
                 }
                 else
                 {
-                    imageColors[counter++] = pal.ColorAtPixel(pixel, Alpha);
+                    //imageColors[counter++] = pal.ColorAtPixel(pixel, Alpha);
+
+                     img.SetPixel(iCol,iRow, pal.ColorAtPixel(pixel, Alpha));
                 }
+                iCol++;
             }
         }
-        byte[] bytes = new byte[width*height*4];
-        int i = 0;
-        foreach (var c in imageColors)
-        {           
+ 
+        return img;
+        // byte[] bytes = new byte[width*height*4];
+        // int i = 0;
+        // foreach (var c in imageColors)
+        // {           
 
-            bytes[i]= (byte)c.R8;
-            bytes[i+1]= (byte)c.G8;
-            bytes[i+2]= (byte)c.B8;
-            bytes[i+3]= (byte)c.A8;
-            i=i+4;
-        }
+        //     bytes[i]= (byte)c.R8;
+        //     bytes[i+1]= (byte)c.G8;
+        //     bytes[i+2]= (byte)c.B8;
+        //     bytes[i+3]= (byte)c.A8;
+        //     i=i+4;
+        // }
 
-        return Godot.Image.CreateFromData(width,height,false,Godot.Image.Format.Rgba8,bytes);
+   //     return Godot.Image.CreateFromData(width,height,false,Godot.Image.Format.Rgba8,bytes);
        // image.name = imageName;
 
         //image.filterMode = FilterMode.Point;
