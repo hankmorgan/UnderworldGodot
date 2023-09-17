@@ -38,7 +38,7 @@ text = "The button"
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="Loader" type="Sprite2D" parent="CanvasLayer" node_paths=PackedStringArray("testTextureNode", "mesh", "sprite_3d", "sprite_2d", "weapon_2d")]
+[node name="Loader" type="Sprite2D" parent="CanvasLayer" node_paths=PackedStringArray("testTextureNode", "mesh", "sprite_3d", "critter_3d", "sprite_2d", "weapon_2d")]
 texture_filter = 1
 rotation = -1.39626
 scale = Vector2(3, 3)
@@ -47,6 +47,7 @@ script = ExtResource("3_4tl8d")
 testTextureNode = NodePath("../NodeToChange")
 mesh = NodePath("../../sphere")
 sprite_3d = NodePath("../../Sprite3D")
+critter_3d = NodePath("../../critter")
 sprite_2d = NodePath("../Sprite2DX")
 weapon_2d = NodePath("../weaponanim")
 
@@ -83,5 +84,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.7047)
 [node name="Sprite3D" type="Sprite3D" parent="."]
 transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, -1.90155)
 texture = ExtResource("4_rlge0")
+
+[node name="critter" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.199105, 0, -1.72449)
+texture = ExtResource("1_d3x74")
 
 [connection signal="pressed" from="Button" to="TextureButton" method="_on_button_pressed"]

@@ -14,6 +14,7 @@ public partial class imageloader : Sprite2D
 [Export] public MeshInstance3D mesh;
 
 [Export] public Sprite3D sprite_3d;
+[Export] public Sprite3D critter_3d;
 [Export] public Sprite2D sprite_2d;
 
 [Export] public Sprite2D weapon_2d;
@@ -22,7 +23,7 @@ public partial class imageloader : Sprite2D
 
 	public override void _Ready()
 	{
-		UWClass._RES=UWClass.GAME_UW2;
+		UWClass._RES=UWClass.GAME_UW1;
 		switch(UWClass._RES)
 		{
 			case UWClass.GAME_UW1:
@@ -81,6 +82,12 @@ public partial class imageloader : Sprite2D
 		weapon_2d.TextureFilter=CanvasItem.TextureFilterEnum.Nearest;
 		weapon_2d.Texture = weapon_texture;
 
+		var critloader = new CritLoader(0);
+		var a_critter = critloader.critter.AnimInfo.animSprites[index];
+		ImageTexture critter_texture= new();
+		critter_texture.SetImage(a_critter);
+		critter_3d.Texture=critter_texture;
+		critter_3d.TextureFilter=BaseMaterial3D.TextureFilterEnum.Nearest;
 	}
 
 
