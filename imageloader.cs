@@ -17,6 +17,11 @@ public partial class imageloader : Sprite2D
 
 	public override void _Ready()
 	{
+
+		var strs = new StringLoader();
+		strs.LoadStringsPak("C:\\Games\\UW1\\game\\UW\\data\\strings.pak");
+		Debug.Print(strs.GetString(1,1));
+
 		PaletteLoader.LoadPalettes("C:\\Games\\UW1\\game\\UW\\data\\pals.dat");
 		var byt = new Underworld.BytLoader();
 		var img =  byt.LoadImageAt(1);
