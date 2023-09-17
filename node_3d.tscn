@@ -1,9 +1,14 @@
-[gd_scene load_steps=8 format=3 uid="uid://13uofwemp67y"]
+[gd_scene load_steps=10 format=3 uid="uid://13uofwemp67y"]
 
 [ext_resource type="Texture2D" uid="uid://e3cd4b3kb81n" path="res://resources/a.png" id="1_d3x74"]
 [ext_resource type="Script" path="res://TextureButton.cs" id="2_v34lh"]
 [ext_resource type="Script" path="res://imageloader.cs" id="3_4tl8d"]
+[ext_resource type="FontFile" uid="uid://dhrg5v5fecw5b" path="res://resources/fonts/FONTBIG.ttf" id="3_lig5x"]
 [ext_resource type="Texture2D" uid="uid://dedvyeljhjeax" path="res://resources/icon.svg" id="4_rlge0"]
+
+[sub_resource type="Theme" id="Theme_snbc4"]
+default_font = ExtResource("3_lig5x")
+default_font_size = 0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_owlev"]
 
@@ -32,9 +37,10 @@ offset_bottom = 684.0
 text = "Hello World"
 
 [node name="Button" type="Button" parent="."]
-offset_right = 8.0
-offset_bottom = 8.0
+offset_right = 87.0
+offset_bottom = 37.0
 scale = Vector2(5.96, 4.52)
+theme = SubResource("Theme_snbc4")
 text = "The button"
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]

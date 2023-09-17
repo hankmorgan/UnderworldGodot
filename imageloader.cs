@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Diagnostics;
+using System.Security.Cryptography.X509Certificates;
 using Underworld;
 
 public partial class imageloader : Sprite2D
@@ -17,19 +18,19 @@ public partial class imageloader : Sprite2D
 
 	public override void _Ready()
 	{
-
-		var strs = new StringLoader();
-		strs.LoadStringsPak("C:\\Games\\UW1\\game\\UW\\data\\strings.pak");
-		Debug.Print(strs.GetString(1,1));
-
+		//Load palettes. run first
 		PaletteLoader.LoadPalettes("C:\\Games\\UW1\\game\\UW\\data\\pals.dat");
-		var byt = new Underworld.BytLoader();
-		var img =  byt.LoadImageAt(1);
-		Debug.Print("Format of the sprite is " + spr.Texture.GetImage().GetFormat());
+
+
+		var textureloader = new TextureLoader();
+		var a_texture = textureloader.LoadImageAt(1);
+		//var byt = new Underworld.BytLoader();
+		//var bytimg =  byt.LoadImageAt(1);
+		//Debug.Print("Format of the bitmap is " + spr.Texture.GetImage().GetFormat());
 		
 		// create the texture for the mesh
 		ImageTexture tex=new();
-		tex.SetImage(img);
+		tex.SetImage(a_texture);
 		
 		//update the mesh with a new material.
 		var material = mesh.GetActiveMaterial(0) as StandardMaterial3D; // or your shader...
@@ -38,19 +39,25 @@ public partial class imageloader : Sprite2D
 
 
 		GRLoader gr = new GRLoader(20);
-		var imggr = gr.LoadImageAt(0);
+		var spriteimg = gr.LoadImageAt(0);
 		spr.TextureFilter=BaseMaterial3D.TextureFilterEnum.Nearest;
 		sprX.TextureFilter=CanvasItem.TextureFilterEnum.Nearest;
-		Debug.Print ("H" + imggr.GetHeight());
+		Debug.Print ("H" + spriteimg.GetHeight());
 		ImageTexture texgr=new();	
 
-		texgr.SetImage(imggr);
+		texgr.SetImage(spriteimg);
 	
 		Debug.Print ("A" + texgr.HasAlpha());
 		sprX.Texture = texgr;
-
 		spr.Texture=texgr;
+
+
+		//Load strings
+		var strs = new StringLoader();
+		strs.LoadStringsPak("C:\\Games\\UW1\\game\\UW\\data\\strings.pak");
+		Debug.Print(strs.GetString(1,1));
 	}
+
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
