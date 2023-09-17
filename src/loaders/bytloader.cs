@@ -85,17 +85,16 @@ namespace Underworld
             {
                 case GAME_UW2:
                     {
-                        return null;
-                        //return extractUW2Bitmap(Path.Combine(BasePath, "DATA", "BYT.ARK"), index, Alpha);      //    "DATA" + sep + "BYT.ARK", index, Alpha);
+                        return extractUW2Bitmap(Path.Combine(BasePath, "DATA", "BYT.ARK"), index, Alpha);      //    "DATA" + sep + "BYT.ARK", index, Alpha);
                     }
                 default:
                     {
                         var toLoad = Path.Combine(BasePath, "DATA", FilePaths[index]);
-                        var toLoadMod = Path.Combine(toLoad, "001.tga");
-                        if (File.Exists(toLoadMod))
-                        {
-                            //return TGALoader.LoadTGA(toLoadMod);
-                        }
+                        // var toLoadMod = Path.Combine(toLoad, "001.tga");
+                        // if (File.Exists(toLoadMod))
+                        // {
+                        //     //return TGALoader.LoadTGA(toLoadMod);
+                        // }
                         if (currentIndex != index)
                         {//Only load from disk if the image to bring back has changed.
                             DataLoaded = false;
@@ -108,6 +107,43 @@ namespace Underworld
                     }
             }
         }
+
+
+    public Godot.Image extractUW2Bitmap(string toLoad, int index, bool Alpha)
+    {
+        // Pointer to our buffered data (little endian format)
+        //int i;
+        long NoOfTextures;
+        // var toLoadMod = Path.Combine(toLoad, index.ToString("d3") + ".tga");
+        // if (File.Exists(toLoadMod))
+        // {
+        //     return TGALoader.LoadTGA(toLoadMod);
+        // }
+
+        if (!ReadStreamFile(toLoad, out byte[] textureFile))
+        { return null; }
+        // Get the size of the file in bytes
+
+        NoOfTextures = getValAtAddress(textureFile, 0, 8);
+        int textureOffset = (int)getValAtAddress(textureFile, (index * 4) + 6, 32);
+        if (textureOffset != 0)
+        {
+            int compressionFlag = (int)getValAtAddress(textureFile, ((index * 4) + 6) + (NoOfTextures * 4), 32);
+            int isCompressed = (compressionFlag >> 1) & 0x01;
+            if (isCompressed == 1)
+            {
+                int datalen = 0;
+                return Image(DataLoader.unpackUW2(textureFile, textureOffset, ref datalen), 0, 320, 200, "namehere", PaletteLoader.Palettes[PaletteIndicesUW2[index]], Alpha);
+            }
+            else
+            {
+                return Image(textureFile, textureOffset, 320, 200, "name_goes_here", PaletteLoader.Palettes[PaletteIndicesUW2[index]], Alpha);
+            }
+        }
+        return null;
     }
 
-}//namespace
+
+    } //end class
+
+}//end namespace

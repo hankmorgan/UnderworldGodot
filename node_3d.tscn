@@ -29,13 +29,6 @@ scale = Vector2(8, 8)
 texture_normal = ExtResource("1_d3x74")
 script = ExtResource("2_v34lh")
 
-[node name="Label" type="Label" parent="."]
-offset_left = 596.0
-offset_top = 658.0
-offset_right = 687.0
-offset_bottom = 684.0
-text = "Hello World"
-
 [node name="Button" type="Button" parent="."]
 offset_right = 87.0
 offset_bottom = 37.0
@@ -45,7 +38,7 @@ text = "The button"
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="Loader" type="Sprite2D" parent="CanvasLayer" node_paths=PackedStringArray("testTextureNode", "mesh", "spr", "sprX")]
+[node name="Loader" type="Sprite2D" parent="CanvasLayer" node_paths=PackedStringArray("testTextureNode", "mesh", "sprite_3d", "sprite_2d")]
 texture_filter = 1
 rotation = -1.39626
 scale = Vector2(3, 3)
@@ -53,8 +46,8 @@ centered = false
 script = ExtResource("3_4tl8d")
 testTextureNode = NodePath("../NodeToChange")
 mesh = NodePath("../../sphere")
-spr = NodePath("../../Sprite3D")
-sprX = NodePath("../Sprite2DX")
+sprite_3d = NodePath("../../Sprite3D")
+sprite_2d = NodePath("../Sprite2DX")
 
 [node name="NodeToChange" type="TextureRect" parent="CanvasLayer"]
 texture_filter = 1

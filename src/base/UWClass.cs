@@ -19,10 +19,10 @@ namespace Underworld
 /// <summary>
 /// Use to track what game is currently active.
 /// </summary>
-    public static string _RES = "UW1";
+    public static string _RES = "UW2";
 
 
-        public static string BasePath = "C:\\Games\\UW1\\game\\UW";
+        public static string BasePath = "C:\\Games\\UW2\\game\\UW2";
 
     }
     

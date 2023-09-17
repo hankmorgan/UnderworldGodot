@@ -252,8 +252,8 @@ namespace Underworld
             /// The game strings are stored in this hashtable.
             /// </summary>
             /// Hash is in format [block number]_[string number]
-            private Hashtable GameStrings;
-            private Hashtable EntryCounts;
+            private static Hashtable GameStrings;
+            private static Hashtable EntryCounts;
 
 
             /// <summary>
@@ -280,46 +280,51 @@ namespace Underworld
             /// <summary>
             /// The instance of this class
             /// </summary>
-            public static StringLoader instance;
+            //public static StringLoader instance;
 
-            void Awake()
-            {
-                instance = this;
-                //Set some default strings that differ between games.
-
-
-                /*if(UWEBase._RES!="UW1")
-                {					
-                    //InitStringController(Application.dataPath + "//..//" + UWEBase._RES + "_strings.txt");
-                }
-                else
-                {
-                    //use the new method
-                    //LoadStringsPak(Path);
-                }*/
-            }
+            // void Awake()
+            // {
+            //     instance = this;
+            //     //Set some default strings that differ between games.
 
 
+            //     /*if(UWEBase._RES!="UW1")
+            //     {					
+            //         //InitStringController(Application.dataPath + "//..//" + UWEBase._RES + "_strings.txt");
+            //     }
+            //     else
+            //     {
+            //         //use the new method
+            //         //LoadStringsPak(Path);
+            //     }*/
+            // }
 
-            /// <summary>
-            /// Inits the string controller.
-            /// </summary>
-            /// <returns><c>true</c>, if string controller was inited, <c>false</c> otherwise.</returns>
-            /// <param name="StringFilePath">String file path.</param>
-            public bool InitStringController(string StringFilePath)
-            {
-                GameStrings = new Hashtable();
-                EntryCounts = new Hashtable();
-                return Load(StringFilePath);
-            }
+
+
+            // /// <summary>
+            // /// Inits the string controller.
+            // /// </summary>
+            // /// <returns><c>true</c>, if string controller was inited, <c>false</c> otherwise.</returns>
+            // /// <param name="StringFilePath">String file path.</param>
+            // public static bool InitStringController(string StringFilePath)
+            // {
+            //     GameStrings = new Hashtable();
+            //     EntryCounts = new Hashtable();
+            //     return Load(StringFilePath);
+            // }
 
 
             /// <summary>
             /// Loads and decodes the strings.pak file as specificed by the Path.
             /// </summary>
             /// <param name="path">Path.</param>
-            public void LoadStringsPak(string path)
+            public static void LoadStringsPak(string path)
             {
+                
+                //Initialise the tables
+                GameStrings = new Hashtable();
+                EntryCounts = new Hashtable();
+
                 //Set some default string numbers that are different from the default in uw2
                 switch (_RES)
                 {
@@ -691,7 +696,7 @@ namespace Underworld
             /// <returns>The string.</returns>
             /// <param name="BlockNo">Block no.</param>
             /// <param name="StringNo">String no.</param>
-            public string GetString(int BlockNo, int StringNo)
+            public static string GetString(int BlockNo, int StringNo)
             {//output a string at the specified block and string no.
                 if (GameStrings == null)
                 {
@@ -725,7 +730,7 @@ namespace Underworld
             /// </summary>
             /// <returns>The object noun U.</returns>
             /// <param name="item_id">Item identifier.</param>
-            public string GetObjectNounUW(int item_id)
+            public static string GetObjectNounUW(int item_id)
             {
                 string output = GetString(4, item_id);
                 if (output.Contains("&"))
