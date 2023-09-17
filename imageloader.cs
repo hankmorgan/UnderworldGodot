@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using Underworld;
 
@@ -15,19 +16,35 @@ public partial class imageloader : Sprite2D
 [Export] public Sprite3D sprite_3d;
 [Export] public Sprite2D sprite_2d;
 
+[Export] public Sprite2D weapon_2d;
+
 
 
 	public override void _Ready()
 	{
+		UWClass._RES=UWClass.GAME_UW2;
+		switch(UWClass._RES)
+		{
+			case UWClass.GAME_UW1:
+				UWClass.BasePath = "C:\\Games\\UW1\\game\\UW"; break;
+			case UWClass.GAME_UW2:
+				UWClass.BasePath = "C:\\Games\\UW2\\game\\UW2"; break;
+			default:
+				throw new InvalidOperationException("Invalid Game Selected");				
+		}
 		
+		Random rnd = new Random();
+		var index = rnd.Next(8);
+		Debug.Print (index.ToString());
+
 		//Load palettes. run first
 		PaletteLoader.LoadPalettes(Path.Combine(UWClass.BasePath,"data","pals.dat"));// "C:\\Games\\UW1\\game\\UW\\data\\pals.dat");
 
 		var textureloader = new TextureLoader();
-		var a_texture = textureloader.LoadImageAt(1);
+		var a_texture = textureloader.LoadImageAt(index);
 		
 		var bytloader = new Underworld.BytLoader();
-		var a_bitmap =  bytloader.LoadImageAt(1);
+		var a_bitmap =  bytloader.LoadImageAt(index);
 	
 		// create the texture for the mesh
 		ImageTexture textureForMesh=new();
@@ -40,8 +57,8 @@ public partial class imageloader : Sprite2D
 		material.TextureFilter=BaseMaterial3D.TextureFilterEnum.Nearest;
 
 		//Load a sprte and apply it to the 2d and 3d sprties
-		GRLoader gr = new GRLoader(20);
-		var a_sprite = gr.LoadImageAt(0);
+		GRLoader gr = new GRLoader(GRLoader.OBJECTS_GR);
+		var a_sprite = gr.LoadImageAt(index);
 		sprite_3d.TextureFilter=BaseMaterial3D.TextureFilterEnum.Nearest;
 		sprite_2d.TextureFilter=CanvasItem.TextureFilterEnum.Nearest;
 
@@ -54,10 +71,16 @@ public partial class imageloader : Sprite2D
 		//Load strings
 		//var strs = new StringLoader();
 		StringLoader.LoadStringsPak(Path.Combine(UWClass.BasePath,"data","strings.pak"));
-		Debug.Print(StringLoader.GetString(1,1));
-
 		//Update a UI Element with a message
-		GetTree().Root.GetNode("Node3D").GetNode<Button>("Button").Text= StringLoader.GetString(1,0);
+		GetTree().Root.GetNode("Node3D").GetNode<Button>("Button").Text= StringLoader.GetString(1,index);
+
+		var weaponloader = new WeaponsLoader(0);
+		var a_weapon = weaponloader.LoadImageAt(index);
+		ImageTexture weapon_texture = new();
+		weapon_texture.SetImage(a_weapon);
+		weapon_2d.TextureFilter=CanvasItem.TextureFilterEnum.Nearest;
+		weapon_2d.Texture = weapon_texture;
+
 	}
 
 

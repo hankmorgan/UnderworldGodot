@@ -38,7 +38,7 @@ text = "The button"
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="Loader" type="Sprite2D" parent="CanvasLayer" node_paths=PackedStringArray("testTextureNode", "mesh", "sprite_3d", "sprite_2d")]
+[node name="Loader" type="Sprite2D" parent="CanvasLayer" node_paths=PackedStringArray("testTextureNode", "mesh", "sprite_3d", "sprite_2d", "weapon_2d")]
 texture_filter = 1
 rotation = -1.39626
 scale = Vector2(3, 3)
@@ -48,6 +48,7 @@ testTextureNode = NodePath("../NodeToChange")
 mesh = NodePath("../../sphere")
 sprite_3d = NodePath("../../Sprite3D")
 sprite_2d = NodePath("../Sprite2DX")
+weapon_2d = NodePath("../weaponanim")
 
 [node name="NodeToChange" type="TextureRect" parent="CanvasLayer"]
 texture_filter = 1
@@ -62,6 +63,12 @@ expand_mode = 2
 [node name="Sprite2DX" type="Sprite2D" parent="CanvasLayer"]
 material = SubResource("ShaderMaterial_owlev")
 position = Vector2(207, 277)
+scale = Vector2(4, 4)
+texture = ExtResource("1_d3x74")
+
+[node name="weaponanim" type="Sprite2D" parent="CanvasLayer"]
+material = SubResource("ShaderMaterial_owlev")
+position = Vector2(562, 480)
 scale = Vector2(4, 4)
 texture = ExtResource("1_d3x74")
 
