@@ -100,7 +100,16 @@ namespace Underworld
         //Image image = new Godot.Image();// width, height, TextureFormat.ARGB32, false);
        
        // Color[] imageColors = new Color[width * height];
-        var img = Godot.Image.Create(width, height, false, Godot.Image.Format.Rgba4444);
+       Godot.Image.Format imgformat;
+        if (Alpha)
+        {
+            imgformat = Godot.Image.Format.Rgba8;
+        }
+        else
+        {
+            imgformat = Godot.Image.Format.Rgb8;
+        }
+        var img = Godot.Image.Create(width, height, false, imgformat);
        
         //long counter = 0;
        // for (int iRow = height - 1; iRow >= 0; iRow--)
@@ -139,7 +148,6 @@ namespace Underworld
                 else
                 {
                     //imageColors[counter++] = pal.ColorAtPixel(pixel, Alpha);
-
                      img.SetPixel(iCol,iRow, pal.ColorAtPixel(pixel, Alpha));
                 }
                 iCol++;

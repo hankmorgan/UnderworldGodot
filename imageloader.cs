@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -23,6 +24,8 @@ public partial class imageloader : Sprite2D
 
 	public override void _Ready()
 	{
+		
+
 		UWClass._RES=UWClass.GAME_UW1;
 		switch(UWClass._RES)
 		{
@@ -51,6 +54,8 @@ public partial class imageloader : Sprite2D
 		ImageTexture textureForMesh=new();
 		textureForMesh.SetImage(a_texture);
 		//textureForMesh.SetImage(a_bitmap);
+
+		CreateMesh(textureForMesh);
 
 		//update the mesh with a new material.
 		var material = mesh.GetActiveMaterial(0) as StandardMaterial3D; // or your shader...
@@ -88,8 +93,75 @@ public partial class imageloader : Sprite2D
 		critter_texture.SetImage(a_critter);
 		critter_3d.Texture=critter_texture;
 		critter_3d.TextureFilter=BaseMaterial3D.TextureFilterEnum.Nearest;
+
+		var main_windowgr =  new GRLoader(GRLoader.ThreeDWIN_GR);
+		var uielem = GetNode<TextureRect>("/root/Node3D/UI/3DWin");
+		var ThreeDWinImg = bytloader.LoadImageAt(BytLoader.MAIN_BYT,true);
+		var ThreeDWinTex = new ImageTexture();
+		ThreeDWinTex.SetImage(ThreeDWinImg);
+		uielem.Texture=ThreeDWinTex;
+		uielem.TextureFilter=CanvasItem.TextureFilterEnum.Nearest;
 	}
 
+	public void CreateMesh(Texture2D textureForMesh)
+	{
+
+
+		//var nd = new Node3D();
+		//nd.Name = "yay";
+		//GetTree().Root.AddChild;
+		var surfaceArray = new Godot.Collections.Array();
+		surfaceArray.Resize((int)Mesh.ArrayType.Max);
+
+		var verts = new List<Vector3>();
+		var uvs = new List<Vector2>();
+		var normals = new List<Vector3>();
+		var indices = new List<int>();
+
+		var vert = new Vector3 (10f,10f,0f) ;
+		verts.Add (vert);
+		normals.Add(vert.Normalized());
+
+		vert = new Vector3 (0f,0f,0f) ;
+		verts.Add (vert);	
+		normals.Add(vert.Normalized());
+		
+		vert = new Vector3 (0f,10f,5f) ;
+		verts.Add (vert);
+		normals.Add(vert.Normalized());
+
+		uvs.Add(new Vector2(0,0));
+		uvs.Add(new Vector2(1,0));
+		uvs.Add(new Vector2(1,1));
+		//uvs.Add(new Vector2(0,1));
+
+		indices.Add(0);
+		indices.Add(1);
+		indices.Add(2);
+
+		surfaceArray[(int)Mesh.ArrayType.Vertex] = verts.ToArray();
+		surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs.ToArray();
+		surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
+		surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
+
+		var arrMesh = new ArrayMesh(); //= Mesh as ArrayMesh;
+		if (arrMesh != null)
+		{
+			// No blendshapes, lods, or compression used.
+			arrMesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
+
+			var material = new StandardMaterial3D(); // or your shader...
+			material!.AlbedoTexture = textureForMesh; // shader parameter, etc.
+			material.TextureFilter=BaseMaterial3D.TextureFilterEnum.Nearest;
+			arrMesh.SurfaceSetMaterial(0, material);
+
+			var m = new MeshInstance3D();
+			
+    		m.Mesh=arrMesh;
+			GetTree().Root.CallDeferred("add_child",m);
+			//GetTree().Root.AddChild(m);
+		}
+	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)

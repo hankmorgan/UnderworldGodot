@@ -1032,44 +1032,44 @@ namespace Underworld
         static void CropImageData(ref Godot.Image imgData, Palette PalUsed)
         {
             return;// turn this off for the moment.
-            Color alphacolor = PalUsed.ColorAtPixel(0, true);
-            int InvalidRows = 0;//imgData.height;
-            for (int x = 0; x < imgData.GetHeight(); x++)
-            {
-                bool rowIsAllAlpha = true;
-                for (int y = 0; y <= imgData.GetWidth(); y++)
-                {
-                    if (imgData.GetPixel(y, x) != alphacolor)
-                    {
-                        rowIsAllAlpha = false;
-                        break;
-                    }
-                }
-                if (rowIsAllAlpha)
-                {
-                    InvalidRows++;
-                    for (int z = 0; z <= imgData.GetWidth(); z++)
-                    {
-                        imgData.SetPixel(z, x, Color.Color8(0,0,0,0)) ;// .white);
-                    }
-                }
-                else
-                {
-                    break;
-                }
-            }
-            if ((InvalidRows < imgData.GetHeight()))
-            {
-                //TODO rebuild this section
-                // Godot.Image newImg = new Godot.Image(imgData.GetWidth(), imgData.GetHeight() - InvalidRows, false);
-                // newImg.SetPixels(imgData.GetPixels(0, InvalidRows, imgData.width, imgData.height - InvalidRows));
-                // newImg.filterMode = FilterMode.Point;
-                // newImg.Apply();
-                // imgData = newImg;
+        //     Color alphacolor = PalUsed.ColorAtPixel(0, true);
+        //     int InvalidRows = 0;//imgData.height;
+        //     for (int x = 0; x < imgData.GetHeight(); x++)
+        //     {
+        //         bool rowIsAllAlpha = true;
+        //         for (int y = 0; y <= imgData.GetWidth(); y++)
+        //         {
+        //             if (imgData.GetPixel(y, x) != alphacolor)
+        //             {
+        //                 rowIsAllAlpha = false;
+        //                 break;
+        //             }
+        //         }
+        //         if (rowIsAllAlpha)
+        //         {
+        //             InvalidRows++;
+        //             for (int z = 0; z <= imgData.GetWidth(); z++)
+        //             {
+        //                 imgData.SetPixel(z, x, Color.Color8(0,0,0,0)) ;// .white);
+        //             }
+        //         }
+        //         else
+        //         {
+        //             break;
+        //         }
+        //     }
+        //     if ((InvalidRows < imgData.GetHeight()))
+        //     {
+        //         //TODO rebuild this section
+        //         // Godot.Image newImg = new Godot.Image(imgData.GetWidth(), imgData.GetHeight() - InvalidRows, false);
+        //         // newImg.SetPixels(imgData.GetPixels(0, InvalidRows, imgData.width, imgData.height - InvalidRows));
+        //         // newImg.filterMode = FilterMode.Point;
+        //         // newImg.Apply();
+        //         // imgData = newImg;
 
-                //imgData.Apply();
-            }
-        }
+        //         //imgData.Apply();
+        //     }
+         }
     }
 
 

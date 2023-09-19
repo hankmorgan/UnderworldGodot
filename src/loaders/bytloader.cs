@@ -102,6 +102,7 @@ namespace Underworld
                             LoadImageFile();
                         }
                         //return Image(ImageFileData, 0, 320, 200, "name_goes_here", GameWorldController.instance.palLoader.Palettes[PaletteIndices[index]], Alpha);
+                        //return Image(ImageFileData, 0, 320, 200, "name_goes_here",  PaletteLoader.GreyScale, Alpha);
 
                         return Image(ImageFileData, 0, 320, 200, "name_goes_here",  PaletteLoader.Palettes[PaletteIndices[index]], Alpha);
                     }

@@ -18,25 +18,27 @@ namespace Underworld
         /// <param name="Alpha">If set to <c>true</c> alpha.</param>
         public Color ColorAtPixel(byte pixel, bool Alpha)
         {
-            byte alpha;
+            byte alphabyte;
             if (Alpha == true)
             {
                 if (pixel != 0) //Alpha
                 {
-                    alpha = 255;
+                    alphabyte = 255;
                 }
                 else
                 {
-                    alpha = 0;
+                    alphabyte = 0;
                 }
             }
             else
             {
-                alpha = 0;
+                alphabyte = 0;
             }
-            uint rgba = (uint)(red[pixel]<<24 | green[pixel]<<16 | blue[pixel]<<8 | alpha);
-            //rrggbbaa
+            
+            uint rgba;
+            rgba = (uint)(red[pixel]<<24 | green[pixel]<<16 | blue[pixel]<<8 | alphabyte);
             return new Color(rgba);
+
            // return new Color(red[pixel], green[pixel], blue[pixel], alpha);
         }
 
