@@ -101,6 +101,13 @@ public partial class imageloader : Sprite2D
 		ThreeDWinTex.SetImage(ThreeDWinImg);
 		uielem.Texture=ThreeDWinTex;
 		uielem.TextureFilter=CanvasItem.TextureFilterEnum.Nearest;
+
+		var cuts = new CutsLoader(Path.Combine(UWClass.BasePath,"CUTS","CS000.N02"));
+		var cutimg = cuts.ImageCache[index];
+		var cutstex = new ImageTexture();
+		cutstex.SetImage(cutimg);
+		uielem.Texture=cutstex;
+		uielem.TextureFilter=CanvasItem.TextureFilterEnum.Nearest;
 	}
 
 	public void CreateMesh(Texture2D textureForMesh)
