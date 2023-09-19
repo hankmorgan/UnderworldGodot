@@ -95,7 +95,7 @@ namespace Underworld
         private bool ImageFileDataLoaded;
         int NoOfImages;
 
-        public Image[] ImageCache = new Image[1];
+        public ImageTexture[] ImageCache = new ImageTexture[1];
 
         public GRLoader(int File, int PalToUse)
         {
@@ -134,7 +134,7 @@ namespace Underworld
             else
             {
                 NoOfImages = (int)getValAtAddress(ImageFileData, 1, 16);
-                ImageCache = new Image[NoOfImages];
+                ImageCache = new ImageTexture[NoOfImages];
                 // if (LoadMod)
                 // {//Load up modded image data at the path
                 //     for (int i = 0; i <= ImageCache.GetUpperBound(0); i++)
@@ -152,12 +152,12 @@ namespace Underworld
         }
 
 
-        public override Image LoadImageAt(int index)
+        public override ImageTexture LoadImageAt(int index)
         {
             return LoadImageAt(index, true);
         }
 
-        public override Image LoadImageAt(int index, bool Alpha)
+        public override ImageTexture LoadImageAt(int index, bool Alpha)
         {
             if (ImageFileDataLoaded == false)
             {

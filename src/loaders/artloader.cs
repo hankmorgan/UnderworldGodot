@@ -53,7 +53,7 @@ namespace Underworld
         /// </summary>
         /// <returns>The <see cref="UnityEngine.Texture2D"/>.</returns>
         /// <param name="index">Index.</param>
-        public virtual Image LoadImageAt(int index)
+        public virtual ImageTexture LoadImageAt(int index)
         {
             return null; // new ImageTexture() Texture2D(1, 1);
         }
@@ -63,7 +63,7 @@ namespace Underworld
         /// </summary>
         /// <returns>The <see cref="UnityEngine.Texture2D"/>.</returns>
         /// <param name="index">Index.</param>
-        public virtual Image LoadImageAt(int index, bool Alpha)
+        public virtual ImageTexture LoadImageAt(int index, bool Alpha)
         {
             return null;// new Texture2D(1, 1);
         }
@@ -79,7 +79,7 @@ namespace Underworld
         /// <param name="imageName">Image name.</param>
         /// <param name="pal">Pal.</param>
         /// <param name="Alpha">If set to <c>true</c> alpha.</param>
-        public static Image Image(byte[] databuffer, long dataOffSet, int width, int height, string imageName, Palette pal, bool Alpha)
+        public static ImageTexture Image(byte[] databuffer, long dataOffSet, int width, int height, string imageName, Palette pal, bool Alpha)
         {
             return Image(databuffer, dataOffSet, width, height, imageName, pal, Alpha, false);
         }
@@ -95,7 +95,7 @@ namespace Underworld
         /// <param name="imageName">Image name.</param>
         /// <param name="pal">Pal.</param>
         /// <param name="Alpha">If set to <c>true</c> alpha.</param>
-        public static Image Image(byte[] databuffer, long dataOffSet, int width, int height, string imageName, Palette pal, bool Alpha, bool useXFER)
+        public static ImageTexture Image(byte[] databuffer, long dataOffSet, int width, int height, string imageName, Palette pal, bool Alpha, bool useXFER)
         {
             //Image image = new Godot.Image();// width, height, TextureFormat.ARGB32, false);
 
@@ -153,8 +153,11 @@ namespace Underworld
                     iCol++;
                 }
             }
+            var tex = new ImageTexture();
+            tex.SetImage(img);
+            return tex;
 
-            return img;
+            //return img;
             // byte[] bytes = new byte[width*height*4];
             // int i = 0;
             // foreach (var c in imageColors)

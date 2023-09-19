@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Diagnostics;
+using Godot;
 
 namespace Underworld
 {    
@@ -74,12 +75,12 @@ namespace Underworld
         /// <returns>The <see cref="UnityEngine.Texture2D"/>.</returns>
         /// <param name="index">Index.</param>
         /// In this case the index is a loading of the seperate file. 
-        public override Godot.Image LoadImageAt(int index)
+        public override ImageTexture LoadImageAt(int index)
         {
             return LoadImageAt(index, false);
         }
 
-        public override Godot.Image LoadImageAt(int index, bool Alpha)
+        public override ImageTexture LoadImageAt(int index, bool Alpha)
         {
             switch (_RES)
             {
@@ -110,7 +111,7 @@ namespace Underworld
         }
 
 
-    public Godot.Image extractUW2Bitmap(string toLoad, int index, bool Alpha)
+    public ImageTexture extractUW2Bitmap(string toLoad, int index, bool Alpha)
     {
         // Pointer to our buffered data (little endian format)
         //int i;

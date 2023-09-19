@@ -74,7 +74,7 @@ public class TextureLoader : ArtLoader
     /// </summary>
     /// <param name="index">Index.</param>
     /// <param name="TextureType">Texture type. 0 = normal, 1 = palette cycled</param>
-    public Image LoadImageAt(int index, short TextureType)
+    public ImageTexture LoadImageAt(int index, short TextureType)
     {
         switch (TextureType)
         {
@@ -88,7 +88,7 @@ public class TextureLoader : ArtLoader
     }
 
 
-    public override Image LoadImageAt(int index)
+    public override ImageTexture LoadImageAt(int index)
     {
         return LoadImageAt(index, PaletteLoader.Palettes[0]);
     }
@@ -100,7 +100,7 @@ public class TextureLoader : ArtLoader
     /// <param name="index">Index.</param>
     /// <param name="palToUse">Pal to use.</param>
     /// If the index is greater than 209 I return a floor texture.
-    public Image LoadImageAt(int index, Palette palToUse)
+    public ImageTexture LoadImageAt(int index, Palette palToUse)
     {
         if (_RES == GAME_UWDEMO)
         {//Point the UW1 texture files to the demo files

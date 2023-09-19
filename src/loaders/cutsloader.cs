@@ -6,7 +6,7 @@ namespace Underworld
     public class CutsLoader : ArtLoader
     {
 
-        public Image[] ImageCache = new Image[1];
+        public ImageTexture[] ImageCache = new ImageTexture[1];
         byte[] dstImage; //repeating buffer
 
 
@@ -130,7 +130,7 @@ namespace Underworld
             {
                 pages[i] = cutsFile[i + 2816];
             }
-            ImageCache = new Image[lpH.nFrames];
+            ImageCache = new ImageTexture[lpH.nFrames];
             for (int framenumber = 0; framenumber < lpH.nFrames; framenumber++)
             {
                 if ((ErrorHandling == true) && (framenumber == 10))

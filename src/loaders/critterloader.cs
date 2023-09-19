@@ -440,7 +440,7 @@ namespace Underworld
 
                             //****************************
 
-                            Godot.Image imgData = ArtLoader.Image(outputImg, 0, BitMapWidth, BitMapHeight, "namehere", pal, true, true);
+                            ImageTexture imgData = ArtLoader.Image(outputImg, 0, BitMapWidth, BitMapHeight, "namehere", pal, true, true);
                             CropImageData(ref imgData, pal);
                             //Image.CreateFromData(imgData.GetWidth(),imgData.GetHeight(),false,Image.Format.Rgba8,)
                             AnimInfo.animSprites[spriteIndex + i] = imgData;  ;//Sprite.Create(imgData, new Rect(0f, 0f, imgData.width, imgData.height), new Vector2(0.5f, 0.0f));
@@ -951,7 +951,7 @@ namespace Underworld
                                 BitMapWidth = MaxWidth;
                                 BitMapHeight = MaxHeight;
 
-                                Godot.Image imgData = ArtLoader.Image(outputImg, 0, BitMapWidth, BitMapHeight, "namehere", pal, true, true);
+                                ImageTexture imgData = ArtLoader.Image(outputImg, 0, BitMapWidth, BitMapHeight, "namehere", pal, true, true);
                                 CropImageData(ref imgData, pal);
                                 AnimInfo.animSprites[spriteIndex++] = imgData; //Sprite.Create(imgData, new Rect(0f, 0f, imgData.width, imgData.height), new Vector2(0.5f, 0.0f));
                             }
@@ -1029,7 +1029,7 @@ namespace Underworld
         /// </summary>
         /// <param name="imgData">Image data.</param>
         /// <param name="PalUsed">Pal used.</param>
-        static void CropImageData(ref Godot.Image imgData, Palette PalUsed)
+        static void CropImageData(ref ImageTexture imgData, Palette PalUsed)
         {
             return;// turn this off for the moment.
         //     Color alphacolor = PalUsed.ColorAtPixel(0, true);
@@ -1080,7 +1080,7 @@ public class CritterAnimInfo
     public string[,] animSequence;
     public int[,] animIndices;
     //public ArtLoader.RawImageData[,] animSprites;
-    public Image[] animSprites;
+    public ImageTexture[] animSprites;
     public string[] animName;
 
     public CritterAnimInfo()
@@ -1090,10 +1090,10 @@ public class CritterAnimInfo
         switch (UWClass._RES)
         {
             case UWClass.GAME_UW2:
-                animSprites = new Image[180];
+                animSprites = new ImageTexture[180];
                 break;
             default:
-                animSprites = new Image[128];
+                animSprites = new ImageTexture[128];
                 break;
         }
         animName = new string[NoOfAnims];

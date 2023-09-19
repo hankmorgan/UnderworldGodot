@@ -51,16 +51,16 @@ public partial class imageloader : Sprite2D
 		var a_bitmap =  bytloader.LoadImageAt(index);
 	
 		// create the texture for the mesh
-		ImageTexture textureForMesh=new();
-		textureForMesh.SetImage(a_texture);
+		//ImageTexture textureForMesh=new();
+		//textureForMesh.SetImage(a_texture);
 		//textureForMesh.SetImage(a_bitmap);
 
-		CreateMesh(textureForMesh);
+		CreateMesh(a_texture);
 
 		//update the mesh with a new material.
 		var material = mesh.GetActiveMaterial(0) as StandardMaterial3D; // or your shader...
-		material!.AlbedoTexture = textureForMesh; // shader parameter, etc.
-		material.TextureFilter=BaseMaterial3D.TextureFilterEnum.Nearest;
+		material!.AlbedoTexture = a_bitmap; // shader parameter, etc.
+		material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
 
 		//Load a sprte and apply it to the 2d and 3d sprties
 		GRLoader gr = new GRLoader(GRLoader.OBJECTS_GR);
@@ -68,11 +68,11 @@ public partial class imageloader : Sprite2D
 		sprite_3d.TextureFilter=BaseMaterial3D.TextureFilterEnum.Nearest;
 		sprite_2d.TextureFilter=CanvasItem.TextureFilterEnum.Nearest;
 
-		ImageTexture sprite_texture=new();
-		sprite_texture.SetImage(a_sprite);
+		//ImageTexture sprite_texture=new();
+		//sprite_texture.SetImage(a_sprite);
 	
-		sprite_2d.Texture = sprite_texture;
-		sprite_3d.Texture=sprite_texture;
+		sprite_2d.Texture = a_sprite;
+		sprite_3d.Texture = a_sprite;
 
 		//Load strings
 		//var strs = new StringLoader();
@@ -82,32 +82,32 @@ public partial class imageloader : Sprite2D
 
 		var weaponloader = new WeaponsLoader(0);
 		var a_weapon = weaponloader.LoadImageAt(index);
-		ImageTexture weapon_texture = new();
-		weapon_texture.SetImage(a_weapon);
+		//ImageTexture weapon_texture = new();
+		//weapon_texture.SetImage(a_weapon);
 		weapon_2d.TextureFilter=CanvasItem.TextureFilterEnum.Nearest;
-		weapon_2d.Texture = weapon_texture;
+		weapon_2d.Texture = a_weapon;
 
 		var critloader = new CritLoader(0);
 		var a_critter = critloader.critter.AnimInfo.animSprites[index];
-		ImageTexture critter_texture= new();
-		critter_texture.SetImage(a_critter);
-		critter_3d.Texture=critter_texture;
+		//ImageTexture critter_texture= new();
+		//critter_texture.SetImage(a_critter);
+		critter_3d.Texture=a_critter;
 		critter_3d.TextureFilter=BaseMaterial3D.TextureFilterEnum.Nearest;
 
 		var main_windowgr =  new GRLoader(GRLoader.ThreeDWIN_GR);
 		var uielem = GetNode<TextureRect>("/root/Node3D/UI/3DWin");
 		var ThreeDWinImg = bytloader.LoadImageAt(BytLoader.MAIN_BYT,true);
-		var ThreeDWinTex = new ImageTexture();
-		ThreeDWinTex.SetImage(ThreeDWinImg);
-		uielem.Texture=ThreeDWinTex;
+		//var ThreeDWinTex = new ImageTexture();
+		//ThreeDWinTex.SetImage(ThreeDWinImg);
+		uielem.Texture=ThreeDWinImg;
 		uielem.TextureFilter=CanvasItem.TextureFilterEnum.Nearest;
 
-		var cuts = new CutsLoader(Path.Combine(UWClass.BasePath,"CUTS","CS000.N02"));
-		var cutimg = cuts.ImageCache[index];
-		var cutstex = new ImageTexture();
-		cutstex.SetImage(cutimg);
-		uielem.Texture=cutstex;
-		uielem.TextureFilter=CanvasItem.TextureFilterEnum.Nearest;
+		// var cuts = new CutsLoader(Path.Combine(UWClass.BasePath,"CUTS","CS000.N02"));
+		// var cutimg = cuts.ImageCache[index];
+		// // var cutstex = new ImageTexture();
+		// // cutstex.SetImage(cutimg);
+		// uielem.Texture=cutimg;
+		// uielem.TextureFilter=CanvasItem.TextureFilterEnum.Nearest;
 	}
 
 	public void CreateMesh(Texture2D textureForMesh)

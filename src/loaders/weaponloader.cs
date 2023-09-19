@@ -1,4 +1,5 @@
 using System.IO;
+using Godot;
 
 namespace Underworld
 {
@@ -13,7 +14,7 @@ namespace Underworld
 
 
 
-        protected Godot.Image[] ImageCache = new Godot.Image[1];
+        protected ImageTexture[] ImageCache = new ImageTexture[1];
 
         public WeaponsLoader(int AuxPal)
         {
@@ -23,7 +24,6 @@ namespace Underworld
                 case GAME_UW2:
                     ReadAnimData(AuxPal); break;
             }
-
         }
 
 
@@ -87,7 +87,7 @@ namespace Underworld
             {
                 NoOfTextures = 230;
             }
-            ImageCache = new Godot.Image[NoOfTextures + 1];
+            ImageCache = new ImageTexture[NoOfTextures + 1];
 
             for (int i = 0; i < NoOfTextures; i++)
             {
@@ -343,7 +343,7 @@ namespace Underworld
         }
 
 
-        public override Godot.Image LoadImageAt(int index)
+        public override Godot.ImageTexture LoadImageAt(int index)
         {
             if (ImageCache[index] != null)
             {
