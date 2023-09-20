@@ -25,7 +25,7 @@ public partial class imageloader : Sprite2D
 	public override void _Ready()
 	{	
 
-		UWClass._RES=UWClass.GAME_UW2;
+		UWClass._RES=UWClass.GAME_UW1;
 		switch(UWClass._RES)
 		{
 			case UWClass.GAME_UW1:
