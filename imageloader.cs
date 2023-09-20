@@ -68,37 +68,26 @@ public partial class imageloader : Sprite2D
 		sprite_3d.TextureFilter=BaseMaterial3D.TextureFilterEnum.Nearest;
 		sprite_2d.TextureFilter=CanvasItem.TextureFilterEnum.Nearest;
 
-		//ImageTexture sprite_texture=new();
-		//sprite_texture.SetImage(a_sprite);
-	
-		sprite_2d.Texture = a_sprite;
+ 		sprite_2d.Texture = a_sprite;
 		sprite_3d.Texture = a_sprite;
 
 		//Load strings
-		//var strs = new StringLoader();
-		StringLoader.LoadStringsPak(Path.Combine(UWClass.BasePath,"data","strings.pak"));
-		//Update a UI Element with a message
 		GetTree().Root.GetNode("Node3D").GetNode<Button>("Button").Text= StringLoader.GetString(1,index);
 
 		var weaponloader = new WeaponsLoader(0);
 		var a_weapon = weaponloader.LoadImageAt(index);
-		//ImageTexture weapon_texture = new();
-		//weapon_texture.SetImage(a_weapon);
 		weapon_2d.TextureFilter=CanvasItem.TextureFilterEnum.Nearest;
 		weapon_2d.Texture = a_weapon;
 
 		var critloader = new CritLoader(0);
 		var a_critter = critloader.critter.AnimInfo.animSprites[index];
-		//ImageTexture critter_texture= new();
-		//critter_texture.SetImage(a_critter);
 		critter_3d.Texture=a_critter;
 		critter_3d.TextureFilter=BaseMaterial3D.TextureFilterEnum.Nearest;
 
 		var main_windowgr =  new GRLoader(GRLoader.ThreeDWIN_GR);
 		var uielem = GetNode<TextureRect>("/root/Node3D/UI/3DWin");
 		var ThreeDWinImg = bytloader.LoadImageAt(BytLoader.MAIN_BYT,true);
-		//var ThreeDWinTex = new ImageTexture();
-		//ThreeDWinTex.SetImage(ThreeDWinImg);
+
 		uielem.Texture=ThreeDWinImg;
 		uielem.TextureFilter=CanvasItem.TextureFilterEnum.Nearest;
 

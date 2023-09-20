@@ -276,6 +276,10 @@ namespace Underworld
             };
 
 
+            static StringLoader()
+            {
+                LoadStringsPak(Path.Combine(UWClass.BasePath,"data","strings.pak"));
+            }
 
             /// <summary>
             /// The instance of this class

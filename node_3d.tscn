@@ -105,7 +105,7 @@ material = SubResource("ShaderMaterial_7v506")
 custom_minimum_size = Vector2(320, 200)
 offset_right = 320.0
 offset_bottom = 200.0
-scale = Vector2(3.6, 3.2)
+scale = Vector2(1, 0.84)
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
