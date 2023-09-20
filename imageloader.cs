@@ -23,10 +23,9 @@ public partial class imageloader : Sprite2D
 
 
 	public override void _Ready()
-	{
-		
+	{	
 
-		UWClass._RES=UWClass.GAME_UW1;
+		UWClass._RES=UWClass.GAME_UW2;
 		switch(UWClass._RES)
 		{
 			case UWClass.GAME_UW1:
@@ -91,6 +90,10 @@ public partial class imageloader : Sprite2D
 		uielem.Texture=ThreeDWinImg;
 		uielem.TextureFilter=CanvasItem.TextureFilterEnum.Nearest;
 
+
+		LoadTileMap(0);
+
+
 		// var cuts = new CutsLoader(Path.Combine(UWClass.BasePath,"CUTS","CS000.N02"));
 		// var cutimg = cuts.ImageCache[index];
 		// // var cutstex = new ImageTexture();
@@ -99,10 +102,40 @@ public partial class imageloader : Sprite2D
 		// uielem.TextureFilter=CanvasItem.TextureFilterEnum.Nearest;
 	}
 
+
+	public void LoadTileMap(int newLevelNo)
+	{
+		LevArkLoader.LoadLevArkFileData();
+		Underworld.TileMap a_tilemap = new(newLevelNo);
+   
+        a_tilemap.lev_ark_block = LevArkLoader.LoadLevArkBlock(newLevelNo);
+        a_tilemap.tex_ark_block = LevArkLoader.LoadTexArkBlock(newLevelNo, a_tilemap.tex_ark_block);
+		//Tilemaps[newLevelNo].ovl_ark_block = null;
+		a_tilemap.BuildTileMapUW(newLevelNo, a_tilemap.lev_ark_block, a_tilemap.tex_ark_block, a_tilemap.ovl_ark_block);
+		string map="";
+		for (int y=63;y>=0;y--)
+		{
+			for (int x=0;x<=63;x++)
+			{
+				//map += a_tilemap.Tiles[x,y].tileType;
+				switch (a_tilemap.Tiles[x,y].tileType)
+				{
+					case Underworld.TileMap.TILE_SOLID:
+						map += "#";
+						break;
+					default:
+						map += " ";
+						break;
+				}
+			}
+			Debug.Print(map);
+			map="";
+		}
+
+	}
+
 	public void CreateMesh(Texture2D textureForMesh)
 	{
-
-
 		//var nd = new Node3D();
 		//nd.Name = "yay";
 		//GetTree().Root.AddChild;
