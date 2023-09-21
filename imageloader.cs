@@ -139,7 +139,7 @@ public partial class imageloader : Sprite2D
 						newnode.Position= obj.GetCoordinate(x,y);
 						var a_sprite = new Sprite3D();
 						a_sprite.Texture= grObjects.LoadImageAt(obj.item_id);
-						a_sprite.Scale=new Vector3(10,10,10);
+						a_sprite.Scale=new Vector3(1,1,1);
 						a_sprite.Billboard= BaseMaterial3D.BillboardModeEnum.Enabled;
 						a_sprite.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
 						newnode.AddChild(a_sprite);

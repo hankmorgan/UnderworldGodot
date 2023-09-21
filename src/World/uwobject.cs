@@ -920,11 +920,11 @@ namespace Underworld
         public short npc_name = 0;
 
         public Godot.Vector3 GetCoordinate(int tileX, int tileY)
-        {
+        {//godot is y-up
             return new Godot.Vector3(
                     ((tileX <<3) + (float)xpos)/10f, 
-                    ((tileY <<3) + (float)ypos)/10f, 
-                    (float)zpos/10f
+                    (float)zpos/10f,
+                    ((tileY <<3) + (float)ypos)/10f                    
                     );
         }
 

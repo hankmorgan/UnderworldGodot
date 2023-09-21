@@ -1,10 +1,11 @@
-[gd_scene load_steps=12 format=3 uid="uid://13uofwemp67y"]
+[gd_scene load_steps=13 format=3 uid="uid://13uofwemp67y"]
 
 [ext_resource type="Texture2D" uid="uid://e3cd4b3kb81n" path="res://resources/a.png" id="1_d3x74"]
 [ext_resource type="Script" path="res://TextureButton.cs" id="2_v34lh"]
 [ext_resource type="Script" path="res://imageloader.cs" id="3_4tl8d"]
 [ext_resource type="FontFile" uid="uid://dhrg5v5fecw5b" path="res://resources/fonts/FONTBIG.ttf" id="3_lig5x"]
 [ext_resource type="Texture2D" uid="uid://dedvyeljhjeax" path="res://resources/icon.svg" id="4_rlge0"]
+[ext_resource type="Script" path="res://assetlib/simple-free-look-camera-78109db3bcae477c2a28ef9fe144faa2435f0acb/camera.gd" id="5_2to2n"]
 [ext_resource type="Shader" path="res://node_3d.gdshader" id="6_x6exc"]
 
 [sub_resource type="Theme" id="Theme_snbc4"]
@@ -87,6 +88,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_hicra")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.19868, 1.89122, 12.2306)
+script = ExtResource("5_2to2n")
 
 [node name="Sprite3D" type="Sprite3D" parent="."]
 transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, -1.90155)
@@ -110,5 +112,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="worldobjects" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.216429, 10.348)
 
 [connection signal="pressed" from="Button" to="TextureButton" method="_on_button_pressed"]
