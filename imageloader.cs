@@ -91,7 +91,7 @@ public partial class imageloader : Sprite2D
 		uielem.TextureFilter=CanvasItem.TextureFilterEnum.Nearest;
 
 
-		LoadTileMap(0);
+		LoadTileMap(0,gr);
 
 
 		// var cuts = new CutsLoader(Path.Combine(UWClass.BasePath,"CUTS","CS000.N02"));
@@ -103,8 +103,9 @@ public partial class imageloader : Sprite2D
 	}
 
 
-	public void LoadTileMap(int newLevelNo)
+	public void LoadTileMap(int newLevelNo, GRLoader grObjects)
 	{
+		Node3D worldobjects = GetNode<Node3D>("/root/Node3D/worldobjects");
 		LevArkLoader.LoadLevArkFileData();
 		Underworld.TileMap a_tilemap = new(newLevelNo);
    
@@ -127,12 +128,30 @@ public partial class imageloader : Sprite2D
 						map += " ";
 						break;
 				}
+				if (a_tilemap.Tiles[x,y].indexObjectList!=0)
+				{
+					int index = a_tilemap.Tiles[x,y].indexObjectList;
+					while(index !=0)
+					{
+						var obj =a_tilemap.LevelObjects[index];
+						var newnode = new Node3D();
+						newnode.Name= StringLoader.GetObjectNounUW(obj.item_id) + "_" + index.ToString();
+						newnode.Position= obj.GetCoordinate(x,y);
+						var a_sprite = new Sprite3D();
+						a_sprite.Texture= grObjects.LoadImageAt(obj.item_id);
+						a_sprite.Scale=new Vector3(10,10,10);
+						a_sprite.Billboard= BaseMaterial3D.BillboardModeEnum.Enabled;
+						a_sprite.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
+						newnode.AddChild(a_sprite);
+						worldobjects.AddChild(newnode);
+						index = a_tilemap.LevelObjects[index].next;
+					}					
+				}
 			}
 			Debug.Print(map);
 			map="";
 		}
-
-	}
+	}		
 
 	public void CreateMesh(Texture2D textureForMesh)
 	{

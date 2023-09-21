@@ -86,7 +86,7 @@ mesh = SubResource("QuadMesh_lq5at")
 surface_material_override/0 = SubResource("StandardMaterial3D_hicra")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.200992, -0.59413, 2.05117)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.19868, 1.89122, 12.2306)
 
 [node name="Sprite3D" type="Sprite3D" parent="."]
 transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, -1.90155)
@@ -108,5 +108,7 @@ offset_bottom = 200.0
 scale = Vector2(1, 0.84)
 size_flags_horizontal = 3
 size_flags_vertical = 3
+
+[node name="worldobjects" type="Node3D" parent="."]
 
 [connection signal="pressed" from="Button" to="TextureButton" method="_on_button_pressed"]
