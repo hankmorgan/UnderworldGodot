@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://13uofwemp67y"]
+[gd_scene load_steps=14 format=3 uid="uid://13uofwemp67y"]
 
 [ext_resource type="Texture2D" uid="uid://e3cd4b3kb81n" path="res://resources/a.png" id="1_d3x74"]
 [ext_resource type="Script" path="res://TextureButton.cs" id="2_v34lh"]
@@ -6,6 +6,7 @@
 [ext_resource type="FontFile" uid="uid://dhrg5v5fecw5b" path="res://resources/fonts/FONTBIG.ttf" id="3_lig5x"]
 [ext_resource type="Texture2D" uid="uid://dedvyeljhjeax" path="res://resources/icon.svg" id="4_rlge0"]
 [ext_resource type="Script" path="res://assetlib/simple-free-look-camera-78109db3bcae477c2a28ef9fe144faa2435f0acb/camera.gd" id="5_2to2n"]
+[ext_resource type="FontFile" uid="uid://dcth0yn5km8si" path="res://resources/fonts/FONT4X5P.ttf" id="5_8iiwt"]
 [ext_resource type="Shader" path="res://node_3d.gdshader" id="6_x6exc"]
 
 [sub_resource type="Theme" id="Theme_snbc4"]
@@ -46,12 +47,14 @@ text = "The button"
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="Loader" type="Sprite2D" parent="CanvasLayer" node_paths=PackedStringArray("testTextureNode", "mesh", "sprite_3d", "critter_3d", "sprite_2d", "weapon_2d")]
+[node name="Loader" type="Sprite2D" parent="CanvasLayer" node_paths=PackedStringArray("cam", "lbl", "testTextureNode", "mesh", "sprite_3d", "critter_3d", "sprite_2d", "weapon_2d")]
 texture_filter = 1
 rotation = -1.39626
 scale = Vector2(3, 3)
 centered = false
 script = ExtResource("3_4tl8d")
+cam = NodePath("../../Camera3D")
+lbl = NodePath("../RichTextLabel")
 testTextureNode = NodePath("../NodeToChange")
 mesh = NodePath("../../sphere")
 sprite_3d = NodePath("../../Sprite3D")
@@ -80,6 +83,16 @@ material = SubResource("ShaderMaterial_owlev")
 position = Vector2(238, 375)
 scale = Vector2(4, 4)
 texture = ExtResource("1_d3x74")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="CanvasLayer"]
+texture_filter = 1
+offset_left = 539.0
+offset_top = 280.0
+offset_right = 1139.0
+offset_bottom = 480.0
+theme_override_fonts/normal_font = ExtResource("5_8iiwt")
+theme_override_font_sizes/normal_font_size = 47
+text = "The Label is here. Can you see it"
 
 [node name="sphere" type="MeshInstance3D" parent="."]
 transform = Transform3D(16, 0, 0, 0, 16, 0, 0, 0, 16, 6.34091, 0.591425, -12.2531)
@@ -112,7 +125,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="worldobjects" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.216429, 10.348)
 
 [node name="tilemap" type="Node3D" parent="."]
 

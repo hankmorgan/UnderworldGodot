@@ -10,7 +10,9 @@ using Underworld;
 public partial class imageloader : Sprite2D
 {
 	// Called when the node enters the scene tree for the first time.
-
+	[Export] public Camera3D cam;
+	[Export] public RichTextLabel lbl;
+	
 	[Export] public TextureRect testTextureNode;
 	[Export] public MeshInstance3D mesh;
 
@@ -220,6 +222,6 @@ public partial class imageloader : Sprite2D
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-
+		lbl.Text = cam.Position.ToString();
 	}
 }
