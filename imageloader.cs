@@ -27,7 +27,7 @@ public partial class imageloader : Sprite2D
 	public override void _Ready()
 	{
 		cam.Position= new Vector3(-38f, 4.2f, 2.2f);
-		UWClass._RES = UWClass.GAME_UW1;
+		UWClass._RES = UWClass.GAME_UW2;
 		switch (UWClass._RES)
 		{
 			case UWClass.GAME_UW1:
@@ -87,14 +87,16 @@ public partial class imageloader : Sprite2D
 
 		var main_windowgr = new GRLoader(GRLoader.ThreeDWIN_GR);
 		var uielem = GetNode<TextureRect>("/root/Node3D/UI/3DWin");
-		var ThreeDWinImg = bytloader.LoadImageAt(BytLoader.MAIN_BYT, true);
+		var mainIndex=BytLoader.MAIN_BYT;
+		if(UWClass._RES==UWClass.GAME_UW2)
+		{
+			mainIndex=BytLoader.UW2ThreeDWin_BYT;
+		}		
+		var ThreeDWinImg = bytloader.LoadImageAt(mainIndex, true);
 
 		uielem.Texture = ThreeDWinImg;
 		uielem.TextureFilter = CanvasItem.TextureFilterEnum.Nearest;
-
-
 		LoadTileMap(0, gr);
-
 
 		// var cuts = new CutsLoader(Path.Combine(UWClass.BasePath,"CUTS","CS000.N02"));
 		// var cutimg = cuts.ImageCache[index];
@@ -120,21 +122,21 @@ public partial class imageloader : Sprite2D
 		//Tilemaps[newLevelNo].ovl_ark_block = null;
 		a_tilemap.BuildTileMapUW(newLevelNo, a_tilemap.lev_ark_block, a_tilemap.tex_ark_block, a_tilemap.ovl_ark_block);
 
-		string map = "";
+		//string map = "";
 		for (int y = 63; y >= 0; y--)
 		{
 			for (int x = 0; x <= 63; x++)
 			{
 				//map += a_tilemap.Tiles[x,y].tileType;
-				switch (a_tilemap.Tiles[x, y].tileType)
-				{
-					case Underworld.TileMap.TILE_SOLID:
-						map += "#";						
-						break;
-					default:
-						map += " ";
-						break;
-				}
+				// switch (a_tilemap.Tiles[x, y].tileType)
+				// {
+				// 	case Underworld.TileMap.TILE_SOLID:
+				// 		map += "#";						
+				// 		break;
+				// 	default:
+				// 		map += " ";
+				// 		break;
+				// }
 				if (a_tilemap.Tiles[x, y].indexObjectList != 0)
 				{
 					int index = a_tilemap.Tiles[x, y].indexObjectList;
@@ -148,15 +150,16 @@ public partial class imageloader : Sprite2D
 						a_sprite.Texture = grObjects.LoadImageAt(obj.item_id);
 						a_sprite.Scale = new Vector3(1, 1, 1);
 						a_sprite.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
-						a_sprite.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
+						a_sprite.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;						
 						newnode.AddChild(a_sprite);
+						a_sprite.Position=new Vector3(0,0.15f,0);
 						worldobjects.AddChild(newnode);
 						index = a_tilemap.LevelObjects[index].next;
 					}
 				}
 			}
-			Debug.Print(map);
-			map = "";			
+			//Debug.Print(map);
+			//map = "";			
 		}
 		tileMapRender.GenerateLevelFromTileMap(the_tiles,worldobjects,UWClass._RES, a_tilemap, a_tilemap.LevelObjects,false);
 	}

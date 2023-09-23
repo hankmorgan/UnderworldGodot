@@ -468,11 +468,11 @@ namespace Underworld
 
                 LevelObjects.Add(uwobj);
 
-                Debug.Print(StringLoader.GetObjectNounUW(uwobj.item_id));
-                if (uwobj.npc_whoami != 0)
-                {
-                    Debug.Print(StringLoader.GetString(7, uwobj.npc_whoami + 16));
-                }
+                //Debug.Print(StringLoader.GetObjectNounUW(uwobj.item_id));
+                // if (uwobj.npc_whoami != 0)
+                // {
+                //     Debug.Print(StringLoader.GetString(7, uwobj.npc_whoami + 16));
+                // }
 
                 if (x < 256)
                 {
@@ -572,7 +572,6 @@ namespace Underworld
         /// Although the tile map renderer supports tiles of size X*Y I'm only smart enought to optimise the tilemap into strips of X*1 or Y*1 !!
         public void CleanUp()
         {
-            return;
             //if (!GameWorldController.instance.DoCleanUp) { return; }
             int x; int y;
 
