@@ -114,4 +114,6 @@ size_flags_vertical = 3
 [node name="worldobjects" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.216429, 10.348)
 
+[node name="tilemap" type="Node3D" parent="."]
+
 [connection signal="pressed" from="Button" to="TextureButton" method="_on_button_pressed"]

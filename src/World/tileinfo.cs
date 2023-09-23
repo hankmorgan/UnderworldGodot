@@ -339,7 +339,7 @@ namespace Underworld
         /// <summary>
         /// Indicates the tile needs to be redrawn.
         /// </summary>
-       // public bool NeedsReRender = false;
+        public bool NeedsReRender = false;
 
         /// <summary>
         /// Does the tile contain a pressure trigger. Used to test pickups of objects from the tile.
