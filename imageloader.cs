@@ -26,7 +26,7 @@ public partial class imageloader : Sprite2D
 
 	public override void _Ready()
 	{
-
+		cam.Position= new Vector3(-38f, 4.2f, 2.2f);
 		UWClass._RES = UWClass.GAME_UW1;
 		switch (UWClass._RES)
 		{
@@ -106,7 +106,7 @@ public partial class imageloader : Sprite2D
 
 
 	public void LoadTileMap(int newLevelNo, GRLoader grObjects)
-{
+{	
 		var tilerender = new tileMapRender();
 		Node3D worldobjects = GetNode<Node3D>("/root/Node3D/worldobjects");
 		Node3D the_tiles = GetNode<Node3D>("/root/Node3D/tilemap");

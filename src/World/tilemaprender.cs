@@ -704,7 +704,7 @@ namespace Underworld
             // int FaceCounter = 0;//Tracks which number face we are now on.
             // float PolySize = Top - Bottom;
             // float uv0 = (float)(Bottom * 0.125f);
-            // float uv1 = (PolySize / 8.0f) + (uv0);
+            // float uv1 = -(PolySize / 8.0f) + (uv0);
             // // float offset = 0f;
 
             // //bottom wall vertices
@@ -967,7 +967,7 @@ namespace Underworld
             int FaceCounter = 0;//Tracks which number face we are now on.
             float PolySize = Top - Bottom;
             float uv0 = (float)(Bottom * 0.125f);
-            float uv1 = (PolySize / 8.0f) + (uv0);
+            float uv1 = -(PolySize / 8.0f) + (uv0);  //this was positive in unity. I had to flip it to get it to work in godot. Possibly a issue from unity that I never sp
             for (int i = 0; i < 6; i++)
             {
                 if (t.VisibleFaces[i] == true)
@@ -1451,33 +1451,32 @@ namespace Underworld
         /// <param name="Top">Top.</param>
         /// <param name="t">T.</param>
         /// <param name="TileName">Tile name.</param>
-        static void RenderDiagNEPortion(Node3D parent, int Bottom, int Top, TileInfo t, string TileName)
+        static Node3D RenderDiagNEPortion(Node3D parent, int Bottom, int Top, TileInfo t, string TileName)
         {
             //Does a thing.
             //Does a thing.
             //Draws 3 meshes. Outward diagonal wall. Back and side if visible.
-            return;
 
-            //    int NumberOfVisibleFaces = 1;//Will always have the diag.
-            //                                 //Get the number of faces
-            //    for (int i = 0; i < 6; i++)
-            //    {
-            //        if ((i == vSOUTH) || (i == vWEST))
-            //        {
-            //            if (t.VisibleFaces[i] == true)
-            //            {
-            //                NumberOfVisibleFaces++;
-            //            }
-            //        }
-            //    }
-            //    //Allocate enough verticea and UVs for the faces
-            //    Material[] MatsToUse = new Material[NumberOfVisibleFaces];
-            //    Vector3[] verts = new Vector3[NumberOfVisibleFaces * 4];
-            //    Vector2[] uvs = new Vector2[NumberOfVisibleFaces * 4];
+            int NumberOfVisibleFaces = 1;//Will always have the diag.
+                                         //Get the number of faces
+            for (int i = 0; i < 6; i++)
+            {
+                if ((i == vSOUTH) || (i == vWEST))
+                {
+                    if (t.VisibleFaces[i] == true)
+                    {
+                        NumberOfVisibleFaces++;
+                    }
+                }
+            }
+            //Allocate enough verticea and UVs for the faces
+            Texture2D[] MatsToUse = new Texture2D[NumberOfVisibleFaces];
+            Vector3[] verts = new Vector3[NumberOfVisibleFaces * 4];
+            Vector2[] uvs = new Vector2[NumberOfVisibleFaces * 4];
 
-            //    float floorHeight = (float)(Top * 0.15f);
-            //    float baseHeight = (float)(Bottom * 0.15f);
-            //    float dimX = t.DimX;
+            float floorHeight = (float)(Top * 0.15f);
+            float baseHeight = (float)(Bottom * 0.15f);
+            float dimX = t.DimX;
             //    //Now create the mesh
             //    GameObject Tile = new GameObject(TileName)
             //    {
@@ -1489,111 +1488,157 @@ namespace Underworld
             //    Tile.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
             //    MeshFilter mf = Tile.AddComponent<MeshFilter>();
             //    MeshRenderer mr = Tile.AddComponent<MeshRenderer>();
-            //    //MeshCollider mc = Tile.AddComponent<MeshCollider>();
-            //    //mc.sharedMesh=null;
+            //MeshCollider mc = Tile.AddComponent<MeshCollider>();
+            //mc.sharedMesh=null;
 
             //    Mesh mesh = new Mesh
             //    {
             //        subMeshCount = NumberOfVisibleFaces//Should be no of visible faces
             //    };
 
-            //    //Now allocate the visible faces to triangles.
-            //    int FaceCounter = 0;//Tracks which number face we are now on.
-            //    float PolySize = Top - Bottom;
-            //    float uv0 = (float)(Bottom * 0.125f);
-            //    float uv1 = (PolySize / 8.0f) + (uv0);
-            //    //Set the diagonal face first
-            //    MatsToUse[FaceCounter] = GameWorldController.instance.MaterialMasterList[WallTexture(fSELF, t)];
-            //    verts[0] = new Vector3(-1.2f, 0f, baseHeight);
-            //    verts[1] = new Vector3(-1.2f, 0f, floorHeight);
-            //    verts[2] = new Vector3(0f, 1.2f, floorHeight);
-            //    verts[3] = new Vector3(0f, 1.2f, baseHeight);
+            var a_mesh = new ArrayMesh();
 
-            //    uvs[0] = new Vector2(0.0f, uv0);
-            //    uvs[1] = new Vector2(0.0f, uv1);
-            //    uvs[2] = new Vector2(1, uv1);
-            //    uvs[3] = new Vector2(1, uv0);
-            //    FaceCounter++;
+            //Now allocate the visible faces to triangles.
+            int FaceCounter = 0;//Tracks which number face we are now on.
+            float PolySize = Top - Bottom;
+            float uv0 = (float)(Bottom * 0.125f);
+            float uv1 = -(PolySize / 8.0f) + (uv0);
+            //Set the diagonal face first
+            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fSELF, t));
+            verts[0] = new Vector3(-1.2f, baseHeight, 0f);
+            verts[1] = new Vector3(-1.2f, floorHeight, 0f);
+            verts[2] = new Vector3(0f, floorHeight, 1.2f);
+            verts[3] = new Vector3(0f, baseHeight, 1.2f);
 
-            //    for (int i = 0; i < 6; i++)
-            //    {
-            //        if ((t.VisibleFaces[i] == true) && ((i == vSOUTH) || (i == vWEST)))
-            //        {//Will only render north or west if needed.
-            //         //float dimY = t.DimY;
-            //            float offset;
-            //            switch (i)
-            //            {
-            //                case vSOUTH:
-            //                    {
-            //                        //south wall vertices
-            //                        offset = CalcCeilOffset(fSOUTH, t);
-            //                        MatsToUse[FaceCounter] = GameWorldController.instance.MaterialMasterList[WallTexture(fSOUTH, t)];
-            //                        verts[0 + (4 * FaceCounter)] = new Vector3(0f, 0f, baseHeight);
-            //                        verts[1 + (4 * FaceCounter)] = new Vector3(0f, 0f, floorHeight);
-            //                        verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, 0f, floorHeight);
-            //                        verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, 0f, baseHeight);
-            //                        uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);
-            //                        uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);
-            //                        uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, uv1 - offset);
-            //                        uvs[3 + (4 * FaceCounter)] = new Vector2(dimX, uv0 - offset);
+            uvs[0] = new Vector2(0.0f, uv0);
+            uvs[1] = new Vector2(0.0f, uv1);
+            uvs[2] = new Vector2(1, uv1);
+            uvs[3] = new Vector2(1, uv0);
+            FaceCounter++;
 
-            //                        break;
-            //                    }
+            for (int i = 0; i < 6; i++)
+            {
+                if ((t.VisibleFaces[i] == true) && ((i == vSOUTH) || (i == vWEST)))
+                {//Will only render north or west if needed.
+                 //float dimY = t.DimY;
+                    float offset;
+                    switch (i)
+                    {
+                        case vSOUTH:
+                            {
+                                //south wall vertices
+                                offset = CalcCeilOffset(fSOUTH, t);
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fSOUTH, t));
+                                verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 0f);
+                                verts[1 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 0f);
+                                verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 0f);
+                                verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 0f);
+                                uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);
+                                uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);
+                                uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, uv1 - offset);
+                                uvs[3 + (4 * FaceCounter)] = new Vector2(dimX, uv0 - offset);
 
-            //                case vWEST:
-            //                    {
-            //                        //west wall vertices
-            //                        offset = CalcCeilOffset(fWEST, t);
-            //                        MatsToUse[FaceCounter] = GameWorldController.instance.MaterialMasterList[WallTexture(fWEST, t)];
-            //                        verts[0 + (4 * FaceCounter)] = new Vector3(0f, 1.2f, baseHeight);
-            //                        verts[1 + (4 * FaceCounter)] = new Vector3(0f, 1.2f, floorHeight);
-            //                        verts[2 + (4 * FaceCounter)] = new Vector3(0f, 0f, floorHeight);
-            //                        verts[3 + (4 * FaceCounter)] = new Vector3(0f, 0f, baseHeight);
-            //                        uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);
-            //                        uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);
-            //                        uvs[2 + (4 * FaceCounter)] = new Vector2(1, uv1 - offset);
-            //                        uvs[3 + (4 * FaceCounter)] = new Vector2(1, uv0 - offset);
+                                break;
+                            }
 
-            //                        break;
-            //                    }
-            //            }
-            //            FaceCounter++;
-            //        }
-            //    }
+                        case vWEST:
+                            {
+                                //west wall vertices
+                                offset = CalcCeilOffset(fWEST, t);
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fWEST, t));
+                                verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 1.2f);
+                                verts[1 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 1.2f);
+                                verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 0f);
+                                verts[3 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 0f);
+                                uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);
+                                uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);
+                                uvs[2 + (4 * FaceCounter)] = new Vector2(1, uv1 - offset);
+                                uvs[3 + (4 * FaceCounter)] = new Vector2(1, uv0 - offset);
 
-            //    //Apply the uvs and create my tris
+                                break;
+                            }
+                    }
+                    FaceCounter++;
+                }
+            }
+
+            FaceCounter = 0;
+            //Apply the uvs and create my tris
             //    mesh.vertices = verts;
             //    mesh.uv = uvs;
-            //    int[] tris = new int[6];
-            //    //Tris for diagonal.
+            int[] indices = new int[6];
+            //Tris for diagonal.
+            //Create normals
+            var normals = new List<Vector3>();
+            foreach (var vert in verts)
+            {
+                normals.Add(vert.Normalized());
+            }
+            indices[0] = 0;
+            indices[1] = 1;
+            indices[2] = 2;
+            indices[3] = 0;
+            indices[4] = 2;
+            indices[5] = 3;
+            // mesh.SetTriangles(indices, 0);
+            var surfaceArray = new Godot.Collections.Array();
+            surfaceArray.Resize((int)Mesh.ArrayType.Max);
 
-            //    tris[0] = 0;
-            //    tris[1] = 1;
-            //    tris[2] = 2;
-            //    tris[3] = 0;
-            //    tris[4] = 2;
-            //    tris[5] = 3;
-            //    mesh.SetTriangles(tris, 0);
-            //    FaceCounter = 1;
+            surfaceArray[(int)Mesh.ArrayType.Vertex] = verts; //.ToArray();
+            surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs; //.ToArray();
+            surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
+            surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
 
-            //    for (int i = 0; i < 6; i++)
-            //    {
-            //        if ((i == vSOUTH) || (i == vWEST))
-            //        {
-            //            if (t.VisibleFaces[i] == true)
-            //            {
-            //                tris[0] = 0 + (4 * FaceCounter);
-            //                tris[1] = 1 + (4 * FaceCounter);
-            //                tris[2] = 2 + (4 * FaceCounter);
-            //                tris[3] = 0 + (4 * FaceCounter);
-            //                tris[4] = 2 + (4 * FaceCounter);
-            //                tris[5] = 3 + (4 * FaceCounter);
-            //                mesh.SetTriangles(tris, FaceCounter);
-            //                FaceCounter++;
-            //            }
-            //        }
-            //    }
+            //Add the new surface to the mesh
+            a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
 
+            var material = new StandardMaterial3D(); // or your shader...
+            material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
+            material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
+            a_mesh.SurfaceSetMaterial(FaceCounter, material);
+
+
+            FaceCounter = 1;
+
+            for (int i = 0; i < 6; i++)
+            {
+                if ((i == vSOUTH) || (i == vWEST))
+                {
+                    if (t.VisibleFaces[i] == true)
+                    {
+                        indices[0] = 0 + (4 * FaceCounter);
+                        indices[1] = 1 + (4 * FaceCounter);
+                        indices[2] = 2 + (4 * FaceCounter);
+                        indices[3] = 0 + (4 * FaceCounter);
+                        indices[4] = 2 + (4 * FaceCounter);
+                        indices[5] = 3 + (4 * FaceCounter);
+                        //mesh.SetTriangles(indices, FaceCounter);
+                        surfaceArray = new Godot.Collections.Array();
+                        surfaceArray.Resize((int)Mesh.ArrayType.Max);
+
+                        surfaceArray[(int)Mesh.ArrayType.Vertex] = verts; //.ToArray();
+                        surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs; //.ToArray();
+                        surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
+                        surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
+
+                        //Add the new surface to the mesh
+                        a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
+
+                        material = new StandardMaterial3D(); // or your shader...
+                        material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
+                        material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
+                        a_mesh.SurfaceSetMaterial(FaceCounter, material);
+                        FaceCounter++;
+                    }
+                }
+            }
+
+            var final_mesh = new MeshInstance3D();
+            parent.AddChild(final_mesh);
+            final_mesh.Position = new Vector3(t.tileX * -1.2f, 0.0f, t.tileY * 1.2f);
+            final_mesh.Name = TileName;
+            final_mesh.Mesh = a_mesh;
+            return final_mesh;
             //    mr.materials = MatsToUse;
             //    mesh.RecalculateNormals();
             //    mesh.RecalculateBounds();
@@ -1604,8 +1649,8 @@ namespace Underworld
             //        mc.sharedMesh = null;
             //        mc.sharedMesh = mesh;
             //    }
-            //    //mc.sharedMesh=mesh;
-            //return;
+            //mc.sharedMesh=mesh;
+            // return;
         }
 
 
@@ -1617,32 +1662,29 @@ namespace Underworld
         /// <param name="Top">Top.</param>
         /// <param name="t">T.</param>
         /// <param name="TileName">Tile name.</param>
-        static void RenderDiagSEPortion(Node3D parent, int Bottom, int Top, TileInfo t, string TileName)
+        static Node3D RenderDiagSEPortion(Node3D parent, int Bottom, int Top, TileInfo t, string TileName)
         {
             //Does a thing.
             //Draws 3 meshes. Outward diagonal wall. Back and side if visible.
 
-            return;
-            //    int NumberOfVisibleFaces = 1;//Will always have the diag.
-            //                                 //Get the number of faces
-            //    for (int i = 0; i < 6; i++)
-            //    {
-            //        if ((i == vNORTH) || (i == vWEST))
-            //        {
-            //            if (t.VisibleFaces[i] == true)
-            //            {
-            //                NumberOfVisibleFaces++;
-            //            }
-            //        }
-            //    }
-            //    //Allocate enough verticea and UVs for the faces
-            //    Material[] MatsToUse = new Material[NumberOfVisibleFaces];
-            //    Vector3[] verts = new Vector3[NumberOfVisibleFaces * 4];
-            //    Vector2[] uvs = new Vector2[NumberOfVisibleFaces * 4];
-            //    float floorHeight = (float)(Top * 0.15f);
-            //    float baseHeight = (float)(Bottom * 0.15f);
-            //    //float dimX = t.DimX;
-            //    //float dimY = t.DimY;
+            int NumberOfVisibleFaces = 1;//Will always have the diag.
+                                         //Get the number of faces
+            for (int i = 0; i < 6; i++)
+            {
+                if ((i == vNORTH) || (i == vWEST))
+                {
+                    if (t.VisibleFaces[i] == true)
+                    {
+                        NumberOfVisibleFaces++;
+                    }
+                }
+            }
+            //Allocate enough vertice and UVs for the faces
+            Texture2D[] MatsToUse = new Texture2D[NumberOfVisibleFaces];
+            Vector3[] verts = new Vector3[NumberOfVisibleFaces * 4];
+            Vector2[] uvs = new Vector2[NumberOfVisibleFaces * 4];
+            float floorHeight = (float)(Top * 0.15f);
+            float baseHeight = (float)(Bottom * 0.15f);
 
             //    //Now create the mesh
             //    GameObject Tile = new GameObject(TileName)
@@ -1655,110 +1697,160 @@ namespace Underworld
             //    Tile.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
             //    MeshFilter mf = Tile.AddComponent<MeshFilter>();
             //    MeshRenderer mr = Tile.AddComponent<MeshRenderer>();
-            //    //MeshCollider mc = Tile.AddComponent<MeshCollider>();
-            //    ///mc.sharedMesh=null;
+            //MeshCollider mc = Tile.AddComponent<MeshCollider>();
+            ///mc.sharedMesh=null;
+
+            var a_mesh = new ArrayMesh();
+
 
             //    Mesh mesh = new Mesh
             //    {
             //        subMeshCount = NumberOfVisibleFaces//Should be no of visible faces
             //    };
 
-            //    //Now allocate the visible faces to triangles.
-            //    int FaceCounter = 0;//Tracks which number face we are now on.
-            //    MatsToUse[FaceCounter] = GameWorldController.instance.MaterialMasterList[WallTexture(fSELF, t)];
-            //    float PolySize = Top - Bottom;
-            //    float uv0 = (float)(Bottom * 0.125f);
-            //    float uv1 = (PolySize / 8.0f) + (uv0);
-            //    //Set the diagonal face first
+            //Now allocate the visible faces to triangles.
+            int FaceCounter = 0;//Tracks which number face we are now on.
+            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fSELF, t));
+            float PolySize = Top - Bottom;
+            float uv0 = (float)(Bottom * 0.125f);
+            float uv1 = -(PolySize / 8.0f) + (uv0);
+            //Set the diagonal face first
 
-            //    verts[0] = new Vector3(0f, 0f, baseHeight);
-            //    verts[1] = new Vector3(0f, 0f, floorHeight);
-            //    verts[2] = new Vector3(-1.2f, 1.2f, floorHeight);
-            //    verts[3] = new Vector3(-1.2f, 1.2f, baseHeight);
+            verts[0] = new Vector3(0f, baseHeight, 0f);
+            verts[1] = new Vector3(0f, floorHeight, 0f);
+            verts[2] = new Vector3(-1.2f, floorHeight, 1.2f);
+            verts[3] = new Vector3(-1.2f, baseHeight, 1.2f);
 
-            //    uvs[0] = new Vector2(0.0f, uv0);
-            //    uvs[1] = new Vector2(0.0f, uv1);
-            //    uvs[2] = new Vector2(1, uv1);
-            //    uvs[3] = new Vector2(1, uv0);
-            //    FaceCounter++;
+            uvs[0] = new Vector2(0.0f, uv0);
+            uvs[1] = new Vector2(0.0f, uv1);
+            uvs[2] = new Vector2(1, uv1);
+            uvs[3] = new Vector2(1, uv0);
+            FaceCounter++;
 
-            //    for (int i = 0; i < 6; i++)
-            //    {
-            //        if ((t.VisibleFaces[i] == true) && ((i == vNORTH) || (i == vWEST)))
-            //        {//Will only render north or west if needed.
-            //            float offset;
-            //            switch (i)
-            //            {
-            //                case vNORTH:
-            //                    {
-            //                        //north wall vertices
-            //                        offset = CalcCeilOffset(fNORTH, t);
-            //                        MatsToUse[FaceCounter] = GameWorldController.instance.MaterialMasterList[WallTexture(fNORTH, t)];
-            //                        verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f, 1.2f, baseHeight);
-            //                        verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f, 1.2f, floorHeight);
-            //                        verts[2 + (4 * FaceCounter)] = new Vector3(0f, 1.2f, floorHeight);
-            //                        verts[3 + (4 * FaceCounter)] = new Vector3(0f, 1.2f, baseHeight);
+            for (int i = 0; i < 6; i++)
+            {
+                if ((t.VisibleFaces[i] == true) && ((i == vNORTH) || (i == vWEST)))
+                {//Will only render north or west if needed.
+                    float offset;
+                    switch (i)
+                    {
+                        case vNORTH:
+                            {
+                                //north wall vertices
+                                offset = CalcCeilOffset(fNORTH, t);
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fNORTH, t));
+                                verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f, baseHeight, 1.2f);
+                                verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f, floorHeight, 1.2f);
+                                verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 1.2f);
+                                verts[3 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 1.2f);
 
-            //                        uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);
-            //                        uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);
-            //                        uvs[2 + (4 * FaceCounter)] = new Vector2(1, uv1 - offset);
-            //                        uvs[3 + (4 * FaceCounter)] = new Vector2(1, uv0 - offset);
+                                uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);
+                                uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);
+                                uvs[2 + (4 * FaceCounter)] = new Vector2(1, uv1 - offset);
+                                uvs[3 + (4 * FaceCounter)] = new Vector2(1, uv0 - offset);
 
-            //                        break;
-            //                    }
-            //                case vWEST:
-            //                    {
-            //                        //west wall vertices
-            //                        offset = CalcCeilOffset(fWEST, t);
-            //                        MatsToUse[FaceCounter] = GameWorldController.instance.MaterialMasterList[WallTexture(fWEST, t)];
-            //                        verts[0 + (4 * FaceCounter)] = new Vector3(0f, 1.2f, baseHeight);
-            //                        verts[1 + (4 * FaceCounter)] = new Vector3(0f, 1.2f, floorHeight);
-            //                        verts[2 + (4 * FaceCounter)] = new Vector3(0f, 0f, floorHeight);
-            //                        verts[3 + (4 * FaceCounter)] = new Vector3(0f, 0f, baseHeight);
-            //                        uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);
-            //                        uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);
-            //                        uvs[2 + (4 * FaceCounter)] = new Vector2(1, uv1 - offset);
-            //                        uvs[3 + (4 * FaceCounter)] = new Vector2(1, uv0 - offset);
+                                break;
+                            }
+                        case vWEST:
+                            {
+                                //west wall vertices
+                                offset = CalcCeilOffset(fWEST, t);
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fWEST, t));
+                                verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 1.2f);
+                                verts[1 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 1.2f);
+                                verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 0f);
+                                verts[3 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 0f);
+                                uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);
+                                uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);
+                                uvs[2 + (4 * FaceCounter)] = new Vector2(1, uv1 - offset);
+                                uvs[3 + (4 * FaceCounter)] = new Vector2(1, uv0 - offset);
 
-            //                        break;
-            //                    }
-            //            }
-            //            FaceCounter++;
-            //        }
-            //    }
+                                break;
+                            }
+                    }
+                    FaceCounter++;
+                }
+            }
 
-            //    //Apply the uvs and create my tris
+            FaceCounter = 0;
+            //Create normals
+            var normals = new List<Vector3>();
+            foreach (var vert in verts)
+            {
+                normals.Add(vert.Normalized());
+            }
+
+            //Apply the uvs and create my tris
             //    mesh.vertices = verts;
             //    mesh.uv = uvs;
-            //    int[] tris = new int[6];
-            //    //Tris for diagonal.
+            int[] indices = new int[6];
+            //Tris for diagonal.
 
-            //    tris[0] = 0;
-            //    tris[1] = 1;
-            //    tris[2] = 2;
-            //    tris[3] = 0;
-            //    tris[4] = 2;
-            //    tris[5] = 3;
-            //    mesh.SetTriangles(tris, 0);
-            //    FaceCounter = 1;
+            indices[0] = 0;
+            indices[1] = 1;
+            indices[2] = 2;
+            indices[3] = 0;
+            indices[4] = 2;
+            indices[5] = 3;
+            var surfaceArray = new Godot.Collections.Array();
+            surfaceArray.Resize((int)Mesh.ArrayType.Max);
 
-            //    for (int i = 0; i < 6; i++)
-            //    {
-            //        if ((i == vNORTH) || (i == vWEST))
-            //        {
-            //            if (t.VisibleFaces[i] == true)
-            //            {
-            //                tris[0] = 0 + (4 * FaceCounter);
-            //                tris[1] = 1 + (4 * FaceCounter);
-            //                tris[2] = 2 + (4 * FaceCounter);
-            //                tris[3] = 0 + (4 * FaceCounter);
-            //                tris[4] = 2 + (4 * FaceCounter);
-            //                tris[5] = 3 + (4 * FaceCounter);
-            //                mesh.SetTriangles(tris, FaceCounter);
-            //                FaceCounter++;
-            //            }
-            //        }
-            //    }
+            surfaceArray[(int)Mesh.ArrayType.Vertex] = verts; //.ToArray();
+            surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs; //.ToArray();
+            surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
+            surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
+
+            //Add the new surface to the mesh
+            a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
+
+            var material = new StandardMaterial3D(); // or your shader...
+            material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
+            material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
+            a_mesh.SurfaceSetMaterial(FaceCounter, material);
+
+            // mesh.SetTriangles(indices, 0);
+            FaceCounter = 1;
+
+            for (int i = 0; i < 6; i++)
+            {
+                if ((i == vNORTH) || (i == vWEST))
+                {
+                    if (t.VisibleFaces[i] == true)
+                    {
+                        indices[0] = 0 + (4 * FaceCounter);
+                        indices[1] = 1 + (4 * FaceCounter);
+                        indices[2] = 2 + (4 * FaceCounter);
+                        indices[3] = 0 + (4 * FaceCounter);
+                        indices[4] = 2 + (4 * FaceCounter);
+                        indices[5] = 3 + (4 * FaceCounter);
+                        //mesh.SetTriangles(indices, FaceCounter);
+                        surfaceArray = new Godot.Collections.Array();
+                        surfaceArray.Resize((int)Mesh.ArrayType.Max);
+
+                        surfaceArray[(int)Mesh.ArrayType.Vertex] = verts; //.ToArray();
+                        surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs; //.ToArray();
+                        surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
+                        surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
+
+                        //Add the new surface to the mesh
+                        a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
+
+                        material = new StandardMaterial3D(); // or your shader...
+                        material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
+                        material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
+                        a_mesh.SurfaceSetMaterial(FaceCounter, material);
+                        FaceCounter++;
+                    }
+                }
+            }
+
+
+            var final_mesh = new MeshInstance3D();
+            parent.AddChild(final_mesh);
+            final_mesh.Position = new Vector3(t.tileX * -1.2f, 0.0f, t.tileY * 1.2f);
+            final_mesh.Name = TileName;
+            final_mesh.Mesh = a_mesh;
+            return final_mesh;
 
             //    mr.materials = MatsToUse;
             //    mesh.RecalculateNormals();
@@ -1770,8 +1862,8 @@ namespace Underworld
             //        mc.sharedMesh = null;
             //        mc.sharedMesh = mesh;
             //    }
-            //    //mc.sharedMesh=mesh;
-            //    return;
+            //mc.sharedMesh=mesh;
+            //return;
         }
 
 
@@ -1797,13 +1889,11 @@ namespace Underworld
                         if (t.TerrainChange)
                         {
                             TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
-                            //return RenderCuboid(parent,x, y, t, Water, -16, t.floorHeight, TileName);
                             return RenderPrism(parent, x, y, t, Water, -16, t.floorHeight, TileName);
                         }
                         else
                         {
                             TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
-                            //return RenderCuboid(parent, x, y, t, Water, -CEILING_HEIGHT, t.floorHeight, TileName);
                             return RenderPrism(parent, x, y, t, Water, -CEILING_HEIGHT, t.floorHeight, TileName);
                         }
                     }
@@ -1833,33 +1923,33 @@ namespace Underworld
         /// <param name="Top">Top.</param>
         /// <param name="t">T.</param>
         /// <param name="TileName">Tile name.</param>
-        static void RenderDiagSWPortion(Node3D parent, int Bottom, int Top, TileInfo t, string TileName)
+        static Node3D RenderDiagSWPortion(Node3D parent, int Bottom, int Top, TileInfo t, string TileName)
         {
-            return;
-            // //Does a thing.
-            // //Does a thing.
-            // //Draws 3 meshes. Outward diagonal wall. Back and side if visible.
-            // int NumberOfVisibleFaces = 1;//Will always have the diag.
-            //                              //Get the number of faces
-            // for (int i = 0; i < 6; i++)
-            // {
-            //     if ((i == vNORTH) || (i == vEAST))
-            //     {
-            //         if (t.VisibleFaces[i] == true)
-            //         {
-            //             NumberOfVisibleFaces++;
-            //         }
-            //     }
-            // }
-            // //Allocate enough verticea and UVs for the faces
-            // Material[] MatsToUse = new Material[NumberOfVisibleFaces];
-            // Vector3[] verts = new Vector3[NumberOfVisibleFaces * 4];
-            // Vector2[] uvs = new Vector2[NumberOfVisibleFaces * 4];
-            // float floorHeight = (float)(Top * 0.15f);
-            // float baseHeight = (float)(Bottom * 0.15f);
-            // float dimX = t.DimX;
-            // float dimY = t.DimY;
-            // //Now create the mesh
+
+            //Does a thing.
+            //Does a thing.
+            //Draws 3 meshes. Outward diagonal wall. Back and side if visible.
+            int NumberOfVisibleFaces = 1;//Will always have the diag.
+                                         //Get the number of faces
+            for (int i = 0; i < 6; i++)
+            {
+                if ((i == vNORTH) || (i == vEAST))
+                {
+                    if (t.VisibleFaces[i] == true)
+                    {
+                        NumberOfVisibleFaces++;
+                    }
+                }
+            }
+            //Allocate enough verticea and UVs for the faces
+            Texture2D[] MatsToUse = new Texture2D[NumberOfVisibleFaces];
+            Vector3[] verts = new Vector3[NumberOfVisibleFaces * 4];
+            Vector2[] uvs = new Vector2[NumberOfVisibleFaces * 4];
+            float floorHeight = (float)(Top * 0.15f);
+            float baseHeight = (float)(Bottom * 0.15f);
+            float dimX = t.DimX;
+            float dimY = t.DimY;
+            //Now create the mesh
             // GameObject Tile = new GameObject(TileName)
             // {
             //     layer = LayerMask.NameToLayer("MapMesh")
@@ -1870,80 +1960,173 @@ namespace Underworld
             // Tile.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
             // MeshFilter mf = Tile.AddComponent<MeshFilter>();
             // MeshRenderer mr = Tile.AddComponent<MeshRenderer>();
-            // //MeshCollider mc = Tile.AddComponent<MeshCollider>();
-            // //mc.sharedMesh=null;
+            //MeshCollider mc = Tile.AddComponent<MeshCollider>();
+            //mc.sharedMesh=null;
 
             // Mesh mesh = new Mesh
             // {
             //     subMeshCount = NumberOfVisibleFaces//Should be no of visible faces
             // };
 
-            // //Now allocate the visible faces to triangles.
-            // int FaceCounter = 0;//Tracks which number face we are now on.
+            //Now allocate the visible faces to triangles.
+            int FaceCounter = 0;//Tracks which number face we are now on.
 
-            // MatsToUse[FaceCounter] = GameWorldController.instance.MaterialMasterList[WallTexture(fSELF, t)];
+            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fSELF, t));
 
-            // float PolySize = Top - Bottom;
-            // float uv0 = (float)(Bottom * 0.125f);
-            // float uv1 = (PolySize / 8.0f) + (uv0);
-            // //Set the diagonal face first
-            // verts[0] = new Vector3(0f, 1.2f, baseHeight);
-            // verts[1] = new Vector3(0f, 1.2f, floorHeight);
-            // verts[2] = new Vector3(-1.2f, 0f, floorHeight);
-            // verts[3] = new Vector3(-1.2f, 0f, baseHeight);
+            float PolySize = Top - Bottom;
+            float uv0 = (float)(Bottom * 0.125f);
+            float uv1 = -(PolySize / 8.0f) + (uv0);
+            //Set the diagonal face first
+            verts[0] = new Vector3(0f, baseHeight, 1.2f);
+            verts[1] = new Vector3(0f, floorHeight, 1.2f);
+            verts[2] = new Vector3(-1.2f, floorHeight, 0f);
+            verts[3] = new Vector3(-1.2f, baseHeight, 0f);
 
-            // uvs[0] = new Vector2(0.0f, uv0);
-            // uvs[1] = new Vector2(0.0f, uv1);
-            // uvs[2] = new Vector2(1, uv1);
-            // uvs[3] = new Vector2(1, uv0);
-            // FaceCounter++;
+            uvs[0] = new Vector2(0.0f, uv0);
+            uvs[1] = new Vector2(0.0f, uv1);
+            uvs[2] = new Vector2(1, uv1);
+            uvs[3] = new Vector2(1, uv0);
+            FaceCounter++;
 
-            // for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 6; i++)
+            {
+                if ((t.VisibleFaces[i] == true) && ((i == vNORTH) || (i == vEAST)))
+                {//Will only render north or west if needed.
+                    float offset;
+                    switch (i)
+                    {
+                        case vNORTH:
+                            {
+                                //north wall vertices
+                                offset = CalcCeilOffset(fNORTH, t);
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fNORTH, t));
+                                verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f, baseHeight, 1.2f);
+                                verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f, floorHeight, 1.2f);
+                                verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 1.2f);
+                                verts[3 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 1.2f);
+
+                                uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);
+                                uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);
+                                uvs[2 + (4 * FaceCounter)] = new Vector2(1, uv1 - offset);
+                                uvs[3 + (4 * FaceCounter)] = new Vector2(1, uv0 - offset);
+
+                                break;
+                            }
+
+                        case vEAST:
+                            {
+                                //east wall vertices
+                                offset = CalcCeilOffset(fEAST, t);
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fEAST, t));
+                                verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 0f);
+                                verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 0f);
+                                verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 1.2f * dimY);
+                                verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 1.2f * dimY);
+                                uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);
+                                uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);
+                                uvs[2 + (4 * FaceCounter)] = new Vector2(dimY, uv1 - offset);
+                                uvs[3 + (4 * FaceCounter)] = new Vector2(dimY, uv0 - offset);
+
+                                break;
+                            }
+                    }
+                    FaceCounter++;
+                }
+            }
+
+            var a_mesh = new ArrayMesh(); //= Mesh as ArrayMesh;
+            //create normals
+            var normals = new List<Vector3>();
+            foreach (var vert in verts)
+            {
+                normals.Add(vert.Normalized());
+            }
+
+            //Apply the uvs and create my tris
+            // mesh.vertices = verts;
+            // mesh.uv = uvs;
+            int[] indices = new int[6];
+            //Tris for diagonal.
+            FaceCounter = 0;
+            indices[0] = 0;
+            indices[1] = 1;
+            indices[2] = 2;
+            indices[3] = 0;
+            indices[4] = 2;
+            indices[5] = 3;
+            //mesh.SetTriangles(indices, 0);
+            var surfaceArray = new Godot.Collections.Array();
+            surfaceArray.Resize((int)Mesh.ArrayType.Max);
+
+            surfaceArray[(int)Mesh.ArrayType.Vertex] = verts; //.ToArray();
+            surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs; //.ToArray();
+            surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
+            surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
+
+            //Add the new surface to the mesh
+            a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
+
+            var material = new StandardMaterial3D(); // or your shader...
+            material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
+            material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
+            a_mesh.SurfaceSetMaterial(FaceCounter, material);
+
+            FaceCounter = 1;
+
+            for (int i = 0; i < 6; i++)
+            {
+                if ((i == vNORTH) || (i == vEAST))
+                {
+                    if (t.VisibleFaces[i] == true)
+                    {
+                        indices[0] = 0 + (4 * FaceCounter);
+                        indices[1] = 1 + (4 * FaceCounter);
+                        indices[2] = 2 + (4 * FaceCounter);
+                        indices[3] = 0 + (4 * FaceCounter);
+                        indices[4] = 2 + (4 * FaceCounter);
+                        indices[5] = 3 + (4 * FaceCounter);
+                        //mesh.SetTriangles(indices, FaceCounter);
+                        surfaceArray = new Godot.Collections.Array();
+                        surfaceArray.Resize((int)Mesh.ArrayType.Max);
+
+                        surfaceArray[(int)Mesh.ArrayType.Vertex] = verts; //.ToArray();
+                        surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs; //.ToArray();
+                        surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
+                        surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
+
+                        //Add the new surface to the mesh
+                        a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
+
+                        material = new StandardMaterial3D(); // or your shader...
+                        material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
+                        material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
+                        a_mesh.SurfaceSetMaterial(FaceCounter, material);
+                        FaceCounter++;
+                    }
+                }
+            }
+
+            // mr.materials = MatsToUse;
+            // mesh.RecalculateNormals();
+            // mesh.RecalculateBounds();
+            // mf.mesh = mesh;
+            // if (EnableCollision)
             // {
-            //     if ((t.VisibleFaces[i] == true) && ((i == vNORTH) || (i == vEAST)))
-            //     {//Will only render north or west if needed.
-            //         float offset;
-            //         switch (i)
-            //         {
-            //             case vNORTH:
-            //                 {
-            //                     //north wall vertices
-            //                     offset = CalcCeilOffset(fNORTH, t);
-            //                     MatsToUse[FaceCounter] = GameWorldController.instance.MaterialMasterList[WallTexture(fNORTH, t)];
-            //                     verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f, 1.2f, baseHeight);
-            //                     verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f, 1.2f, floorHeight);
-            //                     verts[2 + (4 * FaceCounter)] = new Vector3(0f, 1.2f, floorHeight);
-            //                     verts[3 + (4 * FaceCounter)] = new Vector3(0f, 1.2f, baseHeight);
+            //     MeshCollider mc = Tile.AddComponent<MeshCollider>();
+            //     mc.sharedMesh = null;
+            //     mc.sharedMesh = mesh;
+            // }
 
-            //                     uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);
-            //                     uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);
-            //                     uvs[2 + (4 * FaceCounter)] = new Vector2(1, uv1 - offset);
-            //                     uvs[3 + (4 * FaceCounter)] = new Vector2(1, uv0 - offset);
+            var final_mesh = new MeshInstance3D();
+            parent.AddChild(final_mesh);
+            final_mesh.Position = new Vector3(t.tileX * -1.2f, 0.0f, t.tileY * 1.2f);
+            final_mesh.Name = TileName;
+            final_mesh.Mesh = a_mesh;
+            return final_mesh;
 
-            //                     break;
-            //                 }
+            //mc.sharedMesh=mesh;
 
-            //             case vEAST:
-            //                 {
-            //                     //east wall vertices
-            //                     offset = CalcCeilOffset(fEAST, t);
-            //                     MatsToUse[FaceCounter] = GameWorldController.instance.MaterialMasterList[WallTexture(fEAST, t)];
-            //                     verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, 0f, baseHeight);
-            //                     verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, 0f, floorHeight);
-            //                     verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, 1.2f * dimY, floorHeight);
-            //                     verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, 1.2f * dimY, baseHeight);
-            //                     uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);
-            //                     uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);
-            //                     uvs[2 + (4 * FaceCounter)] = new Vector2(dimY, uv1 - offset);
-            //                     uvs[3 + (4 * FaceCounter)] = new Vector2(dimY, uv0 - offset);
-
-            //                     break;
-            //                 }
-            //         }
-            //         FaceCounter++;
-            //     }
         }
-
         /// <summary>
         /// Renders the diag NW portion.
         /// </summary>
@@ -1952,35 +2135,35 @@ namespace Underworld
         /// <param name="Top">Top.</param>
         /// <param name="t">T.</param>
         /// <param name="TileName">Tile name.</param>
-        static void RenderDiagNWPortion(Node3D parent, int Bottom, int Top, TileInfo t, string TileName)
+        static Node3D RenderDiagNWPortion(Node3D parent, int Bottom, int Top, TileInfo t, string TileName)
         {
             //Does a thing.
             //Does a thing.
             //Draws 3 meshes. Outward diagonal wall. Back and side if visible.
-            return;
 
-            //    int NumberOfVisibleFaces = 1;//Will always have the diag.
-            //                                 //Get the number of faces
-            //    for (int i = 0; i < 6; i++)
-            //    {
-            //        if ((i == vSOUTH) || (i == vEAST))
-            //        {
-            //            if (t.VisibleFaces[i] == true)
-            //            {
-            //                NumberOfVisibleFaces++;
-            //            }
-            //        }
-            //    }
-            //    //Allocate enough verticea and UVs for the faces
-            //    Material[] MatsToUse = new Material[NumberOfVisibleFaces];
-            //    Vector3[] verts = new Vector3[NumberOfVisibleFaces * 4];
-            //    Vector2[] uvs = new Vector2[NumberOfVisibleFaces * 4];
-            //    float floorHeight = (float)(Top * 0.15f);
-            //    float baseHeight = (float)(Bottom * 0.15f);
-            //    float dimX = t.DimX;
-            //    float dimY = t.DimY;
 
-            //    //Now create the mesh
+            int NumberOfVisibleFaces = 1;//Will always have the diag.
+                                         //Get the number of faces
+            for (int i = 0; i < 6; i++)
+            {
+                if ((i == vSOUTH) || (i == vEAST))
+                {
+                    if (t.VisibleFaces[i] == true)
+                    {
+                        NumberOfVisibleFaces++;
+                    }
+                }
+            }
+            //Allocate enough verticea and UVs for the faces
+            Texture2D[] MatsToUse = new Texture2D[NumberOfVisibleFaces];
+            Vector3[] verts = new Vector3[NumberOfVisibleFaces * 4];
+            Vector2[] uvs = new Vector2[NumberOfVisibleFaces * 4];
+            float floorHeight = (float)(Top * 0.15f);
+            float baseHeight = (float)(Bottom * 0.15f);
+            float dimX = t.DimX;
+            float dimY = t.DimY;
+
+            //Now create the mesh
             //    GameObject Tile = new GameObject(TileName)
             //    {
             //        layer = LayerMask.NameToLayer("MapMesh")
@@ -1991,109 +2174,150 @@ namespace Underworld
             //    Tile.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
             //    MeshFilter mf = Tile.AddComponent<MeshFilter>();
             //    MeshRenderer mr = Tile.AddComponent<MeshRenderer>();
-            //    //MeshCollider mc = Tile.AddComponent<MeshCollider>();
-            //    //mc.sharedMesh=null;
+            //MeshCollider mc = Tile.AddComponent<MeshCollider>();
+            //mc.sharedMesh=null;
 
             //    Mesh mesh = new Mesh
             //    {
             //        subMeshCount = NumberOfVisibleFaces//Should be no of visible faces
             //    };
-            //    //Now allocate the visible faces to triangles.
-            //    int FaceCounter = 0;//Tracks which number face we are now on.
-            //    float PolySize = Top - Bottom;
-            //    float uv0 = (float)(Bottom * 0.125f);
-            //    float uv1 = (PolySize / 8.0f) + (uv0);
-            //    //Set the diagonal face first
-            //    MatsToUse[FaceCounter] = GameWorldController.instance.MaterialMasterList[WallTexture(fSELF, t)];
 
-            //    verts[0] = new Vector3(-1.2f, 1.2f, baseHeight);
-            //    verts[1] = new Vector3(-1.2f, 1.2f, floorHeight);
-            //    verts[2] = new Vector3(0f, 0f, floorHeight);
-            //    verts[3] = new Vector3(0f, 0f, baseHeight);
+            var a_mesh = new ArrayMesh();
 
-            //    uvs[0] = new Vector2(0.0f, uv0);
-            //    uvs[1] = new Vector2(0.0f, uv1);
-            //    uvs[2] = new Vector2(1, uv1);
-            //    uvs[3] = new Vector2(1, uv0);
-            //    FaceCounter++;
 
-            //    for (int i = 0; i < 6; i++)
-            //    {
-            //        if ((t.VisibleFaces[i] == true) && ((i == vSOUTH) || (i == vEAST)))
-            //        {//Will only render north or west if needed.
-            //            float offset;
-            //            switch (i)
-            //            {
-            //                case vEAST:
-            //                    {
-            //                        //east wall vertices
-            //                        offset = CalcCeilOffset(fEAST, t);
-            //                        MatsToUse[FaceCounter] = GameWorldController.instance.MaterialMasterList[WallTexture(fEAST, t)];
-            //                        verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, 0f, baseHeight);
-            //                        verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, 0f, floorHeight);
-            //                        verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, 1.2f * dimY, floorHeight);
-            //                        verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, 1.2f * dimY, baseHeight);
-            //                        uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);
-            //                        uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);
-            //                        uvs[2 + (4 * FaceCounter)] = new Vector2(dimY, uv1 - offset);
-            //                        uvs[3 + (4 * FaceCounter)] = new Vector2(dimY, uv0 - offset);
+            //Now allocate the visible faces to triangles.
+            int FaceCounter = 0;//Tracks which number face we are now on.
+            float PolySize = Top - Bottom;
+            float uv0 = (float)(Bottom * 0.125f);
+            float uv1 = -(PolySize / 8.0f) + (uv0);
+            //Set the diagonal face first
+            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fSELF, t));
 
-            //                        break;
-            //                    }
+            verts[0] = new Vector3(-1.2f, baseHeight, 1.2f);
+            verts[1] = new Vector3(-1.2f, floorHeight, 1.2f);
+            verts[2] = new Vector3(0f, floorHeight, 0f);
+            verts[3] = new Vector3(0f, baseHeight, 0f);
 
-            //                case vSOUTH:
-            //                    {
-            //                        //south wall vertices
-            //                        offset = CalcCeilOffset(fSOUTH, t);
-            //                        MatsToUse[FaceCounter] = GameWorldController.instance.MaterialMasterList[WallTexture(fSOUTH, t)];
-            //                        verts[0 + (4 * FaceCounter)] = new Vector3(0f, 0f, baseHeight);
-            //                        verts[1 + (4 * FaceCounter)] = new Vector3(0f, 0f, floorHeight);
-            //                        verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, 0f, floorHeight);
-            //                        verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, 0f, baseHeight);
-            //                        uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);
-            //                        uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);
-            //                        uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, uv1 - offset);
-            //                        uvs[3 + (4 * FaceCounter)] = new Vector2(dimX, uv0 - offset);
+            uvs[0] = new Vector2(0.0f, uv0);
+            uvs[1] = new Vector2(0.0f, uv1);
+            uvs[2] = new Vector2(1, uv1);
+            uvs[3] = new Vector2(1, uv0);
+            FaceCounter++;
 
-            //                        break;
-            //                    }
-            //            }
-            //            FaceCounter++;
-            //        }
-            //    }
+            for (int i = 0; i < 6; i++)
+            {
+                if ((t.VisibleFaces[i] == true) && ((i == vSOUTH) || (i == vEAST)))
+                {//Will only render north or west if needed.
+                    float offset;
+                    switch (i)
+                    {
+                        case vEAST:
+                            {
+                                //east wall vertices
+                                offset = CalcCeilOffset(fEAST, t);
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fEAST, t));
+                                verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 0f);
+                                verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 0f);
+                                verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 1.2f * dimY);
+                                verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 1.2f * dimY);
+                                uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);
+                                uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);
+                                uvs[2 + (4 * FaceCounter)] = new Vector2(dimY, uv1 - offset);
+                                uvs[3 + (4 * FaceCounter)] = new Vector2(dimY, uv0 - offset);
+                                break;
+                            }
 
-            //    //Apply the uvs and create my tris
+                        case vSOUTH:
+                            {
+                                //south wall vertices
+                                offset = CalcCeilOffset(fSOUTH, t);
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fSOUTH, t));
+                                verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 0f);
+                                verts[1 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 0f);
+                                verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 0f);
+                                verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 0f);
+                                uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);
+                                uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);
+                                uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, uv1 - offset);
+                                uvs[3 + (4 * FaceCounter)] = new Vector2(dimX, uv0 - offset);
+
+                                break;
+                            }
+                    }
+                    FaceCounter++;
+                }
+            }
+            FaceCounter = 0;
+            //create normals from verts
+            var normals = new List<Vector3>();
+            foreach (var vert in verts)
+            {
+                normals.Add(vert.Normalized());
+            }
+            //Apply the uvs and create my tris
             //    mesh.vertices = verts;
             //    mesh.uv = uvs;
-            //    int[] tris = new int[6];
-            //    //Tris for diagonal.
+            int[] indices = new int[6];
+            //Tris for diagonal.
 
-            //    tris[0] = 0;
-            //    tris[1] = 1;
-            //    tris[2] = 2;
-            //    tris[3] = 0;
-            //    tris[4] = 2;
-            //    tris[5] = 3;
-            //    mesh.SetTriangles(tris, 0);
-            //    FaceCounter = 1;
+            indices[0] = 0;
+            indices[1] = 1;
+            indices[2] = 2;
+            indices[3] = 0;
+            indices[4] = 2;
+            indices[5] = 3;
+            //mesh.SetTriangles(indices, 0);
 
-            //    for (int i = 0; i < 6; i++)
-            //    {
-            //        if ((i == vSOUTH) || (i == vEAST))
-            //        {
-            //            if (t.VisibleFaces[i] == true)
-            //            {
-            //                tris[0] = 0 + (4 * FaceCounter);
-            //                tris[1] = 1 + (4 * FaceCounter);
-            //                tris[2] = 2 + (4 * FaceCounter);
-            //                tris[3] = 0 + (4 * FaceCounter);
-            //                tris[4] = 2 + (4 * FaceCounter);
-            //                tris[5] = 3 + (4 * FaceCounter);
-            //                mesh.SetTriangles(tris, FaceCounter);
-            //                FaceCounter++;
-            //            }
-            //        }
-            //    }
+            var surfaceArray = new Godot.Collections.Array();
+            surfaceArray.Resize((int)Mesh.ArrayType.Max);
+
+            surfaceArray[(int)Mesh.ArrayType.Vertex] = verts; //.ToArray();
+            surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs; //.ToArray();
+            surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
+            surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
+
+            //Add the new surface to the mesh
+            a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
+
+            var material = new StandardMaterial3D(); // or your shader...
+            material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
+            material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
+            a_mesh.SurfaceSetMaterial(FaceCounter, material);
+
+            FaceCounter = 1;
+
+            for (int i = 0; i < 6; i++)
+            {
+                if ((i == vSOUTH) || (i == vEAST))
+                {
+                    if (t.VisibleFaces[i] == true)
+                    {
+                        indices[0] = 0 + (4 * FaceCounter);
+                        indices[1] = 1 + (4 * FaceCounter);
+                        indices[2] = 2 + (4 * FaceCounter);
+                        indices[3] = 0 + (4 * FaceCounter);
+                        indices[4] = 2 + (4 * FaceCounter);
+                        indices[5] = 3 + (4 * FaceCounter);
+                        // mesh.SetTriangles(indices, FaceCounter);
+                        surfaceArray = new Godot.Collections.Array();
+                        surfaceArray.Resize((int)Mesh.ArrayType.Max);
+
+                        surfaceArray[(int)Mesh.ArrayType.Vertex] = verts; //.ToArray();
+                        surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs; //.ToArray();
+                        surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
+                        surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
+
+                        //Add the new surface to the mesh
+                        a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
+
+                        material = new StandardMaterial3D(); // or your shader...
+                        material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
+                        material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
+                        a_mesh.SurfaceSetMaterial(FaceCounter, material);
+                        FaceCounter++;
+                    }
+                }
+            }
 
             //    mr.materials = MatsToUse;
             //    mesh.RecalculateNormals();
@@ -2105,8 +2329,14 @@ namespace Underworld
             //        mc.sharedMesh = null;
             //        mc.sharedMesh = mesh;
             //    }
-            //    //mc.sharedMesh=mesh;
-            //return;
+            //mc.sharedMesh=mesh;
+            var final_mesh = new MeshInstance3D();
+            parent.AddChild(final_mesh);
+            final_mesh.Position = new Vector3(t.tileX * -1.2f, 0.0f, t.tileY * 1.2f);
+            final_mesh.Name = TileName;
+            final_mesh.Mesh = a_mesh;
+            return final_mesh;
+
         }
 
 
@@ -2911,26 +3141,26 @@ namespace Underworld
         /// <param name="TileName">Tile name.</param>
         static Node3D RenderPrism(Node3D parent, int x, int y, TileInfo t, bool Water, int Bottom, int Top, string TileName)
         {
-            return null;
-            //Draw a cube with no slopes.
-            // int NumberOfVisibleFaces = 0;
-            // //Get the number of faces
-            // for (int i = 0; i < 6; i++)
-            // {
-            //     if (t.VisibleFaces[i] == true)
-            //     {
-            //         NumberOfVisibleFaces++;
-            //     }
-            // }
-            // //Allocate enough verticea and UVs for the faces
-            // Vector3[] verts = new Vector3[NumberOfVisibleFaces * 4];
-            // Vector2[] uvs = new Vector2[NumberOfVisibleFaces * 4];
-            // float floorHeight = (float)(Top * 0.15f);
-            // float baseHeight = (float)(Bottom * 0.15f);
-            // float dimX = t.DimX;
-            // float dimY = t.DimY;
 
-            // //Now create the mesh
+            //Draw a cube with no slopes.
+            int NumberOfVisibleFaces = 0;
+            //Get the number of faces
+            for (int i = 0; i < 6; i++)
+            {
+                if (t.VisibleFaces[i] == true)
+                {
+                    NumberOfVisibleFaces++;
+                }
+            }
+            //Allocate enough verticea and UVs for the faces
+            Vector3[] verts = new Vector3[NumberOfVisibleFaces * 4];
+            Vector2[] uvs = new Vector2[NumberOfVisibleFaces * 4];
+            float floorHeight = (float)(Top * 0.15f);
+            float baseHeight = (float)(Bottom * 0.15f);
+            float dimX = t.DimX;
+            float dimY = t.DimY;
+
+            //Now create the mesh
             // GameObject Tile = new GameObject(TileName);
             // SetTileLayer(t, Tile);
             // Tile.transform.parent = parent.transform;
@@ -2945,191 +3175,235 @@ namespace Underworld
             //     subMeshCount = NumberOfVisibleFaces//Should be no of visible faces
             // };
 
-            // Material[] MatsToUse = new Material[NumberOfVisibleFaces];
-            // //Now allocate the visible faces to triangles.
-            // int FaceCounter = 0;//Tracks which number face we are now on.
-            // float PolySize = Top - Bottom;
-            // float uv0 = (float)(Bottom * 0.125f);
-            // float uv1 = (PolySize / 8.0f) + (uv0);
-            // //int vertCountOffset=0;
-            // for (int i = 0; i < 6; i++)
-            // {
-            //     if (t.VisibleFaces[i] == true)
-            //     {
-            //         float offset;
-            //         switch (i)
-            //         {
-            //             case vTOP:
-            //                 {
-            //                     //Set the verts	
-            //                     MatsToUse[FaceCounter] = GameWorldController.instance.MaterialMasterList[FloorTexture(fSELF, t)];
-            //                     verts[0 + (4 * FaceCounter)] = new Vector3(0.0f, 0.0f, floorHeight);
-            //                     verts[1 + (4 * FaceCounter)] = new Vector3(0.0f, 1.2f * dimY, floorHeight);
-            //                     verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, 1.2f * dimY, floorHeight);
-            //                     verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, 0.0f, floorHeight);
-            //                     //Allocate UVs
-            //                     uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, 1.0f * dimY);
-            //                     uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, 0.0f);
-            //                     uvs[2 + (4 * FaceCounter)] = new Vector2(1.0f * dimX, 0.0f);
-            //                     uvs[3 + (4 * FaceCounter)] = new Vector2(1.0f * dimX, 1.0f * dimY);
-            //                     break;
-            //                 }
+            Texture2D[] MatsToUse = new Texture2D[NumberOfVisibleFaces];
+            //Now allocate the visible faces to triangles.
+            int FaceCounter = 0;//Tracks which number face we are now on.
+            float PolySize = Top - Bottom;
+            float uv0 = (float)(Bottom * 0.125f);
+            float uv1 = -(PolySize / 8.0f) + (uv0);
+            //int vertCountOffset=0;
+            for (int i = 0; i < 6; i++)
+            {
+                if (t.VisibleFaces[i] == true)
+                {
+                    float offset;
+                    switch (i)
+                    {
+                        case vTOP:
+                            {
+                                //Set the verts	
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(FloorTexture(fSELF, t));
+                                verts[0 + (4 * FaceCounter)] = new Vector3(0.0f, floorHeight, 0.0f);
+                                verts[1 + (4 * FaceCounter)] = new Vector3(0.0f, floorHeight, 1.2f * dimY);
+                                verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 1.2f * dimY);
+                                verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 0.0f);
+                                //Allocate UVs
+                                uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, 1.0f * dimY);
+                                uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, 0.0f);
+                                uvs[2 + (4 * FaceCounter)] = new Vector2(1.0f * dimX, 0.0f);
+                                uvs[3 + (4 * FaceCounter)] = new Vector2(1.0f * dimX, 1.0f * dimY);
+                                break;
+                            }
 
-            //             case vNORTH:
-            //                 {
-            //                     //north wall vertices
-            //                     offset = CalcCeilOffset(fNORTH, t);
-            //                     MatsToUse[FaceCounter] = GameWorldController.instance.MaterialMasterList[WallTexture(fNORTH, t)];
-            //                     verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, 1.2f * dimY, baseHeight);
-            //                     verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, 1.2f * dimY, floorHeight);
-            //                     verts[2 + (4 * FaceCounter)] = new Vector3(0f, 1.2f * dimY, floorHeight);
-            //                     verts[3 + (4 * FaceCounter)] = new Vector3(0f, 1.2f * dimY, baseHeight);
+                        case vNORTH:
+                            {
+                                //north wall vertices
+                                offset = CalcCeilOffset(fNORTH, t);
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fNORTH, t));
+                                verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 1.2f * dimY);
+                                verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 1.2f * dimY);
+                                verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 1.2f * dimY);
+                                verts[3 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 1.2f * dimY);
 
-            //                     uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);
-            //                     uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);
-            //                     uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, uv1 - offset);
-            //                     uvs[3 + (4 * FaceCounter)] = new Vector2(dimX, uv0 - offset);
+                                uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);
+                                uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);
+                                uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, uv1 - offset);
+                                uvs[3 + (4 * FaceCounter)] = new Vector2(dimX, uv0 - offset);
+                                break;
+                            }
+
+                        case vWEST:
+                            {
+                                //west wall vertices
+                                offset = CalcCeilOffset(fWEST, t);
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fWEST, t));
+                                verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 1.2f * dimY);
+                                verts[1 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 1.2f * dimY);
+                                verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 0f);
+                                verts[3 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 0f);
+                                uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);
+                                uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);
+                                uvs[2 + (4 * FaceCounter)] = new Vector2(dimY, uv1 - offset);
+                                uvs[3 + (4 * FaceCounter)] = new Vector2(dimY, uv0 - offset);
+
+                                break;
+                            }
+
+                        case vEAST:
+                            {
+                                //east wall vertices
+                                offset = CalcCeilOffset(fEAST, t);
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fEAST, t));
+                                verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 0f);
+                                verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 0f);
+                                verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 1.2f * dimY);
+                                verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 1.2f * dimY);
+                                uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);
+                                uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);
+                                uvs[2 + (4 * FaceCounter)] = new Vector2(dimY, uv1 - offset);
+                                uvs[3 + (4 * FaceCounter)] = new Vector2(dimY, uv0 - offset);
+
+                                break;
+                            }
+
+                        case vSOUTH:
+                            {
+                                offset = CalcCeilOffset(fSOUTH, t);
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fSOUTH, t));
+                                //south wall vertices
+                                verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 0f);
+                                verts[1 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 0f);
+                                verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 0f);
+                                verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 0f);
+                                uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);
+                                uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);
+                                uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, uv1 - offset);
+                                uvs[3 + (4 * FaceCounter)] = new Vector2(dimX, uv0 - offset);
+
+                                break;
+                            }
+                        case vBOTTOM:
+                            {
+                                //bottom wall vertices
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(FloorTexture(fCEIL, t));
+                                verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 1.2f * dimY);
+                                verts[1 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 0f);
+                                verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 0f);
+                                verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 1.2f * dimY);
+                                //Change default UVs
+                                uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, 0.0f);
+                                uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, 1.0f * dimY);
+                                uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, 1.0f * dimY);
+                                uvs[3 + (4 * FaceCounter)] = new Vector2(dimX, 0.0f);
+                                break;
+                            }
+                    }
+                    FaceCounter++;
+                }
+            }
 
 
-            //                     break;
-            //                 }
+            var a_mesh = new ArrayMesh(); //= Mesh as ArrayMesh;
+                                          //create normals from verts
+            var normals = new List<Vector3>();
+            foreach (var vert in verts)
+            {
+                normals.Add(vert.Normalized());
+            }
 
-            //             case vWEST:
-            //                 {
-            //                     //west wall vertices
-            //                     offset = CalcCeilOffset(fWEST, t);
-            //                     MatsToUse[FaceCounter] = GameWorldController.instance.MaterialMasterList[WallTexture(fWEST, t)];
-            //                     verts[0 + (4 * FaceCounter)] = new Vector3(0f, 1.2f * dimY, baseHeight);
-            //                     verts[1 + (4 * FaceCounter)] = new Vector3(0f, 1.2f * dimY, floorHeight);
-            //                     verts[2 + (4 * FaceCounter)] = new Vector3(0f, 0f, floorHeight);
-            //                     verts[3 + (4 * FaceCounter)] = new Vector3(0f, 0f, baseHeight);
-            //                     uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);
-            //                     uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);
-            //                     uvs[2 + (4 * FaceCounter)] = new Vector2(dimY, uv1 - offset);
-            //                     uvs[3 + (4 * FaceCounter)] = new Vector2(dimY, uv0 - offset);
-
-            //                     break;
-            //                 }
-
-            //             case vEAST:
-            //                 {
-            //                     //east wall vertices
-            //                     offset = CalcCeilOffset(fEAST, t);
-            //                     MatsToUse[FaceCounter] = GameWorldController.instance.MaterialMasterList[WallTexture(fEAST, t)];
-            //                     verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, 0f, baseHeight);
-            //                     verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, 0f, floorHeight);
-            //                     verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, 1.2f * dimY, floorHeight);
-            //                     verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, 1.2f * dimY, baseHeight);
-            //                     uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);
-            //                     uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);
-            //                     uvs[2 + (4 * FaceCounter)] = new Vector2(dimY, uv1 - offset);
-            //                     uvs[3 + (4 * FaceCounter)] = new Vector2(dimY, uv0 - offset);
-
-            //                     break;
-            //                 }
-
-            //             case vSOUTH:
-            //                 {
-            //                     offset = CalcCeilOffset(fSOUTH, t);
-            //                     MatsToUse[FaceCounter] = GameWorldController.instance.MaterialMasterList[WallTexture(fSOUTH, t)];
-            //                     //south wall vertices
-            //                     verts[0 + (4 * FaceCounter)] = new Vector3(0f, 0f, baseHeight);
-            //                     verts[1 + (4 * FaceCounter)] = new Vector3(0f, 0f, floorHeight);
-            //                     verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, 0f, floorHeight);
-            //                     verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, 0f, baseHeight);
-            //                     uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);
-            //                     uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);
-            //                     uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, uv1 - offset);
-            //                     uvs[3 + (4 * FaceCounter)] = new Vector2(dimX, uv0 - offset);
-
-            //                     break;
-            //                 }
-            //             case vBOTTOM:
-            //                 {
-            //                     //bottom wall vertices
-            //                     MatsToUse[FaceCounter] = GameWorldController.instance.MaterialMasterList[FloorTexture(fCEIL, t)];
-            //                     verts[0 + (4 * FaceCounter)] = new Vector3(0f, 1.2f * dimY, baseHeight);
-            //                     verts[1 + (4 * FaceCounter)] = new Vector3(0f, 0f, baseHeight);
-            //                     verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, 0f, baseHeight);
-            //                     verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, 1.2f * dimY, baseHeight);
-            //                     //Change default UVs
-            //                     uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, 0.0f);
-            //                     uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, 1.0f * dimY);
-            //                     uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, 1.0f * dimY);
-            //                     uvs[3 + (4 * FaceCounter)] = new Vector2(dimX, 0.0f);
-            //                     break;
-            //                 }
-            //         }
-            //         FaceCounter++;
-            //     }
-            // }
-
-            // //Apply the uvs and create my tris
+            //Apply the uvs and create my tris
             // mesh.vertices = verts;
             // mesh.uv = uvs;
-            // FaceCounter = 0;
-            // int curFace = 0;
-            // int[] tris;// = new int[6];
+            FaceCounter = 0;
+            int curFace = 0;
+            int[] indices;// = new int[6];
 
-            // for (int i = 0; i < 6; i++)
-            // {
-            //     if (curFace == vTOP)
-            //     {
-            //         tris = new int[3];
-            //     }
-            //     else
-            //     {
-            //         tris = new int[6];
-            //     }
+            for (int i = 0; i < 6; i++)
+            {
+                if (curFace == vTOP)
+                {
+                    indices = new int[3];
+                }
+                else
+                {
+                    indices = new int[6];
+                }
 
-            //     if (t.VisibleFaces[i] == true)
-            //     {
-            //         if (i == vTOP)
-            //         {
-            //             switch (t.tileType)
-            //             {
-            //                 case TILE_DIAG_NE:
-            //                     tris[0] = 1 + (4 * FaceCounter);
-            //                     tris[1] = 2 + (4 * FaceCounter);
-            //                     tris[2] = 3 + (4 * FaceCounter);
-            //                     break;
-            //                 case TILE_DIAG_SE:
-            //                     tris[0] = 0 + (4 * FaceCounter);
-            //                     tris[1] = 2 + (4 * FaceCounter);
-            //                     tris[2] = 3 + (4 * FaceCounter);
-            //                     break;
-            //                 case TILE_DIAG_SW:
-            //                     tris[0] = 0 + (4 * FaceCounter);
-            //                     tris[1] = 1 + (4 * FaceCounter);
-            //                     tris[2] = 3 + (4 * FaceCounter);
-            //                     break;
-            //                 case TILE_DIAG_NW:
-            //                 default:
-            //                     tris[0] = 0 + (4 * FaceCounter);
-            //                     tris[1] = 1 + (4 * FaceCounter);
-            //                     tris[2] = 2 + (4 * FaceCounter);
-            //                     break;
-            //             }
+                if (t.VisibleFaces[i] == true)
+                {
+                    if (i == vTOP)
+                    {
+                        switch (t.tileType)
+                        {
+                            case TILE_DIAG_NE:
+                                indices[0] = 1 + (4 * FaceCounter);
+                                indices[1] = 2 + (4 * FaceCounter);
+                                indices[2] = 3 + (4 * FaceCounter);
+                                break;
+                            case TILE_DIAG_SE:
+                                indices[0] = 0 + (4 * FaceCounter);
+                                indices[1] = 2 + (4 * FaceCounter);
+                                indices[2] = 3 + (4 * FaceCounter);
+                                break;
+                            case TILE_DIAG_SW:
+                                indices[0] = 0 + (4 * FaceCounter);
+                                indices[1] = 1 + (4 * FaceCounter);
+                                indices[2] = 3 + (4 * FaceCounter);
+                                break;
+                            case TILE_DIAG_NW:
+                            default:
+                                indices[0] = 0 + (4 * FaceCounter);
+                                indices[1] = 1 + (4 * FaceCounter);
+                                indices[2] = 2 + (4 * FaceCounter);
+                                break;
+                        }
 
-            //             //tris[3]=0+(4*FaceCounter);
-            //             //tris[4]=2+(4*FaceCounter);
-            //             //tris[5]=3+(4*FaceCounter);
-            //             mesh.SetTriangles(tris, FaceCounter);
-            //         }
-            //         else
-            //         {
-            //             tris[0] = 0 + (4 * FaceCounter);
-            //             tris[1] = 1 + (4 * FaceCounter);
-            //             tris[2] = 2 + (4 * FaceCounter);
-            //             tris[3] = 0 + (4 * FaceCounter);
-            //             tris[4] = 2 + (4 * FaceCounter);
-            //             tris[5] = 3 + (4 * FaceCounter);
-            //             mesh.SetTriangles(tris, FaceCounter);
-            //         }
-            //         FaceCounter++;
-            //         curFace++;
-            //     }
-            // }
+                        //tris[3]=0+(4*FaceCounter);
+                        //tris[4]=2+(4*FaceCounter);
+                        //tris[5]=3+(4*FaceCounter);
+                        //mesh.SetTriangles(indices, FaceCounter);
+                        var surfaceArray = new Godot.Collections.Array();
+                        surfaceArray.Resize((int)Mesh.ArrayType.Max);
+
+                        surfaceArray[(int)Mesh.ArrayType.Vertex] = verts; //.ToArray();
+                        surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs; //.ToArray();
+                        surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
+                        surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
+
+                        //Add the new surface to the mesh
+                        a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
+
+                        var material = new StandardMaterial3D(); // or your shader...
+                        material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
+                        material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
+                        a_mesh.SurfaceSetMaterial(FaceCounter, material);
+                    }
+                    else
+                    {
+                        indices[0] = 0 + (4 * FaceCounter);
+                        indices[1] = 1 + (4 * FaceCounter);
+                        indices[2] = 2 + (4 * FaceCounter);
+                        indices[3] = 0 + (4 * FaceCounter);
+                        indices[4] = 2 + (4 * FaceCounter);
+                        indices[5] = 3 + (4 * FaceCounter);
+                        // mesh.SetTriangles(indices, FaceCounter);
+                        var surfaceArray = new Godot.Collections.Array();
+                        surfaceArray.Resize((int)Mesh.ArrayType.Max);
+
+                        surfaceArray[(int)Mesh.ArrayType.Vertex] = verts; //.ToArray();
+                        surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs; //.ToArray();
+                        surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
+                        surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
+
+                        //Add the new surface to the mesh
+                        a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
+
+                        var material = new StandardMaterial3D(); // or your shader...
+                        material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
+                        material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
+                        a_mesh.SurfaceSetMaterial(FaceCounter, material);
+                    }
+                    FaceCounter++;
+                    curFace++;
+                }
+            }
+
+            var final_mesh = new MeshInstance3D();
+            parent.AddChild(final_mesh);
+            final_mesh.Position = new Vector3(x * -1.2f, 0.0f, y * 1.2f);
+            final_mesh.Name = TileName;
+            final_mesh.Mesh = a_mesh;
+            return final_mesh;
 
             // mr.materials = MatsToUse;//mats;
             // mesh.RecalculateNormals();
