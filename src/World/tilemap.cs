@@ -444,6 +444,9 @@ namespace Underworld
 
             }
 
+            //Reduce map complexity.
+            CleanUp();
+
             return true;
         }
 
@@ -466,12 +469,12 @@ namespace Underworld
                 LevelObjects.Add(uwobj);
 
                 Debug.Print(StringLoader.GetObjectNounUW(uwobj.item_id));
-                if (uwobj.npc_whoami!=0)
+                if (uwobj.npc_whoami != 0)
                 {
-                    Debug.Print (StringLoader.GetString(7, uwobj.npc_whoami + 16));
+                    Debug.Print(StringLoader.GetString(7, uwobj.npc_whoami + 16));
                 }
 
-                if (x<256)
+                if (x < 256)
                 {
                     address_pointer += 27;
                 }
@@ -567,10 +570,431 @@ namespace Underworld
         /// </summary>
         /// <param name="game">Game.</param>
         /// Although the tile map renderer supports tiles of size X*Y I'm only smart enought to optimise the tilemap into strips of X*1 or Y*1 !!
-        public void CleanUp(string game)
+        public void CleanUp()
         {
-            return; // turn off until i figure out godot and work out the kinks
+            return;
+            //if (!GameWorldController.instance.DoCleanUp) { return; }
+            int x; int y;
+
+            for (x = 0; x <= TileMapSizeX; x++)
+            {
+                for (y = 0; y <= TileMapSizeY; y++)
+                {
+                    //Set some easy tile visible settings
+                    switch (Tiles[x, y].tileType)
+                    {
+                        case TILE_SOLID:
+                            //Bottom and top are invisible
+                            Tiles[x, y].VisibleFaces[vBOTTOM] = false;
+                            Tiles[x, y].VisibleFaces[vTOP] = false;
+                            break;
+                        default:
+                            //Bottom and top is invisible
+                            Tiles[x, y].VisibleFaces[vBOTTOM] = false;
+                            Tiles[x, y].VisibleFaces[vTOP] = false;
+                            break;
+                    }
+                }
+
+                for (x = 0; x <= TileMapSizeX; x++)
+                {
+                    for (y = 0; y <= TileMapSizeY; y++)
+                    {
+                        //lets test this tile for visibility
+                        //A tile is invisible if it only touches other solid tiles and has no objects or does not have a terrain change.
+                        if ((Tiles[x, y].tileType == 0) && (Tiles[x, y].indexObjectList == 0) && (Tiles[x, y].TerrainChange == false))
+                        {
+                            switch (y)
+                            {
+                                case 0: //bottom row
+                                    switch (x)
+                                    {
+                                        case 0: //bl corner
+                                            if ((Tiles[x + 1, y].tileType == 0) && (Tiles[x, y + 1].tileType == 0)
+                                                    && (Tiles[x + 1, y].TerrainChange == false) && (Tiles[x, y + 1].TerrainChange == false))
+                                            { Tiles[x, y].Render = false; ; break; }
+                                            else { Tiles[x, y].Render = true; break; }
+                                        case TileMapSizeX://br corner
+                                            if ((Tiles[x - 1, y].tileType == 0) && (Tiles[x, y + 1].tileType == 0)
+                                                    && (Tiles[x - 1, y].TerrainChange == false) && (Tiles[x, y + 1].TerrainChange == false))
+                                            { Tiles[x, y].Render = false; break; }
+                                            else { Tiles[x, y].Render = true; break; }
+                                        default: // invert t
+                                            if ((Tiles[x + 1, y].tileType == 0) && (Tiles[x, y + 1].tileType == 0) && (Tiles[x + 1, y].tileType == 0)
+                                                    && (Tiles[x + 1, y].TerrainChange == false) && (Tiles[x, y + 1].TerrainChange == false) && (Tiles[x + 1, y].TerrainChange == false))
+                                            { Tiles[x, y].Render = false; break; }
+                                            else { Tiles[x, y].Render = true; break; }
+                                    }
+                                    break;
+                                case TileMapSizeY: //Top row
+                                    switch (x)
+                                    {
+                                        case 0: //tl corner
+                                            if ((Tiles[x + 1, y].tileType == 0) && (Tiles[x, y - 1].tileType == 0)
+                                                    && (Tiles[x + 1, y].TerrainChange == false) && (Tiles[x, y - 1].TerrainChange == false))
+                                            { Tiles[x, y].Render = false; break; }
+                                            else { Tiles[x, y].Render = true; break; }
+                                        case TileMapSizeX://tr corner
+                                            if ((Tiles[x - 1, y].tileType == 0) && (Tiles[x, y - 1].tileType == 0)
+                                                    && (Tiles[x - 1, y].TerrainChange == false) && (Tiles[x, y - 1].TerrainChange == false))
+                                            { Tiles[x, y].Render = false; break; }
+                                            else { Tiles[x, y].Render = true; break; }
+                                        default: //  t
+                                            if ((Tiles[x + 1, y].tileType == 0) && (Tiles[x, y - 1].tileType == 0) && (Tiles[x - 1, y].tileType == 0)
+                                                    && (Tiles[x + 1, y].TerrainChange == false) && (Tiles[x, y - 1].TerrainChange == false) && (Tiles[x - 1, y].TerrainChange == false))
+                                            { Tiles[x, y].Render = false; break; }
+                                            else { Tiles[x, y].Render = true; break; }
+                                    }
+                                    break;
+                                default: //
+                                    switch (x)
+                                    {
+                                        case 0:     //left edge
+                                            if ((Tiles[x, y + 1].tileType == 0) && (Tiles[x + 1, y].tileType == 0) && (Tiles[x, y - 1].tileType == 0)
+                                                    && (Tiles[x, y + 1].TerrainChange == false) && (Tiles[x + 1, y].TerrainChange == false) && (Tiles[x, y - 1].TerrainChange == false))
+                                            { Tiles[x, y].Render = false; break; }
+                                            else { Tiles[x, y].Render = true; break; }
+                                        case TileMapSizeX:  //right edge
+                                            if ((Tiles[x, y + 1].tileType == 0) && (Tiles[x - 1, y].tileType == 0) && (Tiles[x, y - 1].tileType == 0)
+                                                    && (Tiles[x, y + 1].TerrainChange == false) && (Tiles[x - 1, y].TerrainChange == false) && (Tiles[x, y - 1].TerrainChange == false))
+                                            { Tiles[x, y].Render = false; break; }
+                                            else { Tiles[x, y].Render = true; break; }
+                                        default:        //+
+                                            if ((Tiles[x, y + 1].tileType == 0) && (Tiles[x + 1, y].tileType == 0) && (Tiles[x, y - 1].tileType == 0) && (Tiles[x - 1, y].tileType == 0)
+                                                    && (Tiles[x, y + 1].TerrainChange == false) && (Tiles[x + 1, y].TerrainChange == false) && (Tiles[x, y - 1].TerrainChange == false) && (Tiles[x - 1, y].TerrainChange == false))
+                                            { Tiles[x, y].Render = false; break; }
+                                            else { Tiles[x, y].Render = true; break; }
+                                    }
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            //return;
+            // if (game == GAME_SHOCK)
+            // {//TODO:FIx some z-fighting due to tile visibility.
+            //     return;
+            // }
+            //return;
+            int j;
+            //Now lets combine the solids along particular axis
+            for (x = 0; x < TileMapSizeX; x++)
+            {
+                for (y = 0; y < TileMapSizeY; y++)
+                {
+                    if ((Tiles[x, y].Grouped == false))
+                    {
+                        j = 1;
+                        while ((Tiles[x, y].Render == true) && (Tiles[x, y + j].Render == true) && (Tiles[x, y + j].Grouped == false))      //&& (Tiles[x,y].tileType ==0) && (Tiles[x,y+j].tileType ==0)
+                        {
+                            //combine these two if they match and they are not already part of a group
+                            if (DoTilesMatch(Tiles[x, y], Tiles[x, y + j]))
+                            {
+                                Tiles[x, y + j].Render = false;
+                                Tiles[x, y + j].Grouped = true;
+                                Tiles[x, y].Grouped = true;
+                                //Tiles[x,y].DimY++;
+                                j++;
+                            }
+                            else
+                            {
+                                break;
+                            }
+
+                        }
+                        Tiles[x, y].DimY = (short)(Tiles[x, y].DimY + j - 1);
+                    }
+                }
+            }
+
+            ////Now lets combine solids along the other axis
+            for (y = 0; y < TileMapSizeY; y++)
+            {
+                for (x = 0; x < TileMapSizeX; x++)
+                {
+                    if ((Tiles[x, y].Grouped == false))
+                    {
+                        j = 1;
+                        while ((Tiles[x, y].Render == true) && (Tiles[x + j, y].Render == true) && (Tiles[x + j, y].Grouped == false))      //&& (Tiles[x,y].tileType ==0) && (Tiles[x,y+j].tileType ==0)
+                        {
+                            //combine these two if they  match and they are not already part of a group
+                            if (DoTilesMatch(Tiles[x, y], Tiles[x + j, y]))
+                            {
+                                Tiles[x + j, y].Render = false;
+                                Tiles[x + j, y].Grouped = true;
+                                Tiles[x, y].Grouped = true;
+                                //Tiles[x,y].DimY++;
+                                j++;
+                            }
+                            else
+                            {
+                                break;
+                            }
+
+                        }
+                        Tiles[x, y].DimX = (short)(Tiles[x, y].DimX + j - 1);
+                    }
+                }
+            }
+
+            //Clear invisible faces on solid tiles. 
+            //TODO:Support all 64x64 tiles
+            for (y = 0; y <= TileMapSizeY; y++)
+            {
+                for (x = 0; x <= TileMapSizeX; x++)
+                {
+                    if ((Tiles[x, y].tileType == TILE_SOLID))
+                    {
+                        int dimx = Tiles[x, y].DimX;
+                        int dimy = Tiles[x, y].DimY;
+
+                        if (x == 0)
+                        {
+                            Tiles[x, y].VisibleFaces[vWEST] = false;
+                        }
+                        if (x == TileMapSizeX)
+                        {
+                            Tiles[x, y].VisibleFaces[vEAST] = false;
+                        }
+                        if (y == 0)
+                        {
+                            Tiles[x, y].VisibleFaces[vSOUTH] = false;
+                        }
+
+                        if (y == TileMapSizeY)
+                        {
+                            Tiles[x, y].VisibleFaces[vNORTH] = false;
+                        }
+                        if ((x + dimx <= TileMapSizeX) && (y + dimy <= TileMapSizeY))
+                        {
+                            if ((Tiles[x + dimx, y].tileType == TILE_SOLID) && (Tiles[x + dimx, y].TerrainChange == false) && (Tiles[x, y].TerrainChange == false))//Tile to the east is a solid
+                            {
+                                Tiles[x, y].VisibleFaces[vEAST] = false;
+                                Tiles[x + dimx, y].VisibleFaces[vWEST] = false;
+                            }
+                            if ((Tiles[x, y + dimy].tileType == TILE_SOLID) && (Tiles[x, y].TerrainChange == false) && (Tiles[x, y + dimy].TerrainChange == false))//TIle to the north is a solid
+                            {
+                                Tiles[x, y].VisibleFaces[vNORTH] = false;
+                                Tiles[x, y + dimy].VisibleFaces[vSOUTH] = false;
+                            }
+                        }
+                    }
+                }
+            }
+
+            //Clear invisible faces on diagonals
+            for (y = 1; y < TileMapSizeY; y++)
+            {
+                for (x = 1; x < TileMapSizeX; x++)
+                {
+                    switch (Tiles[x, y].tileType)
+                    {
+                        case TILE_DIAG_NW:
+                            {
+                                if ((Tiles[x, y - 1].tileType == TILE_SOLID) && (Tiles[x, y - 1].TerrainChange == false))
+                                {
+                                    Tiles[x, y].VisibleFaces[vSOUTH] = false;
+                                    Tiles[x, y - 1].VisibleFaces[vNORTH] = false;
+                                }
+                                if ((Tiles[x + 1, y].tileType == TILE_SOLID) && (Tiles[x + 1, y].TerrainChange == false))
+                                {
+                                    Tiles[x, y].VisibleFaces[vEAST] = false;
+                                    Tiles[x + 1, y].VisibleFaces[vWEST] = false;
+                                }
+                            }
+                            break;
+                        case TILE_DIAG_NE:
+                            {
+                                if ((Tiles[x, y - 1].tileType == TILE_SOLID) && (Tiles[x, y - 1].TerrainChange == false))
+                                {
+                                    Tiles[x, y].VisibleFaces[vSOUTH] = false;
+                                    Tiles[x, y - 1].VisibleFaces[vNORTH] = false;
+                                }
+                                if ((Tiles[x - 1, y].tileType == TILE_SOLID) && (Tiles[x - 1, y].TerrainChange == false))
+                                {
+                                    Tiles[x, y].VisibleFaces[vWEST] = false;
+                                    Tiles[x - 1, y].VisibleFaces[vEAST] = false;
+                                }
+                            }
+                            break;
+                        case TILE_DIAG_SE:
+                            {
+                                if ((Tiles[x, y + 1].tileType == TILE_SOLID) && (Tiles[x, y + 1].TerrainChange == false))
+                                {
+                                    Tiles[x, y].VisibleFaces[vNORTH] = false;
+                                    Tiles[x, y + 1].VisibleFaces[vSOUTH] = false;
+                                }
+                                if ((Tiles[x - 1, y].tileType == TILE_SOLID) && (Tiles[x - 1, y].TerrainChange == false))
+                                {
+                                    Tiles[x, y].VisibleFaces[vWEST] = false;
+                                    Tiles[x - 1, y].VisibleFaces[vEAST] = false;
+                                }
+                            }
+                            break;
+                        case TILE_DIAG_SW:
+                            {
+                                if ((Tiles[x, y + 1].tileType == TILE_SOLID) && (Tiles[x, y + 1].TerrainChange == false))
+                                {
+                                    Tiles[x, y].VisibleFaces[vNORTH] = false;
+                                    Tiles[x, y + 1].VisibleFaces[vSOUTH] = false;
+                                }
+                                if ((Tiles[x + 1, y].tileType == TILE_SOLID) && (Tiles[x + 1, y].TerrainChange == false))
+                                {
+                                    Tiles[x, y].VisibleFaces[vEAST] = false;
+                                    Tiles[x + 1, y].VisibleFaces[vWEST] = false;
+                                }
+                            }
+                            break;
+                    }
+
+                }
+
+            }
+
+            for (y = 1; y < TileMapSizeY; y++)
+            {
+                for (x = 1; x < TileMapSizeX; x++)
+                {
+                    if ((Tiles[x, y].tileType == TILE_OPEN) && (Tiles[x, y].TerrainChange == false))
+                    {
+                        if (
+                                ((Tiles[x + 1, y].tileType == TILE_OPEN) && (Tiles[x + 1, y].TerrainChange == false) && (Tiles[x + 1, y].floorHeight >= Tiles[x, y].floorHeight))
+                                ||
+                                (Tiles[x + 1, y].tileType == TILE_SOLID) && (Tiles[x + 1, y].TerrainChange == false)
+                        )
+                        {
+                            Tiles[x, y].VisibleFaces[vEAST] = false;
+                        }
+
+
+                        if (
+                                ((Tiles[x - 1, y].tileType == TILE_OPEN) && (Tiles[x - 1, y].TerrainChange == false) && (Tiles[x - 1, y].floorHeight >= Tiles[x, y].floorHeight))
+                                ||
+                                (Tiles[x - 1, y].tileType == TILE_SOLID) && (Tiles[x - 1, y].TerrainChange == false)
+                        )
+                        {
+                            Tiles[x, y].VisibleFaces[vWEST] = false;
+                        }
+
+
+                        if (
+                                ((Tiles[x, y + 1].tileType == TILE_OPEN) && (Tiles[x, y + 1].TerrainChange == false) && (Tiles[x, y + 1].floorHeight >= Tiles[x, y].floorHeight))
+                                ||
+                                (Tiles[x, y + 1].tileType == TILE_SOLID) && (Tiles[x, y + 1].TerrainChange == false)
+                        )
+                        {
+                            Tiles[x, y].VisibleFaces[vNORTH] = false;
+                        }
+
+                        if (
+                                ((Tiles[x, y - 1].tileType == TILE_OPEN) && (Tiles[x, y - 1].TerrainChange == false) && (Tiles[x, y - 1].floorHeight >= Tiles[x, y].floorHeight))
+                                ||
+                                (Tiles[x, y - 1].tileType == TILE_SOLID) && (Tiles[x, y - 1].TerrainChange == false)
+                        )
+                        {
+                            Tiles[x, y].VisibleFaces[vSOUTH] = false;
+                        }
+                    }
+
+                }
+            }
+            //Make sure solids & opens are still consistently visible.
+            for (y = 1; y < TileMapSizeY; y++)
+            {
+                for (x = 1; x < TileMapSizeX; x++)
+                {
+
+                    if ((Tiles[x, y].tileType == TILE_SOLID) || (Tiles[x, y].tileType == TILE_OPEN))
+                    {
+                        int dimx = Tiles[x, y].DimX;
+                        int dimy = Tiles[x, y].DimY;
+                        if (dimx > 1)
+                        {//Make sure the ends are set properly
+                            Tiles[x, y].VisibleFaces[vEAST] = Tiles[x + dimx - 1, y].VisibleFaces[vEAST];
+                        }
+                        if (dimy > 1)
+                        {
+                            Tiles[x, y].VisibleFaces[vNORTH] = Tiles[x, y + dimy - 1].VisibleFaces[vNORTH];
+                        }
+
+                        //Check along each axis
+                        for (int i = 0; i < Tiles[x, y].DimX; i++)
+                        {
+                            if (Tiles[x + i, y].VisibleFaces[vNORTH] == true)
+                            {
+                                Tiles[x, y].VisibleFaces[vNORTH] = true;
+                            }
+                            if (Tiles[x + i, y].VisibleFaces[vSOUTH] == true)
+                            {
+                                Tiles[x, y].VisibleFaces[vSOUTH] = true;
+                            }
+                        }
+
+                        for (int i = 0; i < Tiles[x, y].DimY; i++)
+                        {
+                            if (Tiles[x, y + i].VisibleFaces[vEAST] == true)
+                            {
+                                Tiles[x, y].VisibleFaces[vEAST] = true;
+                            }
+                            if (Tiles[x, y + i].VisibleFaces[vWEST] == true)
+                            {
+                                Tiles[x, y].VisibleFaces[vWEST] = true;
+                            }
+                        }
+
+                    }
+                }
+            }
+            for (y = 0; y <= TileMapSizeY; y++)
+            {
+                Tiles[0, y].VisibleFaces[vEAST] = true;
+                Tiles[TileMapSizeX, y].VisibleFaces[vWEST] = true;
+            }
+            for (x = 0; x <= TileMapSizeX; x++)
+            {
+                Tiles[x, 0].VisibleFaces[vNORTH] = true;
+                Tiles[x, TileMapSizeY].VisibleFaces[vSOUTH] = true;
+            }
         }
+
+
+        /// <summary>
+        /// Check if two tiles are alike
+        /// </summary>
+        /// <param name="t1"></param>
+        /// <param name="t2"></param>
+        /// <returns></returns>
+        bool DoTilesMatch(TileInfo t1, TileInfo t2)
+        {//TODO:Tiles have a lot more properties now.
+            if (_RES == GAME_SHOCK)
+            { return false; }
+            //if ((t1.tileType >1) || (t1.hasElevator==1) || (t1.TerrainChange ==1) ||  (t2.hasElevator==1) || (t2.TerrainChange ==1) || (t1.isWater ==1) || (t2.isWater ==1)){	//autofail no none solid/open/special.
+            if ((t1.tileType > 1) || (t1.TerrainChange == true) || (t2.TerrainChange == true))
+            {   //autofail no none solid/open/special.
+                return false;
+            }
+            else
+            {
+                if ((t1.tileType == 0) && (t2.tileType == 0))   //solid
+                {
+                    return ((t1.wallTexture == t2.wallTexture) && (t1.West == t2.West) && (t1.South == t2.South) && (t1.East == t2.East) && (t1.North == t2.North) && (t1.UseAdjacentTextures == t2.UseAdjacentTextures));
+                }
+                else
+                {
+                    return (t1.shockCeilingTexture == t2.shockCeilingTexture)
+                            && (t1.floorTexture == t2.floorTexture)
+                            && (t1.floorHeight == t2.floorHeight)
+                            && (t1.ceilingHeight == t2.ceilingHeight)
+                            && (t1.DimX == t2.DimX) && (t1.DimY == t2.DimY)
+                            && (t1.wallTexture == t2.wallTexture)
+                            && (t1.tileType == t2.tileType)
+                            && (t1.IsDoorForNPC == false) && (t2.IsDoorForNPC == false);//
+                }
+            }
+        }
+
 
 
         public static bool isTerrainWater(int terraintype)

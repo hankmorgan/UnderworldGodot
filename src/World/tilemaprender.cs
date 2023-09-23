@@ -138,7 +138,7 @@ namespace Underworld
             {
                 if (!UpdateOnly)
                 {
-                    var output = RenderCeiling(parent, 0, 0, CEILING_HEIGHT, CEILING_HEIGHT + CEIL_ADJ, Level.UWCeilingTexture, "CEILING",Level);
+                    var output = RenderCeiling(parent, 0, 0, CEILING_HEIGHT, CEILING_HEIGHT + CEIL_ADJ, Level.UWCeilingTexture, "CEILING", Level);
                 }
             }
             if (!UpdateOnly)
@@ -1151,7 +1151,7 @@ namespace Underworld
             }
 
 
-             return CreateMeshInstance(parent,x,y,TileName,a_mesh);
+            return CreateMeshInstance(parent, x, y, TileName, a_mesh);
             //GetTree().Root.CallDeferred("add_child", final_mesh);
 
 
@@ -1604,7 +1604,7 @@ namespace Underworld
                 }
             }
 
-             return CreateMeshInstance(parent,t.tileX,t.tileY,TileName,a_mesh);
+            return CreateMeshInstance(parent, t.tileX, t.tileY, TileName, a_mesh);
             //    mr.materials = MatsToUse;
             //    mesh.RecalculateNormals();
             //    mesh.RecalculateBounds();
@@ -1781,7 +1781,7 @@ namespace Underworld
                     }
                 }
             }
-            return CreateMeshInstance(parent,t.tileX,t.tileY,TileName,a_mesh);
+            return CreateMeshInstance(parent, t.tileX, t.tileY, TileName, a_mesh);
 
             //    mr.materials = MatsToUse;
             //    mesh.RecalculateNormals();
@@ -2020,7 +2020,7 @@ namespace Underworld
             //     mc.sharedMesh = mesh;
             // }
 
-            return CreateMeshInstance(parent,t.tileX,t.tileY,TileName,a_mesh);
+            return CreateMeshInstance(parent, t.tileX, t.tileY, TileName, a_mesh);
 
             //mc.sharedMesh=mesh;
 
@@ -2168,752 +2168,762 @@ namespace Underworld
                         FaceCounter++;
                     }
                 }
-            }   
-            return CreateMeshInstance(parent,t.tileX,t.tileY,TileName,a_mesh);
+            }
+            return CreateMeshInstance(parent, t.tileX, t.tileY, TileName, a_mesh);
         }
 
 
 
-        /// <summary>
-        /// Renders a cuboid with sloped tops
-        /// </summary>
-        /// <param name="parent">Parent.</param>
-        /// <param name="x">The x coordinate.</param>
-        /// <param name="y">The y coordinate.</param>
-        /// <param name="t">T.</param>
-        /// <param name="Water">If set to <c>true</c> water.</param>
-        /// <param name="Bottom">Bottom.</param>
-        /// <param name="Top">Top.</param>
-        /// <param name="SlopeDir">Slope dir.</param>
-        /// <param name="Steepness">Steepness.</param>
-        /// <param name="Floor">Floor.</param>
-        /// <param name="TileName">Tile name.</param>
-        static Node3D RenderSlopedCuboid(Node3D parent, int x, int y, TileInfo t, bool Water, int Bottom, int Top, int SlopeDir, int Steepness, int Floor, string TileName)
+
+    /// <summary>
+    /// Renders a cuboid with sloped tops
+    /// </summary>
+    /// <param name="parent">Parent.</param>
+    /// <param name="x">The x coordinate.</param>
+    /// <param name="y">The y coordinate.</param>
+    /// <param name="t">T.</param>
+    /// <param name="Water">If set to <c>true</c> water.</param>
+    /// <param name="Bottom">Bottom.</param>
+    /// <param name="Top">Top.</param>
+    /// <param name="SlopeDir">Slope dir.</param>
+    /// <param name="Steepness">Steepness.</param>
+    /// <param name="Floor">Floor.</param>
+    /// <param name="TileName">Tile name.</param>
+    static Node3D RenderSlopedCuboid(Node3D parent, int x, int y, TileInfo t, bool Water, int Bottom, int Top, int SlopeDir, int Steepness, int Floor, string TileName)
+    {
+
+        //Draws a cube with sloped tops
+
+        float AdjustUpperNorth = 0f;
+        float AdjustUpperSouth = 0f;
+        float AdjustUpperEast = 0f;
+        float AdjustUpperWest = 0f;
+
+        float AdjustLowerNorth = 0f;
+        float AdjustLowerSouth = 0f;
+        float AdjustLowerEast = 0f;
+        float AdjustLowerWest = 0f;
+
+        float AdjustUpperNorthEast = 0f;
+        float AdjustUpperNorthWest = 0f;
+        float AdjustUpperSouthEast = 0f;
+        float AdjustUpperSouthWest = 0f;
+
+        float AdjustLowerNorthEast = 0f;
+        float AdjustLowerNorthWest = 0f;
+        float AdjustLowerSouthEast = 0f;
+        float AdjustLowerSouthWest = 0f;
+
+        if (Floor == 1)
         {
-            //Draws a cube with sloped tops
-
-            float AdjustUpperNorth = 0f;
-            float AdjustUpperSouth = 0f;
-            float AdjustUpperEast = 0f;
-            float AdjustUpperWest = 0f;
-
-            float AdjustLowerNorth = 0f;
-            float AdjustLowerSouth = 0f;
-            float AdjustLowerEast = 0f;
-            float AdjustLowerWest = 0f;
-
-            float AdjustUpperNorthEast = 0f;
-            float AdjustUpperNorthWest = 0f;
-            float AdjustUpperSouthEast = 0f;
-            float AdjustUpperSouthWest = 0f;
-
-            float AdjustLowerNorthEast = 0f;
-            float AdjustLowerNorthWest = 0f;
-            float AdjustLowerSouthEast = 0f;
-            float AdjustLowerSouthWest = 0f;
-
-            if (Floor == 1)
+            switch (SlopeDir)
             {
-                switch (SlopeDir)
+                case TILE_SLOPE_N:
+                    AdjustUpperNorth = Steepness * 0.15f;
+                    break;
+                case TILE_SLOPE_S:
+                    AdjustUpperSouth = Steepness * 0.15f;
+                    break;
+                case TILE_SLOPE_E:
+                    AdjustUpperEast = Steepness * 0.15f;
+                    break;
+                case TILE_SLOPE_W:
+                    AdjustUpperWest = Steepness * 0.15f;
+                    break;                
+            }
+        }
+        if (Floor == 0)
+        {
+            switch (SlopeDir)
+            {
+                case TILE_SLOPE_N:
+                    AdjustLowerNorth = -Steepness * 0.15f;
+                    break;
+                case TILE_SLOPE_S:
+                    AdjustLowerSouth = -Steepness * 0.15f;
+                    break;
+                case TILE_SLOPE_E:
+                    AdjustLowerEast = -Steepness * 0.15f;
+                    break;
+                case TILE_SLOPE_W:
+                    AdjustLowerWest = -Steepness * 0.15f;
+                    break;  
+            }
+        }
+
+        int NumberOfVisibleFaces = 0;
+        int NumberOfSlopedFaces = 0;
+        int SlopesAdded = 0;
+        //Get the number of faces
+        for (int i = 0; i < 6; i++)
+        {
+            if (t.VisibleFaces[i] == true)
+            {
+                NumberOfVisibleFaces++;
+                if (
+                        (((SlopeDir == TILE_SLOPE_N) || (SlopeDir == TILE_SLOPE_S)) && ((i == vWEST) || (i == vEAST)))
+                        ||
+                        (((SlopeDir == TILE_SLOPE_E) || (SlopeDir == TILE_SLOPE_W)) && ((i == vNORTH) || (i == vSOUTH)))
+                    )
                 {
-                    case TILE_SLOPE_N:
-                        AdjustUpperNorth = Steepness * 0.15f;
-                        break;
-                    case TILE_SLOPE_S:
-                        AdjustUpperSouth = Steepness * 0.15f;
-                        break;
-                    case TILE_SLOPE_E:
-                        AdjustUpperEast = Steepness * 0.15f;
-                        break;
-                    case TILE_SLOPE_W:
-                        AdjustUpperWest = Steepness * 0.15f;
-                        break;
+                    NumberOfSlopedFaces++;  //SHould only be to a max of two
                 }
             }
-            if (Floor == 0)
+        }
+        //Allocate enough verticea and UVs for the faces
+        Texture2D[] MatsToUse = new Texture2D[NumberOfVisibleFaces + NumberOfSlopedFaces];
+        Vector3[] verts = new Vector3[NumberOfVisibleFaces * 4 + +NumberOfSlopedFaces * 3];
+        Vector2[] uvs = new Vector2[NumberOfVisibleFaces * 4 + NumberOfSlopedFaces * 3];
+        float floorHeight = (float)(Top * 0.15f);
+        float baseHeight = (float)(Bottom * 0.15f);
+        float dimX = t.DimX;
+        float dimY = t.DimY;
+
+
+        //Now create the mesh
+        var a_mesh = new ArrayMesh();
+
+        //Now allocate the visible faces to triangles.
+        int FaceCounter = 0;//Tracks which number face we are now on.
+                            //float PolySize= Top-Bottom;
+                            //float uv0= (float)(Bottom*0.125f);
+                            //float uv1=(PolySize / 8.0f) + (uv0);
+        CalcUV(Top, Bottom, out float uv0, out float uv1);
+        float slopeHeight;
+        float uv0Slope;
+        float uv1Slope;
+        if (Floor == 1)
+        {
+            CalcUV(Top + Steepness, Bottom, out uv0Slope, out uv1Slope);
+            slopeHeight = floorHeight;
+        }
+        else
+        {
+            CalcUV(Top, Bottom - Steepness, out uv0Slope, out uv1Slope);
+            slopeHeight = baseHeight;
+        }
+
+
+        for (int i = 0; i < 6; i++)
+        {
+            if (t.VisibleFaces[i] == true)
             {
-                switch (SlopeDir)
+                float offset;
+                switch (i)
                 {
-                    case TILE_SLOPE_N:
-                        AdjustLowerNorth = -Steepness * 0.15f;
-                        break;
-                    case TILE_SLOPE_S:
-                        AdjustLowerSouth = -Steepness * 0.15f;
-                        break;
-                    case TILE_SLOPE_E:
-                        AdjustLowerEast = -Steepness * 0.15f;
-                        break;
-                    case TILE_SLOPE_W:
-                        AdjustLowerWest = -Steepness * 0.15f;
-                        break;
-                }
-            }
+                    case vTOP:
+                        {
 
-            int NumberOfVisibleFaces = 0;
-            int NumberOfSlopedFaces = 0;
-            int SlopesAdded = 0;
-            //Get the number of faces
-            for (int i = 0; i < 6; i++)
-            {
-                if (t.VisibleFaces[i] == true)
-                {
-                    NumberOfVisibleFaces++;
-                    if (
-                            (((SlopeDir == TILE_SLOPE_N) || (SlopeDir == TILE_SLOPE_S)) && ((i == vWEST) || (i == vEAST)))
-                            ||
-                            (((SlopeDir == TILE_SLOPE_E) || (SlopeDir == TILE_SLOPE_W)) && ((i == vNORTH) || (i == vSOUTH)))
-                        )
-                    {
-                        NumberOfSlopedFaces++;  //SHould only be to a max of two
-                    }
-                }
-            }
-            //Allocate enough verticea and UVs for the faces
-            Texture2D[] MatsToUse = new Texture2D[NumberOfVisibleFaces + NumberOfSlopedFaces];
-            Vector3[] verts = new Vector3[NumberOfVisibleFaces * 4 + +NumberOfSlopedFaces * 3];
-            Vector2[] uvs = new Vector2[NumberOfVisibleFaces * 4 + NumberOfSlopedFaces * 3];
-            float floorHeight = (float)(Top * 0.15f);
-            float baseHeight = (float)(Bottom * 0.15f);
-            float dimX = t.DimX;
-            float dimY = t.DimY;
+                            //Set the verts	
+                            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(FloorTexture(fSELF, t));
 
-            //Now allocate the visible faces to triangles.
-            int FaceCounter = 0;//Tracks which number face we are now on.
-                                //float PolySize= Top-Bottom;
-                                //float uv0= (float)(Bottom*0.125f);
-                                //float uv1=(PolySize / 8.0f) + (uv0);
-            CalcUV(Top, Bottom, out float uv0, out float uv1);
-            float slopeHeight;
-            float uv0Slope;
-            float uv1Slope;
-            if (Floor == 1)
-            {
-                CalcUV(Top + Steepness, Bottom, out uv0Slope, out uv1Slope);
-                slopeHeight = floorHeight;
-            }
-            else
-            {
-                CalcUV(Top, Bottom - Steepness, out uv0Slope, out uv1Slope);
-                slopeHeight = baseHeight;
-            }
+                            verts[0 + (4 * FaceCounter)] = new Vector3(0.0f, floorHeight + AdjustUpperWest + AdjustUpperSouth + AdjustUpperSouthWest, 0.0f);
+                            verts[1 + (4 * FaceCounter)] = new Vector3(0.0f, floorHeight + AdjustUpperWest + AdjustUpperNorth + AdjustUpperNorthWest, 1.2f * dimY);
+                            verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight + AdjustUpperNorth + AdjustUpperEast + AdjustUpperNorthEast, 1.2f * dimY);
+                            verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight + AdjustUpperSouth + AdjustUpperEast + AdjustUpperSouthEast, 0.0f);
+                            //Allocate UVs
+                            uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, 1.0f * dimY);
+                            uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, 0.0f);
+                            uvs[2 + (4 * FaceCounter)] = new Vector2(1.0f * dimX, 0.0f);
+                            uvs[3 + (4 * FaceCounter)] = new Vector2(1.0f * dimX, 1.0f * dimY);
+                            break;
+                        }
 
-
-            for (int i = 0; i < 6; i++)
-            {
-                if (t.VisibleFaces[i] == true)
-                {
-                    float offset;
-                    switch (i)
-                    {
-                        case vTOP:
+                    case vNORTH:
+                        {
+                            //north wall vertices
+                            offset = CalcCeilOffset(fNORTH, t);
+                            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fNORTH, t));
+                            int oldSlopeDir = SlopeDir;
+                            if ((Floor == 0) && (SlopeDir == TILE_SLOPE_S))
                             {
+                                SlopeDir = TILE_SLOPE_N;
+                            }
+                            switch (SlopeDir)
+                            {
+                                case TILE_SLOPE_N:
+                                    verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight + AdjustLowerSouth + AdjustLowerWest, 1.2f * dimY);
+                                    verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight + AdjustUpperNorth + AdjustUpperEast, 1.2f * dimY);
+                                    verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight + AdjustUpperNorth + AdjustUpperWest, 1.2f * dimY);
+                                    verts[3 + (4 * FaceCounter)] = new Vector3(0f, baseHeight + AdjustLowerSouth + AdjustLowerEast, 1.2f * dimY);
+                                    uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0Slope - offset);//bottom uv
+                                    uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1Slope - offset);//top uv
+                                    uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, uv1Slope - offset);//top uv
+                                    uvs[3 + (4 * FaceCounter)] = new Vector2(dimX, uv0Slope - offset);//bottom uv
+                                    break;
 
-                                //Set the verts	
-                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(FloorTexture(fSELF, t));
-                                verts[0 + (4 * FaceCounter)] = new Vector3(0.0f, floorHeight + AdjustUpperWest + AdjustUpperSouth + AdjustUpperSouthWest, 0.0f);
-                                verts[1 + (4 * FaceCounter)] = new Vector3(0.0f, floorHeight + AdjustUpperWest + AdjustUpperNorth + AdjustUpperNorthWest, 1.2f * dimY);
-                                verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight + AdjustUpperNorth + AdjustUpperEast + AdjustUpperNorthEast, 1.2f * dimY);
-                                verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight + AdjustUpperSouth + AdjustUpperEast + AdjustUpperSouthEast, 0.0f);
+                                default:
 
-                                //Allocate UVs
-                                uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, 1.0f * dimY);
-                                uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, 0.0f);
-                                uvs[2 + (4 * FaceCounter)] = new Vector2(1.0f * dimX, 0.0f);
-                                uvs[3 + (4 * FaceCounter)] = new Vector2(1.0f * dimX, 1.0f * dimY);
+                                    verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 1.2f * dimY);
+                                    verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight + AdjustUpperNorthEast, 1.2f * dimY);
+                                    verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight + AdjustUpperNorthWest, 1.2f * dimY);
+                                    verts[3 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 1.2f * dimY);
+                                    uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);//bottom uv
+                                    uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);//top uv
+                                    uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, uv1 - offset);//top uv
+                                    uvs[3 + (4 * FaceCounter)] = new Vector2(dimX, uv0 - offset);//bottom uv
+                                    break;
+                            }
+                            if ((SlopeDir == TILE_SLOPE_E) || (SlopeDir == TILE_SLOPE_W))
+                            {//Insert my verts for this slope														
+                                int index = uvs.GetUpperBound(0) - ((NumberOfSlopedFaces - SlopesAdded) * 3) + 1;
+                                MatsToUse[MatsToUse.GetUpperBound(0) - NumberOfSlopedFaces + SlopesAdded + 1] = MatsToUse[FaceCounter];
+                                int origSlopeDir = SlopeDir;
+                                if (Floor == 0)
+                                {//flip my tile types when doing ceilings
+                                    if (SlopeDir == TILE_SLOPE_E)
+                                    {
+                                        SlopeDir = TILE_SLOPE_W;
+                                    }
+                                    else
+                                    {
+                                        SlopeDir = TILE_SLOPE_E;
+                                    }
+                                }
 
-                                break;
+                                switch (SlopeDir)
+                                {
+                                    case TILE_SLOPE_E:
+                                        {
+                                            verts[index + 0] = new Vector3(-1.2f * dimX, slopeHeight + AdjustLowerSouth + AdjustLowerWest, 1.2f * dimY);
+                                            verts[index + 1] = new Vector3(-1.2f * dimX, slopeHeight + AdjustUpperNorth + AdjustUpperEast, 1.2f * dimY);
+                                            verts[index + 2] = new Vector3(0f, slopeHeight + AdjustUpperNorth + AdjustUpperWest, 1.2f * dimY);
+                                            float uv0edge;
+                                            float uv1edge;
+                                            float uvToUse;
+                                            if (Floor == 1)
+                                            {
+                                                CalcUV(Top + Steepness, Top, out uv0edge, out uv1edge);
+                                                if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
+                                                uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
+                                                uvs[index + 1] = new Vector2(0, uvToUse + Steepness * 0.125f); //vertical + scale
+                                                uvs[index + 2] = new Vector2(1, uvToUse);   //1, vertical alignment	
+                                            }
+                                            else
+                                            {
+                                                CalcUV(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
+                                                if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }//Ceil
+                                                uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
+                                                uvs[index + 1] = new Vector2(0, uvToUse + Steepness * 0.125f); //vertical + scale
+                                                uvs[index + 2] = new Vector2(1, uvToUse + Steepness * 0.125f);   //1, vertical alignment	
+                                            }
+                                            break;
+                                        }
+
+                                    case TILE_SLOPE_W:
+                                        {
+
+                                            verts[index + 0] = new Vector3(-1.2f * dimX, slopeHeight + AdjustUpperNorth + AdjustUpperEast, 1.2f * dimY);
+                                            verts[index + 1] = new Vector3(0f, slopeHeight + AdjustUpperNorth + AdjustUpperWest, 1.2f * dimY);
+                                            verts[index + 2] = new Vector3(0f, slopeHeight + AdjustLowerSouth + AdjustLowerEast, 1.2f * dimY);
+                                            //uvs[index+0]= new Vector2(0,0);
+                                            //uvs[index+1]= new Vector2(1,1);
+                                            //uvs[index+2]= new Vector2(1,0);
+                                            float uv0edge = 0;
+                                            float uvToUse;
+                                            if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
+                                            float uv1edge;
+                                            if (Floor == 1)
+                                            {
+                                                CalcUV(Top + Steepness, Top, out uv0edge, out uv1edge);
+                                                if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
+                                                uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
+                                                uvs[index + 1] = new Vector2(1, uvToUse + Steepness * 0.125f); //vertical + scale
+                                                uvs[index + 2] = new Vector2(1, uvToUse);   //1, vertical alignment	
+                                            }
+                                            else
+                                            {
+                                                CalcUV(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
+                                                if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }//Ceil
+                                                                                                                             //uvs[index+0]= new Vector2(0,0);//0, vertical alignment
+                                                                                                                             //uvs[index+1]= new Vector2(1,  (float)Steepness*0.125f); //vertical + scale
+                                                                                                                             //uvs[index+2]= new Vector2(1,  (float)Steepness*0.125f);	//1, vertical alignment	
+                                                uvs[index + 0] = new Vector2(0, uvToUse + Steepness * 0.125f);
+                                                uvs[index + 1] = new Vector2(1, uvToUse + Steepness * 0.125f);
+                                                uvs[index + 2] = new Vector2(1, uvToUse);
+                                            }
+                                            break;
+                                        }
+
+                                }
+
+                                SlopesAdded++;
                             }
 
-                        case vNORTH:
+                            SlopeDir = oldSlopeDir;
+                            break;
+                        }//end north
+
+
+                    case vSOUTH:
+                        {
+                            //south wall vertices
+                            offset = CalcCeilOffset(fSOUTH, t);
+                            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fSOUTH, t));
+                            int oldSlopeDir = SlopeDir;
+                            if ((Floor == 0) && (SlopeDir == TILE_SLOPE_N))
                             {
-                                //north wall vertices
-                                offset = CalcCeilOffset(fNORTH, t);
-                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fNORTH, t));
-                                int oldSlopeDir = SlopeDir;
-                                if ((Floor == 0) && (SlopeDir == TILE_SLOPE_S))
+                                SlopeDir = TILE_SLOPE_S;
+                            }
+                            switch (SlopeDir)
+                            {
+                                case TILE_SLOPE_S:
+                                    verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight + AdjustLowerNorth + AdjustLowerEast, 0f);
+                                    verts[1 + (4 * FaceCounter)] = new Vector3(0f, floorHeight + AdjustUpperSouth + AdjustUpperWest, 0f);
+                                    verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight + AdjustUpperSouth + AdjustUpperEast, 0f);
+                                    verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight + AdjustLowerNorth + AdjustLowerWest, 0f);
+                                    uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0Slope - offset);//bottom uv
+                                    uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1Slope - offset);//top uv
+                                    uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, uv1Slope - offset);//top uv
+                                    uvs[3 + (4 * FaceCounter)] = new Vector2(dimX, uv0Slope - offset);//bottom uv
+                                    break;
+                                default:
+                                    verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 0f);
+                                    verts[1 + (4 * FaceCounter)] = new Vector3(0f, floorHeight + AdjustUpperSouthWest, 0f);
+                                    verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight + AdjustUpperSouthEast, 0f);
+                                    verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 0f);
+                                    uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);
+                                    uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);
+                                    uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, uv1 - offset);
+                                    uvs[3 + (4 * FaceCounter)] = new Vector2(dimX, uv0 - offset);
+                                    break;
+                            }
+
+                            if ((SlopeDir == TILE_SLOPE_E) || (SlopeDir == TILE_SLOPE_W))
+                            {//Insert my verts for this slope
+
+                                int origSlopeDir = SlopeDir;
+                                if (Floor == 0)
+                                {//flip my tile types when doing ceilings
+                                    if (SlopeDir == TILE_SLOPE_E)
+                                    {
+                                        SlopeDir = TILE_SLOPE_W;
+                                    }
+                                    else
+                                    {
+                                        SlopeDir = TILE_SLOPE_E;
+                                    }
+                                }
+
+
+                                int index = uvs.GetUpperBound(0) - ((NumberOfSlopedFaces - SlopesAdded) * 3) + 1;
+                                MatsToUse[MatsToUse.GetUpperBound(0) - NumberOfSlopedFaces + SlopesAdded + 1] = MatsToUse[FaceCounter];
+                                switch (SlopeDir)
                                 {
-                                    SlopeDir = TILE_SLOPE_N;
+                                    case TILE_SLOPE_W:
+                                        {
+
+                                            verts[index + 0] = new Vector3(0f, slopeHeight + AdjustLowerNorth + AdjustLowerEast, 0f);
+                                            verts[index + 1] = new Vector3(0f, slopeHeight + AdjustUpperSouth + AdjustUpperWest, 0f);
+                                            verts[index + 2] = new Vector3(-1.2f * dimX, slopeHeight + AdjustUpperSouth + AdjustUpperEast, 0f);
+                                            float uv0edge;
+                                            float uv1edge;
+                                            float uvToUse;
+                                            if (Floor == 1)
+                                            {
+                                                CalcUV(Top + Steepness, Top, out uv0edge, out uv1edge);
+                                                if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
+                                                uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
+                                                uvs[index + 1] = new Vector2(0, uvToUse + Steepness * 0.125f); //vertical + scale
+                                                uvs[index + 2] = new Vector2(1, uvToUse);   //1, vertical alignment	
+                                            }
+                                            else
+                                            {
+                                                CalcUV(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
+                                                if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }//Ceil
+                                                uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
+                                                uvs[index + 1] = new Vector2(0, uvToUse + Steepness * 0.125f); //vertical + scale
+                                                uvs[index + 2] = new Vector2(1, uvToUse + Steepness * 0.125f);   //1, vertical alignment	
+                                            }
+                                            break;
+                                        }
+
+                                    case TILE_SLOPE_E:
+                                        {
+
+                                            verts[index + 0] = new Vector3(0f, slopeHeight + AdjustLowerNorth + AdjustLowerEast, 0f);
+                                            verts[index + 1] = new Vector3(-1.2f * dimX, slopeHeight + AdjustUpperSouth + AdjustUpperEast, 0f);
+                                            verts[index + 2] = new Vector3(-1.2f * dimX, slopeHeight + AdjustLowerNorth + AdjustLowerWest, 0f);
+                                            float uv0edge;
+                                            float uv1edge;
+                                            float uvToUse;
+                                            if (Floor == 1)
+                                            {
+                                                CalcUV(Top + Steepness, Top, out uv0edge, out uv1edge);
+                                                if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
+                                                uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
+                                                uvs[index + 1] = new Vector2(1, uvToUse + Steepness * 0.125f); //vertical + scale
+                                                uvs[index + 2] = new Vector2(1, uvToUse);   //1, vertical alignment	
+                                            }
+                                            else
+                                            {
+                                                //uvs[index+0]= new Vector2(0,0);//0, vertical alignment
+                                                //uvs[index+1]= new Vector2(1,  (float)Steepness*0.125f); //vertical + scale
+                                                //uvs[index+2]= new Vector2(1,  (float)Steepness*0.125f);	//1, vertical alignment	
+                                                CalcUV(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
+                                                if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }//Ceil
+                                                uvs[index + 0] = new Vector2(0, uvToUse + Steepness * 0.125f);
+                                                uvs[index + 1] = new Vector2(1, uvToUse + Steepness * 0.125f);
+                                                uvs[index + 2] = new Vector2(1, uvToUse);
+                                            }
+                                            break;
+                                        }
+
+                                }
+
+                                SlopesAdded++;
+                            }
+
+                            SlopeDir = oldSlopeDir;
+                            break;
+                        }//end south
+
+                    case vWEST:
+                        {
+                            offset = CalcCeilOffset(fWEST, t);
+
+                            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fWEST, t));
+
+                            int oldSlopeDir = SlopeDir;
+                            if ((Floor == 0) && (SlopeDir == TILE_SLOPE_E))
+                            {
+                                SlopeDir = TILE_SLOPE_W;
+                            }
+
+                            switch (SlopeDir)
+                            {
+                                case TILE_SLOPE_W:
+                                    verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight + AdjustLowerEast + AdjustLowerSouth, 1.2f * dimY);
+                                    verts[1 + (4 * FaceCounter)] = new Vector3(0f, floorHeight + AdjustUpperWest + AdjustUpperNorth, 1.2f * dimY);
+                                    verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight + AdjustUpperWest + AdjustUpperSouth, 0f);
+                                    verts[3 + (4 * FaceCounter)] = new Vector3(0f, baseHeight + AdjustLowerEast + AdjustLowerNorth, 0f);
+                                    uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0Slope - offset);//bottom uv
+                                    uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1Slope - offset);//top uv
+                                    uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, uv1Slope - offset);//top uv
+                                    uvs[3 + (4 * FaceCounter)] = new Vector2(dimX, uv0Slope - offset);//bottom uv
+                                    break;
+                                default:
+                                    verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 1.2f * dimY);
+                                    verts[1 + (4 * FaceCounter)] = new Vector3(0f, floorHeight + AdjustUpperNorthWest, 1.2f * dimY);
+                                    verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight + AdjustUpperSouthWest, 0f);
+                                    verts[3 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 0f);
+                                    uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);
+                                    uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);
+                                    uvs[2 + (4 * FaceCounter)] = new Vector2(dimY, uv1 - offset);
+                                    uvs[3 + (4 * FaceCounter)] = new Vector2(dimY, uv0 - offset);
+
+                                    break;
+                            }
+
+                            if ((SlopeDir == TILE_SLOPE_N) || (SlopeDir == TILE_SLOPE_S))
+                            {//Insert my verts for this slope
+                                MatsToUse[MatsToUse.GetUpperBound(0) - NumberOfSlopedFaces + SlopesAdded + 1] = MatsToUse[FaceCounter];
+                                int index = uvs.GetUpperBound(0) - ((NumberOfSlopedFaces - SlopesAdded) * 3) + 1;
+                                int origSlopeDir = SlopeDir;
+                                if (Floor == 0)
+                                {//flip my tile types when doing ceilings
+                                    if (SlopeDir == TILE_SLOPE_N)
+                                    {
+                                        SlopeDir = TILE_SLOPE_S;
+                                    }
+                                    else
+                                    {
+                                        SlopeDir = TILE_SLOPE_N;
+                                    }
                                 }
                                 switch (SlopeDir)
                                 {
                                     case TILE_SLOPE_N:
-                                        verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight + AdjustLowerSouth + AdjustLowerWest, 1.2f * dimY);
-                                        verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight + AdjustUpperNorth + AdjustUpperEast, 1.2f * dimY);
-                                        verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight + AdjustUpperNorth + AdjustUpperWest, 1.2f * dimY);
-                                        verts[3 + (4 * FaceCounter)] = new Vector3(0f, baseHeight + AdjustLowerSouth + AdjustLowerEast, 1.2f * dimY);
-                                        uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0Slope - offset);//bottom uv
-                                        uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1Slope - offset);//top uv
-                                        uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, uv1Slope - offset);//top uv
-                                        uvs[3 + (4 * FaceCounter)] = new Vector2(dimX, uv0Slope - offset);//bottom uv
-                                        break;
-
-                                    default:
-
-                                        verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 1.2f * dimY);
-                                        verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight + AdjustUpperNorthEast, 1.2f * dimY);
-                                        verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight + AdjustUpperNorthWest, 1.2f * dimY);
-                                        verts[3 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 1.2f * dimY);
-                                        uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);//bottom uv
-                                        uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);//top uv
-                                        uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, uv1 - offset);//top uv
-                                        uvs[3 + (4 * FaceCounter)] = new Vector2(dimX, uv0 - offset);//bottom uv
-                                        break;
-                                }
-                                if ((SlopeDir == TILE_SLOPE_E) || (SlopeDir == TILE_SLOPE_W))
-                                {//Insert my verts for this slope														
-                                    int index = uvs.GetUpperBound(0) - ((NumberOfSlopedFaces - SlopesAdded) * 3) + 1;
-                                    MatsToUse[MatsToUse.GetUpperBound(0) - NumberOfSlopedFaces + SlopesAdded + 1] = MatsToUse[FaceCounter];
-                                    int origSlopeDir = SlopeDir;
-                                    if (Floor == 0)
-                                    {//flip my tile types when doing ceilings
-                                        if (SlopeDir == TILE_SLOPE_E)
                                         {
-                                            SlopeDir = TILE_SLOPE_W;
-                                        }
-                                        else
-                                        {
-                                            SlopeDir = TILE_SLOPE_E;
-                                        }
-                                    }
 
-                                    switch (SlopeDir)
-                                    {
-                                        case TILE_SLOPE_E:
+                                            verts[index + 0] = new Vector3(0f, slopeHeight + AdjustLowerEast + AdjustLowerSouth, 1.2f * dimY);
+                                            verts[index + 1] = new Vector3(0f, slopeHeight + AdjustUpperWest + AdjustUpperNorth, 1.2f * dimY);
+                                            verts[index + 2] = new Vector3(0f, slopeHeight + AdjustUpperWest + AdjustUpperSouth, 0f);
+                                            float uv0edge;
+                                            float uv1edge;
+                                            float uvToUse;
+                                            if (Floor == 1)
                                             {
-                                                verts[index + 0] = new Vector3(-1.2f * dimX, slopeHeight + AdjustLowerSouth + AdjustLowerWest, 1.2f * dimY);
-                                                verts[index + 1] = new Vector3(-1.2f * dimX, slopeHeight + AdjustUpperNorth + AdjustUpperEast, 1.2f * dimY);
-                                                verts[index + 2] = new Vector3(0f, slopeHeight + AdjustUpperNorth + AdjustUpperWest, 1.2f * dimY);
-                                                float uv0edge;
-                                                float uv1edge;
-                                                float uvToUse;
-                                                if (Floor == 1)
-                                                {
-                                                    CalcUV(Top + Steepness, Top, out uv0edge, out uv1edge);
-                                                    if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
-                                                    uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
-                                                    uvs[index + 1] = new Vector2(0, uvToUse + Steepness * 0.125f); //vertical + scale
-                                                    uvs[index + 2] = new Vector2(1, uvToUse);   //1, vertical alignment	
-                                                }
-                                                else
-                                                {
-                                                    CalcUV(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
-                                                    if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }//Ceil
-                                                    uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
-                                                    uvs[index + 1] = new Vector2(0, uvToUse + Steepness * 0.125f); //vertical + scale
-                                                    uvs[index + 2] = new Vector2(1, uvToUse + Steepness * 0.125f);   //1, vertical alignment	
-                                                }
-                                                break;
-                                            }
-
-                                        case TILE_SLOPE_W:
-                                            {
-
-                                                verts[index + 0] = new Vector3(-1.2f * dimX, slopeHeight + AdjustUpperNorth + AdjustUpperEast, 1.2f * dimY);
-                                                verts[index + 1] = new Vector3(0f, slopeHeight + AdjustUpperNorth + AdjustUpperWest, 1.2f * dimY);
-                                                verts[index + 2] = new Vector3(0f, slopeHeight + AdjustLowerSouth + AdjustLowerEast, 1.2f * dimY);
-
-                                                float uv0edge = 0;
-                                                float uvToUse;
+                                                CalcUV(Top + Steepness, Top, out uv0edge, out uv1edge);
                                                 if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
-                                                float uv1edge;
-                                                if (Floor == 1)
-                                                {
-                                                    CalcUV(Top + Steepness, Top, out uv0edge, out uv1edge);
-                                                    if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
-                                                    uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
-                                                    uvs[index + 1] = new Vector2(1, uvToUse + Steepness * 0.125f); //vertical + scale
-                                                    uvs[index + 2] = new Vector2(1, uvToUse);   //1, vertical alignment	
-                                                }
-                                                else
-                                                {
-                                                    CalcUV(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
-                                                    if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }//Ceil
-
-                                                    uvs[index + 0] = new Vector2(0, uvToUse + Steepness * 0.125f);
-                                                    uvs[index + 1] = new Vector2(1, uvToUse + Steepness * 0.125f);
-                                                    uvs[index + 2] = new Vector2(1, uvToUse);
-                                                }
-                                                break;
+                                                uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
+                                                uvs[index + 1] = new Vector2(0, uvToUse + Steepness * 0.125f); //vertical + scale
+                                                uvs[index + 2] = new Vector2(1, uvToUse);   //1, vertical alignment		
+                                            }
+                                            else
+                                            {
+                                                CalcUV(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
+                                                if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }//Ceil
+                                                uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
+                                                uvs[index + 1] = new Vector2(0, uvToUse + Steepness * 0.125f); //vertical + scale
+                                                uvs[index + 2] = new Vector2(1, uvToUse + Steepness * 0.125f);   //1, vertical alignment	
                                             }
 
-                                    }
 
-                                    SlopesAdded++;
+                                            break;
+                                        }
+
+                                    case TILE_SLOPE_S:
+                                        {
+                                            //ceil n west
+                                            verts[index + 0] = new Vector3(0f, slopeHeight + AdjustUpperWest + AdjustUpperNorth, 1.2f * dimY);
+                                            verts[index + 1] = new Vector3(0f, slopeHeight + AdjustUpperWest + AdjustUpperSouth, 0f);
+                                            verts[index + 2] = new Vector3(0f, slopeHeight + AdjustLowerEast + AdjustLowerNorth, 0f);
+                                            float uv0edge;
+                                            float uv1edge;
+                                            float uvToUse;
+                                            if (Floor == 1)
+                                            {
+                                                CalcUV(Top + Steepness, Top, out uv0edge, out uv1edge);
+                                                if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
+                                                uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
+                                                uvs[index + 1] = new Vector2(1, uvToUse + Steepness * 0.125f); //vertical + scale
+                                                uvs[index + 2] = new Vector2(1, uvToUse);   //1, vertical alignment	
+                                            }
+                                            else
+                                            {
+                                                //uvs[index+0]= new Vector2(0,0);//0, vertical alignment
+                                                //uvs[index+1]= new Vector2(1, (float)Steepness*0.125f); //vertical + scale
+                                                //uvs[index+2]= new Vector2(1, (float)Steepness*0.125f);	//1, vertical alignment	
+                                                CalcUV(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
+                                                if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }//Ceil
+                                                uvs[index + 0] = new Vector2(0, uvToUse + Steepness * 0.125f);
+                                                uvs[index + 1] = new Vector2(1, uvToUse + Steepness * 0.125f);
+                                                uvs[index + 2] = new Vector2(1, uvToUse);
+                                            }
+                                            break;
+                                        }
+
                                 }
 
-                                SlopeDir = oldSlopeDir;
-                                break;
-                            }//end north
+                                SlopesAdded++;
+                            }
 
 
-                        case vSOUTH:
+                            SlopeDir = oldSlopeDir;
+                            break;
+
+                        }//end west
+
+                    case vEAST:
+                        {
+                            //east wall vertices
+                            offset = CalcCeilOffset(fEAST, t);
+
+                            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fEAST, t));
+
+                            int oldSlopeDir = SlopeDir;
+                            if ((Floor == 0) && (SlopeDir == TILE_SLOPE_W))
                             {
-                                //south wall vertices
-                                offset = CalcCeilOffset(fSOUTH, t);
-                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fSOUTH, t));
-                                int oldSlopeDir = SlopeDir;
-                                if ((Floor == 0) && (SlopeDir == TILE_SLOPE_N))
-                                {
-                                    SlopeDir = TILE_SLOPE_S;
+                                SlopeDir = TILE_SLOPE_E;
+                            }
+                            switch (SlopeDir)
+                            {
+                                case TILE_SLOPE_E:
+                                    verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight + AdjustLowerWest + AdjustLowerNorth, 0f);
+                                    verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight + AdjustUpperEast + AdjustUpperSouth, 0f);
+                                    verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight + AdjustUpperEast + AdjustUpperNorth, 1.2f * dimY);
+                                    verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight + AdjustLowerWest + AdjustLowerSouth, 1.2f * dimY);
+                                    uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0Slope - offset);//bottom uv
+                                    uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1Slope - offset);//top uv
+                                    uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, uv1Slope - offset);//top uv
+                                    uvs[3 + (4 * FaceCounter)] = new Vector2(dimX, uv0Slope - offset);//bottom uv
+                                    break;
+                                default:
+                                    verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 0f);
+                                    verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight + AdjustUpperSouthEast, 0f);
+                                    verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight + AdjustUpperNorthEast, 1.2f * dimY);
+                                    verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 1.2f * dimY);
+                                    uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);//0
+                                    uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);//1
+                                    uvs[2 + (4 * FaceCounter)] = new Vector2(dimY, uv1 - offset);//1
+                                    uvs[3 + (4 * FaceCounter)] = new Vector2(dimY, uv0 - offset);//0
+                                    break;
+                            }
+                            if ((SlopeDir == TILE_SLOPE_N) || (SlopeDir == TILE_SLOPE_S))
+                            {//Insert my verts for this slope
+
+                                MatsToUse[MatsToUse.GetUpperBound(0) - NumberOfSlopedFaces + SlopesAdded + 1] = MatsToUse[FaceCounter];
+                                int index = uvs.GetUpperBound(0) - ((NumberOfSlopedFaces - SlopesAdded) * 3) + 1;
+                                int origSlopeDir = SlopeDir;
+                                if (Floor == 0)
+                                {//flip my tile types when doing ceilings
+                                    if (SlopeDir == TILE_SLOPE_N)
+                                    {
+                                        SlopeDir = TILE_SLOPE_S;
+                                    }
+                                    else
+                                    {
+                                        SlopeDir = TILE_SLOPE_N;
+                                    }
                                 }
                                 switch (SlopeDir)
                                 {
                                     case TILE_SLOPE_S:
-                                        verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight + AdjustLowerNorth + AdjustLowerEast, 0f);
-                                        verts[1 + (4 * FaceCounter)] = new Vector3(0f, floorHeight + AdjustUpperSouth + AdjustUpperWest, 0f);
-                                        verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight + AdjustUpperSouth + AdjustUpperEast, 0f);
-                                        verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight + AdjustLowerNorth + AdjustLowerWest, 0f);
-                                        uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0Slope - offset);//bottom uv
-                                        uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1Slope - offset);//top uv
-                                        uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, uv1Slope - offset);//top uv
-                                        uvs[3 + (4 * FaceCounter)] = new Vector2(dimX, uv0Slope - offset);//bottom uv
-                                        break;
-                                    default:
-                                        verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 0f);
-                                        verts[1 + (4 * FaceCounter)] = new Vector3(0f, floorHeight + AdjustUpperSouthWest, 0f);
-                                        verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight + AdjustUpperSouthEast, 0f);
-                                        verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 0f);
-                                        uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);
-                                        uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);
-                                        uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, uv1 - offset);
-                                        uvs[3 + (4 * FaceCounter)] = new Vector2(dimX, uv0 - offset);
-                                        break;
-                                }
-
-                                if ((SlopeDir == TILE_SLOPE_E) || (SlopeDir == TILE_SLOPE_W))
-                                {//Insert my verts for this slope
-
-                                    int origSlopeDir = SlopeDir;
-                                    if (Floor == 0)
-                                    {//flip my tile types when doing ceilings
-                                        if (SlopeDir == TILE_SLOPE_E)
                                         {
-                                            SlopeDir = TILE_SLOPE_W;
+                                            //ceil_n east		
+                                            verts[index + 0] = new Vector3(-1.2f * dimX, slopeHeight + AdjustLowerWest + AdjustLowerNorth, 0f);
+                                            verts[index + 1] = new Vector3(-1.2f * dimX, slopeHeight + AdjustUpperEast + AdjustUpperSouth, 0f);
+                                            verts[index + 2] = new Vector3(-1.2f * dimX, slopeHeight + AdjustUpperEast + AdjustUpperNorth, 1.2f * dimY);
+                                            float uv0edge;
+                                            float uv1edge;
+                                            float uvToUse;
+                                            if (Floor == 1)
+                                            {
+                                                CalcUV(Top + Steepness, Top, out uv0edge, out uv1edge);
+                                                if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
+                                                uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
+                                                uvs[index + 1] = new Vector2(0, uvToUse + Steepness * 0.125f); //vertical + scale
+                                                uvs[index + 2] = new Vector2(1, uvToUse);   //1, vertical alignment	
+                                            }
+                                            else
+                                            {
+                                                CalcUV(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
+                                                if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }//Ceil
+                                                uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
+                                                uvs[index + 1] = new Vector2(0, uvToUse + Steepness * 0.125f); //vertical + scale
+                                                uvs[index + 2] = new Vector2(1, uvToUse + Steepness * 0.125f);   //1, vertical alignment	
+                                            }
+                                            break;
                                         }
-                                        else
+
+                                    case TILE_SLOPE_N:
                                         {
-                                            SlopeDir = TILE_SLOPE_E;
+                                            //hey east on tile s ceil
+                                            verts[index + 0] = new Vector3(-1.2f * dimX, slopeHeight + AdjustUpperEast + AdjustUpperSouth, 0f);
+                                            verts[index + 1] = new Vector3(-1.2f * dimX, slopeHeight + AdjustUpperEast + AdjustUpperNorth, 1.2f * dimY);
+                                            verts[index + 2] = new Vector3(-1.2f * dimX, slopeHeight + AdjustLowerWest + AdjustLowerSouth, 1.2f * dimY);
+                                            float uv0edge;
+                                            float uv1edge;
+                                            float uvToUse;
+                                            //if (t.shockEastOffset==0){uvToUse=+uv1edge;}else{uvToUse=-uv0edge;}
+                                            //uvToUse=uv0edge;
+                                            if (Floor == 1)
+                                            {
+                                                CalcUV(Top + Steepness, Top, out uv0edge, out uv1edge);
+                                                if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
+                                                uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
+                                                uvs[index + 1] = new Vector2(1, uvToUse + Steepness * 0.125f); //vertical + scale
+                                                uvs[index + 2] = new Vector2(1, uvToUse);   //1, vertical alignment	
+                                            }
+                                            else
+                                            {
+                                                CalcUV(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
+                                                if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }//Ceil
+                                                uvs[index + 0] = new Vector2(0, uvToUse + Steepness * 0.125f);
+                                                uvs[index + 1] = new Vector2(1, uvToUse + Steepness * 0.125f);
+                                                uvs[index + 2] = new Vector2(1, uvToUse);
+                                            }
+                                            break;
                                         }
-                                    }
 
 
-                                    int index = uvs.GetUpperBound(0) - ((NumberOfSlopedFaces - SlopesAdded) * 3) + 1;
-                                    MatsToUse[MatsToUse.GetUpperBound(0) - NumberOfSlopedFaces + SlopesAdded + 1] = MatsToUse[FaceCounter];
-                                    switch (SlopeDir)
-                                    {
-                                        case TILE_SLOPE_W:
-                                            {
-
-                                                verts[index + 0] = new Vector3(0f, slopeHeight + AdjustLowerNorth + AdjustLowerEast, 0f);
-                                                verts[index + 1] = new Vector3(0f, slopeHeight + AdjustUpperSouth + AdjustUpperWest, 0f);
-                                                verts[index + 2] = new Vector3(-1.2f * dimX, slopeHeight + AdjustUpperSouth + AdjustUpperEast, 0f);
-                                                float uv0edge;
-                                                float uv1edge;
-                                                float uvToUse;
-                                                if (Floor == 1)
-                                                {
-                                                    CalcUV(Top + Steepness, Top, out uv0edge, out uv1edge);
-                                                    if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
-                                                    uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
-                                                    uvs[index + 1] = new Vector2(0, uvToUse + Steepness * 0.125f); //vertical + scale
-                                                    uvs[index + 2] = new Vector2(1, uvToUse);   //1, vertical alignment	
-                                                }
-                                                else
-                                                {
-                                                    CalcUV(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
-                                                    if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }//Ceil
-                                                    uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
-                                                    uvs[index + 1] = new Vector2(0, uvToUse + Steepness * 0.125f); //vertical + scale
-                                                    uvs[index + 2] = new Vector2(1, uvToUse + Steepness * 0.125f);   //1, vertical alignment	
-                                                }
-                                                break;
-                                            }
-
-                                        case TILE_SLOPE_E:
-                                            {
-
-                                                verts[index + 0] = new Vector3(0f, slopeHeight + AdjustLowerNorth + AdjustLowerEast, 0f);
-                                                verts[index + 1] = new Vector3(-1.2f * dimX, slopeHeight + AdjustUpperSouth + AdjustUpperEast, 0f);
-                                                verts[index + 2] = new Vector3(-1.2f * dimX, slopeHeight + AdjustLowerNorth + AdjustLowerWest, 0f);
-                                                float uv0edge;
-                                                float uv1edge;
-                                                float uvToUse;
-                                                if (Floor == 1)
-                                                {
-                                                    CalcUV(Top + Steepness, Top, out uv0edge, out uv1edge);
-                                                    if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
-                                                    uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
-                                                    uvs[index + 1] = new Vector2(1, uvToUse + Steepness * 0.125f); //vertical + scale
-                                                    uvs[index + 2] = new Vector2(1, uvToUse);   //1, vertical alignment	
-                                                }
-                                                else
-                                                {
-                                                    CalcUV(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
-                                                    if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }//Ceil
-                                                    uvs[index + 0] = new Vector2(0, uvToUse + Steepness * 0.125f);
-                                                    uvs[index + 1] = new Vector2(1, uvToUse + Steepness * 0.125f);
-                                                    uvs[index + 2] = new Vector2(1, uvToUse);
-                                                }
-                                                break;
-                                            }
-
-                                    }
-
-                                    SlopesAdded++;
                                 }
 
-                                SlopeDir = oldSlopeDir;
-                                break;
-                            }//end south
-
-                        case vWEST:
-                            {
-                                offset = CalcCeilOffset(fWEST, t);
-
-                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fWEST, t));
-
-                                int oldSlopeDir = SlopeDir;
-                                if ((Floor == 0) && (SlopeDir == TILE_SLOPE_E))
-                                {
-                                    SlopeDir = TILE_SLOPE_W;
-                                }
-
-                                switch (SlopeDir)
-                                {
-                                    case TILE_SLOPE_W:
-                                        verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight + AdjustLowerEast + AdjustLowerSouth, 1.2f * dimY);
-                                        verts[1 + (4 * FaceCounter)] = new Vector3(0f, floorHeight + AdjustUpperWest + AdjustUpperNorth, 1.2f * dimY);
-                                        verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight + AdjustUpperWest + AdjustUpperSouth, 0f);
-                                        verts[3 + (4 * FaceCounter)] = new Vector3(0f, baseHeight + AdjustLowerEast + AdjustLowerNorth, 0f);
-                                        uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0Slope - offset);//bottom uv
-                                        uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1Slope - offset);//top uv
-                                        uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, uv1Slope - offset);//top uv
-                                        uvs[3 + (4 * FaceCounter)] = new Vector2(dimX, uv0Slope - offset);//bottom uv
-                                        break;
-                                    default:
-                                        verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 1.2f * dimY);
-                                        verts[1 + (4 * FaceCounter)] = new Vector3(0f, floorHeight + AdjustUpperNorthWest, 1.2f * dimY);
-                                        verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight + AdjustUpperSouthWest, 0f);
-                                        verts[3 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 0f);
-                                        uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);
-                                        uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);
-                                        uvs[2 + (4 * FaceCounter)] = new Vector2(dimY, uv1 - offset);
-                                        uvs[3 + (4 * FaceCounter)] = new Vector2(dimY, uv0 - offset);
-
-                                        break;
-                                }
-
-                                if ((SlopeDir == TILE_SLOPE_N) || (SlopeDir == TILE_SLOPE_S))
-                                {//Insert my verts for this slope
-                                    MatsToUse[MatsToUse.GetUpperBound(0) - NumberOfSlopedFaces + SlopesAdded + 1] = MatsToUse[FaceCounter];
-                                    int index = uvs.GetUpperBound(0) - ((NumberOfSlopedFaces - SlopesAdded) * 3) + 1;
-                                    int origSlopeDir = SlopeDir;
-                                    if (Floor == 0)
-                                    {//flip my tile types when doing ceilings
-                                        if (SlopeDir == TILE_SLOPE_N)
-                                        {
-                                            SlopeDir = TILE_SLOPE_S;
-                                        }
-                                        else
-                                        {
-                                            SlopeDir = TILE_SLOPE_N;
-                                        }
-                                    }
-                                    switch (SlopeDir)
-                                    {
-                                        case TILE_SLOPE_N:
-                                            {
-
-                                                verts[index + 0] = new Vector3(0f, slopeHeight + AdjustLowerEast + AdjustLowerSouth, 1.2f * dimY);
-                                                verts[index + 1] = new Vector3(0f, slopeHeight + AdjustUpperWest + AdjustUpperNorth, 1.2f * dimY);
-                                                verts[index + 2] = new Vector3(0f, slopeHeight + AdjustUpperWest + AdjustUpperSouth, 0f);
-                                                float uv0edge;
-                                                float uv1edge;
-                                                float uvToUse;
-                                                if (Floor == 1)
-                                                {
-                                                    CalcUV(Top + Steepness, Top, out uv0edge, out uv1edge);
-                                                    if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
-                                                    uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
-                                                    uvs[index + 1] = new Vector2(0, uvToUse + Steepness * 0.125f); //vertical + scale
-                                                    uvs[index + 2] = new Vector2(1, uvToUse);   //1, vertical alignment		
-                                                }
-                                                else
-                                                {
-                                                    CalcUV(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
-                                                    if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }//Ceil
-                                                    uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
-                                                    uvs[index + 1] = new Vector2(0, uvToUse + Steepness * 0.125f); //vertical + scale
-                                                    uvs[index + 2] = new Vector2(1, uvToUse + Steepness * 0.125f);   //1, vertical alignment	
-                                                }
-
-
-                                                break;
-                                            }
-
-                                        case TILE_SLOPE_S:
-                                            {
-                                                //ceil n west
-                                                verts[index + 0] = new Vector3(0f, slopeHeight + AdjustUpperWest + AdjustUpperNorth, 1.2f * dimY);
-                                                verts[index + 1] = new Vector3(0f, slopeHeight + AdjustUpperWest + AdjustUpperSouth, 0f);
-                                                verts[index + 2] = new Vector3(0f, slopeHeight + AdjustLowerEast + AdjustLowerNorth, 0f);
-                                                float uv0edge;
-                                                float uv1edge;
-                                                float uvToUse;
-                                                if (Floor == 1)
-                                                {
-                                                    CalcUV(Top + Steepness, Top, out uv0edge, out uv1edge);
-                                                    if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
-                                                    uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
-                                                    uvs[index + 1] = new Vector2(1, uvToUse + Steepness * 0.125f); //vertical + scale
-                                                    uvs[index + 2] = new Vector2(1, uvToUse);   //1, vertical alignment	
-                                                }
-                                                else
-                                                {
-                                                    CalcUV(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
-                                                    if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }//Ceil
-                                                    uvs[index + 0] = new Vector2(0, uvToUse + Steepness * 0.125f);
-                                                    uvs[index + 1] = new Vector2(1, uvToUse + Steepness * 0.125f);
-                                                    uvs[index + 2] = new Vector2(1, uvToUse);
-                                                }
-                                                break;
-                                            }
-
-                                    }
-
-                                    SlopesAdded++;
-                                }
-
-
-                                SlopeDir = oldSlopeDir;
-                                break;
-
-                            }//end west
-
-                        case vEAST:
-                            {
-                                //east wall vertices
-                                offset = CalcCeilOffset(fEAST, t);
-
-                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fEAST, t));
-
-                                int oldSlopeDir = SlopeDir;
-                                if ((Floor == 0) && (SlopeDir == TILE_SLOPE_W))
-                                {
-                                    SlopeDir = TILE_SLOPE_E;
-                                }
-                                switch (SlopeDir)
-                                {
-                                    case TILE_SLOPE_E:
-                                        verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight + AdjustLowerWest + AdjustLowerNorth, 0f);
-                                        verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight + AdjustUpperEast + AdjustUpperSouth, 0f);
-                                        verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight + AdjustUpperEast + AdjustUpperNorth, 1.2f * dimY);
-                                        verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight + AdjustLowerWest + AdjustLowerSouth, 1.2f * dimY);
-                                        uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0Slope - offset);//bottom uv
-                                        uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1Slope - offset);//top uv
-                                        uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, uv1Slope - offset);//top uv
-                                        uvs[3 + (4 * FaceCounter)] = new Vector2(dimX, uv0Slope - offset);//bottom uv
-                                        break;
-                                    default:
-                                        verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 0f);
-                                        verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight + AdjustUpperSouthEast, 0f);
-                                        verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight + AdjustUpperNorthEast, 1.2f * dimY);
-                                        verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 1.2f * dimY);
-                                        uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);//0
-                                        uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);//1
-                                        uvs[2 + (4 * FaceCounter)] = new Vector2(dimY, uv1 - offset);//1
-                                        uvs[3 + (4 * FaceCounter)] = new Vector2(dimY, uv0 - offset);//0
-                                        break;
-                                }
-                                if ((SlopeDir == TILE_SLOPE_N) || (SlopeDir == TILE_SLOPE_S))
-                                {//Insert my verts for this slope
-
-                                    MatsToUse[MatsToUse.GetUpperBound(0) - NumberOfSlopedFaces + SlopesAdded + 1] = MatsToUse[FaceCounter];
-                                    int index = uvs.GetUpperBound(0) - ((NumberOfSlopedFaces - SlopesAdded) * 3) + 1;
-                                    int origSlopeDir = SlopeDir;
-                                    if (Floor == 0)
-                                    {//flip my tile types when doing ceilings
-                                        if (SlopeDir == TILE_SLOPE_N)
-                                        {
-                                            SlopeDir = TILE_SLOPE_S;
-                                        }
-                                        else
-                                        {
-                                            SlopeDir = TILE_SLOPE_N;
-                                        }
-                                    }
-                                    switch (SlopeDir)
-                                    {
-                                        case TILE_SLOPE_S:
-                                            {
-                                                //ceil_n east		
-                                                verts[index + 0] = new Vector3(-1.2f * dimX, slopeHeight + AdjustLowerWest + AdjustLowerNorth, 0f);
-                                                verts[index + 1] = new Vector3(-1.2f * dimX, slopeHeight + AdjustUpperEast + AdjustUpperSouth, 0f);
-                                                verts[index + 2] = new Vector3(-1.2f * dimX, slopeHeight + AdjustUpperEast + AdjustUpperNorth, 1.2f * dimY);
-                                                float uv0edge;
-                                                float uv1edge;
-                                                float uvToUse;
-                                                if (Floor == 1)
-                                                {
-                                                    CalcUV(Top + Steepness, Top, out uv0edge, out uv1edge);
-                                                    if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
-                                                    uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
-                                                    uvs[index + 1] = new Vector2(0, uvToUse + Steepness * 0.125f); //vertical + scale
-                                                    uvs[index + 2] = new Vector2(1, uvToUse);   //1, vertical alignment	
-                                                }
-                                                else
-                                                {
-                                                    CalcUV(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
-                                                    if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }//Ceil
-                                                    uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
-                                                    uvs[index + 1] = new Vector2(0, uvToUse + Steepness * 0.125f); //vertical + scale
-                                                    uvs[index + 2] = new Vector2(1, uvToUse + Steepness * 0.125f);   //1, vertical alignment	
-                                                }
-                                                break;
-                                            }
-
-                                        case TILE_SLOPE_N:
-                                            {
-                                                //hey east on tile s ceil
-                                                verts[index + 0] = new Vector3(-1.2f * dimX, slopeHeight + AdjustUpperEast + AdjustUpperSouth, 0f);
-                                                verts[index + 1] = new Vector3(-1.2f * dimX, slopeHeight + AdjustUpperEast + AdjustUpperNorth, 1.2f * dimY);
-                                                verts[index + 2] = new Vector3(-1.2f * dimX, slopeHeight + AdjustLowerWest + AdjustLowerSouth, 1.2f * dimY);
-                                                float uv0edge;
-                                                float uv1edge;
-                                                float uvToUse;
-                                                //if (t.shockEastOffset==0){uvToUse=+uv1edge;}else{uvToUse=-uv0edge;}
-                                                //uvToUse=uv0edge;
-                                                if (Floor == 1)
-                                                {
-                                                    CalcUV(Top + Steepness, Top, out uv0edge, out uv1edge);
-                                                    if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
-                                                    uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
-                                                    uvs[index + 1] = new Vector2(1, uvToUse + Steepness * 0.125f); //vertical + scale
-                                                    uvs[index + 2] = new Vector2(1, uvToUse);   //1, vertical alignment	
-                                                }
-                                                else
-                                                {
-                                                    CalcUV(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
-                                                    if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }//Ceil
-                                                    uvs[index + 0] = new Vector2(0, uvToUse + Steepness * 0.125f);
-                                                    uvs[index + 1] = new Vector2(1, uvToUse + Steepness * 0.125f);
-                                                    uvs[index + 2] = new Vector2(1, uvToUse);
-                                                }
-                                                break;
-                                            }
-
-
-                                    }
-
-                                    SlopesAdded++;
-                                }
-
-                                SlopeDir = oldSlopeDir;
-                                break;
-                            }//end east
-
-
-                        case vBOTTOM:
-                            {
-                                //bottom wall vertices
-                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(FloorTexture(fCEIL, t));
-                                //TODO:Get the lower face adjustments for this (shock only)
-
-                                verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight + AdjustLowerSouth + AdjustLowerEast + AdjustLowerSouthEast, 1.2f * dimY);
-                                verts[1 + (4 * FaceCounter)] = new Vector3(0f, baseHeight + AdjustLowerEast + AdjustLowerNorth + AdjustLowerNorthEast, 0f);
-                                verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight + AdjustLowerNorth + AdjustLowerWest + AdjustLowerNorthWest, 0f);
-                                verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight + AdjustLowerSouth + AdjustLowerWest + AdjustLowerSouthWest, 1.2f * dimY);
-
-                                //Change default UVs
-                                uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, 0.0f);
-                                uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, 1.0f * dimY);
-                                uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, 1.0f * dimY);
-                                uvs[3 + (4 * FaceCounter)] = new Vector2(dimX, 0.0f);
-                                break;
+                                SlopesAdded++;
                             }
-                    }
-                    FaceCounter++;
+
+                            SlopeDir = oldSlopeDir;
+                            break;
+                        }//end east
+
+
+                    case vBOTTOM:
+                        {
+                            //bottom wall vertices
+                            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(FloorTexture(fCEIL, t));
+
+                            verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight + AdjustLowerSouth + AdjustLowerEast + AdjustLowerSouthEast, 1.2f * dimY);
+                            verts[1 + (4 * FaceCounter)] = new Vector3(0f, baseHeight + AdjustLowerEast + AdjustLowerNorth + AdjustLowerNorthEast, 0f);
+                            verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight + AdjustLowerNorth + AdjustLowerWest + AdjustLowerNorthWest, 0f);
+                            verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight + AdjustLowerSouth + AdjustLowerWest + AdjustLowerSouthWest, 1.2f * dimY);
+
+                            //Change default UVs
+                            uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, 0.0f);
+                            uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, 1.0f * dimY);
+                            uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, 1.0f * dimY);
+                            uvs[3 + (4 * FaceCounter)] = new Vector2(dimX, 0.0f);
+                            break;
+                        }
                 }
+                FaceCounter++;
             }
-
-            //Create the normals
-            var normals = new List<Vector3>();
-            foreach (var vert in verts)
-            {
-                normals.Add(vert.Normalized());
-            }
-
-            //Declare the mesh
-            var a_mesh = new ArrayMesh(); //= Mesh as ArrayMesh;
-
-            //Apply the uvs and create my tris
-            //mesh.vertices = verts;
-            //mesh.uv = uvs;
-            FaceCounter = 0;
-
-            int[] indices = new int[6];
-            int LastIndex = 0;
-            for (int i = 0; i < 6; i++)
-            {
-                if (t.VisibleFaces[i] == true)
-                {
-                    indices[0] = 0 + (4 * FaceCounter);
-                    indices[1] = 1 + (4 * FaceCounter);
-                    indices[2] = 2 + (4 * FaceCounter);
-                    indices[3] = 0 + (4 * FaceCounter);
-                    indices[4] = 2 + (4 * FaceCounter);
-                    indices[5] = 3 + (4 * FaceCounter);
-                    LastIndex = 3 + (4 * FaceCounter);
-                    //mesh.SetTriangles(tris, FaceCounter);
-
-                    AddSurfaceToMesh(verts, uvs, MatsToUse, FaceCounter, a_mesh, normals, indices);
-                }
-            }
-            //Insert any sloped tris at the end
-            indices = new int[3];
-            //FaceCounter=0;
-            SlopesAdded = 0;
-            LastIndex++;
-            for (int i = 0; i < 6; i++)
-            {
-                if (t.VisibleFaces[i] == true)
-                {
-                    if (
-                            (((SlopeDir == TILE_SLOPE_N) || (SlopeDir == TILE_SLOPE_S)) && ((i == vWEST) || (i == vEAST)))
-                            ||
-                            (((SlopeDir == TILE_SLOPE_E) || (SlopeDir == TILE_SLOPE_W)) && ((i == vNORTH) || (i == vSOUTH)))
-                    )
-                    {
-                        indices[0] = 0 + LastIndex + (3 * SlopesAdded);
-                        indices[1] = 1 + LastIndex + (3 * SlopesAdded);
-                        indices[2] = 2 + LastIndex + (3 * SlopesAdded);
-
-                        //DO NOT REFACTOR UNTIL THE MATERIALS CODE BELOW IS CHECKED>
-                        //NEEED TO confrim if material should be matstouse[facecounter] or matstouser[facecounter+slopesadded]
-                        //mesh.SetTriangles(indices, FaceCounter + SlopesAdded);
-                        var surfaceArray = new Godot.Collections.Array();
-                        surfaceArray.Resize((int)Mesh.ArrayType.Max);
-
-                        surfaceArray[(int)Mesh.ArrayType.Vertex] = verts; //.ToArray();
-                        surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs; //.ToArray();
-                        surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
-                        surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
-                        //Add the new surface to the mesh
-                        a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
-                        var material = new StandardMaterial3D(); // or your shader...
-                        material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
-                        material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;                      
-                        
-                        //a_mesh.SurfaceSetMaterial(FaceCounter + SlopesAdded, material);
-                        SlopesAdded++;
-                    }
-                }
-            }
-
-
-return CreateMeshInstance(parent,x,y,TileName,a_mesh);
-
         }
+
+        //Apply the uvs and create my tris
+        // mesh.vertices = verts;
+        // mesh.uv = uvs;
+        FaceCounter = 0;
+
+        var normals = new List<Vector3>();
+        foreach (var vert in verts)
+        {
+            normals.Add(vert.Normalized());
+        }
+
+        int[] indices = new int[6];
+        int LastIndex = 0;
+        for (int i = 0; i < 6; i++)
+        {
+            if (t.VisibleFaces[i] == true)
+            {
+                indices[0] = 0 + (4 * FaceCounter);
+                indices[1] = 1 + (4 * FaceCounter);
+                indices[2] = 2 + (4 * FaceCounter);
+                indices[3] = 0 + (4 * FaceCounter);
+                indices[4] = 2 + (4 * FaceCounter);
+                indices[5] = 3 + (4 * FaceCounter);
+                LastIndex = 3 + (4 * FaceCounter);
+                //mesh.SetTriangles(indices, FaceCounter);
+                AddSurfaceToMesh(verts,uvs,MatsToUse,FaceCounter,a_mesh,normals,indices);
+                FaceCounter++;
+            }
+        }
+        //Insert any sloped tris at the end
+        indices = new int[3];
+        //FaceCounter=0;
+        SlopesAdded = 0;
+        LastIndex++;
+        for (int i = 0; i < 6; i++)
+        {
+            if (t.VisibleFaces[i] == true)
+            {
+                if (
+                        (((SlopeDir == TILE_SLOPE_N) || (SlopeDir == TILE_SLOPE_S)) && ((i == vWEST) || (i == vEAST)))
+                        ||
+                        (((SlopeDir == TILE_SLOPE_E) || (SlopeDir == TILE_SLOPE_W)) && ((i == vNORTH) || (i == vSOUTH)))
+                )
+                {
+                    indices[0] = 0 + LastIndex + (3 * SlopesAdded);
+                    indices[1] = 1 + LastIndex + (3 * SlopesAdded);
+                    indices[2] = 2 + LastIndex + (3 * SlopesAdded);
+                    //mesh.SetTriangles(indices, FaceCounter + SlopesAdded);
+                    AddSurfaceToMesh(verts,uvs,MatsToUse,FaceCounter+SlopesAdded,a_mesh,normals,indices);
+                    SlopesAdded++;
+                }
+            }
+        }
+
+        return CreateMeshInstance(parent,x,y,TileName,a_mesh);
+        // mr.materials = MatsToUse;
+        // mesh.RecalculateNormals();
+        // mesh.RecalculateBounds();
+        // mf.mesh = mesh;
+        // if (EnableCollision)
+        // {
+        //     MeshCollider mc = Tile.AddComponent<MeshCollider>();
+        //     mc.sharedMesh = null;
+        //     mc.sharedMesh = mesh;
+        // }
+        //mc.sharedMesh=mesh;
+
+    }
+
+
+
+
+
+
 
         /// <summary>
         /// Renders the floor of a diag tile
@@ -3136,14 +3146,14 @@ return CreateMeshInstance(parent,x,y,TileName,a_mesh);
                         indices[4] = 2 + (4 * FaceCounter);
                         indices[5] = 3 + (4 * FaceCounter);
                         // mesh.SetTriangles(indices, FaceCounter);
-                         AddSurfaceToMesh(verts, uvs, MatsToUse, FaceCounter, a_mesh, normals, indices);
+                        AddSurfaceToMesh(verts, uvs, MatsToUse, FaceCounter, a_mesh, normals, indices);
                     }
                     FaceCounter++;
                     curFace++;
                 }
             }
 
-return CreateMeshInstance(parent,x,y,TileName,a_mesh);
+            return CreateMeshInstance(parent, x, y, TileName, a_mesh);
 
             // mr.materials = MatsToUse;//mats;
             // mesh.RecalculateNormals();
@@ -3159,17 +3169,17 @@ return CreateMeshInstance(parent,x,y,TileName,a_mesh);
         }
 
 
-    /// <summary>
-    /// Adds a surface built from the various uv, vertices and materials arrays to a mesh
-    /// </summary>
-    /// <param name="verts"></param>
-    /// <param name="uvs"></param>
-    /// <param name="MatsToUse"></param>
-    /// <param name="FaceCounter"></param>
-    /// <param name="a_mesh"></param>
-    /// <param name="normals"></param>
-    /// <param name="indices"></param>
-        private static void AddSurfaceToMesh(Vector3[] verts, Vector2[] uvs, Texture2D[] MatsToUse, int FaceCounter, ArrayMesh a_mesh, List<Vector3> normals, int[] indices)
+        /// <summary>
+        /// Adds a surface built from the various uv, vertices and materials arrays to a mesh
+        /// </summary>
+        /// <param name="verts"></param>
+        /// <param name="uvs"></param>
+        /// <param name="MatsToUse"></param>
+        /// <param name="FaceCounter"></param>
+        /// <param name="a_mesh"></param>
+        /// <param name="normals"></param>
+        /// <param name="indices"></param>
+        private static void AddSurfaceToMesh(Vector3[] verts, Vector2[] uvs, Texture2D[] MatsToUse, int FaceCounter, ArrayMesh a_mesh, List<Vector3> normals, int[] indices, int faceCounterAdj=0)
         {
             var surfaceArray = new Godot.Collections.Array();
             surfaceArray.Resize((int)Mesh.ArrayType.Max);
@@ -3185,7 +3195,7 @@ return CreateMeshInstance(parent,x,y,TileName,a_mesh);
             var material = new StandardMaterial3D(); // or your shader...
             material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
             material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
-            a_mesh.SurfaceSetMaterial(FaceCounter, material);
+            a_mesh.SurfaceSetMaterial(FaceCounter+faceCounterAdj, material);
         }
 
 
