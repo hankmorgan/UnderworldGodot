@@ -138,7 +138,7 @@ namespace Underworld
             {
                 if (!UpdateOnly)
                 {
-                    var output = RenderCeiling(parent, 0, 0, CEILING_HEIGHT, CEILING_HEIGHT + CEIL_ADJ, Level.UWCeilingTexture, "CEILING");
+                    var output = RenderCeiling(parent, 0, 0, CEILING_HEIGHT, CEILING_HEIGHT + CEIL_ADJ, Level.UWCeilingTexture, "CEILING",Level);
                 }
             }
             if (!UpdateOnly)
@@ -669,20 +669,20 @@ namespace Underworld
         /// <param name="Bottom">Bottom.</param>
         /// <param name="Top">Top.</param>
         /// <param name="TileName">Tile name.</param>
-        static Node3D RenderCeiling(Node3D parent, int x, int y, int Bottom, int Top, int CeilingTexture, string TileName)
+        static Node3D RenderCeiling(Node3D parent, int x, int y, int Bottom, int Top, int CeilingTexture, string TileName, Underworld.TileMap map)
         {
-            return null;
+            //return null;
 
-            // //Draw a cube with no slopes.
-            // int NumberOfVisibleFaces = 1;
+            //Draw a cube with no slopes.
+            int NumberOfVisibleFaces = 1;
 
-            // //Allocate enough verticea and UVs for the faces
-            // Vector3[] verts = new Vector3[NumberOfVisibleFaces * 4];
-            // Vector2[] uvs = new Vector2[NumberOfVisibleFaces * 4];
-            // float floorHeight = (float)(Top * 0.15f);
-            // float baseHeight = (float)(Bottom * 0.15f);
+            //Allocate enough verticea and UVs for the faces
+            Vector3[] verts = new Vector3[NumberOfVisibleFaces * 4];
+            Vector2[] uvs = new Vector2[NumberOfVisibleFaces * 4];
+            float floorHeight = (float)(Top * 0.15f);
+            float baseHeight = (float)(Bottom * 0.15f);
 
-            // //Now create the mesh
+            //Now create the mesh
             // Node3DTile = new GameObject(TileName)
             // {
             //     layer = LayerMask.NameToLayer("MapMesh")
@@ -699,40 +699,50 @@ namespace Underworld
             //     subMeshCount = NumberOfVisibleFaces//Should be no of visible faces
             // };
 
-            // Material[] MatsToUse = new Material[NumberOfVisibleFaces];
-            // //Now allocate the visible faces to triangles.
-            // int FaceCounter = 0;//Tracks which number face we are now on.
-            // float PolySize = Top - Bottom;
-            // float uv0 = (float)(Bottom * 0.125f);
-            // float uv1 = -(PolySize / 8.0f) + (uv0);
-            // // float offset = 0f;
+            var a_mesh = new ArrayMesh();
 
-            // //bottom wall vertices
-            // MatsToUse[FaceCounter] = GameWorldController.instance.MaterialMasterList[CurrentTileMap().texture_map[CeilingTexture]];
-            // verts[0 + (4 * FaceCounter)] = new Vector3(0f, 1.2f * 64, baseHeight);
-            // verts[1 + (4 * FaceCounter)] = new Vector3(0f, 0f, baseHeight);
-            // verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * 64, 0f, baseHeight);
-            // verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * 64, 1.2f * 64, baseHeight);
-            // //Change default UVs
-            // uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, 0.0f);
-            // uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, 1.0f * 64);
-            // uvs[2 + (4 * FaceCounter)] = new Vector2(64, 1.0f * 64);
-            // uvs[3 + (4 * FaceCounter)] = new Vector2(64, 0.0f);
+            Texture2D[] MatsToUse = new Texture2D[NumberOfVisibleFaces];
+            //Now allocate the visible faces to triangles.
+            int FaceCounter = 0;//Tracks which number face we are now on.
+            float PolySize = Top - Bottom;
+            float uv0 = (float)(Bottom * 0.125f);
+            float uv1 = -(PolySize / 8.0f) + (uv0);
+            // float offset = 0f;
 
+            //bottom wall vertices
+            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(map.texture_map[CeilingTexture]);
+            verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 1.2f * 64);
+            verts[1 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 0f);
+            verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * 64, baseHeight, 0f);
+            verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * 64, baseHeight, 1.2f * 64);
+            //Change default UVs
+            uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, 0.0f);
+            uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, 1.0f * 64);
+            uvs[2 + (4 * FaceCounter)] = new Vector2(64, 1.0f * 64);
+            uvs[3 + (4 * FaceCounter)] = new Vector2(64, 0.0f);
 
+            var normals = new List<Vector3>();
+            foreach (var vert in verts)
+            {
+                normals.Add(vert.Normalized());
+            }
 
-            // //Apply the uvs and create my tris
+            //Apply the uvs and create my tris
             // mesh.vertices = verts;
             // mesh.uv = uvs;
-            // FaceCounter = 0;
-            // int[] tris = new int[6];
-            // tris[0] = 0 + (4 * FaceCounter);
-            // tris[1] = 1 + (4 * FaceCounter);
-            // tris[2] = 2 + (4 * FaceCounter);
-            // tris[3] = 0 + (4 * FaceCounter);
-            // tris[4] = 2 + (4 * FaceCounter);
-            // tris[5] = 3 + (4 * FaceCounter);
-            // mesh.SetTriangles(tris, FaceCounter);
+            FaceCounter = 0;
+            int[] indices = new int[6];
+            indices[0] = 0 + (4 * FaceCounter);
+            indices[1] = 1 + (4 * FaceCounter);
+            indices[2] = 2 + (4 * FaceCounter);
+            indices[3] = 0 + (4 * FaceCounter);
+            indices[4] = 2 + (4 * FaceCounter);
+            indices[5] = 3 + (4 * FaceCounter);
+            //mesh.SetTriangles(indices, FaceCounter);
+            AddSurfaceToMesh(verts, uvs, MatsToUse, 0, a_mesh, normals, indices);
+
+            return CreateMeshInstance(parent, x, y, TileName, a_mesh);
+
             // mr.materials = MatsToUse;//mats;
             // mesh.RecalculateNormals();
             // mesh.RecalculateBounds();
@@ -746,6 +756,15 @@ namespace Underworld
             // return Tile;
         }
 
+        private static Node3D CreateMeshInstance(Node3D parent, int x, int y, string TileName, ArrayMesh a_mesh)
+        {
+            var final_mesh = new MeshInstance3D();
+            parent.AddChild(final_mesh);
+            final_mesh.Position = new Vector3(x * -1.2f, 0.0f, y * 1.2f);
+            final_mesh.Name = TileName;
+            final_mesh.Mesh = a_mesh;
+            return final_mesh;
+        }
 
 
         static void RenderDiagSETile(Node3D parent, int x, int y, TileInfo t, bool Water, bool invert)
@@ -1126,32 +1145,13 @@ namespace Underworld
                     //mesh.SetTriangles(indices, FaceCounter);
 
                     //Create the surface.
-                    var surfaceArray = new Godot.Collections.Array();
-                    surfaceArray.Resize((int)Mesh.ArrayType.Max);
-
-                    surfaceArray[(int)Mesh.ArrayType.Vertex] = verts; //.ToArray();
-                    surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs; //.ToArray();
-                    surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
-                    surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
-
-                    //Add the new surface to the mesh
-                    a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
-
-                    var material = new StandardMaterial3D(); // or your shader...
-                    material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
-                    material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
-                    a_mesh.SurfaceSetMaterial(FaceCounter, material);
+                    AddSurfaceToMesh(verts, uvs, MatsToUse, FaceCounter, a_mesh, normals, indices);
                     FaceCounter++;
                 }
             }
 
 
-            var final_mesh = new MeshInstance3D();
-            parent.AddChild(final_mesh);
-            final_mesh.Position = new Vector3(x * -1.2f, 0.0f, y * 1.2f);
-            final_mesh.Name = TileName;
-            final_mesh.Mesh = a_mesh;
-
+             return CreateMeshInstance(parent,x,y,TileName,a_mesh);
             //GetTree().Root.CallDeferred("add_child", final_mesh);
 
 
@@ -1159,14 +1159,14 @@ namespace Underworld
             // mr.materials = MatsToUse;//mats;
             // mesh.RecalculateNormals();
             // mesh.RecalculateBounds();
-            // mf.mesh = mesh;
-            if (EnableCollision)
-            {
-                // MeshCollider mc = a_tile.AddComponent<MeshCollider>();
-                // mc.sharedMesh = null;
-                // mc.sharedMesh = mesh;
-            }
-            return final_mesh;
+            // // mf.mesh = mesh;
+            // if (EnableCollision)
+            // {
+            //     // MeshCollider mc = a_tile.AddComponent<MeshCollider>();
+            //     // mc.sharedMesh = null;
+            //     // mc.sharedMesh = mesh;
+            // }
+            // return final_mesh;
         }
 
         /// <summary>
@@ -1581,22 +1581,7 @@ namespace Underworld
             indices[4] = 2;
             indices[5] = 3;
             // mesh.SetTriangles(indices, 0);
-            var surfaceArray = new Godot.Collections.Array();
-            surfaceArray.Resize((int)Mesh.ArrayType.Max);
-
-            surfaceArray[(int)Mesh.ArrayType.Vertex] = verts; //.ToArray();
-            surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs; //.ToArray();
-            surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
-            surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
-
-            //Add the new surface to the mesh
-            a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
-
-            var material = new StandardMaterial3D(); // or your shader...
-            material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
-            material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
-            a_mesh.SurfaceSetMaterial(FaceCounter, material);
-
+            AddSurfaceToMesh(verts, uvs, MatsToUse, FaceCounter, a_mesh, normals, indices);
 
             FaceCounter = 1;
 
@@ -1613,32 +1598,13 @@ namespace Underworld
                         indices[4] = 2 + (4 * FaceCounter);
                         indices[5] = 3 + (4 * FaceCounter);
                         //mesh.SetTriangles(indices, FaceCounter);
-                        surfaceArray = new Godot.Collections.Array();
-                        surfaceArray.Resize((int)Mesh.ArrayType.Max);
-
-                        surfaceArray[(int)Mesh.ArrayType.Vertex] = verts; //.ToArray();
-                        surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs; //.ToArray();
-                        surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
-                        surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
-
-                        //Add the new surface to the mesh
-                        a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
-
-                        material = new StandardMaterial3D(); // or your shader...
-                        material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
-                        material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
-                        a_mesh.SurfaceSetMaterial(FaceCounter, material);
+                        AddSurfaceToMesh(verts, uvs, MatsToUse, FaceCounter, a_mesh, normals, indices);
                         FaceCounter++;
                     }
                 }
             }
 
-            var final_mesh = new MeshInstance3D();
-            parent.AddChild(final_mesh);
-            final_mesh.Position = new Vector3(t.tileX * -1.2f, 0.0f, t.tileY * 1.2f);
-            final_mesh.Name = TileName;
-            final_mesh.Mesh = a_mesh;
-            return final_mesh;
+             return CreateMeshInstance(parent,t.tileX,t.tileY,TileName,a_mesh);
             //    mr.materials = MatsToUse;
             //    mesh.RecalculateNormals();
             //    mesh.RecalculateBounds();
@@ -1792,21 +1758,7 @@ namespace Underworld
             indices[3] = 0;
             indices[4] = 2;
             indices[5] = 3;
-            var surfaceArray = new Godot.Collections.Array();
-            surfaceArray.Resize((int)Mesh.ArrayType.Max);
-
-            surfaceArray[(int)Mesh.ArrayType.Vertex] = verts; //.ToArray();
-            surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs; //.ToArray();
-            surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
-            surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
-
-            //Add the new surface to the mesh
-            a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
-
-            var material = new StandardMaterial3D(); // or your shader...
-            material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
-            material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
-            a_mesh.SurfaceSetMaterial(FaceCounter, material);
+            AddSurfaceToMesh(verts, uvs, MatsToUse, FaceCounter, a_mesh, normals, indices);
 
             // mesh.SetTriangles(indices, 0);
             FaceCounter = 1;
@@ -1824,33 +1776,12 @@ namespace Underworld
                         indices[4] = 2 + (4 * FaceCounter);
                         indices[5] = 3 + (4 * FaceCounter);
                         //mesh.SetTriangles(indices, FaceCounter);
-                        surfaceArray = new Godot.Collections.Array();
-                        surfaceArray.Resize((int)Mesh.ArrayType.Max);
-
-                        surfaceArray[(int)Mesh.ArrayType.Vertex] = verts; //.ToArray();
-                        surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs; //.ToArray();
-                        surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
-                        surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
-
-                        //Add the new surface to the mesh
-                        a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
-
-                        material = new StandardMaterial3D(); // or your shader...
-                        material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
-                        material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
-                        a_mesh.SurfaceSetMaterial(FaceCounter, material);
+                        AddSurfaceToMesh(verts, uvs, MatsToUse, FaceCounter, a_mesh, normals, indices);
                         FaceCounter++;
                     }
                 }
             }
-
-
-            var final_mesh = new MeshInstance3D();
-            parent.AddChild(final_mesh);
-            final_mesh.Position = new Vector3(t.tileX * -1.2f, 0.0f, t.tileY * 1.2f);
-            final_mesh.Name = TileName;
-            final_mesh.Mesh = a_mesh;
-            return final_mesh;
+            return CreateMeshInstance(parent,t.tileX,t.tileY,TileName,a_mesh);
 
             //    mr.materials = MatsToUse;
             //    mesh.RecalculateNormals();
@@ -2055,21 +1986,7 @@ namespace Underworld
             indices[4] = 2;
             indices[5] = 3;
             //mesh.SetTriangles(indices, 0);
-            var surfaceArray = new Godot.Collections.Array();
-            surfaceArray.Resize((int)Mesh.ArrayType.Max);
-
-            surfaceArray[(int)Mesh.ArrayType.Vertex] = verts; //.ToArray();
-            surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs; //.ToArray();
-            surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
-            surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
-
-            //Add the new surface to the mesh
-            a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
-
-            var material = new StandardMaterial3D(); // or your shader...
-            material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
-            material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
-            a_mesh.SurfaceSetMaterial(FaceCounter, material);
+            AddSurfaceToMesh(verts, uvs, MatsToUse, FaceCounter, a_mesh, normals, indices);
 
             FaceCounter = 1;
 
@@ -2086,21 +2003,7 @@ namespace Underworld
                         indices[4] = 2 + (4 * FaceCounter);
                         indices[5] = 3 + (4 * FaceCounter);
                         //mesh.SetTriangles(indices, FaceCounter);
-                        surfaceArray = new Godot.Collections.Array();
-                        surfaceArray.Resize((int)Mesh.ArrayType.Max);
-
-                        surfaceArray[(int)Mesh.ArrayType.Vertex] = verts; //.ToArray();
-                        surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs; //.ToArray();
-                        surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
-                        surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
-
-                        //Add the new surface to the mesh
-                        a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
-
-                        material = new StandardMaterial3D(); // or your shader...
-                        material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
-                        material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
-                        a_mesh.SurfaceSetMaterial(FaceCounter, material);
+                        AddSurfaceToMesh(verts, uvs, MatsToUse, FaceCounter, a_mesh, normals, indices);
                         FaceCounter++;
                     }
                 }
@@ -2117,12 +2020,7 @@ namespace Underworld
             //     mc.sharedMesh = mesh;
             // }
 
-            var final_mesh = new MeshInstance3D();
-            parent.AddChild(final_mesh);
-            final_mesh.Position = new Vector3(t.tileX * -1.2f, 0.0f, t.tileY * 1.2f);
-            final_mesh.Name = TileName;
-            final_mesh.Mesh = a_mesh;
-            return final_mesh;
+            return CreateMeshInstance(parent,t.tileX,t.tileY,TileName,a_mesh);
 
             //mc.sharedMesh=mesh;
 
@@ -2162,25 +2060,6 @@ namespace Underworld
             float baseHeight = (float)(Bottom * 0.15f);
             float dimX = t.DimX;
             float dimY = t.DimY;
-
-            //Now create the mesh
-            //    GameObject Tile = new GameObject(TileName)
-            //    {
-            //        layer = LayerMask.NameToLayer("MapMesh")
-            //    };
-            //    Tile.transform.parent = parent.transform;
-            //    Tile.transform.position = new Vector3(t.tileX * 1.2f, 0.0f, t.tileY * 1.2f);
-
-            //    Tile.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
-            //    MeshFilter mf = Tile.AddComponent<MeshFilter>();
-            //    MeshRenderer mr = Tile.AddComponent<MeshRenderer>();
-            //MeshCollider mc = Tile.AddComponent<MeshCollider>();
-            //mc.sharedMesh=null;
-
-            //    Mesh mesh = new Mesh
-            //    {
-            //        subMeshCount = NumberOfVisibleFaces//Should be no of visible faces
-            //    };
 
             var a_mesh = new ArrayMesh();
 
@@ -2268,21 +2147,7 @@ namespace Underworld
             indices[5] = 3;
             //mesh.SetTriangles(indices, 0);
 
-            var surfaceArray = new Godot.Collections.Array();
-            surfaceArray.Resize((int)Mesh.ArrayType.Max);
-
-            surfaceArray[(int)Mesh.ArrayType.Vertex] = verts; //.ToArray();
-            surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs; //.ToArray();
-            surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
-            surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
-
-            //Add the new surface to the mesh
-            a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
-
-            var material = new StandardMaterial3D(); // or your shader...
-            material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
-            material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
-            a_mesh.SurfaceSetMaterial(FaceCounter, material);
+            AddSurfaceToMesh(verts, uvs, MatsToUse, FaceCounter, a_mesh, normals, indices);
 
             FaceCounter = 1;
 
@@ -2299,44 +2164,12 @@ namespace Underworld
                         indices[4] = 2 + (4 * FaceCounter);
                         indices[5] = 3 + (4 * FaceCounter);
                         // mesh.SetTriangles(indices, FaceCounter);
-                        surfaceArray = new Godot.Collections.Array();
-                        surfaceArray.Resize((int)Mesh.ArrayType.Max);
-
-                        surfaceArray[(int)Mesh.ArrayType.Vertex] = verts; //.ToArray();
-                        surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs; //.ToArray();
-                        surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
-                        surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
-
-                        //Add the new surface to the mesh
-                        a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
-
-                        material = new StandardMaterial3D(); // or your shader...
-                        material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
-                        material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
-                        a_mesh.SurfaceSetMaterial(FaceCounter, material);
+                        AddSurfaceToMesh(verts, uvs, MatsToUse, FaceCounter, a_mesh, normals, indices);
                         FaceCounter++;
                     }
                 }
-            }
-
-            //    mr.materials = MatsToUse;
-            //    mesh.RecalculateNormals();
-            //    mesh.RecalculateBounds();
-            //    mf.mesh = mesh;
-            //    if (EnableCollision)
-            //    {
-            //        MeshCollider mc = Tile.AddComponent<MeshCollider>();
-            //        mc.sharedMesh = null;
-            //        mc.sharedMesh = mesh;
-            //    }
-            //mc.sharedMesh=mesh;
-            var final_mesh = new MeshInstance3D();
-            parent.AddChild(final_mesh);
-            final_mesh.Position = new Vector3(t.tileX * -1.2f, 0.0f, t.tileY * 1.2f);
-            final_mesh.Name = TileName;
-            final_mesh.Mesh = a_mesh;
-            return final_mesh;
-
+            }   
+            return CreateMeshInstance(parent,t.tileX,t.tileY,TileName,a_mesh);
         }
 
 
@@ -2444,24 +2277,6 @@ namespace Underworld
             float dimX = t.DimX;
             float dimY = t.DimY;
 
-
-            //Now create the mesh
-            // GameObject Tile = new GameObject(TileName);
-            // SetTileLayer(t, Tile);
-
-            // Tile.transform.parent = parent.transform;
-            // Tile.transform.position = new Vector3(x * 1.2f, 0.0f, y * 1.2f);
-
-            // Tile.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
-            // MeshFilter mf = Tile.AddComponent<MeshFilter>();
-            // MeshRenderer mr = Tile.AddComponent<MeshRenderer>();
-            //MeshCollider mc = Tile.AddComponent<MeshCollider>();
-            //mc.sharedMesh=null;
-
-            // Mesh mesh = new Mesh
-            // {
-            //     subMeshCount = NumberOfVisibleFaces + NumberOfSlopedFaces//Should be no of visible faces
-            // };
             //Now allocate the visible faces to triangles.
             int FaceCounter = 0;//Tracks which number face we are now on.
                                 //float PolySize= Top-Bottom;
@@ -3051,21 +2866,7 @@ namespace Underworld
                     LastIndex = 3 + (4 * FaceCounter);
                     //mesh.SetTriangles(tris, FaceCounter);
 
-                    var surfaceArray = new Godot.Collections.Array();
-                    surfaceArray.Resize((int)Mesh.ArrayType.Max);
-
-                    surfaceArray[(int)Mesh.ArrayType.Vertex] = verts; //.ToArray();
-                    surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs; //.ToArray();
-                    surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
-                    surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
-
-                    //Add the new surface to the mesh
-                    a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
-                    var material = new StandardMaterial3D(); // or your shader...
-                    material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
-                    material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
-                    a_mesh.SurfaceSetMaterial(FaceCounter, material);
-                    FaceCounter++;
+                    AddSurfaceToMesh(verts, uvs, MatsToUse, FaceCounter, a_mesh, normals, indices);
                 }
             }
             //Insert any sloped tris at the end
@@ -3087,6 +2888,8 @@ namespace Underworld
                         indices[1] = 1 + LastIndex + (3 * SlopesAdded);
                         indices[2] = 2 + LastIndex + (3 * SlopesAdded);
 
+                        //DO NOT REFACTOR UNTIL THE MATERIALS CODE BELOW IS CHECKED>
+                        //NEEED TO confrim if material should be matstouse[facecounter] or matstouser[facecounter+slopesadded]
                         //mesh.SetTriangles(indices, FaceCounter + SlopesAdded);
                         var surfaceArray = new Godot.Collections.Array();
                         surfaceArray.Resize((int)Mesh.ArrayType.Max);
@@ -3099,32 +2902,16 @@ namespace Underworld
                         a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
                         var material = new StandardMaterial3D(); // or your shader...
                         material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
-                        material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
-                        a_mesh.SurfaceSetMaterial(FaceCounter + SlopesAdded, material);
+                        material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;                      
+                        
+                        //a_mesh.SurfaceSetMaterial(FaceCounter + SlopesAdded, material);
                         SlopesAdded++;
                     }
                 }
             }
 
 
-            var final_mesh = new MeshInstance3D();
-            parent.AddChild(final_mesh);
-            final_mesh.Position = new Vector3(x * -1.2f, 0.0f, y * 1.2f);
-            final_mesh.Name = TileName;
-            final_mesh.Mesh = a_mesh;
-            return final_mesh;
-
-            // mr.materials = MatsToUse;
-            // mesh.RecalculateNormals();
-            // mesh.RecalculateBounds();
-            // mf.mesh = mesh;
-            // if (EnableCollision)
-            // {
-            //     MeshCollider mc = Tile.AddComponent<MeshCollider>();
-            //     mc.sharedMesh = null;
-            //     mc.sharedMesh = mesh;
-            // }
-            //mc.sharedMesh=mesh;
+return CreateMeshInstance(parent,x,y,TileName,a_mesh);
 
         }
 
@@ -3160,20 +2947,6 @@ namespace Underworld
             float dimX = t.DimX;
             float dimY = t.DimY;
 
-            //Now create the mesh
-            // GameObject Tile = new GameObject(TileName);
-            // SetTileLayer(t, Tile);
-            // Tile.transform.parent = parent.transform;
-            // Tile.transform.position = new Vector3(x * 1.2f, 0.0f, y * 1.2f);
-
-            // Tile.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
-            // MeshFilter mf = Tile.AddComponent<MeshFilter>();
-            // MeshRenderer mr = Tile.AddComponent<MeshRenderer>();
-
-            // Mesh mesh = new Mesh
-            // {
-            //     subMeshCount = NumberOfVisibleFaces//Should be no of visible faces
-            // };
 
             Texture2D[] MatsToUse = new Texture2D[NumberOfVisibleFaces];
             //Now allocate the visible faces to triangles.
@@ -3352,21 +3125,7 @@ namespace Underworld
                         //tris[4]=2+(4*FaceCounter);
                         //tris[5]=3+(4*FaceCounter);
                         //mesh.SetTriangles(indices, FaceCounter);
-                        var surfaceArray = new Godot.Collections.Array();
-                        surfaceArray.Resize((int)Mesh.ArrayType.Max);
-
-                        surfaceArray[(int)Mesh.ArrayType.Vertex] = verts; //.ToArray();
-                        surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs; //.ToArray();
-                        surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
-                        surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
-
-                        //Add the new surface to the mesh
-                        a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
-
-                        var material = new StandardMaterial3D(); // or your shader...
-                        material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
-                        material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
-                        a_mesh.SurfaceSetMaterial(FaceCounter, material);
+                        AddSurfaceToMesh(verts, uvs, MatsToUse, FaceCounter, a_mesh, normals, indices);
                     }
                     else
                     {
@@ -3377,33 +3136,14 @@ namespace Underworld
                         indices[4] = 2 + (4 * FaceCounter);
                         indices[5] = 3 + (4 * FaceCounter);
                         // mesh.SetTriangles(indices, FaceCounter);
-                        var surfaceArray = new Godot.Collections.Array();
-                        surfaceArray.Resize((int)Mesh.ArrayType.Max);
-
-                        surfaceArray[(int)Mesh.ArrayType.Vertex] = verts; //.ToArray();
-                        surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs; //.ToArray();
-                        surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
-                        surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
-
-                        //Add the new surface to the mesh
-                        a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
-
-                        var material = new StandardMaterial3D(); // or your shader...
-                        material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
-                        material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
-                        a_mesh.SurfaceSetMaterial(FaceCounter, material);
+                         AddSurfaceToMesh(verts, uvs, MatsToUse, FaceCounter, a_mesh, normals, indices);
                     }
                     FaceCounter++;
                     curFace++;
                 }
             }
 
-            var final_mesh = new MeshInstance3D();
-            parent.AddChild(final_mesh);
-            final_mesh.Position = new Vector3(x * -1.2f, 0.0f, y * 1.2f);
-            final_mesh.Name = TileName;
-            final_mesh.Mesh = a_mesh;
-            return final_mesh;
+return CreateMeshInstance(parent,x,y,TileName,a_mesh);
 
             // mr.materials = MatsToUse;//mats;
             // mesh.RecalculateNormals();
@@ -3417,6 +3157,37 @@ namespace Underworld
             // }
             // return Tile;
         }
+
+
+    /// <summary>
+    /// Adds a surface built from the various uv, vertices and materials arrays to a mesh
+    /// </summary>
+    /// <param name="verts"></param>
+    /// <param name="uvs"></param>
+    /// <param name="MatsToUse"></param>
+    /// <param name="FaceCounter"></param>
+    /// <param name="a_mesh"></param>
+    /// <param name="normals"></param>
+    /// <param name="indices"></param>
+        private static void AddSurfaceToMesh(Vector3[] verts, Vector2[] uvs, Texture2D[] MatsToUse, int FaceCounter, ArrayMesh a_mesh, List<Vector3> normals, int[] indices)
+        {
+            var surfaceArray = new Godot.Collections.Array();
+            surfaceArray.Resize((int)Mesh.ArrayType.Max);
+
+            surfaceArray[(int)Mesh.ArrayType.Vertex] = verts; //.ToArray();
+            surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs; //.ToArray();
+            surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
+            surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
+
+            //Add the new surface to the mesh
+            a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
+
+            var material = new StandardMaterial3D(); // or your shader...
+            material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
+            material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
+            a_mesh.SurfaceSetMaterial(FaceCounter, material);
+        }
+
 
         static void CalcUV(int Top, int Bottom, out float uv0, out float uv1)
         {
