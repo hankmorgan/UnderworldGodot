@@ -57,15 +57,6 @@ public partial class imageloader : Sprite2D
 
 
 
-		Debug.Print("play complete");
-
-
-
-
-		//audioplayer.Play();
-
-
-		return;
 		Random rnd = new Random();
 		var index = rnd.Next(8);
 		Debug.Print(index.ToString());
@@ -102,6 +93,21 @@ public partial class imageloader : Sprite2D
 
 		//Load strings
 		GetTree().Root.GetNode("Node3D").GetNode<Button>("Button").Text = StringLoader.GetString(1, index);
+
+		//test object combinations
+		for (int obj_a=0; obj_a<463; obj_a++)
+		{
+			for (int obj_b=0; obj_b<463; obj_b++)
+			{
+				var cmb = objectCombination.GetCombination(obj_a,obj_b);
+				if (cmb!=null)
+				{
+					Debug.Print(StringLoader.GetString(4,obj_a) + " + " + StringLoader.GetString(4,obj_b) + " = " + StringLoader.GetString(4,cmb.Obj_Out));					
+				}
+			}
+		}
+
+
 
 		var weaponloader = new WeaponsLoader(0);
 		var a_weapon = weaponloader.LoadImageAt(index);
