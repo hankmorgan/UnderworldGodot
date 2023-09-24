@@ -2288,18 +2288,18 @@ namespace Underworld
                             //float PolySize= Top-Bottom;
                             //float uv0= (float)(Bottom*0.125f);
                             //float uv1=(PolySize / 8.0f) + (uv0);
-        CalcUV(Top, Bottom, out float uv0, out float uv1);
+        CalcUVForSlopedCuboid(Top, Bottom, out float uv0, out float uv1);
         float slopeHeight;
         float uv0Slope;
         float uv1Slope;
         if (Floor == 1)
         {
-            CalcUV(Top + Steepness, Bottom, out uv0Slope, out uv1Slope);
+            CalcUVForSlopedCuboid(Top + Steepness, Bottom, out uv0Slope, out uv1Slope);
             slopeHeight = floorHeight;
         }
         else
         {
-            CalcUV(Top, Bottom - Steepness, out uv0Slope, out uv1Slope);
+            CalcUVForSlopedCuboid(Top, Bottom - Steepness, out uv0Slope, out uv1Slope);
             slopeHeight = baseHeight;
         }
 
@@ -2393,7 +2393,7 @@ namespace Underworld
                                             float uvToUse;
                                             if (Floor == 1)
                                             {
-                                                CalcUV(Top + Steepness, Top, out uv0edge, out uv1edge);
+                                                CalcUVForSlopedCuboid(Top + Steepness, Top, out uv0edge, out uv1edge);
                                                 if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
                                                 uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
                                                 uvs[index + 1] = new Vector2(0, uvToUse + Steepness * 0.125f); //vertical + scale
@@ -2401,7 +2401,7 @@ namespace Underworld
                                             }
                                             else
                                             {
-                                                CalcUV(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
+                                                CalcUVForSlopedCuboid(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
                                                 if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }//Ceil
                                                 uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
                                                 uvs[index + 1] = new Vector2(0, uvToUse + Steepness * 0.125f); //vertical + scale
@@ -2425,7 +2425,7 @@ namespace Underworld
                                             float uv1edge;
                                             if (Floor == 1)
                                             {
-                                                CalcUV(Top + Steepness, Top, out uv0edge, out uv1edge);
+                                                CalcUVForSlopedCuboid(Top + Steepness, Top, out uv0edge, out uv1edge);
                                                 if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
                                                 uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
                                                 uvs[index + 1] = new Vector2(1, uvToUse + Steepness * 0.125f); //vertical + scale
@@ -2433,7 +2433,7 @@ namespace Underworld
                                             }
                                             else
                                             {
-                                                CalcUV(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
+                                                CalcUVForSlopedCuboid(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
                                                 if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }//Ceil
                                                                                                                              //uvs[index+0]= new Vector2(0,0);//0, vertical alignment
                                                                                                                              //uvs[index+1]= new Vector2(1,  (float)Steepness*0.125f); //vertical + scale
@@ -2521,7 +2521,7 @@ namespace Underworld
                                             float uvToUse;
                                             if (Floor == 1)
                                             {
-                                                CalcUV(Top + Steepness, Top, out uv0edge, out uv1edge);
+                                                CalcUVForSlopedCuboid(Top + Steepness, Top, out uv0edge, out uv1edge);
                                                 if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
                                                 uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
                                                 uvs[index + 1] = new Vector2(0, uvToUse + Steepness * 0.125f); //vertical + scale
@@ -2529,7 +2529,7 @@ namespace Underworld
                                             }
                                             else
                                             {
-                                                CalcUV(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
+                                                CalcUVForSlopedCuboid(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
                                                 if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }//Ceil
                                                 uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
                                                 uvs[index + 1] = new Vector2(0, uvToUse + Steepness * 0.125f); //vertical + scale
@@ -2549,7 +2549,7 @@ namespace Underworld
                                             float uvToUse;
                                             if (Floor == 1)
                                             {
-                                                CalcUV(Top + Steepness, Top, out uv0edge, out uv1edge);
+                                                CalcUVForSlopedCuboid(Top + Steepness, Top, out uv0edge, out uv1edge);
                                                 if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
                                                 uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
                                                 uvs[index + 1] = new Vector2(1, uvToUse + Steepness * 0.125f); //vertical + scale
@@ -2560,7 +2560,7 @@ namespace Underworld
                                                 //uvs[index+0]= new Vector2(0,0);//0, vertical alignment
                                                 //uvs[index+1]= new Vector2(1,  (float)Steepness*0.125f); //vertical + scale
                                                 //uvs[index+2]= new Vector2(1,  (float)Steepness*0.125f);	//1, vertical alignment	
-                                                CalcUV(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
+                                                CalcUVForSlopedCuboid(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
                                                 if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }//Ceil
                                                 uvs[index + 0] = new Vector2(0, uvToUse + Steepness * 0.125f);
                                                 uvs[index + 1] = new Vector2(1, uvToUse + Steepness * 0.125f);
@@ -2644,7 +2644,7 @@ namespace Underworld
                                             float uvToUse;
                                             if (Floor == 1)
                                             {
-                                                CalcUV(Top + Steepness, Top, out uv0edge, out uv1edge);
+                                                CalcUVForSlopedCuboid(Top + Steepness, Top, out uv0edge, out uv1edge);
                                                 if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
                                                 uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
                                                 uvs[index + 1] = new Vector2(0, uvToUse + Steepness * 0.125f); //vertical + scale
@@ -2652,7 +2652,7 @@ namespace Underworld
                                             }
                                             else
                                             {
-                                                CalcUV(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
+                                                CalcUVForSlopedCuboid(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
                                                 if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }//Ceil
                                                 uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
                                                 uvs[index + 1] = new Vector2(0, uvToUse + Steepness * 0.125f); //vertical + scale
@@ -2674,7 +2674,7 @@ namespace Underworld
                                             float uvToUse;
                                             if (Floor == 1)
                                             {
-                                                CalcUV(Top + Steepness, Top, out uv0edge, out uv1edge);
+                                                CalcUVForSlopedCuboid(Top + Steepness, Top, out uv0edge, out uv1edge);
                                                 if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
                                                 uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
                                                 uvs[index + 1] = new Vector2(1, uvToUse + Steepness * 0.125f); //vertical + scale
@@ -2685,7 +2685,7 @@ namespace Underworld
                                                 //uvs[index+0]= new Vector2(0,0);//0, vertical alignment
                                                 //uvs[index+1]= new Vector2(1, (float)Steepness*0.125f); //vertical + scale
                                                 //uvs[index+2]= new Vector2(1, (float)Steepness*0.125f);	//1, vertical alignment	
-                                                CalcUV(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
+                                                CalcUVForSlopedCuboid(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
                                                 if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }//Ceil
                                                 uvs[index + 0] = new Vector2(0, uvToUse + Steepness * 0.125f);
                                                 uvs[index + 1] = new Vector2(1, uvToUse + Steepness * 0.125f);
@@ -2770,7 +2770,7 @@ namespace Underworld
                                             float uvToUse;
                                             if (Floor == 1)
                                             {
-                                                CalcUV(Top + Steepness, Top, out uv0edge, out uv1edge);
+                                                CalcUVForSlopedCuboid(Top + Steepness, Top, out uv0edge, out uv1edge);
                                                 if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
                                                 uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
                                                 uvs[index + 1] = new Vector2(0, uvToUse + Steepness * 0.125f); //vertical + scale
@@ -2778,7 +2778,7 @@ namespace Underworld
                                             }
                                             else
                                             {
-                                                CalcUV(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
+                                                CalcUVForSlopedCuboid(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
                                                 if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }//Ceil
                                                 uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
                                                 uvs[index + 1] = new Vector2(0, uvToUse + Steepness * 0.125f); //vertical + scale
@@ -2800,7 +2800,7 @@ namespace Underworld
                                             //uvToUse=uv0edge;
                                             if (Floor == 1)
                                             {
-                                                CalcUV(Top + Steepness, Top, out uv0edge, out uv1edge);
+                                                CalcUVForSlopedCuboid(Top + Steepness, Top, out uv0edge, out uv1edge);
                                                 if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
                                                 uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
                                                 uvs[index + 1] = new Vector2(1, uvToUse + Steepness * 0.125f); //vertical + scale
@@ -2808,7 +2808,7 @@ namespace Underworld
                                             }
                                             else
                                             {
-                                                CalcUV(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
+                                                CalcUVForSlopedCuboid(Bottom, Bottom - Steepness, out uv0edge, out uv1edge);
                                                 if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }//Ceil
                                                 uvs[index + 0] = new Vector2(0, uvToUse + Steepness * 0.125f);
                                                 uvs[index + 1] = new Vector2(1, uvToUse + Steepness * 0.125f);
@@ -3199,11 +3199,11 @@ namespace Underworld
         }
 
 
-        static void CalcUV(int Top, int Bottom, out float uv0, out float uv1)
+        static void CalcUVForSlopedCuboid(int Top, int Bottom, out float uv0, out float uv1)
         {
             float PolySize = Top - Bottom;
             uv0 = (float)(Bottom * 0.125f);
-            uv1 = (PolySize / 8.0f) + (uv0);
+            uv1 = -(PolySize / 8.0f) + (uv0);
         }
 
     } //end class

@@ -17,6 +17,8 @@ config/icon="res://resources/icon.svg"
 
 [display]
 
+window/size/viewport_width=1280
+window/size/viewport_height=800
 window/stretch/mode="canvas_items"
 
 [dotnet]
@@ -25,4 +27,4 @@ project/assembly_name="Underworld"
 
 [rendering]
 
-environment/defaults/default_clear_color=Color(0.843137, 0.843137, 0.843137, 1)
+environment/defaults/default_clear_color=Color(0.768627, 0.898039, 0.592157, 1)

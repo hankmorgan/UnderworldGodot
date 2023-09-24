@@ -12,7 +12,7 @@ public partial class imageloader : Sprite2D
 	// Called when the node enters the scene tree for the first time.
 	[Export] public Camera3D cam;
 	[Export] public RichTextLabel lbl;
-	
+
 	[Export] public TextureRect testTextureNode;
 	[Export] public MeshInstance3D mesh;
 
@@ -22,11 +22,12 @@ public partial class imageloader : Sprite2D
 
 	[Export] public Sprite2D weapon_2d;
 
-
+	[Export] public AudioStreamPlayer audioplayer;
 
 	public override void _Ready()
 	{
-		cam.Position= new Vector3(-38f, 4.2f, 2.2f);
+		cam.Position = new Vector3(-38f, 4.2f, 2.2f);
+
 		UWClass._RES = UWClass.GAME_UW2;
 		switch (UWClass._RES)
 		{
@@ -38,6 +39,33 @@ public partial class imageloader : Sprite2D
 				throw new InvalidOperationException("Invalid Game Selected");
 		}
 
+		// Voc file loading. 
+		// var vocfiles = System.IO.Directory.GetFiles(System.IO.Path.Combine(UWClass.BasePath, "SOUND"), "sp18.voc");
+		// foreach (var vocfile in vocfiles)
+		// {
+		// 	var voc = vocLoader.Load(vocfile);
+		// 	if (voc != null)
+		// 	{
+		// 		audioplayer.Stream = voc.toWav();
+		// 		audioplayer.Play();
+		// 		while (audioplayer.Playing)
+		// 		{
+		// 			System.Threading.Thread.Sleep(1000);
+		// 		}
+		// 	}
+		// }
+
+
+
+		Debug.Print("play complete");
+
+
+
+
+		//audioplayer.Play();
+
+
+		return;
 		Random rnd = new Random();
 		var index = rnd.Next(8);
 		Debug.Print(index.ToString());
@@ -87,11 +115,11 @@ public partial class imageloader : Sprite2D
 
 		var main_windowgr = new GRLoader(GRLoader.ThreeDWIN_GR);
 		var uielem = GetNode<TextureRect>("/root/Node3D/UI/3DWin");
-		var mainIndex=BytLoader.MAIN_BYT;
-		if(UWClass._RES==UWClass.GAME_UW2)
+		var mainIndex = BytLoader.MAIN_BYT;
+		if (UWClass._RES == UWClass.GAME_UW2)
 		{
-			mainIndex=BytLoader.UW2ThreeDWin_BYT;
-		}		
+			mainIndex = BytLoader.UW2ThreeDWin_BYT;
+		}
 		var ThreeDWinImg = bytloader.LoadImageAt(mainIndex, true);
 
 		uielem.Texture = ThreeDWinImg;
@@ -108,7 +136,7 @@ public partial class imageloader : Sprite2D
 
 
 	public void LoadTileMap(int newLevelNo, GRLoader grObjects)
-{	
+	{
 		var tilerender = new tileMapRender();
 		Node3D worldobjects = GetNode<Node3D>("/root/Node3D/worldobjects");
 		Node3D the_tiles = GetNode<Node3D>("/root/Node3D/tilemap");
@@ -150,9 +178,9 @@ public partial class imageloader : Sprite2D
 						a_sprite.Texture = grObjects.LoadImageAt(obj.item_id);
 						a_sprite.Scale = new Vector3(1, 1, 1);
 						a_sprite.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
-						a_sprite.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;						
+						a_sprite.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
 						newnode.AddChild(a_sprite);
-						a_sprite.Position=new Vector3(0,0.15f,0);
+						a_sprite.Position = new Vector3(0, 0.15f, 0);
 						worldobjects.AddChild(newnode);
 						index = a_tilemap.LevelObjects[index].next;
 					}
@@ -161,7 +189,7 @@ public partial class imageloader : Sprite2D
 			//Debug.Print(map);
 			//map = "";			
 		}
-		tileMapRender.GenerateLevelFromTileMap(the_tiles,worldobjects,UWClass._RES, a_tilemap, a_tilemap.LevelObjects,false);
+		tileMapRender.GenerateLevelFromTileMap(the_tiles, worldobjects, UWClass._RES, a_tilemap, a_tilemap.LevelObjects, false);
 	}
 
 	public void CreateMesh(Texture2D textureForMesh)
