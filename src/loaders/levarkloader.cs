@@ -14,7 +14,7 @@ namespace Underworld
         /// </summary>
         public static byte[] lev_ark_file_data;
 
-        public static bool LoadLevArkFileData(string Lev_Ark_File = "lev.ark", string folder = "Data")
+        public static bool LoadLevArkFileData(string Lev_Ark_File = "lev.ark", string folder = "DATA")
         {
             //string Lev_Ark_File;
             //Load up my tile maps

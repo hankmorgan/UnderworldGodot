@@ -62,7 +62,7 @@ public partial class imageloader : Sprite2D
 		Debug.Print(index.ToString());
 
 		//Load palettes. run first
-		PaletteLoader.LoadPalettes(Path.Combine(UWClass.BasePath, "data", "pals.dat"));// "C:\\Games\\UW1\\game\\UW\\data\\pals.dat");
+		PaletteLoader.LoadPalettes(Path.Combine(UWClass.BasePath, "DATA", "pals.dat"));// "C:\\Games\\UW1\\game\\UW\\data\\pals.dat");
 
 		var textureloader = new TextureLoader();
 		var a_texture = textureloader.LoadImageAt(index);
@@ -75,38 +75,42 @@ public partial class imageloader : Sprite2D
 		//textureForMesh.SetImage(a_texture);
 		//textureForMesh.SetImage(a_bitmap);
 
-		CreateMesh(a_texture);
+		// CreateMesh(a_texture);
 
 		//update the mesh with a new material.
-		var material = mesh.GetActiveMaterial(0) as StandardMaterial3D; // or your shader...
-		material!.AlbedoTexture = a_bitmap; // shader parameter, etc.
-		material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
+		//var material = mesh.GetActiveMaterial(0) as StandardMaterial3D; // or your shader...
+		//material!.AlbedoTexture = a_bitmap; // shader parameter, etc.
+		//material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
 
 		//Load a sprte and apply it to the 2d and 3d sprties
 		GRLoader gr = new GRLoader(GRLoader.OBJECTS_GR);
-		var a_sprite = gr.LoadImageAt(index);
-		sprite_3d.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
-		sprite_2d.TextureFilter = CanvasItem.TextureFilterEnum.Nearest;
+		//var a_sprite = gr.LoadImageAt(index);
+		//sprite_3d.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
+		//sprite_2d.TextureFilter = CanvasItem.TextureFilterEnum.Nearest;
 
-		sprite_2d.Texture = a_sprite;
-		sprite_3d.Texture = a_sprite;
+		//sprite_2d.Texture = a_sprite;
+		//sprite_3d.Texture = a_sprite;
 
 		//Load strings
-		GetTree().Root.GetNode("Node3D").GetNode<Button>("Button").Text = StringLoader.GetString(1, index);
+		//GetTree().Root.GetNode("Node3D").GetNode<Button>("Button").Text = StringLoader.GetString(1, index);
 
 		//test object combinations
-		for (int obj_a=0; obj_a<463; obj_a++)
-		{
-			for (int obj_b=0; obj_b<463; obj_b++)
-			{
-				var cmb = objectCombination.GetCombination(obj_a,obj_b);
-				if (cmb!=null)
-				{
-					Debug.Print(StringLoader.GetString(4,obj_a) + " + " + StringLoader.GetString(4,obj_b) + " = " + StringLoader.GetString(4,cmb.Obj_Out));					
-				}
-			}
-		}
+		// for (int obj_a=0; obj_a<463; obj_a++)
+		// {
+		// 	for (int obj_b=0; obj_b<463; obj_b++)
+		// 	{
+		// 		var cmb = objectCombination.GetCombination(obj_a,obj_b);
+		// 		if (cmb!=null)
+		// 		{
+		// 			Debug.Print(StringLoader.GetString(4,obj_a) + " + " + StringLoader.GetString(4,obj_b) + " = " + StringLoader.GetString(4,cmb.Obj_Out));					
+		// 		}
+		// 	}
+		// }
 
+		for (int o = 0; o<463;o++)
+		{
+			Debug.Print( StringLoader.GetObjectNounUW(o) + " Height" + commonObjDat.height(o) + " radius " + commonObjDat.radius(o) + " monetary " + commonObjDat.monetaryvalue(o) );
+		}
 
 
 		var weaponloader = new WeaponsLoader(0);
@@ -114,7 +118,7 @@ public partial class imageloader : Sprite2D
 		weapon_2d.TextureFilter = CanvasItem.TextureFilterEnum.Nearest;
 		weapon_2d.Texture = a_weapon;
 
-		var critloader = new CritLoader(0);
+		var critloader = new CritLoader(index);
 		var a_critter = critloader.critter.AnimInfo.animSprites[index];
 		critter_3d.Texture = a_critter;
 		critter_3d.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;

@@ -278,7 +278,7 @@ namespace Underworld
 
             static StringLoader()
             {
-                LoadStringsPak(Path.Combine(UWClass.BasePath,"data","strings.pak"));
+                LoadStringsPak(Path.Combine(UWClass.BasePath,"DATA","strings.pak"));
             }
 
             /// <summary>
