@@ -291,8 +291,8 @@ namespace Underworld
             {
                 switch (_RES)
                 {
-                    case GAME_SHOCK:
-                        return _shockTileSlopeSteepness;
+                    // case GAME_SHOCK:
+                    //     return _shockTileSlopeSteepness;
                     default:
                         if (tileType >= 2)
                         {
@@ -308,9 +308,9 @@ namespace Underworld
             {
                 switch (_RES)
                 {
-                    case GAME_SHOCK:
-                        _shockTileSlopeSteepness = value;
-                        break;
+                    // case GAME_SHOCK:
+                    //     _shockTileSlopeSteepness = value;
+                    //     break;
                     default:
                         //do nothing read only.
                         break;

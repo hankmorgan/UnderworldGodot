@@ -86,10 +86,10 @@ namespace Underworld
         {
             bool skipCeil = true;
             CEILING_HEIGHT = Level.CEILING_HEIGHT;
-            if (game == GAME_SHOCK)
-            {
-                skipCeil = false;
-            }
+            // if (game == GAME_SHOCK)
+            // {
+            //     skipCeil = false;
+            // }
 
             if (!UpdateOnly)
             {
@@ -122,11 +122,11 @@ namespace Underworld
                     {
                         RenderTile(parent, x, y, Level.Tiles[x, y], false, false, false, skipCeil);
 
-                        if (game != GAME_SHOCK)
-                        {//Water
+                        //if (game != GAME_SHOCK)
+                       // {//Water
                             RenderTile(parent, x, y, Level.Tiles[x, y], true, false, false, skipCeil);
                             Level.Tiles[x, y].NeedsReRender = false;
-                        }
+                       // }
                     }
                     Level.Tiles[x, y].NeedsReRender = false;
                 }
@@ -134,13 +134,13 @@ namespace Underworld
 
             //Do a ceiling
 
-            if (game != GAME_SHOCK)
-            {
+           // if (game != GAME_SHOCK)
+            //{
                 if (!UpdateOnly)
                 {
                     var output = RenderCeiling(parent, 0, 0, CEILING_HEIGHT, CEILING_HEIGHT + CEIL_ADJ, Level.UWCeilingTexture, "CEILING", Level);
                 }
-            }
+            //}
             if (!UpdateOnly)
             {
                 //Render bridges, pillars and door ways
@@ -756,13 +756,17 @@ namespace Underworld
             // return Tile;
         }
 
-        private static Node3D CreateMeshInstance(Node3D parent, int x, int y, string TileName, ArrayMesh a_mesh)
+        private static Node3D CreateMeshInstance(Node3D parent, int x, int y, string TileName, ArrayMesh a_mesh, bool EnableCollision = false)
         {
             var final_mesh = new MeshInstance3D();
             parent.AddChild(final_mesh);
             final_mesh.Position = new Vector3(x * -1.2f, 0.0f, y * 1.2f);
             final_mesh.Name = TileName;
             final_mesh.Mesh = a_mesh;
+            if (EnableCollision)
+            {
+                final_mesh.CreateConvexCollision();
+            }
             return final_mesh;
         }
 
@@ -1423,7 +1427,7 @@ namespace Underworld
                 //floorTexture = t.floorTexture;
                 switch (_RES)
                 {
-                    case GAME_SHOCK:
+                    //case GAME_SHOCK:
                     case GAME_UW2:
                         floorTexture = t.map.texture_map[t.floorTexture];
                         //floorTexture = t.floorTexture;
@@ -3195,7 +3199,7 @@ namespace Underworld
             var material = new StandardMaterial3D(); // or your shader...
             material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
             material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
-            a_mesh.SurfaceSetMaterial(FaceCounter+faceCounterAdj, material);
+            a_mesh.SurfaceSetMaterial(FaceCounter+faceCounterAdj, material);            
         }
 
 

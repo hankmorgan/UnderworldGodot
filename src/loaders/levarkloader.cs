@@ -21,9 +21,9 @@ namespace Underworld
             //First read in my lev_ark file
             switch (_RES)
             {
-                case GAME_SHOCK:
-                    Lev_Ark_File = Path.Combine("RES", folder, "ARCHIVE.DAT");
-                    break;
+                // case GAME_SHOCK:
+                //     Lev_Ark_File = Path.Combine("RES", folder, "ARCHIVE.DAT");
+                //     break;
                 case GAME_UWDEMO:
                     Lev_Ark_File = Path.Combine(folder, "LEVEL13.ST");
                     break;

@@ -149,8 +149,7 @@ public partial class imageloader : Sprite2D
 	{
 		var tilerender = new tileMapRender();
 		Node3D worldobjects = GetNode<Node3D>("/root/Node3D/worldobjects");
-		Node3D the_tiles = GetNode<Node3D>("/root/Node3D/tilemap");
-
+		Node3D the_tiles = GetNode<Node3D>("/root/Node3D/tilemap");	
 
 		LevArkLoader.LoadLevArkFileData();
 		Underworld.TileMap a_tilemap = new(newLevelNo);

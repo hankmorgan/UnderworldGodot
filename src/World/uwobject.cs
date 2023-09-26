@@ -925,7 +925,7 @@ namespace Underworld
             // int y = objList[ObjectIndex].ObjectTileY;
             float ResolutionXY = 7.0f;  // A tile has a 7x7 grid for object positioning.
             float ResolutionZ = 128.0f; //UW has 127 posible z positions for an object in tile.
-            if (_RES == GAME_SHOCK) { ResolutionXY = 256.0f; ResolutionZ = 256.0f; } //Shock has more "z" in it.
+            //if (_RES == GAME_SHOCK) { ResolutionXY = 256.0f; ResolutionZ = 256.0f; } //Shock has more "z" in it.
 
             float BrushX = 120f;
             float BrushY = 120f;

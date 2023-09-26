@@ -967,8 +967,8 @@ namespace Underworld
         /// <returns></returns>
         bool DoTilesMatch(TileInfo t1, TileInfo t2)
         {//TODO:Tiles have a lot more properties now.
-            if (_RES == GAME_SHOCK)
-            { return false; }
+            // if (_RES == GAME_SHOCK)
+            // { return false; }
             //if ((t1.tileType >1) || (t1.hasElevator==1) || (t1.TerrainChange ==1) ||  (t2.hasElevator==1) || (t2.TerrainChange ==1) || (t1.isWater ==1) || (t2.isWater ==1)){	//autofail no none solid/open/special.
             if ((t1.tileType > 1) || (t1.TerrainChange == true) || (t2.TerrainChange == true))
             {   //autofail no none solid/open/special.

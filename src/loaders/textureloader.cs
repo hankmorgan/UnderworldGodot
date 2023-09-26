@@ -33,8 +33,8 @@ public class TextureLoader : ArtLoader
     {
         switch (_RES)
         {
-            case GAME_SHOCK:
-                break;
+            // case GAME_SHOCK:
+            //     break;
             case GAME_UW2:
                 ModPathW = Path.Combine(BasePath, "DATA", pathTex_UW2.Replace(".", "_"));  // BasePath + pathTex_UW2.Replace(".", "_").Replace("--", sep.ToString());
                 if (Directory.Exists(ModPathW))
@@ -295,10 +295,10 @@ public class TextureLoader : ArtLoader
     {
         switch (_RES)
         {
-            case GAME_SHOCK:
-                {
-                    return "";
-                }
+            // case GAME_SHOCK:
+            //     {
+            //         return "";
+            //     }
             case GAME_UW2:
                 {
                     return Path.Combine(ModPathW, index.ToString("d3") + ".tga");//  //ModPathW + sep + index.ToString("d3") + ".tga";
