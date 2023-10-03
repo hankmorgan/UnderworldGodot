@@ -39,6 +39,9 @@ public partial class imageloader : Sprite2D
 				throw new InvalidOperationException("Invalid Game Selected");
 		}
 
+
+		//playerdat.Load("SAVE1");
+		//Debug.Print(playerdat.CharName);
 		// Voc file loading. 
 		// var vocfiles = System.IO.Directory.GetFiles(System.IO.Path.Combine(UWClass.BasePath, "SOUND"), "sp18.voc");
 		// foreach (var vocfile in vocfiles)
