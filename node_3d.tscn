@@ -1,23 +1,10 @@
-[gd_scene load_steps=15 format=3 uid="uid://13uofwemp67y"]
+[gd_scene load_steps=8 format=3 uid="uid://13uofwemp67y"]
 
-[ext_resource type="Texture2D" uid="uid://e3cd4b3kb81n" path="res://resources/a.png" id="1_d3x74"]
-[ext_resource type="Script" path="res://TextureButton.cs" id="2_v34lh"]
 [ext_resource type="Script" path="res://imageloader.cs" id="3_4tl8d"]
 [ext_resource type="FontFile" uid="uid://dhrg5v5fecw5b" path="res://resources/fonts/FONTBIG.ttf" id="3_lig5x"]
-[ext_resource type="Texture2D" uid="uid://dedvyeljhjeax" path="res://resources/icon.svg" id="4_rlge0"]
 [ext_resource type="Script" path="res://assetlib/simple-free-look-camera-78109db3bcae477c2a28ef9fe144faa2435f0acb/camera.gd" id="5_2to2n"]
 [ext_resource type="FontFile" uid="uid://dcth0yn5km8si" path="res://resources/fonts/FONT4X5P.ttf" id="5_8iiwt"]
 [ext_resource type="Shader" path="res://node_3d.gdshader" id="6_x6exc"]
-
-[sub_resource type="Theme" id="Theme_snbc4"]
-default_font = ExtResource("3_lig5x")
-default_font_size = 0
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_owlev"]
-
-[sub_resource type="QuadMesh" id="QuadMesh_lq5at"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hicra"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_7v506"]
 render_priority = 0
@@ -28,94 +15,12 @@ shader = ExtResource("6_x6exc")
 [node name="Node3D" type="Node3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0792771, 0.245405, -0.00219772)
 
-[node name="TextureButton" type="TextureButton" parent="."]
-texture_filter = 1
-offset_left = 987.0
-offset_top = 535.0
-offset_right = 1020.0
-offset_bottom = 579.0
-scale = Vector2(8, 8)
-texture_normal = ExtResource("1_d3x74")
-script = ExtResource("2_v34lh")
-
-[node name="Button" type="Button" parent="."]
-offset_left = 546.0
-offset_top = 537.0
-offset_right = 633.0
-offset_bottom = 574.0
-scale = Vector2(5.96, 4.52)
-theme = SubResource("Theme_snbc4")
-text = "The button"
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="Loader" type="Sprite2D" parent="CanvasLayer" node_paths=PackedStringArray("cam", "lbl", "testTextureNode", "mesh", "sprite_3d", "critter_3d", "sprite_2d", "weapon_2d", "audioplayer")]
-texture_filter = 1
-rotation = -1.39626
-scale = Vector2(3, 3)
-centered = false
-script = ExtResource("3_4tl8d")
-cam = NodePath("../Camera3D")
-lbl = NodePath("../RichTextLabel")
-testTextureNode = NodePath("../NodeToChange")
-mesh = NodePath("../../sphere")
-sprite_3d = NodePath("../../Sprite3D")
-critter_3d = NodePath("../../critter")
-sprite_2d = NodePath("../Sprite2DX")
-weapon_2d = NodePath("../weaponanim")
-audioplayer = NodePath("../../Player")
-
-[node name="NodeToChange" type="TextureRect" parent="CanvasLayer"]
-texture_filter = 1
-offset_left = -977.0
-offset_top = 775.0
-offset_right = -657.0
-offset_bottom = 975.0
-scale = Vector2(1.57537, 1.65972)
-texture = ExtResource("1_d3x74")
-expand_mode = 2
-
-[node name="Sprite2DX" type="Sprite2D" parent="CanvasLayer"]
-material = SubResource("ShaderMaterial_owlev")
-position = Vector2(207, 277)
-scale = Vector2(4, 4)
-texture = ExtResource("1_d3x74")
-
-[node name="weaponanim" type="Sprite2D" parent="CanvasLayer"]
-material = SubResource("ShaderMaterial_owlev")
-position = Vector2(238, 375)
-scale = Vector2(4, 4)
-texture = ExtResource("1_d3x74")
-
-[node name="RichTextLabel" type="RichTextLabel" parent="CanvasLayer"]
-texture_filter = 1
-offset_left = 539.0
-offset_top = 280.0
-offset_right = 1139.0
-offset_bottom = 480.0
-theme_override_fonts/normal_font = ExtResource("5_8iiwt")
-theme_override_font_sizes/normal_font_size = 47
-text = "The Label is here. Can you see it"
-
-[node name="Camera3D" type="Camera3D" parent="CanvasLayer"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1194, 2.13663, 12.2284)
-script = ExtResource("5_2to2n")
-
-[node name="sphere" type="MeshInstance3D" parent="."]
-transform = Transform3D(16, 0, 0, 0, 16, 0, 0, 0, 16, 6.34091, 0.591425, -12.2531)
-mesh = SubResource("QuadMesh_lq5at")
-surface_material_override/0 = SubResource("StandardMaterial3D_hicra")
-
-[node name="Sprite3D" type="Sprite3D" parent="."]
-transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, -1.90155)
-texture = ExtResource("4_rlge0")
-
-[node name="critter" type="Sprite3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.199105, 0, -1.72449)
-texture = ExtResource("1_d3x74")
-
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
+
+[node name="Camera3D" type="Camera3D" parent="UI"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1194, 2.13663, 12.2284)
+script = ExtResource("5_2to2n")
 
 [node name="3DWin" type="TextureRect" parent="UI"]
 texture_filter = 1
@@ -126,11 +31,31 @@ offset_bottom = 800.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
+[node name="PositionLabel" type="RichTextLabel" parent="UI"]
+texture_filter = 1
+offset_left = 280.0
+offset_top = 420.0
+offset_right = 880.0
+offset_bottom = 620.0
+theme_override_fonts/normal_font = ExtResource("5_8iiwt")
+theme_override_font_sizes/normal_font_size = 47
+text = "The Label is here. Can you see it"
+
 [node name="worldobjects" type="Node3D" parent="."]
 
 [node name="tilemap" type="Node3D" parent="."]
 
-[node name="Player" type="AudioStreamPlayer" parent="."]
+[node name="AudioPlayer" type="AudioStreamPlayer" parent="."]
 stream = SubResource("AudioStreamWAV_tkk82")
 
-[connection signal="pressed" from="Button" to="TextureButton" method="_on_button_pressed"]
+[node name="Loader" type="Sprite2D" parent="." node_paths=PackedStringArray("cam", "mesh", "audioplayer", "lbl")]
+texture_filter = 1
+rotation = -1.39626
+scale = Vector2(3, 3)
+centered = false
+script = ExtResource("3_4tl8d")
+cam = NodePath("../UI/Camera3D")
+mesh = NodePath("")
+audioplayer = NodePath("../AudioPlayer")
+lbl = NodePath("../UI/PositionLabel")
+font = ExtResource("3_lig5x")

@@ -3,42 +3,53 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
 using Underworld;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
+internal class uwsettings
+{	
+	public string pathuw1 {get;set;}
+	public string pathuw2 {get;set;}
+	public string gametoload {get;set;}
+	public int level {get;set;}
+}
 
 public partial class imageloader : Sprite2D
 {
 	// Called when the node enters the scene tree for the first time.
 	[Export] public Camera3D cam;
+	[Export] public MeshInstance3D mesh;
+	//[Export] public Sprite2D weapon_2d;
+	[Export] public AudioStreamPlayer audioplayer;
 	[Export] public RichTextLabel lbl;
 
-	[Export] public TextureRect testTextureNode;
-	[Export] public MeshInstance3D mesh;
-
-	[Export] public Sprite3D sprite_3d;
-	[Export] public Sprite3D critter_3d;
-	[Export] public Sprite2D sprite_2d;
-
-	[Export] public Sprite2D weapon_2d;
-
-	[Export] public AudioStreamPlayer audioplayer;
-
+	[Export] public Font font;
+ 
 	public override void _Ready()
 	{
-		cam.Position = new Vector3(-38f, 4.2f, 2.2f);
+		var appfolder = OS.GetExecutablePath();
+		appfolder = System.IO.Path.GetDirectoryName(appfolder);
+		var settingsfile = System.IO.Path.Combine(appfolder, "uwsettings.json");
 
-		UWClass._RES = UWClass.GAME_UW2;
+		if (! System.IO.File.Exists(settingsfile))
+		{
+			OS.Alert ("missing file uwsettings.json at " + settingsfile);
+			return;
+		}
+		var gamesettings = JsonSerializer.Deserialize<uwsettings>(File.ReadAllText(settingsfile));
+		cam.Position = new Vector3(-38f, 4.2f, 2.2f);
+		cam.Rotate(Vector3.Up, (float)Math.PI);
+		UWClass._RES = gamesettings.gametoload;
 		switch (UWClass._RES)
 		{
 			case UWClass.GAME_UW1:
-				UWClass.BasePath = "C:\\Games\\UW1\\game\\UW"; break;
+				UWClass.BasePath = gamesettings.pathuw1; break;
 			case UWClass.GAME_UW2:
-				UWClass.BasePath = "C:\\Games\\UW2\\game\\UW2"; break;
+				UWClass.BasePath = gamesettings.pathuw2; break;
 			default:
 				throw new InvalidOperationException("Invalid Game Selected");
 		}
-
 
 		//playerdat.Load("SAVE1");
 		//Debug.Print(playerdat.CharName);
@@ -67,11 +78,11 @@ public partial class imageloader : Sprite2D
 		//Load palettes. run first
 		PaletteLoader.LoadPalettes(Path.Combine(UWClass.BasePath, "DATA", "pals.dat"));// "C:\\Games\\UW1\\game\\UW\\data\\pals.dat");
 
-		var textureloader = new TextureLoader();
-		var a_texture = textureloader.LoadImageAt(index);
+		//var textureloader = new TextureLoader();
+		//var a_texture = textureloader.LoadImageAt(index);
 
 		var bytloader = new Underworld.BytLoader();
-		var a_bitmap = bytloader.LoadImageAt(index);
+		//var a_bitmap = bytloader.LoadImageAt(index);
 
 		// create the texture for the mesh
 		//ImageTexture textureForMesh=new();
@@ -110,23 +121,23 @@ public partial class imageloader : Sprite2D
 		// 	}
 		// }
 
-		for (int o = 0; o<463;o++)
-		{
-			Debug.Print( StringLoader.GetObjectNounUW(o) + " Height" + commonObjDat.height(o) + " radius " + commonObjDat.radius(o) + " monetary " + commonObjDat.monetaryvalue(o) );
-		}
+		// for (int o = 0; o<463;o++)
+		// {
+		// 	Debug.Print( StringLoader.GetObjectNounUW(o) + " Height" + commonObjDat.height(o) + " radius " + commonObjDat.radius(o) + " monetary " + commonObjDat.monetaryvalue(o) );
+		// }
 
 
-		var weaponloader = new WeaponsLoader(0);
-		var a_weapon = weaponloader.LoadImageAt(index);
-		weapon_2d.TextureFilter = CanvasItem.TextureFilterEnum.Nearest;
-		weapon_2d.Texture = a_weapon;
+		// var weaponloader = new WeaponsLoader(0);
+		// var a_weapon = weaponloader.LoadImageAt(index);
+		// weapon_2d.TextureFilter = CanvasItem.TextureFilterEnum.Nearest;
+		// weapon_2d.Texture = a_weapon;
 
-		var critloader = new CritLoader(index);
-		var a_critter = critloader.critter.AnimInfo.animSprites[index];
-		critter_3d.Texture = a_critter;
-		critter_3d.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
+		// var critloader = new CritLoader(index);
+		// var a_critter = critloader.critter.AnimInfo.animSprites[index];
+		// critter_3d.Texture = a_critter;
+		// critter_3d.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
 
-		var main_windowgr = new GRLoader(GRLoader.ThreeDWIN_GR);
+		//var main_windowgr = new GRLoader(GRLoader.ThreeDWIN_GR);
 		var uielem = GetNode<TextureRect>("/root/Node3D/UI/3DWin");
 		var mainIndex = BytLoader.MAIN_BYT;
 		if (UWClass._RES == UWClass.GAME_UW2)
@@ -137,7 +148,7 @@ public partial class imageloader : Sprite2D
 
 		uielem.Texture = ThreeDWinImg;
 		uielem.TextureFilter = CanvasItem.TextureFilterEnum.Nearest;
-		LoadTileMap(0, gr);
+		LoadTileMap(gamesettings.level, gr);
 
 		// var cuts = new CutsLoader(Path.Combine(UWClass.BasePath,"CUTS","CS000.N02"));
 		// var cutimg = cuts.ImageCache[index];
@@ -194,6 +205,11 @@ public partial class imageloader : Sprite2D
 						newnode.AddChild(a_sprite);
 						a_sprite.Position = new Vector3(0, 0.15f, 0);
 						worldobjects.AddChild(newnode);
+						Label3D obj_lbl = new();
+						obj_lbl.Text = StringLoader.GetObjectNounUW(obj.item_id) + " " + index;
+						obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
+						obj_lbl.Font = font;
+						newnode.AddChild(obj_lbl);
 						index = a_tilemap.LevelObjects[index].next;
 					}
 				}
