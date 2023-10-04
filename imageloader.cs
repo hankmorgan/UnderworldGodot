@@ -80,10 +80,10 @@ public partial class imageloader : Sprite2D
 		//Load palettes. run first
 		PaletteLoader.LoadPalettes(Path.Combine(UWClass.BasePath, "DATA", "pals.dat"));// "C:\\Games\\UW1\\game\\UW\\data\\pals.dat");
 
-		//grey.Texture = PaletteLoader.GreyScale.toImage();
+		grey.Texture = PaletteLoader.Palettes[0].toImage();
 		var textureloader = new TextureLoader();
-		var a_texture = textureloader.LoadImageAt(index);
-		grey.Texture=a_texture;
+		//var a_texture = textureloader.LoadImageAt(index);
+		//grey.Texture=a_texture;
 		var bytloader = new Underworld.BytLoader();
 		//var a_bitmap = bytloader.LoadImageAt(index);
 

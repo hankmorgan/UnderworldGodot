@@ -3211,20 +3211,20 @@ namespace Underworld
             
             if (texturePalette == null)
             {
-                texturePalette = PaletteLoader.Palettes[0].toImage();
+                texturePalette = PaletteLoader.Palettes[0].toImage();            
             }
            
-            material.SetShaderParameter("palette", (Texture2D)texturePalette); 
-            material.SetShaderParameter("texture_albedo", MatsToUse[FaceCounter]);   
-            material.SetShaderParameter("albedo", new Color(1,1,1,1));  
+            material.SetShaderParameter("palette", texturePalette); 
+            material.SetShaderParameter("texture_albedo", (Texture)MatsToUse[FaceCounter]);   
             material.SetShaderParameter("albedo", new Color(1,1,1,1));  
             material.SetShaderParameter("uv1_scale", new Vector3(1,1,1)); 
             material.SetShaderParameter("uv2_scale", new Vector3(1,1,1));    
             //material.SetShaderParameter("tex", MatsToUse[FaceCounter]);
             // material.ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded;
             // material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
-            // material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
-            a_mesh.SurfaceSetMaterial(FaceCounter+faceCounterAdj, material);            
+            // material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;            
+            a_mesh.SurfaceSetMaterial(FaceCounter+faceCounterAdj, material);  
+
         }
 
 
