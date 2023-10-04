@@ -106,7 +106,7 @@ namespace Underworld
                         //return Image(ImageFileData, 0, 320, 200, "name_goes_here", GameWorldController.instance.palLoader.Palettes[PaletteIndices[index]], Alpha);
                         //return Image(ImageFileData, 0, 320, 200, "name_goes_here",  PaletteLoader.GreyScale, Alpha);
 
-                        return Image(ImageFileData, 0, 320, 200, "name_goes_here",  PaletteLoader.Palettes[PaletteIndices[index]], Alpha);
+                        return Image(ImageFileData, 0, 320, 200, "name_goes_here",  PaletteLoader.Palettes[PaletteIndices[index]], Alpha, false);
                     }
             }
         }
@@ -136,11 +136,11 @@ namespace Underworld
             if (isCompressed == 1)
             {
                 int datalen = 0;
-                return Image(DataLoader.unpackUW2(textureFile, textureOffset, ref datalen), 0, 320, 200, "namehere", PaletteLoader.Palettes[PaletteIndicesUW2[index]], Alpha);
+                return Image(DataLoader.unpackUW2(textureFile, textureOffset, ref datalen), 0, 320, 200, "namehere", PaletteLoader.Palettes[PaletteIndicesUW2[index]], Alpha, false);
             }
             else
             {
-                return Image(textureFile, textureOffset, 320, 200, "name_goes_here", PaletteLoader.Palettes[PaletteIndicesUW2[index]], Alpha);
+                return Image(textureFile, textureOffset, 320, 200, "name_goes_here", PaletteLoader.Palettes[PaletteIndicesUW2[index]], Alpha,false);
             }
         }
         return null;

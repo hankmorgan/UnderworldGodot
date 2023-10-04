@@ -79,9 +79,9 @@ namespace Underworld
         /// <param name="imageName">Image name.</param>
         /// <param name="pal">Pal.</param>
         /// <param name="Alpha">If set to <c>true</c> alpha.</param>
-        public static ImageTexture Image(byte[] databuffer, long dataOffSet, int width, int height, string imageName, Palette pal, bool Alpha)
+        public static ImageTexture Image(byte[] databuffer, long dataOffSet, int width, int height, string imageName, Palette pal, bool Alpha, bool useGreyScale)
         {
-            return Image(databuffer, dataOffSet, width, height, imageName, pal, Alpha, false);
+            return Image(databuffer, dataOffSet, width, height, imageName, pal, Alpha, false, useGreyScale);
         }
 
 
@@ -95,7 +95,7 @@ namespace Underworld
         /// <param name="imageName">Image name.</param>
         /// <param name="pal">Pal.</param>
         /// <param name="Alpha">If set to <c>true</c> alpha.</param>
-        public static ImageTexture Image(byte[] databuffer, long dataOffSet, int width, int height, string imageName, Palette pal, bool Alpha, bool useXFER)
+        public static ImageTexture Image(byte[] databuffer, long dataOffSet, int width, int height, string imageName, Palette pal, bool Alpha, bool useXFER, bool useGreyScale)
         {
             //Image image = new Godot.Image();// width, height, TextureFormat.ARGB32, false);
 
@@ -141,14 +141,14 @@ namespace Underworld
                             //  case 0:
                             //      imageColors[counter++] = pal.ColorAtPixel(pixel, Alpha); break;
                             default:
-                                img.SetPixel(iCol, iRow, pal.ColorAtPixel(pixel, Alpha)); break;
+                                img.SetPixel(iCol, iRow, pal.ColorAtPixel(pixel, Alpha ,useGreyScale)); break;
                                 //imageColors[counter++] = pal.ColorAtPixel(pixel, Alpha); break;
                         }
                     }
                     else
                     {
                         //imageColors[counter++] = pal.ColorAtPixel(pixel, Alpha);
-                        img.SetPixel(iCol, iRow, pal.ColorAtPixel(pixel, Alpha));
+                        img.SetPixel(iCol, iRow, pal.ColorAtPixel(pixel, Alpha, useGreyScale));
                     }
                     iCol++;
                 }

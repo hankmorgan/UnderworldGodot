@@ -23,11 +23,12 @@ public partial class imageloader : Sprite2D
 	//[Export] public Sprite2D weapon_2d;
 	[Export] public AudioStreamPlayer audioplayer;
 	[Export] public RichTextLabel lbl;
-
 	[Export] public Font font;
+	[Export] public TextureRect grey;
  
 	public override void _Ready()
 	{
+		
 		var appfolder = OS.GetExecutablePath();
 		appfolder = System.IO.Path.GetDirectoryName(appfolder);
 		var settingsfile = System.IO.Path.Combine(appfolder, "uwsettings.json");
@@ -38,8 +39,9 @@ public partial class imageloader : Sprite2D
 			return;
 		}
 		var gamesettings = JsonSerializer.Deserialize<uwsettings>(File.ReadAllText(settingsfile));
-		cam.Position = new Vector3(-38f, 4.2f, 2.2f);
+		cam.Position = new Vector3(38f, 4.2f, 2.2f);
 		cam.Rotate(Vector3.Up, (float)Math.PI);
+		
 		UWClass._RES = gamesettings.gametoload;
 		switch (UWClass._RES)
 		{
@@ -78,9 +80,10 @@ public partial class imageloader : Sprite2D
 		//Load palettes. run first
 		PaletteLoader.LoadPalettes(Path.Combine(UWClass.BasePath, "DATA", "pals.dat"));// "C:\\Games\\UW1\\game\\UW\\data\\pals.dat");
 
-		//var textureloader = new TextureLoader();
-		//var a_texture = textureloader.LoadImageAt(index);
-
+		//grey.Texture = PaletteLoader.GreyScale.toImage();
+		var textureloader = new TextureLoader();
+		var a_texture = textureloader.LoadImageAt(index);
+		grey.Texture=a_texture;
 		var bytloader = new Underworld.BytLoader();
 		//var a_bitmap = bytloader.LoadImageAt(index);
 
@@ -217,6 +220,7 @@ public partial class imageloader : Sprite2D
 			//Debug.Print(map);
 			//map = "";			
 		}
+		the_tiles.Position= new Vector3(64*1.2f,0f,0f);
 		tileMapRender.GenerateLevelFromTileMap(the_tiles, worldobjects, UWClass._RES, a_tilemap, a_tilemap.LevelObjects, false);
 	}
 

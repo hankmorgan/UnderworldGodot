@@ -939,7 +939,7 @@ namespace Underworld
 
             float ceil = 32;// tileMap.CEILING_HEIGHT;
             float offZ = zpos / ResolutionZ * ceil * BrushZ;
-            return new Godot.Vector3(-offX / 100.0f, offZ / 100.0f, offY / 100.0f);
+            return new Godot.Vector3(offX / 100.0f, offZ / 100.0f, offY / 100.0f);
 
 
 

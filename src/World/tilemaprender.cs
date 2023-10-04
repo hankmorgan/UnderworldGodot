@@ -8,6 +8,9 @@ namespace Underworld
     public class tileMapRender : UWClass
     {
 
+        public static Shader textureshader;
+
+        public static ImageTexture texturePalette;
         public static TextureLoader MaterialMasterList;
 
         static tileMapRender()
@@ -710,7 +713,7 @@ namespace Underworld
             // float offset = 0f;
 
             //bottom wall vertices
-            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(map.texture_map[CeilingTexture]);
+            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(map.texture_map[CeilingTexture], 1);
             verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 1.2f * 64);
             verts[1 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 0f);
             verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * 64, baseHeight, 0f);
@@ -1001,7 +1004,7 @@ namespace Underworld
                         case vTOP:
                             {
                                 //Set the verts	
-                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(FloorTexture(fSELF, t));
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(FloorTexture(fSELF, t), 1);
                                 // if (_RES == GAME_UW1)
                                 //     if (GameWorldController.instance.dungeon_level == 6)
                                 //     {
@@ -1034,7 +1037,7 @@ namespace Underworld
                             {
                                 //north wall vertices
                                 offset = CalcCeilOffset(fNORTH, t);
-                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fNORTH, t));
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fNORTH, t), 1);
                                 verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 1.2f * dimY);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 1.2f * dimY);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 1.2f * dimY);
@@ -1053,7 +1056,7 @@ namespace Underworld
                             {
                                 //west wall vertices
                                 offset = CalcCeilOffset(fWEST, t);
-                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fWEST, t));
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fWEST, t), 1);
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 1.2f * dimY);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 1.2f * dimY);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 0f);
@@ -1070,7 +1073,7 @@ namespace Underworld
                             {
                                 //east wall vertices
                                 offset = CalcCeilOffset(fEAST, t);
-                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fEAST, t));
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fEAST, t), 1);
                                 verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 0f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 0f);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 1.2f * dimY);
@@ -1086,7 +1089,7 @@ namespace Underworld
                         case vSOUTH:
                             {
                                 offset = CalcCeilOffset(fSOUTH, t);
-                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fSOUTH, t));
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fSOUTH, t), 1);
                                 //south wall vertices
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 0f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 0f);
@@ -1102,7 +1105,7 @@ namespace Underworld
                         case vBOTTOM:
                             {
                                 //bottom wall vertices
-                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(FloorTexture(fCEIL, t));
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(FloorTexture(fCEIL, t), 1);
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 1.2f * dimY);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 0f);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 0f);
@@ -1508,7 +1511,7 @@ namespace Underworld
             float uv0 = (float)(Bottom * 0.125f);
             float uv1 = -(PolySize / 8.0f) + (uv0);
             //Set the diagonal face first
-            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fSELF, t));
+            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fSELF, t), 1);
             verts[0] = new Vector3(-1.2f, baseHeight, 0f);
             verts[1] = new Vector3(-1.2f, floorHeight, 0f);
             verts[2] = new Vector3(0f, floorHeight, 1.2f);
@@ -1532,7 +1535,7 @@ namespace Underworld
                             {
                                 //south wall vertices
                                 offset = CalcCeilOffset(fSOUTH, t);
-                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fSOUTH, t));
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fSOUTH, t), 1);
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 0f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 0f);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 0f);
@@ -1549,7 +1552,7 @@ namespace Underworld
                             {
                                 //west wall vertices
                                 offset = CalcCeilOffset(fWEST, t);
-                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fWEST, t));
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fWEST, t), 1);
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 1.2f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 1.2f);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 0f);
@@ -1680,7 +1683,7 @@ namespace Underworld
 
             //Now allocate the visible faces to triangles.
             int FaceCounter = 0;//Tracks which number face we are now on.
-            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fSELF, t));
+            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fSELF, t), 1);
             float PolySize = Top - Bottom;
             float uv0 = (float)(Bottom * 0.125f);
             float uv1 = -(PolySize / 8.0f) + (uv0);
@@ -1708,7 +1711,7 @@ namespace Underworld
                             {
                                 //north wall vertices
                                 offset = CalcCeilOffset(fNORTH, t);
-                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fNORTH, t));
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fNORTH, t), 1);
                                 verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f, baseHeight, 1.2f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f, floorHeight, 1.2f);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 1.2f);
@@ -1725,7 +1728,7 @@ namespace Underworld
                             {
                                 //west wall vertices
                                 offset = CalcCeilOffset(fWEST, t);
-                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fWEST, t));
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fWEST, t), 1);
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 1.2f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 1.2f);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 0f);
@@ -1906,7 +1909,7 @@ namespace Underworld
             //Now allocate the visible faces to triangles.
             int FaceCounter = 0;//Tracks which number face we are now on.
 
-            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fSELF, t));
+            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fSELF, t), 1);
 
             float PolySize = Top - Bottom;
             float uv0 = (float)(Bottom * 0.125f);
@@ -1934,7 +1937,7 @@ namespace Underworld
                             {
                                 //north wall vertices
                                 offset = CalcCeilOffset(fNORTH, t);
-                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fNORTH, t));
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fNORTH, t), 1);
                                 verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f, baseHeight, 1.2f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f, floorHeight, 1.2f);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 1.2f);
@@ -1952,7 +1955,7 @@ namespace Underworld
                             {
                                 //east wall vertices
                                 offset = CalcCeilOffset(fEAST, t);
-                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fEAST, t));
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fEAST, t), 1);
                                 verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 0f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 0f);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 1.2f * dimY);
@@ -2074,7 +2077,7 @@ namespace Underworld
             float uv0 = (float)(Bottom * 0.125f);
             float uv1 = -(PolySize / 8.0f) + (uv0);
             //Set the diagonal face first
-            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fSELF, t));
+            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fSELF, t), 1);
 
             verts[0] = new Vector3(-1.2f, baseHeight, 1.2f);
             verts[1] = new Vector3(-1.2f, floorHeight, 1.2f);
@@ -2098,7 +2101,7 @@ namespace Underworld
                             {
                                 //east wall vertices
                                 offset = CalcCeilOffset(fEAST, t);
-                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fEAST, t));
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fEAST, t), 1);
                                 verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 0f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 0f);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 1.2f * dimY);
@@ -2114,7 +2117,7 @@ namespace Underworld
                             {
                                 //south wall vertices
                                 offset = CalcCeilOffset(fSOUTH, t);
-                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fSOUTH, t));
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fSOUTH, t), 1);
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 0f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 0f);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 0f);
@@ -2319,7 +2322,7 @@ namespace Underworld
                         {
 
                             //Set the verts	
-                            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(FloorTexture(fSELF, t));
+                            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(FloorTexture(fSELF, t), 1);
 
                             verts[0 + (4 * FaceCounter)] = new Vector3(0.0f, floorHeight + AdjustUpperWest + AdjustUpperSouth + AdjustUpperSouthWest, 0.0f);
                             verts[1 + (4 * FaceCounter)] = new Vector3(0.0f, floorHeight + AdjustUpperWest + AdjustUpperNorth + AdjustUpperNorthWest, 1.2f * dimY);
@@ -2337,7 +2340,7 @@ namespace Underworld
                         {
                             //north wall vertices
                             offset = CalcCeilOffset(fNORTH, t);
-                            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fNORTH, t));
+                            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fNORTH, t), 1);
                             int oldSlopeDir = SlopeDir;
                             if ((Floor == 0) && (SlopeDir == TILE_SLOPE_S))
                             {
@@ -2463,7 +2466,7 @@ namespace Underworld
                         {
                             //south wall vertices
                             offset = CalcCeilOffset(fSOUTH, t);
-                            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fSOUTH, t));
+                            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fSOUTH, t), 1);
                             int oldSlopeDir = SlopeDir;
                             if ((Floor == 0) && (SlopeDir == TILE_SLOPE_N))
                             {
@@ -2586,7 +2589,7 @@ namespace Underworld
                         {
                             offset = CalcCeilOffset(fWEST, t);
 
-                            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fWEST, t));
+                            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fWEST, t), 1);
 
                             int oldSlopeDir = SlopeDir;
                             if ((Floor == 0) && (SlopeDir == TILE_SLOPE_E))
@@ -2714,7 +2717,7 @@ namespace Underworld
                             //east wall vertices
                             offset = CalcCeilOffset(fEAST, t);
 
-                            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fEAST, t));
+                            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fEAST, t), 1);
 
                             int oldSlopeDir = SlopeDir;
                             if ((Floor == 0) && (SlopeDir == TILE_SLOPE_W))
@@ -2835,7 +2838,7 @@ namespace Underworld
                     case vBOTTOM:
                         {
                             //bottom wall vertices
-                            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(FloorTexture(fCEIL, t));
+                            MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(FloorTexture(fCEIL, t), 1);
 
                             verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight + AdjustLowerSouth + AdjustLowerEast + AdjustLowerSouthEast, 1.2f * dimY);
                             verts[1 + (4 * FaceCounter)] = new Vector3(0f, baseHeight + AdjustLowerEast + AdjustLowerNorth + AdjustLowerNorthEast, 0f);
@@ -2979,7 +2982,7 @@ namespace Underworld
                         case vTOP:
                             {
                                 //Set the verts	
-                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(FloorTexture(fSELF, t));
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(FloorTexture(fSELF, t), 1);
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0.0f, floorHeight, 0.0f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0.0f, floorHeight, 1.2f * dimY);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 1.2f * dimY);
@@ -2996,7 +2999,7 @@ namespace Underworld
                             {
                                 //north wall vertices
                                 offset = CalcCeilOffset(fNORTH, t);
-                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fNORTH, t));
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fNORTH, t), 1);
                                 verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 1.2f * dimY);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 1.2f * dimY);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 1.2f * dimY);
@@ -3013,7 +3016,7 @@ namespace Underworld
                             {
                                 //west wall vertices
                                 offset = CalcCeilOffset(fWEST, t);
-                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fWEST, t));
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fWEST, t), 1);
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 1.2f * dimY);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 1.2f * dimY);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 0f);
@@ -3030,7 +3033,7 @@ namespace Underworld
                             {
                                 //east wall vertices
                                 offset = CalcCeilOffset(fEAST, t);
-                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fEAST, t));
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fEAST, t), 1);
                                 verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 0f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 0f);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 1.2f * dimY);
@@ -3046,7 +3049,7 @@ namespace Underworld
                         case vSOUTH:
                             {
                                 offset = CalcCeilOffset(fSOUTH, t);
-                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fSOUTH, t));
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(WallTexture(fSOUTH, t), 1);
                                 //south wall vertices
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 0f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 0f);
@@ -3062,7 +3065,7 @@ namespace Underworld
                         case vBOTTOM:
                             {
                                 //bottom wall vertices
-                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(FloorTexture(fCEIL, t));
+                                MatsToUse[FaceCounter] = MaterialMasterList.LoadImageAt(FloorTexture(fCEIL, t), 1);
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 1.2f * dimY);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 0f);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 0f);
@@ -3195,10 +3198,32 @@ namespace Underworld
 
             //Add the new surface to the mesh
             a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
-
-            var material = new StandardMaterial3D(); // or your shader...
-            material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
-            material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
+            
+            //var material = (Material)ResourceLoader.Load("res://resources/materials/mat_001.tres");
+            //res://resources/shaders/uw_texture.gdshader
+            //var material = new StandardMaterial3D(); // or shader 
+            var material = new ShaderMaterial();
+            if (textureshader == null)
+            {
+                textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/new_shader.tres");
+            }
+            material.Shader = textureshader;
+            
+            if (texturePalette == null)
+            {
+                texturePalette = PaletteLoader.Palettes[0].toImage();
+            }
+           
+            material.SetShaderParameter("palette", (Texture2D)texturePalette); 
+            material.SetShaderParameter("texture_albedo", MatsToUse[FaceCounter]);   
+            material.SetShaderParameter("albedo", new Color(1,1,1,1));  
+            material.SetShaderParameter("albedo", new Color(1,1,1,1));  
+            material.SetShaderParameter("uv1_scale", new Vector3(1,1,1)); 
+            material.SetShaderParameter("uv2_scale", new Vector3(1,1,1));    
+            //material.SetShaderParameter("tex", MatsToUse[FaceCounter]);
+            // material.ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded;
+            // material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
+            // material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
             a_mesh.SurfaceSetMaterial(FaceCounter+faceCounterAdj, material);            
         }
 

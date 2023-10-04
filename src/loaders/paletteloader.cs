@@ -31,7 +31,7 @@ namespace Underworld
             {
                 GreyScale.red[i] = (byte)i;
                 GreyScale.blue[i] = (byte)i;
-                GreyScale.green[i] = (byte)i;
+                GreyScale.green[i] = (byte)i;                
             }
             switch (_RES)
             {

@@ -76,6 +76,7 @@ public class TextureLoader : ArtLoader
     /// <param name="TextureType">Texture type. 0 = normal, 1 = palette cycled</param>
     public ImageTexture LoadImageAt(int index, short TextureType)
     {
+        TextureType=0;
         switch (TextureType)
         {
             case 1: // Palette cycled
@@ -115,59 +116,7 @@ public class TextureLoader : ArtLoader
 
         switch (_RES)
         {
-            // case GAME_SHOCK:
-            //     {
-            //         if (texturesFLoaded == false)
-            //         {
-            //             if (!ReadStreamFile(Path.Combine(BasePath, "RES", "DATA", pathTex_SS1), out texturebufferT))
-            //             {
-            //                 return base.LoadImageAt(index);
-            //             }
-            //             else
-            //             {
-            //                 texturesFLoaded = true;
-            //             }
-            //         }
-            //         //Load the chunk requested
-            //         //For textures this is index + 1000
-            //         if (DataLoader.LoadChunk(texturebufferT, index + 1000, out DataLoader.Chunk art_ark))
-            //         {
-            //             switch (art_ark.chunkContentType)
-            //             {
-            //                 case 2:
-            //                 case 17:
-            //                     {
-            //                         long textureOffset = (int)getValAtAddress(art_ark.data, 2 + (0 * 4), 32);
-            //                         int CompressionType = (int)getValAtAddress(art_ark.data, textureOffset + 4, 16);
-            //                         int Width = (int)getValAtAddress(art_ark.data, textureOffset + 8, 16);
-            //                         int Height = (int)getValAtAddress(art_ark.data, textureOffset + 10, 16);
-            //                         if ((Width > 0) && (Height > 0))
-            //                         {
-
-            //                             if (CompressionType == 4)
-            //                             {//compressed
-            //                                 //  UncompressBitmap(art_ark+textureOffset+BitMapHeaderSize, outputImg,Height*Width);
-            //                                 UncompressBitmap(art_ark.data, textureOffset + BitMapHeaderSize, out byte[] outputImg, Height * Width);
-            //                                 return Image(outputImg, 0, Width, Height, "namehere", palToUse, true);
-            //                             }
-            //                             else
-            //                             {//Uncompressed
-            //                                 return Image(art_ark.data, textureOffset + BitMapHeaderSize, Width, Height, "namehere", palToUse, true);
-            //                             }
-            //                         }
-            //                         else
-            //                         {
-            //                             return base.LoadImageAt(index);
-            //                         }
-            //                     }
-            //                     //break;
-            //             }
-            //         }
-
-            //         return base.LoadImageAt(index);
-            //     }
-
-            case GAME_UW2:
+               case GAME_UW2:
                 {
                     // if (LoadMod)
                     // {
@@ -189,7 +138,7 @@ public class TextureLoader : ArtLoader
                         }
                     }
                     long textureOffset = getValAtAddress(texturebufferT, ((index) * 4) + 4, 32);
-                    return Image(texturebufferT, textureOffset, FloorDim, FloorDim, "name_goes_here", palToUse, false);
+                    return Image(texturebufferT, textureOffset, FloorDim, FloorDim, "name_goes_here", palToUse, false, true);
                 }
 
 
@@ -219,7 +168,7 @@ public class TextureLoader : ArtLoader
                         //     }
                         // }
                         long textureOffset = getValAtAddress(texturebufferW, (index * 4) + 4, 32);
-                        return Image(texturebufferW, textureOffset, 64, 64, "name_goes_here", palToUse, false);
+                        return Image(texturebufferW, textureOffset, 64, 64, "name_goes_here", palToUse, false, true);
                     }
                     else
                     {//Floor textures (to match my list of textures)
@@ -243,7 +192,7 @@ public class TextureLoader : ArtLoader
                         //     }
                         // }
                         long textureOffset = getValAtAddress(texturebufferF, ((index - TextureSplit) * 4) + 4, 32);
-                        return Image(texturebufferF, textureOffset, FloorDim, FloorDim, "name_goes_here", palToUse, false);
+                        return Image(texturebufferF, textureOffset, FloorDim, FloorDim, "name_goes_here", palToUse, false,true);
                     }
                 }//end switch	
         }
