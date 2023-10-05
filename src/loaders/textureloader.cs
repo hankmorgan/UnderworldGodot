@@ -8,6 +8,7 @@ namespace Underworld
 /// </summary>
 public class TextureLoader : ArtLoader
 {
+    static bool RenderGrey=true;
 
     private readonly string pathTexW_UW0 = "DW64.TR";
     private readonly string pathTexF_UW0 = "DF32.TR";
@@ -138,7 +139,7 @@ public class TextureLoader : ArtLoader
                         }
                     }
                     long textureOffset = getValAtAddress(texturebufferT, ((index) * 4) + 4, 32);
-                    return Image(texturebufferT, textureOffset, FloorDim, FloorDim, "name_goes_here", palToUse, false, false);
+                    return Image(texturebufferT, textureOffset, FloorDim, FloorDim, "name_goes_here", palToUse, false, RenderGrey);
                 }
 
 
@@ -168,7 +169,7 @@ public class TextureLoader : ArtLoader
                         //     }
                         // }
                         long textureOffset = getValAtAddress(texturebufferW, (index * 4) + 4, 32);
-                        return Image(texturebufferW, textureOffset, 64, 64, "name_goes_here", palToUse, false, false);
+                        return Image(texturebufferW, textureOffset, 64, 64, "name_goes_here", palToUse, false, RenderGrey);
                     }
                     else
                     {//Floor textures (to match my list of textures)
@@ -192,7 +193,7 @@ public class TextureLoader : ArtLoader
                         //     }
                         // }
                         long textureOffset = getValAtAddress(texturebufferF, ((index - TextureSplit) * 4) + 4, 32);
-                        return Image(texturebufferF, textureOffset, FloorDim, FloorDim, "name_goes_here", palToUse, false,false);
+                        return Image(texturebufferF, textureOffset, FloorDim, FloorDim, "name_goes_here", palToUse, false, RenderGrey);
                     }
                 }//end switch	
         }

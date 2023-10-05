@@ -101,14 +101,22 @@ namespace Underworld
 
             // Color[] imageColors = new Color[width * height];
             Godot.Image.Format imgformat;
-            if (Alpha)
+            if (useGreyScale)
             {
-                imgformat = Godot.Image.Format.Rgba8;
+                imgformat= Godot.Image.Format.R8;
             }
             else
             {
-                imgformat = Godot.Image.Format.Rgb8;
+                if (Alpha)
+                {
+                    imgformat = Godot.Image.Format.Rgba8;
+                }
+                else
+                {
+                    imgformat = Godot.Image.Format.Rgb8;
+                }
             }
+
             var img = Godot.Image.Create(width, height, false, imgformat);
 
             //long counter = 0;
@@ -146,7 +154,7 @@ namespace Underworld
                         }
                     }
                     else
-                    {
+                    {                        
                         //imageColors[counter++] = pal.ColorAtPixel(pixel, Alpha);
                         img.SetPixel(iCol, iRow, pal.ColorAtPixel(pixel, Alpha, useGreyScale));
                     }

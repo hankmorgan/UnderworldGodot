@@ -39,7 +39,7 @@ public partial class imageloader : Sprite2D
 			return;
 		}
 		var gamesettings = JsonSerializer.Deserialize<uwsettings>(File.ReadAllText(settingsfile));
-		cam.Position = new Vector3(0f, 4.2f, 2.2f);
+		cam.Position = new Vector3(-38f, 4.2f, 2.2f);
 		cam.Rotate(Vector3.Up, (float)Math.PI);
 		
 		UWClass._RES = gamesettings.gametoload;

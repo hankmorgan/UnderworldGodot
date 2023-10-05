@@ -36,12 +36,12 @@ namespace Underworld
             }
 
             if (useGreyScale)
-            {
+            {               
                 return new Color(
-                    g: pixel/255f,
+                    g: 0,
                     r: pixel/255f,
-                    b: pixel/255f,
-                    a: alphabyte/255f                
+                    b: 0,
+                    a: 0                
                 );
             }
             else
