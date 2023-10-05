@@ -11,7 +11,7 @@ namespace Underworld
 
         public static Shader textureshader;
 
-        public static ImageTexture texturePalette;
+        public static ImageTexture[] texturePalettes;
         public static TextureLoader MaterialMasterList;
 
         static tileMapRender()
@@ -3200,23 +3200,26 @@ namespace Underworld
             //Add the new surface to the mesh
             a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
 
-            //var material = (Material)ResourceLoader.Load("res://resources/materials/mat_001.tres");
-            //res://resources/shaders/uw_texture.gdshader
-            
             bool useCustomShader=true;
             if (useCustomShader)
             {
+
                 var material = new ShaderMaterial();
                 if (textureshader == null)
                 {
-                    textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/new_shader.tres");     
+                    textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwshader.gdshader");     
                 }
                 material.Shader = textureshader;
-                if (texturePalette == null)
-                {
-                    texturePalette = PaletteLoader.Palettes[0].toImage();
+
+                if (texturePalettes == null)
+                {//init the shader palette
+                    CreateTexturePaletteCycles();
+                   // texturePalette = PaletteLoader.Palettes[0].toImage();
+                    RenderingServer.GlobalShaderParameterAdd("uwpalette", RenderingServer.GlobalShaderParameterType.Sampler2D,(Texture)texturePalettes[0]);
+                  //  RenderingServer.GlobalShaderParameterSet("uwpalette", (Texture)texturePalette);
                 }
-                material.SetShaderParameter("palette", (Texture)texturePalette);
+
+                //material.SetShaderParameter("uwpalette", (Texture)texturePalette);
                 material.SetShaderParameter("texture_albedo", (Texture)MatsToUse[FaceCounter]);
                 material.SetShaderParameter("albedo", new Color(1, 1, 1, 1));
                 material.SetShaderParameter("uv1_scale", new Vector3(1, 1, 1));
@@ -3241,6 +3244,37 @@ namespace Underworld
             float PolySize = Top - Bottom;
             uv0 = (float)(Bottom * 0.125f);
             uv1 = -(PolySize / 8.0f) + (uv0);
+        }
+
+
+        static void CreateTexturePaletteCycles(int paletteno = 0)
+        {
+            //copy initial palette
+
+            var palCycler = new Palette();
+            for (int i =0; i<256;i++)
+            {
+                palCycler.red= PaletteLoader.Palettes[paletteno].red;
+                palCycler.green= PaletteLoader.Palettes[paletteno].green;
+                palCycler.blue= PaletteLoader.Palettes[paletteno].blue;
+            }
+            
+            texturePalettes = new ImageTexture[28];
+            for (int c = 0; c <= 27; c++)
+            {//Create palette cycles
+                switch (_RES)
+                {
+                    case GAME_UW2:
+                        Palette.cyclePalette(palCycler, 224, 16);
+                        Palette.cyclePaletteReverse(palCycler, 3, 6);
+                        break;
+                    default:
+                        Palette.cyclePalette(palCycler, 48, 16);//Forward
+                        Palette.cyclePaletteReverse(palCycler, 16, 7);//Reverse direction.
+                        break;
+                }
+                texturePalettes[c] = palCycler.toImage();
+            }
         }
 
     } //end class

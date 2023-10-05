@@ -25,6 +25,9 @@ public partial class imageloader : Sprite2D
 	[Export] public RichTextLabel lbl;
 	[Export] public Font font;
 	[Export] public TextureRect grey;
+
+	double cycletime = 0;
+	int NextPaletteCycle = 0;
  
 	public override void _Ready()
 	{
@@ -225,7 +228,7 @@ public partial class imageloader : Sprite2D
 	}
 
 	public void CreateMesh(Texture2D textureForMesh)
-	{
+	{		
 		//var nd = new Node3D();
 		//nd.Name = "yay";
 		//GetTree().Root.AddChild;
@@ -285,6 +288,19 @@ public partial class imageloader : Sprite2D
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
+
 		lbl.Text = cam.Position.ToString();
+		//RenderingServer.GlobalShaderParameterSet("cameraPos", cam.Position);
+		cycletime += delta;
+		if(cycletime>0.2)
+		{
+			cycletime=0;
+			RenderingServer.GlobalShaderParameterSet("uwpalette", (Texture)tileMapRender.texturePalettes[NextPaletteCycle]);
+			NextPaletteCycle++;
+			if (NextPaletteCycle>tileMapRender.texturePalettes.GetUpperBound(0))
+			{
+				NextPaletteCycle=0;
+			}
+		}
 	}
 }
