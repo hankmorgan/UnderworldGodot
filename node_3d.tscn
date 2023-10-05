@@ -1,10 +1,9 @@
-[gd_scene load_steps=10 format=3 uid="uid://13uofwemp67y"]
+[gd_scene load_steps=8 format=3 uid="uid://13uofwemp67y"]
 
 [ext_resource type="Script" path="res://imageloader.cs" id="3_4tl8d"]
 [ext_resource type="FontFile" uid="uid://dhrg5v5fecw5b" path="res://resources/fonts/FONTBIG.ttf" id="3_lig5x"]
 [ext_resource type="Script" path="res://assetlib/simple-free-look-camera-78109db3bcae477c2a28ef9fe144faa2435f0acb/camera.gd" id="5_2to2n"]
 [ext_resource type="FontFile" uid="uid://dcth0yn5km8si" path="res://resources/fonts/FONT4X5P.ttf" id="5_8iiwt"]
-[ext_resource type="Material" uid="uid://du7n8dkca7tt0" path="res://resources/materials/texture.tres" id="6_sfhgs"]
 [ext_resource type="Shader" path="res://node_3d.gdshader" id="6_x6exc"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_7v506"]
@@ -12,8 +11,6 @@ render_priority = 0
 shader = ExtResource("6_x6exc")
 
 [sub_resource type="AudioStreamWAV" id="AudioStreamWAV_tkk82"]
-
-[sub_resource type="QuadMesh" id="QuadMesh_hakvg"]
 
 [node name="Node3D" type="Node3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0792771, 0.245405, -0.00219772)
@@ -74,9 +71,3 @@ audioplayer = NodePath("../AudioPlayer")
 lbl = NodePath("../UI/PositionLabel")
 font = ExtResource("3_lig5x")
 grey = NodePath("../UI/GreyScale")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35.0073, 0.339489, 0.165879)
-mesh = SubResource("QuadMesh_hakvg")
-skeleton = NodePath("../UI")
-surface_material_override/0 = ExtResource("6_sfhgs")

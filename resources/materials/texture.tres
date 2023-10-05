@@ -1,7 +1,0 @@
-[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://du7n8dkca7tt0"]
-
-[ext_resource type="Shader" uid="uid://bk4my1tegdx8u" path="res://resources/shaders/new_shader.tres" id="1_0locg"]
-
-[resource]
-render_priority = 0
-shader = ExtResource("1_0locg")

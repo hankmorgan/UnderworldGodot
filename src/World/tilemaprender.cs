@@ -1,6 +1,7 @@
 using Godot;
 using System.Collections.Generic;
 using System.Linq;
+using System.Transactions;
 
 namespace Underworld
 {
@@ -3201,28 +3202,31 @@ namespace Underworld
             
             //var material = (Material)ResourceLoader.Load("res://resources/materials/mat_001.tres");
             //res://resources/shaders/uw_texture.gdshader
-            //var material = new StandardMaterial3D(); // or shader 
-            var material = new ShaderMaterial();
-            if (textureshader == null)
-            {
-                textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/new_shader.tres");
-            }
-            material.Shader = textureshader;
+            var material = new StandardMaterial3D(); // or shader 
+            //var material = new ShaderMaterial();
+            // if (textureshader == null)
+            // {//AdvancedPalette_Godot4.gdshader
+            //     //textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/new_shader.tres");     
+            //     textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/AdvancedPalette_Godot4.gdshader");           
+            // }
+           // material.Shader = textureshader;
             
-            if (texturePalette == null)
-            {
-                texturePalette = PaletteLoader.Palettes[0].toImage();            
-            }
+        //     if (texturePalette == null)
+        //     {
+        //         texturePalette = PaletteLoader.Palettes[0].toImage();            
+        //     }
+        //     var mip = texturePalette.GetImage().HasMipmaps();
            
-            material.SetShaderParameter("palette", texturePalette); 
-            material.SetShaderParameter("texture_albedo", (Texture)MatsToUse[FaceCounter]);   
-            material.SetShaderParameter("albedo", new Color(1,1,1,1));  
-            material.SetShaderParameter("uv1_scale", new Vector3(1,1,1)); 
-            material.SetShaderParameter("uv2_scale", new Vector3(1,1,1));    
+        //     material.SetShaderParameter("palette", texturePalette); 
+        //     material.SetShaderParameter("texture_albedo", MatsToUse[FaceCounter]);   
+        //     material.SetShaderParameter("input_tex", MatsToUse[FaceCounter]);   
+        //    // material.SetShaderParameter("albedo", new Color(1,1,1,1));  
+        //     material.SetShaderParameter("uv1_scale", new Vector3(1,1,1)); 
+        //     material.SetShaderParameter("uv2_scale", new Vector3(1,1,1));    
             //material.SetShaderParameter("tex", MatsToUse[FaceCounter]);
-            // material.ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded;
-            // material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
-            // material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;            
+            material.ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded;
+            material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
+            material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;            
             a_mesh.SurfaceSetMaterial(FaceCounter+faceCounterAdj, material);  
 
         }

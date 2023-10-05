@@ -39,7 +39,7 @@ public partial class imageloader : Sprite2D
 			return;
 		}
 		var gamesettings = JsonSerializer.Deserialize<uwsettings>(File.ReadAllText(settingsfile));
-		cam.Position = new Vector3(38f, 4.2f, 2.2f);
+		cam.Position = new Vector3(0f, 4.2f, 2.2f);
 		cam.Rotate(Vector3.Up, (float)Math.PI);
 		
 		UWClass._RES = gamesettings.gametoload;
@@ -220,7 +220,7 @@ public partial class imageloader : Sprite2D
 			//Debug.Print(map);
 			//map = "";			
 		}
-		the_tiles.Position= new Vector3(64*1.2f,0f,0f);
+		the_tiles.Position= new Vector3(0f,0f,0f);
 		tileMapRender.GenerateLevelFromTileMap(the_tiles, worldobjects, UWClass._RES, a_tilemap, a_tilemap.LevelObjects, false);
 	}
 

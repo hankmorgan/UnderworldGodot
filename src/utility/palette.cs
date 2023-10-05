@@ -68,16 +68,30 @@ namespace Underworld
         }
 
 
-        public ImageTexture toImage()
+        public ImageTexture toImage(int ColourBandSize = 16)
         {
-            int height = 1;
-            int width = 256;
-            byte[] imgData = new byte[height * width];
-            for (int i = 0; i < imgData.GetUpperBound(0); i++)
+            int ImageHeight = 16;
+            int NoOfColours = 256;
+            byte[] imgData = new byte[ImageHeight * NoOfColours * ColourBandSize];
+            int x = 0;
+            for (int h=0; h<ImageHeight;h++)
             {
-                imgData[i] = (byte)i;
+                int i = 0;
+                for (int w=0; w<NoOfColours;w++)
+                {
+                    for (int b=0; b<ColourBandSize;b++ )
+                    {
+                        imgData[x++] = (byte)i;
+                    }
+                    i++;
+                }
             }
-            var output= ArtLoader.Image(imgData, 0, width, height, "name here", this, true,false);
+
+            // for (int i = 0; i < imgData.GetUpperBound(0); i++)
+            // {                
+            //     imgData[i] = (byte)i;
+            // }
+            var output= ArtLoader.Image(imgData, 0, NoOfColours * ColourBandSize, ImageHeight, "name here", this, true, false);
             return output;
         }
 
