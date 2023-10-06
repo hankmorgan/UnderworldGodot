@@ -9,36 +9,45 @@ namespace Underworld
     public class PaletteLoader : ArtLoader
     {
         
+        /// <summary>
+        /// Palettes in pals.dat
+        /// </summary>
         public static Palette[] Palettes = new Palette[22];
         public static int NoOfPals = 22;
-        public static Palette GreyScale = null;
 
-        // public PaletteLoader(string PathToResource, short chunkID)
-        // {
-        //     filePath = PathToResource;  //Loader.BasePath+ PathToResource;
-        //     if (_RES == GAME_UW2)
-        //     {
-        //         PaletteNo = chunkID;
-        //     }
-        //     LoadPalettes();
-        // }
+        /// <summary>
+        /// A crappy greyscale palette
+        /// </summary>
+        //public static Palette GreyScale = null;
 
+        /// <summary>
+        /// Palettes loaded by lights.dat
+        /// </summary>
+        public static Palette[] lights = null;
 
-        public static void LoadPalettes(string filePath)
+        /// <summary>
+        /// Palettes loaded by mono.dat
+        /// </summary>
+        public static Palette mono  = null;
+
+        static PaletteLoader()  //void LoadPalettes(string filePath)
         {
-            GreyScale = new Palette();
-            for (int i = 0; i <= GreyScale.blue.GetUpperBound(0); i++)
-            {
-                GreyScale.red[i] = (byte)i;
-                GreyScale.blue[i] = (byte)i;
-                GreyScale.green[i] = (byte)i;                
-            }
+            var path_pals = System.IO.Path.Combine(BasePath,"DATA","PALS.DAT");
+            var path_lights = System.IO.Path.Combine(BasePath,"DATA","LIGHTS.DAT");
+            var path_MONO = System.IO.Path.Combine(BasePath,"DATA","MONO.DAT");
+            // GreyScale = new Palette();
+            // for (int i = 0; i <= GreyScale.blue.GetUpperBound(0); i++)
+            // {
+            //     GreyScale.red[i] = (byte)i;
+            //     GreyScale.blue[i] = (byte)i;
+            //     GreyScale.green[i] = (byte)i;                
+            // }
             switch (_RES)
             {
                 default:
                     {
                         Palettes = new Palette[NoOfPals];
-                        if (ReadStreamFile(filePath, out byte[] pals_dat))
+                        if (ReadStreamFile(path_pals, out byte[] pals_dat))
                         {
                             for (int palNo = 0; palNo <= Palettes.GetUpperBound(0); palNo++)
                             {

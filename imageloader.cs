@@ -81,7 +81,7 @@ public partial class imageloader : Sprite2D
 		Debug.Print(index.ToString());
 
 		//Load palettes. run first
-		PaletteLoader.LoadPalettes(Path.Combine(UWClass.BasePath, "DATA", "pals.dat"));// "C:\\Games\\UW1\\game\\UW\\data\\pals.dat");
+		//PaletteLoader.LoadPalettes(Path.Combine(UWClass.BasePath, "DATA", "pals.dat"));// "C:\\Games\\UW1\\game\\UW\\data\\pals.dat");
 
 		grey.Texture = PaletteLoader.Palettes[0].toImage();
 		var textureloader = new TextureLoader();
@@ -295,9 +295,9 @@ public partial class imageloader : Sprite2D
 		if(cycletime>0.2)
 		{
 			cycletime=0;
-			RenderingServer.GlobalShaderParameterSet("uwpalette", (Texture)tileMapRender.texturePalettes[NextPaletteCycle]);
+			RenderingServer.GlobalShaderParameterSet("uwpalette", (Texture)surfacematerial.texturePalettes[NextPaletteCycle]);
 			NextPaletteCycle++;
-			if (NextPaletteCycle>tileMapRender.texturePalettes.GetUpperBound(0))
+			if (NextPaletteCycle>surfacematerial.texturePalettes.GetUpperBound(0))
 			{
 				NextPaletteCycle=0;
 			}

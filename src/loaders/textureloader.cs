@@ -7,7 +7,11 @@ namespace Underworld
 /// Loads textures.
 /// </summary>
 public class TextureLoader : ArtLoader
-{
+{   
+
+    /// <summary>
+    /// Force all textures to be loaded in greyscale so that they actual colors are applied later in shaders.
+    /// </summary>
     static bool RenderGrey=true;
 
     private readonly string pathTexW_UW0 = "DW64.TR";
@@ -80,8 +84,8 @@ public class TextureLoader : ArtLoader
         TextureType=0;
         switch (TextureType)
         {
-            case 1: // Palette cycled
-                return LoadImageAt(index, PaletteLoader.GreyScale);
+           // case 1: // Palette cycled
+            //    return LoadImageAt(index, PaletteLoader.GreyScale);
             //case 2://modded normal map                
             //    return TGALoader.LoadTGA(Path.Combine(ModPathW, index.ToString("d3") + "_normal.tga"));
             default:

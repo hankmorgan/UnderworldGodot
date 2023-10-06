@@ -55,8 +55,12 @@ void fragment() {
 
 	vec4 rgba = texture(texture_albedo, UV);
 	vec4 finalcolour = texture(uwpalette, vec2(rgba.r ,0));
+	
+	
 	//mix(vec3(0.0), c.rgb, brightness);
 	//finalcolour.rgb = mix(vec3(0.0f), finalcolour.rgb, 1.0f/dist); //example brightness change
+	
+	
 	ALBEDO = finalcolour.rgb;
 	
 	//float metallic_tex = dot(texture(texture_metallic,base_uv),metallic_texture_channel);
