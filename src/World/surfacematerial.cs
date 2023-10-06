@@ -29,7 +29,7 @@ namespace Underworld
             {//init the shader palette
                 CreateTexturePaletteCycles();
                 RenderingServer.GlobalShaderParameterAdd("uwpalette", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)texturePalettes[0]);
-                RenderingServer.GlobalShaderParameterAdd("uwlightmap", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)PaletteLoader.light[4].toImage());
+                RenderingServer.GlobalShaderParameterAdd("uwlightmap", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)PaletteLoader.light[0].toImage());
             }
             textures=new TextureLoader();
         }

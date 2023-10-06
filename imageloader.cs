@@ -28,6 +28,7 @@ public partial class imageloader : Sprite2D
 
 	double cycletime = 0;
 	int NextPaletteCycle = 0;
+	int NextLightCycle = 0;
  
 	public override void _Ready()
 	{
@@ -296,10 +297,16 @@ public partial class imageloader : Sprite2D
 		{
 			cycletime=0;
 			RenderingServer.GlobalShaderParameterSet("uwpalette", (Texture)surfacematerial.texturePalettes[NextPaletteCycle]);
+			RenderingServer.GlobalShaderParameterSet("uwlightmap", (Texture)PaletteLoader.light[NextLightCycle].toImage());
 			NextPaletteCycle++;
+			NextLightCycle++;
 			if (NextPaletteCycle>surfacematerial.texturePalettes.GetUpperBound(0))
 			{
 				NextPaletteCycle=0;
+			}
+			if (NextLightCycle>PaletteLoader.light.GetUpperBound(0))
+			{
+				NextLightCycle=0;
 			}
 		}
 	}

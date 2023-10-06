@@ -54,8 +54,14 @@ void fragment() {
 	//	discard;
 	//}
 
+	//read in greyscale texture to get color index
 	vec4 rgba = texture(texture_albedo, UV);
-	vec4 finalcolour = texture(uwpalette, vec2(rgba.r ,0));
+
+	//get value of light red channel
+	vec4 lightval = texture(uwlightmap, vec2(rgba.r, 0));
+
+	//vec4 finalcolour = texture(uwpalette, vec2(rgba.r ,0));
+	vec4 finalcolour = texture(uwpalette, vec2(lightval.r ,0));
 	
 	
 	//mix(vec3(0.0), c.rgb, brightness);
