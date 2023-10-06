@@ -18,30 +18,30 @@ namespace Underworld
         /// <summary>
         /// A crappy greyscale palette
         /// </summary>
-        //public static Palette GreyScale = null;
+        public static Palette GreyScale = null;
 
         /// <summary>
         /// Palettes loaded by lights.dat
         /// </summary>
-        public static Palette[] lights = null;
+        public static lightmap[] light = null;
 
         /// <summary>
         /// Palettes loaded by mono.dat
         /// </summary>
-        public static Palette mono  = null;
+        public static lightmap mono  = null;
 
         static PaletteLoader()  //void LoadPalettes(string filePath)
         {
             var path_pals = System.IO.Path.Combine(BasePath,"DATA","PALS.DAT");
-            var path_lights = System.IO.Path.Combine(BasePath,"DATA","LIGHTS.DAT");
-            var path_MONO = System.IO.Path.Combine(BasePath,"DATA","MONO.DAT");
-            // GreyScale = new Palette();
-            // for (int i = 0; i <= GreyScale.blue.GetUpperBound(0); i++)
-            // {
-            //     GreyScale.red[i] = (byte)i;
-            //     GreyScale.blue[i] = (byte)i;
-            //     GreyScale.green[i] = (byte)i;                
-            // }
+            var path_light = System.IO.Path.Combine(BasePath,"DATA","LIGHT.DAT");
+            var path_mono = System.IO.Path.Combine(BasePath,"DATA","MONO.DAT");
+            GreyScale = new Palette();
+            for (int i = 0; i <= GreyScale.blue.GetUpperBound(0); i++)
+            {
+                GreyScale.red[i] = (byte)i;
+                GreyScale.blue[i] = 0;// (byte)i;
+                GreyScale.green[i] = 0;// (byte)i;                
+            }
             switch (_RES)
             {
                 default:
@@ -56,11 +56,25 @@ namespace Underworld
                                 {
                                     Palettes[palNo].red[pixel] = (byte)(getValAtAddress(pals_dat, palNo * 256 + (pixel * 3) + 0, 8) << 2);
                                     Palettes[palNo].green[pixel] = (byte)(getValAtAddress(pals_dat, palNo * 256 + (pixel * 3) + 1, 8) << 2);
-                                    Palettes[palNo].blue[pixel] = (byte)(getValAtAddress(pals_dat, palNo * 256 + (pixel * 3) + 2, 8) << 2);
+                                    Palettes[palNo].blue[pixel] = (byte)(getValAtAddress(pals_dat, palNo * 256 + (pixel * 3) + 2, 8) << 2);                                }
+                            }
+                        }
+
+                        light = new lightmap[16];
+                        if (ReadStreamFile(path_light, out byte[] light_dat))
+                        {
+                            for (int palNo = 0; palNo <= light.GetUpperBound(0); palNo++)
+                            {
+                                light[palNo] = new lightmap();
+                                for (int pixel = 0; pixel < 256; pixel++)
+                                { //just store the index values.
+                                   light[palNo].red[pixel] = (byte)getValAtAddress(light_dat, palNo * 256 + pixel + 0, 8);
+                                   light[palNo].blue[pixel] = (byte)getValAtAddress(light_dat, palNo * 256 + pixel + 0, 8);
+                                   light[palNo].green[pixel] = (byte)getValAtAddress(light_dat, palNo * 256 + pixel + 0, 8);
                                 }
                             }
-
                         }
+
                     }
                     break;
             }

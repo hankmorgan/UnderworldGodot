@@ -149,14 +149,14 @@ namespace Underworld
                             //  case 0:
                             //      imageColors[counter++] = pal.ColorAtPixel(pixel, Alpha); break;
                             default:
-                                img.SetPixel(iCol, iRow, pal.ColorAtPixel(pixel, Alpha ,useGreyScale)); break;
+                                img.SetPixel(iCol, iRow, pal.ColorAtIndex(pixel, Alpha ,useGreyScale)); break;
                                 //imageColors[counter++] = pal.ColorAtPixel(pixel, Alpha); break;
                         }
                     }
                     else
                     {                        
                         //imageColors[counter++] = pal.ColorAtPixel(pixel, Alpha);
-                        img.SetPixel(iCol, iRow, pal.ColorAtPixel(pixel, Alpha, useGreyScale));
+                        img.SetPixel(iCol, iRow, pal.ColorAtIndex(pixel, Alpha, useGreyScale));
                     }
                     iCol++;
                 }

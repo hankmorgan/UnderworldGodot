@@ -19,6 +19,7 @@ uniform vec3 uv2_offset;
 global uniform sampler2D uwpalette: filter_nearest;
 uniform sampler2D texture_albedo : source_color,filter_nearest,repeat_enable;
 
+global uniform sampler2D uwlightmap : source_color,filter_nearest,repeat_enable;
 
 // Camera
 //uniform vec3 centerPos;// = vec3(0.0, 0.0, 0.0);  // anything further from this pos from the camera will be discarded, needs to be updated by script each frame

@@ -14,14 +14,14 @@ namespace Underworld
         /// Returns the color for the specified palette index. 
         /// </summary>
         /// <returns>The at pixel.</returns>
-        /// <param name="pixel">Pixel.</param>
+        /// <param name="index">Pixel.</param>
         /// <param name="Alpha">If set to <c>true</c> alpha.</param>
-        public Color ColorAtPixel(byte pixel, bool Alpha, bool useGreyScale)
+        public Color ColorAtIndex(byte index, bool Alpha, bool useGreyScale)
         {
             byte alphabyte;
             if (Alpha == true)
             {
-                if (pixel != 0) //Alpha
+                if (index != 0) //Alpha
                 {
                     alphabyte = 255;
                 }
@@ -39,7 +39,7 @@ namespace Underworld
             {
                 return new Color(
                     g: 0,
-                    r: pixel / 255f,
+                    r: index / 255f,
                     b: 0,
                     a: 0
                 );
@@ -47,19 +47,12 @@ namespace Underworld
             else
             {
                 return new Color(
-                        g: green[pixel] / 255f,
-                        r: red[pixel] / 255f,
-                        b: blue[pixel] / 255f,
+                        g: green[index] / 255f,
+                        r: red[index] / 255f,
+                        b: blue[index] / 255f,
                         a: alphabyte / 255f
                     );
             }
-
-
-
-            // uint rgba;
-            // rgba = (uint)(red[pixel]<<24 | green[pixel]<<16 | blue[pixel]<<8 | alphabyte);
-            // return new Color(rgba);
-            // return new Color(red[pixel], green[pixel], blue[pixel], alpha);
         }
 
         public Color ColorAtPixelAlpha(byte pixel, byte alpha)
@@ -68,11 +61,20 @@ namespace Underworld
         }
 
 
-        public ImageTexture toImage(int ColourBandSize = 16)
+        public virtual ImageTexture toImage(int ColourBandSize = 1)
         {
-            int ImageHeight = 16;
-            int NoOfColours = 256;
-            byte[] imgData = new byte[ImageHeight * NoOfColours * ColourBandSize];
+            int ImageHeight, NoOfColours;
+            byte[] imgData;
+            BuildPaletteImgData(ColourBandSize, out ImageHeight, out NoOfColours, out imgData);
+            var output = ArtLoader.Image(imgData, 0, NoOfColours * ColourBandSize, ImageHeight, "name here", this, true, false);
+            return output;
+        }
+
+        protected static void BuildPaletteImgData(int ColourBandSize, out int ImageHeight, out int NoOfColours, out byte[] imgData)
+        {
+            ImageHeight = 16;
+            NoOfColours = 256;
+            imgData = new byte[ImageHeight * NoOfColours * ColourBandSize];
             int x = 0;
             for (int h = 0; h < ImageHeight; h++)
             {
@@ -86,14 +88,8 @@ namespace Underworld
                     i++;
                 }
             }
-
-            // for (int i = 0; i < imgData.GetUpperBound(0); i++)
-            // {                
-            //     imgData[i] = (byte)i;
-            // }
-            var output = ArtLoader.Image(imgData, 0, NoOfColours * ColourBandSize, ImageHeight, "name here", this, true, false);
-            return output;
         }
+
 
 
 

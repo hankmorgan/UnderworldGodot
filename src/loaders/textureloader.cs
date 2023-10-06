@@ -79,24 +79,24 @@ public class TextureLoader : ArtLoader
     /// </summary>
     /// <param name="index">Index.</param>
     /// <param name="TextureType">Texture type. 0 = normal, 1 = palette cycled</param>
-    public ImageTexture LoadImageAt(int index, short TextureType)
-    {
-        TextureType=0;
-        switch (TextureType)
-        {
-           // case 1: // Palette cycled
-            //    return LoadImageAt(index, PaletteLoader.GreyScale);
-            //case 2://modded normal map                
-            //    return TGALoader.LoadTGA(Path.Combine(ModPathW, index.ToString("d3") + "_normal.tga"));
-            default:
-                return LoadImageAt(index, PaletteLoader.Palettes[0]);
-        }
-    }
+    // public ImageTexture LoadImageAt(int index, short TextureType)
+    // {
+    //     TextureType=0;
+    //     switch (TextureType)
+    //     {
+    //        // case 1: // Palette cycled
+    //         //    return LoadImageAt(index, PaletteLoader.GreyScale);
+    //         //case 2://modded normal map                
+    //         //    return TGALoader.LoadTGA(Path.Combine(ModPathW, index.ToString("d3") + "_normal.tga"));
+    //         default:
+    //             return LoadImageAt(index, PaletteLoader.Palettes[0]);
+    //     }
+    // }
 
 
     public override ImageTexture LoadImageAt(int index)
     {
-        return LoadImageAt(index, PaletteLoader.Palettes[0]);
+        return LoadImageAt(index, PaletteLoader.GreyScale); //PaletteLoader.Palettes[0]);
     }
 
     /// <summary>
