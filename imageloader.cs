@@ -13,6 +13,9 @@ internal class uwsettings
 	public string pathuw2 {get;set;}
 	public string gametoload {get;set;}
 	public int level {get;set;}
+	public float drawdistance {get; set;}
+
+	public static uwsettings instance;
 }
 
 public partial class imageloader : Sprite2D
@@ -43,6 +46,7 @@ public partial class imageloader : Sprite2D
 			return;
 		}
 		var gamesettings = JsonSerializer.Deserialize<uwsettings>(File.ReadAllText(settingsfile));
+		uwsettings.instance=gamesettings;
 		cam.Position = new Vector3(-38f, 4.2f, 2.2f);
 		cam.Rotate(Vector3.Up, (float)Math.PI);
 		
@@ -290,12 +294,12 @@ public partial class imageloader : Sprite2D
 	public override void _Process(double delta)
 	{
 
-		lbl.Text = cam.Position.ToString();
+		lbl.Text = $"{cam.Position.ToString()} nearlightmap: {NextLightCycle}";
 		//RenderingServer.GlobalShaderParameterSet("cameraPos", cam.Position);
 		cycletime += delta;
 		if(cycletime>0.2)
 		{
-			cycletime=0;
+			cycletime=0;			
 			RenderingServer.GlobalShaderParameterSet("uwpalette", (Texture)surfacematerial.texturePalettes[NextPaletteCycle]);
 			RenderingServer.GlobalShaderParameterSet("uwlightmap", (Texture)PaletteLoader.light[NextLightCycle].toImage());
 			NextPaletteCycle++;

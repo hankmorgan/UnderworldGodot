@@ -20,6 +20,8 @@ global uniform sampler2D uwpalette: filter_nearest;
 uniform sampler2D texture_albedo : source_color,filter_nearest,repeat_enable;
 
 global uniform sampler2D uwlightmap : source_color,filter_nearest,repeat_enable;
+global uniform sampler2D uwlightmapfar : source_color,filter_nearest,repeat_enable;
+global uniform float fardistance;
 
 // Camera
 //uniform vec3 centerPos;// = vec3(0.0, 0.0, 0.0);  // anything further from this pos from the camera will be discarded, needs to be updated by script each frame
@@ -46,29 +48,31 @@ void fragment() {
     //    discard;
     //}
 
-	//vec3 world_camera = (INV_VIEW_MATRIX * vec4(vec3(0.0), 1.0)).xyz;
-	//vec4 a = INV_VIEW_MATRIX * vec4(VERTEX, 1.0);
-    //float dist = (distance(a.xyz, world_camera));
-	//if(dist > 25.0f)
-	//{
-	//	discard;
-	//}
+	vec3 world_camera = (INV_VIEW_MATRIX * vec4(vec3(0.0), 1.0)).xyz;
+	vec4 a = INV_VIEW_MATRIX * vec4(VERTEX, 1.0);
+    float dist = (distance(a.xyz, world_camera));
+	if(dist > fardistance)
+	{
+		discard;
+	}
 
 	//read in greyscale texture to get color index
 	vec4 rgba = texture(texture_albedo, UV);
 
 	//get value of light red channel
 	vec4 lightval = texture(uwlightmap, vec2(rgba.r, 0));
+	vec4 lightvalfar = texture(uwlightmapfar, vec2(rgba.r, 0));
 
 	//vec4 finalcolour = texture(uwpalette, vec2(rgba.r ,0));
 	vec4 finalcolour = texture(uwpalette, vec2(lightval.r ,0));
+	vec4 finalcolourfar = texture(uwpalette, vec2(lightvalfar.r ,0));
 	
 	
 	//mix(vec3(0.0), c.rgb, brightness);
 	//finalcolour.rgb = mix(vec3(0.0f), finalcolour.rgb, 1.0f/dist); //example brightness change
 	
-	
-	ALBEDO = finalcolour.rgb;
+	ALBEDO = mix(finalcolour.rgb, finalcolourfar.rgb, smoothstep(0.0f, fardistance, distance(a.xyz, world_camera)));
+	//ALBEDO = finalcolour.rgb;
 	
 	//float metallic_tex = dot(texture(texture_metallic,base_uv),metallic_texture_channel);
 	//METALLIC = metallic_tex * metallic;
