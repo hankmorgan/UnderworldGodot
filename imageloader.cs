@@ -49,7 +49,7 @@ public partial class imageloader : Sprite2D
 		uwsettings.instance=gamesettings;
 		cam.Position = new Vector3(-38f, 4.2f, 2.2f);
 		cam.Rotate(Vector3.Up, (float)Math.PI);
-		
+		shade.getFarDist(0);
 		UWClass._RES = gamesettings.gametoload;
 		switch (UWClass._RES)
 		{

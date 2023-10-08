@@ -27,4 +27,5 @@ project/assembly_name="Underworld"
 
 [rendering]
 
-environment/defaults/default_clear_color=Color(0.768627, 0.898039, 0.592157, 1)
+textures/canvas_textures/default_texture_filter=0
+environment/defaults/default_clear_color=Color(0, 0, 0, 1)
