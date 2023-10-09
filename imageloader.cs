@@ -31,7 +31,8 @@ public partial class imageloader : Sprite2D
 
 	double cycletime = 0;
 	int NextPaletteCycle = 0;
-	int NextLightCycle = 0;
+	int nextShade = 0;
+	int shadedir = 1;
  
 	public override void _Ready()
 	{
@@ -61,6 +62,9 @@ public partial class imageloader : Sprite2D
 				throw new InvalidOperationException("Invalid Game Selected");
 		}
 
+		shade.shadesdata[4].CalculateShades();
+
+		return;
 		//playerdat.Load("SAVE1");
 		//Debug.Print(playerdat.CharName);
 		// Voc file loading. 
@@ -294,23 +298,39 @@ public partial class imageloader : Sprite2D
 	public override void _Process(double delta)
 	{
 
-		lbl.Text = $"{cam.Position.ToString()} nearlightmap: {NextLightCycle}";
+		lbl.Text = $"{cam.Position.ToString()} nearlightmap: {nextShade}";
 		//RenderingServer.GlobalShaderParameterSet("cameraPos", cam.Position);
 		cycletime += delta;
 		if(cycletime>0.2)
 		{
-			cycletime=0;			
+			cycletime=0;	
+			//nextShade=2;
+			//Cycle the palette		
 			RenderingServer.GlobalShaderParameterSet("uwpalette", (Texture)surfacematerial.texturePalettes[NextPaletteCycle]);
-			RenderingServer.GlobalShaderParameterSet("uwlightmap", (Texture)PaletteLoader.light[NextLightCycle].toImage());
+
+			//cycle shades.dat
+			RenderingServer.GlobalShaderParameterSet("uwlightmapnear", (Texture)PaletteLoader.light[shade.getNearMap(nextShade)].toImage());
+			RenderingServer.GlobalShaderParameterSet("uwlightmapfar", (Texture)PaletteLoader.light[shade.getShadeCutoff(nextShade)].toImage());
+			
+			RenderingServer.GlobalShaderParameterSet("neardistance", 1);// (float)shade.getNearDist(nextShade));
+			RenderingServer.GlobalShaderParameterSet("fardistance", 12);// (float)shade.getFarDist(nextShade));
+
 			NextPaletteCycle++;
-			NextLightCycle++;
+			nextShade = nextShade + shadedir;
 			if (NextPaletteCycle>surfacematerial.texturePalettes.GetUpperBound(0))
 			{
 				NextPaletteCycle=0;
 			}
-			if (NextLightCycle>PaletteLoader.light.GetUpperBound(0))
+			if (nextShade<0)
 			{
-				NextLightCycle=0;
+				shadedir = 1;
+				nextShade = 1;
+			}			
+			if (nextShade>=8)
+			{
+				//nextShade=0;
+				shadedir = -1;
+				nextShade = 6;
 			}
 		}
 	}

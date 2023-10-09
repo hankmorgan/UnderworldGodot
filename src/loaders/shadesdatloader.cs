@@ -12,20 +12,20 @@ namespace Underworld
     {
         public int mapindex;
         int nearlightmap;
-        int farlightmap;
-        float neardistance;
-        float fardistance;
+        int shadeCutOff;
+        int neardistance;
+        int fardistance;
 
-        static shade[] shadesdata;
+        public static shade[] shadesdata;
 
         public static int getNearMap(int index)
         {
             return shadesdata[index].nearlightmap;
         }
 
-        public static int getFarMap(int index)
+        public static int getShadeCutoff(int index)
         {
-            return shadesdata[index].farlightmap;
+            return shadesdata[index].shadeCutOff;
         }
 
         public static float getNearDist(int index)
@@ -39,15 +39,102 @@ namespace Underworld
         }
 
 
+        public int[] CalculateShades()
+        {
+            if (shadeCutOff<16)
+            {
+                int[] shadesArray = ExtractShadeArray();
+                ExtractShadingTable(, shadesArray);
+            }
+            return new int[33*17*2];
+        }
 
-        public shade(int _index, float _nearDist, int _nearMap, float _farDist, int _farMap)
+        /// <summary>
+        /// I think this returns a v large look up table for matching raycasts for shading.
+        /// I'm goint to ignore in favour of the shadearray
+        /// </summary>
+        /// <param name="shadesArray"></param>
+        /// <returns></returns>
+        public int[] ExtractShadingTable(int[] shadesArray)
+        {
+            int[] largeShadeArray = new int[33*17*2];
+            for (int di = 0; di < 17; di++)
+            {
+                for (int si = 0; si < 33; si++)
+                {
+                    int ax = 16;
+                    ax = ax - si;
+                    ax = ax * ax;
+
+                    ax = ax + (di * di);
+                    ax = (int)Math.Sqrt(ax);
+                    int var2 = ax;
+                    ax = di * 66;
+                    ax = ax + (si << 1);
+                    if (var2 > shadeCutOff)
+                    {
+                        largeShadeArray[ax] = 0xF; //darkness?
+                    }
+                    else
+                    {
+                        largeShadeArray[ax] = shadesArray[var2];
+                    }
+                }
+            } //loop di
+            return largeShadeArray;
+        }
+
+        /// <summary>
+        /// Returns an array of the light maps to be used in this shade.
+        /// </summary>
+        /// <param name="shadesArray"></param>
+        public int[] ExtractShadeArray()
+        {
+            int[] shadesArray =new int[16];
+            if (shadeCutOff<16)
+            {   //return all zeros.
+                return shadesArray;
+            }
+            for (int si = 0; si < 16; si++)
+            {
+                if (si < shadeCutOff)
+                {
+                    int ax = si;
+                    ax = (int)Math.Pow(ax * 8, 2);
+                    //int var6 = ax;
+                    ax = ax << 1;
+                    //int var4 = ax;
+                    ax = (int)Math.Sqrt(ax);
+                    int var6 = ax;
+                    int var4 = (int)(var6 * neardistance / 64);
+                    var4 += fardistance;
+                    if (var4 < 0)
+                    {
+                        var4 = 0;
+                    }
+                    var6 = var4 + nearlightmap;
+                    if (var6 > 14)
+                    {
+                        var6 = 14;
+                    }
+                    shadesArray[si] = var6;
+                }
+                else
+                {
+                    shadesArray[si] = 0xF; //darkness
+                }
+            } //loop si 1
+            return shadesArray;
+        }
+
+        public shade(int _index, int _nearDist, int _nearMap, int _farDist, int _ShadeCutoff)
         {
             mapindex =_index;
             neardistance = _nearDist;
-            nearlightmap= _nearMap;
+            nearlightmap= _nearMap & 0xF;
             fardistance = _farDist;
-            farlightmap = _farMap;
-            Debug.Print($"{_index} {_nearDist} {_nearMap} {_farDist} {_farMap}");
+            shadeCutOff = _ShadeCutoff  & 0xF;
+            Debug.Print($"{_index} {_nearDist} {_nearMap} {_farDist} {_ShadeCutoff}");
         }
 
         static shade()
@@ -57,17 +144,17 @@ namespace Underworld
             {
                 if (ReadStreamFile(path, out byte[] buffer))
                 {
-                    shadesdata = new shade[12];
-                    for (int i = 0; i < 12; i++)
+                    shadesdata = new shade[8];
+                    for (int i = 0; i < 8; i++)
                     {
                         try
                         {
                             shadesdata[i] = new shade(
                                 _index : i, 
-                                _nearDist: (float)(Int16)getValAtAddress(buffer, 0 + (i * 8), 16 ),
-                                _nearMap : (int)getValAtAddress(buffer, 2 + (i * 8), 16 ),
-                                _farDist : (float)(Int16)getValAtAddress(buffer, 4 + (i * 8), 16 ),
-                                _farMap: (int)getValAtAddress(buffer, 6 + (i * 8), 16 )
+                                _nearDist: (int)(Int16)getValAtAddress(buffer, 0 + (i * 12), 16 ),
+                                _nearMap : (int)getValAtAddress(buffer, 2 + (i * 12), 16 ),
+                                _farDist : (int)(Int16)getValAtAddress(buffer, 4 + (i * 12), 16 ),
+                                _ShadeCutoff: (int)getValAtAddress(buffer, 6 + (i * 12), 16 )
                             );   
                         }
                         catch
@@ -94,10 +181,10 @@ namespace Underworld
             {
                 shadesdata[i] = new shade(
                     _index: i,
-                    _nearDist: 0f,
+                    _nearDist: 0,
                     _nearMap: 0,
-                    _farDist: 1000f,
-                    _farMap: 0
+                    _farDist: 0,
+                    _ShadeCutoff: 0
                  );
             }
         }

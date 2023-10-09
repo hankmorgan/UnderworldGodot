@@ -19,8 +19,11 @@ uniform vec3 uv2_offset;
 global uniform sampler2D uwpalette: filter_nearest;
 uniform sampler2D texture_albedo : source_color,filter_nearest,repeat_enable;
 
-global uniform sampler2D uwlightmap : source_color,filter_nearest,repeat_enable;
+global uniform sampler2D uwlightmapnear : source_color,filter_nearest,repeat_enable;
 global uniform sampler2D uwlightmapfar : source_color,filter_nearest,repeat_enable;
+global uniform sampler2D uwlightmapdark : source_color,filter_nearest,repeat_enable;
+
+global uniform float neardistance;
 global uniform float fardistance;
 
 // Camera
@@ -44,40 +47,36 @@ void vertex() {
 
 void fragment() {
 
-    //if(vertexToCam > 25.0f){        
-    //    discard;
-    //}
-
 	vec3 world_camera = (INV_VIEW_MATRIX * vec4(vec3(0.0), 1.0)).xyz;
 	vec4 a = INV_VIEW_MATRIX * vec4(VERTEX, 1.0);
     float dist = (distance(a.xyz, world_camera));
-	if(dist > fardistance)
-	{
-		discard;
-	}
 
 	//read in greyscale texture to get color index
-	vec4 rgba = texture(texture_albedo, UV);
+	vec4 rgba = texture(texture_albedo, UV);	
 
-	//get value of light red channel
-	vec4 lightval = texture(uwlightmap, vec2(rgba.r, 0));
-	vec4 lightvalfar = texture(uwlightmapfar, vec2(rgba.r, 0));
+	if(dist > fardistance)
+	{
+		//apply the fulldark lightmap
+		vec4 lightvaldark = texture(uwlightmapdark, vec2(rgba.r, 0));	
+		vec4 finalcolourdark = texture(uwpalette, vec2(lightvaldark.r ,0));
+		ALBEDO = finalcolourdark.rgb;
+	}
+	else
+	{
+		//get value of light red channel on the light maps
+		vec4 lightvalnear = texture(uwlightmapnear, vec2(rgba.r, 0));		
 
-	//vec4 finalcolour = texture(uwpalette, vec2(rgba.r ,0));
-	vec4 finalcolour = texture(uwpalette, vec2(lightval.r ,0));
-	vec4 finalcolourfar = texture(uwpalette, vec2(lightvalfar.r ,0));
-	
-	
-	//mix(vec3(0.0), c.rgb, brightness);
-	//finalcolour.rgb = mix(vec3(0.0f), finalcolour.rgb, 1.0f/dist); //example brightness change
-	
-	ALBEDO = mix(finalcolour.rgb, finalcolourfar.rgb, smoothstep(0.0f, fardistance, distance(a.xyz, world_camera)));
-	//ALBEDO = finalcolour.rgb;
-	
-	//float metallic_tex = dot(texture(texture_metallic,base_uv),metallic_texture_channel);
-	//METALLIC = metallic_tex * metallic;
-	//vec4 roughness_texture_channel = vec4(1.0,0.0,0.0,0.0);
-	//float roughness_tex = dot(texture(texture_roughness,base_uv),roughness_texture_channel);
-	//ROUGHNESS = roughness_tex * roughness;
-	//SPECULAR = specular;
+		if (dist < neardistance)
+		{	//apply the near light map uniformly from camera to near distance
+			vec4 finalcolournear = texture(uwpalette, vec2(lightvalnear.r ,0));
+			ALBEDO = finalcolournear.rgb;
+		}
+		else
+		{  //interpolate between the near map to the far map between near distance and far distance
+			vec4 lightvalfar = texture(uwlightmapfar, vec2(rgba.r, 0));			
+			vec4 finalcolournear = texture(uwpalette, vec2(lightvalnear.r ,0));
+			vec4 finalcolourfar = texture(uwpalette, vec2(lightvalfar.r ,0));
+			ALBEDO = mix(finalcolournear.rgb, finalcolourfar.rgb, smoothstep(neardistance, fardistance, distance(a.xyz, world_camera)));
+		}
+	}
 }
