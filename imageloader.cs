@@ -62,9 +62,9 @@ public partial class imageloader : Sprite2D
 				throw new InvalidOperationException("Invalid Game Selected");
 		}
 
-		shade.shadesdata[4].CalculateShades();
+		//shade.shadesdata[4].CalculateShades();
 
-		return;
+
 		//playerdat.Load("SAVE1");
 		//Debug.Print(playerdat.CharName);
 		// Voc file loading. 
@@ -92,7 +92,7 @@ public partial class imageloader : Sprite2D
 		//Load palettes. run first
 		//PaletteLoader.LoadPalettes(Path.Combine(UWClass.BasePath, "DATA", "pals.dat"));// "C:\\Games\\UW1\\game\\UW\\data\\pals.dat");
 
-		grey.Texture = PaletteLoader.light[5].toImage();
+		grey.Texture = PaletteLoader.AllLightMaps(PaletteLoader.light); //PaletteLoader.light[5].toImage();
 		var textureloader = new TextureLoader();
 		//var a_texture = textureloader.LoadImageAt(index);
 		//grey.Texture=a_texture;

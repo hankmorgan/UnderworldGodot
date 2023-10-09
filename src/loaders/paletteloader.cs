@@ -28,7 +28,7 @@ namespace Underworld
         /// <summary>
         /// Palettes loaded by mono.dat
         /// </summary>
-        public static lightmap mono  = null;
+        public static lightmap[] mono  = null;
 
         static PaletteLoader()  //void LoadPalettes(string filePath)
         {
@@ -75,6 +75,22 @@ namespace Underworld
                             }
                         }
 
+
+                        mono = new lightmap[16];
+                        if (ReadStreamFile(path_mono, out byte[] mono_dat))
+                        {
+                            for (int palNo = 0; palNo <= mono.GetUpperBound(0); palNo++)
+                            {
+                                mono[palNo] = new lightmap();
+                                for (int pixel = 0; pixel < 256; pixel++)
+                                { //just store the index values.
+                                   mono[palNo].red[pixel] = (byte)getValAtAddress(mono_dat, palNo * 256 + pixel + 0, 8);
+                                   mono[palNo].blue[pixel] = (byte)getValAtAddress(mono_dat, palNo * 256 + pixel + 0, 8);
+                                   mono[palNo].green[pixel] = (byte)getValAtAddress(mono_dat, palNo * 256 + pixel + 0, 8);
+                                }
+                            }
+                        }
+
                     }
                     break;
             }
@@ -113,6 +129,26 @@ namespace Underworld
                 }
             }
             return auxpal;
+        }
+
+
+        /// <summary>
+        /// Loads all the lightmaps as a single image to use as a global lookup in the shader.
+        /// </summary>
+        /// <param name="maps"></param>
+        /// <returns></returns>
+        public static ImageTexture AllLightMaps(lightmap[] maps)
+        {
+            byte[] imgdata =new byte[maps.GetUpperBound(0)*256];
+            for (int l = 0; l< maps.GetUpperBound(0);l++)
+            {
+                for (int b=0;b<256;b++)
+                {
+                    imgdata[(l*256) + b] = maps[l].red[b];
+                }
+            }
+            var output = ArtLoader.Image(imgdata, 0, 256, maps.GetUpperBound(0), "name here", GreyScale, true, true);
+            return output;
         }
 
     }//end class

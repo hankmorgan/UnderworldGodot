@@ -44,7 +44,7 @@ namespace Underworld
             if (shadeCutOff<16)
             {
                 int[] shadesArray = ExtractShadeArray();
-                ExtractShadingTable(, shadesArray);
+                ExtractShadingTable(shadesArray);
             }
             return new int[33*17*2];
         }
