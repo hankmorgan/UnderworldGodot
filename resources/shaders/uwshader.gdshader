@@ -52,26 +52,31 @@ void vertex() {
 
 void fragment() {
 
-	vec3 world_camera = (INV_VIEW_MATRIX * vec4(vec3(0.0), 1.0)).xyz;
+	vec2 world_camera = (INV_VIEW_MATRIX * vec4(vec3(0.0), 1.0)).xz;
 	vec4 a = INV_VIEW_MATRIX * vec4(VERTEX, 1.0);
-    float dist = (distance(a.xyz, world_camera));
+    float dist = (distance(a.xz, world_camera));
 
 	//read in greyscale texture to get color index
 	vec4 rgba = texture(texture_albedo, UV);	
 
-	if (dist >= cutoffdistance)
-	{
+	if (dist > cutoffdistance)
+	{		
 		discard;
-		//vec4 lightvaldark = texture(uwlightmap, vec2(rgba.r, 1.0f));	
-		//vec4 finalcolourdark = texture(uwpalette, vec2(lightvaldark.r ,0));
+		vec4 lightvaldark = texture(uwlightmapdark, vec2(rgba.r, 0));	
+		vec4 finalcolourdark = texture(uwpalette, vec2(lightvaldark.r ,0));
 		//ALBEDO = finalcolourdark.rgb;
 	}
 	else
 	{
+		//Get the uv offset within the shades.dat image
 		float maptouse = dist/cutoffdistance;
+		//lookup shades.dat using the uv
 		vec4 shade = texture(shades, vec2(maptouse,0));
+		//Apply the shade returned from shades.dat for the lightmap
 		vec4 lightval = texture(uwlightmap, vec2(rgba.r, shade.r));	
+		//lookup the palette colour from the lightmap
 		vec4 finalcolour = texture(uwpalette, vec2(lightval.r ,0));
+		//apply
 		ALBEDO = finalcolour.rgb;
 	}
 }

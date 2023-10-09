@@ -27,17 +27,17 @@ namespace Underworld
 
             if (texturePalettes == null)
             {//init the shader palette
-                CreateTexturePaletteCycles();
+                CreateTexturePaletteCycles(0);
                 RenderingServer.GlobalShaderParameterAdd("uwpalette", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)texturePalettes[0]);
                 RenderingServer.GlobalShaderParameterAdd("uwlightmapnear", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)PaletteLoader.light[0].toImage());
                 RenderingServer.GlobalShaderParameterAdd("uwlightmapfar", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)PaletteLoader.light[15].toImage());
                 RenderingServer.GlobalShaderParameterAdd("uwlightmapdark", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)PaletteLoader.light[15].toImage());
-                RenderingServer.GlobalShaderParameterAdd("fardistance", RenderingServer.GlobalShaderParameterType.Float, uwsettings.instance.drawdistance);
+                //RenderingServer.GlobalShaderParameterAdd("fardistance", RenderingServer.GlobalShaderParameterType.Float, uwsettings.instance.drawdistance);
                 RenderingServer.GlobalShaderParameterAdd("neardistance", RenderingServer.GlobalShaderParameterType.Float, 0);
             
-                RenderingServer.GlobalShaderParameterAdd("cutoffdistance", RenderingServer.GlobalShaderParameterType.Float, 1.2f * shade.getShadeCutoff(4));
+                RenderingServer.GlobalShaderParameterAdd("cutoffdistance", RenderingServer.GlobalShaderParameterType.Float, 1.2f * shade.getShadeCutoff(uwsettings.instance.lightlevel));
                 RenderingServer.GlobalShaderParameterAdd("uwlightmap", RenderingServer.GlobalShaderParameterType.Sampler2D, PaletteLoader.AllLightMaps(PaletteLoader.light));
-                RenderingServer.GlobalShaderParameterAdd("shades", RenderingServer.GlobalShaderParameterType.Sampler2D, shade.shadesdata[4].ToImage());
+                RenderingServer.GlobalShaderParameterAdd("shades", RenderingServer.GlobalShaderParameterType.Sampler2D, shade.shadesdata[uwsettings.instance.lightlevel].ToImage());
                
             }//shade.shadesdata[4].ToImage();
             textures=new TextureLoader();
