@@ -34,7 +34,12 @@ namespace Underworld
                 RenderingServer.GlobalShaderParameterAdd("uwlightmapdark", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)PaletteLoader.light[15].toImage());
                 RenderingServer.GlobalShaderParameterAdd("fardistance", RenderingServer.GlobalShaderParameterType.Float, uwsettings.instance.drawdistance);
                 RenderingServer.GlobalShaderParameterAdd("neardistance", RenderingServer.GlobalShaderParameterType.Float, 0);
-            }
+            
+                RenderingServer.GlobalShaderParameterAdd("cutoffdistance", RenderingServer.GlobalShaderParameterType.Float, 1.2f * shade.getShadeCutoff(4));
+                RenderingServer.GlobalShaderParameterAdd("uwlightmap", RenderingServer.GlobalShaderParameterType.Sampler2D, PaletteLoader.AllLightMaps(PaletteLoader.light));
+                RenderingServer.GlobalShaderParameterAdd("shades", RenderingServer.GlobalShaderParameterType.Sampler2D, shade.shadesdata[4].ToImage());
+               
+            }//shade.shadesdata[4].ToImage();
             textures=new TextureLoader();
         }
 

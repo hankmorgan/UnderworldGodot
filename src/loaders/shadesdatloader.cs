@@ -45,13 +45,18 @@ namespace Underworld
         /// <returns></returns>
         public Godot.ImageTexture ToImage()
         {
+            var bandwidth=1;
             var shadearray = ExtractShadeArray();
-            byte[] imgdata =new byte[16];
+            byte[] imgdata =new byte[16*bandwidth];
             for (int l = 0; l< 16;l++)
             {
-                imgdata[l] = (byte)(shadearray[15-l]); //reverse the image as it goes from dark->light. Easier to use light->dark in the shader
+                for (int i=0;i<bandwidth;i++)
+                {       
+                    imgdata[l*bandwidth + i] = (byte)(shadearray[l]*16); //mult by 16 to get a full range
+                }
+                
             }
-            var output = ArtLoader.Image(imgdata, 0, 16, 1, "name here", PaletteLoader.GreyScale, true, true);
+            var output = ArtLoader.Image(imgdata, 0, 16*bandwidth, 1, "name here", PaletteLoader.GreyScale, true, true);
             return output;
         }
 

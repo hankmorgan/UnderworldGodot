@@ -310,11 +310,11 @@ public partial class imageloader : Sprite2D
 			RenderingServer.GlobalShaderParameterSet("uwpalette", (Texture)surfacematerial.texturePalettes[NextPaletteCycle]);
 
 			//cycle shades.dat
-			RenderingServer.GlobalShaderParameterSet("uwlightmapnear", (Texture)PaletteLoader.light[shade.getNearMap(nextShade)].toImage());
-			RenderingServer.GlobalShaderParameterSet("uwlightmapfar", (Texture)PaletteLoader.light[shade.getShadeCutoff(nextShade)].toImage());
+			//RenderingServer.GlobalShaderParameterSet("uwlightmapnear", (Texture)PaletteLoader.light[shade.getNearMap(nextShade)].toImage());
+			//RenderingServer.GlobalShaderParameterSet("uwlightmapfar", (Texture)PaletteLoader.light[shade.getShadeCutoff(nextShade)].toImage());
 			
-			RenderingServer.GlobalShaderParameterSet("neardistance", 1);// (float)shade.getNearDist(nextShade));
-			RenderingServer.GlobalShaderParameterSet("fardistance", 12);// (float)shade.getFarDist(nextShade));
+			//RenderingServer.GlobalShaderParameterSet("neardistance", 1);// (float)shade.getNearDist(nextShade));
+			//RenderingServer.GlobalShaderParameterSet("fardistance", 12);// (float)shade.getFarDist(nextShade));
 
 			NextPaletteCycle++;
 			nextShade = nextShade + shadedir;

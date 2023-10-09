@@ -23,8 +23,13 @@ global uniform sampler2D uwlightmapnear : source_color,filter_nearest,repeat_ena
 global uniform sampler2D uwlightmapfar : source_color,filter_nearest,repeat_enable;
 global uniform sampler2D uwlightmapdark : source_color,filter_nearest,repeat_enable;
 
+global uniform sampler2D uwlightmap : source_color,filter_nearest,repeat_enable;
+global uniform sampler2D shades : source_color,filter_nearest,repeat_enable;
+
 global uniform float neardistance;
 global uniform float fardistance;
+
+global uniform float cutoffdistance;
 
 // Camera
 //uniform vec3 centerPos;// = vec3(0.0, 0.0, 0.0);  // anything further from this pos from the camera will be discarded, needs to be updated by script each frame
@@ -54,29 +59,19 @@ void fragment() {
 	//read in greyscale texture to get color index
 	vec4 rgba = texture(texture_albedo, UV);	
 
-	if(dist > fardistance)
+	if (dist >= cutoffdistance)
 	{
-		//apply the fulldark lightmap
-		vec4 lightvaldark = texture(uwlightmapdark, vec2(rgba.r, 0));	
-		vec4 finalcolourdark = texture(uwpalette, vec2(lightvaldark.r ,0));
-		ALBEDO = finalcolourdark.rgb;
+		discard;
+		//vec4 lightvaldark = texture(uwlightmap, vec2(rgba.r, 1.0f));	
+		//vec4 finalcolourdark = texture(uwpalette, vec2(lightvaldark.r ,0));
+		//ALBEDO = finalcolourdark.rgb;
 	}
 	else
 	{
-		//get value of light red channel on the light maps
-		vec4 lightvalnear = texture(uwlightmapnear, vec2(rgba.r, 0));		
-
-		if (dist < neardistance)
-		{	//apply the near light map uniformly from camera to near distance
-			vec4 finalcolournear = texture(uwpalette, vec2(lightvalnear.r ,0));
-			ALBEDO = finalcolournear.rgb;
-		}
-		else
-		{  //interpolate between the near map to the far map between near distance and far distance
-			vec4 lightvalfar = texture(uwlightmapfar, vec2(rgba.r, 0));			
-			vec4 finalcolournear = texture(uwpalette, vec2(lightvalnear.r ,0));
-			vec4 finalcolourfar = texture(uwpalette, vec2(lightvalfar.r ,0));
-			ALBEDO = mix(finalcolournear.rgb, finalcolourfar.rgb, smoothstep(neardistance, fardistance, distance(a.xyz, world_camera)));
-		}
+		float maptouse = dist/cutoffdistance;
+		vec4 shade = texture(shades, vec2(maptouse,0));
+		vec4 lightval = texture(uwlightmap, vec2(rgba.r, shade.r));	
+		vec4 finalcolour = texture(uwpalette, vec2(lightval.r ,0));
+		ALBEDO = finalcolour.rgb;
 	}
 }
