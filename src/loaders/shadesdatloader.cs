@@ -2,13 +2,14 @@ using System;
 using System.Diagnostics;
 using System.Net;
 using System.Runtime.CompilerServices;
+using Godot.NativeInterop;
 
 namespace Underworld
 {
     /// <summary>
     /// Class for loading and accessing shades.dat
     /// </summary>
-    public class shade : Loader
+    public class shade :ArtLoader
     {
         public int mapindex;
         int nearlightmap;
@@ -37,6 +38,23 @@ namespace Underworld
         {
             return shadesdata[index].fardistance;
         }
+
+        /// <summary>
+        /// Returns the shade map as a single channel image for use in shaders.
+        /// </summary>
+        /// <returns></returns>
+        public Godot.ImageTexture ToImage()
+        {
+            var shadearray = ExtractShadeArray();
+            byte[] imgdata =new byte[16];
+            for (int l = 0; l< 16;l++)
+            {
+                imgdata[l] = (byte)(shadearray[15-l]); //reverse the image as it goes from dark->light. Easier to use light->dark in the shader
+            }
+            var output = ArtLoader.Image(imgdata, 0, 16, 1, "name here", PaletteLoader.GreyScale, true, true);
+            return output;
+        }
+
 
 
         public int[] CalculateShades()
@@ -91,7 +109,7 @@ namespace Underworld
         public int[] ExtractShadeArray()
         {
             int[] shadesArray =new int[16];
-            if (shadeCutOff<16)
+            if (shadeCutOff>=16)
             {   //return all zeros.
                 return shadesArray;
             }
