@@ -84,9 +84,14 @@ namespace Underworld
         const float doorSideWidth = (doorframewidth - doorwidth) / 2f;
         const float doorheight = 7f * 0.15f;
 
+        public static TextureLoader mapTextures;
 
         public static void GenerateLevelFromTileMap(Node3D parent, Node3D sceneryParent, string game, TileMap Level, List<uwObject> objList, bool UpdateOnly)
         {
+            if (mapTextures==null)
+            {
+                mapTextures = new();
+            }
             bool skipCeil = true;
             CEILING_HEIGHT = Level.CEILING_HEIGHT;
             // if (game == GAME_SHOCK)
@@ -3202,7 +3207,7 @@ namespace Underworld
             //bool useCustomShader=true;
            // if (useCustomShader)
            // {
-            a_mesh.SurfaceSetMaterial(FaceCounter + faceCounterAdj, surfacematerial.Get(MatsToUse[FaceCounter]));
+            a_mesh.SurfaceSetMaterial(FaceCounter + faceCounterAdj, mapTextures.GetMaterial(MatsToUse[FaceCounter])); //  surfacematerial.Get(MatsToUse[FaceCounter]));
            // }
             // else
             // { //standard material shader. this works but does not cycle the textures.

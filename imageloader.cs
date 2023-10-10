@@ -61,7 +61,6 @@ public partial class imageloader : Sprite2D
 			default:
 				throw new InvalidOperationException("Invalid Game Selected");
 		}
-
 		//shade.shadesdata[4].CalculateShades();
 
 
@@ -307,8 +306,8 @@ public partial class imageloader : Sprite2D
 			cycletime=0;	
 			//nextShade=2;
 			//Cycle the palette		
-			RenderingServer.GlobalShaderParameterSet("uwpalette", (Texture)surfacematerial.texturePalettes[NextPaletteCycle]);
-
+			//RenderingServer.GlobalShaderParameterSet("uwpalette", (Texture)surfacematerial.texturePalettes[NextPaletteCycle]);
+			RenderingServer.GlobalShaderParameterSet("uwpalette", (Texture)PaletteLoader.cycledPalette[NextPaletteCycle]);
 			//cycle shades.dat
 			//RenderingServer.GlobalShaderParameterSet("uwlightmapnear", (Texture)PaletteLoader.light[shade.getNearMap(nextShade)].toImage());
 			//RenderingServer.GlobalShaderParameterSet("uwlightmapfar", (Texture)PaletteLoader.light[shade.getShadeCutoff(nextShade)].toImage());
@@ -318,7 +317,7 @@ public partial class imageloader : Sprite2D
 
 			NextPaletteCycle++;
 			nextShade = nextShade + shadedir;
-			if (NextPaletteCycle>surfacematerial.texturePalettes.GetUpperBound(0))
+			if (NextPaletteCycle > PaletteLoader.cycledPalette.GetUpperBound(0))
 			{
 				NextPaletteCycle=0;
 			}

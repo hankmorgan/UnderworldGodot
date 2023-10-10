@@ -4,16 +4,21 @@ using Godot;
 namespace Underworld
 {
 
-/// <summary>
-/// Palette loader.
-/// </summary>
+    /// <summary>
+    /// Palette loader.
+    /// </summary>
     public class PaletteLoader : ArtLoader
     {
-        
+
         /// <summary>
         /// Palettes in pals.dat
         /// </summary>
         public static Palette[] Palettes = new Palette[22];
+
+        /// <summary>
+        /// Prebuilt array of cycled palettes for use in shaders.
+        /// </summary>
+        public static ImageTexture[] cycledPalette;
         public static int NoOfPals = 22;
 
         /// <summary>
@@ -29,13 +34,13 @@ namespace Underworld
         /// <summary>
         /// Palettes loaded by mono.dat
         /// </summary>
-        public static lightmap[] mono  = null;
+        public static lightmap[] mono = null;
 
         static PaletteLoader()  //void LoadPalettes(string filePath)
         {
-            var path_pals = System.IO.Path.Combine(BasePath,"DATA","PALS.DAT");
-            var path_light = System.IO.Path.Combine(BasePath,"DATA","LIGHT.DAT");
-            var path_mono = System.IO.Path.Combine(BasePath,"DATA","MONO.DAT");
+            var path_pals = System.IO.Path.Combine(BasePath, "DATA", "PALS.DAT");
+            var path_light = System.IO.Path.Combine(BasePath, "DATA", "LIGHT.DAT");
+            var path_mono = System.IO.Path.Combine(BasePath, "DATA", "MONO.DAT");
             GreyScale = new Palette();
             for (int i = 0; i <= GreyScale.blue.GetUpperBound(0); i++)
             {
@@ -57,7 +62,8 @@ namespace Underworld
                                 {
                                     Palettes[palNo].red[pixel] = (byte)(getValAtAddress(pals_dat, palNo * 256 + (pixel * 3) + 0, 8) << 2);
                                     Palettes[palNo].green[pixel] = (byte)(getValAtAddress(pals_dat, palNo * 256 + (pixel * 3) + 1, 8) << 2);
-                                    Palettes[palNo].blue[pixel] = (byte)(getValAtAddress(pals_dat, palNo * 256 + (pixel * 3) + 2, 8) << 2);                                }
+                                    Palettes[palNo].blue[pixel] = (byte)(getValAtAddress(pals_dat, palNo * 256 + (pixel * 3) + 2, 8) << 2);
+                                }
                             }
                         }
 
@@ -69,9 +75,9 @@ namespace Underworld
                                 light[palNo] = new lightmap();
                                 for (int pixel = 0; pixel < 256; pixel++)
                                 { //just store the index values.
-                                   light[palNo].red[pixel] = (byte)getValAtAddress(light_dat, palNo * 256 + pixel + 0, 8);
-                                   light[palNo].blue[pixel] = (byte)getValAtAddress(light_dat, palNo * 256 + pixel + 0, 8);
-                                   light[palNo].green[pixel] = (byte)getValAtAddress(light_dat, palNo * 256 + pixel + 0, 8);
+                                    light[palNo].red[pixel] = (byte)getValAtAddress(light_dat, palNo * 256 + pixel + 0, 8);
+                                    light[palNo].blue[pixel] = (byte)getValAtAddress(light_dat, palNo * 256 + pixel + 0, 8);
+                                    light[palNo].green[pixel] = (byte)getValAtAddress(light_dat, palNo * 256 + pixel + 0, 8);
                                 }
                             }
                         }
@@ -85,9 +91,9 @@ namespace Underworld
                                 mono[palNo] = new lightmap();
                                 for (int pixel = 0; pixel < 256; pixel++)
                                 { //just store the index values.
-                                   mono[palNo].red[pixel] = (byte)getValAtAddress(mono_dat, palNo * 256 + pixel + 0, 8);
-                                   mono[palNo].blue[pixel] = (byte)getValAtAddress(mono_dat, palNo * 256 + pixel + 0, 8);
-                                   mono[palNo].green[pixel] = (byte)getValAtAddress(mono_dat, palNo * 256 + pixel + 0, 8);
+                                    mono[palNo].red[pixel] = (byte)getValAtAddress(mono_dat, palNo * 256 + pixel + 0, 8);
+                                    mono[palNo].blue[pixel] = (byte)getValAtAddress(mono_dat, palNo * 256 + pixel + 0, 8);
+                                    mono[palNo].green[pixel] = (byte)getValAtAddress(mono_dat, palNo * 256 + pixel + 0, 8);
                                 }
                             }
                         }
@@ -95,6 +101,20 @@ namespace Underworld
                     }
                     break;
             }
+            CreateTexturePaletteCycles(0);//init the first palette as cycled
+
+            //Init palette shader params
+            RenderingServer.GlobalShaderParameterAdd("uwpalette", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)cycledPalette[0]);
+            RenderingServer.GlobalShaderParameterAdd("uwlightmapnear", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)light[0].toImage());
+            RenderingServer.GlobalShaderParameterAdd("uwlightmapfar", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)light[15].toImage());
+            RenderingServer.GlobalShaderParameterAdd("uwlightmapdark", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)light[15].toImage());
+            //RenderingServer.GlobalShaderParameterAdd("fardistance", RenderingServer.GlobalShaderParameterType.Float, uwsettings.instance.drawdistance);
+            RenderingServer.GlobalShaderParameterAdd("neardistance", RenderingServer.GlobalShaderParameterType.Float, 0);
+
+            RenderingServer.GlobalShaderParameterAdd("cutoffdistance", RenderingServer.GlobalShaderParameterType.Float, 1.2f * shade.getShadeCutoff(uwsettings.instance.lightlevel));
+            RenderingServer.GlobalShaderParameterAdd("uwlightmap", RenderingServer.GlobalShaderParameterType.Sampler2D, PaletteLoader.AllLightMaps(PaletteLoader.light));
+            RenderingServer.GlobalShaderParameterAdd("shades", RenderingServer.GlobalShaderParameterType.Sampler2D, shade.shadesdata[uwsettings.instance.lightlevel].ToImage());
+
         }
 
         public static int[] LoadAuxilaryPalIndices(string auxPalPath, int auxPalIndex)
@@ -140,16 +160,47 @@ namespace Underworld
         /// <returns></returns>
         public static ImageTexture AllLightMaps(lightmap[] maps)
         {
-            byte[] imgdata =new byte[maps.GetUpperBound(0)*256];
-            for (int l = 0; l< maps.GetUpperBound(0);l++)
+            byte[] imgdata = new byte[maps.GetUpperBound(0) * 256];
+            for (int l = 0; l < maps.GetUpperBound(0); l++)
             {
-                for (int b=0;b<256;b++)
+                for (int b = 0; b < 256; b++)
                 {
-                    imgdata[(l*256) + b] = maps[l].red[b];
+                    imgdata[(l * 256) + b] = maps[l].red[b];
                 }
             }
             var output = ArtLoader.Image(imgdata, 0, 256, maps.GetUpperBound(0), "name here", GreyScale, true, true);
             return output;
+        }
+
+
+        public static void CreateTexturePaletteCycles(int paletteno = 0)
+        {
+            //copy initial palette
+
+            var palCycler = new Palette();
+            for (int i = 0; i < 256; i++)
+            {
+                palCycler.red = PaletteLoader.Palettes[paletteno].red;
+                palCycler.green = PaletteLoader.Palettes[paletteno].green;
+                palCycler.blue = PaletteLoader.Palettes[paletteno].blue;
+            }
+
+            cycledPalette = new ImageTexture[28];
+            for (int c = 0; c <= 27; c++)
+            {//Create palette cycles
+                switch (_RES)
+                {
+                    case GAME_UW2:
+                        Palette.cyclePalette(palCycler, 224, 16);
+                        Palette.cyclePaletteReverse(palCycler, 3, 6);
+                        break;
+                    default:
+                        Palette.cyclePalette(palCycler, 48, 16);//Forward
+                        Palette.cyclePaletteReverse(palCycler, 16, 7);//Reverse direction.
+                        break;
+                }
+                cycledPalette[c] = palCycler.toImage();
+            }
         }
 
     }//end class
