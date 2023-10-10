@@ -86,12 +86,16 @@ namespace Underworld
 
         public static TextureLoader mapTextures;
 
-        public static void GenerateLevelFromTileMap(Node3D parent, Node3D sceneryParent, string game, TileMap Level, List<uwObject> objList, bool UpdateOnly)
+        static tileMapRender()
         {
             if (mapTextures==null)
             {
                 mapTextures = new();
             }
+        }
+
+        public static void GenerateLevelFromTileMap(Node3D parent, Node3D sceneryParent, string game, TileMap Level, List<uwObject> objList, bool UpdateOnly)
+        {
             bool skipCeil = true;
             CEILING_HEIGHT = Level.CEILING_HEIGHT;
             // if (game == GAME_SHOCK)

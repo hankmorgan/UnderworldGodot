@@ -11,6 +11,8 @@ namespace Underworld
 /// </summary>
     public class GRLoader : ArtLoader
     {
+        public bool RenderGrey = false;
+
         const int repeat_record_start = 0;
         const int repeat_record = 1;
         const int run_record = 2;
@@ -95,21 +97,25 @@ namespace Underworld
         private bool ImageFileDataLoaded;
         int NoOfImages;
 
+        public Shader textureshader;
         public ImageTexture[] ImageCache = new ImageTexture[1];
 
-        public GRLoader(int File, int PalToUse)
-        {
-            // AuxPalPath = AuxPalPath.Replace("--", sep.ToString());
-            useOverrideAuxPalIndex = false;
-            OverrideAuxPalIndex = 0;
-            FileToLoad = File;
-            PaletteNo = (short)PalToUse;
-            LoadImageFile();
-        }
+        public ShaderMaterial[] materials = new ShaderMaterial[1];
+
+        // public GRLoader(int File, int PalToUse)
+        // {
+        //     // AuxPalPath = AuxPalPath.Replace("--", sep.ToString());
+        //     useOverrideAuxPalIndex = false;
+        //     OverrideAuxPalIndex = 0;
+        //     FileToLoad = File;
+        //     PaletteNo = (short)PalToUse;
+        //     LoadImageFile();
+        // }
 
 
         public GRLoader(int File)
         {
+            textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwsprite.gdshader");
             // AuxPalPath = AuxPalPath.Replace("--", sep.ToString());
             useOverrideAuxPalIndex = false;
             OverrideAuxPalIndex = 0;
@@ -117,6 +123,25 @@ namespace Underworld
             PaletteNo = 0;
             LoadImageFile();
         }       
+
+        public ShaderMaterial GetMaterial(int textureno)
+        {
+            if (materials[textureno] == null)
+            {
+                //materials[textureno] = new surfacematerial(textureno);
+                //create this material and add it to the list
+                var newmaterial = new ShaderMaterial();
+                newmaterial.Shader = textureshader;
+                newmaterial.SetShaderParameter("texture_albedo", (Texture)LoadImageAt(textureno,true));
+                newmaterial.SetShaderParameter("albedo", new Color(1, 1, 1, 1));
+                newmaterial.SetShaderParameter("uv1_scale", new Vector3(1, 1, 1));
+                newmaterial.SetShaderParameter("uv2_scale", new Vector3(1, 1, 1));
+                newmaterial.SetShaderParameter("UseAlpha", true);
+                materials[textureno] = newmaterial;
+
+            }
+            return materials[textureno];    
+        }
 
         public override bool LoadImageFile()
         {
@@ -135,17 +160,7 @@ namespace Underworld
             {
                 NoOfImages = (int)getValAtAddress(ImageFileData, 1, 16);
                 ImageCache = new ImageTexture[NoOfImages];
-                // if (LoadMod)
-                // {//Load up modded image data at the path
-                //     for (int i = 0; i <= ImageCache.GetUpperBound(0); i++)
-                //     {
-                //         var toLoadMod = Path.Combine(ModPath, i.ToString("d3") + ".tga");
-                //         if (File.Exists(toLoadMod))
-                //         {
-                //             ImageCache[i] = TGALoader.LoadTGA(toLoadMod);
-                //         }
-                //     }
-                // }
+                materials = new ShaderMaterial[NoOfImages];
                 ImageFileDataLoaded = true;
                 return true;
             }
@@ -194,7 +209,7 @@ namespace Underworld
                 case 0x4://8 bit uncompressed
                     {
                         imageOffset += 5;
-                        ImageCache[index] = Image(ImageFileData, imageOffset, BitMapWidth, BitMapHeight, "name_goes_here", PaletteLoader.Palettes[PaletteNo], Alpha, xfer);
+                        ImageCache[index] = Image(ImageFileData, imageOffset, BitMapWidth, BitMapHeight, "name_goes_here", PaletteLoader.Palettes[PaletteNo], Alpha, xfer,RenderGrey);
                         return ImageCache[index];
                     }
                 case 0x8://4 bit run-length
@@ -214,7 +229,7 @@ namespace Underworld
                         //auxpal =PaletteLoader.LoadAuxilaryPal(Loader.BasePath+ AuxPalPath,PaletteLoader.Palettes[PaletteNo],auxPalIndex);
                         int[] aux = PaletteLoader.LoadAuxilaryPalIndices(Path.Combine(BasePath, "DATA", AuxPalPath), auxPalIndex);
                         outputImg = DecodeRLEBitmap(imgNibbles, datalen, BitMapWidth, BitMapHeight, 4, aux);
-                        ImageCache[index] = Image(outputImg, 0, BitMapWidth, BitMapHeight, "name_goes_here", PaletteLoader.Palettes[PaletteNo], Alpha, xfer);
+                        ImageCache[index] = Image(outputImg, 0, BitMapWidth, BitMapHeight, "name_goes_here", PaletteLoader.Palettes[PaletteNo], Alpha, xfer,RenderGrey);
                         return ImageCache[index];
                     }
                 case 0xA://4 bit uncompressed//Same as above???
@@ -232,7 +247,7 @@ namespace Underworld
                         imageOffset += 6;  //Start of raw data.
                         copyNibbles(ImageFileData, ref imgNibbles, datalen, imageOffset);
                         auxpal = PaletteLoader.LoadAuxilaryPal(Path.Combine(BasePath, "DATA", AuxPalPath), PaletteLoader.Palettes[PaletteNo], auxPalIndex);
-                        ImageCache[index] = Image(imgNibbles, 0, BitMapWidth, BitMapHeight, "name_goes_here", auxpal, Alpha, xfer);
+                        ImageCache[index] = Image(imgNibbles, 0, BitMapWidth, BitMapHeight, "name_goes_here", auxpal, Alpha, xfer,RenderGrey);
                         return ImageCache[index];
                     }
                 //break;
@@ -248,7 +263,7 @@ namespace Underworld
                             BitMapHeight = 112;
                         }
                         imageOffset = getValAtAddress(ImageFileData, (index * 4) + 3, 32);
-                        ImageCache[index] = Image(ImageFileData, imageOffset, BitMapWidth, BitMapHeight, "name_goes_here", PaletteLoader.Palettes[PaletteNo], Alpha, xfer);
+                        ImageCache[index] = Image(ImageFileData, imageOffset, BitMapWidth, BitMapHeight, "name_goes_here", PaletteLoader.Palettes[PaletteNo], Alpha, xfer,RenderGrey);
                         return ImageCache[index];
                     }
                     break;
@@ -422,63 +437,6 @@ namespace Underworld
             byte n1 = nibbles[addr_ptr];
             addr_ptr++;
             return n1;
-        }
-
-        /// <summary>
-        /// Returns a sprite made from the specified image.
-        /// </summary>
-        /// <returns>The sprite.</returns>
-        /// <param name="index">Index.</param>
-        // public Sprite RequestSprite(int index)
-        // {
-        //     if (ImageCache[index] == null)
-        //     {
-        //         LoadImageAt(index);
-        //         if (ImageCache[index] == null)
-        //         {//Still can't be loaded
-        //             return Resources.Load<Sprite>("Common/null");
-        //         }
-        //     }
-        //     return Sprite.Create(ImageCache[index], new Rect(0, 0, ImageCache[index].width, ImageCache[index].height), new Vector2(0.5f, 0.0f));
-        // }
-
-
-        // public Sprite RequestSprite(int index, int offset)
-        // {
-        //     if (ImageCache[index] == null)
-        //     {
-        //         LoadImageAt(index);
-        //         if (ImageCache[index] == null)
-        //         {//Still can't be loaded
-        //             return Resources.Load<Sprite>("Common/null");
-        //         }
-        //     }
-
-        //     //float height = (float)ImageCache[index].height;
-        //     //float offsetf= (float)offset;
-
-        //     //When offset is zero sprite at (0.5, 0)
-        //     //When offset is height sprite at (0.5, 1)
-        //     //float adj=0f;
-
-
-        //     //adj = offsetf / height;	
-
-
-        //     //adj= GameWorldController.instance.testUVadjust;
-        //     return Sprite.Create(ImageCache[index], new Rect(0, 0, ImageCache[index].width, ImageCache[index].height), new Vector2(0.5f, 0f));
-
-        // }
-
-
-        /// <summary>
-        /// Nos the of images in the cache
-        /// </summary>
-        /// <returns>The of images.</returns>
-        public int NoOfFileImages()
-        {
-            return ImageCache.Length;
-        }
-
+        }   
     }//end class
 }//end namespaces

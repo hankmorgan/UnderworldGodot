@@ -31,8 +31,7 @@ namespace Underworld
         private readonly string ModPathW;
         private readonly string ModPathF;
 
-
-        public static Shader textureshader;
+        public Shader textureshader;
         public ShaderMaterial[] materials = new ShaderMaterial[512];
 
         public TextureLoader()
@@ -174,46 +173,13 @@ namespace Underworld
                 newmaterial.SetShaderParameter("albedo", new Color(1, 1, 1, 1));
                 newmaterial.SetShaderParameter("uv1_scale", new Vector3(1, 1, 1));
                 newmaterial.SetShaderParameter("uv2_scale", new Vector3(1, 1, 1));
+                newmaterial.SetShaderParameter("UseAlpha", false);
                 materials[textureno] = newmaterial;
 
             }
             return materials[textureno];    
         }
-
-        // /// <summary>
-        // /// Converts a Image into a normal map
-        // /// </summary>
-        // /// <returns>The map.</returns>
-        // /// <param name="source">Source.</param>
-        // /// <param name="strength">Strength.</param>
-        // /// Sourced from http://jon-martin.com/?p=123
-        // public static Image NormalMap(Image source, float strength)
-        // {
-        //     strength = Mathf.Clamp(strength, 0.0F, 10.0F);
-        //     Image result;
-        //     float xLeft;
-        //     float xRight;
-        //     float yUp;
-        //     float yDown;
-        //     float yDelta;
-        //     float xDelta;
-        //     result = new Image(source.width, source.height, TextureFormat.ARGB32, true);
-        //     for (int by = 0; by < result.height; by++)
-        //     {
-        //         for (int bx = 0; bx < result.width; bx++)
-        //         {
-        //             xLeft = source.GetPixel(bx - 1, by).grayscale * strength;
-        //             xRight = source.GetPixel(bx + 1, by).grayscale * strength;
-        //             yUp = source.GetPixel(bx, by - 1).grayscale * strength;
-        //             yDown = source.GetPixel(bx, by + 1).grayscale * strength;
-        //             xDelta = ((xLeft - xRight) + 1) * 0.5f;
-        //             yDelta = ((yUp - yDown) + 1) * 0.5f;
-        //             result.SetPixel(bx, by, new Color(xDelta, yDelta, 1.0f, yDelta));
-        //         }
-        //     }
-        //     result.Apply();
-        //     return result;
-        // }
+    
 
         /// <summary>
         /// Returns the Mod path at the specified index.

@@ -176,7 +176,8 @@ public partial class imageloader : Sprite2D
 
 	public void LoadTileMap(int newLevelNo, GRLoader grObjects)
 	{
-		var tilerender = new tileMapRender();
+		grObjects.RenderGrey = true;
+		//var tilerender = new tileMapRender();
 		Node3D worldobjects = GetNode<Node3D>("/root/Node3D/worldobjects");
 		Node3D the_tiles = GetNode<Node3D>("/root/Node3D/tilemap");	
 
@@ -193,38 +194,29 @@ public partial class imageloader : Sprite2D
 		{
 			for (int x = 0; x <= 63; x++)
 			{
-				//map += a_tilemap.Tiles[x,y].tileType;
-				// switch (a_tilemap.Tiles[x, y].tileType)
-				// {
-				// 	case Underworld.TileMap.TILE_SOLID:
-				// 		map += "#";						
-				// 		break;
-				// 	default:
-				// 		map += " ";
-				// 		break;
-				// }
 				if (a_tilemap.Tiles[x, y].indexObjectList != 0)
 				{
 					int index = a_tilemap.Tiles[x, y].indexObjectList;
 					while (index != 0)
 					{
 						var obj = a_tilemap.LevelObjects[index];
-						var newnode = new Node3D();
+						
+						var newnode = new Node3D(); 													
 						newnode.Name = StringLoader.GetObjectNounUW(obj.item_id) + "_" + index.ToString();
 						newnode.Position = obj.GetCoordinate(x, y);
-						var a_sprite = new Sprite3D();
-						a_sprite.Texture = grObjects.LoadImageAt(obj.item_id);
-						a_sprite.Scale = new Vector3(1, 1, 1);
-						a_sprite.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
-						a_sprite.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
+						
+					    var a_sprite = new MeshInstance3D(); //new Sprite3D();
+						a_sprite.Mesh = new QuadMesh();
+						a_sprite.Mesh.Set("size",new Vector3(0.5f, 0.5f, 0.5f)); 
+						a_sprite.Mesh.SurfaceSetMaterial(0, grObjects.GetMaterial(obj.item_id));
 						newnode.AddChild(a_sprite);
-						a_sprite.Position = new Vector3(0, 0.15f, 0);
+						a_sprite.Position = new Vector3(0, 0.20f, 0);
 						worldobjects.AddChild(newnode);
-						Label3D obj_lbl = new();
-						obj_lbl.Text = StringLoader.GetObjectNounUW(obj.item_id) + " " + index;
-						obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
-						obj_lbl.Font = font;
-						newnode.AddChild(obj_lbl);
+						// Label3D obj_lbl = new();
+						// obj_lbl.Text = StringLoader.GetObjectNounUW(obj.item_id) + " " + index;
+						// obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
+						// obj_lbl.Font = font;
+						// newnode.AddChild(obj_lbl);
 						index = a_tilemap.LevelObjects[index].next;
 					}
 				}

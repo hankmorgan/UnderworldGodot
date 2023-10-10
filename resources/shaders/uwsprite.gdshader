@@ -28,6 +28,9 @@ global uniform sampler2D shades : source_color,filter_nearest,repeat_enable;
 
 global uniform float neardistance;
 
+uniform bool UseAlpha = false;
+
+
 global uniform float cutoffdistance;
 
 // Camera
@@ -46,6 +49,15 @@ void vertex() {
 	//world_pos = MODEL_MATRIX * vec4(VERTEX, 1.0);  // get coords as world coords
     //vertexToCam = distance(world_pos.xyz, cameraPos);
     //distanceToCam = distance(centerPos, cameraPos);  // could be computed outside shader but easier to debug this way
+    
+	//https://ask.godotengine.org/152606/how-to-do-i-make-a-shader-a-billboard-face-the-player
+	mat4 modified_model_view = VIEW_MATRIX * mat4(
+        INV_VIEW_MATRIX[0],
+        INV_VIEW_MATRIX[1],
+        INV_VIEW_MATRIX[2],
+        MODEL_MATRIX[3]
+    );
+    MODELVIEW_MATRIX = modified_model_view;
 }
 
 
@@ -77,5 +89,9 @@ void fragment() {
 		vec4 finalcolour = texture(uwpalette, vec2(lightval.r ,0));
 		//apply
 		ALBEDO = finalcolour.rgb;
+		if (UseAlpha)
+		{
+			ALPHA = finalcolour.a;
+		}		
 	}
 }
