@@ -388,6 +388,24 @@ namespace Underworld
 
             BuildObjectListUW();
 
+            //Set x and y for on map objects.
+            for (int y = 63; y >= 0; y--)
+            {
+                for (int x = 0; x <= 63; x++)
+                {
+                    if (Tiles[x, y].indexObjectList != 0)
+                    {
+                        int index = Tiles[x, y].indexObjectList;
+                        while (index != 0)
+                        {
+                            var obj = LevelObjects[index];
+                            obj.tileX = x; obj.tileY =  y;
+                            index = LevelObjects[index].next;
+                        }
+                    }
+                }
+            }
+
             //if (OverlayAddress!=0)
             switch (_RES)
             {

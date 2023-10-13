@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using Godot;
 
 namespace Underworld
@@ -9,6 +10,8 @@ namespace Underworld
         /// global shader for npcs.
         /// </summary>
         public static Shader textureshader;
+
+        public Node3D sprite;
        
        /// <summary>
        /// The material for rendering this unique npc
@@ -20,6 +23,26 @@ namespace Underworld
         {
             uwobject =_uwobject;
             SetAnimSprite(0,0);
+        }
+
+
+        /// <summary>
+        /// Creates a rendered version of this object in the gameworld
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static npc CreateInstance(Node3D parent, uwObject obj)
+        {
+            var n = new npc(obj);  
+            var a_sprite = new MeshInstance3D(); //new Sprite3D();
+            a_sprite.Mesh = new QuadMesh();
+            a_sprite.Mesh.SurfaceSetMaterial(0, n.material);
+            a_sprite.Mesh.Set("size",n.FrameSize);
+            n.sprite = a_sprite;
+            parent.AddChild(a_sprite);
+            a_sprite.Position = new Vector3(0, n.FrameSize.Y / 2, 0);
+            return n;                  
         }
 
         static npc()

@@ -21,8 +21,6 @@ namespace Underworld
 
         public bool isInventory = false;
 
-
-
         public int PTR;
 
         // {
@@ -46,6 +44,38 @@ namespace Underworld
         //         }
         //     }
         // }
+
+        //The tiles these objects are in.
+        public int tileX = 99;
+        public int tileY = 99;
+
+        public int majorclass
+        {
+            get
+            {
+                return item_id >> 6;
+            }
+        }
+
+
+
+        //= obj.item_id >> 6;
+        public int minorclass
+        {
+            get
+            {
+                return (item_id & 0x30) >> 4;
+            }
+        }
+
+        public int classindex
+        {
+            get
+            {
+                return item_id & 0xF;
+            }
+        }
+
 
         //******************Util ****************//
 
@@ -935,15 +965,11 @@ namespace Underworld
             float offX = tileX * BrushX + xpos * (BrushX / ResolutionXY);
             float offY = tileY * BrushY + ypos * (BrushY / ResolutionXY);
 
-           // float zpos = objList[ObjectIndex].zpos;
+            // float zpos = objList[ObjectIndex].zpos;
 
             float ceil = 32;// tileMap.CEILING_HEIGHT;
             float offZ = zpos / ResolutionZ * ceil * BrushZ;
             return new Godot.Vector3(-offX / 100.0f, offZ / 100.0f, offY / 100.0f);
-
-
-
-           
 
             // return new Godot.Vector3(
             //         ((tileX <<3) + (float)xpos)/10f, 

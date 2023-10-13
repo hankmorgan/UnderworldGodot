@@ -1,10 +1,20 @@
+using System;
 using System.Linq;
 using Godot;
 
 namespace Underworld
 {
     public class bed:model3D
-    {
+    {        
+
+        public static bed CreateInstance(Node3D parent, uwObject obj)
+        {
+            var n = new bed(obj);  
+            var modelNode = n.Generate3DModel(parent);	
+            modelNode.Rotate(Vector3.Up,(float)Math.PI);	
+            return n;                  
+        }
+
         public bed(uwObject _uwobject)
         {
             uwobject =_uwobject;

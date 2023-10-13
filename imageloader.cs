@@ -189,75 +189,7 @@ public partial class imageloader : Sprite2D
 		a_tilemap.tex_ark_block = LevArkLoader.LoadTexArkBlock(newLevelNo, a_tilemap.tex_ark_block);
 		//Tilemaps[newLevelNo].ovl_ark_block = null;
 		a_tilemap.BuildTileMapUW(newLevelNo, a_tilemap.lev_ark_block, a_tilemap.tex_ark_block, a_tilemap.ovl_ark_block);
-
-		//string map = "";
-		for (int y = 63; y >= 0; y--)
-		{
-			for (int x = 0; x <= 63; x++)
-			{
-				if (a_tilemap.Tiles[x, y].indexObjectList != 0)
-				{
-					int index = a_tilemap.Tiles[x, y].indexObjectList;
-					while (index != 0)
-					{
-						var obj = a_tilemap.LevelObjects[index];
-
-						var newnode = new Node3D();
-						newnode.Name = StringLoader.GetObjectNounUW(obj.item_id) + "_" + index.ToString();
-						newnode.Position = obj.GetCoordinate(x, y);
-
-						if ((UWClass._RES == UWClass.GAME_UW2) && (obj.item_id==359))
-						{	// abed
-							var bed = new bed(obj);
-							var modelNode = bed.Generate3DModel(newnode);	
-							modelNode.Rotate(Vector3.Up,(float)Math.PI);					
-						}
-						else
-						{
-							var a_sprite = new MeshInstance3D(); //new Sprite3D();
-							a_sprite.Mesh = new QuadMesh();
-							Vector2 NewSize;
-							switch (obj.item_id >> 6)
-							{
-								case 1://NPCS
-									{
-										var n = new npc(obj);
-										a_sprite.Mesh.SurfaceSetMaterial(0, n.material);
-										NewSize = n.FrameSize;
-										break;
-									}
-								default:
-									{
-										a_sprite.Mesh.SurfaceSetMaterial(0, grObjects.GetMaterial(obj.item_id));
-										NewSize = new Vector2(
-												ArtLoader.SpriteScale * grObjects.ImageCache[obj.item_id].GetWidth(),
-												ArtLoader.SpriteScale * grObjects.ImageCache[obj.item_id].GetHeight()
-												);
-										break;
-									}
-							}
-							a_sprite.Mesh.Set("size",
-								NewSize
-						);
-
-							newnode.AddChild(a_sprite);
-							a_sprite.Position = new Vector3(0, NewSize.Y / 2, 0); //was 20
-						}
-
-
-						worldobjects.AddChild(newnode);
-						// Label3D obj_lbl = new();
-						// obj_lbl.Text = $"{StringLoader.GetObjectNounUW(obj.item_id)} {index} {commonObjDat.height(obj.item_id)} x {commonObjDat.radius(obj.item_id)}";
-						// obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
-						// obj_lbl.Font = font;
-						// newnode.AddChild(obj_lbl);
-						index = a_tilemap.LevelObjects[index].next;
-					}
-				}
-			}
-			//Debug.Print(map);
-			//map = "";			
-		}
+		Underworld.ObjectCreator.GenerateObjects(worldobjects,a_tilemap.LevelObjects,grObjects);
 		the_tiles.Position = new Vector3(0f, 0f, 0f);
 		tileMapRender.GenerateLevelFromTileMap(the_tiles, worldobjects, UWClass._RES, a_tilemap, a_tilemap.LevelObjects, false);
 	}
