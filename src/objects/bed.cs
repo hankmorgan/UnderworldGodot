@@ -42,11 +42,11 @@ namespace Underworld
         switch (meshNo)
         {
             case 0://bed frame
-                return 10;// Color.Color8(255,0,0,0); //.red;
+                return 126;// Color.Color8(255,0,0,0); //.red;
             case 1://quilt
                 return 4 * uwobject.owner + 5;// Color.Color8(0,255,0,0);   //.green;
             case 2://mattress
-                return 30;//Color.Color8(255,255,255,0); //white
+                return 150;//Color.Color8(255,255,255,0); //white
             case 3://Pillow			
                 return 4* uwobject.owner;//Color.Color8(0,0,0,0); //Color.black;
         }

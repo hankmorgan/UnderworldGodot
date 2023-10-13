@@ -31,9 +31,6 @@ public partial class imageloader : Sprite2D
 
 	double cycletime = 0;
 	int NextPaletteCycle = 0;
-	int nextShade = 0;
-	int shadedir = 1;
-
 	public override void _Ready()
 	{
 
@@ -68,8 +65,7 @@ public partial class imageloader : Sprite2D
 			default:
 				throw new InvalidOperationException("Invalid Game Selected");
 		}
-		//shade.shadesdata[4].CalculateShades();
-
+		
 
 		//playerdat.Load("SAVE1");
 		//Debug.Print(playerdat.CharName);
@@ -94,9 +90,6 @@ public partial class imageloader : Sprite2D
 		Random rnd = new Random();
 		var index = rnd.Next(8);
 		Debug.Print(index.ToString());
-
-		//Load palettes. run first
-		//PaletteLoader.LoadPalettes(Path.Combine(UWClass.BasePath, "DATA", "pals.dat"));// "C:\\Games\\UW1\\game\\UW\\data\\pals.dat");
 
 		grey.Texture = shade.shadesdata[gamesettings.lightlevel].FullShadingImage();
 		
@@ -253,11 +246,11 @@ public partial class imageloader : Sprite2D
 
 
 						worldobjects.AddChild(newnode);
-						Label3D obj_lbl = new();
-						obj_lbl.Text = $"{StringLoader.GetObjectNounUW(obj.item_id)} {index} {commonObjDat.height(obj.item_id)} x {commonObjDat.radius(obj.item_id)}";
-						obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
-						obj_lbl.Font = font;
-						newnode.AddChild(obj_lbl);
+						// Label3D obj_lbl = new();
+						// obj_lbl.Text = $"{StringLoader.GetObjectNounUW(obj.item_id)} {index} {commonObjDat.height(obj.item_id)} x {commonObjDat.radius(obj.item_id)}";
+						// obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
+						// obj_lbl.Font = font;
+						// newnode.AddChild(obj_lbl);
 						index = a_tilemap.LevelObjects[index].next;
 					}
 				}
@@ -274,39 +267,20 @@ public partial class imageloader : Sprite2D
 	public override void _Process(double delta)
 	{
 
-		lbl.Text = $"{cam.Position.ToString()} nearlightmap: {nextShade}";
+		lbl.Text = $"{cam.Position.ToString()}";
 		//RenderingServer.GlobalShaderParameterSet("cameraPos", cam.Position);
 		cycletime += delta;
 		if (cycletime > 0.2)
 		{
 			cycletime = 0;
-			//nextShade=2;
 			//Cycle the palette		
-			//RenderingServer.GlobalShaderParameterSet("uwpalette", (Texture)surfacematerial.texturePalettes[NextPaletteCycle]);
 			RenderingServer.GlobalShaderParameterSet("uwpalette", (Texture)PaletteLoader.cycledPalette[NextPaletteCycle]);
-			//cycle shades.dat
-			//RenderingServer.GlobalShaderParameterSet("uwlightmapnear", (Texture)PaletteLoader.light[shade.getNearMap(nextShade)].toImage());
-			//RenderingServer.GlobalShaderParameterSet("uwlightmapfar", (Texture)PaletteLoader.light[shade.getShadeCutoff(nextShade)].toImage());
-
-			//RenderingServer.GlobalShaderParameterSet("neardistance", 1);// (float)shade.getNearDist(nextShade));
-			//RenderingServer.GlobalShaderParameterSet("fardistance", 12);// (float)shade.getFarDist(nextShade));
 
 			NextPaletteCycle++;
-			nextShade = nextShade + shadedir;
+			
 			if (NextPaletteCycle > PaletteLoader.cycledPalette.GetUpperBound(0))
 			{
 				NextPaletteCycle = 0;
-			}
-			if (nextShade < 0)
-			{
-				shadedir = 1;
-				nextShade = 1;
-			}
-			if (nextShade >= 8)
-			{
-				//nextShade=0;
-				shadedir = -1;
-				nextShade = 6;
 			}
 		}
 	}
