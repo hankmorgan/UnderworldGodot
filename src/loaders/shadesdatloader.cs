@@ -9,7 +9,7 @@ namespace Underworld
     /// <summary>
     /// Class for loading and accessing shades.dat
     /// </summary>
-    public class shade :ArtLoader
+    public class shade : ArtLoader
     {
         public int mapindex;
         int nearlightmap;
@@ -45,32 +45,59 @@ namespace Underworld
         /// <returns></returns>
         public Godot.ImageTexture ToImage()
         {
-            var bandwidth=1;
+            var bandwidth = 1;
             var shadearray = ExtractShadeArray();
-            byte[] imgdata =new byte[16*bandwidth];
-            for (int l = 0; l< 16;l++)
+            //var AllShades = ExtractShadingTable(shadearray);
+            byte[] imgdata = new byte[16 * bandwidth];
+            for (int l = 0; l < 16; l++)
             {
-                for (int i=0;i<bandwidth;i++)
-                {       
-                    imgdata[l*bandwidth + i] = (byte)(shadearray[l]*16); //mult by 16 to get a full range
+                for (int i = 0; i < bandwidth; i++)
+                {
+                    imgdata[l * bandwidth + i] = (byte)(shadearray[l] * 16); //mult by 16 to get a full range
                 }
-                
+
             }
-            var output = ArtLoader.Image(imgdata, 0, 16*bandwidth, 1, "name here", PaletteLoader.GreyScale, true, true);
+            var output = ArtLoader.Image(imgdata, 0, 16 * bandwidth, 1, "name here", PaletteLoader.GreyScale, true, true);
             return output;
         }
 
-
-
-        public int[] CalculateShades()
+        /// <summary>
+        /// Extract the full shades array as a image
+        /// </summary>
+        /// <returns></returns>
+        public Godot.ImageTexture FullShadingImage()
         {
-            if (shadeCutOff<16)
+            var pal = PaletteLoader.GreyScale;
+            var shadearray = ExtractShadeArray();
+            var AllShades = ExtractShadingTable(shadearray);
+            var width = AllShades.GetUpperBound(0);
+            var height = AllShades.GetUpperBound(1);
+            var img = Godot.Image.Create(width, height, false, Godot.Image.Format.R8);
+
+            for (int x = 0; x < width; x++)
             {
-                int[] shadesArray = ExtractShadeArray();
-                ExtractShadingTable(shadesArray);
+                for (int y = 0; y < height; y++)
+                {
+                    var pixel = (byte)(AllShades[x,y]*16);
+                    img.SetPixel(x,y, pal.ColorAtIndex(pixel, false, true));
+                }
             }
-            return new int[33*17*2];
+            var tex = new Godot.ImageTexture();
+            tex.SetImage(img);
+            return tex;
         }
+
+
+
+        // public int[] CalculateShades()
+        // {
+        //     if (shadeCutOff<16)
+        //     {
+        //         int[] shadesArray = ExtractShadeArray();
+        //         ExtractShadingTable(shadesArray);
+        //     }
+        //     return new int[33*17*2];
+        // }
 
         /// <summary>
         /// I think this returns a v large look up table for matching raycasts for shading.
@@ -78,9 +105,9 @@ namespace Underworld
         /// </summary>
         /// <param name="shadesArray"></param>
         /// <returns></returns>
-        public int[] ExtractShadingTable(int[] shadesArray)
+        public int[,] ExtractShadingTable(int[] shadesArray)
         {
-            int[] largeShadeArray = new int[33*17*2];
+            int[,] largeShadeArray = new int[17, 33]; //new int[33*17*2];
             for (int di = 0; di < 17; di++)
             {
                 for (int si = 0; si < 33; si++)
@@ -93,17 +120,28 @@ namespace Underworld
                     ax = (int)Math.Sqrt(ax);
                     int var2 = ax;
                     ax = di * 66;
-                    ax = ax + (si << 1);
+                    //ax = ax + (si << 1);
+                    //ax = ax + (si);
                     if (var2 > shadeCutOff)
                     {
-                        largeShadeArray[ax] = 0xF; //darkness?
+                        largeShadeArray[di, si] = 0xF; //darkness?
                     }
                     else
                     {
-                        largeShadeArray[ax] = shadesArray[var2];
+                        largeShadeArray[di, si] = shadesArray[var2];
                     }
                 }
             } //loop di
+            // string result = "";
+            // for (int x = 0; x < 17; x++)
+            // {
+            //     for (int y = 0; y < 33; y++)
+            //     {
+            //         result += largeShadeArray[x, y].ToString("#0");
+            //     }
+            //     result += "\n";
+            // }
+            //Debug.Print(result);
             return largeShadeArray;
         }
 
@@ -113,8 +151,8 @@ namespace Underworld
         /// <param name="shadesArray"></param>
         public int[] ExtractShadeArray()
         {
-            int[] shadesArray =new int[16];
-            if (shadeCutOff>=16)
+            int[] shadesArray = new int[16];
+            if (shadeCutOff >= 16)
             {   //return all zeros.
                 return shadesArray;
             }
@@ -152,16 +190,16 @@ namespace Underworld
 
         public shade(int _index, int _nearDist, int _nearMap, int _farDist, int _ShadeCutoff)
         {
-            mapindex =_index;
+            mapindex = _index;
             neardistance = _nearDist;
-            nearlightmap= _nearMap & 0xF;
+            nearlightmap = _nearMap & 0xF;
             fardistance = _farDist;
-            shadeCutOff = _ShadeCutoff  & 0xF;
+            shadeCutOff = _ShadeCutoff & 0xF;
             Debug.Print($"{_index} {_nearDist} {_nearMap} {_farDist} {_ShadeCutoff}");
         }
 
         static shade()
-        {            
+        {
             var path = System.IO.Path.Combine(BasePath, "DATA", "SHADES.DAT");
             if (System.IO.File.Exists(path))
             {
@@ -173,19 +211,19 @@ namespace Underworld
                         try
                         {
                             shadesdata[i] = new shade(
-                                _index : i, 
-                                _nearDist: (int)(Int16)getValAtAddress(buffer, 0 + (i * 12), 16 ),
-                                _nearMap : (int)getValAtAddress(buffer, 2 + (i * 12), 16 ),
-                                _farDist : (int)(Int16)getValAtAddress(buffer, 4 + (i * 12), 16 ),
-                                _ShadeCutoff: (int)getValAtAddress(buffer, 6 + (i * 12), 16 )
-                            );   
+                                _index: i,
+                                _nearDist: (int)(Int16)getValAtAddress(buffer, 0 + (i * 12), 16),
+                                _nearMap: (int)getValAtAddress(buffer, 2 + (i * 12), 16),
+                                _farDist: (int)(Int16)getValAtAddress(buffer, 4 + (i * 12), 16),
+                                _ShadeCutoff: (int)getValAtAddress(buffer, 6 + (i * 12), 16)
+                            );
                         }
                         catch
                         {
                             CreateEmptyShades();
                             return;
                         }
-                     
+
                     }
                 }
             }
