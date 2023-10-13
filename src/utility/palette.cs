@@ -60,6 +60,25 @@ namespace Underworld
             return new Color(red[pixel], green[pixel], blue[pixel], alpha);
         }
 
+        //Returns a 2x2 texture representing the pixel index for use in rendering a single colour on a model.
+        public static ImageTexture IndexToImage(byte index)
+        {
+            var img = Godot.Image.Create(2,2,false,Image.Format.R8);
+            var c = new Color(
+                    g: 0,
+                    r: index / 255f,
+                    b: 0,
+                    a: 0
+                );
+            img.SetPixel(0,0,c);
+            img.SetPixel(0,1,c);
+            img.SetPixel(1,0,c);
+            img.SetPixel(1,1,c);
+            var tex = new Godot.ImageTexture();
+            tex.SetImage(img);
+            return tex;
+        }
+
 
         public virtual ImageTexture toImage(int ColourBandSize = 1)
         {

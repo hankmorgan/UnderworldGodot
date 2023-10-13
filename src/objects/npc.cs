@@ -2,7 +2,7 @@ using Godot;
 
 namespace Underworld
 {
-    public class npc : UWClass
+    public class npc : objectInstance
     {
 
         /// <summary>
@@ -15,11 +15,7 @@ namespace Underworld
        /// </summary>
         public ShaderMaterial material;
 
-        /// <summary>
-        /// Reference to the uwobject that this is an instance of.
-        /// </summary>
-        public uwObject uwobject;
-        public Vector2 FrameSize;
+
         public npc(uwObject _uwobject)
         {
             uwobject =_uwobject;

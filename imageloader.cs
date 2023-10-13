@@ -48,7 +48,14 @@ public partial class imageloader : Sprite2D
 		}
 		var gamesettings = JsonSerializer.Deserialize<uwsettings>(File.ReadAllText(settingsfile));
 		uwsettings.instance = gamesettings;
-		cam.Position = new Vector3(-38f, 4.2f, 2.2f);
+		switch (UWClass._RES)
+		{
+			case UWClass.GAME_UW2:
+				cam.Position = new Vector3(-23f, 4.3f, 58.2f); break;
+			default:
+				cam.Position = new Vector3(-38f, 4.2f, 2.2f); break;
+		}
+
 		cam.Rotate(Vector3.Up, (float)Math.PI);
 		shade.getFarDist(0);
 		UWClass._RES = gamesettings.gametoload;
@@ -92,6 +99,7 @@ public partial class imageloader : Sprite2D
 		//PaletteLoader.LoadPalettes(Path.Combine(UWClass.BasePath, "DATA", "pals.dat"));// "C:\\Games\\UW1\\game\\UW\\data\\pals.dat");
 
 		grey.Texture = shade.shadesdata[gamesettings.lightlevel].FullShadingImage();
+		
 		//grey.Texture = PaletteLoader.AllLightMaps(PaletteLoader.light); //PaletteLoader.light[5].toImage();
 		var textureloader = new TextureLoader();
 		//var a_texture = textureloader.LoadImageAt(index);
@@ -205,44 +213,52 @@ public partial class imageloader : Sprite2D
 						newnode.Name = StringLoader.GetObjectNounUW(obj.item_id) + "_" + index.ToString();
 						newnode.Position = obj.GetCoordinate(x, y);
 
-						var a_sprite = new MeshInstance3D(); //new Sprite3D();
-						a_sprite.Mesh = new QuadMesh();
-
-						Vector2 NewSize;
-						switch (obj.item_id >> 6)
-						{
-							case 1://NPCS
-								{
-									var n = new npc(obj);
-									a_sprite.Mesh.SurfaceSetMaterial(0, n.material);
-									NewSize = n.FrameSize;
-									break;
-								}
-							default:
-								{ //0.03125 -> too big
-									a_sprite.Mesh.SurfaceSetMaterial(0, grObjects.GetMaterial(obj.item_id));
-									NewSize = new Vector2(
-											ArtLoader.SpriteScale * grObjects.ImageCache[obj.item_id].GetWidth(),
-											ArtLoader.SpriteScale * grObjects.ImageCache[obj.item_id].GetHeight()
-											);
-
-									//0.5 : 16 px   -> 1 px = 0.5 /16 
-									break;
-								}
+						if ((UWClass._RES == UWClass.GAME_UW2) && (obj.item_id==359))
+						{	// abed
+							var bed = new bed(obj);
+							var modelNode = bed.Generate3DModel(newnode);	
+							modelNode.Rotate(Vector3.Up,(float)Math.PI);					
 						}
-						a_sprite.Mesh.Set("size",
-							NewSize
-					);
+						else
+						{
+							var a_sprite = new MeshInstance3D(); //new Sprite3D();
+							a_sprite.Mesh = new QuadMesh();
+							Vector2 NewSize;
+							switch (obj.item_id >> 6)
+							{
+								case 1://NPCS
+									{
+										var n = new npc(obj);
+										a_sprite.Mesh.SurfaceSetMaterial(0, n.material);
+										NewSize = n.FrameSize;
+										break;
+									}
+								default:
+									{
+										a_sprite.Mesh.SurfaceSetMaterial(0, grObjects.GetMaterial(obj.item_id));
+										NewSize = new Vector2(
+												ArtLoader.SpriteScale * grObjects.ImageCache[obj.item_id].GetWidth(),
+												ArtLoader.SpriteScale * grObjects.ImageCache[obj.item_id].GetHeight()
+												);
+										break;
+									}
+							}
+							a_sprite.Mesh.Set("size",
+								NewSize
+						);
 
-					newnode.AddChild(a_sprite);
-					a_sprite.Position = new Vector3(0, NewSize.Y/2, 0); //was 20
-					worldobjects.AddChild(newnode);
-					// Label3D obj_lbl = new();
-					// obj_lbl.Text = $"{StringLoader.GetObjectNounUW(obj.item_id)} {index} {commonObjDat.height(obj.item_id)} x {commonObjDat.radius(obj.item_id)}";
-					// obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
-					// obj_lbl.Font = font;
-					// newnode.AddChild(obj_lbl);
-					index = a_tilemap.LevelObjects[index].next;
+							newnode.AddChild(a_sprite);
+							a_sprite.Position = new Vector3(0, NewSize.Y / 2, 0); //was 20
+						}
+
+
+						worldobjects.AddChild(newnode);
+						Label3D obj_lbl = new();
+						obj_lbl.Text = $"{StringLoader.GetObjectNounUW(obj.item_id)} {index} {commonObjDat.height(obj.item_id)} x {commonObjDat.radius(obj.item_id)}";
+						obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
+						obj_lbl.Font = font;
+						newnode.AddChild(obj_lbl);
+						index = a_tilemap.LevelObjects[index].next;
 					}
 				}
 			}
@@ -253,64 +269,7 @@ public partial class imageloader : Sprite2D
 		tileMapRender.GenerateLevelFromTileMap(the_tiles, worldobjects, UWClass._RES, a_tilemap, a_tilemap.LevelObjects, false);
 	}
 
-	public void CreateMesh(Texture2D textureForMesh)
-	{
-		//var nd = new Node3D();
-		//nd.Name = "yay";
-		//GetTree().Root.AddChild;
-		var surfaceArray = new Godot.Collections.Array();
-		surfaceArray.Resize((int)Mesh.ArrayType.Max);
-
-		var verts = new List<Vector3>();
-		var uvs = new List<Vector2>();
-		var normals = new List<Vector3>();
-		var indices = new List<int>();
-
-		var vert = new Vector3(10f, 10f, 0f);
-		verts.Add(vert);
-		normals.Add(vert.Normalized());
-
-		vert = new Vector3(0f, 0f, 0f);
-		verts.Add(vert);
-		normals.Add(vert.Normalized());
-
-		vert = new Vector3(0f, 10f, 5f);
-		verts.Add(vert);
-		normals.Add(vert.Normalized());
-
-		uvs.Add(new Vector2(0, 0));
-		uvs.Add(new Vector2(1, 0));
-		uvs.Add(new Vector2(1, 1));
-		//uvs.Add(new Vector2(0,1));
-
-		indices.Add(0);
-		indices.Add(1);
-		indices.Add(2);
-
-		surfaceArray[(int)Mesh.ArrayType.Vertex] = verts.ToArray();
-		surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs.ToArray();
-		surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
-		surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
-
-		var a_mesh = new ArrayMesh(); //= Mesh as ArrayMesh;
-		if (a_mesh != null)
-		{
-			// No blendshapes, lods, or compression used.
-			a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
-
-			var material = new StandardMaterial3D(); // or your shader...
-			material!.AlbedoTexture = textureForMesh; // shader parameter, etc.
-			material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
-			a_mesh.SurfaceSetMaterial(0, material);
-
-			var m = new MeshInstance3D();
-
-			m.Mesh = a_mesh;
-			GetTree().Root.CallDeferred("add_child", m);
-			//GetTree().Root.AddChild(m);
-		}
-	}
-
+	
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
