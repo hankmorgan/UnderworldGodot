@@ -8,12 +8,12 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 
 internal class uwsettings
-{	
-	public string pathuw1 {get;set;}
-	public string pathuw2 {get;set;}
-	public string gametoload {get;set;}
-	public int level {get;set;}
-	public int lightlevel {get; set;}
+{
+	public string pathuw1 { get; set; }
+	public string pathuw2 { get; set; }
+	public string gametoload { get; set; }
+	public int level { get; set; }
+	public int lightlevel { get; set; }
 
 	public static uwsettings instance;
 }
@@ -33,21 +33,21 @@ public partial class imageloader : Sprite2D
 	int NextPaletteCycle = 0;
 	int nextShade = 0;
 	int shadedir = 1;
- 
+
 	public override void _Ready()
 	{
-		
+
 		var appfolder = OS.GetExecutablePath();
 		appfolder = System.IO.Path.GetDirectoryName(appfolder);
 		var settingsfile = System.IO.Path.Combine(appfolder, "uwsettings.json");
 
-		if (! System.IO.File.Exists(settingsfile))
+		if (!System.IO.File.Exists(settingsfile))
 		{
-			OS.Alert ("missing file uwsettings.json at " + settingsfile);
+			OS.Alert("missing file uwsettings.json at " + settingsfile);
 			return;
 		}
 		var gamesettings = JsonSerializer.Deserialize<uwsettings>(File.ReadAllText(settingsfile));
-		uwsettings.instance=gamesettings;
+		uwsettings.instance = gamesettings;
 		cam.Position = new Vector3(-38f, 4.2f, 2.2f);
 		cam.Rotate(Vector3.Up, (float)Math.PI);
 		shade.getFarDist(0);
@@ -179,7 +179,7 @@ public partial class imageloader : Sprite2D
 		grObjects.RenderGrey = true;
 		//var tilerender = new tileMapRender();
 		Node3D worldobjects = GetNode<Node3D>("/root/Node3D/worldobjects");
-		Node3D the_tiles = GetNode<Node3D>("/root/Node3D/tilemap");	
+		Node3D the_tiles = GetNode<Node3D>("/root/Node3D/tilemap");
 
 		LevArkLoader.LoadLevArkFileData();
 		Underworld.TileMap a_tilemap = new(newLevelNo);
@@ -200,36 +200,61 @@ public partial class imageloader : Sprite2D
 					while (index != 0)
 					{
 						var obj = a_tilemap.LevelObjects[index];
-						
-						var newnode = new Node3D(); 													
+
+						var newnode = new Node3D();
 						newnode.Name = StringLoader.GetObjectNounUW(obj.item_id) + "_" + index.ToString();
 						newnode.Position = obj.GetCoordinate(x, y);
-						
-					    var a_sprite = new MeshInstance3D(); //new Sprite3D();
+
+						var a_sprite = new MeshInstance3D(); //new Sprite3D();
 						a_sprite.Mesh = new QuadMesh();
-						a_sprite.Mesh.Set("size",new Vector3(0.5f, 0.5f, 0.5f)); 
-						a_sprite.Mesh.SurfaceSetMaterial(0, grObjects.GetMaterial(obj.item_id));
-						newnode.AddChild(a_sprite);
-						a_sprite.Position = new Vector3(0, 0.20f, 0);
-						worldobjects.AddChild(newnode);
-						// Label3D obj_lbl = new();
-						// obj_lbl.Text = StringLoader.GetObjectNounUW(obj.item_id) + " " + index;
-						// obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
-						// obj_lbl.Font = font;
-						// newnode.AddChild(obj_lbl);
-						index = a_tilemap.LevelObjects[index].next;
+
+						Vector2 NewSize;
+						switch (obj.item_id >> 6)
+						{
+							case 1://NPCS
+								{
+									var n = new npc(obj);
+									a_sprite.Mesh.SurfaceSetMaterial(0, n.material);
+									NewSize = n.FrameSize;
+									break;
+								}
+							default:
+								{ //0.03125 -> too big
+									a_sprite.Mesh.SurfaceSetMaterial(0, grObjects.GetMaterial(obj.item_id));
+									NewSize = new Vector2(
+											ArtLoader.SpriteScale * grObjects.ImageCache[obj.item_id].GetWidth(),
+											ArtLoader.SpriteScale * grObjects.ImageCache[obj.item_id].GetHeight()
+											);
+
+									//0.5 : 16 px   -> 1 px = 0.5 /16 
+									break;
+								}
+						}
+						a_sprite.Mesh.Set("size",
+							NewSize
+					);
+
+					newnode.AddChild(a_sprite);
+					a_sprite.Position = new Vector3(0, NewSize.Y/2, 0); //was 20
+					worldobjects.AddChild(newnode);
+					// Label3D obj_lbl = new();
+					// obj_lbl.Text = $"{StringLoader.GetObjectNounUW(obj.item_id)} {index} {commonObjDat.height(obj.item_id)} x {commonObjDat.radius(obj.item_id)}";
+					// obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
+					// obj_lbl.Font = font;
+					// newnode.AddChild(obj_lbl);
+					index = a_tilemap.LevelObjects[index].next;
 					}
 				}
 			}
 			//Debug.Print(map);
 			//map = "";			
 		}
-		the_tiles.Position= new Vector3(0f,0f,0f);
+		the_tiles.Position = new Vector3(0f, 0f, 0f);
 		tileMapRender.GenerateLevelFromTileMap(the_tiles, worldobjects, UWClass._RES, a_tilemap, a_tilemap.LevelObjects, false);
 	}
 
 	public void CreateMesh(Texture2D textureForMesh)
-	{		
+	{
 		//var nd = new Node3D();
 		//nd.Name = "yay";
 		//GetTree().Root.AddChild;
@@ -293,9 +318,9 @@ public partial class imageloader : Sprite2D
 		lbl.Text = $"{cam.Position.ToString()} nearlightmap: {nextShade}";
 		//RenderingServer.GlobalShaderParameterSet("cameraPos", cam.Position);
 		cycletime += delta;
-		if(cycletime>0.2)
+		if (cycletime > 0.2)
 		{
-			cycletime=0;	
+			cycletime = 0;
 			//nextShade=2;
 			//Cycle the palette		
 			//RenderingServer.GlobalShaderParameterSet("uwpalette", (Texture)surfacematerial.texturePalettes[NextPaletteCycle]);
@@ -303,7 +328,7 @@ public partial class imageloader : Sprite2D
 			//cycle shades.dat
 			//RenderingServer.GlobalShaderParameterSet("uwlightmapnear", (Texture)PaletteLoader.light[shade.getNearMap(nextShade)].toImage());
 			//RenderingServer.GlobalShaderParameterSet("uwlightmapfar", (Texture)PaletteLoader.light[shade.getShadeCutoff(nextShade)].toImage());
-			
+
 			//RenderingServer.GlobalShaderParameterSet("neardistance", 1);// (float)shade.getNearDist(nextShade));
 			//RenderingServer.GlobalShaderParameterSet("fardistance", 12);// (float)shade.getFarDist(nextShade));
 
@@ -311,14 +336,14 @@ public partial class imageloader : Sprite2D
 			nextShade = nextShade + shadedir;
 			if (NextPaletteCycle > PaletteLoader.cycledPalette.GetUpperBound(0))
 			{
-				NextPaletteCycle=0;
+				NextPaletteCycle = 0;
 			}
-			if (nextShade<0)
+			if (nextShade < 0)
 			{
 				shadedir = 1;
 				nextShade = 1;
-			}			
-			if (nextShade>=8)
+			}
+			if (nextShade >= 8)
 			{
 				//nextShade=0;
 				shadedir = -1;

@@ -10,8 +10,19 @@ namespace Underworld
     public class CritLoader : ArtLoader
     {
 
-        public CritterInfo critter;// =new CritterInfo[64];
+        //public bool RenderGrey = true;
 
+        public static CritLoader[] Critters = new CritLoader[64];
+        public CritterInfo critterinfo;// =new CritterInfo[64];
+
+        public static CritLoader GetCritter(int CritterToLoad)
+        {
+            if (Critters[CritterToLoad]==null)
+            {
+                Critters[CritterToLoad] = new CritLoader(CritterToLoad);
+            }
+            return Critters[CritterToLoad];
+        }
 
         public CritLoader(int CritterToLoad)
         {
@@ -45,7 +56,7 @@ namespace Underworld
                     int auxPal = (int)getValAtAddress(assoc, AssocAddressPtr++, 8);
                     if (ass == CritterToLoad)
                     {
-                        critter = new CritterInfo(FileID, PaletteLoader.Palettes[0], auxPal);
+                        critterinfo = new CritterInfo(FileID, PaletteLoader.Palettes[0], auxPal);
                     }
                 }
             }
@@ -103,7 +114,7 @@ namespace Underworld
                     {
                         if (ass == CritterToLoad)
                         {
-                            critter = new CritterInfo(FileID, PaletteLoader.Palettes[0], auxPal, assoc, pgmp, cran);
+                            critterinfo = new CritterInfo(FileID, PaletteLoader.Palettes[0], auxPal, assoc, pgmp, cran);
                         }
                     }
                 }
@@ -1097,7 +1108,7 @@ public class CritterAnimInfo
                 break;
         }
         animName = new string[NoOfAnims];
-    }
+    }    
 }
 
 

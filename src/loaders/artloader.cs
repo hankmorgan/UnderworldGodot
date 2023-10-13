@@ -30,6 +30,9 @@ namespace Underworld
         /// </summary>
         public short PaletteNo = 0;
 
+
+        public const float SpriteScale = 0.02f;  //height of 1px of a sprite
+
         /// <summary>
         /// Loads the image file into the buffer
         /// </summary>
