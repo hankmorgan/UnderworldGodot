@@ -33,7 +33,6 @@ public partial class imageloader : Sprite2D
 	int NextPaletteCycle = 0;
 	public override void _Ready()
 	{
-
 		var appfolder = OS.GetExecutablePath();
 		appfolder = System.IO.Path.GetDirectoryName(appfolder);
 		var settingsfile = System.IO.Path.Combine(appfolder, "uwsettings.json");
@@ -66,7 +65,6 @@ public partial class imageloader : Sprite2D
 				throw new InvalidOperationException("Invalid Game Selected");
 		}
 
-
 		//playerdat.Load("SAVE1");
 		//Debug.Print(playerdat.CharName);
 		// Voc file loading. 
@@ -86,6 +84,27 @@ public partial class imageloader : Sprite2D
 		// }
 
 
+		var mdl = modelloader.DecodeModel(1);
+		File.WriteAllText("c:\\temp\\mdl.txt",mdl.commands);
+		int vindex=0;
+		var nd = GetNode<Node3D>("/root/Node3D");
+		string code="";
+		foreach (var v in mdl.verts)
+		{
+			if (vindex<= mdl.NoOfVerts)
+			{
+				Label3D obj_lbl = new();
+				obj_lbl.Text = $"{vindex}";
+				obj_lbl.Position = new Vector3(v.X,v.Z,v.Y);
+				code+= $"v[{vindex}] = new Vector3({v.X}f, {v.Z}f, {v.Y}f);\n";
+				obj_lbl.Font = font;
+				obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
+				nd.CallDeferred("add_child",obj_lbl);
+			}
+			vindex++;
+		}
+		Debug.Print (code);
+		//cam.Position= Vector3.Zero;
 
 		Random rnd = new Random();
 		var index = rnd.Next(8);
@@ -192,6 +211,7 @@ public partial class imageloader : Sprite2D
 		Underworld.ObjectCreator.GenerateObjects(worldobjects, a_tilemap.LevelObjects, grObjects, a_tilemap);
 		the_tiles.Position = new Vector3(0f, 0f, 0f);
 		tileMapRender.GenerateLevelFromTileMap(the_tiles, worldobjects, UWClass._RES, a_tilemap, a_tilemap.LevelObjects, false);
+	
 	}
 
 

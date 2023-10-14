@@ -4,9 +4,27 @@ using Godot;
 
 namespace Underworld
 {
-    // For file research
+    // For file research. Model loading is taken from Underworld Adventures
     public class modelloader : Loader
     {
+
+        public class UWModel
+        {
+            public List<Vector3> verts;//= new List<Vector3>();
+            public List<int> tris; //=;// new List<int>();
+            public List<float> u;
+            public List<float> v;
+            public Vector3 origin;
+            public string modelname;
+            public int NoOfVerts;
+            public string commands;
+
+            public UWModel()
+            {
+                tris = new List<int>();
+                verts = new List<Vector3>();
+            }
+        };
 
         enum nodecmd
         {
@@ -45,16 +63,7 @@ namespace Underworld
             M3_UW_FACE_GOURAUD = 0x00D6,
         };
 
-        struct UWModel
-        {
-            public List<Vector3> verts;//= new List<Vector3>();
-            public List<int> tris; //=;// new List<int>();
-            public List<float> u;
-            public List<float> v;
-            public Vector3 origin;
-            public string modelname;
-            public int NoOfVerts;
-        };
+
 
         struct ua_model_offset_table
         {
@@ -112,7 +121,7 @@ namespace Underworld
             modeltable[4].table_offset = 0x00054cf0; modeltable[4].value = 0x59aa64d4; modeltable[4].base_offset = 0x00054d8a;
             modeltable[5].table_offset = 0x000550e0; modeltable[5].value = 0x59aa64d4; modeltable[5].base_offset = 0x0005517a;
         }
-        public static string DecodeModel(int modelToLoad)
+        public static UWModel DecodeModel(int modelToLoad)
         {
             if (buffer == null)
             {
@@ -124,7 +133,7 @@ namespace Underworld
                 var path = System.IO.Path.Combine(BasePath, exename);
                 if (!ReadStreamFile(path, out buffer))
                 {
-                    return "File not loaded";
+                    return null;
                 }
             } //end load file
 
@@ -148,7 +157,7 @@ namespace Underworld
             if (baseOffset == 0)
             {
                 //Debug.Log("didn't find models in file\n");
-                return "Did not find model list"; // didn't find list
+                return null; // didn't find list
             }
 
             // read in offsets
@@ -181,10 +190,9 @@ namespace Underworld
                 //  n,ua_model_name[n],base + offsets[n],unk1,ex,ey,ez);
 
                 //ua_model3d_builtin* model = new ua_model3d_builtin;
-
-                models[n].tris = new List<int>();
-                models[n].verts = new List<Vector3>();
+                models[n] = new();
                 models[n].modelname = ua_model_name[n];
+
                 // Debug.Log(models[n].modelname);
                 for (int i = 0; i <= 128; i++)
                 {
@@ -201,12 +209,10 @@ namespace Underworld
                 if (n == modelToLoad)
                 {
                     //writer.WriteLine("Loading model " + ua_model_name[n] + " at " + addressptr);
-                    return ua_model_parse_node(buffer, addressptr, ref models[n], true);
+                    models[n].commands = ua_model_parse_node(buffer, addressptr, ref models[n], true);
                 }
-
-
             }
-            return "no model loaded!";
+            return models[modelToLoad];  // "no model loaded!";
         }//end decode
 
 
@@ -234,7 +240,7 @@ namespace Underworld
             {
                 mod.verts.Capacity = vertno + 1;
             }
-            mod.verts[vertno] = vertex;
+            mod.verts[vertno] = vertex; //flip uw vector to be Y up vertex;
             if (mod.NoOfVerts < vertno)
             {
                 mod.NoOfVerts = vertno;
@@ -259,14 +265,14 @@ namespace Underworld
                     // misc. nodes
                     case nodecmd.M3_UW_ENDNODE: // 0000 end node
                         {
-                            result += $"\nInstr {instr}\tEnd Node";
+                            result += $"\nInstr {instr} ({cmd})\tEnd Node";
                             loop = false;
                             break;
                         }
                     case nodecmd.M3_UW_ORIGIN: // 0078 define model center
                         {
                             //writer.WriteLine("\nInstr " + instr + " origin");
-                            result += $"\nInstr {instr}\tDefine Model Centre";
+                            result += $"\nInstr {instr} ({cmd})\tDefine Model Centre";
                             int vertno = ua_mdl_read_vertno(buffer, addressptr); addressptr += 2;
                             mod.origin = mod.verts[vertno];
 
@@ -274,7 +280,7 @@ namespace Underworld
                             float vy = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;
                             float vz = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;
                             int unk1 = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;
-                            result += $"\tVertNo:{vertno} x:{vx} y:{vy} z:{vz} unk:{unk1}";
+                            result += $"\n\tVertNo:{vertno} x:{vx} y:{vy} z:{vz} unk:{unk1}";
                             // ua_mdl_trace("[origin] vertno=%u unk1=%04x origin=(%f,%f,%f)",
                             //  vertno,unk1,vx,vy,vz);
                             break;
@@ -284,18 +290,14 @@ namespace Underworld
                     // vertex definition nodes
                     case nodecmd.M3_UW_VERTEX: // 007a define initial vertex
                         {
-                            result += $"\nInstr {instr}\tDefine Initial Vertex";
+                            result += $"\nInstr {instr} ({cmd})\tDefine Initial Vertex";
                             float vx = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                             float vy = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                             float vz = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                             int vertno = ua_mdl_read_vertno(buffer, addressptr); addressptr += 2;//ua_mdl_read_vertno(fd);
-                            Vector3 refvect = new Vector3((float)vx, (float)vy, (float)vz);
-
-                            result += $"\tx:{vx} y:{vy} z:{vz} Vertno:{vertno}";
-                            ua_mdl_store_vertex(refvect, vertno, ref mod);
-                            //Debug.Log("\nInstr " + instr + "Vertex #" + vertno + "="  + refvect);
-                            // ua_mdl_trace("[vertex] vertno=%u vertex=(%f,%f,%f)",
-                            // vertno,vx,vy,vz);
+                            Vector3 final = new Vector3((float)vx, (float)vy, (float)vz);
+                            ua_mdl_store_vertex(final, vertno, ref mod);
+                            result += $"\n\tVertex:{vertno} x:{final.X} y:{final.Y} z:{final.Z}";
                             break;
                         }
 
@@ -303,7 +305,7 @@ namespace Underworld
                     case nodecmd.M3_UW_VERTICES: // 0082 define initial vertices
                         {
                             // writer.WriteLine("\nInstr " + instr + " M3_UW_VERTICES");
-                            result += $"\nInstr {instr}\tDefine Initial Vertices";
+                            result += $"\nInstr {instr} ({cmd})\tDefine Initial Vertices";
                             int nvert = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;// fread16(fd);
                             int vertno = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;// fread16(fd);
                             for (int n = 0; n < nvert; n++)
@@ -312,12 +314,9 @@ namespace Underworld
                                 float vy = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                                 float vz = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
 
-                                Vector3 refvect = new Vector3((float)vx, (float)vy, (float)vz);
-                                ua_mdl_store_vertex(refvect, vertno + n, ref mod);
-                                result += $"\n\tx:{vx} y:{vy} z:{vz} StartingAt:{vertno} NoOfVerts {nvert}";
-                                //Debug.Log("\nInstr " + instr + "Vertex #" + vertno + "="  + refvect);
-                                //ua_mdl_trace("%s[vertex] vertno=%u vertex=(%f,%f,%f)",
-                                // n==0 ? "" : "\n      ",vertno+n,vx,vy,vz);
+                                Vector3 final = new Vector3((float)vx, (float)vy, (float)vz);
+                                ua_mdl_store_vertex(final, vertno + n, ref mod);
+                                result += $"\n\tVertex:{vertno} x:{final.X} y:{final.Y} z:{final.Z}";
                             }
                         }
                         break;
@@ -325,56 +324,47 @@ namespace Underworld
                     case nodecmd.M3_UW_VERTEX_X: // 0086 define vertex offset X
                         {
                             // writer.WriteLine("\nInstr " + instr + " offsetX");
-                            result += $"\nInstr {instr}\tVertex Offset X";
+                            result += $"\nInstr {instr} ({cmd})\tVertex Offset X";
                             int refvert = ua_mdl_read_vertno(buffer, addressptr); addressptr += 2;
                             float vx = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                             int vertno = ua_mdl_read_vertno(buffer, addressptr); addressptr += 2;
-                            result += $"\n\trefvert:{refvert} x:{vx} vertno:{vertno}";
                             Vector3 refvect = mod.verts[refvert];
                             Vector3 adj = new Vector3(vx, 0f, 0f);
-                            ua_mdl_store_vertex(refvect + adj, vertno, ref mod);
-                            //// Debug.Log("Vertex offsetX #" +(vertno) + "="  + (refvect+adj) + " from " + refvect + "(" + refvert + ")" + " adj = " +adj);
-                            //ua_mdl_trace("[vertex] vertno=%u vertex=(%f,%f,%f) x from=%u",
-                            //  vertno,refvect.x,refvect.y,refvect.z,refvert);
+                            Vector3 final = refvect + adj;
+                            ua_mdl_store_vertex(final, vertno, ref mod);
+                            result += $"\n\tVertex:{vertno} x:{final.X} y:{final.Y} z:{final.Z} refvert:{refvert}";
                             break;
                         }
 
                     case nodecmd.M3_UW_VERTEX_Z: // 0088 define vertex offset Z
                         {
                             //writer.WriteLine("\nInstr " + instr + " offsetZ");
-                            result += $"\nInstr {instr}\tVertex Offset Z";
+                            result += $"\nInstr {instr} ({cmd})\tVertex Offset Z";
                             int refvert = ua_mdl_read_vertno(buffer, addressptr); addressptr += 2;
                             float vz = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                             int vertno = ua_mdl_read_vertno(buffer, addressptr); addressptr += 2;
 
                             Vector3 refvect = mod.verts[refvert];
                             Vector3 adj = new Vector3(0f, 0f, vz);
-                            result += $"\n\trefvert:{refvert} z:{vz} vertno:{vertno}";
-                            ua_mdl_store_vertex(refvect + adj, vertno, ref mod);
-                            // Debug.Log("Vertex offsetZ #" +(vertno) + "="  + (refvect+adj) + " from " + refvect + "(" + refvert + ")" + " adj = " +adj);
-                            //ua_mdl_trace("[vertex] vertno=%u vertex=(%f,%f,%f) z from=%u",
-                            //  vertno,refvect.x,refvect.y,refvect.z,refvert);
+                            Vector3 final = refvect + adj;
+                            ua_mdl_store_vertex(final, vertno, ref mod);
+                            result += $"\n\tVertex:{vertno} x:{final.X} y:{final.Y} z:{final.Z} refvert:{refvert}";
+
                             break;
                         }
 
 
                     case nodecmd.M3_UW_VERTEX_Y: // 008a define vertex offset Y
                         {
-                            //writer.WriteLine("\nInstr " + instr + " offsetY");
-                            result += $"\nInstr {instr}\tVertex Offset Z";
+                            result += $"\nInstr {instr} ({cmd})\tVertex Offset Y";
                             int refvert = ua_mdl_read_vertno(buffer, addressptr); addressptr += 2;
                             float vy = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                             int vertno = ua_mdl_read_vertno(buffer, addressptr); addressptr += 2;
-
                             Vector3 refvect = mod.verts[refvert];
-                            //refvect.y += vy;
-                            //refvect  = new Vector3(refvect.x,refvect.y+(float)vy,refvect.z);
-                            Vector3 adj = new Vector3(0f, vy, 0f);
-                            ua_mdl_store_vertex(refvect + adj, vertno, ref mod);
-                            result += $"\n\trefvert:{refvert} y:{vy} vertno:{vertno}";
-                            // Debug.Log("Vertex offsetY #" +(vertno) + "="  + (refvect+adj) + " from " + refvect + "(" + refvert + ")" + " adj = " +adj);
-                            // ua_mdl_trace("[vertex] vertno=%u vertex=(%f,%f,%f) y from=%u",
-                            //   vertno,refvect.x,refvect.y,refvect.z,refvert);
+                            Vector3 adj = new Vector3(0f, vy*10f, 0f);
+                            Vector3 final = refvect + adj;
+                            ua_mdl_store_vertex(final, vertno, ref mod);
+                            result += $"\n\tVertex:{vertno} x:{final.X} y:{final.Y} z:{final.Z} refvert:{refvert}";
                             break;
                         }
 
@@ -382,7 +372,7 @@ namespace Underworld
                     case nodecmd.M3_UW_VERTEX_XZ: // 0090 define vertex offset X,Z
                         {
                             //writer.WriteLine("\nInstr " + instr + " offsetXZ");
-                            result += $"\nInstr {instr}\tVertex Offset XZ";
+                            result += $"\nInstr {instr} ({cmd})\tVertex Offset XZ";
                             float vx = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                             float vz = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                             int refvert = ua_mdl_read_vertno(buffer, addressptr); addressptr += 2;
@@ -404,7 +394,7 @@ namespace Underworld
 
                     case nodecmd.M3_UW_VERTEX_XY: // 0092 define vertex offset X,Y
                         {
-                            result += $"\nInstr {instr}\tVertex Offset XY";
+                            result += $"\nInstr {instr} ({cmd})\tVertex Offset XY";
                             //writer.WriteLine("\nInstr " + instr + " offsetXY");
                             float vx = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                             float vy = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
@@ -429,7 +419,7 @@ namespace Underworld
                     case nodecmd.M3_UW_VERTEX_YZ: // 0094 define vertex offset Y,Z
                         {
                             //writer.WriteLine("\nInstr " + instr + " offsetYZ");
-                            result += $"\nInstr {instr}\tVertex Offset YZ";
+                            result += $"\nInstr {instr} ({cmd})\tVertex Offset YZ";
                             float vy = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                             float vz = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                             int refvert = ua_mdl_read_vertno(buffer, addressptr); addressptr += 2;
@@ -453,21 +443,20 @@ namespace Underworld
 
                     case nodecmd.M3_UW_VERTEX_CEIL: // 008c define vertex variable height
                         {
-                            // writer.WriteLine("\nInstr " + instr + " UW_VERTEX_CEIL");
-                            result += $"\nInstr {instr}\tVertex Variable Height of Ceiling";
+                            result += $"\nInstr {instr} ({cmd})\tVertex Variable Height of Ceiling";
                             int refvert = ua_mdl_read_vertno(buffer, addressptr); addressptr += 2;
-                            int unk1 = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;//fread16(fd);
+                            float unk1 = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;
+                            //int unk1 = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;//fread16(fd);
                             int vertno = ua_mdl_read_vertno(buffer, addressptr); addressptr += 2;
 
                             Vector3 refvect = mod.verts[refvert];
                             // refvect.z = 32.0f; // todo: ceiling value
                             //refvect  = new Vector3(refvect.x,refvect.y,32f);
-                            Vector3 adj = new Vector3(0f, 0f, 32f);
-                            ua_mdl_store_vertex(refvect + adj, vertno, ref mod);
-                            result += $"\n\trefvert:{refvert} unk1:{unk1} vertno:{vertno}";
-                            //  writer.WriteLine("\tVertex Ceil #" +(vertno) + "="  + (refvect+adj) + " from " + refvect + "(" + refvert + ")" + " adj = " +adj);
-                            //  ua_mdl_trace("[vertex] vertno=%u vertex=(%f,%f,ceil) ceil from=%u unk1=%04x",
-                            //   vertno,refvect.x,refvect.y,refvert,unk1);
+                            //Vector3 adj = new Vector3(0f, 0f, 32f);
+
+                            Vector3 final = new Vector3(refvect.X, refvect.Y, 32f * 0.125f);
+                            ua_mdl_store_vertex(final, vertno, ref mod);
+                            result += $"\n\tVertex:{vertno} x:{final.X} y:{final.Y} z:{final.Z} refvert:{refvert}";
                             break;
                         }
 
@@ -475,7 +464,7 @@ namespace Underworld
                     case nodecmd.M3_UW_FACE_PLANE: // 0058 define face plane, arbitrary heading
                         {
                             //writer.WriteLine("\nInstr " + instr + " UW_FACE_PLANE");
-                            result += $"\nInstr {instr}\tFace Plane";
+                            result += $"\nInstr {instr} ({cmd})\tFace Plane";
                             int unk1 = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;//fread16(fd);
                             float nx = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                             float vx = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
@@ -494,7 +483,7 @@ namespace Underworld
 
                     case nodecmd.M3_UW_FACE_PLANE_X: // 0064 define face plane X
                         {
-                            result += $"\nInstr {instr}\tFace Plane X";
+                            result += $"\nInstr {instr} ({cmd})\tFace Plane X";
                             int unk1 = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;//fread16(fd);
                             float n = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                             float v = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
@@ -503,7 +492,7 @@ namespace Underworld
                         }
                     case nodecmd.M3_UW_FACE_PLANE_Z: // 0066 define face plane Z
                         {
-                            result += $"\nInstr {instr}\tFace Plane Z";
+                            result += $"\nInstr {instr} ({cmd})\tFace Plane Z";
                             int unk1 = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;//fread16(fd);
                             float n = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                             float v = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
@@ -512,7 +501,7 @@ namespace Underworld
                         }
                     case nodecmd.M3_UW_FACE_PLANE_Y: // 0068 define face plane Y
                         {
-                            result += $"\nInstr {instr}\tFace Plane Y";
+                            result += $"\nInstr {instr} ({cmd})\tFace Plane Y";
                             int unk1 = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;//fread16(fd);
                             float n = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                             float v = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
@@ -523,7 +512,7 @@ namespace Underworld
 
                     case nodecmd.M3_UW_FACE_PLANE_ZY: // 005e define face plane Z/Y
                         {
-                            result += $"\nInstr {instr}\tFace Plane ZY";
+                            result += $"\nInstr {instr} ({cmd})\tFace Plane ZY";
                             int unk1 = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;// fread16(fd);
                             float nz = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                             float vz = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;// ua_mdl_read_fixed(fd);
@@ -534,7 +523,7 @@ namespace Underworld
                         }
                     case nodecmd.M3_UW_FACE_PLANE_XY: // 0060 define face plane X/Y
                         {
-                            result += $"\nInstr {instr}\tFace Plane ZY";
+                            result += $"\nInstr {instr} ({cmd})\tFace Plane ZY";
                             int unk1 = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;// fread16(fd);
                             float nx = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                             float vx = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;// ua_mdl_read_fixed(fd);
@@ -545,7 +534,7 @@ namespace Underworld
                         }
                     case nodecmd.M3_UW_FACE_PLANE_XZ: // 0062 define face plane X/Z
                         {
-                            result += $"\nInstr {instr}\tFace Plane XZ";
+                            result += $"\nInstr {instr} ({cmd})\tFace Plane XZ";
                             int unk1 = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;// fread16(fd);
                             float nx = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                             float vx = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;// ua_mdl_read_fixed(fd);
@@ -559,7 +548,7 @@ namespace Underworld
                     case nodecmd.M3_UW_FACE_VERTICES: // 007e define face vertices
                         {
                             //writer.WriteLine("\nInstr " + instr + " UW_FACE_VERTICES");
-                            result += $"\nInstr {instr}\tFace Vertices";
+                            result += $"\nInstr {instr} ({cmd})\tFace Vertices";
                             int nvert = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;//fread16(fd);
                             int[] faceverts = new int[nvert];
                             for (int i = 0; i < nvert; i++)
@@ -571,16 +560,15 @@ namespace Underworld
                                 faceverts[i] = vertno;
                                 //Xua_vertex3d vert;
                                 //output = output + vertno + ",";
-                                result += $"\n\tVertNo{vertno}";
+                                result += $"\n\tVertNo:{vertno}";
                             }
                             convertVertToTris(faceverts, ref mod);
                         }
                         break;
 
                     case nodecmd.M3_UW_TEXTURE_FACE: // 00a8 define texture-mapped face
-                    case nodecmd.M3_UW_TMAP_VERTICES: // 00b4 define face vertices with u,v information
                         {
-                            result += $"\nInstr {instr}\tUW_TEXTURE_FACE or UW_TMAP_VERTICES";
+                            result += $"\nInstr {instr} ({cmd})\tUW_TEXTURE_FACE";
                             // ua_mdl_trace("[face] %s ",cmd==M3_UW_TEXTURE_FACE ? "tex" : "tmap");
                             //string output = "\tFace Verts are :";
                             // read texture number
@@ -605,6 +593,27 @@ namespace Underworld
                         }
                         break;
 
+                    case nodecmd.M3_UW_TMAP_VERTICES: // 00b4 define face vertices with u,v information
+                        {
+                            result += $"\nInstr {instr} ({cmd})\tUW_TEXTURE_FACE or UW_TMAP_VERTICES";
+                            // ua_mdl_trace("[face] %s ",cmd==M3_UW_TEXTURE_FACE ? "tex" : "tmap");
+                            //string output = "\tFace Verts are :";
+                            // read texture number
+                            int nvert = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;//fread16(fd);
+                            int[] faceverts = new int[nvert];
+                            for (int i = 0; i < nvert; i++)
+                            {
+                                // Uint16 
+                                int vertno = ua_mdl_read_vertno(buffer, addressptr); addressptr += 2;
+                                float u0 = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
+                                float v0 = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
+                                faceverts[i] = vertno;
+                                result += $"\n\tVertNo{vertno} UV:{u0},{v0}";
+                            }
+                            convertVertToTris(faceverts, ref mod);
+                        }
+                        break;
+
                     // sort nodes
                     case nodecmd.M3_UW_SORT_PLANE: // 0006 define sort node, arbitrary heading
                     case nodecmd.M3_UW_SORT_PLANE_ZY: // 000C define sort node, ZY plane
@@ -612,7 +621,7 @@ namespace Underworld
                     case nodecmd.M3_UW_SORT_PLANE_XZ: // 0010 define sort node, XZ plane
                         {
                             //writer.WriteLine("\nInstr " + instr + " SORT PLANES");
-                            result += $"\nInstr {instr}\tSORT PLANES";
+                            result += $"\nInstr {instr} ({cmd})\tSORT PLANES";
                             if ((nodecmd)(cmd) == nodecmd.M3_UW_SORT_PLANE)
                             {
                                 float nx = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
@@ -657,38 +666,41 @@ namespace Underworld
                     // unknown nodes
                     case nodecmd.M3_UW_COLOR_DEF: // 0014 ??? colour definition
                         {
-                            result += $"\nInstr {instr}\tUW_COLOUR_DEF";
+                            result += $"\nInstr {instr} ({cmd})\tUW_COLOUR_DEF";
                             int refvert = ua_mdl_read_vertno(buffer, addressptr); addressptr += 2;
                             int unk1 = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;//fread16(fd);
                             int vertno = ua_mdl_read_vertno(buffer, addressptr); addressptr += 2;
-                            result += $"\n\trefvert:{refvert} unk1:{unk1} vertno:{vertno}";
+                            int finalcolour = MapColour(unk1);
+                            result += $"\n\trefvert:{refvert} unk1:{unk1} {finalcolour} vertno:{vertno}";
                             break;
                         }
 
 
                     case nodecmd.M3_UW_FACE_SHADE: // 00BC define face shade
                         {
-                            result += $"\nInstr {instr}\tUW_FACE_SHADE";
+                            result += $"\nInstr {instr} ({cmd})\tUW_FACE_SHADE";
                             int unk1 = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;//fread16(fd);
                             int vertno = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;//fread16(fd);
-                            result += $"\n\tunk1:{unk1} vertno:{vertno}";                                                                     //ua_mdl_trace("[shade] shade unk1=%02x unk2=%02x",unk1,vertno);
+                            int finalcolour = MapColour(unk1);
+                            result += $"\n\tunk1:{unk1} {finalcolour} vertno:{vertno}";                                                                   //ua_mdl_trace("[shade] shade unk1=%02x unk2=%02x",unk1,vertno);
                             break;
                         }
 
 
                     case nodecmd.M3_UW_FACE_TWOSHADES: // 00BE ??? seems to define 2 shades
                         {
-                            result += $"\nInstr {instr}\tFACE_TWOSHADE";
+                            result += $"\nInstr {instr} ({cmd})\tFACE_TWOSHADE";
                             int vertno = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;//fread16(fd);
                             int unk1 = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;//fread16(fd);
-                            result += $"\n\tunk1:{unk1} vertno:{vertno}";                                                                        //ua_mdl_trace("[shade] twoshade unk1=%02x unk2=%02x ",vertno,unk1);
+                            int finalcolour = MapColour(unk1);
+                            result += $"\n\tunk1:{unk1} {finalcolour} vertno:{vertno}";                                                                           //ua_mdl_trace("[shade] twoshade unk1=%02x unk2=%02x ",vertno,unk1);
                             break;
                         }
 
 
                     case nodecmd.M3_UW_VERTEX_DARK: // 00D4 define dark vertex face (?)
                         {
-                            result += $"\nInstr {instr}\tVERTEX DARK";
+                            result += $"\nInstr {instr} ({cmd})\tVERTEX DARK";
                             int nvert = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;// fread16(fd);
                             int unk1 = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;// fread16(fd);
                             result += $"\n\tunk1:{unk1} nvert{nvert}";
@@ -710,17 +722,17 @@ namespace Underworld
 
                     case nodecmd.M3_UW_FACE_GOURAUD: // 00D6 define gouraud shading
                                                      // ua_mdl_trace("[shade] gouraud");
-                        result += $"\nInstr {instr}\tFACE_GOURAUD";
+                        result += $"\nInstr {instr} ({cmd})\tFACE_GOURAUD";
                         break;
 
                     case nodecmd.M3_UW_FACE_UNK40: // 0040 ???
-                        result += $"\nInstr {instr}\tFACE_UNK40";
+                        result += $"\nInstr {instr} ({cmd})\tFACE_UNK40";
                         // ua_mdl_trace("[shade] unknown");
                         break;
 
                     case nodecmd.M3_UW_FACE_SHORT: // 00A0 ??? shorthand face definition
                         {
-                            result += $"\nInstr {instr}\tFACE_SHORT";
+                            result += $"\nInstr {instr} ({cmd})\tFACE_SHORT";
                             int vertno = ua_mdl_read_vertno(buffer, addressptr); addressptr += 2;
                             result += $"\n\tinitial_vertno:{vertno}";
                             //ua_mdl_trace("[face] shorthand unk1=%u vertlist=",vertno);
@@ -737,7 +749,7 @@ namespace Underworld
 
                     case (nodecmd)0x00d2: // 00D2 ??? shorthand face definition
                         {
-                            result += $"\nInstr {instr}\tSHORTHAND_FACE_DEFINITION";
+                            result += $"\nInstr {instr} ({cmd})\tSHORTHAND_FACE_DEFINITION";
                             int vertno = ua_mdl_read_vertno(buffer, addressptr); addressptr += 2;
                             result += $"\n\tinitialvertno:{vertno}";
                             //ua_mdl_trace("[face] vertno=%u vertlist=",vertno);
@@ -755,7 +767,7 @@ namespace Underworld
                     case nodecmd.M3_UW_FACE_UNK16: // 0016 ???
                         {
                             //writer.WriteLine("\nInstr " + instr + " UW_FACE_UNK16");
-                            result += $"\nInstr {instr}\tFace_UNK16";
+                            result += $"\nInstr {instr} ({cmd})\tFace_UNK16";
                             long pos = addressptr;//(int)getValAtAddress(buffer,addressptr,16);addressptr++;//ftell(fd);
 
                             int nvert = ua_mdl_read_vertno(buffer, addressptr); addressptr += 2;//ua_mdl_read_vertno(fd);
@@ -778,7 +790,7 @@ namespace Underworld
                     case (nodecmd)0x0012:
                         {
                             // writer.WriteLine("\nInstr " + instr + " UNK 12");
-                            result += $"\nInstr {instr}\tUNK12";
+                            result += $"\nInstr {instr} ({cmd})\tUNK12";
                             int unk1 = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;//fread16(fd);
                             result += $"\n\tunk1:{unk1}";
                             break;
@@ -786,7 +798,7 @@ namespace Underworld
 
                     default:
                         //ua_mdl_trace("unknown command at offset 0x%08x\n",ftell(fd)-2);
-                        result += $"\nInstr {instr}\tUNKNOWN CMD returning";
+                        result += $"\nInstr {instr} ({cmd})\tUNKNOWN {cmd} returning";
                         return result;
                 }
                 // ua_mdl_trace("\n");
@@ -799,6 +811,69 @@ namespace Underworld
         {//This is sort of wrong.
 
         }
+
+        static int MapColour(int index)
+        {
+            switch (_RES)
+            {
+                case GAME_UW2:
+                    {
+                        switch (index)
+                        {
+                            case 0x2680: return 0x63;
+                            case 0x2682: return 0x30;
+                            case 0x2684: return 0x50;
+                            default: return 0;
+                        }
+                    }
+                default:
+                    {
+                        switch (index)
+                        {
+                            case 0x2920: return 0x63;
+                            case 0x2922: return 0x30;
+                            case 0x2924: return 0x50;
+                            default: return 0;
+                        }
+                    }
+            }
+            /*
+TODO: these are the colour mappings 
+
+static std::map<Uint16, Uint8> s_colorOffsetToPaletteIndexMapping =
+{
+   // uw1
+   { 0x2920, 0x63 }, // gray
+   { 0x2922, 0x30 }, // blue
+   { 0x2924, 0x50 }, // yellow
+   { 0x2926, 0 }, // black/transparent
+   { 0x292a, 0 },
+   { 0x292c, 0 }, // only used in 00be node in model 1 door frame
+   { 0x292e, 0 }, // only used in 00be node in model 1 door frame
+   { 0x2936, 0 }, // only used in bridge
+
+   // uw2
+   { 0x2680, 0x63 },
+   { 0x2682, 0x30 },
+   { 0x2684, 0x50 },
+   { 0x2686, 0 },
+   { 0x268a, 0 },
+   { 0x268c, 0 }, // only used in 00be node in model 1 door frame
+   { 0x268e, 0 }, // only used in 00be node in model 1 door frame
+   { 0x2696, 0 }, // only used in bridge
+
+   // blackrock gem colors
+   { 0x2698, 0 },
+   { 0x269a, 0 },
+   { 0x269c, 0 },
+   { 0x269e, 0 },
+   { 0x26a0, 0 },
+};
+
+*/
+        }
+
+
     }//end class
 
 }//end namespace

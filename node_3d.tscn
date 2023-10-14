@@ -13,7 +13,6 @@ shader = ExtResource("6_x6exc")
 [sub_resource type="AudioStreamWAV" id="AudioStreamWAV_tkk82"]
 
 [node name="Node3D" type="Node3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0792771, 0.245405, -0.00219772)
 
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true

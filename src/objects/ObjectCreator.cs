@@ -18,7 +18,10 @@ namespace Underworld
             npcs = new();
             foreach (var obj in objects)
             {
-                RenderObject(worldparent, grObjects, obj, a_tilemap);
+                if (obj.item_id <= 463)
+                {
+                    RenderObject(worldparent, grObjects, obj, a_tilemap);
+                }
             }
         }
 
@@ -41,12 +44,12 @@ namespace Underworld
                     }
                 case 5: //doors, 3d models, buttons/switches
                     {
-                        unimplemented = MajorClass5(obj, newnode);
-                        Label3D obj_lbl = new();
-						obj_lbl.Text = $"{StringLoader.GetObjectNounUW(obj.item_id)} {obj.index} {obj.heading} -> {obj.heading_r}";
-						obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
-						//obj_lbl.Font = font;
-						newnode.AddChild(obj_lbl);
+                        unimplemented = MajorClass5(obj, newnode, a_tilemap);
+                        // Label3D obj_lbl = new();
+                        // obj_lbl.Text = $"{StringLoader.GetObjectNounUW(obj.item_id)} {obj.index} {obj.heading} -> {obj.heading_r}";
+                        // obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
+                        // //obj_lbl.Font = font;
+                        // newnode.AddChild(obj_lbl);
                         break;
                     }
 
@@ -69,10 +72,10 @@ namespace Underworld
 
 
             // Label3D obj_lbl = new();
-			// 			obj_lbl.Text = $"{StringLoader.GetObjectNounUW(obj.item_id)} {obj.index} {obj.heading} -> {obj.heading_r}";
-			// 			obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
-			// 			//obj_lbl.Font = font;
-			// 			newnode.AddChild(obj_lbl);
+            // 			obj_lbl.Text = $"{StringLoader.GetObjectNounUW(obj.item_id)} {obj.index} {obj.heading} -> {obj.heading_r}";
+            // 			obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
+            // 			//obj_lbl.Font = font;
+            // 			newnode.AddChild(obj_lbl);
         }
 
         /// <summary>
@@ -82,10 +85,16 @@ namespace Underworld
         /// <param name="unimplemented"></param>
         /// <param name="newnode"></param>
         /// <returns></returns>
-        private static bool MajorClass5(uwObject obj, Node3D newnode)
+        private static bool MajorClass5(uwObject obj, Node3D newnode, TileMap a_tilemap)
         {
+            if (obj.tileX>=65){return true;}//don't render offmap models.
             switch (obj.minorclass)
             {
+                case 0: //doors
+                    {
+                        door.CreateInstance(newnode, obj, a_tilemap);
+                        return false;
+                    }
                 case 2: //3D models
                     {
                         if (obj.classindex == 0)
@@ -110,14 +119,18 @@ namespace Underworld
             var a_sprite = new MeshInstance3D(); //new Sprite3D();
             a_sprite.Mesh = new QuadMesh();
             Vector2 NewSize;
-            a_sprite.Mesh.SurfaceSetMaterial(0, grObjects.GetMaterial(obj.item_id));
-            NewSize = new Vector2(
-                    ArtLoader.SpriteScale * grObjects.ImageCache[obj.item_id].GetWidth(),
-                    ArtLoader.SpriteScale * grObjects.ImageCache[obj.item_id].GetHeight()
-                    );
-            a_sprite.Mesh.Set("size", NewSize);
-            newnode.AddChild(a_sprite);
-            a_sprite.Position = new Vector3(0, NewSize.Y / 2, 0);
+            var img = grObjects.ImageCache[obj.item_id];    
+            if (img != null)
+            {
+                 a_sprite.Mesh.SurfaceSetMaterial(0, grObjects.GetMaterial(obj.item_id));
+                NewSize = new Vector2(
+                        ArtLoader.SpriteScale * img.GetWidth(),
+                        ArtLoader.SpriteScale * img.GetHeight()
+                        );
+                a_sprite.Mesh.Set("size", NewSize);
+                newnode.AddChild(a_sprite);
+                a_sprite.Position = new Vector3(0, NewSize.Y / 2, 0);
+            }
         }
     }
 
