@@ -81,7 +81,7 @@ namespace Underworld
             Vector2[] customUVs = new Vector2[verts.Length];
             for (int i = 0; i < customUVs.Length; i++)
             {
-                customUVs[i] = new Vector2(verts[i].X, verts[i].Z);
+                customUVs[i] = new Vector2(verts[i].X, verts[i].Y);
                 customUVs[i] = customUVs[i] * TextureScaling();
             }
             return customUVs;
