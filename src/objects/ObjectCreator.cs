@@ -119,7 +119,7 @@ namespace Underworld
             var a_sprite = new MeshInstance3D(); //new Sprite3D();
             a_sprite.Mesh = new QuadMesh();
             Vector2 NewSize;
-            var img = grObjects.ImageCache[obj.item_id];    
+            var img = grObjects.LoadImageAt(obj.item_id);   
             if (img != null)
             {
                  a_sprite.Mesh.SurfaceSetMaterial(0, grObjects.GetMaterial(obj.item_id));

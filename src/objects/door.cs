@@ -23,52 +23,50 @@ namespace Underworld
             n.texture = a_tilemap.texture_map[a_tilemap.Tiles[tileX, tileY].wallTexture];
             n.floorheight = a_tilemap.Tiles[tileX, tileY].floorHeight;
             n.position = parent.Position;
-            
-            if (n.uwobject.heading*45 != tileMapRender.EAST)
-            {
-                return n;
-            }
-
             var modelNode = n.Generate3DModel(parent);
             //modelNode.Rotate(Vector3.Up,(float)Math.PI);
 
 
             switch (n.uwobject.heading*45)
-            {
+            {//align model node in centre of tile along it's axis
                 case tileMapRender.EAST:
-                    modelNode.Rotate(Vector3.Up,(float)Math.PI * 1.5f);
-                    //align model node in centre of tile along it's axis
+                    modelNode.Rotate(Vector3.Up,(float)Math.PI * 1.5f);                    
                     parent.Position = new Vector3(parent.Position.X, parent.Position.Y, (tileY * 1.2f) + 0.6f);
                     break;
                 case tileMapRender.WEST:
+                    modelNode.Rotate(Vector3.Up,(float)Math.PI /2f);                    
+                    parent.Position = new Vector3(parent.Position.X, parent.Position.Y, (tileY * 1.2f) + 0.6f);
                     break;
                 case tileMapRender.NORTH:
+                    parent.Position = new Vector3((tileX * -1.2f) - 0.6f, parent.Position.Y, parent.Position.Z);
                     break;
                 case tileMapRender.SOUTH:
+                    //modelNode.Rotate(Vector3.Up,(float)Math.PI /2f);                    
+                    parent.Position = new Vector3((tileX * -1.2f) - 0.6f, parent.Position.Y, parent.Position.Z);
                     break;
             }
 
-            //render the points for debugging
-            var vs = n.ModelVertices();
-            int vindex = 0;
-            Label3D obj_orign = new();
-            obj_orign.Text = $"@";
-            obj_orign.Position = Vector3.Zero;
-            obj_orign.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
-            modelNode.AddChild(obj_orign);
+            // //render the points for debugging
+            // var vs = n.ModelVertices();
+            // int vindex = 0;
+            // Label3D obj_orign = new();
+            // obj_orign.Text = $"@";
+            // obj_orign.Position = Vector3.Zero;
+            // obj_orign.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
+            // modelNode.AddChild(obj_orign);
 
-            foreach (var v in vs)
-            {
-                if (vindex < 20)
-                {
-                    Label3D obj_lbl = new();
-                    obj_lbl.Text = $"{vindex}";
-                    obj_lbl.Position = new Vector3(v.X, v.Y, v.Z);
-                    obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
-                    modelNode.AddChild(obj_lbl);
-                }
-                vindex++;
-            }
+            // foreach (var v in vs)
+            // {
+            //     if (vindex < 20)
+            //     {
+            //         Label3D obj_lbl = new();
+            //         obj_lbl.Text = $"{vindex}";
+            //         obj_lbl.Position = new Vector3(v.X, v.Y, v.Z);
+            //         obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
+            //         modelNode.AddChild(obj_lbl);
+            //     }
+            //     vindex++;
+            // }
 
             return n;
         }
@@ -86,28 +84,28 @@ namespace Underworld
         {
             float ceilingAdjustment = (float)(32 - floorheight) * 0.15f;//- position.Y; 
             //float frameadjustment = (float)(floorheight+4) * 0.15f ;   //0.8125f
-            float framethickness = 0.125f;  //0.3125f;
+            float framethickness = 0.1f;  //0.3125f;
             Vector3[] v = new Vector3[20];
-            v[0] = new Vector3(-0.1875f * 1.2f, 0f, 0f);
-            v[1] = new Vector3(-0.1875f * 1.2f, 0.8125f * 1.2f, 0f); //frame
+            v[0] = new Vector3(-0.3125f * 1.2f, 0f, 0f);
+            v[1] = new Vector3(-0.3125f * 1.2f, 0.8125f * 1.2f, 0f); //frame
             v[2] = new Vector3(0.3125f * 1.2f, 0.8125f * 1.2f, 0f);  //frame
             v[3] = new Vector3(0.3125f * 1.2f, 0f, 0f);
-            v[4] = new Vector3(-0.1875f * 1.2f, 0f, framethickness);  //rear
-            v[5] = new Vector3(-0.1875f * 1.2f, 0.8125f * 1.2f, framethickness); //frame //rear
+            v[4] = new Vector3(-0.3125f * 1.2f, 0f, framethickness);  //rear
+            v[5] = new Vector3(-0.3125f * 1.2f, 0.8125f * 1.2f, framethickness); //frame //rear
             v[6] = new Vector3(0.3125f * 1.2f, 0.8125f * 1.2f, framethickness);  //frame //rear
             v[7] = new Vector3(0.3125f * 1.2f, 0f, framethickness);  //rear
-            v[8] = new Vector3(-0.4375f * 1.2f, 0f, 0f);
-            v[9] = new Vector3(-0.4375f * 1.2f, 0f, framethickness);   //rear
-            v[10] = new Vector3(0.5625f * 1.2f, 0f, 0f);
-            v[11] = new Vector3(0.5625f * 1.2f, 0f, framethickness);   //rear
-            v[12] = new Vector3(-0.4375f * 1.2f, 0.8125f * 1.2f, 0f);  //level with frame //right
-            v[13] = new Vector3(-0.4375f * 1.2f, 0.8125f * 1.2f, framethickness); //level with frame //rear //right
-            v[14] = new Vector3(0.5625f * 1.2f, 0.8125f * 1.2f, 0f);  //level with frame  //left
-            v[15] = new Vector3(0.5625f * 1.2f, 0.8125f * 1.2f, framethickness);  //level with frame //rear //left
-            v[16] = new Vector3(-0.4375f * 1.2f, ceilingAdjustment, 0f);  //ceiling
-            v[17] = new Vector3(-0.4375f * 1.2f, ceilingAdjustment, framethickness); //ceiling //rear
-            v[18] = new Vector3(0.5625f * 1.2f, ceilingAdjustment, 0f);       //ceiling
-            v[19] = new Vector3(0.5625f * 1.2f, ceilingAdjustment, framethickness);  //ceiling //rear
+            v[8] = new Vector3(-0.6f, 0f, 0f);
+            v[9] = new Vector3(-0.6f, 0f, framethickness);   //rear
+            v[10] = new Vector3(0.6f, 0f, 0f);
+            v[11] = new Vector3(0.6f, 0f, framethickness);   //rear
+            v[12] = new Vector3(-0.6f , 0.8125f * 1.2f, 0f);  //level with frame //right
+            v[13] = new Vector3(-0.6f, 0.8125f * 1.2f, framethickness); //level with frame //rear //right
+            v[14] = new Vector3(0.6f, 0.8125f * 1.2f, 0f);  //level with frame  //left
+            v[15] = new Vector3(0.6f, 0.8125f * 1.2f, framethickness);  //level with frame //rear //left
+            v[16] = new Vector3(-0.6f, ceilingAdjustment, 0f);  //ceiling
+            v[17] = new Vector3(-0.6f, ceilingAdjustment, framethickness); //ceiling //rear
+            v[18] = new Vector3(0.6f, ceilingAdjustment, 0f);       //ceiling
+            v[19] = new Vector3(0.6f, ceilingAdjustment, framethickness);  //ceiling //rear
             return v;
         }
 
