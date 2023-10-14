@@ -3,23 +3,23 @@ using Godot;
 
 namespace Underworld
 {
-    public class pillar: model3D
+    public class pillar : model3D
     {
         Vector3 position;
         public static GRLoader tmObj; //3d model textures.
 
         public static pillar CreateInstance(Node3D parent, uwObject obj, Vector3 position)
         {
-            var n = new pillar(obj, position);  
-            var modelNode = n.Generate3DModel(parent);	
-            modelNode.Rotate(Vector3.Up,(float)Math.PI);	
-            return n;                  
+            var n = new pillar(obj, position);
+            var modelNode = n.Generate3DModel(parent);
+            modelNode.Rotate(Vector3.Up, obj.heading_r);
+            return n;
         }
 
 
         public pillar(uwObject _uwobject, Vector3 _position)
         {
-            uwobject =_uwobject;
+            uwobject = _uwobject;
             position = _position;
         }
 
@@ -57,43 +57,40 @@ namespace Underworld
             float x0 = -0.03f;
             float y0 = -0.03f;
             float y1 = 0.03f;
-            float z1 = (float)( CEILING_HEIGHT * 0.15f) - position.Y;
+            float z1 = (float)(CEILING_HEIGHT * 0.15f) - position.Y;
             float z0 = -position.Y;
             int t = 0;
 
             Verts[t++] = new Vector3(x0, z0, y1);
-Verts[t++] = new Vector3(x0, z1, y1);
-Verts[t++] = new Vector3(x1, z1, y1);
-Verts[t++] = new Vector3(x1, z0, y1);
+            Verts[t++] = new Vector3(x0, z1, y1);
+            Verts[t++] = new Vector3(x1, z1, y1);
+            Verts[t++] = new Vector3(x1, z0, y1);
 
-Verts[t++] = new Vector3(x1, z0, y0);
-Verts[t++] = new Vector3(x1, z1, y0);
-Verts[t++] = new Vector3(x0, z1, y0);
-Verts[t++] = new Vector3(x0, z0, y0);
+            Verts[t++] = new Vector3(x1, z0, y0);
+            Verts[t++] = new Vector3(x1, z1, y0);
+            Verts[t++] = new Vector3(x0, z1, y0);
+            Verts[t++] = new Vector3(x0, z0, y0);
 
-Verts[t++] = new Vector3(x1, z0, y1);
-Verts[t++] = new Vector3(x1, z1, y1);
-Verts[t++] = new Vector3(x1, z1, y0);
-Verts[t++] = new Vector3(x1, z0, y0);
+            Verts[t++] = new Vector3(x1, z0, y1);
+            Verts[t++] = new Vector3(x1, z1, y1);
+            Verts[t++] = new Vector3(x1, z1, y0);
+            Verts[t++] = new Vector3(x1, z0, y0);
 
-Verts[t++] = new Vector3(x0, z0, y0);
-Verts[t++] = new Vector3(x0, z0, y1);
-Verts[t++] = new Vector3(x1, z0, y1);
-Verts[t++] = new Vector3(x1, z0, y0);
+            Verts[t++] = new Vector3(x0, z0, y0);
+            Verts[t++] = new Vector3(x0, z0, y1);
+            Verts[t++] = new Vector3(x1, z0, y1);
+            Verts[t++] = new Vector3(x1, z0, y0);
 
-Verts[t++] = new Vector3(x0, z0, y0);
-Verts[t++] = new Vector3(x0, z1, y0);
-Verts[t++] = new Vector3(x0, z1, y1);
-Verts[t++] = new Vector3(x0, z0, y1);
+            Verts[t++] = new Vector3(x0, z0, y0);
+            Verts[t++] = new Vector3(x0, z1, y0);
+            Verts[t++] = new Vector3(x0, z1, y1);
+            Verts[t++] = new Vector3(x0, z0, y1);
 
-Verts[t++] = new Vector3(x1, z1, y0);
-Verts[t++] = new Vector3(x1, z1, y1);
-Verts[t++] = new Vector3(x0, z1, y1);
-Verts[t++] = new Vector3(x0, z1, y0);
+            Verts[t++] = new Vector3(x1, z1, y0);
+            Verts[t++] = new Vector3(x1, z1, y1);
+            Verts[t++] = new Vector3(x0, z1, y1);
+            Verts[t++] = new Vector3(x0, z1, y0);
 
-
-
-            
             return Verts;
         }
 
@@ -101,12 +98,12 @@ Verts[t++] = new Vector3(x0, z1, y0);
         {
             Vector2[] UVs = new Vector2[24];
             for (int j = 0; j < 6; j++)
-                {
-                    UVs[(j * 4) + 0] = new Vector2(0f, 0f);
-                    UVs[(j * 4) + 1] = new Vector2(0f, CEILING_HEIGHT);
-                    UVs[(j * 4) + 2] = new Vector2(1f, CEILING_HEIGHT);
-                    UVs[(j * 4) + 3] = new Vector2(1f, 0f);
-                }
+            {
+                UVs[(j * 4) + 0] = new Vector2(0f, 0f);
+                UVs[(j * 4) + 1] = new Vector2(0f, CEILING_HEIGHT);
+                UVs[(j * 4) + 2] = new Vector2(1f, CEILING_HEIGHT);
+                UVs[(j * 4) + 3] = new Vector2(1f, 0f);
+            }
             return UVs;
         }
 
@@ -117,12 +114,12 @@ Verts[t++] = new Vector3(x0, z1, y0);
 
         public override ShaderMaterial GetMaterial(int textureno)
         {//Get the material texture from tmobj
-            if (tmObj==null)
+            if (tmObj == null)
             {
                 tmObj = new GRLoader(GRLoader.TMOBJ_GR, GRLoader.GRShaderMode.TextureShader);
-                tmObj.RenderGrey=true;
+                tmObj.RenderGrey = true;
             }
-           return tmObj.GetMaterial((byte)textureno);
+            return tmObj.GetMaterial((byte)textureno);
         }
     }
 }//end namespace

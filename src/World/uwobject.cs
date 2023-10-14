@@ -248,6 +248,15 @@ namespace Underworld
             }
         }
 
+        //gets the current heading in radians
+        public float heading_r
+        {//not quite right. I need to check a bit more.
+            get
+            {
+                var d = (double)(heading*45);
+                return (float)(d * (System.Math.PI/180));
+            }
+        }
 
         public short ypos
         {//(short)(ExtractBits(Vals[1], 10, 0x7));

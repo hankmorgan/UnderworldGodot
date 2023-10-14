@@ -66,10 +66,10 @@ namespace Underworld
         const int fBOTTOM = 1;
 
         //Door headings
-        const int NORTH = 180;
-        const int SOUTH = 0;
-        const int EAST = 270;
-        const int WEST = 90;
+        public const int NORTH = 180;
+        public const int SOUTH = 0;
+        public const int EAST = 270;
+        public const int WEST = 90;
 
         public static bool EnableCollision = true;
 

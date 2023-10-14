@@ -24,9 +24,9 @@ namespace Underworld
             var a_mesh = new ArrayMesh(); //= Mesh as ArrayMesh;
             var verts = ModelVertices();
             Vector2[] uvs = ModelUVs(verts);
-
+            int MeshCount = NoOfMeshes();
             
-            for (int i = 0; i < NoOfMeshes(); i++)
+            for (int i = 0; i < MeshCount; i++)
             {  
                 mats[i] = ModelColour(i); //index into the appropiate palette(default) or material list
             }
@@ -37,12 +37,12 @@ namespace Underworld
                 normals.Add(vert.Normalized());
             }
 
-            for (int i=0; i<NoOfMeshes();i++)
+            for (int i=0; i<MeshCount;i++)
             {
-                AddSurfaceToMesh(verts, uvs, mats, i, a_mesh, normals, ModelTriangles(i));
+                AddSurfaceToMesh(this, verts, uvs, mats, i, a_mesh, normals, ModelTriangles(i));
             }
 
-            return CreateMeshInstance(parent, "test",  a_mesh);
+            return CreateMeshInstance(parent, $"modelinstance_{uwobject.index}",  a_mesh);
         }
 
         public virtual int[] ModelTriangles(int meshNo)
@@ -103,7 +103,7 @@ namespace Underworld
             return 1f;
         }
 
-        private Node3D CreateMeshInstance(Node3D parent,string ModelName, ArrayMesh a_mesh, bool EnableCollision = false)
+        protected static Node3D CreateMeshInstance(Node3D parent,string ModelName, ArrayMesh a_mesh, bool EnableCollision = false)
         {
             var final_mesh = new MeshInstance3D();
             parent.AddChild(final_mesh);
@@ -128,7 +128,7 @@ namespace Underworld
         /// <param name="a_mesh"></param>
         /// <param name="normals"></param>
         /// <param name="indices"></param>
-        private void AddSurfaceToMesh(Vector3[] verts, Vector2[] uvs, int[] MatsToUse, int FaceCounter, ArrayMesh a_mesh, List<Vector3> normals, int[] indices, int faceCounterAdj = 0)
+        protected static void AddSurfaceToMesh(model3D instance, Vector3[] verts, Vector2[] uvs, int[] MatsToUse, int FaceCounter, ArrayMesh a_mesh, List<Vector3> normals, int[] indices, int faceCounterAdj = 0)
         {
             var surfaceArray = new Godot.Collections.Array();
             surfaceArray.Resize((int)Mesh.ArrayType.Max);
@@ -139,7 +139,7 @@ namespace Underworld
             surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
             //Add the new surface to the mesh
             a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
-            a_mesh.SurfaceSetMaterial(FaceCounter + faceCounterAdj, GetMaterial(MatsToUse[FaceCounter])); //  surfacematerial.Get(MatsToUse[FaceCounter]));
+            a_mesh.SurfaceSetMaterial(FaceCounter + faceCounterAdj, instance.GetMaterial(MatsToUse[FaceCounter])); //  surfacematerial.Get(MatsToUse[FaceCounter]));
 
         }
 
@@ -150,7 +150,7 @@ namespace Underworld
         /// </summary>
         /// <param name="textureno"></param>
         /// <returns></returns>
-        public virtual ShaderMaterial GetMaterial(int textureno)
+        public  virtual ShaderMaterial GetMaterial(int textureno)
         {
             if (textureshader==null)
             {
@@ -165,6 +165,10 @@ namespace Underworld
             newmaterial.SetShaderParameter("UseAlpha", false);
             return newmaterial;
         }
+
+
+
+        
 
 
     }//end class

@@ -65,7 +65,7 @@ public partial class imageloader : Sprite2D
 			default:
 				throw new InvalidOperationException("Invalid Game Selected");
 		}
-		
+
 
 		//playerdat.Load("SAVE1");
 		//Debug.Print(playerdat.CharName);
@@ -92,7 +92,7 @@ public partial class imageloader : Sprite2D
 		Debug.Print(index.ToString());
 
 		grey.Texture = shade.shadesdata[gamesettings.lightlevel].FullShadingImage();
-		
+
 		//grey.Texture = PaletteLoader.AllLightMaps(PaletteLoader.light); //PaletteLoader.light[5].toImage();
 		var textureloader = new TextureLoader();
 		//var a_texture = textureloader.LoadImageAt(index);
@@ -189,12 +189,12 @@ public partial class imageloader : Sprite2D
 		a_tilemap.tex_ark_block = LevArkLoader.LoadTexArkBlock(newLevelNo, a_tilemap.tex_ark_block);
 		//Tilemaps[newLevelNo].ovl_ark_block = null;
 		a_tilemap.BuildTileMapUW(newLevelNo, a_tilemap.lev_ark_block, a_tilemap.tex_ark_block, a_tilemap.ovl_ark_block);
-		Underworld.ObjectCreator.GenerateObjects(worldobjects,a_tilemap.LevelObjects,grObjects);
+		Underworld.ObjectCreator.GenerateObjects(worldobjects, a_tilemap.LevelObjects, grObjects, a_tilemap);
 		the_tiles.Position = new Vector3(0f, 0f, 0f);
 		tileMapRender.GenerateLevelFromTileMap(the_tiles, worldobjects, UWClass._RES, a_tilemap, a_tilemap.LevelObjects, false);
 	}
 
-	
+
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
@@ -209,7 +209,7 @@ public partial class imageloader : Sprite2D
 			RenderingServer.GlobalShaderParameterSet("uwpalette", (Texture)PaletteLoader.cycledPalette[NextPaletteCycle]);
 
 			NextPaletteCycle++;
-			
+
 			if (NextPaletteCycle > PaletteLoader.cycledPalette.GetUpperBound(0))
 			{
 				NextPaletteCycle = 0;

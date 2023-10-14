@@ -13,16 +13,16 @@ namespace Underworld
         public static List<npc> npcs;
 
 
-        public static void GenerateObjects(Node3D worldparent, List<uwObject> objects, GRLoader grObjects)
+        public static void GenerateObjects(Node3D worldparent, List<uwObject> objects, GRLoader grObjects, TileMap a_tilemap)
         {
             npcs = new();
             foreach (var obj in objects)
             {
-                RenderObject(worldparent, grObjects, obj);
+                RenderObject(worldparent, grObjects, obj, a_tilemap);
             }
         }
 
-        public static void RenderObject(Node3D worldparent, GRLoader grObjects, uwObject obj)
+        public static void RenderObject(Node3D worldparent, GRLoader grObjects, uwObject obj, TileMap a_tilemap)
         {
             bool unimplemented = true;
 
@@ -42,6 +42,11 @@ namespace Underworld
                 case 5: //doors, 3d models, buttons/switches
                     {
                         unimplemented = MajorClass5(obj, newnode);
+                        Label3D obj_lbl = new();
+						obj_lbl.Text = $"{StringLoader.GetObjectNounUW(obj.item_id)} {obj.index} {obj.heading} -> {obj.heading_r}";
+						obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
+						//obj_lbl.Font = font;
+						newnode.AddChild(obj_lbl);
                         break;
                     }
 
@@ -61,6 +66,13 @@ namespace Underworld
                 //just render a sprite.
                 RenderSprite(grObjects, obj, newnode);
             }
+
+
+            // Label3D obj_lbl = new();
+			// 			obj_lbl.Text = $"{StringLoader.GetObjectNounUW(obj.item_id)} {obj.index} {obj.heading} -> {obj.heading_r}";
+			// 			obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
+			// 			//obj_lbl.Font = font;
+			// 			newnode.AddChild(obj_lbl);
         }
 
         /// <summary>
