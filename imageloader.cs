@@ -110,7 +110,7 @@ public partial class imageloader : Sprite2D
 
 		Random rnd = new Random();
 		var index = rnd.Next(8);
-		Debug.Print(index.ToString());
+		//Debug.Print(index.ToString());
 
 		grey.Texture = shade.shadesdata[gamesettings.lightlevel].FullShadingImage();
 

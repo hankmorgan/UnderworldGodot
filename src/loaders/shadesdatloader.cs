@@ -195,7 +195,7 @@ namespace Underworld
             nearlightmap = _nearMap & 0xF;
             fardistance = _farDist;
             shadeCutOff = _ShadeCutoff & 0xF;
-            Debug.Print($"{_index} {_nearDist} {_nearMap} {_farDist} {_ShadeCutoff}");
+            //Debug.Print($"{_index} {_nearDist} {_nearMap} {_farDist} {_ShadeCutoff}");
         }
 
         static shade()

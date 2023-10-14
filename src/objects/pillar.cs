@@ -112,7 +112,7 @@ namespace Underworld
             return uwobject.flags & 0x3;
         }
 
-        public override ShaderMaterial GetMaterial(int textureno)
+        public override ShaderMaterial GetMaterial(int textureno, int surface)
         {//Get the material texture from tmobj
             if (tmObj == null)
             {

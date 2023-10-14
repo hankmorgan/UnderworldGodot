@@ -77,7 +77,7 @@ namespace Underworld
         }
 
         public virtual Vector2[] ModelUVs(Vector3[] verts)
-        {
+        {//This probably gives bad mappings
             Vector2[] customUVs = new Vector2[verts.Length];
             for (int i = 0; i < customUVs.Length; i++)
             {
@@ -132,14 +132,13 @@ namespace Underworld
         {
             var surfaceArray = new Godot.Collections.Array();
             surfaceArray.Resize((int)Mesh.ArrayType.Max);
-
             surfaceArray[(int)Mesh.ArrayType.Vertex] = verts; //.ToArray();
             surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs; //.ToArray();
             surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
             surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
             //Add the new surface to the mesh
             a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
-            a_mesh.SurfaceSetMaterial(FaceCounter + faceCounterAdj, instance.GetMaterial(MatsToUse[FaceCounter])); //  surfacematerial.Get(MatsToUse[FaceCounter]));
+            a_mesh.SurfaceSetMaterial(FaceCounter + faceCounterAdj, instance.GetMaterial(MatsToUse[FaceCounter], FaceCounter)); //  surfacematerial.Get(MatsToUse[FaceCounter]));
 
         }
 
@@ -150,7 +149,7 @@ namespace Underworld
         /// </summary>
         /// <param name="textureno"></param>
         /// <returns></returns>
-        public  virtual ShaderMaterial GetMaterial(int textureno)
+        public  virtual ShaderMaterial GetMaterial(int textureno, int surface)
         {
             if (textureshader==null)
             {

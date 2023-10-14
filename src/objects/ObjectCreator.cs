@@ -92,7 +92,8 @@ namespace Underworld
             {
                 case 0: //doors
                     {
-                        door.CreateInstance(newnode, obj, a_tilemap);
+                        doorway.CreateInstance(newnode, obj, a_tilemap);
+                        door.CreateInstance(newnode,obj, a_tilemap);
                         return false;
                     }
                 case 2: //3D models
@@ -118,11 +119,11 @@ namespace Underworld
         {
             var a_sprite = new MeshInstance3D(); //new Sprite3D();
             a_sprite.Mesh = new QuadMesh();
-            Vector2 NewSize;
+            Vector2 NewSize;            
             var img = grObjects.LoadImageAt(obj.item_id);   
             if (img != null)
             {
-                 a_sprite.Mesh.SurfaceSetMaterial(0, grObjects.GetMaterial(obj.item_id));
+                a_sprite.Mesh.SurfaceSetMaterial(0, grObjects.GetMaterial(obj.item_id));
                 NewSize = new Vector2(
                         ArtLoader.SpriteScale * img.GetWidth(),
                         ArtLoader.SpriteScale * img.GetHeight()

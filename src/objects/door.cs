@@ -1,40 +1,186 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Godot;
 namespace Underworld
 {
+
+    /// <summary>
+    /// Class to render the moveable door
+    /// </summary>
     public class door : model3D
     {
-        const float doorwidth = 0.8f;
-        const float doorframewidth = 1.2f;
-        const float doorSideWidth = (doorframewidth - doorwidth) / 2f;
-        const float doorheight = 7f * 0.15f;
-
+        static GRLoader tmDoor;
+        public Node3D doorNode;
         public int texture;
         public int floorheight;
         public Vector3 position;
+        bool SecretDoor = false;//327 and 325
+
+        static door()
+        {
+            tmDoor = new GRLoader(GRLoader.DOORS_GR, GRLoader.GRShaderMode.TextureShader);
+            tmDoor.RenderGrey=true;
+        }
 
         public static door CreateInstance(Node3D parent, uwObject obj, TileMap a_tilemap)
         {
             int tileX = obj.tileX;
             int tileY = obj.tileY;
             var n = new door(obj);
+            if (n.SecretDoor)
+            {
+                n.texture = a_tilemap.texture_map[a_tilemap.Tiles[tileX, tileY].wallTexture];
+            }
+            else
+            {
+                n.texture = n.uwobject.item_id & 0x7;
+            }
+
+            n.floorheight = a_tilemap.Tiles[tileX, tileY].floorHeight;
+            n.position = parent.Position;
+            n.doorNode = n.Generate3DModel(parent);
+            return n;
+        }
+
+        public door(uwObject _uwobject)
+        {
+            uwobject = _uwobject;
+            if ((uwobject.item_id == 327) || (uwobject.item_id == 325))
+            {
+                SecretDoor = true;
+            }
+        }
+
+        public override Vector3[] ModelVertices()
+        {
+            ///Same vertices as the doorframe.
+            float ceilingAdjustment = (float)(32 - floorheight) * 0.15f;//- position.Y; 
+            //float frameadjustment = (float)(floorheight+4) * 0.15f ;   //0.8125f
+            float framethickness = 0.1f;  //0.3125f;
+            Vector3[] v = new Vector3[8];
+            v[0] = new Vector3(-0.3125f * 1.2f, 0f, 0f); //frame
+            v[1] = new Vector3(-0.3125f * 1.2f, 0.8125f * 1.2f, 0f); //frame
+            v[2] = new Vector3(0.3125f * 1.2f, 0.8125f * 1.2f, 0f);  //frame
+            v[3] = new Vector3(0.3125f * 1.2f, 0f, 0f);//frame
+            v[4] = new Vector3(-0.3125f * 1.2f, 0f, framethickness);  //rear
+            v[5] = new Vector3(-0.3125f * 1.2f, 0.8125f * 1.2f, framethickness); //frame //rear
+            v[6] = new Vector3(0.3125f * 1.2f, 0.8125f * 1.2f, framethickness);  //frame //rear
+            v[7] = new Vector3(0.3125f * 1.2f, 0f, framethickness);  //rear            
+            return v;
+        }
+
+        public override int NoOfMeshes()
+        {
+            return 2;
+        }
+
+        public override int[] ModelTriangles(int meshNo)
+        {
+            int[] tris = new int[6];
+            switch (meshNo)
+            {
+                case 0: //Door Front
+                    tris[0] = 0;
+                    tris[1] = 3;
+                    tris[2] = 2;
+                    tris[3] = 2;
+                    tris[4] = 1;
+                    tris[5] = 0;
+                    return tris;
+                case 1: //Door Rear
+                    tris[0] = 7;
+                    tris[1] = 4;
+                    tris[2] = 5;
+                    tris[3] = 5;
+                    tris[4] = 6;
+                    tris[5] = 7;
+                    return tris;
+                case 2: // Door trim
+                    { 
+                        //TODO
+                        break;
+                    }
+
+            }
+            return base.ModelTriangles(meshNo);
+        }
+
+        public override Vector2[] ModelUVs(Vector3[] verts)
+        {
+            return base.ModelUVs(verts);
+        }
+
+        public override int ModelColour(int meshNo)
+        {
+            switch (meshNo)
+            {
+                case 0:
+                    return texture;
+                case 1:
+                    return 0;
+            }
+            return base.ModelColour(meshNo);
+        }
+
+        public override ShaderMaterial GetMaterial(int textureno, int surface)
+        {
+            switch (surface)
+            {
+                case 0: //door texture
+                case 1:
+                    if (!SecretDoor)
+                    {
+                        return tmDoor.GetMaterial(textureno);
+                    }
+                    else
+                    {
+                        return tileMapRender.mapTextures.GetMaterial(textureno);
+                    }
+
+            }
+            return base.GetMaterial(textureno, surface);
+        }
+
+
+    } //end class door
+
+
+    /// <summary>
+    /// Class to render the doorway frames
+    /// </summary>
+    public class doorway : model3D
+    {
+        //const float doorwidth = 0.8f;
+        //const float doorframewidth = 1.2f;
+        // const float doorSideWidth = (doorframewidth - doorwidth) / 2f;
+        // const float doorheight = 7f * 0.15f;
+
+        public int texture;
+        public int floorheight;
+        public Vector3 position;
+
+        public Node3D doorFrameNode;
+
+        public static doorway CreateInstance(Node3D parent, uwObject obj, TileMap a_tilemap)
+        {
+            int tileX = obj.tileX;
+            int tileY = obj.tileY;
+            var n = new doorway(obj);
             n.texture = a_tilemap.texture_map[a_tilemap.Tiles[tileX, tileY].wallTexture];
             n.floorheight = a_tilemap.Tiles[tileX, tileY].floorHeight;
             n.position = parent.Position;
-            var modelNode = n.Generate3DModel(parent);
-            //modelNode.Rotate(Vector3.Up,(float)Math.PI);
+            n.doorFrameNode = n.Generate3DModel(parent);
 
-
-            switch (n.uwobject.heading*45)
+            switch (n.uwobject.heading * 45)
             {//align model node in centre of tile along it's axis
                 case tileMapRender.EAST:
-                    modelNode.Rotate(Vector3.Up,(float)Math.PI * 1.5f);                    
+                    parent.Rotate(Vector3.Up, (float)Math.PI * 1.5f);
                     parent.Position = new Vector3(parent.Position.X, parent.Position.Y, (tileY * 1.2f) + 0.6f);
                     break;
                 case tileMapRender.WEST:
-                    modelNode.Rotate(Vector3.Up,(float)Math.PI /2f);                    
+                    parent.Rotate(Vector3.Up, (float)Math.PI / 2f);
                     parent.Position = new Vector3(parent.Position.X, parent.Position.Y, (tileY * 1.2f) + 0.6f);
                     break;
                 case tileMapRender.NORTH:
@@ -46,31 +192,31 @@ namespace Underworld
                     break;
             }
 
-            // //render the points for debugging
-            // var vs = n.ModelVertices();
-            // int vindex = 0;
-            // Label3D obj_orign = new();
-            // obj_orign.Text = $"@";
-            // obj_orign.Position = Vector3.Zero;
-            // obj_orign.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
-            // modelNode.AddChild(obj_orign);
+            //render the points for debugging
+            var vs = n.ModelVertices();
+            int vindex = 0;
+            Label3D obj_orign = new();
+            obj_orign.Text = $"@";
+            obj_orign.Position = Vector3.Zero;
+            obj_orign.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
+            n.doorFrameNode.AddChild(obj_orign);
 
-            // foreach (var v in vs)
-            // {
-            //     if (vindex < 20)
-            //     {
-            //         Label3D obj_lbl = new();
-            //         obj_lbl.Text = $"{vindex}";
-            //         obj_lbl.Position = new Vector3(v.X, v.Y, v.Z);
-            //         obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
-            //         modelNode.AddChild(obj_lbl);
-            //     }
-            //     vindex++;
-            // }
+            foreach (var v in vs)
+            {
+                if (vindex < 20)
+                {
+                    Label3D obj_lbl = new();
+                    obj_lbl.Text = $"{vindex}";
+                    obj_lbl.Position = new Vector3(v.X, v.Y, v.Z);
+                    obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
+                    n.doorFrameNode.AddChild(obj_lbl);
+                }
+                vindex++;
+            }
 
             return n;
         }
-        public door(uwObject _uwobject)
+        public doorway(uwObject _uwobject)
         {
             uwobject = _uwobject;
         }
@@ -98,7 +244,7 @@ namespace Underworld
             v[9] = new Vector3(-0.6f, 0f, framethickness);   //rear
             v[10] = new Vector3(0.6f, 0f, 0f);
             v[11] = new Vector3(0.6f, 0f, framethickness);   //rear
-            v[12] = new Vector3(-0.6f , 0.8125f * 1.2f, 0f);  //level with frame //right
+            v[12] = new Vector3(-0.6f, 0.8125f * 1.2f, 0f);  //level with frame //right
             v[13] = new Vector3(-0.6f, 0.8125f * 1.2f, framethickness); //level with frame //rear //right
             v[14] = new Vector3(0.6f, 0.8125f * 1.2f, 0f);  //level with frame  //left
             v[15] = new Vector3(0.6f, 0.8125f * 1.2f, framethickness);  //level with frame //rear //left
@@ -205,7 +351,7 @@ namespace Underworld
             return base.ModelUVs(verts);
         }
 
-        public override ShaderMaterial GetMaterial(int textureno)
+        public override ShaderMaterial GetMaterial(int textureno, int surface)
         {//Get the material texture from tmobj
             return tileMapRender.mapTextures.GetMaterial(texture);
         }
