@@ -44,16 +44,8 @@ public partial class imageloader : Sprite2D
 		}
 		var gamesettings = JsonSerializer.Deserialize<uwsettings>(File.ReadAllText(settingsfile));
 		uwsettings.instance = gamesettings;
-		switch (UWClass._RES)
-		{
-			case UWClass.GAME_UW2:
-				cam.Position = new Vector3(-23f, 4.3f, 58.2f); break;
-			default:
-				cam.Position = new Vector3(-38f, 4.2f, 2.2f); break;
-		}
-
-		cam.Rotate(Vector3.Up, (float)Math.PI);
-		shade.getFarDist(0);
+		
+		//shade.getFarDist(0);
 		UWClass._RES = gamesettings.gametoload;
 		switch (UWClass._RES)
 		{
@@ -64,6 +56,16 @@ public partial class imageloader : Sprite2D
 			default:
 				throw new InvalidOperationException("Invalid Game Selected");
 		}
+
+
+		switch (UWClass._RES)
+		{
+			case UWClass.GAME_UW2:
+				cam.Position = new Vector3(-23f, 4.3f, 58.2f); break;
+			default:
+				cam.Position = new Vector3(-38f, 4.2f, 2.2f); break;
+		}
+		cam.Rotate(Vector3.Up, (float)Math.PI);
 
 		//playerdat.Load("SAVE1");
 		//Debug.Print(playerdat.CharName);
