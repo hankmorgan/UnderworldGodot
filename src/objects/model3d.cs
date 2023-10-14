@@ -9,53 +9,27 @@ namespace Underworld
     /// </summary>
     public class model3D : objectInstance
     {
+        protected const int CEILING_HEIGHT = 32;
         public Material material;
         public static Shader textureshader;
-
+        
+        /// <summary>
+        /// Generates the defined 3d model and adds as a child to the parent node.
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <returns></returns>
         public Node3D Generate3DModel(Node3D parent)
         {
-            // BoxCollider box = this.GetComponent<BoxCollider>();
-            // if (box != null)
-            // {
-            //     DestroyImmediate(box);
-            // }
-            //MeshFilter meshF = parent.AddComponent<MeshFilter>();
-            //MeshRenderer mr = parent.AddComponent<MeshRenderer>();
             int[] mats = new int[NoOfMeshes()];
-            // Mesh mesh = new Mesh
-            // {
-            //     subMeshCount = NoOfMeshes(),
-            //     vertices = ModelVertices()
-            // };
-
             var a_mesh = new ArrayMesh(); //= Mesh as ArrayMesh;
             var verts = ModelVertices();
             Vector2[] uvs = ModelUVs(verts);
 
             
             for (int i = 0; i < NoOfMeshes(); i++)
-            {                           
-               
-               // mesh.SetTriangles(ModelTriangles(i), i);
-                mats[i] =  ModelColour(i);
-                
-                  // ModelMaterials(i);
-                //mr.material.SetColor("_Color",ModelColour(0));
-                //mats[i].SetColor("_Color", ModelColour(i));
+            {  
+                mats[i] = ModelColour(i); //index into the appropiate palette(default) or material list
             }
-            // if (uvs.GetUpperBound(0) > 0)
-            // {
-            //     mesh.uv = uvs;
-            // }
-            //mr.materials = mats;
-
-
-            // for (int i = 0; i < NoOfMeshes(); i++)
-            // {
-            //     mr.materials[i].SetColor("_Color", ModelColour(i));
-            // }
-            //meshF.mesh = mesh;
-            //mesh.RecalculateNormals();
 
             var normals = new List<Vector3>();
             foreach (var vert in verts)
@@ -69,23 +43,6 @@ namespace Underworld
             }
 
             return CreateMeshInstance(parent, "test",  a_mesh);
-
-            //mesh.RecalculateBounds();
-            // if (isSolidModel())
-            // {
-            //     MeshCollider mc = parent.AddComponent<MeshCollider>();
-            //     mc.convex = true;
-            //     mc.sharedMesh = null;
-            //     mc.sharedMesh = mesh;
-            // }
-            // else
-            // {
-            //     Rigidbody rgd = this.GetComponent<Rigidbody>();
-            //     if (rgd != null)
-            //     {
-            //         DestroyImmediate(rgd);
-            //     }
-            // }
         }
 
         public virtual int[] ModelTriangles(int meshNo)
@@ -103,9 +60,14 @@ namespace Underworld
             return 1;
         }
 
+        /// <summary>
+        /// This is the indices of the texture or colour palette to render with.
+        /// </summary>
+        /// <param name="meshNo"></param>
+        /// <returns></returns>
         public virtual int ModelColour(int meshNo)
         {
-            return 0;
+            return 127; // this colour will standout.
             //return Color.Color8(0, 0, 0, 0);  //.white;
         }
 
@@ -125,16 +87,16 @@ namespace Underworld
             return customUVs;
         }
 
-        public virtual Material ModelMaterials(int meshNo)
-        {
-            return material;
-        }
+        // public virtual Material ModelMaterials(int meshNo)
+        // {
+        //     return material;
+        // }
 
 
-        public virtual Texture2D ModelTexture(int meshNo)
-        {
-            return null;
-        }
+        // public virtual Texture2D ModelTexture(int meshNo)
+        // {
+        //     return null;
+        // }
 
         public virtual float TextureScaling()
         {
@@ -175,47 +137,33 @@ namespace Underworld
             surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs; //.ToArray();
             surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
             surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
-
             //Add the new surface to the mesh
             a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
-
-            //bool useCustomShader=true;
-           // if (useCustomShader)
-           // {
             a_mesh.SurfaceSetMaterial(FaceCounter + faceCounterAdj, GetMaterial(MatsToUse[FaceCounter])); //  surfacematerial.Get(MatsToUse[FaceCounter]));
-           // }
-            // else
-            // { //standard material shader. this works but does not cycle the textures.
-            //     var material = new StandardMaterial3D(); // or shader 
-            //     material.ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded;
-            //     material.AlbedoTexture = MatsToUse[FaceCounter];  //textureForMesh; // shader parameter, etc.
-            //     material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;            
-            //     a_mesh.SurfaceSetMaterial(FaceCounter + faceCounterAdj, material);
-            // }
+
         }
 
+
+        /// <summary>
+        /// Get the material to display this 3d object with. Defaults to a flat colour from the palette.
+        /// Override this to use textures from tmobj instead and replace the texture_albedo as needed.
+        /// </summary>
+        /// <param name="textureno"></param>
+        /// <returns></returns>
         public virtual ShaderMaterial GetMaterial(int textureno)
         {
             if (textureshader==null)
             {
                 textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwshader.gdshader");
             }
-          //  if (materials[textureno] == null)
-            //{
-                //materials[textureno] = new surfacematerial(textureno);
-                //create this material and add it to the list
-                var newmaterial = new ShaderMaterial();
-                newmaterial.Shader = textureshader;
-                newmaterial.SetShaderParameter("texture_albedo", (Texture)Palette.IndexToImage((byte)textureno));
-                newmaterial.SetShaderParameter("albedo", new Color(1, 1, 1, 1));
-                newmaterial.SetShaderParameter("uv1_scale", new Vector3(1, 1, 1));
-                newmaterial.SetShaderParameter("uv2_scale", new Vector3(1, 1, 1));
-                newmaterial.SetShaderParameter("UseAlpha", false);
-                return newmaterial;
-                //materials[textureno] = newmaterial;
-
-           // }
-           // return materials[textureno];    
+            var newmaterial = new ShaderMaterial();
+            newmaterial.Shader = textureshader;
+            newmaterial.SetShaderParameter("texture_albedo", (Texture)Palette.IndexToImage((byte)textureno));
+            newmaterial.SetShaderParameter("albedo", new Color(1, 1, 1, 1));
+            newmaterial.SetShaderParameter("uv1_scale", new Vector3(1, 1, 1));
+            newmaterial.SetShaderParameter("uv2_scale", new Vector3(1, 1, 1));
+            newmaterial.SetShaderParameter("UseAlpha", false);
+            return newmaterial;
         }
 
 

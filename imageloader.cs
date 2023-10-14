@@ -113,7 +113,7 @@ public partial class imageloader : Sprite2D
 		//material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
 
 		//Load a sprte and apply it to the 2d and 3d sprties
-		GRLoader gr = new GRLoader(GRLoader.OBJECTS_GR);
+		GRLoader gr = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
 		//var a_sprite = gr.LoadImageAt(index);
 		//sprite_3d.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
 		//sprite_2d.TextureFilter = CanvasItem.TextureFilterEnum.Nearest;

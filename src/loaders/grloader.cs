@@ -12,7 +12,6 @@ namespace Underworld
     public class GRLoader : ArtLoader
     {
         public bool RenderGrey = false;
-
         const int repeat_record_start = 0;
         const int repeat_record = 1;
         const int run_record = 2;
@@ -111,11 +110,27 @@ namespace Underworld
         //     PaletteNo = (short)PalToUse;
         //     LoadImageFile();
         // }
-
-
-        public GRLoader(int File)
+        public enum GRShaderMode
         {
-            textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwsprite.gdshader");
+            SpriteShader = 0,  //Spritesthat will not be billboarded.
+            BillboardSpriteShader = 1, //Sprites that will be billboarded
+            TextureShader= 2,  //World textures
+            UIShader = 3  //Possible future shader for UI elements that don't react to shading.
+
+        };
+
+        public GRLoader(int File, GRShaderMode shadermode)
+        {      
+            switch (shadermode)
+            {
+                case GRShaderMode.TextureShader:
+                case GRShaderMode.SpriteShader:
+                    textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwshader.gdshader");
+                    break;
+                case GRShaderMode.BillboardSpriteShader:
+                    textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwsprite.gdshader");
+                    break;  
+            }     
             // AuxPalPath = AuxPalPath.Replace("--", sep.ToString());
             useOverrideAuxPalIndex = false;
             OverrideAuxPalIndex = 0;
@@ -125,7 +140,7 @@ namespace Underworld
         }       
 
         public ShaderMaterial GetMaterial(int textureno)
-        {
+        {            
             if (materials[textureno] == null)
             {
                 //materials[textureno] = new surfacematerial(textureno);

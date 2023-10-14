@@ -15,7 +15,7 @@ namespace Underworld
 
         public static void GenerateObjects(Node3D worldparent, List<uwObject> objects, GRLoader grObjects)
         {
-            npcs=new();
+            npcs = new();
             foreach (var obj in objects)
             {
                 RenderObject(worldparent, grObjects, obj);
@@ -41,18 +41,7 @@ namespace Underworld
                     }
                 case 5: //doors, 3d models, buttons/switches
                     {
-                        switch (obj.minorclass)
-                        {
-                            case 2: //3D models
-                                {
-                                    if ((_RES == GAME_UW2) && (obj.classindex == 7))
-                                    {  //or item id 359
-                                        bed.CreateInstance(newnode, obj);
-                                        unimplemented = false;
-                                    }
-                                    break;
-                                }
-                        }
+                        unimplemented = MajorClass5(obj, newnode);
                         break;
                     }
 
@@ -72,6 +61,36 @@ namespace Underworld
                 //just render a sprite.
                 RenderSprite(grObjects, obj, newnode);
             }
+        }
+
+        /// <summary>
+        /// Doors, 3d models, buttons/switches
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="unimplemented"></param>
+        /// <param name="newnode"></param>
+        /// <returns></returns>
+        private static bool MajorClass5(uwObject obj, Node3D newnode)
+        {
+            switch (obj.minorclass)
+            {
+                case 2: //3D models
+                    {
+                        if (obj.classindex == 0)
+                        {//pillar 352
+                            pillar.CreateInstance(newnode, obj, newnode.Position);
+                            return false; /// unimplemented = false;
+                        }
+                        if ((_RES == GAME_UW2) && (obj.classindex == 7))
+                        {  //or item id 359
+                            bed.CreateInstance(newnode, obj);
+                            return false; //unimplemented = false;
+                        }
+                        break;
+                    }
+            }
+
+            return true;
         }
 
         private static void RenderSprite(GRLoader grObjects, uwObject obj, Node3D newnode)

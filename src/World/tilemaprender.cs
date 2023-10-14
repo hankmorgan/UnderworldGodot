@@ -161,7 +161,7 @@ namespace Underworld
                 //     case GAME_SHOCK:
                 //         break;
                 //     default:
-                //         RenderPillars(sceneryParent, Level, objList);
+                //          RenderPillars(sceneryParent, Level, objList);
                 //         RenderDoorways(sceneryParent, Level, objList);
                 //         break;
                 // }
@@ -3222,7 +3222,6 @@ namespace Underworld
             //     a_mesh.SurfaceSetMaterial(FaceCounter + faceCounterAdj, material);
             // }
 
-
         }
 
 
@@ -3231,7 +3230,9 @@ namespace Underworld
             float PolySize = Top - Bottom;
             uv0 = (float)(Bottom * 0.125f);
             uv1 = -(PolySize / 8.0f) + (uv0);
-        }
+        }         
+
+
 
     } //end class
 
