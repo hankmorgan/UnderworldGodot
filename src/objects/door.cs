@@ -111,7 +111,7 @@ namespace Underworld
 
         public override int NoOfMeshes()
         {
-            return 2;
+            return 3;
         }
 
         public override int[] ModelTriangles(int meshNo)
@@ -137,8 +137,35 @@ namespace Underworld
                     return tris;
                 case 2: // Door trim
                     {
-                        //TODO
-                        break;
+                        tris = new int[6*4];
+                        tris[0] = 4;
+                        tris[1] = 0;
+                        tris[2] = 1;
+                        tris[3] = 1;
+                        tris[4] = 5;
+                        tris[5] = 4;
+
+                        tris[6] = 5;
+                        tris[7] = 1;
+                        tris[8] = 2;
+                        tris[9] = 2;
+                        tris[10] = 6;
+                        tris[11] = 5;
+
+                        tris[12] = 3;
+                        tris[13] = 7;
+                        tris[14] = 6;
+                        tris[15] = 6;
+                        tris[16] = 2;
+                        tris[17] = 3;
+
+                        tris[18] = 0;
+                        tris[19] = 4;
+                        tris[20] = 7;
+                        tris[21] = 7;
+                        tris[22] = 3;
+                        tris[23] = 0;
+                        return tris;
                     }
 
             }
@@ -152,7 +179,7 @@ namespace Underworld
             switch (meshNo)
             {
                 case 0:
-                case 1:
+                case 1:                
                     return texture;
                 case 2:
                     return 0;
@@ -205,32 +232,36 @@ namespace Underworld
             int tileY = obj.tileY;
             var n = new doorway(obj);
             n.texture = a_tilemap.texture_map[a_tilemap.Tiles[tileX, tileY].wallTexture];
-            n.texture = 27;
             n.floorheight = (float)(obj.zpos) / 4f; //a_tilemap.Tiles[tileX, tileY].floorHeight;
             n.position = parent.Position;
             n.doorFrameNode = n.Generate3DModel(parent);
 
+            SetModelRotation(parent, n);
+
             switch (n.uwobject.heading * 45)
             {//align model node in centre of tile along it's axis
                 case tileMapRender.EAST:
-                    parent.Rotate(Vector3.Up, (float)Math.PI * 1.5f);
                     parent.Position = new Vector3(parent.Position.X, parent.Position.Y, (tileY * 1.2f) + 0.6f);
                     break;
                 case tileMapRender.WEST:
-                    parent.Rotate(Vector3.Up, (float)Math.PI / 2f);
                     parent.Position = new Vector3(parent.Position.X, parent.Position.Y, (tileY * 1.2f) + 0.6f);
                     break;
                 case tileMapRender.NORTH:
                     parent.Position = new Vector3((tileX * -1.2f) - 0.6f, parent.Position.Y, parent.Position.Z);
                     break;
-                case tileMapRender.SOUTH:
-                    //modelNode.Rotate(Vector3.Up,(float)Math.PI /2f);                    
+                case tileMapRender.SOUTH:                
                     parent.Position = new Vector3((tileX * -1.2f) - 0.6f, parent.Position.Y, parent.Position.Z);
                     break;
-            }       
+                default:
+                    System.Diagnostics.Debug.Print("Unhandled model centre");
+                    break;
+            }
 
             return n;
-        }        
+        }
+
+
+
 
         public doorway(uwObject _uwobject)
         {

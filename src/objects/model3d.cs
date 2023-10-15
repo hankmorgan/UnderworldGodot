@@ -1,4 +1,5 @@
 using Godot;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 namespace Underworld
@@ -189,6 +190,39 @@ namespace Underworld
                 vindex++;
             }
         }
+
+        
+
+        /// <summary>
+        /// Rotates the model along it's axis
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="tileX"></param>
+        /// <param name="tileY"></param>
+        /// <param name="n"></param>
+        public static void SetModelRotation(Node3D parent, model3D n)
+        {
+            switch (n.uwobject.heading * 45)
+            {//align model node in centre of tile along it's axis
+                case tileMapRender.EAST: //270
+                    parent.Rotate(Vector3.Up, (float)Math.PI * 1.5f);
+                    break;
+                case tileMapRender.WEST: //90
+                    parent.Rotate(Vector3.Up, (float)Math.PI / 2f);
+                    break;
+                case tileMapRender.NORTH: //180
+                    //default. no rotation
+                    break;
+                case tileMapRender.SOUTH: //0
+                    //modelNode.Rotate(Vector3.Up,(float)Math.PI /2f);    
+                    //parent.Rotate(Vector3.Up, (float)Math.PI * 1.5f);                
+                    //break;
+                default:
+                    System.Diagnostics.Debug.Print("Unhandled model heading.");
+                    break;
+            }
+        }
+
 
         
 

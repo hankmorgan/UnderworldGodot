@@ -71,11 +71,11 @@ namespace Underworld
             }
 
 
-            // Label3D obj_lbl = new();
-            // 			obj_lbl.Text = $"{StringLoader.GetObjectNounUW(obj.item_id)} {obj.index} {obj.heading} -> {obj.heading_r}";
-            // 			obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
-            // 			//obj_lbl.Font = font;
-            // 			newnode.AddChild(obj_lbl);
+            Label3D obj_lbl = new();
+            			obj_lbl.Text = $"{StringLoader.GetObjectNounUW(obj.item_id)} {obj.index} {obj.heading*45} -> {obj.heading_r}";
+            			obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
+            			//obj_lbl.Font = font;
+            			newnode.AddChild(obj_lbl);
         }
 
         /// <summary>

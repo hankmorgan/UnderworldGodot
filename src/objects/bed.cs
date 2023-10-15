@@ -11,7 +11,8 @@ namespace Underworld
         {
             var n = new bed(obj);
             var modelNode = n.Generate3DModel(parent);
-            modelNode.Rotate(Vector3.Up, (float)Math.PI); //TODO this points some beds in the wrong direction	
+            modelNode.Rotate(Vector3.Up, (float)Math.PI); //my bed model is in the wrong direction. I have to rotate twice	
+            SetModelRotation(parent, n);
             return n;
         }
 
