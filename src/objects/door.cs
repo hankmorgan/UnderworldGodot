@@ -43,7 +43,7 @@ namespace Underworld
             d.position = parent.Position;
             d.doorNode = d.Generate3DModel(parent);
 
-              DisplayModelPoints(d,parent);
+            DisplayModelPoints(d, parent);
             return d;
         }
 
@@ -61,7 +61,7 @@ namespace Underworld
             ///Same vertices as the doorframe.
             float ceilingAdjustment = (float)(32 - floorheight) * 0.15f;//- position.Y; 
             //float frameadjustment = (float)(floorheight+4) * 0.15f ;   //0.8125f
-            float framethickness = 0.1f; 
+            float framethickness = 0.1f;
             Vector3[] v = new Vector3[8];
             v[0] = new Vector3(-0.3125f * 1.2f, 0f, 0f); //frame //bottom //right //front
             v[1] = new Vector3(-0.3125f * 1.2f, 0.8125f * 1.2f, 0f); //frame //right //top //front
@@ -76,6 +76,7 @@ namespace Underworld
 
         public override Vector2[] ModelUVs(Vector3[] verts)
         {
+
             if (!SecretDoor)
             { //normal door textures have a black border at the top that needs to excluded 
                 var uv = new Vector2[8];
@@ -88,21 +89,34 @@ namespace Underworld
                 uv[5] = new Vector2(1f, 0.2f);
                 uv[6] = new Vector2(0f, 0.2f);
                 uv[7] = new Vector2(0f, 1f);
-
                 return uv;
             }
             else
             {
-                var uv = new Vector2[8];
-                uv[0] = new Vector2(1f, 1f);
-                uv[1] = new Vector2(1f, 0.0f);
-                uv[2] = new Vector2(0f, 0.0f);
-                uv[3] = new Vector2(0f, 1f);
+                //3,2
+                //0,1
 
-                uv[4] = new Vector2(1f, 1f);
-                uv[5] = new Vector2(1f, 0.0f);
-                uv[6] = new Vector2(0f, 0.0f);
-                uv[7] = new Vector2(0f, 1f);
+                float distanceToFloor = (float)(32 - floorheight) * 0.15f; //distance to floor
+                float distanceToFrameHead = distanceToFloor - (0.8125f * 1.2f);   //0.975
+
+                float ceilingHeight = 32 * 0.15f;  //4.8f
+                float floor = floorheight * 0.15f;
+                distanceToFloor = ceilingHeight - floor;
+                var vectorToFloor = distanceToFloor / 1.2f;
+                var vectorToFrameHead = (vectorToFloor / distanceToFloor) * distanceToFrameHead;
+
+                var frameV0 = 0.185f;
+                var frameV1 = 1f - frameV0;//0.760416667f;
+                var uv = new Vector2[8];
+                uv[0] = new Vector2(frameV1,vectorToFloor);
+                uv[1] = new Vector2(frameV1,vectorToFrameHead);
+                uv[2] = new Vector2(frameV0, vectorToFrameHead);
+                uv[3] = new Vector2(frameV0, vectorToFloor);
+
+                uv[4] = new Vector2(frameV0, vectorToFloor);
+                uv[5] = new Vector2(frameV0, vectorToFrameHead);
+                uv[6] = new Vector2(frameV1, vectorToFrameHead);
+                uv[7] = new Vector2(frameV1, vectorToFloor);
 
                 return uv;
             }
@@ -137,7 +151,7 @@ namespace Underworld
                     return tris;
                 case 2: // Door trim
                     {
-                        tris = new int[6*4];
+                        tris = new int[6 * 4];
                         tris[0] = 4;
                         tris[1] = 0;
                         tris[2] = 1;
@@ -172,14 +186,12 @@ namespace Underworld
             return base.ModelTriangles(meshNo);
         }
 
-
-
         public override int ModelColour(int meshNo)
         {
             switch (meshNo)
             {
                 case 0:
-                case 1:                
+                case 1:
                     return texture;
                 case 2:
                     return 0;
@@ -201,12 +213,9 @@ namespace Underworld
                     {
                         return tileMapRender.mapTextures.GetMaterial(textureno);
                     }
-
             }
             return base.GetMaterial(textureno, surface);
         }
-
-
     } //end class door
 
 
@@ -223,9 +232,7 @@ namespace Underworld
         public int texture;
         public float floorheight;
         public Vector3 position;
-
         public Node3D doorFrameNode;
-
         public static doorway CreateInstance(Node3D parent, uwObject obj, TileMap a_tilemap)
         {
             int tileX = obj.tileX;
@@ -249,19 +256,15 @@ namespace Underworld
                 case tileMapRender.NORTH:
                     parent.Position = new Vector3((tileX * -1.2f) - 0.6f, parent.Position.Y, parent.Position.Z);
                     break;
-                case tileMapRender.SOUTH:                
+                case tileMapRender.SOUTH:
                     parent.Position = new Vector3((tileX * -1.2f) - 0.6f, parent.Position.Y, parent.Position.Z);
                     break;
                 default:
                     System.Diagnostics.Debug.Print("Unhandled model centre");
                     break;
             }
-
             return n;
         }
-
-
-
 
         public doorway(uwObject _uwobject)
         {
@@ -393,7 +396,7 @@ namespace Underworld
             return base.ModelTriangles(meshNo);
         }
 
-        public override Vector2[] ModelUVs(Vector3[] verts) 
+        public override Vector2[] ModelUVs(Vector3[] verts)
         {
             Vector2[] v = new Vector2[20];
             float distanceToFloor = (float)(32 - floorheight) * 0.15f; //distance to floor
@@ -401,54 +404,52 @@ namespace Underworld
 
             float ceilingHeight = 32 * 0.15f;  //4.8f
             float floor = floorheight * 0.15f;
-            distanceToFloor = ceilingHeight-floor;
-            var vectorToFloor = distanceToFloor/1.2f;
-            var vectorToFrameHead  = (vectorToFloor/distanceToFloor) * distanceToFrameHead;
+            distanceToFloor = ceilingHeight - floor;
+            var vectorToFloor = distanceToFloor / 1.2f;
+            var vectorToFrameHead = (vectorToFloor / distanceToFloor) * distanceToFrameHead;
 
             var frameV0 = 0.185f;
-            var frameV1 = 1f-frameV0;//0.760416667f;
+            var frameV1 = 1f - frameV0;//0.760416667f;
 
-            v[0] = new Vector2(frameV1, vectorToFloor); 
-            v[3] = new Vector2(frameV0, vectorToFloor); 
-            v[4] = new Vector2(frameV0,vectorToFloor);
-            v[7] = new Vector2(frameV1,vectorToFloor);
-            v[8] = new Vector2(1f, vectorToFloor); 
-            v[9] = new Vector2(0f, vectorToFloor); 
-            v[10] = new Vector2(0f, vectorToFloor); 
-            v[11] = new Vector2(1f, vectorToFloor); 
-
+            v[0] = new Vector2(frameV1, vectorToFloor);
+            v[3] = new Vector2(frameV0, vectorToFloor);
+            v[4] = new Vector2(frameV0, vectorToFloor);
+            v[7] = new Vector2(frameV1, vectorToFloor);
+            v[8] = new Vector2(1f, vectorToFloor);
+            v[9] = new Vector2(0f, vectorToFloor);
+            v[10] = new Vector2(0f, vectorToFloor);
+            v[11] = new Vector2(1f, vectorToFloor);
 
             //midpoint
             //1,2,5,6,12,13,14,15
             v[1] = new Vector2(frameV1, vectorToFrameHead);
-            v[2] = new Vector2(frameV0, vectorToFrameHead); 
-            v[5] = new Vector2(frameV0,vectorToFrameHead);
-            v[6] = new Vector2(frameV1,vectorToFrameHead);
-            v[12] = new Vector2(1f,vectorToFrameHead); 
-            v[13] = new Vector2(0f,vectorToFrameHead);
-            v[14] = new Vector2(0f, vectorToFrameHead); 
-            v[15] = new Vector2(1f, vectorToFrameHead);  
+            v[2] = new Vector2(frameV0, vectorToFrameHead);
+            v[5] = new Vector2(frameV0, vectorToFrameHead);
+            v[6] = new Vector2(frameV1, vectorToFrameHead);
+            v[12] = new Vector2(1f, vectorToFrameHead);
+            v[13] = new Vector2(0f, vectorToFrameHead);
+            v[14] = new Vector2(0f, vectorToFrameHead);
+            v[15] = new Vector2(1f, vectorToFrameHead);
 
-            // //Top Vertices
-            
-            v[16] = new Vector2(1, 0f); 
-            v[17] = new Vector2(0, 0f);   
-            v[18] = new Vector2(0, 0f);        
-            v[19] = new Vector2(1, 0f); 
-            
-             return v;
+            // //Top Vertices            
+            v[16] = new Vector2(1, 0f);
+            v[17] = new Vector2(0, 0f);
+            v[18] = new Vector2(0, 0f);
+            v[19] = new Vector2(1, 0f);
+
+            return v;
         }
 
         public override ShaderMaterial GetMaterial(int textureno, int surface)
         {//Get the material texture from tmobj   
-            if (surface!=6)
+            if (surface != 6)
             {
                 return tileMapRender.mapTextures.GetMaterial(texture);
-            }   
+            }
             else
             {
-                return base.GetMaterial(0,6);            
-            }              
+                return base.GetMaterial(0, 6);
+            }
         }
 
 

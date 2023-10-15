@@ -86,7 +86,7 @@ public partial class imageloader : Sprite2D
 		// }
 
 
-		var mdl = modelloader.DecodeModel(1);
+		var mdl = modelloader.DecodeModel(20);
 		File.WriteAllText("c:\\temp\\mdl.txt",mdl.commands);
 		int vindex=0;
 		var nd = GetNode<Node3D>("/root/Node3D");
@@ -105,7 +105,7 @@ public partial class imageloader : Sprite2D
 			}
 			vindex++;
 		}
-		//Debug.Print (code);
+        Debug.Print (code);
 		//cam.Position= Vector3.Zero;
 
 		Random rnd = new Random();
