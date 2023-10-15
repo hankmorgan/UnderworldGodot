@@ -165,7 +165,30 @@ namespace Underworld
             return newmaterial;
         }
 
+        public static void DisplayModelPoints(model3D m, Node3D n)
+        {
+            //render the points for debugging
+            var vs = m.ModelVertices();
+            int vindex = 0;
+            Label3D obj_orign = new();
+            obj_orign.Text = $"@Origin";
+            obj_orign.Position = Vector3.Zero;
+            obj_orign.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
+            n.AddChild(obj_orign);
 
+            foreach (var v in vs)
+            {
+                if (vindex < 20)
+                {
+                    Label3D obj_lbl = new();
+                    obj_lbl.Text = $"{vindex}";
+                    obj_lbl.Position = new Vector3(v.X, v.Y, v.Z);
+                    obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
+                    n.AddChild(obj_lbl);
+                }
+                vindex++;
+            }
+        }
 
         
 

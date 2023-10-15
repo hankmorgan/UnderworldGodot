@@ -102,7 +102,7 @@ namespace Underworld
             // {
             //     skipCeil = false;
             // }
-
+            
             if (!UpdateOnly)
             {
                 //Clear out the children in the transform
@@ -187,7 +187,7 @@ namespace Underworld
         /// <param name="skipFloor">If set to <c>true</c> skip floor.</param>
         /// <param name="skipCeil">If set to <c>true</c> skip ceil.</param>
         public static Node3D RenderTile(Node3D parent, int x, int y, TileInfo t, bool Water, bool invert, bool skipFloor, bool skipCeil)
-        {
+        {           
             //Picks the tile to render based on tile type/flags.
             switch (t.tileType)
             {
