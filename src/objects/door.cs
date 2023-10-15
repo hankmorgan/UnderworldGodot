@@ -21,7 +21,7 @@ namespace Underworld
         static door()
         {
             tmDoor = new GRLoader(GRLoader.DOORS_GR, GRLoader.GRShaderMode.TextureShader);
-            tmDoor.RenderGrey=true;
+            tmDoor.RenderGrey = true;
         }
 
         public static door CreateInstance(Node3D parent, uwObject obj, TileMap a_tilemap)
@@ -60,15 +60,50 @@ namespace Underworld
             //float frameadjustment = (float)(floorheight+4) * 0.15f ;   //0.8125f
             float framethickness = 0.1f;  //0.3125f;
             Vector3[] v = new Vector3[8];
-            v[0] = new Vector3(-0.3125f * 1.2f, 0f, 0f); //frame
-            v[1] = new Vector3(-0.3125f * 1.2f, 0.8125f * 1.2f, 0f); //frame
-            v[2] = new Vector3(0.3125f * 1.2f, 0.8125f * 1.2f, 0f);  //frame
-            v[3] = new Vector3(0.3125f * 1.2f, 0f, 0f);//frame
+            v[0] = new Vector3(-0.3125f * 1.2f, 0f, 0f); //frame //bottom //right //front
+            v[1] = new Vector3(-0.3125f * 1.2f, 0.8125f * 1.2f, 0f); //frame //right //top //front
+            v[2] = new Vector3(0.3125f * 1.2f, 0.8125f * 1.2f, 0f);  //frame // left //top //front
+            v[3] = new Vector3(0.3125f * 1.2f, 0f, 0f);//frame // left //bottom //front
             v[4] = new Vector3(-0.3125f * 1.2f, 0f, framethickness);  //rear
             v[5] = new Vector3(-0.3125f * 1.2f, 0.8125f * 1.2f, framethickness); //frame //rear
             v[6] = new Vector3(0.3125f * 1.2f, 0.8125f * 1.2f, framethickness);  //frame //rear
             v[7] = new Vector3(0.3125f * 1.2f, 0f, framethickness);  //rear            
             return v;
+        }
+
+        public override Vector2[] ModelUVs(Vector3[] verts)
+        {
+            if (!SecretDoor)
+            { //normal door textures have a black border at the top that needs to excluded 
+                var uv = new Vector2[8];
+                uv[0] = new Vector2(1f, 1f);
+                uv[1] = new Vector2(1f, 0.2f);
+                uv[2] = new Vector2(0f, 0.2f);
+                uv[3] = new Vector2(0f, 1f);
+
+                uv[4] = new Vector2(1f, 1f);
+                uv[5] = new Vector2(1f, 0.2f);
+                uv[6] = new Vector2(0f, 0.2f);
+                uv[7] = new Vector2(0f, 1f);
+                
+                return uv;
+            }
+            else
+            {
+                var uv = new Vector2[8];
+                uv[0] = new Vector2(1f, 1f);
+                uv[1] = new Vector2(1f, 0.0f);
+                uv[2] = new Vector2(0f, 0.0f);
+                uv[3] = new Vector2(0f, 1f);
+
+                uv[4] = new Vector2(1f, 1f);
+                uv[5] = new Vector2(1f, 0.0f);
+                uv[6] = new Vector2(0f, 0.0f);
+                uv[7] = new Vector2(0f, 1f);
+                
+                return uv;
+            }
+
         }
 
         public override int NoOfMeshes()
@@ -98,7 +133,7 @@ namespace Underworld
                     tris[5] = 7;
                     return tris;
                 case 2: // Door trim
-                    { 
+                    {
                         //TODO
                         break;
                     }
@@ -107,18 +142,16 @@ namespace Underworld
             return base.ModelTriangles(meshNo);
         }
 
-        public override Vector2[] ModelUVs(Vector3[] verts)
-        {
-            return base.ModelUVs(verts);
-        }
+
 
         public override int ModelColour(int meshNo)
         {
             switch (meshNo)
             {
                 case 0:
-                    return texture;
                 case 1:
+                    return texture;
+                case 2:
                     return 0;
             }
             return base.ModelColour(meshNo);
@@ -158,7 +191,7 @@ namespace Underworld
         // const float doorheight = 7f * 0.15f;
 
         public int texture;
-        public int floorheight;
+        public float floorheight;
         public Vector3 position;
 
         public Node3D doorFrameNode;
@@ -169,7 +202,7 @@ namespace Underworld
             int tileY = obj.tileY;
             var n = new doorway(obj);
             n.texture = a_tilemap.texture_map[a_tilemap.Tiles[tileX, tileY].wallTexture];
-            n.floorheight = a_tilemap.Tiles[tileX, tileY].floorHeight;
+            n.floorheight = (float)(obj.zpos)/4f; //a_tilemap.Tiles[tileX, tileY].floorHeight;
             n.position = parent.Position;
             n.doorFrameNode = n.Generate3DModel(parent);
 
