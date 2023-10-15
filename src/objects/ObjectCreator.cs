@@ -108,6 +108,11 @@ namespace Underworld
                             bed.CreateInstance(newnode, obj);
                             return false; //unimplemented = false;
                         }
+                        if ((obj.classindex==0xE) || (obj.classindex==0xF))
+                        {//tmaps
+                            tmap.CreateInstance(newnode, obj, a_tilemap);
+                            return false;
+                        }
                         break;
                     }
             }

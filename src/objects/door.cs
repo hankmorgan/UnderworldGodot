@@ -43,7 +43,7 @@ namespace Underworld
             d.position = parent.Position;
             d.doorNode = d.Generate3DModel(parent);
 
-            DisplayModelPoints(d, parent);
+            //DisplayModelPoints(d, parent);
             return d;
         }
 

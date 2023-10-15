@@ -172,7 +172,7 @@ namespace Underworld
             var vs = m.ModelVertices();
             int vindex = 0;
             Label3D obj_orign = new();
-            obj_orign.Text = $"@Origin";
+            obj_orign.Text = $"@";
             obj_orign.Position = Vector3.Zero;
             obj_orign.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
             n.AddChild(obj_orign);
