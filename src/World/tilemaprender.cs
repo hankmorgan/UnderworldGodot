@@ -649,7 +649,7 @@ namespace Underworld
                         else
                         {
                             TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
-                            return RenderCuboid(parent, x, y, t, Water, -CEILING_HEIGHT, t.floorHeight, TileName);
+                            return RenderCuboid(parent, x, y, t, Water, 0, t.floorHeight, TileName);
                         }
                     }
                     else
@@ -1841,7 +1841,7 @@ namespace Underworld
                         else
                         {
                             TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
-                            return RenderPrism(parent, x, y, t, Water, -CEILING_HEIGHT, t.floorHeight, TileName);
+                            return RenderPrism(parent, x, y, t, Water, 0, t.floorHeight, TileName);
                         }
                     }
                     else

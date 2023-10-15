@@ -105,7 +105,7 @@ public partial class imageloader : Sprite2D
 			}
 			vindex++;
 		}
-		Debug.Print (code);
+		//Debug.Print (code);
 		//cam.Position= Vector3.Zero;
 
 		Random rnd = new Random();
