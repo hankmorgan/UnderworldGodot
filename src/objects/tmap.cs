@@ -20,6 +20,7 @@ namespace Underworld
             t.texture = a_tilemap.texture_map[obj.owner];
     
             t.tmapnode = t.Generate3DModel(parent);
+            SetModelRotation(parent,t);
 
             DisplayModelPoints(t, parent);
             return t;
@@ -29,10 +30,10 @@ namespace Underworld
         public override Vector3[] ModelVertices()
         {
             Vector3[] v = new Vector3[4];
-            v[0] = new Vector3(-0.0625f*1.2f, 0f, 0.0625f*1.2f);
-            v[1] = new Vector3(0.1875f*1.2f, 0f, 0.0625f*1.2f);
-            v[2] = new Vector3(0.1875f*1.2f, 0.25f*1.2f, 0.0625f*1.2f);
-            v[3] = new Vector3(-0.0625f*1.2f, 0.25f*1.2f, 0.0625f*1.2f);
+            v[0] = new Vector3(-0.6f, 0f, 0.0625f);
+            v[1] = new Vector3(0.6f, 0f, 0.0625f);
+            v[2] = new Vector3(0.6f, 1.2f, 0.0625f);
+            v[3] = new Vector3(-0.6f, 1.2f, 0.0625f);
             return v;
         }
 

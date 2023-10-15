@@ -172,7 +172,7 @@ namespace Underworld
             var vs = m.ModelVertices();
             int vindex = 0;
             Label3D obj_orign = new();
-            obj_orign.Text = $"@";
+            obj_orign.Text = $"@{m.uwobject.heading}";
             obj_orign.Position = Vector3.Zero;
             obj_orign.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
             n.AddChild(obj_orign);
@@ -202,25 +202,29 @@ namespace Underworld
         /// <param name="n"></param>
         public static void SetModelRotation(Node3D parent, model3D n)
         {
+            //float radians=0;
+            //float deg= n.uwobject.heading*45;
+            //radians = (float)(Math.PI / 180 * deg);
             switch (n.uwobject.heading * 45)
             {//align model node in centre of tile along it's axis
-                case tileMapRender.EAST: //270
-                    parent.Rotate(Vector3.Up, (float)Math.PI * 1.5f);
+                case tileMapRender.heading0: //0   //not right
+                    //modelNode.Rotate(Vector3.Up,(float)Math.PI /2f);    
+                    parent.Rotate(Vector3.Up, (float)Math.PI);                
                     break;
-                case tileMapRender.WEST: //90
+                case tileMapRender.heading2: //90 works
                     parent.Rotate(Vector3.Up, (float)Math.PI / 2f);
                     break;
-                case tileMapRender.NORTH: //180
+                case tileMapRender.heading4: //180 works.
                     //default. no rotation
                     break;
-                case tileMapRender.SOUTH: //0
-                    //modelNode.Rotate(Vector3.Up,(float)Math.PI /2f);    
-                    //parent.Rotate(Vector3.Up, (float)Math.PI * 1.5f);                
-                    //break;
+                case tileMapRender.Heading6: //270  //not right
+                    parent.Rotate(Vector3.Up, (float)Math.PI * 1.5f);
+                    break;
                 default:
                     System.Diagnostics.Debug.Print("Unhandled model heading.");
                     break;
             }
+            //parent.Rotate(Vector3.Up, radians);
         }
 
 

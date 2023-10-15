@@ -247,16 +247,16 @@ namespace Underworld
 
             switch (n.uwobject.heading * 45)
             {//align model node in centre of tile along it's axis
-                case tileMapRender.EAST:
+                case tileMapRender.Heading6:
                     parent.Position = new Vector3(parent.Position.X, parent.Position.Y, (tileY * 1.2f) + 0.6f);
                     break;
-                case tileMapRender.WEST:
+                case tileMapRender.heading2:
                     parent.Position = new Vector3(parent.Position.X, parent.Position.Y, (tileY * 1.2f) + 0.6f);
                     break;
-                case tileMapRender.NORTH:
+                case tileMapRender.heading4:
                     parent.Position = new Vector3((tileX * -1.2f) - 0.6f, parent.Position.Y, parent.Position.Z);
                     break;
-                case tileMapRender.SOUTH:
+                case tileMapRender.heading0:
                     parent.Position = new Vector3((tileX * -1.2f) - 0.6f, parent.Position.Y, parent.Position.Z);
                     break;
                 default:
