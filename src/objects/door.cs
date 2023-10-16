@@ -19,6 +19,24 @@ namespace Underworld
         public Vector3 position;
         bool SecretDoor = false;//327 and 325
 
+        Vector3 pivot =Vector3.Zero;
+
+        public bool isOpen
+        {
+            get
+            {
+                return uwobject.classindex>=8;
+            }
+        }
+
+        public bool isPortcullis
+        {
+            get
+            {
+                return ((uwobject.classindex == 6) || (uwobject.classindex==0xE));
+            }
+        }
+
         static door()
         {
             tmDoor = new GRLoader(GRLoader.DOORS_GR, GRLoader.GRShaderMode.TextureShader);
@@ -38,12 +56,32 @@ namespace Underworld
             {
                 d.texture = d.uwobject.item_id & 0x7;
             }
-
+            
             d.floorheight = a_tilemap.Tiles[tileX, tileY].floorHeight;
-            d.position = parent.Position;
             d.doorNode = d.Generate3DModel(parent);
+            if (d.isOpen)
+            {
+                if (d.isPortcullis)
+                {//translate model up 1 unit
+                    d.doorNode.Position 
+                        = new Vector3
+                            (d.doorNode.Position.X,
+                            d.doorNode.Position.Z + 0.8f,
+                            d.doorNode.Position.Y                            
+                            );
+                 
+                }
+                else
+                {// rotate model 90 
+                    d.doorNode.Rotate(Vector3.Up, (float)(Math.PI/2));
+                }
+            }
+            else
+            {
+                d.position = parent.Position;
+            }
 
-            //DisplayModelPoints(d, parent);
+            DisplayModelPoints(d, parent);
             return d;
         }
 
@@ -64,6 +102,7 @@ namespace Underworld
             float framethickness = 0.1f;
             Vector3[] v = new Vector3[8];
             v[0] = new Vector3(-0.3125f * 1.2f, 0f, 0f); //frame //bottom //right //front
+            pivot = v[0];
             v[1] = new Vector3(-0.3125f * 1.2f, 0.8125f * 1.2f, 0f); //frame //right //top //front
             v[2] = new Vector3(0.3125f * 1.2f, 0.8125f * 1.2f, 0f);  //frame // left //top //front
             v[3] = new Vector3(0.3125f * 1.2f, 0f, 0f);//frame // left //bottom //front
@@ -231,17 +270,31 @@ namespace Underworld
 
         public int texture;
         public float floorheight;
-        public Vector3 position;
+       // public Vector3 position;
         public Node3D doorFrameNode;
+
+        public bool isOpen
+        {
+            get
+            {
+                return uwobject.classindex>=7;
+            }
+        }
         public static doorway CreateInstance(Node3D parent, uwObject obj, TileMap a_tilemap)
         {
             int tileX = obj.tileX;
             int tileY = obj.tileY;
             var n = new doorway(obj);
             n.texture = a_tilemap.texture_map[a_tilemap.Tiles[tileX, tileY].wallTexture];
-            n.floorheight = (float)(obj.zpos) / 4f; //a_tilemap.Tiles[tileX, tileY].floorHeight;
-            n.position = parent.Position;
+            n.floorheight = a_tilemap.Tiles[tileX, tileY].floorHeight;//uses floorheight since portculli use zpos when opened // (float)(obj.zpos) / 4f; //a_tilemap.Tiles[tileX, tileY].floorHeight;
+            //n.position = parent.Position;
+            //a portcullis. 
+
             n.doorFrameNode = n.Generate3DModel(parent);
+            if ( n.isOpen )
+            {//fix for map bug where some open doors extend out of the map. Force them onto a lower zpos without changing data
+                parent.Position = new Vector3(parent.Position.X, uwObject.GetZCoordinate(n.uwobject.zpos-24), parent.Position.Z);
+            }
 
             SetModelRotation(parent, n);
 

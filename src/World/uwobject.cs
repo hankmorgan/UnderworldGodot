@@ -959,35 +959,39 @@ namespace Underworld
         public short npc_name = 0;
 
         public Godot.Vector3 GetCoordinate(int tileX, int tileY)
-        {//godot is y-up
-            // int x = objList[ObjectIndex].ObjectTileX;
-            // int y = objList[ObjectIndex].ObjectTileY;
-            float ResolutionXY = 7.0f;  // A tile has a 7x7 grid for object positioning.
-            float ResolutionZ = 128.0f; //UW has 127 posible z positions for an object in tile.
-            //if (_RES == GAME_SHOCK) { ResolutionXY = 256.0f; ResolutionZ = 256.0f; } //Shock has more "z" in it.
-
-            float BrushX = 120f;
-            float BrushY = 120f;
-            float BrushZ = 15f;
-            // float objX =xpos;
-            // float objY = objList[ObjectIndex].ypos;
-            float offX = tileX * BrushX + xpos * (BrushX / ResolutionXY);
-            float offY = tileY * BrushY + ypos * (BrushY / ResolutionXY);
-
-            // float zpos = objList[ObjectIndex].zpos;
-
-            float ceil = 32;// tileMap.CEILING_HEIGHT;
-            float offZ = zpos / ResolutionZ * ceil * BrushZ;
-            return new Godot.Vector3(-offX / 100.0f, offZ / 100.0f, offY / 100.0f);
-
-            // return new Godot.Vector3(
-            //         ((tileX <<3) + (float)xpos)/10f, 
-            //         (float)zpos/10f,
-            //         ((tileY <<3) + (float)ypos)/10f                    
-            //         );
+        {//godot is y-up     
+            float offX = GetXYCoordinate(tileX, xpos);
+            float offY = GetXYCoordinate(tileY, ypos);
+            float offZ = GetZCoordinate(zpos);            
+            return new Godot.Vector3(-offX , offZ, offY);
         }
 
+        /// <summary>
+        /// Gets the world x or y coordinate for a given x or y value
+        /// </summary>
+        /// <param name="xy"></param>
+        /// <returns></returns>
+        public static float GetXYCoordinate(int tilexy, int xy)
+        {
+            float ResolutionXY = 7.0f;  // A tile has a 7x7 grid for object positioning.
+            float BrushXY = 120f;
+            float offXY = tilexy * BrushXY + xy * (BrushXY / ResolutionXY);
+            return offXY/100f;
+        }
 
+        /// <summary>
+        /// Gets the world Z coordinate for a given zpos value
+        /// </summary>
+        /// <param name="_zpos"></param>
+        /// <returns></returns>
+        public static float GetZCoordinate(int _zpos)
+        {
+             float ResolutionZ = 128.0f; //UW has 127 posible z positions for an object in tile.
+            float ceil = 32;// tileMap.CEILING_HEIGHT;
+            float BrushZ = 15f;
+            float offZ = _zpos / ResolutionZ * ceil * BrushZ;
+            return offZ/100.0f;
+        }
     } //end class
 
 

@@ -52,6 +52,7 @@ namespace Underworld
 
         public void SetAnimSprite(int animationNo, int frameNo)
         {
+            if (this.uwobject.item_id>=127){return;}
             var crit = CritLoader.GetCritter(this.uwobject.item_id & 0x3F);
             if (material == null)
             {//create the initial material

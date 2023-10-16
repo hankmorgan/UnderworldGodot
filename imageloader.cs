@@ -14,6 +14,7 @@ internal class uwsettings
 	public string gametoload { get; set; }
 	public int level { get; set; }
 	public int lightlevel { get; set; }
+	public string levarkfolder { get; set; }
 
 	public static uwsettings instance;
 }
@@ -86,7 +87,7 @@ public partial class imageloader : Sprite2D
 		// }
 
 
-		var mdl = modelloader.DecodeModel(20);
+		var mdl = modelloader.DecodeModel(12);
 		File.WriteAllText("c:\\temp\\mdl.txt",mdl.commands);
 		int vindex=0;
 		var nd = GetNode<Node3D>("/root/Node3D");
@@ -112,7 +113,7 @@ public partial class imageloader : Sprite2D
 		var index = rnd.Next(8);
 		//Debug.Print(index.ToString());
 
-		grey.Texture = shade.shadesdata[gamesettings.lightlevel].FullShadingImage();
+		//grey.Texture = shade.shadesdata[gamesettings.lightlevel].FullShadingImage();
 
 		//grey.Texture = PaletteLoader.AllLightMaps(PaletteLoader.light); //PaletteLoader.light[5].toImage();
 		var textureloader = new TextureLoader();
@@ -203,7 +204,7 @@ public partial class imageloader : Sprite2D
 		Node3D worldobjects = GetNode<Node3D>("/root/Node3D/worldobjects");
 		Node3D the_tiles = GetNode<Node3D>("/root/Node3D/tilemap");
 
-		LevArkLoader.LoadLevArkFileData();
+		LevArkLoader.LoadLevArkFileData(folder: uwsettings.instance.levarkfolder);
 		Underworld.TileMap a_tilemap = new(newLevelNo);
 
 		a_tilemap.lev_ark_block = LevArkLoader.LoadLevArkBlock(newLevelNo);

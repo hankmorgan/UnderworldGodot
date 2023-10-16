@@ -45,11 +45,6 @@ namespace Underworld
                 case 5: //doors, 3d models, buttons/switches
                     {
                         unimplemented = MajorClass5(obj, newnode, a_tilemap);
-                        // Label3D obj_lbl = new();
-                        // obj_lbl.Text = $"{StringLoader.GetObjectNounUW(obj.item_id)} {obj.index} {obj.heading} -> {obj.heading_r}";
-                        // obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
-                        // //obj_lbl.Font = font;
-                        // newnode.AddChild(obj_lbl);
                         break;
                     }
 
@@ -71,11 +66,11 @@ namespace Underworld
             }
 
 
-            // Label3D obj_lbl = new();
-            // 			obj_lbl.Text = $"{StringLoader.GetObjectNounUW(obj.item_id)} {obj.index} {obj.heading*45} -> {obj.heading_r}";
-            // 			obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
-            // 			//obj_lbl.Font = font;
-            // 			newnode.AddChild(obj_lbl);
+            Label3D obj_lbl = new();
+            			obj_lbl.Text = $"{StringLoader.GetObjectNounUW(obj.item_id)} {obj.index} {obj.zpos}";
+            			obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
+            			//obj_lbl.Font = font;
+            			newnode.AddChild(obj_lbl);
         }
 
         /// <summary>
@@ -91,9 +86,9 @@ namespace Underworld
             switch (obj.minorclass)
             {
                 case 0: //doors
-                    {
-                        doorway.CreateInstance(newnode, obj, a_tilemap);
-                        door.CreateInstance(newnode,obj, a_tilemap);
+                    {         
+                        door.CreateInstance(newnode, obj, a_tilemap);               
+                        doorway.CreateInstance(newnode, obj, a_tilemap);                        
                         return false;
                     }
                 case 2: //3D models

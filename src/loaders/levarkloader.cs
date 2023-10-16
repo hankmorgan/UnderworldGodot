@@ -34,6 +34,7 @@ namespace Underworld
                     break;
             }
             var toLoad = Path.Combine(Loader.BasePath, Lev_Ark_File);
+            Debug.Print($"Loading {toLoad}");
             if (!Loader.ReadStreamFile(toLoad, out lev_ark_file_data))
             {
                 Debug.Print(toLoad + "File not loaded");
