@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using Godot;
 namespace Underworld
 {
@@ -20,6 +22,8 @@ namespace Underworld
         bool SecretDoor = false;//327 and 325
 
         Vector3 pivot =Vector3.Zero;
+
+        public const float framethickness = 0.08f;
 
         public bool isOpen
         {
@@ -59,6 +63,7 @@ namespace Underworld
             
             d.floorheight = a_tilemap.Tiles[tileX, tileY].floorHeight;
             d.doorNode = d.Generate3DModel(parent);
+            d.doorNode.Position= d.pivot;
             if (d.isOpen)
             {
                 if (d.isPortcullis)
@@ -99,17 +104,23 @@ namespace Underworld
             ///Same vertices as the doorframe.
             float ceilingAdjustment = (float)(32 - floorheight) * 0.15f;//- position.Y; 
             //float frameadjustment = (float)(floorheight+4) * 0.15f ;   //0.8125f
-            float framethickness = 0.1f;
+            
             Vector3[] v = new Vector3[8];
-            v[0] = new Vector3(-0.3125f * 1.2f, 0f, 0f); //frame //bottom //right //front
-            pivot = v[0];
+            v[0] = new Vector3(-0.3125f * 1.2f, 0f, 0f); //frame //bottom //right //front           
             v[1] = new Vector3(-0.3125f * 1.2f, 0.8125f * 1.2f, 0f); //frame //right //top //front
             v[2] = new Vector3(0.3125f * 1.2f, 0.8125f * 1.2f, 0f);  //frame // left //top //front
             v[3] = new Vector3(0.3125f * 1.2f, 0f, 0f);//frame // left //bottom //front
             v[4] = new Vector3(-0.3125f * 1.2f, 0f, framethickness);  //rear
             v[5] = new Vector3(-0.3125f * 1.2f, 0.8125f * 1.2f, framethickness); //frame //rear
             v[6] = new Vector3(0.3125f * 1.2f, 0.8125f * 1.2f, framethickness);  //frame //rear
-            v[7] = new Vector3(0.3125f * 1.2f, 0f, framethickness);  //rear            
+            v[7] = new Vector3(0.3125f * 1.2f, 0f, framethickness);  //rear  
+           
+            pivot=v[0];
+            for (int i =1; i<8;i++)
+            {   //translate away so that v[0] is at the model origin.
+                v[i] -= v[0];
+            }     
+            v[0] = Vector3.Zero;     
             return v;
         }
 
@@ -333,28 +344,28 @@ namespace Underworld
         {
             float ceilingAdjustment = (float)(32 - floorheight) * 0.15f;//- position.Y;   //distance from object to ceiling
             //float frameadjustment = (float)(floorheight+4) * 0.15f ;   //0.8125f
-            float framethickness = 0.1f;
+            
             Vector3[] v = new Vector3[20];
             v[0] = new Vector3(-0.3125f * 1.2f, 0f, 0f);
             v[1] = new Vector3(-0.3125f * 1.2f, 0.8125f * 1.2f, 0f); //frame
             v[2] = new Vector3(0.3125f * 1.2f, 0.8125f * 1.2f, 0f);  //frame
             v[3] = new Vector3(0.3125f * 1.2f, 0f, 0f);
-            v[4] = new Vector3(-0.3125f * 1.2f, 0f, framethickness);  //rear
-            v[5] = new Vector3(-0.3125f * 1.2f, 0.8125f * 1.2f, framethickness); //frame //rear
-            v[6] = new Vector3(0.3125f * 1.2f, 0.8125f * 1.2f, framethickness);  //frame //rear
-            v[7] = new Vector3(0.3125f * 1.2f, 0f, framethickness);  //rear
+            v[4] = new Vector3(-0.3125f * 1.2f, 0f, door.framethickness);  //rear
+            v[5] = new Vector3(-0.3125f * 1.2f, 0.8125f * 1.2f, door.framethickness); //frame //rear
+            v[6] = new Vector3(0.3125f * 1.2f, 0.8125f * 1.2f, door.framethickness);  //frame //rear
+            v[7] = new Vector3(0.3125f * 1.2f, 0f, door.framethickness);  //rear
             v[8] = new Vector3(-0.6f, 0f, 0f);
-            v[9] = new Vector3(-0.6f, 0f, framethickness);   //rear
+            v[9] = new Vector3(-0.6f, 0f, door.framethickness);   //rear
             v[10] = new Vector3(0.6f, 0f, 0f);
-            v[11] = new Vector3(0.6f, 0f, framethickness);   //rear
+            v[11] = new Vector3(0.6f, 0f, door.framethickness);   //rear
             v[12] = new Vector3(-0.6f, 0.8125f * 1.2f, 0f);  //level with frame //right
-            v[13] = new Vector3(-0.6f, 0.8125f * 1.2f, framethickness); //level with frame //rear //right
+            v[13] = new Vector3(-0.6f, 0.8125f * 1.2f, door.framethickness); //level with frame //rear //right
             v[14] = new Vector3(0.6f, 0.8125f * 1.2f, 0f);  //level with frame  //left
-            v[15] = new Vector3(0.6f, 0.8125f * 1.2f, framethickness);  //level with frame //rear //left
+            v[15] = new Vector3(0.6f, 0.8125f * 1.2f, door.framethickness);  //level with frame //rear //left
             v[16] = new Vector3(-0.6f, ceilingAdjustment, 0f);  //ceiling
-            v[17] = new Vector3(-0.6f, ceilingAdjustment, framethickness); //ceiling //rear
+            v[17] = new Vector3(-0.6f, ceilingAdjustment, door.framethickness); //ceiling //rear
             v[18] = new Vector3(0.6f, ceilingAdjustment, 0f);       //ceiling
-            v[19] = new Vector3(0.6f, ceilingAdjustment, framethickness);  //ceiling //rear
+            v[19] = new Vector3(0.6f, ceilingAdjustment, door.framethickness);  //ceiling //rear
             return v;
         }
 
