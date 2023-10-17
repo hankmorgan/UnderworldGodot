@@ -20,9 +20,10 @@ namespace Underworld
             t.texture = a_tilemap.texture_map[obj.owner];
     
             t.tmapnode = t.Generate3DModel(parent);
+            
             SetModelRotation(parent,t);
-
-            DisplayModelPoints(t, parent);
+            
+            //DisplayModelPoints(t, parent);
             return t;
         }
 

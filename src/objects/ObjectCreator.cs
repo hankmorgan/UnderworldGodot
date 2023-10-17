@@ -11,7 +11,7 @@ namespace Underworld
     {
         //List of active NPCs
         public static List<npc> npcs;
-
+        static bool printlabels = false;
 
         public static void GenerateObjects(Node3D worldparent, List<uwObject> objects, GRLoader grObjects, TileMap a_tilemap)
         {
@@ -63,15 +63,15 @@ namespace Underworld
             {
                 //just render a sprite.
                 RenderSprite(grObjects, obj, newnode);
+                if (printlabels)
+                {
                 Label3D obj_lbl = new();
                     obj_lbl.Text = $"{StringLoader.GetObjectNounUW(obj.item_id)} {obj.index} {obj.zpos}";
                     obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
                     //obj_lbl.Font = font;
                     newnode.AddChild(obj_lbl);
+                }
             }
-
-
-
         }
 
         /// <summary>
@@ -97,6 +97,11 @@ namespace Underworld
                         if (obj.classindex==7)
                         {//shrine
                             shrine.CreateInstance(newnode, obj);
+                            return false;
+                        }
+                        if (obj.classindex==8)
+                        {
+                            table.CreateInstance(newnode, obj);
                             return false;
                         }
                         break;

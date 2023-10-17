@@ -184,6 +184,7 @@ namespace Underworld
                 {
                     Label3D obj_lbl = new();
                     obj_lbl.Text = $"{vindex}";
+                    obj_lbl.FontSize=10;
                     obj_lbl.Position = new Vector3(v.X, v.Y, v.Z);
                     obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
                     n.AddChild(obj_lbl);
@@ -203,11 +204,8 @@ namespace Underworld
         /// <param name="n"></param>
         public static void SetModelRotation(Node3D parent, model3D n)
         {
-            //float radians=0;
-            //float deg= n.uwobject.heading*45;
-            //radians = (float)(Math.PI / 180 * deg);
             switch (n.uwobject.heading * 45)
-            {//align model node in centre of tile along it's axis
+            {
                 case tileMapRender.heading0: //0   //not right
                     //modelNode.Rotate(Vector3.Up,(float)Math.PI /2f);    
                     parent.Rotate(Vector3.Up, (float)Math.PI);                
@@ -222,10 +220,9 @@ namespace Underworld
                     parent.Rotate(Vector3.Up, (float)Math.PI * 1.5f);
                     break;
                 default:
-                    System.Diagnostics.Debug.Print("Unhandled model heading.");
+                    System.Diagnostics.Debug.Print($"Unhandled model heading. {n.uwobject.item_id} h:{n.uwobject.heading}");
                     break;
             }
-            //parent.Rotate(Vector3.Up, radians);
         }
 
         /// <summary>

@@ -87,26 +87,26 @@ public partial class imageloader : Sprite2D
 		// }
 
 
-		// var mdl = modelloader.DecodeModel(21);
-		// File.WriteAllText("c:\\temp\\mdl.txt",mdl.commands);
-		// int vindex=0;
-		// var nd = GetNode<Node3D>("/root/Node3D");
-		// string code="";
-		// foreach (var v in mdl.verts)
-		// {
-		// 	if (vindex<= mdl.NoOfVerts)
-		// 	{
-		// 		Label3D obj_lbl = new();
-		// 		obj_lbl.Text = $"{vindex}";
-		// 		obj_lbl.Position = new Vector3(v.X,v.Z,v.Y);
-		// 		code+= $"v[{vindex}] = new Vector3({v.X}f, {v.Z}f, {v.Y}f);\n";
-		// 		obj_lbl.Font = font;
-		// 		obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
-		// 		nd.CallDeferred("add_child",obj_lbl);
-		// 	}
-		// 	vindex++;
-		// }
-        // Debug.Print (code);
+		var mdl = modelloader.DecodeModel(24);
+		File.WriteAllText("c:\\temp\\mdl.txt",mdl.commands);
+		int vindex=0;
+		var nd = GetNode<Node3D>("/root/Node3D");
+		string code="";
+		foreach (var v in mdl.verts)
+		{
+			if (vindex<= mdl.NoOfVerts)
+			{
+				Label3D obj_lbl = new();
+				obj_lbl.Text = $"{vindex}";
+				obj_lbl.Position = new Vector3(v.X,v.Z,v.Y);
+				code+= $"v[{vindex}] = new Vector3({v.X}f, {v.Z}f, {v.Y}f);\n";
+				obj_lbl.Font = font;
+				obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
+				nd.CallDeferred("add_child",obj_lbl);
+			}
+			vindex++;
+		}
+        Debug.Print (code);
 		//cam.Position= Vector3.Zero;
 
 		//Random rnd = new Random();

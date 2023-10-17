@@ -102,7 +102,7 @@ namespace Underworld
             // {
             //     skipCeil = false;
             // }
-            
+
             if (!UpdateOnly)
             {
                 //Clear out the children in the transform
