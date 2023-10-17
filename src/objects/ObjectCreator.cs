@@ -91,6 +91,15 @@ namespace Underworld
                         doorway.CreateInstance(newnode, obj, a_tilemap);                        
                         return false;
                     }
+                case 1: //3D Models
+                    {  
+                        if (obj.classindex==7)
+                        {//shrine
+                            shrine.CreateInstance(newnode, obj);
+                            return true;
+                        }
+                        break;
+                    }
                 case 2: //3D models
                     {
                         if (obj.classindex == 0)
