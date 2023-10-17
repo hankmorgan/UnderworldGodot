@@ -22,9 +22,35 @@ namespace Underworld
             t.tmapnode = t.Generate3DModel(parent);
             
             SetModelRotation(parent,t);
+            centreInTile(parent, t);
             
             //DisplayModelPoints(t, parent);
             return t;
+        }
+
+        //Centeres the tmap in the tile it is in.
+        static void centreInTile(Node3D node, tmap t)
+        {
+            int x = t.uwobject.tileX;
+            int y = t.uwobject.tileY;
+            switch (t.uwobject.heading * 45)
+            {
+                case tileMapRender.heading0: 
+                    node.Position = new Vector3(-(x * 1.2f + 0.6f), node.Position.Y, node.Position.Z);              
+                    break;
+                case tileMapRender.heading2: 
+                     node.Position = new Vector3(node.Position.X, node.Position.Y, y * 1.2f + 0.6f); 
+                    break;
+                case tileMapRender.heading4: 
+                    node.Position = new Vector3(-(x * 1.2f + 0.6f), node.Position.Y, node.Position.Z); 
+                    break;
+                case tileMapRender.Heading6: 
+                    node.Position = new Vector3(node.Position.X, node.Position.Y, y * 1.2f + 0.6f); 
+                    break;
+                default:
+                    System.Diagnostics.Debug.Print($"Unhandled tmap centering heading. {t.uwobject.item_id} h:{t.uwobject.heading}");
+                    break;
+            }
         }
 
 
