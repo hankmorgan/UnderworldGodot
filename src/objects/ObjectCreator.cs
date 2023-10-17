@@ -63,14 +63,15 @@ namespace Underworld
             {
                 //just render a sprite.
                 RenderSprite(grObjects, obj, newnode);
+                Label3D obj_lbl = new();
+                    obj_lbl.Text = $"{StringLoader.GetObjectNounUW(obj.item_id)} {obj.index} {obj.zpos}";
+                    obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
+                    //obj_lbl.Font = font;
+                    newnode.AddChild(obj_lbl);
             }
 
 
-            Label3D obj_lbl = new();
-            			obj_lbl.Text = $"{StringLoader.GetObjectNounUW(obj.item_id)} {obj.index} {obj.zpos}";
-            			obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
-            			//obj_lbl.Font = font;
-            			newnode.AddChild(obj_lbl);
+
         }
 
         /// <summary>
@@ -96,7 +97,7 @@ namespace Underworld
                         if (obj.classindex==7)
                         {//shrine
                             shrine.CreateInstance(newnode, obj);
-                            return true;
+                            return false;
                         }
                         break;
                     }
@@ -106,6 +107,11 @@ namespace Underworld
                         {//pillar 352
                             pillar.CreateInstance(newnode, obj, newnode.Position);
                             return false; /// unimplemented = false;
+                        }
+                        if ((_RES == GAME_UW2) && (obj.classindex == 3))
+                        {  //or item id 163
+                            painting.CreateInstance(newnode, obj);
+                            return false; //unimplemented = false;
                         }
                         if ((_RES == GAME_UW2) && (obj.classindex == 7))
                         {  //or item id 359

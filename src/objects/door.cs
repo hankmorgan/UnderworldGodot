@@ -19,7 +19,13 @@ namespace Underworld
         public int texture;
         public int floorheight;
         public Vector3 position;
-        bool SecretDoor = false;//327 and 325
+        bool isSecretDoor 
+        {
+            get
+            {
+                return ((uwobject.item_id == 327) || (uwobject.item_id == 335));
+            }
+        }
 
         Vector3 pivot =Vector3.Zero;
 
@@ -52,7 +58,7 @@ namespace Underworld
             int tileX = obj.tileX;
             int tileY = obj.tileY;
             var d = new door(obj);
-            if (d.SecretDoor)
+            if (d.isSecretDoor)
             {
                 d.texture = a_tilemap.texture_map[a_tilemap.Tiles[tileX, tileY].wallTexture];
             }
@@ -86,17 +92,13 @@ namespace Underworld
                 d.position = parent.Position;
             }
 
-            DisplayModelPoints(d, parent);
+            //DisplayModelPoints(d, parent);
             return d;
         }
 
         public door(uwObject _uwobject)
         {
             uwobject = _uwobject;
-            if ((uwobject.item_id == 327) || (uwobject.item_id == 325))
-            {
-                SecretDoor = true;
-            }
         }
 
         public override Vector3[] ModelVertices()
@@ -127,7 +129,7 @@ namespace Underworld
         public override Vector2[] ModelUVs(Vector3[] verts)
         {
 
-            if (!SecretDoor)
+            if (!isSecretDoor)
             { //normal door textures have a black border at the top that needs to excluded 
                 var uv = new Vector2[8];
                 uv[0] = new Vector2(1f, 1f);
@@ -255,7 +257,7 @@ namespace Underworld
             {
                 case 0: //door texture
                 case 1:
-                    if (!SecretDoor)
+                    if (!isSecretDoor)
                     {
                         return tmDoor.GetMaterial(textureno);
                     }
@@ -288,7 +290,7 @@ namespace Underworld
         {
             get
             {
-                return uwobject.classindex>=7;
+                return uwobject.classindex>=8;
             }
         }
         public static doorway CreateInstance(Node3D parent, uwObject obj, TileMap a_tilemap)

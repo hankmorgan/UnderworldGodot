@@ -13,6 +13,7 @@ namespace Underworld
         protected const int CEILING_HEIGHT = 32;
         public Material material;
         public static Shader textureshader;
+        public static GRLoader tmObj; //3d model textures.
         
         /// <summary>
         /// Generates the defined 3d model and adds as a child to the parent node.
@@ -166,7 +167,7 @@ namespace Underworld
             return newmaterial;
         }
 
-        public static void DisplayModelPoints(model3D m, Node3D n)
+        public static void DisplayModelPoints(model3D m, Node3D n, int maxpoints=20)
         {
             //render the points for debugging
             var vs = m.ModelVertices();
@@ -179,7 +180,7 @@ namespace Underworld
 
             foreach (var v in vs)
             {
-                if (vindex < 20)
+                if (vindex < maxpoints)
                 {
                     Label3D obj_lbl = new();
                     obj_lbl.Text = $"{vindex}";
@@ -227,8 +228,17 @@ namespace Underworld
             //parent.Rotate(Vector3.Up, radians);
         }
 
-
-        
+        /// <summary>
+        /// Checks if tmObj is loaded and if not load. Call before returning a new material shader using tmObjl
+        /// </summary>
+        protected static void LoadTmObj()
+        {
+            if (tmObj == null)
+            {
+                tmObj = new GRLoader(GRLoader.TMOBJ_GR, GRLoader.GRShaderMode.TextureShader);
+                tmObj.RenderGrey = true;
+            }
+        }      
 
 
     }//end class

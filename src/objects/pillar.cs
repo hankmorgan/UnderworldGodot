@@ -6,7 +6,7 @@ namespace Underworld
     public class pillar : model3D
     {
         Vector3 position;
-        public static GRLoader tmObj; //3d model textures.
+        
 
         public static pillar CreateInstance(Node3D parent, uwObject obj, Vector3 position)
         {
@@ -114,12 +114,10 @@ namespace Underworld
 
         public override ShaderMaterial GetMaterial(int textureno, int surface)
         {//Get the material texture from tmobj
-            if (tmObj == null)
-            {
-                tmObj = new GRLoader(GRLoader.TMOBJ_GR, GRLoader.GRShaderMode.TextureShader);
-                tmObj.RenderGrey = true;
-            }
+            LoadTmObj();
             return tmObj.GetMaterial((byte)textureno);
         }
+
+
     }
 }//end namespace
