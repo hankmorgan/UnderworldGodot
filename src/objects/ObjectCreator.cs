@@ -157,6 +157,11 @@ namespace Underworld
                             bed.CreateInstance(parent, obj);
                             return false; //unimplemented = false;
                         }
+                        if ((_RES == GAME_UW2) && (obj.classindex == 8))
+                        {  //or item id 360
+                            largeblackrockgem.CreateInstance(parent, obj);
+                            return false; //unimplemented = false;
+                        }
                         if ((obj.classindex == 0xE) || (obj.classindex == 0xF))
                         {//tmaps
                             tmap.CreateInstance(parent, obj, a_tilemap);

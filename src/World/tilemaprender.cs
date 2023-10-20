@@ -143,7 +143,6 @@ namespace Underworld
                 case TILE_OPEN:     //1
                     {//open
                         return RenderOpenTile(parent, x, y, t);    //floor
-                        break;
                     }
                 case TILE_DIAG_SE:
                     {//diag se
