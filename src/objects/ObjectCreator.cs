@@ -29,27 +29,27 @@ namespace Underworld
         {
             bool unimplemented = true;
 
-            var newnode = new Node3D();
-            newnode.Name = StringLoader.GetObjectNounUW(obj.item_id) + "_" + obj.index.ToString();
-            newnode.Position = obj.GetCoordinate(obj.tileX, obj.tileY);
-            worldparent.AddChild(newnode);
+            var newparent = new Node3D();
+            newparent.Name = StringLoader.GetObjectNounUW(obj.item_id) + "_" + obj.index.ToString();
+            newparent.Position = obj.GetCoordinate(obj.tileX, obj.tileY);
+            worldparent.AddChild(newparent);
 
             switch (obj.majorclass)
             {
                 case 1://npcs
                     {
-                        npcs.Add(npc.CreateInstance(newnode, obj));
+                        npcs.Add(npc.CreateInstance(newparent, obj));
                         unimplemented = false;
                         break;
                     }
                 case 3: // misc objects
                 {
-                    unimplemented = MajorClass3(obj, newnode, grObjects);
+                    unimplemented = MajorClass3(obj, newparent, grObjects);
                     break;
                 }
                 case 5: //doors, 3d models, buttons/switches
                     {
-                        unimplemented = MajorClass5(obj, newnode, a_tilemap);
+                        unimplemented = MajorClass5(obj, newparent, a_tilemap);
                         break;
                     }
 
@@ -66,14 +66,14 @@ namespace Underworld
             if (unimplemented)
             {
                 //just render a sprite.
-                CreateSpriteInstance(grObjects, obj, newnode);
+                CreateSpriteInstance(grObjects, obj, newparent);
                 if (printlabels)
                 {
                     Label3D obj_lbl = new();
                     obj_lbl.Text = $"{StringLoader.GetObjectNounUW(obj.item_id)} {obj.index} {obj.zpos}";
                     obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
                     //obj_lbl.Font = font;
-                    newnode.AddChild(obj_lbl);
+                    newparent.AddChild(obj_lbl);
                 }
             }
         }
@@ -83,21 +83,21 @@ namespace Underworld
         /// Runestones and some misc objects
         /// </summary>
         /// <param name="obj"></param>
-        /// <param name="newnode"></param>
+        /// <param name="parent"></param>
         /// <param name="grObjects"></param>
         /// <returns></returns>
-        private static bool MajorClass3(uwObject obj, Node3D newnode, GRLoader grObjects)
+        private static bool MajorClass3(uwObject obj, Node3D parent, GRLoader grObjects)
         {
             if ((obj.minorclass == 2) && (obj.classindex == 0))
             {
-                runestone.CreateInstance(newnode, obj, grObjects);
+                runestone.CreateInstance(parent, obj, grObjects);
                 return false;
             }
             if (((obj.minorclass == 2) && (obj.classindex >= 8))
                 || (obj.minorclass == 3)
                 || ((obj.minorclass == 2) && (obj.classindex == 0)))
             {//runestones
-                runestone.CreateInstance(newnode, obj, grObjects);
+                runestone.CreateInstance(parent, obj, grObjects);
                 return false;
             }
             return true;
@@ -108,53 +108,58 @@ namespace Underworld
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="unimplemented"></param>
-        /// <param name="newnode"></param>
+        /// <param name="parent"></param>
         /// <returns></returns>
-        private static bool MajorClass5(uwObject obj, Node3D newnode, TileMap a_tilemap)
+        private static bool MajorClass5(uwObject obj, Node3D parent, TileMap a_tilemap)
         {
             if (obj.tileX >= 65) { return true; }//don't render offmap models.
             switch (obj.minorclass)
             {
                 case 0: //doors
                     {
-                        door.CreateInstance(newnode, obj, a_tilemap);
-                        doorway.CreateInstance(newnode, obj, a_tilemap);
+                        door.CreateInstance(parent, obj, a_tilemap);
+                        doorway.CreateInstance(parent, obj, a_tilemap);
                         return false;
                     }
                 case 1: //3D Models
                     {
+                        if ((obj.classindex>=3) && (obj.classindex<=6))
+                        {//boulders
+                            boulder.CreateInstance(parent,obj);
+                            return false;
+                        }
                         if (obj.classindex == 7)
                         {//shrine
-                            shrine.CreateInstance(newnode, obj);
+                            shrine.CreateInstance(parent, obj);
                             return false;
                         }
                         if (obj.classindex == 8)
                         {
-                            table.CreateInstance(newnode, obj);
+                            table.CreateInstance(parent, obj);
                             return false;
-                        }
+                        }                        
                         break;
                     }
                 case 2: //3D models
                     {
                         if (obj.classindex == 0)
                         {//pillar 352
-                            pillar.CreateInstance(newnode, obj, newnode.Position);
+                            pillar.CreateInstance(parent, obj, parent.Position);
                             return false; /// unimplemented = false;
                         }
                         if ((_RES == GAME_UW2) && (obj.classindex == 3))
                         {  //or item id 163
-                            painting.CreateInstance(newnode, obj);
+                            painting.CreateInstance(parent, obj);
                             return false; //unimplemented = false;
                         }
                         if ((_RES == GAME_UW2) && (obj.classindex == 7))
                         {  //or item id 359
-                            bed.CreateInstance(newnode, obj);
+                            bed.CreateInstance(parent, obj);
                             return false; //unimplemented = false;
                         }
                         if ((obj.classindex == 0xE) || (obj.classindex == 0xF))
                         {//tmaps
-                            tmap.CreateInstance(newnode, obj, a_tilemap);
+                            tmap.CreateInstance(parent, obj, a_tilemap);
                             return false;
                         }
                         break;
@@ -164,12 +169,12 @@ namespace Underworld
             return true;
         }
 
-        public static void CreateSpriteInstance(GRLoader grObjects, uwObject obj, Node3D newnode)
+        public static void CreateSpriteInstance(GRLoader grObjects, uwObject obj, Node3D parent)
         {
-            CreateSprite(grObjects, obj.item_id, newnode);
+            CreateSprite(grObjects, obj.item_id, parent);
         }
 
-        public static void CreateSprite(GRLoader grObjects, int spriteNo, Node3D newnode)
+        public static void CreateSprite(GRLoader grObjects, int spriteNo, Node3D parent)
         {
             var a_sprite = new MeshInstance3D(); //new Sprite3D();
             a_sprite.Mesh = new QuadMesh();
@@ -183,7 +188,7 @@ namespace Underworld
                         ArtLoader.SpriteScale * img.GetHeight()
                         );
                 a_sprite.Mesh.Set("size", NewSize);
-                newnode.AddChild(a_sprite);
+                parent.AddChild(a_sprite);
                 a_sprite.Position = new Vector3(0, NewSize.Y / 2, 0);
             }
         }

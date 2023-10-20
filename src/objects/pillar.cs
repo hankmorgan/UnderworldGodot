@@ -5,8 +5,7 @@ namespace Underworld
 {
     public class pillar : model3D
     {
-        Vector3 position;
-        
+        Vector3 position;        
 
         public static pillar CreateInstance(Node3D parent, uwObject obj, Vector3 position)
         {
@@ -15,7 +14,6 @@ namespace Underworld
             modelNode.Rotate(Vector3.Up, obj.heading_r);
             return n;
         }
-
 
         public pillar(uwObject _uwobject, Vector3 _position)
         {
