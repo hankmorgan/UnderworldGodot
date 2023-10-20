@@ -963,7 +963,7 @@ namespace Underworld
             float offX = GetXYCoordinate(tileX, xpos);
             float offY = GetXYCoordinate(tileY, ypos);
             float offZ = GetZCoordinate(zpos);            
-            return new Godot.Vector3(-offX , offZ, offY);
+            return new Godot.Vector3(-offX , offZ, offY);  //x is neg. probably technical debt from a bug in the unity version
         }
 
         /// <summary>

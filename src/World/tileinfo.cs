@@ -281,10 +281,10 @@ namespace Underworld
         }
 
         //Shock Specific Stuff
-        public short shockSlopeFlag = TileMap.SLOPE_FLOOR_ONLY;    //For controlling ceiling slopes for shock.
+        //public short shockSlopeFlag = TileMap.SLOPE_FLOOR_ONLY;    //For controlling ceiling slopes for shock.
         public short shockCeilingTexture;
 
-        public short _shockTileSlopeSteepness;
+        //public short _shockTileSlopeSteepness;
         public short TileSlopeSteepness
         {
             get
@@ -335,16 +335,6 @@ namespace Underworld
         public bool TerrainChange;  //
 
        // public int[] SHOCKSTATE = new int[4];   //These should be ff,00,00,00 on an initial map. I'm just bringing them back for research purposes.
-
-        /// <summary>
-        /// Indicates the tile needs to be redrawn.
-        /// </summary>
-        public bool NeedsReRender = false;
-
-        /// <summary>
-        /// Does the tile contain a pressure trigger. Used to test pickups of objects from the tile.
-        /// </summary>
-        public short PressureTriggerIndex = 0;
 
         //The terrain on the tile. Result will change when the floor texture is updated.
         // private int _terrain;

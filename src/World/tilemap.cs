@@ -109,9 +109,9 @@ namespace Underworld
         public Overlay[] Overlays = new Overlay[64];
 
         public int thisLevelNo; //The number of this level
-        public short UW_CEILING_HEIGHT;
-        public short CEILING_HEIGHT;
-        public short SHOCK_CEILING_HEIGHT;
+        public const int UW_CEILING_HEIGHT = 32;
+        //public short CEILING_HEIGHT;
+       // public short SHOCK_CEILING_HEIGHT;
 
         /// <summary>
         /// The texture indices for the current map.
@@ -370,9 +370,9 @@ namespace Underworld
             long address_pointer = 0;
             short CeilingTexture = 0;
 
-            UW_CEILING_HEIGHT = ((128 >> 2) * 8 >> 3);  //Shifts the scale of the level. Idea borrowed from abysmal
+           // UW_CEILING_HEIGHT = 32; // ((128 >> 2) * 8 >> 3);  //Shifts the scale of the level. Idea borrowed from abysmal
 
-            CEILING_HEIGHT = UW_CEILING_HEIGHT;
+            //CEILING_HEIGHT = UW_CEILING_HEIGHT;
             BuildTextureMap(tex_ark, ref CeilingTexture, levelNo);
             this.UWCeilingTexture = CeilingTexture;
             for (short y = 0; y <= TileMapSizeY; y++)
@@ -389,7 +389,7 @@ namespace Underworld
             BuildObjectListUW();
 
             //Set x and y for on map objects.
-            for (int y = 63; y >= 0; y--)
+            for (int y = 0; y  <= 63; y++)
             {
                 for (int x = 0; x <= 63; x++)
                 {
@@ -399,7 +399,7 @@ namespace Underworld
                         while (index != 0)
                         {
                             var obj = LevelObjects[index];
-                            obj.tileX = x; obj.tileY =  y;
+                            obj.tileX = x; obj.tileY = y;
                             index = LevelObjects[index].next;
                         }
                     }
@@ -589,8 +589,7 @@ namespace Underworld
         /// <param name="game">Game.</param>
         /// Although the tile map renderer supports tiles of size X*Y I'm only smart enought to optimise the tilemap into strips of X*1 or Y*1 !!
         public void CleanUp()
-        {
-            //if (!GameWorldController.instance.DoCleanUp) { return; }
+        {          
             int x; int y;
 
             for (x = 0; x <= TileMapSizeX; x++)

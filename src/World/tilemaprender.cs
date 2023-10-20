@@ -96,12 +96,7 @@ namespace Underworld
 
         public static void GenerateLevelFromTileMap(Node3D parent, Node3D sceneryParent, string game, TileMap Level, List<uwObject> objList, bool UpdateOnly)
         {
-            bool skipCeil = true;
-            CEILING_HEIGHT = Level.CEILING_HEIGHT;
-            // if (game == GAME_SHOCK)
-            // {
-            //     skipCeil = false;
-            // }
+            CEILING_HEIGHT = TileMap.UW_CEILING_HEIGHT;
 
             if (!UpdateOnly)
             {
@@ -109,68 +104,18 @@ namespace Underworld
                 foreach (var child in parent.GetChildren())
                 {
                     child.QueueFree();
-                    //Object.Destroy(child.gameObject);
                 }
-                // foreach (var child in sceneryParent.GetChildren())
-                // {
-                //     child.QueueFree();
-                //     Object.Destroy(child.gameObject);
-                // }
             }
 
             for (int y = 0; y <= TileMap.TileMapSizeY; y++)
             {
                 for (int x = 0; x <= TileMap.TileMapSizeX; x++)
                 {
-                    if (
-                            (
-                            (UpdateOnly) && (Level.Tiles[x, y].NeedsReRender)
-                            )
-                            ||
-                            (
-                                    !UpdateOnly
-                            )
-                    )
-                    {
-                        RenderTile(parent, x, y, Level.Tiles[x, y], false, false, false, skipCeil);
-
-                        //if (game != GAME_SHOCK)
-                        // {//Water
-                        RenderTile(parent, x, y, Level.Tiles[x, y], true, false, false, skipCeil);
-                        Level.Tiles[x, y].NeedsReRender = false;
-                        // }
-                    }
-                    Level.Tiles[x, y].NeedsReRender = false;
+                    RenderTile(parent, x, y, Level.Tiles[x, y]);
                 }
             }
 
-            //Do a ceiling
-
-            // if (game != GAME_SHOCK)
-            //{
-            if (!UpdateOnly)
-            {
-                var output = RenderCeiling(parent, 0, 0, CEILING_HEIGHT, CEILING_HEIGHT + CEIL_ADJ, Level.UWCeilingTexture, "CEILING", Level);
-            }
-            //}
-            if (!UpdateOnly)
-            {
-                //Render bridges, pillars and door ways
-                // switch (_RES)
-                // {
-                //     case GAME_SHOCK:
-                //         break;
-                //     default:
-                //          RenderPillars(sceneryParent, Level, objList);
-                //         RenderDoorways(sceneryParent, Level, objList);
-                //         break;
-                // }
-
-            }
-            // if ((UWEBase.EditorMode) && (UpdateOnly))
-            // {
-            //     UWHUD.instance.editor.RefreshTileMap();
-            // }
+            RenderCeiling(parent, 0, 0, CEILING_HEIGHT, CEILING_HEIGHT + CEIL_ADJ, Level.UWCeilingTexture, "CEILING", Level);
         }
 
 
@@ -186,437 +131,77 @@ namespace Underworld
         /// <param name="invert">If set to <c>true</c> invert.</param>
         /// <param name="skipFloor">If set to <c>true</c> skip floor.</param>
         /// <param name="skipCeil">If set to <c>true</c> skip ceil.</param>
-        public static Node3D RenderTile(Node3D parent, int x, int y, TileInfo t, bool Water, bool invert, bool skipFloor, bool skipCeil)
+        public static Node3D RenderTile(Node3D parent, int x, int y, TileInfo t)
         {           
             //Picks the tile to render based on tile type/flags.
             switch (t.tileType)
             {
                 case TILE_SOLID:    //0
                     {   //solid                       
-                        return RenderSolidTile(parent, x, y, t, Water);
+                        return RenderSolidTile(parent, x, y, t);
                     }
                 case TILE_OPEN:     //1
                     {//open
-                        if (skipFloor != true) { return RenderOpenTile(parent, x, y, t, Water, false); }    //floor
-                        if ((skipCeil != true)) { return RenderOpenTile(parent, x, y, t, Water, true); }    //ceiling	
+                        return RenderOpenTile(parent, x, y, t);    //floor
                         break;
                     }
                 case TILE_DIAG_SE:
                     {//diag se
-                        if (skipFloor != true) { RenderDiagSETile(parent, x, y, t, Water, false); }//floor
-                        if ((skipCeil != true)) { RenderDiagSETile(parent, x, y, t, Water, true); }
+                       RenderDiagSETile(parent, x, y, t); //floor                      
                         return null;
                     }
 
                 case TILE_DIAG_SW:
                     {   //diag sw
-                        if (skipFloor != true) { RenderDiagSWTile(parent, x, y, t, Water, false); }//floor
-                        if ((skipCeil != true)) { RenderDiagSWTile(parent, x, y, t, Water, true); }
+                        RenderDiagSWTile(parent, x, y, t); //floor
                         return null;
                     }
 
                 case TILE_DIAG_NE:
                     {   //diag ne
-                        if (skipFloor != true) { RenderDiagNETile(parent, x, y, t, Water, invert); }//floor
-                        if ((skipCeil != true)) { RenderDiagNETile(parent, x, y, t, Water, true); }
+                        RenderDiagNETile(parent, x, y, t); //floor
                         return null;
                     }
 
                 case TILE_DIAG_NW:
                     {//diag nw
-                        if (skipFloor != true) { RenderDiagNWTile(parent, x, y, t, Water, invert); }//floor
-                        if ((skipCeil != true)) { RenderDiagNWTile(parent, x, y, t, Water, true); }
+                        RenderDiagNWTile(parent, x, y, t); //floor
                         return null;
                     }
 
                 case TILE_SLOPE_N:  //6
                     {//slope n
-                        switch (t.shockSlopeFlag)
-                        {
-                            case SLOPE_BOTH_PARALLEL:
-                                {
-                                    if (skipFloor != true) { RenderSlopeNTile(parent, x, y, t, Water, false); }//floor
-                                    if ((skipCeil != true)) { RenderSlopeNTile(parent, x, y, t, Water, true); }
-                                    break;
-                                }
-                            case SLOPE_BOTH_OPPOSITE:
-                                {
-                                    if (skipFloor != true) { RenderSlopeNTile(parent, x, y, t, Water, false); }//floor
-                                    if ((skipCeil != true)) { RenderSlopeSTile(parent, x, y, t, Water, true); }
-                                    break;
-                                }
-                            case SLOPE_FLOOR_ONLY:
-                                {
-                                    if (skipFloor != true) { RenderSlopeNTile(parent, x, y, t, Water, false); }//floor
-                                    if ((skipCeil != true)) { RenderOpenTile(parent, x, y, t, Water, true); }   //ceiling
-                                    break;
-                                }
-                            case SLOPE_CEILING_ONLY:
-                                {
-                                    if (skipFloor != true) { RenderOpenTile(parent, x, y, t, Water, false); }   //floor
-                                    RenderSlopeNTile(parent, x, y, t, Water, true);
-                                    break;
-                                }
-                        }
+                        RenderSlopeNTile(parent, x, y, t); //floor
                         return null;
                     }
                 case TILE_SLOPE_S: //slope s	7
                     {
-                        switch (t.shockSlopeFlag)
-                        {
-                            case SLOPE_BOTH_PARALLEL:
-                                {
-                                    if (skipFloor != true) { RenderSlopeSTile(parent, x, y, t, Water, false); } //floor
-                                    RenderSlopeSTile(parent, x, y, t, Water, true);
-                                    break;
-                                }
-                            case SLOPE_BOTH_OPPOSITE:
-                                {
-                                    if (skipFloor != true) { RenderSlopeSTile(parent, x, y, t, Water, false); } //floor
-                                    RenderSlopeNTile(parent, x, y, t, Water, true);
-                                    break;
-                                }
-                            case SLOPE_FLOOR_ONLY:
-                                {
-                                    if (skipFloor != true) { RenderSlopeSTile(parent, x, y, t, Water, false); } //floor
-                                    if ((skipCeil != true)) { RenderOpenTile(parent, x, y, t, Water, true); }   //ceiling
-                                    break;
-                                }
-                            case SLOPE_CEILING_ONLY:
-                                {
-                                    if (skipFloor != true) { RenderOpenTile(parent, x, y, t, Water, false); }   //floor
-                                    if ((skipCeil != true)) { RenderSlopeSTile(parent, x, y, t, Water, true); }
-                                    break;
-                                }
-                        }
+                        RenderSlopeSTile(parent, x, y, t);  //floor
                         return null;
                     }
                 case TILE_SLOPE_E:      //slope e 8	
                     {
-                        switch (t.shockSlopeFlag)
-                        {
-                            case SLOPE_BOTH_PARALLEL:
-                                {
-                                    if (skipFloor != true) { RenderSlopeETile(parent, x, y, t, Water, false); }//floor
-                                    RenderSlopeETile(parent, x, y, t, Water, true);
-                                    break;
-                                }
-                            case SLOPE_BOTH_OPPOSITE:
-                                {
-                                    if (skipFloor != true) { RenderSlopeETile(parent, x, y, t, Water, false); }//floor
-                                    RenderSlopeWTile(parent, x, y, t, Water, true);
-                                    break;
-                                }
-                            case SLOPE_FLOOR_ONLY:
-                                {
-                                    if (skipFloor != true) { RenderSlopeETile(parent, x, y, t, Water, false); }//floor
-                                    if ((skipCeil != true)) { RenderOpenTile(parent, x, y, t, Water, true); }   //ceiling
-                                    break;
-                                }
-                            case SLOPE_CEILING_ONLY:
-                                {
-                                    if (skipFloor != true) { RenderOpenTile(parent, x, y, t, Water, false); }   //floor
-                                    if ((skipCeil != true)) { RenderSlopeETile(parent, x, y, t, Water, true); }
-                                    break;
-                                }
-                        }
+                        RenderSlopeETile(parent, x, y, t);//floor
                         return null;
                     }
                 case TILE_SLOPE_W:  //9
-                    { //slope w
-                        switch (t.shockSlopeFlag)
-                        {
-                            case SLOPE_BOTH_PARALLEL:
-                                {
-                                    if (skipFloor != true) { RenderSlopeWTile(parent, x, y, t, Water, false); }//floor
-                                    if ((skipCeil != true)) { RenderSlopeWTile(parent, x, y, t, Water, true); }
-                                    break;
-                                }
-                            case SLOPE_BOTH_OPPOSITE:
-                                {
-                                    if (skipFloor != true) { RenderSlopeWTile(parent, x, y, t, Water, false); }//floor
-                                    if ((skipCeil != true)) { RenderSlopeETile(parent, x, y, t, Water, true); }
-                                    break;
-                                }
-                            case SLOPE_FLOOR_ONLY:
-                                {
-                                    if (skipFloor != true) { RenderSlopeWTile(parent, x, y, t, Water, false); }//floor
-                                    if ((skipCeil != true)) { RenderOpenTile(parent, x, y, t, Water, true); }   //ceiling
-                                    break;
-                                }
-                            case SLOPE_CEILING_ONLY:
-                                {
-                                    if (skipFloor != true) { RenderOpenTile(parent, x, y, t, Water, false); }   //floor
-                                    if ((skipCeil != true)) { RenderSlopeWTile(parent, x, y, t, Water, true); }
-                                    break;
-                                }
-                        }
+                    { //slope w                        
+                        RenderSlopeWTile(parent, x, y, t); //floor                                  
                         return null;
-                    }
-                    // case TILE_VALLEY_NW:
-                    //     {   //valleyNw(a)
-                    //         switch (t.shockSlopeFlag)
-                    //         {
-                    //             case SLOPE_BOTH_PARALLEL:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderValleyNWTile(parent, x, y, t, Water, false); }//floor
-                    //                     if ((skipCeil != true)) { RenderRidgeNWTile(parent, x, y, t, Water, true); }
-                    //                     break;
-                    //                 }
-                    //             case SLOPE_BOTH_OPPOSITE:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderValleyNWTile(parent, x, y, t, Water, false); }//floor
-                    //                     if ((skipCeil != true)) { RenderValleySETile(parent, x, y, t, Water, true); }
-                    //                     break;
-                    //                 }
-                    //             case SLOPE_FLOOR_ONLY:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderValleyNWTile(parent, x, y, t, Water, false); }//floor
-                    //                     if ((skipCeil != true)) { RenderOpenTile(parent, x, y, t, Water, true); }   //ceiling
-                    //                     break;
-                    //                 }
-                    //             case SLOPE_CEILING_ONLY:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderOpenTile(parent, x, y, t, Water, false); }   //floor
-                    //                     if ((skipCeil != true)) { RenderRidgeNWTile(parent, x, y, t, Water, true); }
-                    //                     break;
-                    //                 }
-                    //         }
-                    //         return null;
-                    //     }
-                    // case TILE_VALLEY_NE:
-                    //     {   //valleyne(b)
-                    //         switch (t.shockSlopeFlag)
-                    //         {
-                    //             case SLOPE_BOTH_PARALLEL:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderValleyNETile(parent, x, y, t, Water, false); }//floor
-                    //                     if ((skipCeil != true)) { RenderRidgeNETile(parent, x, y, t, Water, true); }
-                    //                     break;
-                    //                 }
-                    //             case SLOPE_BOTH_OPPOSITE:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderValleyNETile(parent, x, y, t, Water, false); }//floor
-                    //                     if ((skipCeil != true)) { RenderValleySWTile(parent, x, y, t, Water, true); }
-                    //                     break;
-                    //                 }
-                    //             case SLOPE_FLOOR_ONLY:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderValleyNETile(parent, x, y, t, Water, false); }//floor
-                    //                     if ((skipCeil != true)) { RenderOpenTile(parent, x, y, t, Water, true); }   //ceiling
-                    //                     break;
-                    //                 }
-                    //             case SLOPE_CEILING_ONLY:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderOpenTile(parent, x, y, t, Water, false); }//floor
-                    //                     if ((skipCeil != true)) { RenderRidgeNETile(parent, x, y, t, Water, true); }
-                    //                     break;
-                    //                 }
-                    //         }
-                    //         return null;
-                    //     }
-                    // case TILE_VALLEY_SE:
-                    //     {   //valleyse(c)
-                    //         switch (t.shockSlopeFlag)
-                    //         {
-                    //             case SLOPE_BOTH_PARALLEL:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderValleySETile(parent, x, y, t, Water, false); }//floor
-                    //                     if ((skipCeil != true)) { RenderRidgeSETile(parent, x, y, t, Water, true); }
-                    //                     break;
-                    //                 }
-                    //             case SLOPE_BOTH_OPPOSITE:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderValleySETile(parent, x, y, t, Water, false); }//floor
-                    //                     if ((skipCeil != true)) { RenderValleyNWTile(parent, x, y, t, Water, true); }
-                    //                     break;
-                    //                 }
-                    //             case SLOPE_FLOOR_ONLY:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderValleySETile(parent, x, y, t, Water, false); }//floor
-                    //                     if ((skipCeil != true)) { RenderOpenTile(parent, x, y, t, Water, true); }   //ceiling
-                    //                     break;
-                    //                 }
-                    //             case SLOPE_CEILING_ONLY:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderOpenTile(parent, x, y, t, Water, false); }   //floor
-                    //                     if ((skipCeil != true)) { RenderRidgeSETile(parent, x, y, t, Water, true); }
-                    //                     break;
-                    //                 }
-                    //         }
-                    //         return null;
-                    //     }
-                    // case TILE_VALLEY_SW:
-                    //     {   //valleysw(d)
-                    //         switch (t.shockSlopeFlag)
-                    //         {
-                    //             case SLOPE_BOTH_PARALLEL:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderValleySWTile(parent, x, y, t, Water, false); }//floor
-                    //                     if ((skipCeil != true)) { RenderRidgeSWTile(parent, x, y, t, Water, true); }
-                    //                     break;
-                    //                 }
-                    //             case SLOPE_BOTH_OPPOSITE:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderValleySWTile(parent, x, y, t, Water, false); }//floor
-                    //                     if ((skipCeil != true)) { RenderValleyNETile(parent, x, y, t, Water, true); }
-                    //                     break;
-                    //                 }
-                    //             case SLOPE_FLOOR_ONLY:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderValleySWTile(parent, x, y, t, Water, false); }//floor
-                    //                     if ((skipCeil != true)) { RenderOpenTile(parent, x, y, t, Water, true); }   //ceiling
-                    //                     break;
-                    //                 }
-                    //             case SLOPE_CEILING_ONLY:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderOpenTile(parent, x, y, t, Water, false); }   //floor
-                    //                     if ((skipCeil != true)) { RenderRidgeSWTile(parent, x, y, t, Water, true); }
-                    //                     break;
-                    //                 }
-                    //         }
-                    //         return null;
-                    //     }
-                    // case TILE_RIDGE_SE:
-                    //     {   //ridge se(f)
-                    //         switch (t.shockSlopeFlag)
-                    //         {
-                    //             case SLOPE_BOTH_PARALLEL:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderRidgeSETile(parent, x, y, t, Water, false); }//floor
-                    //                     if ((skipCeil != true)) { RenderValleySETile(parent, x, y, t, Water, true); }
-                    //                     break;
-                    //                 }
-                    //             case SLOPE_BOTH_OPPOSITE:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderRidgeSETile(parent, x, y, t, Water, false); }//floor
-                    //                     if ((skipCeil != true)) { RenderRidgeNWTile(parent, x, y, t, Water, true); }
-                    //                     break;
-                    //                 }
-                    //             case SLOPE_FLOOR_ONLY:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderRidgeSETile(parent, x, y, t, Water, false); }//floor
-                    //                     if ((skipCeil != true)) { RenderOpenTile(parent, x, y, t, Water, true); }   //ceiling
-                    //                     break;
-                    //                 }
-                    //             case SLOPE_CEILING_ONLY:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderOpenTile(parent, x, y, t, Water, false); }//floor
-                    //                     if ((skipCeil != true)) { RenderValleySETile(parent, x, y, t, Water, true); }
-                    //                     break;
-                    //                 }
-                    //         }
-                    //         return null;
-                    //     }
-                    // case TILE_RIDGE_SW:
-                    //     {   //ridgesw(g)
-                    //         switch (t.shockSlopeFlag)
-                    //         {
-                    //             case SLOPE_BOTH_PARALLEL:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderRidgeSWTile(parent, x, y, t, Water, false); }//floor
-                    //                     if ((skipCeil != true)) { RenderValleySWTile(parent, x, y, t, Water, true); }
-                    //                     break;
-                    //                 }
-                    //             case SLOPE_BOTH_OPPOSITE:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderRidgeSWTile(parent, x, y, t, Water, false); }//floor
-                    //                     if ((skipCeil != true)) { RenderRidgeNETile(parent, x, y, t, Water, true); }
-                    //                     break;
-                    //                 }
-                    //             case SLOPE_FLOOR_ONLY:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderRidgeSWTile(parent, x, y, t, Water, false); }//floor
-                    //                     if ((skipCeil != true)) { RenderOpenTile(parent, x, y, t, Water, true); }   //ceiling
-                    //                     break;
-                    //                 }
-                    //             case SLOPE_CEILING_ONLY:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderOpenTile(parent, x, y, t, Water, false); }   //floor
-                    //                     if ((skipCeil != true)) { RenderValleySWTile(parent, x, y, t, Water, true); }
-                    //                     break;
-                    //                 }
-                    //         }
-                    //         return null;
-                    //     }
-                    // case TILE_RIDGE_NW:
-                    //     {   //ridgenw(h)
-                    //         switch (t.shockSlopeFlag)
-                    //         {
-                    //             case SLOPE_BOTH_PARALLEL:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderRidgeNWTile(parent, x, y, t, Water, false); }//floor
-                    //                     if ((skipCeil != true)) { RenderValleyNWTile(parent, x, y, t, Water, true); }
-                    //                     break;
-                    //                 }
-                    //             case SLOPE_BOTH_OPPOSITE:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderRidgeNWTile(parent, x, y, t, Water, false); }//floor
-                    //                     if ((skipCeil != true)) { RenderRidgeSETile(parent, x, y, t, Water, true); }
-                    //                     break;
-                    //                 }
-                    //             case SLOPE_FLOOR_ONLY:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderRidgeNWTile(parent, x, y, t, Water, false); }//floor
-                    //                     if ((skipCeil != true)) { RenderOpenTile(parent, x, y, t, Water, true); }   //ceiling
-                    //                     break;
-                    //                 }
-                    //             case SLOPE_CEILING_ONLY:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderOpenTile(parent, x, y, t, Water, false); }   //floor
-                    //                     if ((skipCeil != true)) { RenderValleyNWTile(parent, x, y, t, Water, true); }
-                    //                     break;
-                    //                 }
-                    //         }
-                    //         return null;
-                    //     }
-                    // case TILE_RIDGE_NE:
-                    //     {   //ridgene(i)
-                    //         switch (t.shockSlopeFlag)
-                    //         {
-                    //             case SLOPE_BOTH_PARALLEL:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderRidgeNETile(parent, x, y, t, Water, false); }//floor
-                    //                     if ((skipCeil != true)) { RenderValleyNETile(parent, x, y, t, Water, true); }
-                    //                     break;
-                    //                 }
-                    //             case SLOPE_BOTH_OPPOSITE:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderRidgeNETile(parent, x, y, t, Water, false); }//floor
-                    //                     if ((skipCeil != true)) { RenderRidgeSWTile(parent, x, y, t, Water, true); }
-                    //                     break;
-                    //                 }
-                    //             case SLOPE_FLOOR_ONLY:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderRidgeNETile(parent, x, y, t, Water, false); }//floor
-                    //                     if ((skipCeil != true)) { RenderOpenTile(parent, x, y, t, Water, true); }   //ceiling
-                    //                     break;
-                    //                 }
-                    //             case SLOPE_CEILING_ONLY:
-                    //                 {
-                    //                     if (skipFloor != true) { RenderOpenTile(parent, x, y, t, Water, false); }   //floor
-                    //                     if ((skipCeil != true)) { RenderValleyNETile(parent, x, y, t, Water, true); }
-                    //                     break;
-                    //                 }
-                    //         }
-                    //         return null;
-                    //     }
+                    }                    
             }
             return null;
         }
 
 
-        static Node3D RenderSolidTile(Node3D parent, int x, int y, TileInfo t, bool Water)
+        static Node3D RenderSolidTile(Node3D parent, int x, int y, TileInfo t)
         {
             if (t.Render == true)
             {
-                if (t.isWater == Water)
-                {
-                    string TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
-                    t.VisibleFaces[vTOP] = false;
-                    t.VisibleFaces[vBOTTOM] = false;
-                    return RenderCuboid(parent, x, y, t, Water, FLOOR_ADJ, CEILING_HEIGHT + CEIL_ADJ, TileName);
-                }
+                string TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
+                t.VisibleFaces[vTOP] = false;
+                t.VisibleFaces[vBOTTOM] = false;
+                return RenderCuboid(parent, x, y, t, FLOOR_ADJ, CEILING_HEIGHT + CEIL_ADJ, TileName);
             }
             return null;
         }
@@ -631,40 +216,21 @@ namespace Underworld
         /// <param name="t">T.</param>
         /// <param name="Water">If set to <c>true</c> water.</param>
         /// <param name="invert">If set to <c>true</c> invert.</param>
-        static Node3D RenderOpenTile(Node3D parent, int x, int y, TileInfo t, bool Water, bool invert)
+        static Node3D RenderOpenTile(Node3D parent, int x, int y, TileInfo t)
         {
             if (t.Render == true)
             {
-                if (t.isWater == Water)
+                string TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
+
+                //Bottom face 
+                if (t.TerrainChange)
+                {                    
+                    return RenderCuboid(parent, x, y, t, -16, t.floorHeight, TileName);
+                }
+                else
                 {
-                    string TileName;
-                    if (invert == false)
-                    {
-                        //Bottom face 
-                        if (t.TerrainChange)
-                        {
-                            TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
-                            return RenderCuboid(parent, x, y, t, Water, -16, t.floorHeight, TileName);
-                        }
-                        else
-                        {
-                            TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
-                            return RenderCuboid(parent, x, y, t, Water, 0, t.floorHeight, TileName);
-                        }
-                    }
-                    else
-                    {
-                        //Ceiling version of the tile
-                        bool visB = t.VisibleFaces[vBOTTOM];
-                        bool visT = t.VisibleFaces[vTOP];
-                        t.VisibleFaces[vBOTTOM] = true;
-                        t.VisibleFaces[vTOP] = false;
-                        TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
-                        var output = RenderCuboid(parent, x, y, t, Water, CEILING_HEIGHT - t.ceilingHeight, CEILING_HEIGHT + CEIL_ADJ, TileName);
-                        t.VisibleFaces[vBOTTOM] = visB;
-                        t.VisibleFaces[vTOP] = visT;
-                        return output;
-                    }
+                    TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
+                    return RenderCuboid(parent, x, y, t, 0, t.floorHeight, TileName);
                 }
             }
             return null;
@@ -677,7 +243,6 @@ namespace Underworld
         /// <param name="x">The x coordinate.</param>
         /// <param name="y">The y coordinate.</param>
         /// <param name="t">T.</param>
-        /// <param name="Water">If set to <c>true</c> water.</param>
         /// <param name="Bottom">Bottom.</param>
         /// <param name="Top">Top.</param>
         /// <param name="TileName">Tile name.</param>
@@ -695,22 +260,6 @@ namespace Underworld
             float baseHeight = (float)(Bottom * 0.15f);
 
             //Now create the mesh
-            // Node3DTile = new GameObject(TileName)
-            // {
-            //     layer = LayerMask.NameToLayer("MapMesh")
-            // };
-            // Tile.transform.parent = parent.transform;
-            // Tile.transform.position = new Vector3(x * 1.2f, 0.0f, y * 1.2f);
-
-            // Tile.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
-            // MeshFilter mf = Tile.AddComponent<MeshFilter>();
-            // MeshRenderer mr = Tile.AddComponent<MeshRenderer>();
-
-            // Mesh mesh = new Mesh
-            // {
-            //     subMeshCount = NumberOfVisibleFaces//Should be no of visible faces
-            // };
-
             var a_mesh = new ArrayMesh();
 
             int[] MatsToUse = new int[NumberOfVisibleFaces];
@@ -783,42 +332,25 @@ namespace Underworld
         }
 
 
-        static void RenderDiagSETile(Node3D parent, int x, int y, TileInfo t, bool Water, bool invert)
+        static void RenderDiagSETile(Node3D parent, int x, int y, TileInfo t)
         {
             //int BLeftX; int BLeftY; int BLeftZ; int TLeftX; int TLeftY; int TLeftZ; int TRightX; int TRightY; int TRightZ;
 
             if (t.Render == true)
             {
-                if (invert == false)
-                {
-
-                    if (Water != true)
-                    {
-                        //the wall part
-                        string TileName = "Wall_" + x.ToString("D2") + "_" + y.ToString("D2");
-                        RenderDiagSEPortion(parent, FLOOR_ADJ, CEILING_HEIGHT + CEIL_ADJ, t, TileName);
-                    }
-                    if (t.isWater == Water)
-                    {
-                        //it's floor
-                        //RenderDiagNWPortion( FLOOR_ADJ, t.floorHeight, t,"DiagNW1");
-                        bool PreviousNorth = t.VisibleFaces[vNORTH];
-                        bool PreviousWest = t.VisibleFaces[vWEST];
-                        t.VisibleFaces[vNORTH] = false;
-                        t.VisibleFaces[vWEST] = false;
-                        RenderDiagOpenTile(parent, x, y, t, Water, false);
-                        t.VisibleFaces[vNORTH] = PreviousNorth;
-                        t.VisibleFaces[vWEST] = PreviousWest;
-                    }
-                }
-                else
-                {//it's ceiling
-                 //RenderDiagNWPortion( CEILING_HEIGHT - t.ceilingHeight, CEILING_HEIGHT + CEIL_ADJ, t, "DiagNW2a");
-                    bool vis = t.VisibleFaces[vBOTTOM];
-                    t.VisibleFaces[vBOTTOM] = true;
-                    RenderOpenTile(parent, x, y, t, Water, true);
-                    t.VisibleFaces[vBOTTOM] = vis;
-                }
+                //the wall part
+                string TileName = "Wall_" + x.ToString("D2") + "_" + y.ToString("D2");
+                RenderDiagSEPortion(parent, FLOOR_ADJ, CEILING_HEIGHT + CEIL_ADJ, t, TileName);
+            
+                //it's floor
+                //RenderDiagNWPortion( FLOOR_ADJ, t.floorHeight, t,"DiagNW1");
+                bool PreviousNorth = t.VisibleFaces[vNORTH];
+                bool PreviousWest = t.VisibleFaces[vWEST];
+                t.VisibleFaces[vNORTH] = false;
+                t.VisibleFaces[vWEST] = false;
+                RenderDiagOpenTile(parent, x, y, t);
+                t.VisibleFaces[vNORTH] = PreviousNorth;
+                t.VisibleFaces[vWEST] = PreviousWest;                    
             }
             return;
         }
@@ -832,45 +364,24 @@ namespace Underworld
         /// <param name="t">T.</param>
         /// <param name="Water">If set to <c>true</c> water.</param>
         /// <param name="invert">If set to <c>true</c> invert.</param>
-        static void RenderDiagSWTile(Node3D parent, int x, int y, TileInfo t, bool Water, bool invert)
+        static void RenderDiagSWTile(Node3D parent, int x, int y, TileInfo t)
         {
             if (t.Render == true)
             {
-                if (invert == false)
-                {
-                    if (Water != true)
-                    {
-                        //Its wall
-                        string TileName = "Wall_" + x.ToString("D2") + "_" + y.ToString("D2");
-                        RenderDiagSWPortion(parent, FLOOR_ADJ, CEILING_HEIGHT + CEIL_ADJ, t, TileName);
-                    }
-                    if (t.isWater == Water)
-                    {
-                        //it's floor
-                        //RenderDiagNEPortion( FLOOR_ADJ, t.floorHeight, t,"TileNe1");
-                        bool PreviousNorth = t.VisibleFaces[vNORTH];
-                        bool PreviousEast = t.VisibleFaces[vEAST];
-                        t.VisibleFaces[vNORTH] = false;
-                        t.VisibleFaces[vEAST] = false;
-                        //RenderOpenTile( parent , x, y, t, Water, false);
-                        RenderDiagOpenTile(parent, x, y, t, Water, false);
-                        t.VisibleFaces[vNORTH] = PreviousNorth;
-                        t.VisibleFaces[vEAST] = PreviousEast;
-                    }
-                }
-                else
-                {
-                    //its' ceiling.
-                    //RenderDiagNEPortion( CEILING_HEIGHT - t.ceilingHeight, CEILING_HEIGHT + CEIL_ADJ, t, "TileNe2");
-                    bool vis = t.VisibleFaces[vBOTTOM];
-                    t.VisibleFaces[vBOTTOM] = true;
-                    RenderOpenTile(parent, x, y, t, Water, true);
-                    t.VisibleFaces[vBOTTOM] = vis;
-                }
+                //Its wall
+                string TileName = "Wall_" + x.ToString("D2") + "_" + y.ToString("D2");
+                RenderDiagSWPortion(parent, FLOOR_ADJ, CEILING_HEIGHT + CEIL_ADJ, t, TileName);
+                //it's floor
+                bool PreviousNorth = t.VisibleFaces[vNORTH];
+                bool PreviousEast = t.VisibleFaces[vEAST];
+                t.VisibleFaces[vNORTH] = false;
+                t.VisibleFaces[vEAST] = false;
+                RenderDiagOpenTile(parent, x, y, t);
+                t.VisibleFaces[vNORTH] = PreviousNorth;
+                t.VisibleFaces[vEAST] = PreviousEast; 
             }
             return;
         }
-
 
 
         /// <summary>
@@ -882,39 +393,20 @@ namespace Underworld
         /// <param name="t">T.</param>
         /// <param name="Water">If set to <c>true</c> water.</param>
         /// <param name="invert">If set to <c>true</c> invert.</param>
-        static void RenderDiagNETile(Node3D parent, int x, int y, TileInfo t, bool Water, bool invert)
+        static void RenderDiagNETile(Node3D parent, int x, int y, TileInfo t)
         {
             if (t.Render == true)
             {
-                if (invert == false)
-                {
-                    if (Water != true)
-                    {
-                        string TileName = "Wall_" + x.ToString("D2") + "_" + y.ToString("D2");
-                        RenderDiagNEPortion(parent, FLOOR_ADJ, CEILING_HEIGHT + CEIL_ADJ, t, TileName);
-                    }
-                    if (t.isWater == Water)
-                    {
-                        //it's floor
-                        //RenderDiagSWPortion( FLOOR_ADJ, t.floorHeight, t, "DiagSW2");
-                        bool PreviousSouth = t.VisibleFaces[vSOUTH];
-                        bool PreviousWest = t.VisibleFaces[vWEST];
-                        t.VisibleFaces[vSOUTH] = false;
-                        t.VisibleFaces[vWEST] = false;
-                        //RenderOpenTile( parent , x, y, t, Water, false);
-                        RenderDiagOpenTile(parent, x, y, t, Water, false);
-                        t.VisibleFaces[vSOUTH] = PreviousSouth;
-                        t.VisibleFaces[vWEST] = PreviousWest;
-                    }
-                }
-                else
-                {//it's ceiling
-                 //RenderDiagSWPortion( CEILING_HEIGHT - t.ceilingHeight, CEILING_HEIGHT + CEIL_ADJ, t, "DiagSE3");
-                    bool vis = t.VisibleFaces[vBOTTOM];
-                    t.VisibleFaces[vBOTTOM] = true;
-                    RenderOpenTile(parent, x, y, t, Water, true);
-                    t.VisibleFaces[vBOTTOM] = vis;
-                }
+                string TileName = "Wall_" + x.ToString("D2") + "_" + y.ToString("D2");
+                RenderDiagNEPortion(parent, FLOOR_ADJ, CEILING_HEIGHT + CEIL_ADJ, t, TileName);
+                //it's floor
+                bool PreviousSouth = t.VisibleFaces[vSOUTH];
+                bool PreviousWest = t.VisibleFaces[vWEST];
+                t.VisibleFaces[vSOUTH] = false;
+                t.VisibleFaces[vWEST] = false;
+                RenderDiagOpenTile(parent, x, y, t);
+                t.VisibleFaces[vSOUTH] = PreviousSouth;
+                t.VisibleFaces[vWEST] = PreviousWest;
             }
             return;
         }
@@ -929,45 +421,27 @@ namespace Underworld
         /// <param name="t">T.</param>
         /// <param name="Water">If set to <c>true</c> water.</param>
         /// <param name="invert">If set to <c>true</c> invert.</param>
-        static void RenderDiagNWTile(Node3D parent, int x, int y, TileInfo t, bool Water, bool invert)
+        static void RenderDiagNWTile(Node3D parent, int x, int y, TileInfo t)
         {
             if (t.Render == true)
             {
-                if (invert == false)
-                {
-                    if (Water != true)
-                    {
-                        //It's wall.
-                        string TileName = "Wall_" + x.ToString("D2") + "_" + y.ToString("D2");
-                        RenderDiagNWPortion(parent, FLOOR_ADJ, CEILING_HEIGHT + CEIL_ADJ, t, TileName);
-                    }
+                //It's wall.
+                string TileName = "Wall_" + x.ToString("D2") + "_" + y.ToString("D2");
+                RenderDiagNWPortion(parent, FLOOR_ADJ, CEILING_HEIGHT + CEIL_ADJ, t, TileName);
 
-                    if (t.isWater == Water)
-                    {//TODO:Update these floors to only show the top surface.
-                     //it's floor
-                     //RenderDiagSEPortion( FLOOR_ADJ, t.floorHeight, t, "DiagSE2");
-                        bool PreviousSouth = t.VisibleFaces[vSOUTH];
-                        bool PreviousEast = t.VisibleFaces[vEAST];
-                        t.VisibleFaces[vSOUTH] = false;
-                        t.VisibleFaces[vEAST] = false;
-                        RenderDiagOpenTile(parent, x, y, t, Water, false);
-                        t.VisibleFaces[vSOUTH] = PreviousSouth;
-                        t.VisibleFaces[vEAST] = PreviousEast;
-                    }
-                }
-                else
-                {//it's ceiling
-                 //RenderDiagSEPortion( CEILING_HEIGHT - t.ceilingHeight, CEILING_HEIGHT + CEIL_ADJ, t, "DiagSE3");
-                    bool vis = t.VisibleFaces[vBOTTOM];
-                    t.VisibleFaces[vBOTTOM] = true;
-                    RenderOpenTile(parent, x, y, t, Water, true);
-                    t.VisibleFaces[vBOTTOM] = vis;
-                }
+                //it's floor
+                bool PreviousSouth = t.VisibleFaces[vSOUTH];
+                bool PreviousEast = t.VisibleFaces[vEAST];
+                t.VisibleFaces[vSOUTH] = false;
+                t.VisibleFaces[vEAST] = false;
+                RenderDiagOpenTile(parent, x, y, t);
+                t.VisibleFaces[vSOUTH] = PreviousSouth;
+                t.VisibleFaces[vEAST] = PreviousEast;
             }
             return;
         }
 
-        public static Node3D RenderCuboid(Node3D parent, int x, int y, TileInfo t, bool Water, int Bottom, int Top, string TileName)
+        public static Node3D RenderCuboid(Node3D parent, int x, int y, TileInfo t, int Bottom, int Top, string TileName)
         {
             //Draw a cube with no slopes.
             int NumberOfVisibleFaces = 0;
@@ -979,23 +453,13 @@ namespace Underworld
                     NumberOfVisibleFaces++;
                 }
             }
-            //Allocate enough verticea and UVs for the faces
+            //Allocate enough vertices and UVs for the faces
             Vector3[] verts = new Vector3[NumberOfVisibleFaces * 4];
             Vector2[] uvs = new Vector2[NumberOfVisibleFaces * 4];
             float floorHeight = (float)(Top * 0.15f);
             float baseHeight = (float)(Bottom * 0.15f);
             float dimX = t.DimX;
             float dimY = t.DimY;
-
-            // SetTileLayer(t, a_tile);
-            //a_tile.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
-            //MeshFilter mf = a_tile.AddComponent<MeshFilter>();
-            //MeshRenderer mr = a_tile.AddComponent<MeshRenderer>();
-
-            //Mesh mesh = new Mesh
-            //{
-            //    subMeshCount = NumberOfVisibleFaces//Should be no of visible faces
-            //};
 
             int[] MatsToUse = new int[NumberOfVisibleFaces];    //was material
             //Now allocate the visible faces to triangles.
@@ -1014,19 +478,6 @@ namespace Underworld
                             {
                                 //Set the verts	
                                 MatsToUse[FaceCounter] = FloorTexture(fSELF, t);
-                                // if (_RES == GAME_UW1)
-                                //     if (GameWorldController.instance.dungeon_level == 6)
-                                //     {
-                                //         if (t.floorTexture == 4)
-                                //         {//Special case for tybals floor
-                                //          //MatsToUse[FaceCounter]= (Material)Resources.Load(_RES+ "\\Materials\\Textures\\uw1_224_maze");
-                                //             MatsToUse[FaceCounter] = GameWorldController.instance.SpecialMaterials[0];
-                                //         }
-                                //     }
-                                // if ((t.tileType == TILE_SOLID) && (UWEBase.EditorMode))
-                                // {
-                                //     MatsToUse[FaceCounter] = GameWorldController.instance.Jorge;
-                                // }
 
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0.0f, floorHeight, 0.0f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0.0f, floorHeight, 1.2f * dimY);
@@ -1194,32 +645,14 @@ namespace Underworld
         /// <param name="t">T.</param>
         /// <param name="Water">If set to <c>true</c> water.</param>
         /// <param name="invert">If set to <c>true</c> invert.</param>
-        static void RenderSlopeNTile(Node3D parent, int x, int y, TileInfo t, bool Water, bool invert)
+        static void RenderSlopeNTile(Node3D parent, int x, int y, TileInfo t)
         {
             if (t.Render == true)
             {
                 string TileName;
-                if (invert == false)
-                {
-                    if (t.isWater == Water)
-                    {
-                        //A floor
-                        TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
-                        RenderSlopedCuboid(parent, x, y, t, Water, FLOOR_ADJ, t.floorHeight, TILE_SLOPE_N, t.TileSlopeSteepness, 1, TileName);
-                    }
-                }
-                else
-                {
-                    //It's invert
-                    TileName = "N_Ceiling_" + x.ToString("D2") + "_" + y.ToString("D2");
-                    bool visB = t.VisibleFaces[vBOTTOM];
-                    bool visT = t.VisibleFaces[vTOP];
-                    t.VisibleFaces[vBOTTOM] = true;
-                    t.VisibleFaces[vTOP] = false;
-                    RenderSlopedCuboid(parent, x, y, t, Water, CEILING_HEIGHT - t.ceilingHeight, CEILING_HEIGHT + CEIL_ADJ, TILE_SLOPE_N, t.TileSlopeSteepness, 0, TileName);
-                    t.VisibleFaces[vBOTTOM] = visB;
-                    t.VisibleFaces[vTOP] = visT;
-                }
+                //A floor
+                TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
+                RenderSlopedCuboid(parent, x, y, t, FLOOR_ADJ, t.floorHeight, TILE_SLOPE_N, t.TileSlopeSteepness, 1, TileName);
             }
             return;
         }
@@ -1233,32 +666,14 @@ namespace Underworld
         /// <param name="t">T.</param>
         /// <param name="Water">If set to <c>true</c> water.</param>
         /// <param name="invert">If set to <c>true</c> invert.</param>
-        static void RenderSlopeSTile(Node3D parent, int x, int y, TileInfo t, bool Water, bool invert)
+        static void RenderSlopeSTile(Node3D parent, int x, int y, TileInfo t)
         {
             if (t.Render == true)
             {
                 string TileName;
-                if (invert == false)
-                {
-                    if (t.isWater == Water)
-                    {
-                        //A floor
-                        TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
-                        RenderSlopedCuboid(parent, x, y, t, Water, FLOOR_ADJ, t.floorHeight, TILE_SLOPE_S, t.TileSlopeSteepness, 1, TileName);
-                    }
-                }
-                else
-                {
-                    //It's invert
-                    TileName = "S_Ceiling_" + x.ToString("D2") + "_" + y.ToString("D2");
-                    bool visB = t.VisibleFaces[vBOTTOM];
-                    bool visT = t.VisibleFaces[vTOP];
-                    t.VisibleFaces[vBOTTOM] = true;
-                    t.VisibleFaces[vTOP] = false;
-                    RenderSlopedCuboid(parent, x, y, t, Water, CEILING_HEIGHT - t.ceilingHeight, CEILING_HEIGHT + CEIL_ADJ, TILE_SLOPE_S, t.TileSlopeSteepness, 0, TileName);
-                    t.VisibleFaces[vBOTTOM] = visB;
-                    t.VisibleFaces[vTOP] = visT;
-                }
+                //A floor
+                TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
+                RenderSlopedCuboid(parent, x, y, t, FLOOR_ADJ, t.floorHeight, TILE_SLOPE_S, t.TileSlopeSteepness, 1, TileName);
             }
             return;
         }
@@ -1272,32 +687,14 @@ namespace Underworld
         /// <param name="t">T.</param>
         /// <param name="Water">If set to <c>true</c> water.</param>
         /// <param name="invert">If set to <c>true</c> invert.</param>
-        static void RenderSlopeWTile(Node3D parent, int x, int y, TileInfo t, bool Water, bool invert)
+        static void RenderSlopeWTile(Node3D parent, int x, int y, TileInfo t)
         {
             if (t.Render == true)
             {
                 string TileName;
-                if (invert == false)
-                {
-                    if (t.isWater == Water)
-                    {
-                        //A floor
-                        TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
-                        RenderSlopedCuboid(parent, x, y, t, Water, FLOOR_ADJ, t.floorHeight, TILE_SLOPE_W, t.TileSlopeSteepness, 1, TileName);
-                    }
-                }
-                else
-                {
-                    //It's invert
-                    TileName = "W_Ceiling_" + x.ToString("D2") + "_" + y.ToString("D2");
-                    bool visB = t.VisibleFaces[vBOTTOM];
-                    bool visT = t.VisibleFaces[vTOP];
-                    t.VisibleFaces[vBOTTOM] = true;
-                    t.VisibleFaces[vTOP] = false;
-                    RenderSlopedCuboid(parent, x, y, t, Water, CEILING_HEIGHT - t.ceilingHeight, CEILING_HEIGHT + CEIL_ADJ, TILE_SLOPE_W, t.TileSlopeSteepness, 0, TileName);
-                    t.VisibleFaces[vBOTTOM] = visB;
-                    t.VisibleFaces[vTOP] = visT;
-                }
+                //A floor
+                TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
+                RenderSlopedCuboid(parent, x, y, t, FLOOR_ADJ, t.floorHeight, TILE_SLOPE_W, t.TileSlopeSteepness, 1, TileName);
             }
             return;
         }
@@ -1311,32 +708,14 @@ namespace Underworld
         /// <param name="t">T.</param>
         /// <param name="Water">If set to <c>true</c> water.</param>
         /// <param name="invert">If set to <c>true</c> invert.</param>
-        static void RenderSlopeETile(Node3D parent, int x, int y, TileInfo t, bool Water, bool invert)
+        static void RenderSlopeETile(Node3D parent, int x, int y, TileInfo t)
         {
             if (t.Render == true)
             {
                 string TileName;
-                if (invert == false)
-                {
-                    if (t.isWater == Water)
-                    {
-                        //A floor
-                        TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
-                        RenderSlopedCuboid(parent, x, y, t, Water, FLOOR_ADJ, t.floorHeight, TILE_SLOPE_E, t.TileSlopeSteepness, 1, TileName);
-                    }
-                }
-                else
-                {
-                    //It's invert
-                    TileName = "E_Ceiling_" + x.ToString("D2") + "_" + y.ToString("D2");
-                    bool visB = t.VisibleFaces[vBOTTOM];
-                    bool visT = t.VisibleFaces[vTOP];
-                    t.VisibleFaces[vBOTTOM] = true;
-                    t.VisibleFaces[vTOP] = false;
-                    RenderSlopedCuboid(parent, x, y, t, Water, CEILING_HEIGHT - t.ceilingHeight, CEILING_HEIGHT + CEIL_ADJ, TILE_SLOPE_E, t.TileSlopeSteepness, 0, TileName);
-                    t.VisibleFaces[vBOTTOM] = visB;
-                    t.VisibleFaces[vTOP] = visT;
-                }
+                //A floor
+                TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
+                RenderSlopedCuboid(parent, x, y, t, FLOOR_ADJ, t.floorHeight, TILE_SLOPE_E, t.TileSlopeSteepness, 1, TileName);
             }
             return;
         }
@@ -1823,40 +1202,21 @@ namespace Underworld
         /// <param name="t">T.</param>
         /// <param name="Water">If set to <c>true</c> water.</param>
         /// <param name="invert">If set to <c>true</c> invert.</param>
-        static Node3D RenderDiagOpenTile(Node3D parent, int x, int y, TileInfo t, bool Water, bool invert)
+        static Node3D RenderDiagOpenTile(Node3D parent, int x, int y, TileInfo t)
         {
             if (t.Render == true)
             {
-                if (t.isWater == Water)
+                string TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
+
+                //Bottom face 
+                if (t.TerrainChange)
+                {                    
+                    return RenderPrism(parent, x, y, t, -16, t.floorHeight, TileName);
+                }
+                else
                 {
-                    string TileName;
-                    if (invert == false)
-                    {
-                        //Bottom face 
-                        if (t.TerrainChange)
-                        {
-                            TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
-                            return RenderPrism(parent, x, y, t, Water, -16, t.floorHeight, TileName);
-                        }
-                        else
-                        {
-                            TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
-                            return RenderPrism(parent, x, y, t, Water, 0, t.floorHeight, TileName);
-                        }
-                    }
-                    else
-                    {
-                        //Ceiling version of the tile
-                        bool visB = t.VisibleFaces[vBOTTOM];
-                        bool visT = t.VisibleFaces[vTOP];
-                        t.VisibleFaces[vBOTTOM] = true;
-                        t.VisibleFaces[vTOP] = false;
-                        TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
-                        var output = RenderCuboid(parent, x, y, t, Water, CEILING_HEIGHT - t.ceilingHeight, CEILING_HEIGHT + CEIL_ADJ, TileName);
-                        t.VisibleFaces[vBOTTOM] = visB;
-                        t.VisibleFaces[vTOP] = visT;
-                        return output;
-                    }
+                    TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
+                    return RenderPrism(parent, x, y, t, 0, t.floorHeight, TileName);
                 }
             }
             return null;
@@ -2205,7 +1565,7 @@ namespace Underworld
         /// <param name="Steepness">Steepness.</param>
         /// <param name="Floor">Floor.</param>
         /// <param name="TileName">Tile name.</param>
-        static Node3D RenderSlopedCuboid(Node3D parent, int x, int y, TileInfo t, bool Water, int Bottom, int Top, int SlopeDir, int Steepness, int Floor, string TileName)
+        static Node3D RenderSlopedCuboid(Node3D parent, int x, int y, TileInfo t, int Bottom, int Top, int SlopeDir, int Steepness, int Floor, string TileName)
         {
 
             //Draws a cube with sloped tops
@@ -2952,7 +2312,7 @@ namespace Underworld
         /// <param name="Bottom">Bottom.</param>
         /// <param name="Top">Top.</param>
         /// <param name="TileName">Tile name.</param>
-        static Node3D RenderPrism(Node3D parent, int x, int y, TileInfo t, bool Water, int Bottom, int Top, string TileName)
+        static Node3D RenderPrism(Node3D parent, int x, int y, TileInfo t, int Bottom, int Top, string TileName)
         {
 
             //Draw a cube with no slopes.
@@ -3229,7 +2589,7 @@ namespace Underworld
         {
             float PolySize = Top - Bottom;
             uv0 = (float)(Bottom * 0.125f);
-            uv1 = -(PolySize / 8.0f) + (uv0);
+            uv1 = +(PolySize / 8.0f) + (uv0);
         }         
 
 
