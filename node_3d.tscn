@@ -1,21 +1,25 @@
-[gd_scene load_steps=8 format=3 uid="uid://13uofwemp67y"]
+[gd_scene load_steps=9 format=3 uid="uid://13uofwemp67y"]
 
-[ext_resource type="Script" path="res://imageloader.cs" id="3_4tl8d"]
-[ext_resource type="FontFile" uid="uid://dhrg5v5fecw5b" path="res://resources/fonts/FONTBIG.ttf" id="3_lig5x"]
+[ext_resource type="Script" path="res://src/ui/uimanager.cs" id="1_lw0yg"]
+[ext_resource type="Script" path="res://src/ui/mouseCursor.cs" id="4_gnu1s"]
 [ext_resource type="Script" path="res://assetlib/simple-free-look-camera-78109db3bcae477c2a28ef9fe144faa2435f0acb/camera.gd" id="5_2to2n"]
 [ext_resource type="FontFile" uid="uid://dcth0yn5km8si" path="res://resources/fonts/FONT4X5P.ttf" id="5_8iiwt"]
+[ext_resource type="Script" path="res://main.cs" id="6_3y8oy"]
 [ext_resource type="Shader" path="res://node_3d.gdshader" id="6_x6exc"]
+
+[sub_resource type="AudioStreamWAV" id="AudioStreamWAV_tkk82"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_7v506"]
 render_priority = 0
 shader = ExtResource("6_x6exc")
 
-[sub_resource type="AudioStreamWAV" id="AudioStreamWAV_tkk82"]
-
 [node name="Node3D" type="Node3D"]
 
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
+
+[node name="AudioPlayer" type="AudioStreamPlayer" parent="UI"]
+stream = SubResource("AudioStreamWAV_tkk82")
 
 [node name="Camera3D" type="Camera3D" parent="UI"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.119, 2.137, 12.228)
@@ -40,33 +44,30 @@ theme_override_fonts/normal_font = ExtResource("5_8iiwt")
 theme_override_font_sizes/normal_font_size = 47
 text = "The Label is here. Can you see it"
 
-[node name="GreyScale" type="TextureRect" parent="UI"]
-offset_left = 438.0
-offset_top = 288.0
-offset_right = 478.0
-offset_bottom = 328.0
+[node name="mouseCursor" type="TextureRect" parent="UI" node_paths=PackedStringArray("uwUI")]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -40.0
+offset_top = -40.0
+grow_horizontal = 0
+grow_vertical = 0
+script = ExtResource("4_gnu1s")
+uwUI = NodePath("../uiManager")
 
-[node name="TextureRect" type="TextureRect" parent="UI"]
-offset_left = 471.0
-offset_top = 277.0
-offset_right = 511.0
-offset_bottom = 317.0
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("mousecursor")]
+script = ExtResource("1_lw0yg")
+mousecursor = NodePath("../mouseCursor")
 
 [node name="worldobjects" type="Node3D" parent="."]
 
 [node name="tilemap" type="Node3D" parent="."]
 
-[node name="AudioPlayer" type="AudioStreamPlayer" parent="."]
-stream = SubResource("AudioStreamWAV_tkk82")
-
-[node name="Loader" type="Sprite2D" parent="." node_paths=PackedStringArray("cam", "audioplayer", "lbl", "grey")]
-texture_filter = 1
-rotation = -1.39626
-scale = Vector2(3, 3)
-centered = false
-script = ExtResource("3_4tl8d")
+[node name="main" type="Node3D" parent="." node_paths=PackedStringArray("cam", "audioplayer", "lblPositionDebug", "uwUI")]
+script = ExtResource("6_3y8oy")
 cam = NodePath("../UI/Camera3D")
-audioplayer = NodePath("../AudioPlayer")
-lbl = NodePath("../UI/PositionLabel")
-font = ExtResource("3_lig5x")
-grey = NodePath("../UI/GreyScale")
+audioplayer = NodePath("../UI/AudioPlayer")
+lblPositionDebug = NodePath("../UI/PositionLabel")
+uwUI = NodePath("../UI/uiManager")

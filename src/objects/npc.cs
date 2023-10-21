@@ -50,7 +50,7 @@ namespace Underworld
             a_sprite.Mesh.Set("size",n.FrameSize*1.5f);
             n.sprite = a_sprite;
             parent.AddChild(a_sprite);
-            a_sprite.Position = new Vector3(0, n.FrameSize.Y / 2, 0);
+            a_sprite.Position = new Vector3(0, n.FrameSize.Y / 2 + 0.12f, 0);
             return n;                  
         }
 

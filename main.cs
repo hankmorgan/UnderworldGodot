@@ -19,16 +19,20 @@ internal class uwsettings
 	public static uwsettings instance;
 }
 
-public partial class imageloader : Sprite2D
+/// <summary>
+/// Node to initialise the game
+/// </summary>
+public partial class main : Node3D
 {
 	// Called when the node enters the scene tree for the first time.
 	[Export] public Camera3D cam;
-	[Export] public MeshInstance3D mesh;
+	//[Export] public MeshInstance3D mesh;
 	//[Export] public Sprite2D weapon_2d;
 	[Export] public AudioStreamPlayer audioplayer;
-	[Export] public RichTextLabel lbl;
-	[Export] public Font font;
-	[Export] public TextureRect grey;
+	[Export] public RichTextLabel lblPositionDebug;
+	//[Export] public Font font;
+	//[Export] public TextureRect grey;
+	[Export] public uimanager uwUI;
 
 	double cycletime = 0;
 	int NextPaletteCycle = 0;
@@ -194,6 +198,8 @@ public partial class imageloader : Sprite2D
 		// // cutstex.SetImage(cutimg);
 		// uielem.Texture=cutimg;
 		// uielem.TextureFilter=CanvasItem.TextureFilterEnum.Nearest;
+
+		uwUI.InitUI();
 	}
 
 
@@ -222,7 +228,7 @@ public partial class imageloader : Sprite2D
 	public override void _Process(double delta)
 	{
 
-		lbl.Text = $"{cam.Position.ToString()}";
+		lblPositionDebug.Text = $"{cam.Position.ToString()}";
 		//RenderingServer.GlobalShaderParameterSet("cameraPos", cam.Position);
 		cycletime += delta;
 		if (cycletime > 0.2)
