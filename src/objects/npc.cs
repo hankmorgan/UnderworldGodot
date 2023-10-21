@@ -1,3 +1,5 @@
+using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Godot;
 
@@ -22,7 +24,14 @@ namespace Underworld
         public npc(uwObject _uwobject)
         {
             uwobject =_uwobject;
-            SetAnimSprite(0,0);
+            try
+            {
+                SetAnimSprite(0,0);
+            }
+            catch (Exception ex)
+            {
+                Debug.Print($"{ex.ToString()}");
+            }           
         }
 
 
@@ -53,7 +62,13 @@ namespace Underworld
         public void SetAnimSprite(int animationNo, int frameNo)
         {
             if (this.uwobject.item_id>=127){return;}
+
             var crit = CritLoader.GetCritter(this.uwobject.item_id & 0x3F);
+            if(animationNo>crit.critterinfo.AnimInfo.animIndices.GetUpperBound(0))
+            {
+                Debug.Print("Animation out of range");
+                return;
+            }
             if (material == null)
             {//create the initial material
                 var newmaterial = new ShaderMaterial();
@@ -66,13 +81,22 @@ namespace Underworld
                 material = newmaterial;
             }
             //assign the params to the shader
-            //critAnim.animSprites[critAnim.animIndices[AnimationIndex, AnimationPos++]]
-            var texture = crit.critterinfo.AnimInfo.animSprites[crit.critterinfo.AnimInfo.animIndices[animationNo, frameNo]];
-            FrameSize= new Vector2(
-                ArtLoader.SpriteScale * texture.GetWidth(), 
-                ArtLoader.SpriteScale * texture.GetHeight()
-                );
-            material.SetShaderParameter("texture_albedo", (Texture)texture);
+            //critAnim.animSprites[critAnim.animIndices[AnimationIndex, AnimationPos++]]            
+            if (crit.critterinfo.AnimInfo.animIndices[animationNo, frameNo] !=-1)
+            {
+                var texture = crit.critterinfo.AnimInfo.animSprites[crit.critterinfo.AnimInfo.animIndices[animationNo, frameNo]];
+                FrameSize= new Vector2(
+                    ArtLoader.SpriteScale * texture.GetWidth(), 
+                    ArtLoader.SpriteScale * texture.GetHeight()
+                    );
+                    material.SetShaderParameter("texture_albedo", (Texture)texture);
+            }
+            else
+            {
+                Debug.Print($"invalid animation {animationNo} {frameNo} for {this.uwobject.item_id}");
+            }
+
+          
         }
 
     }//end class

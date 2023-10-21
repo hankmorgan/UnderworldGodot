@@ -11,7 +11,7 @@ namespace Underworld
     {
         //List of active NPCs
         public static List<npc> npcs;
-        static bool printlabels = false;
+        static bool printlabels = true;
 
         public static void GenerateObjects(Node3D worldparent, List<uwObject> objects, GRLoader grObjects, TileMap a_tilemap)
         {
@@ -38,8 +38,11 @@ namespace Underworld
             {
                 case 1://npcs
                     {
+                        if (obj.item_id<124)
+                        {
                         npcs.Add(npc.CreateInstance(newparent, obj));
                         unimplemented = false;
+                        }
                         break;
                     }
                 case 3: // misc objects
@@ -70,7 +73,7 @@ namespace Underworld
                 if (printlabels)
                 {
                     Label3D obj_lbl = new();
-                    obj_lbl.Text = $"{StringLoader.GetObjectNounUW(obj.item_id)} {obj.index} {obj.zpos}";
+                    obj_lbl.Text = $"{StringLoader.GetObjectNounUW(obj.item_id)} {obj.index}";
                     obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
                     //obj_lbl.Font = font;
                     newparent.AddChild(obj_lbl);
@@ -136,6 +139,11 @@ namespace Underworld
                         if (obj.classindex == 8)
                         {
                             table.CreateInstance(parent, obj);
+                            return false;
+                        }   
+                        if (obj.classindex == 0xA)
+                        {
+                            moongate.CreateInstance(parent, obj);
                             return false;
                         }                        
                         break;
