@@ -123,7 +123,7 @@ public partial class main : Node3D
 		//var textureloader = new TextureLoader();
 		//var a_texture = textureloader.LoadImageAt(index);
 		//grey.Texture=a_texture;
-		var bytloader = new Underworld.BytLoader();
+		//var bytloader = new Underworld.BytLoader();
 		//var a_bitmap = bytloader.LoadImageAt(index);
 
 		// create the texture for the mesh
@@ -180,16 +180,16 @@ public partial class main : Node3D
 		// critter_3d.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
 
 		//var main_windowgr = new GRLoader(GRLoader.ThreeDWIN_GR);
-		var uielem = GetNode<TextureRect>("/root/Node3D/UI/3DWin");
-		var mainIndex = BytLoader.MAIN_BYT;
-		if (UWClass._RES == UWClass.GAME_UW2)
-		{
-			mainIndex = BytLoader.UW2ThreeDWin_BYT;
-		}
-		var ThreeDWinImg = bytloader.LoadImageAt(mainIndex, true);
+		// var uielem = GetNode<TextureRect>("/root/Node3D/UI/3DWin");
+		// var mainIndex = BytLoader.MAIN_BYT;
+		// if (UWClass._RES == UWClass.GAME_UW2)
+		// {
+		// 	mainIndex = BytLoader.UW2ThreeDWin_BYT;
+		// }
+		// var ThreeDWinImg = bytloader.LoadImageAt(mainIndex, true);
 
-		uielem.Texture = ThreeDWinImg;
-		uielem.TextureFilter = CanvasItem.TextureFilterEnum.Nearest;
+		//uielem.Texture = ThreeDWinImg;
+		//uielem.TextureFilter = CanvasItem.TextureFilterEnum.Nearest;
 		LoadTileMap(gamesettings.level, gr);
 
 		// var cuts = new CutsLoader(Path.Combine(UWClass.BasePath,"CUTS","CS000.N02"));
@@ -199,7 +199,8 @@ public partial class main : Node3D
 		// uielem.Texture=cutimg;
 		// uielem.TextureFilter=CanvasItem.TextureFilterEnum.Nearest;
 
-		uwUI.InitUI();
+		uwUI.InitUI();		
+		messageScroll.AddString(StringLoader.GetString(1,13));
 	}
 
 

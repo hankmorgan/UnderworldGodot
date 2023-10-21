@@ -1,11 +1,14 @@
-[gd_scene load_steps=9 format=3 uid="uid://13uofwemp67y"]
+[gd_scene load_steps=12 format=3 uid="uid://13uofwemp67y"]
 
 [ext_resource type="Script" path="res://src/ui/uimanager.cs" id="1_lw0yg"]
 [ext_resource type="Script" path="res://src/ui/mouseCursor.cs" id="4_gnu1s"]
 [ext_resource type="Script" path="res://assetlib/simple-free-look-camera-78109db3bcae477c2a28ef9fe144faa2435f0acb/camera.gd" id="5_2to2n"]
 [ext_resource type="FontFile" uid="uid://dcth0yn5km8si" path="res://resources/fonts/FONT4X5P.ttf" id="5_8iiwt"]
 [ext_resource type="Script" path="res://main.cs" id="6_3y8oy"]
+[ext_resource type="Texture2D" uid="uid://cf536ckyprfbf" path="res://resources/placeholder_art/uw1placeholdermain.png" id="6_a53l0"]
 [ext_resource type="Shader" path="res://node_3d.gdshader" id="6_x6exc"]
+[ext_resource type="Texture2D" uid="uid://plikcry1ow6q" path="res://resources/placeholder_art/textbox_fill.jpg" id="7_qiq8a"]
+[ext_resource type="Texture2D" uid="uid://b5mwiifn8jtb6" path="res://resources/placeholder_art/uw2placeholdermain.png" id="8_2hy02"]
 
 [sub_resource type="AudioStreamWAV" id="AudioStreamWAV_tkk82"]
 
@@ -25,15 +28,6 @@ stream = SubResource("AudioStreamWAV_tkk82")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.119, 2.137, 12.228)
 script = ExtResource("5_2to2n")
 
-[node name="3DWin" type="TextureRect" parent="UI"]
-texture_filter = 1
-material = SubResource("ShaderMaterial_7v506")
-custom_minimum_size = Vector2(320, 200)
-offset_right = 1280.0
-offset_bottom = 800.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
 [node name="PositionLabel" type="RichTextLabel" parent="UI"]
 texture_filter = 1
 offset_left = 280.0
@@ -44,15 +38,103 @@ theme_override_fonts/normal_font = ExtResource("5_8iiwt")
 theme_override_font_sizes/normal_font_size = 47
 text = "The Label is here. Can you see it"
 
-[node name="mouseCursor" type="TextureRect" parent="UI" node_paths=PackedStringArray("uwUI")]
+[node name="mouseCursor" type="TextureRect" parent="UI"]
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("4_gnu1s")
-uwUI = NodePath("../uiManager")
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("mousecursor")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2")]
 script = ExtResource("1_lw0yg")
+cam = NodePath("../Camera3D")
 mousecursor = NodePath("../mouseCursor")
+uw1UI = NodePath("../UW1")
+uw2UI = NodePath("../UW2")
+mainwindowUW1 = NodePath("../UW1/3DWinUW1")
+mainwindowUW2 = NodePath("../UW2/3DWinUW2")
+messageScrollUW1 = NodePath("../UW1/messageScrollUW1")
+messageScrollUW2 = NodePath("../UW2/messageScrollUW2")
+placeholderuw1 = NodePath("../UW1/placeholdermainuw1")
+placeholderuw2 = NodePath("../UW2/placeholdermainuw2")
+
+[node name="UW1" type="CanvasLayer" parent="UI"]
+
+[node name="placeholdermainuw1" type="TextureRect" parent="UI/UW1"]
+offset_right = 1280.0
+offset_bottom = 800.0
+texture = ExtResource("6_a53l0")
+
+[node name="3DWinUW1" type="TextureRect" parent="UI/UW1"]
+texture_filter = 1
+material = SubResource("ShaderMaterial_7v506")
+custom_minimum_size = Vector2(320, 200)
+offset_right = 1280.0
+offset_bottom = 800.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="messageScrollBackgroundUW1" type="TextureRect" parent="UI/UW1"]
+offset_left = 64.0
+offset_top = 676.0
+offset_right = 1224.0
+offset_bottom = 796.0
+texture = ExtResource("7_qiq8a")
+
+[node name="messageScrollUW1" type="Label" parent="UI/UW1"]
+texture_filter = 1
+offset_left = 64.0
+offset_top = 676.0
+offset_right = 1224.0
+offset_bottom = 796.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_constants/line_spacing = -16
+theme_override_fonts/font = ExtResource("5_8iiwt")
+theme_override_font_sizes/font_size = 48
+text = "Line 1
+line 2
+line 3
+line 4
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+"
+text_overrun_behavior = 1
+
+[node name="UW2" type="CanvasLayer" parent="UI"]
+
+[node name="placeholdermainuw2" type="TextureRect" parent="UI/UW2"]
+offset_right = 1280.0
+offset_bottom = 800.0
+texture = ExtResource("8_2hy02")
+
+[node name="3DWinUW2" type="TextureRect" parent="UI/UW2"]
+texture_filter = 1
+material = SubResource("ShaderMaterial_7v506")
+custom_minimum_size = Vector2(320, 200)
+offset_right = 1280.0
+offset_bottom = 800.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="messageScrollBackgroundUW2" type="TextureRect" parent="UI/UW2"]
+offset_left = 64.0
+offset_top = 676.0
+offset_right = 904.0
+offset_bottom = 792.0
+texture = ExtResource("7_qiq8a")
+
+[node name="messageScrollUW2" type="Label" parent="UI/UW2"]
+texture_filter = 1
+offset_left = 64.0
+offset_top = 676.0
+offset_right = 904.0
+offset_bottom = 792.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_constants/line_spacing = -16
+theme_override_fonts/font = ExtResource("5_8iiwt")
+theme_override_font_sizes/font_size = 48
+text = "Line 1
+line 2
+line 3
+line 4
+aaaaaaaaaaaaaaaaaaa"
 
 [node name="worldobjects" type="Node3D" parent="."]
 

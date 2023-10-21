@@ -7,7 +7,7 @@ namespace Underworld
     /// </summary>
     public partial class uwTextureRect : TextureRect
     {
-        //Reference to the UI manager
+        // //Reference to the UI manager
         [Export] public uimanager uwUI;
 
     }
