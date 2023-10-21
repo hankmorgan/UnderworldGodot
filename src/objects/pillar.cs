@@ -7,10 +7,10 @@ namespace Underworld
     {
         Vector3 position;        
 
-        public static pillar CreateInstance(Node3D parent, uwObject obj, Vector3 position)
+        public static pillar CreateInstance(Node3D parent, uwObject obj, Vector3 position, string name)
         {
             var n = new pillar(obj, position);
-            var modelNode = n.Generate3DModel(parent);
+            var modelNode = n.Generate3DModel(parent, name);
             modelNode.Rotate(Vector3.Up, obj.heading_r);
             return n;
         }

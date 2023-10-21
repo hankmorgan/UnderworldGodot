@@ -8,10 +8,10 @@ namespace Underworld
             uwobject = _uwobject;
         }
 
-        public static shrine CreateInstance(Node3D parent, uwObject obj)
+        public static shrine CreateInstance(Node3D parent, uwObject obj, string name)
         {
             var n = new shrine(obj);
-            var modelNode = n.Generate3DModel(parent);
+            var modelNode = n.Generate3DModel(parent, name);
             SetModelRotation(parent, n);
             return n;
         }

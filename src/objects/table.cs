@@ -12,10 +12,10 @@ namespace Underworld
             uwobject = _uwobject;
         }
 
-        public static table CreateInstance(Node3D parent, uwObject obj)
+        public static table CreateInstance(Node3D parent, uwObject obj, string name)
         {
             var n = new table(obj);
-            var modelNode = n.Generate3DModel(parent);
+            var modelNode = n.Generate3DModel(parent, name);
             //modelNode.Rotate(Vector3.Up, (float)Math.PI); 
             SetModelRotation(parent, n);
 

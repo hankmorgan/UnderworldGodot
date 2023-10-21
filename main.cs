@@ -49,7 +49,7 @@ public partial class main : Node3D
 		}
 		var gamesettings = JsonSerializer.Deserialize<uwsettings>(File.ReadAllText(settingsfile));
 		uwsettings.instance = gamesettings;
-		
+
 		//shade.getFarDist(0);
 		UWClass._RES = gamesettings.gametoload;
 		switch (UWClass._RES)
@@ -110,7 +110,7 @@ public partial class main : Node3D
 		// 	}
 		// 	vindex++;
 		// }
-        // Debug.Print (code);
+		// Debug.Print (code);
 		//cam.Position= Vector3.Zero;
 
 		//Random rnd = new Random();
@@ -220,7 +220,7 @@ public partial class main : Node3D
 		Underworld.ObjectCreator.GenerateObjects(worldobjects, a_tilemap.LevelObjects, grObjects, a_tilemap);
 		the_tiles.Position = new Vector3(0f, 0f, 0f);
 		tileMapRender.GenerateLevelFromTileMap(the_tiles, worldobjects, UWClass._RES, a_tilemap, a_tilemap.LevelObjects, false);
-	
+
 	}
 
 
@@ -245,4 +245,31 @@ public partial class main : Node3D
 			}
 		}
 	}
+
+	public override void _Input(InputEvent @event)
+	{
+		float RayLength = 3.0f;
+		if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
+		{
+			//var camera3D = GetNode<Camera3D>("Camera3D");
+			var from = cam.ProjectRayOrigin(eventMouseButton.Position);
+			var to = from + cam.ProjectRayNormal(eventMouseButton.Position) * RayLength;
+			var query = PhysicsRayQueryParameters3D.Create(from, to);
+			var spaceState = GetWorld3D().DirectSpaceState;
+			var result = spaceState.IntersectRay(query);
+			if (result!=null)
+			{
+				if (result.ContainsKey("collider"))
+				{
+				var obj = (StaticBody3D)result["collider"];
+				Debug.Print(obj.Name);
+				}
+			}
+			// foreach (var item in result)
+			// {
+			// 	Debug.Print(item.ToString());
+			// }
+		}
+	}
+
 }

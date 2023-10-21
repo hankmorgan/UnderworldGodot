@@ -3,10 +3,10 @@ namespace Underworld
 {
     public class moongate : model3D
     {
-        public static moongate CreateInstance(Node3D parent, uwObject obj)
+        public static moongate CreateInstance(Node3D parent, uwObject obj, string name)
         {
             var n = new moongate(obj);
-            var modelNode = n.Generate3DModel(parent);
+            var modelNode = n.Generate3DModel(parent, name);
             SetModelRotation(parent, n);
             return n;
         }

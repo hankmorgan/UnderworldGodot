@@ -9,10 +9,10 @@ namespace Underworld
         const int MediumBoulder = 341;
         const int SmallBoulder = 342;
 
-        public static boulder CreateInstance(Node3D parent, uwObject obj)
+        public static boulder CreateInstance(Node3D parent, uwObject obj, string name)
         {
             var b = new boulder(obj);
-            var modelNode = b.Generate3DModel(parent);            
+            var modelNode = b.Generate3DModel(parent, name);            
             return b;
         }
 

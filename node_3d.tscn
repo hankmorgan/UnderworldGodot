@@ -45,15 +45,8 @@ theme_override_font_sizes/normal_font_size = 47
 text = "The Label is here. Can you see it"
 
 [node name="mouseCursor" type="TextureRect" parent="UI" node_paths=PackedStringArray("uwUI")]
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -40.0
-offset_top = -40.0
-grow_horizontal = 0
-grow_vertical = 0
+offset_right = 40.0
+offset_bottom = 40.0
 script = ExtResource("4_gnu1s")
 uwUI = NodePath("../uiManager")
 

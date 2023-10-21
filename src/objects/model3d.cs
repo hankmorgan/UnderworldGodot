@@ -20,7 +20,7 @@ namespace Underworld
         /// </summary>
         /// <param name="parent"></param>
         /// <returns></returns>
-        public Node3D Generate3DModel(Node3D parent)
+        public Node3D Generate3DModel(Node3D parent, string name)
         {
             int[] mats = new int[NoOfMeshes()];
             var a_mesh = new ArrayMesh(); //= Mesh as ArrayMesh;
@@ -44,7 +44,7 @@ namespace Underworld
                 AddSurfaceToMesh(this, verts, uvs, mats, i, a_mesh, normals, ModelTriangles(i));
             }
 
-            return CreateMeshInstance(parent, $"modelinstance_{uwobject.index}",  a_mesh);
+            return CreateMeshInstance(parent, name, a_mesh);
         }
 
         public virtual int[] ModelTriangles(int meshNo)
@@ -105,7 +105,7 @@ namespace Underworld
             return 1f;
         }
 
-        protected static Node3D CreateMeshInstance(Node3D parent,string ModelName, ArrayMesh a_mesh, bool EnableCollision = false)
+        protected static Node3D CreateMeshInstance(Node3D parent,string ModelName, ArrayMesh a_mesh, bool EnableCollision = true)
         {
             var final_mesh = new MeshInstance3D();
             parent.AddChild(final_mesh);

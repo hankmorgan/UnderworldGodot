@@ -9,10 +9,10 @@ namespace Underworld
             uwobject = _uwobject;
         }
 
-        public static painting CreateInstance(Node3D parent, uwObject obj)
+        public static painting CreateInstance(Node3D parent, uwObject obj, string name)
         {
             var n = new painting(obj);
-            var modelNode = n.Generate3DModel(parent);
+            var modelNode = n.Generate3DModel(parent, name);
             modelNode.Rotate(Vector3.Up, (float)Math.PI); 
             SetModelRotation(parent, n);  
             modelNode.Position += new Vector3(0f,0f,0.08f); //extrude the model out of the wall           

@@ -41,16 +41,18 @@ namespace Underworld
         /// <param name="parent"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public static npc CreateInstance(Node3D parent, uwObject obj)
+        public static npc CreateInstance(Node3D parent, uwObject obj, string name)
         {
             var n = new npc(obj);  
             var a_sprite = new MeshInstance3D(); //new Sprite3D();
+            a_sprite.Name = name;
             a_sprite.Mesh = new QuadMesh();
             a_sprite.Mesh.SurfaceSetMaterial(0, n.material);
             a_sprite.Mesh.Set("size",n.FrameSize*1.5f);
             n.sprite = a_sprite;
             parent.AddChild(a_sprite);
             a_sprite.Position = new Vector3(0, n.FrameSize.Y / 2 + 0.12f, 0);
+            a_sprite.CreateConvexCollision();
             return n;                  
         }
 

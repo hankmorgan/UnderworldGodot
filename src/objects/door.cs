@@ -53,7 +53,7 @@ namespace Underworld
             tmDoor.RenderGrey = true;
         }
 
-        public static door CreateInstance(Node3D parent, uwObject obj, TileMap a_tilemap)
+        public static door CreateInstance(Node3D parent, uwObject obj, TileMap a_tilemap, string name)
         {
             int tileX = obj.tileX;
             int tileY = obj.tileY;
@@ -68,7 +68,7 @@ namespace Underworld
             }
             
             d.floorheight = a_tilemap.Tiles[tileX, tileY].floorHeight;
-            d.doorNode = d.Generate3DModel(parent);
+            d.doorNode = d.Generate3DModel(parent, name);
             d.doorNode.Position= d.pivot;
             if (d.isOpen)
             {
@@ -293,7 +293,7 @@ namespace Underworld
                 return uwobject.classindex>=8;
             }
         }
-        public static doorway CreateInstance(Node3D parent, uwObject obj, TileMap a_tilemap)
+        public static doorway CreateInstance(Node3D parent, uwObject obj, TileMap a_tilemap, string name)
         {
             int tileX = obj.tileX;
             int tileY = obj.tileY;
@@ -303,7 +303,7 @@ namespace Underworld
             //n.position = parent.Position;
             //a portcullis. 
 
-            n.doorFrameNode = n.Generate3DModel(parent);
+            n.doorFrameNode = n.Generate3DModel(parent, name);
             if ( n.isOpen )
             {//fix for map bug where some open doors extend out of the map. Force them onto a lower zpos without changing data
                 parent.Position = new Vector3(parent.Position.X, uwObject.GetZCoordinate(n.uwobject.zpos-24), parent.Position.Z);

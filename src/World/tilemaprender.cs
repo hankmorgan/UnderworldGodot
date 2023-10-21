@@ -316,7 +316,7 @@ namespace Underworld
             // return Tile;
         }
 
-        private static Node3D CreateMeshInstance(Node3D parent, int x, int y, string TileName, ArrayMesh a_mesh, bool EnableCollision = false)
+        private static Node3D CreateMeshInstance(Node3D parent, int x, int y, string TileName, ArrayMesh a_mesh, bool EnableCollision = true)
         {
             var final_mesh = new MeshInstance3D();
             parent.AddChild(final_mesh);
@@ -325,7 +325,7 @@ namespace Underworld
             final_mesh.Mesh = a_mesh;
             if (EnableCollision)
             {
-                final_mesh.CreateConvexCollision();
+                final_mesh.CreateConvexCollision(clean: false);
             }
             return final_mesh;
         }
@@ -1176,19 +1176,6 @@ namespace Underworld
                 }
             }
             return CreateMeshInstance(parent, t.tileX, t.tileY, TileName, a_mesh);
-
-            //    mr.materials = MatsToUse;
-            //    mesh.RecalculateNormals();
-            //    mesh.RecalculateBounds();
-            //    mf.mesh = mesh;
-            //    if (EnableCollision)
-            //    {
-            //        MeshCollider mc = Tile.AddComponent<MeshCollider>();
-            //        mc.sharedMesh = null;
-            //        mc.sharedMesh = mesh;
-            //    }
-            //mc.sharedMesh=mesh;
-            //return;
         }
 
 

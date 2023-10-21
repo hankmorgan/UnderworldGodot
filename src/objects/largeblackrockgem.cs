@@ -4,10 +4,10 @@ namespace Underworld
     public class largeblackrockgem : model3D
     {
 
-         public static largeblackrockgem CreateInstance(Node3D parent, uwObject obj)
+         public static largeblackrockgem CreateInstance(Node3D parent, uwObject obj, string name)
         {
             var g = new largeblackrockgem(obj);
-            var modelNode = g.Generate3DModel(parent);
+            var modelNode = g.Generate3DModel(parent, name);
             return g;
         }
 

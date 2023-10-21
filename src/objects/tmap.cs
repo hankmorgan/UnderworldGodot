@@ -12,14 +12,14 @@ namespace Underworld
             uwobject = _uwobject;
         }
 
-        public static tmap CreateInstance(Node3D parent, uwObject obj, TileMap a_tilemap)
+        public static tmap CreateInstance(Node3D parent, uwObject obj, TileMap a_tilemap, string name)
         {
             int tileX = obj.tileX;
             int tileY = obj.tileY;
             var t = new tmap(obj);
             t.texture = a_tilemap.texture_map[obj.owner];
     
-            t.tmapnode = t.Generate3DModel(parent);
+            t.tmapnode = t.Generate3DModel(parent, name);
             
             SetModelRotation(parent,t);
             centreInTile(parent, t);

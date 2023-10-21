@@ -7,10 +7,10 @@ namespace Underworld
     public class bed : model3D
     {
 
-        public static bed CreateInstance(Node3D parent, uwObject obj)
+        public static bed CreateInstance(Node3D parent, uwObject obj, string name)
         {
             var n = new bed(obj);
-            var modelNode = n.Generate3DModel(parent);
+            var modelNode = n.Generate3DModel(parent, name);
             modelNode.Rotate(Vector3.Up, (float)Math.PI); //my bed model is in the wrong direction. I have to rotate twice	
             SetModelRotation(parent, n);
             return n;
