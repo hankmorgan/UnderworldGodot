@@ -21,12 +21,10 @@ shader = ExtResource("6_x6exc")
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "freelook", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "freelook", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2")]
 script = ExtResource("1_lw0yg")
 cam = NodePath("../../Camera3D")
 freelook = NodePath("../../Camera3D")
-uwviewport = NodePath("")
-uwsubviewport = NodePath("")
 mousecursor = NodePath("../mouse/mouseCursor")
 uw1UI = NodePath("../UW1")
 uw2UI = NodePath("../UW2")
@@ -45,6 +43,7 @@ stream = SubResource("AudioStreamWAV_tkk82")
 [node name="placeholdermainuw1" type="TextureRect" parent="UI/UW1"]
 offset_right = 1280.0
 offset_bottom = 800.0
+mouse_filter = 2
 texture = ExtResource("6_a53l0")
 
 [node name="3DWinUW1" type="TextureRect" parent="UI/UW1"]
@@ -55,12 +54,14 @@ offset_right = 1280.0
 offset_bottom = 800.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+mouse_filter = 2
 
 [node name="messageScrollBackgroundUW1" type="TextureRect" parent="UI/UW1"]
 offset_left = 64.0
 offset_top = 676.0
 offset_right = 1224.0
 offset_bottom = 796.0
+mouse_filter = 2
 texture = ExtResource("7_qiq8a")
 
 [node name="messageScrollUW1" type="Label" parent="UI/UW1"]
@@ -86,6 +87,7 @@ text_overrun_behavior = 1
 [node name="placeholdermainuw2" type="TextureRect" parent="UI/UW2"]
 offset_right = 1280.0
 offset_bottom = 800.0
+mouse_filter = 2
 texture = ExtResource("8_2hy02")
 
 [node name="3DWinUW2" type="TextureRect" parent="UI/UW2"]
@@ -96,12 +98,14 @@ offset_right = 1280.0
 offset_bottom = 800.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+mouse_filter = 2
 
 [node name="messageScrollBackgroundUW2" type="TextureRect" parent="UI/UW2"]
 offset_left = 64.0
 offset_top = 676.0
 offset_right = 904.0
 offset_bottom = 792.0
+mouse_filter = 2
 texture = ExtResource("7_qiq8a")
 
 [node name="messageScrollUW2" type="Label" parent="UI/UW2"]
@@ -133,6 +137,7 @@ offset_left = 280.0
 offset_top = 420.0
 offset_right = 880.0
 offset_bottom = 620.0
+mouse_filter = 2
 theme_override_fonts/normal_font = ExtResource("5_8iiwt")
 theme_override_font_sizes/normal_font_size = 47
 text = "The Label is here. Can you see it"
