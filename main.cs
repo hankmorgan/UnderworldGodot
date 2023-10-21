@@ -264,6 +264,7 @@ public partial class main : Node3D
 				{
 				var obj = (StaticBody3D)result["collider"];
 				Debug.Print(obj.Name);
+				messageScroll.AddString(obj.Name);
 				}
 			}
 			// foreach (var item in result)
