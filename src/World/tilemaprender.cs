@@ -9,15 +9,6 @@ namespace Underworld
     public class tileMapRender : UWClass
     {
 
-        //public static Shader textureshader;
-
-        
-
-        //static tileMapRender()
-        //{
-            //MaterialMasterList = new();
-        //}
-
         const int TILE_SOLID = 0;
         const int TILE_OPEN = 1;
 
@@ -32,14 +23,6 @@ namespace Underworld
         const int TILE_SLOPE_S = 7;
         const int TILE_SLOPE_E = 8;
         const int TILE_SLOPE_W = 9;
-        // const int TILE_VALLEY_NW = 10;
-        // const int TILE_VALLEY_NE = 11;
-        // const int TILE_VALLEY_SE = 12;
-        // const int TILE_VALLEY_SW = 13;
-        // const int TILE_RIDGE_SE = 14;
-        // const int TILE_RIDGE_SW = 15;
-        // const int TILE_RIDGE_NW = 16;
-        // const int TILE_RIDGE_NE = 17;
 
         const int SLOPE_BOTH_PARALLEL = 0;
         const int SLOPE_BOTH_OPPOSITE = 1;
@@ -79,11 +62,6 @@ namespace Underworld
         const int CEIL_ADJ = 0;
         const int FLOOR_ADJ = 0; //-2;
 
-        const float doorwidth = 0.8f;
-        const float doorframewidth = 1.2f;
-        const float doorSideWidth = (doorframewidth - doorwidth) / 2f;
-        const float doorheight = 7f * 0.15f;
-
         public static TextureLoader mapTextures;
 
         static tileMapRender()
@@ -97,7 +75,6 @@ namespace Underworld
         public static void GenerateLevelFromTileMap(Node3D parent, Node3D sceneryParent, string game, TileMap Level, List<uwObject> objList, bool UpdateOnly)
         {
             CEILING_HEIGHT = TileMap.UW_CEILING_HEIGHT;
-
             if (!UpdateOnly)
             {
                 //Clear out the children in the transform
@@ -316,7 +293,7 @@ namespace Underworld
             // return Tile;
         }
 
-        private static Node3D CreateMeshInstance(Node3D parent, int x, int y, string TileName, ArrayMesh a_mesh, bool EnableCollision = true)
+        private static Node3D CreateMeshInstance(Node3D parent, int x, int y, string TileName, ArrayMesh a_mesh, bool EnableCollision = false)
         {
             var final_mesh = new MeshInstance3D();
             parent.AddChild(final_mesh);

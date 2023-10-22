@@ -152,23 +152,28 @@ namespace Underworld
                     {
                         if (obj.classindex == 0)
                         {//pillar 352
-                            pillar.CreateInstance(parent, obj, parent.Position, name);
-                            return false; /// unimplemented = false;
+                            pillar.CreateInstance(parent, obj, name);
+                            return false; 
                         }
                         if ((_RES == GAME_UW2) && (obj.classindex == 3))
                         {  //or item id 163
                             painting.CreateInstance(parent, obj, name);
-                            return false; //unimplemented = false;
+                            return false; 
+                        }
+                        if (obj.classindex == 4)
+                        {//bridge 356
+                            bridge.CreateInstance(parent, obj, name, a_tilemap);
+                            return false; 
                         }
                         if ((_RES == GAME_UW2) && (obj.classindex == 7))
                         {  //or item id 359
                             bed.CreateInstance(parent, obj, name);
-                            return false; //unimplemented = false;
+                            return false; 
                         }
                         if ((_RES == GAME_UW2) && (obj.classindex == 8))
                         {  //or item id 360
                             largeblackrockgem.CreateInstance(parent, obj, name);
-                            return false; //unimplemented = false;
+                            return false;
                         }
                         if ((obj.classindex == 0xE) || (obj.classindex == 0xF))
                         {//tmaps

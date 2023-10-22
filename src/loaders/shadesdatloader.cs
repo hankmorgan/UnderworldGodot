@@ -235,17 +235,17 @@ namespace Underworld
 
         private static void CreateEmptyShades()
         {
-            shadesdata = new shade[12];
+            shadesdata = new shade[8];
             Debug.Print("Defaulting to fullbright shades.");
-            //initial an array of empty shades that provide full brigh
-            for (int i = 0; i < 16; i++)
+            //initial an array of empty shades that provide full bright
+            for (int i = 0; i < 8; i++)
             {
                 shadesdata[i] = new shade(
                     _index: i,
-                    _nearDist: 0,
+                    _nearDist: 30,
                     _nearMap: 0,
-                    _farDist: 0,
-                    _ShadeCutoff: 0
+                    _farDist: 60,
+                    _ShadeCutoff: 15
                  );
             }
         }

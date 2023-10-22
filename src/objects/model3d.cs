@@ -89,17 +89,6 @@ namespace Underworld
             return customUVs;
         }
 
-        // public virtual Material ModelMaterials(int meshNo)
-        // {
-        //     return material;
-        // }
-
-
-        // public virtual Texture2D ModelTexture(int meshNo)
-        // {
-        //     return null;
-        // }
-
         public virtual float TextureScaling()
         {
             return 1f;
@@ -237,6 +226,40 @@ namespace Underworld
             }
         }      
 
+
+        //Center the model in the tile it is in along it's heading
+        public static void centreAlongAxis(Node3D ModelParentNode, model3D modelObj)
+        {
+            int x = modelObj.uwobject.tileX;
+            int y = modelObj.uwobject.tileY;
+            switch (modelObj.uwobject.heading * 45)
+            {
+                case tileMapRender.heading0: 
+                    ModelParentNode.Position = new Vector3(-(x * 1.2f + 0.6f), ModelParentNode.Position.Y, ModelParentNode.Position.Z);              
+                    break;
+                case tileMapRender.heading2: 
+                     ModelParentNode.Position = new Vector3(ModelParentNode.Position.X, ModelParentNode.Position.Y, y * 1.2f + 0.6f); 
+                    break;
+                case tileMapRender.heading4: 
+                    ModelParentNode.Position = new Vector3(-(x * 1.2f + 0.6f), ModelParentNode.Position.Y, ModelParentNode.Position.Z); 
+                    break;
+                case tileMapRender.Heading6: 
+                    ModelParentNode.Position = new Vector3(ModelParentNode.Position.X, ModelParentNode.Position.Y, y * 1.2f + 0.6f); 
+                    break;
+                default:
+                    System.Diagnostics.Debug.Print($"Unhandled model axis heading. {modelObj.uwobject.item_id} h:{modelObj.uwobject.heading}");
+                    break;
+            }
+        }
+
+        //Center the model in the tile in it's tile
+        public static void centreInTile(Node3D modelParentNode, model3D modelObj)
+        {
+            int x = modelObj.uwobject.tileX;
+            int y = modelObj.uwobject.tileY;
+           
+            modelParentNode.Position = new Vector3(-(x * 1.2f + 0.6f), modelParentNode.Position.Y, y * 1.2f + 0.6f);
+        }
 
     }//end class
 }//end namespace

@@ -6,7 +6,6 @@ namespace Underworld
 {
     public class bed : model3D
     {
-
         public static bed CreateInstance(Node3D parent, uwObject obj, string name)
         {
             var n = new bed(obj);
