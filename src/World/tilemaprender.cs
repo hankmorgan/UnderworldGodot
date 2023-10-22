@@ -462,10 +462,10 @@ namespace Underworld
                                 verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 0.0f);
 
                                 //Allocate UVs
-                                uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, 1.0f * dimY);
-                                uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, 0.0f);
-                                uvs[2 + (4 * FaceCounter)] = new Vector2(1.0f * dimX, 0.0f);
-                                uvs[3 + (4 * FaceCounter)] = new Vector2(1.0f * dimX, 1.0f * dimY);
+                                uvs[0 + (4 * FaceCounter)] = new Vector2(1.0f * dimX, 0.0f);
+                                uvs[1 + (4 * FaceCounter)] = new Vector2(1.0f * dimX, 1.0f * dimY);
+                                uvs[2 + (4 * FaceCounter)] = new Vector2(0.0f, 1.0f * dimY);
+                                uvs[3 + (4 * FaceCounter)] = new Vector2(0.0f, 0.0f);                               
 
                                 break;
                             }
