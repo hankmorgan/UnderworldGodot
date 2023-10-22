@@ -165,6 +165,11 @@ namespace Underworld
                             bridge.CreateInstance(parent, obj, name, a_tilemap);
                             return false; 
                         }
+                        if (obj.classindex == 6)
+                        {//some_writing 358
+                            writing.CreateInstance(parent, obj, name);
+                            return false; 
+                        }
                         if ((_RES == GAME_UW2) && (obj.classindex == 7))
                         {  //or item id 359
                             bed.CreateInstance(parent, obj, name);
