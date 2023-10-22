@@ -297,21 +297,21 @@ namespace Underworld
         {
             int tileX = obj.tileX;
             int tileY = obj.tileY;
-            var n = new doorway(obj);
-            n.texture = a_tilemap.texture_map[a_tilemap.Tiles[tileX, tileY].wallTexture];
-            n.floorheight = a_tilemap.Tiles[tileX, tileY].floorHeight;//uses floorheight since portculli use zpos when opened // (float)(obj.zpos) / 4f; //a_tilemap.Tiles[tileX, tileY].floorHeight;
+            var dw = new doorway(obj);
+            dw.texture = a_tilemap.texture_map[a_tilemap.Tiles[tileX, tileY].wallTexture];
+            dw.floorheight = a_tilemap.Tiles[tileX, tileY].floorHeight;//uses floorheight since portculli use zpos when opened // (float)(obj.zpos) / 4f; //a_tilemap.Tiles[tileX, tileY].floorHeight;
             //n.position = parent.Position;
             //a portcullis. 
 
-            n.doorFrameNode = n.Generate3DModel(parent, name);
-            if ( n.isOpen )
+            dw.doorFrameNode = dw.Generate3DModel(parent, name);
+            if ( dw.isOpen )
             {//fix for map bug where some open doors extend out of the map. Force them onto a lower zpos without changing data
-                parent.Position = new Vector3(parent.Position.X, uwObject.GetZCoordinate(n.uwobject.zpos-24), parent.Position.Z);
+                parent.Position = new Vector3(parent.Position.X, uwObject.GetZCoordinate(dw.uwobject.zpos-24), parent.Position.Z);
             }
 
-            SetModelRotation(parent, n);
+            SetModelRotation(parent, dw);
 
-            switch (n.uwobject.heading * 45)
+            switch (dw.uwobject.heading * 45)
             {//align model node in centre of tile along it's axis
                 case tileMapRender.Heading6:
                     parent.Position = new Vector3(parent.Position.X, parent.Position.Y, (tileY * 1.2f) + 0.6f);
@@ -329,7 +329,9 @@ namespace Underworld
                     System.Diagnostics.Debug.Print("Unhandled model centre");
                     break;
             }
-            return n;
+
+            //DisplayModelPoints(dw,parent);
+            return dw;
         }
 
         public doorway(uwObject _uwobject)
@@ -339,7 +341,7 @@ namespace Underworld
 
         public override int NoOfMeshes()
         {
-            return 7;
+            return 8;
         }
 
         public override Vector3[] ModelVertices()
@@ -458,6 +460,31 @@ namespace Underworld
                         tris[17] = 2;
                         return tris;
                     }
+                case 7:
+                {
+                    tris = new int[18];
+                    tris[0] = 9;
+                    tris[1] = 8;
+                    tris[2] = 16;
+                    tris[3] = 16;
+                    tris[4] = 17;
+                    tris[5] = 9;
+
+                    tris[6] = 17;
+                    tris[7] = 16;
+                    tris[8] = 18;
+                    tris[9] = 18;
+                    tris[10] = 19;
+                    tris[11] = 17;
+
+                    tris[12] = 10;
+                    tris[13] = 11;
+                    tris[14] = 19;
+                    tris[15] = 19;
+                    tris[16] = 18;
+                    tris[17] = 10;
+                    return tris;
+                }
             }
             return base.ModelTriangles(meshNo);
         }
