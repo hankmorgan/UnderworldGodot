@@ -155,6 +155,11 @@ namespace Underworld
                             pillar.CreateInstance(parent, obj, name);
                             return false; 
                         }
+                        if ((obj.classindex == 1) || (obj.classindex==2))
+                        {//353 and 354, rotary switches
+                            buttonrotary.CreateInstance(parent, obj, name);
+                            return false;
+                        }
                         if ((_RES == GAME_UW2) && (obj.classindex == 3))
                         {  //or item id 163
                             painting.CreateInstance(parent, obj, name);
@@ -187,6 +192,11 @@ namespace Underworld
                         }
                         break;
                     }
+                case 3:
+                    {   //buttons
+                        button.CreateInstance(parent, obj, name);
+                        return false;
+                    }
             }
 
             return true;
@@ -194,7 +204,10 @@ namespace Underworld
 
         public static void CreateSpriteInstance(GRLoader grObjects, uwObject obj, Node3D parent, string name)
         {
-            CreateSprite(grObjects, obj.item_id, parent, name);
+            if (obj.invis ==0)
+            {
+                CreateSprite(grObjects, obj.item_id, parent, name);
+            }           
         }
 
         public static void CreateSprite(GRLoader grObjects, int spriteNo, Node3D parent, string name, bool EnableCollision = true)

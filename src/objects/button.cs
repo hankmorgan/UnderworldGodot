@@ -1,19 +1,23 @@
 using Godot;
+
 namespace Underworld
 {
-    public class writing:model3D
+    /// <summary>
+    /// For rendering switches (except for the rotary switch)
+    /// </summary>
+    public class button : model3D
     {
-        public static writing CreateInstance(Node3D parent, uwObject obj, string name)
+        public static button CreateInstance(Node3D parent, uwObject obj, string name)
         {
-            var b = new writing(obj);
+            var b = new button(obj);
             var modelNode = b.Generate3DModel(parent, name);
-            SetModelRotation(parent, b);            
-            //DisplayModelPoints(b,modelNode);
+            SetModelRotation(parent, b);
+            //DisplayModelPoints(b, modelNode);
             return b;
         }
 
-        public writing(uwObject _uwobject)
-        {            
+        public button(uwObject _uwobject)
+        {
             uwobject = _uwobject;
         }
 
@@ -29,31 +33,29 @@ namespace Underworld
 
         public override int[] ModelTriangles(int meshNo)
         {
-           var tris = new int[6];
-           tris[0] = 0;
-           tris[1] = 3;
-           tris[2] = 2;
-           tris[3] = 2;
-           tris[4] = 1;
-           tris[5] = 0;
-           return tris;
+            var tris = new int[6];
+            tris[0] = 0;
+            tris[1] = 3;
+            tris[2] = 2;
+            tris[3] = 2;
+            tris[4] = 1;
+            tris[5] = 0;
+            return tris;
         }
 
         public override Vector2[] ModelUVs(Vector3[] verts)
         {
             var uv = new Vector2[4];
-            uv[0] = new Vector2(0,1);
-            uv[1] = new Vector2(1,1);
-            uv[2] = new Vector2(1,0);
-            uv[3] = new Vector2(0,0); 
+            uv[0] = new Vector2(0, 1);
+            uv[1] = new Vector2(1, 1);
+            uv[2] = new Vector2(1, 0);
+            uv[3] = new Vector2(0, 0);
             return uv;
         }
 
         public override ShaderMaterial GetMaterial(int textureno, int surface)
         {
-            //(20 + (flags & 0x07)           
-            return GetTmObj.GetMaterial(20 + (uwobject.flags & 0x07));
+            return GetTmFlat.GetMaterial(uwobject.item_id - 368);
         }
-
-    }//end class
-}//end namespace
+    }
+}

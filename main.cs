@@ -91,7 +91,7 @@ public partial class main : Node3D
 		// }
 
 
-		var mdl = modelloader.DecodeModel(18);
+		var mdl = modelloader.DecodeModel(16);
 		//File.WriteAllText("c:\\temp\\mdl.txt",mdl.commands);
 		int vindex=0;
 		var nd = GetNode<Node3D>("/root/Node3D");

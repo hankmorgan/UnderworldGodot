@@ -164,8 +164,7 @@ namespace Underworld
                     }
                     else
                     {
-                    LoadTmObj();
-                    return tmObj.GetMaterial(30 + textureindex);
+                    return GetTmObj.GetMaterial(30 + textureindex);
                     }
                 }
             }

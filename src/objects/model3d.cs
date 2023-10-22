@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 namespace Underworld
 {
 
@@ -13,7 +14,27 @@ namespace Underworld
         protected const int CEILING_HEIGHT = 32;
         public Material material;
         public static Shader textureshader;
-        public static GRLoader tmObj; //3d model textures.
+        static GRLoader tmObj; //3d model textures.
+
+        public static GRLoader GetTmObj
+        {
+            get
+            {
+                LoadTmObj();
+                return tmObj;
+            }
+        }
+        static GRLoader tmFlat; //button.
+
+        public static GRLoader GetTmFlat
+        {
+            get
+            {
+                LoadTmFlat();
+                return tmFlat;
+            }
+        }
+        
         
         /// <summary>
         /// Generates the defined 3d model and adds as a child to the parent node.
@@ -217,14 +238,26 @@ namespace Underworld
         /// <summary>
         /// Checks if tmObj is loaded and if not load. Call before returning a new material shader using tmObjl
         /// </summary>
-        protected static void LoadTmObj()
+        static void LoadTmObj()
         {
             if (tmObj == null)
             {
                 tmObj = new GRLoader(GRLoader.TMOBJ_GR, GRLoader.GRShaderMode.TextureShader);
                 tmObj.RenderGrey = true;
             }
-        }      
+        }  
+
+        /// <summary>
+        /// Checks if tmFlat is loaded and if not load. Call before returning a new material shader using tmObjl
+        /// </summary>
+        static void LoadTmFlat()
+        {
+            if (tmFlat == null)
+            {
+                tmFlat = new GRLoader(GRLoader.TMFLAT_GR, GRLoader.GRShaderMode.TextureShader);
+                tmFlat.RenderGrey = true;
+            }
+        }        
 
 
         //Center the model in the tile it is in along it's heading
