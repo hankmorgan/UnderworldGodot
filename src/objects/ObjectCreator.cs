@@ -194,6 +194,11 @@ namespace Underworld
                             bridge.CreateInstance(parent, obj, name, a_tilemap);
                             return false; 
                         }
+                        if (obj.classindex == 5)
+                        {//gravestone
+                            gravestone.CreateInstance(parent, obj, name);
+                            return false; 
+                        }
                         if (obj.classindex == 6)
                         {//some_writing 358
                             writing.CreateInstance(parent, obj, name);
