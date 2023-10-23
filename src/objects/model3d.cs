@@ -183,7 +183,7 @@ namespace Underworld
             var vs = m.ModelVertices();
             int vindex = 0;
             Label3D obj_orign = new();
-            obj_orign.Text = $"@\n{m.uwobject.heading}";
+            obj_orign.Text = $".";
             obj_orign.Position = Vector3.Zero;
             obj_orign.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
             n.AddChild(obj_orign);
@@ -194,7 +194,7 @@ namespace Underworld
                 {
                     Label3D obj_lbl = new();
                     obj_lbl.Text = $"{vindex}";
-                    obj_lbl.FontSize=10;
+                    obj_lbl.FontSize=8;
                     obj_lbl.Position = new Vector3(v.X, v.Y, v.Z);
                     obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
                     n.AddChild(obj_lbl);

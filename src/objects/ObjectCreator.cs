@@ -145,6 +145,11 @@ namespace Underworld
                             moongate.CreateInstance(parent, obj, name);
                             return false;
                         }  
+                        if (obj.classindex == 0xB)
+                        {
+                            barrel.CreateInstance(parent, obj, name);
+                            return false;
+                        } 
 
                         if (obj.classindex == 0xD)
                         {
