@@ -65,7 +65,7 @@ namespace Underworld
                     unimplemented = true; break;
 
             }
-
+            return;
             if (unimplemented)
             {
                 //just render a sprite.
@@ -184,6 +184,11 @@ namespace Underworld
                         {  //or item id 360
                             largeblackrockgem.CreateInstance(parent, obj, name);
                             return false;
+                        }
+                        if ((_RES == GAME_UW2) && (obj.classindex == 9))
+                        {  //or item id 361
+                            shelf.CreateInstance(parent, obj, name);
+                            return false; 
                         }
                         if ((obj.classindex == 0xE) || (obj.classindex == 0xF))
                         {//tmaps
