@@ -7,8 +7,7 @@ namespace Underworld
         {
             var n = new nightstand(obj);
             var modelNode = n.Generate3DModel(parent, name);
-            SetModelRotation(parent, n);
-       
+            SetModelRotation(parent, n);       
             return n;
         }
 

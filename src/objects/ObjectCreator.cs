@@ -150,6 +150,11 @@ namespace Underworld
                             barrel.CreateInstance(parent, obj, name);
                             return false;
                         } 
+                        if (obj.classindex == 0xC)
+                        {
+                            chair.CreateInstance(parent, obj, name);
+                            return false;
+                        }  
                         if (obj.classindex == 0xD)
                         {
                             chest.CreateInstance(parent, obj, name);
