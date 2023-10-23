@@ -11,8 +11,7 @@ namespace Underworld
             var s = new shelf(obj);
             var modelNode = s.Generate3DModel(parent, name);
             SetModelRotation(parent, s);
-            DisplayModelPoints(s, modelNode);
-            modelNode.Scale = modelNode.Scale * 2;
+            //DisplayModelPoints(s, modelNode);           
             return s;
         }
 

@@ -64,8 +64,7 @@ namespace Underworld
                 default:
                     unimplemented = true; break;
 
-            }
-            return;
+            }           
             if (unimplemented)
             {
                 //just render a sprite.
@@ -145,7 +144,13 @@ namespace Underworld
                         {
                             moongate.CreateInstance(parent, obj, name);
                             return false;
-                        }                        
+                        }  
+
+                        if (obj.classindex == 0xD)
+                        {
+                            chest.CreateInstance(parent, obj, name);
+                            return false;
+                        }    
                         break;
                     }
                 case 2: //3D models
