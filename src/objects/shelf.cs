@@ -1,6 +1,5 @@
-using System.Diagnostics.Tracing;
+using System;
 using Godot;
-using Microsoft.VisualBasic;
 
 namespace Underworld
 {
@@ -10,6 +9,7 @@ namespace Underworld
         {
             var s = new shelf(obj);
             var modelNode = s.Generate3DModel(parent, name);
+            modelNode.Rotate(Vector3.Up, (float)Math.PI);
             SetModelRotation(parent, s);
             //DisplayModelPoints(s, modelNode);           
             return s;

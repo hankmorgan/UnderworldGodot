@@ -125,6 +125,11 @@ namespace Underworld
                     }
                 case 1: //3D Models
                     {
+                        if (obj.classindex == 0)
+                        {//bench
+                            bench.CreateInstance(parent, obj, name);
+                            return false;
+                        }
                         if ((obj.classindex>=3) && (obj.classindex<=6))
                         {//boulders
                             boulder.CreateInstance(parent,obj, name);
