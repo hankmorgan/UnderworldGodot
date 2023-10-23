@@ -401,14 +401,6 @@ namespace Underworld
         public override int ModelColour(int meshNo)
         {
             return 1;
-            if (_RES == GAME_UW2)
-            {
-                return 34;
-            }
-            else
-            {
-                return 30;
-            }
         }
 
         public override ShaderMaterial GetMaterial(int textureno, int surface)
