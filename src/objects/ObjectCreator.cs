@@ -145,6 +145,11 @@ namespace Underworld
                             table.CreateInstance(parent, obj, name);
                             return false;
                         }   
+                        if (obj.classindex == 9)
+                        {
+                            beam.CreateInstance(parent, obj, name);
+                            return false;
+                        }   
                         if (obj.classindex == 0xA)
                         {
                             moongate.CreateInstance(parent, obj, name);
