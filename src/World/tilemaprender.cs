@@ -75,7 +75,7 @@ namespace Underworld
         public static void GenerateLevelFromTileMap(Node3D parent, Node3D sceneryParent, string game, TileMap Level, List<uwObject> objList, bool UpdateOnly)
         {
             CEILING_HEIGHT = TileMap.UW_CEILING_HEIGHT;
-
+            return;
             if (!UpdateOnly)
             {
                 //Clear out the children in the transform

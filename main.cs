@@ -67,6 +67,7 @@ public partial class main : Node3D
 		{
 			case UWClass.GAME_UW2:
 				cam.Position = new Vector3(-23f, 4.3f, 58.2f); 
+				cam.Position = new Vector3(-37.2f, 3.2f, 66f); 
 				break;
 			default:
 				cam.Position = new Vector3(-38f, 4.2f, 2.2f); break;
@@ -111,7 +112,8 @@ public partial class main : Node3D
 			}
 			vindex++;
 		}
-		Debug.Print (code);
+		//Debug.Print (code);
+		File.WriteAllText("c:\\temp\\mdlcode.txt",code);
 		//cam.Position= Vector3.Zero;
 
 		//Random rnd = new Random();

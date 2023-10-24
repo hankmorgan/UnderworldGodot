@@ -174,7 +174,12 @@ namespace Underworld
                         {
                             nightstand.CreateInstance(parent, obj, name);
                             return false;
-                        }     
+                        }    
+                        if (obj.classindex == 0xF)
+                        {
+                            lotus.CreateInstance(parent, obj, name);
+                            return true;
+                        }   
                         break;
                     }
                 case 2: //3D models
