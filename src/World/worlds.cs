@@ -93,7 +93,7 @@ namespace Underworld
             Ethereal6 = 70,
             Ethereal7 = 71,
             Ethereal8 = 72
-        };
+        }; //uw2 floppy level 69 is a secret level containing the lotus.
 
         public static int GetWorldNo(int levelNo)
         {

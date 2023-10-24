@@ -194,7 +194,7 @@ namespace Underworld
                 models[n].modelname = ua_model_name[n];
 
                 // Debug.Log(models[n].modelname);
-                for (int i = 0; i <= 128; i++)
+                for (int i = 0; i <= 256; i++)
                 {
                     models[n].verts.Add(Vector3.Zero);
                 }
@@ -280,7 +280,7 @@ namespace Underworld
                             float vy = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;
                             float vz = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;
                             int unk1 = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;
-                            result += $"\n\tVertNo:{vertno} x:{vx} y:{vy} z:{vz} unk:{unk1}";
+                            result += $"\tVertNo:{vertno} x:{vx} y:{vy} z:{vz} unk:{unk1}";
                             // ua_mdl_trace("[origin] vertno=%u unk1=%04x origin=(%f,%f,%f)",
                             //  vertno,unk1,vx,vy,vz);
                             break;
@@ -297,7 +297,7 @@ namespace Underworld
                             int vertno = ua_mdl_read_vertno(buffer, addressptr); addressptr += 2;//ua_mdl_read_vertno(fd);
                             Vector3 final = new Vector3((float)vx, (float)vy, (float)vz);
                             ua_mdl_store_vertex(final, vertno, ref mod);
-                            result += $"\n\tVertex:{vertno} x:{final.X} y:{final.Y} z:{final.Z}";
+                            result += $"\tVertex:{vertno} x:{final.X} y:{final.Y} z:{final.Z}";
                             break;
                         }
 
@@ -316,7 +316,7 @@ namespace Underworld
 
                                 Vector3 final = new Vector3((float)vx, (float)vy, (float)vz);
                                 ua_mdl_store_vertex(final, vertno + n, ref mod);
-                                result += $"\n\tVertex:{vertno} x:{final.X} y:{final.Y} z:{final.Z}";
+                                result += $"\n\tVertex:{vertno+n} x:{final.X} y:{final.Y} z:{final.Z}";
                             }
                         }
                         break;
@@ -332,7 +332,7 @@ namespace Underworld
                             Vector3 adj = new Vector3(vx, 0f, 0f);
                             Vector3 final = refvect + adj;
                             ua_mdl_store_vertex(final, vertno, ref mod);
-                            result += $"\n\tVertex:{vertno} x:{final.X} y:{final.Y} z:{final.Z} refvert:{refvert}";
+                            result += $"\tVertex:{vertno} x:{final.X} y:{final.Y} z:{final.Z} refvert:{refvert}";
                             break;
                         }
 
@@ -348,7 +348,7 @@ namespace Underworld
                             Vector3 adj = new Vector3(0f, 0f, vz);
                             Vector3 final = refvect + adj;
                             ua_mdl_store_vertex(final, vertno, ref mod);
-                            result += $"\n\tVertex:{vertno} x:{final.X} y:{final.Y} z:{final.Z} refvert:{refvert}";
+                            result += $"\tVertex:{vertno} x:{final.X} y:{final.Y} z:{final.Z} refvert:{refvert}";
 
                             break;
                         }
@@ -361,10 +361,10 @@ namespace Underworld
                             float vy = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                             int vertno = ua_mdl_read_vertno(buffer, addressptr); addressptr += 2;
                             Vector3 refvect = mod.verts[refvert];
-                            Vector3 adj = new Vector3(0f, vy*10f, 0f);
+                            Vector3 adj = new Vector3(0f, vy, 0f);
                             Vector3 final = refvect + adj;
                             ua_mdl_store_vertex(final, vertno, ref mod);
-                            result += $"\n\tVertex:{vertno} x:{final.X} y:{final.Y} z:{final.Z} refvert:{refvert}";
+                            result += $"\tVertex:{vertno} x:{final.X} y:{final.Y} z:{final.Z} refvert:{refvert}";
                             break;
                         }
 
@@ -384,7 +384,7 @@ namespace Underworld
                             // refvect  = new Vector3(refvect.x+(float)vx,refvect.y,refvect.z+(float)vz);
                             Vector3 adj = new Vector3(vx, 0f, vz);
                             ua_mdl_store_vertex(refvect + adj, vertno, ref mod);
-                            result += $"\n\trefvert:{refvert} x:{vx} z:{vz} vertno:{vertno}";
+                            result += $"\trefvert:{refvert} x:{vx} z:{vz} vertno:{vertno}";
                             // Debug.Log("Vertex offsetXZ #" +(vertno) + "="  + (refvect+adj) + " from " + refvect + "(" + refvert + ")" + " adj = " +adj);
                             // ua_mdl_trace("[vertex] vertno=%u vertex=(%f,%f,%f) xz from=%u",
                             //    vertno,refvect.x,refvect.y,refvect.z,refvert);
@@ -408,7 +408,7 @@ namespace Underworld
                             // ua_mdl_store_vertex(refvect,vertno,ref mod);
                             Vector3 adj = new Vector3(vx, vy, 0f);
                             ua_mdl_store_vertex(refvect + adj, vertno, ref mod);
-                            result += $"\n\trefvert:{refvert} x:{vx} y:{vy} vertno:{vertno}";
+                            result += $"\trefvert:{refvert} x:{vx} y:{vy} vertno:{vertno}";
                             // Debug.Log("Vertex offsetXY #" +(vertno) + "="  + (refvect+adj) + " from " + refvect + "(" + refvert + ")" + " adj = " +adj);
                             // ua_mdl_trace("[vertex] vertno=%u vertex=(%f,%f,%f) xy from=%u",
                             //   vertno,refvect.x,refvect.y,refvect.z,refvert);
@@ -431,8 +431,9 @@ namespace Underworld
                             //refvect  = new Vector3(refvect.x,refvect.y+(float)vy,refvect.z+(float)vz);
                             // ua_mdl_store_vertex(refvect,vertno,ref mod);
                             Vector3 adj = new Vector3(0f, vy, vz);
+                            var final = refvect + adj;
                             ua_mdl_store_vertex(refvect + adj, vertno, ref mod);
-                            result += $"\n\trefvert:{refvert} y:{vy} z:{vz} vertno:{vertno}";
+                            result += $"\tvertno:{vertno} x:{final.X} y:{final.Y} z:{final.Z} refvert:{refvert}";
                             // Debug.Log("Vertex offsetYZ #" +(vertno) + "="  + (refvect+adj) + " from " + refvect + "(" + refvert + ")" + " adj = " +adj);
 
                             // ua_mdl_trace("[vertex] vertno=%u vertex=(%f,%f,%f) yz from=%u",
@@ -456,7 +457,7 @@ namespace Underworld
 
                             Vector3 final = new Vector3(refvect.X, refvect.Y, 32f * 0.125f);
                             ua_mdl_store_vertex(final, vertno, ref mod);
-                            result += $"\n\tVertex:{vertno} x:{final.X} y:{final.Y} z:{final.Z} refvert:{refvert}";
+                            result += $"\tVertex:{vertno} x:{final.X} y:{final.Y} z:{final.Z} refvert:{refvert}";
                             break;
                         }
 
@@ -473,7 +474,7 @@ namespace Underworld
                             float nz = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                             float vz = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                             //writer.Write("\t Normal (" + nx + "," + ny + "," + nz + ") dist (" + vx + "," + vy + "," + vz + ")\n");
-                            result += $"\n\tunk1:{unk1} normalXYZ:{nx},{ny},{nz} vertexXYZ:{vx},{vy},{vz}";
+                            result += $"\tunk1:{unk1} normalXYZ:{nx},{ny},{nz} vertexXYZ:{vx},{vy},{vz}";
 
                             //  ua_mdl_trace("[planecheck] skip=%04x normal=(%f,%f,%f) dist=(%f,%f,%f)",
                             //    unk1,nx,ny,nz,vx,vy,vz);
@@ -487,7 +488,7 @@ namespace Underworld
                             int unk1 = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;//fread16(fd);
                             float n = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                             float v = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
-                            result += $"\n\tNormal:{n} Vertex:{v} unk1:{unk1}";
+                            result += $"\tNormal:{n} Vertex:{v} unk1:{unk1}";
                             break;
                         }
                     case nodecmd.M3_UW_FACE_PLANE_Z: // 0066 define face plane Z
@@ -496,7 +497,7 @@ namespace Underworld
                             int unk1 = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;//fread16(fd);
                             float n = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                             float v = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
-                            result += $"\n\tNormal:{n} Vertex:{v} unk1:{unk1}";
+                            result += $"\tNormal:{n} Vertex:{v} unk1:{unk1}";
                             break;
                         }
                     case nodecmd.M3_UW_FACE_PLANE_Y: // 0068 define face plane Y
@@ -505,7 +506,7 @@ namespace Underworld
                             int unk1 = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;//fread16(fd);
                             float n = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                             float v = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
-                            result += $"\n\tNormal:{n} Vertex:{v} unk1:{unk1}";
+                            result += $"\tNormal:{n} Vertex:{v} unk1:{unk1}";
                             break;
                         }
 
@@ -518,7 +519,7 @@ namespace Underworld
                             float vz = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;// ua_mdl_read_fixed(fd);
                             float ny = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                             float vy = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
-                            result += $"\n\tNormalZY:{nz},{ny} VertexZY:{vz},{vy} unk1{unk1}";
+                            result += $"\tNormalZY:{nz},{ny} VertexZY:{vz},{vy} unk1{unk1}";
                             break;
                         }
                     case nodecmd.M3_UW_FACE_PLANE_XY: // 0060 define face plane X/Y
@@ -529,7 +530,7 @@ namespace Underworld
                             float vx = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;// ua_mdl_read_fixed(fd);
                             float ny = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                             float vy = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
-                            result += $"\n\tNormalZY:{nx},{ny} VertexZY:{vx},{vy} unk1{unk1}";
+                            result += $"\tNormalZY:{nx},{ny} VertexZY:{vx},{vy} unk1{unk1}";
                             break;
                         }
                     case nodecmd.M3_UW_FACE_PLANE_XZ: // 0062 define face plane X/Z
@@ -540,7 +541,7 @@ namespace Underworld
                             float vx = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;// ua_mdl_read_fixed(fd);
                             float nz = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                             float vz = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
-                            result += $"\n\tNormalZY:{nx},{nz} VertexZY:{vx},{vz} unk1{unk1}";
+                            result += $"\tNormalZY:{nx},{nz} VertexZY:{vx},{vz} unk1{unk1}";
                             break;
                         }
 
@@ -560,7 +561,7 @@ namespace Underworld
                                 faceverts[i] = vertno;
                                 //Xua_vertex3d vert;
                                 //output = output + vertno + ",";
-                                result += $"\n\tVertNo:{vertno}";
+                                result += $"\tVertNo:{vertno}";
                             }
                             convertVertToTris(faceverts, ref mod);
                         }
@@ -575,7 +576,7 @@ namespace Underworld
                             if ((nodecmd)cmd == nodecmd.M3_UW_TEXTURE_FACE)
                             {
                                 int unk1 = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;//fread16(fd); // texture number?
-                                result += $"\n\tunk1{unk1}";
+                                result += $"\tunk1{unk1}";
                             }
 
                             int nvert = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;//fread16(fd);
@@ -587,7 +588,7 @@ namespace Underworld
                                 float u0 = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                                 float v0 = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                                 faceverts[i] = vertno;
-                                result += $"\n\tVertNo{vertno} UV:{u0},{v0}";
+                                result += $"\tVertNo{vertno} UV:{u0},{v0}";
                             }
                             convertVertToTris(faceverts, ref mod);
                         }
@@ -608,7 +609,7 @@ namespace Underworld
                                 float u0 = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                                 float v0 = ua_mdl_read_fixed(buffer, addressptr); addressptr += 2;//ua_mdl_read_fixed(fd);
                                 faceverts[i] = vertno;
-                                result += $"\n\tVertNo{vertno} UV:{u0},{v0}";
+                                result += $"\tVertNo{vertno} UV:{u0},{v0}";
                             }
                             convertVertToTris(faceverts, ref mod);
                         }
@@ -671,7 +672,7 @@ namespace Underworld
                             int unk1 = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;//fread16(fd);
                             int vertno = ua_mdl_read_vertno(buffer, addressptr); addressptr += 2;
                             int finalcolour = MapColour(unk1);
-                            result += $"\n\trefvert:{refvert} unk1:{unk1} {finalcolour} vertno:{vertno}";
+                            result += $"\trefvert:{refvert} unk1:{unk1} {finalcolour} vertno:{vertno}";
                             break;
                         }
 
@@ -682,7 +683,7 @@ namespace Underworld
                             int unk1 = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;//fread16(fd);
                             int vertno = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;//fread16(fd);
                             int finalcolour = MapColour(unk1);
-                            result += $"\n\tunk1:{unk1} {finalcolour} vertno:{vertno}";                                                                   //ua_mdl_trace("[shade] shade unk1=%02x unk2=%02x",unk1,vertno);
+                            result += $"\tunk1:{unk1} {finalcolour} vertno:{vertno}";                                                                   //ua_mdl_trace("[shade] shade unk1=%02x unk2=%02x",unk1,vertno);
                             break;
                         }
 
@@ -693,7 +694,7 @@ namespace Underworld
                             int vertno = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;//fread16(fd);
                             int unk1 = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;//fread16(fd);
                             int finalcolour = MapColour(unk1);
-                            result += $"\n\tunk1:{unk1} {finalcolour} vertno:{vertno}";                                                                           //ua_mdl_trace("[shade] twoshade unk1=%02x unk2=%02x ",vertno,unk1);
+                            result += $"\tunk1:{unk1} {finalcolour} vertno:{vertno}";                                                                           //ua_mdl_trace("[shade] twoshade unk1=%02x unk2=%02x ",vertno,unk1);
                             break;
                         }
 
@@ -703,13 +704,13 @@ namespace Underworld
                             result += $"\nInstr {instr} ({cmd})\tVERTEX DARK";
                             int nvert = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;// fread16(fd);
                             int unk1 = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;// fread16(fd);
-                            result += $"\n\tunk1:{unk1} nvert{nvert}";
+                            result += $"\tunk1:{unk1} nvert{nvert}";
                             for (int n = 0; n < nvert; n++)
                             {
                                 int vertno = ua_mdl_read_vertno(buffer, addressptr); addressptr += 2;
                                 // unk1 = fgetc(fd);
                                 addressptr++;
-                                result += $"\n\tvertno:{vertno}";
+                                result += $"\tvertno:{vertno}";
                                 // ua_mdl_trace("%u (%02x) ",vertno,unk1);
                             }
                             if ((nvert & 1) == 1)
@@ -734,13 +735,13 @@ namespace Underworld
                         {
                             result += $"\nInstr {instr} ({cmd})\tFACE_SHORT";
                             int vertno = ua_mdl_read_vertno(buffer, addressptr); addressptr += 2;
-                            result += $"\n\tinitial_vertno:{vertno}";
+                            result += $"\tinitial_vertno:{vertno}";
                             //ua_mdl_trace("[face] shorthand unk1=%u vertlist=",vertno);
                             int[] faceverts = new int[4];
                             for (int i = 0; i < 4; i++)
                             {
                                 vertno = (int)getValAtAddress(buffer, addressptr, 8); addressptr++; //fgetc(fd);
-                                result += $"\n\tvertno:{vertno}";
+                                result += $"\tvertno:{vertno}";
                                 faceverts[i] = vertno;
                             }
                             convertVertToTris(faceverts, ref mod);
@@ -751,13 +752,13 @@ namespace Underworld
                         {
                             result += $"\nInstr {instr} ({cmd})\tSHORTHAND_FACE_DEFINITION";
                             int vertno = ua_mdl_read_vertno(buffer, addressptr); addressptr += 2;
-                            result += $"\n\tinitialvertno:{vertno}";
+                            result += $"\tinitialvertno:{vertno}";
                             //ua_mdl_trace("[face] vertno=%u vertlist=",vertno);
                             int[] faceverts = new int[4];
                             for (int i = 0; i < 4; i++)
                             {
                                 vertno = (int)getValAtAddress(buffer, addressptr, 8); addressptr++; //fgetc(fd);
-                                result += $"\n\tvertno:{vertno}";
+                                result += $"\tvertno:{vertno}";
                                 faceverts[i] = vertno;
                             }
                             convertVertToTris(faceverts, ref mod);
@@ -772,12 +773,12 @@ namespace Underworld
 
                             int nvert = ua_mdl_read_vertno(buffer, addressptr); addressptr += 2;//ua_mdl_read_vertno(fd);
                             int unk1 = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;//fread16(fd);
-                            result += $"\n\tnvert:{nvert} unk1:{unk1}";
+                            result += $"\tnvert:{nvert} unk1:{unk1}";
                             for (int n = 0; n < nvert; n++)
                             {
                                 // unk1 = fgetc(fd);
                                 var unk2 = (int)getValAtAddress(buffer, addressptr, 8); addressptr++;
-                                result += $"\n\tunk2:{unk2}";
+                                result += $"\tunk2:{unk2}";
                             }
 
                             if ((nvert & 1) == 1)
@@ -789,12 +790,18 @@ namespace Underworld
 
                     case (nodecmd)0x0012:
                         {
-                            // writer.WriteLine("\nInstr " + instr + " UNK 12");
                             result += $"\nInstr {instr} ({cmd})\tUNK12";
                             int unk1 = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;//fread16(fd);
-                            result += $"\n\tunk1:{unk1}";
+                            result += $"\tunk1:{unk1}";
                             break;
                         }
+                    case (nodecmd)0x002e: //unk 46
+                    {
+                            result += $"\nInstr {instr} ({cmd})\tUNK2E";
+                            int unk1 = (int)getValAtAddress(buffer, addressptr, 16); addressptr += 2;//fread16(fd);
+                            result += $"\tunk1:{unk1}";
+                            break;
+                    }
 
                     default:
                         //ua_mdl_trace("unknown command at offset 0x%08x\n",ftell(fd)-2);
