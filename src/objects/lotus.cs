@@ -13,13 +13,10 @@ namespace Underworld
             DisplayModelPoints(l, parent, 200);
             return l;
         }
-
         public lotus(uwObject _uwobject)
         {
             uwobject = _uwobject;
         }
-
-
         public override Vector3[] ModelVertices()
         {
             var v = new Vector3[194];
@@ -225,7 +222,6 @@ namespace Underworld
 
             return v;
         }
-
         public override int ModelColour(int meshNo)
         {
             switch (meshNo)
@@ -254,10 +250,9 @@ namespace Underworld
             }
             return base.ModelColour(meshNo);
         }
-
         public override int NoOfMeshes()
         {
-            return 14;
+            return 15;
         }
         public override int[] ModelTriangles(int meshNo)
         {
@@ -291,10 +286,11 @@ namespace Underworld
                     return RearBumper();
                 case 13:
                     return BodyWork();
+                case 14:
+                    return Underneath();
             }
             return base.ModelTriangles(meshNo);
         }
-
         public int[] Wheel1Hub()
         {
             var tris = new int[42];
@@ -345,7 +341,6 @@ namespace Underworld
             return tris;
 
         }
-
         public int[] Wheel2Hub()
         {
             var tris = new int[42];
@@ -394,7 +389,6 @@ namespace Underworld
 
             return tris;
         }
-
         public int[] Wheel3Hub()
         {
             var tris = new int[42];
@@ -443,7 +437,6 @@ namespace Underworld
 
             return tris;
         }
-
         public int[] Wheel4Hub()
         {
             var tris = new int[42];
@@ -492,7 +485,6 @@ namespace Underworld
 
             return tris;
         }
-
         public int[] Tyre1()
         {
             var tris = new int[96];
@@ -610,7 +602,6 @@ namespace Underworld
 
             return tris;
         }
-
         public int[] Tyre2()
         {
             var tris = new int[96];
@@ -728,7 +719,6 @@ namespace Underworld
 
             return tris;
         }
-
         public int[] Tyre3()
         {
             var tris = new int[96];
@@ -846,7 +836,6 @@ namespace Underworld
 
             return tris;
         }
-
         public int[] Tyre4()
         {
             var tris = new int[96];
@@ -1068,11 +1057,9 @@ namespace Underworld
 
             return tris;
         }
-
         public int[] BodyWork()
         {
-            var tris = new int[240];
-        
+            var tris = new int[240];        
             tris[0] = 161;
             tris[1] = 170;
             tris[2] = 171;
@@ -1364,6 +1351,114 @@ namespace Underworld
             tris[237] = 158;
             tris[238] = 157;
             tris[239] = 145;
+
+            return tris;
+        }
+        public int[] Underneath()
+        {
+            var tris=new int[75];
+            tris[0] = 138;
+            tris[1] = 151;
+            tris[2] = 176;
+            tris[3] = 176;
+            tris[4] = 155;
+            tris[5] = 138;
+
+            tris[6] = 180;
+            tris[7] = 172;
+            tris[8] = 147;
+            tris[9] = 147;
+            tris[10] = 144;
+            tris[11] = 180;
+
+            tris[12] = 132;
+            tris[13] = 145;
+            tris[14] = 157;
+            tris[15] = 157;
+            tris[16] = 156;
+            tris[17] = 132;
+
+            tris[18] = 156;
+            tris[19] = 180;
+            tris[20] = 144;
+            tris[21] = 144;
+            tris[22] = 132;
+            tris[23] = 156;
+
+            tris[24] = 172;
+            tris[25] = 176;
+            tris[26] = 151;
+            tris[27] = 151;
+            tris[28] = 147;
+            tris[29] = 172;
+
+            //wheels filler
+            tris[27] = 156;
+            tris[28] = 95;
+            tris[29] = 94;
+
+            tris[30] = 156;
+            tris[31] = 96;
+            tris[32] = 95;
+
+            tris[33] = 156;
+            tris[34] = 177;
+            tris[35] = 97;
+            tris[36] = 97;
+            tris[37] = 96;
+            tris[38] = 156;
+
+            tris[36] = 97;
+            tris[37] = 177;
+            tris[38] = 98;
+
+            tris[39] = 156;
+            tris[40] = 97;
+            tris[41] = 96;
+
+            tris[42] = 98;
+            tris[43] = 177;
+            tris[44] = 178;
+            tris[45] = 178;
+            tris[46] = 99;
+            tris[47] = 98;
+
+            tris[48] = 99;
+            tris[49] = 178;
+            tris[50] = 84;
+
+            tris[51] = 84;
+            tris[52] = 178;
+            tris[53] = 85;
+
+            tris[54] = 85;
+            tris[55] = 178;
+            tris[56] = 179;
+            tris[57] = 179;
+            tris[58] = 86;
+            tris[59] = 85;
+
+            tris[60] = 180;
+            tris[61] = 90;
+            tris[62] = 89;
+
+            tris[63] = 180;
+            tris[64] = 89;
+            tris[65] = 88;
+
+            
+            tris[66] = 86;
+            tris[67] = 179;
+            tris[68] = 87;
+
+
+            tris[69] = 87;
+            tris[70] = 179;
+            tris[71] = 180;            
+            tris[72] = 180;
+            tris[73] = 88;
+            tris[74] = 87;
+
 
             return tris;
         }
