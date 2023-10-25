@@ -67,7 +67,7 @@ public partial class main : Node3D
 		{
 			case UWClass.GAME_UW2:
 				cam.Position = new Vector3(-23f, 4.3f, 58.2f); 
-				cam.Position = new Vector3(-37.2f, 3.2f, 66f); 
+				cam.Position = new Vector3(-34.6f, 2.51f, 71.5f); 
 				break;
 			default:
 				cam.Position = new Vector3(-38f, 4.2f, 2.2f); break;
@@ -93,27 +93,27 @@ public partial class main : Node3D
 		// }
 
 
-		var mdl = modelloader.DecodeModel(4);
-		File.WriteAllText("c:\\temp\\mdl.txt",mdl.commands);
-		int vindex=0;
-		var nd = GetNode<Node3D>("/root/Node3D");
-		string code="";
-		foreach (var v in mdl.verts)
-		{
-			if (vindex<= mdl.NoOfVerts)
-			{
-				Label3D obj_lbl = new();
-				obj_lbl.Text = $"{vindex}";
-				obj_lbl.Position = new Vector3(v.X,v.Z,v.Y) * new Vector3(8,8,8);
-				code+= $"v[{vindex}] = new Vector3({v.X}f, {v.Z}f, {v.Y}f);\n";
-				//obj_lbl.Font = font;
-				obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
-				nd.CallDeferred("add_child",obj_lbl);
-			}
-			vindex++;
-		}
+		// var mdl = modelloader.DecodeModel(4);
+		// File.WriteAllText("c:\\temp\\mdl.txt",mdl.commands);
+		// int vindex=0;
+		// var nd = GetNode<Node3D>("/root/Node3D");
+		// string code="";
+		// foreach (var v in mdl.verts)
+		// {
+		// 	if (vindex<= mdl.NoOfVerts)
+		// 	{
+		// 		Label3D obj_lbl = new();
+		// 		obj_lbl.Text = $"{vindex}";
+		// 		obj_lbl.Position = new Vector3(v.X,v.Z,v.Y) * new Vector3(8,8,8);
+		// 		code+= $"v[{vindex}] = new Vector3({v.X}f, {v.Z}f, {v.Y}f);\n";
+		// 		//obj_lbl.Font = font;
+		// 		obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
+		// 		nd.CallDeferred("add_child",obj_lbl);
+		// 	}
+		// 	vindex++;
+		// }
 		//Debug.Print (code);
-		File.WriteAllText("c:\\temp\\mdlcode.txt",code);
+		//File.WriteAllText("c:\\temp\\mdlcode.txt",code);
 		//cam.Position= Vector3.Zero;
 
 		//Random rnd = new Random();
@@ -231,7 +231,6 @@ public partial class main : Node3D
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-
 		lblPositionDebug.Text = $"{cam.Position.ToString()}";
 		//RenderingServer.GlobalShaderParameterSet("cameraPos", cam.Position);
 		cycletime += delta;
