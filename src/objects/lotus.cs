@@ -242,17 +242,22 @@ namespace Underworld
                     return 92; // pinkish
                 case 8: // tail light
                     return 193;
-                case 9:
+                case 9: //windows
                 case 10:
                 case 11:
-                    return 245; //black
+                    return 245; //tinted black
+                case 12: //bumper
+                    return 248;
+                case 13: //body
+                    return 192;
+
             }
             return base.ModelColour(meshNo);
         }
 
         public override int NoOfMeshes()
         {
-            return 13;
+            return 14;
         }
         public override int[] ModelTriangles(int meshNo)
         {
@@ -284,6 +289,8 @@ namespace Underworld
                     return Windscreen();
                 case 12:
                     return RearBumper();
+                case 13:
+                    return BodyWork();
             }
             return base.ModelTriangles(meshNo);
         }
@@ -1064,7 +1071,300 @@ namespace Underworld
 
         public int[] BodyWork()
         {
-            var tris = new int[12];
+            var tris = new int[240];
+        
+            tris[0] = 161;
+            tris[1] = 170;
+            tris[2] = 171;
+            tris[3] = 171;
+            tris[4] = 135;
+            tris[5] = 161;
+
+            tris[6] = 153;
+            tris[7] = 152;
+            tris[8] = 136;
+            tris[9] = 136;
+            tris[10] = 139;
+            tris[11] = 153;
+
+            tris[12] = 154;
+            tris[13] = 153;
+            tris[14] = 139;
+            tris[15] = 139;
+            tris[16] = 140;
+            tris[17] = 154;
+
+            tris[18] = 155;
+            tris[19] = 154;
+            tris[20] = 140;
+            tris[21] = 140;
+            tris[22] = 137;
+            tris[23] = 155;
+
+            tris[24] = 162;
+            tris[25] = 155;
+            tris[26] = 137;
+            tris[27] = 137;
+            tris[28] = 138;
+            tris[29] = 162;
+
+            tris[30] = 155;
+            tris[31] = 152;
+            tris[32] = 153;
+            tris[33] = 153;
+            tris[34] = 154;
+            tris[35] = 155;
+
+            tris[36] = 140;
+            tris[37] = 139;
+            tris[38] = 136;
+            tris[39] = 136;
+            tris[40] = 137;
+            tris[41] = 140;
+
+            tris[42] = 176;
+            tris[43] = 175;
+            tris[44] = 155;
+            tris[45] = 155;
+            tris[46] = 162;
+            tris[47] = 176;
+
+            tris[48] = 138;
+            tris[49] = 137;
+            tris[50] = 150;
+            tris[51] = 150;
+            tris[52] = 151;
+            tris[53] = 138;
+
+
+            tris[54] = 175;
+            tris[55] = 190;
+            tris[56] = 152;            
+            tris[57] = 152;
+            tris[58] = 155;
+            tris[59] = 175;
+
+            tris[60] = 137;
+            tris[61] = 136;
+            tris[62] = 191;
+            tris[63] = 191;
+            tris[64] = 150;
+            tris[65] = 137;
+
+
+            tris[66] = 175;
+            tris[67] = 170;
+            tris[68] = 161;
+            tris[69] = 161;
+            tris[70] = 190;
+            tris[71] = 175;
+
+            tris[72] = 191;
+            tris[73] = 135;
+            tris[74] = 171;
+            tris[75] = 171;
+            tris[76] = 150;
+            tris[77] = 191;
+
+            tris[78] = 168;
+            tris[79] = 165;
+            tris[80] = 170;
+            tris[81] = 170;
+            tris[82] = 3;
+            tris[83] = 168;
+
+            tris[84] = 183;
+            tris[85] = 171;
+            tris[86] = 163;
+            tris[87] = 163;
+            tris[88] = 184;
+            tris[89] = 183;
+
+
+            tris[90] = 4;
+            tris[91] = 3;
+            tris[92] = 170;
+            tris[93] = 170;
+            tris[94] = 175;
+            tris[95] = 4;
+
+            tris[96] = 150;
+            tris[97] = 171;
+            tris[98] = 183;
+            tris[99] = 183;
+            tris[100] = 182;
+            tris[101] = 150;
+
+            tris[102] = 169;
+            tris[103] = 4;
+            tris[104] = 175;
+            tris[105] = 175;
+            tris[106] = 174;
+            tris[107] = 169;
+
+            tris[108] = 150;
+            tris[109] = 182;
+            tris[110] = 181;
+            tris[111] = 181;
+            tris[112] = 149;
+            tris[113] = 150;
+
+
+            tris[114] = 180;
+            tris[115] = 179;
+            tris[116] = 173;
+            tris[117] = 173;
+            tris[118] = 172;
+            tris[119] = 180;
+
+            tris[120] = 147;
+            tris[121] = 148;
+            tris[122] = 143;
+            tris[123] = 143;
+            tris[124] = 144;
+            tris[125] = 147;
+
+
+            tris[126] = 179;
+            tris[127] = 2;
+            tris[128] = 169;
+            tris[129] = 169;
+            tris[130] = 173;
+            tris[131] = 179;
+
+            tris[132] = 148;
+            tris[133] = 181;
+            tris[134] = 187;
+            tris[135] = 187;
+            tris[136] = 143;
+            tris[137] = 148;
+
+            tris[138] = 173;
+            tris[139] = 169;
+            tris[140] = 174;
+
+            tris[141] = 149;
+            tris[142] = 181;
+            tris[143] = 148;
+
+            tris[144] = 167;
+            tris[145] = 164;
+            tris[146] = 165;
+            tris[147] = 165;
+            tris[148] = 168;
+            tris[149] = 167;
+
+            tris[150] = 184;
+            tris[151] = 163;
+            tris[152] = 1;
+            tris[153] = 1;
+            tris[154] = 185;
+            tris[155] = 184;
+
+            tris[156] = 164;
+            tris[157] = 1;
+            tris[158] = 163;
+            tris[159] = 163;
+            tris[160] = 165;
+            tris[161] = 164;
+
+
+            tris[162] = 179;
+            tris[163] = 160;
+            tris[164] = 166;
+            tris[165] = 166;
+            tris[166] = 2;
+            tris[167] = 179;
+
+            tris[168] = 187;
+            tris[169] = 186;
+            tris[170] = 134;
+            tris[171] = 134;
+            tris[172] = 143;
+            tris[173] = 187;
+
+            tris[174] = 166;
+            tris[175] = 164;
+            tris[176] = 167;
+
+            tris[177] = 185;
+            tris[178] = 1;
+            tris[179] = 186;
+
+            tris[180] = 160;
+            tris[181] = 164;
+            tris[182] = 166;
+
+            tris[183] = 186;
+            tris[184] = 1;
+            tris[185] = 134;
+
+            tris[186] = 160;
+            tris[187] = 159;
+            tris[188] = 164;
+
+            tris[189] = 134;
+            tris[190] = 1;
+            tris[191] = 133;
+
+            tris[192] = 177;
+            tris[193] = 159;
+            tris[194] = 160;
+            tris[195] = 160;
+            tris[196] = 178;
+            tris[197] = 177;
+
+            tris[198] = 142;
+            tris[199] = 134;
+            tris[200] = 133;
+            tris[201] = 133;
+            tris[202] = 141;
+            tris[203] = 142;
+
+            tris[204] = 178;
+            tris[205] = 160;
+            tris[206] = 179;
+
+            tris[207] = 143;
+            tris[208] = 134;
+            tris[209] = 142;
+
+            tris[210] = 157;
+            tris[211] = 159;
+            tris[212] = 177;
+            tris[213] = 177;
+            tris[214] = 156;
+            tris[215] = 157;
+            
+            tris[216] = 132;
+            tris[217] = 141;
+            tris[218] = 133;
+            tris[219] = 133;
+            tris[220] = 145;
+            tris[221] = 132;
+
+            tris[222] = 157;
+            tris[223] = 158;
+            tris[224] = 159;
+
+            tris[225] = 145;
+            tris[226] = 133;
+            tris[227] = 146;
+
+            tris[228] = 146;
+            tris[229] = 133;
+            tris[230] = 159;
+            tris[231] = 159;
+            tris[232] = 158;
+            tris[233] = 146;
+
+            tris[234] = 145;
+            tris[235] = 146;
+            tris[236] = 158;
+            tris[237] = 158;
+            tris[238] = 157;
+            tris[239] = 145;
+
             return tris;
         }
     }

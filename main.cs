@@ -67,7 +67,7 @@ public partial class main : Node3D
 		{
 			case UWClass.GAME_UW2:
 				cam.Position = new Vector3(-23f, 4.3f, 58.2f); 
-				cam.Position = new Vector3(-34.6f, 2.51f, 71.5f); 
+				cam.Position = new Vector3(-33.6f, 4.41f, 70.5f); 
 				break;
 			default:
 				cam.Position = new Vector3(-38f, 4.2f, 2.2f); break;
