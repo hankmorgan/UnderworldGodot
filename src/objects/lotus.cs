@@ -240,13 +240,19 @@ namespace Underworld
                 case 6:
                 case 7:
                     return 92; // pinkish
+                case 8: // tail light
+                    return 193;
+                case 9:
+                case 10:
+                case 11:
+                    return 245; //black
             }
             return base.ModelColour(meshNo);
         }
 
         public override int NoOfMeshes()
         {
-            return 8;
+            return 13;
         }
         public override int[] ModelTriangles(int meshNo)
         {
@@ -268,6 +274,16 @@ namespace Underworld
                     return Tyre3();
                 case 7:
                     return Tyre4();
+                case 8:
+                    return TailLights();
+                case 9:
+                    return RearWindow();
+                case 10:
+                    return SideWindows();
+                case 11:
+                    return Windscreen();
+                case 12:
+                    return RearBumper();
             }
             return base.ModelTriangles(meshNo);
         }
@@ -941,6 +957,115 @@ namespace Underworld
 
             return tris;
         }
+        public int[] TailLights()
+        {
+            var tris = new int[12];
+            tris[0] = 190;
+            tris[1] = 161;
+            tris[2] = 188;
+            tris[3] = 188;
+            tris[4] = 189;
+            tris[5] = 190;
 
+            tris[6] = 192;
+            tris[7] = 193;
+            tris[8] = 135;
+            tris[9] = 135;
+            tris[10] = 191;
+            tris[11] = 192;
+
+            return tris;
+        }
+        public int[] RearWindow()
+        {
+            var tris = new int[6];
+            tris[0] = 170;
+            tris[1] = 165;
+            tris[2] = 163;
+            tris[3] = 163;
+            tris[4] = 171;
+            tris[5] = 170;
+            return tris;
+        }
+        public int[] SideWindows()
+        {
+            var tris = new int[30];
+            //passenger side
+            tris[0] = 169;
+            tris[1] = 168;
+            tris[2] = 3;
+            tris[3] = 3;
+            tris[4] = 4;
+            tris[5] = 169;
+
+            tris[6] = 169;
+            tris[7] = 2;
+            tris[8] = 166;
+            tris[9] = 166;
+            tris[10] = 167;
+            tris[11] = 169;
+
+            tris[12] = 167;
+            tris[13] = 168;
+            tris[14] = 169;
+
+            //driver side
+            tris[15] = 181;
+            tris[16] = 182;
+            tris[17] = 183;
+            tris[18] = 183;
+            tris[19] = 184;
+            tris[20] = 181;
+
+            tris[21] = 184;
+            tris[22] = 185;
+            tris[23] = 186;
+            tris[24] = 186;
+            tris[25] = 187;
+            tris[26] = 184;
+
+            tris[27] = 181;
+            tris[28] = 184;
+            tris[29] = 187;
+
+
+            return tris;
+        }
+        public int[] Windscreen()
+        {
+            var tris = new int[6];
+            tris[0] = 133;
+            tris[1] = 1;
+            tris[2] = 164;
+            tris[3] = 164;
+            tris[4] = 159;
+            tris[5] = 133;
+            return tris;
+        }
+        public int[] RearBumper()
+        {
+            var tris = new int[12];
+            tris[0] = 152;
+            tris[1] = 190;
+            tris[2] = 191;
+            tris[3] = 191;
+            tris[4] = 136;
+            tris[5] = 152;
+
+            tris[6] = 189;
+            tris[7] = 188;
+            tris[8] = 193;
+            tris[9] = 193;
+            tris[10] = 192;
+            tris[11] = 189;
+
+            return tris;
+        }
+
+        public int[] BodyWork()
+        {
+            var tris = new int[12];
+            return tris;
+        }
     }
 }//end namespace

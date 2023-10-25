@@ -193,7 +193,7 @@ namespace Underworld
                 if (vindex < maxpoints)
                 {
                     Label3D obj_lbl = new();
-                    obj_lbl.Text = $"{vindex}";
+                    obj_lbl.Text = $".{vindex}";
                     obj_lbl.FontSize=8;
                     obj_lbl.Position = new Vector3(v.X, v.Y, v.Z);
                     obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
