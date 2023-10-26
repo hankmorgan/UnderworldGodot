@@ -60,6 +60,7 @@ namespace Underworld
             var output = ArtLoader.Image(imgdata, 0, 16 * bandwidth, 1, "name here", PaletteLoader.GreyScale, true, true);
             return output;
         }
+       
 
         /// <summary>
         /// Extract the full shades array as a image

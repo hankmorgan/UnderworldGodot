@@ -160,11 +160,6 @@ namespace Underworld
 
         public override bool LoadImageFile()
         {
-            string ModPath = Path.Combine(BasePath, pathGR[FileToLoad].Replace(".", "_"));// BasePath + pathGR[FileToLoad].Replace("--", sep.ToString()).Replace(".", "_");
-            if (Directory.Exists(ModPath))
-            {
-                LoadMod = true;
-            }
             var toLoad = Path.Combine(BasePath, "DATA", pathGR[FileToLoad]);
             if (!ReadStreamFile(toLoad, out ImageFileData))
             {

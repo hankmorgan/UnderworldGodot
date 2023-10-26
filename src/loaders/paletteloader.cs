@@ -103,14 +103,17 @@ namespace Underworld
             }
             CreateTexturePaletteCycles(0);//init the first palette as cycled
 
+            switch (uwsettings.instance.shader.ToUpper())
+            {   
+                case "UWSHADERSMOOTH":
+
+                    break;
+                case "UWSHADER":
+                default:
+                    break;
+            }
             //Init palette shader params
             RenderingServer.GlobalShaderParameterAdd("uwpalette", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)cycledPalette[0]);
-            RenderingServer.GlobalShaderParameterAdd("uwlightmapnear", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)light[0].toImage());
-            RenderingServer.GlobalShaderParameterAdd("uwlightmapfar", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)light[15].toImage());
-            RenderingServer.GlobalShaderParameterAdd("uwlightmapdark", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)light[15].toImage());
-            //RenderingServer.GlobalShaderParameterAdd("fardistance", RenderingServer.GlobalShaderParameterType.Float, uwsettings.instance.drawdistance);
-            RenderingServer.GlobalShaderParameterAdd("neardistance", RenderingServer.GlobalShaderParameterType.Float, 0);
-
             RenderingServer.GlobalShaderParameterAdd("cutoffdistance", RenderingServer.GlobalShaderParameterType.Float, 2.4f * shade.getShadeCutoff(uwsettings.instance.lightlevel));
             RenderingServer.GlobalShaderParameterAdd("uwlightmap", RenderingServer.GlobalShaderParameterType.Sampler2D, PaletteLoader.AllLightMaps(PaletteLoader.light));
             RenderingServer.GlobalShaderParameterAdd("shades", RenderingServer.GlobalShaderParameterType.Sampler2D, shade.shadesdata[uwsettings.instance.lightlevel].ToImage());

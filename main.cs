@@ -15,6 +15,7 @@ internal class uwsettings
 	public int level { get; set; }
 	public int lightlevel { get; set; }
 	public string levarkfolder { get; set; }
+	public string shader {get; set; }
 
 	public static uwsettings instance;
 }

@@ -9,11 +9,6 @@ namespace Underworld
     public class ArtLoader : Loader
     {
         /// <summary>
-        /// If modded data is detected try and load that first.
-        /// </summary>
-        protected bool LoadMod;
-
-        /// <summary>
         /// Load an approximation of xfer.dat transparency
         /// </summary>
         public bool xfer;

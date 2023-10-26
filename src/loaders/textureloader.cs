@@ -28,52 +28,23 @@ namespace Underworld
         public bool texturesFLoaded;
         private int TextureSplit = 210;//at what point does a texture index refer to the floor instead of a wall in uw1/demo
         private int FloorDim = 32;
-        private readonly string ModPathW;
-        private readonly string ModPathF;
-
         public Shader textureshader;
         public ShaderMaterial[] materials = new ShaderMaterial[512];
 
         public TextureLoader()
         {
-            textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwshader.gdshader");
-            switch (_RES)
+            switch (uwsettings.instance.shader.ToUpper())
             {
-                // case GAME_SHOCK:
-                //     break;
-                case GAME_UW2:
-                    ModPathW = Path.Combine(BasePath, "DATA", pathTex_UW2.Replace(".", "_"));  // BasePath + pathTex_UW2.Replace(".", "_").Replace("--", sep.ToString());
-                    if (Directory.Exists(ModPathW))
-                    {
-                        LoadMod = true;
-                    }
+                case "UWSHADERSMOOTH":
+                    textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwshadersmooth.gdshader");
                     break;
-                case GAME_UWDEMO:
-                    ModPathW = Path.Combine(BasePath, "DATA", pathTexW_UW0.Replace(".", "_")); //BasePath + pathTexW_UW0.Replace(".", "_").Replace("--", sep.ToString());
-                    if (Directory.Exists(ModPathW))
-                    {
-                        LoadMod = true;
-                    }
-                    ModPathF = Path.Combine(BasePath, "DATA", pathTexF_UW0.Replace(".", "_"));
-                    if (Directory.Exists(ModPathF))
-                    {
-                        LoadMod = true;
-                    }
-                    break;
-                case GAME_UW1:
-                    ModPathW = Path.Combine(BasePath, "DATA", pathTexW_UW1.Replace(".", "_"));
-                    if (Directory.Exists(ModPathW))
-                    {
-                        LoadMod = true;
-                    }
-                    ModPathF = Path.Combine(BasePath, "DATA", pathTexF_UW1.Replace(".", "_"));
-                    if (Directory.Exists(ModPathF))
-                    {
-                        LoadMod = true;
-                    }
+                case "UWSHADER":
+                default:
+                    textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwshader.gdshader");
                     break;
             }
-        }
+        }         
+
 
         public override ImageTexture LoadImageAt(int index)
         {
@@ -165,7 +136,6 @@ namespace Underworld
         {
             if (materials[textureno] == null)
             {
-                //materials[textureno] = new surfacematerial(textureno);
                 //create this material and add it to the list
                 var newmaterial = new ShaderMaterial();
                 newmaterial.Shader = textureshader;
@@ -179,40 +149,5 @@ namespace Underworld
             }
             return materials[textureno];    
         }
-    
-
-        /// <summary>
-        /// Returns the Mod path at the specified index.
-        /// </summary>
-        /// <param name="index"></param>
-        /// <returns></returns>
-        public string ModPath(int index)
-        {
-            switch (_RES)
-            {
-                // case GAME_SHOCK:
-                //     {
-                //         return "";
-                //     }
-                case GAME_UW2:
-                    {
-                        return Path.Combine(ModPathW, index.ToString("d3") + ".tga");//  //ModPathW + sep + index.ToString("d3") + ".tga";
-                    }
-                case GAME_UWDEMO:
-                case GAME_UW1:
-                default:
-                    {
-                        if (index < TextureSplit)
-                        {//Wall textures
-                            return Path.Combine(ModPathW, index.ToString("d3") + ".tga"); // ModPathW + sep + index.ToString("d3") + ".tga";
-                        }
-                        else
-                        {//Floor textures (to match my list of textures)
-                            return Path.Combine(ModPathF, index.ToString("d3")); // ModPathF + sep + index.ToString("d3") + ".tga";
-                        }
-                    }
-            }//end switch	
-        }
     }
-
 }

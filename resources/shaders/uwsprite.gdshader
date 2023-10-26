@@ -16,21 +16,13 @@ uniform vec3 uv2_scale;
 uniform vec3 uv2_offset;
 
 //Shader Params
+//Shader Params
 global uniform sampler2D uwpalette: filter_nearest;
 uniform sampler2D texture_albedo : source_color,filter_nearest,repeat_enable;
 
-global uniform sampler2D uwlightmapnear : source_color,filter_nearest,repeat_enable;
-global uniform sampler2D uwlightmapfar : source_color,filter_nearest,repeat_enable;
-global uniform sampler2D uwlightmapdark : source_color,filter_nearest,repeat_enable;
-
 global uniform sampler2D uwlightmap : source_color,filter_nearest,repeat_enable;
 global uniform sampler2D shades : source_color,filter_nearest,repeat_enable;
-
-global uniform float neardistance;
-
 uniform bool UseAlpha = false;
-
-
 global uniform float cutoffdistance;
 
 // Camera
@@ -46,10 +38,6 @@ varying float vertexToCam; // distance from current vertex to the camera
 void vertex() {
 	UV=UV*uv1_scale.xy+uv1_offset.xy;
 
-	//world_pos = MODEL_MATRIX * vec4(VERTEX, 1.0);  // get coords as world coords
-    //vertexToCam = distance(world_pos.xyz, cameraPos);
-    //distanceToCam = distance(centerPos, cameraPos);  // could be computed outside shader but easier to debug this way
-    
 	//https://ask.godotengine.org/152606/how-to-do-i-make-a-shader-a-billboard-face-the-player
 	mat4 modified_model_view = VIEW_MATRIX * mat4(
         INV_VIEW_MATRIX[0],
@@ -73,9 +61,6 @@ void fragment() {
 	if (dist > cutoffdistance)
 	{		
 		discard;
-		vec4 lightvaldark = texture(uwlightmapdark, vec2(rgba.r, 0));	
-		vec4 finalcolourdark = texture(uwpalette, vec2(lightvaldark.r ,0));
-		//ALBEDO = finalcolourdark.rgb;
 	}
 	else
 	{

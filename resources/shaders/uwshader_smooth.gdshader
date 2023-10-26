@@ -19,26 +19,11 @@ uniform vec3 uv2_offset;
 global uniform sampler2D uwpalette: filter_nearest;
 uniform sampler2D texture_albedo : source_color,filter_nearest,repeat_enable;
 
-global uniform sampler2D uwlightmapnear : source_color,filter_nearest,repeat_enable;
-global uniform sampler2D uwlightmapfar : source_color,filter_nearest,repeat_enable;
-global uniform sampler2D uwlightmapdark : source_color,filter_nearest,repeat_enable;
-
 global uniform sampler2D uwlightmap : source_color,filter_nearest,repeat_enable;
 global uniform sampler2D shades : source_color,filter_nearest,repeat_enable;
 
-global uniform float neardistance;
 
 global uniform float cutoffdistance;
-
-// Camera
-//uniform vec3 centerPos;// = vec3(0.0, 0.0, 0.0);  // anything further from this pos from the camera will be discarded, needs to be updated by script each frame
-//global uniform vec3 cameraPos;// = vec3(34.160301, 136.675003, 127.48799);  // position of the camera, needs to be updated by script each frame, this is the default start pos
-
-varying float distanceToCam; // distance from cam to center
-varying vec4 world_pos;  // of current vertex
-varying float vertexToCam; // distance from current vertex to the camera
-
-
 
 void vertex() {
 	UV=UV*uv1_scale.xy+uv1_offset.xy;
@@ -61,9 +46,6 @@ void fragment() {
 	if (dist > cutoffdistance)
 	{		
 		discard;
-		vec4 lightvaldark = texture(uwlightmapdark, vec2(rgba.r, 0));	
-		vec4 finalcolourdark = texture(uwpalette, vec2(lightvaldark.r ,0));
-		//ALBEDO = finalcolourdark.rgb;
 	}
 	else
 	{
