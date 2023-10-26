@@ -67,9 +67,11 @@ public partial class main : Node3D
 		switch (UWClass._RES)
 		{
 			case UWClass.GAME_UW2:
-				cam.Position = new Vector3(-23f, 4.3f, 58.2f); break;
+				cam.Position = new Vector3(-23f, 4.3f, 58.2f);				
+				break;
 			default:
-				cam.Position = new Vector3(-38f, 4.2f, 2.2f); break;
+				cam.Position = new Vector3(-38f, 4.2f, 2.2f);
+				cam.Position = new Vector3(-18f, 3.24f, 40.6f);  break;
 		}
 		cam.Rotate(Vector3.Up, (float)Math.PI);
 
@@ -92,8 +94,8 @@ public partial class main : Node3D
 		// }
 
 
-		// var mdl = modelloader.DecodeModel(4);
-		// File.WriteAllText("c:\\temp\\mdl.txt",mdl.commands);
+		// var mdl = modelloader.DecodeModel(1);
+		// //File.WriteAllText("c:\\temp\\mdl.txt",mdl.commands);
 		// int vindex=0;
 		// var nd = GetNode<Node3D>("/root/Node3D");
 		// string code="";
@@ -111,9 +113,9 @@ public partial class main : Node3D
 		// 	}
 		// 	vindex++;
 		// }
-		//Debug.Print (code);
-		//File.WriteAllText("c:\\temp\\mdlcode.txt",code);
-		//cam.Position= Vector3.Zero;
+		// //Debug.Print (code);
+		// //File.WriteAllText("c:\\temp\\mdlcode.txt",code);
+		// cam.Position= Vector3.Zero;
 
 		//Random rnd = new Random();
 		//var index = rnd.Next(8);
