@@ -57,7 +57,7 @@ void fragment() {
 		float maptouse = dist/cutoffdistance;
 		//lookup shades.dat using the uv
 		vec4 shade = texture(shades, vec2(maptouse,0));
-		vec4 shadestart = texture(shades, vec2(bandstart/cutoffdistance,0));
+		vec4 shadestart = texture(shadeshift, vec2(maptouse,0));
 
 		//Apply the shade returned from shades.dat for the lightmap
 		vec4 lightval = texture(uwlightmap, vec2(rgba.r, shade.r));	

@@ -10,7 +10,7 @@ namespace Underworld
             var modelNode = l.Generate3DModel(parent, name);
             // modelNode.Rotate(Vector3.Up, (float)Math.PI);
             SetModelRotation(parent, l);
-            DisplayModelPoints(l, parent, 200);
+            //DisplayModelPoints(l, parent, 200);
             return l;
         }
         public lotus(uwObject _uwobject)
@@ -215,11 +215,10 @@ namespace Underworld
             v[192] = new Vector3(-0.16015625f, 0.20703125f, -0.65625f);
             v[193] = new Vector3(-0.16015625f, 0.26171875f, -0.65625f);
 
-            for (int i = 0; i <= v.GetUpperBound(0); i++)
-            {
-                v[i] = v[i] * new Vector3(8f, 8f, 8f);
-            }
-
+            // for (int i = 0; i <= v.GetUpperBound(0); i++)
+            // {
+            //     v[i] = v[i] * new Vector3(8f, 8f, 8f);
+            // }
             return v;
         }
         public override int ModelColour(int meshNo)
@@ -246,6 +245,8 @@ namespace Underworld
                     return 248;
                 case 13: //body
                     return 192;
+                case 14:
+                    return 1; //underneath. black
 
             }
             return base.ModelColour(meshNo);
@@ -1059,7 +1060,7 @@ namespace Underworld
         }
         public int[] BodyWork()
         {
-            var tris = new int[240];        
+            var tris = new int[240];
             tris[0] = 161;
             tris[1] = 170;
             tris[2] = 171;
@@ -1126,7 +1127,7 @@ namespace Underworld
 
             tris[54] = 175;
             tris[55] = 190;
-            tris[56] = 152;            
+            tris[56] = 152;
             tris[57] = 152;
             tris[58] = 155;
             tris[59] = 175;
@@ -1322,7 +1323,7 @@ namespace Underworld
             tris[213] = 177;
             tris[214] = 156;
             tris[215] = 157;
-            
+
             tris[216] = 132;
             tris[217] = 141;
             tris[218] = 133;
@@ -1356,7 +1357,7 @@ namespace Underworld
         }
         public int[] Underneath()
         {
-            var tris=new int[75];
+            var tris = new int[225];
             tris[0] = 138;
             tris[1] = 151;
             tris[2] = 176;
@@ -1446,7 +1447,7 @@ namespace Underworld
             tris[64] = 89;
             tris[65] = 88;
 
-            
+
             tris[66] = 86;
             tris[67] = 179;
             tris[68] = 87;
@@ -1454,10 +1455,210 @@ namespace Underworld
 
             tris[69] = 87;
             tris[70] = 179;
-            tris[71] = 180;            
+            tris[71] = 180;
             tris[72] = 180;
             tris[73] = 88;
             tris[74] = 87;
+
+
+            tris[75] = 172;
+            tris[76] = 127;
+            tris[77] = 126;
+
+            tris[78] = 172;
+            tris[79] = 128;
+            tris[80] = 127;
+
+            tris[81] = 172;
+            tris[82] = 129;
+            tris[83] = 128;
+
+            tris[84] = 172;
+            tris[85] = 173;
+            tris[86] = 129;
+
+            tris[87] = 129;
+            tris[88] = 173;
+            tris[89] = 130;
+
+            tris[90] = 130;
+            tris[91] = 173;
+            tris[92] = 131;
+
+            tris[93] = 173;
+            tris[94] = 174;
+            tris[95] = 131;
+
+            tris[96] = 131;
+            tris[97] = 174;
+            tris[98] = 116;
+
+            tris[99] = 116;
+            tris[100] = 174;
+            tris[101] = 117;
+
+            tris[102] = 117;
+            tris[103] = 174;
+            tris[104] = 175;
+
+            tris[105] = 117;
+            tris[106] = 175;
+            tris[107] = 118;
+
+            tris[108] = 118;
+            tris[109] = 175;
+            tris[110] = 119;
+
+            tris[111] = 117;
+            tris[112] = 175;
+            tris[113] = 118;
+
+            tris[114] = 175;
+            tris[115] = 120;
+            tris[116] = 119;
+
+            tris[117] = 121;
+            tris[118] = 120;
+            tris[119] = 176;
+
+            tris[120] = 122;
+            tris[121] = 121;
+            tris[122] = 176;
+
+            tris[123] = 175;
+            tris[124] = 176;
+            tris[125] = 120;
+
+            tris[126] = 172;
+            tris[127] = 151;
+            tris[128] = 147;
+
+            tris[129] = 151;
+            tris[130] = 41;
+            tris[131] = 42;
+
+            tris[132] = 151;
+            tris[133] = 40;
+            tris[134] = 41;
+
+            tris[135] = 151;
+            tris[136] = 39;
+            tris[137] = 40;
+
+            tris[138] = 151;
+            tris[139] = 150;
+            tris[140] = 39;
+
+            tris[141] = 39;
+            tris[142] = 150;
+            tris[143] = 38;
+
+            tris[144] = 150;
+            tris[145] = 37;
+            tris[146] = 38;
+
+            tris[147] = 150;
+            tris[148] = 149;
+            tris[149] = 37;
+
+            tris[150] = 37;
+            tris[151] = 149;
+            tris[152] = 36;
+
+            tris[153] = 36;
+            tris[154] = 149;
+            tris[155] = 148;
+            tris[156] = 148;
+            tris[157] = 51;
+            tris[158] = 36;
+
+            tris[159] = 51;
+            tris[160] = 148;
+            tris[161] = 50;
+
+            tris[162] = 50;
+            tris[163] = 148;
+            tris[164] = 49;
+
+            tris[165] = 49;
+            tris[166] = 148;
+            tris[167] = 48;
+
+            tris[168] = 46;
+            tris[169] = 47;
+            tris[170] = 147;
+
+            tris[171] = 48;
+            tris[172] = 148;
+            tris[173] = 147;
+
+            tris[174] = 47;
+            tris[175] = 48;
+            tris[176] = 147;
+
+            tris[177] = 144;
+            tris[178] = 25;
+            tris[179] = 26;
+
+            tris[177] = 144;
+            tris[178] = 24;
+            tris[179] = 25;
+
+            tris[180] = 144;
+            tris[181] = 23;
+            tris[182] = 24;
+
+            tris[183] = 144;
+            tris[184] = 143;
+            tris[185] = 23;
+
+            tris[186] = 23;
+            tris[187] = 143;
+            tris[188] = 22;
+            tris[189] = 22;
+            tris[190] = 143;
+            tris[191] = 21;
+
+            tris[192] = 21;
+            tris[193] = 143;
+            tris[194] = 142;
+            tris[195] = 142;
+            tris[196] = 20;
+            tris[197] = 21;
+
+            tris[198] = 20;
+            tris[199] = 142;
+            tris[200] = 141;
+            tris[201] = 141;
+            tris[202] = 35;
+            tris[203] = 20;
+
+            tris[204] = 35;
+            tris[205] = 141;
+            tris[206] = 34;
+
+            tris[207] = 33;
+            tris[208] = 34;
+            tris[209] = 141;
+
+            tris[210] = 33;
+            tris[211] = 141;
+            tris[212] = 132;
+            tris[213] = 132;
+            tris[214] = 32;
+            tris[215] = 33;
+
+            tris[216] = 31;
+            tris[217] = 32;
+            tris[218] = 132;
+
+            tris[219] = 30;
+            tris[220] = 31;
+            tris[221] = 132;
+
+            tris[222] = 144;
+            tris[223] = 25;
+            tris[224] = 26;
 
 
             return tris;

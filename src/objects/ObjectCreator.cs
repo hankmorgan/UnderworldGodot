@@ -178,7 +178,7 @@ namespace Underworld
                         if (obj.classindex == 0xF)
                         {
                             lotus.CreateInstance(parent, obj, name);
-                            return true;
+                            return false;
                         }   
                         break;
                     }
