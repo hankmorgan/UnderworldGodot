@@ -63,6 +63,36 @@ namespace Underworld
        
 
         /// <summary>
+        /// Returns the shade map as a single channel image for use in shaders.
+        /// This variant shifts the pixels to the right to allow for smooth shading
+        /// </summary>
+        /// <returns></returns>
+        public Godot.ImageTexture ToShiftedImage()
+        {
+            var bandwidth = 1;
+            var tmparray = ExtractShadeArray();
+            var shadearray = new int[tmparray.Length];
+            shadearray[0] = tmparray[0];
+            for (int i = 1; i<=tmparray.GetUpperBound(0);i++)
+            {
+                shadearray[i] = tmparray[i-1];
+            }
+
+           
+            byte[] imgdata = new byte[16 * bandwidth];
+            for (int l = 0; l < 16; l++)
+            {
+                for (int i = 0; i < bandwidth; i++)
+                {
+                    imgdata[l * bandwidth + i] = (byte)(shadearray[l] * 16); //mult by 16 to get a full range
+                }
+
+            }
+            var output = ArtLoader.Image(imgdata, 0, 16 * bandwidth, 1, "name here", PaletteLoader.GreyScale, true, true);
+            return output;
+        }
+
+        /// <summary>
         /// Extract the full shades array as a image
         /// </summary>
         /// <returns></returns>

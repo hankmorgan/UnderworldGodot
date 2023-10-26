@@ -34,7 +34,10 @@ namespace Underworld
         public TextureLoader()
         {
             switch (uwsettings.instance.shader.ToUpper())
-            {
+            {                
+                case "UWSHADERMIXED":
+                    textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwshadermixed.gdshader");
+                    break;
                 case "UWSHADERSMOOTH":
                     textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwshadersmooth.gdshader");
                     break;
