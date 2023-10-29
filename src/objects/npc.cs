@@ -64,9 +64,11 @@ namespace Underworld
         public void SetAnimSprite(int animationNo, int frameNo)
         {
             if (this.uwobject.item_id>=127){return;}
-
-            var crit = CritLoader.GetCritter(this.uwobject.item_id & 0x3F);
-            if(animationNo>crit.critterinfo.AnimInfo.animIndices.GetUpperBound(0))
+            string animname = "idle_front";
+            //var crit = CritLoader.GetCritter(this.uwobject.item_id & 0x3F);
+            var crit = CritterArt.GetCritter(this.uwobject.item_id & 0x3F);
+            var anim = crit.Animations[animname];
+            if(animationNo>crit.Animations[animname].animIndices.GetUpperBound(0))
             {
                 Debug.Print("Animation out of range");
                 return;
@@ -84,9 +86,9 @@ namespace Underworld
             }
             //assign the params to the shader
             //critAnim.animSprites[critAnim.animIndices[AnimationIndex, AnimationPos++]]            
-            if (crit.critterinfo.AnimInfo.animIndices[animationNo, frameNo] !=-1)
+            if (anim.animIndices[frameNo] != -1)
             {
-                var texture = crit.critterinfo.AnimInfo.animSprites[crit.critterinfo.AnimInfo.animIndices[animationNo, frameNo]];
+                var texture = crit.animSprites[anim.animIndices[frameNo]];
                 FrameSize= new Vector2(
                     ArtLoader.SpriteScale * texture.GetWidth(), 
                     ArtLoader.SpriteScale * texture.GetHeight()
