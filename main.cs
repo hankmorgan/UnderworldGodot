@@ -1,11 +1,10 @@
 using Godot;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using Underworld;
 using System.Text.Json;
-using System.Text.Json.Serialization;
+
 
 internal class uwsettings
 {
@@ -35,6 +34,7 @@ public partial class main : Node3D
 	//[Export] public TextureRect grey;
 	[Export] public uimanager uwUI;
 
+	double NPCRefreshTimer=0f;
 	double cycletime = 0;
 	int NextPaletteCycle = 0;
 	public override void _Ready()
@@ -245,6 +245,16 @@ public partial class main : Node3D
 			if (NextPaletteCycle > PaletteLoader.cycledPalette.GetUpperBound(0))
 			{
 				NextPaletteCycle = 0;
+			}
+		}
+		NPCRefreshTimer+=delta;
+		if(NPCRefreshTimer>=0.3)
+		{
+			NPCRefreshTimer=0;
+			foreach(var n in ObjectCreator.npcs)
+			{
+				n.uwobject.AnimationFrame++;				
+				n.SetAnimSprite(n.uwobject.npc_animation, n.uwobject.AnimationFrame, n.uwobject.heading);
 			}
 		}
 	}

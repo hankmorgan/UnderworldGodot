@@ -12,7 +12,7 @@ namespace Underworld
         /// </summary>
         public static Shader textureshader;
 
-        public Node3D sprite;
+        public MeshInstance3D sprite;
        
        /// <summary>
        /// The material for rendering this unique npc
@@ -96,25 +96,28 @@ namespace Underworld
             textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwsprite.gdshader");
         }
 
-        public void SetAnimSprite(int animationNo, int frameNo, int relativeHeading)
+        public void SetAnimSprite(int animationNo, short frameNo, int relativeHeading)
         {
             //if (this.uwobject.item_id >= 127) { return; }
+            if ( uwobject.npc_animation>=8){
+                 uwobject.npc_animation=0;
+            }
             string animname= CritterArt.GetAnimName(animationNo,relativeHeading); // "idle_front";
             //var crit = CritLoader.GetCritter(this.uwobject.item_id & 0x3F);
             var crit = CritterArt.GetCritter(this.uwobject.item_id & 0x3F);
             if (crit.Animations.ContainsKey(animname))
             {
-                ApplyAnimation(animationNo, frameNo, animname, crit);
+                uwobject.npc_animation = ApplyAnimation(animationNo, frameNo, animname, crit);
             }
             else
             {
                 uwobject.npc_animation=0; //default animation to zero;
                 Debug.Print($"{animname} ({animationNo}) was not found for {this.uwobject.item_id & 0x3F}");
-                ApplyAnimation(animationNo, frameNo, CritterArt.GetAnimName(0,0), crit);
+                uwobject.npc_animation = ApplyAnimation(animationNo, frameNo, CritterArt.GetAnimName(0,0), crit);
             }
         }
 
-        private void ApplyAnimation(int animationNo, int frameNo, string animname, CritterArt crit)
+        private short ApplyAnimation(int animationNo, short frameNo, string animname, CritterArt crit)
         {
 
             var anim = crit.Animations[animname];
@@ -131,7 +134,12 @@ namespace Underworld
             }
             //assign the params to the shader
             //critAnim.animSprites[critAnim.animIndices[AnimationIndex, AnimationPos++]] 
-            if (frameNo>=8){frameNo=0;}           
+            if (frameNo>=8){frameNo=0;}       
+            if (anim.animIndices[frameNo] == -1)
+            {
+                frameNo=0;
+            }
+
             if (anim.animIndices[frameNo] != -1)
             {
                 var texture = crit.animSprites[anim.animIndices[frameNo]];
@@ -141,11 +149,14 @@ namespace Underworld
                     ArtLoader.SpriteScale * texture.GetHeight()
                     );
                 material.SetShaderParameter("texture_albedo", (Texture)texture);
+                //sprite.Mesh.Set("size",FrameSize*1.5f);//TODO fix so this does not call a null crash and sprite mesh keeps size
+                return frameNo;
             }
             else
             {
                 Debug.Print($"invalid animation {animationNo} {frameNo} for {this.uwobject.item_id}");
             }
+            return 0;
         }
     }//end class
 
