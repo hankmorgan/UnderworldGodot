@@ -70,8 +70,7 @@ public partial class main : Node3D
 				cam.Position = new Vector3(-23f, 4.3f, 58.2f);				
 				break;
 			default:
-				cam.Position = new Vector3(-38f, 4.2f, 2.2f);
-				cam.Position = new Vector3(-18f, 3.24f, 40.6f);  break;
+				cam.Position = new Vector3(-38f, 4.2f, 2.2f);  break;
 		}
 		cam.Rotate(Vector3.Up, (float)Math.PI);
 

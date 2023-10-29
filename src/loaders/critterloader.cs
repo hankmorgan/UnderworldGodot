@@ -1,6 +1,7 @@
 using System.IO;
 using Godot;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Underworld
 {
@@ -178,19 +179,20 @@ namespace Underworld
         private int ReadPageFileUW1(byte[] PageFile, int XX, int YY, int spriteIndex, int AuxPalNo)
         {
             int addptr = 0;
-            int slotbase = (int)getAt(PageFile, addptr++, 8);
+            int slotbase = (int)getAt(PageFile, addptr++, 8);            
             int NoOfSlots = (int)getAt(PageFile, addptr++, 8);
             int[] SlotIndices = new int[NoOfSlots];
             int spriteCounter = 0;
-            int k = 0;
-            string XXo = DecimalToOct(XX.ToString());
-            string YYo = DecimalToOct(YY.ToString());
+            int slotCounter = 0;
+             string XXo = DecimalToOct(XX.ToString());
+             string YYo = DecimalToOct(YY.ToString());
+            //Debug.Print($"{XXo} {YYo} has {slotbase} + {NoOfSlots}");
             for (int i = 0; i < NoOfSlots; i++)
-            {
+            {//check if the slot is enabled
                 int val = (int)getAt(PageFile, addptr++, 8);
                 if (val != 255)
                 {
-                    SlotIndices[k++] = i;
+                    SlotIndices[slotCounter++] = i;
                 }
             }
             int NoOfSegs = (int)getAt(PageFile, addptr++, 8);
@@ -361,7 +363,54 @@ namespace Underworld
             return spriteCounter;
         }
 
-        private string GetUW2AnimName(int animation, int angle)
+        public static string GetAnimName (int animation, int angle)
+        {
+            if(_RES==GAME_UW2)
+            {
+                return GetUW2AnimName(animation,angle);
+            }
+            else
+            {
+                if ((animation>=0x20) && (animation<=0x27))
+                {
+                    return $"idle_{angleToString(angle)}";
+                }
+                if ((animation>=0x80) && (animation<=0x87))
+                {
+                    return $"walking_{angleToString(angle)}";
+                }
+
+                if ((animation>=0x80) && (animation<=0x87))
+                {
+                    return $"walking_{angleToString(angle)}";
+                }
+                return GetUW1AnimName(animation);
+            }
+        }
+
+        /// <summary>
+        /// Converts a hearing into the heading portion of the animation name
+        /// </summary>
+        /// <param name="angle"></param>
+        /// <returns></returns>
+        public static string angleToString(int angle)
+        {
+            //TODO: these angles may be incorrect.
+            switch (angle)
+            {
+                case 0: return "left";
+                case 1: return "rear_left";
+                case 2: return "rear";
+                case 3: return "rear_right";
+                case 4: return "right";
+                case 5: return "front_right";
+                case 6: return "front";
+                case 7: return "front_left";               
+            }
+            return "front";
+        }
+
+        public static string GetUW2AnimName(int animation, int angle)
         {
             /*
                   x*512 : start character x animation definition [C]
@@ -468,22 +517,23 @@ namespace Underworld
                     return "idle_front_left";
                 case 0x26:
                     return "idle_left";
+                // the following anims appear at different slots
                 case 0x27:
                     return "idle_rear_left";
                 case 0x28:
-                    return "unknown_anim_40";
+                    return "walking_rear";
                 case 0x29:
-                    return "unknown_anim_41";
+                    return "walking_rear_right";
                 case 0x2a:
-                    return "unknown_anim_42";
+                    return "walking_right";
                 case 0x2b:
-                    return "unknown_anim_43";
+                    return "walking_front_right";
                 case 0x2c:
-                    return "unknown_anim_44";
+                    return "walking_front";
                 case 0x2d:
-                    return "unknown_anim_45";
+                    return "walking_front_left";
                 case 0x2e:
-                    return "unknown_anim_46";
+                    return "walking_left";
                 case 0x2f:
                     return "unknown_anim_47";
                 case 0x50:
@@ -700,41 +750,6 @@ namespace Underworld
                     return false;
             }
         }
-
-        /// <summary>
-        /// Translates a uw2 animation index into a uw1 version
-        /// </summary>
-        /// <returns>The U w2 animation.</returns>
-        /// <param name="animation">Animation.</param>
-        /// <param name="angle">Angle.</param>
-        int GetUW2Anim(int animation, int angle)
-        {
-            {
-                switch (animation)
-                {
-                    case 0x0://idlecombat
-                        {
-                            return 0x20 + angle;
-                        }
-                    case 0x1://walking
-                        {
-                            return 0x80 + angle;
-                        }
-                    case 0x2://Attacks
-                    case 0x3:
-                    case 0x4:
-                        return animation - 1;
-                    case 0x5://secondary attack
-                    case 0x6://unknown attack
-                        return animation;
-                    case 0x7://death
-                        return 0xc;
-                    default:
-                        return animation;
-                }
-            }
-        }
-
 
         /// <summary>
         /// Crops the image data to remove all alpha space from beneath the npcs feet

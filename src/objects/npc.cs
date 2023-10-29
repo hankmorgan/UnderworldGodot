@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using Godot;
 
 namespace Underworld
@@ -21,19 +20,39 @@ namespace Underworld
         public ShaderMaterial material;
 
 
+        public enum npc_goals
+        {        
+            npc_goal_stand_still_0 = 0,
+            npc_goal_goto_1 = 1,
+            npc_goal_wander_2 = 2,
+            npc_goal_follow = 3,
+            npc_goal_wander_4 = 4, //possibly this should be another standstill goal
+            npc_goal_attack_5 = 5,
+            npc_goal_attack_6 = 6,  //goal appears to be attack at a distance using ranged weapons, but also fear??
+            npc_goal_stand_still_7 = 7, //same hehaviour as 0
+            npc_goal_wander_8 = 8, //8 is the goal the npc gets when charmed, castle npcs have this too.
+            npc_goal_attack_9 = 9, //goal appears to also be attack at a distance, possibly using magic attacks
+            npc_goal_want_to_talk = 10,
+            npc_goal_stand_still_11 = 11, //This goal is only seen in ethereal void creatures. 0xB
+            npc_goal_stand_still_12 = 12,
+            npc_goal_unk13 = 13,
+            npc_goal_unk14 = 14,
+            npc_goal_petrified = 15
+        };
+
+
         public npc(uwObject _uwobject)
         {
             uwobject =_uwobject;
             try
             {
-                SetAnimSprite(0,0);
+                SetAnimSprite(uwobject.npc_animation,uwobject.AnimationFrame,uwobject.heading);//TODO this value has to be relative to the player heading
             }
             catch (Exception ex)
             {
                 Debug.Print($"{ex.ToString()}");
             }           
         }
-
 
         /// <summary>
         /// Creates a rendered version of this object in the gameworld
@@ -53,6 +72,22 @@ namespace Underworld
             parent.AddChild(a_sprite);
             a_sprite.Position = new Vector3(0, n.FrameSize.Y / 2 + 0.12f, 0);
             a_sprite.CreateConvexCollision();
+            string animname;
+            // if(_RES==GAME_UW2)
+            // {
+            //     animname = CritterArt.GetUW2AnimName(obj.npc_animation, obj.AnimationFrame);
+            // }
+            // else
+            // {
+            //     animname = CritterArt.GetUW1AnimName(obj.npc_animation);
+            // }
+            animname = CritterArt.GetAnimName(obj.npc_animation, obj.heading);
+            Label3D obj_lbl = new();
+            obj_lbl.Text = $"{name} {obj.item_id & 0x3F} \nAnim={obj.npc_animation} Frame={obj.AnimationFrame} {animname}\n Goal {obj.npc_goal}";
+            obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
+            obj_lbl.Position = new Vector3(0f,0.4f,0f);
+            parent.AddChild(obj_lbl);
+
             return n;                  
         }
 
@@ -61,18 +96,28 @@ namespace Underworld
             textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwsprite.gdshader");
         }
 
-        public void SetAnimSprite(int animationNo, int frameNo)
+        public void SetAnimSprite(int animationNo, int frameNo, int relativeHeading)
         {
-            if (this.uwobject.item_id>=127){return;}
-            string animname = "idle_front";
+            //if (this.uwobject.item_id >= 127) { return; }
+            string animname= CritterArt.GetAnimName(animationNo,relativeHeading); // "idle_front";
             //var crit = CritLoader.GetCritter(this.uwobject.item_id & 0x3F);
             var crit = CritterArt.GetCritter(this.uwobject.item_id & 0x3F);
-            var anim = crit.Animations[animname];
-            if(animationNo>crit.Animations[animname].animIndices.GetUpperBound(0))
+            if (crit.Animations.ContainsKey(animname))
             {
-                Debug.Print("Animation out of range");
-                return;
+                ApplyAnimation(animationNo, frameNo, animname, crit);
             }
+            else
+            {
+                uwobject.npc_animation=0; //default animation to zero;
+                Debug.Print($"{animname} ({animationNo}) was not found for {this.uwobject.item_id & 0x3F}");
+                ApplyAnimation(animationNo, frameNo, CritterArt.GetAnimName(0,0), crit);
+            }
+        }
+
+        private void ApplyAnimation(int animationNo, int frameNo, string animname, CritterArt crit)
+        {
+
+            var anim = crit.Animations[animname];
             if (material == null)
             {//create the initial material
                 var newmaterial = new ShaderMaterial();
@@ -85,24 +130,23 @@ namespace Underworld
                 material = newmaterial;
             }
             //assign the params to the shader
-            //critAnim.animSprites[critAnim.animIndices[AnimationIndex, AnimationPos++]]            
+            //critAnim.animSprites[critAnim.animIndices[AnimationIndex, AnimationPos++]] 
+            if (frameNo>=8){frameNo=0;}           
             if (anim.animIndices[frameNo] != -1)
             {
                 var texture = crit.animSprites[anim.animIndices[frameNo]];
-                FrameSize= new Vector2(
-                    ArtLoader.SpriteScale * texture.GetWidth(), 
+                FrameSize = new Vector2(
+                    ArtLoader.SpriteScale * texture.GetWidth(),
+
                     ArtLoader.SpriteScale * texture.GetHeight()
                     );
-                    material.SetShaderParameter("texture_albedo", (Texture)texture);
+                material.SetShaderParameter("texture_albedo", (Texture)texture);
             }
             else
             {
                 Debug.Print($"invalid animation {animationNo} {frameNo} for {this.uwobject.item_id}");
             }
-
-          
         }
-
     }//end class
 
 }//end namespace
