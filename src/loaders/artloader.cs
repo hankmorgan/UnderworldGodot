@@ -124,7 +124,7 @@ namespace Underworld
                 int iCol = 0;
                 for (int j = (iRow * width); j < (iRow * width) + width; j++)
                 {
-                    byte pixel = (byte)getValAtAddress(databuffer, dataOffSet + j, 8);
+                    byte pixel = (byte)getAt(databuffer, dataOffSet + j, 8);
 
                     if (useXFER)
                     {
@@ -227,7 +227,7 @@ namespace Underworld
                         nibble = 0;
 
                     //rawbits = ( int)fgetc(fd);
-                    rawbits = (int)getValAtAddress(FileIn, addr_ptr, 8);
+                    rawbits = (int)getAt(FileIn, addr_ptr, 8);
                     addr_ptr++;
                     if (rawbits == -1)  //EOF
                         return;

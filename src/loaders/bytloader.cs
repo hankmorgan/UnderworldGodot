@@ -127,11 +127,11 @@ namespace Underworld
         { return null; }
         // Get the size of the file in bytes
 
-        NoOfTextures = getValAtAddress(textureFile, 0, 8);
-        int textureOffset = (int)getValAtAddress(textureFile, (index * 4) + 6, 32);
+        NoOfTextures = getAt(textureFile, 0, 8);
+        int textureOffset = (int)getAt(textureFile, (index * 4) + 6, 32);
         if (textureOffset != 0)
         {
-            int compressionFlag = (int)getValAtAddress(textureFile, ((index * 4) + 6) + (NoOfTextures * 4), 32);
+            int compressionFlag = (int)getAt(textureFile, ((index * 4) + 6) + (NoOfTextures * 4), 32);
             int isCompressed = (compressionFlag >> 1) & 0x01;
             if (isCompressed == 1)
             {

@@ -23,9 +23,9 @@ namespace Underworld
                 int add_ptr = 0;
                 for (int i = 0; i < 10; i++)
                 {
-                    int obj_a = (int)getValAtAddress(buffer, add_ptr, 16);
-                    int obj_b = (int)getValAtAddress(buffer, add_ptr + 2, 16);
-                    int output = (int)getValAtAddress(buffer, add_ptr + 4, 16);
+                    int obj_a = (int)getAt(buffer, add_ptr, 16);
+                    int obj_b = (int)getAt(buffer, add_ptr + 2, 16);
+                    int output = (int)getAt(buffer, add_ptr + 4, 16);
                     if (!(((obj_a & 0x7fff)  == (obj_b & 0x7fff)) && ((obj_a & 0x7fff) == (output & 0x7fff))))   // only add if the 3 objects are different.
                         {
                         objectCombination.ObjectCombinations.Add(

@@ -243,10 +243,10 @@ namespace Underworld
                         {
                             shadesdata[i] = new shade(
                                 _index: i,
-                                _nearDist: (int)(Int16)getValAtAddress(buffer, 0 + (i * 12), 16),
-                                _nearMap: (int)getValAtAddress(buffer, 2 + (i * 12), 16),
-                                _farDist: (int)(Int16)getValAtAddress(buffer, 4 + (i * 12), 16),
-                                _ShadeCutoff: (int)getValAtAddress(buffer, 6 + (i * 12), 16)
+                                _nearDist: (int)(Int16)getAt(buffer, 0 + (i * 12), 16),
+                                _nearMap: (int)getAt(buffer, 2 + (i * 12), 16),
+                                _farDist: (int)(Int16)getAt(buffer, 4 + (i * 12), 16),
+                                _ShadeCutoff: (int)getAt(buffer, 6 + (i * 12), 16)
                             );
                         }
                         catch

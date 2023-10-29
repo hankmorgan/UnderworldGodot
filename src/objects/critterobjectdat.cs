@@ -285,7 +285,7 @@ namespace Underworld
         /// <returns></returns>
         public static int experience(int item_id)
         {
-            return (int)getValAtAddress(buffer, 40 + (item_id & 0x3F) * 48, 16);
+            return (int)getAt(buffer, 40 + (item_id & 0x3F) * 48, 16);
         }
 
         /// <summary>

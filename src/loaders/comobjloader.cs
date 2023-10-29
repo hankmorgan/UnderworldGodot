@@ -25,7 +25,7 @@ namespace Underworld
         /// <returns></returns>
         public static int radius(int item_id)
         {   //bits 0..2 at + 1
-            var x = getValAtAddress(buffer, 2 + item_id*11 + 1, 16);
+            var x = getAt(buffer, 2 + item_id*11 + 1, 16);
             return (int)(x & 7);
         }
 
@@ -37,7 +37,7 @@ namespace Underworld
         /// <returns></returns>
         public static int mass(int item_id)
         {   //bits 4-15 at + 1
-            var x = getValAtAddress(buffer, 2 + item_id*11 + 1, 16);
+            var x = getAt(buffer, 2 + item_id*11 + 1, 16);
             return (int)(x>>4 & 0xFFF);
         }
 
@@ -59,7 +59,7 @@ namespace Underworld
         /// <returns></returns>
         public static int monetaryvalue(int item_id)
         {   //int16 at + 4
-            return (int)getValAtAddress(buffer, 2 + item_id*11 + 4, 16);
+            return (int)getAt(buffer, 2 + item_id*11 + 4, 16);
         }
 
         /// <summary>

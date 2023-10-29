@@ -65,11 +65,11 @@ namespace Underworld
                 {
                     for (int j = 0; j < GroupSize; j++)
                     {
-                        AnimX[j + offset] = (int)getValAtAddress(AnimData, add_ptr++, 8);
+                        AnimX[j + offset] = (int)getAt(AnimData, add_ptr++, 8);
                     }
                     for (int j = 0; j < GroupSize; j++)
                     {
-                        AnimY[j + offset] = (int)getValAtAddress(AnimData, add_ptr++, 8);
+                        AnimY[j + offset] = (int)getAt(AnimData, add_ptr++, 8);
                     }
                     offset += GroupSize;
                 }
@@ -78,7 +78,7 @@ namespace Underworld
             {//In UW2 I just read the values into one array
                 for (int i = 0; i <= AnimData.GetUpperBound(0); i++)
                 {
-                    AnimXY[i] = (int)getValAtAddress(AnimData, add_ptr++, 8);
+                    AnimXY[i] = (int)getAt(AnimData, add_ptr++, 8);
                 }
             }
 
@@ -91,16 +91,16 @@ namespace Underworld
 
             for (int i = 0; i < NoOfTextures; i++)
             {
-                long textureOffset = getValAtAddress(textureFile, (i * 4) + 3, 32);
-                int BitMapWidth = (int)getValAtAddress(textureFile, textureOffset + 1, 8);
-                int BitMapHeight = (int)getValAtAddress(textureFile, textureOffset + 2, 8);
+                long textureOffset = getAt(textureFile, (i * 4) + 3, 32);
+                int BitMapWidth = (int)getAt(textureFile, textureOffset + 1, 8);
+                int BitMapHeight = (int)getAt(textureFile, textureOffset + 2, 8);
                 int datalen;
                 Palette auxpal = PaletteLoader.LoadAuxilaryPal(cmfile, PaletteLoader.Palettes[PaletteNo], auxPalIndex);
                 byte[] imgNibbles;
                 byte[] outputImg;
                 byte[] srcImg;
                 
-                datalen = (int)getValAtAddress(textureFile, textureOffset + 4, 16);
+                datalen = (int)getAt(textureFile, textureOffset + 4, 16);
                 imgNibbles = new byte[System.Math.Max(BitMapWidth * BitMapHeight * 2, datalen * 2)];
                 textureOffset += 6; //Start of raw data.
 
@@ -191,15 +191,15 @@ namespace Underworld
             //NoOfNibbles=NoOfNibbles*2;
             while (NoOfNibbles > 1)
             {
-                OutputData[i] = (byte)((getValAtAddress(InputData, add_ptr, 8) >> 4) & 0x0F);       //High nibble
-                OutputData[i + 1] = (byte)((getValAtAddress(InputData, add_ptr, 8)) & 0xf); //Low nibble
+                OutputData[i] = (byte)((getAt(InputData, add_ptr, 8) >> 4) & 0x0F);       //High nibble
+                OutputData[i + 1] = (byte)((getAt(InputData, add_ptr, 8)) & 0xf); //Low nibble
                 i += 2;
                 add_ptr++;
                 NoOfNibbles -= 2;
             }
             if (NoOfNibbles == 1)
             {   //Odd nibble out.
-                OutputData[i] = (byte)((getValAtAddress(InputData, add_ptr, 8) >> 4) & 0x0F);
+                OutputData[i] = (byte)((getAt(InputData, add_ptr, 8) >> 4) & 0x0F);
             }
         }
 

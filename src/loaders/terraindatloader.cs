@@ -78,13 +78,13 @@ namespace Underworld
                     case GAME_UWDEMO:
                         for (int i = 0; i < 256; i++)
                         {
-                            Terrain[i] = (int)getValAtAddress(terrain_dat, add_ptr, 16);
+                            Terrain[i] = (int)getAt(terrain_dat, add_ptr, 16);
                             add_ptr += 2;
                         }
                         add_ptr = 0x200;
                         for (int i = 256; i < 512; i++)
                         {
-                            Terrain[i] = (int)getValAtAddress(terrain_dat, add_ptr, 16);
+                            Terrain[i] = (int)getAt(terrain_dat, add_ptr, 16);
                             add_ptr += 2;
                         }
                         break;
@@ -92,7 +92,7 @@ namespace Underworld
                         {
                             for (int i = 0; i < 256; i++)
                             {
-                                Terrain[i] = (int)getValAtAddress(terrain_dat, add_ptr, 16);
+                                Terrain[i] = (int)getAt(terrain_dat, add_ptr, 16);
                                 add_ptr += 2;
                             }
                             break;

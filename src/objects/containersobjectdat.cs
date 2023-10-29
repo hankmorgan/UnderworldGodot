@@ -27,7 +27,7 @@ namespace Underworld
         /// <returns></returns>
         public static int objectmask(int item_id)
         {
-           return (int)getValAtAddress(buffer,offset + 1 + (item_id & 0xF),16);
+           return (int)getAt(buffer,offset + 1 + (item_id & 0xF),16);
         }
     
     }//end class

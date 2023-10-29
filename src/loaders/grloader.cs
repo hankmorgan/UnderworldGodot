@@ -168,7 +168,7 @@ namespace Underworld
             }
             else
             {
-                NoOfImages = (int)getValAtAddress(ImageFileData, 1, 16);
+                NoOfImages = (int)getAt(ImageFileData, 1, 16);
                 ImageCache = new ImageTexture[NoOfImages];
                 materials = new ShaderMaterial[NoOfImages];
                 ImageFileDataLoaded = true;
@@ -200,13 +200,13 @@ namespace Underworld
             }
 
 
-            long imageOffset = getValAtAddress(ImageFileData, (index * 4) + 3, 32);
+            long imageOffset = getAt(ImageFileData, (index * 4) + 3, 32);
             if (imageOffset >= ImageFileData.GetUpperBound(0))
             {//Image out of range
                 return base.LoadImageAt(index);
             }
-            int BitMapWidth = (int)getValAtAddress(ImageFileData, imageOffset + 1, 8);
-            int BitMapHeight = (int)getValAtAddress(ImageFileData, imageOffset + 2, 8);
+            int BitMapWidth = (int)getAt(ImageFileData, imageOffset + 1, 8);
+            int BitMapHeight = (int)getAt(ImageFileData, imageOffset + 2, 8);
             int datalen;
             Palette auxpal;
             int auxPalIndex;
@@ -214,7 +214,7 @@ namespace Underworld
             byte[] outputImg;
 
 
-            switch (getValAtAddress(ImageFileData, imageOffset, 8))//File type
+            switch (getAt(ImageFileData, imageOffset, 8))//File type
             {
                 case 0x4://8 bit uncompressed
                     {
@@ -226,13 +226,13 @@ namespace Underworld
                     {
                         if (!useOverrideAuxPalIndex)
                         {
-                            auxPalIndex = (int)getValAtAddress(ImageFileData, imageOffset + 3, 8);
+                            auxPalIndex = (int)getAt(ImageFileData, imageOffset + 3, 8);
                         }
                         else
                         {
                             auxPalIndex = OverrideAuxPalIndex;
                         }
-                        datalen = (int)getValAtAddress(ImageFileData, imageOffset + 4, 16);
+                        datalen = (int)getAt(ImageFileData, imageOffset + 4, 16);
                         imgNibbles = new byte[Mathf.Max(BitMapWidth * BitMapHeight * 2, (datalen + 5) * 2)];
                         imageOffset += 6;  //Start of raw data.
                         copyNibbles(ImageFileData, ref imgNibbles, datalen, imageOffset);
@@ -246,13 +246,13 @@ namespace Underworld
                     {
                         if (!useOverrideAuxPalIndex)
                         {
-                            auxPalIndex = (int)getValAtAddress(ImageFileData, imageOffset + 3, 8);
+                            auxPalIndex = (int)getAt(ImageFileData, imageOffset + 3, 8);
                         }
                         else
                         {
                             auxPalIndex = OverrideAuxPalIndex;
                         }
-                        datalen = (int)getValAtAddress(ImageFileData, imageOffset + 4, 16);
+                        datalen = (int)getAt(ImageFileData, imageOffset + 4, 16);
                         imgNibbles = new byte[Mathf.Max(BitMapWidth * BitMapHeight * 2, (5 + datalen) * 2)];
                         imageOffset += 6;  //Start of raw data.
                         copyNibbles(ImageFileData, ref imgNibbles, datalen, imageOffset);
@@ -272,7 +272,7 @@ namespace Underworld
                             BitMapWidth = 79;
                             BitMapHeight = 112;
                         }
-                        imageOffset = getValAtAddress(ImageFileData, (index * 4) + 3, 32);
+                        imageOffset = getAt(ImageFileData, (index * 4) + 3, 32);
                         ImageCache[index] = Image(ImageFileData, imageOffset, BitMapWidth, BitMapHeight, "name_goes_here", PaletteLoader.Palettes[PaletteNo], Alpha, xfer,RenderGrey);
                         return ImageCache[index];
                     }
@@ -299,8 +299,8 @@ namespace Underworld
             {
                 if (add_ptr <= InputData.GetUpperBound(0))
                 {
-                    OutputData[i] = (byte)((getValAtAddress(InputData, add_ptr, 8) >> 4) & 0x0F);        //High nibble
-                    OutputData[i + 1] = (byte)((getValAtAddress(InputData, add_ptr, 8)) & 0xf);  //Low nibble							
+                    OutputData[i] = (byte)((getAt(InputData, add_ptr, 8) >> 4) & 0x0F);        //High nibble
+                    OutputData[i + 1] = (byte)((getAt(InputData, add_ptr, 8)) & 0xf);  //Low nibble							
                 }
                 i += 2;
                 add_ptr++;
@@ -308,7 +308,7 @@ namespace Underworld
             }
             if (NoOfNibbles == 1)
             {   //Odd nibble out.
-                OutputData[i] = (byte)((getValAtAddress(InputData, add_ptr, 8) >> 4) & 0x0F);
+                OutputData[i] = (byte)((getAt(InputData, add_ptr, 8) >> 4) & 0x0F);
             }
         }
 

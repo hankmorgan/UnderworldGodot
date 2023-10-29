@@ -95,11 +95,11 @@ namespace Underworld
     follows (which also is 128 bytes long), which is not used in uw1. Then
     comes the color palette:*/
             lpHeader lpH;
-            lpH.NoOfPages = (int)getValAtAddress(cutsFile, 0x6, 16);
-            lpH.NoOfRecords = (int)getValAtAddress(cutsFile, 0x8, 32);
-            lpH.width = (int)getValAtAddress(cutsFile, 0x14, 16);
-            lpH.height = (int)getValAtAddress(cutsFile, 0x16, 16);
-            lpH.nFrames = (int)getValAtAddress(cutsFile, 0x40, 16);
+            lpH.NoOfPages = (int)getAt(cutsFile, 0x6, 16);
+            lpH.NoOfRecords = (int)getAt(cutsFile, 0x8, 32);
+            lpH.width = (int)getAt(cutsFile, 0x14, 16);
+            lpH.height = (int)getAt(cutsFile, 0x16, 16);
+            lpH.nFrames = (int)getAt(cutsFile, 0x40, 16);
             addptr += 128;//past header.
             addptr += 128;//colour cycling info.
 
@@ -109,9 +109,9 @@ namespace Underworld
             //Read in the palette
             for (int i = 0; i < 256; i++)
             {
-                pal.blue[i] = (byte)getValAtAddress(cutsFile, addptr++, 8);
-                pal.green[i] = (byte)getValAtAddress(cutsFile, addptr++, 8);
-                pal.red[i] = (byte)getValAtAddress(cutsFile, addptr++, 8);
+                pal.blue[i] = (byte)getAt(cutsFile, addptr++, 8);
+                pal.green[i] = (byte)getAt(cutsFile, addptr++, 8);
+                pal.red[i] = (byte)getAt(cutsFile, addptr++, 8);
                 addptr++;//skip reserved.
                         //pal.reserved = fgetc(fd);
             }
@@ -120,9 +120,9 @@ namespace Underworld
             lp_descriptor[] lpd = new lp_descriptor[256];
             for (int i = 0; i < lpd.GetUpperBound(0); i++)
             {
-                lpd[i].baseRecord = (int)getValAtAddress(cutsFile, addptr, 16);
-                lpd[i].nRecords = (int)getValAtAddress(cutsFile, addptr + 2, 16);
-                lpd[i].nBytes = (int)getValAtAddress(cutsFile, addptr + 4, 16);
+                lpd[i].baseRecord = (int)getAt(cutsFile, addptr, 16);
+                lpd[i].nRecords = (int)getAt(cutsFile, addptr + 2, 16);
+                lpd[i].nBytes = (int)getAt(cutsFile, addptr + 4, 16);
                 addptr += 6;
             }
             byte[] pages = new byte[cutsFile.GetUpperBound(0) - 2816 + 1];
@@ -146,9 +146,9 @@ namespace Underworld
                 long curlp = addptr;
                 //long page= addptr;
                 lp_descriptor curl;
-                curl.baseRecord = (int)getValAtAddress(pages, curlp + 0, 16);
-                curl.nRecords = (int)getValAtAddress(pages, curlp + 2, 16);
-                curl.nBytes = (int)getValAtAddress(pages, curlp + 4, 16);
+                curl.baseRecord = (int)getAt(pages, curlp + 0, 16);
+                curl.nRecords = (int)getAt(pages, curlp + 2, 16);
+                curl.nBytes = (int)getAt(pages, curlp + 4, 16);
                 long thepage = curlp + 6 + 2;//reinterpret_cast<Uint8*>(curlp)+sizeof(lp_descriptor)+2 ;
                                             //long thepage = curlp;
                 int destframe = framenumber - curl.baseRecord;
@@ -157,7 +157,7 @@ namespace Underworld
                 long pagepointer = thepage;
                 for (int k = 0; k < destframe; k++)
                 {
-                    offset += (int)getValAtAddress(pages, pagepointer + (k * 2), 16);
+                    offset += (int)getAt(pages, pagepointer + (k * 2), 16);
                 }
                 //offset+= (int)cutsFile[k+pagepointer];//offset += pagepointer[i];
                 //offset += (int)DataLoader.getValAtAddress(cutsFile,thepage,16);
@@ -244,7 +244,7 @@ namespace Underworld
                     {
                         // longOp
                         //Uint16 wordCnt = *((Uint16*)srcP);
-                        int wordCnt = (int)getValAtAddress(srcData, inptr, 16);//srcData[inptr];
+                        int wordCnt = (int)getAt(srcData, inptr, 16);//srcData[inptr];
                                                                             //srcP += 2;
                         inptr += 2;
                         int wordcntSign = (wordCnt & 0x8000) >> 15;//try and get the sign.

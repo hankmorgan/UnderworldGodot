@@ -52,7 +52,7 @@ namespace Underworld
         /// <param name="size">Size of the data in bits</param>
         public static long getValAtAddress(UWBlock buffer, long Address, int size)
         {//Gets contents of bytes the the specific integer address. int(8), int(16), int(32) per uw-formats.txt
-            return getValAtAddress(buffer.Data, Address, size);
+            return getAt(buffer.Data, Address, size);
         }
 
 
@@ -68,7 +68,7 @@ namespace Underworld
         ///This decompresses UW2 blocks.
         public static byte[] unpackUW2(byte[] tmp, int address_pointer, ref int datalen)
         {
-            int BlockLen = (int)getValAtAddress(tmp, address_pointer, 32); //lword(base);
+            int BlockLen = (int)getAt(tmp, address_pointer, 32); //lword(base);
             int NoOfSegs = ((BlockLen / 0x1000) + 1) * 0x1000;
             //byte[] buf = new byte[BlockLen+100];
             byte[] buf = new byte[Math.Max(NoOfSegs, BlockLen + 100)];
@@ -500,22 +500,22 @@ namespace Underworld
             //Finds the address of the block based on the directory block no.
             //Justs loops through until it finds a match.
             int blnLevelFound = 0;
-            long DirectoryAddress = getValAtAddress(tmp_ark, 124, 32);
+            long DirectoryAddress = getAt(tmp_ark, 124, 32);
             //printf("\nThe directory is at %d\n", DirectoryAddress);
 
-            int NoOfChunks = (int)getValAtAddress(tmp_ark, DirectoryAddress, 16);
+            int NoOfChunks = (int)getAt(tmp_ark, DirectoryAddress, 16);
             //printf("there are %d chunks\n",NoOfChunks);
-            long firstChunkAddress = getValAtAddress(tmp_ark, DirectoryAddress + 2, 32);
+            long firstChunkAddress = getAt(tmp_ark, DirectoryAddress + 2, 32);
             //printf("The first chunk is at %d\n", firstChunkAddress);
             long address_pointer = DirectoryAddress + 6;
             long AddressOfBlockStart = firstChunkAddress;
             for (int k = 0; k < NoOfChunks; k++)
             {
-                int chunkId = (int)getValAtAddress(tmp_ark, address_pointer, 16);
-                chunkUnpackedLength = getValAtAddress(tmp_ark, address_pointer + 2, 24);
-                chunkCompressionType = (int)getValAtAddress(tmp_ark, address_pointer + 5, 8);  //Compression.
-                chunkPackedLength = getValAtAddress(tmp_ark, address_pointer + 6, 24);
-                chunkContentType = (short)getValAtAddress(tmp_ark, address_pointer + 9, 8);
+                int chunkId = (int)getAt(tmp_ark, address_pointer, 16);
+                chunkUnpackedLength = getAt(tmp_ark, address_pointer + 2, 24);
+                chunkCompressionType = (int)getAt(tmp_ark, address_pointer + 5, 8);  //Compression.
+                chunkPackedLength = getAt(tmp_ark, address_pointer + 6, 24);
+                chunkContentType = (short)getAt(tmp_ark, address_pointer + 9, 8);
 
                 //Debug.Log(chunkId + " of type " + chunkContentType + " compress=" + chunkCompressionType + " packed= " + chunkPackedLength + " unpacked=" + chunkUnpackedLength + " at file address " + AddressOfBlockStart );
 
@@ -601,7 +601,7 @@ namespace Underworld
                 case 3://Subdir compressed  //Just return the compressed data and unpack the sub chunks individually?
                     {
                         //uncompressed the sub chunks
-                        int NoOfEntries = (int)getValAtAddress(archive_ark, AddressOfBlockStart, 16);
+                        int NoOfEntries = (int)getAt(archive_ark, AddressOfBlockStart, 16);
                         int SubDirLength = (NoOfEntries + 1) * 4 + 2;
                         byte[] temp_ark = new byte[chunkPackedLength];
                         byte[] tmpchunk = new byte[chunkUnpackedLength];
@@ -706,15 +706,15 @@ namespace Underworld
         public static bool LoadUWBlock(byte[] arkData, int blockNo, int targetDataLen, out UWBlock uwb)
         {
             uwb = new UWBlock();
-            int NoOfBlocks = (int)getValAtAddress(arkData, 0, 32);
+            int NoOfBlocks = (int)getAt(arkData, 0, 32);
             switch (_RES)
             {
                 case GAME_UW2:
                     {//6 + block *4 + (noOfBlocks*type)
-                        uwb.Address = (int)getValAtAddress(arkData, 6 + (blockNo * 4), 32);
-                        uwb.CompressionFlag = (int)getValAtAddress(arkData, 6 + (blockNo * 4) + (NoOfBlocks * 4), 32);
-                        uwb.DataLen = (int)getValAtAddress(arkData, 6 + (blockNo * 4) + (NoOfBlocks * 8), 32);
-                        uwb.ReservedSpace = (int)getValAtAddress(arkData, 6 + (blockNo * 4) + (NoOfBlocks * 12), 32);
+                        uwb.Address = (int)getAt(arkData, 6 + (blockNo * 4), 32);
+                        uwb.CompressionFlag = (int)getAt(arkData, 6 + (blockNo * 4) + (NoOfBlocks * 4), 32);
+                        uwb.DataLen = (int)getAt(arkData, 6 + (blockNo * 4) + (NoOfBlocks * 8), 32);
+                        uwb.ReservedSpace = (int)getAt(arkData, 6 + (blockNo * 4) + (NoOfBlocks * 12), 32);
                         if (uwb.Address != 0)
                         {
                             if (((uwb.CompressionFlag >> 1) & 0x01) == 1)
@@ -752,7 +752,7 @@ namespace Underworld
                     }
                 default:
                     {
-                        uwb.Address = (int)getValAtAddress(arkData, (blockNo * 4) + 2, 32);
+                        uwb.Address = (int)getAt(arkData, (blockNo * 4) + 2, 32);
                         if (uwb.Address != 0)
                         {
                             uwb.Data = new byte[targetDataLen];

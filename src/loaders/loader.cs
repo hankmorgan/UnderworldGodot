@@ -59,7 +59,7 @@ namespace Underworld
         /// <param name="buffer">Buffer.</param>
         /// <param name="Address">Address.</param>
         /// <param name="size">Size of the data in bits</param>
-        public static uint getValAtAddress(byte[] buffer, long Address, int size)
+        public static uint getAt(byte[] buffer, long Address, int size)
         {//Gets contents of bytes the the specific integer address. int(8), int(16), int(32) per uw-formats.txt
             switch (size)
             {
@@ -80,7 +80,7 @@ namespace Underworld
             }
         }
 
-        public static void setValAtAddress(byte[] buffer, long address, int size, int val)
+        public static void setAt(byte[] buffer, long address, int size, int val)
         {
             byte valOut;
             switch (size)

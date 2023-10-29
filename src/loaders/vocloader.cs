@@ -67,11 +67,11 @@ namespace Underworld
                     }
                     addptr = 19;
                     Result.signature2 = buffer[addptr++];
-                    Result.MainHeaderSize = (short)getValAtAddress(buffer, addptr, 16);
+                    Result.MainHeaderSize = (short)getAt(buffer, addptr, 16);
                     addptr += 2;
-                    Result.Version = (short)getValAtAddress(buffer, addptr, 16);  //Version number. Usually 0x010A (266d) for the old format
+                    Result.Version = (short)getAt(buffer, addptr, 16);  //Version number. Usually 0x010A (266d) for the old format
                     addptr += 2;
-                    Result.CheckSum = (short)getValAtAddress(buffer, addptr, 16);
+                    Result.CheckSum = (short)getAt(buffer, addptr, 16);
                     //Now at the start of the blocks
                     addptr = 26;
 
@@ -84,7 +84,7 @@ namespace Underworld
                         case 1: //Sound data with type
                             {
                                 addptr++;
-                                int BlockSize = (int)getValAtAddress(buffer, addptr, 24);
+                                int BlockSize = (int)getAt(buffer, addptr, 24);
                                 addptr += 3;
                                 Result.FreqDivisor = buffer[addptr++];
                                 Result.Codec = buffer[addptr++];
@@ -101,8 +101,8 @@ namespace Underworld
                         case 8:
                             {//Only Appears in UW2/sound/sp18
                                 Result.Sample16 = true;
-                                int BlockSize = (int)getValAtAddress(buffer, addptr, 24);
-                                Result.FreqDivisor = (short)getValAtAddress(buffer, addptr, 16); //uses 16 bit instead of 8 as above
+                                int BlockSize = (int)getAt(buffer, addptr, 24);
+                                Result.FreqDivisor = (short)getAt(buffer, addptr, 16); //uses 16 bit instead of 8 as above
                                 addptr += 2;
                                 Result.Codec = buffer[addptr++];
                                 // Debug.Print("Num Channels: " + buffer[addptr++].ToString());

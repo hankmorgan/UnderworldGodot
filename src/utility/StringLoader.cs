@@ -584,7 +584,7 @@ namespace Underworld
 
                 if (Loader.ReadStreamFile(path, out byte[] Buffer))
                 {
-                    long NoOfNodes = Loader.getValAtAddress(Buffer, address_pointer, 16);
+                    long NoOfNodes = Loader.getAt(Buffer, address_pointer, 16);
                     int i = 0;
                     hman = new huffman_node[NoOfNodes];
                     address_pointer += 2;
@@ -598,17 +598,17 @@ namespace Underworld
                         address_pointer += 4;
                     }
 
-                    long NoOfStringBlocks = Loader.getValAtAddress(Buffer, address_pointer, 16);
+                    long NoOfStringBlocks = Loader.getAt(Buffer, address_pointer, 16);
                     blocks = new block_dir[NoOfStringBlocks];
                     address_pointer += 2;
                     i = 0;
                     while (i < NoOfStringBlocks)
                     {
-                        blocks[i].block_no = Loader.getValAtAddress(Buffer, address_pointer, 16);
+                        blocks[i].block_no = Loader.getAt(Buffer, address_pointer, 16);
                         address_pointer += 2;
-                        blocks[i].address = Loader.getValAtAddress(Buffer, address_pointer, 32);
+                        blocks[i].address = Loader.getAt(Buffer, address_pointer, 32);
                         address_pointer += 4;
-                        blocks[i].NoOfEntries = Loader.getValAtAddress(Buffer, blocks[i].address, 16);  //look ahead and get no of entries.
+                        blocks[i].NoOfEntries = Loader.getAt(Buffer, blocks[i].address, 16);  //look ahead and get no of entries.
                         EntryCounts["_" + blocks[i].block_no] = blocks[i].NoOfEntries.ToString();
                         i++;
                     }

@@ -88,12 +88,12 @@ namespace Underworld
 
         int GetAt16(int index)
         {
-            return (int)DataLoader.getValAtAddress(DataBuffer, index, 16);
+            return (int)DataLoader.getAt(DataBuffer, index, 16);
         }
 
         int GetAt32(int index)
         {
-            return (int)DataLoader.getValAtAddress(DataBuffer, index, 32);
+            return (int)DataLoader.getAt(DataBuffer, index, 32);
         }
 
         void SetAt(int index, byte value)
@@ -103,12 +103,12 @@ namespace Underworld
 
         void SetAt16(int index, int value)
         {
-            DataLoader.setValAtAddress(DataBuffer, index, 16, value);
+            DataLoader.setAt(DataBuffer, index, 16, value);
         }
 
         void SetAt32(int index, int value)
         {
-            DataLoader.setValAtAddress(DataBuffer, index, 32, value);
+            DataLoader.setAt(DataBuffer, index, 32, value);
         }
 
 
