@@ -81,13 +81,13 @@ namespace Underworld
             return LoadImageAt(index, false);
         }
 
-        public override ImageTexture LoadImageAt(int index, bool Alpha)
+        public override ImageTexture LoadImageAt(int index, bool UseAlphaChannel)
         {
             switch (_RES)
             {
                 case GAME_UW2:
                     {
-                        return extractUW2Bitmap(Path.Combine(BasePath, "DATA", "BYT.ARK"), index, Alpha);      //    "DATA" + sep + "BYT.ARK", index, Alpha);
+                        return extractUW2Bitmap(Path.Combine(BasePath, "DATA", "BYT.ARK"), index, UseAlphaChannel);      //    "DATA" + sep + "BYT.ARK", index, Alpha);
                     }
                 default:
                     {
@@ -106,13 +106,20 @@ namespace Underworld
                         //return Image(ImageFileData, 0, 320, 200, "name_goes_here", GameWorldController.instance.palLoader.Palettes[PaletteIndices[index]], Alpha);
                         //return Image(ImageFileData, 0, 320, 200, "name_goes_here",  PaletteLoader.GreyScale, Alpha);
 
-                        return Image(ImageFileData, 0, 320, 200, "name_goes_here",  PaletteLoader.Palettes[PaletteIndices[index]], Alpha, false);
+                        return Image(
+                            databuffer: ImageFileData, 
+                            dataOffSet: 0, 
+                            width: 320, 
+                            height: 200, 
+                            palette: PaletteLoader.Palettes[PaletteIndices[index]], 
+                            useAlphaChannel: UseAlphaChannel, 
+                            useSingleRedChannel: false);
                     }
             }
         }
 
 
-    public ImageTexture extractUW2Bitmap(string toLoad, int index, bool Alpha)
+    public ImageTexture extractUW2Bitmap(string toLoad, int index, bool UseAlphaChannel)
     {
         // Pointer to our buffered data (little endian format)
         //int i;
@@ -136,11 +143,25 @@ namespace Underworld
             if (isCompressed == 1)
             {
                 int datalen = 0;
-                return Image(DataLoader.unpackUW2(textureFile, textureOffset, ref datalen), 0, 320, 200, "namehere", PaletteLoader.Palettes[PaletteIndicesUW2[index]], Alpha, false);
+                return Image(
+                    databuffer: DataLoader.unpackUW2(tmpBuffer: textureFile, address_pointer: textureOffset, datalen: ref datalen), 
+                    dataOffSet: 0, 
+                    width: 320, 
+                    height: 200, 
+                    palette: PaletteLoader.Palettes[PaletteIndicesUW2[index]], 
+                    useAlphaChannel: UseAlphaChannel, 
+                    useSingleRedChannel: false);
             }
             else
             {
-                return Image(textureFile, textureOffset, 320, 200, "name_goes_here", PaletteLoader.Palettes[PaletteIndicesUW2[index]], Alpha,false);
+                return Image(
+                    databuffer: textureFile, 
+                    dataOffSet: textureOffset, 
+                    width: 320, 
+                    height: 200, 
+                    palette: PaletteLoader.Palettes[PaletteIndicesUW2[index]], 
+                    useAlphaChannel: UseAlphaChannel, 
+                    useSingleRedChannel: false);
             }
         }
         return null;

@@ -15,11 +15,11 @@ namespace Underworld
         /// </summary>
         /// <returns>The at pixel.</returns>
         /// <param name="index">Pixel.</param>
-        /// <param name="Alpha">If set to <c>true</c> alpha.</param>
-        public Color ColorAtIndex(byte index, bool Alpha, bool useGreyScale)
+        /// <param name="useAlphaChannel">If set to <c>true</c> alpha.</param>
+        public Color ColorAtIndex(byte index, bool useAlphaChannel, bool useSingleRedChannel)
         {
             byte alphabyte;
-            if (Alpha == true)
+            if (useAlphaChannel == true)
             {
                 if (index != 0) //Alpha
                 {
@@ -35,7 +35,7 @@ namespace Underworld
                 alphabyte = 0;
             }
 
-            if (useGreyScale)
+            if (useSingleRedChannel)
             {
                 return new Color(
                     g: 0,
@@ -85,7 +85,14 @@ namespace Underworld
             int ImageHeight, NoOfColours;
             byte[] imgData;
             BuildPaletteImgData(ColourBandSize, out ImageHeight, out NoOfColours, out imgData);
-            var output = ArtLoader.Image(imgData, 0, NoOfColours * ColourBandSize, ImageHeight, "name here", this, true, false);
+            var output = ArtLoader.Image(
+                    databuffer: imgData, 
+                    dataOffSet: 0, 
+                    width: NoOfColours * ColourBandSize, 
+                    height: ImageHeight, 
+                    palette: this, 
+                    useAlphaChannel: true, 
+                    useSingleRedChannel: false);
             return output;
         }
 

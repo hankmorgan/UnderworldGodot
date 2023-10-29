@@ -11,7 +11,7 @@ namespace Underworld
 /// </summary>
     public class GRLoader : ArtLoader
     {
-        public bool RenderGrey = false;
+        public bool UseRedChannel = false;
         const int repeat_record_start = 0;
         const int repeat_record = 1;
         const int run_record = 2;
@@ -182,7 +182,7 @@ namespace Underworld
             return LoadImageAt(index, true);
         }
 
-        public override ImageTexture LoadImageAt(int index, bool Alpha)
+        public override ImageTexture LoadImageAt(int index, bool UseAlphaChannel)
         {
             if (ImageFileDataLoaded == false)
             {
@@ -219,7 +219,13 @@ namespace Underworld
                 case 0x4://8 bit uncompressed
                     {
                         imageOffset += 5;
-                        ImageCache[index] = Image(ImageFileData, imageOffset, BitMapWidth, BitMapHeight, "name_goes_here", PaletteLoader.Palettes[PaletteNo], Alpha, xfer,RenderGrey);
+                        ImageCache[index] = Image(
+                            databuffer: ImageFileData, 
+                            dataOffSet: imageOffset, 
+                            width: BitMapWidth, height: BitMapHeight, 
+                            palette: PaletteLoader.Palettes[PaletteNo], 
+                            useAlphaChannel: UseAlphaChannel, 
+                            useSingleRedChannel: UseRedChannel);
                         return ImageCache[index];
                     }
                 case 0x8://4 bit run-length
@@ -239,7 +245,7 @@ namespace Underworld
                         //auxpal =PaletteLoader.LoadAuxilaryPal(Loader.BasePath+ AuxPalPath,PaletteLoader.Palettes[PaletteNo],auxPalIndex);
                         int[] aux = PaletteLoader.LoadAuxilaryPalIndices(Path.Combine(BasePath, "DATA", AuxPalPath), auxPalIndex);
                         outputImg = DecodeRLEBitmap(imgNibbles, datalen, BitMapWidth, BitMapHeight, 4, aux);
-                        ImageCache[index] = Image(outputImg, 0, BitMapWidth, BitMapHeight, "name_goes_here", PaletteLoader.Palettes[PaletteNo], Alpha, xfer,RenderGrey);
+                        ImageCache[index] = Image(outputImg, 0, BitMapWidth, BitMapHeight, PaletteLoader.Palettes[PaletteNo], UseAlphaChannel, UseRedChannel);
                         return ImageCache[index];
                     }
                 case 0xA://4 bit uncompressed//Same as above???
@@ -257,7 +263,13 @@ namespace Underworld
                         imageOffset += 6;  //Start of raw data.
                         copyNibbles(ImageFileData, ref imgNibbles, datalen, imageOffset);
                         auxpal = PaletteLoader.LoadAuxilaryPal(Path.Combine(BasePath, "DATA", AuxPalPath), PaletteLoader.Palettes[PaletteNo], auxPalIndex);
-                        ImageCache[index] = Image(imgNibbles, 0, BitMapWidth, BitMapHeight, "name_goes_here", auxpal, Alpha, xfer,RenderGrey);
+                        ImageCache[index] = Image(
+                            databuffer: imgNibbles, 
+                            dataOffSet: 0, 
+                            width: BitMapWidth, height: BitMapHeight, 
+                            palette: auxpal, 
+                            useAlphaChannel: UseAlphaChannel , 
+                            useSingleRedChannel: UseRedChannel);
                         return ImageCache[index];
                     }
                 //break;
@@ -273,7 +285,13 @@ namespace Underworld
                             BitMapHeight = 112;
                         }
                         imageOffset = getAt(ImageFileData, (index * 4) + 3, 32);
-                        ImageCache[index] = Image(ImageFileData, imageOffset, BitMapWidth, BitMapHeight, "name_goes_here", PaletteLoader.Palettes[PaletteNo], Alpha, xfer,RenderGrey);
+                        ImageCache[index] = Image(
+                            databuffer: ImageFileData, 
+                            dataOffSet: imageOffset, 
+                            width: BitMapWidth, height: BitMapHeight, 
+                            palette: PaletteLoader.Palettes[PaletteNo], 
+                            useAlphaChannel: UseAlphaChannel, 
+                            useSingleRedChannel: UseRedChannel);
                         return ImageCache[index];
                     }
                     break;

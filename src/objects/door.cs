@@ -50,7 +50,7 @@ namespace Underworld
         static door()
         {
             tmDoor = new GRLoader(GRLoader.DOORS_GR, GRLoader.GRShaderMode.TextureShader);
-            tmDoor.RenderGrey = true;
+            tmDoor.UseRedChannel = true;
         }
 
         public static door CreateInstance(Node3D parent, uwObject obj, TileMap a_tilemap, string name)

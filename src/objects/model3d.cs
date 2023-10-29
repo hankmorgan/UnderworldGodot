@@ -243,7 +243,7 @@ namespace Underworld
             if (tmObj == null)
             {
                 tmObj = new GRLoader(GRLoader.TMOBJ_GR, GRLoader.GRShaderMode.TextureShader);
-                tmObj.RenderGrey = true;
+                tmObj.UseRedChannel = true;
             }
         }  
 
@@ -255,7 +255,7 @@ namespace Underworld
             if (tmFlat == null)
             {
                 tmFlat = new GRLoader(GRLoader.TMFLAT_GR, GRLoader.GRShaderMode.TextureShader);
-                tmFlat.RenderGrey = true;
+                tmFlat.UseRedChannel = true;
             }
         }        
 

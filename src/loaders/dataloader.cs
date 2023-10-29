@@ -61,14 +61,14 @@ namespace Underworld
         /// Unpacks the Uw2 compressed blocks
         /// </summary>
         /// <returns>The Uw2 uncompressed block.</returns>
-        /// <param name="tmp">Tmp.</param>
+        /// <param name="tmpBuffer">Tmp.</param>
         /// <param name="address_pointer">Address pointer.</param>
         /// <param name="datalen">Datalen.</param>
         /// Robbed and changed slightly from the Labyrinth of Worlds implementation project.
         ///This decompresses UW2 blocks.
-        public static byte[] unpackUW2(byte[] tmp, int address_pointer, ref int datalen)
+        public static byte[] unpackUW2(byte[] tmpBuffer, int address_pointer, ref int datalen)
         {
-            int BlockLen = (int)getAt(tmp, address_pointer, 32); //lword(base);
+            int BlockLen = (int)getAt(tmpBuffer, address_pointer, 32); //lword(base);
             int NoOfSegs = ((BlockLen / 0x1000) + 1) * 0x1000;
             //byte[] buf = new byte[BlockLen+100];
             byte[] buf = new byte[Math.Max(NoOfSegs, BlockLen + 100)];
@@ -79,26 +79,26 @@ namespace Underworld
 
             while (upPtr < BlockLen)
             {
-                byte bits = tmp[address_pointer++];
+                byte bits = tmpBuffer[address_pointer++];
                 for (int r = 0; r < 8; r++)
                 {
-                    if (address_pointer > tmp.GetUpperBound(0))
+                    if (address_pointer > tmpBuffer.GetUpperBound(0))
                     {//No more data!
                         return buf;
                     }
                     if ((bits & 1) == 1)
                     {//Transfer
-                        buf[upPtr++] = tmp[address_pointer++];
+                        buf[upPtr++] = tmpBuffer[address_pointer++];
                         datalen++;
                     }
                     else
                     {//copy
-                        if (address_pointer >= tmp.GetUpperBound(0))
+                        if (address_pointer >= tmpBuffer.GetUpperBound(0))
                         {
                             return buf;//no more data.
                         }
-                        int o = tmp[address_pointer++];
-                        int c = tmp[address_pointer++];
+                        int o = tmpBuffer[address_pointer++];
+                        int c = tmpBuffer[address_pointer++];
 
                         o |= ((c & 0xF0) << 4);
                         //if((o&0x800) == 0x800)

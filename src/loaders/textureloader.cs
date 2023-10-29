@@ -12,7 +12,7 @@ namespace Underworld
         /// <summary>
         /// Force all textures to be loaded in greyscale so that they actual colors are applied later in shaders.
         /// </summary>
-        static bool RenderGrey = true;
+        static bool UseRedChannel = true;
 
         private readonly string pathTexW_UW0 = "DW64.TR";
         private readonly string pathTexF_UW0 = "DF32.TR";
@@ -46,22 +46,22 @@ namespace Underworld
                     textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwshader.gdshader");
                     break;
             }
-        }         
+        }        
 
 
         public override ImageTexture LoadImageAt(int index)
         {
-            return LoadImageAt(index, PaletteLoader.GreyScale); //PaletteLoader.Palettes[0]);
+            return LoadImageAt(index, PaletteLoader.GreyScaleIndexPalette); //PaletteLoader.Palettes[0]);
         }
 
         /// <summary>
         /// Loads the image at index.
         /// </summary>
-        /// <returns>The <see cref="UnityEngine.Image"/>.</returns>
+        /// <returns>The texture</returns>
         /// <param name="index">Index.</param>
         /// <param name="palToUse">Pal to use.</param>
         /// If the index is greater than 209 I return a floor texture.
-        public ImageTexture LoadImageAt(int index, Palette palToUse)
+        private ImageTexture LoadImageAt(int index, Palette palToUse)
         {
             if (_RES == GAME_UWDEMO)
             {//Point the UW1 texture files to the demo files
@@ -90,7 +90,13 @@ namespace Underworld
                             }
                         }
                         long textureOffset = getAt(texturebufferT, ((index) * 4) + 4, 32);
-                        return Image(texturebufferT, textureOffset, FloorDim, FloorDim, "name_goes_here", palToUse, false, RenderGrey);
+                        return Image(
+                            databuffer: texturebufferT, 
+                            dataOffSet: textureOffset, 
+                            width: FloorDim, height: FloorDim, 
+                            palette: palToUse, 
+                            useAlphaChannel: false, 
+                            useSingleRedChannel: UseRedChannel);
                     }
 
 
@@ -112,7 +118,13 @@ namespace Underworld
                                 }
                             }
                             long textureOffset = getAt(texturebufferW, (index * 4) + 4, 32);
-                            return Image(texturebufferW, textureOffset, 64, 64, "name_goes_here", palToUse, false, RenderGrey);
+                            return Image(
+                                databuffer: texturebufferW, 
+                                dataOffSet: textureOffset, 
+                                width: 64, height: 64, 
+                                palette: palToUse, 
+                                useAlphaChannel: false, 
+                                useSingleRedChannel: UseRedChannel);
                         }
                         else
                         {//Floor textures (to match my list of textures)
@@ -128,7 +140,13 @@ namespace Underworld
                                 }
                             }
                             long textureOffset = getAt(texturebufferF, ((index - TextureSplit) * 4) + 4, 32);
-                            return Image(texturebufferF, textureOffset, FloorDim, FloorDim, "name_goes_here", palToUse, false, RenderGrey);
+                            return Image(
+                                databuffer: texturebufferF, 
+                                dataOffSet: textureOffset, 
+                                width: FloorDim, height: FloorDim, 
+                                palette: palToUse, 
+                                useAlphaChannel: false, 
+                                useSingleRedChannel: UseRedChannel);
                         }
                     }//end switch	
             }

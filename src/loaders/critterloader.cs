@@ -349,12 +349,15 @@ namespace Underworld
 
                         //****************************
 
-                        ImageTexture imgData = ArtLoader.Image(outputImg, 0, BitMapWidth, BitMapHeight, "namehere", pal, true, true);
+                        ImageTexture imgData = ArtLoader.Image(
+                            databuffer: outputImg, 
+                            dataOffSet: 0, 
+                            width: BitMapWidth, height: BitMapHeight,
+                            palette: pal, 
+                            useAlphaChannel: true, 
+                            useSingleRedChannel: true);
                         CropImageData(ref imgData, pal);
-                        //Image.CreateFromData(imgData.GetWidth(),imgData.GetHeight(),false,Image.Format.Rgba8,)
                         this.animSprites[spriteIndex + i] = imgData;
-                        // AnimInfo.animSprites[spriteIndex + i] = imgData; ;//Sprite.Create(imgData, new Rect(0f, 0f, imgData.width, imgData.height), new Vector2(0.5f, 0.0f));
-                        //AnimInfo.animSprites[spriteIndex + i].texture.filterMode = FilterMode.Point;
                         spriteCounter++;
                     }
 
@@ -713,7 +716,13 @@ namespace Underworld
                                 BitMapWidth = MaxWidth;
                                 BitMapHeight = MaxHeight;
 
-                                ImageTexture imgData = ArtLoader.Image(outputImg, 0, BitMapWidth, BitMapHeight, "namehere", pal, true, true);
+                                ImageTexture imgData = ArtLoader.Image(
+                                    databuffer: outputImg, 
+                                    dataOffSet: 0, 
+                                    width: BitMapWidth, height: BitMapHeight, 
+                                    palette: pal, 
+                                    useAlphaChannel: true, 
+                                    useSingleRedChannel: true);
                                 CropImageData(ref imgData, pal);
                                 this.animSprites[spriteIndex++] = imgData; //Sprite.Create(imgData, new Rect(0f, 0f, imgData.width, imgData.height), new Vector2(0.5f, 0.0f));
                             }

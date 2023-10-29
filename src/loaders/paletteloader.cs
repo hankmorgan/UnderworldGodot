@@ -24,7 +24,7 @@ namespace Underworld
         /// <summary>
         /// A crappy greyscale palette
         /// </summary>
-        public static Palette GreyScale = null;
+        public static Palette GreyScaleIndexPalette = null;
 
         /// <summary>
         /// Palettes loaded by lights.dat
@@ -41,12 +41,12 @@ namespace Underworld
             var path_pals = System.IO.Path.Combine(BasePath, "DATA", "PALS.DAT");
             var path_light = System.IO.Path.Combine(BasePath, "DATA", "LIGHT.DAT");
             var path_mono = System.IO.Path.Combine(BasePath, "DATA", "MONO.DAT");
-            GreyScale = new Palette();
-            for (int i = 0; i <= GreyScale.blue.GetUpperBound(0); i++)
+            GreyScaleIndexPalette = new Palette();
+            for (int i = 0; i <= GreyScaleIndexPalette.blue.GetUpperBound(0); i++)
             {
-                GreyScale.red[i] = (byte)i;
-                GreyScale.blue[i] = 0;// (byte)i;
-                GreyScale.green[i] = 0;// (byte)i;                
+                GreyScaleIndexPalette.red[i] = (byte)i;
+                GreyScaleIndexPalette.blue[i] = 0;// (byte)i;
+                GreyScaleIndexPalette.green[i] = 0;// (byte)i;                
             }
             switch (_RES)
             {
@@ -164,7 +164,7 @@ namespace Underworld
                     imgdata[(l * 256) + b] = maps[l].red[b];
                 }
             }
-            var output = ArtLoader.Image(imgdata, 0, 256, maps.GetUpperBound(0), "name here", GreyScale, true, true);
+            var output = ArtLoader.Image(imgdata, 0, 256, maps.GetUpperBound(0), GreyScaleIndexPalette, true, true);
             return output;
         }
 

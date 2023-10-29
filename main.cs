@@ -209,7 +209,7 @@ public partial class main : Node3D
 
 	public void LoadTileMap(int newLevelNo, GRLoader grObjects)
 	{
-		grObjects.RenderGrey = true;
+		grObjects.UseRedChannel = true;
 		//var tilerender = new tileMapRender();
 		Node3D worldobjects = GetNode<Node3D>("/root/Node3D/worldobjects");
 		Node3D the_tiles = GetNode<Node3D>("/root/Node3D/tilemap");

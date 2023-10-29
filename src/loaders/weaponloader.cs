@@ -164,8 +164,13 @@ namespace Underworld
                         }
                     }
 
-                    ImageCache[i] = Image(outputImg, 0, MaxWidth, MaxHeight, "name_goes_here", auxpal, true,false);
-
+                    ImageCache[i] = Image(
+                        databuffer: outputImg, 
+                        dataOffSet: 0, 
+                        width: MaxWidth, height: MaxHeight, 
+                        palette: auxpal, 
+                        useAlphaChannel: true, 
+                        useSingleRedChannel: false);
                 }
             }
         }

@@ -57,7 +57,13 @@ namespace Underworld
                 }
 
             }
-            var output = ArtLoader.Image(imgdata, 0, 16 * bandwidth, 1, "name here", PaletteLoader.GreyScale, true, true);
+            var output = ArtLoader.Image(
+                databuffer: imgdata, 
+                dataOffSet: 0, 
+                width: 16 * bandwidth, height: 1, 
+                palette: PaletteLoader.GreyScaleIndexPalette, 
+                useAlphaChannel: true, 
+                useSingleRedChannel: true);
             return output;
         }
        
@@ -88,7 +94,13 @@ namespace Underworld
                 }
 
             }
-            var output = ArtLoader.Image(imgdata, 0, 16 * bandwidth, 1, "name here", PaletteLoader.GreyScale, true, true);
+            var output = ArtLoader.Image(
+                databuffer: imgdata, 
+                dataOffSet: 0, 
+                width: 16 * bandwidth, height: 1, 
+                palette: PaletteLoader.GreyScaleIndexPalette, 
+                useAlphaChannel: true, 
+                useSingleRedChannel: true);
             return output;
         }
 
@@ -98,7 +110,7 @@ namespace Underworld
         /// <returns></returns>
         public Godot.ImageTexture FullShadingImage()
         {
-            var pal = PaletteLoader.GreyScale;
+            var pal = PaletteLoader.GreyScaleIndexPalette;
             var shadearray = ExtractShadeArray();
             var AllShades = ExtractShadingTable(shadearray);
             var width = AllShades.GetUpperBound(0);

@@ -11,7 +11,7 @@ namespace Underworld
         /// <summary>
         /// Load an approximation of xfer.dat transparency
         /// </summary>
-        public bool xfer;
+        public bool xfer;  //TODO this should mean that the file uses a shader that has xfer transparency applied
 
         public const byte BitMapHeaderSize = 28;
 
@@ -34,7 +34,6 @@ namespace Underworld
         /// <returns><c>true</c>, if image file was loaded, <c>false</c> otherwise.</returns>
         public virtual bool LoadImageFile()
         {
-            //var toLoad = Path.Combine(BasePath, filePath);
             if (ReadStreamFile(filePath, out ImageFileData))
             {//data read
                 DataLoaded = true;
@@ -75,37 +74,18 @@ namespace Underworld
         /// <param name="width">Width.</param>
         /// <param name="height">Height.</param>
         /// <param name="imageName">Image name.</param>
-        /// <param name="pal">Pal.</param>
-        /// <param name="Alpha">If set to <c>true</c> alpha.</param>
-        public static ImageTexture Image(byte[] databuffer, long dataOffSet, int width, int height, string imageName, Palette pal, bool Alpha, bool useGreyScale)
-        {
-            return Image(databuffer, dataOffSet, width, height, imageName, pal, Alpha, false, useGreyScale);
-        }
-
-
-        /// <summary>
-        /// Generates the image from the specified data buffer position and also use the xfer look up table
-        /// </summary>
-        /// <param name="databuffer">Databuffer.</param>
-        /// <param name="dataOffSet">Data off set.</param>
-        /// <param name="width">Width.</param>
-        /// <param name="height">Height.</param>
-        /// <param name="imageName">Image name.</param>
-        /// <param name="pal">Pal.</param>
-        /// <param name="Alpha">If set to <c>true</c> alpha.</param>
-        public static ImageTexture Image(byte[] databuffer, long dataOffSet, int width, int height, string imageName, Palette pal, bool Alpha, bool useXFER, bool useGreyScale)
-        {
-            //Image image = new Godot.Image();// width, height, TextureFormat.ARGB32, false);
-
-            // Color[] imageColors = new Color[width * height];
+        /// <param name="palette">Pal.</param>
+        /// <param name="useAlphaChannel">If set to <c>true</c> alpha.</param>
+        public static ImageTexture Image(byte[] databuffer, long dataOffSet, int width, int height, Palette palette, bool useAlphaChannel, bool useSingleRedChannel)
+        {        
             Godot.Image.Format imgformat;
-            if (useGreyScale)
+            if (useSingleRedChannel)
             {
                 imgformat= Godot.Image.Format.R8;
             }
             else
             {
-                if (Alpha)
+                if (useAlphaChannel)
                 {
                     imgformat = Godot.Image.Format.Rgba8;
                 }
@@ -116,73 +96,19 @@ namespace Underworld
             }
 
             var img = Godot.Image.Create(width, height, false, imgformat);
-
-            //long counter = 0;
-            // for (int iRow = height - 1; iRow >= 0; iRow--)
-            for (int iRow = 0; iRow <= height - 1; iRow++)
+            for (int iRow = 0; iRow < height; iRow++)
             {
                 int iCol = 0;
-                for (int j = (iRow * width); j < (iRow * width) + width; j++)
+                for (int j = iRow * width; j < (iRow * width) + width; j++)
                 {
                     byte pixel = (byte)getAt(databuffer, dataOffSet + j, 8);
-
-                    if (useXFER)
-                    {
-                        int p = pixel;
-                        switch (p)
-                        {
-                            //  case 0xf9:
-                            //  case 0xf0://red
-                            //      imageColors[counter++] = new Color(252, 56, 76, 40); break;
-                            //  case 0xf4://blue
-                            //      imageColors[counter++] = new Color(92, 92, 252, 40); break;
-                            //  case 0xf8://green
-                            //      imageColors[counter++] = new Color(96, 172, 84, 40); break;
-                            //  case 0xfb://used by shadow beast?                        
-                            //      imageColors[counter++] = new Color(4, 4, 4, 40); break;
-                            //  case 0xfc://white
-                            //      imageColors[counter++] = new Color(204, 204, 220, 40); break;
-                            //  case 0xfd://black???
-                            //      imageColors[counter++] = new Color(4, 4, 4, 40); break;
-                            //  case 0:
-                            //      imageColors[counter++] = pal.ColorAtPixel(pixel, Alpha); break;
-                            default:
-                                img.SetPixel(iCol, iRow, pal.ColorAtIndex(pixel, Alpha ,useGreyScale)); break;
-                                //imageColors[counter++] = pal.ColorAtPixel(pixel, Alpha); break;
-                        }
-                    }
-                    else
-                    {                        
-                        //imageColors[counter++] = pal.ColorAtPixel(pixel, Alpha);
-                        img.SetPixel(iCol, iRow, pal.ColorAtIndex(pixel, Alpha, useGreyScale));
-                    }
+                    img.SetPixel(iCol, iRow, palette.ColorAtIndex(pixel, useAlphaChannel, useSingleRedChannel));
                     iCol++;
                 }
             }
             var tex = new ImageTexture();
             tex.SetImage(img);
             return tex;
-
-            //return img;
-            // byte[] bytes = new byte[width*height*4];
-            // int i = 0;
-            // foreach (var c in imageColors)
-            // {           
-
-            //     bytes[i]= (byte)c.R8;
-            //     bytes[i+1]= (byte)c.G8;
-            //     bytes[i+2]= (byte)c.B8;
-            //     bytes[i+3]= (byte)c.A8;
-            //     i=i+4;
-            // }
-
-            //     return Godot.Image.CreateFromData(width,height,false,Godot.Image.Format.Rgba8,bytes);
-            // image.name = imageName;
-
-            //image.filterMode = FilterMode.Point;
-            // image.SetPixels32(imageColors);
-            // image.Apply();
-            //return image;
         }
 
 
