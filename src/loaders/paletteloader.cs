@@ -18,7 +18,8 @@ namespace Underworld
         /// <summary>
         /// Prebuilt array of cycled palettes for use in shaders.
         /// </summary>
-        public static ImageTexture[] cycledPalette;
+        public static ImageTexture[] cycledGamePalette;
+        public static ImageTexture[] cycledNPCPalette;
         public static int NoOfPals = 22;
 
         /// <summary>
@@ -145,11 +146,12 @@ namespace Underworld
                 }              
             }
             
-            CreateTexturePaletteCycles(0);//init the first palette as cycled
+            cycledGamePalette = CreateTexturePaletteCycles(PaletteLoader.Palettes[0]);//init the first palette as cycled
             //TODO Set up cycling for the npc palette too.
+            cycledNPCPalette = CreateTexturePaletteCycles(CritterPalette);//init the critter palette as cycled
 
             //Init palette shader params
-            RenderingServer.GlobalShaderParameterAdd("uwpalette", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)cycledPalette[0]);
+            RenderingServer.GlobalShaderParameterAdd("uwpalette", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)cycledGamePalette[0]);
             RenderingServer.GlobalShaderParameterAdd("cutoffdistance", RenderingServer.GlobalShaderParameterType.Float, 2.4f * shade.getShadeCutoff(uwsettings.instance.lightlevel));
             RenderingServer.GlobalShaderParameterAdd("uwlightmap", RenderingServer.GlobalShaderParameterType.Sampler2D, PaletteLoader.AllLightMaps(PaletteLoader.light));
             RenderingServer.GlobalShaderParameterAdd("shades", RenderingServer.GlobalShaderParameterType.Sampler2D, shade.shadesdata[uwsettings.instance.lightlevel].ToImage());
@@ -157,7 +159,7 @@ namespace Underworld
             RenderingServer.GlobalShaderParameterAdd("shadeshift", RenderingServer.GlobalShaderParameterType.Sampler2D, shade.shadesdata[uwsettings.instance.lightlevel].ToShiftedImage());
 
             //palette for NPCs (to support xfer transparencies)
-            RenderingServer.GlobalShaderParameterAdd("uwnpc", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)CritterPalette.toImage());
+            RenderingServer.GlobalShaderParameterAdd("uwnpc", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)cycledNPCPalette[0]);
 
         }
 
@@ -217,35 +219,35 @@ namespace Underworld
         }
 
 
-        public static void CreateTexturePaletteCycles(int paletteno = 0)
+        public static ImageTexture[] CreateTexturePaletteCycles(Palette toCycle)
         {
             //copy initial palette
-
-            var palCycler = new Palette();
+            var tmpPalette = new Palette();
             for (int i = 0; i < 256; i++)
             {
-                palCycler.red = PaletteLoader.Palettes[paletteno].red;
-                palCycler.green = PaletteLoader.Palettes[paletteno].green;
-                palCycler.blue = PaletteLoader.Palettes[paletteno].blue;
-                palCycler.alpha =PaletteLoader.Palettes[paletteno].alpha;
+                tmpPalette.red = toCycle.red;
+                tmpPalette.green = toCycle.green;
+                tmpPalette.blue = toCycle.blue;
+                tmpPalette.alpha = toCycle.alpha;
             }
 
-            cycledPalette = new ImageTexture[28];
+            var NewCycledPalette = new ImageTexture[28];
             for (int c = 0; c <= 27; c++)
             {//Create palette cycles
                 switch (_RES)
                 {
                     case GAME_UW2:
-                        Palette.cyclePalette(palCycler, 224, 16);
-                        Palette.cyclePaletteReverse(palCycler, 3, 6);
+                        Palette.cyclePalette(tmpPalette, 224, 16);
+                        Palette.cyclePaletteReverse(tmpPalette, 3, 6);
                         break;
                     default:
-                        Palette.cyclePalette(palCycler, 48, 16);//Forward
-                        Palette.cyclePaletteReverse(palCycler, 16, 7);//Reverse direction.
+                        Palette.cyclePalette(tmpPalette, 48, 16);//Forward
+                        Palette.cyclePaletteReverse(tmpPalette, 16, 7);//Reverse direction.
                         break;
                 }
-                cycledPalette[c] = palCycler.toImage();
+                NewCycledPalette[c] = tmpPalette.toImage();
             }
+            return NewCycledPalette;
         }
 
     }//end class

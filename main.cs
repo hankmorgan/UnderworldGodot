@@ -238,11 +238,12 @@ public partial class main : Node3D
 		{
 			cycletime = 0;
 			//Cycle the palette		
-			RenderingServer.GlobalShaderParameterSet("uwpalette", (Texture)PaletteLoader.cycledPalette[NextPaletteCycle]);
+			RenderingServer.GlobalShaderParameterSet("uwpalette", (Texture)PaletteLoader.cycledGamePalette[NextPaletteCycle]);
+			RenderingServer.GlobalShaderParameterSet("uwnpc", (Texture)PaletteLoader.cycledNPCPalette[NextPaletteCycle]);
 
 			NextPaletteCycle++;
 
-			if (NextPaletteCycle > PaletteLoader.cycledPalette.GetUpperBound(0))
+			if (NextPaletteCycle > PaletteLoader.cycledGamePalette.GetUpperBound(0))
 			{
 				NextPaletteCycle = 0;
 			}
