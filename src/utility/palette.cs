@@ -9,6 +9,7 @@ namespace Underworld
         public byte[] red = new byte[256];
         public byte[] blue = new byte[256];
         public byte[] green = new byte[256];
+        public byte[] alpha = new byte[256];
 
         /// <summary>
         /// Returns the color for the specified palette index. 
@@ -23,7 +24,7 @@ namespace Underworld
             {
                 if (index != 0) //Alpha
                 {
-                    alphabyte = 255;
+                    alphabyte = alpha[index]; //255
                 }
                 else
                 {
@@ -32,25 +33,25 @@ namespace Underworld
             }
             else
             {
-                alphabyte = 0;
+                alphabyte = 255; //no alpha
             }
 
             if (useSingleRedChannel)
-            {
-                return new Color(
-                    g: 0,
-                    r: index / 255f,
-                    b: 0,
-                    a: 0
+            { //This means the shader will contain the colour information in a palette parameter
+                return Color.Color8(
+                    g8: 0,
+                    r8: index,
+                    b8: 0,
+                    a8: 0
                 );
             }
             else
             {
-                return new Color(
-                        g: green[index] / 255f,
-                        r: red[index] / 255f,
-                        b: blue[index] / 255f,
-                        a: alphabyte / 255f
+                return Color.Color8(
+                        g8: green[index],
+                        r8: red[index],
+                        b8: blue[index],
+                        a8: alphabyte
                     );
             }
         }

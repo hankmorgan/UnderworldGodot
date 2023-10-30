@@ -93,7 +93,7 @@ namespace Underworld
 
         static npc()
         {
-            textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwsprite.gdshader");
+            textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwnpc.gdshader");
         }
 
         public void SetAnimSprite(int animationNo, short frameNo, int relativeHeading)
