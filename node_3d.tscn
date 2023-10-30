@@ -231,5 +231,3 @@ uwUI = NodePath("../UI/uiManager")
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.119, 2.137, 12.228)
 script = ExtResource("5_2to2n")
-
-[connection signal="toggled" from="UI/UW1/OptionsButtonUW1" to="UI/uiManager" method="OnOptionsButtonUW1_Pressed"]

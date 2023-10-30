@@ -254,8 +254,11 @@ public partial class main : Node3D
 			NPCRefreshTimer=0;
 			foreach(var n in ObjectCreator.npcs)
 			{
-				n.uwobject.AnimationFrame++;				
-				n.SetAnimSprite(n.uwobject.npc_animation, n.uwobject.AnimationFrame, n.uwobject.heading);
+				if(n.uwobject.tileY!=99)
+				{
+					n.uwobject.AnimationFrame++;				
+					n.SetAnimSprite(n.uwobject.npc_animation, n.uwobject.AnimationFrame, n.uwobject.heading);
+				}
 			}
 		}
 	}

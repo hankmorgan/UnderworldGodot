@@ -47,6 +47,7 @@ namespace Underworld
         public void InitUI()
         {
             instance = this;
+
             mousecursor.InitCursor(); 
             EnableDisable(placeholderuw1,false);
             EnableDisable(placeholderuw2,false);
@@ -106,9 +107,9 @@ namespace Underworld
         /// </summary>
         /// <param name="viewPort"></param>
         /// <param name="inputEvent"></param>
-        public void OnOptionsButtonUW1_Pressed(Node2D viewPort, InputEvent inputEvent)
+        public void OnOptionsButtonUW1_Pressed(InputEvent inputEvent)
         {
-            int toggle=0;
+        int toggle=0;
            for (int i=0; i<instance.InteractionButtonsUW1.GetUpperBound(0);i++)
            {
                 if(i==toggle)

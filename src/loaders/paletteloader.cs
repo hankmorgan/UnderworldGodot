@@ -193,6 +193,7 @@ namespace Underworld
                     auxpal.green[j] = gamepal.green[value];
                     auxpal.blue[j] = gamepal.blue[value];
                     auxpal.red[j] = gamepal.red[value];
+                    auxpal.alpha[j] = gamepal.alpha[value];
                 }
             }
             return auxpal;
