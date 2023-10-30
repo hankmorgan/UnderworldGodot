@@ -28,10 +28,9 @@ shader = ExtResource("6_x6exc")
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "freelook", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2", "InteractionButtonsUW1")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2", "InteractionButtonsUW1")]
 script = ExtResource("1_lw0yg")
 cam = NodePath("../../Camera3D")
-freelook = NodePath("../../Camera3D")
 mousecursor = NodePath("../mouse/mouseCursor")
 uw1UI = NodePath("../UW1")
 uw2UI = NodePath("../UW2")
@@ -109,7 +108,7 @@ toggle_mode = true
 texture_normal = ExtResource("8_wag4x")
 stretch_mode = 0
 script = ExtResource("8_0sew3")
-index = 2
+index = 1
 
 [node name="PickupButtonUW1" type="TextureButton" parent="UI/UW1"]
 offset_left = 24.0
@@ -120,7 +119,7 @@ toggle_mode = true
 texture_normal = ExtResource("10_63i0w")
 stretch_mode = 0
 script = ExtResource("8_0sew3")
-index = 3
+index = 2
 
 [node name="LookButtonUW1" type="TextureButton" parent="UI/UW1"]
 offset_left = 24.0
@@ -131,7 +130,7 @@ toggle_mode = true
 texture_normal = ExtResource("12_3hev6")
 stretch_mode = 0
 script = ExtResource("8_0sew3")
-index = 4
+index = 3
 
 [node name="AttackButtonUW1" type="TextureButton" parent="UI/UW1"]
 offset_left = 32.0
@@ -142,7 +141,7 @@ toggle_mode = true
 texture_normal = ExtResource("14_nhhdh")
 stretch_mode = 0
 script = ExtResource("8_0sew3")
-index = 5
+index = 4
 
 [node name="UseButtonUW1" type="TextureButton" parent="UI/UW1"]
 offset_left = 32.0
@@ -153,7 +152,7 @@ toggle_mode = true
 texture_normal = ExtResource("16_kxj2a")
 stretch_mode = 0
 script = ExtResource("8_0sew3")
-index = 6
+index = 5
 
 [node name="UW2" type="CanvasLayer" parent="UI"]
 visible = false

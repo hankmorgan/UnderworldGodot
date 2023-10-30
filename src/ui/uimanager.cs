@@ -10,14 +10,16 @@ namespace Underworld
 
         public enum InteractionModes
         {
-            ModeOptions = 1,
-            ModeTalk = 2,
-            ModePickup = 3,
-            ModeLook = 4,
-            ModeAttack = 5,
-            ModeUse = 6
+            ModeOptions = 0,
+            ModeTalk = 1,
+            ModePickup = 2,
+            ModeLook = 3,
+            ModeAttack = 4,
+            ModeUse = 5
 
         };
+
+        public static InteractionModes InteractionMode= InteractionModes.ModeUse ;
 
         [Export]
         public Camera3D cam;
@@ -102,11 +104,10 @@ namespace Underworld
                      //grLfti.ExportImages("c:\\temp\\lfti\\");
                     for (int i =0 ; i<= InteractionButtonsUW1.GetUpperBound(0);i++)
                     {
-                        InteractionButtonsUW1[i].TexturePressed = grLfti.LoadImageAt(i*2,false);
-                        InteractionButtonsUW1[i].TextureNormal = grLfti.LoadImageAt(i*2 + 1,false);
-                       
+                        InteractionButtonsUW1[i].TexturePressed = grLfti.LoadImageAt(i*2 + 1,false);
+                        InteractionButtonsUW1[i].TextureNormal = grLfti.LoadImageAt(i*2,false);  
+                        InteractionButtonsUW1[i].SetPressedNoSignal((i == (int)InteractionMode) );
                     }
-
                     break;
             }
 
@@ -139,9 +140,14 @@ namespace Underworld
         public void InteractionModeToggle(InteractionModes index)
         {
            Debug.Print($"Press {index}");
+
            for (int i=0; i<=instance.InteractionButtonsUW1.GetUpperBound(0);i++)
            {
-                InteractionButtonsUW1[i].SetPressedNoSignal(i==(int)(index));                
+                InteractionButtonsUW1[i].SetPressedNoSignal(i==(int)(index)); 
+                if (i==(int)(index))    
+                {
+                    InteractionMode = index;
+                }           
            }
         } 
 

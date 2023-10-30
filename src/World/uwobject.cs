@@ -7,6 +7,7 @@ namespace Underworld
     /// </summary>
     public class uwObject : UWClass
     {
+        public objectInstance instance;//TODO: this needs to be linked in all the object creation code.
         public short index;
 
         /// <summary>

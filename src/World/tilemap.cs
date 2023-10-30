@@ -149,7 +149,7 @@ namespace Underworld
         /// <summary>
         /// Reference to the objects list for this level.
         /// </summary>
-        public List<uwObject> LevelObjects;
+        public uwObject[] LevelObjects = new uwObject[1024];
         // {
         //     get
         //     {
@@ -470,7 +470,7 @@ namespace Underworld
 
         void BuildObjectListUW()
         {
-            LevelObjects = new();
+            LevelObjects = new uwObject[1024];
             int address_pointer = 0;
             int objectsAddress = (64 * 64 * 4);
             for (short x = 0; x < 1024; x++)
@@ -484,7 +484,7 @@ namespace Underworld
                     DataBuffer = this.lev_ark_block.Data
                 };
 
-                LevelObjects.Add(uwobj);
+                LevelObjects[x] = uwobj;
 
                 //Debug.Print(StringLoader.GetObjectNounUW(uwobj.item_id));
                 // if (uwobj.npc_whoami != 0)

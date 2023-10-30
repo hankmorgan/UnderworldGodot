@@ -13,7 +13,7 @@ namespace Underworld
         public static List<npc> npcs;
         static bool printlabels = true;
 
-        public static void GenerateObjects(Node3D worldparent, List<uwObject> objects, GRLoader grObjects, TileMap a_tilemap)
+        public static void GenerateObjects(Node3D worldparent, uwObject[] objects, GRLoader grObjects, TileMap a_tilemap)
         {
             npcs = new();
             foreach (var obj in objects)
@@ -28,7 +28,7 @@ namespace Underworld
         public static void RenderObject(Node3D worldparent, GRLoader grObjects, uwObject obj, TileMap a_tilemap)
         {
             bool unimplemented = true;
-            var name = $"{obj.index}_{StringLoader.GetObjectNounUW(obj.item_id)}";
+            var name = $"{obj.index}_{GameStrings.GetObjectNounUW(obj.item_id)}";
             var newparent = new Node3D();
             newparent.Name = name;
             newparent.Position = obj.GetCoordinate(obj.tileX, obj.tileY);

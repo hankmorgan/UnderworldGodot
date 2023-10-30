@@ -14,8 +14,19 @@ namespace Underworld
 
         public writing(uwObject _uwobject)
         {            
-            uwobject = _uwobject;
+            uwobject = _uwobject;   
+            uwobject.instance = this;         
         }
+
+
+        public static bool LookAt(uwObject obj)
+        {
+            messageScroll.AddString(GameStrings.GetString(8, obj.link-0x200));
+            //TODO add checking to see if link is to a LOOK trigger when isquant =1 and trigger look
+            return true;
+        }
+
+
 
         public override Vector3[] ModelVertices()
         {

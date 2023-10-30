@@ -9,7 +9,7 @@ namespace Underworld
     /// <summary>
 /// Class for holding game strings and returning formatted strings and text
 /// </summary>
-    public class StringLoader : UWClass
+    public class GameStrings : UWClass
         {
             //These are common strings that are different in UW1 and UW2
             public static int str_it_looks_to_be_that_of_ = 22;
@@ -252,7 +252,7 @@ namespace Underworld
             /// The game strings are stored in this hashtable.
             /// </summary>
             /// Hash is in format [block number]_[string number]
-            private static Hashtable GameStrings;
+            private static Hashtable StringTable;
             private static Hashtable EntryCounts;
 
 
@@ -276,7 +276,7 @@ namespace Underworld
             };
 
 
-            static StringLoader()
+            static GameStrings()
             {
                 LoadStringsPak(Path.Combine(UWClass.BasePath,"DATA","strings.pak"));
             }
@@ -326,7 +326,7 @@ namespace Underworld
             {
                 
                 //Initialise the tables
-                GameStrings = new Hashtable();
+                StringTable = new Hashtable();
                 EntryCounts = new Hashtable();
 
                 //Set some default string numbers that are different from the default in uw2
@@ -579,7 +579,7 @@ namespace Underworld
                 huffman_node[] hman;
                 block_dir[] blocks;
                 string Key = "";
-                GameStrings = new Hashtable();
+                StringTable = new Hashtable();
                 EntryCounts = new Hashtable();
 
                 if (Loader.ReadStreamFile(path, out byte[] Buffer))
@@ -675,7 +675,7 @@ namespace Underworld
                                 {
                                     if ((Result.Length > 0) && (Key.Length > 0))
                                     {
-                                        GameStrings[Key] = Result;
+                                        StringTable[Key] = Result;
                                         Result = "";
                                         Key = "";
                                     }
@@ -686,7 +686,7 @@ namespace Underworld
                     }
                     if ((Result.Length > 0) && (Key.Length > 0))
                     {//I still have the very last value to keep.
-                        GameStrings[Key] = Result;
+                        StringTable[Key] = Result;
                     }
                 }
 
@@ -702,11 +702,11 @@ namespace Underworld
             /// <param name="StringNo">String no.</param>
             public static string GetString(int BlockNo, int StringNo)
             {//output a string at the specified block and string no.
-                if (GameStrings == null)
+                if (StringTable == null)
                 {
                     return "";
                 }
-                string result = (string)GameStrings[BlockNo.ToString("000") + "_" + StringNo.ToString("000")];
+                string result = (string)StringTable[BlockNo.ToString("000") + "_" + StringNo.ToString("000")];
                 if (result != null)
                 {
                     return result;
@@ -984,7 +984,7 @@ namespace Underworld
                                 string[] entries = line.Split('~');
                                 if (entries.Length > 0)
                                 {
-                                    GameStrings[entries[1] + "_" + entries[2]] = entries[3];
+                                    StringTable[entries[1] + "_" + entries[2]] = entries[3];
                                     PreviousValue = entries[3];
                                     PreviousKey = entries[1] + "_" + entries[2];
 
@@ -992,7 +992,7 @@ namespace Underworld
                             }
                             else
                             {//possible new line character. Append text to previous entry.
-                                GameStrings[PreviousKey] = PreviousValue + "\n" + line;
+                                StringTable[PreviousKey] = PreviousValue + "\n" + line;
                                 PreviousValue = PreviousValue + "\n" + line;
                                 //Debug.Log (PreviousKey+"="+PreviousValue);
                             }
@@ -1043,7 +1043,7 @@ namespace Underworld
                 string NoOfEntries = (string)EntryCounts["_" + BlockNo];
                 int Count = int.Parse(NoOfEntries);
                 Count++;
-                GameStrings[BlockNo.ToString("000") + "_" + Count.ToString("000")] = NewString;
+                StringTable[BlockNo.ToString("000") + "_" + Count.ToString("000")] = NewString;
                 EntryCounts["_" + BlockNo] = Count.ToString();
 
                 //Debug.Log("New string :" + GameStrings[BlockNo.ToString("000") + "_" + Count.ToString("000")] );

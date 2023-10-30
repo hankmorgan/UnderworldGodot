@@ -72,7 +72,7 @@ namespace Underworld
             }
         }
 
-        public static void GenerateLevelFromTileMap(Node3D parent, Node3D sceneryParent, string game, TileMap Level, List<uwObject> objList, bool UpdateOnly)
+        public static void GenerateLevelFromTileMap(Node3D parent, Node3D sceneryParent, string game, TileMap Level, uwObject[] objList, bool UpdateOnly)
         {
             CEILING_HEIGHT = TileMap.UW_CEILING_HEIGHT;
 
