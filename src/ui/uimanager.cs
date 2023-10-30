@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Godot;
 
 namespace Underworld
@@ -26,6 +27,10 @@ namespace Underworld
         [Export] public TextureRect placeholderuw1;
         [Export] public TextureRect placeholderuw2;
 
+        //Array to store the interaction mode mo
+        [Export] public Godot.TextureButton[] InteractionButtonsUW1 = new Godot.TextureButton[6];
+        //[Export] public Godot.TextureButton[] InteractionButtonsUW2 = new Godot.TextureButton[6];
+ 
         public static bool Fullscreen = false;
     
         public static GRLoader grCursors; //= new GRLoader(GRLoader.CURSORS_GR, GRLoader.GRShaderMode.UIShader);
@@ -93,6 +98,26 @@ namespace Underworld
             {
                 ctrl.Visible=state;
             }
-        }   
+        }  
+
+
+        /// <summary>
+        /// The Options button is pressed
+        /// </summary>
+        /// <param name="viewPort"></param>
+        /// <param name="inputEvent"></param>
+        public void OnOptionsButtonUW1_Pressed(Node2D viewPort, InputEvent inputEvent)
+        {
+            int toggle=0;
+           for (int i=0; i<instance.InteractionButtonsUW1.GetUpperBound(0);i++)
+           {
+                if(i==toggle)
+                {
+                    instance.InteractionButtonsUW1[i].SetPressedNoSignal(false);
+                }
+           }
+        } 
+
+        
     }
 }

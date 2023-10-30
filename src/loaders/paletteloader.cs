@@ -65,7 +65,15 @@ namespace Underworld
                                     Palettes[palNo].red[pixel] = (byte)(getAt(pals_dat, palNo * 256 + (pixel * 3) + 0, 8) << 2);
                                     Palettes[palNo].green[pixel] = (byte)(getAt(pals_dat, palNo * 256 + (pixel * 3) + 1, 8) << 2);
                                     Palettes[palNo].blue[pixel] = (byte)(getAt(pals_dat, palNo * 256 + (pixel * 3) + 2, 8) << 2);
-                                    Palettes[palNo].alpha[pixel] =255; //no alpha by default
+                                    if(pixel==0)
+                                    {
+                                        Palettes[palNo].alpha[pixel] =255; //no alpha by default
+                                    }
+                                    else
+                                    {
+                                        Palettes[palNo].alpha[pixel] = 255;
+                                    }
+                                   
                                 }
                             }
                         }
@@ -81,7 +89,15 @@ namespace Underworld
                                     light[palNo].red[pixel] = (byte)getAt(light_dat, palNo * 256 + pixel + 0, 8);
                                     light[palNo].blue[pixel] = (byte)getAt(light_dat, palNo * 256 + pixel + 0, 8);
                                     light[palNo].green[pixel] = (byte)getAt(light_dat, palNo * 256 + pixel + 0, 8);
-                                    light[palNo].alpha[pixel] =255;
+                                    if (pixel==0)
+                                    {
+                                        light[palNo].alpha[pixel] =255;
+                                    }
+                                    else
+                                    {
+                                        light[palNo].alpha[pixel] =0;
+                                    }
+                                    
                                 }
                             }
                         }
@@ -98,7 +114,7 @@ namespace Underworld
                                     mono[palNo].red[pixel] = (byte)getAt(mono_dat, palNo * 256 + pixel + 0, 8);
                                     mono[palNo].blue[pixel] = (byte)getAt(mono_dat, palNo * 256 + pixel + 0, 8);
                                     mono[palNo].green[pixel] = (byte)getAt(mono_dat, palNo * 256 + pixel + 0, 8);
-                                    mono[palNo].alpha[pixel] =255;
+                                    mono[palNo].alpha[pixel] = 255;
                                 }
                             }
                         }
@@ -123,9 +139,9 @@ namespace Underworld
                     case 0xfb://used by shadow beast?
                     case 0xfc://white
                     case 0xfd://black???
-                     CritterPalette.alpha[i] = 40;break;
+                        CritterPalette.alpha[i] = 40;break;
                     default:
-                    CritterPalette.alpha[i] = 255;break;
+                        CritterPalette.alpha[i] = 255;break;
                 }              
             }
             
@@ -211,6 +227,7 @@ namespace Underworld
                 palCycler.red = PaletteLoader.Palettes[paletteno].red;
                 palCycler.green = PaletteLoader.Palettes[paletteno].green;
                 palCycler.blue = PaletteLoader.Palettes[paletteno].blue;
+                palCycler.alpha =PaletteLoader.Palettes[paletteno].alpha;
             }
 
             cycledPalette = new ImageTexture[28];
