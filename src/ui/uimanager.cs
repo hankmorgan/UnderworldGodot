@@ -7,6 +7,18 @@ namespace Underworld
     {
         public static uimanager instance;
 
+
+        public enum InteractionModes
+        {
+            ModeOptions = 1,
+            ModeTalk = 2,
+            ModePickup = 3,
+            ModeLook = 4,
+            ModeAttack = 5,
+            ModeUse = 6
+
+        };
+
         [Export]
         public Camera3D cam;
         [Export] public Node3D freelook;
@@ -33,25 +45,31 @@ namespace Underworld
  
         public static bool Fullscreen = false;
     
-        public static GRLoader grCursors; //= new GRLoader(GRLoader.CURSORS_GR, GRLoader.GRShaderMode.UIShader);
-		public static GRLoader grObjects; //= new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.UIShader);
+        public static GRLoader grCursors; 
+		public static GRLoader grObjects; 
+
+        public static GRLoader grLfti;
 
         public static BytLoader byt;
+
         static uimanager()
         {
-            grCursors = new GRLoader(GRLoader.CURSORS_GR, GRLoader.GRShaderMode.UIShader);
-            grObjects = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.UIShader);
-            byt = new BytLoader();
+
         }
 
         public void InitUI()
         {
             instance = this;
 
+            grCursors = new GRLoader(GRLoader.CURSORS_GR, GRLoader.GRShaderMode.UIShader);
+            grObjects = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.UIShader);
+            grLfti = new GRLoader(GRLoader.LFTI_GR, GRLoader.GRShaderMode.UIShader);           
+            byt = new BytLoader();
+
             mousecursor.InitCursor(); 
             EnableDisable(placeholderuw1,false);
             EnableDisable(placeholderuw2,false);
-            
+
             EnableDisable(uw1UI, UWClass._RES == UWClass.GAME_UW1);
             EnableDisable(uw2UI, UWClass._RES != UWClass.GAME_UW1);  
 
@@ -71,6 +89,7 @@ namespace Underworld
                         // uwviewport.Position = new Vector2(62f,62f);
                         // uwsubviewport.Size = new Vector2I(840,512);
                     }
+
                     break;
                 default:
                     mainwindowUW1.Texture = byt.LoadImageAt(BytLoader.MAIN_BYT,true);
@@ -80,6 +99,14 @@ namespace Underworld
                         // uwviewport.Position = new Vector2(200f,72f);
                         // uwsubviewport.Size = new Vector2I(700,456);
                     }
+                     //grLfti.ExportImages("c:\\temp\\lfti\\");
+                    for (int i =0 ; i<= InteractionButtonsUW1.GetUpperBound(0);i++)
+                    {
+                        InteractionButtonsUW1[i].TexturePressed = grLfti.LoadImageAt(i*2,false);
+                        InteractionButtonsUW1[i].TextureNormal = grLfti.LoadImageAt(i*2 + 1,false);
+                       
+                    }
+
                     break;
             }
 
@@ -107,18 +134,17 @@ namespace Underworld
         /// </summary>
         /// <param name="viewPort"></param>
         /// <param name="inputEvent"></param>
-        public void OnOptionsButtonUW1_Pressed(InputEvent inputEvent)
+        //event delegates
+
+        public void InteractionModeToggle(InteractionModes index)
         {
-        int toggle=0;
-           for (int i=0; i<instance.InteractionButtonsUW1.GetUpperBound(0);i++)
+           Debug.Print($"Press {index}");
+           for (int i=0; i<=instance.InteractionButtonsUW1.GetUpperBound(0);i++)
            {
-                if(i==toggle)
-                {
-                    instance.InteractionButtonsUW1[i].SetPressedNoSignal(false);
-                }
+                InteractionButtonsUW1[i].SetPressedNoSignal(i==(int)(index));                
            }
         } 
 
         
-    }
-}
+    } //end class
+}   //end namespace

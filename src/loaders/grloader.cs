@@ -466,5 +466,14 @@ namespace Underworld
             addr_ptr++;
             return n1;
         }   
+
+        public void ExportImages(string exportpath)
+        {
+            for (int i =0; i<NoOfImages;i++)
+            {
+                var img = LoadImageAt(i);
+                img.GetImage().SavePng(System.IO.Path.Combine(exportpath,$"{i}.png"));
+            }
+        }
     }//end class
 }//end namespaces
