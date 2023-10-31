@@ -16,5 +16,4 @@ namespace Underworld
         /// </summary>
         public Vector2 FrameSize;
     }
-
 }

@@ -32,6 +32,9 @@ namespace Underworld
                         {
                             case 6: // a readable sign.
                                 return writing.LookAt(obj);
+                            case 0xE:
+                            case 0xF:
+                                return tmap.LookAt(obj);
                             default:
 
                                 return true;

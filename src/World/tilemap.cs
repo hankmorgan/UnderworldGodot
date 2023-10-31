@@ -10,6 +10,7 @@ namespace Underworld
     public class TileMap : Loader
     {
         //Raw Data
+        public static Underworld.TileMap current_tilemap;
         public DataLoader.UWBlock lev_ark_block = new DataLoader.UWBlock();//Data containing tilemap and object data
         public DataLoader.UWBlock tex_ark_block = new DataLoader.UWBlock();//Data containing texture map
         public DataLoader.UWBlock ovl_ark_block = new DataLoader.UWBlock();//Data containing animation overlays

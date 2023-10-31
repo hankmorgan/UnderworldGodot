@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Godot;
 namespace Underworld
 {
@@ -21,8 +22,15 @@ namespace Underworld
 
         public static bool LookAt(uwObject obj)
         {
-            messageScroll.AddString(GameStrings.GetString(8, obj.link-0x200));
-            //TODO add checking to see if link is to a LOOK trigger when isquant =1 and trigger look
+            if (obj.is_quant == 1)
+                {
+                messageScroll.AddString(GameStrings.GetString(8, obj.link-0x200));
+                }
+            else
+                {
+                    //TODO LOOK trigger behaviour.
+                Debug.Print($"Unimplemented trigger {obj.link} linked to this object {obj.index}");
+                }
             return true;
         }
 

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Godot;
 
 namespace Underworld
@@ -27,6 +28,25 @@ namespace Underworld
             //DisplayModelPoints(t, parent);
             return t;
         }    
+
+        public static bool LookAt(uwObject obj)
+        {
+            int textureindex = TileMap.current_tilemap.texture_map[obj.owner];
+            messageScroll.AddString(GameStrings.TextureDescription(textureindex));
+            if ((textureindex == 142) && ((_RES == GAME_UW1) || (_RES == GAME_UWDEMO)))
+            {//This is a window into the abyss.
+                Debug.Print("Look into the volcano");
+                // UWHUD.instance.CutScenesSmall.anim.SetAnimation = "VolcanoWindow_" + GameWorldController.instance.dungeon_level;
+                // UWHUD.instance.CutScenesSmall.anim.looping = true;
+            }
+            //TODO:
+            //If link then trigger look trigger or use trigger.
+            if (obj.link!=0)
+            {
+                Debug.Print($"Unimplemented trigger {obj.link} linked to this object {obj.index}");
+            }
+            return true;
+        }
 
 
         public override Vector3[] ModelVertices()

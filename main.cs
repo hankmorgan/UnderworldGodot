@@ -26,9 +26,7 @@ internal class uwsettings
 /// </summary>
 public partial class main : Node3D
 {
-
-	public Underworld.TileMap current_tilemap;
-	
+		
 	// Called when the node enters the scene tree for the first time.
 	[Export] public Camera3D cam;
 	//[Export] public MeshInstance3D mesh;
@@ -220,15 +218,15 @@ public partial class main : Node3D
 		Node3D the_tiles = GetNode<Node3D>("/root/Node3D/tilemap");
 
 		LevArkLoader.LoadLevArkFileData(folder: uwsettings.instance.levarkfolder);
-		current_tilemap = new(newLevelNo);
+		Underworld.TileMap.current_tilemap = new(newLevelNo);
 
-		current_tilemap.lev_ark_block = LevArkLoader.LoadLevArkBlock(newLevelNo);
-		current_tilemap.tex_ark_block = LevArkLoader.LoadTexArkBlock(newLevelNo, current_tilemap.tex_ark_block);
+		Underworld.TileMap.current_tilemap.lev_ark_block = LevArkLoader.LoadLevArkBlock(newLevelNo);
+		Underworld.TileMap.current_tilemap.tex_ark_block = LevArkLoader.LoadTexArkBlock(newLevelNo, Underworld.TileMap.current_tilemap.tex_ark_block);
 		//Tilemaps[newLevelNo].ovl_ark_block = null;
-		current_tilemap.BuildTileMapUW(newLevelNo, current_tilemap.lev_ark_block, current_tilemap.tex_ark_block, current_tilemap.ovl_ark_block);
-		Underworld.ObjectCreator.GenerateObjects(worldobjects, current_tilemap.LevelObjects, grObjects, current_tilemap);
+		Underworld.TileMap.current_tilemap.BuildTileMapUW(newLevelNo, Underworld.TileMap.current_tilemap.lev_ark_block, Underworld.TileMap.current_tilemap.tex_ark_block, Underworld.TileMap.current_tilemap.ovl_ark_block);
+		Underworld.ObjectCreator.GenerateObjects(worldobjects, Underworld.TileMap.current_tilemap.LevelObjects, grObjects, Underworld.TileMap.current_tilemap);
 		the_tiles.Position = new Vector3(0f, 0f, 0f);
-		tileMapRender.GenerateLevelFromTileMap(the_tiles, worldobjects, UWClass._RES, current_tilemap, current_tilemap.LevelObjects, false);
+		tileMapRender.GenerateLevelFromTileMap(the_tiles, worldobjects, UWClass._RES, Underworld.TileMap.current_tilemap, Underworld.TileMap.current_tilemap.LevelObjects, false);
 
 	}
 
@@ -293,11 +291,11 @@ public partial class main : Node3D
 						{
 							case  uimanager.InteractionModes.ModeLook:
 								//Do a look interaction with the object
-								look.LookAt(objindex, current_tilemap.LevelObjects);
+								look.LookAt(objindex, Underworld.TileMap.current_tilemap.LevelObjects);
 								break;
 							case uimanager.InteractionModes.ModeUse:
 								//do a use interaction with the object.
-								use.Use(objindex, current_tilemap.LevelObjects);
+								use.Use(objindex, Underworld.TileMap.current_tilemap.LevelObjects);
 								break;
 						}
 					}

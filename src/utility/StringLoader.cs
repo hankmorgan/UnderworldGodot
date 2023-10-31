@@ -323,8 +323,7 @@ namespace Underworld
             /// </summary>
             /// <param name="path">Path.</param>
             public static void LoadStringsPak(string path)
-            {
-                
+            {                
                 //Initialise the tables
                 StringTable = new Hashtable();
                 EntryCounts = new Hashtable();
@@ -955,9 +954,9 @@ namespace Underworld
             /// </summary>
             /// <returns>The description.</returns>
             /// <param name="index">Index.</param>
-            public string TextureDescription(int index)
+            public static string TextureDescription(int index)
             {//TODO:fix floor and wall naming
-                return (GetString(1, str_you_see_) + GetString(10, index));
+                return GetString(1, str_you_see_) + GetString(10, index);
             }
 
 
