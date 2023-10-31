@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 namespace Underworld
 {
     /// <summary>
@@ -15,10 +17,10 @@ namespace Underworld
                     case 5:
                         {
                             return UseMajorClass5(obj,objList);
-                        }
-                    
+                        }                    
                 }
             }
+            messageScroll.AddString(GameStrings.GetString(1,GameStrings.str_you_cannot_use_that_));
             return false;
         }
 
@@ -39,6 +41,10 @@ namespace Underworld
 
                                 return true;
                         }
+                    }
+                case 3: //buttons
+                    {
+                        return button.Use(obj);
                     }
 
             }

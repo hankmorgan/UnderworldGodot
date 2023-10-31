@@ -18,7 +18,10 @@ namespace Underworld
                         }
                     
                 }
+                //default string
+                messageScroll.AddString(GameStrings.GetObjectNounUW(obj.item_id));
             }
+
             return false;
         }
 

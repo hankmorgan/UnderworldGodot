@@ -6,11 +6,12 @@ namespace Underworld
     /// For rendering switches (except for the rotary switch)
     /// </summary>
     public class button : model3D
-    {
+    {              
+        Node3D modelNode;  
         public static button CreateInstance(Node3D parent, uwObject obj, string name)
         {
             var b = new button(obj);
-            var modelNode = b.Generate3DModel(parent, name);
+            b.modelNode = b.Generate3DModel(parent, name);
             SetModelRotation(parent, b);
             //DisplayModelPoints(b, modelNode);
             return b;
@@ -19,6 +20,45 @@ namespace Underworld
         public button(uwObject _uwobject)
         {
             uwobject = _uwobject;
+            uwobject.instance = this;
+        }
+
+        public static bool Use(uwObject obj)
+        {
+            if (IsOn(obj))
+            {
+                obj.item_id-=8;
+            }
+            else
+            {
+                obj.item_id+=8;
+            }
+            if (obj.instance !=null)
+            {
+                var newmaterial = GetTmFlat.GetMaterial(obj.item_id - 368);
+                var _button = (button)obj.instance;
+                var mdl = (MeshInstance3D)(_button.modelNode);
+                mdl.Mesh.SurfaceSetMaterial(0,newmaterial);         
+            }
+            return true;
+        }
+
+
+        /// <summary>
+        /// Checks if button is in the on state
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        static bool IsOn(uwObject obj)
+        {
+            if (obj.classindex<=7)
+            {
+                return false; //
+            }
+            else
+            {
+                return true;
+            }
         }
 
         public override Vector3[] ModelVertices()

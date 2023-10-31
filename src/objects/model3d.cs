@@ -12,7 +12,7 @@ namespace Underworld
     public class model3D : objectInstance
     {
         protected const int CEILING_HEIGHT = 32;
-        public Material material;
+        //public Material material;
         public static Shader textureshader;
         static GRLoader tmObj; //3d model textures.
 
