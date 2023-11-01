@@ -26,11 +26,6 @@ namespace Underworld
                 {
                 messageScroll.AddString(GameStrings.GetString(8, obj.link-0x200));
                 }
-            else
-                {
-                    //TODO LOOK trigger behaviour.
-                Debug.Print($"Unimplemented trigger {obj.link} linked to this object {obj.index}");
-                }
             return true;
         }
 

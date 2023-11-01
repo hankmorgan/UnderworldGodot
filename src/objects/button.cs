@@ -39,7 +39,7 @@ namespace Underworld
                 var _button = (button)obj.instance;
                 var mdl = (MeshInstance3D)(_button.modelNode);
                 mdl.Mesh.SurfaceSetMaterial(0,newmaterial);         
-            }
+            }            
             return true;
         }
 

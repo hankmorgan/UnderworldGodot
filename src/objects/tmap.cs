@@ -39,12 +39,6 @@ namespace Underworld
                 // UWHUD.instance.CutScenesSmall.anim.SetAnimation = "VolcanoWindow_" + GameWorldController.instance.dungeon_level;
                 // UWHUD.instance.CutScenesSmall.anim.looping = true;
             }
-            //TODO:
-            //If link then trigger look trigger or use trigger.
-            if (obj.link!=0)
-            {
-                Debug.Print($"Unimplemented trigger {obj.link} linked to this object {obj.index}");
-            }
             return true;
         }
 

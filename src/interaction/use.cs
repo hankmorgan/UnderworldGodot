@@ -1,5 +1,3 @@
-using System.Runtime.InteropServices;
-
 namespace Underworld
 {
     /// <summary>
@@ -9,6 +7,7 @@ namespace Underworld
     {
         public static bool Use(int index, uwObject[] objList)
         {
+            bool result;
             if (index<=objList.GetUpperBound(0))
             {
                 var obj = objList[index];
@@ -16,10 +15,21 @@ namespace Underworld
                 {
                     case 5:
                         {
-                            return UseMajorClass5(obj,objList);
+                            result = UseMajorClass5(obj,objList);
+                            break;
                         }                    
                 }
+                //Check for use trigger on this action and try activate if so.
+                if ((obj.is_quant==0) && (obj.link!=0))
+                {
+                    trigger.UseTrigger(
+                        srcObject: obj, 
+                        triggerIndex: obj.link, 
+                        objList: objList);
+                    return true;
+                }
             }
+          
             messageScroll.AddString(GameStrings.GetString(1,GameStrings.str_you_cannot_use_that_));
             return false;
         }
