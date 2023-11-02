@@ -6,7 +6,7 @@ namespace Underworld
     public class trap:UWClass
     {
 
-        public static void ActivateTrap(uwObject srcObject, int trapIndex, uwObject[] objList)
+        public static void ActivateTrap(uwObject triggerObj, int trapIndex, uwObject[] objList)
         {
             var trapObj = objList[trapIndex];
             if (trapObj == null)
@@ -20,11 +20,14 @@ namespace Underworld
                 {
                     case 0: // class 6-0 traps
                         {
-                            // switch(trapObj.classindex)
-                            // {
-                                
-                            // }
-
+                            switch(trapObj.classindex)
+                            {
+                                case 8://door trap
+                                {
+                                    a_door_trap.activate(triggerObj, trapObj, objList);
+                                    break;
+                                }
+                            }
                             break;
                         }
                     case 1://
@@ -35,7 +38,8 @@ namespace Underworld
                                     {
                                         a_text_string_trap.activate(trapObj,objList);
                                         break;  
-                                    }                                    
+                                    } 
+                                 
                             }
                             break;
                         }

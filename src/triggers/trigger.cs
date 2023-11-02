@@ -29,8 +29,8 @@ namespace Underworld
             {//use trigger class , 6-2-2 or 6-3-2
                 //activate trap
                 Debug.Print ($"Activating trap {triggerObj.link}");
-                trap.ActivateTrap(
-                    srcObject: triggerObj, 
+                trap.ActivateTrap(                    
+                    triggerObj: triggerObj, 
                     trapIndex: triggerObj.link, 
                     objList: objList);
             }
