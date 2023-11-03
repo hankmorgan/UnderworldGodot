@@ -11,9 +11,18 @@ namespace Underworld
     {
         //Raw Data
         public static Underworld.TileMap current_tilemap;
-        public DataLoader.UWBlock lev_ark_block = new DataLoader.UWBlock();//Data containing tilemap and object data
-        public DataLoader.UWBlock tex_ark_block = new DataLoader.UWBlock();//Data containing texture map
-        public DataLoader.UWBlock ovl_ark_block = new DataLoader.UWBlock();//Data containing animation overlays
+        /// <summary>
+        /// Data containing and tiles, objects and in UW2 the overlays
+        /// </summary>
+        public UWBlock lev_ark_block = new UWBlock();
+        /// <summary>
+        /// Data containing the texture maap
+        /// </summary>
+        public UWBlock tex_ark_block = new UWBlock();
+        /// <summary>
+        /// Data containing animation overlays (UW1 only)
+        /// </summary>
+        public UWBlock ovl_ark_block = new UWBlock();
 
 
         //Tile Types for UW1 & 2 and SS1. Note the diag tiles are flipped around in SS1.
@@ -27,14 +36,6 @@ namespace Underworld
         public const short TILE_SLOPE_S = 7;
         public const short TILE_SLOPE_E = 8;
         public const short TILE_SLOPE_W = 9;
-        public const short TILE_VALLEY_NW = 10;
-        public const short TILE_VALLEY_NE = 11;
-        public const short TILE_VALLEY_SE = 12;
-        public const short TILE_VALLEY_SW = 13;
-        public const short TILE_RIDGE_SE = 14;
-        public const short TILE_RIDGE_SW = 15;
-        public const short TILE_RIDGE_NW = 16;
-        public const short TILE_RIDGE_NE = 17;
 
         /// <summary>
         /// The tile map size along the x axis
@@ -47,19 +48,9 @@ namespace Underworld
         public const short TileMapSizeY = 63; //0 to 63
 
         /// <summary>
-        /// Locaton X and Y of the object storage tile location where non map objects are kept.
+        /// Locaton X and Y of the object storage tile location where off-map objects are instantiated.
         /// </summary>
         public const short ObjectStorageTile = 99;
-
-        public const short SURFACE_FLOOR = 1;
-        public const short SURFACE_CEIL = 2;
-        public const short SURFACE_WALL = 3;
-        public const short SURFACE_SLOPE = 4;
-
-        public const short SLOPE_BOTH_PARALLEL = 0;
-        public const short SLOPE_BOTH_OPPOSITE = 1;
-        public const short SLOPE_FLOOR_ONLY = 2;
-        public const short SLOPE_CEILING_ONLY = 3;
 
         //Visible faces indices. Used in sorting tile surface visiblity.
         public const short vTOP = 0;
@@ -68,17 +59,6 @@ namespace Underworld
         public const short vWEST = 3;
         public const short vNORTH = 4;
         public const short vSOUTH = 5;
-
-
-        //BrushFaces
-        // const short fSELF = 128;
-        // const short fCEIL = 64;
-        // const short fNORTH = 32;
-        // const short fSOUTH = 16;
-        // const short fEAST = 8;
-        // const short fWEST = 4;
-        // const short fTOP = 2;
-        // const short fBOTTOM = 1;
 
         public const int UW1_TEXTUREMAPSIZE = 64;
         public const int UW2_TEXTUREMAPSIZE = 70;
@@ -95,24 +75,24 @@ namespace Underworld
         /// <summary>
         /// Animation overlay. Controls how long an animated effect appears for.
         /// </summary>
-        public struct Overlay
-        {
-            public int header;
-            public int link;
-            public int duration;
-            public int tileX;
-            public int tileY;
-        };
+        // public struct Overlay
+        // {
+        //     public int header;
+        //     public int link;
+        //     public int duration;
+        //     public int tileX;
+        //     public int tileY;
+        // };
 
         /// <summary>
         /// Lists of overlays for controlling animated items.
         /// </summary>
-        public Overlay[] Overlays = new Overlay[64];
+        public AnimationOverlay[] Overlays = new AnimationOverlay[64];
 
         public int thisLevelNo; //The number of this level
         public const int UW_CEILING_HEIGHT = 32;
         //public short CEILING_HEIGHT;
-       // public short SHOCK_CEILING_HEIGHT;
+        // public short SHOCK_CEILING_HEIGHT;
 
         /// <summary>
         /// The texture indices for the current map.
@@ -162,6 +142,9 @@ namespace Underworld
         public TileMap(int NewLevelNo)
         {
             thisLevelNo = NewLevelNo;
+            lev_ark_block = LevArkLoader.LoadLevArkBlock(NewLevelNo);
+		    tex_ark_block = LevArkLoader.LoadTexArkBlock(NewLevelNo);
+		    ovl_ark_block = LevArkLoader.LoadOverlayBlock(NewLevelNo);
         }
 
         /// <summary>
@@ -366,12 +349,12 @@ namespace Underworld
             );
         }
 
-        public bool BuildTileMapUW(int levelNo, DataLoader.UWBlock lev_ark, DataLoader.UWBlock tex_ark, DataLoader.UWBlock ovl_ark)
+        public bool BuildTileMapUW(int levelNo, UWBlock lev_ark, UWBlock tex_ark, UWBlock ovl_ark)
         {
             long address_pointer = 0;
             short CeilingTexture = 0;
 
-           // UW_CEILING_HEIGHT = 32; // ((128 >> 2) * 8 >> 3);  //Shifts the scale of the level. Idea borrowed from abysmal
+            // UW_CEILING_HEIGHT = 32; // ((128 >> 2) * 8 >> 3);  //Shifts the scale of the level. Idea borrowed from abysmal
 
             //CEILING_HEIGHT = UW_CEILING_HEIGHT;
             BuildTextureMap(tex_ark, ref CeilingTexture, levelNo);
@@ -390,7 +373,7 @@ namespace Underworld
             BuildObjectListUW();
 
             //Set x and y for on map objects.
-            for (int y = 0; y  <= 63; y++)
+            for (int y = 0; y <= 63; y++)
             {
                 for (int x = 0; x <= 63; x++)
                 {
@@ -414,55 +397,40 @@ namespace Underworld
                     {
                         if (ovl_ark.DataLen != 0)
                         {//read in the next 64 entries of length 6 bytes	
-                            long OverlayAddress = 0;
+                            //long OverlayAddress = 0;
                             for (int overlayIndex = 0; overlayIndex < 64; overlayIndex++)
                             {
-                                Overlays[overlayIndex].header = (int)DataLoader.getValAtAddress(ovl_ark, OverlayAddress, 16);
-                                Overlays[overlayIndex].link = (int)(DataLoader.getValAtAddress(ovl_ark, OverlayAddress, 16) >> 6) & 0x3ff;
-                                Overlays[overlayIndex].duration = (int)DataLoader.getValAtAddress(ovl_ark, OverlayAddress + 2, 16);
-                                Overlays[overlayIndex].tileX = (int)DataLoader.getValAtAddress(ovl_ark, OverlayAddress + 4, 8);
-                                Overlays[overlayIndex].tileY = (int)DataLoader.getValAtAddress(ovl_ark, OverlayAddress + 5, 8);
-                                if (Overlays[overlayIndex].link != 0)
-                                {
-                                    // Debug.Log("Overlay at " + OverlayAddress
-                                    //    + " obj " + Overlays[overlayIndex].link
-                                    //     + " for " + Overlays[overlayIndex].duration
-                                    //     + " tile " + Overlays[overlayIndex].tileX + "," + Overlays[overlayIndex].tileY
-                                    //     + " header :" + Overlays[overlayIndex].header);
-                                }
-                                OverlayAddress += 6;
+                                Overlays[overlayIndex] = new AnimationOverlay(overlayIndex);
+                                // Overlays[overlayIndex].header = (int)DataLoader.getValAtAddress(ovl_ark, OverlayAddress, 16);
+                                // Overlays[overlayIndex].link = (int)(DataLoader.getValAtAddress(ovl_ark, OverlayAddress, 16) >> 6) & 0x3ff;
+                                // Overlays[overlayIndex].duration = (int)DataLoader.getValAtAddress(ovl_ark, OverlayAddress + 2, 16);
+                                // Overlays[overlayIndex].tileX = (int)DataLoader.getValAtAddress(ovl_ark, OverlayAddress + 4, 8);
+                                // Overlays[overlayIndex].tileY = (int)DataLoader.getValAtAddress(ovl_ark, OverlayAddress + 5, 8);
+                                // if (Overlays[overlayIndex].link != 0)
+                                // {
+                                //     // Debug.Log("Overlay at " + OverlayAddress
+                                //     //    + " obj " + Overlays[overlayIndex].link
+                                //     //     + " for " + Overlays[overlayIndex].duration
+                                //     //     + " tile " + Overlays[overlayIndex].tileX + "," + Overlays[overlayIndex].tileY
+                                //     //     + " header :" + Overlays[overlayIndex].header);
+                                // }
+                                //OverlayAddress += 6;
                             }
                         }
                         break;
                     }
                 case GAME_UW2:
                     {
-                        long OverlayAddress = 31752;
+                        //long OverlayAddress = 31752;
                         for (int overlayIndex = 0; overlayIndex < 64; overlayIndex++)
                         {
-                            if (OverlayAddress + 5 <= lev_ark.Data.GetUpperBound(0))
-                            {
-                                Overlays[overlayIndex].header = (int)DataLoader.getValAtAddress(lev_ark, OverlayAddress, 16);
-                                Overlays[overlayIndex].link = (int)(DataLoader.getValAtAddress(lev_ark, OverlayAddress, 16) >> 6) & 0x3ff;
-                                Overlays[overlayIndex].duration = (int)DataLoader.getValAtAddress(lev_ark, OverlayAddress + 2, 16);
-                                Overlays[overlayIndex].tileX = (int)DataLoader.getValAtAddress(lev_ark, OverlayAddress + 4, 8);
-                                Overlays[overlayIndex].tileY = (int)DataLoader.getValAtAddress(lev_ark, OverlayAddress + 5, 8);
-                                if (Overlays[overlayIndex].link != 0)
-                                {
-                                    // Debug.Log("Overlay at " + OverlayAddress 
-                                    //     + " obj " + Overlays[overlayIndex].link 
-                                    //     + " for " + Overlays[overlayIndex].duration 
-                                    //     + " tile " + Overlays[overlayIndex].tileX + "," + Overlays[overlayIndex].tileY
-                                    //    + " header :" + Overlays[overlayIndex].header);
-                                }
-                            }
-                            OverlayAddress += 6;
+                            Overlays[overlayIndex] = new AnimationOverlay(overlayIndex);
+                            //OverlayAddress += 6;
                         }
                         break;
                     }
-
             }
-
+            Debug.Print($"{Overlays[0].link}");
             //Reduce map complexity.
             CleanUp();
 
@@ -590,7 +558,7 @@ namespace Underworld
         /// <param name="game">Game.</param>
         /// Although the tile map renderer supports tiles of size X*Y I'm only smart enought to optimise the tilemap into strips of X*1 or Y*1 !!
         public void CleanUp()
-        {          
+        {
             int x; int y;
 
             for (x = 0; x <= TileMapSizeX; x++)
@@ -1069,7 +1037,7 @@ namespace Underworld
         /// <param name="tex_ark"></param>
         /// <param name="CeilingTexture"></param>
         /// <param name="LevelNo"></param>
-        void BuildTextureMap(DataLoader.UWBlock tex_ark, ref short CeilingTexture, int LevelNo)
+        void BuildTextureMap(UWBlock tex_ark, ref short CeilingTexture, int LevelNo)
         {
             short textureMapSize;//=UW1_TEXTUREMAPSIZE;
             switch (_RES)
@@ -1095,14 +1063,12 @@ namespace Underworld
                             if (i < 48)//Wall textures
                             {
                                 texture_map[i] = (short)DataLoader.getValAtAddress(tex_ark, offset, 16);
-                                //(i * 2)
                                 offset += 2;
                             }
                             else
-                                if (i <= 57)//Floor textures are 49 to 56, ceiling is 57
+                            if (i <= 57)//Floor textures are 49 to 56, ceiling is 57
                             {
                                 texture_map[i] = (short)(DataLoader.getValAtAddress(tex_ark, offset, 16) + 48);
-                                //(i * 2)
                                 offset += 2;
                                 if (i == 57)
                                 {
@@ -1126,7 +1092,7 @@ namespace Underworld
                                 offset += 2;
                             }
                             else
-                                if (i <= 57)//Floor textures are 48 to 56, ceiling is 57
+                            if (i <= 57)//Floor textures are 48 to 56, ceiling is 57
                             {
                                 texture_map[i] = (short)(DataLoader.getValAtAddress(tex_ark, offset, 16) + 210);
                                 offset += 2;
@@ -1139,7 +1105,6 @@ namespace Underworld
                             {
                                 //door textures are int 8s
                                 texture_map[i] = (short)DataLoader.getValAtAddress(tex_ark, offset, 8);
-                                //+210; //(i * 1)
                                 offset++;
                             }
                             break;
@@ -1163,7 +1128,6 @@ namespace Underworld
                         if (i == 0xf)
                         {
                             CeilingTexture = (short)i;
-                            //texture_map[i];
                         }
                         if ((LevelNo == (int)(worlds.UW2_LevelNos.Ethereal4)) && (i == 16))
                         {

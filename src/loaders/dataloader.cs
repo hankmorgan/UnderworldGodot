@@ -22,20 +22,6 @@ namespace Underworld
             public byte[] data;
         };
 
-        /// <summary>
-        /// UW block structure for .ark files.
-        /// </summary>
-        public struct UWBlock
-        {
-            public byte[] Data;
-            public int Address; //The file address of the block
-
-            public int DataLen;
-            //UW2 specific
-            public int CompressionFlag;
-            public int ReservedSpace;
-        };
-
         //Compression flags for UW2
         public const int UW2_NOCOMPRESSION = 0;
         public const int UW2_SHOULDCOMPRESS = 1;
@@ -425,6 +411,7 @@ namespace Underworld
                             if (((uwb.CompressionFlag >> 1) & 0x01) == 1)
                             {//data is compressed;
                                 uwb.Data = unpackUW2(arkData, uwb.Address, ref uwb.DataLen);
+                                File.WriteAllBytes($"c:\\temp\\unpacked_{blockNo}.dat", uwb.Data);
                                 if (uwb.DataLen>0)
                                 {
                                     Array.Resize(ref uwb.Data, uwb.DataLen);

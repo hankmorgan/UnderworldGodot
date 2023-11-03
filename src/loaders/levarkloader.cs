@@ -16,14 +16,10 @@ namespace Underworld
 
         public static bool LoadLevArkFileData(string Lev_Ark_File = "lev.ark", string folder = "DATA")
         {
-            //string Lev_Ark_File;
             //Load up my tile maps
             //First read in my lev_ark file
             switch (_RES)
             {
-                // case GAME_SHOCK:
-                //     Lev_Ark_File = Path.Combine("RES", folder, "ARCHIVE.DAT");
-                //     break;
                 case GAME_UWDEMO:
                     Lev_Ark_File = Path.Combine(folder, "LEVEL13.ST");
                     break;
@@ -47,12 +43,12 @@ namespace Underworld
         }
 
 
-        public static DataLoader.UWBlock LoadLevArkBlock(int newLevelNo)
+        public static UWBlock LoadLevArkBlock(int LevelBlockNo)
         {
-            DataLoader.UWBlock lev_ark_block;
+            UWBlock lev_ark_block;
             if (_RES == GAME_UWDEMO)
             {//In UWDemo there is no block structure. Just copy the data directly from file.
-                lev_ark_block = new DataLoader.UWBlock
+                lev_ark_block = new UWBlock
                 {
                     DataLen = 0x7c06,
                     Data = lev_ark_file_data
@@ -60,33 +56,59 @@ namespace Underworld
             }
             else
             {
+                int targetLen = 0x7c08;                
                 //Load the tile and object blocks
-                DataLoader.LoadUWBlock(lev_ark_file_data, newLevelNo, 0x7c08, out lev_ark_block);
+                if (_RES==GAME_UW2)
+                {
+                    targetLen = 0x8000;
+                }
+                DataLoader.LoadUWBlock(lev_ark_file_data, LevelBlockNo, targetLen, out lev_ark_block);
                 //Trim to the correct size for lev ark blocks.
-                Array.Resize(ref lev_ark_block.Data, 0x7c08);
+                //Array.Resize(ref lev_ark_block.Data, 0x7c08);
             }
             return lev_ark_block;
         }
 
 
-        public static DataLoader.UWBlock LoadTexArkBlock(int newLevelNo, DataLoader.UWBlock tex_ark_block)
+        public static UWBlock LoadTexArkBlock(int LevelBlockNo)
         {
             //Load the texture maps
             switch (_RES)
             {
                 case GAME_UWDEMO:
+                    var tex_ark_block = new UWBlock();
                     Loader.ReadStreamFile(Path.Combine(Loader.BasePath, "DATA", "LEVEL13.TXM"), out tex_ark_block.Data);
                     tex_ark_block.DataLen = tex_ark_block.Data.GetUpperBound(0);
-                    break;
+                    return tex_ark_block;
                 case GAME_UW2:
-                    DataLoader.LoadUWBlock(lev_ark_file_data, newLevelNo + 80, -1, out tex_ark_block);
-                    break;
+                    DataLoader.LoadUWBlock(lev_ark_file_data, LevelBlockNo + 80, -1, out tex_ark_block);
+                    return tex_ark_block;
                 case GAME_UW1:
                 default:
-                    DataLoader.LoadUWBlock(lev_ark_file_data, newLevelNo + 18, 0x7a, out tex_ark_block);
-                    break;
+                    DataLoader.LoadUWBlock(lev_ark_file_data, LevelBlockNo + 18, 0x7a, out tex_ark_block);
+                    return tex_ark_block;
             }
-            return tex_ark_block;
+        }
+
+        public static UWBlock LoadOverlayBlock(int LevelBlockNo)
+        {
+            //Load the texture maps
+            switch (_RES)
+            {
+                case GAME_UWDEMO:
+                    var ovl_ark_block =  new UWBlock();
+                    Loader.ReadStreamFile(Path.Combine(Loader.BasePath, "DATA", "LEVEL13.ANX"), out ovl_ark_block.Data);
+                    ovl_ark_block.DataLen = ovl_ark_block.Data.GetUpperBound(0);
+                    return ovl_ark_block;
+                case GAME_UW2:
+                    //DataLoader.LoadUWBlock(lev_ark_file_data, LevelBlockNo , -1, out ovl_ark_block);//overlay data in uw2 is immediately after the tilemap
+                    //ovl_ark_block = null; // UW2 does not have a seperate overlay block
+                    return null;
+                case GAME_UW1:
+                default:
+                    DataLoader.LoadUWBlock(lev_ark_file_data, LevelBlockNo + 9, 64*6, out ovl_ark_block);
+                   return ovl_ark_block;
+            }
         }
 
     }//end class

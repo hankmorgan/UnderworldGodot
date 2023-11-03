@@ -213,16 +213,13 @@ public partial class main : Node3D
 	public void LoadTileMap(int newLevelNo, GRLoader grObjects)
 	{
 		grObjects.UseRedChannel = true;
-		//var tilerender = new tileMapRender();
+
 		Node3D worldobjects = GetNode<Node3D>("/root/Node3D/worldobjects");
 		Node3D the_tiles = GetNode<Node3D>("/root/Node3D/tilemap");
 
 		LevArkLoader.LoadLevArkFileData(folder: uwsettings.instance.levarkfolder);
 		Underworld.TileMap.current_tilemap = new(newLevelNo);
 
-		Underworld.TileMap.current_tilemap.lev_ark_block = LevArkLoader.LoadLevArkBlock(newLevelNo);
-		Underworld.TileMap.current_tilemap.tex_ark_block = LevArkLoader.LoadTexArkBlock(newLevelNo, Underworld.TileMap.current_tilemap.tex_ark_block);
-		//Tilemaps[newLevelNo].ovl_ark_block = null;
 		Underworld.TileMap.current_tilemap.BuildTileMapUW(newLevelNo, Underworld.TileMap.current_tilemap.lev_ark_block, Underworld.TileMap.current_tilemap.tex_ark_block, Underworld.TileMap.current_tilemap.ovl_ark_block);
 		Underworld.ObjectCreator.GenerateObjects(worldobjects, Underworld.TileMap.current_tilemap.LevelObjects, grObjects, Underworld.TileMap.current_tilemap);
 		the_tiles.Position = new Vector3(0f, 0f, 0f);
