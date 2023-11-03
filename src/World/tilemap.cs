@@ -71,21 +71,21 @@ namespace Underworld
 
 
         //BrushFaces
-        const short fSELF = 128;
-        const short fCEIL = 64;
-        const short fNORTH = 32;
-        const short fSOUTH = 16;
-        const short fEAST = 8;
-        const short fWEST = 4;
-        const short fTOP = 2;
-        const short fBOTTOM = 1;
+        // const short fSELF = 128;
+        // const short fCEIL = 64;
+        // const short fNORTH = 32;
+        // const short fSOUTH = 16;
+        // const short fEAST = 8;
+        // const short fWEST = 4;
+        // const short fTOP = 2;
+        // const short fBOTTOM = 1;
 
         public const int UW1_TEXTUREMAPSIZE = 64;
         public const int UW2_TEXTUREMAPSIZE = 70;
         public const int UWDEMO_TEXTUREMAPSIZE = 63;
 
-        public const int UW1_NO_OF_LEVELS = 9;
-        public const int UW2_NO_OF_LEVELS = 80;
+        // public const int UW1_NO_OF_LEVELS = 9;
+        // public const int UW2_NO_OF_LEVELS = 80;
 
         /// <summary>
         /// The ceiling texture for this level
