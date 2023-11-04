@@ -12,6 +12,9 @@ namespace Underworld
         /// </summary>
         public static Shader textureshader;
 
+        /// <summary>
+        /// Mesh this sprite is drawn on
+        /// </summary>
         public MeshInstance3D sprite;
        
        /// <summary>
@@ -19,6 +22,17 @@ namespace Underworld
        /// </summary>
         public ShaderMaterial material;
 
+
+
+        /// <summary>
+        /// Mesh this sprite is drawn on
+        /// </summary>
+        //public MeshInstance3D sprite;
+       
+       /// <summary>
+       /// The material for rendering this unique npc
+       /// </summary>
+        //public ShaderMaterial material;
 
         public enum npc_goals
         {        
@@ -107,19 +121,18 @@ namespace Underworld
             var crit = CritterArt.GetCritter(this.uwobject.item_id & 0x3F);
             if (crit.Animations.ContainsKey(animname))
             {
-                uwobject.npc_animation = ApplyAnimation(animationNo, frameNo, animname, crit);
+                uwobject.npc_animation = ApplyCritterAnimation(animationNo, frameNo, animname, crit);
             }
             else
             {
                 uwobject.npc_animation=0; //default animation to zero;
                 Debug.Print($"{animname} ({animationNo}) was not found for {this.uwobject.item_id & 0x3F}");
-                uwobject.npc_animation = ApplyAnimation(animationNo, frameNo, CritterArt.GetAnimName(0,0), crit);
+                uwobject.npc_animation = ApplyCritterAnimation(animationNo, frameNo, CritterArt.GetAnimName(0,0), crit);
             }
         }
 
-        private short ApplyAnimation(int animationNo, short frameNo, string animname, CritterArt crit)
+        private short ApplyCritterAnimation(int animationNo, short frameNo, string animname, CritterArt crit)
         {
-
             var anim = crit.Animations[animname];
             if (material == null)
             {//create the initial material

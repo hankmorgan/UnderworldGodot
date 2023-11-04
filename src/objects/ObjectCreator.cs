@@ -60,7 +60,12 @@ namespace Underworld
                 case 2://misc items incl containers, food, and lights.                
                 case 4://keys, usables and readables
                 case 6://Traps and Triggers
+                    break;
                 case 7://Animos
+                    {
+                        unimplemented = MajorClass7(obj, newparent, name);
+                        break;
+                    }
                 default:
                     unimplemented = true; break;
 
@@ -246,6 +251,20 @@ namespace Underworld
             return true;
         }
 
+
+         private static bool MajorClass7(uwObject obj, Node3D parent, string name)
+         {//animos and the moving door
+            //class 7 has only a single minor class. jump straight to the class index
+            switch (obj.classindex)
+            {
+                case 0xF://moving door special case
+                    return true; //unimplemented.
+                default:
+                    animo.CreateInstance(parent, obj, name);
+                    return false;
+            }
+         }
+
         public static void CreateSpriteInstance(GRLoader grObjects, uwObject obj, Node3D parent, string name)
         {
             if (obj.invis ==0)
@@ -254,16 +273,16 @@ namespace Underworld
             }           
         }
 
-        public static void CreateSprite(GRLoader grObjects, int spriteNo, Node3D parent, string name, bool EnableCollision = true)
+        public static void CreateSprite(GRLoader gr, int spriteNo, Node3D parent, string name, bool EnableCollision = true)
         {
             var a_sprite = new MeshInstance3D(); //new Sprite3D();
             a_sprite.Name = name;
             a_sprite.Mesh = new QuadMesh();
             Vector2 NewSize;
-            var img = grObjects.LoadImageAt(spriteNo);
+            var img = gr.LoadImageAt(spriteNo);
             if (img != null)
             {
-                a_sprite.Mesh.SurfaceSetMaterial(0, grObjects.GetMaterial(spriteNo));
+                a_sprite.Mesh.SurfaceSetMaterial(0, gr.GetMaterial(spriteNo));
                 NewSize = new Vector2(
                         ArtLoader.SpriteScale * img.GetWidth(),
                         ArtLoader.SpriteScale * img.GetHeight()

@@ -15,5 +15,6 @@ namespace Underworld
         /// Conversion of the object dimensions into a vector for scaling sprites
         /// </summary>
         public Vector2 FrameSize;
+
     }
 }

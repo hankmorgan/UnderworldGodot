@@ -51,7 +51,10 @@ namespace Underworld
             }
         }
 
-        public int maybeDuration //starts at -1.
+        /// <summary>
+        /// No of frames left to play. -1 means it goes forever. TODO: This info is enough to play the animo?
+        /// </summary>
+        public int Duration //starts at -1.
         {
             get
             {
@@ -61,6 +64,16 @@ namespace Underworld
                         return (int)Loader.getAt(TileMap.current_tilemap.lev_ark_block.Data,PTR+2,16);
                     default://but UW1 stores the data in it's own block
                         return (int)Loader.getAt(TileMap.current_tilemap.ovl_ark_block.Data,PTR+2,16);                  
+                }
+            }
+            set
+            {
+                switch (_RES)
+                {                    
+                    case GAME_UW2: // data is at the end of the tilemap
+                        Loader.setAt(TileMap.current_tilemap.lev_ark_block.Data,PTR+2, 16, 0); break;
+                    default://but UW1 stores the data in it's own block
+                       Loader.setAt(TileMap.current_tilemap.ovl_ark_block.Data,PTR+2, 16 , 0); break;                 
                 }
             }
         }

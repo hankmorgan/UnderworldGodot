@@ -37,7 +37,7 @@ public partial class main : Node3D
 	//[Export] public TextureRect grey;
 	[Export] public uimanager uwUI;
 
-	double NPCRefreshTimer=0f;
+	double gameRefreshTimer=0f;
 	double cycletime = 0;
 	int NextPaletteCycle = 0;
 	public override void _Ready()
@@ -70,10 +70,13 @@ public partial class main : Node3D
 		switch (UWClass._RES)
 		{
 			case UWClass.GAME_UW2:
-				cam.Position = new Vector3(-23f, 4.3f, 58.2f);				
+				cam.Position = new Vector3(-23f, 4.3f, 58.2f);	
+						
 				break;
 			default:
-				cam.Position = new Vector3(-38f, 4.2f, 2.2f);  break;
+				cam.Position = new Vector3(-38f, 4.2f, 2.2f); 
+				cam.Position = new Vector3(-43.9f, 3.6f, 1.59f);		
+				 break;
 		}
 		cam.Rotate(Vector3.Up, (float)Math.PI);
 
@@ -207,6 +210,7 @@ public partial class main : Node3D
 
 		uwUI.InitUI();		
 		messageScroll.AddString(GameStrings.GetString(1,13));
+		//Debug.Print($"{animationObjectDat.startFrame(459)}");
 	}
 
 
@@ -235,35 +239,84 @@ public partial class main : Node3D
 		//RenderingServer.GlobalShaderParameterSet("cameraPos", cam.Position);
 		cycletime += delta;
 		if (cycletime > 0.2)
-		{
-			cycletime = 0;
-			//Cycle the palette		
-			RenderingServer.GlobalShaderParameterSet("uwpalette", (Texture)PaletteLoader.cycledGamePalette[NextPaletteCycle]);
-			RenderingServer.GlobalShaderParameterSet("uwnpc", (Texture)PaletteLoader.cycledNPCPalette[NextPaletteCycle]);
+        {
+            cycletime = 0;
+            UpdatePaletteCycles();
+        }
+        gameRefreshTimer +=delta;
+		if(gameRefreshTimer>=0.3)
+        {
+            gameRefreshTimer = 0;
+            UpdateNPCs();
+            UpdateAnimationOverlays();
+        }
+    }
 
-			NextPaletteCycle++;
+    private void UpdatePaletteCycles()
+    {
+        //Cycle the palette		
+        RenderingServer.GlobalShaderParameterSet("uwpalette", (Texture)PaletteLoader.cycledGamePalette[NextPaletteCycle]);
+        RenderingServer.GlobalShaderParameterSet("uwnpc", (Texture)PaletteLoader.cycledNPCPalette[NextPaletteCycle]);
 
-			if (NextPaletteCycle > PaletteLoader.cycledGamePalette.GetUpperBound(0))
-			{
-				NextPaletteCycle = 0;
-			}
-		}
-		NPCRefreshTimer+=delta;
-		if(NPCRefreshTimer>=0.3)
-		{
-			NPCRefreshTimer=0;
-			foreach(var n in ObjectCreator.npcs)
-			{
-				if(n.uwobject.tileY!=99)
-				{
-					n.uwobject.AnimationFrame++;				
-					n.SetAnimSprite(n.uwobject.npc_animation, n.uwobject.AnimationFrame, n.uwobject.heading);
-				}
-			}
-		}
-	}
+        NextPaletteCycle++;
 
-	public override void _Input(InputEvent @event)
+        if (NextPaletteCycle > PaletteLoader.cycledGamePalette.GetUpperBound(0))
+        {
+            NextPaletteCycle = 0;
+        }
+    }
+
+
+    private static void UpdateNPCs()
+    {
+        foreach (var n in ObjectCreator.npcs)
+        {
+            if (n.uwobject.tileY != 99)
+            {
+                n.uwobject.AnimationFrame++;
+                n.SetAnimSprite(n.uwobject.npc_animation, n.uwobject.AnimationFrame, n.uwobject.heading);
+            }
+        }
+    }
+
+
+    private static void UpdateAnimationOverlays()
+    {
+        foreach (var ovl in Underworld.TileMap.current_tilemap.Overlays)
+        {
+            if (ovl != null)
+            {
+                if (ovl.link != 0)
+                {
+                    if (ovl.Duration != 0)
+                    {
+                        var obj = Underworld.TileMap.current_tilemap.LevelObjects[ovl.link];
+                        if (obj != null)
+                        {
+                            if (obj.owner < animationObjectDat.endFrame(obj.item_id))
+                            { //animation in progress
+                                animo.AdvanceAnimo((animo)obj.instance);
+                            }
+                            else
+                            {
+                                if (ovl.Duration == 0xFFFF) 
+                                {//infinitely loop
+                                    animo.ResetAnimo((animo)obj.instance);
+                                }
+                                else
+                                {
+                                    ovl.Duration = 0;
+                                    //TODO Destroy the animo
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public override void _Input(InputEvent @event)
 	{
 		float RayLength = 3.0f;
 		if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)

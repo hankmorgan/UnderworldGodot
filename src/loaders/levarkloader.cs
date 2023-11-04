@@ -60,7 +60,7 @@ namespace Underworld
                 //Load the tile and object blocks
                 if (_RES==GAME_UW2)
                 {
-                    targetLen = 0x8000;
+                    targetLen = 0x8000; //extra space needed for the animation overlay data.
                 }
                 DataLoader.LoadUWBlock(lev_ark_file_data, LevelBlockNo, targetLen, out lev_ark_block);
                 //Trim to the correct size for lev ark blocks.

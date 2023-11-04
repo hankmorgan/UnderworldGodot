@@ -12,7 +12,7 @@ namespace Underworld
         /// <returns></returns>
         public static int capacity(int item_id)
         {
-              return buffer[offset + (item_id & 0xf) * 3];
+            return buffer[offset + (item_id & 0xf) * 3];
         }
 
         /// <summary>
