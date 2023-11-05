@@ -1,6 +1,4 @@
 using Godot;
-using System;
-using System.Diagnostics;
 namespace Underworld
 {
 
@@ -126,6 +124,26 @@ namespace Underworld
             {
                 obj.ApplyAnimoSprite();
             }
+        }
+
+
+        /// <summary>
+        /// Finds the first available animo slot in the overlays list
+        /// </summary>
+        /// <returns>the index of the animo if found. Othewise -1</returns>
+        public static int GetFreeAnimoSlot()
+        {
+            foreach (var a in TileMap.current_tilemap.Overlays)
+            {
+                if (a!=null)
+                {
+                    if (a.Duration==0)
+                    {
+                        return a.index;
+                    }
+                }
+            }
+            return -1; //no animo found
         }
     }
 }//end namespace

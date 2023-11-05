@@ -26,6 +26,10 @@ namespace Underworld
             {
                 Debug.Print("No Door found for door trap");
             }
+            if (doorObj.instance==null)
+            {
+                 Debug.Print("No Door instance found for door trap");
+            }
             if(trapObj!=null)
             {
                 switch (trapObj.quality)
@@ -35,12 +39,15 @@ namespace Underworld
                         break;
                     case 1://Try Open
                         Debug.Print("Door Trap Open");
+                        door.OpenDoor((door)doorObj.instance);
                         break;
                     case 2://Try Close
                         Debug.Print("Door Trap Close");
+                        door.CloseDoor((door)doorObj.instance);
                         break;
                     case 3: //Try toggle
                         Debug.Print("Door Trap Toggle");
+                        door.ToggleDoor((door)doorObj.instance);
                         break;
                     default:
                         Debug.Print($"Unknown doortrap quality {trapObj.quality}");

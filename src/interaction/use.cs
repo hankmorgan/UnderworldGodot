@@ -38,6 +38,11 @@ namespace Underworld
         {
             switch (obj.minorclass)
             {
+                case 0: // Doors
+                {
+                    return door.Use(obj);
+
+                }
                 case 2: //misc objects including readables
                     {
                         switch (obj.classindex)

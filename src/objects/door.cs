@@ -1,14 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using Godot;
+
 namespace Underworld
 {
-
     /// <summary>
     /// Class to render the moveable door
     /// </summary>
@@ -19,11 +14,19 @@ namespace Underworld
         public int texture;
         public int floorheight;
         public Vector3 position;
+
+        bool isMoving
+        {
+            get
+            {
+                return uwobject.item_id == 463;
+            }
+        }
         bool isSecretDoor
         {
             get
             {
-                return ((uwobject.item_id == 327) || (uwobject.item_id == 335));
+                return (uwobject.item_id == 327) || (uwobject.item_id == 335);
             }
         }
 
@@ -47,10 +50,34 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// How many animation frames this door type has.
+        /// </summary>
+        public int NoOfFrames
+        {
+            get
+            {
+                if(isPortcullis)
+                {
+                    return 4;
+                }
+                else
+                {
+                    return 5;
+                }
+            }
+        }
+
+        public float GetRadiansForIndex(int index)
+        {
+            var unit = (Math.PI/2) / NoOfFrames;
+            return (float)(index * unit);
+        }
+
         static door()
         {
             tmDoor = new GRLoader(GRLoader.DOORS_GR, GRLoader.GRShaderMode.TextureShader);
-            tmDoor.UseRedChannel = true;
+            tmDoor.UseRedChannel = true;    
         }
 
         public static door CreateInstance(Node3D parent, uwObject obj, TileMap a_tilemap, string name)
@@ -100,8 +127,150 @@ namespace Underworld
         public door(uwObject _uwobject)
         {
             uwobject = _uwobject;
+            uwobject.instance = this;
         }
 
+        public static bool Use(uwObject obj)
+        {
+            //TODO make this respect locks
+            ToggleDoor((door)obj.instance);
+            return true;
+        }
+
+
+        /// <summary>
+        /// Opens the door
+        /// </summary>
+        /// <param name="obj"></param>
+        public static void OpenDoor(door obj)
+        {
+            if (obj.isMoving){return;} // do not allow door changes when already moving
+            obj.uwobject.zpos+=24;            
+            if (obj.uwobject.link>0)
+            {//TODO: ACTIVATE OPEN TRIGGER HERE
+                Debug.Print($"Check for open trigger here {obj.uwobject.index}");
+            }
+            if (TurnIntoMovingDoor(obj))
+            {
+
+            }
+            else
+            {
+                //set to open without animation
+                obj.doorNode.Rotate(Vector3.Up, obj.GetRadiansForIndex(obj.NoOfFrames));
+            }
+        }
+        
+
+        /// <summary>
+        /// Closes the door
+        /// </summary>
+        /// <param name="obj"></param>
+        public static void CloseDoor(door obj)
+        {
+            if (obj.isMoving){return;} // do not allow door changes when already moving
+            obj.uwobject.zpos-=24;
+            if (TurnIntoMovingDoor(obj))
+            {
+                // do something here?
+            }
+            else
+            {
+                //set to closed state without animation
+            }
+        }
+
+        /// <summary>
+        /// Toogles the door (ignores lock state)
+        /// </summary>
+        /// <param name="obj"></param>
+        public static void ToggleDoor(door obj)
+        {   
+            if (obj.isMoving){return;} // do not allow door changes when already moving
+            if (obj.isOpen)
+            {
+                CloseDoor(obj);
+            }
+            else
+            {
+                OpenDoor(obj);
+            }
+        }
+
+
+        /// <summary>
+        /// Turns the door in to an animated moving door that will open or close as the animos are processed.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns>true if the door can be animated</returns>
+        public static bool TurnIntoMovingDoor(door obj)
+        {           
+            //Add animation overlay entry
+            var animoindex = animo.GetFreeAnimoSlot();
+            if (animoindex!=-1)
+            {
+                var anim = TileMap.current_tilemap.Overlays[animoindex];
+                anim.link= obj.uwobject.index;
+                anim.tileX = obj.uwobject.tileX;
+                anim.tileY = obj.uwobject.tileY;
+                anim.Duration= obj.NoOfFrames;
+
+                //change object props
+                obj.uwobject.owner = (short)obj.uwobject.classindex;
+                Debug.Print($"About to move door {obj.uwobject.item_id}");
+                obj.uwobject.item_id = 0x1CF; // a moving door
+                Debug.Print($"Moving Door is now {obj.uwobject.item_id}");
+                return true;           
+            }
+            else
+            {
+                return false;
+            }           
+        }
+
+        public static void RotateDoor(door obj, int delta)
+        {
+            var flags = (int)obj.uwobject.flags;
+            if (obj.uwobject.owner<=7)
+            {
+                //door was open and is moving towards closed. Flags increase until NoOfFrames
+                flags += delta;
+                if (flags> obj.NoOfFrames)
+                {
+                    flags=obj.NoOfFrames;                    
+                }    
+                if (flags==obj.NoOfFrames)
+                {
+                    //reset object now it has arrived at the end
+                   obj.uwobject.item_id = 320 + obj.uwobject.owner + 8;
+                   Debug.Print($"Open->Closed item id is now {obj.uwobject.item_id}");
+                   obj.uwobject.owner=0;
+                }           
+            }
+            else
+            {//door was closed and moving towards open. flags decrease until 0
+                flags -= delta;
+                if (flags<0)
+                {
+                    flags=0;                    
+                }
+                if (flags==0)
+                {
+                    //reset object now it has arrived at the end
+                   obj.uwobject.item_id = 320 + obj.uwobject.owner - 8;
+                   Debug.Print($"Closed->Open item id is now {obj.uwobject.item_id}");
+                   obj.uwobject.owner=0;
+                }
+            }
+            obj.uwobject.flags= (short)flags;
+            Debug.Print($"Flags is now {obj.uwobject.flags}");
+            //Set rotate based on flags
+            obj.doorNode.Rotation=Vector3.Zero;
+            obj.doorNode.Rotate (Vector3.Up, obj.GetRadiansForIndex(obj.uwobject.flags)); 
+        }
+
+
+//******************************RENDERING INFO**********************************/
         public override Vector3[] ModelVertices()
         {
             if (isPortcullis)
@@ -432,17 +601,11 @@ namespace Underworld
                             tris[45] = 24;
                             tris[46] = 25;
                             tris[47] = 27;
-
-
-
                             return tris;
                         }
                 }
-
             }
-
-            return base.ModelTriangles(meshNo);
-        }
+            return base.ModelTriangles(meshNo);        }
 
         public override int ModelColour(int meshNo)
         {
@@ -531,7 +694,7 @@ namespace Underworld
             dw.floorheight = a_tilemap.Tiles[tileX, tileY].floorHeight;//uses floorheight since portculli use zpos when opened // (float)(obj.zpos) / 4f; //a_tilemap.Tiles[tileX, tileY].floorHeight;
             //n.position = parent.Position;
             //a portcullis. 
-
+            
             dw.doorFrameNode = dw.Generate3DModel(parent, name);
             if (dw.isOpen)
             {//fix for map bug where some open doors extend out of the map. Force them onto a lower zpos without changing data

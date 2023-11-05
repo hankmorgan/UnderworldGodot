@@ -14,11 +14,11 @@ internal class uwsettings
 	public int level { get; set; }
 	public int lightlevel { get; set; }
 	public string levarkfolder { get; set; }
-	public string shader {get; set; }
+	public string shader { get; set; }
 
 	public static uwsettings instance;
 
-	
+
 }
 
 /// <summary>
@@ -26,7 +26,7 @@ internal class uwsettings
 /// </summary>
 public partial class main : Node3D
 {
-		
+
 	// Called when the node enters the scene tree for the first time.
 	[Export] public Camera3D cam;
 	//[Export] public MeshInstance3D mesh;
@@ -37,7 +37,7 @@ public partial class main : Node3D
 	//[Export] public TextureRect grey;
 	[Export] public uimanager uwUI;
 
-	double gameRefreshTimer=0f;
+	double gameRefreshTimer = 0f;
 	double cycletime = 0;
 	int NextPaletteCycle = 0;
 	public override void _Ready()
@@ -70,13 +70,13 @@ public partial class main : Node3D
 		switch (UWClass._RES)
 		{
 			case UWClass.GAME_UW2:
-				cam.Position = new Vector3(-23f, 4.3f, 58.2f);	
-						
+				cam.Position = new Vector3(-23f, 4.3f, 58.2f);
+
 				break;
 			default:
-				cam.Position = new Vector3(-38f, 4.2f, 2.2f); 
-				cam.Position = new Vector3(-43.9f, 3.6f, 1.59f);		
-				 break;
+				cam.Position = new Vector3(-38f, 4.2f, 2.2f);
+				cam.Position = new Vector3(-38.45f, 4.3f, 8.23f);
+				break;
 		}
 		cam.Rotate(Vector3.Up, (float)Math.PI);
 
@@ -208,8 +208,8 @@ public partial class main : Node3D
 		// uielem.Texture=cutimg;
 		// uielem.TextureFilter=CanvasItem.TextureFilterEnum.Nearest;
 
-		uwUI.InitUI();		
-		messageScroll.AddString(GameStrings.GetString(1,13));
+		uwUI.InitUI();
+		messageScroll.AddString(GameStrings.GetString(1, 13));
 		//Debug.Print($"{animationObjectDat.startFrame(459)}");
 	}
 
@@ -239,84 +239,92 @@ public partial class main : Node3D
 		//RenderingServer.GlobalShaderParameterSet("cameraPos", cam.Position);
 		cycletime += delta;
 		if (cycletime > 0.2)
-        {
-            cycletime = 0;
-            UpdatePaletteCycles();
-        }
-        gameRefreshTimer +=delta;
-		if(gameRefreshTimer>=0.3)
-        {
-            gameRefreshTimer = 0;
-            UpdateNPCs();
-            UpdateAnimationOverlays();
-        }
-    }
+		{
+			cycletime = 0;
+			UpdatePaletteCycles();
+		}
+		gameRefreshTimer += delta;
+		if (gameRefreshTimer >= 0.3)
+		{
+			gameRefreshTimer = 0;
+			UpdateNPCs();
+			UpdateAnimationOverlays();
+		}
+	}
 
-    private void UpdatePaletteCycles()
-    {
-        //Cycle the palette		
-        RenderingServer.GlobalShaderParameterSet("uwpalette", (Texture)PaletteLoader.cycledGamePalette[NextPaletteCycle]);
-        RenderingServer.GlobalShaderParameterSet("uwnpc", (Texture)PaletteLoader.cycledNPCPalette[NextPaletteCycle]);
+	private void UpdatePaletteCycles()
+	{
+		//Cycle the palette		
+		RenderingServer.GlobalShaderParameterSet("uwpalette", (Texture)PaletteLoader.cycledGamePalette[NextPaletteCycle]);
+		RenderingServer.GlobalShaderParameterSet("uwnpc", (Texture)PaletteLoader.cycledNPCPalette[NextPaletteCycle]);
 
-        NextPaletteCycle++;
+		NextPaletteCycle++;
 
-        if (NextPaletteCycle > PaletteLoader.cycledGamePalette.GetUpperBound(0))
-        {
-            NextPaletteCycle = 0;
-        }
-    }
-
-
-    private static void UpdateNPCs()
-    {
-        foreach (var n in ObjectCreator.npcs)
-        {
-            if (n.uwobject.tileY != 99)
-            {
-                n.uwobject.AnimationFrame++;
-                n.SetAnimSprite(n.uwobject.npc_animation, n.uwobject.AnimationFrame, n.uwobject.heading);
-            }
-        }
-    }
+		if (NextPaletteCycle > PaletteLoader.cycledGamePalette.GetUpperBound(0))
+		{
+			NextPaletteCycle = 0;
+		}
+	}
 
 
-    private static void UpdateAnimationOverlays()
-    {
-        foreach (var ovl in Underworld.TileMap.current_tilemap.Overlays)
-        {
-            if (ovl != null)
-            {
-                if (ovl.link != 0)
-                {
-                    if (ovl.Duration != 0)
-                    {
-                        var obj = Underworld.TileMap.current_tilemap.LevelObjects[ovl.link];
-                        if (obj != null)
-                        {
-                            if (obj.owner < animationObjectDat.endFrame(obj.item_id))
-                            { //animation in progress
-                                animo.AdvanceAnimo((animo)obj.instance);
-                            }
-                            else
-                            {
-                                if (ovl.Duration == 0xFFFF) 
-                                {//infinitely loop
-                                    animo.ResetAnimo((animo)obj.instance);
-                                }
-                                else
-                                {
-                                    ovl.Duration = 0;
-                                    //TODO Destroy the animo
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+	private static void UpdateNPCs()
+	{
+		foreach (var n in ObjectCreator.npcs)
+		{
+			if (n.uwobject.tileY != 99)
+			{
+				n.uwobject.AnimationFrame++;
+				n.SetAnimSprite(n.uwobject.npc_animation, n.uwobject.AnimationFrame, n.uwobject.heading);
+			}
+		}
+	}
 
-    public override void _Input(InputEvent @event)
+
+	private static void UpdateAnimationOverlays()
+	{
+		foreach (var ovl in Underworld.TileMap.current_tilemap.Overlays)
+		{
+			if (ovl != null)
+			{
+				if (ovl.link != 0)
+				{
+					if (ovl.Duration != 0)
+					{
+						var obj = Underworld.TileMap.current_tilemap.LevelObjects[ovl.link];
+						if (obj != null)
+						{
+							if (obj.classindex != 0xF)
+							{//animated sprite
+								if (obj.owner < animationObjectDat.endFrame(obj.item_id))
+								{ //animation in progress
+									animo.AdvanceAnimo((animo)obj.instance);
+								}
+								else
+								{
+									if (ovl.Duration == 0xFFFF)
+									{//infinitely loop
+										animo.ResetAnimo((animo)obj.instance);
+									}
+									else
+									{
+										ovl.Duration = 0;
+										//TODO Destroy the animo
+									}
+								}
+							}
+							else
+							{//a moving door
+								ovl.Duration--;
+								door.RotateDoor((door)obj.instance, 1);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public override void _Input(InputEvent @event)
 	{
 		float RayLength = 3.0f;
 		if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
@@ -327,19 +335,19 @@ public partial class main : Node3D
 			var query = PhysicsRayQueryParameters3D.Create(from, to);
 			var spaceState = GetWorld3D().DirectSpaceState;
 			var result = spaceState.IntersectRay(query);
-			if (result!=null)
+			if (result != null)
 			{
 				if (result.ContainsKey("collider"))
 				{
-				var obj = (StaticBody3D)result["collider"];
-				Debug.Print(obj.Name);
-				messageScroll.AddString(obj.Name);
-				string[] vals = obj.Name.ToString().Split("_");
-				if (int.TryParse(vals[0], out int objindex))
+					var obj = (StaticBody3D)result["collider"];
+					Debug.Print(obj.Name);
+					messageScroll.AddString(obj.Name);
+					string[] vals = obj.Name.ToString().Split("_");
+					if (int.TryParse(vals[0], out int objindex))
 					{
-						switch(uimanager.InteractionMode)
+						switch (uimanager.InteractionMode)
 						{
-							case  uimanager.InteractionModes.ModeLook:
+							case uimanager.InteractionModes.ModeLook:
 								//Do a look interaction with the object
 								look.LookAt(objindex, Underworld.TileMap.current_tilemap.LevelObjects);
 								break;
