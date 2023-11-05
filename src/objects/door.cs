@@ -91,9 +91,18 @@ namespace Underworld
         }
 
         public float GetRadiansForIndex(int index)
-        {
+        {            
             var unit = (Math.PI/2) / NoOfFrames;
-            return (float)(index * unit);
+            if (_RES==GAME_UW2)
+            {
+                //doors in uw2 rotate in the opposite direction apparently
+                 return -(float)(index * unit);
+            }
+            else
+            {
+                return (float)(index * unit);
+            }
+           
         }
 
         public float GetHeightForIndex(int index)
@@ -407,14 +416,23 @@ namespace Underworld
                 v[4] = new Vector3(-0.3125f * 1.2f, 0f, framethickness);  //rear
                 v[5] = new Vector3(-0.3125f * 1.2f, 0.8125f * 1.2f, framethickness); //frame //rear
                 v[6] = new Vector3(0.3125f * 1.2f, 0.8125f * 1.2f, framethickness);  //frame //rear
-                v[7] = new Vector3(0.3125f * 1.2f, 0f, framethickness);  //rear  
-
-                pivot = v[0];
-                for (int i = 1; i < 8; i++)
-                {   //translate away so that v[0] is at the model origin.
-                    v[i] -= v[0];
+                v[7] = new Vector3(0.3125f * 1.2f, 0f, framethickness);  //rear 
+                var pivotindex= 0;
+                if (_RES==GAME_UW2)
+                {
+                    pivotindex=4;// doors rotate the opposite direction in uw2
                 }
-                v[0] = Vector3.Zero;
+                pivot = v[pivotindex];
+                for (int i = 0; i < 8; i++)
+                {   //translate away so that v[0] is at the model origin.
+                if (i!=pivotindex)
+                    {
+                        v[i] -= v[pivotindex];
+                    }
+                    
+                }
+                v[pivotindex] = Vector3.Zero;
+        
                 return v;
             }
         }
