@@ -63,7 +63,7 @@ namespace Underworld
                     break;
                 case 7://Animos
                     {
-                        unimplemented = MajorClass7(obj, newparent, name);
+                        unimplemented = MajorClass7(obj, newparent, a_tilemap, name);
                         break;
                     }
                 default:
@@ -125,7 +125,7 @@ namespace Underworld
                 case 0: //doors
                     {
                         door.CreateInstance(parent, obj, a_tilemap, name);
-                        doorway.CreateInstance(parent, obj, a_tilemap, $"{obj.item_id}_doorway");
+                        doorway.CreateInstance(parent, obj, a_tilemap, name);
                         return false;
                     }
                 case 1: //3D Models
@@ -252,13 +252,15 @@ namespace Underworld
         }
 
 
-         private static bool MajorClass7(uwObject obj, Node3D parent, string name)
+         private static bool MajorClass7(uwObject obj, Node3D parent, TileMap a_tilemap, string name)
          {//animos and the moving door
             //class 7 has only a single minor class. jump straight to the class index
             switch (obj.classindex)
             {
                 case 0xF://moving door special case
-                    return true; //unimplemented.
+                        door.CreateInstance(parent, obj, a_tilemap, name);
+                        doorway.CreateInstance(parent, obj, a_tilemap, name);
+                        return false;                    
                 default:
                     animo.CreateInstance(parent, obj, name);
                     return false;

@@ -315,7 +315,7 @@ public partial class main : Node3D
 							else
 							{//a moving door
 								ovl.Duration--;
-								door.RotateDoor((door)obj.instance, 1);
+								door.MoveDoor((door)obj.instance, 1);
 							}
 						}
 					}

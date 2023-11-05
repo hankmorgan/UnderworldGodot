@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using Godot;
 
 namespace Underworld
@@ -46,7 +47,14 @@ namespace Underworld
         {
             get
             {
-                return ((uwobject.classindex == 6) || (uwobject.classindex == 0xE));
+                if (isMoving)
+                {//use the owner
+                    return ((uwobject.owner == 6) || (uwobject.owner == 0xE));
+                }
+                else
+                {
+                    return ((uwobject.classindex == 6) || (uwobject.classindex == 0xE));
+                }                
             }
         }
 
@@ -57,13 +65,27 @@ namespace Underworld
         {
             get
             {
-                if(isPortcullis)
-                {
-                    return 4;
+                if (isMoving)
+                {//return based on the owner
+                    if ((uwobject.owner==6) || (uwobject.owner==14))
+                    {
+                        return 4;
+                    }
+                    else
+                    {                        
+                        return 5;
+                    }
                 }
                 else
                 {
-                    return 5;
+                    if(isPortcullis)
+                    {
+                        return 4;
+                    }
+                    else
+                    {
+                        return 5;
+                    }
                 }
             }
         }
@@ -71,6 +93,12 @@ namespace Underworld
         public float GetRadiansForIndex(int index)
         {
             var unit = (Math.PI/2) / NoOfFrames;
+            return (float)(index * unit);
+        }
+
+        public float GetHeightForIndex(int index)
+        {
+            var unit = 0.8 / NoOfFrames;
             return (float)(index * unit);
         }
 
@@ -98,27 +126,34 @@ namespace Underworld
             d.doorNode = d.Generate3DModel(parent, name);
             d.doorNode.Position = d.pivot;
 
-            if (d.isOpen)
-            {
+            //if (d.isOpen)
+           // {
                 if (d.isPortcullis)
                 {//translate model up 1 unit
+                    // d.doorNode.Position
+                    //     = new Vector3
+                    //         (d.doorNode.Position.X,
+                    //         d.doorNode.Position.Z + 0.8f,
+                    //         d.doorNode.Position.Y
+                    //         );
                     d.doorNode.Position
                         = new Vector3
                             (d.doorNode.Position.X,
-                            d.doorNode.Position.Z + 0.8f,
+                            d.doorNode.Position.Z + d.GetHeightForIndex(d.uwobject.flags),
                             d.doorNode.Position.Y
                             );
 
                 }
                 else
                 {// rotate model 90 
-                    d.doorNode.Rotate(Vector3.Up, (float)(Math.PI / 2));
+                    //d.doorNode.Rotate(Vector3.Up, (float)(Math.PI / 2));
+                    d.doorNode.Rotate(Vector3.Up, d.GetRadiansForIndex(d.uwobject.flags));
                 }
-            }
-            else
-            {
-                d.position = parent.Position;
-            }
+            //}
+            //else
+            //{
+            //    d.position = parent.Position;
+            //}
 
             //DisplayModelPoints(d, parent, 30);
             return d;
@@ -156,8 +191,15 @@ namespace Underworld
             }
             else
             {
+                if (obj.isPortcullis)
+                {
+                obj.position = new Vector3(0f,obj.GetHeightForIndex(obj.NoOfFrames),0f);
+                }
+                else
+                {
                 //set to open without animation
                 obj.doorNode.Rotate(Vector3.Up, obj.GetRadiansForIndex(obj.NoOfFrames));
+                }               
             }
         }
         
@@ -177,6 +219,15 @@ namespace Underworld
             else
             {
                 //set to closed state without animation
+                if (obj.isPortcullis)
+                {
+                obj.position = new Vector3(0f,obj.GetHeightForIndex(0),0f);
+                }
+                else
+                {
+                //set to open without animation
+                obj.doorNode.Rotate(Vector3.Up, obj.GetRadiansForIndex(0));
+                }   
             }
         }
 
@@ -228,7 +279,7 @@ namespace Underworld
             }           
         }
 
-        public static void RotateDoor(door obj, int delta)
+        public static void MoveDoor(door obj, int delta)
         {
             var flags = (int)obj.uwobject.flags;
             if (obj.uwobject.owner<=7)
@@ -264,9 +315,17 @@ namespace Underworld
             }
             obj.uwobject.flags= (short)flags;
             Debug.Print($"Flags is now {obj.uwobject.flags}");
-            //Set rotate based on flags
-            obj.doorNode.Rotation=Vector3.Zero;
-            obj.doorNode.Rotate (Vector3.Up, obj.GetRadiansForIndex(obj.uwobject.flags)); 
+            if(obj.isPortcullis)
+            {
+            //Set z based on flags          
+                obj.doorNode.Position = new Vector3(0f,obj.GetHeightForIndex(obj.uwobject.flags),0f); //? (Vector3.Up, obj.GetRadiansForIndex(obj.uwobject.flags)); 
+            }
+            else
+            {
+                //Set rotate based on flags
+                obj.doorNode.Rotation=Vector3.Zero;
+                obj.doorNode.Rotate (Vector3.Up, obj.GetRadiansForIndex(obj.uwobject.flags)); 
+            }
         }
 
 
@@ -694,7 +753,7 @@ namespace Underworld
             dw.floorheight = a_tilemap.Tiles[tileX, tileY].floorHeight;//uses floorheight since portculli use zpos when opened // (float)(obj.zpos) / 4f; //a_tilemap.Tiles[tileX, tileY].floorHeight;
             //n.position = parent.Position;
             //a portcullis. 
-            
+
             dw.doorFrameNode = dw.Generate3DModel(parent, name);
             if (dw.isOpen)
             {//fix for map bug where some open doors extend out of the map. Force them onto a lower zpos without changing data
