@@ -55,14 +55,27 @@ namespace Underworld
         private ImageTexture[] UW2OptBtnsOff;
         private ImageTexture[] UW2OptBtnsOn;
 
+        public static GRLoader grBody;
+        public static GRLoader grArmour_F;
+        public static GRLoader grArmour_M;
+
+        [Export] public TextureRect HelmUW1;
+        [Export] public TextureRect ArmourUW1;
+        [Export] public TextureRect LeggingsUW1;
+        [Export] public TextureRect BootsUW1;
+        [Export] public TextureRect GlovesUW1;
+        public TextureRect RingLeftUW1;
+        public TextureRect RingRightUW2;
+
+
+
         public static BytLoader byt;
+
 
         static uimanager()
         {
 
         }
-
-
 
         public void InitUI()
         {
@@ -71,6 +84,13 @@ namespace Underworld
             grCursors = new GRLoader(GRLoader.CURSORS_GR, GRLoader.GRShaderMode.UIShader);
             grObjects = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.UIShader);
             grLfti = new GRLoader(GRLoader.LFTI_GR, GRLoader.GRShaderMode.UIShader);
+            grArmour_F = new GRLoader(GRLoader.ARMOR_F_GR, GRLoader.GRShaderMode.UIShader);
+            grArmour_M = new GRLoader(GRLoader.ARMOR_M_GR, GRLoader.GRShaderMode.UIShader);
+
+            // for (int i=0; i<grArmour_F.ImageCache.GetUpperBound(0);i++)
+            // {
+            //    grArmour_F.LoadImageAt(i).GetImage().SavePng(System.IO.Path.Combine("c:\\temp",$"armourf_{i}.png"));
+            // }
             if (UWClass._RES == UWClass.GAME_UW2)
             {
                 UW2OptBtnsOff = new ImageTexture[6];
@@ -202,10 +222,6 @@ namespace Underworld
                     }
                 }
             }
-
-
         }
-
-
     } //end class
 }   //end namespace
