@@ -300,6 +300,16 @@ namespace Underworld
                 // end of while loop
             }
         }
+
+        public static ImageTexture CropImage(Image src, Rect2I rect)
+        {
+            var img = Godot.Image.Create(rect.Size.X, rect.Size.Y, false, src.GetFormat());
+            img.BlitRect(src, rect, Vector2I.Zero);
+            var tex = new ImageTexture();
+            tex.SetImage(img);
+            return tex;
+        }
+
     }//class artloader
 
 } //namespace

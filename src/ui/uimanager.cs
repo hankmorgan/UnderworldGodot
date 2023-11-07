@@ -3,7 +3,7 @@ using Godot;
 
 namespace Underworld
 {
-    public partial class uimanager:Node2D
+    public partial class uimanager : Node2D
     {
         public static uimanager instance;
 
@@ -16,10 +16,9 @@ namespace Underworld
             ModeLook = 3,
             ModeAttack = 4,
             ModeUse = 5
-
         };
 
-        public static InteractionModes InteractionMode= InteractionModes.ModeUse ;
+        public static InteractionModes InteractionMode = InteractionModes.ModeUse;
 
         [Export]
         public Camera3D cam;
@@ -43,14 +42,18 @@ namespace Underworld
 
         //Array to store the interaction mode mo
         [Export] public Godot.TextureButton[] InteractionButtonsUW1 = new Godot.TextureButton[6];
-        //[Export] public Godot.TextureButton[] InteractionButtonsUW2 = new Godot.TextureButton[6];
- 
+        [Export] public Godot.TextureButton[] InteractionButtonsUW2 = new Godot.TextureButton[6];
+
         public static bool Fullscreen = false;
-    
-        public static GRLoader grCursors; 
-		public static GRLoader grObjects; 
+
+        public static GRLoader grCursors;
+        public static GRLoader grObjects;
 
         public static GRLoader grLfti;
+
+        public static GRLoader grOptBtns;
+        private ImageTexture[] UW2OptBtnsOff;
+        private ImageTexture[] UW2OptBtnsOn;
 
         public static BytLoader byt;
 
@@ -59,32 +62,60 @@ namespace Underworld
 
         }
 
+
+
         public void InitUI()
         {
             instance = this;
 
             grCursors = new GRLoader(GRLoader.CURSORS_GR, GRLoader.GRShaderMode.UIShader);
             grObjects = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.UIShader);
-            grLfti = new GRLoader(GRLoader.LFTI_GR, GRLoader.GRShaderMode.UIShader);           
+            grLfti = new GRLoader(GRLoader.LFTI_GR, GRLoader.GRShaderMode.UIShader);
+            if (UWClass._RES == UWClass.GAME_UW2)
+            {
+                UW2OptBtnsOff = new ImageTexture[6];
+                UW2OptBtnsOn = new ImageTexture[6];
+                grOptBtns = new GRLoader(GRLoader.OPTBTNS_GR, GRLoader.GRShaderMode.UIShader);
+                var Off = grOptBtns.LoadImageAt(0).GetImage();
+                var On = grOptBtns.LoadImageAt(1).GetImage();
+                UW2OptBtnsOff[4] = ArtLoader.CropImage(Off, new Rect2I(0, 0, 25, 14)); //attack button off
+                UW2OptBtnsOn[4] = ArtLoader.CropImage(On, new Rect2I(0, 0, 25, 14)); //attack button on
+
+                UW2OptBtnsOff[5] = ArtLoader.CropImage(Off, new Rect2I(26, 0, 25, 14)); //use button off
+                UW2OptBtnsOn[5] = ArtLoader.CropImage(On, new Rect2I(26, 0, 25, 14)); //use button on
+
+                UW2OptBtnsOff[2] = ArtLoader.CropImage(Off, new Rect2I(52, 0, 25, 14)); //pickup button off
+                UW2OptBtnsOn[2] = ArtLoader.CropImage(On, new Rect2I(52, 0, 25, 14)); //pickup button on
+
+                UW2OptBtnsOff[1] = ArtLoader.CropImage(Off, new Rect2I(0, 15, 25, 14)); //talk button off
+                UW2OptBtnsOn[1] = ArtLoader.CropImage(On, new Rect2I(0, 15, 25, 14)); //talk button on
+
+                UW2OptBtnsOff[3] = ArtLoader.CropImage(Off, new Rect2I(26, 15, 25, 14)); //look button off
+                UW2OptBtnsOn[3] = ArtLoader.CropImage(On, new Rect2I(26, 15, 25, 14)); //look button on
+
+                UW2OptBtnsOff[0] = ArtLoader.CropImage(Off, new Rect2I(52, 15, 25, 14)); //options button off
+                UW2OptBtnsOn[0] = ArtLoader.CropImage(On, new Rect2I(52, 15, 25, 14)); //option button on
+
+            }
             byt = new BytLoader();
 
-            mousecursor.InitCursor(); 
-            EnableDisable(placeholderuw1,false);
-            EnableDisable(placeholderuw2,false);
+            mousecursor.InitCursor();
+            EnableDisable(placeholderuw1, false);
+            EnableDisable(placeholderuw2, false);
 
             EnableDisable(uw1UI, UWClass._RES == UWClass.GAME_UW1);
-            EnableDisable(uw2UI, UWClass._RES != UWClass.GAME_UW1);  
+            EnableDisable(uw2UI, UWClass._RES != UWClass.GAME_UW1);
 
             //EnableDisable(mainwindowUW1, UWClass._RES == UWClass.GAME_UW1);
             //EnableDisable(mainwindowUW2, UWClass._RES != UWClass.GAME_UW1);  
 
             //EnableDisable(messageScrollUW1, UWClass._RES == UWClass.GAME_UW1);
             //EnableDisable(messageScrollUW2, UWClass._RES != UWClass.GAME_UW1);  
-            
-            switch(UWClass._RES)  
+
+            switch (UWClass._RES)
             {
                 case UWClass.GAME_UW2:
-                    mainwindowUW2.Texture = byt.LoadImageAt(BytLoader.UW2ThreeDWin_BYT,true);
+                    mainwindowUW2.Texture = byt.LoadImageAt(BytLoader.UW2ThreeDWin_BYT, true);
                     if (!Fullscreen)
                     {
                         // uwviewport.SetSize(new Vector2(840f,512f));
@@ -92,42 +123,49 @@ namespace Underworld
                         // uwsubviewport.Size = new Vector2I(840,512);
                     }
 
+                    for (int i = 0; i <= InteractionButtonsUW2.GetUpperBound(0); i++)
+                    {
+                        InteractionButtonsUW2[i].TexturePressed = UW2OptBtnsOn[i]; // grLfti.LoadImageAt(i*2 + 1,false);
+                        InteractionButtonsUW2[i].TextureNormal = UW2OptBtnsOff[i]; //grLfti.LoadImageAt(i*2,false);  
+                        InteractionButtonsUW2[i].SetPressedNoSignal((i == (int)InteractionMode));
+                    }
+
                     break;
                 default:
-                    mainwindowUW1.Texture = byt.LoadImageAt(BytLoader.MAIN_BYT,true);
+                    mainwindowUW1.Texture = byt.LoadImageAt(BytLoader.MAIN_BYT, true);
                     if (!Fullscreen)
                     {
                         // uwviewport.SetSize(new Vector2(700f,456f));
                         // uwviewport.Position = new Vector2(200f,72f);
                         // uwsubviewport.Size = new Vector2I(700,456);
                     }
-                     //grLfti.ExportImages("c:\\temp\\lfti\\");
-                    for (int i =0 ; i<= InteractionButtonsUW1.GetUpperBound(0);i++)
+                    //grLfti.ExportImages("c:\\temp\\lfti\\");
+                    for (int i = 0; i <= InteractionButtonsUW1.GetUpperBound(0); i++)
                     {
-                        InteractionButtonsUW1[i].TexturePressed = grLfti.LoadImageAt(i*2 + 1,false);
-                        InteractionButtonsUW1[i].TextureNormal = grLfti.LoadImageAt(i*2,false);  
-                        InteractionButtonsUW1[i].SetPressedNoSignal((i == (int)InteractionMode) );
+                        InteractionButtonsUW1[i].TexturePressed = grLfti.LoadImageAt(i * 2 + 1, false);
+                        InteractionButtonsUW1[i].TextureNormal = grLfti.LoadImageAt(i * 2, false);
+                        InteractionButtonsUW1[i].SetPressedNoSignal((i == (int)InteractionMode));
                     }
                     break;
             }
 
-        } 
+        }
 
-        static void EnableDisable (Control ctrl, bool state)
+        static void EnableDisable(Control ctrl, bool state)
         {
-            if (ctrl!=null)
+            if (ctrl != null)
             {
-                ctrl.Visible=state;
+                ctrl.Visible = state;
             }
-        }     
+        }
 
-        static void EnableDisable (CanvasLayer ctrl, bool state)
+        static void EnableDisable(CanvasLayer ctrl, bool state)
         {
-            if (ctrl!=null)
+            if (ctrl != null)
             {
-                ctrl.Visible=state;
+                ctrl.Visible = state;
             }
-        }  
+        }
 
 
         /// <summary>
@@ -139,18 +177,35 @@ namespace Underworld
 
         public void InteractionModeToggle(InteractionModes index)
         {
-           Debug.Print($"Press {index}");
+            Debug.Print($"Press {index}");
 
-           for (int i=0; i<=instance.InteractionButtonsUW1.GetUpperBound(0);i++)
-           {
-                InteractionButtonsUW1[i].SetPressedNoSignal(i==(int)(index)); 
-                if (i==(int)(index))    
+            if (UWClass._RES == UWClass.GAME_UW2)
+            {
+
+                for (int i = 0; i <= instance.InteractionButtonsUW2.GetUpperBound(0); i++)
                 {
-                    InteractionMode = index;
-                }           
-           }
-        } 
+                    InteractionButtonsUW2[i].SetPressedNoSignal(i == (int)(index));
+                    if (i == (int)(index))
+                    {
+                        InteractionMode = index;
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i <= instance.InteractionButtonsUW1.GetUpperBound(0); i++)
+                {
+                    InteractionButtonsUW1[i].SetPressedNoSignal(i == (int)(index));
+                    if (i == (int)(index))
+                    {
+                        InteractionMode = index;
+                    }
+                }
+            }
 
-        
+
+        }
+
+
     } //end class
 }   //end namespace

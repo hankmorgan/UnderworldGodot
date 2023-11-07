@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://13uofwemp67y"]
+[gd_scene load_steps=21 format=3 uid="uid://13uofwemp67y"]
 
 [ext_resource type="Script" path="res://src/ui/uimanager.cs" id="1_lw0yg"]
 [ext_resource type="Script" path="res://src/ui/mouseCursor.cs" id="4_gnu1s"]
@@ -15,6 +15,8 @@
 [ext_resource type="Texture2D" uid="uid://w3pet1fmhrgp" path="res://resources/placeholder_art/uw1lfti/4.png" id="10_63i0w"]
 [ext_resource type="Texture2D" uid="uid://8hg7a1ttaly6" path="res://resources/placeholder_art/uw1lfti/6.png" id="12_3hev6"]
 [ext_resource type="Texture2D" uid="uid://hyq11h2le5c0" path="res://resources/placeholder_art/uw1lfti/8.png" id="14_nhhdh"]
+[ext_resource type="Texture2D" uid="uid://2fndhxavasa7" path="res://resources/placeholder_art/uw2optbtn/optbtn.png" id="14_skaqq"]
+[ext_resource type="Texture2D" uid="uid://b1lj1mh50p8a1" path="res://resources/placeholder_art/uw2optbtn/uw2attackbutton.png" id="15_f0cyy"]
 [ext_resource type="Texture2D" uid="uid://2qekjomlpnxd" path="res://resources/placeholder_art/uw1lfti/10.png" id="16_kxj2a"]
 
 [sub_resource type="AudioStreamWAV" id="AudioStreamWAV_tkk82"]
@@ -28,7 +30,7 @@ shader = ExtResource("6_x6exc")
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2", "InteractionButtonsUW1")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2", "InteractionButtonsUW1", "InteractionButtonsUW2")]
 script = ExtResource("1_lw0yg")
 cam = NodePath("../../Camera3D")
 mousecursor = NodePath("../mouse/mouseCursor")
@@ -41,11 +43,13 @@ messageScrollUW2 = NodePath("../UW2/messageScrollUW2")
 placeholderuw1 = NodePath("../UW1/placeholdermainuw1")
 placeholderuw2 = NodePath("../UW2/placeholdermainuw2")
 InteractionButtonsUW1 = [NodePath("../UW1/OptionsButtonUW1"), NodePath("../UW1/TalkButtonUW1"), NodePath("../UW1/PickupButtonUW1"), NodePath("../UW1/LookButtonUW1"), NodePath("../UW1/AttackButtonUW1"), NodePath("../UW1/UseButtonUW1")]
+InteractionButtonsUW2 = [NodePath("../UW2/OptionsButtonUW2"), NodePath("../UW2/TalkButtonUW2"), NodePath("../UW2/PickupButtonUW2"), NodePath("../UW2/LookButtonUW2"), NodePath("../UW2/AttackButtonUW2"), NodePath("../UW2/UseButtonUW2")]
 
 [node name="AudioPlayer" type="AudioStreamPlayer" parent="UI"]
 stream = SubResource("AudioStreamWAV_tkk82")
 
 [node name="UW1" type="CanvasLayer" parent="UI"]
+visible = false
 
 [node name="placeholdermainuw1" type="TextureRect" parent="UI/UW1"]
 offset_right = 1280.0
@@ -155,7 +159,6 @@ script = ExtResource("8_0sew3")
 index = 5
 
 [node name="UW2" type="CanvasLayer" parent="UI"]
-visible = false
 
 [node name="placeholdermainuw2" type="TextureRect" parent="UI/UW2"]
 offset_right = 1280.0
@@ -196,6 +199,78 @@ line 2
 line 3
 line 4
 aaaaaaaaaaaaaaaaaaa"
+
+[node name="OPTBTNPLACEHOLDER" type="TextureRect" parent="UI/UW2"]
+offset_left = 971.0
+offset_top = 682.0
+offset_right = 1279.0
+offset_bottom = 798.0
+texture = ExtResource("14_skaqq")
+
+[node name="OptionsButtonUW2" type="TextureButton" parent="UI/UW2"]
+offset_left = 1179.0
+offset_top = 742.0
+offset_right = 1279.0
+offset_bottom = 798.0
+toggle_mode = true
+texture_normal = ExtResource("15_f0cyy")
+stretch_mode = 0
+script = ExtResource("8_0sew3")
+
+[node name="TalkButtonUW2" type="TextureButton" parent="UI/UW2"]
+offset_left = 971.0
+offset_top = 742.0
+offset_right = 1071.0
+offset_bottom = 798.0
+toggle_mode = true
+texture_normal = ExtResource("15_f0cyy")
+stretch_mode = 0
+script = ExtResource("8_0sew3")
+index = 1
+
+[node name="PickupButtonUW2" type="TextureButton" parent="UI/UW2"]
+offset_left = 1179.0
+offset_top = 682.0
+offset_right = 1279.0
+offset_bottom = 738.0
+toggle_mode = true
+texture_normal = ExtResource("15_f0cyy")
+stretch_mode = 0
+script = ExtResource("8_0sew3")
+index = 2
+
+[node name="LookButtonUW2" type="TextureButton" parent="UI/UW2"]
+offset_left = 1075.0
+offset_top = 742.0
+offset_right = 1175.0
+offset_bottom = 798.0
+toggle_mode = true
+texture_normal = ExtResource("15_f0cyy")
+stretch_mode = 0
+script = ExtResource("8_0sew3")
+index = 3
+
+[node name="AttackButtonUW2" type="TextureButton" parent="UI/UW2"]
+offset_left = 971.0
+offset_top = 682.0
+offset_right = 1071.0
+offset_bottom = 738.0
+toggle_mode = true
+texture_normal = ExtResource("15_f0cyy")
+stretch_mode = 0
+script = ExtResource("8_0sew3")
+index = 4
+
+[node name="UseButtonUW2" type="TextureButton" parent="UI/UW2"]
+offset_left = 1075.0
+offset_top = 682.0
+offset_right = 1175.0
+offset_bottom = 738.0
+toggle_mode = true
+texture_normal = ExtResource("15_f0cyy")
+stretch_mode = 0
+script = ExtResource("8_0sew3")
+index = 5
 
 [node name="mouse" type="CanvasLayer" parent="UI"]
 
