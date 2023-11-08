@@ -7,6 +7,7 @@ namespace Underworld
     {
         public static bool LookAt(int index, uwObject[] objList)
         {
+            bool result=false;
             trap.ObjectThatStartedChain = index;
             if (index<=objList.GetUpperBound(0))
             {
@@ -15,12 +16,28 @@ namespace Underworld
                 {
                     case 5:
                         {
-                            return LookMajorClass5(obj,objList);
+                            result =  LookMajorClass5(obj,objList);
+                            break;
                         }
                     
                 }
-                //default string
+                if ((obj.is_quant == 0) && (obj.link != 0))
+                {
+                    var linkedObj = objList[obj.link];
+                    if (linkedObj.item_id == 419)
+                    {
+                        trigger.LookTrigger(
+                            srcObject: obj,
+                            triggerIndex: obj.link,
+                            objList: objList);
+                        return true;
+                    }
+                }               
+                if (!result)
+                {
+                //default string  when no overriding action has occured           
                 messageScroll.AddString(GameStrings.GetObjectNounUW(obj.item_id));
+                }
             }
 
             return false;

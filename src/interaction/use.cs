@@ -5,35 +5,37 @@ namespace Underworld
     /// <summary>
     /// Class for interactions involving the use verb
     /// </summary>
-    public class use:UWClass
+    public class use : UWClass
     {
         public static bool Use(int index, uwObject[] objList)
         {
             trap.ObjectThatStartedChain = index;
-            bool result;
-            if (index<=objList.GetUpperBound(0))
+            bool result=false;
+            if (index <= objList.GetUpperBound(0))
             {
                 var obj = objList[index];
                 switch (obj.majorclass)
                 {
                     case 5:
                         {
-                            result = UseMajorClass5(obj,objList);
+                            result = UseMajorClass5(obj, objList);
                             break;
-                        }                    
+                        }
                 }
                 //Check for use trigger on this action and try activate if so.
-                if ((obj.is_quant==0) && (obj.link!=0))
-                {                    
-                    trigger.UseTrigger(
-                        srcObject: obj, 
-                        triggerIndex: obj.link, 
+                if ((obj.is_quant == 0) && (obj.link != 0))
+                {
+                    result = trigger.UseTrigger(
+                        srcObject: obj,
+                        triggerIndex: obj.link,
                         objList: objList);
-                    return true;
                 }
             }
-          
-            messageScroll.AddString(GameStrings.GetString(1,GameStrings.str_you_cannot_use_that_));
+        if (!result)
+        {
+ messageScroll.AddString(GameStrings.GetString(1, GameStrings.str_you_cannot_use_that_));
+        }
+           
             return false;
         }
 
@@ -42,10 +44,10 @@ namespace Underworld
             switch (obj.minorclass)
             {
                 case 0: // Doors
-                {
-                    return door.Use(obj);
+                    {
+                        return door.Use(obj);
 
-                }
+                    }
                 case 2: //misc objects including readables
                     {
                         switch (obj.classindex)
@@ -65,7 +67,7 @@ namespace Underworld
                     }
                 case 3: //buttons
                     {
-                    
+
                         return button.Use(obj);
                     }
 

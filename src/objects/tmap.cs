@@ -39,7 +39,7 @@ namespace Underworld
                 // UWHUD.instance.CutScenesSmall.anim.SetAnimation = "VolcanoWindow_" + GameWorldController.instance.dungeon_level;
                 // UWHUD.instance.CutScenesSmall.anim.looping = true;
             }
-            return true;
+            return true; //prevents the default you cannot use message
         }
 
 
