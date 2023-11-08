@@ -9,7 +9,7 @@ namespace Underworld
             var b = new bench(obj);
             var modelNode = b.Generate3DModel(parent, name);
             SetModelRotation(parent, b);
-            DisplayModelPoints(b,parent);
+            //DisplayModelPoints(b,parent);
             return b;
         }
 

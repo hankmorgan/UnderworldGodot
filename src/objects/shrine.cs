@@ -10,10 +10,10 @@ namespace Underworld
 
         public static shrine CreateInstance(Node3D parent, uwObject obj, string name)
         {
-            var n = new shrine(obj);
-            var modelNode = n.Generate3DModel(parent, name);
-            SetModelRotation(parent, n);
-            return n;
+            var s = new shrine(obj);
+            var modelNode = s.Generate3DModel(parent, name);
+            SetModelRotation(parent, s);
+            return s;
         }
 
         public override Vector3[] ModelVertices()

@@ -128,7 +128,15 @@ namespace Underworld
             }
             else
             {
-                d.texture = d.uwobject.item_id & 0x7;
+                if(_RES==GAME_UW2)
+                {
+                    d.texture = a_tilemap.texture_map[64+ (d.uwobject.item_id & 0x7)];
+                }
+                else
+                {
+                    d.texture = a_tilemap.texture_map[58 + (d.uwobject.item_id & 0x7)];
+                }
+                
             }
 
             d.floorheight = a_tilemap.Tiles[tileX, tileY].floorHeight;
