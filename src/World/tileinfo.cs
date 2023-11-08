@@ -41,6 +41,7 @@ namespace Underworld
 
         /// <summary>
         /// How high is the floor.
+        /// Value is multipled by 2 for rendering purposes.
         /// </summary>
         public short floorHeight
         {
@@ -52,7 +53,7 @@ namespace Underworld
             {
                 int val = map.lev_ark_block.Data[Ptr];
                 val &= 0x0F;
-                val |= (((value / 2) & 0xF) << 4);
+                val |= ((value / 2) & 0xF) << 4;
                 map.lev_ark_block.Data[Ptr] = (byte)val;
             }
         }

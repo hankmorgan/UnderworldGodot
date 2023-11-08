@@ -9,6 +9,7 @@ namespace Underworld
     public class tileMapRender : UWClass
     {
 
+        public static Node3D worldnode;
         const int TILE_SOLID = 0;
         const int TILE_OPEN = 1;
 
@@ -74,6 +75,7 @@ namespace Underworld
 
         public static void GenerateLevelFromTileMap(Node3D parent, Node3D sceneryParent, string game, TileMap Level, uwObject[] objList, bool UpdateOnly)
         {
+            worldnode = parent;
             CEILING_HEIGHT = TileMap.UW_CEILING_HEIGHT;
 
             if (!UpdateOnly)

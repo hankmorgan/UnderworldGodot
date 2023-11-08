@@ -4,10 +4,12 @@ namespace Underworld
     public class buttonrotary:model3D
     {
 
+        Node3D modelNode;
+
         public static buttonrotary CreateInstance(Node3D parent, uwObject obj, string name)
         {
             var b = new buttonrotary(obj);
-            var modelNode = b.Generate3DModel(parent, name);
+            b.modelNode =  b.Generate3DModel(parent, name);
             SetModelRotation(parent, b);
             //DisplayModelPoints(b, modelNode);
             return b;
@@ -16,10 +18,29 @@ namespace Underworld
         public buttonrotary(uwObject _uwobject)
         {
             uwobject = _uwobject;
+            uwobject.instance = this;
+        }
+
+        public static bool Use(uwObject obj)
+        {
+            var flagvalue = obj.flags;
+            flagvalue++;
+            obj.flags = (short)(flagvalue & 0x7); //clamp value between 0 and 7;
+
+            if (obj.instance !=null)
+            {
+                int startIndex = obj.item_id-353;
+                var newmaterial = GetTmObj.GetMaterial(4  + (startIndex * 8) + obj.flags);
+                var _button = (buttonrotary)obj.instance;
+                var mdl = (MeshInstance3D)(_button.modelNode);
+                mdl.Mesh.SurfaceSetMaterial(0,newmaterial);         
+            }    
+
+            return true;
         }
 
 
-public override Vector3[] ModelVertices()
+    public override Vector3[] ModelVertices()
         {
             var v = new Vector3[4];
             v[0] = new Vector3(-0.0625f, 0f, 0.0625f);

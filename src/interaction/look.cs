@@ -7,6 +7,7 @@ namespace Underworld
     {
         public static bool LookAt(int index, uwObject[] objList)
         {
+            trap.ObjectThatStartedChain = index;
             if (index<=objList.GetUpperBound(0))
             {
                 var obj = objList[index];

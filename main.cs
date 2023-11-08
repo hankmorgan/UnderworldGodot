@@ -61,7 +61,7 @@ public partial class main : Node3D
 				break;
 			default:
 				cam.Position = new Vector3(-38f, 4.2f, 2.2f);
-				cam.Position = new Vector3(-38.45f, 4.3f, 8.23f);
+				cam.Position = new Vector3(-67.9f, 4.6f, 55.23f);
 				break;
 		}
 		cam.Rotate(Vector3.Up, (float)Math.PI);
@@ -206,7 +206,7 @@ public partial class main : Node3D
 
 		Node3D worldobjects = GetNode<Node3D>("/root/Node3D/worldobjects");
 		Node3D the_tiles = GetNode<Node3D>("/root/Node3D/tilemap");
-
+//tilemap/Tile_30_00
 		LevArkLoader.LoadLevArkFileData(folder: uwsettings.instance.levarkfolder);
 		Underworld.TileMap.current_tilemap = new(newLevelNo);
 

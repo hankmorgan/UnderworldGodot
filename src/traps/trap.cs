@@ -5,6 +5,7 @@ namespace Underworld
 {
     public class trap:UWClass
     {
+        public static int ObjectThatStartedChain=0;
 
         public static void ActivateTrap(uwObject triggerObj, int trapIndex, uwObject[] objList)
         {
@@ -22,6 +23,14 @@ namespace Underworld
                         {
                             switch(trapObj.classindex)
                             {
+                                case 3:// Do and hack traps
+                                {
+                                    hack_trap.ActivateHackTrap( 
+                                            trapObj: trapObj,
+                                            triggerObj: triggerObj,
+                                            objList: objList);
+                                    break;
+                                }
                                 case 8://door trap
                                 {
                                     a_door_trap.activate(triggerObj, trapObj, objList);

@@ -1,12 +1,15 @@
+using System.Runtime.Serialization.Formatters;
+
 namespace Underworld
 {
     /// <summary>
-    /// Class for interactions involving the look verb
+    /// Class for interactions involving the use verb
     /// </summary>
     public class use:UWClass
     {
         public static bool Use(int index, uwObject[] objList)
         {
+            trap.ObjectThatStartedChain = index;
             bool result;
             if (index<=objList.GetUpperBound(0))
             {
@@ -21,7 +24,7 @@ namespace Underworld
                 }
                 //Check for use trigger on this action and try activate if so.
                 if ((obj.is_quant==0) && (obj.link!=0))
-                {
+                {                    
                     trigger.UseTrigger(
                         srcObject: obj, 
                         triggerIndex: obj.link, 
@@ -47,6 +50,9 @@ namespace Underworld
                     {
                         switch (obj.classindex)
                         {
+                            case 1:
+                            case 2: //rotary switches                                
+                                return buttonrotary.Use(obj);
                             case 6: // a readable sign. interaction is also a look
                                 return writing.LookAt(obj);
                             case 0xE://tmap
@@ -59,6 +65,7 @@ namespace Underworld
                     }
                 case 3: //buttons
                     {
+                    
                         return button.Use(obj);
                     }
 
