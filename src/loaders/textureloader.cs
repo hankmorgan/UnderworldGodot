@@ -159,7 +159,7 @@ namespace Underworld
             {
                 //create this material and add it to the list
                 var newmaterial = new ShaderMaterial();
-                newmaterial.Shader = textureshader;
+                newmaterial.Shader = textureshader;                
                 newmaterial.SetShaderParameter("texture_albedo", (Texture)LoadImageAt(textureno));
                 newmaterial.SetShaderParameter("albedo", new Color(1, 1, 1, 1));
                 newmaterial.SetShaderParameter("uv1_scale", new Vector3(1, 1, 1));

@@ -292,7 +292,7 @@ public partial class main : Node3D
 			{
 				if (ovl.link != 0)
 				{
-					if ((ovl.Duration != 0) && (ovl.Duration != 65535))
+					if (ovl.Duration != 0)
 					{
 						var obj = Underworld.TileMap.current_tilemap.LevelObjects[ovl.link];
 						if (obj != null)
