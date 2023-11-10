@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Godot;
 
 namespace Underworld
 {
@@ -961,11 +962,17 @@ namespace Underworld
 
         public Godot.Vector3 GetCoordinate(int tileX, int tileY)
         {//godot is y-up     
-            float offX = GetXYCoordinate(tileX, xpos);
-            float offY = GetXYCoordinate(tileY, ypos);
-            float offZ = GetZCoordinate(zpos);            
-            return new Godot.Vector3(-offX , offZ, offY);  //x is neg. probably technical debt from a bug in the unity version
+            return GetCoordinate(tileX, tileY, this.xpos, this.ypos, this.zpos);
         }
+
+        public static Vector3 GetCoordinate(int tileX, int tileY, int _xpos, int _ypos, int _zpos)
+        {
+            float offX = GetXYCoordinate(tileX, _xpos);
+            float offY = GetXYCoordinate(tileY, _ypos);
+            float offZ = GetZCoordinate(_zpos);
+            return new Godot.Vector3(-offX, offZ, offY);  //x is neg. probably technical debt from a bug in the unity version
+        }
+
 
         /// <summary>
         /// Gets the world x or y coordinate for a given x or y value

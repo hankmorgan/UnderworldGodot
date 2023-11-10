@@ -59,6 +59,7 @@ namespace Underworld
         public static GRLoader grArmour_F;
         public static GRLoader grArmour_M;
 
+        [Export] public TextureRect BodyUW1;
         [Export] public TextureRect HelmUW1;
         [Export] public TextureRect ArmourUW1;
         [Export] public TextureRect LeggingsUW1;

@@ -443,6 +443,7 @@ namespace Underworld
                             {//Copy the data to the block.
                                 uwb.Data[b++] = arkData[i];
                             }
+                            File.WriteAllBytes($"c:\\temp\\unpacked_{blockNo}.dat", uwb.Data);
                             return true;
                         }
                         else

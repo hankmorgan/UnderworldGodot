@@ -1,5 +1,6 @@
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Underworld
 {
@@ -118,38 +119,30 @@ namespace Underworld
             buffer[0] = pDat[0];
             return buffer;
         } //end decrypt uw2
-
-
         public static byte GetAt(int index)
         {
             return pdat[index];
         }
-
         public static int GetAt16(int index)
         {
             return (int)DataLoader.getAt(pdat, index, 16);
         }
-
         public static int GetAt32(int index)
         {
             return  (int)DataLoader.getAt(pdat,index,32);
         }
-
         public static void SetAt(int index, byte value)
         {
             pdat[index] = value;
         }
-
         public static void SetAt16(int index, int value)
         {
             DataLoader.setAt(pdat, index, 16, value);
         }
-
         public static void SetAt32(int index, int value)
         {
             DataLoader.setAt(pdat, index, 32, value);
         }
-
         public static string CharName
         {
             get
@@ -181,8 +174,7 @@ namespace Underworld
                     }
                 }
         }
-
-        public int Body 
+        public static int Body 
         {
             get
             {
@@ -201,8 +193,7 @@ namespace Underworld
                 SetAt(offset, existingValue);
             }
         }
-
-        public int CharClass
+        public static int CharClass
         {
             get
             {
@@ -221,14 +212,12 @@ namespace Underworld
                 SetAt(offset, existingValue);
             }
         }
-
-        public int CharLevel
+        public static int CharLevel
         {
             get { return GetAt(0x3E); }
             set { SetAt(0x3E, (byte)value); }
         }
-
-        public int Exp
+        public static  int Exp
         {
             get
             {
@@ -239,14 +228,12 @@ namespace Underworld
                 SetAt32(0x4F, value * 10);
             }
         }
-
-        public int TrainingPoints
+        public static  int TrainingPoints
         {
             get { return GetAt(0x53); }
             set { SetAt(0x53, (byte)value); }
         }
-
-        public bool isFemale
+        public static bool isFemale
         {
             get
             {
@@ -271,8 +258,7 @@ namespace Underworld
                 SetAt(offset, existingValue);
             }
         }
-
-        public bool isLefty
+        public static bool isLefty
         {
             get
             {
@@ -297,8 +283,100 @@ namespace Underworld
                 SetAt(offset, existingValue);
             }
         }
-
+       
+        //Location Data
+        public static int dungeon_level
+        {
+            get
+            {
+                return GetAt(0x5D);
+            }
+            set
+            {
+                SetAt(0x53,(byte)value);
+            }
+        }
         //Character attributes
+        public static int X
+        {
+            get
+            {
+                return GetAt16(0x55);
+            }
+        }
+
+        public static int tileX
+        {
+            get
+            {
+                return X>>8;
+            }
+        }
+
+        public static int Y
+        {
+            get
+            {
+                return GetAt16(0x57);
+            }
+        }
+
+        public static int xpos
+        {
+            get
+            {
+                return X & 0x7;// need to confirm if correct
+            }
+        }
+        public static int tileY
+        {
+            get
+            {
+                return Y>>8;
+            }
+        }
+
+        public static int ypos
+        {
+            get
+            {
+                return Y & 0x7;// need to confirm if correct
+            }
+        }
+        
+        public static int Z
+        {
+            get
+            {
+                return GetAt16(0x59);
+            }
+        }
+
+        public static int zpos
+        {
+            get
+            {
+                return Z>>3;
+            }
+        }
+
+        public static int camerazpos
+        {
+            get
+            {
+                return zpos + commonObjDat.height(127);
+            }
+        }
+
+        public static int heading
+        {
+            get
+            {
+                return GetAt(0x5C);
+            }
+        }
+
+
         public static int STR
         {
             get

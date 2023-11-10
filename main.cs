@@ -185,7 +185,7 @@ public partial class main : Node3D
 
 		//uielem.Texture = ThreeDWinImg;
 		//uielem.TextureFilter = CanvasItem.TextureFilterEnum.Nearest;
-		LoadTileMap(gamesettings.level, gr);
+		
 
 		// var cuts = new CutsLoader(Path.Combine(UWClass.BasePath,"CUTS","CS000.N02"));
 		// var cutimg = cuts.ImageCache[index];
@@ -194,6 +194,24 @@ public partial class main : Node3D
 		// uielem.Texture=cutimg;
 		// uielem.TextureFilter=CanvasItem.TextureFilterEnum.Nearest;
 
+		if(uwsettings.instance.levarkfolder.ToUpper()!="DATA")
+		{
+			//load player dat
+			playerdat.Load(uwsettings.instance.levarkfolder);
+			Debug.Print($"Your name is {playerdat.CharName}");
+			LoadTileMap(playerdat.dungeon_level - 1 , gr);
+			Debug.Print($"You are at x:{playerdat.X} y:{playerdat.Y} z:{playerdat.Z}");
+			Debug.Print($"You are at x:{playerdat.tileX} y:{playerdat.tileY} z:{playerdat.zpos}");
+			cam.Position = uwObject.GetCoordinate(playerdat.tileX, playerdat.tileY, playerdat.xpos, playerdat.ypos, playerdat.camerazpos);
+			Debug.Print($"Player Heading is {playerdat.heading}");
+			cam.Rotation  = Vector3.Zero;
+			cam.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
+			cam.Rotate(Vector3.Up, (float)(-playerdat.heading /127f *  Math.PI)); 
+		}
+		else
+		{
+			LoadTileMap(gamesettings.level, gr);
+		}
 		uwUI.InitUI();
 		messageScroll.AddString(GameStrings.GetString(1, 13));
 		//Debug.Print($"{animationObjectDat.startFrame(459)}");
@@ -274,7 +292,7 @@ public partial class main : Node3D
 			{
 				if (ovl.link != 0)
 				{
-					if (ovl.Duration != 0)
+					if ((ovl.Duration != 0) && (ovl.Duration != 65535))
 					{
 						var obj = Underworld.TileMap.current_tilemap.LevelObjects[ovl.link];
 						if (obj != null)
