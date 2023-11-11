@@ -59,12 +59,12 @@ namespace Underworld
         public static GRLoader grArmour_F;
         public static GRLoader grArmour_M;
 
-        [Export] public TextureRect BodyUW1;
-        [Export] public TextureRect HelmUW1;
-        [Export] public TextureRect ArmourUW1;
-        [Export] public TextureRect LeggingsUW1;
-        [Export] public TextureRect BootsUW1;
-        [Export] public TextureRect GlovesUW1;
+        [Export] public TextureRect Body;
+        [Export] public TextureRect Helm;
+        [Export] public TextureRect Armour;
+        [Export] public TextureRect Leggings;
+        [Export] public TextureRect Boots;
+        [Export] public TextureRect Gloves;
         public TextureRect RingLeftUW1;
         public TextureRect RingRightUW2;
 
@@ -236,39 +236,18 @@ namespace Underworld
             {
                 grBody = new GRLoader(GRLoader.BODIES_GR,GRLoader.GRShaderMode.UIShader);
             }
-            switch (UWClass._RES)
-            {
-                case UWClass.GAME_UW2:
-                    return;
-                default:
-                   instance.BodyUW1.Texture = grBody.LoadImageAt(body + (5*MaleOrFemale));
-                   return;
-            }
+            instance.Body.Texture = grBody.LoadImageAt(body + (5*MaleOrFemale));
         }
 
         public static void SetHelm(bool isFemale, int SpriteNo=-1)
         {              
             if (SpriteNo == -1)
             { //clear the slot
-                switch (UWClass._RES)
-                {
-                    case UWClass.GAME_UW2:
-                        return;
-                    default:
-                        instance.HelmUW1.Texture = null;
-                    return;
-                }
+                instance.Helm.Texture = null;
             }
             else
             {
-                switch (UWClass._RES)
-                {
-                    case UWClass.GAME_UW2:
-                        return;
-                    default:
-                        instance.HelmUW1.Texture = grArmour(isFemale).LoadImageAt(SpriteNo);
-                    return;
-                }
+                instance.Helm.Texture = grArmour(isFemale).LoadImageAt(SpriteNo);
             }
         }
 
@@ -276,25 +255,11 @@ namespace Underworld
         {            
             if (SpriteNo == -1)
             { //clear the slot
-                switch (UWClass._RES)
-                {
-                    case UWClass.GAME_UW2:
-                        return;
-                    default:
-                        instance.ArmourUW1.Texture = null;
-                    return;
-                }
+                instance.Armour.Texture = null;
             }
             else
             {
-                switch (UWClass._RES)
-                {
-                    case UWClass.GAME_UW2:
-                        return;
-                    default:
-                        instance.ArmourUW1.Texture = grArmour(isFemale).LoadImageAt(SpriteNo);
-                    return;
-                }
+                instance.Armour.Texture = grArmour(isFemale).LoadImageAt(SpriteNo);
             }
         }
 
@@ -302,25 +267,11 @@ namespace Underworld
         {            
             if (SpriteNo == -1)
             { //clear the slot
-                switch (UWClass._RES)
-                {
-                    case UWClass.GAME_UW2:
-                        return;
-                    default:
-                        instance.LeggingsUW1.Texture = null;
-                    return;
-                }
+                instance.Leggings.Texture = null;
             }
             else
             {
-                switch (UWClass._RES)
-                {
-                    case UWClass.GAME_UW2:
-                        return;
-                    default:
-                        instance.LeggingsUW1.Texture = grArmour(isFemale).LoadImageAt(SpriteNo);
-                    return;
-                }
+                instance.Leggings.Texture = grArmour(isFemale).LoadImageAt(SpriteNo);
             }
         }
 
@@ -328,25 +279,11 @@ namespace Underworld
         {            
             if (SpriteNo == -1)
             { //clear the slot
-                switch (UWClass._RES)
-                {
-                    case UWClass.GAME_UW2:
-                        return;
-                    default:
-                        instance.BootsUW1.Texture = null;
-                    return;
-                }
+                instance.Boots.Texture = null;
             }
             else
             {
-                switch (UWClass._RES)
-                {
-                    case UWClass.GAME_UW2:
-                        return;
-                    default:
-                        instance.BootsUW1.Texture = grArmour(isFemale).LoadImageAt(SpriteNo);
-                    return;
-                }
+                instance.Boots.Texture = grArmour(isFemale).LoadImageAt(SpriteNo);
             }
         }
 
@@ -354,25 +291,11 @@ namespace Underworld
         {            
             if (SpriteNo == -1)
             { //clear the slot
-                switch (UWClass._RES)
-                {
-                    case UWClass.GAME_UW2:
-                        return;
-                    default:
-                        instance.GlovesUW1.Texture = null;
-                    return;
-                }
+                instance.Gloves.Texture = null;
             }
             else
             {
-                switch (UWClass._RES)
-                {
-                    case UWClass.GAME_UW2:
-                        return;
-                    default:
-                        instance.GlovesUW1.Texture =  grArmour(isFemale).LoadImageAt(SpriteNo);
-                    return;
-                }
+                instance.Gloves.Texture =  grArmour(isFemale).LoadImageAt(SpriteNo);
             }
         }
 

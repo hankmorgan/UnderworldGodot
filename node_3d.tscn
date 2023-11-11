@@ -30,7 +30,7 @@ shader = ExtResource("6_x6exc")
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2", "InteractionButtonsUW1", "InteractionButtonsUW2", "BodyUW1", "HelmUW1", "ArmourUW1", "LeggingsUW1", "BootsUW1", "GlovesUW1")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2", "InteractionButtonsUW1", "InteractionButtonsUW2", "Body", "Helm", "Armour", "Leggings", "Boots", "Gloves")]
 script = ExtResource("1_lw0yg")
 cam = NodePath("../../Camera3D")
 mousecursor = NodePath("../mouse/mouseCursor")
@@ -44,12 +44,12 @@ placeholderuw1 = NodePath("../UW1/placeholdermainuw1")
 placeholderuw2 = NodePath("../UW2/placeholdermainuw2")
 InteractionButtonsUW1 = [NodePath("../UW1/OptionsButtonUW1"), NodePath("../UW1/TalkButtonUW1"), NodePath("../UW1/PickupButtonUW1"), NodePath("../UW1/LookButtonUW1"), NodePath("../UW1/AttackButtonUW1"), NodePath("../UW1/UseButtonUW1")]
 InteractionButtonsUW2 = [NodePath("../UW2/OptionsButtonUW2"), NodePath("../UW2/TalkButtonUW2"), NodePath("../UW2/PickupButtonUW2"), NodePath("../UW2/LookButtonUW2"), NodePath("../UW2/AttackButtonUW2"), NodePath("../UW2/UseButtonUW2")]
-BodyUW1 = NodePath("../UW1/BodyUW1")
-HelmUW1 = NodePath("../UW1/HelmUW1")
-ArmourUW1 = NodePath("../UW1/ArmourUW1")
-LeggingsUW1 = NodePath("../UW1/LeggingsUW1")
-BootsUW1 = NodePath("../UW1/BootsUW1")
-GlovesUW1 = NodePath("../UW1/GlovesUW1")
+Body = NodePath("../Common/PaperDoll/Body")
+Helm = NodePath("../Common/PaperDoll/Helm")
+Armour = NodePath("../Common/PaperDoll/Armour")
+Leggings = NodePath("../Common/PaperDoll/Leggings")
+Boots = NodePath("../Common/PaperDoll/Boots")
+Gloves = NodePath("../Common/PaperDoll/Gloves")
 
 [node name="AudioPlayer" type="AudioStreamPlayer" parent="UI"]
 stream = SubResource("AudioStreamWAV_tkk82")
@@ -162,42 +162,6 @@ texture_normal = ExtResource("16_kxj2a")
 stretch_mode = 0
 script = ExtResource("8_0sew3")
 index = 5
-
-[node name="BodyUW1" type="TextureRect" parent="UI/UW1"]
-offset_left = 1040.0
-offset_top = 44.0
-offset_right = 1184.0
-offset_bottom = 320.0
-
-[node name="LeggingsUW1" type="TextureRect" parent="UI/UW1"]
-offset_left = 1072.0
-offset_top = 96.0
-offset_right = 1148.0
-offset_bottom = 300.0
-
-[node name="ArmourUW1" type="TextureRect" parent="UI/UW1"]
-offset_left = 1048.0
-offset_top = 88.0
-offset_right = 1180.0
-offset_bottom = 264.0
-
-[node name="HelmUW1" type="TextureRect" parent="UI/UW1"]
-offset_left = 1068.0
-offset_top = 44.0
-offset_right = 1148.0
-offset_bottom = 124.0
-
-[node name="GlovesUW1" type="TextureRect" parent="UI/UW1"]
-offset_left = 1043.0
-offset_top = 175.0
-offset_right = 1175.0
-offset_bottom = 235.0
-
-[node name="BootsUW1" type="TextureRect" parent="UI/UW1"]
-offset_left = 1063.0
-offset_top = 264.0
-offset_right = 1147.0
-offset_bottom = 320.0
 
 [node name="UW2" type="CanvasLayer" parent="UI"]
 visible = false
@@ -313,6 +277,54 @@ texture_normal = ExtResource("15_f0cyy")
 stretch_mode = 0
 script = ExtResource("8_0sew3")
 index = 5
+
+[node name="Common" type="CanvasLayer" parent="UI"]
+
+[node name="PaperDoll" type="Panel" parent="UI/Common"]
+offset_left = 1110.0
+offset_right = 1150.0
+offset_bottom = 40.0
+
+[node name="Body" type="TextureRect" parent="UI/Common/PaperDoll"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -90.0
+offset_top = 44.0
+offset_right = 54.0
+offset_bottom = 320.0
+grow_horizontal = 2
+
+[node name="Leggings" type="TextureRect" parent="UI/Common/PaperDoll"]
+offset_left = -38.0
+offset_top = 96.0
+offset_right = 38.0
+offset_bottom = 300.0
+
+[node name="Armour" type="TextureRect" parent="UI/Common/PaperDoll"]
+offset_left = -61.0
+offset_top = 92.0
+offset_right = 71.0
+offset_bottom = 268.0
+
+[node name="Helm" type="TextureRect" parent="UI/Common/PaperDoll"]
+offset_left = -41.0
+offset_top = 44.0
+offset_right = 39.0
+offset_bottom = 124.0
+
+[node name="Boots" type="TextureRect" parent="UI/Common/PaperDoll"]
+offset_left = -46.0
+offset_top = 264.0
+offset_right = 38.0
+offset_bottom = 320.0
+
+[node name="Gloves" type="TextureRect" parent="UI/Common/PaperDoll"]
+offset_left = -66.0
+offset_top = 176.0
+offset_right = 66.0
+offset_bottom = 236.0
 
 [node name="mouse" type="CanvasLayer" parent="UI"]
 
