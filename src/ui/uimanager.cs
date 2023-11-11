@@ -225,8 +225,13 @@ namespace Underworld
             }
         }
 
-        public static void SetBody(int body, int isFemale)
+        public static void SetBody(int body, bool isFemale)
         {
+            int MaleOrFemale=0;
+            if (isFemale)
+            {
+                MaleOrFemale =1;
+            }
             if (grBody==null)
             {
                 grBody = new GRLoader(GRLoader.BODIES_GR,GRLoader.GRShaderMode.UIShader);
@@ -236,7 +241,7 @@ namespace Underworld
                 case UWClass.GAME_UW2:
                     return;
                 default:
-                   instance.BodyUW1.Texture = grBody.LoadImageAt(body + (5*isFemale));
+                   instance.BodyUW1.Texture = grBody.LoadImageAt(body + (5*MaleOrFemale));
                    return;
             }
         }
@@ -267,9 +272,9 @@ namespace Underworld
             }
         }
 
-        public static void SetArmour(int spriteNo=-1)
+        public static void SetArmour(bool isFemale, int SpriteNo=-1)
         {            
-            if (spriteNo == -1)
+            if (SpriteNo == -1)
             { //clear the slot
                 switch (UWClass._RES)
                 {
@@ -287,15 +292,15 @@ namespace Underworld
                     case UWClass.GAME_UW2:
                         return;
                     default:
-                        instance.ArmourUW1.Texture = null;
+                        instance.ArmourUW1.Texture = grArmour(isFemale).LoadImageAt(SpriteNo);
                     return;
                 }
             }
         }
 
-        public static void SetLeggings(int spriteNo=-1)
+        public static void SetLeggings(bool isFemale, int SpriteNo=-1)
         {            
-            if (spriteNo == -1)
+            if (SpriteNo == -1)
             { //clear the slot
                 switch (UWClass._RES)
                 {
@@ -313,15 +318,15 @@ namespace Underworld
                     case UWClass.GAME_UW2:
                         return;
                     default:
-                        instance.LeggingsUW1.Texture = null;
+                        instance.LeggingsUW1.Texture = grArmour(isFemale).LoadImageAt(SpriteNo);
                     return;
                 }
             }
         }
 
-        public static void SetBoots(int spriteNo=-1)
+        public static void SetBoots(bool isFemale, int SpriteNo=-1)
         {            
-            if (spriteNo == -1)
+            if (SpriteNo == -1)
             { //clear the slot
                 switch (UWClass._RES)
                 {
@@ -339,15 +344,15 @@ namespace Underworld
                     case UWClass.GAME_UW2:
                         return;
                     default:
-                        instance.BootsUW1.Texture = null;
+                        instance.BootsUW1.Texture = grArmour(isFemale).LoadImageAt(SpriteNo);
                     return;
                 }
             }
         }
 
-        public static void SetGloves(int spriteNo=-1)
+        public static void SetGloves(bool isFemale, int SpriteNo=-1)
         {            
-            if (spriteNo == -1)
+            if (SpriteNo == -1)
             { //clear the slot
                 switch (UWClass._RES)
                 {
@@ -365,7 +370,7 @@ namespace Underworld
                     case UWClass.GAME_UW2:
                         return;
                     default:
-                        instance.GlovesUW1.Texture = null;
+                        instance.GlovesUW1.Texture =  grArmour(isFemale).LoadImageAt(SpriteNo);
                     return;
                 }
             }

@@ -53,7 +53,7 @@ void fragment() {
 		//Apply the shade returned from shades.dat for the lightmap
 		vec4 lightval = texture(uwlightmap, vec2(rgba.r, shade.r));	
 		//lookup the palette colour from the lightmap
-		vec4 finalcolour = texture(uwpalette, vec2(lightval.r ,0));
+		vec4 finalcolour = texture(uwpalette, vec2(lightval.r ,0));  //TODO add an extra dimension to the uwpalette to allow for simulation of the xfer transparencies using y to look them up
 		//apply
 		ALBEDO = finalcolour.rgb;
 	}

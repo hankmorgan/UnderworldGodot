@@ -208,27 +208,32 @@ public partial class main : Node3D
 			LoadTileMap(playerdat.dungeon_level - 1 , gr);
 
 			Debug.Print($"You are at x:{playerdat.X} y:{playerdat.Y} z:{playerdat.Z}");
-			Debug.Print($"You are at x:{playerdat.tileX} y:{playerdat.tileY} z:{playerdat.zpos}");
+			Debug.Print($"You are at x:{playerdat.tileX} {playerdat.xpos} y:{playerdat.tileY} {playerdat.ypos} z:{playerdat.zpos}");
 			cam.Position = uwObject.GetCoordinate(playerdat.tileX, playerdat.tileY, playerdat.xpos, playerdat.ypos, playerdat.camerazpos);
 			Debug.Print($"Player Heading is {playerdat.heading}");
 			cam.Rotation  = Vector3.Zero;
 			cam.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
 			cam.Rotate(Vector3.Up, (float)(-playerdat.heading /127f *  Math.PI)); 	
-			uimanager.SetBody(playerdat.Body, playerdat.isFemale ? 1 : 0);	
+			uimanager.SetBody(playerdat.Body, playerdat.isFemale);	
 			
 			//set helm from inventory
 			uimanager.SetHelm(playerdat.isFemale, helm.GetSpriteIndex(playerdat.HelmObject));
-			
+			uimanager.SetArmour(playerdat.isFemale, chestarmour.GetSpriteIndex(playerdat.ChestArmourObject));
+			uimanager.SetGloves(playerdat.isFemale, gloves.GetSpriteIndex(playerdat.GlovesObject));
+			uimanager.SetLeggings(playerdat.isFemale, gloves.GetSpriteIndex(playerdat.LeggingsObject));
+			uimanager.SetBoots(playerdat.isFemale, gloves.GetSpriteIndex(playerdat.BootsObject));
 		}
 		else
 		{
-			Random r = new Random();			
-			uimanager.SetHelm(false, -1);
-			uimanager.SetArmour(-1);
-			uimanager.SetBoots(-1);
-			uimanager.SetLeggings(-1);
-			uimanager.SetGloves(-1);
-			uimanager.SetBody(r.Next(0,4), r.Next(0,2));	
+			
+			Random r = new Random();
+			var isFemale = r.Next(0,2) == 1;
+			uimanager.SetHelm(isFemale, -1);
+			uimanager.SetArmour(isFemale, -1);
+			uimanager.SetBoots(isFemale,-1);
+			uimanager.SetLeggings(isFemale,-1);
+			uimanager.SetGloves(isFemale, -1);
+			uimanager.SetBody(r.Next(0,4), isFemale);	
 
 			LoadTileMap(gamesettings.level, gr);
 		}

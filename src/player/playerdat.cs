@@ -671,7 +671,6 @@ namespace Underworld
 
         //Inventory
 
-
         /// <summary>
         /// Object index for the item at the helm slot
         /// </summary>
@@ -700,6 +699,126 @@ namespace Underworld
                 if (Helm!=0)
                 {
                     return InventoryObjects[Helm];
+                }
+                return null;
+            }
+        }
+
+        public static int ChestArmour
+        {
+            get
+            {
+                switch(_RES)
+                {
+                    case GAME_UW2:
+                        return GetAt16(0x3A5)>>6;
+                    default:
+                        return GetAt16(0xFA)>>6;
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Direct reference to the object at the chest armour slot
+        /// </summary>
+        public static uwObject ChestArmourObject
+        {
+            get
+            {
+                if (ChestArmour!=0)
+                {
+                    return InventoryObjects[ChestArmour];
+                }
+                return null;
+            }
+        }
+
+        public static int Gloves
+        {
+            get
+            {
+                switch(_RES)
+                {
+                    case GAME_UW2:
+                        return GetAt16(0x3A7)>>6;
+                    default:
+                        return GetAt16(0xFC)>>6;
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Direct reference to the object at the gloves slot
+        /// </summary>
+        public static uwObject GlovesObject
+        {
+            get
+            {
+                if (Gloves!=0)
+                {
+                    return InventoryObjects[Gloves];
+                }
+                return null;
+            }
+        }
+
+        public static int Leggings
+        {
+            get
+            {
+                switch(_RES)
+                {
+                    case GAME_UW2:
+                        return GetAt16(0x3A9)>>6;
+                    default:
+                        return GetAt16(0xFE)>>6;
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Direct reference to the object at the leggings slot
+        /// </summary>
+        public static uwObject LeggingsObject
+        {
+            get
+            {
+                if (Leggings!=0)
+                {
+                    return InventoryObjects[Leggings];
+                }
+                return null;
+            }
+        }
+
+        public static int Boots
+        {
+            get
+            {
+                switch(_RES)
+                {
+                    case GAME_UW2:
+                        return GetAt16(0x3AB)>>6;
+                    default:
+                        return GetAt16(0x100)>>6;
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Direct reference to the object at the boots slot
+        /// </summary>
+        public static uwObject BootsObject
+        {
+            get
+            {
+                if (Boots!=0)
+                {
+                    return InventoryObjects[Boots];
                 }
                 return null;
             }
