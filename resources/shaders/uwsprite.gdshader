@@ -17,7 +17,7 @@ uniform vec3 uv2_offset;
 
 //Shader Params
 //Shader Params
-global uniform sampler2D uwpalette: source_color,filter_nearest;
+global uniform sampler2D uwnpc: source_color,filter_nearest;
 uniform sampler2D texture_albedo : source_color,filter_nearest,repeat_enable;
 
 global uniform sampler2D uwlightmap : source_color,filter_nearest,repeat_enable;
@@ -75,7 +75,7 @@ void fragment() {
 		//Apply the shade returned from shades.dat for the lightmap
 		vec4 lightval = texture(uwlightmap, vec2(rgba.r, shade.r));	
 		//lookup the palette colour from the lightmap
-		vec4 finalcolour = texture(uwpalette, vec2(lightval.r ,0));
+		vec4 finalcolour = texture(uwnpc, vec2(lightval.r ,0));
 		//apply
 		ALBEDO = finalcolour.rgb;
 		if (UseAlpha)

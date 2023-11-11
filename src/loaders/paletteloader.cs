@@ -39,11 +39,36 @@ namespace Underworld
         /// </summary>
         public static lightmap[] mono = null;
 
+
+        //public static Palette[] xfer = new Palette[5];
+
         static PaletteLoader()  //void LoadPalettes(string filePath)
         {
             var path_pals = System.IO.Path.Combine(BasePath, "DATA", "PALS.DAT");
             var path_light = System.IO.Path.Combine(BasePath, "DATA", "LIGHT.DAT");
             var path_mono = System.IO.Path.Combine(BasePath, "DATA", "MONO.DAT");
+            //var path_xfer = System.IO.Path.Combine(BasePath, "DATA", "XFER.DAT");
+
+            // if (ReadStreamFile(path_xfer, out byte[] xfer_dat))
+            // {
+            //     int addr=0;
+            //     for (int x = 0; x<5; x++)
+            //     {
+            //         xfer[x]= new Palette();
+            //         int index=0;
+            //         for (int i=0;i<xfer[x].red.GetUpperBound(0);i++)
+            //         {
+            //         xfer[x].red[index] = (byte)getAt(xfer_dat,addr+i,8);
+            //         xfer[x].green[index] = (byte)getAt(xfer_dat,addr+i+1,8);
+            //         xfer[x].blue[index] = (byte)getAt(xfer_dat,addr+i+2,8);
+            //         xfer[x].alpha[index] = (byte)255;
+            //         index++;
+            //         }
+            //         xfer[x].toImage(1).GetImage().SavePng($"c:\\temp\\xfer_{addr:X}.png");
+            //         addr+=256;
+            //     }                
+            // }
+
             GreyScaleIndexPalette = new Palette();
             for (int i = 0; i <= GreyScaleIndexPalette.blue.GetUpperBound(0); i++)
             {
