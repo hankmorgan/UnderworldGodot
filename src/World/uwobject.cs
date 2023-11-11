@@ -23,29 +23,7 @@ namespace Underworld
 
         public bool isInventory = false;
 
-        public int PTR;
-
-        // {
-        //     get
-        //     {
-        //         if (isInventory)
-        //         {
-        //             return 0;//Always
-        //                      //return (index-1) * 8;
-        //         }
-        //         else
-        //         {
-        //             if (index < 256)
-        //             {//Mobile, 27 bytes per object
-        //                 return 0x4000 + (index * 27);
-        //             }
-        //             else
-        //             {//static, 8 bytes per object
-        //                 return 0x5b00 + ((index - 256) * 8);
-        //             }
-        //         }
-        //     }
-        // }
+        public int PTR;      
 
         //The tiles these objects are in.
         public int tileX = 99;
@@ -58,8 +36,6 @@ namespace Underworld
                 return item_id >> 6;
             }
         }
-
-
 
         //= obj.item_id >> 6;
         public int minorclass

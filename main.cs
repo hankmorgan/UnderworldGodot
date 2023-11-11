@@ -194,27 +194,44 @@ public partial class main : Node3D
 		// uielem.Texture=cutimg;
 		// uielem.TextureFilter=CanvasItem.TextureFilterEnum.Nearest;
 
+		
+
+		uwUI.InitUI();		
+		messageScroll.AddString(GameStrings.GetString(1, 13));
+
+
 		if(uwsettings.instance.levarkfolder.ToUpper()!="DATA")
 		{
 			//load player dat
 			playerdat.Load(uwsettings.instance.levarkfolder);
 			Debug.Print($"Your name is {playerdat.CharName}");
 			LoadTileMap(playerdat.dungeon_level - 1 , gr);
+
 			Debug.Print($"You are at x:{playerdat.X} y:{playerdat.Y} z:{playerdat.Z}");
 			Debug.Print($"You are at x:{playerdat.tileX} y:{playerdat.tileY} z:{playerdat.zpos}");
 			cam.Position = uwObject.GetCoordinate(playerdat.tileX, playerdat.tileY, playerdat.xpos, playerdat.ypos, playerdat.camerazpos);
 			Debug.Print($"Player Heading is {playerdat.heading}");
 			cam.Rotation  = Vector3.Zero;
 			cam.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
-			cam.Rotate(Vector3.Up, (float)(-playerdat.heading /127f *  Math.PI)); 
+			cam.Rotate(Vector3.Up, (float)(-playerdat.heading /127f *  Math.PI)); 	
+			uimanager.SetBody(playerdat.Body, playerdat.isFemale ? 1 : 0);	
+			
+			//set helm from inventory
+			uimanager.SetHelm(playerdat.isFemale, helm.GetSpriteIndex(playerdat.HelmObject));
+			
 		}
 		else
 		{
+			Random r = new Random();			
+			uimanager.SetHelm(false, -1);
+			uimanager.SetArmour(-1);
+			uimanager.SetBoots(-1);
+			uimanager.SetLeggings(-1);
+			uimanager.SetGloves(-1);
+			uimanager.SetBody(r.Next(0,4), r.Next(0,2));	
+
 			LoadTileMap(gamesettings.level, gr);
 		}
-		uwUI.InitUI();
-		messageScroll.AddString(GameStrings.GetString(1, 13));
-		//Debug.Print($"{animationObjectDat.startFrame(459)}");
 	}
 
 

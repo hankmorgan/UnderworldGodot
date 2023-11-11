@@ -224,5 +224,172 @@ namespace Underworld
                 }
             }
         }
+
+        public static void SetBody(int body, int isFemale)
+        {
+            if (grBody==null)
+            {
+                grBody = new GRLoader(GRLoader.BODIES_GR,GRLoader.GRShaderMode.UIShader);
+            }
+            switch (UWClass._RES)
+            {
+                case UWClass.GAME_UW2:
+                    return;
+                default:
+                   instance.BodyUW1.Texture = grBody.LoadImageAt(body + (5*isFemale));
+                   return;
+            }
+        }
+
+        public static void SetHelm(bool isFemale, int SpriteNo=-1)
+        {              
+            if (SpriteNo == -1)
+            { //clear the slot
+                switch (UWClass._RES)
+                {
+                    case UWClass.GAME_UW2:
+                        return;
+                    default:
+                        instance.HelmUW1.Texture = null;
+                    return;
+                }
+            }
+            else
+            {
+                switch (UWClass._RES)
+                {
+                    case UWClass.GAME_UW2:
+                        return;
+                    default:
+                        instance.HelmUW1.Texture = grArmour(isFemale).LoadImageAt(SpriteNo);
+                    return;
+                }
+            }
+        }
+
+        public static void SetArmour(int spriteNo=-1)
+        {            
+            if (spriteNo == -1)
+            { //clear the slot
+                switch (UWClass._RES)
+                {
+                    case UWClass.GAME_UW2:
+                        return;
+                    default:
+                        instance.ArmourUW1.Texture = null;
+                    return;
+                }
+            }
+            else
+            {
+                switch (UWClass._RES)
+                {
+                    case UWClass.GAME_UW2:
+                        return;
+                    default:
+                        instance.ArmourUW1.Texture = null;
+                    return;
+                }
+            }
+        }
+
+        public static void SetLeggings(int spriteNo=-1)
+        {            
+            if (spriteNo == -1)
+            { //clear the slot
+                switch (UWClass._RES)
+                {
+                    case UWClass.GAME_UW2:
+                        return;
+                    default:
+                        instance.LeggingsUW1.Texture = null;
+                    return;
+                }
+            }
+            else
+            {
+                switch (UWClass._RES)
+                {
+                    case UWClass.GAME_UW2:
+                        return;
+                    default:
+                        instance.LeggingsUW1.Texture = null;
+                    return;
+                }
+            }
+        }
+
+        public static void SetBoots(int spriteNo=-1)
+        {            
+            if (spriteNo == -1)
+            { //clear the slot
+                switch (UWClass._RES)
+                {
+                    case UWClass.GAME_UW2:
+                        return;
+                    default:
+                        instance.BootsUW1.Texture = null;
+                    return;
+                }
+            }
+            else
+            {
+                switch (UWClass._RES)
+                {
+                    case UWClass.GAME_UW2:
+                        return;
+                    default:
+                        instance.BootsUW1.Texture = null;
+                    return;
+                }
+            }
+        }
+
+        public static void SetGloves(int spriteNo=-1)
+        {            
+            if (spriteNo == -1)
+            { //clear the slot
+                switch (UWClass._RES)
+                {
+                    case UWClass.GAME_UW2:
+                        return;
+                    default:
+                        instance.GlovesUW1.Texture = null;
+                    return;
+                }
+            }
+            else
+            {
+                switch (UWClass._RES)
+                {
+                    case UWClass.GAME_UW2:
+                        return;
+                    default:
+                        instance.GlovesUW1.Texture = null;
+                    return;
+                }
+            }
+        }
+
+        public static GRLoader grArmour(bool isFemale)
+        {
+            if (isFemale)
+            {
+                if(grArmour_F==null)
+                {
+                    grArmour_F = new GRLoader(GRLoader.ARMOR_F_GR,GRLoader.GRShaderMode.UIShader);
+                }
+                return grArmour_F;
+            }
+            else
+            {
+                if(grArmour_M==null)
+                {
+                    grArmour_M = new GRLoader(GRLoader.ARMOR_M_GR,GRLoader.GRShaderMode.UIShader);
+                }
+                return grArmour_M;
+            }
+        }
+
     } //end class
 }   //end namespace

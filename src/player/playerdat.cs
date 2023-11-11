@@ -1,5 +1,7 @@
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 
 namespace Underworld
@@ -7,8 +9,10 @@ namespace Underworld
     /// <summary>
     /// Class for all operations relating to player.dat
     /// </summary>
-    public class playerdat:Loader
+    public class playerdat : Loader
     {
+        public static uwObject[] InventoryObjects = new uwObject[512];
+        public static byte[] Inventorybuffer = new byte[512 * 8];
         private static byte[] pdat;
 
         /// <summary>
@@ -19,7 +23,7 @@ namespace Underworld
         // Func load pdat
         public static void Load(string folder)
         {
-            var path = System.IO.Path.Combine(BasePath,folder,"PLAYER.DAT"); 
+            var path = System.IO.Path.Combine(BasePath, folder, "PLAYER.DAT");
             byte[] encoded;
             if (ReadStreamFile(path, out encoded))
             {
@@ -35,9 +39,40 @@ namespace Underworld
                     default:
                         {
                             //uw1 decoding
-                            pdat = EncryptDecryptUW1(encoded, xOrValue);  
+                            pdat = EncryptDecryptUW1(encoded, xOrValue);
                             break;
                         }
+                }
+
+                //Copy and initialise inventory
+                var InventoryPtr = 0x138;
+                if (_RES == GAME_UW2)
+                {
+                    InventoryPtr = 0x3E3;
+                }
+                int oIndex = 1; //starts at one since there is no object zero
+                Inventorybuffer = new byte[512*8];
+                
+                while (InventoryPtr < pdat.GetUpperBound(0))
+                {
+                    for (int i =0; i<8; i++)
+                    {//Copy bytes into storage
+                        Inventorybuffer[i + oIndex * 8 ] = pdat[InventoryPtr + i];
+                    }
+                    //Create new objects for the object list
+                    var uwobj = new uwObject
+                    {
+                        isInventory = true,
+                        IsStatic = true,
+                        index = (short)(oIndex),
+                        PTR = oIndex * 8,
+                        DataBuffer = Inventorybuffer
+                    };
+                    Debug.Print($"{GameStrings.GetObjectNounUW(uwobj.item_id)}");
+                    InventoryObjects[oIndex] = uwobj;
+                    oIndex++;
+                    InventoryPtr += 8;
+                    
                 }
             }
         }   //end load
@@ -62,7 +97,7 @@ namespace Underworld
             }
             return output;
         } //end decrypt uw1
-        
+
         // Func decode/encode UW2
         /// <summary>
         /// Encrypts or decrypts a UW2 player dat file.
@@ -129,7 +164,7 @@ namespace Underworld
         }
         public static int GetAt32(int index)
         {
-            return  (int)DataLoader.getAt(pdat,index,32);
+            return (int)DataLoader.getAt(pdat, index, 32);
         }
         public static void SetAt(int index, byte value)
         {
@@ -146,35 +181,35 @@ namespace Underworld
         public static string CharName
         {
             get
+            {
+                var _charname = "";
+                for (int i = 1; i < 14; i++)
                 {
-                    var _charname = "";
-                    for (int i = 1; i < 14; i++)
+                    var alpha = GetAt(i);
+                    if (alpha.ToString() != "\0")
                     {
-                        var alpha = GetAt(i);
-                        if (alpha.ToString() != "\0")
-                        {
-                            _charname += (char)alpha;
-                        }
+                        _charname += (char)alpha;
                     }
-                    return _charname;
                 }
+                return _charname;
+            }
             set
+            {
+                var _chararray = value.ToCharArray();
+                for (int i = 1; i < 14; i++)
                 {
-                    var _chararray = value.ToCharArray();
-                    for (int i = 1; i < 14; i++)
+                    if (i - 1 < value.Length)
                     {
-                        if (i - 1 < value.Length)
-                        {
-                            SetAt(i, (byte)_chararray[i - 1]);
-                        }
-                        else
-                        {
-                            SetAt(i, (byte)0);
-                        }
+                        SetAt(i, (byte)_chararray[i - 1]);
+                    }
+                    else
+                    {
+                        SetAt(i, (byte)0);
                     }
                 }
+            }
         }
-        public static int Body 
+        public static int Body
         {
             get
             {
@@ -187,7 +222,7 @@ namespace Underworld
                 int offset = 0x65;
                 if (_RES == GAME_UW2) { offset = 0x66; }
                 byte existingValue = GetAt(offset);
-                existingValue = (byte)(existingValue & 0xE3); 
+                existingValue = (byte)(existingValue & 0xE3);
                 value = value << 2;
                 existingValue = (byte)(existingValue | value);
                 SetAt(offset, existingValue);
@@ -217,7 +252,7 @@ namespace Underworld
             get { return GetAt(0x3E); }
             set { SetAt(0x3E, (byte)value); }
         }
-        public static  int Exp
+        public static int Exp
         {
             get
             {
@@ -228,7 +263,7 @@ namespace Underworld
                 SetAt32(0x4F, value * 10);
             }
         }
-        public static  int TrainingPoints
+        public static int TrainingPoints
         {
             get { return GetAt(0x53); }
             set { SetAt(0x53, (byte)value); }
@@ -283,7 +318,7 @@ namespace Underworld
                 SetAt(offset, existingValue);
             }
         }
-       
+
         //Location Data
         public static int dungeon_level
         {
@@ -293,7 +328,7 @@ namespace Underworld
             }
             set
             {
-                SetAt(0x53,(byte)value);
+                SetAt(0x53, (byte)value);
             }
         }
         //Character attributes
@@ -309,7 +344,7 @@ namespace Underworld
         {
             get
             {
-                return X>>8;
+                return X >> 8;
             }
         }
 
@@ -332,7 +367,7 @@ namespace Underworld
         {
             get
             {
-                return Y>>8;
+                return Y >> 8;
             }
         }
 
@@ -343,7 +378,7 @@ namespace Underworld
                 return Y & 0x7;// need to confirm if correct
             }
         }
-        
+
         public static int Z
         {
             get
@@ -356,7 +391,7 @@ namespace Underworld
         {
             get
             {
-                return Z>>3;
+                return Z >> 3;
             }
         }
 
@@ -376,7 +411,6 @@ namespace Underworld
             }
         }
 
-
         public static int STR
         {
             get
@@ -385,7 +419,7 @@ namespace Underworld
                 return value;
             }
             set
-            {            
+            {
                 SetAt(0x1F, (byte)(value));
             }
         }
@@ -631,6 +665,43 @@ namespace Underworld
             set
             {
                 SetAt(0x35, (byte)(value));
+            }
+        }
+
+
+        //Inventory
+
+
+        /// <summary>
+        /// Object index for the item at the helm slot
+        /// </summary>
+        public static int Helm
+        {
+            get
+            {
+                switch(_RES)
+                {
+                    case GAME_UW2:
+                        return GetAt16(0x3A3)>>6;
+                    default:
+                        return GetAt16(0xF8)>>6;
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Direct reference to the object at the helm slot
+        /// </summary>
+        public static uwObject HelmObject
+        {
+            get
+            {
+                if (Helm!=0)
+                {
+                    return InventoryObjects[Helm];
+                }
+                return null;
             }
         }
 
