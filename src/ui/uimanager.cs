@@ -117,6 +117,16 @@ namespace Underworld
                 UW2OptBtnsOff[0] = ArtLoader.CropImage(Off, new Rect2I(52, 15, 25, 14)); //options button off
                 UW2OptBtnsOn[0] = ArtLoader.CropImage(On, new Rect2I(52, 15, 25, 14)); //option button on
 
+                //Move paperdoll
+                var offset = new Vector2(-8,-13);
+                Body.Position +=offset;
+                Helm.Position +=offset;
+                Boots.Position +=offset;
+                Gloves.Position +=offset;
+                Leggings.Position +=offset;
+                Armour.Position +=offset;
+
+
             }
             byt = new BytLoader();
 
