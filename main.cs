@@ -224,9 +224,13 @@ public partial class main : Node3D
 			uimanager.SetRightHand(uwObject.GetObjectSprite(playerdat.RightHandObject));
 			uimanager.SetLeftHand(uwObject.GetObjectSprite(playerdat.LeftHandObject));
 			//set rings
-			//uimanager.SetRightRing(gloves.GetSpriteIndex(playerdat.RightRingObject));
-			//uimanager.SetLeftRing(gloves.GetSpriteIndex(playerdat.LeftRingObject));
+			//uimanager.SetRightRing(ring.GetSpriteIndex(playerdat.RightRingObject));
+			//uimanager.SetLeftRing(ring.GetSpriteIndex(playerdat.LeftRingObject));
 			//backback
+			for (int i=0; i<8;i++)
+			{
+				uimanager.SetBackPack(i,uwObject.GetObjectSprite(playerdat.BackPackObject(i)) );
+			}
 		}
 		else
 		{
@@ -242,7 +246,13 @@ public partial class main : Node3D
 			uimanager.SetLeftShoulder(-1);
 			uimanager.SetRightHand(-1);
 			uimanager.SetLeftHand(-1);
+			for (int i=0; i<8;i++)
+			{
+				uimanager.SetBackPack(i,-1);
+			}
+
 			uimanager.SetBody(r.Next(0, 4), isFemale);
+
 
 			LoadTileMap(gamesettings.level, gr);
 		}

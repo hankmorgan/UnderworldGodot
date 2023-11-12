@@ -276,6 +276,27 @@ namespace Underworld
                 return null;
             }
         }
+
+        public static int BackPack(int slot)
+        {
+            switch (_RES)
+                {
+                    case GAME_UW2:
+                        return GetAt16(0x3B9 + slot * 2) >> 6;
+                    default:
+                        return GetAt16(0x10E + slot * 2) >> 6;
+                }
+        }
+
+        public static uwObject BackPackObject(int slot)
+        {
+            if (BackPack(slot) != 0)
+            {
+                return InventoryObjects[BackPack(slot)];
+            }
+            return null;
+        }
+        
         
     } //end class
 } //end namespace

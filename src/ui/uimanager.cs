@@ -48,12 +48,9 @@ namespace Underworld
         [Export] public Godot.TextureButton[] InteractionButtonsUW2 = new Godot.TextureButton[6];
 
         public static bool Fullscreen = false;
-
         public static GRLoader grCursors;
         public static GRLoader grObjects;
-
         public static GRLoader grLfti;
-
         public static GRLoader grOptBtns;
         private ImageTexture[] UW2OptBtnsOff;
         private ImageTexture[] UW2OptBtnsOn;
@@ -70,11 +67,12 @@ namespace Underworld
         [Export] public TextureRect Gloves;
         [Export] public TextureRect RingLeftUW1;
         [Export] public TextureRect RingRightUW2;
-
         [Export] public TextureRect RightShoulder;
         [Export] public TextureRect LeftShoulder;
         [Export] public TextureRect RightHand;
         [Export] public TextureRect LeftHand;
+        [Export] public TextureRect[] Backpack = new TextureRect[8];
+
 
 
 
@@ -367,6 +365,20 @@ namespace Underworld
             {
                 instance.LeftHand.Texture = grObjects.LoadImageAt(SpriteNo);
                 instance.LeftHand.Material = grObjects.GetMaterial(SpriteNo);
+            }
+        }
+
+
+        public static void SetBackPack(int slot, int SpriteNo = -1)
+        {
+            if (SpriteNo == -1)
+            { //clear the slot
+                instance.Backpack[slot].Texture = null;
+            }
+            else
+            {
+                instance.Backpack[slot].Texture = grObjects.LoadImageAt(SpriteNo);
+                instance.Backpack[slot].Material = grObjects.GetMaterial(SpriteNo);
             }
         }
 

@@ -33,7 +33,7 @@ shader = ExtResource("6_x6exc")
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2", "InteractionButtonsUW1", "InteractionButtonsUW2", "Body", "Helm", "Armour", "Leggings", "Boots", "Gloves", "RingLeftUW1", "RingRightUW2", "RightShoulder", "LeftShoulder", "RightHand", "LeftHand")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2", "InteractionButtonsUW1", "InteractionButtonsUW2", "Body", "Helm", "Armour", "Leggings", "Boots", "Gloves", "RingLeftUW1", "RingRightUW2", "RightShoulder", "LeftShoulder", "RightHand", "LeftHand", "Backpack")]
 script = ExtResource("1_lw0yg")
 Font4X5P = ExtResource("5_8iiwt")
 Font5X6I = ExtResource("3_safdl")
@@ -63,6 +63,7 @@ RightShoulder = NodePath("../Common/PaperDoll/RightShoulder")
 LeftShoulder = NodePath("../Common/PaperDoll/LeftShoulder")
 RightHand = NodePath("../Common/PaperDoll/RightHand")
 LeftHand = NodePath("../Common/PaperDoll/LeftHand")
+Backpack = [NodePath("../Common/PaperDoll/Back0"), NodePath("../Common/PaperDoll/Back1"), NodePath("../Common/PaperDoll/Back2"), NodePath("../Common/PaperDoll/Back3"), NodePath("../Common/PaperDoll/Back4"), NodePath("../Common/PaperDoll/Back5"), NodePath("../Common/PaperDoll/Back6"), NodePath("../Common/PaperDoll/Back7")]
 
 [node name="AudioPlayer" type="AudioStreamPlayer" parent="UI"]
 stream = SubResource("AudioStreamWAV_tkk82")
@@ -385,6 +386,62 @@ offset_left = 31.0
 offset_top = 204.0
 offset_right = 95.0
 offset_bottom = 269.0
+
+[node name="Back0" type="TextureRect" parent="UI/Common/PaperDoll"]
+layout_mode = 0
+offset_left = -144.0
+offset_top = 328.0
+offset_right = -80.0
+offset_bottom = 392.0
+
+[node name="Back1" type="TextureRect" parent="UI/Common/PaperDoll"]
+layout_mode = 0
+offset_left = -70.0
+offset_top = 328.0
+offset_right = -6.0
+offset_bottom = 392.0
+
+[node name="Back2" type="TextureRect" parent="UI/Common/PaperDoll"]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 328.0
+offset_right = 70.0
+offset_bottom = 392.0
+
+[node name="Back3" type="TextureRect" parent="UI/Common/PaperDoll"]
+layout_mode = 0
+offset_left = 82.0
+offset_top = 327.0
+offset_right = 146.0
+offset_bottom = 391.0
+
+[node name="Back4" type="TextureRect" parent="UI/Common/PaperDoll"]
+layout_mode = 0
+offset_left = -144.0
+offset_top = 399.0
+offset_right = -80.0
+offset_bottom = 463.0
+
+[node name="Back5" type="TextureRect" parent="UI/Common/PaperDoll"]
+layout_mode = 0
+offset_left = -70.0
+offset_top = 399.0
+offset_right = -6.0
+offset_bottom = 463.0
+
+[node name="Back6" type="TextureRect" parent="UI/Common/PaperDoll"]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 399.0
+offset_right = 69.0
+offset_bottom = 463.0
+
+[node name="Back7" type="TextureRect" parent="UI/Common/PaperDoll"]
+layout_mode = 0
+offset_left = 81.0
+offset_top = 400.0
+offset_right = 145.0
+offset_bottom = 464.0
 
 [node name="mouse" type="CanvasLayer" parent="UI"]
 
