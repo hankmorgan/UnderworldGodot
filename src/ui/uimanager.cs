@@ -92,6 +92,7 @@ namespace Underworld
             instance = this;
             grCursors = new GRLoader(GRLoader.CURSORS_GR, GRLoader.GRShaderMode.UIShader);
             grObjects = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.UIShader);
+            grObjects.UseRedChannel= true;
             grLfti = new GRLoader(GRLoader.LFTI_GR, GRLoader.GRShaderMode.UIShader);
             grArmour_F = new GRLoader(GRLoader.ARMOR_F_GR, GRLoader.GRShaderMode.UIShader);
             grArmour_M = new GRLoader(GRLoader.ARMOR_M_GR, GRLoader.GRShaderMode.UIShader);
@@ -324,8 +325,9 @@ namespace Underworld
                 instance.RightShoulder.Texture = null;
             }
             else
-            {
-                instance.RightShoulder.Texture = grObjects.LoadImageAt(SpriteNo);
+            {                
+               instance.RightShoulder.Texture = grObjects.LoadImageAt(SpriteNo);
+               instance.RightShoulder.Material = grObjects.GetMaterial(SpriteNo);
             }
         }
 
@@ -337,7 +339,8 @@ namespace Underworld
             }
             else
             {
-                instance.LeftShoulder.Texture = grObjects.LoadImageAt(SpriteNo);
+               instance.LeftShoulder.Texture = grObjects.LoadImageAt(SpriteNo);
+               instance.LeftShoulder.Material = grObjects.GetMaterial(SpriteNo);
             }
         }
 
@@ -350,6 +353,7 @@ namespace Underworld
             else
             {
                 instance.RightHand.Texture = grObjects.LoadImageAt(SpriteNo);
+                instance.RightHand.Material = grObjects.GetMaterial(SpriteNo);
             }
         }
 
@@ -362,6 +366,7 @@ namespace Underworld
             else
             {
                 instance.LeftHand.Texture = grObjects.LoadImageAt(SpriteNo);
+                instance.LeftHand.Material = grObjects.GetMaterial(SpriteNo);
             }
         }
 

@@ -130,6 +130,9 @@ namespace Underworld
                 case GRShaderMode.BillboardSpriteShader:
                     textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwsprite.gdshader");
                     break;  
+                case GRShaderMode.UIShader:
+                    textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uisprite.gdshader");
+                    break;
             }     
             // AuxPalPath = AuxPalPath.Replace("--", sep.ToString());
             useOverrideAuxPalIndex = false;
@@ -153,7 +156,6 @@ namespace Underworld
                 newmaterial.SetShaderParameter("uv2_scale", new Vector3(1, 1, 1));
                 newmaterial.SetShaderParameter("UseAlpha", true);
                 materials[textureno] = newmaterial;
-
             }
             return materials[textureno];    
         }
@@ -175,7 +177,6 @@ namespace Underworld
                 return true;
             }
         }
-
 
         public override ImageTexture LoadImageAt(int index)
         {
