@@ -10,12 +10,17 @@ namespace Underworld
         public static bool Use(int index, uwObject[] objList)
         {
             trap.ObjectThatStartedChain = index;
-            bool result=false;
+            bool result = false;
             if (index <= objList.GetUpperBound(0))
             {
                 var obj = objList[index];
                 switch (obj.majorclass)
                 {
+                    case 4:
+                        {
+                            result = UseMajorClass4(obj, objList);
+                            break;
+                        }
                     case 5:
                         {
                             result = UseMajorClass5(obj, objList);
@@ -31,11 +36,28 @@ namespace Underworld
                         objList: objList);
                 }
             }
-        if (!result)
-        {
- messageScroll.AddString(GameStrings.GetString(1, GameStrings.str_you_cannot_use_that_));
+            if (!result)
+            {
+                messageScroll.AddString(GameStrings.GetString(1, GameStrings.str_you_cannot_use_that_));
+            }
+
+            return false;
         }
-           
+
+
+        public static bool UseMajorClass4(uwObject obj, uwObject[] objList)
+        {
+            switch (obj.minorclass)
+            {
+                case 3: //readables (up to index 8)
+                    {
+                        if (obj.classindex<=8)
+                        {
+                            return Readable.LookAt(obj);
+                        }
+                        break;
+                    }
+            }
             return false;
         }
 
@@ -61,20 +83,15 @@ namespace Underworld
                             case 0xF:
                                 return tmap.LookAt(obj);
                             default:
-
                                 return true;
                         }
                     }
                 case 3: //buttons
                     {
-
                         return button.Use(obj);
                     }
-
             }
-
             return false;
         }
-
     }
 }

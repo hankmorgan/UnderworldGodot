@@ -302,7 +302,7 @@ public partial class main : Node3D
 	{
 		float RayLength = 3.0f;
 		if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
-		{
+		{	
 			//var camera3D = GetNode<Camera3D>("Camera3D");
 			var from = cam.ProjectRayOrigin(eventMouseButton.Position);
 			var to = from + cam.ProjectRayNormal(eventMouseButton.Position) * RayLength;

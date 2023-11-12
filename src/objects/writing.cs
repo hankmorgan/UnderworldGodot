@@ -29,8 +29,6 @@ namespace Underworld
             return true;
         }
 
-
-
         public override Vector3[] ModelVertices()
         {
             var v = new Vector3[4];

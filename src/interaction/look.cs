@@ -3,23 +3,28 @@ namespace Underworld
     /// <summary>
     /// Class for interactions involving the look verb
     /// </summary>
-    public class look:UWClass
+    public class look : UWClass
     {
         public static bool LookAt(int index, uwObject[] objList)
         {
-            bool result=false;
+            bool result = false;
             trap.ObjectThatStartedChain = index;
-            if (index<=objList.GetUpperBound(0))
+            if (index <= objList.GetUpperBound(0))
             {
                 var obj = objList[index];
                 switch (obj.majorclass)
                 {
-                    case 5:
+                    case 4:
                         {
-                            result =  LookMajorClass5(obj,objList);
+                            result = LookMajorClass4(obj, objList);
                             break;
                         }
-                    
+                    case 5:
+                        {
+                            result = LookMajorClass5(obj, objList);
+                            break;
+                        }
+
                 }
                 if ((obj.is_quant == 0) && (obj.link != 0))
                 {
@@ -32,14 +37,30 @@ namespace Underworld
                             objList: objList);
                         return true;
                     }
-                }               
+                }
                 if (!result)
                 {
-                //default string  when no overriding action has occured           
-                messageScroll.AddString(GameStrings.GetObjectNounUW(obj.item_id));
+                    //default string  when no overriding action has occured           
+                    messageScroll.AddString(GameStrings.GetObjectNounUW(obj.item_id));
                 }
             }
 
+            return false;
+        }
+
+        public static bool LookMajorClass4(uwObject obj, uwObject[] objList)
+        {
+            switch (obj.minorclass)
+            {
+                case 3: //readables (up to index 8)
+                    {
+                        if (obj.classindex <= 8)
+                        {
+                            return Readable.LookAt(obj);
+                        }
+                        break;
+                    }
+            }
             return false;
         }
 
