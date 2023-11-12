@@ -363,7 +363,6 @@ namespace Underworld
 			}
 		}
 
-
 		public static void SetBackPack(int slot, int SpriteNo = -1)
 		{
 			if (SpriteNo == -1)

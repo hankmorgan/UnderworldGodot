@@ -117,7 +117,12 @@ namespace Underworld
         /// <returns></returns>
         public static int qualitytype(int item_id)
         {
-            return buffer[2 + item_id * 11 + 9] & 0xF;
+            return buffer[2 + item_id * 11 + 0xA] & 0xF;
+        }
+
+        public static bool PrintableLook(int item_id)
+        {
+            return ((buffer[2 + item_id * 11 + 0xA] >> 4) & 1) == 1;
         }
 
         static commonObjDat()
