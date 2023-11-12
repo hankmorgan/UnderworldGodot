@@ -2323,10 +2323,12 @@ namespace Underworld
                                 verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 1.2f * dimY);
                                 verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 0.0f);
                                 //Allocate UVs
-                                uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, 1.0f * dimY);
-                                uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, 0.0f);
-                                uvs[2 + (4 * FaceCounter)] = new Vector2(1.0f * dimX, 0.0f);
-                                uvs[3 + (4 * FaceCounter)] = new Vector2(1.0f * dimX, 1.0f * dimY);
+                                uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, 1.0f * dimY); //0,1
+                                uvs[1 + (4 * FaceCounter)] = new Vector2(1.0f * dimX, 1.0f * dimY); //1,1
+                                uvs[2 + (4 * FaceCounter)] = new Vector2(1.0f * dimX, 0.0f);  //1,0
+                                uvs[3 + (4 * FaceCounter)] = new Vector2(0.0f, 0.0f);         //0,0
+                                
+                               
                                 break;
                             }
 
@@ -2537,6 +2539,7 @@ namespace Underworld
             //bool useCustomShader=true;
            // if (useCustomShader)
            // {
+            MatsToUse[FaceCounter]=27; //TEMP to allow fixing uvs
             a_mesh.SurfaceSetMaterial(FaceCounter + faceCounterAdj, mapTextures.GetMaterial(MatsToUse[FaceCounter])); //  surfacematerial.Get(MatsToUse[FaceCounter]));
            // }
             // else
