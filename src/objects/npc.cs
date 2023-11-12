@@ -96,12 +96,16 @@ namespace Underworld
             //     animname = CritterArt.GetUW1AnimName(obj.npc_animation);
             // }
             animname = CritterArt.GetAnimName(obj.npc_animation, obj.heading);
+            if (ObjectCreator.printlabels)
+            {
             Label3D obj_lbl = new();
             obj_lbl.Text = $"{name} {obj.item_id & 0x3F} \nAnim={obj.npc_animation} Frame={obj.AnimationFrame} {animname}\n Goal {obj.npc_goal}";
+            obj_lbl.Font = uimanager.instance.Font4X5P;
+            obj_lbl.FontSize=16;
             obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
             obj_lbl.Position = new Vector3(0f,0.4f,0f);
             parent.AddChild(obj_lbl);
-
+            }
             return n;                  
         }
 

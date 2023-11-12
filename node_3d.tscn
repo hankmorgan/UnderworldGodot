@@ -1,9 +1,12 @@
-[gd_scene load_steps=21 format=3 uid="uid://13uofwemp67y"]
+[gd_scene load_steps=24 format=3 uid="uid://13uofwemp67y"]
 
 [ext_resource type="Script" path="res://src/ui/uimanager.cs" id="1_lw0yg"]
+[ext_resource type="FontFile" uid="uid://pdy3t627nfxw" path="res://resources/fonts/FONT5X6I.ttf" id="3_safdl"]
 [ext_resource type="Script" path="res://src/ui/mouseCursor.cs" id="4_gnu1s"]
+[ext_resource type="FontFile" uid="uid://bas6pohxbpgah" path="res://resources/fonts/FONT5X6P.ttf" id="4_pfbet"]
 [ext_resource type="Script" path="res://assetlib/simple-free-look-camera-78109db3bcae477c2a28ef9fe144faa2435f0acb/camera.gd" id="5_2to2n"]
 [ext_resource type="FontFile" uid="uid://dcth0yn5km8si" path="res://resources/fonts/FONT4X5P.ttf" id="5_8iiwt"]
+[ext_resource type="FontFile" uid="uid://dhrg5v5fecw5b" path="res://resources/fonts/FONTBIG.ttf" id="5_kj12g"]
 [ext_resource type="Script" path="res://main.cs" id="6_3y8oy"]
 [ext_resource type="Texture2D" uid="uid://cf536ckyprfbf" path="res://resources/placeholder_art/uw1placeholdermain.png" id="6_a53l0"]
 [ext_resource type="Texture2D" uid="uid://cpop1i8thi2t6" path="res://resources/placeholder_art/uw1lfti/0.png" id="6_qaf50"]
@@ -32,6 +35,10 @@ follow_viewport_enabled = true
 
 [node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2", "InteractionButtonsUW1", "InteractionButtonsUW2", "Body", "Helm", "Armour", "Leggings", "Boots", "Gloves")]
 script = ExtResource("1_lw0yg")
+Font4X5P = ExtResource("5_8iiwt")
+Font5X6I = ExtResource("3_safdl")
+Font5X6P = ExtResource("4_pfbet")
+FontBig = ExtResource("5_kj12g")
 cam = NodePath("../../Camera3D")
 mousecursor = NodePath("../mouse/mouseCursor")
 uw1UI = NodePath("../UW1")
@@ -297,30 +304,35 @@ offset_bottom = 320.0
 grow_horizontal = 2
 
 [node name="Leggings" type="TextureRect" parent="UI/Common/PaperDoll"]
+layout_mode = 0
 offset_left = -38.0
 offset_top = 96.0
 offset_right = 38.0
 offset_bottom = 300.0
 
 [node name="Armour" type="TextureRect" parent="UI/Common/PaperDoll"]
+layout_mode = 0
 offset_left = -61.0
 offset_top = 92.0
 offset_right = 71.0
 offset_bottom = 268.0
 
 [node name="Helm" type="TextureRect" parent="UI/Common/PaperDoll"]
+layout_mode = 0
 offset_left = -41.0
 offset_top = 44.0
 offset_right = 39.0
 offset_bottom = 124.0
 
 [node name="Boots" type="TextureRect" parent="UI/Common/PaperDoll"]
+layout_mode = 0
 offset_left = -46.0
 offset_top = 264.0
 offset_right = 38.0
 offset_bottom = 320.0
 
 [node name="Gloves" type="TextureRect" parent="UI/Common/PaperDoll"]
+layout_mode = 0
 offset_left = -66.0
 offset_top = 176.0
 offset_right = 66.0

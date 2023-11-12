@@ -7,7 +7,10 @@ namespace Underworld
     {
         public static uimanager instance;
 
-
+        [Export] public Font Font4X5P;
+        [Export] public Font Font5X6I;
+        [Export] public Font Font5X6P;
+        [Export] public Font FontBig;
         public enum InteractionModes
         {
             ModeOptions = 0,
@@ -81,7 +84,6 @@ namespace Underworld
         public void InitUI()
         {
             instance = this;
-
             grCursors = new GRLoader(GRLoader.CURSORS_GR, GRLoader.GRShaderMode.UIShader);
             grObjects = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.UIShader);
             grLfti = new GRLoader(GRLoader.LFTI_GR, GRLoader.GRShaderMode.UIShader);
@@ -118,13 +120,13 @@ namespace Underworld
                 UW2OptBtnsOn[0] = ArtLoader.CropImage(On, new Rect2I(52, 15, 25, 14)); //option button on
 
                 //Move paperdoll
-                var offset = new Vector2(-8,-13);
-                Body.Position +=offset;
-                Helm.Position +=offset;
-                Boots.Position +=offset;
-                Gloves.Position +=offset;
-                Leggings.Position +=offset;
-                Armour.Position +=offset;
+                var offset = new Vector2(-8, -13);
+                Body.Position += offset;
+                Helm.Position += offset;
+                Boots.Position += offset;
+                Gloves.Position += offset;
+                Leggings.Position += offset;
+                Armour.Position += offset;
 
 
             }
@@ -237,20 +239,20 @@ namespace Underworld
 
         public static void SetBody(int body, bool isFemale)
         {
-            int MaleOrFemale=0;
+            int MaleOrFemale = 0;
             if (isFemale)
             {
-                MaleOrFemale =1;
+                MaleOrFemale = 1;
             }
-            if (grBody==null)
+            if (grBody == null)
             {
-                grBody = new GRLoader(GRLoader.BODIES_GR,GRLoader.GRShaderMode.UIShader);
+                grBody = new GRLoader(GRLoader.BODIES_GR, GRLoader.GRShaderMode.UIShader);
             }
-            instance.Body.Texture = grBody.LoadImageAt(body + (5*MaleOrFemale));
+            instance.Body.Texture = grBody.LoadImageAt(body + (5 * MaleOrFemale));
         }
 
-        public static void SetHelm(bool isFemale, int SpriteNo=-1)
-        {              
+        public static void SetHelm(bool isFemale, int SpriteNo = -1)
+        {
             if (SpriteNo == -1)
             { //clear the slot
                 instance.Helm.Texture = null;
@@ -261,8 +263,8 @@ namespace Underworld
             }
         }
 
-        public static void SetArmour(bool isFemale, int SpriteNo=-1)
-        {            
+        public static void SetArmour(bool isFemale, int SpriteNo = -1)
+        {
             if (SpriteNo == -1)
             { //clear the slot
                 instance.Armour.Texture = null;
@@ -273,8 +275,8 @@ namespace Underworld
             }
         }
 
-        public static void SetLeggings(bool isFemale, int SpriteNo=-1)
-        {            
+        public static void SetLeggings(bool isFemale, int SpriteNo = -1)
+        {
             if (SpriteNo == -1)
             { //clear the slot
                 instance.Leggings.Texture = null;
@@ -285,8 +287,8 @@ namespace Underworld
             }
         }
 
-        public static void SetBoots(bool isFemale, int SpriteNo=-1)
-        {            
+        public static void SetBoots(bool isFemale, int SpriteNo = -1)
+        {
             if (SpriteNo == -1)
             { //clear the slot
                 instance.Boots.Texture = null;
@@ -297,15 +299,15 @@ namespace Underworld
             }
         }
 
-        public static void SetGloves(bool isFemale, int SpriteNo=-1)
-        {            
+        public static void SetGloves(bool isFemale, int SpriteNo = -1)
+        {
             if (SpriteNo == -1)
             { //clear the slot
                 instance.Gloves.Texture = null;
             }
             else
             {
-                instance.Gloves.Texture =  grArmour(isFemale).LoadImageAt(SpriteNo);
+                instance.Gloves.Texture = grArmour(isFemale).LoadImageAt(SpriteNo);
             }
         }
 
@@ -313,17 +315,17 @@ namespace Underworld
         {
             if (isFemale)
             {
-                if(grArmour_F==null)
+                if (grArmour_F == null)
                 {
-                    grArmour_F = new GRLoader(GRLoader.ARMOR_F_GR,GRLoader.GRShaderMode.UIShader);
+                    grArmour_F = new GRLoader(GRLoader.ARMOR_F_GR, GRLoader.GRShaderMode.UIShader);
                 }
                 return grArmour_F;
             }
             else
             {
-                if(grArmour_M==null)
+                if (grArmour_M == null)
                 {
-                    grArmour_M = new GRLoader(GRLoader.ARMOR_M_GR,GRLoader.GRShaderMode.UIShader);
+                    grArmour_M = new GRLoader(GRLoader.ARMOR_M_GR, GRLoader.GRShaderMode.UIShader);
                 }
                 return grArmour_M;
             }

@@ -11,7 +11,7 @@ namespace Underworld
     {
         //List of active NPCs
         public static List<npc> npcs;
-        static bool printlabels = true;
+        public static bool printlabels = true;
 
         public static void GenerateObjects(Node3D worldparent, uwObject[] objects, GRLoader grObjects, TileMap a_tilemap)
         {
@@ -78,8 +78,10 @@ namespace Underworld
                 {
                     Label3D obj_lbl = new();
                     obj_lbl.Text = $"{name}";
+                    obj_lbl.Font = uimanager.instance.Font4X5P;
+                    obj_lbl.FontSize=16;
                     obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
-                    //obj_lbl.Font = font;
+                    obj_lbl.Position = new Vector3(0f,0.4f,0f);
                     newparent.AddChild(obj_lbl);
                 }
             }

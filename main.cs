@@ -15,12 +15,8 @@ public partial class main : Node3D
 
 	// Called when the node enters the scene tree for the first time.
 	[Export] public Camera3D cam;
-	//[Export] public MeshInstance3D mesh;
-	//[Export] public Sprite2D weapon_2d;
 	[Export] public AudioStreamPlayer audioplayer;
 	[Export] public RichTextLabel lblPositionDebug;
-	//[Export] public Font font;
-	//[Export] public TextureRect grey;
 	[Export] public uimanager uwUI;
 
 	double gameRefreshTimer = 0f;
