@@ -231,6 +231,7 @@ public partial class main : Node3D
 			{
 				uimanager.SetBackPack(i,uwObject.GetObjectSprite(playerdat.BackPackObject(i)) );
 			}
+			
 		}
 		else
 		{
