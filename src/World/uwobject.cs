@@ -976,6 +976,16 @@ namespace Underworld
             float offZ = _zpos / ResolutionZ * ceil * BrushZ;
             return offZ/100.0f;
         }
+
+        public static int GetObjectSprite (uwObject obj)
+        {
+            if(obj!=null)
+            {
+                return obj.item_id;
+            }
+            return -1;
+        }
+
     } //end class
 
 

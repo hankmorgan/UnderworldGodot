@@ -68,8 +68,14 @@ namespace Underworld
         [Export] public TextureRect Leggings;
         [Export] public TextureRect Boots;
         [Export] public TextureRect Gloves;
-        public TextureRect RingLeftUW1;
-        public TextureRect RingRightUW2;
+        [Export] public TextureRect RingLeftUW1;
+        [Export] public TextureRect RingRightUW2;
+
+        [Export] public TextureRect RightShoulder;
+        [Export] public TextureRect LeftShoulder;
+        [Export] public TextureRect RightHand;
+        [Export] public TextureRect LeftHand;
+
 
 
 
@@ -308,6 +314,54 @@ namespace Underworld
             else
             {
                 instance.Gloves.Texture = grArmour(isFemale).LoadImageAt(SpriteNo);
+            }
+        }
+
+        public static void SetRightShoulder(int SpriteNo = -1)
+        {
+            if (SpriteNo == -1)
+            { //clear the slot
+                instance.RightShoulder.Texture = null;
+            }
+            else
+            {
+                instance.RightShoulder.Texture = grObjects.LoadImageAt(SpriteNo);
+            }
+        }
+
+        public static void SetLeftShoulder(int SpriteNo = -1)
+        {
+            if (SpriteNo == -1)
+            { //clear the slot
+                instance.LeftShoulder.Texture = null;
+            }
+            else
+            {
+                instance.LeftShoulder.Texture = grObjects.LoadImageAt(SpriteNo);
+            }
+        }
+
+        public static void SetRightHand(int SpriteNo = -1)
+        {
+            if (SpriteNo == -1)
+            { //clear the slot
+                instance.RightHand.Texture = null;
+            }
+            else
+            {
+                instance.RightHand.Texture = grObjects.LoadImageAt(SpriteNo);
+            }
+        }
+
+        public static void SetLeftHand(int SpriteNo = -1)
+        {
+            if (SpriteNo == -1)
+            { //clear the slot
+                instance.LeftHand.Texture = null;
+            }
+            else
+            {
+                instance.LeftHand.Texture = grObjects.LoadImageAt(SpriteNo);
             }
         }
 

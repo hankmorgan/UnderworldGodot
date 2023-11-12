@@ -21,7 +21,7 @@ public partial class main : Node3D
 
 	double gameRefreshTimer = 0f;
 	double cycletime = 0;
-	int NextPaletteCycle = 0;
+	
 	public override void _Ready()
 	{
 		var appfolder = OS.GetExecutablePath();
@@ -212,12 +212,21 @@ public partial class main : Node3D
 			cam.Rotate(Vector3.Up, (float)(-playerdat.heading / 127f * Math.PI));
 			uimanager.SetBody(playerdat.Body, playerdat.isFemale);
 
-			//set helm from inventory
+			//set paperdoll
 			uimanager.SetHelm(playerdat.isFemale, helm.GetSpriteIndex(playerdat.HelmObject));
 			uimanager.SetArmour(playerdat.isFemale, chestarmour.GetSpriteIndex(playerdat.ChestArmourObject));
 			uimanager.SetGloves(playerdat.isFemale, gloves.GetSpriteIndex(playerdat.GlovesObject));
 			uimanager.SetLeggings(playerdat.isFemale, gloves.GetSpriteIndex(playerdat.LeggingsObject));
 			uimanager.SetBoots(playerdat.isFemale, gloves.GetSpriteIndex(playerdat.BootsObject));
+			//Set arms and shoulders
+			uimanager.SetRightShoulder( uwObject.GetObjectSprite(playerdat.RightShoulderObject));
+			uimanager.SetLeftShoulder(uwObject.GetObjectSprite(playerdat.LeftShoulderObject));
+			uimanager.SetRightHand(uwObject.GetObjectSprite(playerdat.RightHandObject));
+			uimanager.SetLeftHand(uwObject.GetObjectSprite(playerdat.LeftHandObject));
+			//set rings
+			//uimanager.SetRightRing(gloves.GetSpriteIndex(playerdat.RightRingObject));
+			//uimanager.SetLeftRing(gloves.GetSpriteIndex(playerdat.LeftRingObject));
+			//backback
 		}
 		else
 		{
@@ -229,6 +238,10 @@ public partial class main : Node3D
 			uimanager.SetBoots(isFemale, -1);
 			uimanager.SetLeggings(isFemale, -1);
 			uimanager.SetGloves(isFemale, -1);
+			uimanager.SetRightShoulder(-1);
+			uimanager.SetLeftShoulder(-1);
+			uimanager.SetRightHand(-1);
+			uimanager.SetLeftHand(-1);
 			uimanager.SetBody(r.Next(0, 4), isFemale);
 
 			LoadTileMap(gamesettings.level, gr);
@@ -263,91 +276,17 @@ public partial class main : Node3D
 		if (cycletime > 0.2)
 		{
 			cycletime = 0;
-			UpdatePaletteCycles();
+			PaletteLoader.UpdatePaletteCycles();
 		}
 		gameRefreshTimer += delta;
 		if (gameRefreshTimer >= 0.3)
 		{
 			gameRefreshTimer = 0;
-			UpdateNPCs();
-			UpdateAnimationOverlays();
+			npc.UpdateNPCs();
+			AnimationOverlay.UpdateAnimationOverlays();
 		}
 	}
 
-	private void UpdatePaletteCycles()
-	{
-		//Cycle the palette		
-		RenderingServer.GlobalShaderParameterSet("uwpalette", (Texture)PaletteLoader.cycledGamePalette[NextPaletteCycle]);
-		RenderingServer.GlobalShaderParameterSet("uwnpc", (Texture)PaletteLoader.cycledNPCPalette[NextPaletteCycle]);
-
-		NextPaletteCycle++;
-
-		if (NextPaletteCycle > PaletteLoader.cycledGamePalette.GetUpperBound(0))
-		{
-			NextPaletteCycle = 0;
-		}
-	}
-
-
-	private static void UpdateNPCs()
-	{
-		foreach (var n in ObjectCreator.npcs)
-		{
-			if (n.uwobject.tileY != 99)
-			{
-				n.uwobject.AnimationFrame++;
-				n.SetAnimSprite(n.uwobject.npc_animation, n.uwobject.AnimationFrame, n.uwobject.heading);
-			}
-		}
-	}
-
-
-	private static void UpdateAnimationOverlays()
-	{
-		foreach (var ovl in Underworld.TileMap.current_tilemap.Overlays)
-		{
-			if (ovl != null)
-			{
-				if (ovl.link != 0)
-				{
-					if (ovl.Duration != 0)
-					{
-						var obj = Underworld.TileMap.current_tilemap.LevelObjects[ovl.link];
-						if (obj != null)
-						{
-							if (obj.majorclass == 7) //animo
-							{
-								if (obj.classindex != 0xF)
-								{//animated sprite
-									if (obj.owner < animationObjectDat.endFrame(obj.item_id))
-									{ //animation in progress
-										animo.AdvanceAnimo((animo)obj.instance);
-									}
-									else
-									{
-										if (ovl.Duration == 0xFFFF)
-										{//infinitely loop
-											animo.ResetAnimo((animo)obj.instance);
-										}
-										else
-										{
-											ovl.Duration = 0;
-											//TODO Destroy the animo
-										}
-									}
-								}
-								else
-								{//a moving door
-									ovl.Duration--;
-									door.MoveDoor((door)obj.instance, 1);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
 
 	public override void _Input(InputEvent @event)
 	{

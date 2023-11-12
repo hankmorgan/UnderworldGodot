@@ -39,6 +39,7 @@ namespace Underworld
         /// </summary>
         public static lightmap[] mono = null;
 
+        public static int NextPaletteCycle = 0;
 
         //public static Palette[] xfer = new Palette[5];
 
@@ -91,15 +92,15 @@ namespace Underworld
                                     Palettes[palNo].red[pixel] = (byte)(getAt(pals_dat, palNo * 256 + (pixel * 3) + 0, 8) << 2);
                                     Palettes[palNo].green[pixel] = (byte)(getAt(pals_dat, palNo * 256 + (pixel * 3) + 1, 8) << 2);
                                     Palettes[palNo].blue[pixel] = (byte)(getAt(pals_dat, palNo * 256 + (pixel * 3) + 2, 8) << 2);
-                                    if(pixel==0)
+                                    if (pixel == 0)
                                     {
-                                        Palettes[palNo].alpha[pixel] =255; //no alpha by default
+                                        Palettes[palNo].alpha[pixel] = 255; //no alpha by default
                                     }
                                     else
                                     {
                                         Palettes[palNo].alpha[pixel] = 255;
                                     }
-                                   
+
                                 }
                             }
                         }
@@ -115,15 +116,15 @@ namespace Underworld
                                     light[palNo].red[pixel] = (byte)getAt(light_dat, palNo * 256 + pixel + 0, 8);
                                     light[palNo].blue[pixel] = (byte)getAt(light_dat, palNo * 256 + pixel + 0, 8);
                                     light[palNo].green[pixel] = (byte)getAt(light_dat, palNo * 256 + pixel + 0, 8);
-                                    if (pixel==0)
+                                    if (pixel == 0)
                                     {
-                                        light[palNo].alpha[pixel] =255;
+                                        light[palNo].alpha[pixel] = 255;
                                     }
                                     else
                                     {
-                                        light[palNo].alpha[pixel] =0;
+                                        light[palNo].alpha[pixel] = 0;
                                     }
-                                    
+
                                 }
                             }
                         }
@@ -151,10 +152,10 @@ namespace Underworld
 
             //Create a critter palette. Copied from the primary game pal
             CritterPalette = new Palette();
-            CritterPalette.red= Palettes[0].red;
-            CritterPalette.green= Palettes[0].green;
-            CritterPalette.blue= Palettes[0].blue;
-            for (int i=1; i<Palettes[0].red.GetUpperBound(0);i++)
+            CritterPalette.red = Palettes[0].red;
+            CritterPalette.green = Palettes[0].green;
+            CritterPalette.blue = Palettes[0].blue;
+            for (int i = 1; i < Palettes[0].red.GetUpperBound(0); i++)
             {//apply an alpha channel to the entire palette for testing
                 switch (i)
                 {
@@ -165,12 +166,12 @@ namespace Underworld
                     case 0xfb://used by shadow beast?
                     case 0xfc://white
                     case 0xfd://black???
-                        CritterPalette.alpha[i] = 40;break;
+                        CritterPalette.alpha[i] = 40; break;
                     default:
-                        CritterPalette.alpha[i] = 255;break;
-                }              
+                        CritterPalette.alpha[i] = 255; break;
+                }
             }
-            
+
             cycledGamePalette = CreateTexturePaletteCycles(PaletteLoader.Palettes[0]);//init the first palette as cycled
             //TODO Set up cycling for the npc palette too.
             cycledNPCPalette = CreateTexturePaletteCycles(CritterPalette);//init the critter palette as cycled
@@ -180,7 +181,7 @@ namespace Underworld
             RenderingServer.GlobalShaderParameterAdd("cutoffdistance", RenderingServer.GlobalShaderParameterType.Float, 2.4f * shade.getShadeCutoff(uwsettings.instance.lightlevel));
             RenderingServer.GlobalShaderParameterAdd("uwlightmap", RenderingServer.GlobalShaderParameterType.Sampler2D, PaletteLoader.AllLightMaps(PaletteLoader.light));
             RenderingServer.GlobalShaderParameterAdd("shades", RenderingServer.GlobalShaderParameterType.Sampler2D, shade.shadesdata[uwsettings.instance.lightlevel].ToImage());
-            
+
             RenderingServer.GlobalShaderParameterAdd("shadeshift", RenderingServer.GlobalShaderParameterType.Sampler2D, shade.shadesdata[uwsettings.instance.lightlevel].ToShiftedImage());
 
             //palette for NPCs (to support xfer transparencies)
@@ -274,6 +275,21 @@ namespace Underworld
                 NewCycledPalette[c] = tmpPalette.toImage();
             }
             return NewCycledPalette;
+        }
+
+
+        public static void UpdatePaletteCycles()
+        {
+            //Cycle the palette		
+            RenderingServer.GlobalShaderParameterSet("uwpalette", (Texture)PaletteLoader.cycledGamePalette[NextPaletteCycle]);
+            RenderingServer.GlobalShaderParameterSet("uwnpc", (Texture)PaletteLoader.cycledNPCPalette[NextPaletteCycle]);
+
+            NextPaletteCycle++;
+
+            if (NextPaletteCycle > PaletteLoader.cycledGamePalette.GetUpperBound(0))
+            {
+                NextPaletteCycle = 0;
+            }
         }
 
     }//end class

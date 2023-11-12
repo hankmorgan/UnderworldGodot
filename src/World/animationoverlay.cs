@@ -164,6 +164,58 @@ namespace Underworld
                 }
             }
         }
+
+
+
+    /// <summary>
+    /// Process the current animation overlays and advance them
+    /// </summary>
+    public static void UpdateAnimationOverlays()
+	{
+		foreach (var ovl in Underworld.TileMap.current_tilemap.Overlays)
+		{
+			if (ovl != null)
+			{
+				if (ovl.link != 0)
+				{
+					if (ovl.Duration != 0)
+					{
+						var obj = Underworld.TileMap.current_tilemap.LevelObjects[ovl.link];
+						if (obj != null)
+						{
+							if (obj.majorclass == 7) //animo
+							{
+								if (obj.classindex != 0xF)
+								{//animated sprite
+									if (obj.owner < animationObjectDat.endFrame(obj.item_id))
+									{ //animation in progress
+										animo.AdvanceAnimo((animo)obj.instance);
+									}
+									else
+									{
+										if (ovl.Duration == 0xFFFF)
+										{//infinitely loop
+											animo.ResetAnimo((animo)obj.instance);
+										}
+										else
+										{
+											ovl.Duration = 0;
+											//TODO Destroy the animo
+										}
+									}
+								}
+								else
+								{//a moving door
+									ovl.Duration--;
+									door.MoveDoor((door)obj.instance, 1);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
     
     }//end class
 }//end namespace

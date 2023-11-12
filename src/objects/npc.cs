@@ -16,10 +16,10 @@ namespace Underworld
         /// Mesh this sprite is drawn on
         /// </summary>
         public MeshInstance3D sprite;
-       
-       /// <summary>
-       /// The material for rendering this unique npc
-       /// </summary>
+
+        /// <summary>
+        /// The material for rendering this unique npc
+        /// </summary>
         public ShaderMaterial material;
 
 
@@ -28,14 +28,14 @@ namespace Underworld
         /// Mesh this sprite is drawn on
         /// </summary>
         //public MeshInstance3D sprite;
-       
-       /// <summary>
-       /// The material for rendering this unique npc
-       /// </summary>
+
+        /// <summary>
+        /// The material for rendering this unique npc
+        /// </summary>
         //public ShaderMaterial material;
 
         public enum npc_goals
-        {        
+        {
             npc_goal_stand_still_0 = 0,
             npc_goal_goto_1 = 1,
             npc_goal_wander_2 = 2,
@@ -57,15 +57,15 @@ namespace Underworld
 
         public npc(uwObject _uwobject)
         {
-            uwobject =_uwobject;
+            uwobject = _uwobject;
             try
             {
-                SetAnimSprite(uwobject.npc_animation,uwobject.AnimationFrame,uwobject.heading);//TODO this value has to be relative to the player heading
+                SetAnimSprite(uwobject.npc_animation, uwobject.AnimationFrame, uwobject.heading);//TODO this value has to be relative to the player heading
             }
             catch (Exception ex)
             {
                 Debug.Print($"{ex.ToString()}");
-            }           
+            }
         }
 
         /// <summary>
@@ -76,12 +76,12 @@ namespace Underworld
         /// <returns></returns>
         public static npc CreateInstance(Node3D parent, uwObject obj, string name)
         {
-            var n = new npc(obj);  
+            var n = new npc(obj);
             var a_sprite = new MeshInstance3D(); //new Sprite3D();
             a_sprite.Name = name;
             a_sprite.Mesh = new QuadMesh();
             a_sprite.Mesh.SurfaceSetMaterial(0, n.material);
-            a_sprite.Mesh.Set("size",n.FrameSize*1.5f);
+            a_sprite.Mesh.Set("size", n.FrameSize * 1.5f);
             n.sprite = a_sprite;
             parent.AddChild(a_sprite);
             a_sprite.Position = new Vector3(0, n.FrameSize.Y / 2 + 0.12f, 0);
@@ -98,15 +98,15 @@ namespace Underworld
             animname = CritterArt.GetAnimName(obj.npc_animation, obj.heading);
             if (ObjectCreator.printlabels)
             {
-            Label3D obj_lbl = new();
-            obj_lbl.Text = $"{name} {obj.item_id & 0x3F} \nAnim={obj.npc_animation} Frame={obj.AnimationFrame} {animname}\n Goal {obj.npc_goal}";
-            obj_lbl.Font = uimanager.instance.Font4X5P;
-            obj_lbl.FontSize=16;
-            obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
-            obj_lbl.Position = new Vector3(0f,0.4f,0f);
-            parent.AddChild(obj_lbl);
+                Label3D obj_lbl = new();
+                obj_lbl.Text = $"{name} {obj.item_id & 0x3F} \nAnim={obj.npc_animation} Frame={obj.AnimationFrame} {animname}\n Goal {obj.npc_goal}";
+                obj_lbl.Font = uimanager.instance.Font4X5P;
+                obj_lbl.FontSize = 16;
+                obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
+                obj_lbl.Position = new Vector3(0f, 0.4f, 0f);
+                parent.AddChild(obj_lbl);
             }
-            return n;                  
+            return n;
         }
 
         static npc()
@@ -117,10 +117,11 @@ namespace Underworld
         public void SetAnimSprite(int animationNo, short frameNo, int relativeHeading)
         {
             //if (this.uwobject.item_id >= 127) { return; }
-            if ( uwobject.npc_animation>=8){
-                 uwobject.npc_animation=0;
+            if (uwobject.npc_animation >= 8)
+            {
+                uwobject.npc_animation = 0;
             }
-            string animname= CritterArt.GetAnimName(animationNo,relativeHeading); // "idle_front";
+            string animname = CritterArt.GetAnimName(animationNo, relativeHeading); // "idle_front";
             //var crit = CritLoader.GetCritter(this.uwobject.item_id & 0x3F);
             var crit = CritterArt.GetCritter(this.uwobject.item_id & 0x3F);
             if (crit.Animations.ContainsKey(animname))
@@ -129,9 +130,9 @@ namespace Underworld
             }
             else
             {
-                uwobject.npc_animation=0; //default animation to zero;
+                uwobject.npc_animation = 0; //default animation to zero;
                 Debug.Print($"{animname} ({animationNo}) was not found for {this.uwobject.item_id & 0x3F}");
-                uwobject.npc_animation = ApplyCritterAnimation(animationNo, frameNo, CritterArt.GetAnimName(0,0), crit);
+                uwobject.npc_animation = ApplyCritterAnimation(animationNo, frameNo, CritterArt.GetAnimName(0, 0), crit);
             }
         }
 
@@ -151,10 +152,10 @@ namespace Underworld
             }
             //assign the params to the shader
             //critAnim.animSprites[critAnim.animIndices[AnimationIndex, AnimationPos++]] 
-            if (frameNo>=8){frameNo=0;}       
+            if (frameNo >= 8) { frameNo = 0; }
             if (anim.animIndices[frameNo] == -1)
             {
-                frameNo=0;
+                frameNo = 0;
             }
 
             if (anim.animIndices[frameNo] != -1)
@@ -175,6 +176,23 @@ namespace Underworld
             }
             return 0;
         }
+
+
+        /// <summary>
+        /// Interate through the npcs and up their their animations
+        /// </summary>
+        public static void UpdateNPCs()
+        {
+            foreach (var n in ObjectCreator.npcs)
+            {
+                if (n.uwobject.tileY != 99)
+                {
+                    n.uwobject.AnimationFrame++;
+                    n.SetAnimSprite(n.uwobject.npc_animation, n.uwobject.AnimationFrame, n.uwobject.heading);
+                }
+            }
+        }
+
     }//end class
 
 }//end namespace
