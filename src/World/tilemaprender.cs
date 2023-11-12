@@ -1,11 +1,15 @@
 using Godot;
 using System.Collections.Generic;
 using System.Linq;
-using System.Transactions;
+
 
 namespace Underworld
 {
 
+
+    /// <summary>
+    /// For drawing the level map. It works somehow..
+    /// </summary>
     public class tileMapRender : UWClass
     {
 
@@ -112,9 +116,9 @@ namespace Underworld
         /// <param name="skipFloor">If set to <c>true</c> skip floor.</param>
         /// <param name="skipCeil">If set to <c>true</c> skip ceil.</param>
         public static Node3D RenderTile(Node3D parent, int x, int y, TileInfo t)
-        {           
-            if (t.tileType!=TILE_SLOPE_E){return null;}
+        {                      
             //Picks the tile to render based on tile type/flags.
+            if (t.tileType!=TILE_SLOPE_N){return null;}
             switch (t.tileType)
             {
                 case TILE_SOLID:    //0
@@ -1691,8 +1695,8 @@ namespace Underworld
                                         verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight + AdjustUpperNorth + AdjustUpperWest, 1.2f * dimY);
                                         verts[3 + (4 * FaceCounter)] = new Vector3(0f, baseHeight + AdjustLowerSouth + AdjustLowerEast, 1.2f * dimY);
                                         uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0Slope - offset);//bottom uv
-                                        uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1Slope - offset);//top uv
-                                        uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, uv1Slope - offset);//top uv
+                                        uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, -uv1Slope - offset);//top uv
+                                        uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, -uv1Slope - offset);//top uv
                                         uvs[3 + (4 * FaceCounter)] = new Vector2(dimX, uv0Slope - offset);//bottom uv
                                         break;
 
@@ -1817,8 +1821,8 @@ namespace Underworld
                                         verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight + AdjustUpperSouth + AdjustUpperEast, 0f);
                                         verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight + AdjustLowerNorth + AdjustLowerWest, 0f);
                                         uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0Slope - offset);//bottom uv
-                                        uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1Slope - offset);//top uv
-                                        uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, uv1Slope - offset);//top uv
+                                        uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, -uv1Slope - offset);//top uv
+                                        uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, -uv1Slope - offset);//top uv
                                         uvs[3 + (4 * FaceCounter)] = new Vector2(dimX, uv0Slope - offset);//bottom uv
                                         break;
                                     default:
@@ -1942,8 +1946,8 @@ namespace Underworld
                                         verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight + AdjustUpperWest + AdjustUpperSouth, 0f);
                                         verts[3 + (4 * FaceCounter)] = new Vector3(0f, baseHeight + AdjustLowerEast + AdjustLowerNorth, 0f);
                                         uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0Slope - offset);//bottom uv
-                                        uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1Slope - offset);//top uv
-                                        uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, uv1Slope - offset);//top uv
+                                        uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, -uv1Slope - offset);//top uv
+                                        uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, -uv1Slope - offset);//top uv
                                         uvs[3 + (4 * FaceCounter)] = new Vector2(dimX, uv0Slope - offset);//bottom uv
                                         break;
                                     default:
@@ -2079,8 +2083,8 @@ namespace Underworld
                                         verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight + AdjustUpperNorthEast, 1.2f * dimY);
                                         verts[3 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 1.2f * dimY);
                                         uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 - offset);//0
-                                        uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1 - offset);//1
-                                        uvs[2 + (4 * FaceCounter)] = new Vector2(dimY, uv1 - offset);//1
+                                        uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, -uv1 - offset);//1
+                                        uvs[2 + (4 * FaceCounter)] = new Vector2(dimY, -uv1 - offset);//1
                                         uvs[3 + (4 * FaceCounter)] = new Vector2(dimY, uv0 - offset);//0
                                         break;
                                 }
@@ -2143,12 +2147,12 @@ namespace Underworld
                                                 //if (t.shockEastOffset==0){uvToUse=+uv1edge;}else{uvToUse=-uv0edge;}
                                                 //uvToUse=uv0edge;
                                                 if (Floor == 1)
-                                                {
+                                                {//fixed
                                                     CalcUVForSlopedCuboid(Top + Steepness, Top, out uv0edge, out uv1edge);
                                                     if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
-                                                    uvs[index + 0] = new Vector2(0, uvToUse);//0, vertical alignment
-                                                    uvs[index + 1] = new Vector2(1, uvToUse + Steepness * 0.125f); //vertical + scale
-                                                    uvs[index + 2] = new Vector2(1, uvToUse);   //1, vertical alignment	
+                                                    uvs[index + 0] = new Vector2(0, -uvToUse);//0, vertical alignment  0,1
+                                                    uvs[index + 1] = new Vector2(1, -(uvToUse + Steepness * 0.125f)); //vertical + scale  1,1
+                                                    uvs[index + 2] = new Vector2(1, -uvToUse);   //1, vertical alignment	  1,0
                                                 }
                                                 else
                                                 {
