@@ -57,7 +57,7 @@ public partial class main : Node3D
 				break;
 			default:
 				cam.Position = new Vector3(-38f, 4.2f, 2.2f);
-				cam.Position = new Vector3(-14.9f, 0.78f, 5.3f);
+				//cam.Position = new Vector3(-14.9f, 0.78f, 5.3f);
 				break;
 		}
 		cam.Rotate(Vector3.Up, (float)Math.PI);
@@ -181,7 +181,7 @@ public partial class main : Node3D
 
 		//uielem.Texture = ThreeDWinImg;
 		//uielem.TextureFilter = CanvasItem.TextureFilterEnum.Nearest;
-		
+
 
 		// var cuts = new CutsLoader(Path.Combine(UWClass.BasePath,"CUTS","CS000.N02"));
 		// var cutimg = cuts.ImageCache[index];
@@ -190,28 +190,28 @@ public partial class main : Node3D
 		// uielem.Texture=cutimg;
 		// uielem.TextureFilter=CanvasItem.TextureFilterEnum.Nearest;
 
-		
 
-		uwUI.InitUI();		
+
+		uwUI.InitUI();
 		messageScroll.AddString(GameStrings.GetString(1, 13));
 
 
-		if(uwsettings.instance.levarkfolder.ToUpper()!="DATA")
+		if (uwsettings.instance.levarkfolder.ToUpper() != "DATA")
 		{
 			//load player dat
 			playerdat.Load(uwsettings.instance.levarkfolder);
 			Debug.Print($"Your name is {playerdat.CharName}");
-			LoadTileMap(playerdat.dungeon_level - 1 , gr);
+			LoadTileMap(playerdat.dungeon_level - 1, gr);
 
 			Debug.Print($"You are at x:{playerdat.X} y:{playerdat.Y} z:{playerdat.Z}");
 			Debug.Print($"You are at x:{playerdat.tileX} {playerdat.xpos} y:{playerdat.tileY} {playerdat.ypos} z:{playerdat.zpos}");
 			cam.Position = uwObject.GetCoordinate(playerdat.tileX, playerdat.tileY, playerdat.xpos, playerdat.ypos, playerdat.camerazpos);
 			Debug.Print($"Player Heading is {playerdat.heading}");
-			cam.Rotation  = Vector3.Zero;
+			cam.Rotation = Vector3.Zero;
 			cam.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
-			cam.Rotate(Vector3.Up, (float)(-playerdat.heading /127f *  Math.PI)); 	
-			uimanager.SetBody(playerdat.Body, playerdat.isFemale);	
-			
+			cam.Rotate(Vector3.Up, (float)(-playerdat.heading / 127f * Math.PI));
+			uimanager.SetBody(playerdat.Body, playerdat.isFemale);
+
 			//set helm from inventory
 			uimanager.SetHelm(playerdat.isFemale, helm.GetSpriteIndex(playerdat.HelmObject));
 			uimanager.SetArmour(playerdat.isFemale, chestarmour.GetSpriteIndex(playerdat.ChestArmourObject));
@@ -221,15 +221,15 @@ public partial class main : Node3D
 		}
 		else
 		{
-			
+
 			Random r = new Random();
-			var isFemale = r.Next(0,2) == 1;
+			var isFemale = r.Next(0, 2) == 1;
 			uimanager.SetHelm(isFemale, -1);
 			uimanager.SetArmour(isFemale, -1);
-			uimanager.SetBoots(isFemale,-1);
-			uimanager.SetLeggings(isFemale,-1);
+			uimanager.SetBoots(isFemale, -1);
+			uimanager.SetLeggings(isFemale, -1);
 			uimanager.SetGloves(isFemale, -1);
-			uimanager.SetBody(r.Next(0,4), isFemale);	
+			uimanager.SetBody(r.Next(0, 4), isFemale);
 
 			LoadTileMap(gamesettings.level, gr);
 		}
@@ -242,7 +242,7 @@ public partial class main : Node3D
 
 		Node3D worldobjects = GetNode<Node3D>("/root/Node3D/worldobjects");
 		Node3D the_tiles = GetNode<Node3D>("/root/Node3D/tilemap");
-//tilemap/Tile_30_00
+		//tilemap/Tile_30_00
 		LevArkLoader.LoadLevArkFileData(folder: uwsettings.instance.levarkfolder);
 		Underworld.TileMap.current_tilemap = new(newLevelNo);
 
@@ -315,29 +315,32 @@ public partial class main : Node3D
 						var obj = Underworld.TileMap.current_tilemap.LevelObjects[ovl.link];
 						if (obj != null)
 						{
-							if (obj.classindex != 0xF)
-							{//animated sprite
-								if (obj.owner < animationObjectDat.endFrame(obj.item_id))
-								{ //animation in progress
-									animo.AdvanceAnimo((animo)obj.instance);
-								}
-								else
-								{
-									if (ovl.Duration == 0xFFFF)
-									{//infinitely loop
-										animo.ResetAnimo((animo)obj.instance);
+							if (obj.majorclass == 7) //animo
+							{
+								if (obj.classindex != 0xF)
+								{//animated sprite
+									if (obj.owner < animationObjectDat.endFrame(obj.item_id))
+									{ //animation in progress
+										animo.AdvanceAnimo((animo)obj.instance);
 									}
 									else
 									{
-										ovl.Duration = 0;
-										//TODO Destroy the animo
+										if (ovl.Duration == 0xFFFF)
+										{//infinitely loop
+											animo.ResetAnimo((animo)obj.instance);
+										}
+										else
+										{
+											ovl.Duration = 0;
+											//TODO Destroy the animo
+										}
 									}
 								}
-							}
-							else
-							{//a moving door
-								ovl.Duration--;
-								door.MoveDoor((door)obj.instance, 1);
+								else
+								{//a moving door
+									ovl.Duration--;
+									door.MoveDoor((door)obj.instance, 1);
+								}
 							}
 						}
 					}

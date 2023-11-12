@@ -730,8 +730,9 @@ namespace Underworld
             {
                 for (x = 0; x <= TileMapSizeX; x++)
                 {
+                     Tiles[x, y].VisibleFaces[vBOTTOM]=false;//hide bottom of tile
                     if ((Tiles[x, y].tileType == TILE_SOLID))
-                    {
+                    {                       
                         int dimx = Tiles[x, y].DimX;
                         int dimy = Tiles[x, y].DimY;
 
