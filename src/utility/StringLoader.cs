@@ -733,12 +733,28 @@ namespace Underworld
             /// </summary>
             /// <returns>The object noun U.</returns>
             /// <param name="item_id">Item identifier.</param>
-            public static string GetObjectNounUW(int item_id)
+            public static string GetObjectNounUW(int item_id, int qty = 0)
             {
                 string output = GetString(4, item_id);
                 if (output.Contains("&"))
                 {
-                    output = output.Split('&')[0];
+                    if (qty<=1)
+                    {
+                        output = output.Split('&')[0];
+                    }
+                    else
+                    {
+                        output = output.Split('&')[1];
+                    }
+                   
+                }
+                else
+                {
+                    if (qty>=2)
+                    {
+                        //plural that just needs an "S"
+                        output+="s";
+                    }
                 }
                 //Remove the article
                 output = output.Replace("a_", "");

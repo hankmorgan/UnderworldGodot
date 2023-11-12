@@ -94,8 +94,7 @@ namespace Underworld
                             case 0xF:
                                 return tmap.LookAt(obj);
                             default:
-
-                                return true;
+                                return false;
                         }
                     }
 
@@ -118,8 +117,19 @@ namespace Underworld
             }
 
             //TODO object identifaciton string
-            string objectname = GameStrings.GetObjectNounUW(obj.item_id);
+
             var qualityclass = commonObjDat.qualityclass(obj.item_id);
+            int qty = 0;
+            if (obj.is_quant == 1)
+            {
+                if (obj.link < 512)
+                {
+                    qty = obj.link;
+                }
+            }
+
+            string objectname = GameStrings.GetObjectNounUW(obj.item_id, qty);
+
             var finalclass = -1;
             if (obj.quality > 0)
             {
@@ -146,27 +156,57 @@ namespace Underworld
 
             var qualitystringid = commonObjDat.qualitytype(obj.item_id) * 6 + finalclass;
             var qualitystring = GameStrings.GetString(5, qualitystringid);
-            // output += GameStrings.GetString(5, qualitystringid) + " " + objectname;
-            var article = "a";
-            if (
-                (objectname.ToUpper().StartsWith("A"))
-                ||
-                (objectname.ToUpper().StartsWith("E"))
-                ||
-                (objectname.ToUpper().StartsWith("I"))
-                ||
-                (objectname.ToUpper().StartsWith("O"))
-                ||
-                (objectname.ToUpper().StartsWith("U"))
-                )
+            if (qualitystring.Length > 0) { qualitystring += " "; }
+
+            var article = "a ";
+       
+            string qtystring = "";
+            if (qty > 1)
             {
-                article = "an";
+                qtystring = $"{qty} ";
             }
 
-            output += $" {article} {qualitystring} {objectname}";
+            if (qty>=2)
+            {
+                article = ""; //GetArticle(qtystring);
+            }
+            else
+            {
+                if (qualitystring.Length>0)
+                {
+                    article = GetArticle(qualitystring);
+                }
+                else
+                {
+                    article = GetArticle(objectname);
+                }
+            }
+
+            output += $"{article}{qtystring}{qualitystring}{objectname}";
             messageScroll.AddString($"{output}");
             return true;
         }
 
+        private static string GetArticle(string noun)
+        {
+            if (
+                (noun.ToUpper().StartsWith("A"))
+                ||
+                (noun.ToUpper().StartsWith("E"))
+                ||
+                (noun.ToUpper().StartsWith("I"))
+                ||
+                (noun.ToUpper().StartsWith("O"))
+                ||
+                (noun.ToUpper().StartsWith("U"))
+                )
+            {
+                return "an ";
+            }
+            else
+            {
+                return "a ";
+            }
+        }
     }//end class
 }//end namespace
