@@ -5,7 +5,7 @@ namespace Underworld
     /// </summary>
     public class look : UWClass
     {
-        public static bool LookAt(int index, uwObject[] objList)
+        public static bool LookAt(int index, uwObject[] objList, bool WorldObject = true)
         {
             bool result = false;
             trap.ObjectThatStartedChain = index;

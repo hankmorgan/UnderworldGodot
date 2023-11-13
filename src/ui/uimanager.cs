@@ -71,6 +71,8 @@ namespace Underworld
 		[Export] public TextureRect LeftShoulder;
 		[Export] public TextureRect RightHand;
 		[Export] public TextureRect LeftHand;
+		[Export] public TextureRect RightRing;
+		[Export] public TextureRect LeftRing;
 		[Export] public TextureRect[] Backpack = new TextureRect[8];
 
 		public static BytLoader byt;
@@ -363,6 +365,32 @@ namespace Underworld
 			}
 		}
 
+		public static void SetRightRing(int SpriteNo = -1)
+		{
+			if (SpriteNo == -1)
+			{ //clear the slot
+				instance.RightRing.Texture = null;
+			}
+			else
+			{
+				instance.RightRing.Texture = grObjects.LoadImageAt(SpriteNo);
+				instance.RightRing.Material = grObjects.GetMaterial(SpriteNo);
+			}
+		}
+
+		public static void SetLeftRing(int SpriteNo = -1)
+		{
+			if (SpriteNo == -1)
+			{ //clear the slot
+				instance.LeftRing.Texture = null;
+			}
+			else
+			{
+				instance.LeftRing.Texture = grObjects.LoadImageAt(SpriteNo);
+				instance.LeftRing.Material = grObjects.GetMaterial(SpriteNo);
+			}
+		}
+
 		public static void SetBackPack(int slot, int SpriteNo = -1)
 		{
 			if (SpriteNo == -1)
@@ -409,6 +437,8 @@ namespace Underworld
 					case "RightShoulder": {obj = playerdat.RightShoulder;break;}
 					case "LeftHand": {obj = playerdat.LeftHand;break;}
 					case "RightHand": {obj = playerdat.RightHand;break;}
+					case "LeftRing": {obj = playerdat.LeftRing;break;}
+					case "RightRing": {obj = playerdat.RightRing;break;}					
 					case "Back0": {obj = playerdat.BackPack(0);break;}
 					case "Back1": {obj = playerdat.BackPack(1);break;}
 					case "Back2": {obj = playerdat.BackPack(2);break;}
@@ -427,7 +457,11 @@ namespace Underworld
 					switch (InteractionMode)
 					{
 						case InteractionModes.ModeUse:
-							use.Use(obj, playerdat.InventoryObjects); break;
+							use.Use(
+								index: obj, 
+								objList: playerdat.InventoryObjects, 
+								WorldObject: false); 
+								break;
 						case InteractionModes.ModeLook:
 							look.LookAt(obj, playerdat.InventoryObjects); break;
 						default:

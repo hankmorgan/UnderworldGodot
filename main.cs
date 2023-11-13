@@ -224,14 +224,13 @@ public partial class main : Node3D
 			uimanager.SetRightHand(uwObject.GetObjectSprite(playerdat.RightHandObject));
 			uimanager.SetLeftHand(uwObject.GetObjectSprite(playerdat.LeftHandObject));
 			//set rings
-			//uimanager.SetRightRing(ring.GetSpriteIndex(playerdat.RightRingObject));
-			//uimanager.SetLeftRing(ring.GetSpriteIndex(playerdat.LeftRingObject));
+			uimanager.SetRightRing(ring.GetSpriteIndex(playerdat.RightRingObject));
+			uimanager.SetLeftRing(ring.GetSpriteIndex(playerdat.LeftRingObject));
 			//backback
 			for (int i=0; i<8;i++)
 			{
 				uimanager.SetBackPack(i,uwObject.GetObjectSprite(playerdat.BackPackObject(i)) );
-			}
-			
+			}			
 		}
 		else
 		{

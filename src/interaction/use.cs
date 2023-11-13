@@ -1,5 +1,3 @@
-using System.Runtime.Serialization.Formatters;
-
 namespace Underworld
 {
     /// <summary>
@@ -7,7 +5,7 @@ namespace Underworld
     /// </summary>
     public class use : UWClass
     {
-        public static bool Use(int index, uwObject[] objList)
+        public static bool Use(int index, uwObject[] objList, bool WorldObject =true)
         {
             trap.ObjectThatStartedChain = index;
             bool result = false;
@@ -18,12 +16,12 @@ namespace Underworld
                 {
                     case 4:
                         {
-                            result = UseMajorClass4(obj, objList);
+                            result = UseMajorClass4(obj, objList, WorldObject);
                             break;
                         }
                     case 5:
                         {
-                            result = UseMajorClass5(obj, objList);
+                            result = UseMajorClass5(obj, objList, WorldObject);
                             break;
                         }
                 }
@@ -45,7 +43,7 @@ namespace Underworld
         }
 
 
-        public static bool UseMajorClass4(uwObject obj, uwObject[] objList)
+        public static bool UseMajorClass4(uwObject obj, uwObject[] objList, bool WorldObject)
         {
             switch (obj.minorclass)
             {
@@ -61,7 +59,7 @@ namespace Underworld
             return false;
         }
 
-        public static bool UseMajorClass5(uwObject obj, uwObject[] objList)
+        public static bool UseMajorClass5(uwObject obj, uwObject[] objList, bool WorldObject)
         {
             switch (obj.minorclass)
             {
