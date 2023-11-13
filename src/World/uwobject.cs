@@ -957,8 +957,9 @@ namespace Underworld
         /// <returns></returns>
         public static float GetXYCoordinate(int tilexy, int xy)
         {
-            float ResolutionXY = 7.0f;  // A tile has a 7x7 grid for object positioning.
-            float BrushXY = 120f;
+            xy = (xy * 3) + 1;
+            float ResolutionXY = 23f;  // A tile has a 8x8 grid for object positioning.
+            float BrushXY = 120f; //game world size of a tile.
             float offXY = tilexy * BrushXY + xy * (BrushXY / ResolutionXY);
             return offXY/100f;
         }

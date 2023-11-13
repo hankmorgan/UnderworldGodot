@@ -46,10 +46,10 @@ namespace Underworld
         public override Vector3[] ModelVertices()
         {
             Vector3[] v = new Vector3[4];
-            v[0] = new Vector3(-0.6f, 0f, 0.0825f);
-            v[1] = new Vector3(0.6f, 0f, 0.0825f);
-            v[2] = new Vector3(0.6f, 1.2f, 0.0825f);
-            v[3] = new Vector3(-0.6f, 1.2f, 0.0825f);
+            v[0] = new Vector3(-0.6f, 0f, 0.0625f);
+            v[1] = new Vector3(0.6f, 0f, 0.0625f);
+            v[2] = new Vector3(0.6f, 1.2f, 0.0625f);
+            v[3] = new Vector3(-0.6f, 1.2f, 0.0625f);
             return v;
         }
 

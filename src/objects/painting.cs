@@ -15,7 +15,7 @@ namespace Underworld
             var modelNode = n.Generate3DModel(parent, name);
             modelNode.Rotate(Vector3.Up, (float)Math.PI); 
             SetModelRotation(parent, n);  
-            modelNode.Position += new Vector3(0f,0f,0.08f); //extrude the model out of the wall           
+            //modelNode.Position += new Vector3(0f,0f,0.08f); //extrude the model out of the wall           
             //DisplayModelPoints(n, parent,11); 
             return n;
         }
