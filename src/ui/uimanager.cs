@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Godot;
+using Godot.NativeInterop;
 
 namespace Underworld
 {
@@ -62,17 +63,21 @@ namespace Underworld
 		[Export] public TextureRect Body;
 		[Export] public TextureRect Helm;
 		[Export] public TextureRect Armour;
+		[Export] public TextureRect ArmourInput;
 		[Export] public TextureRect Leggings;
+		[Export] public TextureRect LeggingsInput;
 		[Export] public TextureRect Boots;
 		[Export] public TextureRect Gloves;
-		[Export] public TextureRect RingLeftUW1;
-		[Export] public TextureRect RingRightUW2;
+		[Export] public TextureRect GlovesInput1;
+		[Export] public TextureRect GlovesInput2;
 		[Export] public TextureRect RightShoulder;
 		[Export] public TextureRect LeftShoulder;
 		[Export] public TextureRect RightHand;
 		[Export] public TextureRect LeftHand;
 		[Export] public TextureRect RightRing;
+		[Export] public TextureRect RightRingInput;
 		[Export] public TextureRect LeftRing;
+		[Export] public TextureRect LeftRingInput;		
 		[Export] public TextureRect[] Backpack = new TextureRect[8];
 
 		public static BytLoader byt;
@@ -129,6 +134,19 @@ namespace Underworld
 				Gloves.Position += offset;
 				Leggings.Position += offset;
 				Armour.Position += offset;
+				RightRing.Position += offset;
+				LeftRing.Position += offset;
+				RightRingInput.Position += offset;
+				LeftRingInput.Position += offset;
+				GlovesInput1.Position += offset;
+				GlovesInput2.Position += offset;
+				ArmourInput.Position += offset;
+				LeggingsInput.Position += offset;
+
+				for (int i=0; i<8;i++)
+				{
+					Backpack[i].Position += offset;
+				}
 
 
 			}
@@ -201,14 +219,6 @@ namespace Underworld
 				ctrl.Visible = state;
 			}
 		}
-
-
-		public void _paperdoll_gui_input(InputEvent inputEvent)
-		{
-			Debug.Print("HERE");
-		}
-
-
 
 		public void InteractionModeToggle(InteractionModes index)
 		{
@@ -430,9 +440,14 @@ namespace Underworld
 			if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
 			{
 				var obj = 0;
-				Debug.Print($"{extra_arg_0}");
+				Debug.Print($"->{extra_arg_0}");
 				switch (extra_arg_0)
 				{
+					case "Helm": {obj = playerdat.Helm;break;}
+					case "Armour":  {obj = playerdat.ChestArmour;break;}
+					case "Gloves":  {obj = playerdat.Gloves;break;}
+					case "Boots":  {obj = playerdat.Boots;break;}
+					case "Leggings":  {obj = playerdat.Leggings;break;}
 					case "LeftShoulder": {obj = playerdat.LeftShoulder;break;}
 					case "RightShoulder": {obj = playerdat.RightShoulder;break;}
 					case "LeftHand": {obj = playerdat.LeftHand;break;}
