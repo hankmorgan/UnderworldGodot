@@ -1,3 +1,5 @@
+using System.ComponentModel;
+
 namespace Underworld
 {
     /// <summary>
@@ -5,7 +7,7 @@ namespace Underworld
     /// </summary>
     public class use : UWClass
     {
-        public static bool Use(int index, uwObject[] objList, bool WorldObject =true)
+        public static bool Use(int index, uwObject[] objList, bool WorldObject = true)
         {
             trap.ObjectThatStartedChain = index;
             bool result = false;
@@ -14,6 +16,11 @@ namespace Underworld
                 var obj = objList[index];
                 switch (obj.majorclass)
                 {
+                    case 2:
+                        {
+                            result = UseMajorClass2(obj, objList, WorldObject);
+                            break;
+                        }
                     case 4:
                         {
                             result = UseMajorClass4(obj, objList, WorldObject);
@@ -42,6 +49,25 @@ namespace Underworld
             return false;
         }
 
+        public static bool UseMajorClass2(uwObject obj, uwObject[] objList, bool WorldObject)
+        {
+            switch (obj.minorclass)
+                {
+                    case 0:
+                        {
+                            if (obj.classindex<0xF)
+                            {
+                                container.Use(obj, WorldObject);
+                            }
+                            else
+                            {
+                                //runebag
+                            }
+                            break;
+                        }
+                }
+            return false;
+        }
 
         public static bool UseMajorClass4(uwObject obj, uwObject[] objList, bool WorldObject)
         {
@@ -49,7 +75,7 @@ namespace Underworld
             {
                 case 3: //readables (up to index 8)
                     {
-                        if (obj.classindex<=8)
+                        if (obj.classindex <= 8)
                         {
                             return Readable.LookAt(obj);
                         }
