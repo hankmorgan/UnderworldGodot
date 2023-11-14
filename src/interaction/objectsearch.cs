@@ -43,5 +43,57 @@ namespace Underworld
             }           
            return null; //nothing found. 
         }
+
+        /// <summary>
+        /// Returns the object index that contains the ToFind object
+        /// </summary>
+        /// <param name="ListHead"></param>
+        /// <param name="ToFind"></param>
+        /// <returns></returns>
+        public static int GetContainingObject(int ListHead, int ToFind, uwObject[] objList) 
+        {
+            if (ListHead<=0){return -1;}
+            var ListHeadObject = objList[ListHead];
+            if (ListHeadObject != null)
+            {
+                if (ListHeadObject.link !=0)
+                { //List has objects
+                    if (ListHeadObject.link == ToFind)
+                    { //The first object is the one we want to find.
+                        return ListHeadObject.index;
+                    }
+                    else
+                    {//Go throught the chain. Check each next and if the next has an object link search up that chain
+                        var NextObjectIndex = ListHeadObject.link; //get the first object
+                        while (NextObjectIndex!=0)
+                        {
+                            var NextObject = objList[NextObjectIndex];
+                            if (NextObject.index == ToFind)
+                            {//This object is the one I want to find. Return the list head I started from.
+                                return ListHeadObject.index;
+                            }
+                            else
+                            {
+                                if (NextObject.is_quant==0)
+                                {
+                                    if (NextObject.link!=0)
+                                    { //search up that object chain
+                                        var result = GetContainingObject(NextObject.index, ToFind, objList);
+                                        if (result != -1)
+                                        {
+                                            return result;
+                                        }
+                                    }
+                                }
+                                //No matches. Try the next object.
+                                NextObjectIndex = NextObject.next;
+                            }
+                        }
+                    }
+                }
+            }
+            return -1;
+        }
+
     }//end class
 }//end namespace

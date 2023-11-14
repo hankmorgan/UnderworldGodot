@@ -48,11 +48,12 @@ namespace Underworld
             {
                 startOffset = 0x3A3;
             }
-            return GetAt16(startOffset + slot * 2);
+            return GetAt16(startOffset + slot * 2) >> 6;
         }
 
         public static void SetInventorySlotListHead(int slot, int value)
         {
+            value = value <<6;
             int startOffset = 0xF8;
             if (_RES == GAME_UW2)
             {

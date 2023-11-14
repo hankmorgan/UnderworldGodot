@@ -14,11 +14,11 @@ namespace Underworld
             else
             {
                 //container use in inventory. Browse into it.
-                if (obj.classindex<=0xB)
+                if (obj.classindex <= 0xB)
                 {
                     //set to opened version by setting bit 0 to 1.
                     obj.item_id |= 0x1;
-                    if ((playerdat.OpenedContainer>=0) && (playerdat.OpenedContainer<=10))
+                    if ((uimanager.CurrentSlot >= 0) && (uimanager.CurrentSlot <= 10))
                     {
                         //redraw slot.
                         uimanager.RefreshSlot(uimanager.CurrentSlot, playerdat.isFemale);
@@ -27,15 +27,15 @@ namespace Underworld
                 playerdat.OpenedContainer = obj.index;
                 uimanager.SetOpenedContainer(obj.index, uwObject.GetObjectSprite(obj));
 
-                var objects = GetObjects(obj.index,playerdat.InventoryObjects);
-                for (int o = 0; o<=objects.GetUpperBound(0);o++)
+                var objects = GetObjects(obj.index, playerdat.InventoryObjects);
+                for (int o = 0; o <= objects.GetUpperBound(0); o++)
                 {
-                    if (objects[o]!=-1)
+                    if (objects[o] != -1)
                     {
                         //render object at this slot
                         var objFound = playerdat.InventoryObjects[objects[o]];
                         uimanager.SetBackPack(o, uwObject.GetObjectSprite(objFound));
-                        playerdat.SetBackPackIndex(o,objFound);
+                        playerdat.SetBackPackIndex(o, objFound);
                     }
                     else
                     {
@@ -44,7 +44,7 @@ namespace Underworld
                     }
                 }
                 return true;
-            }   
+            }
         }
 
         /// <summary>
@@ -54,30 +54,42 @@ namespace Underworld
         public static void Close(int index, uwObject[] objList)
         {
             var obj = objList[index];
-            if (obj==null){return;}
-            //Check the paperdoll
-            for (int p = 0; p<19; p++)
-            {
-               if (playerdat.GetInventorySlotListHead(p) == obj.index)
-               {
-                if(obj.item_id<=0xB)
+            if (obj == null) { return; }
+            if (obj.classindex <= 0xB)
                 {//return to closed version of the container.
-                    obj.item_id &=0x1fe;
+                    obj.item_id &= 0x1fe;                        
                 }
-                
-                playerdat.OpenedContainer=-1;//
-                uimanager.SetOpenedContainer(obj.index, -1);
-                //Draw the paperdoll inventory.
-                for (int i=0; i<8;i++)
+            //Check the paperdoll
+            for (int p = 0; p < 19; p++)
+            {
+                if (playerdat.GetInventorySlotListHead(p) == obj.index)
+                { //object is on the paperdoll. I can close and return to the top level
+                    uimanager.RefreshSlot(p, playerdat.isFemale);
+                    playerdat.OpenedContainer = -1;//clear slot graphics
+                    uimanager.SetOpenedContainer(obj.index, -1);
+                    //Draw the paperdoll inventory.
+                    for (int i = 0; i < 8; i++)
                     {
-                        uimanager.SetBackPack(i,uwObject.GetObjectSprite(playerdat.BackPackObject(i)) );
-                    }	
-                return;
-               }
+                        uimanager.SetBackPack(i, uwObject.GetObjectSprite(playerdat.BackPackObject(i)));
+                        playerdat.SetBackPackIndex(i, playerdat.BackPackObject(i));
+                    }
+                    return;
+                }
             }
             foreach (var objToCheck in playerdat.InventoryObjects)
-            {
-               
+            {//if this far down then I need to find the container that the closing container sits in
+                if (objToCheck!=null)
+                {
+                    var result = objectsearch.GetContainingObject(
+                        ListHead:objToCheck.index, 
+                        ToFind: playerdat.OpenedContainer,
+                        objList: playerdat.InventoryObjects);
+                    if (result!=-1)
+                    {//container found. Browse into it by using it
+                        Use(objList[result],false);
+                        return;
+                    }
+                }
             }
         }
 
