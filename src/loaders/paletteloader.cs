@@ -178,12 +178,10 @@ namespace Underworld
 
             //Init palette shader params
             RenderingServer.GlobalShaderParameterAdd("uwpalette", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)cycledGamePalette[0]);
-            RenderingServer.GlobalShaderParameterAdd("cutoffdistance", RenderingServer.GlobalShaderParameterType.Float, 2.4f * shade.getShadeCutoff(uwsettings.instance.lightlevel));
+            RenderingServer.GlobalShaderParameterAdd("cutoffdistance", RenderingServer.GlobalShaderParameterType.Float, shade.getShadeCutoff(uwsettings.instance.lightlevel));
             RenderingServer.GlobalShaderParameterAdd("uwlightmap", RenderingServer.GlobalShaderParameterType.Sampler2D, PaletteLoader.AllLightMaps(PaletteLoader.light));
             RenderingServer.GlobalShaderParameterAdd("shades", RenderingServer.GlobalShaderParameterType.Sampler2D, shade.shadesdata[uwsettings.instance.lightlevel].ToImage());
-
             RenderingServer.GlobalShaderParameterAdd("shadeshift", RenderingServer.GlobalShaderParameterType.Sampler2D, shade.shadesdata[uwsettings.instance.lightlevel].ToShiftedImage());
-
             //palette for NPCs (to support xfer transparencies)
             RenderingServer.GlobalShaderParameterAdd("uwnpc", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)cycledNPCPalette[0]);
 

@@ -9,7 +9,7 @@ namespace Underworld
     public partial class playerdat : Loader
     {
         public static uwObject[] InventoryObjects = new uwObject[512];
-        public static byte[] Inventorybuffer = new byte[512 * 8];
+        public static byte[] InventoryBuffer = new byte[512 * 8];
 
         public static int[] BackPackIndices = new int[8];
 
@@ -49,6 +49,12 @@ namespace Underworld
                 startOffset = 0x3A3;
             }
             return GetAt16(startOffset + slot * 2) >> 6;
+        }
+
+        public static uwObject GetInventorySlotObject(int slot)
+        {
+            int index = GetInventorySlotListHead(slot);
+            return InventoryObjects[index];
         }
 
         public static void SetInventorySlotListHead(int slot, int value)

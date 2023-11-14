@@ -24,9 +24,9 @@ namespace Underworld
             return shadesdata[index].nearlightmap;
         }
 
-        public static int getShadeCutoff(int index)
+        public static float getShadeCutoff(int index)
         {
-            return shadesdata[index].shadeCutOff;
+            return 4.8f * (float)shadesdata[index].shadeCutOff;
         }
 
         public static float getNearDist(int index)

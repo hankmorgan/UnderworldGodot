@@ -51,13 +51,13 @@ namespace Underworld
                     InventoryPtr = 0x3E3;
                 }
                 int oIndex = 1; //starts at one since there is no object zero
-                Inventorybuffer = new byte[512*8];
+                InventoryBuffer = new byte[512*8];
                 
                 while (InventoryPtr < pdat.GetUpperBound(0))
                 {
                     for (int i =0; i<8; i++)
                     {//Copy bytes into storage
-                        Inventorybuffer[i + oIndex * 8 ] = pdat[InventoryPtr + i];
+                        InventoryBuffer[i + oIndex * 8 ] = pdat[InventoryPtr + i];
                     }
                     //Create new objects for the object list
                     var uwobj = new uwObject
@@ -66,7 +66,7 @@ namespace Underworld
                         IsStatic = true,
                         index = (short)(oIndex),
                         PTR = oIndex * 8,
-                        DataBuffer = Inventorybuffer
+                        DataBuffer = InventoryBuffer
                     };
                     Debug.Print($"{GameStrings.GetObjectNounUW(uwobj.item_id)}");
                     InventoryObjects[oIndex] = uwobj;

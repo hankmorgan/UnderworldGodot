@@ -56,13 +56,25 @@ namespace Underworld
                     case 0:
                         {
                             if (obj.classindex<0xF)
-                            {
-                                container.Use(obj, WorldObject);
+                            {//containers
+                                return container.Use(obj, WorldObject);
                             }
                             else
                             {
                                 //runebag
                             }
+                            break;
+                        }
+                    case 1:
+                        {
+                            if (obj.classindex<=7)
+                            {//lights
+                                return light.Use(obj,WorldObject);
+                            } 
+                            else
+                            {
+                                //wands
+                            }                           
                             break;
                         }
                 }

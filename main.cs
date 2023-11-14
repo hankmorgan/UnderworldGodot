@@ -232,6 +232,11 @@ public partial class main : Node3D
 				uimanager.SetBackPack(i, uwObject.GetObjectSprite(playerdat.BackPackObject(i)));
 				playerdat.SetBackPackIndex(i, playerdat.BackPackObject(i));
 			}
+			uwsettings.instance.lightlevel = light.BrightestLight();
+
+			RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.getShadeCutoff(uwsettings.instance.lightlevel));
+            RenderingServer.GlobalShaderParameterSet("shades", shade.shadesdata[uwsettings.instance.lightlevel].ToImage());
+
 		}
 		else
 		{
