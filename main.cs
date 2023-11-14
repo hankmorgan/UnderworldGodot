@@ -21,7 +21,7 @@ public partial class main : Node3D
 
 	double gameRefreshTimer = 0f;
 	double cycletime = 0;
-	
+
 	public override void _Ready()
 	{
 		var appfolder = OS.GetExecutablePath();
@@ -219,7 +219,7 @@ public partial class main : Node3D
 			uimanager.SetLeggings(playerdat.isFemale, gloves.GetSpriteIndex(playerdat.LeggingsObject));
 			uimanager.SetBoots(playerdat.isFemale, gloves.GetSpriteIndex(playerdat.BootsObject));
 			//Set arms and shoulders
-			uimanager.SetRightShoulder( uwObject.GetObjectSprite(playerdat.RightShoulderObject));
+			uimanager.SetRightShoulder(uwObject.GetObjectSprite(playerdat.RightShoulderObject));
 			uimanager.SetLeftShoulder(uwObject.GetObjectSprite(playerdat.LeftShoulderObject));
 			uimanager.SetRightHand(uwObject.GetObjectSprite(playerdat.RightHandObject));
 			uimanager.SetLeftHand(uwObject.GetObjectSprite(playerdat.LeftHandObject));
@@ -227,10 +227,11 @@ public partial class main : Node3D
 			uimanager.SetRightRing(ring.GetSpriteIndex(playerdat.RightRingObject));
 			uimanager.SetLeftRing(ring.GetSpriteIndex(playerdat.LeftRingObject));
 			//backback
-			for (int i=0; i<8;i++)
+			for (int i = 0; i < 8; i++)
 			{
-				uimanager.SetBackPack(i,uwObject.GetObjectSprite(playerdat.BackPackObject(i)) );
-			}			
+				uimanager.SetBackPack(i, uwObject.GetObjectSprite(playerdat.BackPackObject(i)));
+				playerdat.SetBackPackIndex(i, playerdat.BackPackObject(i));
+			}
 		}
 		else
 		{
@@ -246,9 +247,9 @@ public partial class main : Node3D
 			uimanager.SetLeftShoulder(-1);
 			uimanager.SetRightHand(-1);
 			uimanager.SetLeftHand(-1);
-			for (int i=0; i<8;i++)
+			for (int i = 0; i < 8; i++)
 			{
-				uimanager.SetBackPack(i,-1);
+				uimanager.SetBackPack(i, -1);
 			}
 
 			uimanager.SetBody(r.Next(0, 4), isFemale);
@@ -302,7 +303,7 @@ public partial class main : Node3D
 	{
 		float RayLength = 3.0f;
 		if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
-		{	
+		{
 			//var camera3D = GetNode<Camera3D>("Camera3D");
 			var from = cam.ProjectRayOrigin(eventMouseButton.Position);
 			var to = from + cam.ProjectRayNormal(eventMouseButton.Position) * RayLength;

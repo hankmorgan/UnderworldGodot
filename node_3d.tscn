@@ -34,7 +34,7 @@ shader = ExtResource("6_x6exc")
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2", "InteractionButtonsUW1", "InteractionButtonsUW2", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "LeftShoulder", "RightHand", "LeftHand", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2", "InteractionButtonsUW1", "InteractionButtonsUW2", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "LeftShoulder", "RightHand", "LeftHand", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "OpenedContainer")]
 script = ExtResource("1_lw0yg")
 Font4X5P = ExtResource("5_8iiwt")
 Font5X6I = ExtResource("3_safdl")
@@ -71,6 +71,7 @@ RightRingInput = NodePath("../Common/PaperDoll/RightRingInput")
 LeftRing = NodePath("../Common/PaperDoll/LeftRingInput")
 LeftRingInput = NodePath("../Common/PaperDoll/LeftRingInput")
 Backpack = [NodePath("../Common/PaperDoll/Back0"), NodePath("../Common/PaperDoll/Back1"), NodePath("../Common/PaperDoll/Back2"), NodePath("../Common/PaperDoll/Back3"), NodePath("../Common/PaperDoll/Back4"), NodePath("../Common/PaperDoll/Back5"), NodePath("../Common/PaperDoll/Back6"), NodePath("../Common/PaperDoll/Back7")]
+OpenedContainer = NodePath("../Common/PaperDoll/OpenedContainer")
 
 [node name="AudioPlayer" type="AudioStreamPlayer" parent="UI"]
 stream = SubResource("AudioStreamWAV_tkk82")
@@ -499,6 +500,13 @@ offset_top = 400.0
 offset_right = 145.0
 offset_bottom = 464.0
 
+[node name="OpenedContainer" type="TextureRect" parent="UI/Common/PaperDoll"]
+layout_mode = 0
+offset_left = -143.0
+offset_top = 257.0
+offset_right = -79.0
+offset_bottom = 321.0
+
 [node name="mouse" type="CanvasLayer" parent="UI"]
 
 [node name="mouseCursor" type="TextureRect" parent="UI/mouse"]
@@ -553,3 +561,4 @@ script = ExtResource("5_2to2n")
 [connection signal="gui_input" from="UI/Common/PaperDoll/Back5" to="UI/uiManager" method="_paperdoll_gui_input" binds= ["Back5"]]
 [connection signal="gui_input" from="UI/Common/PaperDoll/Back6" to="UI/uiManager" method="_paperdoll_gui_input" binds= ["Back6"]]
 [connection signal="gui_input" from="UI/Common/PaperDoll/Back7" to="UI/uiManager" method="_paperdoll_gui_input" binds= ["Back7"]]
+[connection signal="gui_input" from="UI/Common/PaperDoll/OpenedContainer" to="UI/uiManager" method="_paperdoll_gui_input" binds= ["OpenedContainer"]]

@@ -14,22 +14,71 @@ namespace Underworld
             else
             {
                 //container use in inventory. Browse into it.
+                if (obj.classindex<=0xB)
+                {
+                    //set to opened version by setting bit 0 to 1.
+                    obj.item_id |= 0x1;
+                    if ((playerdat.OpenedContainer>=0) && (playerdat.OpenedContainer<=10))
+                    {
+                        //redraw slot.
+                        uimanager.RefreshSlot(uimanager.CurrentSlot, playerdat.isFemale);
+                    }
+                }
+                playerdat.OpenedContainer = obj.index;
+                uimanager.SetOpenedContainer(obj.index, uwObject.GetObjectSprite(obj));
+
                 var objects = GetObjects(obj.index,playerdat.InventoryObjects);
                 for (int o = 0; o<=objects.GetUpperBound(0);o++)
                 {
                     if (objects[o]!=-1)
-                    {//uwObject.GetObjectSprite(playerdat.BackPackObject(i))
+                    {
                         //render object at this slot
                         var objFound = playerdat.InventoryObjects[objects[o]];
                         uimanager.SetBackPack(o, uwObject.GetObjectSprite(objFound));
+                        playerdat.SetBackPackIndex(o,objFound);
                     }
                     else
                     {
-                        uimanager.SetBackPack(o,-1);
+                        uimanager.SetBackPack(o, -1);
+                        playerdat.SetBackPackIndex(o, null);
                     }
                 }
                 return true;
             }   
+        }
+
+        /// <summary>
+        /// Closes the container on the paperdoll
+        /// </summary>
+        /// <param name="obj"></param>
+        public static void Close(int index, uwObject[] objList)
+        {
+            var obj = objList[index];
+            if (obj==null){return;}
+            //Check the paperdoll
+            for (int p = 0; p<19; p++)
+            {
+               if (playerdat.GetInventorySlotListHead(p) == obj.index)
+               {
+                if(obj.item_id<=0xB)
+                {//return to closed version of the container.
+                    obj.item_id &=0x1fe;
+                }
+                
+                playerdat.OpenedContainer=-1;//
+                uimanager.SetOpenedContainer(obj.index, -1);
+                //Draw the paperdoll inventory.
+                for (int i=0; i<8;i++)
+                    {
+                        uimanager.SetBackPack(i,uwObject.GetObjectSprite(playerdat.BackPackObject(i)) );
+                    }	
+                return;
+               }
+            }
+            foreach (var objToCheck in playerdat.InventoryObjects)
+            {
+               
+            }
         }
 
         /// <summary>

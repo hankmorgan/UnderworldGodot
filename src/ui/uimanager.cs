@@ -77,8 +77,10 @@ namespace Underworld
 		[Export] public TextureRect RightRing;
 		[Export] public TextureRect RightRingInput;
 		[Export] public TextureRect LeftRing;
-		[Export] public TextureRect LeftRingInput;		
+		[Export] public TextureRect LeftRingInput;
 		[Export] public TextureRect[] Backpack = new TextureRect[8];
+		[Export] public TextureRect OpenedContainer;
+		public static int CurrentSlot;
 
 		public static BytLoader byt;
 
@@ -143,7 +145,7 @@ namespace Underworld
 				ArmourInput.Position += offset;
 				LeggingsInput.Position += offset;
 
-				for (int i=0; i<8;i++)
+				for (int i = 0; i < 8; i++)
 				{
 					Backpack[i].Position += offset;
 				}
@@ -249,6 +251,11 @@ namespace Underworld
 			}
 		}
 
+		/// <summary>
+		/// Sets the body image for the pc
+		/// </summary>
+		/// <param name="body"></param>
+		/// <param name="isFemale"></param>
 		public static void SetBody(int body, bool isFemale)
 		{
 			int MaleOrFemale = 0;
@@ -263,6 +270,44 @@ namespace Underworld
 			instance.Body.Texture = grBody.LoadImageAt(body + (5 * MaleOrFemale));
 		}
 
+
+		/// <summary>
+		/// Redraws the specified slot
+		/// </summary>
+		/// <param name="slotno"></param>
+		/// <param name="isFemale"></param>
+		public static void RefreshSlot(int slotno, bool isFemale)
+		{
+			switch (slotno)
+			{
+			case 0: uimanager.SetHelm(playerdat.isFemale, helm.GetSpriteIndex(playerdat.HelmObject)); break;
+			case 1: uimanager.SetArmour(playerdat.isFemale, chestarmour.GetSpriteIndex(playerdat.ChestArmourObject));break;
+			case 2: uimanager.SetGloves(playerdat.isFemale, gloves.GetSpriteIndex(playerdat.GlovesObject));break;
+			case 3: uimanager.SetLeggings(playerdat.isFemale, gloves.GetSpriteIndex(playerdat.LeggingsObject));break;
+			case 4: uimanager.SetBoots(playerdat.isFemale, gloves.GetSpriteIndex(playerdat.BootsObject));break;
+			//Set arms and shoulders
+			case 5: uimanager.SetRightShoulder( uwObject.GetObjectSprite(playerdat.RightShoulderObject));break;
+			case 6: uimanager.SetLeftShoulder(uwObject.GetObjectSprite(playerdat.LeftShoulderObject));break;
+			case 7: uimanager.SetRightHand(uwObject.GetObjectSprite(playerdat.RightHandObject));break;
+			case 8: uimanager.SetLeftHand(uwObject.GetObjectSprite(playerdat.LeftHandObject));break;
+			//set rings
+			case 9: uimanager.SetRightRing(ring.GetSpriteIndex(playerdat.RightRingObject));break;
+			case 10: uimanager.SetLeftRing(ring.GetSpriteIndex(playerdat.LeftRingObject));break;
+			default: 
+					if ((slotno>=11) && (slotno<=18))
+					{
+					uimanager.SetBackPack(slotno-11, uwObject.GetObjectSprite(playerdat.BackPackObject(slotno-11)));
+					}
+					break;				
+			}
+		}
+
+
+		/// <summary>
+		/// Sets the sprite for the helmet
+		/// </summary>
+		/// <param name="isFemale"></param>
+		/// <param name="SpriteNo"></param>
 		public static void SetHelm(bool isFemale, int SpriteNo = -1)
 		{
 			if (SpriteNo == -1)
@@ -275,6 +320,12 @@ namespace Underworld
 			}
 		}
 
+
+		/// <summary>
+		/// Sets the sprite for the armour
+		/// </summary>
+		/// <param name="isFemale"></param>
+		/// <param name="SpriteNo"></param>
 		public static void SetArmour(bool isFemale, int SpriteNo = -1)
 		{
 			if (SpriteNo == -1)
@@ -287,6 +338,12 @@ namespace Underworld
 			}
 		}
 
+
+		/// <summary>
+		/// Sets the sprite for the leggings
+		/// </summary>
+		/// <param name="isFemale"></param>
+		/// <param name="SpriteNo"></param>
 		public static void SetLeggings(bool isFemale, int SpriteNo = -1)
 		{
 			if (SpriteNo == -1)
@@ -299,6 +356,12 @@ namespace Underworld
 			}
 		}
 
+
+		/// <summary>
+		/// Sets the sprite for the boots
+		/// </summary>
+		/// <param name="isFemale"></param>
+		/// <param name="SpriteNo"></param>
 		public static void SetBoots(bool isFemale, int SpriteNo = -1)
 		{
 			if (SpriteNo == -1)
@@ -311,6 +374,12 @@ namespace Underworld
 			}
 		}
 
+
+		/// <summary>
+		/// Sets the sprite for the gloves
+		/// </summary>
+		/// <param name="isFemale"></param>
+		/// <param name="SpriteNo"></param>
 		public static void SetGloves(bool isFemale, int SpriteNo = -1)
 		{
 			if (SpriteNo == -1)
@@ -323,6 +392,10 @@ namespace Underworld
 			}
 		}
 
+		/// <summary>
+		/// Sets the sprite in the right shoulder
+		/// </summary>
+		/// <param name="SpriteNo"></param>
 		public static void SetRightShoulder(int SpriteNo = -1)
 		{
 			if (SpriteNo == -1)
@@ -336,6 +409,11 @@ namespace Underworld
 			}
 		}
 
+
+		/// <summary>
+		/// Sets the sprite in the left shoulder
+		/// </summary>
+		/// <param name="SpriteNo"></param>
 		public static void SetLeftShoulder(int SpriteNo = -1)
 		{
 			if (SpriteNo == -1)
@@ -349,6 +427,11 @@ namespace Underworld
 			}
 		}
 
+
+		/// <summary>
+		/// Sets the sprite in the right hand
+		/// </summary>
+		/// <param name="SpriteNo"></param>
 		public static void SetRightHand(int SpriteNo = -1)
 		{
 			if (SpriteNo == -1)
@@ -362,6 +445,11 @@ namespace Underworld
 			}
 		}
 
+
+		/// <summary>
+		/// Sets the sprite in the left hand
+		/// </summary>
+		/// <param name="SpriteNo"></param>
 		public static void SetLeftHand(int SpriteNo = -1)
 		{
 			if (SpriteNo == -1)
@@ -375,6 +463,11 @@ namespace Underworld
 			}
 		}
 
+
+		/// <summary>
+		/// Sets the sprite in the ring slot
+		/// </summary>
+		/// <param name="SpriteNo"></param>
 		public static void SetRightRing(int SpriteNo = -1)
 		{
 			if (SpriteNo == -1)
@@ -388,6 +481,11 @@ namespace Underworld
 			}
 		}
 
+
+		/// <summary>
+		/// Sets the sprite in the ring slot
+		/// </summary>
+		/// <param name="SpriteNo"></param>
 		public static void SetLeftRing(int SpriteNo = -1)
 		{
 			if (SpriteNo == -1)
@@ -401,11 +499,16 @@ namespace Underworld
 			}
 		}
 
+		/// <summary>
+		/// Sets the sprite in the backpack slot
+		/// </summary>
+		/// <param name="slot"></param>
+		/// <param name="SpriteNo"></param>
 		public static void SetBackPack(int slot, int SpriteNo = -1)
 		{
 			if (SpriteNo == -1)
 			{ //clear the slot
-				instance.Backpack[slot].Texture = null;
+				instance.Backpack[slot].Texture = null;				
 			}
 			else
 			{
@@ -414,6 +517,32 @@ namespace Underworld
 			}
 		}
 
+
+
+		/// <summary>
+		/// Sets the open container gui image
+		/// </summary>
+		/// <param name="slot"></param>
+		/// <param name="SpriteNo"></param>
+		public static void SetOpenedContainer(int slot, int SpriteNo = -1)
+		{
+			if (SpriteNo == -1)
+			{ //clear the slot
+				instance.OpenedContainer.Texture = null;
+			}
+			else
+			{
+				instance.OpenedContainer.Texture = grObjects.LoadImageAt(SpriteNo);
+				instance.OpenedContainer.Material = grObjects.GetMaterial(SpriteNo);
+			}
+		}
+
+
+		/// <summary>
+		/// Returns the gender specific grArmour data
+		/// </summary>
+		/// <param name="isFemale"></param>
+		/// <returns></returns>
 		public static GRLoader grArmour(bool isFemale)
 		{
 			if (isFemale)
@@ -443,26 +572,31 @@ namespace Underworld
 				Debug.Print($"->{extra_arg_0}");
 				switch (extra_arg_0)
 				{
-					case "Helm": {obj = playerdat.Helm;break;}
-					case "Armour":  {obj = playerdat.ChestArmour;break;}
-					case "Gloves":  {obj = playerdat.Gloves;break;}
-					case "Boots":  {obj = playerdat.Boots;break;}
-					case "Leggings":  {obj = playerdat.Leggings;break;}
-					case "LeftShoulder": {obj = playerdat.LeftShoulder;break;}
-					case "RightShoulder": {obj = playerdat.RightShoulder;break;}
-					case "LeftHand": {obj = playerdat.LeftHand;break;}
-					case "RightHand": {obj = playerdat.RightHand;break;}
-					case "LeftRing": {obj = playerdat.LeftRing;break;}
-					case "RightRing": {obj = playerdat.RightRing;break;}					
-					case "Back0": {obj = playerdat.BackPack(0);break;}
-					case "Back1": {obj = playerdat.BackPack(1);break;}
-					case "Back2": {obj = playerdat.BackPack(2);break;}
-					case "Back3": {obj = playerdat.BackPack(3);break;}
-					case "Back4": {obj = playerdat.BackPack(4);break;}
-					case "Back5": {obj = playerdat.BackPack(5);break;}
-					case "Back6": {obj = playerdat.BackPack(6);break;}
-					case "Back7": {obj = playerdat.BackPack(7);break;}
+					case "Helm": { obj = playerdat.Helm; CurrentSlot=0; break; }
+					case "Armour": { obj = playerdat.ChestArmour;  CurrentSlot=1; break; }
+					case "Gloves": { obj = playerdat.Gloves; CurrentSlot=2;  break; }
+					case "Leggings": { obj = playerdat.Leggings; CurrentSlot=3; break; }
+					case "Boots": { obj = playerdat.Boots;  CurrentSlot=4;  break; }
+
+					case "RightShoulder": { obj = playerdat.RightShoulder;CurrentSlot=5; break; }	
+					case "LeftShoulder": { obj = playerdat.LeftShoulder; CurrentSlot=6; break; }
+					case "RightHand": { obj = playerdat.RightHand; CurrentSlot=7; break; }
+					case "LeftHand": { obj = playerdat.LeftHand; CurrentSlot=8; break; }
+
+					case "RightRing": { obj = playerdat.RightRing; CurrentSlot=9; break; }
+					case "LeftRing": { obj = playerdat.LeftRing; CurrentSlot=10; break; }
+					
+					case "Back0": { obj = playerdat.GetBackPackIndex(0); CurrentSlot=11; break; }
+					case "Back1": { obj = playerdat.GetBackPackIndex(1); CurrentSlot=12; break; }
+					case "Back2": { obj = playerdat.GetBackPackIndex(2); CurrentSlot=13; break; }
+					case "Back3": { obj = playerdat.GetBackPackIndex(3); CurrentSlot=14; break; }
+					case "Back4": { obj = playerdat.GetBackPackIndex(4); CurrentSlot=15; break; }
+					case "Back5": { obj = playerdat.GetBackPackIndex(5); CurrentSlot=16; break; }
+					case "Back6": { obj = playerdat.GetBackPackIndex(6); CurrentSlot=17;break; }
+					case "Back7": { obj = playerdat.GetBackPackIndex(7); CurrentSlot=18;break; }
+					case "OpenedContainer": { obj = playerdat.OpenedContainer; CurrentSlot=-1; break; }
 					default:
+						CurrentSlot=-1;
 						Debug.Print("Unimplemented inventory slot"); break;
 				}
 
@@ -472,17 +606,28 @@ namespace Underworld
 					switch (InteractionMode)
 					{
 						case InteractionModes.ModeUse:
-							use.Use(
-								index: obj, 
-								objList: playerdat.InventoryObjects, 
-								WorldObject: false); 
-								break;
+							if (extra_arg_0 != "OpenedContainer")
+							{
+								use.Use(
+									index: obj,
+									objList: playerdat.InventoryObjects,
+									WorldObject: false);
+							}
+							else
+							{
+								//close up opened container.
+								container.Close(
+									index: obj,
+									objList: playerdat.InventoryObjects);
+							}
+							break;
 						case InteractionModes.ModeLook:
 							look.LookAt(obj, playerdat.InventoryObjects); break;
 						default:
 							Debug.Print("Unimplemented inventory use verb-object combination"); break;
 					}
 				}
+				CurrentSlot=-1;
 			}
 		}
 	} //end class

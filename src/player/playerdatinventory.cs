@@ -11,6 +11,32 @@ namespace Underworld
         public static uwObject[] InventoryObjects = new uwObject[512];
         public static byte[] Inventorybuffer = new byte[512 * 8];
 
+        public static int[] BackPackIndices = new int[8];
+
+
+        /// <summary>
+        /// Stores an array listing the currently displayed backpack objects indices
+        /// </summary>
+        /// <param name="slot"></param>
+        /// <param name="obj"></param>
+        public static void SetBackPackIndex(int slot, uwObject obj)
+        {
+            if (obj != null)
+            {
+                BackPackIndices[slot] = obj.index;
+            }
+            else
+            {
+                BackPackIndices[slot] = -1;
+            }
+        }
+
+
+        public static int GetBackPackIndex(int slot)
+        {            
+            return BackPackIndices[slot];
+        }
+
         /// <summary>
         /// Looks up all inventory slots list indices. starting at helm and ending with backpacks
         /// </summary>
@@ -18,7 +44,8 @@ namespace Underworld
         public static int GetInventorySlotListHead(int slot)
         {
             int startOffset = 0xF8;
-            if (_RES==GAME_UW2){
+            if (_RES == GAME_UW2)
+            {
                 startOffset = 0x3A3;
             }
             return GetAt16(startOffset + slot * 2);
@@ -27,7 +54,8 @@ namespace Underworld
         public static void SetInventorySlotListHead(int slot, int value)
         {
             int startOffset = 0xF8;
-            if (_RES==GAME_UW2){
+            if (_RES == GAME_UW2)
+            {
                 startOffset = 0x3A3;
             }
             SetAt16(startOffset + slot * 2, value);
@@ -53,9 +81,9 @@ namespace Underworld
                 switch (_RES)
                 {
                     case GAME_UW2:
-                        SetAt16(0x3A3 , value << 6);break;
+                        SetAt16(0x3A3, value << 6); break;
                     default:
-                        SetAt16(0xF8 , value << 6);break;
+                        SetAt16(0xF8, value << 6); break;
                 }
             }
         }
@@ -340,9 +368,6 @@ namespace Underworld
                 return null;
             }
         }
-
-
-
         public static int LeftRing
         {
             get
@@ -356,8 +381,6 @@ namespace Underworld
                 }
             }
         }
-
-        
         public static uwObject LeftRingObject
         {
             get
@@ -373,12 +396,12 @@ namespace Underworld
         public static int BackPack(int slot)
         {
             switch (_RES)
-                {
-                    case GAME_UW2:
-                        return GetAt16(0x3B9 + slot * 2) >> 6;
-                    default:
-                        return GetAt16(0x10E + slot * 2) >> 6;
-                }
+            {
+                case GAME_UW2:
+                    return GetAt16(0x3B9 + slot * 2) >> 6;
+                default:
+                    return GetAt16(0x10E + slot * 2) >> 6;
+            }
         }
 
         public static uwObject BackPackObject(int slot)
@@ -389,6 +412,11 @@ namespace Underworld
             }
             return null;
         }
-        
+
+        /// <summary>
+        /// The container currently opened on the paperdoll.
+        /// </summary>
+        public static int OpenedContainer;
+
     } //end class
 } //end namespace
