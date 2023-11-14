@@ -91,6 +91,10 @@ namespace Underworld
                         {
                             return Readable.LookAt(obj);
                         }
+                        if (obj.classindex == 0xB)
+                        {
+                            return map.Use(obj, WorldObject);
+                        }
                         break;
                     }
             }

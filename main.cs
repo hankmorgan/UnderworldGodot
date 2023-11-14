@@ -236,11 +236,9 @@ public partial class main : Node3D
 
 			RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.getShadeCutoff(uwsettings.instance.lightlevel));
             RenderingServer.GlobalShaderParameterSet("shades", shade.shadesdata[uwsettings.instance.lightlevel].ToImage());
-
 		}
 		else
 		{
-
 			Random r = new Random();
 			var isFemale = r.Next(0, 2) == 1;
 			uimanager.SetHelm(isFemale, -1);
@@ -279,7 +277,26 @@ public partial class main : Node3D
 		Underworld.ObjectCreator.GenerateObjects(worldobjects, Underworld.TileMap.current_tilemap.LevelObjects, grObjects, Underworld.TileMap.current_tilemap);
 		the_tiles.Position = new Vector3(0f, 0f, 0f);
 		tileMapRender.GenerateLevelFromTileMap(the_tiles, worldobjects, UWClass._RES, Underworld.TileMap.current_tilemap, Underworld.TileMap.current_tilemap.LevelObjects, false);
-
+		
+		switch (UWClass._RES)
+		{
+			case UWClass.GAME_UW2:	
+				automap.automaps = new automap[80];break;		
+			default:
+				automap.automaps = new automap[9];break;
+		}
+		automap.automaps[newLevelNo] = new automap(newLevelNo-1);
+		// string auto="";
+		// for (int x=0; x<64; x++)
+		// {
+		// 	for (int y=0; y<64; y++)
+		// 	{
+		// 		auto+=automap.automaps[newLevelNo].tiles[x,y].tileType.ToString("0#") + ",";
+		// 	}
+		// 	auto+="\n";
+		// }
+		// //Debug.Print(auto);
+		// File.WriteAllText("c:\\temp\\automap.txt", auto);
 	}
 
 

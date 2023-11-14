@@ -82,6 +82,9 @@ namespace Underworld
 		[Export] public TextureRect OpenedContainer;
 		public static int CurrentSlot;
 
+		[Export] public Panel AutomapPanel;
+		[Export] public TextureRect AutomapImage;
+
 		public static BytLoader byt;
 
 		static uimanager()
@@ -206,7 +209,7 @@ namespace Underworld
 
 		}
 
-		static void EnableDisable(Control ctrl, bool state)
+		public static void EnableDisable(Control ctrl, bool state)
 		{
 			if (ctrl != null)
 			{
@@ -214,7 +217,7 @@ namespace Underworld
 			}
 		}
 
-		static void EnableDisable(CanvasLayer ctrl, bool state)
+		public static void EnableDisable(CanvasLayer ctrl, bool state)
 		{
 			if (ctrl != null)
 			{
@@ -630,5 +633,20 @@ namespace Underworld
 				CurrentSlot=-1;
 			}
 		}
+		
+		private void CloseAutomap(InputEvent @event)
+		{
+			if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
+			{
+				EnableDisable(AutomapPanel,false);
+			}
+		}
+
 	} //end class
 }   //end namespace
+
+
+
+
+
+
