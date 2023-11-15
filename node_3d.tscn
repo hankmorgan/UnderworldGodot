@@ -527,6 +527,7 @@ offset_left = 60.0
 offset_top = 60.0
 offset_right = 700.0
 offset_bottom = 700.0
+flip_v = true
 
 [node name="Close" type="TextureRect" parent="UI/Common/Automap"]
 layout_mode = 0

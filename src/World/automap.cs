@@ -32,7 +32,7 @@ namespace Underworld
                 {
                     for (int x=0; x<64; x++)
                     {
-                        tiles[x,y] = new automaptileinfo(y*64+x, ref buffer);
+                        tiles[x,y] = new automaptileinfo((y*64) + x, ref buffer);
                     }
                 }
             }
