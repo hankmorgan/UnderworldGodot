@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Diagnostics;
 using Godot;
 using Godot.NativeInterop;
@@ -8,10 +9,6 @@ namespace Underworld
 	{
 		public static uimanager instance;
 
-		[Export] public Font Font4X5P;
-		[Export] public Font Font5X6I;
-		[Export] public Font Font5X6P;
-		[Export] public Font FontBig;
 		public enum InteractionModes
 		{
 			ModeOptions = 0,
@@ -22,10 +19,20 @@ namespace Underworld
 			ModeUse = 5
 		};
 
+		//UI Timers
+		static double PanelMoveTimer = 0;
+
+		static bool RotatingOff = false;
+		static bool RotatingOn = false;
+
+		[Export] public Font Font4X5P;
+		[Export] public Font Font5X6I;
+		[Export] public Font Font5X6P;
+		[Export] public Font FontBig;
+
 		public static InteractionModes InteractionMode = InteractionModes.ModeUse;
 
-		[Export]
-		public Camera3D cam;
+		[Export] public Camera3D cam;
 		[Export] public Node3D freelook;
 
 		// [Export] public SubViewportContainer uwviewport;
@@ -43,6 +50,18 @@ namespace Underworld
 
 		[Export] public TextureRect placeholderuw1;
 		[Export] public TextureRect placeholderuw2;
+
+		/// <summary>
+		/// Panels
+		/// </summary>
+		[Export] public Panel PanelInventory;
+		[Export] public Panel PanelRuneBag;
+		[Export] public Panel PanelStats;
+
+		Panel PanelToTurnOff;
+		Panel PanelToTurnOn;
+
+		public static int PanelMode;
 
 		//Array to store the interaction mode mo
 		[Export] public Godot.TextureButton[] InteractionButtonsUW1 = new Godot.TextureButton[6];
@@ -206,7 +225,46 @@ namespace Underworld
 					}
 					break;
 			}
+		}
 
+		public override void _Process(double delta)
+		{
+			if (RotatingOff)
+			{
+				PanelMoveTimer += delta;
+				if (PanelMoveTimer >= 0.5)
+				{ //after 0.5 seconds inventory panel goes off and next pane goes on.
+					//Disable inventory panel
+					EnableDisable(PanelToTurnOff, false);
+					RotatingOff = false;
+					PanelMoveTimer = 0;
+					PanelToTurnOff.Scale = new Vector2(0,1);
+
+					RotatingOn = true; 
+					EnableDisable(PanelToTurnOn, true);					
+					PanelToTurnOn.Scale = PanelToTurnOff.Scale;					
+				}
+				else
+				{
+					PanelToTurnOff.Scale = PanelToTurnOff.Scale.Lerp(new Vector2(0,1f), (float)delta * 2);
+				}
+			}
+
+			if (RotatingOn)
+			{
+				PanelMoveTimer += delta;
+				if (PanelMoveTimer >= 0.5)
+				{
+					//Panel Runebag has arrived
+					RotatingOn = false;
+					PanelMoveTimer = 0;
+					PanelToTurnOn.Scale = new Vector2(1,1);
+				}
+				else
+				{
+					PanelToTurnOn.Scale = PanelToTurnOn.Scale.Lerp(new Vector2(1,1f), (float)delta *2);
+				}
+			}
 		}
 
 		public static void EnableDisable(Control ctrl, bool state)
@@ -222,6 +280,55 @@ namespace Underworld
 			if (ctrl != null)
 			{
 				ctrl.Visible = state;
+			}
+		}
+
+		public static void SetPanelMode(int NewMode)
+		{//0 = inv, 1=runes, 2=stats
+			if (RotatingOff || RotatingOn)
+			{
+				return; // a rotation is already in progress. block this until complete.
+			}
+			switch (NewMode)
+			{
+				case 0:
+					{
+						//stats or runes to inventory.
+						if (PanelMode == 1)
+						{	//turn off runes
+							instance.PanelToTurnOff = instance.PanelRuneBag;
+							instance.PanelToTurnOn = instance.PanelInventory;							
+						}
+						else
+						{
+							instance.PanelToTurnOff = instance.PanelStats;
+							instance.PanelToTurnOn = instance.PanelInventory;
+						}
+						RotatingOff = true;
+						RotatingOn = false;
+						PanelMode=0;
+						break;
+					}
+				case 1: //switch to runes
+					//TODO enable rune panel at scale 0,0 to rotate in the oppsite direction.
+					PanelMode = 1;
+					RotatingOff = true;
+					RotatingOn = false;
+					instance.PanelToTurnOff = instance.PanelInventory;
+					instance.PanelToTurnOn = instance.PanelRuneBag;
+					PanelMoveTimer = 0;
+					break;
+				case 2:
+				{//inventory to stats
+					PanelMode = 2;
+					RotatingOff = true;
+					RotatingOn = false;
+					instance.PanelToTurnOff = instance.PanelInventory;
+					instance.PanelToTurnOn = instance.PanelStats;
+					PanelMoveTimer = 0;
+
+					break;
+				}
 			}
 		}
 
@@ -283,25 +390,25 @@ namespace Underworld
 		{
 			switch (slotno)
 			{
-			case 0: uimanager.SetHelm(playerdat.isFemale, helm.GetSpriteIndex(playerdat.HelmObject)); break;
-			case 1: uimanager.SetArmour(playerdat.isFemale, chestarmour.GetSpriteIndex(playerdat.ChestArmourObject));break;
-			case 2: uimanager.SetGloves(playerdat.isFemale, gloves.GetSpriteIndex(playerdat.GlovesObject));break;
-			case 3: uimanager.SetLeggings(playerdat.isFemale, gloves.GetSpriteIndex(playerdat.LeggingsObject));break;
-			case 4: uimanager.SetBoots(playerdat.isFemale, gloves.GetSpriteIndex(playerdat.BootsObject));break;
-			//Set arms and shoulders
-			case 5: uimanager.SetRightShoulder( uwObject.GetObjectSprite(playerdat.RightShoulderObject));break;
-			case 6: uimanager.SetLeftShoulder(uwObject.GetObjectSprite(playerdat.LeftShoulderObject));break;
-			case 7: uimanager.SetRightHand(uwObject.GetObjectSprite(playerdat.RightHandObject));break;
-			case 8: uimanager.SetLeftHand(uwObject.GetObjectSprite(playerdat.LeftHandObject));break;
-			//set rings
-			case 9: uimanager.SetRightRing(ring.GetSpriteIndex(playerdat.RightRingObject));break;
-			case 10: uimanager.SetLeftRing(ring.GetSpriteIndex(playerdat.LeftRingObject));break;
-			default: 
-					if ((slotno>=11) && (slotno<=18))
+				case 0: uimanager.SetHelm(playerdat.isFemale, helm.GetSpriteIndex(playerdat.HelmObject)); break;
+				case 1: uimanager.SetArmour(playerdat.isFemale, chestarmour.GetSpriteIndex(playerdat.ChestArmourObject)); break;
+				case 2: uimanager.SetGloves(playerdat.isFemale, gloves.GetSpriteIndex(playerdat.GlovesObject)); break;
+				case 3: uimanager.SetLeggings(playerdat.isFemale, gloves.GetSpriteIndex(playerdat.LeggingsObject)); break;
+				case 4: uimanager.SetBoots(playerdat.isFemale, gloves.GetSpriteIndex(playerdat.BootsObject)); break;
+				//Set arms and shoulders
+				case 5: uimanager.SetRightShoulder(uwObject.GetObjectSprite(playerdat.RightShoulderObject)); break;
+				case 6: uimanager.SetLeftShoulder(uwObject.GetObjectSprite(playerdat.LeftShoulderObject)); break;
+				case 7: uimanager.SetRightHand(uwObject.GetObjectSprite(playerdat.RightHandObject)); break;
+				case 8: uimanager.SetLeftHand(uwObject.GetObjectSprite(playerdat.LeftHandObject)); break;
+				//set rings
+				case 9: uimanager.SetRightRing(ring.GetSpriteIndex(playerdat.RightRingObject)); break;
+				case 10: uimanager.SetLeftRing(ring.GetSpriteIndex(playerdat.LeftRingObject)); break;
+				default:
+					if ((slotno >= 11) && (slotno <= 18))
 					{
-					uimanager.SetBackPack(slotno-11, uwObject.GetObjectSprite(playerdat.BackPackObject(slotno-11)));
+						uimanager.SetBackPack(slotno - 11, uwObject.GetObjectSprite(playerdat.BackPackObject(slotno - 11)));
 					}
-					break;				
+					break;
 			}
 		}
 
@@ -511,7 +618,7 @@ namespace Underworld
 		{
 			if (SpriteNo == -1)
 			{ //clear the slot
-				instance.Backpack[slot].Texture = null;				
+				instance.Backpack[slot].Texture = null;
 			}
 			else
 			{
@@ -575,31 +682,31 @@ namespace Underworld
 				Debug.Print($"->{extra_arg_0}");
 				switch (extra_arg_0)
 				{
-					case "Helm": { obj = playerdat.Helm; CurrentSlot=0; break; }
-					case "Armour": { obj = playerdat.ChestArmour;  CurrentSlot=1; break; }
-					case "Gloves": { obj = playerdat.Gloves; CurrentSlot=2;  break; }
-					case "Leggings": { obj = playerdat.Leggings; CurrentSlot=3; break; }
-					case "Boots": { obj = playerdat.Boots;  CurrentSlot=4;  break; }
+					case "Helm": { obj = playerdat.Helm; CurrentSlot = 0; break; }
+					case "Armour": { obj = playerdat.ChestArmour; CurrentSlot = 1; break; }
+					case "Gloves": { obj = playerdat.Gloves; CurrentSlot = 2; break; }
+					case "Leggings": { obj = playerdat.Leggings; CurrentSlot = 3; break; }
+					case "Boots": { obj = playerdat.Boots; CurrentSlot = 4; break; }
 
-					case "RightShoulder": { obj = playerdat.RightShoulder;CurrentSlot=5; break; }	
-					case "LeftShoulder": { obj = playerdat.LeftShoulder; CurrentSlot=6; break; }
-					case "RightHand": { obj = playerdat.RightHand; CurrentSlot=7; break; }
-					case "LeftHand": { obj = playerdat.LeftHand; CurrentSlot=8; break; }
+					case "RightShoulder": { obj = playerdat.RightShoulder; CurrentSlot = 5; break; }
+					case "LeftShoulder": { obj = playerdat.LeftShoulder; CurrentSlot = 6; break; }
+					case "RightHand": { obj = playerdat.RightHand; CurrentSlot = 7; break; }
+					case "LeftHand": { obj = playerdat.LeftHand; CurrentSlot = 8; break; }
 
-					case "RightRing": { obj = playerdat.RightRing; CurrentSlot=9; break; }
-					case "LeftRing": { obj = playerdat.LeftRing; CurrentSlot=10; break; }
-					
-					case "Back0": { obj = playerdat.GetBackPackIndex(0); CurrentSlot=11; break; }
-					case "Back1": { obj = playerdat.GetBackPackIndex(1); CurrentSlot=12; break; }
-					case "Back2": { obj = playerdat.GetBackPackIndex(2); CurrentSlot=13; break; }
-					case "Back3": { obj = playerdat.GetBackPackIndex(3); CurrentSlot=14; break; }
-					case "Back4": { obj = playerdat.GetBackPackIndex(4); CurrentSlot=15; break; }
-					case "Back5": { obj = playerdat.GetBackPackIndex(5); CurrentSlot=16; break; }
-					case "Back6": { obj = playerdat.GetBackPackIndex(6); CurrentSlot=17;break; }
-					case "Back7": { obj = playerdat.GetBackPackIndex(7); CurrentSlot=18;break; }
-					case "OpenedContainer": { obj = playerdat.OpenedContainer; CurrentSlot=-1; break; }
+					case "RightRing": { obj = playerdat.RightRing; CurrentSlot = 9; break; }
+					case "LeftRing": { obj = playerdat.LeftRing; CurrentSlot = 10; break; }
+
+					case "Back0": { obj = playerdat.GetBackPackIndex(0); CurrentSlot = 11; break; }
+					case "Back1": { obj = playerdat.GetBackPackIndex(1); CurrentSlot = 12; break; }
+					case "Back2": { obj = playerdat.GetBackPackIndex(2); CurrentSlot = 13; break; }
+					case "Back3": { obj = playerdat.GetBackPackIndex(3); CurrentSlot = 14; break; }
+					case "Back4": { obj = playerdat.GetBackPackIndex(4); CurrentSlot = 15; break; }
+					case "Back5": { obj = playerdat.GetBackPackIndex(5); CurrentSlot = 16; break; }
+					case "Back6": { obj = playerdat.GetBackPackIndex(6); CurrentSlot = 17; break; }
+					case "Back7": { obj = playerdat.GetBackPackIndex(7); CurrentSlot = 18; break; }
+					case "OpenedContainer": { obj = playerdat.OpenedContainer; CurrentSlot = -1; break; }
 					default:
-						CurrentSlot=-1;
+						CurrentSlot = -1;
 						Debug.Print("Unimplemented inventory slot"); break;
 				}
 
@@ -630,23 +737,37 @@ namespace Underworld
 							Debug.Print("Unimplemented inventory use verb-object combination"); break;
 					}
 				}
-				CurrentSlot=-1;
+				CurrentSlot = -1;
 			}
 		}
-		
+
 		private void CloseAutomap(InputEvent @event)
 		{
 			if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
 			{
-				EnableDisable(AutomapPanel,false);
+				EnableDisable(AutomapPanel, false);
+			}
+		}
+		
+		
+		private void ChainPull(InputEvent @event)
+		{
+			if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
+			{
+				switch (PanelMode)
+				{
+					case 0:
+						SetPanelMode(2); //go to stats from inventory
+						break;
+					case 1:
+						SetPanelMode(0); //runes from inventory
+						break;
+					case 2:
+						SetPanelMode(0); // inventory from stats
+						break;						
+				}
 			}
 		}
 
 	} //end class
 }   //end namespace
-
-
-
-
-
-

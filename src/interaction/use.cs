@@ -62,8 +62,8 @@ namespace Underworld
                             else
                             {
                                 //runebag
+                                return runebag.Use(obj, WorldObject);
                             }
-                            break;
                         }
                     case 1:
                         {

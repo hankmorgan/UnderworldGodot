@@ -5,13 +5,25 @@ namespace Underworld
 {
     public class automap:Loader
     {
-        public static automap currentautomap;
+        
+        public static automap currentautomap;   
+
+        /// <summary>
+        /// Array of all cached automaps
+        /// </summary>
         public static automap[] automaps;
 
+
+        //The raw data for this automap.
         public byte[] buffer;
 
         public automaptileinfo[,] tiles = new automaptileinfo[64,64];
 
+
+        /// <summary>
+        /// Initialises an automap for the specified level no and loads the automap data from the lev.ark file
+        /// </summary>
+        /// <param name="LevelNo"></param>
         public automap (int LevelNo)
         {
             //load buffer. then init tiles with their offsets
