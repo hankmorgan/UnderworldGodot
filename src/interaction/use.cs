@@ -91,8 +91,8 @@ namespace Underworld
                         {
                             return Readable.LookAt(obj);
                         }
-                        if (obj.classindex == 0xB)
-                        {
+                        if (((obj.classindex == 0xB) && (_RES!=GAME_UW2)) || ((obj.classindex == 0xA) && (_RES==GAME_UW2)))
+                        {//class 4-2-B in UW1, class 4-2-A in UW2
                             return map.Use(obj, WorldObject);
                         }
                         break;

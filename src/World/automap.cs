@@ -19,7 +19,7 @@ namespace Underworld
             switch(_RES)
             {
                 case GAME_UW2:
-                    blockno = LevelNo * 4;
+                    blockno = 160 + LevelNo * 4;
                     break;
                 default:
                     blockno = LevelNo + 27;

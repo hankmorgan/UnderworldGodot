@@ -3,8 +3,12 @@ namespace Underworld
 {
     public class AutomapRender : UWClass
     {
+        /// <summary>
+        /// No of pixels wide or tall a tile is draw at.
+        /// </summary>
         const int TileSize = 4;
 
+        //Wall direction constants.
         const int NORTH = 0;
         const int SOUTH = 1;
         const int EAST = 2;
@@ -121,22 +125,24 @@ namespace Underworld
             Color.Color8(24,116,167,255)
         };
 
+        /// <summary>
+        /// Reference to track the currently being drawn tilemap
+        /// </summary>
         static automap mapToRender;
 
         static System.Random rnd;
+       
+        /// <summary>
+        /// Returns the automap as an image.
+        /// </summary>
+        /// <param name="levelno"></param>
+        /// <returns></returns>
         public static ImageTexture MapImage(int levelno)
         {
             rnd = new System.Random();
             var OutputTileMapImage = Image.Create(64 * TileSize, 64 * TileSize, false, Image.Format.Rgba8);
             mapToRender = automap.automaps[levelno];
-            //Init the tile map as a blank map first
-            // for (int x = 0; x <= TileMap.TileMapSizeX; x++)
-            // {
-            //     for (int y = 0; y <= TileMap.TileMapSizeY; y++)
-            //     {
-            //         DrawSolidTile(OutputTileMapImage, mapToRender.tiles[x, y], x, y, BackgroundColour);
-            //     }
-            // }
+
             //Fills in the tile background colour first
             for (int x = 0; x <= TileMap.TileMapSizeX; x++)
             {
@@ -199,8 +205,13 @@ namespace Underworld
             }
         }
 
-
-
+        /// <summary>
+        /// Fills the tile colour of the tile surface
+        /// </summary>
+        /// <param name="OutputTileMapImage"></param>
+        /// <param name="tile"></param>
+        /// <param name="TileX"></param>
+        /// <param name="TileY"></param>
         private static void FillTileColour(Image OutputTileMapImage, automaptileinfo tile, int TileX, int TileY)
         {
             Color[] TileColorPrimary;
@@ -331,6 +342,13 @@ namespace Underworld
             }
         }//end  fill colour
 
+        /// <summary>
+        /// Draws the wall borders around the tile
+        /// </summary>
+        /// <param name="OutputTileMapImage"></param>
+        /// <param name="tile"></param>
+        /// <param name="TileX"></param>
+        /// <param name="TileY"></param>
         private static void DrawTileBorder(Image OutputTileMapImage, automaptileinfo tile, int TileX, int TileY)
         {
             if (tile.visited)
@@ -352,22 +370,22 @@ namespace Underworld
                         }
                     case automaptileinfo.TILE_DIAG_NE:
                         {
-                            DrawDiagNE(OutputTileMapImage, tile, TileX, TileY, BorderColour);
+                            DrawDiagNEBorder(OutputTileMapImage, tile, TileX, TileY, BorderColour);
                             break;
                         }
                     case automaptileinfo.TILE_DIAG_SE:
                         {
-                            DrawDiagSE(OutputTileMapImage, tile, TileX, TileY, BorderColour);
+                            DrawDiagSEBorder(OutputTileMapImage, tile, TileX, TileY, BorderColour);
                             break;
                         }
                     case automaptileinfo.TILE_DIAG_NW:
                         {
-                            DrawDiagNW(OutputTileMapImage, tile, TileX, TileY, BorderColour);
+                            DrawDiagNWBorder(OutputTileMapImage, tile, TileX, TileY, BorderColour);
                             break;
                         }
                     case automaptileinfo.TILE_DIAG_SW:
                         {
-                            DrawDiagSW(OutputTileMapImage, tile, TileX, TileY, BorderColour);
+                            DrawDiagSWBorder(OutputTileMapImage, tile, TileX, TileY, BorderColour);
                             break;
                         }
                     default:
@@ -383,6 +401,15 @@ namespace Underworld
             }
         }
 
+        
+        /// <summary>
+        /// Draws the wall border for an open tile
+        /// </summary>
+        /// <param name="OutputTileMapImage"></param>
+        /// <param name="tile"></param>
+        /// <param name="TileX"></param>
+        /// <param name="TileY"></param>
+        /// <param name="InputColour"></param>
         private static void DrawOpenTileBorder(Image OutputTileMapImage, automaptileinfo tile, int TileX, int TileY, Color[] InputColour)
         {
             //Check the tile to the north
@@ -420,7 +447,15 @@ namespace Underworld
         }
 
 
-        static void DrawDiagSW(Image OutputTileMapImage, automaptileinfo tile, int TileX, int TileY, Color[] InputColour)
+        /// <summary>
+        /// Draws the border for the diag sw tile type
+        /// </summary>
+        /// <param name="OutputTileMapImage"></param>
+        /// <param name="tile"></param>
+        /// <param name="TileX"></param>
+        /// <param name="TileY"></param>
+        /// <param name="InputColour"></param>
+        static void DrawDiagSWBorder(Image OutputTileMapImage, automaptileinfo tile, int TileX, int TileY, Color[] InputColour)
         {
             DrawLine(OutputTileMapImage, TileX, TileY, InputColour, SOUTHWEST);
 
@@ -460,8 +495,15 @@ namespace Underworld
             }
         }
 
-
-        static void DrawDiagNE(Image OutputTileMapImage, automaptileinfo tile, int TileX, int TileY, Color[] InputColour)
+        /// <summary>
+        /// Draws the border for the diag ne tile
+        /// </summary>
+        /// <param name="OutputTileMapImage"></param>
+        /// <param name="tile"></param>
+        /// <param name="TileX"></param>
+        /// <param name="TileY"></param>
+        /// <param name="InputColour"></param>
+        static void DrawDiagNEBorder(Image OutputTileMapImage, automaptileinfo tile, int TileX, int TileY, Color[] InputColour)
         {
             DrawLine(OutputTileMapImage, TileX, TileY, InputColour, NORTHEAST);
 
@@ -501,8 +543,15 @@ namespace Underworld
             }
         }
 
-
-        static void DrawDiagSE(Image OutputTileMapImage, automaptileinfo tile, int TileX, int TileY, Color[] InputColour)
+        /// <summary>
+        /// Draws the border for the diag se tile
+        /// </summary>
+        /// <param name="OutputTileMapImage"></param>
+        /// <param name="tile"></param>
+        /// <param name="TileX"></param>
+        /// <param name="TileY"></param>
+        /// <param name="InputColour"></param>
+        static void DrawDiagSEBorder(Image OutputTileMapImage, automaptileinfo tile, int TileX, int TileY, Color[] InputColour)
         {
             DrawLine(OutputTileMapImage, TileX, TileY, InputColour, SOUTHEAST);
 
@@ -544,8 +593,15 @@ namespace Underworld
         }
 
 
-
-        static void DrawDiagNW(Image OutputTileMapImage, automaptileinfo tile, int TileX, int TileY, Color[] InputColour)
+        /// <summary>
+        /// Draws the border for the diag nw tile
+        /// </summary>
+        /// <param name="OutputTileMapImage"></param>
+        /// <param name="tile"></param>
+        /// <param name="TileX"></param>
+        /// <param name="TileY"></param>
+        /// <param name="InputColour"></param>
+        static void DrawDiagNWBorder(Image OutputTileMapImage, automaptileinfo tile, int TileX, int TileY, Color[] InputColour)
         {
             DrawLine(OutputTileMapImage, TileX, TileY, InputColour, NORTHWEST);
 
@@ -584,7 +640,15 @@ namespace Underworld
                 }
             }
         }
-
+        
+        /// <summary>
+        /// Draws a horizontal, vertical or diagonal border line relative to the tile using the direction specified 
+        /// </summary>
+        /// <param name="OutputTileMapImage"></param>
+        /// <param name="TileX"></param>
+        /// <param name="TileY"></param>
+        /// <param name="InputColour"></param>
+        /// <param name="Direction"></param>
         private static void DrawLine(Image OutputTileMapImage, int TileX, int TileY, Color[] InputColour, int Direction)
         {
             switch (Direction)
@@ -656,7 +720,14 @@ namespace Underworld
             }
         }
 
-
+        /// <summary>
+        /// Draws the door at the specified location.
+        /// </summary>
+        /// <param name="OutputTileMapImage"></param>
+        /// <param name="tile"></param>
+        /// <param name="TileX"></param>
+        /// <param name="TileY"></param>
+        /// <param name="InputColour"></param>
         private static void DrawDoor(Image OutputTileMapImage, automaptileinfo tile, int TileX, int TileY, Color[] InputColour)
         {
             bool TileTypeNorth = mapToRender.tiles[TileX, TileY + 1].IsOpen;
@@ -684,7 +755,7 @@ namespace Underworld
         }
 
         /// <summary>
-        /// Picks a random colour from the array of colours
+        /// Picks a random colour from the array of colours. Use to create the shading variation for the map
         /// </summary>
         /// <returns>The colour selected</returns>
         /// <param name="Selection">Selection.</param>
