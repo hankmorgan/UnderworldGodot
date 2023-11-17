@@ -103,6 +103,31 @@ namespace Underworld
             return false;
         }
 
+        /// <summary>
+        /// A look description based on the item id
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <param name="qty"></param>
+        /// <returns></returns>
+        public static bool GeneralLookDescription(int item_id, int qty=1)
+        {
+            string output;
+            if (commonObjDat.PrintableLook(item_id))
+            {
+                output = "You see ";
+            }
+            else
+            {
+                System.Diagnostics.Debug.Print("No print description");
+                return true;
+            }
+            string objectname = GameStrings.GetObjectNounUW(item_id, qty);
+            var article = GetArticle(objectname);
+            output += $"{article}{objectname}";
+            messageScroll.AddString($"{output}");
+            return true;
+        }
+
         public static bool GeneralLookDescription(uwObject obj)
         {
             string output;

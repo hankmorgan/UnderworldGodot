@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://xjvqmrbs28xs"]
+[gd_scene load_steps=31 format=3 uid="uid://xjvqmrbs28xs"]
 
 [ext_resource type="Script" path="res://src/ui/uimanager.cs" id="1_lw0yg"]
 [ext_resource type="FontFile" uid="uid://pdy3t627nfxw" path="res://resources/fonts/FONT5X6I.ttf" id="3_safdl"]
@@ -26,6 +26,7 @@
 [ext_resource type="Texture2D" uid="uid://fk1vftudb0q8" path="res://resources/placeholder_art/panels/panelsINv.png" id="20_dbxpe"]
 [ext_resource type="Texture2D" uid="uid://du878dn3osxn1" path="res://resources/placeholder_art/blankmap.png" id="20_o03w0"]
 [ext_resource type="Texture2D" uid="uid://bptn5lc7tnnnx" path="res://resources/placeholder_art/panels/panelsrune.png" id="22_ucb6g"]
+[ext_resource type="Texture2D" uid="uid://di1twv4v85gbi" path="res://resources/placeholder_art/rune.png" id="23_ry168"]
 [ext_resource type="Texture2D" uid="uid://51go53yqj8oq" path="res://resources/placeholder_art/panels/panelsstats.png" id="23_usvx2"]
 
 [sub_resource type="AudioStreamWAV" id="AudioStreamWAV_tkk82"]
@@ -39,7 +40,7 @@ shader = ExtResource("6_x6exc")
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2", "PanelInventory", "PanelRuneBag", "PanelStats", "InteractionButtonsUW1", "InteractionButtonsUW2", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "LeftShoulder", "RightHand", "LeftHand", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "OpenedContainer", "AutomapPanel", "AutomapImage")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2", "PanelInventory", "PanelRuneBag", "PanelStats", "InteractionButtonsUW1", "InteractionButtonsUW2", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "LeftShoulder", "RightHand", "LeftHand", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "OpenedContainer", "Runes", "SelectedRunes", "AutomapPanel", "AutomapImage")]
 script = ExtResource("1_lw0yg")
 Font4X5P = ExtResource("5_8iiwt")
 Font5X6I = ExtResource("3_safdl")
@@ -80,6 +81,8 @@ LeftRing = NodePath("../Common/PaperDoll/LeftRingInput")
 LeftRingInput = NodePath("../Common/PaperDoll/LeftRingInput")
 Backpack = [NodePath("../Common/PaperDoll/Back0"), NodePath("../Common/PaperDoll/Back1"), NodePath("../Common/PaperDoll/Back2"), NodePath("../Common/PaperDoll/Back3"), NodePath("../Common/PaperDoll/Back4"), NodePath("../Common/PaperDoll/Back5"), NodePath("../Common/PaperDoll/Back6"), NodePath("../Common/PaperDoll/Back7")]
 OpenedContainer = NodePath("../Common/PaperDoll/OpenedContainer")
+Runes = [NodePath("../Common/RuneBag/Rune0"), NodePath("../Common/RuneBag/Rune1"), NodePath("../Common/RuneBag/Rune2"), NodePath("../Common/RuneBag/Rune3"), NodePath("../Common/RuneBag/Rune4"), NodePath("../Common/RuneBag/Rune5"), NodePath("../Common/RuneBag/Rune6"), NodePath("../Common/RuneBag/Rune7"), NodePath("../Common/RuneBag/Rune8"), NodePath("../Common/RuneBag/Rune9"), NodePath("../Common/RuneBag/Rune10"), NodePath("../Common/RuneBag/Rune11"), NodePath("../Common/RuneBag/Rune12"), NodePath("../Common/RuneBag/Rune13"), NodePath("../Common/RuneBag/Rune14"), NodePath("../Common/RuneBag/Rune15"), NodePath("../Common/RuneBag/Rune16"), NodePath("../Common/RuneBag/Rune17"), NodePath("../Common/RuneBag/Rune18"), NodePath("../Common/RuneBag/Rune19"), NodePath("../Common/RuneBag/Rune20"), NodePath("../Common/RuneBag/Rune21"), NodePath("../Common/RuneBag/Rune22"), NodePath("../Common/RuneBag/Rune23")]
+SelectedRunes = [NodePath("../Common/OtherControls/SelectedRune0"), NodePath("../Common/OtherControls/SelectedRune1"), NodePath("../Common/OtherControls/SelectedRune2")]
 AutomapPanel = NodePath("../Common/Automap")
 AutomapImage = NodePath("../Common/Automap/MapImage")
 
@@ -550,13 +553,189 @@ offset_left = 1110.0
 offset_right = 1150.0
 offset_bottom = 40.0
 
-[node name="TextureRect" type="TextureRect" parent="UI/Common/RuneBag"]
+[node name="RuneBagPanel" type="TextureRect" parent="UI/Common/RuneBag"]
 layout_mode = 0
 offset_left = -166.0
 offset_top = 28.0
 offset_right = 166.0
 offset_bottom = 484.0
 texture = ExtResource("22_ucb6g")
+
+[node name="Rune0" type="TextureRect" parent="UI/Common/RuneBag"]
+layout_mode = 0
+offset_left = -133.0
+offset_top = 48.0
+offset_right = -69.0
+offset_bottom = 112.0
+
+[node name="Rune1" type="TextureRect" parent="UI/Common/RuneBag"]
+layout_mode = 0
+offset_left = -63.0
+offset_top = 48.0
+offset_right = 1.0
+offset_bottom = 112.0
+
+[node name="Rune2" type="TextureRect" parent="UI/Common/RuneBag"]
+layout_mode = 0
+offset_left = 9.0
+offset_top = 48.0
+offset_right = 73.0
+offset_bottom = 112.0
+
+[node name="Rune3" type="TextureRect" parent="UI/Common/RuneBag"]
+layout_mode = 0
+offset_left = 78.0
+offset_top = 48.0
+offset_right = 142.0
+offset_bottom = 112.0
+
+[node name="Rune4" type="TextureRect" parent="UI/Common/RuneBag"]
+layout_mode = 0
+offset_left = -133.0
+offset_top = 108.0
+offset_right = -69.0
+offset_bottom = 172.0
+
+[node name="Rune5" type="TextureRect" parent="UI/Common/RuneBag"]
+layout_mode = 0
+offset_left = -63.0
+offset_top = 108.0
+offset_right = 1.0
+offset_bottom = 172.0
+
+[node name="Rune6" type="TextureRect" parent="UI/Common/RuneBag"]
+layout_mode = 0
+offset_left = 9.0
+offset_top = 108.0
+offset_right = 73.0
+offset_bottom = 172.0
+
+[node name="Rune7" type="TextureRect" parent="UI/Common/RuneBag"]
+layout_mode = 0
+offset_left = 78.0
+offset_top = 108.0
+offset_right = 142.0
+offset_bottom = 172.0
+
+[node name="Rune8" type="TextureRect" parent="UI/Common/RuneBag"]
+layout_mode = 0
+offset_left = -133.0
+offset_top = 167.0
+offset_right = -69.0
+offset_bottom = 231.0
+
+[node name="Rune9" type="TextureRect" parent="UI/Common/RuneBag"]
+layout_mode = 0
+offset_left = -63.0
+offset_top = 167.0
+offset_right = 1.0
+offset_bottom = 231.0
+
+[node name="Rune10" type="TextureRect" parent="UI/Common/RuneBag"]
+layout_mode = 0
+offset_left = 9.0
+offset_top = 167.0
+offset_right = 73.0
+offset_bottom = 231.0
+
+[node name="Rune11" type="TextureRect" parent="UI/Common/RuneBag"]
+layout_mode = 0
+offset_left = 78.0
+offset_top = 167.0
+offset_right = 142.0
+offset_bottom = 231.0
+
+[node name="Rune12" type="TextureRect" parent="UI/Common/RuneBag"]
+layout_mode = 0
+offset_left = -133.0
+offset_top = 227.0
+offset_right = -69.0
+offset_bottom = 291.0
+
+[node name="Rune13" type="TextureRect" parent="UI/Common/RuneBag"]
+layout_mode = 0
+offset_left = -63.0
+offset_top = 227.0
+offset_right = 1.0
+offset_bottom = 291.0
+
+[node name="Rune14" type="TextureRect" parent="UI/Common/RuneBag"]
+layout_mode = 0
+offset_left = 9.0
+offset_top = 227.0
+offset_right = 73.0
+offset_bottom = 291.0
+
+[node name="Rune15" type="TextureRect" parent="UI/Common/RuneBag"]
+layout_mode = 0
+offset_left = 78.0
+offset_top = 227.0
+offset_right = 142.0
+offset_bottom = 291.0
+
+[node name="Rune16" type="TextureRect" parent="UI/Common/RuneBag"]
+layout_mode = 0
+offset_left = -133.0
+offset_top = 287.0
+offset_right = -69.0
+offset_bottom = 351.0
+
+[node name="Rune17" type="TextureRect" parent="UI/Common/RuneBag"]
+layout_mode = 0
+offset_left = -62.0
+offset_top = 287.0
+offset_right = 2.0
+offset_bottom = 351.0
+
+[node name="Rune18" type="TextureRect" parent="UI/Common/RuneBag"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 287.0
+offset_right = 74.0
+offset_bottom = 351.0
+
+[node name="Rune19" type="TextureRect" parent="UI/Common/RuneBag"]
+layout_mode = 0
+offset_left = 79.0
+offset_top = 287.0
+offset_right = 143.0
+offset_bottom = 351.0
+
+[node name="Rune20" type="TextureRect" parent="UI/Common/RuneBag"]
+layout_mode = 0
+offset_left = -133.0
+offset_top = 348.0
+offset_right = -69.0
+offset_bottom = 412.0
+
+[node name="Rune21" type="TextureRect" parent="UI/Common/RuneBag"]
+layout_mode = 0
+offset_left = -61.0
+offset_top = 348.0
+offset_right = 3.0
+offset_bottom = 412.0
+
+[node name="Rune22" type="TextureRect" parent="UI/Common/RuneBag"]
+layout_mode = 0
+offset_left = 11.0
+offset_top = 348.0
+offset_right = 75.0
+offset_bottom = 412.0
+
+[node name="Rune23" type="TextureRect" parent="UI/Common/RuneBag"]
+layout_mode = 0
+offset_left = 80.0
+offset_top = 348.0
+offset_right = 144.0
+offset_bottom = 412.0
+
+[node name="PutRunesAway" type="TextureRect" parent="UI/Common/RuneBag"]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = -82.0
+offset_top = 404.0
+offset_right = 88.0
+offset_bottom = 468.0
 
 [node name="StatsDisplay" type="Panel" parent="UI/Common"]
 visible = false
@@ -602,16 +781,40 @@ offset_bottom = 704.0
 
 [node name="OtherControls" type="Panel" parent="UI/Common"]
 self_modulate = Color(1, 1, 1, 0)
-offset_left = 1092.0
-offset_top = 485.0
-offset_right = 1132.0
-offset_bottom = 565.0
+offset_right = 40.0
+offset_bottom = 80.0
 
 [node name="Chain" type="TextureRect" parent="UI/Common/OtherControls"]
 self_modulate = Color(1, 1, 1, 0)
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 80.0
+offset_left = 1091.0
+offset_top = 486.0
+offset_right = 1131.0
+offset_bottom = 566.0
+
+[node name="SelectedRune0" type="TextureRect" parent="UI/Common/OtherControls"]
+layout_mode = 0
+offset_left = 704.0
+offset_top = 552.0
+offset_right = 768.0
+offset_bottom = 616.0
+texture = ExtResource("23_ry168")
+
+[node name="SelectedRune1" type="TextureRect" parent="UI/Common/OtherControls"]
+layout_mode = 0
+offset_left = 760.0
+offset_top = 552.0
+offset_right = 824.0
+offset_bottom = 616.0
+texture = ExtResource("23_ry168")
+
+[node name="SelectedRune2" type="TextureRect" parent="UI/Common/OtherControls"]
+layout_mode = 0
+offset_left = 816.0
+offset_top = 552.0
+offset_right = 880.0
+offset_bottom = 616.0
+texture = ExtResource("23_ry168")
 
 [node name="mouse" type="CanvasLayer" parent="UI"]
 
@@ -668,5 +871,30 @@ script = ExtResource("5_2to2n")
 [connection signal="gui_input" from="UI/Common/PaperDoll/Back6" to="UI/uiManager" method="_paperdoll_gui_input" binds= ["Back6"]]
 [connection signal="gui_input" from="UI/Common/PaperDoll/Back7" to="UI/uiManager" method="_paperdoll_gui_input" binds= ["Back7"]]
 [connection signal="gui_input" from="UI/Common/PaperDoll/OpenedContainer" to="UI/uiManager" method="_paperdoll_gui_input" binds= ["OpenedContainer"]]
+[connection signal="gui_input" from="UI/Common/RuneBag/Rune0" to="UI/uiManager" method="RuneClick" binds= [0]]
+[connection signal="gui_input" from="UI/Common/RuneBag/Rune1" to="UI/uiManager" method="RuneClick" binds= [1]]
+[connection signal="gui_input" from="UI/Common/RuneBag/Rune2" to="UI/uiManager" method="RuneClick" binds= [2]]
+[connection signal="gui_input" from="UI/Common/RuneBag/Rune3" to="UI/uiManager" method="RuneClick" binds= [3]]
+[connection signal="gui_input" from="UI/Common/RuneBag/Rune4" to="UI/uiManager" method="RuneClick" binds= [4]]
+[connection signal="gui_input" from="UI/Common/RuneBag/Rune5" to="UI/uiManager" method="RuneClick" binds= [5]]
+[connection signal="gui_input" from="UI/Common/RuneBag/Rune6" to="UI/uiManager" method="RuneClick" binds= [6]]
+[connection signal="gui_input" from="UI/Common/RuneBag/Rune7" to="UI/uiManager" method="RuneClick" binds= [7]]
+[connection signal="gui_input" from="UI/Common/RuneBag/Rune8" to="UI/uiManager" method="RuneClick" binds= [8]]
+[connection signal="gui_input" from="UI/Common/RuneBag/Rune9" to="UI/uiManager" method="RuneClick" binds= [9]]
+[connection signal="gui_input" from="UI/Common/RuneBag/Rune10" to="UI/uiManager" method="RuneClick" binds= [10]]
+[connection signal="gui_input" from="UI/Common/RuneBag/Rune11" to="UI/uiManager" method="RuneClick" binds= [11]]
+[connection signal="gui_input" from="UI/Common/RuneBag/Rune12" to="UI/uiManager" method="RuneClick" binds= [12]]
+[connection signal="gui_input" from="UI/Common/RuneBag/Rune13" to="UI/uiManager" method="RuneClick" binds= [13]]
+[connection signal="gui_input" from="UI/Common/RuneBag/Rune14" to="UI/uiManager" method="RuneClick" binds= [14]]
+[connection signal="gui_input" from="UI/Common/RuneBag/Rune15" to="UI/uiManager" method="RuneClick" binds= [15]]
+[connection signal="gui_input" from="UI/Common/RuneBag/Rune16" to="UI/uiManager" method="RuneClick" binds= [16]]
+[connection signal="gui_input" from="UI/Common/RuneBag/Rune17" to="UI/uiManager" method="RuneClick" binds= [17]]
+[connection signal="gui_input" from="UI/Common/RuneBag/Rune18" to="UI/uiManager" method="RuneClick" binds= [18]]
+[connection signal="gui_input" from="UI/Common/RuneBag/Rune19" to="UI/uiManager" method="RuneClick" binds= [19]]
+[connection signal="gui_input" from="UI/Common/RuneBag/Rune20" to="UI/uiManager" method="RuneClick" binds= [20]]
+[connection signal="gui_input" from="UI/Common/RuneBag/Rune21" to="UI/uiManager" method="RuneClick" binds= [21]]
+[connection signal="gui_input" from="UI/Common/RuneBag/Rune22" to="UI/uiManager" method="RuneClick" binds= [22]]
+[connection signal="gui_input" from="UI/Common/RuneBag/Rune23" to="UI/uiManager" method="RuneClick" binds= [23]]
+[connection signal="gui_input" from="UI/Common/RuneBag/PutRunesAway" to="UI/uiManager" method="RuneClick" binds= [-1]]
 [connection signal="gui_input" from="UI/Common/Automap/Close" to="UI/uiManager" method="CloseAutomap"]
 [connection signal="gui_input" from="UI/Common/OtherControls/Chain" to="UI/uiManager" method="ChainPull"]

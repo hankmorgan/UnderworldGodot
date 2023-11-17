@@ -232,6 +232,15 @@ public partial class main : Node3D
 				uimanager.SetBackPack(i, uwObject.GetObjectSprite(playerdat.BackPackObject(i)));
 				playerdat.SetBackPackIndex(i, playerdat.BackPackObject(i));
 			}
+
+			//Load rune slots
+			for (int i=0;i<24;i++)
+			{
+				uimanager.SetRuneInBag(i,playerdat.GetRune(i));
+			}
+			uimanager.RedrawSelectedSlots();
+
+			//Set the playerlight leve;
 			uwsettings.instance.lightlevel = light.BrightestLight();
 
 			RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.GetViewingDistance(uwsettings.instance.lightlevel));

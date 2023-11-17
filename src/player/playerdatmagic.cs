@@ -12,7 +12,7 @@ namespace Underworld
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        public bool GetRune(int index)
+        public static bool GetRune(int index)
         {//0x45,0x46,0x47
             int RuneGroup = index / 8;
             int bit = 7 - (index % 8);
@@ -25,7 +25,7 @@ namespace Underworld
         /// </summary>
         /// <param name="index"></param>
         /// <param name="newValue"></param>
-        public void SetRune(int index, bool newValue)
+        public static void SetRune(int index, bool newValue)
         {
             int RuneSet = index / 8;
             int bit = 7 - (index % 8);
@@ -42,6 +42,40 @@ namespace Underworld
             }
             SetAt(0x45 + RuneSet, existingValue);
         }
+
+        /// <summary>
+        /// Gets the selected rune at the specified index
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public static int GetSelectedRune(int index)
+        {
+            //48,49 and 4A
+            return GetAt(0x48+index);
+        }
+
+        /// <summary>
+        /// Sets the value at this slot. Use 24 if slot is to be empty.
+        /// </summary>
+        /// <param name="index"></param>
+        public static void SetSelectedRune(int index, int value)
+        {
+            //48,49 and 4A
+            SetAt(0x48+index, (byte)value);
+        }
+
+        /// <summary>
+        /// Returns true if the rune is selected at this slot index 
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public static bool IsSelectedRune(int index)
+        {
+            //48,49 and 4A
+            return GetAt(0x48+index) != 24;
+        }
+
+
 
     } //end class
 } //end namespace
