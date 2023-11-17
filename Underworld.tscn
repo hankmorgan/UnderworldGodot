@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://13uofwemp67y"]
+[gd_scene load_steps=30 format=3 uid="uid://xjvqmrbs28xs"]
 
 [ext_resource type="Script" path="res://src/ui/uimanager.cs" id="1_lw0yg"]
 [ext_resource type="FontFile" uid="uid://pdy3t627nfxw" path="res://resources/fonts/FONT5X6I.ttf" id="3_safdl"]
@@ -34,7 +34,7 @@
 render_priority = 0
 shader = ExtResource("6_x6exc")
 
-[node name="Node3D" type="Node3D"]
+[node name="Underworld" type="Node3D"]
 
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
@@ -329,6 +329,7 @@ index = 5
 [node name="Common" type="CanvasLayer" parent="UI"]
 
 [node name="PaperDoll" type="Panel" parent="UI/Common"]
+self_modulate = Color(1, 1, 1, 0)
 offset_left = 1110.0
 offset_right = 1150.0
 offset_bottom = 40.0
@@ -544,6 +545,7 @@ offset_bottom = 321.0
 
 [node name="RuneBag" type="Panel" parent="UI/Common"]
 visible = false
+self_modulate = Color(1, 1, 1, 0)
 offset_left = 1110.0
 offset_right = 1150.0
 offset_bottom = 40.0
@@ -558,6 +560,7 @@ texture = ExtResource("22_ucb6g")
 
 [node name="StatsDisplay" type="Panel" parent="UI/Common"]
 visible = false
+self_modulate = Color(1, 1, 1, 0)
 offset_left = 1110.0
 offset_right = 1150.0
 offset_bottom = 40.0
@@ -572,6 +575,7 @@ texture = ExtResource("23_usvx2")
 
 [node name="Automap" type="Panel" parent="UI/Common"]
 visible = false
+self_modulate = Color(1, 1, 1, 0)
 offset_right = 40.0
 offset_bottom = 40.0
 
@@ -597,12 +601,14 @@ offset_right = 1240.0
 offset_bottom = 704.0
 
 [node name="OtherControls" type="Panel" parent="UI/Common"]
+self_modulate = Color(1, 1, 1, 0)
 offset_left = 1092.0
 offset_top = 485.0
 offset_right = 1132.0
 offset_bottom = 565.0
 
 [node name="Chain" type="TextureRect" parent="UI/Common/OtherControls"]
+self_modulate = Color(1, 1, 1, 0)
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 80.0

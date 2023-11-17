@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Underworld"
-run/main_scene="res://node_3d.tscn"
+run/main_scene="res://Underworld.tscn"
 config/features=PackedStringArray("4.1", "C#", "Forward Plus")
 config/icon="res://resources/icon/dragon.png"
 

@@ -22,7 +22,7 @@ namespace Underworld
                 //Find Remove existing tile
                 string TileName = "Tile_" + tileX.ToString("D2") + "_" + tileY.ToString("D2");
                 //var existingTile = tileMapRender.worldnode.FindChild(TileName);
-                Node3D existingTile = tileMapRender.worldnode.GetNode<Node3D>($"/root/Node3D/tilemap/{TileName}");
+                Node3D existingTile = tileMapRender.worldnode.GetNode<Node3D>($"/root/Underworld/tilemap/{TileName}");
                 existingTile.Name = $"{TileName}_todestroy";
                 existingTile.QueueFree();
 

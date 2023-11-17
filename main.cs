@@ -267,8 +267,8 @@ public partial class main : Node3D
 	{
 		grObjects.UseRedChannel = true;
 
-		Node3D worldobjects = GetNode<Node3D>("/root/Node3D/worldobjects");
-		Node3D the_tiles = GetNode<Node3D>("/root/Node3D/tilemap");
+		Node3D worldobjects = GetNode<Node3D>("/root/Underworld/worldobjects");
+		Node3D the_tiles = GetNode<Node3D>("/root/Underworld/tilemap");
 		//tilemap/Tile_30_00
 		LevArkLoader.LoadLevArkFileData(folder: uwsettings.instance.levarkfolder);
 		Underworld.TileMap.current_tilemap = new(newLevelNo);
