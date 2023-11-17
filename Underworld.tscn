@@ -898,3 +898,6 @@ script = ExtResource("5_2to2n")
 [connection signal="gui_input" from="UI/Common/RuneBag/PutRunesAway" to="UI/uiManager" method="RuneClick" binds= [-1]]
 [connection signal="gui_input" from="UI/Common/Automap/Close" to="UI/uiManager" method="CloseAutomap"]
 [connection signal="gui_input" from="UI/Common/OtherControls/Chain" to="UI/uiManager" method="ChainPull"]
+[connection signal="gui_input" from="UI/Common/OtherControls/SelectedRune0" to="UI/uiManager" method="SelectedRunesClick"]
+[connection signal="gui_input" from="UI/Common/OtherControls/SelectedRune1" to="UI/uiManager" method="SelectedRunesClick"]
+[connection signal="gui_input" from="UI/Common/OtherControls/SelectedRune2" to="UI/uiManager" method="SelectedRunesClick"]

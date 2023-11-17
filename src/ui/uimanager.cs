@@ -238,19 +238,19 @@ namespace Underworld
 				PanelMoveTimer += delta;
 				if (PanelMoveTimer >= 0.5)
 				{ //after 0.5 seconds inventory panel goes off and next pane goes on.
-					//Disable inventory panel
+				  //Disable inventory panel
 					EnableDisable(PanelToTurnOff, false);
 					RotatingOff = false;
 					PanelMoveTimer = 0;
-					PanelToTurnOff.Scale = new Vector2(0,1);
+					PanelToTurnOff.Scale = new Vector2(0, 1);
 
-					RotatingOn = true; 
-					EnableDisable(PanelToTurnOn, true);					
-					PanelToTurnOn.Scale = PanelToTurnOff.Scale;					
+					RotatingOn = true;
+					EnableDisable(PanelToTurnOn, true);
+					PanelToTurnOn.Scale = PanelToTurnOff.Scale;
 				}
 				else
 				{
-					PanelToTurnOff.Scale = PanelToTurnOff.Scale.Lerp(new Vector2(0,1f), (float)delta * 2);
+					PanelToTurnOff.Scale = PanelToTurnOff.Scale.Lerp(new Vector2(0, 1f), (float)delta * 2);
 				}
 			}
 
@@ -262,11 +262,11 @@ namespace Underworld
 					//Panel Runebag has arrived
 					RotatingOn = false;
 					PanelMoveTimer = 0;
-					PanelToTurnOn.Scale = new Vector2(1,1);
+					PanelToTurnOn.Scale = new Vector2(1, 1);
 				}
 				else
 				{
-					PanelToTurnOn.Scale = PanelToTurnOn.Scale.Lerp(new Vector2(1,1f), (float)delta *2);
+					PanelToTurnOn.Scale = PanelToTurnOn.Scale.Lerp(new Vector2(1, 1f), (float)delta * 2);
 				}
 			}
 		}
@@ -299,9 +299,9 @@ namespace Underworld
 					{
 						//stats or runes to inventory.
 						if (PanelMode == 1)
-						{	//turn off runes
+						{   //turn off runes
 							instance.PanelToTurnOff = instance.PanelRuneBag;
-							instance.PanelToTurnOn = instance.PanelInventory;							
+							instance.PanelToTurnOn = instance.PanelInventory;
 						}
 						else
 						{
@@ -310,11 +310,11 @@ namespace Underworld
 						}
 						RotatingOff = true;
 						RotatingOn = false;
-						PanelMode=0;
+						PanelMode = 0;
 						break;
 					}
 				case 1: //switch to runes
-					//TODO enable rune panel at scale 0,0 to rotate in the oppsite direction.
+						//TODO enable rune panel at scale 0,0 to rotate in the oppsite direction.
 					PanelMode = 1;
 					RotatingOff = true;
 					RotatingOn = false;
@@ -323,16 +323,16 @@ namespace Underworld
 					PanelMoveTimer = 0;
 					break;
 				case 2:
-				{//inventory to stats
-					PanelMode = 2;
-					RotatingOff = true;
-					RotatingOn = false;
-					instance.PanelToTurnOff = instance.PanelInventory;
-					instance.PanelToTurnOn = instance.PanelStats;
-					PanelMoveTimer = 0;
+					{//inventory to stats
+						PanelMode = 2;
+						RotatingOff = true;
+						RotatingOn = false;
+						instance.PanelToTurnOff = instance.PanelInventory;
+						instance.PanelToTurnOn = instance.PanelStats;
+						PanelMoveTimer = 0;
 
-					break;
-				}
+						break;
+					}
 			}
 		}
 
@@ -655,14 +655,14 @@ namespace Underworld
 		{
 			if (state)
 			{
-				instance.Runes[slot].Texture =  grObjects.LoadImageAt(232+slot);
-				instance.Runes[slot].Material = grObjects.GetMaterial(232+slot);
+				instance.Runes[slot].Texture = grObjects.LoadImageAt(232 + slot);
+				instance.Runes[slot].Material = grObjects.GetMaterial(232 + slot);
 			}
 			else
 			{
 				instance.Runes[slot].Texture = null;
 			}
-			
+
 		}
 
 
@@ -776,8 +776,8 @@ namespace Underworld
 				EnableDisable(AutomapPanel, false);
 			}
 		}
-		
-		
+
+
 		/// <summary>
 		/// Handles clicking the chain to change the paperdoll panels
 		/// </summary>
@@ -796,19 +796,19 @@ namespace Underworld
 						break;
 					case 2:
 						SetPanelMode(0); // inventory from stats
-						break;						
+						break;
 				}
 			}
 		}
-		
+
 		private void RuneClick(InputEvent @event, long extra_arg_0)
 		{
 			if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
 			{
-				if (extra_arg_0>=0)
+				if (extra_arg_0 >= 0)
 				{
 					if (playerdat.GetRune((int)extra_arg_0))
-					{						
+					{
 						if (InteractionMode == InteractionModes.ModeLook)
 						{
 							look.GeneralLookDescription((int)(232 + extra_arg_0));
@@ -828,9 +828,9 @@ namespace Underworld
 				else
 				{
 					//clear runes  
-					for (int i=0;i<3;i++)
+					for (int i = 0; i < 3; i++)
 					{
-						playerdat.SetSelectedRune(i,24);
+						playerdat.SetSelectedRune(i, 24);
 					}
 					RedrawSelectedSlots();
 				}
@@ -843,7 +843,7 @@ namespace Underworld
 		/// </summary>
 		/// <param name="NewRuneToSelect"></param>
 		static void SelectRune(int NewRuneToSelect)
-		{			
+		{
 			//Adds rune to the selected shelf
 			if (playerdat.IsSelectedRune(0))
 			{
@@ -854,7 +854,7 @@ namespace Underworld
 						//All three slots are filled. Shift values down and fill slot 3
 						playerdat.SetSelectedRune(0, playerdat.GetSelectedRune(1));
 						playerdat.SetSelectedRune(1, playerdat.GetSelectedRune(2));
-						playerdat.SetSelectedRune(2, NewRuneToSelect);						
+						playerdat.SetSelectedRune(2, NewRuneToSelect);
 					}
 					else
 					{
@@ -863,7 +863,7 @@ namespace Underworld
 					}
 				}
 				else
-				{	//slot 1 is available
+				{   //slot 1 is available
 					playerdat.SetSelectedRune(1, NewRuneToSelect);
 				}
 			}
@@ -879,18 +879,37 @@ namespace Underworld
 		/// </summary>
 		public static void RedrawSelectedSlots()
 		{
-			for (int slot=0;slot<3;slot++)
+			for (int slot = 0; slot < 3; slot++)
 			{
 				if (playerdat.IsSelectedRune(slot))
 				{
 					//display
-					instance.SelectedRunes[slot].Texture =  grObjects.LoadImageAt(232+playerdat.GetSelectedRune(slot));
-					instance.SelectedRunes[slot].Material = grObjects.GetMaterial(232+playerdat.GetSelectedRune(slot));
+					instance.SelectedRunes[slot].Texture = grObjects.LoadImageAt(232 + playerdat.GetSelectedRune(slot));
+					instance.SelectedRunes[slot].Material = grObjects.GetMaterial(232 + playerdat.GetSelectedRune(slot));
 				}
 				else
 				{
 					//clear
-					instance.SelectedRunes[slot].Texture=null;
+					instance.SelectedRunes[slot].Texture = null;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Begin casting the current runic spell
+		/// </summary>
+		/// <param name="event"></param>
+		private void SelectedRunesClick(InputEvent @event)
+		{
+			if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
+			{
+				Debug.Print("Casting");
+				for(int i=0;i<3;i++)
+				{
+					if (playerdat.IsSelectedRune(i))
+					{
+						Debug.Print($"{GameStrings.GetObjectNounUW(232+playerdat.GetSelectedRune(i))}");
+					}					
 				}
 			}
 		}

@@ -279,6 +279,18 @@ namespace Underworld
 
         public static void CreateSprite(GRLoader gr, int spriteNo, Node3D parent, string name, bool EnableCollision = true)
         {
+            // var a_sprite = new Sprite3D();
+            // a_sprite.Name = name;
+            // var img = gr.LoadImageAt(spriteNo);
+            // var NewSize = new Vector2(
+            //             ArtLoader.SpriteScale * img.GetWidth(),
+            //             ArtLoader.SpriteScale * img.GetHeight()
+            //             );
+            // a_sprite.Texture = gr.LoadImageAt(spriteNo);
+            // a_sprite.MaterialOverride =  gr.GetMaterial(spriteNo);
+            // parent.AddChild(a_sprite);
+            // a_sprite.Position = new Vector3(0, NewSize.Y / 2, 0);            
+        
             var a_sprite = new MeshInstance3D(); //new Sprite3D();
             a_sprite.Name = name;
             a_sprite.Mesh = new QuadMesh();
