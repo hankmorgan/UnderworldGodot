@@ -17,7 +17,7 @@ namespace Underworld
             uimanager.RefreshSlot(uimanager.CurrentSlot, playerdat.isFemale);
             uwsettings.instance.lightlevel = BrightestLight();
 
-            Godot.RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.getShadeCutoff(uwsettings.instance.lightlevel));
+            Godot.RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.GetViewingDistance(uwsettings.instance.lightlevel));
             Godot.RenderingServer.GlobalShaderParameterSet("shades", shade.shadesdata[uwsettings.instance.lightlevel].ToImage());
 
             return true;

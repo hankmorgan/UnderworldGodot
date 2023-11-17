@@ -234,7 +234,7 @@ public partial class main : Node3D
 			}
 			uwsettings.instance.lightlevel = light.BrightestLight();
 
-			RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.getShadeCutoff(uwsettings.instance.lightlevel));
+			RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.GetViewingDistance(uwsettings.instance.lightlevel));
             RenderingServer.GlobalShaderParameterSet("shades", shade.shadesdata[uwsettings.instance.lightlevel].ToImage());
 		}
 		else

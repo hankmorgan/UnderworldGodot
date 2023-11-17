@@ -12,31 +12,16 @@ namespace Underworld
     public class shade : ArtLoader
     {
         public int mapindex;
-        int nearlightmap;
-        int shadeCutOff;
-        int neardistance;
-        int fardistance;
+        int StartingLightLevel;
+        int ViewingDistance;
+        int Shading;
+        int StartOfShadingDistance;
 
         public static shade[] shadesdata;
 
-        public static int getNearMap(int index)
+        public static float GetViewingDistance(int index)
         {
-            return shadesdata[index].nearlightmap;
-        }
-
-        public static float getShadeCutoff(int index)
-        {
-            return 4.8f * (float)shadesdata[index].shadeCutOff;
-        }
-
-        public static float getNearDist(int index)
-        {
-            return shadesdata[index].neardistance;
-        }
-
-        public static float getFarDist(int index)
-        {
-            return shadesdata[index].fardistance;
+            return 4.8f * (float)shadesdata[index].ViewingDistance;
         }
 
         /// <summary>
@@ -165,7 +150,7 @@ namespace Underworld
                     ax = di * 66;
                     //ax = ax + (si << 1);
                     //ax = ax + (si);
-                    if (var2 > shadeCutOff)
+                    if (var2 > ViewingDistance)
                     {
                         largeShadeArray[di, si] = 0xF; //darkness?
                     }
@@ -195,13 +180,13 @@ namespace Underworld
         public int[] ExtractShadeArray()
         {
             int[] shadesArray = new int[16];
-            if (shadeCutOff >= 16)
+            if (ViewingDistance >= 16)
             {   //return all zeros.
                 return shadesArray;
             }
             for (int si = 0; si < 16; si++)
             {
-                if (si < shadeCutOff)
+                if (si < ViewingDistance)
                 {
                     int ax = si;
                     ax = (int)Math.Pow(ax * 8, 2);
@@ -210,13 +195,13 @@ namespace Underworld
                     //int var4 = ax;
                     ax = (int)Math.Sqrt(ax);
                     int var6 = ax;
-                    int var4 = (int)(var6 * neardistance / 64);
-                    var4 += fardistance;
+                    int var4 = (int)(var6 * Shading / 64);
+                    var4 += StartOfShadingDistance;
                     if (var4 < 0)
                     {
                         var4 = 0;
                     }
-                    var6 = var4 + nearlightmap;
+                    var6 = var4 + StartingLightLevel;
                     if (var6 > 14)
                     {
                         var6 = 14;
@@ -231,13 +216,13 @@ namespace Underworld
             return shadesArray;
         }
 
-        public shade(int _index, int _nearDist, int _nearMap, int _farDist, int _ShadeCutoff)
+        public shade(int _index, int _Shading, int _StartingLightLevel, int _StartOfShadingDistance, int _ViewingDistance)
         {
             mapindex = _index;
-            neardistance = _nearDist;
-            nearlightmap = _nearMap & 0xF;
-            fardistance = _farDist;
-            shadeCutOff = _ShadeCutoff & 0xF;
+            Shading = _Shading; //I had this as near dist. UnderworldAdventures calls it shading?
+            StartingLightLevel = _StartingLightLevel & 0xF;
+            StartOfShadingDistance = _StartOfShadingDistance;
+            ViewingDistance = _ViewingDistance & 0xF;
             //Debug.Print($"{_index} {_nearDist} {_nearMap} {_farDist} {_ShadeCutoff}");
         }
 
@@ -255,10 +240,10 @@ namespace Underworld
                         {
                             shadesdata[i] = new shade(
                                 _index: i,
-                                _nearDist: (int)(Int16)getAt(buffer, 0 + (i * 12), 16),
-                                _nearMap: (int)getAt(buffer, 2 + (i * 12), 16),
-                                _farDist: (int)(Int16)getAt(buffer, 4 + (i * 12), 16),
-                                _ShadeCutoff: (int)getAt(buffer, 6 + (i * 12), 16)
+                                _Shading: (int)(Int16)getAt(buffer, 0 + (i * 12), 16),
+                                _StartingLightLevel: (int)getAt(buffer, 2 + (i * 12), 16),
+                                _StartOfShadingDistance: (int)(Int16)getAt(buffer, 4 + (i * 12), 16),
+                                _ViewingDistance: (int)getAt(buffer, 6 + (i * 12), 16)
                             );
                         }
                         catch
@@ -285,10 +270,10 @@ namespace Underworld
             {
                 shadesdata[i] = new shade(
                     _index: i,
-                    _nearDist: 30,
-                    _nearMap: 0,
-                    _farDist: 60,
-                    _ShadeCutoff: 15
+                    _Shading: 30,
+                    _StartingLightLevel: 0,
+                    _StartOfShadingDistance: 60,
+                    _ViewingDistance: 15
                  );
             }
         }
