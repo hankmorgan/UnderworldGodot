@@ -251,7 +251,6 @@ namespace Underworld
                             CreateEmptyShades();
                             return;
                         }
-
                     }
                 }
             }
@@ -270,10 +269,10 @@ namespace Underworld
             {
                 shadesdata[i] = new shade(
                     _index: i,
-                    _Shading: 30,
+                    _Shading: 0,
                     _StartingLightLevel: 0,
-                    _StartOfShadingDistance: 60,
-                    _ViewingDistance: 15
+                    _StartOfShadingDistance: 0,
+                    _ViewingDistance: 20
                  );
             }
         }
