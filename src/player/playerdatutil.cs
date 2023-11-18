@@ -1,5 +1,7 @@
+using System;
 using System.Diagnostics;
 using System.Linq;
+using Godot;
 
 namespace Underworld
 {
@@ -43,36 +45,39 @@ namespace Underworld
                             break;
                         }
                 }
-
+               
                 //Copy and initialise inventory
                 var InventoryPtr = 0x138;
                 if (_RES == GAME_UW2)
                 {
                     InventoryPtr = 0x3E3;
                 }
+                var origUbound = pdat.GetUpperBound(0);
+                Array.Resize(ref pdat, InventoryPtr + 512 * 8);
                 int oIndex = 1; //starts at one since there is no object zero
-                InventoryBuffer = new byte[512*8];
-                
-                while (InventoryPtr < pdat.GetUpperBound(0))
+                //InventoryBuffer = new byte[512*8];
+                LastItemIndex=0;
+
+                while (InventoryPtr < origUbound)
                 {
-                    for (int i =0; i<8; i++)
-                    {//Copy bytes into storage
-                        InventoryBuffer[i + oIndex * 8 ] = pdat[InventoryPtr + i];
-                    }
+                    // for (int i =0; i<8; i++)
+                    // {//Copy bytes into storage
+                    //     InventoryBuffer[i + oIndex * 8 ] = pdat[InventoryPtr + i];
+                    // }
                     //Create new objects for the object list
                     var uwobj = new uwObject
                     {
                         isInventory = true,
                         IsStatic = true,
                         index = (short)(oIndex),
-                        PTR = oIndex * 8,
-                        DataBuffer = InventoryBuffer
+                        PTR = InventoryPtr,
+                        DataBuffer = pdat
                     };
                     Debug.Print($"{GameStrings.GetObjectNounUW(uwobj.item_id)}");
                     InventoryObjects[oIndex] = uwobj;
                     oIndex++;
                     InventoryPtr += 8;
-                    
+                    LastItemIndex++;                    
                 }
             }
         }   //end load

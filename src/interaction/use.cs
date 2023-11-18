@@ -77,6 +77,10 @@ namespace Underworld
                             }                           
                             break;
                         }
+                    case 3://food
+                        {
+                            return food.Use(obj, WorldObject);
+                        }
                 }
             return false;
         }

@@ -34,12 +34,12 @@ namespace Underworld
                     {
                         //render object at this slot
                         var objFound = playerdat.InventoryObjects[objects[o]];
-                        uimanager.SetBackPack(o, uwObject.GetObjectSprite(objFound));
+                        uimanager.SetBackPackArt(o, uwObject.GetObjectSprite(objFound));
                         playerdat.SetBackPackIndex(o, objFound);
                     }
                     else
                     {
-                        uimanager.SetBackPack(o, -1);
+                        uimanager.SetBackPackArt(o, -1);
                         playerdat.SetBackPackIndex(o, null);
                     }
                 }
@@ -70,7 +70,7 @@ namespace Underworld
                     //Draw the paperdoll inventory.
                     for (int i = 0; i < 8; i++)
                     {
-                        uimanager.SetBackPack(i, uwObject.GetObjectSprite(playerdat.BackPackObject(i)));
+                        uimanager.SetBackPackArt(i, uwObject.GetObjectSprite(playerdat.BackPackObject(i)));
                         playerdat.SetBackPackIndex(i, playerdat.BackPackObject(i));
                     }
                     return;

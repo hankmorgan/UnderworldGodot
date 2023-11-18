@@ -497,6 +497,21 @@ namespace Underworld
         }
 
 
+
+        /// <summary>
+        /// Player Hunger Level
+        /// </summary>
+        public static int play_hunger
+        {
+            get
+            {
+                return (int)GetAt(0x3A);
+            }
+            set
+            {
+                SetAt(0x3A, (byte)value);
+            }
+        }
     } //end class
 
 }//end namespace

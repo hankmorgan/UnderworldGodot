@@ -410,7 +410,7 @@ namespace Underworld
 				default:
 					if ((slotno >= 11) && (slotno <= 18))
 					{
-						uimanager.SetBackPack(slotno - 11, uwObject.GetObjectSprite(playerdat.BackPackObject(slotno - 11)));
+						uimanager.SetBackPackArt(slotno - 11, uwObject.GetObjectSprite(playerdat.BackPackObject(slotno - 11)));
 					}
 					break;
 			}
@@ -618,7 +618,7 @@ namespace Underworld
 		/// </summary>
 		/// <param name="slot"></param>
 		/// <param name="SpriteNo"></param>
-		public static void SetBackPack(int slot, int SpriteNo = -1)
+		public static void SetBackPackArt(int slot, int SpriteNo = -1)
 		{
 			if (SpriteNo == -1)
 			{ //clear the slot
@@ -691,6 +691,37 @@ namespace Underworld
 			}
 		}
 
+
+		public static void UpdateInventoryDisplay()
+		{
+			uimanager.SetHelm(playerdat.isFemale, helm.GetSpriteIndex(playerdat.HelmObject));
+			uimanager.SetArmour(playerdat.isFemale, chestarmour.GetSpriteIndex(playerdat.ChestArmourObject));
+			uimanager.SetGloves(playerdat.isFemale, gloves.GetSpriteIndex(playerdat.GlovesObject));
+			uimanager.SetLeggings(playerdat.isFemale, gloves.GetSpriteIndex(playerdat.LeggingsObject));
+			uimanager.SetBoots(playerdat.isFemale, gloves.GetSpriteIndex(playerdat.BootsObject));
+			//Set arms and shoulders
+			uimanager.SetRightShoulder(uwObject.GetObjectSprite(playerdat.RightShoulderObject));
+			uimanager.SetLeftShoulder(uwObject.GetObjectSprite(playerdat.LeftShoulderObject));
+			uimanager.SetRightHand(uwObject.GetObjectSprite(playerdat.RightHandObject));
+			uimanager.SetLeftHand(uwObject.GetObjectSprite(playerdat.LeftHandObject));
+			//set rings
+			uimanager.SetRightRing(ring.GetSpriteIndex(playerdat.RightRingObject));
+			uimanager.SetLeftRing(ring.GetSpriteIndex(playerdat.LeftRingObject));
+			//backback
+			for (int i = 0; i < 8; i++)
+			{
+				if (playerdat.BackPackIndices[i]!=-1)
+				{
+					var objFound = playerdat.InventoryObjects[playerdat.BackPackIndices[i]];
+					uimanager.SetBackPackArt(i, uwObject.GetObjectSprite(objFound));
+				}
+				else
+				{
+					uimanager.SetBackPackArt(i, -1);
+				}
+
+			}
+		}
 
 		/// <summary>
 		/// Handles click events on the paperdoll

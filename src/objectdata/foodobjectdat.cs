@@ -11,7 +11,7 @@ namespace Underworld
         /// </summary>
         /// <param name="item_id"></param>
         /// <returns></returns>
-        public int nutrition(int item_id)
+        public static int nutrition(int item_id)
         {
             var res = (sbyte)buffer[offset + (item_id & 0xF)]; //signed byte to get negative alcohol values
             return res;

@@ -8,8 +8,11 @@ namespace Underworld
         {
             if (WorldObject == false)
             {// use in inventory
-                Debug.Print("You eat");
+                Debug.Print($"You eat {foodObjectDat.nutrition(obj.item_id)} at hunger level {playerdat.play_hunger}");
+                
+                //var nutrition = foodObjectDat.nutrition(obj.item_id);
                 //Remove Object From Inventory
+                playerdat.RemoveFromInventory(obj.index);
             }
             else
             {//do nothing when object is in the world
