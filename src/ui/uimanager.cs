@@ -863,7 +863,7 @@ namespace Underworld
 					{
 						playerdat.SetSelectedRune(i, 24);
 					}
-					RedrawSelectedSlots();
+					RedrawSelectedRuneSlots();
 				}
 			}
 		}
@@ -902,13 +902,13 @@ namespace Underworld
 			{//Slot 0 is available.
 				playerdat.SetSelectedRune(0, NewRuneToSelect);
 			}
-			RedrawSelectedSlots();
+			RedrawSelectedRuneSlots();
 		}
 
 		/// <summary>
 		/// Draws the selected rune slots after a change is made to them.
 		/// </summary>
-		public static void RedrawSelectedSlots()
+		public static void RedrawSelectedRuneSlots()
 		{
 			for (int slot = 0; slot < 3; slot++)
 			{

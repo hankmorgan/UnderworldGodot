@@ -224,7 +224,7 @@ public partial class main : Node3D
             {
                 uimanager.SetRuneInBag(i, playerdat.GetRune(i));
             }
-            uimanager.RedrawSelectedSlots();
+            uimanager.RedrawSelectedRuneSlots();
 
             //Set the playerlight leve;
             uwsettings.instance.lightlevel = light.BrightestLight();

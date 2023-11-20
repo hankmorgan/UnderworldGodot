@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 
 namespace Underworld
@@ -73,9 +74,28 @@ namespace Underworld
                 }
                 else
                 {
+                    var objname = "That " + GameStrings.GetObjectNounUW(obj.item_id,1);
                     //TODO play eating sound. (sound played depends on how hungry the player is)
+                    var r = new Random();
+                    playerdat.play_hunger += nutrition;
 
-                    playerdat.play_hunger += nutrition; 
+                    //Taste string
+                    var taste = (obj.quality + r.Next(0, 0x14)) >> 4;
+                    if (taste > 4) { taste = 4; }
+
+                    //;  tasted putrid. \n
+                    //;  tasted a little rancid. \n
+                    //;  tasted kind of bland. \n
+                    //;  tasted pretty good. \n
+                    //;  tasted great. \n
+                    if (_RES == GAME_UW2)
+                    {
+                        messageScroll.AddString($"{objname}{GameStrings.GetString(1, 0xBB + taste)}");
+                    }
+                    else
+                    {
+                        messageScroll.AddString($"{objname}{GameStrings.GetString(1, 0xAC + taste)}");
+                    }
 
                     if ((obj.is_quant == 1) && (obj.link > 1))
                     {
@@ -86,35 +106,34 @@ namespace Underworld
                         //Remove Object From Inventory
                         playerdat.RemoveFromInventory(obj.index);
                     }
-
+                    uimanager.UpdateInventoryDisplay();
                     //TODO Leave left overs in the player cursor.                   
 
                 }
             }
-
         }
 
         static void DrinkLiquid(uwObject obj)
         {
             var nutrition = -foodObjectDat.nutrition(obj.item_id);
             //play drinking sound.
-            
+
             //intoxication change is -nutrition
             playerdat.intoxication += (nutrition);
             //do a strength skill check against drunkeness
-            var result = playerdat.SkillCheck(playerdat.STR,playerdat.intoxication);
+            var result = playerdat.SkillCheck(playerdat.STR, playerdat.intoxication);
             //print message base on the skill check
             switch (result)
             {
                 case playerdat.SkillCheckResult.CritFail:
                     {
-                        messageScroll.AddString(GameStrings.GetString(1,0x102));// You wake feeling somewhat unstable but better
+                        messageScroll.AddString(GameStrings.GetString(1, 0x102));// You wake feeling somewhat unstable but better
                         //TODO Screenshake
                         break;
                     }
                 case playerdat.SkillCheckResult.CritSucess:
                     {//The drink makes you feel a little better for now.
-                        messageScroll.AddString(GameStrings.GetString(1,0x101));
+                        messageScroll.AddString(GameStrings.GetString(1, 0x101));
                         break;
                     }
                 case playerdat.SkillCheckResult.Fail:
@@ -123,8 +142,6 @@ namespace Underworld
                         break;
                     }
             }
-            
-
         }
-    }
+    }//end class
 }//end namespace
