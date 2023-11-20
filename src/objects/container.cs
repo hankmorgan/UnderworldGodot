@@ -13,16 +13,16 @@ namespace Underworld
             }
             else
             {
-                //container use in inventory. Browse into it.
+                //container used in inventory. Browse into it.
                 if (obj.classindex <= 0xB)
                 {
                     //set to opened version by setting bit 0 to 1.
                     obj.item_id |= 0x1;
-                    if ((uimanager.CurrentSlot >= 0) && (uimanager.CurrentSlot <= 10))
-                    {
-                        //redraw slot.
-                        uimanager.RefreshSlot(uimanager.CurrentSlot, playerdat.isFemale);
-                    }
+                    // if ((uimanager.CurrentSlot >= 0) && (uimanager.CurrentSlot <= 10))
+                    // {
+                    //     //redraw slot.
+                    //     uimanager.RefreshSlot(uimanager.CurrentSlot, playerdat.isFemale);
+                    // }
                 }
                 playerdat.OpenedContainer = obj.index;
                 uimanager.SetOpenedContainer(obj.index, uwObject.GetObjectSprite(obj));
@@ -34,15 +34,14 @@ namespace Underworld
                     {
                         //render object at this slot
                         var objFound = playerdat.InventoryObjects[objects[o]];
-                        uimanager.SetBackPackArt(o, uwObject.GetObjectSprite(objFound));
                         playerdat.SetBackPackIndex(o, objFound);
                     }
                     else
                     {
-                        uimanager.SetBackPackArt(o, -1);
                         playerdat.SetBackPackIndex(o, null);
                     }
                 }
+                uimanager.UpdateInventoryDisplay();
                 return true;
             }
         }
@@ -70,7 +69,7 @@ namespace Underworld
                     //Draw the paperdoll inventory.
                     for (int i = 0; i < 8; i++)
                     {
-                        uimanager.SetBackPackArt(i, uwObject.GetObjectSprite(playerdat.BackPackObject(i)));
+                        uimanager.SetBackPackArt(i, uwObject.GetObjectSprite(playerdat.BackPackObject(i)), uwObject.GetObjectQuantity(playerdat.BackPackObject(i)));
                         playerdat.SetBackPackIndex(i, playerdat.BackPackObject(i));
                     }
                     return;

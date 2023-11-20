@@ -97,7 +97,7 @@ namespace Underworld
                         messageScroll.AddString($"{objname}{GameStrings.GetString(1, 0xAC + taste)}");
                     }
 
-                    if ((obj.is_quant == 1) && (obj.link > 1))
+                    if (obj.ObjectQuantity > 1)
                     {
                         obj.link--;
                     }

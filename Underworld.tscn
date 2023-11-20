@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://xjvqmrbs28xs"]
+[gd_scene load_steps=31 format=3 uid="uid://xjvqmrbs28xs"]
 
 [ext_resource type="Script" path="res://src/ui/uimanager.cs" id="1_lw0yg"]
 [ext_resource type="FontFile" uid="uid://pdy3t627nfxw" path="res://resources/fonts/FONT5X6I.ttf" id="3_safdl"]
@@ -23,7 +23,6 @@
 [ext_resource type="Texture2D" uid="uid://b1lj1mh50p8a1" path="res://resources/placeholder_art/uw2optbtn/uw2attackbutton.png" id="15_f0cyy"]
 [ext_resource type="Texture2D" uid="uid://2qekjomlpnxd" path="res://resources/placeholder_art/uw1lfti/10.png" id="16_kxj2a"]
 [ext_resource type="Texture2D" uid="uid://dqcrcis2dop6k" path="res://resources/placeholder_art/paperdolluw1/body_f.png" id="19_0yobb"]
-[ext_resource type="Texture2D" uid="uid://fk1vftudb0q8" path="res://resources/placeholder_art/panels/panelsINv.png" id="20_dbxpe"]
 [ext_resource type="Texture2D" uid="uid://du878dn3osxn1" path="res://resources/placeholder_art/blankmap.png" id="20_o03w0"]
 [ext_resource type="Texture2D" uid="uid://bptn5lc7tnnnx" path="res://resources/placeholder_art/panels/panelsrune.png" id="22_ucb6g"]
 [ext_resource type="Texture2D" uid="uid://di1twv4v85gbi" path="res://resources/placeholder_art/rune.png" id="23_ry168"]
@@ -42,7 +41,7 @@ shader = ExtResource("6_x6exc")
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2", "PanelInventory", "PanelRuneBag", "PanelStats", "InteractionButtonsUW1", "InteractionButtonsUW2", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "LeftShoulder", "RightHand", "LeftHand", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "OpenedContainer", "Runes", "SelectedRunes", "AutomapPanel", "AutomapImage")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2", "PanelInventory", "PanelRuneBag", "PanelStats", "InteractionButtonsUW1", "InteractionButtonsUW2", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "OpenedContainer", "Runes", "SelectedRunes", "AutomapPanel", "AutomapImage")]
 script = ExtResource("1_lw0yg")
 Font4X5P = ExtResource("5_8iiwt")
 Font5X6I = ExtResource("3_safdl")
@@ -74,14 +73,19 @@ Gloves = NodePath("../Common/PaperDoll/Gloves")
 GlovesInput1 = NodePath("../Common/PaperDoll/GlovesInput1")
 GlovesInput2 = NodePath("../Common/PaperDoll/GlovesInput2")
 RightShoulder = NodePath("../Common/PaperDoll/RightShoulder")
+RightShoulderQTY = NodePath("../Common/PaperDoll/RightShoulder/lblRightShoulder")
 LeftShoulder = NodePath("../Common/PaperDoll/LeftShoulder")
+LeftShoulderQTY = NodePath("../Common/PaperDoll/LeftShoulder/lblLeftShoulder")
 RightHand = NodePath("../Common/PaperDoll/RightHand")
+RightHandQTY = NodePath("../Common/PaperDoll/RightHand/lblRightHand")
 LeftHand = NodePath("../Common/PaperDoll/LeftHand")
+LeftHandQTY = NodePath("../Common/PaperDoll/LeftHand/lblLeftHand")
 RightRing = NodePath("../Common/PaperDoll/RightRing")
 RightRingInput = NodePath("../Common/PaperDoll/RightRingInput")
 LeftRing = NodePath("../Common/PaperDoll/LeftRingInput")
 LeftRingInput = NodePath("../Common/PaperDoll/LeftRingInput")
 Backpack = [NodePath("../Common/PaperDoll/Back0"), NodePath("../Common/PaperDoll/Back1"), NodePath("../Common/PaperDoll/Back2"), NodePath("../Common/PaperDoll/Back3"), NodePath("../Common/PaperDoll/Back4"), NodePath("../Common/PaperDoll/Back5"), NodePath("../Common/PaperDoll/Back6"), NodePath("../Common/PaperDoll/Back7")]
+BackpackQTY = [NodePath("../Common/PaperDoll/Back0/lblBack0"), NodePath("../Common/PaperDoll/Back1/lblBack1"), NodePath("../Common/PaperDoll/Back2/lblBack2"), NodePath("../Common/PaperDoll/Back3/lblBack3"), NodePath("../Common/PaperDoll/Back4/lblBack4"), NodePath("../Common/PaperDoll/Back5/lblBack5"), NodePath("../Common/PaperDoll/Back6/lblBack6"), NodePath("../Common/PaperDoll/Back7/lblBack7")]
 OpenedContainer = NodePath("../Common/PaperDoll/OpenedContainer")
 Runes = [NodePath("../Common/RuneBag/Rune0"), NodePath("../Common/RuneBag/Rune1"), NodePath("../Common/RuneBag/Rune2"), NodePath("../Common/RuneBag/Rune3"), NodePath("../Common/RuneBag/Rune4"), NodePath("../Common/RuneBag/Rune5"), NodePath("../Common/RuneBag/Rune6"), NodePath("../Common/RuneBag/Rune7"), NodePath("../Common/RuneBag/Rune8"), NodePath("../Common/RuneBag/Rune9"), NodePath("../Common/RuneBag/Rune10"), NodePath("../Common/RuneBag/Rune11"), NodePath("../Common/RuneBag/Rune12"), NodePath("../Common/RuneBag/Rune13"), NodePath("../Common/RuneBag/Rune14"), NodePath("../Common/RuneBag/Rune15"), NodePath("../Common/RuneBag/Rune16"), NodePath("../Common/RuneBag/Rune17"), NodePath("../Common/RuneBag/Rune18"), NodePath("../Common/RuneBag/Rune19"), NodePath("../Common/RuneBag/Rune20"), NodePath("../Common/RuneBag/Rune21"), NodePath("../Common/RuneBag/Rune22"), NodePath("../Common/RuneBag/Rune23")]
 SelectedRunes = [NodePath("../Common/OtherControls/SelectedRune0"), NodePath("../Common/OtherControls/SelectedRune1"), NodePath("../Common/OtherControls/SelectedRune2")]
@@ -346,7 +350,6 @@ offset_top = 28.0
 offset_right = 166.0
 offset_bottom = 484.0
 mouse_filter = 0
-texture = ExtResource("20_dbxpe")
 
 [node name="Body" type="TextureRect" parent="UI/Common/PaperDoll"]
 layout_mode = 1
@@ -450,12 +453,38 @@ offset_top = 50.0
 offset_right = 131.0
 offset_bottom = 115.0
 
+[node name="lblLeftShoulder" type="Label" parent="UI/Common/PaperDoll/LeftShoulder"]
+texture_filter = 1
+offset_left = -1.0
+offset_top = -12.0
+offset_right = 23.0
+offset_bottom = 15.0
+theme = SubResource("Theme_i11v8")
+theme_override_fonts/font = ExtResource("5_8iiwt")
+theme_override_font_sizes/font_size = 32
+text = "255"
+max_lines_visible = 1
+visible_characters = 3
+
 [node name="RightShoulder" type="TextureRect" parent="UI/Common/PaperDoll"]
 layout_mode = 0
 offset_left = -130.0
 offset_top = 50.0
 offset_right = -66.0
 offset_bottom = 115.0
+
+[node name="lblRightShoulder" type="Label" parent="UI/Common/PaperDoll/RightShoulder"]
+texture_filter = 1
+offset_left = -1.0
+offset_top = -12.0
+offset_right = 23.0
+offset_bottom = 15.0
+theme = SubResource("Theme_i11v8")
+theme_override_fonts/font = ExtResource("5_8iiwt")
+theme_override_font_sizes/font_size = 32
+text = "255"
+max_lines_visible = 1
+visible_characters = 3
 
 [node name="LeftHand" type="TextureRect" parent="UI/Common/PaperDoll"]
 layout_mode = 0
@@ -464,12 +493,38 @@ offset_top = 138.0
 offset_right = 138.0
 offset_bottom = 202.0
 
+[node name="lblLeftHand" type="Label" parent="UI/Common/PaperDoll/LeftHand"]
+texture_filter = 1
+offset_left = -1.0
+offset_top = -12.0
+offset_right = 23.0
+offset_bottom = 15.0
+theme = SubResource("Theme_i11v8")
+theme_override_fonts/font = ExtResource("5_8iiwt")
+theme_override_font_sizes/font_size = 32
+text = "255"
+max_lines_visible = 1
+visible_characters = 3
+
 [node name="RightHand" type="TextureRect" parent="UI/Common/PaperDoll"]
 layout_mode = 0
 offset_left = -141.0
 offset_top = 138.0
 offset_right = -77.0
 offset_bottom = 202.0
+
+[node name="lblRightHand" type="Label" parent="UI/Common/PaperDoll/RightHand"]
+texture_filter = 1
+offset_left = -1.0
+offset_top = -12.0
+offset_right = 23.0
+offset_bottom = 15.0
+theme = SubResource("Theme_i11v8")
+theme_override_fonts/font = ExtResource("5_8iiwt")
+theme_override_font_sizes/font_size = 32
+text = "255"
+max_lines_visible = 1
+visible_characters = 3
 
 [node name="RightRingInput" type="TextureRect" parent="UI/Common/PaperDoll"]
 layout_mode = 0
@@ -513,12 +568,38 @@ offset_top = 328.0
 offset_right = -6.0
 offset_bottom = 392.0
 
+[node name="lblBack1" type="Label" parent="UI/Common/PaperDoll/Back1"]
+texture_filter = 1
+layout_mode = 0
+offset_top = -12.0
+offset_right = 24.0
+offset_bottom = 15.0
+theme = SubResource("Theme_i11v8")
+theme_override_fonts/font = ExtResource("5_8iiwt")
+theme_override_font_sizes/font_size = 32
+text = "255"
+max_lines_visible = 1
+visible_characters = 3
+
 [node name="Back2" type="TextureRect" parent="UI/Common/PaperDoll"]
 layout_mode = 0
 offset_left = 6.0
 offset_top = 328.0
 offset_right = 70.0
 offset_bottom = 392.0
+
+[node name="lblBack2" type="Label" parent="UI/Common/PaperDoll/Back2"]
+texture_filter = 1
+layout_mode = 0
+offset_top = -12.0
+offset_right = 24.0
+offset_bottom = 15.0
+theme = SubResource("Theme_i11v8")
+theme_override_fonts/font = ExtResource("5_8iiwt")
+theme_override_font_sizes/font_size = 32
+text = "255"
+max_lines_visible = 1
+visible_characters = 3
 
 [node name="Back3" type="TextureRect" parent="UI/Common/PaperDoll"]
 layout_mode = 0
@@ -527,12 +608,40 @@ offset_top = 327.0
 offset_right = 146.0
 offset_bottom = 391.0
 
+[node name="lblBack3" type="Label" parent="UI/Common/PaperDoll/Back3"]
+texture_filter = 1
+layout_mode = 0
+offset_left = -2.0
+offset_top = -10.0
+offset_right = 22.0
+offset_bottom = 17.0
+theme = SubResource("Theme_i11v8")
+theme_override_fonts/font = ExtResource("5_8iiwt")
+theme_override_font_sizes/font_size = 32
+text = "255"
+max_lines_visible = 1
+visible_characters = 3
+
 [node name="Back4" type="TextureRect" parent="UI/Common/PaperDoll"]
 layout_mode = 0
 offset_left = -144.0
 offset_top = 399.0
 offset_right = -80.0
 offset_bottom = 463.0
+
+[node name="lblBack4" type="Label" parent="UI/Common/PaperDoll/Back4"]
+texture_filter = 1
+layout_mode = 0
+offset_left = 1.0
+offset_top = -11.0
+offset_right = 25.0
+offset_bottom = 16.0
+theme = SubResource("Theme_i11v8")
+theme_override_fonts/font = ExtResource("5_8iiwt")
+theme_override_font_sizes/font_size = 32
+text = "255"
+max_lines_visible = 1
+visible_characters = 3
 
 [node name="Back5" type="TextureRect" parent="UI/Common/PaperDoll"]
 layout_mode = 0
@@ -541,6 +650,20 @@ offset_top = 399.0
 offset_right = -6.0
 offset_bottom = 463.0
 
+[node name="lblBack5" type="Label" parent="UI/Common/PaperDoll/Back5"]
+texture_filter = 1
+layout_mode = 0
+offset_left = 2.0
+offset_top = -11.0
+offset_right = 26.0
+offset_bottom = 16.0
+theme = SubResource("Theme_i11v8")
+theme_override_fonts/font = ExtResource("5_8iiwt")
+theme_override_font_sizes/font_size = 32
+text = "255"
+max_lines_visible = 1
+visible_characters = 3
+
 [node name="Back6" type="TextureRect" parent="UI/Common/PaperDoll"]
 layout_mode = 0
 offset_left = 5.0
@@ -548,12 +671,40 @@ offset_top = 399.0
 offset_right = 69.0
 offset_bottom = 463.0
 
+[node name="lblBack6" type="Label" parent="UI/Common/PaperDoll/Back6"]
+texture_filter = 1
+layout_mode = 0
+offset_left = 3.0
+offset_top = -11.0
+offset_right = 27.0
+offset_bottom = 16.0
+theme = SubResource("Theme_i11v8")
+theme_override_fonts/font = ExtResource("5_8iiwt")
+theme_override_font_sizes/font_size = 32
+text = "255"
+max_lines_visible = 1
+visible_characters = 3
+
 [node name="Back7" type="TextureRect" parent="UI/Common/PaperDoll"]
 layout_mode = 0
 offset_left = 81.0
 offset_top = 400.0
 offset_right = 145.0
 offset_bottom = 464.0
+
+[node name="lblBack7" type="Label" parent="UI/Common/PaperDoll/Back7"]
+texture_filter = 1
+layout_mode = 0
+offset_left = 4.0
+offset_top = -12.0
+offset_right = 28.0
+offset_bottom = 15.0
+theme = SubResource("Theme_i11v8")
+theme_override_fonts/font = ExtResource("5_8iiwt")
+theme_override_font_sizes/font_size = 32
+text = "255"
+max_lines_visible = 1
+visible_characters = 3
 
 [node name="OpenedContainer" type="TextureRect" parent="UI/Common/PaperDoll"]
 layout_mode = 0

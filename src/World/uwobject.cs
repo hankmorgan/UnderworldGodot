@@ -987,6 +987,40 @@ namespace Underworld
             return -1;
         }
 
+        /// <summary>
+        /// Returns how much of a quantity this object really is.
+        /// </summary>
+        public int ObjectQuantity
+        {
+            get
+            {
+                if (is_quant==1)
+                {
+                    if (link>=0x200)
+                    {
+                        return 1;
+                    }   
+                    else
+                    {
+                        return link;
+                    }                
+                }
+                return 1;
+            }
+        }
+
+        public static int GetObjectQuantity(uwObject obj)
+        {
+            if (obj==null)
+            {
+                return 1;
+            }
+            else
+            {
+                return obj.ObjectQuantity;
+            }
+        }
+
     } //end class
 
 

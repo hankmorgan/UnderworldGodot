@@ -444,6 +444,7 @@ namespace Underworld
             }
             return null;
         }
+        
 
         /// <summary>
         /// The container currently opened on the paperdoll.
@@ -468,7 +469,7 @@ namespace Underworld
                 //This clears either the next or link to the object and replaces it with the objects next value
                 var data = (int)getAt(pdat, (LinkOffset), 16);
                 data &= 0x3f; //Clear link/next
-                data |= (next << 6); //Or in the object next for the object.
+                data |= (next << 6); //Or in the obj.next for the object.
                 setAt(pdat, LinkOffset, 16, data);
             }
             else
