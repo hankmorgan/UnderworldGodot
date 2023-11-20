@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://xjvqmrbs28xs"]
+[gd_scene load_steps=32 format=3 uid="uid://xjvqmrbs28xs"]
 
 [ext_resource type="Script" path="res://src/ui/uimanager.cs" id="1_lw0yg"]
 [ext_resource type="FontFile" uid="uid://pdy3t627nfxw" path="res://resources/fonts/FONT5X6I.ttf" id="3_safdl"]
@@ -34,6 +34,8 @@
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_7v506"]
 render_priority = 0
 shader = ExtResource("6_x6exc")
+
+[sub_resource type="Theme" id="Theme_i11v8"]
 
 [node name="Underworld" type="Node3D"]
 
@@ -490,6 +492,20 @@ offset_top = 328.0
 offset_right = -80.0
 offset_bottom = 392.0
 
+[node name="lblBack0" type="Label" parent="UI/Common/PaperDoll/Back0"]
+texture_filter = 1
+layout_mode = 0
+offset_left = -1.0
+offset_top = -12.0
+offset_right = 23.0
+offset_bottom = 15.0
+theme = SubResource("Theme_i11v8")
+theme_override_fonts/font = ExtResource("5_8iiwt")
+theme_override_font_sizes/font_size = 32
+text = "255"
+max_lines_visible = 1
+visible_characters = 3
+
 [node name="Back1" type="TextureRect" parent="UI/Common/PaperDoll"]
 layout_mode = 0
 offset_left = -70.0
@@ -752,33 +768,6 @@ offset_right = 166.0
 offset_bottom = 484.0
 texture = ExtResource("23_usvx2")
 
-[node name="Automap" type="Panel" parent="UI/Common"]
-visible = false
-self_modulate = Color(1, 1, 1, 0)
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="MapBackground" type="TextureRect" parent="UI/Common/Automap"]
-layout_mode = 0
-offset_right = 1280.0
-offset_bottom = 800.0
-texture = ExtResource("20_o03w0")
-
-[node name="MapImage" type="TextureRect" parent="UI/Common/Automap"]
-layout_mode = 0
-offset_left = 60.0
-offset_top = 60.0
-offset_right = 700.0
-offset_bottom = 700.0
-flip_v = true
-
-[node name="Close" type="TextureRect" parent="UI/Common/Automap"]
-layout_mode = 0
-offset_left = 1060.0
-offset_top = 604.0
-offset_right = 1240.0
-offset_bottom = 704.0
-
 [node name="OtherControls" type="Panel" parent="UI/Common"]
 self_modulate = Color(1, 1, 1, 0)
 offset_right = 40.0
@@ -815,6 +804,33 @@ offset_top = 552.0
 offset_right = 880.0
 offset_bottom = 616.0
 texture = ExtResource("23_ry168")
+
+[node name="Automap" type="Panel" parent="UI/Common"]
+visible = false
+self_modulate = Color(1, 1, 1, 0)
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="MapBackground" type="TextureRect" parent="UI/Common/Automap"]
+layout_mode = 0
+offset_right = 1280.0
+offset_bottom = 800.0
+texture = ExtResource("20_o03w0")
+
+[node name="MapImage" type="TextureRect" parent="UI/Common/Automap"]
+layout_mode = 0
+offset_left = 60.0
+offset_top = 60.0
+offset_right = 700.0
+offset_bottom = 700.0
+flip_v = true
+
+[node name="Close" type="TextureRect" parent="UI/Common/Automap"]
+layout_mode = 0
+offset_left = 1060.0
+offset_top = 604.0
+offset_right = 1240.0
+offset_bottom = 704.0
 
 [node name="mouse" type="CanvasLayer" parent="UI"]
 
@@ -896,8 +912,8 @@ script = ExtResource("5_2to2n")
 [connection signal="gui_input" from="UI/Common/RuneBag/Rune22" to="UI/uiManager" method="RuneClick" binds= [22]]
 [connection signal="gui_input" from="UI/Common/RuneBag/Rune23" to="UI/uiManager" method="RuneClick" binds= [23]]
 [connection signal="gui_input" from="UI/Common/RuneBag/PutRunesAway" to="UI/uiManager" method="RuneClick" binds= [-1]]
-[connection signal="gui_input" from="UI/Common/Automap/Close" to="UI/uiManager" method="CloseAutomap"]
 [connection signal="gui_input" from="UI/Common/OtherControls/Chain" to="UI/uiManager" method="ChainPull"]
 [connection signal="gui_input" from="UI/Common/OtherControls/SelectedRune0" to="UI/uiManager" method="SelectedRunesClick"]
 [connection signal="gui_input" from="UI/Common/OtherControls/SelectedRune1" to="UI/uiManager" method="SelectedRunesClick"]
 [connection signal="gui_input" from="UI/Common/OtherControls/SelectedRune2" to="UI/uiManager" method="SelectedRunesClick"]
+[connection signal="gui_input" from="UI/Common/Automap/Close" to="UI/uiManager" method="CloseAutomap"]
