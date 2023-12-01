@@ -28,7 +28,7 @@ namespace Underworld
 
         public static Godot.ImageTexture GetFullShadingImage(Palette pal, lightmap[] maps, int index)
         {            
-            int BandSize = 16;
+            int BandSize = 4;
             var img = Godot.Image.Create(256, BandSize*15, false,Godot.Image.Format.Rgb8);
             var arr = shadesdata[index].ExtractShadeArray();
             //int y = 0;
@@ -38,7 +38,7 @@ namespace Underworld
             {
                 for (int y=0; y< BandSize;y++)
                 {
-                    if (y%16 == 0)
+                    if (y % BandSize == 0)
                     {   
                         //Apply primary colour band
                         basemap = maps[arr[i]];
@@ -55,8 +55,8 @@ namespace Underworld
                         for (int x=0; x<256; x++)
                         {
                             int pixel = basemap.red[x];
-                            img.SetPixel(x,y+i*16, pal.ColorAtIndex((byte)pixel,true,false));
-                            //img.SetPixel(x,y+i*16, new Color(0.5f,0.5f,0.5f));
+                            img.SetPixel(x,y+i*BandSize, pal.ColorAtIndex((byte)pixel,true,false));
+                            //img.SetPixel(x,y+i*BandSize, new Color(0.5f,0.5f,0.5f));
                         } 
                     }
                     else
@@ -67,8 +67,8 @@ namespace Underworld
                             var nextpixel = nextmap.red[x];
                             var basecolour = pal.ColorAtIndex((byte)basepixel,true,false);
                             var nextcolour = pal.ColorAtIndex((byte)nextpixel,true,false);
-                            var lerpedcolour = basecolour.Lerp(nextcolour, (float) (y % 16)/16f);
-                            img.SetPixel(x,y+i*16, lerpedcolour);
+                            var lerpedcolour = basecolour.Lerp(nextcolour, (float) (y % BandSize)/(float)BandSize);
+                            img.SetPixel(x,y+i*BandSize, lerpedcolour);
                         }
                     }
                 }
