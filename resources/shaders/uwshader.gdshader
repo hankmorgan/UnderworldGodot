@@ -16,11 +16,11 @@ uniform vec3 uv2_scale;
 uniform vec3 uv2_offset;
 
 //Shader Params
-global uniform sampler2D uwpalette: source_color,filter_nearest;
+//global uniform sampler2D uwpalette: source_color,filter_nearest;
 uniform sampler2D texture_albedo : source_color,filter_nearest,repeat_enable;
 
-global uniform sampler2D uwlightmap : source_color,filter_nearest,repeat_enable;
-global uniform sampler2D shades : source_color,filter_nearest,repeat_enable;
+//global uniform sampler2D uwlightmap : source_color,filter_nearest,repeat_enable;
+//global uniform sampler2D shades : source_color,filter_nearest,repeat_enable;
 
 global uniform sampler2D smoothpalette: source_color,filter_nearest;
 

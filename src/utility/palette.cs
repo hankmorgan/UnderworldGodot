@@ -28,7 +28,7 @@ namespace Underworld
                 }
                 else
                 {
-                    alphabyte = 0;
+                    alphabyte = 0;  //transparent
                 }
             }
             else

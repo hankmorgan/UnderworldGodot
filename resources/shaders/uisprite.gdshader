@@ -17,7 +17,8 @@ uniform vec3 uv2_offset;
 
 //Shader Params
 //Shader Params
-global uniform sampler2D uwpalette: source_color,filter_nearest;
+//global uniform sampler2D uwpalette: source_color,filter_nearest;
+global uniform sampler2D uipalette: source_color,filter_nearest;
 uniform sampler2D texture_albedo : source_color,filter_nearest,repeat_enable;
 uniform bool UseAlpha = false;
 
@@ -28,6 +29,6 @@ void vertex() {
 
 void fragment(){
   vec4 rgba = texture(TEXTURE, UV); //read from texture  
-  vec4 finalcolour = texture(uwpalette, vec2(rgba.r ,0));
+  vec4 finalcolour = texture(uipalette, vec2(rgba.r ,0));
   COLOR.rgba = finalcolour.rgba;
 }

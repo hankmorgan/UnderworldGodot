@@ -18,8 +18,8 @@ namespace Underworld
         /// <summary>
         /// Prebuilt array of cycled palettes for use in shaders.
         /// </summary>
-        public static ImageTexture[] cycledGamePalette;
-        public static ImageTexture[] cycledNPCPalette;
+        public static ImageTexture[,,] cycledGamePalette;
+        public static ImageTexture[] cycledUIPalette;
         public static int NoOfPals = 22;
 
         /// <summary>
@@ -92,15 +92,14 @@ namespace Underworld
                                     Palettes[palNo].red[pixel] = (byte)(getAt(pals_dat, palNo * 256 + (pixel * 3) + 0, 8) << 2);
                                     Palettes[palNo].green[pixel] = (byte)(getAt(pals_dat, palNo * 256 + (pixel * 3) + 1, 8) << 2);
                                     Palettes[palNo].blue[pixel] = (byte)(getAt(pals_dat, palNo * 256 + (pixel * 3) + 2, 8) << 2);
-                                    if (pixel == 0)
-                                    {
-                                        Palettes[palNo].alpha[pixel] = 255; //no alpha by default
-                                    }
-                                    else
-                                    {
-                                        Palettes[palNo].alpha[pixel] = 255;
-                                    }
 
+                                    switch (pixel)
+                                    {
+                                        case 0:
+                                            Palettes[palNo].alpha[pixel] = 0;break; //transparent
+                                        default:
+                                            Palettes[palNo].alpha[pixel] = 255; break;//no transparency
+                                    }
                                 }
                             }
                         }
@@ -116,15 +115,7 @@ namespace Underworld
                                     light[palNo].red[pixel] = (byte)getAt(light_dat, palNo * 256 + pixel + 0, 8);
                                     light[palNo].blue[pixel] = (byte)getAt(light_dat, palNo * 256 + pixel + 0, 8);
                                     light[palNo].green[pixel] = (byte)getAt(light_dat, palNo * 256 + pixel + 0, 8);
-                                    if (pixel == 0)
-                                    {
-                                        light[palNo].alpha[pixel] = 255;
-                                    }
-                                    else
-                                    {
-                                        light[palNo].alpha[pixel] = 0;
-                                    }
-
+                                    light[palNo].alpha[pixel] = 255;
                                 }
                             }
                         }
@@ -150,48 +141,53 @@ namespace Underworld
                     break;
             }
 
-            //Create a critter palette. Copied from the primary game pal
-            CritterPalette = new Palette();
-            CritterPalette.red = Palettes[0].red;
-            CritterPalette.green = Palettes[0].green;
-            CritterPalette.blue = Palettes[0].blue;
-            for (int i = 1; i < Palettes[0].red.GetUpperBound(0); i++)
-            {//apply an alpha channel to the entire palette for testing
-                switch (i)
-                {
-                    case 0xf9:
-                    case 0xf0://red
-                    case 0xf4://blue
-                    case 0xf8://green
-                    case 0xfb://used by shadow beast?
-                    case 0xfc://white
-                    case 0xfd://black???
-                        CritterPalette.alpha[i] = 40; break;
-                    default:
-                        CritterPalette.alpha[i] = 255; break;
-                }
-            }
+            // //Create a critter palette. Copied from the primary game pal
+            // CritterPalette = new Palette();
+            // CritterPalette.red = Palettes[0].red;
+            // CritterPalette.green = Palettes[0].green;
+            // CritterPalette.blue = Palettes[0].blue;
+            // for (int i = 1; i < Palettes[0].red.GetUpperBound(0); i++)
+            // {//apply an alpha channel to the entire palette for testing
+            //     switch (i)
+            //     {
+            //         case 0xf9:
+            //         case 0xf0://red
+            //         case 0xf4://blue
+            //         case 0xf8://green
+            //         case 0xfb://used by shadow beast?
+            //         case 0xfc://white
+            //         case 0xfd://black???
+            //             CritterPalette.alpha[i] = 40; break;
+            //         default:
+            //             CritterPalette.alpha[i] = 255; break;
+            //     }
+            // }
 
-            cycledGamePalette = CreateTexturePaletteCycles(PaletteLoader.Palettes[0]);//init the first palette as cycled
-            //TODO Set up cycling for the npc palette too.
-            cycledNPCPalette = CreateTexturePaletteCycles(CritterPalette);//init the critter palette as cycled
-
+            cycledGamePalette = CreateFullTexturePaletteCycles(PaletteLoader.Palettes[0]);//init the first palette as cycled
+            cycledUIPalette = CreateSimpleTexturePaletteCycles(Palettes[0]); //set up a simple palette cycle for fullbright ui sprites
+            
+            
             //Init palette shader params
-            RenderingServer.GlobalShaderParameterAdd("uwpalette", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)cycledGamePalette[0]);
+            //RenderingServer.GlobalShaderParameterAdd("uwpalette", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)cycledGamePalette[0,0,0]);
+            
+            RenderingServer.GlobalShaderParameterAdd("uipalette", RenderingServer.GlobalShaderParameterType.Sampler2D, cycledUIPalette[0]);
+           
+            
             RenderingServer.GlobalShaderParameterAdd("cutoffdistance", RenderingServer.GlobalShaderParameterType.Float, shade.GetViewingDistance(uwsettings.instance.lightlevel));
-            RenderingServer.GlobalShaderParameterAdd("uwlightmap", RenderingServer.GlobalShaderParameterType.Sampler2D, PaletteLoader.AllLightMaps(PaletteLoader.light));
-            RenderingServer.GlobalShaderParameterAdd("shades", RenderingServer.GlobalShaderParameterType.Sampler2D, shade.shadesdata[uwsettings.instance.lightlevel].ToImage());
-            RenderingServer.GlobalShaderParameterAdd("shadeshift", RenderingServer.GlobalShaderParameterType.Sampler2D, shade.shadesdata[uwsettings.instance.lightlevel].ToShiftedImage());
+            //RenderingServer.GlobalShaderParameterAdd("uwlightmap", RenderingServer.GlobalShaderParameterType.Sampler2D, PaletteLoader.AllLightMaps(PaletteLoader.light));
+           // RenderingServer.GlobalShaderParameterAdd("shades", RenderingServer.GlobalShaderParameterType.Sampler2D, shade.shadesdata[uwsettings.instance.lightlevel].ToImage());
+            //RenderingServer.GlobalShaderParameterAdd("shadeshift", RenderingServer.GlobalShaderParameterType.Sampler2D, shade.shadesdata[uwsettings.instance.lightlevel].ToShiftedImage());
             //palette for NPCs (to support xfer transparencies)
-            RenderingServer.GlobalShaderParameterAdd("uwnpc", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)cycledNPCPalette[0]);
+           // RenderingServer.GlobalShaderParameterAdd("uwnpc", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)cycledNPCPalette[0,0,0]);
 
-            var smoothimg = shade.GetFullShadingImage(
-                pal: Palettes[0],
-                maps:light,
-                index: uwsettings.instance.lightlevel                
-                );
+            // var smoothimg = shade.GetFullShadingImage(
+            //     pal: Palettes[0],
+            //     maps:light,
+            //     index: uwsettings.instance.lightlevel                
+            //     );
+            //
         
-            RenderingServer.GlobalShaderParameterAdd("smoothpalette", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)smoothimg);
+            RenderingServer.GlobalShaderParameterAdd("smoothpalette", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)cycledGamePalette[0,0,0]);
         
         }
 
@@ -252,7 +248,12 @@ namespace Underworld
         }
 
 
-        public static ImageTexture[] CreateTexturePaletteCycles(Palette toCycle)
+        /// <summary>
+        /// Creates a full set of cycled colour palettes based on the inital palette for all mono,light and shade levels
+        /// </summary>
+        /// <param name="toCycle"></param>
+        /// <returns></returns>
+        public static ImageTexture[,,] CreateFullTexturePaletteCycles(Palette toCycle)
         {
             //copy initial palette
             var tmpPalette = new Palette();
@@ -264,22 +265,68 @@ namespace Underworld
                 tmpPalette.alpha = toCycle.alpha;
             }
 
-            var NewCycledPalette = new ImageTexture[28];
-            for (int c = 0; c <= 27; c++)
-            {//Create palette cycles
-                switch (_RES)
-                {
-                    case GAME_UW2:
-                        Palette.cyclePalette(tmpPalette, 224, 16);
-                        Palette.cyclePaletteReverse(tmpPalette, 3, 6);
-                        break;
-                    default:
-                        Palette.cyclePalette(tmpPalette, 48, 16);//Forward
-                        Palette.cyclePaletteReverse(tmpPalette, 16, 7);//Reverse direction.
-                        break;
+            var NewCycledPalette = new ImageTexture[2,8,28]; //mono/light,light level,cycle
+            for (int l=0; l<8;l++)
+            {
+                for (int c = 0; c <= 27; c++)
+                {//Create palette cycles
+                    switch (_RES)
+                    {
+                        case GAME_UW2:
+                            Palette.cyclePalette(tmpPalette, 224, 16);
+                            Palette.cyclePaletteReverse(tmpPalette, 3, 6);
+                            break;
+                        default:
+                            Palette.cyclePalette(tmpPalette, 48, 16);//Forward
+                            Palette.cyclePaletteReverse(tmpPalette, 16, 7);//Reverse direction.
+                            break;
+                    }
+                    NewCycledPalette[0,l,c] =  shade.GetFullShadingImage(pal: tmpPalette, PaletteLoader.light, l, $"light_{l}_{c}");   // tmpPalette.toImage();
+                    NewCycledPalette[1,l,c] =  shade.GetFullShadingImage(pal: tmpPalette, PaletteLoader.mono, l, $"mono_{l}_{c}");
                 }
-                NewCycledPalette[c] = tmpPalette.toImage();
             }
+
+            return NewCycledPalette;
+        }
+
+
+        /// <summary>
+        /// Creates a simple palette cycle for only the specifie palette at fullbright
+        /// </summary>
+        /// <param name="toCycle"></param>
+        /// <returns></returns>
+        public static ImageTexture[] CreateSimpleTexturePaletteCycles(Palette toCycle)
+        {
+            //copy initial palette
+            var tmpPalette = new Palette();
+            for (int i = 0; i < 256; i++)
+            {
+                tmpPalette.red = toCycle.red;
+                tmpPalette.green = toCycle.green;
+                tmpPalette.blue = toCycle.blue;
+                tmpPalette.alpha = toCycle.alpha;
+            }
+
+            var NewCycledPalette = new ImageTexture[28]; //cycle
+            for (int l=0; l<8;l++)
+            {
+                for (int c = 0; c <= 27; c++)
+                {//Create palette cycles
+                    switch (_RES)
+                    {
+                        case GAME_UW2:
+                            Palette.cyclePalette(tmpPalette, 224, 16);
+                            Palette.cyclePaletteReverse(tmpPalette, 3, 6);
+                            break;
+                        default:
+                            Palette.cyclePalette(tmpPalette, 48, 16);//Forward
+                            Palette.cyclePaletteReverse(tmpPalette, 16, 7);//Reverse direction.
+                            break;
+                    }
+                    NewCycledPalette[c] = tmpPalette.toImage();   // tmpPalette.toImage();
+                }
+            }
+
             return NewCycledPalette;
         }
 
@@ -287,12 +334,15 @@ namespace Underworld
         public static void UpdatePaletteCycles()
         {
             //Cycle the palette		
-            RenderingServer.GlobalShaderParameterSet("uwpalette", (Texture)PaletteLoader.cycledGamePalette[NextPaletteCycle]);
-            RenderingServer.GlobalShaderParameterSet("uwnpc", (Texture)PaletteLoader.cycledNPCPalette[NextPaletteCycle]);
+           // RenderingServer.GlobalShaderParameterSet("uwpalette", (Texture)PaletteLoader.cycledGamePalette[NextPaletteCycle]);
+            //RenderingServer.GlobalShaderParameterSet("uwnpc", (Texture)PaletteLoader.cycledNPCPalette[NextPaletteCycle]);
+            RenderingServer.GlobalShaderParameterSet("smoothpalette", (Texture)PaletteLoader.cycledGamePalette[0, uwsettings.instance.lightlevel, NextPaletteCycle]);
+            RenderingServer.GlobalShaderParameterSet("uipalette", (Texture)PaletteLoader.cycledUIPalette[NextPaletteCycle]);
+
 
             NextPaletteCycle++;
 
-            if (NextPaletteCycle > PaletteLoader.cycledGamePalette.GetUpperBound(0))
+            if (NextPaletteCycle > PaletteLoader.cycledGamePalette.GetUpperBound(2))
             {
                 NextPaletteCycle = 0;
             }

@@ -1,10 +1,6 @@
 using System;
 using System.Diagnostics;
-using System.Net;
-using System.Runtime.CompilerServices;
-using System.Runtime.Versioning;
 using Godot;
-using Godot.NativeInterop;
 
 namespace Underworld
 {
@@ -23,13 +19,20 @@ namespace Underworld
 
         public static float GetViewingDistance(int index)
         {
-            return 4.8f * (float)shadesdata[index].ViewingDistance;
+            return 4.8f * 7; //(float)shadesdata[index].ViewingDistance;
         }
 
-        public static Godot.ImageTexture GetFullShadingImage(Palette pal, lightmap[] maps, int index)
+        /// <summary>
+        /// Creates a banded light map image for the uwshader that lerps shade bands to allow smoother shading.
+        /// </summary>
+        /// <param name="pal"></param>
+        /// <param name="maps"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public static Godot.ImageTexture GetFullShadingImage(Palette pal, lightmap[] maps, int index, string filename)
         {            
-            int BandSize = 4;
-            var img = Godot.Image.Create(256, BandSize*15, false,Godot.Image.Format.Rgb8);
+            int BandSize = 8;
+            var img = Godot.Image.Create(256, BandSize*15, false,Godot.Image.Format.Rgba8);
             var arr = shadesdata[index].ExtractShadeArray();
             //int y = 0;
             lightmap basemap = maps[0];
@@ -45,17 +48,17 @@ namespace Underworld
                         if (i+1<maps.GetUpperBound(0))
                         {
                             nextmap = maps[arr[i+1]];
-                            Debug.Print($"{arr[i]} to {arr[i+1]}");
                         }  
                         else
                         {
                             //on last band. finish here.
-                            Debug.Print("LastBand");
+                            //Debug.Print("LastBand");
                         } 
                         for (int x=0; x<256; x++)
                         {
                             int pixel = basemap.red[x];
-                            img.SetPixel(x,y+i*BandSize, pal.ColorAtIndex((byte)pixel,true,false));
+                            Color color = pal.ColorAtIndex((byte)pixel,true,false);
+                            img.SetPixel(x,y+i*BandSize, color);
                             //img.SetPixel(x,y+i*BandSize, new Color(0.5f,0.5f,0.5f));
                         } 
                     }
@@ -73,7 +76,7 @@ namespace Underworld
                     }
                 }
             }
-            img.SavePng("c:\\temp\\shading.png");
+            img.SavePng($"c:\\temp\\{filename}.png");
 
             var tex = new ImageTexture();
             tex.SetImage(img);
