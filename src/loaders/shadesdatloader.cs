@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Diagnostics;
 using Godot;
 
@@ -30,48 +31,93 @@ namespace Underworld
         /// <param name="index"></param>
         /// <returns></returns>
         public static Godot.ImageTexture GetFullShadingImage(Palette pal, lightmap[] maps, int index, string filename)
-        {            
+        {
             int BandSize = 8;
-            var img = Godot.Image.Create(256, BandSize*15, false,Godot.Image.Format.Rgba8);
+            var img = Godot.Image.Create(256, BandSize * 15, false, Godot.Image.Format.Rgba8);
             var arr = shadesdata[index].ExtractShadeArray();
             //int y = 0;
             lightmap basemap = maps[0];
             lightmap nextmap = maps[1];
-            for (int i = 0; i<arr.GetUpperBound(0);i++)
+            for (int i = 0; i < arr.GetUpperBound(0); i++)
             {
-                for (int y=0; y< BandSize;y++)
+                for (int y = 0; y < BandSize; y++)
                 {
                     if (y % BandSize == 0)
-                    {   
+                    {
                         //Apply primary colour band
                         basemap = maps[arr[i]];
-                        if (i+1<maps.GetUpperBound(0))
+                        if (i + 1 < maps.GetUpperBound(0))
                         {
-                            nextmap = maps[arr[i+1]];
-                        }  
+                            nextmap = maps[arr[i + 1]];
+                        }
                         else
                         {
                             //on last band. finish here.
                             //Debug.Print("LastBand");
-                        } 
-                        for (int x=0; x<256; x++)
+                        }
+                        for (int x = 0; x < 256; x++)
                         {
+                            Color colour;
                             int pixel = basemap.red[x];
-                            Color color = pal.ColorAtIndex((byte)pixel,true,false);
-                            img.SetPixel(x,y+i*BandSize, color);
-                            //img.SetPixel(x,y+i*BandSize, new Color(0.5f,0.5f,0.5f));
-                        } 
+
+                            switch (x)
+                            {
+                                case 0xf9:
+                                case 0xf0://red
+                                case 0xf4://blue
+                                case 0xf8://green
+                                case 0xfb://used by shadow beast?
+                                case 0xfc://white
+                                case 0xfd://black???
+                                    {
+                                        colour = pal.ColorAtIndex((byte)x, true, false);
+                                        colour.A8 = 180;
+                                        var nextcolour = new Color(0, 0, 0, 0);
+                                        colour = colour.Lerp(nextcolour, (float)(arr[i] / 15f));
+                                        break;
+                                    }
+                                    
+                                default:                                    
+                                    colour = pal.ColorAtIndex((byte)pixel, true, false);                                   
+                                    break;
+                            }
+                            img.SetPixel(x, y + i * BandSize, colour);
+
+                        }
                     }
                     else
                     {
-                        for (int x=0; x<256; x++)
+                        for (int x = 0; x < 256; x++)
                         { //apply a lerped colour band from the last to the next
                             var basepixel = basemap.red[x];
                             var nextpixel = nextmap.red[x];
-                            var basecolour = pal.ColorAtIndex((byte)basepixel,true,false);
-                            var nextcolour = pal.ColorAtIndex((byte)nextpixel,true,false);
-                            var lerpedcolour = basecolour.Lerp(nextcolour, (float) (y % BandSize)/(float)BandSize);
-                            img.SetPixel(x,y+i*BandSize, lerpedcolour);
+                            var basecolour = pal.ColorAtIndex((byte)basepixel, true, false);
+                            var nextcolour = pal.ColorAtIndex((byte)nextpixel, true, false);
+                            Color lerpedcolour;
+                            switch (x)
+                            {//An attempt at simulating xfer transparencies
+                                case 0xf9:
+                                case 0xf0://red
+                                case 0xf4://blue
+                                case 0xf8://green
+                                case 0xfb://used by shadow beast?
+                                case 0xfc://white
+                                case 0xfd://black???
+                                    {
+                                        basecolour = pal.ColorAtIndex((byte)x, true, false);
+                                        basecolour.A8 = 180;
+                                        nextcolour = new Color(0, 0, 0, 0); //Should this final colour be different depending on the index?
+                                        lerpedcolour = basecolour.Lerp(nextcolour, (float)(arr[i] / 15f));
+                                        break;
+                                    }
+                                default:
+                                    {
+                                        lerpedcolour = basecolour.Lerp(nextcolour, (float)(y % BandSize) / (float)BandSize);
+                                        break;
+                                    }
+                            }
+
+                            img.SetPixel(x, y + i * BandSize, lerpedcolour);
                         }
                     }
                 }
@@ -102,15 +148,15 @@ namespace Underworld
 
             }
             var output = ArtLoader.Image(
-                databuffer: imgdata, 
-                dataOffSet: 0, 
-                width: 16 * bandwidth, height: 1, 
-                palette: PaletteLoader.GreyScaleIndexPalette, 
-                useAlphaChannel: true, 
+                databuffer: imgdata,
+                dataOffSet: 0,
+                width: 16 * bandwidth, height: 1,
+                palette: PaletteLoader.GreyScaleIndexPalette,
+                useAlphaChannel: true,
                 useSingleRedChannel: true);
             return output;
         }
-       
+
 
         /// <summary>
         /// Returns the shade map as a single channel image for use in shaders.
@@ -123,12 +169,12 @@ namespace Underworld
             var tmparray = ExtractShadeArray();
             var shadearray = new int[tmparray.Length];
             shadearray[0] = tmparray[0];
-            for (int i = 1; i<=tmparray.GetUpperBound(0);i++)
+            for (int i = 1; i <= tmparray.GetUpperBound(0); i++)
             {
-                shadearray[i] = tmparray[i-1];
+                shadearray[i] = tmparray[i - 1];
             }
 
-           
+
             byte[] imgdata = new byte[16 * bandwidth];
             for (int l = 0; l < 16; l++)
             {
@@ -139,11 +185,11 @@ namespace Underworld
 
             }
             var output = ArtLoader.Image(
-                databuffer: imgdata, 
-                dataOffSet: 0, 
-                width: 16 * bandwidth, height: 1, 
-                palette: PaletteLoader.GreyScaleIndexPalette, 
-                useAlphaChannel: true, 
+                databuffer: imgdata,
+                dataOffSet: 0,
+                width: 16 * bandwidth, height: 1,
+                palette: PaletteLoader.GreyScaleIndexPalette,
+                useAlphaChannel: true,
                 useSingleRedChannel: true);
             return output;
         }
@@ -165,8 +211,8 @@ namespace Underworld
             {
                 for (int y = 0; y < height; y++)
                 {
-                    var pixel = (byte)(AllShades[x,y]*16);
-                    img.SetPixel(x,y, pal.ColorAtIndex(pixel, false, true));
+                    var pixel = (byte)(AllShades[x, y] * 16);
+                    img.SetPixel(x, y, pal.ColorAtIndex(pixel, false, true));
                 }
             }
             var tex = new Godot.ImageTexture();
