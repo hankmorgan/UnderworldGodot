@@ -56,8 +56,11 @@ namespace Underworld
 		/// Panels
 		/// </summary>
 		[Export] public Panel PanelInventory;
+		[Export] public TextureRect PanelInventoryArt;
 		[Export] public Panel PanelRuneBag;
+		[Export] public TextureRect PanelRuneBagArt;
 		[Export] public Panel PanelStats;
+		[Export] public TextureRect PanelStatsArt;
 
 		Panel PanelToTurnOff;
 		Panel PanelToTurnOn;
@@ -79,6 +82,8 @@ namespace Underworld
 		public static GRLoader grBody;
 		public static GRLoader grArmour_F;
 		public static GRLoader grArmour_M;
+		public static GRLoader grFlasks;
+
 
 		[Export] public TextureRect Body;
 		[Export] public TextureRect Helm;
@@ -130,10 +135,15 @@ namespace Underworld
 			grArmour_F = new GRLoader(GRLoader.ARMOR_F_GR, GRLoader.GRShaderMode.UIShader);
 			grArmour_M = new GRLoader(GRLoader.ARMOR_M_GR, GRLoader.GRShaderMode.UIShader);
 
-			// for (int i=0; i<grArmour_F.ImageCache.GetUpperBound(0);i++)
-			// {
-			//    grArmour_F.LoadImageAt(i).GetImage().SavePng(System.IO.Path.Combine("c:\\temp",$"armourf_{i}.png"));
-			// }
+			grFlasks = new GRLoader(GRLoader.FLASKS_GR, GRLoader.GRShaderMode.UIShader);
+
+			var grPanels = new GRLoader(GRLoader.PANELS_GR, GRLoader.GRShaderMode.UIShader);
+			if (grPanels!=null)
+			{
+				PanelInventoryArt.Texture = grPanels.LoadImageAt(0);
+				PanelRuneBagArt.Texture = grPanels.LoadImageAt(1);
+				PanelStatsArt.Texture = grPanels.LoadImageAt(2);
+			}
 			if (UWClass._RES == UWClass.GAME_UW2)
 			{
 				UW2OptBtnsOff = new ImageTexture[6];
@@ -186,17 +196,12 @@ namespace Underworld
 			byt = new BytLoader();
 
 			mousecursor.InitCursor();
+
 			EnableDisable(placeholderuw1, false);
 			EnableDisable(placeholderuw2, false);
 
 			EnableDisable(uw1UI, UWClass._RES == UWClass.GAME_UW1);
 			EnableDisable(uw2UI, UWClass._RES != UWClass.GAME_UW1);
-
-			//EnableDisable(mainwindowUW1, UWClass._RES == UWClass.GAME_UW1);
-			//EnableDisable(mainwindowUW2, UWClass._RES != UWClass.GAME_UW1);  
-
-			//EnableDisable(messageScrollUW1, UWClass._RES == UWClass.GAME_UW1);
-			//EnableDisable(messageScrollUW2, UWClass._RES != UWClass.GAME_UW1);  
 
 			switch (UWClass._RES)
 			{

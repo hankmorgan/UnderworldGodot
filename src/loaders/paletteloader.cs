@@ -185,6 +185,14 @@ namespace Underworld
             //palette for NPCs (to support xfer transparencies)
             RenderingServer.GlobalShaderParameterAdd("uwnpc", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)cycledNPCPalette[0]);
 
+            var smoothimg = shade.GetFullShadingImage(
+                pal: Palettes[0],
+                maps:light,
+                index: uwsettings.instance.lightlevel                
+                );
+        
+            RenderingServer.GlobalShaderParameterAdd("smoothpalette", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)smoothimg);
+        
         }
 
         public static int[] LoadAuxilaryPalIndices(string auxPalPath, int auxPalIndex)

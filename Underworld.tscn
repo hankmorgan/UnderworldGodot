@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://xjvqmrbs28xs"]
+[gd_scene load_steps=29 format=3 uid="uid://xjvqmrbs28xs"]
 
 [ext_resource type="Script" path="res://src/ui/uimanager.cs" id="1_lw0yg"]
 [ext_resource type="FontFile" uid="uid://pdy3t627nfxw" path="res://resources/fonts/FONT5X6I.ttf" id="3_safdl"]
@@ -24,9 +24,7 @@
 [ext_resource type="Texture2D" uid="uid://2qekjomlpnxd" path="res://resources/placeholder_art/uw1lfti/10.png" id="16_kxj2a"]
 [ext_resource type="Texture2D" uid="uid://dqcrcis2dop6k" path="res://resources/placeholder_art/paperdolluw1/body_f.png" id="19_0yobb"]
 [ext_resource type="Texture2D" uid="uid://du878dn3osxn1" path="res://resources/placeholder_art/blankmap.png" id="20_o03w0"]
-[ext_resource type="Texture2D" uid="uid://bptn5lc7tnnnx" path="res://resources/placeholder_art/panels/panelsrune.png" id="22_ucb6g"]
 [ext_resource type="Texture2D" uid="uid://di1twv4v85gbi" path="res://resources/placeholder_art/rune.png" id="23_ry168"]
-[ext_resource type="Texture2D" uid="uid://51go53yqj8oq" path="res://resources/placeholder_art/panels/panelsstats.png" id="23_usvx2"]
 
 [sub_resource type="AudioStreamWAV" id="AudioStreamWAV_tkk82"]
 
@@ -41,7 +39,7 @@ shader = ExtResource("6_x6exc")
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2", "PanelInventory", "PanelRuneBag", "PanelStats", "InteractionButtonsUW1", "InteractionButtonsUW2", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "OpenedContainer", "Runes", "SelectedRunes", "AutomapPanel", "AutomapImage")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "InteractionButtonsUW1", "InteractionButtonsUW2", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "OpenedContainer", "Runes", "SelectedRunes", "AutomapPanel", "AutomapImage")]
 script = ExtResource("1_lw0yg")
 Font4X5P = ExtResource("5_8iiwt")
 Font5X6I = ExtResource("3_safdl")
@@ -58,8 +56,11 @@ messageScrollUW2 = NodePath("../UW2/messageScrollUW2")
 placeholderuw1 = NodePath("../UW1/placeholdermainuw1")
 placeholderuw2 = NodePath("../UW2/placeholdermainuw2")
 PanelInventory = NodePath("../Common/PaperDoll")
+PanelInventoryArt = NodePath("../Common/PaperDoll/PaperDollPanel")
 PanelRuneBag = NodePath("../Common/RuneBag")
+PanelRuneBagArt = NodePath("../Common/RuneBag/RuneBagPanel")
 PanelStats = NodePath("../Common/StatsDisplay")
+PanelStatsArt = NodePath("../Common/StatsDisplay/StatsPanel")
 InteractionButtonsUW1 = [NodePath("../UW1/OptionsButtonUW1"), NodePath("../UW1/TalkButtonUW1"), NodePath("../UW1/PickupButtonUW1"), NodePath("../UW1/LookButtonUW1"), NodePath("../UW1/AttackButtonUW1"), NodePath("../UW1/UseButtonUW1")]
 InteractionButtonsUW2 = [NodePath("../UW2/OptionsButtonUW2"), NodePath("../UW2/TalkButtonUW2"), NodePath("../UW2/PickupButtonUW2"), NodePath("../UW2/LookButtonUW2"), NodePath("../UW2/AttackButtonUW2"), NodePath("../UW2/UseButtonUW2")]
 Body = NodePath("../Common/PaperDoll/Body")
@@ -455,6 +456,7 @@ offset_bottom = 115.0
 
 [node name="lblLeftShoulder" type="Label" parent="UI/Common/PaperDoll/LeftShoulder"]
 texture_filter = 1
+layout_mode = 0
 offset_left = -1.0
 offset_top = -12.0
 offset_right = 23.0
@@ -475,6 +477,7 @@ offset_bottom = 115.0
 
 [node name="lblRightShoulder" type="Label" parent="UI/Common/PaperDoll/RightShoulder"]
 texture_filter = 1
+layout_mode = 0
 offset_left = -1.0
 offset_top = -12.0
 offset_right = 23.0
@@ -495,6 +498,7 @@ offset_bottom = 202.0
 
 [node name="lblLeftHand" type="Label" parent="UI/Common/PaperDoll/LeftHand"]
 texture_filter = 1
+layout_mode = 0
 offset_left = -1.0
 offset_top = -12.0
 offset_right = 23.0
@@ -515,6 +519,7 @@ offset_bottom = 202.0
 
 [node name="lblRightHand" type="Label" parent="UI/Common/PaperDoll/RightHand"]
 texture_filter = 1
+layout_mode = 0
 offset_left = -1.0
 offset_top = -12.0
 offset_right = 23.0
@@ -726,7 +731,6 @@ offset_left = -166.0
 offset_top = 28.0
 offset_right = 166.0
 offset_bottom = 484.0
-texture = ExtResource("22_ucb6g")
 
 [node name="Rune0" type="TextureRect" parent="UI/Common/RuneBag"]
 layout_mode = 0
@@ -911,13 +915,12 @@ offset_left = 1110.0
 offset_right = 1150.0
 offset_bottom = 40.0
 
-[node name="TextureRect" type="TextureRect" parent="UI/Common/StatsDisplay"]
+[node name="StatsPanel" type="TextureRect" parent="UI/Common/StatsDisplay"]
 layout_mode = 0
 offset_left = -166.0
 offset_top = 28.0
 offset_right = 166.0
 offset_bottom = 484.0
-texture = ExtResource("23_usvx2")
 
 [node name="OtherControls" type="Panel" parent="UI/Common"]
 self_modulate = Color(1, 1, 1, 0)
@@ -955,6 +958,11 @@ offset_top = 552.0
 offset_right = 880.0
 offset_bottom = 616.0
 texture = ExtResource("23_ry168")
+
+[node name="FlaskHealth" type="TextureRect" parent="UI/Common/OtherControls"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
 
 [node name="Automap" type="Panel" parent="UI/Common"]
 visible = false

@@ -2,6 +2,8 @@ using System;
 using System.Diagnostics;
 using System.Net;
 using System.Runtime.CompilerServices;
+using System.Runtime.Versioning;
+using Godot;
 using Godot.NativeInterop;
 
 namespace Underworld
@@ -22,6 +24,60 @@ namespace Underworld
         public static float GetViewingDistance(int index)
         {
             return 4.8f * (float)shadesdata[index].ViewingDistance;
+        }
+
+        public static Godot.ImageTexture GetFullShadingImage(Palette pal, lightmap[] maps, int index)
+        {            
+            int BandSize = 16;
+            var img = Godot.Image.Create(256, BandSize*15, false,Godot.Image.Format.Rgb8);
+            var arr = shadesdata[index].ExtractShadeArray();
+            //int y = 0;
+            lightmap basemap = maps[0];
+            lightmap nextmap = maps[1];
+            for (int i = 0; i<arr.GetUpperBound(0);i++)
+            {
+                for (int y=0; y< BandSize;y++)
+                {
+                    if (y%16 == 0)
+                    {   
+                        //Apply primary colour band
+                        basemap = maps[arr[i]];
+                        if (i+1<maps.GetUpperBound(0))
+                        {
+                            nextmap = maps[arr[i+1]];
+                            Debug.Print($"{arr[i]} to {arr[i+1]}");
+                        }  
+                        else
+                        {
+                            //on last band. finish here.
+                            Debug.Print("LastBand");
+                        } 
+                        for (int x=0; x<256; x++)
+                        {
+                            int pixel = basemap.red[x];
+                            img.SetPixel(x,y+i*16, pal.ColorAtIndex((byte)pixel,true,false));
+                            //img.SetPixel(x,y+i*16, new Color(0.5f,0.5f,0.5f));
+                        } 
+                    }
+                    else
+                    {
+                        for (int x=0; x<256; x++)
+                        { //apply a lerped colour band from the last to the next
+                            var basepixel = basemap.red[x];
+                            var nextpixel = nextmap.red[x];
+                            var basecolour = pal.ColorAtIndex((byte)basepixel,true,false);
+                            var nextcolour = pal.ColorAtIndex((byte)nextpixel,true,false);
+                            var lerpedcolour = basecolour.Lerp(nextcolour, (float) (y % 16)/16f);
+                            img.SetPixel(x,y+i*16, lerpedcolour);
+                        }
+                    }
+                }
+            }
+            img.SavePng("c:\\temp\\shading.png");
+
+            var tex = new ImageTexture();
+            tex.SetImage(img);
+            return tex;
         }
 
         /// <summary>
