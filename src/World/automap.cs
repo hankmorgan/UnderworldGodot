@@ -1,6 +1,3 @@
-using System.Diagnostics.Contracts;
-using Microsoft.VisualBasic;
-
 namespace Underworld
 {
     public class automap:Loader

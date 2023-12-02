@@ -1,8 +1,3 @@
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using Godot;
-
 namespace Underworld
 {
     //Player dat inventory

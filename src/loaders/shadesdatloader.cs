@@ -122,7 +122,7 @@ namespace Underworld
                     }
                 }
             }
-            img.SavePng($"c:\\temp\\{filename}.png");
+            //img.SavePng($"c:\\temp\\{filename}.png");
 
             var tex = new ImageTexture();
             tex.SetImage(img);

@@ -1,5 +1,3 @@
-using System.Xml.Schema;
-
 namespace Underworld
 {
     public class AnimationOverlay:UWClass
