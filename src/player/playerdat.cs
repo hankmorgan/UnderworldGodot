@@ -135,6 +135,12 @@ namespace Underworld
             {
                 return X >> 8;
             }
+            set
+            {
+                var tmp = GetAt16(0x55) & 0xFF;
+                tmp |= value << 8;
+                SetAt16(0x55,tmp);
+            }
         }
 
         public static int Y
@@ -157,6 +163,12 @@ namespace Underworld
             get
             {
                 return Y >> 8;
+            }
+            set
+            {
+                var tmp = GetAt16(0x57) & 0xFF;
+                tmp |= value << 8;
+                SetAt16(0x57,tmp);
             }
         }
 

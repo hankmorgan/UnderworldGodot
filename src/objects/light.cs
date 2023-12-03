@@ -1,3 +1,5 @@
+using System.ComponentModel;
+
 namespace Underworld
 {
     public class light: objectInstance
@@ -23,6 +25,10 @@ namespace Underworld
             return true;
         }
 
+        /// <summary>
+        /// Calculates the brightest light source that surrounds the player
+        /// </summary>
+        /// <returns></returns>
         public static int BrightestLight()
         {
             int lightlevel = 0; //darkness
@@ -37,11 +43,36 @@ namespace Underworld
                         var level = lightsourceObjectDat.brightness(obj.item_id);
                         if (level>lightlevel)
                         {
-                            lightlevel= level;
+                            lightlevel = level;
                         }
                     }
                 }
             }
+            //If uw2 check for dungeon light level
+            if (_RES==GAME_UW2)
+            {
+                var dungeon_ambientlight = DlDat.GetAmbientLight(playerdat.dungeon_level-1);
+                var remainder = dungeon_ambientlight % 10;
+                var dlFlag =0;
+                if (dungeon_ambientlight >=10)
+                {
+                    dlFlag=1;
+                }
+                int tileLightFlag = TileMap.current_tilemap.Tiles[playerdat.tileX,playerdat.tileY].lightFlag;
+                if ((tileLightFlag ^ dlFlag) == 1)
+                {
+                    dungeon_ambientlight = remainder;
+                }
+                else
+                {
+                    dungeon_ambientlight = -1;
+                }                
+                if (dungeon_ambientlight>lightlevel)
+                {
+                    lightlevel = dungeon_ambientlight;
+                }
+            }
+
             //TODO check for magic lights
             return lightlevel;
         }

@@ -261,6 +261,14 @@ namespace Underworld
             }
         }
 
+        public short lightFlag
+        {
+            get
+            {
+                return (short)(map.lev_ark_block.Data[Ptr + 1] & 0x1);
+            }
+        }
+
 
         /// <summary>
         /// Only seems to matter on Level 9 and possibly where there is water? 

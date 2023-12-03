@@ -226,7 +226,7 @@ public partial class main : Node3D
             }
             uimanager.RedrawSelectedRuneSlots();
 
-            //Set the playerlight leve;
+            //Set the playerlight level;
             uwsettings.instance.lightlevel = light.BrightestLight();
 
             RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.GetViewingDistance(uwsettings.instance.lightlevel));
@@ -252,6 +252,7 @@ public partial class main : Node3D
 
 			uimanager.SetBody(r.Next(0, 4), isFemale);
 
+			uwsettings.instance.lightlevel = light.BrightestLight();
 
 			LoadTileMap(gamesettings.level, gr);
 		}
@@ -299,7 +300,22 @@ public partial class main : Node3D
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-		lblPositionDebug.Text = $"{cam.Position.ToString()}";
+		int tileX = -(int)(cam.Position.X/1.2f);
+		int tileY = (int)(cam.Position.Z/1.2f);
+
+		lblPositionDebug.Text = $"{cam.Position.ToString()} {tileX} {tileY}";
+		 if ((tileX <64) && (tileX>=0) && (tileY <64) && (tileY>=0)) 
+		 {
+		// 	//automap.currentautomap.tiles[tileX,tileX].visited = true;
+			if ((playerdat.tileX!=tileX) || (playerdat.tileY!=tileY))
+			{
+				playerdat.tileX = tileX;
+				playerdat.tileY = tileY;
+				uwsettings.instance.lightlevel = light.BrightestLight();
+			}
+		 }		
+
+
 		//RenderingServer.GlobalShaderParameterSet("cameraPos", cam.Position);
 		cycletime += delta;
 		if (cycletime > 0.2)
