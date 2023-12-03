@@ -235,7 +235,13 @@ public partial class main : Node3D
         else
 		{
 			Random r = new Random();
+			playerdat.InitEmptyPlayer();
+			playerdat.tileX = -(int)(cam.Position.X/1.2f);
+			playerdat.tileY = (int)(cam.Position.Z/1.2f);
+
+			playerdat.dungeon_level = uwsettings.instance.level+1;
 			var isFemale = r.Next(0, 2) == 1;
+			playerdat.isFemale = isFemale;
 			uimanager.SetHelm(isFemale, -1);
 			uimanager.SetArmour(isFemale, -1);
 			uimanager.SetBoots(isFemale, -1);
@@ -250,9 +256,11 @@ public partial class main : Node3D
 				uimanager.SetBackPackArt(i, -1);
 			}
 
-			uimanager.SetBody(r.Next(0, 4), isFemale);
+			playerdat.Body = r.Next(0, 4);
+			uimanager.SetBody(playerdat.Body, playerdat.isFemale);
+			
 
-			uwsettings.instance.lightlevel = light.BrightestLight();
+			
 
 			LoadTileMap(gamesettings.level, gr);
 		}
@@ -293,7 +301,8 @@ public partial class main : Node3D
 			auto+="\n";
 		}
 		//Debug.Print(auto);
-		File.WriteAllText("c:\\temp\\automap.txt", auto);
+		//File.WriteAllText("c:\\temp\\automap.txt", auto);
+		uwsettings.instance.lightlevel = light.BrightestLight();
 	}
 
 

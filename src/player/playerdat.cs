@@ -117,7 +117,7 @@ namespace Underworld
             }
             set
             {
-                SetAt(0x53, (byte)value);
+                SetAt(0x5D, (byte)value);
             }
         }
         //Character attributes

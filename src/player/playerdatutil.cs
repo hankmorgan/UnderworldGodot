@@ -18,9 +18,18 @@ namespace Underworld
         /// </summary>
         private const int NoOfEncryptedBytes = 0xD2;
 
-
-        
-
+        public static void InitEmptyPlayer(string new_charname="Gronk")
+        {
+            var InventoryPtr = 0x138;
+            if (_RES == GAME_UW2)
+            {
+                InventoryPtr = 0x3E3;
+            }
+            pdat = new byte[InventoryPtr+1];
+               
+            Array.Resize(ref pdat, InventoryPtr + 512 * 8);
+            CharName = new_charname;            
+        }
 
         // Func load pdat
         public static void Load(string folder)
