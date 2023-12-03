@@ -479,6 +479,7 @@ namespace Underworld
                     pdat[obj.PTR + i] = 0;
                 }
                 InventoryObjects[index] = null;
+                FindAndChangeBackpackIndex(index, -1);
                 LastItemIndex--;
             }
             else
@@ -491,6 +492,7 @@ namespace Underworld
                         pdat[obj.PTR + i] = 0;
                     }
                     InventoryObjects[index] = null;
+                    FindAndChangeBackpackIndex(index, -1);
                     LastItemIndex--;
                 }
                 else
@@ -511,7 +513,9 @@ namespace Underworld
                         pdat[LastObj.PTR + i] = 0;
                     }
                     InventoryObjects[LastItemIndex] = null;
+                    FindAndChangeBackpackIndex(LastItemIndex, index);
                     LastItemIndex--;
+                    
                 }
             }
             if(updateUI)
@@ -525,6 +529,22 @@ namespace Underworld
 
         }
 
+
+        /// <summary>
+        /// Finds and changes the backpack display array for the specifice object indices
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="newValue"></param>
+        static void FindAndChangeBackpackIndex(int index, int newValue=-1)
+        {
+            for (int i= 0; i<BackPackIndices.GetUpperBound(0);i++)
+            {
+                if (BackPackIndices[i]== index)
+                {
+                    BackPackIndices[i] = newValue;
+                }
+            }
+        }
 
         /// <summary>
         /// Finds the byte that links to the object at index. Returns either a next or link that points to the object
@@ -557,13 +577,13 @@ namespace Underworld
                     if (result != -1)
                     {//container found.
                      //Get either the container link or browse the next chain to match the object
-                        if (objToCheck.link == ToFind)
+                        if (objToCheck.link == ToFind) //check the first object in the container
                         {
                             return objToCheck.PTR + 6;
                         }
                         else
                         {
-                            var NextObj = objToCheck;
+                            var NextObj = playerdat.InventoryObjects[objToCheck.link]; //get the first object in the container
                             while (NextObj.next != 0)
                             {
                                 if (NextObj.next == ToFind)
@@ -572,7 +592,7 @@ namespace Underworld
                                 }
                                 else
                                 {
-                                    NextObj = InventoryObjects[objToCheck.next];
+                                    NextObj = InventoryObjects[NextObj.next];
                                 }
                             }
                         }

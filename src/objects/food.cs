@@ -107,8 +107,7 @@ namespace Underworld
                         playerdat.RemoveFromInventory(obj.index);
                     }
                     uimanager.UpdateInventoryDisplay();
-                    //TODO Leave left overs in the player cursor.                   
-
+                    //TODO Leave left overs in the player cursor.  
                 }
             }
         }

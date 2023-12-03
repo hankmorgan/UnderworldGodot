@@ -291,15 +291,15 @@ public partial class main : Node3D
 				automap.automaps = new automap[9];break;
 		}
 		automap.automaps[newLevelNo] = new automap(newLevelNo);
-		string auto="";
-		for (int y=63; y>=0; y--)
-		{
-			for (int x=0; x<64; x++)
-			{
-				auto+=automap.automaps[newLevelNo].tiles[x,y].tileType.ToString("0#") + ",";
-			}
-			auto+="\n";
-		}
+		// string auto="";
+		// for (int y=63; y>=0; y--)
+		// {
+		// 	for (int x=0; x<64; x++)
+		// 	{
+		// 		auto+=automap.automaps[newLevelNo].tiles[x,y].tileType.ToString("0#") + ",";
+		// 	}
+		// 	auto+="\n";
+		// }
 		//Debug.Print(auto);
 		//File.WriteAllText("c:\\temp\\automap.txt", auto);
 		uwsettings.instance.lightlevel = light.BrightestLight();

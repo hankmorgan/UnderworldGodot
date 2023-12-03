@@ -73,6 +73,7 @@ namespace Underworld
 
 		public static bool Fullscreen = false;
 		public static GRLoader grCursors;
+		public static GRLoader grButtons;
 		public static GRLoader grObjects;
 		public static GRLoader grLfti;
 		public static GRLoader grOptBtns;
@@ -109,6 +110,8 @@ namespace Underworld
 		[Export] public TextureRect LeftRingInput;
 		[Export] public TextureRect[] Backpack = new TextureRect[8];
 		[Export] public Label[] BackpackQTY = new Label[8];
+		[Export] public TextureRect ArrowUp;
+		[Export] public TextureRect ArrowDown;
 		[Export] public TextureRect OpenedContainer;
 		public static int CurrentSlot;
 
@@ -119,6 +122,8 @@ namespace Underworld
 		[Export] public TextureRect AutomapImage;
 
 		public static BytLoader byt;
+
+		public static int BackPackStart = 0;
 
 		static uimanager()
 		{
@@ -131,6 +136,9 @@ namespace Underworld
 			grCursors = new GRLoader(GRLoader.CURSORS_GR, GRLoader.GRShaderMode.UIShader);
 			grObjects = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.UIShader);
 			grObjects.UseRedChannel = true;
+
+			grButtons = new GRLoader(GRLoader.BUTTONS_GR, GRLoader.GRShaderMode.UIShader);
+
 			grLfti = new GRLoader(GRLoader.LFTI_GR, GRLoader.GRShaderMode.UIShader);
 			grArmour_F = new GRLoader(GRLoader.ARMOR_F_GR, GRLoader.GRShaderMode.UIShader);
 			grArmour_M = new GRLoader(GRLoader.ARMOR_M_GR, GRLoader.GRShaderMode.UIShader);
@@ -138,7 +146,7 @@ namespace Underworld
 			grFlasks = new GRLoader(GRLoader.FLASKS_GR, GRLoader.GRShaderMode.UIShader);
 
 			var grPanels = new GRLoader(GRLoader.PANELS_GR, GRLoader.GRShaderMode.UIShader);
-			if (grPanels!=null)
+			if (grPanels != null)
 			{
 				PanelInventoryArt.Texture = grPanels.LoadImageAt(0);
 				PanelRuneBagArt.Texture = grPanels.LoadImageAt(1);
@@ -202,6 +210,9 @@ namespace Underworld
 
 			EnableDisable(uw1UI, UWClass._RES == UWClass.GAME_UW1);
 			EnableDisable(uw2UI, UWClass._RES != UWClass.GAME_UW1);
+
+			EnableDisable(ArrowUp, false);
+			EnableDisable(ArrowDown, false);
 
 			switch (UWClass._RES)
 			{
@@ -421,9 +432,9 @@ namespace Underworld
 					if ((slotno >= 11) && (slotno <= 18))
 					{
 						uimanager.SetBackPackArt(
-							slot: slotno - 11, 
-							SpriteNo: uwObject.GetObjectSprite(playerdat.BackPackObject(slotno - 11)), 
-							qty: uwObject.GetObjectQuantity(playerdat.BackPackObject(slotno - 11)) );
+							slot: slotno - 11,
+							SpriteNo: uwObject.GetObjectSprite(playerdat.BackPackObject(slotno - 11)),
+							qty: uwObject.GetObjectQuantity(playerdat.BackPackObject(slotno - 11)));
 					}
 					break;
 			}
@@ -535,9 +546,9 @@ namespace Underworld
 				instance.RightShoulder.Material = grObjects.GetMaterial(SpriteNo);
 			}
 			var pQty = "";
-			if (qty >1)
+			if (qty > 1)
 			{
-				pQty=qty.ToString();
+				pQty = qty.ToString();
 			}
 			instance.RightShoulderQTY.Text = pQty;
 		}
@@ -559,9 +570,9 @@ namespace Underworld
 				instance.LeftShoulder.Material = grObjects.GetMaterial(SpriteNo);
 			}
 			var pQty = "";
-			if (qty >1)
+			if (qty > 1)
 			{
-				pQty=qty.ToString();
+				pQty = qty.ToString();
 			}
 			instance.LeftShoulderQTY.Text = pQty;
 		}
@@ -583,9 +594,9 @@ namespace Underworld
 				instance.RightHand.Material = grObjects.GetMaterial(SpriteNo);
 			}
 			var pQty = "";
-			if (qty >1)
+			if (qty > 1)
 			{
-				pQty=qty.ToString();
+				pQty = qty.ToString();
 			}
 			instance.RightHandQTY.Text = pQty;
 		}
@@ -607,9 +618,9 @@ namespace Underworld
 				instance.LeftHand.Material = grObjects.GetMaterial(SpriteNo);
 			}
 			var pQty = "";
-			if (qty >1)
+			if (qty > 1)
 			{
-				pQty=qty.ToString();
+				pQty = qty.ToString();
 			}
 			instance.LeftHandQTY.Text = pQty;
 		}
@@ -659,19 +670,19 @@ namespace Underworld
 		{
 			if (SpriteNo == -1)
 			{ //clear the slot
-				instance.Backpack[slot].Texture = null;				
+				instance.Backpack[slot].Texture = null;
 			}
 			else
 			{
 				instance.Backpack[slot].Texture = grObjects.LoadImageAt(SpriteNo);
 				instance.Backpack[slot].Material = grObjects.GetMaterial(SpriteNo);
-			}	
-			
+			}
+
 			//Set the qty label
 			var pQty = "";
-			if (qty >1)
+			if (qty > 1)
 			{
-				pQty=qty.ToString();
+				pQty = qty.ToString();
 			}
 			instance.BackpackQTY[slot].Text = pQty;
 		}
@@ -745,20 +756,20 @@ namespace Underworld
 			uimanager.SetLeggings(playerdat.isFemale, gloves.GetSpriteIndex(playerdat.LeggingsObject));
 			uimanager.SetBoots(playerdat.isFemale, gloves.GetSpriteIndex(playerdat.BootsObject));
 			//Set arms and shoulders
-			uimanager.SetRightShoulder(uwObject.GetObjectSprite(playerdat.RightShoulderObject),uwObject.GetObjectQuantity(playerdat.RightShoulderObject) );
-			uimanager.SetLeftShoulder(uwObject.GetObjectSprite(playerdat.LeftShoulderObject),uwObject.GetObjectQuantity(playerdat.LeftShoulderObject) );
-			uimanager.SetRightHand(uwObject.GetObjectSprite(playerdat.RightHandObject),uwObject.GetObjectQuantity(playerdat.RightHandObject) );
-			uimanager.SetLeftHand(uwObject.GetObjectSprite(playerdat.LeftHandObject),uwObject.GetObjectQuantity(playerdat.LeftHandObject) );
+			uimanager.SetRightShoulder(uwObject.GetObjectSprite(playerdat.RightShoulderObject), uwObject.GetObjectQuantity(playerdat.RightShoulderObject));
+			uimanager.SetLeftShoulder(uwObject.GetObjectSprite(playerdat.LeftShoulderObject), uwObject.GetObjectQuantity(playerdat.LeftShoulderObject));
+			uimanager.SetRightHand(uwObject.GetObjectSprite(playerdat.RightHandObject), uwObject.GetObjectQuantity(playerdat.RightHandObject));
+			uimanager.SetLeftHand(uwObject.GetObjectSprite(playerdat.LeftHandObject), uwObject.GetObjectQuantity(playerdat.LeftHandObject));
 			//set rings
 			uimanager.SetRightRing(ring.GetSpriteIndex(playerdat.RightRingObject));
 			uimanager.SetLeftRing(ring.GetSpriteIndex(playerdat.LeftRingObject));
 			//backback
 			for (int i = 0; i < 8; i++)
 			{
-				if (playerdat.BackPackIndices[i]!=-1)
+				if (playerdat.BackPackIndices[i] != -1)
 				{
 					var objFound = playerdat.InventoryObjects[playerdat.BackPackIndices[i]];
-					uimanager.SetBackPackArt(i, uwObject.GetObjectSprite(objFound),uwObject.GetObjectQuantity(objFound));
+					uimanager.SetBackPackArt(i, uwObject.GetObjectSprite(objFound), uwObject.GetObjectQuantity(objFound));
 				}
 				else
 				{
@@ -979,12 +990,41 @@ namespace Underworld
 			if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
 			{
 				Debug.Print("Casting");
-				for(int i=0;i<3;i++)
+				for (int i = 0; i < 3; i++)
 				{
 					if (playerdat.IsSelectedRune(i))
 					{
-						Debug.Print($"{GameStrings.GetObjectNounUW(232+playerdat.GetSelectedRune(i))}");
-					}					
+						Debug.Print($"{GameStrings.GetObjectNounUW(232 + playerdat.GetSelectedRune(i))}");
+					}
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// Moves the backpack paper doll display up or down
+		/// </summary>
+		/// <param name="event"></param>
+		/// <param name="extra_arg_0">+1 move up, -1 move down</param>
+		private void _on_updown_arrow_gui_input(InputEvent @event, long extra_arg_0)
+		{
+			if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
+			{
+				switch (extra_arg_0)
+				{
+					case -1://move down
+						BackPackStart += 4;
+						container.DisplayContainerObjects(
+							obj: playerdat.InventoryObjects[playerdat.OpenedContainer],
+							start: BackPackStart);
+						break;
+					case 1: //move up
+						BackPackStart -= 4;
+						if (BackPackStart < 0) { BackPackStart = 0; }
+						container.DisplayContainerObjects(
+							obj: playerdat.InventoryObjects[playerdat.OpenedContainer],
+							start: BackPackStart);
+						break;
 				}
 			}
 		}

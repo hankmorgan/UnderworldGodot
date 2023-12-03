@@ -9,6 +9,7 @@ namespace Underworld
     {
         public static bool Use(int index, uwObject[] objList, bool WorldObject = true)
         {
+            if (index==-1){return false;}
             trap.ObjectThatStartedChain = index;
             bool result = false;
             if (index <= objList.GetUpperBound(0))

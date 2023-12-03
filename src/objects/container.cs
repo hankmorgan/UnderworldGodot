@@ -3,7 +3,7 @@ using System.Collections.Generic;
 namespace Underworld
 {
     public class container : objectInstance
-    {
+    {    
         public static bool Use(uwObject obj, bool WorldObject)
         {
             if (WorldObject)
@@ -18,16 +18,42 @@ namespace Underworld
                 {
                     //set to opened version by setting bit 0 to 1.
                     obj.item_id |= 0x1;
-                    // if ((uimanager.CurrentSlot >= 0) && (uimanager.CurrentSlot <= 10))
-                    // {
-                    //     //redraw slot.
-                    //     uimanager.RefreshSlot(uimanager.CurrentSlot, playerdat.isFemale);
-                    // }
                 }
                 playerdat.OpenedContainer = obj.index;
                 uimanager.SetOpenedContainer(obj.index, uwObject.GetObjectSprite(obj));
+                uimanager.BackPackStart = 0;
+                DisplayContainerObjects(obj);
+                return true;
+            }
+        }
 
-                var objects = GetObjects(obj.index, playerdat.InventoryObjects);
+        /// <summary>
+        /// Displays the range (start to start+count) of container objects on the paper doll backback slots
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="start"></param>
+        /// <param name="count"></param>
+        public static void DisplayContainerObjects(uwObject obj, int start = 0, int count = 8)
+        {
+            int occupiedslots = 0;
+            var objects = GetObjects(
+                ContainerIndex: obj.index, 
+                objList: playerdat.InventoryObjects,
+                OccupiedSlots: out occupiedslots,
+                start:start,
+                count:count
+                );
+
+            if (objects==null)
+            {
+                //empty container
+                for (int o=0;o<8;o++)
+                {
+                    playerdat.SetBackPackIndex(o, null);
+                }
+            }
+            else
+            {
                 for (int o = 0; o <= objects.GetUpperBound(0); o++)
                 {
                     if (objects[o] != -1)
@@ -41,9 +67,12 @@ namespace Underworld
                         playerdat.SetBackPackIndex(o, null);
                     }
                 }
-                uimanager.UpdateInventoryDisplay();
-                return true;
             }
+
+            uimanager.EnableDisable(uimanager.instance.ArrowUp, start !=0);
+            uimanager.EnableDisable(uimanager.instance.ArrowDown, occupiedslots == 8);
+
+            uimanager.UpdateInventoryDisplay();
         }
 
         /// <summary>
@@ -72,6 +101,8 @@ namespace Underworld
                         uimanager.SetBackPackArt(i, uwObject.GetObjectSprite(playerdat.BackPackObject(i)), uwObject.GetObjectQuantity(playerdat.BackPackObject(i)));
                         playerdat.SetBackPackIndex(i, playerdat.BackPackObject(i));
                     }
+                    uimanager.EnableDisable(uimanager.instance.ArrowUp, false);
+                    uimanager.EnableDisable(uimanager.instance.ArrowDown, false);
                     return;
                 }
             }
@@ -97,12 +128,18 @@ namespace Underworld
         /// </summary>
         /// <param name="ContainerIndex"></param>
         /// <param name="objList"></param>
+        /// <param name="OccupiedSlots">No of objects still in this list after start+count</param>
         /// <param name="start"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        public static int[] GetObjects(int ContainerIndex, uwObject[] objList, int start = 0, int count = 8)
+        public static int[] GetObjects(int ContainerIndex, uwObject[] objList, out int OccupiedSlots, int start = 0, int count = 8)
         {
-            var Objects = ListObjects(ContainerIndex, objList);
+            var Objects = ListObjects(ContainerIndex, objList);            
+            OccupiedSlots = 0;
+            if (Objects==null)
+                {
+                return null;
+                }
             var output = new int[count];
             int i = 0;
             for (int o = start; o < start + count; o++)
@@ -112,6 +149,7 @@ namespace Underworld
                     if (i < count)
                     {
                         output[i++] = Objects[o];
+                        OccupiedSlots++;
                     }
                     else
                     {
@@ -122,7 +160,7 @@ namespace Underworld
                 {
                     output[i++] = -1;
                 }
-            }
+            }            
             return output;
         }
 
