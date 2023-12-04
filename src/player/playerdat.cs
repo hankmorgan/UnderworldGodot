@@ -212,7 +212,58 @@ namespace Underworld
             }
         }
 
+
+        public static int VIT
+        {
+            get
+            {
+                return GetAt(0x36);
+            }
+            set
+            {
+                SetAt(0x36, (byte)value);
+            }
+        }
+
+        
+        public static int MaxVIT
+        {
+            get
+            {
+                return GetAt(0x37);
+            }
+            set
+            {
+                SetAt(0x37, (byte)value);
+            }
+        }
+
  
+ 
+        public static int MANA
+        {
+            get
+            {
+                return GetAt(0x38);
+            }
+            set
+            {
+                SetAt(0x38, (byte)value);
+            }
+        }
+
+        
+        public static int MaxMANA
+        {
+            get
+            {
+                return GetAt(0x39);
+            }
+            set
+            {
+                SetAt(0x39, (byte)value);
+            }
+        }
 
 
 

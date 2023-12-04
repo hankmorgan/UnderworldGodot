@@ -118,8 +118,20 @@ namespace Underworld
 		[Export] public TextureRect[] Runes = new TextureRect[24];
 		[Export] public TextureRect[] SelectedRunes = new TextureRect[3];
 
+		//Automap
 		[Export] public Panel AutomapPanel;
 		[Export] public TextureRect AutomapImage;
+
+		//Stats Display
+		[Export] public Label Charname;
+		[Export] public Label CharLevel;
+		[Export] public Label CharClass;
+		[Export] public Label STR;
+		[Export] public Label DEX;
+		[Export] public Label INT;
+		[Export] public Label VIT;
+		[Export] public Label MANA;
+		[Export] public Label EXP;
 
 		public static BytLoader byt;
 
@@ -876,15 +888,29 @@ namespace Underworld
 				{
 					case 0:
 						SetPanelMode(2); //go to stats from inventory
+						PrintStatsDisplay();
 						break;
 					case 1:
 						SetPanelMode(0); //runes from inventory
 						break;
 					case 2:
-						SetPanelMode(0); // inventory from stats
+						SetPanelMode(0); // inventory from stats						
 						break;
 				}
 			}
+		}
+
+		private void PrintStatsDisplay()
+		{
+			Charname.Text = playerdat.CharName.ToUpper();
+			CharClass.Text = GameStrings.GetString(2, 23 + playerdat.CharClass).ToUpper();
+			CharLevel.Text = $"{playerdat.CharLevel}{GameStrings.GetOrdinal(playerdat.CharLevel).ToUpper()}";
+			STR.Text = $"{playerdat.STR}";
+			DEX.Text = $"{playerdat.DEX}";
+			INT.Text = $"{playerdat.INT}";
+			VIT.Text = $"{playerdat.VIT}/{playerdat.MaxVIT}";
+			MANA.Text =  $"{playerdat.MANA}/{playerdat.MaxMANA}";
+			EXP.Text = $"{playerdat.Exp}";
 		}
 
 		private void RuneClick(InputEvent @event, long extra_arg_0)

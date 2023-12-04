@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://xjvqmrbs28xs"]
+[gd_scene load_steps=33 format=3 uid="uid://xjvqmrbs28xs"]
 
 [ext_resource type="Script" path="res://src/ui/uimanager.cs" id="1_lw0yg"]
 [ext_resource type="FontFile" uid="uid://pdy3t627nfxw" path="res://resources/fonts/FONT5X6I.ttf" id="3_safdl"]
@@ -28,6 +28,7 @@
 [ext_resource type="Texture2D" uid="uid://cvik4hdmkwuwk" path="res://resources/placeholder_art/paperdolluw1/up button 027.png" id="22_vc6ux"]
 [ext_resource type="Texture2D" uid="uid://01h0bdambuq4" path="res://resources/placeholder_art/paperdolluw1/down button 028.png" id="23_e17mk"]
 [ext_resource type="Texture2D" uid="uid://di1twv4v85gbi" path="res://resources/placeholder_art/rune.png" id="23_ry168"]
+[ext_resource type="Texture2D" uid="uid://51go53yqj8oq" path="res://resources/placeholder_art/panels/panelsstats.png" id="24_filpa"]
 
 [sub_resource type="AudioStreamWAV" id="AudioStreamWAV_tkk82"]
 
@@ -42,7 +43,7 @@ shader = ExtResource("6_x6exc")
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "InteractionButtonsUW1", "InteractionButtonsUW2", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Runes", "SelectedRunes", "AutomapPanel", "AutomapImage")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "InteractionButtonsUW1", "InteractionButtonsUW2", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Runes", "SelectedRunes", "AutomapPanel", "AutomapImage", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP")]
 script = ExtResource("1_lw0yg")
 Font4X5P = ExtResource("5_8iiwt")
 Font5X6I = ExtResource("3_safdl")
@@ -97,6 +98,15 @@ Runes = [NodePath("../Common/RuneBag/Rune0"), NodePath("../Common/RuneBag/Rune1"
 SelectedRunes = [NodePath("../Common/OtherControls/SelectedRune0"), NodePath("../Common/OtherControls/SelectedRune1"), NodePath("../Common/OtherControls/SelectedRune2")]
 AutomapPanel = NodePath("../Common/Automap")
 AutomapImage = NodePath("../Common/Automap/MapImage")
+Charname = NodePath("../Common/StatsDisplay/Charname")
+CharLevel = NodePath("../Common/StatsDisplay/CharLevel")
+CharClass = NodePath("../Common/StatsDisplay/CharClass")
+STR = NodePath("../Common/StatsDisplay/STR")
+DEX = NodePath("../Common/StatsDisplay/DEX")
+INT = NodePath("../Common/StatsDisplay/INT")
+VIT = NodePath("../Common/StatsDisplay/VIT")
+MANA = NodePath("../Common/StatsDisplay/MANA")
+EXP = NodePath("../Common/StatsDisplay/EXP")
 
 [node name="AudioPlayer" type="AudioStreamPlayer" parent="UI"]
 stream = SubResource("AudioStreamWAV_tkk82")
@@ -943,6 +953,114 @@ offset_left = -166.0
 offset_top = 28.0
 offset_right = 166.0
 offset_bottom = 484.0
+texture = ExtResource("24_filpa")
+
+[node name="Charname" type="Label" parent="UI/Common/StatsDisplay"]
+layout_mode = 0
+offset_left = -150.0
+offset_top = 31.0
+offset_right = 150.0
+offset_bottom = 96.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_safdl")
+theme_override_font_sizes/font_size = 64
+text = "Gronk"
+horizontal_alignment = 1
+
+[node name="CharClass" type="Label" parent="UI/Common/StatsDisplay"]
+layout_mode = 0
+offset_left = -136.0
+offset_top = 64.0
+offset_right = 164.0
+offset_bottom = 129.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_safdl")
+theme_override_font_sizes/font_size = 64
+text = "Avatar"
+
+[node name="CharLevel" type="Label" parent="UI/Common/StatsDisplay"]
+layout_mode = 0
+offset_left = 50.0
+offset_top = 66.0
+offset_right = 134.0
+offset_bottom = 131.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_safdl")
+theme_override_font_sizes/font_size = 64
+text = "00th"
+horizontal_alignment = 2
+
+[node name="STR" type="Label" parent="UI/Common/StatsDisplay"]
+layout_mode = 0
+offset_left = 84.0
+offset_top = 94.0
+offset_right = 136.0
+offset_bottom = 159.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_safdl")
+theme_override_font_sizes/font_size = 64
+text = "00"
+horizontal_alignment = 2
+
+[node name="DEX" type="Label" parent="UI/Common/StatsDisplay"]
+layout_mode = 0
+offset_left = 84.0
+offset_top = 122.0
+offset_right = 136.0
+offset_bottom = 187.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_safdl")
+theme_override_font_sizes/font_size = 64
+text = "00"
+horizontal_alignment = 2
+
+[node name="INT" type="Label" parent="UI/Common/StatsDisplay"]
+layout_mode = 0
+offset_left = 84.0
+offset_top = 150.0
+offset_right = 136.0
+offset_bottom = 215.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_safdl")
+theme_override_font_sizes/font_size = 64
+text = "00"
+horizontal_alignment = 2
+
+[node name="VIT" type="Label" parent="UI/Common/StatsDisplay"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 177.0
+offset_right = 136.0
+offset_bottom = 242.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_safdl")
+theme_override_font_sizes/font_size = 64
+text = "00/00"
+horizontal_alignment = 2
+
+[node name="MANA" type="Label" parent="UI/Common/StatsDisplay"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 204.0
+offset_right = 136.0
+offset_bottom = 269.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_safdl")
+theme_override_font_sizes/font_size = 64
+text = "00/00"
+horizontal_alignment = 2
+
+[node name="EXP" type="Label" parent="UI/Common/StatsDisplay"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 232.0
+offset_right = 136.0
+offset_bottom = 297.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_safdl")
+theme_override_font_sizes/font_size = 64
+text = "00000"
+horizontal_alignment = 2
 
 [node name="OtherControls" type="Panel" parent="UI/Common"]
 self_modulate = Color(1, 1, 1, 0)
