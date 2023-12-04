@@ -970,6 +970,10 @@ namespace Underworld
                 else
                 {
                     return (t1.shockCeilingTexture == t2.shockCeilingTexture)
+                            && (t1.North == t2.North)
+                            && (t1.South == t2.South)
+                            && (t1.East == t2.East)
+                            && (t1.West == t2.West)
                             && (t1.floorTexture == t2.floorTexture)
                             && (t1.floorHeight == t2.floorHeight)
                             && (t1.ceilingHeight == t2.ceilingHeight)
