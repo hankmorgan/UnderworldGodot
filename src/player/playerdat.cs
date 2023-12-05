@@ -282,6 +282,21 @@ namespace Underworld
             }
         }
 
+        public static int play_poison
+        {
+            get
+            {
+                switch(_RES)
+                {//TODO double check this is right
+                    case GAME_UW2:
+                        return (short)((GetAt(0x61)>>1) & 0xf);
+                    default:
+                        return (short)((GetAt(0x60)>>2) & 0xf);
+                }  
+            }
+           
+        }
+
         /// <summary>
         /// How drunk the player is
         /// </summary>

@@ -42,7 +42,7 @@ shader = ExtResource("6_x6exc")
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "InteractionButtonsUW1", "InteractionButtonsUW2", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Runes", "SelectedRunes", "AutomapPanel", "AutomapImage", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "InteractionButtonsUW1", "InteractionButtonsUW2", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Runes", "SelectedRunes", "AutomapPanel", "AutomapImage", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "HealthFlask", "HealthFlaskBG", "ManaFlask", "ManaFlaskBG")]
 script = ExtResource("1_lw0yg")
 Font4X5P = ExtResource("5_8iiwt")
 Font5X6I = ExtResource("3_safdl")
@@ -108,6 +108,10 @@ MANA = NodePath("../Common/StatsDisplay/MANA")
 EXP = NodePath("../Common/StatsDisplay/EXP")
 StatsName = NodePath("../Common/StatsDisplay/StatNames")
 StatsValue = NodePath("../Common/StatsDisplay/StatValues")
+HealthFlask = [NodePath("../Common/HealthFlask/FlaskLevel0"), NodePath("../Common/HealthFlask/FlaskLevel1"), NodePath("../Common/HealthFlask/FlaskLevel2"), NodePath("../Common/HealthFlask/FlaskLevel3"), NodePath("../Common/HealthFlask/FlaskLevel4"), NodePath("../Common/HealthFlask/FlaskLevel5"), NodePath("../Common/HealthFlask/FlaskLevel6"), NodePath("../Common/HealthFlask/FlaskLevel7"), NodePath("../Common/HealthFlask/FlaskLevel8"), NodePath("../Common/HealthFlask/FlaskLevel9"), NodePath("../Common/HealthFlask/FlaskLevel10"), NodePath("../Common/HealthFlask/FlaskLevel11"), NodePath("../Common/HealthFlask/FlaskLevel12")]
+HealthFlaskBG = NodePath("../Common/HealthFlask/FlaskBorder")
+ManaFlask = [NodePath("../Common/ManaFlask/FlaskLevel0"), NodePath("../Common/ManaFlask/FlaskLevel1"), NodePath("../Common/ManaFlask/FlaskLevel2"), NodePath("../Common/ManaFlask/FlaskLevel3"), NodePath("../Common/ManaFlask/FlaskLevel4"), NodePath("../Common/ManaFlask/FlaskLevel5"), NodePath("../Common/ManaFlask/FlaskLevel6"), NodePath("../Common/ManaFlask/FlaskLevel7"), NodePath("../Common/ManaFlask/FlaskLevel8"), NodePath("../Common/ManaFlask/FlaskLevel9"), NodePath("../Common/ManaFlask/FlaskLevel10"), NodePath("../Common/ManaFlask/FlaskLevel11"), NodePath("../Common/ManaFlask/FlaskLevel12")]
+ManaFlaskBG = NodePath("../Common/ManaFlask/FlaskBorder")
 
 [node name="AudioPlayer" type="AudioStreamPlayer" parent="UI"]
 stream = SubResource("AudioStreamWAV_tkk82")
@@ -1180,6 +1184,237 @@ offset_top = 604.0
 offset_right = 1240.0
 offset_bottom = 704.0
 
+[node name="HealthFlask" type="Panel" parent="UI/Common"]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="FlaskBorder" type="TextureRect" parent="UI/Common/HealthFlask"]
+layout_mode = 0
+offset_left = 992.0
+offset_top = 500.0
+offset_right = 1088.0
+offset_bottom = 632.0
+
+[node name="FlaskLevel0" type="TextureRect" parent="UI/Common/HealthFlask"]
+layout_mode = 0
+offset_left = 992.0
+offset_top = 604.0
+offset_right = 1088.0
+offset_bottom = 620.0
+mouse_filter = 2
+
+[node name="FlaskLevel1" type="TextureRect" parent="UI/Common/HealthFlask"]
+layout_mode = 0
+offset_left = 992.0
+offset_top = 596.0
+offset_right = 1088.0
+offset_bottom = 616.0
+mouse_filter = 2
+
+[node name="FlaskLevel2" type="TextureRect" parent="UI/Common/HealthFlask"]
+layout_mode = 0
+offset_left = 992.0
+offset_top = 588.0
+offset_right = 1088.0
+offset_bottom = 612.0
+mouse_filter = 2
+
+[node name="FlaskLevel3" type="TextureRect" parent="UI/Common/HealthFlask"]
+layout_mode = 0
+offset_left = 992.0
+offset_top = 580.0
+offset_right = 1088.0
+offset_bottom = 608.0
+mouse_filter = 2
+
+[node name="FlaskLevel4" type="TextureRect" parent="UI/Common/HealthFlask"]
+layout_mode = 0
+offset_left = 992.0
+offset_top = 572.0
+offset_right = 1088.0
+offset_bottom = 600.0
+mouse_filter = 2
+
+[node name="FlaskLevel5" type="TextureRect" parent="UI/Common/HealthFlask"]
+layout_mode = 0
+offset_left = 992.0
+offset_top = 564.0
+offset_right = 1088.0
+offset_bottom = 592.0
+mouse_filter = 2
+
+[node name="FlaskLevel6" type="TextureRect" parent="UI/Common/HealthFlask"]
+layout_mode = 0
+offset_left = 992.0
+offset_top = 560.0
+offset_right = 1088.0
+offset_bottom = 588.0
+mouse_filter = 2
+
+[node name="FlaskLevel7" type="TextureRect" parent="UI/Common/HealthFlask"]
+layout_mode = 0
+offset_left = 992.0
+offset_top = 556.0
+offset_right = 1088.0
+offset_bottom = 580.0
+mouse_filter = 2
+
+[node name="FlaskLevel8" type="TextureRect" parent="UI/Common/HealthFlask"]
+layout_mode = 0
+offset_left = 992.0
+offset_top = 552.0
+offset_right = 1088.0
+offset_bottom = 572.0
+mouse_filter = 2
+
+[node name="FlaskLevel9" type="TextureRect" parent="UI/Common/HealthFlask"]
+layout_mode = 0
+offset_left = 992.0
+offset_top = 544.0
+offset_right = 1088.0
+offset_bottom = 560.0
+mouse_filter = 2
+
+[node name="FlaskLevel10" type="TextureRect" parent="UI/Common/HealthFlask"]
+layout_mode = 0
+offset_left = 992.0
+offset_top = 536.0
+offset_right = 1088.0
+offset_bottom = 552.0
+mouse_filter = 2
+
+[node name="FlaskLevel11" type="TextureRect" parent="UI/Common/HealthFlask"]
+layout_mode = 0
+offset_left = 992.0
+offset_top = 528.0
+offset_right = 1088.0
+offset_bottom = 544.0
+mouse_filter = 2
+
+[node name="FlaskLevel12" type="TextureRect" parent="UI/Common/HealthFlask"]
+layout_mode = 0
+offset_left = 992.0
+offset_top = 516.0
+offset_right = 1088.0
+offset_bottom = 532.0
+mouse_filter = 2
+
+[node name="ManaFlask" type="Panel" parent="UI/Common"]
+offset_left = 144.0
+offset_right = 184.0
+offset_bottom = 40.0
+
+[node name="FlaskBorder" type="TextureRect" parent="UI/Common/ManaFlask"]
+layout_mode = 0
+offset_left = 992.0
+offset_top = 500.0
+offset_right = 1088.0
+offset_bottom = 632.0
+
+[node name="FlaskLevel0" type="TextureRect" parent="UI/Common/ManaFlask"]
+layout_mode = 0
+offset_left = 992.0
+offset_top = 604.0
+offset_right = 1088.0
+offset_bottom = 620.0
+mouse_filter = 2
+
+[node name="FlaskLevel1" type="TextureRect" parent="UI/Common/ManaFlask"]
+layout_mode = 0
+offset_left = 992.0
+offset_top = 596.0
+offset_right = 1088.0
+offset_bottom = 616.0
+mouse_filter = 2
+
+[node name="FlaskLevel2" type="TextureRect" parent="UI/Common/ManaFlask"]
+layout_mode = 0
+offset_left = 992.0
+offset_top = 588.0
+offset_right = 1088.0
+offset_bottom = 612.0
+mouse_filter = 2
+
+[node name="FlaskLevel3" type="TextureRect" parent="UI/Common/ManaFlask"]
+layout_mode = 0
+offset_left = 992.0
+offset_top = 580.0
+offset_right = 1088.0
+offset_bottom = 608.0
+mouse_filter = 2
+
+[node name="FlaskLevel4" type="TextureRect" parent="UI/Common/ManaFlask"]
+layout_mode = 0
+offset_left = 992.0
+offset_top = 572.0
+offset_right = 1088.0
+offset_bottom = 600.0
+mouse_filter = 2
+
+[node name="FlaskLevel5" type="TextureRect" parent="UI/Common/ManaFlask"]
+layout_mode = 0
+offset_left = 992.0
+offset_top = 564.0
+offset_right = 1088.0
+offset_bottom = 592.0
+mouse_filter = 2
+
+[node name="FlaskLevel6" type="TextureRect" parent="UI/Common/ManaFlask"]
+layout_mode = 0
+offset_left = 992.0
+offset_top = 560.0
+offset_right = 1088.0
+offset_bottom = 588.0
+mouse_filter = 2
+
+[node name="FlaskLevel7" type="TextureRect" parent="UI/Common/ManaFlask"]
+layout_mode = 0
+offset_left = 992.0
+offset_top = 556.0
+offset_right = 1088.0
+offset_bottom = 580.0
+mouse_filter = 2
+
+[node name="FlaskLevel8" type="TextureRect" parent="UI/Common/ManaFlask"]
+layout_mode = 0
+offset_left = 992.0
+offset_top = 552.0
+offset_right = 1088.0
+offset_bottom = 572.0
+mouse_filter = 2
+
+[node name="FlaskLevel9" type="TextureRect" parent="UI/Common/ManaFlask"]
+layout_mode = 0
+offset_left = 992.0
+offset_top = 544.0
+offset_right = 1088.0
+offset_bottom = 560.0
+mouse_filter = 2
+
+[node name="FlaskLevel10" type="TextureRect" parent="UI/Common/ManaFlask"]
+layout_mode = 0
+offset_left = 992.0
+offset_top = 536.0
+offset_right = 1088.0
+offset_bottom = 552.0
+mouse_filter = 2
+
+[node name="FlaskLevel11" type="TextureRect" parent="UI/Common/ManaFlask"]
+layout_mode = 0
+offset_left = 992.0
+offset_top = 528.0
+offset_right = 1088.0
+offset_bottom = 544.0
+mouse_filter = 2
+
+[node name="FlaskLevel12" type="TextureRect" parent="UI/Common/ManaFlask"]
+layout_mode = 0
+offset_left = 992.0
+offset_top = 516.0
+offset_right = 1088.0
+offset_bottom = 532.0
+mouse_filter = 2
+
 [node name="mouse" type="CanvasLayer" parent="UI"]
 
 [node name="mouseCursor" type="TextureRect" parent="UI/mouse"]
@@ -1269,3 +1504,5 @@ script = ExtResource("5_2to2n")
 [connection signal="gui_input" from="UI/Common/OtherControls/SelectedRune1" to="UI/uiManager" method="SelectedRunesClick"]
 [connection signal="gui_input" from="UI/Common/OtherControls/SelectedRune2" to="UI/uiManager" method="SelectedRunesClick"]
 [connection signal="gui_input" from="UI/Common/Automap/Close" to="UI/uiManager" method="CloseAutomap"]
+[connection signal="gui_input" from="UI/Common/HealthFlask/FlaskBorder" to="UI/uiManager" method="_on_healthflask_gui_input"]
+[connection signal="gui_input" from="UI/Common/ManaFlask/FlaskBorder" to="UI/uiManager" method="_on_manaflask_gui_input"]

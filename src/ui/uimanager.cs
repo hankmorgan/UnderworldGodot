@@ -138,6 +138,12 @@ namespace Underworld
 
 		public static int StatsOffset=0;
 
+		//Health and manaflask
+		[Export] public TextureRect[] HealthFlask = new TextureRect[13];
+		[Export] public TextureRect HealthFlaskBG;
+		[Export] public TextureRect[] ManaFlask = new TextureRect[13];
+		[Export] public TextureRect ManaFlaskBG;
+
 		public static BytLoader byt;
 
 		public static int BackPackStart = 0;
@@ -161,7 +167,9 @@ namespace Underworld
 			grArmour_M = new GRLoader(GRLoader.ARMOR_M_GR, GRLoader.GRShaderMode.UIShader);
 
 			grFlasks = new GRLoader(GRLoader.FLASKS_GR, GRLoader.GRShaderMode.UIShader);
-
+			HealthFlaskBG.Texture = grFlasks.LoadImageAt(75);
+			ManaFlaskBG.Texture = grFlasks.LoadImageAt(75);
+			
 			var grPanels = new GRLoader(GRLoader.PANELS_GR, GRLoader.GRShaderMode.UIShader);
 			if (grPanels != null)
 			{
@@ -171,6 +179,7 @@ namespace Underworld
 			}
 			if (UWClass._RES == UWClass.GAME_UW2)
 			{
+				
 				UW2OptBtnsOff = new ImageTexture[6];
 				UW2OptBtnsOn = new ImageTexture[6];
 				grOptBtns = new GRLoader(GRLoader.OPTBTNS_GR, GRLoader.GRShaderMode.UIShader);
@@ -938,6 +947,44 @@ namespace Underworld
 			}
 		}
 
+		public static void RefreshHealthFlask()
+		{
+			int level = (int)((float)((float)playerdat.VIT/(float)playerdat.MaxVIT) * 12f);
+			int startOffset =0;
+			if(playerdat.play_poison>0)
+			{
+				startOffset = 50;
+			}
+			for (int i=0;i<13;i++)
+			{
+				if (i<=level)
+				{
+					instance.HealthFlask[i].Texture = grFlasks.LoadImageAt(startOffset + i);
+				}
+				else
+				{
+					instance.HealthFlask[i].Texture = null;
+				}
+			}
+		}
+
+		public static void RefreshManaFlask()
+		{
+			int level = (int)((float)((float)playerdat.MANA/(float)playerdat.MaxMANA) * 12f);
+			int startOffset = 25;
+			for (int i=0;i<13;i++)
+			{
+				if (i<=level)
+				{
+					instance.ManaFlask[i].Texture = grFlasks.LoadImageAt(startOffset + i);
+				}
+				else
+				{
+					instance.ManaFlask[i].Texture = null;
+				}
+			}
+		}
+
 		private void RuneClick(InputEvent @event, long extra_arg_0)
 		{
 			if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
@@ -1097,5 +1144,41 @@ namespace Underworld
 				}
 			}
 		}
+
+		private void _on_healthflask_gui_input(InputEvent @event)
+		{
+			if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
+			{
+				if (playerdat.play_poison>0)
+				{//you are POISON LEVEL \n Your current vitality is vit out of maxvit
+
+							/*
+				0 barely
+				1 mildly
+				2 badly
+				3 seriously
+				4 critically
+				*/
+
+					var poisonlevel = (playerdat.play_poison-1)%5;
+					messageScroll.AddString($"{GameStrings.GetString(1,GameStrings.str_you_are_)}{GameStrings.GetString(1,GameStrings.str_barely+poisonlevel)}{GameStrings.GetString(1,GameStrings.str__poisoned_)}\n{GameStrings.GetString(1,GameStrings.str_your_current_vitality_is_)}{playerdat.VIT} out of {playerdat.MaxVIT}");
+				}
+				else
+				{				
+					messageScroll.AddString($"{GameStrings.GetString(1,GameStrings.str_your_current_vitality_is_)}{playerdat.VIT} out of {playerdat.MaxVIT}");
+				}
+			}
+		}
+
+
+		private void _on_manaflask_gui_input(InputEvent @event)
+		{
+			if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
+			{
+				messageScroll.AddString($"{GameStrings.GetString(1,GameStrings.str_your_current_mana_points_are_)}{playerdat.MANA} out of {playerdat.MaxMANA}");
+			}
+		}
+
+
 	} //end class
 }   //end namespace
