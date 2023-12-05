@@ -819,27 +819,19 @@ namespace Underworld
             // {
             //     return t.floorTexture;
             // }
-            if (face == fCEIL)
-            {
-                floorTexture = t.map.texture_map[t.shockCeilingTexture];
-            }
-            else
-            {
+
                 //floorTexture = t.floorTexture;
-                switch (_RES)
-                {
-                    //case GAME_SHOCK:
-                    case GAME_UW2:
-                        floorTexture = t.map.texture_map[t.floorTexture];
-                        //floorTexture = t.floorTexture;
-                        break;
-                    default:
-                        floorTexture = t.map.texture_map[t.floorTexture + 48];
-                        break;
-                }
-
+            switch (_RES)
+            {
+                //case GAME_SHOCK:
+                case GAME_UW2:
+                    floorTexture = t.map.texture_map[t.floorTexture];
+                    //floorTexture = t.floorTexture;
+                    break;
+                default:
+                    floorTexture = t.map.texture_map[t.floorTexture + 48];
+                    break;
             }
-
             if ((floorTexture < 0) || (floorTexture > 512))
             {
                 floorTexture = 0;

@@ -965,12 +965,15 @@ namespace Underworld
             {
                 if ((t1.tileType == 0) && (t2.tileType == 0))   //solid
                 {
-                    return ((t1.wallTexture == t2.wallTexture) && (t1.West == t2.West) && (t1.South == t2.South) && (t1.East == t2.East) && (t1.North == t2.North) && (t1.UseAdjacentTextures == t2.UseAdjacentTextures));
+                    return ((t1.wallTexture == t2.wallTexture) 
+                        && (t1.West == t2.West) 
+                        && (t1.South == t2.South) 
+                        && (t1.East == t2.East) 
+                        && (t1.North == t2.North));
                 }
                 else
                 {
-                    return (t1.shockCeilingTexture == t2.shockCeilingTexture)
-                            && (t1.North == t2.North)
+                    return (t1.North == t2.North)
                             && (t1.South == t2.South)
                             && (t1.East == t2.East)
                             && (t1.West == t2.West)

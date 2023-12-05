@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 namespace Underworld
 {
     public class TileInfo : Loader
@@ -291,7 +289,7 @@ namespace Underworld
 
         //Shock Specific Stuff
         //public short shockSlopeFlag = TileMap.SLOPE_FLOOR_ONLY;    //For controlling ceiling slopes for shock.
-        public short shockCeilingTexture;
+        //public short shockCeilingTexture;
 
         //public short _shockTileSlopeSteepness;
         public short TileSlopeSteepness
@@ -300,8 +298,6 @@ namespace Underworld
             {
                 switch (_RES)
                 {
-                    // case GAME_SHOCK:
-                    //     return _shockTileSlopeSteepness;
                     default:
                         if (tileType >= 2)
                         {
@@ -317,25 +313,12 @@ namespace Underworld
             {
                 switch (_RES)
                 {
-                    // case GAME_SHOCK:
-                    //     _shockTileSlopeSteepness = value;
-                    //     break;
                     default:
                         //do nothing read only.
                         break;
                 }
             }
         }
-        public short UseAdjacentTextures;
-        public short shockTextureOffset;
-        public short shockNorthOffset; public short shockSouthOffset;
-        public short shockEastOffset; public short shockWestOffset;
-        public short shockShadeUpper;
-        public short shockShadeLower;
-        public short shockNorthCeilHeight; public short shockSouthCeilHeight;
-        public short shockEastCeilHeight; public short shockWestCeilHeight;
-        public short shockFloorOrientation; public short shockCeilOrientation;
-
 
         /// <summary>
         /// Indicates that the tile can change into another type of tile or moves in someway. Eg change terrain trap.
@@ -343,10 +326,6 @@ namespace Underworld
         /// Used to prevent cleanup of this tile.
         public bool TerrainChange;  //
 
-       // public int[] SHOCKSTATE = new int[4];   //These should be ff,00,00,00 on an initial map. I'm just bringing them back for research purposes.
-
-        //The terrain on the tile. Result will change when the floor texture is updated.
-        // private int _terrain;
         public int terrain
         {
             get
@@ -365,10 +344,6 @@ namespace Underworld
             }
         }
 
-        public TileInfo()
-        {
-            //Empty constructor for shock
-        }
 
         /// <summary>
         /// Initialise a tile with parameters for source data and X,Y offset into data.
@@ -388,112 +363,6 @@ namespace Underworld
             East = wallTexture;
             West = wallTexture;
         }
-
-        // public TileInfo(TileMap tm, short X, short Y, short newtileType,
-        //         short newfloorHeight, short newceilingHeight,
-        //         short newfloorTexture, short newwallTexture, short newceilTexture,
-        //         short newFlags, short newnoMagic, short newdoorBit, int newindexObjectList)
-        // {
-        //     InitTileInfo(tm, X, Y, newtileType,
-        //         newfloorHeight, newceilingHeight,
-        //         newfloorTexture, newwallTexture, newceilTexture,
-        //         newFlags, newnoMagic, newdoorBit, newindexObjectList);
-        // }
-
-        // void InitTileInfo(TileMap tm, short X, short Y, short newtiletype,
-        //         short newfloorHeight, short newceilingHeight,
-        //         short newfloorTexture, short newwallTexture, short newceilTexture,
-        //         short newFlags, short newnoMagic, short newdoorBit, int newindexObjectList)
-        // {
-        //     Debug.Print("Use of obsolete inittileinfo");
-        //     return;
-
-        //     map = tm;
-        //     ///tileType = newtiletype;
-        //     tileX = X;
-        //     tileY = Y;
-        //     //floorHeight = newfloorHeight;
-        //     ceilingHeight = newceilingHeight;
-        //     //floorTexture = newfloorTexture;
-        //     // wallTexture = newwallTexture;
-        //     shockCeilingTexture = newceilTexture;
-        //     // flags = newFlags;
-        //     //noMagic = newnoMagic;
-        //     //doorBit = newdoorBit;
-        //     // indexObjectList = newindexObjectList;
-
-        //     //Grouped = false;
-
-        //     ////////if (floorTexture < 0)
-        //     ////////{
-        //     ////////    floorTexture = 0;
-        //     ////////}
-        //     ////////if (floorTexture >= 262)
-        //     ////////{
-        //     ////////    floorTexture = 0;
-        //     ////////}
-        //     ////////if (wallTexture >= 256)
-        //     ////////{
-        //     ////////   wallTexture = 0;
-        //     ////////}
-
-
-        //     //////////Get the terrain type for the tile.
-        //     ////////switch (_RES)
-        //     ////////{
-        //     ////////    case GAME_UWDEMO:
-        //     ////////    case GAME_UW1:
-        //     ////////        _terrain = GameWorldController.instance.terrainData.Terrain[46 + map.texture_map[floorTexture + 48]];
-        //     ////////        break;
-        //     ////////    case GAME_UW2:
-        //     ////////        _terrain = GameWorldController.instance.terrainData.Terrain[map.texture_map[floorTexture]];
-        //     ////////        break;
-        //     ////////    default:
-        //     ////////        _terrain = 0;
-        //     ////////        break;
-        //     ////////}
-
-        //     //////////if (_RES==GAME_UWDEMO)
-        //     //////////{//texture_map[t.floorTexture + 48];
-        //     //////////    if (map.texture_map[floorTexture + 48] == 56)
-        //     //////////    {
-        //     //////////        _terrain = TerrainDatLoader.Water;
-        //     //////////    }
-        //     //////////}
-        //     //There is only one possible steepness in UW so I set it's properties to match a similar tile in shock.
-        //     //shockSlopeFlag = TileMap.SLOPE_FLOOR_ONLY;
-        //     if (tileType >= 2)
-        //     {
-        //         TileSlopeSteepness = 2;
-        //         //shockSteep = 1;
-        //         // shockSteep = (short)(((shockSteep << 3) >> 2) * 8 >> 3);    //Shift copied from shock
-        //     }
-
-        //     //Different textures on solid tiles faces
-        //     North = wallTexture;
-        //     South = wallTexture;
-        //     East = wallTexture;
-        //     West = wallTexture;
-        //     //Top = floorTexture;
-        //     //Bottom = floorTexture;
-        //     //Diagonal = wallTexture;
-
-        //     isNothing = TileMap.isTextureNothing(map.texture_map[floorTexture]);
-        //     if (isNothing)
-        //     {
-        //         Debug.Print("instance of isnothing Why the hell does this exist?" + X + "," + Y);
-        //     }
-        // }
-
-
-        /// <summary>
-        /// Tells us the tile needs to be updated next LateUpdate
-        /// </summary>
-        // public void TileNeedsUpdate()
-        // {
-        //     NeedsReRender = true;
-        //     GameWorldController.WorldReRenderPending = true;
-        // }
     }//end class
 
 }//end namespace

@@ -157,6 +157,18 @@ namespace Underworld
         }
 
         //Character skills
+
+        /// <summary>
+        /// Gets the skill from attack=1 upwards
+        /// </summary>
+        /// <param name="skillNo"></param>
+        /// <returns></returns>
+         public static int GetSkillValue (int skillNo)
+         {
+            return (int)GetAt(0x21+skillNo);
+         }
+
+
         public static int Attack
         {
             get

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -132,6 +133,10 @@ namespace Underworld
 		[Export] public Label VIT;
 		[Export] public Label MANA;
 		[Export] public Label EXP;
+		[Export] public Label StatsName;
+		[Export] public Label StatsValue;
+
+		public static int StatsOffset=0;
 
 		public static BytLoader byt;
 
@@ -899,7 +904,11 @@ namespace Underworld
 				}
 			}
 		}
+		
 
+		/// <summary>
+		/// Updates the stats display panel
+		/// </summary>
 		private void PrintStatsDisplay()
 		{
 			Charname.Text = playerdat.CharName.ToUpper();
@@ -911,6 +920,22 @@ namespace Underworld
 			VIT.Text = $"{playerdat.VIT}/{playerdat.MaxVIT}";
 			MANA.Text =  $"{playerdat.MANA}/{playerdat.MaxMANA}";
 			EXP.Text = $"{playerdat.Exp}";
+			StatsName.Text="";
+			StatsValue.Text="";
+			for (int s = 0; s<6; s++)
+			{
+				if ((StatsOffset==0) && (s==0))
+				{
+					//display training points
+					StatsName.Text= "Skill Pt\n";
+					StatsValue.Text = $"{playerdat.TrainingPoints}\n";
+				}
+				else
+				{//display stat
+					StatsName.Text += $"{GameStrings.GetString(2,30+StatsOffset+s).ToUpper()}\n";
+					StatsValue.Text += $"{playerdat.GetSkillValue(StatsOffset+s)}\n";
+				}
+			}
 		}
 
 		private void RuneClick(InputEvent @event, long extra_arg_0)
@@ -1055,5 +1080,22 @@ namespace Underworld
 			}
 		}
 
+		private void _on_stats_updown_gui_input(InputEvent @event, long extra_arg_0)
+		{
+			if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
+			{
+				switch(extra_arg_0)
+				{
+					case -1:
+						StatsOffset = Math.Max(0, StatsOffset-1);
+						PrintStatsDisplay();
+						break;
+					case 1:
+						StatsOffset = Math.Min(15, StatsOffset+1);
+						PrintStatsDisplay();
+						break;
+				}
+			}
+		}
 	} //end class
 }   //end namespace
