@@ -139,8 +139,10 @@ namespace Underworld
 		public static int StatsOffset=0;
 
 		//Health and manaflask
+		[Export] public Panel HealthFlaskPanel;
 		[Export] public TextureRect[] HealthFlask = new TextureRect[13];
 		[Export] public TextureRect HealthFlaskBG;
+		[Export] public Panel ManaFlaskPanel;
 		[Export] public TextureRect[] ManaFlask = new TextureRect[13];
 		[Export] public TextureRect ManaFlaskBG;
 
@@ -204,7 +206,16 @@ namespace Underworld
 				UW2OptBtnsOn[0] = ArtLoader.CropImage(On, new Rect2I(52, 15, 25, 14)); //option button on
 
 				//Move paperdoll
-				var offset = new Vector2(-8, -13);
+				var offset = new Vector2(0, -12);
+				 PanelInventoryArt.Size=  new Vector2(316,448);
+				 PanelStatsArt.Size=  new Vector2(316,448);
+				 PanelRuneBagArt.Size=  new Vector2(316,448);
+
+				// PanelInventory.Position += offset;
+				// PanelStats.Position +=offset;
+				// PanelRuneBag.Position +=offset;
+
+				 offset = new Vector2(-4, -12);
 				Body.Position += offset;
 				Helm.Position += offset;
 				Boots.Position += offset;
@@ -220,10 +231,33 @@ namespace Underworld
 				ArmourInput.Position += offset;
 				LeggingsInput.Position += offset;
 
-				for (int i = 0; i < 8; i++)
+				offset = new Vector2(-4, -4);
+				for (int i = 0; i < 4; i++)
 				{
 					Backpack[i].Position += offset;
 				}
+				offset = new Vector2(-4, -2);
+				for (int i = 4; i < 8; i++)
+				{
+					Backpack[i].Position += offset;
+				}
+
+				offset = new Vector2(0,24);
+				HealthFlaskPanel.Position+=offset;
+
+				offset = new Vector2(16,24);
+				ManaFlaskPanel.Position+=offset;
+				Charname.Set("theme_override_colors/font_color", Color.Color8(255,255,255) );
+				CharClass.Set("theme_override_colors/font_color", Color.Color8(255,255,255) );
+				CharLevel.Set("theme_override_colors/font_color", Color.Color8(255,255,255) );
+				StatsName.Set("theme_override_colors/font_color", Color.Color8(255,255,255) );
+				STR.Set("theme_override_colors/font_color", Color.Color8(255,255,255) );
+				DEX.Set("theme_override_colors/font_color", Color.Color8(255,255,255) );
+				INT.Set("theme_override_colors/font_color", Color.Color8(255,255,255) );
+				EXP.Set("theme_override_colors/font_color", Color.Color8(255,255,255) );
+				VIT.Set("theme_override_colors/font_color", Color.Color8(255,255,255) );
+				MANA.Set("theme_override_colors/font_color", Color.Color8(255,255,255) );
+				StatsValue.Set("theme_override_colors/font_color", Color.Color8(255,255,255) );
 
 
 			}

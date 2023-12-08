@@ -42,7 +42,7 @@ shader = ExtResource("6_x6exc")
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "InteractionButtonsUW1", "InteractionButtonsUW2", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Runes", "SelectedRunes", "AutomapPanel", "AutomapImage", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "HealthFlask", "HealthFlaskBG", "ManaFlask", "ManaFlaskBG")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "InteractionButtonsUW1", "InteractionButtonsUW2", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Runes", "SelectedRunes", "AutomapPanel", "AutomapImage", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG")]
 script = ExtResource("1_lw0yg")
 Font4X5P = ExtResource("5_8iiwt")
 Font5X6I = ExtResource("3_safdl")
@@ -108,8 +108,10 @@ MANA = NodePath("../Common/StatsDisplay/MANA")
 EXP = NodePath("../Common/StatsDisplay/EXP")
 StatsName = NodePath("../Common/StatsDisplay/StatNames")
 StatsValue = NodePath("../Common/StatsDisplay/StatValues")
+HealthFlaskPanel = NodePath("../Common/HealthFlask")
 HealthFlask = [NodePath("../Common/HealthFlask/FlaskLevel0"), NodePath("../Common/HealthFlask/FlaskLevel1"), NodePath("../Common/HealthFlask/FlaskLevel2"), NodePath("../Common/HealthFlask/FlaskLevel3"), NodePath("../Common/HealthFlask/FlaskLevel4"), NodePath("../Common/HealthFlask/FlaskLevel5"), NodePath("../Common/HealthFlask/FlaskLevel6"), NodePath("../Common/HealthFlask/FlaskLevel7"), NodePath("../Common/HealthFlask/FlaskLevel8"), NodePath("../Common/HealthFlask/FlaskLevel9"), NodePath("../Common/HealthFlask/FlaskLevel10"), NodePath("../Common/HealthFlask/FlaskLevel11"), NodePath("../Common/HealthFlask/FlaskLevel12")]
 HealthFlaskBG = NodePath("../Common/HealthFlask/FlaskBorder")
+ManaFlaskPanel = NodePath("../Common/ManaFlask")
 ManaFlask = [NodePath("../Common/ManaFlask/FlaskLevel0"), NodePath("../Common/ManaFlask/FlaskLevel1"), NodePath("../Common/ManaFlask/FlaskLevel2"), NodePath("../Common/ManaFlask/FlaskLevel3"), NodePath("../Common/ManaFlask/FlaskLevel4"), NodePath("../Common/ManaFlask/FlaskLevel5"), NodePath("../Common/ManaFlask/FlaskLevel6"), NodePath("../Common/ManaFlask/FlaskLevel7"), NodePath("../Common/ManaFlask/FlaskLevel8"), NodePath("../Common/ManaFlask/FlaskLevel9"), NodePath("../Common/ManaFlask/FlaskLevel10"), NodePath("../Common/ManaFlask/FlaskLevel11"), NodePath("../Common/ManaFlask/FlaskLevel12")]
 ManaFlaskBG = NodePath("../Common/ManaFlask/FlaskBorder")
 
@@ -242,14 +244,6 @@ offset_bottom = 800.0
 mouse_filter = 2
 texture = ExtResource("8_2hy02")
 
-[node name="PanelBlack2" type="TextureRect" parent="UI/UW2"]
-offset_left = 946.0
-offset_top = 28.0
-offset_right = 1262.0
-offset_bottom = 476.0
-mouse_filter = 0
-texture = ExtResource("8_mis7n")
-
 [node name="3DWinUW2" type="TextureRect" parent="UI/UW2"]
 texture_filter = 1
 material = SubResource("ShaderMaterial_7v506")
@@ -259,6 +253,14 @@ offset_bottom = 800.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_filter = 2
+
+[node name="PanelBlack2" type="TextureRect" parent="UI/UW2"]
+offset_left = 946.0
+offset_top = 28.0
+offset_right = 1262.0
+offset_bottom = 476.0
+mouse_filter = 0
+texture = ExtResource("8_mis7n")
 
 [node name="messageScrollBackgroundUW2" type="TextureRect" parent="UI/UW2"]
 offset_left = 64.0
