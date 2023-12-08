@@ -11,6 +11,14 @@ namespace Underworld
         public objectInstance instance;//TODO: this needs to be linked in all the object creation code.
         public short index;
 
+        public string _name
+        {
+            get
+            {
+                return GameStrings.GetObjectNounUW(item_id);
+            }
+        }
+
         /// <summary>
         /// Check if the object should only have the base 4 bytes of static info.
         /// </summary>

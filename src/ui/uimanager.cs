@@ -457,10 +457,15 @@ namespace Underworld
 				default:
 					if ((slotno >= 11) && (slotno <= 18))
 					{
+						uwObject objAtSlot = null;
+						if (playerdat.BackPackIndices[slotno-11]!=-1)
+						{
+							objAtSlot = playerdat.InventoryObjects[playerdat.BackPackIndices[slotno-11]];
+						}
 						uimanager.SetBackPackArt(
 							slot: slotno - 11,
-							SpriteNo: uwObject.GetObjectSprite(playerdat.BackPackObject(slotno - 11)),
-							qty: uwObject.GetObjectQuantity(playerdat.BackPackObject(slotno - 11)));
+							SpriteNo: uwObject.GetObjectSprite(objAtSlot),
+							qty: uwObject.GetObjectQuantity(objAtSlot));
 					}
 					break;
 			}
