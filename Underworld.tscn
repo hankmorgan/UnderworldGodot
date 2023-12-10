@@ -46,6 +46,8 @@ offset_right = 900.0
 offset_bottom = 528.0
 
 [node name="SubViewport" type="SubViewport" parent="WorldViewContainer"]
+handle_input_locally = false
+render_target_update_mode = 4
 
 [node name="Camera3D" type="Camera3D" parent="WorldViewContainer/SubViewport"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.119, 2.137, 12.228)
@@ -1444,11 +1446,12 @@ texture_filter = 1
 offset_left = 28.0
 offset_top = -9.0
 offset_right = 628.0
-offset_bottom = 41.0
+offset_bottom = 91.0
 mouse_filter = 2
 theme_override_fonts/normal_font = ExtResource("5_8iiwt")
 theme_override_font_sizes/normal_font_size = 47
-text = "The Label is here. Can you see it"
+text = "The Label is here. Can you see it
+Line 2"
 
 [node name="worldobjects" type="Node3D" parent="."]
 

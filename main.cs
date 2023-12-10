@@ -313,7 +313,7 @@ public partial class main : Node3D
 		int tileX = -(int)(cam.Position.X/1.2f);
 		int tileY = (int)(cam.Position.Z/1.2f);
 
-		lblPositionDebug.Text = $"{cam.Position.ToString()} {tileX} {tileY}";
+		lblPositionDebug.Text = $"{cam.Position.ToString()}\n{tileX} {tileY}";
 		 if ((tileX <64) && (tileX>=0) && (tileY <64) && (tileY>=0)) 
 		 {
 		// 	//automap.currentautomap.tiles[tileX,tileX].visited = true;

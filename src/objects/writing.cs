@@ -2,30 +2,47 @@ using System.Diagnostics;
 using Godot;
 namespace Underworld
 {
-    public class writing:model3D
+    public class writing : model3D
     {
         public static writing CreateInstance(Node3D parent, uwObject obj, string name)
         {
             var b = new writing(obj);
             var modelNode = b.Generate3DModel(parent, name);
-            SetModelRotation(parent, b);            
+            SetModelRotation(parent, b);
             //DisplayModelPoints(b,modelNode);
+            if (obj.xpos == 0)
+            {               
+                parent.Position += new Vector3(+0.1f, 0f, 0f);
+            }
+            if (obj.ypos == 0)
+            {
+                parent.Position += new Vector3(0f, 0f, -0.1f);               
+            }
+            if (obj.xpos == 7)
+            {               
+                parent.Position += new Vector3(-0.1f, 0f, 0f);
+            }
+            if (obj.ypos == 7)
+            {
+                parent.Position += new Vector3(0f, 0f, +0.1f);  
+            }
+
             return b;
         }
 
         public writing(uwObject _uwobject)
-        {            
-            uwobject = _uwobject;   
-            uwobject.instance = this;         
+        {
+            uwobject = _uwobject;
+            uwobject.instance = this;
         }
 
 
         public static bool LookAt(uwObject obj)
         {
             if (obj.is_quant == 1)
-                {
-                messageScroll.AddString(GameStrings.GetString(8, obj.link-0x200));
-                }
+            {
+                messageScroll.AddString(GameStrings.GetString(8, obj.link - 0x200));
+            }
             return true;
         }
 
@@ -41,23 +58,23 @@ namespace Underworld
 
         public override int[] ModelTriangles(int meshNo)
         {
-           var tris = new int[6];
-           tris[0] = 0;
-           tris[1] = 3;
-           tris[2] = 2;
-           tris[3] = 2;
-           tris[4] = 1;
-           tris[5] = 0;
-           return tris;
+            var tris = new int[6];
+            tris[0] = 0;
+            tris[1] = 3;
+            tris[2] = 2;
+            tris[3] = 2;
+            tris[4] = 1;
+            tris[5] = 0;
+            return tris;
         }
 
         public override Vector2[] ModelUVs(Vector3[] verts)
         {
             var uv = new Vector2[4];
-            uv[0] = new Vector2(0,1);
-            uv[1] = new Vector2(1,1);
-            uv[2] = new Vector2(1,0);
-            uv[3] = new Vector2(0,0); 
+            uv[0] = new Vector2(0, 1);
+            uv[1] = new Vector2(1, 1);
+            uv[2] = new Vector2(1, 0);
+            uv[3] = new Vector2(0, 0);
             return uv;
         }
 
