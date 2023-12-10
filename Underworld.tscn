@@ -39,16 +39,30 @@ shader = ExtResource("6_x6exc")
 
 [node name="Underworld" type="Node3D"]
 
+[node name="WorldViewContainer" type="SubViewportContainer" parent="."]
+offset_left = 200.0
+offset_top = 72.0
+offset_right = 900.0
+offset_bottom = 528.0
+
+[node name="SubViewport" type="SubViewport" parent="WorldViewContainer"]
+
+[node name="Camera3D" type="Camera3D" parent="WorldViewContainer/SubViewport"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.119, 2.137, 12.228)
+script = ExtResource("5_2to2n")
+
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "InteractionButtonsUW1", "InteractionButtonsUW2", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Runes", "SelectedRunes", "AutomapPanel", "AutomapImage", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "InteractionButtonsUW1", "InteractionButtonsUW2", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Runes", "SelectedRunes", "AutomapPanel", "AutomapImage", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG")]
 script = ExtResource("1_lw0yg")
 Font4X5P = ExtResource("5_8iiwt")
 Font5X6I = ExtResource("3_safdl")
 Font5X6P = ExtResource("4_pfbet")
 FontBig = ExtResource("5_kj12g")
-cam = NodePath("../../Camera3D")
+cam = NodePath("../../WorldViewContainer/SubViewport/Camera3D")
+uwviewport = NodePath("../../WorldViewContainer")
+uwsubviewport = NodePath("../../WorldViewContainer/SubViewport")
 mousecursor = NodePath("../mouse/mouseCursor")
 uw1UI = NodePath("../UW1")
 uw2UI = NodePath("../UW2")
@@ -1159,33 +1173,6 @@ layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="Automap" type="Panel" parent="UI/Common"]
-visible = false
-self_modulate = Color(1, 1, 1, 0)
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="MapBackground" type="TextureRect" parent="UI/Common/Automap"]
-layout_mode = 0
-offset_right = 1280.0
-offset_bottom = 800.0
-texture = ExtResource("20_o03w0")
-
-[node name="MapImage" type="TextureRect" parent="UI/Common/Automap"]
-layout_mode = 0
-offset_left = 60.0
-offset_top = 60.0
-offset_right = 700.0
-offset_bottom = 700.0
-flip_v = true
-
-[node name="Close" type="TextureRect" parent="UI/Common/Automap"]
-layout_mode = 0
-offset_left = 1060.0
-offset_top = 604.0
-offset_right = 1240.0
-offset_bottom = 704.0
-
 [node name="HealthFlask" type="Panel" parent="UI/Common"]
 offset_right = 40.0
 offset_bottom = 40.0
@@ -1417,6 +1404,33 @@ offset_right = 1088.0
 offset_bottom = 532.0
 mouse_filter = 2
 
+[node name="Automap" type="Panel" parent="UI/Common"]
+visible = false
+self_modulate = Color(1, 1, 1, 0)
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="MapBackground" type="TextureRect" parent="UI/Common/Automap"]
+layout_mode = 0
+offset_right = 1280.0
+offset_bottom = 800.0
+texture = ExtResource("20_o03w0")
+
+[node name="MapImage" type="TextureRect" parent="UI/Common/Automap"]
+layout_mode = 0
+offset_left = 60.0
+offset_top = 60.0
+offset_right = 700.0
+offset_bottom = 700.0
+flip_v = true
+
+[node name="Close" type="TextureRect" parent="UI/Common/Automap"]
+layout_mode = 0
+offset_left = 1060.0
+offset_top = 604.0
+offset_right = 1240.0
+offset_bottom = 704.0
+
 [node name="mouse" type="CanvasLayer" parent="UI"]
 
 [node name="mouseCursor" type="TextureRect" parent="UI/mouse"]
@@ -1442,14 +1456,10 @@ text = "The Label is here. Can you see it"
 
 [node name="main" type="Node3D" parent="." node_paths=PackedStringArray("cam", "audioplayer", "lblPositionDebug", "uwUI")]
 script = ExtResource("6_3y8oy")
-cam = NodePath("../Camera3D")
+cam = NodePath("../WorldViewContainer/SubViewport/Camera3D")
 audioplayer = NodePath("../UI/AudioPlayer")
 lblPositionDebug = NodePath("../UI/mouse/PositionLabel")
 uwUI = NodePath("../UI/uiManager")
-
-[node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.119, 2.137, 12.228)
-script = ExtResource("5_2to2n")
 
 [connection signal="gui_input" from="UI/Common/PaperDoll/Helm" to="UI/uiManager" method="_paperdoll_gui_input" binds= ["Helm"]]
 [connection signal="gui_input" from="UI/Common/PaperDoll/Boots" to="UI/uiManager" method="_paperdoll_gui_input" binds= ["Boots"]]
@@ -1505,6 +1515,6 @@ script = ExtResource("5_2to2n")
 [connection signal="gui_input" from="UI/Common/OtherControls/SelectedRune0" to="UI/uiManager" method="SelectedRunesClick"]
 [connection signal="gui_input" from="UI/Common/OtherControls/SelectedRune1" to="UI/uiManager" method="SelectedRunesClick"]
 [connection signal="gui_input" from="UI/Common/OtherControls/SelectedRune2" to="UI/uiManager" method="SelectedRunesClick"]
-[connection signal="gui_input" from="UI/Common/Automap/Close" to="UI/uiManager" method="CloseAutomap"]
 [connection signal="gui_input" from="UI/Common/HealthFlask/FlaskBorder" to="UI/uiManager" method="_on_healthflask_gui_input"]
 [connection signal="gui_input" from="UI/Common/ManaFlask/FlaskBorder" to="UI/uiManager" method="_on_manaflask_gui_input"]
+[connection signal="gui_input" from="UI/Common/Automap/Close" to="UI/uiManager" method="CloseAutomap"]

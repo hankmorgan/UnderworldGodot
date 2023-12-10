@@ -35,10 +35,10 @@ namespace Underworld
 		public static InteractionModes InteractionMode = InteractionModes.ModeUse;
 
 		[Export] public Camera3D cam;
-		[Export] public Node3D freelook;
+		//[Export] public Node3D freelook;
 
-		// [Export] public SubViewportContainer uwviewport;
-		// [Export] public SubViewport uwsubviewport;
+		[Export] public SubViewportContainer uwviewport;
+		[Export] public SubViewport uwsubviewport;
 
 		[Export] public mouseCursor mousecursor;
 		[Export] public CanvasLayer uw1UI;
@@ -280,9 +280,9 @@ namespace Underworld
 					mainwindowUW2.Texture = byt.LoadImageAt(BytLoader.UW2ThreeDWin_BYT, true);
 					if (!Fullscreen)
 					{
-						// uwviewport.SetSize(new Vector2(840f,512f));
-						// uwviewport.Position = new Vector2(62f,62f);
-						// uwsubviewport.Size = new Vector2I(840,512);
+						uwviewport.SetSize(new Vector2(840f,512f));
+						uwviewport.Position = new Vector2(62f,62f);
+						uwsubviewport.Size = new Vector2I(840,512);
 					}
 
 					for (int i = 0; i <= InteractionButtonsUW2.GetUpperBound(0); i++)
@@ -297,9 +297,9 @@ namespace Underworld
 					mainwindowUW1.Texture = byt.LoadImageAt(BytLoader.MAIN_BYT, true);
 					if (!Fullscreen)
 					{
-						// uwviewport.SetSize(new Vector2(700f,456f));
-						// uwviewport.Position = new Vector2(200f,72f);
-						// uwsubviewport.Size = new Vector2I(700,456);
+						uwviewport.SetSize(new Vector2(700f,456f));
+						uwviewport.Position = new Vector2(200f,72f);
+						uwsubviewport.Size = new Vector2I(700,456);
 					}
 					//grLfti.ExportImages("c:\\temp\\lfti\\");
 					for (int i = 0; i <= InteractionButtonsUW1.GetUpperBound(0); i++)
