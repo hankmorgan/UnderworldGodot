@@ -15,14 +15,14 @@ namespace Underworld
         public int floorheight;
         public Vector3 position;
 
-        bool isMoving
+        public bool isMoving
         {
             get
             {
                 return uwobject.item_id == 463;
             }
         }
-        bool isSecretDoor
+        public bool isSecretDoor
         {
             get
             {
@@ -54,6 +54,65 @@ namespace Underworld
                 {
                     return ((uwobject.classindex == 6) || (uwobject.classindex == 0xE));
                 }                
+            }
+        }
+
+        /// <summary>
+        /// What index key will open this door.
+        /// </summary>
+        public int KeyIndex
+        {
+            get
+            {
+                var lockobj = LockObject;
+                if (lockobj == null)
+                {
+                    return -1;
+                }
+                return lockobj.link & 0x3F;
+            }
+        }
+
+        public bool Locked
+        {
+            get
+            {
+                if (isOpen){return false;}
+                var lockobj = LockObject;
+                if (lockobj == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    return (lockobj.flags & 0x01) == 1;
+                }
+            }
+            set
+            {
+                var lockobj = LockObject;
+                if (lockobj==null){return;}
+                if (value)
+                {//Setting lock to true
+                    lockobj.flags |=1;  //set flag bit 0
+                }
+                else
+                {
+                    lockobj.flags &=0xE;  //clear flag bit 0
+                }
+            }
+        }
+
+        public uwObject LockObject
+        {
+            get
+            {
+                return objectsearch.FindMatchInObjectList(
+                    ListHeadIndex: uwobject.link, 
+                    majorclass: 4, 
+                    minorclass: 0, 
+                    classindex: 0xF,
+                    objList: Underworld.TileMap.current_tilemap.LevelObjects);
             }
         }
 
@@ -184,7 +243,15 @@ namespace Underworld
         public static bool Use(uwObject obj)
         {
             //TODO make this respect locks
-            ToggleDoor((door)obj.instance);
+            var d = (door)obj.instance;
+            if (d.Locked)
+            {
+               messageScroll.AddString("The " + GameStrings.GetObjectNounUW(obj.item_id) + " is locked.");
+            }
+            else
+            {   //door unlocked. toggle it's state
+                ToggleDoor((door)obj.instance);
+            }            
             return true;
         }
 

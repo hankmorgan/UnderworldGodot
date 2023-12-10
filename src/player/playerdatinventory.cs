@@ -3,6 +3,13 @@ namespace Underworld
     //Player dat inventory
     public partial class playerdat : Loader
     {
+
+
+        /// <summary>
+        /// Reference to the object the player is using currently in their hand
+        /// </summary>
+        public static int ObjectInHand = -1;
+
         public static uwObject[] InventoryObjects = new uwObject[512];
         //public static byte[] InventoryBuffer = new byte[512 * 8];
 

@@ -907,7 +907,7 @@ namespace Underworld
 							}
 							break;
 						case InteractionModes.ModeLook:
-							look.LookAt(obj, playerdat.InventoryObjects); break;
+							look.LookAt(obj, playerdat.InventoryObjects,false); break;
 						default:
 							Debug.Print("Unimplemented inventory use verb-object combination"); break;
 					}

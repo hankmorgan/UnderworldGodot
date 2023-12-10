@@ -5,7 +5,7 @@ namespace Underworld
     /// </summary>
     public class look : UWClass
     {
-        public static bool LookAt(int index, uwObject[] objList, bool WorldObject = true)
+        public static bool LookAt(int index, uwObject[] objList, bool WorldObject)
         {
             bool result = false;
             trap.ObjectThatStartedChain = index;
@@ -21,7 +21,7 @@ namespace Underworld
                         }
                     case 4:
                         {
-                            result = LookMajorClass4(obj, objList);
+                            result = LookMajorClass4(obj, objList,WorldObject);
                             break;
                         }
                     case 5:
@@ -64,10 +64,18 @@ namespace Underworld
             return false;
         }
 
-        public static bool LookMajorClass4(uwObject obj, uwObject[] objList)
+        public static bool LookMajorClass4(uwObject obj, uwObject[] objList, bool WorldObject)
         {
             switch (obj.minorclass)
             {
+                case 0: //keys up to 0xE
+                    {
+                        if (obj.classindex<=0xE)
+                        {//TODO LOCKPICK is in the middle of all these
+                            return doorkey.LookAt(obj,WorldObject);
+                        }
+                        break;
+                    }
                 case 3: //readables (up to index 8)
                     {
                         if (obj.classindex <= 8)

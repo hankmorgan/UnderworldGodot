@@ -21,7 +21,17 @@ namespace Underworld
 		{
 			Texture = uimanager.grCursors.LoadImageAt(0);
 			Input.MouseMode = Input.MouseModeEnum.Hidden;
-			//PivotOffset = new Vector2(Texture.GetWidth()/2f, Texture.GetHeight()/2f);
+		}
+
+		public void SetCursorArt(int index)
+		{
+			Texture = uimanager.grObjects.LoadImageAt(index);
+			Material= uimanager.grObjects.GetMaterial(index);
+		}
+
+		public void ResetCursor()
+		{
+			Texture = uimanager.grCursors.LoadImageAt(0);
 		}
 	}
 

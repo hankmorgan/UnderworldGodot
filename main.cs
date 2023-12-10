@@ -368,7 +368,7 @@ public partial class main : Node3D
 						{
 							case uimanager.InteractionModes.ModeLook:
 								//Do a look interaction with the object
-								look.LookAt(objindex, Underworld.TileMap.current_tilemap.LevelObjects);
+								look.LookAt(objindex, Underworld.TileMap.current_tilemap.LevelObjects,true);
 								break;
 							case uimanager.InteractionModes.ModeUse:
 								//do a use interaction with the object.

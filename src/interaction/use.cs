@@ -1,5 +1,3 @@
-using System.ComponentModel;
-
 namespace Underworld
 {
     /// <summary>
@@ -9,6 +7,10 @@ namespace Underworld
     {
         public static bool Use(int index, uwObject[] objList, bool WorldObject = true)
         {
+            if (playerdat.ObjectInHand != -1)
+            {
+                return useon.UseOn(index, objList, WorldObject);
+            }
             if (index==-1){return false;}
             trap.ObjectThatStartedChain = index;
             bool result = false;
@@ -36,7 +38,7 @@ namespace Underworld
                 //Check for use trigger on this action and try activate if so.
                 if ((obj.is_quant == 0) && (obj.link != 0))
                 {
-                    result = trigger.UseTrigger(
+                    trigger.UseTrigger(
                         srcObject: obj,
                         triggerIndex: obj.link,
                         objList: objList);
@@ -47,7 +49,7 @@ namespace Underworld
                 messageScroll.AddString(GameStrings.GetString(1, GameStrings.str_you_cannot_use_that_));
             }
 
-            return false;
+            return result;
         }
 
         public static bool UseMajorClass2(uwObject obj, uwObject[] objList, bool WorldObject)
@@ -105,6 +107,14 @@ namespace Underworld
         {
             switch (obj.minorclass)
             {
+                case 0: //keys up to 0xE
+                    {
+                        if (obj.classindex<=0xE)
+                        {
+                            return doorkey.Use(obj,WorldObject);
+                        }
+                        break;
+                    }
                 case 3: //readables (up to index 8)
                     {
                         if (obj.classindex <= 8)
