@@ -78,6 +78,21 @@ namespace Underworld
                             }                           
                             break;
                         }
+                    case 2:
+                        {   
+                            switch (obj.classindex)
+                            {
+                                case 0xF:
+                                    {//picketwatch in uw2, gold nugget in uw1
+                                        if (_RES==GAME_UW2)
+                                        {
+                                            return pocketwatch.Use(obj, WorldObject);
+                                        }
+                                        break;
+                                    }
+                            }
+                            break;
+                        }
                     case 3://food
                         {
                             return food.Use(obj, WorldObject);
