@@ -9,6 +9,7 @@ namespace Underworld
         public int lightlevel { get; set; }
         public string levarkfolder { get; set; }
         public string shader { get; set; }
+        public float FOV {get; set;}
         public static uwsettings instance;
     } //end class
 }//end namespace

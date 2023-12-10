@@ -5,8 +5,6 @@ using System.IO;
 using Underworld;
 using System.Text.Json;
 
-
-
 /// <summary>
 /// Node to initialise the game
 /// </summary>
@@ -35,6 +33,7 @@ public partial class main : Node3D
 		}
 		var gamesettings = JsonSerializer.Deserialize<uwsettings>(File.ReadAllText(settingsfile));
 		uwsettings.instance = gamesettings;
+		cam.Fov = Math.Max(50, uwsettings.instance.FOV);
 
 		//shade.getFarDist(0);
 		UWClass._RES = gamesettings.gametoload;
@@ -232,7 +231,7 @@ public partial class main : Node3D
             uwsettings.instance.lightlevel = light.BrightestLight();
 
             RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.GetViewingDistance(uwsettings.instance.lightlevel));
-            RenderingServer.GlobalShaderParameterSet("shades", shade.shadesdata[uwsettings.instance.lightlevel].ToImage());
+            //RenderingServer.GlobalShaderParameterSet("shades", shade.shadesdata[uwsettings.instance.lightlevel].ToImage());
         }
         else
 		{
