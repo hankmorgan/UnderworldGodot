@@ -3,15 +3,14 @@
 A port of the old unity project to Godot. Lets see how this goes...
 
 ## Before you begin.
-This is an experiment. No support is provided for it and usage is at your own risk
-
+This is an experiment. No support is provided for it and usage is at your own risk.
 
 ## Getting Started
 
-No exe builds yet. This is just a glorified map viewer at this point.
+No exe builds yet. This is just a glorified map viewer at this point that you will need to build in Godot yourself.
 
 1. Clone the repository
-2. Install Godot https://godotengine.org/ and run it.
+2. Install the Godot engine dev  https://godotengine.org/ and run it.
 3. Save a file called ``uwsettings.json`` in the Godot Folder. See below for format of the file
 4. Open the Project folder in Godot.
 5. Run. It might work
@@ -20,13 +19,14 @@ No exe builds yet. This is just a glorified map viewer at this point.
 This project is developed using VSCode using the C# Tools for Godot extensions.
 
 
-## UWsettings
+## UWsettings.json
 
 Enter optional paths for each game. Select the folder with the .exe file.
 If using the gog versions extract the file ``game.gog`` using a tool like 7-zip and point to that folder.
 
 To select maps to load.
-1. Choose the game mode by editing the gametoload param
+1. Choose the game mode by editing the gametoload param in the file ``uwsettings.json``. This file should be located in the same path as Godot or a built exe.
+   
    1. UW1 or UW2 are the valid values.
 2. Enter the level
 3. Other values
@@ -45,3 +45,14 @@ To select maps to load.
     "shader" : "UWSHADER"
 }
 ```
+
+
+## Controls
+Camera is only in fly mode currently.
+
+WSAD for movement.
+T to toggle mouse look
+
+## Known Bugs
+
+1. Mouse clicks on the 3D window are offset to the wrong location

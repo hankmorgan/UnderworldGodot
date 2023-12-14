@@ -46,7 +46,7 @@ namespace Underworld
                     messageScroll.AddString(GameStrings.GetString(1,6));
                     }
                 else
-                    {
+                    { //do key actions
                         if (doorInstance.Locked)
                         {
                             //locked. try and unlock
@@ -55,6 +55,7 @@ namespace Underworld
                                 //Unlock door
                                 doorInstance.Locked = false;
                                 door.ToggleDoor(doorInstance);
+                                messageScroll.AddString(GameStrings.GetString(1,4));
                             }
                             else
                             {

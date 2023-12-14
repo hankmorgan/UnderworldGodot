@@ -35,12 +35,12 @@ namespace Underworld
         {
             switch (uwsettings.instance.shader.ToUpper())
             {                
-                case "UWSHADERMIXED":
-                    textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwshadermixed.gdshader");
-                    break;
-                case "UWSHADERSMOOTH":
-                    textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwshadersmooth.gdshader");
-                    break;
+                // case "UWSHADERMIXED":
+                //     textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwshadermixed.gdshader");
+                //     break;
+                // case "UWSHADERSMOOTH":
+                //     textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwshadersmooth.gdshader");
+                //     break;
                 case "UWSHADER":
                 default:
                     textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwshader.gdshader");
