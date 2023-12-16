@@ -350,7 +350,8 @@ public partial class main : Node3D
 		{
 			//var camera3D = GetNode<Camera3D>("Camera3D");
 			var from = cam.ProjectRayOrigin(eventMouseButton.Position);
-			var to = from + cam.ProjectRayNormal(eventMouseButton.Position) * RayLength;
+			var mousepos = uimanager.instance.uwsubviewport.GetMousePosition(); //eventMouseButton.Position
+			var to = from + cam.ProjectRayNormal(mousepos) * RayLength;
 			var query = PhysicsRayQueryParameters3D.Create(from, to);
 			var spaceState = GetWorld3D().DirectSpaceState;
 			var result = spaceState.IntersectRay(query);
