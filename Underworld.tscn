@@ -1446,12 +1446,13 @@ texture_filter = 1
 offset_left = 28.0
 offset_top = -9.0
 offset_right = 628.0
-offset_bottom = 91.0
+offset_bottom = 111.0
 mouse_filter = 2
 theme_override_fonts/normal_font = ExtResource("5_8iiwt")
 theme_override_font_sizes/normal_font_size = 47
 text = "The Label is here. Can you see it
-Line 2"
+Line 2
+line 3"
 
 [node name="worldobjects" type="Node3D" parent="."]
 

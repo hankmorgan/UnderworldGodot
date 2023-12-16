@@ -196,51 +196,51 @@ public partial class main : Node3D
 
 
 		if (uwsettings.instance.levarkfolder.ToUpper() != "DATA")
-        {
-            //load player dat
-            playerdat.Load(uwsettings.instance.levarkfolder);
-            Debug.Print($"Your name is {playerdat.CharName}");
-            LoadTileMap(playerdat.dungeon_level - 1, gr);
+		{
+			//load player dat
+			playerdat.Load(uwsettings.instance.levarkfolder);
+			Debug.Print($"Your name is {playerdat.CharName}");
+			LoadTileMap(playerdat.dungeon_level - 1, gr);
 
-            Debug.Print($"You are at x:{playerdat.X} y:{playerdat.Y} z:{playerdat.Z}");
-            Debug.Print($"You are at x:{playerdat.tileX} {playerdat.xpos} y:{playerdat.tileY} {playerdat.ypos} z:{playerdat.zpos}");
-            cam.Position = uwObject.GetCoordinate(playerdat.tileX, playerdat.tileY, playerdat.xpos, playerdat.ypos, playerdat.camerazpos);
-            Debug.Print($"Player Heading is {playerdat.heading}");
-            cam.Rotation = Vector3.Zero;
-            cam.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
-            cam.Rotate(Vector3.Up, (float)(-playerdat.heading / 127f * Math.PI));
-            uimanager.SetBody(playerdat.Body, playerdat.isFemale);
-            for (int i = 0; i < 8; i++)
-            {//Init the backpack indices
-                playerdat.SetBackPackIndex(i, playerdat.BackPackObject(i));
-            }
-			
-            //set paperdoll
-            uimanager.UpdateInventoryDisplay();
+			Debug.Print($"You are at x:{playerdat.X} y:{playerdat.Y} z:{playerdat.Z}");
+			Debug.Print($"You are at x:{playerdat.tileX} {playerdat.xpos} y:{playerdat.tileY} {playerdat.ypos} z:{playerdat.zpos}");
+			cam.Position = uwObject.GetCoordinate(playerdat.tileX, playerdat.tileY, playerdat.xpos, playerdat.ypos, playerdat.camerazpos);
+			Debug.Print($"Player Heading is {playerdat.heading}");
+			cam.Rotation = Vector3.Zero;
+			cam.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
+			cam.Rotate(Vector3.Up, (float)(-playerdat.heading / 127f * Math.PI));
+			uimanager.SetBody(playerdat.Body, playerdat.isFemale);
+			for (int i = 0; i < 8; i++)
+			{//Init the backpack indices
+				playerdat.SetBackPackIndex(i, playerdat.BackPackObject(i));
+			}
 
-            //Load rune slots
-            for (int i = 0; i < 24; i++)
-            {
-                uimanager.SetRuneInBag(i, playerdat.GetRune(i));
-            }
-            uimanager.RedrawSelectedRuneSlots();
+			//set paperdoll
+			uimanager.UpdateInventoryDisplay();
+
+			//Load rune slots
+			for (int i = 0; i < 24; i++)
+			{
+				uimanager.SetRuneInBag(i, playerdat.GetRune(i));
+			}
+			uimanager.RedrawSelectedRuneSlots();
 			uimanager.RefreshHealthFlask();
 			uimanager.RefreshManaFlask();
 
-            //Set the playerlight level;
-            uwsettings.instance.lightlevel = light.BrightestLight();
+			//Set the playerlight level;
+			uwsettings.instance.lightlevel = light.BrightestLight();
 
-            RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.GetViewingDistance(uwsettings.instance.lightlevel));
-            //RenderingServer.GlobalShaderParameterSet("shades", shade.shadesdata[uwsettings.instance.lightlevel].ToImage());
-        }
-        else
+			RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.GetViewingDistance(uwsettings.instance.lightlevel));
+			//RenderingServer.GlobalShaderParameterSet("shades", shade.shadesdata[uwsettings.instance.lightlevel].ToImage());
+		}
+		else
 		{
 			Random r = new Random();
 			playerdat.InitEmptyPlayer();
-			playerdat.tileX = -(int)(cam.Position.X/1.2f);
-			playerdat.tileY = (int)(cam.Position.Z/1.2f);
+			playerdat.tileX = -(int)(cam.Position.X / 1.2f);
+			playerdat.tileY = (int)(cam.Position.Z / 1.2f);
 
-			playerdat.dungeon_level = uwsettings.instance.level+1;
+			playerdat.dungeon_level = uwsettings.instance.level + 1;
 			var isFemale = r.Next(0, 2) == 1;
 			playerdat.isFemale = isFemale;
 			uimanager.SetHelm(isFemale, -1);
@@ -259,9 +259,9 @@ public partial class main : Node3D
 
 			playerdat.Body = r.Next(0, 4);
 			uimanager.SetBody(playerdat.Body, playerdat.isFemale);
-			
 
-			
+
+
 
 			LoadTileMap(gamesettings.level, gr);
 		}
@@ -269,7 +269,7 @@ public partial class main : Node3D
 
 
 
-    public void LoadTileMap(int newLevelNo, GRLoader grObjects)
+	public void LoadTileMap(int newLevelNo, GRLoader grObjects)
 	{
 		grObjects.UseRedChannel = true;
 
@@ -283,13 +283,13 @@ public partial class main : Node3D
 		Underworld.ObjectCreator.GenerateObjects(worldobjects, Underworld.TileMap.current_tilemap.LevelObjects, grObjects, Underworld.TileMap.current_tilemap);
 		the_tiles.Position = new Vector3(0f, 0f, 0f);
 		tileMapRender.GenerateLevelFromTileMap(the_tiles, worldobjects, UWClass._RES, Underworld.TileMap.current_tilemap, Underworld.TileMap.current_tilemap.LevelObjects, false);
-		
+
 		switch (UWClass._RES)
 		{
-			case UWClass.GAME_UW2:	
-				automap.automaps = new automap[80];break;		
+			case UWClass.GAME_UW2:
+				automap.automaps = new automap[80]; break;
 			default:
-				automap.automaps = new automap[9];break;
+				automap.automaps = new automap[9]; break;
 		}
 		automap.automaps[newLevelNo] = new automap(newLevelNo);
 		// string auto="";
@@ -310,20 +310,23 @@ public partial class main : Node3D
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-		int tileX = -(int)(cam.Position.X/1.2f);
-		int tileY = (int)(cam.Position.Z/1.2f);
+		int tileX = -(int)(cam.Position.X / 1.2f);
+		int tileY = (int)(cam.Position.Z / 1.2f);
 
-		lblPositionDebug.Text = $"{cam.Position.ToString()}\n{tileX} {tileY}";
-		 if ((tileX <64) && (tileX>=0) && (tileY <64) && (tileY>=0)) 
-		 {
-		// 	//automap.currentautomap.tiles[tileX,tileX].visited = true;
-			if ((playerdat.tileX!=tileX) || (playerdat.tileY!=tileY))
+
+
+		lblPositionDebug.Text = $"{cam.Position.ToString()}\n{tileX} {tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}";
+
+		if ((tileX < 64) && (tileX >= 0) && (tileY < 64) && (tileY >= 0))
+		{
+			// 	//automap.currentautomap.tiles[tileX,tileX].visited = true;
+			if ((playerdat.tileX != tileX) || (playerdat.tileY != tileY))
 			{
 				playerdat.tileX = tileX;
 				playerdat.tileY = tileY;
 				uwsettings.instance.lightlevel = light.BrightestLight();
 			}
-		 }		
+		}
 
 
 		//RenderingServer.GlobalShaderParameterSet("cameraPos", cam.Position);
@@ -342,47 +345,45 @@ public partial class main : Node3D
 		}
 	}
 
-
 	public override void _Input(InputEvent @event)
 	{
 		float RayLength = 3.0f;
 		if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
 		{
-			//var camera3D = GetNode<Camera3D>("Camera3D");
-			var from = cam.ProjectRayOrigin(eventMouseButton.Position);
-			var mousepos = uimanager.instance.uwsubviewport.GetMousePosition(); //eventMouseButton.Position
-			var to = from + cam.ProjectRayNormal(mousepos) * RayLength;
-			var query = PhysicsRayQueryParameters3D.Create(from, to);
-			var spaceState = GetWorld3D().DirectSpaceState;
-			var result = spaceState.IntersectRay(query);
-			if (result != null)
+			if (uimanager.IsMouseInViewPort())
 			{
-				if (result.ContainsKey("collider"))
+				//var camera3D = GetNode<Camera3D>("Camera3D");
+				var from = cam.ProjectRayOrigin(eventMouseButton.Position);
+				var mousepos = uimanager.instance.uwsubviewport.GetMousePosition(); //eventMouseButton.Position
+				var to = from + cam.ProjectRayNormal(mousepos) * RayLength;
+				var query = PhysicsRayQueryParameters3D.Create(from, to);
+				var spaceState = GetWorld3D().DirectSpaceState;
+				var result = spaceState.IntersectRay(query);
+				if (result != null)
 				{
-					var obj = (StaticBody3D)result["collider"];
-					Debug.Print(obj.Name);
-					messageScroll.AddString(obj.Name);
-					string[] vals = obj.Name.ToString().Split("_");
-					if (int.TryParse(vals[0], out int objindex))
+					if (result.ContainsKey("collider"))
 					{
-						switch (uimanager.InteractionMode)
+						var obj = (StaticBody3D)result["collider"];
+						Debug.Print(obj.Name);
+						messageScroll.AddString(obj.Name);
+						string[] vals = obj.Name.ToString().Split("_");
+						if (int.TryParse(vals[0], out int objindex))
 						{
-							case uimanager.InteractionModes.ModeLook:
-								//Do a look interaction with the object
-								look.LookAt(objindex, Underworld.TileMap.current_tilemap.LevelObjects,true);
-								break;
-							case uimanager.InteractionModes.ModeUse:
-								//do a use interaction with the object.
-								use.Use(objindex, Underworld.TileMap.current_tilemap.LevelObjects);
-								break;
+							switch (uimanager.InteractionMode)
+							{
+								case uimanager.InteractionModes.ModeLook:
+									//Do a look interaction with the object
+									look.LookAt(objindex, Underworld.TileMap.current_tilemap.LevelObjects, true);
+									break;
+								case uimanager.InteractionModes.ModeUse:
+									//do a use interaction with the object.
+									use.Use(objindex, Underworld.TileMap.current_tilemap.LevelObjects);
+									break;
+							}
 						}
 					}
 				}
 			}
-			// foreach (var item in result)
-			// {
-			// 	Debug.Print(item.ToString());
-			// }
 		}
 	}
 

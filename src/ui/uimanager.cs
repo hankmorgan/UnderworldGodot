@@ -1062,6 +1062,27 @@ namespace Underworld
 
 
 		/// <summary>
+		/// Checks if the mouse cursor is over the viewport
+		/// </summary>
+		/// <returns></returns>
+		public static bool IsMouseInViewPort()
+		{
+			var viewportmouspos = uimanager.instance.uwsubviewport.GetMousePosition();
+			if (
+				(viewportmouspos.X >= 0) && (viewportmouspos.Y >= 0)
+				&&
+				(viewportmouspos.X <= uimanager.instance.uwsubviewport.Size.X) && (viewportmouspos.Y <= uimanager.instance.uwsubviewport.Size.Y)
+				)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		/// <summary>
 		/// Selects a rune from the rune bag, triggers update of the selected ui and updates player dat
 		/// </summary>
 		/// <param name="NewRuneToSelect"></param>
