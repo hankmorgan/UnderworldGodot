@@ -232,6 +232,28 @@ public partial class main : Node3D
 
 			RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.GetViewingDistance(uwsettings.instance.lightlevel));
 			//RenderingServer.GlobalShaderParameterSet("shades", shade.shadesdata[uwsettings.instance.lightlevel].ToImage());
+
+			int spriteNo = 127;
+            var a_sprite = new MeshInstance3D(); //new Sprite3D();
+            a_sprite.Name = "player";
+            a_sprite.Mesh = new QuadMesh();
+            Vector2 NewSize;
+            var img = gr.LoadImageAt(spriteNo);
+            if (img != null)
+            {
+                a_sprite.Mesh.SurfaceSetMaterial(0, gr.GetMaterial(spriteNo));
+                NewSize = new Vector2(
+                        ArtLoader.SpriteScale * img.GetWidth(),
+                        ArtLoader.SpriteScale * img.GetHeight()
+                        );
+                a_sprite.Mesh.Set("size", NewSize);
+				Node3D worldobjects = GetNode<Node3D>("/root/Underworld/worldobjects");
+                worldobjects.AddChild(a_sprite);
+                a_sprite.Position = cam.Position;            
+            }
+
+
+
 		}
 		else
 		{

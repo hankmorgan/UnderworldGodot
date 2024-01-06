@@ -120,7 +120,10 @@ namespace Underworld
                 SetAt(0x5D, (byte)value);
             }
         }
-        //Character attributes
+        
+        /// <summary>
+        /// The full X co-ordinate in the map
+        /// </summary>
         public static int X
         {
             get
@@ -129,6 +132,9 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// The X tile the Player is in
+        /// </summary>
         public static int tileX
         {
             get
@@ -143,6 +149,19 @@ namespace Underworld
             }
         }
 
+        public static int xpos
+        {
+            get
+            {
+                return (X & 0xff) >> 5;
+                
+                //& 0x7;// need to confirm if correct
+            }
+        }
+
+        /// <summary>
+        /// The full Y Coordinate in the map
+        /// </summary>
         public static int Y
         {
             get
@@ -151,13 +170,10 @@ namespace Underworld
             }
         }
 
-        public static int xpos
-        {
-            get
-            {
-                return X & 0x7;// need to confirm if correct
-            }
-        }
+
+        /// <summary>
+        /// The Y tile the player is in
+        /// </summary>
         public static int tileY
         {
             get
@@ -172,11 +188,15 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// Player yposition in the tile. Player position appears to be a higher resolution than object positioning 
+        /// so the below calc is a hack for initial development positioning of the player cha
+        /// </summary>
         public static int ypos
         {
             get
             {
-                return Y & 0x7;// need to confirm if correct
+                return (Y & 0xff) >> 5;// need to confirm if correct
             }
         }
 
