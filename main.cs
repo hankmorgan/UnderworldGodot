@@ -11,6 +11,8 @@ using System.Text.Json;
 public partial class main : Node3D
 {
 
+	public static Node3D instance;
+
 	// Called when the node enters the scene tree for the first time.
 	[Export] public Camera3D cam;
 	[Export] public AudioStreamPlayer audioplayer;
@@ -22,6 +24,7 @@ public partial class main : Node3D
 
 	public override void _Ready()
 	{
+		instance = this;
 		var appfolder = OS.GetExecutablePath();
 		appfolder = System.IO.Path.GetDirectoryName(appfolder);
 		var settingsfile = System.IO.Path.Combine(appfolder, "uwsettings.json");
@@ -393,13 +396,16 @@ public partial class main : Node3D
 						{
 							switch (uimanager.InteractionMode)
 							{
+								case uimanager.InteractionModes.ModeTalk:
+									talk.Talk(objindex, Underworld.TileMap.current_tilemap.LevelObjects, true);
+									break;
 								case uimanager.InteractionModes.ModeLook:
 									//Do a look interaction with the object
 									look.LookAt(objindex, Underworld.TileMap.current_tilemap.LevelObjects, true);
 									break;
 								case uimanager.InteractionModes.ModeUse:
 									//do a use interaction with the object.
-									use.Use(objindex, Underworld.TileMap.current_tilemap.LevelObjects);
+									use.Use(objindex, Underworld.TileMap.current_tilemap.LevelObjects, true);
 									break;
 							}
 						}
@@ -407,6 +413,20 @@ public partial class main : Node3D
 				}
 			}
 		}
+		if (ConversationVM.WaitingForInput)
+		{			
+			if (@event is InputEventKey keyinput)
+			{
+				Debug.Print(keyinput.Keycode.ToString());				
+				if (int.TryParse(keyinput.AsText(), out int result))
+				{	
+					if ((result>0) && (result<=ConversationVM.MaxAnswer))
+					{
+						ConversationVM.PlayerNumericAnswer = result;
+						ConversationVM.WaitingForInput = false;	
+					}					
+				}							
+			}
+		}		
 	}
-
 }

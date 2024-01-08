@@ -940,7 +940,7 @@ namespace Underworld
         /// <returns>The simple object name U.</returns>
         /// <param name="item_id">Item identifier.</param>
 
-        public string GetSimpleObjectNameUW(int item_id)
+        public static string GetSimpleObjectNameUW(int item_id)
         {//Without quants.
             string output = GetString(4, item_id);
             if (output == null)

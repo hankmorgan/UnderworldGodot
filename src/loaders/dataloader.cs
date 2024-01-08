@@ -411,7 +411,7 @@ namespace Underworld
                             if (((uwb.CompressionFlag >> 1) & 0x01) == 1)
                             {//data is compressed;
                                 uwb.Data = unpackUW2(arkData, uwb.Address, ref uwb.DataLen);
-                                File.WriteAllBytes($"c:\\temp\\unpacked_{blockNo}.dat", uwb.Data);
+                                //File.WriteAllBytes($"c:\\temp\\unpacked_{blockNo}.dat", uwb.Data);
                                 if (uwb.DataLen>0)
                                 {
                                     Array.Resize(ref uwb.Data, uwb.DataLen);
@@ -443,7 +443,7 @@ namespace Underworld
                             {//Copy the data to the block.
                                 uwb.Data[b++] = arkData[i];
                             }
-                            File.WriteAllBytes($"c:\\temp\\unpacked_{blockNo}.dat", uwb.Data);
+                            //File.WriteAllBytes($"c:\\temp\\unpacked_{blockNo}.dat", uwb.Data);
                             return true;
                         }
                         else

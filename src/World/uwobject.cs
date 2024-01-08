@@ -15,7 +15,14 @@ namespace Underworld
         {
             get
             {
-                return GameStrings.GetObjectNounUW(item_id);
+                if (majorclass==1)
+                {
+                    if (npc_whoami != 0)
+                    {
+                        return GameStrings.GetString(7, npc_whoami + 16);
+                    }
+                }
+                return GameStrings.GetObjectNounUW(item_id);             
             }
         }
 
