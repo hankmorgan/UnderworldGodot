@@ -9,6 +9,8 @@ namespace Underworld
     /// </summary>
     public partial class ConversationVM : UWClass
     {
+
+        public static bool InConversation=false;
         /// <summary>
         /// The currently referenced conversation.
         /// </summary>
@@ -512,7 +514,11 @@ namespace Underworld
             } //end loop
 
             //should have a wait here
-
+            yield return new WaitForSeconds(3);
+            
+            uimanager.EnableDisable(uimanager.instance.ConversationPanel,false);
+            uimanager.instance.ConversationText.Text="";
+            ConversationVM.InConversation = false;
             yield return null;
         }
     }

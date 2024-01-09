@@ -21,16 +21,23 @@ namespace Underworld
             MaxAnswer = 0;
             int j = 1;
             ClearConversationOptions();
+            string finaltext = "";
             for (int i = Start; i <= StackValues.GetUpperBound(0); i++)
             {
                 if (at(i) > 0)
                 {
-                    string TextLine = getString(at(i));
-                    if (TextLine.Contains("@"))
+                    string NewResponseOption = getString(at(i));
+                    if (NewResponseOption.Contains("@"))
                     {
-                        TextLine = TextSubstitute(TextLine);
+                        NewResponseOption = TextSubstitute(NewResponseOption);
                     }
-                    Debug.Print($"{j} {TextLine}");
+                    if (finaltext.Length>0)
+                    {
+                        finaltext += "\n";
+                    }
+                    finaltext += $"{j}. {NewResponseOption}";
+
+                    //Debug.Print($"{j} {TextLine}");
                     //UWHUD.instance.ConversationOptions[j - 1].SetText(j + "." + TextLine + "");
                     //UWHUD.instance.EnableDisableControl(UWHUD.instance.ConversationOptions[j - 1], true);
                     j++;
@@ -41,17 +48,15 @@ namespace Underworld
                     break;
                 }
             }
+            messageScroll.AddString(finaltext);
             WaitingForInput=true;
             while(WaitingForInput)
             {
                 //Debug.Print("Waiting!");
                 yield return new WaitOneFrame();     
             }
-            //yield return new WaitForInput();
-            //yield return Coroutine.Run(WaitForInput(),main.instance);
-            //yield return Coroutine.Run(WaitForInput(),main.instance);
             int AnswerIndex = at(Start + PlayerNumericAnswer - 1);
-            yield return Coroutine.Run(say_op(AnswerIndex, PC_SAY),main.instance);
+            yield return say_op(AnswerIndex, PC_SAY);            
             result_register =  PlayerNumericAnswer;
             yield return 0;
         }

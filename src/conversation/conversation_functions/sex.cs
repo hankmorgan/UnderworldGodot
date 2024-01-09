@@ -1,13 +1,18 @@
 
+using System.Diagnostics;
+
 namespace Underworld
 {
     public partial class ConversationVM:UWClass
     {
+        /// <summary>
+        /// Store on the stack the correct pronouns based on the player sex.
+        /// </summary>
         public static void Sex()
         {
             short[] args = new short[2];
-            args[0] = at(stackptr - 2);//ptr to value
-            args[1] = at(stackptr - 3);//ptr to value
+            args[0] = at(stackptr - 1);//ptr to value
+            args[1] = at(stackptr - 2);//ptr to value
             result_register = sex_string(at(args[0]), at(args[1]));
             return;
         }

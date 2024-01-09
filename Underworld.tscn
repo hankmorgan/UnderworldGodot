@@ -56,7 +56,7 @@ script = ExtResource("5_2to2n")
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "InteractionButtonsUW1", "InteractionButtonsUW2", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Runes", "SelectedRunes", "AutomapPanel", "AutomapImage", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "InteractionButtonsUW1", "InteractionButtonsUW2", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Runes", "SelectedRunes", "AutomapPanel", "AutomapImage", "ConversationPanel", "PlayerPortrait", "NPCPortrait", "PlayerNameLabel", "NPCNameLabel", "PlayerPortraitFrame", "NPCPortraitFrame", "PlayerNameLableFrame", "NPCNameLableFrame", "PlayerTradeArea", "NPCTradeArea", "ConversationScrollTop", "ConversationScrollBottom", "ConversationText", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG")]
 script = ExtResource("1_lw0yg")
 Font4X5P = ExtResource("5_8iiwt")
 Font5X6I = ExtResource("3_safdl")
@@ -113,6 +113,20 @@ Runes = [NodePath("../Common/RuneBag/Rune0"), NodePath("../Common/RuneBag/Rune1"
 SelectedRunes = [NodePath("../Common/OtherControls/SelectedRune0"), NodePath("../Common/OtherControls/SelectedRune1"), NodePath("../Common/OtherControls/SelectedRune2")]
 AutomapPanel = NodePath("../Common/Automap")
 AutomapImage = NodePath("../Common/Automap/MapImage")
+ConversationPanel = NodePath("../Common/Conversation")
+PlayerPortrait = NodePath("../Common/Conversation/PlayerPortrait")
+NPCPortrait = NodePath("../Common/Conversation/NPCPortrait")
+PlayerNameLabel = NodePath("../Common/Conversation/PlayerNameLabel")
+NPCNameLabel = NodePath("../Common/Conversation/NPCNameLabel")
+PlayerPortraitFrame = NodePath("../Common/Conversation/PlayerPortraitFrame")
+NPCPortraitFrame = NodePath("../Common/Conversation/NPCPortraitFrame")
+PlayerNameLableFrame = NodePath("../Common/Conversation/PlayerNameFrame")
+NPCNameLableFrame = NodePath("../Common/Conversation/NPCNameFrame")
+PlayerTradeArea = NodePath("../Common/Conversation/PlayerTradeArea")
+NPCTradeArea = NodePath("../Common/Conversation/NPCTradeArea")
+ConversationScrollTop = NodePath("../Common/Conversation/ConversationTopBorder")
+ConversationScrollBottom = NodePath("../Common/Conversation/ConversationBottomBorder")
+ConversationText = NodePath("../Common/Conversation/ConversationText")
 Charname = NodePath("../Common/StatsDisplay/Charname")
 CharLevel = NodePath("../Common/StatsDisplay/CharLevel")
 CharClass = NodePath("../Common/StatsDisplay/CharClass")
@@ -1432,6 +1446,135 @@ offset_left = 1060.0
 offset_top = 604.0
 offset_right = 1240.0
 offset_bottom = 704.0
+
+[node name="Conversation" type="Panel" parent="UI/Common"]
+visible = false
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="PlayerPortraitFrame" type="TextureRect" parent="UI/Common/Conversation"]
+layout_mode = 0
+offset_left = 780.0
+offset_top = 36.0
+offset_right = 932.0
+offset_bottom = 188.0
+
+[node name="PlayerPortrait" type="TextureRect" parent="UI/Common/Conversation"]
+layout_mode = 0
+offset_left = 788.0
+offset_top = 44.0
+offset_right = 924.0
+offset_bottom = 180.0
+
+[node name="PlayerNameFrame" type="TextureRect" parent="UI/Common/Conversation"]
+layout_mode = 0
+offset_left = 556.0
+offset_right = 932.0
+offset_bottom = 36.0
+
+[node name="PlayerNameLabel" type="Label" parent="UI/Common/Conversation"]
+layout_mode = 0
+offset_left = 572.0
+offset_top = -16.0
+offset_right = 820.0
+offset_bottom = 34.0
+theme_override_colors/font_color = Color(0.454902, 0.627451, 1, 1)
+theme_override_fonts/font = ExtResource("4_pfbet")
+theme_override_font_sizes/font_size = 64
+text = "Character Name"
+
+[node name="PlayerTradeArea" type="TextureRect" parent="UI/Common/Conversation"]
+layout_mode = 0
+offset_left = 557.0
+offset_top = 36.0
+offset_right = 777.0
+offset_bottom = 188.0
+
+[node name="NPCPortraitFrame" type="TextureRect" parent="UI/Common/Conversation"]
+layout_mode = 0
+offset_left = 173.0
+offset_top = 36.0
+offset_right = 325.0
+offset_bottom = 188.0
+
+[node name="NPCPortrait" type="TextureRect" parent="UI/Common/Conversation"]
+layout_mode = 0
+offset_left = 181.0
+offset_top = 44.0
+offset_right = 317.0
+offset_bottom = 180.0
+
+[node name="NPCNameFrame" type="TextureRect" parent="UI/Common/Conversation"]
+layout_mode = 0
+offset_left = 172.0
+offset_right = 548.0
+offset_bottom = 36.0
+
+[node name="NPCNameLabel" type="Label" parent="UI/Common/Conversation"]
+layout_mode = 0
+offset_left = 188.0
+offset_top = -16.0
+offset_right = 516.0
+offset_bottom = 34.0
+theme_override_colors/font_color = Color(0.454902, 0.627451, 1, 1)
+theme_override_fonts/font = ExtResource("4_pfbet")
+theme_override_font_sizes/font_size = 64
+text = "Character Name"
+
+[node name="NPCTradeArea" type="TextureRect" parent="UI/Common/Conversation"]
+layout_mode = 0
+offset_left = 330.0
+offset_top = 36.0
+offset_right = 550.0
+offset_bottom = 188.0
+
+[node name="ConversationTopBorder" type="TextureRect" parent="UI/Common/Conversation"]
+layout_mode = 0
+offset_left = 168.0
+offset_top = 188.0
+offset_right = 936.0
+offset_bottom = 228.0
+
+[node name="ConversationBottomBorder" type="TextureRect" parent="UI/Common/Conversation"]
+layout_mode = 0
+offset_left = 168.0
+offset_top = 508.0
+offset_right = 936.0
+offset_bottom = 548.0
+
+[node name="ConversationBackground" type="TextureRect" parent="UI/Common/Conversation"]
+layout_mode = 0
+offset_left = 217.0
+offset_top = 200.0
+offset_right = 889.0
+offset_bottom = 532.0
+texture = ExtResource("7_qiq8a")
+
+[node name="ConversationText" type="Label" parent="UI/Common/Conversation"]
+texture_filter = 1
+offset_left = 220.0
+offset_top = 201.0
+offset_right = 892.0
+offset_bottom = 533.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_constants/line_spacing = -16
+theme_override_fonts/font = ExtResource("5_8iiwt")
+theme_override_font_sizes/font_size = 48
+text = "1......................................................
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13....................................................."
+autowrap_mode = 1
+text_overrun_behavior = 1
 
 [node name="mouse" type="CanvasLayer" parent="UI"]
 

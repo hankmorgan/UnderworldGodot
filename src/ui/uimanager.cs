@@ -78,6 +78,7 @@ namespace Underworld
 		public static GRLoader grObjects;
 		public static GRLoader grLfti;
 		public static GRLoader grOptBtns;
+		public static GRLoader grConverse;
 		private ImageTexture[] UW2OptBtnsOff;
 		private ImageTexture[] UW2OptBtnsOn;
 
@@ -122,6 +123,26 @@ namespace Underworld
 		//Automap
 		[Export] public Panel AutomapPanel;
 		[Export] public TextureRect AutomapImage;
+		public static bool InAutomap=false;
+
+		//Conversation/Trade areas
+		[Export] public Panel ConversationPanel;
+		[Export] public TextureRect PlayerPortrait;
+		[Export] public TextureRect NPCPortrait;
+		[Export] public Label PlayerNameLabel;
+		[Export] public Label NPCNameLabel;
+		[Export] public TextureRect PlayerPortraitFrame;
+		[Export] public TextureRect NPCPortraitFrame;
+		[Export] public TextureRect PlayerNameLableFrame;
+		[Export] public TextureRect NPCNameLableFrame;
+		[Export] public TextureRect PlayerTradeArea;
+		[Export] public TextureRect NPCTradeArea;
+
+		[Export] public TextureRect ConversationScrollTop;
+		[Export] public TextureRect ConversationScrollBottom;
+
+		[Export] public Label ConversationText;
+
 
 		//Stats Display
 		[Export] public Label Charname;
@@ -171,6 +192,16 @@ namespace Underworld
 			grFlasks = new GRLoader(GRLoader.FLASKS_GR, GRLoader.GRShaderMode.UIShader);
 			HealthFlaskBG.Texture = grFlasks.LoadImageAt(75);
 			ManaFlaskBG.Texture = grFlasks.LoadImageAt(75);
+
+			grConverse = new GRLoader(GRLoader.CONVERSE_GR,GRLoader.GRShaderMode.UIShader);
+			NPCNameLableFrame.Texture = grConverse.LoadImageAt(0);
+			PlayerNameLableFrame.Texture = grConverse.LoadImageAt(0);
+			PlayerTradeArea.Texture = grConverse.LoadImageAt(1);
+			NPCTradeArea.Texture = grConverse.LoadImageAt(1);
+			PlayerPortraitFrame.Texture = grConverse.LoadImageAt(2);
+			NPCPortraitFrame.Texture = grConverse.LoadImageAt(2);
+			ConversationScrollTop.Texture= grConverse.LoadImageAt(3);
+			ConversationScrollBottom.Texture= grConverse.LoadImageAt(4);
 			
 			var grPanels = new GRLoader(GRLoader.PANELS_GR, GRLoader.GRShaderMode.UIShader);
 			if (grPanels != null)
@@ -925,6 +956,7 @@ namespace Underworld
 			if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
 			{
 				EnableDisable(AutomapPanel, false);
+				uimanager.InAutomap=false;
 			}
 		}
 

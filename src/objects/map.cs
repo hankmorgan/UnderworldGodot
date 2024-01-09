@@ -11,6 +11,7 @@ namespace Underworld
             if (WorldObject){return false;}
             uimanager.instance.AutomapImage.Texture = AutomapRender.MapImage(playerdat.dungeon_level-1);
             uimanager.EnableDisable(uimanager.instance.AutomapPanel,true);
+            uimanager.InAutomap=true;//to block input
             return false;
         }
     }//end class

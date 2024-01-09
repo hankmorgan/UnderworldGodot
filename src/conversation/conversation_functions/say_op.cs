@@ -15,8 +15,8 @@ namespace Underworld
         public static IEnumerator say_op(int arg1, int PrintType = NPC_SAY)
         {
             yield return new WaitForSeconds(0.3f);
-            Debug.Print(getString(arg1));
-            messageScroll.AddString(getString(arg1));
+            //Debug.Print(getString(arg1));
+            uimanager.instance.ConversationText.Text = getString(arg1);           
             yield return null;
         }
     }

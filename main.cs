@@ -11,6 +11,18 @@ using System.Text.Json;
 public partial class main : Node3D
 {
 
+	public static bool blockinput
+	{
+		get
+		{
+			return
+			 ConversationVM.InConversation
+			 ||
+			 uimanager.InAutomap;
+			
+			; //TODO and other menu modes that will stop input
+		}
+	}
 	public static Node3D instance;
 
 	// Called when the node enters the scene tree for the first time.
@@ -237,23 +249,23 @@ public partial class main : Node3D
 			//RenderingServer.GlobalShaderParameterSet("shades", shade.shadesdata[uwsettings.instance.lightlevel].ToImage());
 
 			int spriteNo = 127;
-            var a_sprite = new MeshInstance3D(); //new Sprite3D();
-            a_sprite.Name = "player";
-            a_sprite.Mesh = new QuadMesh();
-            Vector2 NewSize;
-            var img = gr.LoadImageAt(spriteNo);
-            if (img != null)
-            {
-                a_sprite.Mesh.SurfaceSetMaterial(0, gr.GetMaterial(spriteNo));
-                NewSize = new Vector2(
-                        ArtLoader.SpriteScale * img.GetWidth(),
-                        ArtLoader.SpriteScale * img.GetHeight()
-                        );
-                a_sprite.Mesh.Set("size", NewSize);
+			var a_sprite = new MeshInstance3D(); //new Sprite3D();
+			a_sprite.Name = "player";
+			a_sprite.Mesh = new QuadMesh();
+			Vector2 NewSize;
+			var img = gr.LoadImageAt(spriteNo);
+			if (img != null)
+			{
+				a_sprite.Mesh.SurfaceSetMaterial(0, gr.GetMaterial(spriteNo));
+				NewSize = new Vector2(
+						ArtLoader.SpriteScale * img.GetWidth(),
+						ArtLoader.SpriteScale * img.GetHeight()
+						);
+				a_sprite.Mesh.Set("size", NewSize);
 				Node3D worldobjects = GetNode<Node3D>("/root/Underworld/worldobjects");
-                worldobjects.AddChild(a_sprite);
-                a_sprite.Position = cam.Position;            
-            }
+				worldobjects.AddChild(a_sprite);
+				a_sprite.Position = cam.Position;
+			}
 
 
 
@@ -375,58 +387,62 @@ public partial class main : Node3D
 		float RayLength = 3.0f;
 		if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
 		{
-			if (uimanager.IsMouseInViewPort())
+			if (!blockinput)
 			{
-				//var camera3D = GetNode<Camera3D>("Camera3D");
-				var from = cam.ProjectRayOrigin(eventMouseButton.Position);
-				var mousepos = uimanager.instance.uwsubviewport.GetMousePosition(); //eventMouseButton.Position
-				var to = from + cam.ProjectRayNormal(mousepos) * RayLength;
-				var query = PhysicsRayQueryParameters3D.Create(from, to);
-				var spaceState = GetWorld3D().DirectSpaceState;
-				var result = spaceState.IntersectRay(query);
-				if (result != null)
+				if (uimanager.IsMouseInViewPort())
 				{
-					if (result.ContainsKey("collider"))
+					//var camera3D = GetNode<Camera3D>("Camera3D");
+					var from = cam.ProjectRayOrigin(eventMouseButton.Position);
+					var mousepos = uimanager.instance.uwsubviewport.GetMousePosition(); //eventMouseButton.Position
+					var to = from + cam.ProjectRayNormal(mousepos) * RayLength;
+					var query = PhysicsRayQueryParameters3D.Create(from, to);
+					var spaceState = GetWorld3D().DirectSpaceState;
+					var result = spaceState.IntersectRay(query);
+					if (result != null)
 					{
-						var obj = (StaticBody3D)result["collider"];
-						Debug.Print(obj.Name);
-						messageScroll.AddString(obj.Name);
-						string[] vals = obj.Name.ToString().Split("_");
-						if (int.TryParse(vals[0], out int objindex))
+						if (result.ContainsKey("collider"))
 						{
-							switch (uimanager.InteractionMode)
+							var obj = (StaticBody3D)result["collider"];
+							Debug.Print(obj.Name);
+							messageScroll.AddString(obj.Name);
+							string[] vals = obj.Name.ToString().Split("_");
+							if (int.TryParse(vals[0], out int objindex))
 							{
-								case uimanager.InteractionModes.ModeTalk:
-									talk.Talk(objindex, Underworld.TileMap.current_tilemap.LevelObjects, true);
-									break;
-								case uimanager.InteractionModes.ModeLook:
-									//Do a look interaction with the object
-									look.LookAt(objindex, Underworld.TileMap.current_tilemap.LevelObjects, true);
-									break;
-								case uimanager.InteractionModes.ModeUse:
-									//do a use interaction with the object.
-									use.Use(objindex, Underworld.TileMap.current_tilemap.LevelObjects, true);
-									break;
+								switch (uimanager.InteractionMode)
+								{
+									case uimanager.InteractionModes.ModeTalk:
+										talk.Talk(objindex, Underworld.TileMap.current_tilemap.LevelObjects, true);
+										break;
+									case uimanager.InteractionModes.ModeLook:
+										//Do a look interaction with the object
+										look.LookAt(objindex, Underworld.TileMap.current_tilemap.LevelObjects, true);
+										break;
+									case uimanager.InteractionModes.ModeUse:
+										//do a use interaction with the object.
+										use.Use(objindex, Underworld.TileMap.current_tilemap.LevelObjects, true);
+										break;
+								}
 							}
 						}
 					}
 				}
 			}
 		}
+
 		if (ConversationVM.WaitingForInput)
-		{			
+		{
 			if (@event is InputEventKey keyinput)
 			{
-				Debug.Print(keyinput.Keycode.ToString());				
+				Debug.Print(keyinput.Keycode.ToString());
 				if (int.TryParse(keyinput.AsText(), out int result))
-				{	
-					if ((result>0) && (result<=ConversationVM.MaxAnswer))
+				{
+					if ((result > 0) && (result <= ConversationVM.MaxAnswer))
 					{
 						ConversationVM.PlayerNumericAnswer = result;
-						ConversationVM.WaitingForInput = false;	
-					}					
-				}							
+						ConversationVM.WaitingForInput = false;
+					}
+				}
 			}
-		}		
+		}
 	}
 }
