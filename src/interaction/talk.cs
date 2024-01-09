@@ -48,41 +48,64 @@ namespace Underworld
             if (ConversationVM.conversations != null)
             {
                 int conversationNo;
-                if (npc.npc_whoami == 0)
-                {
-                    conversationNo = 256 + (npc.item_id - 64);
+                conversationNo = GetConversationNumber(npc);
+
+                //Check if npc can be talked to
+                if ((ConversationVM.conversations[conversationNo].CodeSize == 0) || (npc.npc_whoami == 255))
+                {//006~007~001~You get no response.
+                    messageScroll.AddString(GameStrings.GetString(7, 1));
+                    return;
                 }
                 else
-                {
-                    conversationNo = npc.npc_whoami;
-                    if (_RES == GAME_UW2)
+                { //a conversation can be had (TODO take hostility into account. Some special NPCs can be talked to in combat. eg rodric and patterson)
+                    var head = new GRLoader(GRLoader.HEADS_GR, GRLoader.GRShaderMode.UIShader);
+
+                    //set up relevant UI
+                    Debug.Print($"Talking to {npc._name} conversation no {conversationNo}");
+                    uimanager.EnableDisable(uimanager.instance.ConversationPanel, true);
+                    ConversationVM.InConversation = true;
+
+                    //Player name and portrait
+                    if (playerdat.isFemale)
                     {
-                        conversationNo++;
+                        uimanager.instance.PlayerPortrait.Texture = head.LoadImageAt(playerdat.Body + 5);
                     }
+                    else
+                    {
+                        uimanager.instance.PlayerPortrait.Texture = head.LoadImageAt(playerdat.Body);
+                    }
+                    uimanager.instance.PlayerNameLabel.Text = playerdat.CharName;
+
+                    //npc name and portrait
+                    uimanager.instance.NPCNameLabel.Text = npc._name;
+                    uimanager.instance.NPCPortrait.Texture = NPCPortrait(npc);
+
+
+                    //Launch conversation VM corouting. 
+                    _ = Peaky.Coroutines.Coroutine.Run(
+                        ConversationVM.RunConversationVM(npc, ConversationVM.conversations[conversationNo]),
+                        main.instance);
                 }
-
-                var head = new GRLoader(GRLoader.HEADS_GR, GRLoader.GRShaderMode.UIShader);
-
-                //set up relevant UI
-                Debug.Print($"Talking to {npc._name} conversation no {conversationNo}");
-                uimanager.EnableDisable(uimanager.instance.ConversationPanel, true);    
-                ConversationVM.InConversation = true;            
-
-                //Player name and portrait
-                uimanager.instance.PlayerPortrait.Texture = head.LoadImageAt(playerdat.Body);
-                uimanager.instance.PlayerNameLabel.Text = playerdat.CharName;
-
-                //npc name and portrait
-                uimanager.instance.NPCNameLabel.Text = npc._name;
-                uimanager.instance.NPCPortrait.Texture = NPCPortrait(npc);
-
-
-                //Launch conversation VM task. 
-                // var t = Task.Run(() => ConversationVM.RunConversationVM(npc, ConversationVM.conversations[conversationNo]));
-                _ = Peaky.Coroutines.Coroutine.Run(
-                    ConversationVM.RunConversationVM(npc, ConversationVM.conversations[conversationNo]),
-                    main.instance);
             }
+        }
+
+        private static int GetConversationNumber(uwObject npc)
+        {
+            int conversationNo;
+            if (npc.npc_whoami == 0)
+            {
+                conversationNo = 256 + (npc.item_id - 64);
+            }
+            else
+            {
+                conversationNo = npc.npc_whoami;
+                if (_RES == GAME_UW2)
+                {
+                    conversationNo++;
+                }
+            }
+
+            return conversationNo;
         }
 
         /// <summary>
