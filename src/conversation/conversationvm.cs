@@ -341,17 +341,19 @@ namespace Underworld
 
 
                     case cnv_PUSHI_EFF:
-                        {
-                            int offset = conv.instuctions[instrp + 1];
-                            if (offset >= 0)
-                            {
-                                Push(basep + offset);
-                            }
-                            else
-                            {
-                                offset--; //to skip over base ptr;
-                                Push(basep + offset);
-                            }
+                        {                            
+                            // int offset = conv.instuctions[instrp + 1];
+                            // if (offset >= 0)
+                            // {
+                            //     Push(basep + offset);
+                            // }
+                            // else
+                            // {
+                            //     offset--; //to skip over base ptr;  //TODO figure out if this is correct behaviour
+                            //     Push(basep + offset);
+                            // }
+
+                            Push(basep + conv.instuctions[instrp + 1]);
                             instrp++;
                             break;
                         }
