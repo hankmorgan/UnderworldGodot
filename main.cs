@@ -211,73 +211,33 @@ public partial class main : Node3D
 
 
 		if (uwsettings.instance.levarkfolder.ToUpper() != "DATA")
-		{
-			//load player dat
-			playerdat.Load(uwsettings.instance.levarkfolder);
-			Debug.Print($"Your name is {playerdat.CharName}");
-			LoadTileMap(playerdat.dungeon_level - 1, gr);
+        {
+            //load player dat from a save file
+            playerdat.Load(uwsettings.instance.levarkfolder);  
+            Debug.Print($"You are at x:{playerdat.X} y:{playerdat.Y} z:{playerdat.Z}");
+            Debug.Print($"You are at x:{playerdat.tileX} {playerdat.xpos} y:{playerdat.tileY} {playerdat.ypos} z:{playerdat.zpos}");
+            cam.Position = uwObject.GetCoordinate(playerdat.tileX, playerdat.tileY, playerdat.xpos, playerdat.ypos, playerdat.camerazpos);
+            Debug.Print($"Player Heading is {playerdat.heading}");
+            cam.Rotation = Vector3.Zero;
+            cam.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
+            cam.Rotate(Vector3.Up, (float)(-playerdat.heading / 127f * Math.PI));
+            for (int i = 0; i < 8; i++)
+            {//Init the backpack indices
+                playerdat.SetBackPackIndex(i, playerdat.BackPackObject(i));
+            }
+            RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.GetViewingDistance(uwsettings.instance.lightlevel));
+            //RenderingServer.GlobalShaderParameterSet("shades", shade.shadesdata[uwsettings.instance.lightlevel].ToImage());
 
-			Debug.Print($"You are at x:{playerdat.X} y:{playerdat.Y} z:{playerdat.Z}");
-			Debug.Print($"You are at x:{playerdat.tileX} {playerdat.xpos} y:{playerdat.tileY} {playerdat.ypos} z:{playerdat.zpos}");
-			cam.Position = uwObject.GetCoordinate(playerdat.tileX, playerdat.tileY, playerdat.xpos, playerdat.ypos, playerdat.camerazpos);
-			Debug.Print($"Player Heading is {playerdat.heading}");
-			cam.Rotation = Vector3.Zero;
-			cam.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
-			cam.Rotate(Vector3.Up, (float)(-playerdat.heading / 127f * Math.PI));
-			uimanager.SetBody(playerdat.Body, playerdat.isFemale);
-			for (int i = 0; i < 8; i++)
-			{//Init the backpack indices
-				playerdat.SetBackPackIndex(i, playerdat.BackPackObject(i));
-			}
-
-			//set paperdoll
-			uimanager.UpdateInventoryDisplay();
-
-			//Load rune slots
-			for (int i = 0; i < 24; i++)
-			{
-				uimanager.SetRuneInBag(i, playerdat.GetRune(i));
-			}
-			uimanager.RedrawSelectedRuneSlots();
-			uimanager.RefreshHealthFlask();
-			uimanager.RefreshManaFlask();
-
-			//Set the playerlight level;
-			uwsettings.instance.lightlevel = light.BrightestLight();
-
-			RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.GetViewingDistance(uwsettings.instance.lightlevel));
-			//RenderingServer.GlobalShaderParameterSet("shades", shade.shadesdata[uwsettings.instance.lightlevel].ToImage());
-
-			int spriteNo = 127;
-			var a_sprite = new MeshInstance3D(); //new Sprite3D();
-			a_sprite.Name = "player";
-			a_sprite.Mesh = new QuadMesh();
-			Vector2 NewSize;
-			var img = gr.LoadImageAt(spriteNo);
-			if (img != null)
-			{
-				a_sprite.Mesh.SurfaceSetMaterial(0, gr.GetMaterial(spriteNo));
-				NewSize = new Vector2(
-						ArtLoader.SpriteScale * img.GetWidth(),
-						ArtLoader.SpriteScale * img.GetHeight()
-						);
-				a_sprite.Mesh.Set("size", NewSize);
-				Node3D worldobjects = GetNode<Node3D>("/root/Underworld/worldobjects");
-				worldobjects.AddChild(a_sprite);
-				a_sprite.Position = cam.Position;
-			}
-
-
-
-		}
-		else
+            DrawPlayerPositionSprite(gr);
+        }
+        else
 		{
 			Random r = new Random();
 			playerdat.InitEmptyPlayer();
 			playerdat.tileX = -(int)(cam.Position.X / 1.2f);
 			playerdat.tileY = (int)(cam.Position.Z / 1.2f);
-
 			playerdat.dungeon_level = uwsettings.instance.level + 1;
+
 			var isFemale = r.Next(0, 2) == 1;
 			playerdat.isFemale = isFemale;
 			uimanager.SetHelm(isFemale, -1);
@@ -293,20 +253,58 @@ public partial class main : Node3D
 			{
 				uimanager.SetBackPackArt(i, -1);
 			}
-
 			playerdat.Body = r.Next(0, 4);
-			uimanager.SetBody(playerdat.Body, playerdat.isFemale);
-
-
-
-
-			LoadTileMap(gamesettings.level, gr);
+			
+			//LoadTileMap(gamesettings.level, gr);
 		}
+
+		//Common launch actions
+		LoadTileMap(playerdat.dungeon_level - 1, gr);
+
+		//Load bablglobals
+		bglobal.LoadGlobals(uwsettings.instance.levarkfolder);
+
+		//Draw UI
+		uimanager.SetBody(playerdat.Body, playerdat.isFemale);
+		uimanager.RedrawSelectedRuneSlots();
+        uimanager.RefreshHealthFlask();
+        uimanager.RefreshManaFlask();
+		//set paperdoll
+        uimanager.UpdateInventoryDisplay();
+		//Load rune slots
+		for (int i = 0; i < 24; i++)
+		{
+			uimanager.SetRuneInBag(i, playerdat.GetRune(i));
+		}
+
+		//Set the playerlight level;
+		uwsettings.instance.lightlevel = light.BrightestLight();
 	}
 
+    private void DrawPlayerPositionSprite(GRLoader gr)
+    {
+        int spriteNo = 127;
+        var a_sprite = new MeshInstance3D(); //new Sprite3D();
+        a_sprite.Name = "player";
+        a_sprite.Mesh = new QuadMesh();
+        Vector2 NewSize;
+        var img = gr.LoadImageAt(spriteNo);
+        if (img != null)
+        {
+            a_sprite.Mesh.SurfaceSetMaterial(0, gr.GetMaterial(spriteNo));
+            NewSize = new Vector2(
+                    ArtLoader.SpriteScale * img.GetWidth(),
+                    ArtLoader.SpriteScale * img.GetHeight()
+                    );
+            a_sprite.Mesh.Set("size", NewSize);
+            Node3D worldobjects = GetNode<Node3D>("/root/Underworld/worldobjects");
+            worldobjects.AddChild(a_sprite);
+            a_sprite.Position = cam.Position;
+        }
+    }
 
 
-	public void LoadTileMap(int newLevelNo, GRLoader grObjects)
+    public void LoadTileMap(int newLevelNo, GRLoader grObjects)
 	{
 		grObjects.UseRedChannel = true;
 
