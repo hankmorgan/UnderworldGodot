@@ -10,7 +10,7 @@ namespace Underworld
     public partial class ConversationVM : UWClass
     {
 
-        public static bool InConversation=false;
+        public static bool InConversation = false;
         /// <summary>
         /// The currently referenced conversation.
         /// </summary>
@@ -28,18 +28,8 @@ namespace Underworld
 
         public static IEnumerator RunConversationVM(uwObject npc, conversation _newConv)
         {
-            conv=_newConv;
-            bool finished = false;
-
-            StackValues = new short[4096];
-            stackptr = 200;
-            result_register = 1;//default value
-            instrp = 0;
-            call_level = 1;
-            // for (int i = 0; i < StackValues.GetUpperBound(0); i++)
-            // {
-            //     StackValues[i] = 0;
-            // }
+            conv = _newConv;
+            bool finished = false;           
 
             while (!finished)
             {
@@ -55,7 +45,7 @@ namespace Underworld
                         {
                             int arg1 = Pop();
                             int arg2 = Pop();
-                            Push(arg1+arg2);
+                            Push(arg1 + arg2);
                             break;
                         }
 
@@ -64,7 +54,7 @@ namespace Underworld
                         {
                             int arg1 = Pop();
                             int arg2 = Pop();
-                            Push(arg1*arg2);
+                            Push(arg1 * arg2);
                             break;
                         }
 
@@ -156,8 +146,6 @@ namespace Underworld
                             {
                                 Push(0);
                             }
-
-                            //Push(arg2 >= arg1);
                             break;
                         }
 
@@ -174,7 +162,6 @@ namespace Underworld
                             {
                                 Push(0);
                             }
-                            //Push(arg2 < arg1);
                             break;
                         }
 
@@ -191,7 +178,6 @@ namespace Underworld
                             {
                                 Push(0);
                             }
-                            //Push(arg2 <= arg1);
                             break;
                         }
 
@@ -212,10 +198,7 @@ namespace Underworld
 
                     case cnv_TSTNE:
                         {
-                            //int val1 = Pop();
-                            //int val2 = Pop();
                             if (Pop() != Pop())
-                            //if ((val1) != (val2))
                             {
                                 Push(1);
                             }
@@ -235,23 +218,19 @@ namespace Underworld
 
                     case cnv_BEQ:
                         {
-                            //int origInstrp= instrp;
                             if (Pop() == 0)
                             {
                                 instrp += conv.instuctions[instrp + 1];
                             }
-
                             else
                             {
                                 instrp++;
                             }
-                            //Debug.Log("BEQ to " + instrp + " at " + origInstrp);
                             break;
                         }
 
                     case cnv_BNE:
                         {
-                            //int origInstrp= instrp;
                             if (Pop() != 0)
                             {
                                 instrp += conv.instuctions[instrp + 1];
@@ -260,7 +239,6 @@ namespace Underworld
                             {
                                 instrp++;
                             }
-                            //Debug.Log("BNE to " + instrp + " at " + origInstrp);
                             break;
                         }
 
@@ -289,7 +267,6 @@ namespace Underworld
                             Push(instrp + 1);
                             instrp = conv.instuctions[instrp + 1] - 1;
                             call_level++;
-                            //Debug.Log("CALL to " + instrp + " at " + origInstrp);
                             break;
                         }
 
@@ -300,15 +277,8 @@ namespace Underworld
                             {
                                 if ((conv.functions[i].ID_or_Address == arg1) && (conv.functions[i].import_type == import_function))
                                 {
-                                    Debug.Print("Calling function  " + arg1 + " which is currently : " + conv.functions[i].functionName);
-                                    //yield return StartCoroutine(run_imported_function(conv.functions[i], npc));
-                                    //await run_imported_function();
-                                    // yield return Coroutine.Run(
-                                    //     run_imported_function(conv.functions[i], npc)
-                                    //     ,main.instance);
-
-                                     yield return run_imported_function(conv.functions[i], npc);
-                                        
+                                    Debug.Print("Calling function  " + arg1 + " which is currently : " + conv.functions[i].importname);
+                                    yield return run_imported_function(conv.functions[i], npc);
                                     break;
                                 }
                             }
@@ -325,7 +295,6 @@ namespace Underworld
                             }
                             else
                             {
-                                //Debug.Log("instr = " +instrp + " returning to " + arg1);
                                 instrp = Pop();
                             }
                             break;
@@ -341,7 +310,7 @@ namespace Underworld
 
 
                     case cnv_PUSHI_EFF:
-                        {                            
+                        {
                             // int offset = conv.instuctions[instrp + 1];
                             // if (offset >= 0)
                             // {
@@ -410,17 +379,12 @@ namespace Underworld
                             /// fill reserved stack space with dummy values
                             for (int i = 0; i <= arg1; i++)
                                 Push(0);
-
-                            //Set_stackp(stackptr+arg1);//This will probably cause problems down the line....
-                            //Set_stackp(stackptr+arg1);
                             break;
                         }
 
 
                     case cnv_FETCHM:
                         {
-                            //Debug.Log("Instruction:" + instrp +" Fetching address :" + TopValue + " => " + at(TopValue));
-                            //at(arg1);
                             Push(at(Pop()));
                             break;
                         }
@@ -444,10 +408,7 @@ namespace Underworld
                         {
                             int arg1 = Pop();
                             int arg2 = Pop();
-                            //Debug.Log("Offset " +arg1 + " & " + arg2  + "= " + (arg1+arg2-1));
                             arg1 += arg2 - 1;
-                            //Debug.Log("Instruction:" + instrp +" Offset pushed : " + arg1 + " => " + stackptr);
-
                             Push(arg1);
                             break;
                         }
@@ -455,7 +416,6 @@ namespace Underworld
 
                     case cnv_START:
                         {
-                            // do nothing
                             break;
                         }
 
@@ -485,7 +445,6 @@ namespace Underworld
                         {
                             int arg1 = Pop();
                             yield return say_op(arg1);
-                            //await Say_op(arg1);                            
                             break;
                         }
 
@@ -517,11 +476,20 @@ namespace Underworld
 
             //should have a wait here
             yield return new WaitForSeconds(3);
-            
-            uimanager.EnableDisable(uimanager.instance.ConversationPanel,false);
-            uimanager.instance.ConversationText.Text="";
+
+            uimanager.EnableDisable(uimanager.instance.ConversationPanel, false);
+            uimanager.instance.ConversationText.Text = "";
             ConversationVM.InConversation = false;
             yield return null;
+        }
+
+        private static void InitialiseConversationMemory()
+        {
+            StackValues = new short[4096];
+            stackptr = 200;
+            result_register = 0;
+            instrp = 0;
+            call_level = 1;
         }
     }
 }//end namespace

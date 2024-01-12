@@ -6,7 +6,7 @@ namespace Underworld
     {
         public static IEnumerator run_imported_function(ImportedFunctions func, uwObject npc)
         {
-            switch (func.functionName.ToLower())
+            switch (func.importname.ToLower())
             {
                 case "babl_menu":
                     {

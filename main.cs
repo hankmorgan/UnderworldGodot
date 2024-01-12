@@ -38,10 +38,10 @@ public partial class main : Node3D
 	{
 		instance = this;
 		var appfolder = OS.GetExecutablePath();
-		appfolder = System.IO.Path.GetDirectoryName(appfolder);
-		var settingsfile = System.IO.Path.Combine(appfolder, "uwsettings.json");
+		appfolder = Path.GetDirectoryName(appfolder);
+		var settingsfile = Path.Combine(appfolder, "uwsettings.json");
 
-		if (!System.IO.File.Exists(settingsfile))
+		if (!File.Exists(settingsfile))
 		{
 			OS.Alert("missing file uwsettings.json at " + settingsfile);
 			return;
@@ -79,7 +79,7 @@ public partial class main : Node3D
 		//playerdat.Load("SAVE1");
 		//Debug.Print(playerdat.CharName);
 		// Voc file loading. 
-		// var vocfiles = System.IO.Directory.GetFiles(System.IO.Path.Combine(UWClass.BasePath, "SOUND"), "sp18.voc");
+		// var vocfiles = Directory.GetFiles(Path.Combine(UWClass.BasePath, "SOUND"), "sp18.voc");
 		// foreach (var vocfile in vocfiles)
 		// {
 		// 	var voc = vocLoader.Load(vocfile);
