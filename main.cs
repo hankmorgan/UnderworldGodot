@@ -254,9 +254,12 @@ public partial class main : Node3D
 				uimanager.SetBackPackArt(i, -1);
 			}
 			playerdat.Body = r.Next(0, 4);
+			playerdat.CharName= "GRONK";
 			
 			//LoadTileMap(gamesettings.level, gr);
 		}
+
+		playerdat.CharNameStringNo = GameStrings.AddString(0x125,playerdat.CharName);
 
 		//Common launch actions
 		LoadTileMap(playerdat.dungeon_level - 1, gr);

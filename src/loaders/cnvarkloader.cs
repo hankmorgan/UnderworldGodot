@@ -14,6 +14,7 @@ namespace Underworld
                 ConversationVM.conversations = new ConversationVM.conversation[NoOfConversations];
                 for (int i = 0; i < NoOfConversations; i++)
                 {
+                    ConversationVM.conversations[i]= new();
                     int add_ptr = (int)getAt(cnv_ark, 2 + i * 4, 32);
                     if (add_ptr != 0)
                     {
@@ -37,7 +38,7 @@ namespace Underworld
                         int funcptr = add_ptr + 0x10;
                         for (int f = 0; f < ConversationVM.conversations[i].NoOfImportedGlobals; f++)
                         {
-
+                            ConversationVM.conversations[i].functions[f] = new();
                             /*0000   Int16   length of function name
                             0002   n*char  name of function
                             n+02   Int16   ID (imported func.) / memory address (variable)
@@ -46,7 +47,7 @@ namespace Underworld
                             n+08   Int16   return type (0x0000=void, 0x0129=int, 0x012B=string)*/
                             int len = (int)getAt(cnv_ark, funcptr, 16);
                             for (int j = 0; j < len; j++)
-                            {
+                            {                                
                                 ConversationVM.conversations[i].functions[f].importname += (char)getAt(cnv_ark, funcptr + 2 + j, 8);
                             }
                             ConversationVM.conversations[i].functions[f].ID_or_Address = (int)getAt(cnv_ark, funcptr + len + 2, 16);

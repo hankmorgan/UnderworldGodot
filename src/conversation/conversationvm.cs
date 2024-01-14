@@ -29,7 +29,7 @@ namespace Underworld
         public static IEnumerator RunConversationVM(uwObject npc, conversation _newConv)
         {
             conv = _newConv;
-            bool finished = false;           
+            bool finished = false;
 
             while (!finished)
             {
@@ -472,15 +472,21 @@ namespace Underworld
                 {
                     finished = true;
                 }
-            } //end loop
+            } //end loop            
 
             //should have a wait here
             yield return new WaitForSeconds(3);
 
+            ExitConversation(npc, conv);
+            yield return null;
+        }
+
+        private static void ExitConversation(uwObject npc, conversation conv)
+        {
+            ExportVariables(npc, conv);
             uimanager.EnableDisable(uimanager.instance.ConversationPanel, false);
             uimanager.instance.ConversationText.Text = "";
-            ConversationVM.InConversation = false;
-            yield return null;
+            InConversation = false;
         }
 
         private static void InitialiseConversationMemory()

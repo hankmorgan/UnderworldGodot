@@ -29,7 +29,7 @@ namespace Underworld
         /// <returns></returns>
         public static int protection(int item_id, int bodypart)
         {
-            return buffer[offset + 1 + bodypart + (item_id & 0x3F) * 48];
+            return buffer[offset + 0x1 + bodypart + (item_id & 0x3F) * 48];
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace Underworld
         /// <returns></returns>
         public static int avghit(int item_id)
         {
-            return buffer[offset + 4 + (item_id & 0x3F) * 48 ];
+            return buffer[offset + 0x4 + (item_id & 0x3F) * 48 ];
         }
 
 
@@ -51,7 +51,7 @@ namespace Underworld
         /// <returns></returns>
         public static int strength(int item_id)
         {
-            return buffer[offset + 5 + (item_id & 0x3F) * 48 ];
+            return buffer[offset + 0x5 + (item_id & 0x3F) * 48 ];
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace Underworld
         /// <returns></returns>
         public static int dexterity(int item_id)
         {
-            return buffer[offset + 6 + (item_id & 0x3F) * 48 ];
+            return buffer[offset + 0x6 + (item_id & 0x3F) * 48 ];
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace Underworld
         /// <returns></returns>
         public static int intelligence(int item_id)
         {
-            return buffer[offset + 7 + (item_id & 0x3F) * 48 ];
+            return buffer[offset + 0x7 + (item_id & 0x3F) * 48 ];
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace Underworld
         /// <returns></returns>
         public static int fluids(int item_id)
         {
-            return (buffer[offset + 8 + (item_id & 0x3F) * 48 ] >> 5) & 0x7;
+            return (buffer[offset + 0x8 + (item_id & 0x3F) * 48 ] >> 5) & 0x7;
         }
 
 
@@ -94,7 +94,7 @@ namespace Underworld
         /// <returns></returns>
         public static int vulnerability(int item_id)
         {
-            return (buffer[offset + 8 + (item_id & 0x3F) * 48 ] >> 3) & 0x3;
+            return (buffer[offset + 0x8 + (item_id & 0x3F) * 48 ] >> 3) & 0x3;
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace Underworld
         /// <returns></returns>
         public static int deathsound(int item_id)
         {
-            return (buffer[offset + 8 + (item_id & 0x3F) * 48 ]) & 0x7;
+            return (buffer[offset + 0x8 + (item_id & 0x3F) * 48 ]) & 0x7;
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace Underworld
         public static int race(int item_id)
         {
             Debug.Print("Race. Needs to be reconfirmed");
-            return (buffer[offset + 9 + (item_id & 0x3F) * 48 ] >> 2) & 0x3F;
+            return (buffer[offset + 0x9 + (item_id & 0x3F) * 48 ] >> 2) & 0x3F;
         }
 
 
@@ -126,7 +126,7 @@ namespace Underworld
         /// <returns></returns>
         public static bool isSwimmer(int item_id)
         {   
-            return ((buffer[offset + 10 + (item_id & 0x3F) * 48 ] >> 6) & 0x1) == 1;
+            return ((buffer[offset + 0xA + (item_id & 0x3F) * 48 ] >> 6) & 0x1) == 1;
         }
         
         /// <summary>
@@ -136,7 +136,7 @@ namespace Underworld
         /// <returns></returns>
         public static bool isFlier(int item_id)
         {
-            return ((buffer[offset + 10 + (item_id & 0x3F) * 48 ] >> 7) & 0x1) == 1;
+            return ((buffer[offset + 0xA + (item_id & 0x3F) * 48 ] >> 7) & 0x1) == 1;
         }
 
 
@@ -149,7 +149,7 @@ namespace Underworld
         /// <returns></returns>
         public static int corpse(int item_id)
         {
-            return (buffer[offset + 10 + (item_id & 0x3F) * 48 ] >> 2) & 0x3F;
+            return (buffer[offset + 0xA + (item_id & 0x3F) * 48 ] >> 2) & 0x3F;
         }
 
         /// <summary>
@@ -159,7 +159,17 @@ namespace Underworld
         /// <returns></returns>
         public static int speed(int item_id)
         {
-            return buffer[offset + 12 + (item_id & 0x3F) * 48 ];
+            return buffer[offset + 0xC + (item_id & 0x3F) * 48 ];
+        }
+
+        /// <summary>
+        /// Used for conversations. not to be confused with the regular level variable??
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <returns></returns>
+        public static int npc_level(int item_id)
+        {
+            return buffer[offset + 0xD + (item_id & 0x3F) * 48 ] & 0xF;
         }
 
         /// <summary>
@@ -169,7 +179,7 @@ namespace Underworld
         /// <returns></returns>
         public static int poisondamage(int item_id)
         {
-            return buffer[offset + 15 + (item_id & 0x3F) * 48 ];
+            return buffer[offset + 0xF + (item_id & 0x3F) * 48 ];
         }
 
         /// <summary>
@@ -186,7 +196,7 @@ namespace Underworld
         /// <returns></returns>
         public static int category(int item_id)
         {//=BITAND(HEX2DEC(AE4),15)
-            return (buffer[offset + 16 + (item_id & 0x3F) * 48 ] ) & 0xF;
+            return (buffer[offset + 0x10 + (item_id & 0x3F) * 48 ] ) & 0xF;
         }
 
 
@@ -197,7 +207,7 @@ namespace Underworld
         /// <returns></returns>
         public static int equipmentdamage(int item_id)
         {
-            return buffer[offset + 17 + (item_id & 0x3F) * 48 ] ;
+            return buffer[offset + 0x11 + (item_id & 0x3F) * 48 ] ;
         }   
 
         /// <summary>
@@ -207,7 +217,7 @@ namespace Underworld
         /// <returns></returns>
         public static int maybedefence(int item_id)
         {
-            return buffer[offset + 18 + (item_id & 0x3F) * 48 ] ;
+            return buffer[offset + 0x12 + (item_id & 0x3F) * 48 ] ;
         }
 
 
@@ -220,7 +230,7 @@ namespace Underworld
         /// <returns></returns>
         public static int chancetohit(int item_id, int attackno)
         {
-            return buffer[offset + 19 + (attackno*3) + (item_id & 0x3F) * 48 ] ;
+            return buffer[offset + 0x13 + (attackno*3) + (item_id & 0x3F) * 48 ] ;
         }
 
         /// <summary>
@@ -231,7 +241,17 @@ namespace Underworld
         /// <returns></returns>
         public static int attackdamage(int item_id, int attackno)
         {
-            return buffer[offset + 20 + (attackno*3) + (item_id & 0x3F) * 48 ] ;
+            return buffer[offset + 0x14 + (attackno*3) + (item_id & 0x3F) * 48 ] ;
+        }
+
+        /// <summary>
+        /// Same as attack 1 type?
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <returns></returns>
+        public static int npc_arms(int item_id)
+        {
+            return buffer[offset + 0x13 + (item_id & 0x3F) * 48];
         }
 
         /// <summary>
@@ -244,7 +264,7 @@ namespace Underworld
         /// <returns></returns>
         public static int attackprobability(int item_id, int attackno)
         {
-            return buffer[offset + 21 + (attackno*3) + (item_id & 0x3F) * 48 ] ;
+            return buffer[offset + 0x15 + (attackno*3) + (item_id & 0x3F) * 48 ] ;//TODO double check this
         }
 
         /// <summary>
@@ -255,7 +275,7 @@ namespace Underworld
         /// <returns></returns>
         public static int probablydetectionrange(int item_id)
         {
-            return buffer[offset + 28 + (item_id & 0x3F) * 48 ] ;
+            return buffer[offset + 0x1c + (item_id & 0x3F) * 48 ] ;
         }
 
         /// <summary>
@@ -271,7 +291,7 @@ namespace Underworld
             if (enabled)
             {
                 //get initial value
-                var val = buffer[offset + 32 + loot_no + (item_id & 0x3F) * 48 ] >> 1;
+                var val = buffer[offset + 0x20 + loot_no + (item_id & 0x3F) * 48 ] >> 1;
                 //=BITAND(BITRSHIFT(val,4),3)+BITAND(val,15)
                 return (val >> 4) & 0x3 + (val & 0xf);  // this is an odd calculation...
             }
@@ -285,7 +305,7 @@ namespace Underworld
         /// <returns></returns>
         public static int experience(int item_id)
         {
-            return (int)getAt(buffer, 40 + (item_id & 0x3F) * 48, 16);
+            return (int)getAt(buffer, 0x28 + (item_id & 0x3F) * 48, 16);
         }
 
         /// <summary>
@@ -296,10 +316,20 @@ namespace Underworld
         /// <returns></returns>
         public static int spell (int item_id, int spell_index)
         {
-            return buffer[offset + 42 + spell_index + (item_id & 0x3F) * 48 ] ;
+            return buffer[offset + 0x2a + spell_index + (item_id & 0x3F) * 48 ] ;
         }
 
 
+
+        /// <summary>
+        /// Used in study monster and in the npc_power calculation
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <returns></returns>
+        public static int UNK0x2DBits1To7( int item_id)
+        {
+            return (buffer[offset + 0x2D + (item_id & 0x3F) * 48 ]>>1) & 0x7f;
+        }
         /// <summary>
         /// Returns true if the NPC uses a spell list
         /// </summary>
@@ -307,7 +337,7 @@ namespace Underworld
         /// <returns></returns>
         public static bool isCaster( int item_id)
         {
-            return (buffer[offset + 45 + (item_id & 0x3F) * 48 ] & 0x1) == 1;
+            return (buffer[offset + 0x2D + (item_id & 0x3F) * 48 ] & 0x1) == 1;
         }
 
         /// <summary>
@@ -317,7 +347,7 @@ namespace Underworld
         /// <returns></returns>
         public static int dooropenskill(int item_id)
         {
-            return buffer[offset + 46 + (item_id & 0x3F) * 48] ;
+            return buffer[offset + 0x2E + (item_id & 0x3F) * 48] ;
         }
 
     } //end class

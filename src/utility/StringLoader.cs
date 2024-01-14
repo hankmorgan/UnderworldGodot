@@ -1053,9 +1053,14 @@ namespace Underworld
         /// <returns>The string.</returns>
         /// <param name="BlockNo">Block no.</param>
         /// <param name="NewString">New string.</param>
-        public int AddString(int BlockNo, string NewString)
+        public static int AddString(int BlockNo, string NewString)
         {
             string NoOfEntries = (string)EntryCounts["_" + BlockNo];
+            if (NoOfEntries== null)
+                {
+                    NoOfEntries="0"; 
+                    EntryCounts["_" + BlockNo] = "0";
+                }
             int Count = int.Parse(NoOfEntries);
             Count++;
             StringTable[BlockNo.ToString("000") + "_" + Count.ToString("000")] = NewString;
@@ -1087,6 +1092,18 @@ namespace Underworld
                 default:
                     return "th";
             }
+        }
+
+        /// <summary>
+        /// Gets a string from strings data where the full string no also includes the block number. Possibly needed to support npc_name/string replacements in conversations
+        /// </summary>
+        /// <param name="fullstringno"></param>
+        /// <returns></returns>
+        public static string GetString(int fullstringno)
+        {
+            var BlockNo = fullstringno>>9;
+            var stringno = fullstringno & 0x1FF;
+            return GetString(BlockNo, stringno);
         }
 
     } //end class

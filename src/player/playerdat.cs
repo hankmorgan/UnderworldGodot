@@ -6,6 +6,10 @@ namespace Underworld
     public partial class playerdat : Loader
     {
 
+        /// <summary>
+        /// Reference to the char name in the gamestrings for use in the conversation VM.
+        /// </summary>
+        public static int CharNameStringNo;
         public static string CharName
         {
             get
@@ -233,7 +237,7 @@ namespace Underworld
         }
 
 
-        public static int VIT
+        public static int play_hp
         {
             get
             {
@@ -246,7 +250,7 @@ namespace Underworld
         }
 
         
-        public static int MaxVIT
+        public static int max_hp
         {
             get
             {
@@ -260,7 +264,7 @@ namespace Underworld
 
  
  
-        public static int MANA
+        public static int play_mana
         {
             get
             {
@@ -273,7 +277,7 @@ namespace Underworld
         }
 
         
-        public static int MaxMANA
+        public static int max_mana
         {
             get
             {

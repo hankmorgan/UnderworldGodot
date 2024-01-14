@@ -993,12 +993,12 @@ namespace Underworld
 		{
 			Charname.Text = playerdat.CharName.ToUpper();
 			CharClass.Text = GameStrings.GetString(2, 23 + playerdat.CharClass).ToUpper();
-			CharLevel.Text = $"{playerdat.CharLevel}{GameStrings.GetOrdinal(playerdat.CharLevel).ToUpper()}";
+			CharLevel.Text = $"{playerdat.play_level}{GameStrings.GetOrdinal(playerdat.play_level).ToUpper()}";
 			STR.Text = $"{playerdat.STR}";
 			DEX.Text = $"{playerdat.DEX}";
 			INT.Text = $"{playerdat.INT}";
-			VIT.Text = $"{playerdat.VIT}/{playerdat.MaxVIT}";
-			MANA.Text =  $"{playerdat.MANA}/{playerdat.MaxMANA}";
+			VIT.Text = $"{playerdat.play_hp}/{playerdat.max_hp}";
+			MANA.Text =  $"{playerdat.play_mana}/{playerdat.max_mana}";
 			EXP.Text = $"{playerdat.Exp}";
 			StatsName.Text="";
 			StatsValue.Text="";
@@ -1020,7 +1020,7 @@ namespace Underworld
 
 		public static void RefreshHealthFlask()
 		{
-			int level = (int)((float)((float)playerdat.VIT/(float)playerdat.MaxVIT) * 12f);
+			int level = (int)((float)((float)playerdat.play_hp/(float)playerdat.max_hp) * 12f);
 			int startOffset =0;
 			if(playerdat.play_poison>0)
 			{
@@ -1041,7 +1041,7 @@ namespace Underworld
 
 		public static void RefreshManaFlask()
 		{
-			int level = (int)((float)((float)playerdat.MANA/(float)playerdat.MaxMANA) * 12f);
+			int level = (int)((float)((float)playerdat.play_mana/(float)playerdat.max_mana) * 12f);
 			int startOffset = 25;
 			for (int i=0;i<13;i++)
 			{
@@ -1253,11 +1253,11 @@ namespace Underworld
 				*/
 
 					var poisonlevel = (playerdat.play_poison-1)%5;
-					messageScroll.AddString($"{GameStrings.GetString(1,GameStrings.str_you_are_)}{GameStrings.GetString(1,GameStrings.str_barely+poisonlevel)}{GameStrings.GetString(1,GameStrings.str__poisoned_)}\n{GameStrings.GetString(1,GameStrings.str_your_current_vitality_is_)}{playerdat.VIT} out of {playerdat.MaxVIT}");
+					messageScroll.AddString($"{GameStrings.GetString(1,GameStrings.str_you_are_)}{GameStrings.GetString(1,GameStrings.str_barely+poisonlevel)}{GameStrings.GetString(1,GameStrings.str__poisoned_)}\n{GameStrings.GetString(1,GameStrings.str_your_current_vitality_is_)}{playerdat.play_hp} out of {playerdat.max_hp}");
 				}
 				else
 				{				
-					messageScroll.AddString($"{GameStrings.GetString(1,GameStrings.str_your_current_vitality_is_)}{playerdat.VIT} out of {playerdat.MaxVIT}");
+					messageScroll.AddString($"{GameStrings.GetString(1,GameStrings.str_your_current_vitality_is_)}{playerdat.play_hp} out of {playerdat.max_hp}");
 				}
 			}
 		}
@@ -1267,7 +1267,7 @@ namespace Underworld
 		{
 			if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
 			{
-				messageScroll.AddString($"{GameStrings.GetString(1,GameStrings.str_your_current_mana_points_are_)}{playerdat.MANA} out of {playerdat.MaxMANA}");
+				messageScroll.AddString($"{GameStrings.GetString(1,GameStrings.str_your_current_mana_points_are_)}{playerdat.play_mana} out of {playerdat.max_mana}");
 			}
 		}
 

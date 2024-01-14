@@ -78,7 +78,7 @@ namespace Underworld
         /// <summary>
         /// The progression level the player is at
         /// </summary>
-        public static int CharLevel
+        public static int play_level
         {
             get { return GetAt(0x3E); }
             set { SetAt(0x3E, (byte)value); }

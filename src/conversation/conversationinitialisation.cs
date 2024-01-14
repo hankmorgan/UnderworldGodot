@@ -4,7 +4,7 @@ namespace Underworld
     public partial class ConversationVM : UWClass
     {
         public static void StartConversation(uwObject npc)
-        {
+        {           
             //Try and load the conversation from the ark files.
             if (!cnvArkLoader.Loaded)
             {
@@ -48,6 +48,7 @@ namespace Underworld
 
         private static void SetupConversationUI(uwObject npc)
         {
+            uimanager.instance.ConversationText.Text = "";
             var head = new GRLoader(GRLoader.HEADS_GR, GRLoader.GRShaderMode.UIShader);
             //set up relevant UI
             uimanager.EnableDisable(uimanager.instance.ConversationPanel, true);

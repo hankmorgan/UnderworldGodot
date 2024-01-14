@@ -8,8 +8,8 @@ namespace Underworld
     {
         public struct BablGlobal
         {
-            public int ConversationNo;
-            public int Size;
+            public short ConversationNo;
+            public short Size;
             public short[] Globals;
         };
 
@@ -30,8 +30,8 @@ namespace Underworld
                     bGlobals = new BablGlobal[NoOfSlots + 1];
                     for (int i = 0; i <= NoOfSlots; i++)
                     {
-                        bGlobals[i].ConversationNo = (int)Loader.getAt(bglob_data, add_ptr, 16);
-                        bGlobals[i].Size = (int)Loader.getAt(bglob_data, add_ptr + 2, 16);
+                        bGlobals[i].ConversationNo = (short)Loader.getAt(bglob_data, add_ptr, 16);
+                        bGlobals[i].Size = (short)Loader.getAt(bglob_data, add_ptr + 2, 16);
                         bGlobals[i].Globals = new short[bGlobals[i].Size];
                         add_ptr += 4;
                     }
@@ -52,8 +52,8 @@ namespace Underworld
                     for (int i = 0; i < NoOfSlots; i++)
                     {
 
-                        bGlobals[i].ConversationNo = (int)Loader.getAt(bglob_data, add_ptr, 16);
-                        bGlobals[i].Size = (int)Loader.getAt(bglob_data, add_ptr + 2, 16);
+                        bGlobals[i].ConversationNo = (short)Loader.getAt(bglob_data, add_ptr, 16);
+                        bGlobals[i].Size = (short)Loader.getAt(bglob_data, add_ptr + 2, 16);
                         bGlobals[i].Globals = new short[bGlobals[i].Size];
                         add_ptr += 4;
                         for (int g = 0; g < bGlobals[i].Size; g++)
