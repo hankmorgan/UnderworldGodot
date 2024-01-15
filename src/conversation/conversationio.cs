@@ -19,7 +19,7 @@ namespace Underworld
         /// <returns></returns>
         public static string getString(int stringno)
         {           
-            return GameStrings.GetString(conv.StringBlock, stringno);
+            return GameStrings.GetString(currentConversation.StringBlock, stringno);
         }
 
 

@@ -21,7 +21,7 @@ namespace Underworld
             {
                 int conversationNo = GetConversationNumber(npc);
                 Debug.Print ($"ConversationNo is {conversationNo}");
-
+                currentConversation = null;
                 //Check if npc can be talked to
                 if ((conversations[conversationNo].CodeSize == 0) || (npc.npc_whoami == 255))
                 {//006~007~001~You get no response.
@@ -30,17 +30,17 @@ namespace Underworld
                 }
                 else
                 { //a conversation can be had (TODO take hostility into account. Some special NPCs can be talked to in combat. eg rodric and patterson)
-
+                    currentConversation = conversations[conversationNo]; 
                     InConversation = true;
                     SetupConversationUI(npc);
 
                     InitialiseConversationMemory();    
 
-                    ImportVariables(npc, conversations[conversationNo]);
+                    ImportVariables(npc);
 
                     //Launch conversation VM co-routine 
                     _ = Peaky.Coroutines.Coroutine.Run(
-                        ConversationVM.RunConversationVM(npc, conversations[conversationNo]),
+                        ConversationVM.RunConversationVM(npc),
                         main.instance);
                 }
             }

@@ -124,7 +124,7 @@ namespace Underworld
                 SetAt(0x5D, (byte)value);
             }
         }
-        
+
         /// <summary>
         /// The full X co-ordinate in the map
         /// </summary>
@@ -149,7 +149,7 @@ namespace Underworld
             {
                 var tmp = GetAt16(0x55) & 0xFF;
                 tmp |= value << 8;
-                SetAt16(0x55,tmp);
+                SetAt16(0x55, tmp);
             }
         }
 
@@ -158,7 +158,7 @@ namespace Underworld
             get
             {
                 return (X & 0xff) >> 5;
-                
+
                 //& 0x7;// need to confirm if correct
             }
         }
@@ -188,7 +188,7 @@ namespace Underworld
             {
                 var tmp = GetAt16(0x57) & 0xFF;
                 tmp |= value << 8;
-                SetAt16(0x57,tmp);
+                SetAt16(0x57, tmp);
             }
         }
 
@@ -249,7 +249,7 @@ namespace Underworld
             }
         }
 
-        
+
         public static int max_hp
         {
             get
@@ -262,8 +262,8 @@ namespace Underworld
             }
         }
 
- 
- 
+
+
         public static int play_mana
         {
             get
@@ -276,7 +276,7 @@ namespace Underworld
             }
         }
 
-        
+
         public static int max_mana
         {
             get
@@ -294,11 +294,11 @@ namespace Underworld
         /// <summary>
         /// Player Hunger Level
         /// </summary>
-        public static int play_hunger
+        public static byte play_hunger
         {
             get
             {
-                return (int)GetAt(0x3A);
+                return GetAt(0x3A);
             }
             set
             {
@@ -306,19 +306,39 @@ namespace Underworld
             }
         }
 
-        public static int play_poison
+        public static byte play_poison
         {
             get
             {
-                switch(_RES)
+                switch (_RES)
                 {//TODO double check this is right
                     case GAME_UW2:
-                        return (short)((GetAt(0x61)>>1) & 0xf);
+                        return (byte)((GetAt(0x61) >> 1) & 0xf);
                     default:
-                        return (short)((GetAt(0x60)>>2) & 0xf);
-                }  
+                        return (byte)((GetAt(0x60) >> 2) & 0xf);
+                }
             }
-           
+            set
+            {
+                switch (_RES)
+                {//TODO double check this is right
+                    case GAME_UW2:
+                        {
+                            var tmp = (byte)(GetAt(0x61) & 0xE1);
+                            tmp = (byte)(tmp | ((value & 0xF) << 1));
+                            SetAt(0x61, tmp);
+                            break;
+                        }
+                    default:
+                        {
+                            var tmp = (byte)(GetAt(0x61) & 0xC3);
+                            tmp = (byte)(tmp | ((value & 0xF) << 2));
+                            SetAt(0x60, tmp);
+                            break;
+                        }
+                }
+            }
+
         }
 
         /// <summary>
@@ -328,15 +348,15 @@ namespace Underworld
         {
             get
             {
-        
+
                 return (GetAt16(0x62) >> 4) & 0x3F;
             }
             set
-            {      
+            {
                 var tmpValue = GetAt16(0x62);
                 tmpValue &= 0xF03F;//clear bits
-                tmpValue |= ((value & 0x3F)<<6);//set new value
-                SetAt16(0x62,tmpValue);
+                tmpValue |= ((value & 0x3F) << 6);//set new value
+                SetAt16(0x62, tmpValue);
             }
         }
 

@@ -14,7 +14,7 @@ namespace Underworld
         /// <summary>
         /// The currently referenced conversation.
         /// </summary>
-        public static conversation conv;
+        public static conversation currentConversation;
 
         /// <summary>
         /// The instruction Pointer.
@@ -26,14 +26,13 @@ namespace Underworld
         /// </summary>
         public static int basep = 0;
 
-        public static IEnumerator RunConversationVM(uwObject npc, conversation _newConv)
-        {
-            conv = _newConv;
+        public static IEnumerator RunConversationVM(uwObject npc)
+        {          
             bool finished = false;
 
             while (!finished)
             {
-                switch (conv.instuctions[instrp])
+                switch (currentConversation.instuctions[instrp])
                 {
                     case cnv_NOP:
                         {
@@ -212,7 +211,7 @@ namespace Underworld
 
                     case cnv_JMP:
                         {//Debug.Log("instr = " +instrp + " JMP to " +  conv.instuctions[instrp+1]);
-                            instrp = conv.instuctions[instrp + 1] - 1;
+                            instrp = currentConversation.instuctions[instrp + 1] - 1;
                             break;
                         }
 
@@ -220,7 +219,7 @@ namespace Underworld
                         {
                             if (Pop() == 0)
                             {
-                                instrp += conv.instuctions[instrp + 1];
+                                instrp += currentConversation.instuctions[instrp + 1];
                             }
                             else
                             {
@@ -233,7 +232,7 @@ namespace Underworld
                         {
                             if (Pop() != 0)
                             {
-                                instrp += conv.instuctions[instrp + 1];
+                                instrp += currentConversation.instuctions[instrp + 1];
                             }
                             else
                             {
@@ -245,7 +244,7 @@ namespace Underworld
                     case cnv_BRA:
                         {
                             //int origInstrp= instrp;
-                            instrp += conv.instuctions[instrp + 1];
+                            instrp += currentConversation.instuctions[instrp + 1];
                             //Debug.Log("BRA to " + instrp + " at " + origInstrp);
                             /*int offset = conv.instuctions[instrp+1];
                             if (offset >0)
@@ -265,20 +264,20 @@ namespace Underworld
                             // stack value points to next instruction after call
                             //Debug.Log("inst=" + instrp + "stack ptr" + stackptr + " new inst=" + (conv.instuctions[instrp+1]-1));
                             Push(instrp + 1);
-                            instrp = conv.instuctions[instrp + 1] - 1;
+                            instrp = currentConversation.instuctions[instrp + 1] - 1;
                             call_level++;
                             break;
                         }
 
                     case cnv_CALLI: // imported function
                         {
-                            int arg1 = conv.instuctions[++instrp];
-                            for (int i = 0; i <= conv.functions.GetUpperBound(0); i++)
+                            int arg1 = currentConversation.instuctions[++instrp];
+                            for (int i = 0; i <= currentConversation.functions.GetUpperBound(0); i++)
                             {
-                                if ((conv.functions[i].ID_or_Address == arg1) && (conv.functions[i].import_type == import_function))
+                                if ((currentConversation.functions[i].ID_or_Address == arg1) && (currentConversation.functions[i].import_type == import_function))
                                 {
-                                    Debug.Print("Calling function  " + arg1 + " which is currently : " + conv.functions[i].importname);
-                                    yield return run_imported_function(conv.functions[i], npc);
+                                    Debug.Print("Calling function  " + arg1 + " which is currently : " + currentConversation.functions[i].importname);
+                                    yield return run_imported_function(currentConversation.functions[i], npc);
                                     break;
                                 }
                             }
@@ -304,7 +303,7 @@ namespace Underworld
                     case cnv_PUSHI:
                         {
                             //Debug.Log("Instruction:" + instrp +" Pushing Immediate value :" +conv.instuctions[instrp+1] + " => " + stackptr);
-                            Push(conv.instuctions[++instrp]);
+                            Push(currentConversation.instuctions[++instrp]);
                             break;
                         }
 
@@ -322,7 +321,7 @@ namespace Underworld
                             //     Push(basep + offset);
                             // }
 
-                            Push(basep + conv.instuctions[instrp + 1]);
+                            Push(basep + currentConversation.instuctions[instrp + 1]);
                             instrp++;
                             break;
                         }
@@ -468,7 +467,7 @@ namespace Underworld
 
                 // process next instruction or decide if finished.
                 instrp++;
-                if (instrp > conv.instuctions.GetUpperBound(0))
+                if (instrp > currentConversation.instuctions.GetUpperBound(0))
                 {
                     finished = true;
                 }
@@ -477,13 +476,13 @@ namespace Underworld
             //should have a wait here
             yield return new WaitForSeconds(3);
 
-            ExitConversation(npc, conv);
+            ExitConversation(npc, currentConversation);
             yield return null;
         }
 
         private static void ExitConversation(uwObject npc, conversation conv)
         {
-            ExportVariables(npc, conv);
+            ExportVariables(npc);
             uimanager.EnableDisable(uimanager.instance.ConversationPanel, false);
             uimanager.instance.ConversationText.Text = "";
             InConversation = false;

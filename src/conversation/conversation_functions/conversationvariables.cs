@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using Godot;
 
@@ -9,7 +10,7 @@ namespace Underworld
         /// Import the variables from bglobals and the characters.
         /// </summary>
         /// <param name="npc"></param>
-        public static void ImportVariables(uwObject npc, conversation _newConv)
+        public static void ImportVariables(uwObject npc)
         {
             //Copy the stored values from bglobal.dat files first.
             //This may be overwritten by the imported variables below.
@@ -27,14 +28,14 @@ namespace Underworld
             }
             //imported variables
             //Add in the imported variables at the addresses specified
-            for (int i = 0; i <= _newConv.functions.GetUpperBound(0); i++)
+            for (int i = 0; i <= currentConversation.functions.GetUpperBound(0); i++)
             {
-                if (_newConv.functions[i].import_type == import_variable)
+                if (currentConversation.functions[i].import_type == import_variable)
                 {
-                    var address = _newConv.functions[i].ID_or_Address;
+                    var address = currentConversation.functions[i].ID_or_Address;
 
                     int valueToImport = 0;
-                    switch (_newConv.functions[i].importname.ToLower())
+                    switch (currentConversation.functions[i].importname.ToLower())
                     {
                         case "npc_whoami":
                             {
@@ -123,7 +124,6 @@ namespace Underworld
                             }
                         case "npc_attitude":
                             {
-
                                 if ((npc.npc_goal == 5) && (npc.npc_gtarg == 1))
                                 {
                                     valueToImport = 6;
@@ -216,16 +216,14 @@ namespace Underworld
                                 break;
                             }
                     }
-                    Debug.Print($"Importing {_newConv.functions[i].importname} to {address} with value {valueToImport}");
+                    Debug.Print($"Importing {currentConversation.functions[i].importname} to {address} with value {valueToImport}");
                     Set(address, valueToImport);
                 }
             }
         } //end importvars
 
-        public static void ExportVariables(uwObject npc, conversation _newConv)
+        public static void ExportVariables(uwObject npc)
         {
-            npc.npc_talkedto=1;
-
             //TODO Export the values to bglobals and back to the npc and player
             for (int c = 0; c <= bglobal.bGlobals.GetUpperBound(0); c++)
             {
@@ -239,6 +237,68 @@ namespace Underworld
                     break;
                 }
             }
+            
+            var tmp = FindVariable("npc_hunger");
+            if (tmp>=32)
+                {//Set bit 7
+                    npc.npc_hunger = (short)((npc.npc_hunger & 0x7F) | (1<<7));
+                }
+            else
+                {
+                    //unset bit
+                    npc.npc_hunger = ((short)(npc.npc_hunger & 0x7F));
+                }
+            
+            npc.npc_hp = (byte)FindVariable("npc_hp");
+            npc.owner = FindVariable("npc_yhome");
+            npc.quality = FindVariable("npc_xhome");
+            npc.npc_goal = (byte)FindVariable("npc_goal"); //There may be deeper logic applying here
+            npc.npc_gtarg = (byte)FindVariable("npc_gtarg");
+            npc.npc_talkedto=1;// this always gets set to 1
+            tmp = FindVariable("npc_attitude");
+            if (tmp>3)
+            {
+                npc.npc_attitude = 3;
+                npc.npc_hunger = (short)(npc.npc_hunger | 0x40); //set bit 6 after conv
+            }
+            else
+            {
+                npc.npc_attitude = (short)Math.Min(0, (int)tmp);
+            }
+
+            playerdat.play_hunger = (byte)FindVariable("play_hunger");
+            playerdat.play_hp = (byte)FindVariable("play_hp");
+            playerdat.play_mana = (byte)FindVariable("play_mana");
+            playerdat.play_poison = (byte)FindVariable("play_poison");
+            //Add new_exp
+            tmp = FindVariable("new_player_exp");
+            if (tmp!=0)
+            {
+                Debug.Print("Change in xp. To implement.");//the exp change logic is dungeon level dependant with some randomisation
+            }
+        }
+
+        /// <summary>
+        /// Matches up an imported variable and returns the stack value at it's addres
+        /// </summary>
+        /// <param name="varname"></param>
+        /// <param name="currentConversation"></param>
+        /// <returns></returns>
+        public static short FindVariable(string varname)
+        {
+            for (int i=0; i<= currentConversation.functions.GetUpperBound(0); i++)
+            {
+                if (currentConversation.functions[i].import_type == 0x010F)
+                    {
+                        if (varname.ToLower() == currentConversation.functions[i].importname.ToLower())
+                            {
+                                Debug.Print($"{varname}  = {at(currentConversation.functions[i].ID_or_Address)}");
+                                return at(currentConversation.functions[i].ID_or_Address);
+                            }
+                    }
+            }
+            Debug.Print($"Imported Variable {varname} not found!");
+            return 0;
         }
     }//end class
 }// end namespace

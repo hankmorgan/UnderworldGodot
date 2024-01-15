@@ -77,7 +77,7 @@ namespace Underworld
                     var objname = "That " + GameStrings.GetObjectNounUW(obj.item_id,1);
                     //TODO play eating sound. (sound played depends on how hungry the player is)
                     var r = new Random();
-                    playerdat.play_hunger += nutrition;
+                    playerdat.play_hunger = (byte)(playerdat.play_hunger + (byte)nutrition);
 
                     //Taste string
                     var taste = (obj.quality + r.Next(0, 0x14)) >> 4;
