@@ -130,7 +130,7 @@ namespace Underworld
         /// </summary>
         static automap mapToRender;
 
-        static System.Random rnd;
+        //static System.Random rnd;
        
         /// <summary>
         /// Returns the automap as an image.
@@ -139,7 +139,7 @@ namespace Underworld
         /// <returns></returns>
         public static ImageTexture MapImage(int levelno)
         {
-            rnd = new System.Random();
+            //rnd = new System.Random();
             var OutputTileMapImage = Image.Create(64 * TileSize, 64 * TileSize, false, Image.Format.Rgba8);
             mapToRender = automap.automaps[levelno];
 
@@ -761,7 +761,7 @@ namespace Underworld
         /// <param name="Selection">Selection.</param>
         static Color PickColour(Color[] Selection)
         {
-            return Selection[rnd.Next(0, Selection.GetUpperBound(0) + 1)];
+            return Selection[Rng.r.Next(0, Selection.GetUpperBound(0) + 1)];
         }
     } //end class
 }//end namespace

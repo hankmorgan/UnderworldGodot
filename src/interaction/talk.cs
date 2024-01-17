@@ -16,6 +16,7 @@ namespace Underworld
                 {
                     case 1: //NPCs
                         {
+                            npc.loot(obj);
                             ConversationVM.StartConversation(obj);
                             break;
                         }

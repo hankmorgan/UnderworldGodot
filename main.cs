@@ -232,13 +232,13 @@ public partial class main : Node3D
         }
         else
 		{
-			Random r = new Random();
+			//Random r = new Random();
 			playerdat.InitEmptyPlayer();
 			playerdat.tileX = -(int)(cam.Position.X / 1.2f);
 			playerdat.tileY = (int)(cam.Position.Z / 1.2f);
 			playerdat.dungeon_level = uwsettings.instance.level + 1;
 
-			var isFemale = r.Next(0, 2) == 1;
+			var isFemale = Rng.r.Next(0, 2) == 1;
 			playerdat.isFemale = isFemale;
 			uimanager.SetHelm(isFemale, -1);
 			uimanager.SetArmour(isFemale, -1);
@@ -253,7 +253,7 @@ public partial class main : Node3D
 			{
 				uimanager.SetBackPackArt(i, -1);
 			}
-			playerdat.Body = r.Next(0, 4);
+			playerdat.Body = Rng.r.Next(0, 4);
 			playerdat.CharName= "GRONK";
 			
 			//LoadTileMap(gamesettings.level, gr);

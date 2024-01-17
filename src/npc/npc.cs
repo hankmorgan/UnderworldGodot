@@ -4,7 +4,7 @@ using Godot;
 
 namespace Underworld
 {
-    public class npc : objectInstance
+    public partial class npc : objectInstance
     {
 
         /// <summary>

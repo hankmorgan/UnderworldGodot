@@ -3,7 +3,7 @@ namespace Underworld
 {
     public partial class ConversationVM : UWClass
     {
-        public static void StartConversation(uwObject npc)
+        public static void StartConversation(uwObject talker)
         {           
             //Try and load the conversation from the ark files.
             if (!cnvArkLoader.Loaded)
@@ -19,11 +19,11 @@ namespace Underworld
 
             if (conversations != null)
             {
-                int conversationNo = GetConversationNumber(npc);
+                int conversationNo = GetConversationNumber(talker);
                 Debug.Print ($"ConversationNo is {conversationNo}");
                 currentConversation = null;
                 //Check if npc can be talked to
-                if ((conversations[conversationNo].CodeSize == 0) || (npc.npc_whoami == 255))
+                if ((conversations[conversationNo].CodeSize == 0) || (talker.npc_whoami == 255))
                 {//006~007~001~You get no response.
                     messageScroll.AddString(GameStrings.GetString(7, 1));
                     return;
@@ -32,21 +32,22 @@ namespace Underworld
                 { //a conversation can be had (TODO take hostility into account. Some special NPCs can be talked to in combat. eg rodric and patterson)
                     currentConversation = conversations[conversationNo]; 
                     InConversation = true;
-                    SetupConversationUI(npc);
+                    SetupConversationUI(talker);
 
                     InitialiseConversationMemory();    
 
-                    ImportVariables(npc);
-
+                    ImportVariables(talker);
+                    //Test
+                    
                     //Launch conversation VM co-routine 
                     _ = Peaky.Coroutines.Coroutine.Run(
-                        ConversationVM.RunConversationVM(npc),
+                        ConversationVM.RunConversationVM(talker),
                         main.instance);
                 }
             }
         }
 
-        private static void SetupConversationUI(uwObject npc)
+        private static void SetupConversationUI(uwObject talker)
         {
             uimanager.instance.ConversationText.Text = "";
             var head = new GRLoader(GRLoader.HEADS_GR, GRLoader.GRShaderMode.UIShader);
@@ -65,20 +66,20 @@ namespace Underworld
             uimanager.instance.PlayerNameLabel.Text = playerdat.CharName;
 
             //npc name and portrait
-            uimanager.instance.NPCNameLabel.Text = npc._name;
-            uimanager.instance.NPCPortrait.Texture = NPCPortrait(npc);
+            uimanager.instance.NPCNameLabel.Text = talker._name;
+            uimanager.instance.NPCPortrait.Texture = NPCPortrait(talker);
         }
 
-        private static int GetConversationNumber(uwObject npc)
+        private static int GetConversationNumber(uwObject talker)
         {
             int conversationNo;
-            if (npc.npc_whoami == 0)
+            if (talker.npc_whoami == 0)
             {
-                conversationNo = 256 + (npc.item_id - 64);
+                conversationNo = 256 + (talker.item_id - 64);
             }
             else
             {
-                conversationNo = npc.npc_whoami;
+                conversationNo = talker.npc_whoami;
                 if (_RES == GAME_UW2)
                 {
                     conversationNo++;
@@ -92,21 +93,21 @@ namespace Underworld
         /// </summary>
         /// <param name="whoami"></param>
         /// <returns></returns>
-        public static Godot.Texture2D NPCPortrait(uwObject npc)
+        public static Godot.Texture2D NPCPortrait(uwObject talker)
         {
             //Assume generic head first.
             bool UseGenericHead = true;
             switch (_RES)
             {
                 case GAME_UW2:
-                    if (npc.npc_whoami != 0)
+                    if (talker.npc_whoami != 0)
                     {
                         UseGenericHead = false;
                     }
                     break;
                 default:
                     {
-                        if ((npc.npc_whoami > 0) && (npc.npc_whoami <= 28))
+                        if ((talker.npc_whoami > 0) && (talker.npc_whoami <= 28))
                         {
                             UseGenericHead = false;
                         }
@@ -116,12 +117,12 @@ namespace Underworld
             if (UseGenericHead)
             {
                 var ghead = new GRLoader(GRLoader.GENHEAD_GR, GRLoader.GRShaderMode.UIShader);
-                return ghead.LoadImageAt(npc.item_id & 0x3F);
+                return ghead.LoadImageAt(talker.item_id & 0x3F);
             }
             else
             {
                 var chead = new GRLoader(GRLoader.CHARHEAD_GR, GRLoader.GRShaderMode.UIShader);
-                return chead.LoadImageAt(npc.npc_whoami - 1);
+                return chead.LoadImageAt(talker.npc_whoami - 1);
             }
         }
     }//end class

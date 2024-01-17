@@ -96,13 +96,13 @@ namespace Underworld
         }; //uw2 floppy level 69 is a secret level containing the lotus.
 
         public static int GetWorldNo(int levelNo)
-        {
+        {            
             switch(_RES)
             {
                 case GAME_UW2:
-                    return (levelNo + 1)/8;
+                    return (levelNo - 1)/8;
                 default:
-                    return levelNo + 1;
+                    return levelNo;
             }
         }
 

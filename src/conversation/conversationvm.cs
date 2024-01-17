@@ -26,7 +26,7 @@ namespace Underworld
         /// </summary>
         public static int basep = 0;
 
-        public static IEnumerator RunConversationVM(uwObject npc)
+        public static IEnumerator RunConversationVM(uwObject talker)
         {          
             bool finished = false;
 
@@ -277,7 +277,7 @@ namespace Underworld
                                 if ((currentConversation.functions[i].ID_or_Address == arg1) && (currentConversation.functions[i].import_type == import_function))
                                 {
                                     Debug.Print("Calling function  " + arg1 + " which is currently : " + currentConversation.functions[i].importname);
-                                    yield return run_imported_function(currentConversation.functions[i], npc);
+                                    yield return run_imported_function(currentConversation.functions[i], talker);
                                     break;
                                 }
                             }
@@ -476,13 +476,13 @@ namespace Underworld
             //should have a wait here
             yield return new WaitForSeconds(3);
 
-            ExitConversation(npc, currentConversation);
+            ExitConversation(talker, currentConversation);
             yield return null;
         }
 
-        private static void ExitConversation(uwObject npc, conversation conv)
+        private static void ExitConversation(uwObject talker, conversation conv)
         {
-            ExportVariables(npc);
+            ExportVariables(talker);
             uimanager.EnableDisable(uimanager.instance.ConversationPanel, false);
             uimanager.instance.ConversationText.Text = "";
             InConversation = false;

@@ -7,7 +7,7 @@ namespace Underworld
     /// </summary>
     public partial class playerdat : Loader
     {
-        static Random r = new Random();
+        //static Random r = new Random();
         public enum SkillCheckResult
         {
             CritFail = -1,
@@ -20,7 +20,7 @@ namespace Underworld
     public static SkillCheckResult SkillCheck(int skillValue, int targetValue)
     {
         
-        int score = (skillValue - targetValue) + r.Next(0, 30); //0 to 29;
+        int score = (skillValue - targetValue) + Rng.r.Next(0, 30); //0 to 29;
 
         if (score < 0x1d)
         {
