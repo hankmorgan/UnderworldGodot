@@ -286,22 +286,45 @@ namespace Underworld
 
         /// <summary>
         /// Gets the item id of the loot item at the specified index (0 to 2)
-        /// If loot is not enabled return 0 for no loot dropped
+        /// If loot is not enabled return -1 for no loot dropped
         /// </summary>
         /// <param name="item_id"></param>
         /// <param name="loot_no"></param>
         /// <returns></returns>
-        public static int loot(int item_id, int loot_no)
+        public static int weaponloot(int item_id, int loot_no)
         {
             bool enabled = (buffer[CritterOffset(item_id) + 0x20 + loot_no] & 0x1) == 1;
             if (enabled)
             {
                 //get initial value
-                var val = buffer[offset + 0x20 + loot_no + (item_id & 0x3F) * 48 ] >> 1;
-                //=BITAND(BITRSHIFT(val,4),3)+BITAND(val,15)
-                return (val >> 4) & 0x3 + (val & 0xf);  // this is an odd calculation...
+                var val = 0x7f & buffer[CritterOffset(item_id) + 0x20 + loot_no] >> 1;
+                return (((val >> 4) & 0x3)<<3) + (val & 0xf);  // this is an odd calculation...
             }
-            return 0; // no loot item.
+            return -1; // no loot item.
+        }
+
+        /// <summary>
+        /// The other loot will spawn. Higher values are better. Vs an Rng(0-16)
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <param name="loot_no"></param>
+        /// <returns></returns>
+        public static int otherloot_probability(int item_id, int loot_no)
+        {
+            var val = (int)getAt(buffer,CritterOffset(item_id) + 0x22 + (loot_no * 2), 16);
+            return val & 0xF;            
+        }
+
+        /// <summary>
+        /// The item to be spawned as additional loot by this critter. May include bones and remains
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <param name="loot_no"></param>
+        /// <returns></returns>
+        public static int otherloot_item(int item_id, int loot_no)
+        {
+            var val = (int)getAt(buffer,CritterOffset(item_id) + 0x22 + (loot_no*2), 16);
+            return (val >> 4) & 0xFFF;            
         }
 
         /// <summary>

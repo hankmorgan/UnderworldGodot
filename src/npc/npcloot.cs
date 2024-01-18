@@ -10,8 +10,9 @@ namespace Underworld
     {
         public static void loot(uwObject critter)
         {
-            DropValuableObjectLoot(critter);
-
+            ValuableObjectLoot(critter);
+            WeaponLoot(critter);
+            OtherLoot(critter);
             //TODO set the loot dropped flag on the NPC.
         }
 
@@ -19,7 +20,7 @@ namespace Underworld
         /// Drops coins and gems into then npc inventory.
         /// </summary>
         /// <param name="critter"></param>
-        public static void DropValuableObjectLoot(uwObject critter)
+        public static void ValuableObjectLoot(uwObject critter)
         {
             //The game world chooses which valuable item type is dropped in the valuables object class (starting at coin)
             var world = worlds.GetWorldNo(playerdat.dungeon_level);
@@ -28,7 +29,7 @@ namespace Underworld
             var Critter_var_6 = critterObjectDat.Unk26_R4(critter.item_id);
             
             var r = new Random();
-            if ((r.Next(0, 16) > Critter_var_6) && (false))
+            if (r.Next(0, 16) > Critter_var_6)
             {//Do not spawn a valuable.
                 return;
             }
@@ -66,7 +67,7 @@ namespace Underworld
                 }
 
                 var var_3_qty = 0;
-                /
+                
                 if (Critter_var_5 < base_objectvalue_var_2)
                 {
                     //do a rng roll to check if a single instance of the valuable is spawned.
@@ -90,6 +91,79 @@ namespace Underworld
                 if (var_3_qty > 0)
                 {
                     Debug.Print($"Spawning {var_3_qty} {GameStrings.GetObjectNounUW(coinitemid + valuable_type_var_1)}");
+                }
+            }
+        }
+    
+
+        /// <summary>
+        /// Drops loot that has a quality and qty to it. Probably weapons.
+        /// </summary>
+        /// <param name="critter"></param>
+        public static void WeaponLoot(uwObject critter)
+        {
+            for (int i=0; i<2;i++)
+            {
+                int item_id = critterObjectDat.weaponloot(critter.item_id, i);
+                int quality=0;
+                int qty=0;
+                if (item_id!=-1)
+                {
+                    //Create object now. Set properties later
+
+                    //Now calculate quality 50:50 chance of rnd(0-64) or a figure based on the current dungeon level
+                    quality = RandomLootQuality();
+                    if ((item_id & 0x30) >> 4 == 1)
+                    {
+                        if (rangedObjectDat.RangedWeaponType(item_id) == 0xC0)
+                        {
+                            //item is ammo. it needs a qty.
+                            qty = 4 + (Rng.r.Next(0, 8));
+                        }
+                    }
+                    Debug.Print($"Spawning {qty} {GameStrings.GetObjectNounUW(item_id)} of quality {quality}");
+                }
+            }
+           
+        }
+
+        /// <summary>
+        /// Loot spawns for NPCs have random quality. 50:50 either based on rng(0-63) or based on level no
+        /// </summary>
+        /// <returns></returns>
+        private static int RandomLootQuality()
+        {
+            int quality;
+            if (Rng.r.Next(0, 2) == 0)
+            {
+                quality = Rng.r.Next(1, 0x40);
+            }
+            else
+            {
+                quality = Rng.r.Next(0, playerdat.dungeon_level << 2) + (playerdat.dungeon_level << 2);
+                quality = quality & 0x3F;
+            }
+
+            return quality;
+        }
+
+        /// <summary>
+        /// Drops other loot objects based on rng
+        /// </summary>
+        /// <param name="critter"></param>
+        public static void OtherLoot(uwObject critter)
+        {
+            for (int i=0;i<2;i++)
+            {
+                if ((Rng.r.Next(0,16) <critterObjectDat.otherloot_probability(critter.item_id, i)) || (true))
+                {
+                    var item_id = critterObjectDat.otherloot_item(critter.item_id, i);
+                    var quality = RandomLootQuality();
+                    if (commonObjDat.qualitytype(item_id)==0xF)
+                        {
+                            quality = 0x40;
+                        }
+                    Debug.Print($"Spawning {GameStrings.GetObjectNounUW(item_id)} of quality {quality}");
                 }
             }
         }

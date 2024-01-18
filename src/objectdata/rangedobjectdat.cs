@@ -28,6 +28,16 @@ namespace Underworld
         {
             return buffer[offset + 1 + (item_id & 0xf) * 3] + 16;
         }
+
+        /// <summary>
+        /// Probably flags if this is ammo itself or not
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <returns></returns>
+        public static int RangedWeaponType(int item_id)
+        {
+            return buffer[offset + 2 + (item_id & 0xf) * 3];
+        }
     }
 
 }//end namespace
