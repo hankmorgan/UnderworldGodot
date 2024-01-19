@@ -8,9 +8,11 @@ namespace Underworld
     /// </summary>
     public partial class npc : objectInstance
     {
+        static bool DebugSpawnAllLoot=true;
         public static void loot(uwObject critter)
         {
             ValuableObjectLoot(critter);
+            FoodLoot(critter);
             WeaponLoot(critter);
             OtherLoot(critter);
             //TODO set the loot dropped flag on the NPC.
@@ -29,7 +31,7 @@ namespace Underworld
             var Critter_var_6 = critterObjectDat.Unk26_R4(critter.item_id);
             
             var r = new Random();
-            if (r.Next(0, 16) > Critter_var_6)
+            if ((r.Next(0, 16) > Critter_var_6) && (!DebugSpawnAllLoot))
             {//Do not spawn a valuable.
                 return;
             }
@@ -96,6 +98,15 @@ namespace Underworld
         }
     
 
+        public static void FoodLoot(uwObject critter)
+        {
+            if (Rng.r.Next(0,16)<critterObjectDat.foodloot_probability(critter.item_id) || (DebugSpawnAllLoot))
+            {
+                var item_id = critterObjectDat.foodloot_item(critter.item_id) + 0xB0;
+                 Debug.Print($"Spawning {GameStrings.GetObjectNounUW(item_id)}");
+            }
+        }
+
         /// <summary>
         /// Drops loot that has a quality and qty to it. Probably weapons.
         /// </summary>
@@ -155,7 +166,7 @@ namespace Underworld
         {
             for (int i=0;i<2;i++)
             {
-                if ((Rng.r.Next(0,16) <critterObjectDat.otherloot_probability(critter.item_id, i)) || (true))
+                if ((Rng.r.Next(0,16) <critterObjectDat.otherloot_probability(critter.item_id, i)) || (DebugSpawnAllLoot))
                 {
                     var item_id = critterObjectDat.otherloot_item(critter.item_id, i);
                     var quality = RandomLootQuality();

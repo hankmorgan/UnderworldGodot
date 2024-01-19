@@ -327,6 +327,25 @@ namespace Underworld
             return (val >> 4) & 0xFFF;            
         }
 
+
+        public static int foodloot_probability(int item_id)
+        {
+            var val = buffer[CritterOffset(item_id) + 0x27];
+            return val & 0xF;            
+        }
+
+        /// <summary>
+        /// The food item to be dropped by the critter
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <param name="loot_no"></param>
+        /// <returns></returns>
+        public static int foodloot_item(int item_id)
+        {
+            var val = buffer[CritterOffset(item_id) + 0x27];
+            return (val >> 4) & 0xF;            
+        }
+
         /// <summary>
         /// This value is used in relation to loot drops
         /// </summary>
