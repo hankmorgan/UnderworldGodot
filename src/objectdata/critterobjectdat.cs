@@ -298,7 +298,7 @@ namespace Underworld
             {
                 //get initial value
                 var val = 0x7f & buffer[CritterOffset(item_id) + 0x20 + loot_no] >> 1;
-                return (((val >> 4) & 0x3)<<3) + (val & 0xf);  // this is an odd calculation...
+                return (((val >> 4) & 0x3)<<4) + (val & 0xf);  
             }
             return -1; // no loot item.
         }
