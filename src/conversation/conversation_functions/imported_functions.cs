@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Diagnostics;
+using Godot;
 using Peaky.Coroutines;
 namespace Underworld
 {
@@ -32,11 +33,18 @@ namespace Underworld
                         set_quest();
                         break;
                     }
+                case "random":
+                    {
+                        Random();
+                        break;
+                    }
                 default:
                     {
                         Debug.Print($"Unimplemented {func.importname}");break;
                     }
             }
+            //set the value at the stackptr to the result
+            Set(stackptr,result_register);
             yield return null;
         }
     }
