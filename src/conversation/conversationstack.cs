@@ -103,6 +103,16 @@ namespace Underworld
         {
             return StackValues.GetUpperBound(0);
         }
+
+        /// <summary>
+        /// Returns the value pointed to by the specified ptr value
+        /// </summary>
+        /// <param name="ptr"></param>
+        /// <returns></returns>
+        public static int GetConvoStackValueAtPtr(int ptr)
+        {
+            return StackValues[at(ptr)];
+        }
     }
 
 }//end namespace

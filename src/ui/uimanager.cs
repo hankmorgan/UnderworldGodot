@@ -506,19 +506,19 @@ namespace Underworld
 		{
 			switch (slotno)
 			{
-				case 0: uimanager.SetHelm(playerdat.isFemale, helm.GetSpriteIndex(playerdat.HelmObject)); break;
-				case 1: uimanager.SetArmour(playerdat.isFemale, chestarmour.GetSpriteIndex(playerdat.ChestArmourObject)); break;
-				case 2: uimanager.SetGloves(playerdat.isFemale, gloves.GetSpriteIndex(playerdat.GlovesObject)); break;
-				case 3: uimanager.SetLeggings(playerdat.isFemale, gloves.GetSpriteIndex(playerdat.LeggingsObject)); break;
-				case 4: uimanager.SetBoots(playerdat.isFemale, gloves.GetSpriteIndex(playerdat.BootsObject)); break;
+				case 0: SetHelm(playerdat.isFemale, wearable.GetSpriteIndex(playerdat.HelmObject)); break;
+				case 1: SetArmour(playerdat.isFemale, wearable.GetSpriteIndex(playerdat.ChestArmourObject)); break;
+				case 2: SetGloves(playerdat.isFemale, wearable.GetSpriteIndex(playerdat.GlovesObject)); break;
+				case 3: SetLeggings(playerdat.isFemale, wearable.GetSpriteIndex(playerdat.LeggingsObject)); break;
+				case 4: SetBoots(playerdat.isFemale, wearable.GetSpriteIndex(playerdat.BootsObject)); break;
 				//Set arms and shoulders
-				case 5: uimanager.SetRightShoulder(uwObject.GetObjectSprite(playerdat.RightShoulderObject)); break;
-				case 6: uimanager.SetLeftShoulder(uwObject.GetObjectSprite(playerdat.LeftShoulderObject)); break;
-				case 7: uimanager.SetRightHand(uwObject.GetObjectSprite(playerdat.RightHandObject)); break;
-				case 8: uimanager.SetLeftHand(uwObject.GetObjectSprite(playerdat.LeftHandObject)); break;
+				case 5: SetRightShoulder(uwObject.GetObjectSprite(playerdat.RightShoulderObject)); break;
+				case 6: SetLeftShoulder(uwObject.GetObjectSprite(playerdat.LeftShoulderObject)); break;
+				case 7: SetRightHand(uwObject.GetObjectSprite(playerdat.RightHandObject)); break;
+				case 8: SetLeftHand(uwObject.GetObjectSprite(playerdat.LeftHandObject)); break;
 				//set rings
-				case 9: uimanager.SetRightRing(ring.GetSpriteIndex(playerdat.RightRingObject)); break;
-				case 10: uimanager.SetLeftRing(ring.GetSpriteIndex(playerdat.LeftRingObject)); break;
+				case 9: SetRightRing(ring.GetSpriteIndex(playerdat.RightRingObject)); break;
+				case 10: SetLeftRing(ring.GetSpriteIndex(playerdat.LeftRingObject)); break;
 				default:
 					if ((slotno >= 11) && (slotno <= 18))
 					{
@@ -527,7 +527,7 @@ namespace Underworld
 						{
 							objAtSlot = playerdat.InventoryObjects[playerdat.BackPackIndices[slotno-11]];
 						}
-						uimanager.SetBackPackArt(
+                        SetBackPackArt(
 							slot: slotno - 11,
 							SpriteNo: uwObject.GetObjectSprite(objAtSlot),
 							qty: uwObject.GetObjectQuantity(objAtSlot));
@@ -846,30 +846,30 @@ namespace Underworld
 
 		public static void UpdateInventoryDisplay()
 		{
-			uimanager.SetHelm(playerdat.isFemale, helm.GetSpriteIndex(playerdat.HelmObject));
-			uimanager.SetArmour(playerdat.isFemale, chestarmour.GetSpriteIndex(playerdat.ChestArmourObject));
-			uimanager.SetGloves(playerdat.isFemale, gloves.GetSpriteIndex(playerdat.GlovesObject));
-			uimanager.SetLeggings(playerdat.isFemale, gloves.GetSpriteIndex(playerdat.LeggingsObject));
-			uimanager.SetBoots(playerdat.isFemale, gloves.GetSpriteIndex(playerdat.BootsObject));
-			//Set arms and shoulders
-			uimanager.SetRightShoulder(uwObject.GetObjectSprite(playerdat.RightShoulderObject), uwObject.GetObjectQuantity(playerdat.RightShoulderObject));
-			uimanager.SetLeftShoulder(uwObject.GetObjectSprite(playerdat.LeftShoulderObject), uwObject.GetObjectQuantity(playerdat.LeftShoulderObject));
-			uimanager.SetRightHand(uwObject.GetObjectSprite(playerdat.RightHandObject), uwObject.GetObjectQuantity(playerdat.RightHandObject));
-			uimanager.SetLeftHand(uwObject.GetObjectSprite(playerdat.LeftHandObject), uwObject.GetObjectQuantity(playerdat.LeftHandObject));
-			//set rings
-			uimanager.SetRightRing(ring.GetSpriteIndex(playerdat.RightRingObject));
-			uimanager.SetLeftRing(ring.GetSpriteIndex(playerdat.LeftRingObject));
+            SetHelm(playerdat.isFemale, wearable.GetSpriteIndex(playerdat.HelmObject));
+            SetArmour(playerdat.isFemale, wearable.GetSpriteIndex(playerdat.ChestArmourObject));
+            SetGloves(playerdat.isFemale, wearable.GetSpriteIndex(playerdat.GlovesObject));
+            SetLeggings(playerdat.isFemale, wearable.GetSpriteIndex(playerdat.LeggingsObject));
+            SetBoots(playerdat.isFemale, wearable.GetSpriteIndex(playerdat.BootsObject));
+            //Set arms and shoulders
+            SetRightShoulder(uwObject.GetObjectSprite(playerdat.RightShoulderObject), uwObject.GetObjectQuantity(playerdat.RightShoulderObject));
+            SetLeftShoulder(uwObject.GetObjectSprite(playerdat.LeftShoulderObject), uwObject.GetObjectQuantity(playerdat.LeftShoulderObject));
+            SetRightHand(uwObject.GetObjectSprite(playerdat.RightHandObject), uwObject.GetObjectQuantity(playerdat.RightHandObject));
+            SetLeftHand(uwObject.GetObjectSprite(playerdat.LeftHandObject), uwObject.GetObjectQuantity(playerdat.LeftHandObject));
+            //set rings
+            SetRightRing(ring.GetSpriteIndex(playerdat.RightRingObject));
+            SetLeftRing(ring.GetSpriteIndex(playerdat.LeftRingObject));
 			//backback
 			for (int i = 0; i < 8; i++)
 			{
 				if (playerdat.BackPackIndices[i] != -1)
 				{
 					var objFound = playerdat.InventoryObjects[playerdat.BackPackIndices[i]];
-					uimanager.SetBackPackArt(i, uwObject.GetObjectSprite(objFound), uwObject.GetObjectQuantity(objFound));
+                    SetBackPackArt(i, uwObject.GetObjectSprite(objFound), uwObject.GetObjectQuantity(objFound));
 				}
 				else
 				{
-					uimanager.SetBackPackArt(i, -1);
+                    SetBackPackArt(i, -1);
 				}
 			}
 		}
@@ -956,7 +956,7 @@ namespace Underworld
 			if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
 			{
 				EnableDisable(AutomapPanel, false);
-				uimanager.InAutomap=false;
+                InAutomap = false;
 			}
 		}
 
@@ -1099,11 +1099,11 @@ namespace Underworld
 		/// <returns></returns>
 		public static bool IsMouseInViewPort()
 		{
-			var viewportmouspos = uimanager.instance.uwsubviewport.GetMousePosition();
+			var viewportmouspos = instance.uwsubviewport.GetMousePosition();
 			if (
 				(viewportmouspos.X >= 0) && (viewportmouspos.Y >= 0)
 				&&
-				(viewportmouspos.X <= uimanager.instance.uwsubviewport.Size.X) && (viewportmouspos.Y <= uimanager.instance.uwsubviewport.Size.Y)
+				(viewportmouspos.X <= instance.uwsubviewport.Size.X) && (viewportmouspos.Y <= instance.uwsubviewport.Size.Y)
 				)
 			{
 				return true;

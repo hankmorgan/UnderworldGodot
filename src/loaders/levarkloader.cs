@@ -26,12 +26,12 @@ namespace Underworld
                 case GAME_UW2:
                 case GAME_UW1:
                 default:
-                    Lev_Ark_File = System.IO.Path.Combine(BasePath, folder, "lev.ark");  //  Lev_Ark_File_Selected; //"DATA\\lev.ark";//Eventually this will be a save game.
+                    Lev_Ark_File = Path.Combine(BasePath, folder, "lev.ark");  //  Lev_Ark_File_Selected; //"DATA\\lev.ark";//Eventually this will be a save game.
                     break;
             }
-            var toLoad = Path.Combine(Loader.BasePath, Lev_Ark_File);
+            var toLoad = Path.Combine(BasePath, Lev_Ark_File);
             Debug.Print($"Loading {toLoad}");
-            if (!Loader.ReadStreamFile(toLoad, out lev_ark_file_data))
+            if (!ReadStreamFile(toLoad, out lev_ark_file_data))
             {
                 Debug.Print(toLoad + "File not loaded");
                 return false;
@@ -77,7 +77,7 @@ namespace Underworld
             {
                 case GAME_UWDEMO:
                     var tex_ark_block = new UWBlock();
-                    Loader.ReadStreamFile(Path.Combine(Loader.BasePath, "DATA", "LEVEL13.TXM"), out tex_ark_block.Data);
+                    ReadStreamFile(Path.Combine(BasePath, "DATA", "LEVEL13.TXM"), out tex_ark_block.Data);
                     tex_ark_block.DataLen = tex_ark_block.Data.GetUpperBound(0);
                     return tex_ark_block;
                 case GAME_UW2:
@@ -97,7 +97,7 @@ namespace Underworld
             {
                 case GAME_UWDEMO:
                     var ovl_ark_block =  new UWBlock();
-                    Loader.ReadStreamFile(Path.Combine(Loader.BasePath, "DATA", "LEVEL13.ANX"), out ovl_ark_block.Data);
+                    ReadStreamFile(Path.Combine(BasePath, "DATA", "LEVEL13.ANX"), out ovl_ark_block.Data);
                     ovl_ark_block.DataLen = ovl_ark_block.Data.GetUpperBound(0);
                     return ovl_ark_block;
                 case GAME_UW2:

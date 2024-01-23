@@ -529,7 +529,7 @@ namespace Underworld
             {
             if (uimanager.CurrentSlot>=11)
                 {
-                    playerdat.BackPackIndices[uimanager.CurrentSlot-11] = -1;
+                    BackPackIndices[uimanager.CurrentSlot-11] = -1;
                 }
                 uimanager.UpdateInventoryDisplay();
             }
@@ -573,14 +573,14 @@ namespace Underworld
 
             //otherwise object is on an internal inventory list.
             //Find direct container link first.
-            foreach (var objToCheck in playerdat.InventoryObjects)
+            foreach (var objToCheck in InventoryObjects)
             {//if this far down then I need to find the container that the closing container sits in
                 if (objToCheck != null)
                 {
                     var result = objectsearch.GetContainingObject(
                         ListHead: objToCheck.index,
                         ToFind: ToFind,
-                        objList: playerdat.InventoryObjects);
+                        objList: InventoryObjects);
                     if (result != -1)
                     {//container found.
                      //Get either the container link or browse the next chain to match the object
@@ -590,7 +590,7 @@ namespace Underworld
                         }
                         else
                         {
-                            var NextObj = playerdat.InventoryObjects[objToCheck.link]; //get the first object in the container
+                            var NextObj = InventoryObjects[objToCheck.link]; //get the first object in the container
                             while (NextObj.next != 0)
                             {
                                 if (NextObj.next == ToFind)

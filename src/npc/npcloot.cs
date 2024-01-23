@@ -9,13 +9,21 @@ namespace Underworld
     public partial class npc : objectInstance
     {
         static bool DebugSpawnAllLoot=true;
-        public static void loot(uwObject critter)
+
+        /// <summary>
+        /// Generates the npc's inventory on demand. If lootspawned flag is set the npc already has an inventory
+        /// </summary>
+        /// <param name="critter"></param>
+        public static void spawnloot(uwObject critter)
         {
-            ValuableObjectLoot(critter);
-            FoodLoot(critter);
-            WeaponLoot(critter);
-            OtherLoot(critter);
-            //TODO set the loot dropped flag on the NPC.
+            if (critter.LootSpawnedFlag==0)
+            {
+                ValuableObjectLoot(critter);
+                FoodLoot(critter);
+                WeaponLoot(critter);
+                OtherLoot(critter);
+            }
+            critter.LootSpawnedFlag = 1;
         }
 
         /// <summary>

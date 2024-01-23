@@ -61,13 +61,24 @@ namespace Underworld
             }
         }
 
-        public static bool isFemale
+        /// <summary>
+        /// The Gender bit
+        /// </summary>
+        public static int gender
         {
             get
             {
                 int offset = 0x65;
                 if (_RES == GAME_UW2) { offset = 0x66; }
-                return ((int)(GetAt(offset) >> 1) & 0x1) == 0x1;
+                return (int)(GetAt(offset) >> 1) & 0x1;
+            }
+        }
+
+        public static bool isFemale
+        {
+            get
+            {
+                return gender == 0x1;
             }
             set
             {

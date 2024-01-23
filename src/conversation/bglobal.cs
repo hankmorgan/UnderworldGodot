@@ -23,7 +23,7 @@ namespace Underworld
             byte[] bglob_data;
             if (datafolder.ToUpper() == "DATA") //loading from DATA
             {//Init from BABGLOBS.DAT. Initialise the data.
-                if (Loader.ReadStreamFile(Path.Combine(Loader.BasePath, "DATA", "BABGLOBS.DAT"), out bglob_data))
+                if (Loader.ReadStreamFile(Path.Combine(BasePath, "DATA", "BABGLOBS.DAT"), out bglob_data))
                 {
                     int NoOfSlots = bglob_data.GetUpperBound(0) / 4;
                     int add_ptr = 0;
@@ -40,12 +40,12 @@ namespace Underworld
             else
             {
                 int NoOfSlots = 0;//Assumes the same no of slots that is in the babglobs is in bglobals.
-                if (Loader.ReadStreamFile(Path.Combine(Loader.BasePath, "DATA", "BABGLOBS.DAT"), out bglob_data))
+                if (Loader.ReadStreamFile(Path.Combine(BasePath, "DATA", "BABGLOBS.DAT"), out bglob_data))
                 {
                     NoOfSlots = bglob_data.GetUpperBound(0) / 4;
                     NoOfSlots++;
                 }
-                if (Loader.ReadStreamFile(Path.Combine(Loader.BasePath, datafolder, "BGLOBALS.DAT"), out bglob_data))
+                if (Loader.ReadStreamFile(Path.Combine(BasePath, datafolder, "BGLOBALS.DAT"), out bglob_data))
                 {
                     int add_ptr = 0;
                     bGlobals = new BablGlobal[NoOfSlots];

@@ -104,11 +104,11 @@ namespace Underworld
 
         public static CritterArt GetCritter(int CritterToLoad)
         {
-            if (CritterArt.critterArt[CritterToLoad] == null)
+            if (critterArt[CritterToLoad] == null)
             {
                 LoadCritter(CritterToLoad);
             }
-            return CritterArt.critterArt[CritterToLoad];
+            return critterArt[CritterToLoad];
         }
 
 
@@ -144,7 +144,7 @@ namespace Underworld
                     int auxPal = (int)getAt(assoc, AssocAddressPtr++, 8);
                     if (ass == CritterToLoad)
                     {
-                        CritterArt.critterArt[CritterToLoad] = new CritterArt(FileID, PaletteLoader.Palettes[0], auxPal);
+                        critterArt[CritterToLoad] = new CritterArt(FileID, PaletteLoader.Palettes[0], auxPal);
                     }
                 }
             }
@@ -168,7 +168,7 @@ namespace Underworld
                     {
                         if (ass == CritterToLoad)
                         {
-                            CritterArt.critterArt[CritterToLoad] = new CritterArt(FileID, PaletteLoader.Palettes[0], auxPal, pgmp, cran);
+                            critterArt[CritterToLoad] = new CritterArt(FileID, PaletteLoader.Palettes[0], auxPal, pgmp, cran);
                         }
                     }
                 }
@@ -315,7 +315,7 @@ namespace Underworld
                         byte[] srcImg;
                         srcImg = new byte[BitMapWidth * BitMapHeight * 2];
                         outputImg = new byte[MaxWidth * MaxHeight * 2];
-                        ArtLoader.Ua_image_decode_rle(PageFile, srcImg, compression == 6 ? 5 : 4, datalen, BitMapWidth * BitMapHeight, frameOffset + 7, auxPalVal);
+                        Ua_image_decode_rle(PageFile, srcImg, compression == 6 ? 5 : 4, datalen, BitMapWidth * BitMapHeight, frameOffset + 7, auxPalVal);
 
 
                         //*Put the sprite in the a frame of size max width & height
@@ -349,7 +349,7 @@ namespace Underworld
 
                         //****************************
 
-                        ImageTexture imgData = ArtLoader.Image(
+                        ImageTexture imgData = Image(
                             databuffer: outputImg, 
                             dataOffSet: 0, 
                             width: BitMapWidth, height: BitMapHeight,
@@ -686,7 +686,7 @@ namespace Underworld
                                 byte[] srcImg;
 
                                 srcImg = new byte[BitMapWidth * BitMapHeight * 2];
-                                ArtLoader.Ua_image_decode_rle(critterFile, srcImg, compression == 6 ? 5 : 4, datalen, BitMapWidth * BitMapHeight, frameOffset + 7, auxPalVal);
+                                Ua_image_decode_rle(critterFile, srcImg, compression == 6 ? 5 : 4, datalen, BitMapWidth * BitMapHeight, frameOffset + 7, auxPalVal);
                                 cornerY = MaxHeight - cornerY;//y is from the top left corner
 
                                 int ColCounter = 0; int RowCounter = 0;
@@ -716,7 +716,7 @@ namespace Underworld
                                 BitMapWidth = MaxWidth;
                                 BitMapHeight = MaxHeight;
 
-                                ImageTexture imgData = ArtLoader.Image(
+                                ImageTexture imgData = Image(
                                     databuffer: outputImg, 
                                     dataOffSet: 0, 
                                     width: BitMapWidth, height: BitMapHeight, 

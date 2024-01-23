@@ -8,9 +8,9 @@ namespace Underworld
         {
             get
             {
-                switch (UWClass._RES)
+                switch (_RES)
                 {
-                    case UWClass.GAME_UW2:
+                    case GAME_UW2:
                         return uimanager.instance.messageScrollUW2;
                     default:
                         return uimanager.instance.messageScrollUW1;

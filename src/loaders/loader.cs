@@ -29,7 +29,7 @@ namespace Underworld
             }
             else
             {
-                buffer = System.IO.File.ReadAllBytes(Path);
+                buffer = File.ReadAllBytes(Path);
                 return (buffer != null);
             }
         }

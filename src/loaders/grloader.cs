@@ -473,7 +473,7 @@ namespace Underworld
             for (int i =0; i<NoOfImages;i++)
             {
                 var img = LoadImageAt(i);
-                img.GetImage().SavePng(System.IO.Path.Combine(exportpath,$"{i.ToString("000")}.png"));
+                img.GetImage().SavePng(Path.Combine(exportpath,$"{i.ToString("000")}.png"));
             }
         }
     }//end class

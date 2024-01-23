@@ -163,7 +163,7 @@ namespace Underworld
             //     }
             // }
 
-            cycledGamePalette = CreateFullTexturePaletteCycles(PaletteLoader.Palettes[0]);//init the first palette as cycled
+            cycledGamePalette = CreateFullTexturePaletteCycles(Palettes[0]);//init the first palette as cycled
             cycledUIPalette = CreateSimpleTexturePaletteCycles(Palettes[0]); //set up a simple palette cycle for fullbright ui sprites
             
             
@@ -243,7 +243,7 @@ namespace Underworld
                     imgdata[(l * 256) + b] = maps[l].red[b];
                 }
             }
-            var output = ArtLoader.Image(imgdata, 0, 256, maps.GetUpperBound(0), GreyScaleIndexPalette, true, true);
+            var output = Image(imgdata, 0, 256, maps.GetUpperBound(0), GreyScaleIndexPalette, true, true);
             return output;
         }
 
@@ -281,8 +281,8 @@ namespace Underworld
                             Palette.cyclePaletteReverse(tmpPalette, 16, 7);//Reverse direction.
                             break;
                     }
-                    NewCycledPalette[0,l,c] =  shade.GetFullShadingImage(pal: tmpPalette, PaletteLoader.light, l, $"light_{l}_{c}");   // tmpPalette.toImage();
-                    NewCycledPalette[1,l,c] =  shade.GetFullShadingImage(pal: tmpPalette, PaletteLoader.mono, l, $"mono_{l}_{c}");
+                    NewCycledPalette[0,l,c] =  shade.GetFullShadingImage(pal: tmpPalette, light, l, $"light_{l}_{c}");   // tmpPalette.toImage();
+                    NewCycledPalette[1,l,c] =  shade.GetFullShadingImage(pal: tmpPalette, mono, l, $"mono_{l}_{c}");
                 }
             }
 
@@ -336,13 +336,13 @@ namespace Underworld
             //Cycle the palette		
            // RenderingServer.GlobalShaderParameterSet("uwpalette", (Texture)PaletteLoader.cycledGamePalette[NextPaletteCycle]);
             //RenderingServer.GlobalShaderParameterSet("uwnpc", (Texture)PaletteLoader.cycledNPCPalette[NextPaletteCycle]);
-            RenderingServer.GlobalShaderParameterSet("smoothpalette", (Texture)PaletteLoader.cycledGamePalette[0, uwsettings.instance.lightlevel, NextPaletteCycle]);
-            RenderingServer.GlobalShaderParameterSet("uipalette", (Texture)PaletteLoader.cycledUIPalette[NextPaletteCycle]);
+            RenderingServer.GlobalShaderParameterSet("smoothpalette", (Texture)cycledGamePalette[0, uwsettings.instance.lightlevel, NextPaletteCycle]);
+            RenderingServer.GlobalShaderParameterSet("uipalette", (Texture)cycledUIPalette[NextPaletteCycle]);
 
 
             NextPaletteCycle++;
 
-            if (NextPaletteCycle > PaletteLoader.cycledGamePalette.GetUpperBound(2))
+            if (NextPaletteCycle > cycledGamePalette.GetUpperBound(2))
             {
                 NextPaletteCycle = 0;
             }

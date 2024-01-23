@@ -1,4 +1,3 @@
-
 using System.Diagnostics;
 
 namespace Underworld
@@ -6,33 +5,14 @@ namespace Underworld
     public partial class ConversationVM:UWClass
     {
         /// <summary>
-        /// Store on the stack the correct pronouns based on the player sex.
+        /// Retrieve from the stack the correct pronouns based on the player sex. The possible pronouns are stored in advanced
         /// </summary>
         public static void Sex()
         {
-            short[] args = new short[2];
-            args[0] = at(stackptr - 1);//ptr to value
-            args[1] = at(stackptr - 2);//ptr to value
-            result_register = sex_string(at(args[0]), at(args[1]));
+            var gender = playerdat.gender - 2; //-2 if male, -1 if female
+            result_register = GetConvoStackValueAtPtr(stackptr + gender);
+            Debug.Print(getString(result_register));
             return;
         }
-
-    /// <summary>
-    /// Returns the appropiate string or pronoun for the player gender.
-    /// </summary>
-    /// <param name="ParamFemale">String to return if player is female</param>
-    /// <param name="ParamMale">String to return if player is male</param>
-    /// <returns></returns>
-    public static int sex_string(int ParamFemale, int ParamMale)
-    {
-        if (playerdat.isFemale)
-        {
-            return ParamFemale;
-        }
-        else
-        {
-            return ParamMale;
-        }
-    }
     } 
 }

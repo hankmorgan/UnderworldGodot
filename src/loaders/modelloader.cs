@@ -230,7 +230,7 @@ namespace Underworld
 
         static int ua_mdl_read_vertno(byte[] buffer, long addressPtr)
         {
-            int val = (int)DataLoader.getAt(buffer, addressPtr, 16);
+            int val = (int)getAt(buffer, addressPtr, 16);
             return val / 8;
         }
 

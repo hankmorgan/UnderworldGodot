@@ -173,11 +173,11 @@ namespace Underworld
         }
         public static int GetAt16(int index)
         {
-            return (int)DataLoader.getAt(pdat, index, 16);
+            return (int)getAt(pdat, index, 16);
         }
         public static int GetAt32(int index)
         {
-            return (int)DataLoader.getAt(pdat, index, 32);
+            return (int)getAt(pdat, index, 32);
         }
         public static void SetAt(int index, byte value)
         {
@@ -185,11 +185,11 @@ namespace Underworld
         }
         public static void SetAt16(int index, int value)
         {
-            DataLoader.setAt(pdat, index, 16, value);
+            setAt(pdat, index, 16, value);
         }
         public static void SetAt32(int index, int value)
         {
-            DataLoader.setAt(pdat, index, 32, value);
+            setAt(pdat, index, 32, value);
         }
 
      }

@@ -170,7 +170,7 @@ namespace Underworld
     /// </summary>
     public static void UpdateAnimationOverlays()
 	{
-		foreach (var ovl in Underworld.TileMap.current_tilemap.Overlays)
+		foreach (var ovl in TileMap.current_tilemap.Overlays)
 		{
 			if (ovl != null)
 			{
@@ -178,7 +178,7 @@ namespace Underworld
 				{
 					if (ovl.Duration != 0)
 					{
-						var obj = Underworld.TileMap.current_tilemap.LevelObjects[ovl.link];
+						var obj = TileMap.current_tilemap.LevelObjects[ovl.link];
 						if (obj != null)
 						{
 							if (obj.majorclass == 7) //animo

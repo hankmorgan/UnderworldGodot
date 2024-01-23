@@ -58,7 +58,7 @@ namespace Underworld
             if (File.Exists(file))
             {
                 byte[] buffer;
-                if (Loader.ReadStreamFile(file, out buffer))
+                if (ReadStreamFile(file, out buffer))
                 {
                     int addptr;
                     for (addptr = 0; addptr < 19; addptr++)

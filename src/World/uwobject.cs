@@ -81,12 +81,12 @@ namespace Underworld
 
         int GetAt16(int index)
         {
-            return (int)DataLoader.getAt(DataBuffer, index, 16);
+            return (int)Loader.getAt(DataBuffer, index, 16);
         }
 
         int GetAt32(int index)
         {
-            return (int)DataLoader.getAt(DataBuffer, index, 32);
+            return (int)Loader.getAt(DataBuffer, index, 32);
         }
 
         void SetAt(int index, byte value)
@@ -96,12 +96,12 @@ namespace Underworld
 
         void SetAt16(int index, int value)
         {
-            DataLoader.setAt(DataBuffer, index, 16, value);
+            Loader.setAt(DataBuffer, index, 16, value);
         }
 
         void SetAt32(int index, int value)
         {
-            DataLoader.setAt(DataBuffer, index, 32, value);
+            Loader.setAt(DataBuffer, index, 32, value);
         }
 
 
@@ -550,7 +550,7 @@ namespace Underworld
             }
         }
 
-        public short MobileUnk_0xD_12_1
+        public short LootSpawnedFlag
         {
             get
             {

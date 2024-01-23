@@ -147,7 +147,7 @@ namespace Underworld
                 }
 
             }
-            var output = ArtLoader.Image(
+            var output = Image(
                 databuffer: imgdata,
                 dataOffSet: 0,
                 width: 16 * bandwidth, height: 1,
@@ -184,7 +184,7 @@ namespace Underworld
                 }
 
             }
-            var output = ArtLoader.Image(
+            var output = Image(
                 databuffer: imgdata,
                 dataOffSet: 0,
                 width: 16 * bandwidth, height: 1,

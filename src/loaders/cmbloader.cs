@@ -27,7 +27,7 @@ namespace Underworld
                     int output = (int)getAt(buffer, add_ptr + 4, 16);
                     if (!(((obj_a & 0x7fff)  == (obj_b & 0x7fff)) && ((obj_a & 0x7fff) == (output & 0x7fff))))   // only add if the 3 objects are different.
                         {
-                        objectCombination.ObjectCombinations.Add(
+                        ObjectCombinations.Add(
                             new objectCombination
                                 (
                                     obj_a & 0x7fff,

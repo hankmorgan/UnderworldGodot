@@ -112,7 +112,7 @@ namespace Underworld
                     majorclass: 4, 
                     minorclass: 0, 
                     classindex: 0xF,
-                    objList: Underworld.TileMap.current_tilemap.LevelObjects);
+                    objList: TileMap.current_tilemap.LevelObjects);
             }
         }
 
@@ -869,7 +869,7 @@ namespace Underworld
                     parent.Position = new Vector3((tileX * -1.2f) - 0.6f, parent.Position.Y, parent.Position.Z);
                     break;
                 default:
-                    System.Diagnostics.Debug.Print("Unhandled model centre");
+                    Debug.Print("Unhandled model centre");
                     break;
             }
 

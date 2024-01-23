@@ -16,7 +16,7 @@ namespace Underworld
         {
             var tileX = triggerObj.quality;
             var tileY = triggerObj.owner;
-            var startObject = objList[trap.ObjectThatStartedChain];
+            var startObject = objList[ObjectThatStartedChain];
             if (startObject != null)
             {                                
                 //Find Remove existing tile

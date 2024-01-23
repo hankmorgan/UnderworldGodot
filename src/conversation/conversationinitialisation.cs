@@ -41,7 +41,7 @@ namespace Underworld
                     
                     //Launch conversation VM co-routine 
                     _ = Peaky.Coroutines.Coroutine.Run(
-                        ConversationVM.RunConversationVM(talker),
+                        RunConversationVM(talker),
                         main.instance);
                 }
             }

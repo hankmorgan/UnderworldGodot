@@ -24,7 +24,6 @@ namespace Underworld
         /// </summary>
         public UWBlock ovl_ark_block = new UWBlock();
 
-
         //Tile Types for UW1 & 2 and SS1. Note the diag tiles are flipped around in SS1.
         public const short TILE_SOLID = 0;
         public const short TILE_OPEN = 1;
@@ -46,6 +45,8 @@ namespace Underworld
         /// The tile map size along the y axis.
         /// </summary>
         public const short TileMapSizeY = 63; //0 to 63
+
+        public const int TileMapDataSize = 0x7c08;
 
         /// <summary>
         /// Locaton X and Y of the object storage tile location where off-map objects are instantiated.
@@ -71,6 +72,17 @@ namespace Underworld
         /// The ceiling texture for this level
         /// </summary>
         public short UWCeilingTexture;
+
+        /// <summary>
+        /// Returns the string value at the end of the tile map data (should spell uw)
+        /// </summary>
+        public string uw
+        {
+            get
+            {                
+                return $"{(char)this.lev_ark_block.Data[0x7c07]}{(char)this.lev_ark_block.Data[0x7c06]}";
+            }
+        }
 
         /// <summary>
         /// Animation overlay. Controls how long an animated effect appears for.
@@ -123,20 +135,9 @@ namespace Underworld
         public static short visitedTileY;
 
         /// <summary>
-        /// Map used for A* path finding tests.
-        /// </summary>
-        //public List<string> map = new List<string>();
-
-        /// <summary>
         /// Reference to the objects list for this level.
         /// </summary>
         public uwObject[] LevelObjects = new uwObject[1024];
-        // {
-        //     get
-        //     {
-        //         return GameWorldController.instance.objectList[thisLevelNo];
-        //     }
-        // }
 
 
         public TileMap(int NewLevelNo)
@@ -222,43 +223,6 @@ namespace Underworld
         }
 
         /// <summary>
-        /// Gets the height of the ceiling. Will always be the same value in UW1/2 varies in SHOCK.
-        /// </summary>
-        /// <returns>The ceiling height.</returns>
-        /// <param name="LevelNo">Level no.</param>
-        /// <param name="tileX">Tile x.</param>
-        /// <param name="tileY">Tile y.</param>
-        public int GetCeilingHeight(int tileX, int tileY)
-        {
-            return Tiles[tileX, tileY].ceilingHeight;
-        }
-
-        /// <summary>
-        /// Sets the height of the floor.
-        /// </summary>
-        /// <param name="tileX">Tile x.</param>
-        /// <param name="tileY">Tile y.</param>
-        /// <param name="newHeight">New height.</param>
-        public void SetFloorHeight(int tileX, int tileY, short newHeight)
-        {
-            Tiles[tileX, tileY].floorHeight = newHeight;
-        }
-
-        /// <summary>
-        /// Sets the height of the ceiling.
-        /// </summary>
-        /// <param name="LevelNo">Level no.</param>
-        /// <param name="tileX">Tile x.</param>
-        /// <param name="tileY">Tile y.</param>
-        /// <param name="newHeight">New height.</param>
-        public void SetCeilingHeight(int tileX, int tileY, short newHeight)
-        {
-            //Debug.Log ("ceil :" + newHeight + " was " + CeilingHeight[tileX,tileY]);
-            Tiles[tileX, tileY].ceilingHeight = newHeight;
-        }
-
-
-        /// <summary>
         /// Gets the type of the tile.
         /// </summary>
         /// <returns>The tile type.</returns>
@@ -278,25 +242,6 @@ namespace Underworld
         }
 
         /// <summary>
-        /// Gets the room region at the specified tile
-        /// </summary>
-        /// <returns>The room.</returns>
-        /// <param name="TileX">Tile x.</param>
-        /// <param name="tileY">Tile y.</param>
-        public int GetRoom(int tileX, int tileY)
-        {
-            if (ValidTile(tileX, tileY))
-            {
-                return Tiles[tileX, tileY].roomRegion;
-            }
-            else
-            {
-                return 0;
-            }
-        }
-
-
-        /// <summary>
         /// Gets the tile render state. 
         /// </summary>
         /// <returns>The tile render.</returns>
@@ -306,47 +251,6 @@ namespace Underworld
         private bool GetTileRender(int tileX, int tileY)
         {
             return Tiles[tileX, tileY].Render == true;
-        }
-
-        /// <summary>
-        /// Gets the vector3 at the center of the tile specified.
-        /// </summary>
-        /// <returns>The tile vector.</returns>
-        /// <param name="tileX">Tile x.</param>
-        /// <param name="tileY">Tile y.</param>
-        public Vector3 getTileVector(int tileX, int tileY)
-        {
-            return new Vector3(
-                    (tileX * 1.2f) + 0.6f,
-                    GetFloorHeight(tileX, tileY) * 0.15f,
-                    (tileY * 1.2f) + 0.6f
-            );
-        }
-
-        /// <summary>
-        /// Gets the vector3 at the center of the tile specified.
-        /// </summary>
-        /// <returns>The tile vector.</returns>
-        /// <param name="tileX">Tile x.</param>
-        /// <param name="tileY">Tile y.</param>
-        public Vector3 getTileVector(float tileX, float tileY)
-        {
-            return getTileVector((int)tileX, (int)tileY);
-        }
-
-        /// <summary>
-        /// Gets the vector3 at the center of the tile specified.
-        /// </summary>
-        /// <returns>The tile vector.</returns>
-        /// <param name="tileX">Tile x.</param>
-        /// <param name="tileY">Tile y.</param>
-        public Vector3 getTileVector(int tileX, int tileY, float zpos)
-        {
-            return new Vector3(
-                    (tileX * 1.2f) + 0.6f,
-                    zpos,
-                    (tileY * 1.2f) + 0.6f
-            );
         }
 
         public bool BuildTileMapUW(int levelNo, UWBlock lev_ark, UWBlock tex_ark, UWBlock ovl_ark)
@@ -401,20 +305,6 @@ namespace Underworld
                             for (int overlayIndex = 0; overlayIndex < 64; overlayIndex++)
                             {
                                 Overlays[overlayIndex] = new AnimationOverlay(overlayIndex);
-                                // Overlays[overlayIndex].header = (int)DataLoader.getValAtAddress(ovl_ark, OverlayAddress, 16);
-                                // Overlays[overlayIndex].link = (int)(DataLoader.getValAtAddress(ovl_ark, OverlayAddress, 16) >> 6) & 0x3ff;
-                                // Overlays[overlayIndex].duration = (int)DataLoader.getValAtAddress(ovl_ark, OverlayAddress + 2, 16);
-                                // Overlays[overlayIndex].tileX = (int)DataLoader.getValAtAddress(ovl_ark, OverlayAddress + 4, 8);
-                                // Overlays[overlayIndex].tileY = (int)DataLoader.getValAtAddress(ovl_ark, OverlayAddress + 5, 8);
-                                // if (Overlays[overlayIndex].link != 0)
-                                // {
-                                //     // Debug.Log("Overlay at " + OverlayAddress
-                                //     //    + " obj " + Overlays[overlayIndex].link
-                                //     //     + " for " + Overlays[overlayIndex].duration
-                                //     //     + " tile " + Overlays[overlayIndex].tileX + "," + Overlays[overlayIndex].tileY
-                                //     //     + " header :" + Overlays[overlayIndex].header);
-                                // }
-                                //OverlayAddress += 6;
                             }
                         }
                         break;
@@ -425,12 +315,10 @@ namespace Underworld
                         for (int overlayIndex = 0; overlayIndex < 64; overlayIndex++)
                         {
                             Overlays[overlayIndex] = new AnimationOverlay(overlayIndex);
-                            //OverlayAddress += 6;
                         }
                         break;
                     }
             }
-            Debug.Print($"{Overlays[0].link}");
             //Reduce map complexity.
             CleanUp();
 
