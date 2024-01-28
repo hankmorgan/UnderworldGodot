@@ -140,6 +140,55 @@ namespace Underworld
         public uwObject[] LevelObjects = new uwObject[1024];
 
 
+
+        /// <summary>
+        /// Pointer to the next slot in the static freelist
+        /// </summary>
+        public int StaticFreeListPtr
+        {
+            get
+            {
+                return (int)getAt(lev_ark_block.Data, 0x7C04, 16);
+            }
+            set
+            {
+                setAt(lev_ark_block.Data, 0x7C04, 16, value);
+            }
+        }
+
+        /// <summary>
+        /// Remember to move pointer before changing!
+        /// </summary>
+        public int StaticFreeListObject
+        {
+            get
+            {
+                return (int)getAt(lev_ark_block.Data,  0x74fc + (StaticFreeListPtr * 2), 16);
+            }
+            set
+            {
+                setAt(lev_ark_block.Data,  0x74fc + (StaticFreeListPtr * 2), 16, value);
+            }
+        }
+
+        /// <summary>
+        /// Pointer to the next slot in the mobile freelist
+        /// </summary>
+        public int MobileFreeListPtr
+        {
+            get
+            {
+                return (int)getAt(lev_ark_block.Data, 0x7C02, 16);
+            }
+            set
+            {
+                 setAt(lev_ark_block.Data, 0x7C02, 16, value);
+            }
+        }
+
+
+
+
         public TileMap(int NewLevelNo)
         {
             thisLevelNo = NewLevelNo;

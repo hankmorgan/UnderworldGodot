@@ -53,6 +53,16 @@ namespace Underworld
         }
 
         /// <summary>
+        /// Returns 0,1 or 3 usually
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <returns></returns>
+        public static int stackable(int item_id)
+        {
+            return ((buffer[2 + item_id * 11 + 3]>>6) & 0x3);
+        }
+
+        /// <summary>
         /// The base trade value of a single qty of this object.
         /// </summary>
         /// <param name="item_id"></param>

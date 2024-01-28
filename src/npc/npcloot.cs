@@ -100,18 +100,39 @@ namespace Underworld
 
                 if (var_3_qty > 0)
                 {
+                    //Create obj
+                    uwObject obj = spawnLootObject(critter, valuable_type_var_1 + coinitemid);
+                    //Apply the new qty of valuables to the result
+                    obj.link = (short)var_3_qty;
                     Debug.Print($"Spawning {var_3_qty} {GameStrings.GetObjectNounUW(coinitemid + valuable_type_var_1)}");
                 }
             }
         }
-    
+
+        /// <summary>
+        /// Spawns the final loot object on the critters inventory
+        /// </summary>
+        /// <param name="critter"></param>
+        /// <param name="itemid"></param>
+        /// <returns></returns>
+        private static uwObject spawnLootObject(uwObject critter, int itemid)
+        {
+            var slot = ObjectCreator.PrepareNewObject(itemid);
+            //add to critter object list
+            var obj = TileMap.current_tilemap.LevelObjects[slot];
+            //Insert at the head of the critters inventory.
+            obj.next = critter.link;
+            critter.link = (short)slot;
+            return obj;
+        }
 
         public static void FoodLoot(uwObject critter)
         {
             if (Rng.r.Next(0,16)<critterObjectDat.foodloot_probability(critter.item_id) || (DebugSpawnAllLoot))
             {
                 var item_id = critterObjectDat.foodloot_item(critter.item_id) + 0xB0;
-                 Debug.Print($"Spawning {GameStrings.GetObjectNounUW(item_id)}");
+                var obj = spawnLootObject(critter, item_id);
+                Debug.Print($"Spawning {GameStrings.GetObjectNounUW(item_id)}");
             }
         }
 
@@ -137,9 +158,15 @@ namespace Underworld
                         if (rangedObjectDat.RangedWeaponType(item_id) == 0xC0)
                         {
                             //item is ammo. it needs a qty.
-                            qty = 4 + (Rng.r.Next(0, 8));
+                            qty = 4 + (Rng.r.Next(0, 8));                         
                         }
                     }
+
+                    var obj = spawnLootObject(critter, item_id);
+                    if (qty>0)
+                    {
+                        obj.link = (short)qty; 
+                    }                              
                     Debug.Print($"Spawning {qty} {GameStrings.GetObjectNounUW(item_id)} of quality {quality}");
                 }
             }
@@ -182,6 +209,7 @@ namespace Underworld
                         {
                             quality = 0x40;
                         }
+                    var obj = spawnLootObject(critter, item_id);
                     Debug.Print($"Spawning {GameStrings.GetObjectNounUW(item_id)} of quality {quality}");
                 }
             }

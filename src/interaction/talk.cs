@@ -15,8 +15,7 @@ namespace Underworld
                 switch (obj.majorclass)
                 {
                     case 1: //NPCs
-                        {
-                            npc.spawnloot(obj);
+                        {                           
                             ConversationVM.StartConversation(obj);
                             break;
                         }

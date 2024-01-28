@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using Godot;
 
 namespace Underworld
@@ -12,6 +13,85 @@ namespace Underworld
         public static List<npc> npcs;
         public static bool printlabels = true;
 
+        public enum ObjectListType
+        {
+            StaticList=0,
+            MobileList=1
+        };
+
+        /// <summary>
+        /// Allocates data for a new object
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <returns></returns>
+        public static int PrepareNewObject(int item_id, ObjectListType WhichList = ObjectListType.StaticList)
+        {
+            int slot = GetAvailableObjectSlot(WhichList);
+            if (slot!=0)
+            {
+                var obj = TileMap.current_tilemap.LevelObjects[slot];
+                obj.quality = 0x28;
+                obj.item_id = item_id;
+                obj.zpos = 0;
+                obj.doordir = 0;
+                obj.invis =0;
+                obj.enchantment =0;
+                obj.flags = 0; //DBLCHK (0x11)
+                obj.xpos = 3;
+                obj.ypos = 3;
+                obj.heading = 0;
+                obj.next = 0;
+                obj.owner = 0;
+                //allocate static props
+                var stackable = commonObjDat.stackable(item_id);
+
+                switch (stackable)
+                {
+                    case 0:
+                    case 2:
+                        obj.link = 1;
+                        obj.is_quant = 1;
+                        break;
+                    case 1:
+                    case 3:
+                    default:
+                        obj.is_quant=0;
+                        obj.link = 0;
+                        break;
+                }
+
+                if (obj.majorclass == 1) //NPC
+                {
+                    //TODO INITIALISE CRITTER
+                }
+            }
+            return slot;
+        }
+
+
+        public static int GetAvailableObjectSlot(ObjectListType WhichList = ObjectListType.StaticList)
+        {
+            //look up object free list
+            switch (WhichList)
+            {
+                case ObjectListType.StaticList:
+                    //Move PTR down, get object at that point.
+                    TileMap.current_tilemap.StaticFreeListPtr--;
+                    Debug.Print ($"Allocating {TileMap.current_tilemap.StaticFreeListObject}");
+                    return TileMap.current_tilemap.StaticFreeListObject;
+                case ObjectListType.MobileList:
+                    return 0; //TODO
+            }
+            return 0;
+        }
+
+        /// <summary>
+        /// Process object list
+        /// </summary>
+        /// <param name="worldparent"></param>
+        /// <param name="objects"></param>
+        /// <param name="grObjects"></param>
+        /// <param name="a_tilemap"></param>
         public static void GenerateObjects(Node3D worldparent, uwObject[] objects, GRLoader grObjects, TileMap a_tilemap)
         {
             npcs = new();
@@ -24,6 +104,14 @@ namespace Underworld
             }
         }
 
+
+        /// <summary>
+        /// Adds an object instance to the tilemap
+        /// </summary>
+        /// <param name="worldparent"></param>
+        /// <param name="grObjects"></param>
+        /// <param name="obj"></param>
+        /// <param name="a_tilemap"></param>
         public static void RenderObject(Node3D worldparent, GRLoader grObjects, uwObject obj, TileMap a_tilemap)
         {
             bool unimplemented = true;
