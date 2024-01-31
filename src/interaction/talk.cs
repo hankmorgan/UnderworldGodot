@@ -16,7 +16,6 @@ namespace Underworld
                 {
                     case 1: //NPCs
                         {                
-                            ConversationVM.setup_to_barter(obj);           
                             ConversationVM.StartConversation(obj);
                             break;
                         }

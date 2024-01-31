@@ -14,9 +14,8 @@ namespace Underworld
             args[0] = at(stackptr - 1);//ptr to value
 
             int Start = args[0];
-
             yield return new WaitForSeconds(0.2f);
-            usingBablF = false;
+            
             MaxAnswer = 0;
             int j = 1;
             ClearConversationOptions();

@@ -73,7 +73,7 @@ namespace Underworld
         {
             get
             {
-                 return item_id & 0x1F0;
+                 return (item_id & 0x1F0) >> 4;
             }
         }
 
