@@ -4,7 +4,7 @@ namespace Underworld
     public partial class ConversationVM : UWClass
     {
         public static void StartConversation(uwObject talker)
-        {           
+        {
             //Try and load the conversation from the ark files.
             if (!cnvArkLoader.Loaded)
             {
@@ -20,7 +20,7 @@ namespace Underworld
             if (conversations != null)
             {
                 int conversationNo = GetConversationNumber(talker);
-                Debug.Print ($"ConversationNo is {conversationNo}");
+                Debug.Print($"ConversationNo is {conversationNo}");
                 currentConversation = null;
                 //Check if npc can be talked to
                 if ((conversations[conversationNo].CodeSize == 0) || (talker.npc_whoami == 255))
@@ -30,15 +30,15 @@ namespace Underworld
                 }
                 else
                 { //a conversation can be had (TODO take hostility into account. Some special NPCs can be talked to in combat. eg rodric and patterson)
-                    currentConversation = conversations[conversationNo]; 
+                    currentConversation = conversations[conversationNo];
                     InConversation = true;
                     SetupConversationUI(talker);
 
-                    InitialiseConversationMemory();    
+                    InitialiseConversationMemory();
 
                     ImportVariables(talker);
                     //Test
-                    
+
                     //Launch conversation VM co-routine 
                     _ = Peaky.Coroutines.Coroutine.Run(
                         RunConversationVM(talker),
@@ -122,6 +122,14 @@ namespace Underworld
             else
             {
                 var chead = new GRLoader(GRLoader.CHARHEAD_GR, GRLoader.GRShaderMode.UIShader);
+                if (_RES == GAME_UW2)
+                {//some special portrait cases due to weirdness with charhead.gr
+                    switch (talker.npc_whoami)
+                    {
+                        case 0x11://Janar (for some reason his portrait loads as molloy)
+                            return chead.LoadImageAt(2);
+                    }
+                }
                 return chead.LoadImageAt(talker.npc_whoami - 1);
             }
         }

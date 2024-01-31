@@ -6,8 +6,7 @@ namespace Underworld
 {
 
     public partial class ConversationVM : UWClass
-    {
-        static bool usingBablF;
+    {       
         public static int MaxAnswer;
         public static IEnumerator babl_menu()
         {

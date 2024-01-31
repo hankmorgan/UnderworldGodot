@@ -9,7 +9,7 @@ namespace Underworld
     /// </summary>
     public partial class ConversationVM : UWClass
     {
-        public static IEnumerator run_imported_function(ImportedFunctions func, uwObject npc)
+        public static IEnumerator run_imported_function(ImportedFunctions func, uwObject talker)
         {
             switch (func.importname.ToLower())
             {
@@ -17,6 +17,11 @@ namespace Underworld
                     {
                         yield return babl_menu();
                         break;
+                    }
+                case "babl_fmenu":
+                    {
+                        yield return babl_fmenu();
+                        break; 
                     }
                 case "sex": 
                     {
@@ -36,6 +41,11 @@ namespace Underworld
                 case "random":
                     {
                         Random();
+                        break;
+                    }
+                case "setup_to_barter":
+                    {
+                        setup_to_barter(talker);
                         break;
                     }
                 default:

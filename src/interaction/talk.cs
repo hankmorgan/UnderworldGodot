@@ -15,7 +15,8 @@ namespace Underworld
                 switch (obj.majorclass)
                 {
                     case 1: //NPCs
-                        {                           
+                        {                
+                            ConversationVM.setup_to_barter(obj);           
                             ConversationVM.StartConversation(obj);
                             break;
                         }
