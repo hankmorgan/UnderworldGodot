@@ -76,27 +76,28 @@ namespace Underworld
 
         public void ApplyAnimoSprite()
         {
-            if (material == null)
-            {//create the initial material
-                var newmaterial = new ShaderMaterial();
-                newmaterial.Shader = textureshader;
-                newmaterial.SetShaderParameter("albedo", new Color(1, 1, 1, 1));
-                newmaterial.SetShaderParameter("uv1_scale", new Vector3(1, 1, 1));
-                newmaterial.SetShaderParameter("uv2_scale", new Vector3(1, 1, 1));
-                newmaterial.SetShaderParameter("UseAlpha", true);
-                if (uwobject.item_id==457)
-                    {//make fountain water appear closer than the fountain base
-                    newmaterial.SetShaderParameter("camera_offset", 0.01);
-                    }   
-                else
-                {
-                    newmaterial.SetShaderParameter("camera_offset", 0);
-                }
-                material = newmaterial;
-                sprite.Mesh.SurfaceSetMaterial(0, material);
-            }
-            //sprite.Mesh.SurfaceSetMaterial(0, grAnimo.GetMaterial(uwobject.owner));
-            material.SetShaderParameter("texture_albedo", (Texture)grAnimo.LoadImageAt(uwobject.owner,true));
+            sprite.Mesh.SurfaceSetMaterial(0, grAnimo.GetMaterial(uwobject.owner));
+            // if (material == null)
+            // {//create the initial material
+            //     var newmaterial = new ShaderMaterial();
+            //     newmaterial.Shader = textureshader;
+            //     newmaterial.SetShaderParameter("albedo", new Color(1, 1, 1, 1));
+            //     newmaterial.SetShaderParameter("uv1_scale", new Vector3(1, 1, 1));
+            //     newmaterial.SetShaderParameter("uv2_scale", new Vector3(1, 1, 1));
+            //     newmaterial.SetShaderParameter("UseAlpha", true);
+            //     if (uwobject.item_id==457)
+            //         {//make fountain water appear closer than the fountain base
+            //         newmaterial.SetShaderParameter("camera_offset", 0.01);
+            //         }   
+            //     else
+            //     {
+            //         newmaterial.SetShaderParameter("camera_offset", 0);
+            //     }
+            //     material = newmaterial;
+            //     sprite.Mesh.SurfaceSetMaterial(0, material);
+            // }
+            // //sprite.Mesh.SurfaceSetMaterial(0, grAnimo.GetMaterial(uwobject.owner));
+            // material.SetShaderParameter("texture_albedo", (Texture)grAnimo.LoadImageAt(uwobject.owner,true));
         }
 
         public static void AdvanceAnimo(animo obj)
