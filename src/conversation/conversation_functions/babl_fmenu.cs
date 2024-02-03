@@ -36,7 +36,7 @@ namespace Underworld
                 {
                     if (at(flagIndex++) != 0)
                     {
-                        string NewResponseOption = getString(at(i));
+                        string NewResponseOption = getString(at(i),true);
                         if (NewResponseOption.Contains("@"))
                         {
                             NewResponseOption = TextSubstitute(NewResponseOption);
