@@ -17,6 +17,7 @@ namespace Underworld
             var nextObj = talker.link;
             var objectcount = 0;
             var slotindex = 0;
+            bool LargelootList = false;
             while (nextObj!=0)
             {
                 bool skip = false;
@@ -39,15 +40,21 @@ namespace Underworld
                     {//Items of no monetary value will not be offered by the npc
                         skip = true;
                     }
-                // if ((Rng.r.Next(0,7)<5) && (false))
-                // {//TODO:RNG seems to happen when NPC has more inventory than slots. Need to see an example of this in the wild.
-                //     skip=true;
-                // }
+                if ((Rng.r.Next(0,7)<5) && (LargelootList))
+                {//RNG seems to happen when NPC has more inventory than slots. Randomly replace earlier items 
+                    skip=true;
+                }
 
                 if (!skip)
                 {
                     Debug.Print($"Slot{slotindex} {obj._name}");
+                    uimanager.SetNPCTradeSlot(slotindex, obj.index, false);
                     slotindex++;
+                    if (slotindex>uimanager.NoOfTradeSlots-1)
+                    {
+                        LargelootList =true;
+                        slotindex=0;
+                    }
                 }
                 else
                 {

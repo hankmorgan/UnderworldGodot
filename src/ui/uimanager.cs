@@ -22,30 +22,30 @@ namespace Underworld
 
 
 		public void InitUI()
-        {
-            instance = this;
+		{
+			instance = this;
 
-            InitArt();
-            InitFlasks();
-            InitCoversation();
-            InitPanels();
-            InitPaperdoll();
-            InitOptions();
-            InitInteraction();
+			InitArt();
+			InitFlasks();
+			InitCoversation();
+			InitPanels();
+			InitPaperdoll();
+			InitOptions();
+			InitInteraction();
 			InitViews();
 
 
-            mousecursor.InitCursor();
+			mousecursor.InitCursor();
 
-            EnableDisable(placeholderuw1, false);
-            EnableDisable(placeholderuw2, false);
+			EnableDisable(placeholderuw1, false);
+			EnableDisable(placeholderuw2, false);
 
-            EnableDisable(uw1UI, UWClass._RES == UWClass.GAME_UW1);
-            EnableDisable(uw2UI, UWClass._RES != UWClass.GAME_UW1);            
-        }
-        
+			EnableDisable(uw1UI, UWClass._RES == UWClass.GAME_UW1);
+			EnableDisable(uw2UI, UWClass._RES != UWClass.GAME_UW1);            
+		}
+		
 
-        public override void _Process(double delta)
+		public override void _Process(double delta)
 		{
 			_ProcessPanels(delta);
 		}

@@ -116,6 +116,8 @@ namespace Underworld
 
         private void InitCoversation()
         {
+            EnableDisable(ConversationPanelUW1,false);
+            EnableDisable(ConversationPanelUW2,false);
             if (UWClass._RES != UWClass.GAME_UW2)
             {
                 NPCNameLableFrameUW1.Texture = grConverse.LoadImageAt(0);

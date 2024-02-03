@@ -8,12 +8,11 @@
 [ext_resource type="FontFile" uid="uid://dcth0yn5km8si" path="res://resources/fonts/FONT4X5P.ttf" id="5_8iiwt"]
 [ext_resource type="FontFile" uid="uid://dhrg5v5fecw5b" path="res://resources/fonts/FONTBIG.ttf" id="5_kj12g"]
 [ext_resource type="Script" path="res://main.cs" id="6_3y8oy"]
-[ext_resource type="Texture2D" uid="uid://cf536ckyprfbf" path="res://resources/placeholder_art/uw1placeholdermain.png" id="6_a53l0"]
 [ext_resource type="Texture2D" uid="uid://cpop1i8thi2t6" path="res://resources/placeholder_art/uw1lfti/0.png" id="6_qaf50"]
 [ext_resource type="Shader" path="res://node_3d.gdshader" id="6_x6exc"]
+[ext_resource type="Texture2D" uid="uid://2hduh6i2rlhp" path="res://resources/placeholder_art/converseuw1.png" id="7_ccwt1"]
 [ext_resource type="Texture2D" uid="uid://plikcry1ow6q" path="res://resources/placeholder_art/textbox_fill.jpg" id="7_qiq8a"]
 [ext_resource type="Script" path="res://src/ui/InteractionModeButton.cs" id="8_0sew3"]
-[ext_resource type="Texture2D" uid="uid://b5mwiifn8jtb6" path="res://resources/placeholder_art/uw2placeholdermain.png" id="8_2hy02"]
 [ext_resource type="Texture2D" uid="uid://ug231pvqaq1v" path="res://resources/placeholder_art/panels/panelsBlack.png" id="8_mis7n"]
 [ext_resource type="Texture2D" uid="uid://cpu7b2n5bae5y" path="res://resources/placeholder_art/uw1lfti/2.png" id="8_wag4x"]
 [ext_resource type="Texture2D" uid="uid://w3pet1fmhrgp" path="res://resources/placeholder_art/uw1lfti/4.png" id="10_63i0w"]
@@ -22,6 +21,7 @@
 [ext_resource type="Texture2D" uid="uid://2fndhxavasa7" path="res://resources/placeholder_art/uw2optbtn/optbtn.png" id="14_skaqq"]
 [ext_resource type="Texture2D" uid="uid://b1lj1mh50p8a1" path="res://resources/placeholder_art/uw2optbtn/uw2attackbutton.png" id="15_f0cyy"]
 [ext_resource type="Texture2D" uid="uid://2qekjomlpnxd" path="res://resources/placeholder_art/uw1lfti/10.png" id="16_kxj2a"]
+[ext_resource type="Texture2D" uid="uid://badfxtbgaf6oh" path="res://resources/placeholder_art/uw2 converse.png" id="18_abbbm"]
 [ext_resource type="Texture2D" uid="uid://dqcrcis2dop6k" path="res://resources/placeholder_art/paperdolluw1/body_f.png" id="19_0yobb"]
 [ext_resource type="Texture2D" uid="uid://du878dn3osxn1" path="res://resources/placeholder_art/blankmap.png" id="20_o03w0"]
 [ext_resource type="Texture2D" uid="uid://cvik4hdmkwuwk" path="res://resources/placeholder_art/paperdolluw1/up button 027.png" id="22_vc6ux"]
@@ -56,32 +56,50 @@ script = ExtResource("5_2to2n")
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "InteractionButtonsUW1", "InteractionButtonsUW2", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Runes", "SelectedRunes", "AutomapPanel", "AutomapImage", "ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLableFrameUW1", "NPCNameLableFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLableFrameUW1", "NPCNameLableFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "InteractionButtonsUW1", "InteractionButtonsUW2", "AutomapPanel", "AutomapImage", "messageScrollUW1", "messageScrollUW2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Runes", "SelectedRunes", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "placeholderuw1", "placeholderuw2")]
 script = ExtResource("1_lw0yg")
+ConversationPanelUW1 = NodePath("../UW1/ConversationUW1")
+PlayerPortraitUW1 = NodePath("../UW1/ConversationUW1/PlayerPortraitUW1")
+NPCPortraitUW1 = NodePath("../UW1/ConversationUW1/NPCPortraitUW1")
+PlayerNameLabelUW1 = NodePath("../UW1/ConversationUW1/PlayerNameLabelUW1")
+NPCNameLabelUW1 = NodePath("../UW1/ConversationUW1/NPCNameLabelUW1")
+PlayerPortraitFrameUW1 = NodePath("../UW1/ConversationUW1/PlayerPortraitFrameUW1")
+NPCPortraitFrameUW1 = NodePath("../UW1/ConversationUW1/NPCPortraitFrameUW1")
+PlayerNameLableFrameUW1 = NodePath("../UW1/ConversationUW1/PlayerNameFrameUW1")
+NPCNameLableFrameUW1 = NodePath("../UW1/ConversationUW1/NPCNameFrameUW1")
+PlayerTradeAreaUW1 = NodePath("../UW1/ConversationUW1/PlayerTradeAreaUW1")
+NPCTradeAreaUW1 = NodePath("../UW1/ConversationUW1/NPCTradeAreaUW1")
+ConversationScrollTopUW1 = NodePath("../UW1/ConversationUW1/ConversationTopBorderUW1")
+ConversationScrollBottomUW1 = NodePath("../UW1/ConversationUW1/ConversationBottomBorderUW1")
+ConversationTextUW1 = NodePath("../UW1/ConversationUW1/ConversationTextUW1")
+ConversationPanelUW2 = NodePath("../UW2/ConversationUW2")
+PlayerPortraitUW2 = NodePath("../UW2/ConversationUW2/PlayerPortraitUW2")
+NPCPortraitUW2 = NodePath("../UW2/ConversationUW2/NPCPortraitUW2")
+PlayerNameLabelUW2 = NodePath("../UW2/ConversationUW2/PlayerNameLabelUW1")
+NPCNameLabelUW2 = NodePath("../UW2/ConversationUW2/NPCNameLabelUW2")
+ConversationTextUW2 = NodePath("../UW2/ConversationUW2/ConversationTextUW2")
+HealthFlaskPanel = NodePath("../Common/HealthFlask")
+HealthFlask = [NodePath("../Common/HealthFlask/FlaskLevel0"), NodePath("../Common/HealthFlask/FlaskLevel1"), NodePath("../Common/HealthFlask/FlaskLevel2"), NodePath("../Common/HealthFlask/FlaskLevel3"), NodePath("../Common/HealthFlask/FlaskLevel4"), NodePath("../Common/HealthFlask/FlaskLevel5"), NodePath("../Common/HealthFlask/FlaskLevel6"), NodePath("../Common/HealthFlask/FlaskLevel7"), NodePath("../Common/HealthFlask/FlaskLevel8"), NodePath("../Common/HealthFlask/FlaskLevel9"), NodePath("../Common/HealthFlask/FlaskLevel10"), NodePath("../Common/HealthFlask/FlaskLevel11"), NodePath("../Common/HealthFlask/FlaskLevel12")]
+HealthFlaskBG = NodePath("../Common/HealthFlask/FlaskBorder")
+ManaFlaskPanel = NodePath("../Common/ManaFlask")
+ManaFlask = [NodePath("../Common/ManaFlask/FlaskLevel0"), NodePath("../Common/ManaFlask/FlaskLevel1"), NodePath("../Common/ManaFlask/FlaskLevel2"), NodePath("../Common/ManaFlask/FlaskLevel3"), NodePath("../Common/ManaFlask/FlaskLevel4"), NodePath("../Common/ManaFlask/FlaskLevel5"), NodePath("../Common/ManaFlask/FlaskLevel6"), NodePath("../Common/ManaFlask/FlaskLevel7"), NodePath("../Common/ManaFlask/FlaskLevel8"), NodePath("../Common/ManaFlask/FlaskLevel9"), NodePath("../Common/ManaFlask/FlaskLevel10"), NodePath("../Common/ManaFlask/FlaskLevel11"), NodePath("../Common/ManaFlask/FlaskLevel12")]
+ManaFlaskBG = NodePath("../Common/ManaFlask/FlaskBorder")
 Font4X5P = ExtResource("5_8iiwt")
 Font5X6I = ExtResource("3_safdl")
 Font5X6P = ExtResource("4_pfbet")
 FontBig = ExtResource("5_kj12g")
-cam = NodePath("../../WorldViewContainer/SubViewport/Camera3D")
-uwviewport = NodePath("../../WorldViewContainer")
-uwsubviewport = NodePath("../../WorldViewContainer/SubViewport")
-mousecursor = NodePath("../mouse/mouseCursor")
-uw1UI = NodePath("../UW1")
-uw2UI = NodePath("../UW2")
-mainwindowUW1 = NodePath("../UW1/3DWinUW1")
-mainwindowUW2 = NodePath("../UW2/3DWinUW2")
+InteractionButtonsUW1 = [NodePath("../UW1/OptionsButtonUW1"), NodePath("../UW1/TalkButtonUW1"), NodePath("../UW1/PickupButtonUW1"), NodePath("../UW1/LookButtonUW1"), NodePath("../UW1/AttackButtonUW1"), NodePath("../UW1/UseButtonUW1")]
+InteractionButtonsUW2 = [NodePath("../UW2/OptionsButtonUW2"), NodePath("../UW2/TalkButtonUW2"), NodePath("../UW2/PickupButtonUW2"), NodePath("../UW2/LookButtonUW2"), NodePath("../UW2/AttackButtonUW2"), NodePath("../UW2/UseButtonUW2")]
+AutomapPanel = NodePath("../Common/Automap")
+AutomapImage = NodePath("../Common/Automap/MapImage")
 messageScrollUW1 = NodePath("../UW1/MessageScrollUW1")
 messageScrollUW2 = NodePath("../UW2/messageScrollUW2")
-placeholderuw1 = NodePath("../UW1/placeholdermainuw1")
-placeholderuw2 = NodePath("../UW2/placeholdermainuw2")
 PanelInventory = NodePath("../Common/PaperDoll")
 PanelInventoryArt = NodePath("../Common/PaperDoll/PaperDollPanel")
 PanelRuneBag = NodePath("../Common/RuneBag")
 PanelRuneBagArt = NodePath("../Common/RuneBag/RuneBagPanel")
 PanelStats = NodePath("../Common/StatsDisplay")
 PanelStatsArt = NodePath("../Common/StatsDisplay/StatsPanel")
-InteractionButtonsUW1 = [NodePath("../UW1/OptionsButtonUW1"), NodePath("../UW1/TalkButtonUW1"), NodePath("../UW1/PickupButtonUW1"), NodePath("../UW1/LookButtonUW1"), NodePath("../UW1/AttackButtonUW1"), NodePath("../UW1/UseButtonUW1")]
-InteractionButtonsUW2 = [NodePath("../UW2/OptionsButtonUW2"), NodePath("../UW2/TalkButtonUW2"), NodePath("../UW2/PickupButtonUW2"), NodePath("../UW2/LookButtonUW2"), NodePath("../UW2/AttackButtonUW2"), NodePath("../UW2/UseButtonUW2")]
 Body = NodePath("../Common/PaperDoll/Body")
 Helm = NodePath("../Common/PaperDoll/Helm")
 Armour = NodePath("../Common/PaperDoll/Armour")
@@ -111,28 +129,6 @@ ArrowDown = NodePath("../Common/PaperDoll/DownArrow")
 OpenedContainer = NodePath("../Common/PaperDoll/OpenedContainer")
 Runes = [NodePath("../Common/RuneBag/Rune0"), NodePath("../Common/RuneBag/Rune1"), NodePath("../Common/RuneBag/Rune2"), NodePath("../Common/RuneBag/Rune3"), NodePath("../Common/RuneBag/Rune4"), NodePath("../Common/RuneBag/Rune5"), NodePath("../Common/RuneBag/Rune6"), NodePath("../Common/RuneBag/Rune7"), NodePath("../Common/RuneBag/Rune8"), NodePath("../Common/RuneBag/Rune9"), NodePath("../Common/RuneBag/Rune10"), NodePath("../Common/RuneBag/Rune11"), NodePath("../Common/RuneBag/Rune12"), NodePath("../Common/RuneBag/Rune13"), NodePath("../Common/RuneBag/Rune14"), NodePath("../Common/RuneBag/Rune15"), NodePath("../Common/RuneBag/Rune16"), NodePath("../Common/RuneBag/Rune17"), NodePath("../Common/RuneBag/Rune18"), NodePath("../Common/RuneBag/Rune19"), NodePath("../Common/RuneBag/Rune20"), NodePath("../Common/RuneBag/Rune21"), NodePath("../Common/RuneBag/Rune22"), NodePath("../Common/RuneBag/Rune23")]
 SelectedRunes = [NodePath("../Common/OtherControls/SelectedRune0"), NodePath("../Common/OtherControls/SelectedRune1"), NodePath("../Common/OtherControls/SelectedRune2")]
-AutomapPanel = NodePath("../Common/Automap")
-AutomapImage = NodePath("../Common/Automap/MapImage")
-ConversationPanelUW1 = NodePath("../UW1/ConversationUW1")
-PlayerPortraitUW1 = NodePath("../UW1/ConversationUW1/PlayerPortraitUW1")
-NPCPortraitUW1 = NodePath("../UW1/ConversationUW1/NPCPortraitUW1")
-PlayerNameLabelUW1 = NodePath("../UW1/ConversationUW1/PlayerNameLabelUW1")
-NPCNameLabelUW1 = NodePath("../UW1/ConversationUW1/NPCNameLabelUW1")
-PlayerPortraitFrameUW1 = NodePath("../UW1/ConversationUW1/PlayerPortraitFrameUW1")
-NPCPortraitFrameUW1 = NodePath("../UW1/ConversationUW1/NPCPortraitFrameUW1")
-PlayerNameLableFrameUW1 = NodePath("../UW1/ConversationUW1/PlayerNameFrameUW1")
-NPCNameLableFrameUW1 = NodePath("../UW1/ConversationUW1/NPCNameFrameUW1")
-PlayerTradeAreaUW1 = NodePath("../UW1/ConversationUW1/PlayerTradeAreaUW1")
-NPCTradeAreaUW1 = NodePath("../UW1/ConversationUW1/NPCTradeAreaUW1")
-ConversationScrollTopUW1 = NodePath("../UW1/ConversationUW1/ConversationTopBorderUW1")
-ConversationScrollBottomUW1 = NodePath("../UW1/ConversationUW1/ConversationBottomBorderUW1")
-ConversationTextUW1 = NodePath("../UW1/ConversationUW1/ConversationTextUW1")
-ConversationPanelUW2 = NodePath("../UW2/ConversationUW2")
-PlayerPortraitUW2 = NodePath("../UW2/ConversationUW2/PlayerPortraitUW2")
-NPCPortraitUW2 = NodePath("../UW2/ConversationUW2/NPCPortraitUW2")
-PlayerNameLabelUW2 = NodePath("../UW2/ConversationUW2/PlayerNameLabelUW1")
-NPCNameLabelUW2 = NodePath("../UW2/ConversationUW2/NPCNameLabelUW2")
-ConversationTextUW2 = NodePath("../UW2/ConversationUW2/ConversationTextUW2")
 Charname = NodePath("../Common/StatsDisplay/Charname")
 CharLevel = NodePath("../Common/StatsDisplay/CharLevel")
 CharClass = NodePath("../Common/StatsDisplay/CharClass")
@@ -144,12 +140,20 @@ MANA = NodePath("../Common/StatsDisplay/MANA")
 EXP = NodePath("../Common/StatsDisplay/EXP")
 StatsName = NodePath("../Common/StatsDisplay/StatNames")
 StatsValue = NodePath("../Common/StatsDisplay/StatValues")
-HealthFlaskPanel = NodePath("../Common/HealthFlask")
-HealthFlask = [NodePath("../Common/HealthFlask/FlaskLevel0"), NodePath("../Common/HealthFlask/FlaskLevel1"), NodePath("../Common/HealthFlask/FlaskLevel2"), NodePath("../Common/HealthFlask/FlaskLevel3"), NodePath("../Common/HealthFlask/FlaskLevel4"), NodePath("../Common/HealthFlask/FlaskLevel5"), NodePath("../Common/HealthFlask/FlaskLevel6"), NodePath("../Common/HealthFlask/FlaskLevel7"), NodePath("../Common/HealthFlask/FlaskLevel8"), NodePath("../Common/HealthFlask/FlaskLevel9"), NodePath("../Common/HealthFlask/FlaskLevel10"), NodePath("../Common/HealthFlask/FlaskLevel11"), NodePath("../Common/HealthFlask/FlaskLevel12")]
-HealthFlaskBG = NodePath("../Common/HealthFlask/FlaskBorder")
-ManaFlaskPanel = NodePath("../Common/ManaFlask")
-ManaFlask = [NodePath("../Common/ManaFlask/FlaskLevel0"), NodePath("../Common/ManaFlask/FlaskLevel1"), NodePath("../Common/ManaFlask/FlaskLevel2"), NodePath("../Common/ManaFlask/FlaskLevel3"), NodePath("../Common/ManaFlask/FlaskLevel4"), NodePath("../Common/ManaFlask/FlaskLevel5"), NodePath("../Common/ManaFlask/FlaskLevel6"), NodePath("../Common/ManaFlask/FlaskLevel7"), NodePath("../Common/ManaFlask/FlaskLevel8"), NodePath("../Common/ManaFlask/FlaskLevel9"), NodePath("../Common/ManaFlask/FlaskLevel10"), NodePath("../Common/ManaFlask/FlaskLevel11"), NodePath("../Common/ManaFlask/FlaskLevel12")]
-ManaFlaskBG = NodePath("../Common/ManaFlask/FlaskBorder")
+PlayerTradeSlotUW1 = [NodePath("../UW1/ConversationUW1/PlayerTradeUW1_0"), NodePath("../UW1/ConversationUW1/PlayerTradeUW1_1"), NodePath("../UW1/ConversationUW1/PlayerTradeUW1_2"), NodePath("../UW1/ConversationUW1/PlayerTradeUW1_3")]
+NPCTradeSlotUW1 = [NodePath("../UW1/ConversationUW1/NPCTradeUW1_0"), NodePath("../UW1/ConversationUW1/NPCTradeUW1_1"), NodePath("../UW1/ConversationUW1/NPCTradeUW1_2"), NodePath("../UW1/ConversationUW1/NPCTradeUW1_3")]
+PlayerTradeSlotUW2 = [NodePath("../UW2/ConversationUW2/PlayerTradeUW2_0"), NodePath("../UW2/ConversationUW2/PlayerTradeUW2_1"), NodePath("../UW2/ConversationUW2/PlayerTradeUW2_2"), NodePath("../UW2/ConversationUW2/PlayerTradeUW2_3"), NodePath("../UW2/ConversationUW2/PlayerTradeUW2_4"), NodePath("../UW2/ConversationUW2/PlayerTradeUW2_5")]
+NPCTradeSlotUW2 = [NodePath("../UW2/ConversationUW2/NPCTradeUW2_0"), NodePath("../UW2/ConversationUW2/NPCTradeUW2_1"), NodePath("../UW2/ConversationUW2/NPCTradeUW2_2"), NodePath("../UW2/ConversationUW2/NPCTradeUW2_3"), NodePath("../UW2/ConversationUW2/NPCTradeUW2_4"), NodePath("../UW2/ConversationUW2/NPCTradeUW2_5")]
+cam = NodePath("../../WorldViewContainer/SubViewport/Camera3D")
+uwviewport = NodePath("../../WorldViewContainer")
+uwsubviewport = NodePath("../../WorldViewContainer/SubViewport")
+mousecursor = NodePath("../mouse/mouseCursor")
+uw1UI = NodePath("../UW1")
+uw2UI = NodePath("../UW2")
+mainwindowUW1 = NodePath("../UW1/3DWinUW1")
+mainwindowUW2 = NodePath("../UW2/3DWinUW2")
+placeholderuw1 = NodePath("../UW1/placeholdermainuw1")
+placeholderuw2 = NodePath("../UW2/placeholdermainuw2")
 
 [node name="AudioPlayer" type="AudioStreamPlayer" parent="UI"]
 stream = SubResource("AudioStreamWAV_tkk82")
@@ -161,7 +165,7 @@ visible = false
 offset_right = 1280.0
 offset_bottom = 800.0
 mouse_filter = 2
-texture = ExtResource("6_a53l0")
+texture = ExtResource("7_ccwt1")
 
 [node name="3DWinUW1" type="TextureRect" parent="UI/UW1"]
 texture_filter = 1
@@ -273,7 +277,6 @@ script = ExtResource("8_0sew3")
 index = 5
 
 [node name="ConversationUW1" type="Panel" parent="UI/UW1"]
-visible = false
 offset_right = 40.0
 offset_bottom = 40.0
 
@@ -402,13 +405,70 @@ text = "1......................................................
 autowrap_mode = 1
 text_overrun_behavior = 1
 
+[node name="PlayerTradeUW1_0" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 591.0
+offset_top = 43.0
+offset_right = 655.0
+offset_bottom = 107.0
+
+[node name="PlayerTradeUW1_1" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 676.0
+offset_top = 44.0
+offset_right = 740.0
+offset_bottom = 108.0
+
+[node name="PlayerTradeUW1_2" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 592.0
+offset_top = 115.0
+offset_right = 656.0
+offset_bottom = 179.0
+
+[node name="PlayerTradeUW1_3" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 676.0
+offset_top = 115.0
+offset_right = 740.0
+offset_bottom = 179.0
+
+[node name="NPCTradeUW1_0" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 363.0
+offset_top = 42.0
+offset_right = 427.0
+offset_bottom = 106.0
+
+[node name="NPCTradeUW1_1" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 448.0
+offset_top = 43.0
+offset_right = 512.0
+offset_bottom = 107.0
+
+[node name="NPCTradeUW1_2" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 364.0
+offset_top = 114.0
+offset_right = 428.0
+offset_bottom = 178.0
+
+[node name="NPCTradeUW1_3" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 448.0
+offset_top = 114.0
+offset_right = 512.0
+offset_bottom = 178.0
+
 [node name="UW2" type="CanvasLayer" parent="UI"]
+visible = false
 
 [node name="placeholdermainuw2" type="TextureRect" parent="UI/UW2"]
 offset_right = 1280.0
 offset_bottom = 800.0
 mouse_filter = 2
-texture = ExtResource("8_2hy02")
+texture = ExtResource("18_abbbm")
 
 [node name="3DWinUW2" type="TextureRect" parent="UI/UW2"]
 texture_filter = 1
@@ -503,7 +563,6 @@ script = ExtResource("8_0sew3")
 index = 3
 
 [node name="AttackButtonUW2" type="TextureButton" parent="UI/UW2"]
-visible = false
 offset_left = 971.0
 offset_top = 682.0
 offset_right = 1071.0
@@ -545,6 +604,7 @@ offset_right = 264.0
 offset_bottom = 293.0
 
 [node name="PlayerNameLabelUW1" type="Label" parent="UI/UW2/ConversationUW2"]
+layout_mode = 0
 offset_left = 282.0
 offset_top = -16.0
 offset_right = 662.0
@@ -556,6 +616,7 @@ text = "Character Name"
 horizontal_alignment = 2
 
 [node name="NPCNameLabelUW2" type="Label" parent="UI/UW2/ConversationUW2"]
+layout_mode = 0
 offset_left = 273.0
 offset_top = 258.0
 offset_right = 653.0
@@ -567,6 +628,7 @@ text = "Character Name"
 
 [node name="ConversationTextUW2" type="Label" parent="UI/UW2/ConversationUW2"]
 texture_filter = 1
+layout_mode = 0
 offset_left = 92.0
 offset_top = 320.0
 offset_right = 864.0
@@ -590,6 +652,90 @@ text = "1......................................................
 13....................................................."
 autowrap_mode = 1
 text_overrun_behavior = 1
+
+[node name="PlayerTradeUW2_0" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+layout_mode = 0
+offset_left = 496.0
+offset_top = 52.0
+offset_right = 560.0
+offset_bottom = 116.0
+
+[node name="PlayerTradeUW2_1" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+layout_mode = 0
+offset_left = 571.0
+offset_top = 52.0
+offset_right = 635.0
+offset_bottom = 116.0
+
+[node name="PlayerTradeUW2_2" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+layout_mode = 0
+offset_left = 497.0
+offset_top = 123.0
+offset_right = 561.0
+offset_bottom = 187.0
+
+[node name="PlayerTradeUW2_3" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+layout_mode = 0
+offset_left = 572.0
+offset_top = 123.0
+offset_right = 636.0
+offset_bottom = 187.0
+
+[node name="PlayerTradeUW2_4" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+layout_mode = 0
+offset_left = 496.0
+offset_top = 196.0
+offset_right = 560.0
+offset_bottom = 260.0
+
+[node name="PlayerTradeUW2_5" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+layout_mode = 0
+offset_left = 571.0
+offset_top = 196.0
+offset_right = 635.0
+offset_bottom = 260.0
+
+[node name="NPCTradeUW2_0" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+layout_mode = 0
+offset_left = 300.0
+offset_top = 50.0
+offset_right = 364.0
+offset_bottom = 114.0
+
+[node name="NPCTradeUW2_1" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+layout_mode = 0
+offset_left = 375.0
+offset_top = 50.0
+offset_right = 439.0
+offset_bottom = 114.0
+
+[node name="NPCTradeUW2_2" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+layout_mode = 0
+offset_left = 301.0
+offset_top = 121.0
+offset_right = 365.0
+offset_bottom = 185.0
+
+[node name="NPCTradeUW2_3" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+layout_mode = 0
+offset_left = 376.0
+offset_top = 121.0
+offset_right = 440.0
+offset_bottom = 185.0
+
+[node name="NPCTradeUW2_4" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+layout_mode = 0
+offset_left = 300.0
+offset_top = 194.0
+offset_right = 364.0
+offset_bottom = 258.0
+
+[node name="NPCTradeUW2_5" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+layout_mode = 0
+offset_left = 375.0
+offset_top = 194.0
+offset_right = 439.0
+offset_bottom = 258.0
 
 [node name="Common" type="CanvasLayer" parent="UI"]
 
