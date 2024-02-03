@@ -46,7 +46,7 @@ namespace Underworld
             }
             if (!result)
             {
-                messageScroll.AddString(GameStrings.GetString(1, GameStrings.str_you_cannot_use_that_));
+                uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_cannot_use_that_));
             }
 
             return result;

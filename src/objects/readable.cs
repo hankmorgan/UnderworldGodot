@@ -6,7 +6,7 @@ namespace Underworld
         {
             if (obj.is_quant == 1)
                 {
-                messageScroll.AddString(GameStrings.GetString(3, obj.link-0x200));
+                uimanager.AddToMessageScroll(GameStrings.GetString(3, obj.link-0x200));
                 }
             return true;
         }

@@ -55,7 +55,7 @@ namespace Underworld
                     case 0xE:// a_flask of port&flasks of port
                         DrinkLiquid(obj); break;
                     case 0xF:// a_bottle of wine&bottles of wine
-                        messageScroll.AddString(GameStrings.GetString(1, 0x7F)); break;
+                        uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x7F)); break;
 
                 }
             }
@@ -69,7 +69,7 @@ namespace Underworld
             {
                 if (playerdat.play_hunger + nutrition > 255)
                 {
-                    messageScroll.AddString(GameStrings.GetString(1, GameStrings.str_you_are_too_full_to_eat_that_now_));
+                    uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_are_too_full_to_eat_that_now_));
                     return;
                 }
                 else
@@ -90,11 +90,11 @@ namespace Underworld
                     //;  tasted great. \n
                     if (_RES == GAME_UW2)
                     {
-                        messageScroll.AddString($"{objname}{GameStrings.GetString(1, 0xBB + taste)}");
+                        uimanager.AddToMessageScroll($"{objname}{GameStrings.GetString(1, 0xBB + taste)}");
                     }
                     else
                     {
-                        messageScroll.AddString($"{objname}{GameStrings.GetString(1, 0xAC + taste)}");
+                        uimanager.AddToMessageScroll($"{objname}{GameStrings.GetString(1, 0xAC + taste)}");
                     }
 
                     if (obj.ObjectQuantity > 1)
@@ -126,13 +126,13 @@ namespace Underworld
             {
                 case playerdat.SkillCheckResult.CritFail:
                     {
-                        messageScroll.AddString(GameStrings.GetString(1, 0x102));// You wake feeling somewhat unstable but better
+                        uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x102));// You wake feeling somewhat unstable but better
                         //TODO Screenshake
                         break;
                     }
                 case playerdat.SkillCheckResult.CritSucess:
                     {//The drink makes you feel a little better for now.
-                        messageScroll.AddString(GameStrings.GetString(1, 0x101));
+                        uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x101));
                         break;
                     }
                 case playerdat.SkillCheckResult.Fail:

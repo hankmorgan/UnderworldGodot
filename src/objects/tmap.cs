@@ -32,7 +32,7 @@ namespace Underworld
         public static bool LookAt(uwObject obj)
         {
             int textureindex = TileMap.current_tilemap.texture_map[obj.owner];
-            messageScroll.AddString(GameStrings.TextureDescription(textureindex));
+            uimanager.AddToMessageScroll(GameStrings.TextureDescription(textureindex));
             if ((textureindex == 142) && ((_RES == GAME_UW1) || (_RES == GAME_UWDEMO)))
             {//This is a window into the abyss.
                 Debug.Print("Look into the volcano");

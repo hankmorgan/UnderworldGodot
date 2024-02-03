@@ -246,7 +246,7 @@ namespace Underworld
             var d = (door)obj.instance;
             if (d.Locked)
             {
-               messageScroll.AddString("The " + GameStrings.GetObjectNounUW(obj.item_id) + " is locked.");
+               uimanager.AddToMessageScroll("The " + GameStrings.GetObjectNounUW(obj.item_id) + " is locked.");
             }
             else
             {   //door unlocked. toggle it's state

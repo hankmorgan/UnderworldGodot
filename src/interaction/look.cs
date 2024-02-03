@@ -46,7 +46,7 @@ namespace Underworld
                 if (!result)
                 {
                     //default string  when no overriding action has occured           
-                    //messageScroll.AddString(GameStrings.GetObjectNounUW(obj.item_id));
+                    //uimanager.AddToMessageScroll(GameStrings.GetObjectNounUW(obj.item_id));
                     GeneralLookDescription(obj);
                 }
             }
@@ -132,7 +132,7 @@ namespace Underworld
             string objectname = GameStrings.GetObjectNounUW(item_id, qty);
             var article = GetArticle(objectname);
             output += $"{article}{objectname}";
-            messageScroll.AddString($"{output}");
+            uimanager.AddToMessageScroll($"{output}");
             return true;
         }
 
@@ -216,7 +216,7 @@ namespace Underworld
             }
 
             output += $"{article}{qtystring}{qualitystring}{objectname}";
-            messageScroll.AddString($"{output}");
+            uimanager.AddToMessageScroll($"{output}");
             return true;
         }
 

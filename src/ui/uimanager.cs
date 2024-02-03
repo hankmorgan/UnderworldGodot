@@ -10,20 +10,8 @@ namespace Underworld
 		public static uimanager instance;
 
 
-
 		[Export] public TextureRect placeholderuw1;
 		[Export] public TextureRect placeholderuw2;
-
-
-		[ExportGroup("Messagescroll")]
-		[Export] public Label messageScrollUW1;
-		[Export] public Label messageScrollUW2;
-
-
-
-
-
-
 
 
 
@@ -31,7 +19,6 @@ namespace Underworld
 		{
 
 		}
-
 
 
 		public void InitUI()

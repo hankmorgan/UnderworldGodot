@@ -16,7 +16,7 @@ namespace Underworld
                 uimanager.instance.mousecursor.SetCursorArt(obj.item_id);
 
                 //print use message
-                messageScroll.AddString(GameStrings.GetString(1, 7));
+                uimanager.AddToMessageScroll(GameStrings.GetString(1, 7));
             }
             return true;
         }
@@ -25,11 +25,11 @@ namespace Underworld
         {
             if (WorldObject)
             {
-                messageScroll.AddString(GameStrings.GetObjectNounUW(obj.item_id));
+                uimanager.AddToMessageScroll(GameStrings.GetObjectNounUW(obj.item_id));
             }
             else
             {
-                messageScroll.AddString(GameStrings.GetString(5, obj.owner + 100));
+                uimanager.AddToMessageScroll(GameStrings.GetString(5, obj.owner + 100));
             }
             return true;
         }
@@ -43,7 +43,7 @@ namespace Underworld
                 if (doorInstance.isOpen)
                     {
                     //6	That is already open.
-                    messageScroll.AddString(GameStrings.GetString(1,6));
+                    uimanager.AddToMessageScroll(GameStrings.GetString(1,6));
                     }
                 else
                     { //do key actions
@@ -55,12 +55,12 @@ namespace Underworld
                                 //Unlock door
                                 doorInstance.Locked = false;
                                 door.ToggleDoor(doorInstance);
-                                messageScroll.AddString(GameStrings.GetString(1,4));
+                                uimanager.AddToMessageScroll(GameStrings.GetString(1,4));
                             }
                             else
                             {
                                 //2	The key does not fit.
-                                messageScroll.AddString(GameStrings.GetString(1,2));
+                                uimanager.AddToMessageScroll(GameStrings.GetString(1,2));
                             }
                         }
                         else
@@ -75,7 +75,7 @@ namespace Underworld
                             else
                             {
                                 //2	The key does not fit.
-                                messageScroll.AddString(GameStrings.GetString(1,2));
+                                uimanager.AddToMessageScroll(GameStrings.GetString(1,2));
                             }
                             //
                         }
@@ -84,7 +84,7 @@ namespace Underworld
             else
             {
                 //else return no lock on that  message
-                messageScroll.AddString(GameStrings.GetString(1,3));
+                uimanager.AddToMessageScroll(GameStrings.GetString(1,3));
             }
             return true;
         }

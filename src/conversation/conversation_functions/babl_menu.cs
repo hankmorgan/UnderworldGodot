@@ -46,7 +46,7 @@ namespace Underworld
                     break;
                 }
             }
-            messageScroll.AddString(finaltext);
+            uimanager.AddToMessageScroll(finaltext);
             WaitingForInput=true;
             while(WaitingForInput)
             {

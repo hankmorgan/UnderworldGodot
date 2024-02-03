@@ -16,7 +16,7 @@ namespace Underworld
                     StringNo = (64 * uwsettings.instance.level) + trapObj.owner;
                     break;
             }
-            messageScroll.AddString(GameStrings.GetString(9,StringNo));
+            uimanager.AddToMessageScroll(GameStrings.GetString(9,StringNo));
 
 
             //Continue the trigger-trap chain if possible.

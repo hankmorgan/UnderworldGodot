@@ -17,7 +17,7 @@ namespace Underworld
 
                 //print use message
                 //8	What lock would you like to try to pick?
-                messageScroll.AddString(GameStrings.GetString(1, 8));
+                uimanager.AddToMessageScroll(GameStrings.GetString(1, 8));
             }
             return true;
         }
@@ -30,7 +30,7 @@ namespace Underworld
                 if (doorInstance.isOpen)
                 {
                     //6	That is already open.
-                    messageScroll.AddString(GameStrings.GetString(1, 6));
+                    uimanager.AddToMessageScroll(GameStrings.GetString(1, 6));
                 }
                 else
                 { //do lockpick actions
@@ -52,12 +52,12 @@ namespace Underworld
                                     //open the lock
                                     doorInstance.Locked = false;
                                     door.ToggleDoor(doorInstance);
-                                    messageScroll.AddString(GameStrings.GetString(1, GameStrings.str_you_succeed_in_picking_the_lock_));
+                                    uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_succeed_in_picking_the_lock_));
                                     break;
                                 }
                             case playerdat.SkillCheckResult.Fail:
                                 {
-                                    messageScroll.AddString(GameStrings.GetString(1, GameStrings.str_your_lockpicking_attempt_failed_));
+                                    uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_your_lockpicking_attempt_failed_));
                                     break;
                                 }
                             case playerdat.SkillCheckResult.CritFail:
@@ -67,12 +67,12 @@ namespace Underworld
                                     {
                                         case playerdat.SkillCheckResult.Fail:
                                         case playerdat.SkillCheckResult.CritFail:
-                                            messageScroll.AddString("You broke your pick. \n");
+                                            uimanager.AddToMessageScroll("You broke your pick. \n");
                                             playerdat.RemoveFromInventory(playerdat.ObjectInHand);
                                             playerdat.ObjectInHand = -1;
                                             break;
                                         default:
-                                            messageScroll.AddString(GameStrings.GetString(1, GameStrings.str_your_lockpicking_attempt_failed_));
+                                            uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_your_lockpicking_attempt_failed_));
                                             break;
                                     }
                                     break;
@@ -83,7 +83,7 @@ namespace Underworld
                     else
                     {
                         //122 That is not locked.
-                        messageScroll.AddString(GameStrings.GetString(1, GameStrings.str_that_is_not_locked_));
+                        uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_that_is_not_locked_));
                         //
                     }
                 }
@@ -91,7 +91,7 @@ namespace Underworld
             else
             {
                 //else return no lock on that  message
-                messageScroll.AddString(GameStrings.GetString(1, 3));
+                uimanager.AddToMessageScroll(GameStrings.GetString(1, 3));
             }
             return true;
         }

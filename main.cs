@@ -78,7 +78,7 @@ public partial class main : Node3D
 
 		GRLoader gr = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
 		uwUI.InitUI();
-		messageScroll.AddString(GameStrings.GetString(1, 13));
+		uimanager.AddToMessageScroll(GameStrings.GetString(1, 13));
 
 
 		if (uwsettings.instance.levarkfolder.ToUpper() != "DATA")
@@ -128,7 +128,7 @@ public partial class main : Node3D
 
 		playerdat.CharNameStringNo = GameStrings.AddString(0x125,playerdat.CharName);
 
-		messageScroll.AddString("Welcome to the underworld");
+		uimanager.AddToMessageScroll("Welcome to the underworld");
 		//Common launch actions
 		_ = Coroutine.Run(
 		LoadTileMap(playerdat.dungeon_level - 1, gr), main.instance);
@@ -264,7 +264,7 @@ public partial class main : Node3D
 						{
 							var obj = (StaticBody3D)result["collider"];
 							Debug.Print(obj.Name);
-							messageScroll.AddString(obj.Name);
+							uimanager.AddToMessageScroll(obj.Name);
 							string[] vals = obj.Name.ToString().Split("_");
 							if (int.TryParse(vals[0], out int objindex))
 							{

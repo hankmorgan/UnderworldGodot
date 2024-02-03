@@ -6,7 +6,7 @@ namespace Underworld
         {
             if (!WorldObject)
             {
-                messageScroll.AddString(GameStrings.GetString(1, 39) + playerdat.TwelveHourClock + ":" + playerdat.Minute.ToString("d2"));
+                uimanager.AddToMessageScroll(GameStrings.GetString(1, 39) + playerdat.TwelveHourClock + ":" + playerdat.Minute.ToString("d2"));
             }            
             return true;
         }
