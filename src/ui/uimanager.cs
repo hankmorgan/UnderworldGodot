@@ -126,22 +126,113 @@ namespace Underworld
 		public static bool InAutomap=false;
 
 		//Conversation/Trade areas
-		[Export] public Panel ConversationPanel;
-		[Export] public TextureRect PlayerPortrait;
-		[Export] public TextureRect NPCPortrait;
-		[Export] public Label PlayerNameLabel;
-		[Export] public Label NPCNameLabel;
-		[Export] public TextureRect PlayerPortraitFrame;
-		[Export] public TextureRect NPCPortraitFrame;
-		[Export] public TextureRect PlayerNameLableFrame;
-		[Export] public TextureRect NPCNameLableFrame;
-		[Export] public TextureRect PlayerTradeArea;
-		[Export] public TextureRect NPCTradeArea;
+		//UW1
+		[Export] public Panel ConversationPanelUW1;
+		[Export] public TextureRect PlayerPortraitUW1;
+		[Export] public TextureRect NPCPortraitUW1;
+		[Export] public Label PlayerNameLabelUW1;
+		[Export] public Label NPCNameLabelUW1;
+		[Export] public TextureRect PlayerPortraitFrameUW1;
+		[Export] public TextureRect NPCPortraitFrameUW1;
+		[Export] public TextureRect PlayerNameLableFrameUW1;
+		[Export] public TextureRect NPCNameLableFrameUW1;
+		[Export] public TextureRect PlayerTradeAreaUW1;
+		[Export] public TextureRect NPCTradeAreaUW1;
 
-		[Export] public TextureRect ConversationScrollTop;
-		[Export] public TextureRect ConversationScrollBottom;
+		[Export] public TextureRect ConversationScrollTopUW1;
+		[Export] public TextureRect ConversationScrollBottomUW1;
 
-		[Export] public Label ConversationText;
+		[Export] public Label ConversationTextUW1;
+
+		//UW2 versions
+
+		[Export] public Panel ConversationPanelUW2;
+		[Export] public TextureRect PlayerPortraitUW2;
+		[Export] public TextureRect NPCPortraitUW2;
+		[Export] public Label PlayerNameLabelUW2;
+		[Export] public Label NPCNameLabelUW2;
+		[Export] public Label ConversationTextUW2;
+
+		
+		//Conversation reference handlers to ensure the game appropiate ui element is always accessed.
+		public Label ConversationText
+		{
+			get
+			{
+				if (UWClass._RES==UWClass.GAME_UW2)
+				{
+					return ConversationTextUW2;
+				}
+				else
+				{
+					return ConversationTextUW1;
+				}
+			
+			}
+		}
+
+		public TextureRect PlayerPortrait
+		{
+			get
+			{
+				if (UWClass._RES==UWClass.GAME_UW2)
+					{
+						return PlayerPortraitUW2;
+					}
+				else
+					{
+						return PlayerPortraitUW1;
+					}
+			}
+		}
+
+		public TextureRect NPCPortrait
+		{
+			get
+			{
+				if (UWClass._RES==UWClass.GAME_UW2)
+					{
+						return NPCPortraitUW2;
+					}
+				else
+					{
+						return NPCPortraitUW1;
+					}
+			}
+		}
+
+		public Label PlayerNameLabel
+		{
+			get
+			{
+				if (UWClass._RES==UWClass.GAME_UW2)
+					{
+						return PlayerNameLabelUW2;
+					}
+				else
+					{
+						return PlayerNameLabelUW1;
+					}
+			}
+		}
+
+		public Label NPCNameLabel
+		{
+			get
+			{
+				if (UWClass._RES==UWClass.GAME_UW2)
+					{
+						return NPCNameLabelUW2;
+					}
+				else
+					{
+						return NPCNameLabelUW1;
+					}
+			}
+		}
+
+
+		//UW2 conversation
 
 
 		//Stats Display
@@ -167,7 +258,7 @@ namespace Underworld
 		[Export] public TextureRect[] ManaFlask = new TextureRect[13];
 		[Export] public TextureRect ManaFlaskBG;
 
-		public static BytLoader byt;
+		public static BytLoader bitmaps;
 
 		public static int BackPackStart = 0;
 
@@ -193,15 +284,19 @@ namespace Underworld
 			HealthFlaskBG.Texture = grFlasks.LoadImageAt(75);
 			ManaFlaskBG.Texture = grFlasks.LoadImageAt(75);
 
-			grConverse = new GRLoader(GRLoader.CONVERSE_GR,GRLoader.GRShaderMode.UIShader);
-			NPCNameLableFrame.Texture = grConverse.LoadImageAt(0);
-			PlayerNameLableFrame.Texture = grConverse.LoadImageAt(0);
-			PlayerTradeArea.Texture = grConverse.LoadImageAt(1);
-			NPCTradeArea.Texture = grConverse.LoadImageAt(1);
-			PlayerPortraitFrame.Texture = grConverse.LoadImageAt(2);
-			NPCPortraitFrame.Texture = grConverse.LoadImageAt(2);
-			ConversationScrollTop.Texture= grConverse.LoadImageAt(3);
-			ConversationScrollBottom.Texture= grConverse.LoadImageAt(4);
+
+			if (UWClass._RES!=UWClass.GAME_UW2)
+			{
+				uimanager.grConverse = new GRLoader(GRLoader.CONVERSE_GR,GRLoader.GRShaderMode.UIShader);
+				NPCNameLableFrameUW1.Texture = grConverse.LoadImageAt(0);
+				PlayerNameLableFrameUW1.Texture = grConverse.LoadImageAt(0);
+				PlayerTradeAreaUW1.Texture = grConverse.LoadImageAt(1);
+				NPCTradeAreaUW1.Texture = grConverse.LoadImageAt(1);
+				PlayerPortraitFrameUW1.Texture = grConverse.LoadImageAt(2);
+				NPCPortraitFrameUW1.Texture = grConverse.LoadImageAt(2);
+				ConversationScrollTopUW1.Texture= grConverse.LoadImageAt(3);
+				ConversationScrollBottomUW1.Texture= grConverse.LoadImageAt(4);
+			}
 			
 			var grPanels = new GRLoader(GRLoader.PANELS_GR, GRLoader.GRShaderMode.UIShader);
 			if (grPanels != null)
@@ -273,6 +368,12 @@ namespace Underworld
 					Backpack[i].Position += offset;
 				}
 
+				offset = new Vector2(8, 44);
+				for (int i = 0; i<3; i++)
+				{
+					SelectedRunes[i].Position += offset;
+				}
+
 				offset = new Vector2(0,24);
 				HealthFlaskPanel.Position+=offset;
 
@@ -292,7 +393,7 @@ namespace Underworld
 
 
 			}
-			byt = new BytLoader();
+			bitmaps = new BytLoader();
 
 			mousecursor.InitCursor();
 
@@ -308,7 +409,7 @@ namespace Underworld
 			switch (UWClass._RES)
 			{
 				case UWClass.GAME_UW2:
-					mainwindowUW2.Texture = byt.LoadImageAt(BytLoader.UW2ThreeDWin_BYT, true);
+					mainwindowUW2.Texture = bitmaps.LoadImageAt(BytLoader.UW2ThreeDWin_BYT, true);
 					if (!Fullscreen)
 					{
 						uwviewport.SetSize(new Vector2(840f,512f));
@@ -325,7 +426,7 @@ namespace Underworld
 
 					break;
 				default:
-					mainwindowUW1.Texture = byt.LoadImageAt(BytLoader.MAIN_BYT, true);
+					mainwindowUW1.Texture = bitmaps.LoadImageAt(BytLoader.MAIN_BYT, true);
 					if (!Fullscreen)
 					{
 						uwviewport.SetSize(new Vector2(700f,456f));
@@ -527,7 +628,7 @@ namespace Underworld
 						{
 							objAtSlot = playerdat.InventoryObjects[playerdat.BackPackIndices[slotno-11]];
 						}
-                        SetBackPackArt(
+						SetBackPackArt(
 							slot: slotno - 11,
 							SpriteNo: uwObject.GetObjectSprite(objAtSlot),
 							qty: uwObject.GetObjectQuantity(objAtSlot));
@@ -846,30 +947,30 @@ namespace Underworld
 
 		public static void UpdateInventoryDisplay()
 		{
-            SetHelm(playerdat.isFemale, wearable.GetSpriteIndex(playerdat.HelmObject));
-            SetArmour(playerdat.isFemale, wearable.GetSpriteIndex(playerdat.ChestArmourObject));
-            SetGloves(playerdat.isFemale, wearable.GetSpriteIndex(playerdat.GlovesObject));
-            SetLeggings(playerdat.isFemale, wearable.GetSpriteIndex(playerdat.LeggingsObject));
-            SetBoots(playerdat.isFemale, wearable.GetSpriteIndex(playerdat.BootsObject));
-            //Set arms and shoulders
-            SetRightShoulder(uwObject.GetObjectSprite(playerdat.RightShoulderObject), uwObject.GetObjectQuantity(playerdat.RightShoulderObject));
-            SetLeftShoulder(uwObject.GetObjectSprite(playerdat.LeftShoulderObject), uwObject.GetObjectQuantity(playerdat.LeftShoulderObject));
-            SetRightHand(uwObject.GetObjectSprite(playerdat.RightHandObject), uwObject.GetObjectQuantity(playerdat.RightHandObject));
-            SetLeftHand(uwObject.GetObjectSprite(playerdat.LeftHandObject), uwObject.GetObjectQuantity(playerdat.LeftHandObject));
-            //set rings
-            SetRightRing(ring.GetSpriteIndex(playerdat.RightRingObject));
-            SetLeftRing(ring.GetSpriteIndex(playerdat.LeftRingObject));
+			SetHelm(playerdat.isFemale, wearable.GetSpriteIndex(playerdat.HelmObject));
+			SetArmour(playerdat.isFemale, wearable.GetSpriteIndex(playerdat.ChestArmourObject));
+			SetGloves(playerdat.isFemale, wearable.GetSpriteIndex(playerdat.GlovesObject));
+			SetLeggings(playerdat.isFemale, wearable.GetSpriteIndex(playerdat.LeggingsObject));
+			SetBoots(playerdat.isFemale, wearable.GetSpriteIndex(playerdat.BootsObject));
+			//Set arms and shoulders
+			SetRightShoulder(uwObject.GetObjectSprite(playerdat.RightShoulderObject), uwObject.GetObjectQuantity(playerdat.RightShoulderObject));
+			SetLeftShoulder(uwObject.GetObjectSprite(playerdat.LeftShoulderObject), uwObject.GetObjectQuantity(playerdat.LeftShoulderObject));
+			SetRightHand(uwObject.GetObjectSprite(playerdat.RightHandObject), uwObject.GetObjectQuantity(playerdat.RightHandObject));
+			SetLeftHand(uwObject.GetObjectSprite(playerdat.LeftHandObject), uwObject.GetObjectQuantity(playerdat.LeftHandObject));
+			//set rings
+			SetRightRing(ring.GetSpriteIndex(playerdat.RightRingObject));
+			SetLeftRing(ring.GetSpriteIndex(playerdat.LeftRingObject));
 			//backback
 			for (int i = 0; i < 8; i++)
 			{
 				if (playerdat.BackPackIndices[i] != -1)
 				{
 					var objFound = playerdat.InventoryObjects[playerdat.BackPackIndices[i]];
-                    SetBackPackArt(i, uwObject.GetObjectSprite(objFound), uwObject.GetObjectQuantity(objFound));
+					SetBackPackArt(i, uwObject.GetObjectSprite(objFound), uwObject.GetObjectQuantity(objFound));
 				}
 				else
 				{
-                    SetBackPackArt(i, -1);
+					SetBackPackArt(i, -1);
 				}
 			}
 		}
@@ -956,7 +1057,7 @@ namespace Underworld
 			if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
 			{
 				EnableDisable(AutomapPanel, false);
-                InAutomap = false;
+				InAutomap = false;
 			}
 		}
 

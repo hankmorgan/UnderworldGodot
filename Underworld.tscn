@@ -56,7 +56,7 @@ script = ExtResource("5_2to2n")
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "InteractionButtonsUW1", "InteractionButtonsUW2", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Runes", "SelectedRunes", "AutomapPanel", "AutomapImage", "ConversationPanel", "PlayerPortrait", "NPCPortrait", "PlayerNameLabel", "NPCNameLabel", "PlayerPortraitFrame", "NPCPortraitFrame", "PlayerNameLableFrame", "NPCNameLableFrame", "PlayerTradeArea", "NPCTradeArea", "ConversationScrollTop", "ConversationScrollBottom", "ConversationText", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "messageScrollUW1", "messageScrollUW2", "placeholderuw1", "placeholderuw2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "InteractionButtonsUW1", "InteractionButtonsUW2", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Runes", "SelectedRunes", "AutomapPanel", "AutomapImage", "ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLableFrameUW1", "NPCNameLableFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG")]
 script = ExtResource("1_lw0yg")
 Font4X5P = ExtResource("5_8iiwt")
 Font5X6I = ExtResource("3_safdl")
@@ -113,20 +113,26 @@ Runes = [NodePath("../Common/RuneBag/Rune0"), NodePath("../Common/RuneBag/Rune1"
 SelectedRunes = [NodePath("../Common/OtherControls/SelectedRune0"), NodePath("../Common/OtherControls/SelectedRune1"), NodePath("../Common/OtherControls/SelectedRune2")]
 AutomapPanel = NodePath("../Common/Automap")
 AutomapImage = NodePath("../Common/Automap/MapImage")
-ConversationPanel = NodePath("../Common/Conversation")
-PlayerPortrait = NodePath("../Common/Conversation/PlayerPortrait")
-NPCPortrait = NodePath("../Common/Conversation/NPCPortrait")
-PlayerNameLabel = NodePath("../Common/Conversation/PlayerNameLabel")
-NPCNameLabel = NodePath("../Common/Conversation/NPCNameLabel")
-PlayerPortraitFrame = NodePath("../Common/Conversation/PlayerPortraitFrame")
-NPCPortraitFrame = NodePath("../Common/Conversation/NPCPortraitFrame")
-PlayerNameLableFrame = NodePath("../Common/Conversation/PlayerNameFrame")
-NPCNameLableFrame = NodePath("../Common/Conversation/NPCNameFrame")
-PlayerTradeArea = NodePath("../Common/Conversation/PlayerTradeArea")
-NPCTradeArea = NodePath("../Common/Conversation/NPCTradeArea")
-ConversationScrollTop = NodePath("../Common/Conversation/ConversationTopBorder")
-ConversationScrollBottom = NodePath("../Common/Conversation/ConversationBottomBorder")
-ConversationText = NodePath("../Common/Conversation/ConversationText")
+ConversationPanelUW1 = NodePath("../UW1/ConversationUW1")
+PlayerPortraitUW1 = NodePath("../UW1/ConversationUW1/PlayerPortraitUW1")
+NPCPortraitUW1 = NodePath("../UW1/ConversationUW1/NPCPortraitUW1")
+PlayerNameLabelUW1 = NodePath("../UW1/ConversationUW1/PlayerNameLabelUW1")
+NPCNameLabelUW1 = NodePath("../UW1/ConversationUW1/NPCNameLabelUW1")
+PlayerPortraitFrameUW1 = NodePath("../UW1/ConversationUW1/PlayerPortraitFrameUW1")
+NPCPortraitFrameUW1 = NodePath("../UW1/ConversationUW1/NPCPortraitFrameUW1")
+PlayerNameLableFrameUW1 = NodePath("../UW1/ConversationUW1/PlayerNameFrameUW1")
+NPCNameLableFrameUW1 = NodePath("../UW1/ConversationUW1/NPCNameFrameUW1")
+PlayerTradeAreaUW1 = NodePath("../UW1/ConversationUW1/PlayerTradeAreaUW1")
+NPCTradeAreaUW1 = NodePath("../UW1/ConversationUW1/NPCTradeAreaUW1")
+ConversationScrollTopUW1 = NodePath("../UW1/ConversationUW1/ConversationTopBorderUW1")
+ConversationScrollBottomUW1 = NodePath("../UW1/ConversationUW1/ConversationBottomBorderUW1")
+ConversationTextUW1 = NodePath("../UW1/ConversationUW1/ConversationTextUW1")
+ConversationPanelUW2 = NodePath("../UW2/ConversationUW2")
+PlayerPortraitUW2 = NodePath("../UW2/ConversationUW2/PlayerPortraitUW2")
+NPCPortraitUW2 = NodePath("../UW2/ConversationUW2/NPCPortraitUW2")
+PlayerNameLabelUW2 = NodePath("../UW2/ConversationUW2/PlayerNameLabelUW1")
+NPCNameLabelUW2 = NodePath("../UW2/ConversationUW2/NPCNameLabelUW2")
+ConversationTextUW2 = NodePath("../UW2/ConversationUW2/ConversationTextUW2")
 Charname = NodePath("../Common/StatsDisplay/Charname")
 CharLevel = NodePath("../Common/StatsDisplay/CharLevel")
 CharClass = NodePath("../Common/StatsDisplay/CharClass")
@@ -149,6 +155,7 @@ ManaFlaskBG = NodePath("../Common/ManaFlask/FlaskBorder")
 stream = SubResource("AudioStreamWAV_tkk82")
 
 [node name="UW1" type="CanvasLayer" parent="UI"]
+visible = false
 
 [node name="placeholdermainuw1" type="TextureRect" parent="UI/UW1"]
 offset_right = 1280.0
@@ -265,8 +272,137 @@ stretch_mode = 0
 script = ExtResource("8_0sew3")
 index = 5
 
-[node name="UW2" type="CanvasLayer" parent="UI"]
+[node name="ConversationUW1" type="Panel" parent="UI/UW1"]
 visible = false
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="PlayerPortraitFrameUW1" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 780.0
+offset_top = 36.0
+offset_right = 932.0
+offset_bottom = 188.0
+
+[node name="PlayerPortraitUW1" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 788.0
+offset_top = 44.0
+offset_right = 924.0
+offset_bottom = 180.0
+
+[node name="PlayerNameFrameUW1" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 556.0
+offset_right = 932.0
+offset_bottom = 36.0
+
+[node name="PlayerNameLabelUW1" type="Label" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 572.0
+offset_top = -16.0
+offset_right = 820.0
+offset_bottom = 34.0
+theme_override_colors/font_color = Color(0.454902, 0.627451, 1, 1)
+theme_override_fonts/font = ExtResource("4_pfbet")
+theme_override_font_sizes/font_size = 64
+text = "Character Name"
+
+[node name="PlayerTradeAreaUW1" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 557.0
+offset_top = 36.0
+offset_right = 777.0
+offset_bottom = 188.0
+
+[node name="NPCPortraitFrameUW1" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 173.0
+offset_top = 36.0
+offset_right = 325.0
+offset_bottom = 188.0
+
+[node name="NPCPortraitUW1" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 181.0
+offset_top = 44.0
+offset_right = 317.0
+offset_bottom = 180.0
+
+[node name="NPCNameFrameUW1" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 172.0
+offset_right = 548.0
+offset_bottom = 36.0
+
+[node name="NPCNameLabelUW1" type="Label" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 188.0
+offset_top = -16.0
+offset_right = 516.0
+offset_bottom = 34.0
+theme_override_colors/font_color = Color(0.454902, 0.627451, 1, 1)
+theme_override_fonts/font = ExtResource("4_pfbet")
+theme_override_font_sizes/font_size = 64
+text = "Character Name"
+
+[node name="NPCTradeAreaUW1" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 330.0
+offset_top = 36.0
+offset_right = 550.0
+offset_bottom = 188.0
+
+[node name="ConversationTopBorderUW1" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 168.0
+offset_top = 188.0
+offset_right = 936.0
+offset_bottom = 228.0
+
+[node name="ConversationBottomBorderUW1" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 168.0
+offset_top = 508.0
+offset_right = 936.0
+offset_bottom = 548.0
+
+[node name="ConversationBackgroundUW1" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 217.0
+offset_top = 200.0
+offset_right = 889.0
+offset_bottom = 532.0
+texture = ExtResource("7_qiq8a")
+
+[node name="ConversationTextUW1" type="Label" parent="UI/UW1/ConversationUW1"]
+texture_filter = 1
+layout_mode = 0
+offset_left = 220.0
+offset_top = 201.0
+offset_right = 892.0
+offset_bottom = 533.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_constants/line_spacing = -16
+theme_override_fonts/font = ExtResource("5_8iiwt")
+theme_override_font_sizes/font_size = 48
+text = "1......................................................
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13....................................................."
+autowrap_mode = 1
+text_overrun_behavior = 1
+
+[node name="UW2" type="CanvasLayer" parent="UI"]
 
 [node name="placeholdermainuw2" type="TextureRect" parent="UI/UW2"]
 offset_right = 1280.0
@@ -367,6 +503,7 @@ script = ExtResource("8_0sew3")
 index = 3
 
 [node name="AttackButtonUW2" type="TextureButton" parent="UI/UW2"]
+visible = false
 offset_left = 971.0
 offset_top = 682.0
 offset_right = 1071.0
@@ -387,6 +524,72 @@ texture_normal = ExtResource("15_f0cyy")
 stretch_mode = 0
 script = ExtResource("8_0sew3")
 index = 5
+
+[node name="ConversationUW2" type="Panel" parent="UI/UW2"]
+visible = false
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="PlayerPortraitUW2" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+layout_mode = 0
+offset_left = 672.0
+offset_top = 11.0
+offset_right = 928.0
+offset_bottom = 291.0
+
+[node name="NPCPortraitUW2" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 13.0
+offset_right = 264.0
+offset_bottom = 293.0
+
+[node name="PlayerNameLabelUW1" type="Label" parent="UI/UW2/ConversationUW2"]
+offset_left = 282.0
+offset_top = -16.0
+offset_right = 662.0
+offset_bottom = 34.0
+theme_override_colors/font_color = Color(0.454902, 0.627451, 1, 1)
+theme_override_fonts/font = ExtResource("4_pfbet")
+theme_override_font_sizes/font_size = 64
+text = "Character Name"
+horizontal_alignment = 2
+
+[node name="NPCNameLabelUW2" type="Label" parent="UI/UW2/ConversationUW2"]
+offset_left = 273.0
+offset_top = 258.0
+offset_right = 653.0
+offset_bottom = 308.0
+theme_override_colors/font_color = Color(0.454902, 0.627451, 1, 1)
+theme_override_fonts/font = ExtResource("4_pfbet")
+theme_override_font_sizes/font_size = 64
+text = "Character Name"
+
+[node name="ConversationTextUW2" type="Label" parent="UI/UW2/ConversationUW2"]
+texture_filter = 1
+offset_left = 92.0
+offset_top = 320.0
+offset_right = 864.0
+offset_bottom = 652.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_constants/line_spacing = -16
+theme_override_fonts/font = ExtResource("5_8iiwt")
+theme_override_font_sizes/font_size = 48
+text = "1......................................................
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13....................................................."
+autowrap_mode = 1
+text_overrun_behavior = 1
 
 [node name="Common" type="CanvasLayer" parent="UI"]
 
@@ -1446,135 +1649,6 @@ offset_left = 1060.0
 offset_top = 604.0
 offset_right = 1240.0
 offset_bottom = 704.0
-
-[node name="Conversation" type="Panel" parent="UI/Common"]
-visible = false
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="PlayerPortraitFrame" type="TextureRect" parent="UI/Common/Conversation"]
-layout_mode = 0
-offset_left = 780.0
-offset_top = 36.0
-offset_right = 932.0
-offset_bottom = 188.0
-
-[node name="PlayerPortrait" type="TextureRect" parent="UI/Common/Conversation"]
-layout_mode = 0
-offset_left = 788.0
-offset_top = 44.0
-offset_right = 924.0
-offset_bottom = 180.0
-
-[node name="PlayerNameFrame" type="TextureRect" parent="UI/Common/Conversation"]
-layout_mode = 0
-offset_left = 556.0
-offset_right = 932.0
-offset_bottom = 36.0
-
-[node name="PlayerNameLabel" type="Label" parent="UI/Common/Conversation"]
-layout_mode = 0
-offset_left = 572.0
-offset_top = -16.0
-offset_right = 820.0
-offset_bottom = 34.0
-theme_override_colors/font_color = Color(0.454902, 0.627451, 1, 1)
-theme_override_fonts/font = ExtResource("4_pfbet")
-theme_override_font_sizes/font_size = 64
-text = "Character Name"
-
-[node name="PlayerTradeArea" type="TextureRect" parent="UI/Common/Conversation"]
-layout_mode = 0
-offset_left = 557.0
-offset_top = 36.0
-offset_right = 777.0
-offset_bottom = 188.0
-
-[node name="NPCPortraitFrame" type="TextureRect" parent="UI/Common/Conversation"]
-layout_mode = 0
-offset_left = 173.0
-offset_top = 36.0
-offset_right = 325.0
-offset_bottom = 188.0
-
-[node name="NPCPortrait" type="TextureRect" parent="UI/Common/Conversation"]
-layout_mode = 0
-offset_left = 181.0
-offset_top = 44.0
-offset_right = 317.0
-offset_bottom = 180.0
-
-[node name="NPCNameFrame" type="TextureRect" parent="UI/Common/Conversation"]
-layout_mode = 0
-offset_left = 172.0
-offset_right = 548.0
-offset_bottom = 36.0
-
-[node name="NPCNameLabel" type="Label" parent="UI/Common/Conversation"]
-layout_mode = 0
-offset_left = 188.0
-offset_top = -16.0
-offset_right = 516.0
-offset_bottom = 34.0
-theme_override_colors/font_color = Color(0.454902, 0.627451, 1, 1)
-theme_override_fonts/font = ExtResource("4_pfbet")
-theme_override_font_sizes/font_size = 64
-text = "Character Name"
-
-[node name="NPCTradeArea" type="TextureRect" parent="UI/Common/Conversation"]
-layout_mode = 0
-offset_left = 330.0
-offset_top = 36.0
-offset_right = 550.0
-offset_bottom = 188.0
-
-[node name="ConversationTopBorder" type="TextureRect" parent="UI/Common/Conversation"]
-layout_mode = 0
-offset_left = 168.0
-offset_top = 188.0
-offset_right = 936.0
-offset_bottom = 228.0
-
-[node name="ConversationBottomBorder" type="TextureRect" parent="UI/Common/Conversation"]
-layout_mode = 0
-offset_left = 168.0
-offset_top = 508.0
-offset_right = 936.0
-offset_bottom = 548.0
-
-[node name="ConversationBackground" type="TextureRect" parent="UI/Common/Conversation"]
-layout_mode = 0
-offset_left = 217.0
-offset_top = 200.0
-offset_right = 889.0
-offset_bottom = 532.0
-texture = ExtResource("7_qiq8a")
-
-[node name="ConversationText" type="Label" parent="UI/Common/Conversation"]
-texture_filter = 1
-offset_left = 220.0
-offset_top = 201.0
-offset_right = 892.0
-offset_bottom = 533.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_constants/line_spacing = -16
-theme_override_fonts/font = ExtResource("5_8iiwt")
-theme_override_font_sizes/font_size = 48
-text = "1......................................................
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13....................................................."
-autowrap_mode = 1
-text_overrun_behavior = 1
 
 [node name="mouse" type="CanvasLayer" parent="UI"]
 

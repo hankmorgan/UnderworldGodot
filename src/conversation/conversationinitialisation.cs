@@ -49,10 +49,23 @@ namespace Underworld
 
         private static void SetupConversationUI(uwObject talker)
         {
+
+            if (_RES==GAME_UW2)
+            {//set up the unique ui for uw2 conversations
+                uimanager.instance.mainwindowUW2.Texture = uimanager.bitmaps.LoadImageAt(BytLoader.CONV_BYT, false);
+            }
+            else
+            {
+                //UW1 specific.
+            }
+
+
+
             uimanager.instance.ConversationText.Text = "";
             var head = new GRLoader(GRLoader.HEADS_GR, GRLoader.GRShaderMode.UIShader);
             //set up relevant UI
-            uimanager.EnableDisable(uimanager.instance.ConversationPanel, true);
+            uimanager.EnableDisable(uimanager.instance.ConversationPanelUW1, _RES!=GAME_UW2);
+            uimanager.EnableDisable(uimanager.instance.ConversationPanelUW2, UWClass._RES==UWClass.GAME_UW2);
 
             //Player name and portrait
             if (playerdat.isFemale)
