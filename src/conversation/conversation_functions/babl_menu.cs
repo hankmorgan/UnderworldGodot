@@ -10,6 +10,7 @@ namespace Underworld
         public static int MaxAnswer;
         public static IEnumerator babl_menu()
         {
+            uimanager.instance.scroll.Clear();
             int[] args = new int[1];
             args[0] = at(stackptr - 1);//ptr to value
 
@@ -53,6 +54,7 @@ namespace Underworld
                 //Debug.Print("Waiting!");
                 yield return new WaitOneFrame();     
             }
+            uimanager.instance.scroll.Clear();
             int AnswerIndex = at(Start + PlayerNumericAnswer - 1);
             yield return say_op(AnswerIndex, PC_SAY);            
             result_register =  PlayerNumericAnswer;

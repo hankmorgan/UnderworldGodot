@@ -15,6 +15,7 @@ namespace Underworld
         /// <returns></returns>
         public static IEnumerator babl_fmenu()
         {
+            uimanager.instance.scroll.Clear();
             yield return new WaitForSeconds(0.2f);
             
             int Start = at(stackptr - 1);
@@ -67,6 +68,7 @@ namespace Underworld
                 yield return new WaitOneFrame();
             }
             usingBablF=false;
+            uimanager.instance.scroll.Clear();
             yield return say_op(bablf_array[PlayerNumericAnswer - 1], PC_SAY);
             result_register = bablf_array[PlayerNumericAnswer - 1];
             yield return 0;

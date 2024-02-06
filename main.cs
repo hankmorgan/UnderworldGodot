@@ -128,7 +128,6 @@ public partial class main : Node3D
 
 		playerdat.CharNameStringNo = GameStrings.AddString(0x125,playerdat.CharName);
 
-		uimanager.AddToMessageScroll("Welcome to the underworld");
 		//Common launch actions
 		_ = Coroutine.Run(
 		LoadTileMap(playerdat.dungeon_level - 1, gr), main.instance);

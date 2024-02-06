@@ -193,23 +193,26 @@ offset_bottom = 796.0
 mouse_filter = 2
 texture = ExtResource("7_qiq8a")
 
-[node name="MessageScrollUW1" type="Label" parent="UI/UW1"]
+[node name="MessageScrollUW1" type="RichTextLabel" parent="UI/UW1"]
 texture_filter = 1
 offset_left = 64.0
-offset_top = 676.0
+offset_top = 651.0
 offset_right = 1224.0
-offset_bottom = 796.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_constants/line_spacing = -16
-theme_override_fonts/font = ExtResource("5_8iiwt")
-theme_override_font_sizes/font_size = 48
-text = "Line 1
-line 2
-line 3
-line 4
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+offset_bottom = 791.0
+theme_override_colors/default_color = Color(0.2, 0.109804, 0.0745098, 1)
+theme_override_constants/line_separation = -24
+theme_override_fonts/normal_font = ExtResource("4_pfbet")
+theme_override_font_sizes/normal_font_size = 64
+bbcode_enabled = true
+text = "My dearest Alfred:
+Go into the Abyss knowing that I will not forget thee. As bitter 
+as the Baron's justice dost seem, tis better than a hangman's 
+noose. No matter the passing of years, I will await thy return. 
+Yours forever,
+                 Sandra
 "
-text_overrun_behavior = 1
+scroll_active = false
+autowrap_mode = 0
 
 [node name="OptionsButtonUW1" type="TextureButton" parent="UI/UW1"]
 offset_left = 32.0
@@ -378,32 +381,34 @@ offset_right = 889.0
 offset_bottom = 532.0
 texture = ExtResource("7_qiq8a")
 
-[node name="ConversationTextUW1" type="Label" parent="UI/UW1/ConversationUW1"]
+[node name="ConversationTextUW1" type="RichTextLabel" parent="UI/UW1/ConversationUW1"]
 texture_filter = 1
 layout_mode = 0
 offset_left = 220.0
-offset_top = 201.0
+offset_top = 187.0
 offset_right = 892.0
-offset_bottom = 533.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_constants/line_spacing = -16
-theme_override_fonts/font = ExtResource("5_8iiwt")
-theme_override_font_sizes/font_size = 48
-text = "1......................................................
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13....................................................."
-autowrap_mode = 1
-text_overrun_behavior = 1
+offset_bottom = 519.0
+theme_override_colors/default_color = Color(0.2, 0.109804, 0.0745098, 1)
+theme_override_constants/line_separation = -24
+theme_override_fonts/normal_font = ExtResource("4_pfbet")
+theme_override_font_sizes/normal_font_size = 64
+bbcode_enabled = true
+text = "Hail, stranger!  What be thy
+business?  I have not seen thee in
+this place before.
+Hail, stranger!  What be thy
+business?  I have not seen thee in
+this place before.
+Hail, stranger!  What be thy
+business?  I have not seen thee in
+this place before.
+Hail, stranger!  What be thy
+business?  I have not seen thee in
+this place before.
+Hail, stranger!  What be thy
+"
+scroll_active = false
+autowrap_mode = 0
 
 [node name="PlayerTradeUW1_0" type="TextureRect" parent="UI/UW1/ConversationUW1"]
 layout_mode = 0
@@ -496,21 +501,24 @@ offset_bottom = 792.0
 mouse_filter = 2
 texture = ExtResource("7_qiq8a")
 
-[node name="messageScrollUW2" type="Label" parent="UI/UW2"]
+[node name="messageScrollUW2" type="RichTextLabel" parent="UI/UW2"]
 texture_filter = 1
-offset_left = 64.0
-offset_top = 676.0
-offset_right = 904.0
-offset_bottom = 792.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_constants/line_spacing = -16
-theme_override_fonts/font = ExtResource("5_8iiwt")
-theme_override_font_sizes/font_size = 48
+offset_left = 37.0
+offset_top = 658.0
+offset_right = 977.0
+offset_bottom = 798.0
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_constants/line_separation = -24
+theme_override_fonts/normal_font = ExtResource("4_pfbet")
+theme_override_font_sizes/normal_font_size = 64
+bbcode_enabled = true
 text = "Line 1
 line 2
 line 3
 line 4
 aaaaaaaaaaaaaaaaaaa"
+scroll_active = false
+autowrap_mode = 0
 
 [node name="OPTBTNPLACEHOLDER" type="TextureRect" parent="UI/UW2"]
 offset_left = 971.0
@@ -585,7 +593,6 @@ script = ExtResource("8_0sew3")
 index = 5
 
 [node name="ConversationUW2" type="Panel" parent="UI/UW2"]
-visible = false
 offset_right = 40.0
 offset_bottom = 40.0
 
@@ -626,32 +633,22 @@ theme_override_fonts/font = ExtResource("4_pfbet")
 theme_override_font_sizes/font_size = 64
 text = "Character Name"
 
-[node name="ConversationTextUW2" type="Label" parent="UI/UW2/ConversationUW2"]
+[node name="ConversationTextUW2" type="RichTextLabel" parent="UI/UW2/ConversationUW2"]
 texture_filter = 1
 layout_mode = 0
 offset_left = 92.0
 offset_top = 320.0
 offset_right = 864.0
 offset_bottom = 652.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_constants/line_spacing = -16
-theme_override_fonts/font = ExtResource("5_8iiwt")
-theme_override_font_sizes/font_size = 48
-text = "1......................................................
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13....................................................."
-autowrap_mode = 1
-text_overrun_behavior = 1
+theme_override_colors/default_color = Color(0.647059, 0.164706, 0.164706, 1)
+theme_override_constants/line_separation = -24
+theme_override_fonts/normal_font = ExtResource("4_pfbet")
+theme_override_font_sizes/normal_font_size = 64
+bbcode_enabled = true
+text = "Hail, stranger!  What be thy business?  I have not seen thee in this place before.
+business?  I have not seen thee in"
+scroll_active = false
+autowrap_mode = 0
 
 [node name="PlayerTradeUW2_0" type="TextureRect" parent="UI/UW2/ConversationUW2"]
 layout_mode = 0

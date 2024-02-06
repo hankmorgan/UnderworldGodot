@@ -183,12 +183,15 @@ namespace Underworld
         /// </summary>
         public static void UpdateNPCs()
         {
-            foreach (var n in ObjectCreator.npcs)
+            if (ObjectCreator.npcs != null)
             {
-                if (n.uwobject.tileY != 99)
+                foreach (var n in ObjectCreator.npcs)
                 {
-                    n.uwobject.AnimationFrame++;
-                    n.SetAnimSprite(n.uwobject.npc_animation, n.uwobject.AnimationFrame, n.uwobject.heading);
+                    if (n.uwobject.tileY != 99)
+                    {
+                        n.uwobject.AnimationFrame++;
+                        n.SetAnimSprite(n.uwobject.npc_animation, n.uwobject.AnimationFrame, n.uwobject.heading);
+                    }
                 }
             }
         }

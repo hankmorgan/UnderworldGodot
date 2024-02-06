@@ -25,7 +25,7 @@ namespace Underworld
         [Export] public TextureRect ConversationScrollTopUW1;
         [Export] public TextureRect ConversationScrollBottomUW1;
 
-        [Export] public Label ConversationTextUW1;
+        [Export] public RichTextLabel ConversationTextUW1;
 
         //UW2 versions
 
@@ -34,20 +34,20 @@ namespace Underworld
         [Export] public TextureRect NPCPortraitUW2;
         [Export] public Label PlayerNameLabelUW2;
         [Export] public Label NPCNameLabelUW2;
-        [Export] public Label ConversationTextUW2;
+        [Export] public RichTextLabel ConversationTextUW2;
 
         //Conversation reference handlers to ensure the game appropiate ui element is always accessed.
-        public Label ConversationText
+        public static RichTextLabel ConversationText
         {
             get
             {
                 if (UWClass._RES == UWClass.GAME_UW2)
                 {
-                    return ConversationTextUW2;
+                    return instance.ConversationTextUW2;
                 }
                 else
                 {
-                    return ConversationTextUW1;
+                    return instance.ConversationTextUW1;
                 }
 
             }

@@ -282,43 +282,6 @@ namespace Underworld
         }
 
         /// <summary>
-        /// The instance of this class
-        /// </summary>
-        //public static StringLoader instance;
-
-        // void Awake()
-        // {
-        //     instance = this;
-        //     //Set some default strings that differ between games.
-
-
-        //     /*if(UWEBase._RES!="UW1")
-        //     {					
-        //         //InitStringController(Application.dataPath + "//..//" + UWEBase._RES + "_strings.txt");
-        //     }
-        //     else
-        //     {
-        //         //use the new method
-        //         //LoadStringsPak(Path);
-        //     }*/
-        // }
-
-
-
-        // /// <summary>
-        // /// Inits the string controller.
-        // /// </summary>
-        // /// <returns><c>true</c>, if string controller was inited, <c>false</c> otherwise.</returns>
-        // /// <param name="StringFilePath">String file path.</param>
-        // public static bool InitStringController(string StringFilePath)
-        // {
-        //     GameStrings = new Hashtable();
-        //     EntryCounts = new Hashtable();
-        //     return Load(StringFilePath);
-        // }
-
-
-        /// <summary>
         /// Loads and decodes the strings.pak file as specificed by the Path.
         /// </summary>
         /// <param name="path">Path.</param>
@@ -762,177 +725,7 @@ namespace Underworld
             output = output.Replace("some_", "");
             return output;
         }
-
-
-        /// <summary>
-        /// Gets the formatted object name for the specified object. Takes into account quantity.
-        /// </summary>
-        /// <returns>The formatted object name U.</returns>
-        /// <param name="objInt">Object int.</param>
-        // public string GetFormattedObjectNameUW(ObjectInteraction objInt)
-        // {//Eventually this will return things like proper quants etc.
-        //     string output = GetString(4, objInt.item_id);
-
-        //     if ((objInt.isQuantityBln == true) && (objInt.isEnchanted == false))
-        //     {
-        //         if (output.Contains("&"))
-        //         {
-        //             if (objInt.link > 1)
-        //             {//Plural description
-        //                 output = objInt.link + " " + output.Split('&')[1];
-        //             }
-        //             else
-        //             {
-        //                 output = output.Split('&')[0];
-        //             }
-        //         }
-        //         else
-        //         {
-        //             if (objInt.link > 1)
-        //             {//Plurals
-        //                 output = output.Replace("a_", objInt.link + "_");
-        //                 output = output.Replace("an_", objInt.link + "_");
-        //                 output = output.Replace("some_", objInt.link + "_");
-        //                 output += "s";
-        //             }
-        //         }
-        //     }
-        //     else
-        //     {
-        //         if (output.Contains("&"))
-        //         {
-        //             output = output.Split('&')[0];
-        //         }
-        //     }
-        //     output = output.Replace("_", " ");
-        //     return GetString(1, str_you_see_) + output;
-        // }
-
-
-        /// <summary>
-        /// Gets the formatted object name for the passed object and a specified quantity.
-        /// </summary>
-        /// <returns>The formatted object name U.</returns>
-        /// <param name="objInt">Object int.</param>
-        /// <param name="Quantity">Quantity that I want to display</param>
-        // public string GetFormattedObjectNameUW(ObjectInteraction objInt, int Quantity)
-        // {//Eventually this will return things like proper quants etc.
-
-        //     string output = GetString(4, objInt.item_id);
-
-        //     if ((objInt.isQuantityBln == true) && (objInt.isEnchanted == false))
-        //     {
-        //         if (output.Contains("&"))
-        //         {//string is split into a singular and plural
-        //             if ((objInt.link > 1) && (Quantity > 1))
-        //             {//Plural description
-        //                 output = objInt.link + " " + output.Split('&')[1];
-        //             }
-        //             else
-        //             {
-        //                 output = output.Split('&')[0];
-        //             }
-        //         }
-        //         else
-        //         {
-        //             output = output.Replace("a_", Quantity + "_");
-        //             output = output.Replace("an_", Quantity + "_");
-        //             output = output.Replace("some_", Quantity + "_");
-        //         }
-        //     }
-        //     else
-        //     {
-        //         if (output.Contains("&"))
-        //         {
-        //             output = output.Split('&')[0];
-        //         }
-        //     }
-        //     output = output.Replace("_", " ");
-        //     return GetString(1, str_you_see_) + output;
-        // }
-
-        /// <summary>
-        /// Gets the formatted object name with a description of its qualty. (EG smell fish.)
-        /// </summary>
-        /// <returns>The formatted object name U.</returns>
-        /// <param name="objInt">Object int.</param>
-        /// <param name="QualityString">Quality string.</param>
-        // public string GetFormattedObjectNameUW(ObjectInteraction objInt, string QualityString)
-        // {//Eventually this will return things like proper quants etc.
-        //     string output = GetString(4, objInt.item_id);
-        //     if (output == null)
-        //     {
-        //         output = "";
-        //     }
-        //     if ((objInt.isQuantityBln == true) && (output.Contains("&")) && (objInt.isEnchanted == false))
-        //     {
-        //         if (objInt.link > 1)
-        //         {//Plural description
-        //             output = objInt.link + " " + output.Split('&')[1];
-        //         }
-        //         else
-        //         {
-        //             output = output.Split('&')[0];
-        //         }
-        //     }
-        //     else
-        //     {
-        //         if (output.Contains("&"))
-        //         {
-        //             output = output.Split('&')[0];
-        //         }
-        //     }
-
-        //     string isThisAVowel = QualityString.Substring(0, 1).ToUpper();
-        //     if (
-        //         (isThisAVowel == "A")
-        //         ||
-        //         (isThisAVowel == "E")
-        //         ||
-        //         (isThisAVowel == "I")
-        //         ||
-        //         (isThisAVowel == "O")
-        //         ||
-        //         (isThisAVowel == "U")
-        //         )
-        //     {
-        //         if (output.Contains("a_"))
-        //         {
-        //             output = output.Replace("a_", "an " + QualityString + " ");
-        //         }
-        //         else
-        //         {
-        //             if (output.Contains("_"))
-        //             {
-        //                 output = output.Replace("_", " " + QualityString + " ");
-        //             }
-        //             else
-        //             {
-        //                 output = QualityString + " " + output + " ";
-        //             }
-        //         }
-        //     }
-        //     else
-        //     {
-        //         if (output.Contains("an_"))
-        //         {
-        //             output = output.Replace("an_", "a " + QualityString + " ");
-        //         }
-        //         else
-        //         {
-        //             if (output.Contains("_"))
-        //             {
-        //                 output = output.Replace("_", " " + QualityString + " ");
-        //             }
-        //             else
-        //             {
-        //                 output = QualityString + " " + output + " ";
-        //             }
-        //         }
-        //     }
-        //     //output =output.Replace("_", " " + QualityString + " ");
-        //     return GetString(1, str_you_see_) + output;
-        // }
+        
 
         //// <summary>
         /// Gets the simple object name without quantity
@@ -956,16 +749,6 @@ namespace Underworld
         }
 
         /// <summary>
-        /// Gets the simple object name for the pass object.
-        /// </summary>
-        /// <returns>The simple object name U.</returns>
-        /// <param name="objInt">Object int.</param>
-        // public string GetSimpleObjectNameUW(ObjectInteraction objInt)
-        // {//Without quants.
-        //     return GetSimpleObjectNameUW(objInt.item_id);
-        // }
-
-        /// <summary>
         /// Gets the description for the texture looked at.
         /// </summary>
         /// <returns>The description.</returns>
@@ -974,50 +757,7 @@ namespace Underworld
         {//TODO:fix floor and wall naming
             return GetString(1, str_you_see_) + GetString(10, index);
         }
-
-
-        /// <summary>
-        /// Load the strings in from an external txt file. Parses the values into the hashtable.
-        /// </summary>
-        /// <param name="fileName">File name.</param>
-        private bool Load(string fileName)
-        {
-            string line;
-            StreamReader fileReader = new StreamReader(fileName, Encoding.Default);
-            string PreviousKey = "";
-            string PreviousValue = "";
-            using (fileReader)
-            {
-                // While there's lines left in the text file, do this:
-                do
-                {
-                    line = fileReader.ReadLine();
-                    if (line != null)
-                    {
-                        if (line.IndexOf("~") >= 0)
-                        {
-                            string[] entries = line.Split('~');
-                            if (entries.Length > 0)
-                            {
-                                StringTable[entries[1] + "_" + entries[2]] = entries[3];
-                                PreviousValue = entries[3];
-                                PreviousKey = entries[1] + "_" + entries[2];
-
-                            }
-                        }
-                        else
-                        {//possible new line character. Append text to previous entry.
-                            StringTable[PreviousKey] = PreviousValue + "\n" + line;
-                            PreviousValue = PreviousValue + "\n" + line;
-                            //Debug.Log (PreviousKey+"="+PreviousValue);
-                        }
-                    }
-                }
-                while (line != null);
-                fileReader.Close();
-                return true;
-            }
-        }
+      
 
 
         /// <summary>

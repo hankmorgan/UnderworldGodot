@@ -16,7 +16,11 @@ namespace Underworld
         {
             yield return new WaitForSeconds(0.3f);
             Debug.Print(getString(arg1));
-            uimanager.instance.ConversationText.Text = getString(arg1,true);           
+            //uimanager.instance.ConversationText.Text = getString(arg1,true);   
+            uimanager.AddToConvoScroll(
+                stringToAdd: getString(arg1,true),
+                colour: PrintType
+                );     
             yield return null;
         }
     }

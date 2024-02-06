@@ -489,7 +489,8 @@ namespace Underworld
 			{//store background
 				uimanager.instance.mainwindowUW2.Texture = uimanager.bitmaps.LoadImageAt(BytLoader.UW2ThreeDWin_BYT, true);
 			}
-			uimanager.instance.ConversationText.Text = "";
+			uimanager.instance.convo.Clear();
+			//uimanager.instance.ConversationText.Text = "";
 			uimanager.AddToMessageScroll(""); //temp to clear.
 			InConversation = false;
 		}

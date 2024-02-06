@@ -33,6 +33,7 @@ namespace Underworld
 			InitOptions();
 			InitInteraction();
 			InitViews();
+			InitMessageScrolls();
 
 
 			mousecursor.InitCursor();

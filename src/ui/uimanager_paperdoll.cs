@@ -518,7 +518,7 @@ namespace Underworld
                 }
 
                 //Do action appropiate to the interaction mode verb. use 
-                if (obj != 0)
+                if (obj > 0)
                 {
                     switch (InteractionMode)
                     {
