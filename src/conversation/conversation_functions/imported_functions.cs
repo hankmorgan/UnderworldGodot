@@ -21,9 +21,9 @@ namespace Underworld
                 case "babl_fmenu":
                     {
                         yield return babl_fmenu();
-                        break; 
+                        break;
                     }
-                case "sex": 
+                case "sex":
                     {
                         Sex();
                         break;
@@ -48,13 +48,18 @@ namespace Underworld
                         setup_to_barter(talker);
                         break;
                     }
+                case "print":
+                    {
+                        yield return print();
+                        break;
+                    }
                 default:
                     {
-                        Debug.Print($"Unimplemented {func.importname}");break;
+                        Debug.Print($"Unimplemented {func.importname}"); break;
                     }
             }
             //set the value at the stackptr to the result
-            Set(stackptr,result_register);
+            Set(stackptr, result_register);
             yield return null;
         }
     }

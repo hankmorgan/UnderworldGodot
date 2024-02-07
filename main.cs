@@ -263,7 +263,7 @@ public partial class main : Node3D
 						{
 							var obj = (StaticBody3D)result["collider"];
 							Debug.Print(obj.Name);
-							uimanager.AddToMessageScroll(obj.Name);
+							//uimanager.AddToMessageScroll(obj.Name);
 							string[] vals = obj.Name.ToString().Split("_");
 							if (int.TryParse(vals[0], out int objindex))
 							{

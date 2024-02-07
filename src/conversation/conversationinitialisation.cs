@@ -59,9 +59,11 @@ namespace Underworld
                 //UW1 specific.
             }
 
-
+            //Clear existing text
+            uimanager.instance.scroll.Clear();
             uimanager.instance.convo.Clear();
             //uimanager.instance.ConversationText.Text = "";
+            
             var head = new GRLoader(GRLoader.HEADS_GR, GRLoader.GRShaderMode.UIShader);
             //set up relevant UI
             uimanager.EnableDisable(uimanager.instance.ConversationPanelUW1, _RES!=GAME_UW2);
