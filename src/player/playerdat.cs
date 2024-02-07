@@ -317,6 +317,20 @@ namespace Underworld
             }
         }
 
+
+        
+        public static byte play_fatigue
+        {
+            get
+            {
+                return GetAt(0x39);
+            }
+            set
+            {
+                SetAt(0x39, (byte)value);
+            }
+        }
+
         public static byte play_poison
         {
             get

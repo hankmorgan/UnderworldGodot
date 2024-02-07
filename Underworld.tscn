@@ -10,7 +10,7 @@
 [ext_resource type="Script" path="res://main.cs" id="6_3y8oy"]
 [ext_resource type="Texture2D" uid="uid://cpop1i8thi2t6" path="res://resources/placeholder_art/uw1lfti/0.png" id="6_qaf50"]
 [ext_resource type="Shader" path="res://node_3d.gdshader" id="6_x6exc"]
-[ext_resource type="Texture2D" uid="uid://2hduh6i2rlhp" path="res://resources/placeholder_art/converseuw1.png" id="7_ccwt1"]
+[ext_resource type="Texture2D" uid="uid://cf536ckyprfbf" path="res://resources/placeholder_art/uw1placeholdermain.png" id="7_ihdac"]
 [ext_resource type="Texture2D" uid="uid://plikcry1ow6q" path="res://resources/placeholder_art/textbox_fill.jpg" id="7_qiq8a"]
 [ext_resource type="Script" path="res://src/ui/InteractionModeButton.cs" id="8_0sew3"]
 [ext_resource type="Texture2D" uid="uid://ug231pvqaq1v" path="res://resources/placeholder_art/panels/panelsBlack.png" id="8_mis7n"]
@@ -21,7 +21,7 @@
 [ext_resource type="Texture2D" uid="uid://2fndhxavasa7" path="res://resources/placeholder_art/uw2optbtn/optbtn.png" id="14_skaqq"]
 [ext_resource type="Texture2D" uid="uid://b1lj1mh50p8a1" path="res://resources/placeholder_art/uw2optbtn/uw2attackbutton.png" id="15_f0cyy"]
 [ext_resource type="Texture2D" uid="uid://2qekjomlpnxd" path="res://resources/placeholder_art/uw1lfti/10.png" id="16_kxj2a"]
-[ext_resource type="Texture2D" uid="uid://badfxtbgaf6oh" path="res://resources/placeholder_art/uw2 converse.png" id="18_abbbm"]
+[ext_resource type="Texture2D" uid="uid://b5mwiifn8jtb6" path="res://resources/placeholder_art/uw2placeholdermain.png" id="18_bbcxb"]
 [ext_resource type="Texture2D" uid="uid://dqcrcis2dop6k" path="res://resources/placeholder_art/paperdolluw1/body_f.png" id="19_0yobb"]
 [ext_resource type="Texture2D" uid="uid://du878dn3osxn1" path="res://resources/placeholder_art/blankmap.png" id="20_o03w0"]
 [ext_resource type="Texture2D" uid="uid://cvik4hdmkwuwk" path="res://resources/placeholder_art/paperdolluw1/up button 027.png" id="22_vc6ux"]
@@ -165,7 +165,7 @@ visible = false
 offset_right = 1280.0
 offset_bottom = 800.0
 mouse_filter = 2
-texture = ExtResource("7_ccwt1")
+texture = ExtResource("7_ihdac")
 
 [node name="3DWinUW1" type="TextureRect" parent="UI/UW1"]
 texture_filter = 1
@@ -279,7 +279,19 @@ stretch_mode = 0
 script = ExtResource("8_0sew3")
 index = 5
 
+[node name="CompassUW1" type="Panel" parent="UI/UW1"]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="CompassClickArea" type="TextureRect" parent="UI/UW1/CompassUW1"]
+layout_mode = 0
+offset_left = 535.0
+offset_top = 552.0
+offset_right = 575.0
+offset_bottom = 592.0
+
 [node name="ConversationUW1" type="Panel" parent="UI/UW1"]
+visible = false
 offset_right = 40.0
 offset_bottom = 40.0
 
@@ -473,7 +485,7 @@ visible = false
 offset_right = 1280.0
 offset_bottom = 800.0
 mouse_filter = 2
-texture = ExtResource("18_abbbm")
+texture = ExtResource("18_bbcxb")
 
 [node name="3DWinUW2" type="TextureRect" parent="UI/UW2"]
 texture_filter = 1
@@ -503,10 +515,10 @@ texture = ExtResource("7_qiq8a")
 
 [node name="messageScrollUW2" type="RichTextLabel" parent="UI/UW2"]
 texture_filter = 1
-offset_left = 37.0
-offset_top = 658.0
-offset_right = 977.0
-offset_bottom = 798.0
+offset_left = 73.0
+offset_top = 656.0
+offset_right = 913.0
+offset_bottom = 796.0
 theme_override_colors/default_color = Color(0, 0, 0, 1)
 theme_override_constants/line_separation = -24
 theme_override_fonts/normal_font = ExtResource("4_pfbet")
@@ -733,6 +745,16 @@ offset_left = 375.0
 offset_top = 194.0
 offset_right = 439.0
 offset_bottom = 258.0
+
+[node name="CompassUW2" type="Panel" parent="UI/UW2"]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="CompassClickArea" type="TextureRect" parent="UI/UW2/CompassUW2"]
+offset_left = 380.0
+offset_top = 599.0
+offset_right = 580.0
+offset_bottom = 639.0
 
 [node name="Common" type="CanvasLayer" parent="UI"]
 
@@ -1825,6 +1847,8 @@ audioplayer = NodePath("../UI/AudioPlayer")
 lblPositionDebug = NodePath("../UI/mouse/PositionLabel")
 uwUI = NodePath("../UI/uiManager")
 
+[connection signal="gui_input" from="UI/UW1/CompassUW1/CompassClickArea" to="UI/uiManager" method="_on_compass_click"]
+[connection signal="gui_input" from="UI/UW2/CompassUW2/CompassClickArea" to="UI/uiManager" method="_on_compass_click"]
 [connection signal="gui_input" from="UI/Common/PaperDoll/Helm" to="UI/uiManager" method="_paperdoll_gui_input" binds= ["Helm"]]
 [connection signal="gui_input" from="UI/Common/PaperDoll/Boots" to="UI/uiManager" method="_paperdoll_gui_input" binds= ["Boots"]]
 [connection signal="gui_input" from="UI/Common/PaperDoll/ArmourInput" to="UI/uiManager" method="_paperdoll_gui_input" binds= ["Armour"]]

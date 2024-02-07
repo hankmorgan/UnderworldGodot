@@ -139,6 +139,7 @@ namespace Underworld
 
         public void AddLine(string newText, int Option, bool WaitForMore = false, int Colour = 0)
         {
+            if (newText.Trim() == "") { return; }
             switch (Colour)
             {
                 case ConversationVM.PC_SAY:
@@ -151,9 +152,7 @@ namespace Underworld
                 default:
                     newText = $"[color=#331C13]{newText}[/color]";
                     break;
-
-            }
-            if (newText.Trim() == "") { return; }
+            }            
             if (LinePtr <= Lines.GetUpperBound(0))
             {
                 Lines[LinePtr++].SetLine(newText, Option);
