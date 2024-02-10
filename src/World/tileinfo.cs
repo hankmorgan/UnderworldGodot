@@ -102,7 +102,7 @@ namespace Underworld
         /// <summary>
         /// /Points to a linked list of objects in the objects block
         /// </summary>
-        public int indexObjectList
+        public short indexObjectList
         {
             get
             {

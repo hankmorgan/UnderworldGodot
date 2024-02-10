@@ -15,14 +15,14 @@ namespace Underworld
         {
             get
             {
-                if (majorclass==1)
+                if (majorclass == 1)
                 {
                     if (npc_whoami != 0)
                     {
                         return GameStrings.GetString(7, npc_whoami + 16);
                     }
                 }
-                return GameStrings.GetObjectNounUW(item_id);             
+                return GameStrings.GetObjectNounUW(item_id);
             }
         }
 
@@ -38,7 +38,7 @@ namespace Underworld
 
         public bool isInventory = false;
 
-        public int PTR;      
+        public int PTR;
 
         //The tiles these objects are in.
         public int tileX = 99;
@@ -73,7 +73,7 @@ namespace Underworld
         {
             get
             {
-                 return (item_id & 0x1F0) >> 4;
+                return (item_id & 0x1F0) >> 4;
             }
         }
 
@@ -254,8 +254,8 @@ namespace Underworld
         {//not quite right. I need to check a bit more.
             get
             {
-                var d = (double)(heading*45);
-                return (float)(d * (System.Math.PI/180));
+                var d = (double)(heading * 45);
+                return (float)(d * (System.Math.PI / 180));
             }
         }
 
@@ -976,16 +976,45 @@ namespace Underworld
         /// <summary>
         /// Gets the world x or y coordinate for a given x or y value
         /// </summary>
-        /// <param name="xy"></param>
+        /// <param name="xypos"></param>
         /// <returns></returns>
-        public static float GetXYCoordinate(int tilexy, int xy)
+        public static float GetXYCoordinate(int tilexy, int xypos)
         {
-            xy = (xy * 3) + 1;
+            xypos = (xypos * 3) + 1;
             float ResolutionXY = 23f;  // A tile has a 8x8 grid for object positioning.
             float BrushXY = 120f; //game world size of a tile.
-            float offXY = tilexy * BrushXY + xy * (BrushXY / ResolutionXY);
-            return offXY/100f;
+            float offXY = (tilexy * BrushXY) + xypos * (BrushXY / ResolutionXY);
+            return offXY / 100f;
         }
+
+        /// <summary>
+        /// Converts an world co-ordinate into a xpos or ypos value. (ignores tileXY)
+        /// </summary>
+        /// <param name="xypos"></param>
+        /// <returns></returns>
+        public static short FloatXYToXYPos(float offXY)
+        {
+            float BrushXY = 120f;
+            float ResolutionXY = 23f;
+            int tilexy = (int)(offXY / 1.2f);
+
+            offXY = offXY * 100f;            
+            short xypos = (short)((offXY - (tilexy * BrushXY)) / (BrushXY / ResolutionXY));
+
+            // xypos = (xypos * 3) + 1;
+            xypos = (short)((xypos-1)/3);
+
+            if (xypos > 8)
+            {
+                xypos = 4;
+            }
+            if (xypos < 0)
+            {
+                xypos = 4;
+            }
+            return xypos;
+        }
+
 
         /// <summary>
         /// Gets the world Z coordinate for a given zpos value
@@ -994,16 +1023,33 @@ namespace Underworld
         /// <returns></returns>
         public static float GetZCoordinate(int _zpos)
         {
-             float ResolutionZ = 128.0f; //UW has 127 posible z positions for an object in tile.
+            float ResolutionZ = 128.0f; //UW has 127 posible z positions for an object in tile.
             float ceil = 32;// tileMap.CEILING_HEIGHT;
             float BrushZ = 15f;
-            float offZ = _zpos / ResolutionZ * ceil * BrushZ;
-            return offZ/100.0f;
+            float offZ = (_zpos / ResolutionZ) * ceil * BrushZ;
+            return offZ / 100.0f;
         }
 
-        public static int GetObjectSprite (uwObject obj)
+
+        /// <summary>
+        /// Converts a world coordinate to a zpos
+        /// </summary>
+        /// <param name="offZ"></param>
+        /// <returns></returns>
+         public static short FloatZToZPos(float offZ)
+         {
+            float ResolutionZ = 128.0f; //UW has 127 posible z positions for an object in tile.
+            float ceil = 32;// tileMap.CEILING_HEIGHT;
+            float BrushZ = 15f;
+            offZ = offZ * 100f;
+            //float offZ = (_zpos / ResolutionZ) * ceil * BrushZ;
+            return (short)((offZ / (ceil * BrushZ)) * ResolutionZ);
+         }
+
+
+        public static int GetObjectSprite(uwObject obj)
         {
-            if(obj!=null)
+            if (obj != null)
             {
                 return obj.item_id;
             }
@@ -1017,16 +1063,16 @@ namespace Underworld
         {
             get
             {
-                if (is_quant==1)
+                if (is_quant == 1)
                 {
-                    if (link>=0x200)
+                    if (link >= 0x200)
                     {
                         return 1;
-                    }   
+                    }
                     else
                     {
                         return link;
-                    }                
+                    }
                 }
                 return 1;
             }
@@ -1034,7 +1080,7 @@ namespace Underworld
 
         public static int GetObjectQuantity(uwObject obj)
         {
-            if (obj==null)
+            if (obj == null)
             {
                 return 1;
             }
