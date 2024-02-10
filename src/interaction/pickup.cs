@@ -6,7 +6,6 @@ namespace Underworld
     /// </summary>
     public class pickup : UWClass
     {
-
         public static bool Drop(int index, uwObject[] objList, Vector3 dropPosition, int tileX, int tileY)
         {
             var t = UWTileMap.current_tilemap.Tiles[tileX,tileY];
@@ -82,6 +81,6 @@ namespace Underworld
                 }
             }
             return true;
-        }
-    }
+        }    
+    } //end class
 }//end namespace

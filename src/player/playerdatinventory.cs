@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace Underworld
 {
     //Player dat inventory
@@ -446,12 +448,69 @@ namespace Underworld
             }
             return null;
         }
-        
+
 
         /// <summary>
         /// The container currently opened on the paperdoll.
         /// </summary>
-        public static int OpenedContainer;
+        public static int OpenedContainer=-1;
+
+
+        /// <summary>
+        /// The object containing the opened container. Returns -1 parent is at top level. Assumes container is opened.
+        /// </summary>
+        public static int OpenedContainerParent
+        {
+            get
+            {
+                if (OpenedContainer==-1)
+                {
+                    return -1;
+                }
+                for (int i=0;i<19;i++)
+                {
+                    if(GetInventorySlotListHead(i)==OpenedContainer)
+                    {
+                        return -1;
+                    }
+                }
+                //try and find in the rest of the inventory
+                foreach (var objToCheck in InventoryObjects)
+                {//if this far down then I need to find the container that the closing container sits in
+                    if (objToCheck!=null)
+                    {
+                        var result = objectsearch.GetContainingObject(
+                            ListHead:objToCheck.index, 
+                            ToFind: OpenedContainer,
+                            objList: InventoryObjects);
+                        if (result!=-1)
+                        {//container found. Browse into it by using it
+                            return result;
+                        }
+                    }
+                }
+                return -1; //not found. assume paperdoll
+            }
+        }
+
+
+        /// <summary>
+        /// Gets a free paperdoll slot
+        /// </summary>
+        public static int FreePaperDollSlot
+        {
+            get
+            {
+            for (int i=11;i<19;i++)
+            {
+                if (GetInventorySlotListHead(i)==0)
+                {
+                    return i;
+                }
+            }
+            return -1;
+            }
+        }
 
 
         /// <summary>
@@ -522,14 +581,14 @@ namespace Underworld
                     InventoryObjects[LastItemIndex] = null;
                     FindAndChangeBackpackIndex(LastItemIndex, index);
                     LastItemIndex--;
-                    
+
                 }
             }
-            if(updateUI)
+            if (updateUI)
             {
-            if (uimanager.CurrentSlot>=11)
+                if (uimanager.CurrentSlot >= 11)
                 {
-                    BackPackIndices[uimanager.CurrentSlot-11] = -1;
+                    BackPackIndices[uimanager.CurrentSlot - 11] = -1;
                 }
                 uimanager.UpdateInventoryDisplay();
             }
@@ -542,11 +601,11 @@ namespace Underworld
         /// </summary>
         /// <param name="index"></param>
         /// <param name="newValue"></param>
-        static void FindAndChangeBackpackIndex(int index, int newValue=-1)
+        static void FindAndChangeBackpackIndex(int index, int newValue = -1)
         {
-            for (int i= 0; i<BackPackIndices.GetUpperBound(0);i++)
+            for (int i = 0; i < BackPackIndices.GetUpperBound(0); i++)
             {
-                if (BackPackIndices[i]== index)
+                if (BackPackIndices[i] == index)
                 {
                     BackPackIndices[i] = newValue;
                 }
@@ -556,14 +615,14 @@ namespace Underworld
         /// <summary>
         /// Finds the byte that links to the object at index. Returns either a next or link that points to the object
         /// </summary>
-        /// <param name="ToFind"></param>
+        /// <param name="IndexToFind"></param>
         /// <returns></returns>
-        public static int GetItemLinkOffset(int ToFind)
+        public static int GetItemLinkOffset(int IndexToFind)
         {
             //first check the paperdolls
             for (int slot = 0; slot <= 18; slot++)
             {
-                if (GetInventorySlotListHead(slot) == ToFind)
+                if (GetInventorySlotListHead(slot) == IndexToFind)
                 {
                     //found. 
                     //object is on the paperdoll at that slot. return that slot offset
@@ -579,12 +638,12 @@ namespace Underworld
                 {
                     var result = objectsearch.GetContainingObject(
                         ListHead: objToCheck.index,
-                        ToFind: ToFind,
+                        ToFind: IndexToFind,
                         objList: InventoryObjects);
                     if (result != -1)
                     {//container found.
                      //Get either the container link or browse the next chain to match the object
-                        if (objToCheck.link == ToFind) //check the first object in the container
+                        if (objToCheck.link == IndexToFind) //check the first object in the container
                         {
                             return objToCheck.PTR + 6;
                         }
@@ -593,7 +652,7 @@ namespace Underworld
                             var NextObj = InventoryObjects[objToCheck.link]; //get the first object in the container
                             while (NextObj.next != 0)
                             {
-                                if (NextObj.next == ToFind)
+                                if (NextObj.next == IndexToFind)
                                 {
                                     return NextObj.PTR + 4;
                                 }
@@ -610,5 +669,70 @@ namespace Underworld
         }
 
 
+
+        /// <summary>
+        /// Recursively adds object data to player inventory and returns the index it is at.
+        /// </summary>
+        /// <param name="objIndex"></param>
+        /// <param name="ObjectToAddTo"></param>
+        /// <returns></returns>
+        public static short AddObjectToPlayerInventory(int objIndex)
+        {
+            var newIndex = MoveObjectToInventoryData(objIndex);
+            var newobj = InventoryObjects[newIndex];
+            // recursively add linked/next objects
+            if (newobj.link != 0 && newobj.is_quant == 0)
+            {
+                newobj.link = AddObjectToPlayerInventory(newobj.link);
+            }
+            if (newobj.next != 0)
+            {
+                newobj.next = AddObjectToPlayerInventory(newobj.next);
+            }
+
+
+            return (short)newIndex;
+        }
+
+        private static int MoveObjectToInventoryData(int objIndex)
+        {
+
+            var obj = UWTileMap.current_tilemap.LevelObjects[objIndex];
+            if (objIndex >= 256)
+            {
+                //Add to static free list
+                UWTileMap.current_tilemap.StaticFreeListPtr++;
+                UWTileMap.current_tilemap.StaticFreeListObject = objIndex;
+            }
+            else
+            {
+                // TODO mobile              //Add to mobile free list
+                // UWTileMap.current_tilemap.MobileFreeListPtr++;
+                // UWTileMap.current_tilemap.MobileFreeListObject = objIndex;
+            }
+            var newIndex = ++LastItemIndex;
+
+            InventoryObjects[newIndex] = new uwObject
+            {
+                isInventory = true,
+                IsStatic = true,
+                index = (short)(newIndex),
+                PTR = InventoryPtr + newIndex * 8,
+                DataBuffer = pdat
+            };
+            var NewObj = InventoryObjects[newIndex];
+
+            //copy data to this offset.... and wipe the old
+            for (int i = 0; i < 8; i++)
+            {
+                InventoryObjects[newIndex].DataBuffer[NewObj.PTR+i] = obj.DataBuffer[obj.PTR + i];
+                obj.DataBuffer[obj.PTR + i] = 0;
+            }
+            //Destroy the world object.
+            obj.instance.uwnode.QueueFree();
+            obj.instance = null;
+            return newIndex;
+
+        }
     } //end class
 } //end namespace

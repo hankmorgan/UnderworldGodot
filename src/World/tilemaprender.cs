@@ -29,11 +29,6 @@ namespace Underworld
         const int TILE_SLOPE_E = 8;
         const int TILE_SLOPE_W = 9;
 
-        const int SLOPE_BOTH_PARALLEL = 0;
-        const int SLOPE_BOTH_OPPOSITE = 1;
-        const int SLOPE_FLOOR_ONLY = 2;
-        const int SLOPE_CEILING_ONLY = 3;
-
         //Visible faces indices
         const int vTOP = 0;
         const int vEAST = 1;
@@ -59,7 +54,7 @@ namespace Underworld
         public const int Heading6 = 270;
         public const int heading2 = 90;
 
-        public static bool EnableCollision = true;
+        public static bool EnableCollision = false;
 
         //static int UW_CEILING_HEIGHT;
         static int CEILING_HEIGHT;

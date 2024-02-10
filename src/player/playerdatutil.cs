@@ -17,6 +17,24 @@ namespace Underworld
         /// </summary>
         private const int NoOfEncryptedBytes = 0xD2;
 
+        /// <summary>
+        /// Where inventory starts in playerdat
+        /// </summary>
+        public static int InventoryPtr
+        {
+            get
+            { 
+                if (_RES == GAME_UW2)
+                {
+                    return 0x3E3;
+                }
+                else
+                {
+                    return 0x138;
+                }
+
+            }
+        }
         public static void InitEmptyPlayer(string new_charname="Gronk")
         {
             var InventoryPtr = 0x138;
@@ -55,18 +73,14 @@ namespace Underworld
                 }
                
                 //Copy and initialise inventory
-                var InventoryPtr = 0x138;
-                if (_RES == GAME_UW2)
-                {
-                    InventoryPtr = 0x3E3;
-                }
+                var CurrentInventoryPtr = InventoryPtr;
                 var origUbound = pdat.GetUpperBound(0);
                 Array.Resize(ref pdat, InventoryPtr + 512 * 8);
                 int oIndex = 1; //starts at one since there is no object zero
                 //InventoryBuffer = new byte[512*8];
                 LastItemIndex=0;
 
-                while (InventoryPtr < origUbound)
+                while (CurrentInventoryPtr < origUbound)
                 {
                     // for (int i =0; i<8; i++)
                     // {//Copy bytes into storage
@@ -78,13 +92,13 @@ namespace Underworld
                         isInventory = true,
                         IsStatic = true,
                         index = (short)(oIndex),
-                        PTR = InventoryPtr,
+                        PTR = CurrentInventoryPtr,
                         DataBuffer = pdat
                     };
                     Debug.Print($"{GameStrings.GetObjectNounUW(uwobj.item_id)}");
                     InventoryObjects[oIndex] = uwobj;
                     oIndex++;
-                    InventoryPtr += 8;
+                    CurrentInventoryPtr += 8;
                     LastItemIndex++;                    
                 }
             }

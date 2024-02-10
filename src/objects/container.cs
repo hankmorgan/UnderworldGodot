@@ -92,7 +92,7 @@ namespace Underworld
             {
                 if (playerdat.GetInventorySlotListHead(p) == obj.index)
                 { //object is on the paperdoll. I can close and return to the top level
-                    uimanager.RefreshSlot(p, playerdat.isFemale);
+                    uimanager.RefreshSlot(p);
                     playerdat.OpenedContainer = -1;//clear slot graphics
                     uimanager.SetOpenedContainer(obj.index, -1);
                     //Draw the paperdoll inventory.

@@ -113,8 +113,7 @@ namespace Underworld
 		/// Redraws the specified slot
 		/// </summary>
 		/// <param name="slotno"></param>
-		/// <param name="isFemale"></param>
-		public static void RefreshSlot(int slotno, bool isFemale)
+		public static void RefreshSlot(int slotno)
         {
             switch (slotno)
             {
@@ -485,75 +484,218 @@ namespace Underworld
             // Replace with function body.
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
-                var obj = 0;
                 Debug.Print($"->{extra_arg_0}");
-                switch (extra_arg_0)
-                {
-                    case "Helm": { obj = playerdat.Helm; CurrentSlot = 0; break; }
-                    case "Armour": { obj = playerdat.ChestArmour; CurrentSlot = 1; break; }
-                    case "Gloves": { obj = playerdat.Gloves; CurrentSlot = 2; break; }
-                    case "Leggings": { obj = playerdat.Leggings; CurrentSlot = 3; break; }
-                    case "Boots": { obj = playerdat.Boots; CurrentSlot = 4; break; }
-
-                    case "RightShoulder": { obj = playerdat.RightShoulder; CurrentSlot = 5; break; }
-                    case "LeftShoulder": { obj = playerdat.LeftShoulder; CurrentSlot = 6; break; }
-                    case "RightHand": { obj = playerdat.RightHand; CurrentSlot = 7; break; }
-                    case "LeftHand": { obj = playerdat.LeftHand; CurrentSlot = 8; break; }
-
-                    case "RightRing": { obj = playerdat.RightRing; CurrentSlot = 9; break; }
-                    case "LeftRing": { obj = playerdat.LeftRing; CurrentSlot = 10; break; }
-
-                    case "Back0": { obj = playerdat.GetBackPackIndex(0); CurrentSlot = 11; break; }
-                    case "Back1": { obj = playerdat.GetBackPackIndex(1); CurrentSlot = 12; break; }
-                    case "Back2": { obj = playerdat.GetBackPackIndex(2); CurrentSlot = 13; break; }
-                    case "Back3": { obj = playerdat.GetBackPackIndex(3); CurrentSlot = 14; break; }
-                    case "Back4": { obj = playerdat.GetBackPackIndex(4); CurrentSlot = 15; break; }
-                    case "Back5": { obj = playerdat.GetBackPackIndex(5); CurrentSlot = 16; break; }
-                    case "Back6": { obj = playerdat.GetBackPackIndex(6); CurrentSlot = 17; break; }
-                    case "Back7": { obj = playerdat.GetBackPackIndex(7); CurrentSlot = 18; break; }
-                    case "OpenedContainer": { obj = playerdat.OpenedContainer; CurrentSlot = -1; break; }
-                    default:
-                        CurrentSlot = -1;
-                        Debug.Print("Unimplemented inventory slot"); break;
-                }
+                var obj = GetObjAtSlot(extra_arg_0);
 
                 //Do action appropiate to the interaction mode verb. use 
                 if (obj > 0)
-                {
-                    switch (InteractionMode)
-                    {
-                        case InteractionModes.ModeUse:
-                            if (extra_arg_0 != "OpenedContainer")
-                            {
-                                use.Use(
-                                    index: obj,
-                                    objList: playerdat.InventoryObjects,
-                                    WorldObject: false);
-                            }
-                            else
-                            {
-                                //close up opened container.
-                                container.Close(
-                                    index: obj,
-                                    objList: playerdat.InventoryObjects);
-                            }
-                            break;
-                        case InteractionModes.ModeLook:
-                            look.LookAt(obj, playerdat.InventoryObjects, false); break;
-                        default:
-                            Debug.Print("Unimplemented inventory use verb-object combination"); break;
-                    }
+                { //there is an object in that slot.
+                    InteractWithObjectInSlot(extra_arg_0, obj);
                 }
+                else
+                {
+                    InteractWithEmptySlot();
+                }                    
                 CurrentSlot = -1;
             }
         }
 
+        private static void InteractWithEmptySlot()
+        {
+            //there is no object in the slot.
+            switch (InteractionMode)
+            {
+                case InteractionModes.ModePickup:
+                    {
+                        PickupToEmptySlot();
+                        break;
+                    }
+            }
+        }
+
+        private static void PickupToEmptySlot()
+        {
+            if (playerdat.ObjectInHand != -1)
+            {
+                switch (CurrentSlot)
+                {
+                    case -1:
+                        {
+                            MoveObjectInHandOutOfOpenedContainer();
+                            break;
+                        }
+                    case >= 0 and <= 10:
+                        {//paperdoll
+                            var index = playerdat.AddObjectToPlayerInventory(playerdat.ObjectInHand);                             
+                            playerdat.SetInventorySlotListHead(CurrentSlot, index);
+                            //redraw                            
+                            RefreshSlot(CurrentSlot);
+                            playerdat.ObjectInHand=-1;
+                            instance.mousecursor.ResetCursor();
+                            break;
+                        }
+                    case > 10 and <= 18:
+                        //backpack
+                        if (playerdat.OpenedContainer < 0)
+                        {//backpackslot
+                            var index = playerdat.AddObjectToPlayerInventory(playerdat.ObjectInHand);
+                            playerdat.SetInventorySlotListHead(CurrentSlot, index);
+
+                            //redraw
+                            playerdat.BackPackIndices[CurrentSlot-11] = index;
+                            RefreshSlot(CurrentSlot);
+                            playerdat.ObjectInHand=-1;
+                            instance.mousecursor.ResetCursor();
+                        }
+                        else
+                        {
+                            //in a container 
+                            var index = playerdat.AddObjectToPlayerInventory(playerdat.ObjectInHand);
+                            var newobj = playerdat.InventoryObjects[index];
+                            //add to linked list, for the moment it will be at the head but later on should be at the end (next of the object to it's left)
+                            var opened = playerdat.InventoryObjects[playerdat.OpenedContainer];
+                            newobj.next = opened.link;
+                            opened.link = index;
+
+                            //redraw
+                            playerdat.BackPackIndices[CurrentSlot-11] = index;
+                            RefreshSlot(CurrentSlot);
+                            playerdat.ObjectInHand=-1;
+                            instance.mousecursor.ResetCursor();
+                            
+                        }
+                        break;
+                }
+
+            }
+        }
+
+        private static void MoveObjectInHandOutOfOpenedContainer()
+        {
+            //the opened container
+            if (playerdat.OpenedContainerParent == -1)
+            {
+                //on paperdoll. try and add to there
+                var freeslot = playerdat.FreePaperDollSlot;
+                if (freeslot != -1)
+                {
+                    var index = playerdat.AddObjectToPlayerInventory(playerdat.ObjectInHand);
+                    playerdat.SetInventorySlotListHead(freeslot, index);
+                    playerdat.ObjectInHand = -1;
+                    instance.mousecursor.ResetCursor();
+                }
+                else
+                {
+                    Debug.Print("No room on paperdoll");
+                }
+            }
+            else
+            {
+                //the container that contains the opened container.
+                var index = playerdat.AddObjectToPlayerInventory(playerdat.ObjectInHand);
+                var newobj = playerdat.InventoryObjects[index];
+                var container = playerdat.InventoryObjects[playerdat.OpenedContainerParent];
+                newobj.next = container.link;
+                container.link = index;
+                playerdat.ObjectInHand = -1;
+                instance.mousecursor.ResetCursor();
+            }
+        }
+
+
+        private static void InteractWithObjectInSlot(string extra_arg_0, int obj)
+        {
+            switch (InteractionMode)
+            {
+                case InteractionModes.ModeUse:
+                    if (extra_arg_0 != "OpenedContainer")
+                    {
+                        use.Use(
+                            index: obj,
+                            objList: playerdat.InventoryObjects,
+                            WorldObject: false);
+                    }
+                    else
+                    {
+                        //close up opened container.
+                        container.Close(
+                            index: obj,
+                            objList: playerdat.InventoryObjects);
+                    }
+                    break;
+                case InteractionModes.ModeLook:
+                    look.LookAt(obj, playerdat.InventoryObjects, false); break;
+                case InteractionModes.ModePickup:
+                    if (extra_arg_0=="OpenedContainer")
+                    {
+                        if(playerdat.ObjectInHand!=-1)
+                        {
+                            MoveObjectInHandOutOfOpenedContainer();
+                        }
+                        else
+                        {
+                            //close up opened container.
+                            container.Close(
+                                index: obj,
+                                objList: playerdat.InventoryObjects);
+                        }                        
+                    }
+                    else
+                    {
+                        use.Use(
+                            index: obj,
+                            objList: playerdat.InventoryObjects,
+                            WorldObject: false);
+                    }
+                    break;
+                default:
+                    Debug.Print("Unimplemented inventory use verb-object combination"); break;
+            }
+        }
+
+
+        private static int GetObjAtSlot(string extra_arg_0)
+        {
+            var obj=-1;
+            switch (extra_arg_0)
+            {
+                case "Helm": { obj = playerdat.Helm; CurrentSlot = 0; break; }
+                case "Armour": { obj = playerdat.ChestArmour; CurrentSlot = 1; break; }
+                case "Gloves": { obj = playerdat.Gloves; CurrentSlot = 2; break; }
+                case "Leggings": { obj = playerdat.Leggings; CurrentSlot = 3; break; }
+                case "Boots": { obj = playerdat.Boots; CurrentSlot = 4; break; }
+
+                case "RightShoulder": { obj = playerdat.RightShoulder; CurrentSlot = 5; break; }
+                case "LeftShoulder": { obj = playerdat.LeftShoulder; CurrentSlot = 6; break; }
+                case "RightHand": { obj = playerdat.RightHand; CurrentSlot = 7; break; }
+                case "LeftHand": { obj = playerdat.LeftHand; CurrentSlot = 8; break; }
+
+                case "RightRing": { obj = playerdat.RightRing; CurrentSlot = 9; break; }
+                case "LeftRing": { obj = playerdat.LeftRing; CurrentSlot = 10; break; }
+
+                case "Back0": { obj = playerdat.GetBackPackIndex(0); CurrentSlot = 11; break; }
+                case "Back1": { obj = playerdat.GetBackPackIndex(1); CurrentSlot = 12; break; }
+                case "Back2": { obj = playerdat.GetBackPackIndex(2); CurrentSlot = 13; break; }
+                case "Back3": { obj = playerdat.GetBackPackIndex(3); CurrentSlot = 14; break; }
+                case "Back4": { obj = playerdat.GetBackPackIndex(4); CurrentSlot = 15; break; }
+                case "Back5": { obj = playerdat.GetBackPackIndex(5); CurrentSlot = 16; break; }
+                case "Back6": { obj = playerdat.GetBackPackIndex(6); CurrentSlot = 17; break; }
+                case "Back7": { obj = playerdat.GetBackPackIndex(7); CurrentSlot = 18; break; }
+                case "OpenedContainer": { obj = playerdat.OpenedContainer; CurrentSlot = -1; break; }
+                default:
+                    CurrentSlot = -1;
+                    Debug.Print("Unimplemented inventory slot"); break;
+            }
+
+            return obj;
+        }
+
         /// <summary>
-		/// Moves the backpack paper doll display up or down
-		/// </summary>
-		/// <param name="event"></param>
-		/// <param name="extra_arg_0">+1 move up, -1 move down</param>
-		private void _on_updown_arrow_gui_input(InputEvent @event, long extra_arg_0)
+        /// Moves the backpack paper doll display up or down
+        /// </summary>
+        /// <param name="event"></param>
+        /// <param name="extra_arg_0">+1 move up, -1 move down</param>
+        private void _on_updown_arrow_gui_input(InputEvent @event, long extra_arg_0)
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {

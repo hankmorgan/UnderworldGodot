@@ -12,7 +12,7 @@ namespace Underworld
             {
                 return false;
             }
-            var ObjInHand = playerdat.InventoryObjects[playerdat.ObjectInHand];
+            var ObjInHand = UWTileMap.current_tilemap.LevelObjects[playerdat.ObjectInHand];//playerdat.InventoryObjects[playerdat.ObjectInHand];
 
             if (index==-1){return false;}
             trap.ObjectThatStartedChain = index;
