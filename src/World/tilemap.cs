@@ -7,10 +7,10 @@ namespace Underworld
     /// <summary>
     /// Tile map class for storing and accessing the tilemap and tile properties..
     /// </summary>
-    public class TileMap : Loader
+    public class UWTileMap : Loader
     {
         //Raw Data
-        public static Underworld.TileMap current_tilemap;
+        public static Underworld.UWTileMap current_tilemap;
         /// <summary>
         /// Data containing and tiles, objects and in UW2 the overlays
         /// </summary>
@@ -189,7 +189,7 @@ namespace Underworld
 
 
 
-        public TileMap(int NewLevelNo)
+        public UWTileMap(int NewLevelNo)
         {
             thisLevelNo = NewLevelNo;
             lev_ark_block = LevArkLoader.LoadLevArkBlock(NewLevelNo);

@@ -6,7 +6,7 @@ namespace Underworld
     {
         public static void activate(uwObject triggerObj, uwObject trapObj, uwObject[] objList)
         {
-            var tile = TileMap.current_tilemap.Tiles[triggerObj.quality, triggerObj.owner];
+            var tile = UWTileMap.current_tilemap.Tiles[triggerObj.quality, triggerObj.owner];
             var doorObj = objectsearch.FindMatchInObjectList(
                 ListHeadIndex: tile.indexObjectList, 
                 majorclass: 5, 

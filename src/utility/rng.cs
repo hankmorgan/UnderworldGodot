@@ -9,6 +9,19 @@ namespace Underworld
 
 
         /// <summary>
+        /// Returns a random value which is base value offset by the upper and lower range
+        /// </summary>
+        /// <param name="basevalue"></param>
+        /// <param name="lower_offset"></param>
+        /// <param name="upper_offset"></param>
+        /// <returns></returns>
+        public static int RandomOffset(int basevalue, int lower_offset, int upper_offset)
+        {
+            return r.Next(basevalue + lower_offset, basevalue + upper_offset);
+        }
+
+
+        /// <summary>
         /// Returns NoOfLoops + ({NoOfLoops}D{DiceRange})
         /// </summary>
         /// <param name="NoOfLoops"></param>
@@ -24,19 +37,19 @@ namespace Underworld
             }
             else
             {
-                if (NoOfLoops<=0)
+                if (NoOfLoops <= 0)
+                {
+                    return si;
+                }
+                else
+                {
+                    while (NoOfLoops != 0)
                     {
-                        return si;
+                        si += r.Next(0, di);
+                        NoOfLoops--;
                     }
-                else   
-                    {
-                        while (NoOfLoops!=0)
-                        {
-                            si += r.Next(0, di);
-                            NoOfLoops--;
-                        }
-                        return si;
-                    }
+                    return si;
+                }
             }
         }
     }

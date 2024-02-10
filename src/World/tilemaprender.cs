@@ -77,10 +77,10 @@ namespace Underworld
             }
         }
 
-        public static void GenerateLevelFromTileMap(Node3D parent, Node3D sceneryParent, string game, TileMap Level, uwObject[] objList, bool UpdateOnly)
+        public static void GenerateLevelFromTileMap(Node3D parent, Node3D sceneryParent, string game, UWTileMap Level, uwObject[] objList, bool UpdateOnly)
         {
             worldnode = parent;
-            CEILING_HEIGHT = TileMap.UW_CEILING_HEIGHT;
+            CEILING_HEIGHT = UWTileMap.UW_CEILING_HEIGHT;
 
             if (!UpdateOnly)
             {
@@ -91,9 +91,9 @@ namespace Underworld
                 }
             }
 
-            for (int y = 0; y <= TileMap.TileMapSizeY; y++)
+            for (int y = 0; y <= UWTileMap.TileMapSizeY; y++)
             {
-                for (int x = 0; x <= TileMap.TileMapSizeX; x++)
+                for (int x = 0; x <= UWTileMap.TileMapSizeX; x++)
                 {
                     RenderTile(parent, x, y, Level.Tiles[x, y]);
                 }
@@ -225,7 +225,7 @@ namespace Underworld
         /// <param name="Bottom">Bottom.</param>
         /// <param name="Top">Top.</param>
         /// <param name="TileName">Tile name.</param>
-        static Node3D RenderCeiling(Node3D parent, int x, int y, int Bottom, int Top, int CeilingTexture, string TileName, Underworld.TileMap map)
+        static Node3D RenderCeiling(Node3D parent, int x, int y, int Bottom, int Top, int CeilingTexture, string TileName, Underworld.UWTileMap map)
         {
             //return null;
 
@@ -296,7 +296,7 @@ namespace Underworld
             // return Tile;
         }
 
-        private static Node3D CreateMeshInstance(Node3D parent, int x, int y, string TileName, ArrayMesh a_mesh, bool EnableCollision = false)
+        private static Node3D CreateMeshInstance(Node3D parent, int x, int y, string TileName, ArrayMesh a_mesh)
         {
             var final_mesh = new MeshInstance3D();
             parent.AddChild(final_mesh);

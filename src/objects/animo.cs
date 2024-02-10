@@ -134,7 +134,7 @@ namespace Underworld
         /// <returns>the index of the animo if found. Othewise -1</returns>
         public static int GetFreeAnimoSlot()
         {
-            foreach (var a in TileMap.current_tilemap.Overlays)
+            foreach (var a in UWTileMap.current_tilemap.Overlays)
             {
                 if (a!=null)
                 {

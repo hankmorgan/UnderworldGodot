@@ -112,7 +112,7 @@ namespace Underworld
                     majorclass: 4, 
                     minorclass: 0, 
                     classindex: 0xF,
-                    objList: TileMap.current_tilemap.LevelObjects);
+                    objList: UWTileMap.current_tilemap.LevelObjects);
             }
         }
 
@@ -175,7 +175,7 @@ namespace Underworld
             tmDoor.UseRedChannel = true;    
         }
 
-        public static door CreateInstance(Node3D parent, uwObject obj, TileMap a_tilemap, string name)
+        public static door CreateInstance(Node3D parent, uwObject obj, UWTileMap a_tilemap, string name)
         {
             int tileX = obj.tileX;
             int tileY = obj.tileY;
@@ -343,7 +343,7 @@ namespace Underworld
             var animoindex = animo.GetFreeAnimoSlot();
             if (animoindex!=-1)
             {
-                var anim = TileMap.current_tilemap.Overlays[animoindex];
+                var anim = UWTileMap.current_tilemap.Overlays[animoindex];
                 anim.link= obj.uwobject.index;
                 anim.tileX = obj.uwobject.tileX;
                 anim.tileY = obj.uwobject.tileY;
@@ -836,7 +836,7 @@ namespace Underworld
                 return uwobject.classindex >= 8;
             }
         }
-        public static doorway CreateInstance(Node3D parent, uwObject obj, TileMap a_tilemap, string name)
+        public static doorway CreateInstance(Node3D parent, uwObject obj, UWTileMap a_tilemap, string name)
         {           
             int tileX = obj.tileX;
             int tileY = obj.tileY;

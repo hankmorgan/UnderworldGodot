@@ -6,6 +6,7 @@ namespace Underworld
     public partial class playerdat : Loader
     {
 
+        
         /// <summary>
         /// Reference to the char name in the gamestrings for use in the conversation VM.
         /// </summary>

@@ -144,9 +144,9 @@ namespace Underworld
             mapToRender = automap.automaps[levelno];
 
             //Fills in the tile background colour first
-            for (int x = 0; x <= TileMap.TileMapSizeX; x++)
+            for (int x = 0; x <= UWTileMap.TileMapSizeX; x++)
             {
-                for (int y = 0; y <= TileMap.TileMapSizeY; y++)
+                for (int y = 0; y <= UWTileMap.TileMapSizeY; y++)
                 {//If the tile has been visited and can be rendered.
                     if (mapToRender.tiles[x, y].visited)
                     {
@@ -155,9 +155,9 @@ namespace Underworld
                 }
             }
 
-            for (int x = 0; x <= TileMap.TileMapSizeX; x++)
+            for (int x = 0; x <= UWTileMap.TileMapSizeX; x++)
             {
-                for (int y = 0; y <= TileMap.TileMapSizeY; y++)
+                for (int y = 0; y <= UWTileMap.TileMapSizeY; y++)
                 {//If the tile has been visited and can be rendered.
                     if (mapToRender.tiles[x, y].visited)
                     {
@@ -167,9 +167,9 @@ namespace Underworld
             }
 
             //Draw door ways
-            for (int x = 1; x < TileMap.TileMapSizeX; x++)
+            for (int x = 1; x < UWTileMap.TileMapSizeX; x++)
             {
-                for (int y = 1; y < TileMap.TileMapSizeY; y++)
+                for (int y = 1; y < UWTileMap.TileMapSizeY; y++)
                 {
                     if (mapToRender.tiles[x, y].IsDoor)
                     {
@@ -413,7 +413,7 @@ namespace Underworld
         private static void DrawOpenTileBorder(Image OutputTileMapImage, automaptileinfo tile, int TileX, int TileY, Color[] InputColour)
         {
             //Check the tile to the north
-            if (TileY < TileMap.TileMapSizeY)
+            if (TileY < UWTileMap.TileMapSizeY)
             {
                 if (mapToRender.tiles[TileX, TileY + 1].IsSolidWall)
                 {//Solid tile to the north.
@@ -429,7 +429,7 @@ namespace Underworld
                 }
             }
             //Check the tile to the east
-            if (TileX < TileMap.TileMapSizeX)
+            if (TileX < UWTileMap.TileMapSizeX)
             {
                 if (mapToRender.tiles[TileX + 1, TileY].IsSolidWall)
                 {
@@ -460,7 +460,7 @@ namespace Underworld
             DrawLine(OutputTileMapImage, TileX, TileY, InputColour, SOUTHWEST);
 
             //Check the tiles to the north and east of this tile to see what needs to be drawn for borders
-            if (TileY < TileMap.TileMapSizeY)
+            if (TileY < UWTileMap.TileMapSizeY)
             {//north
                 var TileToTest = mapToRender.tiles[TileX, TileY + 1];
                 if (TileToTest.IsOpen || TileToTest.tileType == automaptileinfo.TILE_DIAG_SW)
@@ -468,7 +468,7 @@ namespace Underworld
                     DrawLine(OutputTileMapImage, TileX, TileY, InputColour, NORTH);
                 }
             }
-            if (TileX < TileMap.TileMapSizeX)
+            if (TileX < UWTileMap.TileMapSizeX)
             {//east
                 var TileToTest = mapToRender.tiles[TileX + 1, TileY];
                 if (TileToTest.IsOpen || TileToTest.tileType == automaptileinfo.TILE_DIAG_SW)
@@ -526,7 +526,7 @@ namespace Underworld
             }
 
             //Check North and East for solids.
-            if (TileY < TileMap.TileMapSizeY)
+            if (TileY < UWTileMap.TileMapSizeY)
             {//North
                 if (mapToRender.tiles[TileX, TileY + 1].tileType == automaptileinfo.TILE_SOLID)
                 {
@@ -534,7 +534,7 @@ namespace Underworld
                 }
             }
 
-            if (TileX < TileMap.TileMapSizeX)
+            if (TileX < UWTileMap.TileMapSizeX)
             {//East
                 if (mapToRender.tiles[TileX + 1, TileY].tileType == automaptileinfo.TILE_SOLID)
                 {
@@ -556,7 +556,7 @@ namespace Underworld
             DrawLine(OutputTileMapImage, TileX, TileY, InputColour, SOUTHEAST);
 
             //Check the tiles to the north and west of this tile
-            if (TileY < TileMap.TileMapSizeY)
+            if (TileY < UWTileMap.TileMapSizeY)
             {//north
                 var TileToTest = mapToRender.tiles[TileX, TileY + 1];
                 if (TileToTest.IsOpen || TileToTest.tileType == automaptileinfo.TILE_DIAG_SE)
@@ -583,7 +583,7 @@ namespace Underworld
                 }
             }
 
-            if (TileX < TileMap.TileMapSizeX)
+            if (TileX < UWTileMap.TileMapSizeX)
             {//East
                 if (mapToRender.tiles[TileX + 1, TileY].tileType == automaptileinfo.TILE_SOLID)
                 {
@@ -614,7 +614,7 @@ namespace Underworld
                     DrawLine(OutputTileMapImage, TileX, TileY, InputColour, SOUTH);
                 }
             }
-            if (TileX < TileMap.TileMapSizeX)
+            if (TileX < UWTileMap.TileMapSizeX)
             {//East
                 var TileToTest = mapToRender.tiles[TileX + 1, TileY];
                 if (TileToTest.IsOpen || TileToTest.tileType == automaptileinfo.TILE_DIAG_NW)
@@ -624,7 +624,7 @@ namespace Underworld
             }
 
             //Check North and West for solids.
-            if (TileY < TileMap.TileMapSizeY)
+            if (TileY < UWTileMap.TileMapSizeY)
             {//North
                 if (mapToRender.tiles[TileX, TileY + 1].tileType == automaptileinfo.TILE_SOLID)
                 {

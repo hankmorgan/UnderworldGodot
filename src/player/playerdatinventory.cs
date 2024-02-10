@@ -4,9 +4,9 @@ namespace Underworld
     public partial class playerdat : Loader
     {
 
-
         /// <summary>
         /// Reference to the object the player is using currently in their hand
+        /// To be consistanct his object MUST always be a world object. When picking inventory objects add it to world
         /// </summary>
         public static int ObjectInHand = -1;
 

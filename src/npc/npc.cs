@@ -106,6 +106,7 @@ namespace Underworld
                 obj_lbl.Position = new Vector3(0f, 0.4f, 0f);
                 parent.AddChild(obj_lbl);
             }
+            obj.instance = n;
             return n;
         }
 

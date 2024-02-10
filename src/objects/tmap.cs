@@ -13,7 +13,7 @@ namespace Underworld
             uwobject = _uwobject;
         }
 
-        public static tmap CreateInstance(Node3D parent, uwObject obj, TileMap a_tilemap, string name)
+        public static tmap CreateInstance(Node3D parent, uwObject obj, UWTileMap a_tilemap, string name)
         {
             int tileX = obj.tileX;
             int tileY = obj.tileY;
@@ -31,7 +31,7 @@ namespace Underworld
 
         public static bool LookAt(uwObject obj)
         {
-            int textureindex = TileMap.current_tilemap.texture_map[obj.owner];
+            int textureindex = UWTileMap.current_tilemap.texture_map[obj.owner];
             uimanager.AddToMessageScroll(GameStrings.TextureDescription(textureindex));
             if ((textureindex == 142) && ((_RES == GAME_UW1) || (_RES == GAME_UWDEMO)))
             {//This is a window into the abyss.

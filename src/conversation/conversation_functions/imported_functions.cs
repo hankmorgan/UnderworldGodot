@@ -53,6 +53,11 @@ namespace Underworld
                         yield return print();
                         break;
                     }
+                case "do_judgement":
+                    {
+                        yield return do_judgement();
+                        break;
+                    }
                 default:
                     {
                         Debug.Print($"Unimplemented {func.importname}"); break;

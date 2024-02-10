@@ -59,6 +59,9 @@ namespace Underworld
                 //UW1 specific.
             }
 
+            Likes = 0;
+            Dislikes = 0;
+            
             //Clear existing text
             uimanager.instance.scroll.Clear();
             uimanager.instance.convo.Clear();

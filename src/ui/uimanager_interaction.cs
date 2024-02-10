@@ -49,6 +49,30 @@ namespace Underworld
             }
         }
 
+        public static void InteractWithObjectCollider(int objindex)
+        {
+            switch (uimanager.InteractionMode)
+            {
+                case uimanager.InteractionModes.ModeTalk:
+                    talk.Talk(objindex, Underworld.UWTileMap.current_tilemap.LevelObjects, true);
+                    break;
+                case uimanager.InteractionModes.ModeLook:
+                    //Do a look interaction with the object
+                    look.LookAt(objindex, Underworld.UWTileMap.current_tilemap.LevelObjects, true);
+                    break;
+                case uimanager.InteractionModes.ModeUse:
+                    //do a use interaction with the object.
+                    use.Use(objindex, Underworld.UWTileMap.current_tilemap.LevelObjects, true);
+                    break;
+                case uimanager.InteractionModes.ModePickup:
+                    pickup.PickUp(objindex, Underworld.UWTileMap.current_tilemap.LevelObjects, true);
+                    break;
+            }
+        }
+
+
+
+
         public void InteractionModeToggle(InteractionModes index)
         {
             Debug.Print($"Press {index}");

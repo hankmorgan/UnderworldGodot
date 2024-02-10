@@ -5,8 +5,8 @@ namespace Underworld
 {
     public class bridge : model3D
     {
-        TileMap tilemap;
-        public static bridge CreateInstance(Node3D parent, uwObject obj, string name, TileMap a_tilemap)
+        UWTileMap tilemap;
+        public static bridge CreateInstance(Node3D parent, uwObject obj, string name, UWTileMap a_tilemap)
         {
             var b = new bridge(obj, a_tilemap);
             var modelNode = b.Generate3DModel(parent, name);
@@ -17,7 +17,7 @@ namespace Underworld
             return b;
         }
 
-        public bridge(uwObject _uwobject, TileMap _tilemap)
+        public bridge(uwObject _uwobject, UWTileMap _tilemap)
         {            
             uwobject = _uwobject;
             tilemap = _tilemap;

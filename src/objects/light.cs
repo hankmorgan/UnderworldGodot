@@ -58,7 +58,7 @@ namespace Underworld
                 {
                     dlFlag=1;
                 }
-                int tileLightFlag = TileMap.current_tilemap.Tiles[playerdat.tileX,playerdat.tileY].lightFlag;
+                int tileLightFlag = UWTileMap.current_tilemap.Tiles[playerdat.tileX,playerdat.tileY].lightFlag;
                 if ((tileLightFlag ^ dlFlag) == 1)
                 {
                     dungeon_ambientlight = remainder;

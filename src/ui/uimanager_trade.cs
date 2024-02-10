@@ -93,7 +93,7 @@ namespace Underworld
             }
             else
             {
-                var obj = TileMap.current_tilemap.LevelObjects[item_index];
+                var obj = UWTileMap.current_tilemap.LevelObjects[item_index];
                 playerTrade[slotno].Texture = grObjects.LoadImageAt(obj.item_id);
                 playerTrade[slotno].Material = grObjects.GetMaterial(obj.item_id);
             }
@@ -115,7 +115,7 @@ namespace Underworld
             }
             else
             {
-                var obj = TileMap.current_tilemap.LevelObjects[item_index];
+                var obj = UWTileMap.current_tilemap.LevelObjects[item_index];
                 NPCTrade[slotno].Texture = grObjects.LoadImageAt(obj.item_id);
                 NPCTrade[slotno].Material = grObjects.GetMaterial(obj.item_id);
             }

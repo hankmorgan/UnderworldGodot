@@ -119,7 +119,7 @@ namespace Underworld
         {
             var slot = ObjectCreator.PrepareNewObject(itemid);
             //add to critter object list
-            var obj = TileMap.current_tilemap.LevelObjects[slot];
+            var obj = UWTileMap.current_tilemap.LevelObjects[slot];
             //Insert at the head of the critters inventory.
             obj.next = critter.link;
             critter.link = (short)slot;

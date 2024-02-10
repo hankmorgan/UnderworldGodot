@@ -26,7 +26,7 @@ namespace Underworld
                 {
                     break;
                 }
-                var obj = TileMap.current_tilemap.LevelObjects[nextObj];
+                var obj = UWTileMap.current_tilemap.LevelObjects[nextObj];
                 if (!skippedprimaryweapon)
                     {
                         if (obj.OneF0Class==0)

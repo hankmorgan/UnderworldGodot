@@ -29,7 +29,7 @@ namespace Underworld
                 //Set the new height
                 var newHeight = heights[startObject.flags];
                 Debug.Print($"Flags is {startObject.flags} new height is {newHeight}");
-                var t = TileMap.current_tilemap.Tiles[tileX, tileY];
+                var t = UWTileMap.current_tilemap.Tiles[tileX, tileY];
                 t.floorHeight = (short)newHeight;
                 
                 //Render new tile

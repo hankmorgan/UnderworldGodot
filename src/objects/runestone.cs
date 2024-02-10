@@ -12,13 +12,12 @@ namespace Underworld
             var r = new runestone(obj);
             if (obj.isInventory)
             {
-                 ObjectCreator.CreateSprite(grObjects, obj.item_id, parent, name);
+                ObjectCreator.CreateSprite(grObjects, obj.item_id, parent, name);
             }
             else
             {//Use default rune sprite when displayed in world
                 ObjectCreator.CreateSprite(grObjects, 224, parent, name);
             }
-           
             return r;
         }
     }//end class

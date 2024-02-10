@@ -6,6 +6,7 @@ namespace Underworld
 {
 	public partial class ConversationVM : UWClass
 	{
+
 		/// <summary>
 		/// Import the variables from bglobals and the characters.
 		/// </summary>

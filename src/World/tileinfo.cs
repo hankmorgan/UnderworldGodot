@@ -1,3 +1,4 @@
+using Godot;
 namespace Underworld
 {
     public class TileInfo : Loader
@@ -17,7 +18,7 @@ namespace Underworld
         /// <summary>
         /// Reference to the tilemap containing this tile
         /// </summary>
-        public TileMap map;
+        public UWTileMap map;
 
         /// <summary>
         /// What type of tile this is
@@ -195,7 +196,7 @@ namespace Underworld
         {
             get
             {
-                return TileMap.isTerrainWater(terrain);
+                return UWTileMap.isTerrainWater(terrain);
             }
         }
         /// <summary>
@@ -205,7 +206,7 @@ namespace Underworld
         {
             get
             {
-                return TileMap.isTerrainIce(terrain);
+                return UWTileMap.isTerrainIce(terrain);
             }
         }
 
@@ -216,7 +217,7 @@ namespace Underworld
         {
             get
             {
-                return TileMap.isTerrainLava(terrain);
+                return UWTileMap.isTerrainLava(terrain);
             }
         }
         /// <summary>
@@ -344,6 +345,113 @@ namespace Underworld
             }
         }
 
+        public string DescriptionFloor
+        {
+            get
+            {
+                return TextureName(floorTexture, true);
+            }
+        }
+
+        public string DescriptionWall
+        {
+            get
+            {
+                return TextureName(wallTexture, false);
+            }
+        }
+
+        public string DescriptionNorth
+        {
+            get
+            {
+                return TextureName(North, false);
+            }
+        }
+
+        public string DescriptionSouth
+        {
+            get
+            {
+                return TextureName(South, false);
+            }
+        }
+
+        public string DescriptionEast
+        {
+            get
+            {
+                return TextureName(East, false);
+            }
+        }
+
+        public string DescriptionWest
+        {
+            get
+            {
+                return TextureName(West, false);
+            }
+        }
+
+        static string TextureName(int index, bool floor = true)
+        {
+
+            int offset = 0;
+            if ((_RES != GAME_UW2) && (floor)) { offset = 48; }
+            var textureNo = UWTileMap.current_tilemap.texture_map[index + offset];
+            if (_RES == GAME_UW2)
+            {
+                return GameStrings.GetString(10, 510 - textureNo);
+            }
+            else
+            {
+                if (textureNo < 210)
+                {//Return a wall texture.
+                    return GameStrings.GetString(10, textureNo);
+                }
+                else
+                {//return a floor texture in reverse order.
+                    return GameStrings.GetString(10, 510 - textureNo + 210);
+                }
+            }
+        }
+
+        public static string GetTileSurfaceDescription(Vector3 normal, int tileX, int tileY)
+        {
+            var t = UWTileMap.current_tilemap.Tiles[tileX, tileY];
+            if (t == null)
+            {
+                return "";
+            }
+            //look at tile
+            //uimanager.AddToMessageScroll($"{tileX},{tileY}");
+            //parse the normal into a tile surface.
+            if (normal.Y > 0)
+            {
+                //this is a floor
+                return t.DescriptionFloor;
+            }
+            else
+            {
+                if (normal == Vector3.Forward)
+                {
+                    return t.DescriptionSouth;
+                }
+                if (normal == Vector3.Back)
+                {
+                    return t.DescriptionNorth;
+                }
+                if (normal == Vector3.Left)
+                {
+                    return t.DescriptionEast;
+                }
+                if (normal == Vector3.Right)
+                {
+                    return t.DescriptionWest;
+                }
+            }
+            return t.DescriptionWall; //default self wall
+        }
 
         /// <summary>
         /// Initialise a tile with parameters for source data and X,Y offset into data.
@@ -351,7 +459,7 @@ namespace Underworld
         /// <param name="tm"></param>
         /// <param name="X"></param>
         /// <param name="Y"></param>
-        public TileInfo(TileMap tm, short X, short Y)
+        public TileInfo(UWTileMap tm, short X, short Y)
         {
             map = tm;
             tileX = X;

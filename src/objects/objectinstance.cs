@@ -16,5 +16,10 @@ namespace Underworld
         /// </summary>
         public Vector2 FrameSize;
 
+        /// <summary>
+        /// The node used for this object.
+        /// </summary>
+        public Node3D uwnode;
+
     }
 }
