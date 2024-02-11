@@ -109,6 +109,10 @@ namespace Underworld
                     }
                 case 1: //switch to runes
                         //TODO enable rune panel at scale 0,0 to rotate in the oppsite direction.
+                    for (int i = 0; i<24;i++)
+                    {
+                        SetRuneInBag(i, playerdat.GetRune(i));
+                    }
                     PanelMode = 1;
                     RotatingOff = true;
                     RotatingOn = false;

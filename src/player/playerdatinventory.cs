@@ -813,8 +813,58 @@ namespace Underworld
                 }                
                 obj.instance = null;
             }
-
             return newIndex;
+        }
+
+        /// <summary>
+        /// Uses a srcobject from world on a target object in inventory
+        /// </summary>
+        /// <param name="srcObj"></param>
+        /// <param name="targetObj"></param>
+        public static void UseObjectsTogether(int srcObj, int targetObj)
+        {
+            var target = InventoryObjects[targetObj];
+            var source = UWTileMap.current_tilemap.LevelObjects[srcObj];
+
+            if ((target.majorclass==2) && (target.minorclass==0) && (target.classindex!=0xF))
+            {
+                //containers excluding the runebag.
+                //add object to container
+                var Added = AddObjectToPlayerInventory(srcObj,false);
+                var AddedObj = InventoryObjects[Added];
+                AddedObj.next = target.link;
+                target.link = Added;
+                playerdat.ObjectInHand = -1; uimanager.instance.mousecursor.ResetCursor();
+                return;
+            }
+
+            if ((target.majorclass==2) && (target.minorclass==0) && (target.classindex==0xF))
+                {
+                    if(source.majorclass==3)
+                    {
+                        if (
+                            (source.minorclass==2) && (source.classindex>=8)
+                            ||
+                             (source.minorclass==3)
+                        )
+                        {
+                            //the runebag. add to runes if source is a rune.
+                            int runeid = source.item_id-232;
+                            playerdat.SetRune(runeid,true);
+                            playerdat.ObjectInHand = -1; uimanager.instance.mousecursor.ResetCursor();
+                        }
+                    }
+                    return;
+                }
+
+            //try item combinations
+            
+
+            //otherwise swap objects in and out of hand
+            // use.Use(
+            //     index: obj,
+            //     objList: playerdat.InventoryObjects,
+            //     WorldObject: false);
 
         }
     } //end class

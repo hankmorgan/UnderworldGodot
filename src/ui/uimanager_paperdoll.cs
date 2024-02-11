@@ -648,10 +648,11 @@ namespace Underworld
                         if (playerdat.ObjectInHand != -1)
                         {
                             //do a use interaction on the object already there. 
-                            use.Use(
-                                index: obj,
-                                objList: playerdat.InventoryObjects,
-                                WorldObject: false);
+                            playerdat.UseObjectsTogether(playerdat.ObjectInHand, obj);
+                            // use.Use(
+                            //     index: obj,
+                            //     objList: playerdat.InventoryObjects,
+                            //     WorldObject: false);
                         }
                         else
                         {
@@ -660,8 +661,6 @@ namespace Underworld
                             var pickObject = UWTileMap.current_tilemap.LevelObjects[newIndex];
                             playerdat.ObjectInHand = newIndex;
                             uimanager.instance.mousecursor.SetCursorArt(pickObject.item_id);
-
-
                         }
 
                     }
