@@ -543,6 +543,11 @@ namespace Underworld
            
             // //Find the object chain the object is in           
             var LinkOffset = GetItemLinkOffset(index);
+            if (LinkOffset<InventoryPtr)
+            {
+                //offset is directly on paper doll. it should have no next. rare issue in Uw1 where a paperdoll object still has a next.
+                next= 0;
+            }
 
             //This clears either the next or link to the object and replaces it with the objects next value
             var data = (int)getAt(pdat, (LinkOffset), 16);
@@ -858,7 +863,42 @@ namespace Underworld
                 }
 
             //try item combinations
-            
+            var combo = objectCombination.GetCombination(source.item_id,target.item_id);
+            if (combo!=null)
+            {
+                //uimanager.AddToMessageScroll($"combo found: {source.item_id} + {target.item_id} = {combo.Obj_Out}");
+                if(combo.DestroyA) 
+                {
+                    if (target.item_id == combo.Obj_A)
+                    {
+                        //target changes
+                        target.item_id = combo.Obj_Out;
+                        uimanager.UpdateInventoryDisplay();
+                    }
+                    if(source.item_id == combo.Obj_A)
+                    {
+                        //object in hand changes
+                        source.item_id = combo.Obj_Out;
+                        uimanager.instance.mousecursor.SetCursorArt(source.item_id);
+                    }
+                }    
+
+                if(combo.DestroyB) 
+                {
+                    if (target.item_id == combo.Obj_B)
+                    {
+                        //target changes
+                        target.item_id = combo.Obj_Out;
+                        uimanager.UpdateInventoryDisplay();
+                    }
+                    if(source.item_id == combo.Obj_B)
+                    {
+                        //object in hand changes
+                        source.item_id = combo.Obj_Out;
+                        uimanager.instance.mousecursor.SetCursorArt(source.item_id);
+                    }
+                }             
+            }
 
             //otherwise swap objects in and out of hand
             // use.Use(
