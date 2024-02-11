@@ -56,7 +56,7 @@ namespace Underworld
             var ListHeadObject = objList[ListHead];
             if (ListHeadObject != null)
             {
-                if (ListHeadObject.link !=0)
+                if ((ListHeadObject.link !=0) && (ListHeadObject.is_quant==0))
                 { //List has objects
                     if (ListHeadObject.link == ToFind)
                     { //The first object is the one we want to find.

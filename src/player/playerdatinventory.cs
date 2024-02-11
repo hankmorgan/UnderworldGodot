@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 
 namespace Underworld
 {
@@ -23,7 +24,25 @@ namespace Underworld
         /// <summary>
         /// The last item in the inventory
         /// </summary>
-        public static int LastItemIndex;
+        //public static int LastItemIndex;
+
+        /// <summary>
+        /// Gets the next memory slot in the inventory that does not have an object.
+        /// </summary>
+        public static int NextFreeInventorySlot
+        {
+            get
+                {
+                    for (int i=1;i<=InventoryObjects.GetUpperBound(0);i++)
+                    {//start at 1 since there is no object 0
+                        if (InventoryObjects[i]==null)
+                        {
+                            return i;
+                        }
+                    }
+                    return -1; //no free slot
+                }
+        }
 
 
         /// <summary>
@@ -521,69 +540,16 @@ namespace Underworld
         {
             var obj = InventoryObjects[index];
             var next = obj.next;
-            //Find the object chain the object is in
-            var LastObj = InventoryObjects[LastItemIndex];
+           
+            // //Find the object chain the object is in           
             var LinkOffset = GetItemLinkOffset(index);
 
-            if (LastItemIndex != next)
-            {
-                //This clears either the next or link to the object and replaces it with the objects next value
-                var data = (int)getAt(pdat, (LinkOffset), 16);
-                data &= 0x3f; //Clear link/next
-                data |= (next << 6); //Or in the obj.next for the object.
-                setAt(pdat, LinkOffset, 16, data);
-            }
-            else
-            { //The next object is to be slided down in place of index. In this case link does not change.
-
-            }
-            //Slide down the last object.
-            if (LastItemIndex == index)
-            {//same objects. just wipe the data.
-                for (int i = 0; i < 8; i++)
-                {
-                    pdat[obj.PTR + i] = 0;
-                }
-                InventoryObjects[index] = null;
-                FindAndChangeBackpackIndex(index, -1);
-                LastItemIndex--;
-            }
-            else
-            {
-                if (LastItemIndex <= 1)
-                {
-                    //Object is the last item. just clear data.
-                    for (int i = 0; i < 8; i++)
-                    {
-                        pdat[obj.PTR + i] = 0;
-                    }
-                    InventoryObjects[index] = null;
-                    FindAndChangeBackpackIndex(index, -1);
-                    LastItemIndex--;
-                }
-                else
-                {
-                    //Object is to be replaced with last item. Last item needs to be relinked to the new slot as well as moved
-                    var LastObjectLinkOffset = GetItemLinkOffset(LastItemIndex);
-                    if (LastObjectLinkOffset != -1)
-                    {
-                        var data = (int)getAt(pdat, (LastObjectLinkOffset), 16);
-                        data &= 0x3f; //Clear link/next
-                        data |= (index << 6); //Or in the object next for the object.
-                        setAt(pdat, LastObjectLinkOffset, 16, data);
-                    }
-                    //now move data
-                    for (int i = 0; i < 8; i++)
-                    {
-                        pdat[obj.PTR + i] = pdat[LastObj.PTR + i];
-                        pdat[LastObj.PTR + i] = 0;
-                    }
-                    InventoryObjects[LastItemIndex] = null;
-                    FindAndChangeBackpackIndex(LastItemIndex, index);
-                    LastItemIndex--;
-
-                }
-            }
+            //This clears either the next or link to the object and replaces it with the objects next value
+            var data = (int)getAt(pdat, (LinkOffset), 16);
+            data &= 0x3f; //Clear link/next
+            data |= (next << 6); //Or in the obj.next for the object.
+            setAt(pdat, LinkOffset, 16, data);
+            InventoryObjects[index] = null;
             if (updateUI)
             {
                 if (uimanager.CurrentSlot >= 11)
@@ -592,6 +558,82 @@ namespace Underworld
                 }
                 uimanager.UpdateInventoryDisplay();
             }
+
+
+            // var obj = InventoryObjects[index];
+            // var next = obj.next;
+            // //Find the object chain the object is in
+            // var LastObj = InventoryObjects[LastItemIndex];
+            // var LinkOffset = GetItemLinkOffset(index);
+
+            // if (LastItemIndex != next)
+            // {
+            //     //This clears either the next or link to the object and replaces it with the objects next value
+            //     var data = (int)getAt(pdat, (LinkOffset), 16);
+            //     data &= 0x3f; //Clear link/next
+            //     data |= (next << 6); //Or in the obj.next for the object.
+            //     setAt(pdat, LinkOffset, 16, data);
+            // }
+            // else
+            // { //The next object is to be slided down in place of index. In this case link does not change.
+
+            // }
+            // //Slide down the last object.
+            // if (LastItemIndex == index)
+            // {//same objects. just wipe the data.
+            //     for (int i = 0; i < 8; i++)
+            //     {
+            //         pdat[obj.PTR + i] = 0;
+            //     }
+            //     InventoryObjects[index] = null;
+            //     FindAndChangeBackpackIndex(index, -1);
+            //     LastItemIndex--;
+            // }
+            // else
+            // {
+            //     if (LastItemIndex <= 1)
+            //     {
+            //         //Object is the last item. just clear data.
+            //         for (int i = 0; i < 8; i++)
+            //         {
+            //             pdat[obj.PTR + i] = 0;
+            //         }
+            //         InventoryObjects[index] = null;
+            //         FindAndChangeBackpackIndex(index, -1);
+            //         LastItemIndex--;
+            //     }
+            //     else
+            //     {
+            //         //Object is to be replaced with last item. Last item needs to be relinked to the new slot as well as moved
+            //         var LastObjectLinkOffset = GetItemLinkOffset(LastItemIndex);
+            //         if (LastObjectLinkOffset != -1)
+            //         {
+            //             var data = (int)getAt(pdat, (LastObjectLinkOffset), 16);
+            //             data &= 0x3f; //Clear link/next
+            //             data |= (index << 6); //Or in the object next for the object.
+            //             setAt(pdat, LastObjectLinkOffset, 16, data);
+            //         }
+            //         //now move data
+            //         for (int i = 0; i < 8; i++)
+            //         {
+            //             pdat[obj.PTR + i] = pdat[LastObj.PTR + i];
+            //             pdat[LastObj.PTR + i] = 0;
+            //         }
+            //         InventoryObjects[LastItemIndex] = null;
+            //         FindAndChangeBackpackIndex(LastItemIndex, index);
+            //         LastItemIndex--;
+
+            //     }
+            // }
+
+            // if (updateUI)
+            // {
+            //     if (uimanager.CurrentSlot >= 11)
+            //     {
+            //         BackPackIndices[uimanager.CurrentSlot - 11] = -1;
+            //     }
+            //     uimanager.UpdateInventoryDisplay();
+            // }
 
         }
 
@@ -669,6 +711,36 @@ namespace Underworld
         }
 
 
+        public static short AddInventoryObjectToWorld(int objIndex, bool updateUI, bool RemoveNext)
+        {
+            var oldObj = InventoryObjects[objIndex];      
+           
+            // recursively add linked/next objects to the world first. Updating oldobj so that its link/next is pointing to the world
+            if (oldObj.link != 0 && oldObj.is_quant == 0)
+            {
+                oldObj.link = (short)AddInventoryObjectToWorld(oldObj.link,false,true);
+            }
+            if (oldObj.next!=0 && RemoveNext)
+            {
+                oldObj.next = (short)AddInventoryObjectToWorld(oldObj.next,false,true);
+            }
+
+            //Now get the index to store at
+            UWTileMap.current_tilemap.StaticFreeListPtr--;
+            var newIndex = (short)UWTileMap.current_tilemap.StaticFreeListObject;
+            var NewObj = UWTileMap.current_tilemap.LevelObjects[newIndex];
+            //copy data to that index.
+            for (int i = 0; i < 8; i++)
+                {
+                    NewObj.DataBuffer[NewObj.PTR + i] = oldObj.DataBuffer[oldObj.PTR+i]; 
+                }
+
+            //remove inventory obj
+            RemoveFromInventory(objIndex, updateUI);
+            return newIndex;
+        }
+
+
 
         /// <summary>
         /// Recursively adds object data to player inventory and returns the index it is at.
@@ -676,27 +748,31 @@ namespace Underworld
         /// <param name="objIndex"></param>
         /// <param name="ObjectToAddTo"></param>
         /// <returns></returns>
-        public static short AddObjectToPlayerInventory(int objIndex)
+        public static short AddObjectToPlayerInventory(int objIndex, bool IncludeNext)
         {
-            var newIndex = MoveObjectToInventoryData(objIndex);
-            var newobj = InventoryObjects[newIndex];
+            var oldObj = UWTileMap.current_tilemap.LevelObjects[objIndex];
+            
             // recursively add linked/next objects
-            if (newobj.link != 0 && newobj.is_quant == 0)
+            if (oldObj.link != 0 && oldObj.is_quant == 0)
             {
-                newobj.link = AddObjectToPlayerInventory(newobj.link);
+                oldObj.link = AddObjectToPlayerInventory(oldObj.link,true);
             }
-            if (newobj.next != 0)
+            if (oldObj.next != 0 && IncludeNext)
             {
-                newobj.next = AddObjectToPlayerInventory(newobj.next);
+                oldObj.next = AddObjectToPlayerInventory(oldObj.next,true);
             }
-
-
+            
+            var newIndex = MoveObjectToInventoryData(objIndex);
             return (short)newIndex;
         }
 
+        /// <summary>
+        /// Justs adds object at objIndex in the gameworld to the inventory data at the next free slot.
+        /// </summary>
+        /// <param name="objIndex"></param>
+        /// <returns></returns>
         private static int MoveObjectToInventoryData(int objIndex)
         {
-
             var obj = UWTileMap.current_tilemap.LevelObjects[objIndex];
             if (objIndex >= 256)
             {
@@ -710,7 +786,7 @@ namespace Underworld
                 // UWTileMap.current_tilemap.MobileFreeListPtr++;
                 // UWTileMap.current_tilemap.MobileFreeListObject = objIndex;
             }
-            var newIndex = ++LastItemIndex;
+            var newIndex =  NextFreeInventorySlot; //++LastItemIndex;
 
             InventoryObjects[newIndex] = new uwObject
             {
@@ -728,9 +804,16 @@ namespace Underworld
                 InventoryObjects[newIndex].DataBuffer[NewObj.PTR+i] = obj.DataBuffer[obj.PTR + i];
                 obj.DataBuffer[obj.PTR + i] = 0;
             }
-            //Destroy the world object.
-            obj.instance.uwnode.QueueFree();
-            obj.instance = null;
+            //Destroy the world object instance (but never the underlying uwObject)
+            if (obj.instance!=null)
+            {
+                if (obj.instance.uwnode!=null)
+                {
+                    obj.instance.uwnode.QueueFree();
+                }                
+                obj.instance = null;
+            }
+
             return newIndex;
 
         }

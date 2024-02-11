@@ -78,7 +78,7 @@ namespace Underworld
                 Array.Resize(ref pdat, InventoryPtr + 512 * 8);
                 int oIndex = 1; //starts at one since there is no object zero
                 //InventoryBuffer = new byte[512*8];
-                LastItemIndex=0;
+                //LastItemIndex=0;
 
                 while (CurrentInventoryPtr < origUbound)
                 {
@@ -95,11 +95,11 @@ namespace Underworld
                         PTR = CurrentInventoryPtr,
                         DataBuffer = pdat
                     };
-                    Debug.Print($"{GameStrings.GetObjectNounUW(uwobj.item_id)}");
+                    //Debug.Print($"{GameStrings.GetObjectNounUW(uwobj.item_id)}");
                     InventoryObjects[oIndex] = uwobj;
                     oIndex++;
                     CurrentInventoryPtr += 8;
-                    LastItemIndex++;                    
+                    //LastItemIndex++;                    
                 }
             }
         }   //end load
