@@ -77,5 +77,52 @@ namespace Underworld
             return null; // no combination found.
         }
 
+        /// <summary>
+        /// Performs an object combination
+        /// </summary>
+        /// <param name="target">object in inventory</param>
+        /// <param name="source">object in hand</param>
+        public static bool TryObjectCombination(uwObject target, uwObject source)
+        {
+            var combo = GetCombination(source.item_id, target.item_id);
+            if (combo != null)
+            {
+                //uimanager.AddToMessageScroll($"combo found: {source.item_id} + {target.item_id} = {combo.Obj_Out}");
+                if (combo.DestroyA)
+                {
+                    if (target.item_id == combo.Obj_A)
+                    {
+                        //target changes
+                        target.item_id = combo.Obj_Out;
+                        uimanager.UpdateInventoryDisplay();
+                    }
+                    if (source.item_id == combo.Obj_A)
+                    {
+                        //object in hand changes
+                        source.item_id = combo.Obj_Out;
+                        uimanager.instance.mousecursor.SetCursorArt(source.item_id);
+                    }
+                }
+
+                if (combo.DestroyB)
+                {
+                    if (target.item_id == combo.Obj_B)
+                    {
+                        //target changes
+                        target.item_id = combo.Obj_Out;
+                        uimanager.UpdateInventoryDisplay();
+                    }
+                    if (source.item_id == combo.Obj_B)
+                    {
+                        //object in hand changes
+                        source.item_id = combo.Obj_Out;
+                        uimanager.instance.mousecursor.SetCursorArt(source.item_id);
+                    }
+                }
+                return true;//combo has worked
+            }
+            return false;
+        }
+
     }//end class
 }//end namespace

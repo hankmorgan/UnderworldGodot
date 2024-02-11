@@ -79,7 +79,8 @@ public partial class main : Node3D
 		}
 		cam.Rotate(Vector3.Up, (float)Math.PI);
 
-		GRLoader gr = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
+		ObjectCreator.grObjects = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
+		ObjectCreator.grObjects.UseRedChannel = true;
 		uwUI.InitUI();
 		uimanager.AddToMessageScroll(GameStrings.GetString(1, 13));
 
@@ -100,7 +101,7 @@ public partial class main : Node3D
 				playerdat.SetBackPackIndex(i, playerdat.BackPackObject(i));
 			}
 			RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.GetViewingDistance(uwsettings.instance.lightlevel));
-			DrawPlayerPositionSprite(gr);
+			DrawPlayerPositionSprite(ObjectCreator.grObjects);
 		}
 		else
 		{
@@ -133,7 +134,7 @@ public partial class main : Node3D
 
 		//Common launch actions
 		_ = Coroutine.Run(
-		LoadTileMap(playerdat.dungeon_level - 1, gr), main.instance);
+		LoadTileMap(playerdat.dungeon_level - 1), main.instance);
 
 
 		//Load bablglobals
@@ -179,20 +180,21 @@ public partial class main : Node3D
 	}
 
 
-	public static IEnumerator LoadTileMap(int newLevelNo, GRLoader grObjects)
+	public static IEnumerator LoadTileMap(int newLevelNo)
 	{
-		grObjects.UseRedChannel = true;
+		
+		//grObjects.UseRedChannel = true;
 
-		Node3D worldobjects = instance.GetNode<Node3D>("/root/Underworld/worldobjects");
+		ObjectCreator.worldobjects = instance.GetNode<Node3D>("/root/Underworld/worldobjects");
 		Node3D the_tiles = instance.GetNode<Node3D>("/root/Underworld/tilemap");
 
 		LevArkLoader.LoadLevArkFileData(folder: uwsettings.instance.levarkfolder);
 		Underworld.UWTileMap.current_tilemap = new(newLevelNo);
 
 		Underworld.UWTileMap.current_tilemap.BuildTileMapUW(newLevelNo, Underworld.UWTileMap.current_tilemap.lev_ark_block, Underworld.UWTileMap.current_tilemap.tex_ark_block, Underworld.UWTileMap.current_tilemap.ovl_ark_block);
-		ObjectCreator.GenerateObjects(worldobjects, Underworld.UWTileMap.current_tilemap.LevelObjects, grObjects, Underworld.UWTileMap.current_tilemap);
+		ObjectCreator.GenerateObjects(Underworld.UWTileMap.current_tilemap.LevelObjects, Underworld.UWTileMap.current_tilemap);
 		the_tiles.Position = new Vector3(0f, 0f, 0f);
-		tileMapRender.GenerateLevelFromTileMap(the_tiles, worldobjects, UWClass._RES, Underworld.UWTileMap.current_tilemap, Underworld.UWTileMap.current_tilemap.LevelObjects, false);
+		tileMapRender.GenerateLevelFromTileMap(the_tiles, ObjectCreator.worldobjects, UWClass._RES, Underworld.UWTileMap.current_tilemap, Underworld.UWTileMap.current_tilemap.LevelObjects, false);
 
 		switch (UWClass._RES)
 		{

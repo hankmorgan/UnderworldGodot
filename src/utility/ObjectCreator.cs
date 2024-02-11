@@ -13,6 +13,16 @@ namespace Underworld
         public static List<npc> npcs;
         public static bool printlabels = true;
 
+        /// <summary>
+        /// object art
+        /// </summary>
+        public static GRLoader grObjects;
+
+        /// <summary>
+        /// The node objects will be attached to
+        /// </summary>
+        public static Node3D worldobjects;
+
         public enum ObjectListType
         {
             StaticList=0,
@@ -92,14 +102,14 @@ namespace Underworld
         /// <param name="objects"></param>
         /// <param name="grObjects"></param>
         /// <param name="a_tilemap"></param>
-        public static void GenerateObjects(Node3D worldparent, uwObject[] objects, GRLoader grObjects, UWTileMap a_tilemap)
+        public static void GenerateObjects(uwObject[] objects, UWTileMap a_tilemap)
         {
             npcs = new();
             foreach (var obj in objects)
             {
                 if (obj.item_id <= 463)
                 {
-                    RenderObject(worldparent, grObjects, obj, a_tilemap);
+                    RenderObject(obj, a_tilemap);
                 }
             }
         }
@@ -112,14 +122,14 @@ namespace Underworld
         /// <param name="grObjects"></param>
         /// <param name="obj"></param>
         /// <param name="a_tilemap"></param>
-        public static void RenderObject(Node3D worldparent, GRLoader grObjects, uwObject obj, UWTileMap a_tilemap)
+        public static void RenderObject(uwObject obj, UWTileMap a_tilemap)
         {
             bool unimplemented = true;
             var name = $"{obj.index}_{GameStrings.GetObjectNounUW(obj.item_id)}";
             var newNode = new Node3D();
             newNode.Name = name;
             newNode.Position = obj.GetCoordinate(obj.tileX, obj.tileY);
-            worldparent.AddChild(newNode);
+            worldobjects.AddChild(newNode);
             
             switch (obj.majorclass)
             {

@@ -45,8 +45,6 @@ namespace Underworld
         const int fSOUTH = 16;
         const int fEAST = 8;
         const int fWEST = 4;
-        const int fTOP = 2;
-        const int fBOTTOM = 1;
 
         //Door headings
         public const int heading4 = 180;
@@ -54,7 +52,7 @@ namespace Underworld
         public const int Heading6 = 270;
         public const int heading2 = 90;
 
-        public static bool EnableCollision = false;
+        public static bool EnableCollision = true;
 
         //static int UW_CEILING_HEIGHT;
         static int CEILING_HEIGHT;

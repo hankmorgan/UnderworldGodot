@@ -537,7 +537,7 @@ namespace Underworld
                             instance.mousecursor.ResetCursor();
                             break;
                         }
-                    case > 10 and <= 18:
+                    case >= 11 and <= 18:
                         //backpack
                         if (playerdat.OpenedContainer < 0)
                         {//backpackslot

@@ -798,7 +798,7 @@ namespace Underworld
                 isInventory = true,
                 IsStatic = true,
                 index = (short)(newIndex),
-                PTR = InventoryPtr + newIndex * 8,
+                PTR = InventoryPtr + (newIndex-1) * 8,
                 DataBuffer = pdat
             };
             var NewObj = InventoryObjects[newIndex];
@@ -831,73 +831,41 @@ namespace Underworld
             var target = InventoryObjects[targetObj];
             var source = UWTileMap.current_tilemap.LevelObjects[srcObj];
 
-            if ((target.majorclass==2) && (target.minorclass==0) && (target.classindex!=0xF))
+            if ((target.majorclass == 2) && (target.minorclass == 0) && (target.classindex != 0xF))
             {
                 //containers excluding the runebag.
                 //add object to container
-                var Added = AddObjectToPlayerInventory(srcObj,false);
+                var Added = AddObjectToPlayerInventory(srcObj, false);
                 var AddedObj = InventoryObjects[Added];
                 AddedObj.next = target.link;
                 target.link = Added;
-                playerdat.ObjectInHand = -1; uimanager.instance.mousecursor.ResetCursor();
+                ObjectInHand = -1; uimanager.instance.mousecursor.ResetCursor();
                 return;
             }
 
-            if ((target.majorclass==2) && (target.minorclass==0) && (target.classindex==0xF))
+            if ((target.majorclass == 2) && (target.minorclass == 0) && (target.classindex == 0xF))
+            {
+                if (source.majorclass == 3)
                 {
-                    if(source.majorclass==3)
+                    if (
+                        (source.minorclass == 2) && (source.classindex >= 8)
+                        ||
+                         (source.minorclass == 3)
+                    )
                     {
-                        if (
-                            (source.minorclass==2) && (source.classindex>=8)
-                            ||
-                             (source.minorclass==3)
-                        )
-                        {
-                            //the runebag. add to runes if source is a rune.
-                            int runeid = source.item_id-232;
-                            playerdat.SetRune(runeid,true);
-                            playerdat.ObjectInHand = -1; uimanager.instance.mousecursor.ResetCursor();
-                        }
+                        //the runebag. add to runes if source is a rune.
+                        int runeid = source.item_id - 232;
+                        SetRune(runeid, true);
+                        ObjectInHand = -1; uimanager.instance.mousecursor.ResetCursor();
                     }
-                    return;
                 }
+                return;
+            }
 
             //try item combinations
-            var combo = objectCombination.GetCombination(source.item_id,target.item_id);
-            if (combo!=null)
+            if (objectCombination.TryObjectCombination(target, source))
             {
-                //uimanager.AddToMessageScroll($"combo found: {source.item_id} + {target.item_id} = {combo.Obj_Out}");
-                if(combo.DestroyA) 
-                {
-                    if (target.item_id == combo.Obj_A)
-                    {
-                        //target changes
-                        target.item_id = combo.Obj_Out;
-                        uimanager.UpdateInventoryDisplay();
-                    }
-                    if(source.item_id == combo.Obj_A)
-                    {
-                        //object in hand changes
-                        source.item_id = combo.Obj_Out;
-                        uimanager.instance.mousecursor.SetCursorArt(source.item_id);
-                    }
-                }    
-
-                if(combo.DestroyB) 
-                {
-                    if (target.item_id == combo.Obj_B)
-                    {
-                        //target changes
-                        target.item_id = combo.Obj_Out;
-                        uimanager.UpdateInventoryDisplay();
-                    }
-                    if(source.item_id == combo.Obj_B)
-                    {
-                        //object in hand changes
-                        source.item_id = combo.Obj_Out;
-                        uimanager.instance.mousecursor.SetCursorArt(source.item_id);
-                    }
-                }             
+                return;
             }
 
             //otherwise swap objects in and out of hand
@@ -906,6 +874,7 @@ namespace Underworld
             //     objList: playerdat.InventoryObjects,
             //     WorldObject: false);
 
-        }
+        }       
+
     } //end class
 } //end namespace

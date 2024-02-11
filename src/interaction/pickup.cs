@@ -28,8 +28,14 @@ namespace Underworld
                 t.indexObjectList = (short)index;
                 if (obj.instance!=null)
                 {
-                    obj.instance.uwnode.Position = obj.GetCoordinate(tileX,tileY);
+                    //obj.instance.uwnode.Position = obj.GetCoordinate(tileX,tileY);
+                    if (obj.instance.uwnode!=null)
+                    {
+                        obj.instance.uwnode.QueueFree();
+                    }
+                    obj.instance=null;
                 }
+                ObjectCreator.RenderObject(obj,UWTileMap.current_tilemap);
                 playerdat.ObjectInHand=-1;
                 uimanager.instance.mousecursor.ResetCursor();
                 return true;
