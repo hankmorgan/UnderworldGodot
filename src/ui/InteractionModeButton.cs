@@ -12,9 +12,11 @@ namespace Underworld
         static int eventcount=0;
         public override void _Toggled(bool buttonPressed)
         {
-
-            Debug.Print($"Press event {eventcount++} ");
-            uimanager.instance.InteractionModeToggle(index);
+            if (!ConversationVM.InConversation)
+            {
+                Debug.Print($"Press event {eventcount++} ");
+                uimanager.instance.InteractionModeToggle(index);
+            }
         }
     }
 }//end namespace

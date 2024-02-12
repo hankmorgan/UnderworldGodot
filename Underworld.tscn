@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://xjvqmrbs28xs"]
+[gd_scene load_steps=33 format=3 uid="uid://xjvqmrbs28xs"]
 
 [ext_resource type="Script" path="res://src/ui/uimanager.cs" id="1_lw0yg"]
 [ext_resource type="FontFile" uid="uid://pdy3t627nfxw" path="res://resources/fonts/FONT5X6I.ttf" id="3_safdl"]
@@ -10,7 +10,7 @@
 [ext_resource type="Script" path="res://main.cs" id="6_3y8oy"]
 [ext_resource type="Texture2D" uid="uid://cpop1i8thi2t6" path="res://resources/placeholder_art/uw1lfti/0.png" id="6_qaf50"]
 [ext_resource type="Shader" path="res://node_3d.gdshader" id="6_x6exc"]
-[ext_resource type="Texture2D" uid="uid://cf536ckyprfbf" path="res://resources/placeholder_art/uw1placeholdermain.png" id="7_ihdac"]
+[ext_resource type="Texture2D" uid="uid://2hduh6i2rlhp" path="res://resources/placeholder_art/converseuw1.png" id="7_mq4ti"]
 [ext_resource type="Texture2D" uid="uid://plikcry1ow6q" path="res://resources/placeholder_art/textbox_fill.jpg" id="7_qiq8a"]
 [ext_resource type="Script" path="res://src/ui/InteractionModeButton.cs" id="8_0sew3"]
 [ext_resource type="Texture2D" uid="uid://ug231pvqaq1v" path="res://resources/placeholder_art/panels/panelsBlack.png" id="8_mis7n"]
@@ -21,9 +21,10 @@
 [ext_resource type="Texture2D" uid="uid://2fndhxavasa7" path="res://resources/placeholder_art/uw2optbtn/optbtn.png" id="14_skaqq"]
 [ext_resource type="Texture2D" uid="uid://b1lj1mh50p8a1" path="res://resources/placeholder_art/uw2optbtn/uw2attackbutton.png" id="15_f0cyy"]
 [ext_resource type="Texture2D" uid="uid://2qekjomlpnxd" path="res://resources/placeholder_art/uw1lfti/10.png" id="16_kxj2a"]
-[ext_resource type="Texture2D" uid="uid://b5mwiifn8jtb6" path="res://resources/placeholder_art/uw2placeholdermain.png" id="18_bbcxb"]
+[ext_resource type="Texture2D" uid="uid://b1y5rs02fgv6d" path="res://resources/cross.png" id="18_tfr7p"]
 [ext_resource type="Texture2D" uid="uid://dqcrcis2dop6k" path="res://resources/placeholder_art/paperdolluw1/body_f.png" id="19_0yobb"]
 [ext_resource type="Texture2D" uid="uid://du878dn3osxn1" path="res://resources/placeholder_art/blankmap.png" id="20_o03w0"]
+[ext_resource type="Texture2D" uid="uid://dx526kvjk8jmj" path="res://resources/cross2.png" id="21_5p8p7"]
 [ext_resource type="Texture2D" uid="uid://cvik4hdmkwuwk" path="res://resources/placeholder_art/paperdolluw1/up button 027.png" id="22_vc6ux"]
 [ext_resource type="Texture2D" uid="uid://01h0bdambuq4" path="res://resources/placeholder_art/paperdolluw1/down button 028.png" id="23_e17mk"]
 [ext_resource type="Texture2D" uid="uid://di1twv4v85gbi" path="res://resources/placeholder_art/rune.png" id="23_ry168"]
@@ -56,7 +57,7 @@ script = ExtResource("5_2to2n")
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLableFrameUW1", "NPCNameLableFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "InteractionButtonsUW1", "InteractionButtonsUW2", "AutomapPanel", "AutomapImage", "messageScrollUW1", "messageScrollUW2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Runes", "SelectedRunes", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "placeholderuw1", "placeholderuw2")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLableFrameUW1", "NPCNameLableFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "InteractionButtonsUW1", "InteractionButtonsUW2", "AutomapPanel", "AutomapImage", "messageScrollUW1", "messageScrollUW2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Runes", "SelectedRunes", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSelectedUW1", "NPCTradeSelectedUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "PlayerTradeSelectedUW2", "NPCTradeSelectedUW2", "cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "placeholderuw1", "placeholderuw2")]
 script = ExtResource("1_lw0yg")
 ConversationPanelUW1 = NodePath("../UW1/ConversationUW1")
 PlayerPortraitUW1 = NodePath("../UW1/ConversationUW1/PlayerPortraitUW1")
@@ -140,10 +141,16 @@ MANA = NodePath("../Common/StatsDisplay/MANA")
 EXP = NodePath("../Common/StatsDisplay/EXP")
 StatsName = NodePath("../Common/StatsDisplay/StatNames")
 StatsValue = NodePath("../Common/StatsDisplay/StatValues")
+cross = ExtResource("18_tfr7p")
+cross2 = ExtResource("21_5p8p7")
 PlayerTradeSlotUW1 = [NodePath("../UW1/ConversationUW1/PlayerTradeUW1_0"), NodePath("../UW1/ConversationUW1/PlayerTradeUW1_1"), NodePath("../UW1/ConversationUW1/PlayerTradeUW1_2"), NodePath("../UW1/ConversationUW1/PlayerTradeUW1_3")]
 NPCTradeSlotUW1 = [NodePath("../UW1/ConversationUW1/NPCTradeUW1_0"), NodePath("../UW1/ConversationUW1/NPCTradeUW1_1"), NodePath("../UW1/ConversationUW1/NPCTradeUW1_2"), NodePath("../UW1/ConversationUW1/NPCTradeUW1_3")]
+PlayerTradeSelectedUW1 = [NodePath("../UW1/ConversationUW1/PlayerTradeSelectedUW1_0"), NodePath("../UW1/ConversationUW1/PlayerTradeSelectedUW1_1"), NodePath("../UW1/ConversationUW1/PlayerTradeSelectedUW1_2"), NodePath("../UW1/ConversationUW1/PlayerTradeSelectedUW1_3")]
+NPCTradeSelectedUW1 = [NodePath("../UW1/ConversationUW1/NPCTradeSelectedUW1_0"), NodePath("../UW1/ConversationUW1/NPCTradeSelectedUW1_1"), NodePath("../UW1/ConversationUW1/NPCTradeSelectedUW1_2"), NodePath("../UW1/ConversationUW1/NPCTradeSelectedUW1_3")]
 PlayerTradeSlotUW2 = [NodePath("../UW2/ConversationUW2/PlayerTradeUW2_0"), NodePath("../UW2/ConversationUW2/PlayerTradeUW2_1"), NodePath("../UW2/ConversationUW2/PlayerTradeUW2_2"), NodePath("../UW2/ConversationUW2/PlayerTradeUW2_3"), NodePath("../UW2/ConversationUW2/PlayerTradeUW2_4"), NodePath("../UW2/ConversationUW2/PlayerTradeUW2_5")]
 NPCTradeSlotUW2 = [NodePath("../UW2/ConversationUW2/NPCTradeUW2_0"), NodePath("../UW2/ConversationUW2/NPCTradeUW2_1"), NodePath("../UW2/ConversationUW2/NPCTradeUW2_2"), NodePath("../UW2/ConversationUW2/NPCTradeUW2_3"), NodePath("../UW2/ConversationUW2/NPCTradeUW2_4"), NodePath("../UW2/ConversationUW2/NPCTradeUW2_5")]
+PlayerTradeSelectedUW2 = [NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_0"), NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_1"), NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_2"), NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_3"), NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_4"), NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_5")]
+NPCTradeSelectedUW2 = [NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_0"), NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_1"), NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_2"), NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_3"), NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_4"), NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_5")]
 cam = NodePath("../../WorldViewContainer/SubViewport/Camera3D")
 uwviewport = NodePath("../../WorldViewContainer")
 uwsubviewport = NodePath("../../WorldViewContainer/SubViewport")
@@ -159,13 +166,12 @@ placeholderuw2 = NodePath("../UW2/placeholdermainuw2")
 stream = SubResource("AudioStreamWAV_tkk82")
 
 [node name="UW1" type="CanvasLayer" parent="UI"]
-visible = false
 
 [node name="placeholdermainuw1" type="TextureRect" parent="UI/UW1"]
 offset_right = 1280.0
 offset_bottom = 800.0
 mouse_filter = 2
-texture = ExtResource("7_ihdac")
+texture = ExtResource("7_mq4ti")
 
 [node name="3DWinUW1" type="TextureRect" parent="UI/UW1"]
 texture_filter = 1
@@ -291,7 +297,6 @@ offset_right = 575.0
 offset_bottom = 592.0
 
 [node name="ConversationUW1" type="Panel" parent="UI/UW1"]
-visible = false
 offset_right = 40.0
 offset_bottom = 40.0
 
@@ -422,6 +427,34 @@ Hail, stranger!  What be thy
 scroll_active = false
 autowrap_mode = 0
 
+[node name="PlayerTradeSelectedUW1_0" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 572.0
+offset_top = 64.0
+offset_right = 592.0
+offset_bottom = 84.0
+
+[node name="PlayerTradeSelectedUW1_1" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 740.0
+offset_top = 64.0
+offset_right = 760.0
+offset_bottom = 84.0
+
+[node name="PlayerTradeSelectedUW1_2" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 572.0
+offset_top = 136.0
+offset_right = 592.0
+offset_bottom = 156.0
+
+[node name="PlayerTradeSelectedUW1_3" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 740.0
+offset_top = 136.0
+offset_right = 760.0
+offset_bottom = 156.0
+
 [node name="PlayerTradeUW1_0" type="TextureRect" parent="UI/UW1/ConversationUW1"]
 layout_mode = 0
 offset_left = 591.0
@@ -478,6 +511,34 @@ offset_top = 114.0
 offset_right = 512.0
 offset_bottom = 178.0
 
+[node name="NPCTradeSelectedUW1_0" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 344.0
+offset_top = 64.0
+offset_right = 364.0
+offset_bottom = 84.0
+
+[node name="NPCTradeSelectedUW1_1" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 512.0
+offset_top = 64.0
+offset_right = 532.0
+offset_bottom = 84.0
+
+[node name="NPCTradeSelectedUW1_2" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 344.0
+offset_top = 136.0
+offset_right = 364.0
+offset_bottom = 156.0
+
+[node name="NPCTradeSelectedUW1_3" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 512.0
+offset_top = 136.0
+offset_right = 532.0
+offset_bottom = 156.0
+
 [node name="UW2" type="CanvasLayer" parent="UI"]
 visible = false
 
@@ -485,7 +546,6 @@ visible = false
 offset_right = 1280.0
 offset_bottom = 800.0
 mouse_filter = 2
-texture = ExtResource("18_bbcxb")
 
 [node name="3DWinUW2" type="TextureRect" parent="UI/UW2"]
 texture_filter = 1
@@ -605,6 +665,7 @@ script = ExtResource("8_0sew3")
 index = 5
 
 [node name="ConversationUW2" type="Panel" parent="UI/UW2"]
+visible = false
 offset_right = 40.0
 offset_bottom = 40.0
 
@@ -746,11 +807,96 @@ offset_top = 194.0
 offset_right = 439.0
 offset_bottom = 258.0
 
+[node name="PlayerTradeSelectedUW2_0" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+layout_mode = 0
+offset_left = 472.0
+offset_top = 72.0
+offset_right = 492.0
+offset_bottom = 96.0
+
+[node name="PlayerTradeSelectedUW2_1" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+layout_mode = 0
+offset_left = 640.0
+offset_top = 72.0
+offset_right = 660.0
+offset_bottom = 96.0
+
+[node name="PlayerTradeSelectedUW2_2" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+layout_mode = 0
+offset_left = 472.0
+offset_top = 144.0
+offset_right = 492.0
+offset_bottom = 168.0
+
+[node name="PlayerTradeSelectedUW2_3" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+layout_mode = 0
+offset_left = 640.0
+offset_top = 144.0
+offset_right = 660.0
+offset_bottom = 168.0
+
+[node name="PlayerTradeSelectedUW2_4" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+layout_mode = 0
+offset_left = 472.0
+offset_top = 216.0
+offset_right = 492.0
+offset_bottom = 240.0
+
+[node name="PlayerTradeSelectedUW2_5" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+layout_mode = 0
+offset_left = 640.0
+offset_top = 216.0
+offset_right = 660.0
+offset_bottom = 240.0
+
+[node name="NPCTradeSelectedUW2_0" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+layout_mode = 0
+offset_left = 276.0
+offset_top = 72.0
+offset_right = 296.0
+offset_bottom = 96.0
+
+[node name="NPCTradeSelectedUW2_1" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+layout_mode = 0
+offset_left = 444.0
+offset_top = 72.0
+offset_right = 464.0
+offset_bottom = 96.0
+
+[node name="NPCTradeSelectedUW2_2" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+layout_mode = 0
+offset_left = 276.0
+offset_top = 144.0
+offset_right = 296.0
+offset_bottom = 168.0
+
+[node name="NPCTradeSelectedUW2_3" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+layout_mode = 0
+offset_left = 444.0
+offset_top = 144.0
+offset_right = 464.0
+offset_bottom = 168.0
+
+[node name="NPCTradeSelectedUW2_4" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+layout_mode = 0
+offset_left = 276.0
+offset_top = 216.0
+offset_right = 296.0
+offset_bottom = 240.0
+
+[node name="NPCTradeSelectedUW2_5" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+layout_mode = 0
+offset_left = 444.0
+offset_top = 216.0
+offset_right = 464.0
+offset_bottom = 240.0
+
 [node name="CompassUW2" type="Panel" parent="UI/UW2"]
 offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="CompassClickArea" type="TextureRect" parent="UI/UW2/CompassUW2"]
+layout_mode = 0
 offset_left = 380.0
 offset_top = 599.0
 offset_right = 580.0
@@ -1848,6 +1994,46 @@ lblPositionDebug = NodePath("../UI/mouse/PositionLabel")
 uwUI = NodePath("../UI/uiManager")
 
 [connection signal="gui_input" from="UI/UW1/CompassUW1/CompassClickArea" to="UI/uiManager" method="_on_compass_click"]
+[connection signal="gui_input" from="UI/UW1/ConversationUW1/PlayerTradeSelectedUW1_0" to="UI/uiManager" method="_on_player_trade_selected" binds= [0]]
+[connection signal="gui_input" from="UI/UW1/ConversationUW1/PlayerTradeSelectedUW1_1" to="UI/uiManager" method="_on_player_trade_selected" binds= [1]]
+[connection signal="gui_input" from="UI/UW1/ConversationUW1/PlayerTradeSelectedUW1_2" to="UI/uiManager" method="_on_player_trade_selected" binds= [2]]
+[connection signal="gui_input" from="UI/UW1/ConversationUW1/PlayerTradeSelectedUW1_3" to="UI/uiManager" method="_on_player_trade_selected" binds= [3]]
+[connection signal="gui_input" from="UI/UW1/ConversationUW1/PlayerTradeUW1_0" to="UI/uiManager" method="_on_player_trade_input" binds= [0]]
+[connection signal="gui_input" from="UI/UW1/ConversationUW1/PlayerTradeUW1_1" to="UI/uiManager" method="_on_player_trade_input" binds= [1]]
+[connection signal="gui_input" from="UI/UW1/ConversationUW1/PlayerTradeUW1_2" to="UI/uiManager" method="_on_player_trade_input" binds= [2]]
+[connection signal="gui_input" from="UI/UW1/ConversationUW1/PlayerTradeUW1_3" to="UI/uiManager" method="_on_player_trade_input" binds= [3]]
+[connection signal="gui_input" from="UI/UW1/ConversationUW1/NPCTradeUW1_0" to="UI/uiManager" method="_on_npc_trade_input" binds= [0]]
+[connection signal="gui_input" from="UI/UW1/ConversationUW1/NPCTradeUW1_1" to="UI/uiManager" method="_on_npc_trade_input" binds= [1]]
+[connection signal="gui_input" from="UI/UW1/ConversationUW1/NPCTradeUW1_2" to="UI/uiManager" method="_on_npc_trade_input" binds= [2]]
+[connection signal="gui_input" from="UI/UW1/ConversationUW1/NPCTradeUW1_3" to="UI/uiManager" method="_on_npc_trade_input" binds= [3]]
+[connection signal="gui_input" from="UI/UW1/ConversationUW1/NPCTradeSelectedUW1_0" to="UI/uiManager" method="_on_npc_trade_selected" binds= [0]]
+[connection signal="gui_input" from="UI/UW1/ConversationUW1/NPCTradeSelectedUW1_1" to="UI/uiManager" method="_on_npc_trade_selected" binds= [1]]
+[connection signal="gui_input" from="UI/UW1/ConversationUW1/NPCTradeSelectedUW1_2" to="UI/uiManager" method="_on_npc_trade_selected" binds= [2]]
+[connection signal="gui_input" from="UI/UW1/ConversationUW1/NPCTradeSelectedUW1_3" to="UI/uiManager" method="_on_npc_trade_selected" binds= [3]]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/PlayerTradeUW2_0" to="UI/uiManager" method="_on_player_trade_input" binds= [0]]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/PlayerTradeUW2_1" to="UI/uiManager" method="_on_player_trade_input" binds= [1]]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/PlayerTradeUW2_2" to="UI/uiManager" method="_on_player_trade_input" binds= [2]]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/PlayerTradeUW2_3" to="UI/uiManager" method="_on_player_trade_input" binds= [3]]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/PlayerTradeUW2_4" to="UI/uiManager" method="_on_player_trade_input" binds= [4]]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/PlayerTradeUW2_5" to="UI/uiManager" method="_on_player_trade_input" binds= [5]]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/NPCTradeUW2_0" to="UI/uiManager" method="_on_npc_trade_input" binds= [0]]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/NPCTradeUW2_1" to="UI/uiManager" method="_on_npc_trade_input" binds= [1]]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/NPCTradeUW2_2" to="UI/uiManager" method="_on_npc_trade_input" binds= [2]]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/NPCTradeUW2_3" to="UI/uiManager" method="_on_npc_trade_input" binds= [3]]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/NPCTradeUW2_4" to="UI/uiManager" method="_on_npc_trade_input" binds= [4]]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/NPCTradeUW2_5" to="UI/uiManager" method="_on_npc_trade_input" binds= [5]]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/PlayerTradeSelectedUW2_0" to="UI/uiManager" method="_on_player_trade_selected"]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/PlayerTradeSelectedUW2_1" to="UI/uiManager" method="_on_player_trade_selected"]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/PlayerTradeSelectedUW2_2" to="UI/uiManager" method="_on_player_trade_selected"]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/PlayerTradeSelectedUW2_3" to="UI/uiManager" method="_on_player_trade_selected"]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/PlayerTradeSelectedUW2_4" to="UI/uiManager" method="_on_player_trade_selected" binds= [4]]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/PlayerTradeSelectedUW2_5" to="UI/uiManager" method="_on_player_trade_selected" binds= [5]]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/NPCTradeSelectedUW2_0" to="UI/uiManager" method="_on_npc_trade_selected"]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/NPCTradeSelectedUW2_1" to="UI/uiManager" method="_on_npc_trade_selected"]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/NPCTradeSelectedUW2_2" to="UI/uiManager" method="_on_npc_trade_selected"]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/NPCTradeSelectedUW2_3" to="UI/uiManager" method="_on_npc_trade_selected"]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/NPCTradeSelectedUW2_4" to="UI/uiManager" method="_on_npc_trade_selected" binds= [4]]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/NPCTradeSelectedUW2_5" to="UI/uiManager" method="_on_npc_trade_selected" binds= [5]]
 [connection signal="gui_input" from="UI/UW2/CompassUW2/CompassClickArea" to="UI/uiManager" method="_on_compass_click"]
 [connection signal="gui_input" from="UI/Common/PaperDoll/Helm" to="UI/uiManager" method="_paperdoll_gui_input" binds= ["Helm"]]
 [connection signal="gui_input" from="UI/Common/PaperDoll/Boots" to="UI/uiManager" method="_paperdoll_gui_input" binds= ["Boots"]]

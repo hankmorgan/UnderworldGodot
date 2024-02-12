@@ -62,6 +62,12 @@ namespace Underworld
             Likes = 0;
             Dislikes = 0;
             
+            for (int i=0;i<uimanager.NoOfTradeSlots;i++)
+            {
+               uimanager.SetPlayerTradeSlot(i,-1,false);
+               uimanager.SetNPCTradeSlot(i,-1,false);
+            }
+            
             //Clear existing text
             uimanager.instance.scroll.Clear();
             uimanager.instance.convo.Clear();
