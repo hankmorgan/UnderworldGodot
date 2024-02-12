@@ -71,6 +71,25 @@ namespace Underworld
 				}
 			}
 		}
+
+		
+        private void _on_stats_updown_gui_input(InputEvent @event, long extra_arg_0)
+        {
+            if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
+            {
+                switch (extra_arg_0)
+                {
+                    case -1:
+                        StatsOffset = Math.Max(0, StatsOffset - 1);
+                        PrintStatsDisplay();
+                        break;
+                    case 1:
+                        StatsOffset = Math.Min(15, StatsOffset + 1);
+                        PrintStatsDisplay();
+                        break;
+                }
+            }
+        }
         
     }//end class
 }//end namespace

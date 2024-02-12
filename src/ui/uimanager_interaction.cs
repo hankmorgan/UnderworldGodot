@@ -18,7 +18,6 @@ namespace Underworld
             ModeUse = 5
         };
 
-
         public static InteractionModes InteractionMode = InteractionModes.ModeUse;
         [ExportGroup("InteractionModes")]
         //Array to store the interaction mode mo
@@ -49,23 +48,39 @@ namespace Underworld
             }
         }
 
-        public static void InteractWithObjectCollider(int objindex)
+        /// <summary>
+        /// Handles interacting with objects in the world
+        /// </summary>
+        /// <param name="index"></param>
+        public static void InteractWithObjectCollider(int index)
         {
-            switch (uimanager.InteractionMode)
+            switch (InteractionMode)
             {
-                case uimanager.InteractionModes.ModeTalk:
-                    talk.Talk(objindex, Underworld.UWTileMap.current_tilemap.LevelObjects, true);
+                case InteractionModes.ModeTalk:
+                    talk.Talk(
+                        index: index, 
+                        objList: Underworld.UWTileMap.current_tilemap.LevelObjects, 
+                        WorldObject: true);
                     break;
-                case uimanager.InteractionModes.ModeLook:
+                case InteractionModes.ModeLook:
                     //Do a look interaction with the object
-                    look.LookAt(objindex, Underworld.UWTileMap.current_tilemap.LevelObjects, true);
+                    look.LookAt(
+                        index: index, 
+                        objList: Underworld.UWTileMap.current_tilemap.LevelObjects, 
+                        WorldObject: true);
                     break;
-                case uimanager.InteractionModes.ModeUse:
+                case InteractionModes.ModeUse:
                     //do a use interaction with the object.
-                    use.Use(objindex, Underworld.UWTileMap.current_tilemap.LevelObjects, true);
+                    use.Use(
+                        index: index, 
+                        objList: Underworld.UWTileMap.current_tilemap.LevelObjects, 
+                        WorldObject: true);
                     break;
-                case uimanager.InteractionModes.ModePickup:
-                    pickup.PickUp(objindex, Underworld.UWTileMap.current_tilemap.LevelObjects, true);
+                case InteractionModes.ModePickup:
+                    pickup.PickUp(
+                        index: index, 
+                        objList: Underworld.UWTileMap.current_tilemap.LevelObjects, 
+                        WorldObject: true);
                     break;
             }
         }

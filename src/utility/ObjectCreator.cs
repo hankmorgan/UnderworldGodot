@@ -87,7 +87,7 @@ namespace Underworld
                 case ObjectListType.StaticList:
                     //Move PTR down, get object at that point.
                     UWTileMap.current_tilemap.StaticFreeListPtr--;
-                    Debug.Print ($"Allocating {UWTileMap.current_tilemap.StaticFreeListObject}");
+                    Debug.Print ($"Allocating {UWTileMap.current_tilemap.StaticFreeListObject} Pointer decremented");
                     return UWTileMap.current_tilemap.StaticFreeListObject;
                 case ObjectListType.MobileList:
                     return 0; //TODO

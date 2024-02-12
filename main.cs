@@ -179,10 +179,8 @@ public partial class main : Node3D
 		}
 	}
 
-
 	public static IEnumerator LoadTileMap(int newLevelNo)
-	{
-		
+	{		
 		//grObjects.UseRedChannel = true;
 
 		ObjectCreator.worldobjects = instance.GetNode<Node3D>("/root/Underworld/worldobjects");
@@ -208,7 +206,6 @@ public partial class main : Node3D
 		Debug.Print($"{Underworld.UWTileMap.current_tilemap.uw}");
 		yield return null;
 	}
-
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
@@ -252,91 +249,9 @@ public partial class main : Node3D
 		{
 			if (!blockinput)
 			{
-				if (uimanager.IsMouseInViewPort())
-				{
-					float RayLength = 3.0f;
-					//var camera3D = GetNode<Camera3D>("Camera3D");
-					Dictionary result = DoRayCast(eventMouseButton, RayLength);
-					if (result != null)
-					{
-						if (result.ContainsKey("collider") && result.ContainsKey("normal") && result.ContainsKey("position"))
-						{
-							var obj = (StaticBody3D)result["collider"];
-							var normal = (Vector3)result["normal"];
-							var pos = (Vector3)result["position"];
-							Debug.Print(obj.Name);
-							string[] vals = obj.Name.ToString().Split("_");
-							switch (vals[0].ToUpper())
-							{
-								case "TILE":
-								case "WALL":
-									{
-										switch (uimanager.InteractionMode)
-										{
-											case uimanager.InteractionModes.ModePickup:
-												{
-													if (playerdat.ObjectInHand != -1)
-													{//something is held. try and drop it on this tile.
-													 //int tileX = int.Parse(vals[1]); int tileY = int.Parse(vals[2]);
-														int tileX = (int)(-pos.X / 1.2f);
-														int tileY = (int)(pos.Z / 1.2f);
-														//move object to this tile if possble
-														pickup.Drop(
-															index: playerdat.ObjectInHand,
-															objList: UWTileMap.current_tilemap.LevelObjects,
-															dropPosition: pos,
-															tileX: tileX, tileY: tileY);
-													}
-													break;
-												}
-											case uimanager.InteractionModes.ModeLook:
-												{
-													int tileX = int.Parse(vals[1]); int tileY = int.Parse(vals[2]);
-													uimanager.AddToMessageScroll(
-														GameStrings.GetString(1, GameStrings.str_you_see_)
-														+
-														TileInfo.GetTileSurfaceDescription(normal, tileX, tileY));
-													break;
-												}
-										}
-										break;
-									}
-								case "CEILING":
-									{
-										switch (uimanager.InteractionMode)
-										{
-											case uimanager.InteractionModes.ModeLook:
-												{
-													uimanager.AddToMessageScroll(
-														GameStrings.GetString(1, GameStrings.str_you_see_)
-														+
-														GameStrings.GetString(10, 511)
-														);
-													break;
-												}
-										}
-
-										break;
-									}
-
-								default: //check for regular collider with an obj.
-									{
-										if (int.TryParse(vals[0], out int objindex))
-										{
-											uimanager.InteractWithObjectCollider(objindex);
-										}
-									}
-									break;
-							}
-						}
-					}
-					else
-					{
-						//no match on the raycast. if holding an object in pickup mode this should try and throw the object
-						//along the ray
-					}
-				}
-			}
+                if (uimanager.IsMouseInViewPort())
+                    uimanager.ClickOnViewPort(eventMouseButton);
+            }
 		}
 
 		if (ConversationVM.WaitingForInput)
@@ -356,20 +271,4 @@ public partial class main : Node3D
 		}
 	}
 
-	/// <summary>
-	/// Does a raycast of specified length from the mouse event position.
-	/// </summary>
-	/// <param name="eventMouseButton"></param>
-	/// <param name="RayLength"></param>
-	/// <returns></returns>
-	public static Dictionary DoRayCast(InputEventMouseButton eventMouseButton, float RayLength)
-	{
-		var from = gamecam.ProjectRayOrigin(eventMouseButton.Position);
-		var mousepos = uimanager.instance.uwsubviewport.GetMousePosition(); //eventMouseButton.Position
-		var to = from + gamecam.ProjectRayNormal(mousepos) * RayLength;
-		var query = PhysicsRayQueryParameters3D.Create(from, to);
-		var spaceState = main.instance.GetWorld3D().DirectSpaceState;
-		var result = spaceState.IntersectRay(query);
-		return result;
-	}
-}
+}//end class

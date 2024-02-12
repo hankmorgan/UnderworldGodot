@@ -1,5 +1,4 @@
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
+using System.Diagnostics;
 
 namespace Underworld
 {
@@ -716,7 +715,7 @@ namespace Underworld
         }
 
 
-        public static short AddInventoryObjectToWorld(int objIndex, bool updateUI, bool RemoveNext)
+        public static int AddInventoryObjectToWorld(int objIndex, bool updateUI, bool RemoveNext)
         {
             var oldObj = InventoryObjects[objIndex];      
            
@@ -731,8 +730,11 @@ namespace Underworld
             }
 
             //Now get the index to store at
-            UWTileMap.current_tilemap.StaticFreeListPtr--;
-            var newIndex = (short)UWTileMap.current_tilemap.StaticFreeListObject;
+            //UWTileMap.current_tilemap.StaticFreeListPtr--;
+            //Debug.Print($"Allocating {UWTileMap.current_tilemap.StaticFreeListObject} (pointer decremented)");
+            var newIndex = ObjectCreator.GetAvailableObjectSlot();
+            
+            //(short)UWTileMap.current_tilemap.StaticFreeListObject;
             var NewObj = UWTileMap.current_tilemap.LevelObjects[newIndex];
             //copy data to that index.
             for (int i = 0; i < 8; i++)
@@ -781,9 +783,10 @@ namespace Underworld
             var obj = UWTileMap.current_tilemap.LevelObjects[objIndex];
             if (objIndex >= 256)
             {
-                //Add to static free list
-                UWTileMap.current_tilemap.StaticFreeListPtr++;
+                //Add to static free list                
+                Debug.Print($"Freeing {objIndex} (pointer incremented)");
                 UWTileMap.current_tilemap.StaticFreeListObject = objIndex;
+                UWTileMap.current_tilemap.StaticFreeListPtr++;
             }
             else
             {
@@ -868,13 +871,60 @@ namespace Underworld
                 return;
             }
 
-            //otherwise swap objects in and out of hand
-            // use.Use(
-            //     index: obj,
-            //     objList: playerdat.InventoryObjects,
-            //     WorldObject: false);
+            //swap objects otherwise
+            var backup = ObjectInHand;
+            PickupObjectFromSlot(targetObj);
+            uimanager.PickupToEmptySlot(backup);    
+            uimanager.UpdateInventoryDisplay();        
+        }  
 
-        }       
+        public static void PickupObjectFromSlot(int objAtSlot)
+        {
+            var newIndex = AddInventoryObjectToWorld(
+                    objIndex: objAtSlot, 
+                    updateUI: true, 
+                    RemoveNext: false);
+            var pickObject = UWTileMap.current_tilemap.LevelObjects[newIndex];
+            ObjectInHand = newIndex;
+            uimanager.instance.mousecursor.SetCursorArt(pickObject.item_id);
+        }     
+
+
+        public static void MoveObjectInHandOutOfOpenedContainer(int ObjectToPickup)
+        {
+            //the opened container
+            if (OpenedContainerParent == -1)
+            {
+                //on paperdoll. try and add to there
+                var freeslot = FreePaperDollSlot;
+                if (freeslot != -1)
+                {
+                    var index = AddObjectToPlayerInventory(ObjectToPickup, false);
+                    SetInventorySlotListHead(freeslot, index);
+                    if (ObjectToPickup==ObjectInHand)
+                    {
+                        ObjectInHand = -1;
+                        uimanager.instance.mousecursor.ResetCursor();
+                    }
+
+                }
+                else
+                {
+                    Debug.Print("No room on paperdoll");
+                }
+            }
+            else
+            {
+                //the container that contains the opened container.
+                var index = AddObjectToPlayerInventory(ObjectInHand, false);
+                var newobj = InventoryObjects[index];
+                var container = InventoryObjects[OpenedContainerParent];
+                newobj.next = container.link;
+                container.link = index;
+                ObjectInHand = -1;
+                uimanager.instance.mousecursor.ResetCursor();
+            }
+        }
 
     } //end class
 } //end namespace
