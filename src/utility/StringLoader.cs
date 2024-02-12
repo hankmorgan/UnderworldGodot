@@ -720,9 +720,19 @@ namespace Underworld
                 }
             }
             //Remove the article
-            output = output.Replace("a_", "");
-            output = output.Replace("an_", "");
-            output = output.Replace("some_", "");
+            if (qty>1)
+            {
+                output = output.Replace("a_", "");
+                output = output.Replace("an_", "");
+                output = output.Replace("some_", "");
+            }
+            else
+            {
+                output = output.Replace("a_", "");
+                output = output.Replace("an_", "");
+                output = output.Replace("some_", "some ");
+            }
+
             return output;
         }
         
@@ -733,20 +743,20 @@ namespace Underworld
         /// <returns>The simple object name U.</returns>
         /// <param name="item_id">Item identifier.</param>
 
-        public static string GetSimpleObjectNameUW(int item_id)
-        {//Without quants.
-            string output = GetString(4, item_id);
-            if (output == null)
-            {
-                return "";
-            }
-            if (output.Contains("&"))
-            {
-                output = output.Split('&')[0];
-            }
+        // public static string GetSimpleObjectNameUW(int item_id)
+        // {//Without quants.
+        //     string output = GetString(4, item_id);
+        //     if (output == null)
+        //     {
+        //         return "";
+        //     }
+        //     if (output.Contains("&"))
+        //     {
+        //         output = output.Split('&')[0];
+        //     }
 
-            return (output.Replace("_", " "));
-        }
+        //     return (output.Replace("_", " "));
+        // }
 
         /// <summary>
         /// Gets the description for the texture looked at.
@@ -765,27 +775,27 @@ namespace Underworld
         /// </summary>
         /// <returns>The texture name.</returns>
         /// <param name="index">Index.</param>
-        public string GetTextureName(int index)
-        {
-            switch (_RES)
-            {
-                case GAME_UW2:
+        // public string GetTextureName(int index)
+        // {
+        //     switch (_RES)
+        //     {
+        //         case GAME_UW2:
 
-                    return GetString(10, index);//There is something odd here. Some textures in the file don't match this
+        //             return GetString(10, index);//There is something odd here. Some textures in the file don't match this
 
-                default:
-                    {
-                        if (index < 210)
-                        {//Return a wall texture.
-                            return GetString(10, index);
-                        }
-                        else
-                        {//return a floor texture in reverse order.
-                            return GetString(10, 510 - index + 210);
-                        }
-                    }
-            }
-        }
+        //         default:
+        //             {
+        //                 if (index < 210)
+        //                 {//Return a wall texture.
+        //                     return GetString(10, index);
+        //                 }
+        //                 else
+        //                 {//return a floor texture in reverse order.
+        //                     return GetString(10, 510 - index + 210);
+        //                 }
+        //             }
+        //     }
+        // }
 
         /// <summary>
         /// Adds a string to string block and return a memory location for it. Used in the conversation vm

@@ -1,3 +1,5 @@
+using Godot;
+
 namespace Underworld
 {
     /// <summary>
@@ -141,7 +143,7 @@ namespace Underworld
             string output;
             if (commonObjDat.PrintableLook(obj.item_id))
             {
-                output = "You see ";
+                output =GameStrings.GetString(1, GameStrings.str_you_see_);
             }
             else
             {
@@ -214,8 +216,16 @@ namespace Underworld
                     article = GetArticle(objectname);
                 }
             }
+            if (objectname.StartsWith("some "))
+            {
+                output += $"{qtystring}{qualitystring}{objectname}";
+            }
+            else
+            {
+                output += $"{article}{qtystring}{qualitystring}{objectname}";
+            }
 
-            output += $"{article}{qtystring}{qualitystring}{objectname}";
+            
             uimanager.AddToMessageScroll($"{output}");
             return true;
         }
