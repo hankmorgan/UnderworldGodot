@@ -158,11 +158,17 @@ namespace Underworld
         /// <param name="tileY"></param>
         private static void DropToTileAtPosition(Vector3 pos, int tileX, int tileY)
         {
-            pickup.Drop(
+            if(
+                pickup.Drop(
                 index: playerdat.ObjectInHand,
                 objList: UWTileMap.current_tilemap.LevelObjects,
                 dropPosition: pos,
-                tileX: tileX, tileY: tileY);
+                tileX: tileX, tileY: tileY)
+            )
+            {
+                playerdat.ObjectInHand=-1;
+                uimanager.instance.mousecursor.ResetCursor();
+            }
         }
 
 

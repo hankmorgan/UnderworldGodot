@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://xjvqmrbs28xs"]
+[gd_scene load_steps=34 format=3 uid="uid://xjvqmrbs28xs"]
 
 [ext_resource type="Script" path="res://src/ui/uimanager.cs" id="1_lw0yg"]
 [ext_resource type="FontFile" uid="uid://pdy3t627nfxw" path="res://resources/fonts/FONT5X6I.ttf" id="3_safdl"]
@@ -24,6 +24,7 @@
 [ext_resource type="Texture2D" uid="uid://b1y5rs02fgv6d" path="res://resources/cross.png" id="18_tfr7p"]
 [ext_resource type="Texture2D" uid="uid://dqcrcis2dop6k" path="res://resources/placeholder_art/paperdolluw1/body_f.png" id="19_0yobb"]
 [ext_resource type="Texture2D" uid="uid://du878dn3osxn1" path="res://resources/placeholder_art/blankmap.png" id="20_o03w0"]
+[ext_resource type="Texture2D" uid="uid://badfxtbgaf6oh" path="res://resources/placeholder_art/uw2 converse.png" id="20_xqwxh"]
 [ext_resource type="Texture2D" uid="uid://dx526kvjk8jmj" path="res://resources/cross2.png" id="21_5p8p7"]
 [ext_resource type="Texture2D" uid="uid://cvik4hdmkwuwk" path="res://resources/placeholder_art/paperdolluw1/up button 027.png" id="22_vc6ux"]
 [ext_resource type="Texture2D" uid="uid://01h0bdambuq4" path="res://resources/placeholder_art/paperdolluw1/down button 028.png" id="23_e17mk"]
@@ -166,6 +167,7 @@ placeholderuw2 = NodePath("../UW2/placeholdermainuw2")
 stream = SubResource("AudioStreamWAV_tkk82")
 
 [node name="UW1" type="CanvasLayer" parent="UI"]
+visible = false
 
 [node name="placeholdermainuw1" type="TextureRect" parent="UI/UW1"]
 offset_right = 1280.0
@@ -540,12 +542,12 @@ offset_right = 532.0
 offset_bottom = 156.0
 
 [node name="UW2" type="CanvasLayer" parent="UI"]
-visible = false
 
 [node name="placeholdermainuw2" type="TextureRect" parent="UI/UW2"]
 offset_right = 1280.0
 offset_bottom = 800.0
 mouse_filter = 2
+texture = ExtResource("20_xqwxh")
 
 [node name="3DWinUW2" type="TextureRect" parent="UI/UW2"]
 texture_filter = 1
@@ -665,7 +667,6 @@ script = ExtResource("8_0sew3")
 index = 5
 
 [node name="ConversationUW2" type="Panel" parent="UI/UW2"]
-visible = false
 offset_right = 40.0
 offset_bottom = 40.0
 
@@ -2022,16 +2023,16 @@ uwUI = NodePath("../UI/uiManager")
 [connection signal="gui_input" from="UI/UW2/ConversationUW2/NPCTradeUW2_3" to="UI/uiManager" method="_on_npc_trade_input" binds= [3]]
 [connection signal="gui_input" from="UI/UW2/ConversationUW2/NPCTradeUW2_4" to="UI/uiManager" method="_on_npc_trade_input" binds= [4]]
 [connection signal="gui_input" from="UI/UW2/ConversationUW2/NPCTradeUW2_5" to="UI/uiManager" method="_on_npc_trade_input" binds= [5]]
-[connection signal="gui_input" from="UI/UW2/ConversationUW2/PlayerTradeSelectedUW2_0" to="UI/uiManager" method="_on_player_trade_selected"]
-[connection signal="gui_input" from="UI/UW2/ConversationUW2/PlayerTradeSelectedUW2_1" to="UI/uiManager" method="_on_player_trade_selected"]
-[connection signal="gui_input" from="UI/UW2/ConversationUW2/PlayerTradeSelectedUW2_2" to="UI/uiManager" method="_on_player_trade_selected"]
-[connection signal="gui_input" from="UI/UW2/ConversationUW2/PlayerTradeSelectedUW2_3" to="UI/uiManager" method="_on_player_trade_selected"]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/PlayerTradeSelectedUW2_0" to="UI/uiManager" method="_on_player_trade_selected" binds= [0]]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/PlayerTradeSelectedUW2_1" to="UI/uiManager" method="_on_player_trade_selected" binds= [1]]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/PlayerTradeSelectedUW2_2" to="UI/uiManager" method="_on_player_trade_selected" binds= [2]]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/PlayerTradeSelectedUW2_3" to="UI/uiManager" method="_on_player_trade_selected" binds= [3]]
 [connection signal="gui_input" from="UI/UW2/ConversationUW2/PlayerTradeSelectedUW2_4" to="UI/uiManager" method="_on_player_trade_selected" binds= [4]]
 [connection signal="gui_input" from="UI/UW2/ConversationUW2/PlayerTradeSelectedUW2_5" to="UI/uiManager" method="_on_player_trade_selected" binds= [5]]
-[connection signal="gui_input" from="UI/UW2/ConversationUW2/NPCTradeSelectedUW2_0" to="UI/uiManager" method="_on_npc_trade_selected"]
-[connection signal="gui_input" from="UI/UW2/ConversationUW2/NPCTradeSelectedUW2_1" to="UI/uiManager" method="_on_npc_trade_selected"]
-[connection signal="gui_input" from="UI/UW2/ConversationUW2/NPCTradeSelectedUW2_2" to="UI/uiManager" method="_on_npc_trade_selected"]
-[connection signal="gui_input" from="UI/UW2/ConversationUW2/NPCTradeSelectedUW2_3" to="UI/uiManager" method="_on_npc_trade_selected"]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/NPCTradeSelectedUW2_0" to="UI/uiManager" method="_on_npc_trade_selected" binds= [0]]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/NPCTradeSelectedUW2_1" to="UI/uiManager" method="_on_npc_trade_selected" binds= [1]]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/NPCTradeSelectedUW2_2" to="UI/uiManager" method="_on_npc_trade_selected" binds= [2]]
+[connection signal="gui_input" from="UI/UW2/ConversationUW2/NPCTradeSelectedUW2_3" to="UI/uiManager" method="_on_npc_trade_selected" binds= [4]]
 [connection signal="gui_input" from="UI/UW2/ConversationUW2/NPCTradeSelectedUW2_4" to="UI/uiManager" method="_on_npc_trade_selected" binds= [4]]
 [connection signal="gui_input" from="UI/UW2/ConversationUW2/NPCTradeSelectedUW2_5" to="UI/uiManager" method="_on_npc_trade_selected" binds= [5]]
 [connection signal="gui_input" from="UI/UW2/CompassUW2/CompassClickArea" to="UI/uiManager" method="_on_compass_click"]

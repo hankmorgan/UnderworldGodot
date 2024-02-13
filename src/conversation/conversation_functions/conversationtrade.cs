@@ -23,6 +23,11 @@ namespace Underworld
         public static int NPCAppraisalAccuracy=0;
 
         /// <summary>
+        /// Score of the previous trade evaluation. Used to determine if a better or worse offer has been made on repeated offers
+        /// </summary>
+        public static int PreviousEvaluation =0;
+
+        /// <summary>
 		/// Pointer to Array in the stack that contains the items the npc likes
 		/// </summary>
 		public static int Likes = 0;
@@ -156,6 +161,37 @@ namespace Underworld
             return itemvalue;
         }
 
+        /// <summary>
+        /// Check if at least one item in the player trade is selected
+        /// </summary>
+        /// <returns></returns>
+        static bool IsPlayerOfferingItems()
+        {
+            for (int i=0;i < uimanager.NoOfTradeSlots; i++ )
+            {
+                if (uimanager.GetPlayerTradeSlot(i)!=-1)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Check if at least one item in the npc trade is selected
+        /// </summary>
+        /// <returns></returns>
+        static bool IsNPCOfferingItems()
+        {
+            for (int i=0;i < uimanager.NoOfTradeSlots; i++ )
+            {
+                if (uimanager.GetNPCTradeSlot(i)!=-1)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
     } //end class
 }//end namespace

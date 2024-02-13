@@ -327,11 +327,14 @@ namespace Underworld
                 }
                 else
                 {//right click look at
-                    var obj = UWTileMap.current_tilemap.LevelObjects[PlayerItemIDs[extra_arg_0]];
-                    if (obj!=null)
+                    if (PlayerItemIDs[extra_arg_0]!=-1)
                     {
-                        look.GeneralLookDescription(obj: obj, OutputConvoScroll: true);
-                    }  
+                        var obj = UWTileMap.current_tilemap.LevelObjects[PlayerItemIDs[extra_arg_0]];
+                        if (obj!=null)
+                        {
+                            look.GeneralLookDescription(obj: obj, OutputConvoScroll: true);
+                        }  
+                    }
                 }                
             }
         }

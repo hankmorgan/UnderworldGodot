@@ -21,7 +21,7 @@ namespace Underworld
             int j = 1;
             ClearConversationOptions();
             string finaltext = "";
-            for (int i = Start; i <= StackValues.GetUpperBound(0); i++)
+            for (int i = Start; i <= StackValues.GetUpperBound(0) && (i < Start+5); i++)
             {
                 if (at(i) > 0)
                 {

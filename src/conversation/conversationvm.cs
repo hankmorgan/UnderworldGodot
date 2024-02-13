@@ -28,14 +28,20 @@ namespace Underworld
 
 		public static IEnumerator RunConversationVM(uwObject talker)
 		{          
+			bool testing = true;
 			bool finished = false;
 
 			while (!finished)
 			{
+				if (StackValues[362]==-1)
+				{
+					Debug.Print("ELU");
+				}
 				switch (currentConversation.instuctions[instrp])
 				{
 					case cnv_NOP:
 						{
+							if (testing){Debug.Print($"{instrp}:NOP");}							
 							break;
 						}
 
@@ -44,15 +50,17 @@ namespace Underworld
 						{
 							int arg1 = Pop();
 							int arg2 = Pop();
+							if (testing){Debug.Print($"{instrp}:Add {arg1},{arg2}");}
 							Push(arg1 + arg2);
 							break;
 						}
 
 
 					case cnv_OPMUL:
-						{
+						{							
 							int arg1 = Pop();
 							int arg2 = Pop();
+							if (testing){Debug.Print($"{instrp}:Mul {arg1},{arg2}");}
 							Push(arg1 * arg2);
 							break;
 						}
@@ -62,6 +70,7 @@ namespace Underworld
 						{
 							int arg1 = Pop();
 							int arg2 = Pop();
+							if (testing){Debug.Print($"{instrp}:Sub {arg1},{arg2}");}
 							Push(arg2 - arg1);
 							break;
 						}
@@ -73,6 +82,7 @@ namespace Underworld
 							int arg2 = Pop();
 							//if (arg1==0)
 							//	throw ua_ex_div_by_zero;
+							if (testing){Debug.Print($"{instrp}:Div {arg2},{arg1}");}
 							Push(arg2 / arg1);
 							break;
 						}
@@ -82,6 +92,7 @@ namespace Underworld
 						{
 							int arg1 = Pop();
 							int arg2 = Pop();
+							if (testing){Debug.Print($"{instrp}:Mod {arg1},{arg2}");}
 							//if (arg1==0)
 							//	throw ua_ex_div_by_zero;
 							Push(arg2 % arg1);
@@ -90,21 +101,28 @@ namespace Underworld
 
 
 					case cnv_OPOR:
-						{
-							Push(Pop() | Pop());
+						{							
+							var arg1 = Pop();
+							var arg2 = Pop();
+							if (testing){Debug.Print($"{instrp}:Or {arg1},{arg2}");}
+							Push(arg1 | arg2);
 						}
 						break;
 
 					case cnv_OPAND:
 						{
-							Push(Pop() & Pop());
+							var arg1 = Pop();
+							var arg2 = Pop();
+							if (testing){Debug.Print($"{instrp}:AND {arg1},{arg2}");}
+							Push(arg1 & arg2);
 						}
 						break;
 
 					case cnv_OPNOT:
 						{
+							if (testing){Debug.Print($"NOT");}
 							if (Pop() == 0)
-							{
+							{								
 								Push(1);
 							}
 							else
@@ -120,6 +138,7 @@ namespace Underworld
 						{
 							int arg1 = Pop();
 							int arg2 = Pop();
+							if (testing){Debug.Print($"{instrp}:TSTGT {arg1},{arg2}");}
 							if (arg2 > arg1)
 							{
 								Push(1);
@@ -137,6 +156,7 @@ namespace Underworld
 						{
 							int arg1 = Pop();
 							int arg2 = Pop();
+							if (testing){Debug.Print($"{instrp}:TSTGE {arg1},{arg2}");}
 							if (arg2 >= arg1)
 							{
 								Push(1);
@@ -153,6 +173,7 @@ namespace Underworld
 						{
 							int arg1 = Pop();
 							int arg2 = Pop();
+							if (testing){Debug.Print($"{instrp}:TSTLT {arg1},{arg2}");}
 							if (arg2 < arg1)
 							{
 								Push(1);
@@ -169,6 +190,7 @@ namespace Underworld
 						{
 							int arg1 = Pop();
 							int arg2 = Pop();
+							if (testing){Debug.Print($"{instrp}:TSTLE {arg1},{arg2}");}
 							if (arg2 <= arg1)
 							{
 								Push(1);
@@ -183,7 +205,10 @@ namespace Underworld
 
 					case cnv_TSTEQ:
 						{
-							if (Pop() == Pop())
+							int arg1 = Pop();
+							int arg2 = Pop();
+							if (testing){Debug.Print($"{instrp}:TSTEQ {arg1},{arg2}");}
+							if (arg1 == arg2)
 							{
 								Push(1);
 							}
@@ -197,7 +222,10 @@ namespace Underworld
 
 					case cnv_TSTNE:
 						{
-							if (Pop() != Pop())
+							int arg1 = Pop();
+							int arg2 = Pop();
+							if (testing){Debug.Print($"{instrp}:TSTNE {arg1},{arg2}");}
+							if (arg1 != arg2)
 							{
 								Push(1);
 							}
@@ -210,8 +238,9 @@ namespace Underworld
 						}
 
 					case cnv_JMP:
-						{//Debug.Log("instr = " +instrp + " JMP to " +  conv.instuctions[instrp+1]);
+						{//Debug.Log("instr = " +instrp + " JMP to " +  conv.instuctions[instrp+1]);							
 							instrp = currentConversation.instuctions[instrp + 1] - 1;
+							if (testing){Debug.Print($"{instrp}:JMP {instrp}");}
 							break;
 						}
 
@@ -225,6 +254,7 @@ namespace Underworld
 							{
 								instrp++;
 							}
+							if (testing){Debug.Print($"{instrp}:BEQ {instrp}");}
 							break;
 						}
 
@@ -238,6 +268,7 @@ namespace Underworld
 							{
 								instrp++;
 							}
+							if (testing){Debug.Print($"{instrp}:BNE {instrp}");}
 							break;
 						}
 
@@ -245,6 +276,7 @@ namespace Underworld
 						{
 							//int origInstrp= instrp;
 							instrp += currentConversation.instuctions[instrp + 1];
+							if (testing){Debug.Print($"{instrp}:BRA {instrp}");}
 							//Debug.Log("BRA to " + instrp + " at " + origInstrp);
 							/*int offset = conv.instuctions[instrp+1];
 							if (offset >0)
@@ -265,6 +297,7 @@ namespace Underworld
 							//Debug.Log("inst=" + instrp + "stack ptr" + stackptr + " new inst=" + (conv.instuctions[instrp+1]-1));
 							Push(instrp + 1);
 							instrp = currentConversation.instuctions[instrp + 1] - 1;
+							if (testing){Debug.Print($"{instrp}:Call {instrp}");}
 							call_level++;
 							break;
 						}
@@ -276,6 +309,7 @@ namespace Underworld
 							{
 								if ((currentConversation.functions[i].ID_or_Address == arg1) && (currentConversation.functions[i].import_type == import_function))
 								{
+									if (testing){Debug.Print($"{instrp}:CALLI {arg1}");}
 									Debug.Print("Calling function  " + arg1 + " which is currently : " + currentConversation.functions[i].importname);
 									yield return run_imported_function(currentConversation.functions[i], talker);
 									break;
@@ -287,14 +321,17 @@ namespace Underworld
 
 					case cnv_RET:
 						{
+							
 							if (--call_level < 0)
 							{
+								if (testing){Debug.Print($"{instrp}:RET (Finished)");}
 								// conversation ended
 								finished = true;
 							}
 							else
 							{
 								instrp = Pop();
+								if (testing){Debug.Print($"{instrp}:RET {instrp}");}
 							}
 							break;
 						}
@@ -303,6 +340,7 @@ namespace Underworld
 					case cnv_PUSHI:
 						{
 							//Debug.Log("Instruction:" + instrp +" Pushing Immediate value :" +conv.instuctions[instrp+1] + " => " + stackptr);
+							if (testing){Debug.Print($"{instrp}:PUSHI {currentConversation.instuctions[instrp+1]}");}
 							Push(currentConversation.instuctions[++instrp]);
 							break;
 						}
@@ -320,7 +358,7 @@ namespace Underworld
 							//     offset--; //to skip over base ptr;  //TODO figure out if this is correct behaviour
 							//     Push(basep + offset);
 							// }
-
+							if (testing){Debug.Print($"{instrp}:PUSHI_EFF {basep + currentConversation.instuctions[instrp + 1]}");}
 							Push(basep + currentConversation.instuctions[instrp + 1]);
 							instrp++;
 							break;
@@ -338,6 +376,7 @@ namespace Underworld
 						{
 							int arg1 = Pop();
 							int arg2 = Pop();
+							if (testing){Debug.Print($"{instrp}:SWAP {arg1},{arg2}");}
 							Push(arg1);
 							Push(arg2);
 							break;
@@ -345,7 +384,8 @@ namespace Underworld
 
 					case cnv_PUSHBP:
 						{
-							//Debug.Log("Instruction:" + instrp +" Pushing Base Ptr :" + basep + " => " + stackptr);							
+							//Debug.Print("Instruction:" + instrp +" Pushing Base Ptr :" + basep + " => " + stackptr);	
+							if (testing){Debug.Print($"{instrp}:PUSHBP {basep}");}						
 							Push(basep);
 							break;
 						}
@@ -353,13 +393,25 @@ namespace Underworld
 
 					case cnv_POPBP:
 						{
-							int arg1 = Pop();
-							basep = arg1;
+							if (stackptr<0)
+							{
+								Debug.Print ($"{instrp} StackPtr is {stackptr}. Possible UW1 bug in some conversations. Exiting conversation!");
+								finished = true;
+							}
+							else
+							{
+								//Debug.Print("Instruction:" + instrp +" Popping Base Ptr :" + basep + " => " + stackptr);	
+								int arg1 = Pop();
+								if (testing){Debug.Print($"{instrp}:POPBP {arg1}");}	
+								basep = arg1;
+							}
 							break;
 						}
 
 					case cnv_SPTOBP:
 						{
+							//Debug.Print("Instruction:" + instrp +" Setting Base Ptr to Stack :" + basep + " => " + stackptr);
+							if (testing){Debug.Print($"{instrp}:SPTOBP {stackptr}");}	
 							basep = stackptr;
 							break;
 						}
@@ -367,6 +419,8 @@ namespace Underworld
 
 					case cnv_BPTOSP:
 						{
+							//Debug.Print("Instruction:" + instrp +" Setting Stack Ptr to BaseP :" + basep + " => " + stackptr);
+							if (testing){Debug.Print($"{instrp}:BPTOSP {basep}");}	
 							set_stackp(basep);
 							break;
 						}
@@ -374,17 +428,24 @@ namespace Underworld
 
 					case cnv_ADDSP:
 						{
-							int arg1 = Pop();
+							int arg1 = at(stackptr);
+
+							if (testing){Debug.Print($"{instrp}:ADDSP {arg1}");}	
 							/// fill reserved stack space with dummy values
-							for (int i = 0; i <= arg1; i++)
-								Push(0);
+							//for (int i = 0; i <= arg1; i++)
+							//	Push(0);
+
+							set_stackp(stackptr + arg1 - 1);
+
 							break;
 						}
 
 
 					case cnv_FETCHM:
 						{
-							Push(at(Pop()));
+							var arg1 = at(Pop());
+							if (testing){Debug.Print($"{instrp}:FETCHM {arg1}");}	
+							Push(arg1);
 							break;
 						}
 
@@ -393,10 +454,7 @@ namespace Underworld
 						{
 							int value = Pop();
 							int index = Pop();
-							// if (index < conv.NoOfImportedGlobals)
-							// {
-							//     PrintImportedVariable(index, value);
-							// }
+							if (testing){Debug.Print($"{instrp}:STO {index} {value}");}	
 							Set(index, value);
 
 							break;
@@ -404,29 +462,37 @@ namespace Underworld
 
 
 					case cnv_OFFSET:
-						{
-							int arg1 = Pop();
-							int arg2 = Pop();
-							arg1 += arg2 - 1;
-							Push(arg1);
+						{							
+							//int arg1 = Pop();
+							int arg1 = at(stackptr);
+							int arg2 = at(stackptr-1);//Pop();
+							stackptr--;
+							if (testing){Debug.Print($"{instrp}:Offset {arg1} {arg2}");}	
+							arg1 += arg2 - 1;  //why -1
+							Set(stackptr, arg1);
+							//Push(arg1);
 							break;
 						}
 
 
 					case cnv_START:
 						{
+							if (testing){Debug.Print($"{instrp}:Start");}	
 							break;
 						}
 
 					case cnv_SAVE_REG:
 						{
-							result_register = Pop();
+							var arg1 = Pop();
+							if (testing){Debug.Print($"{instrp}:Save_Reg {arg1}");}	
+							result_register = arg1;
 							break;
 						}
 
 
 					case cnv_PUSH_REG:
 						{
+							if (testing){Debug.Print($"{instrp}:Push_Reg {result_register}");}	
 							Push(result_register);
 							break;
 						}
@@ -435,6 +501,7 @@ namespace Underworld
 					case cnv_EXIT_OP:
 						{
 							// finish processing (we still might be in some sub function)
+							if (testing){Debug.Print($"{instrp}:EXIT");}	
 							finished = true;
 							break;
 						}
@@ -443,24 +510,28 @@ namespace Underworld
 					case cnv_SAY_OP:
 						{
 							int arg1 = Pop();
+							if (testing){Debug.Print($"{instrp}:SAY_OP {arg1} {getString(arg1)}");}	
 							yield return say_op(arg1);
 							break;
 						}
 
 					case cnv_RESPOND_OP:
 						{// do nothing
+							if (testing){Debug.Print($"{instrp}:RESPOND");}	
 							Debug.Print("Respond_Op");
 							break;
 						}
 
 					case cnv_OPNEG:
 						{
+							if (testing){Debug.Print($"{instrp}:NEG");}	
 							Push(-Pop());
 							break;
 						}
 
 
 					default: // unknown opcode
+						if (testing){Debug.Print($"{instrp}:UNKNOWN");}	
 							 //throw ua_ex_unk_opcode;
 						break;
 				} //end switch
@@ -488,6 +559,19 @@ namespace Underworld
 			if (_RES==GAME_UW2)
 			{//store background
 				uimanager.instance.mainwindowUW2.Texture = uimanager.bitmaps.LoadImageAt(BytLoader.UW2ThreeDWin_BYT, true);
+			}
+			for (int i=0;i<uimanager.NoOfTradeSlots;i++)
+			{//move objects to the players tile.
+				var objindex = uimanager.GetPlayerTradeSlot(i,true);
+				if (objindex!=-1)
+				{
+					pickup.Drop(
+						index: objindex, 
+						objList: UWTileMap.current_tilemap.LevelObjects , 
+						dropPosition: main.gamecam.Position, 
+						tileX: playerdat.tileX, 
+						tileY: playerdat.tileY);
+				}
 			}
 			uimanager.instance.convo.Clear();
 			//uimanager.instance.ConversationText.Text = "";

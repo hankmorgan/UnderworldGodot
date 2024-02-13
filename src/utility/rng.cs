@@ -1,5 +1,6 @@
 
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Underworld
 {
@@ -17,7 +18,10 @@ namespace Underworld
         /// <returns></returns>
         public static int RandomOffset(int basevalue, int lower_offset, int upper_offset)
         {
-            return r.Next(basevalue + lower_offset, basevalue + upper_offset);
+           // return r.Next(basevalue + lower_offset, basevalue + upper_offset);
+            var range = upper_offset-lower_offset;
+            var rnd = r.Next(0, range);
+            return basevalue + basevalue * (lower_offset + rnd) /100;        
         }
 
 

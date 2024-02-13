@@ -36,10 +36,7 @@ namespace Underworld
                     obj.instance=null;
                 }
                 ObjectCreator.RenderObject(obj,UWTileMap.current_tilemap);
-                playerdat.ObjectInHand=-1;
-                uimanager.instance.mousecursor.ResetCursor();
                 return true;
-
             }
         }
 

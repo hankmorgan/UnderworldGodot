@@ -11,6 +11,7 @@ namespace Underworld
     {
         public static IEnumerator run_imported_function(ImportedFunctions func, uwObject talker)
         {
+            result_register=0;
             switch (func.importname.ToLower())
             {
                 case "babl_menu":
@@ -69,6 +70,7 @@ namespace Underworld
                     }
             }
             //set the value at the stackptr to the result
+            Debug.Print($"Set result {result_register} at {stackptr}");
             Set(stackptr, result_register);
             yield return null;
         }
