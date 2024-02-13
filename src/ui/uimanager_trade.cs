@@ -157,6 +157,20 @@ namespace Underworld
         }
 
         /// <summary>
+        /// Gets the item id if it is selected at that slot
+        /// </summary>
+        /// <param name="slotno"></param>
+        /// <returns></returns>
+        public static int GetPlayerTradeSlot(int slotno, bool ignoreSelected = true)
+        {
+            if ((PlayerItemSelected[slotno]) | (!ignoreSelected))
+            {
+                return PlayerItemIDs[slotno];
+            }
+            return -1;
+        }
+
+        /// <summary>
         /// Sets the art, item index, for the specified slot. 
         /// </summary>
         /// <param name="slotno"></param>
@@ -189,6 +203,20 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// Gets the item if selected at the npc trade slot
+        /// </summary>
+        /// <param name="slotno"></param>
+        /// <param name="ignoreSelected"></param>
+        /// <returns></returns>
+        public static int GetNPCTradeSlot(int slotno, bool ignoreSelected = true)
+        {
+            if ((NPCItemSelected[slotno]) | (!ignoreSelected))
+            {
+                return NPCItemIDs[slotno];
+            }
+            return -1;
+        }
         private void _on_player_trade_selected(InputEvent @event, long extra_arg_0)
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)

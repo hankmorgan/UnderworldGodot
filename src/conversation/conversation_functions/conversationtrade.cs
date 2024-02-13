@@ -19,29 +19,80 @@ namespace Underworld
         /// <param name="ApplyLikeDislike"></param>
         /// <param name="appraise_accuracy"></param>
         /// <returns></returns>
-        static int GetNPCValue(bool ApplyLikeDislike, int appraise_accuracy)
+        static int GetNPCValue(bool ApplyLikeDislike=false, int appraise_accuracy = 0, bool applyAccuracy = false)
         {
+            var result = 0;
             for (int i = 0; i < uimanager.NoOfTradeSlots; i++)
             {
                 //if slot select get monetary value, possibly adjusted for likes dislike and player appraisal score
-                //GetValueOfItem(obj,ApplyLikeDislike, appraise_accuracy)
+                var index = uimanager.GetNPCTradeSlot(i);
+                result += GetTrueItemValue(
+                    ApplyLikeDislike: ApplyLikeDislike, 
+                    appraise_accuracy: appraise_accuracy, 
+                    applyAccuracy: applyAccuracy, 
+                    index: index);
             }
-            return 0;
+            return result;
         }
 
 
         /// <summary>
-        /// Get the total value of the NPC trade area (selected items)
+        /// Get the total value of the PC trade area (selected items)
         /// </summary>
         /// <param name="ApplyLikeDislike"></param>
         /// <param name="appraise_accuracy"></param>
+        /// <param name="applyAccuracy"></param>
         /// <returns></returns>
-        static int GetPCValue(bool ApplyLikeDislike, int appraise_accuracy)
+        static int GetPCValue(bool ApplyLikeDislike=false, int appraise_accuracy = 0, bool applyAccuracy = false)
         {
+            var result = 0;
             for (int i = 0; i < uimanager.NoOfTradeSlots; i++)
             {
                 //if slot select get monetary value, possibly adjusted for likes dislike and player appraisal score
+                var index = uimanager.GetPlayerTradeSlot(i);
+                result += GetTrueItemValue(
+                    ApplyLikeDislike: ApplyLikeDislike, 
+                    appraise_accuracy: appraise_accuracy, 
+                    applyAccuracy: applyAccuracy, 
+                    index: index);
             }
+            return result;
+        }
+
+        private static int GetTrueItemValue(bool ApplyLikeDislike, int appraise_accuracy, bool applyAccuracy, int index)
+        {
+            if (index != -1)
+            {
+                var obj = UWTileMap.current_tilemap.LevelObjects[index];
+                if (obj != null)
+                {
+                    //obj.ObjectQuantity;
+                    var itemvalue = commonObjDat.monetaryvalue(obj.item_id);
+                    if (ApplyLikeDislike)
+                    {//todo
+                        itemvalue = itemvalue * 1;
+                    }
+                    itemvalue = itemvalue * obj.ObjectQuantity;
+                    var quality = obj.quality;
+                    //if coin quality = 0x40
+                    if (
+                        (obj.item_id == 160)
+                        ||
+                        ((_RES != GAME_UW2) && (obj.item_id == 161))
+                        )
+                    {
+                        quality = 0x3F;
+                    }
+
+                    itemvalue = (itemvalue * quality) >> 6;
+                    if (applyAccuracy)
+                    {
+                        itemvalue = Rng.RandomOffset(itemvalue, -appraise_accuracy, +appraise_accuracy);
+                    }
+                    return itemvalue;
+                }
+            }
+
             return 0;
         }
 
