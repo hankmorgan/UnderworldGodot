@@ -3,6 +3,25 @@ namespace Underworld
     //Common data and code for item trading.
     public partial class ConversationVM : UWClass
     {
+
+        /// <summary>
+        /// The trade evaluation that has to be met to allow the NPC to trade. 
+        /// Calculated using random offset and CritterDat[0xEh] bits 0-3
+        /// RNG is seeded by critter item_id
+        /// </summary>
+        public static int TradeThreshold=0;
+
+        /// <summary>
+        /// How much patience the NPC has for bad or insulting trade offers. 
+        /// </summary>
+        public static int TradePatience=0;
+
+
+        /// <summary>
+        /// Measure of how good this NPC is at appraising the value of a trade item.
+        /// </summary>
+        public static int NPCAppraisalAccuracy=0;
+
         /// <summary>
 		/// Pointer to Array in the stack that contains the items the npc likes
 		/// </summary>
@@ -87,6 +106,7 @@ namespace Underworld
                     itemvalue = (itemvalue * quality) >> 6;
                     if (applyAccuracy)
                     {
+                        Rng.r = new System.Random(obj.item_id);//RNG is always re-seeded with item_id before getting offset here
                         itemvalue = Rng.RandomOffset(itemvalue, -appraise_accuracy, +appraise_accuracy);
                     }
                     return itemvalue;

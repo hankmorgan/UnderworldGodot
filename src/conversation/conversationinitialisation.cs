@@ -92,6 +92,14 @@ namespace Underworld
             //npc name and portrait
             uimanager.instance.NPCNameLabel.Text = talker._name;
             uimanager.instance.NPCPortrait.Texture = NPCPortrait(talker);
+
+            //Init conversation trade globals
+            Rng.r = new System.Random(talker.item_id);//rng is always set to npcs item id
+            TradeThreshold = Rng.RandomOffset(critterObjectDat.TradeThreshold(talker.item_id), -25, +25);
+            TradePatience = Rng.RandomOffset(critterObjectDat.TradePatience(talker.item_id), -20, +100); 
+            NPCAppraisalAccuracy = Rng.RandomOffset( (16 - critterObjectDat.TradeAppraisal(talker.item_id)) * 6 , -25,+50); 
+
+
         }
 
         private static int GetConversationNumber(uwObject talker)

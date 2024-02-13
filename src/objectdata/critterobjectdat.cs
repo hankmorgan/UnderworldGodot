@@ -179,6 +179,37 @@ namespace Underworld
         }
 
         /// <summary>
+        /// Used to calculate how good the NPC is at appraising trades offered to it.
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <returns></returns>
+        public static int TradeAppraisal(int item_id)
+        {
+            return ((buffer[CritterOffset(item_id) + 0xD])>>4) & 0xF;
+        }
+
+        /// <summary>
+        /// Used to calculate what trade value evaluation score will a trade offer be accepted.
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <returns></returns>
+        public static int TradeThreshold(int item_id)
+        {
+             return buffer[CritterOffset(item_id) + 0xE] & 0xF;            
+        }
+
+
+        /// <summary>
+        /// How much tolerance the NPC has to bad or insulting trade offers.
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <returns></returns>
+        public static int TradePatience(int item_id)
+        {
+             return (buffer[CritterOffset(item_id) + 0xE]>>4) & 0xF;            
+        }
+
+        /// <summary>
         /// The poison damage the npc is capable of
         /// </summary>
         /// <param name="item_id"></param>
