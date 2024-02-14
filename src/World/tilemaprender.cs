@@ -53,6 +53,7 @@ namespace Underworld
         public const int heading2 = 90;
 
         public static bool EnableCollision = true;
+        public static bool SkipRender = false;
 
         //static int UW_CEILING_HEIGHT;
         static int CEILING_HEIGHT;
@@ -83,7 +84,7 @@ namespace Underworld
                     child.QueueFree();
                 }
             }
-
+            if (SkipRender){return;}
             for (int y = 0; y <= UWTileMap.TileMapSizeY; y++)
             {
                 for (int x = 0; x <= UWTileMap.TileMapSizeX; x++)

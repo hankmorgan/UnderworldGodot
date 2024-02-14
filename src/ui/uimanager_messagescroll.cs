@@ -239,7 +239,7 @@ namespace Underworld
                 }//end loop
                 if (LineToAdd != "")
                 {//Store remaining data
-                    Debug.Print($"{LineToAdd}");
+                    //Debug.Print($"{LineToAdd}");
                     AddLine(newText: LineToAdd, Option: option, Colour: colour);
                 }
             }

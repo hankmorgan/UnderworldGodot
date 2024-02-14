@@ -301,5 +301,27 @@ namespace Underworld
 			Debug.Print($"Imported Variable {varname} not found!");
 			return 0;
 		}
+
+		/// <summary>
+		/// Returns the stack address where a variable is stored at.
+		/// </summary>
+		/// <param name="varname"></param>
+		/// <returns></returns>
+		public static int FindVariableAddress(string varname)
+		{
+			for (int i=0; i<= currentConversation.functions.GetUpperBound(0); i++)
+			{
+				if (currentConversation.functions[i].import_type == 0x010F)
+					{
+						if (varname.ToLower() == currentConversation.functions[i].importname.ToLower())
+							{
+								//Debug.Print($"{varname}  = {at(currentConversation.functions[i].ID_or_Address)}");
+								return currentConversation.functions[i].ID_or_Address;
+							}
+					}
+			}
+			Debug.Print($"Imported Variable {varname} not found!");
+			return 0;
+		}
 	}//end class
 }// end namespace

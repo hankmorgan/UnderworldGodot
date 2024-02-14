@@ -574,8 +574,6 @@ namespace Underworld
 				}
 			}
 			uimanager.instance.convo.Clear();
-			//uimanager.instance.ConversationText.Text = "";
-			uimanager.AddToMessageScroll(""); //temp to clear.
 			InConversation = false;
 		}
 

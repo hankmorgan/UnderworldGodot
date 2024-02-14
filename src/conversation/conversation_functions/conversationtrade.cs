@@ -37,6 +37,8 @@ namespace Underworld
         /// </summary>
         public static int Dislikes = 0;
 
+        public static int TradeResult = 0;
+
         /// <summary>
         /// Get the total value of the players trade area (selected items)
         /// </summary>

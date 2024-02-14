@@ -62,6 +62,13 @@ namespace Underworld
                 case "do_offer":
                     {
                         yield return do_offer();
+                        TradeResult = result_register;
+                        break;
+                    }
+                case "do_demand":
+                    {
+                        yield return do_demand(talker);
+                        TradeResult = result_register;
                         break;
                     }
                 default:
