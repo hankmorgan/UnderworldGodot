@@ -33,10 +33,6 @@ namespace Underworld
 
 			while (!finished)
 			{
-				if (StackValues[362]==-1)
-				{
-					Debug.Print("ELU");
-				}
 				switch (currentConversation.instuctions[instrp])
 				{
 					case cnv_NOP:
@@ -44,7 +40,6 @@ namespace Underworld
 							if (testing){Debug.Print($"{instrp}:NOP");}							
 							break;
 						}
-
 
 					case cnv_OPADD:
 						{
