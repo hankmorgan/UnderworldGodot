@@ -151,6 +151,7 @@ public partial class main : Node3D
 		uimanager.RefreshManaFlask();
 		//set paperdoll
 		uimanager.UpdateInventoryDisplay();
+		uimanager.ConversationText.Text="";
 		//Load rune slots
 		for (int i = 0; i < 24; i++)
 		{
@@ -251,11 +252,18 @@ public partial class main : Node3D
 	{
 		if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
 		{
+			if (MessageDisplay.WaitingForMore)
+			{
+				Debug.Print("End wait due to click");
+				MessageDisplay.WaitingForMore = false;
+				return; //don't process any more clicks here.
+			}
 			if (!blockinput)
 			{
                 if (uimanager.IsMouseInViewPort())
                     uimanager.ClickOnViewPort(eventMouseButton);
             }
+			
 		}
 
 		if (ConversationVM.WaitingForInput)
@@ -271,6 +279,15 @@ public partial class main : Node3D
 						ConversationVM.WaitingForInput = false;
 					}
 				}
+			}
+		}
+		
+		if (MessageDisplay.WaitingForMore)
+		{
+			if (@event is InputEventKey keyinput)
+			{
+				Debug.Print("End wait due to key inputclick");
+				MessageDisplay.WaitingForMore=false;
 			}
 		}
 	}

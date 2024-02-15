@@ -51,7 +51,6 @@ namespace Underworld
             WaitingForInput=true;
             while(WaitingForInput)
             {
-                //Debug.Print("Waiting!");
                 yield return new WaitOneFrame();     
             }
             uimanager.instance.scroll.Clear();

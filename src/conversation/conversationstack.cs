@@ -39,7 +39,7 @@ namespace Underworld
         public static short Pop()
         {  
             var popvalue = StackValues[stackptr];
-            Debug.Print($"Pop {popvalue} from {stackptr}");
+            //Debug.Print($"Pop {popvalue} from {stackptr}");
             stackptr--;            
             return popvalue;
         }
@@ -53,7 +53,7 @@ namespace Underworld
         {
             stackptr++;
             StackValues[stackptr] = newValue;
-            Debug.Print($"Push {newValue} to {stackptr}");
+            //Debug.Print($"Push {newValue} to {stackptr}");
         }
 
         public static void Push(int newValue)
@@ -68,7 +68,7 @@ namespace Underworld
         /// <param name="val">value to set</param>
         public static void Set(int index, short val)
         {
-            Debug.Print($"Set {val} at {index}");
+            //Debug.Print($"Set {val} at {index}");
             StackValues[index] = val;//I hope!
         }
 
@@ -84,7 +84,7 @@ namespace Underworld
 
         public static void set_stackp(int ptr)
         {
-            Debug.Print($"Set StackPtr to {ptr}");
+            //Debug.Print($"Set StackPtr to {ptr}");
             stackptr = ptr;
         }
 

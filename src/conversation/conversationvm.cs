@@ -28,7 +28,7 @@ namespace Underworld
 
 		public static IEnumerator RunConversationVM(uwObject talker)
 		{          
-			bool testing = true;
+			bool testing = false;
 			bool finished = false;
 
 			while (!finished)
