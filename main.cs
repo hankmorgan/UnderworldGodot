@@ -107,6 +107,10 @@ public partial class main : Node3D
 		{
 			//Random r = new Random();
 			playerdat.InitEmptyPlayer();
+			playerdat.max_hp = 60;
+			playerdat.play_hp = 60;
+			playerdat.max_hp = 60;
+			playerdat.play_hp = 60;
 			playerdat.tileX = -(int)(cam.Position.X / 1.2f);
 			playerdat.tileY = (int)(cam.Position.Z / 1.2f);
 			playerdat.dungeon_level = uwsettings.instance.level + 1;

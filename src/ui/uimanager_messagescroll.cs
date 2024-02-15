@@ -107,11 +107,6 @@ namespace Underworld
 
     public class MessageDisplay
     {
-        /// <summary>
-        /// Controls if output is the clickable message scroll used in conversations or the non-clicable conversation scroll.
-        /// </summary>
-        public bool msgScroll = false;
-
         public RichTextLabel[] OutputControl;
 
         public MessageScrollLine[] Lines = new MessageScrollLine[5];
@@ -172,28 +167,22 @@ namespace Underworld
             //yield return 0;
         }
 
+        /// <summary>
+        /// Outputs all text to the control
+        /// </summary>
         private void UpdateMessageDisplay()
         {
-            if (msgScroll)
-            {//add each line to a unique control
-                for (int i = 0; i <= Lines.GetUpperBound(0); i++)
+            //output all text 
+            var output = "";
+            for (int i = 0; i <= Lines.GetUpperBound(0); i++)
+            {
+                if (output.Length > 0)
                 {
-                    OutputControl[i].Text = Lines[i].LineText;
+                    output += "\n";
                 }
+                output += Lines[i].LineText;
             }
-            else
-            {//output all text to a single control.
-                var output = "";
-                for (int i = 0; i <= Lines.GetUpperBound(0); i++)
-                {
-                    if (output.Length > 0)
-                    {
-                        output += "\n";
-                    }
-                    output += Lines[i].LineText;
-                }
-                OutputControl[0].Text = output;
-            }
+            OutputControl[0].Text = output;
         }
 
         public void AddText(string newText, int option = -1, int colour = 0)
@@ -229,7 +218,7 @@ namespace Underworld
                             else
                             {
                                 AddNewLine = true;
-                                Debug.Print($"{LineToAdd}");
+                                //Debug.Print($"{LineToAdd}");
                                 AddLine(newText: LineToAdd, Option: option, Colour: colour);
                                 LineToAdd = Words[WordPtr] + " "; //new word. new line.
                             }
