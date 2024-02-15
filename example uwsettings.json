@@ -1,0 +1,10 @@
+{
+    "pathuw1": "C:\\Games\\UW1\\game\\UW",
+    "pathuw2": "C:\\Games\\UW2IDA\\UW",
+    "gametoload": "UW1",
+    "level": 0,
+    "lightlevel" : 6,
+    "levarkfolder" : "SAVE1",
+    "shader" : "UWSHADER",
+    "FOV" : 75.0
+}
