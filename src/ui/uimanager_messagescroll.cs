@@ -1,6 +1,5 @@
-using System;
 using System.Collections;
-using System.Diagnostics;
+using System.Xml.Schema;
 using Godot;
 using Peaky.Coroutines;
 //using Peaky.Coroutines;
@@ -16,6 +15,12 @@ namespace Underworld
         public MessageDisplay scroll = new();
 
         public MessageDisplay convo = new();
+        
+        /// <summary>
+        /// For future use. Any typed content, eg "other text" in conversations, quantities to be picked up.
+        /// Will auto replace the special text {TYPEDINPUT} in the scrolls.
+        /// </summary>
+        public static string TypedInput;
 
         public static void InitMessageScrolls()
         {
@@ -222,6 +227,8 @@ namespace Underworld
                 }
                 output += Lines[i].LineText;
             }
+            //Replace special characters
+            output = output.Replace("{TYPEDINPUT}", uimanager.TypedInput);
             OutputControl[0].Text = output;            
         }
 
