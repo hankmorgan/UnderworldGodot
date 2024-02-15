@@ -262,6 +262,7 @@ namespace Underworld
         /// <param name="obj"></param>
         public static void OpenDoor(door obj)
         {
+            if (obj.isOpen) {return;}//don't reopen an open door
             if (obj.isMoving){return;} // do not allow door changes when already moving
             obj.uwobject.zpos+=24;            
             if (obj.uwobject.link>0)
@@ -293,6 +294,7 @@ namespace Underworld
         /// <param name="obj"></param>
         public static void CloseDoor(door obj)
         {
+            if (!obj.isOpen) {return;}//don't reclose a closed door
             if (obj.isMoving){return;} // do not allow door changes when already moving
             obj.uwobject.zpos-=24;
             if (TurnIntoMovingDoor(obj))

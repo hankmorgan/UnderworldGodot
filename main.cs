@@ -243,8 +243,11 @@ public partial class main : Node3D
 		if (gameRefreshTimer >= 0.3)
 		{
 			gameRefreshTimer = 0;
-			npc.UpdateNPCs();
-			AnimationOverlay.UpdateAnimationOverlays();
+			if (!ConversationVM.InConversation)
+			{
+				npc.UpdateNPCs();
+				AnimationOverlay.UpdateAnimationOverlays();
+			}
 		}
 	}
 

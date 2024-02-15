@@ -71,6 +71,11 @@ namespace Underworld
                         TradeResult = result_register;
                         break;
                     }
+                case "gronk_door":
+                    {
+                        gronk_door();
+                        break;
+                    }                  
                 default:
                     {
                         Debug.Print($"Unimplemented {func.importname}"); break;
