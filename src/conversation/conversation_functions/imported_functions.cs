@@ -75,7 +75,12 @@ namespace Underworld
                     {
                         gronk_door();
                         break;
-                    }                  
+                    } 
+                case "show_inv":
+                    {
+                        show_inv();
+                        break;
+                    }                 
                 default:
                     {
                         Debug.Print($"Unimplemented {func.importname}"); break;

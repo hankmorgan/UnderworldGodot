@@ -195,5 +195,31 @@ namespace Underworld
             return false;
         }
 
+        /// <summary>
+        /// Creates arrays of the selected items and their item indices
+        /// </summary>
+        /// <param name="itemIds"></param>
+        /// <param name="itemdIndices"></param>
+        /// <returns>No of items</returns>
+        static int GetPlayerSelectedTradeItems(out int[] itemIds, out int[] itemdIndices)
+        {
+            int count=0;
+            itemIds = new int[uimanager.NoOfTradeSlots];
+            itemdIndices = new int[uimanager.NoOfTradeSlots];
+
+            for (int i = 0; i<uimanager.NoOfTradeSlots;i++)
+            {
+                var item =  uimanager.GetPlayerTradeSlot(i);
+                if (item!=-1)
+                {
+                    var obj = UWTileMap.current_tilemap.LevelObjects[item];
+                    itemIds[count] = obj.item_id;
+                    itemdIndices[count] = item;
+                    count++;
+                }
+            }
+            return count;
+        }
+
     } //end class
 }//end namespace
