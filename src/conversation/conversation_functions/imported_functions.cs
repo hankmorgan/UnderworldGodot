@@ -85,7 +85,12 @@ namespace Underworld
                     {
                         give_to_npc(talker);
                         break;
-                    }                     
+                    }   
+                case "take_from_npc":
+                    {
+                        take_from_npc(talker);
+                        break;
+                    }                        
                 default:
                     {
                         Debug.Print($"Unimplemented {func.importname}"); break;
