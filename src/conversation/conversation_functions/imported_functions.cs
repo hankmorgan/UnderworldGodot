@@ -80,7 +80,12 @@ namespace Underworld
                     {
                         show_inv();
                         break;
-                    }                 
+                    }
+                case "give_to_npc":
+                    {
+                        give_to_npc();
+                        break;
+                    }                     
                 default:
                     {
                         Debug.Print($"Unimplemented {func.importname}"); break;
