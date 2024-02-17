@@ -15,7 +15,7 @@ namespace Underworld
         public MessageDisplay scroll = new();
 
         public MessageDisplay convo = new();
-        
+
         /// <summary>
         /// For future use. Any typed content, eg "other text" in conversations, quantities to be picked up.
         /// Will auto replace the special text {TYPEDINPUT} in the scrolls.
@@ -62,10 +62,10 @@ namespace Underworld
         /// <param name="stringToAdd"></param>
         /// <param name="option"></param>
         /// <param name="colour"></param>
-        public static void AddToMessageScroll(string stringToAdd, int option = 0, int colour=0)
+        public static void AddToMessageScroll(string stringToAdd, int option = 0, int colour = 0)
         {
             _ = Peaky.Coroutines.Coroutine.Run(
-            instance.scroll.AddText(newText: stringToAdd, option:option, colour:colour),
+            instance.scroll.AddText(newText: stringToAdd, option: option, colour: colour),
                 main.instance
                 );
         }
@@ -157,7 +157,7 @@ namespace Underworld
                 default:
                     newText = $"[color=#331C13]{newText}[/color]";
                     break;
-            }            
+            }
             if (LinePtr <= Lines.GetUpperBound(0))
             {
                 Lines[LinePtr++].SetLine(newText, Option);
@@ -178,38 +178,42 @@ namespace Underworld
         }
 
 
-        public IEnumerator AddLine(string newText, int Option, int Colour = 0 , bool ForceMore = false)
+        public IEnumerator AddLine(string newText, int Option, int Colour = 0, bool ForceMore = false)
         {
-            if (ForceMore)
-            {//causes [more] to happen without splitting.
-                yield return AddLineWithMore(newText:newText, Option:Option, Colour:ConversationVM.UI_SAY);
-                WaitingForMore = true;
-                while (WaitingForMore)
-                {
-                    yield return new WaitOneFrame();
-                }
-                LinePtr--;//overwrite last line
-            }
-            else
+            if (newText.Trim() != "")
             {
-                var newTextSplit = newText.Split("[MORE]");
-                for (int i = 0; i<=newTextSplit.GetUpperBound(0);i++)
-                {
-                    if (i>0)
+                if (ForceMore)
+                {//causes [more] to happen without splitting.
+                    yield return AddLineWithMore(newText: newText, Option: Option, Colour: ConversationVM.UI_SAY);
+                    WaitingForMore = true;
+                    while (WaitingForMore)
                     {
-                        yield return AddLineWithMore(newText:"[MORE]", Option:Option, Colour:ConversationVM.UI_SAY);
-                        WaitingForMore = true;
-                        while (WaitingForMore)
-                        {
-                            yield return new WaitOneFrame();
-                        }
-                        LinePtr--;//overwrite last line
+                        yield return new WaitOneFrame();
                     }
-                    yield return AddLineWithMore(newText:newTextSplit[i], Option:Option, Colour:Colour);             
-                }    
-                yield return 0;  
+                    LinePtr--;//overwrite last line
+                }
+                else
+                {
+                    var newTextSplit = newText.Split("[MORE]");
+                    for (int i = 0; i <= newTextSplit.GetUpperBound(0); i++)
+                    {
+                        if (i > 0)
+                        {
+                            yield return AddLineWithMore(newText: "[MORE]", Option: Option, Colour: ConversationVM.UI_SAY);
+                            WaitingForMore = true;
+                            while (WaitingForMore)
+                            {
+                                yield return new WaitOneFrame();
+                            }
+                            LinePtr--;//overwrite last line
+                        }
+                        yield return AddLineWithMore(newText: newTextSplit[i], Option: Option, Colour: Colour);
+                    }
+                    yield return 0;
+                }
             }
-                  
+
+
         }
 
         /// <summary>
@@ -229,14 +233,14 @@ namespace Underworld
             }
             //Replace special characters
             output = output.Replace("{TYPEDINPUT}", uimanager.TypedInput);
-            OutputControl[0].Text = output;            
+            OutputControl[0].Text = output;
         }
 
         public IEnumerator AddText(string newText, int option = -1, int colour = 0)
         {
-            int NoOfRowsNeeded = 0;            
+            int NoOfRowsNeeded = 0;
             //split by new lines
-            newText = newText.Replace("\\m"," [MORE] ");
+            newText = newText.Replace("\\m", " [MORE] ");
             var TextLines = newText.Split('\n');
             foreach (var textline in TextLines)
             {//then split by whitespace into words  
@@ -247,7 +251,7 @@ namespace Underworld
                 int WordPtr = 0;
                 for (WordPtr = 0; WordPtr <= Words.GetUpperBound(0); WordPtr++)
                 {
-                    if (NoOfRowsNeeded >= Rows-1)
+                    if (NoOfRowsNeeded >= Rows - 1)
                     {//To force a [more] to appear when text is longer than the control
                         yield return AddLine(newText: "[MORE]", Option: -1, Colour: ConversationVM.UI_SAY, ForceMore: true);
                         NoOfRowsNeeded = 0;
@@ -257,7 +261,7 @@ namespace Underworld
                     if (!firstWord)
                     {
                         LineToAdd = Words[WordPtr] + " ";
-                        firstWord = true;                        
+                        firstWord = true;
                     }
                     else
                     {
@@ -266,7 +270,7 @@ namespace Underworld
                             AddNewLine = false;
                             if (length + Words[WordPtr].Length <= Columns)
                             {//space to add next word
-                                LineToAdd += Words[WordPtr] + " ";                       
+                                LineToAdd += Words[WordPtr] + " ";
                                 WordPtr++;
                             }
                             else
@@ -276,7 +280,7 @@ namespace Underworld
                                 NoOfRowsNeeded++;
                                 LineToAdd = Words[WordPtr] + " "; //new word. new line.
                             }
-                            length = LineToAdd.Length;                            
+                            length = LineToAdd.Length;
                         }//end while
                     }
                 }//end loop

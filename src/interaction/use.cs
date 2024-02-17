@@ -1,3 +1,5 @@
+using System.ComponentModel.Design.Serialization;
+
 namespace Underworld
 {
     /// <summary>
@@ -11,7 +13,7 @@ namespace Underworld
             {
                 return useon.UseOn(index, objList, WorldObject);
             }
-            if (index==-1){return false;}
+            if (index == -1) { return false; }
             trap.ObjectThatStartedChain = index;
             bool result = false;
             if (index <= objList.GetUpperBound(0))
@@ -55,51 +57,51 @@ namespace Underworld
         public static bool UseMajorClass2(uwObject obj, uwObject[] objList, bool WorldObject)
         {
             switch (obj.minorclass)
-                {
-                    case 0:
-                        {
-                            if (obj.classindex<0xF)
-                            {//containers
-                                return container.Use(obj, WorldObject);
-                            }
-                            else
-                            {
-                                //runebag
-                                return runebag.Use(obj, WorldObject);
-                            }
+            {
+                case 0:
+                    {
+                        if (obj.classindex < 0xF)
+                        {//containers
+                            return container.Use(obj, WorldObject);
                         }
-                    case 1:
+                        else
                         {
-                            if (obj.classindex<=7)
-                            {//lights
-                                return light.Use(obj,WorldObject);
-                            } 
-                            else
-                            {
-                                //wands
-                            }                           
-                            break;
+                            //runebag
+                            return runebag.Use(obj, WorldObject);
                         }
-                    case 2:
-                        {   
-                            switch (obj.classindex)
-                            {
-                                case 0xF:
-                                    {//picketwatch in uw2, gold nugget in uw1
-                                        if (_RES==GAME_UW2)
-                                        {
-                                            return pocketwatch.Use(obj, WorldObject);
-                                        }
-                                        break;
+                    }
+                case 1:
+                    {
+                        if (obj.classindex <= 7)
+                        {//lights
+                            return light.Use(obj, WorldObject);
+                        }
+                        else
+                        {
+                            //wands
+                        }
+                        break;
+                    }
+                case 2:
+                    {
+                        switch (obj.classindex)
+                        {
+                            case 0xF:
+                                {//picketwatch in uw2, gold nugget in uw1
+                                    if (_RES == GAME_UW2)
+                                    {
+                                        return pocketwatch.Use(obj, WorldObject);
                                     }
-                            }
-                            break;
+                                    break;
+                                }
                         }
-                    case 3://food
-                        {
-                            return food.Use(obj, WorldObject);
-                        }
-                }
+                        break;
+                    }
+                case 3://food
+                    {
+                        return food.Use(obj, WorldObject);
+                    }
+            }
             return false;
         }
 
@@ -109,23 +111,46 @@ namespace Underworld
             {
                 case 0: //keys up to 0xE
                     {
-                        if (obj.classindex<=0xE)
+                        if (obj.classindex <= 0xE)
                         {
-                            return doorkey.Use(obj,WorldObject);
+                            return doorkey.Use(obj, WorldObject);
                         }
                         break;
                     }
                 case 3: //readables (up to index 8)
                     {
-                        if (obj.classindex <= 8)
+                        if (_RES != GAME_UW2)
                         {
-                            return Readable.LookAt(obj);
+                            switch (obj.classindex)
+                            {
+                                case 0xB:
+                                    return map.Use(obj, WorldObject);
+                                default:
+                                    return Readable.LookAt(obj);
+                            }
                         }
-                        if (((obj.classindex == 0xB) && (_RES!=GAME_UW2)) || ((obj.classindex == 0xA) && (_RES==GAME_UW2)))
-                        {//class 4-2-B in UW1, class 4-2-A in UW2
-                            return map.Use(obj, WorldObject);
+                        else
+                        {//uw2
+                            switch (obj.classindex)
+                            {
+                                case 0x9://a_bit of a map 
+                                    return false;
+                                case 0xA://a_map 
+                                    return map.Use(obj, WorldObject);
+                                case 0xB://a_dead plant 
+                                    return false;
+                                case 0xC://a_dead plant 
+                                    return false;
+                                case 0xD://a_bottle 
+                                    return false;
+                                case 0xE://a_stick 
+                                    return false;
+                                case 0xF://a_resilient sphere 
+                                    return false;
+                                default:
+                                    return Readable.LookAt(obj);
+                            }
                         }
-                        break;
                     }
             }
             return false;

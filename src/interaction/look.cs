@@ -23,7 +23,7 @@ namespace Underworld
                         }
                     case 4:
                         {
-                            result = LookMajorClass4(obj, objList,WorldObject);
+                            result = LookMajorClass4(obj, objList, WorldObject);
                             break;
                         }
                     case 5:
@@ -72,19 +72,40 @@ namespace Underworld
             {
                 case 0: //keys up to 0xE
                     {
-                        if (obj.classindex<=0xE)
+                        if (obj.classindex <= 0xE)
                         {//TODO LOCKPICK is in the middle of all these
-                            return doorkey.LookAt(obj,WorldObject);
+                            return doorkey.LookAt(obj, WorldObject);
                         }
                         break;
                     }
                 case 3: //readables (up to index 8)
                     {
-                        if (obj.classindex <= 8)
+                        if (_RES != GAME_UW2)
                         {
-                            return Readable.LookAt(obj);
+                            switch (obj.classindex)
+                            {
+                                case 0xB:
+                                    return false;
+                                default:
+                                    return Readable.LookAt(obj);
+                            }
                         }
-                        break;
+                        else
+                        {//uw2
+                            switch (obj.classindex)
+                            {
+                                case 0x9://a_bit of a map                                   
+                                case 0xA://a_map                   
+                                case 0xB://a_dead plant 
+                                case 0xC://a_dead plant  
+                                case 0xD://a_bottle 
+                                case 0xE://a_stick 
+                                case 0xF://a_resilient sphere 
+                                    return false;
+                                default:
+                                    return Readable.LookAt(obj);
+                            }
+                        }
                     }
             }
             return false;
@@ -119,7 +140,7 @@ namespace Underworld
         /// <param name="item_id"></param>
         /// <param name="qty"></param>
         /// <returns></returns>
-        public static bool GeneralLookDescription(int item_id, int qty=1)
+        public static bool GeneralLookDescription(int item_id, int qty = 1)
         {
             string output;
             if (commonObjDat.PrintableLook(item_id))
@@ -143,7 +164,7 @@ namespace Underworld
             string output;
             if (commonObjDat.PrintableLook(obj.item_id))
             {
-                output =GameStrings.GetString(1, GameStrings.str_you_see_);
+                output = GameStrings.GetString(1, GameStrings.str_you_see_);
             }
             else
             {
@@ -194,20 +215,20 @@ namespace Underworld
             if (qualitystring.Length > 0) { qualitystring += " "; }
 
             var article = "a ";
-       
+
             string qtystring = "";
             if (qty > 1)
             {
                 qtystring = $"{qty} ";
             }
 
-            if (qty>=2)
+            if (qty >= 2)
             {
                 article = ""; //GetArticle(qtystring);
             }
             else
             {
-                if (qualitystring.Length>0)
+                if (qualitystring.Length > 0)
                 {
                     article = GetArticle(qualitystring);
                 }
@@ -233,7 +254,7 @@ namespace Underworld
             {
                 uimanager.AddToMessageScroll($"{output}");
             }
-            
+
             return true;
         }
 
