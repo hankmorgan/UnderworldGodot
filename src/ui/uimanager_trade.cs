@@ -161,9 +161,9 @@ namespace Underworld
         /// </summary>
         /// <param name="slotno"></param>
         /// <returns></returns>
-        public static int GetPlayerTradeSlot(int slotno, bool ignoreSelected = true)
+        public static int GetPlayerTradeSlot(int slotno, bool OnlySelected = true)
         {
-            if ((PlayerItemSelected[slotno]) | (!ignoreSelected))
+            if ((PlayerItemSelected[slotno]) | (!OnlySelected))
             {
                 return PlayerItemIDs[slotno];
             }

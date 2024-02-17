@@ -83,7 +83,7 @@ namespace Underworld
                     }
                 case "give_to_npc":
                     {
-                        give_to_npc();
+                        give_to_npc(talker);
                         break;
                     }                     
                 default:

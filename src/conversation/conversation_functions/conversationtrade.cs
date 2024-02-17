@@ -221,5 +221,28 @@ namespace Underworld
             return count;
         }
 
+
+        /// <summary>
+        /// Gives the item at the specified index from the trade area to the npc.
+        /// </summary>
+        /// <param name="talker"></param>
+        /// <param name="itemindex"></param>
+        public static void GiveItemIndexToNPC(uwObject talker, int itemindex)
+        {
+            for (int i=0; i<uimanager.NoOfTradeSlots;i++)
+            {
+                var x = uimanager.GetPlayerTradeSlot(i,false);
+                if (x!=-1)
+                    {                       
+                        var obj = UWTileMap.current_tilemap.LevelObjects[x];
+                        //insert to talkers object list
+                        obj.next = talker.link;
+                        talker.link = obj.index;
+                        uimanager.SetPlayerTradeSlot(i,-1,false);
+                        return;
+                    }
+            }
+        }
+
     } //end class
 }//end namespace

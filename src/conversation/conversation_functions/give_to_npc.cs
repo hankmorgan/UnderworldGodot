@@ -4,25 +4,46 @@ namespace Underworld
 {
     public partial class ConversationVM : UWClass
     {
-        public static void give_to_npc()
+        public static void give_to_npc(uwObject talker)
         {
-            switch(_RES)
+            var CountItems_arg1 = GetConvoStackValueAtPtr(stackptr - 2);//how many items to get
+            var ItemIndexToGive_arg2 = at(stackptr - 1); // array of item ids to get.  GetConvoStackValueAtPtr(stackptr-1);
+
+            //Get the player inventory
+            var itemcount = GetPlayerSelectedTradeItems(out int[] itemIds, out int[] itemIndices);
+            if (itemcount >= CountItems_arg1)
+            {
+                bool ItemsGiven = false;
+                for (int s = 0; s < CountItems_arg1; s++)
                 {
-                    case GAME_UW2:
-                        Debug.Print("UW2 variation of give_to_npc()");
-                        break;
-
-                    default:
-                        give_to_npc_uw1();
-                        break;
+                    var itemIndexToFind = at(ItemIndexToGive_arg2 + s);
+                    //loop inventorys to find  matching item
+                    bool itemFound = false;
+                    for (int i = 0; i < uimanager.NoOfTradeSlots && !itemFound; i++)
+                    {
+                        if (itemIndices[i] == itemIndexToFind)
+                        {                            
+                            GiveItemIndexToNPC(talker, itemIndexToFind);
+                            itemFound = true;
+                            ItemsGiven = true;
+                        }
+                    }
                 }
-        }
-
-        static void give_to_npc_uw1()
-        {
-            var arg1 = GetConvoStackValueAtPtr(stackptr-2);
-            var arg2 = GetConvoStackValueAtPtr(stackptr-1);
-            Debug.Print($"{arg1}, {arg2}");
+                if (ItemsGiven)
+                {
+                    result_register = 1;
+                }
+                else
+                {
+                    result_register = 0;
+                }
+                return;
+            }
+            else
+            {//not enough items selected.
+                result_register = 0;
+                return;
+            }
         }
     }//end class
 }//end namespace
