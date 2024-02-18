@@ -610,6 +610,13 @@ namespace Underworld
         }
 
 
+        /// <summary>
+        /// Adds an object from the inventory from inventory to the world
+        /// </summary>
+        /// <param name="objIndex"></param>
+        /// <param name="updateUI"></param>
+        /// <param name="RemoveNext"></param>
+        /// <returns></returns>
         public static int AddInventoryObjectToWorld(int objIndex, bool updateUI, bool RemoveNext)
         {
             var oldObj = InventoryObjects[objIndex];      
@@ -627,6 +634,7 @@ namespace Underworld
             //Now get the index to store at
             //UWTileMap.current_tilemap.StaticFreeListPtr--;
             //Debug.Print($"Allocating {UWTileMap.current_tilemap.StaticFreeListObject} (pointer decremented)");
+           
             var newIndex = ObjectCreator.GetAvailableObjectSlot();
             
             //(short)UWTileMap.current_tilemap.StaticFreeListObject;
@@ -707,15 +715,9 @@ namespace Underworld
                 InventoryObjects[newIndex].DataBuffer[NewObj.PTR+i] = obj.DataBuffer[obj.PTR + i];
                 obj.DataBuffer[obj.PTR + i] = 0;
             }
-            //Destroy the world object instance (but never the underlying uwObject)
-            if (obj.instance!=null)
-            {
-                if (obj.instance.uwnode!=null)
-                {
-                    obj.instance.uwnode.QueueFree();
-                }                
-                obj.instance = null;
-            }
+
+            //Destroy the world object
+            ObjectCreator.RemoveObject(obj);
             return newIndex;
         }
 

@@ -257,6 +257,10 @@ namespace Underworld
             }
             set
             {
+                if (value>max_hp)
+                {
+                    value = max_hp;
+                }
                 SetAt(0x36, (byte)value);
                 uimanager.RefreshHealthFlask();
             }            
@@ -285,6 +289,10 @@ namespace Underworld
             }
             set
             {
+                if (value>max_mana)
+                {
+                    value = max_mana;
+                }
                 SetAt(0x38, (byte)value);
                 uimanager.RefreshManaFlask();
             }

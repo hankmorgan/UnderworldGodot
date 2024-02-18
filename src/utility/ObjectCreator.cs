@@ -96,6 +96,26 @@ namespace Underworld
         }
 
         /// <summary>
+        /// Removes object from the game world
+        /// </summary>
+        /// <param name="obj"></param>
+        public static void RemoveObject(uwObject obj)
+        {
+            //remove from world
+            UWTileMap.current_tilemap.StaticFreeListObject = obj.index;
+            UWTileMap.current_tilemap.StaticFreeListPtr++;
+            if (obj.instance != null)
+            {
+                if (obj.instance.uwnode != null)
+                {
+                    obj.instance.uwnode.QueueFree();
+
+                }
+                obj.instance = null;
+            }
+        }
+
+        /// <summary>
         /// Process object list
         /// </summary>
         /// <param name="worldparent"></param>

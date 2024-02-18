@@ -1088,9 +1088,7 @@ namespace Underworld
             {
                 return obj.ObjectQuantity;
             }
-        }
+        }       
 
     } //end class
-
-
 }//end namespace

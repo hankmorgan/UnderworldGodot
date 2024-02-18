@@ -26,15 +26,9 @@ namespace Underworld
                 obj.tileX= tileX; obj.tileY = tileY;
                 obj.next = t.indexObjectList;
                 t.indexObjectList = (short)index;
-                if (obj.instance!=null)
-                {
-                    //obj.instance.uwnode.Position = obj.GetCoordinate(tileX,tileY);
-                    if (obj.instance.uwnode!=null)
-                    {
-                        obj.instance.uwnode.QueueFree();
-                    }
-                    obj.instance=null;
-                }
+                //remove the old
+                ObjectCreator.RemoveObject(obj);  
+                //create the new              
                 ObjectCreator.RenderObject(obj,UWTileMap.current_tilemap);
                 return true;
             }

@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Diagnostics.Tracing;
 using Godot;
 
 namespace Underworld
@@ -45,6 +46,28 @@ namespace Underworld
                         }
                     case >= 0 and <= 10:
                         {//paperdoll
+                            if (CurrentSlot == 0) //HELM
+                                {
+                                    //try the eat interation.
+                                    if (playerdat.ObjectInHand!=1)
+                                    {
+                                        var objInHand = UWTileMap.current_tilemap.LevelObjects[playerdat.ObjectInHand];
+                                        if (objInHand.majorclass==2 && objInHand.minorclass==3)
+                                        {
+                                            food.Use(objInHand, true);
+                                            return;
+                                        }
+                                        else
+                                        {
+                                            if (food.SpecialFoodCases(
+                                                obj: objInHand, 
+                                                UsedFromInventory: false))
+                                            {//if any food special case occurs exit sub
+                                                return;
+                                            }
+                                        }
+                                    }
+                                }
                             var index = playerdat.AddObjectToPlayerInventory(ObjectToPickup, false);
                             playerdat.SetInventorySlotListHead(CurrentSlot, index);
                             //redraw                
