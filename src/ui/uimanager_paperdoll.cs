@@ -37,7 +37,6 @@ namespace Underworld
         public static int CurrentSlot;
         public static int BackPackStart = 0;
 
-
         public void InitPaperdoll()
         {
             if (UWClass._RES == UWClass.GAME_UW2)
@@ -134,9 +133,9 @@ namespace Underworld
                     if ((slotno >= 11) && (slotno <= 18))
                     {
                         uwObject objAtSlot = null;
-                        if (playerdat.BackPackIndices[slotno - 11] != -1)
+                        if (BackPackIndices[slotno - 11] != -1)
                         {
-                            objAtSlot = playerdat.InventoryObjects[playerdat.BackPackIndices[slotno - 11]];
+                            objAtSlot = playerdat.InventoryObjects[BackPackIndices[slotno - 11]];
                         }
                         SetBackPackArt(
                             slot: slotno - 11,
@@ -461,9 +460,9 @@ namespace Underworld
             //backback
             for (int i = 0; i < 8; i++)
             {
-                if (playerdat.BackPackIndices[i] != -1)
+                if (BackPackIndices[i] != -1)
                 {
-                    var objFound = playerdat.InventoryObjects[playerdat.BackPackIndices[i]];
+                    var objFound = playerdat.InventoryObjects[BackPackIndices[i]];
                     SetBackPackArt(i, uwObject.GetObjectSprite(objFound), uwObject.GetObjectQuantity(objFound));
                 }
                 else
@@ -519,17 +518,74 @@ namespace Underworld
                     case -1://move down
                         BackPackStart += 4;
                         container.DisplayContainerObjects(
-                            obj: playerdat.InventoryObjects[playerdat.OpenedContainer],
+                            obj: playerdat.InventoryObjects[uimanager.OpenedContainerIndex],
                             start: BackPackStart);
                         break;
                     case 1: //move up
                         BackPackStart -= 4;
                         if (BackPackStart < 0) { BackPackStart = 0; }
                         container.DisplayContainerObjects(
-                            obj: playerdat.InventoryObjects[playerdat.OpenedContainer],
+                            obj: playerdat.InventoryObjects[uimanager.OpenedContainerIndex],
                             start: BackPackStart);
                         break;
                 }
+            }
+        }
+
+
+        /// <summary>
+        /// The object containing the opened container. Returns -1 parent is at top level. Assumes container is opened.
+        /// </summary>
+        public static int OpenedContainerParent
+        {
+            get
+            {
+                if (uimanager.OpenedContainerIndex ==-1)
+                {
+                    return -1;
+                }
+                for (int i=0;i<19;i++)
+                {
+                    if(playerdat.GetInventorySlotListHead(i)==uimanager.OpenedContainerIndex)
+                    {
+                        return -1;
+                    }
+                }
+                //try and find in the rest of the inventory
+                foreach (var objToCheck in playerdat.InventoryObjects)
+                {//if this far down then I need to find the container that the closing container sits in
+                    if (objToCheck!=null)
+                    {
+                        var result = objectsearch.GetContainingObject(
+                            ListHead:objToCheck.index, 
+                            ToFind: uimanager.OpenedContainerIndex,
+                            objList: playerdat.InventoryObjects);
+                        if (result!=-1)
+                        {//container found. Browse into it by using it
+                            return result;
+                        }
+                    }
+                }
+                return -1; //not found. assume paperdoll
+            }
+        }
+
+
+        /// <summary>
+        /// Gets a free paperdoll slot
+        /// </summary>
+        public static int FreePaperDollSlot
+        {
+            get
+            {
+            for (int i=11;i<19;i++)
+            {
+                if (playerdat.GetInventorySlotListHead(i)==0)
+                {
+                    return i;
+                }
+            }
+            return -1;
             }
         }
 

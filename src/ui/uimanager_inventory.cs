@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics;
 using Godot;
 
@@ -6,6 +5,15 @@ namespace Underworld
 {
     public partial class uimanager : Node2D
     {
+        /// <summary>
+        /// The currently displayed backpack objects.
+        /// </summary>
+        public static int[] BackPackIndices = new int[8];
+
+        /// <summary>
+        /// The container currently opened on the paperdoll.
+        /// </summary>
+        public static int OpenedContainerIndex=-1;
 
         private static void InteractWithEmptySlot()
         {
@@ -32,7 +40,7 @@ namespace Underworld
                 {
                     case -1:
                         {
-                            playerdat.MoveObjectInHandOutOfOpenedContainer(ObjectToPickup);
+                            MoveObjectInHandOutOfOpenedContainer(ObjectToPickup);
                             break;
                         }
                     case >= 0 and <= 10:
@@ -41,7 +49,7 @@ namespace Underworld
                             playerdat.SetInventorySlotListHead(CurrentSlot, index);
                             //redraw                
                             RefreshSlot(CurrentSlot);
-                            if (ObjectToPickup==playerdat.ObjectInHand)
+                            if (ObjectToPickup == playerdat.ObjectInHand)
                             {
                                 playerdat.ObjectInHand = -1;
                                 instance.mousecursor.ResetCursor();
@@ -51,37 +59,69 @@ namespace Underworld
                         }
                     case >= 11 and <= 18:
                         //backpack
-                        if (playerdat.OpenedContainer < 0)
+                        if (uimanager.OpenedContainerIndex < 0)
                         {//backpackslot
                             var index = playerdat.AddObjectToPlayerInventory(ObjectToPickup, false);
                             playerdat.SetInventorySlotListHead(CurrentSlot, index);
 
                             //redraw
-                            playerdat.BackPackIndices[CurrentSlot - 11] = index;
+                            BackPackIndices[CurrentSlot - 11] = index;
                             RefreshSlot(CurrentSlot);
-                            if (ObjectToPickup==playerdat.ObjectInHand)
-                            {                               
+                            if (ObjectToPickup == playerdat.ObjectInHand)
+                            {
                                 playerdat.ObjectInHand = -1;
-                                instance.mousecursor.ResetCursor();                                
+                                instance.mousecursor.ResetCursor();
                             }
                         }
                         else
                         {
+                            int occupiedslots;
+                            var containerobjects = container.GetObjects(
+                                ContainerIndex: uimanager.OpenedContainerIndex, 
+                                objList: playerdat.InventoryObjects,
+                                OccupiedSlots: out occupiedslots,
+                                start:0,
+                                count:512
+                                );
+                            //find the object that is previous to the current slot.
+                            var start = BackPackStart + CurrentSlot - 11 - 1;
+                            var previousObjectIndex = -1;
+                            while (start>=0)
+                            {
+                                if (containerobjects[start]!=-1)
+                                {
+                                    previousObjectIndex = containerobjects[start];
+                                    break;
+                                }
+                                start--;
+                            }
+
                             //in a container 
                             var index = playerdat.AddObjectToPlayerInventory(ObjectToPickup, false);
                             var newobj = playerdat.InventoryObjects[index];
-                            //add to linked list, for the moment it will be at the head but later on should be at the end (next of the object to it's left)
-                            var opened = playerdat.InventoryObjects[playerdat.OpenedContainer];
-                            newobj.next = opened.link;
-                            opened.link = index;
 
+                            if (previousObjectIndex!=-1)
+                            {
+                                //add as a next to that object
+                                var prev = playerdat.InventoryObjects[previousObjectIndex];
+                                newobj.next = prev.next;
+                                prev.next = newobj.index;
+                            }
+                            else
+                            {
+                                //add to the container link
+                                var opened = playerdat.InventoryObjects[uimanager.OpenedContainerIndex];
+                                newobj.next = opened.link;
+                                opened.link = index;
+                            }
+                            
                             //redraw
-                            playerdat.BackPackIndices[CurrentSlot - 11] = index;
-                            RefreshSlot(CurrentSlot);
-                            if (ObjectToPickup==playerdat.ObjectInHand)
-                            {                                
+                            BackPackIndices[CurrentSlot - 11] = index;
+                            UpdateInventoryDisplay();
+                            if (ObjectToPickup == playerdat.ObjectInHand)
+                            {
                                 playerdat.ObjectInHand = -1;
-                                instance.mousecursor.ResetCursor(); 
+                                instance.mousecursor.ResetCursor();
                             }
                         }
                         break;
@@ -90,9 +130,14 @@ namespace Underworld
             }
         }
 
-        
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="slotname"></param>
+        /// <param name="objAtSlot"></param>
+        /// <param name="isLeftClick"></param>
         private static void InteractWithObjectInSlot(string slotname, int objAtSlot, bool isLeftClick)
         {
             switch (InteractionMode)
@@ -115,14 +160,14 @@ namespace Underworld
                     break;
                 case InteractionModes.ModeLook:
                     look.LookAt(objAtSlot, playerdat.InventoryObjects, false); break;
-                
+
                 case InteractionModes.ModeTalk://same as pickup except no use
                 case InteractionModes.ModePickup:
                     if (slotname == "OpenedContainer")
                     {
                         if ((playerdat.ObjectInHand != -1) && (!isLeftClick))
                         {
-                            playerdat.MoveObjectInHandOutOfOpenedContainer(playerdat.ObjectInHand);
+                            MoveObjectInHandOutOfOpenedContainer(playerdat.ObjectInHand);
                         }
                         else
                         {
@@ -137,24 +182,24 @@ namespace Underworld
                         if (playerdat.ObjectInHand != -1)
                         {
                             //do a use interaction on the object already there. 
-                            playerdat.UseObjectsTogether(playerdat.ObjectInHand, objAtSlot);
+                            uimanager.UseObjectsTogether(playerdat.ObjectInHand, objAtSlot);
                         }
                         else
                         {
-                            if (InteractionMode!=InteractionModes.ModeTalk)
+                            if (InteractionMode != InteractionModes.ModeTalk)
                             {
                                 if (isLeftClick)
-                                    {//use the object at that slot
-                                        use.Use(
-                                            index: objAtSlot,
-                                            objList: playerdat.InventoryObjects,
-                                            WorldObject: false);
-                                    }
+                                {//use the object at that slot
+                                    use.Use(
+                                        index: objAtSlot,
+                                        objList: playerdat.InventoryObjects,
+                                        WorldObject: false);
+                                }
                                 else
-                                    {
-                                        //try and pickup
-                                        playerdat.PickupObjectFromSlot(objAtSlot);
-                                    }
+                                {
+                                    //try and pickup
+                                    PickupObjectFromSlot(objAtSlot);
+                                }
                             }
                             else
                             {//click on a slot in talk mode
@@ -162,7 +207,7 @@ namespace Underworld
                                 {
                                     //check if container.
                                     var obj = playerdat.InventoryObjects[objAtSlot];
-                                    if ((obj.majorclass == 2)&&(obj.minorclass==0)&& (obj.classindex!=0xF))
+                                    if ((obj.majorclass == 2) && (obj.minorclass == 0) && (obj.classindex != 0xF))
                                     {//containers, browse into
                                         use.Use(
                                             index: objAtSlot,
@@ -171,28 +216,28 @@ namespace Underworld
                                     }
                                     else
                                     {
-                                        if ((obj.majorclass == 2)&&(obj.minorclass==0)&& (obj.classindex==0xF))
-                                            {//runebag. ignore.
+                                        if ((obj.majorclass == 2) && (obj.minorclass == 0) && (obj.classindex == 0xF))
+                                        {//runebag. ignore.
 
-                                            }
+                                        }
                                         else
-                                            {//all other objects look at
-                                                look.GeneralLookDescription(obj: obj, OutputConvoScroll:true);
-                                            }
+                                        {//all other objects look at
+                                            look.GeneralLookDescription(obj: obj, OutputConvoScroll: true);
+                                        }
                                     }
                                 }
                                 else
                                 {
                                     //right click pickup in conversation
                                     var obj = playerdat.InventoryObjects[objAtSlot];
-                                    if ((obj.majorclass == 2)&&(obj.minorclass==0))
+                                    if ((obj.majorclass == 2) && (obj.minorclass == 0))
                                     {
-                                        AddToConvoScroll(GameStrings.GetString(1,GameStrings.str_you_cannot_barter_a_container__instead_remove_the_contents_you_want_to_trade_),2);
+                                        AddToConvoScroll(GameStrings.GetString(1, GameStrings.str_you_cannot_barter_a_container__instead_remove_the_contents_you_want_to_trade_), 2);
                                     }
                                     else
                                     {
                                         //try and pickup if not a container
-                                        playerdat.PickupObjectFromSlot(objAtSlot);
+                                        PickupObjectFromSlot(objAtSlot);
                                     }
                                 }
 
@@ -207,7 +252,11 @@ namespace Underworld
         }
 
 
-
+        /// <summary>
+        /// Gets the object at the named inventory slot
+        /// </summary>
+        /// <param name="slotname"></param>
+        /// <returns></returns>
         private static int GetObjAtSlot(string slotname)
         {
             var obj = -1;
@@ -227,15 +276,15 @@ namespace Underworld
                 case "RightRing": { obj = playerdat.RightRing; CurrentSlot = 9; break; }
                 case "LeftRing": { obj = playerdat.LeftRing; CurrentSlot = 10; break; }
 
-                case "Back0": { obj = playerdat.GetBackPackIndex(0); CurrentSlot = 11; break; }
-                case "Back1": { obj = playerdat.GetBackPackIndex(1); CurrentSlot = 12; break; }
-                case "Back2": { obj = playerdat.GetBackPackIndex(2); CurrentSlot = 13; break; }
-                case "Back3": { obj = playerdat.GetBackPackIndex(3); CurrentSlot = 14; break; }
-                case "Back4": { obj = playerdat.GetBackPackIndex(4); CurrentSlot = 15; break; }
-                case "Back5": { obj = playerdat.GetBackPackIndex(5); CurrentSlot = 16; break; }
-                case "Back6": { obj = playerdat.GetBackPackIndex(6); CurrentSlot = 17; break; }
-                case "Back7": { obj = playerdat.GetBackPackIndex(7); CurrentSlot = 18; break; }
-                case "OpenedContainer": { obj = playerdat.OpenedContainer; CurrentSlot = -1; break; }
+                case "Back0": { obj = GetBackPackIndex(0); CurrentSlot = 11; break; }
+                case "Back1": { obj = GetBackPackIndex(1); CurrentSlot = 12; break; }
+                case "Back2": { obj = GetBackPackIndex(2); CurrentSlot = 13; break; }
+                case "Back3": { obj = GetBackPackIndex(3); CurrentSlot = 14; break; }
+                case "Back4": { obj = GetBackPackIndex(4); CurrentSlot = 15; break; }
+                case "Back5": { obj = GetBackPackIndex(5); CurrentSlot = 16; break; }
+                case "Back6": { obj = GetBackPackIndex(6); CurrentSlot = 17; break; }
+                case "Back7": { obj = GetBackPackIndex(7); CurrentSlot = 18; break; }
+                case "OpenedContainer": { obj = uimanager.OpenedContainerIndex; CurrentSlot = -1; break; }
                 default:
                     CurrentSlot = -1;
                     Debug.Print("Unimplemented inventory slot"); break;
@@ -246,6 +295,153 @@ namespace Underworld
 
 
 
+        /// <summary>
+        /// Stores an array listing the currently displayed backpack objects indices
+        /// </summary>
+        /// <param name="slot"></param>
+        /// <param name="obj"></param>
+        public static void SetBackPackIndex(int slot, uwObject obj)
+        {
+            if (obj != null)
+            {
+                BackPackIndices[slot] = obj.index;
+            }
+            else
+            {
+                BackPackIndices[slot] = -1;
+            }
+        }
 
-    }
-}
+        /// <summary>
+        /// Get the index of the object at the currently displayed backpack slot
+        /// </summary>
+        /// <param name="slot"></param>
+        /// <returns></returns>
+        public static int GetBackPackIndex(int slot)
+        {
+            return BackPackIndices[slot];
+        }
+
+
+                /// <summary>
+        /// Uses a srcobject from world on a target object in inventory
+        /// </summary>
+        /// <param name="srcObj"></param>
+        /// <param name="targetObj"></param>
+        public static void UseObjectsTogether(int srcObj, int targetObj)
+        {
+            var target = playerdat.InventoryObjects[targetObj];
+            var source = UWTileMap.current_tilemap.LevelObjects[srcObj];
+
+            if ((target.majorclass == 2) && (target.minorclass == 0) && (target.classindex != 0xF))
+            {
+                //containers excluding the runebag.
+                //add object to container
+                var Added = playerdat.AddObjectToPlayerInventory(srcObj, false);
+                var AddedObj = playerdat.InventoryObjects[Added];
+                AddedObj.next = target.link;
+                target.link = Added;
+                playerdat.ObjectInHand = -1; 
+                uimanager.instance.mousecursor.ResetCursor();
+                return;
+            }
+
+            if ((target.majorclass == 2) && (target.minorclass == 0) && (target.classindex == 0xF))
+            {
+                if (source.majorclass == 3)
+                {
+                    if (
+                        (source.minorclass == 2) && (source.classindex >= 8)
+                        ||
+                         (source.minorclass == 3)
+                    )
+                    {
+                        //the runebag. add to runes if source is a rune.
+                        int runeid = source.item_id - 232;
+                        playerdat.SetRune(runeid, true);
+                        playerdat.ObjectInHand = -1; uimanager.instance.mousecursor.ResetCursor();
+                    }
+                }
+                return;
+            }
+
+            //try item combinations
+            if (objectCombination.TryObjectCombination(target, source))
+            {
+                return;
+            }
+
+            //swap objects otherwise
+            var backup = playerdat.ObjectInHand;
+            PickupObjectFromSlot(targetObj);
+            uimanager.PickupToEmptySlot(backup);    
+            uimanager.UpdateInventoryDisplay();        
+        }  
+
+        public static void PickupObjectFromSlot(int objAtSlot)
+        {
+            var newIndex = playerdat.AddInventoryObjectToWorld(
+                    objIndex: objAtSlot, 
+                    updateUI: true, 
+                    RemoveNext: false);
+            var pickObject = UWTileMap.current_tilemap.LevelObjects[newIndex];
+            playerdat.ObjectInHand = newIndex;
+            uimanager.instance.mousecursor.SetCursorArt(pickObject.item_id);
+        }     
+
+
+        public static void MoveObjectInHandOutOfOpenedContainer(int ObjectToPickup)
+        {
+            //the opened container
+            if (uimanager.OpenedContainerParent == -1)
+            {
+                //on paperdoll. try and add to there
+                var freeslot = uimanager.FreePaperDollSlot;
+                if (freeslot != -1)
+                {
+                    var index = playerdat.AddObjectToPlayerInventory(ObjectToPickup, false);
+                    playerdat.SetInventorySlotListHead(freeslot, index);
+                    if (ObjectToPickup==playerdat.ObjectInHand)
+                    {
+                        playerdat.ObjectInHand = -1;
+                        uimanager.instance.mousecursor.ResetCursor();
+                    }
+
+                }
+                else
+                {
+                    Debug.Print("No room on paperdoll");
+                }
+            }
+            else
+            {
+                //the container that contains the opened container.
+                var index = playerdat.AddObjectToPlayerInventory(playerdat.ObjectInHand, false);
+                var newobj = playerdat.InventoryObjects[index];
+                var container = playerdat.InventoryObjects[uimanager.OpenedContainerParent];
+                newobj.next = container.link;
+                container.link = index;
+                playerdat.ObjectInHand = -1;
+                uimanager.instance.mousecursor.ResetCursor();
+            }
+        }
+
+
+        // /// <summary>
+        // /// Finds and changes the backpack display array for the specific object indices
+        // /// </summary>
+        // /// <param name="index"></param>
+        // /// <param name="newValue"></param>
+        // static void FindAndChangeBackpackIndex(int index, int newValue = -1)
+        // {
+        //     for (int i = 0; i < BackPackIndices.GetUpperBound(0); i++)
+        //     {
+        //         if (BackPackIndices[i] == index)
+        //         {
+        //             BackPackIndices[i] = newValue;
+        //         }
+        //     }
+        // }
+
+    }//end class
+}//end namespace

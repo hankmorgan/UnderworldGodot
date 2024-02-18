@@ -19,7 +19,7 @@ namespace Underworld
                     //set to opened version by setting bit 0 to 1.
                     obj.item_id |= 0x1;
                 }
-                playerdat.OpenedContainer = obj.index;
+                uimanager.OpenedContainerIndex = obj.index;
                 uimanager.SetOpenedContainer(obj.index, uwObject.GetObjectSprite(obj));
                 uimanager.BackPackStart = 0;
                 DisplayContainerObjects(obj);
@@ -49,7 +49,7 @@ namespace Underworld
                 //empty container
                 for (int o=0;o<8;o++)
                 {
-                    playerdat.SetBackPackIndex(o, null);
+                    uimanager.SetBackPackIndex(o, null);
                 }
             }
             else
@@ -60,11 +60,11 @@ namespace Underworld
                     {
                         //render object at this slot
                         var objFound = playerdat.InventoryObjects[objects[o]];
-                        playerdat.SetBackPackIndex(o, objFound);
+                        uimanager.SetBackPackIndex(o, objFound);
                     }
                     else
                     {
-                        playerdat.SetBackPackIndex(o, null);
+                        uimanager.SetBackPackIndex(o, null);
                     }
                 }
             }
@@ -93,13 +93,13 @@ namespace Underworld
                 if (playerdat.GetInventorySlotListHead(p) == obj.index)
                 { //object is on the paperdoll. I can close and return to the top level
                     uimanager.RefreshSlot(p);
-                    playerdat.OpenedContainer = -1;//clear slot graphics
+                    uimanager.OpenedContainerIndex = -1;//clear slot graphics
                     uimanager.SetOpenedContainer(obj.index, -1);
                     //Draw the paperdoll inventory.
                     for (int i = 0; i < 8; i++)
                     {
                         uimanager.SetBackPackArt(i, uwObject.GetObjectSprite(playerdat.BackPackObject(i)), uwObject.GetObjectQuantity(playerdat.BackPackObject(i)));
-                        playerdat.SetBackPackIndex(i, playerdat.BackPackObject(i));
+                        uimanager.SetBackPackIndex(i, playerdat.BackPackObject(i));
                     }
                     uimanager.EnableDisable(uimanager.instance.ArrowUp, false);
                     uimanager.EnableDisable(uimanager.instance.ArrowDown, false);
@@ -112,7 +112,7 @@ namespace Underworld
                 {
                     var result = objectsearch.GetContainingObject(
                         ListHead:objToCheck.index, 
-                        ToFind: playerdat.OpenedContainer,
+                        ToFind: uimanager.OpenedContainerIndex,
                         objList: playerdat.InventoryObjects);
                     if (result!=-1)
                     {//container found. Browse into it by using it

@@ -98,7 +98,7 @@ public partial class main : Node3D
 			cam.Rotate(Vector3.Up, (float)(-playerdat.heading / 127f * Math.PI));
 			for (int i = 0; i < 8; i++)
 			{//Init the backpack indices
-				playerdat.SetBackPackIndex(i, playerdat.BackPackObject(i));
+				uimanager.SetBackPackIndex(i, playerdat.BackPackObject(i));
 			}
 			RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.GetViewingDistance(uwsettings.instance.lightlevel));
 			DrawPlayerPositionSprite(ObjectCreator.grObjects);

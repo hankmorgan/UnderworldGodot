@@ -16,11 +16,6 @@ namespace Underworld
         //public static byte[] InventoryBuffer = new byte[512 * 8];
 
         /// <summary>
-        /// The currently displayed backpack objects.
-        /// </summary>
-        public static int[] BackPackIndices = new int[8];
-
-        /// <summary>
         /// The last item in the inventory
         /// </summary>
         //public static int LastItemIndex;
@@ -43,33 +38,6 @@ namespace Underworld
                 }
         }
 
-
-        /// <summary>
-        /// Stores an array listing the currently displayed backpack objects indices
-        /// </summary>
-        /// <param name="slot"></param>
-        /// <param name="obj"></param>
-        public static void SetBackPackIndex(int slot, uwObject obj)
-        {
-            if (obj != null)
-            {
-                BackPackIndices[slot] = obj.index;
-            }
-            else
-            {
-                BackPackIndices[slot] = -1;
-            }
-        }
-
-        /// <summary>
-        /// Get the index of the object at the currently displayed backpack slot
-        /// </summary>
-        /// <param name="slot"></param>
-        /// <returns></returns>
-        public static int GetBackPackIndex(int slot)
-        {
-            return BackPackIndices[slot];
-        }
 
         /// <summary>
         /// Looks up all inventory slots list indices. starting at helm and ending with backpacks
@@ -468,67 +436,10 @@ namespace Underworld
         }
 
 
-        /// <summary>
-        /// The container currently opened on the paperdoll.
-        /// </summary>
-        public static int OpenedContainer=-1;
 
 
-        /// <summary>
-        /// The object containing the opened container. Returns -1 parent is at top level. Assumes container is opened.
-        /// </summary>
-        public static int OpenedContainerParent
-        {
-            get
-            {
-                if (OpenedContainer==-1)
-                {
-                    return -1;
-                }
-                for (int i=0;i<19;i++)
-                {
-                    if(GetInventorySlotListHead(i)==OpenedContainer)
-                    {
-                        return -1;
-                    }
-                }
-                //try and find in the rest of the inventory
-                foreach (var objToCheck in InventoryObjects)
-                {//if this far down then I need to find the container that the closing container sits in
-                    if (objToCheck!=null)
-                    {
-                        var result = objectsearch.GetContainingObject(
-                            ListHead:objToCheck.index, 
-                            ToFind: OpenedContainer,
-                            objList: InventoryObjects);
-                        if (result!=-1)
-                        {//container found. Browse into it by using it
-                            return result;
-                        }
-                    }
-                }
-                return -1; //not found. assume paperdoll
-            }
-        }
 
-
-        /// <summary>
-        /// Gets a free paperdoll slot
-        /// </summary>
-        public static int FreePaperDollSlot
-        {
-            get
-            {
-            for (int i=11;i<19;i++)
-            {
-                if (GetInventorySlotListHead(i)==0)
-                {
-                    return i;
-                }
-            }
-            return -1;
-            }
-        }
+        
 
 
         /// <summary>
@@ -558,7 +469,7 @@ namespace Underworld
             {
                 if (uimanager.CurrentSlot >= 11)
                 {
-                    BackPackIndices[uimanager.CurrentSlot - 11] = -1;
+                    uimanager.BackPackIndices[uimanager.CurrentSlot - 11] = -1;
                 }
                 uimanager.UpdateInventoryDisplay();
             }
@@ -641,22 +552,6 @@ namespace Underworld
 
         }
 
-
-        /// <summary>
-        /// Finds and changes the backpack display array for the specifice object indices
-        /// </summary>
-        /// <param name="index"></param>
-        /// <param name="newValue"></param>
-        static void FindAndChangeBackpackIndex(int index, int newValue = -1)
-        {
-            for (int i = 0; i < BackPackIndices.GetUpperBound(0); i++)
-            {
-                if (BackPackIndices[i] == index)
-                {
-                    BackPackIndices[i] = newValue;
-                }
-            }
-        }
 
         /// <summary>
         /// Finds the byte that links to the object at index. Returns either a next or link that points to the object
@@ -824,107 +719,7 @@ namespace Underworld
             return newIndex;
         }
 
-        /// <summary>
-        /// Uses a srcobject from world on a target object in inventory
-        /// </summary>
-        /// <param name="srcObj"></param>
-        /// <param name="targetObj"></param>
-        public static void UseObjectsTogether(int srcObj, int targetObj)
-        {
-            var target = InventoryObjects[targetObj];
-            var source = UWTileMap.current_tilemap.LevelObjects[srcObj];
 
-            if ((target.majorclass == 2) && (target.minorclass == 0) && (target.classindex != 0xF))
-            {
-                //containers excluding the runebag.
-                //add object to container
-                var Added = AddObjectToPlayerInventory(srcObj, false);
-                var AddedObj = InventoryObjects[Added];
-                AddedObj.next = target.link;
-                target.link = Added;
-                ObjectInHand = -1; uimanager.instance.mousecursor.ResetCursor();
-                return;
-            }
-
-            if ((target.majorclass == 2) && (target.minorclass == 0) && (target.classindex == 0xF))
-            {
-                if (source.majorclass == 3)
-                {
-                    if (
-                        (source.minorclass == 2) && (source.classindex >= 8)
-                        ||
-                         (source.minorclass == 3)
-                    )
-                    {
-                        //the runebag. add to runes if source is a rune.
-                        int runeid = source.item_id - 232;
-                        SetRune(runeid, true);
-                        ObjectInHand = -1; uimanager.instance.mousecursor.ResetCursor();
-                    }
-                }
-                return;
-            }
-
-            //try item combinations
-            if (objectCombination.TryObjectCombination(target, source))
-            {
-                return;
-            }
-
-            //swap objects otherwise
-            var backup = ObjectInHand;
-            PickupObjectFromSlot(targetObj);
-            uimanager.PickupToEmptySlot(backup);    
-            uimanager.UpdateInventoryDisplay();        
-        }  
-
-        public static void PickupObjectFromSlot(int objAtSlot)
-        {
-            var newIndex = AddInventoryObjectToWorld(
-                    objIndex: objAtSlot, 
-                    updateUI: true, 
-                    RemoveNext: false);
-            var pickObject = UWTileMap.current_tilemap.LevelObjects[newIndex];
-            ObjectInHand = newIndex;
-            uimanager.instance.mousecursor.SetCursorArt(pickObject.item_id);
-        }     
-
-
-        public static void MoveObjectInHandOutOfOpenedContainer(int ObjectToPickup)
-        {
-            //the opened container
-            if (OpenedContainerParent == -1)
-            {
-                //on paperdoll. try and add to there
-                var freeslot = FreePaperDollSlot;
-                if (freeslot != -1)
-                {
-                    var index = AddObjectToPlayerInventory(ObjectToPickup, false);
-                    SetInventorySlotListHead(freeslot, index);
-                    if (ObjectToPickup==ObjectInHand)
-                    {
-                        ObjectInHand = -1;
-                        uimanager.instance.mousecursor.ResetCursor();
-                    }
-
-                }
-                else
-                {
-                    Debug.Print("No room on paperdoll");
-                }
-            }
-            else
-            {
-                //the container that contains the opened container.
-                var index = AddObjectToPlayerInventory(ObjectInHand, false);
-                var newobj = InventoryObjects[index];
-                var container = InventoryObjects[OpenedContainerParent];
-                newobj.next = container.link;
-                container.link = index;
-                ObjectInHand = -1;
-                uimanager.instance.mousecursor.ResetCursor();
-            }
-        }
 
         /// <summary>
         /// Future proof. Will test if player can carry the weight of this object.
