@@ -1,4 +1,6 @@
+using System.Collections;
 using System.ComponentModel.Design.Serialization;
+using System.Diagnostics;
 
 namespace Underworld
 {
@@ -19,6 +21,7 @@ namespace Underworld
             if (index <= objList.GetUpperBound(0))
             {
                 var obj = objList[index];
+                Debug.Print ($"Object {obj.majorclass}-{obj.minorclass}-{obj.classindex} {obj._name}");
                 switch (obj.majorclass)
                 {
                     case 2:
@@ -164,6 +167,17 @@ namespace Underworld
                     {
                         return door.Use(obj);
 
+                    }
+                case 1: //3d models
+                    {
+                        switch (obj.classindex)
+                        {
+                            case 7://a_shrine
+                                {
+                                    return shrine.Use(obj);
+                                   }
+                        }
+                        break;
                     }
                 case 2: //misc objects including readables
                     {

@@ -12,6 +12,7 @@ var _mouse_position = Vector2(0.0, 0.0)
 var _total_pitch = 0.0
 
 var MOUSELOOK = false
+var MOVE = true
 
 # Movement state
 var _direction = Vector3(0.0, 0.0, 0.0)
@@ -77,7 +78,8 @@ func _input(event):
 # Updates mouselook and movement every frame
 func _process(delta):
 	_update_mouselook()
-	_update_movement(delta)
+	if MOVE:
+		_update_movement(delta)
 
 # Updates camera movement
 func _update_movement(delta):

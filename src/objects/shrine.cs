@@ -1,4 +1,7 @@
+using System.Collections;
 using Godot;
+using Peaky.Coroutines;
+
 namespace Underworld
 {
     public class shrine : model3D
@@ -111,6 +114,41 @@ namespace Underworld
         public override int ModelColour(int meshNo)
         {
             return 80; // agold colour
+        }
+
+
+        /// <summary>
+        /// Uses a shrine
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static bool Use(uwObject obj)
+        {//node.Set("variable_name", value);
+            main.gamecam.Set("MOVE", false);
+            MessageDisplay.WaitingForTypedInput = true;
+            uimanager.instance.TypedInput.Text = "";
+            uimanager.instance.scroll.Clear();
+            uimanager.AddToMessageScroll("Chant the mantra {TYPEDINPUT}|");
+            //Add a waiting co-routine to finish this interaction
+
+             _ = Peaky.Coroutines.Coroutine.Run(
+                    ShrineWaitForInput(),
+                main.instance
+                );
+
+            return true;
+        }
+
+        static IEnumerator ShrineWaitForInput()
+        {
+            while (MessageDisplay.WaitingForTypedInput)
+            {
+                yield return new WaitOneFrame();
+            }
+            //parse input
+            uimanager.AddToMessageScroll($"You typed {uimanager.instance.TypedInput.Text}");
+
+            yield return 0;
         }
 
     } //end class

@@ -14,14 +14,21 @@ using Godot.Collections;
 public partial class main : Node3D
 {
 
-	public static bool blockinput
+	/// <summary>
+	/// Blocks input for certain modes
+	/// </summary>
+	public static bool blockmouseinput
 	{
 		get
 		{
 			return
 			 ConversationVM.InConversation
 			 ||
-			 uimanager.InAutomap;
+			 uimanager.InAutomap
+			 ||
+			 MessageDisplay.WaitingForTypedInput
+			 ||
+			 MessageDisplay.WaitingForMore;
 
 			; //TODO and other menu modes that will stop input
 		}
@@ -243,11 +250,20 @@ public partial class main : Node3D
 		if (gameRefreshTimer >= 0.3)
 		{
 			gameRefreshTimer = 0;
-			if (!ConversationVM.InConversation)
+			if (!blockmouseinput)
 			{
 				npc.UpdateNPCs();
 				AnimationOverlay.UpdateAnimationOverlays();
 			}
+		}
+
+		if (MessageDisplay.WaitingForTypedInput)
+		{
+			if (!uimanager.instance.TypedInput.HasFocus())
+			{
+				uimanager.instance.TypedInput.GrabFocus();
+			}
+			uimanager.instance.scroll.UpdateMessageDisplay();
 		}
 	}
 
@@ -261,7 +277,7 @@ public partial class main : Node3D
 				MessageDisplay.WaitingForMore = false;
 				return; //don't process any more clicks here.
 			}
-			if (!blockinput)
+			if (!blockmouseinput)
 			{
                 if (uimanager.IsMouseInViewPort())
                     uimanager.ClickOnViewPort(eventMouseButton);
@@ -273,7 +289,7 @@ public partial class main : Node3D
 		{
 			if (@event is InputEventKey keyinput)
 			{
-				Debug.Print(keyinput.Keycode.ToString());
+				//Debug.Print(keyinput.Keycode.ToString());
 				if (int.TryParse(keyinput.AsText(), out int result))
 				{
 					if ((result > 0) && (result <= ConversationVM.MaxAnswer))
@@ -293,6 +309,29 @@ public partial class main : Node3D
 				MessageDisplay.WaitingForMore=false;
 			}
 		}
-	}
 
+		if (MessageDisplay.WaitingForTypedInput)
+		{
+			if (@event is InputEventKey keyinput)
+			{
+				bool stop = false;
+				switch (keyinput.Keycode)
+				{
+					case Key.Enter:
+						stop= true;
+						break;
+					case Key.Escape:
+						stop = true;
+						uimanager.instance.TypedInput.Text ="";						
+						break;
+				}
+				if (stop)
+				{//end typed input
+					uimanager.instance.scroll.Clear();
+					MessageDisplay.WaitingForTypedInput = false;					
+					gamecam.Set("MOVE", true);//re-enable movement
+				}
+			}
+		}
+	}
 }//end class

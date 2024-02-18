@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Xml.Schema;
 using Godot;
 using Peaky.Coroutines;
 //using Peaky.Coroutines;
@@ -11,16 +10,19 @@ namespace Underworld
         [ExportGroup("Messagescroll")]
         [Export] public RichTextLabel messageScrollUW1;
         [Export] public RichTextLabel messageScrollUW2;
+        
+         /// <summary>
+        /// Any typed content, eg "other text" in conversations, quantities to be picked up.
+        /// Will auto replace the special text {TYPEDINPUT} in the scrolls.
+        /// </summary>
+  
+        [Export] public LineEdit TypedInput;
 
         public MessageDisplay scroll = new();
 
         public MessageDisplay convo = new();
 
-        /// <summary>
-        /// For future use. Any typed content, eg "other text" in conversations, quantities to be picked up.
-        /// Will auto replace the special text {TYPEDINPUT} in the scrolls.
-        /// </summary>
-        public static string TypedInput;
+
 
         public static void InitMessageScrolls()
         {
@@ -112,7 +114,15 @@ namespace Underworld
 
     public class MessageDisplay
     {
+        /// <summary>
+        /// Player has been prompted with a [MORE] wait
+        /// </summary>
         public static bool WaitingForMore = false;
+
+        /// <summary>
+        /// Player has to type input
+        /// </summary>
+        public static bool WaitingForTypedInput = false;
 
         public RichTextLabel[] OutputControl;
 
@@ -219,7 +229,7 @@ namespace Underworld
         /// <summary>
         /// Outputs all text to the control
         /// </summary>
-        private void UpdateMessageDisplay()
+        public void UpdateMessageDisplay()
         {
             //output all text 
             var output = "";
@@ -232,7 +242,7 @@ namespace Underworld
                 output += Lines[i].LineText;
             }
             //Replace special characters
-            output = output.Replace("{TYPEDINPUT}", uimanager.TypedInput);
+            output = output.Replace("{TYPEDINPUT}", uimanager.instance.TypedInput.Text);
             OutputControl[0].Text = output;
         }
 
@@ -296,6 +306,5 @@ namespace Underworld
             }
             yield return 0;
         }
-
     }
 }//end namespace
