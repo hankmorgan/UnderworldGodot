@@ -161,7 +161,19 @@ namespace Underworld
                 case InteractionModes.ModeLook:
                     if (slotname != "OpenedContainer")
                     {
-                        look.LookAt(objAtSlot, playerdat.InventoryObjects, false);
+                        if (isLeftClick)
+                        {
+                            look.LookAt(objAtSlot, playerdat.InventoryObjects, false);
+                        }
+                        else
+                        {
+                            //use
+                            use.Use(
+                                index: objAtSlot,
+                                objList: playerdat.InventoryObjects,
+                                WorldObject: false);
+                        }
+
                     }
                     else
                     {
@@ -201,23 +213,41 @@ namespace Underworld
                             if (InteractionMode != InteractionModes.ModeTalk)
                             {
                                 if (isLeftClick)
-                                {//use the object at that slot
+                                {
+                                    //try and pickup
+                                    PickupObjectFromSlot(objAtSlot);
+                                }
+                                else
+                                {
+                                    //use the object at that slot
                                     use.Use(
                                         index: objAtSlot,
                                         objList: playerdat.InventoryObjects,
                                         WorldObject: false);
-                                }
-                                else
-                                {
-                                    //try and pickup
-                                    PickupObjectFromSlot(objAtSlot);
                                 }
                             }
                             else
                             {//click on a slot in talk mode
                                 if (isLeftClick)
                                 {
-                                    //check if container.
+
+                                    //left click pickup in conversation
+                                    var obj = playerdat.InventoryObjects[objAtSlot];
+                                    if ((obj.majorclass == 2) && (obj.minorclass == 0))
+                                    {
+                                        AddToConvoScroll(GameStrings.GetString(1, GameStrings.str_you_cannot_barter_a_container__instead_remove_the_contents_you_want_to_trade_), 2);
+                                    }
+                                    else
+                                    {
+                                        //try and pickup if not a container
+                                        PickupObjectFromSlot(objAtSlot);
+                                    }
+
+
+
+                                }
+                                else
+                                {//check if container.
                                     var obj = playerdat.InventoryObjects[objAtSlot];
                                     if ((obj.majorclass == 2) && (obj.minorclass == 0) && (obj.classindex != 0xF))
                                     {//containers, browse into
@@ -237,20 +267,7 @@ namespace Underworld
                                             look.GeneralLookDescription(obj: obj, OutputConvoScroll: true);
                                         }
                                     }
-                                }
-                                else
-                                {
-                                    //right click pickup in conversation
-                                    var obj = playerdat.InventoryObjects[objAtSlot];
-                                    if ((obj.majorclass == 2) && (obj.minorclass == 0))
-                                    {
-                                        AddToConvoScroll(GameStrings.GetString(1, GameStrings.str_you_cannot_barter_a_container__instead_remove_the_contents_you_want_to_trade_), 2);
-                                    }
-                                    else
-                                    {
-                                        //try and pickup if not a container
-                                        PickupObjectFromSlot(objAtSlot);
-                                    }
+
                                 }
 
                             }
