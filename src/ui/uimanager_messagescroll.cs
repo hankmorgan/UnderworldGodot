@@ -238,6 +238,10 @@ namespace Underworld
 
         public IEnumerator AddText(string newText, int option = -1, int colour = 0)
         {
+            if (newText.EndsWith("\n"))
+            {//trims an ending new line
+                newText = newText.Substring(0, newText.Length-1);
+            }
             int NoOfRowsNeeded = 0;
             //split by new lines
             newText = newText.Replace("\\m", " [MORE] ");
