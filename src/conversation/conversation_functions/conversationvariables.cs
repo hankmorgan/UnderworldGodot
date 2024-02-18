@@ -205,7 +205,7 @@ namespace Underworld
 							}
 						case "play_poison":
 							{
-								valueToImport = playerdat.play_mana; break;
+								valueToImport = playerdat.play_poison; break;
 							}
 						case "play_drawn":
 							{

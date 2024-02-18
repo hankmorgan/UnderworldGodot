@@ -13,7 +13,7 @@ namespace Underworld
         /// <summary>
         /// The container currently opened on the paperdoll.
         /// </summary>
-        public static int OpenedContainerIndex=-1;
+        public static int OpenedContainerIndex = -1;
 
         private static void InteractWithEmptySlot()
         {
@@ -77,18 +77,18 @@ namespace Underworld
                         {
                             int occupiedslots;
                             var containerobjects = container.GetObjects(
-                                ContainerIndex: uimanager.OpenedContainerIndex, 
+                                ContainerIndex: uimanager.OpenedContainerIndex,
                                 objList: playerdat.InventoryObjects,
                                 OccupiedSlots: out occupiedslots,
-                                start:0,
-                                count:512
+                                start: 0,
+                                count: 512
                                 );
                             //find the object that is previous to the current slot.
                             var start = BackPackStart + CurrentSlot - 11 - 1;
                             var previousObjectIndex = -1;
-                            while (start>=0)
+                            while (start >= 0)
                             {
-                                if (containerobjects[start]!=-1)
+                                if (containerobjects[start] != -1)
                                 {
                                     previousObjectIndex = containerobjects[start];
                                     break;
@@ -100,7 +100,7 @@ namespace Underworld
                             var index = playerdat.AddObjectToPlayerInventory(ObjectToPickup, false);
                             var newobj = playerdat.InventoryObjects[index];
 
-                            if (previousObjectIndex!=-1)
+                            if (previousObjectIndex != -1)
                             {
                                 //add as a next to that object
                                 var prev = playerdat.InventoryObjects[previousObjectIndex];
@@ -114,7 +114,7 @@ namespace Underworld
                                 newobj.next = opened.link;
                                 opened.link = index;
                             }
-                            
+
                             //redraw
                             BackPackIndices[CurrentSlot - 11] = index;
                             UpdateInventoryDisplay();
@@ -159,7 +159,19 @@ namespace Underworld
                     }
                     break;
                 case InteractionModes.ModeLook:
-                    look.LookAt(objAtSlot, playerdat.InventoryObjects, false); break;
+                    if (slotname != "OpenedContainer")
+                    {
+                        look.LookAt(objAtSlot, playerdat.InventoryObjects, false);
+                    }
+                    else
+                    {
+                        //close up opened container.
+                        container.Close(
+                            index: objAtSlot,
+                            objList: playerdat.InventoryObjects);
+                    }
+
+                    break;
 
                 case InteractionModes.ModeTalk://same as pickup except no use
                 case InteractionModes.ModePickup:
@@ -323,7 +335,7 @@ namespace Underworld
         }
 
 
-                /// <summary>
+        /// <summary>
         /// Uses a srcobject from world on a target object in inventory
         /// </summary>
         /// <param name="srcObj"></param>
@@ -341,7 +353,7 @@ namespace Underworld
                 var AddedObj = playerdat.InventoryObjects[Added];
                 AddedObj.next = target.link;
                 target.link = Added;
-                playerdat.ObjectInHand = -1; 
+                playerdat.ObjectInHand = -1;
                 uimanager.instance.mousecursor.ResetCursor();
                 return;
             }
@@ -374,20 +386,20 @@ namespace Underworld
             //swap objects otherwise
             var backup = playerdat.ObjectInHand;
             PickupObjectFromSlot(targetObj);
-            uimanager.PickupToEmptySlot(backup);    
-            uimanager.UpdateInventoryDisplay();        
-        }  
+            uimanager.PickupToEmptySlot(backup);
+            uimanager.UpdateInventoryDisplay();
+        }
 
         public static void PickupObjectFromSlot(int objAtSlot)
         {
             var newIndex = playerdat.AddInventoryObjectToWorld(
-                    objIndex: objAtSlot, 
-                    updateUI: true, 
+                    objIndex: objAtSlot,
+                    updateUI: true,
                     RemoveNext: false);
             var pickObject = UWTileMap.current_tilemap.LevelObjects[newIndex];
             playerdat.ObjectInHand = newIndex;
             uimanager.instance.mousecursor.SetCursorArt(pickObject.item_id);
-        }     
+        }
 
 
         public static void MoveObjectInHandOutOfOpenedContainer(int ObjectToPickup)
@@ -401,7 +413,7 @@ namespace Underworld
                 {
                     var index = playerdat.AddObjectToPlayerInventory(ObjectToPickup, false);
                     playerdat.SetInventorySlotListHead(freeslot, index);
-                    if (ObjectToPickup==playerdat.ObjectInHand)
+                    if (ObjectToPickup == playerdat.ObjectInHand)
                     {
                         playerdat.ObjectInHand = -1;
                         uimanager.instance.mousecursor.ResetCursor();

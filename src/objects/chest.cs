@@ -114,7 +114,7 @@ namespace Underworld
         {
             switch (meshNo)
             {
-                case 1:
+                case 1://TODO IN UW1 these colours are palette cycled
                     return 50;
                 default:
                     return 63;

@@ -258,7 +258,8 @@ namespace Underworld
             set
             {
                 SetAt(0x36, (byte)value);
-            }
+                uimanager.RefreshHealthFlask();
+            }            
         }
 
 
@@ -285,6 +286,7 @@ namespace Underworld
             set
             {
                 SetAt(0x38, (byte)value);
+                uimanager.RefreshManaFlask();
             }
         }
 
@@ -363,6 +365,7 @@ namespace Underworld
                             break;
                         }
                 }
+                uimanager.RefreshHealthFlask();
             }
 
         }
