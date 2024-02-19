@@ -855,6 +855,5 @@ namespace Underworld
             var stringno = fullstringno & 0x1FF;
             return GetString(BlockNo, stringno);
         }
-
     } //end class
 } //end namespace

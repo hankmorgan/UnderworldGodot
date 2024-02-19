@@ -43,7 +43,7 @@ namespace Underworld
         /// <summary>
 		/// Updates the stats display panel
 		/// </summary>
-		private void PrintStatsDisplay()
+		public void PrintStatsDisplay()
 		{
 			Charname.Text = playerdat.CharName.ToUpper();
 			CharClass.Text = GameStrings.GetString(2, 23 + playerdat.CharClass).ToUpper();
@@ -62,12 +62,12 @@ namespace Underworld
 				{
 					//display training points
 					StatsName.Text= "Skill Pt\n";
-					StatsValue.Text = $"{playerdat.TrainingPoints}\n";
+					StatsValue.Text = $"{playerdat.SkillPoints}\n";
 				}
 				else
 				{//display stat
 					StatsName.Text += $"{GameStrings.GetString(2,30+StatsOffset+s).ToUpper()}\n";
-					StatsValue.Text += $"{playerdat.GetSkillValue(StatsOffset+s)}\n";
+					StatsValue.Text += $"{playerdat.GetSkillValue(StatsOffset+s-1)}\n";
 				}
 			}
 		}

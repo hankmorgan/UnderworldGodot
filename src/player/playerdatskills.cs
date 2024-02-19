@@ -18,8 +18,7 @@ namespace Underworld
 
 
     public static SkillCheckResult SkillCheck(int skillValue, int targetValue)
-    {
-        
+    {        
         int score = (skillValue - targetValue) + Rng.r.Next(0, 30); //0 to 29;
 
         if (score < 0x1d)
@@ -99,17 +98,6 @@ namespace Underworld
             }
         }
 
-
-        /// <summary>
-        /// The training points available to spend on skill ups
-        /// </summary>
-        public static int TrainingPoints
-        {
-            get { return GetAt(0x53); }
-            set { SetAt(0x53, (byte)value); }
-        }
-
-
         /// <summary>
         /// The player strength
         /// </summary>
@@ -159,15 +147,57 @@ namespace Underworld
         //Character skills
 
         /// <summary>
+        /// Gets the str, dex or int score
+        /// </summary>
+        /// <param name="attributeNo"></param>
+        /// <returns></returns>
+        public static int GetAttributeValue (int attributeNo)
+        {
+            return (int)GetAt(0x1F+attributeNo);
+        }
+
+
+        /// <summary>
         /// Gets the skill from attack=1 upwards
         /// </summary>
         /// <param name="skillNo"></param>
         /// <returns></returns>
          public static int GetSkillValue (int skillNo)
          {
-            return (int)GetAt(0x21+skillNo);
+            return (int)GetAt(0x22+skillNo);
          }
 
+
+        /// <summary>
+        /// Sets the skills at the index (attack = 1 upwards) to the specified value
+        /// </summary>
+        /// <param name="skillNo"></param>
+        /// <param name="value"></param>
+         public static void SetSkillValue(int skillNo, int value)
+         {
+            if (value>30)
+            {
+                value = 30;
+            }
+            SetAt(0x22+skillNo, (byte)value);
+         }
+
+
+        public static void SetDungeonLore(int dungeon, int newLore)
+        {
+            switch (_RES)
+                {   
+                    case GAME_UW2:
+                        Debug.Print("Lore increase in UW2");
+                        return;//TODO
+                    default:           
+                        if (dungeon <=8)
+                        {
+                        SetAt(0xC3 + dungeon, (byte)newLore);
+                        }  
+                        break;
+                }
+        }
 
         public static int Attack
         {
@@ -390,5 +420,108 @@ namespace Underworld
             }
         }
 
-    }
+        /// <summary>
+        /// Gets which of strength, dex or int 
+        /// </summary>
+        /// <param name="skillno"></param>
+        /// <returns></returns>
+        public static int GetGoverningAttribute(int skillno)
+        {
+            if (skillno<7)
+            {
+                return 0;
+            }
+            if (skillno<10)
+            {
+                return 2;
+            }
+            return 1;
+        }
+
+        /// <summary>
+        /// Skillpoints available to spend
+        /// </summary>
+        public static int SkillPoints
+        {
+            get
+            {
+                return GetAt(0x53);
+            }
+            set
+            {
+                SetAt(0x53, (byte)value);
+            }
+        }
+
+        /// <summary>
+        /// Skillpoints at last exp gain.
+        /// Stores the skillpoints from the last time the char gained exp. Used to calc if new skillpoints are to be awarded at exp gain. Checked against exp/1500
+        /// </summary>
+        public static int SkillPointsTotal
+        {
+            get
+            {
+                return GetAt(0x54);
+            }
+            set
+            {
+                SetAt(0x54, (byte)value);
+            }
+        }
+
+
+        /// <summary>
+        /// Increases the specified skill based on attributes and current skill level
+        /// </summary>
+        /// <param name="skillno"></param>
+        /// <returns>1 if skill increases, 0 if no increase</returns>
+        public static int IncreaseSkill(int skillno)
+        {
+            int[] governingRngRanges = new int[]{0x19,0x28,0xA};
+            var governingAttribute = GetGoverningAttribute(0);
+            
+            int skillvalue = GetSkillValue(skillno);
+            int attributeValue = GetAttributeValue(governingAttribute);
+
+            if ((attributeValue<<1) < skillvalue)
+            {//cap skill at 2xAttribute value
+                return 0;
+            }
+            if (skillvalue>=30)
+            { //already at max
+                return 0;
+            }            
+            //increment by 1
+            skillvalue++;
+            SetSkillValue(skillNo: skillno, value: skillvalue);
+
+            if (governingAttribute!=0)
+            {
+                if (governingAttribute/2 > skillvalue)
+                {//gain another point when skill is less than half the attribute
+                    skillvalue++;
+                    SetSkillValue(skillNo: skillno, value: skillvalue);
+                }
+                if (skillvalue < governingAttribute)
+                {//if skill is still less than attribute. add another point based on rng
+                    var r = Rng.r.Next(governingRngRanges[governingAttribute]);
+                    if (r < governingAttribute - skillvalue)
+                    {
+                        skillvalue++;
+                        SetSkillValue(skillNo: skillno, value: skillvalue);
+                    }
+                }
+            }
+
+            if (skillno==8 && dungeon_level<=8)
+            {
+                //A lore skill increase has occured.
+                //we need to store the lore values per dungeon level and reset
+                //object  identification bits on every sprite object in the level.
+                //but oddly enough not on objects the player has in inventory?!?
+                SetDungeonLore(dungeon_level, Lore);
+            }            
+            return 1;
+        }
+    }//end class
 }//end namespace

@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using Godot;
 using Peaky.Coroutines;
 
@@ -131,10 +133,10 @@ namespace Underworld
             uimanager.AddToMessageScroll("Chant the mantra {TYPEDINPUT}|");
             //Add a waiting co-routine to finish this interaction
 
-             _ = Peaky.Coroutines.Coroutine.Run(
-                    ShrineWaitForInput(),
-                main.instance
-                );
+            _ = Peaky.Coroutines.Coroutine.Run(
+                   ShrineWaitForInput(),
+               main.instance
+               );
 
             return true;
         }
@@ -145,11 +147,157 @@ namespace Underworld
             {
                 yield return new WaitOneFrame();
             }
+
             //parse input
-            uimanager.AddToMessageScroll($"You typed {uimanager.instance.TypedInput.Text}");
+            var toMatch = uimanager.instance.TypedInput.Text.ToUpper();
+            var mantra = -1;
+            for (int mIndex = 0; mIndex <= 25; mIndex++)
+            {
+                if (GameStrings.GetString(2, 51 + mIndex).ToUpper() == toMatch)
+                {
+                    mantra = mIndex;
+                    break;
+                }
+            }
+            if (mantra == -1)
+            { //no match
+                uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_that_is_not_a_mantra_));
+                yield return 0;
+            }
+            else
+            {
+                if (mantra <= 19)
+                {
+                    if (playerdat.SkillPoints > 0)
+                    {
+                        AdvanceGreatly(mantra);
+                    }
+                    else
+                    {
+                        uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_are_not_ready_to_advance_));
+                    }
+                }
+                else
+                {
+                    ProcessSpecialMantra(mantra-20);//quest mantras and the mantras that increase multiple skills
+                }
+            }
+
+            //refresh ui elements
+            uimanager.instance.PrintStatsDisplay();
+            uimanager.RefreshManaFlask();
 
             yield return 0;
         }
 
+        /// <summary>
+        /// Process the special quest mantras and the mantras that update a set of skills
+        /// </summary>
+        /// <param name="mantra"></param>
+        private static void ProcessSpecialMantra(int mantra)
+        {
+            {
+                var NoOfSkillsToImprove = -1;
+                var BaseSkillOffset = -1;
+                var NoOfSkillsInGroup = -1;
+                switch (mantra)
+                {
+                    case 0://inform avatar where the cup of wonder is relative to position
+                        uimanager.AddToMessageScroll("TODO: The Cup of Wonder"); break;
+                    case 1://key of truth
+                        uimanager.AddToMessageScroll("TODO: The Key of truth"); break;
+                    case 2:// the unused NO mantra
+                        break;
+                    case 3://attack skills
+                        NoOfSkillsInGroup = 7; BaseSkillOffset = 0; NoOfSkillsToImprove = 3; break;
+                    case 4://magic skills
+                        NoOfSkillsInGroup = 3; BaseSkillOffset = 7; NoOfSkillsToImprove = 2; break;
+                    case 5://other skills
+                        NoOfSkillsInGroup = 10; BaseSkillOffset = 10; NoOfSkillsToImprove = 4; break;
+                }
+
+                if (NoOfSkillsToImprove > 0)
+                {
+                    if (playerdat.SkillPoints > 0)
+                    {
+                        var SkillsHaveImproved = false;
+                        var SkillsImproved = new List<string>();
+                        while (NoOfSkillsToImprove > 0)
+                        {
+                            //pick a random skill
+                            var skillNo = Rng.r.Next(BaseSkillOffset, BaseSkillOffset + NoOfSkillsInGroup);
+                            var result = playerdat.IncreaseSkill(skillNo);
+                            if (result != 0)
+                            {
+                                SkillsHaveImproved = true;
+                                SkillsImproved.Add(GameStrings.GetString(2, 0x1F + skillNo));
+                            }
+                            NoOfSkillsToImprove--;
+                        }
+
+                        if (SkillsHaveImproved)
+                        {//print messsage
+                            var index = 1;
+                            var msg = $"{GameStrings.GetString(1, GameStrings.str_you_have_advanced_in_)}";
+                            foreach (var skillname in SkillsImproved)
+                            {
+                                if (SkillsImproved.Count > 1)
+                                {
+                                    if (index == SkillsImproved.Count)
+                                    {
+                                        //insert and
+                                        msg += " and ";
+                                    }
+                                    else
+                                    {
+                                        if (index > 1)
+                                        {
+                                            msg += ", ";
+                                        }                                        
+                                    }
+                                    msg += skillname;
+                                }
+                                index++;
+                            }
+                            playerdat.SkillPoints--; //decrement points
+                            uimanager.AddToMessageScroll(msg);
+                        }
+                        else
+                        {
+                            uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_are_not_ready_to_advance_));
+                        }
+                    }
+                    else
+                    {
+                        uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_are_not_ready_to_advance_));
+                    }
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Advances a single skill greatly.
+        /// </summary>
+        /// <param name="skillNo"></param>
+        private static void AdvanceGreatly(int skillNo)
+        {
+            var result1 = playerdat.IncreaseSkill(skillNo);//test attack increase
+            var result2 = playerdat.IncreaseSkill(skillNo);
+            var skillname = GameStrings.GetString(2, 0x1F + skillNo);
+
+            if ((result1 != 0) || (result2 != 0))
+            {
+                uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_knowledge_and_understanding_fill_you_));
+                playerdat.SkillPoints--;
+
+                var msg = $"{GameStrings.GetString(1, GameStrings.str_you_have_advanced_greatly_in_)}{skillname}";
+                uimanager.AddToMessageScroll(msg);
+            }
+            else
+            {//no skill gain
+                uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_cannot_advance_any_further_in_that_skill_));
+            }
+        }
     } //end class
 } //end namespace
