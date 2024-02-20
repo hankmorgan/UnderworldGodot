@@ -625,10 +625,12 @@ namespace Underworld
             if (oldObj.link != 0 && oldObj.is_quant == 0)
             {
                 oldObj.link = (short)AddInventoryObjectToWorld(oldObj.link,false,true);
+                Debug.Print ($"Link is now {oldObj.link}");
             }
             if (oldObj.next!=0 && RemoveNext)
             {
                 oldObj.next = (short)AddInventoryObjectToWorld(oldObj.next,false,true);
+                Debug.Print ($"Next is now {oldObj.next}");
             }
 
             //Now get the index to store at
@@ -666,10 +668,12 @@ namespace Underworld
             if (oldObj.link != 0 && oldObj.is_quant == 0)
             {
                 oldObj.link = AddObjectToPlayerInventory(oldObj.link,true);
+                Debug.Print($"link is now {oldObj.link}");
             }
             if (oldObj.next != 0 && IncludeNext)
             {
                 oldObj.next = AddObjectToPlayerInventory(oldObj.next,true);
+                Debug.Print($"Next is now {oldObj.next}");
             }
             
             var newIndex = MoveObjectToInventoryData(objIndex);
@@ -683,22 +687,23 @@ namespace Underworld
         /// <returns></returns>
         private static int MoveObjectToInventoryData(int objIndex)
         {
+           
             var obj = UWTileMap.current_tilemap.LevelObjects[objIndex];
-            if (objIndex >= 256)
-            {
-                //Add to static free list                
-                Debug.Print($"Freeing {objIndex} (pointer incremented)");
-                UWTileMap.current_tilemap.StaticFreeListObject = objIndex;
-                UWTileMap.current_tilemap.StaticFreeListPtr++;
-            }
-            else
-            {
-                // TODO mobile              //Add to mobile free list
-                // UWTileMap.current_tilemap.MobileFreeListPtr++;
-                // UWTileMap.current_tilemap.MobileFreeListObject = objIndex;
-            }
+            // if (objIndex >= 256)
+            // {
+            //     //Add to static free list                
+            //     Debug.Print($"Freeing {objIndex} (pointer incremented)");
+            //     UWTileMap.current_tilemap.StaticFreeListObject = objIndex;
+            //     UWTileMap.current_tilemap.StaticFreeListPtr++;
+            // }
+            // else
+            // {
+            //     // TODO mobile              //Add to mobile free list
+            //     // UWTileMap.current_tilemap.MobileFreeListPtr++;
+            //     // UWTileMap.current_tilemap.MobileFreeListObject = objIndex;
+            // }
             var newIndex =  NextFreeInventorySlot; //++LastItemIndex;
-
+            Debug.Print($"Moving object at index {objIndex} to {newIndex}");
             InventoryObjects[newIndex] = new uwObject
             {
                 isInventory = true,

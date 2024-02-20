@@ -105,7 +105,7 @@ namespace Underworld
                 case ObjectListType.StaticList:
                     //Move PTR down, get object at that point.
                     UWTileMap.current_tilemap.StaticFreeListPtr--;
-                    Debug.Print ($"Allocating {UWTileMap.current_tilemap.StaticFreeListObject} Pointer decremented");
+                    Debug.Print ($"Allocating {UWTileMap.current_tilemap.StaticFreeListObject} Pointer decremented to {UWTileMap.current_tilemap.StaticFreeListPtr}");
                     return UWTileMap.current_tilemap.StaticFreeListObject;
                 case ObjectListType.MobileList:
                     return 0; //TODO
@@ -118,10 +118,12 @@ namespace Underworld
         /// </summary>
         /// <param name="obj"></param>
         public static void RemoveObject(uwObject obj)
-        {
+        {            
             //remove from world
             UWTileMap.current_tilemap.StaticFreeListObject = obj.index;
             UWTileMap.current_tilemap.StaticFreeListPtr++;
+            Debug.Print ($"Freeing {obj.index} Pointer incremented to {UWTileMap.current_tilemap.StaticFreeListPtr}");
+            
             if (obj.instance != null)
             {
                 if (obj.instance.uwnode != null)
