@@ -30,6 +30,24 @@ namespace Underworld
         };
 
         /// <summary>
+        /// Spawns an object directly in hand
+        /// </summary>
+        /// <param name="itemid"></param>
+        /// <returns></returns>
+        public static int SpawnObjectInHand(int itemid, bool changeInteractionmode = true)
+        {
+            var slot = ObjectCreator.PrepareNewObject(itemid);
+            var obj = UWTileMap.current_tilemap.LevelObjects[slot];
+            playerdat.ObjectInHand = slot;
+            uimanager.instance.mousecursor.SetCursorArt(obj.item_id);
+            if (changeInteractionmode)
+            {
+                uimanager.instance.InteractionModeToggle(uimanager.InteractionModes.ModePickup);
+            }
+            return slot;
+        }
+
+        /// <summary>
         /// Allocates data for a new object
         /// </summary>
         /// <param name="item_id"></param>

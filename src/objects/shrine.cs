@@ -209,7 +209,12 @@ namespace Underworld
                         }
                         break;
                     case 1://key of truth
-                        uimanager.AddToMessageScroll("TODO: The Key of truth"); break;
+                        if (!playerdat.GotKeyOfTruth)
+                        {
+                            SpawnKeyOfTruth();
+                            uimanager.AddToMessageScroll(GameStrings.GetString(1,GameStrings.str_none_of_your_skills_improved_)); 
+                        }
+                        break;
                     case 2:// the unused NO mantra
                         break;
                     case 3://attack skills
@@ -386,6 +391,18 @@ namespace Underworld
                         return 0;
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Spawns the key of truth.
+        /// </summary>
+        public static void SpawnKeyOfTruth()
+        {
+            if (playerdat.ObjectInHand==-1)
+            {//player not holding anything
+                ObjectCreator.SpawnObjectInHand(225);
+                playerdat.GotKeyOfTruth = true;
             }
         }
     } //end class

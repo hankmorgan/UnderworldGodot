@@ -7,6 +7,20 @@ namespace Underworld
     public partial class playerdat : Loader
     {
 
+        public static bool GotKeyOfTruth
+        {
+            get
+            {
+                return ((GetAt(0x61) >>6 ) & 1) == 1;
+            }
+            set
+            {
+                var tmp = GetAt(0x61);
+                tmp |= (1<<6);               
+                SetAt(0x61, tmp);
+            }
+        }
+
         public static bool GotCupOfWonder
         {
             get

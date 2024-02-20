@@ -14,7 +14,7 @@ namespace Underworld
         {
             if (!ConversationVM.InConversation)
             {
-                Debug.Print($"Press event {eventcount++} ");
+                //Debug.Print($"Press event {eventcount++} ");
                 uimanager.instance.InteractionModeToggle(index);
             }
         }

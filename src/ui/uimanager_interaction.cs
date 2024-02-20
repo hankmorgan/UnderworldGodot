@@ -90,7 +90,7 @@ namespace Underworld
 
         public void InteractionModeToggle(InteractionModes index)
         {
-            Debug.Print($"Press {index}");
+            //Debug.Print($"Press {index}");
 
             if (UWClass._RES == UWClass.GAME_UW2)
             {
