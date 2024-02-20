@@ -203,7 +203,11 @@ namespace Underworld
                 switch (mantra)
                 {
                     case 0://inform avatar where the cup of wonder is relative to position
-                        uimanager.AddToMessageScroll("TODO: The Cup of Wonder"); break;
+                        if (!playerdat.GotCupOfWonder)
+                        {
+                            DetectCupOfWonder(); 
+                        }
+                        break;
                     case 1://key of truth
                         uimanager.AddToMessageScroll("TODO: The Key of truth"); break;
                     case 2:// the unused NO mantra
@@ -297,6 +301,91 @@ namespace Underworld
             else
             {//no skill gain
                 uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_cannot_advance_any_further_in_that_skill_));
+            }
+        }
+
+        /// <summary>
+        /// Identifies where the cup of wonder can be found
+        /// </summary>
+        private static void DetectCupOfWonder()
+        {
+            var targetDungeon = 3;
+
+            var cupstring = GameStrings.GetString(1, 35);//the cup of wonder is
+            string direction = GameStrings.GetString(1, 36 + GetDirectionHeadingToCup());
+            string Level;
+            if (playerdat.dungeon_level==targetDungeon)
+            {
+                Level ="very near";
+            }
+            else
+            {
+                Level = GameStrings.GetString(1, playerdat.dungeon_level + 0x33 - targetDungeon);
+            }
+
+            uimanager.AddToMessageScroll($"{cupstring}{direction} and {Level}");
+        }
+
+        /// <summary>
+        /// Gets the direction string no to the targetx/y from the player
+        /// </summary>
+        /// <param name="targetX"></param>
+        /// <param name="targetY"></param>
+        /// <returns></returns>
+        private static int GetDirectionHeadingToCup(int targetX = 24, int targetY = 45)
+        {
+            var x = targetX - playerdat.tileX;
+            var y = targetY - playerdat.tileY;
+
+            if (Math.Abs(x)/2 > Math.Abs(y))
+            {
+                if (x<=0)
+                {
+                    return 6;
+                }
+                else
+                {
+                    return 2;
+                }
+            }
+            else
+            {
+                if (Math.Abs(y)/2 <= Math.Abs(x))
+                {
+                    if (x>=0)
+                    {
+                        if (y>=0)
+                        {
+                            return 0;
+                        }
+                        else
+                        {
+                            return 2;
+                        }
+                    }
+                    else
+                    {
+                        if (y<=0)
+                        {
+                            return 5;
+                        }
+                        else
+                        {
+                            return 7;
+                        }
+                    }
+                }
+                else
+                {
+                    if (y<=0)
+                    {
+                        return 4;
+                    }
+                    else
+                    {
+                        return 0;
+                    }
+                }
             }
         }
     } //end class
