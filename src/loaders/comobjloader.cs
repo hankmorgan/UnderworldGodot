@@ -47,9 +47,9 @@ namespace Underworld
         /// </summary>
         /// <param name="item_id"></param>
         /// <returns></returns>
-        public static bool canbepickedup(int item_id)
+        public static bool CanBePickedUp(int item_id)
         {//bit 5 at + 3
-            return (buffer[2 + item_id * 11 + 3] & 0x1)==1;
+            return ((buffer[2 + item_id * 11 + 3] >>5) & 0x1)==1;
         }
 
         /// <summary>

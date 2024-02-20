@@ -43,6 +43,12 @@ namespace Underworld
             else
             {
                 var obj = objList[index];
+
+                if (!commonObjDat.CanBePickedUp(obj.item_id))
+                {//object cannot be picked up
+                    uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_cannot_pick_that_up_));
+                    return false;
+                }
                 //player is trying to pick something up
                 playerdat.ObjectInHand = index;
                 uimanager.instance.mousecursor.SetCursorArt(obj.item_id);
