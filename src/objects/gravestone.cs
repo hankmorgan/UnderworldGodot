@@ -1,15 +1,71 @@
+using System.Collections;
 using Godot;
+using Peaky.Coroutines;
+
 namespace Underworld
 {
     public class gravestone : model3D
     {
+
+        public static bool Use(uwObject obj)
+        {
+            DisplayGrave(obj);
+
+             _ = Peaky.Coroutines.Coroutine.Run(
+                    DisplayGrave(obj),
+                    main.instance
+               );
+
+            return true;
+        }
+
+        /// <summary>
+        /// Displays the grave cutscene
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        private static IEnumerator DisplayGrave(uwObject obj)
+        {
+            var graveid = GetGraveID(obj);
+            var cuts = new CutsLoader("cs401.n01");
+            uimanager.AddToMessageScroll(GameStrings.GetString(8, obj.link - 512));           
+            uimanager.CutsSmall.Texture = cuts.LoadImageAt(graveid);
+            uimanager.CutsSmall.Material = cuts.GetMaterial(graveid);
+            uimanager.EnableDisable(uimanager.CutsSmall, true);
+            MessageDisplay.WaitingForMore=true;
+            while(MessageDisplay.WaitingForMore)
+            {//wait until key input before clearing the image
+                yield return new WaitOneFrame();
+            }
+            uimanager.EnableDisable(uimanager.CutsSmall, false);
+            yield return 0;
+        }
+
+        /// <summary>
+        /// Opens graves.dat to get the correct grave no to display.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static int GetGraveID(uwObject obj)
+        {
+            //Load in the grave information
+            if (_RES != GAME_UW2)
+            {
+                Loader.ReadStreamFile(System.IO.Path.Combine(BasePath, "DATA", "GRAVE.DAT"), out byte[] graves);
+                if (obj.link >= 512)
+                {
+                    return (short)Loader.getAt(graves, obj.link - 512, 8) - 1;
+                }
+            }
+            return 0;
+        }
 
         public static gravestone CreateInstance(Node3D parent, uwObject obj, string name)
         {
             var g = new gravestone(obj);
             var modelNode = g.Generate3DModel(parent, name);
             SetModelRotation(parent, g);
-            DisplayModelPoints(g, parent);
+            //DisplayModelPoints(g, parent);
             return g;
         }
 

@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Godot;
 
 namespace Underworld
@@ -9,12 +8,10 @@ namespace Underworld
         [Export]
         public uimanager.InteractionModes index;
 
-        static int eventcount=0;
         public override void _Toggled(bool buttonPressed)
         {
             if (!ConversationVM.InConversation)
             {
-                //Debug.Print($"Press event {eventcount++} ");
                 uimanager.instance.InteractionModeToggle(index);
             }
         }

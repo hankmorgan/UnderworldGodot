@@ -242,7 +242,6 @@ namespace Underworld
 
         public static bool Use(uwObject obj)
         {
-            //TODO make this respect locks
             var d = (door)obj.instance;
             if (d.Locked)
             {

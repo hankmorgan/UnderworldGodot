@@ -1,5 +1,3 @@
-using System.Collections;
-using System.ComponentModel.Design.Serialization;
 using System.Diagnostics;
 
 namespace Underworld
@@ -172,6 +170,7 @@ namespace Underworld
                     {
                         switch (obj.classindex)
                         {
+                            
                             case 7://a_shrine
                                 {
                                     return shrine.Use(obj);
@@ -186,6 +185,8 @@ namespace Underworld
                             case 1:
                             case 2: //rotary switches                                
                                 return buttonrotary.Use(obj);
+                            case 5://gravestone
+                                return gravestone.Use(obj);
                             case 6: // a readable sign. interaction is also a look
                                 return writing.LookAt(obj);
                             case 0xE://tmap

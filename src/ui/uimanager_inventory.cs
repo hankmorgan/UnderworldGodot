@@ -290,11 +290,8 @@ namespace Underworld
                                             look.GeneralLookDescription(obj: obj, OutputConvoScroll: true);
                                         }
                                     }
-
                                 }
-
                             }
-
                         }
                     }
                     break;

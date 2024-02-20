@@ -119,8 +119,10 @@ namespace Underworld
                     {
                         switch (obj.classindex)
                         {
+                            case 5:
+                                return gravestone.Use(obj);
                             case 6: // a readable sign.
-                                return writing.LookAt(obj);
+                                return writing.LookAt(obj);                            
                             case 0xE:
                             case 0xF:
                                 return tmap.LookAt(obj);

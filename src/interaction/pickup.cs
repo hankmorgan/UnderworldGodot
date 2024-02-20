@@ -16,7 +16,7 @@ namespace Underworld
             }
             else
             {
-                //translate dropposition into xpos, ypos and zpos on the tile.
+                //translate drop position into xpos, ypos and zpos on the tile.
                 //for the moment just use 4,4 and floorheight.
                 var obj = objList[index];
                 obj.xpos= uwObject.FloatXYToXYPos(-dropPosition.X); 

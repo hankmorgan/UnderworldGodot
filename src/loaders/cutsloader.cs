@@ -9,6 +9,9 @@ namespace Underworld
         public ImageTexture[] ImageCache = new ImageTexture[1];
         byte[] dstImage; //repeating buffer
 
+        public ShaderMaterial[] materials = new ShaderMaterial[1];
+        public Shader textureshader;
+
 
         struct lpHeader
         {
@@ -18,7 +21,6 @@ namespace Underworld
             public int height;
             public int nFrames;
         };
-
 
         struct lp_descriptor
         {
@@ -37,6 +39,7 @@ namespace Underworld
             {
                 ReadCutsFile(ref ImageFileData, UseAlpha(File), UseErrorHandling(File));
             }
+            textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uisprite.gdshader");
         }
 
 
@@ -131,6 +134,7 @@ namespace Underworld
                 pages[i] = cutsFile[i + 2816];
             }
             ImageCache = new ImageTexture[lpH.nFrames];
+            materials = new ShaderMaterial[lpH.nFrames];
             for (int framenumber = 0; framenumber < lpH.nFrames; framenumber++)
             {
                 if ((ErrorHandling == true) && (framenumber == 10))
@@ -182,12 +186,10 @@ namespace Underworld
                     width: lpH.width, height: lpH.height, 
                     palette: pal, 
                     useAlphaChannel: Alpha, 
-                    useSingleRedChannel: false);
+                    useSingleRedChannel: true);
 
             }
         }
-
-
 
 
         /// <summary>
@@ -310,6 +312,30 @@ namespace Underworld
             }
         }
 
+
+        public override ImageTexture LoadImageAt(int index)
+        {
+            return ImageCache[index];
+        }
+
+
+        public ShaderMaterial GetMaterial(int textureno)
+        {            
+            if (materials[textureno] == null)
+            {
+                //materials[textureno] = new surfacematerial(textureno);
+                //create this material and add it to the list
+                var newmaterial = new ShaderMaterial();
+                newmaterial.Shader = textureshader;
+                newmaterial.SetShaderParameter("texture_albedo", (Texture)LoadImageAt(textureno,true));
+                newmaterial.SetShaderParameter("albedo", new Color(1, 1, 1, 1));
+                newmaterial.SetShaderParameter("uv1_scale", new Vector3(1, 1, 1));
+                newmaterial.SetShaderParameter("uv2_scale", new Vector3(1, 1, 1));
+                newmaterial.SetShaderParameter("UseAlpha", true);
+                materials[textureno] = newmaterial;
+            }
+            return materials[textureno];    
+        }
 
 
         /// <summary>

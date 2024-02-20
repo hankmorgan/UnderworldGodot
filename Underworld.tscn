@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=3 uid="uid://xjvqmrbs28xs"]
+[gd_scene load_steps=35 format=3 uid="uid://xjvqmrbs28xs"]
 
 [ext_resource type="Script" path="res://src/ui/uimanager.cs" id="1_lw0yg"]
 [ext_resource type="FontFile" uid="uid://pdy3t627nfxw" path="res://resources/fonts/FONT5X6I.ttf" id="3_safdl"]
@@ -10,11 +10,11 @@
 [ext_resource type="Script" path="res://main.cs" id="6_3y8oy"]
 [ext_resource type="Texture2D" uid="uid://cpop1i8thi2t6" path="res://resources/placeholder_art/uw1lfti/0.png" id="6_qaf50"]
 [ext_resource type="Shader" path="res://node_3d.gdshader" id="6_x6exc"]
-[ext_resource type="Texture2D" uid="uid://2hduh6i2rlhp" path="res://resources/placeholder_art/converseuw1.png" id="7_mq4ti"]
 [ext_resource type="Texture2D" uid="uid://plikcry1ow6q" path="res://resources/placeholder_art/textbox_fill.jpg" id="7_qiq8a"]
 [ext_resource type="Script" path="res://src/ui/InteractionModeButton.cs" id="8_0sew3"]
 [ext_resource type="Texture2D" uid="uid://ug231pvqaq1v" path="res://resources/placeholder_art/panels/panelsBlack.png" id="8_mis7n"]
 [ext_resource type="Texture2D" uid="uid://cpu7b2n5bae5y" path="res://resources/placeholder_art/uw1lfti/2.png" id="8_wag4x"]
+[ext_resource type="Texture2D" uid="uid://cf536ckyprfbf" path="res://resources/placeholder_art/uw1placeholdermain.png" id="9_emry3"]
 [ext_resource type="Texture2D" uid="uid://w3pet1fmhrgp" path="res://resources/placeholder_art/uw1lfti/4.png" id="10_63i0w"]
 [ext_resource type="Texture2D" uid="uid://8hg7a1ttaly6" path="res://resources/placeholder_art/uw1lfti/6.png" id="12_3hev6"]
 [ext_resource type="Texture2D" uid="uid://hyq11h2le5c0" path="res://resources/placeholder_art/uw1lfti/8.png" id="14_nhhdh"]
@@ -23,6 +23,7 @@
 [ext_resource type="Texture2D" uid="uid://2qekjomlpnxd" path="res://resources/placeholder_art/uw1lfti/10.png" id="16_kxj2a"]
 [ext_resource type="Texture2D" uid="uid://b1y5rs02fgv6d" path="res://resources/cross.png" id="18_tfr7p"]
 [ext_resource type="Texture2D" uid="uid://dqcrcis2dop6k" path="res://resources/placeholder_art/paperdolluw1/body_f.png" id="19_0yobb"]
+[ext_resource type="Texture2D" uid="uid://b4hn75lfpnecd" path="res://resources/placeholder_art/grave.png" id="20_n8sfi"]
 [ext_resource type="Texture2D" uid="uid://du878dn3osxn1" path="res://resources/placeholder_art/blankmap.png" id="20_o03w0"]
 [ext_resource type="Texture2D" uid="uid://badfxtbgaf6oh" path="res://resources/placeholder_art/uw2 converse.png" id="20_xqwxh"]
 [ext_resource type="Texture2D" uid="uid://dx526kvjk8jmj" path="res://resources/cross2.png" id="21_5p8p7"]
@@ -58,7 +59,7 @@ script = ExtResource("5_2to2n")
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLableFrameUW1", "NPCNameLableFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "InteractionButtonsUW1", "InteractionButtonsUW2", "AutomapPanel", "AutomapImage", "messageScrollUW1", "messageScrollUW2", "TypedInput", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Runes", "SelectedRunes", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSelectedUW1", "NPCTradeSelectedUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "PlayerTradeSelectedUW2", "NPCTradeSelectedUW2", "cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "placeholderuw1", "placeholderuw2")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLableFrameUW1", "NPCNameLableFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "CutsSmallUW1", "CutsSmallUW2", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "InteractionButtonsUW1", "InteractionButtonsUW2", "AutomapPanel", "AutomapImage", "messageScrollUW1", "messageScrollUW2", "TypedInput", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Runes", "SelectedRunes", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSelectedUW1", "NPCTradeSelectedUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "PlayerTradeSelectedUW2", "NPCTradeSelectedUW2", "cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "placeholderuw1", "placeholderuw2")]
 script = ExtResource("1_lw0yg")
 ConversationPanelUW1 = NodePath("../UW1/ConversationUW1")
 PlayerPortraitUW1 = NodePath("../UW1/ConversationUW1/PlayerPortraitUW1")
@@ -80,6 +81,8 @@ NPCPortraitUW2 = NodePath("../UW2/ConversationUW2/NPCPortraitUW2")
 PlayerNameLabelUW2 = NodePath("../UW2/ConversationUW2/PlayerNameLabelUW1")
 NPCNameLabelUW2 = NodePath("../UW2/ConversationUW2/NPCNameLabelUW2")
 ConversationTextUW2 = NodePath("../UW2/ConversationUW2/ConversationTextUW2")
+CutsSmallUW1 = NodePath("../UW1/CutsceneSmallUW1")
+CutsSmallUW2 = NodePath("../UW2/CutsceneSmallUW2")
 HealthFlaskPanel = NodePath("../Common/HealthFlask")
 HealthFlask = [NodePath("../Common/HealthFlask/FlaskLevel0"), NodePath("../Common/HealthFlask/FlaskLevel1"), NodePath("../Common/HealthFlask/FlaskLevel2"), NodePath("../Common/HealthFlask/FlaskLevel3"), NodePath("../Common/HealthFlask/FlaskLevel4"), NodePath("../Common/HealthFlask/FlaskLevel5"), NodePath("../Common/HealthFlask/FlaskLevel6"), NodePath("../Common/HealthFlask/FlaskLevel7"), NodePath("../Common/HealthFlask/FlaskLevel8"), NodePath("../Common/HealthFlask/FlaskLevel9"), NodePath("../Common/HealthFlask/FlaskLevel10"), NodePath("../Common/HealthFlask/FlaskLevel11"), NodePath("../Common/HealthFlask/FlaskLevel12")]
 HealthFlaskBG = NodePath("../Common/HealthFlask/FlaskBorder")
@@ -168,13 +171,12 @@ placeholderuw2 = NodePath("../UW2/placeholdermainuw2")
 stream = SubResource("AudioStreamWAV_tkk82")
 
 [node name="UW1" type="CanvasLayer" parent="UI"]
-visible = false
 
 [node name="placeholdermainuw1" type="TextureRect" parent="UI/UW1"]
 offset_right = 1280.0
 offset_bottom = 800.0
 mouse_filter = 2
-texture = ExtResource("7_mq4ti")
+texture = ExtResource("9_emry3")
 
 [node name="3DWinUW1" type="TextureRect" parent="UI/UW1"]
 texture_filter = 1
@@ -300,6 +302,7 @@ offset_right = 575.0
 offset_bottom = 592.0
 
 [node name="ConversationUW1" type="Panel" parent="UI/UW1"]
+visible = false
 offset_right = 40.0
 offset_bottom = 40.0
 
@@ -542,7 +545,16 @@ offset_top = 136.0
 offset_right = 532.0
 offset_bottom = 156.0
 
+[node name="CutsceneSmallUW1" type="TextureRect" parent="UI/UW1"]
+offset_left = -384.0
+offset_top = -268.0
+offset_right = 896.0
+offset_bottom = 532.0
+mouse_filter = 2
+texture = ExtResource("20_n8sfi")
+
 [node name="UW2" type="CanvasLayer" parent="UI"]
+visible = false
 
 [node name="placeholdermainuw2" type="TextureRect" parent="UI/UW2"]
 offset_right = 1280.0
@@ -903,6 +915,14 @@ offset_left = 380.0
 offset_top = 599.0
 offset_right = 580.0
 offset_bottom = 639.0
+
+[node name="CutsceneSmallUW2" type="TextureRect" parent="UI/UW2"]
+offset_left = -384.0
+offset_top = -268.0
+offset_right = 896.0
+offset_bottom = 532.0
+mouse_filter = 2
+texture = ExtResource("20_n8sfi")
 
 [node name="Common" type="CanvasLayer" parent="UI"]
 
