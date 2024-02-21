@@ -38,15 +38,15 @@ namespace Underworld
         /// <param name="cutsfile"></param>
         /// <param name="imageNo"></param>
         /// <param name="targetControl"></param>
-        public static void DisplayCutsImage(string cutsfile, int imageNo, TextureRect targetControl)
-        {
+        public static void DisplayCutsImage(string cutsfile, int imageNo, TextureRect targetControl, bool DisableCamera = true)
+        {            
             var cuts = new CutsLoader(cutsfile);
             if (!csCuts.ContainsKey(cutsfile))
             {
                 csCuts.Add(cutsfile, new CutsLoader(cutsfile));
             }
             _ = Peaky.Coroutines.Coroutine.Run(
-                    DisplayCutsImageWithWait(cuts: csCuts[cutsfile], imageNo: imageNo, targetControl: targetControl),
+                    DisplayCutsImageWithWait(cuts: csCuts[cutsfile], imageNo: imageNo, targetControl: targetControl, DisableCamera: DisableCamera),
                     main.instance
                );            
         }
@@ -58,17 +58,22 @@ namespace Underworld
         /// <param name="imageNo"></param>
         /// <param name="targetControl"></param>
         /// <returns></returns>
-        private static IEnumerator DisplayCutsImageWithWait(CutsLoader cuts, int imageNo, TextureRect targetControl)
+        private static IEnumerator DisplayCutsImageWithWait(CutsLoader cuts, int imageNo, TextureRect targetControl, bool DisableCamera = true)
         {
             targetControl.Texture = cuts.LoadImageAt(imageNo);
             targetControl.Material = cuts.GetMaterial(imageNo); 
             uimanager.EnableDisable(targetControl, true);
+            if (DisableCamera)
+            {
+                instance.uwsubviewport.Disable3D=true;
+            }
             MessageDisplay.WaitingForMore=true;
             while(MessageDisplay.WaitingForMore)
             {//wait until key input before clearing the image
                 yield return new WaitOneFrame();
             }
             uimanager.EnableDisable(targetControl, false);
+            instance.uwsubviewport.Disable3D=false;
             yield return 0;
         }
 

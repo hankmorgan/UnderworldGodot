@@ -33,11 +33,9 @@ namespace Underworld
         {
             int textureindex = UWTileMap.current_tilemap.texture_map[obj.owner];
             uimanager.AddToMessageScroll(GameStrings.TextureDescription(textureindex));
-            if ((textureindex == 142) && ((_RES == GAME_UW1) || (_RES == GAME_UWDEMO)))
+            if ((textureindex == 142) && ((_RES != GAME_UW2)))
             {//This is a window into the abyss.
-                Debug.Print("Look into the volcano");
-                // UWHUD.instance.CutScenesSmall.anim.SetAnimation = "VolcanoWindow_" + GameWorldController.instance.dungeon_level;
-                // UWHUD.instance.CutScenesSmall.anim.looping = true;
+                uimanager.DisplayCutsImage("cs400.n01",playerdat.dungeon_level, uimanager.CutsSmall);
             }
             return true; //prevents the default you cannot use message
         }

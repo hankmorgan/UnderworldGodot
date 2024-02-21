@@ -5,6 +5,7 @@ namespace Underworld
 {
     public class CutsLoader : ArtLoader
     {
+        private bool _alpha;//does thie file use an alpha channel
 
         public ImageTexture[] ImageCache = new ImageTexture[1];
         byte[] dstImage; //repeating buffer
@@ -35,18 +36,17 @@ namespace Underworld
         public CutsLoader(string File)
         {
             filePath = Path.Combine(BasePath, "CUTS", File.ToUpper());
+            _alpha = UseAlpha(File);
             if (LoadImageFile())
             {
-                ReadCutsFile(ref ImageFileData, UseAlpha(File), UseErrorHandling(File));
+                ReadCutsFile(ref ImageFileData, _alpha, UseErrorHandling(File));
             }
-            textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uisprite.gdshader");
+            textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uisprite.gdshader");          
         }
 
-
-
-        bool UseAlpha(string File)
+        static bool UseAlpha(string File)
         {
-            switch (File)
+            switch (File.ToLower())
             {
                 //case "cs400.n01"://  Look graphics for volcano
                 case "cs401.n01"://   grave stones
@@ -331,7 +331,7 @@ namespace Underworld
                 newmaterial.SetShaderParameter("albedo", new Color(1, 1, 1, 1));
                 newmaterial.SetShaderParameter("uv1_scale", new Vector3(1, 1, 1));
                 newmaterial.SetShaderParameter("uv2_scale", new Vector3(1, 1, 1));
-                newmaterial.SetShaderParameter("UseAlpha", true);
+                newmaterial.SetShaderParameter("UseAlpha", _alpha);
                 materials[textureno] = newmaterial;
             }
             return materials[textureno];    
