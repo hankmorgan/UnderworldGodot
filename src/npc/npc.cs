@@ -219,9 +219,9 @@ namespace Underworld
 
         public static bool LookAt(uwObject critter)
         {
-            if (critter.npc_goal == 15)//Ethereal void creatures
+            if ((critter.npc_whoami>=240) && (critter.npc_whoami!=248))//Ethereal void creatures 
             {
-                 EtheralVoidNPCDescription(critter);
+                EtheralVoidNPCDescription(critter);
             }
             else
             {
@@ -244,10 +244,16 @@ namespace Underworld
         /// <param name="critter"></param>
         private static void EtheralVoidNPCDescription(uwObject critter)        
         {
-            var id = critter.npc_animation + 277;
-            var name = GameStrings.GetString(1,id);
-
-            uimanager.AddToMessageScroll($"You see {name}");            
+            if (_RES==GAME_UW2)
+            {
+                var id = critter.npc_animation + 277;
+                var name = GameStrings.GetString(1,id);
+                uimanager.AddToMessageScroll($"You see {name}");   
+            }
+            else
+            {
+                uimanager.AddToMessageScroll($"You see {critter._name.Replace("_"," ")}"); 
+            }         
         }
 
         /// <summary>
@@ -256,6 +262,7 @@ namespace Underworld
         /// <param name="critter"></param>
         private static void RegularNPCDescription(uwObject critter)
         {
+            //TODO: A worried spectre named Warren.
             var name = critter._name;
             var lowercasename = char.IsLower(name.First<char>());//check if name is lower case. if so do not print it
             string npcrace = GameStrings.GetObjectNounUW(critter.item_id);

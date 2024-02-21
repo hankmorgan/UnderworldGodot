@@ -214,7 +214,10 @@ namespace Underworld
                     }
                 }
                 var newanim = new CritterAnimation(AnimName, newIndices);
-                Animations.Add(AnimName, newanim);
+                if (!Animations.ContainsKey(AnimName))
+                {
+                    Animations.Add(AnimName, newanim);
+                }                
             }
 
             //Read in the palette
