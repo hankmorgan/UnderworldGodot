@@ -175,7 +175,7 @@ namespace Underworld
             {
                 case 1://npcs
                     {
-                        if (obj.item_id<124)
+                        if (obj.item_id<127)
                         {
                         npcs.Add(npc.CreateInstance(newNode, obj, name));
                         unimplemented = false;
