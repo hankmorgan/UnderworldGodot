@@ -16,6 +16,11 @@ namespace Underworld
                 var obj = objList[index];
                 switch (obj.majorclass)
                 {
+                    case 1:
+                        {
+                            result = npc.LookAt(obj);
+                            break;
+                        }
                     case 2:
                         {
                             result = LookMajorClass2(obj, objList);

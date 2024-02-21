@@ -1,6 +1,8 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Dynamic;
+using System.Linq;
 using Godot;
 
 namespace Underworld
@@ -213,8 +215,80 @@ namespace Underworld
             }
             critter.npc_goal = (byte)goal;
             critter.npc_gtarg = (byte)target;
-        }        
-        
+        }   
+
+        public static bool LookAt(uwObject critter)
+        {
+            if (critter.npc_goal == 15)//Ethereal void creatures
+            {
+                 EtheralVoidNPCDescription(critter);
+            }
+            else
+            {
+                if ((_RES!=GAME_UW2) && (critter.npc_whoami==248))
+                {//slasher of veils
+                    var name = critter._name;
+                    uimanager.AddToMessageScroll($"You see {name}");
+                }
+                else
+                {
+                    RegularNPCDescription(critter);
+                }                
+            }  
+            return true;
+        }
+
+        /// <summary>
+        /// Describes Mr Jaws and his friends
+        /// </summary>
+        /// <param name="critter"></param>
+        private static void EtheralVoidNPCDescription(uwObject critter)        
+        {
+            var id = critter.npc_animation + 277;
+            var name = GameStrings.GetString(1,id);
+
+            uimanager.AddToMessageScroll($"You see {name}");            
+        }
+
+        /// <summary>
+        /// Describes an NPC in terms of their mood, race and name
+        /// </summary>
+        /// <param name="critter"></param>
+        private static void RegularNPCDescription(uwObject critter)
+        {
+            var name = critter._name;
+            var lowercasename = char.IsLower(name.First<char>());//check if name is lower case. if so do not print it
+            string npcrace = GameStrings.GetObjectNounUW(critter.item_id);
+            var mood = GameStrings.GetString(5, 96 + critter.npc_attitude);
+
+            var article = "a";
+            switch (mood.ToUpper().Substring(0, 1))
+            {
+                case "A":
+                case "E":
+                case "I":
+                case "O":
+                case "U":
+                    article = "an"; break;
+
+            }
+            if ((critter.npc_whoami != 0))
+            {
+                if (lowercasename)
+                {//print the whoami as the race only
+                    uimanager.AddToMessageScroll($"You see {article} {mood} {name}");
+                }
+                else
+                {//print race
+                    uimanager.AddToMessageScroll($"You see {article} {mood} {npcrace} named {name}");
+                }                
+            }
+            else
+            {
+                uimanager.AddToMessageScroll($"You see {article} {mood} {npcrace}");
+            }
+        }
+
 
     }//end class
 
