@@ -99,7 +99,15 @@ namespace Underworld
             //set the value at the stackptr to the result
             Debug.Print($"Set result {result_register} at {stackptr}");
             Set(stackptr, result_register);
+
+            if (TradeResult == 1 )
+            {
+                SwapTradedObjects(talker);
+                TradeResult = 0;
+            }
             yield return null;
         }
-    }
+        
+
+    }//end class
 }//end namespace

@@ -482,25 +482,25 @@ namespace Underworld
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed)
             {
-                bool isLeftClick=(eventMouseButton.ButtonIndex == MouseButton.Left);
+                bool isLeftClick = (eventMouseButton.ButtonIndex == MouseButton.Left);
 
-                    //LEFT CLICK ACTIONS
-                    Debug.Print($"->{extra_arg_0}");
-                    var objAtSlot = GetObjAtSlot(extra_arg_0);
+                //LEFT CLICK ACTIONS
+                Debug.Print($"->{extra_arg_0}");
+                var objAtSlot = GetObjAtSlot(extra_arg_0);
 
-                    //Do action appropiate to the interaction mode verb. use 
-                    if (objAtSlot > 0)
-                    { //there is an object in that slot.
-                        InteractWithObjectInSlot(
-                            slotname: extra_arg_0, 
-                            objAtSlot: objAtSlot, 
-                            isLeftClick: isLeftClick);
-                    }
-                    else
-                    {
-                        InteractWithEmptySlot();
-                    }
-                    CurrentSlot = -1;
+                //Do action appropiate to the interaction mode verb. use 
+                if (objAtSlot > 0)
+                { //there is an object in that slot.
+                    InteractWithObjectInSlot(
+                        slotname: extra_arg_0,
+                        objAtSlot: objAtSlot,
+                        isLeftClick: isLeftClick);
+                }
+                else
+                {
+                    InteractWithEmptySlot();
+                }
+                CurrentSlot = -1;
             }
         }
 
@@ -540,13 +540,13 @@ namespace Underworld
         {
             get
             {
-                if (uimanager.OpenedContainerIndex ==-1)
+                if (uimanager.OpenedContainerIndex == -1)
                 {
                     return -1;
                 }
-                for (int i=0;i<19;i++)
+                for (int i = 0; i < 19; i++)
                 {
-                    if(playerdat.GetInventorySlotListHead(i)==uimanager.OpenedContainerIndex)
+                    if (playerdat.GetInventorySlotListHead(i) == uimanager.OpenedContainerIndex)
                     {
                         return -1;
                     }
@@ -554,13 +554,13 @@ namespace Underworld
                 //try and find in the rest of the inventory
                 foreach (var objToCheck in playerdat.InventoryObjects)
                 {//if this far down then I need to find the container that the closing container sits in
-                    if (objToCheck!=null)
+                    if (objToCheck != null)
                     {
                         var result = objectsearch.GetContainingObject(
-                            ListHead:objToCheck.index, 
+                            ListHead: objToCheck.index,
                             ToFind: uimanager.OpenedContainerIndex,
                             objList: playerdat.InventoryObjects);
-                        if (result!=-1)
+                        if (result != -1)
                         {//container found. Browse into it by using it
                             return result;
                         }
@@ -578,14 +578,41 @@ namespace Underworld
         {
             get
             {
-            for (int i=11;i<19;i++)
-            {
-                if (playerdat.GetInventorySlotListHead(i)==0)
+                for (int i = 11; i < 19; i++)
                 {
-                    return i;
+                    if (playerdat.GetInventorySlotListHead(i) == 0)
+                    {
+                        return i;
+                    }
                 }
+                return -1;
             }
-            return -1;
+        }
+
+        /// <summary>
+        /// Finds a slot on the inventory (top level) that has no objects in it. Excludes paperdoll
+        /// </summary>
+        /// <returns></returns>
+        public static int FreeGeneralUseSlot
+        {
+            get
+            {
+                for (int i = 11; i <= 18; i++)
+                {//try backpack first
+                    if (playerdat.GetInventorySlotListHead(i) == 0)
+                    {
+                        return i;
+                    }
+                }
+
+                for (int i = 5; i <=8; i++)
+                {//then arms and shoulders
+                    if (playerdat.GetInventorySlotListHead(i) == 0)
+                    {
+                        return i;
+                    }
+                }
+                return -1; //nothing found
             }
         }
 

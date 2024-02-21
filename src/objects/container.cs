@@ -79,10 +79,10 @@ namespace Underworld
         /// Closes the container on the paperdoll
         /// </summary>
         /// <param name="obj"></param>
-        public static void Close(int index, uwObject[] objList)
+        public static int Close(int index, uwObject[] objList)
         {
             var obj = objList[index];
-            if (obj == null) { return; }
+            if (obj == null) { return -1; }
             if (obj.classindex <= 0xB)
                 {//return to closed version of the container.
                     obj.item_id &= 0x1fe;                        
@@ -103,7 +103,7 @@ namespace Underworld
                     }
                     uimanager.EnableDisable(uimanager.instance.ArrowUp, false);
                     uimanager.EnableDisable(uimanager.instance.ArrowDown, false);
-                    return;
+                    return -1;
                 }
             }
             foreach (var objToCheck in playerdat.InventoryObjects)
@@ -117,10 +117,11 @@ namespace Underworld
                     if (result!=-1)
                     {//container found. Browse into it by using it
                         Use(objList[result],false);
-                        return;
+                        return result;
                     }
                 }
             }
+            return -1;
         }
 
         /// <summary>

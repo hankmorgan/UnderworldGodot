@@ -244,5 +244,65 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// Completes the trade between player and NPC and moves objects between their inventory
+        /// </summary>
+        /// <param name="talker"></param>
+        private static void SwapTradedObjects(uwObject talker)
+        {
+            //transfer trade item
+            //player(world) to Npc
+            for (int i = 0; i < uimanager.NoOfTradeSlots; i++)
+            {
+                var objindex = uimanager.GetPlayerTradeSlot(i);
+                if (objindex != -1)
+                {
+                    var tradedobject = UWTileMap.current_tilemap.LevelObjects[objindex];
+                    //insert at head of npcs object list
+                    tradedobject.next = talker.link;
+                    talker.link = tradedobject.index;
+                    uimanager.SetPlayerTradeSlot(i, -1, false);
+                }
+            }
+
+            //npc to player. use free backpack slots or else drop at player position
+            //Some deliberate jank here. close opened containers
+            if (uimanager.OpenedContainerIndex != -1)
+            {//keep closing until we reach the top
+                while (uimanager.OpenedContainerIndex != -1)
+                {
+                    container.Close(uimanager.OpenedContainerIndex, playerdat.InventoryObjects);
+                }
+            }
+            for (int i = 0; i < uimanager.NoOfTradeSlots; i++)
+            {
+                var objindex = uimanager.GetNPCTradeSlot(i);
+                if (objindex != -1)
+                {
+                    var tradedobject = UWTileMap.current_tilemap.LevelObjects[objindex];
+
+                    uimanager.CurrentSlot = uimanager.FreeGeneralUseSlot;
+                    if (uimanager.CurrentSlot != -1)
+                    {
+                        playerdat.ObjectInHand = tradedobject.index;
+                        uimanager.PickupToEmptySlot(tradedobject.index);
+                        uimanager.CurrentSlot = -1;
+                    }
+                    else
+                    {
+                        //drop at players location
+                        pickup.Drop(
+                            index: objindex,
+                            objList: UWTileMap.current_tilemap.LevelObjects,
+                            dropPosition: main.gamecam.Position,
+                            tileX: playerdat.tileX,
+                            tileY: playerdat.tileY);                            
+                    }
+                    uimanager.SetNPCTradeSlot(i, -1, false);
+                }
+            }
+            uimanager.UpdateInventoryDisplay();
+        }
+
     } //end class
 }//end namespace

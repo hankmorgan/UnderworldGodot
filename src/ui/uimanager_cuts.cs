@@ -16,6 +16,9 @@ namespace Underworld
             EnableDisable(CutsSmall,false);
         }
 
+        /// <summary>
+        /// Gets the smaller cuts window
+        /// </summary>
         public static TextureRect CutsSmall
         {
             get
@@ -62,7 +65,7 @@ namespace Underworld
         {
             targetControl.Texture = cuts.LoadImageAt(imageNo);
             targetControl.Material = cuts.GetMaterial(imageNo); 
-            uimanager.EnableDisable(targetControl, true);
+            EnableDisable(targetControl, true);
             if (DisableCamera)
             {
                 instance.uwsubviewport.Disable3D=true;
@@ -72,7 +75,7 @@ namespace Underworld
             {//wait until key input before clearing the image
                 yield return new WaitOneFrame();
             }
-            uimanager.EnableDisable(targetControl, false);
+            EnableDisable(targetControl, false);
             instance.uwsubviewport.Disable3D=false;
             yield return 0;
         }

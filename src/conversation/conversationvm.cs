@@ -556,7 +556,7 @@ namespace Underworld
 				uimanager.instance.mainwindowUW2.Texture = uimanager.bitmaps.LoadImageAt(BytLoader.UW2ThreeDWin_BYT, true);
 			}
 			for (int i=0;i<uimanager.NoOfTradeSlots;i++)
-			{//move objects to the players tile.
+			{//move remaining objects in the trade area to the players tile.
 				var objindex = uimanager.GetPlayerTradeSlot(i,true);
 				if (objindex!=-1)
 				{
