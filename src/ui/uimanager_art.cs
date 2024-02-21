@@ -1,6 +1,8 @@
 using System;
 using System.Diagnostics;
 using Godot;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Underworld
 {
@@ -19,6 +21,8 @@ namespace Underworld
 
         public static BytLoader bitmaps;
 
+        public static Dictionary<string, CutsLoader> csCuts;
+
 		public static void InitArt()
 		{
             grCursors = new GRLoader(GRLoader.CURSORS_GR, GRLoader.GRShaderMode.UIShader);
@@ -31,6 +35,8 @@ namespace Underworld
 			grConverse = new GRLoader(GRLoader.CONVERSE_GR, GRLoader.GRShaderMode.UIShader);
 
 			bitmaps = new BytLoader();
+
+            csCuts = new Dictionary<string, CutsLoader>();
 		}
 
     }

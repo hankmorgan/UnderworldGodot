@@ -1,6 +1,5 @@
 using System.Collections;
 using Godot;
-using Peaky.Coroutines;
 
 namespace Underworld
 {
@@ -10,12 +9,6 @@ namespace Underworld
         public static bool Use(uwObject obj)
         {
             DisplayGrave(obj);
-
-             _ = Peaky.Coroutines.Coroutine.Run(
-                    DisplayGrave(obj),
-                    main.instance
-               );
-
             return true;
         }
 
@@ -24,21 +17,12 @@ namespace Underworld
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        private static IEnumerator DisplayGrave(uwObject obj)
+        private static void DisplayGrave(uwObject obj)
         {
             var graveid = GetGraveID(obj);
-            var cuts = new CutsLoader("cs401.n01");
-            uimanager.AddToMessageScroll(GameStrings.GetString(8, obj.link - 512));           
-            uimanager.CutsSmall.Texture = cuts.LoadImageAt(graveid);
-            uimanager.CutsSmall.Material = cuts.GetMaterial(graveid);
-            uimanager.EnableDisable(uimanager.CutsSmall, true);
-            MessageDisplay.WaitingForMore=true;
-            while(MessageDisplay.WaitingForMore)
-            {//wait until key input before clearing the image
-                yield return new WaitOneFrame();
-            }
-            uimanager.EnableDisable(uimanager.CutsSmall, false);
-            yield return 0;
+            uimanager.AddToMessageScroll(GameStrings.GetString(8, obj.link - 512));   
+            uimanager.DisplayCutsImage("cs401.n01", graveid,  uimanager.CutsSmall);
+            //"cs401.n01"            
         }
 
         /// <summary>
