@@ -80,45 +80,89 @@ namespace Underworld
         /// <summary>
         /// Performs an object combination
         /// </summary>
-        /// <param name="target">object in inventory</param>
-        /// <param name="source">object in hand</param>
-        public static bool TryObjectCombination(uwObject target, uwObject source)
+        /// <param name="ItemInInventory">object in inventory</param>
+        /// <param name="ItemInHand">object in hand</param>
+        public static bool TryObjectCombination(uwObject ItemInInventory, uwObject ItemInHand)
         {
-            var combo = GetCombination(source.item_id, target.item_id);
+            var combo = GetCombination(ItemInHand.item_id, ItemInInventory.item_id);
             if (combo != null)
             {
-                //uimanager.AddToMessageScroll($"combo found: {source.item_id} + {target.item_id} = {combo.Obj_Out}");
+                if (combo.DestroyA==combo.DestroyB)
+                {//make sure destroy is always mutually exclusive
+                    combo.DestroyA = !combo.DestroyA;
+                }
+                            
                 if (combo.DestroyA)
-                {
-                    if (target.item_id == combo.Obj_A)
+                {//change B to out
+                    if (ItemInInventory.item_id == combo.Obj_A)//item in inventory is the one to destroy;
                     {
-                        //target changes
-                        target.item_id = combo.Obj_Out;
-                        uimanager.UpdateInventoryDisplay();
+                        //destroy object in inventory
+                        playerdat.RemoveFromInventory(ItemInInventory.index, true);
                     }
-                    if (source.item_id == combo.Obj_A)
+                    else
                     {
-                        //object in hand changes
-                        source.item_id = combo.Obj_Out;
-                        uimanager.instance.mousecursor.SetCursorArt(source.item_id);
+                        //assumtion here that item_id is different.
+                        if (ItemInInventory.item_id == combo.Obj_B)
+                        {
+                            //inventory changes to new object
+                            ItemInInventory.item_id = combo.Obj_Out;
+                            uimanager.UpdateInventoryDisplay();
+                        }
                     }
+                    
+                    if (ItemInHand.item_id == combo.Obj_A) //item in hand is the one to destroy
+                    {
+                        playerdat.ObjectInHand = -1;
+                        uimanager.instance.mousecursor.ResetCursor();
+                        ObjectCreator.RemoveObject(ItemInHand);
+                    }
+                    else
+                    {
+                        if (ItemInHand.item_id == combo.Obj_B)
+                        {
+                            //object in hand changes
+                            ItemInHand.item_id = combo.Obj_Out;
+                            uimanager.instance.mousecursor.SetCursorArt(ItemInHand.item_id);
+                        }    
+                    }                
                 }
 
+
                 if (combo.DestroyB)
-                {
-                    if (target.item_id == combo.Obj_B)
+                {//change B to out
+                    if (ItemInInventory.item_id == combo.Obj_B)//item in inventory is the one to destroy;
                     {
-                        //target changes
-                        target.item_id = combo.Obj_Out;
-                        uimanager.UpdateInventoryDisplay();
+                        //destroy object in inventory
+                        playerdat.RemoveFromInventory(ItemInInventory.index, true);
                     }
-                    if (source.item_id == combo.Obj_B)
+                    else
                     {
-                        //object in hand changes
-                        source.item_id = combo.Obj_Out;
-                        uimanager.instance.mousecursor.SetCursorArt(source.item_id);
+                        //assumtion here that item_id is different.
+                        if (ItemInInventory.item_id == combo.Obj_A)
+                        {
+                            //inventory changes to new object
+                            ItemInInventory.item_id = combo.Obj_Out;
+                            uimanager.UpdateInventoryDisplay();
+                        }
                     }
+                    
+                    if (ItemInHand.item_id == combo.Obj_B) //item in hand is the one to destroy
+                    {
+                        playerdat.ObjectInHand = -1;
+                        uimanager.instance.mousecursor.ResetCursor();
+                        ObjectCreator.RemoveObject(ItemInHand);
+                    }
+                    else
+                    {
+                        if (ItemInHand.item_id == combo.Obj_A)
+                        {
+                            //object in hand changes
+                            ItemInHand.item_id = combo.Obj_Out;
+                            uimanager.instance.mousecursor.SetCursorArt(ItemInHand.item_id);
+                        }    
+                    }                
                 }
+                             
                 return true;//combo has worked
             }
             return false;
