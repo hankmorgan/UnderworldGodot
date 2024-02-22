@@ -102,7 +102,7 @@ namespace Underworld
                         uimanager.AddToMessageScroll($"{objname}{GameStrings.GetString(1, 0xAC + taste)}");
                     }
 
-                    Consume(obj, UsedFromInventory);
+                    ObjectCreator.Consume(obj, UsedFromInventory);
                     //TODO Leave left overs in the player cursor.  
                 }
             }
@@ -138,7 +138,7 @@ namespace Underworld
                         break;
                     }
             }
-            Consume(obj, UsedFromInventory);
+            ObjectCreator.Consume(obj, UsedFromInventory);
         }
 
         static void TakeShrooms(uwObject obj)
@@ -229,41 +229,12 @@ namespace Underworld
                 }
             }
 
-            Consume(obj, UsedFromInventory);
+            ObjectCreator.Consume(obj, UsedFromInventory);
 
             return true;
         }
 
 
-        /// <summary>
-        /// Removes or reduces the qty of the eaten object
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <param name="UsedFromInventory"></param>
-        private static void Consume(uwObject obj, bool UsedFromInventory)
-        {
-            if (obj.ObjectQuantity > 1)
-            {
-                obj.link--;
-            }
-            else
-            {
-                //Remove Object From Inventory or world
-                if (UsedFromInventory)
-                {
-                    playerdat.RemoveFromInventory(obj.index);
-                    uimanager.UpdateInventoryDisplay();
-                }
-                else
-                {
-                    if (playerdat.ObjectInHand == obj.index)
-                    {
-                        playerdat.ObjectInHand = -1;
-                        uimanager.instance.mousecursor.ResetCursor();
-                    }
-                    ObjectCreator.RemoveObject(obj);                    
-                }
-            }
-        }
+        
     }//end class
 }//end namespace

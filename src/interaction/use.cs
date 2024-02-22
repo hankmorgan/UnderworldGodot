@@ -118,6 +118,16 @@ namespace Underworld
                         }
                         break;
                     }
+                case 2:
+                {
+                    switch(obj.classindex)
+                    {
+                        case 5://leeches
+                            return leech.use(obj,WorldObject);
+                    }
+
+                    break;
+                }
                 case 3: //readables (up to index 8)
                     {
                         if (_RES != GAME_UW2)

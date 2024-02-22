@@ -25,8 +25,8 @@ namespace Underworld
 
         public enum ObjectListType
         {
-            StaticList=0,
-            MobileList=1
+            StaticList = 0,
+            MobileList = 1
         };
 
         /// <summary>
@@ -55,15 +55,15 @@ namespace Underworld
         public static int PrepareNewObject(int item_id, ObjectListType WhichList = ObjectListType.StaticList)
         {
             int slot = GetAvailableObjectSlot(WhichList);
-            if (slot!=0)
+            if (slot != 0)
             {
                 var obj = UWTileMap.current_tilemap.LevelObjects[slot];
                 obj.quality = 0x28;
                 obj.item_id = item_id;
                 obj.zpos = 0;
                 obj.doordir = 0;
-                obj.invis =0;
-                obj.enchantment =0;
+                obj.invis = 0;
+                obj.enchantment = 0;
                 obj.flags = 0; //DBLCHK (0x11)
                 obj.xpos = 3;
                 obj.ypos = 3;
@@ -83,7 +83,7 @@ namespace Underworld
                     case 1:
                     case 3:
                     default:
-                        obj.is_quant=0;
+                        obj.is_quant = 0;
                         obj.link = 0;
                         break;
                 }
@@ -105,7 +105,7 @@ namespace Underworld
                 case ObjectListType.StaticList:
                     //Move PTR down, get object at that point.
                     UWTileMap.current_tilemap.StaticFreeListPtr--;
-                    Debug.Print ($"Allocating {UWTileMap.current_tilemap.StaticFreeListObject} Pointer decremented to {UWTileMap.current_tilemap.StaticFreeListPtr}");
+                    Debug.Print($"Allocating {UWTileMap.current_tilemap.StaticFreeListObject} Pointer decremented to {UWTileMap.current_tilemap.StaticFreeListPtr}");
                     return UWTileMap.current_tilemap.StaticFreeListObject;
                 case ObjectListType.MobileList:
                     return 0; //TODO
@@ -118,12 +118,12 @@ namespace Underworld
         /// </summary>
         /// <param name="obj"></param>
         public static void RemoveObject(uwObject obj)
-        {            
+        {
             //remove from world
             UWTileMap.current_tilemap.StaticFreeListObject = obj.index;
             UWTileMap.current_tilemap.StaticFreeListPtr++;
-            Debug.Print ($"Freeing {obj.index} Pointer incremented to {UWTileMap.current_tilemap.StaticFreeListPtr}");
-            
+            Debug.Print($"Freeing {obj.index} Pointer incremented to {UWTileMap.current_tilemap.StaticFreeListPtr}");
+
             if (obj.instance != null)
             {
                 if (obj.instance.uwnode != null)
@@ -170,23 +170,23 @@ namespace Underworld
             newNode.Name = name;
             newNode.Position = obj.GetCoordinate(obj.tileX, obj.tileY);
             worldobjects.AddChild(newNode);
-            
+
             switch (obj.majorclass)
             {
                 case 1://npcs
                     {
-                        if (obj.item_id<127)
+                        if (obj.item_id < 127)
                         {
-                        npcs.Add(npc.CreateInstance(newNode, obj, name));
-                        unimplemented = false;
+                            npcs.Add(npc.CreateInstance(newNode, obj, name));
+                            unimplemented = false;
                         }
                         break;
                     }
                 case 3: // misc objects
-                {
-                    unimplemented = MajorClass3(obj, newNode, grObjects, name);
-                    break;
-                }
+                    {
+                        unimplemented = MajorClass3(obj, newNode, grObjects, name);
+                        break;
+                    }
                 case 5: //doors, 3d models, buttons/switches
                     {
                         unimplemented = MajorClass5(obj, newNode, a_tilemap, name);
@@ -206,7 +206,7 @@ namespace Underworld
                 default:
                     unimplemented = true; break;
 
-            }           
+            }
             if (unimplemented)
             {
                 //just render a sprite.
@@ -216,13 +216,13 @@ namespace Underworld
                     Label3D obj_lbl = new();
                     obj_lbl.Text = $"{name}";
                     obj_lbl.Font = uimanager.instance.Font4X5P;
-                    obj_lbl.FontSize=16;
+                    obj_lbl.FontSize = 16;
                     obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
-                    obj_lbl.Position = new Vector3(0f,0.4f,0f);
+                    obj_lbl.Position = new Vector3(0f, 0.4f, 0f);
                     newNode.AddChild(obj_lbl);
                 }
             }
-            if (obj.instance!=null)
+            if (obj.instance != null)
             {
                 obj.instance.uwnode = newNode;
             }
@@ -283,9 +283,9 @@ namespace Underworld
                             obj.instance = bench.CreateInstance(parent, obj, name);
                             return false;
                         }
-                        if ((obj.classindex>=3) && (obj.classindex<=6))
+                        if ((obj.classindex >= 3) && (obj.classindex <= 6))
                         {//boulders
-                            obj.instance = boulder.CreateInstance(parent,obj, name);
+                            obj.instance = boulder.CreateInstance(parent, obj, name);
                             return false;
                         }
                         if (obj.classindex == 7)
@@ -297,42 +297,42 @@ namespace Underworld
                         {
                             obj.instance = table.CreateInstance(parent, obj, name);
                             return false;
-                        }   
+                        }
                         if (obj.classindex == 9)
                         {
                             obj.instance = beam.CreateInstance(parent, obj, name);
                             return false;
-                        }   
+                        }
                         if (obj.classindex == 0xA)
                         {
                             obj.instance = moongate.CreateInstance(parent, obj, name);
                             return false;
-                        }  
+                        }
                         if (obj.classindex == 0xB)
                         {
                             obj.instance = barrel.CreateInstance(parent, obj, name);
                             return false;
-                        } 
+                        }
                         if (obj.classindex == 0xC)
                         {
                             obj.instance = chair.CreateInstance(parent, obj, name);
                             return false;
-                        }  
+                        }
                         if (obj.classindex == 0xD)
                         {
                             obj.instance = chest.CreateInstance(parent, obj, name);
                             return false;
-                        }  
+                        }
                         if (obj.classindex == 0xE)
                         {
                             obj.instance = nightstand.CreateInstance(parent, obj, name);
                             return false;
-                        }    
+                        }
                         if (obj.classindex == 0xF)
                         {
                             obj.instance = lotus.CreateInstance(parent, obj, name);
                             return false;
-                        }   
+                        }
                         break;
                     }
                 case 2: //3D models
@@ -340,9 +340,9 @@ namespace Underworld
                         if (obj.classindex == 0)
                         {//pillar 352
                             obj.instance = pillar.CreateInstance(parent, obj, name);
-                            return false; 
+                            return false;
                         }
-                        if ((obj.classindex == 1) || (obj.classindex==2))
+                        if ((obj.classindex == 1) || (obj.classindex == 2))
                         {//353 and 354, rotary switches
                             obj.instance = buttonrotary.CreateInstance(parent, obj, name);
                             return false;
@@ -350,27 +350,27 @@ namespace Underworld
                         if ((_RES == GAME_UW2) && (obj.classindex == 3))
                         {  //or item id 163
                             obj.instance = painting.CreateInstance(parent, obj, name);
-                            return false; 
+                            return false;
                         }
                         if (obj.classindex == 4)
                         {//bridge 356
                             obj.instance = bridge.CreateInstance(parent, obj, name, a_tilemap);
-                            return false; 
+                            return false;
                         }
                         if (obj.classindex == 5)
                         {//gravestone
                             obj.instance = gravestone.CreateInstance(parent, obj, name);
-                            return false; 
+                            return false;
                         }
                         if (obj.classindex == 6)
                         {//some_writing 358
                             obj.instance = writing.CreateInstance(parent, obj, name);
-                            return false; 
+                            return false;
                         }
                         if ((_RES == GAME_UW2) && (obj.classindex == 7))
                         {  //or item id 359
                             obj.instance = bed.CreateInstance(parent, obj, name);
-                            return false; 
+                            return false;
                         }
                         if ((_RES == GAME_UW2) && (obj.classindex == 8))
                         {  //or item id 360
@@ -380,7 +380,7 @@ namespace Underworld
                         if ((_RES == GAME_UW2) && (obj.classindex == 9))
                         {  //or item id 361
                             obj.instance = shelf.CreateInstance(parent, obj, name);
-                            return false; 
+                            return false;
                         }
                         if ((obj.classindex == 0xE) || (obj.classindex == 0xF))
                         {//tmaps
@@ -400,29 +400,29 @@ namespace Underworld
         }
 
 
-         private static bool MajorClass7(uwObject obj, Node3D parent, UWTileMap a_tilemap, string name)
-         {//animos and the moving door
+        private static bool MajorClass7(uwObject obj, Node3D parent, UWTileMap a_tilemap, string name)
+        {//animos and the moving door
             //class 7 has only a single minor class. jump straight to the class index
             switch (obj.classindex)
             {
                 case 0xF://moving door special case
                     obj.instance = door.CreateInstance(parent, obj, a_tilemap, name);
                     doorway.CreateInstance(parent, obj, a_tilemap, name);
-                    return false;                    
+                    return false;
                 default:
                     obj.instance = animo.CreateInstance(parent, obj, name);
                     return false;
             }
-         }
+        }
 
         public static genericsprite CreateSpriteInstance(GRLoader grObjects, uwObject obj, Node3D parent, string name)
         {
             var inst = new genericsprite(obj);
-            if (obj.invis ==0)
-            {              
+            if (obj.invis == 0)
+            {
                 CreateSprite(grObjects, obj.item_id, parent, name);
-            } 
-            return inst;         
+            }
+            return inst;
         }
 
         public static void CreateSprite(GRLoader gr, int spriteNo, Node3D parent, string name, bool EnableCollision = true)
@@ -438,7 +438,7 @@ namespace Underworld
             // a_sprite.MaterialOverride =  gr.GetMaterial(spriteNo);
             // parent.AddChild(a_sprite);
             // a_sprite.Position = new Vector3(0, NewSize.Y / 2, 0);            
-            
+
             var a_sprite = new MeshInstance3D(); //new Sprite3D();
             a_sprite.Name = name;
             a_sprite.Mesh = new QuadMesh();
@@ -457,9 +457,40 @@ namespace Underworld
                 if (EnableCollision)
                 {
                     a_sprite.CreateConvexCollision();
-                }                
+                }
             }
         }
-    }
 
+        /// <summary>
+        /// Removes or reduces the qty of the object
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="UsedFromInventory"></param>
+        public static void Consume(uwObject obj, bool UsedFromInventory)
+        {
+            if (obj.ObjectQuantity > 1)
+            {
+                obj.link--;
+            }
+            else
+            {
+                //Remove Object From Inventory or world
+                if (UsedFromInventory)
+                {
+                    playerdat.RemoveFromInventory(obj.index);
+                    uimanager.UpdateInventoryDisplay();
+                }
+                else
+                {
+                    if (playerdat.ObjectInHand == obj.index)
+                    {//used from object in hnand
+                        playerdat.ObjectInHand = -1;
+                        uimanager.instance.mousecursor.ResetCursor();
+                    }
+                    ObjectCreator.RemoveObject(obj);
+                }
+            }
+        }
+
+    } //end class
 } //end namesace
