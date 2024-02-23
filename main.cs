@@ -96,13 +96,13 @@ public partial class main : Node3D
 		{
 			//load player dat from a save file
 			playerdat.Load(uwsettings.instance.levarkfolder);
-			Debug.Print($"You are at x:{playerdat.X} y:{playerdat.Y} z:{playerdat.Z}");
-			Debug.Print($"You are at x:{playerdat.tileX} {playerdat.xpos} y:{playerdat.tileY} {playerdat.ypos} z:{playerdat.zpos}");
+			//Debug.Print($"You are at x:{playerdat.X} y:{playerdat.Y} z:{playerdat.Z}");
+			//Debug.Print($"You are at x:{playerdat.tileX} {playerdat.xpos} y:{playerdat.tileY} {playerdat.ypos} z:{playerdat.zpos}");
 			cam.Position = uwObject.GetCoordinate(playerdat.tileX, playerdat.tileY, playerdat.xpos, playerdat.ypos, playerdat.camerazpos);
-			Debug.Print($"Player Heading is {playerdat.heading}");
 			cam.Rotation = Vector3.Zero;
 			cam.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
 			cam.Rotate(Vector3.Up, (float)(-playerdat.heading / 127f * Math.PI));
+
 			for (int i = 0; i < 8; i++)
 			{//Init the backpack indices
 				uimanager.SetBackPackIndex(i, playerdat.BackPackObject(i));
@@ -169,6 +169,10 @@ public partial class main : Node3D
 		uwsettings.instance.lightlevel = light.BrightestLight();
 	}
 
+	/// <summary>
+	/// Draws a debug marker sprite on game load to show where the character is positioned
+	/// </summary>
+	/// <param name="gr"></param>
 	private void DrawPlayerPositionSprite(GRLoader gr)
 	{
 		int spriteNo = 127;
@@ -191,6 +195,12 @@ public partial class main : Node3D
 		}
 	}
 
+
+	/// <summary>
+	/// Loads the tilemap for the specified level number (dungeon_level-1)
+	/// </summary>
+	/// <param name="newLevelNo"></param>
+	/// <returns></returns>
 	public static IEnumerator LoadTileMap(int newLevelNo)
 	{		
 		//grObjects.UseRedChannel = true;
@@ -224,8 +234,13 @@ public partial class main : Node3D
 	{
 		int tileX = -(int)(cam.Position.X / 1.2f);
 		int tileY = (int)(cam.Position.Z / 1.2f);
+			
+		var tmp = cam.Rotation;
+		tmp.Y = (float)(tmp.Y - Math.PI);
+		playerdat.heading = (int)Math.Round(-(tmp.Y * 127)/ Math.PI);
+		 
 
-		lblPositionDebug.Text = $"{cam.Position.ToString()}\n{tileX} {tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}";
+		lblPositionDebug.Text = $"{cam.Position.ToString()}\n{tileX} {tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}\n{cam.Rotation} {playerdat.heading}";
 
 		if ((tileX < 64) && (tileX >= 0) && (tileY < 64) && (tileY >= 0))
 		{

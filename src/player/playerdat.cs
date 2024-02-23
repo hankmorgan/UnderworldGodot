@@ -246,6 +246,10 @@ namespace Underworld
             {
                 return GetAt(0x5C);
             }
+            set
+            {
+                SetAt(0x5C, (byte)value);
+            }
         }
 
 

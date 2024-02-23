@@ -560,6 +560,7 @@ offset_left = 204.0
 offset_top = 72.0
 offset_right = 900.0
 offset_bottom = 532.0
+mouse_filter = 2
 
 [node name="UW2" type="CanvasLayer" parent="UI"]
 
@@ -937,6 +938,7 @@ offset_left = 60.0
 offset_top = 60.0
 offset_right = 900.0
 offset_bottom = 580.0
+mouse_filter = 2
 
 [node name="Common" type="CanvasLayer" parent="UI"]
 
@@ -2018,13 +2020,14 @@ texture_filter = 1
 offset_left = 28.0
 offset_top = -9.0
 offset_right = 628.0
-offset_bottom = 111.0
+offset_bottom = 151.0
 mouse_filter = 2
 theme_override_fonts/normal_font = ExtResource("5_8iiwt")
 theme_override_font_sizes/normal_font_size = 47
 text = "The Label is here. Can you see it
 Line 2
-line 3"
+line 3
+line 4"
 
 [node name="worldobjects" type="Node3D" parent="."]
 
