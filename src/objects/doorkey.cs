@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using Godot;
-
 namespace Underworld
 {
     public class doorkey : objectInstance

@@ -6,7 +6,6 @@ using Underworld;
 using System.Text.Json;
 using System.Collections;
 using Peaky.Coroutines;
-using Godot.Collections;
 
 /// <summary>
 /// Node to initialise the game

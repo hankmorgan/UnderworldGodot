@@ -1,10 +1,9 @@
-using System;
 using System.IO;
-using System.Diagnostics;
 using Godot;
 
 namespace Underworld
-{    
+{
+
     public class BytLoader : ArtLoader
     {
         public const int BLNKMAP_BYT = 0;

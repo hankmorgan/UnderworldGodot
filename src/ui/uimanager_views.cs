@@ -1,7 +1,5 @@
-using System;
 using System.Diagnostics;
 using Godot;
-using System.Collections;
 using Godot.Collections;
 
 namespace Underworld

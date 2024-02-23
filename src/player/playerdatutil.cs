@@ -1,11 +1,10 @@
 using System;
-using System.Diagnostics;
 using System.Linq;
 
 namespace Underworld
 {
-//Utility code for playerdat
-     public partial class playerdat : Loader
+    //Utility code for playerdat
+    public partial class playerdat : Loader
      {
 
         /// <summary>

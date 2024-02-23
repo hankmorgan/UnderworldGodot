@@ -1,7 +1,5 @@
 using System.Collections;
 using System.Diagnostics;
-using Godot;
-using Peaky.Coroutines;
 namespace Underworld
 {
     /// <summary>

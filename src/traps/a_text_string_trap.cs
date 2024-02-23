@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 namespace Underworld
 {
     public class a_text_string_trap : trap

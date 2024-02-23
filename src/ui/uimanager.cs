@@ -1,11 +1,9 @@
-using System;
-using System.Diagnostics;
 using Godot;
 
 
 namespace Underworld
 {
-	public partial class uimanager : Node2D
+    public partial class uimanager : Node2D
 	{
 		public static uimanager instance;
 

@@ -1,5 +1,3 @@
-using System.Collections;
-
 namespace Underworld
 {
     public class lockpick : objectInstance

@@ -1,10 +1,9 @@
 using System;
 using System.Diagnostics;
-using Godot;
 
 namespace Underworld
 {
-	public partial class ConversationVM : UWClass
+    public partial class ConversationVM : UWClass
 	{
 
 		/// <summary>

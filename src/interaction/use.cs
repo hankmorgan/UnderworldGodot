@@ -122,6 +122,14 @@ namespace Underworld
                 {
                     switch(obj.classindex)
                     {
+                        case 2:
+                            {
+                                if (_RES!=GAME_UW2)
+                                {
+                                    return silverseed.use(obj,WorldObject);//plant silver seed
+                                }
+                                break;
+                            }
                         case 5://leeches
                             return leech.use(obj,WorldObject);
                         case 0xB://Fishing pole

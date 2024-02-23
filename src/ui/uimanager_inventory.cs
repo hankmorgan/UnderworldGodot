@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Diagnostics.Tracing;
 using Godot;
 
 namespace Underworld

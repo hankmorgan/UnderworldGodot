@@ -1,5 +1,3 @@
-using System.Diagnostics.Contracts;
-
 namespace Underworld
 {
     /// <summary>

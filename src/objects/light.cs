@@ -1,5 +1,3 @@
-using System.ComponentModel;
-
 namespace Underworld
 {
     public class light: objectInstance
