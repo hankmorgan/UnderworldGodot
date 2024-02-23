@@ -6,6 +6,23 @@ namespace Underworld
      public partial class playerdat : Loader
      {
         
+          public static int SilverTreeLevel
+          {
+               get
+               {
+                    return GetAt(0x5F)>>4;
+               }
+               set
+               {
+                    value = value & 0xF;
+                    var tmp =  GetAt(0x5F);
+                    tmp &=0xF;
+                    tmp |= (byte)(value<<4);
+                    SetAt(0x5F, tmp);
+               }
+          }
+
+        
           /// <summary>
           /// True when the player has fallen asleep under the effect of dream plants
           /// </summary>

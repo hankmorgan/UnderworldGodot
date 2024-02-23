@@ -22,6 +22,9 @@ namespace Underworld
             //now change into a seed with doordir set to 1
             obj.item_id = 290;
             obj.doordir = 1;
+
+            playerdat.SilverTreeLevel = 0;
+            
             if (playerdat.ObjectInHand == obj.index)
             {
                 uimanager.instance.mousecursor.SetCursorArt(obj.item_id);
