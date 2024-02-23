@@ -34,6 +34,18 @@ namespace Underworld
             }
         }
 
+        static bool CanBePickedUpOverrides(int item_id)
+        {
+            if (_RES!=GAME_UW2)
+            {
+                if (item_id==458)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public static bool PickUp(int index, uwObject[] objList, bool WorldObject = true)
         {
             if (playerdat.ObjectInHand != -1)
@@ -44,7 +56,7 @@ namespace Underworld
             {
                 var obj = objList[index];
 
-                if (!commonObjDat.CanBePickedUp(obj.item_id))
+                if (!commonObjDat.CanBePickedUp(obj.item_id) && !CanBePickedUpOverrides(obj.item_id))
                 {//object cannot be picked up
                     uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_cannot_pick_that_up_));
                     return false;
@@ -81,6 +93,15 @@ namespace Underworld
                 if (obj.instance!=null)
                 {
                     obj.instance.uwnode.Position = obj.GetCoordinate(obj.tileX, obj.tileY);
+                }
+
+                //now handle some special cases
+                if (_RES!=GAME_UW2)
+                {
+                    if (obj.item_id==458)//silver tree
+                    {
+                        silvertree.PickupTree(obj);
+                    }
                 }
             }
             return true;
