@@ -124,6 +124,8 @@ namespace Underworld
                     {
                         case 5://leeches
                             return leech.use(obj,WorldObject);
+                        case 0xB://Fishing pole
+                            return fishingpole.use(obj,WorldObject);
                     }
 
                     break;

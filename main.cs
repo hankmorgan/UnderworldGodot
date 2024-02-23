@@ -37,7 +37,7 @@ public partial class main : Node3D
 
 	// Called when the node enters the scene tree for the first time.
 	[Export] public Camera3D cam;
-	public static Camera3D gamecam;
+	public static Camera3D gamecam; //static ref to the above camera
 	[Export] public AudioStreamPlayer audioplayer;
 	[Export] public RichTextLabel lblPositionDebug;
 	[Export] public uimanager uwUI;

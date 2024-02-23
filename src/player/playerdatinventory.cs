@@ -729,11 +729,22 @@ namespace Underworld
 
 
         /// <summary>
-        /// Future proof. Will test if player can carry the weight of this object.
+        /// Future proof. Will test if player can carry the weight of this object based on it's stack size.
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
         public static bool CanCarryWeight(uwObject obj)
+        {
+            Debug.Print ("unimplemented weight check");
+            return true;
+        }
+
+        /// <summary>
+        /// Weight check based on a single instance of an item
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <returns></returns>
+         public static bool CanCarryWeight(int item_id)
         {
             Debug.Print ("unimplemented weight check");
             return true;

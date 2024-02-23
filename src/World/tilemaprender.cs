@@ -449,7 +449,7 @@ namespace Underworld
                         case vTOP:
                             {
                                 //Set the verts	
-                                MatsToUse[FaceCounter] = FloorTexture(fSELF, t);
+                                MatsToUse[FaceCounter] = FloorTexture(t);
 
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0.0f, floorHeight, 0.0f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0.0f, floorHeight, 1.2f * dimY);
@@ -533,7 +533,7 @@ namespace Underworld
                         case vBOTTOM:
                             {
                                 //bottom wall vertices
-                                MatsToUse[FaceCounter] = FloorTexture(fCEIL, t);
+                                MatsToUse[FaceCounter] = FloorTexture(t);
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 1.2f * dimY);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 0f);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 0f);
@@ -806,7 +806,7 @@ namespace Underworld
         /// <returns>The texture.</returns>
         /// <param name="face">Face.</param>
         /// <param name="t">T.</param>
-        public static int FloorTexture(int face, TileInfo t)
+        public static int FloorTexture(TileInfo t)
         {
             int floorTexture;
             // if (debugtextures)
@@ -1613,7 +1613,7 @@ namespace Underworld
                             {
 
                                 //Set the verts	
-                                MatsToUse[FaceCounter] = FloorTexture(fSELF, t);
+                                MatsToUse[FaceCounter] = FloorTexture(t);
 
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0.0f, floorHeight + AdjustUpperWest + AdjustUpperSouth, 0.0f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0.0f, floorHeight + AdjustUpperWest + AdjustUpperNorth, 1.2f * dimY);
@@ -1933,7 +1933,7 @@ namespace Underworld
                         case vBOTTOM:
                             {
                                 //bottom wall vertices.
-                                MatsToUse[FaceCounter] = FloorTexture(fCEIL, t);
+                                MatsToUse[FaceCounter] = FloorTexture(t);
 
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 1.2f * dimY);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 0f);
@@ -2075,7 +2075,7 @@ namespace Underworld
                         case vTOP:
                             {
                                 //Set the verts	
-                                MatsToUse[FaceCounter] = FloorTexture(fSELF, t);
+                                MatsToUse[FaceCounter] = FloorTexture(t);
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0.0f, floorHeight, 0.0f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0.0f, floorHeight, 1.2f * dimY);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 1.2f * dimY);
@@ -2156,7 +2156,7 @@ namespace Underworld
                         case vBOTTOM:
                             {
                                 //bottom wall vertices
-                                MatsToUse[FaceCounter] = FloorTexture(fCEIL, t);
+                                MatsToUse[FaceCounter] = FloorTexture(t);
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 1.2f * dimY);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 0f);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 0f);
