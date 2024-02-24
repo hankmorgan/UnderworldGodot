@@ -312,7 +312,7 @@ namespace Underworld
         /// </summary>
         /// <param name="slotname"></param>
         /// <returns></returns>
-        private static int GetObjAtSlot(string slotname)
+        public static int GetObjAtSlot(string slotname)
         {
             var obj = -1;
             switch (slotname)
@@ -447,8 +447,8 @@ namespace Underworld
             //swap objects otherwise
             var backup = playerdat.ObjectInHand;
             PickupObjectFromSlot(targetObj);
-            uimanager.PickupToEmptySlot(backup);
-            uimanager.UpdateInventoryDisplay();
+            PickupToEmptySlot(backup);
+            UpdateInventoryDisplay();
         }
 
         public static void PickupObjectFromSlot(int objAtSlot)
@@ -491,7 +491,7 @@ namespace Underworld
                     DestroyInventoryObject: DestroyInventoryObject);
             var pickObject = UWTileMap.current_tilemap.LevelObjects[newIndex];
             playerdat.ObjectInHand = newIndex;
-            uimanager.instance.mousecursor.SetCursorArt(pickObject.item_id);
+            instance.mousecursor.SetCursorArt(pickObject.item_id);
             return newIndex;
         }
 

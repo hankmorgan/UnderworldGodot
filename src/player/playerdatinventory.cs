@@ -473,83 +473,6 @@ namespace Underworld
                 }
                 uimanager.UpdateInventoryDisplay();
             }
-
-
-            // var obj = InventoryObjects[index];
-            // var next = obj.next;
-            // //Find the object chain the object is in
-            // var LastObj = InventoryObjects[LastItemIndex];
-            // var LinkOffset = GetItemLinkOffset(index);
-
-            // if (LastItemIndex != next)
-            // {
-            //     //This clears either the next or link to the object and replaces it with the objects next value
-            //     var data = (int)getAt(pdat, (LinkOffset), 16);
-            //     data &= 0x3f; //Clear link/next
-            //     data |= (next << 6); //Or in the obj.next for the object.
-            //     setAt(pdat, LinkOffset, 16, data);
-            // }
-            // else
-            // { //The next object is to be slided down in place of index. In this case link does not change.
-
-            // }
-            // //Slide down the last object.
-            // if (LastItemIndex == index)
-            // {//same objects. just wipe the data.
-            //     for (int i = 0; i < 8; i++)
-            //     {
-            //         pdat[obj.PTR + i] = 0;
-            //     }
-            //     InventoryObjects[index] = null;
-            //     FindAndChangeBackpackIndex(index, -1);
-            //     LastItemIndex--;
-            // }
-            // else
-            // {
-            //     if (LastItemIndex <= 1)
-            //     {
-            //         //Object is the last item. just clear data.
-            //         for (int i = 0; i < 8; i++)
-            //         {
-            //             pdat[obj.PTR + i] = 0;
-            //         }
-            //         InventoryObjects[index] = null;
-            //         FindAndChangeBackpackIndex(index, -1);
-            //         LastItemIndex--;
-            //     }
-            //     else
-            //     {
-            //         //Object is to be replaced with last item. Last item needs to be relinked to the new slot as well as moved
-            //         var LastObjectLinkOffset = GetItemLinkOffset(LastItemIndex);
-            //         if (LastObjectLinkOffset != -1)
-            //         {
-            //             var data = (int)getAt(pdat, (LastObjectLinkOffset), 16);
-            //             data &= 0x3f; //Clear link/next
-            //             data |= (index << 6); //Or in the object next for the object.
-            //             setAt(pdat, LastObjectLinkOffset, 16, data);
-            //         }
-            //         //now move data
-            //         for (int i = 0; i < 8; i++)
-            //         {
-            //             pdat[obj.PTR + i] = pdat[LastObj.PTR + i];
-            //             pdat[LastObj.PTR + i] = 0;
-            //         }
-            //         InventoryObjects[LastItemIndex] = null;
-            //         FindAndChangeBackpackIndex(LastItemIndex, index);
-            //         LastItemIndex--;
-
-            //     }
-            // }
-
-            // if (updateUI)
-            // {
-            //     if (uimanager.CurrentSlot >= 11)
-            //     {
-            //         BackPackIndices[uimanager.CurrentSlot - 11] = -1;
-            //     }
-            //     uimanager.UpdateInventoryDisplay();
-            // }
-
         }
 
 
@@ -646,7 +569,13 @@ namespace Underworld
                 {
                     NewObj.DataBuffer[NewObj.PTR + i] = oldObj.DataBuffer[oldObj.PTR+i]; 
                 }
-
+            //special cases
+            if ((NewObj.majorclass == 2) && (NewObj.minorclass == 1) && (NewObj.classindex>=4) && (NewObj.classindex<=7))
+            {
+                //light source that is turned on.
+                light.LightOff(NewObj);
+                light.RefreshLighting();
+            }
             if (DestroyInventoryObject)
             {
                 //remove inventory obj
