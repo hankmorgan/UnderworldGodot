@@ -19,9 +19,13 @@ namespace Underworld
                 for (int i = 1; i < 14; i++)
                 {
                     var alpha = GetAt(i);
-                    if (alpha.ToString() != "\0")
+                    if (alpha.ToString() != "0")
                     {
                         _charname += (char)alpha;
+                    }
+                    else
+                    {
+                        return _charname;//end at terminator
                     }
                 }
                 return _charname;

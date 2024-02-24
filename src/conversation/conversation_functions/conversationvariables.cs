@@ -212,7 +212,8 @@ namespace Underworld
 							}
 						case "play_name": //reference to a custom gamestring for the player name
 							{
-								valueToImport = (0x125<<9) | playerdat.CharNameStringNo;
+								//valueToImport = (0x125<<9) | playerdat.CharNameStringNo;
+								valueToImport = playerdat.CharNameStringNo;//pointer to string in block 0x125
 								break;
 							}
 					}

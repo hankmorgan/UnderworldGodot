@@ -110,7 +110,7 @@ namespace Underworld
                     {
                         case "@GS": //Global string.
                             {
-                                FoundString =getString(at(ReplacementValue));
+                                FoundString = GameStrings.GetString(0x125, at(ReplacementValue)); //getString(at(ReplacementValue));
                                 break;
                             }
                         case "@GI": //Global integer
