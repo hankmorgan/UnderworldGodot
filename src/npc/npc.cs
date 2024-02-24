@@ -164,9 +164,9 @@ namespace Underworld
             {
                 var texture = crit.animSprites[anim.animIndices[frameNo]];
                 FrameSize = new Vector2(
-                    ArtLoader.SpriteScale * texture.GetWidth(),
+                    ArtLoader.NPCSpriteScale * texture.GetWidth(),
 
-                    ArtLoader.SpriteScale * texture.GetHeight()
+                    ArtLoader.NPCSpriteScale * texture.GetHeight()
                     );
                 material.SetShaderParameter("texture_albedo", (Texture)texture);
                 //sprite.Mesh.Set("size",FrameSize*1.5f);//TODO fix so this does not call a null crash and sprite mesh keeps size

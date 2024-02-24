@@ -22,7 +22,9 @@ namespace Underworld
         public short PaletteNo = 0;
 
 
-        public const float SpriteScale = 0.012f;  //height of 1px of a sprite
+        public const float SpriteScale = 0.024f;  //height of 1px of a sprite
+
+        public const float NPCSpriteScale = 0.012f; 
 
         /// <summary>
         /// Loads the image file into the buffer
