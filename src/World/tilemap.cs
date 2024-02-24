@@ -1099,19 +1099,25 @@ namespace Underworld
         /// <param name="magnitude"></param>
         public static TileInfo GetTileInDirection(float magnitude)
         {
-            var direction = main.gamecam.GlobalTransform.Basis.Z;
-            var targetpos = main.gamecam.Position - (direction.Normalized() * magnitude);
+            Vector3 targetpos = GetPositionInDirection(magnitude);
             var tileX = -(int)(targetpos.X / 1.2f);
             var tileY = (int)(targetpos.Z / 1.2f);
-            Debug.Print($"From {main.gamecam.Position} to {targetpos} {tileX},{tileY}");          
+            Debug.Print($"From {main.gamecam.Position} to {targetpos} {tileX},{tileY}");
 
-            if (ValidTile(tileX,tileY))
+
+            if (ValidTile(tileX, tileY))
             {
-                return current_tilemap.Tiles[tileX,tileY];
+                return current_tilemap.Tiles[tileX, tileY];
             }
 
             return null;
         }
 
+        public static Vector3 GetPositionInDirection(float magnitude)
+        {
+            var direction = main.gamecam.GlobalTransform.Basis.Z;
+            var targetpos = main.gamecam.Position - (direction.Normalized() * magnitude);
+            return targetpos;
+        }
     } //end class
 }//end namespace

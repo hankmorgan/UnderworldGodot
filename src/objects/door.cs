@@ -336,31 +336,18 @@ namespace Underworld
         /// <summary>
         /// Turns the door in to an animated moving door that will open or close as the animos are processed.
         /// </summary>
-        /// <param name="obj"></param>
+        /// <param name="doorObj"></param>
         /// <returns>true if the door can be animated</returns>
-        public static bool TurnIntoMovingDoor(door obj)
-        {           
-            //Add animation overlay entry
-            var animoindex = animo.GetFreeAnimoSlot();
-            if (animoindex!=-1)
+        public static bool TurnIntoMovingDoor(door doorObj)
+        {
+            if (animo.CreateAnimoLink(doorObj.uwobject, doorObj.NoOfFrames))
             {
-                var anim = UWTileMap.current_tilemap.Overlays[animoindex];
-                anim.link= obj.uwobject.index;
-                anim.tileX = obj.uwobject.tileX;
-                anim.tileY = obj.uwobject.tileY;
-                anim.Duration= obj.NoOfFrames;
-
                 //change object props
-                obj.uwobject.owner = (short)obj.uwobject.classindex;
-                Debug.Print($"About to move door {obj.uwobject.item_id}");
-                obj.uwobject.item_id = 0x1CF; // a moving door
-                Debug.Print($"Moving Door is now {obj.uwobject.item_id}");
-                return true;           
-            }
-            else
-            {
-                return false;
-            }           
+                doorObj.uwobject.owner = (short)doorObj.uwobject.classindex;
+                doorObj.uwobject.item_id = 0x1CF; // a moving door 
+                return true;    
+            }    
+            return false;
         }
 
         public static void MoveDoor(door obj, int delta)

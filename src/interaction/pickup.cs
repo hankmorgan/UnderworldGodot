@@ -27,7 +27,8 @@ namespace Underworld
                 obj.next = t.indexObjectList;
                 t.indexObjectList = (short)index;
                 //remove the old
-                ObjectCreator.RemoveObject(obj);  
+                // why was this here 
+                //ObjectCreator.RemoveObject(obj);  
                 //create the new              
                 ObjectCreator.RenderObject(obj,UWTileMap.current_tilemap);
                 return true;

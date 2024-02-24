@@ -136,9 +136,9 @@ namespace Underworld
         {
             foreach (var a in UWTileMap.current_tilemap.Overlays)
             {
-                if (a!=null)
+                if (a != null)
                 {
-                    if (a.Duration==0)
+                    if (a.Duration == 0)
                     {
                         return a.index;
                     }
@@ -146,5 +146,32 @@ namespace Underworld
             }
             return -1; //no animo found
         }
-    }
+
+
+
+        /// <summary>
+        /// Creates a linked animo.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="Duration"></param>
+        /// <returns></returns>
+        public static bool CreateAnimoLink(uwObject obj, int Duration)
+        {
+            //Add animation overlay entry
+            var animoindex = animo.GetFreeAnimoSlot();
+            if (animoindex != -1)
+            {
+                var anim = UWTileMap.current_tilemap.Overlays[animoindex];
+                anim.link = obj.index;
+                anim.tileX = obj.tileX;
+                anim.tileY = obj.tileY;
+                anim.Duration = Duration;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }//end class
 }//end namespace
