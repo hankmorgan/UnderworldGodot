@@ -299,7 +299,7 @@ public partial class main : Node3D
 			
 		}
 
-		if (ConversationVM.WaitingForInput)
+		if (ConversationVM.WaitingForInput && !uimanager.MessageScrollIsTemporary)
 		{
 			if (@event is InputEventKey keyinput)
 			{

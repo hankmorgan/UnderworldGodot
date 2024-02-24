@@ -7,17 +7,19 @@ namespace Underworld
         [ExportGroup("Messagescroll")]
         [Export] public RichTextLabel messageScrollUW1;
         [Export] public RichTextLabel messageScrollUW2;
-        
-         /// <summary>
+
+        /// <summary>
         /// Any typed content, eg "other text" in conversations, quantities to be picked up.
         /// Will auto replace the special text {TYPEDINPUT} in the scrolls.
         /// </summary>
-  
+
         [Export] public LineEdit TypedInput;
 
         public MessageDisplay scroll = new();
 
         public MessageDisplay convo = new();
+
+        public static bool MessageScrollIsTemporary = false;
 
 
 
@@ -61,12 +63,57 @@ namespace Underworld
         /// <param name="stringToAdd"></param>
         /// <param name="option"></param>
         /// <param name="colour"></param>
-        public static void AddToMessageScroll(string stringToAdd, int option = 0, int colour = 0)
+        public static void AddToMessageScroll(string stringToAdd, int option = 0, int colour = 0, MessageDisplay.MessageDisplayMode mode = MessageDisplay.MessageDisplayMode.NormalMode)
         {
-            _ = Peaky.Coroutines.Coroutine.Run(
-            instance.scroll.AddText(newText: stringToAdd, option: option, colour: colour),
-                main.instance
-                );
+            if (MessageScrollIsTemporary)
+            {//don't allow any overwriting when a message is already being displayed temporarily.
+                return;
+            }
+
+
+
+            switch (mode)
+            {
+                case MessageDisplay.MessageDisplayMode.TypedInput:
+                    //TODO.
+                    break;
+                case MessageDisplay.MessageDisplayMode.TemporaryMessage:
+                    {
+                        //back up lines
+                        var backup = BackupLines(instance.scroll.Lines, 5);
+                        MessageScrollIsTemporary = true;
+                        instance.scroll.Clear();
+                        _ = Peaky.Coroutines.Coroutine.Run(
+                            instance.scroll.AddText(newText: stringToAdd, option: option, colour: colour),
+                            main.instance
+                            );
+
+                        _ = Peaky.Coroutines.Coroutine.Run(
+                            instance.scroll.RestoreLinesAfterWait(backup, 2f),
+                            main.instance
+                            );
+                        break;
+                    }
+                case MessageDisplay.MessageDisplayMode.NormalMode:
+                default:
+                    {
+                        _ = Peaky.Coroutines.Coroutine.Run(
+                                instance.scroll.AddText(newText: stringToAdd, option: option, colour: colour),
+                                main.instance
+                                );
+                        break;
+                    }
+            }
+        }
+
+        private static MessageScrollLine[] BackupLines(MessageScrollLine[] toBackup, int size)
+        {
+            var existingLines = new MessageScrollLine[size];
+            for (int i = 0; i <= existingLines.GetUpperBound(0); i++)
+            {
+                existingLines[i] = new MessageScrollLine(toBackup[i].OptionNo, toBackup[i].LineText);
+            }
+            return existingLines;
         }
 
 

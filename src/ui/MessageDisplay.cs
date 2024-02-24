@@ -4,12 +4,18 @@ using System.Collections;
 
 namespace Underworld
 {
-    
+
     /// <summary>
     /// Class for processing message output being sent to the screen.
     /// </summary>
     public class MessageDisplay
     {
+        public enum MessageDisplayMode
+        {
+            NormalMode = 0,
+            TypedInput = 1,
+            TemporaryMessage = 2
+        }
         /// <summary>
         /// Player has been prompted with a [MORE] wait
         /// </summary>
@@ -146,7 +152,7 @@ namespace Underworld
         {
             if (newText.EndsWith("\n"))
             {//trims an ending new line
-                newText = newText.Substring(0, newText.Length-1);
+                newText = newText.Substring(0, newText.Length - 1);
             }
             int NoOfRowsNeeded = 0;
             //split by new lines
@@ -202,6 +208,19 @@ namespace Underworld
             }
             yield return 0;
         }
-    }
 
-}
+        public IEnumerator RestoreLinesAfterWait(MessageScrollLine[] linesToRestore, float waittime)
+        {
+            yield return new WaitForSeconds(waittime);
+            //restore
+            for (int i = 0; i<=Lines.GetUpperBound(0);i++)
+            {
+                Lines[i] = new MessageScrollLine(linesToRestore[i].OptionNo, linesToRestore[i].LineText);
+            }
+            UpdateMessageDisplay();
+            uimanager.MessageScrollIsTemporary = false;
+            yield return 0;
+        }
+
+    }//end class
+}//end namespace

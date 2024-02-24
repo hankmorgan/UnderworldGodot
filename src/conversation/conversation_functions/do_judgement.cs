@@ -73,7 +73,7 @@ namespace Underworld
                 GameStrings.GetString(7, 8 + final_evaluation);
 
             //Debug.Print(output);
-            uimanager.AddToConvoScroll(output,PRINT_SAY);           
+            uimanager.AddToMessageScroll(stringToAdd: output, option: PRINT_SAY, mode: MessageDisplay.MessageDisplayMode.TemporaryMessage);           
             yield return 0;
         } 
     }//end class

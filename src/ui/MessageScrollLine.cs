@@ -21,6 +21,16 @@ namespace Underworld
             LineText = newText;
             OptionNo = option;
         }
+
+        public MessageScrollLine()
+        {
+
+        }
+        public MessageScrollLine(int _OptionNo, string _LineText)
+        {
+            OptionNo = _OptionNo;
+            LineText = _LineText;
+        }
     }//end class
 
 }

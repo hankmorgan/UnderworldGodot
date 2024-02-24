@@ -164,7 +164,7 @@ namespace Underworld
             return true;
         }
 
-        public static bool GeneralLookDescription(uwObject obj, bool OutputConvoScroll = false)
+        public static bool GeneralLookDescription(uwObject obj, bool OutputConvo = false)
         {
             string output;
             if (commonObjDat.PrintableLook(obj.item_id))
@@ -251,9 +251,12 @@ namespace Underworld
                 output += $"{article}{qtystring}{qualitystring}{objectname}";
             }
 
-            if (OutputConvoScroll)
+            if (OutputConvo)
             {
-                uimanager.AddToConvoScroll($"{output}", 2);
+                uimanager.AddToMessageScroll(
+                    stringToAdd: $"{output}", 
+                    option: 2, 
+                    mode: MessageDisplay.MessageDisplayMode.TemporaryMessage);
             }
             else
             {

@@ -257,7 +257,11 @@ namespace Underworld
                                     var obj = playerdat.InventoryObjects[objAtSlot];
                                     if ((obj.majorclass == 2) && (obj.minorclass == 0))
                                     {
-                                        AddToConvoScroll(GameStrings.GetString(1, GameStrings.str_you_cannot_barter_a_container__instead_remove_the_contents_you_want_to_trade_), 2);
+                                        AddToMessageScroll(
+                                            stringToAdd: GameStrings.GetString(1, GameStrings.str_you_cannot_barter_a_container__instead_remove_the_contents_you_want_to_trade_), 
+                                            option: 2,
+                                            mode: MessageDisplay.MessageDisplayMode.TemporaryMessage
+                                            );
                                     }
                                     else
                                     {
@@ -286,7 +290,7 @@ namespace Underworld
                                         }
                                         else
                                         {//all other objects look at
-                                            look.GeneralLookDescription(obj: obj, OutputConvoScroll: true);
+                                            look.GeneralLookDescription(obj: obj, OutputConvo: true);
                                         }
                                     }
                                 }
