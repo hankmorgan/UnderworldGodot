@@ -93,7 +93,7 @@ namespace Underworld
         public static IEnumerator DoPickupQty(int index, uwObject[] objList, uwObject obj)
         {
             MessageDisplay.WaitingForTypedInput = true;
-            
+
             uimanager.instance.TypedInput.Text = "";
             uimanager.instance.scroll.Clear();
             uimanager.AddToMessageScroll("Move how many? {TYPEDINPUT}|");
@@ -102,38 +102,40 @@ namespace Underworld
             {
                 yield return new WaitOneFrame();
             }
-            
+
             var response = uimanager.instance.TypedInput.Text;
             if (int.TryParse(response, out int result))
             {
-                if (obj.ObjectQuantity <= result)
-                {//at least all of the stack is seleced
-                    DoPickup(index, objList, obj);
+                if (result > 0)
+                {
+                    if (obj.ObjectQuantity <= result)
+                    {//at least all of the stack is seleced
+                        DoPickup(index, objList, obj);
+                    }
+                    else
+                    {
+                        //if <quantity selected, split objects, pickup object of that quantity.
+                        var newObjIndex = ObjectCreator.SpawnObjectInHand(obj.item_id); //spawning in hand is very handy here
+                        var newObj = UWTileMap.current_tilemap.LevelObjects[newObjIndex];
+                        newObj.link = (short)result;
+                        newObj.quality = obj.quality;
+                        newObj.owner = obj.owner;
+                        //TODO. see if other object properties need copying.                    
+                        obj.link = (short)(obj.link - result);//reduce the other object.
+                    }
+                    yield return true;
                 }
                 else
                 {
-                    //if <quantity selected, split objects, pickup object of that quantity.
-                    var newObjIndex = ObjectCreator.SpawnObjectInHand(obj.item_id); //spawning in hand is very handy here
-                    var newObj = UWTileMap.current_tilemap.LevelObjects[newObjIndex];
-                    newObj.link = (short)result;
-                    newObj.quality = obj.quality;
-                    newObj.owner= obj.owner;
-                    //TODO. see if other object properties need copying.                    
-                    obj.link = (short)(obj.link - result);//reduce the other object.
-                }
-                yield return true;
+                    //<0
+                    yield return false;
+                }                
             }
             else
             {
-                //invalid input. cancel
+                //invalid input. cancel                
                 yield return false;
-            }
-            
-            
-
-            //full quantity select, pickup all
-
-            //if 0, cancel.
+            }        
             yield return false;
         }
 
@@ -182,8 +184,8 @@ namespace Underworld
                 }
             }
         }
-    
-    
+
+
 
     } //end class
 }//end namespace
