@@ -74,9 +74,9 @@ namespace Underworld
 
             switch (mode)
             {
-                case MessageDisplay.MessageDisplayMode.TypedInput:
-                    //TODO.
-                    break;
+                // case MessageDisplay.MessageDisplayMode.TypedInput:
+                //     //TODO.
+                //     break;
                 case MessageDisplay.MessageDisplayMode.TemporaryMessage:
                     {
                         //back up lines
@@ -95,6 +95,7 @@ namespace Underworld
                         break;
                     }
                 case MessageDisplay.MessageDisplayMode.NormalMode:
+                case MessageDisplay.MessageDisplayMode.TypedInput:
                 default:
                     {
                         _ = Peaky.Coroutines.Coroutine.Run(
@@ -106,7 +107,7 @@ namespace Underworld
             }
         }
 
-        private static MessageScrollLine[] BackupLines(MessageScrollLine[] toBackup, int size)
+        public static MessageScrollLine[] BackupLines(MessageScrollLine[] toBackup, int size)
         {
             var existingLines = new MessageScrollLine[size];
             for (int i = 0; i <= existingLines.GetUpperBound(0); i++)

@@ -617,7 +617,7 @@ namespace Underworld
         /// <param name="updateUI"></param>
         /// <param name="RemoveNext"></param>
         /// <returns></returns>
-        public static int AddInventoryObjectToWorld(int objIndex, bool updateUI, bool RemoveNext)
+        public static int AddInventoryObjectToWorld(int objIndex, bool updateUI, bool RemoveNext, bool DestroyInventoryObject = true)
         {
             var oldObj = InventoryObjects[objIndex];      
            
@@ -647,8 +647,11 @@ namespace Underworld
                     NewObj.DataBuffer[NewObj.PTR + i] = oldObj.DataBuffer[oldObj.PTR+i]; 
                 }
 
-            //remove inventory obj
-            RemoveFromInventory(objIndex, updateUI);
+            if (DestroyInventoryObject)
+            {
+                //remove inventory obj
+                RemoveFromInventory(objIndex, updateUI);
+            }
             return newIndex;
         }
 

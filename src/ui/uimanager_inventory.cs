@@ -1,5 +1,7 @@
 using System.Diagnostics;
 using Godot;
+using Peaky.Coroutines;
+using System.Collections;
 
 namespace Underworld
 {
@@ -46,27 +48,27 @@ namespace Underworld
                     case >= 0 and <= 10:
                         {//paperdoll
                             if (CurrentSlot == 0) //HELM
+                            {
+                                //try the eat interation.
+                                if (playerdat.ObjectInHand != 1)
                                 {
-                                    //try the eat interation.
-                                    if (playerdat.ObjectInHand!=1)
+                                    var objInHand = UWTileMap.current_tilemap.LevelObjects[playerdat.ObjectInHand];
+                                    if (objInHand.majorclass == 2 && objInHand.minorclass == 3)
                                     {
-                                        var objInHand = UWTileMap.current_tilemap.LevelObjects[playerdat.ObjectInHand];
-                                        if (objInHand.majorclass==2 && objInHand.minorclass==3)
-                                        {
-                                            food.Use(objInHand, true);
+                                        food.Use(objInHand, true);
+                                        return;
+                                    }
+                                    else
+                                    {
+                                        if (food.SpecialFoodCases(
+                                            obj: objInHand,
+                                            UsedFromInventory: false))
+                                        {//if any food special case occurs exit sub
                                             return;
-                                        }
-                                        else
-                                        {
-                                            if (food.SpecialFoodCases(
-                                                obj: objInHand, 
-                                                UsedFromInventory: false))
-                                            {//if any food special case occurs exit sub
-                                                return;
-                                            }
                                         }
                                     }
                                 }
+                            }
                             var index = playerdat.AddObjectToPlayerInventory(ObjectToPickup, false);
                             playerdat.SetInventorySlotListHead(CurrentSlot, index);
                             //redraw                
@@ -162,6 +164,10 @@ namespace Underworld
         /// <param name="isLeftClick"></param>
         private static void InteractWithObjectInSlot(string slotname, int objAtSlot, bool isLeftClick)
         {
+            if ( MessageDisplay.WaitingForTypedInput)
+            {//stop while typing in progress
+                return;
+            }
             switch (InteractionMode)
             {
                 case InteractionModes.ModeUse:
@@ -258,7 +264,7 @@ namespace Underworld
                                     if ((obj.majorclass == 2) && (obj.minorclass == 0))
                                     {
                                         AddToMessageScroll(
-                                            stringToAdd: GameStrings.GetString(1, GameStrings.str_you_cannot_barter_a_container__instead_remove_the_contents_you_want_to_trade_), 
+                                            stringToAdd: GameStrings.GetString(1, GameStrings.str_you_cannot_barter_a_container__instead_remove_the_contents_you_want_to_trade_),
                                             option: 2,
                                             mode: MessageDisplay.MessageDisplayMode.TemporaryMessage
                                             );
@@ -268,9 +274,6 @@ namespace Underworld
                                         //try and pickup if not a container
                                         PickupObjectFromSlot(objAtSlot);
                                     }
-
-
-
                                 }
                                 else
                                 {//check if container.
@@ -382,6 +385,10 @@ namespace Underworld
         /// <param name="targetObj"></param>
         public static void UseObjectsTogether(int srcObj, int targetObj)
         {
+            if ( MessageDisplay.WaitingForTypedInput)
+            {//stop while typing in progress
+                return;
+            }
             var target = playerdat.InventoryObjects[targetObj];
             var source = UWTileMap.current_tilemap.LevelObjects[srcObj];
 
@@ -417,6 +424,8 @@ namespace Underworld
                 return;
             }
 
+            //todo if objects are of same type can can be stacked. -> combine.
+
             //try item combinations
             if (objectCombination.TryObjectCombination(target, source))
             {
@@ -432,15 +441,47 @@ namespace Underworld
 
         public static void PickupObjectFromSlot(int objAtSlot)
         {
+            if ( MessageDisplay.WaitingForTypedInput)
+            {//stop while another in progress
+                return;
+            }
+            var obj = playerdat.InventoryObjects[objAtSlot];
+
+            if (obj.ObjectQuantity > 1)
+            {//object is a quantity, prompty for pickup size and then complete pickup
+                //prompt for quantity in coroutine.
+                _ = Peaky.Coroutines.Coroutine.Run(
+                        DoPickupQty(objAtSlot: objAtSlot, currslot: CurrentSlot),
+                        main.instance
+                    );
+            }
+            else
+            {
+                //just pick it up
+                DoPickup(objAtSlot);
+            }
+        }
+
+
+
+        /// <summary>
+        /// Does the pickup forom slot.
+        /// </summary>
+        /// <param name="objAtSlot"></param>
+        /// <param name="DestroyInventoryObject"></param>
+        /// <returns></returns>
+        private static int DoPickup(int objAtSlot, bool DestroyInventoryObject = true)
+        {
             var newIndex = playerdat.AddInventoryObjectToWorld(
                     objIndex: objAtSlot,
                     updateUI: true,
-                    RemoveNext: false);
+                    RemoveNext: false,
+                    DestroyInventoryObject: DestroyInventoryObject);
             var pickObject = UWTileMap.current_tilemap.LevelObjects[newIndex];
             playerdat.ObjectInHand = newIndex;
             uimanager.instance.mousecursor.SetCursorArt(pickObject.item_id);
+            return newIndex;
         }
-
 
         public static void MoveObjectInHandOutOfOpenedContainer(int ObjectToPickup)
         {
@@ -495,5 +536,65 @@ namespace Underworld
         //     }
         // }
 
+
+        /// <summary>
+        /// Handles pickup up stacks of objects which need to be split
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="objList"></param>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static IEnumerator DoPickupQty(int objAtSlot, int currslot)
+        {
+            MessageScrollLine[] linesToRestore = BackupLines(instance.scroll.Lines, 5);
+            var obj = playerdat.InventoryObjects[objAtSlot];
+            MessageDisplay.WaitingForTypedInput = true;
+
+            instance.TypedInput.Text = "";
+            instance.scroll.Clear();
+            AddToMessageScroll("Move how many? {TYPEDINPUT}|", mode: MessageDisplay.MessageDisplayMode.TypedInput);
+
+            while (MessageDisplay.WaitingForTypedInput)
+            {
+                yield return new WaitOneFrame();
+            }
+            //restore currentslot as this gets wiped once the calling function has ended
+            CurrentSlot = currslot;
+
+            var response = instance.TypedInput.Text;
+            if (int.TryParse(response, out int result))
+            {
+                if (result > 0)
+                {
+                    if (obj.ObjectQuantity <= result)
+                    {//at least all of the stack is selected                        
+                        DoPickup(objAtSlot);
+                    }
+                    else
+                    {
+                        //if <quantity selected, split objects, pickup object of that quantity.
+                        var newObjIndex = ObjectCreator.SpawnObjectInHand(obj.item_id); //spawning in hand is very handy here
+                        var newObj = UWTileMap.current_tilemap.LevelObjects[newObjIndex];
+                        newObj.link = (short)result;
+                        newObj.quality = obj.quality;
+                        newObj.owner = obj.owner;
+                        //TODO. see if other object properties need copying.                    
+                        obj.link = (short)(obj.link - result);//reduce the other object.
+                    }
+                }
+            }
+            UpdateInventoryDisplay();
+            if (ConversationVM.InConversation)
+            {
+                //restore lines.
+                for (int i = 0; i <= linesToRestore.GetUpperBound(0); i++)
+                {
+                    instance.scroll.Lines[i] = new MessageScrollLine(linesToRestore[i].OptionNo, linesToRestore[i].LineText);
+                }
+                instance.scroll.UpdateMessageDisplay();
+            }
+            CurrentSlot =-1; //cleanup/needed?
+            yield return true;
+        }
     }//end class
 }//end namespace
