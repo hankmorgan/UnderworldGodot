@@ -423,14 +423,18 @@ namespace Underworld
                 }
                 return;
             }
-
-            //todo if objects are of same type can can be stacked. -> combine.
+            
             if (target.item_id == source.item_id)
             {
                 if ((commonObjDat.stackable(target.item_id) & 0x1) == 0)
                 {//and is stackable.
+                    //average out the quality between the stacks
+                    target.quality = (short)(((target.quality * target.ObjectQuantity) + (source.quality*source.ObjectQuantity))/(target.ObjectQuantity + source.ObjectQuantity));
+                   
+                    //change the quantities.
                     target.link += source.link;
                     target.is_quant = 1;
+                    
                     UpdateInventoryDisplay();
                     //destroy the source.
                     ObjectCreator.RemoveObject(source);
