@@ -425,7 +425,19 @@ namespace Underworld
             }
 
             //todo if objects are of same type can can be stacked. -> combine.
-
+            if (target.item_id == source.item_id)
+            {
+                if ((commonObjDat.stackable(target.item_id) & 0x1) == 0)
+                {//and is stackable.
+                    target.link += source.link;
+                    target.is_quant = 1;
+                    UpdateInventoryDisplay();
+                    //destroy the source.
+                    ObjectCreator.RemoveObject(source);
+                    playerdat.ObjectInHand = -1; uimanager.instance.mousecursor.ResetCursor();
+                    return;
+                }
+            }
             //try item combinations
             if (objectCombination.TryObjectCombination(target, source))
             {
@@ -550,7 +562,7 @@ namespace Underworld
             var obj = playerdat.InventoryObjects[objAtSlot];
             MessageDisplay.WaitingForTypedInput = true;
 
-            instance.TypedInput.Text = "";
+            instance.TypedInput.Text = obj.ObjectQuantity.ToString();
             instance.scroll.Clear();
             AddToMessageScroll("Move how many? {TYPEDINPUT}|", mode: MessageDisplay.MessageDisplayMode.TypedInput);
 
