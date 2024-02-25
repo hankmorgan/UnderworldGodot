@@ -107,7 +107,7 @@ namespace Underworld
         {
             get
             {
-                return objectsearch.FindMatchInObjectList(
+                return objectsearch.FindMatchInObjectChain(
                     ListHeadIndex: uwobject.link, 
                     majorclass: 4, 
                     minorclass: 0, 

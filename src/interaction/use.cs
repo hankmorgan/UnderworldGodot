@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Godot;
 
 namespace Underworld
 {
@@ -118,6 +119,17 @@ namespace Underworld
                         }
                         break;
                     }
+                case 1:
+                    {
+                        if (_RES!=GAME_UW2)
+                        {
+                            if (obj.classindex==0xB)
+                            {
+                                return rotwormstew.Use(obj,WorldObject);
+                            }
+                        }
+                        break;
+                    }
                 case 2:
                 {
                     switch(obj.classindex)
@@ -147,7 +159,7 @@ namespace Underworld
                                 case 0xB:
                                     return map.Use(obj, WorldObject);
                                 default:
-                                    return Readable.LookAt(obj);
+                                    return Readable.Use(obj);
                             }
                         }
                         else

@@ -15,7 +15,7 @@ namespace Underworld
         /// <param name="classindex">use -1 to return any of the class index </param>
         /// <param name="objList"></param>
         /// <returns></returns>
-        public static uwObject FindMatchInObjectList(int ListHeadIndex, int majorclass, int minorclass, int classindex, uwObject[] objList) 
+        public static uwObject FindMatchInObjectChain(int ListHeadIndex, int majorclass, int minorclass, int classindex, uwObject[] objList) 
         {
             if (ListHeadIndex !=0 )
             {
@@ -33,7 +33,7 @@ namespace Underworld
                         }
                     }
                     //no matches. Try next value. Returns null if nothing found.
-                    return FindMatchInObjectList(
+                    return FindMatchInObjectChain(
                         ListHeadIndex: testObj.next, 
                         majorclass: majorclass, 
                         minorclass: minorclass, 
@@ -42,6 +42,36 @@ namespace Underworld
                 }
             }           
            return null; //nothing found. 
+        }
+
+        /// <summary>
+        /// Finds a matching object in a full list of objects
+        /// </summary>
+        /// <param name="majorclass"></param>
+        /// <param name="minorclass"></param>
+        /// <param name="classindex"></param>
+        /// <param name="objList"></param>
+        /// <returns></returns>
+        public static uwObject FindMatchInObjectList(int majorclass, int minorclass, int classindex, uwObject[] objList) 
+        {
+            for (int i = 1; i<=objList.GetUpperBound(0);i++)
+            {
+                var testObj = objList[i];
+                if (testObj!=null)
+                {
+                    if (testObj.majorclass == majorclass)
+                    { //matching major class
+                        if ((testObj.minorclass == minorclass)|| (minorclass==-1))
+                        {//Either minor class matches or if minorclass =-1 (find all)
+                            if ((testObj.classindex == classindex) || (classindex==-1))
+                            {//obj match found.
+                                return testObj;
+                            }
+                        }
+                    }
+                }
+            }
+            return null;     
         }
 
         /// <summary>

@@ -2,6 +2,54 @@ namespace Underworld
 {
     public class Readable: objectInstance
     {
+
+        /// <summary>
+        /// The use interaction. Reads the object unless there is a special effect or magic to be cast
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static bool Use(uwObject obj)
+        {
+            if (_RES==GAME_UW2)
+            {//TODO implement the UW2 logic.
+                return LookAt(obj);
+            }
+            else
+            {
+                if (obj.enchantment == 0 || (obj.enchantment == 1 && obj.majorclass==5))
+                {
+                    if(obj.flags1==0)
+                    {
+                        if ((obj.link & 0x1FF) < 0x100)
+                            {
+                                return LookAt(obj);//default read
+                            }
+                        else
+                            {
+                                //rotworm stew and only rotworm stew
+                                return rotwormstew.MixRotwormStew();
+                            }                        
+                    }
+                    else
+                    {
+                        var cutsno = (obj.link & 0x1ff) + 0x100; 
+                        uimanager.AddToMessageScroll($"Display Cutscene {cutsno}", colour: 2);
+                        return true;
+                    }
+                }
+                else
+                {
+                     uimanager.AddToMessageScroll($"Cast a spell from this object", colour: 2);
+                     return true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// The read interation.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public static bool LookAt(uwObject obj)
         {
             if (obj.is_quant == 1)

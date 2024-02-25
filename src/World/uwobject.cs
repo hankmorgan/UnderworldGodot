@@ -152,6 +152,39 @@ namespace Underworld
         }
 
         /// <summary>
+        /// Flag shortcuts - Flag 0
+        /// </summary>
+        public short flags0
+        {
+            get 
+            {
+                return (short)(flags & 0x1);
+            }
+        }
+
+        /// <summary>
+        /// Flag shortcuts - Flag 1
+        /// </summary>
+        public short flags1
+        {
+            get 
+            {
+                return (short)((flags>>1) & 0x1);
+            }
+        }
+
+        /// <summary>
+        /// Flag shortcuts - Flag 2
+        /// </summary>
+        public short flags2
+        {
+            get 
+            {
+                return (short)((flags>>2) & 0x1);
+            }
+        }
+
+        /// <summary>
         /// The enchantment flag for the object.
         /// </summary>
         public short enchantment
