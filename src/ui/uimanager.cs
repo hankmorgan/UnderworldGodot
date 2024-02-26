@@ -7,23 +7,17 @@ namespace Underworld
 	{
 		public static uimanager instance;
 
-
+		public static bool InGame = false;
+		
 		[Export] public TextureRect placeholderuw1;
 		[Export] public TextureRect placeholderuw2;
-
-
-
-		static uimanager()
-		{
-
-		}
-
 
 		public void InitUI()
 		{
 			instance = this;
 
 			InitArt();
+			InitMainMenu();
 			InitFlasks();
 			InitCoversation();
 			InitPanels();

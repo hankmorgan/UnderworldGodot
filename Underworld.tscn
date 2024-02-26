@@ -24,12 +24,12 @@
 [ext_resource type="Texture2D" uid="uid://b1y5rs02fgv6d" path="res://resources/cross.png" id="18_tfr7p"]
 [ext_resource type="Texture2D" uid="uid://dqcrcis2dop6k" path="res://resources/placeholder_art/paperdolluw1/body_f.png" id="19_0yobb"]
 [ext_resource type="Texture2D" uid="uid://b4hn75lfpnecd" path="res://resources/placeholder_art/grave.png" id="20_n8sfi"]
-[ext_resource type="Texture2D" uid="uid://du878dn3osxn1" path="res://resources/placeholder_art/blankmap.png" id="20_o03w0"]
 [ext_resource type="Texture2D" uid="uid://dx526kvjk8jmj" path="res://resources/cross2.png" id="21_5p8p7"]
 [ext_resource type="Texture2D" uid="uid://b5mwiifn8jtb6" path="res://resources/placeholder_art/uw2placeholdermain.png" id="21_t84cw"]
 [ext_resource type="Texture2D" uid="uid://cvik4hdmkwuwk" path="res://resources/placeholder_art/paperdolluw1/up button 027.png" id="22_vc6ux"]
 [ext_resource type="Texture2D" uid="uid://01h0bdambuq4" path="res://resources/placeholder_art/paperdolluw1/down button 028.png" id="23_e17mk"]
 [ext_resource type="Texture2D" uid="uid://51go53yqj8oq" path="res://resources/placeholder_art/panels/panelsstats.png" id="24_filpa"]
+[ext_resource type="Texture2D" uid="uid://dlhf0nj7vj1o2" path="res://resources/placeholder_art/PanelBlack.jpg" id="29_aiei8"]
 
 [sub_resource type="AudioStreamWAV" id="AudioStreamWAV_tkk82"]
 
@@ -58,7 +58,7 @@ script = ExtResource("5_2to2n")
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLableFrameUW1", "NPCNameLableFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "CutsFull", "CutsSmallUW1", "CutsSmallUW2", "Cuts3DWinUW1", "Cuts3DWinUW2", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "InteractionButtonsUW1", "InteractionButtonsUW2", "AutomapPanel", "AutomapImage", "messageScrollUW1", "messageScrollUW2", "TypedInput", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Chains", "RuneTiles", "SelectedRunes", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSelectedUW1", "NPCTradeSelectedUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "PlayerTradeSelectedUW2", "NPCTradeSelectedUW2", "cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "placeholderuw1", "placeholderuw2")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLableFrameUW1", "NPCNameLableFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "CutsFull", "CutsSmallUW1", "CutsSmallUW2", "Cuts3DWinUW1", "Cuts3DWinUW2", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "InteractionButtonsUW1", "InteractionButtonsUW2", "PanelMainMenu", "MainMenuBG", "MainMenuButtons", "LoadingLabel", "AutomapPanel", "AutomapImage", "messageScrollUW1", "messageScrollUW2", "TypedInput", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Chains", "RuneTiles", "SelectedRunes", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSelectedUW1", "NPCTradeSelectedUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "PlayerTradeSelectedUW2", "NPCTradeSelectedUW2", "cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "placeholderuw1", "placeholderuw2")]
 script = ExtResource("1_lw0yg")
 ConversationPanelUW1 = NodePath("../UW1/ConversationUW1")
 PlayerPortraitUW1 = NodePath("../UW1/ConversationUW1/PlayerPortraitUW1")
@@ -97,6 +97,10 @@ Font5X6P = ExtResource("4_pfbet")
 FontBig = ExtResource("5_kj12g")
 InteractionButtonsUW1 = [NodePath("../UW1/OptionsButtonUW1"), NodePath("../UW1/TalkButtonUW1"), NodePath("../UW1/PickupButtonUW1"), NodePath("../UW1/LookButtonUW1"), NodePath("../UW1/AttackButtonUW1"), NodePath("../UW1/UseButtonUW1")]
 InteractionButtonsUW2 = [NodePath("../UW2/OptionsButtonUW2"), NodePath("../UW2/TalkButtonUW2"), NodePath("../UW2/PickupButtonUW2"), NodePath("../UW2/LookButtonUW2"), NodePath("../UW2/AttackButtonUW2"), NodePath("../UW2/UseButtonUW2")]
+PanelMainMenu = NodePath("../Common/MainMenu")
+MainMenuBG = NodePath("../Common/MainMenu/MainMenuBG")
+MainMenuButtons = [NodePath("../Common/MainMenu/Introduction"), NodePath("../Common/MainMenu/CreateCharacter"), NodePath("../Common/MainMenu/Acknowledgements"), NodePath("../Common/MainMenu/JourneyOnwards")]
+LoadingLabel = NodePath("../Common/MainMenu/LoadingLabel")
 AutomapPanel = NodePath("../Common/Automap")
 AutomapImage = NodePath("../Common/Automap/MapImage")
 messageScrollUW1 = NodePath("../UW1/MessageScrollUW1")
@@ -1984,7 +1988,6 @@ offset_bottom = 40.0
 layout_mode = 0
 offset_right = 1280.0
 offset_bottom = 800.0
-texture = ExtResource("20_o03w0")
 
 [node name="MapImage" type="TextureRect" parent="UI/Common/Automap"]
 layout_mode = 0
@@ -2006,6 +2009,62 @@ visible = false
 offset_right = 1280.0
 offset_bottom = 800.0
 mouse_filter = 0
+
+[node name="MainMenu" type="Panel" parent="UI/Common"]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="MainMenuBlackground" type="TextureRect" parent="UI/Common/MainMenu"]
+layout_mode = 0
+offset_right = 1280.0
+offset_bottom = 800.0
+mouse_filter = 0
+texture = ExtResource("29_aiei8")
+
+[node name="MainMenuBG" type="TextureRect" parent="UI/Common/MainMenu"]
+layout_mode = 0
+offset_right = 1280.0
+offset_bottom = 800.0
+mouse_filter = 0
+
+[node name="Introduction" type="TextureRect" parent="UI/Common/MainMenu"]
+layout_mode = 0
+offset_left = 392.0
+offset_top = 325.0
+offset_right = 844.0
+offset_bottom = 397.0
+
+[node name="CreateCharacter" type="TextureRect" parent="UI/Common/MainMenu"]
+layout_mode = 0
+offset_left = 324.0
+offset_top = 418.0
+offset_right = 960.0
+offset_bottom = 502.0
+
+[node name="Acknowledgements" type="TextureRect" parent="UI/Common/MainMenu"]
+layout_mode = 0
+offset_left = 288.0
+offset_top = 512.0
+offset_right = 960.0
+offset_bottom = 604.0
+
+[node name="JourneyOnwards" type="TextureRect" parent="UI/Common/MainMenu"]
+layout_mode = 0
+offset_left = 340.0
+offset_top = 612.0
+offset_right = 924.0
+offset_bottom = 704.0
+
+[node name="LoadingLabel" type="Label" parent="UI/Common/MainMenu"]
+layout_mode = 0
+offset_left = 326.0
+offset_top = 327.0
+offset_right = 982.0
+offset_bottom = 390.0
+theme_override_colors/font_color = Color(0.619608, 1, 0, 1)
+theme_override_fonts/font = ExtResource("5_kj12g")
+theme_override_font_sizes/font_size = 64
+text = "You reenter the abyss..."
 
 [node name="TypedInput" type="LineEdit" parent="UI/Common"]
 offset_left = 81.0
@@ -2150,3 +2209,13 @@ uwUI = NodePath("../UI/uiManager")
 [connection signal="gui_input" from="UI/Common/HealthFlask/FlaskBorder" to="UI/uiManager" method="_on_healthflask_gui_input"]
 [connection signal="gui_input" from="UI/Common/ManaFlask/FlaskBorder" to="UI/uiManager" method="_on_manaflask_gui_input"]
 [connection signal="gui_input" from="UI/Common/Automap/Close" to="UI/uiManager" method="CloseAutomap"]
+[connection signal="mouse_entered" from="UI/Common/MainMenu/Introduction" to="UI/uiManager" method="_on_introduction_mouse_entered"]
+[connection signal="mouse_exited" from="UI/Common/MainMenu/Introduction" to="UI/uiManager" method="_on_introduction_mouse_exited"]
+[connection signal="gui_input" from="UI/Common/MainMenu/CreateCharacter" to="WorldViewContainer/SubViewport/Camera3D" method="_on_create_character_gui_input"]
+[connection signal="mouse_entered" from="UI/Common/MainMenu/CreateCharacter" to="UI/uiManager" method="_on_create_character_mouse_entered"]
+[connection signal="mouse_exited" from="UI/Common/MainMenu/CreateCharacter" to="UI/uiManager" method="_on_create_character_mouse_exited"]
+[connection signal="mouse_entered" from="UI/Common/MainMenu/Acknowledgements" to="UI/uiManager" method="_on_acknowledgements_mouse_entered"]
+[connection signal="mouse_exited" from="UI/Common/MainMenu/Acknowledgements" to="UI/uiManager" method="_on_acknowledgements_mouse_exited"]
+[connection signal="gui_input" from="UI/Common/MainMenu/JourneyOnwards" to="UI/uiManager" method="_on_journey_onwards_gui_input"]
+[connection signal="mouse_entered" from="UI/Common/MainMenu/JourneyOnwards" to="UI/uiManager" method="_on_journey_onwards_mouse_entered"]
+[connection signal="mouse_exited" from="UI/Common/MainMenu/JourneyOnwards" to="UI/uiManager" method="_on_journey_onwards_mouse_exited"]

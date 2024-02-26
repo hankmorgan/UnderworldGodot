@@ -19,7 +19,7 @@ namespace Underworld
 
         //UW2 bitmap indices
         public const int UW2MAIN_BYT = 5;
-         public const int UW2ThreeDWin_BYT = 4;
+        public const int UW2ThreeDWin_BYT = 4;
 
         private readonly int currentIndex = -1;
 
@@ -66,6 +66,33 @@ namespace Underworld
                 0
             };
 
+        public Shader textureshader;
+        
+
+         public ShaderMaterial[] materials = new ShaderMaterial[10];
+
+
+        public ShaderMaterial GetMaterial(int textureno)
+        {            
+            if (textureshader==null)
+            {
+                textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uisprite.gdshader");
+            }
+            if (materials[textureno] == null)
+            {
+                //materials[textureno] = new surfacematerial(textureno);
+                //create this material and add it to the list
+                var newmaterial = new ShaderMaterial();
+                newmaterial.Shader = textureshader;
+                newmaterial.SetShaderParameter("texture_albedo", (Texture)LoadImageAt(textureno,true));
+                newmaterial.SetShaderParameter("albedo", new Color(1, 1, 1, 1));
+                newmaterial.SetShaderParameter("uv1_scale", new Vector3(1, 1, 1));
+                newmaterial.SetShaderParameter("uv2_scale", new Vector3(1, 1, 1));
+                newmaterial.SetShaderParameter("UseAlpha", true);
+                materials[textureno] = newmaterial;
+            }
+            return materials[textureno];    
+        }
 
 
 
@@ -91,20 +118,12 @@ namespace Underworld
                 default:
                     {
                         var toLoad = Path.Combine(BasePath, "DATA", FilePaths[index]);
-                        // var toLoadMod = Path.Combine(toLoad, "001.tga");
-                        // if (File.Exists(toLoadMod))
-                        // {
-                        //     //return TGALoader.LoadTGA(toLoadMod);
-                        // }
                         if (currentIndex != index)
                         {//Only load from disk if the image to bring back has changed.
                             DataLoaded = false;
                             filePath = toLoad;   //FilePaths[index];
                             LoadImageFile();
                         }
-                        //return Image(ImageFileData, 0, 320, 200, "name_goes_here", GameWorldController.instance.palLoader.Palettes[PaletteIndices[index]], Alpha);
-                        //return Image(ImageFileData, 0, 320, 200, "name_goes_here",  PaletteLoader.GreyScale, Alpha);
-
                         return Image(
                             databuffer: ImageFileData, 
                             dataOffSet: 0, 
@@ -120,18 +139,10 @@ namespace Underworld
 
     public ImageTexture extractUW2Bitmap(string toLoad, int index, bool UseAlphaChannel)
     {
-        // Pointer to our buffered data (little endian format)
-        //int i;
         long NoOfTextures;
-        // var toLoadMod = Path.Combine(toLoad, index.ToString("d3") + ".tga");
-        // if (File.Exists(toLoadMod))
-        // {
-        //     return TGALoader.LoadTGA(toLoadMod);
-        // }
 
         if (!ReadStreamFile(toLoad, out byte[] textureFile))
         { return null; }
-        // Get the size of the file in bytes
 
         NoOfTextures = getAt(textureFile, 0, 8);
         int textureOffset = (int)getAt(textureFile, (index * 4) + 6, 32);

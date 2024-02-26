@@ -15,6 +15,7 @@ namespace Underworld
 		public static GRLoader grArmour_F;
 		public static GRLoader grArmour_M;
 		public static GRLoader grFlasks;
+        public static GRLoader grOptbtn; //main menu buttons
 
         public static BytLoader bitmaps;
 
@@ -30,6 +31,8 @@ namespace Underworld
             grArmour_F = new GRLoader(GRLoader.ARMOR_F_GR, GRLoader.GRShaderMode.UIShader);
             grArmour_M = new GRLoader(GRLoader.ARMOR_M_GR, GRLoader.GRShaderMode.UIShader);
 			grConverse = new GRLoader(GRLoader.CONVERSE_GR, GRLoader.GRShaderMode.UIShader);
+            grOptbtn = new  GRLoader(GRLoader.OPBTN_GR, GRLoader.GRShaderMode.UIShader);
+            grOptbtn.PaletteNo = 6;
 
 			bitmaps = new BytLoader();
 

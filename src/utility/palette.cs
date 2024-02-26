@@ -6,10 +6,18 @@ namespace Underworld
     public class Palette : UWClass
     {
 
+        public static int CurrentPalette = 0;
         public byte[] red = new byte[256];
         public byte[] blue = new byte[256];
         public byte[] green = new byte[256];
         public byte[] alpha = new byte[256];
+
+
+        /// <summary>
+        /// Prebuilt array of cycled palettes for use in shaders.
+        /// </summary>
+        public ImageTexture[,,] cycledGamePalette;   //[mono|shaded, ]
+        public ImageTexture[] cycledUIPalette;
 
         /// <summary>
         /// Returns the color for the specified palette index. 

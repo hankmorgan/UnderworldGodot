@@ -1,11 +1,8 @@
 using Godot;
 using System;
 using System.Diagnostics;
-using System.IO;
 using Underworld;
-using System.Text.Json;
 using System.Collections;
-using Peaky.Coroutines;
 
 /// <summary>
 /// Node to initialise the game
@@ -40,39 +37,42 @@ public partial class main : Node3D
 	[Export] public AudioStreamPlayer audioplayer;
 	[Export] public RichTextLabel lblPositionDebug;
 	[Export] public uimanager uwUI;
+	
 
 	double gameRefreshTimer = 0f;
 	double cycletime = 0;
 
 	public override void _Ready()
-    {
-        instance = this;
-        gamecam = cam;
-        uwsettings.LoadSettings();
+	{
+		instance = this;
+		gamecam = cam;
+		uwsettings.LoadSettings();
 
-        ObjectCreator.grObjects = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
-        ObjectCreator.grObjects.UseRedChannel = true;
-
-        uwUI.InitUI();
-
-        uimanager.AddToMessageScroll(GameStrings.GetString(1, 13));//welcome message
-
-        playerdat.LoadPlayerDat(datafolder: uwsettings.instance.levarkfolder);
-
-        //Common launch actions
-        _ = Coroutine.Run(
-        LoadTileMap(playerdat.dungeon_level - 1), main.instance);
-    }
-
- 
+		ObjectCreator.grObjects = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
+		ObjectCreator.grObjects.UseRedChannel = true;
+		Palette.CurrentPalette = 0; 
+		
+		uwUI.InitUI();
 
 
+		uimanager.AddToMessageScroll(GameStrings.GetString(1, 13));//welcome message
 
-    /// <summary>
-    /// Draws a debug marker sprite on game load to show where the character is positioned
-    /// </summary>
-    /// <param name="gr"></param>
-    public static void DrawPlayerPositionSprite(GRLoader gr)
+		
+
+		// playerdat.LoadPlayerDat(datafolder: uwsettings.instance.levarkfolder);
+
+
+	}
+
+
+
+
+
+	/// <summary>
+	/// Draws a debug marker sprite on game load to show where the character is positioned
+	/// </summary>
+	/// <param name="gr"></param>
+	public static void DrawPlayerPositionSprite(GRLoader gr)
 	{
 		int spriteNo = 127;
 		var a_sprite = new MeshInstance3D(); //new Sprite3D();
@@ -92,65 +92,35 @@ public partial class main : Node3D
 			worldobjects.AddChild(a_sprite);
 			a_sprite.Position = main.gamecam.Position;
 		}
-	}
-
-
-	/// <summary>
-	/// Loads the tilemap for the specified level number (dungeon_level-1)
-	/// </summary>
-	/// <param name="newLevelNo"></param>
-	/// <returns></returns>
-	public static IEnumerator LoadTileMap(int newLevelNo)
-	{		
-		//grObjects.UseRedChannel = true;
-
-		ObjectCreator.worldobjects = instance.GetNode<Node3D>("/root/Underworld/worldobjects");
-		Node3D the_tiles = instance.GetNode<Node3D>("/root/Underworld/tilemap");
-
-		LevArkLoader.LoadLevArkFileData(folder: uwsettings.instance.levarkfolder);
-		Underworld.UWTileMap.current_tilemap = new(newLevelNo);
-
-		Underworld.UWTileMap.current_tilemap.BuildTileMapUW(newLevelNo, Underworld.UWTileMap.current_tilemap.lev_ark_block, Underworld.UWTileMap.current_tilemap.tex_ark_block, Underworld.UWTileMap.current_tilemap.ovl_ark_block);
-		ObjectCreator.GenerateObjects(Underworld.UWTileMap.current_tilemap.LevelObjects, Underworld.UWTileMap.current_tilemap);
-		the_tiles.Position = new Vector3(0f, 0f, 0f);
-		tileMapRender.GenerateLevelFromTileMap(the_tiles, ObjectCreator.worldobjects, UWClass._RES, Underworld.UWTileMap.current_tilemap, Underworld.UWTileMap.current_tilemap.LevelObjects, false);
-
-		switch (UWClass._RES)
-		{
-			case UWClass.GAME_UW2:
-				automap.automaps = new automap[80]; break;
-			default:
-				automap.automaps = new automap[9]; break;
-		}
-		automap.automaps[newLevelNo] = new automap(newLevelNo);
-		uwsettings.instance.lightlevel = light.BrightestLight();
-		Debug.Print($"{Underworld.UWTileMap.current_tilemap.uw}");
-		yield return null;
-	}
+	}	
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-		int tileX = -(int)(cam.Position.X / 1.2f);
-		int tileY = (int)(cam.Position.Z / 1.2f);
-			
-		var tmp = cam.Rotation;
-		tmp.Y = (float)(tmp.Y - Math.PI);
-		playerdat.heading = (int)Math.Round(-(tmp.Y * 127)/ Math.PI);
-		 
-
-		lblPositionDebug.Text = $"{cam.Position.ToString()}\n{tileX} {tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}\n{cam.Rotation} {playerdat.heading}";
-
-		if ((tileX < 64) && (tileX >= 0) && (tileY < 64) && (tileY >= 0))
+		if (uimanager.InGame)
 		{
-			// 	//automap.currentautomap.tiles[tileX,tileX].visited = true;
-			if ((playerdat.tileX != tileX) || (playerdat.tileY != tileY))
+			int tileX = -(int)(cam.Position.X / 1.2f);
+			int tileY = (int)(cam.Position.Z / 1.2f);
+
+			var tmp = cam.Rotation;
+			tmp.Y = (float)(tmp.Y - Math.PI);
+			playerdat.heading = (int)Math.Round(-(tmp.Y * 127) / Math.PI);
+
+
+			lblPositionDebug.Text = $"{cam.Position.ToString()}\n{tileX} {tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}\n{cam.Rotation} {playerdat.heading}";
+
+			if ((tileX < 64) && (tileX >= 0) && (tileY < 64) && (tileY >= 0))
 			{
-				playerdat.tileX = tileX;
-				playerdat.tileY = tileY;
-				uwsettings.instance.lightlevel = light.BrightestLight();
+				// 	//automap.currentautomap.tiles[tileX,tileX].visited = true;
+				if ((playerdat.tileX != tileX) || (playerdat.tileY != tileY))
+				{
+					playerdat.tileX = tileX;
+					playerdat.tileY = tileY;
+					uwsettings.instance.lightlevel = light.BrightestLight();
+				}
 			}
 		}
+
 
 
 		//RenderingServer.GlobalShaderParameterSet("cameraPos", cam.Position);
@@ -160,25 +130,29 @@ public partial class main : Node3D
 			cycletime = 0;
 			PaletteLoader.UpdatePaletteCycles();
 		}
-		gameRefreshTimer += delta;
-		if (gameRefreshTimer >= 0.3)
+		if (uimanager.InGame)
 		{
-			gameRefreshTimer = 0;
-			if (!blockmouseinput)
+			gameRefreshTimer += delta;
+			if (gameRefreshTimer >= 0.3)
 			{
-				npc.UpdateNPCs();
-				AnimationOverlay.UpdateAnimationOverlays();
+				gameRefreshTimer = 0;
+				if (!blockmouseinput)
+				{
+					npc.UpdateNPCs();
+					AnimationOverlay.UpdateAnimationOverlays();
+				}
+			}
+
+			if (MessageDisplay.WaitingForTypedInput)
+			{
+				if (!uimanager.instance.TypedInput.HasFocus())
+				{
+					uimanager.instance.TypedInput.GrabFocus();
+				}
+				uimanager.instance.scroll.UpdateMessageDisplay();
 			}
 		}
 
-		if (MessageDisplay.WaitingForTypedInput)
-		{
-			if (!uimanager.instance.TypedInput.HasFocus())
-			{
-				uimanager.instance.TypedInput.GrabFocus();
-			}
-			uimanager.instance.scroll.UpdateMessageDisplay();
-		}
 	}
 
 	public override void _Input(InputEvent @event)
@@ -193,10 +167,10 @@ public partial class main : Node3D
 			}
 			if (!blockmouseinput)
 			{
-                if (uimanager.IsMouseInViewPort())
-                    uimanager.ClickOnViewPort(eventMouseButton);
-            }
-			
+				if (uimanager.IsMouseInViewPort())
+					uimanager.ClickOnViewPort(eventMouseButton);
+			}
+
 		}
 
 		if (ConversationVM.WaitingForInput && !uimanager.MessageScrollIsTemporary && !MessageDisplay.WaitingForTypedInput)
@@ -214,13 +188,13 @@ public partial class main : Node3D
 				}
 			}
 		}
-		
+
 		if (MessageDisplay.WaitingForMore)
 		{
 			if (@event is InputEventKey keyinput)
 			{
 				Debug.Print("End wait due to key inputclick");
-				MessageDisplay.WaitingForMore=false;
+				MessageDisplay.WaitingForMore = false;
 			}
 		}
 
@@ -232,17 +206,17 @@ public partial class main : Node3D
 				switch (keyinput.Keycode)
 				{
 					case Key.Enter:
-						stop= true;
+						stop = true;
 						break;
 					case Key.Escape:
 						stop = true;
-						uimanager.instance.TypedInput.Text ="";						
+						uimanager.instance.TypedInput.Text = "";
 						break;
 				}
 				if (stop)
 				{//end typed input
 					uimanager.instance.scroll.Clear();
-					MessageDisplay.WaitingForTypedInput = false;					
+					MessageDisplay.WaitingForTypedInput = false;
 					gamecam.Set("MOVE", true);//re-enable movement
 				}
 			}

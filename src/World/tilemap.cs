@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Godot;
+using System.Collections;
 
 namespace Underworld
 {
@@ -204,6 +205,56 @@ namespace Underworld
 		    tex_ark_block = LevArkLoader.LoadTexArkBlock(NewLevelNo);
 		    ovl_ark_block = LevArkLoader.LoadOverlayBlock(NewLevelNo);
         }
+
+/// <summary>
+	/// Loads the tilemap for the specified level number (dungeon_level-1)
+	/// </summary>
+	/// <param name="newLevelNo"></param>
+	/// <returns></returns>
+	public static IEnumerator LoadTileMap(int newLevelNo, string datafolder, bool fromMainMenu)
+	{
+		ObjectCreator.worldobjects = main.instance.GetNode<Node3D>("/root/Underworld/worldobjects");
+		Node3D the_tiles = main.instance.GetNode<Node3D>("/root/Underworld/tilemap");
+
+		LevArkLoader.LoadLevArkFileData(folder: datafolder);
+		current_tilemap = new(newLevelNo);
+
+		current_tilemap.BuildTileMapUW(
+            levelNo: newLevelNo, 
+            lev_ark: current_tilemap.lev_ark_block, 
+            tex_ark: current_tilemap.tex_ark_block, 
+            ovl_ark: current_tilemap.ovl_ark_block);
+
+		ObjectCreator.GenerateObjects(
+            objects: current_tilemap.LevelObjects, 
+            a_tilemap: current_tilemap);
+
+		the_tiles.Position = new Vector3(0f, 0f, 0f);
+
+		tileMapRender.GenerateLevelFromTileMap(
+            parent: the_tiles, 
+            Level: current_tilemap, 
+            objList: current_tilemap.LevelObjects, 
+            UpdateOnly: false);
+
+		switch (_RES)
+		{
+			case GAME_UW2:
+				automap.automaps = new automap[80]; break;
+			default:
+				automap.automaps = new automap[9]; break;
+		}
+		automap.automaps[newLevelNo] = new automap(newLevelNo);
+		uwsettings.instance.lightlevel = light.BrightestLight();
+		Debug.Print($"{current_tilemap.uw}");
+        if (fromMainMenu)
+        {
+            uimanager.EnableDisable(uimanager.instance.PanelMainMenu,false);
+        }
+		yield return 0;
+	}
+
+
 
         /// <summary>
         /// Checks to see if the tile at a specified location is within the valid game world. (eg is rendered and is not a solid).

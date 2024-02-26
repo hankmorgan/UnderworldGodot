@@ -14,11 +14,6 @@ namespace Underworld
         /// </summary>
         public static Palette[] Palettes = new Palette[22];
 
-        /// <summary>
-        /// Prebuilt array of cycled palettes for use in shaders.
-        /// </summary>
-        public static ImageTexture[,,] cycledGamePalette;
-        public static ImageTexture[] cycledUIPalette;
         public static int NoOfPals = 22;
 
         /// <summary>
@@ -40,34 +35,11 @@ namespace Underworld
 
         public static int NextPaletteCycle = 0;
 
-        //public static Palette[] xfer = new Palette[5];
-
-        static PaletteLoader()  //void LoadPalettes(string filePath)
+        static PaletteLoader()
         {
             var path_pals = System.IO.Path.Combine(BasePath, "DATA", "PALS.DAT");
             var path_light = System.IO.Path.Combine(BasePath, "DATA", "LIGHT.DAT");
             var path_mono = System.IO.Path.Combine(BasePath, "DATA", "MONO.DAT");
-            //var path_xfer = System.IO.Path.Combine(BasePath, "DATA", "XFER.DAT");
-
-            // if (ReadStreamFile(path_xfer, out byte[] xfer_dat))
-            // {
-            //     int addr=0;
-            //     for (int x = 0; x<5; x++)
-            //     {
-            //         xfer[x]= new Palette();
-            //         int index=0;
-            //         for (int i=0;i<xfer[x].red.GetUpperBound(0);i++)
-            //         {
-            //         xfer[x].red[index] = (byte)getAt(xfer_dat,addr+i,8);
-            //         xfer[x].green[index] = (byte)getAt(xfer_dat,addr+i+1,8);
-            //         xfer[x].blue[index] = (byte)getAt(xfer_dat,addr+i+2,8);
-            //         xfer[x].alpha[index] = (byte)255;
-            //         index++;
-            //         }
-            //         xfer[x].toImage(1).GetImage().SavePng($"c:\\temp\\xfer_{addr:X}.png");
-            //         addr+=256;
-            //     }                
-            // }
 
             GreyScaleIndexPalette = new Palette();
             for (int i = 0; i <= GreyScaleIndexPalette.blue.GetUpperBound(0); i++)
@@ -140,53 +112,22 @@ namespace Underworld
                     break;
             }
 
-            // //Create a critter palette. Copied from the primary game pal
-            // CritterPalette = new Palette();
-            // CritterPalette.red = Palettes[0].red;
-            // CritterPalette.green = Palettes[0].green;
-            // CritterPalette.blue = Palettes[0].blue;
-            // for (int i = 1; i < Palettes[0].red.GetUpperBound(0); i++)
-            // {//apply an alpha channel to the entire palette for testing
-            //     switch (i)
-            //     {
-            //         case 0xf9:
-            //         case 0xf0://red
-            //         case 0xf4://blue
-            //         case 0xf8://green
-            //         case 0xfb://used by shadow beast?
-            //         case 0xfc://white
-            //         case 0xfd://black???
-            //             CritterPalette.alpha[i] = 40; break;
-            //         default:
-            //             CritterPalette.alpha[i] = 255; break;
-            //     }
-            // }
+            Palettes[0].cycledGamePalette = CreateFullTexturePaletteCycles(Palettes[0]);//init the first palette as cycled
+            Palettes[0].cycledUIPalette = CreateSimpleTexturePaletteCycles(Palettes[0]); //set up a simple palette cycle for fullbright ui sprites
 
-            cycledGamePalette = CreateFullTexturePaletteCycles(Palettes[0]);//init the first palette as cycled
-            cycledUIPalette = CreateSimpleTexturePaletteCycles(Palettes[0]); //set up a simple palette cycle for fullbright ui sprites
-            
-            
+            //main menu
+           // Palettes[6].cycledGamePalette = CreateFullTexturePaletteCycles(Palettes[6]);//init the first palette as cycled
+           // Palettes[6].cycledUIPalette = CreateSimpleTexturePaletteCycles(Palettes[6]); //set up a simple palette cycle for fullbright ui sprites
+                    
+
             //Init palette shader params
-            //RenderingServer.GlobalShaderParameterAdd("uwpalette", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)cycledGamePalette[0,0,0]);
-            
-            RenderingServer.GlobalShaderParameterAdd("uipalette", RenderingServer.GlobalShaderParameterType.Sampler2D, cycledUIPalette[0]);
-           
-            
+ 
+            RenderingServer.GlobalShaderParameterAdd("uipalette", RenderingServer.GlobalShaderParameterType.Sampler2D, Palettes[Palette.CurrentPalette].cycledUIPalette[0]);
             RenderingServer.GlobalShaderParameterAdd("cutoffdistance", RenderingServer.GlobalShaderParameterType.Float, shade.GetViewingDistance(uwsettings.instance.lightlevel));
-            //RenderingServer.GlobalShaderParameterAdd("uwlightmap", RenderingServer.GlobalShaderParameterType.Sampler2D, PaletteLoader.AllLightMaps(PaletteLoader.light));
-           // RenderingServer.GlobalShaderParameterAdd("shades", RenderingServer.GlobalShaderParameterType.Sampler2D, shade.shadesdata[uwsettings.instance.lightlevel].ToImage());
-            //RenderingServer.GlobalShaderParameterAdd("shadeshift", RenderingServer.GlobalShaderParameterType.Sampler2D, shade.shadesdata[uwsettings.instance.lightlevel].ToShiftedImage());
-            //palette for NPCs (to support xfer transparencies)
-           // RenderingServer.GlobalShaderParameterAdd("uwnpc", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)cycledNPCPalette[0,0,0]);
-
-            // var smoothimg = shade.GetFullShadingImage(
-            //     pal: Palettes[0],
-            //     maps:light,
-            //     index: uwsettings.instance.lightlevel                
-            //     );
-            //
-        
-            RenderingServer.GlobalShaderParameterAdd("smoothpalette", RenderingServer.GlobalShaderParameterType.Sampler2D, (Texture)cycledGamePalette[0,0,0]);
+            RenderingServer.GlobalShaderParameterAdd(
+                name: "smoothpalette", 
+                type: RenderingServer.GlobalShaderParameterType.Sampler2D, 
+                defaultValue: (Texture)Palettes[Palette.CurrentPalette].cycledGamePalette[0,0,0]);
         
         }
 
@@ -252,7 +193,7 @@ namespace Underworld
         /// </summary>
         /// <param name="toCycle"></param>
         /// <returns></returns>
-        public static ImageTexture[,,] CreateFullTexturePaletteCycles(Palette toCycle)
+        public static ImageTexture[, ,] CreateFullTexturePaletteCycles(Palette toCycle)
         {
             //copy initial palette
             var tmpPalette = new Palette();
@@ -264,7 +205,7 @@ namespace Underworld
                 tmpPalette.alpha = toCycle.alpha;
             }
 
-            var NewCycledPalette = new ImageTexture[2,8,28]; //mono/light,light level,cycle
+            var NewCycledPalette = new ImageTexture[2,8,28]; //mono/light,light level,Cycle
             for (int l=0; l<8;l++)
             {
                 for (int c = 0; c <= 27; c++)
@@ -333,15 +274,13 @@ namespace Underworld
         public static void UpdatePaletteCycles()
         {
             //Cycle the palette		
-           // RenderingServer.GlobalShaderParameterSet("uwpalette", (Texture)PaletteLoader.cycledGamePalette[NextPaletteCycle]);
-            //RenderingServer.GlobalShaderParameterSet("uwnpc", (Texture)PaletteLoader.cycledNPCPalette[NextPaletteCycle]);
-            RenderingServer.GlobalShaderParameterSet("smoothpalette", (Texture)cycledGamePalette[0, uwsettings.instance.lightlevel, NextPaletteCycle]);
-            RenderingServer.GlobalShaderParameterSet("uipalette", (Texture)cycledUIPalette[NextPaletteCycle]);
+            RenderingServer.GlobalShaderParameterSet("smoothpalette", (Texture)Palettes[Palette.CurrentPalette].cycledGamePalette[0, uwsettings.instance.lightlevel, NextPaletteCycle]);
+            RenderingServer.GlobalShaderParameterSet("uipalette", (Texture)Palettes[Palette.CurrentPalette].cycledUIPalette[NextPaletteCycle]);
 
 
             NextPaletteCycle++;
 
-            if (NextPaletteCycle > cycledGamePalette.GetUpperBound(2))
+            if (NextPaletteCycle > PaletteLoader.Palettes[Palette.CurrentPalette].cycledGamePalette.GetUpperBound(2))
             {
                 NextPaletteCycle = 0;
             }

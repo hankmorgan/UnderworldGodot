@@ -128,3 +128,7 @@ func _update_mouselook():
 	
 		rotate_y(deg_to_rad(-yaw))
 		rotate_object_local(Vector3(1,0,0), deg_to_rad(-pitch))
+
+
+func _on_create_character_gui_input(event):
+	pass # Replace with function body.
