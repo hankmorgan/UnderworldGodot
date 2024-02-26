@@ -7,6 +7,8 @@ namespace Underworld
     public partial class uimanager : Node2D
     {
         [ExportGroup("Cutscenes")]
+        //full screen cutscene output
+        [Export] TextureRect CutsFull;
         //cutscene outputs that stretch from 0,0 to the bottom right corner of the 3d view.
         [Export] TextureRect CutsSmallUW1;
         [Export] TextureRect CutsSmallUW2;
@@ -19,6 +21,17 @@ namespace Underworld
         public static void InitCuts()
         {
             EnableDisable(CutsSmall, false);
+            EnableDisable(CutsFullscreen, false);
+        }
+
+
+        public static TextureRect CutsFullscreen
+        {
+            get
+
+            {
+                return instance.CutsFull;
+            }
         }
 
         /// <summary>
@@ -75,7 +88,7 @@ namespace Underworld
                );
         }
 
-        public static void FlashColour(byte colour, TextureRect targetControl, float duration=0.2f)
+        public static void FlashColour(byte colour, TextureRect targetControl, float duration = 0.2f)
         {
             var palette = PaletteLoader.Palettes[0];
             var width = 2; var height = 2;
@@ -93,12 +106,12 @@ namespace Underworld
             var tex = new ImageTexture();
             tex.SetImage(img);
             _ = Peaky.Coroutines.Coroutine.Run(
-                    FlashColourWithDelay(colorimg: tex, targetControl: targetControl, duration:duration),
+                    FlashColourWithDelay(colorimg: tex, targetControl: targetControl, duration: duration),
                     main.instance
                );
         }
 
-        private static IEnumerator FlashColourWithDelay(ImageTexture colorimg, TextureRect targetControl, float duration=0.2f)
+        private static IEnumerator FlashColourWithDelay(ImageTexture colorimg, TextureRect targetControl, float duration = 0.2f)
         {
             EnableDisable(targetControl, true);
             targetControl.Texture = colorimg;

@@ -45,134 +45,34 @@ public partial class main : Node3D
 	double cycletime = 0;
 
 	public override void _Ready()
-	{
-		instance = this;
-		gamecam = cam;
-		var appfolder = OS.GetExecutablePath();
-		appfolder = Path.GetDirectoryName(appfolder);
-		var settingsfile = Path.Combine(appfolder, "uwsettings.json");
+    {
+        instance = this;
+        gamecam = cam;
+        uwsettings.LoadSettings();
 
-		if (!File.Exists(settingsfile))
-		{
-			OS.Alert("missing file uwsettings.json at " + settingsfile);
-			return;
-		}
-		var gamesettings = JsonSerializer.Deserialize<uwsettings>(File.ReadAllText(settingsfile));
-		uwsettings.instance = gamesettings;
-		cam.Fov = Math.Max(50, uwsettings.instance.FOV);
+        ObjectCreator.grObjects = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
+        ObjectCreator.grObjects.UseRedChannel = true;
 
-		UWClass._RES = gamesettings.gametoload;
-		switch (UWClass._RES)
-		{
-			case UWClass.GAME_UW1:
-				UWClass.BasePath = gamesettings.pathuw1; break;
-			case UWClass.GAME_UW2:
-				UWClass.BasePath = gamesettings.pathuw2; break;
-			default:
-				throw new InvalidOperationException("Invalid Game Selected");
-		}
+        uwUI.InitUI();
 
-		switch (UWClass._RES)
-		{
-			case UWClass.GAME_UW2:
-				cam.Position = new Vector3(-23f, 4.3f, 58.2f);
+        uimanager.AddToMessageScroll(GameStrings.GetString(1, 13));//welcome message
 
-				break;
-			default:
-				cam.Position = new Vector3(-38f, 4.2f, 2.2f);
-				//cam.Position = new Vector3(-14.9f, 0.78f, 5.3f);
-				break;
-		}
-		cam.Rotate(Vector3.Up, (float)Math.PI);
+        playerdat.LoadPlayerDat(datafolder: uwsettings.instance.levarkfolder);
 
-		ObjectCreator.grObjects = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
-		ObjectCreator.grObjects.UseRedChannel = true;
-		uwUI.InitUI();
-		uimanager.AddToMessageScroll(GameStrings.GetString(1, 13));
+        //Common launch actions
+        _ = Coroutine.Run(
+        LoadTileMap(playerdat.dungeon_level - 1), main.instance);
+    }
+
+ 
 
 
-		if (uwsettings.instance.levarkfolder.ToUpper() != "DATA")
-		{
-			//load player dat from a save file
-			playerdat.Load(uwsettings.instance.levarkfolder);
-			//Debug.Print($"You are at x:{playerdat.X} y:{playerdat.Y} z:{playerdat.Z}");
-			//Debug.Print($"You are at x:{playerdat.tileX} {playerdat.xpos} y:{playerdat.tileY} {playerdat.ypos} z:{playerdat.zpos}");
-			cam.Position = uwObject.GetCoordinate(playerdat.tileX, playerdat.tileY, playerdat.xpos, playerdat.ypos, playerdat.camerazpos);
-			cam.Rotation = Vector3.Zero;
-			cam.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
-			cam.Rotate(Vector3.Up, (float)(-playerdat.heading / 127f * Math.PI));
 
-			for (int i = 0; i < 8; i++)
-			{//Init the backpack indices
-				uimanager.SetBackPackIndex(i, playerdat.BackPackObject(i));
-			}
-			RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.GetViewingDistance(uwsettings.instance.lightlevel));
-			DrawPlayerPositionSprite(ObjectCreator.grObjects);
-		}
-		else
-		{
-			//Random r = new Random();
-			playerdat.InitEmptyPlayer();
-			playerdat.max_hp = 60;
-			playerdat.play_hp = 60;
-			playerdat.max_hp = 60;
-			playerdat.play_hp = 60;
-			playerdat.tileX = -(int)(cam.Position.X / 1.2f);
-			playerdat.tileY = (int)(cam.Position.Z / 1.2f);
-			playerdat.dungeon_level = uwsettings.instance.level + 1;
-
-			var isFemale = Rng.r.Next(0, 2) == 1;
-			playerdat.isFemale = isFemale;
-			uimanager.SetHelm(isFemale, -1);
-			uimanager.SetArmour(isFemale, -1);
-			uimanager.SetBoots(isFemale, -1);
-			uimanager.SetLeggings(isFemale, -1);
-			uimanager.SetGloves(isFemale, -1);
-			uimanager.SetRightShoulder(-1);
-			uimanager.SetLeftShoulder(-1);
-			uimanager.SetRightHand(-1);
-			uimanager.SetLeftHand(-1);
-			for (int i = 0; i < 8; i++)
-			{
-				uimanager.SetBackPackArt(i, -1);
-			}
-			playerdat.Body = Rng.r.Next(0, 4);
-			playerdat.CharName = "GRONK";
-		}
-
-		playerdat.CharNameStringNo = GameStrings.AddString(0x125, playerdat.CharName);
-
-		//Common launch actions
-		_ = Coroutine.Run(
-		LoadTileMap(playerdat.dungeon_level - 1), main.instance);
-
-
-		//Load bablglobals
-		bglobal.LoadGlobals(uwsettings.instance.levarkfolder);
-
-		//Draw UI
-		uimanager.SetBody(playerdat.Body, playerdat.isFemale);
-		uimanager.RedrawSelectedRuneSlots();
-		uimanager.RefreshHealthFlask();
-		uimanager.RefreshManaFlask();
-		//set paperdoll
-		uimanager.UpdateInventoryDisplay();
-		uimanager.ConversationText.Text="";
-		//Load rune slots
-		for (int i = 0; i < 24; i++)
-		{
-			uimanager.SetRuneInBag(i, playerdat.GetRune(i));
-		}
-
-		//Set the playerlight level;
-		uwsettings.instance.lightlevel = light.BrightestLight();
-	}
-
-	/// <summary>
-	/// Draws a debug marker sprite on game load to show where the character is positioned
-	/// </summary>
-	/// <param name="gr"></param>
-	private void DrawPlayerPositionSprite(GRLoader gr)
+    /// <summary>
+    /// Draws a debug marker sprite on game load to show where the character is positioned
+    /// </summary>
+    /// <param name="gr"></param>
+    public static void DrawPlayerPositionSprite(GRLoader gr)
 	{
 		int spriteNo = 127;
 		var a_sprite = new MeshInstance3D(); //new Sprite3D();
@@ -188,9 +88,9 @@ public partial class main : Node3D
 					ArtLoader.SpriteScale * img.GetHeight()
 					);
 			a_sprite.Mesh.Set("size", NewSize);
-			Node3D worldobjects = GetNode<Node3D>("/root/Underworld/worldobjects");
+			Node3D worldobjects = main.instance.GetNode<Node3D>("/root/Underworld/worldobjects");
 			worldobjects.AddChild(a_sprite);
-			a_sprite.Position = cam.Position;
+			a_sprite.Position = main.gamecam.Position;
 		}
 	}
 
