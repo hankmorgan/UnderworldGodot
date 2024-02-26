@@ -11,7 +11,7 @@ namespace Underworld
             if (datafolder.ToUpper() != "DATA")
             {
                 //load player dat from a save file
-                Load(uwsettings.instance.levarkfolder);
+                Load(datafolder);
                 //Debug.Print($"You are at x:{X} y:{Y} z:{Z}");
                 //Debug.Print($"You are at x:{tileX} {xpos} y:{tileY} {ypos} z:{zpos}");
                 main.gamecam.Position = uwObject.GetCoordinate(tileX, tileY, xpos, ypos, camerazpos);
@@ -91,7 +91,7 @@ namespace Underworld
             }
 
             //Set the playerlight level;
-            uwsettings.instance.lightlevel = light.BrightestLight();
+            //uwsettings.instance.lightlevel = light.BrightestLight();
 
         }
     }

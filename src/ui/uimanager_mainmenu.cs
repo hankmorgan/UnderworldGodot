@@ -23,8 +23,15 @@ namespace Underworld
 
         private void InitMainMenu()
         {
-
-            MainMenuBG.Texture = bitmaps.LoadImageAt(BytLoader.OPSCR_BYT);
+            if (UWClass._RES==UWClass.GAME_UW2)
+            {
+                MainMenuBG.Texture = bitmaps.LoadImageAt(5);
+            }
+            else
+            {
+                MainMenuBG.Texture = bitmaps.LoadImageAt(BytLoader.OPSCR_BYT);
+            }
+            
             //MainMenuBG.Material = bitmaps.GetMaterial(BytLoader.OPSCR_BYT);
             LoadingLabel.Text = "";
             TurnButtonsOff();

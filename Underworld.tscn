@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=3 uid="uid://xjvqmrbs28xs"]
+[gd_scene load_steps=33 format=3 uid="uid://xjvqmrbs28xs"]
 
 [ext_resource type="Script" path="res://src/ui/uimanager.cs" id="1_lw0yg"]
 [ext_resource type="FontFile" uid="uid://pdy3t627nfxw" path="res://resources/fonts/FONT5X6I.ttf" id="3_safdl"]
@@ -25,7 +25,6 @@
 [ext_resource type="Texture2D" uid="uid://dqcrcis2dop6k" path="res://resources/placeholder_art/paperdolluw1/body_f.png" id="19_0yobb"]
 [ext_resource type="Texture2D" uid="uid://b4hn75lfpnecd" path="res://resources/placeholder_art/grave.png" id="20_n8sfi"]
 [ext_resource type="Texture2D" uid="uid://dx526kvjk8jmj" path="res://resources/cross2.png" id="21_5p8p7"]
-[ext_resource type="Texture2D" uid="uid://b5mwiifn8jtb6" path="res://resources/placeholder_art/uw2placeholdermain.png" id="21_t84cw"]
 [ext_resource type="Texture2D" uid="uid://cvik4hdmkwuwk" path="res://resources/placeholder_art/paperdolluw1/up button 027.png" id="22_vc6ux"]
 [ext_resource type="Texture2D" uid="uid://01h0bdambuq4" path="res://resources/placeholder_art/paperdolluw1/down button 028.png" id="23_e17mk"]
 [ext_resource type="Texture2D" uid="uid://51go53yqj8oq" path="res://resources/placeholder_art/panels/panelsstats.png" id="24_filpa"]
@@ -577,7 +576,6 @@ visible = false
 offset_right = 1280.0
 offset_bottom = 800.0
 mouse_filter = 2
-texture = ExtResource("21_t84cw")
 
 [node name="3DWinUW2" type="TextureRect" parent="UI/UW2"]
 texture_filter = 1
