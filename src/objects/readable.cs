@@ -54,7 +54,7 @@ namespace Underworld
         {
             if (obj.is_quant == 1)
                 {
-                look.GeneralLookDescription(obj.item_id);
+                look.GeneralLookDescription(obj);
                 uimanager.AddToMessageScroll(GameStrings.GetString(3, obj.link-0x200));
                 }
             return true;

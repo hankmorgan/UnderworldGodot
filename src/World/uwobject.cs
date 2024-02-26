@@ -382,6 +382,14 @@ namespace Underworld
             }
         }
 
+        public short race
+        {
+            get
+            {
+                return (short)(owner & 0x1F);
+            }
+        }
+
         public short link
         {//(short)(ExtractBits(Vals[2], 6, 0x3ff));
             get

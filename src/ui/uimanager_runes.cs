@@ -42,7 +42,7 @@ namespace Underworld
                     {
                         if (InteractionMode == InteractionModes.ModeLook)
                         {
-                            look.GeneralLookDescription((int)(232 + extra_arg_0));
+                            look.GenericLookDescription((int)(232 + extra_arg_0));
                         }
                         else
                         {

@@ -145,7 +145,7 @@ namespace Underworld
         /// <param name="item_id"></param>
         /// <param name="qty"></param>
         /// <returns></returns>
-        public static bool GeneralLookDescription(int item_id, int qty = 1)
+        public static bool GenericLookDescription(int item_id, int qty = 1)
         {
             string output;
             if (commonObjDat.PrintableLook(item_id))
@@ -251,16 +251,30 @@ namespace Underworld
                 output += $"{article}{qtystring}{qualitystring}{objectname}";
             }
 
+            var ownership = "";
+            if (
+                commonObjDat.canhaveowner(obj.item_id) 
+            && 
+                ( 
+                    (_RES==GAME_UW2) && (obj.race<=30)
+                    ||
+                    (_RES!=GAME_UW2) && (obj.race<=27)                
+                )
+            )
+            {
+                ownership = $" belonging to{GameStrings.GetString(1, 370 + obj.race)}"; 
+            }
+
             if (OutputConvo)
             {
                 uimanager.AddToMessageScroll(
-                    stringToAdd: $"{output}", 
+                    stringToAdd: $"{output}{ownership}", 
                     option: 2, 
                     mode: MessageDisplay.MessageDisplayMode.TemporaryMessage);
             }
             else
             {
-                uimanager.AddToMessageScroll($"{output}");
+                uimanager.AddToMessageScroll($"{output}{ownership}");
             }
 
             return true;
