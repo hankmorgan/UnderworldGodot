@@ -58,7 +58,7 @@ script = ExtResource("5_2to2n")
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLableFrameUW1", "NPCNameLableFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "CutsFull", "CutsSmallUW1", "CutsSmallUW2", "Cuts3DWinUW1", "Cuts3DWinUW2", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "InteractionButtonsUW1", "InteractionButtonsUW2", "PanelMainMenu", "MainMenuBG", "MainMenuButtons", "LoadingLabel", "AutomapPanel", "AutomapBG", "AutomapImage", "messageScrollUW1", "messageScrollUW2", "TypedInput", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Chains", "RuneTiles", "SelectedRunes", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSelectedUW1", "NPCTradeSelectedUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "PlayerTradeSelectedUW2", "NPCTradeSelectedUW2", "cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "placeholderuw1", "placeholderuw2")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLableFrameUW1", "NPCNameLableFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "CutsFull", "CutsSmallUW1", "CutsSmallUW2", "Cuts3DWinUW1", "Cuts3DWinUW2", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "InteractionButtonsUW1", "InteractionButtonsUW2", "PanelMainMenu", "MainMenuBG", "MainMenuButtons", "LoadingLabel", "SaveGamesNames", "AutomapPanel", "AutomapBG", "AutomapImage", "messageScrollUW1", "messageScrollUW2", "TypedInput", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Chains", "RuneTiles", "SelectedRunes", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSelectedUW1", "NPCTradeSelectedUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "PlayerTradeSelectedUW2", "NPCTradeSelectedUW2", "cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "placeholderuw1", "placeholderuw2")]
 script = ExtResource("1_lw0yg")
 ConversationPanelUW1 = NodePath("../UW1/ConversationUW1")
 PlayerPortraitUW1 = NodePath("../UW1/ConversationUW1/PlayerPortraitUW1")
@@ -101,6 +101,7 @@ PanelMainMenu = NodePath("../Common/MainMenu")
 MainMenuBG = NodePath("../Common/MainMenu/MainMenuBG")
 MainMenuButtons = [NodePath("../Common/MainMenu/Introduction"), NodePath("../Common/MainMenu/CreateCharacter"), NodePath("../Common/MainMenu/Acknowledgements"), NodePath("../Common/MainMenu/JourneyOnwards")]
 LoadingLabel = NodePath("../Common/MainMenu/LoadingLabel")
+SaveGamesNames = [NodePath("../Common/MainMenu/Save1"), NodePath("../Common/MainMenu/Save2"), NodePath("../Common/MainMenu/Save3"), NodePath("../Common/MainMenu/Save4")]
 AutomapPanel = NodePath("../Common/Automap")
 AutomapBG = NodePath("../Common/Automap/MapBackground")
 AutomapImage = NodePath("../Common/Automap/MapImage")
@@ -2058,14 +2059,58 @@ offset_bottom = 704.0
 
 [node name="LoadingLabel" type="Label" parent="UI/Common/MainMenu"]
 layout_mode = 0
-offset_left = 326.0
-offset_top = 327.0
-offset_right = 982.0
-offset_bottom = 390.0
+offset_left = 324.0
+offset_top = 75.0
+offset_right = 980.0
+offset_bottom = 138.0
 theme_override_colors/font_color = Color(0.619608, 1, 0, 1)
 theme_override_fonts/font = ExtResource("5_kj12g")
 theme_override_font_sizes/font_size = 64
 text = "You reenter the abyss..."
+
+[node name="Save1" type="Label" parent="UI/Common/MainMenu"]
+layout_mode = 0
+offset_left = 525.0
+offset_top = 365.0
+offset_right = 717.0
+offset_bottom = 430.0
+mouse_filter = 1
+theme_override_fonts/font = ExtResource("5_kj12g")
+theme_override_font_sizes/font_size = 65
+text = "SAVE1"
+
+[node name="Save2" type="Label" parent="UI/Common/MainMenu"]
+layout_mode = 0
+offset_left = 525.0
+offset_top = 459.0
+offset_right = 717.0
+offset_bottom = 524.0
+mouse_filter = 1
+theme_override_fonts/font = ExtResource("5_kj12g")
+theme_override_font_sizes/font_size = 65
+text = "SAVE1"
+
+[node name="Save3" type="Label" parent="UI/Common/MainMenu"]
+layout_mode = 0
+offset_left = 524.0
+offset_top = 558.0
+offset_right = 716.0
+offset_bottom = 623.0
+mouse_filter = 1
+theme_override_fonts/font = ExtResource("5_kj12g")
+theme_override_font_sizes/font_size = 65
+text = "SAVE1"
+
+[node name="Save4" type="Label" parent="UI/Common/MainMenu"]
+layout_mode = 0
+offset_left = 524.0
+offset_top = 648.0
+offset_right = 716.0
+offset_bottom = 713.0
+mouse_filter = 1
+theme_override_fonts/font = ExtResource("5_kj12g")
+theme_override_font_sizes/font_size = 65
+text = "SAVE1"
 
 [node name="TypedInput" type="LineEdit" parent="UI/Common"]
 offset_left = 81.0
@@ -2212,7 +2257,7 @@ uwUI = NodePath("../UI/uiManager")
 [connection signal="gui_input" from="UI/Common/Automap/Close" to="UI/uiManager" method="CloseAutomap"]
 [connection signal="mouse_entered" from="UI/Common/MainMenu/Introduction" to="UI/uiManager" method="_on_introduction_mouse_entered"]
 [connection signal="mouse_exited" from="UI/Common/MainMenu/Introduction" to="UI/uiManager" method="_on_introduction_mouse_exited"]
-[connection signal="gui_input" from="UI/Common/MainMenu/CreateCharacter" to="WorldViewContainer/SubViewport/Camera3D" method="_on_create_character_gui_input"]
+[connection signal="gui_input" from="UI/Common/MainMenu/CreateCharacter" to="UI/uiManager" method="_on_create_character_gui_input"]
 [connection signal="mouse_entered" from="UI/Common/MainMenu/CreateCharacter" to="UI/uiManager" method="_on_create_character_mouse_entered"]
 [connection signal="mouse_exited" from="UI/Common/MainMenu/CreateCharacter" to="UI/uiManager" method="_on_create_character_mouse_exited"]
 [connection signal="mouse_entered" from="UI/Common/MainMenu/Acknowledgements" to="UI/uiManager" method="_on_acknowledgements_mouse_entered"]
@@ -2220,3 +2265,7 @@ uwUI = NodePath("../UI/uiManager")
 [connection signal="gui_input" from="UI/Common/MainMenu/JourneyOnwards" to="UI/uiManager" method="_on_journey_onwards_gui_input"]
 [connection signal="mouse_entered" from="UI/Common/MainMenu/JourneyOnwards" to="UI/uiManager" method="_on_journey_onwards_mouse_entered"]
 [connection signal="mouse_exited" from="UI/Common/MainMenu/JourneyOnwards" to="UI/uiManager" method="_on_journey_onwards_mouse_exited"]
+[connection signal="gui_input" from="UI/Common/MainMenu/Save1" to="UI/uiManager" method="_on_save_1_gui_input"]
+[connection signal="gui_input" from="UI/Common/MainMenu/Save2" to="UI/uiManager" method="_on_save_2_gui_input"]
+[connection signal="gui_input" from="UI/Common/MainMenu/Save3" to="UI/uiManager" method="_on_save_3_gui_input"]
+[connection signal="gui_input" from="UI/Common/MainMenu/Save4" to="UI/uiManager" method="_on_save_4_gui_input"]

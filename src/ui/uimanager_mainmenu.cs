@@ -1,4 +1,5 @@
 using System.Collections;
+using System.IO;
 using System.Threading.Tasks;
 using Godot;
 using Peaky.Coroutines;
@@ -18,6 +19,8 @@ namespace Underworld
 
         [Export] public Label LoadingLabel;
 
+        [Export] public Label[] SaveGamesNames = new Label[4];
+
         private void InitMainMenu()
         {
 
@@ -25,6 +28,7 @@ namespace Underworld
             //MainMenuBG.Material = bitmaps.GetMaterial(BytLoader.OPSCR_BYT);
             LoadingLabel.Text = "";
             TurnButtonsOff();
+            HideSaves();
 
         }
 
@@ -41,6 +45,15 @@ namespace Underworld
             for (int i = 0; i < 4; i++)
             {
                 EnableDisable(MainMenuButtons[i], false);
+            }
+        }
+
+
+        private void HideSaves()
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                EnableDisable(SaveGamesNames[i], false);
             }
         }
 
@@ -108,13 +121,22 @@ namespace Underworld
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
-                _ = Coroutine.Run(
-                   ClearMainMenu()
-                   , main.instance);
+                HideButtons();
+                for (int i = 1; i <= 4; i++)
+                {
+                    var path = Path.Combine(UWClass.BasePath, $"SAVE{i}", "DESC");
+                    if (File.Exists(path))
+                    {
+                        var savename = File.ReadAllText(path);
+                        EnableDisable(SaveGamesNames[i - 1], true);
+                        SaveGamesNames[i - 1].Text = savename;
+                    }
+                    else
+                    {
+                        EnableDisable(SaveGamesNames[i - 1], false);
+                    }
+                }
 
-                _ = Coroutine.Run(
-                    JourneyOnwards()
-                    , main.instance);
             }
         }
 
@@ -132,26 +154,94 @@ namespace Underworld
             yield return 0;
         }
 
-        private IEnumerator JourneyOnwards()
+        private IEnumerator JourneyOnwards(string folder)
         {
 
-            playerdat.LoadPlayerDat(datafolder: uwsettings.instance.levarkfolder);
+            playerdat.LoadPlayerDat(datafolder: folder);
 
             // //Common launch actions            
             yield return UWTileMap.LoadTileMap(
                     newLevelNo: playerdat.dungeon_level - 1,
-                    datafolder: uwsettings.instance.levarkfolder,
+                    datafolder: folder,
                     fromMainMenu: true);
-
-            // _ = Coroutine.Run(
-            //     UWTileMap.LoadTileMap(
-            //         newLevelNo: playerdat.dungeon_level - 1,
-            //         datafolder: uwsettings.instance.levarkfolder,
-            //         fromMainMenu: true)
-            //         , main.instance);
 
             yield return null;
 
         }
+
+        private void _on_create_character_gui_input(InputEvent @event)
+        {
+            if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
+            {
+                _ = Coroutine.Run(
+                   ClearMainMenu()
+                   , main.instance);
+
+                _ = Coroutine.Run(
+                    JourneyOnwards("DATA")
+                    , main.instance);
+            }
+        }
+
+
+
+        private void _on_save_1_gui_input(InputEvent @event)
+        {
+            if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
+            {
+                _ = Coroutine.Run(
+                   ClearMainMenu()
+                   , main.instance);
+
+                _ = Coroutine.Run(
+                    JourneyOnwards("SAVE1")
+                    , main.instance);
+            }
+        }
+
+        private void _on_save_2_gui_input(InputEvent @event)
+        {
+            if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
+            {
+                _ = Coroutine.Run(
+                   ClearMainMenu()
+                   , main.instance);
+
+                _ = Coroutine.Run(
+                    JourneyOnwards("SAVE2")
+                    , main.instance);
+            }
+        }
+
+
+        private void _on_save_3_gui_input(InputEvent @event)
+        {
+            if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
+            {
+                _ = Coroutine.Run(
+                   ClearMainMenu()
+                   , main.instance);
+
+                _ = Coroutine.Run(
+                    JourneyOnwards("SAVE3")
+                    , main.instance);
+            }
+        }
+
+
+        private void _on_save_4_gui_input(InputEvent @event)
+        {
+            if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
+            {
+                _ = Coroutine.Run(
+                   ClearMainMenu()
+                   , main.instance);
+
+                _ = Coroutine.Run(
+                    JourneyOnwards("SAVE4")
+                    , main.instance);
+            }
+        }
+
     }//end class
 }//end namespace
