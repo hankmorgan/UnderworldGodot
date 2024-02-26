@@ -33,11 +33,14 @@ namespace Underworld
         [Export] public TextureRect ArrowUp;
         [Export] public TextureRect ArrowDown;
         [Export] public TextureRect OpenedContainer;
+        [Export] public TextureRect Chains;
+
         public static int CurrentSlot;
         public static int BackPackStart = 0;
 
         public void InitPaperdoll()
         {
+            EnableDisable(PanelInventory,true);
             if (UWClass._RES == UWClass.GAME_UW2)
             {
                 //Move paperdoll
@@ -86,6 +89,10 @@ namespace Underworld
 
             EnableDisable(ArrowUp, false);
             EnableDisable(ArrowDown, false);
+            EnableDisable(Chains, true);
+            EnableDisable(SelectedRunes[0],true);
+            EnableDisable(SelectedRunes[1],true);
+            EnableDisable(SelectedRunes[2],true);
         }
 
         /// <summary>

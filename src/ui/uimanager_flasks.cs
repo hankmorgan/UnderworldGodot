@@ -28,6 +28,10 @@ namespace Underworld
                 offset = new Vector2(16, 24);
                 ManaFlaskPanel.Position += offset;
                 }
+            
+            
+            EnableDisable(HealthFlaskPanel, true);
+            EnableDisable(ManaFlaskPanel, true);
         }
 
         public static void RefreshHealthFlask()

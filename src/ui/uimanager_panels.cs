@@ -115,7 +115,7 @@ namespace Underworld
                     RotatingOff = true;
                     RotatingOn = false;
                     instance.PanelToTurnOff = instance.PanelInventory;
-                    instance.PanelToTurnOn = instance.PanelRuneBag;
+                    instance.PanelToTurnOn = instance.PanelRuneBag;                    
                     PanelMoveTimer = 0;
                     break;
                 case 2:
@@ -124,7 +124,7 @@ namespace Underworld
                         RotatingOff = true;
                         RotatingOn = false;
                         instance.PanelToTurnOff = instance.PanelInventory;
-                        instance.PanelToTurnOn = instance.PanelStats;
+                        instance.PanelToTurnOn = instance.PanelStats;                        
                         PanelMoveTimer = 0;
 
                         break;

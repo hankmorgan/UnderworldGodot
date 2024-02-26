@@ -6,7 +6,7 @@ namespace Underworld
     public partial class uimanager : Node2D
     {
         [ExportGroup("Runes")]
-        [Export] public TextureRect[] Runes = new TextureRect[24];
+        [Export] public TextureRect[] RuneTiles = new TextureRect[24];
         [Export] public TextureRect[] SelectedRunes = new TextureRect[3];
 
         /// <summary>
@@ -18,12 +18,12 @@ namespace Underworld
         {
             if (state)
             {
-                instance.Runes[slot].Texture = grObjects.LoadImageAt(232 + slot);
-                instance.Runes[slot].Material = grObjects.GetMaterial(232 + slot);
+                instance.RuneTiles[slot].Texture = grObjects.LoadImageAt(232 + slot);
+                instance.RuneTiles[slot].Material = grObjects.GetMaterial(232 + slot);
             }
             else
             {
-                instance.Runes[slot].Texture = null;
+                instance.RuneTiles[slot].Texture = null;
             }
         }
 
