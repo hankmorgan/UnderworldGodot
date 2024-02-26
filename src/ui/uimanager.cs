@@ -28,6 +28,7 @@ namespace Underworld
 			InitMessageScrolls();
 			InitCuts();
 
+			AutomapBG.Texture = bitmaps.LoadImageAt(BytLoader.BLNKMAP_BYT);
 
 			mousecursor.InitCursor();
 

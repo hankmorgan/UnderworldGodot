@@ -1,3 +1,5 @@
+using Godot;
+
 namespace Underworld
 {
     /// <summary>
@@ -125,7 +127,7 @@ namespace Underworld
                             case 5:
                                 return gravestone.Use(obj);
                             case 6: // a readable sign.
-                                return writing.LookAt(obj);                            
+                                return writing.LookAt(obj);
                             case 0xE:
                             case 0xF:
                                 return tmap.LookAt(obj);
@@ -253,23 +255,26 @@ namespace Underworld
 
             var ownership = "";
             if (
-                commonObjDat.canhaveowner(obj.item_id) 
-            && 
-                ( 
-                    (_RES==GAME_UW2) && (obj.race<=30)
+                commonObjDat.canhaveowner(obj.item_id)
+            &&
+                (
+                    (_RES == GAME_UW2) && (obj.race <= 30)
                     ||
-                    (_RES!=GAME_UW2) && (obj.race<=27)                
+                    (_RES != GAME_UW2) && (obj.race <= 27)
                 )
             )
             {
-                ownership = $" belonging to{GameStrings.GetString(1, 370 + obj.race)}"; 
+                if (obj.owner > 0)
+                {
+                    ownership = $" belonging to{GameStrings.GetString(1, 370 + obj.race)}";
+                }
             }
 
             if (OutputConvo)
             {
                 uimanager.AddToMessageScroll(
-                    stringToAdd: $"{output}{ownership}", 
-                    option: 2, 
+                    stringToAdd: $"{output}{ownership}",
+                    option: 2,
                     mode: MessageDisplay.MessageDisplayMode.TemporaryMessage);
             }
             else

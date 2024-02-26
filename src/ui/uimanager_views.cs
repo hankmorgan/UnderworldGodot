@@ -25,7 +25,7 @@ namespace Underworld
 
         private void InitViews()
         {
-            switch (UWClass._RES)
+              switch (UWClass._RES)
             {
                 case UWClass.GAME_UW2:
                     mainwindowUW2.Texture = bitmaps.LoadImageAt(BytLoader.UW2ThreeDWin_BYT, true);

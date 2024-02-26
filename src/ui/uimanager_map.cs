@@ -8,6 +8,7 @@ namespace Underworld
         [ExportGroup("Automap")]
         //Automap
         [Export] public Panel AutomapPanel;
+        [Export] public TextureRect AutomapBG;
         [Export] public TextureRect AutomapImage;
         public static bool InAutomap = false;
 
