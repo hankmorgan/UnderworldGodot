@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace Underworld
 {
     public class MagicEnchantment : UWClass
@@ -65,7 +67,7 @@ namespace Underworld
                             {
                                 if (SpellMajorClass>0)
                                 {
-                                    stringNo = SpellMajorClass<<4;
+                                    stringNo = SpellMinorClass + (SpellMajorClass<<4);
                                 }
                                 else
                                 {
@@ -75,10 +77,11 @@ namespace Underworld
                             }
                             else
                             {
-                                stringNo = SpellMajorClass<<4;
+                                stringNo = SpellMajorClass + (SpellMajorClass<<4);
                             }                            
                         }
                 }
+                Debug.Print($"{SpellMajorClass},{SpellMinorClass}->{stringNo}");
                 return GameStrings.GetString(6,stringNo);
             }
             else
@@ -147,7 +150,7 @@ namespace Underworld
                         }
                         else
                         {
-                            major = 0xC;
+                            major += 0xC;
                         }
                         minor = obj.link & 0x3F;
                     }
