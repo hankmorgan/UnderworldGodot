@@ -22,7 +22,8 @@ namespace Underworld
             }
             else
             {
-                return (obj.item_id>=187 && obj.item_id<=188);
+                return false;// this is a uw2 only behaviour.
+                //return (obj.item_id>=187 && obj.item_id<=188);
             }
         }
 
@@ -45,7 +46,7 @@ namespace Underworld
             {//passed lorecheck
                 if (SpellMajorClass == 0xC)
                 {
-                    stringNo = SpellMajorClass<<4;
+                    stringNo = 0x1C0;
                     if (obj.minorclass >=2)
                     {
                         stringNo+=16;
