@@ -90,7 +90,7 @@ namespace Underworld
             uimanager.instance.PlayerNameLabel.Text = playerdat.CharName;
 
             //npc name and portrait
-            uimanager.instance.NPCNameLabel.Text = talker._name;
+            uimanager.instance.NPCNameLabel.Text = talker.a_name;
             uimanager.instance.NPCPortrait.Texture = NPCPortrait(talker);
 
             //Init conversation trade globals

@@ -446,25 +446,29 @@ namespace Underworld
         /// Removes the object data at index from the player inventory.
         /// </summary>
         /// <param name="index"></param>
-        public static void RemoveFromInventory(int index, bool updateUI = true)
+        public static void RemoveFromInventory(int index, bool updateUI = true, bool ClearLink = true)
         {
             var obj = InventoryObjects[index];
             var next = obj.next;
            
-            // //Find the object chain the object is in           
-            var LinkOffset = GetItemLinkOffset(index);
-            if (LinkOffset<InventoryPtr)
+           if (ClearLink)
             {
-                //offset is directly on paper doll. it should have no next. rare issue in Uw1 where a paperdoll object still has a next.
-                next= 0;
-            }
+                // //Find the object chain the object is in and clear the list head index        
+                var LinkOffset = GetItemLinkOffset(index);
+                if (LinkOffset<InventoryPtr)
+                {
+                    //offset is directly on paper doll. it should have no next. rare issue in Uw1 where a paperdoll object still has a next.
+                    next= 0;                }
+                
+                //This clears either the next or link to the object and replaces it with the objects next value
+                var data = (int)getAt(pdat, (LinkOffset), 16);
+                data &= 0x3f; //Clear link/next
+                data |= (next << 6); //Or in the obj.next for the object.
+                setAt(pdat, LinkOffset, 16, data);
+           }
 
-            //This clears either the next or link to the object and replaces it with the objects next value
-            var data = (int)getAt(pdat, (LinkOffset), 16);
-            data &= 0x3f; //Clear link/next
-            data |= (next << 6); //Or in the obj.next for the object.
-            setAt(pdat, LinkOffset, 16, data);
             InventoryObjects[index] = null;
+
             if (updateUI)
             {
                 if (uimanager.CurrentSlot >= 11)
@@ -540,19 +544,28 @@ namespace Underworld
         /// <param name="updateUI"></param>
         /// <param name="RemoveNext"></param>
         /// <returns></returns>
-        public static int AddInventoryObjectToWorld(int objIndex, bool updateUI, bool RemoveNext, bool DestroyInventoryObject = true)
+        public static int AddInventoryObjectToWorld(int objIndex, bool updateUI, bool RemoveNext, bool DestroyInventoryObject = true, bool ClearLink = true)
         {
             var oldObj = InventoryObjects[objIndex];      
            
             // recursively add linked/next objects to the world first. Updating oldobj so that its link/next is pointing to the world
             if (oldObj.link != 0 && oldObj.is_quant == 0)
             {
-                oldObj.link = (short)AddInventoryObjectToWorld(oldObj.link,false,true);
+                oldObj.link = (short)AddInventoryObjectToWorld(
+                    objIndex: oldObj.link, 
+                    updateUI: false, 
+                    RemoveNext: true,
+                    ClearLink: false
+                    );
                 Debug.Print ($"Link is now {oldObj.link}");
             }
             if (oldObj.next!=0 && RemoveNext)
             {
-                oldObj.next = (short)AddInventoryObjectToWorld(oldObj.next,false,true);
+                oldObj.next = (short)AddInventoryObjectToWorld(
+                    objIndex: oldObj.next, 
+                    updateUI: false, 
+                    RemoveNext: true,
+                    ClearLink: false);
                 Debug.Print ($"Next is now {oldObj.next}");
             }
 
@@ -579,7 +592,10 @@ namespace Underworld
             if (DestroyInventoryObject)
             {
                 //remove inventory obj
-                RemoveFromInventory(objIndex, updateUI);
+                RemoveFromInventory(
+                    index: objIndex, 
+                    updateUI: updateUI, 
+                    ClearLink: ClearLink);
             }
             return newIndex;
         }
@@ -599,8 +615,18 @@ namespace Underworld
             // recursively add linked/next objects
             if (oldObj.link != 0 && oldObj.is_quant == 0)
             {
-                oldObj.link = AddObjectToPlayerInventory(oldObj.link,true);
-                Debug.Print($"link is now {oldObj.link}");
+                if (oldObj.item_id == 288)//a_spell. stop here.
+                {
+                    //do nothing
+                    Debug.Print("picked up a_spell");
+                    //TODO add handling of traps/triggers
+                }
+                else
+                {
+                    oldObj.link = AddObjectToPlayerInventory(oldObj.link,true);
+                    Debug.Print($"link is now {oldObj.link}");
+                }
+
             }
             if (oldObj.next != 0 && IncludeNext)
             {

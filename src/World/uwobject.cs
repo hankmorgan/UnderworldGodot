@@ -11,7 +11,7 @@ namespace Underworld
         public objectInstance instance;//TODO: this needs to be linked in all the object creation code.
         public short index;
 
-        public string _name
+        public string a_name
         {
             get
             {

@@ -293,7 +293,7 @@ namespace Underworld
                                         }
                                         else
                                         {//all other objects look at
-                                            look.GeneralLookDescription(obj: obj, OutputConvo: true);
+                                            look.GeneralLookDescription(obj: obj, objList: playerdat.InventoryObjects, OutputConvo: true);
                                         }
                                     }
                                 }
@@ -492,7 +492,9 @@ namespace Underworld
                     objIndex: objAtSlot,
                     updateUI: true,
                     RemoveNext: false,
-                    DestroyInventoryObject: DestroyInventoryObject);
+                    DestroyInventoryObject: DestroyInventoryObject,
+                    ClearLink: true
+                    );
             var pickObject = UWTileMap.current_tilemap.LevelObjects[newIndex];
             playerdat.ObjectInHand = newIndex;
             instance.mousecursor.SetCursorArt(pickObject.item_id);

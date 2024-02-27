@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Godot;
 using System.Collections;
+using System;
 
 namespace Underworld
 {
@@ -251,6 +252,7 @@ namespace Underworld
         {
             uimanager.EnableDisable(uimanager.instance.PanelMainMenu,false);
         }
+        uimanager.InGame = true;
 		yield return 0;
 	}
 
@@ -402,6 +404,18 @@ namespace Underworld
                 }
             }
 
+            //debug enchantments, print all normally accessible enchanted objects.
+            for (int y = 0; y <= 63; y++)
+            {
+                for (int x = 0; x <= 63; x++)
+                {
+                    if (Tiles[x, y].indexObjectList != 0)
+                    {
+                        ListEnchantmentsInLinkedList(Tiles[x, y].indexObjectList, x, y);
+                    }
+                }
+            }
+
             //if (OverlayAddress!=0)
             switch (_RES)
             {
@@ -432,6 +446,34 @@ namespace Underworld
 
             return true;
         }
+
+        private void ListEnchantmentsInLinkedList(int listhead, int x,int y)
+        {
+            var nextObject = listhead;
+            while (nextObject != 0)
+            {
+                var obj = LevelObjects[nextObject];
+                if ((obj.is_quant==0) && (obj.link!=0))
+                {
+                    ListEnchantmentsInLinkedList(obj.link,x ,y);
+                }
+                try
+                {
+                    var spelleffect = MagicEnchantment.GetSpellEnchantment(obj, LevelObjects);
+                    if (spelleffect != null)
+                    {
+                        var effectname = spelleffect.NameEnchantment(obj: obj, objList: LevelObjects);
+                        Debug.Print($"({x},{y}) {obj.a_name} {obj.index} Link: {obj.link} Enchant:{obj.enchantment} isquant:{obj.is_quant} flag2:{obj.flags2} has spelleffect {spelleffect.SpellMajorClass},{spelleffect.SpellMinorClass} {effectname}");
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.Print($"{e}");
+                }
+                nextObject = obj.next;
+            }
+        }
+
 
         void BuildObjectListUW()
         {

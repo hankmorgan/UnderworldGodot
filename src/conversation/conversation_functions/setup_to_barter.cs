@@ -47,7 +47,7 @@ namespace Underworld
 
                 if (!skip)
                 {
-                    Debug.Print($"Slot{slotindex} {obj._name}");
+                    Debug.Print($"Slot{slotindex} {obj.a_name}");
                     uimanager.SetNPCTradeSlot(slotindex, obj.index, false);
                     slotindex++;
                     if (slotindex>uimanager.NoOfTradeSlots-1)
@@ -58,7 +58,7 @@ namespace Underworld
                 }
                 else
                 {
-                    Debug.Print($"Excluding {obj._name}");
+                    Debug.Print($"Excluding {obj.a_name}");
                 }
 
                 nextObj = obj.next;

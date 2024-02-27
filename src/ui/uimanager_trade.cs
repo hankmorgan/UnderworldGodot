@@ -332,7 +332,10 @@ namespace Underworld
                         var obj = UWTileMap.current_tilemap.LevelObjects[PlayerItemIDs[extra_arg_0]];
                         if (obj!=null)
                         {
-                            look.GeneralLookDescription(obj: obj, OutputConvo: true);
+                            look.GeneralLookDescription(
+                                obj: obj,
+                                objList:UWTileMap.current_tilemap.LevelObjects,
+                                OutputConvo: true);
                         }  
                     }
                 }                
@@ -350,7 +353,10 @@ namespace Underworld
                     var obj = UWTileMap.current_tilemap.LevelObjects[NPCItemIDs[extra_arg_0]];
                     if (obj!=null)
                     {
-                        look.GeneralLookDescription(obj: obj, OutputConvo: true);
+                        look.GeneralLookDescription(
+                            obj: obj, 
+                            objList: UWTileMap.current_tilemap.LevelObjects,
+                            OutputConvo: true);
                     }                    
                 }
             }

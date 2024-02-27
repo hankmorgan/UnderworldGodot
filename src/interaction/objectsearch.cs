@@ -82,6 +82,11 @@ namespace Underworld
         /// <returns></returns>
         public static int GetContainingObject(int ListHead, int ToFind, uwObject[] objList) 
         {
+            if (ListHead==ToFind)
+            {
+                //same object
+                return -1;
+            }
             if (ListHead<=0){return -1;}
             var ListHeadObject = objList[ListHead];
             if (ListHeadObject != null)

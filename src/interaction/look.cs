@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Godot;
 
 namespace Underworld
@@ -9,6 +10,7 @@ namespace Underworld
     {
         public static bool LookAt(int index, uwObject[] objList, bool WorldObject)
         {
+            
             bool result = false;
             trap.ObjectThatStartedChain = index;
             if (index <= objList.GetUpperBound(0))
@@ -54,7 +56,9 @@ namespace Underworld
                 {
                     //default string  when no overriding action has occured           
                     //uimanager.AddToMessageScroll(GameStrings.GetObjectNounUW(obj.item_id));
-                    GeneralLookDescription(obj);
+                    GeneralLookDescription(
+                        obj: obj , 
+                        objList: objList);
                 }
             }
 
@@ -92,7 +96,7 @@ namespace Underworld
                                 case 0xB:
                                     return false;
                                 default:
-                                    return Readable.LookAt(obj);
+                                    return Readable.LookAt(obj, objList);
                             }
                         }
                         else
@@ -108,7 +112,7 @@ namespace Underworld
                                 case 0xF://a_resilient sphere 
                                     return false;
                                 default:
-                                    return Readable.LookAt(obj);
+                                    return Readable.LookAt(obj, objList);
                             }
                         }
                     }
@@ -166,7 +170,7 @@ namespace Underworld
             return true;
         }
 
-        public static bool GeneralLookDescription(uwObject obj, bool OutputConvo = false)
+        public static bool GeneralLookDescription(uwObject obj, uwObject[] objList, bool OutputConvo = false)
         {
             string output;
             if (commonObjDat.PrintableLook(obj.item_id))
@@ -270,16 +274,31 @@ namespace Underworld
                 }
             }
 
+            var magicenchantment = MagicEnchantment.GetSpellEnchantment(obj, objList);
+            string enchantmenttext ="";
+            if (magicenchantment!=null)
+            {
+                enchantmenttext = magicenchantment.NameEnchantment(obj, objList); //TODO add a lore check
+                if (enchantmenttext=="")
+                {
+                    enchantmenttext = " of unnamed";
+                }
+                else
+                {
+                    enchantmenttext = $" of {enchantmenttext}";
+                }
+            }
+
             if (OutputConvo)
             {
                 uimanager.AddToMessageScroll(
-                    stringToAdd: $"{output}{ownership}",
+                    stringToAdd: $"{output}{enchantmenttext}{ownership}",
                     option: 2,
                     mode: MessageDisplay.MessageDisplayMode.TemporaryMessage);
             }
             else
             {
-                uimanager.AddToMessageScroll($"{output}{ownership}");
+                uimanager.AddToMessageScroll($"{output}{enchantmenttext}{ownership}");
             }
 
             return true;

@@ -225,7 +225,7 @@ namespace Underworld
             {
                 if ((_RES!=GAME_UW2) && (critter.npc_whoami==248))
                 {//slasher of veils
-                    var name = critter._name;
+                    var name = critter.a_name;
                     uimanager.AddToMessageScroll($"You see {name}");
                 }
                 else
@@ -250,7 +250,7 @@ namespace Underworld
             }
             else
             {
-                uimanager.AddToMessageScroll($"You see {critter._name.Replace("_"," ")}"); 
+                uimanager.AddToMessageScroll($"You see {critter.a_name.Replace("_"," ")}"); 
             }         
         }
 
@@ -261,7 +261,7 @@ namespace Underworld
         private static void RegularNPCDescription(uwObject critter)
         {
             //TODO: A worried spectre named Warren.
-            var name = critter._name;
+            var name = critter.a_name;
             var lowercasename = char.IsLower(name.First<char>());//check if name is lower case. if so do not print it
             string npcrace = GameStrings.GetObjectNounUW(critter.item_id);
             var mood = GameStrings.GetString(5, 96 + critter.npc_attitude);

@@ -8,11 +8,11 @@ namespace Underworld
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public static bool Use(uwObject obj)
+        public static bool Use(uwObject obj, uwObject[] objlist)
         {
             if (_RES==GAME_UW2)
             {//TODO implement the UW2 logic.
-                return LookAt(obj);
+                return LookAt(obj, objlist);
             }
             else
             {
@@ -22,7 +22,7 @@ namespace Underworld
                     {
                         if ((obj.link & 0x1FF) < 0x100)
                             {
-                                return LookAt(obj);//default read
+                                return LookAt(obj, objlist);//default read
                             }
                         else
                             {
@@ -50,11 +50,11 @@ namespace Underworld
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public static bool LookAt(uwObject obj)
+        public static bool LookAt(uwObject obj, uwObject[] objList)
         {
             if (obj.is_quant == 1)
                 {
-                look.GeneralLookDescription(obj);
+                look.GeneralLookDescription(obj: obj, objList: objList);
                 uimanager.AddToMessageScroll(GameStrings.GetString(3, obj.link-0x200));
                 }
             return true;

@@ -32,7 +32,7 @@ namespace Underworld
 		public void ResetCursor()
 		{
 			Texture = uimanager.grCursors.LoadImageAt(0);
-			Material= uimanager.grCursors.GetMaterial(0);
+			//Material= uimanager.grCursors.GetMaterial(0);
 		}
 	}
 

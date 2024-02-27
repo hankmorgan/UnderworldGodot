@@ -20,7 +20,7 @@ namespace Underworld
             if (index <= objList.GetUpperBound(0))
             {
                 var obj = objList[index];
-                Debug.Print ($"Object {obj.majorclass}-{obj.minorclass}-{obj.classindex} {obj._name}");
+                Debug.Print ($"Object {obj.majorclass}-{obj.minorclass}-{obj.classindex} {obj.a_name}");
                 switch (obj.majorclass)
                 {
                     case 2:
@@ -159,7 +159,7 @@ namespace Underworld
                                 case 0xB:
                                     return map.Use(obj, WorldObject);
                                 default:
-                                    return Readable.Use(obj);
+                                    return Readable.Use(obj, objList);
                             }
                         }
                         else
@@ -181,7 +181,7 @@ namespace Underworld
                                 case 0xF://a_resilient sphere 
                                     return false;
                                 default:
-                                    return Readable.LookAt(obj);
+                                    return Readable.LookAt(obj, objList);
                             }
                         }
                     }
