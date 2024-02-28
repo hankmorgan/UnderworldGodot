@@ -142,6 +142,15 @@ namespace Underworld
                         Debug.Print($"{GameStrings.GetObjectNounUW(232 + playerdat.GetSelectedRune(i))}");
                     }
                 }
+                var spell = RunicMagic.CurrentSpell();
+                if (spell!=null)
+                {
+                    uimanager.AddToMessageScroll($"Casting {spell.spellname}");
+                }
+                else
+                {
+                    uimanager.AddToMessageScroll("Not a spell.");
+                }
             }
         }
 
