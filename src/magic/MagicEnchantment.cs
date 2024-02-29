@@ -2,6 +2,9 @@ using System.Diagnostics;
 
 namespace Underworld
 {
+    /// <summary>
+    /// Object enchantment and spells. For spells cast by objects (exclude runic magic)
+    /// </summary>
     public class MagicEnchantment : UWClass
     {
 

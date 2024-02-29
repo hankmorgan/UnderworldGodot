@@ -1,5 +1,10 @@
 namespace Underworld
 {
+
+    /// <summary>
+    /// Runic magic spell lookup tables and logic. 
+    /// For spells cast directly by the player.
+    /// </summary>
     public class RunicMagic : UWClass
     {
         public static RunicMagic[] SpellList;

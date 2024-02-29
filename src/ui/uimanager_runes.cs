@@ -146,6 +146,12 @@ namespace Underworld
                 if (spell!=null)
                 {
                     uimanager.AddToMessageScroll($"Casting {spell.spellname}");
+                    SpellCasting.CastSpell(
+                        majorclass: spell.SpellMajorClass, 
+                        minorclass: spell.SpellMinorClass, 
+                        caster: null, target: null, 
+                        tileX: playerdat.tileX, tileY: playerdat.tileY, 
+                        PlayerCast: true);
                 }
                 else
                 {
