@@ -25,12 +25,28 @@ namespace Underworld
                 case 1://motion related
                 case 2://
                 case 3://
-                    //TODO add special handling for ironflesh etc
-                    PlayerStatusEffectSpells(
-                        major: majorclass, 
-                        minor: minorclass & 0x3F, 
-                        stabilityclass: minorclass & 0xC0);
-                    break;
+                    {
+                        //TODO add special handling for ironflesh (plot handling for xclock3) and leviation/fly spells (stop falling)
+                        if ((majorclass == 2) && (((minorclass & 0x3F) == 3) || ((minorclass & 0x3F) == 5)))
+                            {
+                                Debug.Print("Leviate/Fly cast. Stop jumping"); //what happens here if all active effects are running???
+                            }
+                        if ( (_RES==GAME_UW2) && (majorclass == 2) && ((minorclass & 0x3F) == 5) )
+                        {
+                            //iron flesh.
+                            //if xclock == 4 
+                            // glaze over
+                            //set xclock = 5
+                            uimanager.AddToMessageScroll(GameStrings.GetString(1,335));
+                        }
+
+                        //Apply the active effect if possible.
+                        PlayerActiveStatusEffectSpells(
+                            major: majorclass, 
+                            minor: minorclass & 0x3F, 
+                            stabilityclass: minorclass & 0xC0);
+                        break;
+                    }
                 case 4://healing
                     break;
                 case 5://projectile spells
@@ -56,15 +72,43 @@ namespace Underworld
             }
         }
 
-
         /// <summary>
-        /// Player status spells
+        /// Applies player active status effects
         /// </summary>
         /// <param name="major"></param>
         /// <param name="minor"></param>
-        static void PlayerStatusEffectSpells(int major, int minor, int stabilityclass)
+        /// <param name="stabilityclass"></param>
+        static void PlayerActiveStatusEffectSpells(int major, int minor, int stabilityclass)
         {//updates the player status active effects. The actual impact of the spell is processed by PlayerRefreshUpdates()
+            if (playerdat.ActiveSpellEffectCount < 3)
+            {
+                var stability = 0;
+                //calc stability
+                switch (stabilityclass)
+                {
+                    case 0x80:
+                        stability = Rng.DiceRoll(3,24); break;
+                    case 0x40:
+                        stability = Rng.DiceRoll(2,8); break;
+                    case 1:
+                        stability = 1;break;
+                    case 0:
+                        stability = Rng.DiceRoll(2,3); break;
+                    default:
+                        stability = 0;break;
+                }
 
+                //apply effect to player data
+                playerdat.SetSpellEffect(
+                    index: playerdat.ActiveSpellEffectCount, 
+                    effectid: minor, 
+                    stability: stability);
+                playerdat.ActiveSpellEffectCount++;   
+            }
+            else
+            {
+                return; //no more effects allowed
+            }
         }
     }//end class
 }//end namespace

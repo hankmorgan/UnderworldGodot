@@ -3,6 +3,9 @@ using System;
 
 namespace Underworld
 {
+    /// <summary>
+    /// Handles RNG calls for the game. Eventually this may replicate the original rng that is based on system time rather than .NET rng.
+    /// </summary>
     public class Rng : UWClass
     {
         public static Random r = new();
@@ -17,7 +20,6 @@ namespace Underworld
         /// <returns></returns>
         public static int RandomOffset(int basevalue, int lower_offset, int upper_offset)
         {
-           // return r.Next(basevalue + lower_offset, basevalue + upper_offset);
             var range = upper_offset-lower_offset;
             var rnd = r.Next(0, range);
             return basevalue + basevalue * (lower_offset + rnd) /100;        
@@ -55,5 +57,5 @@ namespace Underworld
                 }
             }
         }
-    }
-}
+    }//end class
+}//end namespace
