@@ -6,6 +6,24 @@ namespace Underworld
      public partial class playerdat : Loader
      {
         
+        /// <summary>
+        /// Ptr to next available spell effect slot.
+        /// </summary>
+          public static int ActiveSpellEffectCount
+          {
+               get
+               {
+                    if (_RES==GAME_UW2)
+                    {
+                         return (GetAt16(0x61)>>5) & 0xF;
+                    }
+                    else
+                    {
+                         return (GetAt16(0x60)>>6) & 0xF;
+                    }                    
+               }
+          }
+
           public static int SilverTreeLevel
           {
                get

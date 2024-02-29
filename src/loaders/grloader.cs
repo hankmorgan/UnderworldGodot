@@ -280,7 +280,7 @@ namespace Underworld
                     {
                         BitMapWidth = 83;  //getValAtAddress(textureFile, textureOffset + 1, 8);
                         BitMapHeight = 114; // getValAtAddress(textureFile, textureOffset + 2, 8);
-                        if (_RES == "UW2")
+                        if (_RES == GAME_UW2)
                         {
                             BitMapWidth = 79;
                             BitMapHeight = 112;

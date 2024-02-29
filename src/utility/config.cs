@@ -14,36 +14,52 @@ namespace Underworld
         public int lightlevel { get; set; }
         public string levarkfolder { get; set; }
         public string shader { get; set; }
-        public float FOV {get; set;}
+        public float FOV { get; set; }
         public static uwsettings instance;
 
 
-   public static void LoadSettings()
-    {
-        var appfolder = OS.GetExecutablePath();
-        appfolder = Path.GetDirectoryName(appfolder);
-        var settingsfile = Path.Combine(appfolder, "uwsettings.json");
-
-        if (!File.Exists(settingsfile))
+        public static void LoadSettings()
         {
-            OS.Alert("missing file uwsettings.json at " + settingsfile);
-            return;
-        }
-        var gamesettings = JsonSerializer.Deserialize<uwsettings>(File.ReadAllText(settingsfile));
-        uwsettings.instance = gamesettings;
-        main.gamecam.Fov = Math.Max(50, uwsettings.instance.FOV);
+            var appfolder = OS.GetExecutablePath();
+            appfolder = Path.GetDirectoryName(appfolder);
+            var settingsfile = Path.Combine(appfolder, "uwsettings.json");
 
-        UWClass._RES = gamesettings.gametoload;
-        switch (UWClass._RES)
-        {
-            case UWClass.GAME_UW1:
-                UWClass.BasePath = gamesettings.pathuw1; break;
-            case UWClass.GAME_UW2:
-                UWClass.BasePath = gamesettings.pathuw2; break;
-            default:
-                throw new InvalidOperationException("Invalid Game Selected");
+            if (!File.Exists(settingsfile))
+            {
+                OS.Alert("missing file uwsettings.json at " + settingsfile);
+                return;
+            }
+            var gamesettings = JsonSerializer.Deserialize<uwsettings>(File.ReadAllText(settingsfile));
+            uwsettings.instance = gamesettings;
+            main.gamecam.Fov = Math.Max(50, uwsettings.instance.FOV);
+
+            setGame(gamesettings.gametoload);
+            switch (UWClass._RES)
+            {
+                case UWClass.GAME_UW1:
+                    UWClass.BasePath = gamesettings.pathuw1; break;
+                case UWClass.GAME_UW2:
+                    UWClass.BasePath = gamesettings.pathuw2; break;
+                default:
+                    throw new InvalidOperationException("Invalid Game Selected");
+            }
         }
-    }
+
+        public static void setGame(string gamemode)
+        {
+            switch (gamemode.ToUpper())
+            {
+                case "UW2":
+                case "2":
+                    UWClass._RES = UWClass.GAME_UW2; break;
+                case "UW1":
+                case "1":
+                    UWClass._RES = UWClass.GAME_UW1; break;                
+                case "UWDEMO":
+                case "0":
+                    UWClass._RES = UWClass.GAME_UWDEMO; break;
+            }
+        }
 
 
     } //end class
