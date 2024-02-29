@@ -205,5 +205,10 @@ namespace Underworld
             setAt(pdat, index, 32, value);
         }
 
+
+            public static void WriteBytesToFile()
+            {
+                System.IO.File.WriteAllBytes("c:\\temp\\debug.pdat", pdat);
+            }
      }
 }//end namespace

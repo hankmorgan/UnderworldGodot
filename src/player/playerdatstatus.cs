@@ -37,7 +37,7 @@ namespace Underworld
                          var temp = GetAt16(0x60);
                          temp &= 0xFC3F; //clear bits
                          temp |= (value << 6); //set new value
-                         SetAt16(0x61, temp);
+                         SetAt16(0x60, temp);
                     }
                }
           }
