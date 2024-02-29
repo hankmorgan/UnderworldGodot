@@ -101,7 +101,7 @@ namespace Underworld
                 //apply effect to player data
                 playerdat.SetSpellEffect(
                     index: playerdat.ActiveSpellEffectCount, 
-                    effectid: (minor<<4), 
+                    effectid: (minor<<4)  + major, 
                     stability: stability);
                 playerdat.ActiveSpellEffectCount++;   
                 playerdat.WriteBytesToFile();
