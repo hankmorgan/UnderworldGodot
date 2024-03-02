@@ -34,7 +34,10 @@ namespace Underworld
         {
             get
             {
-                var result = 1 + (SpellIndex + 1);
+                var div = 6; 
+                if (_RES==GAME_UW2){div=8;}
+                
+                var result = 1 + (SpellIndex / div);
                 if (result > 8)
                 {
                     return 1;
@@ -50,7 +53,7 @@ namespace Underworld
         {
             get
             {
-                return SpellIndex * 3;
+                return SpellLevel * 3;
             }
         }
         public static RunicMagic CurrentSpell()
@@ -72,7 +75,7 @@ namespace Underworld
             return null;// no spell.
         }
         static RunicMagic()
-        {            
+        {
             switch (_RES)
             {
                 case GAME_UW2:
@@ -206,5 +209,96 @@ namespace Underworld
                     break;
             }
         }
+
+
+        public static void CastRunicSpell()
+        {
+            var spell = RunicMagic.CurrentSpell();
+            if (spell != null)
+            {
+                if ((spell.TestIfPlayerCanCastSpell()) | (true))//force this to be true for test and development
+                {
+                    //apply mana cost
+                    playerdat.play_mana = System.Math.Max(0, playerdat.play_mana - spell.ManaCost);
+
+                    uimanager.AddToMessageScroll($"DEBUG PRINT {spell.spellname}");
+                    //do the skill check
+                    var chkresult = playerdat.SkillCheck(playerdat.Casting, spell.SpellLevel * 3);
+                    switch (chkresult)
+                    {
+                        case playerdat.SkillCheckResult.CritFail:
+                            {
+                                //In a crit fail the spell class turns into a curse and subclass into spell level/2
+                                SpellCasting.CastSpell(
+                                    majorclass: 9,
+                                    minorclass: spell.SpellLevel / 2,
+                                    caster: null, target: null,
+                                    tileX: playerdat.tileX, tileY: playerdat.tileY,
+                                    PlayerCast: true);
+                                uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_the_spell_backfires_));
+                                break;
+                            }
+                        case playerdat.SkillCheckResult.Fail:
+                            {
+                                uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_the_incantation_failed_));
+                                break;
+                            }
+                        default:
+                            SpellCasting.CastSpell(
+                                majorclass: spell.SpellMajorClass,
+                                minorclass: spell.SpellMinorClass,
+                                caster: null, target: null,
+                                tileX: playerdat.tileX, tileY: playerdat.tileY,
+                                PlayerCast: true);
+                            break;
+                    }
+                }
+            }
+            else
+            {
+                uimanager.AddToMessageScroll("Not a spell.");
+            }
+        }
+
+        /// <summary>
+        /// Checks Mana,level and plot requirements to cast a spell.
+        /// </summary>
+        /// <returns></returns>
+        public bool TestIfPlayerCanCastSpell()
+        {
+            if (_RES == GAME_UW2)
+            {
+                if (worlds.GetWorldNo(playerdat.dungeon_level) == 0)
+                {//check if spell is allowed in britannia
+                    if (SpellLevel >= 3)
+                    {
+                        uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_the_incantation_failed_));//incantation failed
+                        return false;
+                    }
+                }
+            }
+            if (((playerdat.play_level + 1) / 2) < SpellLevel)
+            {
+                if (_RES == GAME_UW2)
+                {
+                    uimanager.AddToMessageScroll(GameStrings.GetString(1, 225)); //you are not experienced enough
+                }
+                else
+                {
+                    uimanager.AddToMessageScroll(GameStrings.GetString(1, 210));
+                }
+                return false;
+            }
+            else
+            {
+                if (playerdat.play_mana < ManaCost)
+                {
+                    uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_do_not_have_enough_mana_to_cast_the_spell_));
+                    return false;
+                }
+            }
+            return true;
+        }
+
     }//end class
 }//end namespace

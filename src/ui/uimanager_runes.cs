@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using Godot;
 
@@ -134,31 +135,8 @@ namespace Underworld
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
-                Debug.Print("Casting");
-                for (int i = 0; i < 3; i++)
-                {
-                    if (playerdat.IsSelectedRune(i))
-                    {
-                        Debug.Print($"{GameStrings.GetObjectNounUW(232 + playerdat.GetSelectedRune(i))}");
-                    }
-                }
-                var spell = RunicMagic.CurrentSpell();
-                if (spell!=null)
-                {
-                    uimanager.AddToMessageScroll($"Casting {spell.spellname}");
-                    SpellCasting.CastSpell(
-                        majorclass: spell.SpellMajorClass, 
-                        minorclass: spell.SpellMinorClass, 
-                        caster: null, target: null, 
-                        tileX: playerdat.tileX, tileY: playerdat.tileY, 
-                        PlayerCast: true);
-                }
-                else
-                {
-                    uimanager.AddToMessageScroll("Not a spell.");
-                }
+                RunicMagic.CastRunicSpell();
             }
-        }
-
+        }        
     } //end class
 }//end namespace
