@@ -123,7 +123,7 @@ namespace Underworld
             //Init palette shader params
  
             RenderingServer.GlobalShaderParameterAdd("uipalette", RenderingServer.GlobalShaderParameterType.Sampler2D, Palettes[Palette.CurrentPalette].cycledUIPalette[0]);
-            RenderingServer.GlobalShaderParameterAdd("cutoffdistance", RenderingServer.GlobalShaderParameterType.Float, shade.GetViewingDistance(uwsettings.instance.lightlevel));
+            RenderingServer.GlobalShaderParameterAdd("cutoffdistance", RenderingServer.GlobalShaderParameterType.Float, shade.GetViewingDistance(playerdat.lightlevel));
             RenderingServer.GlobalShaderParameterAdd(
                 name: "smoothpalette", 
                 type: RenderingServer.GlobalShaderParameterType.Sampler2D, 
@@ -274,7 +274,7 @@ namespace Underworld
         public static void UpdatePaletteCycles()
         {
             //Cycle the palette		
-            RenderingServer.GlobalShaderParameterSet("smoothpalette", (Texture)Palettes[Palette.CurrentPalette].cycledGamePalette[0, uwsettings.instance.lightlevel, NextPaletteCycle]);
+            RenderingServer.GlobalShaderParameterSet("smoothpalette", (Texture)Palettes[Palette.CurrentPalette].cycledGamePalette[0, playerdat.lightlevel, NextPaletteCycle]);
             RenderingServer.GlobalShaderParameterSet("uipalette", (Texture)Palettes[Palette.CurrentPalette].cycledUIPalette[NextPaletteCycle]);
 
 

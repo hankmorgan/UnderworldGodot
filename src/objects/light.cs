@@ -42,9 +42,9 @@ namespace Underworld
         public static void RefreshLighting()
         {
 
-            uwsettings.instance.lightlevel = BrightestLight();
-            Godot.RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.GetViewingDistance(uwsettings.instance.lightlevel));
-            Godot.RenderingServer.GlobalShaderParameterSet("shades", shade.shadesdata[uwsettings.instance.lightlevel].ToImage());
+            playerdat.lightlevel = BrightestLight();
+            Godot.RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.GetViewingDistance(playerdat.lightlevel));
+            Godot.RenderingServer.GlobalShaderParameterSet("shades", shade.shadesdata[playerdat.lightlevel].ToImage());
         }
 
 

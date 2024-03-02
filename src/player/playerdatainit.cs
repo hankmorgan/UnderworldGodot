@@ -23,7 +23,7 @@ namespace Underworld
                 {//Init the backpack indices
                     uimanager.SetBackPackIndex(i, BackPackObject(i));
                 }
-                RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.GetViewingDistance(uwsettings.instance.lightlevel));
+                RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.GetViewingDistance(lightlevel));
                 main.DrawPlayerPositionSprite(ObjectCreator.grObjects);
             }
             else

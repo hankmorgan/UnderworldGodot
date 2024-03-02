@@ -246,7 +246,8 @@ namespace Underworld
 				automap.automaps = new automap[9]; break;
 		}
 		automap.automaps[newLevelNo] = new automap(newLevelNo);
-		uwsettings.instance.lightlevel = light.BrightestLight();
+		//uwsettings.instance.lightlevel = light.BrightestLight();
+        playerdat.lightlevel = light.BrightestLight();
 		Debug.Print($"{current_tilemap.uw}");
         if (fromMainMenu)
         {
