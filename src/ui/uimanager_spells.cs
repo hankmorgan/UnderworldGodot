@@ -35,9 +35,16 @@ namespace Underworld
         public static void SetSpellIcon(int index, int major, int minor)
         {
             var spellno = GetSpellNoIndex(major, minor);
-            instance.ActiveSpellIcons[index].Texture = grSpells.LoadImageAt(spellno);
-            instance.ActiveSpellIcons[index].Material = grSpells.GetMaterial(spellno);
-            EnableDisable(instance.ActiveSpellIcons[index], true);
+            if (spellno>= 0x80)
+            {//out of range value/not applicable
+                ClearSpellIcon(index);
+            }
+            else
+            {
+                instance.ActiveSpellIcons[index].Texture = grSpells.LoadImageAt(spellno);
+                instance.ActiveSpellIcons[index].Material = grSpells.GetMaterial(spellno);
+                EnableDisable(instance.ActiveSpellIcons[index], true);
+            }
         }
 
 
