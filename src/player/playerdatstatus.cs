@@ -109,6 +109,23 @@ namespace Underworld
                return GetAt16(0x3F + index * 2) & 0xFF;                    
           }
 
+          public static void CancelEffect(int index)
+          {
+               SetAt16(0x3f+index*2, 0);//clear data.
+               while (index<2)
+               {//if not the third effect ID then shift down remain effect data to occupy the first 2 slots.
+                    var toMoveToIndex = index;                    
+                    index++;
+                    var toMoveFromIndex = index;
+                    var tmp = GetAt16(0x3f+toMoveFromIndex*2);
+                    SetAt16(0x3F+toMoveToIndex*2, tmp);
+                    SetAt16(0x3f+toMoveFromIndex*2, 0);//clear data.
+               }
+               ActiveSpellEffectCount--;
+          }
+
+
+
           public static int SilverTreeLevel
           {
                get
