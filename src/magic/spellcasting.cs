@@ -70,6 +70,7 @@ namespace Underworld
                 case 14://cutscene spells.
                     break;
             }
+            playerdat.PlayerStatusUpdate();
         }
 
         /// <summary>
@@ -104,12 +105,25 @@ namespace Underworld
                     effectid: (minor<<4)  + major, 
                     stability: stability);
                 playerdat.ActiveSpellEffectCount++;   
-                playerdat.WriteBytesToFile();
             }
             else
             {
                 return; //no more effects allowed
             }
         }
+
+        public static void ApplyStatusEffectSpell(int majorclass, int minorclass)
+        {
+            switch(majorclass)
+            {
+                case 0://lighting spells
+                    if (playerdat.lightlevel<minorclass)
+                    {
+                        playerdat.lightlevel = minorclass;
+                    }
+                    break;
+            }
+        }
+
     }//end class
 }//end namespace

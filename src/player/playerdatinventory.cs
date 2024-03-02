@@ -586,8 +586,7 @@ namespace Underworld
             if ((NewObj.majorclass == 2) && (NewObj.minorclass == 1) && (NewObj.classindex>=4) && (NewObj.classindex<=7))
             {
                 //light source that is turned on.
-                light.LightOff(NewObj);
-                light.RefreshLighting();
+                light.LightOff(NewObj);                
             }
             if (DestroyInventoryObject)
             {

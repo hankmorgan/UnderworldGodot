@@ -98,6 +98,17 @@ namespace Underworld
                SetAt16(0x3F  + index * 2 , temp);               
           }
 
+
+          public static int GetEffectStability(int index)
+          {               
+               return GetAt16(0x3F + index * 2) >> 8;              
+          }
+
+          public static int GetEffectClass(int index)
+          {
+               return GetAt16(0x3F + index * 2) & 0xFF;                    
+          }
+
           public static int SilverTreeLevel
           {
                get

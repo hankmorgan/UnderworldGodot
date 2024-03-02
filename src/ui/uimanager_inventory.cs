@@ -150,7 +150,8 @@ namespace Underworld
                         }
                         break;
                 }
-
+            //Update player state
+            playerdat.PlayerStatusUpdate();
             }
         }
 
@@ -234,7 +235,7 @@ namespace Underworld
                         if (playerdat.ObjectInHand != -1)
                         {
                             //do a use interaction on the object already there. 
-                            uimanager.UseObjectsTogether(playerdat.ObjectInHand, objAtSlot);
+                            UseObjectsTogether(playerdat.ObjectInHand, objAtSlot);
                         }
                         else
                         {
@@ -453,6 +454,9 @@ namespace Underworld
             PickupObjectFromSlot(targetObj);
             PickupToEmptySlot(backup);
             UpdateInventoryDisplay();
+            
+            //Update player state
+            playerdat.PlayerStatusUpdate();
         }
 
         public static void PickupObjectFromSlot(int objAtSlot)
@@ -498,6 +502,10 @@ namespace Underworld
             var pickObject = UWTileMap.current_tilemap.LevelObjects[newIndex];
             playerdat.ObjectInHand = newIndex;
             instance.mousecursor.SetCursorArt(pickObject.item_id);
+            
+            //Update player state
+            playerdat.PlayerStatusUpdate();
+
             return newIndex;
         }
 

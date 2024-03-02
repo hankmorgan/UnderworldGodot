@@ -90,9 +90,8 @@ namespace Underworld
                 uimanager.SetRuneInBag(i, GetRune(i));
             }
 
-            //Set the playerlight level;
+            //Set the playerlight level;            
             //uwsettings.instance.lightlevel = light.BrightestLight();
-
         }
-    }
-}
+    }//end class
+}//end namespace

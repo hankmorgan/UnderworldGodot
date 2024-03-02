@@ -117,7 +117,8 @@ public partial class main : Node3D
 					playerdat.tileX = tileX;
 					playerdat.tileY = tileY;
 					//uwsettings.instance.lightlevel = light.BrightestLight();
-					playerdat.lightlevel = light.BrightestLight();
+					//playerdat.lightlevel = light.BrightestLight();
+					playerdat.PlayerStatusUpdate();
 				}
 			}
 		}
