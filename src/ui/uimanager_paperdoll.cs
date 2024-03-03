@@ -122,7 +122,9 @@ namespace Underworld
         {
             switch (slotno)
             {
-                case 0: SetHelm(playerdat.isFemale, wearable.GetSpriteIndex(playerdat.HelmObject)); break;
+                case 0:
+                    SetHelm(playerdat.isFemale, wearable.GetSpriteIndex(playerdat.HelmObject));                     
+                    break;
                 case 1: SetArmour(playerdat.isFemale, wearable.GetSpriteIndex(playerdat.ChestArmourObject)); break;
                 case 2: SetGloves(playerdat.isFemale, wearable.GetSpriteIndex(playerdat.GlovesObject)); break;
                 case 3: SetLeggings(playerdat.isFemale, wearable.GetSpriteIndex(playerdat.LeggingsObject)); break;
