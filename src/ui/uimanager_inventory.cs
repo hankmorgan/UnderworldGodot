@@ -647,7 +647,7 @@ namespace Underworld
             yield return true;
         }
 
-        static bool ValidObjectForSlot(int slot, uwObject obj)
+        public static bool ValidObjectForSlot(int slot, uwObject obj)
         {
             //test game specific special objects
             switch (UWClass._RES)

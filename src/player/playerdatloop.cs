@@ -46,23 +46,47 @@ namespace Underworld
             {
                 var objindex = uimanager.GetPaperDollObjAtSlot(i);
                 if (objindex != -1)
-                { //TODO check obj in an appropiate slot to get it's effect
+                {
                     var obj = InventoryObjects[objindex];
                     if (obj != null)
                     {
-                       
-                        var spell = MagicEnchantment.GetSpellEnchantment(obj: obj, InventoryObjects);
-                        if (spell != null)
+                        bool isValid = true;
+
+                        if (!uimanager.ValidObjectForSlot(i, obj))
                         {
-                            SpellCasting.CastSpell(
-                                majorclass: spell.SpellMajorClass,
-                                minorclass: spell.SpellMinorClass, caster: obj,
-                                target: null,
-                                tileX: tileX,
-                                tileY: tileY,
-                                CastOnEquip: CastOnEquip,
-                                PlayerCast: false);
+                            isValid = false;
                         }
+                        if (uimanager.DominantHandSlot == i)
+                        {//Check for weapon in dominant hand.
+                            if (
+                                !
+                            (
+                                ((obj.majorclass == 0) && (obj.minorclass == 0))
+                                ||
+                                ((obj.majorclass == 0 && obj.minorclass == 1) && (obj.classindex >= 8 && obj.classindex <= 10))
+                            )
+                            )
+                            {
+                                isValid = false;
+                            }
+                        }
+
+                        if (isValid)
+                        {
+                            var spell = MagicEnchantment.GetSpellEnchantment(obj: obj, InventoryObjects);
+                            if (spell != null)
+                            {
+                                SpellCasting.CastSpell(
+                                    majorclass: spell.SpellMajorClass,
+                                    minorclass: spell.SpellMinorClass, caster: obj,
+                                    target: null,
+                                    tileX: tileX,
+                                    tileY: tileY,
+                                    CastOnEquip: CastOnEquip,
+                                    PlayerCast: false);
+                            }
+                        }
+
                     }
                 }
             }
@@ -87,7 +111,7 @@ namespace Underworld
             //5,6,7,8
             for (int i = 5; i <= 8; i++)
             {
-                var obj = playerdat.GetInventorySlotObject(i);
+                var obj = GetInventorySlotObject(i);
                 if (obj != null)
                 {
                     if ((obj.majorclass == 2) && (obj.minorclass == 1) && (obj.classindex >= 4) && (obj.classindex <= 7))

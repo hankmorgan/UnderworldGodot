@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime.Serialization;
 using Godot;
 
 namespace Underworld
@@ -37,6 +38,21 @@ namespace Underworld
 
         public static int CurrentSlot;
         public static int BackPackStart = 0;
+
+        public static int DominantHandSlot
+        {
+            get
+            {
+                if (playerdat.isLefty)
+                    {
+                        return 8;
+                    }
+                else
+                    {
+                        return 7;
+                    }
+            }
+        }
 
         public void InitPaperdoll()
         {
