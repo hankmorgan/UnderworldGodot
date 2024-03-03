@@ -70,6 +70,12 @@ namespace Underworld
                                     }
                                 }
                             }
+
+                            //Test if object is valid for slot
+                            if (!ValidObjectForSlot(CurrentSlot, UWTileMap.current_tilemap.LevelObjects[ObjectToPickup]))
+                            {
+                                return;
+                            }
                             var index = playerdat.AddObjectToPlayerInventory(ObjectToPickup, false);
                             playerdat.SetInventorySlotListHead(CurrentSlot, index);
                             //redraw                
@@ -317,18 +323,18 @@ namespace Underworld
             switch (slotindex)
             {
                 case 0: { obj = playerdat.Helm; break; }
-                case 1: { obj = playerdat.ChestArmour;break; }
-                case 2: { obj = playerdat.Gloves;break; }
-                case 3: { obj = playerdat.Leggings;break; }
-                case 4: { obj = playerdat.Boots;break; }
+                case 1: { obj = playerdat.ChestArmour; break; }
+                case 2: { obj = playerdat.Gloves; break; }
+                case 3: { obj = playerdat.Leggings; break; }
+                case 4: { obj = playerdat.Boots; break; }
 
                 case 5: { obj = playerdat.RightShoulder; break; }
                 case 6: { obj = playerdat.LeftShoulder; break; }
                 case 7: { obj = playerdat.RightHand; break; }
                 case 8: { obj = playerdat.LeftHand; break; }
 
-                case 9: { obj = playerdat.RightRing;  break; }
-                case 10: { obj = playerdat.LeftRing;  break; }               
+                case 9: { obj = playerdat.RightRing; break; }
+                case 10: { obj = playerdat.LeftRing; break; }
             }
             return obj;
         }
@@ -639,6 +645,93 @@ namespace Underworld
             }
             CurrentSlot = -1; //cleanup/needed?
             yield return true;
+        }
+
+        static bool ValidObjectForSlot(int slot, uwObject obj)
+        {
+            //test game specific special objects
+            switch (UWClass._RES)
+            {
+                case UWClass.GAME_UW2:
+                    {
+                        switch (obj.item_id)
+                        {
+                            case 47://	a_pair of swamp boots&pairs of swamp boots
+                                return slot == 4;
+                            case 51://	fraznium gauntlets&pairs of fraznium gauntlets
+                                return slot == 2;
+                            case 52://	a_fraznium circlet
+                                return slot == 0;
+                            case 53://	a_Guardian signet ring
+                            case 55://	a_copper ring
+                                return (slot == 9) || (slot == 10);
+                        }
+                        break;
+                    }
+
+                default:
+                    {
+                        switch (obj.item_id)
+                        {
+                            case 47: //a_pair of dragon skin boots&pairs of dragon skin boots
+                                return slot == 4;
+                            case 54://an_iron ring
+                                return (slot == 9) || (slot == 10);
+                        }
+                        break;
+                    }
+            }
+            //standard rules
+            switch (slot)
+            {
+                case 0: //helm. 
+                    return
+                        obj.majorclass == 0
+                        &&
+                        (
+                            (obj.minorclass == 2) && (obj.classindex >= 0xC)
+                            ||
+                            (obj.minorclass == 3) && (obj.classindex <= 2)
+                        );
+                case 1://body armour
+                    return
+                        obj.majorclass == 0
+                        &&
+                        obj.minorclass == 2
+                        &&
+                        (obj.classindex >= 0 || obj.classindex <= 2);
+                case 2://gloves
+                    return
+                        obj.majorclass == 0
+                        &&
+                        obj.minorclass == 2
+                        &&
+                        (obj.classindex >= 7 || obj.classindex <= 8);
+                case 3://leggings
+                    return
+                        obj.majorclass == 0
+                        &&
+                        obj.minorclass == 2
+                        &&
+                        (obj.classindex >= 3 || obj.classindex <= 5);
+                case 4://boots
+                    return
+                        obj.majorclass == 0
+                        &&
+                        obj.minorclass == 2
+                        &&
+                        (obj.classindex >= 9 || obj.classindex <= 0xB);
+                case 9:
+                case 10:
+                    return
+                        obj.majorclass == 0
+                        &&
+                        obj.minorclass == 2
+                        &&
+                        (obj.classindex >= 9 || obj.classindex <= 0xB);
+            }
+
+            return true;
         }
     }//end class
 }//end namespace
