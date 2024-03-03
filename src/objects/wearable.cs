@@ -24,5 +24,5 @@ namespace Underworld
                 return  60 + (obj.item_id - 47);
             }
         }
-    }
-}
+    }//end class
+}//end namespace

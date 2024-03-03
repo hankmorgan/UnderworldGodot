@@ -12,6 +12,11 @@ namespace Underworld
         {
             lightlevel = 0;
             MagicalMotionAbilities = 0;
+            for (int i=0; i<=LocationalArmourValues.GetUpperBound(0);i++)
+            {
+                LocationalArmourValues[i] = 0;
+            }
+           
         }
 
         public static void PlayerStatusUpdate(bool CastOnEquip = false)
@@ -19,7 +24,31 @@ namespace Underworld
             var DamageResistance = 0;
             ResetPlayer();
 
-            //Get armour protections, magic bonuses from equipment
+            //Get armour protections to store in LocationalArmourValues
+            for (int i =0; i<=4; i++)
+            {//check each inventory slot (helm, armour, leggings, boots and gloves)
+                var objindex = uimanager.GetPaperDollObjAtSlot(i); 
+                var obj = InventoryObjects[objindex];
+                if (obj!=null)
+                {
+                    if (uimanager.ValidObjectForSlot(i, obj))
+                    {//apply protection if object is valid
+                        var protection = armourObjectDat.protection(obj.item_id);
+                        switch (i)
+                            {//apply protection to the appropiate body location
+                                case 0://helm
+                                    LocationalArmourValues[3] += protection;break;
+                                case 1: //armour
+                                    LocationalArmourValues[0] += protection;break;
+                                case 2: // gloves
+                                    LocationalArmourValues[1] += protection;break;
+                                case 3: //leggings                                
+                                case 4: //boots
+                                    LocationalArmourValues[2] += protection;break;
+                            }
+                    }
+                }                 
+            }
 
             //Get brightest physcial light
             lightlevel = BrightestNonMagicalLight();
@@ -94,16 +123,26 @@ namespace Underworld
                 }
             }
 
+            //Apply the max damage resistance from enchantments/active spell effects
             ApplyDamageResistance(DamageResistance);
+
             RefreshLighting();//either brightest physical light or brightest magical light
         }
 
 
+        /// <summary>
+        /// Applies the bonuses from things like iron flesh, resist blows to the player. 
+        /// Only the highest value applies
+        /// </summary>
+        /// <param name="DamageResistance"></param>
         public static void ApplyDamageResistance(int DamageResistance)
         {
-
+            for (int i = 0; i<= LocationalArmourValues.GetUpperBound(0); i++)
+            {
+                 LocationalArmourValues[i] += DamageResistance;
+            }
         }
-        
+
         public static void RefreshLighting()
         {
             Godot.RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.GetViewingDistance(playerdat.lightlevel));
