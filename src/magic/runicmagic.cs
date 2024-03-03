@@ -210,6 +210,16 @@ namespace Underworld
             }
         }
 
+        public static void CastRunicSpellWithoutRules(RunicMagic spell)
+        {
+            SpellCasting.CastSpell(
+                majorclass: spell.SpellMajorClass,
+                minorclass: spell.SpellMinorClass,
+                caster: null, target: null,
+                tileX: playerdat.tileX, tileY: playerdat.tileY,
+                CastOnEquip:false,
+                PlayerCast: true);
+        }
 
         public static void CastRunicSpell()
         {

@@ -8,8 +8,13 @@ namespace Underworld
     /// </summary>
     public class use : UWClass
     {
+        /// <summary>
+        /// Global flag in case the object uses fires the spell prematurely.
+        /// </summary>
+        public static bool SpellHasBeenCast=false;
         public static bool Use(int index, uwObject[] objList, bool WorldObject = true)
         {
+            SpellHasBeenCast = false;
             if (playerdat.ObjectInHand != -1)
             {
                 return useon.UseOn(index, objList, WorldObject);
@@ -46,6 +51,19 @@ namespace Underworld
                         srcObject: obj,
                         triggerIndex: obj.link,
                         objList: objList);
+                }
+                //check for a spell
+                if (!SpellHasBeenCast)
+                {
+                    if (obj!=null)
+                    {
+                        var spell = MagicEnchantment.GetSpellEnchantment(obj, objList);
+                        if (spell!=null)
+                        {
+                            MagicEnchantment.CastObjectSpell(obj, spell);
+                            result = true;
+                        }
+                    }
                 }
             }
             if (!result)

@@ -52,6 +52,8 @@ namespace Underworld
                     case 0xA:// a_bottle of ale&bottles of ale
                     case 0xB:// a_red potion
                     case 0xC:// a_green potion
+                        QuaffPotion(obj, !WorldObject);
+                        break;
                     case 0xD:// a_bottle of water&bottles of water
                     case 0xE:// a_flask of port&flasks of port
                         DrinkLiquid(obj, !WorldObject); break;
@@ -104,6 +106,41 @@ namespace Underworld
                     //TODO Leave left overs in the player cursor.  
                 }
             }
+        }
+
+
+        static void QuaffPotion(uwObject obj, bool UsedFromInventory)
+        {
+            uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_quaff_the_potion_in_one_gulp_));
+
+
+            MagicEnchantment spell;
+            if (UsedFromInventory)
+            {
+                spell = MagicEnchantment.GetSpellEnchantment(obj, playerdat.InventoryObjects);
+            }
+            else
+            {
+                spell = MagicEnchantment.GetSpellEnchantment(obj, UWTileMap.current_tilemap.LevelObjects);
+            }
+
+            if (spell != null)
+            {
+                MagicEnchantment.CastObjectSpell(obj, spell);
+            }
+            // {
+            //     CastObjectSpell(obj, spell);
+
+            //     // SpellCasting.CastSpell(
+            //     //     majorclass: spell.SpellMajorClass,
+            //     //      minorclass: spell.SpellMinorClass, 
+            //     //      caster: obj, 
+            //     //      target: null, 
+            //     //      tileX: playerdat.tileX, 
+            //     //      tileY: playerdat.tileY, 
+            //     //      CastOnEquip: false);
+            // }
+            ObjectCreator.Consume(obj, UsedFromInventory);
         }
 
         static void DrinkLiquid(uwObject obj, bool UsedFromInventory)
@@ -233,6 +270,6 @@ namespace Underworld
         }
 
 
-        
+
     }//end class
 }//end namespace

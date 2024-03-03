@@ -174,6 +174,17 @@ namespace Underworld
                     return null;
                 }
             }
-        }       
+        }     
+
+        public static void CastObjectSpell(uwObject obj, MagicEnchantment spell)
+        {
+            use.SpellHasBeenCast = true;
+            var spellno = spell.SpellMinorClass;
+            if (spell.SpellMajorClass != -1)
+            {
+                spellno = spellno |= (spell.SpellMajorClass << 6);
+            }
+            SpellCasting.CastSpellFromObject(spellno, obj);
+        }  
     }//end class
 }//end namespace
