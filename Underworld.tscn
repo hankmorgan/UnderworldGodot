@@ -1752,9 +1752,9 @@ offset_bottom = 616.0
 [node name="SpellIcon0" type="TextureRect" parent="UI/Common/OtherControls"]
 visible = false
 layout_mode = 0
-offset_left = 212.0
+offset_left = 340.0
 offset_top = 552.0
-offset_right = 276.0
+offset_right = 404.0
 offset_bottom = 624.0
 texture = ExtResource("28_uj0ag")
 
@@ -1770,9 +1770,9 @@ texture = ExtResource("28_uj0ag")
 [node name="SpellIcon2" type="TextureRect" parent="UI/Common/OtherControls"]
 visible = false
 layout_mode = 0
-offset_left = 340.0
+offset_left = 212.0
 offset_top = 552.0
-offset_right = 404.0
+offset_right = 276.0
 offset_bottom = 624.0
 texture = ExtResource("28_uj0ag")
 

@@ -94,10 +94,16 @@ namespace Underworld
                 }
             }
 
+            ApplyDamageResistance(DamageResistance);
             RefreshLighting();//either brightest physical light or brightest magical light
         }
 
 
+        public static void ApplyDamageResistance(int DamageResistance)
+        {
+
+        }
+        
         public static void RefreshLighting()
         {
             Godot.RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.GetViewingDistance(playerdat.lightlevel));

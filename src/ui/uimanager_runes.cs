@@ -35,20 +35,20 @@ namespace Underworld
         /// <param name="extra_arg_0"></param>
         private void RuneClick(InputEvent @event, long extra_arg_0)
         {
-            if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
+            if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed)
             {
+                bool LeftClick = (eventMouseButton.ButtonIndex == MouseButton.Left);
                 if (extra_arg_0 >= 0)
                 {
                     if (playerdat.GetRune((int)extra_arg_0))
                     {
-                        if (InteractionMode == InteractionModes.ModeLook)
+                        if ((InteractionMode == InteractionModes.ModeLook) || (!LeftClick))
                         {
                             look.GenericLookDescription((int)(232 + extra_arg_0));
                         }
                         else
                         {
                             //use action
-                            Debug.Print($"Rune {extra_arg_0} can be selected");
                             SelectRune((int)extra_arg_0);
                         }
                     }
