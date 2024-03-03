@@ -144,7 +144,7 @@ namespace Underworld
 				{
 					case 0:
 						SetPanelMode(2); //go to stats from inventory
-						PrintStatsDisplay();
+						RefreshStatsDisplay();
 						break;
 					case 1:
 						SetPanelMode(0); //runes from inventory

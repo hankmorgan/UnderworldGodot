@@ -43,6 +43,11 @@ namespace Underworld
                             result = UseMajorClass5(obj, objList, WorldObject);
                             break;
                         }
+                    case 7:
+                        {
+                            result = UseMajorClass7(obj, objList, WorldObject);
+                            break;
+                        }
                 }
                 //Check for use trigger on this action and try activate if so.
                 if ((obj.is_quant == 0) && (obj.link != 0))
@@ -253,5 +258,16 @@ namespace Underworld
             }
             return false;
         }
-    }
-}
+
+        public static bool UseMajorClass7(uwObject obj, uwObject[] objList, bool WorldObject)
+        {
+            switch (obj.classindex)
+            {
+                case 9://fountain animo.
+                    return fountain.FountainAnimoUse(obj);
+            }
+            return false;
+        }
+
+    }//end class
+}//end namespace

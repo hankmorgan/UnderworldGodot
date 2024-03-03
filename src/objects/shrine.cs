@@ -184,7 +184,7 @@ namespace Underworld
             }
 
             //refresh ui elements
-            uimanager.instance.PrintStatsDisplay();
+            uimanager.RefreshStatsDisplay();
             uimanager.RefreshManaFlask();
 
             yield return 0;

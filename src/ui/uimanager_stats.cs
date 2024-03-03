@@ -42,31 +42,31 @@ namespace Underworld
         /// <summary>
 		/// Updates the stats display panel
 		/// </summary>
-		public void PrintStatsDisplay()
+		public static void RefreshStatsDisplay()
 		{
-			Charname.Text = playerdat.CharName.ToUpper();
-			CharClass.Text = GameStrings.GetString(2, 23 + playerdat.CharClass).ToUpper();
-			CharLevel.Text = $"{playerdat.play_level}{GameStrings.GetOrdinal(playerdat.play_level).ToUpper()}";
-			STR.Text = $"{playerdat.STR}";
-			DEX.Text = $"{playerdat.DEX}";
-			INT.Text = $"{playerdat.INT}";
-			VIT.Text = $"{playerdat.play_hp}/{playerdat.max_hp}";
-			MANA.Text =  $"{playerdat.play_mana}/{playerdat.max_mana}";
-			EXP.Text = $"{playerdat.Exp}";
-			StatsName.Text="";
-			StatsValue.Text="";
+			instance.Charname.Text = playerdat.CharName.ToUpper();
+			instance.CharClass.Text = GameStrings.GetString(2, 23 + playerdat.CharClass).ToUpper();
+			instance.CharLevel.Text = $"{playerdat.play_level}{GameStrings.GetOrdinal(playerdat.play_level).ToUpper()}";
+			instance.STR.Text = $"{playerdat.STR}";
+			instance.DEX.Text = $"{playerdat.DEX}";
+			instance.INT.Text = $"{playerdat.INT}";
+			instance.VIT.Text = $"{playerdat.play_hp}/{playerdat.max_hp}";
+			instance.MANA.Text =  $"{playerdat.play_mana}/{playerdat.max_mana}";
+			instance.EXP.Text = $"{playerdat.Exp}";
+			instance.StatsName.Text="";
+			instance.StatsValue.Text="";
 			for (int s = 0; s<6; s++)
 			{
 				if ((StatsOffset==0) && (s==0))
 				{
 					//display training points
-					StatsName.Text= "Skill Pt\n";
-					StatsValue.Text = $"{playerdat.SkillPoints}\n";
+					instance.StatsName.Text= "Skill Pt\n";
+					instance.StatsValue.Text = $"{playerdat.SkillPoints}\n";
 				}
 				else
 				{//display stat
-					StatsName.Text += $"{GameStrings.GetString(2,30+StatsOffset+s).ToUpper()}\n";
-					StatsValue.Text += $"{playerdat.GetSkillValue(StatsOffset+s-1)}\n";
+					instance.StatsName.Text += $"{GameStrings.GetString(2,30+StatsOffset+s).ToUpper()}\n";
+					instance.StatsValue.Text += $"{playerdat.GetSkillValue(StatsOffset+s-1)}\n";
 				}
 			}
 		}
@@ -80,11 +80,11 @@ namespace Underworld
                 {
                     case -1:
                         StatsOffset = Math.Max(0, StatsOffset - 1);
-                        PrintStatsDisplay();
+                        RefreshStatsDisplay();
                         break;
                     case 1:
                         StatsOffset = Math.Min(15, StatsOffset + 1);
-                        PrintStatsDisplay();
+                        RefreshStatsDisplay();
                         break;
                 }
             }
