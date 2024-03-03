@@ -1,4 +1,8 @@
+using System;
 using System.Collections.Generic;
+using System.Configuration.Assemblies;
+using System.Diagnostics;
+using Godot;
 
 namespace Underworld
 {
@@ -8,8 +12,8 @@ namespace Underworld
         {
             if (WorldObject)
             {
-                //container used in the world
-                return false;
+                SpillWorldContainer(obj);
+                return true;
             }
             else
             {
@@ -26,6 +30,59 @@ namespace Underworld
                 return true;
             }
         }
+
+
+        /// <summary>
+        /// Splills the contents of a container onto the tile
+        /// </summary>
+        /// <param name="obj"></param>
+        public static void SpillWorldContainer(uwObject obj)
+        {
+            //container used in the world
+            if (UWTileMap.ValidTile(obj.tileX, obj.tileY))
+            {
+                var tile = UWTileMap.current_tilemap.Tiles[obj.tileX, obj.tileY];
+                if (tile != null)
+                {
+                    //add the contents of the container to the tile.
+                    if ((obj.majorclass == 2) && (obj.minorclass == 0))
+                    {
+                        if ((obj.classindex & 1) == 0)
+                        {
+                            obj.item_id |= 0x1;// set it to an opened version.
+                            if (obj.instance != null)
+                            {
+                                if (obj.instance.uwnode != null)
+                                {
+                                    var nd = (MeshInstance3D)obj.instance.uwnode.GetChild(0);
+                                    nd.Mesh.SurfaceSetMaterial(0, ObjectCreator.grObjects.GetMaterial(obj.item_id));
+                                }
+                            }
+                        }
+                    }
+                    int nextobj = obj.link;
+                    obj.link = 0;
+                    while (nextobj != 0)
+                    {
+                        var objToSpill = UWTileMap.current_tilemap.LevelObjects[nextobj];
+                        Debug.Print($"Spilling {objToSpill.a_name}");
+                        objToSpill.tileX = obj.tileX;
+                        objToSpill.tileY = obj.tileY;
+                        GetRandomXYZForTile(tile, out int newxpos, out int newypos, out int newzpos);
+                        objToSpill.xpos = (short)newxpos;//obj.xpos;
+                        objToSpill.ypos = (short)newypos;///obj.ypos;
+                        objToSpill.zpos = (short)newzpos; //obj.zpos;
+                        objToSpill.owner = 0; //clear owner
+                        ObjectCreator.RenderObject(objToSpill, UWTileMap.current_tilemap);
+                        nextobj = objToSpill.next;
+                        //insert to object list
+                        objToSpill.next = tile.indexObjectList;
+                        tile.indexObjectList = objToSpill.index;
+                    }
+                }
+            }
+        }
+
 
         /// <summary>
         /// Displays the range (start to start+count) of container objects on the paper doll backback slots
@@ -197,5 +254,60 @@ namespace Underworld
             }
             return null;
         }
+
+        static void GetRandomXYZForTile(TileInfo tile, out int xpos, out int ypos, out int zpos)
+        {
+            switch (tile.tileType)
+            {
+                case UWTileMap.TILE_DIAG_NE:
+                    zpos = tile.floorHeight << 2;
+                    xpos = Rng.r.Next(1, 8);
+                    ypos = Rng.r.Next(7-xpos, 8); //(i >= 7 - j)
+                    return;
+                case UWTileMap.TILE_DIAG_SE:
+                    zpos = tile.floorHeight << 2;
+                    xpos = Rng.r.Next(1, 8);
+                    ypos = Rng.r.Next(1, xpos); // (i >= j)
+                    return;
+                case UWTileMap.TILE_DIAG_NW:
+                    zpos = tile.floorHeight << 2;
+                    xpos = Rng.r.Next(1, 8);
+                    ypos = Rng.r.Next(xpos, 8); // ((i <= j)
+                    return;
+                case UWTileMap.TILE_DIAG_SW:
+                    zpos = tile.floorHeight << 2;
+                    xpos = Rng.r.Next(1, 8);
+                    ypos = Rng.r.Next(0, 8-xpos); // (7 - i >= j)
+                    return;
+                case UWTileMap.TILE_SLOPE_S:
+                    xpos = Rng.r.Next(0,8);
+                    ypos = Rng.r.Next(0,8);
+                    zpos = (8-ypos) + (tile.floorHeight << 2);
+                    return;
+                case UWTileMap.TILE_SLOPE_N:
+                    xpos = Rng.r.Next(0,8);
+                    ypos = Rng.r.Next(0,8);
+                    zpos = (ypos) + (tile.floorHeight << 2);
+                    return;
+                case UWTileMap.TILE_SLOPE_E:
+                    xpos = Rng.r.Next(0,8);
+                    ypos = Rng.r.Next(0,8);
+                    zpos = (xpos) + (tile.floorHeight << 2);
+                    return;
+                case UWTileMap.TILE_SLOPE_W:
+                    xpos = Rng.r.Next(0,8);
+                    ypos = Rng.r.Next(0,8);
+                    zpos = (8-xpos) + (tile.floorHeight << 2);
+                    return;
+                default:
+                case UWTileMap.TILE_OPEN:
+                case UWTileMap.TILE_SOLID:
+                    xpos = Rng.r.Next(0,8);
+                    ypos = Rng.r.Next(0,8);
+                    zpos = tile.floorHeight << 2;
+                    return;
+            }
+        }
+
     }//end class
 }//end namespace

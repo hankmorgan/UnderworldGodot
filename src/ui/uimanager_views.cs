@@ -74,7 +74,7 @@ namespace Underworld
 
         public static void ClickOnViewPort(InputEventMouseButton eventMouseButton)
         {
-            //bool LeftClick = (eventMouseButton.ButtonIndex == MouseButton.Left); //else treat it as a right click.
+            bool LeftClick = (eventMouseButton.ButtonIndex == MouseButton.Left); //else treat it as a right click.
                                                                                  //float RayLength = 3.0f;
             Dictionary result = DoRayCast(eventMouseButton, RayDistance);
             if (result != null)
@@ -134,7 +134,7 @@ namespace Underworld
                                 if (int.TryParse(vals[0], out int index))
                                 {
                                     InteractWithObjectCollider(
-                                        index: index);
+                                        index: index , LeftClick: LeftClick);
                                 }
                             }
                             break;

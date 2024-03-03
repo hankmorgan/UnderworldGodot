@@ -50,7 +50,7 @@ namespace Underworld
         /// Handles interacting with objects in the world
         /// </summary>
         /// <param name="index"></param>
-        public static void InteractWithObjectCollider(int index)
+        public static void InteractWithObjectCollider(int index, bool LeftClick)
         {
             switch (InteractionMode)
             {
@@ -69,10 +69,22 @@ namespace Underworld
                     break;
                 case InteractionModes.ModeUse:
                     //do a use interaction with the object.
-                    use.Use(
-                        index: index, 
-                        objList: Underworld.UWTileMap.current_tilemap.LevelObjects, 
-                        WorldObject: true);
+                    if (LeftClick)
+                    {
+                        use.Use(
+                            index: index, 
+                            objList: Underworld.UWTileMap.current_tilemap.LevelObjects, 
+                            WorldObject: true);
+                    }
+                    else
+                    {
+                        uimanager.InteractionModeToggle(InteractionModes.ModePickup);
+                        pickup.PickUp(
+                            index: index, 
+                            objList: Underworld.UWTileMap.current_tilemap.LevelObjects, 
+                            WorldObject: true);
+                    }
+
                     break;
                 case InteractionModes.ModePickup:
                     pickup.PickUp(
@@ -86,7 +98,7 @@ namespace Underworld
 
 
 
-        public void InteractionModeToggle(InteractionModes index)
+        public static void InteractionModeToggle(InteractionModes index)
         {
             //Debug.Print($"Press {index}");
 
@@ -95,7 +107,7 @@ namespace Underworld
 
                 for (int i = 0; i <= instance.InteractionButtonsUW2.GetUpperBound(0); i++)
                 {
-                    InteractionButtonsUW2[i].SetPressedNoSignal(i == (int)(index));
+                    instance.InteractionButtonsUW2[i].SetPressedNoSignal(i == (int)(index));
                     if (i == (int)(index))
                     {
                         InteractionMode = index;
@@ -106,7 +118,7 @@ namespace Underworld
             {
                 for (int i = 0; i <= instance.InteractionButtonsUW1.GetUpperBound(0); i++)
                 {
-                    InteractionButtonsUW1[i].SetPressedNoSignal(i == (int)(index));
+                    instance.InteractionButtonsUW1[i].SetPressedNoSignal(i == (int)(index));
                     if (i == (int)(index))
                     {
                         InteractionMode = index;

@@ -12,7 +12,7 @@ namespace Underworld
         {
             if (!ConversationVM.InConversation)
             {
-                uimanager.instance.InteractionModeToggle(index);
+                uimanager.InteractionModeToggle(index);
             }
         }
     }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Godot;
@@ -43,7 +42,7 @@ namespace Underworld
             uimanager.instance.mousecursor.SetCursorArt(obj.item_id);
             if (changeInteractionmode)
             {
-                uimanager.instance.InteractionModeToggle(uimanager.InteractionModes.ModePickup);
+                uimanager.InteractionModeToggle(uimanager.InteractionModes.ModePickup);
             }
             return slot;
         }
@@ -215,7 +214,7 @@ namespace Underworld
                 if (printlabels)
                 {
                     Label3D obj_lbl = new();
-                    obj_lbl.Text = $"{name}";
+                    obj_lbl.Text = $"{name} {obj.xpos},{obj.ypos},{obj.zpos}";
                     obj_lbl.Font = uimanager.instance.Font4X5P;
                     obj_lbl.FontSize = 16;
                     obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;

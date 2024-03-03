@@ -1,6 +1,3 @@
-using System.Data;
-using Godot;
-
 namespace Underworld
 {
     public class fountain : objectInstance

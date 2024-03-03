@@ -182,10 +182,20 @@ namespace Underworld
                 case InteractionModes.ModeUse:
                     if (slotname != "OpenedContainer")
                     {
-                        use.Use(
-                            index: objAtSlot,
-                            objList: playerdat.InventoryObjects,
-                            WorldObject: false);
+                        if (isLeftClick)
+                        {
+                            use.Use(
+                                index: objAtSlot,
+                                objList: playerdat.InventoryObjects,
+                                WorldObject: false);
+                        }
+                        else
+                        {
+                            //do pickup
+                            //try and pickup
+                            uimanager.InteractionModeToggle(InteractionModes.ModePickup);
+                            PickupObjectFromSlot(objAtSlot);
+                        }
                     }
                     else
                     {

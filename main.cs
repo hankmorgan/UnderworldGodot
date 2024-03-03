@@ -2,7 +2,6 @@ using Godot;
 using System;
 using System.Diagnostics;
 using Underworld;
-using System.Collections;
 
 /// <summary>
 /// Node to initialise the game
@@ -159,7 +158,7 @@ public partial class main : Node3D
 
 	public override void _Input(InputEvent @event)
 	{
-		if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
+		if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed)
 		{
 			if (MessageDisplay.WaitingForMore)
 			{
