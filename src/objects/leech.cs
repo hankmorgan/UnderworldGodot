@@ -37,7 +37,7 @@ namespace Underworld
 
         private static void LeechDamage()
         {
-            //reduce hp to no less than 3 (technically a cursed object)
+            //reduce hp to no less than 3 (technically a cursed object spell is supposed to be cast here)
             var dmg = Rng.DiceRoll(2, 8);
             if (playerdat.play_hp - dmg < 3)
             {

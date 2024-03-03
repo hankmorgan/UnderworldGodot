@@ -14,7 +14,7 @@ namespace Underworld
         /// <param name="caster">Casting object (use if not the player casting)</param>
         /// <param name="target"></param>
         /// <returns></returns>
-        public static void CastSpell(int majorclass, int minorclass, uwObject caster, uwObject target, int tileX, int tileY, bool PlayerCast = true)
+        public static void CastSpell(int majorclass, int minorclass, uwObject caster, uwObject target, int tileX, int tileY, bool CastOnEquip, bool PlayerCast = true)
         {            
             Debug.Print ($"Casting {majorclass},{minorclass}");
             switch (majorclass)
@@ -45,6 +45,8 @@ namespace Underworld
                             major: majorclass, 
                             minor: minorclass & 0x3F, 
                             stabilityclass: minorclass & 0xC0);
+                        
+                        playerdat.PlayerStatusUpdate();                        
                         break;
                     }
                 case 4://healing
@@ -58,6 +60,9 @@ namespace Underworld
                 case 8://spells that create or summon
                     break;
                 case 9://curses
+                    CastClass9_Curse(
+                        minorclass: minorclass, 
+                        CastOnEquip: CastOnEquip);                    
                     break;
                 case 10://mana change spells
                     break;
@@ -69,8 +74,7 @@ namespace Underworld
                     break;
                 case 14://cutscene spells.
                     break;
-            }
-            playerdat.PlayerStatusUpdate();
+            }            
         }
 
         /// <summary>
@@ -112,18 +116,69 @@ namespace Underworld
             }
         }
 
-        public static void ApplyStatusEffectSpell(int majorclass, int minorclass)
+        /// <summary>
+        /// Makes the necessary changes to set the effects of status effect spells
+        /// </summary>
+        /// <param name="majorclass"></param>
+        /// <param name="minorclass"></param>
+        public static void ApplyStatusEffectSpell(int majorclass, int minorclass, bool TriggeredByInventoryEvent)
         {
             switch(majorclass)
             {
                 case 0://lighting spells
-                    if (playerdat.lightlevel<minorclass)
                     {
-                        playerdat.lightlevel = minorclass;
+                        if (playerdat.lightlevel<minorclass)
+                        {
+                            playerdat.lightlevel = minorclass;
+                        }
+                        break;
                     }
-                    break;
+
+                case 9://curses
+                    {
+                        CastClass9_Curse(minorclass, TriggeredByInventoryEvent);
+                        break;
+                    }
             }
         }
+
+
+        /// <summary>
+        /// Applies curse object damage
+        /// Assumes it can only affect the player character.
+        /// </summary>
+        /// <param name="minorclass"></param>
+        /// <param name="CastOnEquip">Has the cursed item just been equiped</param>
+        public static void CastClass9_Curse(int minorclass,bool CastOnEquip)
+        {
+            var dmg = Rng.DiceRoll(minorclass, 8);
+            if (playerdat.play_hp-dmg>=3)
+                {
+                     playerdat.play_hp-= dmg;
+                }
+            else
+                {
+                    playerdat.play_hp = 3;                   
+                }
+            if (CastOnEquip)
+            {
+                if (_RES==GAME_UW2)
+                {
+                    uimanager.AddToMessageScroll(GameStrings.GetString(1, 362));
+                }                
+            }
+            else
+            {
+                if (_RES==GAME_UW2)
+                {
+                    uimanager.FlashColour(0x30, uimanager.Cuts3DWin,0.2f);
+                }
+                else
+                {
+                    uimanager.FlashColour(0xA8, uimanager.Cuts3DWin,0.2f);
+                }   
+            }
+        } 
 
     }//end class
 }//end namespace

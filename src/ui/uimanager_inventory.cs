@@ -36,6 +36,7 @@ namespace Underworld
         /// </summary>
         public static void PickupToEmptySlot(int ObjectToPickup)
         {
+            bool CheckForEnchantments = false;
             if (ObjectToPickup != -1)
             {
                 switch (CurrentSlot)
@@ -78,7 +79,8 @@ namespace Underworld
                                 playerdat.ObjectInHand = -1;
                                 instance.mousecursor.ResetCursor();
                             }
-
+                            //the object added to the paper doll may have a (curse) enchantment that may need to be activated
+                            CheckForEnchantments = true;
                             break;
                         }
                     case >= 11 and <= 18:
@@ -150,8 +152,8 @@ namespace Underworld
                         }
                         break;
                 }
-            //Update player state
-            playerdat.PlayerStatusUpdate();
+                //Update player state
+                playerdat.PlayerStatusUpdate(CastOnEquip: CheckForEnchantments);
             }
         }
 
@@ -165,7 +167,7 @@ namespace Underworld
         /// <param name="isLeftClick"></param>
         private static void InteractWithObjectInSlot(string slotname, int objAtSlot, bool isLeftClick)
         {
-            if ( MessageDisplay.WaitingForTypedInput)
+            if (MessageDisplay.WaitingForTypedInput)
             {//stop while typing in progress
                 return;
             }
@@ -308,6 +310,28 @@ namespace Underworld
         }
 
 
+
+        public static int GetPaperDollObjAtSlot(int slotindex)
+        {
+            var obj = -1;
+            switch (slotindex)
+            {
+                case 0: { obj = playerdat.Helm; break; }
+                case 1: { obj = playerdat.ChestArmour;break; }
+                case 2: { obj = playerdat.Gloves;break; }
+                case 3: { obj = playerdat.Leggings;break; }
+                case 4: { obj = playerdat.Boots;break; }
+
+                case 5: { obj = playerdat.RightShoulder; break; }
+                case 6: { obj = playerdat.LeftShoulder; break; }
+                case 7: { obj = playerdat.RightHand; break; }
+                case 8: { obj = playerdat.LeftHand; break; }
+
+                case 9: { obj = playerdat.RightRing;  break; }
+                case 10: { obj = playerdat.LeftRing;  break; }               
+            }
+            return obj;
+        }
         /// <summary>
         /// Gets the object at the named inventory slot
         /// </summary>
@@ -386,7 +410,7 @@ namespace Underworld
         /// <param name="targetObj"></param>
         public static void UseObjectsTogether(int srcObj, int targetObj)
         {
-            if ( MessageDisplay.WaitingForTypedInput)
+            if (MessageDisplay.WaitingForTypedInput)
             {//stop while typing in progress
                 return;
             }
@@ -424,18 +448,18 @@ namespace Underworld
                 }
                 return;
             }
-            
+
             if (target.item_id == source.item_id)
             {
                 if ((commonObjDat.stackable(target.item_id) & 0x1) == 0)
                 {//and is stackable.
                     //average out the quality between the stacks
-                    target.quality = (short)(((target.quality * target.ObjectQuantity) + (source.quality*source.ObjectQuantity))/(target.ObjectQuantity + source.ObjectQuantity));
-                   
+                    target.quality = (short)(((target.quality * target.ObjectQuantity) + (source.quality * source.ObjectQuantity)) / (target.ObjectQuantity + source.ObjectQuantity));
+
                     //change the quantities.
                     target.link += source.link;
                     target.is_quant = 1;
-                    
+
                     UpdateInventoryDisplay();
                     //destroy the source.
                     ObjectCreator.RemoveObject(source);
@@ -454,14 +478,13 @@ namespace Underworld
             PickupObjectFromSlot(targetObj);
             PickupToEmptySlot(backup);
             UpdateInventoryDisplay();
-            
             //Update player state
             playerdat.PlayerStatusUpdate();
         }
 
         public static void PickupObjectFromSlot(int objAtSlot)
         {
-            if ( MessageDisplay.WaitingForTypedInput)
+            if (MessageDisplay.WaitingForTypedInput)
             {//stop while another in progress
                 return;
             }
@@ -502,20 +525,16 @@ namespace Underworld
             var pickObject = UWTileMap.current_tilemap.LevelObjects[newIndex];
             playerdat.ObjectInHand = newIndex;
             instance.mousecursor.SetCursorArt(pickObject.item_id);
-            
-            //Update player state
-            playerdat.PlayerStatusUpdate();
-
             return newIndex;
         }
 
         public static void MoveObjectInHandOutOfOpenedContainer(int ObjectToPickup)
         {
             //the opened container
-            if (uimanager.OpenedContainerParent == -1)
+            if (OpenedContainerParent == -1)
             {
                 //on paperdoll. try and add to there
-                var freeslot = uimanager.FreePaperDollSlot;
+                var freeslot = FreePaperDollSlot;
                 if (freeslot != -1)
                 {
                     var index = playerdat.AddObjectToPlayerInventory(ObjectToPickup, false);
@@ -523,9 +542,8 @@ namespace Underworld
                     if (ObjectToPickup == playerdat.ObjectInHand)
                     {
                         playerdat.ObjectInHand = -1;
-                        uimanager.instance.mousecursor.ResetCursor();
+                        instance.mousecursor.ResetCursor();
                     }
-
                 }
                 else
                 {
@@ -537,11 +555,11 @@ namespace Underworld
                 //the container that contains the opened container.
                 var index = playerdat.AddObjectToPlayerInventory(playerdat.ObjectInHand, false);
                 var newobj = playerdat.InventoryObjects[index];
-                var container = playerdat.InventoryObjects[uimanager.OpenedContainerParent];
+                var container = playerdat.InventoryObjects[OpenedContainerParent];
                 newobj.next = container.link;
                 container.link = index;
                 playerdat.ObjectInHand = -1;
-                uimanager.instance.mousecursor.ResetCursor();
+                instance.mousecursor.ResetCursor();
             }
         }
 
@@ -619,7 +637,7 @@ namespace Underworld
                 }
                 instance.scroll.UpdateMessageDisplay();
             }
-            CurrentSlot =-1; //cleanup/needed?
+            CurrentSlot = -1; //cleanup/needed?
             yield return true;
         }
     }//end class

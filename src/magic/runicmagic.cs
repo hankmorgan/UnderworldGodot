@@ -234,6 +234,7 @@ namespace Underworld
                                     minorclass: spell.SpellLevel / 2,
                                     caster: null, target: null,
                                     tileX: playerdat.tileX, tileY: playerdat.tileY,
+                                    CastOnEquip: false,
                                     PlayerCast: true);
                                 uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_the_spell_backfires_));
                                 break;
@@ -249,6 +250,7 @@ namespace Underworld
                                 minorclass: spell.SpellMinorClass,
                                 caster: null, target: null,
                                 tileX: playerdat.tileX, tileY: playerdat.tileY,
+                                CastOnEquip:false,
                                 PlayerCast: true);
                             break;
                     }
