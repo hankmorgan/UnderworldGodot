@@ -62,8 +62,6 @@ namespace Underworld
                }
           }
 
-          public static int[] LocationalArmourValues = new int[4];//equivilant to bytes 0-3 of critter data for the player
-
           /// <summary>
           /// The current light level the player has from torches and magical lights
           /// </summary>

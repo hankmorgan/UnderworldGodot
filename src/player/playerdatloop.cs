@@ -12,48 +12,41 @@ namespace Underworld
         {
             lightlevel = 0;
             MagicalMotionAbilities = 0;
-            for (int i=0; i<=LocationalArmourValues.GetUpperBound(0);i++)
+            for (int i=0; i<=3;i++)
             {
                 LocationalArmourValues[i] = 0;
-            }
-           
+                LocationalProtectionValues[i] = 0;
+            }           
         }
 
         public static void PlayerStatusUpdate(bool CastOnEquip = false)
         {
             var DamageResistance = 0;
             ResetPlayer();
-
-            //Get armour protections to store in LocationalArmourValues
-            for (int i =0; i<=4; i++)
-            {//check each inventory slot (helm, armour, leggings, boots and gloves)
-                var objindex = uimanager.GetPaperDollObjAtSlot(i); 
-                var obj = InventoryObjects[objindex];
-                if (obj!=null)
-                {
-                    if (uimanager.ValidObjectForSlot(i, obj))
-                    {//apply protection if object is valid
-                        var protection = armourObjectDat.protection(obj.item_id);
-                        switch (i)
-                            {//apply protection to the appropiate body location
-                                case 0://helm
-                                    LocationalArmourValues[3] += protection;break;
-                                case 1: //armour
-                                    LocationalArmourValues[0] += protection;break;
-                                case 2: // gloves
-                                    LocationalArmourValues[1] += protection;break;
-                                case 3: //leggings                                
-                                case 4: //boots
-                                    LocationalArmourValues[2] += protection;break;
-                            }
-                    }
-                }                 
-            }
+            InitArmourValues();
 
             //Get brightest physcial light
             lightlevel = BrightestNonMagicalLight();
 
             //cast active spell effects
+            DamageResistance = CastActiveSpellEffects(DamageResistance);
+
+            DamageResistance = ApplyEquipmentEffects(CastOnEquip, DamageResistance);
+
+            //Apply the max damage resistance from enchantments/active spell effects
+            ApplyDamageResistance(DamageResistance);
+
+            RefreshLighting();//either brightest physical light or brightest magical light
+        }
+
+
+        /// <summary>
+        /// Casts the 3 spell effects stored in the player data.
+        /// </summary>
+        /// <param name="DamageResistance"></param>
+        /// <returns></returns>
+        private static int CastActiveSpellEffects(int DamageResistance)
+        {
             for (int i = 0; i < 3; i++)
             {
                 if (i < ActiveSpellEffectCount)
@@ -64,10 +57,11 @@ namespace Underworld
                     var minor = effectclass >> 4;
                     Debug.Print($"Player has spell effect {major},{minor} of {stability} ");
                     SpellCasting.CastEnchantedItemSpell(
-                        majorclass: major, 
-                        minorclass: minor, 
+                        majorclass: major,
+                        minorclass: minor,
                         TriggeredByInventoryEvent: false,
-                        DamageResistance: ref DamageResistance);
+                        DamageResistance: ref DamageResistance,
+                        PaperDollSlot: -1);
                     uimanager.SetSpellIcon(i, major, minor);
                 }
                 else
@@ -76,6 +70,17 @@ namespace Underworld
                 }
             }
 
+            return DamageResistance;
+        }
+
+        /// <summary>
+        /// Casts the spell effects from equipment on the paperdoll
+        /// </summary>
+        /// <param name="CastOnEquip"></param>
+        /// <param name="DamageResistance"></param>
+        /// <returns></returns>
+        private static int ApplyEquipmentEffects(bool CastOnEquip, int DamageResistance)
+        {
             //apply spell effects from inventory objects
             for (int i = 0; i < 10; i++)
             {
@@ -112,10 +117,11 @@ namespace Underworld
                             if (spell != null)
                             {
                                 SpellCasting.CastEnchantedItemSpell(
-                                    majorclass: spell.SpellMajorClass, 
-                                    minorclass:spell.SpellMinorClass, 
+                                    majorclass: spell.SpellMajorClass,
+                                    minorclass: spell.SpellMinorClass,
                                     TriggeredByInventoryEvent: CastOnEquip,
-                                    DamageResistance: ref  DamageResistance
+                                    DamageResistance: ref DamageResistance,
+                                    PaperDollSlot: i
                                     );
                             }
                         }
@@ -123,10 +129,39 @@ namespace Underworld
                 }
             }
 
-            //Apply the max damage resistance from enchantments/active spell effects
-            ApplyDamageResistance(DamageResistance);
+            return DamageResistance;
+        }
 
-            RefreshLighting();//either brightest physical light or brightest magical light
+        /// <summary>
+        /// Inints armour protection values
+        /// </summary>
+        private static void InitArmourValues()
+        {
+            //Get armour protections to store in LocationalArmourValues
+            for (int i = 0; i <= 4; i++)
+            {//check each inventory slot (helm, armour, leggings, boots and gloves)
+                var objindex = uimanager.GetPaperDollObjAtSlot(i);
+                var obj = InventoryObjects[objindex];
+                if (obj != null)
+                {
+                    if (uimanager.ValidObjectForSlot(i, obj))
+                    {//apply protection if object is valid
+                        var protection = armourObjectDat.protection(obj.item_id);
+                        switch (i)
+                        {//apply protection to the appropiate body location
+                            case 0://helm
+                                LocationalArmourValues[3] += protection; break;
+                            case 1: //armour
+                                LocationalArmourValues[0] += protection; break;
+                            case 2: // gloves
+                                LocationalArmourValues[1] += protection; break;
+                            case 3: //leggings                                
+                            case 4: //boots
+                                LocationalArmourValues[2] += protection; break;
+                        }
+                    }
+                }
+            }
         }
 
 

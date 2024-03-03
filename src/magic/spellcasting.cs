@@ -69,6 +69,7 @@ namespace Underworld
                 case 11://misc or special spells
                     break;
                 case 12://not castable here
+                    Debug.Print("Attempt to directly cast Class 0xC spell. This should not happen");
                     break;
                 case 13://misc spells
                     break;
@@ -122,7 +123,7 @@ namespace Underworld
         /// <param name="majorclass"></param>
         /// <param name="minorclass"></param>
         /// <param name="TriggeredByInventoryEvent">First time trigger from adding to inventory, used for curse objects initial message in UW2</param>
-        public static void CastEnchantedItemSpell(int majorclass, int minorclass, bool TriggeredByInventoryEvent, ref int DamageResistance)
+        public static void CastEnchantedItemSpell(int majorclass, int minorclass, bool TriggeredByInventoryEvent, ref int DamageResistance, int PaperDollSlot)
         {
             switch (majorclass)
             {
@@ -140,8 +141,8 @@ namespace Underworld
                         break;
                     }
                 case 2: // resistances
-                    {
-                        if (minorclass> DamageResistance)
+                    {//these apply a blanket damage resistance to each body part.
+                        if (minorclass > DamageResistance)
                         {
                             DamageResistance = minorclass;
                         }
@@ -152,6 +153,29 @@ namespace Underworld
                         CastClass9_Curse(minorclass, TriggeredByInventoryEvent);
                         break;
                     }
+                case 0xC: //toughness or protection.
+                    {   //toughness applies a damage resistance to a specific body part. 
+                        //Protection makes the body part harder to hit
+                        if (PaperDollSlot < 2) //appears to only work when helm and chest?
+                        {
+                            var slot = 0; 
+                            if (PaperDollSlot == 0){slot=3;}
+                            if ((minorclass & 0x8) == 0)
+                            {
+                                //protection
+                                playerdat.LocationalProtectionValues[slot] += (minorclass & 0x7);
+                            }
+                            else
+                            {
+                                //toughness
+                                playerdat.LocationalProtectionValues[slot] += (minorclass & 0x7);
+                            }
+                        }
+                        break;
+                    }
+                default:
+                    Debug.Print ($"Unhandled enchantment {majorclass} {minorclass}");
+                    break;
             }
         }
 

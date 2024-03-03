@@ -24,5 +24,12 @@ namespace Underworld
                 
             }
         }
+
+
+        public static int[] LocationalArmourValues = new int[4];//equivilant to bytes 0-3 of critter data for the player
+
+         public static int[] LocationalProtectionValues = new int[4];//Affects to hit chance for a body part.
+
+         
     }//end class
 }//end namespace
