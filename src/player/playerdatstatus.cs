@@ -5,6 +5,63 @@ namespace Underworld
      /// </summary>
      public partial class playerdat : Loader
      {
+
+          /// <summary>
+          /// Bit 0=Leap (1)
+          /// Bit 1=Slow Fall (2)
+          /// Bit 2=Levitate (4)
+          /// Bit 3=Water Walk (8)
+          /// Bit 4=Fly (10h)
+          /// Bit 5=Bouncing (20h)
+          /// </summary>
+          public static byte MagicalMotionAbilities;
+
+          public static bool IsMagicLeaping
+          {
+               get 
+               {
+                    return (MagicalMotionAbilities & 0x1) == 1;
+               }
+          }
+
+          public static bool IsSlowFalling
+          {
+               get 
+               {
+                    return (MagicalMotionAbilities>>1 & 0x1) == 1;
+               }
+          }
+
+          public static bool IsLevitating
+          {
+               get 
+               {
+                    return (MagicalMotionAbilities>>2 & 0x1) == 1;
+               }
+          }
+          public static bool IsWaterWalking
+          {
+               get 
+               {
+                    return (MagicalMotionAbilities>>3 & 0x1) == 1;
+               }
+          }
+
+          public static bool IsFlying
+          {
+               get 
+               {
+                    return (MagicalMotionAbilities>>4 & 0x1) == 1;
+               }
+          }
+          public static bool IsBouncing
+          {
+               get 
+               {
+                    return (MagicalMotionAbilities>>5 & 0x1) == 1;
+               }
+          }
+
           /// <summary>
           /// The current light level the player has from torches and magical lights
           /// </summary>

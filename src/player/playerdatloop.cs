@@ -11,10 +11,12 @@ namespace Underworld
         static void ResetPlayer()
         {
             lightlevel = 0;
+            MagicalMotionAbilities = 0;
         }
 
         public static void PlayerStatusUpdate(bool CastOnEquip = false)
         {
+            var DamageResistance = 0;
             ResetPlayer();
 
             //Get armour protections, magic bonuses from equipment
@@ -32,7 +34,11 @@ namespace Underworld
                     var major = effectclass & 0xF;
                     var minor = effectclass >> 4;
                     Debug.Print($"Player has spell effect {major},{minor} of {stability} ");
-                    SpellCasting.ApplyStatusEffectSpell(majorclass: major, minorclass: minor, TriggeredByInventoryEvent: false);
+                    SpellCasting.CastEnchantedItemSpell(
+                        majorclass: major, 
+                        minorclass: minor, 
+                        TriggeredByInventoryEvent: false,
+                        DamageResistance: ref DamageResistance);
                     uimanager.SetSpellIcon(i, major, minor);
                 }
                 else
@@ -76,17 +82,14 @@ namespace Underworld
                             var spell = MagicEnchantment.GetSpellEnchantment(obj: obj, InventoryObjects);
                             if (spell != null)
                             {
-                                SpellCasting.CastSpell(
-                                    majorclass: spell.SpellMajorClass,
-                                    minorclass: spell.SpellMinorClass, caster: obj,
-                                    target: null,
-                                    tileX: tileX,
-                                    tileY: tileY,
-                                    CastOnEquip: CastOnEquip,
-                                    PlayerCast: false);
+                                SpellCasting.CastEnchantedItemSpell(
+                                    majorclass: spell.SpellMajorClass, 
+                                    minorclass:spell.SpellMinorClass, 
+                                    TriggeredByInventoryEvent: CastOnEquip,
+                                    DamageResistance: ref  DamageResistance
+                                    );
                             }
                         }
-
                     }
                 }
             }
