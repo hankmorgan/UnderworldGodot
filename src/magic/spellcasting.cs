@@ -211,6 +211,18 @@ namespace Underworld
                         StealthBonus |= (1 << (minorclass-1)); //OR in this bit
                         break;
                     }
+                case 5:
+                case 6:
+                case 7:
+                case 8:
+                case 9://Damage proof protections, eg missile, flameproof
+                    {
+                        var bits = new byte[]{0x40, 8, 0x10, 1, 2};//what bits to set
+                        var bit = bits[minorclass-5];
+                        playerdat.PlayerDamageTypeScale |= bit;//set the relevant x-proof
+                        break;
+                    }
+
             }
         }
 

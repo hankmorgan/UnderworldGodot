@@ -28,8 +28,15 @@ namespace Underworld
 
         public static int[] LocationalArmourValues = new int[4];//equivilant to bytes 0-3 of critter data for the player
 
-         public static int[] LocationalProtectionValues = new int[4];//Affects to hit chance for a body part.
+        public static int[] LocationalProtectionValues = new int[4];//Affects to hit chance for a body part.
 
-         
+        /// <summary>
+        /// Bit flags to indicate what damage types the player is resistant to. 
+        /// These bits will be the same for NPCs resistances. See the "scale" value in critter object.dat
+        /// </summary>
+        /// Known bits
+        /// Bit 3 = Flameproof
+        /// Bit 6 = Missileproof
+        public static byte PlayerDamageTypeScale;
     }//end class
 }//end namespace

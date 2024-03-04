@@ -19,7 +19,9 @@ namespace Underworld
                 LocationalProtectionValues[i] = 0;
             }       
             StealthScore1 = 13 - (Sneak/3);
-            StealthScore2 = 15 - (Sneak/5);;
+            StealthScore2 = 15 - (Sneak/5);
+
+            PlayerDamageTypeScale = 0;
         }
 
         public static void PlayerStatusUpdate(bool CastOnEquip = false)
@@ -33,7 +35,7 @@ namespace Underworld
             lightlevel = BrightestNonMagicalLight();
 
             //cast active spell effects
-           CastActiveSpellEffects(ref DamageResistance, ref StealthBonus);
+            CastActiveSpellEffects(ref DamageResistance, ref StealthBonus);
 
             ApplyEquipmentEffects(CastOnEquip, ref DamageResistance, ref StealthBonus);
 
@@ -181,6 +183,11 @@ namespace Underworld
             }
         }
 
+
+        /// <summary>
+        /// Provides an adjustment to 2 stealth scores which are presumably used later on in stealth detection when player is moving
+        /// </summary>
+        /// <param name="StealthBonus"></param>
         public static void ApplyStealthBonus(int StealthBonus)
         {
             for (int i = 0; i<3; i++)
