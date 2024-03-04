@@ -22,7 +22,8 @@ namespace Underworld
             StealthScore2 = 15 - (Sneak/5);
 
             PlayerDamageTypeScale = 0;
-            ValourBonus=0;
+            ValourBonus = 0;
+            PoisonedWeapon = false;
         }
 
         public static void PlayerStatusUpdate(bool CastOnEquip = false)

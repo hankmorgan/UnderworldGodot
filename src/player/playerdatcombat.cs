@@ -39,6 +39,12 @@ namespace Underworld
         /// Bit 6 = Missileproof
         public static byte PlayerDamageTypeScale;
 
+
+        /// <summary>
+        /// A bonus applied from the valour spell. Gives a bonus of 10 + Casting/5
+        /// </summary>
         public static int ValourBonus;
+
+        public static bool PoisonedWeapon;
     }//end class
 }//end namespace

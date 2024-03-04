@@ -227,11 +227,19 @@ namespace Underworld
                         //Valour spell. This spell is unique to UW2.
                         if (_RES==GAME_UW2)
                         {
-                            playerdat.ValourBonus = 0x10 + playerdat.Casting/5;
+                            playerdat.ValourBonus = 10 + playerdat.Casting/5;
                         }                        
                         break;
                     }
-
+                case 0xB:
+                    {
+                        //Poison weapon, unique to UW2
+                        if (_RES==GAME_UW2)
+                        {
+                            playerdat.PoisonedWeapon = true;
+                        }
+                        break;
+                    }
             }
         }
 
