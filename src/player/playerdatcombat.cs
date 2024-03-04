@@ -38,5 +38,7 @@ namespace Underworld
         /// Bit 3 = Flameproof
         /// Bit 6 = Missileproof
         public static byte PlayerDamageTypeScale;
+
+        public static int ValourBonus;
     }//end class
 }//end namespace

@@ -222,6 +222,15 @@ namespace Underworld
                         playerdat.PlayerDamageTypeScale |= bit;//set the relevant x-proof
                         break;
                     }
+                case 0x10:
+                    {
+                        //Valour spell. This spell is unique to UW2.
+                        if (_RES==GAME_UW2)
+                        {
+                            playerdat.ValourBonus = 0x10 + playerdat.Casting/5;
+                        }                        
+                        break;
+                    }
 
             }
         }
