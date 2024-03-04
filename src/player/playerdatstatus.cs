@@ -6,7 +6,22 @@ namespace Underworld
      public partial class playerdat : Loader
      {
 
-          /// <summary>
+  
+
+          //Stealth scores. One of these is probably noise detection range, the other visual detection range.
+          //Not known yet which is which
+          public static int StealthScore1;
+          public static int StealthScore2;
+
+          //Various class B enchantments
+          public static bool FreezeTimeEnchantment;
+          public static bool RoamingSightEnchantment;
+          public static bool SpeedEnchantment;
+          public static bool TelekenesisEnchantment;
+          public static bool HealthRegenEnchantment;
+          public static bool ManaRegenEnchantment;
+
+        /// <summary>
           /// Bit 0=Leap (1)
           /// Bit 1=Slow Fall (2)
           /// Bit 2=Levitate (4)
@@ -15,11 +30,6 @@ namespace Underworld
           /// Bit 5=Bouncing (20h)
           /// </summary>
           public static byte MagicalMotionAbilities;
-
-          //Stealth scores. One of these is probably noise detection range, the other visual detection range.
-          //Not known yet which is which
-          public static int StealthScore1;
-          public static int StealthScore2;
 
           public static bool IsMagicLeaping
           {

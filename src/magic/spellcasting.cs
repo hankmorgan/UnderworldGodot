@@ -69,6 +69,7 @@ namespace Underworld
                     CastClass10_ManaBoost(minorclass);
                     break;
                 case 11://misc or special spells
+                    CastClassB_Spells(minorclass, minorclass & 0xC0);                    
                     break;
                 case 12://not castable here
                     Debug.Print("Attempt to directly cast Class 0xC spell. This should not happen");
@@ -243,6 +244,30 @@ namespace Underworld
             }
         }
 
+
+        /// <summary>
+        /// Note these enchantments don't line up exactly with the class B spell cast list. This is the correct behaviour
+        /// </summary>
+        /// <param name="minorclass"></param>
+        public static void CastClassBEnchantment(int minorclass)
+        {
+            switch (minorclass)
+            {
+                case 0://freezetime
+                    playerdat.FreezeTimeEnchantment = true; break;
+                case 1://roaming sight
+                    playerdat.RoamingSightEnchantment = true; break;
+                case 2://speed
+                    playerdat.SpeedEnchantment = true; break;
+                case 3://telekenesis
+                    playerdat.TelekenesisEnchantment = true; break;
+                case 0xE://health regen
+                    playerdat.HealthRegenEnchantment = true; break;
+                case 0xF://Mana regen       
+                    playerdat.ManaRegenEnchantment = true; break;         
+            }
+
+        }
         /// <summary>
         /// Healing spells
         /// </summary>
@@ -334,6 +359,22 @@ namespace Underworld
             }
         }
 
+
+        /// <summary>
+        /// Misc active spells and others
+        /// </summary>
+        /// <param name="minorclass"></param>
+        /// <param name="stability"></param>
+        public static void CastClassB_Spells(int minorclass, int stability)
+        {
+            switch (minorclass)
+            {
+                case 0: //speed
+                    PlayerActiveStatusEffectSpells(0xB, 2, stability);//Note the change in mapping here.
+                    playerdat.PlayerStatusUpdate();
+                    break;
+            }
+        }
 
         public static void CastSpellFromObject(int spellno, uwObject obj)
         {

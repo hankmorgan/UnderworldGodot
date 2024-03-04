@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Underworld
 {
@@ -24,6 +25,13 @@ namespace Underworld
             PlayerDamageTypeScale = 0;
             ValourBonus = 0;
             PoisonedWeapon = false;
+
+            FreezeTimeEnchantment = false;
+            RoamingSightEnchantment = false;
+            SpeedEnchantment = false;
+            TelekenesisEnchantment = false;
+            HealthRegenEnchantment = false;
+            ManaRegenEnchantment = false;
         }
 
         public static void PlayerStatusUpdate(bool CastOnEquip = false)
