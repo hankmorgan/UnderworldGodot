@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 
 namespace Underworld
@@ -16,12 +17,15 @@ namespace Underworld
             {
                 LocationalArmourValues[i] = 0;
                 LocationalProtectionValues[i] = 0;
-            }           
+            }       
+            StealthScore1 = 13 - (Sneak/3);
+            StealthScore2 = 15 - (Sneak/5);;
         }
 
         public static void PlayerStatusUpdate(bool CastOnEquip = false)
         {
             var DamageResistance = 0;
+            var StealthBonus = 0;
             ResetPlayer();
             InitArmourValues();
 
@@ -29,12 +33,13 @@ namespace Underworld
             lightlevel = BrightestNonMagicalLight();
 
             //cast active spell effects
-            DamageResistance = CastActiveSpellEffects(DamageResistance);
+           CastActiveSpellEffects(ref DamageResistance, ref StealthBonus);
 
-            DamageResistance = ApplyEquipmentEffects(CastOnEquip, DamageResistance);
+            ApplyEquipmentEffects(CastOnEquip, ref DamageResistance, ref StealthBonus);
 
             //Apply the max damage resistance from enchantments/active spell effects
             ApplyDamageResistance(DamageResistance);
+            ApplyStealthBonus(StealthBonus);
 
             RefreshLighting();//either brightest physical light or brightest magical light
         }
@@ -45,7 +50,7 @@ namespace Underworld
         /// </summary>
         /// <param name="DamageResistance"></param>
         /// <returns></returns>
-        private static int CastActiveSpellEffects(int DamageResistance)
+        private static void CastActiveSpellEffects(ref int DamageResistance, ref int StealthBonus)
         {
             for (int i = 0; i < 3; i++)
             {
@@ -61,6 +66,7 @@ namespace Underworld
                         minorclass: minor,
                         TriggeredByInventoryEvent: false,
                         DamageResistance: ref DamageResistance,
+                        StealthBonus : ref StealthBonus,
                         PaperDollSlot: -1);
                     uimanager.SetSpellIcon(i, major, minor);
                 }
@@ -69,8 +75,6 @@ namespace Underworld
                     uimanager.ClearSpellIcon(i);
                 }
             }
-
-            return DamageResistance;
         }
 
         /// <summary>
@@ -79,7 +83,7 @@ namespace Underworld
         /// <param name="CastOnEquip"></param>
         /// <param name="DamageResistance"></param>
         /// <returns></returns>
-        private static int ApplyEquipmentEffects(bool CastOnEquip, int DamageResistance)
+        private static void ApplyEquipmentEffects(bool CastOnEquip, ref int DamageResistance, ref int StealthBonus)
         {
             //apply spell effects from inventory objects
             for (int i = 0; i < 10; i++)
@@ -121,6 +125,7 @@ namespace Underworld
                                     minorclass: spell.SpellMinorClass,
                                     TriggeredByInventoryEvent: CastOnEquip,
                                     DamageResistance: ref DamageResistance,
+                                    StealthBonus: ref StealthBonus,
                                     PaperDollSlot: i
                                     );
                             }
@@ -128,8 +133,6 @@ namespace Underworld
                     }
                 }
             }
-
-            return DamageResistance;
         }
 
         /// <summary>
@@ -175,6 +178,26 @@ namespace Underworld
             for (int i = 0; i<= LocationalArmourValues.GetUpperBound(0); i++)
             {
                  LocationalArmourValues[i] += DamageResistance;
+            }
+        }
+
+        public static void ApplyStealthBonus(int StealthBonus)
+        {
+            for (int i = 0; i<3; i++)
+            {
+                var bit = (StealthBonus>>i) & 1;
+                if (bit == 1)
+                {//bit is set
+                    switch (i)
+                    {
+                        case 0:
+                            StealthScore1 = Math.Max(StealthScore1 - 0x10, 0); break;
+                        case 1:
+                            StealthScore2 = Math.Max(StealthScore2 - 5 , 0); break;
+                        case 2:
+                            StealthScore2 = Math.Max(StealthScore2 - 0x10 , 0); break;
+                    }
+                }
             }
         }
 

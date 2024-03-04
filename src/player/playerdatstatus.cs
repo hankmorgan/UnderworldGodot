@@ -16,6 +16,11 @@ namespace Underworld
           /// </summary>
           public static byte MagicalMotionAbilities;
 
+          //Stealth scores. One of these is probably noise detection range, the other visual detection range.
+          //Not known yet which is which
+          public static int StealthScore1;
+          public static int StealthScore2;
+
           public static bool IsMagicLeaping
           {
                get 

@@ -125,7 +125,7 @@ namespace Underworld
         /// <param name="majorclass"></param>
         /// <param name="minorclass"></param>
         /// <param name="TriggeredByInventoryEvent">First time trigger from adding to inventory, used for curse objects initial message in UW2</param>
-        public static void CastEnchantedItemSpell(int majorclass, int minorclass, bool TriggeredByInventoryEvent, ref int DamageResistance, int PaperDollSlot)
+        public static void CastEnchantedItemSpell(int majorclass, int minorclass, bool TriggeredByInventoryEvent, ref int DamageResistance, ref int StealthBonus, int PaperDollSlot)
         {
             switch (majorclass)
             {
@@ -148,6 +148,11 @@ namespace Underworld
                         {
                             DamageResistance = minorclass;
                         }
+                        break;
+                    }
+                case 3://bonuses
+                    {
+                        CastClass3Enchantment(minorclass, ref StealthBonus);
                         break;
                     }
                 case 9://curses
@@ -178,6 +183,34 @@ namespace Underworld
                 default:
                     Debug.Print($"Unhandled enchantment {majorclass} {minorclass}");
                     break;
+            }
+        }
+
+
+        /// <summary>
+        /// General bonuses
+        /// </summary>
+        /// <param name="minorclass"></param>
+        /// <param name="StealthBonus"></param>
+        public static void CastClass3Enchantment(int minorclass, ref int StealthBonus)
+        {
+            switch (minorclass)
+            {
+                case 1: //LUCK
+                    {//A +3 bonus to location protection
+                        playerdat.LocationalProtectionValues[0]+=3;
+                        playerdat.LocationalProtectionValues[1]+=3;
+                        playerdat.LocationalProtectionValues[2]+=3;
+                        playerdat.LocationalProtectionValues[3]+=3;
+                        break;
+                    }
+                case 2:
+                case 3:
+                case 4://stealth
+                    {   //set the bit field of stealth bonuses. These are used to adjust the player stealth score which does something..
+                        StealthBonus |= (1 << (minorclass-1)); //OR in this bit
+                        break;
+                    }
             }
         }
 
