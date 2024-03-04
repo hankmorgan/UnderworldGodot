@@ -185,6 +185,6 @@ namespace Underworld
                 spellno = spellno |= (spell.SpellMajorClass << 6);
             }
             SpellCasting.CastSpellFromObject(spellno, obj);
-        }  
+        } 
     }//end class
 }//end namespace

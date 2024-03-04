@@ -3,7 +3,7 @@ using System.Diagnostics;
 namespace Underworld
 {
 
-    public class SpellCasting : UWClass
+    public  partial class SpellCasting : UWClass
     {
 
         /// <summary>
@@ -17,6 +17,15 @@ namespace Underworld
         public static void CastSpell(int majorclass, int minorclass, uwObject caster, uwObject target, int tileX, int tileY, bool CastOnEquip, bool PlayerCast = true)
         {
             Debug.Print($"Casting {majorclass},{minorclass}");
+            if (_RES==GAME_UW1)
+            {
+                if (playerdat.dungeon_level==8)
+                {
+                    return; //no casting in the ethereal void.
+                }
+            }
+            //TODO if no magic allow bit return
+
             switch (majorclass)
             {
                 //0-3 affect active player statuses
@@ -26,27 +35,7 @@ namespace Underworld
                 case 2://
                 case 3://
                     {
-                        //TODO add special handling for ironflesh (plot handling for xclock3) and leviation/fly spells (stop falling)
-                        if ((majorclass == 1) && (((minorclass & 0x3F) == 3) || ((minorclass & 0x3F) == 5)))
-                        {
-                            Debug.Print("Leviate/Fly cast. Stop jumping"); //what happens here if all active effects are running???
-                        }
-                        if ((_RES == GAME_UW2) && (majorclass == 2) && ((minorclass & 0x3F) == 5))
-                        {
-                            //iron flesh.
-                            //if xclock == 4 
-                            // glaze over
-                            //set xclock = 5
-                            uimanager.AddToMessageScroll(GameStrings.GetString(1, 335));
-                        }
-
-                        //Apply the active effect if possible.
-                        PlayerActiveStatusEffectSpells(
-                            major: majorclass,
-                            minor: minorclass & 0x3F,
-                            stabilityclass: minorclass & 0xC0);
-
-                        playerdat.PlayerStatusUpdate();
+                        CastClass0123_Spells(majorclass, minorclass);
                         break;
                     }
                 case 4://healing
@@ -79,326 +68,6 @@ namespace Underworld
                 case 14://cutscene spells.
                     break;
             }
-        }
-
-        /// <summary>
-        /// Applies player active status effects
-        /// </summary>
-        /// <param name="major"></param>
-        /// <param name="minor"></param>
-        /// <param name="stabilityclass"></param>
-        static void PlayerActiveStatusEffectSpells(int major, int minor, int stabilityclass)
-        {//updates the player status active effects. The actual impact of the spell is processed by PlayerRefreshUpdates()
-            if (playerdat.ActiveSpellEffectCount < 3)
-            {
-                var stability = 0;
-                //calc stability
-                switch (stabilityclass)
-                {
-                    case 0x80:
-                        stability = Rng.DiceRoll(3, 24); break;
-                    case 0x40:
-                        stability = Rng.DiceRoll(2, 8); break;
-                    case 1:
-                        stability = 1; break;
-                    case 0:
-                        stability = Rng.DiceRoll(2, 3); break;
-                    default:
-                        stability = 0; break;
-                }
-
-                //apply effect to player data
-                playerdat.SetSpellEffect(
-                    index: playerdat.ActiveSpellEffectCount,
-                    effectid: (minor << 4) + major,
-                    stability: stability);
-                playerdat.ActiveSpellEffectCount++;
-            }
-            else
-            {
-                return; //no more effects allowed
-            }
-        }
-
-        /// <summary>
-        /// Casts spells from enchanted equipment. Not all spells will cast from here.
-        /// </summary>
-        /// <param name="majorclass"></param>
-        /// <param name="minorclass"></param>
-        /// <param name="TriggeredByInventoryEvent">First time trigger from adding to inventory, used for curse objects initial message in UW2</param>
-        public static void CastEnchantedItemSpell(int majorclass, int minorclass, bool TriggeredByInventoryEvent, ref int DamageResistance, ref int StealthBonus, int PaperDollSlot)
-        {
-            switch (majorclass)
-            {
-                case 0://lighting spells
-                    {
-                        if (playerdat.lightlevel < minorclass)
-                        {
-                            playerdat.lightlevel = minorclass;
-                        }
-                        break;
-                    }
-                case 1: //Motion abilities
-                    {//set relevant bit
-                        playerdat.MagicalMotionAbilities = (byte)(playerdat.MagicalMotionAbilities | (1 << (minorclass - 1)));
-                        break;
-                    }
-                case 2: // resistances
-                    {//these apply a blanket damage resistance to each body part.
-                        if (minorclass > DamageResistance)
-                        {
-                            DamageResistance = minorclass;
-                        }
-                        break;
-                    }
-                case 3://bonuses
-                    {
-                        CastClass3Enchantment(minorclass, ref StealthBonus);
-                        break;
-                    }
-                case 9://curses
-                    {
-                        CastClass9_Curse(minorclass, TriggeredByInventoryEvent);
-                        break;
-                    }
-                case 0xC: //toughness or protection.
-                    {   //toughness applies a damage resistance to a specific body part. 
-                        //Protection makes the body part harder to hit
-                        if (PaperDollSlot < 2) //appears to only work when helm and chest?
-                        {
-                            var slot = 0;
-                            if (PaperDollSlot == 0) { slot = 3; }
-                            if ((minorclass & 0x8) == 0)
-                            {
-                                //protection
-                                playerdat.LocationalProtectionValues[slot] += (minorclass & 0x7);
-                            }
-                            else
-                            {
-                                //toughness
-                                playerdat.LocationalProtectionValues[slot] += (minorclass & 0x7);
-                            }
-                        }
-                        break;
-                    }
-                default:
-                    Debug.Print($"Unhandled enchantment {majorclass} {minorclass}");
-                    break;
-            }
-        }
-
-
-        /// <summary>
-        /// General bonuses
-        /// </summary>
-        /// <param name="minorclass"></param>
-        /// <param name="StealthBonus"></param>
-        public static void CastClass3Enchantment(int minorclass, ref int StealthBonus)
-        {
-            switch (minorclass)
-            {
-                case 1: //LUCK
-                    {//A +3 bonus to location protection
-                        playerdat.LocationalProtectionValues[0]+=3;
-                        playerdat.LocationalProtectionValues[1]+=3;
-                        playerdat.LocationalProtectionValues[2]+=3;
-                        playerdat.LocationalProtectionValues[3]+=3;
-                        break;
-                    }
-                case 2:
-                case 3:
-                case 4://stealth
-                    {   //set the bit field of stealth bonuses. These are used to adjust the player stealth score which does something..
-                        StealthBonus |= (1 << (minorclass-1)); //OR in this bit
-                        break;
-                    }
-                case 5:
-                case 6:
-                case 7:
-                case 8:
-                case 9://Damage proof protections, eg missile, flameproof
-                    {
-                        var bits = new byte[]{0x40, 8, 0x10, 1, 2};//what bits to set
-                        var bit = bits[minorclass-5];
-                        playerdat.PlayerDamageTypeScale |= bit;//set the relevant x-proof
-                        break;
-                    }
-                case 0x10:
-                    {
-                        //Valour spell. This spell is unique to UW2.
-                        if (_RES==GAME_UW2)
-                        {
-                            playerdat.ValourBonus = 10 + playerdat.Casting/5;
-                        }                        
-                        break;
-                    }
-                case 0xB:
-                    {
-                        //Poison weapon, unique to UW2
-                        if (_RES==GAME_UW2)
-                        {
-                            playerdat.PoisonedWeapon = true;
-                        }
-                        break;
-                    }
-            }
-        }
-
-
-        /// <summary>
-        /// Note these enchantments don't line up exactly with the class B spell cast list. This is the correct behaviour
-        /// </summary>
-        /// <param name="minorclass"></param>
-        public static void CastClassBEnchantment(int minorclass)
-        {
-            switch (minorclass)
-            {
-                case 0://freezetime
-                    playerdat.FreezeTimeEnchantment = true; break;
-                case 1://roaming sight
-                    playerdat.RoamingSightEnchantment = true; break;
-                case 2://speed
-                    playerdat.SpeedEnchantment = true; break;
-                case 3://telekenesis
-                    playerdat.TelekenesisEnchantment = true; break;
-                case 0xE://health regen
-                    playerdat.HealthRegenEnchantment = true; break;
-                case 0xF://Mana regen       
-                    playerdat.ManaRegenEnchantment = true; break;         
-            }
-
-        }
-        /// <summary>
-        /// Healing spells
-        /// </summary>
-        /// <param name="minorclass"></param>
-        public static void CastClass4_Heal(int minorclass)
-        {
-            int healamount = 0;
-            if (minorclass == 0xF)
-            {//what spell would do this???
-                healamount = -1;
-                playerdat.play_hp = System.Math.Max(0, playerdat.max_hp + healamount);//negative ???
-
-            }
-            else
-            {
-                healamount = Rng.DiceRoll(minorclass, 8);
-                playerdat.play_hp = System.Math.Min(playerdat.max_hp, playerdat.max_hp + healamount);
-            }
-        }
-
-
-
-        /// <summary>
-        /// Applies curse object damage
-        /// Assumes it can only affect the player character.
-        /// </summary>
-        /// <param name="minorclass"></param>
-        /// <param name="CastOnEquip">Has the cursed item just been equiped</param>
-        public static void CastClass9_Curse(int minorclass, bool CastOnEquip)
-        {
-            var dmg = Rng.DiceRoll(minorclass, 8);
-            if (playerdat.play_hp - dmg >= 3)
-            {
-                playerdat.play_hp -= dmg;
-            }
-            else
-            {
-                playerdat.play_hp = 3;
-            }
-            if (CastOnEquip)
-            {
-                if (_RES == GAME_UW2)
-                {
-                    uimanager.AddToMessageScroll(GameStrings.GetString(1, 362));
-                }
-            }
-            else
-            {
-                if (_RES == GAME_UW2)
-                {
-                    uimanager.FlashColour(0x30, uimanager.Cuts3DWin, 0.2f);
-                }
-                else
-                {
-                    uimanager.FlashColour(0xA8, uimanager.Cuts3DWin, 0.2f);
-                }
-            }
-        }
-        public static void CastClass10_ManaBoost(int minorclass)
-        {
-            //check mana rules for the academy test.
-            if (_RES == GAME_UW2)
-            {
-                if (worlds.GetWorldNo(playerdat.dungeon_level) == 5)//Academy
-                {
-                    var academylevel = 1 + playerdat.dungeon_level % 8;
-                    if ((academylevel > 1) && (academylevel < 8))
-                    {
-                        return;
-                    }
-                    if (academylevel == 8)
-                    {
-                        if (playerdat.tileX < 25)
-                        {
-                            return;
-                        }
-                    }
-                }
-            }
-            //Apply mana boost
-            if (minorclass < 0)
-            {//boost mana by minus minus minor class. Not clear when this could happen...
-                playerdat.play_mana = System.Math.Min(playerdat.play_mana + minorclass, playerdat.max_mana);
-            }
-            else
-            {
-                var increase = 1 + ((playerdat.max_mana * (minorclass + Rng.r.Next(0, 4))) >> 4);
-                playerdat.play_mana = System.Math.Min(playerdat.play_mana + increase, playerdat.max_mana);
-            }
-        }
-
-
-        /// <summary>
-        /// Misc active spells and others
-        /// </summary>
-        /// <param name="minorclass"></param>
-        /// <param name="stability"></param>
-        public static void CastClassB_Spells(int minorclass, int stability)
-        {
-            switch (minorclass)
-            {
-                case 0: //speed
-                    PlayerActiveStatusEffectSpells(0xB, 2, stability);//Note the change in mapping here.
-                    playerdat.PlayerStatusUpdate();
-                    break;
-            }
-        }
-
-        public static void CastSpellFromObject(int spellno, uwObject obj)
-        {
-            if (((spellno & 0xC0) == 0) && (spellno <= RunicMagic.SpellList.GetUpperBound(0)))
-            {
-                //do a runic table lookup
-                var spell = RunicMagic.SpellList[spellno];
-                RunicMagic.CastRunicSpellWithoutRules(spell);
-            }
-            else
-            {
-                var major = 12 + ((spellno & 0xC0) >> 6);
-                var minor = spellno & 0x3F;
-                CastSpell(
-                    majorclass: major,
-                    minorclass: minor,
-                    caster: obj,
-                    target: null,
-                    tileX: playerdat.tileX,
-                    tileY: playerdat.tileY,
-                    CastOnEquip: false,
-                    PlayerCast: true);
-            }
-        }
-
+        }     
     }//end class
 }//end namespace
