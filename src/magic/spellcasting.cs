@@ -48,6 +48,8 @@ namespace Underworld
                 case 7://spells with prompts and code callbacks.
                     break;
                 case 8://spells that create or summon
+                    CastClass8_Summoning(
+                        minorclass: minorclass);
                     break;
                 case 9://curses
                     CastClass9_Curse(
