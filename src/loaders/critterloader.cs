@@ -357,8 +357,11 @@ namespace Underworld
                             width: BitMapWidth, height: BitMapHeight,
                             palette: pal, 
                             useAlphaChannel: true, 
-                            useSingleRedChannel: true);
+                            useSingleRedChannel: true,
+                            crop: UseCropping);
+                        
                         CropImageData(ref imgData, pal);
+
                         this.animSprites[spriteIndex + i] = imgData;
                         spriteCounter++;
                     }
@@ -724,7 +727,8 @@ namespace Underworld
                                     width: BitMapWidth, height: BitMapHeight, 
                                     palette: pal, 
                                     useAlphaChannel: true, 
-                                    useSingleRedChannel: true);
+                                    useSingleRedChannel: true,
+                                    crop: UseCropping);
                                 CropImageData(ref imgData, pal);
                                 this.animSprites[spriteIndex++] = imgData; //Sprite.Create(imgData, new Rect(0f, 0f, imgData.width, imgData.height), new Vector2(0.5f, 0.0f));
                             }

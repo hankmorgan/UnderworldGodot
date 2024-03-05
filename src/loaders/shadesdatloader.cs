@@ -152,7 +152,8 @@ namespace Underworld
                 width: 16 * bandwidth, height: 1,
                 palette: PaletteLoader.GreyScaleIndexPalette,
                 useAlphaChannel: true,
-                useSingleRedChannel: true);
+                useSingleRedChannel: true,
+                crop: false);
             return output;
         }
 
@@ -189,7 +190,8 @@ namespace Underworld
                 width: 16 * bandwidth, height: 1,
                 palette: PaletteLoader.GreyScaleIndexPalette,
                 useAlphaChannel: true,
-                useSingleRedChannel: true);
+                useSingleRedChannel: true,
+                crop: false);
             return output;
         }
 

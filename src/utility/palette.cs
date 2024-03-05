@@ -101,7 +101,8 @@ namespace Underworld
                     height: ImageHeight, 
                     palette: this, 
                     useAlphaChannel: true, 
-                    useSingleRedChannel: false);
+                    useSingleRedChannel: false,
+                    crop: false);
             return output;
         }
 

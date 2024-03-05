@@ -226,7 +226,8 @@ namespace Underworld
                             width: BitMapWidth, height: BitMapHeight, 
                             palette: PaletteLoader.Palettes[PaletteNo], 
                             useAlphaChannel: UseAlphaChannel, 
-                            useSingleRedChannel: UseRedChannel);
+                            useSingleRedChannel: UseRedChannel,
+                            crop: UseCropping);
                         return ImageCache[index];
                     }
                 case 0x8://4 bit run-length
@@ -246,7 +247,14 @@ namespace Underworld
                         //auxpal =PaletteLoader.LoadAuxilaryPal(Loader.BasePath+ AuxPalPath,PaletteLoader.Palettes[PaletteNo],auxPalIndex);
                         int[] aux = PaletteLoader.LoadAuxilaryPalIndices(Path.Combine(BasePath, "DATA", AuxPalPath), auxPalIndex);
                         outputImg = DecodeRLEBitmap(imgNibbles, datalen, BitMapWidth, BitMapHeight, 4, aux);
-                        ImageCache[index] = Image(outputImg, 0, BitMapWidth, BitMapHeight, PaletteLoader.Palettes[PaletteNo], UseAlphaChannel, UseRedChannel);
+                        ImageCache[index] = Image(
+                            databuffer: outputImg, 
+                            dataOffSet: 0, 
+                            width: BitMapWidth, height: BitMapHeight, 
+                            palette: PaletteLoader.Palettes[PaletteNo], 
+                            useAlphaChannel: UseAlphaChannel, 
+                            useSingleRedChannel: UseRedChannel, 
+                            crop: UseCropping);
                         return ImageCache[index];
                     }
                 case 0xA://4 bit uncompressed//Same as above???
@@ -270,7 +278,8 @@ namespace Underworld
                             width: BitMapWidth, height: BitMapHeight, 
                             palette: auxpal, 
                             useAlphaChannel: UseAlphaChannel , 
-                            useSingleRedChannel: UseRedChannel);
+                            useSingleRedChannel: UseRedChannel,
+                            crop: UseCropping);
                         return ImageCache[index];
                     }
                 //break;
@@ -292,7 +301,8 @@ namespace Underworld
                             width: BitMapWidth, height: BitMapHeight, 
                             palette: PaletteLoader.Palettes[PaletteNo], 
                             useAlphaChannel: UseAlphaChannel, 
-                            useSingleRedChannel: UseRedChannel);
+                            useSingleRedChannel: UseRedChannel,
+                            crop: UseCropping);
                         return ImageCache[index];
                     }
                     break;

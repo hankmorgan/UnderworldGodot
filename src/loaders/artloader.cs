@@ -1,3 +1,4 @@
+using System;
 using Godot;
 
 namespace Underworld
@@ -20,6 +21,11 @@ namespace Underworld
         /// The palette no to use with this file.
         /// </summary>
         public short PaletteNo = 0;
+
+        /// <summary>
+        /// Instructs the image() function to crop out based on pixel 0
+        /// </summary>
+        public bool UseCropping = false;
 
 
         public const float SpriteScale = 0.024f;  //height of 1px of a sprite
@@ -74,7 +80,7 @@ namespace Underworld
         /// <param name="imageName">Image name.</param>
         /// <param name="palette">Pal.</param>
         /// <param name="useAlphaChannel">If set to <c>true</c> alpha.</param>
-        public static ImageTexture Image(byte[] databuffer, long dataOffSet, int width, int height, Palette palette, bool useAlphaChannel, bool useSingleRedChannel)
+        public static ImageTexture Image(byte[] databuffer, long dataOffSet, int width, int height, Palette palette, bool useAlphaChannel, bool useSingleRedChannel, bool crop)
         {        
             Godot.Image.Format imgformat;
             if (useSingleRedChannel)
@@ -92,7 +98,7 @@ namespace Underworld
                     imgformat = Godot.Image.Format.Rgb8;
                 }
             }
-
+            bool[,] mask = new bool[width,height];
             var img = Godot.Image.Create(width, height, false, imgformat);
             for (int iRow = 0; iRow < height; iRow++)
             {
@@ -100,13 +106,96 @@ namespace Underworld
                 for (int j = iRow * width; j < (iRow * width) + width; j++)
                 {
                     byte pixel = (byte)getAt(databuffer, dataOffSet + j, 8);
+                    mask[iCol, iRow] = (pixel==0);
                     img.SetPixel(iCol, iRow, palette.ColorAtIndex(pixel, useAlphaChannel, useSingleRedChannel));
                     iCol++;
                 }
             }
-            var tex = new ImageTexture();
-            tex.SetImage(img);
-            return tex;
+           
+            if (crop)
+            {
+                var bound = GetBoundingBox(databuffer,(int)dataOffSet, width, height);
+                return CropImage(img, bound);
+            }
+            else
+            {
+                var tex = new ImageTexture();
+                tex.SetImage(img);
+                return tex;
+            }
+        }
+
+
+        static Rect2I GetBoundingBox(byte[]buf, int dataoffset, int width, int height)
+        {//https://stackoverflow.com/questions/32191887/creating-a-bounding-box-in-image-with-transparency
+            
+            //search upper bound
+            bool found = false;
+            int x0=0; int x1=width+1; int y1=0; int y0=height+1;
+            for (int row = 0; row<height && !found; row++) //row
+            {
+                for (int col = 0; col<width && !found; col++) //column
+                {
+                    int idx = dataoffset + (row * width + col);
+                    if (!(buf[idx] == 0)) //not transparent
+                    {
+                        //BoundingBox.top = row;
+                        y0 = row;
+                        found = true;
+                    }
+                }
+            }
+
+            //search lower bound
+            found = false;
+            for (int row = height-1; row >= 0 && !found; row--) //row
+            {
+                for (int col = width-1; col >= 0 && !found; col--) //column
+                {
+                    int idx = dataoffset + (row * width + col);
+                    if (!(buf[idx] == 0)) //not transparent           
+                    {
+                        //BoundingBox.bottom = row;
+                        y1 = row;
+                        found = true;
+                    }
+                }
+            }
+
+
+            //search left bound
+            found = false;
+            for (int col = 0; col<width && !found; col++) //row
+            {
+                for (int row = 0; row<height && !found; row++) //column
+                {
+                    int idx = dataoffset + (row * width + col);
+                    if (!(buf[idx] == 0)) //not transparent           
+                    {
+                        //BoundingBox.left = col;
+                        x0 = col;
+                        found = true;
+                    }
+                }
+            }
+
+
+            //search right bound
+            found = false;
+            for (int col = width-1; col >= 0 && !found; col--) //row
+            {
+                for (int row = height-1; row >= 0 && !found; row--) //column
+                {
+                    int idx = dataoffset + (row * width + col);
+                    if (!(buf[idx] == 0 )) //not transparent           
+                    {
+                        //BoundingBox.right = col;
+                        x1 = col;
+                        found = true;
+                    }
+                }
+            }
+            return new Rect2I(x0,y0,x1,y1);
         }
 
 

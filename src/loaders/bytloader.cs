@@ -131,7 +131,8 @@ namespace Underworld
                             height: 200, 
                             palette: PaletteLoader.Palettes[PaletteIndices[index]], 
                             useAlphaChannel: UseAlphaChannel, 
-                            useSingleRedChannel: false);
+                            useSingleRedChannel: false,
+                            crop: UseCropping);
                     }
             }
         }
@@ -160,7 +161,8 @@ namespace Underworld
                     height: 200, 
                     palette: PaletteLoader.Palettes[PaletteIndicesUW2[index]], 
                     useAlphaChannel: UseAlphaChannel, 
-                    useSingleRedChannel: false);
+                    useSingleRedChannel: false,
+                    crop: UseCropping);
             }
             else
             {
@@ -171,7 +173,8 @@ namespace Underworld
                     height: 200, 
                     palette: PaletteLoader.Palettes[PaletteIndicesUW2[index]], 
                     useAlphaChannel: UseAlphaChannel, 
-                    useSingleRedChannel: false);
+                    useSingleRedChannel: false,
+                    crop: UseCropping);
             }
         }
         return null;

@@ -96,7 +96,8 @@ namespace Underworld
                             width: FloorDim, height: FloorDim, 
                             palette: palToUse, 
                             useAlphaChannel: false, 
-                            useSingleRedChannel: UseRedChannel);
+                            useSingleRedChannel: UseRedChannel,
+                            crop: UseCropping);
                     }
 
 
@@ -124,7 +125,8 @@ namespace Underworld
                                 width: 64, height: 64, 
                                 palette: palToUse, 
                                 useAlphaChannel: false, 
-                                useSingleRedChannel: UseRedChannel);
+                                useSingleRedChannel: UseRedChannel,
+                                crop: UseCropping);
                         }
                         else
                         {//Floor textures (to match my list of textures)
@@ -146,7 +148,8 @@ namespace Underworld
                                 width: FloorDim, height: FloorDim, 
                                 palette: palToUse, 
                                 useAlphaChannel: false, 
-                                useSingleRedChannel: UseRedChannel);
+                                useSingleRedChannel: UseRedChannel,
+                                crop: UseCropping);
                         }
                     }//end switch	
             }

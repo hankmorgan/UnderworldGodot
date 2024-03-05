@@ -183,7 +183,14 @@ namespace Underworld
                     imgdata[(l * 256) + b] = maps[l].red[b];
                 }
             }
-            var output = Image(imgdata, 0, 256, maps.GetUpperBound(0), GreyScaleIndexPalette, true, true);
+            var output = Image(
+                databuffer: imgdata, 
+                dataOffSet: 0, 
+                width: 256, height: maps.GetUpperBound(0), 
+                palette: GreyScaleIndexPalette, 
+                useAlphaChannel: true, 
+                useSingleRedChannel: true, 
+                crop: false);
             return output;
         }
 

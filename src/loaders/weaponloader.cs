@@ -170,7 +170,8 @@ namespace Underworld
                         width: MaxWidth, height: MaxHeight, 
                         palette: auxpal, 
                         useAlphaChannel: true, 
-                        useSingleRedChannel: false);
+                        useSingleRedChannel: false,
+                        crop: UseCropping);
                 }
             }
         }

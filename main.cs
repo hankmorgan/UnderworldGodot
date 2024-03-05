@@ -49,6 +49,7 @@ public partial class main : Node3D
 
 		ObjectCreator.grObjects = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
 		ObjectCreator.grObjects.UseRedChannel = true;
+		ObjectCreator.grObjects.UseCropping = true;
 		Palette.CurrentPalette = 0; 
 		
 		uwUI.InitUI();

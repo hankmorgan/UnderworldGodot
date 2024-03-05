@@ -186,7 +186,8 @@ namespace Underworld
                     width: lpH.width, height: lpH.height, 
                     palette: pal, 
                     useAlphaChannel: Alpha, 
-                    useSingleRedChannel: true);
+                    useSingleRedChannel: true,
+                    crop: UseCropping);
 
             }
         }
