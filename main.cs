@@ -54,20 +54,12 @@ public partial class main : Node3D
 		
 		uwUI.InitUI();
 
-
 		uimanager.AddToMessageScroll(GameStrings.GetString(1, 13));//welcome message
 
-		
-
 		// playerdat.LoadPlayerDat(datafolder: uwsettings.instance.levarkfolder);
-
-
 	}
 
-
-
-
-
+	
 	/// <summary>
 	/// Draws a debug marker sprite on game load to show where the character is positioned
 	/// </summary>

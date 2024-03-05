@@ -453,7 +453,7 @@ namespace Underworld
                         );
                 a_sprite.Mesh.Set("size", NewSize);
                 parent.AddChild(a_sprite);
-                a_sprite.Position = new Vector3(0, NewSize.Y / 2, 0);
+                a_sprite.Position = new Vector3(0, NewSize.Y/2f, 0);
                 if (EnableCollision)
                 {
                     a_sprite.CreateConvexCollision();

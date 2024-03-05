@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.Serialization;
 using Godot;
 
 namespace Underworld
@@ -114,7 +115,7 @@ namespace Underworld
            
             if (crop)
             {
-                var bound = GetBoundingBox(databuffer,(int)dataOffSet, width, height);
+                var bound = GetBoundingBox(databuffer,(int)dataOffSet, width, height);                
                 return CropImage(img, bound);
             }
             else
@@ -131,7 +132,7 @@ namespace Underworld
             
             //search upper bound
             bool found = false;
-            int x0=0; int x1=width+1; int y1=0; int y0=height+1;
+            int x0=0; int x1=width; int y1=0; int y0=height;
             for (int row = 0; row<height && !found; row++) //row
             {
                 for (int col = 0; col<width && !found; col++) //column
@@ -195,7 +196,7 @@ namespace Underworld
                     }
                 }
             }
-            return new Rect2I(x0,y0,x1,y1);
+            return new Rect2I(x0, y0, x1-x0+1, y1-y0+1);
         }
 
 
@@ -394,6 +395,7 @@ namespace Underworld
             img.BlitRect(src, rect, Vector2I.Zero);
             var tex = new ImageTexture();
             tex.SetImage(img);
+            //img.SavePng("c:\\temp\\img\\" + System.Guid.NewGuid() + ".png");
             return tex;
         }
 
