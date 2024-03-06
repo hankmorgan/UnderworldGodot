@@ -77,6 +77,8 @@ namespace Underworld
             bglobal.LoadGlobals(uwsettings.instance.levarkfolder);
 
             //Draw UI
+            playerdat.SetSelectedRune(0,24);playerdat.SetSelectedRune(1,24);playerdat.SetSelectedRune(2,24);
+
             uimanager.SetBody(Body, isFemale);
             uimanager.RedrawSelectedRuneSlots();
             uimanager.RefreshHealthFlask();

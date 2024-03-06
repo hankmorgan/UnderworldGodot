@@ -116,9 +116,6 @@ public partial class main : Node3D
 			}
 		}
 
-
-
-		//RenderingServer.GlobalShaderParameterSet("cameraPos", cam.Position);
 		cycletime += delta;
 		if (cycletime > 0.2)
 		{

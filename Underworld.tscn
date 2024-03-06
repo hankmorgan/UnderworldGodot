@@ -58,9 +58,9 @@ render_target_update_mode = 4
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.119, 2.137, 12.228)
 script = ExtResource("5_2to2n")
 
-[node name="CharacterBody3D" type="CharacterBody3D" parent="WorldViewContainer/SubViewport/Camera3D"]
+[node name="Gronk" type="CharacterBody3D" parent="WorldViewContainer/SubViewport/Camera3D"]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="WorldViewContainer/SubViewport/Camera3D/CharacterBody3D"]
+[node name="CronkCollision" type="CollisionShape3D" parent="WorldViewContainer/SubViewport/Camera3D/Gronk"]
 shape = SubResource("CapsuleShape3D_1c8r5")
 
 [node name="UI" type="CanvasLayer" parent="."]

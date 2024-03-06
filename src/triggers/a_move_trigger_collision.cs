@@ -1,7 +1,8 @@
+using Underworld;
 using System.Diagnostics;
 using Godot;
 
-public partial class movetrigger:  Area3D
+public partial class a_movetriggercollision:  Area3D
 {
     
     public int uwObjectIndex;
@@ -9,9 +10,16 @@ public partial class movetrigger:  Area3D
     [Signal]
     public delegate void MoveTriggerEnteredEventHandler();
 
-    public static void body_entered()
+    public void movetrigger_entered(Node3D body)
     {
-        Debug.Print("YAY!");
+        
+        Debug.Print($"{body.Name} => {uwObjectIndex}");
+        if (body.Name == "Gronk")
+        {
+            use.SpellHasBeenCast = false;
+            trap.ObjectThatStartedChain = uwObjectIndex;
+            trigger.Move(null, uwObjectIndex, UWTileMap.current_tilemap.LevelObjects);
+        }
+        
     }
-
 }
