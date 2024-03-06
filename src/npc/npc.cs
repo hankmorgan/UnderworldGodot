@@ -16,7 +16,7 @@ namespace Underworld
         /// <summary>
         /// Mesh this sprite is drawn on
         /// </summary>
-        public MeshInstance3D sprite;
+        public uwMeshInstance3D sprite;
 
         /// <summary>
         /// The material for rendering this unique npc
@@ -78,7 +78,7 @@ namespace Underworld
         public static npc CreateInstance(Node3D parent, uwObject obj, string name)
         {
             var n = new npc(obj);
-            var a_sprite = new MeshInstance3D(); //new Sprite3D();
+            var a_sprite = new uwMeshInstance3D(); //new Sprite3D();
             a_sprite.Name = name;
             a_sprite.Mesh = new QuadMesh();
             a_sprite.Mesh.SurfaceSetMaterial(0, n.material);

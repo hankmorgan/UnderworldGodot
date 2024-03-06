@@ -438,8 +438,8 @@ namespace Underworld
             // a_sprite.MaterialOverride =  gr.GetMaterial(spriteNo);
             // parent.AddChild(a_sprite);
             // a_sprite.Position = new Vector3(0, NewSize.Y / 2, 0);            
-
-            var a_sprite = new MeshInstance3D(); //new Sprite3D();
+//res://src/utility/uwmeshinstance3d.gd
+            var a_sprite = new uwMeshInstance3D(); //MeshInstance3D(); //new Sprite3D();
             a_sprite.Name = name;
             a_sprite.Mesh = new QuadMesh();
             Vector2 NewSize;

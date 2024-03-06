@@ -15,7 +15,7 @@ namespace Underworld
         /// <summary>
         /// Mesh this sprite is drawn on
         /// </summary>
-        public MeshInstance3D sprite;
+        public uwMeshInstance3D sprite;
 
         /// <summary>
         /// The material for rendering this unique npc
@@ -43,7 +43,7 @@ namespace Underworld
         {
             var a = new animo(obj);
             //a.ApplyAnimoSprite();
-            var a_sprite = new MeshInstance3D(); //new Sprite3D();
+            var a_sprite = new uwMeshInstance3D(); //new Sprite3D();
             a_sprite.Name = name;
             a_sprite.Mesh = new QuadMesh();
             a_sprite.Mesh.SurfaceSetMaterial(0, grAnimo.GetMaterial(obj.owner));

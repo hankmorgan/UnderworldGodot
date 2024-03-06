@@ -54,7 +54,7 @@ namespace Underworld
                             {
                                 if (obj.instance.uwnode != null)
                                 {
-                                    var nd = (MeshInstance3D)obj.instance.uwnode.GetChild(0);
+                                    var nd = (uwMeshInstance3D)obj.instance.uwnode.GetChild(0);
                                     nd.Mesh.SurfaceSetMaterial(0, ObjectCreator.grObjects.GetMaterial(obj.item_id));
                                 }
                             }
