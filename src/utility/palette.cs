@@ -7,6 +7,10 @@ namespace Underworld
     {
 
         public static int CurrentPalette = 0;
+        /// <summary>
+        /// 0 = normal colours, 1 for greyscale
+        /// </summary>
+        public static int ColourTone = 0;
         public byte[] red = new byte[256];
         public byte[] blue = new byte[256];
         public byte[] green = new byte[256];

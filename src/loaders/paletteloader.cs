@@ -122,12 +122,18 @@ namespace Underworld
 
             //Init palette shader params
  
-            RenderingServer.GlobalShaderParameterAdd("uipalette", RenderingServer.GlobalShaderParameterType.Sampler2D, Palettes[Palette.CurrentPalette].cycledUIPalette[0]);
-            RenderingServer.GlobalShaderParameterAdd("cutoffdistance", RenderingServer.GlobalShaderParameterType.Float, shade.GetViewingDistance(playerdat.lightlevel));
+            RenderingServer.GlobalShaderParameterAdd(
+                name: "uipalette", 
+                type: RenderingServer.GlobalShaderParameterType.Sampler2D, 
+                defaultValue: Palettes[Palette.CurrentPalette].cycledUIPalette[0]);
+            RenderingServer.GlobalShaderParameterAdd(
+                name: "cutoffdistance", 
+                type: RenderingServer.GlobalShaderParameterType.Float, 
+                defaultValue: shade.GetViewingDistance(playerdat.lightlevel));
             RenderingServer.GlobalShaderParameterAdd(
                 name: "smoothpalette", 
                 type: RenderingServer.GlobalShaderParameterType.Sampler2D, 
-                defaultValue: (Texture)Palettes[Palette.CurrentPalette].cycledGamePalette[0,0,0]);
+                defaultValue: (Texture)Palettes[Palette.CurrentPalette].cycledGamePalette[Palette.ColourTone,0,0]);
         
         }
 
@@ -281,8 +287,12 @@ namespace Underworld
         public static void UpdatePaletteCycles()
         {
             //Cycle the palette		
-            RenderingServer.GlobalShaderParameterSet("smoothpalette", (Texture)Palettes[Palette.CurrentPalette].cycledGamePalette[0, playerdat.lightlevel, NextPaletteCycle]);
-            RenderingServer.GlobalShaderParameterSet("uipalette", (Texture)Palettes[Palette.CurrentPalette].cycledUIPalette[NextPaletteCycle]);
+            RenderingServer.GlobalShaderParameterSet(
+                name: "smoothpalette", 
+                value: (Texture)Palettes[Palette.CurrentPalette].cycledGamePalette[Palette.ColourTone, playerdat.lightlevel, NextPaletteCycle]);
+            RenderingServer.GlobalShaderParameterSet(
+                name: "uipalette", 
+                value: (Texture)Palettes[Palette.CurrentPalette].cycledUIPalette[NextPaletteCycle]);
 
 
             NextPaletteCycle++;

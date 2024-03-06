@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://xjvqmrbs28xs"]
+[gd_scene load_steps=36 format=3 uid="uid://xjvqmrbs28xs"]
 
 [ext_resource type="Script" path="res://src/ui/uimanager.cs" id="1_lw0yg"]
 [ext_resource type="FontFile" uid="uid://pdy3t627nfxw" path="res://resources/fonts/FONT5X6I.ttf" id="3_safdl"]
@@ -32,6 +32,8 @@
 [ext_resource type="Texture2D" uid="uid://1ecbe7htlqun" path="res://resources/placeholder_art/spellicon.png" id="28_uj0ag"]
 [ext_resource type="Texture2D" uid="uid://dlhf0nj7vj1o2" path="res://resources/placeholder_art/PanelBlack.jpg" id="29_aiei8"]
 
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1c8r5"]
+
 [sub_resource type="AudioStreamWAV" id="AudioStreamWAV_tkk82"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_7v506"]
@@ -55,6 +57,11 @@ render_target_update_mode = 4
 [node name="Camera3D" type="Camera3D" parent="WorldViewContainer/SubViewport"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.119, 2.137, 12.228)
 script = ExtResource("5_2to2n")
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="WorldViewContainer/SubViewport/Camera3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WorldViewContainer/SubViewport/Camera3D/CharacterBody3D"]
+shape = SubResource("CapsuleShape3D_1c8r5")
 
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
