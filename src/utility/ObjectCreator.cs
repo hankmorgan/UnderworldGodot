@@ -196,7 +196,11 @@ namespace Underworld
                 case 0://Weapons
                 case 2://misc items incl containers, food, and lights.                
                 case 4://keys, usables and readables
+                    break;
                 case 6://Traps and Triggers
+                    {
+                        unimplemented = MajorClass6(obj, newNode, a_tilemap, name);
+                    }
                     break;
                 case 7://Animos
                     {
@@ -399,7 +403,54 @@ namespace Underworld
             return true;
         }
 
+        /// <summary>
+        /// Traps and Triggers
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="parent"></param>
+        /// <param name="a_tilemap"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        private static bool MajorClass6(uwObject obj, Node3D parent, UWTileMap a_tilemap, string name)
+        {
+            switch (obj.minorclass)
+            {
+                case 2:
+                    {
+                        switch (obj.classindex)
+                        {
+                            case 0://move trigger, 6-2-0
+                                return trigger.CreateMoveTrigger(obj, parent);
+                        }
+                        break; 
+                    }                   
+                case 3: //uw1 does not have class 6-3-xx
+                    {
+                        switch (obj.classindex)
+                        {
+                            case 0://move trigger 6-3-0
+                                if (_RES==GAME_UW2)
+                                {
+                                    return trigger.CreateMoveTrigger(obj, parent);
+                                }                                
+                                break;
+                        }
+                        break; 
+                    }
+            }
+            return true;
+        }
 
+    
+
+        /// <summary>
+        /// Animos and moving doors
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="parent"></param>
+        /// <param name="a_tilemap"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
         private static bool MajorClass7(uwObject obj, Node3D parent, UWTileMap a_tilemap, string name)
         {//animos and the moving door
             //class 7 has only a single minor class. jump straight to the class index
@@ -438,7 +489,7 @@ namespace Underworld
             // a_sprite.MaterialOverride =  gr.GetMaterial(spriteNo);
             // parent.AddChild(a_sprite);
             // a_sprite.Position = new Vector3(0, NewSize.Y / 2, 0);            
-//res://src/utility/uwmeshinstance3d.gd
+            //res://src/utility/uwmeshinstance3d.gd
             var a_sprite = new uwMeshInstance3D(); //MeshInstance3D(); //new Sprite3D();
             a_sprite.Name = name;
             a_sprite.Mesh = new QuadMesh();
@@ -453,7 +504,7 @@ namespace Underworld
                         );
                 a_sprite.Mesh.Set("size", NewSize);
                 parent.AddChild(a_sprite);
-                a_sprite.Position = new Vector3(0, NewSize.Y/2f, 0);
+                a_sprite.Position = new Vector3(0, NewSize.Y / 2f, 0);
                 if (EnableCollision)
                 {
                     a_sprite.CreateConvexCollision();

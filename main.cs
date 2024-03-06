@@ -43,6 +43,7 @@ public partial class main : Node3D
 
 	public override void _Ready()
 	{
+		GetTree().DebugCollisionsHint = true;
 		instance = this;
 		gamecam = cam;
 		uwsettings.LoadSettings();
