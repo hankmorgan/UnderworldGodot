@@ -123,7 +123,8 @@ namespace Underworld
             final_mesh.Mesh = a_mesh;
             if (EnableCollision)
             {
-                final_mesh.CreateConvexCollision();
+                final_mesh.CreateTrimeshCollision();
+               // final_mesh.CreateConvexCollision();
             }
             return final_mesh;
         }

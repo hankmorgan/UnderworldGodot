@@ -72,6 +72,19 @@ namespace Underworld
             return (int)getAt(buffer, 2 + item_id*11 + 4, 16);
         }
 
+
+
+        /// <summary>
+        /// This object can activate switches when it collides with an object.
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <returns></returns>
+        public static int ActivatedByCollision(int item_id)
+        {//bits 2,3 at + 6
+            return (buffer[2 + item_id * 11 + 6]>>1 ) & 0x1;
+        }
+
+
         /// <summary>
         /// "Quality class bits 2,3
         /// Cannot be removed in projectile motion when =3

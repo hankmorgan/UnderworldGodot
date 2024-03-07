@@ -215,16 +215,10 @@ namespace Underworld
             {
                 //just render a sprite.
                 obj.instance = CreateSpriteInstance(grObjects, obj, newNode, $"{name}");
-                if (printlabels)
-                {
-                    Label3D obj_lbl = new();
-                    obj_lbl.Text = $"{name} {obj.xpos},{obj.ypos},{obj.zpos}";
-                    obj_lbl.Font = uimanager.instance.Font4X5P;
-                    obj_lbl.FontSize = 16;
-                    obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
-                    obj_lbl.Position = new Vector3(0f, 0.4f, 0f);
-                    newNode.AddChild(obj_lbl);
-                }
+            }
+            if (printlabels)
+            {
+                PrintObjectLabel(obj, name, newNode);
             }
             if (obj.instance != null)
             {
@@ -235,6 +229,19 @@ namespace Underworld
                 Debug.Print($"{name} is null!");
             }
         }
+
+        private static void PrintObjectLabel(uwObject obj, string name, Node3D newNode)
+        {
+            var collider = commonObjDat.ActivatedByCollision(obj.item_id);
+            Label3D obj_lbl = new();
+            obj_lbl.Text = $"{name} {obj.xpos},{obj.ypos},{obj.zpos} Activated by collision:{collider}";
+            obj_lbl.Font = uimanager.instance.Font4X5P;
+            obj_lbl.FontSize = 16;
+            obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
+            obj_lbl.Position = new Vector3(0f, 0.4f, 0f);
+            newNode.AddChild(obj_lbl);
+        }
+
 
 
         /// <summary>
