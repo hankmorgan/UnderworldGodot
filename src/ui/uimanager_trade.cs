@@ -302,7 +302,7 @@ namespace Underworld
                         {//drop available item in slot
                             SetPlayerTradeSlot((int)extra_arg_0,playerdat.ObjectInHand,true);
                             playerdat.ObjectInHand = -1;
-                            mousecursor.SetToCursor();
+                            mousecursor.SetCursorToCursor();
                         }
                     }
                     else

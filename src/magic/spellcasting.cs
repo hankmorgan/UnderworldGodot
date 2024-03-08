@@ -50,7 +50,7 @@ namespace Underworld
                 case 5://projectile spells
                     {
                         currentSpell = new RunicMagic(majorclass,minorclass);
-                        uimanager.instance.mousecursor.SetToCursor(9);
+                        uimanager.instance.mousecursor.SetCursorToCursor(9);
                     }
                     break;
                 case 6://spells that run code in an area around the player
@@ -58,7 +58,7 @@ namespace Underworld
                 case 7://spells with prompts and code callbacks.
                     {
                         currentSpell = new RunicMagic(majorclass,minorclass);
-                        uimanager.instance.mousecursor.SetToCursor(10);
+                        uimanager.instance.mousecursor.SetCursorToCursor(10);
                     }
                     break;
                 case 8://spells that create or summon
@@ -95,18 +95,17 @@ namespace Underworld
                     case 5://projectiles
                         //Casting on ray cast target should stop the spell from launching
                         uimanager.AddToMessageScroll(GameStrings.GetString(1,GameStrings.str_there_is_not_enough_room_to_release_that_spell_));
-                        break;
+                        return;
                     case 7://click on object spells
                         CastClass7_Spells(
                             minorclass: currentSpell.SpellMinorClass, 
                             index: index, 
                             objList: objList);
+                        currentSpell = null;
+                        uimanager.instance.mousecursor.SetCursorToCursor();
                         break;
                 }
             }
-
-            currentSpell = null;
-            uimanager.instance.mousecursor.SetToCursor();
         }   
 
         public static void CastCurrentSpellAtPosition(Godot.Vector3 position) 

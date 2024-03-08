@@ -25,7 +25,7 @@ namespace Underworld
 
         private void InitViews()
         {
-              switch (UWClass._RES)
+            switch (UWClass._RES)
             {
                 case UWClass.GAME_UW2:
                     mainwindowUW2.Texture = bitmaps.LoadImageAt(BytLoader.UW2ThreeDWin_BYT, true);
@@ -74,7 +74,7 @@ namespace Underworld
 
         public static void ClickOnViewPort(InputEventMouseButton eventMouseButton)
         {
-            if (!InGame){return;}
+            if (!InGame) { return; }
             bool LeftClick = (eventMouseButton.ButtonIndex == MouseButton.Left); //else treat it as a right click.
                                                                                  //float RayLength = 3.0f;
             Dictionary result = DoRayCast(eventMouseButton, RayDistance);
@@ -93,6 +93,14 @@ namespace Underworld
                         case "TILE":
                         case "WALL":
                             {
+                                if (SpellCasting.currentSpell!=null)
+                                {
+                                    if (SpellCasting.currentSpell.SpellMajorClass==5)
+                                    {
+                                        SpellCasting.CastCurrentSpellOnRayCastTarget(0,null);//not enough room to cast
+                                        return;
+                                    }
+                                }
                                 switch (InteractionMode)
                                 {
                                     case InteractionModes.ModePickup:
@@ -119,6 +127,14 @@ namespace Underworld
                             }
                         case "CEILING":
                             {
+                                if (SpellCasting.currentSpell!=null)
+                                {
+                                    if (SpellCasting.currentSpell.SpellMajorClass==5)
+                                    {
+                                        SpellCasting.CastCurrentSpellOnRayCastTarget(0,null);//not enough room to cast
+                                        return;
+                                    }
+                                }
                                 switch (InteractionMode)
                                 {
                                     case InteractionModes.ModeLook:
@@ -134,25 +150,39 @@ namespace Underworld
                             {
                                 if (int.TryParse(vals[0], out int index))
                                 {
-                                    if (SpellCasting.currentSpell==null)
+                                    if (SpellCasting.currentSpell == null)
                                     {
                                         InteractWithObjectCollider(
-                                            index: index , LeftClick: LeftClick);
+                                            index: index, LeftClick: LeftClick);
                                     }
                                     else
                                     {
-                                        SpellCasting.CastCurrentSpellOnRayCastTarget(index, UWTileMap.current_tilemap.LevelObjects);                                 
+                                        SpellCasting.CastCurrentSpellOnRayCastTarget(index, UWTileMap.current_tilemap.LevelObjects);
                                     }
                                 }
                             }
                             break;
                     }
                 }
-            }
-            else
-            {
-                //no match on the raycast. if holding an object in pickup mode this should try and throw the object
-                //along the ray
+                else
+                {
+                    //along the ray
+                    if (SpellCasting.currentSpell != null)
+                    {
+                        //try can cast the current spell if class 5
+                        if (SpellCasting.currentSpell.SpellMajorClass == 5)
+                        {
+                            uimanager.AddToMessageScroll("Woosh! Fired off a projectile");
+                            SpellCasting.currentSpell = null;
+                            uimanager.instance.mousecursor.SetCursorToCursor(0);
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        //no match on the raycast. if holding an object in pickup mode this should try and throw the object
+                    }
+                }
             }
         }
 
@@ -164,7 +194,7 @@ namespace Underworld
         /// <param name="tileY"></param>
         private static void DropToTileAtPosition(Vector3 pos, int tileX, int tileY)
         {
-            if(
+            if (
                 pickup.Drop(
                 index: playerdat.ObjectInHand,
                 objList: UWTileMap.current_tilemap.LevelObjects,
@@ -172,8 +202,8 @@ namespace Underworld
                 tileX: tileX, tileY: tileY)
             )
             {
-                playerdat.ObjectInHand=-1;
-                uimanager.instance.mousecursor.SetToCursor();
+                playerdat.ObjectInHand = -1;
+                uimanager.instance.mousecursor.SetCursorToCursor();
             }
         }
 

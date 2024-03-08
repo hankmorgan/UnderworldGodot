@@ -29,7 +29,7 @@ namespace Underworld
 			Material= uimanager.grObjects.GetMaterial(index);
 		}
 
-		public void SetToCursor(int index = 0)
+		public void SetCursorToCursor(int index = 0)
 		{
 			Texture = uimanager.grCursors.LoadImageAt(index);
 			//Material= uimanager.grCursors.GetMaterial(index);//no shader is applied here

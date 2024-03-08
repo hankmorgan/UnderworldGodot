@@ -543,7 +543,7 @@ namespace Underworld
                     if (playerdat.ObjectInHand == obj.index)
                     {//used from object in hnand
                         playerdat.ObjectInHand = -1;
-                        uimanager.instance.mousecursor.SetToCursor();
+                        uimanager.instance.mousecursor.SetCursorToCursor();
                     }
                     ObjectCreator.RemoveObject(obj);
                 }
