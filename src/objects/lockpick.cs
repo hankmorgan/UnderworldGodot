@@ -11,7 +11,7 @@ namespace Underworld
                 playerdat.ObjectInHand = obj.index;
 
                 //change the mouse cursor
-                uimanager.instance.mousecursor.SetCursorArt(obj.item_id);
+                uimanager.instance.mousecursor.SetCursorToObject(obj.item_id);
 
                 //print use message
                 //8	What lock would you like to try to pick?

@@ -39,7 +39,7 @@ namespace Underworld
             var slot = ObjectCreator.PrepareNewObject(itemid);
             var obj = UWTileMap.current_tilemap.LevelObjects[slot];
             playerdat.ObjectInHand = slot;
-            uimanager.instance.mousecursor.SetCursorArt(obj.item_id);
+            uimanager.instance.mousecursor.SetCursorToObject(obj.item_id);
             if (changeInteractionmode)
             {
                 uimanager.InteractionModeToggle(uimanager.InteractionModes.ModePickup);
@@ -543,7 +543,7 @@ namespace Underworld
                     if (playerdat.ObjectInHand == obj.index)
                     {//used from object in hnand
                         playerdat.ObjectInHand = -1;
-                        uimanager.instance.mousecursor.ResetCursor();
+                        uimanager.instance.mousecursor.SetToCursor();
                     }
                     ObjectCreator.RemoveObject(obj);
                 }

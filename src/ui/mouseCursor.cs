@@ -23,16 +23,17 @@ namespace Underworld
 			Input.MouseMode = Input.MouseModeEnum.Hidden;
 		}
 
-		public void SetCursorArt(int index)
+		public void SetCursorToObject(int index)
 		{
 			Texture = uimanager.grObjects.LoadImageAt(index);
 			Material= uimanager.grObjects.GetMaterial(index);
 		}
 
-		public void ResetCursor()
+		public void SetToCursor(int index = 0)
 		{
-			Texture = uimanager.grCursors.LoadImageAt(0);
-			//Material= uimanager.grCursors.GetMaterial(0);
+			Texture = uimanager.grCursors.LoadImageAt(index);
+			//Material= uimanager.grCursors.GetMaterial(index);//no shader is applied here
+			Material = null;
 		}
 	}
 

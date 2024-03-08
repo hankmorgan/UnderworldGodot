@@ -1,10 +1,16 @@
 using System.Diagnostics;
+using System.Numerics;
+using Godot;
 
 namespace Underworld
 {
 
     public  partial class SpellCasting : UWClass
     {
+        /// <summary>
+        /// The current spell to cast after a delay.
+        /// </summary>
+        public static RunicMagic currentSpell;
 
         /// <summary>
         /// Logic for casting spells that are not from enchanted objects. Assumes all spell casting requirements have been met. 
@@ -42,10 +48,18 @@ namespace Underworld
                     CastClass4_Heal(minorclass);
                     break;
                 case 5://projectile spells
+                    {
+                        currentSpell = new RunicMagic(majorclass,minorclass);
+                        uimanager.instance.mousecursor.SetToCursor(9);
+                    }
                     break;
                 case 6://spells that run code in an area around the player
                     break;
                 case 7://spells with prompts and code callbacks.
+                    {
+                        currentSpell = new RunicMagic(majorclass,minorclass);
+                        uimanager.instance.mousecursor.SetToCursor(10);
+                    }
                     break;
                 case 8://spells that create or summon
                     CastClass8_Summoning(
@@ -70,6 +84,31 @@ namespace Underworld
                 case 14://cutscene spells.
                     break;
             }
-        }     
+        } 
+
+        public static void CastCurrentSpellOnRayCastTarget(int index, uwObject[] objList)
+        {
+            if (currentSpell != null)
+            {
+                switch (currentSpell.SpellMajorClass)
+                {
+                    case 5://projectiles
+                        //Casting on ray cast target should stop the spell from launching
+                        uimanager.AddToMessageScroll(GameStrings.GetString(1,GameStrings.str_there_is_not_enough_room_to_release_that_spell_));
+                        break;
+                    case 7://click on object spells
+                        break;
+                }
+            }
+
+            currentSpell = null;
+            uimanager.instance.mousecursor.SetToCursor();
+        }   
+
+        public static void CastCurrentSpellAtPosition(Godot.Vector3 position) 
+        {
+
+        }
+
     }//end class
 }//end namespace

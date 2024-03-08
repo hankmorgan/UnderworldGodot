@@ -25,7 +25,7 @@ namespace Underworld
             
             if (playerdat.ObjectInHand == obj.index)
             {
-                uimanager.instance.mousecursor.SetCursorArt(obj.item_id);
+                uimanager.instance.mousecursor.SetCursorToObject(obj.item_id);
             }
             uimanager.AddToMessageScroll(GameStrings.GetString(1,9));
 

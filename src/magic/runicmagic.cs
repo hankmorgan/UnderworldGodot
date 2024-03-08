@@ -22,6 +22,19 @@ namespace Underworld
             RuneSequence = _RuneSequence;
         }
 
+        
+        /// <summary>
+        /// Constructor for a spell without index or runes
+        /// </summary>
+        /// <param name="_major"></param>
+        /// <param name="_minor"></param>
+        /// <param name=""></param>
+        public RunicMagic(int _major, int _minor)
+        {
+            SpellMajorClass = _major;
+            SpellMinorClass = _minor;
+        }
+
         public string spellname
         {
             get

@@ -143,7 +143,7 @@ namespace Underworld
         {
             //player is trying to pick something up
             playerdat.ObjectInHand = index;
-            uimanager.instance.mousecursor.SetCursorArt(obj.item_id);
+            uimanager.instance.mousecursor.SetCursorToObject(obj.item_id);
 
             //remove from it's tile
             var tile = UWTileMap.current_tilemap.Tiles[obj.tileX, obj.tileY];

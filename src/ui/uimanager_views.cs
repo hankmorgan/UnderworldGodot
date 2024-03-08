@@ -134,8 +134,15 @@ namespace Underworld
                             {
                                 if (int.TryParse(vals[0], out int index))
                                 {
-                                    InteractWithObjectCollider(
-                                        index: index , LeftClick: LeftClick);
+                                    if (SpellCasting.currentSpell==null)
+                                    {
+                                        InteractWithObjectCollider(
+                                            index: index , LeftClick: LeftClick);
+                                    }
+                                    else
+                                    {
+                                        SpellCasting.CastCurrentSpellOnRayCastTarget(index, UWTileMap.current_tilemap.LevelObjects);                                 
+                                    }
                                 }
                             }
                             break;
@@ -166,7 +173,7 @@ namespace Underworld
             )
             {
                 playerdat.ObjectInHand=-1;
-                uimanager.instance.mousecursor.ResetCursor();
+                uimanager.instance.mousecursor.SetToCursor();
             }
         }
 

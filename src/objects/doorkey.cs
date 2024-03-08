@@ -10,7 +10,7 @@ namespace Underworld
                 playerdat.ObjectInHand = obj.index;
 
                 //change the mouse cursor
-                uimanager.instance.mousecursor.SetCursorArt(obj.item_id);
+                uimanager.instance.mousecursor.SetCursorToObject(obj.item_id);
 
                 //print use message
                 uimanager.AddToMessageScroll(GameStrings.GetString(1, 7));

@@ -54,7 +54,7 @@ namespace Underworld
 
             //Clear the cursor icons
             playerdat.ObjectInHand = -1;
-            uimanager.instance.mousecursor.ResetCursor();
+            uimanager.instance.mousecursor.SetToCursor();
 
             return false;
         }

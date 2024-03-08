@@ -83,7 +83,7 @@ namespace Underworld
                             if (ObjectToPickup == playerdat.ObjectInHand)
                             {
                                 playerdat.ObjectInHand = -1;
-                                instance.mousecursor.ResetCursor();
+                                instance.mousecursor.SetToCursor();
                             }
                             //the object added to the paper doll may have a (curse) enchantment that may need to be activated
                             CheckForEnchantments = true;
@@ -102,7 +102,7 @@ namespace Underworld
                             if (ObjectToPickup == playerdat.ObjectInHand)
                             {
                                 playerdat.ObjectInHand = -1;
-                                instance.mousecursor.ResetCursor();
+                                instance.mousecursor.SetToCursor();
                             }
                         }
                         else
@@ -153,7 +153,7 @@ namespace Underworld
                             if (ObjectToPickup == playerdat.ObjectInHand)
                             {
                                 playerdat.ObjectInHand = -1;
-                                instance.mousecursor.ResetCursor();
+                                instance.mousecursor.SetToCursor();
                             }
                         }
                         break;
@@ -442,7 +442,7 @@ namespace Underworld
                 AddedObj.next = target.link;
                 target.link = Added;
                 playerdat.ObjectInHand = -1;
-                uimanager.instance.mousecursor.ResetCursor();
+                uimanager.instance.mousecursor.SetToCursor();
                 return;
             }
 
@@ -459,7 +459,7 @@ namespace Underworld
                         //the runebag. add to runes if source is a rune.
                         int runeid = source.item_id - 232;
                         playerdat.SetRune(runeid, true);
-                        playerdat.ObjectInHand = -1; uimanager.instance.mousecursor.ResetCursor();
+                        playerdat.ObjectInHand = -1; uimanager.instance.mousecursor.SetToCursor();
                     }
                 }
                 return;
@@ -479,7 +479,7 @@ namespace Underworld
                     UpdateInventoryDisplay();
                     //destroy the source.
                     ObjectCreator.RemoveObject(source);
-                    playerdat.ObjectInHand = -1; uimanager.instance.mousecursor.ResetCursor();
+                    playerdat.ObjectInHand = -1; uimanager.instance.mousecursor.SetToCursor();
                     return;
                 }
             }
@@ -540,7 +540,7 @@ namespace Underworld
                     );
             var pickObject = UWTileMap.current_tilemap.LevelObjects[newIndex];
             playerdat.ObjectInHand = newIndex;
-            instance.mousecursor.SetCursorArt(pickObject.item_id);
+            instance.mousecursor.SetCursorToObject(pickObject.item_id);
             return newIndex;
         }
 
@@ -558,7 +558,7 @@ namespace Underworld
                     if (ObjectToPickup == playerdat.ObjectInHand)
                     {
                         playerdat.ObjectInHand = -1;
-                        instance.mousecursor.ResetCursor();
+                        instance.mousecursor.SetToCursor();
                     }
                 }
                 else
@@ -575,7 +575,7 @@ namespace Underworld
                 newobj.next = container.link;
                 container.link = index;
                 playerdat.ObjectInHand = -1;
-                instance.mousecursor.ResetCursor();
+                instance.mousecursor.SetToCursor();
             }
         }
 

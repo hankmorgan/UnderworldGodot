@@ -112,10 +112,11 @@ namespace Underworld
         // }
         public enum GRShaderMode
         {
-            SpriteShader = 0,  //Spritesthat will not be billboarded.
-            BillboardSpriteShader = 1, //Sprites that will be billboarded
-            TextureShader= 2,  //World textures
-            UIShader = 3  //Possible future shader for UI elements that don't react to shading.
+            None = 0, 
+            SpriteShader = 1,  //Spritesthat will not be billboarded.
+            BillboardSpriteShader = 2, //Sprites that will be billboarded
+            TextureShader= 3,  //World textures
+            UIShader = 4  //For ui elements that need palette cycling
 
         };
 
@@ -123,6 +124,9 @@ namespace Underworld
         {      
             switch (shadermode)
             {
+                case GRShaderMode.None:
+                    textureshader = null;
+                    break;
                 case GRShaderMode.TextureShader:
                 case GRShaderMode.SpriteShader:
                     textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwshader.gdshader");

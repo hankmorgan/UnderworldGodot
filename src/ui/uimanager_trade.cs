@@ -302,7 +302,7 @@ namespace Underworld
                         {//drop available item in slot
                             SetPlayerTradeSlot((int)extra_arg_0,playerdat.ObjectInHand,true);
                             playerdat.ObjectInHand = -1;
-                            mousecursor.ResetCursor();
+                            mousecursor.SetToCursor();
                         }
                     }
                     else
@@ -311,7 +311,7 @@ namespace Underworld
                         {//take item from slot into a free hand
                             playerdat.ObjectInHand = PlayerItemIDs[extra_arg_0];
                             var obj = UWTileMap.current_tilemap.LevelObjects[playerdat.ObjectInHand];
-                            mousecursor.SetCursorArt(obj.item_id);
+                            mousecursor.SetCursorToObject(obj.item_id);
                             SetPlayerTradeSlot((int)extra_arg_0, -1, false);
                         }
                         else
@@ -320,7 +320,7 @@ namespace Underworld
                             var swap = playerdat.ObjectInHand;
                             playerdat.ObjectInHand = PlayerItemIDs[extra_arg_0];
                             var obj = UWTileMap.current_tilemap.LevelObjects[playerdat.ObjectInHand];
-                            mousecursor.SetCursorArt(obj.item_id);
+                            mousecursor.SetCursorToObject(obj.item_id);
                             SetPlayerTradeSlot((int)extra_arg_0, swap, true);
                         }
                     }

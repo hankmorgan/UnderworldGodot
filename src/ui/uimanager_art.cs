@@ -24,7 +24,7 @@ namespace Underworld
 
 		public static void InitArt()
 		{
-            grCursors = new GRLoader(GRLoader.CURSORS_GR, GRLoader.GRShaderMode.UIShader);
+            grCursors = new GRLoader(GRLoader.CURSORS_GR, GRLoader.GRShaderMode.None);
             grObjects = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.UIShader);
             grObjects.UseRedChannel = true;
             grButtons = new GRLoader(GRLoader.BUTTONS_GR, GRLoader.GRShaderMode.UIShader);

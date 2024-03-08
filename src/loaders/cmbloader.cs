@@ -113,7 +113,7 @@ namespace Underworld
                     if (ItemInHand.item_id == combo.Obj_A) //item in hand is the one to destroy
                     {
                         playerdat.ObjectInHand = -1;
-                        uimanager.instance.mousecursor.ResetCursor();
+                        uimanager.instance.mousecursor.SetToCursor();
                         ObjectCreator.RemoveObject(ItemInHand);
                     }
                     else
@@ -122,7 +122,7 @@ namespace Underworld
                         {
                             //object in hand changes
                             ItemInHand.item_id = combo.Obj_Out;
-                            uimanager.instance.mousecursor.SetCursorArt(ItemInHand.item_id);
+                            uimanager.instance.mousecursor.SetCursorToObject(ItemInHand.item_id);
                         }    
                     }                
                 }
@@ -149,7 +149,7 @@ namespace Underworld
                     if (ItemInHand.item_id == combo.Obj_B) //item in hand is the one to destroy
                     {
                         playerdat.ObjectInHand = -1;
-                        uimanager.instance.mousecursor.ResetCursor();
+                        uimanager.instance.mousecursor.SetToCursor();
                         ObjectCreator.RemoveObject(ItemInHand);
                     }
                     else
@@ -158,7 +158,7 @@ namespace Underworld
                         {
                             //object in hand changes
                             ItemInHand.item_id = combo.Obj_Out;
-                            uimanager.instance.mousecursor.SetCursorArt(ItemInHand.item_id);
+                            uimanager.instance.mousecursor.SetCursorToObject(ItemInHand.item_id);
                         }    
                     }                
                 }
