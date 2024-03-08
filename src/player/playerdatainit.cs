@@ -56,6 +56,7 @@ namespace Underworld
                 }
                 Body = Rng.r.Next(0, 4);
                 CharName = "GRONK";
+                playerdat.SetSelectedRune(0,24);playerdat.SetSelectedRune(1,24);playerdat.SetSelectedRune(2,24);
 
                 switch (_RES)
                 {
@@ -77,8 +78,6 @@ namespace Underworld
             bglobal.LoadGlobals(uwsettings.instance.levarkfolder);
 
             //Draw UI
-            playerdat.SetSelectedRune(0,24);playerdat.SetSelectedRune(1,24);playerdat.SetSelectedRune(2,24);
-
             uimanager.SetBody(Body, isFemale);
             uimanager.RedrawSelectedRuneSlots();
             uimanager.RefreshHealthFlask();
@@ -91,6 +90,8 @@ namespace Underworld
             {
                 uimanager.SetRuneInBag(i, GetRune(i));
             }
+            
+            SpellCasting.currentSpell = null;
 
             //Set the playerlight level;            
             //uwsettings.instance.lightlevel = light.BrightestLight();

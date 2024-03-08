@@ -97,6 +97,10 @@ namespace Underworld
                         uimanager.AddToMessageScroll(GameStrings.GetString(1,GameStrings.str_there_is_not_enough_room_to_release_that_spell_));
                         break;
                     case 7://click on object spells
+                        CastClass7_Spells(
+                            minorclass: currentSpell.SpellMinorClass, 
+                            index: index, 
+                            objList: objList);
                         break;
                 }
             }

@@ -8,6 +8,18 @@ namespace Underworld
         {
             get
             {
+                if (SpellCasting.currentSpell != null)
+                {
+                    if (SpellCasting.currentSpell.SpellMajorClass == 5)
+                    {
+                        return 1f;
+                    }
+                    else
+                    {
+                        return 3f;
+                    }
+
+                }
                 switch (InteractionMode)
                 {
                     case InteractionModes.ModeLook:
