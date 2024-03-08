@@ -81,6 +81,16 @@ namespace Underworld
         }
 
         /// <summary>
+        /// If not equal to 0 the npc can bleed
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <returns></returns>
+        public static int bleed(int item_id)
+        {
+            return (buffer[CritterOffset(item_id) + 0x8] >> 3) & 0x3;
+        }
+
+        /// <summary>
         /// The blood stains left behind by the npc on death.
         /// Value is offset by +217d as an index in to object lists (UW2)
         /// Value of 0 is no remains.

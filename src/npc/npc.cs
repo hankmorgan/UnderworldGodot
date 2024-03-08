@@ -295,6 +295,32 @@ namespace Underworld
         }
 
 
-    }//end class
+        /// <summary>
+        /// Applies damage to the npc with the specified damage type
+        /// </summary>
+        /// <param name="critter"></param>
+        /// <param name="damage"></param>
+        /// <param name="damagetype"></param>
+        public static void DamageNPC(uwObject critter, int basedamage, int damagetype, int damagesource = 0)
+        {
+            var finaldamage = ScaleDamage(critter, basedamage, damagetype);
+        
+            Debug.Print($"Damage {critter.a_name} by {finaldamage}");
 
+            //Note to be strictly compatable with UW behaviour the damage should be accumulated for the npc an applied
+            //once per frame. This is used to control the angering behaviour of the npc in checking against passiveness.
+            //In the future a total damage figure will be used here that is evaulated each frame as part of the AI routine
+            critter.npc_hp = (byte)Math.Max(0, critter.npc_hp-finaldamage);
+
+            //make the npc react to the damage source. player if 0
+            //record the damage source as the player
+            Debug.Print($"Record damage source as {damagesource}");
+        }
+
+        public static int ScaleDamage(uwObject critter, int basedamage, int damagetype)
+        {
+            Debug.Print ("TODO SCALE DAMAGE");
+            return basedamage;
+        }
+    }//end class
 }//end namespace

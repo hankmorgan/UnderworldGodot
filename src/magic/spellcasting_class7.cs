@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 
 namespace Underworld
@@ -12,7 +13,8 @@ namespace Underworld
                 switch (minorclass)
                 {
                     case 0:
-                        //cause bleeding       
+                        //cause bleeding  
+                        CauseBleeding(index, objList);     
                         break;
                     case 1:
                         //Causefear
@@ -28,6 +30,10 @@ namespace Underworld
                         break;
                     case 5:
                         //paralyse  
+                        break;
+                    case 6:
+                        ///bleed (identical)
+                        CauseBleeding(index, objList);
                         break;
                     case 7:
                         StudyMonster(index, objList);
@@ -84,9 +90,70 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// UW2 only spell. Causes damage scaled by vulnerability
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="objList"></param>
+        static void CauseBleeding(int index, uwObject[] objList)
+        {
+            var obj = objList[index];
+            if (obj!=null)
+            {
+                if (obj.majorclass == 1)
+                {
+                    //npc
+                    
+                    var bleed = critterObjectDat.bleed(obj.item_id);
+                    if (bleed==0)
+                    {
+                        uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x12B));
+                    }
+                    else
+                    {
+                        var basedamage = 0xA + playerdat.Casting/2;
+                        ScaledDamageOnNPCWithAnimo(
+                            critter: obj, 
+                            basedamage: basedamage, 
+                            damagetype: 4, 
+                            animoclassindex: 0);
+                    }
+                }
+            }
+        }
+
         static void StudyMonster(int index, uwObject[] objList)
         {
             Debug.Print("STUDY MONSTER");
         }
+
+        
+        
+        /// <summary>
+        /// Scales damage on the NPC based on it's vulnerabilities defined in critter object data
+        /// Spawns an animo of the specified type to represent blood etc
+        /// </summary>
+        /// <param name="critter"></param>
+        /// <param name="basedamage"></param>
+        /// <param name="damagetype"></param>
+        /// <param name="UpdateUI"></param>
+        public static void ScaledDamageOnNPCWithAnimo(uwObject critter, int basedamage, int damagetype, int animoclassindex, bool UpdateUI = true)
+        {
+            var noOfSplatters = basedamage;
+             
+            noOfSplatters = noOfSplatters / 4;
+            if (noOfSplatters>3)
+            {
+                noOfSplatters = 3;
+            }
+            
+            Debug.Print($"Spawn animo {animoclassindex} {noOfSplatters} times");
+
+            npc.DamageNPC(critter, basedamage, damagetype);           
+        }
+
+
+
+
     }//end class
 }//end namespace
