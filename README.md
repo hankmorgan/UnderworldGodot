@@ -47,7 +47,7 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * Picking up and dropping of items (without checking pickup rules)
 * Usable switches
 * Reading signs
-* Gamestrings
+* Game strings
 * Palette cycling and shading
 * Save file loading
 * Player stats display
@@ -55,6 +55,8 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * Compass status message
 * 3D Models
 * Food consumption
+* Spell casting (partial) and vanilla decoding of object enchantment values into actual spell effects
+* Small window cutscenes
 
 
 ## Whats missing
@@ -63,7 +65,6 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * NPC AI, movement and pathfinding
 * Sound and music
 * Combat
-* Spell casting
 * Sleeping
 * Plot events
 * Plot variables, and quest variables (outside of conversations)
