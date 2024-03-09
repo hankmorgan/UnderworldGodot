@@ -805,7 +805,7 @@ namespace Underworld
             {
                 byte existingValue = (byte)GetAt(PTR + 0x15);
                 existingValue &= 0xC0; //Mask out current val
-                SetAt(PTR + 0xF, (byte)(existingValue | ((value & 0x3F) << 0x0)));
+                SetAt(PTR + 0x15, (byte)(existingValue | ((value & 0x3F) << 0x0)));
             }
         }
 

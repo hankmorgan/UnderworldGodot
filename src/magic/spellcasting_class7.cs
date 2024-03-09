@@ -151,9 +151,5 @@ namespace Underworld
 
             npc.DamageNPC(critter, basedamage, damagetype);           
         }
-
-
-
-
     }//end class
 }//end namespace

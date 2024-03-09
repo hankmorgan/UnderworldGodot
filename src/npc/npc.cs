@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using Godot;
 
 namespace Underworld
@@ -119,22 +120,23 @@ namespace Underworld
         public void SetAnimSprite(int animationNo, short frameNo, int relativeHeading)
         {
             //if (this.uwobject.item_id >= 127) { return; }
-            if (uwobject.npc_animation >= 8)
+            if (uwobject.AnimationFrame >= 8)
             {
-                uwobject.npc_animation = 0;
+                uwobject.AnimationFrame = 0;
             }
             string animname = CritterArt.GetAnimName(animationNo, relativeHeading); // "idle_front";
             //var crit = CritLoader.GetCritter(this.uwobject.item_id & 0x3F);
             var crit = CritterArt.GetCritter(this.uwobject.item_id & 0x3F);
             if (crit.Animations.ContainsKey(animname))
             {
-                uwobject.npc_animation = ApplyCritterAnimation(animationNo, frameNo, animname, crit);
+                uwobject.AnimationFrame = (byte)ApplyCritterAnimation(animationNo, frameNo, animname, crit);
+                
             }
             else
             {
                 uwobject.npc_animation = 0; //default animation to zero;
                 Debug.Print($"{animname} ({animationNo}) was not found for {this.uwobject.item_id & 0x3F}");
-                uwobject.npc_animation = ApplyCritterAnimation(animationNo, frameNo, CritterArt.GetAnimName(0, 0), crit);
+                uwobject.AnimationFrame = (byte)ApplyCritterAnimation(animationNo, frameNo, CritterArt.GetAnimName(0, 0), crit);
             }
         }
 
@@ -303,24 +305,95 @@ namespace Underworld
         /// <param name="damagetype"></param>
         public static void DamageNPC(uwObject critter, int basedamage, int damagetype, int damagesource = 0)
         {
-            var finaldamage = ScaleDamage(critter, basedamage, damagetype);
+            ScaleDamage(critter, ref basedamage, damagetype);
         
-            Debug.Print($"Damage {critter.a_name} by {finaldamage}");
+            Debug.Print($"Damage {critter.a_name} by {basedamage}");
 
             //Note to be strictly compatable with UW behaviour the damage should be accumulated for the npc an applied
             //once per frame. This is used to control the angering behaviour of the npc in checking against passiveness.
             //In the future a total damage figure will be used here that is evaulated each frame as part of the AI routine
-            critter.npc_hp = (byte)Math.Max(0, critter.npc_hp-finaldamage);
+            critter.npc_hp = (byte)Math.Max(0, critter.npc_hp-basedamage);
 
             //make the npc react to the damage source. player if 0
             //record the damage source as the player
             Debug.Print($"Record damage source as {damagesource}");
+            if (critter.npc_hp==0)
+            {
+                //do death handling.
+                if (SpecialDeathCases(critter))
+                {
+                    critter.npc_animation= 7;//
+                }                
+            }
         }
 
-        public static int ScaleDamage(uwObject critter, int basedamage, int damagetype)
+        /// <summary>
+        /// Handles special cases where some npcs death will trigger something to happen or change quest vars.
+        /// </summary>
+        /// <param name="critter"></param>
+        /// <returns>True if NPC should die.</returns>
+        public static bool SpecialDeathCases(uwObject critter)
         {
-            Debug.Print ("TODO SCALE DAMAGE");
-            return basedamage;
+            return true;
+        }
+
+        /// <summary>
+        /// Scales damage up or down based on the NPCs damage resistances
+        /// </summary>
+        /// <param name="critter"></param>
+        /// <param name="basedamage"></param>
+        /// <param name="damagetype"></param>
+        /// <returns></returns>
+        public static int ScaleDamage(uwObject critter, ref int basedamage, int damagetype)
+        {
+            var scales = commonObjDat.scaleresistances(critter.item_id);
+            if ((scales & damagetype) !=0)
+            {
+                if ((scales & 3) !=0)
+                {
+                    if (Rng.r.Next(0,3) < (scales & 3))
+                    {
+                        return 0;
+                    }
+                    damagetype &= 0xFC;
+                    if ((scales & damagetype) !=0)
+                    {
+                        return 0;
+                    }
+                }
+            }
+
+            if ((scales & 8) != 0)
+            {
+                if ((scales & 0x20) !=0)
+                {
+                    basedamage = Math.Min(127, basedamage<<1);
+                    return basedamage;                    
+                }
+            }
+            if ((damagetype & 0x20) == 0)
+            {
+                return basedamage;
+            }
+            else
+            {
+                if ((damagetype & 0x8) == 0)
+                    {
+                        return basedamage;
+                    }
+                else
+                {
+                    if  ((scales & 0x28) == 0x28)
+                    {
+                        return basedamage;
+                    }
+                    else
+                    {
+                        basedamage = Math.Min(127, basedamage<<1);
+                        return basedamage;  
+                    }
+                }
+            }
         }
     }//end class
 }//end namespace
