@@ -36,6 +36,10 @@ namespace Underworld
             instance.convo.Lines = new MessageScrollLine[13];
             instance.convo.Rows = 13;
             instance.convo.Columns = 36;
+            if (UWClass._RES==UWClass.GAME_UW2)
+            {
+                instance.scroll.Columns = 46;
+            }
             for (int i = 0; i <= instance.convo.Lines.GetUpperBound(0); i++)
             {
                 instance.convo.Lines[i] = new();

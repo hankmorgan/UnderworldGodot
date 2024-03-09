@@ -501,7 +501,10 @@ namespace Underworld
 		/// <param name="extra_arg_0"></param>
 		private void _paperdoll_gui_input(InputEvent @event, string extra_arg_0)
         {
-            if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed)
+            if (@event is InputEventMouseButton eventMouseButton 
+                && eventMouseButton.Pressed 
+                &&  (((eventMouseButton.ButtonIndex == MouseButton.Left) || (eventMouseButton.ButtonIndex == MouseButton.Right)))
+            )
             {
                 bool isLeftClick = (eventMouseButton.ButtonIndex == MouseButton.Left);
 

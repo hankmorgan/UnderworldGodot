@@ -737,25 +737,30 @@ namespace Underworld
         
 
         //// <summary>
-        /// Gets the simple object name without quantity
+        /// Gets the simple object name without articles etc
         /// </summary>
         /// <returns>The simple object name U.</returns>
         /// <param name="item_id">Item identifier.</param>
 
-        // public static string GetSimpleObjectNameUW(int item_id)
-        // {//Without quants.
-        //     string output = GetString(4, item_id);
-        //     if (output == null)
-        //     {
-        //         return "";
-        //     }
-        //     if (output.Contains("&"))
-        //     {
-        //         output = output.Split('&')[0];
-        //     }
+        public static string GetSimpleObjectNameUW(int item_id)
+        {//Without quants.
+            string output = GetString(4, item_id);
+            if (output == null)
+            {
+                return "";
+            }
+            if (output.Contains("_"))
+            {
+                output = output.Split("_")[1];
+            }
 
-        //     return (output.Replace("_", " "));
-        // }
+            if (output.Contains("&"))
+            {
+                output = output.Split('&')[0];
+            }
+
+            return output;
+        }
 
         /// <summary>
         /// Gets the description for the texture looked at.

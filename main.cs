@@ -150,7 +150,9 @@ public partial class main : Node3D
 
 	public override void _Input(InputEvent @event)
 	{
-		if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed)
+		if ((@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed)
+			&&
+			((eventMouseButton.ButtonIndex == MouseButton.Left) || (eventMouseButton.ButtonIndex == MouseButton.Right)))
 		{
 			if (MessageDisplay.WaitingForMore)
 			{

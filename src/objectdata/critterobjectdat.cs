@@ -27,15 +27,15 @@ namespace Underworld
         }
 
         /// <summary>
-        /// Array of 3 values representing the locational protection of armour on the NPC. 
-        /// Suspect this means helm, body and leggings protection
+        /// Array of 4 values representing the locational protection of armour on the NPC. 
+        /// Suspect this means chest, arms, legs and head protection
         /// </summary>
         /// <param name="item_id"></param>
         /// <param name="bodypart">0, 1 or 2</param>
         /// <returns></returns>
         public static int protection(int item_id, int bodypart)
         {
-            return buffer[CritterOffset(item_id) + 0x1 + bodypart];
+            return buffer[CritterOffset(item_id) + bodypart];
         }
 
         /// <summary>
@@ -121,6 +121,13 @@ namespace Underworld
         public static int deathsound(int item_id)
         {
             return (buffer[CritterOffset(item_id) + 0x8]) & 0x7;
+        }
+
+
+        public static int generaltype(int item_id)
+        {
+            Debug.Print("Race. Needs to be reconfirmed");
+            return buffer[CritterOffset(item_id) + 0x9];
         }
 
         /// <summary>
@@ -449,7 +456,7 @@ namespace Underworld
         /// </summary>
         /// <param name="item_id"></param>
         /// <returns></returns>
-        public static int dooropenskill(int item_id)
+        public static int dooropenskill(int item_id) //possibly this is not just door open skill...
         {
             return buffer[CritterOffset(item_id) + 0x2E] ;
         }

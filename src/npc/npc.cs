@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
+using System.Runtime.ConstrainedExecution;
 using Godot;
 
 namespace Underworld
@@ -130,7 +132,7 @@ namespace Underworld
             if (crit.Animations.ContainsKey(animname))
             {
                 uwobject.AnimationFrame = (byte)ApplyCritterAnimation(animationNo, frameNo, animname, crit);
-                
+
             }
             else
             {
@@ -215,17 +217,17 @@ namespace Underworld
             }
             critter.npc_goal = (byte)goal;
             critter.npc_gtarg = (byte)target;
-        }   
+        }
 
         public static bool LookAt(uwObject critter)
         {
-            if ((critter.npc_whoami>=240) && (critter.npc_whoami!=248))//Ethereal void creatures 
+            if ((critter.npc_whoami >= 240) && (critter.npc_whoami != 248))//Ethereal void creatures 
             {
                 EtheralVoidNPCDescription(critter);
             }
             else
             {
-                if ((_RES!=GAME_UW2) && (critter.npc_whoami==248))
+                if ((_RES != GAME_UW2) && (critter.npc_whoami == 248))
                 {//slasher of veils
                     var name = critter.a_name;
                     uimanager.AddToMessageScroll($"You see {name}");
@@ -233,8 +235,8 @@ namespace Underworld
                 else
                 {
                     RegularNPCDescription(critter);
-                }                
-            }  
+                }
+            }
             return true;
         }
 
@@ -242,18 +244,18 @@ namespace Underworld
         /// Describes Mr Jaws and his friends
         /// </summary>
         /// <param name="critter"></param>
-        private static void EtheralVoidNPCDescription(uwObject critter)        
+        private static void EtheralVoidNPCDescription(uwObject critter)
         {
-            if (_RES==GAME_UW2)
+            if (_RES == GAME_UW2)
             {
                 var id = critter.npc_animation + 277;
-                var name = GameStrings.GetString(1,id);
-                uimanager.AddToMessageScroll($"You see {name}");   
+                var name = GameStrings.GetString(1, id);
+                uimanager.AddToMessageScroll($"You see {name}");
             }
             else
             {
-                uimanager.AddToMessageScroll($"You see {critter.a_name.Replace("_"," ")}"); 
-            }         
+                uimanager.AddToMessageScroll($"You see {critter.a_name.Replace("_", " ")}");
+            }
         }
 
         /// <summary>
@@ -288,7 +290,7 @@ namespace Underworld
                 else
                 {//print race
                     uimanager.AddToMessageScroll($"You see {article} {mood} {npcrace} named {name}");
-                }                
+                }
             }
             else
             {
@@ -306,24 +308,24 @@ namespace Underworld
         public static void DamageNPC(uwObject critter, int basedamage, int damagetype, int damagesource = 0)
         {
             ScaleDamage(critter, ref basedamage, damagetype);
-        
+
             Debug.Print($"Damage {critter.a_name} by {basedamage}");
 
             //Note to be strictly compatable with UW behaviour the damage should be accumulated for the npc an applied
             //once per frame. This is used to control the angering behaviour of the npc in checking against passiveness.
             //In the future a total damage figure will be used here that is evaulated each frame as part of the AI routine
-            critter.npc_hp = (byte)Math.Max(0, critter.npc_hp-basedamage);
+            critter.npc_hp = (byte)Math.Max(0, critter.npc_hp - basedamage);
 
             //make the npc react to the damage source. player if 0
             //record the damage source as the player
             Debug.Print($"Record damage source as {damagesource}");
-            if (critter.npc_hp==0)
+            if (critter.npc_hp == 0)
             {
                 //do death handling.
                 if (SpecialDeathCases(critter))
                 {
-                    critter.npc_animation= 7;//
-                }                
+                    critter.npc_animation = 7;//
+                }
             }
         }
 
@@ -347,53 +349,233 @@ namespace Underworld
         public static int ScaleDamage(uwObject critter, ref int basedamage, int damagetype)
         {
             var scales = commonObjDat.scaleresistances(critter.item_id);
-            if ((scales & damagetype) !=0)
+
+            if ((scales & damagetype) == 0)
             {
-                if ((scales & 3) !=0)
+                //Seg25:4E9
+            }
+            else
+            {
+                if ((damagetype & 3) == 0)
                 {
-                    if (Rng.r.Next(0,3) < (scales & 3))
+                    //seg025_26A1_4DD
+                }
+                else
+                {
+                    //seg025_26A1_4BA:
+                    var r = Rng.r.Next(0, 3);
+                    if (r >= (scales & 0x3))
+                    {
+                        //seg025_26A1_4D5
+                        damagetype &= 0xFC;
+                    }
+                    else
                     {
                         return 0;
                     }
-                    damagetype &= 0xFC;
-                    if ((scales & damagetype) !=0)
-                    {
-                        return 0;
-                    }
+                }
+
+                //seg025_26A1_4DD
+                if ((scales & damagetype) == 0)
+                {
+                    // seg025_26A1_4E9
+                }
+                else
+                {
+                    return 0;
                 }
             }
 
-            if ((scales & 8) != 0)
+
+            //seg 25:429
+            if ((damagetype & 8) == 0)
             {
-                if ((scales & 0x20) !=0)
+                //seg025_26A1_4F5
+            }
+            else
+            {
+                if ((scales & 0x20) != 0)
                 {
-                    basedamage = Math.Min(127, basedamage<<1);
-                    return basedamage;                    
+                    return VulnerableDamage(ref basedamage);
                 }
             }
+
+            //seg025_26A1_4F5
             if ((damagetype & 0x20) == 0)
             {
                 return basedamage;
             }
             else
             {
-                if ((damagetype & 0x8) == 0)
-                    {
-                        return basedamage;
-                    }
+                if ((scales & 8) == 0)
+                {
+                    return basedamage;
+                }
                 else
                 {
-                    if  ((scales & 0x28) == 0x28)
+                    if ((scales & 0x28) == 0x28)
                     {
                         return basedamage;
                     }
                     else
                     {
-                        basedamage = Math.Min(127, basedamage<<1);
-                        return basedamage;  
+                        return VulnerableDamage(ref basedamage);
                     }
                 }
             }
+
+        }
+
+        static int VulnerableDamage(ref int basedamage)
+        {
+            basedamage = Math.Min(127, basedamage << 1);
+            return basedamage;
+        }
+
+
+
+        /// <summary>
+        /// Scales damage on the NPC based on it's vulnerabilities defined in critter object data
+        /// Spawns an animo of the specified type to represent blood etc
+        /// </summary>
+        /// <param name="critter"></param>
+        /// <param name="basedamage"></param>
+        /// <param name="damagetype"></param>
+        /// <param name="UpdateUI"></param>
+        public static void ScaledDamageOnNPCWithAnimo(uwObject critter, int basedamage, int damagetype, int animoclassindex, bool UpdateUI = true)
+        {
+            var noOfSplatters = basedamage;
+
+            noOfSplatters = noOfSplatters / 4;
+            if (noOfSplatters > 3)
+            {
+                noOfSplatters = 3;
+            }
+
+            Debug.Print($"Spawn animo {animoclassindex} {noOfSplatters} times");
+
+            npc.DamageNPC(critter, basedamage, damagetype);
+        }
+
+        /// <summary>
+        /// Gets a list of spells and properties the npc has.
+        /// </summary>
+        /// <param name="critter"></param>
+        /// <param name="prop"></param>
+        /// <returns></returns>
+        public static bool ListNPCProperties(uwObject critter, out string propertystring)
+        {
+            var propertycount = 0;
+            int[] prop = new int[] { -1, -1, -1, -1, -1, -1, -1, -1 };
+            propertystring = "";
+            if (critterObjectDat.UNK0x2DBits1To7(critter.item_id) != 0)
+            {
+                int si = 0;
+
+                for (si = 0; si < 3; si++)
+                {//read in the spells
+                    prop[si] = critterObjectDat.spell(critter.item_id, si);
+                }
+                if (critterObjectDat.generaltype(critter.item_id) == 0x17)
+                {//liches?
+                    if (critterObjectDat.isFlier(critter.item_id))
+                    {
+                        prop[si++] = 0x39;//can cast fly
+                    }
+                    if (critterObjectDat.dooropenskill(critter.item_id) >= 0x2D)
+                    {
+                        prop[si++] = 0x23;//can cast open
+                    }
+                    var testdam = 1;
+                    var scale = ScaleDamage(critter, ref testdam, 8);
+                    if (scale == 0)
+                    {
+                        prop[si++] = 0x1C; //can cast flameproof
+                    }
+
+                    if (critterObjectDat.UNK0x2DBits1To7(critter.item_id) >= 0x19)
+                    {
+                        if (critterObjectDat.level(critter.item_id) >= 9)
+                        {
+                            prop[si++] = 0x3b; //can cast ironflesh
+                        }
+                    }
+                }
+
+                //Make sure properties are unique
+                if (prop[0] == prop[1])
+                {
+                    prop[1] = -1;
+                }
+                else
+                {
+                    if (prop[1] == prop[2])
+                    {
+                        prop[1] = -1;
+                    }
+                }
+                if (prop[0] == prop[2])
+                {
+                    prop[2] = -1;
+                }
+
+                for (si = 0; si < 8; si++)
+                {
+                    if (prop[si] != -1)
+                    {
+                        propertycount++;
+                    }
+                }
+                if (propertycount == 0)
+                {
+                    return false;
+                }
+                else
+                {
+                    for (si = 0; si < 8; si++)
+                    {
+                        //loop the properties and turn them into spellnames
+                        if (prop[si] != -1)
+                        {
+                            int major = (prop[si] & 0xC0) >> 6;
+                            int minor = prop[si] & 0x3F;
+                            if (major == 0)
+                            {
+                                var spell = RunicMagic.SpellList[prop[si]];
+                                if (spell.SpellMajorClass == 4)
+                                {//if healing? and a golem??
+                                    if (critterObjectDat.generaltype(critter.item_id) == 0xF)
+                                    {
+                                        major = 1; minor = 6;//bouncing???
+                                    }
+                                }
+                            }
+                            if (major <= 0)
+                            {
+                                minor += 0x100;
+                            }
+                            else
+                            {
+                                minor += ((major + 0xC0) << 4);
+                            }
+
+                            propertystring += GameStrings.GetString(6, minor);
+                            if (propertycount - si > 2)
+                            {
+                                propertystring += ", ";
+                            }
+                            else
+                            {
+                                if (propertycount - si == 2)
+                                {
+                                    propertystring += GameStrings.GetString(0x274); //AND
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return (propertycount > 0);
         }
     }//end class
 }//end namespace

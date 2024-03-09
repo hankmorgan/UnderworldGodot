@@ -589,7 +589,10 @@ namespace Underworld
             }
         }
 
-        public short NPC_PowerFlag
+        /// <summary>
+        /// When set the npc is powerful and does extra damage and so on.
+        /// </summary>
+        public short IsPowerfull
         {
             get
             {

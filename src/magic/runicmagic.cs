@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace Underworld
 {
 
@@ -244,7 +246,7 @@ namespace Underworld
                     //apply mana cost
                     playerdat.play_mana = System.Math.Max(0, playerdat.play_mana - spell.ManaCost);
 
-                    uimanager.AddToMessageScroll($"DEBUG PRINT {spell.spellname}");
+                    Debug.Print($"{spell.spellname}");
                     //do the skill check
                     var chkresult = playerdat.SkillCheck(playerdat.Casting, spell.SpellLevel * 3);
                     switch (chkresult)
