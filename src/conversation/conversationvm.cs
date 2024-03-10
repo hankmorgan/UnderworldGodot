@@ -563,6 +563,7 @@ namespace Underworld
 					uimanager.EnableDisable(uimanager.instance.InteractionButtonsUW2[i], true);
 				}
 				uimanager.instance.messageScrollUW2.Size = new Godot.Vector2(840,140);
+				uimanager.instance.scroll.Columns = 44;				
 			}
 			for (int i = 0; i < uimanager.NoOfTradeSlots; i++)
 			{//move remaining objects in the trade area to the players tile.

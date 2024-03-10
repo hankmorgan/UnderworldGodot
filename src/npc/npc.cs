@@ -466,7 +466,7 @@ namespace Underworld
         public static bool ListNPCProperties(uwObject critter, out string propertystring)
         {
             var propertycount = 0;
-            int[] prop = new int[] { -1, -1, -1, -1, -1, -1, -1, -1 };
+            byte[] prop = new byte[] { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
             propertystring = "";
             if (critterObjectDat.UNK0x2DBits1To7(critter.item_id) != 0)
             {
@@ -474,7 +474,7 @@ namespace Underworld
 
                 for (si = 0; si < 3; si++)
                 {//read in the spells
-                    prop[si] = critterObjectDat.spell(critter.item_id, si);
+                    prop[si] = (byte)critterObjectDat.spell(critter.item_id, si);
                 }
                 if (critterObjectDat.generaltype(critter.item_id) == 0x17)
                 {//liches?
@@ -498,6 +498,7 @@ namespace Underworld
                         if (critterObjectDat.level(critter.item_id) >= 9)
                         {
                             prop[si++] = 0x3b; //can cast ironflesh
+                            propertycount++;
                         }
                     }
                 }
@@ -505,23 +506,23 @@ namespace Underworld
                 //Make sure properties are unique
                 if (prop[0] == prop[1])
                 {
-                    prop[1] = -1;
+                    prop[1] = 0xff;
                 }
                 else
                 {
                     if (prop[1] == prop[2])
                     {
-                        prop[1] = -1;
+                        prop[1] = 0xff;
                     }
                 }
                 if (prop[0] == prop[2])
                 {
-                    prop[2] = -1;
+                    prop[2] = 0xff;
                 }
 
                 for (si = 0; si < 8; si++)
                 {
-                    if (prop[si] != -1)
+                    if (prop[si] != 0xff)
                     {
                         propertycount++;
                     }
@@ -532,11 +533,12 @@ namespace Underworld
                 }
                 else
                 {
+                    var propertiesremaining = propertycount-1;
                     for (si = 0; si < 8; si++)
                     {
                         //loop the properties and turn them into spellnames
-                        if (prop[si] != -1)
-                        {
+                        if (prop[si] != 0xff)
+                        {                           
                             int major = (prop[si] & 0xC0) >> 6;
                             int minor = prop[si] & 0x3F;
                             if (major == 0)
@@ -560,17 +562,18 @@ namespace Underworld
                             }
 
                             propertystring += GameStrings.GetString(6, minor);
-                            if (propertycount - si > 2)
+                            if (propertiesremaining >= 2)
                             {
                                 propertystring += ", ";
                             }
                             else
                             {
-                                if ((propertycount - si == 2) && (propertycount>1))
+                                if ((propertiesremaining == 1) && (propertycount>1))
                                 {
                                     propertystring += GameStrings.GetString(0x274); //AND
                                 }
                             }
+                            propertiesremaining--;
                         }
                     }
                 }

@@ -33,23 +33,21 @@ namespace Underworld
             instance.scroll.OutputControl = new RichTextLabel[] { MessageScroll };
 
             instance.convo = new();
-            if (UWClass._RES==UWClass.GAME_UW2)
+            if (UWClass._RES == UWClass.GAME_UW2)
             {
-            instance.convo.Lines = new MessageScrollLine[12];            
-            instance.convo.Rows = 12;
-            instance.convo.Columns = 44;
+                instance.convo.Lines = new MessageScrollLine[12];
+                instance.convo.Rows = 12;
+                instance.convo.Columns = 44;
+
+                instance.scroll.Columns = 44;
             }
             else
             {
-            instance.convo.Lines = new MessageScrollLine[13];            
-            instance.convo.Rows = 13;
-            instance.convo.Columns = 36;
+                instance.convo.Lines = new MessageScrollLine[13];
+                instance.convo.Rows = 13;
+                instance.convo.Columns = 36;
             }
 
-            if (UWClass._RES==UWClass.GAME_UW2)
-            {
-                instance.scroll.Columns = 46;
-            }
             for (int i = 0; i <= instance.convo.Lines.GetUpperBound(0); i++)
             {
                 instance.convo.Lines[i] = new();
