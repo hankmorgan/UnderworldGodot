@@ -1149,6 +1149,33 @@ namespace Underworld
 
         public static int ScaleDamageUW1(int item_id, ref int basedamage, int damagetype)
         {
+
+            var scales = commonObjDat.scaleresistances(item_id);
+
+            if ((scales & damagetype) != 0)
+            { //has some sort of resistance
+                if ((damagetype & 3) != 0) //magic resistances
+                {
+                    //damage & 3 != 0
+                    //seg025_26A1_4BA:
+                    var r = Rng.r.Next(0, 3);
+                    if (r >= (scales & 0x3))
+                    {
+                        //seg025_26A1_4D5
+                        damagetype &= 0xFC; //mask out magic damage. possibly means magic can be used in combo with other damage type??
+                    }
+                    else
+                    {
+                        return 0;
+                    }
+                }
+
+                //seg025_26A1_4DD
+                if ((scales & damagetype) != 0)
+                { //the damage type is resisted after possibly masking out magic damage.
+                    return 0;
+                }
+            }
             return basedamage;
         }
         /// <summary>
@@ -1162,24 +1189,17 @@ namespace Underworld
         {
             var scales = commonObjDat.scaleresistances(item_id);
 
-            if ((scales & damagetype) == 0)
-            {
-                //Seg25:4E9
-            }
-            else
-            {
-                if ((damagetype & 3) == 0) //magic resistances
+            if ((scales & damagetype) != 0)
+            { //has some sort of resistance
+                if ((damagetype & 3) != 0) //magic resistances
                 {
-                    //seg025_26A1_4DD
-                }
-                else
-                { //damage & 3 != 0
+                    //damage & 3 != 0
                     //seg025_26A1_4BA:
                     var r = Rng.r.Next(0, 3);
                     if (r >= (scales & 0x3))
                     {
                         //seg025_26A1_4D5
-                        damagetype &= 0xFC; //mask out magic damage.
+                        damagetype &= 0xFC; //mask out magic damage. possibly means magic can be used in combo with other damage type??
                     }
                     else
                     {
@@ -1188,50 +1208,44 @@ namespace Underworld
                 }
 
                 //seg025_26A1_4DD
-                if ((scales & damagetype) == 0)
-                {
-                    // seg025_26A1_4E9
-                }
-                else
-                {
+                if ((scales & damagetype) != 0)
+                { //the damage type is resisted after possibly masking out magic damage.
                     return 0;
                 }
             }
 
-
+            //if at this point magic has possibly been masked out. but checks need to be made to see how fire/ice damage interact with fire/ice resistances
+            //Ice is unique to UW2 so this does not apply to UW1.
             //seg 25:429
-            if ((damagetype & 8) == 0) //test for fire
+            if ((damagetype & 8) != 0) //test for fire damage
             {
-                //seg025_26A1_4F5
-            }
-            else
-            {
-                if ((scales & 0x20) != 0) //test for ice.
+                if ((scales & 0x20) != 0) //test for ice resistance
                 {
-                    return VulnerableDamage(ref basedamage);
+                    return VulnerableDamage(ref basedamage); //fire does double damage to ice resistance creatures?
                 }
             }
 
             //seg025_26A1_4F5
-            if ((damagetype & 0x20) == 0) //test for ice
+            if ((damagetype & 0x20) == 0) //test for ice damage
             {
                 return basedamage; 
             }
             else
-            {
-                if ((scales & 8) == 0)//test for fire
+            {//not ice damage
+                if ((scales & 8) == 0)//test for no fire resistance
                 {
-                    return basedamage; 
+                    return basedamage;  
                 }
                 else
                 {
+                    //if has fire ressistance
                     if ((scales & 0x28) == 0x28) //test for fire and ice together.
                     {
-                        return basedamage; //when fire and ice
+                        return basedamage; //when fire and ice together ice only does regular damage
                     }
                     else
                     {
-                        return VulnerableDamage(ref basedamage);
+                        return VulnerableDamage(ref basedamage); //if has no ice resistance, ice damage will do double damage
                     }
                 }
             }
