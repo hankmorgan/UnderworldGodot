@@ -18,7 +18,6 @@
 [ext_resource type="Texture2D" uid="uid://w3pet1fmhrgp" path="res://resources/placeholder_art/uw1lfti/4.png" id="10_63i0w"]
 [ext_resource type="Texture2D" uid="uid://8hg7a1ttaly6" path="res://resources/placeholder_art/uw1lfti/6.png" id="12_3hev6"]
 [ext_resource type="Texture2D" uid="uid://hyq11h2le5c0" path="res://resources/placeholder_art/uw1lfti/8.png" id="14_nhhdh"]
-[ext_resource type="Texture2D" uid="uid://2fndhxavasa7" path="res://resources/placeholder_art/uw2optbtn/optbtn.png" id="14_skaqq"]
 [ext_resource type="Texture2D" uid="uid://b1lj1mh50p8a1" path="res://resources/placeholder_art/uw2optbtn/uw2attackbutton.png" id="15_f0cyy"]
 [ext_resource type="Texture2D" uid="uid://2qekjomlpnxd" path="res://resources/placeholder_art/uw1lfti/10.png" id="16_kxj2a"]
 [ext_resource type="Texture2D" uid="uid://b1y5rs02fgv6d" path="res://resources/cross.png" id="18_tfr7p"]
@@ -26,6 +25,7 @@
 [ext_resource type="Texture2D" uid="uid://b4hn75lfpnecd" path="res://resources/placeholder_art/grave.png" id="20_n8sfi"]
 [ext_resource type="Texture2D" uid="uid://b5mwiifn8jtb6" path="res://resources/placeholder_art/uw2placeholdermain.png" id="21_3ww2u"]
 [ext_resource type="Texture2D" uid="uid://dx526kvjk8jmj" path="res://resources/cross2.png" id="21_5p8p7"]
+[ext_resource type="Texture2D" uid="uid://6t8lhnhw347e" path="res://resources/placeholder_art/textbox_fill_uw2.png" id="22_vajvs"]
 [ext_resource type="Texture2D" uid="uid://cvik4hdmkwuwk" path="res://resources/placeholder_art/paperdolluw1/up button 027.png" id="22_vc6ux"]
 [ext_resource type="Texture2D" uid="uid://01h0bdambuq4" path="res://resources/placeholder_art/paperdolluw1/down button 028.png" id="23_e17mk"]
 [ext_resource type="Texture2D" uid="uid://51go53yqj8oq" path="res://resources/placeholder_art/panels/panelsstats.png" id="24_filpa"]
@@ -612,7 +612,7 @@ offset_top = 676.0
 offset_right = 904.0
 offset_bottom = 792.0
 mouse_filter = 2
-texture = ExtResource("7_qiq8a")
+texture = ExtResource("22_vajvs")
 
 [node name="messageScrollUW2" type="RichTextLabel" parent="UI/UW2"]
 texture_filter = 1
@@ -632,13 +632,6 @@ line 4
 aaaaaaaaaaaaaaaaaaa"
 scroll_active = false
 autowrap_mode = 0
-
-[node name="OPTBTNPLACEHOLDER" type="TextureRect" parent="UI/UW2"]
-offset_left = 971.0
-offset_top = 682.0
-offset_right = 1279.0
-offset_bottom = 798.0
-texture = ExtResource("14_skaqq")
 
 [node name="OptionsButtonUW2" type="TextureButton" parent="UI/UW2"]
 offset_left = 1179.0
@@ -2049,6 +2042,7 @@ offset_bottom = 800.0
 mouse_filter = 0
 
 [node name="MainMenu" type="Panel" parent="UI/Common"]
+visible = false
 offset_right = 40.0
 offset_bottom = 40.0
 

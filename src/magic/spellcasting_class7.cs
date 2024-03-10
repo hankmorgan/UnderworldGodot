@@ -231,8 +231,7 @@ namespace Underworld
                 for (int si = 0; si < 6; si++)
                 {
                     var testdam = 1;
-                    var scale = npc.ScaleDamage(critter, ref testdam, damagetypes[si]);
-                    Debug.Print($"Scale {damagetypes[si]}->{scale}");
+                    var scale = npc.ScaleDamage(critter, ref testdam, damagetypes[si]);                    
                     if (scale == 0)
                     {
                         if (

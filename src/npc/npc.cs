@@ -566,7 +566,7 @@ namespace Underworld
                             }
                             else
                             {
-                                if (propertycount - si == 2)
+                                if ((propertycount - si == 2) && (propertycount>1))
                                 {
                                     propertystring += GameStrings.GetString(0x274); //AND
                                 }

@@ -81,19 +81,40 @@ namespace Underworld
                 {//you are POISON LEVEL \n Your current vitality is vit out of maxvit
 
                     /*
-        0 barely
-        1 mildly
-        2 badly
-        3 seriously
-        4 critically
-        */
+                        0 barely
+                        1 mildly
+                        2 badly
+                        3 seriously
+                        4 critically
+                        */
 
                     var poisonlevel = (playerdat.play_poison - 1) % 5;
-                    uimanager.AddToMessageScroll($"{GameStrings.GetString(1, GameStrings.str_you_are_)}{GameStrings.GetString(1, GameStrings.str_barely + poisonlevel)}{GameStrings.GetString(1, GameStrings.str__poisoned_)}\n{GameStrings.GetString(1, GameStrings.str_your_current_vitality_is_)}{playerdat.play_hp} out of {playerdat.max_hp}");
+                    if (ConversationVM.InConversation)
+                    {
+                        uimanager.AddToMessageScroll(
+                            stringToAdd: $"{GameStrings.GetString(1, GameStrings.str_you_are_)}{GameStrings.GetString(1, GameStrings.str_barely + poisonlevel)}{GameStrings.GetString(1, GameStrings.str__poisoned_)}\n{GameStrings.GetString(1, GameStrings.str_your_current_vitality_is_)}{playerdat.play_hp} out of {playerdat.max_hp}"
+                            ,mode: MessageDisplay.MessageDisplayMode.TemporaryMessage);
+                    }
+                    else
+                    {
+                        uimanager.AddToMessageScroll(
+                            stringToAdd: $"{GameStrings.GetString(1, GameStrings.str_you_are_)}{GameStrings.GetString(1, GameStrings.str_barely + poisonlevel)}{GameStrings.GetString(1, GameStrings.str__poisoned_)}\n{GameStrings.GetString(1, GameStrings.str_your_current_vitality_is_)}{playerdat.play_hp} out of {playerdat.max_hp}");
+                    }
+                    
                 }
                 else
                 {
-                    uimanager.AddToMessageScroll($"{GameStrings.GetString(1, GameStrings.str_your_current_vitality_is_)}{playerdat.play_hp} out of {playerdat.max_hp}");
+                    if (ConversationVM.InConversation)
+                    {
+                        uimanager.AddToMessageScroll(
+                            stringToAdd: $"{GameStrings.GetString(1, GameStrings.str_your_current_vitality_is_)}{playerdat.play_hp} out of {playerdat.max_hp}", 
+                            mode: MessageDisplay.MessageDisplayMode.TemporaryMessage);
+                    }
+                    else
+                    {
+                        uimanager.AddToMessageScroll($"{GameStrings.GetString(1, GameStrings.str_your_current_vitality_is_)}{playerdat.play_hp} out of {playerdat.max_hp}");
+                    }
+                    
                 }
             }
         }
@@ -103,7 +124,19 @@ namespace Underworld
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
-                uimanager.AddToMessageScroll($"{GameStrings.GetString(1, GameStrings.str_your_current_mana_points_are_)}{playerdat.play_mana} out of {playerdat.max_mana}");
+                if (ConversationVM.InConversation)
+                {
+                    uimanager.AddToMessageScroll(
+                        stringToAdd: $"{GameStrings.GetString(1, GameStrings.str_your_current_mana_points_are_)}{playerdat.play_mana} out of {playerdat.max_mana}",
+                        mode: MessageDisplay.MessageDisplayMode.TemporaryMessage
+                        );
+                }
+                else
+                {
+                    uimanager.AddToMessageScroll(
+                        stringToAdd: $"{GameStrings.GetString(1, GameStrings.str_your_current_mana_points_are_)}{playerdat.play_mana} out of {playerdat.max_mana}"
+                        );
+                }                
             }
         }
     }//end class

@@ -257,7 +257,7 @@ namespace Underworld
                         }
                         else
                         {
-                            if (InteractionMode != InteractionModes.ModeTalk)
+                            if ((InteractionMode != InteractionModes.ModeTalk) && (!ConversationVM.InConversation))
                             {
                                 if (isLeftClick)
                                 {
@@ -274,10 +274,9 @@ namespace Underworld
                                 }
                             }
                             else
-                            {//click on a slot in talk mode
+                            {//click on a slot in talk mode and in a conversation
                                 if (isLeftClick)
                                 {
-
                                     //left click pickup in conversation
                                     var obj = playerdat.InventoryObjects[objAtSlot];
                                     if ((obj.majorclass == 2) && (obj.minorclass == 0))

@@ -37,7 +37,8 @@ namespace Underworld
 			EnableDisable(placeholderuw2, false);
 
 			EnableDisable(uw1UI, UWClass._RES == UWClass.GAME_UW1);
-			EnableDisable(uw2UI, UWClass._RES != UWClass.GAME_UW1);            
+			EnableDisable(uw2UI, UWClass._RES != UWClass.GAME_UW1);  
+			EnableDisable(PanelMainMenu,true);          
 		}
 		
 

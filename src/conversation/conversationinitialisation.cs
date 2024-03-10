@@ -53,6 +53,17 @@ namespace Underworld
             if (_RES==GAME_UW2)
             {//set up the unique ui for uw2 conversations
                 uimanager.instance.mainwindowUW2.Texture = uimanager.bitmaps.LoadImageAt(BytLoader.CONV_BYT, false);
+                for (int i=0; i<=uimanager.instance.SelectedRunes.GetUpperBound(0);i++)
+                {
+                uimanager.EnableDisable(uimanager.instance.SelectedRunes[i],false);
+                }
+                for (int i=0; i<=uimanager.instance.InteractionButtonsUW2.GetUpperBound(0);i++)
+                {//disable interaction buttons
+                    uimanager.EnableDisable(uimanager.instance.InteractionButtonsUW2[i],false);
+                }
+
+                uimanager.instance.scroll.Columns = 100;
+                uimanager.instance.messageScrollUW2.SetSize(new Godot.Vector2(1160,140));
             }
             else
             {

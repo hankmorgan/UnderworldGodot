@@ -27,6 +27,11 @@ namespace Underworld
                 Debug.Print ($"Object {obj.majorclass}-{obj.minorclass}-{obj.classindex} {obj.a_name}");
                 switch (obj.majorclass)
                 {
+                    case 1://npcs
+                        {                            
+                            talk.Talk(index, objList, WorldObject);
+                            return true;                          
+                        }
                     case 2:
                         {
                             result = UseMajorClass2(obj, objList, WorldObject);

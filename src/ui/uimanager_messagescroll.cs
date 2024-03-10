@@ -33,9 +33,19 @@ namespace Underworld
             instance.scroll.OutputControl = new RichTextLabel[] { MessageScroll };
 
             instance.convo = new();
-            instance.convo.Lines = new MessageScrollLine[13];
+            if (UWClass._RES==UWClass.GAME_UW2)
+            {
+            instance.convo.Lines = new MessageScrollLine[12];            
+            instance.convo.Rows = 12;
+            instance.convo.Columns = 44;
+            }
+            else
+            {
+            instance.convo.Lines = new MessageScrollLine[13];            
             instance.convo.Rows = 13;
             instance.convo.Columns = 36;
+            }
+
             if (UWClass._RES==UWClass.GAME_UW2)
             {
                 instance.scroll.Columns = 46;
@@ -73,8 +83,6 @@ namespace Underworld
             {//don't allow any overwriting when a message is already being displayed temporarily.
                 return;
             }
-
-
 
             switch (mode)
             {
