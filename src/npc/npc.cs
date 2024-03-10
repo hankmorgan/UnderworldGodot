@@ -307,7 +307,7 @@ namespace Underworld
         /// <param name="damagetype"></param>
         public static void DamageNPC(uwObject critter, int basedamage, int damagetype, int damagesource = 0)
         {
-            ScaleDamage(critter, ref basedamage, damagetype);
+            uwObject.ScaleDamage(critter.item_id, ref basedamage, damagetype);
 
             Debug.Print($"Damage {critter.a_name} by {basedamage}");
 
@@ -339,98 +339,7 @@ namespace Underworld
             return true;
         }
 
-        /// <summary>
-        /// Scales damage up or down based on the NPCs damage resistances
-        /// </summary>
-        /// <param name="critter"></param>
-        /// <param name="basedamage"></param>
-        /// <param name="damagetype"></param>
-        /// <returns></returns>
-        public static int ScaleDamage(uwObject critter, ref int basedamage, int damagetype)
-        {
-            var scales = commonObjDat.scaleresistances(critter.item_id);
-
-            if ((scales & damagetype) == 0)
-            {
-                //Seg25:4E9
-            }
-            else
-            {
-                if ((damagetype & 3) == 0)
-                {
-                    //seg025_26A1_4DD
-                }
-                else
-                {
-                    //seg025_26A1_4BA:
-                    var r = Rng.r.Next(0, 3);
-                    if (r >= (scales & 0x3))
-                    {
-                        //seg025_26A1_4D5
-                        damagetype &= 0xFC;
-                    }
-                    else
-                    {
-                        return 0;
-                    }
-                }
-
-                //seg025_26A1_4DD
-                if ((scales & damagetype) == 0)
-                {
-                    // seg025_26A1_4E9
-                }
-                else
-                {
-                    return 0;
-                }
-            }
-
-
-            //seg 25:429
-            if ((damagetype & 8) == 0)
-            {
-                //seg025_26A1_4F5
-            }
-            else
-            {
-                if ((scales & 0x20) != 0)
-                {
-                    return VulnerableDamage(ref basedamage);
-                }
-            }
-
-            //seg025_26A1_4F5
-            if ((damagetype & 0x20) == 0)
-            {
-                return basedamage;
-            }
-            else
-            {
-                if ((scales & 8) == 0)
-                {
-                    return basedamage;
-                }
-                else
-                {
-                    if ((scales & 0x28) == 0x28)
-                    {
-                        return basedamage;
-                    }
-                    else
-                    {
-                        return VulnerableDamage(ref basedamage);
-                    }
-                }
-            }
-
-        }
-
-        static int VulnerableDamage(ref int basedamage)
-        {
-            basedamage = Math.Min(127, basedamage << 1);
-            return basedamage;
-        }
+ 
 
 
 
@@ -487,7 +396,8 @@ namespace Underworld
                         prop[si++] = 0x23;//can cast open
                     }
                     var testdam = 1;
-                    var scale = ScaleDamage(critter, ref testdam, 8);
+                    var scale = uwObject.ScaleDamage(critter.item_id, ref testdam, 8);
+
                     if (scale == 0)
                     {
                         prop[si++] = 0x1C; //can cast flameproof

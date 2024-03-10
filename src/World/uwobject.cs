@@ -1134,5 +1134,115 @@ namespace Underworld
             }
         }       
 
+         public static int ScaleDamage(int item_id, ref int basedamage, int damagetype)
+         {
+            if (_RES==GAME_UW2)
+            {
+                return ScaleDamageUW2(item_id: item_id, basedamage: ref basedamage, damagetype: damagetype);
+            }
+            else
+            {
+                return ScaleDamageUW1(item_id: item_id, basedamage: ref basedamage, damagetype: damagetype);
+            }
+         }
+
+
+        public static int ScaleDamageUW1(int item_id, ref int basedamage, int damagetype)
+        {
+            return basedamage;
+        }
+        /// <summary>
+        /// Scales damage up or down based on the NPCs damage resistances
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="basedamage"></param>
+        /// <param name="damagetype"></param>
+        /// <returns></returns>
+        public static int ScaleDamageUW2(int item_id, ref int basedamage, int damagetype)
+        {
+            var scales = commonObjDat.scaleresistances(item_id);
+
+            if ((scales & damagetype) == 0)
+            {
+                //Seg25:4E9
+            }
+            else
+            {
+                if ((damagetype & 3) == 0) //magic resistances
+                {
+                    //seg025_26A1_4DD
+                }
+                else
+                { //damage & 3 != 0
+                    //seg025_26A1_4BA:
+                    var r = Rng.r.Next(0, 3);
+                    if (r >= (scales & 0x3))
+                    {
+                        //seg025_26A1_4D5
+                        damagetype &= 0xFC; //mask out magic damage.
+                    }
+                    else
+                    {
+                        return 0;
+                    }
+                }
+
+                //seg025_26A1_4DD
+                if ((scales & damagetype) == 0)
+                {
+                    // seg025_26A1_4E9
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+
+
+            //seg 25:429
+            if ((damagetype & 8) == 0) //test for fire
+            {
+                //seg025_26A1_4F5
+            }
+            else
+            {
+                if ((scales & 0x20) != 0) //test for ice.
+                {
+                    return VulnerableDamage(ref basedamage);
+                }
+            }
+
+            //seg025_26A1_4F5
+            if ((damagetype & 0x20) == 0) //test for ice
+            {
+                return basedamage; 
+            }
+            else
+            {
+                if ((scales & 8) == 0)//test for fire
+                {
+                    return basedamage; 
+                }
+                else
+                {
+                    if ((scales & 0x28) == 0x28) //test for fire and ice together.
+                    {
+                        return basedamage; //when fire and ice
+                    }
+                    else
+                    {
+                        return VulnerableDamage(ref basedamage);
+                    }
+                }
+            }
+
+        }
+
+        static int VulnerableDamage(ref int basedamage)
+        {
+            basedamage = System.Math.Min(127, basedamage << 1);
+            return basedamage;
+        }
+
     } //end class
 }//end namespace
