@@ -139,7 +139,7 @@ namespace Underworld
                 }
                 //test damage type 7 in scale damage.
                 int test = 1;
-                var scale = npc.ScaleDamage(critter, ref test, 128);
+                var scale = uwObject.ScaleDamage(critter.item_id, ref test, 128);
                 if (scale == 0)
                 {
                     var6 |= 2; //undead?
@@ -231,7 +231,7 @@ namespace Underworld
                 for (int si = 0; si < 6; si++)
                 {
                     var testdam = 1;
-                    var scale = npc.ScaleDamage(critter, ref testdam, damagetypes[si]);                    
+                    var scale = uwObject.ScaleDamage(critter.item_id, ref testdam, damagetypes[si]);                    
                     if (scale == 0)
                     {
                         if (

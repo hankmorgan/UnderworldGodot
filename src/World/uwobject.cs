@@ -1147,7 +1147,7 @@ namespace Underworld
          }
 
 
-        public static int ScaleDamageUW1(int item_id, ref int basedamage, int damagetype)
+        static int ScaleDamageUW1(int item_id, ref int basedamage, int damagetype)
         {
 
             var scales = commonObjDat.scaleresistances(item_id);
@@ -1185,7 +1185,7 @@ namespace Underworld
         /// <param name="basedamage"></param>
         /// <param name="damagetype"></param>
         /// <returns></returns>
-        public static int ScaleDamageUW2(int item_id, ref int basedamage, int damagetype)
+        static int ScaleDamageUW2(int item_id, ref int basedamage, int damagetype)
         {
             var scales = commonObjDat.scaleresistances(item_id);
 
