@@ -176,6 +176,12 @@ namespace Underworld
             }
         }     
 
+
+        /// <summary>
+        /// Casts a spell from a object. eg wand.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="spell"></param>
         public static void CastObjectSpell(uwObject obj, MagicEnchantment spell)
         {
             use.SpellHasBeenCast = true;

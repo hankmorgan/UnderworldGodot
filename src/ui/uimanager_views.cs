@@ -158,7 +158,9 @@ namespace Underworld
                                     }
                                     else
                                     {
-                                        SpellCasting.CastCurrentSpellOnRayCastTarget(index, UWTileMap.current_tilemap.LevelObjects);
+                                        SpellCasting.CastCurrentSpellOnRayCastTarget(
+                                            index: index, 
+                                            objList: UWTileMap.current_tilemap.LevelObjects);
                                     }
                                 }
                             }
