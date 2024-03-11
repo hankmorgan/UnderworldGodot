@@ -100,7 +100,8 @@ namespace Underworld
                         CastClass7_Spells(
                             minorclass: currentSpell.SpellMinorClass, 
                             index: index, 
-                            objList: objList);
+                            objList: objList,
+                            caster: 1);
                         currentSpell = null;
                         uimanager.instance.mousecursor.SetCursorToCursor();
                         break;

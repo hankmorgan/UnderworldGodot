@@ -1,11 +1,12 @@
 using System.Diagnostics;
+using System.Net.Http.Headers;
 
 namespace Underworld
 {
     public partial class SpellCasting : UWClass
     {
         //targeted spells
-        public static void CastClass7_Spells(int minorclass, int index, uwObject[] objList)
+        public static void CastClass7_Spells(int minorclass, int index, uwObject[] objList, int caster = 1)
         {
             if (_RES == GAME_UW2)
             {
@@ -30,6 +31,7 @@ namespace Underworld
                         break;
                     case 5:
                         //paralyse  
+                        Paralyse(index, objList, caster);
                         break;
                     case 6:
                         ///bleed (identical)
@@ -73,6 +75,7 @@ namespace Underworld
                         break;
                     case 1:
                         //Cause fear
+                        Causefear(index, objList);
                         break;
                     case 2:
                         //smite undeead
@@ -85,6 +88,7 @@ namespace Underworld
                         break;
                     case 5:
                         //paralyse
+                        Paralyse(index, objList, caster);
                         break;
                 }
             }
@@ -230,7 +234,7 @@ namespace Underworld
                 for (int si = 0; si < 6; si++)
                 {
                     var testdam = 1;
-                    var scale = uwObject.ScaleDamage(critter.item_id, ref testdam, damagetypes[si]);                    
+                    var scale = uwObject.ScaleDamage(critter.item_id, ref testdam, damagetypes[si]);
                     if (scale == 0)
                     {
                         if (
@@ -255,14 +259,14 @@ namespace Underworld
                 if (critterObjectDat.generaltype(critter.item_id) == 0x17)
                 {
                     if (HasResistances)
-                        {
-                            resistancesstring += ", ";
-                        }
+                    {
+                        resistancesstring += ", ";
+                    }
                     resistancesstring += GameStrings.GetString(0xD25);//rune of statis?
                 }
                 if (HasResistances)
                 {
-                    uimanager.AddToMessageScroll($"{GameStrings.GetString(1,0x13D)}{resistancesstring}");
+                    uimanager.AddToMessageScroll($"{GameStrings.GetString(1, 0x13D)}{resistancesstring}");
                 }
             }
             uimanager.AddToMessageScroll(output);
@@ -276,23 +280,23 @@ namespace Underworld
         /// <param name="newgoal"></param>
         /// <param name="newattitude"></param>
         /// <param name="newgtarg"></param>
-        static void ApplyAIChangingSpell(uwObject critter, byte newgoal=0xFF, byte newattitude = 0xFF, byte newgtarg = 0xFF)
+        static void ApplyAIChangingSpell(uwObject critter, byte newgoal = 0xFF, byte newattitude = 0xFF, byte newgtarg = 0xFF)
         {
             int test = 1;
-            if (uwObject.ScaleDamage(critter.item_id,ref test, 3)!=0)
+            if (uwObject.ScaleDamage(critter.item_id, ref test, 3) != 0)
             {
                 ObjectCreator.SpawnAnimo_Placeholder(7);
-                if (newgoal!=0xFF)
+                if (newgoal != 0xFF)
                 {
                     critter.npc_goal = newgoal;
                 }
 
-                if (newattitude!=0xFF)
+                if (newattitude != 0xFF)
                 {
                     critter.npc_attitude = newattitude;
                 }
 
-                if (newgtarg!=0xFF)
+                if (newgtarg != 0xFF)
                 {
                     critter.npc_gtarg = newgtarg;
                 }
@@ -300,23 +304,68 @@ namespace Underworld
             else
             {
                 Debug.Print("NPC has resisted spell");
-            }            
+            }
         }
 
         static void Causefear(int index, uwObject[] objList)
         {
             var critter = objList[index];
-            if (critter!=null)
+            if (critter != null)
             {
                 if (critter.majorclass == 1)
                 {//npc class
                     critter.npc_attitude = 1;
 
                     ApplyAIChangingSpell(
-                        critter:critter, 
+                        critter: critter,
                         newgoal: (byte)npc.npc_goals.npc_goal_fear_6,
                         newgtarg: 1);
 
+                }
+            }
+        }
+
+        static void Paralyse(int index, uwObject[] objList, int caster = 1)
+        {
+            var critter = objList[index];
+            if (critter != null)
+            {
+                if (_RES == GAME_UW2)
+                {
+                    int castscore;
+                    if (caster == 1)//player has cast
+                    {
+                        castscore = playerdat.Casting / 3;
+                    }
+                    else
+                    {
+                        castscore = 8;
+                    }
+
+                    var duration = 0x10 + Rng.r.Next(0, 16) * castscore;
+
+                    if (critter.majorclass == 1)
+                    {
+                        int test = 1;
+                        if (uwObject.ScaleDamage(critter.item_id, ref test, 0x80) != 0)
+                        {//check for undead, immune
+                            ApplyAIChangingSpell(
+                                critter: critter,
+                                newgoal: (byte)npc.npc_goals.npc_goal_petrified,
+                                newattitude: 1,
+                                newgtarg: (byte)duration);
+                        }
+                    }
+                }
+                else
+                {   //UW1 is much simpler, does no skill checking and sets a different goal than UW2.
+                    if (critter.majorclass == 1)
+                    {
+                        ApplyAIChangingSpell(
+                            critter: critter,
+                            newgoal: (byte)npc.npc_goals.npc_goal_stand_still_7,
+                            newattitude: 1);
+                    }
                 }
             }
         }
