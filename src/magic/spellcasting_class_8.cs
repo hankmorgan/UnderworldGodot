@@ -55,10 +55,6 @@ namespace Underworld
                         break;
                     }
             }
-
-
-            //Spawn the object in the tile           
-
         }
     }   //end class
 }//end namespace

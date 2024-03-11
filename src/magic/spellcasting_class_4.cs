@@ -9,7 +9,7 @@ namespace Underworld
         /// <param name="minorclass"></param>
         public static void CastClass4_Heal(int minorclass)
         {
-            int healamount = 0;
+            int healamount;
             if (minorclass == 0xF)
             {//what spell would do this???
                 healamount = -1;

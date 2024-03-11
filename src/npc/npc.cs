@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Runtime.ConstrainedExecution;
 using Godot;
 
 namespace Underworld
@@ -29,16 +26,9 @@ namespace Underworld
 
 
         /// <summary>
-        /// Mesh this sprite is drawn on
+        /// Possible AI goals
         /// </summary>
-        //public MeshInstance3D sprite;
-
-        /// <summary>
-        /// The material for rendering this unique npc
-        /// </summary>
-        //public ShaderMaterial material;
-
-        public enum npc_goals
+        public enum npc_goals : byte
         {
             npc_goal_stand_still_0 = 0,
             npc_goal_goto_1 = 1,
@@ -46,7 +36,7 @@ namespace Underworld
             npc_goal_follow = 3,
             npc_goal_wander_4 = 4, //possibly this should be another standstill goal
             npc_goal_attack_5 = 5,
-            npc_goal_attack_6 = 6,  //goal appears to be attack at a distance using ranged weapons, but also fear??
+            npc_goal_fear_6 = 6,  //goal appears to be attack at a distance using ranged weapons, but also fear??
             npc_goal_stand_still_7 = 7, //same hehaviour as 0
             npc_goal_wander_8 = 8, //8 is the goal the npc gets when charmed, castle npcs have this too.
             npc_goal_attack_9 = 9, //goal appears to also be attack at a distance, possibly using magic attacks
@@ -361,6 +351,7 @@ namespace Underworld
                 noOfSplatters = 3;
             }
 
+            ObjectCreator.SpawnAnimo_Placeholder(animoclassindex);
             Debug.Print($"Spawn animo {animoclassindex} {noOfSplatters} times");
 
             npc.DamageNPC(critter, basedamage, damagetype);

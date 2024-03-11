@@ -550,5 +550,10 @@ namespace Underworld
             }
         }
 
+        public static void SpawnAnimo_Placeholder(int subclass)
+        {
+            Debug.Print($"Placeholder spawn animo {subclass}");
+        }
+
     } //end class
 } //end namesace

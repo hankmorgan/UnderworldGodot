@@ -1,6 +1,4 @@
-using System;
 using System.Diagnostics;
-using Godot;
 
 namespace Underworld
 {
@@ -19,6 +17,7 @@ namespace Underworld
                         break;
                     case 1:
                         //Causefear
+                        Causefear(index, objList);
                         break;
                     case 2:
                         //SmiteUndead
@@ -267,6 +266,59 @@ namespace Underworld
                 }
             }
             uimanager.AddToMessageScroll(output);
+        }
+
+
+        /// <summary>
+        /// Changes the AI attitudes and goals if npc is not resistant to raw/magic damage
+        /// </summary>
+        /// <param name="critter"></param>
+        /// <param name="newgoal"></param>
+        /// <param name="newattitude"></param>
+        /// <param name="newgtarg"></param>
+        static void ApplyAIChangingSpell(uwObject critter, byte newgoal=0xFF, byte newattitude = 0xFF, byte newgtarg = 0xFF)
+        {
+            int test = 1;
+            if (uwObject.ScaleDamage(critter.item_id,ref test, 3)!=0)
+            {
+                ObjectCreator.SpawnAnimo_Placeholder(7);
+                if (newgoal!=0xFF)
+                {
+                    critter.npc_goal = newgoal;
+                }
+
+                if (newattitude!=0xFF)
+                {
+                    critter.npc_attitude = newattitude;
+                }
+
+                if (newgtarg!=0xFF)
+                {
+                    critter.npc_gtarg = newgtarg;
+                }
+            }
+            else
+            {
+                Debug.Print("NPC has resisted spell");
+            }            
+        }
+
+        static void Causefear(int index, uwObject[] objList)
+        {
+            var critter = objList[index];
+            if (critter!=null)
+            {
+                if (critter.majorclass == 1)
+                {//npc class
+                    critter.npc_attitude = 1;
+
+                    ApplyAIChangingSpell(
+                        critter:critter, 
+                        newgoal: (byte)npc.npc_goals.npc_goal_fear_6,
+                        newgtarg: 1);
+
+                }
+            }
         }
     }//end class
 }//end namespace
