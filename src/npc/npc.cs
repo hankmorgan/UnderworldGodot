@@ -38,7 +38,7 @@ namespace Underworld
             npc_goal_attack_5 = 5,
             npc_goal_fear_6 = 6,  //goal appears to be attack at a distance using ranged weapons, but also fear??
             npc_goal_stand_still_7 = 7, //same hehaviour as 0
-            npc_goal_wander_8 = 8, //8 is the goal the npc gets when charmed, castle npcs have this too.
+            npc_goal_charmed_8 = 8, //8 is the goal the npc gets when charmed, castle npcs have this too.
             npc_goal_attack_9 = 9, //goal appears to also be attack at a distance, possibly using magic attacks
             npc_goal_want_to_talk = 10,
             npc_goal_stand_still_11 = 11, //This goal is only seen in ethereal void creatures. 0xB

@@ -25,6 +25,7 @@ namespace Underworld
                         break;
                     case 3:
                         //Charm
+                        Charm(index, objList);
                         break;
                     case 4:
                         //smite foe
@@ -365,6 +366,43 @@ namespace Underworld
                             critter: critter,
                             newgoal: (byte)npc.npc_goals.npc_goal_stand_still_7,
                             newattitude: 1);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Makes an NPC friendly. If the NPC is a valid target for charming.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="objList"></param>
+        public static void Charm(int index, uwObject[] objList)
+        {//UW2 spell.
+            var critter = objList[index];
+            if (critter.majorclass==1)
+            {
+                var test = 1;
+                if (uwObject.ScaleDamage(critter.item_id, ref test, 3)!=0)
+                {
+                    ObjectCreator.SpawnAnimo_Placeholder(7);
+                    var whoami = critter.npc_whoami;
+                    int stringoffset = 0;
+                    if (whoami>=0x8C)
+                    {
+                        whoami-=0x8C;
+                        stringoffset++;
+                    }
+                    var maskstring = GameStrings.GetString(1,0x15E+ stringoffset); //get a long string that flags what whoami npcs can be charmed
+                    var flagchar =maskstring.ToCharArray()[whoami];                    
+                    if (flagchar== '+')
+                    {
+                        critter.npc_gtarg = 0;
+                        critter.npc_goal = (byte)npc.npc_goals.npc_goal_charmed_8;
+                        critter.npc_attitude = 3;
+                        if (playerdat.IsFightingInPit)
+                        {
+                            playerdat.RemovePitFighter(critter.index);
+                        }
                     }
                 }
             }

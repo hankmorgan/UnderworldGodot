@@ -125,6 +125,6 @@ namespace Underworld
                     SetAt(0x6a + (questno - 32), (byte)newValue);
                 }
             }
-        }        
+        }   
     }//end class
 }//end namespace
