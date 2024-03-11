@@ -80,12 +80,13 @@ namespace Underworld
                             }
                             else
                             {
-                                stringNo = SpellMajorClass + (SpellMajorClass<<4);
+                                stringNo = SpellMinorClass + (SpellMajorClass<<4);
                             }                            
                         }
                 }
+                stringNo = 0xC00 | stringNo;
                 Debug.Print($"{SpellMajorClass},{SpellMinorClass}->{stringNo}");
-                return GameStrings.GetString(6,stringNo);
+                return GameStrings.GetString(stringNo);
             }
             else
             {
