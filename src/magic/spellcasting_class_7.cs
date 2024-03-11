@@ -52,6 +52,7 @@ namespace Underworld
                         break;
                     case 11:
                         //name enchantment
+                        NameEnchantment(index, objList);
                         break;
                     case 12:
                         //unlock spell
@@ -379,22 +380,22 @@ namespace Underworld
         public static void Charm(int index, uwObject[] objList)
         {//UW2 spell.
             var critter = objList[index];
-            if (critter.majorclass==1)
+            if (critter.majorclass == 1)
             {
                 var test = 1;
-                if (uwObject.ScaleDamage(critter.item_id, ref test, 3)!=0)
+                if (uwObject.ScaleDamage(critter.item_id, ref test, 3) != 0)
                 {
                     ObjectCreator.SpawnAnimo_Placeholder(7);
                     var whoami = critter.npc_whoami;
                     int stringoffset = 0;
-                    if (whoami>=0x8C)
+                    if (whoami >= 0x8C)
                     {
-                        whoami-=0x8C;
+                        whoami -= 0x8C;
                         stringoffset++;
                     }
-                    var maskstring = GameStrings.GetString(1,0x15E+ stringoffset); //get a long string that flags what whoami npcs can be charmed
-                    var flagchar =maskstring.ToCharArray()[whoami];                    
-                    if (flagchar== '+')
+                    var maskstring = GameStrings.GetString(1, 0x15E + stringoffset); //get a long string that flags what whoami npcs can be charmed
+                    var flagchar = maskstring.ToCharArray()[whoami];
+                    if (flagchar == '+')
                     {
                         critter.npc_gtarg = 0;
                         critter.npc_goal = (byte)npc.npc_goals.npc_goal_charmed_8;
@@ -404,6 +405,30 @@ namespace Underworld
                             playerdat.RemovePitFighter(critter.index);
                         }
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Identifies an object
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="objList"></param>
+        public static void NameEnchantment(int index, uwObject[] objList)
+        {
+            var obj = objList[index];
+            if (obj != null)
+            {
+                if (
+                    (obj.majorclass != 5)
+                    &&
+                    (obj.majorclass != 6)
+                    &&
+                    (commonObjDat.rendertype(obj.item_id) != 2)
+                    )
+                {//can be identifed
+                    obj.heading = 7;
+                    look.GeneralLookDescription(obj, objList, 3);
                 }
             }
         }

@@ -335,7 +335,8 @@ namespace Underworld
                             look.GeneralLookDescription(
                                 obj: obj,
                                 objList:UWTileMap.current_tilemap.LevelObjects,
-                                OutputConvo: true);
+                                OutputConvo: true,
+                                lorecheckresult: look.LoreCheck(obj));
                         }  
                     }
                 }                
@@ -356,7 +357,8 @@ namespace Underworld
                         look.GeneralLookDescription(
                             obj: obj, 
                             objList: UWTileMap.current_tilemap.LevelObjects,
-                            OutputConvo: true);
+                            OutputConvo: true,
+                            lorecheckresult: 0);
                     }                    
                 }
             }

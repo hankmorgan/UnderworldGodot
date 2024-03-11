@@ -311,7 +311,11 @@ namespace Underworld
                                         }
                                         else
                                         {//all other objects look at
-                                            look.GeneralLookDescription(obj: obj, objList: playerdat.InventoryObjects, OutputConvo: true);
+                                            look.GeneralLookDescription(
+                                                obj: obj, 
+                                                objList: playerdat.InventoryObjects, 
+                                                OutputConvo: true,
+                                                lorecheckresult: look.LoreCheck(obj));
                                         }
                                     }
                                 }

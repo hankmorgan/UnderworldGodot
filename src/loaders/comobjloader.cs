@@ -129,6 +129,11 @@ namespace Underworld
             return buffer[2 + item_id * 11 + 8];
         }
 
+        public static int rendertype(int item_id)
+        {
+            return buffer[2 + item_id * 11 + 0x9] & 0x3;
+        }
+
         /// <summary>
         /// Each possible value of "quality type" maps onto a group of 6 strings in
         /// block 4 (???? should this be 5????) from lowest to highest quality. 

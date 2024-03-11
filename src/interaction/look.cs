@@ -5,9 +5,38 @@ namespace Underworld
     /// </summary>
     public class look : UWClass
     {
+        public static int LoreCheck(uwObject obj)
+        {            
+            if (
+                (obj.majorclass!=5)
+                &&
+                (obj.majorclass!=6)
+                &&
+                (commonObjDat.rendertype(obj.item_id) != 2)
+                )
+                {//can be identified
+                    if ((obj.heading & 0x4)==0)
+                    {//no attempt has been made yet. try and id now
+                        var result = (int)playerdat.SkillCheck(playerdat.Lore,8);
+                        result++;
+                        if (result==0)
+                        {
+                            result = 1;
+                        }
+                        obj.heading = (short)(4 | result); //store result and flag that attempt was made.
+                        return result; //1,2 or 3
+                    }
+                    else
+                    {
+                        return obj.heading & 0x3; //return previous result
+                    }
+                }
+            return 1;//fail or cannot be identified
+        }
+
         public static bool LookAt(int index, uwObject[] objList, bool WorldObject)
         {
-            
+
             bool result = false;
             trap.ObjectThatStartedChain = index;
             if (index <= objList.GetUpperBound(0))
@@ -51,11 +80,13 @@ namespace Underworld
                 }
                 if (!result)
                 {
+                
                     //default string  when no overriding action has occured           
                     //uimanager.AddToMessageScroll(GameStrings.GetObjectNounUW(obj.item_id));
                     GeneralLookDescription(
-                        obj: obj , 
-                        objList: objList);
+                        obj: obj,
+                        objList: objList, 
+                        lorecheckresult: LoreCheck(obj));
                 }
             }
 
@@ -167,7 +198,7 @@ namespace Underworld
             return true;
         }
 
-        public static bool GeneralLookDescription(uwObject obj, uwObject[] objList, bool OutputConvo = false)
+        public static bool GeneralLookDescription(uwObject obj, uwObject[] objList, int lorecheckresult, bool OutputConvo = false)
         {
             string output;
             if (commonObjDat.PrintableLook(obj.item_id))
@@ -179,8 +210,6 @@ namespace Underworld
                 System.Diagnostics.Debug.Print("No print description");
                 return true;
             }
-
-            //TODO object identifaciton string
 
             var qualityclass = commonObjDat.qualityclass(obj.item_id);
             int qty = 0;
@@ -245,13 +274,38 @@ namespace Underworld
                     article = GetArticle(objectname);
                 }
             }
+            //enchantments
+            var magicenchantment = MagicEnchantment.GetSpellEnchantment(obj, objList);
+            string enchantmenttext = "";
+            string magical = "";
+            if (magicenchantment != null)
+            {
+                System.Diagnostics.Debug.Print($"{magicenchantment.NameEnchantment(obj, objList)}");
+                switch (lorecheckresult)
+                {
+                    case 2://just magical
+                        magical = "magical "; break;
+                    case 3: // full description
+                        enchantmenttext = magicenchantment.NameEnchantment(obj, objList);
+                        if (enchantmenttext == "")
+                        {
+                            enchantmenttext = " of unnamed";
+                        }
+                        else
+                        {
+                            enchantmenttext = $" of {enchantmenttext}";
+                        }
+                        break;
+                }
+            }
+
             if (objectname.StartsWith("some "))
             {
-                output += $"{qtystring}{qualitystring}{objectname}";
+                output += $"{qtystring}{qualitystring}{magical}{objectname}";
             }
             else
             {
-                output += $"{article}{qtystring}{qualitystring}{objectname}";
+                output += $"{article}{qtystring}{qualitystring}{magical}{objectname}";
             }
 
             var ownership = "";
@@ -268,21 +322,6 @@ namespace Underworld
                 if (obj.owner > 0)
                 {
                     ownership = $" belonging to{GameStrings.GetString(1, 370 + obj.race)}";
-                }
-            }
-
-            var magicenchantment = MagicEnchantment.GetSpellEnchantment(obj, objList);
-            string enchantmenttext ="";
-            if (magicenchantment!=null)
-            {
-                enchantmenttext = magicenchantment.NameEnchantment(obj, objList); //TODO add a lore check
-                if (enchantmenttext=="")
-                {
-                    enchantmenttext = " of unnamed";
-                }
-                else
-                {
-                    enchantmenttext = $" of {enchantmenttext}";
                 }
             }
 

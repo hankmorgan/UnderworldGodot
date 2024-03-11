@@ -48,7 +48,7 @@ namespace Underworld
         }
 
         /// <summary>
-        /// The rate at which the weapon charge builds up
+        /// The rate at which the weapon charge builds up. This score increments the overall charge every 10 units of a game timer
         /// </summary>
         /// <param name="item_id"></param>
         /// <returns></returns>
