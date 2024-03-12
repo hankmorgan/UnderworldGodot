@@ -7,12 +7,7 @@ namespace Underworld
         {
             if (!WorldObject)
             {
-                //become the object in hand.
-                playerdat.ObjectInHand = obj.index;
-
-                //change the mouse cursor
-                uimanager.instance.mousecursor.SetCursorToObject(obj.item_id);
-
+                useon.CurrentItemBeingUsed = new useon(obj, WorldObject);
                 //print use message
                 //8	What lock would you like to try to pick?
                 uimanager.AddToMessageScroll(GameStrings.GetString(1, 8));
@@ -20,8 +15,8 @@ namespace Underworld
             return true;
         }
 
-        public static bool UseOn(uwObject KeyObject, uwObject targetObject)
-        {
+        public static bool UseOn(uwObject LockpickObject, uwObject targetObject)
+        {//assumes lockpick is in inventory. door is in world
             if ((targetObject.majorclass == 5) && (targetObject.minorclass == 0))
             {
                 var doorInstance = (door)targetObject.instance;
@@ -66,8 +61,7 @@ namespace Underworld
                                         case playerdat.SkillCheckResult.Fail:
                                         case playerdat.SkillCheckResult.CritFail:
                                             uimanager.AddToMessageScroll("You broke your pick. \n");
-                                            playerdat.RemoveFromInventory(playerdat.ObjectInHand);
-                                            playerdat.ObjectInHand = -1;
+                                            playerdat.RemoveFromInventory(LockpickObject.index, true);
                                             break;
                                         default:
                                             uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_your_lockpicking_attempt_failed_));

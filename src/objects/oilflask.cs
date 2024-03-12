@@ -9,7 +9,7 @@ namespace Underworld
         {
             if (!WorldObject)
             {
-                //flag we are using the oil flas         
+                //flag we are using the oil flask         
                 useon.CurrentItemBeingUsed = new useon(obj, WorldObject);
                 //print use message
                 uimanager.AddToMessageScroll(useon.CurrentItemBeingUsed.GeneralUseOnString);

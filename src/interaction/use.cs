@@ -151,7 +151,7 @@ namespace Underworld
                                 case 0:
                                 case 1:
                                     //LOCKPICK and curious implement.
-                                    return false;
+                                    return lockpick.Use(obj, WorldObject); 
                                 case >1 and <0xE://keys
                                     return doorkey.Use(obj, WorldObject);                                
                             }
@@ -164,7 +164,7 @@ namespace Underworld
                                 case >1 and <0xE://keys
                                     return doorkey.Use(obj, WorldObject);    
                                 case 1://lockpick
-                                    return false;                                                                
+                                    return lockpick.Use(obj, WorldObject);                                                            
                             }
                         }  
                         break;
