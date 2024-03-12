@@ -144,10 +144,29 @@ namespace Underworld
             {
                 case 0: //keys up to 0xE
                     {
-                        if (obj.classindex <= 0xE)
+                        if (_RES==GAME_UW2)
                         {
-                            return doorkey.Use(obj, WorldObject);
+                            switch (obj.classindex)
+                            {
+                                case 0:
+                                case 1:
+                                    //LOCKPICK and curious implement.
+                                    return false;
+                                case >1 and <0xE://keys
+                                    return doorkey.Use(obj, WorldObject);                                
+                            }
                         }
+                        else
+                        {
+                            switch (obj.classindex)
+                            {
+                                case 0:
+                                case >1 and <0xE://keys
+                                    return doorkey.Use(obj, WorldObject);    
+                                case 1://lockpick
+                                    return false;                                                                
+                            }
+                        }  
                         break;
                     }
                 case 1:
@@ -177,6 +196,8 @@ namespace Underworld
                             return leech.use(obj,WorldObject);
                         case 0xB://Fishing pole
                             return fishingpole.use(obj,WorldObject);
+                        case 0xD://oilflask
+                            return oilflask.Use(obj,WorldObject);
                     }
 
                     break;

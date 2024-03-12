@@ -21,6 +21,13 @@ namespace Underworld
             uimanager.instance.mousecursor.SetCursorToObject(obj.item_id);
         }
 
+        public string GeneralUseOnString
+        {
+            get
+            {
+                return $"Use {GameStrings.GetObjectNounUW(itemBeingUsed.item_id,0)} on?"; 
+            }
+        }
 
         public static bool UseOn(int index, uwObject[] targetobjList, useon srcObject)
         {
@@ -87,6 +94,17 @@ namespace Underworld
                         if (objInHand.classindex<=0xE)
                         {
                             return doorkey.UseOn(objInHand, targetObject);
+                        }
+                        break;
+                    }
+                case 2:// misc usables
+                    {
+                        switch (objInHand.classindex)
+                        {
+                            case 0xD://oil flask
+                            {
+                                return oilflask.UseOn(objInHand, targetObject);
+                            }
                         }
                         break;
                     }

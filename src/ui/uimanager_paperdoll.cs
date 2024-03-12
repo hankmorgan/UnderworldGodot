@@ -519,13 +519,14 @@ namespace Underworld
                     switch(uimanager.UsageMode)
                     {
                         case 0: //default
-                        case 1://object select to use on another. eg doorkey
                             InteractWithObjectInSlot(
                                 slotname: extra_arg_0,
                                 objAtSlot: objAtSlot,
                                 isLeftClick: isLeftClick);
                             break;
-
+                        case 1://object select to use on another. eg doorkey
+                            useon.UseOn(objAtSlot, playerdat.InventoryObjects, useon.CurrentItemBeingUsed);
+                            break;
                         case 2://spell casting
                             if (SpellCasting.currentSpell.SpellMajorClass != 5)
                                 {//as long as it's not a project try and cast on the object

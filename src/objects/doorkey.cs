@@ -6,10 +6,7 @@ namespace Underworld
         {
             if (!WorldObject)
             {
-                //become the object in hand.
-               // playerdat.ObjectInHand = obj.index;//TODO this is inconsistant with the idea that objectinhand is always in the world.
-                
-                
+                //flag we are using the key
                 useon.CurrentItemBeingUsed = new useon(obj, WorldObject);
                 //print use message
                 uimanager.AddToMessageScroll(GameStrings.GetString(1, 7));
