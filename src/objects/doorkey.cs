@@ -7,11 +7,10 @@ namespace Underworld
             if (!WorldObject)
             {
                 //become the object in hand.
-                playerdat.ObjectInHand = obj.index;
-
-                //change the mouse cursor
-                uimanager.instance.mousecursor.SetCursorToObject(obj.item_id);
-
+               // playerdat.ObjectInHand = obj.index;//TODO this is inconsistant with the idea that objectinhand is always in the world.
+                
+                
+                useon.CurrentItemBeingUsed = new useon(obj, WorldObject);
                 //print use message
                 uimanager.AddToMessageScroll(GameStrings.GetString(1, 7));
             }

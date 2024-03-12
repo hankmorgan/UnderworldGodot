@@ -6,6 +6,29 @@ namespace Underworld
     public partial class uimanager : Node2D
     {
 
+
+        /// <summary>
+        /// Identifies what mode of object usage is currently being used.
+        /// 0 = default interactions
+        /// 1 = Player has selected an object and it has changed to prompt to be used on something. Eg rockhammer, doorkey, oil flask
+        /// 2 = Player is casting a spell and the spell needs to be clicked on an object.
+        /// </summary>
+        public static int UsageMode
+        {
+            get
+            {
+                if (useon.CurrentItemBeingUsed!=null)
+                {
+                    return 1;
+                }
+                if (SpellCasting.currentSpell!=null)
+                {
+                    return 2;
+                }
+                return 0;
+            }
+        }
+
         public enum InteractionModes
         {
             ModeOptions = 0,

@@ -92,6 +92,7 @@ namespace Underworld
             }
             
             SpellCasting.currentSpell = null;
+            useon.CurrentItemBeingUsed = null;
 
             //Set the playerlight level;            
             //uwsettings.instance.lightlevel = light.BrightestLight();

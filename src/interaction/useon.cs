@@ -5,21 +5,37 @@ namespace Underworld
     /// </summary>
     public class useon : UWClass
     {
-        
-        public static bool UseOn(int index, uwObject[] objList, bool WorldObject = true)
-        {
-            if (playerdat.ObjectInHand==-1)
-            {
-                return false;
-            }
-            var ObjInHand = UWTileMap.current_tilemap.LevelObjects[playerdat.ObjectInHand];//playerdat.InventoryObjects[playerdat.ObjectInHand];
+        public static useon CurrentItemBeingUsed;
+        public int index = 0;
 
+        public bool WorldObject;
+
+        public uwObject itemBeingUsed;
+
+        public useon(uwObject obj, bool _worldobject )
+        {
+            index = obj.index;
+            WorldObject = _worldobject;
+            itemBeingUsed = obj;
+            //change the mouse cursor
+            uimanager.instance.mousecursor.SetCursorToObject(obj.item_id);
+        }
+
+
+        public static bool UseOn(int index, uwObject[] targetobjList, useon srcObject)
+        {
+            // if (playerdat.ObjectInHand==-1)
+            // {
+            //     return false;
+            // }
+            //var ObjInHand = UWTileMap.current_tilemap.LevelObjects[playerdat.ObjectInHand];//playerdat.InventoryObjects[playerdat.ObjectInHand];
+            var ObjInHand = srcObject.itemBeingUsed;
             if (index==-1){return false;}
             trap.ObjectThatStartedChain = index;
             bool result = false;
-            if (index <= objList.GetUpperBound(0))
+            if (index <= targetobjList.GetUpperBound(0))
             {
-                var targetObj = objList[index];
+                var targetObj = targetobjList[index];
                 switch (ObjInHand.majorclass)
                 {
                     case 2:
@@ -44,7 +60,7 @@ namespace Underworld
                     trigger.UseTrigger(
                         srcObject: targetObj,
                         triggerIndex: targetObj.link,
-                        objList: objList);
+                        objList: targetobjList);
                 }
             }
             // if (!result)
@@ -53,11 +69,13 @@ namespace Underworld
             // }
 
             //Clear the cursor icons
-            playerdat.ObjectInHand = -1;
+            useon.CurrentItemBeingUsed = null;
+           // playerdat.ObjectInHand = -1;
             uimanager.instance.mousecursor.SetCursorToCursor();
 
             return false;
         }
+
 
 
         public static bool UseOnMajorClass4(uwObject objInHand,uwObject targetObject)
