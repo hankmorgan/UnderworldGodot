@@ -10,13 +10,13 @@ namespace Underworld
         /// <summary>
         /// Global flag in case the object uses fires the spell prematurely.
         /// </summary>
-        public static bool SpellHasBeenCast=false;
+        public static bool SpellHasBeenCast = false;
         public static bool Use(int index, uwObject[] objList, bool WorldObject = true)
         {
             SpellHasBeenCast = false;
-            if (useon.CurrentItemBeingUsed!=null)
+            if (useon.CurrentItemBeingUsed != null)
             {
-                return useon.UseOn(index, objList, useon.CurrentItemBeingUsed);
+                return useon.UseOn(index, objList, useon.CurrentItemBeingUsed, WorldObject);
             }
             // if (playerdat.ObjectInHand != -1)
             // {
@@ -28,17 +28,22 @@ namespace Underworld
             if (index <= objList.GetUpperBound(0))
             {
                 var obj = objList[index];
-                Debug.Print ($"Object {obj.majorclass}-{obj.minorclass}-{obj.classindex} {obj.a_name}");
+                Debug.Print($"Object {obj.majorclass}-{obj.minorclass}-{obj.classindex} {obj.a_name}");
                 switch (obj.majorclass)
                 {
                     case 1://npcs
-                        {                            
+                        {
                             talk.Talk(index, objList, WorldObject);
-                            return true;                          
+                            return true;
                         }
                     case 2:
                         {
                             result = UseMajorClass2(obj, objList, WorldObject);
+                            break;
+                        }
+                    case 3:
+                        {
+                            result = UseMajorClass3(obj, objList, WorldObject);
                             break;
                         }
                     case 4:
@@ -68,10 +73,10 @@ namespace Underworld
                 //check for a spell
                 if (!SpellHasBeenCast)
                 {
-                    if (obj!=null)
+                    if (obj != null)
                     {
                         var spell = MagicEnchantment.GetSpellEnchantment(obj, objList);
-                        if (spell!=null)
+                        if (spell != null)
                         {
                             MagicEnchantment.CastObjectSpell(obj, spell);
                             result = true;
@@ -85,6 +90,23 @@ namespace Underworld
             }
 
             return result;
+        }
+
+        public static bool UseMajorClass3(uwObject obj, uwObject[] objList, bool WorldObject)
+        {
+            switch (obj.minorclass)
+            {
+                case 1:
+                    {//some misc items                    
+                        switch (obj.classindex)
+                        {
+                            case 7://anvil
+                                return anvil.Use(obj, WorldObject);
+                        }
+                        break;
+                    }
+            }
+            return false;
         }
 
         public static bool UseMajorClass2(uwObject obj, uwObject[] objList, bool WorldObject)
@@ -144,16 +166,16 @@ namespace Underworld
             {
                 case 0: //keys up to 0xE
                     {
-                        if (_RES==GAME_UW2)
+                        if (_RES == GAME_UW2)
                         {
                             switch (obj.classindex)
                             {
                                 case 0:
                                 case 1:
                                     //LOCKPICK and curious implement.
-                                    return lockpick.Use(obj, WorldObject); 
-                                case >1 and <0xE://keys
-                                    return doorkey.Use(obj, WorldObject);                                
+                                    return lockpick.Use(obj, WorldObject);
+                                case > 1 and < 0xE://keys
+                                    return doorkey.Use(obj, WorldObject);
                             }
                         }
                         else
@@ -161,47 +183,47 @@ namespace Underworld
                             switch (obj.classindex)
                             {
                                 case 0:
-                                case >1 and <0xE://keys
-                                    return doorkey.Use(obj, WorldObject);    
+                                case > 1 and < 0xE://keys
+                                    return doorkey.Use(obj, WorldObject);
                                 case 1://lockpick
-                                    return lockpick.Use(obj, WorldObject);                                                            
+                                    return lockpick.Use(obj, WorldObject);
                             }
-                        }  
+                        }
                         break;
                     }
                 case 1:
                     {
-                        if (_RES!=GAME_UW2)
+                        if (_RES != GAME_UW2)
                         {
-                            if (obj.classindex==0xB)
+                            if (obj.classindex == 0xB)
                             {
-                                return rotwormstew.Use(obj,WorldObject);
+                                return rotwormstew.Use(obj, WorldObject);
                             }
                         }
                         break;
                     }
                 case 2:
-                {
-                    switch(obj.classindex)
                     {
-                        case 2:
-                            {
-                                if (_RES!=GAME_UW2)
+                        switch (obj.classindex)
+                        {
+                            case 2:
                                 {
-                                    return silverseed.use(obj,WorldObject);//plant silver seed
+                                    if (_RES != GAME_UW2)
+                                    {
+                                        return silverseed.use(obj, WorldObject);//plant silver seed
+                                    }
+                                    break;
                                 }
-                                break;
-                            }
-                        case 5://leeches
-                            return leech.use(obj,WorldObject);
-                        case 0xB://Fishing pole
-                            return fishingpole.use(obj,WorldObject);
-                        case 0xD://oilflask
-                            return oilflask.Use(obj,WorldObject);
-                    }
+                            case 5://leeches
+                                return leech.use(obj, WorldObject);
+                            case 0xB://Fishing pole
+                                return fishingpole.use(obj, WorldObject);
+                            case 0xD://oilflask
+                                return oilflask.Use(obj, WorldObject);
+                        }
 
-                    break;
-                }
+                        break;
+                    }
                 case 3: //readables (up to index 8)
                     {
                         if (_RES != GAME_UW2)
@@ -254,11 +276,11 @@ namespace Underworld
                     {
                         switch (obj.classindex)
                         {
-                            
+
                             case 7://a_shrine
                                 {
                                     return shrine.Use(obj);
-                                   }
+                                }
                         }
                         break;
                     }

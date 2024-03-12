@@ -525,7 +525,11 @@ namespace Underworld
                                 isLeftClick: isLeftClick);
                             break;
                         case 1://object select to use on another. eg doorkey
-                            useon.UseOn(objAtSlot, playerdat.InventoryObjects, useon.CurrentItemBeingUsed);
+                            useon.UseOn(
+                                index: objAtSlot, 
+                                targetobjList: playerdat.InventoryObjects, 
+                                srcObject: useon.CurrentItemBeingUsed, 
+                                WorldObject: false);
                             break;
                         case 2://spell casting
                             if (SpellCasting.currentSpell.SpellMajorClass != 5)

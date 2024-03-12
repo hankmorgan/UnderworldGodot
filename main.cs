@@ -23,7 +23,9 @@ public partial class main : Node3D
 			 ||
 			 MessageDisplay.WaitingForTypedInput
 			 ||
-			 MessageDisplay.WaitingForMore;
+			 MessageDisplay.WaitingForMore 
+			 ||
+			 MessageDisplay.WaitingForYesOrNo;
 
 			; //TODO and other menu modes that will stop input
 		}
@@ -136,7 +138,7 @@ public partial class main : Node3D
 				}
 			}
 
-			if (MessageDisplay.WaitingForTypedInput)
+			if ((MessageDisplay.WaitingForTypedInput) || (MessageDisplay.WaitingForYesOrNo))
 			{
 				if (!uimanager.instance.TypedInput.HasFocus())
 				{
@@ -168,11 +170,12 @@ public partial class main : Node3D
 
 		}
 
-		if (ConversationVM.WaitingForInput && !uimanager.MessageScrollIsTemporary && !MessageDisplay.WaitingForTypedInput)
+		if (ConversationVM.WaitingForInput 
+			&& !uimanager.MessageScrollIsTemporary 
+			&& !MessageDisplay.WaitingForTypedInput)
 		{
 			if (@event is InputEventKey keyinput)
 			{
-				//Debug.Print(keyinput.Keycode.ToString());
 				if (int.TryParse(keyinput.AsText(), out int result))
 				{
 					if ((result > 0) && (result <= ConversationVM.MaxAnswer))
@@ -216,5 +219,34 @@ public partial class main : Node3D
 				}
 			}
 		}
+
+		if (MessageDisplay.WaitingForYesOrNo)
+		{
+			if (@event is InputEventKey keyinput)
+			{
+				bool stop = false;
+				switch (keyinput.Keycode)
+				{
+					case Key.Enter:
+						stop = true;
+						break;
+					case Key.Escape:
+						stop = true;
+						uimanager.instance.TypedInput.Text = "No";
+						break;
+					case Key.Y:
+						uimanager.instance.TypedInput.Text = "Yes"; break;
+					default:
+						uimanager.instance.TypedInput.Text = "No"; break;
+				}
+				if (stop)
+				{//end typed input
+					uimanager.instance.scroll.Clear();
+					MessageDisplay.WaitingForYesOrNo = false;
+					gamecam.Set("MOVE", true);//re-enable movement
+				}
+			}
+		}
+
 	}
 }//end class

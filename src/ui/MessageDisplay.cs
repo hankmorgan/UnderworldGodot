@@ -22,9 +22,11 @@ namespace Underworld
         public static bool WaitingForMore = false;
 
         /// <summary>
-        /// Player has to type input
+        /// Player has to type an input string
         /// </summary>
         public static bool WaitingForTypedInput = false;
+
+        public static bool WaitingForYesOrNo = false;
 
         public RichTextLabel[] OutputControl;
 

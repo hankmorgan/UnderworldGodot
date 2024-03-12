@@ -29,7 +29,7 @@ namespace Underworld
             }
         }
 
-        public static bool UseOn(int index, uwObject[] targetobjList, useon srcObject)
+        public static bool UseOn(int index, uwObject[] targetobjList, useon srcObject, bool WorldObject)
         {
             // if (playerdat.ObjectInHand==-1)
             // {
@@ -48,6 +48,11 @@ namespace Underworld
                     case 2:
                         {
                             //result = UseOnMajorClass2(obj, objList, WorldObject);
+                            break;
+                        }
+                    case 3:
+                        {
+                            result = UseOnMajorClass3(ObjInHand, targetObj, WorldObject);
                             break;
                         }
                     case 4:
@@ -83,7 +88,22 @@ namespace Underworld
             return false;
         }
 
-
+        public static bool UseOnMajorClass3(uwObject objInHand, uwObject targetObject, bool WorldObject)
+        {
+            switch (objInHand.minorclass)
+            {
+                case 1:
+                {//some misc items                    
+                    switch(objInHand.classindex)
+                    {
+                        case 7://anvil
+                            return anvil.UseOn(objInHand, targetObject, WorldObject);
+                    }
+                    break;
+                }
+            }
+            return false;
+        }
 
         public static bool UseOnMajorClass4(uwObject objInHand, uwObject targetObject)
         {

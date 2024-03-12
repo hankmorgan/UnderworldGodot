@@ -173,7 +173,7 @@ namespace Underworld
         /// <param name="isLeftClick"></param>
         private static void InteractWithObjectInSlot(string slotname, int objAtSlot, bool isLeftClick)
         {
-            if (MessageDisplay.WaitingForTypedInput)
+            if ((MessageDisplay.WaitingForTypedInput)||(MessageDisplay.WaitingForYesOrNo))
             {//stop while typing in progress
                 return;
             }
@@ -429,7 +429,7 @@ namespace Underworld
         /// <param name="targetObj"></param>
         public static void UseObjectsTogether(int srcObj, int targetObj)
         {
-            if (MessageDisplay.WaitingForTypedInput)
+            if ((MessageDisplay.WaitingForTypedInput)||(MessageDisplay.WaitingForYesOrNo))
             {//stop while typing in progress
                 return;
             }
@@ -503,7 +503,7 @@ namespace Underworld
 
         public static void PickupObjectFromSlot(int objAtSlot)
         {
-            if (MessageDisplay.WaitingForTypedInput)
+            if ((MessageDisplay.WaitingForTypedInput)||(MessageDisplay.WaitingForYesOrNo))
             {//stop while another in progress
                 return;
             }
