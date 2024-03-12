@@ -85,7 +85,13 @@ namespace Underworld
                     break;
             }
         } 
+        
 
+        /// <summary>
+        /// Casts the pre-stored spell on the currently clicked object
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="objList"></param>
         public static void CastCurrentSpellOnRayCastTarget(int index, uwObject[] objList)
         {
             if (currentSpell != null)
