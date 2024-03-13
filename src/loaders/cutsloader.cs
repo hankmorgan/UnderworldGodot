@@ -39,7 +39,11 @@ namespace Underworld
             _alpha = UseAlpha(File);
             if (LoadImageFile())
             {
-                ReadCutsFile(ref ImageFileData, _alpha, UseErrorHandling(File));
+                ReadCutsFile(
+                    cutsFile: ref ImageFileData, 
+                    Alpha: _alpha, 
+                    ErrorHandling: UseErrorHandling(File), 
+                    file: File);
             }
             textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uisprite.gdshader");          
         }
@@ -76,7 +80,7 @@ namespace Underworld
         /// Reads the cuts file.
         /// </summary>
         /// <param name="cutsFile">Cuts file.</param>
-        public void ReadCutsFile(ref byte[] cutsFile, bool Alpha, bool ErrorHandling)
+        public void ReadCutsFile(ref byte[] cutsFile, bool Alpha, bool ErrorHandling, string file)
         {
             long addptr = 0;
             int imagecount = 0;
@@ -178,8 +182,11 @@ namespace Underworld
                     ppointer += 4;
                 }
                 //	byte[] imgOut ;//= //new byte[lpH.height*lpH.width+ 4000];
-                myPlayRunSkipDump(ppointer, pages);//Stores in the global memory
-                                                //output.texture= 
+                if (!SkipImage(file, imagecount))
+                {
+                    myPlayRunSkipDump(ppointer, pages);//Stores in the global memory
+                }                
+                                               
                 ImageCache[imagecount++] = Image(
                     databuffer: dstImage, 
                     dataOffSet: 0, 
@@ -338,21 +345,25 @@ namespace Underworld
             return materials[textureno];    
         }
 
-
         /// <summary>
-        /// Returns a sprite made from the specified image.
+        /// IN UW2 for some reason some frames are bugged and overwrite dstimage in the wrong location screwing up the rest of the cuts file
+        /// this hack skips loading the image data for these images by not overwriting dstimage with their data.
         /// </summary>
-        /// <returns>The sprite.</returns>
-        /// <param name="index">Index.</param>
-        // public Sprite RequestSprite(int index)
-        // {
-        //     if (ImageCache[index] == null)
-        //     {
-        //         LoadImageAt(index);
-        //     }
-        //     return Sprite.Create(ImageCache[index], new Rect(0, 0, ImageCache[index].width, ImageCache[index].height), new Vector2(0.5f, 0.0f));
-        // }
+        /// <param name="file"></param>
+        /// <param name="frame"></param>
+        /// <returns></returns>
+        bool SkipImage(string file, int frame)
+        {
+            if (_RES == GAME_UW2)
+            {
+                switch(file.ToUpper())
+                {
+                    case "CS012.N01"://in acknowledgements only 1 in 4 frames is valid
+                        return !(frame % 4 == 0);
+                }
+            }
+                return false;
+        }
 
-    }
-
+    }//end class
 } //end namespace
