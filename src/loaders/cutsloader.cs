@@ -107,7 +107,7 @@ namespace Underworld
             addptr += 128;//colour cycling info.
 
             //Init the buffer
-            dstImage = new byte[lpH.height * lpH.width + 4000];
+            dstImage = new byte[lpH.height * lpH.width]; //+ 4000];
 
             //Read in the palette
             for (int i = 0; i < 256; i++)
