@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace Underworld
 {
     //Clock/time player data
@@ -68,6 +70,11 @@ namespace Underworld
             {
                 return (ClockValue / 0x3C00) % 60;
             }
+        }
+
+        public static void AdvanceTime(int span)
+        {
+            Debug.Print ($"Advance time {span}");
         }
     }  //end class
 }//end namespace

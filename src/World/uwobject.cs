@@ -1258,5 +1258,25 @@ namespace Underworld
             return basedamage;
         }
 
+
+        public int Durability     
+        {  
+            get
+            {
+                if (majorclass==0)
+                {
+                    switch((item_id & 0x30)>>4)
+                    {
+                        case 0://melee weapons
+                            return weaponObjectDat.durability(item_id);
+                        case 2://armour items
+                        case 3:
+                            return armourObjectDat.durability(item_id);
+                    }
+                }
+                return -1; 
+            }
+                       
+        }
     } //end class
 }//end namespace

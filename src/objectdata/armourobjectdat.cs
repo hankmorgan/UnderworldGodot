@@ -15,7 +15,7 @@ namespace Underworld
         /// <returns></returns>
         public static int protection (int item_id)
         {
-            return buffer[offset + (item_id & 0x1f) * 4];
+            return buffer[offset + ((item_id-32) & 0x3f) * 4];
         }
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace Underworld
         /// <returns></returns>
         public static int durability (int item_id)
         {
-            return buffer[offset + 1 + (item_id & 0x1f) * 4];
+            return buffer[offset + 1 + ((item_id-32) & 0x3f) * 4];
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace Underworld
         /// <returns></returns>
         public int slot (int item_id)
         {
-            return buffer[offset + 1 + (item_id & 0x1f) * 4];
+            return buffer[offset + 1 + ((item_id-32) & 0x3f) * 4];
         }
     }
 }//end namespace

@@ -133,7 +133,10 @@ namespace Underworld
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
-                RunicMagic.CastRunicSpell();
+                if (!main.blockmouseinput)
+                {
+                    RunicMagic.CastRunicSpell();
+                }                
             }
         }        
     } //end class
