@@ -198,3 +198,4 @@ The "me" mentioned in the credits is not the author of this guide.
 
 ##### Other contributions to this document
 [KarlClinckspoor](https://github.com/KarlClinckspoor) on ``cmb.dat``
+Information on cutscene animation commands from khedoros at https://github.com/khedoros/uw-engine/blob/master/csparse.cpp
