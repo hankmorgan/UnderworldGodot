@@ -102,6 +102,8 @@ namespace Underworld
                         {
                             case 7://anvil
                                 return anvil.Use(obj, WorldObject);
+                            case 8:
+                                return pole.Use(obj,WorldObject);
                         }
                         break;
                     }

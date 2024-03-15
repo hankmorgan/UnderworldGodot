@@ -27,8 +27,16 @@ namespace Underworld
                     case InteractionModes.ModeTalk:
                         return 8f;
                     case InteractionModes.ModePickup:
-                    case InteractionModes.ModeUse:
                         return 3f;
+                    case InteractionModes.ModeUse:
+                        if (playerdat.usingpole)
+                        {
+                            return 6f;
+                        }   
+                        else
+                        {
+                            return 3f;
+                        } 
                     case InteractionModes.ModeAttack:
                         return 1f;
                 }

@@ -20,6 +20,7 @@ namespace Underworld
           public static bool TelekenesisEnchantment;
           public static bool HealthRegenEnchantment;
           public static bool ManaRegenEnchantment;
+          public static bool usingpole = false;
 
         /// <summary>
           /// Bit 0=Leap (1)

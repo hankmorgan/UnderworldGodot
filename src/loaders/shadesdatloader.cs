@@ -42,7 +42,7 @@ namespace Underworld
                 for (int y = 0; y < BandSize; y++)
                 {
                     if (y % BandSize == 0)
-                    {
+                    {//At a band that contains colours specified by the light map.
                         //Apply primary colour band
                         basemap = maps[arr[i]];
                         if (i + 1 < maps.GetUpperBound(0))
@@ -61,6 +61,7 @@ namespace Underworld
 
                             switch (x)
                             {
+                                //Special handling for transparencies
                                 case 0xf9:
                                 case 0xf0://red
                                 case 0xf4://blue
@@ -85,7 +86,7 @@ namespace Underworld
                         }
                     }
                     else
-                    {
+                    {//in betweeen lightmap bands. Lerp from the first band to this.
                         for (int x = 0; x < 256; x++)
                         { //apply a lerped colour band from the last to the next
                             var basepixel = basemap.red[x];
