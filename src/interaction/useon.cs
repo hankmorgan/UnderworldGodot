@@ -57,7 +57,7 @@ namespace Underworld
                         }
                     case 4:
                         {
-                            result = UseOnMajorClass4(ObjInHand, targetObj);
+                            result = UseOnMajorClass4(ObjInHand, targetObj, WorldObject);
                             break;
                         }
                     case 5:
@@ -107,7 +107,7 @@ namespace Underworld
             return false;
         }
 
-        public static bool UseOnMajorClass4(uwObject objInHand, uwObject targetObject)
+        public static bool UseOnMajorClass4(uwObject objInHand, uwObject targetObject, bool WorldObject)
         {
             switch (objInHand.minorclass)
             {
@@ -142,6 +142,10 @@ namespace Underworld
                     {
                         switch (objInHand.classindex)
                         {
+                            case 0x8://rock hammer
+                                {
+                                    return rockhammer.UseOn(objInHand, targetObject,WorldObject);
+                                }
                             case 0xD://oil flask
                                 {
                                     return oilflask.UseOn(objInHand, targetObject);

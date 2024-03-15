@@ -30,6 +30,28 @@ namespace Underworld
         };
 
         /// <summary>
+        /// Creates a default static object int the tile,
+        /// </summary>
+        /// <param name="itemid"></param>
+        /// <param name="tileX"></param>
+        /// <param name="tileY"></param>
+        /// <returns></returns>
+        public static uwObject spawnObjectInTile(int itemid, int tileX, int tileY, short xpos, short ypos, short zpos, ObjectListType WhichList = ObjectListType.StaticList)
+        {
+            var slot = ObjectCreator.PrepareNewObject(itemid);
+            //add to critter object list
+            var obj = UWTileMap.current_tilemap.LevelObjects[slot];
+            //Insert at the head of the tile list.
+            var tile = UWTileMap.current_tilemap.Tiles[tileX,tileY];
+            obj.next = tile.indexObjectList;
+            tile.indexObjectList = obj.index;
+            obj.xpos = xpos; obj.ypos=ypos; obj.zpos =zpos;
+            obj.tileX = tileX; obj.tileY = tileY;
+            RenderObject(obj, UWTileMap.current_tilemap);
+            return obj;
+        }
+
+        /// <summary>
         /// Spawns an object directly in hand
         /// </summary>
         /// <param name="itemid"></param>

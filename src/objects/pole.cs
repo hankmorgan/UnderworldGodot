@@ -20,7 +20,7 @@ namespace Underworld
             }
         }
 
-        public static bool UseOn(uwObject pole, uwObject itemTargeted, bool WorldObject)
+        public static bool UseOn(uwObject poleobject, uwObject itemTargeted, bool WorldObject)
         {
             if (WorldObject)
             {

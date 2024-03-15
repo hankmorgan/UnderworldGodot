@@ -94,7 +94,7 @@ namespace Underworld
         {
             MessageDisplay.WaitingForTypedInput = true;
 
-            uimanager.instance.TypedInput.Text = "";
+            uimanager.instance.TypedInput.Text = obj.ObjectQuantity.ToString();
             uimanager.instance.scroll.Clear();
             uimanager.AddToMessageScroll("Move how many? {TYPEDINPUT}|");
 
