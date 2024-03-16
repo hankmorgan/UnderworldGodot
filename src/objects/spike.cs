@@ -1,5 +1,3 @@
-using Godot;
-
 namespace Underworld
 {
     public class spike : objectInstance

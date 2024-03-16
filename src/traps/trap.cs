@@ -22,9 +22,17 @@ namespace Underworld
                         {
                             switch(trapObj.classindex)
                             {
+                                case 0://damage traps
+                                {
+                                    a_damage_trap.activate( 
+                                            trapObj: trapObj,
+                                            triggerObj: triggerObj,
+                                            objList: objList);
+                                    break;
+                                }                            
                                 case 3:// Do and hack traps
                                 {
-                                    hack_trap.ActivateHackTrap( 
+                                    hack_trap.activate( 
                                             trapObj: trapObj,
                                             triggerObj: triggerObj,
                                             objList: objList);
@@ -56,8 +64,22 @@ namespace Underworld
                         return; //stop execution.
                 }
             }
+
+            TriggerNext(trapObj, objList);//probably need to have a guardrail to stop execution
         } //end activate trap
 
-    }//end class
 
+        public static void TriggerNext(uwObject trapObj, uwObject[] objList)
+        {
+            //Continue the trigger-trap chain if possible.
+            if ((trapObj.link != 0) && (trapObj.is_quant == 0))
+            {
+                trigger.Trigger(
+                    srcObject: trapObj,
+                    triggerIndex: trapObj.link,
+                    objList: objList);
+            }
+        }
+
+    }//end class
 }//end namespace

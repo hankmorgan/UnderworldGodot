@@ -119,6 +119,11 @@ namespace Underworld
         }
 
 
+        /// <summary>
+        /// Gets an object slot that can be allocated for a new object
+        /// </summary>
+        /// <param name="WhichList"></param>
+        /// <returns></returns>
         public static int GetAvailableObjectSlot(ObjectListType WhichList = ObjectListType.StaticList)
         {
             //look up object free list

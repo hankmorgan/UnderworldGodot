@@ -14,17 +14,7 @@ namespace Underworld
                     StringNo = (64 * uwsettings.instance.level) + trapObj.owner;
                     break;
             }
-            uimanager.AddToMessageScroll(GameStrings.GetString(9,StringNo));
-
-
-            //Continue the trigger-trap chain if possible.
-            if((trapObj.link!=0) && (trapObj.is_quant==0))
-            {
-                trigger.Trigger(
-                    srcObject: trapObj, 
-                    triggerIndex: trapObj.link, 
-                    objList: objList);
-            }
+            uimanager.AddToMessageScroll(GameStrings.GetString(9, StringNo));
         }
-    }
-}
+    }//end class
+}//end namespace

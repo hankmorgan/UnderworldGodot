@@ -3,7 +3,7 @@ namespace Underworld
 
     public class hack_trap : trap
     {
-        public static void ActivateHackTrap(uwObject trapObj, uwObject triggerObj, uwObject[] objList)
+        public static void activate(uwObject trapObj, uwObject triggerObj, uwObject[] objList)
         {
             switch (trapObj.quality)
             {
@@ -16,5 +16,5 @@ namespace Underworld
                 return;
             }
         }
-    }
+    }//end class
 }//end namespace

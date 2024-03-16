@@ -1,10 +1,16 @@
 using System;
-using System.Runtime.Serialization;
 
 namespace Underworld
 {
     public class a_damage_trap:trap
     {
+
+         public static void activate(uwObject trapObj, uwObject triggerObj, uwObject[] objList)
+        {
+            ApplyDamageTrap(trapObj.owner>1,trapObj.quality);
+        }
+
+
         public static void ApplyDamageTrap(bool Poison, int basedamage)
         {
             if (Poison)
