@@ -142,6 +142,14 @@ namespace Underworld
                     {
                         switch (objInHand.classindex)
                         {
+                            case 0x7:   //spike in uw1
+                                {
+                                    if (_RES!=GAME_UW2)
+                                    {
+                                        return spike.UseOn(objInHand, targetObject,WorldObject);
+                                    }
+                                    break;
+                                }
                             case 0x8://rock hammer
                                 {
                                     return rockhammer.UseOn(objInHand, targetObject,WorldObject);

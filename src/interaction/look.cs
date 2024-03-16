@@ -156,6 +156,10 @@ namespace Underworld
         {
             switch (obj.minorclass)
             {
+                case 0://doors
+                    {
+                        return door.LookAt(obj);
+                    }
                 case 2: //misc objects including readables
                     {
                         switch (obj.classindex)

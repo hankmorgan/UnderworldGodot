@@ -551,6 +551,10 @@ namespace Underworld
             if (obj.ObjectQuantity > 1)
             {
                 obj.link--;
+                if (UsedFromInventory)
+                {
+                    uimanager.UpdateInventoryDisplay();
+                }
             }
             else
             {
@@ -567,7 +571,7 @@ namespace Underworld
                         playerdat.ObjectInHand = -1;
                         uimanager.instance.mousecursor.SetCursorToCursor();
                     }
-                    ObjectCreator.RemoveObject(obj);
+                    RemoveObject(obj);
                 }
             }
         }

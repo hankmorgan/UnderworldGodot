@@ -220,6 +220,12 @@ namespace Underworld
                                 return leech.use(obj, WorldObject);
                             case 8://rock hammer
                                 return rockhammer.Use(obj, WorldObject);
+                            case 7: //spike and forcefield in uw2
+                                if (_RES!=GAME_UW2)
+                                {
+                                    return spike.Use(obj, WorldObject);
+                                }
+                                break;
                             case 0xB://Fishing pole
                                 return fishingpole.use(obj, WorldObject);
                             case 0xD://oilflask

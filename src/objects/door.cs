@@ -399,6 +399,19 @@ namespace Underworld
             }
         }
 
+        public static bool LookAt(uwObject doorobject)
+        {
+            if (_RES!=GAME_UW2)
+            {
+                if ((doorobject.owner & 0x1) ==1 )
+                {
+                    uimanager.AddToMessageScroll(GameStrings.GetString(1,0x83));//the door is spiked
+                    return true;
+                }        
+            }
+            return look.GeneralLookDescription(doorobject, UWTileMap.current_tilemap.LevelObjects, 3);
+        }
+
 
 //******************************RENDERING INFO**********************************/
         public override Vector3[] ModelVertices()
