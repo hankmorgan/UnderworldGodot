@@ -32,6 +32,13 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// Returns the name of the enchantement
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="objList"></param>
+        /// <param name="LoreCheck"></param>
+        /// <returns></returns>
         public string NameEnchantment(uwObject obj, uwObject[] objList, int LoreCheck = 3)
         {
             var stringNo = 0;
@@ -84,9 +91,50 @@ namespace Underworld
                             }                            
                         }
                 }
+
+                //try and determine charges
+                string charges="";
+                    var spell = objectsearch.FindMatchInObjectChain(
+                        ListHeadIndex: obj.index, 
+                        majorclass: 4, 
+                        minorclass: 2, 
+                        classindex: 0, 
+                        objList: objList);
+                    if (spell!=null)
+                    {
+                        if (spell.flags2 ==1)
+                        {
+                            var NoOfCharges = spell.quality;
+                            if (IsPotion(obj))
+                            {
+                                NoOfCharges = 1;
+                            }
+                            if (NoOfCharges<=0)
+                            {
+                                charges = " with no charges remaining";
+                            }
+                            else
+                            {
+                                if (NoOfCharges>1)
+                                {
+                                    charges = $" with {NoOfCharges} full charges remaining";
+                                }
+                                else
+                                {//1 charge
+                                    charges = $" with {NoOfCharges} full charge remaining";
+                                }                               
+                            }
+                            if (LoreCheck !=3)
+                            {
+                                charges="";//hide charges when not identified
+                            }
+                        }
+                    }
+
+
                 stringNo = 0xC00 | stringNo;
                 Debug.Print($"{SpellMajorClass},{SpellMinorClass}->{stringNo}");
-                return GameStrings.GetString(stringNo);
+                return $"{GameStrings.GetString(stringNo)}{charges}";
             }
             else
             {

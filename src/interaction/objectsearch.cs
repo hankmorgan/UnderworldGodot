@@ -32,6 +32,23 @@ namespace Underworld
                             }
                         }
                     }
+
+                    if (testObj.is_quant==0)
+                    {
+                        if (testObj.link!=0)
+                        {
+                            var testlinked = FindMatchInObjectChain(
+                                ListHeadIndex: testObj.link, 
+                                majorclass: majorclass, 
+                                minorclass: minorclass, 
+                                classindex: classindex, 
+                                objList: objList);                                
+                            if (testlinked!=null)
+                            {
+                                return testlinked;
+                            }
+                        }
+                    }
                     //no matches. Try next value. Returns null if nothing found.
                     return FindMatchInObjectChain(
                         ListHeadIndex: testObj.next, 

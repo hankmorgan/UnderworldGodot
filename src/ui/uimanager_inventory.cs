@@ -214,7 +214,7 @@ namespace Underworld
                         }
                         else
                         {
-                            //use
+                            uimanager.InteractionModeToggle(InteractionModes.ModeUse);
                             use.Use(
                                 index: objAtSlot,
                                 objList: playerdat.InventoryObjects,
