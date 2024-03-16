@@ -101,11 +101,24 @@ namespace Underworld
                         uimanager.AddToMessageScroll(GameStrings.GetString(1,GameStrings.str_there_is_not_enough_room_to_release_that_spell_));
                         return;
                     case 7://click on object spells
-                        CastClass7_Spells(
+
+                        CastClass7_SpellsOnCallBack(
                             minorclass: currentSpell.SpellMinorClass, 
                             index: index, 
                             objList: objList,
-                            caster: 1);
+                            caster: 1); 
+                        currentSpell = null;
+                        uimanager.instance.mousecursor.SetCursorToCursor();
+                        break;
+                    case 0xB: 
+                        if (_RES!=GAME_UW2)
+                        {//special cases in UW1
+                        CastClassB_SpellsOnCallBack(
+                            minorclass: currentSpell.SpellMinorClass, 
+                            index: index, 
+                            objList: objList,
+                            caster: 1); 
+                        }
                         currentSpell = null;
                         uimanager.instance.mousecursor.SetCursorToCursor();
                         break;

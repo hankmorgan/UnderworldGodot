@@ -1,12 +1,11 @@
 using System.Diagnostics;
-using System.Net.Http.Headers;
 
 namespace Underworld
 {
     public partial class SpellCasting : UWClass
     {
         //targeted spells
-        public static void CastClass7_Spells(int minorclass, int index, uwObject[] objList, int caster = 1)
+        public static void CastClass7_SpellsOnCallBack(int minorclass, int index, uwObject[] objList, int caster = 1)
         {
             if (_RES == GAME_UW2)
             {

@@ -40,7 +40,7 @@ namespace Underworld
                         }
                         else
                         {
-                            Debug.Print("REMOVE TRAP");
+                            Debug.Print("Strengthen door->Note this spell appears to be bugged and does nothing???");
                         }
                         break;
                     }
@@ -53,17 +53,27 @@ namespace Underworld
                         }
                         else
                         {
-                            Debug.Print("REMOVE TRAP");//again
+                            Debug.Print("Remove Trap");
                         }
                         break;
                     }
 
                 case 4:
+                    { 
+                        if (_RES != GAME_UW2)
+                        {//no uw2 spells here, Name Enchantment                        
+                            //map major and minor to the other version of this spell
+                            //currentSpell = new RunicMagic(majorclass,minorclass);
+                            currentSpell = new RunicMagic(11, minorclass);
+                            uimanager.instance.mousecursor.SetCursorToCursor(10);
+                        }
+                        break;
+                    }
                 case 5:
                     {
                         if (_RES != GAME_UW2)
                         {//no uw2 spells here.
-                            Debug.Print("REMOVE TRAP"); //once more
+                            Debug.Print("Unlock"); //once more
                         }
                         break;
                     }
@@ -130,6 +140,36 @@ namespace Underworld
                     playerdat.HealthRegenEnchantment = true; break;
                 case 0xF://Mana regen       
                     playerdat.ManaRegenEnchantment = true; break;
+            }
+        }
+
+        
+        /// <summary>
+        /// Special case for UW1 spells that are class B but have callbacks
+        /// </summary>
+        /// <param name="minorclass"></param>
+        /// <param name="index"></param>
+        /// <param name="objList"></param>
+        /// <param name="caster"></param>
+        public static void CastClassB_SpellsOnCallBack(int minorclass, int index, uwObject[] objList, int caster = 1)
+        {
+            if (_RES!=GAME_UW2)
+            {
+                switch (minorclass)
+                {
+                    case 2://strengthen door.
+                        Debug.Print("Strengthen door callback, this spell does nothing in vanilla!");
+                        break;
+                    case 3://remove trap
+                        Debug.Print("Remove trap callback");
+                        break;
+                    case 4://Name enchantment
+                        NameEnchantment(index, objList);
+                        break;
+                    case 5://unlock
+                        Debug.Print("Remove trap callback");
+                        break;
+                }
             }
         }
 
