@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
+using Godot;
 
 namespace Underworld
 {
     public class container : objectInstance
-    {    
+    {
         public static bool Use(uwObject obj, bool WorldObject)
         {
             if (WorldObject)
@@ -91,17 +92,17 @@ namespace Underworld
         {
             int occupiedslots = 0;
             var objects = GetObjects(
-                ContainerIndex: obj.index, 
+                ContainerIndex: obj.index,
                 objList: playerdat.InventoryObjects,
                 OccupiedSlots: out occupiedslots,
-                start:start,
-                count:count
+                start: start,
+                count: count
                 );
 
-            if (objects==null)
+            if (objects == null)
             {
                 //empty container
-                for (int o=0;o<8;o++)
+                for (int o = 0; o < 8; o++)
                 {
                     uimanager.SetBackPackIndex(o, null);
                 }
@@ -123,7 +124,7 @@ namespace Underworld
                 }
             }
 
-            uimanager.EnableDisable(uimanager.instance.ArrowUp, start !=0);
+            uimanager.EnableDisable(uimanager.instance.ArrowUp, start != 0);
             uimanager.EnableDisable(uimanager.instance.ArrowDown, occupiedslots == 8);
 
             uimanager.UpdateInventoryDisplay();
@@ -138,9 +139,9 @@ namespace Underworld
             var obj = objList[index];
             if (obj == null) { return -1; }
             if (obj.classindex <= 0xB)
-                {//return to closed version of the container.
-                    obj.item_id &= 0x1fe;                        
-                }
+            {//return to closed version of the container.
+                obj.item_id &= 0x1fe;
+            }
             //Check the paperdoll
             for (int p = 0; p < 19; p++)
             {
@@ -162,15 +163,15 @@ namespace Underworld
             }
             foreach (var objToCheck in playerdat.InventoryObjects)
             {//if this far down then I need to find the container that the closing container sits in
-                if (objToCheck!=null)
+                if (objToCheck != null)
                 {
                     var result = objectsearch.GetContainingObject(
-                        ListHead:objToCheck.index, 
+                        ListHead: objToCheck.index,
                         ToFind: uimanager.OpenedContainerIndex,
                         objList: playerdat.InventoryObjects);
-                    if (result!=-1)
+                    if (result != -1)
                     {//container found. Browse into it by using it
-                        Use(objList[result],false);
+                        Use(objList[result], false);
                         return result;
                     }
                 }
@@ -189,12 +190,12 @@ namespace Underworld
         /// <returns></returns>
         public static int[] GetObjects(int ContainerIndex, uwObject[] objList, out int OccupiedSlots, int start = 0, int count = 8)
         {
-            var Objects = ListObjects(ContainerIndex, objList);            
+            var Objects = ListObjects(ContainerIndex, objList);
             OccupiedSlots = 0;
-            if (Objects==null)
-                {
+            if (Objects == null)
+            {
                 return null;
-                }
+            }
             var output = new int[count];
             int i = 0;
             for (int o = start; o < start + count; o++)
@@ -215,7 +216,7 @@ namespace Underworld
                 {
                     output[i++] = -1;
                 }
-            }            
+            }
             return output;
         }
 
@@ -259,7 +260,7 @@ namespace Underworld
                 case UWTileMap.TILE_DIAG_NE:
                     zpos = tile.floorHeight << 2;
                     xpos = Rng.r.Next(1, 8);
-                    ypos = Rng.r.Next(7-xpos, 8); //(i >= 7 - j)
+                    ypos = Rng.r.Next(7 - xpos, 8); //(i >= 7 - j)
                     return;
                 case UWTileMap.TILE_DIAG_SE:
                     zpos = tile.floorHeight << 2;
@@ -274,36 +275,202 @@ namespace Underworld
                 case UWTileMap.TILE_DIAG_SW:
                     zpos = tile.floorHeight << 2;
                     xpos = Rng.r.Next(1, 8);
-                    ypos = Rng.r.Next(0, 8-xpos); // (7 - i >= j)
+                    ypos = Rng.r.Next(0, 8 - xpos); // (7 - i >= j)
                     return;
                 case UWTileMap.TILE_SLOPE_S:
-                    xpos = Rng.r.Next(0,8);
-                    ypos = Rng.r.Next(0,8);
-                    zpos = (8-ypos) + (tile.floorHeight << 2);
+                    xpos = Rng.r.Next(0, 8);
+                    ypos = Rng.r.Next(0, 8);
+                    zpos = (8 - ypos) + (tile.floorHeight << 2);
                     return;
                 case UWTileMap.TILE_SLOPE_N:
-                    xpos = Rng.r.Next(0,8);
-                    ypos = Rng.r.Next(0,8);
+                    xpos = Rng.r.Next(0, 8);
+                    ypos = Rng.r.Next(0, 8);
                     zpos = (ypos) + (tile.floorHeight << 2);
                     return;
                 case UWTileMap.TILE_SLOPE_E:
-                    xpos = Rng.r.Next(0,8);
-                    ypos = Rng.r.Next(0,8);
+                    xpos = Rng.r.Next(0, 8);
+                    ypos = Rng.r.Next(0, 8);
                     zpos = (xpos) + (tile.floorHeight << 2);
                     return;
                 case UWTileMap.TILE_SLOPE_W:
-                    xpos = Rng.r.Next(0,8);
-                    ypos = Rng.r.Next(0,8);
-                    zpos = (8-xpos) + (tile.floorHeight << 2);
+                    xpos = Rng.r.Next(0, 8);
+                    ypos = Rng.r.Next(0, 8);
+                    zpos = (8 - xpos) + (tile.floorHeight << 2);
                     return;
                 default:
                 case UWTileMap.TILE_OPEN:
                 case UWTileMap.TILE_SOLID:
-                    xpos = Rng.r.Next(0,8);
-                    ypos = Rng.r.Next(0,8);
+                    xpos = Rng.r.Next(0, 8);
+                    ypos = Rng.r.Next(0, 8);
                     zpos = tile.floorHeight << 2;
                     return;
             }
+        }
+
+        public static bool TestContainerCanHold(uwObject containerobject, uwObject objectToAdd, bool printReason = true)
+        {//assume containerobject = in player object list, objecttoadd in level objects list
+            bool WeightTest = false;
+            bool ContainerCanHold = false;
+            bool WrongTypeMessage = false;
+            var mask = containerObjectDat.objectmask(containerobject.item_id);
+            if (mask <= -1)
+            {
+                ContainerCanHold = true;
+            }
+            else
+            {
+                if ((mask >= 0) && (mask < 512))
+                {//check for exact match. I don't think this actually happens with any container but just incase...
+                    if (objectToAdd.item_id == mask)
+                    {
+                        if (printReason)
+                        {
+                            uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_that_item_does_not_fit_));
+                        }
+                        ContainerCanHold = false;
+                    }
+                    else
+                    {
+                        ContainerCanHold = true;
+                    }
+                }
+                else
+                {//check category against mask-512;
+                    //mask = mask - 512s;
+                    switch (mask)
+                    {
+                        case 512://rune bag, this will probably never hit but included this case for completedness
+                            ContainerCanHold = runestone.IsRunestone(objectToAdd.item_id);
+                            if ((!ContainerCanHold) && (printReason))
+                            {
+                                uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_can_only_put_runes_in_the_rune_bag_));
+                            }
+                            break;
+                        case 513://quivers, accepts missiles and wands
+                            {
+                                if (
+                                    ((objectToAdd.majorclass == 0) && (objectToAdd.minorclass == 3) && (objectToAdd.classindex <= 3))
+                                    ||
+                                    ((objectToAdd.majorclass == 0) && (objectToAdd.minorclass == 3) && (objectToAdd.classindex >= 8))
+                                )
+                                {//a wand or ammo
+                                    ContainerCanHold = true;
+                                }
+                                else
+                                {
+                                    ContainerCanHold = false;
+                                    WrongTypeMessage = true;
+                                }
+                                break;
+                            }
+                        case 514://scrolls
+                            {
+                                if (
+                                    ((objectToAdd.majorclass == 4) && (objectToAdd.minorclass == 3) && (_RES != GAME_UW2))
+                                    ||
+                                    ((objectToAdd.majorclass == 4) && (objectToAdd.minorclass == 3) && (objectToAdd.classindex <= 0xA) && (_RES == GAME_UW2))
+                                    )
+                                {
+                                    //a book/scroll
+                                    ContainerCanHold = true;
+                                }
+                                else
+                                {
+                                    ContainerCanHold = false;
+                                    WrongTypeMessage = true;
+                                }
+                                break;
+                            }
+                        case 515://bowl/food
+                            {
+                                if (food.IsFood(objectToAdd))
+                                {
+                                    ContainerCanHold = true;
+                                }
+                                else
+                                {
+                                    ContainerCanHold = false;
+                                    WrongTypeMessage = true;
+                                }
+                                break;
+                            }
+                        case 516://keyring
+                            {
+                                if ((objectToAdd.majorclass == 4) && (objectToAdd.minorclass == 0))
+                                {
+                                    ContainerCanHold = true;
+                                }
+                                else
+                                {
+                                    ContainerCanHold = false;
+                                    WrongTypeMessage = true;
+                                }
+                                break;
+                            }
+                    }
+                }
+            }
+
+            if (!ContainerCanHold && WrongTypeMessage)
+            {
+                uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_that_item_does_not_fit_));
+            }
+
+            //TODO test total weight.
+            if (ContainerCanHold)
+            {
+                var containerMass = GetTotalMass(containerobject, playerdat.InventoryObjects, true);
+                var itemToAddMass = GetTotalMass(objectToAdd, UWTileMap.current_tilemap.LevelObjects, true);
+                if (containerMass + itemToAddMass > containerObjectDat.capacity(containerobject.item_id))
+                {
+                    WeightTest = false;
+                    if (printReason)
+                    {
+                        uimanager.AddToMessageScroll($"The {GameStrings.GetSimpleObjectNameUW(containerobject.item_id)} is too full");
+                    }
+                }
+                else
+                {
+                    WeightTest = true;
+                }
+            }
+
+
+            return (ContainerCanHold && WeightTest);
+        }
+
+
+        /// <summary>
+        /// Gets the total mass of the object chain.
+        /// </summary>
+        /// <param name="objectToWeight"></param>
+        /// <param name="objList"></param>
+        /// <param name="IgnoreNext">tells the loop to not look at the next object.</param>
+        /// <returns></returns>
+        public static int GetTotalMass(uwObject objectToWeight, uwObject[] objList, bool IgnoreNext)
+        {
+            var selfweight = objectToWeight.ObjectQuantity * commonObjDat.mass(objectToWeight.item_id);
+
+            if (!IgnoreNext)
+            {
+                var nextIndex = objectToWeight.next;
+                while (nextIndex!=0)
+                {
+                    var nextObject = objList[nextIndex];
+                    selfweight+= GetTotalMass(nextObject, objList, true);
+                    nextIndex = nextObject.next;
+                }
+            }
+
+            if (objectToWeight.is_quant==0)
+            {
+                if (objectToWeight.link>0)
+                {
+                    var linked = objList[objectToWeight.link];
+                    selfweight+= GetTotalMass(linked, objList, false);
+                }
+            }   
+            return selfweight;
         }
 
     }//end class

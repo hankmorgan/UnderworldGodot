@@ -270,6 +270,88 @@ namespace Underworld
         }
 
 
+        public static bool IsFood(uwObject obj)
+        {
+
+            if (obj.majorclass == 2)
+            {
+                if (_RES == GAME_UW2)
+                {
+                    switch (obj.classindex)
+                    {
+                        case 0: //a_piece of meat&pieces of meat
+                        case 1: //a_piece of meat&pieces of meat
+                        case 2: //a_piece of cheese&pieces of cheese
+                        case 3: //an_apple
+                        case 4: //an_ear of corn&ears of corn
+                        case 5: //a_loaf of bread&loaves of bread
+                        case 6: //a_fish&fish
+                        case 7: //some_popcorn&bunches of popcorn
+                        case 8: //a_pastry&pastries
+                        case 0xA: //a_honeycomb
+                        case 0xE: //some_meat-on-a-stick&pieces of meat-on-a-stick
+                        case 0xF: //a_nutritious wafer
+                        case 0xB: //a_bottle of ale&bottles of ale
+                        case 0xC: //a_bottle of water&bottles of water
+                        case 0xD: //a_bottle of wine&bottles of wine
+                        case 9: //a_mushroom  //this needs to do a shrooms skill check on it
+                            return true;
+                    }
+                }
+                else
+                {
+                    switch (obj.classindex)
+                    {
+                        case 0:// a_piece of meat&pieces of meat
+                        case 1:// a_loaf of bread&loaves of bread
+                        case 2:// a_piece of cheese&pieces of cheese
+                        case 3:// an_apple
+                        case 4:// an_ear of corn&ears of corn
+                        case 5:// a_loaf of bread&loaves of bread
+                        case 6:// a_fish&fish
+                        case 7:// some_popcorn&bunches of popcorn
+                        case 9:// a_toadstool                       
+                        case 0xA:// a_bottle of ale&bottles of ale
+                        case 0xB:// a_red potion
+                        case 0xC:// a_green potion                      
+                        case 0xD:// a_bottle of water&bottles of water
+                        case 0xE:// a_flask of port&flasks of port                       
+                        case 0xF:// a_bottle of wine&bottles of wine                       
+                        case 8:// a_mushroom
+                            return true;
+                    }
+                }
+            }
+
+
+            if (_RES == GAME_UW2)
+            {//uw2
+                switch (obj.item_id)
+                {
+                    case 0x92://Candle                     
+                    case 0xCE://throny flower
+                    case 0x110://eyeball
+                    case 0xCF:
+                    case 0x114://plant
+                    case 0x125://leeches
+                        return true;
+                }
+            }
+            else
+            {//uw1
+                switch (obj.item_id)
+                {
+                    case 0x92://Candle
+                    case 0xCE: //plant                     
+                    case 0xCF:  //plant
+                    case 0xD9://rotworm corpse                       
+                    case 0x11B: //rotworm stew                      
+                    case 0x125://leech
+                        return true;
+                }
+            }
+            return false;
+        }
 
     }//end class
 }//end namespace

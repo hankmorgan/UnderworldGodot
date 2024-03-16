@@ -25,9 +25,9 @@ namespace Underworld
         /// </summary>
         /// <param name="item_id"></param>
         /// <returns></returns>
-        public static int objectmask(int item_id)
+        public static short objectmask(int item_id)
         {
-           return (int)getAt(buffer,offset + 1 + (item_id & 0xF),16);
+           return (short)getAt(buffer,offset + 1 + (item_id & 0xF) * 3,16);
         }
     
     }//end class

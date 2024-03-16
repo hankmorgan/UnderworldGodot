@@ -440,12 +440,15 @@ namespace Underworld
             {
                 //containers excluding the runebag.
                 //add object to container
-                var Added = playerdat.AddObjectToPlayerInventory(srcObj, false);
-                var AddedObj = playerdat.InventoryObjects[Added];
-                AddedObj.next = target.link;
-                target.link = Added;
-                playerdat.ObjectInHand = -1;
-                uimanager.instance.mousecursor.SetCursorToCursor();
+                if (container.TestContainerCanHold(target,source))
+                {
+                    var Added = playerdat.AddObjectToPlayerInventory(srcObj, false);
+                    var AddedObj = playerdat.InventoryObjects[Added];
+                    AddedObj.next = target.link;
+                    target.link = Added;
+                    playerdat.ObjectInHand = -1;
+                    uimanager.instance.mousecursor.SetCursorToCursor();
+                }
                 return;
             }
 
