@@ -27,7 +27,14 @@ namespace Underworld
                     case InteractionModes.ModeTalk:
                         return 8f;
                     case InteractionModes.ModePickup:
-                        return 3f;
+                        if (playerdat.TelekenesisEnchantment)
+                            {
+                                return 10f;
+                            }
+                            else
+                            {
+                                return 3f;
+                            }    
                     case InteractionModes.ModeUse:
                         if (playerdat.usingpole)
                         {
@@ -35,7 +42,14 @@ namespace Underworld
                         }   
                         else
                         {
-                            return 3f;
+                            if (playerdat.TelekenesisEnchantment)
+                            {
+                                return 10f;
+                            }
+                            else
+                            {
+                                return 3f;
+                            }                            
                         } 
                     case InteractionModes.ModeAttack:
                         return 1f;

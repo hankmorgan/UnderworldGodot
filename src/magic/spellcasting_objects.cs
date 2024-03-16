@@ -46,6 +46,10 @@ namespace Underworld
                         CastClass9_Curse(minorclass, TriggeredByInventoryEvent);
                         break;
                     }
+                case 0xB:
+                    {
+                        CastClassBEnchantment(minorclass); break;
+                    }
                 case 0xC: //toughness or protection.
                     {   //toughness applies a damage resistance to a specific body part. 
                         //Protection makes the body part harder to hit
