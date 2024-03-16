@@ -187,17 +187,20 @@ namespace Underworld
             }
         }
 
-        // public int MobileFreeListObject
-        // {
-        //     get
-        //     {
-        //         return (int)getAt(lev_ark_block.Data,  0x74fc + (StaticFreeListPtr * 2), 16);
-        //     }
-        //     set
-        //     {
-        //         setAt(lev_ark_block.Data,  0x74fc + (StaticFreeListPtr * 2), 16, value);
-        //     }
-        // }
+        /// <summary>
+        /// Remember to move pointer before changing!
+        /// </summary>
+        public int MobileFreeListObject
+        {
+            get
+            {
+                return (int)getAt(lev_ark_block.Data,  0x7300 + (MobileFreeListPtr * 2), 16);
+            }
+            set
+            {
+                setAt(lev_ark_block.Data,  0x7300 + (MobileFreeListPtr * 2), 16, value);
+            }
+        }
 
         public UWTileMap(int NewLevelNo)
         {

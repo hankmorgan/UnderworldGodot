@@ -70,7 +70,7 @@ namespace Underworld
         }
 
         /// <summary>
-        /// Allocates data for a new object
+        /// Allocates data for a new object using the defaults
         /// </summary>
         /// <param name="item_id"></param>
         /// <returns></returns>
@@ -110,9 +110,9 @@ namespace Underworld
                         break;
                 }
 
-                if (obj.majorclass == 1) //NPC
+                if (obj.majorclass == 1) //NPC/mobile
                 {
-                    //TODO INITIALISE CRITTER
+                    //TODO INITIALISE CRITTER/mobile objects
                 }
             }
             return slot;
@@ -130,7 +130,10 @@ namespace Underworld
                     Debug.Print($"Allocating {UWTileMap.current_tilemap.StaticFreeListObject} Pointer decremented to {UWTileMap.current_tilemap.StaticFreeListPtr}");
                     return UWTileMap.current_tilemap.StaticFreeListObject;
                 case ObjectListType.MobileList:
-                    return 0; //TODO
+                    UWTileMap.current_tilemap.MobileFreeListPtr--;
+                    Debug.Print($"Allocating {UWTileMap.current_tilemap.MobileFreeListObject} Pointer decremented to {UWTileMap.current_tilemap.StaticFreeListPtr}");
+                    return UWTileMap.current_tilemap.MobileFreeListObject;
+
             }
             return 0;
         }
