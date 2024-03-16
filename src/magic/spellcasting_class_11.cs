@@ -62,8 +62,6 @@ namespace Underworld
                     { 
                         if (_RES != GAME_UW2)
                         {//no uw2 spells here, Name Enchantment                        
-                            //map major and minor to the other version of this spell
-                            //currentSpell = new RunicMagic(majorclass,minorclass);
                             currentSpell = new RunicMagic(11, minorclass);
                             uimanager.instance.mousecursor.SetCursorToCursor(10);
                         }
@@ -72,8 +70,9 @@ namespace Underworld
                 case 5:
                     {
                         if (_RES != GAME_UW2)
-                        {//no uw2 spells here.
-                            Debug.Print("Unlock"); //once more
+                        {//no uw2 spells here, Unlock/Open spell                        
+                            currentSpell = new RunicMagic(11, minorclass);
+                            uimanager.instance.mousecursor.SetCursorToCursor(10);
                         }
                         break;
                     }
@@ -167,7 +166,7 @@ namespace Underworld
                         NameEnchantment(index, objList);
                         break;
                     case 5://unlock
-                        Debug.Print("Remove trap callback");
+                        Unlock(index, objList);
                         break;
                 }
             }

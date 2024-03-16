@@ -55,6 +55,7 @@ namespace Underworld
                         break;
                     case 12:
                         //unlock spell
+                        Unlock (index, objList);
                         break;
                     case 13:
                         //detect trap
@@ -428,6 +429,19 @@ namespace Underworld
                 {//can be identifed
                     obj.heading = 7;
                     look.GeneralLookDescription(obj, objList, 3);
+                }
+            }
+        }
+
+        static void Unlock(int index, uwObject[] objList)
+        {
+            var target = objList[index];
+            if ((target.majorclass==5) && (target.minorclass==0))
+            {
+                var doorobj = (door)target.instance;
+                if (doorobj!=null)
+                {
+                    doorobj.Locked = false;
                 }
             }
         }
