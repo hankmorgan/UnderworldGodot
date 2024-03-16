@@ -15,7 +15,7 @@ namespace Underworld
         /// <param name="classindex">use -1 to return any of the class index </param>
         /// <param name="objList"></param>
         /// <returns></returns>
-        public static uwObject FindMatchInObjectChain(int ListHeadIndex, int majorclass, int minorclass, int classindex, uwObject[] objList) 
+        public static uwObject FindMatchInObjectChain(int ListHeadIndex, int majorclass, int minorclass, int classindex, uwObject[] objList, bool SkipNext = false) 
         {
             if (ListHeadIndex !=0 )
             {
@@ -49,13 +49,16 @@ namespace Underworld
                             }
                         }
                     }
-                    //no matches. Try next value. Returns null if nothing found.
-                    return FindMatchInObjectChain(
-                        ListHeadIndex: testObj.next, 
-                        majorclass: majorclass, 
-                        minorclass: minorclass, 
-                        classindex: classindex, 
-                        objList: objList);
+                    if (!SkipNext)
+                    {
+                        //no matches. Try next value. Returns null if nothing found.
+                        return FindMatchInObjectChain(
+                            ListHeadIndex: testObj.next, 
+                            majorclass: majorclass, 
+                            minorclass: minorclass, 
+                            classindex: classindex, 
+                            objList: objList);
+                    }
                 }
             }           
            return null; //nothing found. 

@@ -306,6 +306,22 @@ namespace Underworld
                         break;
                 }
             }
+            else
+            {
+                if ((obj.is_quant == 0) && (obj.link != 0))
+                {//check for a linked damage trap
+                        var dmgtrap = objectsearch.FindMatchInObjectChain(
+                            ListHeadIndex: obj.link, 
+                            majorclass: 6, 
+                            minorclass: 0, 
+                            classindex: 0, 
+                            objList: objList);
+                        if (dmgtrap!=null)
+                        {
+                           enchantmenttext = " of poison";
+                        }
+                }
+            }
 
             if (objectname.StartsWith("some "))
             {

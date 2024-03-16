@@ -19,7 +19,7 @@ namespace Underworld
             IsFlagBit2Set = _isflag2set;
         }
 
-        public static bool IsPotion(uwObject obj)
+        public static bool IsPotion(uwObject obj, bool UW2Only = true)
         {
             if (_RES==GAME_UW2)
             {
@@ -27,8 +27,14 @@ namespace Underworld
             }
             else
             {
-                return false;// this is a uw2 only behaviour.
-                //return (obj.item_id>=187 && obj.item_id<=188);
+                if (UW2Only)
+                {
+                    return false;// hack for checking enchantments in uw2
+                }
+                else
+                {
+                    return (obj.item_id>=187 && obj.item_id<=188);
+                }
             }
         }
 
@@ -42,7 +48,7 @@ namespace Underworld
         public string NameEnchantment(uwObject obj, uwObject[] objList, int LoreCheck = 3)
         {
             var stringNo = 0;
-            if (IsPotion(obj))
+            if (IsPotion(obj, false))
             {
                 if (obj.is_quant == 0)
                 {//check for poisoned potions

@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 
 namespace Underworld
 {
@@ -109,38 +110,48 @@ namespace Underworld
         }
 
 
-        static void QuaffPotion(uwObject obj, bool UsedFromInventory)
+        static void QuaffPotion(uwObject potion, bool UsedFromInventory)
         {
             uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_quaff_the_potion_in_one_gulp_));
 
+            uwObject[] objList;
 
             MagicEnchantment spell;
             if (UsedFromInventory)
             {
-                spell = MagicEnchantment.GetSpellEnchantment(obj, playerdat.InventoryObjects);
+                spell = MagicEnchantment.GetSpellEnchantment(potion, playerdat.InventoryObjects);
+                objList = playerdat.InventoryObjects;
             }
             else
             {
-                spell = MagicEnchantment.GetSpellEnchantment(obj, UWTileMap.current_tilemap.LevelObjects);
+                spell = MagicEnchantment.GetSpellEnchantment(potion, UWTileMap.current_tilemap.LevelObjects);
+                objList = UWTileMap.current_tilemap.LevelObjects;
             }
 
             if (spell != null)
             {
-                MagicEnchantment.CastObjectSpell(obj, spell);
+                MagicEnchantment.CastObjectSpell(potion, spell);
             }
-            // {
-            //     CastObjectSpell(obj, spell);
-
-            //     // SpellCasting.CastSpell(
-            //     //     majorclass: spell.SpellMajorClass,
-            //     //      minorclass: spell.SpellMinorClass, 
-            //     //      caster: obj, 
-            //     //      target: null, 
-            //     //      tileX: playerdat.tileX, 
-            //     //      tileY: playerdat.tileY, 
-            //     //      CastOnEquip: false);
-            // }
-            ObjectCreator.Consume(obj, UsedFromInventory);
+            else
+            {//no spell was attached. See if a damage trap is present.
+                if (potion.is_quant==0)
+                {
+                    if (potion.link!=0)
+                    {                       
+                        var dmgtrap = objectsearch.FindMatchInObjectChain(
+                            ListHeadIndex: potion.link, 
+                            majorclass: 6, 
+                            minorclass: 0, 
+                            classindex: 0, 
+                            objList: objList);
+                        if (dmgtrap!=null)
+                        {
+                            a_damage_trap.ApplyDamageTrap(dmgtrap.owner>0, dmgtrap.quality);
+                        }
+                    }
+                }
+            }
+            ObjectCreator.Consume(potion, UsedFromInventory);
         }
 
         static void DrinkLiquid(uwObject obj, bool UsedFromInventory)
