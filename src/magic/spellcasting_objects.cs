@@ -21,6 +21,11 @@ namespace Underworld
                         {
                             playerdat.lightlevel = minorclass;
                         }
+                        if (minorclass == 5)
+                        {
+                            //apply mono palette for nightvision.
+                            Palette.ColourTone = 1;
+                        }
                         break;
                     }
                 case 1: //Motion abilities

@@ -12,6 +12,8 @@ namespace Underworld
         static void ResetPlayer()
         {
             lightlevel = 0;
+            Palette.ColourTone = 0;
+            
             MagicalMotionAbilities = 0;
             for (int i=0; i<=3;i++)
             {
@@ -41,7 +43,7 @@ namespace Underworld
             InitArmourValues();
 
             //Get brightest physcial light
-            lightlevel = BrightestNonMagicalLight();
+            lightlevel = BrightestNonMagicalLight();          
 
             //cast active spell effects
             CastActiveSpellEffects(ref DamageResistance, ref StealthBonus);

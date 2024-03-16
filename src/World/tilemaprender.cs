@@ -276,18 +276,6 @@ namespace Underworld
             AddSurfaceToMesh(verts, uvs, MatsToUse, 0, a_mesh, normals, indices);
 
             return CreateMeshInstance(parent, x, y, TileName, a_mesh);
-
-            // mr.materials = MatsToUse;//mats;
-            // mesh.RecalculateNormals();
-            // mesh.RecalculateBounds();
-            // mf.mesh = mesh;
-            // if (EnableCollision)
-            // {
-            //     MeshCollider mc = Tile.AddComponent<MeshCollider>();
-            //     mc.sharedMesh = null;
-            //     mc.sharedMesh = mesh;
-            // }
-            // return Tile;
         }
 
         private static Node3D CreateMeshInstance(Node3D parent, int x, int y, string TileName, ArrayMesh a_mesh)
@@ -299,7 +287,8 @@ namespace Underworld
             final_mesh.Mesh = a_mesh;
             if (EnableCollision)
             {
-                final_mesh.CreateConvexCollision(clean: false);
+                //final_mesh.CreateConvexCollision(clean: false);
+                final_mesh.CreateTrimeshCollision();
             }
             return final_mesh;
         }
