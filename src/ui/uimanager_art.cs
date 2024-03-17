@@ -40,9 +40,7 @@ namespace Underworld
             grSpells.UseRedChannel = true;
 			bitmaps = new BytLoader();
             grCompass= new GRLoader(GRLoader.COMPASS_GR, GRLoader.GRShaderMode.UIShader);
-
             csCuts = new Dictionary<string, CutsLoader>();
 		}
-
-    }
-}
+    }//end class
+}//end namespace

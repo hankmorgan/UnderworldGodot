@@ -12,6 +12,8 @@ namespace Underworld
         public TextureRect[] CompassBgUW2 = new TextureRect[4];
         [Export] 
         TextureRect[] CompassPointsUW1 = new TextureRect[16];
+        [Export] 
+        TextureRect[] CompassPointsUW2 = new TextureRect[16];
 
 
         public static void InitCompass()
@@ -27,6 +29,17 @@ namespace Underworld
                     instance.CompassPointsUW1[i].Texture = grCompass.LoadImageAt(4+i);
                 }            
             }
+            else
+            {
+                for (int i = 0; i<=instance.CompassBgUW1.GetUpperBound(0);i++)
+                {
+                    instance.CompassBgUW2[i].Texture = grCompass.LoadImageAt(i);
+                }   
+                for (int i = 0; i <= instance.CompassPointsUW2.GetUpperBound(0); i++)
+                {
+                    instance.CompassPointsUW2[i].Texture = grCompass.LoadImageAt(4+i);
+                }  
+            }
         }
 
         public static void UpdateCompass()
@@ -41,6 +54,17 @@ namespace Underworld
                 for (int i = 0; i <= instance.CompassPointsUW1.GetUpperBound(0); i++)
                 {
                     EnableDisable(instance.CompassPointsUW1[i], (heading % 16 == i));
+                }
+            }
+            else
+            {
+                for (int i = 0; i <= instance.CompassBgUW2.GetUpperBound(0); i++)
+                {
+                    EnableDisable(instance.CompassBgUW2[i], (heading % 4 == i));
+                }
+                for (int i = 0; i <= instance.CompassPointsUW2.GetUpperBound(0); i++)
+                {
+                    EnableDisable(instance.CompassPointsUW2[i], (heading % 16 == i));
                 }
             }
         }

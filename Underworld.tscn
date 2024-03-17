@@ -66,10 +66,12 @@ shape = SubResource("CapsuleShape3D_1c8r5")
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("CompassBgUW1", "CompassPointsUW1", "ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLableFrameUW1", "NPCNameLableFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "CutsFull", "CutsSmallUW1", "CutsSmallUW2", "Cuts3DWinUW1", "Cuts3DWinUW2", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "InteractionButtonsUW1", "InteractionButtonsUW2", "PanelMainMenu", "MainMenuBG", "MainMenuButtons", "LoadingLabel", "SaveGamesNames", "AutomapPanel", "AutomapBG", "AutomapImage", "messageScrollUW1", "messageScrollUW2", "TypedInput", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Chains", "RuneTiles", "SelectedRunes", "ActiveSpellIcons", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSelectedUW1", "NPCTradeSelectedUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "PlayerTradeSelectedUW2", "NPCTradeSelectedUW2", "cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "placeholderuw1", "placeholderuw2")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("CompassBgUW1", "CompassBgUW2", "CompassPointsUW1", "CompassPointsUW2", "ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLableFrameUW1", "NPCNameLableFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "CutsFull", "CutsSmallUW1", "CutsSmallUW2", "Cuts3DWinUW1", "Cuts3DWinUW2", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "InteractionButtonsUW1", "InteractionButtonsUW2", "PanelMainMenu", "MainMenuBG", "MainMenuButtons", "LoadingLabel", "SaveGamesNames", "AutomapPanel", "AutomapBG", "AutomapImage", "messageScrollUW1", "messageScrollUW2", "TypedInput", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Chains", "RuneTiles", "SelectedRunes", "ActiveSpellIcons", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSelectedUW1", "NPCTradeSelectedUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "PlayerTradeSelectedUW2", "NPCTradeSelectedUW2", "cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "placeholderuw1", "placeholderuw2")]
 script = ExtResource("1_lw0yg")
 CompassBgUW1 = [NodePath("../UW1/CompassUW1/CompassBg0"), NodePath("../UW1/CompassUW1/CompassBg1"), NodePath("../UW1/CompassUW1/CompassBg2"), NodePath("../UW1/CompassUW1/CompassBg3")]
+CompassBgUW2 = [NodePath("../UW2/CompassUW2/CompassBG0"), NodePath("../UW2/CompassUW2/CompassBG1"), NodePath("../UW2/CompassUW2/CompassBG2"), NodePath("../UW2/CompassUW2/CompassBG3")]
 CompassPointsUW1 = [NodePath("../UW1/CompassUW1/CompassPoint0"), NodePath("../UW1/CompassUW1/CompassPoint1"), NodePath("../UW1/CompassUW1/CompassPoint2"), NodePath("../UW1/CompassUW1/CompassPoint3"), NodePath("../UW1/CompassUW1/CompassPoint4"), NodePath("../UW1/CompassUW1/CompassPoint5"), NodePath("../UW1/CompassUW1/CompassPoint6"), NodePath("../UW1/CompassUW1/CompassPoint7"), NodePath("../UW1/CompassUW1/CompassPoint8"), NodePath("../UW1/CompassUW1/CompassPoint9"), NodePath("../UW1/CompassUW1/CompassPoint10"), NodePath("../UW1/CompassUW1/CompassPoint11"), NodePath("../UW1/CompassUW1/CompassPoint12"), NodePath("../UW1/CompassUW1/CompassPoint13"), NodePath("../UW1/CompassUW1/CompassPoint14"), NodePath("../UW1/CompassUW1/CompassPoint15")]
+CompassPointsUW2 = [NodePath("../UW2/CompassUW2/CompassPoint0"), NodePath("../UW2/CompassUW2/CompassPoint1"), NodePath("../UW2/CompassUW2/CompassPoint2"), NodePath("../UW2/CompassUW2/CompassPoint3"), NodePath("../UW2/CompassUW2/CompassPoint4"), NodePath("../UW2/CompassUW2/CompassPoint5"), NodePath("../UW2/CompassUW2/CompassPoint6"), NodePath("../UW2/CompassUW2/CompassPoint7"), NodePath("../UW2/CompassUW2/CompassPoint8"), NodePath("../UW2/CompassUW2/CompassPoint9"), NodePath("../UW2/CompassUW2/CompassPoint10"), NodePath("../UW2/CompassUW2/CompassPoint11"), NodePath("../UW2/CompassUW2/CompassPoint12"), NodePath("../UW2/CompassUW2/CompassPoint13"), NodePath("../UW2/CompassUW2/CompassPoint14"), NodePath("../UW2/CompassUW2/CompassPoint15")]
 ConversationPanelUW1 = NodePath("../UW1/ConversationUW1")
 PlayerPortraitUW1 = NodePath("../UW1/ConversationUW1/PlayerPortraitUW1")
 NPCPortraitUW1 = NodePath("../UW1/ConversationUW1/NPCPortraitUW1")
@@ -191,6 +193,7 @@ placeholderuw2 = NodePath("../UW2/placeholdermainuw2")
 stream = SubResource("AudioStreamWAV_tkk82")
 
 [node name="UW1" type="CanvasLayer" parent="UI"]
+visible = false
 
 [node name="placeholdermainuw1" type="TextureRect" parent="UI/UW1"]
 offset_right = 1280.0
@@ -723,7 +726,6 @@ offset_bottom = 532.0
 mouse_filter = 2
 
 [node name="UW2" type="CanvasLayer" parent="UI"]
-visible = false
 
 [node name="placeholdermainuw2" type="TextureRect" parent="UI/UW2"]
 offset_right = 1280.0
@@ -1077,6 +1079,166 @@ offset_left = 380.0
 offset_top = 599.0
 offset_right = 580.0
 offset_bottom = 639.0
+
+[node name="CompassBG0" type="TextureRect" parent="UI/UW2/CompassUW2"]
+visible = false
+layout_mode = 0
+offset_left = 376.0
+offset_top = 592.0
+offset_right = 584.0
+offset_bottom = 656.0
+
+[node name="CompassBG1" type="TextureRect" parent="UI/UW2/CompassUW2"]
+visible = false
+layout_mode = 0
+offset_left = 376.0
+offset_top = 592.0
+offset_right = 584.0
+offset_bottom = 656.0
+
+[node name="CompassBG2" type="TextureRect" parent="UI/UW2/CompassUW2"]
+visible = false
+layout_mode = 0
+offset_left = 376.0
+offset_top = 592.0
+offset_right = 584.0
+offset_bottom = 656.0
+
+[node name="CompassBG3" type="TextureRect" parent="UI/UW2/CompassUW2"]
+visible = false
+layout_mode = 0
+offset_left = 376.0
+offset_top = 592.0
+offset_right = 584.0
+offset_bottom = 656.0
+
+[node name="CompassPoint0" type="TextureRect" parent="UI/UW2/CompassUW2"]
+visible = false
+layout_mode = 0
+offset_left = 460.0
+offset_top = 592.0
+offset_right = 500.0
+offset_bottom = 608.0
+
+[node name="CompassPoint1" type="TextureRect" parent="UI/UW2/CompassUW2"]
+visible = false
+layout_mode = 0
+offset_left = 432.0
+offset_top = 592.0
+offset_right = 472.0
+offset_bottom = 612.0
+
+[node name="CompassPoint2" type="TextureRect" parent="UI/UW2/CompassUW2"]
+visible = false
+layout_mode = 0
+offset_left = 408.0
+offset_top = 600.0
+offset_right = 440.0
+offset_bottom = 616.0
+
+[node name="CompassPoint3" type="TextureRect" parent="UI/UW2/CompassUW2"]
+visible = false
+layout_mode = 0
+offset_left = 384.0
+offset_top = 604.0
+offset_right = 416.0
+offset_bottom = 624.0
+
+[node name="CompassPoint4" type="TextureRect" parent="UI/UW2/CompassUW2"]
+visible = false
+layout_mode = 0
+offset_left = 376.0
+offset_top = 612.0
+offset_right = 404.0
+offset_bottom = 632.0
+
+[node name="CompassPoint5" type="TextureRect" parent="UI/UW2/CompassUW2"]
+visible = false
+layout_mode = 0
+offset_left = 376.0
+offset_top = 616.0
+offset_right = 416.0
+offset_bottom = 640.0
+
+[node name="CompassPoint6" type="TextureRect" parent="UI/UW2/CompassUW2"]
+visible = false
+layout_mode = 0
+offset_left = 400.0
+offset_top = 628.0
+offset_right = 432.0
+offset_bottom = 648.0
+
+[node name="CompassPoint7" type="TextureRect" parent="UI/UW2/CompassUW2"]
+visible = false
+layout_mode = 0
+offset_left = 428.0
+offset_top = 632.0
+offset_right = 472.0
+offset_bottom = 652.0
+
+[node name="CompassPoint8" type="TextureRect" parent="UI/UW2/CompassUW2"]
+visible = false
+layout_mode = 0
+offset_left = 456.0
+offset_top = 636.0
+offset_right = 504.0
+offset_bottom = 656.0
+
+[node name="CompassPoint9" type="TextureRect" parent="UI/UW2/CompassUW2"]
+visible = false
+layout_mode = 0
+offset_left = 488.0
+offset_top = 632.0
+offset_right = 532.0
+offset_bottom = 652.0
+
+[node name="CompassPoint10" type="TextureRect" parent="UI/UW2/CompassUW2"]
+visible = false
+layout_mode = 0
+offset_left = 528.0
+offset_top = 628.0
+offset_right = 560.0
+offset_bottom = 648.0
+
+[node name="CompassPoint11" type="TextureRect" parent="UI/UW2/CompassUW2"]
+visible = false
+layout_mode = 0
+offset_left = 544.0
+offset_top = 616.0
+offset_right = 580.0
+offset_bottom = 640.0
+
+[node name="CompassPoint12" type="TextureRect" parent="UI/UW2/CompassUW2"]
+visible = false
+layout_mode = 0
+offset_left = 556.0
+offset_top = 612.0
+offset_right = 584.0
+offset_bottom = 632.0
+
+[node name="CompassPoint13" type="TextureRect" parent="UI/UW2/CompassUW2"]
+visible = false
+layout_mode = 0
+offset_left = 544.0
+offset_top = 604.0
+offset_right = 576.0
+offset_bottom = 624.0
+
+[node name="CompassPoint14" type="TextureRect" parent="UI/UW2/CompassUW2"]
+visible = false
+layout_mode = 0
+offset_left = 520.0
+offset_top = 596.0
+offset_right = 548.0
+offset_bottom = 616.0
+
+[node name="CompassPoint15" type="TextureRect" parent="UI/UW2/CompassUW2"]
+visible = false
+layout_mode = 0
+offset_left = 488.0
+offset_top = 592.0
+offset_right = 528.0
+offset_bottom = 608.0
 
 [node name="CutsceneSmallUW2" type="TextureRect" parent="UI/UW2"]
 visible = false
