@@ -63,9 +63,14 @@ namespace Underworld
                         Debug.Print ($"Unknown Trap Class {trapObj.item_id}");
                         return; //stop execution.
                 }
-            }
-
+            }           
             TriggerNext(trapObj, objList);//probably need to have a guardrail to stop execution
+
+            if (triggerObj.flags1 == 0)
+            {
+                //remove trigger chain
+                Debug.Print ("TEST ME, THIS TRIGGER SHOULD ONLY FIRE ONCE");
+            }
         } //end activate trap
 
 

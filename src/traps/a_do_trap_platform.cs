@@ -12,7 +12,7 @@ namespace Underworld
         /// The switch flags maps to these tile heights
         /// </summary>
         static int[] heights = new int[] { 4, 6, 8, 10, 12, 14, 16, 18 }; //heights *2
-        public static void activate(uwObject trapObj, uwObject triggerObj, uwObject[] objList)
+        public static void Activate(uwObject trapObj, uwObject triggerObj, uwObject[] objList)
         {
             var tileX = triggerObj.quality;
             var tileY = triggerObj.owner;

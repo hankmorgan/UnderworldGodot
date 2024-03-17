@@ -19,7 +19,12 @@ namespace Underworld
                 {
                     if (npc_whoami != 0)
                     {
-                        return GameStrings.GetString(7, npc_whoami + 16);
+                        var name = GameStrings.GetString(7, npc_whoami + 16);
+                        if (name!="")
+                        {//check for 0 length whoami. eg the gazer in the mines has no name
+                            return GameStrings.GetString(7, npc_whoami + 16);
+                        }
+                       
                     }
                 }
                 return GameStrings.GetObjectNounUW(item_id);

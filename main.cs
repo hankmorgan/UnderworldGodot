@@ -101,9 +101,9 @@ public partial class main : Node3D
 			var tmp = cam.Rotation;
 			tmp.Y = (float)(tmp.Y - Math.PI);
 			playerdat.heading = (int)Math.Round(-(tmp.Y * 127) / Math.PI);
+			uimanager.UpdateCompass();
 
-
-			lblPositionDebug.Text = $"{cam.Position.ToString()}\n{tileX} {tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}\n{cam.Rotation} {playerdat.heading}";
+			lblPositionDebug.Text = $"{cam.Position.ToString()}\n{tileX} {tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}\n{cam.Rotation} {playerdat.heading} {(playerdat.heading>>4)%4}";
 
 			if ((tileX < 64) && (tileX >= 0) && (tileY < 64) && (tileY >= 0))
 			{

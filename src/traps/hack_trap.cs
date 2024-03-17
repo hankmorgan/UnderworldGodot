@@ -8,7 +8,7 @@ namespace Underworld
             switch (trapObj.quality)
             {
                 case 3: //do trap platform
-                    a_do_trap_platform.activate(
+                    a_do_trap_platform.Activate(
                         trapObj: trapObj,
                         triggerObj: triggerObj,
                         objList: objList
