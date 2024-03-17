@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=3 uid="uid://xjvqmrbs28xs"]
+[gd_scene load_steps=37 format=3 uid="uid://xjvqmrbs28xs"]
 
 [ext_resource type="Script" path="res://src/ui/uimanager.cs" id="1_lw0yg"]
 [ext_resource type="FontFile" uid="uid://pdy3t627nfxw" path="res://resources/fonts/FONT5X6I.ttf" id="3_safdl"]
@@ -30,6 +30,7 @@
 [ext_resource type="Texture2D" uid="uid://01h0bdambuq4" path="res://resources/placeholder_art/paperdolluw1/down button 028.png" id="23_e17mk"]
 [ext_resource type="Texture2D" uid="uid://51go53yqj8oq" path="res://resources/placeholder_art/panels/panelsstats.png" id="24_filpa"]
 [ext_resource type="Texture2D" uid="uid://1ecbe7htlqun" path="res://resources/placeholder_art/spellicon.png" id="28_uj0ag"]
+[ext_resource type="Texture2D" uid="uid://du878dn3osxn1" path="res://resources/placeholder_art/blankmap.png" id="29_1j15l"]
 [ext_resource type="Texture2D" uid="uid://dlhf0nj7vj1o2" path="res://resources/placeholder_art/PanelBlack.jpg" id="29_aiei8"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1c8r5"]
@@ -726,6 +727,7 @@ offset_bottom = 532.0
 mouse_filter = 2
 
 [node name="UW2" type="CanvasLayer" parent="UI"]
+visible = false
 
 [node name="placeholdermainuw2" type="TextureRect" parent="UI/UW2"]
 offset_right = 1280.0
@@ -2324,13 +2326,14 @@ offset_bottom = 40.0
 layout_mode = 0
 offset_right = 1280.0
 offset_bottom = 800.0
+texture = ExtResource("29_1j15l")
 
 [node name="MapImage" type="TextureRect" parent="UI/Common/Automap"]
 layout_mode = 0
-offset_left = 60.0
-offset_top = 60.0
-offset_right = 700.0
-offset_bottom = 700.0
+offset_left = 14.0
+offset_top = 16.0
+offset_right = 794.0
+offset_bottom = 796.0
 flip_v = true
 
 [node name="Close" type="TextureRect" parent="UI/Common/Automap"]
