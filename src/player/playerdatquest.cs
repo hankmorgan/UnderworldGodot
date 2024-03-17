@@ -126,5 +126,23 @@ namespace Underworld
                 }
             }
         }   
+
+
+        public static byte WorldsVisited
+        {
+            get
+            {
+                return GetAt(0xF4);
+            }
+        }
+        /// <summary>
+        /// Checks  if worlds has already been visited by the player
+        /// </summary>
+        /// <param name="worldno"></param>
+        /// <returns></returns>
+        public static bool HasWorldBeenVisited(int worldno)
+        {           
+            return ((1<<worldno) & WorldsVisited) !=0;
+        }
     }//end class
 }//end namespace

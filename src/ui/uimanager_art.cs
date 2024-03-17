@@ -19,6 +19,8 @@ namespace Underworld
         public static GRLoader grSpells; //spell icons
         public static GRLoader grCompass;
 
+        public static GRLoader grGempt;
+
         public static BytLoader bitmaps;
 
         public static Dictionary<string, CutsLoader> csCuts;
@@ -41,6 +43,11 @@ namespace Underworld
 			bitmaps = new BytLoader();
             grCompass= new GRLoader(GRLoader.COMPASS_GR, GRLoader.GRShaderMode.UIShader);
             csCuts = new Dictionary<string, CutsLoader>();
+            if (UWClass._RES==UWClass.GAME_UW2)
+            {
+                grGempt = new GRLoader(GRLoader.GEMPT_GR, GRLoader.GRShaderMode.UIShader);
+                grGempt.PaletteNo = 3;
+            }
 		}
     }//end class
 }//end namespace

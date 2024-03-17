@@ -29,6 +29,7 @@ namespace Underworld
 			InitCuts();
 			InitSpellIcons();
 			InitCompass();
+			InitAutomap();
 
 			AutomapBG.Texture = bitmaps.LoadImageAt(BytLoader.BLNKMAP_BYT);
 			EnableDisable(AutomapPanel,false);
