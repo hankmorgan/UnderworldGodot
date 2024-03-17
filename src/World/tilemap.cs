@@ -215,7 +215,7 @@ namespace Underworld
 	/// </summary>
 	/// <param name="newLevelNo"></param>
 	/// <returns></returns>
-	public static IEnumerator LoadTileMap(int newLevelNo, string datafolder, bool fromMainMenu)
+	public static void LoadTileMap(int newLevelNo, string datafolder, bool fromMainMenu)
 	{
 		ObjectCreator.worldobjects = main.instance.GetNode<Node3D>("/root/Underworld/worldobjects");
 		Node3D the_tiles = main.instance.GetNode<Node3D>("/root/Underworld/tilemap");
@@ -248,7 +248,7 @@ namespace Underworld
 			default:
 				automap.automaps = new automap[9]; break;
 		}
-		automap.automaps[newLevelNo] = new automap(newLevelNo);
+		automap.automaps[newLevelNo] = new automap(newLevelNo, (int)_RES);
 		//uwsettings.instance.lightlevel = light.BrightestLight();
         //playerdat.lightlevel = light.BrightestLight();
         playerdat.PlayerStatusUpdate();
@@ -257,8 +257,7 @@ namespace Underworld
         {
             uimanager.EnableDisable(uimanager.instance.PanelMainMenu,false);
         }
-        uimanager.InGame = true;
-		yield return 0;
+        uimanager.InGame = true;		
 	}
 
 

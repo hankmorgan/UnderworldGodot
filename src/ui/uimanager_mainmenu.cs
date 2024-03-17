@@ -160,19 +160,16 @@ namespace Underworld
             yield return 0;
         }
 
-        private IEnumerator JourneyOnwards(string folder)
+        private void JourneyOnwards(string folder)
         {
 
             playerdat.LoadPlayerDat(datafolder: folder);
 
             // //Common launch actions            
-            yield return UWTileMap.LoadTileMap(
+            UWTileMap.LoadTileMap(
                     newLevelNo: playerdat.dungeon_level - 1,
                     datafolder: folder,
                     fromMainMenu: true);
-
-            yield return null;
-
         }
 
         private void _on_create_character_gui_input(InputEvent @event)
@@ -182,10 +179,7 @@ namespace Underworld
                 _ = Coroutine.Run(
                    ClearMainMenu()
                    , main.instance);
-
-                _ = Coroutine.Run(
-                    JourneyOnwards("DATA")
-                    , main.instance);
+                    JourneyOnwards("DATA");
             }
         }
 
@@ -198,10 +192,7 @@ namespace Underworld
                 _ = Coroutine.Run(
                    ClearMainMenu()
                    , main.instance);
-
-                _ = Coroutine.Run(
-                    JourneyOnwards("SAVE1")
-                    , main.instance);
+                    JourneyOnwards("SAVE1");
             }
         }
 
@@ -213,9 +204,7 @@ namespace Underworld
                    ClearMainMenu()
                    , main.instance);
 
-                _ = Coroutine.Run(
-                    JourneyOnwards("SAVE2")
-                    , main.instance);
+                JourneyOnwards("SAVE2");
             }
         }
 
@@ -228,9 +217,7 @@ namespace Underworld
                    ClearMainMenu()
                    , main.instance);
 
-                _ = Coroutine.Run(
-                    JourneyOnwards("SAVE3")
-                    , main.instance);
+                JourneyOnwards("SAVE3");
             }
         }
 
@@ -243,9 +230,7 @@ namespace Underworld
                    ClearMainMenu()
                    , main.instance);
 
-                _ = Coroutine.Run(
-                    JourneyOnwards("SAVE4")
-                    , main.instance);
+                JourneyOnwards("SAVE4");
             }
         }
 
