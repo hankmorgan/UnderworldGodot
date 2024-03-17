@@ -55,7 +55,6 @@ namespace Underworld
         {
             int BlockLen = (int)getAt(tmpBuffer, address_pointer, 32); //lword(base);
             int NoOfSegs = ((BlockLen / 0x1000) + 1) * 0x1000;
-            //byte[] buf = new byte[BlockLen+100];
             byte[] buf = new byte[Math.Max(NoOfSegs, BlockLen + 100)];
 
             int upPtr = 0;
@@ -410,7 +409,6 @@ namespace Underworld
                             if (((uwb.CompressionFlag >> 1) & 0x01) == 1)
                             {//data is compressed;
                                 uwb.Data = unpackUW2(arkData, uwb.Address, ref uwb.DataLen);
-                                //File.WriteAllBytes($"c:\\temp\\unpacked_{blockNo}.dat", uwb.Data);
                                 if (uwb.DataLen>0)
                                 {
                                     Array.Resize(ref uwb.Data, uwb.DataLen);
@@ -438,7 +436,7 @@ namespace Underworld
                             uwb.Data = new byte[targetDataLen];
                             uwb.DataLen = targetDataLen;
                             int b = 0;
-                            for (long i = uwb.Address; i < uwb.Address + uwb.DataLen; i++)
+                            for (long i = uwb.Address; i < Math.Min(uwb.Address + uwb.DataLen, arkData.GetUpperBound(0)+1); i++)
                             {//Copy the data to the block.
                                 uwb.Data[b++] = arkData[i];
                             }

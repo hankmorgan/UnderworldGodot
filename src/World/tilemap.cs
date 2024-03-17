@@ -244,15 +244,22 @@ namespace Underworld
 		switch (_RES)
 		{
 			case GAME_UW2:
-				automap.automaps = new automap[80]; break;
+				automap.automaps = new automap[80]; 
+                automapnotes.automapsnote= new automapnotes[80];
+                break;
 			default:
-				automap.automaps = new automap[9]; break;
+				automap.automaps = new automap[9]; 
+                automapnotes.automapsnote= new automapnotes[9];
+                break;
 		}
 		automap.automaps[newLevelNo] = new automap(newLevelNo, (int)_RES);
-		//uwsettings.instance.lightlevel = light.BrightestLight();
-        //playerdat.lightlevel = light.BrightestLight();
+        automapnotes.automapsnote[newLevelNo] = new automapnotes(newLevelNo, (int)_RES);
+
+
         playerdat.PlayerStatusUpdate();
+
 		Debug.Print($"{current_tilemap.uw}");
+
         if (fromMainMenu)
         {
             uimanager.EnableDisable(uimanager.instance.PanelMainMenu,false);

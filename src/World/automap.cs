@@ -26,8 +26,7 @@ namespace Underworld
         public automap(int LevelNo, int gameNo)
         {
             //load buffer. then init tiles with their offsets
-            int blockno;
-            Debug.Print($"{_RES}, {GAME_UW2} {(_RES == GAME_UW2)}");
+            int blockno;           
             if (gameNo == UWClass.GAME_UW2) //this is weird. I had to pass gameno as a parm or otherwise this if-else would not work??
             {
                 Debug.Print("UW2");
