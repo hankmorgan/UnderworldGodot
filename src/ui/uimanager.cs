@@ -31,6 +31,7 @@ namespace Underworld
 			InitCompass();
 
 			AutomapBG.Texture = bitmaps.LoadImageAt(BytLoader.BLNKMAP_BYT);
+			EnableDisable(AutomapPanel,false);
 
 			mousecursor.InitCursor();
 

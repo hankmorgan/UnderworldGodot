@@ -245,15 +245,15 @@ namespace Underworld
 		{
 			case GAME_UW2:
 				automap.automaps = new automap[80]; 
-                automapnotes.automapsnote= new automapnotes[80];
+                automapnote.automapsnotes= new automapnote[80];
                 break;
 			default:
 				automap.automaps = new automap[9]; 
-                automapnotes.automapsnote= new automapnotes[9];
+                automapnote.automapsnotes= new automapnote[9];
                 break;
 		}
 		automap.automaps[newLevelNo] = new automap(newLevelNo, (int)_RES);
-        automapnotes.automapsnote[newLevelNo] = new automapnotes(newLevelNo, (int)_RES);
+        automapnote.automapsnotes[newLevelNo] = new automapnote(newLevelNo, (int)_RES);
 
 
         playerdat.PlayerStatusUpdate();

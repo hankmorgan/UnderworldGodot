@@ -3,20 +3,20 @@ using System.Diagnostics;
 
 namespace Underworld
 {
-    public class automapnotes : Loader
+    public class automapnote : Loader
     {
-        public static automapnotes currentautomapnotes;
+       // public static automapnotes currentautomapnotes;
 
         /// <summary>
         /// Array of all cached automaps
         /// </summary>
-        public static automapnotes[] automapsnote;
+        public static automapnote[] automapsnotes;
 
 
         //The raw data for this set of automap notes.
         public byte[] buffer;
 
-        public List<mapnote> notes=new();
+        public List<mapnotetext> notes=new();
 
         static int GetBlockAddress(int blockno, byte[] buffer)
         {
@@ -29,7 +29,7 @@ namespace Underworld
                 return (int)getAt(buffer, (blockno * 4) + 2, 32);
             }
         }
-        public automapnotes(int LevelNo, int gameNo)
+        public automapnote(int LevelNo, int gameNo)
         {
             int blockno;  
             int noOfPossibleBlocks; 
@@ -92,7 +92,7 @@ namespace Underworld
                         }
                         var _posX = (int)Loader.getAt(block.Data,addptr+0x32,16);
                         var _posY = (int)Loader.getAt(block.Data,addptr+0x34,16);
-                        notes.Add (new mapnote(fullstring,_posX,_posY));
+                        notes.Add (new mapnotetext(fullstring,_posX,_posY));
                     }
                     addptr+=54;
                     counter++;
@@ -100,13 +100,13 @@ namespace Underworld
             }
         }    
 
-        public class mapnote:UWClass
+        public class mapnotetext:UWClass
         {
             public string notetext;
             public int posX; 
             public int posY;
 
-            public mapnote(string _notetext, int _posX, int _posY)
+            public mapnotetext(string _notetext, int _posX, int _posY)
             {
                 notetext = _notetext;
                 posX = _posX;
