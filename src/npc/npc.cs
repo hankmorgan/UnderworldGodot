@@ -163,6 +163,10 @@ namespace Underworld
                     ArtLoader.NPCSpriteScale * texture.GetHeight()
                     );
                 material.SetShaderParameter("texture_albedo", (Texture)texture);
+                if (sprite!=null)
+                {
+                    sprite.Mesh.Set("size", FrameSize * 1.5f);
+                }                
                 //sprite.Mesh.Set("size",FrameSize*1.5f);//TODO fix so this does not call a null crash and sprite mesh keeps size
                 return frameNo;
             }
@@ -185,12 +189,40 @@ namespace Underworld
                 {
                     if (n.uwobject.tileY != 99)
                     {
+                        short CalcedFacing = CalculateFacingAngleToNPC(n);
                         n.uwobject.AnimationFrame++;
-                        n.SetAnimSprite(n.uwobject.npc_animation, n.uwobject.AnimationFrame, n.uwobject.heading);
+                        n.SetAnimSprite(n.uwobject.npc_animation, n.uwobject.AnimationFrame, CalcedFacing); //n.uwobject.heading);
                     }
                 }
             }
         }
+
+        private static short CalculateFacingAngleToNPC(npc n)
+        {
+            var direction = -main.gamecam.Position + n.uwnode.Position;
+            var angle = Mathf.RadToDeg(Mathf.Atan2(direction.X, direction.Z));
+            var facingIndex = facing(angle);
+            var CalcedFacing = (short)(facingIndex + n.uwobject.heading);
+            if (CalcedFacing >= 8)//Make sure it wraps around correcly between 0 and 7 ->The compass headings.
+            {
+                CalcedFacing = (short)(CalcedFacing - 8);
+            }
+            if (CalcedFacing <= -8)
+            {
+                CalcedFacing = (short)(CalcedFacing + 8);
+            }
+            if (CalcedFacing < 0)
+            {
+                CalcedFacing = (short)(8 + CalcedFacing);
+            }
+            else if (CalcedFacing > 7)
+            {
+                CalcedFacing = (short)(8 - CalcedFacing);
+            }
+
+            return CalcedFacing;
+        }
+
 
 
         /// <summary>
@@ -329,7 +361,7 @@ namespace Underworld
             return true;
         }
 
- 
+
 
 
 
@@ -434,12 +466,12 @@ namespace Underworld
                 }
                 else
                 {
-                    var propertiesremaining = propertycount-1;
+                    var propertiesremaining = propertycount - 1;
                     for (si = 0; si < 8; si++)
                     {
                         //loop the properties and turn them into spellnames
                         if (prop[si] != 0xff)
-                        {                           
+                        {
                             int major = (prop[si] & 0xC0) >> 6;
                             int minor = prop[si] & 0x3F;
                             if (major == 0)
@@ -469,7 +501,7 @@ namespace Underworld
                             }
                             else
                             {
-                                if ((propertiesremaining == 1) && (propertycount>1))
+                                if ((propertiesremaining == 1) && (propertycount > 1))
                                 {
                                     propertystring += GameStrings.GetString(0x274); //AND
                                 }
@@ -481,5 +513,72 @@ namespace Underworld
             }
             return (propertycount > 0);
         }
+
+
+        /// <summary>
+        /// Breaks down the angle in the the facing sector. Clockwise from 0)
+        /// </summary>
+        /// <param name="angle">Angle.</param>
+        static short facing(float angle)
+        {
+            if ((angle >= -22.5) && (angle <= 22.5))
+            {
+                return 0;//*AnimRange;//Facing forward
+            }
+            else
+            {
+                if ((angle > 22.5) && (angle <= 67.5))
+                {//Facing forward left
+                    return 1;//*AnimRange;
+                }
+                else
+                {
+                    if ((angle > 67.5) && (angle <= 112.5))
+                    {//facing (right)
+                        return 2;//*AnimRange;
+                    }
+                    else
+                    {
+                        if ((angle > 112.5) && (angle <= 157.5))
+                        {//Facing away left
+                            return 3;//*AnimRange;
+                        }
+                        else
+                        {
+                            if (((angle > 157.5) && (angle <= 180.0)) || ((angle >= -180) && (angle <= -157.5)))
+                            {//Facing away
+                                return 4;//*AnimRange;
+                            }
+                            else
+                            {
+                                if ((angle >= -157.5) && (angle < -112.5))
+                                {//Facing away right
+                                    return 5;//*AnimRange;
+                                }
+                                else
+                                {
+                                    if ((angle > -112.5) && (angle < -67.5))
+                                    {//Facing (left)
+                                        return 6;//*AnimRange;
+                                    }
+                                    else
+                                    {
+                                        if ((angle > -67.5) && (angle < -22.5))
+                                        {//Facing forward right
+                                            return 7;//*AnimRange;
+                                        }
+                                        else
+                                        {
+                                            return 0;//*AnimRange;//default
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
     }//end class
 }//end namespace
