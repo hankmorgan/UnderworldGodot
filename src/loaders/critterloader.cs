@@ -728,8 +728,8 @@ namespace Underworld
                                     palette: pal, 
                                     useAlphaChannel: true, 
                                     useSingleRedChannel: true,
-                                    crop: UseCropping);
-                                CropImageData(ref imgData, pal);
+                                    crop: true);
+                                //CropImageData(ref imgData, pal);
                                 this.animSprites[spriteIndex++] = imgData; //Sprite.Create(imgData, new Rect(0f, 0f, imgData.width, imgData.height), new Vector2(0.5f, 0.0f));
                             }
                         }//end extrac frameoffset
@@ -743,28 +743,6 @@ namespace Underworld
 
         }
 
-
-        /// <summary>
-        /// Is the animation unangled.
-        /// </summary>
-        /// <returns><c>true</c>, if animation unangled was ised, <c>false</c> otherwise.</returns>
-        /// <param name="animationNo">Animation no.</param>
-        bool isAnimUnAngled(int animationNo)
-        {
-            switch (animationNo)
-            {
-                case 0x2:
-                case 0x3:
-                case 0x4:
-                case 0x5:
-                case 0x6:
-                case 0x7:
-                case 0xd:
-                    return true;
-                default:
-                    return false;
-            }
-        }
 
         /// <summary>
         /// Crops the image data to remove all alpha space from beneath the npcs feet

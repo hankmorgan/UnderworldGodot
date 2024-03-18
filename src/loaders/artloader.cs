@@ -188,7 +188,7 @@ namespace Underworld
         }
 
 
-        static Rect2I GetBoundingBox(byte[] buf, int dataoffset, int width, int height)
+        public static Rect2I GetBoundingBox(byte[] buf, int dataoffset, int width, int height)
         {//https://stackoverflow.com/questions/32191887/creating-a-bounding-box-in-image-with-transparency
 
             //search upper bound
