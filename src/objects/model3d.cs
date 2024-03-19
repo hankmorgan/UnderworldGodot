@@ -216,21 +216,64 @@ namespace Underworld
         {
             switch (n.uwobject.heading * 45)
             {
-                case tileMapRender.heading0: //0   //not right
-                    //modelNode.Rotate(Vector3.Up,(float)Math.PI /2f);    
+               case tileMapRender.heading0: 
                     parent.Rotate(Vector3.Up, (float)Math.PI);                
                     break;
-                case tileMapRender.heading2: //90 works
+                case tileMapRender.heading1:
+                    parent.Rotate(Vector3.Up, (float)Math.PI * 3f/4f); break;  
+                 case tileMapRender.heading2: //90 works
                     parent.Rotate(Vector3.Up, (float)Math.PI / 2f);
                     break;
-                case tileMapRender.heading4: //180 works.
+                case tileMapRender.heading3:
+                    parent.Rotate(Vector3.Up, (float)Math.PI / 4f);
+                    break;
+                case tileMapRender.heading4: 
                     //default. no rotation
                     break;
-                case tileMapRender.Heading6: //270  //not right
+                case tileMapRender.heading5:
+                    parent.Rotate(Vector3.Up, (float)Math.PI * 7f/4f);
+                    break;
+                case tileMapRender.Heading6: 
                     parent.Rotate(Vector3.Up, (float)Math.PI * 1.5f);
+                    break;
+                case tileMapRender.Heading7:
+                    parent.Rotate(Vector3.Up, (float)Math.PI * 5f/4f);
                     break;
                 default:
                     System.Diagnostics.Debug.Print($"Unhandled model heading. {n.uwobject.item_id} h:{n.uwobject.heading}");
+                    break;
+            }
+        }
+
+        public static void SetObjectRotation(Node3D parent, uwObject obj)
+        {
+            switch (obj.heading * 45)
+            {
+                case tileMapRender.heading0: 
+                    parent.Rotate(Vector3.Up, (float)Math.PI);                
+                    break;
+                case tileMapRender.heading1:
+                    parent.Rotate(Vector3.Up, (float)Math.PI * 3f/4f); break;  
+                 case tileMapRender.heading2: //90 works
+                    parent.Rotate(Vector3.Up, (float)Math.PI / 2f);
+                    break;
+                case tileMapRender.heading3:
+                    parent.Rotate(Vector3.Up, (float)Math.PI / 4f);
+                    break;
+                case tileMapRender.heading4: 
+                    //default. no rotation
+                    break;
+                case tileMapRender.heading5:
+                    parent.Rotate(Vector3.Up, (float)Math.PI * 7f/4f);
+                    break;
+                case tileMapRender.Heading6: 
+                    parent.Rotate(Vector3.Up, (float)Math.PI * 1.5f);
+                    break;
+                case tileMapRender.Heading7:
+                    parent.Rotate(Vector3.Up, (float)Math.PI * 5f/4f);
+                    break;
+                default:
+                    System.Diagnostics.Debug.Print($"Unhandled model heading. {obj.item_id} h:{obj.heading}");
                     break;
             }
         }

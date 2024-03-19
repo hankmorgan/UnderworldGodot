@@ -56,6 +56,7 @@ render_target_update_mode = 4
 
 [node name="Camera3D" type="Camera3D" parent="WorldViewContainer/SubViewport"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.119, 2.137, 12.228)
+current = true
 script = ExtResource("5_2to2n")
 
 [node name="Gronk" type="CharacterBody3D" parent="WorldViewContainer/SubViewport/Camera3D"]
@@ -2591,12 +2592,13 @@ line 4"
 
 [node name="tilemap" type="Node3D" parent="."]
 
-[node name="main" type="Node3D" parent="." node_paths=PackedStringArray("cam", "audioplayer", "lblPositionDebug", "uwUI")]
+[node name="main" type="Node3D" parent="." node_paths=PackedStringArray("cam", "audioplayer", "lblPositionDebug", "uwUI", "secondarycameras")]
 script = ExtResource("6_3y8oy")
 cam = NodePath("../WorldViewContainer/SubViewport/Camera3D")
 audioplayer = NodePath("../UI/AudioPlayer")
 lblPositionDebug = NodePath("../UI/mouse/PositionLabel")
 uwUI = NodePath("../UI/uiManager")
+secondarycameras = NodePath("../WorldViewContainer/SubViewport")
 
 [connection signal="gui_input" from="UI/UW1/CompassUW1/CompassClickArea" to="UI/uiManager" method="_on_compass_click"]
 [connection signal="gui_input" from="UI/UW1/ConversationUW1/PlayerTradeSelectedUW1_0" to="UI/uiManager" method="_on_player_trade_selected" binds= [0]]

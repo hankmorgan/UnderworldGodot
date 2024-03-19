@@ -1,4 +1,5 @@
 using Godot;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -46,12 +47,20 @@ namespace Underworld
         const int fEAST = 8;
         const int fWEST = 4;
 
-        //Door headings
-        public const int heading4 = 180;
-        public const int heading0 = 0;
-        public const int Heading6 = 270;
-        public const int heading2 = 90;
 
+        //headings in UW go clockwise from 9 o'clock.
+        //
+
+        public const int heading0 = 0; //in uw PI
+        public const int heading1 = 45; // uw 3PI/4
+        public const int heading2 = 90;  //in uw PI/2
+        public const int heading3 = 135;  //PI/4     
+        public const int heading4 = 180; // in uw 0
+        public const int heading5 = 225; // 7PI/4
+        public const int Heading6 = 270;// in uw 3PI/2
+        public const int Heading7 = 315; // 5PI/4
+ 
+ 
         public static bool EnableCollision = true;
         public static bool SkipRender = false;
 

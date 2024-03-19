@@ -42,10 +42,10 @@ namespace Underworld
             //add to critter object list
             var obj = UWTileMap.current_tilemap.LevelObjects[slot];
             //Insert at the head of the tile list.
-            var tile = UWTileMap.current_tilemap.Tiles[tileX,tileY];
+            var tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];
             obj.next = tile.indexObjectList;
             tile.indexObjectList = obj.index;
-            obj.xpos = xpos; obj.ypos=ypos; obj.zpos =zpos;
+            obj.xpos = xpos; obj.ypos = ypos; obj.zpos = zpos;
             obj.tileX = tileX; obj.tileY = tileY;
             RenderObject(obj, UWTileMap.current_tilemap);
             return obj;
@@ -452,6 +452,17 @@ namespace Underworld
         {
             switch (obj.minorclass)
             {
+                case 0: //traps
+                    {
+                        switch (obj.classindex)
+                        {
+                            case 3://do trap 6-0-3
+                                {
+                                    return hack_trap.CreateDoTrap(parent, obj, name);
+                                }
+                        }
+                        break;
+                    }
                 case 2:
                     {
                         switch (obj.classindex)
@@ -459,26 +470,26 @@ namespace Underworld
                             case 0://move trigger, 6-2-0
                                 return trigger.CreateMoveTrigger(obj, parent);
                         }
-                        break; 
-                    }                   
+                        break;
+                    }
                 case 3: //uw1 does not have class 6-3-xx
                     {
                         switch (obj.classindex)
                         {
                             case 0://move trigger 6-3-0
-                                if (_RES==GAME_UW2)
+                                if (_RES == GAME_UW2)
                                 {
                                     return trigger.CreateMoveTrigger(obj, parent);
-                                }                                
+                                }
                                 break;
                         }
-                        break; 
+                        break;
                     }
             }
             return true;
         }
 
-    
+
 
         /// <summary>
         /// Animos and moving doors

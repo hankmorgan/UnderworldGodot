@@ -30,7 +30,7 @@ public partial class main : Node3D
 			; //TODO and other menu modes that will stop input
 		}
 	}
-	public static Node3D instance;
+	public static main instance;
 
 	// Called when the node enters the scene tree for the first time.
 	[Export] public Camera3D cam;
@@ -38,6 +38,8 @@ public partial class main : Node3D
 	[Export] public AudioStreamPlayer audioplayer;
 	[Export] public RichTextLabel lblPositionDebug;
 	[Export] public uimanager uwUI;
+
+	[Export] public SubViewport secondarycameras;
 	
 
 	double gameRefreshTimer = 0f;
