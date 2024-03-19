@@ -75,12 +75,33 @@ namespace Underworld
                 {
                     if (obj != null)
                     {
-                        var spell = MagicEnchantment.GetSpellEnchantment(obj, objList);
-                        if (spell != null)
+                        switch(obj.majorclass)
                         {
-                            MagicEnchantment.CastObjectSpell(obj, spell);
-                            result = true;
+                            case 0:
+                            case 1:
+                            case 5:
+                            case 6:
+                            case 7://do not cast spell from these objects major classes
+                                break;
+                            default:
+                            {
+                                if ((obj.majorclass==2) && (obj.minorclass == 0))
+                                {
+                                    //do not cast spells from containers.
+                                }   
+                                else
+                                {
+                                    var spell = MagicEnchantment.GetSpellEnchantment(obj, objList);
+                                    if (spell != null)
+                                    {
+                                        MagicEnchantment.CastObjectSpell(obj, spell);
+                                        result = true;
+                                    }
+                                }
+                                break;
+                            }
                         }
+
                     }
                 }
             }
@@ -143,6 +164,14 @@ namespace Underworld
                     {
                         switch (obj.classindex)
                         {
+                            case 0x1://Storage crystal in UW2, gold coin in uw1
+                                {
+                                    if (_RES==GAME_UW2)
+                                    {
+                                        return storage_crystal.Use(obj, WorldObject);
+                                    }
+                                    break;
+                                }
                             case 0xF:
                                 {//picketwatch in uw2, gold nugget in uw1
                                     if (_RES == GAME_UW2)

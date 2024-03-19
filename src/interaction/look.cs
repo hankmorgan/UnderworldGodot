@@ -6,35 +6,35 @@ namespace Underworld
     public class look : UWClass
     {
         public static int LoreCheck(uwObject obj)
-        {            
+        {
             if (
-                (obj.majorclass!=5)
+                (obj.majorclass != 5)
                 &&
-                (obj.majorclass!=6)
+                (obj.majorclass != 6)
                 &&
                 (commonObjDat.rendertype(obj.item_id) != 2)
                 )
-                {//can be identified
-                    if ((obj.heading & 0x4)==0)
-                    {//no attempt has been made yet. try and id now
-                        var result = (int)playerdat.SkillCheck(playerdat.Lore,8);
-                        result++;
-                        if (result==0)
-                        {
-                            result = 1;
-                        }
-                        if (result < (obj.heading & 0x3))
-                        {
-                            result = obj.heading & 0x3;//make sure identification does not lose a previous ID attempt if bit 3 has changed due to a lore skill increase
-                        }
-                        obj.heading = (short)(4 | result); //store result and flag that attempt was made.
-                        return result; //1,2 or 3
-                    }
-                    else
+            {//can be identified
+                if ((obj.heading & 0x4) == 0)
+                {//no attempt has been made yet. try and id now
+                    var result = (int)playerdat.SkillCheck(playerdat.Lore, 8);
+                    result++;
+                    if (result == 0)
                     {
-                        return obj.heading & 0x3; //return previous result
+                        result = 1;
                     }
+                    if (result < (obj.heading & 0x3))
+                    {
+                        result = obj.heading & 0x3;//make sure identification does not lose a previous ID attempt if bit 3 has changed due to a lore skill increase
+                    }
+                    obj.heading = (short)(4 | result); //store result and flag that attempt was made.
+                    return result; //1,2 or 3
                 }
+                else
+                {
+                    return obj.heading & 0x3; //return previous result
+                }
+            }
             return 1;//fail or cannot be identified
         }
 
@@ -55,7 +55,7 @@ namespace Underworld
                         }
                     case 2:
                         {
-                            result = LookMajorClass2(obj, objList);
+                            result = LookMajorClass2(obj, objList, WorldObject);
                             break;
                         }
                     case 4:
@@ -84,12 +84,12 @@ namespace Underworld
                 }
                 if (!result)
                 {
-                
+
                     //default string  when no overriding action has occured           
                     //uimanager.AddToMessageScroll(GameStrings.GetObjectNounUW(obj.item_id));
                     GeneralLookDescription(
                         obj: obj,
-                        objList: objList, 
+                        objList: objList,
                         lorecheckresult: LoreCheck(obj));
                 }
             }
@@ -97,13 +97,8 @@ namespace Underworld
             return false;
         }
 
-        public static bool LookMajorClass2(uwObject obj, uwObject[] objList)
+        public static bool LookMajorClass2(uwObject obj, uwObject[] objList, bool WorldObject)
         {
-            // switch (obj.minorclass)
-            // {
-            //     case 3:
-            //         return food.LookAt(obj);
-            // }
             return false;
         }
 
@@ -282,47 +277,53 @@ namespace Underworld
                     article = GetArticle(objectname);
                 }
             }
-            //enchantments
-            var magicenchantment = MagicEnchantment.GetSpellEnchantment(obj, objList);
+            //enchantments            
             string enchantmenttext = "";
             string magical = "";
-            if (magicenchantment != null)
-            {
-                System.Diagnostics.Debug.Print($"{magicenchantment.NameEnchantment(obj, objList)}");
-                switch (lorecheckresult)
-                {
-                    case 2://just magical
-                        magical = "magical "; break;
-                    case 3: // full description
-                        enchantmenttext = magicenchantment.NameEnchantment(obj, objList);
-                        if (enchantmenttext == "")
-                        {
-                            enchantmenttext = " of unnamed";
-                        }
-                        else
-                        {
-                            enchantmenttext = $" of {enchantmenttext}";
-                        }
-                        break;
-                }
-            }
-            else
-            {
-                if ((obj.is_quant == 0) && (obj.link != 0))
-                {//check for a linked damage trap
-                        var dmgtrap = objectsearch.FindMatchInObjectChain(
-                            ListHeadIndex: obj.link, 
-                            majorclass: 6, 
-                            minorclass: 0, 
-                            classindex: 0, 
-                            objList: objList);
-                        if (dmgtrap!=null)
-                        {
-                           enchantmenttext = " of poison";
-                        }
-                }
-            }
 
+            if (!((obj.majorclass == 2) && (obj.minorclass == 0))) //when not a container
+            {
+                var magicenchantment = MagicEnchantment.GetSpellEnchantment(obj, objList);
+
+                if (magicenchantment != null)
+                {
+                    System.Diagnostics.Debug.Print($"{magicenchantment.NameEnchantment(obj, objList)}");
+                    switch (lorecheckresult)
+                    {
+                        case 2://just magical
+                            magical = "magical "; break;
+                        case 3: // full description
+                            enchantmenttext = magicenchantment.NameEnchantment(obj, objList);
+                            if (enchantmenttext == "")
+                            {
+                                enchantmenttext = " of unnamed";
+                            }
+                            else
+                            {
+                                enchantmenttext = $" of {enchantmenttext}";
+                            }
+                            break;
+                    }
+                }
+                else
+                {
+                    if ((obj.is_quant == 0) && (obj.link != 0))
+                    {//check for a linked damage trap
+                        var dmgtrap = objectsearch.FindMatchInObjectChain(
+                            ListHeadIndex: obj.link,
+                            majorclass: 6,
+                            minorclass: 0,
+                            classindex: 0,
+                            objList: objList);
+                        if (dmgtrap != null)
+                        {
+                            enchantmenttext = " of poison";
+                        }
+                    }
+                }
+
+
+            }
             if (objectname.StartsWith("some "))
             {
                 output += $"{qtystring}{qualitystring}{magical}{objectname}";
