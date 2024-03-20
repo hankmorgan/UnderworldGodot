@@ -141,6 +141,22 @@ namespace Underworld
         }   
 
 
+        /// <summary>
+        /// Gets one of 15/16 xclocks which track plot progression
+        /// </summary>
+        /// <param name="clockno"></param>
+        /// <returns></returns>
+        public static int GetXClock(int clockno)
+        {
+            return GetAt(0x36E + clockno);
+        }
+
+        public static void SetXClock(int clockno, int value)
+        {
+            SetAt(0x36E + clockno, (byte)value);
+        }
+
+
         public static bool GotKeyOfTruth
         {
             get
