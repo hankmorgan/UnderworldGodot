@@ -29,6 +29,8 @@ namespace Underworld
         /// <param name="value"></param>
         public static void SetGameVariable(int variableno, int value)
         {
+            value = value & 0x3F;//keep value within range.
+            Debug.Print($"Setting {variableno} to {value}");
             if (_RES==GAME_UW2)
             {
                SetAt(0x7A+variableno*2, (byte)value);

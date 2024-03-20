@@ -18,6 +18,7 @@ namespace Underworld
             {
                 Debug.Print($"Running trap {trapObj.a_name}");
             }
+            var triggerNextIndex = trapObj.link; //default object to trigger next. This may change due to the results of a check_variable_trap
             bool implemented = false;
             if (trapObj.majorclass == 6)
             {
@@ -57,6 +58,12 @@ namespace Underworld
                                         a_set_variable_trap.activate(triggerObj, trapObj);
                                         break;
                                     }
+                                case 0xE://check variable trap
+                                    {
+                                        implemented = true;
+                                        triggerNextIndex = a_check_variable_trap.activate(triggerObj, trapObj, objList);
+                                        break;
+                                    }
                             }
                             break;
                         }
@@ -83,7 +90,17 @@ namespace Underworld
             }
             else
             {
-                TriggerNext(trapObj, objList);//probably need to have a guardrail to stop infinite execution loops
+                if (triggerNextIndex!=0)
+                {
+                    var triggerNextObject = objList[triggerNextIndex];
+                    if (triggerNextObject!=null)
+                    {
+                        if (triggerNextObject.majorclass == 6)//only trigger next a trap/trigger.
+                        {
+                            TriggerNext(trapObj, objList, triggerNextIndex);
+                        }
+                    }                    
+                }                
             }
 
             if (triggerObj.flags1 == 0)
@@ -94,14 +111,14 @@ namespace Underworld
         } //end activate trap
 
 
-        public static void TriggerNext(uwObject trapObj, uwObject[] objList)
+        public static void TriggerNext(uwObject trapObj, uwObject[] objList, int triggerNextIndex)
         {
             //Continue the trigger-trap chain if possible.
-            if ((trapObj.link != 0) && (trapObj.is_quant == 0))
+            if ((trapObj.link != 0) && (trapObj.is_quant == 0) && (triggerNextIndex !=0 ))
             {
                 trigger.Trigger(
                     srcObject: trapObj,
-                    triggerIndex: trapObj.link,
+                    triggerIndex: triggerNextIndex,
                     objList: objList);
             }
         }
