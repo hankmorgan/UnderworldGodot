@@ -5,37 +5,42 @@ namespace Underworld
     //For quest variable management
     public partial class playerdat : Loader
     {
-
-        public static bool GotKeyOfTruth
+        /// <summary>
+        /// Gets regular game variables
+        /// </summary>
+        /// <param name="variableno"></param>
+        /// <returns></returns>
+        public static int GetGameVariable(int variableno)
         {
-            get
+            if (_RES==GAME_UW2)
             {
-                return ((GetAt(0x61) >>6 ) & 1) == 1;
+                return GetAt(0x7A+variableno*2);
             }
-            set
+            else
             {
-                var tmp = GetAt(0x61);
-                tmp |= (1<<6);               
-                SetAt(0x61, tmp);
-            }
-        }
-
-        public static bool GotCupOfWonder
-        {
-            get
-            {
-                return ((GetAt(0x61) >>7 ) & 1) == 1;
-            }
-            set
-            {
-                var tmp = GetAt(0x61);
-                tmp |= (1<<7);               
-                SetAt(0x61, tmp);
+                return GetAt(0x71+variableno);
             }
         }
 
         /// <summary>
-        /// Setting of regular quest variables.
+        /// Sets regular game variables
+        /// </summary>
+        /// <param name="variableno"></param>
+        /// <param name="value"></param>
+        public static void SetGameVariable(int variableno, int value)
+        {
+            if (_RES==GAME_UW2)
+            {
+               SetAt(0x7A+variableno*2, (byte)value);
+            }
+            else
+            {
+                SetAt(0x71+variableno, (byte)value);
+            }
+        }
+
+        /// <summary>
+        /// Getting of regular quest variables.
         /// </summary>
         /// <param name="questno"></param>
         /// <returns></returns>
@@ -73,6 +78,12 @@ namespace Underworld
             return 0; //default result
         }
 
+
+        /// <summary>
+        /// Setting Quest variable value
+        /// </summary>
+        /// <param name="questno"></param>
+        /// <param name="newValue"></param>
         public static void SetQuest(int questno, int newValue)
         {
             Debug.Print($"Setting {questno} to {newValue}");
@@ -127,6 +138,34 @@ namespace Underworld
             }
         }   
 
+
+        public static bool GotKeyOfTruth
+        {
+            get
+            {
+                return ((GetAt(0x61) >>6 ) & 1) == 1;
+            }
+            set
+            {
+                var tmp = GetAt(0x61);
+                tmp |= (1<<6);               
+                SetAt(0x61, tmp);
+            }
+        }
+
+        public static bool GotCupOfWonder
+        {
+            get
+            {
+                return ((GetAt(0x61) >>7 ) & 1) == 1;
+            }
+            set
+            {
+                var tmp = GetAt(0x61);
+                tmp |= (1<<7);               
+                SetAt(0x61, tmp);
+            }
+        }
 
         public static byte WorldsVisited
         {

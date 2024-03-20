@@ -18,7 +18,7 @@ namespace Underworld
         }
 
         public static bool CreateDoTrapCamera(Node3D parent, uwObject trapObj, string name)
-        {
+        {//maybe consider creating this camera only when needed
             Camera3D newcam = new();
             newcam.Fov = main.gamecam.Fov;      
             main.instance.secondarycameras.AddChild(newcam);

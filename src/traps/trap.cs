@@ -2,9 +2,9 @@ using System.Diagnostics;
 
 namespace Underworld
 {
-    public class trap:UWClass
+    public class trap : UWClass
     {
-        public static int ObjectThatStartedChain=0;
+        public static int ObjectThatStartedChain = 0;
 
         public static void ActivateTrap(uwObject triggerObj, int trapIndex, uwObject[] objList)
         {
@@ -14,62 +14,82 @@ namespace Underworld
                 Debug.Print($"Null trap at {trapIndex}");
                 return;
             }
-            if (trapObj.majorclass==6)
+            else
+            {
+                Debug.Print($"Running trap {trapObj.a_name}");
+            }
+            bool implemented = false;
+            if (trapObj.majorclass == 6)
             {
                 switch (trapObj.minorclass)
                 {
                     case 0: // class 6-0 traps
                         {
-                            switch(trapObj.classindex)
+                            switch (trapObj.classindex)
                             {
                                 case 0://damage traps
-                                {
-                                    a_damage_trap.activate( 
-                                            trapObj: trapObj,
-                                            triggerObj: triggerObj,
-                                            objList: objList);
-                                    break;
-                                }                            
+                                    {
+                                        implemented = true;
+                                        a_damage_trap.activate(
+                                                trapObj: trapObj,
+                                                triggerObj: triggerObj,
+                                                objList: objList);
+                                        break;
+                                    }
                                 case 3:// Do and hack traps
-                                {
-                                    hack_trap.activate( 
-                                            trapObj: trapObj,
-                                            triggerObj: triggerObj,
-                                            objList: objList);
-                                    break;
-                                }
+                                    {
+                                        implemented = true;
+                                        hack_trap.activate(
+                                                trapObj: trapObj,
+                                                triggerObj: triggerObj,
+                                                objList: objList);
+                                        break;
+                                    }
                                 case 8://door trap
-                                {
-                                    a_door_trap.activate(triggerObj, trapObj, objList);
-                                    break;
-                                }
+                                    {
+                                        implemented = true;
+                                        a_door_trap.activate(triggerObj, trapObj, objList);
+                                        break;
+                                    }
+                                case 0xD://set variable trap
+                                    {
+                                        implemented = true;
+                                        a_set_variable_trap.activate(triggerObj, trapObj);
+                                        break;
+                                    }
                             }
                             break;
                         }
-                    case 1://
+                    case 1://class 6-1
                         {
-                            switch(trapObj.classindex)
+                            switch (trapObj.classindex)
                             {
                                 case 0: //6-1-0 Text String Trap
                                     {
-                                        a_text_string_trap.activate(trapObj,objList);
-                                        break;  
-                                    } 
-                                 
+                                        implemented = true;
+                                        a_text_string_trap.activate(trapObj, objList);
+                                        break;
+                                    }
+
                             }
                             break;
                         }
-                    default:
-                        Debug.Print ($"Unknown Trap Class {trapObj.item_id}");
-                        return; //stop execution.
                 }
-            }           
-            TriggerNext(trapObj, objList);//probably need to have a guardrail to stop execution
+            }
+
+            if (!implemented)
+            {
+                Debug.Print($"Unknown/unimplemented Trap Class {trapObj.majorclass} {trapObj.minorclass} {trapObj.classindex} {trapObj.a_name} i:{trapObj.index}");
+            }
+            else
+            {
+                TriggerNext(trapObj, objList);//probably need to have a guardrail to stop infinite execution loops
+            }
 
             if (triggerObj.flags1 == 0)
             {
                 //remove trigger chain
-                Debug.Print ("TEST ME, THIS TRIGGER SHOULD ONLY FIRE ONCE");
+                Debug.Print("TEST ME, THIS TRIGGER SHOULD ONLY FIRE ONCE");
             }
         } //end activate trap
 
