@@ -97,7 +97,19 @@ namespace Underworld
                     {
                         if (triggerNextObject.majorclass == 6)//only trigger next a trap/trigger.
                         {
-                            TriggerNext(trapObj, objList, triggerNextIndex);
+                            switch (triggerNextObject.minorclass)
+                            {
+                                case 0:
+                                case 1://traps
+                                    ActivateTrap(triggerObj, triggerNextIndex, objList); //am i right re-using the original trigger?
+                                    break;
+                                case 2:
+                                case 3://triggers
+                                    TriggerNext(trapObj, objList, triggerNextIndex);
+                                    break;
+
+                            }
+                            
                         }
                     }                    
                 }                

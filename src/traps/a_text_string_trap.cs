@@ -11,7 +11,7 @@ namespace Underworld
                     StringNo = 32 * trapObj.quality + trapObj.owner;//I hope.
                     break;
                 default:
-                    StringNo = (64 * uwsettings.instance.level) + trapObj.owner;
+                    StringNo = (64 * (playerdat.dungeon_level-1)) + trapObj.owner;
                     break;
             }
             uimanager.AddToMessageScroll(GameStrings.GetString(9, StringNo));
