@@ -31,11 +31,38 @@ namespace Underworld
 
         }
 
+        /// <summary>
+        /// Performs a change to the specified game variable
+        /// </summary>
+        /// <param name="LeftOperator"></param>
+        /// <param name="Operation"></param>
+        /// <param name="RightOperator"></param>
         private static void VariableOperationUW1(short LeftOperator, short Operation, int RightOperator)
         {
             if (LeftOperator == 0)
             {// bitwise operations on quest variables. no known instances of this happening?
-                Debug.Print ("Quest var bitwise operation");
+                Debug.Print("Quest var bitwise operation");
+                var questToChange = (1 << RightOperator);
+                switch (Operation)
+                {
+                    case 1://Unset
+                        {
+                            playerdat.SetQuest(questToChange, 0);
+                            break;
+                        }
+                    case 5://XOR
+                        {
+                            var tmp = playerdat.GetQuest(questToChange);
+                            tmp ^= 1;
+                            playerdat.SetQuest(questToChange, tmp);
+                            break;
+                        }
+                    default://set bit
+                        {
+                            playerdat.SetQuest(questToChange, 1);
+                            break;
+                        }
+                }
             }
             else
             {
@@ -44,14 +71,14 @@ namespace Underworld
                     case 0: //add
                         {
                             var tmp = playerdat.GetGameVariable(LeftOperator);
-                            tmp+= RightOperator;
+                            tmp += RightOperator;
                             playerdat.SetGameVariable(LeftOperator, tmp);
                             break;
                         }
                     case 1:
                         {   //SUB
                             var tmp = playerdat.GetGameVariable(LeftOperator);
-                            tmp-= RightOperator;
+                            tmp -= RightOperator;
                             playerdat.SetGameVariable(LeftOperator, tmp);
                             break;
                         }
@@ -96,8 +123,6 @@ namespace Underworld
                 }
             }
         }
-
-
 
         /// <summary>
         /// performs variable operations that change gamevars, xclock and quest vars.

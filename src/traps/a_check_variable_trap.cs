@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 
 namespace Underworld
 {
@@ -17,7 +16,8 @@ namespace Underworld
         {
             if (_RES == GAME_UW2)
             {
-//TODO: Check if same or new logic applies in UW2
+                //TODO: Check if same or new logic applies in UW2
+                return 0;//fail
             }
             else
             {
@@ -27,9 +27,9 @@ namespace Underworld
                 var_1A <<= 3;
                 var_1A |= (int)trapObj.ypos;
                 var di = 0;
-            VariableLoop:
-                if (si<=var_18)
-                {
+
+                while (si<=var_18)
+                {//loop through heading no of variables.
                     var gamevar = playerdat.GetGameVariable(si);
                     if (trapObj.xpos==0)
                     {
@@ -41,23 +41,19 @@ namespace Underworld
                         di+=gamevar;
                     }
                     si++;
-                    goto VariableLoop;
+                }
+                
+                 //check results
+                Debug.Print($"Comparing {di} to {var_1A}");
+                if (di==var_1A)
+                {
+                    return trapObj.link; //trigger the true condition chain.
                 }
                 else
-                { //check results
-                    Debug.Print($"Comparing {di} to {var_1A}");
-                    if (di==var_1A)
-                    {
-                        return trapObj.link; //trigger the next
-                    }
-                    else
-                    {
-                        return GetAlternativeLink(trapObj, objList);
-                    }
-                }
-            }
-
-            return 0;//fail
+                { 
+                    return GetAlternativeLink(trapObj, objList);//trigger the false condition chain
+                }                
+            }            
         }
 
         /// <summary>

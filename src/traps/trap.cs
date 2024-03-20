@@ -106,7 +106,7 @@ namespace Underworld
             if (triggerObj.flags1 == 0)
             {
                 //remove trigger chain
-                Debug.Print("TEST ME, THIS TRIGGER SHOULD ONLY FIRE ONCE");
+                Debug.Print("TEST ME, THIS TRIGGER SHOULD ONLY FIRE ONCE and clear the trigger chain");
             }
         } //end activate trap
 
