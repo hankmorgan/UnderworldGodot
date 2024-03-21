@@ -65,7 +65,7 @@ namespace Underworld
                         Debug.Print($"Spilling {objToSpill.a_name}");
                         objToSpill.tileX = obj.tileX;
                         objToSpill.tileY = obj.tileY;
-                        GetRandomXYZForTile(tile, out int newxpos, out int newypos, out int newzpos);
+                        UWTileMap.GetRandomXYZForTile(tile, out int newxpos, out int newypos, out int newzpos);
                         objToSpill.xpos = (short)newxpos;//obj.xpos;
                         objToSpill.ypos = (short)newypos;///obj.ypos;
                         objToSpill.zpos = (short)newzpos; //obj.zpos;
@@ -252,59 +252,7 @@ namespace Underworld
             return null;
         }
 
-        static void GetRandomXYZForTile(TileInfo tile, out int xpos, out int ypos, out int zpos)
-        {
-            switch (tile.tileType)
-            {
-                case UWTileMap.TILE_DIAG_NE:
-                    zpos = tile.floorHeight << 2;
-                    xpos = Rng.r.Next(1, 8);
-                    ypos = Rng.r.Next(7 - xpos, 8); //(i >= 7 - j)
-                    return;
-                case UWTileMap.TILE_DIAG_SE:
-                    zpos = tile.floorHeight << 2;
-                    xpos = Rng.r.Next(1, 8);
-                    ypos = Rng.r.Next(1, xpos); // (i >= j)
-                    return;
-                case UWTileMap.TILE_DIAG_NW:
-                    zpos = tile.floorHeight << 2;
-                    xpos = Rng.r.Next(1, 8);
-                    ypos = Rng.r.Next(xpos, 8); // ((i <= j)
-                    return;
-                case UWTileMap.TILE_DIAG_SW:
-                    zpos = tile.floorHeight << 2;
-                    xpos = Rng.r.Next(1, 8);
-                    ypos = Rng.r.Next(0, 8 - xpos); // (7 - i >= j)
-                    return;
-                case UWTileMap.TILE_SLOPE_S:
-                    xpos = Rng.r.Next(0, 8);
-                    ypos = Rng.r.Next(0, 8);
-                    zpos = (8 - ypos) + (tile.floorHeight << 2);
-                    return;
-                case UWTileMap.TILE_SLOPE_N:
-                    xpos = Rng.r.Next(0, 8);
-                    ypos = Rng.r.Next(0, 8);
-                    zpos = (ypos) + (tile.floorHeight << 2);
-                    return;
-                case UWTileMap.TILE_SLOPE_E:
-                    xpos = Rng.r.Next(0, 8);
-                    ypos = Rng.r.Next(0, 8);
-                    zpos = (xpos) + (tile.floorHeight << 2);
-                    return;
-                case UWTileMap.TILE_SLOPE_W:
-                    xpos = Rng.r.Next(0, 8);
-                    ypos = Rng.r.Next(0, 8);
-                    zpos = (8 - xpos) + (tile.floorHeight << 2);
-                    return;
-                default:
-                case UWTileMap.TILE_OPEN:
-                case UWTileMap.TILE_SOLID:
-                    xpos = Rng.r.Next(0, 8);
-                    ypos = Rng.r.Next(0, 8);
-                    zpos = tile.floorHeight << 2;
-                    return;
-            }
-        }
+        
 
         public static bool TestContainerCanHold(uwObject containerobject, uwObject objectToAdd, bool printReason = true)
         {//assume containerobject = in player object list, objecttoadd in level objects list

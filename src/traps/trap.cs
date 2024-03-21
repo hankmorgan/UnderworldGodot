@@ -46,6 +46,13 @@ namespace Underworld
                                                 objList: objList);
                                         break;
                                     }
+                                case 7: //create object 6-0-7
+                                    {
+                                        implemented = true;
+                                        a_create_object_trap.activate(triggerObj, trapObj, objList);
+                                        triggerNextIndex = 0;//always stop on create object trap
+                                        break;
+                                    }
                                 case 8://door trap
                                     {
                                         implemented = true;
