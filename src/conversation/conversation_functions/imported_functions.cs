@@ -88,7 +88,15 @@ namespace Underworld
                     {
                         take_from_npc(talker);
                         break;
-                    }                        
+                    }
+                case "babl_ask":
+                    {
+                        yield return babl_ask();
+                        break;
+                    }  
+                case "compare":
+                    compare(); 
+                    break;                     
                 default:
                     {
                         Debug.Print($"Unimplemented {func.importname}"); break;

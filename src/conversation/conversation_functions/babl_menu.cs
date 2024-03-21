@@ -18,7 +18,7 @@ namespace Underworld
             
             MaxAnswer = 0;
             int j = 1;
-            ClearConversationOptions();
+            //ClearConversationOptions();
             string finaltext = "";
             for (int i = Start; i <= StackValues.GetUpperBound(0) && (i < Start+5); i++)
             {

@@ -580,6 +580,7 @@ namespace Underworld
 			}
 			uimanager.instance.convo.Clear();
 			InConversation = false;
+			main.gamecam.Set("MOVE", true);
 		}
 
 		private static void InitialiseConversationMemory()

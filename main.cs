@@ -217,7 +217,10 @@ public partial class main : Node3D
 				{//end typed input
 					uimanager.instance.scroll.Clear();
 					MessageDisplay.WaitingForTypedInput = false;
-					gamecam.Set("MOVE", true);//re-enable movement
+					if (ConversationVM.InConversation==false)
+					{
+						gamecam.Set("MOVE", true);//re-enable movement
+					}					
 				}
 			}
 		}
