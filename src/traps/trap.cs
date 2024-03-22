@@ -71,6 +71,11 @@ namespace Underworld
                                         triggerNextIndex = a_check_variable_trap.activate(triggerObj, trapObj, objList);
                                         break;
                                     }
+                                case 0xF://nulltrap/combination trap
+                                    {   
+                                        implemented = true;//null trap does nothing.
+                                        break;
+                                    }
                             }
                             break;
                         }
