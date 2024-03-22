@@ -95,14 +95,19 @@ namespace Underworld
             Ethereal8 = 72
         }; //uw2 floppy level 69 is a secret level containing the lotus.
 
-        public static int GetWorldNo(int levelNo)
+        /// <summary>
+        /// Converts a dungeon level into a world no. Note dungeon level is not zero-based
+        /// </summary>
+        /// <param name="dungeonlevel"></param>
+        /// <returns></returns>
+        public static int GetWorldNo(int dungeonlevel)
         {            
             switch(_RES)
             {
                 case GAME_UW2:
-                    return (levelNo - 1)/8;
+                    return (dungeonlevel - 1)/8;
                 default:
-                    return levelNo;
+                    return dungeonlevel;
             }
         }
 

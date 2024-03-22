@@ -601,5 +601,14 @@ namespace Underworld
             Debug.Print($"Placeholder spawn animo {subclass}");
         }
 
+        /// <summary>
+        /// Initialises the default critter properties
+        /// </summary>
+        /// <param name="critter"></param>
+        public static void InitialiseCritter (uwObject critter)
+        {
+            Debug.Print ("Initialise critter.");
+        }
+
     } //end class
 } //end namesace

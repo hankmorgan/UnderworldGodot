@@ -14,72 +14,33 @@ namespace Underworld
         /// <param name="objList"></param>
         public static void activate(uwObject triggerObj, uwObject trapObj, uwObject[] objList)
         {
-            if ((trapObj.link!=0) && (trapObj.is_quant==0))
+            if ((trapObj.link != 0) && (trapObj.is_quant == 0))
             {
-                
+
                 var template = objList[trapObj.link];
                 Debug.Print($"Cloning {template.index} {template.a_name}");
-                if (template !=null)
+                if (template != null)
                 {
-                    if (_RES==GAME_UW2)
+                    if (_RES == GAME_UW2)
                     {
-                        CreateObjectUW2(triggerObj,trapObj,template,objList);
+                        CreateObjectUW2(triggerObj, trapObj, template, objList);
                     }
                     else
                     {
-                        CreateObjectUW1(triggerObj,trapObj,template,objList);
-                    }                
-                }                            
-            } 
+                        CreateObjectUW1(triggerObj, trapObj, template, objList);
+                    }
+                }
+            }
         }
 
-        static void CreateObjectUW1(uwObject  triggerObj, uwObject trapObj, uwObject template, uwObject[] objList)
+        static void CreateObjectUW1(uwObject triggerObj, uwObject trapObj, uwObject template, uwObject[] objList)
         {
-            if (Rng.r.Next(0,63)>= trapObj.quality)
+            if (Rng.r.Next(0, 63) >= trapObj.quality)
             {
                 //there appears to be a logic check here first that runs in the area around the template. 
                 //not currently implemented as I suspect it is a check that the template is on the map and/or maybe the player 
                 //do spawn
-                int slot;
-                if (template.IsStatic)
-                {
-                    //static object spawn
-                    slot = ObjectCreator.GetAvailableObjectSlot(ObjectCreator.ObjectListType.StaticList);
-                }
-                else
-                {
-                    //mobile object spawn
-                    slot = ObjectCreator.GetAvailableObjectSlot(ObjectCreator.ObjectListType.MobileList);
-                }
-                var newobj = UWTileMap.current_tilemap.LevelObjects[slot];
-                //copy from template to new obj
-                if (template.IsStatic)
-                {
-                    for (int i=0;i<8;i++)
-                    {
-                        newobj.DataBuffer[newobj.PTR + i] = template.DataBuffer[template.PTR + i];
-                    }
-                }
-                else
-                {
-                    for (int i=0;i<27;i++)
-                    {
-                        newobj.DataBuffer[newobj.PTR + i] = template.DataBuffer[template.PTR + i];
-                    }
-                }
-                
-                //set new position and spawn
-                newobj.tileX = triggerObj.quality;
-                newobj.tileY = triggerObj.owner;
-                if (UWTileMap.ValidTile(newobj.tileX, newobj.tileY))
-                {
-                    var tile = UWTileMap.current_tilemap.Tiles[newobj.tileX, newobj.tileY];
-                    UWTileMap.GetRandomXYZForTile(tile, out int newxpos, out int newypos, out int newzpos);
-                    newobj.xpos = (short)newxpos;//obj.xpos;
-                    newobj.ypos = (short)newypos;///obj.ypos;
-                    newobj.zpos = (short)newzpos; //obj.zpos;
-                }
-                ObjectCreator.RenderObject(newobj, UWTileMap.current_tilemap);
+                DoCreateObject(triggerObj, template);
             }
         }
 
@@ -91,9 +52,126 @@ namespace Underworld
         /// <param name="trapObj"></param>
         /// <param name="template"></param>
         /// <param name="objList"></param>
-        static void CreateObjectUW2(uwObject  triggerObj, uwObject trapObj, uwObject template, uwObject[] objList)
+        static void CreateObjectUW2(uwObject triggerObj, uwObject trapObj, uwObject template, uwObject[] objList)
         {
+            if (worlds.GetWorldNo(playerdat.dungeon_level) == 6)//not in loths tomb
+            {
+                if (playerdat.GetQuest(7) == 1)
+                {
+                    return; //loth has been freed. no more object creation in this world
+                }
+            }
 
+            if (template.item_id == 127)//adventurer
+            {//UNTESTED
+                //spawn a random leveled creature. this is possibly caused by sleeping near the trap
+                //traps with this condition existing in the britannia dungeons
+                var spawnRngFactor = worlds.GetWorldNo(playerdat.dungeon_level);
+                spawnRngFactor++;
+                spawnRngFactor *= 3;
+                spawnRngFactor += playerdat.GetXClock(1);
+                spawnRngFactor /= 9;
+
+                var item_id = 0;
+                bool CritterFound = false;
+                //loop rng until we get a critter with random str>1
+                do
+                {
+                    var playRngFactor = playerdat.play_level;
+                    playRngFactor++;
+                    if (playRngFactor <= 0x10)
+                    {
+                        playRngFactor = 0x10;
+                    }
+                    if (playRngFactor <= 0)
+                    {
+                        playRngFactor = 1;
+                    }
+                    var rnd1 = Rng.r.Next(0, spawnRngFactor);
+                    rnd1 <<= 4;
+
+                    var rnd2 = Rng.r.Next(0, playRngFactor);
+
+                    item_id = 0x40 + rnd1 + rnd2;
+
+                    var str = critterObjectDat.strength(item_id);
+                    if (str == 0)
+                    {
+                        CritterFound = false;
+                    }
+                    else
+                    {
+                        CritterFound = Rng.r.Next(0, str) == 0;
+                    }
+                } while (!CritterFound);
+
+                Debug.Print($"This trap will spawn {GameStrings.GetSimpleObjectNameUW(item_id)}");
+
+                //I think the logic now is to temporarily make the template the new item id, 
+                template.item_id = item_id;
+                //but also initialise its defaults depending on the critter defaults
+                ObjectCreator.InitialiseCritter(template);
+                //Create the object 
+                template.MobileUnk_0xA |=0x80; //set bit
+                DoCreateObject(triggerObj, template);
+                //and then revert it back to a the adventurer template.
+                template.item_id = 127;
+
+            }
+            else
+            {
+                DoCreateObject(triggerObj, template);
+            }
+        }
+
+
+        /// <summary>
+        /// Standard create object
+        /// </summary>
+        /// <param name="triggerObj"></param>
+        /// <param name="template"></param>
+        private static void DoCreateObject(uwObject triggerObj, uwObject template)
+        {
+            int slot;
+            if (template.IsStatic)
+            {
+                //static object spawn
+                slot = ObjectCreator.GetAvailableObjectSlot(ObjectCreator.ObjectListType.StaticList);
+            }
+            else
+            {
+                //mobile object spawn
+                slot = ObjectCreator.GetAvailableObjectSlot(ObjectCreator.ObjectListType.MobileList);
+            }
+            var newobj = UWTileMap.current_tilemap.LevelObjects[slot];
+            //copy from template to new obj
+            if (template.IsStatic)
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    newobj.DataBuffer[newobj.PTR + i] = template.DataBuffer[template.PTR + i];
+                }
+            }
+            else
+            {
+                for (int i = 0; i < 27; i++)
+                {
+                    newobj.DataBuffer[newobj.PTR + i] = template.DataBuffer[template.PTR + i];
+                }
+            }
+
+            //set new position and spawn
+            newobj.tileX = triggerObj.quality;
+            newobj.tileY = triggerObj.owner;
+            if (UWTileMap.ValidTile(newobj.tileX, newobj.tileY))
+            {
+                var tile = UWTileMap.current_tilemap.Tiles[newobj.tileX, newobj.tileY];
+                UWTileMap.GetRandomXYZForTile(tile, out int newxpos, out int newypos, out int newzpos);
+                newobj.xpos = (short)newxpos;//obj.xpos;
+                newobj.ypos = (short)newypos;///obj.ypos;
+                newobj.zpos = (short)newzpos; //obj.zpos;
+            }
+            ObjectCreator.RenderObject(newobj, UWTileMap.current_tilemap);
         }
 
 
