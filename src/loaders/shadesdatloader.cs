@@ -17,6 +17,8 @@ namespace Underworld
 
         public static shade[] shadesdata;
 
+        ImageTexture cachedimage;
+
         public static float GetViewingDistance(int index)
         {
             return 4.8f * 7; //(float)shadesdata[index].ViewingDistance;
@@ -129,11 +131,20 @@ namespace Underworld
             return tex;
         }
 
+        public ImageTexture GetImage()
+        {
+            if (cachedimage == null)
+            {
+                cachedimage = ToImage();
+            }
+            return cachedimage;
+        }
+
         /// <summary>
         /// Returns the shade map as a single channel image for use in shaders.
         /// </summary>
         /// <returns></returns>
-        public Godot.ImageTexture ToImage()
+        private Godot.ImageTexture ToImage()
         {
             var bandwidth = 1;
             var shadearray = ExtractShadeArray();
