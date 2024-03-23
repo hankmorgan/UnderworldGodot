@@ -5,6 +5,7 @@ namespace Underworld
     /// </summary>
     public partial class playerdat : Loader
     {
+        public static string currentfolder;
 
         /// <summary>
         /// Reference to the char name in the gamestrings for use in the conversation VM.
@@ -241,7 +242,7 @@ namespace Underworld
             }
             set
             {
-                SetAt(0x59, (byte)value);
+                SetAt16(0x59, value);
             }
         }
 

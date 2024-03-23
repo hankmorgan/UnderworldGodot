@@ -10,7 +10,23 @@ namespace Underworld
     public class UWTileMap : Loader
     {
         //Raw Data
-        public static Underworld.UWTileMap current_tilemap;
+        public static UWTileMap current_tilemap;
+
+        public static UWTileMap[] dungeons;
+
+        public static int NO_OF_LEVELS
+        {
+            get
+            {
+                switch (_RES)
+                {
+                    case GAME_UWDEMO: return 1;
+                    case GAME_UW1: return 9;
+                    case GAME_UW2: return 80;
+                }
+                return 1;
+            }
+        }
         /// <summary>
         /// Data containing and tiles, objects and in UW2 the overlays
         /// </summary>
@@ -64,9 +80,6 @@ namespace Underworld
         public const int UW1_TEXTUREMAPSIZE = 64;
         public const int UW2_TEXTUREMAPSIZE = 70;
         public const int UWDEMO_TEXTUREMAPSIZE = 63;
-
-        // public const int UW1_NO_OF_LEVELS = 9;
-        // public const int UW2_NO_OF_LEVELS = 80;
 
         /// <summary>
         /// The ceiling texture for this level
@@ -214,17 +227,37 @@ namespace Underworld
 	/// </summary>
 	/// <param name="newLevelNo"></param>
 	/// <returns></returns>
-	public static void LoadTileMap(int newLevelNo, string datafolder, bool fromMainMenu)
+	public static void LoadTileMap(int newLevelNo, string datafolder, bool newGameSession = true)
 	{
-		ObjectCreator.worldobjects = main.instance.GetNode<Node3D>("/root/Underworld/worldobjects");
+        ObjectCreator.worldobjects = main.instance.GetNode<Node3D>("/root/Underworld/worldobjects");
 		Node3D the_tiles = main.instance.GetNode<Node3D>("/root/Underworld/tilemap");
+        if (newGameSession)
+        {
+            dungeons = new UWTileMap[NO_OF_LEVELS];
+			automap.automaps = new automap[NO_OF_LEVELS]; 
+            automapnote.automapsnotes= new automapnote[NO_OF_LEVELS];
+            LevArkLoader.LoadLevArkFileData(folder: datafolder);
+            uimanager.EnableDisable(uimanager.instance.PanelMainMenu,false);
+        }
 
-		LevArkLoader.LoadLevArkFileData(folder: datafolder);
-		current_tilemap = new(newLevelNo);
+        //Clear out old data
+        foreach (var child in the_tiles.GetChildren())
+        {
+            child.QueueFree();
+        }
+        foreach (var child in ObjectCreator.worldobjects.GetChildren())
+        {
+            child.QueueFree();
+        }
+
+        if (dungeons[newLevelNo] == null)
+        {
+            dungeons[newLevelNo] = new (newLevelNo);
+        }		
+		current_tilemap = dungeons[newLevelNo];
 
 		current_tilemap.BuildTileMapUW(
             levelNo: newLevelNo, 
-            lev_ark: current_tilemap.lev_ark_block, 
             tex_ark: current_tilemap.tex_ark_block, 
             ovl_ark: current_tilemap.ovl_ark_block);
 
@@ -240,29 +273,13 @@ namespace Underworld
             objList: current_tilemap.LevelObjects, 
             UpdateOnly: false);
 
-		switch (_RES)
-		{
-			case GAME_UW2:
-				automap.automaps = new automap[80]; 
-                automapnote.automapsnotes= new automapnote[80];
-                break;
-			default:
-				automap.automaps = new automap[9]; 
-                automapnote.automapsnotes= new automapnote[9];
-                break;
-		}
 		automap.automaps[newLevelNo] = new automap(newLevelNo, (int)_RES);
         automapnote.automapsnotes[newLevelNo] = new automapnote(newLevelNo, (int)_RES);
-
 
         playerdat.PlayerStatusUpdate();
 
 		Debug.Print($"{current_tilemap.uw}");
-
-        if (fromMainMenu)
-        {
-            uimanager.EnableDisable(uimanager.instance.PanelMainMenu,false);
-        }
+            
         uimanager.InGame = true;		
 	}
 
@@ -373,7 +390,7 @@ namespace Underworld
             return Tiles[tileX, tileY].Render == true;
         }
 
-        public bool BuildTileMapUW(int levelNo, UWBlock lev_ark, UWBlock tex_ark, UWBlock ovl_ark)
+        public bool BuildTileMapUW(int levelNo, UWBlock tex_ark, UWBlock ovl_ark)
         {
             long address_pointer = 0;
             short CeilingTexture = 0;

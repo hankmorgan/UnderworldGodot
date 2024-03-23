@@ -162,6 +162,7 @@ namespace Underworld
 
         private void JourneyOnwards(string folder)
         {
+            playerdat.currentfolder = folder;
 
             playerdat.LoadPlayerDat(datafolder: folder);
 
@@ -169,13 +170,15 @@ namespace Underworld
             UWTileMap.LoadTileMap(
                     newLevelNo: playerdat.dungeon_level - 1,
                     datafolder: folder,
-                    fromMainMenu: true);
+                    newGameSession: true);
         }
 
         private void _on_create_character_gui_input(InputEvent @event)
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
+                 playerdat.currentfolder = "DATA";
+                 
                 _ = Coroutine.Run(
                    ClearMainMenu()
                    , main.instance);
