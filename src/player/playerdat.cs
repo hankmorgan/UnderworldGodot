@@ -149,6 +149,10 @@ namespace Underworld
             {
                 return GetAt16(0x55);
             }
+            set
+            {
+                SetAt16(0x55, value);
+            }
         }
 
         /// <summary>
@@ -173,9 +177,11 @@ namespace Underworld
             get
             {
                 return (X & 0xff) >> 5;
-
-                //& 0x7;// need to confirm if correct
             }
+            set
+            {
+                X = (value << 5);
+            }        
         }
 
         /// <summary>
@@ -186,6 +192,10 @@ namespace Underworld
             get
             {
                 return GetAt16(0x57);
+            }
+            set
+            {
+                SetAt16(0x57, value);
             }
         }
 
@@ -217,6 +227,10 @@ namespace Underworld
             {
                 return (Y & 0xff) >> 5;// need to confirm if correct
             }
+            set
+            {
+                Y = (value << 5);
+            }
         }
 
         public static int Z
@@ -225,6 +239,10 @@ namespace Underworld
             {
                 return GetAt16(0x59);
             }
+            set
+            {
+                SetAt(0x59, (byte)value);
+            }
         }
 
         public static int zpos
@@ -232,6 +250,10 @@ namespace Underworld
             get
             {
                 return Z >> 3;
+            }
+            set
+            {
+                Z = (value << 3);
             }
         }
 

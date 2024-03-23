@@ -111,9 +111,12 @@ namespace Underworld
                     }
                     break;
             }
-
+            
+        
             Palettes[0].cycledGamePalette = CreateFullTexturePaletteCycles(Palettes[0]);//init the first palette as cycled
             Palettes[0].cycledUIPalette = CreateSimpleTexturePaletteCycles(Palettes[0]); //set up a simple palette cycle for fullbright ui sprites
+
+            //var img = Palettes[0].cycledGamePalette[0,0,0].GetImage().SavePng("c:\\temp\\pal.png");
 
             //main menu
            // Palettes[6].cycledGamePalette = CreateFullTexturePaletteCycles(Palettes[6]);//init the first palette as cycled
@@ -216,7 +219,7 @@ namespace Underworld
                 tmpPalette.green = toCycle.green;
                 tmpPalette.blue = toCycle.blue;
                 tmpPalette.alpha = toCycle.alpha;
-            }
+            }            
 
             var NewCycledPalette = new ImageTexture[2,8,28]; //mono/light,light level,Cycle
             for (int l=0; l<8;l++)

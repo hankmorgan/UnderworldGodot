@@ -99,13 +99,14 @@ public partial class main : Node3D
 		{
 			int tileX = -(int)(cam.Position.X / 1.2f);
 			int tileY = (int)(cam.Position.Z / 1.2f);
-
+			int xposvecto =  -(int)(((cam.Position.X % 1.2f)/1.2f)*8);
+			int yposvecto =  (int)(((cam.Position.Z % 1.2f)/1.2f)*8);
 			var tmp = cam.Rotation;
 			tmp.Y = (float)(tmp.Y - Math.PI);
 			playerdat.heading = (int)Math.Round(-(tmp.Y * 127) / Math.PI);
 			uimanager.UpdateCompass();
 
-			lblPositionDebug.Text = $"{cam.Position.ToString()}\n{tileX} {tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}\n{cam.Rotation} {playerdat.heading} {(playerdat.heading>>4)%4}";
+			lblPositionDebug.Text = $"{cam.Position.ToString()}\n{tileX} {tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}\n{cam.Rotation} {playerdat.heading} {(playerdat.heading>>4)%4} {xposvecto} {yposvecto}";
 
 			if ((tileX < 64) && (tileX >= 0) && (tileY < 64) && (tileY >= 0))
 			{
@@ -114,6 +115,9 @@ public partial class main : Node3D
 				{
 					playerdat.tileX = tileX;
 					playerdat.tileY = tileY;
+					playerdat.xpos = xposvecto;
+					playerdat.ypos = yposvecto;
+					//playerdat.zpos = 
 					//uwsettings.instance.lightlevel = light.BrightestLight();
 					//playerdat.lightlevel = light.BrightestLight();
 					playerdat.PlayerStatusUpdate();

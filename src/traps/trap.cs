@@ -38,6 +38,14 @@ namespace Underworld
                                                 objList: objList);
                                         break;
                                     }
+                                case 1: // a teleport trap
+                                    {
+                                        implemented = true;
+                                        a_teleport_trap.activate(
+                                                trapObj: trapObj,                                              
+                                                objList: objList);
+                                        break;
+                                    }
                                 case 3:// Do and hack traps
                                     {
                                         implemented = true;
