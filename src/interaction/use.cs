@@ -315,11 +315,17 @@ namespace Underworld
                     {
                         switch (obj.classindex)
                         {
-
                             case 7://a_shrine
                                 {
                                     return shrine.Use(obj);
                                 }
+                            case 0xB://barrel
+                            case 0xD://chest
+                            case 0xE://nightstand
+                            {
+                                return container.Use(obj, WorldObject);
+                            }
+                            
                         }
                         break;
                     }
