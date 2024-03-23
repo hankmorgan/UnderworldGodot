@@ -1,6 +1,7 @@
 using Godot;
 using Peaky.Coroutines;
 using System.Collections;
+using System.Diagnostics;
 
 namespace Underworld
 {
@@ -141,6 +142,9 @@ namespace Underworld
 
         private static void DoPickup(int index, uwObject[] objList, uwObject obj)
         {
+            //check for pickup triggers linked to this object
+            trigger.PickupTrigger(objList, obj);
+
             //player is trying to pick something up
             playerdat.ObjectInHand = index;
             uimanager.instance.mousecursor.SetCursorToObject(obj.item_id);
@@ -183,9 +187,6 @@ namespace Underworld
                     silvertree.PickupTree(obj);
                 }
             }
-        }
-
-
-
+        }        
     } //end class
 }//end namespace

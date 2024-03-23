@@ -149,6 +149,5 @@ namespace Underworld
             }
             return -1;
         }
-
     }//end class
 }//end namespace
