@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Godot;
 
 namespace Underworld
 {
@@ -44,6 +45,14 @@ namespace Underworld
                                                 trapObj: trapObj,
                                                 triggerObj: triggerObj,
                                                 objList: objList);
+                                        break;
+                                    }
+                                case 4: // pit trap 6-0-4 in uw1, special effects in uw2
+                                    {
+                                        if (_RES!=GAME_UW2)
+                                        {//uw1 pit trap
+                                            implemented = true;//to continue the chain
+                                        }
                                         break;
                                     }
                                 case 7: //create object 6-0-7
