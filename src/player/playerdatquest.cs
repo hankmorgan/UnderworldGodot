@@ -97,7 +97,7 @@ namespace Underworld
                     int offset = 0x66 + (questno / 4) * 4;
                     int bit = questno % 4;
                     byte existingValue = GetAt(offset);
-                    byte mask = (byte)(bit << 1);
+                    byte mask = (byte)(1<< bit);
                     if (newValue >= 1)
                     {//set
                         existingValue |= mask;
@@ -122,7 +122,7 @@ namespace Underworld
                     int bit = questno % 8;
 
                     byte existingValue = GetAt(offset);
-                    byte mask = (byte)(bit << 1);
+                    byte mask = (byte)(1<< bit);
                     if (newValue >= 1)
                     {//set
                         existingValue |= mask;

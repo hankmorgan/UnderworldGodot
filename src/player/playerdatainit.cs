@@ -75,7 +75,7 @@ namespace Underworld
             CharNameStringNo = GameStrings.AddString(0x125, CharName);
 
             //Load bablglobals
-            bglobal.LoadGlobals(uwsettings.instance.levarkfolder);
+            bglobal.LoadGlobals(datafolder);
 
             //Draw UI
             uimanager.SetBody(Body, isFemale);

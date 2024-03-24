@@ -95,8 +95,15 @@ namespace Underworld
                         break;
                     }  
                 case "compare":
-                    compare(); 
-                    break;                     
+                    {
+                        compare(); 
+                        break;  
+                    }
+                case "count_inv":
+                    {
+                        count_inv();
+                        break;
+                    }                 
                 default:
                     {
                         Debug.Print($"Unimplemented {func.importname}"); break;

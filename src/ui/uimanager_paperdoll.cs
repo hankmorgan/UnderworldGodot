@@ -507,7 +507,10 @@ namespace Underworld
             )
             {
                 bool isLeftClick = (eventMouseButton.ButtonIndex == MouseButton.Left);
-
+                if (uimanager.MessageScrollIsTemporary)
+                {//avoids bug involved in clicking on an object while a temp message is displayed
+                    return;
+                }
                 //LEFT CLICK ACTIONS
                 Debug.Print($"->{extra_arg_0}");
                 var objAtSlot = GetObjAtSlot(extra_arg_0);

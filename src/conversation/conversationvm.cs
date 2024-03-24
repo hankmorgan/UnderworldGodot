@@ -533,8 +533,9 @@ namespace Underworld
 
 				// process next instruction or decide if finished.
 				instrp++;
-				if (instrp > currentConversation.instuctions.GetUpperBound(0))
-				{
+				if ((instrp > currentConversation.instuctions.GetUpperBound(0)) || (instrp<0))
+				{//if out of bounds safely end conversation
+					Debug.Print($"Conversation has gone out of bounds!");
 					finished = true;
 				}
 			} //end loop            
