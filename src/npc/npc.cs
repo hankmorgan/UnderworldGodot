@@ -202,7 +202,7 @@ namespace Underworld
             var direction = -main.gamecam.Position + n.uwnode.Position;
             var angle = Mathf.RadToDeg(Mathf.Atan2(direction.X, direction.Z));
             var facingIndex = facing(angle);
-            var CalcedFacing = (short)(facingIndex + n.uwobject.heading);
+            var CalcedFacing = (short)(facingIndex - n.uwobject.heading);
             if (CalcedFacing >= 8)//Make sure it wraps around correcly between 0 and 7 ->The compass headings.
             {
                 CalcedFacing = (short)(CalcedFacing - 8);
