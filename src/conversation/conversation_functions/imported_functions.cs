@@ -103,7 +103,12 @@ namespace Underworld
                     {
                         count_inv();
                         break;
-                    }                 
+                    }    
+                case "remove_talker":
+                    {
+                        remove_talker(talker);
+                        break;
+                    }             
                 default:
                     {
                         Debug.Print($"Unimplemented {func.importname}"); break;

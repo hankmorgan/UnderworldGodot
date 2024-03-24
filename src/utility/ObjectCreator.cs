@@ -610,5 +610,44 @@ namespace Underworld
             Debug.Print ("Initialise critter.");
         }
 
+        public static void DeleteObjectFromTile(short tileX, short tileY, short indexToDelete)
+        {     
+            var objList = UWTileMap.current_tilemap.LevelObjects;
+            if (indexToDelete != 0)
+            {
+                var tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];
+                var objectToDelete = objList[indexToDelete];
+                if (objectToDelete != null)
+                {
+                    if (tile.indexObjectList == indexToDelete)
+                    {
+                        tile.indexObjectList = objectToDelete.next;
+                        objectToDelete.next = 0;
+                        ObjectCreator.RemoveObject(objectToDelete);
+                        return;
+                    }
+                    else
+                    {
+                        //search
+                        var next = tile.indexObjectList;
+
+                        while (next != 0)
+                        {
+                            var nextObject = objList[next];
+                            if (nextObject.next == indexToDelete)
+                            {
+                                nextObject.next = objectToDelete.next;
+                                objectToDelete.next = 0;
+                                ObjectCreator.RemoveObject(objectToDelete);
+                                return;
+                            }
+                            next = nextObject.next;
+                        }
+                        Debug.Print($"Was unable to find {indexToDelete} to delete it in {tileX},{tileY}");
+                    }
+                }
+            }
+        }
+
     } //end class
 } //end namesace
