@@ -146,13 +146,13 @@ namespace Underworld
             get
             {
                 int val = (int)GetAt16(PTR);
-                return (short)DataLoader.ExtractBits(val, 9, 0x7);
+                return (short)DataLoader.ExtractBits(val, 9, 0xF);
             }
             set
             {
                 int existingValue = GetAt16(PTR);
-                existingValue &= 0xF1FF; //Mask out current val
-                SetAt16(PTR, existingValue | ((value & 0x7) << 9));
+                existingValue &= 0xE1FF; //Mask out current val
+                SetAt16(PTR, existingValue | ((value & 0xF) << 9));
             }
         }
 

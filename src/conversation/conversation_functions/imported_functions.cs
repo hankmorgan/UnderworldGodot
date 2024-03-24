@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Diagnostics;
+
 namespace Underworld
 {
     /// <summary>
@@ -108,7 +109,12 @@ namespace Underworld
                     {
                         remove_talker(talker);
                         break;
-                    }             
+                    } 
+                case "x_obj_stuff":
+                    {
+                        x_obj_stuff();
+                        break;
+                    }            
                 default:
                     {
                         Debug.Print($"Unimplemented {func.importname}"); break;

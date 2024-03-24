@@ -8,11 +8,7 @@ namespace Underworld
         public static int LoreCheck(uwObject obj)
         {
             if (
-                (obj.majorclass != 5)
-                &&
-                (obj.majorclass != 6)
-                &&
-                (commonObjDat.rendertype(obj.item_id) != 2)
+                CanBeIdentified(obj)
                 )
             {//can be identified
                 if ((obj.heading & 0x4) == 0)
@@ -37,6 +33,16 @@ namespace Underworld
             }
             return 1;//fail or cannot be identified
         }
+
+        public static bool CanBeIdentified(uwObject obj)
+        {
+            return (obj.majorclass != 5)
+                    &&
+                    (obj.majorclass != 6)
+                    &&
+                    (commonObjDat.rendertype(obj.item_id) != 2);
+        }
+
 
         public static bool LookAt(int index, uwObject[] objList, bool WorldObject)
         {
