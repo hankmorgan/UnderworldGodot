@@ -89,6 +89,15 @@ namespace Underworld
                                             objList: objList);
                                         break;
                                     }
+                                case 0xB: //6-0-B, delete object
+                                    {
+                                        implemented = true;
+                                        a_delete_object_trap.Activate(
+                                            trapObj:trapObj, 
+                                            objList: objList);
+                                        triggerNextIndex = 0;;//always stop on delete object trap
+                                        break;
+                                    }
                                 case 0xD://set variable trap
                                     {
                                         implemented = true;
