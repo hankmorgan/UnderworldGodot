@@ -106,54 +106,60 @@ namespace Underworld
                             }
                         }
                         else
-                        {
-                            int occupiedslots;
-                            var containerobjects = container.GetObjects(
-                                ContainerIndex: uimanager.OpenedContainerIndex,
-                                objList: playerdat.InventoryObjects,
-                                OccupiedSlots: out occupiedslots,
-                                start: 0,
-                                count: 512
-                                );
-                            //find the object that is previous to the current slot.
-                            var start = BackPackStart + CurrentSlot - 11 - 1;
-                            var previousObjectIndex = -1;
-                            while (start >= 0)
+                        {//into a container directly. test if it can hold the object
+                            if (container.TestContainerCanHold(
+                                containerobject: playerdat.InventoryObjects[OpenedContainerIndex],
+                                objectToAdd: UWTileMap.current_tilemap.LevelObjects[ObjectToPickup],
+                                printReason: true))
                             {
-                                if (containerobjects[start] != -1)
+                                int occupiedslots;
+                                var containerobjects = container.GetObjects(
+                                    ContainerIndex: uimanager.OpenedContainerIndex,
+                                    objList: playerdat.InventoryObjects,
+                                    OccupiedSlots: out occupiedslots,
+                                    start: 0,
+                                    count: 512
+                                    );
+                                //find the object that is previous to the current slot.
+                                var start = BackPackStart + CurrentSlot - 11 - 1;
+                                var previousObjectIndex = -1;
+                                while (start >= 0)
                                 {
-                                    previousObjectIndex = containerobjects[start];
-                                    break;
+                                    if (containerobjects[start] != -1)
+                                    {
+                                        previousObjectIndex = containerobjects[start];
+                                        break;
+                                    }
+                                    start--;
                                 }
-                                start--;
-                            }
 
-                            //in a container 
-                            var index = playerdat.AddObjectToPlayerInventory(ObjectToPickup, false);
-                            var newobj = playerdat.InventoryObjects[index];
+                                //in a container 
+                                var index = playerdat.AddObjectToPlayerInventory(ObjectToPickup, false);
+                                var newobj = playerdat.InventoryObjects[index];
 
-                            if (previousObjectIndex != -1)
-                            {
-                                //add as a next to that object
-                                var prev = playerdat.InventoryObjects[previousObjectIndex];
-                                newobj.next = prev.next;
-                                prev.next = newobj.index;
-                            }
-                            else
-                            {
-                                //add to the container link
-                                var opened = playerdat.InventoryObjects[uimanager.OpenedContainerIndex];
-                                newobj.next = opened.link;
-                                opened.link = index;
-                            }
+                                if (previousObjectIndex != -1)
+                                {
+                                    //add as a next to that object
+                                    var prev = playerdat.InventoryObjects[previousObjectIndex];
+                                    newobj.next = prev.next;
+                                    prev.next = newobj.index;
+                                }
+                                else
+                                {
+                                    //add to the container link
+                                    var opened = playerdat.InventoryObjects[uimanager.OpenedContainerIndex];
+                                    newobj.next = opened.link;
+                                    opened.link = index;
+                                }
 
-                            //redraw
-                            BackPackIndices[CurrentSlot - 11] = index;
-                            UpdateInventoryDisplay();
-                            if (ObjectToPickup == playerdat.ObjectInHand)
-                            {
-                                playerdat.ObjectInHand = -1;
-                                instance.mousecursor.SetCursorToCursor();
+                                //redraw
+                                BackPackIndices[CurrentSlot - 11] = index;
+                                UpdateInventoryDisplay();
+                                if (ObjectToPickup == playerdat.ObjectInHand)
+                                {
+                                    playerdat.ObjectInHand = -1;
+                                    instance.mousecursor.SetCursorToCursor();
+                                }
                             }
                         }
                         break;
@@ -173,7 +179,7 @@ namespace Underworld
         /// <param name="isLeftClick"></param>
         private static void InteractWithObjectInSlot(string slotname, int objAtSlot, bool isLeftClick)
         {
-            if ((MessageDisplay.WaitingForTypedInput)||(MessageDisplay.WaitingForYesOrNo))
+            if ((MessageDisplay.WaitingForTypedInput) || (MessageDisplay.WaitingForYesOrNo))
             {//stop while typing in progress
                 return;
             }
@@ -312,8 +318,8 @@ namespace Underworld
                                         else
                                         {//all other objects look at
                                             look.GeneralLookDescription(
-                                                obj: obj, 
-                                                objList: playerdat.InventoryObjects, 
+                                                obj: obj,
+                                                objList: playerdat.InventoryObjects,
                                                 OutputConvo: true,
                                                 lorecheckresult: look.LoreCheck(obj));
                                         }
@@ -429,7 +435,7 @@ namespace Underworld
         /// <param name="targetObj"></param>
         public static void UseObjectsTogether(int srcObj, int targetObj)
         {
-            if ((MessageDisplay.WaitingForTypedInput)||(MessageDisplay.WaitingForYesOrNo))
+            if ((MessageDisplay.WaitingForTypedInput) || (MessageDisplay.WaitingForYesOrNo))
             {//stop while typing in progress
                 return;
             }
@@ -440,7 +446,7 @@ namespace Underworld
             {
                 //containers excluding the runebag.
                 //add object to container
-                if (container.TestContainerCanHold(target,source))
+                if (container.TestContainerCanHold(target, source))
                 {
                     var Added = playerdat.AddObjectToPlayerInventory(srcObj, false);
                     var AddedObj = playerdat.InventoryObjects[Added];
@@ -506,7 +512,7 @@ namespace Underworld
 
         public static void PickupObjectFromSlot(int objAtSlot)
         {
-            if ((MessageDisplay.WaitingForTypedInput)||(MessageDisplay.WaitingForYesOrNo))
+            if ((MessageDisplay.WaitingForTypedInput) || (MessageDisplay.WaitingForYesOrNo))
             {//stop while another in progress
                 return;
             }

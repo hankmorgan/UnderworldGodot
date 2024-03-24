@@ -37,7 +37,7 @@ namespace Underworld
         {
             //check for pickup trigger first
             trigger.PickupTrigger(UWTileMap.current_tilemap.LevelObjects, obj);
-            
+
             //container used in the world
             if (UWTileMap.ValidTile(obj.tileX, obj.tileY))
             {
@@ -196,7 +196,13 @@ namespace Underworld
             OccupiedSlots = 0;
             if (Objects == null)
             {
-                return null;
+                //return an empty list
+                var emptylist = new int[count];
+                for (int o = start; o < start + count; o++)
+                {
+                    emptylist[o] = -1;
+                }
+                return emptylist;
             }
             var output = new int[count];
             int i = 0;
@@ -255,10 +261,15 @@ namespace Underworld
             return null;
         }
 
-        
+
 
         public static bool TestContainerCanHold(uwObject containerobject, uwObject objectToAdd, bool printReason = true)
         {//assume containerobject = in player object list, objecttoadd in level objects list
+            MessageDisplay.MessageDisplayMode printmode = MessageDisplay.MessageDisplayMode.NormalMode;
+            if (ConversationVM.InConversation)
+            {
+                printmode = MessageDisplay.MessageDisplayMode.TemporaryMessage;
+            }
             bool WeightTest = false;
             bool ContainerCanHold = false;
             bool WrongTypeMessage = false;
@@ -275,7 +286,12 @@ namespace Underworld
                     {
                         if (printReason)
                         {
-                            uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_that_item_does_not_fit_));
+                            if (ConversationVM.InConversation)
+                            {
+                                uimanager.AddToMessageScroll(
+                                    stringToAdd: GameStrings.GetString(1, GameStrings.str_that_item_does_not_fit_),
+                                    mode: printmode);
+                            }
                         }
                         ContainerCanHold = false;
                     }
@@ -293,7 +309,9 @@ namespace Underworld
                             ContainerCanHold = runestone.IsRunestone(objectToAdd.item_id);
                             if ((!ContainerCanHold) && (printReason))
                             {
-                                uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_can_only_put_runes_in_the_rune_bag_));
+                                uimanager.AddToMessageScroll(
+                                    stringToAdd: GameStrings.GetString(1, GameStrings.str_you_can_only_put_runes_in_the_rune_bag_),
+                                    mode:printmode);
                             }
                             break;
                         case 513://quivers, accepts missiles and wands
@@ -363,7 +381,9 @@ namespace Underworld
 
             if (!ContainerCanHold && WrongTypeMessage)
             {
-                uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_that_item_does_not_fit_));
+                uimanager.AddToMessageScroll(
+                    stringToAdd: GameStrings.GetString(1, GameStrings.str_that_item_does_not_fit_),
+                    mode: printmode);
             }
 
             //TODO test total weight.
@@ -376,7 +396,9 @@ namespace Underworld
                     WeightTest = false;
                     if (printReason)
                     {
-                        uimanager.AddToMessageScroll($"The {GameStrings.GetSimpleObjectNameUW(containerobject.item_id)} is too full");
+                        uimanager.AddToMessageScroll(
+                            stringToAdd: $"The {GameStrings.GetSimpleObjectNameUW(containerobject.item_id)} is too full",
+                            mode:printmode);
                     }
                 }
                 else
@@ -384,7 +406,6 @@ namespace Underworld
                     WeightTest = true;
                 }
             }
-
 
             return (ContainerCanHold && WeightTest);
         }
@@ -404,22 +425,22 @@ namespace Underworld
             if (!IgnoreNext)
             {
                 var nextIndex = objectToWeight.next;
-                while (nextIndex!=0)
+                while (nextIndex != 0)
                 {
                     var nextObject = objList[nextIndex];
-                    selfweight+= GetTotalMass(nextObject, objList, true);
+                    selfweight += GetTotalMass(nextObject, objList, true);
                     nextIndex = nextObject.next;
                 }
             }
 
-            if (objectToWeight.is_quant==0)
+            if (objectToWeight.is_quant == 0)
             {
-                if (objectToWeight.link>0)
+                if (objectToWeight.link > 0)
                 {
                     var linked = objList[objectToWeight.link];
-                    selfweight+= GetTotalMass(linked, objList, false);
+                    selfweight += GetTotalMass(linked, objList, false);
                 }
-            }   
+            }
             return selfweight;
         }
 
