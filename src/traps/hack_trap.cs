@@ -17,7 +17,7 @@ namespace Underworld
             return true;//unimplemented
         }
 
-        public static void activate(uwObject trapObj, uwObject triggerObj, uwObject[] objList)
+        public static void ActivateHackTrap(uwObject trapObj, uwObject triggerObj, uwObject[] objList)
         {
             switch (trapObj.quality)
             {

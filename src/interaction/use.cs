@@ -324,8 +324,7 @@ namespace Underworld
                             case 0xE://nightstand
                             {
                                 return container.Use(obj, WorldObject);
-                            }
-                            
+                            }                            
                         }
                         break;
                     }

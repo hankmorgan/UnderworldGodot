@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using Godot;
 
 namespace Underworld
 {
@@ -18,25 +17,22 @@ namespace Underworld
             var tileY = triggerObj.owner;
             var startObject = objList[ObjectThatStartedChain];
             if (startObject != null)
-            {                                
+            {
                 //Find Remove existing tile
-                string TileName = "Tile_" + tileX.ToString("D2") + "_" + tileY.ToString("D2");
-                //var existingTile = tileMapRender.worldnode.FindChild(TileName);
-                Node3D existingTile = tileMapRender.worldnode.GetNode<Node3D>($"/root/Underworld/tilemap/{TileName}");
-                existingTile.Name = $"{TileName}_todestroy";
-                existingTile.QueueFree();
+                 UWTileMap.RemoveTile(tileX, tileY);
 
                 //Set the new height
                 var newHeight = heights[startObject.flags];
                 Debug.Print($"Flags is {startObject.flags} new height is {newHeight}");
                 var t = UWTileMap.current_tilemap.Tiles[tileX, tileY];
                 t.floorHeight = (short)newHeight;
-                
+
                 //Render new tile
+
                 tileMapRender.RenderTile(tileMapRender.worldnode, tileX, tileY, t);
+
+                //TODO find objects in the tile that may need to be moved.
             }
         }
     } //end class
-
-
 }//end namespace

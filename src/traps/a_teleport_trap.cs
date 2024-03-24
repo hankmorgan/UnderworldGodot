@@ -10,7 +10,7 @@ namespace Underworld
     public class a_teleport_trap : trap
     {
         static bool JustChangedLevel;
-        public static int activate(uwObject trapObj, uwObject[] objList)
+        public static int Activate(uwObject trapObj, uwObject[] objList)
         {
             if (trapObj.zpos == 0)
             {

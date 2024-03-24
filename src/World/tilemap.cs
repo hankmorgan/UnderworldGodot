@@ -92,7 +92,7 @@ namespace Underworld
         public string uw
         {
             get
-            {                
+            {
                 return $"{(char)this.lev_ark_block.Data[0x7c07]}{(char)this.lev_ark_block.Data[0x7c06]}";
             }
         }
@@ -176,11 +176,11 @@ namespace Underworld
         {
             get
             {
-                return (int)getAt(lev_ark_block.Data,  0x74fc + (StaticFreeListPtr * 2), 16);
+                return (int)getAt(lev_ark_block.Data, 0x74fc + (StaticFreeListPtr * 2), 16);
             }
             set
             {
-                setAt(lev_ark_block.Data,  0x74fc + (StaticFreeListPtr * 2), 16, value);
+                setAt(lev_ark_block.Data, 0x74fc + (StaticFreeListPtr * 2), 16, value);
             }
         }
 
@@ -195,7 +195,7 @@ namespace Underworld
             }
             set
             {
-                 setAt(lev_ark_block.Data, 0x7C02, 16, value);
+                setAt(lev_ark_block.Data, 0x7C02, 16, value);
             }
         }
 
@@ -206,11 +206,11 @@ namespace Underworld
         {
             get
             {
-                return (int)getAt(lev_ark_block.Data,  0x7300 + (MobileFreeListPtr * 2), 16);
+                return (int)getAt(lev_ark_block.Data, 0x7300 + (MobileFreeListPtr * 2), 16);
             }
             set
             {
-                setAt(lev_ark_block.Data,  0x7300 + (MobileFreeListPtr * 2), 16, value);
+                setAt(lev_ark_block.Data, 0x7300 + (MobileFreeListPtr * 2), 16, value);
             }
         }
 
@@ -218,70 +218,70 @@ namespace Underworld
         {
             thisLevelNo = NewLevelNo;
             lev_ark_block = LevArkLoader.LoadLevArkBlock(NewLevelNo);
-		    tex_ark_block = LevArkLoader.LoadTexArkBlock(NewLevelNo);
-		    ovl_ark_block = LevArkLoader.LoadOverlayBlock(NewLevelNo);
+            tex_ark_block = LevArkLoader.LoadTexArkBlock(NewLevelNo);
+            ovl_ark_block = LevArkLoader.LoadOverlayBlock(NewLevelNo);
         }
 
-/// <summary>
-	/// Loads the tilemap for the specified level number (dungeon_level-1)
-	/// </summary>
-	/// <param name="newLevelNo"></param>
-	/// <returns></returns>
-	public static void LoadTileMap(int newLevelNo, string datafolder, bool newGameSession = true)
-	{
-        ObjectCreator.worldobjects = main.instance.GetNode<Node3D>("/root/Underworld/worldobjects");
-		Node3D the_tiles = main.instance.GetNode<Node3D>("/root/Underworld/tilemap");
-        if (newGameSession)
+        /// <summary>
+        /// Loads the tilemap for the specified level number (dungeon_level-1)
+        /// </summary>
+        /// <param name="newLevelNo"></param>
+        /// <returns></returns>
+        public static void LoadTileMap(int newLevelNo, string datafolder, bool newGameSession = true)
         {
-            dungeons = new UWTileMap[NO_OF_LEVELS];
-			automap.automaps = new automap[NO_OF_LEVELS]; 
-            automapnote.automapsnotes= new automapnote[NO_OF_LEVELS];
-            LevArkLoader.LoadLevArkFileData(folder: datafolder);
-            uimanager.EnableDisable(uimanager.instance.PanelMainMenu,false);
+            ObjectCreator.worldobjects = main.instance.GetNode<Node3D>("/root/Underworld/worldobjects");
+            Node3D the_tiles = main.instance.GetNode<Node3D>("/root/Underworld/tilemap");
+            if (newGameSession)
+            {
+                dungeons = new UWTileMap[NO_OF_LEVELS];
+                automap.automaps = new automap[NO_OF_LEVELS];
+                automapnote.automapsnotes = new automapnote[NO_OF_LEVELS];
+                LevArkLoader.LoadLevArkFileData(folder: datafolder);
+                uimanager.EnableDisable(uimanager.instance.PanelMainMenu, false);
+            }
+
+            //Clear out old data
+            foreach (var child in the_tiles.GetChildren())
+            {
+                child.QueueFree();
+            }
+            foreach (var child in ObjectCreator.worldobjects.GetChildren())
+            {
+                child.QueueFree();
+            }
+
+            if (dungeons[newLevelNo] == null)
+            {
+                dungeons[newLevelNo] = new(newLevelNo);
+            }
+            current_tilemap = dungeons[newLevelNo];
+
+            current_tilemap.BuildTileMapUW(
+                levelNo: newLevelNo,
+                tex_ark: current_tilemap.tex_ark_block,
+                ovl_ark: current_tilemap.ovl_ark_block);
+
+            ObjectCreator.GenerateObjects(
+                objects: current_tilemap.LevelObjects,
+                a_tilemap: current_tilemap);
+
+            the_tiles.Position = new Vector3(0f, 0f, 0f);
+
+            tileMapRender.GenerateLevelFromTileMap(
+                parent: the_tiles,
+                Level: current_tilemap,
+                objList: current_tilemap.LevelObjects,
+                UpdateOnly: false);
+
+            automap.automaps[newLevelNo] = new automap(newLevelNo, (int)_RES);
+            automapnote.automapsnotes[newLevelNo] = new automapnote(newLevelNo, (int)_RES);
+
+            playerdat.PlayerStatusUpdate();
+
+            Debug.Print($"{current_tilemap.uw}");
+
+            uimanager.InGame = true;
         }
-
-        //Clear out old data
-        foreach (var child in the_tiles.GetChildren())
-        {
-            child.QueueFree();
-        }
-        foreach (var child in ObjectCreator.worldobjects.GetChildren())
-        {
-            child.QueueFree();
-        }
-
-        if (dungeons[newLevelNo] == null)
-        {
-            dungeons[newLevelNo] = new (newLevelNo);
-        }		
-		current_tilemap = dungeons[newLevelNo];
-
-		current_tilemap.BuildTileMapUW(
-            levelNo: newLevelNo, 
-            tex_ark: current_tilemap.tex_ark_block, 
-            ovl_ark: current_tilemap.ovl_ark_block);
-
-		ObjectCreator.GenerateObjects(
-            objects: current_tilemap.LevelObjects, 
-            a_tilemap: current_tilemap);
-
-		the_tiles.Position = new Vector3(0f, 0f, 0f);
-
-		tileMapRender.GenerateLevelFromTileMap(
-            parent: the_tiles, 
-            Level: current_tilemap, 
-            objList: current_tilemap.LevelObjects, 
-            UpdateOnly: false);
-
-		automap.automaps[newLevelNo] = new automap(newLevelNo, (int)_RES);
-        automapnote.automapsnotes[newLevelNo] = new automapnote(newLevelNo, (int)_RES);
-
-        playerdat.PlayerStatusUpdate();
-
-		Debug.Print($"{current_tilemap.uw}");
-            
-        uimanager.InGame = true;		
-	}
 
 
 
@@ -468,21 +468,80 @@ namespace Underworld
                         break;
                     }
             }
+
+            //Find tiles that may change terrain due to triggers/traps
+            FindTerrainChanges();
+
             //Reduce map complexity.
             CleanUp();
 
             return true;
         }
 
-        private void ListEnchantmentsInLinkedList(int listhead, int x,int y)
+
+        /// <summary>
+        /// Finds trigger-trap chains that will change the terrain
+        /// </summary>
+        static void FindTerrainChanges()
+        {
+            for (int i = 255; i <= current_tilemap.LevelObjects.GetUpperBound(0); i++)
+            {
+                var trigger = current_tilemap.LevelObjects[i];
+                if (trigger != null)
+                {
+                    if ((trigger.majorclass == 6) && ((trigger.minorclass == 2) || (trigger.minorclass == 3)))
+                    {//a trigger
+                        if (trigger.link != 0)
+                        {
+                            var trap = current_tilemap.LevelObjects[trigger.link];
+                            if (trap != null)
+                            {
+                                Debug.Print($"Testing {trap.a_name}" );
+                                switch (trap.item_id)
+                                {
+                                    case 387:   //do traps
+                                        {
+                                            switch (trap.quality)
+                                            {
+                                                case 2:
+                                                {
+                                                    current_tilemap.Tiles[trigger.quality,trigger.owner].TerrainChange = true;
+                                                    break;
+                                                }
+                                            }
+                                            break;
+                                        }
+                                    case 389://change terrain trap
+                                        {
+                                            for (int X = trigger.quality; X <= trigger.quality + trap.xpos; X++)
+                                            {
+                                                for (int Y = trigger.owner; Y <= trigger.owner + trap.ypos; Y++)
+                                                {
+                                                    if (ValidTile(X,Y))
+                                                    {
+                                                        current_tilemap.Tiles[X,Y].TerrainChange = true;
+                                                    }                                                    
+                                                }
+                                            }
+                                            break;
+                                        }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void ListEnchantmentsInLinkedList(int listhead, int x, int y)
         {
             var nextObject = listhead;
             while (nextObject != 0)
             {
                 var obj = LevelObjects[nextObject];
-                if ((obj.is_quant==0) && (obj.link!=0))
+                if ((obj.is_quant == 0) && (obj.link != 0))
                 {
-                    ListEnchantmentsInLinkedList(obj.link,x ,y);
+                    ListEnchantmentsInLinkedList(obj.link, x, y);
                 }
                 try
                 {
@@ -557,7 +616,7 @@ namespace Underworld
         /// </summary>
         /// <param name="x">The x coordinate.</param>
         /// <param name="y">The y coordinate.</param>
-        public void SetTileMapWallFacesUW()
+        public static void SetTileMapWallFacesUW()
         {
             short x; short y;
             for (y = 0; y <= TileMapSizeY; y++)
@@ -574,45 +633,45 @@ namespace Underworld
         /// </summary>
         /// <param name="x">The x coordinate.</param>
         /// <param name="y">The y coordinate.</param>
-        public void SetTileWallFacesUW(short x, short y)
+        public static void SetTileWallFacesUW(short x, short y)
         {
-            if (Tiles[x, y].tileType >= 0)//was just solid only. Note: If textures are all wrong it's probably caused here!
+            if (current_tilemap.Tiles[x, y].tileType >= 0)//was just solid only. Note: If textures are all wrong it's probably caused here!
             {
                 //assign it's north texture
                 if (y < TileMapSizeY)
                 {
-                    Tiles[x, y].North = Tiles[x, y + 1].wallTexture;
+                    current_tilemap.Tiles[x, y].North = current_tilemap.Tiles[x, y + 1].wallTexture;
                 }
                 else
                 {
-                    Tiles[x, y].North = -1;
+                    current_tilemap.Tiles[x, y].North = -1;
                 }
                 //assign it's southern
                 if (y > 0)
                 {
-                    Tiles[x, y].South = Tiles[x, y - 1].wallTexture;
+                    current_tilemap.Tiles[x, y].South = current_tilemap.Tiles[x, y - 1].wallTexture;
                 }
                 else
                 {
-                    Tiles[x, y].South = -1;
+                    current_tilemap.Tiles[x, y].South = -1;
                 }
                 //it's east
                 if (x < TileMapSizeX)
                 {
-                    Tiles[x, y].East = Tiles[x + 1, y].wallTexture;
+                    current_tilemap.Tiles[x, y].East = current_tilemap.Tiles[x + 1, y].wallTexture;
                 }
                 else
                 {
-                    Tiles[x, y].East = -1;
+                    current_tilemap.Tiles[x, y].East = -1;
                 }
                 //assign it's West
                 if (x > 0)
                 {
-                    Tiles[x, y].West = Tiles[x - 1, y].wallTexture;
+                    current_tilemap.Tiles[x, y].West = current_tilemap.Tiles[x - 1, y].wallTexture;
                 }
                 else
                 {
-                    Tiles[x, y].West = -1;
+                    current_tilemap.Tiles[x, y].West = -1;
                 }
             }
         }
@@ -722,12 +781,6 @@ namespace Underworld
                 }
             }
 
-            //return;
-            // if (game == GAME_SHOCK)
-            // {//TODO:FIx some z-fighting due to tile visibility.
-            //     return;
-            // }
-            //return;
             int j;
             //Now lets combine the solids along particular axis
             for (x = 0; x < TileMapSizeX; x++)
@@ -795,9 +848,9 @@ namespace Underworld
             {
                 for (x = 0; x <= TileMapSizeX; x++)
                 {
-                     Tiles[x, y].VisibleFaces[vBOTTOM]=false;//hide bottom of tile
+                    Tiles[x, y].VisibleFaces[vBOTTOM] = false;//hide bottom of tile
                     if ((Tiles[x, y].tileType == TILE_SOLID))
-                    {                       
+                    {
                         int dimx = Tiles[x, y].DimX;
                         int dimy = Tiles[x, y].DimY;
 
@@ -1030,10 +1083,10 @@ namespace Underworld
             {
                 if ((t1.tileType == 0) && (t2.tileType == 0))   //solid
                 {
-                    return ((t1.wallTexture == t2.wallTexture) 
-                        && (t1.West == t2.West) 
-                        && (t1.South == t2.South) 
-                        && (t1.East == t2.East) 
+                    return ((t1.wallTexture == t2.wallTexture)
+                        && (t1.West == t2.West)
+                        && (t1.South == t2.South)
+                        && (t1.East == t2.East)
                         && (t1.North == t2.North));
                 }
                 else
@@ -1302,5 +1355,24 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// Remove the tile from the scene.
+        /// </summary>
+        /// <param name="tileX"></param>
+        /// <param name="tileY"></param>
+        public static void RemoveTile(short tileX, short tileY)
+        {
+            string TileName = "Tile_" + tileX.ToString("D2") + "_" + tileY.ToString("D2");
+            Node3D existingTile = tileMapRender.worldnode.GetNode<Node3D>($"/root/Underworld/tilemap/{TileName}");
+            if (existingTile != null)
+            {
+                existingTile.Name = $"{TileName}_todestroy";
+                existingTile.QueueFree();
+            }
+            else
+            {
+                Debug.Print($"Unable to find tile {TileName} to destroy");
+            }
+        }
     } //end class
 }//end namespace

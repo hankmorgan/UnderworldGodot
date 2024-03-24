@@ -12,7 +12,7 @@ namespace Underworld
         /// <param name="triggerObj"></param>
         /// <param name="trapObj"></param>
         /// <returns></returns>
-        public static short activate(uwObject triggerObj, uwObject trapObj, uwObject[] objList)
+        public static short Activate(uwObject triggerObj, uwObject trapObj, uwObject[] objList)
         {
             if (_RES == GAME_UW2)
             {

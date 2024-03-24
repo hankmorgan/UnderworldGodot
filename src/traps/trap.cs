@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using Godot;
 
 namespace Underworld
 {
@@ -32,7 +31,7 @@ namespace Underworld
                                 case 0://damage traps
                                     {
                                         implemented = true;
-                                        a_damage_trap.activate(
+                                        a_damage_trap.Activate(
                                                 trapObj: trapObj,
                                                 triggerObj: triggerObj,
                                                 objList: objList);
@@ -41,7 +40,7 @@ namespace Underworld
                                 case 1: // a teleport trap
                                     {
                                         implemented = true;
-                                        a_teleport_trap.activate(
+                                        a_teleport_trap.Activate(
                                                 trapObj: trapObj,                                              
                                                 objList: objList);
                                         break;
@@ -49,7 +48,7 @@ namespace Underworld
                                 case 3:// Do and hack traps
                                     {
                                         implemented = true;
-                                        hack_trap.activate(
+                                        hack_trap.ActivateHackTrap(
                                                 trapObj: trapObj,
                                                 triggerObj: triggerObj,
                                                 objList: objList);
@@ -63,29 +62,48 @@ namespace Underworld
                                         }
                                         break;
                                     }
+                                case 5: //change terrain trap
+                                    {
+                                        implemented = true;
+                                        a_change_terrain_trap.Activate(
+                                            triggerObj: triggerObj, 
+                                            trapObj: trapObj);
+                                        break;
+                                    }
                                 case 7: //create object 6-0-7
                                     {
                                         implemented = true;
-                                        a_create_object_trap.activate(triggerObj, trapObj, objList);
+                                        a_create_object_trap.Activate(
+                                            triggerObj: triggerObj, 
+                                            trapObj: trapObj, 
+                                            objList: objList);
                                         triggerNextIndex = 0;//always stop on create object trap
                                         break;
                                     }
                                 case 8://door trap
                                     {
                                         implemented = true;
-                                        a_door_trap.activate(triggerObj, trapObj, objList);
+                                        a_door_trap.Activate(
+                                            triggerObj: triggerObj, 
+                                            trapObj: trapObj, 
+                                            objList: objList);
                                         break;
                                     }
                                 case 0xD://set variable trap
                                     {
                                         implemented = true;
-                                        a_set_variable_trap.activate(triggerObj, trapObj);
+                                        a_set_variable_trap.Activate(
+                                            triggerObj: triggerObj, 
+                                            trapObj: trapObj);
                                         break;
                                     }
                                 case 0xE://check variable trap
                                     {
                                         implemented = true;
-                                        triggerNextIndex = a_check_variable_trap.activate(triggerObj, trapObj, objList);
+                                        triggerNextIndex = a_check_variable_trap.Activate(
+                                            triggerObj: triggerObj, 
+                                            trapObj: trapObj, 
+                                            objList: objList);
                                         break;
                                     }
                                 case 0xF://nulltrap/combination trap
@@ -103,7 +121,9 @@ namespace Underworld
                                 case 0: //6-1-0 Text String Trap
                                     {
                                         implemented = true;
-                                        a_text_string_trap.activate(trapObj, objList);
+                                        a_text_string_trap.activate(
+                                            trapObj: trapObj, 
+                                            objList: objList);
                                         break;
                                     }
 
@@ -130,15 +150,20 @@ namespace Underworld
                             {
                                 case 0:
                                 case 1://traps
-                                    ActivateTrap(triggerObj, triggerNextIndex, objList); //am i right re-using the original trigger?
+                                    ActivateTrap(
+                                        triggerObj: triggerObj, 
+                                        trapIndex: triggerNextIndex, 
+                                        objList: objList); //am i right re-using the original trigger?
                                     break;
                                 case 2:
                                 case 3://triggers
-                                    TriggerNext(trapObj, objList, triggerNextIndex);
+                                    TriggerNext(
+                                        trapObj: trapObj, 
+                                        objList: objList, 
+                                        triggerNextIndex: triggerNextIndex);
                                     break;
 
-                            }
-                            
+                            }                            
                         }
                     }                    
                 }                

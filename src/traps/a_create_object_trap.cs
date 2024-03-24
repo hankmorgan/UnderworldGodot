@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using Godot;
 
 namespace Underworld
 {
@@ -12,7 +11,7 @@ namespace Underworld
         /// <param name="triggerObj"></param>
         /// <param name="trapObj"></param>
         /// <param name="objList"></param>
-        public static void activate(uwObject triggerObj, uwObject trapObj, uwObject[] objList)
+        public static void Activate(uwObject triggerObj, uwObject trapObj, uwObject[] objList)
         {
             if ((trapObj.link != 0) && (trapObj.is_quant == 0))
             {

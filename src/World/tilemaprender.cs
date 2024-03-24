@@ -203,16 +203,16 @@ namespace Underworld
             {
                 string TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
 
-                //Bottom face 
-                if (t.TerrainChange)
-                {                    
-                    return RenderCuboid(parent, x, y, t, -16, t.floorHeight, TileName);
-                }
-                else
-                {
+                // //Bottom face 
+                // if (t.TerrainChange)
+                // {                    
+                //     return RenderCuboid(parent, x, y, t, -16, t.floorHeight, TileName);
+                // }
+                // else
+                // {
                     TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
                     return RenderCuboid(parent, x, y, t, 0, t.floorHeight, TileName);
-                }
+                //}
             }
             return null;
         }
@@ -814,7 +814,6 @@ namespace Underworld
                 //floorTexture = t.floorTexture;
             switch (_RES)
             {
-                //case GAME_SHOCK:
                 case GAME_UW2:
                     floorTexture = t.map.texture_map[t.floorTexture];
                     //floorTexture = t.floorTexture;

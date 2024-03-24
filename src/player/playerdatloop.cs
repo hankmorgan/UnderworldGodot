@@ -272,7 +272,6 @@ namespace Underworld
                     lightlevel = dungeon_ambientlight;
                 }
             }
-            //TODO check for magic lights
             return lightlevel;
         }
     }//end class

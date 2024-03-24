@@ -322,9 +322,9 @@ namespace Underworld
         }
 
         /// <summary>
-        /// Indicates that the tile can change into another type of tile or moves in someway. Eg change terrain trap.
+        /// Indicates that the tile can change into another type of tile or moves in someway. Eg because change terrain trap.
         /// </summary>
-        /// Used to prevent cleanup of this tile.
+        /// Used to ensure this tile is rendered as a single tile.
         public bool TerrainChange;  //
 
         public int terrain

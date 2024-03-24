@@ -4,7 +4,7 @@ namespace Underworld
 {
     public class a_door_trap:trap
     {
-        public static void activate(uwObject triggerObj, uwObject trapObj, uwObject[] objList)
+        public static void Activate(uwObject triggerObj, uwObject trapObj, uwObject[] objList)
         {
             var tile = UWTileMap.current_tilemap.Tiles[triggerObj.quality, triggerObj.owner];
             var doorObj = objectsearch.FindMatchInObjectChain(
