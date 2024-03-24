@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using Godot;
 
@@ -165,6 +166,13 @@ namespace Underworld
             {
                 return (short)(flags & 0x1);
             }
+            set
+            {                
+                short bit = (short)(value & 0x1);         
+                var tmp = (short)(flags & 0xE);                
+                tmp = (short)(tmp | bit);
+                flags = tmp;
+            }
         }
 
         /// <summary>
@@ -175,6 +183,13 @@ namespace Underworld
             get 
             {
                 return (short)((flags>>1) & 0x1);
+            }
+            set
+            {                
+                short bit = (short)((value & 0x1)<<1);         
+                var tmp = (short)(flags & 0xD);                
+                tmp = (short)(tmp | bit);
+                flags = tmp;
             }
         }
 

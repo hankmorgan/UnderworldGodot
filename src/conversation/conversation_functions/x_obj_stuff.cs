@@ -63,8 +63,45 @@ namespace Underworld
                     }
                 }
                 else
-                {
-
+                { //mode <> 0. set values
+                    if (identifyObject != -1)
+                    {
+                        if (look.CanBeIdentified(obj))
+                        {
+                            obj.heading = identifyObject;
+                        }
+                    }
+                    if (owner!=-1)
+                    {
+                        obj.owner = owner;
+                    }
+                    if (flags!=-1)
+                    {
+                        obj.flags = flags;
+                    }
+                    if (link!=-1)
+                    {
+                        if (_RES==GAME_UW2)
+                        {
+                            obj.link = link;
+                        }
+                        else
+                        {
+                            obj.link = (short)(link | 0x200);
+                        }                        
+                    }
+                    if (flag1!=-1)
+                    {
+                        obj.flags1 = flag1;
+                    }
+                    if (flag0!=-1)
+                    {
+                        obj.flags0 = flag0;
+                    }
+                    if (quality!=-1)
+                    {
+                        obj.quality = quality;
+                    }
                 }
             }
             else
