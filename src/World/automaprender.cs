@@ -128,10 +128,8 @@ namespace Underworld
         /// <summary>
         /// Reference to track the currently being drawn tilemap
         /// </summary>
-        static automap mapToRender;
+        static automap mapToRender;    
 
-        //static System.Random rnd;
-       
         /// <summary>
         /// Returns the automap as an image.
         /// </summary>

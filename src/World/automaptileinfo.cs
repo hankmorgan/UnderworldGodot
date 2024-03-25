@@ -47,6 +47,11 @@ namespace Underworld
             {
                 return (short)((buffer[PTR] >> 4) & 0xf);
             }
+            set
+            {
+                buffer[PTR] &= 0x0F;
+                buffer[PTR] |= (byte)(value << 4);
+            }
         }
 
         /// <summary>
@@ -57,6 +62,11 @@ namespace Underworld
             get
             {
                 return (short)(buffer[PTR] & 0xF);
+            }
+            set
+            {
+                buffer[PTR] &= 0xF0;
+                buffer[PTR] |= (byte)(value & 0xF);
             }
         }
 
@@ -197,5 +207,61 @@ namespace Underworld
                 }
             }
         }
+
+
+        /// <summary>
+        /// Gets how the tile should be displayed in the automap based on various properties.
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public static int GetDisplayType(TileInfo t)
+        {
+            if (t.hasBridge)
+            {
+                switch (_RES)
+                {
+                    case GAME_UW2:
+                        return DisplayTypeBridgeUW2;
+                    default:
+                        return DisplayTypeBridge1UW1;
+                }
+
+            }
+            else if (t.isWater)
+            {
+                switch (_RES)
+                {
+                    case GAME_UW2:
+                        return DisplayTypeWaterUW2;
+                    default:
+                        return DisplayTypeWaterUW1;
+                }
+
+            }
+            else if (t.isLava)
+            {
+                return DisplayTypeLava;
+            }
+            else if (t.isIce)
+            {
+                return DisplayTypeIce;
+            }
+            else if (t.IsDoorForNPC)
+            {
+                switch (_RES)
+                {
+
+                    case GAME_UW2:
+                        return DisplayTypeDoorUW2;
+                    default:
+                        return DisplayTypeDoorUW1;
+                }
+            }
+            else
+            {
+                return DisplayTypeClear;
+            }
+        }
+
     }//end class
 }//end namespace

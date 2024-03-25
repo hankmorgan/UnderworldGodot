@@ -112,7 +112,6 @@ public partial class main : Node3D
 
 			if ((tileX < 64) && (tileX >= 0) && (tileY < 64) && (tileY >= 0))
 			{
-				// 	//automap.currentautomap.tiles[tileX,tileX].visited = true;
 				if ((playerdat.tileX != tileX) || (playerdat.tileY != tileY))
 				{
 					playerdat.tileX = tileX;
@@ -124,6 +123,7 @@ public partial class main : Node3D
 					//playerdat.lightlevel = light.BrightestLight();
 					playerdat.PlayerStatusUpdate();
 				}
+				
 			}
 		}
 

@@ -37,15 +37,6 @@ namespace Underworld
             {
                 blockno = LevelNo + 27;
             }
-            // switch(_RES)
-            // {
-            //     case GAME_UW2:
-            //         blockno = 160 + LevelNo * 4;
-            //         break;
-            //     default:
-            //         blockno = LevelNo + 27;
-            //         break;
-            // }
             DataLoader.LoadUWBlock(LevArkLoader.lev_ark_file_data, blockno, 64 * 64, out UWBlock block);
             if (block.Data == null)
             { //init a blank map
@@ -64,5 +55,24 @@ namespace Underworld
                 }
             }
         }
+
+        public static void MarkTileVisited(int level, int tileX, int tileY, int tiletype, int displaytype = automaptileinfo.DisplayTypeClear )
+        {
+            automaps[level].tiles[tileX,tileY].tileType = (short)tiletype;
+            automaps[level].tiles[tileX,tileY].DisplayType = (short)displaytype;
+        }
+
+
+        /// <summary>
+        /// Checks if automapping is allowed in this map
+        /// </summary>
+        /// <param name="level"></param>
+        /// <returns></returns>
+        public static bool CanMap(int level)
+        {
+            return true;
+        }
+
+        
     }//end class
 }//end namespace

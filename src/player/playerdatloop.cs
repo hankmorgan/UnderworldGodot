@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using Godot;
 
 namespace Underworld
 {
@@ -13,15 +14,15 @@ namespace Underworld
         {
             lightlevel = 0;
             Palette.ColourTone = 0;
-            
+
             MagicalMotionAbilities = 0;
-            for (int i=0; i<=3;i++)
+            for (int i = 0; i <= 3; i++)
             {
                 LocationalArmourValues[i] = 0;
                 LocationalProtectionValues[i] = 0;
-            }       
-            StealthScore1 = 13 - (Sneak/3);
-            StealthScore2 = 15 - (Sneak/5);
+            }
+            StealthScore1 = 13 - (Sneak / 3);
+            StealthScore2 = 15 - (Sneak / 5);
 
             PlayerDamageTypeScale = 0;
             ValourBonus = 0;
@@ -43,7 +44,7 @@ namespace Underworld
             InitArmourValues();
 
             //Get brightest physcial light
-            lightlevel = BrightestNonMagicalLight();          
+            lightlevel = BrightestNonMagicalLight();
 
             //cast active spell effects
             CastActiveSpellEffects(ref DamageResistance, ref StealthBonus);
@@ -55,6 +56,8 @@ namespace Underworld
             ApplyStealthBonus(StealthBonus);
 
             RefreshLighting();//either brightest physical light or brightest magical light
+            
+            UpdateAutomap();//update the visited status of nearby tiles
         }
 
 
@@ -79,7 +82,7 @@ namespace Underworld
                         minorclass: minor,
                         TriggeredByInventoryEvent: false,
                         DamageResistance: ref DamageResistance,
-                        StealthBonus : ref StealthBonus,
+                        StealthBonus: ref StealthBonus,
                         PaperDollSlot: -1);
                     uimanager.SetSpellIcon(i, major, minor);
                 }
@@ -188,9 +191,9 @@ namespace Underworld
         /// <param name="DamageResistance"></param>
         public static void ApplyDamageResistance(int DamageResistance)
         {
-            for (int i = 0; i<= LocationalArmourValues.GetUpperBound(0); i++)
+            for (int i = 0; i <= LocationalArmourValues.GetUpperBound(0); i++)
             {
-                 LocationalArmourValues[i] += DamageResistance;
+                LocationalArmourValues[i] += DamageResistance;
             }
         }
 
@@ -201,9 +204,9 @@ namespace Underworld
         /// <param name="StealthBonus"></param>
         public static void ApplyStealthBonus(int StealthBonus)
         {
-            for (int i = 0; i<3; i++)
+            for (int i = 0; i < 3; i++)
             {
-                var bit = (StealthBonus>>i) & 1;
+                var bit = (StealthBonus >> i) & 1;
                 if (bit == 1)
                 {//bit is set
                     switch (i)
@@ -211,9 +214,9 @@ namespace Underworld
                         case 0:
                             StealthScore1 = Math.Max(StealthScore1 - 0x10, 0); break;
                         case 1:
-                            StealthScore2 = Math.Max(StealthScore2 - 5 , 0); break;
+                            StealthScore2 = Math.Max(StealthScore2 - 5, 0); break;
                         case 2:
-                            StealthScore2 = Math.Max(StealthScore2 - 0x10 , 0); break;
+                            StealthScore2 = Math.Max(StealthScore2 - 0x10, 0); break;
                     }
                 }
             }
@@ -222,7 +225,7 @@ namespace Underworld
         public static void RefreshLighting()
         {
             Godot.RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.GetViewingDistance(playerdat.lightlevel));
-           // Godot.RenderingServer.GlobalShaderParameterSet("shades", shade.shadesdata[playerdat.lightlevel].GetImage());
+            // Godot.RenderingServer.GlobalShaderParameterSet("shades", shade.shadesdata[playerdat.lightlevel].GetImage());
         }
 
         /// <summary>
@@ -274,5 +277,31 @@ namespace Underworld
             }
             return lightlevel;
         }
+
+
+        public static void UpdateAutomap()
+        {
+
+            //depending on light level 
+            var range = 1 + (lightlevel/2);
+            var cX = playerdat.tileX; 
+            var cY =  playerdat.tileY;
+
+            for (int aX = cX - range; aX <= cX + range; aX++)
+            {                
+                for (int aY = cY - range; aY <= cY + range; aY++)
+                {                    
+                    if (UWTileMap.ValidTile(aX, aY))
+                    {//TODO figure out how to do line of sight checking of solid walls.
+                        automap.MarkTileVisited(
+                                level: dungeon_level - 1,
+                                tileX: aX, tileY: aY,
+                                tiletype: UWTileMap.current_tilemap.Tiles[aX, aY].tileType,
+                                displaytype: automaptileinfo.GetDisplayType(UWTileMap.current_tilemap.Tiles[aX, aY]));
+                    }
+                }
+            }
+        }
+
     }//end class
 }//end namespace

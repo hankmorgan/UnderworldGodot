@@ -181,7 +181,9 @@ namespace Underworld
             }
             set
             {
-                X = (value << 5);
+                var tmp = X & 0xFF1F;
+                tmp |= (value<<5);
+                X = tmp;
             }        
         }
 
@@ -230,7 +232,9 @@ namespace Underworld
             }
             set
             {
-                Y = (value << 5);
+                var tmp = Y & 0xFF1F;
+                tmp |= (value<<5);
+                Y = tmp;
             }
         }
 
