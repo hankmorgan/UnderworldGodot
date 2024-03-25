@@ -119,7 +119,12 @@ namespace Underworld
                     {
                         identify_inv();
                         break;
-                    }         
+                    }  
+                case "contains":
+                    {
+                        contains();
+                        break;
+                    }       
                 default:
                     {
                         Debug.Print($"Unimplemented {func.importname}"); break;

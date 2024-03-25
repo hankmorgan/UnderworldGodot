@@ -264,7 +264,7 @@ namespace Underworld
 			}
 			else
 			{
-				npc.npc_attitude = (short)Math.Min(0, (int)tmp);
+				npc.npc_attitude = (short)Math.Max(0, (int)tmp);
 			}
 
 			playerdat.play_hunger = (byte)FindVariable("play_hunger");

@@ -68,7 +68,7 @@ namespace Underworld
         /// <param name="val">value to set</param>
         public static void Set(int index, short val)
         {
-            //Debug.Print($"Set {val} at {index}");
+            Debug.Print($"Set {val} at {index}");
             StackValues[index] = val;//I hope!
         }
 
