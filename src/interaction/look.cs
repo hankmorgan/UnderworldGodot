@@ -1,3 +1,5 @@
+using Godot;
+
 namespace Underworld
 {
     /// <summary>
@@ -93,7 +95,7 @@ namespace Underworld
 
                     //default string  when no overriding action has occured           
                     //uimanager.AddToMessageScroll(GameStrings.GetObjectNounUW(obj.item_id));
-                    GeneralLookDescription(
+                    PrintLookDescription(
                         obj: obj,
                         objList: objList,
                         lorecheckresult: LoreCheck(obj));
@@ -206,19 +208,47 @@ namespace Underworld
             uimanager.AddToMessageScroll($"{output}");
             return true;
         }
-
-        public static bool GeneralLookDescription(uwObject obj, uwObject[] objList, int lorecheckresult, bool OutputConvo = false)
+ 
+        public static bool PrintLookDescription(uwObject obj, uwObject[] objList, int lorecheckresult, bool OutputConvo = false)
         {
-            string output;
-            if (commonObjDat.PrintableLook(obj.item_id))
-            {
-                output = GameStrings.GetString(1, GameStrings.str_you_see_);
+            var output = GetDescriptionString(
+                obj: obj, 
+                objList: objList, 
+                lorecheckresult: lorecheckresult);
+
+            if (OutputConvo)
+            {                
+                uimanager.AddToMessageScroll(
+                    stringToAdd: $"{output}",
+                    option: 2,
+                    mode: MessageDisplay.MessageDisplayMode.TemporaryMessage);
             }
             else
             {
-                System.Diagnostics.Debug.Print("No print description");
-                return true;
+                uimanager.AddToMessageScroll($"{output}");
             }
+            return true;
+        }
+
+        /// <summary>
+        /// Just returns the identification string
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="objList"></param>
+        /// <param name="lorecheckresult">How fully description of enchantments the string is</param>
+        /// <returns></returns>
+        public static string GetDescriptionString(uwObject obj, uwObject[] objList, int lorecheckresult, bool IncludeYouSee = true)
+        {
+            string output="";
+            if (commonObjDat.PrintableLook(obj.item_id) && IncludeYouSee)
+            {
+                output = GameStrings.GetString(1, GameStrings.str_you_see_);
+            }
+            // else
+            // {
+            //     // System.Diagnostics.Debug.Print("No print description");
+            //     // return "";
+            // }
 
             var qualityclass = commonObjDat.qualityclass(obj.item_id);
             int qty = 0;
@@ -327,8 +357,6 @@ namespace Underworld
                         }
                     }
                 }
-
-
             }
             if (objectname.StartsWith("some "))
             {
@@ -342,7 +370,7 @@ namespace Underworld
             var ownership = "";
             if (
                 commonObjDat.canhaveowner(obj.item_id)
-            &&
+                &&
                 (
                     (_RES == GAME_UW2) && (obj.race <= 30)
                     ||
@@ -356,19 +384,7 @@ namespace Underworld
                 }
             }
 
-            if (OutputConvo)
-            {
-                uimanager.AddToMessageScroll(
-                    stringToAdd: $"{output}{enchantmenttext}{ownership}",
-                    option: 2,
-                    mode: MessageDisplay.MessageDisplayMode.TemporaryMessage);
-            }
-            else
-            {
-                uimanager.AddToMessageScroll($"{output}{enchantmenttext}{ownership}");
-            }
-
-            return true;
+            return $"{output}{enchantmenttext}{ownership}";
         }
 
         private static string GetArticle(string noun)

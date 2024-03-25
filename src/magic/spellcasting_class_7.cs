@@ -428,7 +428,7 @@ namespace Underworld
                     )
                 {//can be identifed
                     obj.heading = 7;
-                    look.GeneralLookDescription(obj, objList, 3);
+                    look.PrintLookDescription(obj, objList, 3);
                 }
             }
         }

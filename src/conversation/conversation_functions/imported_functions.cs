@@ -114,7 +114,12 @@ namespace Underworld
                     {
                         x_obj_stuff();
                         break;
-                    }            
+                    }   
+                case "identify_inv":
+                    {
+                        identify_inv();
+                        break;
+                    }         
                 default:
                     {
                         Debug.Print($"Unimplemented {func.importname}"); break;

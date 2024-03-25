@@ -409,7 +409,7 @@ namespace Underworld
                     return true;
                 }        
             }
-            return look.GeneralLookDescription(doorobject, UWTileMap.current_tilemap.LevelObjects, 3);
+            return look.PrintLookDescription(doorobject, UWTileMap.current_tilemap.LevelObjects, 3);
         }
 
 

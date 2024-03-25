@@ -317,7 +317,7 @@ namespace Underworld
                                         }
                                         else
                                         {//all other objects look at
-                                            look.GeneralLookDescription(
+                                            look.PrintLookDescription(
                                                 obj: obj,
                                                 objList: playerdat.InventoryObjects,
                                                 OutputConvo: true,
