@@ -179,6 +179,19 @@ namespace Underworld
                 }
             }
 
+            if (levelno == playerdat.dungeon_level-1)
+            {
+                var src = new Rect2I(
+                    x: 0, 
+                    y: 0, 
+                    width: uimanager.instance.cross.GetWidth(), 
+                    height: uimanager.instance.cross.GetHeight());
+                var dst = new Vector2I(
+                    x: playerdat.tileX*TileSize, 
+                    y: playerdat.tileY*TileSize);
+                //Draw player icon at 
+                OutputTileMapImage.BlitRect(uimanager.instance.cross.GetImage(), src, dst);
+            }
             var tex = new ImageTexture();
             tex.SetImage(OutputTileMapImage);
             return tex;
