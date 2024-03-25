@@ -23,9 +23,11 @@ public partial class main : Node3D
 			 ||
 			 MessageDisplay.WaitingForTypedInput
 			 ||
-			 MessageDisplay.WaitingForMore 
+			 MessageDisplay.WaitingForMore
 			 ||
-			 MessageDisplay.WaitingForYesOrNo;
+			 MessageDisplay.WaitingForYesOrNo
+			 ||
+			 musicalinstrument.PlayingInstrument;
 
 			; //TODO and other menu modes that will stop input
 		}
@@ -40,7 +42,7 @@ public partial class main : Node3D
 	[Export] public uimanager uwUI;
 
 	[Export] public SubViewport secondarycameras;
-	
+
 
 	double gameRefreshTimer = 0f;
 	double cycletime = 0;
@@ -56,8 +58,8 @@ public partial class main : Node3D
 		ObjectCreator.grObjects.UseRedChannel = true;
 		ObjectCreator.grObjects.UseCropping = true;
 		//ObjectCreator.grObjects.GenerateCollision = false;//not working for now..
-		Palette.CurrentPalette = 0; 
-		
+		Palette.CurrentPalette = 0;
+
 		uwUI.InitUI();
 
 		uimanager.AddToMessageScroll(GameStrings.GetString(1, 13));//welcome message
@@ -65,7 +67,7 @@ public partial class main : Node3D
 		// playerdat.LoadPlayerDat(datafolder: uwsettings.instance.levarkfolder);
 	}
 
-	
+
 	/// <summary>
 	/// Draws a debug marker sprite on game load to show where the character is positioned
 	/// </summary>
@@ -90,7 +92,7 @@ public partial class main : Node3D
 			worldobjects.AddChild(a_sprite);
 			a_sprite.Position = main.gamecam.Position;
 		}
-	}	
+	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
@@ -99,14 +101,14 @@ public partial class main : Node3D
 		{
 			int tileX = -(int)(cam.Position.X / 1.2f);
 			int tileY = (int)(cam.Position.Z / 1.2f);
-			int xposvecto =  -(int)(((cam.Position.X % 1.2f)/1.2f)*8);
-			int yposvecto =  (int)(((cam.Position.Z % 1.2f)/1.2f)*8);
+			int xposvecto = -(int)(((cam.Position.X % 1.2f) / 1.2f) * 8);
+			int yposvecto = (int)(((cam.Position.Z % 1.2f) / 1.2f) * 8);
 			var tmp = cam.Rotation;
 			tmp.Y = (float)(tmp.Y - Math.PI);
 			playerdat.heading = (int)Math.Round(-(tmp.Y * 127) / Math.PI);
 			uimanager.UpdateCompass();
 
-			lblPositionDebug.Text = $"{cam.Position.ToString()}\n{tileX} {tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}\n{cam.Rotation} {playerdat.heading} {(playerdat.heading>>4)%4} {xposvecto} {yposvecto}";
+			lblPositionDebug.Text = $"{cam.Position.ToString()}\n{tileX} {tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}\n{cam.Rotation} {playerdat.heading} {(playerdat.heading >> 4) % 4} {xposvecto} {yposvecto}";
 
 			if ((tileX < 64) && (tileX >= 0) && (tileY < 64) && (tileY >= 0))
 			{
@@ -176,18 +178,21 @@ public partial class main : Node3D
 
 		}
 
-		if (ConversationVM.WaitingForInput 
-			&& !uimanager.MessageScrollIsTemporary 
+		if (ConversationVM.WaitingForInput
+			&& !uimanager.MessageScrollIsTemporary
 			&& !MessageDisplay.WaitingForTypedInput)
 		{
 			if (@event is InputEventKey keyinput)
 			{
-				if (int.TryParse(keyinput.AsText(), out int result))
+				if (keyinput.Pressed)
 				{
-					if ((result > 0) && (result <= ConversationVM.MaxAnswer))
+					if (int.TryParse(keyinput.AsText(), out int result))
 					{
-						ConversationVM.PlayerNumericAnswer = result;
-						ConversationVM.WaitingForInput = false;
+						if ((result > 0) && (result <= ConversationVM.MaxAnswer))
+						{
+							ConversationVM.PlayerNumericAnswer = result;
+							ConversationVM.WaitingForInput = false;
+						}
 					}
 				}
 			}
@@ -206,25 +211,50 @@ public partial class main : Node3D
 		{
 			if (@event is InputEventKey keyinput)
 			{
-				bool stop = false;
-				switch (keyinput.Keycode)
+				if (keyinput.Pressed)
 				{
-					case Key.Enter:
-						stop = true;
-						break;
-					case Key.Escape:
-						stop = true;
-						uimanager.instance.TypedInput.Text = "";
-						break;
-				}
-				if (stop)
-				{//end typed input
-					uimanager.instance.scroll.Clear();
-					MessageDisplay.WaitingForTypedInput = false;
-					if (ConversationVM.InConversation==false)
+					bool stop = false;
+					switch (keyinput.Keycode)
 					{
-						gamecam.Set("MOVE", true);//re-enable movement
-					}					
+						case Key.Enter:
+							stop = true;
+							break;
+						case Key.Escape:
+							stop = true;
+							uimanager.instance.TypedInput.Text = "";
+							break;
+					}
+					if (stop)
+					{//end typed input
+						uimanager.instance.scroll.Clear();
+						MessageDisplay.WaitingForTypedInput = false;
+						if (ConversationVM.InConversation == false)
+						{
+							gamecam.Set("MOVE", true);//re-enable movement
+						}
+					}
+				}
+
+			}
+		}
+
+		if (musicalinstrument.PlayingInstrument)
+		{
+			if (@event is InputEventKey keyinput)
+			{
+				if (keyinput.Pressed)
+				{
+					switch (keyinput.Keycode)
+					{
+						case >= Key.Key0 and <= Key.Key9:
+						case >= Key.Kp0 and <= Key.Kp9:
+							musicalinstrument.notesplayed += keyinput.AsText();
+							Debug.Print($"Imagine musical note {keyinput.AsText()}");
+							break;
+						case Key.Escape:
+							musicalinstrument.StopPlaying();
+							break;
+					}
 				}
 			}
 		}
@@ -233,29 +263,31 @@ public partial class main : Node3D
 		{
 			if (@event is InputEventKey keyinput)
 			{
-				bool stop = false;
-				switch (keyinput.Keycode)
+				if (keyinput.Pressed)
 				{
-					case Key.Enter:
-						stop = true;
-						break;
-					case Key.Escape:
-						stop = true;
-						uimanager.instance.TypedInput.Text = "No";
-						break;
-					case Key.Y:
-						uimanager.instance.TypedInput.Text = "Yes"; break;
-					default:
-						uimanager.instance.TypedInput.Text = "No"; break;
-				}
-				if (stop)
-				{//end typed input
-					uimanager.instance.scroll.Clear();
-					MessageDisplay.WaitingForYesOrNo = false;
-					gamecam.Set("MOVE", true);//re-enable movement
+					bool stop = false;
+					switch (keyinput.Keycode)
+					{
+						case Key.Enter:
+							stop = true;
+							break;
+						case Key.Escape:
+							stop = true;
+							uimanager.instance.TypedInput.Text = "No";
+							break;
+						case Key.Y:
+							uimanager.instance.TypedInput.Text = "Yes"; break;
+						default:
+							uimanager.instance.TypedInput.Text = "No"; break;
+					}
+					if (stop)
+					{//end typed input
+						uimanager.instance.scroll.Clear();
+						MessageDisplay.WaitingForYesOrNo = false;
+						gamecam.Set("MOVE", true);//re-enable movement
+					}
 				}
 			}
 		}
-
 	}
 }//end class

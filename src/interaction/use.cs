@@ -245,6 +245,11 @@ namespace Underworld
                                     }
                                     break;
                                 }
+                            case 3:
+                            case 4://musical instruments
+                                {
+                                    return musicalinstrument.use(obj, WorldObject);
+                                }
                             case 5://leeches
                                 return leech.use(obj, WorldObject);
                             case 8://rock hammer
