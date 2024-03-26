@@ -287,8 +287,16 @@ namespace Underworld
                 objList: current_tilemap.LevelObjects,
                 UpdateOnly: false);
 
-            automap.automaps[newLevelNo] = new automap(newLevelNo, (int)_RES);
-            automapnote.automapsnotes[newLevelNo] = new automapnote(newLevelNo, (int)_RES);
+            if (automap.automaps[newLevelNo] ==null)
+            {
+                automap.automaps[newLevelNo] = new automap(newLevelNo, (int)_RES);
+            }
+            
+            if ( automapnote.automapsnotes[newLevelNo] == null)
+            {
+                automapnote.automapsnotes[newLevelNo] = new automapnote(newLevelNo, (int)_RES);
+            }
+            
 
             playerdat.PlayerStatusUpdate();
 
