@@ -57,7 +57,10 @@ namespace Underworld
 
             RefreshLighting();//either brightest physical light or brightest magical light
 
-            UpdateAutomap();//update the visited status of nearby tiles
+            if (automap.CanMap(playerdat.dungeon_level))
+            {
+                UpdateAutomap();//update the visited status of nearby tiles
+            }            
         }
 
 
@@ -279,108 +282,20 @@ namespace Underworld
         }
 
 
+        /// <summary>
+        /// Updates a range of tiles in the automap around the player
+        /// </summary>
         public static void UpdateAutomap()
         {
-            //depending on light level 
+            //depending on light level. need to confirm if below math is okay
             var range = 1 + (lightlevel / 2);
-            var cX = playerdat.tileX;
-            var cY = playerdat.tileY;
-
-            for (int aX = cX - range; aX <= cX + range; aX++)
-            {
-                for (int aY = cY - range; aY <= cY + range; aY++)
-                {
-                    if (UWTileMap.ValidTile(aX, aY))
-                    {//TODO figure out how to do line of sight checking of solid walls.
-                        automap.MarkTileVisited(
-                                level: dungeon_level - 1,
-                                tileX: aX, tileY: aY,
-                                tiletype: UWTileMap.current_tilemap.Tiles[aX, aY].tileType,
-                                displaytype: automaptileinfo.GetDisplayType(UWTileMap.current_tilemap.Tiles[aX, aY]));
-                    }
-                }
-            }
-            range++;
-            //make outside range as unvisited open tiles if not already visited
-            //along the north
-            var northaxis = cX + range;
-            var southaxis = cX - range;
-            var westaxis = cY - range;
-            var eastaxis = cY + range;
-            for (int aY = cY - range; aY <= cY + range; aY++)
-            {
-                if (UWTileMap.ValidTile(northaxis, aY))
-                {
-                    var tile = UWTileMap.current_tilemap.Tiles[northaxis, aY];
-                    if (automap.automaps[dungeon_level - 1].tiles[northaxis, aY].visited == false)
-                    {
-                        if (UWTileMap.IsOpen(UWTileMap.current_tilemap.Tiles[northaxis, aY].tileType))
-                        {
-                            var displaytype =  automaptileinfo.GetDisplayType(tile);
-                            //automap.automaps[dungeon_level - 1].tiles[northaxis, aY].DisplayType;
-                            //mark as undiscovered, open tile. (there probably needs to be other rules for diagonals)
-                            automap.MarkTileVisited(
-                                level: dungeon_level - 1,
-                                tileX: northaxis, tileY: aY,
-                                tiletype: 11,
-                                displaytype: displaytype);
-                        }
-                    }
-                }
-                if (UWTileMap.ValidTile(southaxis, aY))
-                {
-                    var tile = UWTileMap.current_tilemap.Tiles[southaxis, aY];
-                    if (automap.automaps[dungeon_level - 1].tiles[southaxis, aY].visited == false)
-                    {
-                        if (UWTileMap.IsOpen(UWTileMap.current_tilemap.Tiles[southaxis, aY].tileType))
-                        {        
-                            var displaytype =  automaptileinfo.GetDisplayType(tile);                    
-                            automap.MarkTileVisited(
-                                level: dungeon_level - 1,
-                                tileX: southaxis, tileY: aY,
-                                tiletype: 11,
-                                displaytype: displaytype);
-                        }
-                    }
-                }
-            }
-
-            for (int aX = cX - range; aX <= cX + range; aX++)
-            {
-                if (UWTileMap.ValidTile(aX, westaxis))
-                {
-                    var tile = UWTileMap.current_tilemap.Tiles[aX, westaxis];
-                    if (automap.automaps[dungeon_level - 1].tiles[aX, westaxis].visited == false)
-                    {
-                        if (UWTileMap.IsOpen(UWTileMap.current_tilemap.Tiles[aX, westaxis].tileType))
-                        {
-                            var displaytype =  automaptileinfo.GetDisplayType(tile);
-                            automap.MarkTileVisited(
-                                level: dungeon_level - 1,
-                                tileX: aX, tileY: westaxis,
-                                tiletype: 11,
-                                displaytype: displaytype);
-                        }
-                    }
-                }
-                if (UWTileMap.ValidTile(aX, eastaxis))
-                {
-                    var tile = UWTileMap.current_tilemap.Tiles[aX, eastaxis];
-                    if (automap.automaps[dungeon_level - 1].tiles[aX, eastaxis].visited == false)
-                    {
-                        if (UWTileMap.IsOpen(UWTileMap.current_tilemap.Tiles[aX, eastaxis].tileType))
-                        {
-                            var displaytype =  automaptileinfo.GetDisplayType(tile);
-                            automap.MarkTileVisited(
-                                level: dungeon_level - 1,
-                                tileX: aX, tileY: eastaxis,
-                                tiletype: 11,
-                                displaytype: displaytype);
-                        }
-                    }
-                }
-            }
+            automap.MarkRangeOfTilesVisited(
+                range: range, 
+                cX: playerdat.tileX, 
+                cY: playerdat.tileY,
+                dungeon_level: playerdat.dungeon_level
+                );
         }
-
+        
     }//end class
 }//end namespace

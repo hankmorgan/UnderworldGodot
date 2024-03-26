@@ -78,6 +78,7 @@ namespace Underworld
                     Debug.Print("Attempt to directly cast Class 0xC spell. This should not happen");
                     break;
                 case 13://misc spells
+                    CastClassD_Spells(minorclass);
                     break;
                 case 14://cutscene spells.
                     break;
