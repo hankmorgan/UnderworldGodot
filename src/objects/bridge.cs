@@ -18,7 +18,7 @@ namespace Underworld
             if (UWTileMap.ValidTile(obj.tileX, obj.tileY))
             {
                 var textureindex = (obj.enchantment<<3) | (int)obj.flags;
-                if (textureindex<2)
+                if (textureindex<=2)
                 {
                     UWTileMap.current_tilemap.Tiles[obj.tileX, obj.tileY].hasBridge = true;
                 }                

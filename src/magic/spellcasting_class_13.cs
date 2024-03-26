@@ -11,7 +11,7 @@ namespace Underworld
         public static void CastClassD_Spells(int minorclass)
         {
             switch (minorclass)
-            {
+            {                
                 case 7:
                     {//Map area
                         if (automap.CanMap(playerdat.dungeon_level))
@@ -28,6 +28,31 @@ namespace Underworld
                         }
                         break;
                     }
+                case 8:
+                    {//acid spit
+                        CastSpell(
+                            majorclass: 5, 
+                            minorclass: 4, 
+                            caster: null, 
+                            target: null, 
+                            tileX: playerdat.tileX, 
+                            tileY: playerdat.tileY, 
+                            CastOnEquip: false);
+                        break;
+                    }
+                case 9:
+                    {//snowball
+                        CastSpell(
+                            majorclass: 5, 
+                            minorclass: 6, 
+                            caster: null, 
+                            target: null, 
+                            tileX: playerdat.tileX, 
+                            tileY: playerdat.tileY, 
+                            CastOnEquip: false);
+                        break;
+                    }
+
             }
         }
     }//end class
