@@ -188,6 +188,7 @@ namespace Underworld
                 return !((isWater) || (isLava) || (isNothing));
             }
         }
+        public bool isStair;
 
         /// <summary>
         /// Checks if the tile is water.

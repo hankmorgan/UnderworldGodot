@@ -253,6 +253,16 @@ namespace Underworld
                         return DisplayTypeDoorUW1;
                 }
             }
+            else if (t.isStair)
+            {
+                switch (_RES)
+                {
+                    case GAME_UW2:
+                        return DisplayTypeStairUW2;
+                    default:
+                        return DisplayTypeStairUW1;
+                }
+            }
             else
             {
                 return DisplayTypeClear;

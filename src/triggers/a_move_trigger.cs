@@ -1,5 +1,6 @@
 using Godot;
 using System.Diagnostics;
+using System.Threading.Tasks.Dataflow;
 namespace Underworld
 {
     public partial class trigger:UWClass
@@ -22,6 +23,23 @@ namespace Underworld
             //     callable: new Callable(ar, "del"));
              parent.AddChild(ar);
             ar.BodyEntered += ar.movetrigger_entered;
+
+            //Now mark the tile type if linked to a teleport
+            if (obj.link!=0)
+            {
+                var linked = UWTileMap.current_tilemap.LevelObjects[obj.link];
+                if (linked.item_id == 385)
+                {
+                    if (linked.zpos!=0)
+                    {
+                        //linked to a teleport trap to another level
+                        if (UWTileMap.ValidTile(obj.tileX, obj.tileY))
+                        {                        
+                            UWTileMap.current_tilemap.Tiles[obj.tileX,obj.tileY].isStair = true;
+                        }
+                    }
+                }
+            }
             return true;
         }
 
