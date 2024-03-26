@@ -1,3 +1,5 @@
+using System.Windows.Markup;
+
 namespace Underworld
 {
     /// <summary>
@@ -425,15 +427,69 @@ namespace Underworld
         {
             get
             {
-
-                return (GetAt16(0x62) >> 4) & 0x3F;
+                if (_RES==GAME_UW2)
+                {
+                    return (GetAt16(0x62) >> 6) & 0x3F;
+                }
+                else
+                {
+                    return (GetAt16(0x62) >> 4) & 0x3F;
+                }
+                
             }
             set
             {
-                var tmpValue = GetAt16(0x62);
-                tmpValue &= 0xF03F;//clear bits
-                tmpValue |= ((value & 0x3F) << 6);//set new value
-                SetAt16(0x62, tmpValue);
+                if (_RES==GAME_UW2)
+                {
+                    var tmpValue = GetAt16(0x62);
+                    tmpValue &= 0xF03F;//clear bits
+                    tmpValue |= ((value & 0x3F) << 6);//set new value
+                    SetAt16(0x62, tmpValue);
+                }
+                else
+                {
+                    var tmpValue = GetAt16(0x62);
+                    tmpValue &= 0xFC0F;//clear bits
+                    tmpValue |= ((value & 0x3F) << 4);//set new value
+                    SetAt16(0x62, tmpValue);
+                }
+            }
+        }
+
+        //Remaining cycles of hallucination effects.
+        public static int shrooms
+        {
+            get
+            {
+                if (_RES==GAME_UW2)
+                {
+                    return (GetAt(0x62) >> 4) & 0x3;
+                }
+                else
+                {
+                    return (GetAt(0x62) >> 2) & 0x3;
+                }
+            }
+            set
+            {
+                if (_RES==GAME_UW2)
+                {
+                    var tmp = GetAt(0x62);
+                    tmp &= 0xCF;
+                    value &=0x3;
+                    value <<= 4;
+                    tmp = (byte)(tmp | (value));
+                    SetAt(0x62,tmp);
+                }
+                else
+                {
+                    var tmp = GetAt(0x62);
+                    tmp &= 0xF3;
+                    value &=0x3;
+                    value <<= 4;
+                    tmp = (byte)(tmp | (value));
+                    SetAt(0x62,tmp);
+                }
             }
         }
 

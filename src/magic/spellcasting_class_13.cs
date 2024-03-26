@@ -26,12 +26,29 @@ namespace Underworld
                 case 3://basilisk oil
                 case 4:
                     {
-                        Debug.Print("Basillisk oil. do an INT skill check to avoid hallucination");
+                        if (playerdat.shrooms == 0)
+                        {
+                            var SkillCheckResult = playerdat.SkillCheck(playerdat.INT, 0x14);
+                            if (SkillCheckResult<=0)
+                            {
+                                uimanager.AddToMessageScroll(GameStrings.GetString(1,GameStrings.str_your_vision_distorts_and_you_feel_light_headed_));
+                                playerdat.shrooms = 2;
+                            }
+                            else
+                            {
+                                uimanager.FlashColour(95, uimanager.CutsSmall);
+                            }
+                        }
+                        else
+                        {
+                            uimanager.FlashColour(95, uimanager.CutsSmall);
+                        }
                         break;
                     }
                 case 5:
                     {
-                        Debug.Print("Basillisk oil. no skill check to avoid hallucination");
+                        uimanager.AddToMessageScroll(GameStrings.GetString(1,GameStrings.str_your_vision_distorts_and_you_feel_light_headed_));
+                        playerdat.shrooms = 3;
                         break;
                     }
                 case 7:
@@ -47,6 +64,10 @@ namespace Underworld
                                 cY: playerdat.tileY,
                                 dungeon_level: playerdat.dungeon_level
                                 );
+                        }
+                        else
+                        {
+                            uimanager.AddToMessageScroll(GameStrings.GetString(1,GameStrings.str_the_spell_has_no_discernable_effect_));
                         }
                         break;
                     }
