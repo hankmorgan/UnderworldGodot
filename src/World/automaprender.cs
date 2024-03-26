@@ -190,7 +190,7 @@ namespace Underworld
                     x: playerdat.tileX*TileSize, 
                     y: playerdat.tileY*TileSize);
                 //Draw player icon at 
-                OutputTileMapImage.BlitRect(uimanager.instance.cross.GetImage(), src, dst);
+                OutputTileMapImage.BlendRect(uimanager.instance.cross.GetImage(), src, dst);
             }
             var tex = new ImageTexture();
             tex.SetImage(OutputTileMapImage);
