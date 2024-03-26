@@ -97,6 +97,20 @@ namespace Underworld
             }
         }
 
+        public static bool IsOpen(int tileType)
+        {
+            switch (tileType)
+            {
+                case TILE_OPEN:
+                case TILE_SLOPE_E:
+                case TILE_SLOPE_W:
+                case TILE_SLOPE_N:
+                case TILE_SLOPE_S:
+                    return true;
+            }
+            return false;
+        }
+
         /// <summary>
         /// Animation overlay. Controls how long an animated effect appears for.
         /// </summary>
