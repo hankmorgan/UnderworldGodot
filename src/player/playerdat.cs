@@ -3,7 +3,7 @@ namespace Underworld
     /// <summary>
     /// Class for all operations relating to player.dat
     /// </summary>
-    public partial class playerdat : Loader
+    public partial class playerdat : Loader  //should this inherit from uwobject?
     {
         public static string currentfolder;
 
