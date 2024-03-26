@@ -25,7 +25,22 @@ namespace Underworld
                 if (freeslot != -1)
                 {
                     //move from slot by picking it up and dropping it.
-                    uimanager.PickupObjectFromSlot(obj.index);
+                    if (obj.ObjectQuantity==1)
+                    {
+                        uimanager.PickupObjectFromSlot(obj.index);      
+                    }
+                    else
+                    {
+                        //pick up a single instance
+                        obj.link--;
+                        var newObjIndex = ObjectCreator.SpawnObjectInHand(obj.item_id); //spawning in hand is very handy here
+                        var cloneObj = UWTileMap.current_tilemap.LevelObjects[newObjIndex];
+                        cloneObj.link = 1;
+                        cloneObj.quality = obj.quality;
+                        cloneObj.owner = obj.owner;
+                        playerdat.ObjectInHand = cloneObj.index;
+                    }
+                                  
                     var newObj = UWTileMap.current_tilemap.LevelObjects[playerdat.ObjectInHand];
                     LightOn(newObj); //assuming light starts in an off state
                     uimanager.CurrentSlot = freeslot;

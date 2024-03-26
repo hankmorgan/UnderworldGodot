@@ -486,7 +486,7 @@ namespace Underworld
                     var tmp = GetAt(0x62);
                     tmp &= 0xF3;
                     value &=0x3;
-                    value <<= 4;
+                    value <<= 2;
                     tmp = (byte)(tmp | (value));
                     SetAt(0x62,tmp);
                 }

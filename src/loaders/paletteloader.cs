@@ -116,6 +116,14 @@ namespace Underworld
             Palettes[0].cycledGamePalette = CreateFullTexturePaletteCycles(Palettes[0]);//init the first palette as cycled
             Palettes[0].cycledUIPalette = CreateSimpleTexturePaletteCycles(Palettes[0]); //set up a simple palette cycle for fullbright ui sprites
 
+            Palettes[1].cycledGamePalette = CreateFullTexturePaletteCycles(Palettes[1]);
+            Palettes[1].cycledUIPalette = CreateSimpleTexturePaletteCycles(Palettes[1]); 
+            Palettes[2].cycledGamePalette = CreateFullTexturePaletteCycles(Palettes[2]);
+            Palettes[2].cycledUIPalette = CreateSimpleTexturePaletteCycles(Palettes[2]); 
+            Palettes[3].cycledGamePalette = CreateFullTexturePaletteCycles(Palettes[3]);
+            Palettes[3].cycledUIPalette = CreateSimpleTexturePaletteCycles(Palettes[3]);
+
+
             //var img = Palettes[0].cycledGamePalette[0,0,0].GetImage().SavePng("c:\\temp\\pal.png");
 
             //main menu

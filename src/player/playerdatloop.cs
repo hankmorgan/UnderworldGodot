@@ -14,6 +14,7 @@ namespace Underworld
         {
             lightlevel = 0;
             Palette.ColourTone = 0;
+            Palette.CurrentPalette = 0;
 
             MagicalMotionAbilities = 0;
             for (int i = 0; i <= 3; i++)
@@ -54,6 +55,13 @@ namespace Underworld
             //Apply the max damage resistance from enchantments/active spell effects
             ApplyDamageResistance(DamageResistance);
             ApplyStealthBonus(StealthBonus);
+
+            if (playerdat.shrooms != 0)
+            {
+                Palette.CurrentPalette = Rng.r.Next(1,4);
+                playerdat.shrooms--; //eventually this should be on a timer
+            }
+            
 
             RefreshLighting();//either brightest physical light or brightest magical light
 

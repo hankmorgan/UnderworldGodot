@@ -29,7 +29,7 @@ namespace Underworld
                     case 0xD: //a_bottle of wine&bottles of wine
                         DrinkLiquid(obj, !WorldObject); break;
                     case 9: //a_mushroom  //this needs to do a shrooms skill check on it
-                        TakeShrooms(obj);
+                        TakeShrooms(obj, !WorldObject);
                         break;
                 }
                 return true;
@@ -60,7 +60,7 @@ namespace Underworld
                     case 0xF:// a_bottle of wine&bottles of wine
                         uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x7F)); break;
                     case 8:// a_mushroom
-                        TakeShrooms(obj); break;
+                        TakeShrooms(obj, !WorldObject); break;
 
                 }
             }
@@ -186,9 +186,19 @@ namespace Underworld
             ObjectCreator.Consume(obj, UsedFromInventory);
         }
 
-        static void TakeShrooms(uwObject obj)
+        static void TakeShrooms(uwObject obj, bool UsedFromInventory)
         {
+            var SkillCheckResult = playerdat.SkillCheck(playerdat.INT, 0x14);
+            var manachange = playerdat.play_mana = Rng.r.Next(1,4) * (int)SkillCheckResult;
+            
+            playerdat.play_mana = Math.Max(
+                Math.Min(manachange, playerdat.max_mana)
+                , 0);
 
+            playerdat.shrooms = Math.Min(3, playerdat.shrooms +1);
+            uimanager.AddToMessageScroll(GameStrings.GetString(1,GameStrings.str_the_mushroom_causes_your_head_to_spin_and_your_vision_to_blur_));
+            ObjectCreator.Consume(obj,UsedFromInventory);
+            playerdat.PlayerStatusUpdate();
         }
 
         /// <summary>
