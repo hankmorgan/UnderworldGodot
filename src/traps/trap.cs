@@ -60,6 +60,11 @@ namespace Underworld
                                         {//uw1 pit trap
                                             implemented = true;//to continue the chain
                                         }
+                                        else
+                                        {
+                                            implemented =true;
+                                            a_specialeffect_trap.Activate(trapObj);
+                                        }
                                         break;
                                     }
                                 case 5: //change terrain trap

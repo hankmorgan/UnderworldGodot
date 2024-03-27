@@ -156,8 +156,7 @@ namespace Underworld
                                         {//in ice caverns
                                             playerdat.SetQuest(52,1);
                                         }
-
-                                        Debug.Print("SCREEN SHAKE");
+                                        special_effects.SpecialEffect(4, 15);//screenshake
                                         return;
                                     }
                                 }
