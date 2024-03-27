@@ -105,7 +105,8 @@ namespace Underworld
                         majorclass: 4, 
                         minorclass: 2, 
                         classindex: 0, 
-                        objList: objList);
+                        objList: objList, 
+                        SkipNext: true);
                     if (spell!=null)
                     {
                         if (spell.flags2 ==1)
