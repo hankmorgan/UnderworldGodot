@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Diagnostics;
 using System.IO;
 using Godot;
 using Peaky.Coroutines;
@@ -22,7 +23,7 @@ namespace Underworld
 
         private void InitMainMenu()
         {
-            if (UWClass._RES==UWClass.GAME_UW2)
+            if (UWClass._RES == UWClass.GAME_UW2)
             {
                 MainMenuBG.Texture = bitmaps.LoadImageAt(5);
             }
@@ -30,14 +31,18 @@ namespace Underworld
             {
                 MainMenuBG.Texture = bitmaps.LoadImageAt(BytLoader.OPSCR_BYT);
             }
-            
+
             //MainMenuBG.Material = bitmaps.GetMaterial(BytLoader.OPSCR_BYT);
             LoadingLabel.Text = "";
             TurnButtonsOff();
+            ToggleButtons(true);
             HideSaves();
 
         }
 
+        /// <summary>
+        /// loads the off graphics for the main menu buttons
+        /// </summary>
         private void TurnButtonsOff()
         {
             for (int i = 0; i < 4; i++)
@@ -46,15 +51,23 @@ namespace Underworld
             }
         }
 
-        private void HideButtons()
+
+        /// <summary>
+        /// Shows or hides the 4 main menu options
+        /// </summary>
+        /// <param name="show"></param>
+        private void ToggleButtons(bool show)
         {
             for (int i = 0; i < 4; i++)
             {
-                EnableDisable(MainMenuButtons[i], false);
+                EnableDisable(MainMenuButtons[i], show);
             }
         }
 
 
+        /// <summary>
+        /// Hides the list of save games
+        /// </summary>
         private void HideSaves()
         {
             for (int i = 0; i < 4; i++)
@@ -127,7 +140,15 @@ namespace Underworld
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
-                HideButtons();
+                ToggleButtons(false);
+                ToggleSaves();
+            }
+        }
+
+        private void ToggleSaves(bool show = true)
+        {
+            if (show)
+            {
                 for (int i = 1; i <= 4; i++)
                 {
                     var path = Path.Combine(UWClass.BasePath, $"SAVE{i}", "DESC");
@@ -142,13 +163,19 @@ namespace Underworld
                         EnableDisable(SaveGamesNames[i - 1], false);
                     }
                 }
-
+            }
+            else
+            {
+                for (int i = 1; i <= 4; i++)
+                {
+                     EnableDisable(SaveGamesNames[i - 1], false);
+                }
             }
         }
 
         private IEnumerator ClearMainMenu()
         {
-            HideButtons();
+            ToggleButtons(false);
             if (UWClass._RES == UWClass.GAME_UW2)
             {
                 LoadingLabel.Text = GameStrings.GetString(1, 273);
@@ -177,12 +204,12 @@ namespace Underworld
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
-                 playerdat.currentfolder = "DATA";
-                 
+                playerdat.currentfolder = "DATA";
+
                 _ = Coroutine.Run(
                    ClearMainMenu()
                    , main.instance);
-                    JourneyOnwards("DATA");
+                JourneyOnwards("DATA");
             }
         }
 
@@ -195,7 +222,7 @@ namespace Underworld
                 _ = Coroutine.Run(
                    ClearMainMenu()
                    , main.instance);
-                    JourneyOnwards("SAVE1");
+                JourneyOnwards("SAVE1");
             }
         }
 
@@ -234,6 +261,21 @@ namespace Underworld
                    , main.instance);
 
                 JourneyOnwards("SAVE4");
+            }
+        }
+
+       public override void _Input(InputEvent @event)
+        {
+            if (@event is InputEventKey keyinput)
+            {
+                if (keyinput.Pressed)
+                {
+                    if(keyinput.Keycode == Key.Escape)
+                    {//return to main menu
+                        ToggleButtons(true);
+                        ToggleSaves(false);
+                    }                    
+                }
             }
         }
 
