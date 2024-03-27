@@ -11,7 +11,7 @@ namespace Underworld
             {
                 return -1; //clear sprite
             }    
-            if ((obj.item_id>=48) && (obj.item_id<=50))
+            if ((obj.item_id>=48) && (obj.item_id<=51))
             {
                 return 61 + obj.classindex;
             }
