@@ -108,7 +108,7 @@ public partial class main : Node3D
 			playerdat.heading = (int)Math.Round(-(tmp.Y * 127) / Math.PI);
 			uimanager.UpdateCompass();
 
-			lblPositionDebug.Text = $"{cam.Position.ToString()}\n{tileX} {tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}\n{cam.Rotation} {playerdat.heading} {(playerdat.heading >> 4) % 4} {xposvecto} {yposvecto}";
+			lblPositionDebug.Text = $"{cam.Position.ToString()}\nL:{playerdat.dungeon_level} X:{tileX} Y:{tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}\n{cam.Rotation} {playerdat.heading} {(playerdat.heading >> 4) % 4} {xposvecto} {yposvecto}";
 
 			if ((tileX < 64) && (tileX >= 0) && (tileY < 64) && (tileY >= 0))
 			{

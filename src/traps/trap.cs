@@ -46,9 +46,8 @@ namespace Underworld
                                         break;
                                     }
                                 case 3:// Do and hack traps
-                                    {
-                                        implemented = true;
-                                        hack_trap.ActivateHackTrap(
+                                    {                                        
+                                        implemented = hack_trap.ActivateHackTrap(
                                                 trapObj: trapObj,
                                                 triggerObj: triggerObj,
                                                 objList: objList);
@@ -73,6 +72,15 @@ namespace Underworld
                                         a_change_terrain_trap.Activate(
                                             triggerObj: triggerObj, 
                                             trapObj: trapObj);
+                                        break;
+                                    }
+                                case 6: // spell trap
+                                    {
+                                        implemented = true;
+                                        a_spell_trap.Activate(
+                                            triggerObj: triggerObj, 
+                                            trapObj: trapObj, 
+                                            objList: UWTileMap.current_tilemap.LevelObjects);
                                         break;
                                     }
                                 case 7: //create object 6-0-7

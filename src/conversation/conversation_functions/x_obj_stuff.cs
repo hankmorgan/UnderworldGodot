@@ -36,7 +36,7 @@ namespace Underworld
                     }
                     if (flags != -1)
                     {
-                        Set(at(stackptr-5), obj.flags);
+                        Set(at(stackptr-5), obj.flags_full);
                     }
                     if (link!=-1)
                     {
@@ -77,7 +77,7 @@ namespace Underworld
                     }
                     if (flags!=-1)
                     {
-                        obj.flags = flags;
+                        obj.flags_full = flags;
                     }
                     if (link!=-1)
                     {

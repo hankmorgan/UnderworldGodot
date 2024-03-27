@@ -148,19 +148,15 @@ namespace Underworld
             }
         }
 
-        public float GetRadiansForIndex(int index)
+        public float GetRadiansForIndex(int index, int doordir)
         {            
             var unit = (Math.PI/2) / NoOfFrames;
-            if (_RES==GAME_UW2)
+            var dir = 1;
+            if (doordir == 1)
             {
-                //doors in uw2 rotate in the opposite direction apparently
-                 return -(float)(index * unit);
+                dir = -1;
             }
-            else
-            {
-                return (float)(index * unit);
-            }
-           
+            return (float)(dir * index * unit);           
         }
 
         public float GetHeightForIndex(int index)
@@ -222,7 +218,7 @@ namespace Underworld
                 else
                 {// rotate model 90 
                     //d.doorNode.Rotate(Vector3.Up, (float)(Math.PI / 2));
-                    d.doorNode.Rotate(Vector3.Up, d.GetRadiansForIndex(d.uwobject.flags));
+                    d.doorNode.Rotate(Vector3.Up, d.GetRadiansForIndex(d.uwobject.flags, d.uwobject.doordir));
                 }
             //}
             //else
@@ -281,7 +277,7 @@ namespace Underworld
                 else
                 {
                 //set to open without animation
-                obj.doorNode.Rotate(Vector3.Up, obj.GetRadiansForIndex(obj.NoOfFrames));
+                obj.doorNode.Rotate(Vector3.Up, obj.GetRadiansForIndex(obj.NoOfFrames, obj.uwobject.doordir));
                 }               
             }
         }
@@ -310,7 +306,7 @@ namespace Underworld
                 else
                 {
                 //set to open without animation
-                obj.doorNode.Rotate(Vector3.Up, obj.GetRadiansForIndex(0));
+                obj.doorNode.Rotate(Vector3.Up, obj.GetRadiansForIndex(0, obj.uwobject.doordir));
                 }   
             }
         }
@@ -395,10 +391,10 @@ namespace Underworld
             {
                 //Set rotate based on flags
                 obj.doorNode.Rotation=Vector3.Zero;
-                obj.doorNode.Rotate (Vector3.Up, obj.GetRadiansForIndex(obj.uwobject.flags)); 
+                                    obj.doorNode.Rotate (Vector3.Up, obj.GetRadiansForIndex(obj.uwobject.flags,obj.uwobject.doordir)); 
+                }                
             }
-        }
-
+        
         public static bool LookAt(uwObject doorobject)
         {
             if (_RES!=GAME_UW2)

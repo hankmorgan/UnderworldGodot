@@ -140,10 +140,10 @@ namespace Underworld
         }
 
         /// <summary>
-        /// Various Object Flags
+        /// Various Object Flags, bits 9-12
         /// </summary>
-        public short flags
-        {//; //9-11
+        public short flags_full
+        {//; //9-12
             get
             {
                 int val = (int)GetAt16(PTR);
@@ -158,20 +158,38 @@ namespace Underworld
         }
 
         /// <summary>
+        /// Various object flags bits 9-11 only
+        /// </summary>
+        public short flags
+        {//; //9-11
+            get
+            {
+                int val = (int)GetAt16(PTR);
+                return (short)DataLoader.ExtractBits(val, 9, 0x7);
+            }
+            set
+            {
+                int existingValue = GetAt16(PTR);
+                existingValue &= 0xF1FF; //Mask out current val
+                SetAt16(PTR, existingValue | ((value & 0x7) << 9));
+            }
+        }
+
+        /// <summary>
         /// Flag shortcuts - Flag 0
         /// </summary>
         public short flags0
         {
             get 
             {
-                return (short)(flags & 0x1);
+                return (short)(flags_full & 0x1);
             }
             set
             {                
                 short bit = (short)(value & 0x1);         
-                var tmp = (short)(flags & 0xE);                
+                var tmp = (short)(flags_full & 0xE);                
                 tmp = (short)(tmp | bit);
-                flags = tmp;
+                flags_full = tmp;
             }
         }
 
@@ -182,14 +200,14 @@ namespace Underworld
         {
             get 
             {
-                return (short)((flags>>1) & 0x1);
+                return (short)((flags_full>>1) & 0x1);
             }
             set
             {                
                 short bit = (short)((value & 0x1)<<1);         
-                var tmp = (short)(flags & 0xD);                
+                var tmp = (short)(flags_full & 0xD);                
                 tmp = (short)(tmp | bit);
-                flags = tmp;
+                flags_full = tmp;
             }
         }
 
@@ -200,7 +218,7 @@ namespace Underworld
         {
             get 
             {
-                return (short)((flags>>2) & 0x1);
+                return (short)((flags_full>>2) & 0x1);
             }
         }
 

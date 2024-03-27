@@ -17,7 +17,7 @@ namespace Underworld
             return true;//unimplemented
         }
 
-        public static void ActivateHackTrap(uwObject trapObj, uwObject triggerObj, uwObject[] objList)
+        public static bool ActivateHackTrap(uwObject trapObj, uwObject triggerObj, uwObject[] objList)
         {
             switch (trapObj.quality)
             {
@@ -28,7 +28,7 @@ namespace Underworld
                         triggerObj: triggerObj,
                         objList: objList
                     );
-                    return;
+                    return true;
                 }
                 case 3: //do trap platform
                 {
@@ -37,9 +37,10 @@ namespace Underworld
                         triggerObj: triggerObj,
                         objList: objList
                     );
-                    return;
+                   return true;
                 }
             }
+            return false;
         }
     }//end class
 }//end namespace
