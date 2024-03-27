@@ -1,5 +1,3 @@
-using System.Net.WebSockets;
-
 namespace Underworld
 {
     public partial class ConversationVM : UWClass

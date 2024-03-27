@@ -45,6 +45,15 @@ namespace Underworld
                                                 objList: objList);
                                         break;
                                     }
+                                case 2://arrow trap
+                                    {
+                                        implemented =true;//-ish
+                                        an_arrow_trap.Activate(
+                                            triggerObj: triggerObj, 
+                                            trapObj: trapObj, 
+                                            objList: objList);
+                                        break;
+                                    }
                                 case 3:// Do and hack traps
                                     {                                        
                                         implemented = hack_trap.ActivateHackTrap(

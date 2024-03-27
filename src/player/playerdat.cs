@@ -1,5 +1,3 @@
-using System.Windows.Markup;
-
 namespace Underworld
 {
     /// <summary>
