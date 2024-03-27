@@ -148,9 +148,6 @@ namespace Underworld
             }
         }
 
-
-
-
         public static void InteractionModeToggle(InteractionModes index)
         {
             PreviousInteractionMode = InteractionMode;
@@ -178,7 +175,14 @@ namespace Underworld
             }
             if (index == 0)
             {
-                InteractionModeShowHide(false);//hide the interaction buttons.                
+                if (UWClass._RES==UWClass.GAME_UW2)
+                {
+                    
+                }
+                else
+                {
+                    InteractionModeShowHide(false);//hide the interaction buttons.  
+                }                              
                 ReturnToTopOptionsMenu();
                 main.gamecam.Set("MOVE", false);
             }

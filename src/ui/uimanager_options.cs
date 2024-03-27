@@ -32,7 +32,7 @@ namespace Underworld
 
         enum OptionButtonIndices
         {
-            AllInteractioButtons = 0,
+            AllInteractionButtons = 0,
             AllOptionButtons = 1,
             AllSaveButtons = 2,
             QuitGame = 3,
@@ -95,7 +95,7 @@ namespace Underworld
 
         public static OptionMenus CurrentGameOptionMenu = OptionMenus.MainOptionMenu;
 
-        private static ImageTexture[] UW2OptionButtons = new ImageTexture[60];
+        private static ImageTexture[] UW2OptionButtons = new ImageTexture[61];
 
 
         public static TextureRect[] GameOptionButtons
@@ -132,7 +132,86 @@ namespace Underworld
         {
             if (UWClass._RES == UWClass.GAME_UW2)
             {
+
+                Rect2I[] croppingareas = new Rect2I[11];
+
+                //cropping areas for 7 button images
+                croppingareas[0] = new Rect2I(1, 3, 76, 15);
+                croppingareas[1] = new Rect2I(1, 19, 76, 15);
+                croppingareas[2] = new Rect2I(1, 35, 76, 15);
+                croppingareas[3] = new Rect2I(1, 51, 76, 15);
+                croppingareas[4] = new Rect2I(1, 67, 76, 15);
+                croppingareas[5] = new Rect2I(1, 83, 76, 15);
+                croppingareas[6] = new Rect2I(1, 99, 76, 15);
+
+                //croping arears for 4 button images
+                croppingareas[7] = new Rect2I(1, 1, 76, 15);
+                croppingareas[8] = new Rect2I(1, 17, 76, 15);
+                croppingareas[9] = new Rect2I(1, 33, 76, 15);
+                croppingareas[10] = new Rect2I(1, 39, 76, 15);
+
                 //crop uw2 art
+                UW2OptionButtons[(int)OptionButtonIndices.AllInteractionButtons] = grOptBtns.LoadImageAt(1);
+                UW2OptionButtons[(int)OptionButtonIndices.AllOptionButtons] = grOptBtns.LoadImageAt(3);
+                UW2OptionButtons[(int)OptionButtonIndices.AllSaveButtons] = grOptBtns.LoadImageAt(6);
+                UW2OptionButtons[(int)OptionButtonIndices.QuitGame] = grOptBtns.LoadImageAt(5);
+                UW2OptionButtons[(int)OptionButtonIndices.MusicButtons] = grOptBtns.LoadImageAt(7);
+                UW2OptionButtons[(int)OptionButtonIndices.DetailButtons] = grOptBtns.LoadImageAt(4);
+                UW2OptionButtons[(int)OptionButtonIndices.SaveGameOff] = ArtLoader.CropImage(grOptBtns.LoadImageAt(3).GetImage(), croppingareas[0]);
+                UW2OptionButtons[(int)OptionButtonIndices.SaveGameOn] = ArtLoader.CropImage(grOptBtns.LoadImageAt(8).GetImage(), croppingareas[0]);
+                UW2OptionButtons[(int)OptionButtonIndices.RestoreGameOff] = ArtLoader.CropImage(grOptBtns.LoadImageAt(3).GetImage(), croppingareas[1]);
+                UW2OptionButtons[(int)OptionButtonIndices.RestoreGameOn] = ArtLoader.CropImage(grOptBtns.LoadImageAt(8).GetImage(), croppingareas[1]);
+                UW2OptionButtons[(int)OptionButtonIndices.MusicOff] = ArtLoader.CropImage(grOptBtns.LoadImageAt(3).GetImage(), croppingareas[2]);
+                UW2OptionButtons[(int)OptionButtonIndices.MusicOn] = ArtLoader.CropImage(grOptBtns.LoadImageAt(8).GetImage(), croppingareas[2]);
+                UW2OptionButtons[(int)OptionButtonIndices.SoundOff] = ArtLoader.CropImage(grOptBtns.LoadImageAt(3).GetImage(), croppingareas[3]);
+                UW2OptionButtons[(int)OptionButtonIndices.SoundOn] = ArtLoader.CropImage(grOptBtns.LoadImageAt(8).GetImage(), croppingareas[3]);
+                UW2OptionButtons[(int)OptionButtonIndices.DetailOff] = ArtLoader.CropImage(grOptBtns.LoadImageAt(3).GetImage(), croppingareas[4]);
+                UW2OptionButtons[(int)OptionButtonIndices.DetailOn] = ArtLoader.CropImage(grOptBtns.LoadImageAt(8).GetImage(), croppingareas[4]);
+                UW2OptionButtons[(int)OptionButtonIndices.ReturnToGameOff] = ArtLoader.CropImage(grOptBtns.LoadImageAt(3).GetImage(), croppingareas[6]);
+                UW2OptionButtons[(int)OptionButtonIndices.ReturnToGameOn] = ArtLoader.CropImage(grOptBtns.LoadImageAt(8).GetImage(), croppingareas[6]);
+                UW2OptionButtons[(int)OptionButtonIndices.QuitGameOff] = ArtLoader.CropImage(grOptBtns.LoadImageAt(3).GetImage(), croppingareas[5]);
+                UW2OptionButtons[(int)OptionButtonIndices.QuitGameOn] = ArtLoader.CropImage(grOptBtns.LoadImageAt(8).GetImage(), croppingareas[5]);
+                UW2OptionButtons[(int)OptionButtonIndices.OnButtonOff] = ArtLoader.CropImage(grOptBtns.LoadImageAt(7).GetImage(), croppingareas[2]);
+                UW2OptionButtons[(int)OptionButtonIndices.OnButtonOn] = ArtLoader.CropImage(grOptBtns.LoadImageAt(12).GetImage(), croppingareas[2]);
+                UW2OptionButtons[(int)OptionButtonIndices.OffButtonOff] = ArtLoader.CropImage(grOptBtns.LoadImageAt(7).GetImage(), croppingareas[3]);
+                UW2OptionButtons[(int)OptionButtonIndices.OffButtonOn] = ArtLoader.CropImage(grOptBtns.LoadImageAt(12).GetImage(), croppingareas[3]);
+                UW2OptionButtons[(int)OptionButtonIndices.CancelOff] = ArtLoader.CropImage(grOptBtns.LoadImageAt(6).GetImage(), croppingareas[5]);
+                UW2OptionButtons[(int)OptionButtonIndices.CancelOn] = ArtLoader.CropImage(grOptBtns.LoadImageAt(11).GetImage(), croppingareas[5]);
+                UW2OptionButtons[(int)OptionButtonIndices.DoneOff] = ArtLoader.CropImage(grOptBtns.LoadImageAt(7).GetImage(), croppingareas[4]);
+                UW2OptionButtons[(int)OptionButtonIndices.DoneOn] = ArtLoader.CropImage(grOptBtns.LoadImageAt(12).GetImage(), croppingareas[4]);
+                UW2OptionButtons[(int)OptionButtonIndices.Save1Off] = ArtLoader.CropImage(grOptBtns.LoadImageAt(6).GetImage(), croppingareas[1]);
+                UW2OptionButtons[(int)OptionButtonIndices.Save1On] = ArtLoader.CropImage(grOptBtns.LoadImageAt(11).GetImage(), croppingareas[1]);
+                UW2OptionButtons[(int)OptionButtonIndices.Save2Off] = ArtLoader.CropImage(grOptBtns.LoadImageAt(6).GetImage(), croppingareas[2]);
+                UW2OptionButtons[(int)OptionButtonIndices.Save2On] = ArtLoader.CropImage(grOptBtns.LoadImageAt(11).GetImage(), croppingareas[2]);
+                UW2OptionButtons[(int)OptionButtonIndices.Save3Off] = ArtLoader.CropImage(grOptBtns.LoadImageAt(6).GetImage(), croppingareas[3]);
+                UW2OptionButtons[(int)OptionButtonIndices.Save3On] = ArtLoader.CropImage(grOptBtns.LoadImageAt(11).GetImage(), croppingareas[3]);
+                UW2OptionButtons[(int)OptionButtonIndices.Save4Off] = ArtLoader.CropImage(grOptBtns.LoadImageAt(6).GetImage(), croppingareas[4]);
+                UW2OptionButtons[(int)OptionButtonIndices.Save4On] = ArtLoader.CropImage(grOptBtns.LoadImageAt(11).GetImage(), croppingareas[4]);
+                UW2OptionButtons[(int)OptionButtonIndices.LowDetailOff] = ArtLoader.CropImage(grOptBtns.LoadImageAt(4).GetImage(), croppingareas[2]);
+                UW2OptionButtons[(int)OptionButtonIndices.LowDetailOn] = ArtLoader.CropImage(grOptBtns.LoadImageAt(9).GetImage(), croppingareas[2]);
+                UW2OptionButtons[(int)OptionButtonIndices.MediumDetailOff] = ArtLoader.CropImage(grOptBtns.LoadImageAt(4).GetImage(), croppingareas[3]);
+                UW2OptionButtons[(int)OptionButtonIndices.MediumDetailOn] = ArtLoader.CropImage(grOptBtns.LoadImageAt(9).GetImage(), croppingareas[3]);
+                UW2OptionButtons[(int)OptionButtonIndices.HighDetailOff] = ArtLoader.CropImage(grOptBtns.LoadImageAt(4).GetImage(), croppingareas[4]);
+                UW2OptionButtons[(int)OptionButtonIndices.HighDetailOn] = ArtLoader.CropImage(grOptBtns.LoadImageAt(9).GetImage(), croppingareas[4]);
+                UW2OptionButtons[(int)OptionButtonIndices.VHighDetailOff] = ArtLoader.CropImage(grOptBtns.LoadImageAt(4).GetImage(), croppingareas[5]);
+                UW2OptionButtons[(int)OptionButtonIndices.VHighDetailOn] = ArtLoader.CropImage(grOptBtns.LoadImageAt(9).GetImage(), croppingareas[5]);
+                UW2OptionButtons[(int)OptionButtonIndices.RestoreGameLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(14).GetImage(), croppingareas[7]);
+                UW2OptionButtons[(int)OptionButtonIndices.MusicIsOnLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(15).GetImage(), croppingareas[7]);
+                UW2OptionButtons[(int)OptionButtonIndices.MusicIsOffLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(15).GetImage(), croppingareas[6]);
+                UW2OptionButtons[(int)OptionButtonIndices.SoundIsOnLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(15).GetImage(), croppingareas[9]);
+                UW2OptionButtons[(int)OptionButtonIndices.SoundIsOffLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(15).GetImage(), croppingareas[8]);
+                UW2OptionButtons[(int)OptionButtonIndices.TurnMusicLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(12).GetImage(), croppingareas[7]);
+                UW2OptionButtons[(int)OptionButtonIndices.TurnSoundLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(14).GetImage(), croppingareas[8]);
+                UW2OptionButtons[(int)OptionButtonIndices.DetailLowLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(13).GetImage(), croppingareas[6]);
+                UW2OptionButtons[(int)OptionButtonIndices.DetailMedLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(13).GetImage(), croppingareas[7]);
+                UW2OptionButtons[(int)OptionButtonIndices.DetailHighLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(13).GetImage(), croppingareas[8]);
+                UW2OptionButtons[(int)OptionButtonIndices.DetailVHighLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(13).GetImage(), croppingareas[9]);
+                UW2OptionButtons[(int)OptionButtonIndices.YesOff] = ArtLoader.CropImage(grOptBtns.LoadImageAt(5).GetImage(), croppingareas[2]);
+                UW2OptionButtons[(int)OptionButtonIndices.YesOn] = ArtLoader.CropImage(grOptBtns.LoadImageAt(10).GetImage(), croppingareas[2]);
+                UW2OptionButtons[(int)OptionButtonIndices.NoOff] = ArtLoader.CropImage(grOptBtns.LoadImageAt(5).GetImage(), croppingareas[3]);
+                UW2OptionButtons[(int)OptionButtonIndices.NoOn] = ArtLoader.CropImage(grOptBtns.LoadImageAt(10).GetImage(), croppingareas[3]);
+
+
             }
             EnableDisable(GameOptionBackground, false);
             for (int i = 0; i <= GameOptionButtons.GetUpperBound(0); i++)
@@ -273,9 +352,9 @@ namespace Underworld
                                         else
                                         {
                                             instance.scroll.Clear();
-                                            AddToMessageScroll(GameStrings.GetString(1,GameStrings.str_no_save_game_there_));
-                                        }   
-                                        ReturnToGame();                                     
+                                            AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_no_save_game_there_));
+                                        }
+                                        ReturnToGame();
                                         break;
                                     }
                                 case 5://cancel and return to top
@@ -288,15 +367,15 @@ namespace Underworld
                         }
                     case OptionMenus.ConfirmQuit:
                         {
-                            switch(extra_arg_0)
-                                {
-                                    case 2://confirm quit yes
-                                        GetTree().Quit();
-                                        break;
-                                    case 3://cancel quit
-                                        ReturnToTopOptionsMenu();
-                                        break;
-                                }
+                            switch (extra_arg_0)
+                            {
+                                case 2://confirm quit yes
+                                    GetTree().Quit();
+                                    break;
+                                case 3://cancel quit
+                                    ReturnToTopOptionsMenu();
+                                    break;
+                            }
                             break;
                         }
 
@@ -305,7 +384,12 @@ namespace Underworld
         }
 
         private static void ReturnToGame()
-        {           
+        {
+            if (UWClass._RES == UWClass.GAME_UW2)
+            {
+                EnableDisable(instance.PanelInventory, true);
+                PanelMode = 0;
+            }
             InteractionModeToggle(PreviousInteractionMode);
             InteractionModeShowHide(true);
             SetGameOptionsBackground(-1);
@@ -324,6 +408,12 @@ namespace Underworld
 
         private static void ReturnToTopOptionsMenu()
         {
+            if (UWClass._RES == UWClass.GAME_UW2)
+            {
+                EnableDisable(instance.PanelInventory, false);
+                EnableDisable(instance.PanelRuneBag, false);
+                EnableDisable(instance.PanelStats, false);
+            }
             CurrentGameOptionMenu = OptionMenus.MainOptionMenu;
             SetGameOptionsBackground((int)OptionButtonIndices.AllOptionButtons);
             SetGameOptionButtons(

@@ -10,7 +10,7 @@ namespace Underworld
 
         public override void _Toggled(bool buttonPressed)
         {
-            if (!ConversationVM.InConversation)
+            if (!main.blockmouseinput)
             {
                 uimanager.InteractionModeToggle(index);
             }

@@ -102,6 +102,8 @@ namespace Underworld
             }
             uimanager.instance.PlayerNameLabel.Text = playerdat.CharName;
 
+            uimanager.SetPanelMode(0);//make sure inventory paperdoll is displayed
+
             //npc name and portrait
             uimanager.instance.NPCNameLabel.Text = talker.a_name;
             uimanager.instance.NPCPortrait.Texture = NPCPortrait(talker);
