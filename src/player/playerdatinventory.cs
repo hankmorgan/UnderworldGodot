@@ -643,8 +643,7 @@ namespace Underworld
         /// <param name="objIndex"></param>
         /// <returns></returns>
         private static int MoveObjectToInventoryData(int objIndex)
-        {
-           
+        {           
             var obj = UWTileMap.current_tilemap.LevelObjects[objIndex];
             // if (objIndex >= 256)
             // {

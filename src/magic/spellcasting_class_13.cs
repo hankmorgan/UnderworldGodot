@@ -16,6 +16,7 @@ namespace Underworld
                 case 0://altaras wand
                     {
                         Debug.Print("Altaras wand");
+                        AltarasWand();
                         break;
                     }
                 case 2://mind blast
@@ -29,9 +30,9 @@ namespace Underworld
                         if (playerdat.shrooms == 0)
                         {
                             var SkillCheckResult = playerdat.SkillCheck(playerdat.INT, 0x14);
-                            if (SkillCheckResult<=0)
+                            if (SkillCheckResult <= 0)
                             {
-                                uimanager.AddToMessageScroll(GameStrings.GetString(1,GameStrings.str_your_vision_distorts_and_you_feel_light_headed_));
+                                uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_your_vision_distorts_and_you_feel_light_headed_));
                                 playerdat.shrooms = 2;
                             }
                             else
@@ -47,7 +48,7 @@ namespace Underworld
                     }
                 case 5:
                     {
-                        uimanager.AddToMessageScroll(GameStrings.GetString(1,GameStrings.str_your_vision_distorts_and_you_feel_light_headed_));
+                        uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_your_vision_distorts_and_you_feel_light_headed_));
                         playerdat.shrooms = 3;
                         break;
                     }
@@ -67,7 +68,7 @@ namespace Underworld
                         }
                         else
                         {
-                            uimanager.AddToMessageScroll(GameStrings.GetString(1,GameStrings.str_the_spell_has_no_discernable_effect_));
+                            uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_the_spell_has_no_discernable_effect_));
                         }
                         break;
                     }
@@ -100,10 +101,71 @@ namespace Underworld
                 case 14:
                 case 15: //mana boost
                     {
-                        var mc = ((minorclass-11)<<2)-1;
+                        var mc = ((minorclass - 11) << 2) - 1;
                         CastClass10_ManaBoost(mc);
                         break;
                     }
+            }
+        }
+
+
+        /// <summary>
+        /// Checks objects in an area to see if a valid line of power can be cut here.
+        /// </summary>
+        static void AltarasWand()
+        {
+            var worldflag = 1 << ((worlds.GetWorldNo(playerdat.dungeon_level)) - 1);
+            var range = 2;
+            var cX = playerdat.tileX; var cY = playerdat.tileY;
+            var linesOfPower = playerdat.GetQuest(128);
+
+            //try and find a guardian signet ring in the area
+            for (int aX = cX - range; aX <= cX + range; aX++)
+            {
+                for (int aY = cX - range; aY <= cY + range; aY++)
+                {
+                    if (UWTileMap.ValidTile(aY, aX))
+                    {
+                        var tile = UWTileMap.current_tilemap.Tiles[aX, aY];
+                        var next = tile.indexObjectList;
+                        while (next != 0)
+                        {
+                            var nextObj = UWTileMap.current_tilemap.LevelObjects[next];
+                            if (nextObj.item_id == 53) //signet ring
+                            {
+                                //test this signet ring 
+                                if (nextObj.invis == 1 && nextObj.doordir == 1)
+                                {//line of power marked by an invisible signet ring with doordir=1
+                                    nextObj.doordir = 0;
+                                    if ((linesOfPower & worldflag) == 0)
+                                    {//line can be cut
+
+                                        //update bit
+                                        linesOfPower |= worldflag;
+                                        playerdat.SetQuest(128, linesOfPower);
+                                        linesOfPower = playerdat.GetQuest(128);
+                                        
+                                        if (linesOfPower == 0xFF)
+                                        {//all lines cut.
+                                            playerdat.SetQuest(14, 1);
+                                        }
+                                        ObjectCreator.SpawnAnimo_Placeholder(0);
+                                        ObjectCreator.DeleteObjectFromTile(nextObj.tileX, nextObj.tileY, nextObj.index);
+
+                                        if (worlds.GetWorldNo(playerdat.dungeon_level) == 3)
+                                        {//in ice caverns
+                                            playerdat.SetQuest(52,1);
+                                        }
+
+                                        Debug.Print("SCREEN SHAKE");
+                                        return;
+                                    }
+                                }
+                            }
+                            next = nextObj.next;
+                        }
+                    }
+                }
             }
         }
     }//end class

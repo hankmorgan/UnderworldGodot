@@ -490,7 +490,7 @@ namespace Underworld
 
                     UpdateInventoryDisplay();
                     //destroy the source.
-                    ObjectCreator.RemoveObject(source);
+                    ObjectCreator.RemoveObject(source); //object in hand
                     playerdat.ObjectInHand = -1; uimanager.instance.mousecursor.SetCursorToCursor();
                     return;
                 }

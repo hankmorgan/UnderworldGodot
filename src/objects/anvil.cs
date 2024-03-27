@@ -128,7 +128,7 @@ namespace Underworld
                                     uimanager.AddToMessageScroll($"{GameStrings.GetString(1, GameStrings.str_you_destroyed_the_)}{GameStrings.GetSimpleObjectNameUW(itemToRepair.item_id)}");
                                     if (WorldObject)
                                     {
-                                        ObjectCreator.RemoveObject(itemToRepair);
+                                        ObjectCreator.DeleteObjectFromTile(itemToRepair.tileX, itemToRepair.tileY, itemToRepair.index);
                                     }
                                     else
                                     {
@@ -186,7 +186,7 @@ namespace Underworld
                     //npc failed to repair the object
                     if (WorldObject)
                     {
-                        ObjectCreator.RemoveObject(itemToRepair);
+                        ObjectCreator.DeleteObjectFromTile(itemToRepair.tileX, itemToRepair.tileY, itemToRepair.index);
                     }
                     else
                     {

@@ -144,22 +144,30 @@ namespace Underworld
         }
 
         /// <summary>
-        /// Removes object from the game world
+        /// Removes object from the game world and allocates free ptrs Does not update object chains
         /// </summary>
         /// <param name="obj"></param>
         public static void RemoveObject(uwObject obj)
         {
             //remove from world
-            UWTileMap.current_tilemap.StaticFreeListObject = obj.index;
-            UWTileMap.current_tilemap.StaticFreeListPtr++;
-            Debug.Print($"Freeing {obj.index} Pointer incremented to {UWTileMap.current_tilemap.StaticFreeListPtr}");
+            if (obj.index<256)
+            {//mobile
+                UWTileMap.current_tilemap.MobileFreeListObject = obj.index;
+                UWTileMap.current_tilemap.MobileFreeListPtr++;
+                Debug.Print($"Freeing Mobile {obj.index} Pointer incremented to {UWTileMap.current_tilemap.MobileFreeListPtr}");
+            }
+            else
+            {//static
+                UWTileMap.current_tilemap.StaticFreeListObject = obj.index;
+                UWTileMap.current_tilemap.StaticFreeListPtr++;
+                Debug.Print($"Freeing Static {obj.index} Pointer incremented to {UWTileMap.current_tilemap.StaticFreeListPtr}");
+            }           
 
             if (obj.instance != null)
             {
                 if (obj.instance.uwnode != null)
                 {
                     obj.instance.uwnode.QueueFree();
-
                 }
                 obj.instance = null;
             }
@@ -590,8 +598,12 @@ namespace Underworld
                     {//used from object in hnand
                         playerdat.ObjectInHand = -1;
                         uimanager.instance.mousecursor.SetCursorToCursor();
+                        RemoveObject(obj);
                     }
-                    RemoveObject(obj);
+                    else
+                    {//used from a tile
+                        DeleteObjectFromTile(obj.tileX, obj.tileY, obj.index);
+                    }                    
                 }
             }
         }
@@ -610,7 +622,14 @@ namespace Underworld
             Debug.Print ("Initialise critter.");
         }
 
-        public static void DeleteObjectFromTile(short tileX, short tileY, short indexToDelete)
+
+        /// <summary>
+        /// Deletes the specified object from the tile (searches first level only, does not remove from containers)
+        /// </summary>
+        /// <param name="tileX"></param>
+        /// <param name="tileY"></param>
+        /// <param name="indexToDelete"></param>
+        public static void DeleteObjectFromTile(int tileX, int tileY, short indexToDelete)
         {     
             var objList = UWTileMap.current_tilemap.LevelObjects;
             if (indexToDelete != 0)
