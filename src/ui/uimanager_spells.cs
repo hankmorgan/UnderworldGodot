@@ -78,6 +78,10 @@ namespace Underworld
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed)
             {
+                if (main.blockmouseinput)
+                {
+                    return;
+                }
                 var i = (int)extra_arg_0;
                 if (eventMouseButton.ButtonIndex == MouseButton.Left)
                 {

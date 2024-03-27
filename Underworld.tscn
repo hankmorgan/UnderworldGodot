@@ -67,7 +67,7 @@ shape = SubResource("CapsuleShape3D_1c8r5")
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("CompassBgUW1", "CompassBgUW2", "CompassPointsUW1", "CompassPointsUW2", "ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLableFrameUW1", "NPCNameLableFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "CutsFull", "CutsSmallUW1", "CutsSmallUW2", "Cuts3DWinUW1", "Cuts3DWinUW2", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "InteractionButtonsUW1", "InteractionButtonsUW2", "PanelMainMenu", "MainMenuBG", "MainMenuButtons", "LoadingLabel", "SaveGamesNames", "AutomapPanel", "AutomapBG", "AutomapImage", "NotesPanel", "AutomapNumberLabel", "AutomapWorldGem", "messageScrollUW1", "messageScrollUW2", "TypedInput", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Chains", "RuneTiles", "SelectedRunes", "ActiveSpellIcons", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSelectedUW1", "NPCTradeSelectedUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "PlayerTradeSelectedUW2", "NPCTradeSelectedUW2", "cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "placeholderuw1", "placeholderuw2")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("CompassBgUW1", "CompassBgUW2", "CompassPointsUW1", "CompassPointsUW2", "ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLableFrameUW1", "NPCNameLableFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "CutsFull", "CutsSmallUW1", "CutsSmallUW2", "Cuts3DWinUW1", "Cuts3DWinUW2", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "InteractionButtonsUW1", "InteractionButtonsUW2", "PanelMainMenu", "MainMenuBG", "MainMenuButtons", "LoadingLabel", "SaveGamesNames", "AutomapPanel", "AutomapBG", "AutomapImage", "NotesPanel", "AutomapNumberLabel", "AutomapWorldGem", "messageScrollUW1", "messageScrollUW2", "TypedInput", "GameOptionButtonsUW1", "GameOptionsBackgroundUW1", "GameOptionsBackgroundUW2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Chains", "RuneTiles", "SelectedRunes", "ActiveSpellIcons", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSelectedUW1", "NPCTradeSelectedUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "PlayerTradeSelectedUW2", "NPCTradeSelectedUW2", "cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "placeholderuw1", "placeholderuw2")]
 script = ExtResource("1_lw0yg")
 CompassBgUW1 = [NodePath("../UW1/CompassUW1/CompassBg0"), NodePath("../UW1/CompassUW1/CompassBg1"), NodePath("../UW1/CompassUW1/CompassBg2"), NodePath("../UW1/CompassUW1/CompassBg3")]
 CompassBgUW2 = [NodePath("../UW2/CompassUW2/CompassBG0"), NodePath("../UW2/CompassUW2/CompassBG1"), NodePath("../UW2/CompassUW2/CompassBG2"), NodePath("../UW2/CompassUW2/CompassBG3")]
@@ -124,6 +124,9 @@ AutomapWorldGem = [NodePath("../Common/Automap/Gem/World0"), NodePath("../Common
 messageScrollUW1 = NodePath("../UW1/MessageScrollUW1")
 messageScrollUW2 = NodePath("../UW2/messageScrollUW2")
 TypedInput = NodePath("../Common/TypedInput")
+GameOptionButtonsUW1 = [NodePath("../UW1/GameOptionsUW1_0"), NodePath("../UW1/GameOptionsUW1_1"), NodePath("../UW1/GameOptionsUW1_2"), NodePath("../UW1/GameOptionsUW1_3"), NodePath("../UW1/GameOptionsUW1_4"), NodePath("../UW1/GameOptionsUW1_5"), NodePath("../UW1/GameOptionsUW1_6")]
+GameOptionsBackgroundUW1 = NodePath("../UW1/OptionsBackgroundUW1")
+GameOptionsBackgroundUW2 = NodePath("")
 PanelInventory = NodePath("../Common/PaperDoll")
 PanelInventoryArt = NodePath("../Common/PaperDoll/PaperDollPanel")
 PanelRuneBag = NodePath("../Common/RuneBag")
@@ -197,7 +200,6 @@ placeholderuw2 = NodePath("../UW2/placeholdermainuw2")
 stream = SubResource("AudioStreamWAV_tkk82")
 
 [node name="UW1" type="CanvasLayer" parent="UI"]
-visible = false
 
 [node name="placeholdermainuw1" type="TextureRect" parent="UI/UW1"]
 offset_right = 1280.0
@@ -251,71 +253,6 @@ Yours forever,
 "
 scroll_active = false
 autowrap_mode = 0
-
-[node name="OptionsButtonUW1" type="TextureButton" parent="UI/UW1"]
-offset_left = 32.0
-offset_top = 40.0
-offset_right = 144.0
-offset_bottom = 108.0
-toggle_mode = true
-texture_normal = ExtResource("6_qaf50")
-stretch_mode = 0
-script = ExtResource("8_0sew3")
-
-[node name="TalkButtonUW1" type="TextureButton" parent="UI/UW1"]
-offset_left = 28.0
-offset_top = 108.0
-offset_right = 156.0
-offset_bottom = 184.0
-toggle_mode = true
-texture_normal = ExtResource("8_wag4x")
-stretch_mode = 0
-script = ExtResource("8_0sew3")
-index = 1
-
-[node name="PickupButtonUW1" type="TextureButton" parent="UI/UW1"]
-offset_left = 24.0
-offset_top = 188.0
-offset_right = 152.0
-offset_bottom = 252.0
-toggle_mode = true
-texture_normal = ExtResource("10_63i0w")
-stretch_mode = 0
-script = ExtResource("8_0sew3")
-index = 2
-
-[node name="LookButtonUW1" type="TextureButton" parent="UI/UW1"]
-offset_left = 24.0
-offset_top = 260.0
-offset_right = 132.0
-offset_bottom = 316.0
-toggle_mode = true
-texture_normal = ExtResource("12_3hev6")
-stretch_mode = 0
-script = ExtResource("8_0sew3")
-index = 3
-
-[node name="AttackButtonUW1" type="TextureButton" parent="UI/UW1"]
-offset_left = 32.0
-offset_top = 320.0
-offset_right = 156.0
-offset_bottom = 396.0
-toggle_mode = true
-texture_normal = ExtResource("14_nhhdh")
-stretch_mode = 0
-script = ExtResource("8_0sew3")
-index = 4
-
-[node name="UseButtonUW1" type="TextureButton" parent="UI/UW1"]
-offset_left = 32.0
-offset_top = 396.0
-offset_right = 152.0
-offset_bottom = 472.0
-toggle_mode = true
-texture_normal = ExtResource("16_kxj2a")
-stretch_mode = 0
-script = ExtResource("8_0sew3")
-index = 5
 
 [node name="CompassUW1" type="Panel" parent="UI/UW1"]
 offset_right = 40.0
@@ -729,7 +666,121 @@ offset_right = 900.0
 offset_bottom = 532.0
 mouse_filter = 2
 
+[node name="OptionsButtonUW1" type="TextureButton" parent="UI/UW1"]
+offset_left = 32.0
+offset_top = 40.0
+offset_right = 144.0
+offset_bottom = 108.0
+toggle_mode = true
+texture_normal = ExtResource("6_qaf50")
+stretch_mode = 0
+script = ExtResource("8_0sew3")
+
+[node name="TalkButtonUW1" type="TextureButton" parent="UI/UW1"]
+offset_left = 28.0
+offset_top = 108.0
+offset_right = 156.0
+offset_bottom = 184.0
+toggle_mode = true
+texture_normal = ExtResource("8_wag4x")
+stretch_mode = 0
+script = ExtResource("8_0sew3")
+index = 1
+
+[node name="PickupButtonUW1" type="TextureButton" parent="UI/UW1"]
+offset_left = 24.0
+offset_top = 188.0
+offset_right = 152.0
+offset_bottom = 252.0
+toggle_mode = true
+texture_normal = ExtResource("10_63i0w")
+stretch_mode = 0
+script = ExtResource("8_0sew3")
+index = 2
+
+[node name="LookButtonUW1" type="TextureButton" parent="UI/UW1"]
+offset_left = 24.0
+offset_top = 260.0
+offset_right = 132.0
+offset_bottom = 316.0
+toggle_mode = true
+texture_normal = ExtResource("12_3hev6")
+stretch_mode = 0
+script = ExtResource("8_0sew3")
+index = 3
+
+[node name="AttackButtonUW1" type="TextureButton" parent="UI/UW1"]
+offset_left = 32.0
+offset_top = 320.0
+offset_right = 156.0
+offset_bottom = 396.0
+toggle_mode = true
+texture_normal = ExtResource("14_nhhdh")
+stretch_mode = 0
+script = ExtResource("8_0sew3")
+index = 4
+
+[node name="UseButtonUW1" type="TextureButton" parent="UI/UW1"]
+offset_left = 32.0
+offset_top = 396.0
+offset_right = 152.0
+offset_bottom = 472.0
+toggle_mode = true
+texture_normal = ExtResource("16_kxj2a")
+stretch_mode = 0
+script = ExtResource("8_0sew3")
+index = 5
+
+[node name="OptionsBackgroundUW1" type="TextureRect" parent="UI/UW1"]
+offset_left = 16.0
+offset_top = 40.0
+offset_right = 156.0
+offset_bottom = 472.0
+
+[node name="GameOptionsUW1_0" type="TextureRect" parent="UI/UW1"]
+offset_left = 20.0
+offset_top = 48.0
+offset_right = 144.0
+offset_bottom = 104.0
+
+[node name="GameOptionsUW1_1" type="TextureRect" parent="UI/UW1"]
+offset_left = 20.0
+offset_top = 108.0
+offset_right = 144.0
+offset_bottom = 164.0
+
+[node name="GameOptionsUW1_2" type="TextureRect" parent="UI/UW1"]
+offset_left = 20.0
+offset_top = 168.0
+offset_right = 144.0
+offset_bottom = 224.0
+
+[node name="GameOptionsUW1_3" type="TextureRect" parent="UI/UW1"]
+offset_left = 20.0
+offset_top = 228.0
+offset_right = 144.0
+offset_bottom = 284.0
+
+[node name="GameOptionsUW1_4" type="TextureRect" parent="UI/UW1"]
+offset_left = 20.0
+offset_top = 288.0
+offset_right = 144.0
+offset_bottom = 344.0
+
+[node name="GameOptionsUW1_5" type="TextureRect" parent="UI/UW1"]
+offset_left = 20.0
+offset_top = 348.0
+offset_right = 144.0
+offset_bottom = 404.0
+
+[node name="GameOptionsUW1_6" type="TextureRect" parent="UI/UW1"]
+offset_left = 20.0
+offset_top = 408.0
+offset_right = 144.0
+offset_bottom = 464.0
+
 [node name="UW2" type="CanvasLayer" parent="UI"]
+visible = false
 
 [node name="placeholdermainuw2" type="TextureRect" parent="UI/UW2"]
 offset_right = 1280.0
@@ -2575,6 +2626,7 @@ mouse_filter = 2
 script = ExtResource("4_gnu1s")
 
 [node name="PositionLabel" type="RichTextLabel" parent="UI/mouse"]
+visible = false
 texture_filter = 1
 offset_left = 28.0
 offset_top = -9.0
@@ -2617,6 +2669,13 @@ secondarycameras = NodePath("../WorldViewContainer/SubViewport")
 [connection signal="gui_input" from="UI/UW1/ConversationUW1/NPCTradeSelectedUW1_1" to="UI/uiManager" method="_on_npc_trade_selected" binds= [1]]
 [connection signal="gui_input" from="UI/UW1/ConversationUW1/NPCTradeSelectedUW1_2" to="UI/uiManager" method="_on_npc_trade_selected" binds= [2]]
 [connection signal="gui_input" from="UI/UW1/ConversationUW1/NPCTradeSelectedUW1_3" to="UI/uiManager" method="_on_npc_trade_selected" binds= [3]]
+[connection signal="gui_input" from="UI/UW1/GameOptionsUW1_0" to="UI/uiManager" method="_on_game_options_input" binds= [0]]
+[connection signal="gui_input" from="UI/UW1/GameOptionsUW1_1" to="UI/uiManager" method="_on_game_options_input" binds= [1]]
+[connection signal="gui_input" from="UI/UW1/GameOptionsUW1_2" to="UI/uiManager" method="_on_game_options_input" binds= [2]]
+[connection signal="gui_input" from="UI/UW1/GameOptionsUW1_3" to="UI/uiManager" method="_on_game_options_input" binds= [3]]
+[connection signal="gui_input" from="UI/UW1/GameOptionsUW1_4" to="UI/uiManager" method="_on_game_options_input" binds= [4]]
+[connection signal="gui_input" from="UI/UW1/GameOptionsUW1_5" to="UI/uiManager" method="_on_game_options_input" binds= [5]]
+[connection signal="gui_input" from="UI/UW1/GameOptionsUW1_6" to="UI/uiManager" method="_on_game_options_input" binds= [6]]
 [connection signal="gui_input" from="UI/UW2/ConversationUW2/PlayerTradeUW2_0" to="UI/uiManager" method="_on_player_trade_input" binds= [0]]
 [connection signal="gui_input" from="UI/UW2/ConversationUW2/PlayerTradeUW2_1" to="UI/uiManager" method="_on_player_trade_input" binds= [1]]
 [connection signal="gui_input" from="UI/UW2/ConversationUW2/PlayerTradeUW2_2" to="UI/uiManager" method="_on_player_trade_input" binds= [2]]

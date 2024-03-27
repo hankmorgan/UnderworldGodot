@@ -22,7 +22,7 @@ namespace Underworld
 			InitCoversation();
 			InitPanels();
 			InitPaperdoll();
-			InitOptions();
+			InitGameOptions();
 			InitInteraction();
 			InitViews();
 			InitMessageScrolls();

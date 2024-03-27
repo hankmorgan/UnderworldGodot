@@ -27,7 +27,10 @@ public partial class main : Node3D
 			 ||
 			 MessageDisplay.WaitingForYesOrNo
 			 ||
-			 musicalinstrument.PlayingInstrument;
+			 musicalinstrument.PlayingInstrument
+			 ||
+			 uimanager.InteractionMode == uimanager.InteractionModes.ModeOptions			 
+			 ;
 
 			; //TODO and other menu modes that will stop input
 		}
