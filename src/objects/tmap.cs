@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Godot;
 
 namespace Underworld
@@ -6,6 +7,7 @@ namespace Underworld
     {
         int texture;
         Node3D tmapnode;
+        float tmapOffset = 0;// 0.1f;//how far out the tmap extrudes from it's origin
 
         public tmap(uwObject _uwobject)
         {
@@ -17,14 +19,30 @@ namespace Underworld
             int tileX = obj.tileX;
             int tileY = obj.tileY;
             var t = new tmap(obj);
-            t.texture = a_tilemap.texture_map[obj.owner];
-    
-            t.tmapnode = t.Generate3DModel(parent, name);
+
+            //check if tmap shares space with a door, this deals with a tmap that is over a door in level 4 of UW1
+            if (UWTileMap.ValidTile(obj.tileX, obj.tileY))
+            {
+                var tile = UWTileMap.current_tilemap.Tiles[obj.tileX, obj.tileY];
+
+                var door = objectsearch.FindMatchInObjectChain(tile.indexObjectList, 5, 0, -1, UWTileMap.current_tilemap.LevelObjects);
+                if (door!=null)
+                {
+                    if ((door.xpos == obj.xpos) && (door.ypos == obj.ypos))
+                    {
+                        Debug.Print($"Tmap {obj.index} shares space with door {door.index}");
+                        t.tmapOffset = 0.1f;
+                    }
+                }
+            }
             
+            t.texture = a_tilemap.texture_map[obj.owner];    
+            t.tmapnode = t.Generate3DModel(parent, name);
+           
             SetModelRotation(parent,t);
             centreAlongAxis(parent, t);
             
-            //DisplayModelPoints(t, parent);
+            DisplayModelPoints(t, parent);
             return t;
         }    
 
@@ -43,10 +61,10 @@ namespace Underworld
         public override Vector3[] ModelVertices()
         {
             Vector3[] v = new Vector3[4];
-            v[0] = new Vector3(-0.6f, 0f, 0f);//0.0625f);
-            v[1] = new Vector3(0.6f, 0f, 0f);//0.0625f);
-            v[2] = new Vector3(0.6f, 1.2f, 0f);//0.0625f);
-            v[3] = new Vector3(-0.6f, 1.2f, 0f);//..0.0625f);
+            v[0] = new Vector3(-0.6f, 0f, tmapOffset);//0.0625f);
+            v[1] = new Vector3(0.6f, 0f, tmapOffset);//0.0625f);
+            v[2] = new Vector3(0.6f, 1.2f, tmapOffset);//0.0625f);
+            v[3] = new Vector3(-0.6f, 1.2f, tmapOffset);//..0.0625f);
             return v;
         }
 
