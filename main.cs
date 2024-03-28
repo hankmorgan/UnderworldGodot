@@ -121,6 +121,20 @@ public partial class main : Node3D
 
 			lblPositionDebug.Text = $"{cam.Position.ToString()}\nL:{playerdat.dungeon_level} X:{tileX} Y:{tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}\n{cam.Rotation} {playerdat.heading} {(playerdat.heading >> 4) % 4} {xposvecto} {yposvecto}";
 
+			if (uimanager.InteractionMode == uimanager.InteractionModes.ModeAttack)
+			{
+				if (Input.IsMouseButtonPressed(MouseButton.Right))
+				{//building up charge
+					combat.CombatLoop(delta);
+				}
+				else
+				{
+					if (combat.stage>0)
+					{
+						combat.EndCombatLoop();//this will change
+					}
+				}
+			}
 			if ((tileX < 64) && (tileX >= 0) && (tileY < 64) && (tileY >= 0))
 			{
 				if ((playerdat.tileX != tileX) || (playerdat.tileY != tileY))
@@ -170,22 +184,26 @@ public partial class main : Node3D
 
 	public override void _Input(InputEvent @event)
 	{
-		if ((@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed)
+		if ((@event is InputEventMouseButton eventMouseButton)
 			&&
 			((eventMouseButton.ButtonIndex == MouseButton.Left) || (eventMouseButton.ButtonIndex == MouseButton.Right)))
 		{
-			if (MessageDisplay.WaitingForMore)
+			if (eventMouseButton.Pressed)
 			{
-				Debug.Print("End wait due to click");
-				MessageDisplay.WaitingForMore = false;
-				return; //don't process any more clicks here.
-			}
-			if (!blockmouseinput)
-			{
-				if (uimanager.IsMouseInViewPort())
-					uimanager.ClickOnViewPort(eventMouseButton);
+				if (MessageDisplay.WaitingForMore)
+				{
+					//Debug.Print("End wait due to click");
+					MessageDisplay.WaitingForMore = false;
+					return; //don't process any more clicks here.
+				}
+				if (!blockmouseinput)
+				{
+					if (uimanager.IsMouseInViewPort())
+						uimanager.ClickOnViewPort(eventMouseButton);
+				}
 			}
 		}
+
 
 		if ((!blockmouseinput) && (uimanager.InGame))
 		{

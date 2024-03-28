@@ -71,13 +71,18 @@ namespace Underworld
         }
 
 
-
         public static void ClickOnViewPort(InputEventMouseButton eventMouseButton)
         {
 
             if (!InGame) { return; }
             bool LeftClick = (eventMouseButton.ButtonIndex == MouseButton.Left); //else treat it as a right click.
                                                                                  //float RayLength = 3.0f;
+            // if(uimanager.InteractionMode == InteractionModes.ModeAttack)
+            // {//click while in combat mode. do special processing
+            //     combat.CombatLoop();//? maybe here?
+            //     return;
+            // }
+
             Dictionary result = DoRayCast(eventMouseButton, RayDistance);
             if (result != null)
             {
