@@ -263,7 +263,7 @@ namespace Underworld
                         }
                         else
                         {
-                            if ((InteractionMode != InteractionModes.ModeTalk) && (!ConversationVM.InConversation))
+                            if (!ConversationVM.InConversation)
                             {
                                 if (isLeftClick)
                                 {
@@ -280,7 +280,7 @@ namespace Underworld
                                 }
                             }
                             else
-                            {//click on a slot in talk mode and in a conversation
+                            {//click on a slot in a conversation
                                 if (isLeftClick)
                                 {
                                     //left click pickup in conversation

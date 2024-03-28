@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Godot;
 
 namespace Underworld
@@ -41,8 +40,8 @@ namespace Underworld
         public static InteractionModes InteractionMode = InteractionModes.ModeUse;
         [ExportGroup("InteractionModes")]
         //Array to store the interaction mode mo
-        [Export] public Godot.TextureButton[] InteractionButtonsUW1 = new Godot.TextureButton[6];
-        [Export] public Godot.TextureButton[] InteractionButtonsUW2 = new Godot.TextureButton[6];
+        [Export] public Godot.TextureRect[] InteractionButtonsUW1 = new Godot.TextureRect[6];
+        [Export] public Godot.TextureRect[] InteractionButtonsUW2 = new Godot.TextureRect[6];
 
         private ImageTexture[] UW2InteractionBtnsOff;
         private ImageTexture[] UW2InteractionButtonsOn;
@@ -83,17 +82,27 @@ namespace Underworld
                 case UWClass.GAME_UW2:
                     for (int i = 0; i <= InteractionButtonsUW2.GetUpperBound(0); i++)
                     {
-                        InteractionButtonsUW2[i].TexturePressed = UW2InteractionButtonsOn[i]; // grLfti.LoadImageAt(i*2 + 1,false);
-                        InteractionButtonsUW2[i].TextureNormal = UW2InteractionBtnsOff[i]; //grLfti.LoadImageAt(i*2,false);  
-                        InteractionButtonsUW2[i].SetPressedNoSignal((i == (int)InteractionMode));
+                        if (i != (int)InteractionMode)
+                        {
+                            InteractionButtonsUW2[i].Texture = UW2InteractionBtnsOff[i];
+                        }
+                        else
+                        {
+                            InteractionButtonsUW2[i].Texture = UW2InteractionButtonsOn[i];
+                        }
                     }
                     break;
                 default:
                     for (int i = 0; i <= InteractionButtonsUW1.GetUpperBound(0); i++)
                     {
-                        InteractionButtonsUW1[i].TexturePressed = grLfti.LoadImageAt(i * 2 + 1, false);
-                        InteractionButtonsUW1[i].TextureNormal = grLfti.LoadImageAt(i * 2, false);
-                        InteractionButtonsUW1[i].SetPressedNoSignal((i == (int)InteractionMode));
+                        if (i != (int)InteractionMode)
+                        {
+                            InteractionButtonsUW1[i].Texture = grLfti.LoadImageAt(i * 2, false); //off button
+                        }
+                        else
+                        {
+                            InteractionButtonsUW1[i].Texture = grLfti.LoadImageAt(i * 2 + 1, false);//on button
+                        }
                     }
                     break;
             }
@@ -152,13 +161,17 @@ namespace Underworld
         {
             PreviousInteractionMode = InteractionMode;
             if (UWClass._RES == UWClass.GAME_UW2)
-            {   
+            {
                 for (int i = 0; i <= instance.InteractionButtonsUW2.GetUpperBound(0); i++)
                 {
-                    instance.InteractionButtonsUW2[i].SetPressedNoSignal(i == (int)(index));
                     if (i == (int)(index))
                     {
                         InteractionMode = index;
+                        instance.InteractionButtonsUW2[i].Texture = instance.UW2InteractionButtonsOn[i];
+                    }
+                    else
+                    {
+                        instance.InteractionButtonsUW2[i].Texture = instance.UW2InteractionBtnsOff[i];
                     }
                 }
             }
@@ -166,23 +179,27 @@ namespace Underworld
             {
                 for (int i = 0; i <= instance.InteractionButtonsUW1.GetUpperBound(0); i++)
                 {
-                    instance.InteractionButtonsUW1[i].SetPressedNoSignal(i == (int)(index));
                     if (i == (int)(index))
                     {
                         InteractionMode = index;
+                        instance.InteractionButtonsUW1[i].Texture = grLfti.LoadImageAt(i * 2 + 1, false);//on button
+                    }
+                    else
+                    {
+                        instance.InteractionButtonsUW1[i].Texture = grLfti.LoadImageAt(i * 2, false);//off button
                     }
                 }
             }
             if (index == 0)
             {
-                if (UWClass._RES==UWClass.GAME_UW2)
+                if (UWClass._RES == UWClass.GAME_UW2)
                 {
-                    
+
                 }
                 else
                 {
                     InteractionModeShowHide(false);//hide the interaction buttons.  
-                }                              
+                }
                 ReturnToTopOptionsMenu();
                 main.gamecam.Set("MOVE", false);
             }
@@ -207,6 +224,19 @@ namespace Underworld
                 }
             }
         }
+
+
+        private void _on_interactionoptions_button(InputEvent @event, long extra_arg_0)
+        {
+            if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
+            {
+                if (!main.blockmouseinput)
+                {
+                    uimanager.InteractionModeToggle((InteractionModes)extra_arg_0);
+                }
+            }
+        }
+
 
     }//end class    
 }//end namespace

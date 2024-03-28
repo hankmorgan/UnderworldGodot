@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=3 uid="uid://xjvqmrbs28xs"]
+[gd_scene load_steps=28 format=3 uid="uid://xjvqmrbs28xs"]
 
 [ext_resource type="Script" path="res://src/ui/uimanager.cs" id="1_lw0yg"]
 [ext_resource type="FontFile" uid="uid://pdy3t627nfxw" path="res://resources/fonts/FONT5X6I.ttf" id="3_safdl"]
@@ -8,18 +8,10 @@
 [ext_resource type="FontFile" uid="uid://dcth0yn5km8si" path="res://resources/fonts/FONT4X5P.ttf" id="5_8iiwt"]
 [ext_resource type="FontFile" uid="uid://dhrg5v5fecw5b" path="res://resources/fonts/FONTBIG.ttf" id="5_kj12g"]
 [ext_resource type="Script" path="res://main.cs" id="6_3y8oy"]
-[ext_resource type="Texture2D" uid="uid://cpop1i8thi2t6" path="res://resources/placeholder_art/uw1lfti/0.png" id="6_qaf50"]
 [ext_resource type="Shader" path="res://node_3d.gdshader" id="6_x6exc"]
 [ext_resource type="Texture2D" uid="uid://plikcry1ow6q" path="res://resources/placeholder_art/textbox_fill.jpg" id="7_qiq8a"]
-[ext_resource type="Script" path="res://src/ui/InteractionModeButton.cs" id="8_0sew3"]
 [ext_resource type="Texture2D" uid="uid://ug231pvqaq1v" path="res://resources/placeholder_art/panels/panelsBlack.png" id="8_mis7n"]
-[ext_resource type="Texture2D" uid="uid://cpu7b2n5bae5y" path="res://resources/placeholder_art/uw1lfti/2.png" id="8_wag4x"]
 [ext_resource type="Texture2D" uid="uid://cf536ckyprfbf" path="res://resources/placeholder_art/uw1placeholdermain.png" id="9_emry3"]
-[ext_resource type="Texture2D" uid="uid://w3pet1fmhrgp" path="res://resources/placeholder_art/uw1lfti/4.png" id="10_63i0w"]
-[ext_resource type="Texture2D" uid="uid://8hg7a1ttaly6" path="res://resources/placeholder_art/uw1lfti/6.png" id="12_3hev6"]
-[ext_resource type="Texture2D" uid="uid://hyq11h2le5c0" path="res://resources/placeholder_art/uw1lfti/8.png" id="14_nhhdh"]
-[ext_resource type="Texture2D" uid="uid://b1lj1mh50p8a1" path="res://resources/placeholder_art/uw2optbtn/uw2attackbutton.png" id="15_f0cyy"]
-[ext_resource type="Texture2D" uid="uid://2qekjomlpnxd" path="res://resources/placeholder_art/uw1lfti/10.png" id="16_kxj2a"]
 [ext_resource type="Texture2D" uid="uid://b1y5rs02fgv6d" path="res://resources/cross.png" id="18_tfr7p"]
 [ext_resource type="Texture2D" uid="uid://dqcrcis2dop6k" path="res://resources/placeholder_art/paperdolluw1/body_f.png" id="19_0yobb"]
 [ext_resource type="Texture2D" uid="uid://b4hn75lfpnecd" path="res://resources/placeholder_art/grave.png" id="20_n8sfi"]
@@ -201,7 +193,6 @@ placeholderuw2 = NodePath("../UW2/placeholdermainuw2")
 stream = SubResource("AudioStreamWAV_tkk82")
 
 [node name="UW1" type="CanvasLayer" parent="UI"]
-visible = false
 
 [node name="placeholdermainuw1" type="TextureRect" parent="UI/UW1"]
 offset_right = 1280.0
@@ -668,70 +659,41 @@ offset_right = 900.0
 offset_bottom = 532.0
 mouse_filter = 2
 
-[node name="OptionsButtonUW1" type="TextureButton" parent="UI/UW1"]
+[node name="OptionsButtonUW1" type="TextureRect" parent="UI/UW1"]
 offset_left = 32.0
 offset_top = 40.0
 offset_right = 144.0
 offset_bottom = 108.0
-toggle_mode = true
-texture_normal = ExtResource("6_qaf50")
-stretch_mode = 0
-script = ExtResource("8_0sew3")
 
-[node name="TalkButtonUW1" type="TextureButton" parent="UI/UW1"]
+[node name="TalkButtonUW1" type="TextureRect" parent="UI/UW1"]
 offset_left = 28.0
 offset_top = 108.0
 offset_right = 156.0
 offset_bottom = 184.0
-toggle_mode = true
-texture_normal = ExtResource("8_wag4x")
-stretch_mode = 0
-script = ExtResource("8_0sew3")
-index = 1
 
-[node name="PickupButtonUW1" type="TextureButton" parent="UI/UW1"]
+[node name="PickupButtonUW1" type="TextureRect" parent="UI/UW1"]
 offset_left = 24.0
 offset_top = 188.0
 offset_right = 152.0
 offset_bottom = 252.0
-toggle_mode = true
-texture_normal = ExtResource("10_63i0w")
-stretch_mode = 0
-script = ExtResource("8_0sew3")
-index = 2
 
-[node name="LookButtonUW1" type="TextureButton" parent="UI/UW1"]
+[node name="LookButtonUW1" type="TextureRect" parent="UI/UW1"]
 offset_left = 24.0
 offset_top = 260.0
 offset_right = 132.0
 offset_bottom = 316.0
-toggle_mode = true
-texture_normal = ExtResource("12_3hev6")
-stretch_mode = 0
-script = ExtResource("8_0sew3")
-index = 3
 
-[node name="AttackButtonUW1" type="TextureButton" parent="UI/UW1"]
+[node name="AttackButtonUW1" type="TextureRect" parent="UI/UW1"]
 offset_left = 32.0
 offset_top = 320.0
 offset_right = 156.0
 offset_bottom = 396.0
-toggle_mode = true
-texture_normal = ExtResource("14_nhhdh")
-stretch_mode = 0
-script = ExtResource("8_0sew3")
-index = 4
 
-[node name="UseButtonUW1" type="TextureButton" parent="UI/UW1"]
+[node name="UseButtonUW1" type="TextureRect" parent="UI/UW1"]
 offset_left = 32.0
 offset_top = 396.0
 offset_right = 152.0
 offset_bottom = 472.0
-toggle_mode = true
-texture_normal = ExtResource("16_kxj2a")
-stretch_mode = 0
-script = ExtResource("8_0sew3")
-index = 5
 
 [node name="OptionsBackgroundUW1" type="TextureRect" parent="UI/UW1"]
 offset_left = 16.0
@@ -834,70 +796,41 @@ aaaaaaaaaaaaaaaaaaa"
 scroll_active = false
 autowrap_mode = 0
 
-[node name="OptionsButtonUW2" type="TextureButton" parent="UI/UW2"]
+[node name="OptionsButtonUW2" type="TextureRect" parent="UI/UW2"]
 offset_left = 1179.0
 offset_top = 742.0
 offset_right = 1279.0
 offset_bottom = 798.0
-toggle_mode = true
-texture_normal = ExtResource("15_f0cyy")
-stretch_mode = 0
-script = ExtResource("8_0sew3")
 
-[node name="TalkButtonUW2" type="TextureButton" parent="UI/UW2"]
+[node name="TalkButtonUW2" type="TextureRect" parent="UI/UW2"]
 offset_left = 971.0
 offset_top = 742.0
 offset_right = 1071.0
 offset_bottom = 798.0
-toggle_mode = true
-texture_normal = ExtResource("15_f0cyy")
-stretch_mode = 0
-script = ExtResource("8_0sew3")
-index = 1
 
-[node name="PickupButtonUW2" type="TextureButton" parent="UI/UW2"]
+[node name="PickupButtonUW2" type="TextureRect" parent="UI/UW2"]
 offset_left = 1179.0
 offset_top = 682.0
 offset_right = 1279.0
 offset_bottom = 738.0
-toggle_mode = true
-texture_normal = ExtResource("15_f0cyy")
-stretch_mode = 0
-script = ExtResource("8_0sew3")
-index = 2
 
-[node name="LookButtonUW2" type="TextureButton" parent="UI/UW2"]
+[node name="LookButtonUW2" type="TextureRect" parent="UI/UW2"]
 offset_left = 1075.0
 offset_top = 742.0
 offset_right = 1175.0
 offset_bottom = 798.0
-toggle_mode = true
-texture_normal = ExtResource("15_f0cyy")
-stretch_mode = 0
-script = ExtResource("8_0sew3")
-index = 3
 
-[node name="AttackButtonUW2" type="TextureButton" parent="UI/UW2"]
+[node name="AttackButtonUW2" type="TextureRect" parent="UI/UW2"]
 offset_left = 971.0
 offset_top = 682.0
 offset_right = 1071.0
 offset_bottom = 738.0
-toggle_mode = true
-texture_normal = ExtResource("15_f0cyy")
-stretch_mode = 0
-script = ExtResource("8_0sew3")
-index = 4
 
-[node name="UseButtonUW2" type="TextureButton" parent="UI/UW2"]
+[node name="UseButtonUW2" type="TextureRect" parent="UI/UW2"]
 offset_left = 1075.0
 offset_top = 682.0
 offset_right = 1175.0
 offset_bottom = 738.0
-toggle_mode = true
-texture_normal = ExtResource("15_f0cyy")
-stretch_mode = 0
-script = ExtResource("8_0sew3")
-index = 5
 
 [node name="ConversationUW2" type="Panel" parent="UI/UW2"]
 offset_right = 40.0
@@ -2719,6 +2652,12 @@ secondarycameras = NodePath("../WorldViewContainer/SubViewport")
 [connection signal="gui_input" from="UI/UW1/ConversationUW1/NPCTradeSelectedUW1_1" to="UI/uiManager" method="_on_npc_trade_selected" binds= [1]]
 [connection signal="gui_input" from="UI/UW1/ConversationUW1/NPCTradeSelectedUW1_2" to="UI/uiManager" method="_on_npc_trade_selected" binds= [2]]
 [connection signal="gui_input" from="UI/UW1/ConversationUW1/NPCTradeSelectedUW1_3" to="UI/uiManager" method="_on_npc_trade_selected" binds= [3]]
+[connection signal="gui_input" from="UI/UW1/OptionsButtonUW1" to="UI/uiManager" method="_on_interactionoptions_button" binds= [0]]
+[connection signal="gui_input" from="UI/UW1/TalkButtonUW1" to="UI/uiManager" method="_on_interactionoptions_button" binds= [1]]
+[connection signal="gui_input" from="UI/UW1/PickupButtonUW1" to="UI/uiManager" method="_on_interactionoptions_button" binds= [2]]
+[connection signal="gui_input" from="UI/UW1/LookButtonUW1" to="UI/uiManager" method="_on_interactionoptions_button" binds= [3]]
+[connection signal="gui_input" from="UI/UW1/AttackButtonUW1" to="UI/uiManager" method="_on_interactionoptions_button" binds= [4]]
+[connection signal="gui_input" from="UI/UW1/UseButtonUW1" to="UI/uiManager" method="_on_interactionoptions_button" binds= [5]]
 [connection signal="gui_input" from="UI/UW1/GameOptionsUW1_0" to="UI/uiManager" method="_on_game_options_input" binds= [0]]
 [connection signal="gui_input" from="UI/UW1/GameOptionsUW1_1" to="UI/uiManager" method="_on_game_options_input" binds= [1]]
 [connection signal="gui_input" from="UI/UW1/GameOptionsUW1_2" to="UI/uiManager" method="_on_game_options_input" binds= [2]]
@@ -2726,6 +2665,12 @@ secondarycameras = NodePath("../WorldViewContainer/SubViewport")
 [connection signal="gui_input" from="UI/UW1/GameOptionsUW1_4" to="UI/uiManager" method="_on_game_options_input" binds= [4]]
 [connection signal="gui_input" from="UI/UW1/GameOptionsUW1_5" to="UI/uiManager" method="_on_game_options_input" binds= [5]]
 [connection signal="gui_input" from="UI/UW1/GameOptionsUW1_6" to="UI/uiManager" method="_on_game_options_input" binds= [6]]
+[connection signal="gui_input" from="UI/UW2/OptionsButtonUW2" to="UI/uiManager" method="_on_interactionoptions_button" binds= [0]]
+[connection signal="gui_input" from="UI/UW2/TalkButtonUW2" to="UI/uiManager" method="_on_interactionoptions_button" binds= [1]]
+[connection signal="gui_input" from="UI/UW2/PickupButtonUW2" to="UI/uiManager" method="_on_interactionoptions_button" binds= [2]]
+[connection signal="gui_input" from="UI/UW2/LookButtonUW2" to="UI/uiManager" method="_on_interactionoptions_button" binds= [3]]
+[connection signal="gui_input" from="UI/UW2/AttackButtonUW2" to="UI/uiManager" method="_on_interactionoptions_button" binds= [4]]
+[connection signal="gui_input" from="UI/UW2/UseButtonUW2" to="UI/uiManager" method="_on_interactionoptions_button" binds= [5]]
 [connection signal="gui_input" from="UI/UW2/ConversationUW2/PlayerTradeUW2_0" to="UI/uiManager" method="_on_player_trade_input" binds= [0]]
 [connection signal="gui_input" from="UI/UW2/ConversationUW2/PlayerTradeUW2_1" to="UI/uiManager" method="_on_player_trade_input" binds= [1]]
 [connection signal="gui_input" from="UI/UW2/ConversationUW2/PlayerTradeUW2_2" to="UI/uiManager" method="_on_player_trade_input" binds= [2]]
