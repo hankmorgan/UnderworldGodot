@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://xjvqmrbs28xs"]
+[gd_scene load_steps=30 format=3 uid="uid://xjvqmrbs28xs"]
 
 [ext_resource type="Script" path="res://src/ui/uimanager.cs" id="1_lw0yg"]
 [ext_resource type="FontFile" uid="uid://pdy3t627nfxw" path="res://resources/fonts/FONT5X6I.ttf" id="3_safdl"]
@@ -17,9 +17,11 @@
 [ext_resource type="Texture2D" uid="uid://b4hn75lfpnecd" path="res://resources/placeholder_art/grave.png" id="20_n8sfi"]
 [ext_resource type="Texture2D" uid="uid://b5mwiifn8jtb6" path="res://resources/placeholder_art/uw2placeholdermain.png" id="21_3ww2u"]
 [ext_resource type="Texture2D" uid="uid://dx526kvjk8jmj" path="res://resources/cross2.png" id="21_5p8p7"]
+[ext_resource type="Texture2D" uid="uid://ciqrdjocqcm2p" path="res://resources/splash/uw1_poster.jpg" id="22_2v7cv"]
 [ext_resource type="Texture2D" uid="uid://6t8lhnhw347e" path="res://resources/placeholder_art/textbox_fill_uw2.png" id="22_vajvs"]
 [ext_resource type="Texture2D" uid="uid://cvik4hdmkwuwk" path="res://resources/placeholder_art/paperdolluw1/up button 027.png" id="22_vc6ux"]
 [ext_resource type="Texture2D" uid="uid://01h0bdambuq4" path="res://resources/placeholder_art/paperdolluw1/down button 028.png" id="23_e17mk"]
+[ext_resource type="Texture2D" uid="uid://cxu7fxiybk3ee" path="res://resources/splash/uw2_poster.jpg" id="23_f4jqj"]
 [ext_resource type="Texture2D" uid="uid://51go53yqj8oq" path="res://resources/placeholder_art/panels/panelsstats.png" id="24_filpa"]
 [ext_resource type="Texture2D" uid="uid://1ecbe7htlqun" path="res://resources/placeholder_art/spellicon.png" id="28_uj0ag"]
 [ext_resource type="Texture2D" uid="uid://dlhf0nj7vj1o2" path="res://resources/placeholder_art/PanelBlack.jpg" id="29_aiei8"]
@@ -59,7 +61,7 @@ shape = SubResource("CapsuleShape3D_1c8r5")
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("CompassBgUW1", "CompassBgUW2", "CompassPointsUW1", "CompassPointsUW2", "ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLableFrameUW1", "NPCNameLableFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "CutsFull", "CutsSmallUW1", "CutsSmallUW2", "Cuts3DWinUW1", "Cuts3DWinUW2", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "InteractionButtonsUW1", "InteractionButtonsUW2", "PanelMainMenu", "MainMenuBG", "MainMenuButtons", "LoadingLabel", "SaveGamesNames", "AutomapPanel", "AutomapBG", "AutomapImage", "NotesPanel", "AutomapNumberLabel", "AutomapWorldGem", "messageScrollUW1", "messageScrollUW2", "TypedInput", "GameOptionButtonsUW1", "GameOptionButtonsUW2", "GameOptionsBackgroundUW1", "GameOptionsBackgroundUW2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Chains", "RuneTiles", "SelectedRunes", "ActiveSpellIcons", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSelectedUW1", "NPCTradeSelectedUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "PlayerTradeSelectedUW2", "NPCTradeSelectedUW2", "cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "placeholderuw1", "placeholderuw2")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("CompassBgUW1", "CompassBgUW2", "CompassPointsUW1", "CompassPointsUW2", "ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLableFrameUW1", "NPCNameLableFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "CutsFull", "CutsSmallUW1", "CutsSmallUW2", "Cuts3DWinUW1", "Cuts3DWinUW2", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "InteractionButtonsUW1", "InteractionButtonsUW2", "PanelMainMenu", "MainMenuBG", "MainMenuButtons", "LoadingLabel", "SaveGamesNames", "AutomapPanel", "AutomapBG", "AutomapImage", "NotesPanel", "AutomapNumberLabel", "AutomapWorldGem", "messageScrollUW1", "messageScrollUW2", "TypedInput", "GameOptionButtonsUW1", "GameOptionButtonsUW2", "GameOptionsBackgroundUW1", "GameOptionsBackgroundUW2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Chains", "RuneTiles", "SelectedRunes", "ActiveSpellIcons", "StartMenuPanel", "pathuw1", "pathuw2", "filed", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSelectedUW1", "NPCTradeSelectedUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "PlayerTradeSelectedUW2", "NPCTradeSelectedUW2", "cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "placeholderuw1", "placeholderuw2")]
 script = ExtResource("1_lw0yg")
 CompassBgUW1 = [NodePath("../UW1/CompassUW1/CompassBg0"), NodePath("../UW1/CompassUW1/CompassBg1"), NodePath("../UW1/CompassUW1/CompassBg2"), NodePath("../UW1/CompassUW1/CompassBg3")]
 CompassBgUW2 = [NodePath("../UW2/CompassUW2/CompassBG0"), NodePath("../UW2/CompassUW2/CompassBG1"), NodePath("../UW2/CompassUW2/CompassBG2"), NodePath("../UW2/CompassUW2/CompassBG3")]
@@ -157,6 +159,10 @@ Chains = NodePath("../Common/OtherControls/Chain")
 RuneTiles = [NodePath("../Common/RuneBag/Rune0"), NodePath("../Common/RuneBag/Rune1"), NodePath("../Common/RuneBag/Rune2"), NodePath("../Common/RuneBag/Rune3"), NodePath("../Common/RuneBag/Rune4"), NodePath("../Common/RuneBag/Rune5"), NodePath("../Common/RuneBag/Rune6"), NodePath("../Common/RuneBag/Rune7"), NodePath("../Common/RuneBag/Rune8"), NodePath("../Common/RuneBag/Rune9"), NodePath("../Common/RuneBag/Rune10"), NodePath("../Common/RuneBag/Rune11"), NodePath("../Common/RuneBag/Rune12"), NodePath("../Common/RuneBag/Rune13"), NodePath("../Common/RuneBag/Rune14"), NodePath("../Common/RuneBag/Rune15"), NodePath("../Common/RuneBag/Rune16"), NodePath("../Common/RuneBag/Rune17"), NodePath("../Common/RuneBag/Rune18"), NodePath("../Common/RuneBag/Rune19"), NodePath("../Common/RuneBag/Rune20"), NodePath("../Common/RuneBag/Rune21"), NodePath("../Common/RuneBag/Rune22"), NodePath("../Common/RuneBag/Rune23")]
 SelectedRunes = [NodePath("../Common/OtherControls/SelectedRune0"), NodePath("../Common/OtherControls/SelectedRune1"), NodePath("../Common/OtherControls/SelectedRune2")]
 ActiveSpellIcons = [NodePath("../Common/OtherControls/SpellIcon0"), NodePath("../Common/OtherControls/SpellIcon1"), NodePath("../Common/OtherControls/SpellIcon2")]
+StartMenuPanel = NodePath("../LaunchScreen")
+pathuw1 = NodePath("../LaunchScreen/PathUW1")
+pathuw2 = NodePath("../LaunchScreen/PathUW2")
+filed = NodePath("../LaunchScreen/GameSelectFileDialog")
 Charname = NodePath("../Common/StatsDisplay/Charname")
 CharLevel = NodePath("../Common/StatsDisplay/CharLevel")
 CharClass = NodePath("../Common/StatsDisplay/CharClass")
@@ -744,6 +750,7 @@ offset_right = 144.0
 offset_bottom = 464.0
 
 [node name="UW2" type="CanvasLayer" parent="UI"]
+visible = false
 
 [node name="placeholdermainuw2" type="TextureRect" parent="UI/UW2"]
 offset_right = 1280.0
@@ -2600,6 +2607,59 @@ shortcut_keys_enabled = false
 middle_mouse_paste_enabled = false
 selecting_enabled = false
 
+[node name="LaunchScreen" type="CanvasLayer" parent="UI"]
+
+[node name="LaunchBackground" type="TextureRect" parent="UI/LaunchScreen"]
+offset_right = 1280.0
+offset_bottom = 800.0
+texture = ExtResource("29_aiei8")
+
+[node name="LaunchUW1" type="TextureRect" parent="UI/LaunchScreen"]
+offset_left = 201.0
+offset_top = 120.0
+offset_right = 1001.0
+offset_bottom = 1136.0
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("22_2v7cv")
+
+[node name="LaunchUW2" type="TextureRect" parent="UI/LaunchScreen"]
+offset_left = 721.0
+offset_top = 120.0
+offset_right = 1521.0
+offset_bottom = 1136.0
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("23_f4jqj")
+
+[node name="PathUW1" type="TextEdit" parent="UI/LaunchScreen"]
+offset_left = 165.0
+offset_top = 643.0
+offset_right = 665.0
+offset_bottom = 743.0
+theme_override_fonts/font = ExtResource("4_pfbet")
+theme_override_font_sizes/font_size = 64
+text = "c:\\games\\uw1"
+autowrap_mode = 0
+
+[node name="PathUW2" type="TextEdit" parent="UI/LaunchScreen"]
+offset_left = 680.0
+offset_top = 643.0
+offset_right = 1180.0
+offset_bottom = 743.0
+theme_override_fonts/font = ExtResource("4_pfbet")
+theme_override_font_sizes/font_size = 64
+text = "c:\\games\\uw2"
+autowrap_mode = 0
+
+[node name="GameSelectFileDialog" type="FileDialog" parent="UI/LaunchScreen"]
+mode = 3
+title = "Open a File"
+initial_position = 1
+size = Vector2i(1200, 700)
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+filters = PackedStringArray("uw*.exe")
+
 [node name="mouse" type="CanvasLayer" parent="UI"]
 
 [node name="mouseCursor" type="TextureRect" parent="UI/mouse"]
@@ -2787,3 +2847,8 @@ secondarycameras = NodePath("../WorldViewContainer/SubViewport")
 [connection signal="gui_input" from="UI/Common/MainMenu/Save2" to="UI/uiManager" method="_on_save_2_gui_input"]
 [connection signal="gui_input" from="UI/Common/MainMenu/Save3" to="UI/uiManager" method="_on_save_3_gui_input"]
 [connection signal="gui_input" from="UI/Common/MainMenu/Save4" to="UI/uiManager" method="_on_save_4_gui_input"]
+[connection signal="gui_input" from="UI/LaunchScreen/LaunchUW1" to="UI/uiManager" method="_on_launch_input" binds= [1]]
+[connection signal="gui_input" from="UI/LaunchScreen/LaunchUW2" to="UI/uiManager" method="_on_launch_input" binds= [2]]
+[connection signal="gui_input" from="UI/LaunchScreen/PathUW1" to="UI/uiManager" method="_on_path_input" binds= [1]]
+[connection signal="gui_input" from="UI/LaunchScreen/PathUW2" to="UI/uiManager" method="_on_path_input" binds= [2]]
+[connection signal="file_selected" from="UI/LaunchScreen/GameSelectFileDialog" to="UI/uiManager" method="_on_game_select_file_dialog_file_selected"]

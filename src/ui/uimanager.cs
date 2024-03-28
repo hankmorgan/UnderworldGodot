@@ -14,8 +14,6 @@ namespace Underworld
 
 		public void InitUI()
 		{
-			instance = this;
-
 			InitArt();
 			InitMainMenu();
 			InitFlasks();

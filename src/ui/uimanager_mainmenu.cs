@@ -197,6 +197,7 @@ namespace Underworld
                     newLevelNo: playerdat.dungeon_level - 1,
                     datafolder: folder,
                     newGameSession: true);
+            uimanager.instance.InitViews();
         }
 
         private void _on_create_character_gui_input(InputEvent @event)

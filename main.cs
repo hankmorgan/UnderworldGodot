@@ -29,7 +29,7 @@ public partial class main : Node3D
 			 ||
 			 musicalinstrument.PlayingInstrument
 			 ||
-			 uimanager.InteractionMode == uimanager.InteractionModes.ModeOptions			 
+			 uimanager.InteractionMode == uimanager.InteractionModes.ModeOptions
 			 ;
 
 			; //TODO and other menu modes that will stop input
@@ -55,19 +55,27 @@ public partial class main : Node3D
 		GetTree().DebugCollisionsHint = true;
 		instance = this;
 		gamecam = cam;
+		uimanager.instance = uwUI;
+		uimanager.instance.mousecursor.Texture = uimanager.instance.cross;
 		uwsettings.LoadSettings();
+		uimanager.EnableDisable(uimanager.instance.StartMenuPanel, true);
+		uimanager.instance.pathuw1.Text = uwsettings.instance.pathuw1;
+		uimanager.instance.pathuw2.Text = uwsettings.instance.pathuw2;
 
+		//StartGame();
+
+		// playerdat.LoadPlayerDat(datafolder: uwsettings.instance.levarkfolder);
+	}
+
+	public static void StartGame()
+	{
+		uimanager.EnableDisable(uimanager.instance.StartMenuPanel, false);
 		ObjectCreator.grObjects = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
 		ObjectCreator.grObjects.UseRedChannel = true;
 		ObjectCreator.grObjects.UseCropping = true;
-		//ObjectCreator.grObjects.GenerateCollision = false;//not working for now..
 		Palette.CurrentPalette = 0;
-
-		uwUI.InitUI();
-
+		uimanager.instance.InitUI();
 		uimanager.AddToMessageScroll(GameStrings.GetString(1, 13));//welcome message
-
-		// playerdat.LoadPlayerDat(datafolder: uwsettings.instance.levarkfolder);
 	}
 
 
@@ -124,36 +132,37 @@ public partial class main : Node3D
 
 					playerdat.PlayerStatusUpdate();
 				}
-				
-			}
-		}
 
-		cycletime += delta;
-		if (cycletime > 0.2)
-		{
-			cycletime = 0;
-			PaletteLoader.UpdatePaletteCycles();
-		}
-		if (uimanager.InGame)
-		{
-			gameRefreshTimer += delta;
-			if (gameRefreshTimer >= 0.3)
-			{
-				gameRefreshTimer = 0;
-				if (!blockmouseinput)
-				{
-					npc.UpdateNPCs();
-					AnimationOverlay.UpdateAnimationOverlays();
-				}
 			}
 
-			if ((MessageDisplay.WaitingForTypedInput) || (MessageDisplay.WaitingForYesOrNo))
+
+			cycletime += delta;
+			if (cycletime > 0.2)
 			{
-				if (!uimanager.instance.TypedInput.HasFocus())
+				cycletime = 0;
+				PaletteLoader.UpdatePaletteCycles();
+			}
+			if (uimanager.InGame)
+			{
+				gameRefreshTimer += delta;
+				if (gameRefreshTimer >= 0.3)
 				{
-					uimanager.instance.TypedInput.GrabFocus();
+					gameRefreshTimer = 0;
+					if (!blockmouseinput)
+					{
+						npc.UpdateNPCs();
+						AnimationOverlay.UpdateAnimationOverlays();
+					}
 				}
-				uimanager.instance.scroll.UpdateMessageDisplay();
+
+				if ((MessageDisplay.WaitingForTypedInput) || (MessageDisplay.WaitingForYesOrNo))
+				{
+					if (!uimanager.instance.TypedInput.HasFocus())
+					{
+						uimanager.instance.TypedInput.GrabFocus();
+					}
+					uimanager.instance.scroll.UpdateMessageDisplay();
+				}
 			}
 		}
 
@@ -194,9 +203,9 @@ public partial class main : Node3D
 							}
 							else
 							{//toogle to mouselook
-								Input.MouseMode = Input.MouseModeEnum.Captured;								
+								Input.MouseMode = Input.MouseModeEnum.Captured;
 							}
-							gamecam.Set("MOUSELOOK",!mouselook);
+							gamecam.Set("MOUSELOOK", !mouselook);
 							break;
 					}
 				}

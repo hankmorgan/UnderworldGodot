@@ -14,7 +14,7 @@ namespace Underworld
         /// </summary>
         public static int _RES = 1;  //"UW1";
 
-        public static string BasePath;// = "C:\\Games\\UW2\\game\\UW2";
+        public static string BasePath  ;    // = "C:\\Games\\UW2\\game\\UW2";
 
     }//end class
 }//end namespace

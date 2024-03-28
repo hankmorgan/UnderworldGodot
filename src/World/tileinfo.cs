@@ -394,6 +394,13 @@ namespace Underworld
             }
         }
 
+
+        /// <summary>
+        /// Gets the texture name for the specified index (into texturemap) based on the surface type
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="floor"></param>
+        /// <returns></returns>
         static string TextureName(int index, bool floor = true)
         {
             int offset = 0;
