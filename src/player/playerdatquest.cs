@@ -62,7 +62,7 @@ namespace Underworld
                 }
             }
             else
-            {
+            {//UW1
                 if (questno < 32)
                 {
                     int offset = 0x66 + (questno / 8);
@@ -73,10 +73,11 @@ namespace Underworld
                 {
                     if (questno < 38)
                     {
-                        GetAt(0x6a + (questno - 32));
+                        return GetAt(0x6a + (questno - 32));
                     }
                 }
             }
+            Debug.Print($"Returning default variable for {questno}");
             return 0; //default result
         }
 

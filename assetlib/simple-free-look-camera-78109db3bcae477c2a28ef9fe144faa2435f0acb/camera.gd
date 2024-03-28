@@ -65,15 +65,15 @@ func _input(event):
 				_shift = event.pressed
 			KEY_ALT:
 				_alt = event.pressed
-			KEY_T:
-				var just_pressed = event.is_pressed() and not event.is_echo()
-				if just_pressed:
-					if MOUSELOOK:
-						MOUSELOOK = false
-						Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
-					else:
-						MOUSELOOK = true
-						Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+			#KEY_T:
+			#	var just_pressed = event.is_pressed() and not event.is_echo()
+			#	if just_pressed:
+			#		if MOUSELOOK:
+			#			MOUSELOOK = false
+			#			Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
+			#		else:
+			#			MOUSELOOK = true
+			#			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 # Updates mouselook and movement every frame
 func _process(delta):

@@ -178,7 +178,33 @@ public partial class main : Node3D
 				if (uimanager.IsMouseInViewPort())
 					uimanager.ClickOnViewPort(eventMouseButton);
 			}
+		}
 
+		if (!blockmouseinput)
+		{
+			if (@event is InputEventKey keyinput)
+			{
+				if (keyinput.Pressed)
+				{
+					switch (keyinput.Keycode)
+					{
+						case Key.T:
+							var mouselook = (bool)gamecam.Get("MOUSELOOK");
+							if (mouselook)
+							{
+								//Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
+								Input.MouseMode = Input.MouseModeEnum.Hidden;
+							}
+							else
+							{
+								//Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+								Input.MouseMode = Input.MouseModeEnum.Captured;								
+							}
+							gamecam.Set("MOUSELOOK",!mouselook);
+							break;
+					}
+				}
+			}
 		}
 
 		if (ConversationVM.WaitingForInput
