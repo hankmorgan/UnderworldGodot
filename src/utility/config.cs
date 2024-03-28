@@ -2,6 +2,7 @@ using System.IO;
 using System.Text.Json;
 using System;
 using Godot;
+using System.Diagnostics;
 
 namespace Underworld
 {
@@ -11,12 +12,19 @@ namespace Underworld
         public string pathuw2 { get; set; }
         public string gametoload { get; set; }
         public int level { get; set; }
-        public int lightlevel { get; set; }
-        public string levarkfolder { get; set; }
-        public string shader { get; set; }
+        //public int lightlevel { get; set; }
+        //public string levarkfolder { get; set; }
+        //public string shader { get; set; }
         public float FOV { get; set; }
         public static uwsettings instance;
 
+        public static void Save()
+        {
+            var appfolder = OS.GetExecutablePath();
+            appfolder = Path.GetDirectoryName(appfolder);
+            var json = JsonSerializer.Serialize(instance);
+            Debug.Print($"If I was to save settings now the value would be\n{json}");
+        }
 
         public static void LoadSettings()
         {

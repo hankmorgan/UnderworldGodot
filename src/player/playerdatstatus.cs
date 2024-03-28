@@ -85,7 +85,7 @@ namespace Underworld
           {
                get
                {
-                    if (pdat==null){return uwsettings.instance.lightlevel;}
+                    if (pdat==null){return 1;}
                     if(_RES==GAME_UW2)
                     {
                          return GetAt(0x65)>>4;
@@ -98,7 +98,7 @@ namespace Underworld
 
                set
                {
-                    if (pdat==null){ uwsettings.instance.lightlevel = value;}
+                    //if (pdat==null){ uwsettings.instance.lightlevel = value;}
                     if(_RES==GAME_UW2)
                     {
                          var tmp = GetAt(0x65);
