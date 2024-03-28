@@ -7,7 +7,7 @@ namespace Underworld
         public static void Activate(uwObject triggerObj, uwObject trapObj)
         {
             var newFloorTexture = trapObj.quality >> 1;
-            var newTileType = trapObj.quality & 0x1 + (trapObj.heading<<1);
+            var newTileType = trapObj.quality & 0x1; // codes seems to indicate heading has an impact but not in game+ (trapObj.heading<<1);
             var newWallTexture = trapObj.owner;
             if (newTileType==0xF){newTileType = 0xA;}
             var X = triggerObj.quality;            
