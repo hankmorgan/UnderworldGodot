@@ -2609,7 +2609,6 @@ mouse_filter = 2
 script = ExtResource("4_gnu1s")
 
 [node name="PositionLabel" type="RichTextLabel" parent="UI/mouse"]
-visible = false
 texture_filter = 1
 offset_left = 28.0
 offset_top = -9.0

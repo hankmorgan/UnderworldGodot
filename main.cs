@@ -121,9 +121,7 @@ public partial class main : Node3D
 					playerdat.tileY = tileY;
 					playerdat.xpos = xposvecto;
 					playerdat.ypos = yposvecto;
-					//playerdat.zpos = 
-					//uwsettings.instance.lightlevel = light.BrightestLight();
-					//playerdat.lightlevel = light.BrightestLight();
+
 					playerdat.PlayerStatusUpdate();
 				}
 				
@@ -180,7 +178,7 @@ public partial class main : Node3D
 			}
 		}
 
-		if (!blockmouseinput)
+		if ((!blockmouseinput) && (uimanager.InGame))
 		{
 			if (@event is InputEventKey keyinput)
 			{
@@ -191,13 +189,11 @@ public partial class main : Node3D
 						case Key.T:
 							var mouselook = (bool)gamecam.Get("MOUSELOOK");
 							if (mouselook)
-							{
-								//Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
+							{//toggle to free curso
 								Input.MouseMode = Input.MouseModeEnum.Hidden;
 							}
 							else
-							{
-								//Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+							{//toogle to mouselook
 								Input.MouseMode = Input.MouseModeEnum.Captured;								
 							}
 							gamecam.Set("MOUSELOOK",!mouselook);

@@ -5,16 +5,68 @@ namespace Underworld
 	/// <summary>
 	/// The mouse cursor in UW
 	/// </summary>
-	public partial class mouseCursor : uwTextureRect
+	public partial class mouseCursor : TextureRect
 	{
-		// Called when the node enters the scene tree for the first time.
+		private static Vector2 UW1CursorPosition = new Vector2(552,296);
+		private static Vector2 UW2CursorPosition = new Vector2(474,314);
+		private static Vector2 UW1SubCursorPosition = new Vector2(366,238);
+		private static Vector2 UW2SubCursorPosition = new Vector2(420,250);
 
+		/// <summary>
+		/// Display position of the cursor when in mouselook
+		/// </summary>
+		public static Vector2 CursorPosition
+		{
+			get
+			{
+				if (UWClass._RES==UWClass.GAME_UW2)
+				{
+					return UW2CursorPosition;
+				}
+				else
+				{
+					return UW1CursorPosition;
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// Position of the mouse cursor for raycasts when in mouselook
+		/// </summary>
+		public static Vector2 CursorPositionSub
+		{
+			get
+			{
+				if (UWClass._RES==UWClass.GAME_UW2)
+				{
+					return UW2SubCursorPosition;
+				}
+				else
+				{
+					return UW1SubCursorPosition;
+				}
+			}
+		}
+		
 		// Called every frame. 'delta' is the elapsed time since the previous frame.
 		public override void _Process(double delta)
 		{
-			var offset = new Vector2(Texture.GetWidth()/1f, Texture.GetHeight()/1f);
-			var pos = GetViewport().GetMousePosition() - offset;
-			this.Position = pos;
+			var mouselook = (bool)main.gamecam.Get("MOUSELOOK");
+
+			if (mouselook)
+			{
+				this.Position = CursorPosition;
+			}
+			else
+			{//follow the mouse
+				var offset = new Vector2(Texture.GetWidth()/1f, Texture.GetHeight()/1f);
+				var pos = GetViewport().GetMousePosition() - offset;
+				this.Position = pos;
+			}
+
+
+			//Debug.Print($"{GetViewport().get}");
 		}
 
 		public void InitCursor()
