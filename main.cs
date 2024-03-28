@@ -220,9 +220,9 @@ public partial class main : Node3D
 						case Key.F6://use
 							uimanager.InteractionModeToggle((uimanager.InteractionModes)5);break;
 						case Key.F7://toggle panel
-							Debug.Print("Toggle panel"); break;
+							uimanager.ChangePanels(); break;
 						case Key.F8: //cast spell
-							Debug.Print ("Cast spell"); break;
+							RunicMagic.CastRunicSpell(); break;
 						case Key.F9://track skill
 							Debug.Print ("Track"); break;
 						case Key.F10: // make camp 

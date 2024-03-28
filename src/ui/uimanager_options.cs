@@ -311,7 +311,7 @@ namespace Underworld
                                     }
                                 case 5: // return to game
                                     {
-                                        ReturnToGame();
+                                        ReturnToGameFromOptions();
                                         break;
                                     }
                                 case 6://quit game
@@ -353,7 +353,7 @@ namespace Underworld
                                             instance.scroll.Clear();
                                             AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_no_save_game_there_));
                                         }
-                                        ReturnToGame();
+                                        ReturnToGameFromOptions();
                                         break;
                                     }
                                 case 5://cancel and return to top
@@ -382,7 +382,7 @@ namespace Underworld
             }
         }
 
-        private static void ReturnToGame()
+        public static void ReturnToGameFromOptions()
         {
             if (UWClass._RES == UWClass.GAME_UW2)
             {

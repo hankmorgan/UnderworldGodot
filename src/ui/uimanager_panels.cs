@@ -139,26 +139,30 @@ namespace Underworld
 		private void ChainPull(InputEvent @event)
 		{
 			if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
-			{
+            {
                 if (main.blockmouseinput)
                 {
                     return;
                 }
-				switch (PanelMode)
-				{
-					case 0:
-						SetPanelMode(2); //go to stats from inventory
-						RefreshStatsDisplay();
-						break;
-					case 1:
-						SetPanelMode(0); //runes from inventory
-						break;
-					case 2:
-						SetPanelMode(0); // inventory from stats						
-						break;
-				}
-			}
-		}
+                ChangePanels();
+            }
+        }
 
+        public static void ChangePanels()
+        {
+            switch (PanelMode)
+            {
+                case 0:
+                    SetPanelMode(2); //go to stats from inventory
+                    RefreshStatsDisplay();
+                    break;
+                case 1:
+                    SetPanelMode(0); //runes from inventory
+                    break;
+                case 2:
+                    SetPanelMode(0); // inventory from stats						
+                    break;
+            }
+        }
     }//end class
 }//end namespace
