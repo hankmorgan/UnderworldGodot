@@ -396,13 +396,19 @@ namespace Underworld
 
         static string TextureName(int index, bool floor = true)
         {
-
             int offset = 0;
             if ((_RES != GAME_UW2) && (floor)) { offset = 48; }
             var textureNo = UWTileMap.current_tilemap.texture_map[index + offset];
             if (_RES == GAME_UW2)
             {
-                return GameStrings.GetString(10, 510 - textureNo);
+                if (floor)
+                {
+                    return GameStrings.GetString(10, 510 - textureNo);
+                }
+                else
+                {
+                    return GameStrings.GetString(10, textureNo);
+                }                
             }
             else
             {
