@@ -124,7 +124,12 @@ namespace Underworld
                     {
                         contains();
                         break;
-                    }       
+                    }  
+                case "find_barter":
+                    {
+                        find_barter();
+                        break;
+                    }     
                 default:
                     {
                         Debug.Print($"Unimplemented {func.importname}"); break;
