@@ -10,7 +10,7 @@ namespace Underworld
     {
         public static IEnumerator run_imported_function(ImportedFunctions func, uwObject talker)
         {
-            result_register=0;
+            result_register = 0;
             switch (func.importname.ToLower())
             {
                 case "babl_menu":
@@ -74,7 +74,7 @@ namespace Underworld
                     {
                         gronk_door();
                         break;
-                    } 
+                    }
                 case "show_inv":
                     {
                         show_inv();
@@ -84,7 +84,7 @@ namespace Underworld
                     {
                         give_to_npc(talker);
                         break;
-                    }   
+                    }
                 case "take_from_npc":
                     {
                         take_from_npc(talker);
@@ -94,42 +94,47 @@ namespace Underworld
                     {
                         yield return babl_ask();
                         break;
-                    }  
+                    }
                 case "compare":
                     {
-                        compare(); 
-                        break;  
+                        compare();
+                        break;
                     }
                 case "count_inv":
                     {
                         count_inv();
                         break;
-                    }    
+                    }
                 case "remove_talker":
                     {
                         remove_talker(talker);
                         break;
-                    } 
+                    }
                 case "x_obj_stuff":
                     {
                         x_obj_stuff();
                         break;
-                    }   
+                    }
                 case "identify_inv":
                     {
                         identify_inv();
                         break;
-                    }  
+                    }
                 case "contains":
                     {
                         contains();
                         break;
-                    }  
+                    }
                 case "find_barter":
                     {
                         find_barter();
                         break;
-                    }     
+                    }
+                case "give_ptr_npc":
+                    {
+                        give_ptr_npc(talker);
+                        break;
+                    }
                 default:
                     {
                         Debug.Print($"Unimplemented {func.importname}"); break;
@@ -139,14 +144,14 @@ namespace Underworld
             Debug.Print($"Set result {result_register} at {stackptr}");
             Set(stackptr, result_register);
 
-            if (TradeResult == 1 )
+            if (TradeResult == 1)
             {
                 SwapTradedObjects(talker);
                 TradeResult = 0;
             }
             yield return null;
         }
-        
+
 
     }//end class
 }//end namespace
