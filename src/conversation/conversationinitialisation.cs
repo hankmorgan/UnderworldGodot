@@ -106,6 +106,10 @@ namespace Underworld
             {
                 uimanager.SetPanelMode(0);//make sure inventory paperdoll is displayed
             }
+
+            //turn off mouselook to allow clicking around the screen.
+            Godot.Input.MouseMode = Godot.Input.MouseModeEnum.Hidden;
+            main.gamecam.Set("MOUSELOOK", false);
             
 
             //npc name and portrait
