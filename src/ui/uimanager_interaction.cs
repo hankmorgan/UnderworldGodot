@@ -200,6 +200,10 @@ namespace Underworld
                 {
                     InteractionModeShowHide(false);//hide the interaction buttons.  
                 }
+                //turn off mouselook
+                Godot.Input.MouseMode = Godot.Input.MouseModeEnum.Hidden;
+                main.gamecam.Set("MOUSELOOK", false);
+                
                 ReturnToTopOptionsMenu();
                 main.gamecam.Set("MOVE", false);
             }

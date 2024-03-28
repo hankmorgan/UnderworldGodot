@@ -207,6 +207,26 @@ public partial class main : Node3D
 							}
 							gamecam.Set("MOUSELOOK", !mouselook);
 							break;
+						case Key.F1: //open options menu
+							uimanager.InteractionModeToggle(0);break;
+						case Key.F2: //talk
+							uimanager.InteractionModeToggle((uimanager.InteractionModes)1);break;
+						case Key.F3://pickup
+							uimanager.InteractionModeToggle((uimanager.InteractionModes)2);break;
+						case Key.F4://look
+							uimanager.InteractionModeToggle((uimanager.InteractionModes)3);break;
+						case Key.F5://attack
+							uimanager.InteractionModeToggle((uimanager.InteractionModes)4);break;
+						case Key.F6://use
+							uimanager.InteractionModeToggle((uimanager.InteractionModes)5);break;
+						case Key.F7://toggle panel
+							Debug.Print("Toggle panel"); break;
+						case Key.F8: //cast spell
+							Debug.Print ("Cast spell"); break;
+						case Key.F9://track skill
+							Debug.Print ("Track"); break;
+						case Key.F10: // make camp 
+							Debug.Print ("Make camp"); break;
 					}
 				}
 			}
