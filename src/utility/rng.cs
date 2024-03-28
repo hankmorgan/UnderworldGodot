@@ -9,7 +9,7 @@ namespace Underworld
     public class Rng : UWClass
     {
         public static Random r = new();
-
+        public static Random r_unseeded = new(); //for rng calls where the seed never gets reset
 
         /// <summary>
         /// Returns a random value which is base value offset by the upper and lower range
