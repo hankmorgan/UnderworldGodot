@@ -189,8 +189,14 @@ namespace Underworld
                         }
                     case CombatStages.Striking:
                         {
-                            //weapon has struck do combat calcs                            
-                            Debug.Print("Striking");
+                            //weapon has struck do combat calcs  (if melee) 
+                            var position = mouseCursor.CursorPosition;
+                            if (!uimanager.IsMouseInViewPort())
+                            {
+                                position = mouseCursor.CursorPositionSub;//use mouselook position
+                            }
+                            var raycast = uimanager.DoRayCast(position, 2f);
+                            Debug.Print($"Striking {raycast.ToString()}");                            
                             //when done start reset
                             stage = CombatStages.Resetting;
                             combattimer = 0;

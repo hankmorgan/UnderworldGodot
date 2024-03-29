@@ -76,8 +76,8 @@ namespace Underworld
 
             if (!InGame) { return; }
             bool LeftClick = (eventMouseButton.ButtonIndex == MouseButton.Left); 
-            
-            Dictionary result = DoRayCast(eventMouseButton, RayDistance);
+           
+            Dictionary result = DoRayCast(eventMouseButton.Position, RayDistance);
             if (result != null)
             {
                 if (result.ContainsKey("collider") && result.ContainsKey("normal") && result.ContainsKey("position"))
