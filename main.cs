@@ -109,80 +109,69 @@ public partial class main : Node3D
 	public override void _Process(double delta)
 	{
 		if (uimanager.InGame)
-		{
-			int tileX = -(int)(cam.Position.X / 1.2f);
-			int tileY = (int)(cam.Position.Z / 1.2f);
-			int xposvecto = -(int)(((cam.Position.X % 1.2f) / 1.2f) * 8);
-			int yposvecto = (int)(((cam.Position.Z % 1.2f) / 1.2f) * 8);
-			var tmp = cam.Rotation;
-			tmp.Y = (float)(tmp.Y - Math.PI);
-			playerdat.heading = (int)Math.Round(-(tmp.Y * 127) / Math.PI);
-			uimanager.UpdateCompass();
+        {
+            int tileX = -(int)(cam.Position.X / 1.2f);
+            int tileY = (int)(cam.Position.Z / 1.2f);
+            int xposvecto = -(int)(((cam.Position.X % 1.2f) / 1.2f) * 8);
+            int yposvecto = (int)(((cam.Position.Z % 1.2f) / 1.2f) * 8);
+            var tmp = cam.Rotation;
+            tmp.Y = (float)(tmp.Y - Math.PI);
+            playerdat.heading = (int)Math.Round(-(tmp.Y * 127) / Math.PI);
+            uimanager.UpdateCompass();
+			combat.CombatInputHandler(delta);
 
-			lblPositionDebug.Text = $"{cam.Position.ToString()}\nL:{playerdat.dungeon_level} X:{tileX} Y:{tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}\n{cam.Rotation} {playerdat.heading} {(playerdat.heading >> 4) % 4} {xposvecto} {yposvecto}";
-
-			if (uimanager.InteractionMode == uimanager.InteractionModes.ModeAttack)
-			{
-				if (Input.IsMouseButtonPressed(MouseButton.Right))
-				{//building up charge
-					combat.CombatLoop(delta);
-				}
-				else
-				{
-					if (combat.stage>0)
-					{
-						combat.EndCombatLoop();//this will change
-					}
-				}
-			}
+            lblPositionDebug.Text = $"{cam.Position.ToString()}\nL:{playerdat.dungeon_level} X:{tileX} Y:{tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}\n{cam.Rotation} {playerdat.heading} {(playerdat.heading >> 4) % 4} {xposvecto} {yposvecto}";
+            
+			
+            
 			if ((tileX < 64) && (tileX >= 0) && (tileY < 64) && (tileY >= 0))
-			{
-				if ((playerdat.tileX != tileX) || (playerdat.tileY != tileY))
-				{
-					playerdat.tileX = tileX;
-					playerdat.tileY = tileY;
-					playerdat.xpos = xposvecto;
-					playerdat.ypos = yposvecto;
+            {
+                if ((playerdat.tileX != tileX) || (playerdat.tileY != tileY))
+                {
+                    playerdat.tileX = tileX;
+                    playerdat.tileY = tileY;
+                    playerdat.xpos = xposvecto;
+                    playerdat.ypos = yposvecto;
 
-					playerdat.PlayerStatusUpdate();
-				}
+                    playerdat.PlayerStatusUpdate();
+                }
 
-			}
+            }
 
 
-			cycletime += delta;
-			if (cycletime > 0.2)
-			{
-				cycletime = 0;
-				PaletteLoader.UpdatePaletteCycles();
-			}
-			if (uimanager.InGame)
-			{
-				gameRefreshTimer += delta;
-				if (gameRefreshTimer >= 0.3)
-				{
-					gameRefreshTimer = 0;
-					if (!blockmouseinput)
-					{
-						npc.UpdateNPCs();
-						AnimationOverlay.UpdateAnimationOverlays();
-					}
-				}
+            cycletime += delta;
+            if (cycletime > 0.2)
+            {
+                cycletime = 0;
+                PaletteLoader.UpdatePaletteCycles();
+            }
+            if (uimanager.InGame)
+            {
+                gameRefreshTimer += delta;
+                if (gameRefreshTimer >= 0.3)
+                {
+                    gameRefreshTimer = 0;
+                    if (!blockmouseinput)
+                    {
+                        npc.UpdateNPCs();
+                        AnimationOverlay.UpdateAnimationOverlays();
+                    }
+                }
 
-				if ((MessageDisplay.WaitingForTypedInput) || (MessageDisplay.WaitingForYesOrNo))
-				{
-					if (!uimanager.instance.TypedInput.HasFocus())
-					{
-						uimanager.instance.TypedInput.GrabFocus();
-					}
-					uimanager.instance.scroll.UpdateMessageDisplay();
-				}
-			}
-		}
+                if ((MessageDisplay.WaitingForTypedInput) || (MessageDisplay.WaitingForYesOrNo))
+                {
+                    if (!uimanager.instance.TypedInput.HasFocus())
+                    {
+                        uimanager.instance.TypedInput.GrabFocus();
+                    }
+                    uimanager.instance.scroll.UpdateMessageDisplay();
+                }
+            }
+        }
 
-	}
+    }
 
-	public override void _Input(InputEvent @event)
+    public override void _Input(InputEvent @event)
 	{
 		if ((@event is InputEventMouseButton eventMouseButton)
 			&&
@@ -199,7 +188,10 @@ public partial class main : Node3D
 				if (!blockmouseinput)
 				{
 					if (uimanager.IsMouseInViewPort())
-						uimanager.ClickOnViewPort(eventMouseButton);
+						{
+							uimanager.ClickOnViewPort(eventMouseButton);
+						}
+						
 				}
 			}
 		}

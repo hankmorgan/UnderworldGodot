@@ -227,7 +227,7 @@ namespace Underworld
                         break;
                     }
                 default:
-                    playerdat.play_drawn = 0; //ensure weapon is not draw.
+                    playerdat.play_drawn = 0; //ensure weapon is not drawn.
                     break;
 
             }
