@@ -190,22 +190,46 @@ namespace Underworld
                     }
                 }
             }
-            if (index == 0)
-            {
-                if (UWClass._RES == UWClass.GAME_UW2)
-                {
 
-                }
-                else
-                {
-                    InteractionModeShowHide(false);//hide the interaction buttons.  
-                }
-                //turn off mouselook
-                Godot.Input.MouseMode = Godot.Input.MouseModeEnum.Hidden;
-                main.gamecam.Set("MOUSELOOK", false);
-                
-                ReturnToTopOptionsMenu();
-                main.gamecam.Set("MOVE", false);
+            ///special handling for some modes
+            switch (index)
+            {
+                case InteractionModes.ModeOptions:
+                    {
+                        if (UWClass._RES == UWClass.GAME_UW2)
+                        {
+
+                        }
+                        else
+                        {
+                            InteractionModeShowHide(false);//hide the interaction buttons.  
+                        }
+                        //turn off mouselook
+                        Godot.Input.MouseMode = Godot.Input.MouseModeEnum.Hidden;
+                        main.gamecam.Set("MOUSELOOK", false);
+
+                        ReturnToTopOptionsMenu();
+                        main.gamecam.Set("MOVE", false);
+                        break;
+                    }
+                case InteractionModes.ModeAttack:
+                    {
+                        playerdat.play_drawn = 1;//draw the weapon
+                        var obj = playerdat.PrimaryHandObject;
+                        switch(combat.isWeapon(obj))
+                        {                          
+                            case 1://melee weapon
+                            case 2: //rangedweapon
+                                combat.currentweapon = obj;break;
+                            default: 
+                                combat.currentweapon = null;break;
+                        }
+                        break;
+                    }
+                default:
+                    playerdat.play_drawn = 0; //ensure weapon is not draw.
+                    break;
+
             }
         }
 

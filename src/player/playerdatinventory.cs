@@ -26,16 +26,16 @@ namespace Underworld
         public static int NextFreeInventorySlot
         {
             get
-                {
-                    for (int i=1;i<=InventoryObjects.GetUpperBound(0);i++)
-                    {//start at 1 since there is no object 0
-                        if (InventoryObjects[i]==null)
-                        {
-                            return i;
-                        }
+            {
+                for (int i = 1; i <= InventoryObjects.GetUpperBound(0); i++)
+                {//start at 1 since there is no object 0
+                    if (InventoryObjects[i] == null)
+                    {
+                        return i;
                     }
-                    return -1; //no free slot
                 }
+                return -1; //no free slot
+            }
         }
 
 
@@ -364,6 +364,26 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// Gets the object in the player primary hand.
+        /// </summary>
+        /// <returns></returns>
+
+        public static uwObject PrimaryHandObject
+        {
+            get
+            {
+                if (playerdat.isLefty)
+                {
+                    return playerdat.LeftHandObject;
+                }
+                else
+                {
+                    return playerdat.RightHandObject;
+                }
+            }
+        }
+
 
         public static int RightRing
         {
@@ -439,7 +459,7 @@ namespace Underworld
 
 
 
-        
+
 
 
         /// <summary>
@@ -450,22 +470,23 @@ namespace Underworld
         {
             var obj = InventoryObjects[index];
             var next = obj.next;
-           
-           if (ClearLink)
+
+            if (ClearLink)
             {
                 // //Find the object chain the object is in and clear the list head index        
                 var LinkOffset = GetItemLinkOffset(index);
-                if (LinkOffset<InventoryPtr)
+                if (LinkOffset < InventoryPtr)
                 {
                     //offset is directly on paper doll. it should have no next. rare issue in Uw1 where a paperdoll object still has a next.
-                    next= 0;                }
-                
+                    next = 0;
+                }
+
                 //This clears either the next or link to the object and replaces it with the objects next value
                 var data = (int)getAt(pdat, (LinkOffset), 16);
                 data &= 0x3f; //Clear link/next
                 data |= (next << 6); //Or in the obj.next for the object.
                 setAt(pdat, LinkOffset, 16, data);
-           }
+            }
 
             InventoryObjects[index] = null;
 
@@ -546,54 +567,54 @@ namespace Underworld
         /// <returns></returns>
         public static int AddInventoryObjectToWorld(int objIndex, bool updateUI, bool RemoveNext, bool DestroyInventoryObject = true, bool ClearLink = true)
         {
-            var oldObj = InventoryObjects[objIndex];      
-           
+            var oldObj = InventoryObjects[objIndex];
+
             // recursively add linked/next objects to the world first. Updating oldobj so that its link/next is pointing to the world
             if (oldObj.link != 0 && oldObj.is_quant == 0)
             {
                 oldObj.link = (short)AddInventoryObjectToWorld(
-                    objIndex: oldObj.link, 
-                    updateUI: false, 
+                    objIndex: oldObj.link,
+                    updateUI: false,
                     RemoveNext: true,
                     ClearLink: false
                     );
-                Debug.Print ($"Link is now {oldObj.link}");
+                Debug.Print($"Link is now {oldObj.link}");
             }
-            if (oldObj.next!=0 && RemoveNext)
+            if (oldObj.next != 0 && RemoveNext)
             {
                 oldObj.next = (short)AddInventoryObjectToWorld(
-                    objIndex: oldObj.next, 
-                    updateUI: false, 
+                    objIndex: oldObj.next,
+                    updateUI: false,
                     RemoveNext: true,
                     ClearLink: false);
-                Debug.Print ($"Next is now {oldObj.next}");
+                Debug.Print($"Next is now {oldObj.next}");
             }
 
             //Now get the index to store at
             //UWTileMap.current_tilemap.StaticFreeListPtr--;
             //Debug.Print($"Allocating {UWTileMap.current_tilemap.StaticFreeListObject} (pointer decremented)");
-           
+
             var newIndex = ObjectCreator.GetAvailableObjectSlot();
-            
+
             //(short)UWTileMap.current_tilemap.StaticFreeListObject;
             var NewObj = UWTileMap.current_tilemap.LevelObjects[newIndex];
             //copy data to that index.
             for (int i = 0; i < 8; i++)
-                {
-                    NewObj.DataBuffer[NewObj.PTR + i] = oldObj.DataBuffer[oldObj.PTR+i]; 
-                }
+            {
+                NewObj.DataBuffer[NewObj.PTR + i] = oldObj.DataBuffer[oldObj.PTR + i];
+            }
             //special cases
-            if ((NewObj.majorclass == 2) && (NewObj.minorclass == 1) && (NewObj.classindex>=4) && (NewObj.classindex<=7))
+            if ((NewObj.majorclass == 2) && (NewObj.minorclass == 1) && (NewObj.classindex >= 4) && (NewObj.classindex <= 7))
             {
                 //light source that is turned on.
-                light.LightOff(NewObj);                
+                light.LightOff(NewObj);
             }
             if (DestroyInventoryObject)
             {
                 //remove inventory obj
                 RemoveFromInventory(
-                    index: objIndex, 
-                    updateUI: updateUI, 
+                    index: objIndex,
+                    updateUI: updateUI,
                     ClearLink: ClearLink);
             }
             return newIndex;
@@ -610,7 +631,7 @@ namespace Underworld
         public static short AddObjectToPlayerInventory(int objIndex, bool IncludeNext)
         {
             var oldObj = UWTileMap.current_tilemap.LevelObjects[objIndex];
-            
+
             // recursively add linked/next objects
             if (oldObj.link != 0 && oldObj.is_quant == 0)
             {
@@ -622,17 +643,17 @@ namespace Underworld
                 }
                 else
                 {
-                    oldObj.link = AddObjectToPlayerInventory(oldObj.link,true);
+                    oldObj.link = AddObjectToPlayerInventory(oldObj.link, true);
                     Debug.Print($"link is now {oldObj.link}");
                 }
 
             }
             if (oldObj.next != 0 && IncludeNext)
             {
-                oldObj.next = AddObjectToPlayerInventory(oldObj.next,true);
+                oldObj.next = AddObjectToPlayerInventory(oldObj.next, true);
                 Debug.Print($"Next is now {oldObj.next}");
             }
-            
+
             var newIndex = MoveObjectToInventoryData(objIndex);
             return (short)newIndex;
         }
@@ -643,7 +664,7 @@ namespace Underworld
         /// <param name="objIndex"></param>
         /// <returns></returns>
         private static int MoveObjectToInventoryData(int objIndex)
-        {           
+        {
             var obj = UWTileMap.current_tilemap.LevelObjects[objIndex];
             // if (objIndex >= 256)
             // {
@@ -658,14 +679,14 @@ namespace Underworld
             //     // UWTileMap.current_tilemap.MobileFreeListPtr++;
             //     // UWTileMap.current_tilemap.MobileFreeListObject = objIndex;
             // }
-            var newIndex =  NextFreeInventorySlot; //++LastItemIndex;
+            var newIndex = NextFreeInventorySlot; //++LastItemIndex;
             Debug.Print($"Moving object at index {objIndex} to {newIndex}");
             InventoryObjects[newIndex] = new uwObject
             {
                 isInventory = true,
                 IsStatic = true,
                 index = (short)(newIndex),
-                PTR = InventoryPtr + (newIndex-1) * 8,
+                PTR = InventoryPtr + (newIndex - 1) * 8,
                 DataBuffer = pdat
             };
             var NewObj = InventoryObjects[newIndex];
@@ -673,7 +694,7 @@ namespace Underworld
             //copy data to this offset.... and wipe the old
             for (int i = 0; i < 8; i++)
             {
-                InventoryObjects[newIndex].DataBuffer[NewObj.PTR+i] = obj.DataBuffer[obj.PTR + i];
+                InventoryObjects[newIndex].DataBuffer[NewObj.PTR + i] = obj.DataBuffer[obj.PTR + i];
                 obj.DataBuffer[obj.PTR + i] = 0;
             }
 
@@ -691,7 +712,7 @@ namespace Underworld
         /// <returns></returns>
         public static bool CanCarryWeight(uwObject obj)
         {
-            Debug.Print ("unimplemented weight check");
+            Debug.Print("unimplemented weight check");
             return true;
         }
 
@@ -700,9 +721,9 @@ namespace Underworld
         /// </summary>
         /// <param name="item_id"></param>
         /// <returns></returns>
-         public static bool CanCarryWeight(int item_id)
+        public static bool CanCarryWeight(int item_id)
         {
-            Debug.Print ("unimplemented weight check");
+            Debug.Print("unimplemented weight check");
             return true;
         }
 

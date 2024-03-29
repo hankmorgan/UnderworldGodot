@@ -41,22 +41,20 @@ namespace Underworld
             PowerGem.Texture = grPower.LoadImageAt(0);
         }
 
-        public static void IncreasePower()
+        public static void ChangePower(int powerlevel)
         {
-            if (PowerLevelFrame<9)
+            if (powerlevel<9)
             {
-                PowerLevelFrame++;
-                PowerFrameAdjust=0;
+                PowerLevelFrame = powerlevel;
+                PowerFrameAdjust = 0;
                 SetPowerFrame(PowerLevelFrame);
             }
             else
-            {
-                if (PowerLevelFrame==9)
-                    {
-                        PowerFrameAdjust++;
-                        if (PowerFrameAdjust>4){PowerFrameAdjust = 0;}                        
-                        SetPowerFrame(PowerLevelFrame + PowerFrameAdjust);                       
-                    }
+            {//cycle frames at max level
+                PowerLevelFrame = 9;
+                PowerFrameAdjust++;
+                if (PowerFrameAdjust>4){PowerFrameAdjust = 0;}                        
+                SetPowerFrame(PowerLevelFrame + PowerFrameAdjust);                       
             }                        
         }
 

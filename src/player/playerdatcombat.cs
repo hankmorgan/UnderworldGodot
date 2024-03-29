@@ -23,6 +23,25 @@ namespace Underworld
                     }
                 
             }
+            set
+            {
+                if (_RES==GAME_UW2)
+                    {
+                        value = value & 0x1;
+                        var tmp = GetAt(0x61);
+                        tmp &= 0xFE;
+                        tmp |= (byte)value;
+                        SetAt(0x61,tmp);
+                    }
+                else
+                    {
+                        value = value & 0x1;
+                        var tmp = GetAt(0x60);
+                        tmp &= 0xFE;
+                        tmp |= (byte)value;
+                        SetAt(0x60,tmp);
+                    }
+            }
         }
 
 
