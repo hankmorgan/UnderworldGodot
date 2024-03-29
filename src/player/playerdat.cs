@@ -352,144 +352,21 @@ namespace Underworld
         }
 
 
-
-        /// <summary>
-        /// Player Hunger Level
-        /// </summary>
-        public static byte play_hunger
+        public static int difficuly
         {
             get
             {
-                return GetAt(0x3A);
-            }
-            set
-            {
-                SetAt(0x3A, (byte)value);
-            }
-        }
-
-
-        
-        public static byte play_fatigue
-        {
-            get
-            {
-                return GetAt(0x39);
-            }
-            set
-            {
-                SetAt(0x39, (byte)value);
-            }
-        }
-
-        public static byte play_poison
-        {
-            get
-            {
-                switch (_RES)
-                {//TODO double check this is right
-                    case GAME_UW2:
-                        return (byte)((GetAt(0x61) >> 1) & 0xf);
-                    default:
-                        return (byte)((GetAt(0x60) >> 2) & 0xf);
-                }
-            }
-            set
-            {
-                switch (_RES)
-                {//TODO double check this is right
-                    case GAME_UW2:
-                        {
-                            var tmp = (byte)(GetAt(0x61) & 0xE1);
-                            tmp = (byte)(tmp | ((value & 0xF) << 1));
-                            SetAt(0x61, tmp);
-                            break;
-                        }
-                    default:
-                        {
-                            var tmp = (byte)(GetAt(0x61) & 0xC3);
-                            tmp = (byte)(tmp | ((value & 0xF) << 2));
-                            SetAt(0x60, tmp);
-                            break;
-                        }
-                }
-                uimanager.RefreshHealthFlask();
-            }
-
-        }
-
-        /// <summary>
-        /// How drunk the player is
-        /// </summary>
-        public static int intoxication
-        {
-            get
-            {
-                if (_RES==GAME_UW2)
+                if(_RES==GAME_UW2)
                 {
-                    return (GetAt16(0x62) >> 6) & 0x3F;
+                    return GetAt(0x302);
                 }
                 else
                 {
-                    return (GetAt16(0x62) >> 4) & 0x3F;
-                }
-                
-            }
-            set
-            {
-                if (_RES==GAME_UW2)
-                {
-                    var tmpValue = GetAt16(0x62);
-                    tmpValue &= 0xF03F;//clear bits
-                    tmpValue |= ((value & 0x3F) << 6);//set new value
-                    SetAt16(0x62, tmpValue);
-                }
-                else
-                {
-                    var tmpValue = GetAt16(0x62);
-                    tmpValue &= 0xFC0F;//clear bits
-                    tmpValue |= ((value & 0x3F) << 4);//set new value
-                    SetAt16(0x62, tmpValue);
+                    return GetAt(0xB5);
                 }
             }
         }
 
-        //Remaining cycles of hallucination effects.
-        public static int shrooms
-        {
-            get
-            {
-                if (_RES==GAME_UW2)
-                {
-                    return (GetAt(0x62) >> 4) & 0x3;
-                }
-                else
-                {
-                    return (GetAt(0x62) >> 2) & 0x3;
-                }
-            }
-            set
-            {
-                if (_RES==GAME_UW2)
-                {
-                    var tmp = GetAt(0x62);
-                    tmp &= 0xCF;
-                    value &=0x3;
-                    value <<= 4;
-                    tmp = (byte)(tmp | (value));
-                    SetAt(0x62,tmp);
-                }
-                else
-                {
-                    var tmp = GetAt(0x62);
-                    tmp &= 0xF3;
-                    value &=0x3;
-                    value <<= 2;
-                    tmp = (byte)(tmp | (value));
-                    SetAt(0x62,tmp);
-                }
-            }
-        }
 
     } //end class
 }//end namespace
