@@ -9,23 +9,37 @@ namespace Underworld
     /// </summary>
     public class a_teleport_trap : trap
     {
-        static bool JustChangedLevel;
+        /// <summary>
+        /// To prevent teleporting again when the teleport destination in inside a teleport trap
+        /// </summary>
+        static bool JustTeleported;
         public static int Activate(uwObject trapObj, uwObject[] objList)
         {
             if (trapObj.zpos == 0)
             {
-                uimanager.FlashColour(1, uimanager.Cuts3DWin, 0.1f);
-                Debug.Print($"Teleport within this level {trapObj.quality},{trapObj.owner}");
-                var targetTile = UWTileMap.current_tilemap.Tiles[trapObj.quality, trapObj.owner];
-                playerdat.zpos = targetTile.floorHeight << 2;
-                playerdat.xpos = 3; playerdat.ypos = 3;
-                playerdat.tileX = trapObj.quality; playerdat.tileY = trapObj.owner;
-
-                main.gamecam.Position = uwObject.GetCoordinate(playerdat.tileX, playerdat.tileY, playerdat.xpos, playerdat.ypos, playerdat.camerazpos);
+                if (!JustTeleported)
+                {
+                    uimanager.FlashColour(1, uimanager.Cuts3DWin, 0.1f);
+                    Debug.Print($"Teleport within this level {trapObj.quality},{trapObj.owner}");
+                    var targetTile = UWTileMap.current_tilemap.Tiles[trapObj.quality, trapObj.owner];
+                    playerdat.zpos = targetTile.floorHeight << 2;
+                    playerdat.xpos = 3; playerdat.ypos = 3;
+                    playerdat.tileX = trapObj.quality; playerdat.tileY = trapObj.owner;
+                    main.gamecam.Position = uwObject.GetCoordinate(playerdat.tileX, playerdat.tileY, playerdat.xpos, playerdat.ypos, playerdat.camerazpos);
+                    JustTeleported = true;
+                    _ = Peaky.Coroutines.Coroutine.Run(
+                    PauseTeleport(),
+                    main.instance
+                    );
+                }
+                else
+                {
+                    JustTeleported = false;
+                }
             }
             else
             {
-                if (!JustChangedLevel)
+                if (!JustTeleported)
                 {
                     var targetX = trapObj.quality; var targetY = trapObj.owner;
                     Debug.Print($"Teleport to dungeon {trapObj.zpos}  {trapObj.quality},{trapObj.owner}");
@@ -43,7 +57,7 @@ namespace Underworld
                     playerdat.xpos = 3; playerdat.ypos = 3;
                     playerdat.tileX = targetX; playerdat.tileY = targetY;
                     main.gamecam.Position = uwObject.GetCoordinate(targetX, targetY, playerdat.xpos, playerdat.ypos, playerdat.camerazpos);
-                    JustChangedLevel = true;
+                    JustTeleported = true;
                     _ = Peaky.Coroutines.Coroutine.Run(
                     PauseTeleport(),
                     main.instance
@@ -51,7 +65,7 @@ namespace Underworld
                 }
                 else
                 {
-                    JustChangedLevel = false;
+                    JustTeleported = false;
                 }
             }
 
@@ -66,9 +80,9 @@ namespace Underworld
         /// <returns></returns>
         static IEnumerator PauseTeleport()
         {
-            JustChangedLevel = true;
+            JustTeleported = true;
             yield return new WaitForSeconds(1);
-            JustChangedLevel = false;
+            JustTeleported = false;
             yield return 0;
         }
 
