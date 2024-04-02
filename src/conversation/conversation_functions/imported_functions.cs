@@ -145,6 +145,11 @@ namespace Underworld
                         x_skills();
                         break;
                     }
+                case "set_likes_dislikes":
+                    {
+                        set_likes_dislikes();
+                        break;
+                    }
                 default:
                     {
                         Debug.Print($"Unimplemented {func.importname}"); break;

@@ -10,7 +10,7 @@ namespace Underworld
             {
                 var NewValue = at(at(stackptr-1));
                 var SkillNo = at(at(stackptr-2));
-                Debug.Print($"{NewValue} {SkillNo}");
+                Debug.Print($"x_skills {NewValue} {SkillNo}");
                 if (NewValue==10000)
                 {
                     //advance skill using skill gain logic

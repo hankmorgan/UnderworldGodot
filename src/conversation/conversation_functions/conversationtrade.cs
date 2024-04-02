@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace Underworld
 {
     //Common data and code for item trading.
@@ -9,23 +11,23 @@ namespace Underworld
         /// Calculated using random offset and CritterDat[0xEh] bits 0-3
         /// RNG is seeded by critter item_id
         /// </summary>
-        public static int TradeThreshold=0;
+        public static int TradeThreshold = 0;
 
         /// <summary>
         /// How much patience the NPC has for bad or insulting trade offers. 
         /// </summary>
-        public static int TradePatience=0;
+        public static int TradePatience = 0;
 
 
         /// <summary>
         /// Measure of how good this NPC is at appraising the value of a trade item.
         /// </summary>
-        public static int NPCAppraisalAccuracy=0;
+        public static int NPCAppraisalAccuracy = 0;
 
         /// <summary>
         /// Score of the previous trade evaluation. Used to determine if a better or worse offer has been made on repeated offers
         /// </summary>
-        public static int PreviousEvaluation =0;
+        public static int PreviousEvaluation = 0;
 
         /// <summary>
 		/// Pointer to Array in the stack that contains the items the npc likes
@@ -45,7 +47,7 @@ namespace Underworld
         /// <param name="ApplyLikeDislike"></param>
         /// <param name="appraise_accuracy"></param>
         /// <returns></returns>
-        static int GetNPCValue(bool ApplyLikeDislike=false, int appraise_accuracy = 0, bool applyAccuracy = false)
+        static int GetNPCValue(bool ApplyLikeDislike = false, int appraise_accuracy = 0, bool applyAccuracy = false)
         {
             var result = 0;
             for (int i = 0; i < uimanager.NoOfTradeSlots; i++)
@@ -53,9 +55,9 @@ namespace Underworld
                 //if slot select get monetary value, possibly adjusted for likes dislike and player appraisal score
                 var index = uimanager.GetNPCTradeSlot(i);
                 result += GetTrueItemValue(
-                    ApplyLikeDislike: ApplyLikeDislike, 
-                    appraise_accuracy: appraise_accuracy, 
-                    applyAccuracy: applyAccuracy, 
+                    ApplyLikeDislike: ApplyLikeDislike,
+                    appraise_accuracy: appraise_accuracy,
+                    applyAccuracy: applyAccuracy,
                     index: index);
             }
             return result;
@@ -69,7 +71,7 @@ namespace Underworld
         /// <param name="appraise_accuracy"></param>
         /// <param name="applyAccuracy"></param>
         /// <returns></returns>
-        static int GetPCValue(bool ApplyLikeDislike=false, int appraise_accuracy = 0, bool applyAccuracy = false)
+        static int GetPCValue(bool ApplyLikeDislike = false, int appraise_accuracy = 0, bool applyAccuracy = false)
         {
             var result = 0;
             for (int i = 0; i < uimanager.NoOfTradeSlots; i++)
@@ -77,9 +79,9 @@ namespace Underworld
                 //if slot select get monetary value, possibly adjusted for likes dislike and player appraisal score
                 var index = uimanager.GetPlayerTradeSlot(i);
                 result += GetTrueItemValue(
-                    ApplyLikeDislike: ApplyLikeDislike, 
-                    appraise_accuracy: appraise_accuracy, 
-                    applyAccuracy: applyAccuracy, 
+                    ApplyLikeDislike: ApplyLikeDislike,
+                    appraise_accuracy: appraise_accuracy,
+                    applyAccuracy: applyAccuracy,
                     index: index);
             }
             return result;
@@ -132,33 +134,100 @@ namespace Underworld
         /// <returns></returns>
         static int GetValueOfItemToNPC(uwObject obj, bool ApplyLikeDislike, int appraise_accuracy)
         {
+            float multiplier = 1f;
             int itemvalue = 0;
+            var itemCategory = obj.item_id >> 4;
+
+            var quality = obj.quality;
+            if (((obj.item_id == 160) || (obj.item_id == 161)) && (_RES != GAME_UW2))
+            {
+                quality = 63;
+            }
+            if (((obj.item_id == 160)) && (_RES == GAME_UW2))
+            {
+                quality = 63;
+            }
+
             if (ApplyLikeDislike)
             {
                 //return the value adjusted for the npc likes dislikes.
-                if (Likes!=0)
+                if (Likes != 0)
                 {//loop the stack starting at Likes until value 0xFF is hit.
-                    //if value is >=1000 then liked is a class of object
-                    //if value < 1000 then liked is an exact object match
-                    //if liked value is 1.5 times
-                    //itemvalue = (commonObjDat.monetaryvalue(obj.item_id) / 3) * 2;
+                 //if value is >=1000 then liked is a class of object
+                 //if value < 1000 then liked is an exact object match
+                 //if liked value is 1.5 times
+                 //itemvalue = (commonObjDat.monetaryvalue(obj.item_id) / 3) * 2;
+                 //Debug.Print($"Likes are {Likes}");                   
 
-                    //TODO item value has to take into account quality. (coins are always make quality.)
+                    var arrayindex = Likes;
+                    var entry = at(arrayindex);
+                    while (entry != -1)
+                    {
+                        if (entry >= 1000)
+                        {
+                            if (itemCategory == entry - 1000)
+                            {
+                                multiplier = 1.5f;
+                                Debug.Print($"NPC likes item category of {GameStrings.GetSimpleObjectNameUW(obj.item_id)}");
+                            }
+                        }
+                        else
+                        {
+
+                            if (entry == obj.item_id)
+                            {
+                                multiplier = 1.5f;
+                                Debug.Print($"NPC likes item {GameStrings.GetSimpleObjectNameUW(obj.item_id)}");
+                            }
+                        }
+                        arrayindex++;
+                        entry = at(arrayindex);
+                    }
                 }
-                if (Dislikes!=0)
+                if (Dislikes != 0)
                 {
                     //if unliked no value
                     //itemvalue = 0;
-                }             
-                
+                    Debug.Print($"Dislikes are {Dislikes}");
+
+                    var arrayindex = Dislikes;
+                    var entry = at(arrayindex);
+                    while (entry != -1)
+                    {
+                        if (entry >= 1000)
+                        {
+                            if (itemCategory == entry - 1000)
+                            {
+                                multiplier = 0f;
+                                Debug.Print($"NPC dislikes item category of {GameStrings.GetSimpleObjectNameUW(obj.item_id)}");
+                                return 0;
+                            }
+                        }
+                        else
+                        {
+                            if (obj.item_id == entry)
+                            {
+                                multiplier = 0f;
+                                Debug.Print($"NPC dislikes item {GameStrings.GetSimpleObjectNameUW(obj.item_id)}");
+                                return 0;
+                            }
+                        }
+                        arrayindex++;
+                        entry = at(arrayindex);
+                    }
+                }
+
+                itemvalue = (int)(commonObjDat.monetaryvalue(obj.item_id) * multiplier);
+                itemvalue = (itemvalue * quality) >> 6;
             }
             else
             {
-                //return the true base value
+                //return the true base value adjusted for quality.
                 itemvalue = commonObjDat.monetaryvalue(obj.item_id);
+                itemvalue = (itemvalue * quality) >> 6;
             }
 
-            //Adjust the value of the item based on the players appraisal accuracy score
+            //Adjust the value of the item based on the players/npcs appraisal accuracy score
             var offset = Rng.RandomOffset(itemvalue, -appraise_accuracy, +appraise_accuracy);
             return itemvalue;
         }
@@ -169,9 +238,9 @@ namespace Underworld
         /// <returns></returns>
         static bool IsPlayerOfferingItems()
         {
-            for (int i=0;i < uimanager.NoOfTradeSlots; i++ )
+            for (int i = 0; i < uimanager.NoOfTradeSlots; i++)
             {
-                if (uimanager.GetPlayerTradeSlot(i)!=-1)
+                if (uimanager.GetPlayerTradeSlot(i) != -1)
                 {
                     return true;
                 }
@@ -185,9 +254,9 @@ namespace Underworld
         /// <returns></returns>
         static bool IsNPCOfferingItems()
         {
-            for (int i=0;i < uimanager.NoOfTradeSlots; i++ )
+            for (int i = 0; i < uimanager.NoOfTradeSlots; i++)
             {
-                if (uimanager.GetNPCTradeSlot(i)!=-1)
+                if (uimanager.GetNPCTradeSlot(i) != -1)
                 {
                     return true;
                 }
@@ -203,14 +272,14 @@ namespace Underworld
         /// <returns>No of items</returns>
         static int GetPlayerSelectedTradeItems(out int[] itemIds, out int[] itemdIndices)
         {
-            int count=0;
+            int count = 0;
             itemIds = new int[uimanager.NoOfTradeSlots];
             itemdIndices = new int[uimanager.NoOfTradeSlots];
 
-            for (int i = 0; i<uimanager.NoOfTradeSlots;i++)
+            for (int i = 0; i < uimanager.NoOfTradeSlots; i++)
             {
-                var item =  uimanager.GetPlayerTradeSlot(i);
-                if (item!=-1)
+                var item = uimanager.GetPlayerTradeSlot(i);
+                if (item != -1)
                 {
                     var obj = UWTileMap.current_tilemap.LevelObjects[item];
                     itemIds[count] = obj.item_id;
@@ -229,18 +298,18 @@ namespace Underworld
         /// <param name="itemindex"></param>
         public static void GiveItemIndexToNPC(uwObject talker, int itemindex)
         {
-            for (int i=0; i<uimanager.NoOfTradeSlots;i++)
+            for (int i = 0; i < uimanager.NoOfTradeSlots; i++)
             {
-                var x = uimanager.GetPlayerTradeSlot(i,false);
-                if (x!=-1)
-                    {                       
-                        var obj = UWTileMap.current_tilemap.LevelObjects[x];
-                        //insert to talkers object list
-                        obj.next = talker.link;
-                        talker.link = obj.index;
-                        uimanager.SetPlayerTradeSlot(i,-1,false);
-                        return;
-                    }
+                var x = uimanager.GetPlayerTradeSlot(i, false);
+                if (x != -1)
+                {
+                    var obj = UWTileMap.current_tilemap.LevelObjects[x];
+                    //insert to talkers object list
+                    obj.next = talker.link;
+                    talker.link = obj.index;
+                    uimanager.SetPlayerTradeSlot(i, -1, false);
+                    return;
+                }
             }
         }
 
@@ -296,7 +365,7 @@ namespace Underworld
                             objList: UWTileMap.current_tilemap.LevelObjects,
                             dropPosition: main.gamecam.Position,
                             tileX: playerdat.tileX,
-                            tileY: playerdat.tileY);                            
+                            tileY: playerdat.tileY);
                     }
                     uimanager.SetNPCTradeSlot(i, -1, false);
                 }
