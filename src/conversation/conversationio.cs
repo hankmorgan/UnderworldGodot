@@ -59,7 +59,7 @@ namespace Underworld
                     int ReplacementValue = 0;
                     int OffsetValue = 0;
                     string FoundString = "";
-
+                    int ArrayOffset = 0;
                     for (int sg = 0; sg < matches[sm].Groups.Count; sg++)
                     {
                         if (matches[sm].Groups[sg].Success)
@@ -95,9 +95,16 @@ namespace Underworld
                                         }
                                         break;
                                     }
-                                case 5: //formatting specifier (unimplemented
-                                    string formatting = matches[sm].Groups[sg].Value;
-                                    break;
+                                case 5: //c2 array offset (unimplemented
+                                    {
+                                    string CModifier = matches[sm].Groups[sg].Value;
+                                        CModifier= CModifier.Replace("C","");
+                                        if (int.TryParse(CModifier, out int val))
+                                        {
+                                            ArrayOffset = val - 1;
+                                        }                                        
+                                        break;
+                                    }    
                             }
                         }
                         //Debug.Log("group " + matches[sm].Groups[sg].Success + " " + matches[sm].Groups[sg].Value);
@@ -115,8 +122,8 @@ namespace Underworld
                             }
                         case "@GI": //Global integer
                             {
-                                //Debug.Print("@GI String replacement (" + ReplacementValue + ")");//Sometimes this works with val+1 other times val!!
-                                FoundString = at(ReplacementValue).ToString();
+                                //Debug.Print("@GI String replacement (" + ReplacementValue + ")");//Depending on the presense of the 'C' extension a offset may be applied.
+                                FoundString = at(ReplacementValue + ArrayOffset).ToString();
                                 break;
                             }
                         case "@SS": //Stack string
@@ -137,7 +144,7 @@ namespace Underworld
                             {//TODO: this +1 behaves inconsistently. UW1 or UW2 difference???
                                 // if (_RES == GAME_UW2)
                                 // {
-                                    FoundString = at(basep + ReplacementValue).ToString();
+                                    FoundString = at(basep + ReplacementValue + ArrayOffset).ToString();
                                 // }
                                 // else
                                 // {
