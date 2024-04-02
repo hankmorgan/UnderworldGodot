@@ -323,5 +323,17 @@ namespace Underworld
 			Debug.Print($"Imported Variable {varname} not found!");
 			return 0;
 		}
+
+		public static string GetVariableNameAtAddress(int address)
+		{
+			if (address<=currentConversation.functions.GetUpperBound(0))
+			{
+				if (currentConversation.functions[address].import_type == 0x010F)
+				{
+					return currentConversation.functions[address].importname;
+				}
+			}
+			return "";
+		}
 	}//end class
 }// end namespace

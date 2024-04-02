@@ -140,6 +140,11 @@ namespace Underworld
                         check_inv_quality();
                         break;
                     }
+                case "x_skills":
+                    {
+                        x_skills();
+                        break;
+                    }
                 default:
                     {
                         Debug.Print($"Unimplemented {func.importname}"); break;

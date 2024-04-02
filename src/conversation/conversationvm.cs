@@ -438,7 +438,13 @@ namespace Underworld
 
 					case cnv_FETCHM:
 						{
-							var arg1 = at(Pop());
+							var address = Pop();
+							var arg1 = at(address);
+							var varname = GetVariableNameAtAddress(address);
+							if (varname!="")
+							{
+								Debug.Print ($"Fetching {varname} with value {arg1}");
+							}
 							if (testing) { Debug.Print($"{instrp}:FETCHM {arg1}"); }
 							Push(arg1);
 							break;
