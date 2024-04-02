@@ -135,6 +135,11 @@ namespace Underworld
                         give_ptr_npc(talker);
                         break;
                     }
+                case "check_inv_quality":
+                    {
+                        check_inv_quality();
+                        break;
+                    }
                 default:
                     {
                         Debug.Print($"Unimplemented {func.importname}"); break;
