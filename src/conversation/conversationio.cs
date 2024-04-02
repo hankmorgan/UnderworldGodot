@@ -45,7 +45,7 @@ namespace Underworld
             //<num>: decimal value
             //<extension>: format: C<number>: use array index <number>
 
-            string RegExForFindingReplacements = "([@][GSP][SI])([0-9]*)([S][I])?([0-9]*)?([C][0-9]*)?";
+            string RegExForFindingReplacements = "([@][GSP][SI])(-*[0-9]*)([S][I])?([0-9]*)?([C][0-9]*)?";
             //"(@)([GSP])([SI])([0-9])*([S][I][0-9]*)*([C][0-9])*";
             //string RegExForFindingReplacementsTypes = "(@)([GSP])([SI])";
 
