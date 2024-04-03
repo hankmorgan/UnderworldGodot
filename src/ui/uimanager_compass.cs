@@ -13,6 +13,9 @@ namespace Underworld
         TextureRect[] CompassPointsUW1 = new TextureRect[16];
         [Export] 
         TextureRect[] CompassPointsUW2 = new TextureRect[16];
+        
+        [Export]
+        public Panel CompassPanelUW2 = new Panel();
 
 
         public static void InitCompass()

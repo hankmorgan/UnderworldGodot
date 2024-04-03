@@ -569,6 +569,8 @@ namespace Underworld
 				{//disable interaction buttons
 					uimanager.EnableDisable(uimanager.instance.InteractionButtonsUW2[i], true);
 				}
+				uimanager.EnableDisable(uimanager.instance.CompassPanelUW2,true);
+				uimanager.EnableDisable(uimanager.instance.PowerGemUW2,true);
 				uimanager.instance.messageScrollUW2.Size = new Godot.Vector2(840,140);
 				uimanager.instance.scroll.Columns = 44;				
 			}

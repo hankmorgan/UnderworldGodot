@@ -150,6 +150,11 @@ namespace Underworld
                         set_likes_dislikes();
                         break;
                     }
+                case "find_inv":
+                    {
+                        find_inv(talker);
+                        break;
+                    }
                 default:
                     {
                         Debug.Print($"Unimplemented {func.importname}"); break;

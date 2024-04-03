@@ -81,7 +81,7 @@ namespace Underworld
                 {
                     if (testObj.majorclass == majorclass)
                     { //matching major class
-                        if ((testObj.minorclass == minorclass)|| (minorclass==-1))
+                        if ((testObj.minorclass == minorclass) || (minorclass==-1))
                         {//Either minor class matches or if minorclass =-1 (find all)
                             if ((testObj.classindex == classindex) || (classindex==-1))
                             {//obj match found.

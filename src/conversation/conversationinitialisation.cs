@@ -66,6 +66,8 @@ namespace Underworld
 
                 uimanager.instance.scroll.Columns = 100;
                 uimanager.instance.messageScrollUW2.SetSize(new Godot.Vector2(1160,140));
+                uimanager.EnableDisable(uimanager.instance.CompassPanelUW2,false);
+                uimanager.EnableDisable(uimanager.instance.PowerGemUW2,false);
             }
             else
             {
