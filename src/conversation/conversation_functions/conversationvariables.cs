@@ -108,18 +108,19 @@ namespace Underworld
 							}
 						case "npc_name":
 							{
-								if (npc.npc_whoami == 0)
-								{//generic npc, name is in block 4
-									valueToImport = npc.item_id;
-									valueToImport |= 0x800;
+								valueToImport = GameStrings.AddString(0x125, npc.a_name);
+								// if (npc.npc_whoami == 0)
+								// {//generic npc, name is in block 4
+								// 	valueToImport = npc.item_id;
+								// 	valueToImport |= 0x800;
 
-								}
-								else
-								{
-									//Name of npc in string block 7
-									valueToImport = npc.npc_whoami + 0x10;
-									valueToImport |= 0xE00;
-								}
+								// }
+								// else
+								// {
+								// 	//Name of npc in string block 7
+								// 	valueToImport = npc.npc_whoami + 0x10;
+								// 	valueToImport |= 0xE00;
+								// }
 								break;
 							}
 						case "npc_attitude":

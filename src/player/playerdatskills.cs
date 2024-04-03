@@ -173,14 +173,24 @@ namespace Underworld
         /// <param name="skillNo"></param>
         /// <param name="value"></param>
          public static void SetSkillValue(int skillNo, int value)
-         {
-            if (value>30)
+        {
+            if (value > 30)
             {
                 value = 30;
             }
-            SetAt(0x22+skillNo, (byte)value);
-         }
+            Debug.Print($"Setting skill {skillNo} to {value} TODO: Refresh player stats such as mana/vit/carry weight as needed");
+            SetAt(0x22 + skillNo, (byte)value);           
+        }
 
+        public static void UpdateAttributes(bool IncreasePlayMana = true)
+        {
+            playerdat.max_mana = ((playerdat.ManaSkill + 1) * playerdat.INT) >> 3;
+            playerdat.max_hp = (30 + (playerdat.STR * playerdat.play_level) / 5);
+            if (IncreasePlayMana)
+            {
+                playerdat.play_mana = playerdat.max_mana;
+            }            
+        }
 
         public static void SetDungeonLore(int dungeon, int newLore)
         {
@@ -507,6 +517,7 @@ namespace Underworld
                     if (r < governingAttribute - skillvalue)
                     {
                         skillvalue++;
+                        playerdat.GetSkillValue(skillno);
                         SetSkillValue(skillNo: skillno, value: skillvalue);
                     }
                 }
@@ -521,6 +532,73 @@ namespace Underworld
                 SetDungeonLore(dungeon_level, Lore);
             }            
             return 1;
+        }
+
+        /// <summary>
+        /// general skill function for trainers in UW2. Increases a single skill or a random skill within a category of skills;
+        /// </summary>
+        /// <param name="SkillNo"></param>
+        /// <returns></returns>
+        public static int IncreaseSkillGroup(int SkillNo)
+        {
+            var di = 0;
+            var si = 0;
+            var SkillRange_var8 = 0;
+            var StartSkillNo_var6 = 0;
+            var skillsincreased = 0;
+            var SkillToUpdate_varC = 0;
+            switch(SkillNo)
+            {
+                case -3:
+                    StartSkillNo_var6 = 10;//Dexterity skills
+                    SkillRange_var8 = 10;
+                    si = 4;
+                    break;
+                case -2:
+                    StartSkillNo_var6 = 7;//intelligence skills
+                    SkillRange_var8 = 3;
+                    si = 2;
+                    break;
+                case -1:
+                    StartSkillNo_var6 = 0;//strength skills
+                    SkillRange_var8 = 7;
+                    si = 3;
+                    break;
+                default:
+                    StartSkillNo_var6 = SkillNo; //single skill
+                    SkillRange_var8 = 1;
+                    si = 1;
+                    break;
+
+            }
+            di = SkillRange_var8;
+
+            while (si>0 && di>0)
+            {
+                if (
+                    (StartSkillNo_var6 == 7)
+                    && 
+                    (ManaSkill<8)
+                    && 
+                    ((Rng.r.Next(0,0x8000) & 2) != 0)
+                    )
+                    {
+                        SkillToUpdate_varC = 7;
+                    }
+                else
+                    {
+                        SkillToUpdate_varC = StartSkillNo_var6 + Rng.r.Next(0, SkillRange_var8);
+                    }
+
+                var tmp = IncreaseSkill(SkillToUpdate_varC);
+                if (tmp == 1)
+                {
+                    skillsincreased = 1;
+                }
+                si--; di--;
+            }
+
+            return skillsincreased;
         }
     }//end class
 }//end namespace

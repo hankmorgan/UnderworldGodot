@@ -169,8 +169,9 @@ namespace Underworld
                 if (mantra <= 19)
                 {
                     if (playerdat.SkillPoints > 0)
-                    {
+                    {                        
                         AdvanceGreatly(mantra);
+                        playerdat.UpdateAttributes(true);
                     }
                     else
                     {
@@ -270,6 +271,7 @@ namespace Underworld
                             }
                             playerdat.SkillPoints--; //decrement points
                             uimanager.AddToMessageScroll(msg);
+                            playerdat.UpdateAttributes(true);
                         }
                         else
                         {
@@ -301,7 +303,7 @@ namespace Underworld
                 playerdat.SkillPoints--;
 
                 var msg = $"{GameStrings.GetString(1, GameStrings.str_you_have_advanced_greatly_in_)}{skillname}";
-                uimanager.AddToMessageScroll(msg);
+                uimanager.AddToMessageScroll(msg);                
             }
             else
             {//no skill gain

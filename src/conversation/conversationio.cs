@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace Underworld
@@ -43,11 +44,13 @@ namespace Underworld
             //S: value is a string number into current string block
             //I: value is an integer value
             //<num>: decimal value
-            //<extension>: format: C<number>: use array index <number>
-
+            //<extension>: format: C<number>: use array index <number-1> offset from the initial source value.
+            if (!input.Contains("@"))
+            {
+                return input;
+            }
             string RegExForFindingReplacements = "([@][GSP][SI])(-*[0-9]*)([S][I])?([0-9]*)?([C][0-9]*)?";
-            //"(@)([GSP])([SI])([0-9])*([S][I][0-9]*)*([C][0-9])*";
-            //string RegExForFindingReplacementsTypes = "(@)([GSP])([SI])";
+
 
             MatchCollection matches = Regex.Matches(input, RegExForFindingReplacements);
             for (int sm = 0; sm < matches.Count; sm++)
@@ -82,6 +85,7 @@ namespace Underworld
                                     }
                                 case 3: //Offset Type (should only be SI?)
                                     string OffsetType = matches[sm].Groups[sg].Value;
+                                    Debug.Print($"Unimplemented SI Offset {OffsetType}");
                                     break;
                                 case 4: //Offset value
                                     {
@@ -95,22 +99,19 @@ namespace Underworld
                                         }
                                         break;
                                     }
-                                case 5: //c2 array offset (unimplemented
+                                case 5: //c2 array offset
                                     {
-                                    string CModifier = matches[sm].Groups[sg].Value;
-                                        CModifier= CModifier.Replace("C","");
+                                        string CModifier = matches[sm].Groups[sg].Value;
+                                        CModifier = CModifier.Replace("C", "");
                                         if (int.TryParse(CModifier, out int val))
                                         {
-                                            ArrayOffset = val - 1;
-                                        }                                        
+                                            ArrayOffset = val - 1; // array is 1-based
+                                        }
                                         break;
-                                    }    
+                                    }
                             }
                         }
-                        //Debug.Log("group " + matches[sm].Groups[sg].Success + " " + matches[sm].Groups[sg].Value);
                     }
-
-
 
                     //Now replace
                     switch (ReplacementType)
@@ -137,20 +138,11 @@ namespace Underworld
                                 {
                                     FoundString = getString(at(basep + ReplacementValue));
                                 }
-
                                 break;
                             }
                         case "@SI": //Stack integer
-                            {//TODO: this +1 behaves inconsistently. UW1 or UW2 difference???
-                                // if (_RES == GAME_UW2)
-                                // {
-                                    FoundString = at(basep + ReplacementValue + ArrayOffset).ToString();
-                                // }
-                                // else
-                                // {
-                                //     FoundString = at(basep + ReplacementValue + 1).ToString();//Skip over 1 for basepointer	
-                                // }
-
+                            {
+                                FoundString = at(basep + ReplacementValue + ArrayOffset).ToString();
                                 break;
                             }
 
@@ -178,10 +170,7 @@ namespace Underworld
                     }
                 }
             }
-
-
             return input;
         }
-
     }//end class
 }//end namespace
