@@ -155,6 +155,11 @@ namespace Underworld
                         find_inv(talker);
                         break;
                     }
+                case "x_clock":
+                    {
+                        x_clock();
+                        break;
+                    }
                 default:
                     {
                         Debug.Print($"Unimplemented {func.importname}"); break;

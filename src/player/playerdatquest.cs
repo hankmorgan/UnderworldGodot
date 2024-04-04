@@ -151,7 +151,7 @@ namespace Underworld
         {
             return GetAt(0x36E + clockno);
         }
-
+    
         public static void SetXClock(int clockno, int value)
         {
             SetAt(0x36E + clockno, (byte)value);
@@ -319,3 +319,35 @@ namespace Underworld
 /// 134: The password for the prison tower (random value)
 /// 135: Checked by goblin in sewers  (no of worms killed on level. At more than 8 they give you fish)
 /// 143: Set to 33 after first LB conversation. Set to 3 during endgame (is this what triggers the cutscenes?)
+/// 
+
+
+/// <summary>
+    /// The x clocks tracks progress during the game and is used in firing events.
+    /// </summary>
+    /// The xclock is a range of 16 variables. When references by traps the index is -16 to get the below values.
+    /// The X Clock is tied closely to SCD.ark and the scheduled events within that file.
+    /// 1=Miranda conversations & related events in the castle
+    ///     1 - Nystrul is curious about exploration.Set after entering lvl 1 from the route downwards. (set variable traps 17 may be related)
+    ///     2 - After you visited another world.  (variable 17 is set to 16), dupre is tempted
+    ///     3 - servants getting restless
+    ///     4 - concerned about water, dupre is annoyed by patterson
+    ///     5 - Dupre is bored / dupre is fetching water
+    ///     7 - Miranda wants to talk to you pre tori murder
+    ///     8 - tori is murdered
+    ///     9 - Charles finds a key
+    ///     11 - Go see Nelson
+    ///     12 - Patterson kills Nelson
+    ///     13 - Patterson is dead
+    ///     14 - Gem is weak/Mors is in killorn(?)
+    ///     15 - Nystrul wants to see you again re endgame
+    ///     16 - Nystrul questions have been answered Mars Gotha comes
+    /// 2=Nystrul conversations and no of blackrock gems treated
+    /// 3=Djinn Capture
+    ///     2 = balisk oil is in the mud
+    ///     3 = bathed in oil
+    ///     4 = baked in lava
+    ///     5 = iron flesh cast (does not need to be still on when you break the bottle)
+    ///     6 = djinn captured in body
+    /// 14=Tracks no of enemies killed in pits. Does things like update graffiti.
+    /// 15=Used in multiple convos. Possibly tells the game to process a change when updated?
