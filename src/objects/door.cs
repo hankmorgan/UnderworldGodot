@@ -175,6 +175,10 @@ namespace Underworld
         {
             int tileX = obj.tileX;
             int tileY = obj.tileY;
+            if (UWTileMap.ValidTile(tileX,tileY))
+            {//Mark the tile as having a door.
+                a_tilemap.Tiles[tileX,tileY].DoorIndex = obj.index;
+            }
             var d = new door(obj);
             if (d.isSecretDoor)
             {
@@ -266,6 +270,7 @@ namespace Underworld
                     obj.doorNode.Rotate(Vector3.Up, obj.GetRadiansForIndex(obj.NoOfFrames, obj.uwobject.doordir));
                 }
             }
+            playerdat.UpdateAutomap();//trigger an update of visibility
         }
 
 

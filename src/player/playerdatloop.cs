@@ -6,11 +6,13 @@ namespace Underworld
     //for handling loop updates for the player.
     public partial class playerdat : Loader
     {
+        static int previousLightLevel;
         /// <summary>
         /// resets the player variables ahead of a status update
         /// </summary>
         static void ResetPlayer()
         {
+            previousLightLevel = lightlevel;
             lightlevel = 0;
             Palette.ColourTone = 0;
             Palette.CurrentPalette = 0;
@@ -235,6 +237,10 @@ namespace Underworld
         public static void RefreshLighting()
         {
             Godot.RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.GetViewingDistance(playerdat.lightlevel));
+            if (previousLightLevel!=playerdat.lightlevel)
+            {
+                playerdat.UpdateAutomap();//refresh automap visibility
+            }
             // Godot.RenderingServer.GlobalShaderParameterSet("shades", shade.shadesdata[playerdat.lightlevel].GetImage());
         }
 

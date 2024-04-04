@@ -136,11 +136,23 @@ namespace Underworld
         /// <summary>
         /// Set when ever a tile does contain a door regardless of the door bit above.
         /// </summary>
-        public bool IsDoorForNPC;
+        public bool HasDoor
+        {
+            get
+            {
+                return DoorIndex!=0;
+            }
+        }
+        /// <summary>
+        /// Index of the door at this tile.
+        /// </summary>
+        public int DoorIndex;
+
         /// <summary>
         /// If set then we output this tile. Is off when it is a subpart of a group or is hidden from sight.
         /// </summary>
         public bool Render = true;
+       
         /// <summary>
         ///  The dimensions on the x-axis of this tile. 1 for a regular tile.
         /// </summary>

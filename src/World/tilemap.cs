@@ -106,6 +106,10 @@ namespace Underworld
                 case TILE_SLOPE_W:
                 case TILE_SLOPE_N:
                 case TILE_SLOPE_S:
+                case TILE_DIAG_NE:
+                case TILE_DIAG_NW:
+                case TILE_DIAG_SE:
+                case TILE_DIAG_SW:
                     return true;
             }
             return false;
@@ -1123,7 +1127,7 @@ namespace Underworld
                             && (t1.DimX == t2.DimX) && (t1.DimY == t2.DimY)
                             && (t1.wallTexture == t2.wallTexture)
                             && (t1.tileType == t2.tileType)
-                            && (t1.IsDoorForNPC == false) && (t2.IsDoorForNPC == false);//
+                            && (t1.HasDoor == false) && (t2.HasDoor == false);//
                 }
             }
         }

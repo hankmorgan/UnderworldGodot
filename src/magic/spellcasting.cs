@@ -39,7 +39,7 @@ namespace Underworld
                 case 2://
                 case 3://
                     {
-                        CastClass0123_Spells(majorclass, minorclass);
+                        CastClass0123_Spells(majorclass, minorclass);                        
                         break;
                     }
                 case 4://healing

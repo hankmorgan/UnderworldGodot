@@ -242,7 +242,7 @@ namespace Underworld
             {
                 return DisplayTypeIce;
             }
-            else if (t.IsDoorForNPC)
+            else if (t.HasDoor)
             {
                 switch (_RES)
                 {
