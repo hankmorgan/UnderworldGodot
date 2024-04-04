@@ -10,7 +10,7 @@ namespace Underworld
         /// <summary>
         /// Reference to the char name in the gamestrings for use in the conversation VM.
         /// </summary>
-        public static int CharNameStringNo;
+        //public static int CharNameStringNo;
         public static string CharName
         {
             get

@@ -72,7 +72,7 @@ namespace Underworld
                 main.gamecam.Rotate(Vector3.Up, (float)Math.PI);
             }
 
-            CharNameStringNo = GameStrings.AddString(0x125, CharName);
+            //CharNameStringNo = GameStrings.AddString(0x125, CharName);
 
             //Load bablglobals
             bglobal.LoadGlobals(datafolder);

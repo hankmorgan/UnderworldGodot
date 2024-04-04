@@ -108,7 +108,7 @@ namespace Underworld
 							}
 						case "npc_name":
 							{
-								valueToImport = GameStrings.AddString(0x125, npc.a_name);
+								valueToImport = GameStrings.AddString(currentConversation.StringBlock, npc.a_name);
 								// if (npc.npc_whoami == 0)
 								// {//generic npc, name is in block 4
 								// 	valueToImport = npc.item_id;
@@ -214,7 +214,8 @@ namespace Underworld
 						case "play_name": //reference to a custom gamestring for the player name
 							{
 								//valueToImport = (0x125<<9) | playerdat.CharNameStringNo;
-								valueToImport = playerdat.CharNameStringNo;//pointer to string in block 0x125
+								valueToImport = GameStrings.AddString(currentConversation.StringBlock, playerdat.CharName);
+								//valueToImport = playerdat.CharNameStringNo;//pointer to string in block 0x125
 								break;
 							}
 					}

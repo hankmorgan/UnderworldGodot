@@ -51,8 +51,9 @@ namespace Underworld
             }
             string RegExForFindingReplacements = "([@][GSP][SI])(-*[0-9]*)([S][I])?([0-9]*)?([C][0-9]*)?";
 
-
+            Debug.Print($"Doing string replacement on line {input}");
             MatchCollection matches = Regex.Matches(input, RegExForFindingReplacements);
+            
             for (int sm = 0; sm < matches.Count; sm++)
             {
                 string ReplacementString = matches[sm].Value;
@@ -63,6 +64,7 @@ namespace Underworld
                     int OffsetValue = 0;
                     string FoundString = "";
                     int ArrayOffset = 0;
+                    bool SIOffset = false;
                     for (int sg = 0; sg < matches[sm].Groups.Count; sg++)
                     {
                         if (matches[sm].Groups[sg].Success)
@@ -85,13 +87,22 @@ namespace Underworld
                                     }
                                 case 3: //Offset Type (should only be SI?)
                                     string OffsetType = matches[sm].Groups[sg].Value;
-                                    Debug.Print($"Unimplemented SI Offset {OffsetType}");
+                                    SIOffset = true;
+                                    //Debug.Print($"Unimplemented SI Offset {OffsetType}");
                                     break;
                                 case 4: //Offset value
                                     {
                                         if (int.TryParse(matches[sm].Groups[sg].Value, out int val))
                                         {
-                                            OffsetValue = val;
+                                            if (SIOffset)
+                                            {
+                                                OffsetValue = at(basep+ val) -1;
+                                            }
+                                            else
+                                            {
+                                                OffsetValue = val;
+                                            }
+                                            
                                         }
                                         else
                                         {
@@ -118,7 +129,8 @@ namespace Underworld
                     {
                         case "@GS": //Global string.
                             {
-                                FoundString = GameStrings.GetString(0x125, at(ReplacementValue)); //getString(at(ReplacementValue));
+                                //FoundString = GameStrings.GetString(0x125, at(ReplacementValue)); //getString(at(ReplacementValue));
+                                FoundString = getString(at(ReplacementValue+OffsetValue));
                                 break;
                             }
                         case "@GI": //Global integer
