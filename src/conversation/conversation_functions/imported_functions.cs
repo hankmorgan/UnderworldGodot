@@ -170,6 +170,11 @@ namespace Underworld
                         do_inv_create(talker);
                         break;   
                     }
+                case "do_inv_delete":
+                    {
+                        do_inv_delete(talker);
+                        break;   
+                    }
                 default:
                     {
                         Debug.Print($"Unimplemented {func.importname}"); break;

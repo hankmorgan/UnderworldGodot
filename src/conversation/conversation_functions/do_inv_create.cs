@@ -12,6 +12,11 @@ namespace Underworld
                 newObj.quality = 63;
                 newObj.next = talker.link;
                 talker.link = newObj.index;
+                result_register = newObj.index;
+            }
+            else
+            {
+                result_register = 0;
             }
         }
     }//end class
