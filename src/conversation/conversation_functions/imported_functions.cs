@@ -160,6 +160,11 @@ namespace Underworld
                         x_clock();
                         break;
                     }
+                case "find_barter_total":
+                    {
+                        find_barter_total();
+                        break;
+                    }
                 default:
                     {
                         Debug.Print($"Unimplemented {func.importname}"); break;

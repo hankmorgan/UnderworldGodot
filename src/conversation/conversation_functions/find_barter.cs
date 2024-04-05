@@ -27,7 +27,7 @@ namespace Underworld
                     var itemToCheck = UWTileMap.current_tilemap.LevelObjects[itemIndices[i]];
                     if (itemToCheck!=null)
                     {
-                        if ((itemToCheck.majorclass== major) && (itemToCheck.majorclass==minor))
+                        if ((itemToCheck.majorclass== major) && (itemToCheck.minorclass==minor))
                         {
                             result_register = itemIndices[i];
                             return;
