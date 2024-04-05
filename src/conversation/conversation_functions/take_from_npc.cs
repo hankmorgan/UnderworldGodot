@@ -47,10 +47,12 @@ namespace Underworld
                     if (talker.link == obj.index)
                     {
                         talker.link = obj.next;
+                        obj.next = 0;
                     }
                     else
                     {
                         previous.next = obj.next;
+                        obj.next = 0;
                     }
 
                     //TODO add a weight check. if passed it goes to hand, if not add to trade slots

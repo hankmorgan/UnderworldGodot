@@ -165,6 +165,11 @@ namespace Underworld
                         find_barter_total();
                         break;
                     }
+                case "do_inv_create":
+                    {
+                        do_inv_create(talker);
+                        break;   
+                    }
                 default:
                     {
                         Debug.Print($"Unimplemented {func.importname}"); break;
