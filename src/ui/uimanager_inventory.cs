@@ -551,6 +551,7 @@ namespace Underworld
                     ClearLink: true
                     );
             var pickObject = UWTileMap.current_tilemap.LevelObjects[newIndex];
+            pickObject.next=0;
             playerdat.ObjectInHand = newIndex;
             instance.mousecursor.SetCursorToObject(pickObject.item_id);
             return newIndex;

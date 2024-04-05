@@ -304,11 +304,14 @@ namespace Underworld
                 if (x != -1)
                 {
                     var obj = UWTileMap.current_tilemap.LevelObjects[x];
-                    //insert to talkers object list
-                    obj.next = talker.link;
-                    talker.link = obj.index;
-                    uimanager.SetPlayerTradeSlot(i, -1, false);
-                    return;
+                    if (obj.index==itemindex)
+                    {
+                        //insert to talkers object list
+                        obj.next = talker.link;
+                        talker.link = obj.index;
+                        uimanager.SetPlayerTradeSlot(i, -1, false);
+                        return;
+                    }
                 }
             }
         }
