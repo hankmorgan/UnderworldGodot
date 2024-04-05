@@ -174,9 +174,7 @@ namespace Underworld
                         //try can cast the current spell if class 5
                         if (SpellCasting.currentSpell.SpellMajorClass == 5)
                         {
-                            uimanager.AddToMessageScroll("Woosh! Fired off a projectile");
-                            SpellCasting.currentSpell = null;
-                            uimanager.instance.mousecursor.SetCursorToCursor(0);
+                            SpellCasting.PlayerCastsMagicProjectile();
                             return;
                         }
                     }

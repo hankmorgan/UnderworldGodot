@@ -11,8 +11,7 @@ public partial class a_movetriggercollision:  Area3D
     public delegate void MoveTriggerEnteredEventHandler();
 
     public void movetrigger_entered(Node3D body)
-    {
-        
+    {        
         Debug.Print($"{body.Name} collides with {uwObjectIndex}");
         if (body.Name == "Gronk")
         {

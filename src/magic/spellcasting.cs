@@ -47,8 +47,15 @@ namespace Underworld
                     break;
                 case 5://projectile spells
                     {
-                        currentSpell = new RunicMagic(majorclass,minorclass);
-                        uimanager.instance.mousecursor.SetCursorToCursor(9);
+                        if (PlayerCast)
+                        {
+                            currentSpell = new RunicMagic(majorclass,minorclass);
+                            uimanager.instance.mousecursor.SetCursorToCursor(9);
+                        }
+                        else
+                        {//cast by an object, eg spell trap. fire off immediately
+                            ObjectCastsMagicProjectile(caster, minorclass);
+                        }
                     }
                     break;
                 case 6://spells that run code in an area around the player

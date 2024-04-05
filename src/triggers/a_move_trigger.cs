@@ -7,7 +7,7 @@ namespace Underworld
         public static bool CreateMoveTrigger(uwObject obj, Node3D parent)
         {
             var h = ((float)commonObjDat.height(obj.item_id)/128f)  * 0.15f;
-            h=h*10; //increase size a bit. not sure what height it should be but a bigger box makes it easier to test.
+            h=h*10; //increase size a bit. not sure what height it should be, but a bigger box makes it easier to test.
             var r = ((float)commonObjDat.radius(obj.item_id)/8f) * 1.2f;
             var ar = new a_movetriggercollision();
             ar.uwObjectIndex = obj.index;
