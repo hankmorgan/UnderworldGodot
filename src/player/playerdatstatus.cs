@@ -177,6 +177,14 @@ namespace Underworld
                return GetAt16(0x3F + index * 2) >> 8;
           }
 
+          public static void SetEffectStability(int index, int stability)
+          {
+               var temp = GetAt16(0x3F + index * 2);
+               temp &= 0x00FF; //clear stability
+               temp |= (stability << 8); //set stability
+               SetAt16(0x3F + index * 2, temp);
+          }
+
           public static int GetEffectClass(int index)
           {
                return GetAt16(0x3F + index * 2) & 0xFF;

@@ -7,6 +7,175 @@ namespace Underworld
     public partial class playerdat : Loader
     {
         static int previousLightLevel;
+
+        static double playertimer;
+        static int playerUpdateCounter;
+
+        public static void PlayerTimedLoop(double delta)
+        {
+            if ((!main.blockmouseinput) && (uimanager.InGame))
+            {
+                playertimer += delta;
+                if (playertimer >= 1f)
+                {
+                    var secondelasped = (int)(playertimer / 1);
+                    playertimer = 0f;
+                    for (int s = 0; s < secondelasped; s++)
+                    {
+                        ClockValue+=0x40; //not sure what the exact rate should be here. for the moment assuming this is 1 second of time
+
+                        if (ClockValue % 20 == 0)//every 20 seconds
+                        {
+                            playerUpdateCounter++;
+
+                            UpdateLightStability(playerUpdateCounter);
+
+                            for (int i = 0; i < 3; i++)
+                            {
+                                if (i < ActiveSpellEffectCount)
+                                {
+                                    var stability = GetEffectStability(i);
+                                    stability--;                                    
+                                    if (stability == 1)
+                                    {
+                                        CancelEffect(i);
+                                        break; //breaking here since cancelling effects changes the order of the list. too annoying a problem to solve now.
+                                    }
+                                    else
+                                    {
+                                        SetEffectStability(i, stability);
+                                    }
+                                }
+                            }
+
+                            if (shrooms > 0)
+                            {
+                                shrooms--;
+                            }
+
+                            if (ManaRegenEnchantment)
+                            {
+                                play_mana = Math.Min(play_mana + 1, max_mana);
+                            }
+                            if (HealthRegenEnchantment)
+                            {
+                                play_hp = Math.Min(play_hp + 1, max_hp);
+                            }
+
+                            SwimmingSkillCheck();
+
+                            if (_RES == GAME_UW2)
+                            {
+                                if (GetQuest(50) == 1)
+                                {//the keep is crashing
+                                    KillornKeepEvent();
+                                }
+                            }
+
+                            if (DreamingInVoid)
+                            {//TODO check if dreaming in void and count down
+                                Debug.Print("Dreaming in void. count down dream plant value");
+                            }
+
+                            if ((playerUpdateCounter % 3) == 0)
+                            {//every 60 seconds
+                                if (play_poison > 0)
+                                {
+                                    Debug.Print("TODO apply poison damage");
+                                    var dam = play_poison >> 1;
+                                    play_poison = (byte)Math.Max(play_poison - 1, 0);                                   
+                                    play_hp = Math.Max(play_hp - dam, 0);
+                                }
+
+                                var manaskillcheck = (int)SkillCheck(ManaSkill, 10);
+                                if (manaskillcheck > 0)
+                                {
+                                    play_mana = Math.Min(play_mana + manaskillcheck, max_mana);
+                                }
+                            }//end every 60 seconds update
+                            if ((playerUpdateCounter % 30) == 0)
+                            {//every 5 minutes
+                                var hungerchange = -3 - Rng.r.Next(0, 3);
+                                play_hunger = (byte)Math.Max(play_hunger + hungerchange, 0);
+
+                                if (intoxication > 0)
+                                {
+                                    intoxication--;
+                                }
+
+                                if ((Rng.r.Next(0, 0xffff) & 0x3) == 0)
+                                {
+                                    Debug.Print("Find and trigger create object traps that are on map!");
+                                }
+
+                                Debug.Print("Do something with Npc hunger");
+
+                                Debug.Print("Increment values at  bx+3a(fatigue), bx+3b(related to food health regen), bx+3c (unknown)");
+                                play_fatigue = (byte)Math.Min(play_fatigue + 1, 0xFF);
+
+                                var hpskillcheck = (int)SkillCheck(STR, 10);
+                                if (hpskillcheck > 0)
+                                {//regular health regen
+                                    play_hp = Math.Min(play_hp + hpskillcheck, max_hp);
+                                }
+                            }//end every 5 mins update
+                            if ((playerUpdateCounter % 60) == 0)//every 20 mins
+                            {
+                                Debug.Print("TODO Update 'day' value");
+                                Debug.Print("Do something with scd.ark");
+                                playerUpdateCounter = 0;
+                            }//end every 20 mins update
+
+                            PlayerStatusUpdate();
+                        }//end every 20 seconds update
+                    }//end seconds for loop                 
+                }  //every second              
+            }//end ingame check
+        }
+
+
+        /// <summary>
+        /// Screenshakes and damage when killorn is crashing
+        /// </summary>
+        public static void KillornKeepEvent()
+        {
+            Debug.Print("Killorn is crashing!!");
+        }
+
+        /// <summary>
+        /// Does a skill check every 20s when in water to see if damage is taken while swimming
+        /// </summary>
+        public static void SwimmingSkillCheck()
+        {
+            //TODO
+        }
+
+        static void UpdateLightStability(int updatecounter)
+        {
+            //loop each lit light source.
+            //when updatecounter % lightsource class index. decrease light quality by 1 point
+            for (int slot = 5; slot <= 8; slot++)
+            {
+                var objInSlot = GetInventorySlotObject(slot);
+                if (objInSlot != null)
+                {
+                    if ((objInSlot.majorclass == 2) && (objInSlot.minorclass == 1) && (objInSlot.classindex >= 4 && objInSlot.classindex <= 7))
+                    {
+                        //a lit light source
+                        if (updatecounter % objInSlot.classindex == 0)
+                        {
+                            objInSlot.quality = (short)Math.Max(objInSlot.quality - 1, 1);
+                            if (objInSlot.quality == 1)
+                            {
+                                light.LightOff(objInSlot);
+                                uimanager.UpdateInventoryDisplay();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// resets the player variables ahead of a status update
         /// </summary>
@@ -57,19 +226,19 @@ namespace Underworld
             ApplyDamageResistance(DamageResistance);
             ApplyStealthBonus(StealthBonus);
 
-            if (playerdat.shrooms != 0)
+            if (shrooms != 0)
             {
-                Palette.CurrentPalette = Rng.r.Next(1,4);
-                playerdat.shrooms--; //eventually this should be on a timer
+                Palette.CurrentPalette = Rng.r.Next(1, 4);
+                shrooms--; //eventually this should be on a timer
             }
-            
+
 
             RefreshLighting();//either brightest physical light or brightest magical light
 
-            if (automap.CanMap(playerdat.dungeon_level))
+            if (automap.CanMap(dungeon_level))
             {
                 UpdateAutomap();//update the visited status of nearby tiles
-            }            
+            }
         }
 
 
@@ -88,7 +257,7 @@ namespace Underworld
                     var effectclass = GetEffectClass(i);
                     var major = effectclass & 0xF;
                     var minor = effectclass >> 4;
-                    Debug.Print($"Player has spell effect {major},{minor} of {stability} ");
+                    //Debug.Print($"Player has spell effect {major},{minor} of {stability} ");
                     SpellCasting.CastEnchantedItemSpell(
                         majorclass: major,
                         minorclass: minor,
@@ -236,10 +405,10 @@ namespace Underworld
 
         public static void RefreshLighting()
         {
-            Godot.RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.GetViewingDistance(playerdat.lightlevel));
-            if (previousLightLevel!=playerdat.lightlevel)
+            Godot.RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.GetViewingDistance(lightlevel));
+            if (previousLightLevel != lightlevel)
             {
-                playerdat.UpdateAutomap();//refresh automap visibility
+                UpdateAutomap();//refresh automap visibility
             }
             // Godot.RenderingServer.GlobalShaderParameterSet("shades", shade.shadesdata[playerdat.lightlevel].GetImage());
         }
@@ -270,14 +439,14 @@ namespace Underworld
             //If uw2 check for dungeon light level
             if (_RES == GAME_UW2)
             {
-                var dungeon_ambientlight = DlDat.GetAmbientLight(playerdat.dungeon_level - 1);
+                var dungeon_ambientlight = DlDat.GetAmbientLight(dungeon_level - 1);
                 var remainder = dungeon_ambientlight % 10;
                 var dlFlag = 0;
                 if (dungeon_ambientlight >= 10)
                 {
                     dlFlag = 1;
                 }
-                int tileLightFlag = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY].lightFlag;
+                int tileLightFlag = UWTileMap.current_tilemap.Tiles[tileX, tileY].lightFlag;
                 if ((tileLightFlag ^ dlFlag) == 1)
                 {
                     dungeon_ambientlight = remainder;
@@ -303,12 +472,12 @@ namespace Underworld
             //depending on light level. need to confirm if below math is okay
             var range = 1 + (lightlevel / 2);
             automap.MarkRangeOfTilesVisited(
-                range: range, 
-                cX: playerdat.tileX, 
-                cY: playerdat.tileY,
-                dungeon_level: playerdat.dungeon_level
+                range: range,
+                cX: tileX,
+                cY: tileY,
+                dungeon_level: dungeon_level
                 );
         }
-        
+
     }//end class
 }//end namespace

@@ -42,7 +42,7 @@ namespace Underworld
             SetModelRotation(parent,t);
             centreAlongAxis(parent, t);
             
-            DisplayModelPoints(t, parent);
+            //DisplayModelPoints(t, parent);
             return t;
         }    
 

@@ -50,6 +50,7 @@ namespace Underworld
         // Func load pdat
         public static void Load(string folder)
         {
+            playerUpdateCounter=0;
             var path = System.IO.Path.Combine(BasePath, folder, "PLAYER.DAT");
             byte[] encoded;
             if (ReadStreamFile(path, out encoded))

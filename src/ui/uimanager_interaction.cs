@@ -131,22 +131,10 @@ namespace Underworld
                     break;
                 case InteractionModes.ModeUse:
                     //do a use interaction with the object.
-                    if (LeftClick)
-                    {
-                        use.Use(
-                            index: index,
-                            objList: Underworld.UWTileMap.current_tilemap.LevelObjects,
-                            WorldObject: true);
-                    }
-                    else
-                    {
-                        uimanager.InteractionModeToggle(InteractionModes.ModePickup);
-                        pickup.PickUp(
-                            index: index,
-                            objList: Underworld.UWTileMap.current_tilemap.LevelObjects,
-                            WorldObject: true);
-                    }
-
+                    use.Use(
+                        index: index,
+                        objList: Underworld.UWTileMap.current_tilemap.LevelObjects,
+                        WorldObject: true);
                     break;
                 case InteractionModes.ModePickup:
                     pickup.PickUp(

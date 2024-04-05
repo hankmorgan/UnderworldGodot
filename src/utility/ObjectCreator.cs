@@ -11,7 +11,7 @@ namespace Underworld
     {
         //List of active NPCs
         public static List<npc> npcs;
-        public static bool printlabels = true;
+        public static bool printlabels = false;
 
         /// <summary>
         /// object art

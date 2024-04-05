@@ -384,8 +384,8 @@ namespace Underworld
             set
             {
                 int existingValue = GetAt16(PTR + 4);
-                existingValue &= 0xE3FF; //Mask out current val
-                SetAt16(PTR + 4, existingValue | ((value & 0x3f) << 0));
+                existingValue &= 0xFFC0; //Mask out current val
+                SetAt16(PTR + 4, existingValue | (value & 0x3f));
             }
         }
 
@@ -415,7 +415,7 @@ namespace Underworld
             {
                 int existingValue = GetAt16(PTR + 6);
                 existingValue &= 0xFFC0; //Mask out current val
-                SetAt16(PTR + 6, existingValue | ((value & 0x3f) << 0));
+                SetAt16(PTR + 6, existingValue | (value & 0x3f));
             }
         }
 

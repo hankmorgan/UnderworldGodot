@@ -522,7 +522,7 @@ namespace Underworld
                             var trap = current_tilemap.LevelObjects[trigger.link];
                             if (trap != null)
                             {
-                                Debug.Print($"Testing {trap.a_name}" );
+                                //Debug.Print($"Testing {trap.a_name}" );
                                 switch (trap.item_id)
                                 {
                                     case 387:   //do traps

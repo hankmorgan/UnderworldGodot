@@ -119,8 +119,9 @@ public partial class main : Node3D
             playerdat.heading = (int)Math.Round(-(tmp.Y * 127) / Math.PI);
             uimanager.UpdateCompass();
 			combat.CombatInputHandler(delta);
-
-            lblPositionDebug.Text = $"{cam.Position.ToString()}\nL:{playerdat.dungeon_level} X:{tileX} Y:{tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}\n{cam.Rotation} {playerdat.heading} {(playerdat.heading >> 4) % 4} {xposvecto} {yposvecto}";
+			playerdat.PlayerTimedLoop(delta);
+			
+            lblPositionDebug.Text = $"Minutes:{playerdat.game_mins}\nL:{playerdat.dungeon_level} X:{tileX} Y:{tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}\n{cam.Rotation} {playerdat.heading} {(playerdat.heading >> 4) % 4} {xposvecto} {yposvecto}";
             
 			
             

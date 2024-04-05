@@ -23,6 +23,17 @@ namespace Underworld
                     return GetAt32(0xCF);
                 }
             }
+            set
+            {
+                if (_RES==GAME_UW2)
+                {
+                    SetAt32(0x36A, value);
+                }
+                else
+                {
+                    SetAt32(0xCF, value);
+                }
+            }
         }
 
         public static int game_time

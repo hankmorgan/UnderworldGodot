@@ -58,21 +58,17 @@ namespace Underworld
             //turn light on or off.
             if (obj.classindex <= 3)
             {
-                obj.item_id += 4;
+                LightOn(obj);
             }
             else
             {
-                obj.item_id -= 4;
+                LightOff(obj);
             }
         }
 
         public static void LightOff(uwObject obj)
         {
-            if (obj.classindex <= 3)
-            {
-                //obj.item_id += 4;
-            }
-            else
+            if (obj.classindex >= 4)
             {
                 obj.item_id -= 4;
             }
@@ -82,11 +78,14 @@ namespace Underworld
         {
             if (obj.classindex <= 3)
             {
-                obj.item_id += 4;
-            }
-            else
-            {
-                //obj.item_id -= 4;
+                if (obj.quality > 1 )
+                {
+                    obj.item_id += 4;
+                }
+                else
+                {
+                    uimanager.AddToMessageScroll(GameStrings.GetString(1,GameStrings.str_that_light_is_already_used_up_));
+                }                
             }
         }
 
