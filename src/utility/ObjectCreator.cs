@@ -224,17 +224,20 @@ namespace Underworld
                     {
                         unimplemented = MajorClass3(obj, newNode, grObjects, name);
                         break;
-                    }
+                    }       
+                case 4://keys, usables and readables
+                    {
+                        unimplemented = MajorClass4(obj, newNode, grObjects, name);
+                        break;     
+                    }    
                 case 5: //doors, 3d models, buttons/switches
                     {
                         unimplemented = MajorClass5(obj, newNode, a_tilemap, name);
                         break;
                     }
-
                 case 0://Weapons
                 case 2://misc items incl containers, food, and lights.                
-                case 4://keys, usables and readables
-                    break;
+
                 case 6://Traps and Triggers
                     {
                         unimplemented = MajorClass6(obj, newNode, a_tilemap, name);
@@ -304,6 +307,30 @@ namespace Underworld
                 return false;
             }
 
+            return true;
+        }
+
+        private static bool MajorClass4(uwObject obj, Node3D parent, GRLoader grObjects, string name)
+        {
+            switch (obj.minorclass)
+            {
+                case 2:
+                    {
+                        switch (obj.classindex)
+                        {
+                            case 9:
+                                {
+                                    if (_RES != GAME_UW2)
+                                    {
+                                        glowing_rock.CreateGlowingRock(grObjects, obj, parent,name);
+                                        return false;
+                                    }
+                                    break;
+                                }
+                        }
+                        break;
+                    }
+            }
             return true;
         }
 

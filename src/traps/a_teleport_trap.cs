@@ -44,6 +44,10 @@ namespace Underworld
                     var targetX = trapObj.quality; var targetY = trapObj.owner;
                     Debug.Print($"Teleport to dungeon {trapObj.zpos}  {trapObj.quality},{trapObj.owner}");
                     playerdat.dungeon_level = trapObj.zpos;
+                    if (playerdat.ObjectInHand!=0)
+                    {
+                        Debug.Print("Player is holding a world object while changing levels. This scenario needs to fixed!");
+                    }
 
                     UWTileMap.LoadTileMap(
                         newLevelNo: playerdat.dungeon_level - 1,
