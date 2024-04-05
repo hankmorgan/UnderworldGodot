@@ -19,6 +19,16 @@
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach"
+        },
+        {
+            "name": ".NET Core Launch without build (console)",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "C:/Godot_v4.1.1-stable_mono_win64/Godot_v4.1.1-stable_mono_win64.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopAtEntry": false
         }
     ]
 }

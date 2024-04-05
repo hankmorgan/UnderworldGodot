@@ -5,7 +5,7 @@ namespace Underworld
         public static void give_to_npc(uwObject talker)
         {
             var CountItems_arg1 = GetConvoStackValueAtPtr(stackptr - 2);//how many items to get
-            var ItemIndexToGive_arg2 = at(stackptr - 1); // array of item ids to get.  GetConvoStackValueAtPtr(stackptr-1);
+            var ItemIDToGiveArray = at(stackptr - 1); // array of item ids to get.  GetConvoStackValueAtPtr(stackptr-1);
 
             //Get the player inventory
             var itemcount = GetPlayerSelectedTradeItems(out int[] itemIds, out int[] itemIndices);
@@ -14,14 +14,14 @@ namespace Underworld
                 bool ItemsGiven = false;
                 for (int s = 0; s < CountItems_arg1; s++)
                 {
-                    var itemIndexToFind = at(ItemIndexToGive_arg2 + s);
+                    var itemIDToFind = at(ItemIDToGiveArray + s);
                     //loop inventorys to find  matching item
                     bool itemFound = false;
                     for (int i = 0; i < uimanager.NoOfTradeSlots && !itemFound; i++)
                     {
-                        if (itemIndices[i] == itemIndexToFind)
+                        if (itemIds[i] == itemIDToFind)
                         {                            
-                            GiveItemIndexToNPC(talker, itemIndexToFind);
+                            GiveItemIndexToNPC(talker, itemIndices[i]);
                             itemFound = true;
                             ItemsGiven = true;
                         }
