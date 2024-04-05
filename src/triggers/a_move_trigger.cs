@@ -16,11 +16,7 @@ namespace Underworld
             box.Set("extents", new Vector3(r,h,r));
             col.Shape = box;
             ar.AddChild(col);
-           // var del = new movetrigger.MoveTriggerEnteredEventHandler(movetrigger.moved);
-            // ar.Connect(signal: 
-            //     "body_entered", 
-            //     callable: new Callable(ar, "del"));
-             parent.AddChild(ar);
+            parent.AddChild(ar);
             ar.BodyEntered += ar.movetrigger_entered;
 
             //Now mark the tile type if linked to a teleport

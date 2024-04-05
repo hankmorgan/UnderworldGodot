@@ -286,7 +286,7 @@ namespace Underworld
                               }
                          default:
                               {
-                                   var tmp = (byte)(GetAt(0x61) & 0xC3);
+                                   var tmp = (byte)(GetAt(0x60) & 0xC3);
                                    tmp = (byte)(tmp | ((value & 0xF) << 2));
                                    SetAt(0x60, tmp);
                                    break;

@@ -1,6 +1,7 @@
 using Godot;
 using Peaky.Coroutines;
 using System.Collections;
+using System.Diagnostics;
 
 namespace Underworld
 {
@@ -176,6 +177,10 @@ namespace Underworld
             if (obj.instance != null)
             {
                 obj.instance.uwnode.Position = obj.GetCoordinate(obj.tileX, obj.tileY);
+            }
+            else
+            {
+                Debug.Print($"Trying to pick up {obj.a_name} without an instance!");
             }
 
             //now handle some special cases
