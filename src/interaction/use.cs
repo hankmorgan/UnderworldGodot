@@ -231,6 +231,14 @@ namespace Underworld
                                 return rotwormstew.Use(obj, WorldObject);
                             }
                         }
+                        else
+                        {//uw2
+                            switch (obj.classindex)
+                            {
+                                case >= 8 and <= 0xF:
+                                    return smallblackrockgem.Use(obj, WorldObject);
+                            }
+                        }
                         break;
                     }
                 case 2:

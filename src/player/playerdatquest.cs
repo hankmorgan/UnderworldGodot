@@ -157,6 +157,11 @@ namespace Underworld
             SetAt(0x36E + clockno, (byte)value);
         }
 
+        public static void IncrementXClock(int clockno)
+        {
+            SetXClock(clockno, GetXClock(clockno)+1);
+        }
+
 
         public static bool GotKeyOfTruth
         {

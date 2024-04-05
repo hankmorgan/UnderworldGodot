@@ -138,6 +138,18 @@ namespace Underworld
                         }
                         break;
                     }
+                    case 1:
+                    {
+                        if (_RES==GAME_UW2)
+                        {
+                            switch(objInHand.classindex)
+                            {
+                                case >=8 and <=0xF:
+                                    return smallblackrockgem.UseOn(objInHand, targetObject, WorldObject);
+                            }
+                        }
+                        break;
+                    }
                 case 2:// misc usables
                     {
                         switch (objInHand.classindex)
