@@ -120,6 +120,18 @@ namespace Underworld
                         }
                         break;
                     }
+                case 1:
+                    {
+                        if (_RES==GAME_UW2)
+                        {
+                            switch(obj.classindex)
+                            {
+                                case >=8 and <=0xF:
+                                    return smallblackrockgem.LookAt(obj, objList);
+                            }
+                        }
+                        break;
+                    }
                 case 3: //readables (up to index 8)
                     {
                         if (_RES != GAME_UW2)
