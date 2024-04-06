@@ -16,9 +16,11 @@ namespace Underworld
             Release = 2,
             Swinging = 3,
             Striking = 4,
-            Resetting = 5        
+            Resetting = 5
         }
         public static uwObject currentweapon;  //if null then using fist
+
+        public static int OnHitSpell = 0;
 
         public static int currentWeaponItemID
         {
@@ -37,9 +39,9 @@ namespace Underworld
 
         public static int CurrentWeaponBaseDamage(int attacktype)
         {
-            if (currentweapon!=null)
+            if (currentweapon != null)
             {
-                switch(attacktype)
+                switch (attacktype)
                 {
                     case 0://stab
                         return weaponObjectDat.stab(currentweapon.item_id);
@@ -71,12 +73,12 @@ namespace Underworld
                     {
                         return 2; //return unarmed
                     }
-                    return tmp;                   
+                    return tmp;
                 }
             }
         }
 
-        public static CombatStages stage = 0; 
+        public static CombatStages stage = 0;
         public static double combattimer = 0.0;
 
         /// <summary>
@@ -91,7 +93,7 @@ namespace Underworld
 
         public static int WeaponCharge = 0;
 
-        public static int PlayerAttackScore = 0;
+        public static int PlayerAttackAccuracy = 0;
         public static int PlayerAttackDamage = 0;
 
 
@@ -175,7 +177,7 @@ namespace Underworld
                 var frame = 1 + (WeaponCharge / 12);
                 //Debug.Print($"{frame} at {WeaponCharge}");
                 uimanager.ChangePower(frame);
-                combattimer = 0f;                
+                combattimer = 0f;
             }
         }
 
@@ -183,7 +185,7 @@ namespace Underworld
         /// Ends the combat attack
         /// </summary>
         public static void EndCombatLoop()
-        {            
+        {
             WeaponCharge = 0;
             stage = CombatStages.Ready;
             uimanager.ResetPower();
@@ -231,20 +233,21 @@ namespace Underworld
         /// </summary>
         /// <param name="delta"></param>
         public static void CombatInputHandler(double delta)
-        {        
+        {
             if (uimanager.InteractionMode == uimanager.InteractionModes.ModeAttack)
             {
                 bool MouseHeldDown = Input.IsMouseButtonPressed(MouseButton.Right);
-                switch(stage)
+                switch (stage)
                 {
                     case CombatStages.Ready:
                         if (MouseHeldDown)
                         {
+                            OnHitSpell = 0;
                             JeweledDagger = false;
-                            PlayerAttackScore = 0;
+                            PlayerAttackAccuracy = 0;
                             PlayerAttackDamage = 0;
-                            stage = CombatStages.Charging; 
-                            CombatChargingLoop(delta);                           
+                            stage = CombatStages.Charging;
+                            CombatChargingLoop(delta);
                         }
                         break;
                     case CombatStages.Charging:
@@ -279,18 +282,18 @@ namespace Underworld
                         {
                             //repeat until swing anim sequence is completed. then go to strike
                             combattimer += delta;
-                            if (combattimer>=0.2f)
+                            if (combattimer >= 0.2f)
                             {
                                 Debug.Print("Swing completed");
                                 stage = CombatStages.Striking;
-                            }                            
+                            }
                             break;
                         }
                     case CombatStages.Striking:
                         {
                             //weapon has struck do combat calcs  (if melee) 
                             ProcessAttackHit();
-                                                      
+
                             //when done start reset
                             stage = CombatStages.Resetting;
                             combattimer = 0;
@@ -300,20 +303,20 @@ namespace Underworld
                         {
                             //do weapon put away anim until time   
                             combattimer += delta;
-                            if (combattimer>=0.2f)
+                            if (combattimer >= 0.2f)
                             {
                                 Debug.Print("Resetting");
                                 EndCombatLoop();//resetting. when done return to ready    
-                            }                        
+                            }
                             break;
                         }
-                }                
+                }
             }
             else
             {// check if we need to reset
                 if (stage != CombatStages.Ready)
                 {
-                    EndCombatLoop();                
+                    EndCombatLoop();
                 }
             }
         }
@@ -348,21 +351,21 @@ namespace Underworld
                             Debug.Print("hit a wall. do selfdamage to the weapon");
                             return false;
                         default:
-                                if (int.TryParse(vals[0], out int index))
+                            if (int.TryParse(vals[0], out int index))
+                            {
+                                var hitobject = UWTileMap.current_tilemap.LevelObjects[index];
+                                if (hitobject != null)
                                 {
-                                    var hitobject = UWTileMap.current_tilemap.LevelObjects[index];
-                                    if (hitobject!=null)
+                                    if (hitobject.majorclass == 1)//hit an npc
                                     {
-                                        if (hitobject.majorclass==1)//hit an npc
-                                        {
-                                            Debug.Print($"{hitobject.a_name}");
-                                            return PlayerHitsNPC(hitobject);   
-                                        }
-                                    }                                    
+                                        Debug.Print($"{hitobject.a_name}");
+                                        return PlayerHitsNPC(hitobject);
+                                    }
                                 }
-                                break;                            
+                            }
+                            break;
                     }
-                }               
+                }
             }
             return false; //miss attack
         }
@@ -375,8 +378,8 @@ namespace Underworld
         static bool PlayerHitsNPC(uwObject critter)
         {
             //calc final attack charge based on the % of charge built up in the weapon
-            var finalcharge = mincharge+((maxcharge-mincharge)*WeaponCharge)/100; //this is kept later for damage calcs.
-            
+            var finalcharge = mincharge + ((maxcharge - mincharge) * WeaponCharge) / 100; //this is kept later for damage calcs.
+
             //do attack calcs
             CalcPlayerAttackScores();
 
@@ -393,47 +396,94 @@ namespace Underworld
 
         static void CalcPlayerAttackScores()
         {
-            var weapon = currentweapon;   
-            var weaponskill = playerdat.GetSkillValue(currentMeleeWeaponSkillNo);         
-            
-            if (_RES==GAME_UW2)
+            var weapon = currentweapon;
+            var weaponskill = playerdat.GetSkillValue(currentMeleeWeaponSkillNo);
+
+            if (_RES == GAME_UW2)
             {
                 if (currentWeaponItemID == 10)
                 {
-                    JeweledDagger = true;                
+                    JeweledDagger = true;
                 }
             }
 
-            PlayerAttackScore = weaponskill + (playerdat.Attack>>1) + (playerdat.DEX/7) + playerdat.ValourBonus ;
+            PlayerAttackAccuracy = weaponskill + (playerdat.Attack >> 1) + (playerdat.DEX / 7) + playerdat.ValourBonus;
             if (playerdat.difficuly == 1)
             {   //easy dificulty
-                PlayerAttackScore +=7;
-            }           
-            
+                PlayerAttackAccuracy += 7;
+            }
+
 
             //base damage calcs
-            
+
             if (weaponskill == 2)
             {
                 //do unarmed calcs for base damage
-                PlayerAttackDamage = 4 + (playerdat.STR/6) + (playerdat.Unarmed<<1)/5;
+                PlayerAttackDamage = 4 + (playerdat.STR / 6) + (playerdat.Unarmed << 1) / 5;
             }
             else
             {
-                var attacktype = Rng.r.Next(0,3);
+                var attacktype = Rng.r.Next(0, 3);
                 //do weapon based calcs, using a random attack type now.
-                PlayerAttackDamage = (playerdat.STR/9) + CurrentWeaponBaseDamage(attacktype);
+                PlayerAttackDamage = (playerdat.STR / 9) + CurrentWeaponBaseDamage(attacktype);
             }
 
             //Then get weapon enchantments
-            if (currentweapon!=null)
+            if (currentweapon != null)
             {
-                var enchant = MagicEnchantment.GetSpellEnchantment(currentweapon,playerdat.InventoryObjects);
-                if (enchant!=null)
+                var enchant = MagicEnchantment.GetSpellEnchantment(currentweapon, playerdat.InventoryObjects);
+                if (enchant != null)
                 {
-                    Debug.Print($"Weapon has enchantment {enchant.NameEnchantment} {enchant.SpellMajorClass} {enchant.SpellMinorClass}");
-                }                
-            }            
+                    if (!enchant.IsFlagBit2Set)
+                    {
+                        Debug.Print($"Weapon has enchantment {enchant.NameEnchantment(currentweapon, playerdat.InventoryObjects, 3)} {enchant.SpellMajorClass} {enchant.SpellMinorClass}");
+                        if (enchant.SpellMajorClass == 12)
+                        {//accuracy or damage bonuses
+                            switch (_RES)
+                            {
+                                case GAME_UW2:
+                                    {
+                                        if (enchant.SpellMinorClass <= 7)
+                                        {
+                                            Debug.Print("check me. Possibly bugged enchantment behaviour in uw2 where attack and accuracy are the wrong way around!");
+                                            if (enchant.SpellMinorClass < 4)
+                                            {//this is possibly a bug in uw2 since the accuracy enchantments come to here.
+                                                PlayerAttackDamage += (1 + enchant.SpellMinorClass << 1);
+                                            }
+                                            else
+                                            {
+                                                PlayerAttackAccuracy += ((enchant.SpellMinorClass << 1) - 7);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            OnHitSpell = enchant.SpellMinorClass - 7;//eg lifestealer, firedoom, stone strike door unlocking
+                                            if (OnHitSpell == 7)
+                                            {//unknown special spell.
+                                                PlayerAttackDamage += 5;
+                                            }
+                                        }
+                                        break;
+                                    }
+                                default:
+                                    {
+
+                                        if ((enchant.SpellMinorClass & 8) == 0)
+                                        {
+                                            PlayerAttackAccuracy += (1 + enchant.SpellMinorClass & 0x7);
+                                        }
+                                        else
+                                        {
+                                            PlayerAttackDamage += (1 + enchant.SpellMinorClass & 0x7);
+                                        }
+                                        break;
+                                    }
+                            }
+                        }
+                    }
+                }
+            }
+            Debug.Print($"Final scores accuracy {PlayerAttackAccuracy} damage {PlayerAttackDamage}");
         }
     }//end class
 }//end namespace
