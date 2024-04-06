@@ -38,6 +38,15 @@ namespace Underworld
                         );
                         return true;
                     }
+                case 5:// trespass trap
+                    {
+                        a_do_trap_trespass.Activate(
+                            trapObj: trapObj,
+                            triggerObj: triggerObj,
+                            objList: objList
+                        );
+                        return false;
+                    }
                 default:
                     {
                         Debug.Print($"Unimplemented hack trap {trapObj.quality}");
