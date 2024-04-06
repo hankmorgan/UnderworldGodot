@@ -4,26 +4,33 @@ namespace Underworld
     public partial class trigger : UWClass
     {
         /// <summary>
-        /// Triggers a use trigger linked to the source object at index
+        /// Triggers an open trigger can be linked to the srcObj directly or as a next to a lock.
         /// </summary>
         /// <param name="triggerIndex"></param>
         /// <param name="objList"></param>
         public static bool OpenTrigger(uwObject srcObject, int triggerIndex, uwObject[] objList)
         {
-            var triggerObj = objList[triggerIndex];
-            if (triggerObj == null)
-            {
-                Debug.Print($"Null trigger at {triggerIndex}");
-                return false;
-            }
             //open trigger. 625 in UW1, 62A and 63A in UW2
-            if (
-                ((triggerObj.majorclass == 6) && (triggerObj.minorclass == 2) && (triggerObj.classindex == 5) && (_RES!=GAME_UW2))
-                ||
-                ((triggerObj.majorclass == 6) && (triggerObj.minorclass == 2) && (triggerObj.classindex == 0xA) && (_RES==GAME_UW2))
-                ||
-                ((triggerObj.majorclass == 6) && (triggerObj.minorclass == 3) && (triggerObj.classindex == 0xA) && (_RES==GAME_UW2))
-                )
+            uwObject triggerObj;
+            if (_RES!=GAME_UW2)
+            {
+                triggerObj =  objectsearch.FindMatchInObjectChain(triggerIndex, 6, 2, 5, UWTileMap.current_tilemap.LevelObjects);
+            }
+            else
+            {
+                triggerObj =  objectsearch.FindMatchInObjectChain(triggerIndex, 6, 2, 0xA, UWTileMap.current_tilemap.LevelObjects);
+                if (triggerObj== null)
+                {
+                    triggerObj =  objectsearch.FindMatchInObjectChain(triggerIndex, 6, 3, 0xA, UWTileMap.current_tilemap.LevelObjects);
+                }
+            }
+           
+            
+            if (triggerObj == null)
+            {//no open trigger found                
+                return false;
+            }            
+            else
             {
                 //activate trap
                 Debug.Print($"Activating trap {triggerObj.link}");
@@ -33,7 +40,6 @@ namespace Underworld
                     objList: objList);
                 return true;
             }
-            return false;
         }
     }//end class
 }//end namespace
