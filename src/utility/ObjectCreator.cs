@@ -211,6 +211,8 @@ namespace Underworld
 
             switch (obj.majorclass)
             {
+                case 0://Weapons
+                    break;
                 case 1://npcs
                     {
                         if (obj.item_id < 127)
@@ -219,7 +221,9 @@ namespace Underworld
                             unimplemented = false;
                         }
                         break;
-                    }
+                    }                                
+                case 2://misc items incl containers, food, and lights.                
+                    break;
                 case 3: // misc objects
                     {
                         unimplemented = MajorClass3(obj, newNode, grObjects, name);
@@ -235,9 +239,6 @@ namespace Underworld
                         unimplemented = MajorClass5(obj, newNode, a_tilemap, name);
                         break;
                     }
-                case 0://Weapons
-                case 2://misc items incl containers, food, and lights.                
-
                 case 6://Traps and Triggers
                     {
                         unimplemented = MajorClass6(obj, newNode, a_tilemap, name);

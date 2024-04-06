@@ -92,7 +92,7 @@ namespace Underworld
                 default://cushion
                     if (_RES == GAME_UW2)
                     {
-                        return 38;
+                        return 38+uwobject.flags;
                     }
                     else
                     {

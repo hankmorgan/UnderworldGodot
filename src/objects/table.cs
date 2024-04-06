@@ -462,7 +462,14 @@ namespace Underworld
         {
             if (_RES == GAME_UW2)
             {
-                return 32;
+                switch(meshNo)
+                    {
+                        case 0:
+                        case 1:
+                            return 32 + uwobject.flags;
+                        default:
+                            return 32;
+                    }                
             }
             else
             {

@@ -383,13 +383,27 @@ namespace Underworld
             //do attack calcs
             CalcPlayerAttackScores();
 
-            //update npc AI/attitudes
+            //execute attack
 
-            //process hit result crit, success, fail or critfail/
+            if (PlayerExecuteAttack(critter))
+            {
+                if (_RES==GAME_UW2)
+                {
+                    //post apply spell effect if applicable
+                    switch(OnHitSpell)
+                    {
+                        case 1: Debug.Print("Lifestealer");break;
+                        case 2: Debug.Print("Undeadbane");break;
+                        case 3: Debug.Print("Firedoom");break;
+                        case 4: Debug.Print("stonestrike");break;
+                        case 5: Debug.Print("unknownspecial 5");break;
+                        case 6: Debug.Print("Entry");break;
+                        case 7: Debug.Print("unknownspecial 7");break;
+                        case 8: Debug.Print("unknownspecial 8");break;
+                    }
+                }             
 
-            //apply damages
-
-            //post apply spell effect if applicable
+            }
 
             return true;
         }
@@ -458,7 +472,7 @@ namespace Underworld
                                         else
                                         {
                                             OnHitSpell = enchant.SpellMinorClass - 7;//eg lifestealer, firedoom, stone strike door unlocking
-                                            if (OnHitSpell == 7)
+                                            if (OnHitSpell == 8)
                                             {//unknown special spell.
                                                 PlayerAttackDamage += 5;
                                             }
@@ -484,6 +498,58 @@ namespace Underworld
                 }
             }
             Debug.Print($"Final scores accuracy {PlayerAttackAccuracy} damage {PlayerAttackDamage}");
+        }
+    
+        static bool PlayerExecuteAttack(uwObject critter)
+        {
+        
+            if (checkAttackHit())
+            {
+                CalcFlankingBonus(critter);
+                if(CalcAttackResults(critter) == 0)
+                    {//attack roll has hit
+
+                    }
+                    else
+                    {//attack roll has missed
+
+                    }
+
+                return true;   
+            }
+            else
+            {
+                return false;//swing and a miss
+            }            
+        }
+
+
+        /// <summary>
+        /// Finalises the attack results
+        /// </summary>
+        /// <param name="critter"></param>
+        static int CalcAttackResults(uwObject critter)
+        {
+            return 0;
+        }
+
+        /// <summary>
+        /// Applies a damage bonus based on the relative headings of the attacker and defender.
+        /// </summary>
+        static void CalcFlankingBonus(uwObject critter)
+        {
+
+        }
+
+        /// <summary>
+        /// Checks for a hit within the weapon radius+3 and gets the body positions where the target has been hit
+        /// In my implementation an attack hit is currently handled by the raycast. 
+        /// But I will still need to calculate the body part hit.
+        /// </summary>
+        /// <returns></returns>
+        static bool checkAttackHit()
+        {
+            return true;
         }
     }//end class
 }//end namespace
