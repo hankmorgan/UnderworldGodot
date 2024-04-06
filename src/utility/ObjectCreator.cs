@@ -656,7 +656,7 @@ namespace Underworld
         /// <param name="tileX"></param>
         /// <param name="tileY"></param>
         /// <param name="indexToDelete"></param>
-        public static void DeleteObjectFromTile(int tileX, int tileY, short indexToDelete)
+        public static void DeleteObjectFromTile(int tileX, int tileY, short indexToDelete, bool RemoveFromWorld = true)
         {     
             var objList = UWTileMap.current_tilemap.LevelObjects;
             if (indexToDelete != 0)
@@ -669,7 +669,10 @@ namespace Underworld
                     {
                         tile.indexObjectList = objectToDelete.next;
                         objectToDelete.next = 0;
-                        ObjectCreator.RemoveObject(objectToDelete);
+                        if (RemoveFromWorld)
+                        {
+                            ObjectCreator.RemoveObject(objectToDelete);
+                        }                        
                         return;
                     }
                     else
@@ -684,7 +687,10 @@ namespace Underworld
                             {
                                 nextObject.next = objectToDelete.next;
                                 objectToDelete.next = 0;
-                                ObjectCreator.RemoveObject(objectToDelete);
+                                if (RemoveFromWorld)
+                                {
+                                    ObjectCreator.RemoveObject(objectToDelete);
+                                }                                
                                 return;
                             }
                             next = nextObject.next;

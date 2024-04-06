@@ -175,8 +175,13 @@ namespace Underworld
                         do_inv_delete(talker);
                         break;   
                     }
-                default:
+                case "place_object":
                     {
+                        place_object(talker);
+                        break;
+                    }
+                default:
+                    {                       
                         Debug.Print($"Unimplemented {func.importname}"); break;
                     }
             }
