@@ -103,6 +103,18 @@ namespace Underworld
                     }
                     break;
                 }
+                case 2:
+                {
+                        if (_RES!=GAME_UW2)
+                        {
+                            switch (objInHand.classindex)
+                            {
+                                case 7://key of infinity
+                                    return key_of_infinity.UseOn(objInHand, targetObject, WorldObject);
+                            }
+                        }
+                    break;
+                }
             }
             return false;
         }

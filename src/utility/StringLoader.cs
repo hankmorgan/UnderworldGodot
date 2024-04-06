@@ -730,6 +730,7 @@ namespace Underworld
                 output = output.Replace("a_", "");
                 output = output.Replace("an_", "");
                 output = output.Replace("some_", "some ");
+                output = output.Replace("the_", "the ");
             }
 
             return output;

@@ -128,6 +128,26 @@ namespace Underworld
                         }
                         break;
                     }
+                case 2:
+                    {
+                        if (_RES!=GAME_UW2)
+                        {
+                            switch (obj.classindex)
+                            {
+                                case 7://key of infinity
+                                    return key_of_infinity.Use(obj, WorldObject);
+                            }
+                        }
+                        else
+                        {
+                            switch(obj.classindex)
+                            {
+                                case >0 and <=7://a range of potions.
+                                    break;                                    
+                            }
+                        }
+                        break;
+                    }
             }
             return false;
         }
