@@ -2622,6 +2622,21 @@ shortcut_keys_enabled = false
 middle_mouse_paste_enabled = false
 selecting_enabled = false
 
+[node name="PositionLabel" type="RichTextLabel" parent="UI/Common"]
+visible = false
+texture_filter = 1
+offset_left = 28.0
+offset_top = -9.0
+offset_right = 628.0
+offset_bottom = 151.0
+mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource("5_8iiwt")
+theme_override_font_sizes/normal_font_size = 47
+text = "The Label is here. Can you see it
+Line 2
+line 3
+line 4"
+
 [node name="LaunchScreen" type="CanvasLayer" parent="UI"]
 visible = false
 
@@ -2684,20 +2699,6 @@ offset_bottom = 40.0
 mouse_filter = 2
 script = ExtResource("4_gnu1s")
 
-[node name="PositionLabel" type="RichTextLabel" parent="UI/mouse"]
-texture_filter = 1
-offset_left = 28.0
-offset_top = -9.0
-offset_right = 628.0
-offset_bottom = 151.0
-mouse_filter = 2
-theme_override_fonts/normal_font = ExtResource("5_8iiwt")
-theme_override_font_sizes/normal_font_size = 47
-text = "The Label is here. Can you see it
-Line 2
-line 3
-line 4"
-
 [node name="worldobjects" type="Node3D" parent="."]
 
 [node name="tilemap" type="Node3D" parent="."]
@@ -2706,7 +2707,7 @@ line 4"
 script = ExtResource("6_3y8oy")
 cam = NodePath("../WorldViewContainer/SubViewport/Camera3D")
 audioplayer = NodePath("../UI/AudioPlayer")
-lblPositionDebug = NodePath("../UI/mouse/PositionLabel")
+lblPositionDebug = NodePath("../UI/Common/PositionLabel")
 uwUI = NodePath("../UI/uiManager")
 secondarycameras = NodePath("../WorldViewContainer/SubViewport")
 

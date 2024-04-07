@@ -12,10 +12,10 @@ namespace Underworld
         public string pathuw2 { get; set; }
         public string gametoload { get; set; }
         public int level { get; set; }
-        //public int lightlevel { get; set; }
-        //public string levarkfolder { get; set; }
-        //public string shader { get; set; }
+
         public float FOV { get; set; }
+
+        public bool showcolliders { get; set; }
         public static uwsettings instance;
 
         public static void Save()

@@ -9,6 +9,7 @@ using Underworld;
 public partial class main : Node3D
 {
 
+	static bool EnablePositionDebug=false;
 	/// <summary>
 	/// Blocks input for certain modes
 	/// </summary>
@@ -51,8 +52,7 @@ public partial class main : Node3D
 	double cycletime = 0;
 
 	public override void _Ready()
-	{
-		GetTree().DebugCollisionsHint = true;
+	{		
 		instance = this;
 		gamecam = cam;
 		uimanager.instance = uwUI;
@@ -61,14 +61,12 @@ public partial class main : Node3D
 		uimanager.EnableDisable(uimanager.instance.StartMenuPanel, true);
 		uimanager.instance.pathuw1.Text = uwsettings.instance.pathuw1;
 		uimanager.instance.pathuw2.Text = uwsettings.instance.pathuw2;
-
-		//StartGame();
-
-		// playerdat.LoadPlayerDat(datafolder: uwsettings.instance.levarkfolder);
+		GetTree().DebugCollisionsHint =uwsettings.instance.showcolliders;
 	}
 
 	public static void StartGame()
-	{
+	{		
+		uimanager.EnableDisable(instance.lblPositionDebug,EnablePositionDebug);
 		uimanager.EnableDisable(uimanager.instance.StartMenuPanel, false);
 		ObjectCreator.grObjects = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
 		ObjectCreator.grObjects.UseRedChannel = true;
@@ -120,9 +118,12 @@ public partial class main : Node3D
             uimanager.UpdateCompass();
 			combat.CombatInputHandler(delta);
 			playerdat.PlayerTimedLoop(delta);
-			
-            lblPositionDebug.Text = $"Minutes:{playerdat.game_mins}\nL:{playerdat.dungeon_level} X:{tileX} Y:{tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}\n{cam.Rotation} {playerdat.heading} {(playerdat.heading >> 4) % 4} {xposvecto} {yposvecto}";
-            
+			if (EnablePositionDebug)
+			{
+				var fps = Engine.GetFramesPerSecond();
+				lblPositionDebug.Text = $"FPS:{fps} Time:{playerdat.game_time}\nL:{playerdat.dungeon_level} X:{tileX} Y:{tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}\n{cam.Rotation} {playerdat.heading} {(playerdat.heading >> 4) % 4} {xposvecto} {yposvecto}";
+ 			}
+
 			
             
 			if ((tileX < 64) && (tileX >= 0) && (tileY < 64) && (tileY >= 0))
@@ -238,6 +239,12 @@ public partial class main : Node3D
 							Debug.Print ("Track"); break;
 						case Key.F10: // make camp 
 							Debug.Print ("Make camp"); break;
+						case Key.F11://toggle position label
+							{
+								EnablePositionDebug = !EnablePositionDebug;
+								uimanager.EnableDisable(lblPositionDebug,EnablePositionDebug);
+								break;
+							}
 					}
 				}
 			}
