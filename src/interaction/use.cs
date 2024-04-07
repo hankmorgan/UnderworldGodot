@@ -95,6 +95,7 @@ namespace Underworld
                                     if (spell != null)
                                     {
                                         MagicEnchantment.CastObjectSpell(obj, spell);
+                                        //TODO determine if spell qty needs to be decremented.
                                         result = true;
                                     }
                                 }
@@ -143,7 +144,7 @@ namespace Underworld
                             switch(obj.classindex)
                             {
                                 case >0 and <=7://a range of potions.
-                                    break;                                    
+                                    return potion.Use(obj,objList, WorldObject);                                
                             }
                         }
                         break;
@@ -203,7 +204,7 @@ namespace Underworld
                         }
                         break;
                     }
-                case 3://food
+                case 3://food (including some potions)
                     {
                         return food.Use(obj, WorldObject);
                     }
@@ -305,7 +306,7 @@ namespace Underworld
                                 case 0xB:
                                     return map.Use(obj, WorldObject);
                                 default:
-                                    return Readable.Use(obj, objList);
+                                    return Readable.Use(obj, objList, WorldObject);
                             }
                         }
                         else
@@ -327,7 +328,7 @@ namespace Underworld
                                 case 0xF://a_resilient sphere 
                                     return false;
                                 default:
-                                    return Readable.LookAt(obj, objList);
+                                    return Readable.Use(obj, objList, WorldObject);
                             }
                         }
                     }

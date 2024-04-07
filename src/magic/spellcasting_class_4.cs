@@ -11,15 +11,14 @@ namespace Underworld
         {
             int healamount;
             if (minorclass == 0xF)
-            {//what spell would do this???
+            {//what spell would do this??? Answer Greater heal.
                 healamount = -1;
-                playerdat.play_hp = System.Math.Max(0, playerdat.max_hp + healamount);//negative ???
-
+                playerdat.play_hp = playerdat.max_hp;//System.Math.Max(0, playerdat.play_hp + healamount);//negative ???
             }
             else
             {
                 healamount = Rng.DiceRoll(minorclass, 8);
-                playerdat.play_hp = System.Math.Min(playerdat.max_hp, playerdat.max_hp + healamount);
+                playerdat.play_hp = System.Math.Min(playerdat.max_hp, playerdat.play_hp + healamount);
             }
         }
     }//end namespace
