@@ -1,4 +1,6 @@
+using System;
 using Godot;
+using Godot.NativeInterop;
 
 namespace Underworld
 {
@@ -59,6 +61,10 @@ namespace Underworld
 
         public static void SetPowerFrame(int frameno)
         {
+            if (UWClass._RES==UWClass.GAME_UW2)
+            {
+                frameno = Math.Min(10,frameno);
+            }
             PowerGem.Texture = grPower.LoadImageAt(frameno); 
         }
 

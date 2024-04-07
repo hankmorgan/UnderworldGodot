@@ -108,7 +108,7 @@ namespace Underworld
         /// </summary>
         /// <param name="item_id"></param>
         /// <returns></returns>
-        public static int vulnerability(int item_id)
+        public static int maybepoisonvulnerability(int item_id)
         {
             return (buffer[CritterOffset(item_id) + 0x8] >> 3) & 0x3;
         }
@@ -141,6 +141,16 @@ namespace Underworld
             return (buffer[CritterOffset(item_id) + 0x9] >> 2) & 0x3F;
         }
 
+
+        /// <summary>
+        /// The player weapon will get damaged on a crit miss against this enemy.
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <returns></returns>
+        public static bool damagesWeaponOnCritMiss(int item_id)
+        {   
+            return ((buffer[CritterOffset(item_id) + 0xA]) & 0x1) == 1;
+        }
 
         /// <summary>
         /// True if NPC is a swimmer.
@@ -265,11 +275,11 @@ namespace Underworld
         }   
 
         /// <summary>
-        /// Maybe the defence stat for the NPC
+        /// The defence stat for the NPC
         /// </summary>
         /// <param name="item_id"></param>
         /// <returns></returns>
-        public static int maybedefence(int item_id)
+        public static int defence(int item_id)
         {
             return buffer[CritterOffset(item_id) + 0x12] ;
         }

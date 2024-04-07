@@ -18,13 +18,13 @@ namespace Underworld
 
     public static SkillCheckResult SkillCheck(int skillValue, int targetValue)
     {        
-        int score = (skillValue - targetValue) + Rng.r.Next(0, 30); //0 to 29;
+        int score = (skillValue - targetValue) + Rng.r.Next(0, 31); //0 to 30;
 
-        if (score < 0x1d)
+        if (score <= 0x1c)
         {
-            if (score < 0x10)
+            if (score <= 0xF)
             {
-                if (score < 3)
+                if (score <= 2)
                 {
                     Debug.Print("Skill roll " + skillValue + " vs " + targetValue + " Score = " + score + " (CritFail)");
                     return SkillCheckResult.CritFail;//0xffff //critical failure

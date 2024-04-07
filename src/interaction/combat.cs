@@ -95,6 +95,8 @@ namespace Underworld
 
         public static int PlayerAttackAccuracy = 0;
         public static int PlayerAttackDamage = 0;
+        public static int PlayerFlankingBonus = 0;
+        public static bool PlayerHasCritted = false;
 
 
         /// <summary>
@@ -246,6 +248,8 @@ namespace Underworld
                             JeweledDagger = false;
                             PlayerAttackAccuracy = 0;
                             PlayerAttackDamage = 0;
+                            PlayerFlankingBonus = 0;
+                            PlayerHasCritted = false;
                             stage = CombatStages.Charging;
                             CombatChargingLoop(delta);
                         }
@@ -266,10 +270,17 @@ namespace Underworld
                         {
                             if (uimanager.IsMouseInViewPort())
                             {
-                                //start swing                            
-                                Debug.Print($"Releasing attack at charge {WeaponCharge}");
-                                stage = CombatStages.Swinging;
-                                combattimer = 0;
+                                if (WeaponCharge>= mincharge)
+                                {
+                                    //start return swing   swing                            
+                                    Debug.Print($"Releasing attack at charge {WeaponCharge}");
+                                    stage = CombatStages.Swinging;
+                                    combattimer = 0;
+                                }
+                                else
+                                {//cancel. not enough charge built up
+                                    stage = CombatStages.Resetting;
+                                }                                
                             }
                             else
                             {
@@ -504,17 +515,16 @@ namespace Underworld
         {
         
             if (checkAttackHit())
-            {
-                CalcFlankingBonus(critter);
+            {                
+                PlayerFlankingBonus = CalcFlankingBonus(critter);
                 if(CalcAttackResults(critter) == 0)
                     {//attack roll has hit
-
+                        Debug.Print("Hit");
                     }
                     else
                     {//attack roll has missed
-
+                        Debug.Print("Miss");
                     }
-
                 return true;   
             }
             else
@@ -528,17 +538,82 @@ namespace Underworld
         /// Finalises the attack results
         /// </summary>
         /// <param name="critter"></param>
+        /// <returns>0 if attack hit</returns>
         static int CalcAttackResults(uwObject critter)
         {
-            return 0;
+            if (critter.majorclass==1)
+                {//npc
+                    var defencescore = critterObjectDat.defence(critter.item_id);
+                    var attackscore = PlayerAttackAccuracy + PlayerFlankingBonus;
+                    var result = playerdat.SkillCheck(attackscore, defencescore);
+                    if (playerdat.PoisonedWeapon)
+                    {
+                        if (checkforPoisonableWeapon())
+                        {
+                            if (critterObjectDat.maybepoisonvulnerability(critter.item_id) != 0)
+                            {
+                                PlayerAttackDamage += ((playerdat.Casting+30)/40);
+                            }
+                        }
+                    }
+                    PlayerHasCritted = false;
+                    if (result == playerdat.SkillCheckResult.CritSucess)
+                    {
+                        PlayerHasCritted = true;
+                        var critbonus = (48+ Rng.r.Next(30)) >>5;
+                        PlayerAttackDamage = PlayerAttackDamage * critbonus;
+                        return 0;
+                    }
+                    else
+                    {
+                        if (result == playerdat.SkillCheckResult.CritFail)
+                        {
+                            if (critterObjectDat.damagesWeaponOnCritMiss(critter.item_id))
+                            {
+                                var weaponselfdamage = Rng.DiceRoll(2,3);
+                                Debug.Print($"Damage primary weapon by {weaponselfdamage}");
+                            }
+                        }
+                        return 1 - (int)result;
+
+                    }
+                }
+            else
+                {
+                    //did not hit an npc
+                    return 0;//for now
+                }
+        }
+
+
+        /// <summary>
+        /// Only certain weapons can use a poison enchantment. for the moment return true here.
+        /// </summary>
+        /// <returns></returns>
+        static bool checkforPoisonableWeapon()
+        {
+            return true;
         }
 
         /// <summary>
-        /// Applies a damage bonus based on the relative headings of the attacker and defender.
+        /// Gets a damage bonus based on the relative headings of the attacker and defender.
         /// </summary>
-        static void CalcFlankingBonus(uwObject critter)
+        static int CalcFlankingBonus(uwObject critter)
         {
+            var defenderHeading = critter.heading;
+            var attackerHeading = playerdat.heading>>4;
+            return CalcFlankingBonus(defenderHeading,attackerHeading);
+        }
 
+        static int CalcFlankingBonus(int defenderHeading, int attackerHeading)
+        {
+            var bonus = defenderHeading + 0xC - attackerHeading;
+            bonus = bonus & 0x7;
+            if (bonus>4)
+            {
+                bonus = 8 - bonus;
+            }
+            return bonus;
         }
 
         /// <summary>

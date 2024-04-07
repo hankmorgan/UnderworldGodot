@@ -22,6 +22,11 @@ namespace Underworld
                 int conversationNo = GetConversationNumber(talker);
                 Debug.Print($"ConversationNo is {conversationNo}");
                 currentConversation = null;
+                if(conversations[conversationNo] == null)
+                {
+                    uimanager.AddToMessageScroll(GameStrings.GetString(7, 1));
+                    return;
+                }
                 //Check if npc can be talked to
                 if ((conversations[conversationNo].CodeSize == 0) || (talker.npc_whoami == 255))
                 {//006~007~001~You get no response.
