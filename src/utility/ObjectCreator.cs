@@ -182,14 +182,28 @@ namespace Underworld
         /// <param name="a_tilemap"></param>
         public static void GenerateObjects(uwObject[] objects, UWTileMap a_tilemap)
         {
+            
             npcs = new();
-            foreach (var obj in objects)
+            for (int x = 0; x<=a_tilemap.Tiles.GetUpperBound(0);x++)
             {
-                if (obj.item_id <= 463)
+                for (int y = 0; y<=a_tilemap.Tiles.GetUpperBound(0);y++)
                 {
-                    RenderObject(obj, a_tilemap);
+                    var next = a_tilemap.Tiles[x,y].indexObjectList;
+                    while (next!=0)
+                    {
+                        var obj = a_tilemap.LevelObjects[next];
+                        RenderObject(obj, a_tilemap);
+                        next = obj.next;
+                    }
                 }
             }
+            // foreach (var obj in objects)
+            // {
+            //     if (obj.item_id <= 463)
+            //     {
+            //         RenderObject(obj, a_tilemap);
+            //     }
+            // }
         }
 
 
