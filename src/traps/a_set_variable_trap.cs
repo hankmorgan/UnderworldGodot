@@ -10,9 +10,9 @@ namespace Underworld
             {
                 case GAME_UW2:
                     {
-                        var RightVariable = trapObj.heading;  //arg4
-                        var Operator = trapObj.quality << 6 + trapObj.owner; //arg2
-                        var LeftVariable = trapObj.xpos << 7 + trapObj.zpos; //arg0
+                        var Operator = trapObj.heading;  //arg4
+                        var RightVariable = (trapObj.quality << 6) + trapObj.owner; //arg2
+                        var LeftVariable = (trapObj.xpos << 7) + trapObj.zpos; //arg0
                         VariableOperationUW2(LeftVariable, Operator, RightVariable);
                         if (trapObj.ypos != 0)
                         {
@@ -138,7 +138,7 @@ namespace Underworld
         /// <param name="RightOperator"></param>
         static void VariableOperationUW2(int LeftOperator, int Operation, int RightOperator)
         {
-            Debug.Print($"{LeftOperator} {Operation} {RightOperator}");
+            Debug.Print($"L:{LeftOperator} O:{Operation} R:{RightOperator}");
             switch (LeftOperator)
             {
                 case < 0x100:

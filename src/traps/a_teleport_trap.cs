@@ -9,75 +9,28 @@ namespace Underworld
 
         public static int Activate(uwObject trapObj, uwObject[] objList)
         {
+            if (trigger.JustTeleported)
+            {
+                trigger.JustTeleported = false;
+                return 0;
+            }
+
             if (trapObj.zpos == 0)
             {
-                if (!trigger.JustTeleported)
-                {
-                    trigger.TeleportLevel = -1;
-                    trigger.TeleportTileX = trapObj.quality;
-                    trigger.TeleportTileY = trapObj.owner;
-                    
-                    uimanager.FlashColour(1, uimanager.Cuts3DWin, 0.1f);
-
-                    // Debug.Print($"Teleport within this level {trapObj.quality},{trapObj.owner}");
-                    // var targetTile = UWTileMap.current_tilemap.Tiles[trapObj.quality, trapObj.owner];
-                    // playerdat.zpos = targetTile.floorHeight << 2;
-                    // playerdat.xpos = 3; playerdat.ypos = 3;
-                    // playerdat.tileX = trapObj.quality; playerdat.tileY = trapObj.owner;
-                    // main.gamecam.Position = uwObject.GetCoordinate(playerdat.tileX, playerdat.tileY, playerdat.xpos, playerdat.ypos, playerdat.camerazpos);
-                    // JustTeleported = true;
-                    // _ = Peaky.Coroutines.Coroutine.Run(
-                    // PauseTeleport(),
-                    // main.instance
-                    // );
-                }
-                else
-                {
-                    trigger.JustTeleported = false;
-                }
+                trigger.TeleportLevel = -1;
+                trigger.TeleportTileX = trapObj.quality;
+                trigger.TeleportTileY = trapObj.owner;
+                uimanager.FlashColour(1, uimanager.Cuts3DWin, 0.1f);
             }
             else
             {
-                if (!trigger.JustTeleported)
-                {
-                    trigger.TeleportLevel = trapObj.zpos;
-                    trigger.TeleportTileX = trapObj.quality;
-                    trigger.TeleportTileY = trapObj.owner;
-
-                    // var targetX = trapObj.quality; var targetY = trapObj.owner;
-                    // Debug.Print($"Teleport to dungeon {trapObj.zpos}  {trapObj.quality},{trapObj.owner}");
-                    // playerdat.dungeon_level = trapObj.zpos;
-                    // if (playerdat.ObjectInHand!=0)
-                    // {
-                    //     Debug.Print("Player is holding a world object while changing levels. This scenario needs to fixed!");
-                    // }
-
-                    // UWTileMap.LoadTileMap(
-                    //     newLevelNo: playerdat.dungeon_level - 1,
-                    //     datafolder: playerdat.currentfolder,
-                    //     newGameSession: false);
-
-                    // var targetTile = UWTileMap.current_tilemap.Tiles[targetX, targetY];
-                    // Debug.Print($"Player ZPOS {playerdat.zpos} -> {targetTile.floorHeight << 2}");
-                    // playerdat.zpos = targetTile.floorHeight << 2;
-                    // Debug.Print($"Player ZPOS is now {playerdat.zpos}");
-                    // playerdat.xpos = 3; playerdat.ypos = 3;
-                    // playerdat.tileX = targetX; playerdat.tileY = targetY;
-                    // main.gamecam.Position = uwObject.GetCoordinate(targetX, targetY, playerdat.xpos, playerdat.ypos, playerdat.camerazpos);
-                    // JustTeleported = true;
-                    // _ = Peaky.Coroutines.Coroutine.Run(
-                    // PauseTeleport(),
-                    // main.instance
-                    //);
-                }
-                else
-                {
-                    trigger.JustTeleported = false;
-                }
+                trigger.TeleportLevel = trapObj.zpos;
+                trigger.TeleportTileX = trapObj.quality;
+                trigger.TeleportTileY = trapObj.owner;
             }
 
             //main.gamecam.Position = uwObject.GetCoordinate(tileX, tileY, xpos, ypos, camerazpos);
-            return 0;
+            return trapObj.link;
         }
 
     }//end class
