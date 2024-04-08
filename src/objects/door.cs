@@ -305,6 +305,10 @@ namespace Underworld
                     obj.doorNode.Rotate(Vector3.Up, obj.GetRadiansForIndex(0, obj.uwobject.doordir));
                 }
             }
+            if ((obj.uwobject.link != 0) && (_RES==GAME_UW2))
+            {
+                trigger.CloseTrigger(obj.uwobject, obj.uwobject.link, UWTileMap.current_tilemap.LevelObjects);
+            }
         }
 
         /// <summary>
