@@ -33,11 +33,13 @@ namespace Underworld
             else
             {
                 //activate trap
+                trigger.StartTriggerChainEvents();
                 Debug.Print($"Activating trap {triggerObj.link}");
                 trap.ActivateTrap(
                     triggerObj: triggerObj,
                     trapIndex: triggerObj.link,
                     objList: objList);
+                trigger.EndTriggerChainEvents();
                 return true;
             }
         }

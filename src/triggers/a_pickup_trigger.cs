@@ -10,11 +10,12 @@ namespace Underworld
         /// <param name="objList"></param>
         /// <param name="obj"></param>
         public static void PickupTrigger(uwObject[] objList, uwObject obj)
-        {
+        {            
             var index = obj.index;
             var PickupTrigger = objectsearch.FindMatchInObjectChain(index, 6, 2, 1, objList, true);
             if (PickupTrigger != null)
             {
+                trigger.StartTriggerChainEvents();
                 Debug.Print($"Pickup trigger found {PickupTrigger.index} -> {PickupTrigger.link}");
                 trap.ActivateTrap(
                     triggerObj: PickupTrigger,
@@ -51,6 +52,7 @@ namespace Underworld
                     Debug.Print("Unable to find the pickup trigger to remove it.");
                 }
             }
+            trigger.EndTriggerChainEvents();
         }
-    }
-}
+    }//end class
+}//end namespace

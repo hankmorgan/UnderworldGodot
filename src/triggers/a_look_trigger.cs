@@ -21,11 +21,13 @@ namespace Underworld
             if ((triggerObj.majorclass == 6) && ((triggerObj.minorclass == 2) || (triggerObj.minorclass == 3)) && (triggerObj.classindex == 3))
             {//use trigger class , 6-2-3 or 6-3-3 
                 //activate trap
+                trigger.StartTriggerChainEvents();
                 Debug.Print($"Activating trap {triggerObj.link}");
                 trap.ActivateTrap(
                     triggerObj: triggerObj,
                     trapIndex: triggerObj.link,
                     objList: objList);
+                trigger.EndTriggerChainEvents();
             }
         }
     }//end class

@@ -166,6 +166,7 @@ namespace Underworld
                     }
                 }
             }
+            uimanager.AddToMessageScroll(GameStrings.GetString(1,GameStrings.str_the_spell_has_no_discernable_effect_));
         }
     }//end class
 }//end namespace
