@@ -130,16 +130,31 @@ public partial class main : Node3D
             {
                 if ((playerdat.tileX != tileX) || (playerdat.tileY != tileY))
                 {
+					if (UWClass._RES==UWClass.GAME_UW2)
+					{
+						//find exit triggers.
+						var entertrigger = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY].EnterTrigger;
+						if (entertrigger!=0)
+						{
+							trigger.ExitTrigger(null, entertrigger, UWTileMap.current_tilemap.LevelObjects);
+						}
+					}
                     playerdat.tileX = tileX;
                     playerdat.tileY = tileY;
                     playerdat.xpos = xposvecto;
                     playerdat.ypos = yposvecto;
-
                     playerdat.PlayerStatusUpdate();
+					if (UWClass._RES==UWClass.GAME_UW2)
+					{
+						//find enter triggers.
+						var entertrigger = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY].EnterTrigger;
+						if (entertrigger!=0)
+						{
+							trigger.EnterTrigger(null, entertrigger, UWTileMap.current_tilemap.LevelObjects);
+						}
+					}
                 }
-
             }
-
 
             cycletime += delta;
             if (cycletime > 0.2)

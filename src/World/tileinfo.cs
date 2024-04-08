@@ -255,6 +255,17 @@ namespace Underworld
         /// </summary>
         public short tileY;
 
+
+        /// <summary>
+        /// Index of trigger to fire when entering this tile
+        /// </summary>
+        public int EnterTrigger =0;
+        
+        /// <summary>
+        /// Index of trigger to fire when exiting this tile
+        /// </summary>
+        public int ExitTrigger =0;
+
         /// <summary>
         /// UW Tile flags - Unknown purpose
         /// </summary>

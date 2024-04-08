@@ -496,7 +496,7 @@ namespace Underworld
             }
 
             //Find tiles that may change terrain due to triggers/traps
-            FindTerrainChanges();
+            FindTileTriggersAndChanges();
 
             //Reduce map complexity.
             CleanUp();
@@ -508,7 +508,7 @@ namespace Underworld
         /// <summary>
         /// Finds trigger-trap chains that will change the terrain
         /// </summary>
-        static void FindTerrainChanges()
+        static void FindTileTriggersAndChanges()
         {
             for (int i = 255; i <= current_tilemap.LevelObjects.GetUpperBound(0); i++)
             {
@@ -553,6 +553,22 @@ namespace Underworld
                                         }
                                 }
                             }
+                        }
+                    }
+                
+                    if ((_RES==GAME_UW2) && (trigger.item_id == 422))
+                    {
+                        if (ValidTile(trigger.tileX, trigger.tileY))
+                        {
+                            current_tilemap.Tiles[trigger.tileX, trigger.tileY].EnterTrigger = trigger.index;
+                        }
+                    }
+
+                    if ((_RES==GAME_UW2) && (trigger.item_id == 423))
+                    {
+                        if (ValidTile(trigger.tileX, trigger.tileY))
+                        {
+                            current_tilemap.Tiles[trigger.tileX, trigger.tileY].ExitTrigger = trigger.index;
                         }
                     }
                 }
