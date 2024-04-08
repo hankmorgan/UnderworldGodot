@@ -54,7 +54,16 @@ namespace Underworld
             {//cycle frames at max level
                 PowerLevelFrame = 9;
                 PowerFrameAdjust++;
-                if (PowerFrameAdjust>4){PowerFrameAdjust = 0;}                        
+            
+                if ((PowerFrameAdjust>4)&& (UWClass._RES!=UWClass.GAME_UW2))
+                {
+                    PowerFrameAdjust = 0;
+                } 
+                if ((PowerFrameAdjust>1)&& (UWClass._RES==UWClass.GAME_UW2))
+                {
+                    PowerFrameAdjust = 0;
+                } 
+                                      
                 SetPowerFrame(PowerLevelFrame + PowerFrameAdjust);                       
             }                        
         }
