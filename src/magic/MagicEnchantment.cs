@@ -8,15 +8,17 @@ namespace Underworld
     public class MagicEnchantment : UWClass
     {
 
+        public uwObject LinkedSpellObject;
         public int SpellMajorClass;
         public int SpellMinorClass;
         public bool IsFlagBit2Set;
 
-        public MagicEnchantment(int _major, int _minor, bool _isflag2set)
+        public MagicEnchantment(int _major, int _minor, bool _isflag2set, uwObject _linkedSpellObject)
         {
             SpellMajorClass = _major;
             SpellMinorClass = _minor;
             IsFlagBit2Set = _isflag2set;
+            LinkedSpellObject = _linkedSpellObject;
         }
 
         public static bool IsPotion(uwObject obj, bool UW2Only = true)
@@ -153,6 +155,7 @@ namespace Underworld
 
         public static MagicEnchantment GetSpellEnchantment(uwObject obj, uwObject[] objList)
         {
+            uwObject _linkedSpell = null;
             if (obj.majorclass == 6)
             {
                 return null;
@@ -193,6 +196,10 @@ namespace Underworld
                         minorclass: 2, 
                         classindex: 0, 
                         objList: objList);
+                    if (obj!=null)
+                    {
+                        _linkedSpell = obj;
+                    }
                 }
 
                 if (obj!=null)
@@ -223,7 +230,9 @@ namespace Underworld
                     return new MagicEnchantment(
                         _major: major,
                         _minor: minor, 
-                        _isflag2set: flag2);
+                        _isflag2set: flag2,
+                        _linkedSpellObject: _linkedSpell
+                        );
                 }
                 else
                 {
@@ -248,5 +257,57 @@ namespace Underworld
             }
             SpellCasting.CastSpellFromObject(spellno, obj);
         } 
+
+
+        /// <summary>
+        /// Reducees the quality of a linked spell object to reflect reducing spell charges.
+        /// </summary>
+        /// <param name="objList"></param>
+        /// <param name="WorldObject"></param>
+        /// <param name="parentObject"></param>
+        /// <param name="spell"></param>
+        /// <returns>True when spell has ran out.</returns>
+        public static bool DecrementSpellQuality(uwObject[] objList, bool WorldObject, uwObject parentObject, MagicEnchantment spell)
+        {
+            if (spell.LinkedSpellObject.quality > 0)
+            {
+                spell.LinkedSpellObject.quality--;
+            }
+            else
+            {
+                //spell has ran out. unlink it
+                var next = parentObject.link;
+                var previous = 0;
+                while (next != 0)
+                {
+                    var nextObj = objList[next];
+                    if (next == spell.LinkedSpellObject.index)
+                    {
+                        if (WorldObject)
+                        {
+                            if (previous == 0)
+                            {
+                                parentObject.link = 0;
+                            }
+                            else
+                            {
+                                var previousObject = objList[previous];
+                                previousObject.link = 0;
+                            }
+                            ObjectCreator.RemoveObject(spell.LinkedSpellObject);                            
+                        }
+                        else
+                        {
+                            playerdat.RemoveFromInventory(spell.LinkedSpellObject.index, ClearLink: true, updateUI: false);
+                        }
+                        return true;//spell has ran out
+                    }
+                    next = nextObj.next;
+                    previous = nextObj.index;
+                }
+            }
+            return false;
+        }
+
     }//end class
 }//end namespace

@@ -87,19 +87,13 @@ namespace Underworld
                             {
                                 if ((obj.majorclass==2) && (obj.minorclass == 0))
                                 {
-                                    //do not cast spells from containers.
+                                    //do not cast spells from containers. (except maybe the cornicopia?)
                                 }   
                                 else
-                                {
-                                    var spell = MagicEnchantment.GetSpellEnchantment(obj, objList);
-                                    if (spell != null)
                                     {
-                                        MagicEnchantment.CastObjectSpell(obj, spell);
-                                        //TODO determine if spell qty needs to be decremented.
-                                        result = true;
+                                        result = UseItemCastSpell(objList, WorldObject, result, obj);
                                     }
-                                }
-                                break;
+                                    break;
                             }
                         }
 
@@ -113,6 +107,35 @@ namespace Underworld
 
             return result;
         }
+
+        /// <summary>
+        /// General catch all spell cast. Allows casting of spells from objects that are not normally associated with magic. Eg the piece of wood of lightning
+        /// </summary>
+        /// <param name="objList"></param>
+        /// <param name="WorldObject"></param>
+        /// <param name="result"></param>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static bool UseItemCastSpell(uwObject[] objList, bool WorldObject, bool result, uwObject obj)
+        {
+            var spell = MagicEnchantment.GetSpellEnchantment(obj, objList);
+            if (spell != null)
+            {
+                MagicEnchantment.CastObjectSpell(obj, spell);
+                if (spell.LinkedSpellObject != null)
+                {
+                    MagicEnchantment.DecrementSpellQuality(
+                        objList: objList,
+                        WorldObject: WorldObject,
+                        parentObject: obj,
+                        spell: spell);
+
+                }
+                return true;
+            }
+            return false;
+        }
+
 
         public static bool UseMajorClass3(uwObject obj, uwObject[] objList, bool WorldObject)
         {
@@ -178,6 +201,10 @@ namespace Underworld
                         else
                         {
                             //wands
+                            if (obj.classindex<=0xB)
+                                {
+                                    return wand.Use(obj, WorldObject);
+                                }
                         }
                         break;
                     }
