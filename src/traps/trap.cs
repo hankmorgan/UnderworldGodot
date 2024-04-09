@@ -158,7 +158,7 @@ namespace Underworld
                                         break;
                                     }
                                 case 1:
-                                    {
+                                    {//6-1-1 experience trap
                                         if(_RES==GAME_UW2)
                                         {
                                             implemented = true;

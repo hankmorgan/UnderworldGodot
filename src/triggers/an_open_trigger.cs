@@ -33,15 +33,32 @@ namespace Underworld
             else
             {
                 //activate trap
-                trigger.StartTriggerChainEvents();
-                Debug.Print($"Activating trap {triggerObj.link}");
-                trap.ActivateTrap(
-                    triggerObj: triggerObj,
-                    trapIndex: triggerObj.link,
-                    objList: objList);
-                trigger.EndTriggerChainEvents();
+                RunOpenTrigger(objList, triggerObj);
+
+                if (_RES == GAME_UW2)
+                {//check if the next object of the open trigger is an open trigger as well. Supports the secret room in the avatars room. This may be needed for other combos as well?
+                    if (triggerObj.next != 0)
+                    {
+                        var nextTrigger = objList[triggerObj.next];
+                        if ((nextTrigger.item_id == 442) ||(nextTrigger.item_id == 426))
+                        {
+                            RunOpenTrigger(objList, nextTrigger);
+                        }
+                    }
+                }
                 return true;
             }
+        }
+
+        private static void RunOpenTrigger(uwObject[] objList, uwObject triggerObj)
+        {
+            trigger.StartTriggerChainEvents();
+            Debug.Print($"Activating trap {triggerObj.link}");
+            trap.ActivateTrap(
+                triggerObj: triggerObj,
+                trapIndex: triggerObj.link,
+                objList: objList);
+            trigger.EndTriggerChainEvents();
         }
     }//end class
 }//end namespace

@@ -38,6 +38,7 @@ namespace Underworld
                 tileX = -(int)(main.gamecam.Position.X / 1.2f);
                 tileY = (int)(main.gamecam.Position.Z / 1.2f);
                 dungeon_level = uwsettings.instance.level + 1;
+                play_level = 1;
 
                 var isfemale = Rng.r.Next(0, 2) == 1;
                 isFemale = isfemale;
