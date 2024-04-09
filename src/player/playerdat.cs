@@ -372,29 +372,11 @@ namespace Underworld
             }
         }
 
-         public static void ChangeExperience(int newEXP)
-         {
-            if (_RES==GAME_UW2)
-            {
-                ChangeExperienceUW2(newEXP);
-            }
-            else
-            {
-                ChangeExperienceUW1(newEXP);
-            }
-         }
-
-
-        private static void ChangeExperienceUW1(int newEXP)
-        {
-                //TODO (assuming may be different from UW1)
-        }
-
         /// <summary>
         /// Changes the player EXP using the vanilla logic for EXP gains
         /// </summary>
         /// <param name="newEXP"></param>
-        private static void ChangeExperienceUW2(int newEXP)
+        public static void ChangeExperience(int newEXP)
         {
             //value * 500 is the exp needed for next level up
             int[] LevelUpAt = new int[]{0,1,2,3,4,6,8,0xC,0x10,0x18,0x20,0x30,0x40,0x60,0x80,0xC0};
@@ -405,12 +387,15 @@ namespace Underworld
 
             if (newEXP>=0)
             {
-                var world = worlds.GetWorldNo(dungeon_level);
-                world = world<<1;
-                world += 2;
-                if (world < playerdat.play_level)
-                {//reduce gain if on a lower "level" of the world then the player level
-                    newEXP = 1 + (newEXP/2);
+                if (_RES==GAME_UW2)
+                {
+                    var world = worlds.GetWorldNo(dungeon_level);
+                    world = world<<1;
+                    world += 2;
+                    if (world < playerdat.play_level)
+                    {//reduce xp gain if on a lower "world level" then the player level
+                        newEXP = 1 + (newEXP/2);
+                    }
                 }
                 var newTotalSkillPoints = (Exp + newEXP)/1500; //how many skill points the player will have gained at their total exp level
                 if (SkillPointsTotal<newTotalSkillPoints)
