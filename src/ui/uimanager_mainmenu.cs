@@ -25,6 +25,16 @@ namespace Underworld
             if (UWClass._RES == UWClass.GAME_UW2)
             {
                 MainMenuBG.Texture = bitmaps.LoadImageAt(5);
+                //move main menu buttons
+                MainMenuButtons[0].Size = new Vector2(436, 68);
+                MainMenuButtons[0].Position = new Vector2(420, 308);
+                MainMenuButtons[1].Position =  new Vector2(324, 392);
+                
+                MainMenuButtons[2].Size = new Vector2(668, 96);
+                MainMenuButtons[2].Position = new Vector2(300, 484);
+
+                MainMenuButtons[3].Size = new Vector2(580, 100);
+                MainMenuButtons[3].Position = new Vector2(348, 584);
             }
             else
             {
