@@ -241,8 +241,8 @@ namespace Underworld
 				}
 			}
 			
-			var tmp = FindVariable("npc_hunger");
-			if (tmp>=32)
+			var newexp = FindVariable("npc_hunger");
+			if (newexp>=32)
 				{//Set bit 7
 					npc.npc_hunger = (short)((npc.npc_hunger & 0x7F) | (1<<7));
 				}
@@ -258,15 +258,15 @@ namespace Underworld
 			npc.npc_goal = (byte)FindVariable("npc_goal"); //There may be deeper logic applying here
 			npc.npc_gtarg = (byte)FindVariable("npc_gtarg");
 			npc.npc_talkedto=1;// this always gets set to 1
-			tmp = FindVariable("npc_attitude");
-			if (tmp>3)
+			newexp = FindVariable("npc_attitude");
+			if (newexp>3)
 			{
 				npc.npc_attitude = 3;
 				npc.npc_hunger = (short)(npc.npc_hunger | 0x40); //set bit 6 after conv
 			}
 			else
 			{
-				npc.npc_attitude = (short)Math.Max(0, (int)tmp);
+				npc.npc_attitude = (short)Math.Max(0, (int)newexp);
 			}
 
 			playerdat.play_hunger = (byte)FindVariable("play_hunger");
@@ -274,10 +274,11 @@ namespace Underworld
 			playerdat.play_mana = (byte)FindVariable("play_mana");
 			playerdat.play_poison = (byte)FindVariable("play_poison");
 			//Add new_exp
-			tmp = FindVariable("new_player_exp");
-			if (tmp!=0)
+			newexp = FindVariable("new_player_exp");
+			if (newexp!=0)
 			{
-				Debug.Print("Change in xp. To implement.");//the exp change logic is dungeon level dependant with some randomisation
+				Debug.Print("Change in xp in conversation. Test me.");//the exp change logic is dungeon level dependant with some randomisation
+				playerdat.ChangeExperience(newexp);
 			}
 		}
 
