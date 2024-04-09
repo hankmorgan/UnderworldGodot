@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Godot;
 
 namespace Underworld
@@ -6,32 +7,37 @@ namespace Underworld
     /// For rendering switches (except for the rotary switch)
     /// </summary>
     public class button : model3D
-    {              
-        Node3D modelNode;  
+    {
+        Node3D modelNode;
         public static button CreateInstance(Node3D parent, uwObject obj, string name)
         {
             var b = new button(obj);
-            b.modelNode = b.Generate3DModel(parent, name);
-            SetModelRotation(parent, b);
-            //DisplayModelPoints(b, modelNode);
-            if (obj.xpos == 0)
-            {               
-                parent.Position += new Vector3(+0.1f, 0f, 0f);
-            }
-            if (obj.ypos == 0)
+            if (obj.invis == 0)
             {
-                parent.Position += new Vector3(0f, 0f, -0.1f);               
+                b.modelNode = b.Generate3DModel(parent, name);
+                SetModelRotation(parent, b);
+                //DisplayModelPoints(b, modelNode);
+                if (obj.xpos == 0)
+                {
+                    parent.Position += new Vector3(+0.1f, 0f, 0f);
+                }
+                if (obj.ypos == 0)
+                {
+                    parent.Position += new Vector3(0f, 0f, -0.1f);
+                }
+                if (obj.xpos == 7)
+                {
+                    parent.Position += new Vector3(-0.1f, 0f, 0f);
+                }
+                if (obj.ypos == 7)
+                {
+                    parent.Position += new Vector3(0f, 0f, +0.1f);
+                }
             }
-            if (obj.xpos == 7)
-            {               
-                parent.Position += new Vector3(-0.1f, 0f, 0f);
-            }
-            if (obj.ypos == 7)
+            else
             {
-                parent.Position += new Vector3(0f, 0f, +0.1f);  
+                Debug.Print($"{obj.a_name} I:{obj.index} L:{obj.link}  X:{obj.tileX} Y:{obj.tileY} is an invisible button");
             }
-
-
             return b;
         }
 
@@ -45,19 +51,19 @@ namespace Underworld
         {
             if (IsOn(obj))
             {
-                obj.item_id-=8;
+                obj.item_id -= 8;
             }
             else
             {
-                obj.item_id+=8;
+                obj.item_id += 8;
             }
-            if (obj.instance !=null)
+            if (obj.instance != null)
             {
                 var newmaterial = GetTmFlat.GetMaterial(obj.item_id - 368);
                 var _button = (button)obj.instance;
                 var mdl = (MeshInstance3D)(_button.modelNode);
-                mdl.Mesh.SurfaceSetMaterial(0,newmaterial);         
-            }            
+                mdl.Mesh.SurfaceSetMaterial(0, newmaterial);
+            }
             return true;
         }
 
@@ -69,7 +75,7 @@ namespace Underworld
         /// <returns></returns>
         static bool IsOn(uwObject obj)
         {
-            if (obj.classindex<=7)
+            if (obj.classindex <= 7)
             {
                 return false; //
             }

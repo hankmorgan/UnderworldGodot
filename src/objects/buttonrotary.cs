@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Godot;
 namespace Underworld
 {
@@ -9,8 +10,15 @@ namespace Underworld
         public static buttonrotary CreateInstance(Node3D parent, uwObject obj, string name)
         {
             var b = new buttonrotary(obj);
-            b.modelNode =  b.Generate3DModel(parent, name);
-            SetModelRotation(parent, b);
+            if (obj.invis==0)
+            {
+                b.modelNode =  b.Generate3DModel(parent, name);
+                SetModelRotation(parent, b);
+            }
+            else
+            {
+                Debug.Print($"{obj.a_name} I:{obj.index} L:{obj.link}  X:{obj.tileX} Y:{obj.tileY} is an invisible button");
+            }
             //DisplayModelPoints(b, modelNode);
             return b;
         }
