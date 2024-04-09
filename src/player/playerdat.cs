@@ -432,7 +432,10 @@ namespace Underworld
             {
                 playerdat.play_level = newLevel;
                 SkillPoints += newLevel;
-                uimanager.AddToMessageScroll($"{GameStrings.GetString(1, GameStrings.str_you_have_attained_experience_level_)}{newLevel}");
+                if (!ConversationVM.InConversation)
+                {
+                    uimanager.AddToMessageScroll($"{GameStrings.GetString(1, GameStrings.str_you_have_attained_experience_level_)}{newLevel}");
+                }                
             }
         }
     } //end class

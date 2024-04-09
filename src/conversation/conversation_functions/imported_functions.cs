@@ -185,6 +185,11 @@ namespace Underworld
                         switch_pic();
                         break;
                     }
+                case "x_exp":
+                    {
+                        x_exp();
+                        break;
+                    }
                 default:
                     {                       
                         Debug.Print($"Unimplemented {func.importname}"); break;
