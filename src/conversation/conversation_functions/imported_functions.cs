@@ -180,6 +180,11 @@ namespace Underworld
                         place_object(talker);
                         break;
                     }
+                case "switch_pic":
+                    {
+                        switch_pic();
+                        break;
+                    }
                 default:
                     {                       
                         Debug.Print($"Unimplemented {func.importname}"); break;

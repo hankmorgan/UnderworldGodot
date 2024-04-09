@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Godot;
 namespace Underworld
 {
     public partial class ConversationVM : UWClass
@@ -121,7 +122,7 @@ namespace Underworld
 
             //npc name and portrait
             uimanager.instance.NPCNameLabel.Text = talker.a_name;
-            uimanager.instance.NPCPortrait.Texture = NPCPortrait(talker);
+            uimanager.instance.NPCPortrait.Texture = NPCPortrait(talker.npc_whoami, talker.item_id);
 
             //Init conversation trade globals
             Rng.r = new System.Random(talker.item_id);//rng is always set to npcs item id
@@ -156,21 +157,22 @@ namespace Underworld
         /// </summary>
         /// <param name="whoami"></param>
         /// <returns></returns>
-        public static Godot.Texture2D NPCPortrait(uwObject talker)
+        private static Texture2D NPCPortrait(int whoami, int item_id)
         {
             //Assume generic head first.
+
             bool UseGenericHead = true;
             switch (_RES)
             {
                 case GAME_UW2:
-                    if (talker.npc_whoami != 0)
+                    if (whoami != 0)
                     {
                         UseGenericHead = false;
                     }
                     break;
                 default:
                     {
-                        if ((talker.npc_whoami > 0) && (talker.npc_whoami <= 28))
+                        if ((whoami > 0) && (whoami <= 28))
                         {
                             UseGenericHead = false;
                         }
@@ -180,21 +182,22 @@ namespace Underworld
             if (UseGenericHead)
             {
                 var ghead = new GRLoader(GRLoader.GENHEAD_GR, GRLoader.GRShaderMode.UIShader);
-                return ghead.LoadImageAt(talker.item_id & 0x3F);
+                return ghead.LoadImageAt(item_id & 0x3F);
             }
             else
             {
                 var chead = new GRLoader(GRLoader.CHARHEAD_GR, GRLoader.GRShaderMode.UIShader);
                 if (_RES == GAME_UW2)
                 {//some special portrait cases due to weirdness with charhead.gr
-                    switch (talker.npc_whoami)
+                    switch (whoami)
                     {
                         case 0x11://Janar (for some reason his portrait loads as molloy)
                             return chead.LoadImageAt(2);
                     }
                 }
-                return chead.LoadImageAt(talker.npc_whoami - 1);
+                return chead.LoadImageAt(whoami - 1);
             }
         }
+
     }//end class
 }//end namespace
