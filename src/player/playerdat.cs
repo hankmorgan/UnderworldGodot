@@ -1,3 +1,8 @@
+using System;
+using System.ComponentModel;
+using System.Linq.Expressions;
+using System.Reflection.Emit;
+
 namespace Underworld
 {
     /// <summary>
@@ -367,6 +372,83 @@ namespace Underworld
             }
         }
 
+         public static void ChangeExperience(int newEXP)
+         {
+            if (_RES==GAME_UW2)
+            {
+                ChangeExperienceUW2(newEXP);
+            }
+            else
+            {
+                ChangeExperienceUW1(newEXP);
+            }
+         }
 
+
+        private static void ChangeExperienceUW1(int newEXP)
+        {
+                //TODO (assuming may be different from UW1)
+        }
+
+        /// <summary>
+        /// Changes the player EXP using the vanilla logic for EXP gains
+        /// </summary>
+        /// <param name="newEXP"></param>
+        private static void ChangeExperienceUW2(int newEXP)
+        {
+            //value * 500 is the exp needed for next level up
+            int[] LevelUpAt = new int[]{0,1,2,3,4,6,8,0xC,0x10,0x18,0x20,0x30,0x40,0x60,0x80,0xC0};
+            if (newEXP>0)
+            {
+                newEXP = (newEXP + Rng.r.Next(0,2))/2;
+            }
+
+            if (newEXP>=0)
+            {
+                var world = worlds.GetWorldNo(dungeon_level);
+                world = world<<1;
+                world += 2;
+                if (world < playerdat.play_level)
+                {//reduce gain if on a lower "level" of the world then the player level
+                    newEXP = 1 + (newEXP/2);
+                }
+                var newTotalSkillPoints = (Exp + newEXP)/1500; //how many skill points the player will have gained at their total exp level
+                if (SkillPointsTotal<newTotalSkillPoints)
+                {
+                    SkillPoints = SkillPoints + (newTotalSkillPoints - SkillPointsTotal);// calculate new level of skill points available to spend.
+                    SkillPointsTotal = newTotalSkillPoints; //store total earned.
+                }
+                Exp = Math.Min(Exp + newEXP, 0x17700);//96000 (exp points are in units of 0.1)
+
+                //Check if player can level up
+                if (play_level<0x10)
+                {
+                    var PointsToCheck = Exp/500;
+                    var pointsNeeded = LevelUpAt[play_level];
+                    if (pointsNeeded<=PointsToCheck)
+                    {//player can level up
+                        LevelUp(play_level+1);
+                    }
+                }
+
+                UpdateAttributes(false);
+                uimanager.RefreshStatsDisplay();
+            }
+            else
+            {
+                //negative exp
+                Exp = Math.Max(0, Exp-newEXP);                
+            }
+        }
+
+        static void LevelUp(int newLevel)
+        {
+            if (newLevel<=0x10)
+            {
+                playerdat.play_level = newLevel;
+                SkillPoints += newLevel;
+                uimanager.AddToMessageScroll($"{GameStrings.GetString(1, GameStrings.str_you_have_attained_experience_level_)}{newLevel}");
+            }
+        }
     } //end class
 }//end namespace

@@ -2,7 +2,7 @@ namespace Underworld
 {
     public class a_text_string_trap : trap
     {
-        public static void activate(uwObject trapObj, uwObject[] objList)
+        public static void Activate(uwObject trapObj, uwObject[] objList)
         {
             int StringNo;
             switch (_RES)

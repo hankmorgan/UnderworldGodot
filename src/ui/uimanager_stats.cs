@@ -52,7 +52,7 @@ namespace Underworld
 			instance.INT.Text = $"{playerdat.INT}";
 			instance.VIT.Text = $"{playerdat.play_hp}/{playerdat.max_hp}";
 			instance.MANA.Text =  $"{playerdat.play_mana}/{playerdat.max_mana}";
-			instance.EXP.Text = $"{playerdat.Exp}";
+			instance.EXP.Text = $"{playerdat.Exp/10}";
 			instance.StatsName.Text="";
 			instance.StatsValue.Text="";
 			for (int s = 0; s<6; s++)

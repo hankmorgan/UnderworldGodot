@@ -89,11 +89,11 @@ namespace Underworld
         {
             get
             {
-                return (int)GetAt32(0x4F) / 10;
+                return (int)GetAt32(0x4F);
             }
             set
             {
-                SetAt32(0x4F, value * 10);
+                SetAt32(0x4F, value);
             }
         }
 
@@ -189,7 +189,8 @@ namespace Underworld
             if (IncreasePlayMana)
             {
                 playerdat.play_mana = playerdat.max_mana;
-            }            
+            }      
+            //TODO carry weight and others      
         }
 
         public static void SetDungeonLore(int dungeon, int newLore)

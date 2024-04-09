@@ -152,12 +152,20 @@ namespace Underworld
                                 case 0: //6-1-0 Text String Trap
                                     {
                                         implemented = true;
-                                        a_text_string_trap.activate(
+                                        a_text_string_trap.Activate(
                                             trapObj: trapObj, 
                                             objList: objList);
                                         break;
                                     }
-
+                                case 1:
+                                    {
+                                        if(_RES==GAME_UW2)
+                                        {
+                                            implemented = true;
+                                            an_experience_trap.Activate(trapObj: trapObj);
+                                        }
+                                        break;
+                                    }
                             }
                             break;
                         }

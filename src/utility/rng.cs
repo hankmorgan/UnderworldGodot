@@ -34,9 +34,9 @@ namespace Underworld
         /// <returns></returns>
         public static int DiceRoll(int NoOfLoops, int diceRange)
         {
-            var di = diceRange;
+            //var di = diceRange;
             var si = NoOfLoops;
-            if (di <= 0)
+            if (diceRange <= 0)
             {
                 return si;
             }
@@ -50,7 +50,7 @@ namespace Underworld
                 {
                     while (NoOfLoops != 0)
                     {
-                        si += r.Next(0, di);
+                        si += r.Next(0, diceRange);
                         NoOfLoops--;
                     }
                     return si;
