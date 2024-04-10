@@ -26,6 +26,9 @@ This project supercedes the Unity-based project and reboots the code base to act
 
 ![Screenshot1](resources/screenshots/screenshotuw1.jpg)
 ![Screenshot2](resources/screenshots/screenshotuw2.jpg)
+![Screenshot3](resources/screenshots/screenshotuw3.jpg)
+![Screenshot4](resources/screenshots/screenshotuw4.jpg)
+![Screenshot5](resources/screenshots/screenshotuw5.jpg)
 
 ## Credits
 This project is largely based on the previous reverse engineering work undertaken by various groups and individuals over the years. Without their efforts this project would not be possible please see the appendix below for the credits I have been able to attribute. If I have failed to give proper credit please let me know and I will happily correct this document.
@@ -41,8 +44,8 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * Animated doors and sprites
 * Looping NPC animations
 * Partial Conversations
-* Barter logic (excluding actual exchange of items)
-* Lighing effects
+* Barter logic (partial)
+* Lighting effects
 * Basic inventory management including runebag
 * Picking up and dropping of items (without checking pickup rules)
 * Usable switches
@@ -55,9 +58,18 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * Compass status message
 * 3D Models
 * Food consumption
-* Spell casting (partial) and vanilla decoding of object enchantment values into actual spell effects
+* Spell casting (partial) and vanilla decoding of object enchantment values into actual spell effects. Some spells implemented.
+* Usable wands, scrolls and potions.
 * Small window cutscenes
-
+* Game variables and quest variables (partial support, not all scenarios may work)
+* Level transitions
+* Partial options menu. In game loading of saves
+* Fishing
+* Combat attack charge buildup and combat accuracy calcuations for player
+* In game advancement and player status changes over time (hunger, fatigue, mana regeneration)
+* Skillpoints and character advancement logic
+* Automap navigation and updating
+* Read-only automap notes.
 
 ## Whats missing
 * Player collision and regular movement
@@ -67,13 +79,10 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * Combat
 * Sleeping
 * Plot events
-* Plot variables, and quest variables (outside of conversations)
 * Cutscenes
-* Options menu
 * Many traps and triggers
 * Transparencies
 * Saving  
-* Level transitions
 * Character creation
 * and much more!
 
