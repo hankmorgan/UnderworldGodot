@@ -310,6 +310,8 @@ namespace Underworld
             }
 
 
+            playerdat.previousMazeNavigation = false;//to force maze navigation to reset on level load.
+
             playerdat.PlayerStatusUpdate();
 
             Debug.Print($"{current_tilemap.uw}");

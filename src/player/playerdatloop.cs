@@ -8,7 +8,7 @@ namespace Underworld
     public partial class playerdat : Loader
     {
         static int previousLightLevel;
-        static bool previousMazeNavigation = false;
+        public static bool previousMazeNavigation = false;
 
         static double playertimer;
         static int playerUpdateCounter;
