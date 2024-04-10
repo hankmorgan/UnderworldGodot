@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Godot;
 
 namespace Underworld
 {
@@ -8,6 +9,11 @@ namespace Underworld
 
         public static void ActivateTrap(uwObject triggerObj, int trapIndex, uwObject[] objList)
         {
+            if (trapIndex == 0)
+            {
+                Debug.Print("Trap is at index 0. Do not fire");
+                return;
+            }
             var trapObj = objList[trapIndex];
             if (trapObj == null)
             {
@@ -212,9 +218,32 @@ namespace Underworld
             {
                 //remove trigger chain
                 Debug.Print("TEST ME, THIS TRIGGER SHOULD ONLY FIRE ONCE and clear the trigger chain");
+
+                //unlink the linked trap from all triggers that link to it.                
+                for (int i=1; i<=objList.GetUpperBound(0); i++)
+                {
+                    var obj = objList[i];
+                    if(obj!=null)
+                    {
+                        if ((obj.majorclass==6) && ((obj.minorclass==2)||(obj.minorclass==3)))
+                        {
+                            if (obj.link == trapObj.index)
+                            {
+                                obj.link = 0; //unlink trigger.
+                            }
+                        }
+                    }
+                }
+                //delete trap, assumes trap is on map
+                if (UWTileMap.ValidTile(trapObj.tileX, trapObj.tileY))
+                {
+                    ObjectCreator.UnlinkObjectFromTile(trapObj);
+                }
+                ObjectCreator.RemoveObject(trapObj);
             }
         } //end activate trap
 
+       
 
         public static void TriggerNext(uwObject trapObj, uwObject[] objList, int triggerNextIndex)
         {

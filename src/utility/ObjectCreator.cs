@@ -716,5 +716,40 @@ namespace Underworld
             }
         }
 
+
+        /// <summary>
+        /// Unlinks an object from the top level of a tile.
+        /// </summary>
+        /// <param name="ObjectToUnlink"></param>
+        /// <returns></returns>
+        public static bool UnlinkObjectFromTile(uwObject ObjectToUnlink)
+        {
+            //unlink trap from it's tile if needed
+            var tile = UWTileMap.current_tilemap.Tiles[ObjectToUnlink.tileX, ObjectToUnlink.tileY];
+            var previous = 0;
+            var next = tile.indexObjectList;
+            while (next != 0)
+            {
+                var nextObj = UWTileMap.current_tilemap.LevelObjects[next];
+                if (next == ObjectToUnlink.index)
+                {
+                    if (previous == 0)
+                    {
+                        tile.indexObjectList = ObjectToUnlink.next;
+                    }
+                    else
+                    {
+                        var prevObject = UWTileMap.current_tilemap.LevelObjects[previous];
+                        prevObject.next = ObjectToUnlink.next;
+                        ObjectToUnlink.next = 0;
+                    }
+                    return true;
+                }
+                previous = nextObj.index;
+                next = nextObj.next;
+            }
+            return false;//no unlinking
+        }
+
     } //end class
 } //end namesace
