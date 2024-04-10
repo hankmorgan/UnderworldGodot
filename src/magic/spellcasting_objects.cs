@@ -75,6 +75,21 @@ namespace Underworld
                         }
                         break;
                     }
+                case 0xD:
+                    {
+                        if (_RES!=GAME_UW2)
+                        {
+                            switch(minorclass)
+                            {
+                                case 4://maze navigation
+                                {
+                                    playerdat.MazeNavigation = true;
+                                    break;
+                                }
+                            }
+                        }
+                        break;
+                    }
                 default:
                     Debug.Print($"Unhandled enchantment {majorclass} {minorclass}");
                     break;

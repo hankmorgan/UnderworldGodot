@@ -103,6 +103,7 @@ namespace Underworld
             useon.CurrentItemBeingUsed = null;
             playerdat.usingpole = false;
             musicalinstrument.PlayingInstrument = false;
+            previousMazeNavigation = false;
 
             //Set the playerlight level;            
             //uwsettings.instance.lightlevel = light.BrightestLight();

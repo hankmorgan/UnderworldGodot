@@ -36,7 +36,7 @@ namespace Underworld
                 }
             }
             
-            t.texture = a_tilemap.texture_map[obj.owner];    
+            t.texture = obj.owner; //a_tilemap.texture_map[obj.owner];    
             t.tmapnode = t.Generate3DModel(parent, name);
            
             SetModelRotation(parent,t);
@@ -96,7 +96,7 @@ namespace Underworld
         {//Get the material texture from tmobj   
             if (surface != 6)
             {
-                return tileMapRender.mapTextures.GetMaterial(texture);
+                return tileMapRender.mapTextures.GetMaterial(texture, UWTileMap.current_tilemap.texture_map);
             }
             else
             {

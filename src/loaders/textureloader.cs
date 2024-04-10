@@ -156,20 +156,19 @@ namespace Underworld
         }
 
 
-        public ShaderMaterial GetMaterial(int textureno)
+        public ShaderMaterial GetMaterial(int textureno, short[] texturemap)
         {
             if (materials[textureno] == null)
             {
                 //create this material and add it to the list
                 var newmaterial = new ShaderMaterial();
                 newmaterial.Shader = textureshader;                
-                newmaterial.SetShaderParameter("texture_albedo", (Texture)LoadImageAt(textureno));
+                newmaterial.SetShaderParameter("texture_albedo", (Texture)LoadImageAt(texturemap[textureno]));
                 newmaterial.SetShaderParameter("albedo", new Color(1, 1, 1, 1));
                 newmaterial.SetShaderParameter("uv1_scale", new Vector3(1, 1, 1));
                 newmaterial.SetShaderParameter("uv2_scale", new Vector3(1, 1, 1));
                 newmaterial.SetShaderParameter("UseAlpha", false);
                 materials[textureno] = newmaterial;
-
             }
             return materials[textureno];    
         }

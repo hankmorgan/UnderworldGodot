@@ -163,13 +163,13 @@ namespace Underworld
                     {
                         if (_RES==GAME_UW2)
                         {
-                            textureindex = tilemap.texture_map[textureindex-2];
+                            textureindex = textureindex-2; //tilemap.texture_map[textureindex-2];
                         }
                         else
                         {
-                            textureindex = tilemap.texture_map[textureindex-2+48];
+                            textureindex = textureindex-2+48; //tilemap.texture_map[textureindex-2+48];
                         }
-                        return tileMapRender.mapTextures.GetMaterial(textureindex);
+                        return tileMapRender.mapTextures.GetMaterial(textureindex, tilemap.texture_map);
                     }
                     else
                     {

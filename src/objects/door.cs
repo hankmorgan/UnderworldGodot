@@ -182,7 +182,7 @@ namespace Underworld
             var d = new door(obj);
             if (d.isSecretDoor)
             {
-                d.texture = a_tilemap.texture_map[a_tilemap.Tiles[tileX, tileY].wallTexture];
+                d.texture = a_tilemap.Tiles[tileX, tileY].wallTexture; //a_tilemap.texture_map[a_tilemap.Tiles[tileX, tileY].wallTexture];
             }
             else
             {
@@ -801,7 +801,7 @@ namespace Underworld
                         }
                         else
                         {
-                            return tileMapRender.mapTextures.GetMaterial(textureno);
+                            return tileMapRender.mapTextures.GetMaterial(textureno, UWTileMap.current_tilemap.texture_map);
                         }
                 }
             }
@@ -838,7 +838,7 @@ namespace Underworld
             int tileX = obj.tileX;
             int tileY = obj.tileY;
             var dw = new doorway(obj);
-            dw.texture = a_tilemap.texture_map[a_tilemap.Tiles[tileX, tileY].wallTexture];
+            dw.texture = a_tilemap.Tiles[tileX, tileY].wallTexture; //a_tilemap.texture_map[a_tilemap.Tiles[tileX, tileY].wallTexture];
             dw.floorheight = a_tilemap.Tiles[tileX, tileY].floorHeight;//uses floorheight since portculli use zpos when opened // (float)(obj.zpos) / 4f; //a_tilemap.Tiles[tileX, tileY].floorHeight;
             //n.position = parent.Position;
             //a portcullis. 
@@ -1077,7 +1077,7 @@ namespace Underworld
         {//Get the material texture from tmobj   
             if (surface != 6)
             {
-                return tileMapRender.mapTextures.GetMaterial(texture);
+                return tileMapRender.mapTextures.GetMaterial(texture, UWTileMap.current_tilemap.texture_map);
             }
             else
             {

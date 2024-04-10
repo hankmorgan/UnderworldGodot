@@ -6,8 +6,6 @@ namespace Underworld
      public partial class playerdat : Loader
      {
 
-
-
           //Stealth scores. One of these is probably noise detection range, the other visual detection range.
           //Not known yet which is which
           public static int StealthScore1;
@@ -148,6 +146,40 @@ namespace Underworld
                          temp &= 0xFC3F; //clear bits
                          temp |= (value << 6); //set new value
                          SetAt16(0x60, temp);
+                    }
+               }
+          }
+
+
+          /// <summary>
+          /// Is the player subject to the crown of maze navigation spell.
+          /// Note the spell will cause a visual impact on Tybals maze
+          /// </summary>
+          public static bool MazeNavigation
+          {
+               get
+               {
+                    if (_RES!=GAME_UW2)
+                    {
+                         return ((GetAt(0x63) >> 4) & 0x1) == 1;
+                    }
+                    else
+                    {
+                         return false;
+                    }
+               }
+               set
+               {
+                    if (_RES!=GAME_UW2)
+                    {
+                         var temp = GetAt(0x63);
+                         temp &= 0xEF; //clear bits
+                         if (value)
+                         {
+                              temp |= (1 << 4);
+                         }
+                          //set new value
+                         SetAt(0x63, temp);
                     }
                }
           }

@@ -19,7 +19,7 @@ namespace Underworld
             if (startObject != null)
             {
                 //Find Remove existing tile
-                 UWTileMap.RemoveTile(tileX, tileY);
+                UWTileMap.RemoveTile(tileX, tileY);
 
                 //Set the new height
                 var newHeight = heights[startObject.flags];

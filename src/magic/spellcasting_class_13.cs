@@ -6,7 +6,7 @@ namespace Underworld
     public partial class SpellCasting : UWClass
     {
         /// <summary>
-        /// Special extra spells only found in UW2
+        /// Special extra spells
         /// </summary>
         /// <param name="minorclass"></param>
         public static void CastClassD_Spells(int minorclass)

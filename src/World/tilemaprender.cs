@@ -71,14 +71,16 @@ namespace Underworld
 
         static tileMapRender()
         {
-            if (mapTextures==null)
-            {
-                mapTextures = new();
-            }
+           // if (mapTextures==null)
+          //  {
+            //    mapTextures = new();
+           // }
         }
 
         public static void GenerateLevelFromTileMap(Node3D parent, UWTileMap Level, uwObject[] objList, bool UpdateOnly)
         {
+           
+
             worldnode = parent;
             CEILING_HEIGHT = UWTileMap.UW_CEILING_HEIGHT;
 
@@ -250,7 +252,7 @@ namespace Underworld
             // float offset = 0f;
 
             //bottom wall vertices
-            MatsToUse[FaceCounter] = map.texture_map[CeilingTexture];
+            MatsToUse[FaceCounter] = CeilingTexture; //map.texture_map[CeilingTexture];
             verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 1.2f * 64);
             verts[1 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 0f);
             verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * 64, baseHeight, 0f);
@@ -788,11 +790,8 @@ namespace Underworld
             {
                 wallTexture = 0;
             }
-            // if (debugtextures)
-            // {
-            //     return wallTexture;
-            // }
-            return t.map.texture_map[wallTexture];
+            return wallTexture;
+            //return t.map.texture_map[wallTexture];
         }
 
         /// <summary>
@@ -804,20 +803,13 @@ namespace Underworld
         public static int FloorTexture(TileInfo t)
         {
             int floorTexture;
-            // if (debugtextures)
-            // {
-            //     return t.floorTexture;
-            // }
-
-                //floorTexture = t.floorTexture;
             switch (_RES)
             {
                 case GAME_UW2:
-                    floorTexture = t.map.texture_map[t.floorTexture];
-                    //floorTexture = t.floorTexture;
+                    floorTexture = t.floorTexture; //t.map.texture_map[t.floorTexture];
                     break;
                 default:
-                    floorTexture = t.map.texture_map[t.floorTexture + 48];
+                    floorTexture =t.floorTexture + 48;  // t.map.texture_map[t.floorTexture + 48];
                     break;
             }
             if ((floorTexture < 0) || (floorTexture > 512))
@@ -2271,8 +2263,7 @@ namespace Underworld
 
             //Add the new surface to the mesh
             a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
-            //MatsToUse[FaceCounter]=38; //TEMP to allow fixing uvs
-            a_mesh.SurfaceSetMaterial(FaceCounter + faceCounterAdj, mapTextures.GetMaterial(MatsToUse[FaceCounter])); //  surfacematerial.Get(MatsToUse[FaceCounter]));
+            a_mesh.SurfaceSetMaterial(FaceCounter + faceCounterAdj, mapTextures.GetMaterial(MatsToUse[FaceCounter], UWTileMap.current_tilemap.texture_map)); //  surfacematerial.Get(MatsToUse[FaceCounter]));
         }
 
 

@@ -133,6 +133,13 @@ namespace Underworld
         public AnimationOverlay[] Overlays = new AnimationOverlay[64];
 
         public int thisLevelNo; //The number of this level
+        public int thisDungeonLevel//level no as a dungeon no
+        {
+            get
+            {
+                return thisLevelNo+1;
+            }
+        }
         public const int UW_CEILING_HEIGHT = 32;
         //public short CEILING_HEIGHT;
         // public short SHOCK_CEILING_HEIGHT;
@@ -247,6 +254,7 @@ namespace Underworld
         /// <returns></returns>
         public static void LoadTileMap(int newLevelNo, string datafolder, bool newGameSession = true)
         {
+            tileMapRender.mapTextures = new();//refresh textures
             ObjectCreator.worldobjects = main.instance.GetNode<Node3D>("/root/Underworld/worldobjects");
             Node3D the_tiles = main.instance.GetNode<Node3D>("/root/Underworld/tilemap");
             if (newGameSession)
@@ -291,16 +299,16 @@ namespace Underworld
                 objList: current_tilemap.LevelObjects,
                 UpdateOnly: false);
 
-            if (automap.automaps[newLevelNo] ==null)
+            if (automap.automaps[newLevelNo] == null)
             {
                 automap.automaps[newLevelNo] = new automap(newLevelNo, (int)_RES);
             }
-            
-            if ( automapnote.automapsnotes[newLevelNo] == null)
+
+            if (automapnote.automapsnotes[newLevelNo] == null)
             {
                 automapnote.automapsnotes[newLevelNo] = new automapnote(newLevelNo, (int)_RES);
             }
-            
+
 
             playerdat.PlayerStatusUpdate();
 
@@ -530,10 +538,10 @@ namespace Underworld
                                             switch (trap.quality)
                                             {
                                                 case 2:
-                                                {
-                                                    current_tilemap.Tiles[trigger.quality,trigger.owner].TerrainChange = true;
-                                                    break;
-                                                }
+                                                    {
+                                                        current_tilemap.Tiles[trigger.quality, trigger.owner].TerrainChange = true;
+                                                        break;
+                                                    }
                                             }
                                             break;
                                         }
@@ -543,10 +551,10 @@ namespace Underworld
                                             {
                                                 for (int Y = trigger.owner; Y <= trigger.owner + trap.ypos; Y++)
                                                 {
-                                                    if (ValidTile(X,Y))
+                                                    if (ValidTile(X, Y))
                                                     {
-                                                        current_tilemap.Tiles[X,Y].TerrainChange = true;
-                                                    }                                                    
+                                                        current_tilemap.Tiles[X, Y].TerrainChange = true;
+                                                    }
                                                 }
                                             }
                                             break;
@@ -555,8 +563,8 @@ namespace Underworld
                             }
                         }
                     }
-                
-                    if ((_RES==GAME_UW2) && (trigger.item_id == 422))
+
+                    if ((_RES == GAME_UW2) && (trigger.item_id == 422))
                     {
                         if (ValidTile(trigger.tileX, trigger.tileY))
                         {
@@ -564,7 +572,7 @@ namespace Underworld
                         }
                     }
 
-                    if ((_RES==GAME_UW2) && (trigger.item_id == 423))
+                    if ((_RES == GAME_UW2) && (trigger.item_id == 423))
                     {
                         if (ValidTile(trigger.tileX, trigger.tileY))
                         {
@@ -573,6 +581,24 @@ namespace Underworld
                     }
                 }
             }
+
+            // if (_RES != GAME_UW2)
+            // {
+            //     if (current_tilemap.thisDungeonLevel == 7)
+            //     {//mark tybals maze
+            //         for (int x = 0; x <= 63; x++)
+            //         {
+            //             for (int y = 0; y <= 63; y++)
+            //             {
+            //                 if ((current_tilemap.Tiles[x, y].floorTexture == 4))
+            //                 {
+            //                     current_tilemap.Tiles[x, y].TerrainChange = true;
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
+
         }
 
         private void ListEnchantmentsInLinkedList(int listhead, int x, int y)
