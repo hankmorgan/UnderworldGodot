@@ -31,6 +31,13 @@ namespace Underworld
 
                 //Random r = new Random();
                 InitEmptyPlayer();
+                playerdat.STR = Rng.r.Next(10,31);
+                playerdat.INT = Rng.r.Next(10,31);
+                playerdat.DEX = Rng.r.Next(10,31);
+                for (int s = 0; s<20;s++)
+                {
+                    playerdat.SetSkillValue(s, Rng.r.Next(1,12));
+                }
                 max_hp = 60;
                 play_hp = 60;
                 max_hp = 60;

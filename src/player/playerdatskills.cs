@@ -157,7 +157,7 @@ namespace Underworld
 
 
         /// <summary>
-        /// Gets the skill from attack=1 upwards
+        /// Gets the skill from attack upwards
         /// </summary>
         /// <param name="skillNo"></param>
         /// <returns></returns>

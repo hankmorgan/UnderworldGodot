@@ -47,6 +47,16 @@ namespace Underworld
                         );
                         return false;
                     }
+                case 10://change class item
+                    {
+                        a_hack_trap_classitem.Activate(
+                            trapObj: trapObj,
+                            triggerObj: triggerObj,
+                            objList: objList
+                        );
+                        return true;
+                    }
+
                 default:
                     {
                         Debug.Print($"Unimplemented hack trap {trapObj.quality}");
