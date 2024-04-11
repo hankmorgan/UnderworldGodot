@@ -24,7 +24,7 @@ namespace Underworld
                     playertimer = 0f;
                     for (int s = 0; s < secondelasped; s++)
                     {
-                        ClockValue+=0x40; //not sure what the exact rate should be here. for the moment assuming this is 1 second of time
+                        ClockValue += 0x40; //not sure what the exact rate should be here. for the moment assuming this is 1 second of time
 
                         if (ClockValue % 20 == 0)//every 20 seconds
                         {
@@ -37,7 +37,7 @@ namespace Underworld
                                 if (i < ActiveSpellEffectCount)
                                 {
                                     var stability = GetEffectStability(i);
-                                    stability--;                                    
+                                    stability--;
                                     if (stability == 1)
                                     {
                                         CancelEffect(i);
@@ -85,7 +85,7 @@ namespace Underworld
                                 {
                                     Debug.Print("TODO apply poison damage");
                                     var dam = play_poison >> 1;
-                                    play_poison = (byte)Math.Max(play_poison - 1, 0);                                   
+                                    play_poison = (byte)Math.Max(play_poison - 1, 0);
                                     play_hp = Math.Max(play_hp - dam, 0);
                                 }
 
@@ -241,7 +241,7 @@ namespace Underworld
             if (automap.CanMap(dungeon_level))
             {
                 UpdateAutomap();//update the visited status of nearby tiles
-            }            
+            }
         }
 
 
@@ -449,18 +449,21 @@ namespace Underworld
                 {
                     dlFlag = 1;
                 }
-                int tileLightFlag = UWTileMap.current_tilemap.Tiles[tileX, tileY].lightFlag;
-                if ((tileLightFlag ^ dlFlag) == 1)
+                if (UWTileMap.ValidTile(tileX, tileY))
                 {
-                    dungeon_ambientlight = remainder;
-                }
-                else
-                {
-                    dungeon_ambientlight = -1;
-                }
-                if (dungeon_ambientlight > lightlevel)
-                {
-                    lightlevel = dungeon_ambientlight;
+                    int tileLightFlag = UWTileMap.current_tilemap.Tiles[tileX, tileY].lightFlag;
+                    if ((tileLightFlag ^ dlFlag) == 1)
+                    {
+                        dungeon_ambientlight = remainder;
+                    }
+                    else
+                    {
+                        dungeon_ambientlight = -1;
+                    }
+                    if (dungeon_ambientlight > lightlevel)
+                    {
+                        lightlevel = dungeon_ambientlight;
+                    }
                 }
             }
             return lightlevel;
@@ -484,11 +487,11 @@ namespace Underworld
 
         static void ApplyMazeNavigation()
         {
-            if (_RES!=GAME_UW2)
+            if (_RES != GAME_UW2)
             {
-                if (dungeon_level==7)
+                if (dungeon_level == 7)
                 {
-                    if (previousMazeNavigation!=MazeNavigation)
+                    if (previousMazeNavigation != MazeNavigation)
                     {
                         //change in stage
                         if (MazeNavigation)
