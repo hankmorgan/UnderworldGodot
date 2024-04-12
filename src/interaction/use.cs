@@ -31,6 +31,11 @@ namespace Underworld
                 Debug.Print($"Object {obj.majorclass}-{obj.minorclass}-{obj.classindex} {obj.a_name}");
                 switch (obj.majorclass)
                 {
+                    case 0://weapons
+                        {
+                            result = UseMajorClass1(WorldObject, obj);
+                            break;
+                        }
                     case 1://npcs
                         {
                             talk.Talk(index, objList, WorldObject);
@@ -107,6 +112,46 @@ namespace Underworld
 
             return result;
         }
+
+        private static bool UseMajorClass1(bool WorldObject, uwObject obj)
+        {
+            if ((obj.minorclass == 0) && (!WorldObject))
+            {
+                //weapons on paperdoll.
+                if (playerdat.isLefty)
+                {
+                    if (uimanager.CurrentSlot == 8)
+                    {
+                        if (uimanager.InteractionMode!=uimanager.InteractionModes.ModeAttack)
+                        {
+                            uimanager.InteractionModeToggle(uimanager.InteractionModes.ModeAttack);
+                        }
+                        else
+                        {
+                            uimanager.InteractionModeToggle(uimanager.InteractionModes.ModeUse);
+                        }                       
+                        return true;
+                    }
+                }
+                else
+                {
+                    if (uimanager.CurrentSlot == 7)
+                    {
+                        if (uimanager.InteractionMode!=uimanager.InteractionModes.ModeAttack)
+                        {
+                            uimanager.InteractionModeToggle(uimanager.InteractionModes.ModeAttack);
+                        }
+                        else
+                        {
+                            uimanager.InteractionModeToggle(uimanager.InteractionModes.ModeUse);
+                        }    
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
 
         /// <summary>
         /// General catch all spell cast. Allows casting of spells from objects that are not normally associated with magic. Eg the piece of wood of lightning

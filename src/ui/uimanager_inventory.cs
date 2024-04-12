@@ -183,8 +183,17 @@ namespace Underworld
             {//stop while typing in progress
                 return;
             }
+            if (InteractionMode == InteractionModes.ModeAttack)
+            {
+                if (combat.stage != combat.CombatStages.Ready)
+                {
+                    return;
+                }
+            }
+            
             switch (InteractionMode)
             {
+                case InteractionModes.ModeAttack:
                 case InteractionModes.ModeUse:
                     if (slotname != "OpenedContainer")
                     {
@@ -235,7 +244,6 @@ namespace Underworld
                             index: objAtSlot,
                             objList: playerdat.InventoryObjects);
                     }
-
                     break;
 
                 case InteractionModes.ModeTalk://same as pickup except no use

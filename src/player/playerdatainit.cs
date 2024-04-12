@@ -108,13 +108,13 @@ namespace Underworld
             //load the correct skin tones for weapon animations
             switch(Body)
             {
-            case 0:
-            case 2:
-            case 3:
-            case 4:
-                uimanager.grWeapon = new WeaponsLoader(0); break;
-            default:
-                uimanager.grWeapon = new WeaponsLoader(1); break;
+                case 0:
+                case 2:
+                case 3:
+                case 4:
+                    uimanager.grWeapon = new WeaponsLoader(0); break;
+                default:
+                    uimanager.grWeapon = new WeaponsLoader(1); break;
             }
 
             //Set the playerlight level;            

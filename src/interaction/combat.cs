@@ -243,6 +243,13 @@ namespace Underworld
         {
             if (uimanager.InteractionMode == uimanager.InteractionModes.ModeAttack)
             {
+                if ((playerdat.ObjectInHand != -1) 
+                || (useon.CurrentItemBeingUsed != null) 
+                || (SpellCasting.currentSpell!=null)
+                || (main.blockmouseinput))
+                {
+                    return;
+                }
                 bool MouseHeldDown = Input.IsMouseButtonPressed(MouseButton.Right);
                 switch (stage)
                 {
