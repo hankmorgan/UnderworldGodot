@@ -160,6 +160,7 @@ namespace Underworld
                     }
                     uimanager.EnableDisable(uimanager.instance.ArrowUp, false);
                     uimanager.EnableDisable(uimanager.instance.ArrowDown, false);
+                    uimanager.EnableDisable(uimanager.instance.OpenedContainer, false);
                     return -1;
                 }
             }

@@ -98,6 +98,9 @@ namespace Underworld
             {
                 uimanager.SetRuneInBag(i, GetRune(i));
             }
+            //remove opened container
+            uimanager.OpenedContainerIndex = -1;
+            uimanager.EnableDisable(uimanager.instance.OpenedContainer, false);
             
             SpellCasting.currentSpell = null;
             useon.CurrentItemBeingUsed = null;

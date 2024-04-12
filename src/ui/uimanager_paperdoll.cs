@@ -425,10 +425,12 @@ namespace Underworld
         {
             if (SpriteNo == -1)
             { //clear the slot
-                instance.OpenedContainer.Texture = null;
+                uimanager.EnableDisable(uimanager.instance.OpenedContainer, false);
+                instance.OpenedContainer.Texture = null;                
             }
             else
             {
+                uimanager.EnableDisable(uimanager.instance.OpenedContainer, true);
                 instance.OpenedContainer.Texture = grObjects.LoadImageAt(SpriteNo);
                 instance.OpenedContainer.Material = grObjects.GetMaterial(SpriteNo);
             }
