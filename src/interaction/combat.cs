@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.Security.Cryptography;
 using Godot;
 
 namespace Underworld
@@ -22,6 +21,9 @@ namespace Underworld
         public static uwObject currentweapon;  //if null then using fist
 
         public static int OnHitSpell = 0;
+
+        public static int CurrentAttackSwingType = 0;
+        //public static int currentAnimationStrikeType = 0;
 
         public static int currentWeaponItemID
         {
@@ -159,7 +161,7 @@ namespace Underworld
         {
             switch (stage)
             {
-                case CombatStages.Ready:
+                case CombatStages.Ready:                    
                     stage = CombatStages.Charging; //begin charging. start weapon swing pull back anim
                     IncreaseCharge(delta);
                     break;
@@ -253,8 +255,14 @@ namespace Underworld
                             PlayerAttackDamage = 0;
                             PlayerFlankingBonus = 0;
                             PlayerHasCritted = false;
-                            stage = CombatStages.Charging;
-                            CombatChargingLoop(delta);
+                            //currentAnimationStrikeType = WeaponAnimStrikeOffset;
+                            CurrentAttackSwingType = Rng.r.Next(0,4);                            
+                            stage = CombatStages.Charging;                           
+                        }
+                        else
+                        {
+                                //return to normal
+                            uimanager.currentWeaponAnim = WeaponAnimGroup + WeaponAnimHandednessOffset + 6;
                         }
                         break;
                     case CombatStages.Charging:
@@ -262,6 +270,7 @@ namespace Underworld
                             if (MouseHeldDown)
                             {
                                 CombatChargingLoop(delta);
+                                uimanager.currentWeaponAnim = WeaponAnimGroup + WeaponAnimStrikeOffset + WeaponAnimHandednessOffset;
                             }
                             else
                             {
@@ -273,17 +282,18 @@ namespace Underworld
                         {
                             if (uimanager.IsMouseInViewPort())
                             {
-                                if (WeaponCharge>= mincharge)
+                                if (WeaponCharge >= mincharge)
                                 {
                                     //start return swing   swing                            
                                     Debug.Print($"Releasing attack at charge {WeaponCharge}");
                                     stage = CombatStages.Swinging;
                                     combattimer = 0;
+                                    uimanager.currentWeaponAnim = WeaponAnimGroup + WeaponAnimStrikeOffset + WeaponAnimHandednessOffset + 1;
                                 }
                                 else
                                 {//cancel. not enough charge built up
                                     stage = CombatStages.Resetting;
-                                }                                
+                                }
                             }
                             else
                             {
@@ -296,7 +306,7 @@ namespace Underworld
                         {
                             //repeat until swing anim sequence is completed. then go to strike
                             combattimer += delta;
-                            if (combattimer >= 0.2f)
+                            if (combattimer >= 0.6f)
                             {
                                 Debug.Print("Swing completed");
                                 stage = CombatStages.Striking;
@@ -314,11 +324,12 @@ namespace Underworld
                             break;
                         }
                     case CombatStages.Resetting:
-                        {
+                        {                           
                             //do weapon put away anim until time   
                             combattimer += delta;
                             if (combattimer >= 0.2f)
                             {
+                                uimanager.currentWeaponAnim = WeaponAnimGroup + WeaponAnimHandednessOffset + 6;
                                 Debug.Print("Resetting");
                                 EndCombatLoop();//resetting. when done return to ready    
                             }
@@ -401,21 +412,21 @@ namespace Underworld
 
             if (PlayerExecuteAttack(critter))
             {
-                if (_RES==GAME_UW2)
+                if (_RES == GAME_UW2)
                 {
                     //post apply spell effect if applicable
-                    switch(OnHitSpell)
+                    switch (OnHitSpell)
                     {
-                        case 1: Debug.Print("Lifestealer");break;
-                        case 2: Debug.Print("Undeadbane");break;
-                        case 3: Debug.Print("Firedoom");break;
-                        case 4: Debug.Print("stonestrike");break;
-                        case 5: Debug.Print("unknownspecial 5");break;
-                        case 6: Debug.Print("Entry");break;
-                        case 7: Debug.Print("unknownspecial 7");break;
-                        case 8: Debug.Print("unknownspecial 8");break;
+                        case 1: Debug.Print("Lifestealer"); break;
+                        case 2: Debug.Print("Undeadbane"); break;
+                        case 3: Debug.Print("Firedoom"); break;
+                        case 4: Debug.Print("stonestrike"); break;
+                        case 5: Debug.Print("unknownspecial 5"); break;
+                        case 6: Debug.Print("Entry"); break;
+                        case 7: Debug.Print("unknownspecial 7"); break;
+                        case 8: Debug.Print("unknownspecial 8"); break;
                     }
-                }             
+                }
 
             }
 
@@ -451,9 +462,9 @@ namespace Underworld
             }
             else
             {
-                var attacktype = Rng.r.Next(0, 3);
+                //var attacktype = Rng.r.Next(0, 3);
                 //do weapon based calcs, using a random attack type now.
-                PlayerAttackDamage = (playerdat.STR / 9) + CurrentWeaponBaseDamage(attacktype);
+                PlayerAttackDamage = (playerdat.STR / 9) + CurrentWeaponBaseDamage(CurrentAttackSwingType);
             }
 
             //Then get weapon enchantments
@@ -513,27 +524,27 @@ namespace Underworld
             }
             Debug.Print($"Final scores accuracy {PlayerAttackAccuracy} basedamage {PlayerAttackDamage}");
         }
-    
+
         static bool PlayerExecuteAttack(uwObject critter)
-        {        
+        {
             if (checkAttackHit())
-            {   
-                if(CalcAttackResults(critter) == 0)
-                    {//attack roll has hit
-                        PlayerFlankingBonus = CalcFlankingBonus(critter);
-                        Debug.Print("Hit");
-                        ApplyPlayersFinalDamage(critter, 4, false);
-                    }
-                    else
-                    {//attack roll has missed
-                        Debug.Print("Miss");
-                    }
-                return true;   
+            {
+                if (CalcAttackResults(critter) == 0)
+                {//attack roll has hit
+                    PlayerFlankingBonus = CalcFlankingBonus(critter);
+                    Debug.Print("Hit");
+                    ApplyPlayersFinalDamage(critter, 4, false);
+                }
+                else
+                {//attack roll has missed
+                    Debug.Print("Miss");
+                }
+                return true;
             }
             else
             {
                 return false;//swing and a miss
-            }            
+            }
         }
 
 
@@ -544,65 +555,65 @@ namespace Underworld
         /// <returns>0 if attack hit</returns>
         static int CalcAttackResults(uwObject critter)
         {
-            if (critter.majorclass==1)
-                {//npc
-                    var defencescore = critterObjectDat.defence(critter.item_id);
-                    var attackscore = PlayerAttackAccuracy + PlayerFlankingBonus;
-                    var result = playerdat.SkillCheck(attackscore, defencescore);
-                    if (playerdat.PoisonedWeapon)
-                    {
-                        if (checkforPoisonableWeapon())
-                        {
-                            if (critterObjectDat.maybepoisonvulnerability(critter.item_id) != 0)
-                            {
-                                PlayerAttackDamage += ((playerdat.Casting+30)/40);
-                            }
-                        }
-                    }
-                    PlayerHasCritted = false;
-                    if (result == playerdat.SkillCheckResult.CritSucess)
-                    {
-                        PlayerHasCritted = true;
-                        var critbonus = (48+ Rng.r.Next(30)) >>5;
-                        PlayerAttackDamage = PlayerAttackDamage * critbonus;
-                        return 0;
-                    }
-                    else
-                    {
-                        if (result == playerdat.SkillCheckResult.CritFail)
-                        {
-                            if (critterObjectDat.damagesWeaponOnCritMiss(critter.item_id))
-                            {
-                                var weaponselfdamage = Rng.DiceRoll(2,3);
-                                Debug.Print($"Damage primary weapon by {weaponselfdamage}");
-                            }
-                        }
-                        return 1 - (int)result;
-
-                    }
-                }
-            else
+            if (critter.majorclass == 1)
+            {//npc
+                var defencescore = critterObjectDat.defence(critter.item_id);
+                var attackscore = PlayerAttackAccuracy + PlayerFlankingBonus;
+                var result = playerdat.SkillCheck(attackscore, defencescore);
+                if (playerdat.PoisonedWeapon)
                 {
-                    //did not hit an npc
-                    return 0;//for now
+                    if (checkforPoisonableWeapon())
+                    {
+                        if (critterObjectDat.maybepoisonvulnerability(critter.item_id) != 0)
+                        {
+                            PlayerAttackDamage += ((playerdat.Casting + 30) / 40);
+                        }
+                    }
                 }
+                PlayerHasCritted = false;
+                if (result == playerdat.SkillCheckResult.CritSucess)
+                {
+                    PlayerHasCritted = true;
+                    var critbonus = (48 + Rng.r.Next(30)) >> 5;
+                    PlayerAttackDamage = PlayerAttackDamage * critbonus;
+                    return 0;
+                }
+                else
+                {
+                    if (result == playerdat.SkillCheckResult.CritFail)
+                    {
+                        if (critterObjectDat.damagesWeaponOnCritMiss(critter.item_id))
+                        {
+                            var weaponselfdamage = Rng.DiceRoll(2, 3);
+                            Debug.Print($"Damage primary weapon by {weaponselfdamage}");
+                        }
+                    }
+                    return 1 - (int)result;
+
+                }
+            }
+            else
+            {
+                //did not hit an npc
+                return 0;//for now
+            }
         }
 
 
         static int ApplyPlayersFinalDamage(uwObject critter, int damageType, bool MissileAttack = false)
         {
-            if (PlayerAttackDamage<2)
+            if (PlayerAttackDamage < 2)
             {
                 PlayerAttackDamage = 2;
             }
             var damagequotient = PlayerAttackDamage / 6;
             var damageremainder = PlayerAttackDamage % 6;
             PlayerAttackDamage = 0;
-            if (damagequotient !=0)
+            if (damagequotient != 0)
             {
                 PlayerAttackDamage = Rng.DiceRoll(damagequotient, 6);
             }
-            if (damageremainder!=0)
+            if (damageremainder != 0)
             {
                 PlayerAttackDamage += Rng.DiceRoll(1, damageremainder);
             }
@@ -618,9 +629,9 @@ namespace Underworld
                 Debug.Print("Spatter blood");
             }
 
-            if ((critter.item_id>>6) == 1)
+            if ((critter.item_id >> 6) == 1)
             {//npc has been hit
-                var bodypartindex = BodyPartHit /4;
+                var bodypartindex = BodyPartHit / 4;
                 int cx = (int)critterObjectDat.toughness(critter.item_id, bodypartindex);
                 if (cx == -1)
                 {
@@ -629,7 +640,7 @@ namespace Underworld
                 }
                 if (critter.IsPowerfull == 1)
                 {
-                    cx = (cx * 5)/3;
+                    cx = (cx * 5) / 3;
                 }
 
                 if (cx >= finaldamage)
@@ -638,11 +649,11 @@ namespace Underworld
                 }
                 else
                 {
-                    finaldamage-=cx;
+                    finaldamage -= cx;
                 }
 
-                var di = finaldamage/4;
-                if (di<=3)
+                var di = finaldamage / 4;
+                if (di <= 3)
                 {
                     di = 3;//this is used for animo later on?
                 }
@@ -675,15 +686,15 @@ namespace Underworld
         static int CalcFlankingBonus(uwObject critter)
         {
             var defenderHeading = critter.heading;
-            var attackerHeading = playerdat.heading>>4;
-            return CalcFlankingBonus(defenderHeading,attackerHeading);
+            var attackerHeading = playerdat.heading >> 4;
+            return CalcFlankingBonus(defenderHeading, attackerHeading);
         }
 
         static int CalcFlankingBonus(int defenderHeading, int attackerHeading)
         {
             var bonus = defenderHeading + 0xC - attackerHeading;
             bonus = bonus & 0x7;
-            if (bonus>4)
+            if (bonus > 4)
             {
                 bonus = 8 - bonus;
             }
@@ -698,8 +709,83 @@ namespace Underworld
         /// <returns></returns>
         static bool checkAttackHit()
         {
-            BodyPartHit = Rng.r.Next(0,4);
+            BodyPartHit = Rng.r.Next(0, 4);
             return true;
         }
+
+
+        /// <summary>
+        /// Offset into animation frams for the weapon type
+        /// </summary>
+        /// <returns></returns>
+        static short WeaponAnimGroup
+        {
+            get
+            {
+                switch (currentMeleeWeaponSkillNo)
+                {
+                    case 3:
+                        return 0;
+                    case 4:
+                        return 7;
+                    case 5:
+                        return 14;
+                    default:
+                        return 21;
+                }
+            }
+        }
+
+        static short WeaponAnimHandednessOffset
+        {
+            get
+            {
+                if (playerdat.isLefty)
+                {
+                    return 28;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+        }
+
+        static short WeaponAnimStrikeOffset
+        {
+            get
+            {
+                // if (!UWCharacter.Instance.MouseLookEnabled)
+                // {
+                //     if (Camera.main.ScreenToViewportPoint(Input.mousePosition).y > 0.666f)
+                //     {
+                //         return 2;//bash
+                //     }
+                //     else if (Camera.main.ScreenToViewportPoint(Input.mousePosition).y > 0.333f)
+                //     {
+                //         return 0;//Slash
+                //     }
+                //     else
+                //     {
+                //         return 4;//stab
+                //     }
+                // }
+                // else
+                // {
+                    switch (CurrentAttackSwingType) //random for now
+                    {
+                        case 1:
+                            return 2; //bash
+                        case 2:
+                            return 4;//stab
+                        case 3:
+                        default:
+                            return 0; //slash
+                    }
+                //}
+            }
+        }
+
+
     }//end class
 }//end namespace

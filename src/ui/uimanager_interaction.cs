@@ -202,6 +202,7 @@ namespace Underworld
                     }
                 case InteractionModes.ModeAttack:
                     {
+                        PreviousWeaponAnimation = -1; //force redraw.
                         playerdat.play_drawn = 1;//draw the weapon
                         var obj = playerdat.PrimaryHandObject;
                         switch(combat.isWeapon(obj))

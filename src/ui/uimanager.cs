@@ -8,7 +8,7 @@ namespace Underworld
 		public static uimanager instance;
 
 		public static bool InGame = false;
-		
+		[ExportGroup("Placeholders")]
 		[Export] public TextureRect placeholderuw1;
 		[Export] public TextureRect placeholderuw2;
 
@@ -30,6 +30,7 @@ namespace Underworld
 			InitAutomap();
 			InitPower();
 			InitStats();
+			InitWeaponAnimation();
 
 			AutomapBG.Texture = bitmaps.LoadImageAt(BytLoader.BLNKMAP_BYT);
 			EnableDisable(AutomapPanel,false);
@@ -48,6 +49,7 @@ namespace Underworld
 		public override void _Process(double delta)
 		{
 			_ProcessPanels(delta);
+			_ProcessWeaponAnims(delta);
 		}
 
 		public static void EnableDisable(Control ctrl, bool state)

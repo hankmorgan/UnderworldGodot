@@ -20,7 +20,8 @@ namespace Underworld
         public static GRLoader grCompass;
         public static GRLoader grGempt;
         public static GRLoader grPower;
-        public static BytLoader bitmaps;       
+        public static BytLoader bitmaps;  
+        public static WeaponsLoader grWeapon;     
 
         public static Dictionary<string, CutsLoader> csCuts;
 
@@ -49,6 +50,8 @@ namespace Underworld
                 grGempt = new GRLoader(GRLoader.GEMPT_GR, GRLoader.GRShaderMode.UIShader);
                 grGempt.PaletteNo = 3;
             }
+            grWeapon = new WeaponsLoader(0);
+  
 		}
     }//end class
 }//end namespace
