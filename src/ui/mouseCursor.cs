@@ -73,12 +73,14 @@ namespace Underworld
 		{
 			Texture = uimanager.grCursors.LoadImageAt(0);
 			Input.MouseMode = Input.MouseModeEnum.Hidden;
+			this.Size = Texture.GetSize()*4;
 		}
 
 		public void SetCursorToObject(int index)
 		{
 			Texture = uimanager.grObjects.LoadImageAt(index);
 			Material= uimanager.grObjects.GetMaterial(index);
+			this.Size = Texture.GetSize()*4;
 		}
 
 		public void SetCursorToCursor(int index = 0)
@@ -86,6 +88,7 @@ namespace Underworld
 			Texture = uimanager.grCursors.LoadImageAt(index);
 			//Material= uimanager.grCursors.GetMaterial(index);//no shader is applied here
 			Material = null;
+			this.Size = Texture.GetSize()*4;
 		}
 	}
 
