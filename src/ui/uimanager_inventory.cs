@@ -562,6 +562,7 @@ namespace Underworld
             pickObject.next=0;
             playerdat.ObjectInHand = newIndex;
             instance.mousecursor.SetCursorToObject(pickObject.item_id);
+            playerdat.PlayerStatusUpdate();//check if any enchantments need to be updated
             return newIndex;
         }
 
