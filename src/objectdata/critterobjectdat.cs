@@ -27,15 +27,14 @@ namespace Underworld
         }
 
         /// <summary>
-        /// Array of 4 values representing the locational protection of armour on the NPC. 
-        /// Suspect this means chest, arms, legs and head protection
+        /// Array of 4 values representing the locational damage reduction provided by body part armour on the NPC. 
         /// </summary>
         /// <param name="item_id"></param>
         /// <param name="bodypart">0, 1 or 2</param>
         /// <returns></returns>
-        public static int protection(int item_id, int bodypart)
+        public static sbyte toughness(int item_id, int bodypart)
         {
-            return buffer[CritterOffset(item_id) + bodypart];
+            return (sbyte)buffer[CritterOffset(item_id) + bodypart];
         }
 
         /// <summary>

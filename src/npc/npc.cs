@@ -346,7 +346,15 @@ namespace Underworld
                 //do death handling.
                 if (SpecialDeathCases(critter))
                 {
-                    critter.npc_animation = 7;//
+                    if (_RES==GAME_UW2)
+                    {
+                        critter.npc_animation = 7;//are these right??
+                    }
+                    else
+                    {
+                        critter.npc_animation = 0xC;//
+                    }
+                    
                 }
             }
         }

@@ -413,7 +413,7 @@ namespace Underworld
                 case 4: return "right";
                 case 5: return "front_right";
                 case 6: return "front";
-                case 7: return "front_left";               
+                case 7: return "front_left";         
             }
             return "front";
         }

@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Security.Cryptography;
 using Godot;
 
 namespace Underworld
@@ -97,6 +98,8 @@ namespace Underworld
         public static int PlayerAttackDamage = 0;
         public static int PlayerFlankingBonus = 0;
         public static bool PlayerHasCritted = false;
+
+        public static int BodyPartHit;
 
 
         /// <summary>
@@ -441,7 +444,7 @@ namespace Underworld
 
             //base damage calcs
 
-            if (weaponskill == 2)
+            if (currentMeleeWeaponSkillNo == 2)
             {
                 //do unarmed calcs for base damage
                 PlayerAttackDamage = 4 + (playerdat.STR / 6) + (playerdat.Unarmed << 1) / 5;
@@ -508,18 +511,18 @@ namespace Underworld
                     }
                 }
             }
-            Debug.Print($"Final scores accuracy {PlayerAttackAccuracy} damage {PlayerAttackDamage}");
+            Debug.Print($"Final scores accuracy {PlayerAttackAccuracy} basedamage {PlayerAttackDamage}");
         }
     
         static bool PlayerExecuteAttack(uwObject critter)
-        {
-        
+        {        
             if (checkAttackHit())
-            {                
-                PlayerFlankingBonus = CalcFlankingBonus(critter);
+            {   
                 if(CalcAttackResults(critter) == 0)
                     {//attack roll has hit
+                        PlayerFlankingBonus = CalcFlankingBonus(critter);
                         Debug.Print("Hit");
+                        ApplyPlayersFinalDamage(critter, 4, false);
                     }
                     else
                     {//attack roll has missed
@@ -586,6 +589,77 @@ namespace Underworld
         }
 
 
+        static int ApplyPlayersFinalDamage(uwObject critter, int damageType, bool MissileAttack = false)
+        {
+            if (PlayerAttackDamage<2)
+            {
+                PlayerAttackDamage = 2;
+            }
+            var damagequotient = PlayerAttackDamage / 6;
+            var damageremainder = PlayerAttackDamage % 6;
+            PlayerAttackDamage = 0;
+            if (damagequotient !=0)
+            {
+                PlayerAttackDamage = Rng.DiceRoll(damagequotient, 6);
+            }
+            if (damageremainder!=0)
+            {
+                PlayerAttackDamage += Rng.DiceRoll(1, damageremainder);
+            }
+
+            var finaldamage = (PlayerAttackDamage * WeaponCharge) >> 7;
+            finaldamage += PlayerFlankingBonus;
+
+            //TODO figure out correct sounds
+            Debug.Print("Player Weapon Hit sound");
+            if (!MissileAttack)
+            {
+                //Do blood spatters.
+                Debug.Print("Spatter blood");
+            }
+
+            if ((critter.item_id>>6) == 1)
+            {//npc has been hit
+                var bodypartindex = BodyPartHit /4;
+                int cx = (int)critterObjectDat.toughness(critter.item_id, bodypartindex);
+                if (cx == -1)
+                {
+                    BodyPartHit = BodyPartHit & 4;
+                    cx = critterObjectDat.toughness(critter.item_id, 0);
+                }
+                if (critter.IsPowerfull == 1)
+                {
+                    cx = (cx * 5)/3;
+                }
+
+                if (cx >= finaldamage)
+                {
+                    finaldamage = 0;
+                }
+                else
+                {
+                    finaldamage-=cx;
+                }
+
+                var di = finaldamage/4;
+                if (di<=3)
+                {
+                    di = 3;//this is used for animo later on?
+                }
+
+                npc.DamageNPC(critter, finaldamage, damageType);
+
+                Debug.Print("Spawn damage animo");
+
+            }
+            else
+            {
+                //other object type has been hit
+            }
+
+            return 0;
+        }
+
         /// <summary>
         /// Only certain weapons can use a poison enchantment. for the moment return true here.
         /// </summary>
@@ -624,6 +698,7 @@ namespace Underworld
         /// <returns></returns>
         static bool checkAttackHit()
         {
+            BodyPartHit = Rng.r.Next(0,4);
             return true;
         }
     }//end class
