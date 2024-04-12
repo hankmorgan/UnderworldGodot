@@ -105,6 +105,18 @@ namespace Underworld
             musicalinstrument.PlayingInstrument = false;
             previousMazeNavigation = false;
 
+            //load the correct skin tones for weapon animations
+            switch(Body)
+            {
+            case 0:
+            case 2:
+            case 3:
+            case 4:
+                uimanager.grWeapon = new WeaponsLoader(0); break;
+            default:
+                uimanager.grWeapon = new WeaponsLoader(1); break;
+            }
+
             //Set the playerlight level;            
             //uwsettings.instance.lightlevel = light.BrightestLight();
         }
