@@ -144,6 +144,10 @@ namespace Underworld
         {
             //check for pickup triggers linked to this object
             trigger.PickupTrigger(objList, obj);
+            if (obj.owner!=0)
+            {
+                Debug.Print($"Object Owner is {obj.owner}");
+            }
 
             //player is trying to pick something up
             playerdat.ObjectInHand = index;

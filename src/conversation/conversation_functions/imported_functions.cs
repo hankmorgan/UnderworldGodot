@@ -70,6 +70,11 @@ namespace Underworld
                         TradeResult = result_register;
                         break;
                     }
+                case "do_decline":
+                    {
+                        do_decline(talker);
+                        break;
+                    }
                 case "gronk_door":
                     {
                         gronk_door();
