@@ -12,7 +12,11 @@ namespace Underworld
         public static void PickupTrigger(uwObject[] objList, uwObject obj)
         {            
             var index = obj.index;
-            var PickupTrigger = objectsearch.FindMatchInObjectChain(index, 6, 2, 1, objList, true);
+            var PickupTrigger = objectsearch.FindMatchInObjectChainTopLevel(index, 6, 2, 1, objList, true);
+            if (PickupTrigger==null && _RES==GAME_UW2)
+            {
+                PickupTrigger = objectsearch.FindMatchInObjectChainTopLevel(index, 6, 3, 1, objList, true);
+            }
             if (PickupTrigger != null)
             {
                 trigger.StartTriggerChainEvents();

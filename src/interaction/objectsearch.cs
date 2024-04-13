@@ -3,8 +3,57 @@ namespace Underworld
     /// <summary>
     /// Class to find objects in tiles etc
     /// </summary>
-    public class objectsearch:UWClass
+    public class objectsearch : UWClass
     {
+
+        public static uwObject FindMatchInObjectChainTopLevel(int ListHeadIndex, int majorclass, int minorclass, int classindex, uwObject[] objList, bool SkipNext = false)
+        {
+            if (ListHeadIndex != 0)
+            {
+                var TopObject = objList[ListHeadIndex];
+                if (TopObject != null)
+                {
+                    //check the top object first.
+                    if (TopObject.majorclass == majorclass)
+                    { //matching major class
+                        if ((TopObject.minorclass == minorclass) || (minorclass == -1))
+                        {//Either minor class matches or if minorclass =-1 (find all)
+                            if ((TopObject.classindex == classindex) || (classindex == -1))
+                            {//obj match found.
+                                return TopObject;
+                            }
+                        }
+                    }
+
+                    if (TopObject.is_quant == 0)
+                    {
+                        if (TopObject.link != 0)
+                        {//check the contents of the top object
+                            var next = TopObject.link;
+                            while (next != 0)
+                            {
+                                var testObj = objList[next];
+                                if (testObj.majorclass == majorclass)
+                                { //matching major class
+                                    if ((testObj.minorclass == minorclass) || (minorclass == -1))
+                                    {//Either minor class matches or if minorclass =-1 (find all)
+                                        if ((testObj.classindex == classindex) || (classindex == -1))
+                                        {//obj match found.
+                                            return testObj;
+                                        }
+                                    }
+                                }
+                                next = testObj.next;
+                            }
+                        }
+                    }
+
+
+                }
+            }
+            return null; //nothing found. 
+        }
+
 
         /// <summary>
         /// Searches for the first matching object type in the specified object list chain
@@ -15,35 +64,35 @@ namespace Underworld
         /// <param name="classindex">use -1 to return any of the class index </param>
         /// <param name="objList"></param>
         /// <returns></returns>
-        public static uwObject FindMatchInObjectChain(int ListHeadIndex, int majorclass, int minorclass, int classindex, uwObject[] objList, bool SkipNext = false) 
+        public static uwObject FindMatchInObjectChain(int ListHeadIndex, int majorclass, int minorclass, int classindex, uwObject[] objList, bool SkipNext = false)
         {
-            if (ListHeadIndex !=0 )
+            if (ListHeadIndex != 0)
             {
                 var testObj = objList[ListHeadIndex];
-                if (testObj!=null)
+                if (testObj != null)
                 {
                     if (testObj.majorclass == majorclass)
                     { //matching major class
-                        if ((testObj.minorclass == minorclass)|| (minorclass==-1))
+                        if ((testObj.minorclass == minorclass) || (minorclass == -1))
                         {//Either minor class matches or if minorclass =-1 (find all)
-                            if ((testObj.classindex == classindex) || (classindex==-1))
+                            if ((testObj.classindex == classindex) || (classindex == -1))
                             {//obj match found.
                                 return testObj;
                             }
                         }
                     }
 
-                    if (testObj.is_quant==0)
+                    if (testObj.is_quant == 0)
                     {
-                        if (testObj.link!=0)
+                        if (testObj.link != 0)
                         {
                             var testlinked = FindMatchInObjectChain(
-                                ListHeadIndex: testObj.link, 
-                                majorclass: majorclass, 
-                                minorclass: minorclass, 
-                                classindex: classindex, 
-                                objList: objList);                                
-                            if (testlinked!=null)
+                                ListHeadIndex: testObj.link,
+                                majorclass: majorclass,
+                                minorclass: minorclass,
+                                classindex: classindex,
+                                objList: objList);
+                            if (testlinked != null)
                             {
                                 return testlinked;
                             }
@@ -53,15 +102,15 @@ namespace Underworld
                     {
                         //no matches. Try next value. Returns null if nothing found.
                         return FindMatchInObjectChain(
-                            ListHeadIndex: testObj.next, 
-                            majorclass: majorclass, 
-                            minorclass: minorclass, 
-                            classindex: classindex, 
+                            ListHeadIndex: testObj.next,
+                            majorclass: majorclass,
+                            minorclass: minorclass,
+                            classindex: classindex,
                             objList: objList);
                     }
                 }
-            }           
-           return null; //nothing found. 
+            }
+            return null; //nothing found. 
         }
 
         /// <summary>
@@ -72,18 +121,18 @@ namespace Underworld
         /// <param name="classindex"></param>
         /// <param name="objList"></param>
         /// <returns></returns>
-        public static uwObject FindMatchInObjectList(int majorclass, int minorclass, int classindex, uwObject[] objList) 
+        public static uwObject FindMatchInObjectList(int majorclass, int minorclass, int classindex, uwObject[] objList)
         {
-            for (int i = 1; i<=objList.GetUpperBound(0);i++)
+            for (int i = 1; i <= objList.GetUpperBound(0); i++)
             {
                 var testObj = objList[i];
-                if (testObj!=null)
+                if (testObj != null)
                 {
                     if (testObj.majorclass == majorclass)
                     { //matching major class
-                        if ((testObj.minorclass == minorclass) || (minorclass==-1))
+                        if ((testObj.minorclass == minorclass) || (minorclass == -1))
                         {//Either minor class matches or if minorclass =-1 (find all)
-                            if ((testObj.classindex == classindex) || (classindex==-1))
+                            if ((testObj.classindex == classindex) || (classindex == -1))
                             {//obj match found.
                                 return testObj;
                             }
@@ -91,7 +140,7 @@ namespace Underworld
                     }
                 }
             }
-            return null;     
+            return null;
         }
 
         /// <summary>
@@ -100,18 +149,18 @@ namespace Underworld
         /// <param name="ListHead"></param>
         /// <param name="ToFind"></param>
         /// <returns></returns>
-        public static int GetContainingObject(int ListHead, int ToFind, uwObject[] objList) 
+        public static int GetContainingObject(int ListHead, int ToFind, uwObject[] objList)
         {
-            if (ListHead==ToFind)
+            if (ListHead == ToFind)
             {
                 //same object
                 return -1;
             }
-            if (ListHead<=0){return -1;}
+            if (ListHead <= 0) { return -1; }
             var ListHeadObject = objList[ListHead];
             if (ListHeadObject != null)
             {
-                if ((ListHeadObject.link !=0) && (ListHeadObject.is_quant==0))
+                if ((ListHeadObject.link != 0) && (ListHeadObject.is_quant == 0))
                 { //List has objects
                     if (ListHeadObject.link == ToFind)
                     { //The first object is the one we want to find.
@@ -120,7 +169,7 @@ namespace Underworld
                     else
                     {//Go throught the chain. Check each next and if the next has an object link search up that chain
                         var NextObjectIndex = ListHeadObject.link; //get the first object
-                        while (NextObjectIndex!=0)
+                        while (NextObjectIndex != 0)
                         {
                             var NextObject = objList[NextObjectIndex];
                             if (NextObject.index == ToFind)
@@ -129,9 +178,9 @@ namespace Underworld
                             }
                             else
                             {
-                                if (NextObject.is_quant==0)
+                                if (NextObject.is_quant == 0)
                                 {
-                                    if (NextObject.link!=0)
+                                    if (NextObject.link != 0)
                                     { //search up that object chain
                                         var result = GetContainingObject(NextObject.index, ToFind, objList);
                                         if (result != -1)
