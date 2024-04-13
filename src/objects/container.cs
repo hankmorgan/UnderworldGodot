@@ -35,8 +35,14 @@ namespace Underworld
         /// <param name="obj"></param>
         public static void SpillWorldContainer(uwObject obj)
         {
-            //check for pickup trigger first
+            //Checkfor use trigger
+            trigger.UseTrigger(
+                srcObject: obj,
+                triggerIndex: obj.link,
+                objList: UWTileMap.current_tilemap.LevelObjects);
+            //check for pickup trigger f
             trigger.PickupTrigger(UWTileMap.current_tilemap.LevelObjects, obj);
+        
 
             //container used in the world
             if (UWTileMap.ValidTile(obj.tileX, obj.tileY))

@@ -232,7 +232,7 @@ namespace Underworld
             if (shrooms != 0)
             {
                 Palette.CurrentPalette = Rng.r.Next(1, 4);
-                shrooms--; //eventually this should be on a timer
+                //shrooms--; //eventually this should be on a timer
             }
 
 
