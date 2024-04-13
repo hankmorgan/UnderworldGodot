@@ -8,9 +8,37 @@ namespace Underworld
 
         /// <summary>
         /// Reference to the object the player is using currently in their hand
-        /// To be consistanct his object MUST always be a world object. When picking inventory objects add it to world
+        /// To be consistent his object MUST always be a world object. When picking inventory objects add it to world
         /// </summary>
-        public static int ObjectInHand = -1;
+        public static int ObjectInHand// = -1;
+        {
+            get
+            {
+                return _ObjectInHand;
+            }
+            set
+            {
+                if (value != -1)
+                {
+                    if (_ObjectInHand != -1)
+                    {
+                        Debug.Print("Dropping object that was already in hand before taking new object.");
+                        //already holding something. Drop that item to the ground first so it does not get lost
+                        pickup.Drop(
+                            index: _ObjectInHand,
+                            objList: UWTileMap.current_tilemap.LevelObjects,
+                            dropPosition: main.gamecam.Position,
+                            tileX: playerdat.tileX,
+                            tileY: playerdat.tileY);
+                    }
+                }
+                _ObjectInHand = value;
+            }
+        }
+
+
+        static int _ObjectInHand = -1;
+
 
         public static uwObject[] InventoryObjects = new uwObject[512];
         //public static byte[] InventoryBuffer = new byte[512 * 8];

@@ -10,10 +10,10 @@ namespace Underworld
             Debug.Print($"take_from_npc({arg1})");
 
 
-            if (playerdat.ObjectInHand!=-1)
-            {
-                result_register = 0; return;
-            }
+            // if (playerdat.ObjectInHand!=-1)
+            // {
+            //     result_register = 0; return;
+            // }
 
             if (talker.LootSpawnedFlag==0)
             {
