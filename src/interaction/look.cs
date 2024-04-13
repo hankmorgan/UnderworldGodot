@@ -1,3 +1,5 @@
+using System.Reflection;
+
 namespace Underworld
 {
     /// <summary>
@@ -326,6 +328,7 @@ namespace Underworld
             //enchantments            
             string enchantmenttext = "";
             string magical = "";
+            string cursed="";
 
             if (!((obj.majorclass == 2) && (obj.minorclass == 0))) //when not a container
             {
@@ -340,14 +343,23 @@ namespace Underworld
                             magical = "magical "; break;
                         case 3: // full description
                             enchantmenttext = magicenchantment.NameEnchantment(obj, objList);
-                            if (enchantmenttext == "")
+                            if (magicenchantment.SpellMajorClass!=9)
                             {
-                                enchantmenttext = " of unnamed";
+                                if (enchantmenttext == "")
+                                {
+                                    enchantmenttext = " of unnamed";
+                                }
+                                else
+                                {
+                                    enchantmenttext = $" of {enchantmenttext}";
+                                }
                             }
                             else
                             {
-                                enchantmenttext = $" of {enchantmenttext}";
+                                enchantmenttext ="";
+                                cursed = "cursed ";
                             }
+
                             break;
                     }
                 }
@@ -370,11 +382,11 @@ namespace Underworld
             }
             if (objectname.StartsWith("some "))
             {
-                output += $"{qtystring}{qualitystring}{magical}{objectname}";
+                output += $"{qtystring}{qualitystring}{cursed}{magical}{objectname}";
             }
             else
             {
-                output += $"{article}{qtystring}{qualitystring}{magical}{objectname}";
+                output += $"{article}{qtystring}{qualitystring}{cursed}{magical}{objectname}";
             }
 
             var ownership = "";

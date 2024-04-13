@@ -77,7 +77,7 @@ namespace Underworld
                 {
                     if (SpellMajorClass==9)
                         {
-                            return "";
+                            return "cursed";
                         }
                     else
                         {
