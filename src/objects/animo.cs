@@ -41,6 +41,10 @@ namespace Underworld
 
         public static animo CreateInstance(Node3D parent, uwObject obj, string name)
         {
+            if (obj.invis == 1)
+            {
+                return null;
+            }
             var a = new animo(obj);
             //a.ApplyAnimoSprite();
             var a_sprite = new uwMeshInstance3D(); //new Sprite3D();

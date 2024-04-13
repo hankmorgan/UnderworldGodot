@@ -265,8 +265,8 @@ namespace Underworld
 				npc.npc_hunger = (short)(npc.npc_hunger | 0x40); //set bit 6 after conv
 			}
 			else
-			{
-				npc.npc_attitude = (short)Math.Max(0, (int)newvalue);
+			{//note this value will overwrite a set_race_attitude value, npc will become hostile later on in this case due to hardcoded behavioural code when their gtarg is the player 1
+				npc.npc_attitude = (short)Math.Max(0, (int)newvalue&0x3);
 			}
 
 			playerdat.play_hunger = (byte)FindVariable("play_hunger");
