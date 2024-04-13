@@ -126,6 +126,12 @@ namespace Underworld
                                         triggerNextIndex = 0;;//always stop on delete object trap
                                         break;
                                     }
+                                case 0xC: // 6-0-C, inventory trap
+                                    {   
+                                        triggerNextIndex  = an_inventory_trap.Activate(trapObj, objList);
+                                        implemented =true;
+                                        break;
+                                    }
                                 case 0xD://set variable trap
                                     {
                                         implemented = true;

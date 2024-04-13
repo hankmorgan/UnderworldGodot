@@ -68,7 +68,7 @@ namespace Underworld
                         newLevelNo: playerdat.dungeon_level - 1,
                         datafolder: playerdat.currentfolder,
                         newGameSession: false);
-                        
+
                 if (itemToTransfer!=-1)
                 {//takes object back out of inventory.
                     uimanager.DoPickup(itemToTransfer);
@@ -91,10 +91,6 @@ namespace Underworld
 
             if ((TeleportTileX!=-1) || (TeleportTileY!=-1) || (TeleportLevel!=-1))
             {
-                    if (playerdat.ObjectInHand!=0)
-                    {
-                        Debug.Print("Player is holding a world object while changing levels. This scenario needs to fixed!");
-                    }
                 JustTeleported = true;
                     _ = Peaky.Coroutines.Coroutine.Run(
                     PauseTeleport(),
