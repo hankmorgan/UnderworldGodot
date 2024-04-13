@@ -475,17 +475,24 @@ namespace Underworld
             {
                 // //Find the object chain the object is in and clear the list head index        
                 var LinkOffset = GetItemLinkOffset(index);
-                if (LinkOffset < InventoryPtr)
+                if (LinkOffset != -1)
                 {
-                    //offset is directly on paper doll. it should have no next. rare issue in Uw1 where a paperdoll object still has a next.
-                    next = 0;
-                }
+                    if (LinkOffset < InventoryPtr)
+                    {
+                        //offset is directly on paper doll. it should have no next. rare issue in Uw1 where a paperdoll object still has a next.
+                        next = 0;
+                    }
 
-                //This clears either the next or link to the object and replaces it with the objects next value
-                var data = (int)getAt(pdat, (LinkOffset), 16);
-                data &= 0x3f; //Clear link/next
-                data |= (next << 6); //Or in the obj.next for the object.
-                setAt(pdat, LinkOffset, 16, data);
+                    //This clears either the next or link to the object and replaces it with the objects next value
+                    var data = (int)getAt(pdat, (LinkOffset), 16);
+                    data &= 0x3f; //Clear link/next
+                    data |= (next << 6); //Or in the obj.next for the object.
+                    setAt(pdat, LinkOffset, 16, data);
+                }
+                else
+                {
+                    Debug.Print($"No link offset found for {index}. If you are not changing levels this should not happen");
+                }
             }
 
             InventoryObjects[index] = null;

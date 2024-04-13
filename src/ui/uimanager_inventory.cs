@@ -544,12 +544,12 @@ namespace Underworld
 
 
         /// <summary>
-        /// Does the pickup forom slot.
+        /// Does the pickup from inventory.
         /// </summary>
         /// <param name="objAtSlot"></param>
         /// <param name="DestroyInventoryObject"></param>
         /// <returns></returns>
-        private static int DoPickup(int objAtSlot, bool DestroyInventoryObject = true)
+        public static int DoPickup(int objAtSlot, bool DestroyInventoryObject = true)
         {
             var newIndex = playerdat.AddInventoryObjectToWorld(
                     objIndex: objAtSlot,

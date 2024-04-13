@@ -57,12 +57,22 @@ namespace Underworld
             //Handle level transitions now since it's possible for further traps to be called after the teleport trap
             if (TeleportLevel!=-1)
             {
+                int itemToTransfer=-1;
+                if (playerdat.ObjectInHand!=-1)
+                {//handle moving an object in hand through levels. Temporarily add to inventory data.
+                    itemToTransfer = playerdat.AddObjectToPlayerInventory(playerdat.ObjectInHand, false);
+                }
                 playerdat.dungeon_level = TeleportLevel;
                 //switch level
                 UWTileMap.LoadTileMap(
                         newLevelNo: playerdat.dungeon_level - 1,
                         datafolder: playerdat.currentfolder,
                         newGameSession: false);
+                        
+                if (itemToTransfer!=-1)
+                {//takes object back out of inventory.
+                    uimanager.DoPickup(itemToTransfer);
+                }
             }
             if ((TeleportTileX != -1) && (TeleportTileY !=-1))
             {
