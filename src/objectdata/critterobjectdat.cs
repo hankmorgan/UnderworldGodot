@@ -136,8 +136,7 @@ namespace Underworld
         /// <returns></returns>
         public static int race(int item_id)
         {
-            Debug.Print("Race. Needs to be reconfirmed");
-            return (buffer[CritterOffset(item_id) + 0x9] >> 2) & 0x3F;
+            return (buffer[CritterOffset(item_id) + 0x9]) & 0x3F;
         }
 
 

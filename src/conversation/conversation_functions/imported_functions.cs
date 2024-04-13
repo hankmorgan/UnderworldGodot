@@ -195,6 +195,11 @@ namespace Underworld
                         x_exp();
                         break;
                     }
+                case "set_race_attitude":
+                    {
+                        set_race_attitude(talker);
+                        break;
+                    }
                 default:
                     {                       
                         Debug.Print($"Unimplemented {func.importname}"); break;
