@@ -48,6 +48,8 @@ namespace Underworld
             {
                 case 1:
                     pathuw1.Text = pathdir; break;
+                case 2:
+                    pathuw2.Text = pathdir; break;
             }
         }
 

@@ -11,8 +11,8 @@ namespace Underworld
                 case GAME_UW2:
                     {
                         var Operator = trapObj.heading;  //arg4
-                        var RightVariable = (trapObj.quality << 6) + trapObj.owner; //arg2
-                        var LeftVariable = (trapObj.xpos << 7) + trapObj.zpos; //arg0
+                        var RightVariable = ((trapObj.quality & 0x3F) << 6) + (trapObj.owner & 0x3F); //arg2
+                        var LeftVariable = (trapObj.xpos << 7) + trapObj.zpos; //arg0                       
                         VariableOperationUW2(LeftVariable, Operator, RightVariable);
                         if (trapObj.ypos != 0)
                         {
@@ -133,24 +133,33 @@ namespace Underworld
         /// <summary>
         /// performs variable operations that change gamevars, xclock and quest vars.
         /// </summary>
-        /// <param name="LeftOperator"></param>
+        /// <param name="LeftVariable"></param>
         /// <param name="Operation"></param>
-        /// <param name="RightOperator"></param>
-        static void VariableOperationUW2(int LeftOperator, int Operation, int RightOperator)
+        /// <param name="RightVariable"></param>
+        static void VariableOperationUW2(int LeftVariable, int Operation, int RightVariable)
         {
-            Debug.Print($"L:{LeftOperator} O:{Operation} R:{RightOperator}");
-            switch (LeftOperator)
+            Debug.Print($"L:{LeftVariable} O:{Operation} R:{RightVariable}");
+            switch (LeftVariable)
             {
                 case < 0x100:
                     { //game variables
-                        var gamevar = playerdat.GetGameVariable(LeftOperator);
-                        var newValue = VariableTransformUW2(gamevar, Operation, RightOperator);
-                        playerdat.SetGameVariable(LeftOperator, newValue & 0x3FF);
+
+                        var gamevar = playerdat.GetGameVariable(LeftVariable);
+                        var newValue = VariableTransformUW2(gamevar, Operation, RightVariable);
+                        playerdat.SetGameVariable(LeftVariable, newValue & 0x3FF);
+
+                        // var gamevaroffset = (LeftVariable<<1) + 0x0FA;                        
+                        // var gamevar = playerdat.pdat[(LeftVariable<<1) + 0x0FA];
+                        // //var gamevar = playerdat.GetGameVariable(LeftVariable);
+                        // var newValue = VariableTransformUW2(gamevar, Operation, RightVariable);
+                        // playerdat.pdat[(LeftVariable<<1) + 0x0FA] = (byte)newValue;
+                        // Debug.Print($"Setting gamevar at offset {gamevaroffset} from {gamevar} to {newValue}");
+                        // //playerdat.SetGameVariable(LeftVariable, newValue & 0x3FF);
                         break;
                     }
                 case >= 0x100 and < 0x180:
                     {//Quest vars
-                        var questno = LeftOperator - 0x100;// >> 2;
+                        var questno = LeftVariable - 0x100;// >> 2;
                         switch (Operation)
                         {   //assuming these cases are the same as UW1. the dissasembly is complex so I could be wrong here
                             case 1://maybe unset
@@ -176,17 +185,17 @@ namespace Underworld
                 case >=0x180 and <0x190:
                     {
                         //quest 128 and up
-                        var questvar = playerdat.GetQuest(128 + LeftOperator-0x180);
-                        var newValue = VariableTransformUW2(questvar, Operation,RightOperator);
-                        playerdat.SetQuest(128 + LeftOperator-0x180, newValue);
+                        var questvar = playerdat.GetQuest(128 + LeftVariable-0x180);
+                        var newValue = VariableTransformUW2(questvar, Operation,RightVariable);
+                        playerdat.SetQuest(128 + LeftVariable-0x180, newValue);
                         break;
                     }
                 case >=0x190 and <0x200:
                     {
                         //xclock
-                        var xclockvar = playerdat.GetXClock(LeftOperator-0x190);
-                        var newValue = VariableTransformUW2(xclockvar, Operation,RightOperator); 
-                        playerdat.SetXClock(LeftOperator-0x190, newValue);
+                        var xclockvar = playerdat.GetXClock(LeftVariable-0x190);
+                        var newValue = VariableTransformUW2(xclockvar, Operation,RightVariable); 
+                        playerdat.SetXClock(LeftVariable-0x190, newValue);
                         break;
                     }
                 default:

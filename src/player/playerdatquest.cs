@@ -14,7 +14,7 @@ namespace Underworld
         {
             if (_RES==GAME_UW2)
             {
-                return GetAt(0x7A+variableno*2);
+                return GetAt(0xFA+(variableno*2));
             }
             else
             {
@@ -33,7 +33,7 @@ namespace Underworld
             Debug.Print($"Setting {variableno} to {value}");
             if (_RES==GAME_UW2)
             {
-               SetAt(0x7A+variableno*2, (byte)value);
+               SetAt(0xFA+variableno*2, (byte)value);
             }
             else
             {
