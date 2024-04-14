@@ -56,6 +56,14 @@ namespace Underworld
                         );
                         return true;
                     }
+                case 39:
+                    {//changes visibility of object
+                        a_hack_trap_visibility.Activate(
+                            trapObj: trapObj
+                            );
+                        triggerNextIndex = 0; //stop chain
+                        return true;
+                    }
 
                 default:
                     {
