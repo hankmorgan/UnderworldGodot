@@ -65,7 +65,8 @@ namespace Underworld
                                         implemented = hack_trap.ActivateHackTrap(
                                                 trapObj: trapObj,
                                                 triggerObj: triggerObj,
-                                                objList: objList);
+                                                objList: objList,
+                                                ref triggerNextIndex);
                                         break;
                                     }
                                 case 4: // pit trap 6-0-4 in uw1, special effects in uw2

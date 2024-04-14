@@ -11,9 +11,11 @@ namespace Underworld
         /// Global flag in case the object uses fires the spell prematurely.
         /// </summary>
         public static bool SpellHasBeenCast = false;
+        public static bool UseTriggerHasBeenActivated = false;
         public static bool Use(int index, uwObject[] objList, bool WorldObject = true)
         {
             SpellHasBeenCast = false;
+            UseTriggerHasBeenActivated = false;
             if (useon.CurrentItemBeingUsed != null)
             {
                 return useon.UseOn(index, objList, useon.CurrentItemBeingUsed, WorldObject);
@@ -68,7 +70,7 @@ namespace Underworld
                         }
                 }
                 //Check for use trigger on this action and try activate if so.
-                if ((obj.is_quant == 0) && (obj.link != 0))
+                if ((obj.is_quant == 0) && (obj.link != 0) && (!UseTriggerHasBeenActivated))
                 {
                     trigger.UseTrigger(
                         srcObject: obj,

@@ -50,13 +50,41 @@ namespace Underworld
         public static bool Use(uwObject obj)
         {
             if (IsOn(obj))
-            {
+            {//on-->off
                 obj.item_id -= 8;
+                // if (obj.link!=0)
+                // {
+                //     var trigger = UWTileMap.current_tilemap.LevelObjects[obj.link];
+                //     if (trigger!=null)
+                //     {
+                //         use.UseTriggerHasBeenActivated = true;
+                //         trigger.UseTrigger(
+                //             srcObject: obj,
+                //             triggerIndex: obj.link,
+                //             objList: UWTileMap.current_tilemap.LevelObjects);
+                //     }
+                // }
             }
             else
-            {
+            {//off->on
                 obj.item_id += 8;
+                if (obj.link != 0)
+                {
+                    var triggerObj = UWTileMap.current_tilemap.LevelObjects[obj.link];
+                    if (triggerObj!=null)
+                    {
+                        if (triggerObj.next!=0)
+                        {//trigger the next of the use trigger when going off->on instead of the linked one.
+                            use.UseTriggerHasBeenActivated = true;
+                            trigger.UseTrigger(
+                                srcObject: obj,
+                                triggerIndex: triggerObj.next,
+                                objList: UWTileMap.current_tilemap.LevelObjects);
+                        }
+                    }
+                }
             }
+
             if (obj.instance != null)
             {
                 var newmaterial = GetTmFlat.GetMaterial(obj.item_id - 368);

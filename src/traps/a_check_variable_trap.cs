@@ -42,7 +42,7 @@ namespace Underworld
                 }
 
                 //check results
-                Debug.Print($"Comparing {di} to {var_1A}");
+                Debug.Print($"Comparing variables starting at {si} with value(s) {di} to {var_1A}");
                 if (di == var_1A)
                 {
                     return trapObj.link; //trigger the true condition chain.
