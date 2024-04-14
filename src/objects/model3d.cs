@@ -13,6 +13,7 @@ namespace Underworld
         protected const int CEILING_HEIGHT = 32;
         //public Material material;
         public static Shader textureshader;
+        public static Shader transparentshader;
         static GRLoader tmObj; //3d model textures.
 
         public static GRLoader GetTmObj
@@ -169,6 +170,22 @@ namespace Underworld
             }
             var newmaterial = new ShaderMaterial();
             newmaterial.Shader = textureshader;
+            newmaterial.SetShaderParameter("texture_albedo", (Texture)Palette.IndexToImage((byte)textureno));
+            newmaterial.SetShaderParameter("albedo", new Color(1, 1, 1, 1));
+            newmaterial.SetShaderParameter("uv1_scale", new Vector3(1, 1, 1));
+            newmaterial.SetShaderParameter("uv2_scale", new Vector3(1, 1, 1));
+            newmaterial.SetShaderParameter("UseAlpha", false);
+            return newmaterial;
+        }
+
+        public ShaderMaterial GetMaterial_alphacolour(int textureno, int surface)
+        {
+            if (transparentshader==null)
+            {
+                transparentshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwshader_alpha.gdshader");
+            }
+            var newmaterial = new ShaderMaterial();
+            newmaterial.Shader = transparentshader;
             newmaterial.SetShaderParameter("texture_albedo", (Texture)Palette.IndexToImage((byte)textureno));
             newmaterial.SetShaderParameter("albedo", new Color(1, 1, 1, 1));
             newmaterial.SetShaderParameter("uv1_scale", new Vector3(1, 1, 1));

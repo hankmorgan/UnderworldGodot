@@ -155,6 +155,10 @@ namespace Underworld
 
         public override ShaderMaterial GetMaterial(int textureno, int surface)
         {//Get the material texture from tmobj
+        if (uwobject.invis==1)
+        {
+            return GetMaterial_alphacolour(0, surface);
+        }
         switch (surface)
             {
                 case 0:

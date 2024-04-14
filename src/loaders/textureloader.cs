@@ -29,11 +29,11 @@ namespace Underworld
         private int TextureSplit = 210;//at what point does a texture index refer to the floor instead of a wall in uw1/demo
         private int FloorDim = 32;
         public Shader textureshader;
+        
         public ShaderMaterial[] materials = new ShaderMaterial[512];
-
         public TextureLoader()
         {  
-            textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwshader.gdshader");
+            textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwshader.gdshader");            
         }        
 
 
@@ -158,7 +158,7 @@ namespace Underworld
                 newmaterial.SetShaderParameter("UseAlpha", false);
                 materials[textureno] = newmaterial;
             }
-            return materials[textureno];    
+            return materials[textureno];   
         }
-    }
-}
+    }//end class
+}//end namespace
