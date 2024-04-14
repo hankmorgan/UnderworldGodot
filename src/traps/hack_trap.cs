@@ -56,6 +56,13 @@ namespace Underworld
                         );
                         return true;
                     }
+                case 38:
+                    {//transform red potions to poison
+                        a_hack_trap_transformpotion.Activate(
+                            trapObj: trapObj, 
+                            triggerObj: triggerObj);
+                        return true;
+                    }
                 case 39:
                     {//changes visibility of object
                         a_hack_trap_visibility.Activate(
