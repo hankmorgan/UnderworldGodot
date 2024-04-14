@@ -1,5 +1,5 @@
 using System.Collections;
-using System.Diagnostics;
+using System.Collections.Generic;
 using Peaky.Coroutines;
 
 namespace Underworld
@@ -14,6 +14,8 @@ namespace Underworld
         public static int TeleportLevel = -1;
         public static int TeleportTileX = -1;
         public static int TeleportTileY = -1;
+
+        public static bool DoRedraw = false;
 
 
         /// <summary>
@@ -47,6 +49,7 @@ namespace Underworld
             TeleportLevel = -1;
             TeleportTileX = -1;
             TeleportTileY = -1;
+            DoRedraw = false;
         }
 
         /// <summary>
@@ -54,6 +57,22 @@ namespace Underworld
         /// </summary>
         public static void EndTriggerChainEvents()
         {
+            if (DoRedraw)
+            {
+                //update tile faces
+                UWTileMap.SetTileMapWallFacesUW();
+                //Handle tile changes after all else is done
+                foreach (var t in UWTileMap.current_tilemap.Tiles)
+                {
+                    if (t.Redraw)
+                    {
+                        UWTileMap.RemoveTile(t.tileX, t.tileY);
+                        tileMapRender.RenderTile(tileMapRender.worldnode, t.tileX, t.tileY, t);
+                        t.Redraw = false;
+                    }
+                }
+            }
+
             //Handle level transitions now since it's possible for further traps to be called after the teleport trap
             if (TeleportLevel!=-1)
             {

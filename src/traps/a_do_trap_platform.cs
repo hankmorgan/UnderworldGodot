@@ -28,8 +28,9 @@ namespace Underworld
                 t.floorHeight = (short)newHeight;
 
                 //Render new tile
-
-                tileMapRender.RenderTile(tileMapRender.worldnode, tileX, tileY, t);
+                trigger.DoRedraw = true;
+                t.Redraw = true;
+                //tileMapRender.RenderTile(tileMapRender.worldnode, tileX, tileY, t);
 
                 //TODO find objects in the tile that may need to be moved.
             }

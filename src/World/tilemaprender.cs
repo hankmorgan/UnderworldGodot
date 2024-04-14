@@ -1,7 +1,7 @@
 using Godot;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-
 namespace Underworld
 {
 
@@ -67,6 +67,8 @@ namespace Underworld
         const int CEIL_ADJ = 0;
         const int FLOOR_ADJ = 0; //-2;
 
+        public static string guid;
+
         public static TextureLoader mapTextures;
 
         static tileMapRender()
@@ -79,7 +81,8 @@ namespace Underworld
 
         public static void GenerateLevelFromTileMap(Node3D parent, UWTileMap Level, uwObject[] objList, bool UpdateOnly)
         {
-           
+           var g= Guid.NewGuid();
+           guid = g.ToString();
 
             worldnode = parent;
             CEILING_HEIGHT = UWTileMap.UW_CEILING_HEIGHT;
@@ -202,17 +205,8 @@ namespace Underworld
             if (t.Render == true)
             {
                 string TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
-
-                // //Bottom face 
-                // if (t.TerrainChange)
-                // {                    
-                //     return RenderCuboid(parent, x, y, t, -16, t.floorHeight, TileName);
-                // }
-                // else
-                // {
-                    TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
-                    return RenderCuboid(parent, x, y, t, 0, t.floorHeight, TileName);
-                //}
+                TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
+                return RenderCuboid(parent, x, y, t, 0, t.floorHeight, TileName);
             }
             return null;
         }
@@ -291,7 +285,7 @@ namespace Underworld
             var final_mesh = new MeshInstance3D();
             parent.AddChild(final_mesh);
             final_mesh.Position = new Vector3(x * -1.2f, 0.0f, y * 1.2f);
-            final_mesh.Name = TileName;
+            final_mesh.Name = TileName + "_" + guid;
             final_mesh.Mesh = a_mesh;
             if (EnableCollision)
             {

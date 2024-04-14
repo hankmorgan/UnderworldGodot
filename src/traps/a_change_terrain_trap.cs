@@ -6,6 +6,7 @@ namespace Underworld
     {
         public static void Activate(uwObject triggerObj, uwObject trapObj)
         {
+            
             var newFloorTexture = trapObj.quality >> 1;
             var newTileType = trapObj.quality & 0x1; // codes seems to indicate heading has an impact but not in game+ (trapObj.heading<<1);
             var newWallTexture = trapObj.owner;
@@ -21,13 +22,16 @@ namespace Underworld
                     if (UWTileMap.ValidTile(X, Y))
                     {
                         Debug.Print($"Changing terrain:{trapObj.index} Changing tile {X},{Y} to a {newTileType}");
-                        UWTileMap.RemoveTile(X, Y);
+                        // UWTileMap.RemoveTile(X, Y);
                         var tileToChange = UWTileMap.current_tilemap.Tiles[X, Y];
                         tileToChange.tileType = (short)newTileType;
                         if (_RES==GAME_UW2)
                         {
-                            tileToChange.floorTexture =  (short)newFloorTexture;   
-                            tileToChange.wallTexture = newWallTexture;
+                            tileToChange.floorTexture = (short)newFloorTexture; 
+                            if (newWallTexture<63)
+                            {
+                                tileToChange.wallTexture = newWallTexture;
+                            }                              
                         }
                         else
                         {
@@ -57,8 +61,11 @@ namespace Underworld
                         {
                             
                         }
-                        UWTileMap.SetTileWallFacesUW(X,Y);
-                        tileMapRender.RenderTile(tileMapRender.worldnode, X, Y, tileToChange);
+                        trigger.DoRedraw =true;
+                        tileToChange.Redraw = true;
+                        //UWTileMap.SetTileWallFacesUW(X,Y);
+                        //UWTileMap.SetTileMapWallFacesUW();
+                        //tileMapRender.RenderTile(tileMapRender.worldnode, X, Y, tileToChange);
                     }
                     Y++;
                 }

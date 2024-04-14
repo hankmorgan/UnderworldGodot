@@ -506,7 +506,7 @@ namespace Underworld
             }
 
             //Find tiles that may change terrain due to triggers/traps
-            FindTileTriggersAndChanges();
+           // FindTileTriggersAndChanges();
 
             //Reduce map complexity.
             CleanUp();
@@ -518,90 +518,91 @@ namespace Underworld
         /// <summary>
         /// Finds trigger-trap chains that will change the terrain
         /// </summary>
-        static void FindTileTriggersAndChanges()
-        {
-            for (int i = 255; i <= current_tilemap.LevelObjects.GetUpperBound(0); i++)
-            {
-                var trigger = current_tilemap.LevelObjects[i];
-                if (trigger != null)
-                {
-                    if ((trigger.majorclass == 6) && ((trigger.minorclass == 2) || (trigger.minorclass == 3)))
-                    {//a trigger
-                        if (trigger.link != 0)
-                        {
-                            var trap = current_tilemap.LevelObjects[trigger.link];
-                            if (trap != null)
-                            {
-                                //Debug.Print($"Testing {trap.a_name}" );
-                                switch (trap.item_id)
-                                {
-                                    case 387:   //do traps
-                                        {
-                                            switch (trap.quality)
-                                            {
-                                                case 2:
-                                                    {
-                                                        current_tilemap.Tiles[trigger.quality, trigger.owner].TerrainChange = true;
-                                                        break;
-                                                    }
-                                            }
-                                            break;
-                                        }
-                                    case 389://change terrain trap
-                                        {
-                                            for (int X = trigger.quality; X <= trigger.quality + trap.xpos; X++)
-                                            {
-                                                for (int Y = trigger.owner; Y <= trigger.owner + trap.ypos; Y++)
-                                                {
-                                                    if (ValidTile(X, Y))
-                                                    {
-                                                        current_tilemap.Tiles[X, Y].TerrainChange = true;
-                                                    }
-                                                }
-                                            }
-                                            break;
-                                        }
-                                }
-                            }
-                        }
-                    }
+        // static void FindTileTriggersAndChanges()
+        // {
+        //     for (int i = 255; i <= current_tilemap.LevelObjects.GetUpperBound(0); i++)
+        //     {
+        //         var trigger = current_tilemap.LevelObjects[i];
+        //         if (trigger != null)
+        //         {
+        //             if ((trigger.majorclass == 6) && ((trigger.minorclass == 2) || (trigger.minorclass == 3)))
+        //             {//a trigger
+        //                 if (trigger.link != 0)
+        //                 {
+        //                     var trap = current_tilemap.LevelObjects[trigger.link];
+        //                     if (trap != null)
+        //                     {
+        //                         //Debug.Print($"Testing {trap.a_name}" );
+        //                         switch (trap.item_id)
+        //                         {
+        //                             case 387:   //do traps
+        //                                 {
+        //                                     switch (trap.quality)
+        //                                     {
+        //                                         case 2:
+        //                                             {
+        //                                                 current_tilemap.Tiles[trigger.quality, trigger.owner].TerrainChange = true;
+        //                                                 break;
+        //                                             }
+        //                                     }
+        //                                     break;
+        //                                 }
+        //                             case 389://change terrain trap
+        //                                 {
+        //                                     for (int X = trigger.quality; X <= trigger.quality + trap.xpos; X++)
+        //                                     {
+        //                                         for (int Y = trigger.owner; Y <= trigger.owner + trap.ypos; Y++)
+        //                                         {
+        //                                             if (ValidTile(X, Y))
+        //                                             {
+        //                                                 current_tilemap.Tiles[X, Y].TerrainChange = true;
+        //                                             }
+        //                                         }
+        //                                     }
+        //                                     break;
+        //                                 }
+        //                         }
+        //                     }
 
-                    if ((_RES == GAME_UW2) && (trigger.item_id == 422))
-                    {
-                        if (ValidTile(trigger.tileX, trigger.tileY))
-                        {
-                            current_tilemap.Tiles[trigger.tileX, trigger.tileY].EnterTrigger = trigger.index;
-                        }
-                    }
+        //                 }
+        //             }
 
-                    if ((_RES == GAME_UW2) && (trigger.item_id == 423))
-                    {
-                        if (ValidTile(trigger.tileX, trigger.tileY))
-                        {
-                            current_tilemap.Tiles[trigger.tileX, trigger.tileY].ExitTrigger = trigger.index;
-                        }
-                    }
-                }
-            }
+        //             if ((_RES == GAME_UW2) && (trigger.item_id == 422))
+        //             {
+        //                 if (ValidTile(trigger.tileX, trigger.tileY))
+        //                 {
+        //                     current_tilemap.Tiles[trigger.tileX, trigger.tileY].EnterTrigger = trigger.index;
+        //                 }
+        //             }
 
-            // if (_RES != GAME_UW2)
-            // {
-            //     if (current_tilemap.thisDungeonLevel == 7)
-            //     {//mark tybals maze
-            //         for (int x = 0; x <= 63; x++)
-            //         {
-            //             for (int y = 0; y <= 63; y++)
-            //             {
-            //                 if ((current_tilemap.Tiles[x, y].floorTexture == 4))
-            //                 {
-            //                     current_tilemap.Tiles[x, y].TerrainChange = true;
-            //                 }
-            //             }
-            //         }
-            //     }
-            // }
+        //             if ((_RES == GAME_UW2) && (trigger.item_id == 423))
+        //             {
+        //                 if (ValidTile(trigger.tileX, trigger.tileY))
+        //                 {
+        //                     current_tilemap.Tiles[trigger.tileX, trigger.tileY].ExitTrigger = trigger.index;
+        //                 }
+        //             }
+        //         }
+        //     }
 
-        }
+        //     // if (_RES != GAME_UW2)
+        //     // {
+        //     //     if (current_tilemap.thisDungeonLevel == 7)
+        //     //     {//mark tybals maze
+        //     //         for (int x = 0; x <= 63; x++)
+        //     //         {
+        //     //             for (int y = 0; y <= 63; y++)
+        //     //             {
+        //     //                 if ((current_tilemap.Tiles[x, y].floorTexture == 4))
+        //     //                 {
+        //     //                     current_tilemap.Tiles[x, y].TerrainChange = true;
+        //     //                 }
+        //     //             }
+        //     //         }
+        //     //     }
+        //     // }
+
+        // }
 
         private void ListEnchantmentsInLinkedList(int listhead, int x, int y)
         {
@@ -752,7 +753,7 @@ namespace Underworld
         /// <param name="game">Game.</param>
         /// Although the tile map renderer supports tiles of size X*Y I'm only smart enought to optimise the tilemap into strips of X*1 or Y*1 !!
         public void CleanUp()
-        {
+        {            
             int x; int y;
 
             for (x = 0; x <= TileMapSizeX; x++)
@@ -851,66 +852,66 @@ namespace Underworld
                 }
             }
 
-            int j;
+            //int j;
             //Now lets combine the solids along particular axis
-            for (x = 0; x < TileMapSizeX; x++)
-            {
-                for (y = 0; y < TileMapSizeY; y++)
-                {
-                    if ((Tiles[x, y].Grouped == false))
-                    {
-                        j = 1;
-                        while ((Tiles[x, y].Render == true) && (Tiles[x, y + j].Render == true) && (Tiles[x, y + j].Grouped == false))      //&& (Tiles[x,y].tileType ==0) && (Tiles[x,y+j].tileType ==0)
-                        {
-                            //combine these two if they match and they are not already part of a group
-                            if (DoTilesMatch(Tiles[x, y], Tiles[x, y + j]))
-                            {
-                                Tiles[x, y + j].Render = false;
-                                Tiles[x, y + j].Grouped = true;
-                                Tiles[x, y].Grouped = true;
-                                //Tiles[x,y].DimY++;
-                                j++;
-                            }
-                            else
-                            {
-                                break;
-                            }
+            // for (x = 0; x < TileMapSizeX; x++)
+            // {
+            //     for (y = 0; y < TileMapSizeY; y++)
+            //     {
+            //         if ((Tiles[x, y].Grouped == false))
+            //         {
+            //             j = 1;
+            //             while ((Tiles[x, y].Render == true) && (Tiles[x, y + j].Render == true) && (Tiles[x, y + j].Grouped == false))      //&& (Tiles[x,y].tileType ==0) && (Tiles[x,y+j].tileType ==0)
+            //             {
+            //                 //combine these two if they match and they are not already part of a group
+            //                 if (DoTilesMatch(Tiles[x, y], Tiles[x, y + j]))
+            //                 {
+            //                     Tiles[x, y + j].Render = false;
+            //                     Tiles[x, y + j].Grouped = true;
+            //                     Tiles[x, y].Grouped = true;
+            //                     //Tiles[x,y].DimY++;
+            //                     j++;
+            //                 }
+            //                 else
+            //                 {
+            //                     break;
+            //                 }
 
-                        }
-                        Tiles[x, y].DimY = (short)(Tiles[x, y].DimY + j - 1);
-                    }
-                }
-            }
+            //             }
+            //             Tiles[x, y].DimY = (short)(Tiles[x, y].DimY + j - 1);
+            //         }
+            //     }
+            // }
 
             ////Now lets combine solids along the other axis
-            for (y = 0; y < TileMapSizeY; y++)
-            {
-                for (x = 0; x < TileMapSizeX; x++)
-                {
-                    if ((Tiles[x, y].Grouped == false))
-                    {
-                        j = 1;
-                        while ((Tiles[x, y].Render == true) && (Tiles[x + j, y].Render == true) && (Tiles[x + j, y].Grouped == false))      //&& (Tiles[x,y].tileType ==0) && (Tiles[x,y+j].tileType ==0)
-                        {
-                            //combine these two if they  match and they are not already part of a group
-                            if (DoTilesMatch(Tiles[x, y], Tiles[x + j, y]))
-                            {
-                                Tiles[x + j, y].Render = false;
-                                Tiles[x + j, y].Grouped = true;
-                                Tiles[x, y].Grouped = true;
-                                //Tiles[x,y].DimY++;
-                                j++;
-                            }
-                            else
-                            {
-                                break;
-                            }
+            // for (y = 0; y < TileMapSizeY; y++)
+            // {
+            //     for (x = 0; x < TileMapSizeX; x++)
+            //     {
+            //         if ((Tiles[x, y].Grouped == false))
+            //         {
+            //             j = 1;
+            //             while ((Tiles[x, y].Render == true) && (Tiles[x + j, y].Render == true) && (Tiles[x + j, y].Grouped == false))      //&& (Tiles[x,y].tileType ==0) && (Tiles[x,y+j].tileType ==0)
+            //             {
+            //                 //combine these two if they  match and they are not already part of a group
+            //                 if (DoTilesMatch(Tiles[x, y], Tiles[x + j, y]))
+            //                 {
+            //                     Tiles[x + j, y].Render = false;
+            //                     Tiles[x + j, y].Grouped = true;
+            //                     Tiles[x, y].Grouped = true;
+            //                     //Tiles[x,y].DimY++;
+            //                     j++;
+            //                 }
+            //                 else
+            //                 {
+            //                     break;
+            //                 }
 
-                        }
-                        Tiles[x, y].DimX = (short)(Tiles[x, y].DimX + j - 1);
-                    }
-                }
-            }
+            //             }
+            //             Tiles[x, y].DimX = (short)(Tiles[x, y].DimX + j - 1);
+            //         }
+            //     }
+            // }
 
             //Clear invisible faces on solid tiles. 
             //TODO:Support all 64x64 tiles
@@ -1432,7 +1433,7 @@ namespace Underworld
         /// <param name="tileY"></param>
         public static void RemoveTile(short tileX, short tileY)
         {
-            string TileName = "Tile_" + tileX.ToString("D2") + "_" + tileY.ToString("D2");
+            string TileName = "Tile_" + tileX.ToString("D2") + "_" + tileY.ToString("D2") + "_" + tileMapRender.guid;
             Node3D existingTile = tileMapRender.worldnode.GetNode<Node3D>($"/root/Underworld/tilemap/{TileName}");
             if (existingTile != null)
             {

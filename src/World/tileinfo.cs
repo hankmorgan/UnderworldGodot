@@ -3,6 +3,7 @@ namespace Underworld
 {
     public class TileInfo : Loader
     {
+        public bool Redraw;
 
         /// <summary>
         /// PTR to the file data in the UW Block for this tile.
