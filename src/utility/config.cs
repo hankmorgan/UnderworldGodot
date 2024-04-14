@@ -16,6 +16,7 @@ namespace Underworld
         public float FOV { get; set; }
 
         public bool showcolliders { get; set; }
+        public int shaderbandsize { get; set; }
         public static uwsettings instance;
 
         public static void Save()

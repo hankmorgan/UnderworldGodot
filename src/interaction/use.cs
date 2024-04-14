@@ -82,28 +82,30 @@ namespace Underworld
                 {
                     if (obj != null)
                     {
-                        switch(obj.majorclass)
+                        if (obj.link != 0)
                         {
-                            case 0:
-                            case 1:
-                            case 5:
-                            case 6:
-                            case 7://do not cast spell from these objects major classes
-                                break;
-                            default:
+                            switch (obj.majorclass)
                             {
-                                if ((obj.majorclass==2) && (obj.minorclass == 0))
-                                {
-                                    //do not cast spells from containers. (except maybe the cornicopia?)
-                                }   
-                                else
-                                    {
-                                        result = UseItemCastSpell(objList, WorldObject, result, obj);
-                                    }
+                                case 0:
+                                case 1:
+                                case 5:
+                                case 6:
+                                case 7://do not cast spell from these objects major classes
                                     break;
+                                default:
+                                    {
+                                        if ((obj.majorclass == 2) && (obj.minorclass == 0))
+                                        {
+                                            //do not cast spells from containers. (except maybe the cornicopia?)
+                                        }
+                                        else
+                                        {
+                                            result = UseItemCastSpell(objList, WorldObject, result, obj) | result;
+                                        }
+                                        break;
+                                    }
                             }
                         }
-
                     }
                 }
             }
@@ -124,14 +126,14 @@ namespace Underworld
                 {
                     if (uimanager.CurrentSlot == 8)
                     {
-                        if (uimanager.InteractionMode!=uimanager.InteractionModes.ModeAttack)
+                        if (uimanager.InteractionMode != uimanager.InteractionModes.ModeAttack)
                         {
                             uimanager.InteractionModeToggle(uimanager.InteractionModes.ModeAttack);
                         }
                         else
                         {
                             uimanager.InteractionModeToggle(uimanager.InteractionModes.ModeUse);
-                        }                       
+                        }
                         return true;
                     }
                 }
@@ -139,14 +141,14 @@ namespace Underworld
                 {
                     if (uimanager.CurrentSlot == 7)
                     {
-                        if (uimanager.InteractionMode!=uimanager.InteractionModes.ModeAttack)
+                        if (uimanager.InteractionMode != uimanager.InteractionModes.ModeAttack)
                         {
                             uimanager.InteractionModeToggle(uimanager.InteractionModes.ModeAttack);
                         }
                         else
                         {
                             uimanager.InteractionModeToggle(uimanager.InteractionModes.ModeUse);
-                        }    
+                        }
                         return true;
                     }
                 }
@@ -195,13 +197,13 @@ namespace Underworld
                             case 7://anvil
                                 return anvil.Use(obj, WorldObject);
                             case 8:
-                                return pole.Use(obj,WorldObject);
+                                return pole.Use(obj, WorldObject);
                         }
                         break;
                     }
                 case 2:
                     {
-                        if (_RES!=GAME_UW2)
+                        if (_RES != GAME_UW2)
                         {
                             switch (obj.classindex)
                             {
@@ -211,10 +213,10 @@ namespace Underworld
                         }
                         else
                         {
-                            switch(obj.classindex)
+                            switch (obj.classindex)
                             {
-                                case >0 and <=7://a range of potions.
-                                    return potion.Use(obj,objList, WorldObject);                                
+                                case > 0 and <= 7://a range of potions.
+                                    return potion.Use(obj, objList, WorldObject);
                             }
                         }
                         break;
@@ -248,10 +250,10 @@ namespace Underworld
                         else
                         {
                             //wands
-                            if (obj.classindex<=0xB)
-                                {
-                                    return wand.Use(obj, WorldObject);
-                                }
+                            if (obj.classindex <= 0xB)
+                            {
+                                return wand.Use(obj, WorldObject);
+                            }
                         }
                         break;
                     }
@@ -261,7 +263,7 @@ namespace Underworld
                         {
                             case 0x1://Storage crystal in UW2, gold coin in uw1
                                 {
-                                    if (_RES==GAME_UW2)
+                                    if (_RES == GAME_UW2)
                                     {
                                         return storage_crystal.Use(obj, WorldObject);
                                     }
@@ -358,7 +360,7 @@ namespace Underworld
                             case 8://rock hammer
                                 return rockhammer.Use(obj, WorldObject);
                             case 7: //spike and forcefield in uw2
-                                if (_RES!=GAME_UW2)
+                                if (_RES != GAME_UW2)
                                 {
                                     return spike.Use(obj, WorldObject);
                                 }
@@ -430,9 +432,9 @@ namespace Underworld
                             case 0xB://barrel
                             case 0xD://chest
                             case 0xE://nightstand
-                            {
-                                return container.Use(obj, WorldObject);
-                            }                            
+                                {
+                                    return container.Use(obj, WorldObject);
+                                }
                         }
                         break;
                     }
