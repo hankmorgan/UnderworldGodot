@@ -11,7 +11,7 @@ namespace Underworld
         /// <param name="triggerObj"></param>
         /// <param name="trapObj"></param>
         /// <param name="objList"></param>
-        public static void Activate(uwObject triggerObj, uwObject trapObj, uwObject[] objList)
+        public static void Activate(uwObject trapObj, int triggerX, int triggerY, uwObject[] objList)
         {
             if ((trapObj.link != 0) && (trapObj.is_quant == 0))
             {
@@ -22,24 +22,24 @@ namespace Underworld
                 {
                     if (_RES == GAME_UW2)
                     {
-                        CreateObjectUW2(triggerObj, trapObj, template, objList);
+                        CreateObjectUW2(template, triggerX, triggerY, objList);
                     }
                     else
                     {
-                        CreateObjectUW1(triggerObj, trapObj, template, objList);
+                        CreateObjectUW1(template, trapObj, triggerX, triggerY, objList);
                     }
                 }
             }
         }
 
-        static void CreateObjectUW1(uwObject triggerObj, uwObject trapObj, uwObject template, uwObject[] objList)
+        static void CreateObjectUW1(uwObject template, uwObject trapObj, int triggerX, int triggerY, uwObject[] objList)
         {
             if (Rng.r.Next(0, 63) >= trapObj.quality)
             {
                 //there appears to be a logic check here first that runs in the area around the template. 
                 //not currently implemented as I suspect it is a check that the template is on the map and/or maybe the player 
                 //do spawn
-                DoCreateObject(triggerObj, template);
+                DoCreateObject(triggerX, triggerY, template);
             }
         }
 
@@ -51,7 +51,7 @@ namespace Underworld
         /// <param name="trapObj"></param>
         /// <param name="template"></param>
         /// <param name="objList"></param>
-        static void CreateObjectUW2(uwObject triggerObj, uwObject trapObj, uwObject template, uwObject[] objList)
+        static void CreateObjectUW2(uwObject template, int triggerX, int triggerY, uwObject[] objList)
         {
             if (worlds.GetWorldNo(playerdat.dungeon_level) == 6)//not in loths tomb
             {
@@ -112,14 +112,14 @@ namespace Underworld
                 ObjectCreator.InitialiseCritter(template);
                 //Create the object 
                 template.MobileUnk_0xA |=0x80; //set bit
-                DoCreateObject(triggerObj, template);
+                DoCreateObject(triggerX, triggerY, template);
                 //and then revert it back to a the adventurer template.
                 template.item_id = 127;
 
             }
             else
             {
-                DoCreateObject(triggerObj, template);
+                DoCreateObject(triggerX, triggerY, template);
             }
         }
 
@@ -129,7 +129,7 @@ namespace Underworld
         /// </summary>
         /// <param name="triggerObj"></param>
         /// <param name="template"></param>
-        private static void DoCreateObject(uwObject triggerObj, uwObject template)
+        private static void DoCreateObject(int triggerX, int triggerY, uwObject template)
         {
             int slot;
             if (template.IsStatic)
@@ -160,8 +160,8 @@ namespace Underworld
             }
 
             //set new position and spawn
-            newobj.tileX = triggerObj.quality;
-            newobj.tileY = triggerObj.owner;
+            newobj.tileX = triggerX;//triggerObj.quality;
+            newobj.tileY = triggerY;//triggerObj.owner;
             if (UWTileMap.ValidTile(newobj.tileX, newobj.tileY))
             {
                 var tile = UWTileMap.current_tilemap.Tiles[newobj.tileX, newobj.tileY];

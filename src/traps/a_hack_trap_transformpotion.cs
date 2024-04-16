@@ -8,7 +8,7 @@ namespace Underworld
     /// </summary>
     public class a_hack_trap_transformpotion : trap
     {
-        public static void Activate(uwObject trapObj, uwObject triggerObj)
+        public static void Activate(int triggerX, int triggerY)
         {
             //change the objects in the player inventory.
             foreach (var obj in playerdat.InventoryObjects)
@@ -22,11 +22,11 @@ namespace Underworld
                 uimanager.instance.mousecursor.SetCursorToObject(obj.item_id);
             }
             //tranforms all red potions into poison on the tile and in the player inventory.
-            var tileX = triggerObj.quality; var tileY = triggerObj.owner;
-            if (UWTileMap.ValidTile(tileX, tileY))
+           
+            if (UWTileMap.ValidTile(triggerX, triggerY))
             {
                 //and in the tile the trigger is point at
-                var tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];
+                var tile = UWTileMap.current_tilemap.Tiles[triggerX, triggerY];
                 IterateObjectsToTransform(tile.indexObjectList);
             }
         }

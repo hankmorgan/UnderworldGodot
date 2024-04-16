@@ -8,7 +8,7 @@ namespace Underworld
     /// </summary>
     public class a_hack_trap_classitem : trap
     {
-        public static void Activate(uwObject trapObj, uwObject triggerObj, uwObject[] objList)
+        public static void Activate(uwObject trapObj, int triggerX, int triggerY, uwObject[] objList)
         {
             var BestCombatSkill = -1;
             var BestCombatSkillScore = -1;
@@ -59,7 +59,7 @@ namespace Underworld
             }
             if (itemID != -1)
             {
-                var tile = UWTileMap.current_tilemap.Tiles[triggerObj.quality, triggerObj.owner];
+                var tile = UWTileMap.current_tilemap.Tiles[triggerX, triggerY];
                 var ObjToChange = objectsearch.FindMatchInObjectChain(tile.indexObjectList, 0, 0, trapObj.owner, objList);
                 if (ObjToChange != null)
                 {

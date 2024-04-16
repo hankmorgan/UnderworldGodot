@@ -6,17 +6,17 @@ namespace Underworld
     {
         public static int ObjectThatStartedChain = 0;
 
-        public static void ActivateTrap(uwObject triggerObj, int trapIndex, uwObject[] objList)
+        public static void ActivateTrap(int character, uwObject trapObj, uwObject ObjectUsed, int triggerX, int triggerY, uwObject[] objList)
         {
-            if (trapIndex == 0)
-            {
-                Debug.Print("Trap is at index 0. Do not fire");
-                return;
-            }
-            var trapObj = objList[trapIndex];
+            // if (trapIndex == 0)
+            // {
+            //     Debug.Print("Trap is at index 0. Do not fire");
+            //     return;
+            // }
+            // var trapObj = objList[trapIndex];
             if (trapObj == null)
             {
-                Debug.Print($"Null trap at {trapIndex}");
+                Debug.Print("Null trap");
                 return;
             }
             else
@@ -38,7 +38,6 @@ namespace Underworld
                                         implemented = true;
                                         a_damage_trap.Activate(
                                                 trapObj: trapObj,
-                                                triggerObj: triggerObj,
                                                 objList: objList);
                                         break;
                                     }
@@ -54,8 +53,9 @@ namespace Underworld
                                     {
                                         implemented =true;//-ish
                                         an_arrow_trap.Activate(
-                                            triggerObj: triggerObj, 
                                             trapObj: trapObj, 
+                                            triggerX: triggerX,
+                                            triggerY: triggerY,
                                             objList: objList);
                                         break;
                                     }
@@ -63,7 +63,9 @@ namespace Underworld
                                     {                                        
                                         implemented = hack_trap.ActivateHackTrap(
                                                 trapObj: trapObj,
-                                                triggerObj: triggerObj,
+                                                ObjectUsed: ObjectUsed,
+                                                triggerX: triggerX,
+                                                triggerY: triggerY,                                                
                                                 objList: objList,
                                                 ref triggerNextIndex);
                                         break;
@@ -85,7 +87,8 @@ namespace Underworld
                                     {
                                         implemented = true;
                                         a_change_terrain_trap.Activate(
-                                            triggerObj: triggerObj, 
+                                            triggerX: triggerX,
+                                            triggerY: triggerY, 
                                             trapObj: trapObj);
                                         break;
                                     }
@@ -93,8 +96,8 @@ namespace Underworld
                                     {
                                         implemented = true;
                                         a_spell_trap.Activate(
-                                            triggerObj: triggerObj, 
-                                            trapObj: trapObj, 
+                                            character: character,
+                                            trapObj: trapObj,
                                             objList: UWTileMap.current_tilemap.LevelObjects);
                                         break;
                                     }
@@ -102,7 +105,8 @@ namespace Underworld
                                     {
                                         implemented = true;
                                         a_create_object_trap.Activate(
-                                            triggerObj: triggerObj, 
+                                            triggerX: triggerX,
+                                            triggerY: triggerY, 
                                             trapObj: trapObj, 
                                             objList: objList);
                                         triggerNextIndex = 0;//always stop on create object trap
@@ -112,7 +116,8 @@ namespace Underworld
                                     {
                                         implemented = true;
                                         a_door_trap.Activate(
-                                            triggerObj: triggerObj, 
+                                            triggerX: triggerX,
+                                            triggerY: triggerY, 
                                             trapObj: trapObj, 
                                             objList: objList);
                                         break;
@@ -136,7 +141,6 @@ namespace Underworld
                                     {
                                         implemented = true;
                                         a_set_variable_trap.Activate(
-                                            triggerObj: triggerObj, 
                                             trapObj: trapObj);
                                         break;
                                     }
@@ -144,7 +148,6 @@ namespace Underworld
                                     {
                                         implemented = true;
                                         triggerNextIndex = a_check_variable_trap.Activate(
-                                            triggerObj: triggerObj, 
                                             trapObj: trapObj, 
                                             objList: objList);
                                         break;
@@ -202,17 +205,21 @@ namespace Underworld
                                 case 0:
                                 case 1://traps
                                     ActivateTrap(
-                                        triggerObj: triggerObj, 
-                                        trapIndex: triggerNextIndex, 
+                                        character: character,
+                                        trapObj: triggerNextObject,
+                                        triggerX: triggerX,
+                                        triggerY: triggerY,
+                                        ObjectUsed: ObjectUsed,
                                         objList: objList); //am i right re-using the original trigger?
                                     break;
                                 case 2:
                                 case 3://triggers
-                                    TriggerNext(
-                                        trapObj: trapObj, 
-                                        objList: objList, 
-                                        triggerNextIndex: triggerNextIndex);
-                                    break;
+                                    trigger.RunTrigger(character:character, 
+                                        ObjectUsed: ObjectUsed, 
+                                        TriggerObject: triggerNextObject, 
+                                        triggerType: (int)triggerObjectDat.triggertypes.ALL, 
+                                        objList: objList);
+                                        break;
 
                             }                            
                         }
@@ -220,48 +227,48 @@ namespace Underworld
                 }                
             }
 
-            if (triggerObj.flags1 == 0)
-            {
-                //remove trigger chain
-                Debug.Print("TEST ME, THIS TRIGGER SHOULD ONLY FIRE ONCE and clear the trigger chain");
+            // if (triggerObj.flags1 == 0)
+            // {
+            //     //remove trigger chain
+            //     Debug.Print("TEST ME, THIS TRIGGER SHOULD ONLY FIRE ONCE and clear the trigger chain");
 
-                //unlink the linked trap from all triggers that link to it.                
-                for (int i=1; i<=objList.GetUpperBound(0); i++)
-                {
-                    var obj = objList[i];
-                    if(obj!=null)
-                    {
-                        if ((obj.majorclass==6) && ((obj.minorclass==2)||(obj.minorclass==3)))
-                        {
-                            if (obj.link == trapObj.index)
-                            {
-                                obj.link = 0; //unlink trigger.
-                            }
-                        }
-                    }
-                }
-                //delete trap, assumes trap is on map
-                if (UWTileMap.ValidTile(trapObj.tileX, trapObj.tileY))
-                {
-                    ObjectCreator.UnlinkObjectFromTile(trapObj);
-                }
-                ObjectCreator.RemoveObject(trapObj);
-            }
+            //     //unlink the linked trap from all triggers that link to it.                
+            //     for (int i=1; i<=objList.GetUpperBound(0); i++)
+            //     {
+            //         var obj = objList[i];
+            //         if(obj!=null)
+            //         {
+            //             if ((obj.majorclass==6) && ((obj.minorclass==2)||(obj.minorclass==3)))
+            //             {
+            //                 if (obj.link == trapObj.index)
+            //                 {
+            //                     obj.link = 0; //unlink trigger.
+            //                 }
+            //             }
+            //         }
+            //     }
+            //     //delete trap, assumes trap is on map
+            //     if (UWTileMap.ValidTile(trapObj.tileX, trapObj.tileY))
+            //     {
+            //         ObjectCreator.UnlinkObjectFromTile(trapObj);
+            //     }
+            //     ObjectCreator.RemoveObject(trapObj);
+            // }
         } //end activate trap
 
        
 
-        public static void TriggerNext(uwObject trapObj, uwObject[] objList, int triggerNextIndex)
-        {
-            //Continue the trigger-trap chain if possible.
-            if ((trapObj.link != 0) && (trapObj.is_quant == 0) && (triggerNextIndex !=0 ))
-            {
-                trigger.Trigger(
-                    srcObject: trapObj,
-                    triggerIndex: triggerNextIndex,
-                    objList: objList);
-            }
-        }
+        // public static void TriggerNext(uwObject trapObj, uwObject[] objList, int triggerNextIndex)
+        // {
+        //     //Continue the trigger-trap chain if possible.
+        //     if ((trapObj.link != 0) && (trapObj.is_quant == 0) && (triggerNextIndex !=0 ))
+        //     {
+        //         trigger.Trigger_OBSOLETE(
+        //             srcObject: trapObj,
+        //             triggerIndex: triggerNextIndex,
+        //             objList: objList);
+        //     }
+        // }
 
     }//end class
 }//end namespace

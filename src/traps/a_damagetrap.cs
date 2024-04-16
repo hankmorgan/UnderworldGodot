@@ -5,7 +5,7 @@ namespace Underworld
     public class a_damage_trap:trap
     {
 
-         public static void Activate(uwObject trapObj, uwObject triggerObj, uwObject[] objList)
+         public static void Activate(uwObject trapObj, uwObject[] objList)
         {
             ApplyDamageTrap(trapObj.owner!=0, trapObj.quality);
         }

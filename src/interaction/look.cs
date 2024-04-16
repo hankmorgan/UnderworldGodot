@@ -76,18 +76,27 @@ namespace Underworld
                         }
 
                 }
-                if ((obj.is_quant == 0) && (obj.link != 0))
-                {
-                    var linkedObj = objList[obj.link];
-                    if (linkedObj.item_id == 419)
-                    {
-                        trigger.LookTrigger(
-                            srcObject: obj,
-                            triggerIndex: obj.link,
-                            objList: objList);
-                        return true;
-                    }
-                }
+
+                trigger.TriggerObjectLink(
+                    character: 0, 
+                    ObjectUsed: obj, 
+                    triggerType: (int)triggerObjectDat.triggertypes.LOOK, 
+                    triggerX: obj.tileX, 
+                    triggerY: obj.tileY, 
+                    objList: UWTileMap.current_tilemap.LevelObjects);
+
+                // if ((obj.is_quant == 0) && (obj.link != 0))
+                // {
+                //     var linkedObj = objList[obj.link];
+                //     if (linkedObj.item_id == 419)
+                //     {
+                //         trigger.LookTrigger(
+                //             srcObject: obj,
+                //             triggerIndex: obj.link,
+                //             objList: objList);
+                //         return true;
+                //     }
+                // }
                 if (!result)
                 {
 

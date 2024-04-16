@@ -24,7 +24,13 @@ namespace Underworld
             if (!WorldObject){return false;}
             if (itemTargeted.link != 0)
             {
-                trigger.OpenTrigger(itemTargeted, itemTargeted.link, UWTileMap.current_tilemap.LevelObjects);
+                trigger.TriggerObjectLink(character:0, 
+                    ObjectUsed: itemTargeted, 
+                    triggerType: (int)triggerObjectDat.triggertypes.USE,
+                    triggerX: itemTargeted.tileX,
+                    triggerY: itemTargeted.tileY, 
+                    objList: UWTileMap.current_tilemap.LevelObjects);
+                //trigger.OpenTrigger(itemTargeted, itemTargeted.link, UWTileMap.current_tilemap.LevelObjects);
             }
             return true;
         }

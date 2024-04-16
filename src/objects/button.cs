@@ -67,22 +67,7 @@ namespace Underworld
             }
             else
             {//off->on
-                obj.item_id += 8;
-                if (obj.link != 0)
-                {
-                    var triggerObj = UWTileMap.current_tilemap.LevelObjects[obj.link];
-                    if (triggerObj!=null)
-                    {
-                        if (triggerObj.next!=0)
-                        {//trigger the next of the use trigger when going off->on instead of the linked one.
-                            use.UseTriggerHasBeenActivated = true;
-                            trigger.UseTrigger(
-                                srcObject: obj,
-                                triggerIndex: triggerObj.next,
-                                objList: UWTileMap.current_tilemap.LevelObjects);
-                        }
-                    }
-                }
+                obj.item_id += 8;                
             }
 
             if (obj.instance != null)

@@ -6,7 +6,8 @@ namespace Underworld
 
 
         public enum triggertypes
-        {            
+        { 
+            ALL = -1,           
             MOVE = 0,
             STEP_ON = 1,
             PICKUP = 2,

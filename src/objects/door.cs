@@ -244,38 +244,48 @@ namespace Underworld
         /// <summary>
         /// Opens the door
         /// </summary>
-        /// <param name="obj"></param>
-        public static void OpenDoor(door obj)
+        /// <param name="doorObj"></param>
+        public static void OpenDoor(door doorObj)
         {
-            if (obj.isOpen) { return; }//don't reopen an open door
-            if (obj.isMoving) { return; } // do not allow door changes when already moving
-            obj.uwobject.zpos += 24;
-            if (obj.uwobject.link > 0)
+            if (doorObj.isOpen) { return; }//don't reopen an open door
+            if (doorObj.isMoving) { return; } // do not allow door changes when already moving
+            doorObj.uwobject.zpos += 24;
+            if (doorObj.uwobject.link > 0)
             {//TODO: ACTIVATE OPEN TRIGGER HERE
-                Debug.Print($"Check for open trigger here {obj.uwobject.index}");
+                Debug.Print($"Check for open trigger here {doorObj.uwobject.index}");
             }
-            if (TurnIntoMovingDoor(obj))
+            if (TurnIntoMovingDoor(doorObj))
             {
 
             }
             else
             {
-                if (obj.isPortcullis)
+                if (doorObj.isPortcullis)
                 {
-                    obj.position = new Vector3(0f, obj.GetHeightForIndex(obj.NoOfFrames), 0f);
+                    doorObj.position = new Vector3(0f, doorObj.GetHeightForIndex(doorObj.NoOfFrames), 0f);
                 }
                 else
                 {
                     //set to open without animation
-                    obj.doorNode.Rotate(Vector3.Up, obj.GetRadiansForIndex(obj.NoOfFrames, obj.uwobject.doordir));
+                    doorObj.doorNode.Rotate(Vector3.Up, doorObj.GetRadiansForIndex(doorObj.NoOfFrames, doorObj.uwobject.doordir));
                 }
             }
             playerdat.UpdateAutomap();//trigger an update of visibility
-            if (obj.uwobject.link != 0)
+            // if (obj.uwobject.link != 0)
+            // {
+            //     trigger.OpenTrigger(obj.uwobject, obj.uwobject.link, UWTileMap.current_tilemap.LevelObjects);
+            // }
+            var triggertype = (int)triggerObjectDat.triggertypes.OPEN_UW1;
+            if (_RES==GAME_UW2)
             {
-                trigger.OpenTrigger(obj.uwobject, obj.uwobject.link, UWTileMap.current_tilemap.LevelObjects);
+                triggertype = (int)triggerObjectDat.triggertypes.OPEN_UW2;
             }
-
+            trigger.TriggerObjectLink(character:0, 
+                    ObjectUsed: doorObj.uwobject, 
+                    triggerType: triggertype,
+                    triggerX: doorObj.uwobject.tileX,
+                    triggerY: doorObj.uwobject.tileY, 
+                    objList: UWTileMap.current_tilemap.LevelObjects);
         }
 
 
@@ -307,7 +317,14 @@ namespace Underworld
             }
             if ((obj.uwobject.link != 0) && (_RES==GAME_UW2))
             {
-                trigger.CloseTrigger(obj.uwobject, obj.uwobject.link, UWTileMap.current_tilemap.LevelObjects);
+                // trigger.CloseTrigger(obj.uwobject, obj.uwobject.link, UWTileMap.current_tilemap.LevelObjects);
+                trigger.TriggerObjectLink(
+                    character: 0, 
+                    ObjectUsed: obj.uwobject, 
+                    triggerType: (int)triggerObjectDat.triggertypes.CLOSE, 
+                    triggerX: obj.uwobject.tileX, 
+                    triggerY: obj.uwobject.tileY, 
+                    objList: UWTileMap.current_tilemap.LevelObjects);
             }
         }
 

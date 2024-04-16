@@ -143,7 +143,16 @@ namespace Underworld
         private static void DoPickup(int index, uwObject[] objList, uwObject obj)
         {
             //check for pickup triggers linked to this object
-            trigger.PickupTrigger(objList, obj);
+            //trigger.PickupTrigger(objList, obj);
+
+            trigger.TriggerObjectLink(
+                    character: 0, 
+                    ObjectUsed: obj, 
+                    triggerType: (int)triggerObjectDat.triggertypes.PICKUP, 
+                    triggerX: obj.tileX, 
+                    triggerY: obj.tileY, 
+                    objList: UWTileMap.current_tilemap.LevelObjects);
+
             if (obj.owner!=0)
             {
                 Debug.Print($"Object Owner is {obj.owner}");

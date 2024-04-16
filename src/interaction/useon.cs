@@ -67,13 +67,23 @@ namespace Underworld
                         }
                 }
                 //Check for use trigger on this action and try activate if so.
-                if ((targetObj.is_quant == 0) && (targetObj.link != 0))
-                {
-                    trigger.UseTrigger(
-                        srcObject: targetObj,
-                        triggerIndex: targetObj.link,
-                        objList: targetobjList);
-                }
+                    trigger.TriggerObjectLink
+                    (
+                        character: 0,
+                        ObjectUsed: targetObj,
+                        triggerType: (int)triggerObjectDat.triggertypes.USE,
+                        triggerX: targetObj.tileX,
+                        triggerY: targetObj.tileY,
+                        objList: targetobjList
+                    );
+
+                // if ((targetObj.is_quant == 0) && (targetObj.link != 0))
+                // {
+                //     trigger.UseTrigger(
+                //         srcObject: targetObj,
+                //         triggerIndex: targetObj.link,
+                //         objList: targetobjList);
+                // }
             }
             // if (!result)
             // {

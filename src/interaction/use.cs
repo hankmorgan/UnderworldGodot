@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Godot;
 
 namespace Underworld
 {
@@ -70,12 +71,21 @@ namespace Underworld
                         }
                 }
                 //Check for use trigger on this action and try activate if so.
-                if ((obj.is_quant == 0) && (obj.link != 0) && (!UseTriggerHasBeenActivated))
+                if (!UseTriggerHasBeenActivated)
                 {
-                    trigger.UseTrigger(
-                        srcObject: obj,
-                        triggerIndex: obj.link,
-                        objList: objList);
+                    trigger.TriggerObjectLink
+                    (
+                        character: 0,
+                        ObjectUsed: obj,
+                        triggerType: (int)triggerObjectDat.triggertypes.USE,
+                        triggerX: obj.tileX,
+                        triggerY: obj.tileY,
+                        objList: objList
+                    );
+                    // trigger.UseTrigger(
+                    //     srcObject: obj,
+                    //     triggerIndex: obj.link,
+                    //     objList: objList);
                 }
                 //check for a spell
                 if (!SpellHasBeenCast)

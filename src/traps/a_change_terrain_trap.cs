@@ -4,19 +4,19 @@ namespace Underworld
 {
     public class a_change_terrain_trap : trap
     {
-        public static void Activate(uwObject triggerObj, uwObject trapObj)
+        public static void Activate(uwObject trapObj, int triggerX, int triggerY)
         {
             
             var newFloorTexture = trapObj.quality >> 1;
             var newTileType = trapObj.quality & 0x1; // codes seems to indicate heading has an impact but not in game+ (trapObj.heading<<1);
             var newWallTexture = trapObj.owner;
             if (newTileType==0xF){newTileType = 0xA;}
-            var X = triggerObj.quality;            
-            var EndX = triggerObj.quality + trapObj.xpos;
-            var EndY = triggerObj.owner + trapObj.ypos;
+            var X = triggerX;            
+            var EndX = triggerX + trapObj.xpos;
+            var EndY = triggerY + trapObj.ypos;
             while (X <= EndX)
             {
-                var Y = triggerObj.owner;
+                var Y = triggerY;
                 while (Y <= EndY)
                 {
                     if (UWTileMap.ValidTile(X, Y))
@@ -47,7 +47,8 @@ namespace Underworld
                                             
                         if (trapObj.zpos == 120)
                         {//If at this height use the trigger zpos for height instead.
-                            tileToChange.floorHeight = (short)(triggerObj.zpos >> 2);
+                            //tileToChange.floorHeight = (short)(triggerObj.zpos >> 2);
+                            Debug.Print("FIXME TILEHEIGHT TO USE HERE");
                         }
                         else
                         {
@@ -61,7 +62,7 @@ namespace Underworld
                         {
                             
                         }
-                        trigger.DoRedraw =true;
+                        main.DoRedraw =true;
                         tileToChange.Redraw = true;
                         //UWTileMap.SetTileWallFacesUW(X,Y);
                         //UWTileMap.SetTileMapWallFacesUW();

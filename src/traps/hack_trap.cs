@@ -16,15 +16,14 @@ namespace Underworld
             return true;//unimplemented
         }
 
-        public static bool ActivateHackTrap(uwObject trapObj, uwObject triggerObj, uwObject[] objList, ref short triggerNextIndex)
+        public static bool ActivateHackTrap(uwObject trapObj, uwObject ObjectUsed, int triggerX, int triggerY, uwObject[] objList, ref short triggerNextIndex)
         {
             switch (trapObj.quality)
             {
                 case 2: //do trap camera
                     {
                         a_do_trap_camera.Activate(
-                            trapObj: trapObj,
-                            triggerObj: triggerObj,
+                            trapObj: trapObj,                           
                             objList: objList
                         );
                         return true;
@@ -33,7 +32,9 @@ namespace Underworld
                     {
                         a_do_trap_platform.Activate(
                             trapObj: trapObj,
-                            triggerObj: triggerObj,
+                            ObjectUsed: ObjectUsed,
+                            triggerX: triggerX,
+                            triggerY: triggerY,
                             objList: objList
                         );
                         return true;
@@ -41,8 +42,7 @@ namespace Underworld
                 case 5:// trespass trap
                     {
                         a_do_trap_trespass.Activate(
-                            trapObj: trapObj,
-                            triggerObj: triggerObj,
+                            trapObj: trapObj,                           
                             objList: objList
                         );
                         return false;
@@ -51,7 +51,8 @@ namespace Underworld
                     {
                         a_hack_trap_classitem.Activate(
                             trapObj: trapObj,
-                            triggerObj: triggerObj,
+                            triggerX: triggerX,
+                            triggerY: triggerY,
                             objList: objList
                         );
                         return true;
@@ -59,8 +60,8 @@ namespace Underworld
                 case 38:
                     {//transform red potions to poison
                         a_hack_trap_transformpotion.Activate(
-                            trapObj: trapObj, 
-                            triggerObj: triggerObj);
+                            triggerX: triggerX,
+                            triggerY: triggerY);
                         return true;
                     }
                 case 39:

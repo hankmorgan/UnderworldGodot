@@ -4,7 +4,7 @@ namespace Underworld
 {
     public class a_set_variable_trap : trap
     {
-        public static void Activate(uwObject triggerObj, uwObject trapObj)
+        public static void Activate(uwObject trapObj)
         {
             switch (_RES)
             {

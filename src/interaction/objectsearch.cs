@@ -6,7 +6,37 @@ namespace Underworld
     public class objectsearch : UWClass
     {
 
-        public static uwObject FindMatchInObjectChainTopLevel(int ListHeadIndex, int majorclass, int minorclass, int classindex, uwObject[] objList, bool SkipNext = false)
+        /// <summary>
+        /// Finds the matching object in the chain starting at ListHeadIndex
+        /// </summary>
+        /// <param name="ListHeadIndex"></param>
+        /// <param name="majorclass"></param>
+        /// <param name="minorclass"></param>
+        /// <param name="classindex"></param>
+        /// <param name="objList"></param>
+        /// <returns></returns>
+        public static uwObject FindMatchInObjectListChain(int ListHeadIndex, int majorclass, int minorclass, int classindex, uwObject[] objList)
+        {                
+            var next = ListHeadIndex;
+            while (next != 0)
+            {
+                var testObj = objList[next];
+                if (testObj.majorclass == majorclass)
+                { //matching major class
+                    if ((testObj.minorclass == minorclass) || (minorclass == -1))
+                    {//Either minor class matches or if minorclass =-1 (find all)
+                        if ((testObj.classindex == classindex) || (classindex == -1))
+                        {//obj match found.
+                            return testObj;
+                        }
+                    }
+                }
+                next = testObj.next;
+            }                        
+            return null; //nothing found. 
+        }
+
+        public static uwObject FindMatchInObjectChainTopLevel(int ListHeadIndex, int majorclass, int minorclass, int classindex, uwObject[] objList)
         {
             if (ListHeadIndex != 0)
             {

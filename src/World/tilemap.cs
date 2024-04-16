@@ -1426,6 +1426,10 @@ namespace Underworld
             }
         }
 
+        public static void RemoveTile(int tileX, int tileY)
+        {
+            RemoveTile((short)tileX, (short)tileY);
+        }
         /// <summary>
         /// Remove the tile from the scene.
         /// </summary>

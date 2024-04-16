@@ -54,7 +54,7 @@ namespace Underworld
         /// <param name="trapObj"></param>
         /// <param name="triggerObj"></param>
         /// <param name="objList"></param>
-        public static void Activate(uwObject trapObj, uwObject triggerObj, uwObject[] objList)
+        public static void Activate(uwObject trapObj,uwObject[] objList)
         {
             //switch camera
             var d = (a_do_trap_camera)(trapObj.instance);

@@ -7,7 +7,7 @@ namespace Underworld
     /// </summary>
     public class a_do_trap_trespass : hack_trap
     {
-        public static void Activate(uwObject trapObj, uwObject triggerObj, uwObject[] objList)
+        public static void Activate(uwObject trapObj, uwObject[] objList)
         {
             Debug.Print($"Flag trespass to {trapObj.owner}");            
         }

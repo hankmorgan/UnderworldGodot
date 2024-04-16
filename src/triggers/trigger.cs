@@ -1,22 +1,227 @@
-using System.Collections;
-using System.Collections.Generic;
-using Peaky.Coroutines;
+using System.Diagnostics;
+
 
 namespace Underworld
 {
-    public partial class trigger:UWClass
+    public partial class trigger : UWClass
     {
 
+
+
         /// <summary>
-        /// To prevent teleporting again when the teleport destination in inside a teleport trap
+        /// Tests if object is a trigger(true) or a not(false)
         /// </summary>
-        public static bool JustTeleported;
-        public static int TeleportLevel = -1;
-        public static int TeleportTileX = -1;
-        public static int TeleportTileY = -1;
+        /// <param name="toTest"></param>
+        /// <returns></returns>
+        static bool IsTrigger(uwObject toTest)
+        {
+            if (_RES == GAME_UW2)
+            {
+                return (toTest.majorclass == 6) && ((toTest.minorclass == 2) || (toTest.minorclass == 3));
+            }
+            else
+            {
+                return (toTest.majorclass == 6) && (toTest.minorclass == 2);
+            }
+        }
 
-        public static bool DoRedraw = false;
 
+        public static int RunTrigger(int character, uwObject ObjectUsed, uwObject TriggerObject, int triggerType, uwObject[] objList)
+        {
+            Debug.Print($"Run Trigger {TriggerObject.a_name}");
+            if (IsTrigger(TriggerObject))
+            {
+                if (triggerType >= 0)
+                {
+                    if (ObjectUsed != null)
+                    {
+                        if (ObjectUsed.OneF0Class == 0x17)
+                        {
+                            if (ObjectUsed.classindex > 7)
+                            {
+                                //on button
+                                if (TriggerObject.next != 0)
+                                {
+                                    var nextObj = objList[TriggerObject.next];
+                                    return RunTrigger(
+                                        character: character,
+                                        ObjectUsed: ObjectUsed,
+                                        TriggerObject: nextObj,
+                                        triggerType: triggerType,
+                                        objList: objList);
+                                }
+                            }
+                        }
+                    }
+                    if (triggerType == triggerObjectDat.triggertype(TriggerObject.item_id))
+                    {
+                        if (character == 0)
+                        {//player
+                            if (TriggerObject.flags2 != 0)
+                            {
+                                if (triggerType == (int)triggerObjectDat.triggertypes.LOOK)
+                                {
+                                    if (TriggerObject.zpos > 0)
+                                    {
+                                        var skillcheck = playerdat.SkillCheck(playerdat.Search, TriggerObject.zpos);
+                                        if (skillcheck <= 0)
+                                        {//failed search
+                                            return 2;
+                                        }
+                                    }
+                                }
+                                //run trap.
+                                if (TriggerObject.link != 0)
+                                {
+                                    var trapObj = objList[TriggerObject.link];
+                                    if (trapObj != null)
+                                    {
+                                        int triggerX = TriggerObject.quality;
+                                        int triggerY = TriggerObject.owner;
+                                        trigger.RunTrap(
+                                            character: character,
+                                            ObjectUsed: ObjectUsed,
+                                            trapObject: trapObj,
+                                            triggerX: triggerX,
+                                            triggerY: triggerY,
+                                            objList: objList);
+
+                                        //Test for trap repeat.
+                                        if (TriggerObject.flags1 == 0)
+                                        {
+                                            Debug.Print("Test me. remove trap from object list here");
+                                        }
+                                        //if uw2 test for pressure triggers
+                                        if (_RES == GAME_UW2)
+                                        {
+                                            if ((triggerType & 0xF07) == 7)
+                                            {
+                                                Debug.Print("Do something with pressure triggers and texures");
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Debug.Print("To implement NPC activation of triggers");
+                        }
+                    }
+                }
+            }
+            return 2;
+        }
+
+        public static void RunTrap(int character, uwObject ObjectUsed, uwObject trapObject, int triggerX, int triggerY, uwObject[] objList)
+        {//directly triggers a trap
+            trap.ActivateTrap(
+                character: character,
+                trapObj: trapObject,
+                ObjectUsed: ObjectUsed,
+                triggerX: triggerX,
+                triggerY: triggerY,
+                objList: objList);
+        }
+
+        /// <summary>
+        /// Handles the triggering of object links
+        /// </summary>
+        /// <param name="character"></param>
+        /// <param name="ObjectUsed"></param>
+        /// <param name="triggerType"></param>
+        /// <param name="triggerX"></param>
+        /// <param name="triggerY"></param>
+        public static void TriggerObjectLink(int character, uwObject ObjectUsed, int triggerType, int triggerX, int triggerY, uwObject[] objList)
+        {
+            bool RunNext = true;
+            if (ObjectUsed.is_quant == 0 && ObjectUsed.link > 0)
+            {
+                var ObjectToTrigger = objectsearch.FindMatchInObjectListChain(
+                    ListHeadIndex: ObjectUsed.link,
+                    majorclass: 6,
+                    minorclass: -1,
+                    classindex: -1,
+                    objList: objList);
+
+                if (ObjectUsed.OneF0Class == 0x17)
+                {//a button/switch
+                    RunNext = false; //flag so that no next triggers are ran
+                    if (ObjectUsed.classindex > 7)
+                    {//button is in on postion
+                        if (ObjectToTrigger != null)
+                        {
+                            var buttonTriggerNext = objectsearch.FindMatchInObjectListChain(
+                                ListHeadIndex: ObjectUsed.link,
+                                majorclass: 6,
+                                minorclass: -1,
+                                classindex: -1,
+                                objList: objList);
+                            if (buttonTriggerNext != null)
+                            {
+                                ObjectToTrigger = buttonTriggerNext;
+                            }
+                        }
+                    }
+                }
+
+                while (ObjectToTrigger != null)
+                {
+                    if (IsTrigger(ObjectToTrigger))
+                    {
+                        //Get the next of the trigger object first
+                        var toTriggerNext = objectsearch.FindMatchInObjectListChain(
+                                ListHeadIndex: ObjectToTrigger.next,
+                                majorclass: 6,
+                                minorclass: -1,
+                                classindex: -1,
+                                objList: objList);
+
+                        RunTrigger(
+                            character: character,
+                            ObjectUsed: ObjectUsed,
+                            TriggerObject: ObjectToTrigger,
+                            triggerType: triggerType,
+                            objList: objList);
+
+                        if (RunNext)
+                        {
+                            ObjectToTrigger = toTriggerNext;
+                        }
+                        else
+                        {
+                            ObjectToTrigger = null; //end process
+                        }
+                    }
+                    else
+                    { //linked to a trap. if not a door trap linked to a use trigger with flags=0, run it once and then delete
+                        if (
+                            (ObjectToTrigger.flags_full == 0)
+                            &&
+                            (triggerType == 4)
+                            &&
+                            ((ObjectToTrigger.item_id & 0x3F) != 8)
+                            )
+                        {
+
+                            RunTrap(
+                                character: character,
+                                ObjectUsed: ObjectUsed,
+                                trapObject: ObjectToTrigger,
+                                triggerX: triggerX,
+                                triggerY: triggerY,
+                                objList: objList);
+
+                            Debug.Print("TODO RemoveThisTriggerChain");
+                        }
+                        else
+                        {
+                            ObjectToTrigger = null;//end process
+                        }
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// General trigger function for the execution of triggers generically (call this from the traps only when continuing a chain
@@ -26,112 +231,32 @@ namespace Underworld
         /// <param name="srcObject"></param>
         /// <param name="triggerIndex"></param>
         /// <param name="objList"></param>
-        public static void Trigger(uwObject srcObject, int triggerIndex, uwObject[] objList)
-        {
-            if (triggerIndex!=0)
-            {
-                var Trig = objList[triggerIndex];
-                if (Trig!=null)
-                {
-                    if (Trig.link!=0)
-                    {         
-                        trap.ActivateTrap(Trig, Trig.link, objList);
-                    }
-                }
-            }
-        }  
+        // public static void Trigger_OBSOLETE(uwObject srcObject, int triggerIndex, uwObject[] objList)
+        // {
+        //     if (triggerIndex != 0)
+        //     {
+        //         var Trig = objList[triggerIndex];
+        //         if (Trig != null)
+        //         {
+        //             if (Trig.link != 0)
+        //             {
+        //                 trap.ActivateTrap(Trig, Trig.link, objList);
+        //             }
+        //         }
+        //     }
+        // }
 
         /// <summary>
         /// Handles common start events at start of chain.
-        /// </summary>
-        public static void StartTriggerChainEvents()
-        {
-            TeleportLevel = -1;
-            TeleportTileX = -1;
-            TeleportTileY = -1;
-            DoRedraw = false;
-        }
+        // /// </summary>
+        // public static void StartTriggerChainEvents()
+        // {
+        //     TeleportLevel = -1;
+        //     TeleportTileX = -1;
+        //     TeleportTileY = -1;
+        //     DoRedraw = false;
+        // }      
 
-        /// <summary>
-        /// Handles the end of chain events.
-        /// </summary>
-        public static void EndTriggerChainEvents()
-        {
-            if (DoRedraw)
-            {
-                //update tile faces
-                UWTileMap.SetTileMapWallFacesUW();
-                //Handle tile changes after all else is done
-                foreach (var t in UWTileMap.current_tilemap.Tiles)
-                {
-                    if (t.Redraw)
-                    {
-                        UWTileMap.RemoveTile(t.tileX, t.tileY);
-                        tileMapRender.RenderTile(tileMapRender.worldnode, t.tileX, t.tileY, t);
-                        t.Redraw = false;
-                    }
-                }
-            }
-
-            //Handle level transitions now since it's possible for further traps to be called after the teleport trap
-            if (TeleportLevel!=-1)
-            {
-                int itemToTransfer=-1;
-                if (playerdat.ObjectInHand!=-1)
-                {//handle moving an object in hand through levels. Temporarily add to inventory data.
-                    itemToTransfer = playerdat.AddObjectToPlayerInventory(playerdat.ObjectInHand, false);
-                }
-                playerdat.dungeon_level = TeleportLevel;
-                //switch level
-                UWTileMap.LoadTileMap(
-                        newLevelNo: playerdat.dungeon_level - 1,
-                        datafolder: playerdat.currentfolder,
-                        newGameSession: false);
-
-                if (itemToTransfer!=-1)
-                {//takes object back out of inventory.
-                    uimanager.DoPickup(itemToTransfer);
-                }
-            }
-            if ((TeleportTileX != -1) && (TeleportTileY !=-1))
-            {
-                //move to new tile
-                var targetTile = UWTileMap.current_tilemap.Tiles[TeleportTileX, TeleportTileY];
-                playerdat.zpos = targetTile.floorHeight << 2;
-                playerdat.xpos = 3; playerdat.ypos = 3;
-                playerdat.tileX = TeleportTileX; playerdat.tileY = TeleportTileY;
-                main.gamecam.Position = uwObject.GetCoordinate(
-                    tileX: playerdat.tileX, 
-                    tileY: playerdat.tileY, 
-                    _xpos: playerdat.xpos, 
-                    _ypos: playerdat.ypos, 
-                    _zpos: playerdat.camerazpos);
-            }
-
-            if ((TeleportTileX!=-1) || (TeleportTileY!=-1) || (TeleportLevel!=-1))
-            {
-                JustTeleported = true;
-                    _ = Peaky.Coroutines.Coroutine.Run(
-                    PauseTeleport(),
-                    main.instance
-                    );
-            }
-            TeleportLevel = -1;
-            TeleportTileX = -1;
-            TeleportTileY = -1;
-        }
-
-        /// <summary>
-        /// Puts a block on sucessive level transitions due to teleport placing player in a new move trigger
-        /// </summary>
-        /// <returns></returns>
-        static IEnumerator PauseTeleport()
-        {
-            JustTeleported = true;
-            yield return new WaitForSeconds(1);
-            JustTeleported = false;
-            yield return 0;
-        }
 
     }//end class
 }//end namespace

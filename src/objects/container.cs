@@ -32,58 +32,76 @@ namespace Underworld
         /// <summary>
         /// Splills the contents of a container onto the tile
         /// </summary>
-        /// <param name="obj"></param>
-        public static void SpillWorldContainer(uwObject obj)
+        /// <param name="containerObj"></param>
+        public static void SpillWorldContainer(uwObject containerObj)
         {
             //Checkfor use trigger
-            trigger.UseTrigger(
-                srcObject: obj,
-                triggerIndex: obj.link,
-                objList: UWTileMap.current_tilemap.LevelObjects);
+            // trigger.UseTrigger(
+            //     srcObject: obj,
+            //     triggerIndex: obj.link,
+            //     objList: UWTileMap.current_tilemap.LevelObjects);
             //check for pickup trigger f
-            trigger.PickupTrigger(UWTileMap.current_tilemap.LevelObjects, obj);
+            //trigger.PickupTrigger(UWTileMap.current_tilemap.LevelObjects, obj);
         
 
             //container used in the world
-            if (UWTileMap.ValidTile(obj.tileX, obj.tileY))
+            if (UWTileMap.ValidTile(containerObj.tileX, containerObj.tileY))
             {
-                var tile = UWTileMap.current_tilemap.Tiles[obj.tileX, obj.tileY];
+                var tile = UWTileMap.current_tilemap.Tiles[containerObj.tileX, containerObj.tileY];
                 if (tile != null)
                 {
                     //add the contents of the container to the tile.
-                    if ((obj.majorclass == 2) && (obj.minorclass == 0))
+                    if ((containerObj.majorclass == 2) && (containerObj.minorclass == 0))
                     {
-                        if ((obj.classindex & 1) == 0)
+                        if ((containerObj.classindex & 1) == 0)
                         {
-                            obj.item_id |= 0x1;// set it to an opened version.
-                            if (obj.instance != null)
+                            containerObj.item_id |= 0x1;// set it to an opened version.
+                            if (containerObj.instance != null)
                             {
-                                if (obj.instance.uwnode != null)
+                                if (containerObj.instance.uwnode != null)
                                 {
-                                    var nd = (uwMeshInstance3D)obj.instance.uwnode.GetChild(0);
-                                    nd.Mesh.SurfaceSetMaterial(0, ObjectCreator.grObjects.GetMaterial(obj.item_id));
+                                    var nd = (uwMeshInstance3D)containerObj.instance.uwnode.GetChild(0);
+                                    nd.Mesh.SurfaceSetMaterial(0, ObjectCreator.grObjects.GetMaterial(containerObj.item_id));
                                 }
                             }
                         }
                     }
-                    int nextobj = obj.link;
-                    obj.link = 0;
+                    int nextobj = containerObj.link;
+                    containerObj.link = 0;//clear the container link
                     while (nextobj != 0)
                     {
                         var objToSpill = UWTileMap.current_tilemap.LevelObjects[nextobj];
-                        Debug.Print($"Spilling {objToSpill.a_name}");
-                        objToSpill.tileX = obj.tileX;
-                        objToSpill.tileY = obj.tileY;
-                        UWTileMap.GetRandomXYZForTile(tile, out int newxpos, out int newypos, out int newzpos);
-                        objToSpill.xpos = (short)newxpos;//obj.xpos;
-                        objToSpill.ypos = (short)newypos;///obj.ypos;
-                        objToSpill.zpos = (short)newzpos; //obj.zpos;
-                        objToSpill.owner = 0; //clear owner
-                        ObjectCreator.RenderObject(objToSpill, UWTileMap.current_tilemap);
-                        nextobj = objToSpill.next;
-                        //insert to object list
-                        objToSpill.next = tile.indexObjectList;
-                        tile.indexObjectList = objToSpill.index;
+                        if ((objToSpill.majorclass==6) && (objToSpill.minorclass>=2))
+                        {
+                            nextobj = objToSpill.next;
+                            //a trigger has been spilled.
+                            containerObj.link = objToSpill.index;
+                            //run it if it is a use trigger
+                            trigger.TriggerObjectLink(
+                                character: 0, 
+                                ObjectUsed: containerObj,
+                                triggerX: containerObj.tileX,
+                                triggerY: containerObj.tileY,                              
+                                triggerType: (int)triggerObjectDat.triggertypes.USE, 
+                                objList: UWTileMap.current_tilemap.LevelObjects);
+                            containerObj.link = 0;
+                        }
+                        else
+                        {
+                            Debug.Print($"Spilling {objToSpill.a_name}");
+                            objToSpill.tileX = containerObj.tileX;
+                            objToSpill.tileY = containerObj.tileY;
+                            UWTileMap.GetRandomXYZForTile(tile, out int newxpos, out int newypos, out int newzpos);
+                            objToSpill.xpos = (short)newxpos;//obj.xpos;
+                            objToSpill.ypos = (short)newypos;///obj.ypos;
+                            objToSpill.zpos = (short)newzpos; //obj.zpos;
+                            objToSpill.owner = 0; //clear owner
+                            ObjectCreator.RenderObject(objToSpill, UWTileMap.current_tilemap); 
+                            nextobj = objToSpill.next;   
+                            //insert to object list
+                            objToSpill.next = tile.indexObjectList;
+                            tile.indexObjectList = objToSpill.index; 
+                        }   
                     }
                 }
             }
