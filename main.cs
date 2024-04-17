@@ -79,7 +79,16 @@ public partial class main : Node3D
 	{	
 		if (gamecam==null)
 		{
+			if (instance.cam == null)
+			{
+				Debug.Print("Main Cam instance is null. trying to find it's node");
+				instance.cam = (Camera3D)instance.GetNode("WorldViewContainer/SubViewport/Camera3D");
+			}
 			gamecam = instance.cam;
+			if (gamecam==null)
+			{
+				Debug.Print("Gamecam is still null!");
+			}
 		}
 		gamecam.Fov = Math.Max(50, uwsettings.instance.FOV);
 		uimanager.EnableDisable(instance.lblPositionDebug,EnablePositionDebug);

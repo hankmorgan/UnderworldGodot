@@ -1,4 +1,5 @@
 using Godot;
+using System.Diagnostics;
 
 
 namespace Underworld
@@ -15,11 +16,21 @@ namespace Underworld
 
 		public override void _Ready()
 		{			
+			Debug.Print("Uimanager about to set instance to this");
 			instance = this;
+			Debug.Print("Uimanager has set instance");
+			if (instance==null)
+			{
+				Debug.Print("Uimanager instance is null");
+			}
 			//uimanager.instance.mousecursor.Texture = uimanager.instance.cross;
 			//uimanager.EnableDisable(uimanager.instance.StartMenuPanel, true);
+			Debug.Print("Trying to load settings");
 			uimanager.instance.pathuw1.Text = uwsettings.instance.pathuw1;
+			Debug.Print(uwsettings.instance.pathuw1);
 			uimanager.instance.pathuw2.Text = uwsettings.instance.pathuw2;
+			Debug.Print(uwsettings.instance.pathuw2);
+			Debug.Print("Settings loaded");
 		}
 
 		public void InitUI()

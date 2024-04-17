@@ -38,6 +38,13 @@ shader = ExtResource("6_x6exc")
 
 [node name="Underworld" type="Node3D"]
 
+[node name="main" type="Node3D" parent="." node_paths=PackedStringArray("cam", "audioplayer", "lblPositionDebug", "secondarycameras")]
+script = ExtResource("6_3y8oy")
+cam = NodePath("../WorldViewContainer/SubViewport/Camera3D")
+audioplayer = NodePath("../UI/AudioPlayer")
+lblPositionDebug = NodePath("../UI/Common/PositionLabel")
+secondarycameras = NodePath("../WorldViewContainer/SubViewport")
+
 [node name="WorldViewContainer" type="SubViewportContainer" parent="."]
 offset_left = 200.0
 offset_top = 72.0
@@ -2722,13 +2729,6 @@ PowerGemUW2 = NodePath("../UW2/PowerGemUW2")
 [node name="worldobjects" type="Node3D" parent="."]
 
 [node name="tilemap" type="Node3D" parent="."]
-
-[node name="main" type="Node3D" parent="." node_paths=PackedStringArray("cam", "audioplayer", "lblPositionDebug", "secondarycameras")]
-script = ExtResource("6_3y8oy")
-cam = NodePath("../WorldViewContainer/SubViewport/Camera3D")
-audioplayer = NodePath("../UI/AudioPlayer")
-lblPositionDebug = NodePath("../UI/Common/PositionLabel")
-secondarycameras = NodePath("../WorldViewContainer/SubViewport")
 
 [connection signal="gui_input" from="UI/UW1/CompassUW1/CompassClickArea" to="UI/uiManager" method="_on_compass_click"]
 [connection signal="gui_input" from="UI/UW1/ConversationUW1/PlayerTradeSelectedUW1_0" to="UI/uiManager" method="_on_player_trade_selected" binds= [0]]
