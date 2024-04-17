@@ -45,7 +45,7 @@ public partial class main : Node3D
 	public static Camera3D gamecam; //static ref to the above camera
 	[Export] public AudioStreamPlayer audioplayer;
 	[Export] public RichTextLabel lblPositionDebug;
-	[Export] public uimanager uwUI;
+	//[Export] public uimanager uwUI;
 
 	[Export] public SubViewport secondarycameras;
 
@@ -64,15 +64,15 @@ public partial class main : Node3D
 
 	public override void _Ready()
 	{		
-		instance = this;
+		instance = this; 
 		gamecam = cam;
-		uimanager.instance = uwUI;
-		uimanager.instance.mousecursor.Texture = uimanager.instance.cross;
-		uwsettings.LoadSettings();
-		uimanager.EnableDisable(uimanager.instance.StartMenuPanel, true);
-		uimanager.instance.pathuw1.Text = uwsettings.instance.pathuw1;
-		uimanager.instance.pathuw2.Text = uwsettings.instance.pathuw2;
-		GetTree().DebugCollisionsHint =uwsettings.instance.showcolliders;
+		//uimanager.instance = uwUI;	
+		if (uwsettings.instance!=null)
+		{
+			gamecam.Fov = Math.Max(50, uwsettings.instance.FOV);
+			GetTree().DebugCollisionsHint = uwsettings.instance.showcolliders;
+		}		
+		
 	}
 
 	public static void StartGame()

@@ -40,7 +40,11 @@ namespace Underworld
             }
             var gamesettings = JsonSerializer.Deserialize<uwsettings>(File.ReadAllText(settingsfile));
             uwsettings.instance = gamesettings;
-            main.gamecam.Fov = Math.Max(50, uwsettings.instance.FOV);
+            if (main.gamecam!=null)
+            {
+                main.gamecam.Fov = Math.Max(50, uwsettings.instance.FOV);
+            }
+            
 
             setGame(gamesettings.gametoload);
             switch (UWClass._RES)
