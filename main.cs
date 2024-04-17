@@ -66,6 +66,7 @@ public partial class main : Node3D
 	{		
 		instance = this; 
 		gamecam = cam;
+		
 		//uimanager.instance = uwUI;	
 		if (uwsettings.instance!=null)
 		{
@@ -76,6 +77,10 @@ public partial class main : Node3D
 
 	public static void StartGame()
 	{	
+		if (gamecam==null)
+		{
+			gamecam = instance.cam;
+		}
 		gamecam.Fov = Math.Max(50, uwsettings.instance.FOV);
 		uimanager.EnableDisable(instance.lblPositionDebug,EnablePositionDebug);
 		uimanager.EnableDisable(uimanager.instance.StartMenuPanel, false);
