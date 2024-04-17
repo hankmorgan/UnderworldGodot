@@ -387,12 +387,9 @@ namespace Underworld
                             {
                                 var hitobject = UWTileMap.current_tilemap.LevelObjects[index];
                                 if (hitobject != null)
-                                {
-                                    if (hitobject.majorclass == 1)//hit an npc
-                                    {
-                                        Debug.Print($"{hitobject.a_name}");
-                                        return PlayerHitsNPC(hitobject);
-                                    }
+                                {                                    
+                                    Debug.Print($"{hitobject.a_name}");
+                                    return PlayerHitsUWObject(hitobject);
                                 }
                             }
                             break;
@@ -402,22 +399,23 @@ namespace Underworld
             return false; //miss attack
         }
 
+
         /// <summary>
-        /// Do the attack calcs for the player hitting an npc
+        /// Do the attack calcs for the player hitting an object
         /// </summary>
-        /// <param name="critter"></param>
+        /// <param name="objHit"></param>
         /// <returns></returns>
-        static bool PlayerHitsNPC(uwObject critter)
+        static bool PlayerHitsUWObject(uwObject objHit)
         {
             //calc final attack charge based on the % of charge built up in the weapon
-            var finalcharge = mincharge + ((maxcharge - mincharge) * WeaponCharge) / 100; //this is kept later for damage calcs.
+            WeaponCharge = mincharge + ((maxcharge - mincharge) * WeaponCharge) / 100; //this is kept later for damage calcs.
 
             //do attack calcs
             CalcPlayerAttackScores();
 
             //execute attack
 
-            if (PlayerExecuteAttack(critter))
+            if (PlayerExecuteAttack(objHit))
             {
                 if (_RES == GAME_UW2)
                 {
@@ -440,6 +438,9 @@ namespace Underworld
             return true;
         }
 
+        /// <summary>
+        /// Calculates the player attack accuracy and base damage scores
+        /// </summary>
         static void CalcPlayerAttackScores()
         {
             var weapon = currentweapon;
@@ -461,19 +462,16 @@ namespace Underworld
 
 
             //base damage calcs
+            CalcBasicWeaponDamage();
+            CalcAttackEnchantment();
+            Debug.Print($"Final scores accuracy {PlayerAttackAccuracy} basedamage {PlayerAttackDamage}");
+        }
 
-            if (currentMeleeWeaponSkillNo == 2)
-            {
-                //do unarmed calcs for base damage
-                PlayerAttackDamage = 4 + (playerdat.STR / 6) + (playerdat.Unarmed << 1) / 5;
-            }
-            else
-            {
-                //var attacktype = Rng.r.Next(0, 3);
-                //do weapon based calcs, using a random attack type now.
-                PlayerAttackDamage = (playerdat.STR / 9) + CurrentWeaponBaseDamage(CurrentAttackSwingType);
-            }
-
+        /// <summary>
+        /// Gets the damage and accuracy bonuses for the attack
+        /// </summary>
+        private static void CalcAttackEnchantment()
+        {
             //Then get weapon enchantments
             if (currentweapon != null)
             {
@@ -529,7 +527,24 @@ namespace Underworld
                     }
                 }
             }
-            Debug.Print($"Final scores accuracy {PlayerAttackAccuracy} basedamage {PlayerAttackDamage}");
+        }
+
+        /// <summary>
+        /// Initialises the basic damage for a weapon attack
+        /// </summary>
+        private static void CalcBasicWeaponDamage()
+        {
+            if (currentMeleeWeaponSkillNo == 2)
+            {
+                //do unarmed calcs for base damage
+                PlayerAttackDamage = 4 + (playerdat.STR / 6) + (playerdat.Unarmed << 1) / 5;
+            }
+            else
+            {
+                //var attacktype = Rng.r.Next(0, 3);
+                //do weapon based calcs, using a random attack type now.
+                PlayerAttackDamage = (playerdat.STR / 9) + CurrentWeaponBaseDamage(CurrentAttackSwingType);
+            }
         }
 
         static bool PlayerExecuteAttack(uwObject critter)
@@ -558,20 +573,20 @@ namespace Underworld
         /// <summary>
         /// Finalises the attack results
         /// </summary>
-        /// <param name="critter"></param>
+        /// <param name="objHit"></param>
         /// <returns>0 if attack hit</returns>
-        static int CalcAttackResults(uwObject critter)
+        static int CalcAttackResults(uwObject objHit)
         {
-            if (critter.majorclass == 1)
+            if (objHit.majorclass == 1)
             {//npc
-                var defencescore = critterObjectDat.defence(critter.item_id);
+                var defencescore = critterObjectDat.defence(objHit.item_id);
                 var attackscore = PlayerAttackAccuracy + PlayerFlankingBonus;
                 var result = playerdat.SkillCheck(attackscore, defencescore);
                 if (playerdat.PoisonedWeapon)
                 {
                     if (checkforPoisonableWeapon())
                     {
-                        if (critterObjectDat.maybepoisonvulnerability(critter.item_id) != 0)
+                        if (critterObjectDat.maybepoisonvulnerability(objHit.item_id) != 0)
                         {
                             PlayerAttackDamage += ((playerdat.Casting + 30) / 40);
                         }
@@ -589,7 +604,7 @@ namespace Underworld
                 {
                     if (result == playerdat.SkillCheckResult.CritFail)
                     {
-                        if (critterObjectDat.damagesWeaponOnCritMiss(critter.item_id))
+                        if (critterObjectDat.damagesWeaponOnCritMiss(objHit.item_id))
                         {
                             var weaponselfdamage = Rng.DiceRoll(2, 3);
                             Debug.Print($"Damage primary weapon by {weaponselfdamage}");
@@ -601,13 +616,27 @@ namespace Underworld
             }
             else
             {
-                //did not hit an npc
-                return 0;//for now
+                //did not hit an npc                
+                if (objHit.OneF0Class == 0x14)
+                {//doors
+                    var hitroll = Rng.r.Next(0,0xC);
+                    var checkvalue = (objHit.item_id & 0x7)<<1;
+                    if (hitroll < checkvalue)
+                    {
+                        var equipdam = Rng.DiceRoll(2,4);
+                        Debug.Print($"Do weapon self damage of {equipdam}");
+                    }
+                    return 0; //0 is a hit!
+                }
+                else
+                {
+                    return 0;
+                }
             }
         }
 
 
-        static int ApplyPlayersFinalDamage(uwObject critter, int damageType, bool MissileAttack = false)
+        static int ApplyPlayersFinalDamage(uwObject objHit, int damageType, bool MissileAttack = false)
         {
             if (PlayerAttackDamage < 2)
             {
@@ -636,16 +665,16 @@ namespace Underworld
                 Debug.Print("Spatter blood");
             }
 
-            if ((critter.item_id >> 6) == 1)
-            {//npc has been hit
+            if (objHit.majorclass == 1)
+            {//npc has been hit, apply defenses
                 var bodypartindex = BodyPartHit / 4;
-                int cx = (int)critterObjectDat.toughness(critter.item_id, bodypartindex);
+                int cx = (int)critterObjectDat.toughness(objHit.item_id, bodypartindex);
                 if (cx == -1)
                 {
                     BodyPartHit = BodyPartHit & 4;
-                    cx = critterObjectDat.toughness(critter.item_id, 0);
+                    cx = critterObjectDat.toughness(objHit.item_id, 0);
                 }
-                if (critter.IsPowerfull == 1)
+                if (objHit.IsPowerfull == 1)
                 {
                     cx = (cx * 5) / 3;
                 }
@@ -664,17 +693,13 @@ namespace Underworld
                 {
                     di = 3;//this is used for animo later on?
                 }
-
-                npc.DamageNPC(critter, finaldamage, damageType);
-
-                Debug.Print("Spawn damage animo");
-
             }
-            else
-            {
-                //other object type has been hit
-            }
-
+            //apply damage
+            DamageObject(
+                objToDamage: objHit, 
+                basedamage: finaldamage, 
+                damagetype: damageType, 
+                damagesource: 0);
             return 0;
         }
 
@@ -692,9 +717,16 @@ namespace Underworld
         /// </summary>
         static int CalcFlankingBonus(uwObject critter)
         {
-            var defenderHeading = critter.heading;
-            var attackerHeading = playerdat.heading >> 4;
-            return CalcFlankingBonus(defenderHeading, attackerHeading);
+            if (critter.majorclass==1)
+            {
+                var defenderHeading = critter.heading;
+                var attackerHeading = playerdat.heading >> 4;
+                return CalcFlankingBonus(defenderHeading, attackerHeading);
+            }
+            else
+            {
+                return 0;
+            }
         }
 
         static int CalcFlankingBonus(int defenderHeading, int attackerHeading)
@@ -793,6 +825,46 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// Applies damage to objects.
+        /// </summary>
+        /// <param name="objToDamage"></param>
+        /// <param name="basedamage"></param>
+        /// <param name="damagetype"></param>
+        /// <param name="damagesource"></param>
+        public static void DamageObject(uwObject objToDamage, int basedamage, int damagetype, int damagesource = 0)
+        {
+            uwObject.ScaleDamage(objToDamage.item_id, ref basedamage, damagetype);
+            Debug.Print($"Damage {objToDamage.a_name} by {basedamage}");
+            switch(objToDamage.majorclass)
+            {
+                case 1:
+                    {
+                        npc.DamageNPC(
+                            critter: objToDamage, 
+                            basedamage: basedamage, 
+                            damagetype: damagetype, 
+                            damagesource: damagesource);
+                        return;
+                    }
+                case 5:
+                    {
+                        if (objToDamage.OneF0Class==0x14)
+                        {
+                            //door damage
+                            door.DamageDoor(
+                                doorobject: objToDamage, 
+                                damage: basedamage, 
+                                damagesource: 0);
+                            return;
+                        }
+                        break;
+                    }
+            }
+            //all other objects.
+            Debug.Print("damage to non npc or door");
+            //TODO handle object destruction
+        }       
 
     }//end class
 }//end namespace
