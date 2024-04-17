@@ -82,7 +82,7 @@ public partial class main : Node3D
 			if (instance.cam == null)
 			{
 				Debug.Print("Main Cam instance is null. trying to find it's node");
-				instance.cam = (Camera3D)instance.GetNode("WorldViewContainer/SubViewport/Camera3D");
+				instance.cam = (Camera3D)instance.GetNode("/root/Underworld/WorldViewContainer/SubViewport/Camera3D");
 			}
 			gamecam = instance.cam;
 			if (gamecam==null)

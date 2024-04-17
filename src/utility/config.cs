@@ -37,7 +37,7 @@ namespace Underworld
             var appfolder = OS.GetExecutablePath();
             appfolder = Path.GetDirectoryName(appfolder);
             var settingsfile = Path.Combine(appfolder, "uwsettings.json");
-
+            Debug.Print($"Loading settings at {settingsfile}");
             if (!File.Exists(settingsfile))
             {
                 OS.Alert("missing file uwsettings.json at " + settingsfile);

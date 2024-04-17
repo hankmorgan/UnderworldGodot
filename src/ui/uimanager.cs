@@ -26,6 +26,11 @@ namespace Underworld
 			//uimanager.instance.mousecursor.Texture = uimanager.instance.cross;
 			//uimanager.EnableDisable(uimanager.instance.StartMenuPanel, true);
 			Debug.Print("Trying to load settings");
+			if (uwsettings.instance==null)
+			{
+				Debug.Print("Force loadsettings");
+				uwsettings.LoadSettings();
+			}
 			uimanager.instance.pathuw1.Text = uwsettings.instance.pathuw1;
 			Debug.Print(uwsettings.instance.pathuw1);
 			uimanager.instance.pathuw2.Text = uwsettings.instance.pathuw2;
