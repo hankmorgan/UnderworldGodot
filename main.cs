@@ -52,15 +52,15 @@ public partial class main : Node3D
 		double gameRefreshTimer = 0f;
 		double cycletime = 0;
 
-	    /// <summary>
-        /// To prevent teleporting again when the teleport destination in inside a teleport trap
-        /// </summary>
-        public static bool JustTeleported;
-        public static int TeleportLevel = -1;
-        public static int TeleportTileX = -1;
-        public static int TeleportTileY = -1;
+		/// <summary>
+		/// To prevent teleporting again when the teleport destination in inside a teleport trap
+		/// </summary>
+		public static bool JustTeleported;
+		public static int TeleportLevel = -1;
+		public static int TeleportTileX = -1;
+		public static int TeleportTileY = -1;
 
-        public static bool DoRedraw = false;
+		public static bool DoRedraw = false;
 
 	public override void _Ready()
 	{		
@@ -142,17 +142,17 @@ public partial class main : Node3D
 	public override void _Process(double delta)
 	{
 		if (uimanager.InGame)
-        {
+		{
 			RefreshWorldState();//handles teleports, tile redraws
 
-            int tileX = -(int)(cam.Position.X / 1.2f);
-            int tileY = (int)(cam.Position.Z / 1.2f);
-            int xposvecto = -(int)(((cam.Position.X % 1.2f) / 1.2f) * 8);
-            int yposvecto = (int)(((cam.Position.Z % 1.2f) / 1.2f) * 8);
-            var tmp = cam.Rotation;
-            tmp.Y = (float)(tmp.Y - Math.PI);
-            playerdat.heading = (int)Math.Round(-(tmp.Y * 127) / Math.PI);
-            uimanager.UpdateCompass();
+			int tileX = -(int)(cam.Position.X / 1.2f);
+			int tileY = (int)(cam.Position.Z / 1.2f);
+			int xposvecto = -(int)(((cam.Position.X % 1.2f) / 1.2f) * 8);
+			int yposvecto = (int)(((cam.Position.Z % 1.2f) / 1.2f) * 8);
+			var tmp = cam.Rotation;
+			tmp.Y = (float)(tmp.Y - Math.PI);
+			playerdat.heading = (int)Math.Round(-(tmp.Y * 127) / Math.PI);
+			uimanager.UpdateCompass();
 			combat.CombatInputHandler(delta);
 			playerdat.PlayerTimedLoop(delta);
 			if (EnablePositionDebug)
@@ -162,11 +162,11 @@ public partial class main : Node3D
  			}
 
 			
-            
+			
 			if ((tileX < 64) && (tileX >= 0) && (tileY < 64) && (tileY >= 0))
-            {
-                if ((playerdat.tileX != tileX) || (playerdat.tileY != tileY))
-                {
+			{
+				if ((playerdat.tileX != tileX) || (playerdat.tileY != tileY))
+				{
 					if (UWClass._RES==UWClass.GAME_UW2)
 					{
 						//find exit triggers.
@@ -176,17 +176,17 @@ public partial class main : Node3D
 							var exittriggerobj = UWTileMap.current_tilemap.LevelObjects[exittrigger];
 							//trigger.ExitTrigger(null, entertrigger, UWTileMap.current_tilemap.LevelObjects);
 							trigger.RunTrigger(character:0, 
-                                        ObjectUsed: exittriggerobj, 
-                                        TriggerObject: exittriggerobj, 
-                                        triggerType: (int)triggerObjectDat.triggertypes.EXIT, 
-                                        objList: UWTileMap.current_tilemap.LevelObjects);
+										ObjectUsed: exittriggerobj, 
+										TriggerObject: exittriggerobj, 
+										triggerType: (int)triggerObjectDat.triggertypes.EXIT, 
+										objList: UWTileMap.current_tilemap.LevelObjects);
 						}
 					}
-                    playerdat.tileX = tileX;
-                    playerdat.tileY = tileY;
-                    playerdat.xpos = xposvecto;
-                    playerdat.ypos = yposvecto;
-                    playerdat.PlayerStatusUpdate();
+					playerdat.tileX = tileX;
+					playerdat.tileY = tileY;
+					playerdat.xpos = xposvecto;
+					playerdat.ypos = yposvecto;
+					playerdat.PlayerStatusUpdate();
 					if (UWClass._RES==UWClass.GAME_UW2)
 					{
 						//find enter triggers.
@@ -196,48 +196,48 @@ public partial class main : Node3D
 							var entertriggerobj = UWTileMap.current_tilemap.LevelObjects[entertrigger];
 							//trigger.EnterTrigger(null, entertrigger, UWTileMap.current_tilemap.LevelObjects);
 							trigger.RunTrigger(character:0, 
-                                        ObjectUsed: entertriggerobj, 
-                                        TriggerObject: entertriggerobj, 
-                                        triggerType: (int)triggerObjectDat.triggertypes.ENTER, 
-                                        objList: UWTileMap.current_tilemap.LevelObjects);
+										ObjectUsed: entertriggerobj, 
+										TriggerObject: entertriggerobj, 
+										triggerType: (int)triggerObjectDat.triggertypes.ENTER, 
+										objList: UWTileMap.current_tilemap.LevelObjects);
 						}
 					}
-                }
-            }
+				}
+			}
 
-            cycletime += delta;
-            if (cycletime > 0.2)
-            {
-                cycletime = 0;
-                PaletteLoader.UpdatePaletteCycles();
-            }
-            if (uimanager.InGame)
-            {
-                gameRefreshTimer += delta;
-                if (gameRefreshTimer >= 0.3)
-                {
-                    gameRefreshTimer = 0;
-                    if (!blockmouseinput)
-                    {
-                        npc.UpdateNPCs();
-                        AnimationOverlay.UpdateAnimationOverlays();
-                    }
-                }
+			cycletime += delta;
+			if (cycletime > 0.2)
+			{
+				cycletime = 0;
+				PaletteLoader.UpdatePaletteCycles();
+			}
+			if (uimanager.InGame)
+			{
+				gameRefreshTimer += delta;
+				if (gameRefreshTimer >= 0.3)
+				{
+					gameRefreshTimer = 0;
+					if (!blockmouseinput)
+					{
+						npc.UpdateNPCs();
+						AnimationOverlay.UpdateAnimationOverlays();
+					}
+				}
 
-                if ((MessageDisplay.WaitingForTypedInput) || (MessageDisplay.WaitingForYesOrNo))
-                {
-                    if (!uimanager.instance.TypedInput.HasFocus())
-                    {
-                        uimanager.instance.TypedInput.GrabFocus();
-                    }
-                    uimanager.instance.scroll.UpdateMessageDisplay();
-                }
-            }
-        }
+				if ((MessageDisplay.WaitingForTypedInput) || (MessageDisplay.WaitingForYesOrNo))
+				{
+					if (!uimanager.instance.TypedInput.HasFocus())
+					{
+						uimanager.instance.TypedInput.GrabFocus();
+					}
+					uimanager.instance.scroll.UpdateMessageDisplay();
+				}
+			}
+		}
 
-    }
+	}
 
-    public override void _Input(InputEvent @event)
+	public override void _Input(InputEvent @event)
 	{
 		if ((@event is InputEventMouseButton eventMouseButton)
 			&&
@@ -428,85 +428,85 @@ public partial class main : Node3D
 	}
 
 	/// <summary>
-        /// Handles the end of chain events.
-        /// </summary>
-        public static void RefreshWorldState()
-        {
-            if (DoRedraw)
-            {
-                //update tile faces
-                UWTileMap.SetTileMapWallFacesUW();
-                //Handle tile changes after all else is done
-                foreach (var t in UWTileMap.current_tilemap.Tiles)
-                {
-                    if (t.Redraw)
-                    {
-                        UWTileMap.RemoveTile(t.tileX, t.tileY);
-                        tileMapRender.RenderTile(tileMapRender.worldnode, t.tileX, t.tileY, t);
-                        t.Redraw = false;
-                    }
-                }
-            }
+		/// Handles the end of chain events.
+		/// </summary>
+		public static void RefreshWorldState()
+		{
+			if (DoRedraw)
+			{
+				//update tile faces
+				UWTileMap.SetTileMapWallFacesUW();
+				//Handle tile changes after all else is done
+				foreach (var t in UWTileMap.current_tilemap.Tiles)
+				{
+					if (t.Redraw)
+					{
+						UWTileMap.RemoveTile(t.tileX, t.tileY);
+						tileMapRender.RenderTile(tileMapRender.worldnode, t.tileX, t.tileY, t);
+						t.Redraw = false;
+					}
+				}
+			}
 
-            //Handle level transitions now since it's possible for further traps to be called after the teleport trap
-            if (TeleportLevel != -1)
-            {
-                int itemToTransfer = -1;
-                if (playerdat.ObjectInHand != -1)
-                {//handle moving an object in hand through levels. Temporarily add to inventory data.
-                    itemToTransfer = playerdat.AddObjectToPlayerInventory(playerdat.ObjectInHand, false);
-                }
-                playerdat.dungeon_level = TeleportLevel;
-                //switch level
-                UWTileMap.LoadTileMap(
-                        newLevelNo: playerdat.dungeon_level - 1,
-                        datafolder: playerdat.currentfolder,
-                        newGameSession: false);
+			//Handle level transitions now since it's possible for further traps to be called after the teleport trap
+			if (TeleportLevel != -1)
+			{
+				int itemToTransfer = -1;
+				if (playerdat.ObjectInHand != -1)
+				{//handle moving an object in hand through levels. Temporarily add to inventory data.
+					itemToTransfer = playerdat.AddObjectToPlayerInventory(playerdat.ObjectInHand, false);
+				}
+				playerdat.dungeon_level = TeleportLevel;
+				//switch level
+				UWTileMap.LoadTileMap(
+						newLevelNo: playerdat.dungeon_level - 1,
+						datafolder: playerdat.currentfolder,
+						newGameSession: false);
 
-                if (itemToTransfer != -1)
-                {//takes object back out of inventory.
-                    uimanager.DoPickup(itemToTransfer);
-                }
-            }
-            if ((TeleportTileX != -1) && (TeleportTileY != -1))
-            {
-                //move to new tile
-                var targetTile = UWTileMap.current_tilemap.Tiles[TeleportTileX, TeleportTileY];
-                playerdat.zpos = targetTile.floorHeight << 2;
-                playerdat.xpos = 3; playerdat.ypos = 3;
-                playerdat.tileX = TeleportTileX; playerdat.tileY = TeleportTileY;
-                main.gamecam.Position = uwObject.GetCoordinate(
-                    tileX: playerdat.tileX,
-                    tileY: playerdat.tileY,
-                    _xpos: playerdat.xpos,
-                    _ypos: playerdat.ypos,
-                    _zpos: playerdat.camerazpos);
-            }
+				if (itemToTransfer != -1)
+				{//takes object back out of inventory.
+					uimanager.DoPickup(itemToTransfer);
+				}
+			}
+			if ((TeleportTileX != -1) && (TeleportTileY != -1))
+			{
+				//move to new tile
+				var targetTile = UWTileMap.current_tilemap.Tiles[TeleportTileX, TeleportTileY];
+				playerdat.zpos = targetTile.floorHeight << 2;
+				playerdat.xpos = 3; playerdat.ypos = 3;
+				playerdat.tileX = TeleportTileX; playerdat.tileY = TeleportTileY;
+				main.gamecam.Position = uwObject.GetCoordinate(
+					tileX: playerdat.tileX,
+					tileY: playerdat.tileY,
+					_xpos: playerdat.xpos,
+					_ypos: playerdat.ypos,
+					_zpos: playerdat.camerazpos);
+			}
 
-            if ((TeleportTileX != -1) || (TeleportTileY != -1) || (TeleportLevel != -1))
-            {
-                JustTeleported = true;
-                _ = Peaky.Coroutines.Coroutine.Run(
-                PauseTeleport(),
-                main.instance
-                );
-            }
-            TeleportLevel = -1;
-            TeleportTileX = -1;
-            TeleportTileY = -1;
-        }
+			if ((TeleportTileX != -1) || (TeleportTileY != -1) || (TeleportLevel != -1))
+			{
+				JustTeleported = true;
+				_ = Peaky.Coroutines.Coroutine.Run(
+				PauseTeleport(),
+				main.instance
+				);
+			}
+			TeleportLevel = -1;
+			TeleportTileX = -1;
+			TeleportTileY = -1;
+		}
 
 		
-        /// <summary>
-        /// Puts a block on sucessive level transitions due to teleport placing player in a new move trigger
-        /// </summary>
-        /// <returns></returns>
-        public static IEnumerator PauseTeleport()
-        {
-            JustTeleported = true;
-            yield return new WaitForSeconds(1);
-            JustTeleported = false;
-            yield return 0;
-        }
+		/// <summary>
+		/// Puts a block on sucessive level transitions due to teleport placing player in a new move trigger
+		/// </summary>
+		/// <returns></returns>
+		public static IEnumerator PauseTeleport()
+		{
+			JustTeleported = true;
+			yield return new WaitForSeconds(1);
+			JustTeleported = false;
+			yield return 0;
+		}
 
 }//end class
