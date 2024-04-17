@@ -90,6 +90,16 @@ public partial class main : Node3D
 				Debug.Print("Gamecam is still null!");
 			}
 		}
+		if (uimanager.instance==null)
+		{
+			Debug.Print("UI Manager is null");
+			//UI/uiManager
+			uimanager.instance = (uimanager)instance.GetNode("/root/Underworld/UI/uiManager");
+			if (uimanager.instance==null)
+			{
+				Debug.Print("UIManager is still null!!");
+			}
+		}
 		gamecam.Fov = Math.Max(50, uwsettings.instance.FOV);
 		uimanager.EnableDisable(instance.lblPositionDebug,EnablePositionDebug);
 		uimanager.EnableDisable(uimanager.instance.StartMenuPanel, false);
