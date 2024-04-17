@@ -250,10 +250,6 @@ namespace Underworld
             if (doorObj.isOpen) { return; }//don't reopen an open door
             if (doorObj.isMoving) { return; } // do not allow door changes when already moving
             doorObj.uwobject.zpos += 24;
-            if (doorObj.uwobject.link > 0)
-            {//TODO: ACTIVATE OPEN TRIGGER HERE
-                Debug.Print($"Check for open trigger here {doorObj.uwobject.index}");
-            }
             if (TurnIntoMovingDoor(doorObj))
             {
 
