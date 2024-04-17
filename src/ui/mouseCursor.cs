@@ -52,21 +52,21 @@ namespace Underworld
 		// Called every frame. 'delta' is the elapsed time since the previous frame.
 		public override void _Process(double delta)
 		{
-			var mouselook = (bool)main.gamecam.Get("MOUSELOOK");
-
-			if (mouselook)
+			if (main.gamecam != null)
 			{
-				this.Position = CursorPosition;
-			}
-			else
-			{//follow the mouse
-				var offset = new Vector2(Texture.GetWidth()/1f, Texture.GetHeight()/1f);
-				var pos = GetViewport().GetMousePosition() - offset;
-				this.Position = pos;
-			}
+				var mouselook = (bool)main.gamecam.Get("MOUSELOOK");
 
-
-			//Debug.Print($"{GetViewport().get}");
+				if (mouselook)
+				{
+					this.Position = CursorPosition;
+				}
+				else
+				{//follow the mouse
+					var offset = new Vector2(Texture.GetWidth() / 1f, Texture.GetHeight() / 1f);
+					var pos = GetViewport().GetMousePosition() - offset;
+					this.Position = pos;
+				}
+			}
 		}
 
 		public void InitCursor()

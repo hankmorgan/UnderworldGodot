@@ -19,6 +19,11 @@ namespace Underworld
         public int shaderbandsize { get; set; }
         public static uwsettings instance;
 
+        static uwsettings()
+        {
+            uwsettings.LoadSettings();
+        }
+        
         public static void Save()
         {
             var appfolder = OS.GetExecutablePath();

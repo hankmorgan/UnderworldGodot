@@ -15,10 +15,12 @@ namespace Underworld
 
         public override void _Ready()
         {
-			uwsettings.LoadSettings();
+			
 			instance = this;
             uimanager.instance.mousecursor.Texture = uimanager.instance.cross;
 			uimanager.EnableDisable(uimanager.instance.StartMenuPanel, true);
+			
+			
 			uimanager.instance.pathuw1.Text = uwsettings.instance.pathuw1;
 			uimanager.instance.pathuw2.Text = uwsettings.instance.pathuw2;
         }
