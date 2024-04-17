@@ -90,6 +90,7 @@ namespace Underworld
                 case 14://cutscene spells.
                     break;
             }
+            playerdat.PlayerStatusUpdate();
         } 
         
 

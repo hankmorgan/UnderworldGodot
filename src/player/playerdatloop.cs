@@ -13,6 +13,7 @@ namespace Underworld
         static double playertimer;
         static int playerUpdateCounter;
 
+        static int PreviousClockValue;
         public static void PlayerTimedLoop(double delta)
         {
             if ((!main.blockmouseinput) && (uimanager.InGame))
@@ -26,7 +27,7 @@ namespace Underworld
                     {
                         ClockValue += 0x40; //not sure what the exact rate should be here. for the moment assuming this is 1 second of time
 
-                        if (ClockValue % 20 == 0)//every 20 seconds
+                        if ((ClockValue % 20) < PreviousClockValue)//every 20 seconds
                         {
                             playerUpdateCounter++;
 
@@ -130,6 +131,7 @@ namespace Underworld
 
                             PlayerStatusUpdate();
                         }//end every 20 seconds update
+                        PreviousClockValue = ClockValue % 20;
                     }//end seconds for loop                 
                 }  //every second              
             }//end ingame check
