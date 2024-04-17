@@ -38,5 +38,6 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         generateReleaseNotes: true
+        tag: release
         artifacts: ${{ steps.export.outputs.archive_directory }}/*
         prerelease: true
