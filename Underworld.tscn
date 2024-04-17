@@ -2717,18 +2717,18 @@ filters = PackedStringArray("uw*.exe")
 offset_right = 40.0
 offset_bottom = 40.0
 mouse_filter = 2
+texture = ExtResource("18_tfr7p")
 script = ExtResource("4_gnu1s")
 
 [node name="worldobjects" type="Node3D" parent="."]
 
 [node name="tilemap" type="Node3D" parent="."]
 
-[node name="main" type="Node3D" parent="." node_paths=PackedStringArray("cam", "audioplayer", "lblPositionDebug", "uwUI", "secondarycameras")]
+[node name="main" type="Node3D" parent="." node_paths=PackedStringArray("cam", "audioplayer", "lblPositionDebug", "secondarycameras")]
 script = ExtResource("6_3y8oy")
 cam = NodePath("../WorldViewContainer/SubViewport/Camera3D")
 audioplayer = NodePath("../UI/AudioPlayer")
 lblPositionDebug = NodePath("../UI/Common/PositionLabel")
-uwUI = NodePath("../UI/uiManager")
 secondarycameras = NodePath("../WorldViewContainer/SubViewport")
 
 [connection signal="gui_input" from="UI/UW1/CompassUW1/CompassClickArea" to="UI/uiManager" method="_on_compass_click"]

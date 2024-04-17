@@ -69,14 +69,14 @@ public partial class main : Node3D
 		//uimanager.instance = uwUI;	
 		if (uwsettings.instance!=null)
 		{
-			gamecam.Fov = Math.Max(50, uwsettings.instance.FOV);
 			GetTree().DebugCollisionsHint = uwsettings.instance.showcolliders;
 		}		
 		
 	}
 
 	public static void StartGame()
-	{		
+	{	
+		gamecam.Fov = Math.Max(50, uwsettings.instance.FOV);
 		uimanager.EnableDisable(instance.lblPositionDebug,EnablePositionDebug);
 		uimanager.EnableDisable(uimanager.instance.StartMenuPanel, false);
 		ObjectCreator.grObjects = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
