@@ -9,7 +9,15 @@ namespace Underworld
         {
             if (WorldObject)
             {
-                SpillWorldContainer(obj);
+                if (a_lock.GetIsLocked(obj)==false)
+                {
+                    SpillWorldContainer(obj);
+                }
+                else
+                {
+                    var msg = $"The {GameStrings.GetSimpleObjectNameUW(obj.item_id)} is locked";
+                    uimanager.AddToMessageScroll(msg);
+                }                
                 return true;
             }
             else

@@ -57,64 +57,6 @@ namespace Underworld
             }
         }
 
-        /// <summary>
-        /// What index key will open this door.
-        /// </summary>
-        public int KeyIndex
-        {
-            get
-            {
-                var lockobj = LockObject;
-                if (lockobj == null)
-                {
-                    return -1;
-                }
-                return lockobj.link & 0x3F;
-            }
-        }
-
-        public bool Locked
-        {
-            get
-            {
-                if (isOpen) { return false; }
-                var lockobj = LockObject;
-                if (lockobj == null)
-                {
-                    return false;
-                }
-                else
-                {
-                    return (lockobj.flags & 0x01) == 1;
-                }
-            }
-            set
-            {
-                var lockobj = LockObject;
-                if (lockobj == null) { return; }
-                if (value)
-                {//Setting lock to true
-                    lockobj.flags |= 1;  //set flag bit 0
-                }
-                else
-                {
-                    lockobj.flags &= 0xE;  //clear flag bit 0
-                }
-            }
-        }
-
-        public uwObject LockObject
-        {
-            get
-            {
-                return objectsearch.FindMatchInObjectChain(
-                    ListHeadIndex: uwobject.link,
-                    majorclass: 4,
-                    minorclass: 0,
-                    classindex: 0xF,
-                    objList: UWTileMap.current_tilemap.LevelObjects);
-            }
-        }
 
         /// <summary>
         /// How many animation frames this door type has.
@@ -229,8 +171,8 @@ namespace Underworld
         public static bool Use(uwObject obj)
         {
             var d = (door)obj.instance;
-            if (d.Locked)
-            {
+            if (a_lock.GetIsLocked(obj) && (!d.isOpen))
+            {//door is locked and closed
                 uimanager.AddToMessageScroll("The " + GameStrings.GetObjectNounUW(obj.item_id) + " is locked.");
             }
             else
@@ -267,18 +209,9 @@ namespace Underworld
                 }
             }
             playerdat.UpdateAutomap();//trigger an update of visibility
-            // if (obj.uwobject.link != 0)
-            // {
-            //     trigger.OpenTrigger(obj.uwobject, obj.uwobject.link, UWTileMap.current_tilemap.LevelObjects);
-            // }
-            var triggertype = (int)triggerObjectDat.triggertypes.OPEN_UW1;
-            if (_RES==GAME_UW2)
-            {
-                triggertype = (int)triggerObjectDat.triggertypes.OPEN_UW2;
-            }
             trigger.TriggerObjectLink(character:0, 
                     ObjectUsed: doorObj.uwobject, 
-                    triggerType: triggertype,
+                    triggerType: (int)triggerObjectDat.OPEN_TRIGGER_TYPE,
                     triggerX: doorObj.uwobject.tileX,
                     triggerY: doorObj.uwobject.tileY, 
                     objList: UWTileMap.current_tilemap.LevelObjects);
@@ -464,7 +397,8 @@ namespace Underworld
                                     triggerY: doorobject.tileY, 
                                     objList: UWTileMap.current_tilemap.LevelObjects);
 
-                                doorcontrol.Locked=false;
+                                a_lock.SetIsLocked(doorobject, false, 0);
+                                //doorcontrol.Locked=false;
                                 OpenDoor(doorcontrol);                                
                             }
                         }

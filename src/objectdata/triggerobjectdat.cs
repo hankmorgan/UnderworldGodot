@@ -26,6 +26,35 @@ namespace Underworld
             PRESSURE_RELEASE = 15            
         }
 
+        public static triggertypes UNLOCK_TRIGGER_TYPE
+        {
+            get
+            {
+                if (_RES==GAME_UW2)
+                {
+                    return triggertypes.UNLOCK_UW2;
+                }
+                else
+                {
+                    return triggertypes.UNLOCK_UW1;
+                }
+            }
+        }
+        public static triggertypes OPEN_TRIGGER_TYPE
+        {
+            get
+            {
+                if (_RES==GAME_UW2)
+                {
+                    return triggertypes.OPEN_UW2;
+                }
+                else
+                {
+                    return triggertypes.OPEN_UW1;
+                }
+            }
+        }
+
         /// <summary>
         /// The type of trigger this is
         /// </summary>

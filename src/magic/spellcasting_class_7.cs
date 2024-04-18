@@ -433,17 +433,37 @@ namespace Underworld
             }
         }
 
-        static void Unlock(int index, uwObject[] objList)
+        static void Unlock(int index, uwObject[] objList, int character = 0)
         {
             var target = objList[index];
-            if ((target.majorclass==5) && (target.minorclass==0))
+            if (a_lock.GetIsLocked(target))
             {
-                var doorobj = (door)target.instance;
-                if (doorobj!=null)
+                a_lock.SetIsLocked(
+                    parentObject: target, 
+                    value: false, 
+                    character: character);
+                if (character==0)
                 {
-                    doorobj.Locked = false;
+                    //this has no lock.
+                    uimanager.AddToMessageScroll(GameStrings.GetString(GameStrings.str_the_spell_unlocks_the_lock_));
                 }
             }
+            else
+            {
+                if (character==0)
+                {
+                    //this has no lock.
+                    uimanager.AddToMessageScroll(GameStrings.GetString(GameStrings.str_that_is_not_locked_));
+                }
+            }
+            // if ((target.majorclass==5) && (target.minorclass==0))
+            // {
+            //     var doorobj = (door)target.instance;
+            //     if (doorobj!=null)
+            //     {
+            //         doorobj.Locked = false;
+            //     }
+            // }
         }
     }//end class
 }//end namespace
