@@ -27,10 +27,10 @@ namespace Underworld
 
 
         public static int RunTrigger(int character, uwObject ObjectUsed, uwObject TriggerObject, int triggerType, uwObject[] objList)
-        {
-            Debug.Print($"Run Trigger {TriggerObject.a_name}");
+        {            
             if (IsTrigger(TriggerObject))
             {
+                Debug.Print($"Try and Run Trigger {TriggerObject.index} {TriggerObject.a_name}");
                 if (triggerType >= 0)
                 {
                     if (ObjectUsed != null)
@@ -43,6 +43,7 @@ namespace Underworld
                                 if (TriggerObject.next != 0)
                                 {
                                     var nextObj = objList[TriggerObject.next];
+
                                     return RunTrigger(
                                         character: character,
                                         ObjectUsed: ObjectUsed,
@@ -53,62 +54,63 @@ namespace Underworld
                             }
                         }
                     }
-                    if (triggerType == triggerObjectDat.triggertype(TriggerObject.item_id))
-                    {
-                        if (character == 0)
-                        {//player
-                            if (TriggerObject.flags2 != 0)
+                }
+                if (triggerType == triggerObjectDat.triggertype(TriggerObject.item_id) || (triggerType == (int)triggerObjectDat.triggertypes.ALL))
+                {
+                    if (character == 0)
+                    {//player
+                        if (TriggerObject.flags2 != 0)
+                        {
+                            if (triggerType == (int)triggerObjectDat.triggertypes.LOOK)
                             {
-                                if (triggerType == (int)triggerObjectDat.triggertypes.LOOK)
+                                if (TriggerObject.zpos > 0)
                                 {
-                                    if (TriggerObject.zpos > 0)
-                                    {
-                                        var skillcheck = playerdat.SkillCheck(playerdat.Search, TriggerObject.zpos);
-                                        if (skillcheck <= 0)
-                                        {//failed search
-                                            return 2;
-                                        }
+                                    var skillcheck = playerdat.SkillCheck(playerdat.Search, TriggerObject.zpos);
+                                    if (skillcheck <= 0)
+                                    {//failed search
+                                        return 2;
                                     }
                                 }
-                                //run trap.
-                                if (TriggerObject.link != 0)
+                            }
+                            //run trap.
+                            if (TriggerObject.link != 0)
+                            {
+                                var trapObj = objList[TriggerObject.link];
+                                if (trapObj != null)
                                 {
-                                    var trapObj = objList[TriggerObject.link];
-                                    if (trapObj != null)
-                                    {
-                                        int triggerX = TriggerObject.quality;
-                                        int triggerY = TriggerObject.owner;
-                                        trigger.RunTrap(
-                                            character: character,
-                                            ObjectUsed: ObjectUsed,
-                                            trapObject: trapObj,
-                                            triggerX: triggerX,
-                                            triggerY: triggerY,
-                                            objList: objList);
+                                    int triggerX = TriggerObject.quality;
+                                    int triggerY = TriggerObject.owner;
+                                    trigger.RunTrap(
+                                        character: character,
+                                        ObjectUsed: ObjectUsed,
+                                        trapObject: trapObj,
+                                        triggerX: triggerX,
+                                        triggerY: triggerY,
+                                        objList: objList);
 
-                                        //Test for trap repeat.
-                                        if (TriggerObject.flags1 == 0)
+                                    //Test for trap repeat.
+                                    if (TriggerObject.flags1 == 0)
+                                    {
+                                        Debug.Print("Test me. remove trap from object list here");
+                                    }
+                                    //if uw2 test for pressure triggers
+                                    if (_RES == GAME_UW2)
+                                    {
+                                        if ((triggerType & 0xF07) == 7)
                                         {
-                                            Debug.Print("Test me. remove trap from object list here");
-                                        }
-                                        //if uw2 test for pressure triggers
-                                        if (_RES == GAME_UW2)
-                                        {
-                                            if ((triggerType & 0xF07) == 7)
-                                            {
-                                                Debug.Print("Do something with pressure triggers and texures");
-                                            }
+                                            Debug.Print("Do something with pressure triggers and texures");
                                         }
                                     }
                                 }
                             }
                         }
-                        else
-                        {
-                            Debug.Print("To implement NPC activation of triggers");
-                        }
+                    }
+                    else
+                    {
+                        Debug.Print("To implement NPC activation of triggers");
                     }
                 }
+                
             }
             return 2;
         }

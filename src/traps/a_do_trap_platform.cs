@@ -22,7 +22,7 @@ namespace Underworld
                 //UWTileMap.RemoveTile(triggerX, triggerY);
 
                 //Set the new height
-                var newHeight = heights[ObjectUsed.flags];
+                var newHeight = heights[ObjectUsed.flags] * 2;
                 Debug.Print($"Flags is {ObjectUsed.flags} new height is {newHeight}");
                 var t = UWTileMap.current_tilemap.Tiles[triggerX, triggerY];
                 t.floorHeight = (short)newHeight;

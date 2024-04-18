@@ -472,7 +472,7 @@ public partial class main : Node3D
 			{
 				//move to new tile
 				var targetTile = UWTileMap.current_tilemap.Tiles[TeleportTileX, TeleportTileY];
-				playerdat.zpos = targetTile.floorHeight << 2;
+				playerdat.zpos = targetTile.floorHeight << 3;
 				playerdat.xpos = 3; playerdat.ypos = 3;
 				playerdat.tileX = TeleportTileX; playerdat.tileY = TeleportTileY;
 				main.gamecam.Position = uwObject.GetCoordinate(

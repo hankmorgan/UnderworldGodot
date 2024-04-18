@@ -30,7 +30,7 @@ namespace Underworld
                             //var position = UWTileMap.GetPositionInDirection(0.6f);
                             
                             var newobj = UWTileMap.current_tilemap.LevelObjects[newindex];
-                            newobj.zpos = (short)(tile.floorHeight<<2);
+                            newobj.zpos = (short)(tile.floorHeight<<3);
                             newobj.xpos =3; newobj.ypos =3;
                             newobj.item_id = 458; //set to tree.                            
                             pickup.Drop(

@@ -47,13 +47,13 @@ namespace Underworld
         {
             get
             {
-                return (short)(2 * (map.lev_ark_block.Data[Ptr] & 0xF0) >> 4);
+                return (short)((map.lev_ark_block.Data[Ptr] & 0xF0) >> 4);
             }
             set
             {
                 int val = map.lev_ark_block.Data[Ptr];
                 val &= 0x0F;
-                val |= ((value / 2) & 0xF) << 4;
+                val |= ((value) & 0xF) << 4;
                 map.lev_ark_block.Data[Ptr] = (byte)val;
             }
         }

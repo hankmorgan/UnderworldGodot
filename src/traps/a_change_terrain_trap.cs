@@ -45,14 +45,10 @@ namespace Underworld
                             }
                         }
                                             
-                        if (trapObj.zpos == 120)
-                        {//If at this height use the trigger zpos for height instead.
-                            //tileToChange.floorHeight = (short)(triggerObj.zpos >> 2);
-                            Debug.Print("FIXME TILEHEIGHT TO USE HERE");
-                        }
-                        else
+                        var newHeight = trapObj.zpos>>3;
+                        if ((newHeight>=0) && (newHeight<=0xE))
                         {
-                            tileToChange.floorHeight = (short)(trapObj.zpos >> 2);
+                            tileToChange.floorHeight = (short)newHeight;
                         }
                         for (int i = 0; i <= tileToChange.VisibleFaces.GetUpperBound(0); i++)
                         {

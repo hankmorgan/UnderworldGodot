@@ -206,7 +206,7 @@ namespace Underworld
             {
                 string TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
                 TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
-                return RenderCuboid(parent, x, y, t, 0, t.floorHeight, TileName);
+                return RenderCuboid(parent, x, y, t, 0, t.floorHeight * 2, TileName);
             }
             return null;
         }
@@ -307,7 +307,6 @@ namespace Underworld
                 RenderDiagSEPortion(parent, FLOOR_ADJ, CEILING_HEIGHT + CEIL_ADJ, t, TileName);
             
                 //it's floor
-                //RenderDiagNWPortion( FLOOR_ADJ, t.floorHeight, t,"DiagNW1");
                 bool PreviousNorth = t.VisibleFaces[vNORTH];
                 bool PreviousWest = t.VisibleFaces[vWEST];
                 t.VisibleFaces[vNORTH] = false;
@@ -617,7 +616,7 @@ namespace Underworld
                     y: y, 
                     t: t, 
                     Bottom: FLOOR_ADJ, 
-                    Top: t.floorHeight, 
+                    Top: t.floorHeight * 2, 
                     SlopeDir: TILE_SLOPE_N, 
                     Steepness: t.TileSlopeSteepness, 
                     TileName: TileName);
@@ -647,7 +646,7 @@ namespace Underworld
                     y: y, 
                     t: t, 
                     Bottom: FLOOR_ADJ, 
-                    Top: t.floorHeight, 
+                    Top: t.floorHeight * 2, 
                     SlopeDir: TILE_SLOPE_S, 
                     Steepness: t.TileSlopeSteepness, 
                     TileName: TileName);
@@ -677,7 +676,7 @@ namespace Underworld
                     y: y, 
                     t: t, 
                     Bottom: FLOOR_ADJ, 
-                    Top: t.floorHeight, 
+                    Top: t.floorHeight * 2, 
                     SlopeDir: TILE_SLOPE_W, 
                     Steepness: t.TileSlopeSteepness, 
                     TileName: TileName);
@@ -707,7 +706,7 @@ namespace Underworld
                     y: y, 
                     t: t, 
                     Bottom: FLOOR_ADJ, 
-                    Top: t.floorHeight, 
+                    Top: t.floorHeight * 2, 
                     SlopeDir: TILE_SLOPE_E, 
                     Steepness: t.TileSlopeSteepness, 
                     TileName: TileName);
@@ -1152,12 +1151,12 @@ namespace Underworld
                 //Bottom face 
                 if (t.TerrainChange)
                 {                    
-                    return RenderPrism(parent, x, y, t, -16, t.floorHeight, TileName);
+                    return RenderPrism(parent, x, y, t, -16, t.floorHeight * 2, TileName);
                 }
                 else
                 {
                     TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
-                    return RenderPrism(parent, x, y, t, 0, t.floorHeight, TileName);
+                    return RenderPrism(parent, x, y, t, 0, t.floorHeight * 2, TileName);
                 }
             }
             return null;

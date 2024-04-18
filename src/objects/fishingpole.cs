@@ -38,7 +38,7 @@ namespace Underworld
                        
                         if (terrain==1)
                         {//water
-                            if ((playerdat.zpos>>3) >= (tile.floorHeight/2 -2))
+                            if ((playerdat.zpos>>3) >= (tile.floorHeight -2))
                             {
                                 var catchfish = (playerdat.Track + 7)/8 >=Rng.r.Next(0, 5); 
                                 //Note: in UW1 this is simply a rng(0-4)==0 check. 

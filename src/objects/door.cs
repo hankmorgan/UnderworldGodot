@@ -139,7 +139,7 @@ namespace Underworld
 
             }
 
-            d.floorheight = a_tilemap.Tiles[tileX, tileY].floorHeight;
+            d.floorheight = a_tilemap.Tiles[tileX, tileY].floorHeight * 2;
             d.doorNode = d.Generate3DModel(parent, name);
             d.doorNode.Position = d.pivot;
 
@@ -845,7 +845,7 @@ namespace Underworld
             int tileY = obj.tileY;
             var dw = new doorway(obj);
             dw.texture = a_tilemap.Tiles[tileX, tileY].wallTexture; //a_tilemap.texture_map[a_tilemap.Tiles[tileX, tileY].wallTexture];
-            dw.floorheight = a_tilemap.Tiles[tileX, tileY].floorHeight;//uses floorheight since portculli use zpos when opened // (float)(obj.zpos) / 4f; //a_tilemap.Tiles[tileX, tileY].floorHeight;
+            dw.floorheight = a_tilemap.Tiles[tileX, tileY].floorHeight * 2;//uses floorheight since portculli use zpos when opened // (float)(obj.zpos) / 4f; //a_tilemap.Tiles[tileX, tileY].floorHeight;
             //n.position = parent.Position;
             //a portcullis. 
 
