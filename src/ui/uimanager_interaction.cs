@@ -136,7 +136,7 @@ namespace Underworld
                         objList: Underworld.UWTileMap.current_tilemap.LevelObjects,
                         WorldObject: true);
                     break;
-                case InteractionModes.ModePickup:
+                case InteractionModes.ModePickup:                
                     pickup.PickUp(
                         index: index,
                         objList: Underworld.UWTileMap.current_tilemap.LevelObjects,

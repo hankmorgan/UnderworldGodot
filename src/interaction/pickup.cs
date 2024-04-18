@@ -53,9 +53,9 @@ namespace Underworld
 
         public static bool PickUp(int index, uwObject[] objList, bool WorldObject = true)
         {
-            if (playerdat.ObjectInHand != -1)
+            if (useon.CurrentItemBeingUsed != null)
             {
-                //??
+                return useon.UseOn(index, objList, useon.CurrentItemBeingUsed, WorldObject);
             }
             else
             {
