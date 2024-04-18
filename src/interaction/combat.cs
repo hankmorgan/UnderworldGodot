@@ -835,26 +835,26 @@ namespace Underworld
         public static void DamageObject(uwObject objToDamage, int basedamage, int damagetype, int damagesource = 0)
         {
             uwObject.ScaleDamage(objToDamage.item_id, ref basedamage, damagetype);
-            Debug.Print($"Damage {objToDamage.a_name} by {basedamage}");
-            switch(objToDamage.majorclass)
+            Debug.Print($"Try and Damage {objToDamage.a_name} by {basedamage}");
+            switch (objToDamage.majorclass)
             {
                 case 1:
                     {
                         npc.DamageNPC(
-                            critter: objToDamage, 
-                            basedamage: basedamage, 
-                            damagetype: damagetype, 
+                            critter: objToDamage,
+                            basedamage: basedamage,
+                            damagetype: damagetype,
                             damagesource: damagesource);
                         return;
                     }
                 case 5:
                     {
-                        if (objToDamage.OneF0Class==0x14)
+                        if (objToDamage.OneF0Class == 0x14)
                         {
                             //door damage
                             door.DamageDoor(
-                                doorobject: objToDamage, 
-                                damage: basedamage, 
+                                doorobject: objToDamage,
+                                damage: basedamage,
                                 damagesource: 0);
                             return;
                         }
@@ -862,9 +862,36 @@ namespace Underworld
                     }
             }
             //all other objects.
-            Debug.Print("damage to non npc or door");
-            //TODO handle object destruction
-        }       
+            DamageGeneralObject(objToDamage, basedamage);
+        }
 
+        private static void DamageGeneralObject(uwObject objToDamage, int basedamage)
+        {
+            var qualityclass = commonObjDat.qualityclass(objToDamage.item_id);
+            if (commonObjDat.qualityclass(objToDamage.item_id) != 3)
+            {
+                basedamage >>= qualityclass;
+                var finalquality = Math.Max(0, objToDamage.quality - basedamage);
+                if (objToDamage.owner != 0)
+                {
+                    //door can have an owner
+                    if (commonObjDat.canhaveowner(objToDamage.item_id))
+                    {
+                        Debug.Print("Flag trespass to object owner");
+                    }
+                }
+                Debug.Print($"{objToDamage.a_name} quality is now {finalquality}");
+                objToDamage.quality = (short)finalquality;
+            }
+            
+            if (objToDamage.quality == 0)
+            {//TODO handle object destruction
+                if (a_lock.GetIsLocked(objToDamage))
+                {//unlock
+                    a_lock.SetIsLocked(objToDamage, false);
+                }
+                Debug.Print($"Destroy {objToDamage.a_name}");
+            }
+        }
     }//end class
 }//end namespace

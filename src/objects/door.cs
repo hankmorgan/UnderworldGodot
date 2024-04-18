@@ -363,22 +363,25 @@ namespace Underworld
                 if (qualityclass != 3)
                 {
                     damage >>= qualityclass;
+                    if (_RES!=GAME_UW2)
+                    {
+                        if (doorobject.owner == 63)
+                        {
+                            //Door is spiked
+                            damage = 0;
+                            Debug.Print("Door is spiked. TEST ME");
+                        } 
+                    }
                     Debug.Print($"Final door damage is {damage}");
+
                     if (damage>0)
                     {
                         if (doorobject.classindex<=7)
                         {//closed doors
                             var finalquality = Math.Max(0, doorobject.quality-damage);
-                            if (doorobject.owner==0)
+                            if (doorobject.owner!=0)
                             {
-                                if (qualityclass==0)
-                                {
-                                    finalquality = 0;
-                                }
-                            }
-                            else
-                            {
-                                //door has an owner
+                                //door can have an owner
                                 if (commonObjDat.canhaveowner(doorobject.item_id))
                                 {
                                     Debug.Print("Flag trespass to door owner");
