@@ -21,7 +21,8 @@ namespace Underworld
         public static GRLoader grGempt;
         public static GRLoader grPower;
         public static BytLoader bitmaps;  
-        public static WeaponsLoader grWeapon;     
+        public static WeaponsLoader grWeapon;   
+        public static GRLoader grInv;  
 
         public static Dictionary<string, CutsLoader> csCuts;
 
@@ -44,6 +45,7 @@ namespace Underworld
 			bitmaps = new BytLoader();
             grCompass= new GRLoader(GRLoader.COMPASS_GR, GRLoader.GRShaderMode.UIShader);
             grPower = new GRLoader(GRLoader.POWER_GR, GRLoader.GRShaderMode.UIShader);
+            grInv = new GRLoader(GRLoader.INV_GR, GRLoader.GRShaderMode.UIShader);
             csCuts = new Dictionary<string, CutsLoader>();
             if (UWClass._RES==UWClass.GAME_UW2)
             {

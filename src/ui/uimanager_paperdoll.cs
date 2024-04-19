@@ -34,6 +34,7 @@ namespace Underworld
         [Export] public TextureRect ArrowDown;
         [Export] public TextureRect OpenedContainer;
         [Export] public TextureRect Chains;
+        [Export] public TextureRect BackpackBG;
 
         public static int CurrentSlot;
         public static int BackPackStart = 0;
@@ -104,6 +105,8 @@ namespace Underworld
                 offset = new Vector2(10, -12);
                 ArrowUp.Position += offset;
                 ArrowDown.Position +=offset;
+                BackpackBG.Position = new Vector2(-148,314);
+                BackpackBG.Size = new Vector2(300,164);                
             }
 
             ArrowUp.Texture = grButtons.LoadImageAt(27);
@@ -114,6 +117,8 @@ namespace Underworld
             EnableDisable(SelectedRunes[0],true);
             EnableDisable(SelectedRunes[1],true);
             EnableDisable(SelectedRunes[2],true);
+            EnableDisable(BackpackBG,false);
+            BackpackBG.Texture = grInv.LoadImageAt(6);
         }
 
         /// <summary>
@@ -432,13 +437,15 @@ namespace Underworld
             if (SpriteNo == -1)
             { //clear the slot
                 uimanager.EnableDisable(uimanager.instance.OpenedContainer, false);
-                instance.OpenedContainer.Texture = null;                
+                instance.OpenedContainer.Texture = null;      
+                EnableDisable(instance.BackpackBG,false);          
             }
             else
             {
                 uimanager.EnableDisable(uimanager.instance.OpenedContainer, true);
                 instance.OpenedContainer.Texture = grObjects.LoadImageAt(SpriteNo);
                 instance.OpenedContainer.Material = grObjects.GetMaterial(SpriteNo);
+                EnableDisable(instance.BackpackBG,true);
             }
         }
 
