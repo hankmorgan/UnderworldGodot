@@ -751,5 +751,21 @@ namespace Underworld
             return false;//no unlinking
         }
 
+        public static void RefreshSprite(uwObject objToRefresh)
+        {//assumes sprite to sprite refresh
+            if (objToRefresh.instance != null)
+            {
+                if (objToRefresh.instance.uwnode != null)
+                {
+                    var nd = (uwMeshInstance3D)objToRefresh.instance.uwnode.GetChild(0);
+                    if (nd!=null)
+                    {
+                        nd.Mesh.SurfaceSetMaterial(0, ObjectCreator.grObjects.GetMaterial(objToRefresh.item_id));
+                    }                    
+                }
+            }
+        }
+
+
     } //end class
 } //end namesace

@@ -161,7 +161,7 @@ namespace Underworld
         {
             switch (stage)
             {
-                case CombatStages.Ready:                    
+                case CombatStages.Ready:
                     stage = CombatStages.Charging; //begin charging. start weapon swing pull back anim
                     IncreaseCharge(delta);
                     break;
@@ -243,9 +243,9 @@ namespace Underworld
         {
             if (uimanager.InteractionMode == uimanager.InteractionModes.ModeAttack)
             {
-                if ((playerdat.ObjectInHand != -1) 
-                || (useon.CurrentItemBeingUsed != null) 
-                || (SpellCasting.currentSpell!=null)
+                if ((playerdat.ObjectInHand != -1)
+                || (useon.CurrentItemBeingUsed != null)
+                || (SpellCasting.currentSpell != null)
                 || (main.blockmouseinput))
                 {
                     return;
@@ -263,12 +263,12 @@ namespace Underworld
                             PlayerFlankingBonus = 0;
                             PlayerHasCritted = false;
                             //currentAnimationStrikeType = WeaponAnimStrikeOffset;
-                            CurrentAttackSwingType = Rng.r.Next(0,4);                            
-                            stage = CombatStages.Charging;                           
+                            CurrentAttackSwingType = Rng.r.Next(0, 4);
+                            stage = CombatStages.Charging;
                         }
                         else
                         {
-                                //return to normal
+                            //return to normal
                             uimanager.currentWeaponAnim = WeaponAnimGroup + WeaponAnimHandednessOffset + 6;
                         }
                         break;
@@ -331,7 +331,7 @@ namespace Underworld
                             break;
                         }
                     case CombatStages.Resetting:
-                        {                           
+                        {
                             //do weapon put away anim until time   
                             combattimer += delta;
                             if (combattimer >= 0.2f)
@@ -387,7 +387,7 @@ namespace Underworld
                             {
                                 var hitobject = UWTileMap.current_tilemap.LevelObjects[index];
                                 if (hitobject != null)
-                                {                                    
+                                {
                                     Debug.Print($"{hitobject.a_name}");
                                     return PlayerHitsUWObject(hitobject);
                                 }
@@ -619,11 +619,11 @@ namespace Underworld
                 //did not hit an npc                
                 if (objHit.OneF0Class == 0x14)
                 {//doors
-                    var hitroll = Rng.r.Next(0,0xC);
-                    var checkvalue = (objHit.item_id & 0x7)<<1;
+                    var hitroll = Rng.r.Next(0, 0xC);
+                    var checkvalue = (objHit.item_id & 0x7) << 1;
                     if (hitroll < checkvalue)
                     {
-                        var equipdam = Rng.DiceRoll(2,4);
+                        var equipdam = Rng.DiceRoll(2, 4);
                         Debug.Print($"Do weapon self damage of {equipdam}");
                     }
                     return 0; //0 is a hit!
@@ -695,10 +695,12 @@ namespace Underworld
                 }
             }
             //apply damage
-            DamageObject(
-                objToDamage: objHit, 
-                basedamage: finaldamage, 
-                damagetype: damageType, 
+            damage.DamageObject(
+                objToDamage: objHit,
+                basedamage: finaldamage,
+                damagetype: damageType,                
+                objList: UWTileMap.current_tilemap.LevelObjects, 
+                WorldObject: true,
                 damagesource: 0);
             return 0;
         }
@@ -717,7 +719,7 @@ namespace Underworld
         /// </summary>
         static int CalcFlankingBonus(uwObject critter)
         {
-            if (critter.majorclass==1)
+            if (critter.majorclass == 1)
             {
                 var defenderHeading = critter.heading;
                 var attackerHeading = playerdat.heading >> 4;
@@ -811,87 +813,21 @@ namespace Underworld
                 // }
                 // else
                 // {
-                    switch (CurrentAttackSwingType) //random for now
-                    {
-                        case 1:
-                            return 2; //bash
-                        case 2:
-                            return 4;//stab
-                        case 3:
-                        default:
-                            return 0; //slash
-                    }
+                switch (CurrentAttackSwingType) //random for now
+                {
+                    case 1:
+                        return 2; //bash
+                    case 2:
+                        return 4;//stab
+                    case 3:
+                    default:
+                        return 0; //slash
+                }
                 //}
             }
         }
 
-        /// <summary>
-        /// Applies damage to objects.
-        /// </summary>
-        /// <param name="objToDamage"></param>
-        /// <param name="basedamage"></param>
-        /// <param name="damagetype"></param>
-        /// <param name="damagesource"></param>
-        public static void DamageObject(uwObject objToDamage, int basedamage, int damagetype, int damagesource = 0)
-        {
-            uwObject.ScaleDamage(objToDamage.item_id, ref basedamage, damagetype);
-            Debug.Print($"Try and Damage {objToDamage.a_name} by {basedamage}");
-            switch (objToDamage.majorclass)
-            {
-                case 1:
-                    {
-                        npc.DamageNPC(
-                            critter: objToDamage,
-                            basedamage: basedamage,
-                            damagetype: damagetype,
-                            damagesource: damagesource);
-                        return;
-                    }
-                case 5:
-                    {
-                        if (objToDamage.OneF0Class == 0x14)
-                        {
-                            //door damage
-                            door.DamageDoor(
-                                doorobject: objToDamage,
-                                damage: basedamage,
-                                damagesource: 0);
-                            return;
-                        }
-                        break;
-                    }
-            }
-            //all other objects.
-            DamageGeneralObject(objToDamage, basedamage);
-        }
+ 
 
-        private static void DamageGeneralObject(uwObject objToDamage, int basedamage)
-        {
-            var qualityclass = commonObjDat.qualityclass(objToDamage.item_id);
-            if (commonObjDat.qualityclass(objToDamage.item_id) != 3)
-            {
-                basedamage >>= qualityclass;
-                var finalquality = Math.Max(0, objToDamage.quality - basedamage);
-                if (objToDamage.owner != 0)
-                {
-                    //door can have an owner
-                    if (commonObjDat.canhaveowner(objToDamage.item_id))
-                    {
-                        Debug.Print("Flag trespass to object owner");
-                    }
-                }
-                Debug.Print($"{objToDamage.a_name} quality is now {finalquality}");
-                objToDamage.quality = (short)finalquality;
-            }
-            
-            if (objToDamage.quality == 0)
-            {//TODO handle object destruction
-                if (a_lock.GetIsLocked(objToDamage))
-                {//unlock
-                    a_lock.SetIsLocked(objToDamage, false);
-                }
-                Debug.Print($"Destroy {objToDamage.a_name}");
-            }
-        }
     }//end class
 }//end namespace

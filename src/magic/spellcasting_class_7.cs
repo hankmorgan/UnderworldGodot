@@ -118,7 +118,7 @@ namespace Underworld
                     else
                     {
                         var basedamage = 0xA + playerdat.Casting / 2;
-                        npc.ScaledDamageOnNPCWithAnimo(
+                        damage.ScaledDamageOnNPCWithAnimo(
                             critter: obj,
                             basedamage: basedamage,
                             damagetype: 4,

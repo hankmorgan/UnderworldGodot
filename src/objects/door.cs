@@ -354,65 +354,51 @@ namespace Underworld
             return look.PrintLookDescription(doorobject, UWTileMap.current_tilemap.LevelObjects, 3);
         }
 
-        public static void DamageDoor(uwObject doorobject, int damage, int damagesource)
-        {
-            var doorcontrol = (door)doorobject.instance;
-            if (doorobject.classindex<=7)
-            {
-                var qualityclass = commonObjDat.qualityclass(doorobject.item_id);
-                if (qualityclass != 3)
-                {
-                    damage >>= qualityclass;
-                    if (_RES!=GAME_UW2)
-                    {
-                        if (doorobject.owner == 63)
-                        {
-                            //Door is spiked
-                            damage = 0;
-                            Debug.Print("Door is spiked. TEST ME");
-                        } 
-                    }
-                    Debug.Print($"Final door damage is {damage}");
+        // public static void DamageDoor(uwObject doorobject, int damage, int damagesource)
+        // {
+        //     var doorcontrol = (door)doorobject.instance;
+        //     if (doorobject.classindex<=7)
+        //     {
+        //         var qualityclass = commonObjDat.qualityclass(doorobject.item_id);
+        //         if (qualityclass != 3)
+        //         {
+        //             damage >>= qualityclass;
+        //             Debug.Print($"Final door damage is {damage}");
 
-                    if (damage>0)
-                    {
-                        if (doorobject.classindex<=7)
-                        {//closed doors
-                            var finalquality = Math.Max(0, doorobject.quality-damage);
-                            if (doorobject.owner!=0)
-                            {
-                                //door can have an owner
-                                if (commonObjDat.canhaveowner(doorobject.item_id))
-                                {
-                                    Debug.Print("Flag trespass to door owner");
-                                }
-                            }
-                            Debug.Print($"Door quality is now {finalquality}");
-                            doorobject.quality = (short)finalquality;
+        //             if (damage>0)
+        //             {
+        //                 var finalquality = Math.Max(0, doorobject.quality-damage);
+        //                 if (doorobject.classindex<=7)
+        //                 {//closed doors
+        //                     if (doorobject.owner)                       
 
-                            if (finalquality==0)
-                            {
-                                trigger.TriggerObjectLink(
-                                    character: damagesource, 
-                                    ObjectUsed: doorobject, 
-                                    triggerType: (int)triggerObjectDat.triggertypes.USE, 
-                                    triggerX: doorobject.tileX, 
-                                    triggerY: doorobject.tileY, 
-                                    objList: UWTileMap.current_tilemap.LevelObjects);
+        //                     Debug.Print($"Door quality is now {finalquality}");
+        //                     doorobject.quality = (short)finalquality;
+        //                     if ()
+        //                 }
+                         
+        //                 if (finalquality==0)
+        //                 {
+        //                     trigger.TriggerObjectLink(
+        //                         character: damagesource, 
+        //                         ObjectUsed: doorobject, 
+        //                         triggerType: (int)triggerObjectDat.triggertypes.USE, 
+        //                         triggerX: doorobject.tileX, 
+        //                         triggerY: doorobject.tileY, 
+        //                         objList: UWTileMap.current_tilemap.LevelObjects);
 
-                                a_lock.SetIsLocked(doorobject, false, 0);
-                                //doorcontrol.Locked=false;
-                                OpenDoor(doorcontrol);                                
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    Debug.Print("invulnerable door");
-                }
-            }
-        }
+        //                     a_lock.SetIsLocked(doorobject, false, 0);
+        //                     //doorcontrol.Locked=false;
+        //                     OpenDoor(doorcontrol);                                
+        //                 }
+        //             }
+        //         }
+        //         else
+        //         {
+        //             Debug.Print("invulnerable door");
+        //         }
+        //     }
+        // }
 
 
         //******************************RENDERING INFO**********************************/

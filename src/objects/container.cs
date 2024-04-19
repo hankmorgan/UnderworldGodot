@@ -64,14 +64,7 @@ namespace Underworld
                         if ((containerObj.classindex & 1) == 0)
                         {
                             containerObj.item_id |= 0x1;// set it to an opened version.
-                            if (containerObj.instance != null)
-                            {
-                                if (containerObj.instance.uwnode != null)
-                                {
-                                    var nd = (uwMeshInstance3D)containerObj.instance.uwnode.GetChild(0);
-                                    nd.Mesh.SurfaceSetMaterial(0, ObjectCreator.grObjects.GetMaterial(containerObj.item_id));
-                                }
-                            }
+                            ObjectCreator.RefreshSprite(containerObj);
                         }
                     }
                     int nextobj = containerObj.link;
@@ -114,6 +107,8 @@ namespace Underworld
                 }
             }
         }
+
+
 
 
         /// <summary>
