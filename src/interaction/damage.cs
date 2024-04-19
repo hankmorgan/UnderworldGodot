@@ -189,12 +189,15 @@ namespace Underworld
             return true;
         }
 
+        /// <summary>
+        /// Handles destruction of a damage object and replaces it with appropiate debris objects
+        /// </summary>
+        /// <param name="objToDestroy"></param>
+        /// <param name="damagetype"></param>
+        /// <param name="objList"></param>
+        /// <param name="WorldObject"></param>
         public static void ObjectDestruction(uwObject objToDestroy, int damagetype, uwObject[] objList, bool WorldObject)
-        {//this is uw2 logic. may need a seperate version for uw1 logic
-            if (_RES != GAME_UW2)
-            {
-                return;
-            }
+        {
             int Debris = -1;
             if (!UWTileMap.ValidTile(objToDestroy.tileX, objToDestroy.tileY))
             {
@@ -301,7 +304,14 @@ namespace Underworld
 
             if (Debris == -1)
             {
-                Debris = GetObjectTypeDebris(objToDestroy, damagetype);
+                if (_RES==GAME_UW2)
+                {
+                    Debris = GetObjectTypeDebris(objToDestroy, damagetype);
+                }
+                else
+                {
+                    Debris = 0xD5 + Rng.r.Next(0,2);
+                }                
             }
 
             if (Debris != -1)
@@ -338,9 +348,9 @@ namespace Underworld
         /// Gets the type of debris to be left behind by an object.
         /// </summary>
         /// <param name="item_id"></param>
-        /// <returns></returns>
+        /// <returns>item id of debris to spawn.</returns>
         static int GetObjectTypeDebris(uwObject objToDestroy, int damagetype)
-        {
+        {//only used in uw2
             if ((objToDestroy.majorclass != 0) || (damagetype == 8))
             {
                 if (objToDestroy.OneF0Class == 0x15)
