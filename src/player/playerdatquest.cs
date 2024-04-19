@@ -52,7 +52,7 @@ namespace Underworld
             {
                 if (questno <= 127)
                 {//Quests are every 4 bytes. The first 4 bits are the four quests in that block of 4 bytes.
-                    int offset = 0x66 + ((questno / 4) * 4);
+                    int offset = 0x67 + ((questno / 4) * 4);
                     int bit = questno % 4;
                     return (GetAt(offset) >> bit) & 0x1;
                 }
@@ -95,7 +95,7 @@ namespace Underworld
                 if (questno <= 127)
                 {//Quests are every 4 bytes. The first 4 bits are the four quests in that block of 4 bytes.
                     newValue = newValue & 0x1;
-                    int offset = 0x66 + (questno / 4) * 4;
+                    int offset = 0x67 + (questno / 4) * 4;
                     int bit = questno % 4;
                     byte existingValue = GetAt(offset);
                     byte mask = (byte)(1<< bit);
