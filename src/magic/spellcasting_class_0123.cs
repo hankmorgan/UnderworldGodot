@@ -13,10 +13,12 @@ namespace Underworld
             if ((_RES == GAME_UW2) && (majorclass == 2) && ((minorclass & 0x3F) == 5))
             {
                 //iron flesh.
-                //if xclock == 4 
-                // glaze over
-                //set xclock = 5
-                uimanager.AddToMessageScroll(GameStrings.GetString(1, 335));
+                if (playerdat.GetXClock(3)==4)
+                {
+                    playerdat.SetXClock(3, 5);
+                    uimanager.AddToMessageScroll(GameStrings.GetString(1, 335));
+                }
+                
             }
 
             //Apply the active effect if possible.

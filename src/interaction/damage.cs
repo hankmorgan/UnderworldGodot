@@ -264,7 +264,7 @@ namespace Underworld
                             {
                                 if ((_RES == GAME_UW2) && (objToDestroy.item_id == 0x116))
                                 {
-                                    Debug.Print("DJINN BOTTLE");
+                                    djinnbottle.DestroyDjinnBottle(objToDestroy,WorldObject);
                                 }
                                 else
                                 {
