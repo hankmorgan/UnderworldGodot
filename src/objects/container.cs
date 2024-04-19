@@ -153,8 +153,8 @@ namespace Underworld
                 }
             }
 
-            uimanager.EnableDisable(uimanager.instance.ArrowUp, start != 0);
-            uimanager.EnableDisable(uimanager.instance.ArrowDown, occupiedslots == 8);
+            uimanager.EnableDisable(uimanager.instance.ArrowUp, occupiedslots == 8);
+            uimanager.EnableDisable(uimanager.instance.ArrowDown, start != 0);
 
             uimanager.UpdateInventoryDisplay();
         }

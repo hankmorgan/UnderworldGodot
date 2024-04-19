@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://xjvqmrbs28xs"]
+[gd_scene load_steps=28 format=3 uid="uid://xjvqmrbs28xs"]
 
 [ext_resource type="Script" path="res://src/ui/uimanager.cs" id="1_lw0yg"]
 [ext_resource type="FontFile" uid="uid://pdy3t627nfxw" path="res://resources/fonts/FONT5X6I.ttf" id="3_safdl"]
@@ -19,8 +19,6 @@
 [ext_resource type="Texture2D" uid="uid://dx526kvjk8jmj" path="res://resources/cross2.png" id="21_5p8p7"]
 [ext_resource type="Texture2D" uid="uid://ciqrdjocqcm2p" path="res://resources/splash/uw1_poster.jpg" id="22_2v7cv"]
 [ext_resource type="Texture2D" uid="uid://6t8lhnhw347e" path="res://resources/placeholder_art/textbox_fill_uw2.png" id="22_vajvs"]
-[ext_resource type="Texture2D" uid="uid://cvik4hdmkwuwk" path="res://resources/placeholder_art/paperdolluw1/up button 027.png" id="22_vc6ux"]
-[ext_resource type="Texture2D" uid="uid://01h0bdambuq4" path="res://resources/placeholder_art/paperdolluw1/down button 028.png" id="23_e17mk"]
 [ext_resource type="Texture2D" uid="uid://cxu7fxiybk3ee" path="res://resources/splash/uw2_poster.jpg" id="23_f4jqj"]
 [ext_resource type="Texture2D" uid="uid://51go53yqj8oq" path="res://resources/placeholder_art/panels/panelsstats.png" id="24_filpa"]
 [ext_resource type="Texture2D" uid="uid://1ecbe7htlqun" path="res://resources/placeholder_art/spellicon.png" id="28_uj0ag"]
@@ -1592,7 +1590,6 @@ offset_left = 58.0
 offset_top = 280.0
 offset_right = 90.0
 offset_bottom = 320.0
-texture = ExtResource("22_vc6ux")
 
 [node name="DownArrow" type="TextureRect" parent="UI/Common/PaperDoll"]
 layout_mode = 0
@@ -1600,7 +1597,6 @@ offset_left = 98.0
 offset_top = 280.0
 offset_right = 130.0
 offset_bottom = 320.0
-texture = ExtResource("23_e17mk")
 
 [node name="RuneBag" type="Panel" parent="UI/Common"]
 visible = false

@@ -100,8 +100,14 @@ namespace Underworld
                 {
                     SelectedRunes[i].Position += offset;
                 }
+
+                offset = new Vector2(10, -12);
+                ArrowUp.Position += offset;
+                ArrowDown.Position +=offset;
             }
 
+            ArrowUp.Texture = grButtons.LoadImageAt(27);
+            ArrowDown.Texture = grButtons.LoadImageAt(28);
             EnableDisable(ArrowUp, false);
             EnableDisable(ArrowDown, false);
             EnableDisable(Chains, true);
@@ -569,13 +575,13 @@ namespace Underworld
             {
                 switch (extra_arg_0)
                 {
-                    case -1://move down
+                    case 1://move down
                         BackPackStart += 4;
                         container.DisplayContainerObjects(
                             obj: playerdat.InventoryObjects[uimanager.OpenedContainerIndex],
                             start: BackPackStart);
                         break;
-                    case 1: //move up
+                    case -1: //move up
                         BackPackStart -= 4;
                         if (BackPackStart < 0) { BackPackStart = 0; }
                         container.DisplayContainerObjects(
