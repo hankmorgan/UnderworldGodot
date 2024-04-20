@@ -166,6 +166,7 @@ namespace Underworld
         {
             //Add animation overlay entry
             var animoindex = animo.GetFreeAnimoSlot();
+            obj.owner = (short)animationObjectDat.startFrame(obj.item_id);
             if (animoindex != -1)
             {
                 var anim = UWTileMap.current_tilemap.Overlays[animoindex];

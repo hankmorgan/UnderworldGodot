@@ -77,14 +77,15 @@ namespace Underworld
             if (!InGame) { return; }
             bool LeftClick = (eventMouseButton.ButtonIndex == MouseButton.Left); 
            
-            Dictionary result = DoRayCast(eventMouseButton.Position, RayDistance);
+            Dictionary result = DoRayCast(eventMouseButton.Position, RayDistance, out Vector3 rayOrigin);
             if (result != null)
             {
                 if (result.ContainsKey("collider") && result.ContainsKey("normal") && result.ContainsKey("position"))
                 {
                     var obj = (StaticBody3D)result["collider"];
                     var normal = (Vector3)result["normal"];
-                    var hitCoordinate = (Vector3)result["position"];
+                    var hitCoordinateEnd = (Vector3)result["position"];
+                    var hitCoordinate = rayOrigin.Lerp(hitCoordinateEnd, 0.9f);
                     Debug.Print(obj.Name);
                     string[] vals = obj.Name.ToString().Split("_");
 

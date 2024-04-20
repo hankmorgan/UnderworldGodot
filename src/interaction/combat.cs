@@ -365,14 +365,16 @@ namespace Underworld
             {
                 position = mouseCursor.CursorPositionSub;//use mouselook position
             }
-            var result = uimanager.DoRayCast(position, 2f);
+            var result = uimanager.DoRayCast(position, 2f, out Vector3 rayorigin);
             if (result != null)
             {
                 if (result.ContainsKey("collider") && result.ContainsKey("normal") && result.ContainsKey("position"))
                 {
                     var obj = (StaticBody3D)result["collider"];
                     var normal = (Vector3)result["normal"];
-                    var hitCoordinate = (Vector3)result["position"];
+                    var hitCoordinateEnd = (Vector3)result["position"];
+                    var hitCoordinate = rayorigin.Lerp(hitCoordinateEnd,0.9f);
+
                     Debug.Print(obj.Name);
                     string[] vals = obj.Name.ToString().Split("_");
                     switch (vals[0].ToUpper())
@@ -381,6 +383,7 @@ namespace Underworld
                         case "WALL":
                         case "CEILING"://hit a wall/surface
                             Debug.Print("hit a wall. do selfdamage to the weapon");
+                            animo.SpawnAnimoAtPoint(0xB, hitCoordinate);
                             return false;
                         default:
                             if (int.TryParse(vals[0], out int index))
@@ -667,7 +670,26 @@ namespace Underworld
             {
                 //Do blood spatters.
                 Debug.Print("Spatter blood");
-                animo.SpawnAnimoAtPoint(0,hitCoordinate);
+                
+                if (objHit.majorclass==1)
+                {
+                    if (critterObjectDat.bleed(objHit.item_id) != 0)
+                    {
+                        animo.SpawnAnimoAtPoint(0,hitCoordinate); //blood
+                        if (PlayerHasCritted)
+                        {
+                            animo.SpawnAnimoAtPoint(0,hitCoordinate + (Vector3.Up * 0.12f)); //blood
+                        }
+                    }
+                    else
+                    {//npc does not bleed
+                        animo.SpawnAnimoAtPoint(0xB,hitCoordinate);// a flash damage
+                    }
+                }
+                else
+                {//hit a non-npc object
+                    animo.SpawnAnimoAtPoint(0xB,hitCoordinate);// a flash/damage
+                }
             }
 
             if (objHit.majorclass == 1)
