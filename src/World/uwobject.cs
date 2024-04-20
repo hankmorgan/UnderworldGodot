@@ -126,7 +126,7 @@ namespace Underworld
         {//0-8
             get
             {
-                int val = (int)GetAt16(PTR);
+                int val = GetAt16(PTR);
                 return DataLoader.ExtractBits(val, 0, 0x1FF);
             }
             set
@@ -144,7 +144,7 @@ namespace Underworld
         {//; //9-12
             get
             {
-                int val = (int)GetAt16(PTR);
+                int val = GetAt16(PTR);
                 return (short)DataLoader.ExtractBits(val, 9, 0xF);
             }
             set
@@ -162,7 +162,7 @@ namespace Underworld
         {//; //9-11
             get
             {
-                int val = (int)GetAt16(PTR);
+                int val = GetAt16(PTR);
                 return (short)DataLoader.ExtractBits(val, 9, 0x7);
             }
             set
@@ -227,7 +227,7 @@ namespace Underworld
         {//;   //12  (short)(ExtractBits(Vals[0], 12, 1));
             get
             {
-                int val = (int)GetAt16(PTR);
+                int val = GetAt16(PTR);
                 return (short)DataLoader.ExtractBits(val, 12, 1);
             }
             set
@@ -242,7 +242,7 @@ namespace Underworld
         {//;   //13 // (short)(ExtractBits(Vals[0], 13, 1))
             get
             {
-                int val = (int)GetAt16(PTR);
+                int val = GetAt16(PTR);
                 return (short)DataLoader.ExtractBits(val, 13, 1);
             }
             set
@@ -257,7 +257,7 @@ namespace Underworld
         {//(short)(ExtractBits(Vals[0], 14, 1));
             get
             {
-                int val = (int)GetAt16(PTR);
+                int val = GetAt16(PTR);
                 return (short)DataLoader.ExtractBits(val, 14, 1);
             }
             set
@@ -272,7 +272,7 @@ namespace Underworld
         {
             get
             {
-                int val = (int)GetAt16(PTR);
+                int val = GetAt16(PTR);
                 return (short)DataLoader.ExtractBits(val, 15, 1);
             }
             set
@@ -282,17 +282,11 @@ namespace Underworld
                 SetAt16(PTR, existingValue | ((value & 0x1) << 15));
             }
         }
-
-        public int Obsolete_texture; // Note: some objects don't have flags and use the whole lower byte as a texture number
-                                     //(gravestone, picture, lever, switch, shelf, bridge, ..)
-                                     //This variable is uses for shorthand usage of this property
-                                     //Not used ??
-
         public short zpos
         {//; (short)(ExtractBits(Vals[1], 0, 0x7f)); 
             get
             {
-                int val = (int)GetAt16(PTR + 2);
+                int val = GetAt16(PTR + 2);
                 return (short)DataLoader.ExtractBits(val, 0, 0x7f);
             }
             set
@@ -307,7 +301,7 @@ namespace Underworld
         {//;(short)(ExtractBits(Vals[1], 7, 0x7)); //bits 7-9
             get
             {
-                int val = (int)GetAt16(PTR + 2);
+                int val = GetAt16(PTR + 2);
                 return (short)DataLoader.ExtractBits(val, 7, 0x7);
             }
             set
@@ -332,7 +326,7 @@ namespace Underworld
         {//(short)(ExtractBits(Vals[1], 10, 0x7));
             get
             {
-                int val = (int)GetAt16(PTR + 2);
+                int val = GetAt16(PTR + 2);
                 return (short)DataLoader.ExtractBits(val, 10, 0x7);
             }
             set
@@ -355,7 +349,7 @@ namespace Underworld
         {// (short)(ExtractBits(Vals[1], 13, 0x7));
             get
             {
-                int val = (int)GetAt16(PTR + 2);
+                int val = GetAt16(PTR + 2);
                 return (short)DataLoader.ExtractBits(val, 13, 0x7);
             }
             set
@@ -377,7 +371,7 @@ namespace Underworld
         { // (short)(ExtractBits(Vals[2], 0, 0x3f))
             get
             {
-                int val = (int)GetAt16(PTR + 4);
+                int val = GetAt16(PTR + 4);
                 return (short)DataLoader.ExtractBits(val, 0, 0x3f);
             }
             set
@@ -392,7 +386,7 @@ namespace Underworld
         {//(short)(ExtractBits(Vals[2], 6, 0x3ff));
             get
             {
-                int val = (int)GetAt16(PTR + 4);
+                int val = GetAt16(PTR + 4);
                 return (short)DataLoader.ExtractBits(val, 6, 0x3ff);
             }
             set
@@ -407,7 +401,7 @@ namespace Underworld
         { // (short)(ExtractBits(Vals[2], 0, 0x3f))
             get
             {
-                int val = (int)GetAt16(PTR + 6);
+                int val = GetAt16(PTR + 6);
                 return (short)DataLoader.ExtractBits(val, 0, 0x3f);
             }
             set
@@ -430,7 +424,7 @@ namespace Underworld
         {//(short)(ExtractBits(Vals[2], 6, 0x3ff));
             get
             {
-                int val = (int)GetAt16(PTR + 6);
+                int val = GetAt16(PTR + 6);
                 return (short)DataLoader.ExtractBits(val, 6, 0x3ff);
             }
             set
@@ -464,7 +458,7 @@ namespace Underworld
             get
             {
                 if (IsStatic) { return 0; }
-                return (short)GetAt(PTR + 0x9);
+                return GetAt(PTR + 0x9);
             }
             set
             {
@@ -514,18 +508,81 @@ namespace Underworld
         //    }
         //}
 
-        public byte MobileUnk_0xA
+        // public byte MobileUnk_0xA
+        // {
+        //     get
+        //     {
+        //         if (IsStatic) { return 0; }
+        //         return GetAt(PTR + 0xa);
+        //     }
+        //     set
+        //     {
+        //         if (!IsStatic)
+        //         {
+        //             SetAt(PTR + 0xA, (byte)value);
+        //         }
+        //     }
+        // }
+
+         public short UnkBit_0XA_Bit012
         {
             get
             {
                 if (IsStatic) { return 0; }
-                return GetAt(PTR + 0xa);
+                int val = GetAt(PTR + 0xA);
+                return (short)DataLoader.ExtractBits(val, 0, 7);
             }
             set
             {
                 if (!IsStatic)
                 {
-                    SetAt(PTR + 0xA, (byte)value);
+                    int existingValue = GetAt(PTR + 0xA);
+                    existingValue &= 0xF8; //Mask out current val
+                    SetAt(PTR + 0xA, (byte)(existingValue | ((value & 0x7))));
+                }
+            }
+        }
+
+        /// <summary>
+        /// When 0 study npc returns a hp of 30????
+        /// </summary>
+        public short UnkBit_0XA_Bit456
+        {
+            get
+            {
+                if (IsStatic) { return 0; }
+                int val = GetAt(PTR + 0xA);
+                return (short)DataLoader.ExtractBits(val, 4, 7);
+            }
+            set
+            {
+                if (!IsStatic)
+                {
+                    int existingValue = GetAt(PTR + 0xA);
+                    existingValue &= 0x8F; //Mask out current val
+                    SetAt(PTR + 0xA, (byte)(existingValue | ((value & 0x7) << 4)));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Used by create object traps. Possibly flags if npc is "live"
+        /// </summary>
+        public short UnkBit_0XA_Bit7
+        {
+            get
+            {
+                if (IsStatic) { return 0; }
+                int val = GetAt(PTR + 0xA);
+                return (short)DataLoader.ExtractBits(val, 7, 1);
+            }
+            set
+            {
+                if (!IsStatic)
+                {
+                    int existingValue = GetAt(PTR + 0xA);
+                    existingValue &= 0x7F; //Mask out current val
+                    SetAt(PTR + 0xA, (byte)(existingValue | ((value & 0x1) << 7)));
                 }
             }
         }
@@ -535,7 +592,7 @@ namespace Underworld
             get
             {
                 if (IsStatic) { return 0; }
-                int val = (int)GetAt16(PTR + 0xb);
+                int val = GetAt16(PTR + 0xb);
                 return (byte)(DataLoader.ExtractBits(val, 0, 0xF));
             }
             set
@@ -554,7 +611,7 @@ namespace Underworld
             get
             {
                 if (IsStatic) { return 0; }
-                int val = (int)GetAt16(PTR + 0xb);
+                int val = GetAt16(PTR + 0xb);
                 return (byte)(DataLoader.ExtractBits(val, 4, 0xFF));
             }
             set
@@ -573,7 +630,7 @@ namespace Underworld
             get
             {
                 if (IsStatic) { return 0; }
-                int val = (int)GetAt16(PTR + 0xb);
+                int val = GetAt16(PTR + 0xb);
                 return (byte)(DataLoader.ExtractBits(val, 12, 0xF));
             }
             set
@@ -592,7 +649,7 @@ namespace Underworld
             get
             {
                 if (IsStatic) { return 0; }
-                int val = (int)GetAt16(PTR + 0xd);
+                int val = GetAt16(PTR + 0xd);
                 return (byte)(DataLoader.ExtractBits(val, 0, 0xF));
             }
             set
@@ -606,21 +663,59 @@ namespace Underworld
             }
         }
 
-        public short MobileUnk_0xD_4_FF
+        public short TargetZHeight
         {
             get
             {
                 if (IsStatic) { return 0; }
-                int val = (int)GetAt16(PTR + 0xd);
-                return (short)(DataLoader.ExtractBits(val, 4, 0xff));
+                int val = GetAt16(PTR + 0xd);
+                return (short)(DataLoader.ExtractBits(val, 4, 0xf));
             }
             set
             {
                 if (!IsStatic)
                 {
                     int existingValue = GetAt16(PTR + 0xD);
-                    existingValue &= 0xF00F; //Mask out current val
-                    SetAt16(PTR + 0xD, existingValue | ((value & 0xFF) << 4));
+                    existingValue &= 0xFF0F; //Mask out current val
+                    SetAt16(PTR + 0xD, existingValue | ((value & 0xF) << 4));
+                }
+            }
+        }
+
+        public short UnkBit_0XD_Bit8
+        {
+            get
+            {
+                if (IsStatic) { return 0; }
+                int val = GetAt16(PTR + 0xd);
+                return (short)(DataLoader.ExtractBits(val, 8, 1));
+            }
+            set
+            {
+                if (!IsStatic)
+                {
+                    int existingValue = GetAt16(PTR + 0xD);
+                    existingValue &= 0xFEFF; //Mask out current val
+                    SetAt16(PTR + 0xD, existingValue | ((value & 0x1) << 8));
+                }
+            }
+        }
+
+        public short UnkBit_0XD_Bit9
+        {
+            get
+            {
+                if (IsStatic) { return 0; }
+                int val = GetAt16(PTR + 0xd);
+                return (short)(DataLoader.ExtractBits(val, 9, 1));
+            }
+            set
+            {
+                if (!IsStatic)
+                {
+                    int existingValue = GetAt16(PTR + 0xD);
+                    existingValue &= 0xFDFF; //Mask out current val
+                    SetAt16(PTR + 0xD, existingValue | ((value & 0x1) << 9));
                 }
             }
         }
@@ -633,17 +728,49 @@ namespace Underworld
             get
             {
                 if (IsStatic) { return 0; }
-                int val = (int)GetAt16(PTR + 0xd);
+                int val = GetAt16(PTR + 0xd);
                 return (short)(DataLoader.ExtractBits(val, 0xA, 1));
+            }
+            set
+            {
+                if (!IsStatic)
+                {
+                    int existingValue = GetAt16(PTR + 0xD);
+                    existingValue &= 0xFBFF; //Mask out current val
+                    SetAt16(PTR + 0xD, existingValue | ((value & 0x1) << 10));
+                }
             }
         }
 
+
+        public short UnkBit_0XD_Bit11
+        {
+            get
+            {
+                if (IsStatic) { return 0; }
+                int val = GetAt16(PTR + 0xd);
+                return (short)(DataLoader.ExtractBits(val, 11, 1));
+            }
+            set
+            {
+                if (!IsStatic)
+                {
+                    int existingValue = GetAt16(PTR + 0xD);
+                    existingValue &= 0xF7FF; //Mask out current val
+                    SetAt16(PTR + 0xD, existingValue | ((value & 0x1) << 11));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Has the NPC spawned their inventory objects yet.
+        /// </summary>
         public short LootSpawnedFlag
         {
             get
             {
                 if (IsStatic) { return 0; }
-                int val = (int)GetAt16(PTR + 0xd);
+                int val = GetAt16(PTR + 0xd);
                 return (short)(DataLoader.ExtractBits(val, 12, 1));
             }
             set
@@ -662,7 +789,7 @@ namespace Underworld
             get
             {
                 if (IsStatic) { return 0; }
-                int val = (int)GetAt16(PTR + 0xd);
+                int val = GetAt16(PTR + 0xd);
                 return (short)(DataLoader.ExtractBits(val, 13, 1));
             }
             set
@@ -681,7 +808,7 @@ namespace Underworld
             get
             {
                 if (IsStatic) { return 0; }
-                int val = (int)GetAt16(PTR + 0xd);
+                int val = GetAt16(PTR + 0xd);
                 return (short)(DataLoader.ExtractBits(val, 14, 0x3));
             }
             set
@@ -695,12 +822,12 @@ namespace Underworld
             }
         }
 
-        public short MobileUnk_0xF_0_3F
+        public short TargetTileX
         {
             get
             {
                 if (IsStatic) { return 0; }
-                int val = (int)GetAt16(PTR + 0xf);
+                int val = GetAt16(PTR + 0xf);
                 return (short)(DataLoader.ExtractBits(val, 0, 0x3F));
             }
             set
@@ -714,12 +841,12 @@ namespace Underworld
             }
         }
 
-        public short npc_height
+        public short TargetTileY
         {
             get
             {
                 if (IsStatic) { return 0; }
-                int val = (int)GetAt16(PTR + 0xf);
+                int val = GetAt16(PTR + 0xf);
                 return (short)(DataLoader.ExtractBits(val, 6, 0x3F));
             }
             set
@@ -733,12 +860,15 @@ namespace Underworld
             }
         }
 
-        public short MobileUnk_0xF_C_F
+        /// <summary>
+        /// Possibliy the type of weapon swing the NPC is doing
+        /// </summary>
+        public short Swing
         {///Possibly used as a look up in to NPC charge modifiers?
             get
             {
                 if (IsStatic) { return 0; }
-                int val = (int)GetAt16(PTR + 0xf);
+                int val = GetAt16(PTR + 0xf);
                 return (short)(DataLoader.ExtractBits(val, 0xC, 0xF));
             }
             set
@@ -752,12 +882,12 @@ namespace Underworld
             }
         }
 
-        public short MobileUnk_0x11
+        public short AccumulatedDamage
         {
             get
             {
                 if (IsStatic) { return 0; }
-                return (short)GetAt(PTR + 0x11);
+                return GetAt(PTR + 0x11);
             }
             set
             {
@@ -773,7 +903,7 @@ namespace Underworld
             get
             {
                 if (IsStatic) { return 0; }
-                return (short)GetAt(PTR + 0x12);
+                return GetAt(PTR + 0x12);
             }
             set
             {
@@ -784,18 +914,56 @@ namespace Underworld
             }
         }
 
-        public short MobileUnk_0x13
+        // public short MobileUnk_0x13
+        // {
+        //     get
+        //     {
+        //         if (IsStatic) { return 0; }
+        //         return GetAt(PTR + 0x13);
+        //     }
+        //     set
+        //     {
+        //         if (!IsStatic)
+        //         {
+        //             SetAt(PTR + 0x13, (byte)value);
+        //         }
+        //     }
+        // }
+
+        public short UnkBit_0X13_Bit0to6
         {
             get
             {
                 if (IsStatic) { return 0; }
-                return (short)(GetAt(PTR + 0x13));
+                int val = GetAt(PTR + 0x13);
+                return (short)DataLoader.ExtractBits(val, 0, 0x7f);
             }
             set
             {
                 if (!IsStatic)
                 {
-                    SetAt(PTR + 0x13, (byte)value);
+                    int existingValue = GetAt(PTR + 0x13);
+                    existingValue &= 0x80; //Mask out current val
+                    SetAt(PTR + 0x13, (byte)(existingValue | (value & 0x7f)));
+                }
+            }
+        }
+
+        public short UnkBit_0X13_Bit7
+        {
+            get
+            {
+                if (IsStatic) { return 0; }
+                int val = GetAt(PTR + 0x13);
+                return (short)DataLoader.ExtractBits(val, 7, 1);
+            }
+            set
+            {
+                if (!IsStatic)
+                {
+                    int existingValue = GetAt(PTR + 0x13);
+                    existingValue &= 0x7F; //Mask out current val
+                    SetAt(PTR + 0x13, (byte)(existingValue | ((value & 0x1) << 7)));
                 }
             }
         }
@@ -805,14 +973,14 @@ namespace Underworld
             get
             {
                 if (IsStatic) { return 0; }
-                int val = (int)GetAt(PTR + 0x14);
-                return (short)(DataLoader.ExtractBits(val, 0, 0x8));
+                int val = GetAt(PTR + 0x14);
+                return (short)DataLoader.ExtractBits(val, 0, 0x7);
             }
             set
             {
-                byte existingValue = (byte)GetAt16(PTR + 0x14);
-                existingValue &= 0xF7; //Mask out current val
-                SetAt(PTR + 0x14, (byte)(existingValue | ((value & 0x7) << 0)));
+                byte existingValue = GetAt(PTR + 0x14);
+                existingValue &= 0xF8; //Mask out current val
+                SetAt(PTR + 0x14, (byte)(existingValue | (value & 0x7)));
             }
         }
 
@@ -821,7 +989,7 @@ namespace Underworld
             get
             {
                 if (IsStatic) { return 0; }
-                int val = (int)GetAt(PTR + 0x14);
+                int val = GetAt(PTR + 0x14);
                 return (short)(DataLoader.ExtractBits(val, 3, 0x1F));
             }
             set
@@ -832,19 +1000,51 @@ namespace Underworld
             }
         }
 
+
+        public short npc_attack
+        {
+            get
+            {
+                return Projectile_Pitch;
+            }
+            set
+            {
+               Projectile_Pitch = value;
+            }
+        }
+
         public short npc_animation
         {
             get
             {
                 if (IsStatic) { return 0; }
-                int val = (int)GetAt(PTR + 0x15);
+                int val = GetAt(PTR + 0x15);
                 return (short)(DataLoader.ExtractBits(val, 0, 0x3F));
             }
             set
             {
-                byte existingValue = (byte)GetAt(PTR + 0x15);
+                byte existingValue = GetAt(PTR + 0x15);
                 existingValue &= 0xC0; //Mask out current val
                 SetAt(PTR + 0x15, (byte)(existingValue | ((value & 0x3F) << 0x0)));
+            }
+        }
+
+        public short UnkBit_0X15_Bit6
+        {
+            get
+            {
+                if (IsStatic) { return 0; }
+                int val = GetAt(PTR + 0x15);
+                return (short)DataLoader.ExtractBits(val, 6, 1);
+            }
+            set
+            {
+                if (!IsStatic)
+                {
+                    int existingValue = GetAt(PTR + 0x15);
+                    existingValue &= 0xBF; //Mask out current val
+                    SetAt(PTR + 0x15, (byte)(existingValue | ((value & 0x1) << 6)));
+                }
             }
         }
 
@@ -864,12 +1064,15 @@ namespace Underworld
         //    }
         //}
 
+        /// <summary>
+        /// Possibly related to pathfinding
+        /// </summary>
         public short MobileUnk_0x16_0_F
         {
             get
             {
                 if (IsStatic) { return 0; }
-                int val = (int)GetAt16(PTR + 0x16);
+                int val = GetAt16(PTR + 0x16);
                 return (short)(DataLoader.ExtractBits(val, 0, 0xF));
             }
             set
@@ -878,7 +1081,7 @@ namespace Underworld
                 {
                     int existingValue = GetAt16(PTR + 0x16);
                     existingValue &= 0xFFF0; //Mask out current val
-                    SetAt16(PTR + 0x16, (existingValue | ((value & 0xF) << 0x0)));
+                    SetAt16(PTR + 0x16, (existingValue | (value & 0xF)));
                 }
             }
         }
@@ -888,7 +1091,7 @@ namespace Underworld
             get
             {
                 if (IsStatic) { return 0; }
-                int val = (int)GetAt16(PTR + 0x16);
+                int val = GetAt16(PTR + 0x16);
                 return (short)(DataLoader.ExtractBits(val, 4, 0x3F));
             }
             set
@@ -907,7 +1110,7 @@ namespace Underworld
             get
             {
                 if (IsStatic) { return 0; }
-                int val = (int)GetAt16(PTR + 0x16);
+                int val = GetAt16(PTR + 0x16);
                 return (short)(DataLoader.ExtractBits(val, 10, 0x3F));
             }
             set
@@ -925,62 +1128,181 @@ namespace Underworld
             get
             {
                 if (IsStatic) { return 0; }
-                int val = (int)GetAt(PTR + 0x18);
+                int val = GetAt(PTR + 0x18);
                 return (short)(DataLoader.ExtractBits(val, 0, 0x1F));
             }
             set
             {
-                byte existingValue = (byte)GetAt(PTR + 0x18);
+                byte existingValue = GetAt(PTR + 0x18);
                 existingValue &= 0xE0; //Mask out current val
                 SetAt(PTR + 0x18, (byte)(existingValue | ((value & 0x1F) << 0x0)));
             }
         }
 
-        public short MobileUnk_0x18_5_7
+        /// <summary>
+        /// Possibly used to indicate if npc is at their target
+        /// </summary>
+        public short UnkBit_0x18_5
         {
             get
             {
                 if (IsStatic) { return 0; }
-                int val = (int)GetAt(PTR + 0x18);
-                return (short)(DataLoader.ExtractBits(val, 5, 0x7));
+                int val = GetAt(PTR + 0x18);
+                return (short)(DataLoader.ExtractBits(val, 5, 1));
             }
             set
             {
-                byte existingValue = (byte)GetAt(PTR + 0x18);
-                existingValue &= 0x1F; //Mask out current val
-                SetAt(PTR + 0x18, (byte)(existingValue | ((value & 0x7) << 0x5)));
+                byte existingValue = GetAt(PTR + 0x18);
+                existingValue &= 0xDF; //Mask out current val
+                SetAt(PTR + 0x18, (byte)(existingValue | ((value & 0x1) << 0x5)));
             }
         }
 
+        public short UnkBit_0x18_6
+        {
+            get
+            {
+                if (IsStatic) { return 0; }
+                int val = GetAt(PTR + 0x18);
+                return (short)DataLoader.ExtractBits(val, 6, 1);
+            }
+            set
+            {
+                byte existingValue = GetAt(PTR + 0x18);
+                existingValue &= 0xBF; //Mask out current val
+                SetAt(PTR + 0x18, (byte)(existingValue | ((value & 0x1) << 0x6)));
+            }
+        }
+
+        public short UnkBit_0x18_7
+        {
+            get
+            {
+                if (IsStatic) { return 0; }
+                int val = GetAt(PTR + 0x18);
+                return (short)DataLoader.ExtractBits(val, 7, 1);
+            }
+            set
+            {
+                byte existingValue = GetAt(PTR + 0x18);
+                existingValue &= 0x7F; //Mask out current val
+                SetAt(PTR + 0x18, (byte)(existingValue | ((value & 0x1) << 0x7)));
+            }
+        }
+
+        /// <summary>
+        /// Possibly a series of AI Flags
+        /// </summary>
         public short npc_hunger
         {
             get
             {
                 if (IsStatic) { return 0; }
-                int val = (int)GetAt(PTR + 0x19);
+                int val = GetAt(PTR + 0x19);
                 return (short)(DataLoader.ExtractBits(val, 0, 0x3F));
             }
             set
             {
-                byte existingValue = (byte)GetAt(PTR + 0x19);
+                byte existingValue = GetAt(PTR + 0x19);
                 existingValue &= 0xC0; //Mask out current val
                 SetAt(PTR + 0x19, (byte)(existingValue | ((value & 0x3f) << 0x0)));
             }
         }
 
-        public short MobileUnk_0x19_6_3
+        public short UnkBit_0x19_0
+        {
+             get
+            {
+                if (IsStatic) { return 0; }
+                int val = GetAt(PTR + 0x19);
+                return (short)DataLoader.ExtractBits(val, 0, 0x1);
+            }
+            set
+            {
+                byte existingValue = GetAt(PTR + 0x19);
+                existingValue &= 0xFE; //Mask out current val
+                SetAt(PTR + 0x19, (byte)(existingValue | ((value & 0x1) << 0)));
+            }
+        }
+        
+        public short UnkBit_0x19_4
+        {
+             get
+            {
+                if (IsStatic) { return 0; }
+                int val = GetAt(PTR + 0x19);
+                return (short)DataLoader.ExtractBits(val, 4, 0x1);
+            }
+            set
+            {
+                byte existingValue = GetAt(PTR + 0x19);
+                existingValue &= 0xEF; //Mask out current val
+                SetAt(PTR + 0x19, (byte)(existingValue | ((value & 0x1) << 4)));
+            }
+        }
+
+        public short UnkBit_0x19_23
         {
             get
             {
                 if (IsStatic) { return 0; }
-                int val = (int)GetAt(PTR + 0x19);
-                return (short)(DataLoader.ExtractBits(val, 6, 0x3));
+                int val = GetAt(PTR + 0x19);
+                return (short)DataLoader.ExtractBits(val, 2, 3);
             }
             set
             {
-                byte existingValue = (byte)GetAt(PTR + 0x19);
-                existingValue &= 0x3F; //Mask out current val
-                SetAt(PTR + 0x19, (byte)(existingValue | ((value & 0x3) << 6)));
+                byte existingValue = GetAt(PTR + 0x19);
+                existingValue &= 0xF3; //Mask out current val
+                SetAt(PTR + 0x19, (byte)(existingValue | ((value & 0x3) << 2)));
+            }
+        }
+
+        public short UnkBit_0x19_5
+        {
+             get
+            {
+                if (IsStatic) { return 0; }
+                int val = GetAt(PTR + 0x19);
+                return (short)DataLoader.ExtractBits(val, 5, 0x1);
+            }
+            set
+            {
+                byte existingValue = GetAt(PTR + 0x19);
+                existingValue &= 0xDF; //Mask out current val
+                SetAt(PTR + 0x19, (byte)(existingValue | ((value & 0x1) << 5)));
+            }
+        }
+
+
+        public short UnkBit_0x19_6
+        {
+            get
+            {
+                if (IsStatic) { return 0; }
+                int val = GetAt(PTR + 0x19);
+                return (short)DataLoader.ExtractBits(val, 6, 0x1);
+            }
+            set
+            {
+                byte existingValue = GetAt(PTR + 0x19);
+                existingValue &= 0xBF; //Mask out current val
+                SetAt(PTR + 0x19, (byte)(existingValue | ((value & 0x1) << 6)));
+            }
+        }
+
+        public short UnkBit_0x19_7
+        {
+            get
+            {
+                if (IsStatic) { return 0; }
+                int val = GetAt(PTR + 0x19);
+                return (short)DataLoader.ExtractBits(val, 7, 0x1);
+            }
+            set
+            {
+                byte existingValue = GetAt(PTR + 0x19);
+                existingValue &= 0x7F; //Mask out current val
+                SetAt(PTR + 0x19, (byte)(existingValue | ((value & 0x1) << 7)));
             }
         }
 
@@ -990,7 +1312,7 @@ namespace Underworld
             get
             {
                 if (IsStatic) { return 0; }
-                return (short)GetAt(PTR + 0x1a);
+                return GetAt(PTR + 0x1a);
             }
             set
             {

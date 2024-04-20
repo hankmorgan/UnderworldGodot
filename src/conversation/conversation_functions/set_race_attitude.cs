@@ -31,7 +31,7 @@ namespace Underworld
                             {//npc
                                 if (obj.item_id == talker.item_id)
                                 {
-                                    if (((obj.MobileUnk_0xA & 0x80) >> 7) == 0)
+                                    if (obj.UnkBit_0XA_Bit7 == 0 ) //  .MobileUnk_0xA & 0x80) >> 7) == 0)
                                     {
                                         if (critterObjectDat.race(obj.item_id) == race)
                                         {

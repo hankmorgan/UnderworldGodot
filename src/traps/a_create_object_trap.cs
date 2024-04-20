@@ -111,7 +111,8 @@ namespace Underworld
                 //but also initialise its defaults depending on the critter defaults
                 ObjectCreator.InitialiseCritter(template);
                 //Create the object 
-                template.MobileUnk_0xA |=0x80; //set bit
+                //template.MobileUnk_0xA |=0x80; //set bit
+                template.UnkBit_0XA_Bit7 = 1;
                 DoCreateObject(triggerX, triggerY, template);
                 //and then revert it back to a the adventurer template.
                 template.item_id = 127;

@@ -196,7 +196,7 @@ namespace Underworld
             {
                 if (critter.npc_whoami == 0x100)
                 {
-                    var unk = (critter.MobileUnk_0xA & 0x70) >> 4;
+                    var unk = critter.UnkBit_0XA_Bit456; //(critter.MobileUnk_0xA & 0x70) >> 4;
                     if (unk == 0)
                     {
                         hp = 30;

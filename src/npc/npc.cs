@@ -187,6 +187,7 @@ namespace Underworld
             {
                 foreach (var n in ObjectCreator.npcs)
                 {
+                    n.uwobject.AccumulatedDamage = 0;
                     if (n.uwobject.tileY != 99)
                     {
                         short CalcedFacing = CalculateFacingAngleToNPC(n);

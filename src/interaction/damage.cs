@@ -57,11 +57,10 @@ namespace Underworld
 
             Debug.Print($"Damage {critter.a_name} by {basedamage}");
 
-            //Note to be strictly compatable with UW behaviour the damage should be accumulated for the npc and applied
-            //once per frame. This is used to control the angering behaviour of the npc in checking against passiveness.
-            //In the future a total damage figure will be used here that is evaluated each frame as part of the AI routine
+            //Note to be strictly compatable with UW behaviour the damage should be accumulated for the npc and test
+            //once per tick This is used to control the angering behaviour of the npc in checking against passiveness.
             critter.npc_hp = (byte)Math.Max(0, critter.npc_hp - basedamage);
-
+            critter.AccumulatedDamage+=(short)basedamage;//how much total damage has been applied in this tick.
             //make the npc react to the damage source. player if 0
             //record the damage source as the player
             Debug.Print($"Record damage source as {damagesource}");

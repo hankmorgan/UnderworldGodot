@@ -80,44 +80,54 @@ namespace Underworld
             if (slot != 0)
             {
                 var obj = UWTileMap.current_tilemap.LevelObjects[slot];
-                obj.quality = 0x28;
-                obj.item_id = item_id;
-                obj.zpos = 0;
-                obj.doordir = 0;
-                obj.invis = 0;
-                obj.enchantment = 0;
-                obj.flags = 0; //DBLCHK (0x11)
-                obj.xpos = 3;
-                obj.ypos = 3;
-                obj.heading = 0;
-                obj.next = 0;
-                obj.owner = 0;
-                //allocate static props
-                var stackable = commonObjDat.stackable(item_id);
-
-                switch (stackable)
+                if (WhichList == ObjectListType.StaticList)
                 {
-                    case 0:
-                    case 2:
-                        obj.link = 1;
-                        obj.is_quant = 1;
-                        break;
-                    case 1:
-                    case 3:
-                    default:
-                        obj.is_quant = 0;
-                        obj.link = 0;
-                        break;
+                    obj.quality = 0x28;
+                    obj.item_id = item_id;
+                    obj.zpos = 0;
+                    obj.doordir = 0;
+                    obj.invis = 0;
+                    obj.enchantment = 0;
+                    obj.flags = 0; //DBLCHK (0x11)
+                    obj.xpos = 3;
+                    obj.ypos = 3;
+                    obj.heading = 0;
+                    obj.next = 0;
+                    obj.owner = 0;
+                    //allocate static props
+                    var stackable = commonObjDat.stackable(item_id);
+
+                    switch (stackable)
+                    {
+                        case 0:
+                        case 2:
+                            obj.link = 1;
+                            obj.is_quant = 1;
+                            break;
+                        case 1:
+                        case 3:
+                        default:
+                            obj.is_quant = 0;
+                            obj.link = 0;
+                            break;
+                    }
                 }
-
-                if (obj.majorclass == 1) //NPC/mobile
+                else
                 {
-                    //TODO INITIALISE CRITTER/mobile objects
+                    //mobile object                    
+                    if (obj.majorclass == 1) //NPC
+                    {
+                        //in uw2 critter is initialised here, uw1 skips this. leaving it like this for now as I've yet to find the uw1 equivilant to study
+                        InitialiseCritter(obj);
+                    }
+                    else
+                    {
+                        //todo projectile props
+                    }
                 }
             }
             return slot;
-        }
-
+        }        
 
         /// <summary>
         /// Gets an object slot that can be allocated for a new object
@@ -150,7 +160,7 @@ namespace Underworld
         public static void RemoveObject(uwObject obj)
         {
             //remove from world
-            if (obj.index<256)
+            if (obj.index < 256)
             {//mobile
                 UWTileMap.current_tilemap.MobileFreeListObject = obj.index;
                 UWTileMap.current_tilemap.MobileFreeListPtr++;
@@ -161,7 +171,7 @@ namespace Underworld
                 UWTileMap.current_tilemap.StaticFreeListObject = obj.index;
                 UWTileMap.current_tilemap.StaticFreeListPtr++;
                 Debug.Print($"Freeing Static {obj.index} Pointer incremented to {UWTileMap.current_tilemap.StaticFreeListPtr}");
-            }           
+            }
 
             if (obj.instance != null)
             {
@@ -182,14 +192,14 @@ namespace Underworld
         /// <param name="a_tilemap"></param>
         public static void GenerateObjects(uwObject[] objects, UWTileMap a_tilemap)
         {
-            
+
             npcs = new();
-            for (int x = 0; x<=a_tilemap.Tiles.GetUpperBound(0);x++)
+            for (int x = 0; x <= a_tilemap.Tiles.GetUpperBound(0); x++)
             {
-                for (int y = 0; y<=a_tilemap.Tiles.GetUpperBound(0);y++)
+                for (int y = 0; y <= a_tilemap.Tiles.GetUpperBound(0); y++)
                 {
-                    var next = a_tilemap.Tiles[x,y].indexObjectList;
-                    while (next!=0)
+                    var next = a_tilemap.Tiles[x, y].indexObjectList;
+                    while (next != 0)
                     {
                         var obj = a_tilemap.LevelObjects[next];
                         RenderObject(obj, a_tilemap);
@@ -235,19 +245,19 @@ namespace Underworld
                             unimplemented = false;
                         }
                         break;
-                    }                                
+                    }
                 case 2://misc items incl containers, food, and lights.                
                     break;
                 case 3: // misc objects
                     {
                         unimplemented = MajorClass3(obj, newNode, grObjects, name);
                         break;
-                    }       
+                    }
                 case 4://keys, usables and readables
                     {
                         unimplemented = MajorClass4(obj, newNode, grObjects, name);
-                        break;     
-                    }    
+                        break;
+                    }
                 case 5: //doors, 3d models, buttons/switches
                     {
                         unimplemented = MajorClass5(obj, newNode, a_tilemap, name);
@@ -337,7 +347,7 @@ namespace Underworld
                                 {
                                     if (_RES != GAME_UW2)
                                     {
-                                        glowing_rock.CreateGlowingRock(grObjects, obj, parent,name);
+                                        glowing_rock.CreateGlowingRock(grObjects, obj, parent, name);
                                         return false;
                                     }
                                     break;
@@ -500,7 +510,7 @@ namespace Underworld
         /// <returns></returns>
         private static bool MajorClass6(uwObject obj, Node3D parent, UWTileMap a_tilemap, string name)
         {
-            Debug.Print ($"Trap {obj.a_name} {obj.index} {obj.tileX},{obj.tileY} Class {obj.majorclass}-{obj.minorclass}-{obj.classindex} Params[F:{obj.flags} Q:{obj.quality}, O:{obj.owner}] Link {obj.link}");
+            Debug.Print($"Trap {obj.a_name} {obj.index} {obj.tileX},{obj.tileY} Class {obj.majorclass}-{obj.minorclass}-{obj.classindex} Params[F:{obj.flags} Q:{obj.quality}, O:{obj.owner}] Link {obj.link}");
             switch (obj.minorclass)
             {
                 case 0: //traps
@@ -645,7 +655,7 @@ namespace Underworld
                     else
                     {//used from a tile
                         DeleteObjectFromTile(obj.tileX, obj.tileY, obj.index);
-                    }                    
+                    }
                 }
             }
         }
@@ -656,9 +666,51 @@ namespace Underworld
         /// Initialises the default critter properties
         /// </summary>
         /// <param name="critter"></param>
-        public static void InitialiseCritter (uwObject critter)
+        public static void InitialiseCritter(uwObject critter)
         {
-            Debug.Print ("Initialise critter.");
+            critter.npc_xhome = 32;
+            critter.npc_yhome = 32;
+            critter.quality = 32;
+            critter.owner = 32;
+            critter.npc_hp = (byte)((0x10 + Rng.r.Next(0,0x18))/0x20);
+            critter.ProjectileHeading = (short)(critter.heading << 5);
+            critter.npc_goal = 8;
+            critter.npc_gtarg = 0;
+            critter.TargetTileX = 0;
+            critter.TargetTileY = 0;
+            critter.TargetZHeight = 0;
+            critter.UnkBit_0XD_Bit9 = 0;            
+            critter.IsPowerfull = 0;
+            critter.UnkBit_0XD_Bit11 = 0;
+            critter.UnkBit_0XD_Bit8 = 0;
+            critter.UnkBit_0x18_5 = 0;//possbily used to indicate npc is at their target
+            critter.Swing = 0;
+            critter.UnkBit_0XA_Bit012 = 0;
+            critter.Projectile_Speed = 4;
+            critter.npc_animation = 0;
+            critter.AnimationFrame = 0;
+            critter.npc_attack = 10;
+            critter.UnkBit_0X13_Bit7 = 0;
+            critter.UnkBit_0X13_Bit0to6 = 0;
+            critter.AccumulatedDamage = 0;
+            critter.ProjectileSourceID = 0;
+            critter.UnkBit_0x18_7 = 0;
+            critter.UnkBit_0x18_6 = 0;
+            critter.MobileUnk_0x16_0_F = 0;
+            critter.UnkBit_0X15_Bit6 = 0;
+            critter.npc_whoami = 0;
+            critter.UnkBit_0x19_0 = 0;
+            critter.UnkBit_0x19_4 = 0;
+            critter.UnkBit_0x19_5 = 0;
+            critter.UnkBit_0x19_6 = 0;
+            critter.UnkBit_0x19_7 = 0;
+            critter.LootSpawnedFlag = 0;
+            critter.npc_talkedto = 0;
+            critter.npc_attitude = 2;
+            critter.UnkBit_0XA_Bit7 = 0;//active?
+            critter.UnkBit_0x19_23 = 0;
+            critter.UnkBit_0XA_Bit456 = 0;
+
         }
 
 
@@ -669,7 +721,7 @@ namespace Underworld
         /// <param name="tileY"></param>
         /// <param name="indexToDelete"></param>
         public static void DeleteObjectFromTile(int tileX, int tileY, short indexToDelete, bool RemoveFromWorld = true)
-        {     
+        {
             var objList = UWTileMap.current_tilemap.LevelObjects;
             if (indexToDelete != 0)
             {
@@ -684,7 +736,7 @@ namespace Underworld
                         if (RemoveFromWorld)
                         {
                             ObjectCreator.RemoveObject(objectToDelete);
-                        }                        
+                        }
                         return;
                     }
                     else
@@ -702,7 +754,7 @@ namespace Underworld
                                 if (RemoveFromWorld)
                                 {
                                     ObjectCreator.RemoveObject(objectToDelete);
-                                }                                
+                                }
                                 return;
                             }
                             next = nextObject.next;
@@ -755,10 +807,10 @@ namespace Underworld
                 if (objToRefresh.instance.uwnode != null)
                 {
                     var nd = (uwMeshInstance3D)objToRefresh.instance.uwnode.GetChild(0);
-                    if (nd!=null)
+                    if (nd != null)
                     {
                         nd.Mesh.SurfaceSetMaterial(0, ObjectCreator.grObjects.GetMaterial(objToRefresh.item_id));
-                    }                    
+                    }
                 }
             }
         }
