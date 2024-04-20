@@ -72,7 +72,18 @@ namespace Underworld
                         triggerNextIndex = 0; //stop chain
                         return true;
                     }
+                case 42:
+                    {
+                        if (_RES!=GAME_UW2)
+                        {
 
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
                 default:
                     {
                         Debug.Print($"Unimplemented hack trap {trapObj.quality}");

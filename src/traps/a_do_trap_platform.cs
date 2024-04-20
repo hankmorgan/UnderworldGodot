@@ -10,7 +10,7 @@ namespace Underworld
         /// <summary>
         /// The switch flags maps to these tile heights
         /// </summary>
-        static int[] heights = new int[] { 4, 6, 8, 10, 12, 14, 16, 18 }; //heights *2
+        static int[] heights = new int[] { 2, 3, 4, 5, 6, 7, 8, 9 }; //heights *2
         public static void Activate(uwObject trapObj, uwObject ObjectUsed, int triggerX, int triggerY, uwObject[] objList)
         {
             //var tileX = triggerX;//triggerObj.quality;
@@ -22,7 +22,7 @@ namespace Underworld
                 //UWTileMap.RemoveTile(triggerX, triggerY);
 
                 //Set the new height
-                var newHeight = heights[ObjectUsed.flags] * 2;
+                var newHeight = heights[ObjectUsed.flags];
                 Debug.Print($"Flags is {ObjectUsed.flags} new height is {newHeight}");
                 var t = UWTileMap.current_tilemap.Tiles[triggerX, triggerY];
                 t.floorHeight = (short)newHeight;
