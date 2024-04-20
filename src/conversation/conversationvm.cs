@@ -9,8 +9,10 @@ namespace Underworld
 	/// </summary>
 	public partial class ConversationVM : UWClass
 	{
-
-		public static bool InConversation = false;
+		public static bool InConversation = false;				
+				
+		public static bool TemporaryTalker = false;
+		
 		/// <summary>
 		/// The currently referenced conversation.
 		/// </summary>
@@ -573,7 +575,13 @@ namespace Underworld
 				uimanager.EnableDisable(uimanager.instance.PowerGemUW2,true);
 				uimanager.instance.messageScrollUW2.Size = new Godot.Vector2(840,140);
 				uimanager.instance.scroll.Columns = 44;				
+			}			
+			if (TemporaryTalker)
+			{
+				//a talking door or a wisp. remove the temporary NPC
+				ObjectCreator.DeleteObjectFromTile(talker.tileX,talker.tileY,talker.index, true);
 			}
+			TemporaryTalker = false;
 			for (int i = 0; i < uimanager.NoOfTradeSlots; i++)
 			{//move remaining objects in the trade area to the players tile.
 				var objindex = uimanager.GetPlayerTradeSlot(i, true);

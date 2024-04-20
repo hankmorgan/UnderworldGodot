@@ -76,7 +76,7 @@ namespace Underworld
                     {
                         if (_RES!=GAME_UW2)
                         {
-
+                            a_do_trap_conversation.Activate();//a talking door!
                             return true;
                         }
                         else

@@ -38,7 +38,7 @@ namespace Underworld
         /// <returns></returns>
         public static uwObject spawnObjectInTile(int itemid, int tileX, int tileY, short xpos, short ypos, short zpos, ObjectListType WhichList = ObjectListType.StaticList)
         {
-            var slot = ObjectCreator.PrepareNewObject(itemid);
+            var slot = ObjectCreator.PrepareNewObject(itemid, WhichList);
             //add to critter object list
             var obj = UWTileMap.current_tilemap.LevelObjects[slot];
             //Insert at the head of the tile list.
@@ -80,39 +80,36 @@ namespace Underworld
             if (slot != 0)
             {
                 var obj = UWTileMap.current_tilemap.LevelObjects[slot];
-                if (WhichList == ObjectListType.StaticList)
-                {
-                    obj.quality = 0x28;
-                    obj.item_id = item_id;
-                    obj.zpos = 0;
-                    obj.doordir = 0;
-                    obj.invis = 0;
-                    obj.enchantment = 0;
-                    obj.flags = 0; //DBLCHK (0x11)
-                    obj.xpos = 3;
-                    obj.ypos = 3;
-                    obj.heading = 0;
-                    obj.next = 0;
-                    obj.owner = 0;
-                    //allocate static props
-                    var stackable = commonObjDat.stackable(item_id);
+                obj.quality = 0x28;
+                obj.item_id = item_id;
+                obj.zpos = 0;
+                obj.doordir = 0;
+                obj.invis = 0;
+                obj.enchantment = 0;
+                obj.flags = 0; //DBLCHK (0x11)
+                obj.xpos = 3;
+                obj.ypos = 3;
+                obj.heading = 0;
+                obj.next = 0;
+                obj.owner = 0;
+                //allocate static props
+                var stackable = commonObjDat.stackable(item_id);
 
-                    switch (stackable)
-                    {
-                        case 0:
-                        case 2:
-                            obj.link = 1;
-                            obj.is_quant = 1;
-                            break;
-                        case 1:
-                        case 3:
-                        default:
-                            obj.is_quant = 0;
-                            obj.link = 0;
-                            break;
-                    }
+                switch (stackable)
+                {
+                    case 0:
+                    case 2:
+                        obj.link = 1;
+                        obj.is_quant = 1;
+                        break;
+                    case 1:
+                    case 3:
+                    default:
+                        obj.is_quant = 0;
+                        obj.link = 0;
+                        break;
                 }
-                else
+                if (WhichList == ObjectListType.MobileList)
                 {
                     //mobile object                    
                     if (obj.majorclass == 1) //NPC
@@ -127,7 +124,7 @@ namespace Underworld
                 }
             }
             return slot;
-        }        
+        }
 
         /// <summary>
         /// Gets an object slot that can be allocated for a new object
@@ -672,14 +669,14 @@ namespace Underworld
             critter.npc_yhome = 32;
             critter.quality = 32;
             critter.owner = 32;
-            critter.npc_hp = (byte)((0x10 + Rng.r.Next(0,0x18))/0x20);
+            critter.npc_hp = (byte)((0x10 + Rng.r.Next(0, 0x18)) / 0x20);
             critter.ProjectileHeading = (short)(critter.heading << 5);
             critter.npc_goal = 8;
             critter.npc_gtarg = 0;
             critter.TargetTileX = 0;
             critter.TargetTileY = 0;
             critter.TargetZHeight = 0;
-            critter.UnkBit_0XD_Bit9 = 0;            
+            critter.UnkBit_0XD_Bit9 = 0;
             critter.IsPowerfull = 0;
             critter.UnkBit_0XD_Bit11 = 0;
             critter.UnkBit_0XD_Bit8 = 0;
