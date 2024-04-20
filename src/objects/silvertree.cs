@@ -21,7 +21,7 @@ namespace Underworld
             obj.item_id = 290;
             obj.doordir = 1;
 
-            playerdat.SilverTreeLevel = 0;
+            playerdat.SilverTreeDungeon = 0;
             
             if (playerdat.ObjectInHand == obj.index)
             {

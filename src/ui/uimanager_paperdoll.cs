@@ -533,7 +533,7 @@ namespace Underworld
                 //Do action appropiate to the interaction mode verb. use 
                 if (objAtSlot > 0)
                 { //there is an object in that slot.
-                    switch(uimanager.UsageMode)
+                    switch(UsageMode)
                     {
                         case 0: //default
                             InteractWithObjectInSlot(
@@ -553,7 +553,8 @@ namespace Underworld
                                 {//as long as it's not a project try and cast on the object
                                     SpellCasting.CastCurrentSpellOnRayCastTarget(
                                         index: objAtSlot, 
-                                        objList: playerdat.InventoryObjects);
+                                        objList: playerdat.InventoryObjects, 
+                                        hitCoordinate: Vector3.Zero);
                                 }
                             break;
                     }

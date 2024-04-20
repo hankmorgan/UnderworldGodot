@@ -99,7 +99,7 @@ namespace Underworld
         /// </summary>
         /// <param name="index"></param>
         /// <param name="objList"></param>
-        public static void CastCurrentSpellOnRayCastTarget(int index, uwObject[] objList)
+        public static void CastCurrentSpellOnRayCastTarget(int index, uwObject[] objList, Godot.Vector3 hitCoordinate)
         {
             if (currentSpell != null)
             {
@@ -115,7 +115,8 @@ namespace Underworld
                             minorclass: currentSpell.SpellMinorClass, 
                             index: index, 
                             objList: objList,
-                            caster: 1); 
+                            caster: 1,
+                            hitCoordinate: hitCoordinate); 
                         currentSpell = null;
                         uimanager.instance.mousecursor.SetCursorToCursor();
                         break;

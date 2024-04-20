@@ -1,3 +1,5 @@
+using System.Threading.Tasks.Dataflow;
+
 namespace Underworld
 {
     public class AnimationOverlay : UWClass
@@ -198,7 +200,13 @@ namespace Underworld
                                             else
                                             {
                                                 ovl.Duration = 0;
-                                                //TODO Destroy the animo
+                                                ObjectCreator.DeleteObjectFromTile(
+                                                    tileX: ovl.tileX, 
+                                                    tileY: ovl.tileY, 
+                                                    indexToDelete: (short)ovl.link);
+                                                ovl.link = 0;
+                                                ovl.tileX = 0;
+                                                ovl.tileY = 0;
                                             }
                                         }
                                     }

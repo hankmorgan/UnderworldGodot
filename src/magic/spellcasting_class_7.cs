@@ -1,11 +1,12 @@
 using System.Diagnostics;
+using System.Numerics;
 
 namespace Underworld
 {
     public partial class SpellCasting : UWClass
     {
         //targeted spells
-        public static void CastClass7_SpellsOnCallBack(int minorclass, int index, uwObject[] objList, int caster = 1)
+        public static void CastClass7_SpellsOnCallBack(int minorclass, int index, uwObject[] objList, Godot.Vector3 hitCoordinate, int caster = 1)
         {
             if (_RES == GAME_UW2)
             {
@@ -13,7 +14,7 @@ namespace Underworld
                 {
                     case 0:
                         //cause bleeding  
-                        CauseBleeding(index, objList);
+                        CauseBleeding(index, objList, hitCoordinate);
                         break;
                     case 1:
                         //Causefear
@@ -35,7 +36,7 @@ namespace Underworld
                         break;
                     case 6:
                         ///bleed (identical)
-                        CauseBleeding(index, objList);
+                        CauseBleeding(index, objList, hitCoordinate);
                         break;
                     case 7:
                         StudyMonster(index, objList);
@@ -101,7 +102,7 @@ namespace Underworld
         /// </summary>
         /// <param name="index"></param>
         /// <param name="objList"></param>
-        static void CauseBleeding(int index, uwObject[] objList)
+        static void CauseBleeding(int index, uwObject[] objList, Godot.Vector3 hitCoordinate)
         {
             var obj = objList[index];
             if (obj != null)
@@ -118,11 +119,20 @@ namespace Underworld
                     else
                     {
                         var basedamage = 0xA + playerdat.Casting / 2;
-                        damage.ScaledDamageOnNPCWithAnimo(
-                            critter: obj,
-                            basedamage: basedamage,
-                            damagetype: 4,
-                            animoclassindex: 0);
+                        damage.DamageObject(
+                            objToDamage: obj, 
+                            basedamage: basedamage, 
+                            damagetype: 4, objList: objList, 
+                            WorldObject: true, 
+                            hitCoordinate: hitCoordinate, 
+                            damagesource: 0);
+                        animo.SpawnAnimoAtPoint(0, hitCoordinate);
+                        // damage.ScaledDamageOnNPCWithAnimo(
+                        //     critter: obj,
+                        //     basedamage: basedamage,
+                        //     damagetype: 4,
+                        //     animoclassindex: 0, 
+                        //     hitCoordinate: obj.GetCoordinate(obj.tileX, obj.tileY)+ Godot.Vector3.Up);
                     }
                 }
             }
@@ -287,7 +297,7 @@ namespace Underworld
             int test = 1;
             if (uwObject.ScaleDamage(critter.item_id, ref test, 3) != 0)
             {
-                ObjectCreator.SpawnAnimo_Placeholder(7);
+                animo.SpawnAnimoAtPoint(7, critter.GetCoordinate(critter.tileX, critter.tileY)+ Godot.Vector3.Up);                
                 if (newgoal != 0xFF)
                 {
                     critter.npc_goal = newgoal;
@@ -385,7 +395,7 @@ namespace Underworld
                 var test = 1;
                 if (uwObject.ScaleDamage(critter.item_id, ref test, 3) != 0)
                 {
-                    ObjectCreator.SpawnAnimo_Placeholder(7);
+                    animo.SpawnAnimoAtPoint(7, critter.GetCoordinate(critter.tileX, critter.tileY)+ Godot.Vector3.Up);
                     var whoami = critter.npc_whoami;
                     int stringoffset = 0;
                     if (whoami >= 0x8C)

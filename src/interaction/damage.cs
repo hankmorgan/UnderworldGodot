@@ -1,6 +1,6 @@
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
+using Godot;
 namespace Underworld
 {
     /// <summary>
@@ -17,7 +17,7 @@ namespace Underworld
         /// <param name="damagetype"></param>
         /// <param name="damagesource"></param>
 
-        public static void DamageObject(uwObject objToDamage, int basedamage, int damagetype, uwObject[] objList, bool WorldObject, int damagesource = 0)
+        public static void DamageObject(uwObject objToDamage, int basedamage, int damagetype, uwObject[] objList, bool WorldObject, Godot.Vector3 hitCoordinate, int damagesource = 0)
         {
             uwObject.ScaleDamage(objToDamage.item_id, ref basedamage, damagetype);
             Debug.Print($"Try and Damage {objToDamage.a_name} by {basedamage}");
@@ -34,7 +34,12 @@ namespace Underworld
                 if (DamageGeneralObject(objToDamage, basedamage, 0))
                 {
                     //object should be destroyed
-                    ObjectDestruction(objToDamage, damagetype, objList, WorldObject);
+                    ObjectDestruction(
+                        objToDestroy: objToDamage, 
+                        damagetype: damagetype, 
+                        objList: objList, 
+                        WorldObject: WorldObject, 
+                        hitcoordinate: hitCoordinate);
                 }
             }
         }
@@ -162,21 +167,23 @@ namespace Underworld
         /// <param name="basedamage"></param>
         /// <param name="damagetype"></param>
         /// <param name="UpdateUI"></param>
-        public static void ScaledDamageOnNPCWithAnimo(uwObject critter, int basedamage, int damagetype, int animoclassindex, bool UpdateUI = true)
-        {
-            var noOfSplatters = basedamage;
+        // public static void ScaledDamageOnNPCWithAnimo(uwObject critter, int basedamage, int damagetype, int animoclassindex, Godot.Vector3 hitCoordinate, bool UpdateUI = true)
+        // {
+        //     var noOfSplatters = basedamage;
 
-            noOfSplatters = noOfSplatters / 4;
-            if (noOfSplatters > 3)
-            {
-                noOfSplatters = 3;
-            }
+        //     noOfSplatters = noOfSplatters / 4;
+        //     if (noOfSplatters > 3)
+        //     {
+        //         noOfSplatters = 3;
+        //     }
+        //     if (hitCoordinate!=Vector3.Zero)
+        //     {
+        //         animo.SpawnAnimoAtPoint(animoclassindex, hitCoordinate);
+        //     }            
+        //     Debug.Print($"Spawn animo {animoclassindex} {noOfSplatters} times");
 
-            ObjectCreator.SpawnAnimo_Placeholder(animoclassindex);
-            Debug.Print($"Spawn animo {animoclassindex} {noOfSplatters} times");
-
-            DamageNPC(critter, basedamage, damagetype);
-        }
+        //     DamageNPC(critter, basedamage, damagetype);
+        // }
 
 
         /// <summary>
@@ -196,7 +203,7 @@ namespace Underworld
         /// <param name="damagetype"></param>
         /// <param name="objList"></param>
         /// <param name="WorldObject"></param>
-        public static void ObjectDestruction(uwObject objToDestroy, int damagetype, uwObject[] objList, bool WorldObject)
+        public static void ObjectDestruction(uwObject objToDestroy, int damagetype, uwObject[] objList, bool WorldObject, Godot.Vector3 hitcoordinate)
         {
             int Debris = -1;
             if (!UWTileMap.ValidTile(objToDestroy.tileX, objToDestroy.tileY))
@@ -284,9 +291,13 @@ namespace Underworld
                                     }
                                     else
                                     {
-                                        if ((Rng.r.Next(0, 0x7fff) & 0x3) != 0)
+                                        if (((Rng.r.Next(0, 0x7fff) & 0x3) != 0) || (true))
                                         {
-                                            ObjectCreator.SpawnAnimo_Placeholder(8);
+                                            //ObjectCreator.SpawnAnimo_Placeholder(8);
+                                            if (hitcoordinate!=Godot.Vector3.Zero)
+                                            {
+                                                animo.SpawnAnimoAtPoint(8, hitcoordinate);
+                                            }                                            
                                             Debris = 0xD6;
                                         }
                                         

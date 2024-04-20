@@ -24,7 +24,7 @@ namespace Underworld
                         case >=35 and <=40:                             
                              //plantit
                             uimanager.AddToMessageScroll(GameStrings.GetString(1,12));
-                            playerdat.SilverTreeLevel = playerdat.dungeon_level;
+                            playerdat.SilverTreeDungeon = playerdat.dungeon_level;
                             
                             var newindex = playerdat.AddInventoryObjectToWorld(obj.index, true, false);
                             //var position = UWTileMap.GetPositionInDirection(0.6f);

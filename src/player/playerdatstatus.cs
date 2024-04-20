@@ -239,7 +239,7 @@ namespace Underworld
 
 
 
-          public static int SilverTreeLevel
+          public static int SilverTreeDungeon
           {
                get
                {

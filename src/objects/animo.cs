@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Godot;
 namespace Underworld
 {
@@ -144,10 +145,12 @@ namespace Underworld
                 {
                     if (a.Duration == 0)
                     {
+                        Debug.Print($"Free animo slot {a.index}");
                         return a.index;
                     }
                 }
             }
+            Debug.Print($"No Free Animo slot");
             return -1; //no animo found
         }
 
@@ -175,6 +178,32 @@ namespace Underworld
             else
             {
                 return false;
+            }
+        }
+
+        public static void SpawnAnimoAtPoint(int subclass, Godot.Vector3 point, bool randomZpos = true)
+        {
+            //Debug.Print($"Placeholder spawn animo {subclass}");
+            var itemid = 448 + subclass;
+            //var slot = ObjectCreator.PrepareNewObject(itemid, ObjectCreator.ObjectListType.StaticList);
+            //var newObject = UWTileMap.current_tilemap.LevelObjects[slot];
+            var xpos = uwObject.FloatXYToXYPos(-point.X);
+            var ypos = uwObject.FloatXYToXYPos(point.Z);
+            var zpos = uwObject.FloatZToZPos(point.Y); //(short)(t.floorHeight<<2);
+            var tileX = -(int)(point.X/1.2f);
+            var tileY = (int)(point.Z/1.2f);
+            var newObject =ObjectCreator.spawnObjectInTile(
+                itemid: itemid, 
+                tileX: tileX, 
+                tileY: tileY, 
+                xpos: xpos, 
+                ypos: ypos, 
+                zpos: zpos, 
+                WhichList: ObjectCreator.ObjectListType.StaticList);
+            if (newObject!=null)
+            {
+                var duration = animationObjectDat.endFrame(itemid)-animationObjectDat.startFrame(itemid);
+                CreateAnimoLink(newObject, duration);
             }
         }
     }//end class

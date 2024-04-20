@@ -372,7 +372,7 @@ namespace Underworld
                 {
                     var obj = (StaticBody3D)result["collider"];
                     var normal = (Vector3)result["normal"];
-                    var pos = (Vector3)result["position"];
+                    var hitCoordinate = (Vector3)result["position"];
                     Debug.Print(obj.Name);
                     string[] vals = obj.Name.ToString().Split("_");
                     switch (vals[0].ToUpper())
@@ -389,7 +389,7 @@ namespace Underworld
                                 if (hitobject != null)
                                 {
                                     Debug.Print($"{hitobject.a_name}");
-                                    return PlayerHitsUWObject(hitobject);
+                                    return PlayerHitsUWObject(hitobject, hitCoordinate);
                                 }
                             }
                             break;
@@ -405,7 +405,7 @@ namespace Underworld
         /// </summary>
         /// <param name="objHit"></param>
         /// <returns></returns>
-        static bool PlayerHitsUWObject(uwObject objHit)
+        static bool PlayerHitsUWObject(uwObject objHit, Godot.Vector3 hitCoordinate)
         {
             //calc final attack charge based on the % of charge built up in the weapon
             WeaponCharge = mincharge + ((maxcharge - mincharge) * WeaponCharge) / 100; //this is kept later for damage calcs.
@@ -415,7 +415,7 @@ namespace Underworld
 
             //execute attack
 
-            if (PlayerExecuteAttack(objHit))
+            if (PlayerExecuteAttack(objHit, hitCoordinate))
             {
                 if (_RES == GAME_UW2)
                 {
@@ -547,7 +547,7 @@ namespace Underworld
             }
         }
 
-        static bool PlayerExecuteAttack(uwObject critter)
+        static bool PlayerExecuteAttack(uwObject critter, Godot.Vector3 hitCoordinate)
         {
             if (checkAttackHit())
             {
@@ -555,7 +555,11 @@ namespace Underworld
                 {//attack roll has hit
                     PlayerFlankingBonus = CalcFlankingBonus(critter);
                     Debug.Print("Hit");
-                    ApplyPlayersFinalDamage(critter, 4, false);
+                    ApplyPlayersFinalDamage(
+                        objHit: critter, 
+                        damageType: 4, 
+                        hitCoordinate: hitCoordinate, 
+                        MissileAttack: false);
                 }
                 else
                 {//attack roll has missed
@@ -636,7 +640,7 @@ namespace Underworld
         }
 
 
-        static int ApplyPlayersFinalDamage(uwObject objHit, int damageType, bool MissileAttack = false)
+        static int ApplyPlayersFinalDamage(uwObject objHit, int damageType, Godot.Vector3 hitCoordinate, bool MissileAttack = false)
         {
             if (PlayerAttackDamage < 2)
             {
@@ -663,6 +667,7 @@ namespace Underworld
             {
                 //Do blood spatters.
                 Debug.Print("Spatter blood");
+                animo.SpawnAnimoAtPoint(0,hitCoordinate);
             }
 
             if (objHit.majorclass == 1)
@@ -701,7 +706,8 @@ namespace Underworld
                 damagetype: damageType,                
                 objList: UWTileMap.current_tilemap.LevelObjects, 
                 WorldObject: true,
-                damagesource: 0);
+                damagesource: 0,
+                hitCoordinate: hitCoordinate);
             return 0;
         }
 

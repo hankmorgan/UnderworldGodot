@@ -169,6 +169,8 @@ namespace Underworld
                 newobj.xpos = (short)newxpos;//obj.xpos;
                 newobj.ypos = (short)newypos;///obj.ypos;
                 newobj.zpos = (short)newzpos; //obj.zpos;
+                newobj.next = tile.indexObjectList;//link to tile
+                tile.indexObjectList = newobj.index;
             }
             ObjectCreator.RenderObject(newobj, UWTileMap.current_tilemap);
         }

@@ -84,7 +84,7 @@ namespace Underworld
                 {
                     var obj = (StaticBody3D)result["collider"];
                     var normal = (Vector3)result["normal"];
-                    var pos = (Vector3)result["position"];
+                    var hitCoordinate = (Vector3)result["position"];
                     Debug.Print(obj.Name);
                     string[] vals = obj.Name.ToString().Split("_");
 
@@ -97,7 +97,10 @@ namespace Underworld
                                 {
                                     if (SpellCasting.currentSpell.SpellMajorClass==5)
                                     {
-                                        SpellCasting.CastCurrentSpellOnRayCastTarget(0,null);//not enough room to cast
+                                        SpellCasting.CastCurrentSpellOnRayCastTarget(
+                                            index: 0, 
+                                            objList: null, 
+                                            hitCoordinate: hitCoordinate);//not enough room to cast
                                         return;
                                     }
                                 }
@@ -109,10 +112,10 @@ namespace Underworld
                                             {//something is held. try and drop it on this tile.
                                              //int tileX = int.Parse(vals[1]); int tileY = int.Parse(vals[2]);
 
-                                                int tileX = (int)(-pos.X / 1.2f);
-                                                int tileY = (int)(pos.Z / 1.2f);
+                                                int tileX = (int)(-hitCoordinate.X / 1.2f);
+                                                int tileY = (int)(hitCoordinate.Z / 1.2f);
                                                 //move object to this tile if possble
-                                                DropToTileAtPosition(pos, tileX, tileY);
+                                                DropToTileAtPosition(hitCoordinate, tileX, tileY);
                                             }
                                             break;
                                         }
@@ -131,7 +134,10 @@ namespace Underworld
                                 {
                                     if (SpellCasting.currentSpell.SpellMajorClass==5)
                                     {
-                                        SpellCasting.CastCurrentSpellOnRayCastTarget(0,null);//not enough room to cast
+                                        SpellCasting.CastCurrentSpellOnRayCastTarget(
+                                            index: 0, 
+                                            objList: null, 
+                                            hitCoordinate: Vector3.Zero);//not enough room to cast
                                         return;
                                     }
                                 }
@@ -159,7 +165,8 @@ namespace Underworld
                                     {
                                         SpellCasting.CastCurrentSpellOnRayCastTarget(
                                             index: index, 
-                                            objList: UWTileMap.current_tilemap.LevelObjects);
+                                            objList: UWTileMap.current_tilemap.LevelObjects,
+                                            hitCoordinate: hitCoordinate);
                                     }
                                 }
                             }
