@@ -67,6 +67,8 @@ namespace Underworld
             };
 
         public Shader textureshader;
+
+        public bool UseRedChannel;
         
 
          public ShaderMaterial[] materials = new ShaderMaterial[10];
@@ -131,7 +133,7 @@ namespace Underworld
                             height: 200, 
                             palette: PaletteLoader.Palettes[PaletteIndices[index]], 
                             useAlphaChannel: UseAlphaChannel, 
-                            useSingleRedChannel: false,
+                            useSingleRedChannel: UseRedChannel,
                             crop: UseCropping);
                     }
             }
@@ -161,7 +163,7 @@ namespace Underworld
                     height: 200, 
                     palette: PaletteLoader.Palettes[PaletteIndicesUW2[index]], 
                     useAlphaChannel: UseAlphaChannel, 
-                    useSingleRedChannel: false,
+                    useSingleRedChannel: UseRedChannel,
                     crop: UseCropping);
             }
             else
@@ -173,7 +175,7 @@ namespace Underworld
                     height: 200, 
                     palette: PaletteLoader.Palettes[PaletteIndicesUW2[index]], 
                     useAlphaChannel: UseAlphaChannel, 
-                    useSingleRedChannel: false,
+                    useSingleRedChannel: UseRedChannel,
                     crop: UseCropping);
             }
         }

@@ -20,8 +20,10 @@ namespace Underworld
 
         [Export] public Label[] SaveGamesNames = new Label[4];
 
+        public static bool AtMainMenu;
         private void InitMainMenu()
         {
+            bitmaps.UseRedChannel = true;
             if (UWClass._RES == UWClass.GAME_UW2)
             {
                 MainMenuBG.Texture = bitmaps.LoadImageAt(5);
@@ -39,6 +41,9 @@ namespace Underworld
             else
             {
                 MainMenuBG.Texture = bitmaps.LoadImageAt(BytLoader.OPSCR_BYT);
+                MainMenuBG.Material = bitmaps.GetMaterial(BytLoader.OPSCR_BYT);
+                var img = bitmaps.LoadImageAt(BytLoader.OPSCR_BYT);
+                Palette.CurrentPalette = 6;               
             }
 
             //MainMenuBG.Material = bitmaps.GetMaterial(BytLoader.OPSCR_BYT);
@@ -46,7 +51,9 @@ namespace Underworld
             TurnButtonsOff();
             ToggleButtons(true);
             HideSaves();
-
+            bitmaps.UseRedChannel = false;
+            AtMainMenu = true;
+            Palette.CurrentPalette = 6;
         }
 
         /// <summary>
