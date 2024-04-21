@@ -223,7 +223,7 @@ namespace Underworld
 /// 5    Garamon, find talismans and throw into lava
 /// 6    friend of Lizardman folk
 /// 7    ?? (conv #24, Murgo)
-/// 8    book from Bronus for Morlock
+/// 8    book from Bronus for Morlock has exploded
 /// 9    "find Gurstang" quest
 /// 10    where to find Zak, for Delanrey
 /// 11    Rodrick killed

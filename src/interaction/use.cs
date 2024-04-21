@@ -333,9 +333,13 @@ namespace Underworld
                     {
                         if (_RES != GAME_UW2)
                         {
-                            if (obj.classindex == 0xB)
+                            switch(obj.classindex)
                             {
-                                return rotwormstew.Use(obj, WorldObject);
+                                case 4://exploding book
+                                    return explodingbook.Use(obj, WorldObject);
+                                case 0xB:
+                                    return rotwormstew.Use(obj, WorldObject);
+
                             }
                         }
                         else
