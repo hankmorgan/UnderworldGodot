@@ -14,6 +14,7 @@ namespace Underworld
                 SpellCasting.CastClass9_Curse(3, false);
                 playerdat.SetQuest(8,1);
                 playerdat.RemoveFromInventory(obj.index, true);
+                playerdat.PlayerStatusUpdate();
                 return true;
             }
         }
