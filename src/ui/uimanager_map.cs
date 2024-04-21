@@ -139,7 +139,7 @@ namespace Underworld
                 foreach (var n in automapnote.automapsnotes[blockno].notes)
                 {
                     RichTextLabel mapnote = new();
-                    mapnote.Position = new Vector2(-10 + n.posX * 4, 770 - (n.posY * 4));
+                    mapnote.Position = new Vector2(-4 + n.posX * 4, 780 - (n.posY * 4));
                     mapnote.FitContent = true;
                     mapnote.BbcodeEnabled = true;
                     mapnote.AutowrapMode = TextServer.AutowrapMode.Off;
