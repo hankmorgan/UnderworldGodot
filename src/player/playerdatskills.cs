@@ -488,7 +488,7 @@ namespace Underworld
         public static int IncreaseSkill(int skillno)
         {
             int[] governingRngRanges = new int[]{0x19,0x28,0xA};
-            var governingAttribute = GetGoverningAttribute(0);
+            var governingAttribute = GetGoverningAttribute(skillno);
             
             int skillvalue = GetSkillValue(skillno);
             int attributeValue = GetAttributeValue(governingAttribute);
