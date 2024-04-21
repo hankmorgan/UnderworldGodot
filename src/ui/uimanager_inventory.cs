@@ -53,20 +53,9 @@ namespace Underworld
                                 //try the eat interation.
                                 if (playerdat.ObjectInHand != 1)
                                 {
-                                    var objInHand = UWTileMap.current_tilemap.LevelObjects[playerdat.ObjectInHand];
-                                    if (objInHand.majorclass == 2 && objInHand.minorclass == 3)
+                                    if (TryEatInteraction())
                                     {
-                                        food.Use(objInHand, true);
-                                        return;
-                                    }
-                                    else
-                                    {
-                                        if (food.SpecialFoodCases(
-                                            obj: objInHand,
-                                            UsedFromInventory: false))
-                                        {//if any food special case occurs exit sub
-                                            return;
-                                        }
+                                        return; //food has been consumed. exit function.
                                     }
                                 }
                             }
@@ -170,6 +159,31 @@ namespace Underworld
         }
 
 
+        /// <summary>
+        /// Handles dropping food items on the players head
+        /// </summary>
+        /// <returns></returns>
+        private static bool TryEatInteraction()
+        {
+            var objInHand = UWTileMap.current_tilemap.LevelObjects[playerdat.ObjectInHand];
+            if (objInHand.majorclass == 2 && objInHand.minorclass == 3)
+            {
+                food.Use(objInHand, true);
+                return true;
+            }
+            else
+            {
+                if (food.SpecialFoodCases(
+                    obj: objInHand,
+                    UsedFromInventory: false))
+                {//if any food special case occurs exit sub
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
 
         /// <summary>
         /// 
@@ -188,6 +202,18 @@ namespace Underworld
                 if (combat.stage != combat.CombatStages.Ready)
                 {
                     return;
+                }
+            }
+
+            if (CurrentSlot == 0) //HELM
+            {
+                //try the eat interation.
+                if (playerdat.ObjectInHand != 1)
+                {
+                    if (TryEatInteraction())
+                    {
+                        return; //food has been consumed. exit function.
+                    }
                 }
             }
             
@@ -509,11 +535,16 @@ namespace Underworld
                 return;
             }
 
-            //swap objects otherwise
-            var backup = playerdat.ObjectInHand;
-            PickupObjectFromSlot(targetObj);
-            PickupToEmptySlot(backup);
-            UpdateInventoryDisplay();
+            //swap objects otherwise if object is valid for slot
+            if (ValidObjectForSlot(CurrentSlot, source))
+            {
+                var backup = playerdat.ObjectInHand;
+                PickupObjectFromSlot(targetObj);
+                PickupToEmptySlot(backup);
+                UpdateInventoryDisplay();
+            }
+
+
             //Update player state
             playerdat.PlayerStatusUpdate();
         }
