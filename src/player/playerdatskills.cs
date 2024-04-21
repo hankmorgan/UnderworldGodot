@@ -168,7 +168,7 @@ namespace Underworld
 
 
         /// <summary>
-        /// Sets the skills at the index (attack = 1 upwards) to the specified value
+        /// Sets the skills at the index (attack = 0 upwards) to the specified value
         /// </summary>
         /// <param name="skillNo"></param>
         /// <param name="value"></param>
