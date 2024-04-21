@@ -323,6 +323,16 @@ namespace Underworld
 
         public static void UpdatePaletteCycles()
         {
+
+            if (NextPaletteCycle_GAME > PaletteLoader.Palettes[Palette.CurrentPalette].cycledGamePalette.GetUpperBound(2))
+            {
+                NextPaletteCycle_GAME = 0;
+            }
+            if (NextPaletteCycle_UI > PaletteLoader.Palettes[Palette.CurrentPalette].cycledUIPalette.GetUpperBound(0))
+            {
+                NextPaletteCycle_UI = 0;
+            }
+            
             //Cycle the palette		
             RenderingServer.GlobalShaderParameterSet(
                 name: "smoothpalette",
@@ -335,14 +345,6 @@ namespace Underworld
             NextPaletteCycle_GAME++;
             NextPaletteCycle_UI++;
 
-            if (NextPaletteCycle_GAME > PaletteLoader.Palettes[Palette.CurrentPalette].cycledGamePalette.GetUpperBound(2))
-            {
-                NextPaletteCycle_GAME = 0;
-            }
-            if (NextPaletteCycle_UI > PaletteLoader.Palettes[Palette.CurrentPalette].cycledUIPalette.GetUpperBound(0))
-            {
-                NextPaletteCycle_UI = 0;
-            }
         }
 
     }//end class
