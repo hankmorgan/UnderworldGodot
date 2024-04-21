@@ -15,7 +15,7 @@ namespace Underworld
             {
                 if (tile.tileType==UWTileMap.TILE_OPEN)
                 {
-                    var floorterrain = tileMapRender.FloorTexture(tile)-210;
+                    var floorterrain = tileMapRender.FloorTexture_MapIndex(tile)-210;
                     switch (floorterrain)
                     {//i think these are right.
                         case >=5 and <=11:

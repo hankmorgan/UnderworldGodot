@@ -65,7 +65,6 @@ namespace Underworld
         public short ceilingHeight;
 
         //Index into the texture map table for the actual floor texture of this tile.
-        //private short _floorTexture;
         public short floorTexture
         {
             get
