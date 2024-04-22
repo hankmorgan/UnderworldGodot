@@ -10,6 +10,7 @@ namespace Underworld
             //Preamble of getting positon to spawn in.  based on facing direction of the player
             var itemid = -1;
             var whichList = ObjectCreator.ObjectListType.StaticList;
+            bool isNPCSpawn = false;
             var tile = UWTileMap.GetTileInDirectionFromCamera(1.2f);
             if (tile != null)
             {
@@ -22,14 +23,16 @@ namespace Underworld
             switch (minorclass)
             {
                 case 1:
-                    {
-                        Debug.Print("Create Food"); break;
+                    {                        
+                       // Debug.Print("Create Food");
+                        itemid = Rng.r.Next(0,7) + 0xB0;                       
+                        break;
                     }
                 case 2:
                     {
                         if (_RES == GAME_UW2)
                         {
-                            Debug.Print("FLAM RUNE");
+                            //Debug.Print("FLAM RUNE");
                             itemid = 414;
                         }
                         break;
@@ -38,7 +41,7 @@ namespace Underworld
                     {
                         if (_RES == GAME_UW2)
                         {
-                            Debug.Print("TYM RUNE");
+                            //Debug.Print("TYM RUNE");
                             itemid = 415;
                         }
                         else
@@ -49,7 +52,8 @@ namespace Underworld
                         break;
                     }
                 case 4:
-                    {                        
+                    {          //Summon Monster (UW1 only? )  
+                        isNPCSpawn= true;            
                         var monsterlevel = 2;
                         if (caster == 0)
                         {
@@ -88,9 +92,10 @@ namespace Underworld
                         break;
                     }
                 case 5:
-                    {
+                    {//SUmmon demon. summons a hostile demon from a list of demons item ids
                         if (_RES == GAME_UW2)
                         {
+                            isNPCSpawn= true; 
                             var demons = new int[]{0x4B, 0x4B, 0x5E, 0x64, 0x68};
                             var demonIndex = (Rng.r.Next(0,0x1E) + playerdat.Casting)/0xC;                            
                             itemid = demons[demonIndex];
@@ -106,7 +111,7 @@ namespace Underworld
                     {
                         if (_RES == GAME_UW2)
                         {
-                            Debug.Print("Satellite");
+                            //Debug.Print("Satellite");
                             itemid =0x1E;// spawn a satellite. it does nothing
                             break;
                         }
@@ -116,10 +121,12 @@ namespace Underworld
                         }
                     }
             }
+
+            //Do the item creation.
             if (itemid != -1)
             {
                 UWTileMap.GetRandomXYZForTile(tile, out int newxpos, out int newypos, out int newzpos);
-                if (whichList == ObjectCreator.ObjectListType.MobileList)
+                if ((whichList == ObjectCreator.ObjectListType.MobileList) && (isNPCSpawn))
                 {
                     if (critterObjectDat.isFlier(itemid))
                     {
