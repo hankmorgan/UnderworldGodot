@@ -115,6 +115,8 @@ namespace Underworld
 
                                 Debug.Print("Increment values at  bx+3a(fatigue), bx+3b(related to food health regen), bx+3c (unknown)");
                                 play_fatigue = (byte)Math.Min(play_fatigue + 1, 0xFF);
+                                
+                                maybefoodhealthbonus = (byte)Math.Min(maybefoodhealthbonus + 1, 0xFF);
 
                                 var hpskillcheck = (int)SkillCheck(STR, 10);
                                 if (hpskillcheck > 0)

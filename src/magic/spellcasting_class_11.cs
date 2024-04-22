@@ -116,6 +116,13 @@ namespace Underworld
                         Debug.Print("ARMAGEDDON--> Everything vanishes");
                         break;
                     }
+                case 0xD:
+                    {
+                        playerdat.play_hunger = 0xC0;
+                        playerdat.maybefoodhealthbonus = 0;
+                        uimanager.AddToMessageScroll(GameStrings.GetString(1,0x134));
+                        break;
+                    }
             }
         }
 
@@ -158,6 +165,7 @@ namespace Underworld
                 {
                     case 2://strengthen door.
                         Debug.Print("Strengthen door callback, this spell does nothing in vanilla!");
+                        //probably a suitable fix here would be to apply an owner value to the door, or restore the quality to max.
                         break;
                     case 3://remove trap
                         Debug.Print("Remove trap callback");
@@ -170,7 +178,10 @@ namespace Underworld
                         break;
                 }
             }
+            else
+            {  
+                    //not in uw2/
+            }
         }
-
     }//end class
 }//end namespace

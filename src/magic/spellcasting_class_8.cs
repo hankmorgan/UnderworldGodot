@@ -92,7 +92,7 @@ namespace Underworld
                         break;
                     }
                 case 5:
-                    {//SUmmon demon. summons a hostile demon from a list of demons item ids
+                    {//Summon demon. summons a hostile demon from a list of demons item ids
                         if (_RES == GAME_UW2)
                         {
                             isNPCSpawn= true; 

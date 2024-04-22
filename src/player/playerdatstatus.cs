@@ -293,13 +293,27 @@ namespace Underworld
           {
                get
                {
-                    return GetAt(0x39);
+                    return GetAt(0x3B);
                }
                set
                {
-                    SetAt(0x39, (byte)value);
+                    SetAt(0x3B, (byte)value);
                }
           }
+
+           public static byte maybefoodhealthbonus
+          {
+               get
+               {
+                    return GetAt(0x3C);
+               }
+               set
+               {
+                    SetAt(0x3C, (byte)value);
+               }
+          }
+
+
 
           public static byte play_poison
           {
