@@ -425,6 +425,9 @@ namespace Underworld
           }
 
 
+          /// <summary>
+          /// Controls if the automapping function is enabled. (A player property in UW2, a global variable in UW1)
+          /// </summary>
           public static bool AutomapEnabled
           {
                get
@@ -436,7 +439,7 @@ namespace Underworld
                     }
                     else
                     {
-                         return true;//todo find the offset in uw1
+                         return _automapenabled_uw1;
                     }
                }
                set
@@ -451,8 +454,14 @@ namespace Underworld
                          }
                          SetAt(0x63, tmp);
                     }
+                    else
+                    {
+                         _automapenabled_uw1 = value;
+                    }
                }
           }
+
+          private static bool _automapenabled_uw1=true;
 
      }//enclass
 }//end namespace

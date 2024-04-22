@@ -242,7 +242,7 @@ namespace Underworld
 
             RefreshLighting();//either brightest physical light or brightest magical light
             ApplyMazeNavigation();//handles tybals maze
-            if (!AutomapEnabled)
+            if ((!AutomapEnabled) && (_RES==GAME_UW2))
             {
                 //Do a test here to see if the player has entered a previously visible tile. If so renable automap.                
             }
