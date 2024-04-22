@@ -489,6 +489,7 @@ namespace Underworld
                     playerdat.ObjectInHand = -1;
                     uimanager.instance.mousecursor.SetCursorToCursor();
                 }
+                playerdat.PlayerStatusUpdate();
                 return;
             }
 
