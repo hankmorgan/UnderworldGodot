@@ -24,7 +24,6 @@ namespace Underworld
             main.instance.secondarycameras.AddChild(newcam);
             newcam.Current=false;
             newcam.Position = trapObj.GetCoordinate(trapObj.tileX, trapObj.tileY);
-            //todo:rotation
             model3D.SetObjectRotation(newcam, trapObj);
             trapObj.instance = new a_do_trap_camera(newcam, trapObj);
             secondarycameras.Add(newcam);// to track cameras so that when loading is implemented I can destroy old cameras
@@ -38,11 +37,14 @@ namespace Underworld
         /// <returns></returns>
         static IEnumerator CameraWaitForInput()
         {
+            bool automap = playerdat.AutomapEnabled;
+            playerdat.AutomapEnabled = false;
             MessageDisplay.WaitingForMore = true; //quick hack to block input
             while (MessageDisplay.WaitingForMore)
             {
                 yield return new WaitOneFrame();
             }
+            playerdat.AutomapEnabled = automap;
             main.gamecam.MakeCurrent();
             main.gamecam.Set("MOVE", true);
         }
@@ -56,7 +58,7 @@ namespace Underworld
         /// <param name="objList"></param>
         public static void Activate(uwObject trapObj,uwObject[] objList)
         {
-            //switch camera
+            //switch camera            
             var d = (a_do_trap_camera)(trapObj.instance);
             d.do_camera.MakeCurrent();
             main.gamecam.Set("MOVE", false);

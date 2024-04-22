@@ -49,6 +49,9 @@ namespace Underworld
 
                 var isfemale = Rng.r.Next(0, 2) == 1;
                 isFemale = isfemale;
+
+                playerdat.AutomapEnabled = true;
+
                 uimanager.SetHelm(isfemale, -1);
                 uimanager.SetArmour(isfemale, -1);
                 uimanager.SetBoots(isfemale, -1);

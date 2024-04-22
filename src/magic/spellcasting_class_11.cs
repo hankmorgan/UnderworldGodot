@@ -49,7 +49,16 @@ namespace Underworld
                     {
                         if (_RES == GAME_UW2)
                         {
-                            Debug.Print("LOCATE");
+                            //Debug.Print("LOCATE");//turn automapping back on if player is lost
+                            if ((playerdat.AutomapEnabled==false) && (worlds.GetWorldNo(playerdat.dungeon_level)!=8))
+                            {
+                                playerdat.AutomapEnabled = true;
+                                uimanager.AddToMessageScroll(GameStrings.GetString(1,0x12A));//your position is revealed
+                            }
+                            else
+                            {
+                                uimanager.AddToMessageScroll(GameStrings.GetString(1,0x142));//no noticeable effect
+                            }
                         }
                         else
                         {
@@ -116,7 +125,7 @@ namespace Underworld
                         Debug.Print("ARMAGEDDON--> Everything vanishes");
                         break;
                     }
-                case 0xD:
+                case 0xD://dispel hunger
                     {
                         playerdat.play_hunger = 0xC0;
                         playerdat.maybefoodhealthbonus = 0;

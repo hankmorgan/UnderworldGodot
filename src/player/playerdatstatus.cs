@@ -424,5 +424,35 @@ namespace Underworld
                }
           }
 
+
+          public static bool AutomapEnabled
+          {
+               get
+               {
+                    if (_RES==GAME_UW2)
+                    {
+                         return (GetAt(0x63)>>4 & 0x1)==1;
+
+                    }
+                    else
+                    {
+                         return true;//todo find the offset in uw1
+                    }
+               }
+               set
+               {
+                    if (_RES==GAME_UW2)
+                    {
+                         var tmp = GetAt(0x63);
+                         tmp &= 0xEF;
+                         if (value)
+                         {
+                              tmp|=0x10;
+                         }
+                         SetAt(0x63, tmp);
+                    }
+               }
+          }
+
      }//enclass
 }//end namespace

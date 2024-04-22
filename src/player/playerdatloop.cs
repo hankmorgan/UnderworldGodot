@@ -115,7 +115,7 @@ namespace Underworld
 
                                 Debug.Print("Increment values at  bx+3a(fatigue), bx+3b(related to food health regen), bx+3c (unknown)");
                                 play_fatigue = (byte)Math.Min(play_fatigue + 1, 0xFF);
-                                
+
                                 maybefoodhealthbonus = (byte)Math.Min(maybefoodhealthbonus + 1, 0xFF);
 
                                 var hpskillcheck = (int)SkillCheck(STR, 10);
@@ -242,7 +242,11 @@ namespace Underworld
 
             RefreshLighting();//either brightest physical light or brightest magical light
             ApplyMazeNavigation();//handles tybals maze
-            if (automap.CanMap(dungeon_level))
+            if (!AutomapEnabled)
+            {
+                //Do a test here to see if the player has entered a previously visible tile. If so renable automap.                
+            }
+            if (automap.CanMap(dungeon_level) && (AutomapEnabled))
             {
                 UpdateAutomap();//update the visited status of nearby tiles
             }
