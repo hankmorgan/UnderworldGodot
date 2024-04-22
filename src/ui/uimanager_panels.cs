@@ -81,6 +81,10 @@ namespace Underworld
 
         public static void SetPanelMode(int NewMode)
         {//0 = inv, 1=runes, 2=stats
+            if (PanelMode==NewMode)
+            {
+                return;//already at that panel
+            }
             if (RotatingOff || RotatingOn)
             {
                 return; // a rotation is already in progress. block this until complete.

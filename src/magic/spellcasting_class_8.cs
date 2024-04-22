@@ -107,6 +107,7 @@ namespace Underworld
                         if (_RES == GAME_UW2)
                         {
                             Debug.Print("Satellite");
+                            itemid =0x1E;// spawn a satellite. it does nothing
                             break;
                         }
                         else

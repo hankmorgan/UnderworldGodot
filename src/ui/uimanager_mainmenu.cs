@@ -216,7 +216,7 @@ namespace Underworld
                     datafolder: folder,
                     newGameSession: true);
             uimanager.instance.InitViews();
-
+            
             SetPanelMode(0);
         }
 
