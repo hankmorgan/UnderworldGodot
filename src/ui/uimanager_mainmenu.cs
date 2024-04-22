@@ -216,6 +216,8 @@ namespace Underworld
                     datafolder: folder,
                     newGameSession: true);
             uimanager.instance.InitViews();
+
+            SetPanelMode(0);
         }
 
         private void _on_create_character_gui_input(InputEvent @event)
