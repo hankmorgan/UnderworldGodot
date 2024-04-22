@@ -49,8 +49,7 @@ namespace Underworld
                         break;
                     }
                 case 4:
-                    {
-                        Debug.Print("Summon Monster");
+                    {                        
                         var monsterlevel = 2;
                         if (caster == 0)
                         {
@@ -92,7 +91,9 @@ namespace Underworld
                     {
                         if (_RES == GAME_UW2)
                         {
-                            Debug.Print("Summon Demon");
+                            var demons = new int[]{0x4B, 0x4B, 0x5E, 0x64, 0x68};
+                            var demonIndex = (Rng.r.Next(0,0x1E) + playerdat.Casting)/0xC;                            
+                            itemid = demons[demonIndex];
                             whichList = ObjectCreator.ObjectListType.MobileList;
                             break;
                         }
@@ -149,7 +150,6 @@ namespace Underworld
                             newObject.TargetTileY = (short)playerdat.tileY;
 
                         }
-
                         break;
 
                 }
