@@ -12,7 +12,7 @@ namespace Underworld
             else
             {
                 //go fish
-                var tile = UWTileMap.GetTileInDirection(1.2f);
+                var tile = UWTileMap.GetTileInDirectionFromCamera(1.2f);
                 if (tile!=null)
                 {
                     if (tile.tileType == UWTileMap.TILE_SOLID)

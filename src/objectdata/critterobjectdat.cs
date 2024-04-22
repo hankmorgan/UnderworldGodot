@@ -151,6 +151,17 @@ namespace Underworld
         }
 
         /// <summary>
+        /// Unknown meaning. If set critter cannot be summoned in a spell?
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <returns></returns>
+        public static bool unkPassivenessProperty(int item_id)
+        {   
+            return ((buffer[CritterOffset(item_id) + 0xA] >> 1) & 0x1) == 1;
+        }
+        
+
+        /// <summary>
         /// True if NPC is a swimmer.
         /// </summary>
         /// <param name="item_id"></param>
