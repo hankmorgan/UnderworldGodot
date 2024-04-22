@@ -362,11 +362,15 @@ namespace Underworld
                     }
                     else
                     {
+                        var tile = UWTileMap.current_tilemap.Tiles[playerdat.tileX,playerdat.tileY];
+					    UWTileMap.GetRandomXYZForTile(tile, out int newxpos, out int newypos, out int newzpos);
+					    var dropcoordinate = uwObject.GetCoordinate(playerdat.tileX, playerdat.tileY, newxpos, newypos, newzpos);
+
                         //drop at players location
                         pickup.Drop(
                             index: objindex,
                             objList: UWTileMap.current_tilemap.LevelObjects,
-                            dropPosition: main.gamecam.Position,
+                            dropPosition: dropcoordinate,
                             tileX: playerdat.tileX,
                             tileY: playerdat.tileY);
                     }
