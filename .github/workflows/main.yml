@@ -36,7 +36,7 @@ jobs:
     - name: create release
       uses: ncipollo/release-action@v1.12.0
       with:
-        name: Underworld ${{github.run_number}}
+        name: Ultima Underworld Godot Build ${{github.run_number}}
         token: ${{ secrets.GITHUB_TOKEN }}
         generateReleaseNotes: true
         tag: release

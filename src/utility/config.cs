@@ -38,12 +38,23 @@ namespace Underworld
             appfolder = Path.GetDirectoryName(appfolder);
             var settingsfile = Path.Combine(appfolder, "uwsettings.json");
             Debug.Print($"Loading settings at {settingsfile}");
+            uwsettings gamesettings;
+
             if (!File.Exists(settingsfile))
             {
-                OS.Alert("missing file uwsettings.json at " + settingsfile);
-                return;
+                //OS.Alert($"Missing file uwsettings.json at {settingsfile}\nCreating defaults.");
+                gamesettings = new uwsettings();
+                gamesettings.FOV=75;
+                gamesettings.level = 0;
+                gamesettings.shaderbandsize = 8;
+                gamesettings.gametoload = "UW1";
+                gamesettings.pathuw1 = "c:\\games";
+                gamesettings.pathuw2 = "c:\\games";
             }
-            var gamesettings = JsonSerializer.Deserialize<uwsettings>(File.ReadAllText(settingsfile));
+            else
+            {
+                gamesettings = JsonSerializer.Deserialize<uwsettings>(File.ReadAllText(settingsfile));
+            }
             uwsettings.instance = gamesettings;
             if (main.gamecam!=null)
             {
