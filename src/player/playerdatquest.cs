@@ -288,7 +288,7 @@ namespace Underworld
 /// 54: Checked by Mors Gotha? related to keep crashing
 /// 55: Banner of Killorn returned (based on Scd.ark research)
 /// 58: Set when meeting bishop. Bishop tells you about altara
-/// 60: Possible prison tower variable. used in check trap on second highest level
+/// 60: Probably means Goblins have been killed in the prison tower. used in check trap on second highest level
 /// 61: You've brought water to Josie
 /// 
 /// 63: Blog has given you the gem
@@ -306,7 +306,7 @@ namespace Underworld
 /// 115: checked when talking to LB. The servants are on strike
 /// 116: The strike has been called off.
 /// 117: Mors has been defeated in Kilorn
-/// 118: The wisps tell you about the trilikisssss2
+/// 118: The wisps tell you about the triliki
 /// 119: Fizzit the thief surrenders
 /// 120: checked by miranda?
 /// 121: You have defeated Dorstag

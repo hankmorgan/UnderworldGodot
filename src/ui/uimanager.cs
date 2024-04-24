@@ -23,7 +23,7 @@ namespace Underworld
 			// {				
 			// 	uwsettings.LoadSettings();
 			// }
-			uimanager.instance.pathuw1.Text = uwsettings.instance.pathuw1;
+			inar
 			Debug.Print(uwsettings.instance.pathuw1);
 			uimanager.instance.pathuw2.Text = uwsettings.instance.pathuw2;
 			Debug.Print(uwsettings.instance.pathuw2);
