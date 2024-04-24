@@ -190,9 +190,12 @@ namespace Underworld
                     n.uwobject.AccumulatedDamage = 0;
                     if (n.uwobject.tileY != 99)
                     {
-                        short CalcedFacing = CalculateFacingAngleToNPC(n);
-                        n.uwobject.AnimationFrame++;
-                        n.SetAnimSprite(n.uwobject.npc_animation, n.uwobject.AnimationFrame, CalcedFacing); //n.uwobject.heading);
+                        if (n.uwnode!=null)
+                        {
+                            short CalcedFacing = CalculateFacingAngleToNPC(n);
+                            n.uwobject.AnimationFrame++;
+                            n.SetAnimSprite(n.uwobject.npc_animation, n.uwobject.AnimationFrame, CalcedFacing); //n.uwobject.heading);
+                        }                        
                     }
                 }
             }

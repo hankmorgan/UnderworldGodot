@@ -162,6 +162,12 @@ namespace Underworld
                 UWTileMap.current_tilemap.MobileFreeListObject = obj.index;
                 UWTileMap.current_tilemap.MobileFreeListPtr++;
                 Debug.Print($"Freeing Mobile {obj.index} Pointer incremented to {UWTileMap.current_tilemap.MobileFreeListPtr}");
+                if (obj.majorclass==1)
+                {
+                    var n = (npc)(obj.instance);
+                    npcs.Remove(n);
+                }
+            
             }
             else
             {//static
