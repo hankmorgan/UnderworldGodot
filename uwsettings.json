@@ -1,0 +1,12 @@
+{
+    "pathuw1": "C:\\Games\\UW1",
+    "pathuw2": "C:\\Games\\UW2",
+    "gametoload": "UW1",
+    "level": 5,
+    "lightlevel" : 6,
+    "levarkfolder" : "DATA",
+    "shader" : "UWSHADER",
+    "FOV" : 75.0,
+    "showcolliders" : false,
+    "shaderbandsize" : 8
+}
