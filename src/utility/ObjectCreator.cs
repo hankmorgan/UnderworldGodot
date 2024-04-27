@@ -688,7 +688,7 @@ namespace Underworld
             critter.UnkBit_0XD_Bit8 = 0;
             critter.UnkBit_0x18_5 = 0;//possbily used to indicate npc is at their target
             critter.Swing = 0;
-            critter.UnkBit_0XA_Bit012 = 0;
+            critter.UnkBit_0XA_Bit0123 = 0;
             critter.Projectile_Speed = 4;
             critter.npc_animation = 0;
             critter.AnimationFrame = 0;

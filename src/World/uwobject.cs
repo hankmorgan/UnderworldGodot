@@ -524,21 +524,21 @@ namespace Underworld
         //     }
         // }
 
-         public short UnkBit_0XA_Bit012
+         public short UnkBit_0XA_Bit0123
         {
             get
             {
                 if (IsStatic) { return 0; }
                 int val = GetAt(PTR + 0xA);
-                return (short)DataLoader.ExtractBits(val, 0, 7);
+                return (short)DataLoader.ExtractBits(val, 0, 0xF);
             }
             set
             {
                 if (!IsStatic)
                 {
                     int existingValue = GetAt(PTR + 0xA);
-                    existingValue &= 0xF8; //Mask out current val
-                    SetAt(PTR + 0xA, (byte)(existingValue | ((value & 0x7))));
+                    existingValue &= 0xF0; //Mask out current val
+                    SetAt(PTR + 0xA, (byte)(existingValue | ((value & 0xF))));
                 }
             }
         }
@@ -563,7 +563,7 @@ namespace Underworld
                     SetAt(PTR + 0xA, (byte)(existingValue | ((value & 0x7) << 4)));
                 }
             }
-        }
+        }        
 
         /// <summary>
         /// Used by create object traps. Possibly flags if npc is "live"
@@ -1033,6 +1033,11 @@ namespace Underworld
             }
         }
 
+
+
+        /// <summary>
+        /// Maybe determines if npc needs to move
+        /// </summary>
         public short UnkBit_0X15_Bit6
         {
             get
@@ -1051,6 +1056,26 @@ namespace Underworld
                 }
             }
         }
+
+        public short UnkBit_0X15_Bit7
+        {
+            get
+            {
+                if (IsStatic) { return 0; }
+                int val = GetAt(PTR + 0x15);
+                return (short)DataLoader.ExtractBits(val, 7, 1);
+            }
+            set
+            {
+                if (!IsStatic)
+                {
+                    int existingValue = GetAt(PTR + 0x15);
+                    existingValue &= 0x7F; //Mask out current val
+                    SetAt(PTR + 0x15, (byte)(existingValue | ((value & 0x1) << 7)));
+                }
+            }
+        }
+
 
         //public short MobileUnk_0x15_4_1F
         //{
