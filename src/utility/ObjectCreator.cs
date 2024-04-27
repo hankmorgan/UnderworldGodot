@@ -711,7 +711,7 @@ namespace Underworld
             critter.npc_talkedto = 0;
             critter.npc_attitude = 2;
             critter.UnkBit_0XA_Bit7 = 0;//active?
-            critter.UnkBit_0x19_23 = 0;
+            critter.npc_spellindex = 0;
             critter.UnkBit_0XA_Bit456 = 0;
 
         }

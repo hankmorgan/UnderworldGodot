@@ -898,6 +898,10 @@ namespace Underworld
             }
         }
 
+
+        /// <summary>
+        /// What character launched a projectile and also the last character to hit the NPC in combat
+        /// </summary>
         public short ProjectileSourceID
         {
             get
@@ -1241,7 +1245,11 @@ namespace Underworld
             }
         }
 
-        public short UnkBit_0x19_23
+
+        /// <summary>
+        /// Index into the spell list in critter object data. Controls the spell the npc will cast next in combat.
+        /// </summary>
+        public short npc_spellindex
         {
             get
             {

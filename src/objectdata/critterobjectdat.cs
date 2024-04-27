@@ -125,7 +125,7 @@ namespace Underworld
 
         public static int generaltype(int item_id)
         {
-            Debug.Print("Race. Needs to be reconfirmed");
+           // Debug.Print("Race. Needs to be reconfirmed");
             return buffer[CritterOffset(item_id) + 0x9];
         }
 

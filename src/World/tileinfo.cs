@@ -294,8 +294,7 @@ namespace Underworld
 
 
         /// <summary>
-        /// Only seems to matter on Level 9 and possibly where there is water? 
-        /// UPDATE>Possible bug in reading data. Retest this. TODO:
+        /// Used to determine if NPC/character can use a magic attack from this tile
         /// </summary>
         public short noMagic
         {

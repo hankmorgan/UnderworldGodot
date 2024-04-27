@@ -64,8 +64,23 @@ namespace Underworld
             //make the npc react to the damage source. player if 0
             //record the damage source as the player
             Debug.Print($"Record damage source as {damagesource}");
+
+            critter.ProjectileSourceID = (short)damagesource;
+            if (damagesource==1)
+            {//player applied damage
+                playerdat.LastDamagedNPCIndex = critter.index;
+                playerdat.LastDamagedNPCType = critterObjectDat.generaltype(critter.item_id);
+                playerdat.LastDamagedNPCTime = playerdat.ClockValue;
+                playerdat.LastDamagedNPCTileX = critter.tileX;
+                playerdat.LastDamagedNPCTileY = critter.tileY;
+            }
+
+
+
+
+            //TODO: update hostility and AI flags.
             if (critter.npc_hp == 0)
-            {
+            {//TODO this should be in a special death function. not here.
                 //do death handling.
                 if (SpecialNPCDeathCases(critter))
                 {
