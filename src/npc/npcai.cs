@@ -41,12 +41,29 @@ namespace Underworld
             var distancesquaredtoplayer = ((critter.npc_yhome - playerdat.tileY) ^ 2)
                                             + ((critter.npc_xhome - playerdat.tileX) ^ 2);
 
+            var n = (npc)critter.instance;
+
             if (
                 (distancesquaredtoplayer <= 0x64)
                 ||
                 (critter.npc_goal == (byte)npc_goals.npc_goal_follow)
                 )
             {
+                int MaxAnimFrame;
+                short CalcedFacing = CalculateFacingAngleToNPC(critter);
+                string animname = CritterArt.GetAnimName(critter.npc_animation, CalcedFacing);
+                var crit = CritterArt.GetCritter(critter.item_id & 0x3F);
+                if (crit.Animations.ContainsKey(animname))
+                {
+                    var anim = crit.Animations[animname];
+                    MaxAnimFrame = anim.maxNoOfFrames;
+                }
+                else
+                {
+                    return;//no animation data.
+                }
+
+
                 if (critterObjectDat.isFlier(critter.item_id))
                 {
                     //special setup for flying ai                    
@@ -130,12 +147,19 @@ namespace Underworld
                 currObjTotalHeading = (critter.heading<<5) + critter.npc_heading;
                 currObjUnk13 = critter.UnkBit_0X13_Bit0to6;
                 currObjHeight = commonObjDat.height(critter.item_id);
-                //TODO get animation globals
-
                 //finally process goals.
                 if ((critter.npc_goal == 0xB) || (critter.npc_goal == 3))
                 {
                     NpcBehaviours();
+                    if (critter.AnimationFrame>=MaxAnimFrame)
+                    {
+                        critter.AnimationFrame=0;
+                    }
+                    else
+                    {
+                        critter.AnimationFrame++;
+                    }
+                    n.SetAnimSprite(critter.npc_animation,critter.AnimationFrame, CalcedFacing);//temp keep anims running
                 }
                 else
                 {
@@ -146,7 +170,7 @@ namespace Underworld
                     )
                     {
                         //death animation
-                        if (critter.AnimationFrame==4)//todo make last frame dynamic
+                        if (critter.AnimationFrame>=MaxAnimFrame)
                         {
                             //Special death cases
                             //SpecialDeathCases(1); //mode 1
@@ -158,7 +182,8 @@ namespace Underworld
                         else
                         {
                             critter.AnimationFrame++;
-                        }
+                            n.SetAnimSprite(critter.npc_animation,critter.AnimationFrame, CalcedFacing);   
+                        }                                         
                     }
                     else
                     {//check and process combat anims and other goals
@@ -181,11 +206,16 @@ namespace Underworld
                                         //apply attack
                                         Debug.Print("NPC makes attack");
                                     }
-
-                                    //Advance frame.
-                                    // if frame is last frame set animation to 2, frame 0
-                                            //clear swing value,
-                                    // else increment frame
+                                    if (critter.AnimationFrame>=MaxAnimFrame)
+                                    {
+                                        critter.npc_animation = 2;
+                                        critter.AnimationFrame = 0;
+                                    }
+                                    else
+                                    {
+                                        critter.AnimationFrame++;
+                                    }
+                                    n.SetAnimSprite(critter.npc_animation,critter.AnimationFrame, CalcedFacing);
 
                                     break;
                                 }
@@ -210,17 +240,31 @@ namespace Underworld
                                         }
                                     }
 
-                                    //advance frame
-                                    //if at max
-                                    // critter.npc_spellindex = 0;
-                                    //set animation to 2, frame 0
-                                    
-
+                                    if (critter.AnimationFrame>=MaxAnimFrame)
+                                    {
+                                        critter.npc_animation = 2;
+                                        critter.AnimationFrame = 0;
+                                    }
+                                    else
+                                    {
+                                        critter.AnimationFrame++;
+                                    }
+                                    n.SetAnimSprite(critter.npc_animation,critter.AnimationFrame, CalcedFacing);
                                     break;
                                 }
                             default:
-                                {
+                                {                                    
                                     NpcBehaviours();
+                                    //temp
+                                    if (critter.AnimationFrame>=MaxAnimFrame)
+                                    {
+                                        critter.AnimationFrame=0;
+                                    }
+                                    else
+                                    {
+                                        critter.AnimationFrame++;
+                                    }
+                                    n.SetAnimSprite(critter.npc_animation,critter.AnimationFrame, CalcedFacing);//temp keep anims running
                                     break;
                                 }
                         }

@@ -122,7 +122,6 @@ namespace Underworld
             if (crit.Animations.ContainsKey(animname))
             {
                 uwobject.AnimationFrame = (byte)ApplyCritterAnimation(animationNo, frameNo, animname, crit);
-
             }
             else
             {
@@ -192,21 +191,22 @@ namespace Underworld
                     {
                         if (n.uwnode!=null)
                         {
-                            short CalcedFacing = CalculateFacingAngleToNPC(n);
-                            n.uwobject.AnimationFrame++;
-                            n.SetAnimSprite(n.uwobject.npc_animation, n.uwobject.AnimationFrame, CalcedFacing); //n.uwobject.heading);
+                            NPCInitialProcess(n.uwobject);
+                            // short CalcedFacing = CalculateFacingAngleToNPC(n.uwobject);
+                            // n.uwobject.AnimationFrame++;
+                            // n.SetAnimSprite(n.uwobject.npc_animation, n.uwobject.AnimationFrame, CalcedFacing); //n.uwobject.heading);
                         }                        
                     }
                 }
             }
         }
 
-        private static short CalculateFacingAngleToNPC(npc n)
+        private static short CalculateFacingAngleToNPC(uwObject n)
         {
-            var direction = -main.gamecam.Position + n.uwnode.Position;
+            var direction = -main.gamecam.Position + n.instance.uwnode.Position;
             var angle = Mathf.RadToDeg(Mathf.Atan2(direction.X, direction.Z));
             var facingIndex = facing(angle);
-            var CalcedFacing = (short)(facingIndex + n.uwobject.heading);
+            var CalcedFacing = (short)(facingIndex + n.heading);
             if (CalcedFacing >= 8)//Make sure it wraps around correcly between 0 and 7 ->The compass headings.
             {
                 CalcedFacing = (short)(CalcedFacing - 8);

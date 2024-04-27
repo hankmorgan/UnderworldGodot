@@ -987,6 +987,7 @@ namespace Underworld
     /// </summary>
     public class CritterAnimation
     {
+        public int maxNoOfFrames;
         public string animName;
         //public int[] animSequence = { -1, -1, -1, -1, -1, -1, -1, -1 };
         public int[] animIndices = { -1, -1, -1, -1, -1, -1, -1, -1 };
@@ -994,6 +995,14 @@ namespace Underworld
         {
             animName = _animName;
             animIndices = _indices;
+            for (int i=7;i>=0;i--)
+            {
+                if (_indices[i] != -1)
+                {
+                    maxNoOfFrames=i;
+                    break;
+                }
+            }
         }
     }//end class critteranimation
 
