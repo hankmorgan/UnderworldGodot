@@ -118,12 +118,11 @@ namespace Underworld
                 )
                 {
                     //motion
-                    //todo
                     var ProjectileHeading = critter.ProjectileHeading;
-                    //InitMotionParams()
-                    //call    seg006_1413_9F5 
-                    // CalculateMotion_seg006_1413_D6A
-                    //ApplyProjectileMotion_seg030_2BB7_689
+                    motion.InitMotionParams(critter);
+                    motion.seg006_1413_9F5(critter);
+                    motion.CalculateMotion_seg006_1413_D6A(critter);
+                    motion.ApplyProjectileMotion_seg030_2BB7_689(critter);
                     if (ProjectileHeading != critter.ProjectileHeading)
                     {
                         HasCurrobjHeadingChanged_dseg_67d6_2242 = 1;
@@ -147,6 +146,7 @@ namespace Underworld
                 currObjTotalHeading = (critter.heading<<5) + critter.npc_heading;
                 currObjUnk13 = critter.UnkBit_0X13_Bit0to6;
                 currObjHeight = commonObjDat.height(critter.item_id);
+                
                 //finally process goals.
                 if ((critter.npc_goal == 0xB) || (critter.npc_goal == 3))
                 {
@@ -175,8 +175,15 @@ namespace Underworld
                             //Special death cases
                             //SpecialDeathCases(1); //mode 1
                             //Drop npc loot (spawn if missing)
+                            if (critter.LootSpawnedFlag==0)
+                            {
+                                spawnloot(critter);
+                            }
+                            container.SpillWorldContainer(critter);
                             //Drop corpse
+                           // ObjectCreator.spawnObjectInTile(0, critter.tileX, critter.tileY, critter.xpos, critter.ypos, critter.zpos,ObjectCreator.ObjectListType.StaticList);
                             //remove from tile and free object
+                            ObjectCreator.DeleteObjectFromTile(critter.tileX, critter.tileY, critter.index, true);
                             return;
                         }
                         else
@@ -280,7 +287,9 @@ namespace Underworld
         }
 
 
-
+        /// <summary>
+        /// Handles high level goal processing and determines if an npc needs to become hostile to the player
+        /// </summary>
         static void NpcBehaviours()
         {
 
