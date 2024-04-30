@@ -418,12 +418,12 @@ namespace Underworld
         /// </summary>
         /// <param name="item_id"></param>
         /// <returns></returns>
-        public static int Unk26_R4(int item_id)
+        public static int valuable_loot_probability(int item_id)
         {
             return (buffer[CritterOffset(item_id) + 0x26] >>4 ) & 0xF;
         }
 
-    public static int Unk26_F(int item_id)
+    public static int valuable_multipleprobability(int item_id)
         {
             return (buffer[CritterOffset(item_id) + 0x26]) & 0xF;
         }

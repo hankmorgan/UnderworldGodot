@@ -124,6 +124,69 @@ namespace Underworld
 
 
         /// <summary>
+        /// Spawns the blood fluids and corpse object for this crittter type
+        /// </summary>
+        /// <param name="critter"></param>
+        private static void DropRemains(uwObject critter)
+        {
+            var tile = UWTileMap.current_tilemap.Tiles[critter.tileX, critter.tileY];
+            //Drop npc loot (spawn if missing)
+            if (critter.LootSpawnedFlag == 0)
+            {
+                spawnloot(critter);
+            }
+            container.SpillWorldContainer(critter);
+
+            var fluids = critterObjectDat.fluids(critter.item_id);
+            if (fluids!=0)
+            {
+                if (_RES==GAME_UW2)
+                {
+                    fluids+=0xD9;
+                }
+                else
+                {
+                    fluids+=0xD8;
+                }                
+                //UWTileMap.GetRandomXYZForTile(tile, out int newxpos, out int newypos, out int newzpos);
+                ObjectCreator.spawnObjectInTile(
+                    itemid: fluids, 
+                    tileX: critter.tileX, 
+                    tileY: critter.tileY, 
+                    xpos: (short)critter.xpos, 
+                    ypos: (short)critter.zpos, 
+                    zpos: (short)(tile.floorHeight<<3), 
+                    WhichList: ObjectCreator.ObjectListType.StaticList);
+            }
+
+            //Drop corpse
+            var corpse = critterObjectDat.corpse(critter.item_id);
+            if ((_RES == GAME_UW2) && (worlds.GetWorldNo(playerdat.dungeon_level) == 7))
+            {
+                corpse = 0;//no spawn in the pits of carnage
+            }
+            if (corpse != 0)
+            {
+                if (Rng.r.Next(0, 16) < 7)
+                {
+                    corpse += 0xC0;
+                    //UWTileMap.GetRandomXYZForTile(tile, out int newxpos, out int newypos, out int newzpos);
+                    ObjectCreator.spawnObjectInTile(
+                        itemid: corpse, 
+                        tileX: critter.tileX, 
+                        tileY: critter.tileY, 
+                        xpos: (short)critter.xpos, 
+                        ypos: (short)critter.zpos, 
+                        zpos: (short)(tile.floorHeight<<3), 
+                        WhichList: ObjectCreator.ObjectListType.StaticList);
+
+                }
+            }
+        }
+
+
+
+        /// <summary>
         /// Handles tybals death.
         /// </summary>
         /// <param name="tybal"></param>

@@ -8,7 +8,7 @@ namespace Underworld
     /// </summary>
     public partial class npc : objectInstance
     {
-        static bool DebugSpawnAllLoot=true;
+        //static bool DebugSpawnAllLoot=false;
 
         /// <summary>
         /// Generates the npc's inventory on demand. If lootspawned flag is set the npc already has an inventory
@@ -35,11 +35,11 @@ namespace Underworld
             //The game world chooses which valuable item type is dropped in the valuables object class (starting at coin)
             var world = worlds.GetWorldNo(playerdat.dungeon_level);
             
-            var Critter_var_5 = critterObjectDat.Unk26_F(critter.item_id);
-            var Critter_var_6 = critterObjectDat.Unk26_R4(critter.item_id);
+            var Critter_var_5 = critterObjectDat.valuable_multipleprobability(critter.item_id);
+            var valuableDropProbability = critterObjectDat.valuable_loot_probability(critter.item_id);
             
             var r = new Random();
-            if ((r.Next(0, 16) > Critter_var_6) && (!DebugSpawnAllLoot))
+            if (r.Next(0, 16) >= valuableDropProbability)
             {//Do not spawn a valuable.
                 return;
             }
@@ -128,7 +128,7 @@ namespace Underworld
 
         public static void FoodLoot(uwObject critter)
         {
-            if (Rng.r.Next(0,16)<critterObjectDat.foodloot_probability(critter.item_id) || (DebugSpawnAllLoot))
+            if (Rng.r.Next(0,16)<critterObjectDat.foodloot_probability(critter.item_id))
             {
                 var item_id = critterObjectDat.foodloot_item(critter.item_id) + 0xB0;
                 var obj = spawnLootObject(critter, item_id);
@@ -201,7 +201,7 @@ namespace Underworld
         {
             for (int i=0;i<2;i++)
             {
-                if ((Rng.r.Next(0,16) <critterObjectDat.otherloot_probability(critter.item_id, i)) || (DebugSpawnAllLoot))
+                if (Rng.r.Next(0,16) <critterObjectDat.otherloot_probability(critter.item_id, i))
                 {
                     var item_id = critterObjectDat.otherloot_item(critter.item_id, i);
                     var quality = RandomLootQuality();

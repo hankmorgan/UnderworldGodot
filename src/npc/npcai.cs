@@ -174,15 +174,11 @@ namespace Underworld
                         {
                             //Special death cases
                             SpecialDeathCases(critter, 1); //mode 1
-                            //Drop npc loot (spawn if missing)
-                            if (critter.LootSpawnedFlag==0)
-                            {
-                                spawnloot(critter);
-                            }
-                            container.SpillWorldContainer(critter);
-                            //Drop corpse
-                           // ObjectCreator.spawnObjectInTile(0, critter.tileX, critter.tileY, critter.xpos, critter.ypos, critter.zpos,ObjectCreator.ObjectListType.StaticList);
+                            DropRemains(critter);
+
+                            // ObjectCreator.spawnObjectInTile(0, critter.tileX, critter.tileY, critter.xpos, critter.ypos, critter.zpos,ObjectCreator.ObjectListType.StaticList);
                             //remove from tile and free object
+
                             ObjectCreator.DeleteObjectFromTile(critter.tileX, critter.tileY, critter.index, true);
                             return;
                         }
@@ -286,8 +282,7 @@ namespace Underworld
             }
         }
 
-
-        /// <summary>
+         /// <summary>
         /// Handles high level goal processing and determines if an npc needs to become hostile to the player
         /// </summary>
         static void NpcBehaviours()
