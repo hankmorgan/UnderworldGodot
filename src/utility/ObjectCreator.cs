@@ -184,6 +184,7 @@ namespace Underworld
                 }
                 obj.instance = null;
             }
+            obj.tileX=99; obj.tileY=99;
         }
 
         /// <summary>
