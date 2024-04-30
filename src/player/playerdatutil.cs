@@ -207,9 +207,9 @@ namespace Underworld
         }
 
 
-            public static void WriteBytesToFile()
-            {
-                System.IO.File.WriteAllBytes("c:\\temp\\debug.pdat", pdat);
-            }
+            // public static void WriteBytesToFile()
+            // {
+            //     System.IO.File.WriteAllBytes("c:\\temp\\debug.pdat", pdat);
+            // }
      }
 }//end namespace

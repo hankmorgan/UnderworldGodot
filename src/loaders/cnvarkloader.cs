@@ -63,7 +63,7 @@ namespace Underworld
                     }
                 }
                 var json = System.Text.Json.JsonSerializer.Serialize(ConversationVM.conversations);
-                 File.WriteAllText("c:\\temp\\conversations.txt", json);
+                //File.WriteAllText("c:\\temp\\conversations.txt", json);
                 Loaded = true;
             }
         }

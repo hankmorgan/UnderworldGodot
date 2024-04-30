@@ -275,7 +275,7 @@ namespace Underworld
             {//Create palette cycles                    
                 Palette.cyclePaletteReverse(tmpPalette, 64, 63);//Forward
                 NewCycledPalette[c] = tmpPalette.toImage();   // tmpPalette.toImage();
-                tmpPalette.toImage().GetImage().SavePng($"c:\\temp\\p{c.ToString("##")}.png");
+                //tmpPalette.toImage().GetImage().SavePng($"c:\\temp\\p{c.ToString("##")}.png");
             }
             return NewCycledPalette;
         }
