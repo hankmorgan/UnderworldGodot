@@ -25,7 +25,7 @@ namespace Underworld
                 case GAME_UW2:
                 case GAME_UW1:
                 default:
-                    Lev_Ark_File = Path.Combine(BasePath, folder, "lev.ark");  //  Lev_Ark_File_Selected; //"DATA\\lev.ark";//Eventually this will be a save game.
+                    Lev_Ark_File = Path.Combine(BasePath, folder, "LEV.ARK");  //  Lev_Ark_File_Selected; //"DATA\\lev.ark";//Eventually this will be a save game.
                     break;
             }
             var toLoad = Path.Combine(BasePath, Lev_Ark_File);
