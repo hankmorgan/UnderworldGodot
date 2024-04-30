@@ -728,7 +728,7 @@ namespace Underworld
                 damagetype: damageType,                
                 objList: UWTileMap.current_tilemap.LevelObjects, 
                 WorldObject: true,
-                damagesource: 0,
+                damagesource: 1,
                 hitCoordinate: hitCoordinate);
             return 0;
         }

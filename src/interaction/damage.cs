@@ -17,7 +17,7 @@ namespace Underworld
         /// <param name="damagetype"></param>
         /// <param name="damagesource"></param>
 
-        public static void DamageObject(uwObject objToDamage, int basedamage, int damagetype, uwObject[] objList, bool WorldObject, Godot.Vector3 hitCoordinate, int damagesource = 0)
+        public static void DamageObject(uwObject objToDamage, int basedamage, int damagetype, uwObject[] objList, bool WorldObject, Godot.Vector3 hitCoordinate, int damagesource)
         {
             uwObject.ScaleDamage(objToDamage.item_id, ref basedamage, damagetype);
             Debug.Print($"Try and Damage {objToDamage.a_name} by {basedamage}");
@@ -51,7 +51,7 @@ namespace Underworld
         /// <param name="critter"></param>
         /// <param name="damage"></param>
         /// <param name="damagetype"></param>
-        static bool DamageNPC(uwObject critter, int basedamage, int damagetype, int damagesource = 0)
+        static bool DamageNPC(uwObject critter, int basedamage, int damagetype, int damagesource)
         {
             uwObject.ScaleDamage(critter.item_id, ref basedamage, damagetype);
 
@@ -77,22 +77,27 @@ namespace Underworld
 
 
 
-
-            //TODO: update hostility and AI flags.
             if (critter.npc_hp == 0)
-            {//TODO this should be in a special death function. not here.
-                //do death handling.
-                if (SpecialNPCDeathCases(critter))
-                {
-                    if (_RES == GAME_UW2)
+            {
+                if (
+                    (_RES==GAME_UW2) && (critter.npc_animation!=7)
+                    ||
+                    (_RES!=GAME_UW2) && (critter.npc_animation!=0xC)
+                )
+                { //if not already in the death animation
+                    if (npc.SpecialDeathCases(critter))
                     {
-                        critter.npc_animation = 7;//are these right??
+                        if (_RES == GAME_UW2)
+                        {
+                            critter.npc_animation = 7;//are these right??                            
+                        }
+                        else
+                        {
+                            critter.npc_animation = 0xC;//
+                        }
+                        critter.AnimationFrame = 0;
+                        npc.RedrawAnimation(critter);
                     }
-                    else
-                    {
-                        critter.npc_animation = 0xC;//
-                    }
-
                 }
             }
             return false;
@@ -198,17 +203,6 @@ namespace Underworld
 
         //     DamageNPC(critter, basedamage, damagetype);
         // }
-
-
-        /// <summary>
-        /// Handles special cases where some npcs death will trigger something to happen or change quest vars.
-        /// </summary>
-        /// <param name="critter"></param>
-        /// <returns>True if NPC should die.</returns>
-        public static bool SpecialNPCDeathCases(uwObject critterToKill)
-        {
-            return true;
-        }
 
         /// <summary>
         /// Handles destruction of a damage object and replaces it with appropiate debris objects

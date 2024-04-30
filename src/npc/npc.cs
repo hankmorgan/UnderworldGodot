@@ -182,26 +182,51 @@ namespace Underworld
         /// </summary>
         public static void UpdateNPCs()
         {
-            if (ObjectCreator.npcs != null)
+            for (int i = 1; i<=255;i++)
             {
-                foreach (var n in ObjectCreator.npcs)
+                var obj = UWTileMap.current_tilemap.LevelObjects[i];
+                if (obj!=null)
                 {
-                    n.uwobject.AccumulatedDamage = 0;
-                    if (n.uwobject.tileY != 99)
+                    if (obj.majorclass==1)
                     {
-                        if (n.uwnode!=null)
+                        if (UWTileMap.ValidTile(obj.tileX, obj.tileY))
                         {
-                            NPCInitialProcess(n.uwobject);
-                            // short CalcedFacing = CalculateFacingAngleToNPC(n.uwobject);
-                            // n.uwobject.AnimationFrame++;
-                            // n.SetAnimSprite(n.uwobject.npc_animation, n.uwobject.AnimationFrame, CalcedFacing); //n.uwobject.heading);
-                        }                        
+                            NPCInitialProcess(obj);
+                        }
                     }
                 }
             }
+
+            // if (ObjectCreator.npcs != null)
+            // {
+            //     foreach (var n in ObjectCreator.npcs)
+            //     {
+            //         n.uwobject.AccumulatedDamage = 0;
+            //         if (n.uwobject.tileY != 99)
+            //         {
+            //             if (n.uwnode!=null)
+            //             {
+            //                 NPCInitialProcess(n.uwobject);
+            //                 // short CalcedFacing = CalculateFacingAngleToNPC(n.uwobject);
+            //                 // n.uwobject.AnimationFrame++;
+            //                 // n.SetAnimSprite(n.uwobject.npc_animation, n.uwobject.AnimationFrame, CalcedFacing); //n.uwobject.heading);
+            //             }                        
+            //         }
+            //     }
+            // }
         }
 
-        private static short CalculateFacingAngleToNPC(uwObject n)
+        public static void RedrawAnimation(uwObject n)
+        {
+            short CalcedFacing = CalculateFacingAngleToNPC(n);
+            var np = (npc)(n.instance);
+            if (np!=null)
+            {
+                np.SetAnimSprite(n.npc_animation,n.AnimationFrame, CalcedFacing);
+            }            
+        }
+
+        public static short CalculateFacingAngleToNPC(uwObject n)
         {
             var direction = -main.gamecam.Position + n.instance.uwnode.Position;
             var angle = Mathf.RadToDeg(Mathf.Atan2(direction.X, direction.Z));

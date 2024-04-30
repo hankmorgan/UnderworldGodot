@@ -125,7 +125,7 @@ namespace Underworld
                             damagetype: 4, objList: objList, 
                             WorldObject: true, 
                             hitCoordinate: hitCoordinate, 
-                            damagesource: 0);
+                            damagesource: 1);
                         animo.SpawnAnimoAtPoint(0, hitCoordinate);
                         // damage.ScaledDamageOnNPCWithAnimo(
                         //     critter: obj,

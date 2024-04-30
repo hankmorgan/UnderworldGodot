@@ -173,7 +173,7 @@ namespace Underworld
                         if (critter.AnimationFrame>=MaxAnimFrame)
                         {
                             //Special death cases
-                            //SpecialDeathCases(1); //mode 1
+                            SpecialDeathCases(critter, 1); //mode 1
                             //Drop npc loot (spawn if missing)
                             if (critter.LootSpawnedFlag==0)
                             {
