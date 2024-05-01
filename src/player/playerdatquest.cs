@@ -258,7 +258,7 @@ namespace Underworld
 /// 18: You learn that the Trikili can talk.
 /// 19: You know Relk has found the black jewel (josie tells you)
 /// 20: You've met Mokpo
-/// 22: Blog is now your friend(?)
+/// 22: Blog is now your friend(?), cleared if you kill him
 /// 23: You have used Blog to defeat dorstag
 /// 24: You have won a duel in the arena
 /// 25: You have defeated Zaria in the pits
@@ -285,6 +285,7 @@ namespace Underworld
 /// 50: The keep is going to crash.
 /// 51: You have visited the ice caves (britannia becomes icy)
 /// 52: Have you cut the line of power in the ice caverns
+/// 53: You have killed Mokpo
 /// 54: Checked by Mors Gotha? related to keep crashing
 /// 55: Banner of Killorn returned (based on Scd.ark research)
 /// 58: Set when meeting bishop. Bishop tells you about altara
@@ -295,6 +296,7 @@ namespace Underworld
 /// 64: Is mors dead
 /// 65: Pits related (checked by dorstag)
 /// 68: You have given the answers to nystrul and the invasion (endgame) has begun.
+/// 100: you have killed bishop
 /// 104: Set when you enter scintilus level 5 (set by variable trap)
 /// 105: Set when the air daemon is absorbed. (see also xclock1 and xclock3 changes)
 /// 106: Got or read mors spellbook
@@ -323,7 +325,8 @@ namespace Underworld
 /// 133: How much Jospur owes you for fighting in the pits
 /// 134: The password for the prison tower (random value)
 /// 135: Checked by goblin in sewers  (no of worms killed on level. At more than 8 they give you fish)
-/// 143: Set to 33 after first LB conversation. Set to 3 during endgame (is this what triggers the cutscenes?)
+/// 137: 3 is added to this when Zaria is killed by the avatar
+/// 143: Set to 33 after first LB conversation. Set to 3 during endgame (this value is the cutscene to play at the end of a conversation)
 /// 
 
 
