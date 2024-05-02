@@ -225,6 +225,11 @@ namespace Underworld
             }
         }
 
+        public static void RunScheduledTriggerInTile_15_29(int xhome, int yhome)
+        {
+            Debug.Print("Find schedule trigger in this hard coded tile and run it to create npcs");
+        }
+
         /// <summary>
         /// General trigger function for the execution of triggers generically (call this from the traps only when continuing a chain
         /// Specialised triggers like look and use triggers should be called directly by the interaction modes.
