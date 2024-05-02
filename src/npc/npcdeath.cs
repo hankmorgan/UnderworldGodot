@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.Linq;
 namespace Underworld
@@ -118,6 +119,32 @@ namespace Underworld
         
         public static bool SpecialDeathCasesUW2(uwObject critter, int mode = 0)
         {
+            if (mode!=0)
+            {
+                if (CheckIfMatchingRaceUW2(critter, 0xB))//a_trilkhun&trilkhai
+                {
+                    //set attitude to 0 on all of these
+                    Debug.Print("TODO set attitude function for race 0xB");
+                }
+                if ((playerdat.dungeon_level==4)&& (critter.item_id==0x4E))
+                {//killing worms in the sewers
+                    playerdat.SetQuest(135, Math.Min(playerdat.GetQuest(135) + 1, 200));
+                }
+                if (playerdat.IsFightingInPit)
+                {
+                    if (playerdat.IsDuelingAgainstCritter(critter.index))
+                    {
+                        if (playerdat.RemovePitFighter(critter.index))
+                        {
+                            playerdat.SetQuest(129, playerdat.GetQuest(129)+1); //if enough duels are fought the pit counter will overflow!
+                            if (critter.npc_whoami!=0x64)
+                            {//no honour in defeating krillner...
+                                playerdat.SetQuest(24,1);
+                            }
+                        }
+                    }
+                }
+            }
             return true;//todo
         }
 

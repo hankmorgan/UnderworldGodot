@@ -12,13 +12,13 @@ namespace Underworld
         /// <returns></returns>
         public static int GetGameVariable(int variableno)
         {
-            if (_RES==GAME_UW2)
+            if (_RES == GAME_UW2)
             {
-                return GetAt(0xFA+(variableno*2));
+                return GetAt(0xFA + (variableno * 2));
             }
             else
             {
-                return GetAt(0x71+variableno);
+                return GetAt(0x71 + variableno);
             }
         }
 
@@ -31,13 +31,13 @@ namespace Underworld
         {
             value = value & 0x3F;//keep value within range.
             Debug.Print($"Setting {variableno} to {value}");
-            if (_RES==GAME_UW2)
+            if (_RES == GAME_UW2)
             {
-               SetAt(0xFA+variableno*2, (byte)value);
+                SetAt(0xFA + variableno * 2, (byte)value);
             }
             else
             {
-                SetAt(0x71+variableno, (byte)value);
+                SetAt(0x71 + variableno, (byte)value);
             }
         }
 
@@ -98,7 +98,7 @@ namespace Underworld
                     int offset = 0x67 + (questno / 4) * 4;
                     int bit = questno % 4;
                     byte existingValue = GetAt(offset);
-                    byte mask = (byte)(1<< bit);
+                    byte mask = (byte)(1 << bit);
                     if (newValue >= 1)
                     {//set
                         existingValue |= mask;
@@ -123,7 +123,7 @@ namespace Underworld
                     int bit = questno % 8;
 
                     byte existingValue = GetAt(offset);
-                    byte mask = (byte)(1<< bit);
+                    byte mask = (byte)(1 << bit);
                     if (newValue >= 1)
                     {//set
                         existingValue |= mask;
@@ -139,7 +139,7 @@ namespace Underworld
                     SetAt(0x6a + (questno - 32), (byte)newValue);
                 }
             }
-        }   
+        }
 
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace Underworld
         {
             return GetAt(0x36E + clockno);
         }
-    
+
         public static void SetXClock(int clockno, int value)
         {
             SetAt(0x36E + clockno, (byte)value);
@@ -159,7 +159,7 @@ namespace Underworld
 
         public static void IncrementXClock(int clockno)
         {
-            SetXClock(clockno, GetXClock(clockno)+1);
+            SetXClock(clockno, GetXClock(clockno) + 1);
         }
 
 
@@ -167,12 +167,12 @@ namespace Underworld
         {
             get
             {
-                return ((GetAt(0x61) >>6 ) & 1) == 1;
+                return ((GetAt(0x61) >> 6) & 1) == 1;
             }
             set
             {
                 var tmp = GetAt(0x61);
-                tmp |= (1<<6);               
+                tmp |= (1 << 6);
                 SetAt(0x61, tmp);
             }
         }
@@ -181,12 +181,12 @@ namespace Underworld
         {
             get
             {
-                return ((GetAt(0x61) >>7 ) & 1) == 1;
+                return ((GetAt(0x61) >> 7) & 1) == 1;
             }
             set
             {
                 var tmp = GetAt(0x61);
-                tmp |= (1<<7);               
+                tmp |= (1 << 7);
                 SetAt(0x61, tmp);
             }
         }
@@ -204,9 +204,47 @@ namespace Underworld
         /// <param name="worldno"></param>
         /// <returns></returns>
         public static bool HasWorldBeenVisited(int worldno)
-        {           
-            return ((1<<worldno) & WorldsVisited) !=0;
+        {
+            return ((1 << worldno) & WorldsVisited) != 0;
         }
+
+        /// <summary>
+        /// The dungeon number where the silver tree is planted
+        /// </summary>
+        public static int SilverTreeDungeon
+        {
+            get
+            {
+                return GetAt(0x5F) >> 4;
+            }
+            set
+            {
+                value = value & 0xF;
+                var tmp = GetAt(0x5F);
+                tmp &= 0xF;
+                tmp |= (byte)(value << 4);
+                SetAt(0x5F, tmp);
+            }
+        }
+
+
+        /// <summary>
+        /// True when the player has fallen asleep under the effect of dream plants
+        /// </summary>
+        public static bool DreamingInVoid
+        {
+            get
+            {
+                if (_RES == GAME_UW2)
+                {
+                    return ((GetAt(0x63) >> 1) & 1) == 1;
+                }
+                return false;//not applicable to UW2
+            }
+        }
+
+
+
     }//end class
 }//end namespace
 
@@ -260,7 +298,7 @@ namespace Underworld
 /// 20: You've met Mokpo
 /// 22: Blog is now your friend(?), cleared if you kill him
 /// 23: You have used Blog to defeat dorstag
-/// 24: You have won a duel in the arena
+/// 24: You have won at least one duel in the arena. (Krillner does not count!)
 /// 25: You have defeated Zaria in the pits
 /// 26: You know about the magic scepter (for the Zoranthus)
 /// 27: You know about the sigil of binding/got the djinn bottle(by bringing the scepter to zorantus)
@@ -331,31 +369,31 @@ namespace Underworld
 
 
 /// <summary>
-    /// The x clocks tracks progress during the game and is used in firing events.
-    /// </summary>
-    /// The xclock is a range of 16 variables. When references by traps the index is -16 to get the below values.
-    /// The X Clock is tied closely to SCD.ark and the scheduled events within that file.
-    /// 1=Miranda conversations & related events in the castle
-    ///     1 - Nystrul is curious about exploration.Set after entering lvl 1 from the route downwards. (set variable traps 17 may be related)
-    ///     2 - After you visited another world.  (variable 17 is set to 16), dupre is tempted
-    ///     3 - servants getting restless
-    ///     4 - concerned about water, dupre is annoyed by patterson
-    ///     5 - Dupre is bored / dupre is fetching water
-    ///     7 - Miranda wants to talk to you pre tori murder
-    ///     8 - tori is murdered
-    ///     9 - Charles finds a key
-    ///     11 - Go see Nelson
-    ///     12 - Patterson kills Nelson
-    ///     13 - Patterson is dead
-    ///     14 - Gem is weak/Mors is in killorn(?)
-    ///     15 - Nystrul wants to see you again re endgame
-    ///     16 - Nystrul questions have been answered Mars Gotha comes
-    /// 2=Nystrul conversations and no of blackrock gems treated
-    /// 3=Djinn Capture
-    ///     2 = balisk oil is in the mud
-    ///     3 = bathed in oil
-    ///     4 = baked in lava
-    ///     5 = iron flesh cast (does not need to be still on when you break the bottle)
-    ///     6 = djinn captured in body
-    /// 14=Tracks no of enemies killed in pits. Does things like update graffiti.
-    /// 15=Used in multiple convos. Possibly tells the game to process a change when updated?
+/// The x clocks tracks progress during the game and is used in firing events.
+/// </summary>
+/// The xclock is a range of 16 variables. When references by traps the index is -16 to get the below values.
+/// The X Clock is tied closely to SCD.ark and the scheduled events within that file.
+/// 1=Miranda conversations & related events in the castle
+///     1 - Nystrul is curious about exploration.Set after entering lvl 1 from the route downwards. (set variable traps 17 may be related)
+///     2 - After you visited another world.  (variable 17 is set to 16), dupre is tempted
+///     3 - servants getting restless
+///     4 - concerned about water, dupre is annoyed by patterson
+///     5 - Dupre is bored / dupre is fetching water
+///     7 - Miranda wants to talk to you pre tori murder
+///     8 - tori is murdered
+///     9 - Charles finds a key
+///     11 - Go see Nelson
+///     12 - Patterson kills Nelson
+///     13 - Patterson is dead
+///     14 - Gem is weak/Mors is in killorn(?)
+///     15 - Nystrul wants to see you again re endgame
+///     16 - Nystrul questions have been answered Mars Gotha comes
+/// 2=Nystrul conversations and no of blackrock gems treated
+/// 3=Djinn Capture
+///     2 = balisk oil is in the mud
+///     3 = bathed in oil
+///     4 = baked in lava
+///     5 = iron flesh cast (does not need to be still on when you break the bottle)
+///     6 = djinn captured in body
+/// 14=Tracks no of enemies killed in pits. Does things like update graffiti.
+/// 15=Used in multiple convos. Possibly tells the game to process a change when updated?
