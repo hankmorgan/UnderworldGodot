@@ -18,7 +18,7 @@ namespace Underworld
 
         public static void DamageObject(uwObject objToDamage, int basedamage, int damagetype, uwObject[] objList, bool WorldObject, Godot.Vector3 hitCoordinate, int damagesource)
         {
-            uwObject.ScaleDamage(objToDamage.item_id, ref basedamage, damagetype);
+            damage.ScaleDamage(objToDamage.item_id, ref basedamage, damagetype);
             Debug.Print($"Try and Damage {objToDamage.a_name} by {basedamage}");
             if (objToDamage.majorclass == 1)
             {
@@ -34,10 +34,10 @@ namespace Underworld
                 {
                     //object should be destroyed
                     ObjectDestruction(
-                        objToDestroy: objToDamage, 
-                        damagetype: damagetype, 
-                        objList: objList, 
-                        WorldObject: WorldObject, 
+                        objToDestroy: objToDamage,
+                        damagetype: damagetype,
+                        objList: objList,
+                        WorldObject: WorldObject,
                         hitcoordinate: hitCoordinate);
                 }
             }
@@ -52,20 +52,20 @@ namespace Underworld
         /// <param name="damagetype"></param>
         static bool DamageNPC(uwObject critter, int basedamage, int damagetype, int damagesource)
         {
-            uwObject.ScaleDamage(critter.item_id, ref basedamage, damagetype);
+            damage.ScaleDamage(critter.item_id, ref basedamage, damagetype);
 
             Debug.Print($"Damage {critter.a_name} by {basedamage}");
 
             //Note to be strictly compatable with UW behaviour the damage should be accumulated for the npc and test
             //once per tick This is used to control the angering behaviour of the npc in checking against passiveness.
             critter.npc_hp = (byte)Math.Max(0, critter.npc_hp - basedamage);
-            critter.AccumulatedDamage+=(short)basedamage;//how much total damage has been applied in this tick.
+            critter.AccumulatedDamage += (short)basedamage;//how much total damage has been applied in this tick.
             //make the npc react to the damage source. player if 0
             //record the damage source as the player
             Debug.Print($"Record damage source as {damagesource}");
 
             critter.ProjectileSourceID = (short)damagesource;
-            if (damagesource==1)
+            if (damagesource == 1)
             {//player applied damage
                 playerdat.LastDamagedNPCIndex = critter.index;
                 playerdat.LastDamagedNPCType = critterObjectDat.generaltype(critter.item_id);
@@ -79,9 +79,9 @@ namespace Underworld
             if (critter.npc_hp == 0)
             {
                 if (
-                    (_RES==GAME_UW2) && (critter.npc_animation!=7)
+                    (_RES == GAME_UW2) && (critter.npc_animation != 7)
                     ||
-                    (_RES!=GAME_UW2) && (critter.npc_animation!=0xC)
+                    (_RES != GAME_UW2) && (critter.npc_animation != 0xC)
                 )
                 { //if not already in the death animation
                     if (npc.SpecialDeathCases(critter))
@@ -278,7 +278,7 @@ namespace Underworld
                             {
                                 if ((_RES == GAME_UW2) && (objToDestroy.item_id == 0x116))
                                 {
-                                    djinnbottle.DestroyDjinnBottle(objToDestroy,WorldObject);
+                                    djinnbottle.DestroyDjinnBottle(objToDestroy, WorldObject);
                                 }
                                 else
                                 {
@@ -301,13 +301,13 @@ namespace Underworld
                                         if (((Rng.r.Next(0, 0x7fff) & 0x3) != 0) || (true))
                                         {
                                             //ObjectCreator.SpawnAnimo_Placeholder(8);
-                                            if (hitcoordinate!=Godot.Vector3.Zero)
+                                            if (hitcoordinate != Godot.Vector3.Zero)
                                             {
                                                 animo.SpawnAnimoAtPoint(8, hitcoordinate);
-                                            }                                            
+                                            }
                                             Debris = 0xD6;
                                         }
-                                        
+
                                         if ((objToDestroy.is_quant == 0) && (objToDestroy.link > 0))
                                         {
                                             Debug.Print("TODO Clear object chain");
@@ -322,14 +322,14 @@ namespace Underworld
 
             if (Debris == -1)
             {
-                if (_RES==GAME_UW2)
+                if (_RES == GAME_UW2)
                 {
                     Debris = GetObjectTypeDebris(objToDestroy, damagetype);
                 }
                 else
                 {
-                    Debris = 0xD5 + Rng.r.Next(0,2);
-                }                
+                    Debris = 0xD5 + Rng.r.Next(0, 2);
+                }
             }
 
             if (Debris != -1)
@@ -407,6 +407,132 @@ namespace Underworld
                 }
             }
         }
+
+
+        public static int ScaleDamage(int item_id, ref int basedamage, int damagetype)
+        {
+            if (_RES == GAME_UW2)
+            {
+                return ScaleDamageUW2(item_id: item_id, basedamage: ref basedamage, damagetype: damagetype);
+            }
+            else
+            {
+                return ScaleDamageUW1(item_id: item_id, basedamage: ref basedamage, damagetype: damagetype);
+            }
+        }
+
+
+        static int ScaleDamageUW1(int item_id, ref int basedamage, int damagetype)
+        {
+
+            var scales = commonObjDat.scaleresistances(item_id);
+
+            if ((scales & damagetype) != 0)
+            { //has some sort of resistance
+                if ((damagetype & 3) != 0) //magic resistances
+                {
+                    //damage & 3 != 0
+                    //seg025_26A1_4BA:
+                    var r = Rng.r.Next(0, 3);
+                    if (r >= (scales & 0x3))
+                    {
+                        //seg025_26A1_4D5
+                        damagetype &= 0xFC; //mask out magic damage. possibly means magic can be used in combo with other damage type??
+                    }
+                    else
+                    {
+                        return 0;
+                    }
+                }
+
+                //seg025_26A1_4DD
+                if ((scales & damagetype) != 0)
+                { //the damage type is resisted after possibly masking out magic damage.
+                    return 0;
+                }
+            }
+            return basedamage;
+        }
+        /// <summary>
+        /// Scales damage up or down based on the NPCs damage resistances
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="basedamage"></param>
+        /// <param name="damagetype"></param>
+        /// <returns></returns>
+        static int ScaleDamageUW2(int item_id, ref int basedamage, int damagetype)
+        {
+            var scales = commonObjDat.scaleresistances(item_id);
+
+            if ((scales & damagetype) != 0)
+            { //has some sort of resistance
+                if ((damagetype & 3) != 0) //magic resistances
+                {
+                    //damage & 3 != 0
+                    //seg025_26A1_4BA:
+                    var r = Rng.r.Next(0, 3);
+                    if (r >= (scales & 0x3))
+                    {
+                        //seg025_26A1_4D5
+                        damagetype &= 0xFC; //mask out magic damage. possibly means magic can be used in combo with other damage type??
+                    }
+                    else
+                    {
+                        return 0;
+                    }
+                }
+
+                //seg025_26A1_4DD
+                if ((scales & damagetype) != 0)
+                { //the damage type is resisted after possibly masking out magic damage.
+                    return 0;
+                }
+            }
+
+            //if at this point magic has possibly been masked out. but checks need to be made to see how fire/ice damage interact with fire/ice resistances
+            //Ice is unique to UW2 so this does not apply to UW1.
+            //seg 25:429
+            if ((damagetype & 8) != 0) //test for fire damage
+            {
+                if ((scales & 0x20) != 0) //test for ice resistance
+                {
+                    return VulnerableDamage(ref basedamage); //fire does double damage to ice resistance creatures?
+                }
+            }
+
+            //seg025_26A1_4F5
+            if ((damagetype & 0x20) == 0) //test for ice damage
+            {
+                return basedamage;
+            }
+            else
+            {//not ice damage
+                if ((scales & 8) == 0)//test for no fire resistance
+                {
+                    return basedamage;
+                }
+                else
+                {
+                    //if has fire ressistance
+                    if ((scales & 0x28) == 0x28) //test for fire and ice together.
+                    {
+                        return basedamage; //when fire and ice together ice only does regular damage
+                    }
+                    else
+                    {
+                        return VulnerableDamage(ref basedamage); //if has no ice resistance, ice damage will do double damage
+                    }
+                }
+            }
+
+        }
+
+        static int VulnerableDamage(ref int basedamage)
+        {
+            basedamage = System.Math.Min(127, basedamage << 1);
+            return basedamage;
+        }
+
 
     }//end class
 }//end namespace
