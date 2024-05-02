@@ -119,6 +119,7 @@ namespace Underworld
 
         public static bool SpecialDeathCasesUW2(uwObject critter, int mode = 0)
         {
+            bool WasPitFighter = false;
             if (mode != 0)
             {//handle some initial events
                 if (CheckIfMatchingRaceUW2(critter, 0xB))//a_trilkhun&trilkhai
@@ -136,9 +137,10 @@ namespace Underworld
                     {
                         if (playerdat.RemovePitFighter(critter.index))
                         {
+                            WasPitFighter = true;
                             playerdat.SetQuest(129, playerdat.GetQuest(129) + 1); //if enough duels are fought the pit counter will overflow!
                             if (critter.npc_whoami != 0x64)
-                            {//no honour in defeating krillner...
+                            {//no honour in defeating krillner..., note krillners special case will decrease quest 129 by 1.
                                 playerdat.SetQuest(24, 1);
                             }
                         }
@@ -163,23 +165,124 @@ namespace Underworld
                 )
             {
                 //friendly britannian npcs
-                if ((critter.npc_whoami == 0x8D) && (playerdat.GetXClock(1)>=8))//lady tori
+                if ((critter.npc_whoami == 0x8D) && (playerdat.GetXClock(1) >= 8))//lady tori
                 {
-                    return true;
+                    return true; //allow her to die only after the xclock reaches 8
                 }
                 //revive
-                var newhp = (critterObjectDat.avghit(critter.item_id)/3)-1;
+                var newhp = (critterObjectDat.avghit(critter.item_id) / 3) - 1;
                 critter.npc_hp = (byte)newhp;
                 trigger.RunScheduledTriggerInTile_15_29(critter.npc_xhome, critter.npc_yhome);
                 return false;//do not kill
             }
             else
-            {
+            {               
                 //the others
+                switch (critter.npc_whoami)
+                {
+                    case 0x4b: //guard, transforms into hordling
+                        {
+                            if (mode == 0)
+                            {
+                                if (critter.item_id != 0x5E)//check if turned yet
+                                {
+                                    critter.item_id = 0x5E;
+                                    critter.npc_hp = 92;
+                                    critter.npc_goal = 5;
+                                    return false;//do not kill at this point
+                                }
+                            }
+                            return true;
+                        }
+                    case 0x8B://nelson
+                        {
+                            if (mode != 0)
+                            {
+                                if (playerdat.GetXClock(1) >= 0xB)
+                                {
+                                    if (
+                                        (critter.npc_xhome >= 0x14)
+                                        &&
+                                        (critter.npc_yhome >= 0x25)
+                                        &&
+                                        (critter.npc_xhome <= 0x16)
+                                        &&
+                                        (critter.npc_yhome <= 0x27)
+                                    )
+                                    {
+                                        trigger.RunScheduledTriggerInTile_15_29(0x12, 0x28); //spawns guards??
+                                    }
+                                }
+                                return true;
+                            }
+                            break;
+                        }
+                    case 0x64://krillner
+                        {
+                            if (WasPitFighter)
+                            {
+                                playerdat.SetQuest(129, playerdat.GetQuest(129) - 1);
+                            }
+                            if (playerdat.GetQuest(28) == 0) //Is krillner your slave
+                            {
+                                //talk to krillner
+                                if (mode == 0)
+                                {
+                                    if (critter.UnkBit_0XA_Bit456 == 0)
+                                    {
+                                        critter.UnkBit_0XA_Bit456 = 1;
+                                        playerdat.ChangeExperience(0x32);
+                                        //Talk to NPC
+                                        TalkToDyingNPC(critter);
+                                        return false;
+                                    }
+                                    else
+                                    {
+                                        return true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                return true;
+                            }
+                            break;
+                        }
+                    case 0x80://fissif
+                        {
+                            if (playerdat.GetQuest(119) == 0)
+                            {//talk to fissif
+                                if (mode == 0)
+                                {
+                                    if (critter.UnkBit_0XA_Bit456 == 0)
+                                    {
+                                        critter.UnkBit_0XA_Bit456 = 1;
+                                        playerdat.ChangeExperience(0x32);
+                                        //Talk to NPC
+                                        TalkToDyingNPC(critter);
+                                        return false;
+                                    }
+                                    else
+                                    {
+                                        return true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                return true;
+                            }
+                            break;
+                        }
+                }
 
+                //update winloss record.
+                if ( playerdat.GetQuest(129) < playerdat.GetXClock(14))
+                {
+                    playerdat.SetQuest(129, playerdat.GetXClock(14));
+                }               
+                return true;
             }
-
-            return true;//todo
         }
 
 
@@ -240,12 +343,9 @@ namespace Underworld
                         ypos: (short)critter.zpos,
                         zpos: (short)(tile.floorHeight << 3),
                         WhichList: ObjectCreator.ObjectListType.StaticList);
-
                 }
             }
         }
-
-
 
         /// <summary>
         /// Handles tybals death.
@@ -304,6 +404,19 @@ namespace Underworld
                     }
                 }
             }
+        }
+
+        public static void TalkToDyingNPC(uwObject critter)
+        {
+            combat.EndCombatLoop();
+            critter.ProjectileSourceID=0;
+            critter.npc_animation=0;
+            critter.AnimationFrame=0;
+            critter.npc_attitude=2;
+            critter.npc_goal=8;
+            playerdat.FreezeTimeEnchantment=false;//?
+            talk.Talk(critter.index, UWTileMap.current_tilemap.LevelObjects, true);
+            //todo: in uw2 npc_talkedto gets cleared here. does this matter and if so how would implement it seeing as the conversation runs in a co-routine
         }
     }//end class
 }//end namespace

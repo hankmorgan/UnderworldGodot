@@ -227,7 +227,7 @@ namespace Underworld
 
         public static void RunScheduledTriggerInTile_15_29(int xhome, int yhome)
         {
-            Debug.Print("Find schedule trigger in this hard coded tile and run it to create npcs");
+            Debug.Print("Find schedule triggers in this hard coded tile and run it to create npcs");
         }
 
         /// <summary>
