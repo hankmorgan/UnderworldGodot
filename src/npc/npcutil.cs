@@ -51,5 +51,36 @@ namespace Underworld
                 }
             }
         }
+
+
+        static void SetRaceAttitude(int targetrace, int newAttitute)
+        {
+            for (var tileX =0; tileX <=63 ; tileX++)
+            {
+                for (var tileY = 0; tileY <= 63; tileY++)
+                {
+                    if (UWTileMap.ValidTile(tileX,tileY))
+                    {
+                        var next = UWTileMap.current_tilemap.Tiles[tileX,tileY].indexObjectList;
+                        while (next!=0)
+                        {
+                            var obj = UWTileMap.current_tilemap.LevelObjects[next];
+                            if(obj.majorclass == 1)
+                            {//npc
+                                if (critterObjectDat.race(obj.item_id) == targetrace)
+                                {                                   
+                                    obj.npc_attitude = (short)newAttitute;
+                                    if (newAttitute==0)
+                                    {
+                                        obj.ProjectileSourceID=0; //clear last hit index
+                                    }
+                                }
+                            }
+                            next = obj.next;                            
+                        }
+                    }
+                }
+            }
+        }
     }//end class
 }//end namespace

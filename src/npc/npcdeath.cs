@@ -123,8 +123,8 @@ namespace Underworld
             {
                 if (CheckIfMatchingRaceUW2(critter, 0xB))//a_trilkhun&trilkhai
                 {
-                    //set attitude to 0 on all of these
-                    Debug.Print("TODO set attitude function for race 0xB");
+                    //set attitude to 0 on all members of race 0xB
+                    SetRaceAttitude(0, 0xB);
                 }
                 if ((playerdat.dungeon_level==4)&& (critter.item_id==0x4E))
                 {//killing worms in the sewers
