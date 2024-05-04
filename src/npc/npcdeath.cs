@@ -195,12 +195,34 @@ namespace Underworld
                         }
                     case 0x2C://mystell
                         {
-                            if (mode==0)
+                            if (mode!=0)
                             {
                                 playerdat.SetQuest(66,1);
                                 playerdat.IncrementXClock(15);
                             }
                             break;                            
+                        }
+                    case 0x2D://Altara
+                        {
+                            //original uw2 has a bit of complicated logic for this quest variable change.
+                            //I think all it is doing is clearing quest69 in the first stage and
+                            // then setting it when altara is finally killed in the second loop
+                            if (mode==0)
+                            {
+                                playerdat.SetQuest(69,0);
+                            }
+                            else
+                            {
+                                playerdat.SetQuest(69,1);
+                            }
+                        }
+                    case 0x31://Relk
+                        {
+                            if (mode!=0)
+                            {
+                                playerdat.SetQuest(123,1);
+                            }
+                            break;
                         }
                     case 0x3A://brain creatures in the keep
                         {
