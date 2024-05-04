@@ -231,6 +231,15 @@ namespace Underworld
                             }
                             break;
                         }
+                    case 0x62://Zaria
+                        {
+                            playerdat.SetQuest(25,1);
+                            if (WasPitFighter)
+                            {
+                                playerdat.SetQuest(129, playerdat.GetQuest(129)+3);
+                            }
+                            break;
+                        }
                     case 0x63://Dorstag
                         {
                             if (mode!=0)
@@ -238,7 +247,7 @@ namespace Underworld
                                 playerdat.SetQuest(121,1);
                                 if (playerdat.GetQuest(23)==0)
                                 {//player did not use blog to defeat dorstag
-                                    playerdat.SetQuest(129, playerdat.GetQuest(129)+6);//increment pits "score" by six
+                                    playerdat.SetQuest(137, playerdat.GetQuest(137)+6);//increment pits "score" by six
                                 }
                             }
                             break;
