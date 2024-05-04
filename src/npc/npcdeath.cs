@@ -262,6 +262,27 @@ namespace Underworld
                         }
                         break;
                     }
+                    case 0x65://blog
+                        {
+                            if (mode!=0)
+                            {
+                                playerdat.SetQuest(65,1);
+                                playerdat.IncrementXClock(15);
+                                if (playerdat.GetQuest(22) != 0)//blog is friend
+                                {
+                                    if (playerdat.GetQuest(23) == 0) //blog has no yet helped defeat dorstag
+                                    {
+                                        playerdat.SetQuest(22,0);//blog no longer friend.
+                                    }
+                                }
+
+                                if (playerdat.GetQuest(23) != 0)//this is possibly a bug in vanilla. why award rep points when dorstag is already defeated.
+                                {
+                                    playerdat.SetQuest(129, playerdat.GetQuest(129) + 6);
+                                }
+                            }
+                            break;
+                        }
                     case 0x8B://nelson
                         {
                             if (mode != 0)
