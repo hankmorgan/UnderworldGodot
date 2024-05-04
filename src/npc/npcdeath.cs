@@ -215,6 +215,7 @@ namespace Underworld
                             {
                                 playerdat.SetQuest(69,1);
                             }
+                            break;
                         }
                     case 0x31://Relk
                         {
@@ -252,6 +253,15 @@ namespace Underworld
                             }
                             return true;
                         }
+                    case 0x48://mokpo
+                    {
+                        if (mode!=0)
+                        {
+                            playerdat.SetQuest(53,1);
+                            playerdat.IncrementXClock(15);
+                        }
+                        break;
+                    }
                     case 0x8B://nelson
                         {
                             if (mode != 0)
