@@ -333,6 +333,7 @@ namespace Underworld
 /// 63: Blog has given you the gem
 /// 64: Is mors dead
 /// 65: Pits related (checked by dorstag)
+/// 66: You have killed Mystell
 /// 68: You have given the answers to nystrul and the invasion (endgame) has begun.
 /// 100: you have killed bishop
 /// 104: Set when you enter scintilus level 5 (set by variable trap)

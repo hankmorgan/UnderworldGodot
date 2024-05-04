@@ -180,6 +180,15 @@ namespace Underworld
                 //the others
                 switch (critter.npc_whoami)
                 {
+                    case 0x2C://mystell
+                        {
+                            if (mode==0)
+                            {
+                                playerdat.SetQuest(66,1);
+                                playerdat.IncrementXClock(15);
+                            }
+                            break;                            
+                        }
                     case 0x4b: //guard, transforms into hordling
                         {
                             if (mode == 0)
