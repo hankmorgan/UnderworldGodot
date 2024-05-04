@@ -180,6 +180,14 @@ namespace Underworld
                 //the others
                 switch (critter.npc_whoami)
                 {
+                    case 6://Bishop
+                        {
+                            if (mode!=0)
+                            {
+                                playerdat.SetQuest(100,1);
+                            }
+                            break;
+                        }
                     case 0xB://Freemis
                         {
                             playerdat.SetQuest(10,1);
