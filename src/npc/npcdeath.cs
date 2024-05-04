@@ -202,6 +202,20 @@ namespace Underworld
                             }
                             break;                            
                         }
+                    case 0x3A://brain creatures in the keep
+                        {
+                            if (mode!=0)
+                            {
+                                playerdat.SetQuest(134, playerdat.GetQuest(134)+1);
+                                if (playerdat.GetQuest(134)>=2)
+                                {
+                                    playerdat.SetQuest(50,1);
+                                    special_effects.SpecialEffect(4, 44);//screen shake
+                                    playerdat.SetQuest(134,24);                                    
+                                }                                
+                            }
+                            return true;
+                        }
                     case 0x4b: //guard, transforms into hordling
                         {
                             if (mode == 0)
