@@ -286,7 +286,7 @@ namespace Underworld
 /// 7: Loth is dead
 /// 8:  Kintara tells you about Javra
 /// 9:  Lobar tells you about the "virtues"
-/// 10: PT related
+/// 10: Killed Freemis
 /// 11: Listener under the castle is dead.
 /// 12: used in Ice caverns to say the avatar can banish the guardians presence. Wand of altara?
 /// 13: Mystral wants you to spy on altara

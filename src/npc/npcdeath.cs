@@ -180,6 +180,11 @@ namespace Underworld
                 //the others
                 switch (critter.npc_whoami)
                 {
+                    case 0xB://Freemis
+                        {
+                            playerdat.SetQuest(10,1);
+                            break;
+                        }
                     case 0x2C://mystell
                         {
                             if (mode==0)
@@ -223,6 +228,18 @@ namespace Underworld
                                     }
                                 }
                                 return true;
+                            }
+                            break;
+                        }
+                    case 0x63://Dorstag
+                        {
+                            if (mode!=0)
+                            {
+                                playerdat.SetQuest(121,1);
+                                if (playerdat.GetQuest(23)==0)
+                                {//player did not use blog to defeat dorstag
+                                    playerdat.SetQuest(129, playerdat.GetQuest(129)+6);//increment pits "score" by six
+                                }
                             }
                             break;
                         }
