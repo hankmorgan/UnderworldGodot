@@ -274,6 +274,29 @@ namespace Underworld
                             }
                             break;
                         }
+                    case 0x91://the listener
+                    {
+                        if (mode==0)
+                        {
+                            if (combat.JeweledDagger)
+                            {
+                                if (combat.currentweapon!=null)
+                                {
+                                    combat.currentweapon.item_id=199;//broken dagger
+                                    uimanager.UpdateInventoryDisplay();
+                                    playerdat.SetQuest(11,1);
+                                    playerdat.IncrementXClock(1);
+                                }
+                            }
+                            else
+                            {
+                                critter.npc_hp=1;
+                                critter.npc_goal=5;
+                                return false;//do not kill
+                            }
+                        }
+                        break;                        
+                    }
                 }
 
                 //update winloss record.

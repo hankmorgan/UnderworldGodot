@@ -87,7 +87,7 @@ namespace Underworld
         /// <summary>
         /// tracks if a jewelled dagger is being used in order to ensure the listener in the sewers can be killed with it
         /// </summary>
-        static bool JeweledDagger = false;
+        public static bool JeweledDagger = false;
 
         /// <summary>
         /// Item ID for Fist object
