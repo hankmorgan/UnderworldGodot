@@ -379,7 +379,7 @@ namespace Underworld
                         prop[si++] = 0x23;//can cast open
                     }
                     var testdam = 1;
-                    var scale = uwObject.ScaleDamage(critter.item_id, ref testdam, 8);
+                    var scale = damage.ScaleDamage(critter.item_id, ref testdam, 8);
 
                     if (scale == 0)
                     {

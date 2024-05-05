@@ -7,7 +7,7 @@ namespace Underworld
         public static void remove_talker(uwObject talker)
         {
             var NPC = (npc)talker.instance;
-            ObjectCreator.npcs.Remove(NPC);
+            //ObjectCreator.npcs.Remove(NPC);
             
             ObjectCreator.DeleteObjectFromTile(                
                 tileX: (short)talker.npc_xhome,

@@ -153,7 +153,7 @@ namespace Underworld
                 }
                 //test damage type 7 in scale damage.
                 int test = 1;
-                var scale = uwObject.ScaleDamage(critter.item_id, ref test, 128);
+                var scale = damage.ScaleDamage(critter.item_id, ref test, 128);
                 if (scale == 0)
                 {
                     var6 |= 2; //undead?
@@ -245,7 +245,7 @@ namespace Underworld
                 for (int si = 0; si < 6; si++)
                 {
                     var testdam = 1;
-                    var scale = uwObject.ScaleDamage(critter.item_id, ref testdam, damagetypes[si]);
+                    var scale = damage.ScaleDamage(critter.item_id, ref testdam, damagetypes[si]);
                     if (scale == 0)
                     {
                         if (
@@ -294,7 +294,7 @@ namespace Underworld
         static void ApplyAIChangingSpell(uwObject critter, byte newgoal = 0xFF, byte newattitude = 0xFF, byte newgtarg = 0xFF)
         {
             int test = 1;
-            if (uwObject.ScaleDamage(critter.item_id, ref test, 3) != 0)
+            if (damage.ScaleDamage(critter.item_id, ref test, 3) != 0)
             {
                 animo.SpawnAnimoAtPoint(7, critter.GetCoordinate(critter.tileX, critter.tileY)+ Godot.Vector3.Up);                
                 if (newgoal != 0xFF)
@@ -358,7 +358,7 @@ namespace Underworld
                     if (critter.majorclass == 1)
                     {
                         int test = 1;
-                        if (uwObject.ScaleDamage(critter.item_id, ref test, 0x80) != 0)
+                        if (damage.ScaleDamage(critter.item_id, ref test, 0x80) != 0)
                         {//check for undead, immune
                             ApplyAIChangingSpell(
                                 critter: critter,
@@ -392,7 +392,7 @@ namespace Underworld
             if (critter.majorclass == 1)
             {
                 var test = 1;
-                if (uwObject.ScaleDamage(critter.item_id, ref test, 3) != 0)
+                if (damage.ScaleDamage(critter.item_id, ref test, 3) != 0)
                 {
                     animo.SpawnAnimoAtPoint(7, critter.GetCoordinate(critter.tileX, critter.tileY)+ Godot.Vector3.Up);
                     var whoami = critter.npc_whoami;

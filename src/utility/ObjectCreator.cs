@@ -10,7 +10,7 @@ namespace Underworld
     public class ObjectCreator : UWClass
     {
         //List of active NPCs
-        public static List<npc> npcs;
+        //public static List<npc> npcs;
         public static bool printlabels = false;
 
         /// <summary>
@@ -162,11 +162,11 @@ namespace Underworld
                 UWTileMap.current_tilemap.MobileFreeListObject = obj.index;
                 UWTileMap.current_tilemap.MobileFreeListPtr++;
                 Debug.Print($"Freeing Mobile {obj.index} Pointer incremented to {UWTileMap.current_tilemap.MobileFreeListPtr}");
-                if (obj.majorclass==1)
-                {
-                    var n = (npc)(obj.instance);
-                    npcs.Remove(n);
-                }
+                // if (obj.majorclass==1)
+                // {
+                //     var n = (npc)(obj.instance);
+                //     npcs.Remove(n);
+                // }
             
             }
             else
@@ -197,7 +197,7 @@ namespace Underworld
         public static void GenerateObjects(uwObject[] objects, UWTileMap a_tilemap)
         {
 
-            npcs = new();
+           // npcs = new();
             for (int x = 0; x <= a_tilemap.Tiles.GetUpperBound(0); x++)
             {
                 for (int y = 0; y <= a_tilemap.Tiles.GetUpperBound(0); y++)
@@ -245,7 +245,9 @@ namespace Underworld
                     {
                         if (obj.item_id < 127)
                         {
-                            npcs.Add(npc.CreateInstance(newNode, obj, name));
+                            //npcs.Add(
+                            npc.CreateInstance(newNode, obj, name);
+                                //);
                             unimplemented = false;
                         }
                         break;

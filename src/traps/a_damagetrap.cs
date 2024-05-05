@@ -17,7 +17,7 @@ namespace Underworld
             {
                 //apply poisoning
                 //int test = basedamage;
-                //var scale = uwObject.ScaleDamage(127, ref test, 0x10); //player;
+                //var scale = damage.ScaleDamage(127, ref test, 0x10); //player;
                 if (basedamage> playerdat.play_poison)
                 {
                     playerdat.play_poison = (byte)Math.Min(basedamage,0xF);

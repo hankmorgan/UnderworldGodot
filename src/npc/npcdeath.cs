@@ -581,6 +581,7 @@ namespace Underworld
         public static void KillLothsLiches()
         {
             Debug.Print("kill all the liches");
+            //for (int i =0; i<= UWTileMap.current_tilemap.LevelObjects)
         }
     }//end class
 }//end namespace
