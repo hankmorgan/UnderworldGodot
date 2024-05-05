@@ -224,6 +224,19 @@ namespace Underworld
             }
         }
 
+
+        public int NoOfActiveMobiles
+        {
+            get
+            {
+                return (int)getAt(lev_ark_block.Data, 0x7C00, 16);
+            }
+            set
+            {
+                setAt(lev_ark_block.Data, 0x7C00, 16, value);
+            }
+        }
+
         /// <summary>
         /// Remember to move pointer before changing!
         /// </summary>
@@ -319,6 +332,7 @@ namespace Underworld
             uimanager.InGame = true;
             uimanager.AtMainMenu = false;
             Palette.CurrentPalette = 0;
+            //Debug.Print($"{current_tilemap.NoOfActiveMobiles}");
         }
 
 
