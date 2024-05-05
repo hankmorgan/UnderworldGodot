@@ -193,6 +193,15 @@ namespace Underworld
                             playerdat.SetQuest(10, 1);
                             break;
                         }
+                    case 0x1F://lord umbria
+                        {
+                            if (mode!=0)
+                            {
+                                a_set_variable_trap.VariableOperationUW2(243,2,1);
+                                a_do_trap_trespass.HackTrapTrespass(21);
+                            }
+                            break;
+                        }
                     case 0x2C://mystell
                         {
                             if (mode != 0)

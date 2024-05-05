@@ -9,7 +9,14 @@ namespace Underworld
     {
         public static void Activate(uwObject trapObj, uwObject[] objList)
         {
-            Debug.Print($"Flag trespass to {trapObj.owner}");            
+             
+            HackTrapTrespass(trapObj.owner);         
         }
+
+        public static void HackTrapTrespass(int owner)
+        {
+            Debug.Print($"Flag trespass to {owner}");  
+        }
+
     } //end class
 }//end namespace

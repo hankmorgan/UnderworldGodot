@@ -136,7 +136,7 @@ namespace Underworld
         /// <param name="LeftVariable"></param>
         /// <param name="Operation"></param>
         /// <param name="RightVariable"></param>
-        static void VariableOperationUW2(int LeftVariable, int Operation, int RightVariable)
+        public static void VariableOperationUW2(int LeftVariable, int Operation, int RightVariable)
         {
             Debug.Print($"L:{LeftVariable} O:{Operation} R:{RightVariable}");
             switch (LeftVariable)
@@ -147,14 +147,6 @@ namespace Underworld
                         var gamevar = playerdat.GetGameVariable(LeftVariable);
                         var newValue = VariableTransformUW2(gamevar, Operation, RightVariable);
                         playerdat.SetGameVariable(LeftVariable, newValue & 0x3FF);
-
-                        // var gamevaroffset = (LeftVariable<<1) + 0x0FA;                        
-                        // var gamevar = playerdat.pdat[(LeftVariable<<1) + 0x0FA];
-                        // //var gamevar = playerdat.GetGameVariable(LeftVariable);
-                        // var newValue = VariableTransformUW2(gamevar, Operation, RightVariable);
-                        // playerdat.pdat[(LeftVariable<<1) + 0x0FA] = (byte)newValue;
-                        // Debug.Print($"Setting gamevar at offset {gamevaroffset} from {gamevar} to {newValue}");
-                        // //playerdat.SetGameVariable(LeftVariable, newValue & 0x3FF);
                         break;
                     }
                 case >= 0x100 and < 0x180:
@@ -214,7 +206,7 @@ namespace Underworld
         /// <param name="Operation"></param>
         /// <param name="RightOperator"></param>
         /// <returns></returns>
-        public static int VariableTransformUW2(int LeftOperator, int Operation, int RightOperator)
+        static int VariableTransformUW2(int LeftOperator, int Operation, int RightOperator)
         {
             switch (Operation)
             {
