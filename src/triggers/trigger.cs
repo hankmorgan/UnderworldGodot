@@ -225,6 +225,35 @@ namespace Underworld
             }
         }
 
+        public static void TriggerTrapInTile(int tileX, int tileY)
+        {
+            var tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];
+            var traptrigger = objectsearch.FindMatchInObjectListChain(tile.indexObjectList,6,-1,-1,UWTileMap.current_tilemap.LevelObjects);
+            if (traptrigger!=null)
+            {
+                if ((traptrigger.minorclass & 2) == 0)
+                {
+                    trap.ActivateTrap(
+                        character: 0, 
+                        trapObj: traptrigger, 
+                        ObjectUsed: null, 
+                        triggerX: tileX, 
+                        triggerY: tileY, 
+                        objList: UWTileMap.current_tilemap.LevelObjects);
+                }
+                else
+                {
+                    trigger.RunTrigger(
+                        character: 0, 
+                        ObjectUsed: null, 
+                        TriggerObject: traptrigger, 
+                        triggerType: -1, 
+                        objList: UWTileMap.current_tilemap.LevelObjects);
+                }
+            }
+
+        }
+
         public static void RunScheduledTriggerInTile_15_29(int xhome, int yhome)
         {
             Debug.Print("Find schedule triggers in this hard coded tile and run it to create npcs");

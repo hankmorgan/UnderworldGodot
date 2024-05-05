@@ -176,66 +176,66 @@ namespace Underworld
                 return false;//do not kill
             }
             else
-            {               
+            {
                 //the others
                 switch (critter.npc_whoami)
                 {
                     case 6://Bishop
                         {
-                            if (mode!=0)
+                            if (mode != 0)
                             {
-                                playerdat.SetQuest(100,1);
+                                playerdat.SetQuest(100, 1);
                             }
                             break;
                         }
                     case 0xB://Freemis
                         {
-                            playerdat.SetQuest(10,1);
+                            playerdat.SetQuest(10, 1);
                             break;
                         }
                     case 0x2C://mystell
                         {
-                            if (mode!=0)
+                            if (mode != 0)
                             {
-                                playerdat.SetQuest(66,1);
+                                playerdat.SetQuest(66, 1);
                                 playerdat.IncrementXClock(15);
                             }
-                            break;                            
+                            break;
                         }
                     case 0x2D://Altara
                         {
                             //original uw2 has a bit of complicated logic for this quest variable change.
                             //I think all it is doing is clearing quest69 in the first stage and
                             // then setting it when altara is finally killed in the second loop
-                            if (mode==0)
+                            if (mode == 0)
                             {
-                                playerdat.SetQuest(69,0);
+                                playerdat.SetQuest(69, 0);
                             }
                             else
                             {
-                                playerdat.SetQuest(69,1);
+                                playerdat.SetQuest(69, 1);
                             }
                             break;
                         }
                     case 0x31://Relk
                         {
-                            if (mode!=0)
+                            if (mode != 0)
                             {
-                                playerdat.SetQuest(123,1);
+                                playerdat.SetQuest(123, 1);
                             }
                             break;
                         }
                     case 0x3A://brain creatures in the keep
                         {
-                            if (mode!=0)
+                            if (mode != 0)
                             {
-                                playerdat.SetQuest(134, playerdat.GetQuest(134)+1);
-                                if (playerdat.GetQuest(134)>=2)
+                                playerdat.SetQuest(134, playerdat.GetQuest(134) + 1);
+                                if (playerdat.GetQuest(134) >= 2)
                                 {
-                                    playerdat.SetQuest(50,1);
+                                    playerdat.SetQuest(50, 1);
                                     special_effects.SpecialEffect(4, 44);//screen shake
-                                    playerdat.SetQuest(134,24);                                    
-                                }                                
+                                    playerdat.SetQuest(134, 24);
+                                }
                             }
                             return true;
                         }
@@ -254,25 +254,25 @@ namespace Underworld
                             return true;
                         }
                     case 0x48://mokpo
-                    {
-                        if (mode!=0)
                         {
-                            playerdat.SetQuest(53,1);
-                            playerdat.IncrementXClock(15);
+                            if (mode != 0)
+                            {
+                                playerdat.SetQuest(53, 1);
+                                playerdat.IncrementXClock(15);
+                            }
+                            break;
                         }
-                        break;
-                    }
                     case 0x65://blog
                         {
-                            if (mode!=0)
+                            if (mode != 0)
                             {
-                                playerdat.SetQuest(65,1);
+                                playerdat.SetQuest(65, 1);
                                 playerdat.IncrementXClock(15);
                                 if (playerdat.GetQuest(22) != 0)//blog is friend
                                 {
                                     if (playerdat.GetQuest(23) == 0) //blog has no yet helped defeat dorstag
                                     {
-                                        playerdat.SetQuest(22,0);//blog no longer friend.
+                                        playerdat.SetQuest(22, 0);//blog no longer friend.
                                     }
                                 }
 
@@ -283,46 +283,23 @@ namespace Underworld
                             }
                             break;
                         }
-                    case 0x8B://nelson
-                        {
-                            if (mode != 0)
-                            {
-                                if (playerdat.GetXClock(1) >= 0xB)
-                                {
-                                    if (
-                                        (critter.npc_xhome >= 0x14)
-                                        &&
-                                        (critter.npc_yhome >= 0x25)
-                                        &&
-                                        (critter.npc_xhome <= 0x16)
-                                        &&
-                                        (critter.npc_yhome <= 0x27)
-                                    )
-                                    {
-                                        trigger.RunScheduledTriggerInTile_15_29(0x12, 0x28); //spawns guards??
-                                    }
-                                }
-                                return true;
-                            }
-                            break;
-                        }
                     case 0x62://Zaria
                         {
-                            playerdat.SetQuest(25,1);
+                            playerdat.SetQuest(25, 1);
                             if (WasPitFighter)
                             {
-                                playerdat.SetQuest(129, playerdat.GetQuest(129)+3);
+                                playerdat.SetQuest(129, playerdat.GetQuest(129) + 3);
                             }
                             break;
                         }
                     case 0x63://Dorstag
                         {
-                            if (mode!=0)
+                            if (mode != 0)
                             {
-                                playerdat.SetQuest(121,1);
-                                if (playerdat.GetQuest(23)==0)
+                                playerdat.SetQuest(121, 1);
+                                if (playerdat.GetQuest(23) == 0)
                                 {//player did not use blog to defeat dorstag
-                                    playerdat.SetQuest(137, playerdat.GetQuest(137)+6);//increment pits "score" by six
+                                    playerdat.SetQuest(137, playerdat.GetQuest(137) + 6);//increment pits "score" by six
                                 }
                             }
                             break;
@@ -384,36 +361,69 @@ namespace Underworld
                             }
                             break;
                         }
-                    case 0x91://the listener
-                    {
-                        if (mode==0)
+                    case 0x8B://nelson
                         {
-                            if (combat.JeweledDagger)
+                            if (mode != 0)
                             {
-                                if (combat.currentweapon!=null)
+                                if (playerdat.GetXClock(1) >= 0xB)
                                 {
-                                    combat.currentweapon.item_id=199;//broken dagger
-                                    uimanager.UpdateInventoryDisplay();
-                                    playerdat.SetQuest(11,1);
-                                    playerdat.IncrementXClock(1);
+                                    if (
+                                        (critter.npc_xhome >= 0x14)
+                                        &&
+                                        (critter.npc_yhome >= 0x25)
+                                        &&
+                                        (critter.npc_xhome <= 0x16)
+                                        &&
+                                        (critter.npc_yhome <= 0x27)
+                                    )
+                                    {
+                                        trigger.RunScheduledTriggerInTile_15_29(0x12, 0x28); //spawns guards??
+                                    }
+                                }
+                                return true;
+                            }
+                            break;
+                        }
+                    case 0x91://the listener
+                        {
+                            if (mode == 0)
+                            {
+                                if (combat.JeweledDagger)
+                                {
+                                    if (combat.currentweapon != null)
+                                    {
+                                        combat.currentweapon.item_id = 199;//broken dagger
+                                        uimanager.UpdateInventoryDisplay();
+                                        playerdat.SetQuest(11, 1);
+                                        playerdat.IncrementXClock(1);
+                                    }
+                                }
+                                else
+                                {
+                                    critter.npc_hp = 1;
+                                    critter.npc_goal = 5;
+                                    return false;//do not kill
                                 }
                             }
-                            else
-                            {
-                                critter.npc_hp=1;
-                                critter.npc_goal=5;
-                                return false;//do not kill
-                            }
+                            break;
                         }
-                        break;                        
-                    }
+                    case 0x98:
+                        {//bly ductosnore
+                            if (mode!=0)
+                            {
+                                trigger.TriggerTrapInTile(58,18);
+                                trigger.TriggerTrapInTile(60,18);
+                                playerdat.SetQuest(122,1);
+                            }
+                            break;
+                        }
                 }
 
                 //update winloss record.
-                if ( playerdat.GetQuest(129) < playerdat.GetXClock(14))
+                if (playerdat.GetQuest(129) < playerdat.GetXClock(14))
                 {
                     playerdat.SetQuest(129, playerdat.GetXClock(14));
-                }               
+                }
                 return true;
             }
         }
@@ -542,12 +552,12 @@ namespace Underworld
         public static void TalkToDyingNPC(uwObject critter)
         {
             combat.EndCombatLoop();
-            critter.ProjectileSourceID=0;
-            critter.npc_animation=0;
-            critter.AnimationFrame=0;
-            critter.npc_attitude=2;
-            critter.npc_goal=8;
-            playerdat.FreezeTimeEnchantment=false;//?
+            critter.ProjectileSourceID = 0;
+            critter.npc_animation = 0;
+            critter.AnimationFrame = 0;
+            critter.npc_attitude = 2;
+            critter.npc_goal = 8;
+            playerdat.FreezeTimeEnchantment = false;//?
             talk.Talk(critter.index, UWTileMap.current_tilemap.LevelObjects, true);
             //todo: in uw2 npc_talkedto gets cleared here. does this matter and if so how would implement it seeing as the conversation runs in a co-routine
         }
