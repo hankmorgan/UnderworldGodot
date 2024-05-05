@@ -202,6 +202,13 @@ namespace Underworld
                             }
                             break;
                         }
+                    case 0x20:// Praecor Loth
+                        {
+                            KillLothsLiches();
+                            playerdat.SetQuest(103, 1);
+                            trigger.TriggerTrapInTile(1,2);
+                            break;
+                        }
                     case 0x2C://mystell
                         {
                             if (mode != 0)
@@ -569,6 +576,11 @@ namespace Underworld
             playerdat.FreezeTimeEnchantment = false;//?
             talk.Talk(critter.index, UWTileMap.current_tilemap.LevelObjects, true);
             //todo: in uw2 npc_talkedto gets cleared here. does this matter and if so how would implement it seeing as the conversation runs in a co-routine
+        }
+
+        public static void KillLothsLiches()
+        {
+            Debug.Print("kill all the liches");
         }
     }//end class
 }//end namespace

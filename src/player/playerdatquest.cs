@@ -337,6 +337,7 @@ namespace Underworld
 /// 68: You have given the answers to nystrul and the invasion (endgame) has begun.
 /// 69: you have killed Altara
 /// 100: you have killed bishop
+/// 103: Loth is dead
 /// 104: Set when you enter scintilus level 5 (set by variable trap)
 /// 105: Set when the air daemon is absorbed. (see also xclock1 and xclock3 changes)
 /// 106: Got or read mors spellbook

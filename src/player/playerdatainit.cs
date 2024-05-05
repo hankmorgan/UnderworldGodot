@@ -123,6 +123,8 @@ namespace Underworld
                     uimanager.grWeapon = new WeaponsLoader(1); break;
             }
 
+            InitPlayerObject();
+
             //Set the playerlight level;            
             //uwsettings.instance.lightlevel = light.BrightestLight();
         }
