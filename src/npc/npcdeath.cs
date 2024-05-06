@@ -445,6 +445,24 @@ namespace Underworld
                             }
                             return true;//this might be a problem. what will happen here since this code will run before the conversation is over.
                         }
+                    case 0x8D://lady tory
+                        {
+                            if (mode==0)
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                if (playerdat.GetXClock(1) >= 8)
+                                {
+                                    return true;
+                                }
+                                else
+                                {
+                                    return false;
+                                }
+                            }                            
+                        }
                     case 0x91://the listener
                         {
                             if (mode == 0)
