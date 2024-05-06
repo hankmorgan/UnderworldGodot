@@ -173,11 +173,9 @@ namespace Underworld
                         {
                             //Special death cases
                             SpecialDeathCases(critter, 1); //mode 1
-                            DropRemains(critter);
-
-                            // ObjectCreator.spawnObjectInTile(0, critter.tileX, critter.tileY, critter.xpos, critter.ypos, critter.zpos,ObjectCreator.ObjectListType.StaticList);
+                            DropRemainsAndLoot(critter);
+                            
                             //remove from tile and free object
-
                             ObjectCreator.DeleteObjectFromTile(critter.tileX, critter.tileY, critter.index, true);
                             return;
                         }

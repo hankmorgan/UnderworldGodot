@@ -195,18 +195,19 @@ namespace Underworld
                         }
                     case 0x1F://lord umbria
                         {
-                            if (mode!=0)
+                            if (mode != 0)
                             {
-                                a_set_variable_trap.VariableOperationUW2(243,2,1);
+                                a_set_variable_trap.VariableOperationUW2(243, 2, 1);
                                 a_do_trap_trespass.HackTrapTrespass(21);
                             }
                             break;
                         }
                     case 0x20:// Praecor Loth
                         {
-                            KillLothsLiches();
+                            KillLothsLiches(0x17);
                             playerdat.SetQuest(103, 1);
-                            trigger.TriggerTrapInTile(1,2);
+                            playerdat.SetQuest(7,1);
+                            trigger.TriggerTrapInTile(1, 2);
                             break;
                         }
                     case 0x2C://mystell
@@ -425,11 +426,11 @@ namespace Underworld
                         }
                     case 0x98:
                         {//bly ductosnore
-                            if (mode!=0)
+                            if (mode != 0)
                             {
-                                trigger.TriggerTrapInTile(58,18);
-                                trigger.TriggerTrapInTile(60,18);
-                                playerdat.SetQuest(122,1);
+                                trigger.TriggerTrapInTile(58, 18);
+                                trigger.TriggerTrapInTile(60, 18);
+                                playerdat.SetQuest(122, 1);
                             }
                             break;
                         }
@@ -447,10 +448,10 @@ namespace Underworld
 
 
         /// <summary>
-        /// Spawns the blood fluids and corpse object for this crittter type
+        /// Spawns the loot, blood fluids and corpse object for this crittter type
         /// </summary>
         /// <param name="critter"></param>
-        private static void DropRemains(uwObject critter)
+        private static void DropRemainsAndLoot(uwObject critter)
         {
             var tile = UWTileMap.current_tilemap.Tiles[critter.tileX, critter.tileY];
             //Drop npc loot (spawn if missing)
@@ -578,10 +579,50 @@ namespace Underworld
             //todo: in uw2 npc_talkedto gets cleared here. does this matter and if so how would implement it seeing as the conversation runs in a co-routine
         }
 
-        public static void KillLothsLiches()
+        /// <summary>
+        /// Handles killing of all undead in Loths tomb. TODO: this needs to be called when changing levels when quest 7 is set
+        /// </summary>
+        /// <param name="raceparam"></param>
+        public static void KillLothsLiches(int raceparam)
         {
             Debug.Print("kill all the liches");
-            //for (int i =0; i<= UWTileMap.current_tilemap.LevelObjects)
+            for (int i = 0; i < UWTileMap.current_tilemap.NoOfActiveMobiles; i++)
+            {
+                var critterindex = UWTileMap.current_tilemap.GetActiveMobileAtIndex(i);
+                var obj = UWTileMap.current_tilemap.LevelObjects[i];
+                if (obj.majorclass == 1)
+                {//npc
+                    if (CheckIfMatchingRaceUW2(obj, raceparam))
+                    {
+                        KillCritter(obj);
+                        i--;//reduce index as list count has changed.
+                    }
+                }
+                else
+                {
+                    if (raceparam == -1)
+                    {
+                        if (obj.item_id == 0x13)
+                        {
+                            Debug.Print($"Smite {obj.a_name}");
+                        }
+                    }
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Outright kills an npc
+        /// </summary>
+        /// <param name="critter"></param>
+        public static void KillCritter(uwObject critter)
+        {
+            SpecialDeathCases(critter, 0);
+            SpecialDeathCases(critter, 1);
+            DropRemainsAndLoot(critter);
+            //remove from tile and free object
+            ObjectCreator.DeleteObjectFromTile(critter.tileX, critter.tileY, critter.index, true);
         }
     }//end class
 }//end namespace
