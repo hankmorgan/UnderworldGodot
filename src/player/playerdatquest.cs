@@ -388,7 +388,7 @@ namespace Underworld
 ///     11 - Go see Nelson
 ///     12 - Patterson kills Nelson
 ///     13 - Patterson is dead
-///     14 - Gem is weak/Mors is in killorn(?)
+///     14 - Djinn has been captured, Gem is weak/Mors is in killorn(?)
 ///     15 - Nystrul wants to see you again re endgame
 ///     16 - Nystrul questions have been answered Mars Gotha comes
 /// 2=Nystrul conversations and no of blackrock gems treated
