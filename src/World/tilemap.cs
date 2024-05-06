@@ -116,18 +116,6 @@ namespace Underworld
         }
 
         /// <summary>
-        /// Animation overlay. Controls how long an animated effect appears for.
-        /// </summary>
-        // public struct Overlay
-        // {
-        //     public int header;
-        //     public int link;
-        //     public int duration;
-        //     public int tileX;
-        //     public int tileY;
-        // };
-
-        /// <summary>
         /// Lists of overlays for controlling animated items.
         /// </summary>
         public AnimationOverlay[] Overlays = new AnimationOverlay[64];
@@ -141,8 +129,6 @@ namespace Underworld
             }
         }
         public const int UW_CEILING_HEIGHT = 32;
-        //public short CEILING_HEIGHT;
-        // public short SHOCK_CEILING_HEIGHT;
 
         /// <summary>
         /// The texture indices for the current map.
@@ -235,6 +221,27 @@ namespace Underworld
             {
                 setAt(lev_ark_block.Data, 0x7C00, 16, value);
             }
+        }
+        
+        /// <summary>
+        /// Returns the mobile object index number at the specified slotindex in the list of active mobiles
+        /// </summary>
+        /// <param name="slotindex"></param>
+        /// <returns></returns>
+        public int GetActiveMobileAtIndex(int slotindex)
+        {
+            return (int)getAt(lev_ark_block.Data, 0x7afc + slotindex, 8);
+        }
+
+
+        /// <summary>
+        /// Sets the mobile object index at the specified slot
+        /// </summary>
+        /// <param name="slotindex"></param>
+        /// <param name="objectindex"></param>
+        public void SetActiveMobileAtIndex(int slotindex, int objectindex)
+        {
+            setAt(lev_ark_block.Data, 0x7afc + slotindex, 8, objectindex);
         }
 
         /// <summary>
@@ -521,104 +528,12 @@ namespace Underworld
                     }
             }
 
-            //Find tiles that may change terrain due to triggers/traps
-           // FindTileTriggersAndChanges();
-
             //Reduce map complexity.
             CleanUp();
 
             return true;
         }
-
-
-        /// <summary>
-        /// Finds trigger-trap chains that will change the terrain
-        /// </summary>
-        // static void FindTileTriggersAndChanges()
-        // {
-        //     for (int i = 255; i <= current_tilemap.LevelObjects.GetUpperBound(0); i++)
-        //     {
-        //         var trigger = current_tilemap.LevelObjects[i];
-        //         if (trigger != null)
-        //         {
-        //             if ((trigger.majorclass == 6) && ((trigger.minorclass == 2) || (trigger.minorclass == 3)))
-        //             {//a trigger
-        //                 if (trigger.link != 0)
-        //                 {
-        //                     var trap = current_tilemap.LevelObjects[trigger.link];
-        //                     if (trap != null)
-        //                     {
-        //                         //Debug.Print($"Testing {trap.a_name}" );
-        //                         switch (trap.item_id)
-        //                         {
-        //                             case 387:   //do traps
-        //                                 {
-        //                                     switch (trap.quality)
-        //                                     {
-        //                                         case 2:
-        //                                             {
-        //                                                 current_tilemap.Tiles[trigger.quality, trigger.owner].TerrainChange = true;
-        //                                                 break;
-        //                                             }
-        //                                     }
-        //                                     break;
-        //                                 }
-        //                             case 389://change terrain trap
-        //                                 {
-        //                                     for (int X = trigger.quality; X <= trigger.quality + trap.xpos; X++)
-        //                                     {
-        //                                         for (int Y = trigger.owner; Y <= trigger.owner + trap.ypos; Y++)
-        //                                         {
-        //                                             if (ValidTile(X, Y))
-        //                                             {
-        //                                                 current_tilemap.Tiles[X, Y].TerrainChange = true;
-        //                                             }
-        //                                         }
-        //                                     }
-        //                                     break;
-        //                                 }
-        //                         }
-        //                     }
-
-        //                 }
-        //             }
-
-        //             if ((_RES == GAME_UW2) && (trigger.item_id == 422))
-        //             {
-        //                 if (ValidTile(trigger.tileX, trigger.tileY))
-        //                 {
-        //                     current_tilemap.Tiles[trigger.tileX, trigger.tileY].EnterTrigger = trigger.index;
-        //                 }
-        //             }
-
-        //             if ((_RES == GAME_UW2) && (trigger.item_id == 423))
-        //             {
-        //                 if (ValidTile(trigger.tileX, trigger.tileY))
-        //                 {
-        //                     current_tilemap.Tiles[trigger.tileX, trigger.tileY].ExitTrigger = trigger.index;
-        //                 }
-        //             }
-        //         }
-        //     }
-
-        //     // if (_RES != GAME_UW2)
-        //     // {
-        //     //     if (current_tilemap.thisDungeonLevel == 7)
-        //     //     {//mark tybals maze
-        //     //         for (int x = 0; x <= 63; x++)
-        //     //         {
-        //     //             for (int y = 0; y <= 63; y++)
-        //     //             {
-        //     //                 if ((current_tilemap.Tiles[x, y].floorTexture == 4))
-        //     //                 {
-        //     //                     current_tilemap.Tiles[x, y].TerrainChange = true;
-        //     //                 }
-        //     //             }
-        //     //         }
-        //     //     }
-        //     // }
-
-        // }
+       
 
         private void ListEnchantmentsInLinkedList(int listhead, int x, int y)
         {
@@ -666,12 +581,6 @@ namespace Underworld
 
                 LevelObjects[x] = uwobj;
 
-                //Debug.Print(StringLoader.GetObjectNounUW(uwobj.item_id));
-                // if (uwobj.npc_whoami != 0)
-                // {
-                //     Debug.Print(StringLoader.GetString(7, uwobj.npc_whoami + 16));
-                // }
-
                 if (x < 256)
                 {
                     address_pointer += 27;
@@ -680,21 +589,6 @@ namespace Underworld
                 {
                     address_pointer += 8;
                 }
-
-                // objList[x] = new ObjectLoaderInfo(x, map, true)
-                // {
-                //     map = map,
-                //     parentList = this,
-                //     index = x,                
-                //     address = map.lev_ark_block.Address + objectsAddress + address_pointer
-                // };          
-
-                // if ((objList[x].item_id >= 464) && ((_RES == GAME_UW1) || (_RES == GAME_UWDEMO)))//Fixed for bugged out of range items
-                // {
-                //     objList[x].item_id = 0;
-                // }
-                // HandleMovingDoors(objList, x);
-                // SetObjectTextureValue(objList, map.texture_map, x);
             }
         }
 
