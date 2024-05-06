@@ -180,22 +180,22 @@ namespace Underworld
         /// <summary>
         /// Interate through the npcs and up their their animations
         /// </summary>
-        public static void UpdateNPCs()
-        {
-            for (int i = 1; i<=255;i++)
-            {
-                var obj = UWTileMap.current_tilemap.LevelObjects[i];
-                if (obj!=null)
-                {
-                    if (obj.majorclass==1)
-                    {
-                        if (UWTileMap.ValidTile(obj.tileX, obj.tileY))
-                        {
-                            NPCInitialProcess(obj);
-                        }
-                    }
-                }
-            }
+        //public static void UpdateNPCs()
+        //{
+            // for (int i = 1; i<=255;i++)
+            // {
+            //     var obj = UWTileMap.current_tilemap.LevelObjects[i];
+            //     if (obj!=null)
+            //     {
+            //         if (obj.majorclass==1)
+            //         {
+            //             if (UWTileMap.ValidTile(obj.tileX, obj.tileY))
+            //             {
+            //                 NPCInitialProcess(obj);
+            //             }
+            //         }
+            //     }
+            // }
 
             // if (ObjectCreator.npcs != null)
             // {
@@ -214,7 +214,7 @@ namespace Underworld
             //         }
             //     }
             // }
-        }
+       // }
 
         public static void RedrawAnimation(uwObject n)
         {

@@ -221,7 +221,22 @@ public partial class main : Node3D
 				gameRefreshTimer = 0;
 				if (!blockmouseinput)
 				{
-					npc.UpdateNPCs();
+					for (int i=0;i<UWTileMap.current_tilemap.NoOfActiveMobiles;i++)
+					{
+						var index = UWTileMap.current_tilemap.GetActiveMobileAtIndex(i);
+						if ((index!=0) && (index<256))
+						{
+							var obj = UWTileMap.current_tilemap.LevelObjects[index];
+							if (obj.majorclass==1)
+							{
+								npc.NPCInitialProcess(obj);
+							}
+							else
+							{
+								//TODO this is a projectile
+							}
+						}
+					}					
 					AnimationOverlay.UpdateAnimationOverlays();
 				}
 			}
