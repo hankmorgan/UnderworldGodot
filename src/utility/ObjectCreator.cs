@@ -144,7 +144,11 @@ namespace Underworld
                 case ObjectListType.MobileList:
                     UWTileMap.current_tilemap.MobileFreeListPtr--;
                     Debug.Print($"Allocating Mobile {UWTileMap.current_tilemap.MobileFreeListObject} Pointer decremented to {UWTileMap.current_tilemap.MobileFreeListPtr}");
-                    return UWTileMap.current_tilemap.MobileFreeListObject;
+                    //add to the active mobiles list                    
+                    var newslot = UWTileMap.current_tilemap.MobileFreeListObject;
+                    UWTileMap.current_tilemap.SetActiveMobileAtIndex(UWTileMap.current_tilemap.NoOfActiveMobiles, newslot);
+                    UWTileMap.current_tilemap.NoOfActiveMobiles++;
+                    return newslot;
 
             }
             return 0;
@@ -177,12 +181,6 @@ namespace Underworld
                         break;
                     }
                 }
-                // if (obj.majorclass==1)
-                // {
-                //     var n = (npc)(obj.instance);
-                //     npcs.Remove(n);
-                // }
-            
             }
             else
             {//static
