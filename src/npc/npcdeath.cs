@@ -234,6 +234,32 @@ namespace Underworld
                             }
                             break;
                         }
+                    case 0x2F://Mors Gothri
+                        {
+                            if (mode==0)
+                            {
+                                if (worlds.GetWorldNo(playerdat.dungeon_level)==2)
+                                {//initial encounter in the keep
+                                    if (playerdat.GetQuest(54)==1)
+                                    {
+                                        ObjectCreator.DeleteObjectFromTile(critter.tileX, critter.tileY, critter.index, true);                                       
+                                    }
+                                    else
+                                    {
+                                        TalkToDyingNPC(critter);
+                                    }
+                                    return false;
+                                }
+                                else
+                                {//final encounter
+                                    TalkToDyingNPC(critter);
+                                    playerdat.SetQuest(64,1);
+                                    playerdat.IncrementXClock(15);
+                                    return true;
+                                }
+                            }
+                            break;
+                        }
                     case 0x31://Relk
                         {
                             if (mode != 0)
