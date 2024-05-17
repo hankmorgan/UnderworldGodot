@@ -156,6 +156,7 @@ namespace Underworld
             if (obj.owner!=0)
             {
                 Debug.Print($"Object Owner is {obj.owner}");
+                thief.FlagTheftToObjectOwner(obj, 0);
             }
 
             //player is trying to pick something up
