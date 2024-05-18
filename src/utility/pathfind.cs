@@ -34,8 +34,8 @@ namespace Underworld
             bool var17;
             int var16;
             int var15;
-            int var14;
-            int var13;
+            int var14_axismodifier;
+            int var13_axismodifier;
             int var12;
             int var11;
             //int var10;
@@ -51,7 +51,7 @@ namespace Underworld
             int var5 = dstZ>>3;
             int var4 = srcY>>3;
             int var3 = srcX>>3;
-            int var2 = srcZ;
+            int var2_zdiff = dstZ-srcZ;
 
             if (di_xdiff>=si_ydiff)
             {
@@ -62,10 +62,10 @@ namespace Underworld
                     var11 = di_xdiff>>3;
                     //var10 = srcY;
                     var10_axis = false;
-                    var13 = 1;
+                    var13_axismodifier = 1;
                     if (si_ydiff<=0)
                     {
-                        var14 = -1;
+                        var14_axismodifier = -1;
                         var15 = (-si_ydiff<<7)/di_xdiff;
                         var ax = var15;
                         var bx = 7 - (srcX & 7);
@@ -74,7 +74,7 @@ namespace Underworld
                     }
                     else
                     {
-                        var14 = 1;
+                        var14_axismodifier = 1;
                         var15 = (si_ydiff<<7)/di_xdiff;
                         var ax = var15;
                         var bx = 7 - (srcX & 7);
@@ -89,10 +89,10 @@ namespace Underworld
                     var11 = -si_ydiff>>3;
                     //var10 = srcX;
                     var10_axis = true;
-                    var13 = -1;
+                    var13_axismodifier = -1;
                     if(di_xdiff<=0)
                     {
-                        var14 = -1;
+                        var14_axismodifier = -1;
                         //seg006_1413_247B:
                         var15 = (-di_xdiff<<7) / -si_ydiff;
                         var ax = var15;
@@ -102,7 +102,7 @@ namespace Underworld
                     }
                     else
                     {
-                        var14 = 1;  
+                        var14_axismodifier = 1;  
                         var15 = (di_xdiff<<7) / -si_ydiff;
                         var ax = var15;     
                         var dx = (srcY & 7);  
@@ -118,14 +118,14 @@ namespace Underworld
                 if (-si_ydiff <= di_xdiff)
                 {//seg006_1413_24BA
                     //varE = srcY;
-                    varE_axis = false;
+                    varE_axis = false; //changes y-axis
                     var11 = si_ydiff >> 3;
                     //var10 = srcX;
                     var10_axis = true;
-                    var13 = 1;
+                    var13_axismodifier = 1;
                     if (di_xdiff<=0)
                     {//seg006_1413_251A
-                        var14 = -1;
+                        var14_axismodifier = -1;
                         var15 = (-di_xdiff<<7)/si_ydiff;
                         var ax = var15;
                         var dx = srcY & 7;
@@ -137,7 +137,7 @@ namespace Underworld
                     }
                     else
                     {
-                        var14 = 1;
+                        var14_axismodifier = 1;
                         var15 = (di_xdiff<<7)/si_ydiff;
                         var ax = var15;
                         var dx = srcY & 7;
@@ -154,10 +154,10 @@ namespace Underworld
                     var11 = -di_xdiff >> 3;
                     //var10 = srcY;
                     var10_axis = false;
-                    var13 = -1;
+                    var13_axismodifier = -1;
                     if (si_ydiff<=0)
                     {
-                        var14 = -1;
+                        var14_axismodifier = -1;
                         var15 = (-si_ydiff<<7)/-di_xdiff;
                         var ax = var15;
                         var dx = srcX & 7;
@@ -166,7 +166,7 @@ namespace Underworld
                     }
                     else
                     {
-                        var14 = 1;
+                        var14_axismodifier = 1;
                         var15 = (si_ydiff<<7)/-di_xdiff;
                         var ax = var15;
                         var dx = srcX & 7;
@@ -189,20 +189,29 @@ namespace Underworld
             { //seg006_1413_261C
                 var16 = var16 & 0x7f;
                 if (var10_axis)
-                {//srcX
-                    srcX += var14;
+                {
+                    varB += var14_axismodifier;
                 }
                 else
-                {//srcY
-                    srcY += var14;
+                {
+                    varA += var14_axismodifier;
                 }
 
-                var17 = TestTileTraversal(var8,var9,var4,var4,varA,varB,var5);
+                var17 = TestTileTraversal(
+                    arg0: var8, arg2: var9, 
+                    Tile1_X_arg4: var3, Tile1_Y_arg6: var4, 
+                    Tile2_X_arg8: varA, Tile2_Y_argA: varB, 
+                    Height_argC: var5);
+
                 if (var17)
                 {//seg006_1413_265D:
-                    if ((srcX==dstX) && (srcX==dstY))
+                    if ((varA==var6) && (varB==var7))
                     {
-                        var17 = TestTileTraversal(var3,var4,varA,varB,0,0,var5);
+                        var17 = TestTileTraversal(
+                            arg0: var3, arg2: var4, 
+                            Tile1_X_arg4: varA, Tile1_Y_arg6: varB, 
+                            Tile2_X_arg8: 0, Tile2_Y_argA: 0, 
+                            Height_argC: var5);
                         return var17;
                     }
                     else
@@ -222,35 +231,43 @@ namespace Underworld
             //seg006_1413_26AA
             if (varE_axis)
             {
-                srcX += var13;
+                varA += var13_axismodifier;
             }
             else
             {
-                srcY += var13;
+                varB += var13_axismodifier;
             }
             var12++;
             if (var12<=0xA)
             {
                 if (var11!=0)
                 {
-                    var5 = (var12*var2)/var11;
+                    var5 = srcZ + (var12*var2_zdiff)/var11;
                 }
 
-                var17 = TestTileTraversal(var8,var9,var3,var4,varA,varB,var5);
+                var17 = TestTileTraversal(
+                    arg0: var8, arg2: var9, 
+                    Tile1_X_arg4: var3, Tile1_Y_arg6: var4, 
+                    Tile2_X_arg8: varA, Tile2_Y_argA: varB, 
+                    Height_argC: var5);
                 if (var17)
                 {
-                    if ((srcX==dstX)&&(srcY==dstY))
+                    if ((varA==var6)&&(varB==var7))
                     {
-                        var17 = TestTileTraversal(var3,var4,varA,varB,0,0,var5);
+                        var17 = TestTileTraversal(
+                            arg0: var3, arg2: var4, 
+                            Tile1_X_arg4: varA, Tile1_Y_arg6: varB, 
+                            Tile2_X_arg8: 0, Tile2_Y_argA: 0, 
+                            Height_argC: var5);
                         return var17;
                     }
                     else
-                    {
+                    {//seg006_1413_2744:
                         var8 = var3;
                         var9 = var4;
-                        var3 = srcX;
-                        var4 = srcY;
-                        var16 = var15;
+                        var3 = varA;
+                        var4 = varB;
+                        var16 += var15;
                         goto Loop_seg006_1413_2613; //loop around and try again
                     }
                 }
@@ -366,7 +383,7 @@ namespace Underworld
                                             {
                                                 if ((Tile2_Y_argA >= Tile1_Y_arg6) || ((tilewallflags[tile1.tileType] & 0x10) == 0))
                                                 {
-                                                    return (tile2.floorHeight>>3)>=Height_argC;
+                                                    return (Height_argC>>3)>=tile2.floorHeight;
                                                 }
                                                 else
                                                 {

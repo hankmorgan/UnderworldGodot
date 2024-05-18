@@ -15,7 +15,7 @@ namespace Underworld
         /// <returns></returns>
         public static int height(int item_id)
         { // value at + 0
-            return buffer[2 + item_id * 11 + 0];
+            return buffer[2 + (item_id * 11) + 0];
         }
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace Underworld
         /// <returns></returns>
         public static int radius(int item_id)
         {   //bits 0..2 at + 1
-            var x = getAt(buffer, 2 + item_id*11 + 1, 16);
+            var x = getAt(buffer, 2 + (item_id*11) + 1, 16);
             return (int)(x & 7);
         }
 
@@ -37,7 +37,7 @@ namespace Underworld
         /// <returns></returns>
         public static int mass(int item_id)
         {   //bits 4-15 at + 1
-            var x = getAt(buffer, 2 + item_id*11 + 1, 16);
+            var x = getAt(buffer, 2 + (item_id*11) + 1, 16);
             return (int)(x>>4 & 0xFFF);
         }
 

@@ -136,7 +136,7 @@ namespace Underworld
                         objList: Underworld.UWTileMap.current_tilemap.LevelObjects,
                         WorldObject: true);
                     break;
-                case InteractionModes.ModePickup:                
+                case InteractionModes.ModePickup:
                     pickup.PickUp(
                         index: index,
                         objList: Underworld.UWTileMap.current_tilemap.LevelObjects,
@@ -205,13 +205,13 @@ namespace Underworld
                         PreviousWeaponAnimation = -1; //force redraw.
                         playerdat.play_drawn = 1;//draw the weapon
                         var obj = playerdat.PrimaryHandObject;
-                        switch(combat.isWeapon(obj))
-                        {                          
+                        switch (combat.isWeapon(obj))
+                        {
                             case 1://melee weapon
                             case 2: //rangedweapon
-                                combat.currentweapon = obj;break;
-                            default: 
-                                combat.currentweapon = null;break;
+                                combat.currentweapon = obj; break;
+                            default:
+                                combat.currentweapon = null; break;
                         }
                         break;
                     }
@@ -249,6 +249,14 @@ namespace Underworld
             {
                 if (!main.blockmouseinput)
                 {
+                    if (playerdat.ObjectInHand != -1)
+                    {
+                        return;
+                    }
+                    if (UsageMode != 0)
+                    {
+                        return;
+                    }
                     uimanager.InteractionModeToggle((InteractionModes)extra_arg_0);
                 }
             }

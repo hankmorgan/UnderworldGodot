@@ -349,6 +349,17 @@ namespace Underworld
             return buffer[CritterOffset(item_id) + 0x1c] ;
         }
 
+
+        /// <summary>
+        /// Likely how far away the npc will detect illegal actions.
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <returns></returns>
+        public static int theftdetectionrange(int item_id)
+        {
+            return (buffer[CritterOffset(item_id) + 0x1E] >> 4) & 0xF;
+        }
+
         /// <summary>
         /// Gets the item id of the loot item at the specified index (0 to 2)
         /// If loot is not enabled return -1 for no loot dropped
