@@ -33,8 +33,8 @@ namespace Underworld
         /// </summary>
         public static lightmap[] mono = null;
 
-        public static int NextPaletteCycle_GAME = 0;
-         public static int NextPaletteCycle_UI  = 0;
+        public static int NextPaletteCycle_GAME = -1;
+        public static int NextPaletteCycle_UI  = -1;
 
         static PaletteLoader()
         {
@@ -323,31 +323,38 @@ namespace Underworld
 
         public static void UpdatePaletteCycles()
         {
-
-            if (NextPaletteCycle_GAME > PaletteLoader.Palettes[Palette.CurrentPalette].cycledGamePalette.GetUpperBound(2))
+            if (NextPaletteCycle_GAME+1 > Palettes[Palette.CurrentPalette].cycledGamePalette.GetUpperBound(2))
             {
-                NextPaletteCycle_GAME = 0;
+                NextPaletteCycle_GAME = -1;
             }
-            if (NextPaletteCycle_UI > PaletteLoader.Palettes[Palette.CurrentPalette].cycledUIPalette.GetUpperBound(0))
+            if (NextPaletteCycle_UI+1 > Palettes[Palette.CurrentPalette].cycledUIPalette.GetUpperBound(0))
             {
-                NextPaletteCycle_UI = 0;
+                NextPaletteCycle_UI = -1;
             }
-            
-            //Cycle the palette		
-            RenderingServer.GlobalShaderParameterSet(
-                name: "smoothpalette",
-                value: (Texture)Palettes[Palette.CurrentPalette].cycledGamePalette[Palette.ColourTone, playerdat.lightlevel, NextPaletteCycle_GAME]);
-            RenderingServer.GlobalShaderParameterSet(
-                name: "uipalette",
-                value: (Texture)Palettes[Palette.CurrentPalette].cycledUIPalette[NextPaletteCycle_UI]);
-
 
             NextPaletteCycle_GAME++;
             NextPaletteCycle_UI++;
 
+            //Cycle the palette		
+            UpdateShaderParams();
+
         }
 
+        public static void UpdateShaderParams()
+        {
+            if (NextPaletteCycle_GAME!=-1)
+            {
+                RenderingServer.GlobalShaderParameterSet(
+                    name: "smoothpalette",
+                    value: (Texture)Palettes[Palette.CurrentPalette].cycledGamePalette[Palette.ColourTone, playerdat.lightlevel, NextPaletteCycle_GAME]);
+            }
+            
+            if (NextPaletteCycle_UI!=-1)
+            {
+                RenderingServer.GlobalShaderParameterSet(
+                    name: "uipalette",
+                    value: (Texture)Palettes[Palette.CurrentPalette].cycledUIPalette[NextPaletteCycle_UI]);
+            }
+        }
     }//end class
-
-
 }//end namespace

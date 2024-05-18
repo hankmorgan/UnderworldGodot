@@ -6,7 +6,20 @@ namespace Underworld
     public class Palette : UWClass
     {
 
-        public static int CurrentPalette = 0;
+        public static int CurrentPalette
+        {
+            get
+            {
+                return _currentpalette;
+            }
+            set
+            {
+                _currentpalette = value;
+                PaletteLoader.UpdateShaderParams();
+            }
+        }
+
+        static int _currentpalette = 0;
         /// <summary>
         /// 0 = normal colours, 1 for greyscale
         /// </summary>

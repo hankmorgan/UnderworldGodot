@@ -274,6 +274,9 @@ namespace Underworld
         /// <returns></returns>
         public static void LoadTileMap(int newLevelNo, string datafolder, bool newGameSession = true)
         {
+            PaletteLoader.NextPaletteCycle_GAME = 0;
+            PaletteLoader.NextPaletteCycle_UI  = 0;
+
             tileMapRender.mapTextures = new();//refresh textures
             ObjectCreator.worldobjects = main.instance.GetNode<Node3D>("/root/Underworld/worldobjects");
             Node3D the_tiles = main.instance.GetNode<Node3D>("/root/Underworld/tilemap");
