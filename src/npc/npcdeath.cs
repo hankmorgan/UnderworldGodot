@@ -199,6 +199,7 @@ namespace Underworld
                             {
                                 a_set_variable_trap.VariableOperationUW2(243, 2, 1);
                                 a_do_trap_trespass.HackTrapTrespass(21);
+                                thief.FlagTheftToObjectOwner(playerdat.playerObject,21);
                             }
                             break;
                         }

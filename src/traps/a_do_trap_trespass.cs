@@ -8,15 +8,17 @@ namespace Underworld
     public class a_do_trap_trespass : hack_trap
     {
         public static void Activate(uwObject trapObj, uwObject[] objList)
-        {
-             
-            HackTrapTrespass(trapObj.owner);         
+        {           
+            HackTrapTrespass(trapObj.owner);
         }
 
         public static void HackTrapTrespass(int owner)
         {
-            Debug.Print($"Flag trespass to {owner}");  
+            if (owner!=0)
+            {
+                Debug.Print($"Flag trespass to {owner}");  
+                thief.FlagTheftToObjectOwner(playerdat.playerObject, owner);
+            }          
         }
-
     } //end class
 }//end namespace

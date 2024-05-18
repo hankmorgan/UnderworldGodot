@@ -196,6 +196,13 @@ public partial class main : Node3D
 					playerdat.tileY = tileY;
 					playerdat.xpos = xposvecto;
 					playerdat.ypos = yposvecto;
+
+					//tmp update the player object to keep in sync with other values
+					playerdat.playerObject.xpos = (short)playerdat.xpos;
+					playerdat.playerObject.ypos = (short)playerdat.ypos;
+					playerdat.playerObject.tileX = tileX;
+					playerdat.playerObject.tileY = tileY;
+
 					playerdat.PlayerStatusUpdate();
 					if (UWClass._RES == UWClass.GAME_UW2)
 					{
