@@ -344,11 +344,27 @@ namespace Underworld
         /// </summary>
         /// <param name="item_id"></param>
         /// <returns></returns>
-        public static int probablydetectionrange(int item_id)
+        // public static int probablydetectionrange(int item_id)
+        // {
+        //     return buffer[CritterOffset(item_id) + 0x1c] ;
+        // }
+
+
+        public static int maybemorale(int item_id)
         {
-            return buffer[CritterOffset(item_id) + 0x1c] ;
+            return buffer[CritterOffset(item_id) + 0x1c] & 0xF ;
         }
 
+
+        /// <summary>
+        /// Used in deciding if combat actions are detected
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <returns></returns>
+        public static int combatdetectionrange(int item_id)
+        {
+            return (buffer[CritterOffset(item_id) + 0x1E]) & 0xF;
+        }
 
         /// <summary>
         /// Likely how far away the npc will detect illegal actions.
@@ -358,6 +374,16 @@ namespace Underworld
         public static int theftdetectionrange(int item_id)
         {
             return (buffer[CritterOffset(item_id) + 0x1E] >> 4) & 0xF;
+        }
+
+        /// <summary>
+        /// Appears to be likelihood of giving up on a target
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <returns></returns>
+        public static int unk_1F(int item_id)
+        {
+            return (buffer[CritterOffset(item_id) + 0x1F] >> 4) & 0xF;
         }
 
         /// <summary>

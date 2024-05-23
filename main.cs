@@ -201,7 +201,9 @@ public partial class main : Node3D
 					playerdat.playerObject.xpos = (short)playerdat.xpos;
 					playerdat.playerObject.ypos = (short)playerdat.ypos;
 					playerdat.playerObject.tileX = tileX;
+					playerdat.playerObject.npc_xhome= (short)tileX;
 					playerdat.playerObject.tileY = tileY;
+					playerdat.playerObject.npc_yhome= (short)tileY;
 
 					playerdat.PlayerStatusUpdate();
 					if (UWClass._RES == UWClass.GAME_UW2)

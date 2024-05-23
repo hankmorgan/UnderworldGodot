@@ -1253,6 +1253,22 @@ namespace Underworld
                 SetAt(PTR + 0x19, (byte)(existingValue | ((value & 0x1) << 0)));
             }
         }
+
+        public short UnkBit_0x19_1
+        {
+             get
+            {
+                if (IsStatic) { return 0; }
+                int val = GetAt(PTR + 0x19);
+                return (short)DataLoader.ExtractBits(val, 1, 0x1);
+            }
+            set
+            {
+                byte existingValue = GetAt(PTR + 0x19);
+                existingValue &= 0xFD; //Mask out current val
+                SetAt(PTR + 0x19, (byte)(existingValue | ((value & 0x1) << 1)));
+            }
+        }
         
         public short UnkBit_0x19_4
         {
@@ -1307,7 +1323,10 @@ namespace Underworld
         }
 
 
-        public short UnkBit_0x19_6
+        /// <summary>
+        /// Likely critter is an ally of the player
+        /// </summary>
+        public short UnkBit_0x19_6_MaybeAlly
         {
             get
             {

@@ -19,6 +19,8 @@ namespace Underworld
 
         static int dseg_67d6_B4;
 
+        static int dseg_67d6_226E;
+
         static int currObj_XHome;
         static int currObj_YHome;
         static int currObj_Zpos;
@@ -30,6 +32,22 @@ namespace Underworld
         static int currObjTotalHeading;
         static int currObjUnk13;
         static int currObjHeight;
+
+        static uwObject currentGoalTarget;
+        static int currentGTargXHome;
+        static int currentGTargYHome;
+        static int currentGTargHeight;
+
+        static int currentGTargXCoord;
+        static int currentGTargYCoord;
+
+        static int currentGTargXVector;
+        static int currentGTargYVector;
+
+        static int currentGTargSquaredDistanceByTiles;
+        static int currentGTargSquaredDistanceByCoordinates;
+
+        static int zposofGTARG;
 
         /// <summary>
         /// Initial stage of processing AI. Handles the execution of attacks, NPCs reacting to combat and then jumps into handling of goals.
@@ -149,7 +167,7 @@ namespace Underworld
                 //finally process goals.
                 if ((critter.npc_goal == 0xB) || (critter.npc_goal == 3))
                 {
-                    NpcBehaviours();
+                    NpcBehaviours(critter);
                     if (critter.AnimationFrame>=MaxAnimFrame)
                     {
                         critter.AnimationFrame=0;
@@ -254,7 +272,7 @@ namespace Underworld
                                 }
                             default:
                                 {                                    
-                                    NpcBehaviours();
+                                    NpcBehaviours(critter);
                                     //temp
                                     if (critter.AnimationFrame>=MaxAnimFrame)
                                     {
@@ -279,12 +297,433 @@ namespace Underworld
             }
         }
 
-         /// <summary>
-        /// Handles high level goal processing and determines if an npc needs to become hostile to the player
+        /// <summary>
+        /// Handles high level goal processing, critter footsteps and determines if an npc needs to become hostile to the player and so on
         /// </summary>
-        static void NpcBehaviours()
+        static void NpcBehaviours(uwObject critter)
         {
+            dseg_67d6_226E = 0;//global related to goto
+            critter.UnkBit_0x18_5 = 0;
+            critter.UnkBit_0x18_6 = 0;
+            bool gtargAvailable = false;
 
+            if ((critter.npc_goal != 0xB) && (critter.npc_goal != 0xF))
+            {
+                if ((critter.npc_animation == 1) && ((critter.AnimationFrame & 0x1) ==1))
+                {
+                    int soundeffect = -1;
+                    switch(critterObjectDat.category(critter.item_id))
+                    {
+                        case 1://humanoids
+                            {
+                                if (critter.AnimationFrame==1)
+                                {
+                                    soundeffect = 0x5A;//uw2 value?
+                                }
+                                else if (critter.AnimationFrame == 3)
+                                {
+                                    soundeffect = 0x5B;//uw2 value?
+                                }
+                                break;
+                            }
+                        case 2://fliers
+                            {                               
+                                soundeffect = 0x17;//uw2 value?
+                                break;
+                            }
+                        case 3://swimmers
+                            {
+                                soundeffect = 0x27;//uw2 value?
+                                break;
+                            }
+                        case 4://creepycrawlies
+                            {
+                                soundeffect = 0xE;//uw2 value?
+                                break;
+                            }
+                        case 5://
+                            {
+                                soundeffect = 0xD;//uw2 value?
+                                break;
+                            }
+                        case 6://
+                            {
+                                if (critter.AnimationFrame==1)
+                                {
+                                    soundeffect = 0x2F;//uw2 value?
+                                }
+                                else if (critter.AnimationFrame == 3)
+                                {
+                                    soundeffect = 0x30;//uw2 value?
+                                }
+                                break;
+                            }
+                        case 7://
+                            {
+                                if ((critter.AnimationFrame==1) || (critter.AnimationFrame == 3))
+                                {
+                                    soundeffect = 0x1D;//uw2 value?
+                                }
+                                break;
+                            }
+                    }
+                    if (soundeffect!=-1)
+                    {
+                        //play sound effect at critter x,y coordinate
+                    }
+                }//end sound block
+                //passisve test
+                if (critterObjectDat.unkPassivenessProperty(critter.item_id)==false)
+                {
+                    if ( 
+                        (
+                            (critter.UnkBit_0x19_6_MaybeAlly == 0)
+                            && 
+                            (critter.index == playerdat.LastDamagedNPCIndex)
+                            && 
+                            (critterObjectDat.generaltype(critter.item_id) == playerdat.LastDamagedNPCType)
+                            &&  
+                            (critter.UnkBit_0XA_Bit7 == 0)
+                        )
+                        ||
+                        (
+                            critter.UnkBit_0x19_6_MaybeAlly == 1
+                        )
+                    )
+                    {
+                        if (playerdat.LastDamagedNPCTime + 512 < playerdat.game_time)
+                        {
+                            //do detection
+                            var dist = System.Math.Abs(critter.tileX-playerdat.LastDamagedNPCTileX) + System.Math.Abs(critter.tileY-playerdat.LastDamagedNPCTileY);
+                            if (dist < critterObjectDat.combatdetectionrange(critter.item_id))
+                            {//npc has detected hostility to themselves or to an ally
+                                critter.npc_attitude = 0;
+                                critter.UnkBit_0x19_0 = 1;
+                                if ((critter.npc_goal!=9) && (critter.npc_goal!=6))
+                                {   
+                                    var gtarg = 1;
+                                    if (critter.UnkBit_0x19_6_MaybeAlly == 1)
+                                    {//critter is allied with the player? set them to attack the players target
+                                        gtarg = playerdat.LastDamagedNPCIndex;
+                                    }
+                                    SetGoalAndGtarg(critter, gtarg, 5);
+                                    SetNPCTargetDestination(critter, playerdat.LastDamagedNPCTileX, playerdat.LastDamagedNPCTileY,playerdat.LastDamagedNPCZpos);
+                                }
+                            }
+                        }
+                    }
+                    if (critter.ProjectileSourceID>0)//last hit
+                    {
+                        if 
+                            (
+                            (critter.ProjectileSourceID!=1)
+                            ||
+                            (
+                                (critter.ProjectileSourceID==1) && (critter.UnkBit_0x19_6_MaybeAlly==1)
+                            )
+                            )
+                        {
+                            bool tmp=false;
+                            if (critter.UnkBit_0x19_6_MaybeAlly==1)
+                            {
+                                tmp = true;
+                            }
+                            else
+                            {
+                                uwObject lasthitobject;
+                                if (critter.ProjectileSourceID==1)
+                                {
+                                    lasthitobject = playerdat.playerObject;
+                                }
+                                else
+                                {
+                                    lasthitobject= UWTileMap.current_tilemap.LevelObjects[critter.ProjectileSourceID];
+                                }
+                                tmp = (lasthitobject.UnkBit_0x19_6_MaybeAlly==1);
+                            }
+                            if (tmp)
+                            {
+                                if(critter.npc_gtarg != critter.ProjectileSourceID)
+                                {
+                                    critter.npc_gtarg = (byte)critter.ProjectileSourceID;
+                                }
+
+                                if (GetDistancesToGTarg(critter))
+                                {
+                                    int newGoal;
+                                    //int newGtarg  = critter.ProjectileSourceID;;
+                                    gtargAvailable = true;
+                                    if (critter.ProjectileSourceID==1)
+                                    {//player has attacked
+                                        critter.npc_attitude=0;
+                                        SetNPCTargetDestination(critter,playerdat.tileX, playerdat.tileY, playerdat.zpos);
+                                        critter.UnkBit_0x19_0 = 1;
+                                    }
+
+                                    //now eval distances to decide attack types
+                                    if 
+                                        (
+                                        currentGTargSquaredDistanceByTiles<=2
+                                        ||
+                                            (
+                                            currentGTargSquaredDistanceByTiles>2
+                                            && critterObjectDat.isCaster(critter.item_id) 
+                                            && (UWTileMap.current_tilemap.Tiles[critter.tileX, critter.tileY].noMagic==0)
+                                            )
+                                        )   
+                                    {//npc is close, or is a caster who is at range and can cast
+                                        if (critter.UnkBit_0x19_5 == 0)
+                                        {
+                                            if (critter.UnkBit_0x19_4 == 0)
+                                            {
+                                                if (ShouldNPCWithdraw(critter))
+                                                {
+                                                    newGoal = 6;
+                                                }
+                                                else
+                                                {
+                                                    newGoal = 5;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                newGoal = 9;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            newGoal = 5;
+                                        }
+                                    }
+                                    else
+                                    {//non caster at range/ caster who is unable to cast spell
+                                        critter.UnkBit_0x19_5 = 1;
+                                        newGoal = 5;
+                                    }
+
+                                    SetGoalAndGtarg(critter, newGoal, critter.ProjectileSourceID);
+                                    critter.ProjectileSourceID = 0;
+                                    critter.AccumulatedDamage = 0;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            //processgoals here
+            switch(critter.npc_goal)
+            {
+                case 0://standstill
+                case 7:
+                    break;
+                case 1: //goto
+                    break;
+                    //and so on
+            }
+
+        }
+
+        /// <summary>
+        /// Changes the goal and gtarg for the npc
+        /// </summary>
+        /// <param name="critter"></param>
+        /// <param name="goal"></param>
+        /// <param name="target"></param>
+        public static void SetGoalAndGtarg(uwObject critter, int goal, int target)
+        {
+            if (critter.npc_goal == 4)
+            {//back up goal for some unknown reason
+                critter.npc_level = critter.npc_goal;
+            }
+            critter.npc_goal = (byte)goal;
+            critter.npc_gtarg = (byte)target;
+        }
+
+        public static void SetNPCTargetDestination(uwObject critter, int newTargetX, int newTargetY, int newHeight)
+        {
+            if (
+                (critter.TargetTileX != newTargetX)
+                ||
+                (critter.TargetTileY != newTargetY)
+                ||
+                (critter.TargetZHeight != newHeight)
+            )
+            {
+                critter.TargetTileX = (short)newTargetX;
+                critter.TargetTileY = (short)newTargetY;
+                critter.TargetZHeight = (short)newHeight;
+                critter.UnkBit_0x18_5 = 1;
+                critter.UnkBit_0x18_6 = 0;
+            }
+        }
+
+
+        /// <summary>
+        /// Calcs distances from critter to it's target
+        /// </summary>
+        /// <param name="critter"></param>
+        /// <returns>true if target hp>0</returns>
+        public static bool GetDistancesToGTarg(uwObject critter)
+        {
+            if (critter.npc_gtarg==1)
+            {
+                currentGoalTarget = playerdat.playerObject;
+            }
+            else
+            {
+                currentGoalTarget = UWTileMap.current_tilemap.LevelObjects[critter.npc_gtarg];
+            }
+            if (currentGoalTarget.npc_hp<=0)
+            {
+                return false;
+            }  
+            else
+            {
+                currentGTargXHome = currentGoalTarget.npc_xhome;
+                currentGTargYHome = currentGoalTarget.npc_yhome;
+                currentGTargHeight = currentGoalTarget.zpos>>3;
+                currentGTargXCoord = currentGoalTarget.xpos + (currentGoalTarget.npc_xhome<<3);
+                currentGTargYCoord = currentGoalTarget.ypos + (currentGoalTarget.npc_yhome<<3);
+                currentGTargXVector = currentGTargXCoord - currObjXCoordinate;
+                currentGTargYVector = currentGTargYCoord - currObjYCoordinate;
+                zposofGTARG = currentGoalTarget.zpos>>3;
+                currentGTargSquaredDistanceByTiles = (currentGTargXHome - currObj_XHome)^2 +  (currentGTargYHome - currObj_YHome)^2;
+                currentGTargSquaredDistanceByCoordinates = (currentGTargXCoord - currObjXCoordinate)^2 +  (currentGTargYCoord - currObjYCoordinate)^2;
+                return true;
+            }             
+        }
+
+        static bool ShouldNPCWithdraw(uwObject critter)        
+        {//, int maxhp, int currhp, int unk1C, int accumulateddmg)
+            var maxhp = critterObjectDat.avghit(critter.item_id);
+            var critter1C = critterObjectDat.maybemorale(critter.item_id);            
+            
+            if ((maxhp*3)>>2>= critter.npc_hp) //.75 of max hp
+            {
+                if (maxhp>>3 <=critter.npc_hp)//maxhp/8
+                {
+                    if ((maxhp>>1) < critter.AccumulatedDamage)//max/2
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        if (maxhp!=0)
+                        {
+                            var hpcalc = Rng.r.Next(0,4) + ((critter.npc_hp<<4)/maxhp);
+                            var moralcalc = 15 - critter1C;
+                            if (moralcalc>=hpcalc)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        public static void StandStillGoal(uwObject critter)
+        {
+            int gtarg_x=-1; int gtarg_y=-1;
+            if (IsNPCActive_dseg_67d6_2234 != 0)
+            {
+                if (critter.npc_attitude==0)
+                {
+                    GetDistancesToGTarg(critter);
+                    if (critter.UnkBit_0x19_0==0)
+                    {
+                        if (critter.UnkBit_0x19_1 !=0)
+                        {
+                            if (Rng.r.Next(0,16)<=critterObjectDat.unk_1F(critter.item_id))
+                            {
+                                TurnTowardsTarget(0);
+                            }
+                            else
+                            {
+                                critter.UnkBit_0x19_1 = 0;
+                            }
+                        }
+
+                        if (Rng.r.Next(0,16)<critterObjectDat.unk_1F(critter.item_id))
+                        {
+                            var result = SearchForGoalTarget(ref gtarg_x, ref gtarg_y);
+                            if (result == 0)
+                            {
+                                critter.UnkBit_0x19_0 = 1;
+                                SetNPCTargetDestination(critter, gtarg_x, gtarg_y, zposofGTARG);
+                                SetGoalAndGtarg(critter, 5,1);
+                                return;
+                            }
+                            else
+                            {
+                                if (result == 2)
+                                {
+                                    critter.UnkBit_0x19_1 = 1;
+                                    if (Rng.r.Next(0,2) == 1)
+                                    {
+                                        NPC_Goto(gtarg_x, gtarg_y, zposofGTARG);
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+
+                        //check goal again.
+                        switch (critter.npc_goal)
+                        {
+                            case 2:
+                                NPCWander(critter); 
+                                return;
+                            case 0:
+                            case 7:
+                                critter.Projectile_Speed = 6;
+                                critter.UnkBit_0X13_Bit0to6 = 0;
+                                ChangeAnimation(critter, 0,0);
+                                return;
+                            default:
+                                NPC_Goal8(critter);
+                                return;
+                        }
+                    }
+                    else
+                    {
+                        SetGoalAndGtarg(critter, 5, 1);
+                        return;
+                    }
+                }
+            }
+        }
+
+        static int SearchForGoalTarget(ref int tilex, ref int tiley)
+        {
+            //placeholder
+            tilex=0; tiley=0;
+            return 1;
+        }
+
+        static void TurnTowardsTarget(int arg0)
+        {
+//placeholder
+        }
+        static void NPC_Goto(int targetX, int targetY, int targetZ)
+        {
+//placeholder
+        }
+        
+        static void NPCWander(uwObject critter)
+        {
+//placeholder
+        }
+
+        static void ChangeAnimation(uwObject critter, int arg0, int arg2)
+        {
+            //placeholder
+        }
+
+        static void NPC_Goal8(uwObject critter)
+        {
+            //placeholder
         }
     } //end class
 }//end namespace

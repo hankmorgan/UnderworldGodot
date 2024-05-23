@@ -211,5 +211,7 @@ namespace Underworld
             }
         }
 
+        public static int LastDamagedNPCZpos;//this value is not serialised into the save game
+
     }//end class
 }//end namespace

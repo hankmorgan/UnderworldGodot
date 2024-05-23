@@ -721,7 +721,7 @@ namespace Underworld
             critter.UnkBit_0x19_0 = 0;
             critter.UnkBit_0x19_4 = 0;
             critter.UnkBit_0x19_5 = 0;
-            critter.UnkBit_0x19_6 = 0;
+            critter.UnkBit_0x19_6_MaybeAlly = 0;
             critter.UnkBit_0x19_7 = 0;
             critter.LootSpawnedFlag = 0;
             critter.npc_talkedto = 0;

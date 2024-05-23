@@ -300,6 +300,7 @@ namespace Underworld
                 SetAt(0x36, (byte)value);
                 uimanager.RefreshHealthFlask();
                 uimanager.RefreshStatsDisplay();
+                playerObject.npc_hp = (byte)value;
             }            
         }
 

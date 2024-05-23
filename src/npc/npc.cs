@@ -252,24 +252,6 @@ namespace Underworld
             return CalcedFacing;
         }
 
-
-
-        /// <summary>
-        /// Changes the goal and gtarg for the npc
-        /// </summary>
-        /// <param name="critter"></param>
-        /// <param name="goal"></param>
-        /// <param name="target"></param>
-        public static void SetGoalAndGtarg(uwObject critter, int goal, int target)
-        {
-            if (critter.npc_goal == 4)
-            {//back up goal for some unknown reason
-                critter.npc_level = critter.npc_goal;
-            }
-            critter.npc_goal = (byte)goal;
-            critter.npc_gtarg = (byte)target;
-        }
-
         public static bool LookAt(uwObject critter)
         {
             if ((critter.npc_whoami >= 240) && (critter.npc_whoami != 248))//Ethereal void creatures 

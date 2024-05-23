@@ -72,6 +72,7 @@ namespace Underworld
                 playerdat.LastDamagedNPCTime = playerdat.ClockValue;
                 playerdat.LastDamagedNPCTileX = critter.tileX;
                 playerdat.LastDamagedNPCTileY = critter.tileY;
+                playerdat.LastDamagedNPCZpos = critter.zpos;
             }
 
 
