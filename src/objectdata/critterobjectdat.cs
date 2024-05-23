@@ -356,6 +356,17 @@ namespace Underworld
         }
 
 
+        public static int unk_1D_lowernibble(int item_id)
+        {
+            return buffer[CritterOffset(item_id) + 0x1d] & 0xF ;
+        }
+
+        public static int unk_1D_uppernibble(int item_id)
+        {
+            return (buffer[CritterOffset(item_id) + 0x1d]>>4) & 0xF ;
+        }
+
+
         /// <summary>
         /// Used in deciding if combat actions are detected
         /// </summary>

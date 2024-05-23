@@ -1238,7 +1238,10 @@ namespace Underworld
             }
         }
 
-        public short UnkBit_0x19_0
+        /// <summary>
+        /// Seems to indicate if the npc is in a combat state
+        /// </summary>
+        public short UnkBit_0x19_0_likelyincombat
         {
              get
             {
@@ -1250,7 +1253,7 @@ namespace Underworld
             {
                 byte existingValue = GetAt(PTR + 0x19);
                 existingValue &= 0xFE; //Mask out current val
-                SetAt(PTR + 0x19, (byte)(existingValue | ((value & 0x1) << 0)));
+                SetAt(PTR + 0x19, (byte)(existingValue | ((value & 0x1))));
             }
         }
 

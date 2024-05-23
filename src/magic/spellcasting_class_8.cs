@@ -152,7 +152,7 @@ namespace Underworld
                         else
                         {
                             newObject.npc_attitude = 0;
-                            newObject.UnkBit_0x19_0 = 1;
+                            newObject.UnkBit_0x19_0_likelyincombat = 1;
                             newObject.TargetTileX = (short)playerdat.tileX;
                             newObject.TargetTileY = (short)playerdat.tileY;
 

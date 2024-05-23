@@ -398,7 +398,7 @@ namespace Underworld
                             if (dist < critterObjectDat.combatdetectionrange(critter.item_id))
                             {//npc has detected hostility to themselves or to an ally
                                 critter.npc_attitude = 0;
-                                critter.UnkBit_0x19_0 = 1;
+                                critter.UnkBit_0x19_0_likelyincombat = 1;
                                 if ((critter.npc_goal!=9) && (critter.npc_goal!=6))
                                 {   
                                     var gtarg = 1;
@@ -457,7 +457,7 @@ namespace Underworld
                                     {//player has attacked
                                         critter.npc_attitude=0;
                                         SetNPCTargetDestination(critter,playerdat.tileX, playerdat.tileY, playerdat.zpos);
-                                        critter.UnkBit_0x19_0 = 1;
+                                        critter.UnkBit_0x19_0_likelyincombat = 1;
                                     }
 
                                     //now eval distances to decide attack types
@@ -631,7 +631,7 @@ namespace Underworld
                 if (critter.npc_attitude==0)
                 {
                     GetDistancesToGTarg(critter);
-                    if (critter.UnkBit_0x19_0==0)
+                    if (critter.UnkBit_0x19_0_likelyincombat==0)
                     {
                         if (critter.UnkBit_0x19_1 !=0)
                         {
@@ -647,10 +647,10 @@ namespace Underworld
 
                         if (Rng.r.Next(0,16)<critterObjectDat.unk_1F(critter.item_id))
                         {
-                            var result = SearchForGoalTarget(ref gtarg_x, ref gtarg_y);
+                            var result = SearchForGoalTarget(critter, ref gtarg_x, ref gtarg_y);
                             if (result == 0)
                             {
-                                critter.UnkBit_0x19_0 = 1;
+                                critter.UnkBit_0x19_0_likelyincombat = 1;
                                 SetNPCTargetDestination(critter, gtarg_x, gtarg_y, zposofGTARG);
                                 SetGoalAndGtarg(critter, 5,1);
                                 return;
@@ -695,11 +695,71 @@ namespace Underworld
             }
         }
 
-        static int SearchForGoalTarget(ref int tilex, ref int tiley)
+        /// <summary>
+        ///; ax = 0, npc finds and is aware of the player who is close, optionally set npc_hunger bit 0 based on x and y vector
+        ///; ax = 1, npc loses and becames unaware of the player who has gone far away clear npc_hunger bit 0
+        ///; ax = 2, npc makes no change to their detection state because the player is in the middle distance no change to hunger bit 0
+        /// </summary>
+        /// <param name="xHomeFound"></param>
+        /// <param name="yHomeFound"></param>
+        /// <returns></returns>
+        static int SearchForGoalTarget(uwObject critter, ref int xHomeFound, ref int yHomeFound)
         {
             //placeholder
-            tilex=0; tiley=0;
-            return 1;
+            xHomeFound=currentGTargXHome; yHomeFound=currentGTargYHome;
+
+            var xvector = currentGTargXHome - critter.tileX;
+            var yvector = currentGTargXHome - critter.tileY;
+
+            var si_dist = xvector^2 + yvector^2;
+            var tmp_critter = (critterObjectDat.combatdetectionrange(critter.item_id) * critterObjectDat.unk_1D_lowernibble(critter.item_id))/16;
+            var tmp_gtarg = (critterObjectDat.combatdetectionrange(currentGoalTarget.item_id) * critterObjectDat.unk_1D_lowernibble(currentGoalTarget.item_id))/16;
+            
+            var score = (tmp_critter * tmp_gtarg)/4;
+
+            if (score<si_dist)
+            {
+                tmp_critter = (critterObjectDat.theftdetectionrange(critter.item_id) * critterObjectDat.unk_1D_uppernibble(critter.item_id))/16;
+                tmp_gtarg = (critterObjectDat.theftdetectionrange(currentGoalTarget.item_id) * critterObjectDat.unk_1D_uppernibble(currentGoalTarget.item_id))/16;
+                var var8 = (tmp_critter * tmp_gtarg);
+                if (si_dist<var8)
+                {
+                    var HeadingToTarget_var3 = GetVectorHeading(xvector, yvector);
+                    var var5 =  (8 + (HeadingToTarget_var3-critter.heading)) / 8;
+                    if ((var5 == 0) || (var5 == 1) || (var5 == 7))
+                    {
+                        var result = pathfind.TestBetweenPoints(
+                            currObjXCoordinate,currObjYCoordinate, critter.zpos+ commonObjDat.height(critter.item_id),
+                            currentGTargXCoord,currentGTargYCoord, currentGoalTarget.zpos+ commonObjDat.height(currentGoalTarget.item_id)
+                            );     
+                        if (result)
+                        {
+                            critter.UnkBit_0x19_0_likelyincombat = 1;
+                            return 0;
+                        }                   
+                    }
+                }
+
+                if ((score<<2) < si_dist)
+                {
+                    critter.UnkBit_0x19_0_likelyincombat = 1;
+                    return 1;
+                }
+                else
+                {
+                    return 2;
+                }
+
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        static int GetVectorHeading(int x, int y)
+        {
+            return 0;
         }
 
         static void TurnTowardsTarget(int arg0)
