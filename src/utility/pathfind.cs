@@ -427,5 +427,71 @@ namespace Underworld
                 }
             }
         }
+
+
+
+
+        /// <summary>
+        /// Converts x and y vectors into a 0-7 heading value.
+        /// </summary>
+        /// <param name="xVector"></param>
+        /// <param name="yVector"></param>
+        /// <returns></returns>
+        public static int GetVectorHeading(int xVector, int yVector)
+        {
+            var cl_x = xVector<<1;
+            var bl_y = yVector<<2;
+
+            if (yVector<=cl_x)
+            {
+                if (xVector<=-bl_y)
+                {
+                    if (yVector<= -cl_x)
+                    {
+                        return 4;
+                    }
+                    else
+                    {
+                        return 3;
+                    }
+                }
+                else
+                {
+                    if (xVector<=bl_y)
+                    {
+                        return 1;
+                    }
+                    else
+                    {
+                        return 2;
+                    }
+                }
+            }
+            else
+            {
+                if (xVector<=-bl_y)
+                {
+                    if (xVector<= bl_y)
+                    {
+                        return 6;
+                    }
+                    else
+                    {
+                        return 5;
+                    }
+                }
+                else
+                {
+                    if (yVector <= -cl_x)
+                    {
+                        return 7;
+                    }
+                    else
+                    {
+                        return 0;
+                    }
+                }
+            }
+        } 
     }//end class
 }//end namespace

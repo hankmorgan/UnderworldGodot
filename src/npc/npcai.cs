@@ -724,7 +724,7 @@ namespace Underworld
                 var var8 = (tmp_critter * tmp_gtarg);
                 if (si_dist<var8)
                 {
-                    var HeadingToTarget_var3 = GetVectorHeading(xvector, yvector);
+                    var HeadingToTarget_var3 = pathfind.GetVectorHeading(xvector, yvector);
                     var var5 =  (8 + (HeadingToTarget_var3-critter.heading)) / 8;
                     if ((var5 == 0) || (var5 == 1) || (var5 == 7))
                     {
@@ -755,11 +755,6 @@ namespace Underworld
             {
                 return 0;
             }
-        }
-
-        static int GetVectorHeading(int x, int y)
-        {
-            return 0;
         }
 
         static void TurnTowardsTarget(int arg0)
