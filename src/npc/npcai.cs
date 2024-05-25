@@ -725,7 +725,7 @@ namespace Underworld
                 if (si_dist<var8)
                 {
                     var HeadingToTarget_var3 = pathfind.GetVectorHeading(xvector, yvector);
-                    var var5 =  (8 + (HeadingToTarget_var3-critter.heading)) / 8;
+                    var var5 =  (8 + (HeadingToTarget_var3-critter.heading)) % 8;
                     if ((var5 == 0) || (var5 == 1) || (var5 == 7))
                     {
                         var result = pathfind.TestBetweenPoints(
