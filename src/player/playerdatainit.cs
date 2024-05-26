@@ -7,11 +7,12 @@ namespace Underworld
         //loads a player.dat file and initialses ui and cameras.
 
         public static void LoadPlayerDat(string datafolder)
-        {
+        {           
             if (datafolder.ToUpper() != "DATA")
             {
                 //load player dat from a save file
                 Load(datafolder);
+                InitPlayerObject();
                 //Debug.Print($"You are at x:{X} y:{Y} z:{Z}");
                 //Debug.Print($"You are at x:{tileX} {xpos} y:{tileY} {ypos} z:{zpos}");
                 main.gamecam.Position = uwObject.GetCoordinate(tileX, tileY, xpos, ypos, camerazpos);
@@ -31,6 +32,7 @@ namespace Underworld
 
                 //Random r = new Random();
                 InitEmptyPlayer();
+                InitPlayerObject();
                 playerdat.STR = Rng.r.Next(10,31);
                 playerdat.INT = Rng.r.Next(10,31);
                 playerdat.DEX = Rng.r.Next(10,31);
@@ -123,7 +125,7 @@ namespace Underworld
                     uimanager.grWeapon = new WeaponsLoader(1); break;
             }
 
-            InitPlayerObject();
+            
 
             //Set the playerlight level;            
             //uwsettings.instance.lightlevel = light.BrightestLight();
