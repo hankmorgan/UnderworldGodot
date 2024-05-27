@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 
 
 namespace Underworld
@@ -10,7 +11,7 @@ namespace Underworld
     {
 
         static int MaxAnimFrame;
-        static int dseg_67d6_224E;
+        static int dseg_67d6_224E;//needs to be set in 1413:ABF
         static int IsNPCActive_dseg_67d6_2234;
         static int dseg_67d6_225E;
         static int HasCurrobjHeadingChanged_dseg_67d6_2242;
@@ -67,20 +68,8 @@ namespace Underworld
                 (critter.npc_goal == (byte)npc_goals.npc_goal_follow)
                 )
             {
-
-                short CalcedFacing = CalculateFacingAngleToNPC(critter);
-                string animname = CritterArt.GetAnimName(critter.npc_animation, CalcedFacing);
-                var crit = CritterArt.GetCritter(critter.item_id & 0x3F);
-                if (crit.Animations.ContainsKey(animname))
-                {
-                    var anim = crit.Animations[animname];
-                    MaxAnimFrame = anim.maxNoOfFrames;
-                }
-                else
-                {
-                    return;//no animation data.
-                }
-
+                
+                var CalcedFacing = GetCritterAnimationGlobalsForCurrObj(critter);
 
                 if (critterObjectDat.isFlier(critter.item_id))
                 {
@@ -647,7 +636,7 @@ namespace Underworld
                     {
                         if (critter.UnkBit_0x19_1 != 0)
                         {
-                            if (Rng.r.Next(0, 16) <= critterObjectDat.unk_1F(critter.item_id))
+                            if (Rng.r.Next(0, 16) <= critterObjectDat.unk_1F_uppernibble(critter.item_id))
                             {
                                 TurnTowardsTarget(critter, 0);
                             }
@@ -657,7 +646,7 @@ namespace Underworld
                             }
                         }
 
-                        if (Rng.r.Next(0, 16) < critterObjectDat.unk_1F(critter.item_id))
+                        if (Rng.r.Next(0, 16) < critterObjectDat.unk_1F_uppernibble(critter.item_id))
                         {
                             var result = SearchForGoalTarget(critter, ref gtarg_x, ref gtarg_y);
                             if (result == 0)
@@ -838,6 +827,239 @@ namespace Underworld
         static void NPCWander(uwObject critter)
         {
             //placeholder
+            var newAnim_var2 = 1;
+            int NewHeading = critter.ProjectileHeading;//not sure if it is initialised to this value. possibly vanilla behaviour was to use uninitialised memory in certain circumstances
+            int PitchVarA;
+            int si;
+            if (critter.UnkBit_0X15_Bit7 == 1)
+            {
+                var tmp = 1 << critter.MobileUnk_0x16_0_F;
+                dseg_67d6_B4 |= tmp;
+                critter.UnkBit_0X15_Bit7 = 0;                
+            }
+
+            var tileVar8 = UWTileMap.current_tilemap.Tiles[currObj_XHome,currObj_YHome];
+
+            if (IsNPCActive_dseg_67d6_2234 != 0)
+            {
+                if (critter.npc_attitude == 0)
+                {
+                    if (Rng.r.Next(0,2)==1)
+                    {
+                        StandStillGoal(critter);
+                        return;
+                    }
+                }
+                //seg007_17A2_15D
+                if (critterObjectDat.isFlier(critter.item_id))
+                {
+                    PitchVarA = 0xE;
+                    si = 3;
+                    if (currObj_Zpos<=0xE)
+                    {
+                        if (currObj_Zpos < tileVar8.floorHeight + 2)
+                        {
+                            PitchVarA = 0x10;
+                        }
+                        else
+                        {
+                            si = 5;
+                        }
+                        var tmp = Rng.r.Next(0,si) + PitchVarA;
+                        tmp = tmp & 0x1F;
+                        tmp = tmp << 3;
+                        critter.Projectile_Pitch = (short)tmp;
+                    }
+                    //seg007_17A2_1C2://TODO include UW1 logic
+                    if (_RES==GAME_UW2)
+                    {                       
+                        if (critter.npc_animation == 0)
+                        {
+                            if (critterObjectDat.unk_1F_lowernibble(critter.item_id) <= Rng.r.Next(0,0x10))
+                            {
+                                if (critter.AnimationFrame == MaxAnimFrame+1)
+                                {
+                                    newAnim_var2 = -1;
+                                }
+                            }
+                            else
+                            {
+                                newAnim_var2 = -1;
+                            }
+                            //seg007_17A2_202:
+                        }
+                        else
+                        {
+                            if (critterObjectDat.unk_1F_lowernibble(critter.item_id) < Rng.r.Next(0,0x10))
+                            {
+                                if (critter.AnimationFrame == MaxAnimFrame+1)
+                                {
+                                    newAnim_var2 = 0;
+                                }
+                            }
+                        }
+                        //seg007_17A2_241: uw2
+                        if (critter.npc_animation != newAnim_var2)
+                        {
+                            if (newAnim_var2!=-1)
+                            {
+                                critter.npc_animation = (short)newAnim_var2;
+                                GetCritterAnimationGlobalsForCurrObj(critter);
+                                if (critter.AnimationFrame > MaxAnimFrame)
+                                {
+                                    critter.AnimationFrame = (byte)MaxAnimFrame;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        //todo
+                        //from X to 
+                        //seg007_1798_193: uw1
+                        if (critter.npc_animation == 32)
+                        {
+                            if (critterObjectDat.unk_1F_lowernibble(critter.item_id) > Rng.r.Next(0,0x10))
+                            {
+                                if (critter.AnimationFrame==3)
+                                {
+                                    critter.npc_animation = 44;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (critterObjectDat.unk_1F_lowernibble(critter.item_id) < Rng.r.Next(0,0x10))
+                            {
+                                if (critter.AnimationFrame == 3)
+                                {
+                                    critter.npc_animation = 32;
+                                }
+                                else
+                                {
+                                    critter.npc_animation = 44;
+                                }
+                            }
+                        }
+                    }
+
+                    //seg007_17A2_2A9: uw2
+                    //seg007_1798_193: uw1
+                    if 
+                    (
+                        (_RES==GAME_UW2 && critter.npc_animation == 1)
+                        ||
+                        (_RES!=GAME_UW2 && critter.npc_animation == 44)
+                    )
+                    {
+                        if (dseg_67d6_224E != 0)
+                        {
+                            if (HasCurrobjHeadingChanged_dseg_67d6_2242 == 0)
+                            {
+                                //seg007_17A2_2D1
+                                var deflection = Rng.r.Next(0,2);
+                                deflection--;
+                                deflection = deflection<<6;
+
+                                var newheading = critter.ProjectileHeading;
+                                newheading = (short)(newheading + deflection);
+                                newheading = (short)(newheading + 256);
+                                newheading = (short)(newheading % 256);
+                                critter.ProjectileHeading = newheading;
+                                critter.heading = (short)((newheading>>5) & 7);
+                                critter.UnkBit_0X13_Bit0to6 = 0;
+                                return;
+                            }
+                            //seg007_17A2_34C
+                           
+                            if (Rng.r.Next(0,0x40)>=critterObjectDat.unk_1F_lowernibble(critter.item_id) + 8)
+                            {
+                                var tmp = Rng.r.Next(0,0x40);
+                                tmp = tmp + critter.ProjectileHeading + 224;
+                                tmp = tmp % 0x100;
+                                NewHeading = (short)tmp;
+                            }
+                            else
+                            {
+                                NewHeading = critter.ProjectileHeading;
+                            }
+                            
+                            if (HasCurrobjHeadingChanged_dseg_67d6_2242==0)
+                            {
+                                NewHeading = VectorsToPlayer(NewHeading, 0xA);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        //animation is not 1 in uw2 (probably 0)
+                        //animation is not 44 in uw1 (probably 32)
+
+                        if (critterObjectDat.unk_1F_lowernibble(critter.item_id)>Rng.r.Next(0,0x80))
+                        {
+                            var tmp = Rng.r.Next(0,0x40);
+                            tmp = tmp + critter.ProjectileHeading;
+                            tmp = tmp + 224;
+                            tmp = tmp % 0x100;
+                            NewHeading = tmp;
+                        }
+                        else
+                        {
+                            //uninitialised heading here???
+                        }
+
+                    }
+
+                    //seg007_17A2_3FF:
+                    critter.ProjectileHeading = (short)NewHeading;
+                    critter.heading = (short)((NewHeading >> 5) & 7);
+                    critter.npc_heading = ((short)(NewHeading & 0x1F));
+                    bool frameadvance = false;
+                    if 
+                    (
+                        (_RES==GAME_UW2 && critter.npc_animation == 0)
+                        ||
+                        (_RES!=GAME_UW2 && critter.npc_animation == 32)
+                    )
+                    {
+                        critter.UnkBit_0X15_Bit7 = 1;
+                        critter.UnkBit_0X13_Bit0to6 = 0;
+                        critter.Projectile_Speed = 6;
+                        frameadvance = Rng.r.Next(0,2) == 0;
+                    }
+                    else
+                    {
+                        frameadvance = true;
+                        critter.UnkBit_0X15_Bit6 = 0;
+                        critter.UnkBit_0X15_Bit7 = 0;                        
+                        critter.UnkBit_0X13_Bit0to6 = (short)critterObjectDat.unk_b_0_7(critter.item_id);
+                        critter.Projectile_Speed = 4;
+
+                    }
+                    if (frameadvance)
+                    {
+                        if (_RES==GAME_UW2)
+                        {
+                            var frame = critter.AnimationFrame;
+                            frame++;
+                            frame = (byte)(frame % (MaxAnimFrame + 1));
+                            critter.AnimationFrame = frame;
+                        }
+                        else
+                        {
+                            var frame = critter.AnimationFrame;
+                            frame++;
+                            frame = (byte)(frame & 3);
+                            critter.AnimationFrame = frame;
+                        }
+                    }
+                    SomethingWithGtargs();
+                }
+            }
+            else
+            {
+                critter.Projectile_Speed = 1;
+            }
         }
 
         static void UpdateAnimation(uwObject critter, int NewAnimation_arg0, bool DoNotIdle)
@@ -869,6 +1091,33 @@ namespace Underworld
         static void NPC_Goal8(uwObject critter)
         {
             //placeholder
+        }
+
+        static int GetCritterAnimationGlobalsForCurrObj(uwObject critter)
+        {
+            short CalcedFacing = CalculateFacingAngleToNPC(critter);
+            string animname = CritterArt.GetAnimName(critter.npc_animation, CalcedFacing);
+            var crit = CritterArt.GetCritter(critter.item_id & 0x3F);
+            if (crit.Animations.ContainsKey(animname))
+            {
+                var anim = crit.Animations[animname];
+                MaxAnimFrame = anim.maxNoOfFrames;
+            }
+            // else
+            // {
+            //     return;//no animation data.
+            // }
+            return CalcedFacing;
+        }
+
+        static int VectorsToPlayer(int heading, int maybedist)
+        {//placeholder
+            return heading;
+        }
+
+        static void SomethingWithGtargs()
+        {
+
         }
     } //end class
 }//end namespace

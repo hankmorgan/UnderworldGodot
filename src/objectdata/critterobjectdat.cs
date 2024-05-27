@@ -192,6 +192,12 @@ namespace Underworld
             return (buffer[CritterOffset(item_id) + 0xA] >> 2) & 0x3F;
         }
 
+
+        public static int unk_b_0_7(int item_id)
+        {
+            return (buffer[CritterOffset(item_id) + 0xB]) & 0x7F;
+        }
+
         /// <summary>
         /// Returns the movement speed of the NPC
         /// </summary>
@@ -387,15 +393,28 @@ namespace Underworld
             return (buffer[CritterOffset(item_id) + 0x1E] >> 4) & 0xF;
         }
 
+
+        /// <summary>
+        /// Probably how often animation changes.
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <returns></returns>
+        public static int unk_1F_lowernibble(int item_id)
+        {
+            return (buffer[CritterOffset(item_id) + 0x1F]) & 0xF;
+        }
+
         /// <summary>
         /// Appears to be likelihood of giving up on a target
         /// </summary>
         /// <param name="item_id"></param>
         /// <returns></returns>
-        public static int unk_1F(int item_id)
+        public static int unk_1F_uppernibble(int item_id)
         {
             return (buffer[CritterOffset(item_id) + 0x1F] >> 4) & 0xF;
         }
+
+
 
         /// <summary>
         /// Gets the item id of the loot item at the specified index (0 to 2)
