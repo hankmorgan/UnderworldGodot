@@ -514,6 +514,9 @@ namespace Underworld
                 case 1: //goto
                     break;
                     //and so on
+                case 2:
+                    NPCWander(critter);
+                    break;
             }
 
         }
@@ -1115,9 +1118,43 @@ namespace Underworld
             return heading;
         }
 
-        static void SomethingWithGtargs()
-        {
 
+        /// <summary>
+        /// Seems to turn the critter towards the player
+        /// </summary>
+        /// <param name="critter"></param>
+        static void MaybeFaceGtarg(uwObject critter)
+        {
+            if 
+                (
+                (playerdat.play_drawn == 1)
+                ||
+                (critter.UnkBit_0X13_Bit0to6 == 0)
+                )
+                {
+                    critter.npc_gtarg = 1;
+                    GetDistancesToGTarg(critter);
+                    if ((currentGTargXVector^2 + currentGTargYVector^2) < 0x90)
+                    {
+                        var heading = pathfind.GetVectorHeading(currentGTargXVector, currentGTargYVector);
+                        critter.UnkBit_0X13_Bit0to6 = 0;
+                        critter.Projectile_Speed = 6;
+                        if (_RES == GAME_UW2)
+                        {
+                            UpdateAnimation(critter,0,false);
+                        }
+                        else
+                        {
+                            critter.npc_animation = 32;
+                            if (Rng.r.Next(0,2)==1)
+                            {
+                                critter.AnimationFrame = (byte)((critter.AnimationFrame + 1) & 3);
+                            }
+                        }
+                        critter.heading = (short)heading;
+                        critter.npc_heading = 0;
+                    }
+                }
         }
     } //end class
 }//end namespace
