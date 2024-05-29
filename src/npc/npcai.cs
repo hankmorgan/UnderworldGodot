@@ -1113,9 +1113,59 @@ namespace Underworld
             return CalcedFacing;
         }
 
-        static int VectorsToPlayer(int heading, int maybedist)
+
+        /// <summary>
+        /// Does something with getting a heading towards the player??
+        /// </summary>
+        /// <param name="headingArg0"></param>
+        /// <param name="maybedist"></param>
+        /// <returns></returns>
+        static int VectorsToPlayer(int headingArg0, int maybedist)
         {//placeholder
-            return heading;
+            var playerXCoordinate = playerdat.xpos + (playerdat.playerObject.npc_xhome<<3);
+            var playerYCoordinate = playerdat.ypos + (playerdat.playerObject.npc_yhome<<3);
+            var xvector = playerXCoordinate - currentGTargXCoord;
+            var yvector = playerYCoordinate - currentGTargYCoord;
+            if ((xvector^2 + yvector^2) > (maybedist^2))
+            {
+                var HeadingVarB = ((pathfind.GetVectorHeading(xvector,yvector) + 4) % 8)<<5;
+                HeadingVarB += 0x100;
+                HeadingVarB -= headingArg0;
+                var varD = HeadingVarB % 0x100;
+                if ((varD>=0x40) || (varD<=0xC0))
+                {
+                    if (varD>=0x60)
+                    {
+                        if (varD>=0x80)
+                        {
+                            if (varD<=0xA0)
+                            {
+                                return (headingArg0 + 0xE0) % 0x100;
+                            }
+                            else
+                            {
+                                return (HeadingVarB + 0x20) % 0x100;
+                            }
+                        }
+                        else
+                        {
+                            return (HeadingVarB + 0x20) % 0x100;
+                        }
+                    }
+                    else
+                    {
+                        return (HeadingVarB + 0xE0) % 0x100;
+                    }
+                }
+                else
+                {
+                    return headingArg0;
+                }
+            }
+            else
+            {
+                return headingArg0;
+            }            
         }
 
 
