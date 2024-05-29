@@ -716,7 +716,6 @@ namespace Underworld
         /// <returns></returns>
         static int SearchForGoalTarget(uwObject critter, ref int xHomeFound, ref int yHomeFound)
         {
-            //placeholder
             xHomeFound = currentGTargXHome; yHomeFound = currentGTargYHome;
 
             var xvector = currentGTargXHome - critter.tileX;
@@ -778,7 +777,6 @@ namespace Underworld
         /// <returns></returns>
         static bool TurnTowardsTarget(uwObject critter, int arg0)
         {
-            //placeholder
             var vectorX = currentGTargXCoord - currObjXCoordinate;
             var vectorY = currentGTargYCoord - currObjYCoordinate;
             var heading_var3 = pathfind.GetVectorHeading(vectorX, vectorY);
@@ -829,7 +827,6 @@ namespace Underworld
 
         static void NPCWander(uwObject critter)
         {
-            //placeholder
             var newAnim_var2 = 1;
             int NewHeading = critter.ProjectileHeading;//not sure if it is initialised to this value. possibly vanilla behaviour was to use uninitialised memory in certain circumstances
             int PitchVarA;
@@ -1056,7 +1053,7 @@ namespace Underworld
                             critter.AnimationFrame = frame;
                         }
                     }
-                    SomethingWithGtargs();
+                    MaybeFaceGtarg(critter);
                 }
             }
             else
@@ -1067,7 +1064,6 @@ namespace Underworld
 
         static void UpdateAnimation(uwObject critter, int NewAnimation_arg0, bool DoNotIdle)
         {
-            //placeholder
             if (critter.npc_animation == NewAnimation_arg0)
             {
                 if (!DoNotIdle)
@@ -1121,7 +1117,7 @@ namespace Underworld
         /// <param name="maybedist"></param>
         /// <returns></returns>
         static int VectorsToPlayer(int headingArg0, int maybedist)
-        {//placeholder
+        {
             var playerXCoordinate = playerdat.xpos + (playerdat.playerObject.npc_xhome<<3);
             var playerYCoordinate = playerdat.ypos + (playerdat.playerObject.npc_yhome<<3);
             var xvector = playerXCoordinate - currentGTargXCoord;
