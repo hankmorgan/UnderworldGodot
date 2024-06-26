@@ -14,8 +14,12 @@ namespace Underworld
             }
             set
             {
+                bool update = (_currentpalette != value);
                 _currentpalette = value;
-                PaletteLoader.UpdateShaderParams();
+                if (update)
+                {
+                    PaletteLoader.UpdateShaderParams();
+                }                
             }
         }
 
