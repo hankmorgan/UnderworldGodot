@@ -51,6 +51,8 @@ namespace Underworld
 
         static int zposofGTARG;
 
+        static uwObject collisionObject = new uwObject(); //tmp
+
         /// <summary>
         /// Initial stage of processing AI. Handles the execution of attacks, NPCs reacting to combat and then jumps into handling of goals.
         /// </summary>
@@ -110,7 +112,7 @@ namespace Underworld
                     {
                         if (critter.UnkBit_0X15_Bit7 == 1)
                         {
-                            dseg_67d6_B4 |= (1 << critter.MobileUnk_0x16_0_F);
+                            dseg_67d6_B4 |= (1 << critter.UnkBits_0x16_0_F);
                             critter.UnkBit_0X15_Bit7 = 0;
                         }
                     }
@@ -512,6 +514,11 @@ namespace Underworld
                     StandStillGoal(critter);
                     break;
                 case 1: //goto
+                    NPC_Goto(
+                        critter: critter, 
+                        targetX: currObjQualityX, 
+                        targetY: currObjOwnerY, 
+                        targetZ: UWTileMap.current_tilemap.Tiles[currObjQualityX, currObjOwnerY].floorHeight);
                     break;
                     //and so on
                 case 2:
@@ -520,6 +527,14 @@ namespace Underworld
             }
 
         }
+
+
+        public static void NpcGoto(uwObject critter, int tileX, int tileY, int Height)
+        {
+
+        }
+
+
 
         /// <summary>
         /// Changes the goal and gtarg for the npc
@@ -666,7 +681,7 @@ namespace Underworld
                                     critter.UnkBit_0x19_1 = 1;
                                     if (Rng.r.Next(0, 2) == 1)
                                     {
-                                        NPC_Goto(gtarg_x, gtarg_y, zposofGTARG);
+                                        NPC_Goto(critter, gtarg_x, gtarg_y, zposofGTARG);
                                         return;
                                     }
                                 }
@@ -820,9 +835,184 @@ namespace Underworld
             return true;
         }
 
-        static void NPC_Goto(int targetX, int targetY, int targetZ)
+        static void NPC_Goto(uwObject critter, int targetX, int targetY, int targetZ)
         {
             //placeholder
+            var Bit7Cleared_Var5 = false;
+            var MaybeIsFlier_Var6 = false;
+
+            SetNPCTargetDestination(
+                critter: critter, 
+                newTargetX: targetX, 
+                newTargetY: targetY, 
+                newHeight: targetZ);
+
+            if (critter.UnkBit_0x18_5 == 1)
+            {
+                if (critter.UnkBit_0X15_Bit7 == 1)
+                {
+                    dseg_67d6_B4 |= (1<<critter.UnkBits_0x16_0_F);
+                    critter.UnkBit_0X15_Bit7 = 0;
+                }
+            }
+
+            var xDiff = targetX-currObj_XHome;
+            var yDiff = targetY-currObj_YHome;
+
+            if ((xDiff==0) && (xDiff==0))
+            {
+                if (critter.UnkBit_0X15_Bit7==1)
+                {
+                    dseg_67d6_B4 |= (1<<critter.UnkBits_0x16_0_F);
+                    critter.UnkBit_0X15_Bit7 = 0;
+                }
+                if (critter.npc_goal == 1)
+                {
+                    SetGoalAndGtarg(critter, 8, 0);
+                }
+                else
+                {
+                    if (IsNPCActive_dseg_67d6_2234==1)
+                    {
+                        critter.UnkBit_0X13_Bit7 = 1;
+                        critter.UnkBit_0X15_Bit6 = 1;
+                        critter.npc_animation = 0;
+                        critter.AnimationFrame = 0;
+                        return;
+                    }
+                }
+            }
+            if (IsNPCActive_dseg_67d6_2234==0)
+            {
+                critter.Projectile_Speed = 1;
+                if(critter.UnkBit_0X15_Bit7 == 1)
+                {
+                    //table look up into seg057_625F (possibly a path list)
+                    var tmpSeg57_x = -1;
+                    var tmpSeg57_y = -1;
+                    var indexSeg57 = critter.UnkBits_0x16_0_F;  
+                    if (tmpSeg57_x == critter.npc_xhome)
+                    {
+                        if (tmpSeg57_y == critter.npc_yhome)
+                        {
+                            SomethingWithSeg57(critter, indexSeg57);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (dseg_67d6_224E != 0)
+                {//seg006_1413_31DC
+                    if (HasCurrobjHeadingChanged_dseg_67d6_2242 == 0)
+                    {
+                        if (critter.UnkBit_0x18_6 == 0)
+                        {
+                            if (dseg_67d6_2269 !=0)
+                            {
+                                if (dseg_67d6_226F==0)
+                                {
+                                    //get collision object
+                                    var siOtherItemId = collisionObject.item_id;
+                                    if (collisionObject.majorclass == 1)
+                                    {
+                                        goto seg006_1413_3290;
+                                    }
+                                    if (collisionObject.item_id ==0x7F)
+                                    {
+                                        goto seg006_1413_3290;
+                                    }
+                                    if (critter.npc_goal != 5)
+                                    {
+                                        goto seg006_1413_3290;
+                                    }
+                                    if (collisionObject.npc_goal!=5)
+                                    {
+                                        goto seg006_1413_3290;
+                                    }
+                                    else
+                                    {
+                                        goto seg006_1413_32E5;
+                                    }
+
+                                    seg006_1413_3290:
+                                    if (
+                                        (collisionObject.OneF0Class == 0x14)
+                                        &&
+                                        (collisionObject.classindex>=8)
+                                        )
+                                    {
+                                        if (critterObjectDat.isFlier(critter.item_id))
+                                        {
+                                            critter.Projectile_Pitch = 14;
+                                            dseg_67d6_224E = 0;
+                                            dseg_67d6_2246 = 1;
+                                            MaybeIsFlier_Var6 = true;
+                                            goto seg006_1413_32E5;
+                                        }
+                                        else
+                                        {
+                                            goto seg006_1413_32D5;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        goto seg006_1413_32D5;
+                                    }
+
+                                }
+                                else
+                                {
+                                    critter.npc_animation = 0;
+                                    critter.AnimationFrame = 0;
+                                    if (Rng.r.Next(0,4)==0)
+                                    {
+                                        goto seg006_1413_32D5;
+                                    }
+                                    else
+                                    {
+                                        //seg006_1413:323b
+                                        //push collision object
+                                        NPCTryToOpenDoor(critter, null);
+                                    }
+                                }
+                            }
+                        goto seg006_1413_32E5;
+
+                        seg006_1413_32D5:
+                            critter.UnkBit_0x18_6 = 1;
+
+                        seg006_1413_32E5:
+                            if (dseg_67d6_224E !=0)
+                            {
+                                if (critter.UnkBit_0X15_Bit7 ==1)
+                                {
+                                    dseg_67d6_B4 |= (1<<critter.UnkBits_0x16_0_F);
+                                    critter.UnkBit_0X15_Bit7 = 0;
+                                }
+                               critter.UnkBit_0x18_7 = 0;
+                               Bit7Cleared_Var5 = true;
+                            }
+                        }
+                    }
+                }
+                //seg006_1413_332C:
+                //resume here
+
+            }
+
+
+
+        }
+
+        static void SomethingWithSeg57(uwObject critter, int tableindex)
+        {
+            //placeholder
+        }
+
+        static void NPCTryToOpenDoor(uwObject critter, uwObject doorobject)
+        {
+            //playerholder
         }
 
         static void NPCWander(uwObject critter)
@@ -833,7 +1023,7 @@ namespace Underworld
             int si;
             if (critter.UnkBit_0X15_Bit7 == 1)
             {
-                var tmp = 1 << critter.MobileUnk_0x16_0_F;
+                var tmp = 1 << critter.UnkBits_0x16_0_F;
                 dseg_67d6_B4 |= tmp;
                 critter.UnkBit_0X15_Bit7 = 0;                
             }

@@ -715,7 +715,7 @@ namespace Underworld
             critter.ProjectileSourceID = 0;
             critter.UnkBit_0x18_7 = 0;
             critter.UnkBit_0x18_6 = 0;
-            critter.MobileUnk_0x16_0_F = 0;
+            critter.UnkBits_0x16_0_F = 0;
             critter.UnkBit_0X15_Bit6 = 0;
             critter.npc_whoami = 0;
             critter.UnkBit_0x19_0_likelyincombat = 0;

@@ -1096,7 +1096,7 @@ namespace Underworld
         /// <summary>
         /// Possibly related to pathfinding
         /// </summary>
-        public short MobileUnk_0x16_0_F
+        public short UnkBits_0x16_0_F
         {
             get
             {
