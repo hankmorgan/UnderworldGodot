@@ -278,7 +278,7 @@ namespace Underworld
 /// 
 /// UW2 Quest flags
 /// 0: PT related - The troll is released
-/// 1: PT related - Bishop is free?
+/// 1: PT related - Bishop is free
 /// 2: PT related - Borne wants you to kill bishop
 /// 3: PT related - Bishop is dead
 /// 
@@ -293,7 +293,7 @@ namespace Underworld
 /// 14: Likely all lines of power have been cut.
 /// 15: Altara tells you about the listener
 /// 
-/// 18: You learn that the Trikili can talk.
+/// 18: You learn that the Trikili can talk OR you have the quest to find out about their history
 /// 19: You know Relk has found the black jewel (josie tells you)
 /// 20: You've met Mokpo
 /// 22: Blog is now your friend(?), cleared if you kill him
