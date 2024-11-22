@@ -156,8 +156,8 @@ namespace Underworld
                 }
                 address_pointer += 4;
             }
-            var json = System.Text.Json.JsonSerializer.Serialize(ConversationVM.conversations);
-            File.WriteAllText("c:\\temp\\conversations.txt", json);
+            // var json = System.Text.Json.JsonSerializer.Serialize(ConversationVM.conversations);
+            // File.WriteAllText("c:\\temp\\conversations.txt", json);
         }
     }//endclass
 }//end namespace
