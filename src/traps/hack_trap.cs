@@ -57,6 +57,13 @@ namespace Underworld
                         );
                         return true;
                     }
+                case 32://qbert in UW2
+                    {   
+                        a_hack_trap_qbert.Activate(
+                            trapObj: trapObj, 
+                            objList: objList);
+                            return true;
+                    }
                 case 38:
                     {//transform red potions to poison
                         a_hack_trap_transformpotion.Activate(
