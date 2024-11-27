@@ -15,8 +15,6 @@ namespace Underworld
         static void HackTrapQbert(int owner)
         {
             InitialiseQbert();
-
-            //check mode
             switch (owner)
             {
                 case < 10: // when <10 starting a pyramid color or going to a pyramid
@@ -28,10 +26,39 @@ namespace Underworld
                     break;
                 case >= 20 and < 63:
                     //spawns a hacktrap
+                    {
+                        UseColouredRoomOrb(owner);
+                    }
                     break;
                 case 63://stepping on tile
                     StepOnPyramidTile();
                     break;
+            }
+        }
+
+        /// <summary>
+        /// When using the orb in a colour room
+        /// </summary>
+        /// <param name="owner"></param>
+        private static void UseColouredRoomOrb(int owner)
+        {
+            owner -= 30; //? 
+            var si = 0;
+            while (si < 7)
+            {
+                if (playerdat.GetGameVariable(100 + si) == owner)
+                {
+                    //do hacktrap
+                    var ax = 6 - si;
+                    var dx = 7 - si;
+                    ax = ax * dx;
+                    ax = ax / 2;
+                    var Y = 0x1D - ax;
+                    //TODO spawn a camera hack trap in player object tile
+                    Debug.Print($"Point a camera at {0x20},{Y}");
+                    return;
+                }
+                si++;
             }
         }
 
