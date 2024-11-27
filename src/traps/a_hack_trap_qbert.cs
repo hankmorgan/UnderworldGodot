@@ -2,13 +2,13 @@ using System;
 using System.Diagnostics;
 namespace Underworld
 {
-   /// <summary>
+    /// <summary>
     /// Trap which controls the behaviour of qbert pyramid and the moongates in the ethereal void in UW2
     /// </summary>
     public class a_hack_trap_qbert : hack_trap
-    {        
+    {
         public static void Activate(uwObject trapObj, uwObject[] objList)
-        {           
+        {
             HackTrapQbert(trapObj.owner);
         }
 
@@ -17,16 +17,16 @@ namespace Underworld
             InitialiseQbert();
 
             //check mode
-            switch(owner)
+            switch (owner)
             {
-                case <10: // when <10 starting a pyramid color
-                    StartPyramid();
+                case < 10: // when <10 starting a pyramid color or going to a pyramid
+                    StartPyramid(owner);
                     break;
-                case >=10 and < 20:
+                case >= 10 and < 20:
                     //Teleport to a location
                     TeleportToLocation(owner: owner);
                     break;
-                case >=20 and <63:
+                case >= 20 and < 63:
                     //spawns a hacktrap
                     break;
                 case 63://stepping on tile
@@ -34,6 +34,16 @@ namespace Underworld
                     break;
             }
         }
+
+        private static void TeleportToTopOfPyramid()
+        {
+            DoTeleport(
+                teleportX: 49,
+                teleportY: 51,
+                newLevel: 69,
+                heading: 61);
+        }
+
 
 
         /// <summary>
@@ -56,9 +66,37 @@ namespace Underworld
 
         }
 
-        private static void StartPyramid()
-        { 
+        private static void StartPyramid(int owner)
+        {
+            var si = 0;
+            while (si <= 4)
+            {
+                var gamevarvalue = playerdat.GetGameVariable(100 + si);
+                if (gamevarvalue == 0xFF)
+                {//freeslot
+                    playerdat.SetGameVariable(
+                        variableno: 100 + si,
+                        value: owner);
+                    if (si == 4)
+                    {//final colour
+                        playerdat.SetGameVariable(
+                        variableno: 100 + si + 1,
+                        value: 5);
+                    }
 
+                    TeleportToTopOfPyramid();
+                    return;
+                }
+                else
+                {
+                    if (gamevarvalue == owner)
+                    {
+                        TeleportToTopOfPyramid();
+                        return;
+                    }
+                    si++;
+                }
+            }
         }
 
         /// <summary>
@@ -66,15 +104,15 @@ namespace Underworld
         /// </summary>
         /// <param name="owner"></param>
         private static void TeleportToLocation(int owner)
-        { 
+        {
             var counter = 0;
-            var tile_a = UWTileMap.current_tilemap.Tiles[owner + 46,1];                
+            var tile_a = UWTileMap.current_tilemap.Tiles[owner + 46, 1];
             var newLevel = 69;
             var randomrange = (int)tile_a.wallTexture;
 
             //ovr110_4480:
-            while (counter<=4)
-            {                
+            while (counter <= 4)
+            {
                 var tmpRngRange = (randomrange * 3) >> 1;
                 var RngResult_var14 = Rng.r.Next(tmpRngRange);
                 if (RngResult_var14 >= randomrange)
@@ -87,34 +125,34 @@ namespace Underworld
                 var teleportX = tile_b.wallTexture;
                 var teleportY = tile_c.wallTexture;
 
-                var heading = ((tile_c.floorTexture + 8)<<2) + ((tile_b.floorTexture & 0x8)>>3);
+                var heading = ((tile_c.floorTexture + 8) << 2) + ((tile_b.floorTexture & 0x8) >> 3);
                 //if ((tile_b.floorTexture & 0x7) != 0)
                 //{
-                    newLevel -= (tile_b.floorTexture & 0x7);
+                newLevel -= (tile_b.floorTexture & 0x7);
                 //}
                 counter++;
-                if (counter>=4)
+                if (counter >= 4)
                 {//after 4 to find a faraway teleport destination give up and just teleport to the found locaiton.
                     DoTeleport(
-                        teleportX: teleportX, 
-                        teleportY: teleportY, 
-                        newLevel: newLevel, 
+                        teleportX: teleportX,
+                        teleportY: teleportY,
+                        newLevel: newLevel,
                         heading: heading);
                     return;
                 }
                 else
                 {
-                    if ((Math.Abs(teleportX-playerdat.tileX)>=3) || (Math.Abs(teleportY-playerdat.tileY)>=3))
+                    if ((Math.Abs(teleportX - playerdat.tileX) >= 3) || (Math.Abs(teleportY - playerdat.tileY) >= 3))
                     {//only teleport if destination is away from the current location.
                         DoTeleport(
-                            teleportX: teleportX, 
-                            teleportY: teleportY, 
-                            newLevel: newLevel, 
+                            teleportX: teleportX,
+                            teleportY: teleportY,
+                            newLevel: newLevel,
                             heading: heading);
                         return;
                     }
                 }
-            }            
+            }
         }
 
 
@@ -131,7 +169,7 @@ namespace Underworld
             {
                 main.JustTeleported = false;
                 return;
-            }    
+            }
             if (newLevel != playerdat.dungeon_level)
             {
                 main.TeleportLevel = newLevel;
@@ -139,11 +177,11 @@ namespace Underworld
             else
             {
                 main.TeleportLevel = -1;
-            }            
-            Debug.Print ($"{teleportX},{teleportY},{newLevel}");
+            }
+            Debug.Print($"{teleportX},{teleportY},{newLevel}");
             main.TeleportTileX = teleportX;
             main.TeleportTileY = teleportY;
             //TODO: include heading after teleport
-        }     
+        }
     } //end class
 }//end namespace
