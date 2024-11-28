@@ -43,7 +43,7 @@ namespace Underworld
                                 if (TriggerObject.next != 0)
                                 {
                                     var nextObj = objList[TriggerObject.next];
-
+                                    
                                     return RunTrigger(
                                         character: character,
                                         ObjectUsed: ObjectUsed,

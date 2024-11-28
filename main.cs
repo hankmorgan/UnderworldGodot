@@ -159,6 +159,9 @@ public partial class main : Node3D
 			int tileY = (int)(cam.Position.Z / 1.2f);
 			int xposvecto = -(int)(((cam.Position.X % 1.2f) / 1.2f) * 8);
 			int yposvecto = (int)(((cam.Position.Z % 1.2f) / 1.2f) * 8);
+			int newzpos =(int)(((((cam.Position.Y) * 100)/32f)/15f)*128f)  - commonObjDat.height(127);
+			
+			newzpos = Math.Max(Math.Min(newzpos,127),0);
 			var tmp = cam.Rotation;
 			tmp.Y = (float)(tmp.Y - Math.PI);
 			playerdat.heading = (int)Math.Round(-(tmp.Y * 127) / Math.PI);
@@ -168,57 +171,85 @@ public partial class main : Node3D
 			if (EnablePositionDebug)
 			{
 				var fps = Engine.GetFramesPerSecond();
-				lblPositionDebug.Text = $"FPS:{fps} Time:{playerdat.game_time}\nL:{playerdat.dungeon_level} X:{tileX} Y:{tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}\n{cam.Rotation} {playerdat.heading} {(playerdat.heading >> 4) % 4} {xposvecto} {yposvecto}";
+				lblPositionDebug.Text = $"FPS:{fps} Time:{playerdat.game_time}\nL:{playerdat.dungeon_level} X:{tileX} Y:{tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}\n{cam.Rotation} {playerdat.heading} {(playerdat.heading >> 4) % 4} {xposvecto} {yposvecto} {newzpos}";
 			}
 
 
-
 			if ((tileX < 64) && (tileX >= 0) && (tileY < 64) && (tileY >= 0))
-			{
+			{				
 				if ((playerdat.tileX != tileX) || (playerdat.tileY != tileY))
 				{
+
+					var tileExited = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY];
 					if (UWClass._RES == UWClass.GAME_UW2)
 					{
 						//find exit triggers.
-						var exittrigger = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY].ExitTrigger;
-						if (exittrigger != 0)
+						if (tileExited.indexObjectList != 0)
 						{
-							var exittriggerobj = UWTileMap.current_tilemap.LevelObjects[exittrigger];
-							//trigger.ExitTrigger(null, entertrigger, UWTileMap.current_tilemap.LevelObjects);
-							trigger.RunTrigger(character: 0,
-										ObjectUsed: exittriggerobj,
-										TriggerObject: exittriggerobj,
+							var next = tileExited.indexObjectList;
+							while (next != 0)
+							{
+								var nextObj = UWTileMap.current_tilemap.LevelObjects[next];
+								trigger.RunTrigger(character: 0,
+										ObjectUsed: nextObj,
+										TriggerObject: nextObj,
 										triggerType: (int)triggerObjectDat.triggertypes.EXIT,
 										objList: UWTileMap.current_tilemap.LevelObjects);
+								next = nextObj.next;
+							}
 						}
 					}
 					playerdat.tileX = tileX;
 					playerdat.tileY = tileY;
 					playerdat.xpos = xposvecto;
 					playerdat.ypos = yposvecto;
+					playerdat.zpos = newzpos;
 
 					//tmp update the player object to keep in sync with other values
 					playerdat.playerObject.xpos = (short)playerdat.xpos;
 					playerdat.playerObject.ypos = (short)playerdat.ypos;
 					playerdat.playerObject.tileX = tileX;
-					playerdat.playerObject.npc_xhome= (short)tileX;
+					playerdat.playerObject.npc_xhome = (short)tileX;
 					playerdat.playerObject.tileY = tileY;
-					playerdat.playerObject.npc_yhome= (short)tileY;
-
+					playerdat.playerObject.npc_yhome = (short)tileY;
+					var tileEntered = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY]; 
 					playerdat.PlayerStatusUpdate();
 					if (UWClass._RES == UWClass.GAME_UW2)
 					{
 						//find enter triggers.
-						var entertrigger = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY].EnterTrigger;
-						if (entertrigger != 0)
+						//find exit triggers.
+						if (tileEntered.indexObjectList != 0)
 						{
-							var entertriggerobj = UWTileMap.current_tilemap.LevelObjects[entertrigger];
-							//trigger.EnterTrigger(null, entertrigger, UWTileMap.current_tilemap.LevelObjects);
-							trigger.RunTrigger(character: 0,
-										ObjectUsed: entertriggerobj,
-										TriggerObject: entertriggerobj,
+							var next = tileEntered.indexObjectList;
+							while (next != 0)
+							{
+								var nextObj = UWTileMap.current_tilemap.LevelObjects[next];
+								trigger.RunTrigger(character: 0,
+										ObjectUsed: nextObj,
+										TriggerObject: nextObj,
 										triggerType: (int)triggerObjectDat.triggertypes.ENTER,
 										objList: UWTileMap.current_tilemap.LevelObjects);
+								next = nextObj.next;
+							}
+						}
+						Debug.Print($"{playerdat.zpos} vs {(tileEntered.floorHeight << 3)}");
+						// If grounded try and find pressure triggers. for the moment ground is just zpos less than floorheight.
+						if (playerdat.zpos <= (tileEntered.floorHeight << 3))//Janky temp implementation. player must be on/below the height before changing tiles.
+						{
+							if (tileEntered.indexObjectList != 0)
+							{
+								var next = tileEntered.indexObjectList;
+								while (next != 0)
+								{
+									var nextObj = UWTileMap.current_tilemap.LevelObjects[next];
+									trigger.RunTrigger(character: 0,
+											ObjectUsed: nextObj,
+											TriggerObject: nextObj,
+											triggerType: (int)triggerObjectDat.triggertypes.PRESSURE,
+											objList: UWTileMap.current_tilemap.LevelObjects);
+									next = nextObj.next;
+								}
+							}
 						}
 					}
 				}
@@ -230,13 +261,13 @@ public partial class main : Node3D
 				gameRefreshTimer = 0;
 				if (!blockmouseinput)
 				{
-					for (int i=0;i<UWTileMap.current_tilemap.NoOfActiveMobiles;i++)
+					for (int i = 0; i < UWTileMap.current_tilemap.NoOfActiveMobiles; i++)
 					{
 						var index = UWTileMap.current_tilemap.GetActiveMobileAtIndex(i);
-						if ((index!=0) && (index<256))
+						if ((index != 0) && (index < 256))
 						{
 							var obj = UWTileMap.current_tilemap.LevelObjects[index];
-							if (obj.majorclass==1)
+							if (obj.majorclass == 1)
 							{
 								npc.NPCInitialProcess(obj);
 							}
@@ -245,7 +276,7 @@ public partial class main : Node3D
 								//TODO this is a projectile
 							}
 						}
-					}					
+					}
 					AnimationOverlay.UpdateAnimationOverlays();
 				}
 			}

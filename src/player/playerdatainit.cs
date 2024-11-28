@@ -15,7 +15,12 @@ namespace Underworld
                 InitPlayerObject();
                 //Debug.Print($"You are at x:{X} y:{Y} z:{Z}");
                 //Debug.Print($"You are at x:{tileX} {xpos} y:{tileY} {ypos} z:{zpos}");
-                main.gamecam.Position = uwObject.GetCoordinate(tileX, tileY, xpos, ypos, camerazpos);
+                main.gamecam.Position = uwObject.GetCoordinate(
+                    tileX: tileX, 
+                    tileY: tileY, 
+                    _xpos: xpos, 
+                    _ypos: ypos, 
+                    _zpos: camerazpos);
                 main.gamecam.Rotation = Vector3.Zero;
                 main.gamecam.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
                 main.gamecam.Rotate(Vector3.Up, (float)(-heading / 127f * Math.PI));

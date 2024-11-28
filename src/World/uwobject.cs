@@ -8,6 +8,9 @@ namespace Underworld
     /// </summary>
     public class uwObject : UWClass
     {
+        const float _ResolutionZ = 128.0f; //UW has 127 posible z positions for an object in tile.
+        const float _ceil = 32;// tileMap.CEILING_HEIGHT;
+        const float _BrushZ = 15f;
         public objectInstance instance;//TODO: this needs to be linked in all the object creation code.
         public short index;
 
@@ -1480,10 +1483,7 @@ namespace Underworld
         /// <returns></returns>
         public static float GetZCoordinate(int _zpos)
         {
-            float ResolutionZ = 128.0f; //UW has 127 posible z positions for an object in tile.
-            float ceil = 32;// tileMap.CEILING_HEIGHT;
-            float BrushZ = 15f;
-            float offZ = (_zpos / ResolutionZ) * ceil * BrushZ;
+            float offZ = (_zpos / _ResolutionZ) * _ceil * _BrushZ;
             return offZ / 100.0f;
         }
 
