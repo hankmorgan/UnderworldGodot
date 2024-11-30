@@ -94,6 +94,7 @@ namespace Underworld
         {
             bool ShowMoongate;
             var var4_neededcolour = playerdat.GetGameVariable(0x1CF);
+            int var8 = 0;
             var currentTile = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY];
             if (currentTile.Ptr == 0x33C4)//should be tile 49,51 -> pyramid top
             {
@@ -157,109 +158,113 @@ namespace Underworld
                         currentTile.floorTexture = (short)(playerdat.GetGameVariable(100 + si) & 0xF); main.DoRedraw = true; currentTile.Redraw = true;
                         di = 0;
 
-                        while (di < 5)
+                    ovr110_41D6:
+                        if (di < 5)
                         {
                             si = 0;
                         ovr110_41CC:
                             if (di - 5 < si)
                             {
+                                //ovr110:4193
                                 var oddtile = UWTileMap.current_tilemap.Tiles[49 + si, 51 + di];
-                                var var8 = oddtile.floorTexture;
+                                var8 = oddtile.floorTexture;
                                 if (var6 != 0xFF)
-                                {
-                                    if (var6 != var8)
+                                {//ovr110:41C3
+                                    if (var6 == var8)
                                     {
                                         si--;
                                         goto ovr110_41CC;
                                     }
+                                    else
+                                    {
+                                        goto ovr110_41DB;//tile matching has failed
+                                    }
                                 }
                                 else
                                 {
-                                    var6 = var8;
+                                    var6 = oddtile.floorTexture;
                                     si--;
                                     goto ovr110_41CC;
-                                }
-                                //ovr110_41DB;
-                                ShowMoongate = (var6 == var8);
-                                // if (var6==var8)
-                                // {
-                                //     ShowMoongate = true;
-                                // }
-                                // else
-                                // {
-                                //     ShowMoongate = false;
-                                // }
-
-                                if (ShowMoongate)
-                                {
-                                    di = 0;
-                                    while (di < 6)
-                                    {
-                                        si = 0;
-                                    ovr110_4228:
-                                        if (di - 6 < si)
-                                        {
-                                            var anotheroddtile = UWTileMap.current_tilemap.Tiles[49 + si, 51 + di];
-                                            anotheroddtile.wallTexture = (short)var6; main.DoRedraw = true; anotheroddtile.Redraw = true;
-                                            si--;
-                                            goto ovr110_4228;
-                                        }
-                                        else
-                                        {
-                                            di++;
-                                        }
-                                    }
-
-                                    //do handling of showing moongates.
-                                    var move = UWTileMap.current_tilemap.LevelObjects[972];
-                                    move.zpos = 96;
-                                    objectInstance.Reposition(move);
-
-                                    var teleport = UWTileMap.current_tilemap.LevelObjects[973];
-
-                                    objectInstance.Redraw(teleport);
-
-                                    if (var6 != 5)
-                                    {
-                                        var moon = UWTileMap.current_tilemap.LevelObjects[666];
-                                        moon.invis = 0;
-                                        objectInstance.Redraw(moon);
-                                        var anothermove = UWTileMap.current_tilemap.LevelObjects[633];
-                                        anothermove.zpos = moon.zpos;
-                                        objectInstance.Reposition(anothermove);
-                                    }
-                                    else
-                                    {//set teleport destination to the shrine.
-                                        teleport.quality = 32;
-                                        teleport.owner = 25;
-                                        teleport.heading = 0;
-                                    }
-                                    var anothermoon = UWTileMap.current_tilemap.LevelObjects[974];
-                                    var newlink = qbertmoongatelinks[var6] | 0x200;
-                                    anothermoon.link = (short)newlink;
-                                    anothermoon.invis = 0;
-                                    objectInstance.Redraw(anothermoon);
-                                    if (var4_neededcolour == 0)
-                                    {
-                                        HideMoonGateAndTrigger();
-                                    }
-                                    return;
-                                }
-                                else
-                                {
-                                    if (var4_neededcolour == 0)
-                                    {
-                                        HideMoonGateAndTrigger();
-                                    }
-                                    return;
                                 }
                             }
                             else
                             {
                                 di++;
+                                goto ovr110_41D6;
                             }
                         }
+                        ovr110_41DB:
+                        ShowMoongate = (var6 == var8);
+                        // if (var6==var8)
+                        // {
+                        //     ShowMoongate = true;
+                        // }
+                        // else
+                        // {
+                        //     ShowMoongate = false;
+                        // }
 
+                        if (ShowMoongate)
+                        {
+                            di = 0;
+                            while (di < 6)
+                            {
+                                si = 0;
+                            ovr110_4228:
+                                if (di - 6 < si)
+                                {
+                                    var anotheroddtile = UWTileMap.current_tilemap.Tiles[49 + si, 51 + di];
+                                    anotheroddtile.wallTexture = (short)var6; main.DoRedraw = true; anotheroddtile.Redraw = true;
+                                    si--;
+                                    goto ovr110_4228;
+                                }
+                                else
+                                {
+                                    di++;
+                                }
+                            }
+
+                            //do handling of showing moongates.
+                            var move = UWTileMap.current_tilemap.LevelObjects[972];
+                            move.zpos = 96;
+                            objectInstance.Reposition(move);
+
+                            var teleport = UWTileMap.current_tilemap.LevelObjects[973];
+
+                            objectInstance.Redraw(teleport);
+
+                            if (var6 != 5)
+                            {
+                                var moon = UWTileMap.current_tilemap.LevelObjects[666];
+                                moon.invis = 0;
+                                objectInstance.Redraw(moon);
+                                var anothermove = UWTileMap.current_tilemap.LevelObjects[633];
+                                anothermove.zpos = moon.zpos;
+                                objectInstance.Reposition(anothermove);
+                            }
+                            else
+                            {//set teleport destination to the shrine.
+                                teleport.quality = 32;
+                                teleport.owner = 25;
+                                teleport.heading = 0;
+                            }
+                            var anothermoon = UWTileMap.current_tilemap.LevelObjects[974];
+                            var newlink = qbertmoongatelinks[var6] | 0x200;
+                            anothermoon.link = (short)newlink;
+                            anothermoon.invis = 0;
+                            objectInstance.Redraw(anothermoon);
+                            if (var4_neededcolour == 0)
+                            {
+                                HideMoonGateAndTrigger();
+                            }
+                        }
+                        else
+                        {
+                            //if (var4_neededcolour == 0)
+                            //{
+                            HideMoonGateAndTrigger();
+                            //}
+                        }
                         return;
                     }
                     else
