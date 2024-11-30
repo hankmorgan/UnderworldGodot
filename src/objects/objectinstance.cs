@@ -21,5 +21,21 @@ namespace Underworld
         /// </summary>
         public Node3D uwnode;
 
-    }
-}
+
+        public static void Redraw (uwObject obj)
+        {
+            if (obj.instance != null)
+            {
+                if (obj.instance.uwnode != null)
+                {
+                    obj.instance.uwnode.QueueFree();
+                }
+                obj.instance = null;
+            }
+            ObjectCreator.RenderObject(
+                obj: obj, 
+                a_tilemap: UWTileMap.current_tilemap);
+        }
+
+    }//end class
+}//end namespace

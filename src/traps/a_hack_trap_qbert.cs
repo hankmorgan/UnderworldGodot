@@ -90,7 +90,49 @@ namespace Underworld
 
         private static void StepOnPyramidTile()
         {
+            var tile = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY];
+            if (tile.Ptr == 0x33C4)//should be tile 49,51 -> pyramid top
+            {
+                var si = 29;
+                while (si<=35)
+                {
+                    var searchTile = UWTileMap.current_tilemap.Tiles[si,4];
+                    if (searchTile.indexObjectList != 0)
+                    {
+                        var tmapObject = objectsearch.FindMatchInObjectListChain(
+                            ListHeadIndex: searchTile.indexObjectList, 
+                            majorclass: 5, minorclass: 2, classindex: 0xE, 
+                            objList: UWTileMap.current_tilemap.LevelObjects);
 
+                        if (tmapObject != null)
+                        {
+                            var di = 0;
+                            while (di < 7)
+                            {
+                                if (playerdat.GetGameVariable(100+di)==0xFF)
+                                {
+                                    break;
+                                }
+                                else
+                                {
+                                    if (playerdat.GetGameVariable(100 + di) == tmapObject.owner)
+                                    {
+                                        Debug.Print($"Changing owner of {tmapObject.a_name} on tile {si},{4} to 5, Previous value was {tmapObject.owner}");
+                                        tmapObject.owner = 5;//changes texture
+                                        tmap.Redraw(tmapObject);//force redraw.
+                                    }
+                                }
+                                di++;
+                            }
+                        }                        
+                    }
+                    si++;
+                }                
+            }
+            else
+            {
+                //not tile 49,51
+            }            
         }
 
         private static void StartPyramid(int owner)

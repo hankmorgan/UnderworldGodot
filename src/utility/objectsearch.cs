@@ -36,53 +36,53 @@ namespace Underworld
             return null; //nothing found. 
         }
 
-        public static uwObject FindMatchInObjectChainTopLevel(int ListHeadIndex, int majorclass, int minorclass, int classindex, uwObject[] objList)
-        {
-            if (ListHeadIndex != 0)
-            {
-                var TopObject = objList[ListHeadIndex];
-                if (TopObject != null)
-                {
-                    //check the top object first.
-                    if (TopObject.majorclass == majorclass)
-                    { //matching major class
-                        if ((TopObject.minorclass == minorclass) || (minorclass == -1))
-                        {//Either minor class matches or if minorclass =-1 (find all)
-                            if ((TopObject.classindex == classindex) || (classindex == -1))
-                            {//obj match found.
-                                return TopObject;
-                            }
-                        }
-                    }
+        // public static uwObject FindMatchInObjectChainTopLevel(int ListHeadIndex, int majorclass, int minorclass, int classindex, uwObject[] objList)
+        // {
+        //     if (ListHeadIndex != 0)
+        //     {
+        //         var TopObject = objList[ListHeadIndex];
+        //         if (TopObject != null)
+        //         {
+        //             //check the top object first.
+        //             if (TopObject.majorclass == majorclass)
+        //             { //matching major class
+        //                 if ((TopObject.minorclass == minorclass) || (minorclass == -1))
+        //                 {//Either minor class matches or if minorclass =-1 (find all)
+        //                     if ((TopObject.classindex == classindex) || (classindex == -1))
+        //                     {//obj match found.
+        //                         return TopObject;
+        //                     }
+        //                 }
+        //             }
 
-                    if (TopObject.is_quant == 0)
-                    {
-                        if (TopObject.link != 0)
-                        {//check the contents of the top object
-                            var next = TopObject.link;
-                            while (next != 0)
-                            {
-                                var testObj = objList[next];
-                                if (testObj.majorclass == majorclass)
-                                { //matching major class
-                                    if ((testObj.minorclass == minorclass) || (minorclass == -1))
-                                    {//Either minor class matches or if minorclass =-1 (find all)
-                                        if ((testObj.classindex == classindex) || (classindex == -1))
-                                        {//obj match found.
-                                            return testObj;
-                                        }
-                                    }
-                                }
-                                next = testObj.next;
-                            }
-                        }
-                    }
+        //             if (TopObject.is_quant == 0)
+        //             {
+        //                 if (TopObject.link != 0)
+        //                 {//check the contents of the top object
+        //                     var next = TopObject.link;
+        //                     while (next != 0)
+        //                     {
+        //                         var testObj = objList[next];
+        //                         if (testObj.majorclass == majorclass)
+        //                         { //matching major class
+        //                             if ((testObj.minorclass == minorclass) || (minorclass == -1))
+        //                             {//Either minor class matches or if minorclass =-1 (find all)
+        //                                 if ((testObj.classindex == classindex) || (classindex == -1))
+        //                                 {//obj match found.
+        //                                     return testObj;
+        //                                 }
+        //                             }
+        //                         }
+        //                         next = testObj.next;
+        //                     }
+        //                 }
+        //             }
 
 
-                }
-            }
-            return null; //nothing found. 
-        }
+        //         }
+        //     }
+        //     return null; //nothing found. 
+        // }
 
 
         /// <summary>
