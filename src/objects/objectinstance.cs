@@ -4,7 +4,7 @@ namespace Underworld
     /// <summary>
     /// Blank class for managing instances of objects.
     /// </summary>
-    public abstract class objectInstance:UWClass
+    public abstract class objectInstance : UWClass
     {
         /// <summary>
         /// Reference to the uwobject that this is an instance of.
@@ -22,7 +22,11 @@ namespace Underworld
         public Node3D uwnode;
 
 
-        public static void Redraw (uwObject obj)
+        /// <summary>
+        /// Forces redraw of an object
+        /// </summary>
+        /// <param name="obj"></param>
+        public static void Redraw(uwObject obj)
         {
             if (obj.instance != null)
             {
@@ -33,8 +37,23 @@ namespace Underworld
                 obj.instance = null;
             }
             ObjectCreator.RenderObject(
-                obj: obj, 
+                obj: obj,
                 a_tilemap: UWTileMap.current_tilemap);
+        }
+
+        /// <summary>
+        /// Forces object to move nodes to its updated position
+        /// </summary>
+        /// <param name="obj"></param>
+        public static void Reposition(uwObject obj)
+        {
+            if (obj.instance != null)
+            {
+                if (obj.instance.uwnode != null)
+                {
+                    obj.instance.uwnode.Position = obj.GetCoordinate(obj.tileX, obj.tileY);
+                }
+            }
         }
 
     }//end class

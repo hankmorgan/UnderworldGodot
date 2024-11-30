@@ -6,8 +6,11 @@ namespace Underworld
         public static moongate CreateInstance(Node3D parent, uwObject obj, string name)
         {
             var n = new moongate(obj);
-            var modelNode = n.Generate3DModel(parent, name);
-            SetModelRotation(parent, n);
+            if (obj.invis == 0)
+            {
+                var modelNode = n.Generate3DModel(parent, name);
+                SetModelRotation(parent, n);
+            }
             return n;
         }
 
