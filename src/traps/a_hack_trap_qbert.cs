@@ -93,7 +93,7 @@ namespace Underworld
         private static void StepOnPyramidTile()
         {
             bool ShowMoongate;
-            var var4_neededcolour = playerdat.GetGameVariable(0x1CF);
+            var var4_puzzleactive = playerdat.GetGameVariable(114);
             int var8 = 0;
             var currentTile = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY];
             if (currentTile.Ptr == 0x33C4)//should be tile 49,51 -> pyramid top
@@ -195,14 +195,6 @@ namespace Underworld
                         }
                         ovr110_41DB:
                         ShowMoongate = (var6 == var8);
-                        // if (var6==var8)
-                        // {
-                        //     ShowMoongate = true;
-                        // }
-                        // else
-                        // {
-                        //     ShowMoongate = false;
-                        // }
 
                         if (ShowMoongate)
                         {
@@ -225,45 +217,56 @@ namespace Underworld
                             }
 
                             //do handling of showing moongates.
-                            var move = UWTileMap.current_tilemap.LevelObjects[972];
-                            move.zpos = 96;
-                            objectInstance.Reposition(move);
-
-                            var teleport = UWTileMap.current_tilemap.LevelObjects[973];
-
-                            objectInstance.Redraw(teleport);
+                            var obj_teleport_973 = UWTileMap.current_tilemap.LevelObjects[973];
+                            
+                            
+                            var obj_movetrigger_633 = UWTileMap.current_tilemap.LevelObjects[633];
+                            var obj_movetrigger_972 = UWTileMap.current_tilemap.LevelObjects[972];
+                            
+                            var obj_666_moongate = UWTileMap.current_tilemap.LevelObjects[666];
+                            var obj_974_moongate = UWTileMap.current_tilemap.LevelObjects[974];
+                            
+                            
+                            obj_movetrigger_972.zpos = 96;
+                            objectInstance.Reposition(obj_movetrigger_972);                            
 
                             if (var6 != 5)
                             {
-                                var moon = UWTileMap.current_tilemap.LevelObjects[666];
-                                moon.invis = 0;
-                                objectInstance.Redraw(moon);
-                                var anothermove = UWTileMap.current_tilemap.LevelObjects[633];
-                                anothermove.zpos = moon.zpos;
-                                objectInstance.Reposition(anothermove);
+                                obj_teleport_973.quality = 4;
+                                obj_teleport_973.owner = (short)(4 + (var6*6));
+
+                                if (var6 == playerdat.GetGameVariable(108))
+                                {
+                                    obj_666_moongate.invis = 0;
+                                    objectInstance.Redraw(obj_666_moongate);                                
+                                    
+                                    obj_movetrigger_633.zpos = obj_666_moongate.zpos;
+                                    objectInstance.Reposition(obj_movetrigger_633);
+                                }
                             }
                             else
-                            {//set teleport destination to the shrine.
-                                teleport.quality = 32;
-                                teleport.owner = 25;
-                                teleport.heading = 0;
+                            {//set teleport destination to the sigil of binding.
+                                obj_teleport_973.quality = 32;
+                                obj_teleport_973.owner = 25;
+                                obj_teleport_973.heading = 0;
                             }
-                            var anothermoon = UWTileMap.current_tilemap.LevelObjects[974];
+                            
                             var newlink = qbertmoongatelinks[var6] | 0x200;
-                            anothermoon.link = (short)newlink;
-                            anothermoon.invis = 0;
-                            objectInstance.Redraw(anothermoon);
-                            if (var4_neededcolour == 0)
+                            obj_974_moongate.link = (short)newlink;
+                            obj_974_moongate.invis = 0;
+                            objectInstance.Redraw(obj_974_moongate);
+                            
+                            if (var4_puzzleactive == 0)
                             {
                                 HideMoonGateAndTrigger();
                             }
                         }
                         else
-                        {
-                            //if (var4_neededcolour == 0)
-                            //{
-                            HideMoonGateAndTrigger();
-                            //}
+                        {//hidemoongate
+                            if (var4_puzzleactive == 0)
+                            {
+                                HideMoonGateAndTrigger();
+                            }
                         }
                         return;
                     }
