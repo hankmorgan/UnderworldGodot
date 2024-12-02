@@ -47,9 +47,9 @@ namespace Underworld
                         );
                         return false;
                     }
-                case 9://fraznium forcefields
+                case 10://change class item
                     {
-                        a_hack_trap_forcefield.Activate(
+                        a_hack_trap_classitem.Activate(
                             trapObj: trapObj,
                             triggerX: triggerX,
                             triggerY: triggerY,
@@ -57,9 +57,9 @@ namespace Underworld
                         );
                         return true;
                     }
-                case 10://change class item
+                    case 11://fraznium forcefields
                     {
-                        a_hack_trap_classitem.Activate(
+                        a_hack_trap_forcefield.Activate(
                             trapObj: trapObj,
                             triggerX: triggerX,
                             triggerY: triggerY,

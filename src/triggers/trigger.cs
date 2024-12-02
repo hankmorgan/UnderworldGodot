@@ -258,6 +258,9 @@ namespace Underworld
             Debug.Print("Find schedule triggers in this hard coded tile and run it to create npcs");
         }
 
+        /// <summary>
+        /// Runs all found timer triggers for debugging
+        /// </summary>
         public static void RunTimerTriggers()
         {
             if (_RES!=GAME_UW2){return;}
