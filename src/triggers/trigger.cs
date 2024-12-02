@@ -29,8 +29,7 @@ namespace Underworld
         public static int RunTrigger(int character, uwObject ObjectUsed, uwObject TriggerObject, int triggerType, uwObject[] objList)
         {            
             if (IsTrigger(TriggerObject))
-            {
-                Debug.Print($"Try and Run Trigger {TriggerObject.index} {TriggerObject.a_name}");
+            {                
                 if (triggerType >= 0)
                 {
                     if (ObjectUsed != null)
@@ -43,7 +42,7 @@ namespace Underworld
                                 if (TriggerObject.next != 0)
                                 {
                                     var nextObj = objList[TriggerObject.next];
-                                    
+                                    Debug.Print($"Run Trigger {TriggerObject.index} {TriggerObject.a_name}");
                                     return RunTrigger(
                                         character: character,
                                         ObjectUsed: ObjectUsed,
@@ -257,6 +256,23 @@ namespace Underworld
         public static void RunScheduledTriggerInTile_15_29(int xhome, int yhome)
         {
             Debug.Print("Find schedule triggers in this hard coded tile and run it to create npcs");
+        }
+
+        public static void RunTimerTriggers()
+        {
+            if (_RES!=GAME_UW2){return;}
+            for (int i = 256; i<=UWTileMap.current_tilemap.LevelObjects.GetUpperBound(0);i++)
+            {
+                if ((UWTileMap.current_tilemap.LevelObjects[i].item_id==425) || (UWTileMap.current_tilemap.LevelObjects[i].item_id==441))
+                {
+                    RunTrigger(
+                        character: 0, 
+                        ObjectUsed: null, 
+                        TriggerObject: UWTileMap.current_tilemap.LevelObjects[i], 
+                        triggerType: (int)triggerObjectDat.triggertypes.TIMER, 
+                        objList: UWTileMap.current_tilemap.LevelObjects);
+                }
+            }
         }
 
         /// <summary>

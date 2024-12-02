@@ -364,6 +364,11 @@ public partial class main : Node3D
 								uimanager.EnableDisable(lblPositionDebug, EnablePositionDebug);
 								break;
 							}
+						case Key.F12:
+							{
+								trigger.RunTimerTriggers();
+								break;
+							}
 					}
 				}
 			}
