@@ -181,6 +181,26 @@ namespace Underworld
                                         }
                                         break;
                                     }
+                                case 5:
+                                    {
+                                        if (_RES==GAME_UW2)
+                                        {
+                                            implemented = true;
+                                            an_oscillator_trap.Activate(
+                                                trapObj: trapObj,
+                                                triggerX: triggerX,
+                                                triggerY: triggerY
+                                                );
+
+                                        }
+                                        break;
+                                    }
+                                case 6:
+                                    {
+                                        Debug.Print("Skipping proximity trap for testing of chains");
+                                        implemented =true;
+                                        break;
+                                    }
                             }
                             break;
                         }

@@ -507,6 +507,34 @@ namespace Underworld
             East = wallTexture;
             West = wallTexture;
         }
+
+
+        public static void ChangeTile (TileInfo tileToChange, int newHeight, int newFloor, int newWall, int newType, int HeightAdjustFlag)
+        {
+            var initialheight = tileToChange.floorHeight;//to later check if objects need to be moved.
+
+            if ((HeightAdjustFlag == 1) || (HeightAdjustFlag == 3))
+            {
+                newHeight = initialheight + 2 - HeightAdjustFlag;
+            }
+
+            if ((newHeight >= 0) && (newHeight<=0xE))
+            {
+                tileToChange.floorHeight = (short)newHeight;
+                
+            }
+
+            if((newHeight == 15) && (HeightAdjustFlag == 4))
+            {
+                tileToChange.floorHeight = 0xF;
+            }
+            tileToChange.Redraw = true;
+            main.DoRedraw = true;                   
+
+        }
+
+
+
     }//end class
 
 }//end namespace

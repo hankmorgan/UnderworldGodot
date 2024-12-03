@@ -57,9 +57,19 @@ namespace Underworld
                         );
                         return true;
                     }
-                    case 11://fraznium forcefields
+                case 11://fraznium forcefields
                     {
                         a_hack_trap_forcefield.Activate(
+                            trapObj: trapObj,
+                            triggerX: triggerX,
+                            triggerY: triggerY,
+                            objList: objList
+                        );
+                        return true;
+                    }
+                case 12://tile oscillator
+                    {
+                        a_hack_trap_oscillator.Activate(
                             trapObj: trapObj,
                             triggerX: triggerX,
                             triggerY: triggerY,

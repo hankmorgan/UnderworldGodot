@@ -266,16 +266,19 @@ namespace Underworld
             if (_RES!=GAME_UW2){return;}
             for (int i = 256; i<=UWTileMap.current_tilemap.LevelObjects.GetUpperBound(0);i++)
             {
+                //if (i==966)
+               // {
                 if ((UWTileMap.current_tilemap.LevelObjects[i].item_id==425) || (UWTileMap.current_tilemap.LevelObjects[i].item_id==441))
-                {
-                    RunTrigger(
-                        character: 0, 
-                        ObjectUsed: null, 
-                        TriggerObject: UWTileMap.current_tilemap.LevelObjects[i], 
-                        triggerType: (int)triggerObjectDat.triggertypes.TIMER, 
-                        objList: UWTileMap.current_tilemap.LevelObjects);
-                }
-            }
+                    {
+                        RunTrigger(
+                            character: 0, 
+                            ObjectUsed: null, 
+                            TriggerObject: UWTileMap.current_tilemap.LevelObjects[i], 
+                            triggerType: (int)triggerObjectDat.triggertypes.TIMER, 
+                            objList: UWTileMap.current_tilemap.LevelObjects);
+                    }
+               // }
+            
         }
 
         /// <summary>
