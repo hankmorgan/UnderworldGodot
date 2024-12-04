@@ -277,7 +277,7 @@ namespace Underworld
                             triggerType: (int)triggerObjectDat.triggertypes.TIMER, 
                             objList: UWTileMap.current_tilemap.LevelObjects);
                     }
-               // }
+            }
             
         }
 

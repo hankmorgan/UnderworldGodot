@@ -47,16 +47,6 @@ namespace Underworld
                    // main.DoRedraw = true;
                    // t.Redraw = true;
                 //}
-                //Ensure tile faces are always visible
-                for (int i = 0; i <= t.VisibleFaces.GetUpperBound(0); i++)
-                {
-                    if (!tile.VisibleFaces[i])
-                    {
-                        t.VisibleFaces[i] = true;
-                        main.DoRedraw = true;
-                        t.Redraw = true;
-                    }
-                }
             }
         }
     }//end class

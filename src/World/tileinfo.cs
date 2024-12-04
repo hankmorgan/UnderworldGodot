@@ -140,7 +140,7 @@ namespace Underworld
         {
             get
             {
-                return DoorIndex!=0;
+                return DoorIndex != 0;
             }
         }
         /// <summary>
@@ -152,7 +152,7 @@ namespace Underworld
         /// If set then we output this tile. Is off when it is a subpart of a group or is hidden from sight.
         /// </summary>
         public bool Render = true;
-       
+
         /// <summary>
         ///  The dimensions on the x-axis of this tile. 1 for a regular tile.
         /// </summary>
@@ -260,7 +260,7 @@ namespace Underworld
         /// Index of trigger to fire when entering this tile
         /// </summary>
         //public int EnterTrigger =0;
-        
+
         /// <summary>
         /// Index of trigger to fire when exiting this tile
         /// </summary>
@@ -437,7 +437,7 @@ namespace Underworld
                 else
                 {
                     return GameStrings.GetString(10, textureNo);
-                }                
+                }
             }
             else
             {
@@ -509,7 +509,7 @@ namespace Underworld
         }
 
 
-        public static void ChangeTile (TileInfo tileToChange, int newHeight, int newFloor, int newWall, int newType, int HeightAdjustFlag)
+        public static void ChangeTile(TileInfo tileToChange, int newHeight, int newFloor, int newWall, int newType, int HeightAdjustFlag)
         {
             var initialheight = tileToChange.floorHeight;//to later check if objects need to be moved.
 
@@ -518,23 +518,68 @@ namespace Underworld
                 newHeight = initialheight + 2 - HeightAdjustFlag;
             }
 
-            if ((newHeight >= 0) && (newHeight<=0xE))
+            if ((newHeight >= 0) && (newHeight <= 0xE))
             {
                 tileToChange.floorHeight = (short)newHeight;
-                
+
             }
 
-            if((newHeight == 15) && (HeightAdjustFlag == 4))
+            if ((newHeight == 15) && (HeightAdjustFlag == 4))
             {
                 tileToChange.floorHeight = 0xF;
             }
-            tileToChange.Redraw = true;
-            main.DoRedraw = true;                   
 
+            if (newFloor <0xF)//TODO confirm if values are same for UW1
+            {
+                tileToChange.floorTexture = (short)newFloor;
+                //TODO some terrain changes happen here too.
+            }
+
+
+
+
+            tileToChange.Redraw = true;
+            main.DoRedraw = true;
+
+            MakeFacesVisible(tileToChange);
+            //update neighbours to ensure their faces are always visible.
+            MakeNeighbourTileFacesVisible(tileToChange);
+        }
+
+        private static void MakeNeighbourTileFacesVisible(TileInfo tileToChange)
+        {
+            if (UWTileMap.ValidTile(tileToChange.tileX + 1, tileToChange.tileY))
+            {
+                MakeFacesVisible(UWTileMap.current_tilemap.Tiles[tileToChange.tileX + 1, tileToChange.tileY]);
+            }
+            if (UWTileMap.ValidTile(tileToChange.tileX - 1, tileToChange.tileY))
+            {
+                MakeFacesVisible(UWTileMap.current_tilemap.Tiles[tileToChange.tileX - 1, tileToChange.tileY]);
+            }
+            if (UWTileMap.ValidTile(tileToChange.tileX, tileToChange.tileY + 1))
+            {
+                MakeFacesVisible(UWTileMap.current_tilemap.Tiles[tileToChange.tileX, tileToChange.tileY + 1]);
+            }
+            if (UWTileMap.ValidTile(tileToChange.tileX, tileToChange.tileY - 1))
+            {
+                MakeFacesVisible(UWTileMap.current_tilemap.Tiles[tileToChange.tileX, tileToChange.tileY - 1]);
+            }
         }
 
 
-
+        private static void MakeFacesVisible(TileInfo tileToChange)
+        {
+            //Ensure tile faces are always visible
+            for (int i = 0; i <= tileToChange.VisibleFaces.GetUpperBound(0); i++)
+            {
+                if (!tileToChange.VisibleFaces[i])
+                {
+                    tileToChange.VisibleFaces[i] = true;
+                    main.DoRedraw = true;
+                    tileToChange.Redraw = true;
+                }
+            }
+        }
     }//end class
 
 }//end namespace

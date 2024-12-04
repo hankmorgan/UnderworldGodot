@@ -6,6 +6,21 @@ namespace Underworld
     public partial class playerdat : Loader
     {
 
+        public static int WeightCarried
+        {
+            get
+            {
+                if(_RES==GAME_UW2)
+                {
+                    return GetAt16(0x4B);
+                }
+                else
+                {
+                    return GetAt16(0x4C);
+                }
+            }
+        }
+
         /// <summary>
         /// Reference to the object the player is using currently in their hand
         /// To be consistent his object MUST always be a world object. When picking inventory objects add it to world

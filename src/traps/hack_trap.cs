@@ -77,6 +77,16 @@ namespace Underworld
                         );
                         return true;
                     }
+                case 17: //Floor collapse
+                    {
+                        a_hack_trap_floorcollapse.Activate(
+                            trapObj: trapObj,
+                            triggerX: triggerX,
+                            triggerY: triggerY,
+                            objList: objList
+                        );
+                        return true;
+                    }
                 case 32://qbert in UW2
                     {   
                         a_hack_trap_qbert.Activate(
