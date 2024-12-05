@@ -25,7 +25,7 @@ namespace Underworld
             {
                 var tile = UWTileMap.current_tilemap.Tiles[obj.tileX, obj.tileY];
 
-                var door = objectsearch.FindMatchInObjectChain(tile.indexObjectList, 5, 0, -1, UWTileMap.current_tilemap.LevelObjects);
+                var door = objectsearch.FindMatchInObjectChainIncLinks(tile.indexObjectList, 5, 0, -1, UWTileMap.current_tilemap.LevelObjects);
                 if (door!=null)
                 {
                     if ((door.xpos == obj.xpos) && (door.ypos == obj.ypos))

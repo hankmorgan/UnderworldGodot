@@ -1,3 +1,5 @@
+using System;
+
 namespace Underworld
 {
     /// <summary>
@@ -8,7 +10,19 @@ namespace Underworld
     {
 
         public delegate bool AreaEffectCallback(int x, int y, uwObject obj, TileInfo tile, int srcIndex);
+        public delegate bool SingleObjectCallBack(uwObject obj);
 
+        /// <summary>
+        /// Finds objects in area around tile and runs a function against them
+        /// </summary>
+        /// <param name="methodToCall"></param>
+        /// <param name="Rng_arg0"></param>
+        /// <param name="srcItemIndex"></param>
+        /// <param name="typeOfTargetArg8"></param>
+        /// <param name="tileX0"></param>
+        /// <param name="tileY0"></param>
+        /// <param name="xWidth"></param>
+        /// <param name="yHeight"></param>
         public static void RunCodeOnTargetsInArea(AreaEffectCallback methodToCall, int Rng_arg0, int srcItemIndex, int typeOfTargetArg8, int tileX0, int tileY0, int xWidth, int yHeight)
         {
             int varE = 0;
@@ -138,6 +152,51 @@ namespace Underworld
         }
 
 
+        public static bool CallFunctionOnObjectsInChain(SingleObjectCallBack methodToCall, uwObject obj, uwObject[] objList)
+        {
+            if (obj==null)
+            {
+                return false;
+            }
+            else
+            {
+                while (obj != null)
+                {
+                    if (methodToCall(obj))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        //check the link on the object
+                        if (obj.is_quant == 0 && obj.link > 0)
+                        {
+                            var linkedObject = objList[obj.link];
+                            if (CallFunctionOnObjectsInChain(methodToCall, linkedObject, objList))
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                //fall down and get next
+                            }                            
+                        }
+                    }
+
+
+                    //get next
+                    if (obj.next != 0)
+                    {
+                        obj = objList[obj.next];
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }//end while
+                return false;
+            }
+        }
 
 
     }//end class

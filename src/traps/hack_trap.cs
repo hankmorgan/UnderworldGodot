@@ -94,6 +94,11 @@ namespace Underworld
                             objList: objList);
                             return true;
                     }
+                case 35://recharges light spher
+                    {
+                        a_hack_trap_rechargelightsphere.Activate(triggerX, triggerY);
+                        return true;
+                    }
                 case 38:
                     {//transform red potions to poison
                         a_hack_trap_transformpotion.Activate(

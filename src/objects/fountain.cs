@@ -30,7 +30,7 @@ namespace Underworld
             }
             //Check if water on
             var tile = UWTileMap.current_tilemap.Tiles[obj.tileX, obj.tileY];
-            var water = objectsearch.FindMatchInObjectChain(
+            var water = objectsearch.FindMatchInObjectChainIncLinks(
                 ListHeadIndex: tile.indexObjectList,
                 majorclass: 4,
                 minorclass: 2,
@@ -55,7 +55,7 @@ namespace Underworld
         {
             //Checks for a linked fountain to this animated water
             var tile = UWTileMap.current_tilemap.Tiles[obj.tileX, obj.tileY];
-            var parentfountain = objectsearch.FindMatchInObjectChain(
+            var parentfountain = objectsearch.FindMatchInObjectChainIncLinks(
                 ListHeadIndex: tile.indexObjectList,
                 majorclass: 4,
                 minorclass: 2,

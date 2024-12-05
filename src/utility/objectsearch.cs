@@ -7,7 +7,7 @@ namespace Underworld
     {
 
         /// <summary>
-        /// Finds the matching object in the chain starting at ListHeadIndex
+        /// Finds the matching object in the chain starting at ListHeadIndex. Does not go into linked items
         /// </summary>
         /// <param name="ListHeadIndex"></param>
         /// <param name="majorclass"></param>
@@ -94,7 +94,7 @@ namespace Underworld
         /// <param name="classindex">use -1 to return any of the class index </param>
         /// <param name="objList"></param>
         /// <returns></returns>
-        public static uwObject FindMatchInObjectChain(int ListHeadIndex, int majorclass, int minorclass, int classindex, uwObject[] objList, bool SkipNext = false)
+        public static uwObject FindMatchInObjectChainIncLinks(int ListHeadIndex, int majorclass, int minorclass, int classindex, uwObject[] objList, bool SkipNext = false)
         {
             if (ListHeadIndex != 0)
             {
@@ -116,7 +116,7 @@ namespace Underworld
                     {
                         if (testObj.link != 0)
                         {
-                            var testlinked = FindMatchInObjectChain(
+                            var testlinked = FindMatchInObjectChainIncLinks(
                                 ListHeadIndex: testObj.link,
                                 majorclass: majorclass,
                                 minorclass: minorclass,
@@ -131,7 +131,7 @@ namespace Underworld
                     if (!SkipNext)
                     {
                         //no matches. Try next value. Returns null if nothing found.
-                        return FindMatchInObjectChain(
+                        return FindMatchInObjectChainIncLinks(
                             ListHeadIndex: testObj.next,
                             majorclass: majorclass,
                             minorclass: minorclass,
@@ -151,7 +151,7 @@ namespace Underworld
         /// <param name="classindex"></param>
         /// <param name="objList"></param>
         /// <returns></returns>
-        public static uwObject FindMatchInObjectList(int majorclass, int minorclass, int classindex, uwObject[] objList)
+        public static uwObject FindMatchInFullObjectList(int majorclass, int minorclass, int classindex, uwObject[] objList)
         {
             for (int i = 1; i <= objList.GetUpperBound(0); i++)
             {

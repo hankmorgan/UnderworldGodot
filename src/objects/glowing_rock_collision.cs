@@ -17,7 +17,7 @@ public partial class glowing_rock_collision : Area3D
         {
             Debug.Print("Player has collided with Zanium");
             bool DestroyZanium = false;
-            var zanium = objectsearch.FindMatchInObjectList(4, 2, 9, playerdat.InventoryObjects);
+            var zanium = objectsearch.FindMatchInFullObjectList(4, 2, 9, playerdat.InventoryObjects);
             if (zanium != null)
             {    //player has zanium. add to the pile.
                 zanium.link++;

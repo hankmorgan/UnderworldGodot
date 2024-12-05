@@ -374,7 +374,7 @@ namespace Underworld
                 {
                     if ((obj.is_quant == 0) && (obj.link != 0))
                     {//check for a linked damage trap
-                        var dmgtrap = objectsearch.FindMatchInObjectChain(
+                        var dmgtrap = objectsearch.FindMatchInObjectChainIncLinks(
                             ListHeadIndex: obj.link,
                             majorclass: 6,
                             minorclass: 0,

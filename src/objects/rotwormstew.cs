@@ -13,7 +13,7 @@ namespace Underworld
 
         public static bool MixRotwormStew()
         {
-            var bowl = objectsearch.FindMatchInObjectList(2, 0, 0xE, playerdat.InventoryObjects);
+            var bowl = objectsearch.FindMatchInFullObjectList(2, 0, 0xE, playerdat.InventoryObjects);
             if (bowl == null)
             {
                 uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_need_a_bowl_to_mix_the_ingredients_));

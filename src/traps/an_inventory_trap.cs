@@ -11,7 +11,7 @@ namespace Underworld
             var minorclass = (itemid & 0x30) >> 4;
             var classindex = itemid & 0xF;
 
-            var match = objectsearch.FindMatchInObjectList(majorclass, minorclass, classindex, playerdat.InventoryObjects);
+            var match = objectsearch.FindMatchInFullObjectList(majorclass, minorclass, classindex, playerdat.InventoryObjects);
             if (match != null)
             {
                 if ((trapObj.xpos != 0) && (_RES == GAME_UW2))

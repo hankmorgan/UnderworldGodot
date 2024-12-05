@@ -35,7 +35,7 @@ namespace Underworld
                 {
                     npc.spawnloot(talker);
                 }
-                var result = objectsearch.FindMatchInObjectChain(
+                var result = objectsearch.FindMatchInObjectChainIncLinks(
                     ListHeadIndex: talker.link,
                     majorclass: majorclass,
                     minorclass: minorclass,
@@ -51,7 +51,7 @@ namespace Underworld
             else
             {
                 //search player
-                var result = objectsearch.FindMatchInObjectList(
+                var result = objectsearch.FindMatchInFullObjectList(
                     majorclass: majorclass,
                     minorclass: minorclass,
                     classindex: classindex,

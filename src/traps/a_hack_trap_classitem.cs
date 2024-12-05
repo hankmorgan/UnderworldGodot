@@ -60,7 +60,7 @@ namespace Underworld
             if (itemID != -1)
             {
                 var tile = UWTileMap.current_tilemap.Tiles[triggerX, triggerY];
-                var ObjToChange = objectsearch.FindMatchInObjectChain(tile.indexObjectList, 0, 0, trapObj.owner, objList);
+                var ObjToChange = objectsearch.FindMatchInObjectChainIncLinks(tile.indexObjectList, 0, 0, trapObj.owner, objList);
                 if (ObjToChange != null)
                 {
                     ObjToChange.item_id = itemID;

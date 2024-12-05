@@ -41,7 +41,7 @@ namespace Underworld
                 {
                     if (potion.link!=0)
                     {                       
-                        var dmgtrap = objectsearch.FindMatchInObjectChain(
+                        var dmgtrap = objectsearch.FindMatchInObjectChainIncLinks(
                             ListHeadIndex: potion.link, 
                             majorclass: 6, 
                             minorclass: 0, 

@@ -46,7 +46,7 @@ namespace Underworld
         /// <returns></returns>
         public static uwObject LockObject(uwObject parentObject)
         {
-            return objectsearch.FindMatchInObjectChain(
+            return objectsearch.FindMatchInObjectChainIncLinks(
                 ListHeadIndex: parentObject.link,
                 majorclass: 4,
                 minorclass: 0,
