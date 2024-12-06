@@ -23,7 +23,7 @@ namespace Underworld
                 case 2: //do trap camera
                     {
                         a_do_trap_camera.Activate(
-                            trapObj: trapObj,                           
+                            trapObj: trapObj,
                             objList: objList
                         );
                         return true;
@@ -42,7 +42,7 @@ namespace Underworld
                 case 5:// trespass trap
                     {
                         a_do_trap_trespass.Activate(
-                            trapObj: trapObj,                           
+                            trapObj: trapObj,
                             objList: objList
                         );
                         return false;
@@ -88,13 +88,23 @@ namespace Underworld
                         return true;
                     }
                 case 32://qbert in UW2
-                    {   
+                    {
                         a_hack_trap_qbert.Activate(
-                            trapObj: trapObj, 
+                            trapObj: trapObj,
                             objList: objList);
-                            return true;
+                        return true;
                     }
-                case 35://recharges light spher
+                case 33: // bottle recycler
+                    {
+                        a_hack_trap_recycler.Activate(
+                                trapObj: trapObj,
+                                triggerX: triggerX,
+                                triggerY: triggerY,
+                                objList: objList
+                            );
+                        return true;
+                    }
+                case 35://recharges light sphere
                     {
                         a_hack_trap_rechargelightsphere.Activate(triggerX, triggerY);
                         return true;
@@ -116,7 +126,7 @@ namespace Underworld
                     }
                 case 42:
                     {
-                        if (_RES!=GAME_UW2)
+                        if (_RES != GAME_UW2)
                         {
                             a_do_trap_conversation.Activate();//a talking door!
                             return true;

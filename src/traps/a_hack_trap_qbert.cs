@@ -124,7 +124,7 @@ namespace Underworld
                                     {
                                         Debug.Print($"Changing owner of {tmapObject.a_name} on tile {si},{4} to 5, Previous value was {tmapObject.owner}");
                                         tmapObject.owner = 5;//changes texture
-                                        tmap.Redraw(tmapObject);//force redraw.
+                                        tmap.RedrawFull(tmapObject);//force redraw.
                                     }
                                 }
                                 di++;
@@ -238,7 +238,7 @@ namespace Underworld
                                 if (var6 == playerdat.GetGameVariable(108))
                                 {
                                     obj_666_moongate.invis = 0;
-                                    objectInstance.Redraw(obj_666_moongate);                                
+                                    objectInstance.RedrawFull(obj_666_moongate);                                
                                     
                                     obj_movetrigger_633.zpos = obj_666_moongate.zpos;
                                     objectInstance.Reposition(obj_movetrigger_633);
@@ -254,7 +254,7 @@ namespace Underworld
                             var newlink = qbertmoongatelinks[var6] | 0x200;
                             obj_974_moongate.link = (short)newlink;
                             obj_974_moongate.invis = 0;
-                            objectInstance.Redraw(obj_974_moongate);
+                            objectInstance.RedrawFull(obj_974_moongate);
                             
                             if (var4_puzzleactive == 0)
                             {
@@ -295,7 +295,7 @@ namespace Underworld
 
             var moon = UWTileMap.current_tilemap.LevelObjects[974];
             moon.invis = 1;
-            objectInstance.Redraw(moon);
+            objectInstance.RedrawFull(moon);
         }
 
 

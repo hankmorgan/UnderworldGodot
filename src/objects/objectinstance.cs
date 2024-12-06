@@ -26,7 +26,7 @@ namespace Underworld
         /// Forces redraw of an object
         /// </summary>
         /// <param name="obj"></param>
-        public static void Redraw(uwObject obj)
+        public static void RedrawFull(uwObject obj)
         {
             if (obj.instance != null)
             {
