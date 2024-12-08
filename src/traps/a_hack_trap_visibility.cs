@@ -2,7 +2,7 @@ namespace Underworld
 {
 
     /// <summary>
-    /// Trap that creates an item in Britannia that suits the player skillset
+    /// Trap that shows or hides a target object.
     /// </summary>
     public class a_hack_trap_visibility : trap
     {

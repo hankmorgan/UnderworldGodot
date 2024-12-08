@@ -124,6 +124,14 @@ namespace Underworld
                         triggerNextIndex = 0; //stop chain
                         return true;
                     }
+                case 40:
+                case 41:
+                    {
+                        a_hack_trap_vending.Activate(
+                            trapObj: trapObj, 
+                            triggerX: triggerX, triggerY: triggerY);
+                        return true;
+                    }
                 case 42:
                     {
                         if (_RES != GAME_UW2)
@@ -133,7 +141,10 @@ namespace Underworld
                         }
                         else
                         {
-                            return false;
+                            a_hack_trap_vending.Activate(
+                                trapObj: trapObj, 
+                                triggerX: triggerX, triggerY: triggerY);
+                            return true;
                         }
                     }
                 default:

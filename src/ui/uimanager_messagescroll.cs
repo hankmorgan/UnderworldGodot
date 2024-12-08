@@ -21,7 +21,10 @@ namespace Underworld
 
         public static bool MessageScrollIsTemporary = false;
 
-
+        /// <summary>
+        /// forces text to appear in front of the next string outputed. Used to display messages like The sign says
+        /// </summary>
+        public static string NextOutputPrependedString = "";
 
         public static void InitMessageScrolls()
         {
@@ -80,6 +83,12 @@ namespace Underworld
             if (MessageScrollIsTemporary)
             {//don't allow any overwriting when a message is already being displayed temporarily.
                 return;
+            }
+
+            if (NextOutputPrependedString!="")
+            {//forces messages to include text like "the sign says"
+                stringToAdd = NextOutputPrependedString + stringToAdd;
+                NextOutputPrependedString = "";
             }
 
             switch (mode)

@@ -78,12 +78,14 @@ namespace Underworld
                 }
 
                 trigger.TriggerObjectLink(
-                    character: 0, 
-                    ObjectUsed: obj, 
-                    triggerType: (int)triggerObjectDat.triggertypes.LOOK, 
-                    triggerX: obj.tileX, 
-                    triggerY: obj.tileY, 
+                    character: 0,
+                    ObjectUsed: obj,
+                    triggerType: (int)triggerObjectDat.triggertypes.LOOK,
+                    triggerX: obj.tileX,
+                    triggerY: obj.tileY,
                     objList: UWTileMap.current_tilemap.LevelObjects);
+
+                uimanager.NextOutputPrependedString = "";//turn off any "writing reads" messages
 
                 // if ((obj.is_quant == 0) && (obj.link != 0))
                 // {
@@ -131,11 +133,11 @@ namespace Underworld
                     }
                 case 1:
                     {
-                        if (_RES==GAME_UW2)
+                        if (_RES == GAME_UW2)
                         {
-                            switch(obj.classindex)
+                            switch (obj.classindex)
                             {
-                                case >=8 and <=0xF:
+                                case >= 8 and <= 0xF:
                                     return smallblackrockgem.LookAt(obj, objList);
                             }
                         }
@@ -227,16 +229,16 @@ namespace Underworld
             uimanager.AddToMessageScroll($"{output}");
             return true;
         }
- 
+
         public static bool PrintLookDescription(uwObject obj, uwObject[] objList, int lorecheckresult, bool OutputConvo = false)
         {
             var output = GetDescriptionString(
-                obj: obj, 
-                objList: objList, 
+                obj: obj,
+                objList: objList,
                 lorecheckresult: lorecheckresult);
 
             if (OutputConvo)
-            {                
+            {
                 uimanager.AddToMessageScroll(
                     stringToAdd: $"{output}",
                     option: 2,
@@ -258,7 +260,7 @@ namespace Underworld
         /// <returns></returns>
         public static string GetDescriptionString(uwObject obj, uwObject[] objList, int lorecheckresult, bool IncludeYouSee = true)
         {
-            string output="";
+            string output = "";
             if (commonObjDat.PrintableLook(obj.item_id) && IncludeYouSee)
             {
                 output = GameStrings.GetString(1, GameStrings.str_you_see_);
@@ -335,7 +337,7 @@ namespace Underworld
             //enchantments            
             string enchantmenttext = "";
             string magical = "";
-            string cursed="";
+            string cursed = "";
 
             if (!((obj.majorclass == 2) && (obj.minorclass == 0))) //when not a container
             {
@@ -350,7 +352,7 @@ namespace Underworld
                             magical = "magical "; break;
                         case 3: // full description
                             enchantmenttext = magicenchantment.NameEnchantment(obj, objList);
-                            if (magicenchantment.SpellMajorClass!=9)
+                            if (magicenchantment.SpellMajorClass != 9)
                             {
                                 if (enchantmenttext == "")
                                 {
@@ -363,7 +365,7 @@ namespace Underworld
                             }
                             else
                             {
-                                enchantmenttext ="";
+                                enchantmenttext = "";
                                 cursed = "cursed ";
                             }
 
@@ -416,7 +418,7 @@ namespace Underworld
             return $"{output}{enchantmenttext}{ownership}";
         }
 
-        private static string GetArticle(string noun)
+        public static string GetArticle(string noun, bool caps = false)
         {
             if (
                 (noun.ToUpper().StartsWith("A"))
@@ -430,11 +432,27 @@ namespace Underworld
                 (noun.ToUpper().StartsWith("U"))
                 )
             {
-                return "an ";
+                if (caps)
+                {
+                    return "An ";
+                }
+                else
+                {
+                    return "an ";
+                }
+
             }
             else
             {
-                return "a ";
+                if (caps)
+                {
+                    return "A ";
+                }
+                else
+                {
+                    return "a ";
+                }
+
             }
         }
     }//end class

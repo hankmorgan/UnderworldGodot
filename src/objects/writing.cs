@@ -38,6 +38,11 @@ namespace Underworld
 
         public static bool LookAt(uwObject obj)
         {
+            if (obj.classindex == 6)
+            {
+                uimanager.NextOutputPrependedString = GameStrings.GetString(0x1170 + obj.flags);//The TYPE of SIGN reads: message
+            }
+            
             if (obj.is_quant == 1)
             {
                 uimanager.AddToMessageScroll(GameStrings.GetString(8, obj.link - 0x200));
