@@ -509,41 +509,65 @@ namespace Underworld
         }
 
 
-        public static void ChangeTile(TileInfo tileToChange, int newHeight, int newFloor, int newWall, int newType, int HeightAdjustFlag)
+        /// <summary>
+        /// Changes a range of tiles
+        /// </summary>
+        /// <param name="StartTileX"></param>
+        /// <param name="StartTileY"></param>
+        /// <param name="newHeight"></param>
+        /// <param name="newFloor"></param>
+        /// <param name="newWall"></param>
+        /// <param name="newType"></param>
+        /// <param name="HeightAdjustFlag"></param>
+        /// <param name="DimX"></param>
+        /// <param name="DimY"></param>
+        public static void ChangeTile(int StartTileX, int StartTileY, int newHeight=0xF, int newFloor =0xF, int newWall =0x3F, int newType = 0xF, int HeightAdjustFlag = 0, int DimX = 0, int DimY = 0)
         {
-            var initialheight = tileToChange.floorHeight;//to later check if objects need to be moved.
-
-            if ((HeightAdjustFlag == 1) || (HeightAdjustFlag == 3))
+            for (int x = StartTileX; x <= StartTileX + DimX; x++)
             {
-                newHeight = initialheight + 2 - HeightAdjustFlag;
+                for (int y = StartTileY; x <= StartTileY + DimY; y++)
+                {
+                    if (UWTileMap.ValidTile(x, y))
+                    {
+                        var tileToChange = UWTileMap.current_tilemap.Tiles[x, y];
+                        var initialheight = tileToChange.floorHeight;//to later check if objects need to be moved.
+
+                        if ((HeightAdjustFlag == 1) || (HeightAdjustFlag == 3))
+                        {
+                            newHeight = initialheight + 2 - HeightAdjustFlag;
+                        }
+
+                        if ((newHeight >= 0) && (newHeight <= 0xE))
+                        {
+                            tileToChange.floorHeight = (short)newHeight;
+
+                        }
+
+                        if ((newHeight == 15) && (HeightAdjustFlag == 4))
+                        {
+                            tileToChange.floorHeight = 0xF;
+                        }
+
+                        if (newFloor < 0xF)//TODO confirm if values are same for UW1
+                        {
+                            tileToChange.floorTexture = (short)newFloor;
+                            //TODO some terrain changes happen here too.
+                        }
+
+                        //TODO wall textures
+
+                        //TODO move objects in the affected tiles
+
+                        tileToChange.Render = true;
+                        tileToChange.Redraw = true;
+                        main.DoRedraw = true;
+
+                        MakeFacesVisible(tileToChange);
+                        //update neighbours to ensure their faces are always visible.
+                        MakeNeighbourTileFacesVisible(tileToChange);
+                    }
+                }
             }
-
-            if ((newHeight >= 0) && (newHeight <= 0xE))
-            {
-                tileToChange.floorHeight = (short)newHeight;
-
-            }
-
-            if ((newHeight == 15) && (HeightAdjustFlag == 4))
-            {
-                tileToChange.floorHeight = 0xF;
-            }
-
-            if (newFloor <0xF)//TODO confirm if values are same for UW1
-            {
-                tileToChange.floorTexture = (short)newFloor;
-                //TODO some terrain changes happen here too.
-            }
-
-
-
-
-            tileToChange.Redraw = true;
-            main.DoRedraw = true;
-
-            MakeFacesVisible(tileToChange);
-            //update neighbours to ensure their faces are always visible.
-            MakeNeighbourTileFacesVisible(tileToChange);
         }
 
         private static void MakeNeighbourTileFacesVisible(TileInfo tileToChange)
@@ -569,6 +593,7 @@ namespace Underworld
 
         private static void MakeFacesVisible(TileInfo tileToChange)
         {
+            tileToChange.Render = true;
             //Ensure tile faces are always visible
             for (int i = 0; i <= tileToChange.VisibleFaces.GetUpperBound(0); i++)
             {

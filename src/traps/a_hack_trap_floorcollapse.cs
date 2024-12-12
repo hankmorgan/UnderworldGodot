@@ -26,19 +26,17 @@ namespace Underworld
                     var si_floorheight = playerTile.floorHeight - 1;
                     var newTexture = (int)((trapObj.ypos << 3) | (int)trapObj.xpos);
 
-
                     if (si_floorheight < 0)
                     {
                         si_floorheight = 0;//new height
                     }
                     
                     TileInfo.ChangeTile(
-                        tileToChange: playerTile,
+                        StartTileX: playerdat.tileX,
+                        StartTileY: playerdat.tileY,
                         newHeight: si_floorheight,
-                        newFloor: newTexture,
-                        newWall: playerTile.wallTexture,
-                        newType: playerTile.tileType,
-                        HeightAdjustFlag: 0);                   
+                        newFloor: newTexture
+                       );                   
 
                 }
             }

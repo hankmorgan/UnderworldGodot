@@ -73,16 +73,13 @@ namespace Underworld
             {
                 Debug.Print($"updating {triggerX},{triggerY}");
                 TileInfo.ChangeTile(
-                    tileToChange: tile, 
-                    newHeight: var34_newheight, 
-                    newFloor: tile.floorTexture, 
-                    newWall: tile.wallTexture, 
-                    newType: tile.tileType, 
+                    StartTileX: triggerX,
+                    StartTileY: triggerY, 
+                    newHeight: var34_newheight,   
+                    newFloor: var30_floortexture,                  
                     HeightAdjustFlag: 4);
-                tile.floorHeight = (short)var34_newheight;
-                tile.floorTexture = (short)var30_floortexture;
-                tile.Redraw = true;
-                main.DoRedraw = true;
+                // tile.floorHeight = (short)var34_newheight;
+                // tile.floorTexture = (short)var30_floortexture;
             }
 
             if (si==1)

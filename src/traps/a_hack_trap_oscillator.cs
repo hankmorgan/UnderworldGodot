@@ -37,10 +37,13 @@ namespace Underworld
 
             for (int si = 1; si < 8; si++)
             {
-                var t = UWTileMap.current_tilemap.Tiles[X, Y - si];
+                //var t = UWTileMap.current_tilemap.Tiles[X, Y - si];
                 var finalheight = (short)((adjustment * oscillatordata[si - 1]) / 2);
                 finalheight += height;
-                TileInfo.ChangeTile(t, finalheight, t.floorTexture, t.wallTexture, t.tileType, 0 );
+                TileInfo.ChangeTile(
+                    StartTileX: X, 
+                    StartTileY: Y - si, 
+                    newHeight: finalheight);
                 // if (finalheight != 0)
                 // {
                     //t.floorHeight = finalheight;
