@@ -521,7 +521,7 @@ namespace Underworld
         /// <param name="HeightAdjustFlag"></param>
         /// <param name="DimX"></param>
         /// <param name="DimY"></param>
-        public static void ChangeTile(int StartTileX, int StartTileY, int newHeight=0xF, int newFloor =0xF, int newWall =0x3F, int newType = 0xF, int HeightAdjustFlag = 0, int DimX = 0, int DimY = 0)
+        public static void ChangeTile(int StartTileX, int StartTileY, int newHeight=0xF, int newFloor =0xF, int newWall =0x3F, int newType = 0xA, int HeightAdjustFlag = 0, int DimX = 0, int DimY = 0)
         {
             for (int x = StartTileX; x <= StartTileX + DimX; x++)
             {
@@ -555,8 +555,23 @@ namespace Underworld
                         }
 
                         //TODO wall textures
+                        if (newWall<0x3F)
+                        {
+                            tileToChange.wallTexture = (short)newWall;
+                            //Update NSEW of neighbours
+                        }
 
-                        //TODO move objects in the affected tiles
+                        if (newType<0xA)
+                        {
+                            tileToChange.tileType = (short)newType;
+                        }
+
+                        
+                        if (tileToChange.floorHeight!=initialheight)
+                        {
+                            //TODO move objects in the affected tiles
+                            //move objects in tile up or down
+                        }
 
                         tileToChange.Render = true;
                         tileToChange.Redraw = true;
@@ -570,23 +585,39 @@ namespace Underworld
             }
         }
 
-        private static void MakeNeighbourTileFacesVisible(TileInfo tileToChange)
+        private static void MakeNeighbourTileFacesVisible(TileInfo tileToChange, int newWall=0x3F)
         {
             if (UWTileMap.ValidTile(tileToChange.tileX + 1, tileToChange.tileY))
             {
                 MakeFacesVisible(UWTileMap.current_tilemap.Tiles[tileToChange.tileX + 1, tileToChange.tileY]);
+                if (newWall<0x3F)
+                {
+                    UWTileMap.current_tilemap.Tiles[tileToChange.tileX + 1, tileToChange.tileY].South = (short)newWall;
+                }                
             }
             if (UWTileMap.ValidTile(tileToChange.tileX - 1, tileToChange.tileY))
             {
                 MakeFacesVisible(UWTileMap.current_tilemap.Tiles[tileToChange.tileX - 1, tileToChange.tileY]);
+                if (newWall<0x3F)
+                {
+                    UWTileMap.current_tilemap.Tiles[tileToChange.tileX - 1, tileToChange.tileY].North = (short)newWall;
+                }   
             }
             if (UWTileMap.ValidTile(tileToChange.tileX, tileToChange.tileY + 1))
             {
                 MakeFacesVisible(UWTileMap.current_tilemap.Tiles[tileToChange.tileX, tileToChange.tileY + 1]);
+                if (newWall<0x3F)
+                {
+                    UWTileMap.current_tilemap.Tiles[tileToChange.tileX , tileToChange.tileY + 1].West = (short)newWall;
+                }   
             }
             if (UWTileMap.ValidTile(tileToChange.tileX, tileToChange.tileY - 1))
             {
                 MakeFacesVisible(UWTileMap.current_tilemap.Tiles[tileToChange.tileX, tileToChange.tileY - 1]);
+                if (newWall<0x3F)
+                {
+                    UWTileMap.current_tilemap.Tiles[tileToChange.tileX , tileToChange.tileY - 1].East = (short)newWall;
+                }   
             }
         }
 
