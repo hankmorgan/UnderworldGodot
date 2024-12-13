@@ -24,26 +24,22 @@ namespace Underworld
                         Debug.Print("Mind blast");
                         break;
                     }
-                case 3://basilisk oil
-                case 4:
+                case 3://basilisk oil and bullfrog
                     {
-                        if (playerdat.shrooms == 0)
+                        if (_RES==GAME_UW2)
                         {
-                            var SkillCheckResult = playerdat.SkillCheck(playerdat.INT, 0x14);
-                            if (SkillCheckResult <= 0)
-                            {
-                                uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_your_vision_distorts_and_you_feel_light_headed_));
-                                playerdat.shrooms = 2;
-                            }
-                            else
-                            {
-                                uimanager.FlashColour(95, uimanager.CutsSmall);
-                            }
+                            Hallucination();
                         }
                         else
                         {
-                            uimanager.FlashColour(95, uimanager.CutsSmall);
-                        }
+                            //bullfrog reset
+                            a_do_trap_bullfrog.Bullfrog(mode: 4, triggerX: 0, triggerY: 0);
+                        }                        
+                        break;
+                    }
+                case 4:
+                    {
+                        Hallucination();
                         break;
                     }
                 case 5:
@@ -107,6 +103,28 @@ namespace Underworld
                     }
             }
         }
+
+        private static void Hallucination()
+        {
+            if (playerdat.shrooms == 0)
+            {
+                var SkillCheckResult = playerdat.SkillCheck(playerdat.INT, 0x14);
+                if (SkillCheckResult <= 0)
+                {
+                    uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_your_vision_distorts_and_you_feel_light_headed_));
+                    playerdat.shrooms = 2;
+                }
+                else
+                {
+                    uimanager.FlashColour(95, uimanager.CutsSmall);
+                }
+            }
+            else
+            {
+                uimanager.FlashColour(95, uimanager.CutsSmall);
+            }
+        }
+
 
 
         /// <summary>

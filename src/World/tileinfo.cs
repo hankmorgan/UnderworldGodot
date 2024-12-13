@@ -525,7 +525,7 @@ namespace Underworld
         {
             for (int x = StartTileX; x <= StartTileX + DimX; x++)
             {
-                for (int y = StartTileY; x <= StartTileY + DimY; y++)
+                for (int y = StartTileY; y <= StartTileY + DimY; y++)
                 {
                     if (UWTileMap.ValidTile(x, y))
                     {

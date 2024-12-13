@@ -87,6 +87,21 @@ namespace Underworld
                         );
                         return true;
                     }
+                case 24:
+                    {
+                        if (_RES != GAME_UW2)
+                        {
+                            a_do_trap_bullfrog.Activate(
+                                trapObj: trapObj,
+                                triggerX: triggerX,
+                                triggerY: triggerY);
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
                 case 32://qbert in UW2
                     {
                         a_hack_trap_qbert.Activate(
@@ -128,7 +143,7 @@ namespace Underworld
                 case 41:
                     {
                         a_hack_trap_vending.Activate(
-                            trapObj: trapObj, 
+                            trapObj: trapObj,
                             triggerX: triggerX, triggerY: triggerY);
                         return true;
                     }
@@ -142,7 +157,7 @@ namespace Underworld
                         else
                         {
                             a_hack_trap_vending.Activate(
-                                trapObj: trapObj, 
+                                trapObj: trapObj,
                                 triggerX: triggerX, triggerY: triggerY);
                             return true;
                         }
