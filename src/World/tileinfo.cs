@@ -3,6 +3,9 @@ namespace Underworld
 {
     public class TileInfo : Loader
     {
+        /// <summary>
+        /// Flags that a tile needs to be redrawn on the next frame
+        /// </summary>
         public bool Redraw;
 
         /// <summary>

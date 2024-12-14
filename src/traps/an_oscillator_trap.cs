@@ -117,19 +117,32 @@ namespace Underworld
             {
                 for (int i=0; i<5;i++)
                 {
-                    var tileToChange = UWTileMap.current_tilemap.Tiles[24+i,2];
-                    tileToChange.wallTexture = 0x17;
-                    tileToChange.floorTexture = 4;
-                    tileToChange.tileType = 1;
-                    tileToChange.Redraw = true;
-                    main.DoRedraw = true;
+                    TileInfo.ChangeTile(
+                        StartTileX: 24+i, StartTileY:2, 
+                        newWall:0x17, 
+                        newType: 1, 
+                        newFloor: 4);
+
+
+                    // var tileToChange = UWTileMap.current_tilemap.Tiles[24+i,2];
+                    // tileToChange.wallTexture = 0x17;
+                    // tileToChange.floorTexture = 4;
+                    // tileToChange.tileType = 1;
+                    // tileToChange.Redraw = true;
+                    // main.DoRedraw = true;
                 }
-                var anotherTileToChange = UWTileMap.current_tilemap.Tiles[2,0x15];
-                anotherTileToChange.wallTexture = 0x14;
-                anotherTileToChange.floorTexture = 4;
-                anotherTileToChange.tileType = 1;
-                anotherTileToChange.Redraw = true;
-                main.DoRedraw = true;
+                TileInfo.ChangeTile(
+                    StartTileX: 2, StartTileY:0x15, 
+                    newWall:0x14, 
+                    newFloor: 4, 
+                    newType: 1);
+
+                // var anotherTileToChange = UWTileMap.current_tilemap.Tiles[2,0x15];
+                // anotherTileToChange.wallTexture = 0x14;
+                // anotherTileToChange.floorTexture = 4;
+                // anotherTileToChange.tileType = 1;
+                // anotherTileToChange.Redraw = true;
+                // main.DoRedraw = true;
             }
         }
     }//end class

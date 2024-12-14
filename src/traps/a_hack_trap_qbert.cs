@@ -155,7 +155,10 @@ namespace Underworld
                         {
                             si = 0;
                         }
-                        currentTile.floorTexture = (short)(playerdat.GetGameVariable(100 + si) & 0xF); main.DoRedraw = true; currentTile.Redraw = true;
+                        TileInfo.ChangeTile(
+                            StartTileX: currentTile.tileX, StartTileY: currentTile.tileY, 
+                            newFloor:(playerdat.GetGameVariable(100 + si) & 0xF));
+                       // currentTile.floorTexture = (short)(playerdat.GetGameVariable(100 + si) & 0xF); main.DoRedraw = true; currentTile.Redraw = true;
                         di = 0;
 
                     ovr110_41D6:
@@ -206,7 +209,10 @@ namespace Underworld
                                 if (di - 6 < si)
                                 {
                                     var anotheroddtile = UWTileMap.current_tilemap.Tiles[49 + si, 51 + di];
-                                    anotheroddtile.wallTexture = (short)var6; main.DoRedraw = true; anotheroddtile.Redraw = true;
+                                    TileInfo.ChangeTile(
+                                        StartTileX: anotheroddtile.tileX, StartTileY: anotheroddtile.tileY, 
+                                        newWall: var6);
+                                    //anotheroddtile.wallTexture = (short)var6; main.DoRedraw = true; anotheroddtile.Redraw = true;
                                     si--;
                                     goto ovr110_4228;
                                 }
@@ -275,7 +281,10 @@ namespace Underworld
                         //ovr110_43B4
                         if (playerdat.GetGameVariable(100) > 0 && playerdat.GetGameVariable(100) < 10)
                         {//sets floor to default colour
-                            currentTile.floorTexture = (short)(playerdat.GetGameVariable(100) & 0xF); main.DoRedraw = true; currentTile.Redraw = true;
+                            TileInfo.ChangeTile(
+                                StartTileX: currentTile.tileX, StartTileY: currentTile.tileY, 
+                                newFloor: (playerdat.GetGameVariable(100) & 0xF));
+                            //currentTile.floorTexture = (short)(playerdat.GetGameVariable(100) & 0xF); main.DoRedraw = true; currentTile.Redraw = true;
                         }
                     }
                 }
