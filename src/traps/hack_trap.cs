@@ -50,7 +50,7 @@ namespace Underworld
                                 );
                             return true;
                         }
-                        break;
+                        return false;
                     }             
                 case 5:// trespass trap
                     {

@@ -522,7 +522,7 @@ namespace Underworld
         /// <param name="DimX"></param>
         /// <param name="DimY"></param>
         /// <param name="HeightAdjustFlag"></param>
-        public static void ChangeTile(int StartTileX, int StartTileY, int newWall =0x3F, int newFloor =0xF, int newHeight=0xF,int newType = 0xA, int DimX = 0, int DimY = 0, int HeightAdjustFlag = 0 )
+        public static void ChangeTile(int StartTileX, int StartTileY, int newWall =0x3F, int newFloor = 0xF, int newHeight=0xF,int newType = 0xA, int DimX = 0, int DimY = 0, int HeightAdjustFlag = 0 )
         {
             for (int x = StartTileX; x <= StartTileX + DimX; x++)
             {
@@ -549,7 +549,7 @@ namespace Underworld
                             tileToChange.floorHeight = 0xF;
                         }
 
-                        if (newFloor < 0xF)//TODO confirm if values are same for UW1
+                        if ((newFloor < 0xF) && (_RES==GAME_UW2) || ((newFloor < 0xB) && (_RES!=GAME_UW2)))
                         {
                             tileToChange.floorTexture = (short)newFloor;
                             //TODO some terrain changes happen here too.
