@@ -28,17 +28,30 @@ namespace Underworld
                         );
                         return true;
                     }
-                case 3: //do trap platform
+                case 3: //do trap platform                
                     {
                         a_do_trap_platform.Activate(
                             trapObj: trapObj,
-                            ObjectUsed: ObjectUsed,
                             triggerX: triggerX,
                             triggerY: triggerY,
                             objList: objList
                         );
                         return true;
-                    }
+                    }   
+                case 4: //uw1 alternate do_trap_platform behaviour
+                    {
+                        if(_RES!=GAME_UW2)
+                        {
+                            a_do_trap_platform.Activate(
+                                trapObj: trapObj,
+                                triggerX: triggerX,
+                                triggerY: triggerY,
+                                objList: objList
+                                );
+                            return true;
+                        }
+                        break;
+                    }             
                 case 5:// trespass trap
                     {
                         a_do_trap_trespass.Activate(

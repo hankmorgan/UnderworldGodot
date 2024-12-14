@@ -44,12 +44,6 @@ namespace Underworld
                     StartTileX: X, 
                     StartTileY: Y - si, 
                     newHeight: finalheight);
-                // if (finalheight != 0)
-                // {
-                    //t.floorHeight = finalheight;
-                   // main.DoRedraw = true;
-                   // t.Redraw = true;
-                //}
             }
         }
     }//end class

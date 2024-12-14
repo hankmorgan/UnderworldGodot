@@ -509,19 +509,20 @@ namespace Underworld
         }
 
 
+
         /// <summary>
-        /// Changes a range of tiles
+        /// Changes the layout of a range of tiles
         /// </summary>
         /// <param name="StartTileX"></param>
         /// <param name="StartTileY"></param>
-        /// <param name="newHeight"></param>
-        /// <param name="newFloor"></param>
         /// <param name="newWall"></param>
+        /// <param name="newFloor"></param>
+        /// <param name="newHeight"></param>
         /// <param name="newType"></param>
-        /// <param name="HeightAdjustFlag"></param>
         /// <param name="DimX"></param>
         /// <param name="DimY"></param>
-        public static void ChangeTile(int StartTileX, int StartTileY, int newHeight=0xF, int newFloor =0xF, int newWall =0x3F, int newType = 0xA, int HeightAdjustFlag = 0, int DimX = 0, int DimY = 0)
+        /// <param name="HeightAdjustFlag"></param>
+        public static void ChangeTile(int StartTileX, int StartTileY, int newWall =0x3F, int newFloor =0xF, int newHeight=0xF,int newType = 0xA, int DimX = 0, int DimY = 0, int HeightAdjustFlag = 0 )
         {
             for (int x = StartTileX; x <= StartTileX + DimX; x++)
             {

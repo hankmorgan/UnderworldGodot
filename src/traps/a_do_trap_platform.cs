@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 
 namespace Underworld
@@ -7,31 +8,33 @@ namespace Underworld
     /// </summary>
     public class a_do_trap_platform : hack_trap
     {
-        /// <summary>
-        /// The switch flags maps to these tile heights
-        /// </summary>
-        static int[] heights = new int[] { 2, 3, 4, 5, 6, 7, 8, 9 }; //heights *2
-        public static void Activate(uwObject trapObj, uwObject ObjectUsed, int triggerX, int triggerY, uwObject[] objList)
+
+        public static void Activate(uwObject trapObj, int triggerX, int triggerY, uwObject[] objList)
         {
-            //var tileX = triggerX;//triggerObj.quality;
-            //var tileY = triggerY;//triggerObj.owner;
-            //var startObject = objList[ObjectThatStartedChain];
-            if (ObjectUsed != null)
-            {
-                //Find Remove existing tile
-                //UWTileMap.RemoveTile(triggerX, triggerY);
 
-                //Set the new height
-                var newHeight = heights[ObjectUsed.flags];
-                Debug.Print($"Flags is {ObjectUsed.flags} new height is {newHeight}");
-                var t = UWTileMap.current_tilemap.Tiles[triggerX, triggerY];
-                t.floorHeight = (short)newHeight;
+            if (ObjectThatStartedChain != 0)
+            {                    
+                var obj = UWTileMap.current_tilemap.LevelObjects[ObjectThatStartedChain];       
+                var si = trapObj.zpos + (obj.flags<<3);
 
-                //Render new tile
-                main.DoRedraw = true;
-                t.Redraw = true;
-
-                //TODO find objects in the tile that may need to be moved.
+                if (trapObj.quality != 3)
+                {
+                    if (trapObj.link!=0)
+                    {//Not sure what scenario this code will occur?
+                        var linked = UWTileMap.current_tilemap.LevelObjects[trapObj.link];
+                        linked.zpos = (short)si;//?
+                        objectInstance.Reposition(linked);//?
+                    }                    
+                }
+                else
+                {                        
+                    if (si<0x68)
+                    {
+                        TileInfo.ChangeTile(
+                            StartTileX: triggerX, StartTileY: triggerY,
+                            newHeight: (si>>3));
+                    }
+                }
             }
         }
     } //end class
