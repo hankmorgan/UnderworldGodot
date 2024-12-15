@@ -37,10 +37,10 @@ namespace Underworld
                             objList: objList
                         );
                         return true;
-                    }   
+                    }
                 case 4: //uw1 alternate do_trap_platform behaviour
                     {
-                        if(_RES!=GAME_UW2)
+                        if (_RES != GAME_UW2)
                         {
                             a_do_trap_platform.Activate(
                                 trapObj: trapObj,
@@ -50,8 +50,8 @@ namespace Underworld
                                 );
                             return true;
                         }
-                        return false;
-                    }             
+                        break;
+                    }
                 case 5:// trespass trap
                     {
                         a_do_trap_trespass.Activate(
@@ -62,45 +62,61 @@ namespace Underworld
                     }
                 case 10://change class item
                     {
-                        a_hack_trap_classitem.Activate(
-                            trapObj: trapObj,
-                            triggerX: triggerX,
-                            triggerY: triggerY,
-                            objList: objList
-                        );
-                        return true;
+                        if (_RES == GAME_UW2)
+                        {
+                            a_hack_trap_classitem.Activate(
+                                trapObj: trapObj,
+                                triggerX: triggerX,
+                                triggerY: triggerY,
+                                objList: objList
+                            );
+                            return true;
+                        }
+                        break;
                     }
                 case 11://fraznium forcefields
                     {
-                        a_hack_trap_forcefield.Activate(
-                            trapObj: trapObj,
-                            triggerX: triggerX,
-                            triggerY: triggerY,
-                            objList: objList
-                        );
-                        return true;
+                        if (_RES == GAME_UW2)
+                        {
+                            a_hack_trap_forcefield.Activate(
+                                trapObj: trapObj,
+                                triggerX: triggerX,
+                                triggerY: triggerY,
+                                objList: objList
+                            );
+                            return true;
+                        }
+                        break;
                     }
                 case 12://tile oscillator
                     {
-                        a_hack_trap_oscillator.Activate(
-                            trapObj: trapObj,
-                            triggerX: triggerX,
-                            triggerY: triggerY,
-                            objList: objList
-                        );
-                        return true;
+                        if (_RES==GAME_UW2)
+                        {
+                            a_hack_trap_oscillator.Activate(
+                                trapObj: trapObj,
+                                triggerX: triggerX,
+                                triggerY: triggerY,
+                                objList: objList
+                            );
+                            return true;
+                        }
+                        break;
                     }
                 case 17: //Floor collapse
                     {
-                        a_hack_trap_floorcollapse.Activate(
-                            trapObj: trapObj,
-                            triggerX: triggerX,
-                            triggerY: triggerY,
-                            objList: objList
-                        );
-                        return true;
+                        if (_RES==GAME_UW2)
+                        {
+                            a_hack_trap_floorcollapse.Activate(
+                                trapObj: trapObj,
+                                triggerX: triggerX,
+                                triggerY: triggerY,
+                                objList: objList
+                            );
+                            return true;
+                        }
+                        break;
                     }
-                case 24:
+                case 24://bullfrog in UW1 and something else in UW2
                     {
                         if (_RES != GAME_UW2)
                         {
@@ -117,48 +133,72 @@ namespace Underworld
                     }
                 case 32://qbert in UW2
                     {
-                        a_hack_trap_qbert.Activate(
-                            trapObj: trapObj,
-                            objList: objList);
-                        return true;
-                    }
-                case 33: // bottle recycler
-                    {
-                        a_hack_trap_recycler.Activate(
+                        if (_RES == GAME_UW2)
+                        {
+                            a_hack_trap_qbert.Activate(
                                 trapObj: trapObj,
-                                triggerX: triggerX,
-                                triggerY: triggerY,
-                                objList: objList
-                            );
-                        return true;
+                                objList: objList);
+                            return true;
+                        }
+                        break;
                     }
-                case 35://recharges light sphere
+                case 33: // bottle recycler in UW2
                     {
-                        a_hack_trap_rechargelightsphere.Activate(triggerX, triggerY);
-                        return true;
+                        if (_RES==GAME_UW2)
+                        {
+                            a_hack_trap_recycler.Activate(
+                                    trapObj: trapObj,
+                                    triggerX: triggerX,
+                                    triggerY: triggerY,
+                                    objList: objList
+                                );
+                            return true;
+                        }
+                        break;
+                    }
+                case 35://recharges light sphere in UW2
+                    {
+                        if (_RES==GAME_UW2)
+                        {
+                            a_hack_trap_rechargelightsphere.Activate(triggerX, triggerY);
+                            return true;
+                        }
+                        break; 
                     }
                 case 38:
                     {//transform red potions to poison
-                        a_hack_trap_transformpotion.Activate(
-                            triggerX: triggerX,
-                            triggerY: triggerY);
-                        return true;
+                        if (_RES == GAME_UW2)
+                        {
+                            a_hack_trap_transformpotion.Activate(
+                                triggerX: triggerX,
+                                triggerY: triggerY);
+                            return true;
+                        }
+                        break;
                     }
                 case 39:
                     {//changes visibility of object
-                        a_hack_trap_visibility.Activate(
-                            trapObj: trapObj
-                            );
-                        triggerNextIndex = 0; //stop chain
-                        return true;
+                        if (_RES == GAME_UW2)
+                        {
+                            a_hack_trap_visibility.Activate(
+                                trapObj: trapObj
+                                );
+                            triggerNextIndex = 0; //stop chain
+                            return true;
+                        }
+                        break;
                     }
                 case 40:
                 case 41:
                     {
-                        a_hack_trap_vending.Activate(
-                            trapObj: trapObj,
-                            triggerX: triggerX, triggerY: triggerY);
-                        return true;
+                        if (_RES == GAME_UW2)
+                        {
+                            a_hack_trap_vending.Activate(
+                                trapObj: trapObj,
+                                triggerX: triggerX, triggerY: triggerY);
+                            return true;
+                        }
+                        break;
                     }
                 case 42:
                     {
@@ -175,12 +215,19 @@ namespace Underworld
                             return true;
                         }
                     }
-                default:
+                case 54://world gem rotation
                     {
-                        Debug.Print($"Unimplemented hack trap {trapObj.quality}");
-                        return false;
+                        if (_RES == GAME_UW2)
+                        {
+                            a_hack_trap_gemrotate.Activate();
+                            return true;
+                        }
+                        break;
                     }
-            }
+            }//end switch
+
+            Debug.Print($"Unimplemented hack trap {trapObj.quality}");
+            return false;
         }
     }//end class
 }//end namespace
