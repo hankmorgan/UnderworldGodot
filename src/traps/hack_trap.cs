@@ -33,8 +33,7 @@ namespace Underworld
                         a_do_trap_platform.Activate(
                             trapObj: trapObj,
                             triggerX: triggerX,
-                            triggerY: triggerY,
-                            objList: objList
+                            triggerY: triggerY
                         );
                         return true;
                     }
@@ -45,8 +44,7 @@ namespace Underworld
                             a_do_trap_platform.Activate(
                                 trapObj: trapObj,
                                 triggerX: triggerX,
-                                triggerY: triggerY,
-                                objList: objList
+                                triggerY: triggerY
                                 );
                             return true;
                         }
@@ -188,8 +186,24 @@ namespace Underworld
                         }
                         break;
                     }
-                case 40:
-                case 41:
+                case 40: //vending machine uw2 (variant), emerald puzzle in UW1
+                    {
+                        if (_RES == GAME_UW2)
+                        {
+                            a_hack_trap_vending.Activate(
+                                trapObj: trapObj,
+                                triggerX: triggerX, triggerY: triggerY);                            
+                        }
+                        else
+                        {
+                            a_do_trap_emeraldpuzzle.Activate(
+                                trapObj: trapObj,
+                                triggerX: triggerX, triggerY: triggerY);
+
+                        }
+                        return true;
+                    }
+                case 41://vending machine uw2 (variant)
                     {
                         if (_RES == GAME_UW2)
                         {
@@ -200,7 +214,7 @@ namespace Underworld
                         }
                         break;
                     }
-                case 42:
+                case 42://vending machine uw2 (variant), UW1 talking door
                     {
                         if (_RES != GAME_UW2)
                         {

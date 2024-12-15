@@ -6,7 +6,7 @@ namespace Underworld
     public class a_do_trap_platform : hack_trap
     {
 
-        public static void Activate(uwObject trapObj, int triggerX, int triggerY, uwObject[] objList)
+        public static void Activate(uwObject trapObj, int triggerX, int triggerY)
         {
 
             if (ObjectThatStartedChain != 0)
