@@ -114,6 +114,18 @@ namespace Underworld
                         }
                         break;
                     }
+                case 19://
+                {
+                    if (_RES==GAME_UW2)
+                    {
+                        a_hack_trap_platformreset.Activate(
+                            trapObj: trapObj, 
+                            triggerX: triggerX, 
+                            triggerY: triggerY);
+                        return true;
+                    }
+                    break;
+                }
                 case 24://bullfrog in UW1 and something else in UW2
                     {
                         if (_RES != GAME_UW2)
