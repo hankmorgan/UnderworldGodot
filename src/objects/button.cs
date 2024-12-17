@@ -49,20 +49,29 @@ namespace Underworld
 
         public static bool Use(uwObject obj)
         {
-            ToggleItemID(obj);
-            RefreshButtonSprite(obj);
+            TryAndUse(obj,3);
+            // ToggleItemID(obj);
+            // RefreshButtonSprite(obj);
             return true;
         }
 
-        public static bool TryAndUse(uwObject obj, int state)
+
+        
+        /// <summary>
+        /// Controls toggling of switches.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="toggleMode">0, do nothing, 1,2 try and go to a target state, 3 toggle</param>
+        /// <returns></returns>
+        public static bool TryAndUse(uwObject obj, int toggleMode)
         {
-            if (state==0)
+            if (toggleMode==0)
             {
                 return false;
             }
             else
             {
-                if (state != 3)
+                if (toggleMode != 3)
                 {
                     int dx = 0;
                     if (IsOn(obj))
@@ -71,7 +80,7 @@ namespace Underworld
                     }
 
                     int ax = 0;
-                    if (state>2)
+                    if (toggleMode>2)
                     {
                         ax = 1;
                     }
