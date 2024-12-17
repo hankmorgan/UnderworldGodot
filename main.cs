@@ -501,7 +501,10 @@ public partial class main : Node3D
 			{
 				if (t.Redraw)
 				{
-					UWTileMap.RemoveTile(t.tileX, t.tileY);
+					UWTileMap.RemoveTile(
+						tileX: t.tileX, 
+						tileY: t.tileY, 
+						removeWall: (t.tileType>=2 && t.tileType<=5));
 					tileMapRender.RenderTile(tileMapRender.worldnode, t.tileX, t.tileY, t);
 					t.Redraw = false;
 				}

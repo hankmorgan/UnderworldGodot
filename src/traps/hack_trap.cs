@@ -100,6 +100,18 @@ namespace Underworld
                         }
                         break;
                     }
+                case 14://texture cycle
+                    {
+                        if (_RES==GAME_UW2)
+                        {
+                            a_hack_trap_texturecycle.Activate(
+                                trapObj: trapObj,
+                                triggerX: triggerX,
+                                triggerY: triggerY);
+                            return true;
+                        }
+                        break;
+                    }
                 case 17: //Floor collapse
                     {
                         if (_RES==GAME_UW2)

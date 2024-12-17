@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 namespace Underworld
 {
@@ -292,6 +293,7 @@ namespace Underworld
                 //final_mesh.CreateConvexCollision(clean: false);
                 final_mesh.CreateTrimeshCollision();
             }
+            //Debug.Print($"Meshname is {final_mesh.Name}");
             return final_mesh;
         }
 
@@ -1003,27 +1005,7 @@ namespace Underworld
             float floorHeight = (float)(Top * 0.15f);
             float baseHeight = (float)(Bottom * 0.15f);
 
-            //    //Now create the mesh
-            //    GameObject Tile = new GameObject(TileName)
-            //    {
-            //        layer = LayerMask.NameToLayer("MapMesh")
-            //    };
-            //    Tile.transform.parent = parent.transform;
-            //    Tile.transform.position = new Vector3(t.tileX * 1.2f, 0.0f, t.tileY * 1.2f);
-
-            //    Tile.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
-            //    MeshFilter mf = Tile.AddComponent<MeshFilter>();
-            //    MeshRenderer mr = Tile.AddComponent<MeshRenderer>();
-            //MeshCollider mc = Tile.AddComponent<MeshCollider>();
-            ///mc.sharedMesh=null;
-
             var a_mesh = new ArrayMesh();
-
-
-            //    Mesh mesh = new Mesh
-            //    {
-            //        subMeshCount = NumberOfVisibleFaces//Should be no of visible faces
-            //    };
 
             //Now allocate the visible faces to triangles.
             int FaceCounter = 0;//Tracks which number face we are now on.

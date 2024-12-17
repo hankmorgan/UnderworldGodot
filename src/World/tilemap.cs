@@ -1348,9 +1348,20 @@ namespace Underworld
         /// </summary>
         /// <param name="tileX"></param>
         /// <param name="tileY"></param>
-        public static void RemoveTile(short tileX, short tileY)
+        public static void RemoveTile(short tileX, short tileY, bool removeWall)
         {
-            string TileName = "Tile_" + tileX.ToString("D2") + "_" + tileY.ToString("D2") + "_" + tileMapRender.guid;
+
+            string TileName = $"Tile_{tileX.ToString("D2")}_{tileY.ToString("D2")}_{tileMapRender.guid}";
+            RemoveTileInstance(TileName);
+            if (removeWall)
+            {
+                TileName = $"Wall_{tileX.ToString("D2")}_{tileY.ToString("D2")}_{tileMapRender.guid}";
+                RemoveTileInstance(TileName);
+            }
+        }
+
+        private static void RemoveTileInstance(string TileName)
+        {
             Node3D existingTile = tileMapRender.worldnode.GetNode<Node3D>($"/root/Underworld/tilemap/{TileName}");
             if (existingTile != null)
             {
@@ -1362,5 +1373,6 @@ namespace Underworld
                 Debug.Print($"Unable to find tile {TileName} to destroy");
             }
         }
+
     } //end class
 }//end namespace
