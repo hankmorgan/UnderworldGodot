@@ -232,7 +232,7 @@ public partial class main : Node3D
 								next = nextObj.next;
 							}
 						}
-						Debug.Print($"{playerdat.zpos} vs {(tileEntered.floorHeight << 3)}");
+						//Debug.Print($"{playerdat.zpos} vs {(tileEntered.floorHeight << 3)}");
 						// If grounded try and find pressure triggers. for the moment ground is just zpos less than floorheight.
 						if (playerdat.zpos <= (tileEntered.floorHeight << 3))//Janky temp implementation. player must be on/below the height before changing tiles.
 						{

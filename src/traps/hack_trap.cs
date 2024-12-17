@@ -114,6 +114,18 @@ namespace Underworld
                         }
                         break;
                     }
+                case 18://button triggering in Scintillus academy 5
+                {
+                    if (_RES==GAME_UW2)
+                    {
+                        a_hack_trap_usebutton.Activate(
+                            trapObj: trapObj, 
+                            triggerX: triggerX, 
+                            triggerY: triggerY);
+                        return true;
+                    }
+                    break;
+                }
                 case 19://platforms reset in scintillus academy 7
                 {
                     if (_RES==GAME_UW2)

@@ -49,27 +49,59 @@ namespace Underworld
 
         public static bool Use(uwObject obj)
         {
+            ToggleItemID(obj);
+            RefreshButtonSprite(obj);
+            return true;
+        }
+
+        public static bool TryAndUse(uwObject obj, int state)
+        {
+            if (state==0)
+            {
+                return false;
+            }
+            else
+            {
+                if (state != 3)
+                {
+                    int dx = 0;
+                    if (IsOn(obj))
+                    {
+                        dx = 1;
+                    }
+
+                    int ax = 0;
+                    if (state>2)
+                    {
+                        ax = 1;
+                    }
+                    if (ax != dx)
+                    {
+                        return false;
+                    }
+                }
+                //Debug.Print($"toggle button {obj.a_name} {obj.index}");
+                ToggleItemID(obj);
+                RefreshButtonSprite(obj);
+                return true;
+            }
+        }
+
+        private static void ToggleItemID(uwObject obj)
+        {
             if (IsOn(obj))
             {//on-->off
                 obj.item_id -= 8;
-                // if (obj.link!=0)
-                // {
-                //     var trigger = UWTileMap.current_tilemap.LevelObjects[obj.link];
-                //     if (trigger!=null)
-                //     {
-                //         use.UseTriggerHasBeenActivated = true;
-                //         trigger.UseTrigger(
-                //             srcObject: obj,
-                //             triggerIndex: obj.link,
-                //             objList: UWTileMap.current_tilemap.LevelObjects);
-                //     }
-                // }
             }
             else
             {//off->on
-                obj.item_id += 8;                
+                obj.item_id += 8;
             }
+        }
 
+
+        private static void RefreshButtonSprite(uwObject obj)
+        {
             if (obj.instance != null)
             {
                 var newmaterial = GetTmFlat.GetMaterial(obj.item_id - 368);
@@ -77,8 +109,8 @@ namespace Underworld
                 var mdl = (MeshInstance3D)(_button.modelNode);
                 mdl.Mesh.SurfaceSetMaterial(0, newmaterial);
             }
-            return true;
         }
+
 
 
         /// <summary>
@@ -88,14 +120,15 @@ namespace Underworld
         /// <returns></returns>
         static bool IsOn(uwObject obj)
         {
-            if (obj.classindex <= 7)
-            {
-                return false; //
-            }
-            else
-            {
-                return true;
-            }
+            return obj.classindex > 7;
+            // if (obj.classindex <= 7)
+            // {
+            //     return false; //
+            // }
+            // else
+            // {
+            //     return true;
+            // }
         }
 
         public override Vector3[] ModelVertices()

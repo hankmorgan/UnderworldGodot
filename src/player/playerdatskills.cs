@@ -16,7 +16,7 @@ namespace Underworld
         }
 
 
-    public static SkillCheckResult SkillCheck(int skillValue, int targetValue)
+    public static SkillCheckResult SkillCheck(int skillValue, int targetValue, bool debug = false)
     {        
         int score = (skillValue - targetValue) + Rng.r.Next(0, 31); //0 to 30;
 
@@ -26,24 +26,24 @@ namespace Underworld
             {
                 if (score <= 2)
                 {
-                    Debug.Print("Skill roll " + skillValue + " vs " + targetValue + " Score = " + score + " (CritFail)");
+                    if (debug){Debug.Print("Skill roll " + skillValue + " vs " + targetValue + " Score = " + score + " (CritFail)");}
                     return SkillCheckResult.CritFail;//0xffff //critical failure
                 }
                 else
                 {
-                    Debug.Print("Skill roll " + skillValue + " vs " + targetValue + " Score = " + score + " (Fail)");
+                    if (debug){Debug.Print("Skill roll " + skillValue + " vs " + targetValue + " Score = " + score + " (Fail)");}
                     return SkillCheckResult.Fail; //failure
                 }
             }
             else
             {
-                Debug.Print("Skill roll " + skillValue + " vs " + targetValue + " Score = " + score + " (Success)");
+                if (debug){Debug.Print("Skill roll " + skillValue + " vs " + targetValue + " Score = " + score + " (Success)");}
                 return SkillCheckResult.Success; //sucess
             }
         }
         else
         { //more than 29
-            Debug.Print("Skill roll " + skillValue + " vs " + targetValue + " Score = " + score + " (CritSuccess)");
+            if (debug){Debug.Print("Skill roll " + skillValue + " vs " + targetValue + " Score = " + score + " (CritSuccess)");}
             return SkillCheckResult.CritSucess; //critical sucess
         }
     }
