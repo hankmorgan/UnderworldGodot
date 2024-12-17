@@ -114,7 +114,7 @@ namespace Underworld
                         }
                         break;
                     }
-                case 19://
+                case 19://platforms reset in scintillus academy 7
                 {
                     if (_RES==GAME_UW2)
                     {
@@ -124,6 +124,19 @@ namespace Underworld
                             triggerY: triggerY);
                         return true;
                     }
+                    break;
+                }
+                case 20://rising platforms in scintillus academy 3
+                {
+                    if(_RES==GAME_UW2)
+                    {
+                        a_hack_trap_terraformplatforms.Activate(
+                            trapObj: trapObj, 
+                            triggerX: triggerX, 
+                            triggerY: triggerY); 
+                        return true;
+                    }
+
                     break;
                 }
                 case 24://bullfrog in UW1 and something else in UW2
