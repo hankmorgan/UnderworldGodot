@@ -178,6 +178,17 @@ namespace Underworld
                             return false;
                         }
                     }
+                case 29://button flickering
+                    {
+                        if (_RES==GAME_UW2)
+                        {
+                            a_hack_trap_switchflicker.Activate(
+                                triggerX: triggerX, 
+                                triggerY: triggerY);
+                            return true;
+                        }
+                        break;
+                    }
                 case 32://qbert in UW2
                     {
                         if (_RES == GAME_UW2)

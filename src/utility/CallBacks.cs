@@ -150,6 +150,13 @@ namespace Underworld
         }
 
 
+        /// <summary>
+        /// Calls method on each object in the chain starting at first obj
+        /// </summary>
+        /// <param name="methodToCall"></param>
+        /// <param name="obj"></param>
+        /// <param name="objList"></param>
+        /// <returns></returns>
         public static bool CallFunctionOnObjectsInChain(SingleObjectCallBack methodToCall, uwObject obj, uwObject[] objList)
         {
             if (obj==null)
