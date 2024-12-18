@@ -7,6 +7,22 @@ namespace Underworld
     {
 
         /// <summary>
+        /// Searches the specified tile for a matching object
+        /// </summary>
+        /// <param name="tileX"></param>
+        /// <param name="tileY"></param>
+        /// <param name="majorclass"></param>
+        /// <param name="minorclass"></param>
+        /// <param name="classindex"></param>
+        /// <returns></returns>
+        public static uwObject FindMatchInTile(int tileX, int tileY, int majorclass, int minorclass, int classindex)
+        {
+            var tile = UWTileMap.current_tilemap.Tiles[tileX,tileY];
+            return FindMatchInObjectListChain(tile.indexObjectList, majorclass, minorclass,classindex, UWTileMap.current_tilemap.LevelObjects);
+        }
+
+
+        /// <summary>
         /// Finds the matching object in the chain starting at ListHeadIndex. Does not go into linked items
         /// </summary>
         /// <param name="ListHeadIndex"></param>

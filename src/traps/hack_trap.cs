@@ -178,6 +178,15 @@ namespace Underworld
                             return false;
                         }
                     }
+                case 25://Bly Skup Chamber
+                    {
+                        if (_RES==GAME_UW2)
+                        {
+                            a_hack_trap_blyskup.Activate();
+                            return true;
+                        }
+                        break;   
+                    }
                 case 29://button flickering
                     {
                         if (_RES==GAME_UW2)
