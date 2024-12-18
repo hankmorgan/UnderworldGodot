@@ -187,6 +187,16 @@ namespace Underworld
                         }
                         break;   
                     }
+                case 26://Toggle forcefield
+                    {
+                        if (_RES==GAME_UW2)
+                        {
+                            a_hack_trap_toggleforcefield.Activate(
+                                triggerX: triggerX, triggerY: triggerY);
+                            return true;
+                        }   
+                        break;
+                    }
                 case 29://button flickering
                     {
                         if (_RES==GAME_UW2)
