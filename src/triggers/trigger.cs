@@ -92,7 +92,7 @@ namespace Underworld
                                     //Test for trap repeat.
                                     if (TriggerObject.flags1 == 0)
                                     {
-                                        Debug.Print($"Test me. remove trap {trapObj.a_name} from object list here");
+                                        Debug.Print($"Test me. remove trap {trapObj.index} {trapObj.a_name} from object list here");
                                     }
                                     //if uw2 test for pressure triggers
                                     if (_RES == GAME_UW2)

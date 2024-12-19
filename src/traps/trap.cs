@@ -21,7 +21,7 @@ namespace Underworld
             }
             else
             {
-                Debug.Print($"Running trap {trapObj.a_name}");
+            Debug.Print($"Running trap {trapObj.a_name} {trapObj.index}");
             }
             var triggerNextIndex = trapObj.link; //default object to trigger next. This may change due to the results of a check_variable_trap
             bool implemented = false;

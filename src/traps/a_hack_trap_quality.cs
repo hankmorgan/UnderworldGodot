@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace Underworld
 {
     /// <summary>
@@ -12,6 +14,7 @@ namespace Underworld
                 var obj = UWTileMap.current_tilemap.LevelObjects[trapObj.link];
                 if (obj!=null)
                 {
+                    Debug.Print($"Setting {obj.index} {obj.a_name} quality to {trapObj.owner}");
                     obj.quality = trapObj.owner;
                 }
             }
