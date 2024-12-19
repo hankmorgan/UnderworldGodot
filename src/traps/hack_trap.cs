@@ -197,6 +197,15 @@ namespace Underworld
                         }   
                         break;
                     }
+                case 27://change quality trap
+                    {
+                        if (_RES==GAME_UW2)
+                        {
+                            a_hack_trap_quality.Activate(trapObj);
+                            return true;
+                        }
+                        break;
+                    }
                 case 29://button flickering
                     {
                         if (_RES==GAME_UW2)
