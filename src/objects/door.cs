@@ -351,7 +351,10 @@ namespace Underworld
                     return true;
                 }
             }
-            return look.PrintLookDescription(doorobject, UWTileMap.current_tilemap.LevelObjects, 3);
+            return look.PrintLookDescription(
+                obj: doorobject, 
+                objList: UWTileMap.current_tilemap.LevelObjects, 
+                lorecheckresult: 3);
         }
 
         // public static void DamageDoor(uwObject doorobject, int damage, int damagesource)

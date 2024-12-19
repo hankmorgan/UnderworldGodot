@@ -283,7 +283,7 @@ namespace Underworld
 
             string objectname = GameStrings.GetObjectNounUW(obj.item_id, qty);
 
-            var finalclass = -1;
+            var finalclass = 0;
             if (obj.quality > 0)
             {
                 if (obj.quality == 1)
