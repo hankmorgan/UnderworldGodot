@@ -367,6 +367,7 @@ public partial class main : Node3D
 						case Key.F12:
 							{
 								trigger.RunTimerTriggers();
+								trigger.RunNextScheduledTrigger();
 								break;
 							}
 					}

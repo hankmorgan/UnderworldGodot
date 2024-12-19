@@ -5,8 +5,10 @@ namespace Underworld
 {
     public partial class trigger : UWClass
     {
-
-
+        /// <summary>
+        /// test and debug index for testing scheduled triggers
+        /// </summary>
+        static int scheduledtriggerindex=0;
 
         /// <summary>
         /// Tests if object is a trigger(true) or a not(false)
@@ -224,6 +226,11 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// Finds the first trap in the specified tile and runs it
+        /// </summary>
+        /// <param name="tileX"></param>
+        /// <param name="tileY"></param>
         public static void TriggerTrapInTile(int tileX, int tileY)
         {
             var tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];
@@ -277,8 +284,38 @@ namespace Underworld
                             triggerType: (int)triggerObjectDat.triggertypes.TIMER, 
                             objList: UWTileMap.current_tilemap.LevelObjects);
                     }
+            }            
+        }
+
+        /// <summary>
+        /// Debug/Test function that will pick the next scheduled trigger on the map and run it.
+        /// </summary>
+        public static void RunNextScheduledTrigger()
+        {
+            if (_RES!=GAME_UW2){return;}
+            if ((scheduledtriggerindex<256) ||(scheduledtriggerindex>=1024))
+            {
+                scheduledtriggerindex=256;                
             }
-            
+            while(scheduledtriggerindex<1024)
+            {
+                if ((UWTileMap.current_tilemap.LevelObjects[scheduledtriggerindex].item_id==428) || (UWTileMap.current_tilemap.LevelObjects[scheduledtriggerindex].item_id==444))
+                {
+                    Debug.Print($"Testing scheduled trigger {scheduledtriggerindex}");
+                    RunTrigger(
+                        character: 0, 
+                        ObjectUsed: null, 
+                        TriggerObject: UWTileMap.current_tilemap.LevelObjects[scheduledtriggerindex], 
+                        triggerType: (int)triggerObjectDat.triggertypes.SCHEDULED, 
+                        objList: UWTileMap.current_tilemap.LevelObjects);
+                        scheduledtriggerindex++;
+                    return;
+                }
+                else
+                {
+                    scheduledtriggerindex++;
+                }                
+            }
         }
 
         /// <summary>
