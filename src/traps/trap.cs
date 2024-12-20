@@ -21,7 +21,7 @@ namespace Underworld
             }
             else
             {
-            Debug.Print($"Running trap {trapObj.a_name} {trapObj.index}");
+                Debug.Print($"Running trap {trapObj.a_name} i:{trapObj.index} q:{trapObj.quality}");
             }
             var triggerNextIndex = trapObj.link; //default object to trigger next. This may change due to the results of a check_variable_trap
             bool implemented = false;
@@ -209,7 +209,7 @@ namespace Underworld
 
             if (!implemented)
             {
-                Debug.Print($"Unknown/unimplemented Trap Class {trapObj.majorclass} {trapObj.minorclass} {trapObj.classindex} {trapObj.a_name} i:{trapObj.index}");
+                Debug.Print($"Unknown/unimplemented Trap Class {trapObj.majorclass} {trapObj.minorclass} {trapObj.classindex} {trapObj.a_name} i:{trapObj.index} Q:{trapObj.quality}");
             }
             else
             {
