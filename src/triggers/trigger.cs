@@ -10,27 +10,18 @@ namespace Underworld
         /// </summary>
         static int scheduledtriggerindex=0;
 
-        /// <summary>
-        /// Tests if object is a trigger(true) or a not(false)
+       /// <summary>
+        /// Runs the the trigger class object (if it matches the required triggerType)
         /// </summary>
-        /// <param name="toTest"></param>
+        /// <param name="character"></param>
+        /// <param name="ObjectUsed"></param>
+        /// <param name="TriggerObject"></param>
+        /// <param name="triggerType"></param>
+        /// <param name="objList"></param>
         /// <returns></returns>
-        static bool IsTrigger(uwObject toTest)
-        {
-            if (_RES == GAME_UW2)
-            {
-                return (toTest.majorclass == 6) && ((toTest.minorclass == 2) || (toTest.minorclass == 3));
-            }
-            else
-            {
-                return (toTest.majorclass == 6) && (toTest.minorclass == 2);
-            }
-        }
-
-
         public static int RunTrigger(int character, uwObject ObjectUsed, uwObject TriggerObject, int triggerType, uwObject[] objList)
         {            
-            if (IsTrigger(TriggerObject))
+            if (TriggerObject.IsTrigger)
             {                
                 if (triggerType >= 0)
                 {
@@ -92,7 +83,12 @@ namespace Underworld
                                     //Test for trap repeat.
                                     if (TriggerObject.flags1 == 0)
                                     {
-                                        Debug.Print($"Test me. remove trap {trapObj.index} {trapObj.a_name} from object list here");
+                                        //var tile = UWTileMap.current_tilemap.Tiles[triggerX, triggerY];
+                                        //Debug.Print($"Test me. remove trap {trapObj.index} {trapObj.a_name} from object list here");
+                                        trap.RemoveSingleUseTrap(
+                                            trapObj: trapObj, 
+                                            triggerX: triggerX,
+                                            triggerY: triggerY);                                        
                                     }
                                     //if uw2 test for pressure triggers
                                     if (_RES == GAME_UW2)
@@ -110,8 +106,7 @@ namespace Underworld
                     {
                         Debug.Print("To implement NPC activation of triggers");
                     }
-                }
-                
+                }                
             }
             return 2;
         }
@@ -170,7 +165,7 @@ namespace Underworld
 
                 while (ObjectToTrigger != null)
                 {
-                    if (IsTrigger(ObjectToTrigger))
+                    if (ObjectToTrigger.IsTrigger)
                     {
                         //Get the next of the trigger object first
                         var toTriggerNext = objectsearch.FindMatchInObjectListChain(
@@ -316,42 +311,6 @@ namespace Underworld
                     scheduledtriggerindex++;
                 }                
             }
-        }
-
-        /// <summary>
-        /// General trigger function for the execution of triggers generically (call this from the traps only when continuing a chain
-        /// Specialised triggers like look and use triggers should be called directly by the interaction modes.
-        /// IE this is use to continue chains, not start them so it should not call the start and end trigger chain events
-        /// </summary>
-        /// <param name="srcObject"></param>
-        /// <param name="triggerIndex"></param>
-        /// <param name="objList"></param>
-        // public static void Trigger_OBSOLETE(uwObject srcObject, int triggerIndex, uwObject[] objList)
-        // {
-        //     if (triggerIndex != 0)
-        //     {
-        //         var Trig = objList[triggerIndex];
-        //         if (Trig != null)
-        //         {
-        //             if (Trig.link != 0)
-        //             {
-        //                 trap.ActivateTrap(Trig, Trig.link, objList);
-        //             }
-        //         }
-        //     }
-        // }
-
-        /// <summary>
-        /// Handles common start events at start of chain.
-        // /// </summary>
-        // public static void StartTriggerChainEvents()
-        // {
-        //     TeleportLevel = -1;
-        //     TeleportTileX = -1;
-        //     TeleportTileY = -1;
-        //     DoRedraw = false;
-        // }      
-
-
+        }    
     }//end class
 }//end namespace

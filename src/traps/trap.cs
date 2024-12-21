@@ -1,10 +1,12 @@
 using System.Diagnostics;
+using Godot;
 
 namespace Underworld
 {
     public class trap : UWClass
     {
         public static int ObjectThatStartedChain = 0;
+        static int RemoveTrapFlags;
 
         public static void ActivateTrap(int character, uwObject trapObj, uwObject ObjectUsed, int triggerX, int triggerY, uwObject[] objList)
         {
@@ -246,49 +248,83 @@ namespace Underworld
                     }                    
                 }                
             }
+        }
+   
 
-            // if (triggerObj.flags1 == 0)
-            // {
-            //     //remove trigger chain
-            //     Debug.Print("TEST ME, THIS TRIGGER SHOULD ONLY FIRE ONCE and clear the trigger chain");
+        public static void RemoveSingleUseTrap(uwObject trapObj, int triggerX, int triggerY)
+        {
+            //var triggertile = UWTileMap.current_tilemap.Tiles[triggerX, triggerY];
+            Debug.Print($"Try and remove trap {trapObj.a_name} {trapObj.index}");
+            RemoveTrapFlags = trapObj.flags_full;
+            if (RemoveTrapFlags != 0)
+            {
+                //removes this trap and all links to it in the gameworld
+                //go throught all the tiles and object chains
+                for (int x = 0; (x<64 && RemoveTrapFlags>0); x++)
+                {
+                    for (int y = 0; (y<64 && RemoveTrapFlags>0); y++)
+                    {
+                        var tile = UWTileMap.current_tilemap.Tiles[x,y];
+                        if (tile.indexObjectList != 0)
+                        {
+                            RemoveTriggersPointingAtTrap(
+                                listhead: tile.indexObjectList, 
+                                trapObjIndex: trapObj.index, 
+                                objList: UWTileMap.current_tilemap.LevelObjects,
+                                tile: tile);
+                        }
+                    }
+                }
+            }
+        }  
 
-            //     //unlink the linked trap from all triggers that link to it.                
-            //     for (int i=1; i<=objList.GetUpperBound(0); i++)
-            //     {
-            //         var obj = objList[i];
-            //         if(obj!=null)
-            //         {
-            //             if ((obj.majorclass==6) && ((obj.minorclass==2)||(obj.minorclass==3)))
-            //             {
-            //                 if (obj.link == trapObj.index)
-            //                 {
-            //                     obj.link = 0; //unlink trigger.
-            //                 }
-            //             }
-            //         }
-            //     }
-            //     //delete trap, assumes trap is on map
-            //     if (UWTileMap.ValidTile(trapObj.tileX, trapObj.tileY))
-            //     {
-            //         ObjectCreator.UnlinkObjectFromTile(trapObj);
-            //     }
-            //     ObjectCreator.RemoveObject(trapObj);
-            // }
-        } //end activate trap
+        static void RemoveTriggersPointingAtTrap(int listhead, int trapObjIndex, uwObject[] objList, TileInfo tile=null)
+        {
+            if (listhead==0){return;}
+            
+            var triggerObj = objList[listhead];
+            var trapObj = objList[trapObjIndex];
 
-       
+            if (tile != null)
+            {//special case for start of tile list.
+                if (tile.indexObjectList == trapObjIndex)
+                {
+                    tile.indexObjectList = trapObj.next;
+                    trapObj.next = 0; 
+                    return;
+                }
+            }
 
-        // public static void TriggerNext(uwObject trapObj, uwObject[] objList, int triggerNextIndex)
-        // {
-        //     //Continue the trigger-trap chain if possible.
-        //     if ((trapObj.link != 0) && (trapObj.is_quant == 0) && (triggerNextIndex !=0 ))
-        //     {
-        //         trigger.Trigger_OBSOLETE(
-        //             srcObject: trapObj,
-        //             triggerIndex: triggerNextIndex,
-        //             objList: objList);
-        //     }
-        // }
-
+            while (triggerObj!=null)
+            {
+                uwObject nextObj = null;
+                if (triggerObj.next!=0)
+                {
+                    nextObj = objList[triggerObj.next];
+                }
+                if (triggerObj.IsTrigger) 
+                {
+                    if (triggerObj.IsTrigger)
+                    {
+                        if (triggerObj.link == trapObj.index)
+                        {
+                            if (triggerObjectDat.triggertype(triggerObj.item_id) == (int)triggerObjectDat.triggertypes.TIMER)
+                            {
+                                Debug.Print("Special handling for deleting timer triggers");
+                            }
+                            ObjectCreator.RemoveObjectFromLinkedList(listhead, triggerObj.index, objList);
+                            ObjectCreator.RemoveObject(triggerObj);
+                            triggerObj.link = 0;
+                            RemoveTrapFlags--;
+                        }
+                    }
+                }
+                if (triggerObj.is_quant==0 && triggerObj.link > 0)
+                {//try recursive
+                    RemoveTriggersPointingAtTrap(triggerObj.link, trapObjIndex, objList);
+                }
+                triggerObj = nextObj;
+            }
+        }
     }//end class
 }//end namespace

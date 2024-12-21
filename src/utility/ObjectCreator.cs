@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
 using Godot;
 
 namespace Underworld
@@ -196,6 +197,8 @@ namespace Underworld
                 }
                 obj.instance = null;
             }
+            obj.item_id = 0;//set to default
+           // obj.link = 0; obj.next = 0; //force remove from chains. Full updates to chains should have been done before calling this function
             obj.tileX=99; obj.tileY=99;
         }
 
@@ -833,6 +836,25 @@ namespace Underworld
             }
         }
 
+        public static bool RemoveObjectFromLinkedList(int listhead, int toRemove, uwObject[] objlist)
+        {
+            //var obj = objlist[toRemove];
+            var next = listhead;
+            while (next!=0)
+            {
+                var nextObject = objlist[next];
+                var headObject = objlist[listhead];
+                if (nextObject.index == toRemove)
+                {
+                    headObject.next = nextObject.next;
+                    nextObject.next = 0;
+                    return true;
+                }
+                listhead = next;//move the listhead on.
+                next = objlist[next].next;//get the next object
+            }               
 
+            return false;
+        }
     } //end class
 } //end namesace

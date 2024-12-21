@@ -1567,5 +1567,40 @@ namespace Underworld
             }
                        
         }
+
+
+        /// <summary>
+        /// Tests if object is a trigger(true) or a not(false)
+        /// </summary>
+        public bool IsTrigger
+        {
+            get
+            {
+                if (_RES == GAME_UW2)
+                {
+                    return (majorclass == 6) && ((minorclass == 2) || (minorclass == 3));
+                }
+                else
+                {
+                    return (majorclass == 6) && (minorclass == 2);
+                }
+            }
+        }
+
+        public bool IsTrap
+        {
+            get
+            {
+                if (_RES == GAME_UW2)
+                {
+                    return (majorclass == 6) && (minorclass < 2);
+                }
+                else
+                {
+                    return (majorclass == 6) && (minorclass < 2);
+                }
+            }
+        }
+
     } //end class
 }//end namespace

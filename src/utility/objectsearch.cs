@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace Underworld
 {
     /// <summary>
@@ -243,6 +245,36 @@ namespace Underworld
                 }
             }
             return -1;
+        }
+
+        /// <summary>
+        /// Returns the index of an object that either links to indexToFind or is the object previous to it in the linked list
+        /// </summary>
+        /// <param name="listhead"></param>
+        /// <param name="indexToFind"></param>
+        /// <param name="objList"></param>
+        /// <returns>0 if nothing found, other the object that links to or is previous to</returns>
+        public static int GetObjectParent(int listhead, int indexToFind, uwObject[] objList)
+        {
+            var next = listhead;
+            while (next != 0)
+            {
+                var nextObj = objList[next];
+                if (nextObj.next == indexToFind)
+                {
+                    return next;
+                }
+                if (nextObj.is_quant==0 && nextObj.link>0)
+                {
+                    var result = GetObjectParent(nextObj.link, indexToFind, objList);
+                    if (result != 0)
+                    {
+                        return result;
+                    }
+                }
+                next = nextObj.next;
+            }
+            return 0;
         }
     }//end class
 }//end namespace
