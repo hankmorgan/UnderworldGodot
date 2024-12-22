@@ -207,6 +207,11 @@ namespace Underworld
                         }
                 }
             }
+            else
+            {
+                //non trap class.
+                return;
+            }
 
             if (!implemented)
             {

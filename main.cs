@@ -175,11 +175,10 @@ public partial class main : Node3D
 			}
 
 
-			if ((tileX < 64) && (tileX >= 0) && (tileY < 64) && (tileY >= 0))
+			if (UWTileMap.ValidTile(tileX, tileY))//((tileX < 64) && (tileX >= 0) && (tileY < 64) && (tileY >= 0))
 			{				
 				if ((playerdat.tileX != tileX) || (playerdat.tileY != tileY))
 				{
-
 					var tileExited = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY];
 					if (UWClass._RES == UWClass.GAME_UW2)
 					{
