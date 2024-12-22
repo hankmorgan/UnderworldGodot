@@ -294,7 +294,7 @@ namespace Underworld
                                 var previousObject = objList[previous];
                                 previousObject.link = 0;
                             }
-                            ObjectCreator.RemoveObject(spell.LinkedSpellObject);                            
+                            ObjectFreeLists.ReleaseFreeObject(spell.LinkedSpellObject);                            
                         }
                         else
                         {

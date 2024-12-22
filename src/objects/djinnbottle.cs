@@ -12,7 +12,7 @@ namespace Underworld
             }            
             if (playerdat.GetXClock(3)<5)
             {//player has not coated in treated filanium, baked in lava and cast ironflesh
-                ObjectCreator.DeleteObjectFromTile(obj.tileX,obj.tileY, obj.index,true);
+                ObjectRemover.DeleteObjectFromTile(obj.tileX,obj.tileY, obj.index,true);
                 uimanager.AddToMessageScroll(GameStrings.GetString(1,0x171));
                 Debug.Print("Kill the player with 255 points of raw damage");
                 playerdat.play_hp = 0;//probably need to wait for next frame before processing player death
@@ -28,7 +28,7 @@ namespace Underworld
                 )
                 {
                    //at the sigil
-                   ObjectCreator.DeleteObjectFromTile(obj.tileX,obj.tileY, obj.index,true);
+                   ObjectRemover.DeleteObjectFromTile(obj.tileX,obj.tileY, obj.index,true);
                    uimanager.FlashColour(2, uimanager.CutsSmall);
                    playerdat.SetXClock(3, 6);//djinn has been captured
                    uimanager.AddToMessageScroll(GameStrings.GetString(1,0x150));
@@ -40,7 +40,7 @@ namespace Underworld
                 }
                 else
                 { // not a sigil
-                    ObjectCreator.DeleteObjectFromTile(obj.tileX,obj.tileY, obj.index,true);
+                    ObjectRemover.DeleteObjectFromTile(obj.tileX,obj.tileY, obj.index,true);
                     uimanager.FlashColour(2, uimanager.CutsSmall);
                 }                
             }

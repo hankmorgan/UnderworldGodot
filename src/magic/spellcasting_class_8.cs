@@ -8,7 +8,7 @@ namespace Underworld
         {
             //Preamble of getting positon to spawn in.  based on facing direction of the player
             var itemid = -1;
-            var whichList = ObjectCreator.ObjectListType.StaticList;
+            var whichList = ObjectFreeLists.ObjectListType.StaticList;
             bool isNPCSpawn = false;
             var tile = UWTileMap.GetTileInDirectionFromCamera(1.2f);
             if (tile != null)
@@ -67,7 +67,7 @@ namespace Underworld
                         while ((!ValidMonster) && (retries<=16))
                         {
                             itemid = 0x40 + (Rng.r.Next(0, monsterlevel) & 0x3F);
-                            whichList = ObjectCreator.ObjectListType.MobileList;
+                            whichList = ObjectFreeLists.ObjectListType.MobileList;
                             if (
                                 (critterObjectDat.avghit(itemid) == 0) 
                                 || critterObjectDat.isSwimmer(itemid) 
@@ -98,7 +98,7 @@ namespace Underworld
                             var demons = new int[]{0x4B, 0x4B, 0x5E, 0x64, 0x68};
                             var demonIndex = (Rng.r.Next(0,0x1E) + playerdat.Casting)/0xC;                            
                             itemid = demons[demonIndex];
-                            whichList = ObjectCreator.ObjectListType.MobileList;
+                            whichList = ObjectFreeLists.ObjectListType.MobileList;
                             break;
                         }
                         else
@@ -125,7 +125,7 @@ namespace Underworld
             if (itemid != -1)
             {
                 UWTileMap.GetRandomXYZForTile(tile, out int newxpos, out int newypos, out int newzpos);
-                if ((whichList == ObjectCreator.ObjectListType.MobileList) && (isNPCSpawn))
+                if ((whichList == ObjectFreeLists.ObjectListType.MobileList) && (isNPCSpawn))
                 {
                     if (critterObjectDat.isFlier(itemid))
                     {

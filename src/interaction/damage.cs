@@ -288,7 +288,7 @@ namespace Underworld
                                     {//already debris, remove it
                                         if (WorldObject)
                                         {
-                                            ObjectCreator.DeleteObjectFromTile(
+                                            ObjectRemover.DeleteObjectFromTile(
                                                 tileX: objToDestroy.tileX,
                                                 tileY: objToDestroy.tileY,
                                                 indexToDelete: objToDestroy.index,

@@ -83,12 +83,11 @@ namespace Underworld
                                     //Test for trap repeat.
                                     if (TriggerObject.flags1 == 0)
                                     {
-                                        //var tile = UWTileMap.current_tilemap.Tiles[triggerX, triggerY];
+                                        var tile = UWTileMap.current_tilemap.Tiles[triggerX, triggerY];
                                         //Debug.Print($"Test me. remove trap {trapObj.index} {trapObj.a_name} from object list here");
-                                        trap.RemoveSingleUseTrap(
+                                        ObjectRemover.RemoveTrapChain(
                                             trapObj: trapObj, 
-                                            triggerX: triggerX,
-                                            triggerY: triggerY);                                        
+                                            ptrListHead: tile.Ptr+2);                                        
                                     }
                                     //if uw2 test for pressure triggers
                                     if (_RES == GAME_UW2)
@@ -286,7 +285,7 @@ namespace Underworld
         /// Debug/Test function that will pick the next scheduled trigger on the map and run it.
         /// </summary>
         public static void RunNextScheduledTrigger()
-        {
+        {            
             if (_RES!=GAME_UW2){return;}
             if ((scheduledtriggerindex<256) ||(scheduledtriggerindex>=1024))
             {

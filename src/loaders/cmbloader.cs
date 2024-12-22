@@ -114,7 +114,7 @@ namespace Underworld
                     {
                         playerdat.ObjectInHand = -1;
                         uimanager.instance.mousecursor.SetCursorToCursor();
-                        ObjectCreator.RemoveObject(ItemInHand);
+                        ObjectFreeLists.ReleaseFreeObject(ItemInHand);
                     }
                     else
                     {
@@ -150,7 +150,7 @@ namespace Underworld
                     {
                         playerdat.ObjectInHand = -1;
                         uimanager.instance.mousecursor.SetCursorToCursor();
-                        ObjectCreator.RemoveObject(ItemInHand);
+                        ObjectFreeLists.ReleaseFreeObject(ItemInHand);
                     }
                     else
                     {

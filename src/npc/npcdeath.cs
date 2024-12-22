@@ -243,7 +243,7 @@ namespace Underworld
                                 {//initial encounter in the keep
                                     if (playerdat.GetQuest(54)==1)
                                     {
-                                        ObjectCreator.DeleteObjectFromTile(critter.tileX, critter.tileY, critter.index, true);                                       
+                                        ObjectRemover.DeleteObjectFromTile(critter.tileX, critter.tileY, critter.index, true);                                       
                                     }
                                     else
                                     {
@@ -543,7 +543,7 @@ namespace Underworld
                     xpos: (short)critter.xpos,
                     ypos: (short)critter.zpos,
                     zpos: (short)(tile.floorHeight << 3),
-                    WhichList: ObjectCreator.ObjectListType.StaticList);
+                    WhichList: ObjectFreeLists.ObjectListType.StaticList);
             }
 
             //Drop corpse
@@ -565,7 +565,7 @@ namespace Underworld
                         xpos: (short)critter.xpos,
                         ypos: (short)critter.zpos,
                         zpos: (short)(tile.floorHeight << 3),
-                        WhichList: ObjectCreator.ObjectListType.StaticList);
+                        WhichList: ObjectFreeLists.ObjectListType.StaticList);
                 }
             }
         }
@@ -602,7 +602,7 @@ namespace Underworld
                         previousObject.next = nextObj.next;
                         nextObj.next = 0;
                     }
-                    ObjectCreator.RemoveObject(nextObj);
+                    ObjectFreeLists.ReleaseFreeObject(nextObj);
                 }
                 else
                 {//not a match. try next
@@ -622,7 +622,7 @@ namespace Underworld
                     {
                         if (WhotoRemove.Contains(n.npc_whoami))
                         {
-                            ObjectCreator.DeleteObjectFromTile(n.tileX, n.tileY, n.index, true);
+                            ObjectRemover.DeleteObjectFromTile(n.tileX, n.tileY, n.index, true);
                         }
                     }
                 }
@@ -685,7 +685,7 @@ namespace Underworld
             SpecialDeathCases(critter, 1);
             DropRemainsAndLoot(critter);
             //remove from tile and free object
-            ObjectCreator.DeleteObjectFromTile(critter.tileX, critter.tileY, critter.index, true);
+            ObjectRemover.DeleteObjectFromTile(critter.tileX, critter.tileY, critter.index, true);
         }
     }//end class
 }//end namespace

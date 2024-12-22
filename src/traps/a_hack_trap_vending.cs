@@ -66,7 +66,7 @@ namespace Underworld
                         tileX: trapObj.tileX, tileY: trapObj.tileY,
                         xpos: 4, ypos: 4,
                         zpos: (short)(tile.floorHeight << 3),
-                        WhichList: ObjectCreator.ObjectListType.StaticList);
+                        WhichList: ObjectFreeLists.ObjectListType.StaticList);
                 }
             }
         }
@@ -125,7 +125,7 @@ namespace Underworld
                     {//target value is greater or equal to the stack size. the stack must be consumed.
                         if (!CountOnly)
                         {//consume the stack
-                            ObjectCreator.DeleteObjectFromTile(tileX, tileY, objectToCheck.index);
+                            ObjectRemover.DeleteObjectFromTile(tileX, tileY, objectToCheck.index);
                         }
                         AmountToCollect -=coinsdeposited;//update the remainin count.
                     }

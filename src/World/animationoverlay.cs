@@ -198,7 +198,7 @@ namespace Underworld
                                             else
                                             {
                                                 ovl.Duration = 0;
-                                                ObjectCreator.DeleteObjectFromTile(
+                                                ObjectRemover.DeleteObjectFromTile(
                                                     tileX: ovl.tileX, 
                                                     tileY: ovl.tileY, 
                                                     indexToDelete: (short)ovl.link);

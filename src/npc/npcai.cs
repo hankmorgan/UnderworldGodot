@@ -189,7 +189,7 @@ namespace Underworld
                             DropRemainsAndLoot(critter);
 
                             //remove from tile and free object
-                            ObjectCreator.DeleteObjectFromTile(critter.tileX, critter.tileY, critter.index, true);
+                            ObjectRemover.DeleteObjectFromTile(critter.tileX, critter.tileY, critter.index, true);
                             return;
                         }
                         else

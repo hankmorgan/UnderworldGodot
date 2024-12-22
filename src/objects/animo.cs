@@ -186,7 +186,7 @@ namespace Underworld
         {
             //Debug.Print($"Placeholder spawn animo {subclass}");
             var itemid = 448 + subclass;
-            //var slot = ObjectCreator.PrepareNewObject(itemid, ObjectCreator.ObjectListType.StaticList);
+            //var slot = ObjectCreator.PrepareNewObject(itemid, ObjectFreeLists.ObjectListType.StaticList);
             //var newObject = UWTileMap.current_tilemap.LevelObjects[slot];
             var xpos = uwObject.FloatXYToXYPos(-point.X);
             var ypos = uwObject.FloatXYToXYPos(point.Z);
@@ -200,7 +200,7 @@ namespace Underworld
                 xpos: xpos, 
                 ypos: ypos, 
                 zpos: zpos, 
-                WhichList: ObjectCreator.ObjectListType.StaticList);
+                WhichList: ObjectFreeLists.ObjectListType.StaticList);
             if (newObject!=null)
             {
                 var duration = animationObjectDat.endFrame(itemid)-animationObjectDat.startFrame(itemid);

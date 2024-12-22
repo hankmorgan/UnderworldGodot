@@ -136,12 +136,12 @@ namespace Underworld
             if (template.IsStatic)
             {
                 //static object spawn
-                slot = ObjectCreator.GetAvailableObjectSlot(ObjectCreator.ObjectListType.StaticList);
+                slot = ObjectFreeLists.GetAvailableObjectSlot(ObjectFreeLists.ObjectListType.StaticList);
             }
             else
             {
                 //mobile object spawn
-                slot = ObjectCreator.GetAvailableObjectSlot(ObjectCreator.ObjectListType.MobileList);
+                slot = ObjectFreeLists.GetAvailableObjectSlot(ObjectFreeLists.ObjectListType.MobileList);
             }
             var newobj = UWTileMap.current_tilemap.LevelObjects[slot];
             //copy from template to new obj

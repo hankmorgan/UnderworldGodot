@@ -9,7 +9,7 @@ namespace Underworld
             var tileX = trapObj.quality; var tileY = trapObj.owner;           
             var indexToDelete = trapObj.link;
             Debug.Print($"Delete object trap: Deleting {indexToDelete}");
-            ObjectCreator.DeleteObjectFromTile(
+            ObjectRemover.DeleteObjectFromTile(
                 tileX: tileX, 
                 tileY: tileY,
                 indexToDelete: indexToDelete);

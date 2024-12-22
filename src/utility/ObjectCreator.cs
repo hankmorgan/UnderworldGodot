@@ -1,6 +1,6 @@
 using System.Diagnostics;
-using System.Reflection.Metadata.Ecma335;
 using Godot;
+
 
 namespace Underworld
 {
@@ -23,12 +23,6 @@ namespace Underworld
         /// </summary>
         public static Node3D worldobjects;
 
-        public enum ObjectListType
-        {
-            StaticList = 0,
-            MobileList = 1
-        };
-
         /// <summary>
         /// Creates a default static object int the tile,
         /// </summary>
@@ -36,7 +30,7 @@ namespace Underworld
         /// <param name="tileX"></param>
         /// <param name="tileY"></param>
         /// <returns></returns>
-        public static uwObject spawnObjectInTile(int itemid, int tileX, int tileY, short xpos, short ypos, short zpos, ObjectListType WhichList = ObjectListType.StaticList)
+        public static uwObject spawnObjectInTile(int itemid, int tileX, int tileY, short xpos, short ypos, short zpos, ObjectFreeLists.ObjectListType WhichList = ObjectFreeLists.ObjectListType.StaticList)
         {
             var slot = ObjectCreator.PrepareNewObject(itemid, WhichList);
             //add to critter object list
@@ -74,9 +68,9 @@ namespace Underworld
         /// </summary>
         /// <param name="item_id"></param>
         /// <returns></returns>
-        public static int PrepareNewObject(int item_id, ObjectListType WhichList = ObjectListType.StaticList)
+        public static int PrepareNewObject(int item_id, ObjectFreeLists.ObjectListType WhichList = ObjectFreeLists.ObjectListType.StaticList)
         {
-            int slot = GetAvailableObjectSlot(WhichList);
+            int slot = ObjectFreeLists.GetAvailableObjectSlot(WhichList);
             if (slot != 0)
             {
                 var obj = UWTileMap.current_tilemap.LevelObjects[slot];
@@ -109,7 +103,7 @@ namespace Underworld
                         obj.link = 0;
                         break;
                 }
-                if (WhichList == ObjectListType.MobileList)
+                if (WhichList == ObjectFreeLists.ObjectListType.MobileList)
                 {
                     //mobile object                    
                     if (obj.majorclass == 1) //NPC
@@ -125,82 +119,7 @@ namespace Underworld
             }
             return slot;
         }
-
-        /// <summary>
-        /// Gets an object slot that can be allocated for a new object
-        /// </summary>
-        /// <param name="WhichList"></param>
-        /// <returns></returns>
-        public static int GetAvailableObjectSlot(ObjectListType WhichList = ObjectListType.StaticList)
-        {
-            //look up object free list
-            switch (WhichList)
-            {
-                case ObjectListType.StaticList:
-                    //Move PTR down, get object at that point.
-                    UWTileMap.current_tilemap.StaticFreeListPtr--;
-                    Debug.Print($"Allocating Static {UWTileMap.current_tilemap.StaticFreeListObject} Pointer decremented to {UWTileMap.current_tilemap.StaticFreeListPtr}");
-                    return UWTileMap.current_tilemap.StaticFreeListObject;
-                case ObjectListType.MobileList:
-                    UWTileMap.current_tilemap.MobileFreeListPtr--;
-                    Debug.Print($"Allocating Mobile {UWTileMap.current_tilemap.MobileFreeListObject} Pointer decremented to {UWTileMap.current_tilemap.MobileFreeListPtr}");
-                    //add to the active mobiles list                    
-                    var newslot = UWTileMap.current_tilemap.MobileFreeListObject;
-                    UWTileMap.current_tilemap.SetActiveMobileAtIndex(UWTileMap.current_tilemap.NoOfActiveMobiles, newslot);
-                    UWTileMap.current_tilemap.NoOfActiveMobiles++;
-                    return newslot;
-
-            }
-            return 0;
-        }
-
-        /// <summary>
-        /// Removes object from the game world and allocates free ptrs Does not update object chains
-        /// </summary>
-        /// <param name="obj"></param>
-        public static void RemoveObject(uwObject obj)
-        {
-            //remove from world
-            if (obj.index < 256)
-            {//mobile
-                UWTileMap.current_tilemap.MobileFreeListObject = obj.index;
-                UWTileMap.current_tilemap.MobileFreeListPtr++;
-                Debug.Print($"Freeing Mobile {obj.index} Pointer incremented to {UWTileMap.current_tilemap.MobileFreeListPtr}");
-                for (int i=0; i<UWTileMap.current_tilemap.NoOfActiveMobiles;i++)
-                {
-                    var atSlot = UWTileMap.current_tilemap.GetActiveMobileAtIndex(i);
-                    if (atSlot == obj.index)
-                    {                                           
-                        UWTileMap.current_tilemap.NoOfActiveMobiles--;
-                        if (i<UWTileMap.current_tilemap.NoOfActiveMobiles)
-                        {
-                            var atEnd = UWTileMap.current_tilemap.GetActiveMobileAtIndex(UWTileMap.current_tilemap.NoOfActiveMobiles); 
-                            //shift down the object at the end of this list
-                            UWTileMap.current_tilemap.SetActiveMobileAtIndex(i, atEnd);
-                        }
-                        break;
-                    }
-                }
-            }
-            else
-            {//static
-                UWTileMap.current_tilemap.StaticFreeListObject = obj.index;
-                UWTileMap.current_tilemap.StaticFreeListPtr++;
-                Debug.Print($"Freeing Static {obj.index} Pointer incremented to {UWTileMap.current_tilemap.StaticFreeListPtr}");
-            }
-
-            if (obj.instance != null)
-            {
-                if (obj.instance.uwnode != null)
-                {
-                    obj.instance.uwnode.QueueFree();
-                }
-                obj.instance = null;
-            }
-            obj.item_id = 0;//set to default
-           // obj.link = 0; obj.next = 0; //force remove from chains. Full updates to chains should have been done before calling this function
-            obj.tileX=99; obj.tileY=99;
-        }
+        
 
         /// <summary>
         /// Process object list
@@ -671,11 +590,11 @@ namespace Underworld
                     {//used from object in hnand
                         playerdat.ObjectInHand = -1;
                         uimanager.instance.mousecursor.SetCursorToCursor();
-                        RemoveObject(obj);
+                        ObjectFreeLists.ReleaseFreeObject(obj);
                     }
                     else
                     {//used from a tile
-                        DeleteObjectFromTile(obj.tileX, obj.tileY, obj.index);
+                        ObjectRemover.DeleteObjectFromTile(obj.tileX, obj.tileY, obj.index);
                     }
                 }
             }
@@ -735,126 +654,38 @@ namespace Underworld
         }
 
 
-        /// <summary>
-        /// Deletes the specified object from the tile (searches first level only, does not remove from containers)
-        /// </summary>
-        /// <param name="tileX"></param>
-        /// <param name="tileY"></param>
-        /// <param name="indexToDelete"></param>
-        public static void DeleteObjectFromTile(int tileX, int tileY, short indexToDelete, bool RemoveFromWorld = true)
-        {
-            var objList = UWTileMap.current_tilemap.LevelObjects;
-            if (indexToDelete != 0)
-            {
-                var tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];
-                var objectToDelete = objList[indexToDelete];
-                if (objectToDelete != null)
-                {
-                    if (tile.indexObjectList == indexToDelete)
-                    {
-                        tile.indexObjectList = objectToDelete.next;
-                        objectToDelete.next = 0;
-                        if (RemoveFromWorld)
-                        {
-                            ObjectCreator.RemoveObject(objectToDelete);
-                        }
-                        return;
-                    }
-                    else
-                    {
-                        //search
-                        var next = tile.indexObjectList;
-
-                        while (next != 0)
-                        {
-                            var nextObject = objList[next];
-                            if (nextObject.next == indexToDelete)
-                            {
-                                nextObject.next = objectToDelete.next;
-                                objectToDelete.next = 0;
-                                if (RemoveFromWorld)
-                                {
-                                    ObjectCreator.RemoveObject(objectToDelete);
-                                }
-                                return;
-                            }
-                            next = nextObject.next;
-                        }
-                        Debug.Print($"Was unable to find {indexToDelete} to delete it in {tileX},{tileY}");
-                    }
-                }
-            }
-        }
-
-
-        /// <summary>
-        /// Unlinks an object from the top level of a tile.
-        /// </summary>
-        /// <param name="ObjectToUnlink"></param>
-        /// <returns></returns>
-        public static bool UnlinkObjectFromTile(uwObject ObjectToUnlink)
-        {
-            //unlink trap from it's tile if needed
-            var tile = UWTileMap.current_tilemap.Tiles[ObjectToUnlink.tileX, ObjectToUnlink.tileY];
-            var previous = 0;
-            var next = tile.indexObjectList;
-            while (next != 0)
-            {
-                var nextObj = UWTileMap.current_tilemap.LevelObjects[next];
-                if (next == ObjectToUnlink.index)
-                {
-                    if (previous == 0)
-                    {
-                        tile.indexObjectList = ObjectToUnlink.next;
-                    }
-                    else
-                    {
-                        var prevObject = UWTileMap.current_tilemap.LevelObjects[previous];
-                        prevObject.next = ObjectToUnlink.next;
-                        ObjectToUnlink.next = 0;
-                    }
-                    return true;
-                }
-                previous = nextObj.index;
-                next = nextObj.next;
-            }
-            return false;//no unlinking
-        }
-
-        public static void RefreshSprite(uwObject objToRefresh)
-        {//assumes sprite to sprite refresh
-            if (objToRefresh.instance != null)
-            {
-                if (objToRefresh.instance.uwnode != null)
-                {
-                    var nd = (uwMeshInstance3D)objToRefresh.instance.uwnode.GetChild(0);
-                    if (nd != null)
-                    {
-                        nd.Mesh.SurfaceSetMaterial(0, ObjectCreator.grObjects.GetMaterial(objToRefresh.item_id));
-                    }
-                }
-            }
-        }
-
-        public static bool RemoveObjectFromLinkedList(int listhead, int toRemove, uwObject[] objlist)
-        {
-            //var obj = objlist[toRemove];
-            var next = listhead;
-            while (next!=0)
-            {
-                var nextObject = objlist[next];
-                var headObject = objlist[listhead];
-                if (nextObject.index == toRemove)
-                {
-                    headObject.next = nextObject.next;
-                    nextObject.next = 0;
-                    return true;
-                }
-                listhead = next;//move the listhead on.
-                next = objlist[next].next;//get the next object
-            }               
-
-            return false;
-        }
+        // /// <summary>
+        // /// Unlinks an object from the top level of a tile.
+        // /// </summary>
+        // /// <param name="ObjectToUnlink"></param>
+        // /// <returns></returns>
+        // public static bool UnlinkObjectFromTile(uwObject ObjectToUnlink)
+        // {
+        //     //unlink trap from it's tile if needed
+        //     var tile = UWTileMap.current_tilemap.Tiles[ObjectToUnlink.tileX, ObjectToUnlink.tileY];
+        //     var previous = 0;
+        //     var next = tile.indexObjectList;
+        //     while (next != 0)
+        //     {
+        //         var nextObj = UWTileMap.current_tilemap.LevelObjects[next];
+        //         if (next == ObjectToUnlink.index)
+        //         {
+        //             if (previous == 0)
+        //             {
+        //                 tile.indexObjectList = ObjectToUnlink.next;
+        //             }
+        //             else
+        //             {
+        //                 var prevObject = UWTileMap.current_tilemap.LevelObjects[previous];
+        //                 prevObject.next = ObjectToUnlink.next;
+        //                 ObjectToUnlink.next = 0;
+        //             }
+        //             return true;
+        //         }
+        //         previous = nextObj.index;
+        //         next = nextObj.next;
+        //     }
+        //     return false;//no unlinking
+        // }
     } //end class
 } //end namesace

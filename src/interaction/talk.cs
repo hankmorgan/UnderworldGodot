@@ -51,7 +51,7 @@ namespace Underworld
                 itemid: itemid,
                 tileX: tileX, tileY: tileY,
                 xpos: 0, ypos: 0, zpos: 0,
-                WhichList: ObjectCreator.ObjectListType.MobileList);
+                WhichList: ObjectFreeLists.ObjectListType.MobileList);
             temporaryTalker.npc_whoami = (short)whoami;
             temporaryTalker.npc_attitude = (short)attitude;
             temporaryTalker.npc_goal = (byte)goal;

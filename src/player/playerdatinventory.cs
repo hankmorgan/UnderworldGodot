@@ -648,7 +648,7 @@ namespace Underworld
             //UWTileMap.current_tilemap.StaticFreeListPtr--;
             //Debug.Print($"Allocating {UWTileMap.current_tilemap.StaticFreeListObject} (pointer decremented)");
 
-            var newIndex = ObjectCreator.GetAvailableObjectSlot();
+            var newIndex = ObjectFreeLists.GetAvailableObjectSlot();
 
             //(short)UWTileMap.current_tilemap.StaticFreeListObject;
             var NewObj = UWTileMap.current_tilemap.LevelObjects[newIndex];
@@ -753,7 +753,7 @@ namespace Underworld
             }
 
             //Destroy the world object
-            ObjectCreator.RemoveObject(obj);
+            ObjectFreeLists.ReleaseFreeObject(obj);
             return newIndex;
         }
 

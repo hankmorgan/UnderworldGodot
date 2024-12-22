@@ -15,7 +15,7 @@ namespace Underworld
                 xpos: (short)trapObj.tileX, 
                 ypos: (short)trapObj.tileY, 
                 zpos: trapObj.zpos, 
-                WhichList: ObjectCreator.ObjectListType.StaticList);
+                WhichList: ObjectFreeLists.ObjectListType.StaticList);
             Debug.Print("TODO: spawn this arrow trap object as a projectile");
         }
     }//end class

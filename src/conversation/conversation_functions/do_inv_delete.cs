@@ -27,7 +27,7 @@ namespace Underworld
                             previousObj.next = nextObject.next;
                             nextObject.next = 0;
                         }
-                    ObjectCreator.RemoveObject(nextObject);
+                    ObjectFreeLists.ReleaseFreeObject(nextObject);
                     result_register = 1;
                     return;
                 }

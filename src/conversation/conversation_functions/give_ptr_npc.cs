@@ -42,7 +42,7 @@ namespace Underworld
                             itemid: ptrObject.item_id, 
                             tileX: 99, tileY: 99, 
                             xpos: ptrObject.xpos, ypos: ptrObject.ypos, zpos: ptrObject.zpos, 
-                            WhichList: ObjectCreator.ObjectListType.StaticList);
+                            WhichList: ObjectFreeLists.ObjectListType.StaticList);
 
                         clone.is_quant = ptrObject.is_quant;
                         clone.flags_full = ptrObject.flags_full;
