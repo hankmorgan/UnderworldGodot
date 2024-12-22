@@ -126,7 +126,7 @@ namespace Underworld
                         }
                         break;
                     }
-                case 18://button triggering in Scintillus academy 5
+                case 18://button triggering talorus
                 {
                     if (_RES==GAME_UW2)
                     {
@@ -163,6 +163,25 @@ namespace Underworld
 
                     break;
                 }
+                case 21://Change object zpos
+                        {//used in the tombs?
+                        if (_RES==GAME_UW2)
+                        {
+                            //TODO
+                            a_hack_trap_resetzpos.Activate(trapObj: trapObj, 1);
+                            return true;
+                        }
+                        break;
+                    }
+                case 22://Change object zpos
+                    {
+                        if (_RES==GAME_UW2)
+                        {
+                            a_hack_trap_resetzpos.Activate(trapObj: trapObj, mode: 0);
+                            return true;
+                        }
+                        break;
+                    }
                 case 24://bullfrog in UW1 and something else in UW2
                     {
                         if (_RES != GAME_UW2)
