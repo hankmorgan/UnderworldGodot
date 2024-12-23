@@ -82,5 +82,15 @@ namespace Underworld
                 }
             }
         }
+
+        public static void set_goal_and_target_by_array(uwObject critter, int[] paramsarray)
+        {
+            npc.SetGoalAndGtarg(
+                critter: critter, 
+                goal: paramsarray[7], 
+                target: paramsarray[6]);
+        }
+
+
     }//end class
 }//end namespace

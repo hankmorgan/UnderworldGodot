@@ -67,6 +67,7 @@ namespace Underworld
                                                 triggerX: triggerX,
                                                 triggerY: triggerY,                                                
                                                 objList: objList,
+                                                character: character,
                                                 ref triggerNextIndex);
                                         break;
                                     }

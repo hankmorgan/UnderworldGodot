@@ -19,7 +19,7 @@ namespace Underworld
                         if (tile.indexObjectList != 0)
                         {
                             var obj = UWTileMap.current_tilemap.LevelObjects[tile.indexObjectList];
-                            CallBacks.CallFunctionOnObjectsInChain(
+                            CallBacks.RunCodeOnObjectsInChain(
                                 methodToCall: Flicker,
                                 obj: obj,
                                 objList: UWTileMap.current_tilemap.LevelObjects);

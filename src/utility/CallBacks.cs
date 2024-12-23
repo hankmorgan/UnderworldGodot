@@ -7,8 +7,9 @@ namespace Underworld
     public class CallBacks : UWClass
     {
 
-        public delegate bool AreaEffectCallback(int x, int y, uwObject obj, TileInfo tile, int srcIndex);
+        public delegate bool AreaEffectCallBack(int x, int y, uwObject obj, TileInfo tile, int srcIndex);
         public delegate bool SingleObjectCallBack(uwObject obj);
+        public delegate void NPCChangeCallBack(uwObject critter, int[] paramsarray);
 
         /// <summary>
         /// Finds objects in area around tile and runs a function against them
@@ -21,7 +22,7 @@ namespace Underworld
         /// <param name="tileY0"></param>
         /// <param name="xWidth"></param>
         /// <param name="yHeight"></param>
-        public static void RunCodeOnTargetsInArea(AreaEffectCallback methodToCall, int Rng_arg0, int srcItemIndex, int typeOfTargetArg8, int tileX0, int tileY0, int xWidth, int yHeight)
+        public static void RunCodeOnTargetsInArea(AreaEffectCallBack methodToCall, int Rng_arg0, int srcItemIndex, int typeOfTargetArg8, int tileX0, int tileY0, int xWidth, int yHeight)
         {
             int varE = 0;
             if (
@@ -149,7 +150,6 @@ namespace Underworld
             }
         }
 
-
         /// <summary>
         /// Calls method on each object in the chain starting at first obj
         /// </summary>
@@ -157,9 +157,9 @@ namespace Underworld
         /// <param name="obj"></param>
         /// <param name="objList"></param>
         /// <returns></returns>
-        public static bool CallFunctionOnObjectsInChain(SingleObjectCallBack methodToCall, uwObject obj, uwObject[] objList)
+        public static bool RunCodeOnObjectsInChain(SingleObjectCallBack methodToCall, uwObject obj, uwObject[] objList)
         {
-            if (obj==null)
+            if (obj == null)
             {
                 return false;
             }
@@ -177,14 +177,14 @@ namespace Underworld
                         if (obj.is_quant == 0 && obj.link > 0)
                         {
                             var linkedObject = objList[obj.link];
-                            if (CallFunctionOnObjectsInChain(methodToCall, linkedObject, objList))
+                            if (RunCodeOnObjectsInChain(methodToCall, linkedObject, objList))
                             {
                                 return true;
                             }
                             else
                             {
                                 //fall down and get next
-                            }                            
+                            }
                         }
                     }
 
@@ -203,6 +203,30 @@ namespace Underworld
             }
         }
 
+        public static void RunCodeOnNPCS(NPCChangeCallBack methodToCall, int whoami, int[] paramsArray, bool loopAll)
+        {
+            for (int i = 0; i < UWTileMap.current_tilemap.NoOfActiveMobiles; i++)
+            {
+                var index = UWTileMap.current_tilemap.GetActiveMobileAtIndex(i);
+                if ((index != 0) && (index < 256))
+                {
+                    var obj = UWTileMap.current_tilemap.LevelObjects[index];
+                    if (obj.majorclass == 1)
+                    {
+                        if (obj.npc_whoami == whoami)
+                        {
+                            methodToCall(
+                                critter: obj, 
+                                paramsarray: paramsArray);
+                            if (!loopAll)
+                            {
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
     }//end class
 }//end namespace

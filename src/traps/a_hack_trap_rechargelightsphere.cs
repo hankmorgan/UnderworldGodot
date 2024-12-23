@@ -13,7 +13,7 @@ namespace Underworld
             {
                 //Recharge all light spheres in the tile.
                 var obj = UWTileMap.current_tilemap.LevelObjects[tile.indexObjectList];
-                CallBacks.CallFunctionOnObjectsInChain(
+                CallBacks.RunCodeOnObjectsInChain(
                     methodToCall: RechargeLightSphere, 
                     obj: obj, 
                     objList: UWTileMap.current_tilemap.LevelObjects );

@@ -16,7 +16,7 @@ namespace Underworld
             return true;//unimplemented
         }
 
-        public static bool ActivateHackTrap(uwObject trapObj, uwObject ObjectUsed, int triggerX, int triggerY, uwObject[] objList, ref short triggerNextIndex)
+        public static bool ActivateHackTrap(uwObject trapObj, uwObject ObjectUsed, int triggerX, int triggerY, uwObject[] objList, int character, ref short triggerNextIndex)
         {
             switch (trapObj.quality)
             {
@@ -345,6 +345,15 @@ namespace Underworld
                             return true;
                         }
                     }
+                case 43: // change goal and target
+                    {
+                        if (_RES==GAME_UW2)
+                        {
+                            a_hack_trap_changegoaltarget.Activate(trapObj: trapObj, character: character);
+                        }
+                        break;
+                    }
+
                 case 54://world gem rotation
                     {
                         if (_RES == GAME_UW2)
