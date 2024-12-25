@@ -202,6 +202,18 @@ namespace Underworld
                                         implemented =true;
                                         break;
                                     }
+                                case 8: //Bridge trap
+                                    {
+                                        if (_RES==GAME_UW2)
+                                        {
+                                            implemented = true;
+                                            a_bridge_trap.Activate(
+                                                trapObj:trapObj, 
+                                                triggerX: triggerX, 
+                                                triggerY: triggerY);
+                                        }
+                                        break;
+                                    }
                             }
                             break;
                         }

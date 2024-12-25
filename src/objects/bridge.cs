@@ -163,7 +163,7 @@ namespace Underworld
             {
                 case 0:
                 {
-                    var textureindex = (uwobject.enchantment<<3) | (int)uwobject.flags;
+                    int textureindex = uwobject.flags_full;  //(uwobject.enchantment<<3) | (int)uwobject.flags;
                     if (textureindex >= 2)
                     {
                         if (_RES==GAME_UW2)
