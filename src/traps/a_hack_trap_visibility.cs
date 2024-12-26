@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace Underworld
 {
 
@@ -14,6 +16,7 @@ namespace Underworld
             ObjToChange.invis = newVis;
             if (ObjToChange.invis==1)
             {
+                Debug.Print($"Hiding {ObjToChange.a_name} {ObjToChange.index}");
                 //hide object
                 if (ObjToChange.instance!=null)
                 {
@@ -23,6 +26,7 @@ namespace Underworld
             else
             {
                 //show object
+                Debug.Print($"Showing {ObjToChange.a_name} {ObjToChange.index}");
                 if (ObjToChange.instance==null)
                 {
                     ObjectCreator.RenderObject(ObjToChange, UWTileMap.current_tilemap);
