@@ -6,43 +6,43 @@ namespace Underworld
     {
         public static void Activate(uwObject trapObj, int triggerX, int triggerY)
         {
-            var var30 = triggerX;
-            var var32 = triggerY;
-            var var36 = 0;
-            var var38 = 0;
-            int var34;
+            var tileX = triggerX;
+            var tileY = triggerY;
+            var xStep = 0;
+            var yStep = 0;
+            int step;
 
             trapObj.heading = (short)(trapObj.heading & 0x6);
             if (trapObj.heading < 4)
             {
-                var34 = 1;  // (1<<1)-1
+                step = 1;  // (1<<1)-1
             }
             else
             {
-                var34 = -1; //(0<<1) - 1;
+                step = -1; //(0<<1) - 1;
             }
 
             if ((trapObj.heading & 2) == 0)
             {
-                var38 = var34;
+                yStep = step;
                 
             }
             else
             {
-                var36 = var34;
+                xStep = step;
             }
 
-            var34 = trapObj.quality;
+            var counter = trapObj.quality;
 
-            while (var34>0)
+            while (counter>0)
             {                
                 switch (trapObj.owner>>4)
                 {
                     case 1:
                         {
                             var foundBridge = CreateBridge(
-                                tileX: var30, 
-                                tileY: var32, 
+                                tileX: tileX, 
+                                tileY: tileY, 
                                 heading: trapObj.heading, 
                                 zpos: trapObj.zpos);
                             if (foundBridge != null)
@@ -57,8 +57,8 @@ namespace Underworld
                         }
                     case 2://remove
                         DestroyBridge(
-                            tileX: var30, 
-                            tileY: var32, 
+                            tileX: tileX, 
+                            tileY: tileY, 
                             heading: trapObj.heading, 
                             zpos: trapObj.zpos);
                         break;
@@ -67,9 +67,9 @@ namespace Underworld
 
 
                 //decrement and move to next tile
-                var30 = var30 + var36;
-                var32 = var32 + var38;
-                var34--;
+                tileX = tileX + xStep;
+                tileY = tileY + yStep;
+                counter--;
             }
 
         }
