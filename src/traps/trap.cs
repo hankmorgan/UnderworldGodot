@@ -182,7 +182,7 @@ namespace Underworld
                                         }
                                         break;
                                     }
-                                case 5:
+                                case 5://oscillator (uw2)
                                     {
                                         if (_RES==GAME_UW2)
                                         {
@@ -196,10 +196,19 @@ namespace Underworld
                                         }
                                         break;
                                     }
-                                case 6:
+                                case 6://proximity trap (uw2)
                                     {
-                                        Debug.Print("Skipping proximity trap for testing of chains");
+                                        if (_RES==GAME_UW2)
+                                        {
+                                        //Debug.Print("Skipping proximity trap for testing of chains");
                                         implemented =true;
+                                        triggerNextIndex = a_proximity_trap.Activate(
+                                            trapObj: trapObj, 
+                                            triggerX: triggerX, 
+                                            triggerY: triggerY, 
+                                            character: character);
+                                        }
+
                                         break;
                                     }
                                 case 7://Pit trap (UW2) In UW1 Pit trap is 6,0,4 and does nothing.

@@ -157,6 +157,8 @@ public partial class main : Node3D
 
 			int tileX = -(int)(cam.Position.X / 1.2f);
 			int tileY = (int)(cam.Position.Z / 1.2f);
+			tileX = Math.Max(Math.Min(tileX,63),0);
+			tileY = Math.Max(Math.Min(tileY,63),0);
 			int xposvecto = -(int)(((cam.Position.X % 1.2f) / 1.2f) * 8);
 			int yposvecto = (int)(((cam.Position.Z % 1.2f) / 1.2f) * 8);
 			int newzpos =(int)(((((cam.Position.Y) * 100)/32f)/15f)*128f)  - commonObjDat.height(127);
@@ -198,18 +200,18 @@ public partial class main : Node3D
 							}
 						}
 					}
-					playerdat.tileX = tileX;
-					playerdat.tileY = tileY;
-					playerdat.xpos = xposvecto;
-					playerdat.ypos = yposvecto;
+					playerdat.tileX = Math.Min(Math.Max(tileX,0),63);
+					playerdat.tileY = Math.Min(Math.Max(tileY,0),63);
+					playerdat.xpos = Math.Min(Math.Max(0,xposvecto),8);
+					playerdat.ypos = Math.Min(Math.Max(0,yposvecto),8);
 					playerdat.zpos = newzpos;
 
 					//tmp update the player object to keep in sync with other values
 					playerdat.playerObject.xpos = (short)playerdat.xpos;
 					playerdat.playerObject.ypos = (short)playerdat.ypos;
-					playerdat.playerObject.tileX = tileX;
+					playerdat.playerObject.tileX = playerdat.tileX;
 					playerdat.playerObject.npc_xhome = (short)tileX;
-					playerdat.playerObject.tileY = tileY;
+					playerdat.playerObject.tileY = playerdat.tileY;
 					playerdat.playerObject.npc_yhome = (short)tileY;
 					var tileEntered = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY]; 
 					playerdat.PlayerStatusUpdate();

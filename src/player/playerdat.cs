@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 
 namespace Underworld
 {
@@ -170,6 +171,7 @@ namespace Underworld
             set
             {
                 var tmp = GetAt16(0x55) & 0xFF;
+                value = value & 0x3F;
                 tmp |= value << 8;
                 SetAt16(0x55, tmp);
             }
@@ -217,6 +219,7 @@ namespace Underworld
             set
             {
                 var tmp = GetAt16(0x57) & 0xFF;
+                value = value & 0x3F;
                 tmp |= value << 8;
                 SetAt16(0x57, tmp);
             }
@@ -224,7 +227,7 @@ namespace Underworld
 
         /// <summary>
         /// Player yposition in the tile. Player position appears to be a higher resolution than object positioning 
-        /// so the below calc is a hack for initial development positioning of the player cha
+        /// so the below calc is a hack for initial development positioning of the player char
         /// </summary>
         public static int ypos
         {
