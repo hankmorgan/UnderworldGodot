@@ -35,7 +35,7 @@ namespace Underworld
                         StartTileX: playerdat.tileX,
                         StartTileY: playerdat.tileY,
                         newHeight: si_floorheight,
-                        newFloor: newTexture
+                        newFloorTexture: newTexture
                        );                   
 
                 }

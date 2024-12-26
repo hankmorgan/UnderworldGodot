@@ -2,6 +2,9 @@ using System.Diagnostics;
 
 namespace Underworld
 {
+    /// <summary>
+    /// Trap that extends a bridge in a direction
+    /// </summary>
     public class a_bridge_trap : trap
     {
         public static void Activate(uwObject trapObj, int triggerX, int triggerY)

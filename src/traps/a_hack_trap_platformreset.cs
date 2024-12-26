@@ -63,7 +63,7 @@ namespace Underworld
                                 TileInfo.ChangeTile(
                                     StartTileX: di_x,
                                     StartTileY:si_y,
-                                    newFloor: newFloor,
+                                    newFloorTexture: newFloor,
                                     newHeight: pressureTrigger.zpos>>3);
 
                             }

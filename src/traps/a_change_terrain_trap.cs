@@ -9,8 +9,8 @@ namespace Underworld
 
             TileInfo.ChangeTile(
                 StartTileX: triggerX, StartTileY: triggerY, 
-                newWall: trapObj.owner, 
-                newFloor: trapObj.quality>>1,
+                newWallTexture: trapObj.owner, 
+                newFloorTexture: trapObj.quality>>1,
                 newHeight: trapObj.zpos>>3,
                 newType: newtype,
                 DimX: trapObj.xpos, DimY: trapObj.ypos);

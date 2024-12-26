@@ -202,6 +202,18 @@ namespace Underworld
                                         implemented =true;
                                         break;
                                     }
+                                case 7://Pit trap (UW2) In UW1 Pit trap is 6,0,4 and does nothing.
+                                    {
+                                        if (_RES==GAME_UW2)
+                                        {
+                                            implemented = true;
+                                            a_pit_trap.Activate(
+                                                trapObj:trapObj, 
+                                                triggerX: triggerX, 
+                                                triggerY: triggerY);
+                                        }
+                                        break;
+                                    }
                                 case 8: //Bridge trap
                                     {
                                         if (_RES==GAME_UW2)

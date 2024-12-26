@@ -76,7 +76,7 @@ namespace Underworld
                     StartTileX: triggerX,
                     StartTileY: triggerY, 
                     newHeight: var34_newheight,   
-                    newFloor: var30_floortexture,                  
+                    newFloorTexture: var30_floortexture,                  
                     HeightAdjustFlag: 4);
                 // tile.floorHeight = (short)var34_newheight;
                 // tile.floorTexture = (short)var30_floortexture;
@@ -119,9 +119,9 @@ namespace Underworld
                 {
                     TileInfo.ChangeTile(
                         StartTileX: 24+i, StartTileY:2, 
-                        newWall:0x17, 
+                        newWallTexture:0x17, 
                         newType: 1, 
-                        newFloor: 4);
+                        newFloorTexture: 4);
 
 
                     // var tileToChange = UWTileMap.current_tilemap.Tiles[24+i,2];
@@ -133,8 +133,8 @@ namespace Underworld
                 }
                 TileInfo.ChangeTile(
                     StartTileX: 2, StartTileY:0x15, 
-                    newWall:0x14, 
-                    newFloor: 4, 
+                    newWallTexture:0x14, 
+                    newFloorTexture: 4, 
                     newType: 1);
 
                 // var anotherTileToChange = UWTileMap.current_tilemap.Tiles[2,0x15];

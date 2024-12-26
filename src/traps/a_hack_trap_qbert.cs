@@ -157,7 +157,7 @@ namespace Underworld
                         }
                         TileInfo.ChangeTile(
                             StartTileX: currentTile.tileX, StartTileY: currentTile.tileY, 
-                            newFloor:(playerdat.GetGameVariable(100 + si) & 0xF));
+                            newFloorTexture:(playerdat.GetGameVariable(100 + si) & 0xF));
                        // currentTile.floorTexture = (short)(playerdat.GetGameVariable(100 + si) & 0xF); main.DoRedraw = true; currentTile.Redraw = true;
                         di = 0;
 
@@ -211,7 +211,7 @@ namespace Underworld
                                     var anotheroddtile = UWTileMap.current_tilemap.Tiles[49 + si, 51 + di];
                                     TileInfo.ChangeTile(
                                         StartTileX: anotheroddtile.tileX, StartTileY: anotheroddtile.tileY, 
-                                        newWall: var6);
+                                        newWallTexture: var6);
                                     //anotheroddtile.wallTexture = (short)var6; main.DoRedraw = true; anotheroddtile.Redraw = true;
                                     si--;
                                     goto ovr110_4228;
@@ -283,7 +283,7 @@ namespace Underworld
                         {//sets floor to default colour
                             TileInfo.ChangeTile(
                                 StartTileX: currentTile.tileX, StartTileY: currentTile.tileY, 
-                                newFloor: (playerdat.GetGameVariable(100) & 0xF));
+                                newFloorTexture: (playerdat.GetGameVariable(100) & 0xF));
                             //currentTile.floorTexture = (short)(playerdat.GetGameVariable(100) & 0xF); main.DoRedraw = true; currentTile.Redraw = true;
                         }
                     }

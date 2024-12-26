@@ -71,8 +71,8 @@ namespace Underworld
                     TileInfo.ChangeTile(
                         StartTileX: triggerX, 
                         StartTileY: di, 
-                        newFloor:newfloor,
-                        newWall:newwall);
+                        newFloorTexture:newfloor,
+                        newWallTexture:newwall);
 
                     di++;
                 }//end whileY
