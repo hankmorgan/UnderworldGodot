@@ -299,6 +299,9 @@ namespace Underworld
                 child.QueueFree();
             }
 
+            //Reset timers
+            timers.FrameNo = 0;
+
             if (dungeons[newLevelNo] == null)
             {
                 dungeons[newLevelNo] = new(newLevelNo);

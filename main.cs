@@ -50,6 +50,7 @@ public partial class main : Node3D
 	[Export] public SubViewport secondarycameras;
 
 	double gameRefreshTimer = 0f;
+	
 	double cycletime = 0;
 
 	/// <summary>
@@ -72,7 +73,6 @@ public partial class main : Node3D
 		{
 			GetTree().DebugCollisionsHint = uwsettings.instance.showcolliders;
 		}
-
 	}
 
 	public static void StartGame()
@@ -279,6 +279,7 @@ public partial class main : Node3D
 						}
 					}
 					AnimationOverlay.UpdateAnimationOverlays();
+					timers.RunTimerTriggers(1);
 				}
 			}
 
@@ -367,7 +368,7 @@ public partial class main : Node3D
 							}
 						case Key.F12:
 							{
-								trigger.RunTimerTriggers();
+								//trigger.RunTimerTriggers();
 								trigger.RunNextScheduledTrigger();
 								break;
 							}
