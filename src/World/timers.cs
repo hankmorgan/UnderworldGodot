@@ -1,10 +1,11 @@
 using System;
-using System.IO;
 
 namespace Underworld
 {
     /// <summary>
     /// For managing UW2 timer triggers
+    /// A timer trigger runs every zpos frames
+    /// It takes 127 frames or so to run each timer.
     /// </summary>
     public class timers : UWClass
     {
@@ -54,6 +55,9 @@ namespace Underworld
                     var tTrigger = UWTileMap.current_tilemap.LevelObjects[tIndex];
                     if (tTrigger.item_id == 425)
                     {
+                        //this gets the number of times the trigger would have run by this frame,
+                        //and subtracts the number of times the trigger would have ran by the last frame. 
+                        //The difference is the number of times the trigger needs to run in this frame.
                         var noOfRuns = ((FrameNo + delta) / (tTrigger.zpos + 1)) - (FrameNo / (tTrigger.zpos + 1));
                         if (noOfRuns > 0)
                         {
@@ -78,7 +82,7 @@ namespace Underworld
                     }
                 }
             }
-            FrameNo++;
+            FrameNo+= delta;//advance the frame count by the delta
         }
     }//end class
 }//end namespace
