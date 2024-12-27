@@ -182,6 +182,26 @@ namespace Underworld
                                         }
                                         break;
                                     }
+                                case 3:// a change_from_trap.
+                                    {
+                                        if(_RES==GAME_UW2)
+                                        {
+                                            implemented = true;
+                                            a_change_from_trap.Activate(
+                                                trapObj: trapObj, 
+                                                triggerX: triggerX, 
+                                                triggerY: triggerY);
+                                        }
+                                        break;
+                                    }
+                                case 4:
+                                    {//A change_to_trap. Does nothing but continues execution.
+                                        if(_RES==GAME_UW2)
+                                        {
+                                            implemented = true;
+                                        }
+                                        break;
+                                    }
                                 case 5://oscillator (uw2)
                                     {
                                         if (_RES==GAME_UW2)

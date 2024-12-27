@@ -499,6 +499,7 @@ public partial class main : Node3D
 		{
 			//update tile faces
 			UWTileMap.SetTileMapWallFacesUW();
+			UWTileMap.current_tilemap.CleanUp();
 			//Handle tile changes after all else is done
 			foreach (var t in UWTileMap.current_tilemap.Tiles)
 			{
