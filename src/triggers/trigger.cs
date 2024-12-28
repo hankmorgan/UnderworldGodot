@@ -292,7 +292,7 @@ namespace Underworld
             {
                 scheduledtriggerindex=256;                
             }
-            scheduledtriggerindex = 790;
+           
             while(scheduledtriggerindex<1024)
             {
                 if ((UWTileMap.current_tilemap.LevelObjects[scheduledtriggerindex].item_id==428) || (UWTileMap.current_tilemap.LevelObjects[scheduledtriggerindex].item_id==444))

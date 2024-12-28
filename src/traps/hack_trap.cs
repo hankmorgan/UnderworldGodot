@@ -194,7 +194,11 @@ namespace Underworld
                         }
                         else
                         {
-                            return false;
+                            a_hack_trap_graffiti.Activate(
+                                trapObj: trapObj, 
+                                triggerX: triggerX, 
+                                triggerY: triggerY);
+                            return true;
                         }
                     }
                 case 25://Bly Skup Chamber
