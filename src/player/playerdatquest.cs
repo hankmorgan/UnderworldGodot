@@ -228,6 +228,18 @@ namespace Underworld
         }
 
 
+        public static bool DreamPlantEaten
+        {
+            get
+            {
+                if (_RES == GAME_UW2)
+                {
+                    return ((GetAt(0x63) >> 6) & 7) == 1;
+                }
+                return false;//not applicable to UW1
+            }
+        }
+
         /// <summary>
         /// True when the player has fallen asleep under the effect of dream plants
         /// </summary>
@@ -237,9 +249,9 @@ namespace Underworld
             {
                 if (_RES == GAME_UW2)
                 {
-                    return ((GetAt(0x63) >> 1) & 1) == 1;
+                    return ((GetAt(0x64) >> 1) & 1) == 1;
                 }
-                return false;//not applicable to UW2
+                return false;//not applicable to UW1
             }
         }
 
@@ -355,7 +367,7 @@ namespace Underworld
 /// 121: You have defeated Dorstag
 /// 122: You have killed the bly scup ductosnore
 /// 123: Relk is dead
-/// 124 & 126 are referenced in teleport_trap
+/// 124 is referenced in teleport_trap inrelateion to quest 112 fighting in the castle. 
 /// 128: 0-128 bit field of where the lines of power have been broken.
 /// 129: How many enemies killed in the pits (also xclock 14)
 /// 131: You are told that you are in the prison tower =1  

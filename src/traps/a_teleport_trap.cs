@@ -9,28 +9,35 @@ namespace Underworld
 
         public static int Activate(uwObject trapObj, uwObject[] objList)
         {
-            if (main.JustTeleported)
+            if (Teleportation.JustTeleported)
             {
-                main.JustTeleported = false;
+                Teleportation.JustTeleported = false;
                 return 0;
             }
 
-            if (trapObj.zpos == 0)
-            {
-                main.TeleportLevel = -1;
-                main.TeleportTileX = trapObj.quality;
-                main.TeleportTileY = trapObj.owner;               
-            }
-            else
-            {
-                main.TeleportLevel = trapObj.zpos;
-                main.TeleportTileX = trapObj.quality;
-                main.TeleportTileY = trapObj.owner;
-            }
+            // if (trapObj.zpos == 0)
+            // {
+            //     // Teleportation.TeleportLevel = -1;
+            //     // Teleportation.TeleportTileX = trapObj.quality;
+            //     // Teleportation.TeleportTileY = trapObj.owner;   
+
+                Teleportation.Teleport(
+                    character: 0, 
+                    tileX: trapObj.quality, 
+                    tileY: trapObj.owner, 
+                    newLevel: trapObj.zpos, 
+                    heading: 0);            
+            // }
+            // else
+            // {
+            //     Teleportation.TeleportLevel = trapObj.zpos;
+            //     Teleportation.TeleportTileX = trapObj.quality;
+            //     Teleportation.TeleportTileY = trapObj.owner;
+            // }
             //TODO: include heading after teleport
             //TODO: use proper teleport function.
             uimanager.FlashColour(1, uimanager.Cuts3DWin, 0.1f);
-            //main.gamecam.Position = uwObject.GetCoordinate(tileX, tileY, xpos, ypos, camerazpos);
+            //Teleportation.gamecam.Position = uwObject.GetCoordinate(tileX, tileY, xpos, ypos, camerazpos);
             return trapObj.link;
         }
 

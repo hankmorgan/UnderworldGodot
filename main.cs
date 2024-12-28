@@ -2,8 +2,7 @@ using Godot;
 using System;
 using System.Diagnostics;
 using Underworld;
-using Peaky.Coroutines;
-using System.Collections;
+
 
 /// <summary>
 /// Node to initialise the game
@@ -53,14 +52,7 @@ public partial class main : Node3D
 	
 	double cycletime = 0;
 
-	/// <summary>
-	/// To prevent teleporting again when the teleport destination in inside a teleport trap
-	/// </summary>
-	public static bool JustTeleported;
-	public static int TeleportLevel = -1;
-	public static int TeleportTileX = -1;
-	public static int TeleportTileY = -1;
-	public static int TeleportRotation= 0;//not yet implemented.
+
 
 	public static bool DoRedraw = false;
 
@@ -495,86 +487,29 @@ public partial class main : Node3D
 	/// Handles the end of chain events.
 	/// </summary>
 	public static void RefreshWorldState()
-	{
-		if (DoRedraw)
-		{
-			//update tile faces
-			UWTileMap.SetTileMapWallFacesUW();
-			UWTileMap.current_tilemap.CleanUp();
-			//Handle tile changes after all else is done
-			foreach (var t in UWTileMap.current_tilemap.Tiles)
-			{
-				if (t.Redraw)
-				{
-					UWTileMap.RemoveTile(
-						tileX: t.tileX, 
-						tileY: t.tileY, 
-						removeWall: (t.tileType>=2 && t.tileType<=5));
-					tileMapRender.RenderTile(tileMapRender.worldnode, t.tileX, t.tileY, t);
-					t.Redraw = false;
-				}
-			}
-		}
+    {
+        if (DoRedraw)
+        {
+            //update tile faces
+            UWTileMap.SetTileMapWallFacesUW();
+            UWTileMap.current_tilemap.CleanUp();
+            //Handle tile changes after all else is done
+            foreach (var t in UWTileMap.current_tilemap.Tiles)
+            {
+                if (t.Redraw)
+                {
+                    UWTileMap.RemoveTile(
+                        tileX: t.tileX,
+                        tileY: t.tileY,
+                        removeWall: (t.tileType >= 2 && t.tileType <= 5));
+                    tileMapRender.RenderTile(tileMapRender.worldnode, t.tileX, t.tileY, t);
+                    t.Redraw = false;
+                }
+            }
+        }
 
 		//Handle level transitions now since it's possible for further traps to be called after the teleport trap
-		if (TeleportLevel != -1)
-		{
-			int itemToTransfer = -1;
-			if (playerdat.ObjectInHand != -1)
-			{//handle moving an object in hand through levels. Temporarily add to inventory data.
-				itemToTransfer = playerdat.AddObjectToPlayerInventory(playerdat.ObjectInHand, false);
-			}
-			playerdat.dungeon_level = TeleportLevel;
-			//switch level
-			UWTileMap.LoadTileMap(
-					newLevelNo: playerdat.dungeon_level - 1,
-					datafolder: playerdat.currentfolder,
-					newGameSession: false);
-
-			if (itemToTransfer != -1)
-			{//takes object back out of inventory.
-				uimanager.DoPickup(itemToTransfer);
-			}
-		}
-		if ((TeleportTileX != -1) && (TeleportTileY != -1))
-		{
-			//move to new tile
-			var targetTile = UWTileMap.current_tilemap.Tiles[TeleportTileX, TeleportTileY];
-			playerdat.zpos = targetTile.floorHeight << 3;
-			playerdat.xpos = 3; playerdat.ypos = 3;
-			playerdat.tileX = TeleportTileX; playerdat.tileY = TeleportTileY;
-			main.gamecam.Position = uwObject.GetCoordinate(
-				tileX: playerdat.tileX,
-				tileY: playerdat.tileY,
-				_xpos: playerdat.xpos,
-				_ypos: playerdat.ypos,
-				_zpos: playerdat.camerazpos);
-		}
-
-		if ((TeleportTileX != -1) || (TeleportTileY != -1) || (TeleportLevel != -1))
-		{
-			JustTeleported = true;
-			_ = Peaky.Coroutines.Coroutine.Run(
-			PauseTeleport(),
-			main.instance
-			);
-		}
-		TeleportLevel = -1;
-		TeleportTileX = -1;
-		TeleportTileY = -1;
-	}
-
-
-	/// <summary>
-	/// Puts a block on sucessive level transitions due to teleport placing player in a new move trigger
-	/// </summary>
-	/// <returns></returns>
-	public static IEnumerator PauseTeleport()
-	{
-		JustTeleported = true;
-		yield return new WaitForSeconds(1);
-		JustTeleported = false;
-		yield return 0;
-	}
+        Teleportation.HandleTeleportation();
+    }    
 
 }//end class

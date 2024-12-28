@@ -1,6 +1,5 @@
 
 using System;
-using Godot;
 
 namespace Underworld
 {
@@ -76,12 +75,18 @@ namespace Underworld
                 visited = visited | (1<<var4X);
                 playerdat.SetQuest(141, visited);
 
-                main.TeleportRotation = heading[si_world];                
-                main.TeleportLevel = dungeonNos[si_world];
-                main.TeleportTileX = arriveX[si_world];
-                main.TeleportTileY = arriveY[si_world];
-                main.JustTeleported = true;
-                return 2;//TODO this must use the proper teleport function.
+                Teleportation.Teleport(
+                    character: 0, 
+                    tileX: arriveX[si_world], 
+                    tileY: arriveY[si_world], 
+                    newLevel: dungeonNos[si_world], 
+                    heading: heading[si_world]);
+                // Teleportation.TeleportRotation = heading[si_world];                
+                // Teleportation.TeleportLevel = dungeonNos[si_world];
+                // Teleportation.TeleportTileX = arriveX[si_world];
+                // Teleportation.TeleportTileY = arriveY[si_world];
+                // Teleportation.JustTeleported = true;
+                return 2;
                 
             }            
         }

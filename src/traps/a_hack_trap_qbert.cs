@@ -158,7 +158,7 @@ namespace Underworld
                         TileInfo.ChangeTile(
                             StartTileX: currentTile.tileX, StartTileY: currentTile.tileY, 
                             newFloorTexture:(playerdat.GetGameVariable(100 + si) & 0xF));
-                       // currentTile.floorTexture = (short)(playerdat.GetGameVariable(100 + si) & 0xF); main.DoRedraw = true; currentTile.Redraw = true;
+                       // currentTile.floorTexture = (short)(playerdat.GetGameVariable(100 + si) & 0xF); Teleportation.DoRedraw = true; currentTile.Redraw = true;
                         di = 0;
 
                     ovr110_41D6:
@@ -212,7 +212,7 @@ namespace Underworld
                                     TileInfo.ChangeTile(
                                         StartTileX: anotheroddtile.tileX, StartTileY: anotheroddtile.tileY, 
                                         newWallTexture: var6);
-                                    //anotheroddtile.wallTexture = (short)var6; main.DoRedraw = true; anotheroddtile.Redraw = true;
+                                    //anotheroddtile.wallTexture = (short)var6; Teleportation.DoRedraw = true; anotheroddtile.Redraw = true;
                                     si--;
                                     goto ovr110_4228;
                                 }
@@ -284,7 +284,7 @@ namespace Underworld
                             TileInfo.ChangeTile(
                                 StartTileX: currentTile.tileX, StartTileY: currentTile.tileY, 
                                 newFloorTexture: (playerdat.GetGameVariable(100) & 0xF));
-                            //currentTile.floorTexture = (short)(playerdat.GetGameVariable(100) & 0xF); main.DoRedraw = true; currentTile.Redraw = true;
+                            //currentTile.floorTexture = (short)(playerdat.GetGameVariable(100) & 0xF); Teleportation.DoRedraw = true; currentTile.Redraw = true;
                         }
                     }
                 }
@@ -407,22 +407,29 @@ namespace Underworld
         /// <param name="heading"></param>
         static void DoTeleport(int teleportX, int teleportY, int newLevel, int heading)
         {
-            if (main.JustTeleported)
-            {
-                main.JustTeleported = false;
-                return;
-            }
-            if (newLevel != playerdat.dungeon_level)
-            {
-                main.TeleportLevel = newLevel;
-            }
-            else
-            {
-                main.TeleportLevel = -1;
-            }
-            Debug.Print($"{teleportX},{teleportY},{newLevel}");
-            main.TeleportTileX = teleportX;
-            main.TeleportTileY = teleportY;
+            // if (Teleportation.JustTeleported)
+            // {
+            //     Teleportation.JustTeleported = false;
+            //     return;
+            // }
+            // if (newLevel != playerdat.dungeon_level)
+            // {
+            //     Teleportation.TeleportLevel = newLevel;
+            // }
+            // else
+            // {
+            //     Teleportation.TeleportLevel = -1;
+            // }
+            // Debug.Print($"{teleportX},{teleportY},{newLevel}");
+            // Teleportation.TeleportTileX = teleportX;
+            // Teleportation.TeleportTileY = teleportY;
+
+            Teleportation.Teleport(character: 0, 
+                tileX: teleportX, 
+                tileY: teleportY, 
+                newLevel: newLevel, 
+                heading: heading);
+
             //TODO: include heading after teleport
         }
     } //end class
