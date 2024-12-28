@@ -28,6 +28,7 @@ namespace Underworld
                 main.TeleportTileY = trapObj.owner;
             }
             //TODO: include heading after teleport
+            //TODO: use proper teleport function.
             uimanager.FlashColour(1, uimanager.Cuts3DWin, 0.1f);
             //main.gamecam.Position = uwObject.GetCoordinate(tileX, tileY, xpos, ypos, camerazpos);
             return trapObj.link;

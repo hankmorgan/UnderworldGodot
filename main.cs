@@ -60,6 +60,7 @@ public partial class main : Node3D
 	public static int TeleportLevel = -1;
 	public static int TeleportTileX = -1;
 	public static int TeleportTileY = -1;
+	public static int TeleportRotation= 0;//not yet implemented.
 
 	public static bool DoRedraw = false;
 

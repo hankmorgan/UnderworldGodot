@@ -363,6 +363,15 @@ namespace Underworld
                         }
                         break;
                     }
+                case 55:// world gem transportation
+                    {
+                        if (_RES == GAME_UW2)
+                        {
+                            a_hack_trap_gemteleport.Activate();
+                            return true;
+                        }
+                        break;
+                    }
             }//end switch
 
             Debug.Print($"Unimplemented hack trap {trapObj.quality}");
