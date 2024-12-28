@@ -182,7 +182,16 @@ namespace Underworld
                         }
                         break;
                     }
-                case 24://bullfrog in UW1 and something else in UW2
+                case 23://alternate index for change owner trap
+                    {
+                        if (_RES==GAME_UW2)
+                        {
+                            a_hack_trap_owner.Activate(trapObj: trapObj);
+                            return true;
+                        }  
+                        break;
+                    }
+                case 24://bullfrog in UW1 and graffiti change in UW2
                     {
                         if (_RES != GAME_UW2)
                         {
