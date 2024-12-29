@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace Underworld
 {
     /// <summary>
@@ -91,6 +93,29 @@ namespace Underworld
                 target: paramsarray[6]);
         }
 
+
+        public static void moveNPCToTile(uwObject critter, int destTileX, int destTileY)
+        {
+            Debug.Print($"Moving {critter.a_name} to {destTileX},{destTileY}");
+            if ((UWTileMap.ValidTile(destTileX,destTileY) && (UWTileMap.ValidTile(critter.tileX,critter.tileY))))
+            {
+                var sourceTile = UWTileMap.current_tilemap.Tiles[critter.tileX,critter.tileY];
+                var destTile = UWTileMap.current_tilemap.Tiles[destTileX,destTileY];
+                if (sourceTile.indexObjectList == critter.index)
+                {
+                    sourceTile.indexObjectList = critter.next;
+                }
+                else
+                {
+                    ObjectRemover.RemoveObjectFromLinkedList(sourceTile.indexObjectList,critter.index,UWTileMap.current_tilemap.LevelObjects);
+                }               
+                critter.next = destTile.indexObjectList ;
+                destTile.indexObjectList = critter.index;
+                critter.tileX = destTileX; critter.tileY= destTileY;
+                critter.zpos = (short)(destTile.floorHeight<<3);
+                objectInstance.Reposition(critter);
+            }
+        }
 
     }//end class
 }//end namespace

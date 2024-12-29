@@ -296,7 +296,7 @@ namespace Underworld
             while(scheduledtriggerindex<1024)
             {
                 if ((UWTileMap.current_tilemap.LevelObjects[scheduledtriggerindex].item_id==428) || (UWTileMap.current_tilemap.LevelObjects[scheduledtriggerindex].item_id==444))
-                {
+                {                    
                     Debug.Print($"Testing scheduled trigger {scheduledtriggerindex}");
                     RunTrigger(
                         character: 0, 

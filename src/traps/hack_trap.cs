@@ -292,6 +292,15 @@ namespace Underworld
                         }
                         break; 
                     }
+                case 36://castle schedule
+                    {
+                        if (_RES == GAME_UW2)
+                        {  
+                            a_hack_trap_castleschedule.Activate();
+                            return true;
+                        }
+                        break;
+                    }
                 case 38:
                     {//transform red potions to poison
                         if (_RES == GAME_UW2)
