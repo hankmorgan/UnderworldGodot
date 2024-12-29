@@ -406,6 +406,15 @@ namespace Underworld
                         }
                         break;
                     }
+                case 62://some sort of goal change for npcs. possibly does nothing in practice do to trap setup
+                    {
+                        if (_RES == GAME_UW2)
+                        {
+                            a_hack_trap_changegoal.Activate(trapObj, character);
+                            return true;
+                        }
+                        break;
+                    }
             }//end switch
 
             Debug.Print($"Unimplemented hack trap {trapObj.quality}");
