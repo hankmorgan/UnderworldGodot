@@ -6,7 +6,7 @@ namespace Underworld
     //The pits of carnage arena fights are fairly complex.
     public partial class playerdat : Loader
     {
-        static bool IsAvatarInPitFightGlobal = true;//used in babl_hack.
+        public static bool IsAvatarInPitFightGlobal = true;//used in babl_hack.
         public static bool IsFightingInPit
         {
             get

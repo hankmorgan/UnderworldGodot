@@ -200,6 +200,11 @@ namespace Underworld
                         set_race_attitude(talker);
                         break;
                     }
+                case "babl_hack":
+                    {
+                        babl_hack(talker);
+                        break;
+                    }
                 default:
                     {                       
                         Debug.Print($"Unimplemented {func.importname}"); break;
