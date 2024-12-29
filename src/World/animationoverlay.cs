@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 namespace Underworld
 {
     public class AnimationOverlay : UWClass
@@ -197,14 +199,7 @@ namespace Underworld
                                             }
                                             else
                                             {
-                                                ovl.Duration = 0;
-                                                ObjectRemover.DeleteObjectFromTile(
-                                                    tileX: ovl.tileX, 
-                                                    tileY: ovl.tileY, 
-                                                    indexToDelete: (short)ovl.link);
-                                                ovl.link = 0;
-                                                ovl.tileX = 0;
-                                                ovl.tileY = 0;
+                                                EndOverlay(ovl);
                                             }
                                         }
                                     }
@@ -221,5 +216,40 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// Finds the overlay that links to the specified world object.
+        /// </summary>
+        /// <param name="linkToFind"></param>
+        /// <returns></returns>
+        public static AnimationOverlay FindOverlay(int linkToFind)
+        {
+            foreach (var ovl in UWTileMap.current_tilemap.Overlays)
+            {
+                if (ovl != null)
+                {
+                    if (ovl.link == linkToFind)
+                    {
+                        return ovl;
+                    }
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Ends a running overlay and destroys it's world instance.
+        /// </summary>
+        /// <param name="ovl"></param>
+        public static void EndOverlay(AnimationOverlay ovl)
+        {
+            ovl.Duration = 0;
+            ObjectRemover.DeleteObjectFromTile(
+                tileX: ovl.tileX,
+                tileY: ovl.tileY,
+                indexToDelete: (short)ovl.link);
+            ovl.link = 0;
+            ovl.tileX = 0;
+            ovl.tileY = 0;
+        }
     }//end class
 }//end namespace

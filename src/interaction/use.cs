@@ -382,6 +382,8 @@ namespace Underworld
                                 return fishingpole.use(obj, WorldObject);
                             case 0xD://oilflask
                                 return oilflask.Use(obj, WorldObject);
+                            case 0xE://foutain
+                                return fountain.Use(obj);
                         }
 
                         break;

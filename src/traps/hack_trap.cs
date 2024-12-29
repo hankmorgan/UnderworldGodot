@@ -283,6 +283,18 @@ namespace Underworld
                         }
                         break;
                     }
+                case 34://britannia goes dry in UW2
+                    {
+                        if (_RES==GAME_UW2)
+                        {
+                            a_hack_trap_godry.Activate(
+                                trapObj: trapObj, 
+                                triggerX: triggerX, 
+                                triggerY: triggerY);
+                            return true;
+                        }
+                        break;
+                    }
                 case 35://recharges light sphere in UW2
                     {
                         if (_RES==GAME_UW2)

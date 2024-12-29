@@ -36,7 +36,7 @@ namespace Underworld
                 minorclass: 2,
                 classindex: 0xE,
                 objList: UWTileMap.current_tilemap.LevelObjects);
-            if (water == null)
+            if ((water == null) || (obj.quality == 0))
             {
                 if (_RES == GAME_UW2)
                 {
