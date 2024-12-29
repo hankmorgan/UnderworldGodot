@@ -12,7 +12,7 @@ namespace Underworld
 		public static bool InConversation = false;				
 				
 		public static bool TemporaryTalker = false;
-		
+	
 		/// <summary>
 		/// The currently referenced conversation.
 		/// </summary>

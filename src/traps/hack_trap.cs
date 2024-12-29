@@ -258,6 +258,14 @@ namespace Underworld
                         }
                         break;
                     }
+                case 30://cowardice in the pits of carnage
+                    {
+                        if (_RES==GAME_UW2)
+                        {
+                            return a_hack_trap_coward.Activate(character);
+                        }
+                        break;                        
+                    }
                 case 32://qbert in UW2
                     {
                         if (_RES == GAME_UW2)

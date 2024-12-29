@@ -169,12 +169,12 @@ namespace Underworld
                         else
                         {
                             //Check if avatar is a coward by checking if they are still in an arena.
-                            
+                            Debug.Print ("todo check if avatar is a coward and has left the arena!");
                         }
                     }
                 if (coward)
-                {
-                    Debug.Print ("avatar is a coward!");
+                {                    
+                    playerdat.AvatarIsACoward(skipConversation:true);
                 }
 
                 //TODO: Handle moonstones.

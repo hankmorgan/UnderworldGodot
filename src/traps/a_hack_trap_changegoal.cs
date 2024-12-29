@@ -9,7 +9,7 @@ namespace Underworld
     {
         public static void Activate(uwObject trapObj, int character)
         {
-            Debug.Print("UNTESTED HACK TRAP CHANGE GOAL. HAS LORD BRITISH TRIGGERED THIS?")
+            Debug.Print("UNTESTED HACK TRAP CHANGE GOAL. HAS LORD BRITISH TRIGGERED THIS?");
             var linkedObj = UWTileMap.current_tilemap.LevelObjects[trapObj.link];            
            
             if (linkedObj.index != character)
