@@ -138,7 +138,14 @@ namespace Underworld
                 }
 
                 //queue up the teleport.
-                TeleportLevel = newLevel;
+                if (newLevel==0)
+                {
+                    TeleportLevel = -1;
+                }
+                else
+                {
+                    TeleportLevel = newLevel;
+                }                
                 TeleportTileX = tileX;
                 TeleportTileY = tileY;
 
@@ -188,19 +195,23 @@ namespace Underworld
 
         static int TeleportUW1(int character, int tileX, int tileY, int newLevel)
         {
-            Debug.Print("untested uw1 teleport");
-            TeleportLevel = newLevel;
-            TeleportTileX = tileX;
-            TeleportTileY = tileY;
-
             if (newLevel !=0)
             {
                 if (newLevel == playerdat.dungeon_level)
                 {
                     TeleportLevel = -1;//same level.
-                }                    
+                }    
+                else
+                {
+                    TeleportLevel = newLevel;
+                }                
             }
-
+            else
+            {
+                TeleportLevel = -1;
+            }
+            TeleportTileX = tileX;
+            TeleportTileY = tileY;
             return 2;
         }
 
