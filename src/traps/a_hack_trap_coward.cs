@@ -18,6 +18,7 @@ namespace Underworld
             else
             {
                 //NPC. Not yet implemented.
+                playerdat.DefeatFighter(character);
                 return false;
             }
         }

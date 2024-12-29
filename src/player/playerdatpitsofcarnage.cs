@@ -1,3 +1,6 @@
+using System;
+using System.Diagnostics;
+
 namespace Underworld
 {
     //The pits of carnage arena fights are fairly complex.
@@ -85,6 +88,10 @@ namespace Underworld
             return false;
         }
 
+        /// <summary>
+        /// When avatar flees combat in the pit.
+        /// </summary>
+        /// <param name="skipConversation"></param>
         public static void AvatarIsACoward(bool skipConversation = false)
         {
             if (IsFightingInPit)
@@ -99,7 +106,7 @@ namespace Underworld
                         var fighterObj = UWTileMap.current_tilemap.LevelObjects[fighterindex];
                         fighterObj.npc_attitude = 1;
                         fighterObj.ProjectileSourceID = 0;//clear last hit
-                        fighterObj.npc_goal = 1;
+                        fighterObj.npc_goal = (byte)npc.npc_goals.npc_goal_goto_1;
                         if (firstFighterIndex == -1)
                         {
                             firstFighterIndex = si;
@@ -118,11 +125,28 @@ namespace Underworld
                         talk.Talk(firstfighter.index, UWTileMap.current_tilemap.LevelObjects,true);
                     }                    
                     SetPitFighter(firstFighterIndex, 0);
-                    playerdat.IsFightingInPit = false;
-                    playerdat.SetQuest(129,0); //win loss record
-                    playerdat.SetQuest(133,0);  //jospurs debt.
+                    IsFightingInPit = false;
+                    SetQuest(129,0); //win loss record
+                    SetQuest(133,0);  //jospurs debt.
                 }
             }
         }
+
+        /// <summary>
+        /// Defeats a pit fighter that has fled the arena.
+        /// </summary>
+        /// <param name="character"></param>
+        public static void DefeatLivingPitFighter(int character)
+        {
+            Debug.Print("Untested removal of defeated living cowardly pit fighter");
+            if (GetQuest(129) >GetXClock(14))
+            {
+                SetXClock(14,GetQuest(129));
+            }
+            var defeatedfighter = UWTileMap.current_tilemap.LevelObjects[character];
+            defeatedfighter.npc_goal = (byte)npc.npc_goals.npc_goal_fear_6;
+            RemovePitFighter(character);
+        }
+
     }//end class
 }//end namespace
