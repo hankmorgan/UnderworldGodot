@@ -19,7 +19,7 @@ namespace Underworld
                         result_register = 0;
                         break;
                     }
-                case 1:
+                case 1://returns 1 if the player has triggered the cowardice hack trap to begin this conversation.
                     {
                         if (pitsofcarnage.IsAvatarInPitFightGlobal)
                         {
@@ -30,6 +30,12 @@ namespace Underworld
                         {
                             result_register = 0;
                         }
+                        break;
+                    }
+                case 3:
+                    {//gets and clears jospurs debt.
+                        result_register = playerdat.GetQuest(133);
+                        playerdat.SetQuest(133,0);
                         break;
                     }
                 default:                
