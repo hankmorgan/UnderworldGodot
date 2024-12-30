@@ -210,6 +210,11 @@ namespace Underworld
                         teleport_player();
                         break;
                     }
+                case "teleport_talker":
+                    {
+                        teleport_talker(talker);
+                        break;
+                    }
                 default:
                     {                       
                         Debug.Print($"Unimplemented {func.importname}"); break;
