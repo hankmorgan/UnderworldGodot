@@ -205,6 +205,11 @@ namespace Underworld
                         babl_hack(talker);
                         break;
                     }
+                case "teleport_player":
+                    {
+                        teleport_player();
+                        break;
+                    }
                 default:
                     {                       
                         Debug.Print($"Unimplemented {func.importname}"); break;

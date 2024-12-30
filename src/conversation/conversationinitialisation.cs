@@ -19,7 +19,7 @@ namespace Underworld
             }
 
             if (conversations != null)
-            {
+            {                
                 int conversationNo = GetConversationNumber(talker);
                 Debug.Print($"ConversationNo is {conversationNo}");
                 currentConversation = null;
@@ -38,6 +38,11 @@ namespace Underworld
                 { //a conversation can be had (TODO take hostility into account. Some special NPCs can be talked to in combat. eg rodric and patterson)
                     currentConversation = conversations[conversationNo];
                     InConversation = true;
+                    DoTeleport = false;
+                    TeleportToLevel = -1;
+                    TeleportTileX = - 1;
+                    TeleportTileY = -1;
+
                     SetupConversationUI(talker);
 
                     InitialiseConversationMemory();

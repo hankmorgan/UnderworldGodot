@@ -23,7 +23,7 @@ namespace Underworld
                 {//clear
                     currval &= 0xFB;
                 }
-                SetAt(0x65, currval);
+                SetAt(0x64, currval);
             }
         }
 

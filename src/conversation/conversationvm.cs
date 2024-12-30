@@ -28,6 +28,13 @@ namespace Underworld
 		/// </summary>
 		public static int basep = 0;
 
+
+		//To handle teleportation requests for the player
+		static bool DoTeleport = false;
+		static int TeleportToLevel = -1;
+		static int TeleportTileX = - 1;
+		static int TeleportTileY = -1;
+
 		public static IEnumerator RunConversationVM(uwObject talker)
 		{
 			bool testing = false;
@@ -602,6 +609,13 @@ namespace Underworld
 			uimanager.instance.convo.Clear();
 			InConversation = false;
 			main.gamecam.Set("MOVE", true);
+			if (DoTeleport)
+			{
+				if (UWTileMap.ValidTile(TeleportTileX, TeleportTileY))
+				{
+					Teleportation.Teleport(0, TeleportTileX, TeleportTileY, TeleportToLevel, 0);
+				}				
+			}
 		}
 
 		private static void InitialiseConversationMemory()
