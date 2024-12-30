@@ -645,7 +645,6 @@ offset_top = 64.0
 offset_right = 900.0
 offset_bottom = 574.0
 mouse_filter = 2
-texture = ExtResource("20_n8sfi")
 
 [node name="placeholdermainuw2" type="TextureRect" parent="UI/UW2"]
 offset_right = 1280.0
@@ -912,7 +911,6 @@ offset_top = -268.0
 offset_right = 896.0
 offset_bottom = 532.0
 mouse_filter = 2
-texture = ExtResource("20_n8sfi")
 
 [node name="Cuts3DWinUW2" type="TextureRect" parent="UI/UW2"]
 offset_left = 60.0

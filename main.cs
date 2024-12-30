@@ -487,29 +487,29 @@ public partial class main : Node3D
 	/// Handles the end of chain events.
 	/// </summary>
 	public static void RefreshWorldState()
-    {
-        if (DoRedraw)
-        {
-            //update tile faces
-            UWTileMap.SetTileMapWallFacesUW();
-            UWTileMap.current_tilemap.CleanUp();
-            //Handle tile changes after all else is done
-            foreach (var t in UWTileMap.current_tilemap.Tiles)
-            {
-                if (t.Redraw)
-                {
-                    UWTileMap.RemoveTile(
-                        tileX: t.tileX,
-                        tileY: t.tileY,
-                        removeWall: (t.tileType >= 2 && t.tileType <= 5));
-                    tileMapRender.RenderTile(tileMapRender.worldnode, t.tileX, t.tileY, t);
-                    t.Redraw = false;
-                }
-            }
-        }
+	{
+		if (DoRedraw)
+		{
+			//update tile faces
+			UWTileMap.SetTileMapWallFacesUW();
+			UWTileMap.current_tilemap.CleanUp();
+			//Handle tile changes after all else is done
+			foreach (var t in UWTileMap.current_tilemap.Tiles)
+			{
+				if (t.Redraw)
+				{
+					UWTileMap.RemoveTile(
+						tileX: t.tileX,
+						tileY: t.tileY,
+						removeWall: (t.tileType >= 2 && t.tileType <= 5));
+					tileMapRender.RenderTile(tileMapRender.worldnode, t.tileX, t.tileY, t);
+					t.Redraw = false;
+				}
+			}
+		}
 
 		//Handle level transitions now since it's possible for further traps to be called after the teleport trap
-        Teleportation.HandleTeleportation();
-    }    
+		Teleportation.HandleTeleportation();
+	}    
 
 }//end class
