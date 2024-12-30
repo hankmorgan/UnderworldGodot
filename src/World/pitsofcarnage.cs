@@ -5,6 +5,70 @@ namespace Underworld
     {
         public static bool IsAvatarInPitFightGlobal = false;//used in babl_hack.
 
+
+        public static uwObject CreateRandomPitFighter(int tileX, int tileY, int isPowerfullProbability )
+        {
+            var tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];
+            bool isPowerfull = false;
+
+            int itemIdToSpawn;
+
+            if (Rng.r.Next(0x10)==0)
+            {   //spawn a mage
+                itemIdToSpawn = 0x75 + Rng.r.Next(3);
+            }
+            else
+            {   //spawn a fighter
+                itemIdToSpawn = 0x78 + Rng.r.Next(2);
+            }
+
+            if (Rng.r.Next(3)< isPowerfullProbability )
+            {
+                isPowerfull = true;
+                var rngPowerfull = Rng.r.Next(5);
+                if (rngPowerfull <2)
+                {
+                    switch (rngPowerfull)
+                    {
+                        case 0:
+                            itemIdToSpawn = 0x5C; // great troll
+                            break;
+                        case 1:
+                            itemIdToSpawn = 0x7B;// human
+                            break;
+                    }
+                    isPowerfull = false;
+                }
+            }
+
+            var obj = ObjectCreator.spawnObjectInTile(
+                itemid: itemIdToSpawn, 
+                tileX: tileX, tileY: tileY, 
+                xpos: (short)Rng.r.Next(1,8), 
+                ypos: (short)Rng.r.Next(1,8), 
+                zpos: (short)(tile.floorHeight<<3), 
+                WhichList: ObjectFreeLists.ObjectListType.MobileList);
+
+            obj.npc_whoami = 0x66;
+            if (isPowerfull)
+            {
+                obj.IsPowerfull = 1;
+            }
+            else
+            {
+                obj.IsPowerfull = 0;
+            }
+
+            obj.UnkBit_0XD_Bit8 = 1;
+            obj.npc_attitude = 0;
+            obj.npc_goal = 5;
+            obj.npc_gtarg = 1;
+            obj.UnkBit_0XA_Bit7 = 1;
+            
+            return obj;
+        }
+
+
         /// <summary>
         /// Checks if the specified npc is fighting against the avatar in the pits
         /// </summary>
