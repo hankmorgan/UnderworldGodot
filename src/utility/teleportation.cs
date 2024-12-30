@@ -191,7 +191,7 @@ namespace Underworld
                     }
                 if (coward)
                 {                    
-                    playerdat.AvatarIsACoward(skipConversation:true);
+                     pitsofcarnage.AvatarIsACoward(skipConversation:true);
                 }
 
                 //TODO: Handle moonstones.

@@ -133,9 +133,9 @@ namespace Underworld
                 }
                 if (playerdat.IsFightingInPit)
                 {
-                    if (playerdat.IsDuelingAgainstCritter(critter.index))
+                    if (pitsofcarnage.IsDuelingAgainstCritter(critter.index))
                     {
-                        if (playerdat.RemovePitFighter(critter.index))
+                        if (pitsofcarnage.RemovePitFighter(critter.index))
                         {
                             WasPitFighter = true;
                             playerdat.SetQuest(129, playerdat.GetQuest(129) + 1); //if enough duels are fought the pit counter will overflow!

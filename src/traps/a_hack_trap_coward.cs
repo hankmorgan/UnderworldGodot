@@ -11,14 +11,14 @@ namespace Underworld
             {//Avatar has fled.
                 if (playerdat.IsFightingInPit)
                 {
-                    playerdat.AvatarIsACoward();
+                    pitsofcarnage.AvatarIsACoward();
                 }
                 return true;
             }
             else
             {
                 //NPC. Not yet implemented.
-                playerdat.DefeatLivingPitFighter(character);
+                pitsofcarnage.DefeatLivingPitFighter(character);
                 return false;
             }
         }

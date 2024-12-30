@@ -411,7 +411,7 @@ namespace Underworld
                         critter.npc_attitude = 3;
                         if (playerdat.IsFightingInPit)
                         {
-                            playerdat.RemovePitFighter(critter.index);
+                            pitsofcarnage.RemovePitFighter(critter.index);
                         }
                     }
                 }

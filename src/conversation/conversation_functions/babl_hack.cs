@@ -21,9 +21,9 @@ namespace Underworld
                     }
                 case 1:
                     {
-                        if (playerdat.IsAvatarInPitFightGlobal)
+                        if (pitsofcarnage.IsAvatarInPitFightGlobal)
                         {
-                            playerdat.IsAvatarInPitFightGlobal = false;
+                            pitsofcarnage.IsAvatarInPitFightGlobal = false;
                             result_register = 1;
                         }
                         else
