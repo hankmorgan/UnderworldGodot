@@ -9,6 +9,12 @@ namespace Underworld
     {
 
         /// <summary>
+        /// Function to call when teleporting.
+        /// </summary>
+        public delegate void TeleportCallBack();
+
+
+        /// <summary>
         /// To prevent teleporting again when the teleport destination in inside a teleport trap
         /// </summary>
         public static bool JustTeleported;
@@ -16,6 +22,12 @@ namespace Underworld
         static int TeleportTileX = -1;
         static int TeleportTileY = -1;
         static int TeleportRotation = 0;//not yet implemented.
+
+
+        /// <summary>
+        /// A function to call once teleported.
+        /// </summary>
+        public static TeleportCallBack CodeToRunOnTeleport;
 
 
         /// <summary>
@@ -68,6 +80,11 @@ namespace Underworld
             TeleportLevel = -1;
             TeleportTileX = -1;
             TeleportTileY = -1;
+            if (CodeToRunOnTeleport!=null)
+            {//handle a callback.
+                CodeToRunOnTeleport();
+                CodeToRunOnTeleport = null;//although this should be handled by the method itself
+            }
         }
 
 
@@ -227,6 +244,5 @@ namespace Underworld
             JustTeleported = false;
             yield return 0;
         }
-
-    }
-}
+    }//end class
+}//end namespace

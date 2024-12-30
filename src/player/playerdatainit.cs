@@ -117,6 +117,8 @@ namespace Underworld
             playerdat.usingpole = false;
             musicalinstrument.PlayingInstrument = false;
             previousMazeNavigation = false;
+            Teleportation.CodeToRunOnTeleport = null;
+            playerdat.IsAvatarInPitFightGlobal = false;
 
             //load the correct skin tones for weapon animations
             switch(Body)

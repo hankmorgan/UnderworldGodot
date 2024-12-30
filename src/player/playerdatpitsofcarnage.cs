@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics;
 
 namespace Underworld
@@ -6,7 +5,7 @@ namespace Underworld
     //The pits of carnage arena fights are fairly complex.
     public partial class playerdat : Loader
     {
-        public static bool IsAvatarInPitFightGlobal = true;//used in babl_hack.
+        public static bool IsAvatarInPitFightGlobal = false;//used in babl_hack.
         public static bool IsFightingInPit
         {
             get
@@ -56,7 +55,7 @@ namespace Underworld
             return fighterRemoved;
         }
 
-        private static void SetPitFighter(int i, byte indexToSet)
+        public static void SetPitFighter(int i, byte indexToSet)
         {
             SetAt(0x361 + i, indexToSet);
         }
