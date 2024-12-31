@@ -15,9 +15,9 @@ namespace Underworld
             {
                 if (tile.tileType==UWTileMap.TILE_OPEN)
                 {
-                    var floorterrain = tileMapRender.FloorTexture_MapIndex(tile)-210;
+                    var floorterrain = UWTileMap.current_tilemap.texture_map[tileMapRender.FloorTexture_MapIndex(tile)]-210;
                     switch (floorterrain)
-                    {//i think these are right.
+                    {//i think these are right. but there is some added complexity to how UW1 loads terrain data that I'm missing.
                         case >=5 and <=11:
                         case >=18 and <=22:
                         case >=27 and <=31:
