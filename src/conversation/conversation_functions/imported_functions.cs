@@ -215,6 +215,11 @@ namespace Underworld
                         teleport_talker(talker);
                         break;
                     }
+                case "take_id_from_npc":
+                    {
+                        take_id_from_npc(talker);
+                        break;
+                    }
                 default:
                     {                       
                         Debug.Print($"Unimplemented {func.importname}"); break;

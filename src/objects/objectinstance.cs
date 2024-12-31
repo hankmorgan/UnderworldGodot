@@ -54,6 +54,14 @@ namespace Underworld
                     obj.instance.uwnode.Position = obj.GetCoordinate(obj.tileX, obj.tileY);
                 }
             }
+            else
+            {
+                //has no instance. Force a full redrawl.
+                if (UWTileMap.ValidTile(obj.tileX, obj.tileY))
+                {
+                    RedrawFull(obj);
+                }
+            }
         }
 
         public static void RefreshSprite(uwObject objToRefresh)
@@ -69,6 +77,17 @@ namespace Underworld
                     }
                 }
             }
+        }
+
+        public static void PlaceObjectInTile(int tileX, int tileY, uwObject toPlace)
+        {
+            var Tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];
+            toPlace.next = Tile.indexObjectList;
+            Tile.indexObjectList = toPlace.index;
+            toPlace.tileX = tileX; 
+            toPlace.tileY = tileY;
+            toPlace.zpos = (short)(Tile.floorHeight<<3);
+            Reposition(toPlace);
         }
 
     }//end class
