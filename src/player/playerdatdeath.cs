@@ -1,4 +1,6 @@
+using System;
 using System.Diagnostics;
+using Godot;
 
 namespace Underworld
 {
@@ -27,7 +29,7 @@ namespace Underworld
                 //respawn in gem room.
                 if (dungeon_level==1)
                 {
-                    //playerObject.ProjectileSourceID = 235; for testing against LB
+                    playerObject.ProjectileSourceID = 235;  // for testing against LB
                     //Check if was killed by an ally
                     if(playerObject.ProjectileSourceID !=0)
                     {
@@ -161,8 +163,43 @@ namespace Underworld
         {        
             Teleportation.CodeToRunOnTeleport = null;    
             play_hp = max_hp;
+            ChangeExperience(-Exp/9);//loss of exp
             PlayerInDeathMode = false;        
-            //TODO: make humans friendly, set quests, run a trap, advance the clock and move LB to the prison to release you.        
+            //TODO: make humans friendly, set quests, run a trap, advance the clock and move LB to the prison to release you.
+            var newtime =  (ClockValue / 0x3C00) % 20;        
+            newtime = Math.Abs(0x28 - newtime);
+            newtime = newtime * 0x3C;
+            newtime = newtime - Rng.r.Next(0x5A) + 0x3C; 
+            Debug.Print($"Advancing time by {newtime}");
+            AdvanceTime(newtime);
+            CallBacks.RunCodeOnRace(npc.set_attitude_by_array,0x1C, new int[]{2}, true);
+            CallBacks.RunCodeOnRace(npc.set_goal_and_target_by_array,0x1C, new int[]{0,1}, true); // goal=1, gtarg=0
+            SetQuest(112,1);//avatar has been fighting.
+
+            //TODO: calm NPCs across the map
+            
+            uwObject LBritish = null;
+            for (int i=1; i<256;i++)
+            {//find lord british
+                LBritish = UWTileMap.current_tilemap.LevelObjects[i];
+                if (LBritish.npc_whoami== 0x8E)
+                {
+                    break;
+                }
+                LBritish = null;
+            }
+            if (LBritish != null)
+            {
+                npc.moveNPCToTile(LBritish, 42, 34);
+                LBritish.quality = 0x28;
+                LBritish.owner = 0x27;
+                LBritish.npc_goal = 1;
+            }
+
+            trigger.TriggerTrapInTile(39,37);
+
+            //put weapons away.
+            
         }
 
     }//end class

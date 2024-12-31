@@ -85,14 +85,44 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// For use with delegates
+        /// {target,goal}
+        /// </summary>
+        /// <param name="critter"></param>
+        /// <param name="paramsarray"></param>
         public static void set_goal_and_target_by_array(uwObject critter, int[] paramsarray)
         {
-            npc.SetGoalAndGtarg(
+            SetGoalAndGtarg(
                 critter: critter, 
-                goal: paramsarray[7], 
-                target: paramsarray[6]);
+                goal: paramsarray[1], 
+                target: paramsarray[0]);
         }
 
+        /// <summary>
+        /// For use with delegates
+        /// </summary>
+        /// <param name="critter"></param>
+        /// <param name="paramsarray"></param>
+         public static void set_attitude_by_array(uwObject critter, int[] paramsarray)
+         {
+            set_attitude(critter, paramsarray[0]);
+         }
+
+
+        /// <summary>
+        /// Used by event based attitude changes. Eg avatar going to jail
+        /// </summary>
+        /// <param name="critter"></param>
+        /// <param name="newAttitute"></param>
+        public static void set_attitude(uwObject critter, int newAttitute)
+        {
+            critter.npc_attitude = (short)newAttitute;
+            if (newAttitute!=0)
+            {
+                critter.ProjectileSourceID = 0;
+            }
+        }
 
         public static void moveNPCToTile(uwObject critter, int destTileX, int destTileY)
         {

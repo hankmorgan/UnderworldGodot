@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 namespace Underworld
 {
     /// <summary>
@@ -203,6 +205,14 @@ namespace Underworld
             }
         }
 
+
+        /// <summary>
+        /// Runs a function on all matching NPCs that have the whoami
+        /// </summary>
+        /// <param name="methodToCall"></param>
+        /// <param name="whoami"></param>
+        /// <param name="paramsArray"></param>
+        /// <param name="loopAll"></param>
         public static void RunCodeOnNPCS(NPCChangeCallBack methodToCall, int whoami, int[] paramsArray, bool loopAll)
         {
             for (int i = 0; i < UWTileMap.current_tilemap.NoOfActiveMobiles; i++)
@@ -216,8 +226,37 @@ namespace Underworld
                         if (obj.npc_whoami == whoami)
                         {
                             methodToCall(
-                                critter: obj, 
+                                critter: obj,
                                 paramsarray: paramsArray);
+                            if (!loopAll)
+                            {
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Runs a function on all matching npcs of a race defined by their critter data
+        /// </summary>
+        /// <param name="methodToCall"></param>
+        /// <param name="race"></param>
+        /// <param name="paramsArray"></param>
+        public static void RunCodeOnRace(NPCChangeCallBack methodToCall, int race, int[] paramsArray, bool loopAll)
+        {
+            for (int i = 0; i < UWTileMap.current_tilemap.NoOfActiveMobiles; i++)
+            {
+                var index = UWTileMap.current_tilemap.GetActiveMobileAtIndex(i);
+                if ((index != 0) && (index < 256))
+                {
+                    var obj = UWTileMap.current_tilemap.LevelObjects[index];
+                    if (obj.majorclass == 1)//NPC
+                    {
+                        if (critterObjectDat.race(obj.item_id)== race)
+                        {
+                            methodToCall(obj, paramsArray);
                             if (!loopAll)
                             {
                                 return;

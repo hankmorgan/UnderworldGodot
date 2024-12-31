@@ -7,15 +7,15 @@ namespace Underworld
     {
         public static void Activate(uwObject trapObj, int character)
         {
-            var paramsarray = new int[8];
-            paramsarray[7] = trapObj.owner;//the goal
+            var paramsarray = new int[2];
+            paramsarray[1] = trapObj.owner;//the goal
             if (trapObj.ypos>0)
             {
-                paramsarray[6] = 1; //the target
+                paramsarray[0] = 1; //the target
             }
             else
             {
-                paramsarray[6] = character;
+                paramsarray[0] = character;
             }
             
             int whoami = 0;
