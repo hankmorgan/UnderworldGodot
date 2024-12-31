@@ -40,7 +40,7 @@ namespace Underworld
             {
                 instance.convo.Lines = new MessageScrollLine[12];
                 instance.convo.Rows = 12;
-                instance.convo.Columns = 44;
+                instance.convo.Columns = 40;
 
                 instance.scroll.Columns = 44;
             }
