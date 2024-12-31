@@ -1,5 +1,3 @@
-using System.Runtime.InteropServices;
-
 namespace Underworld
 {
     public class AnimationOverlay : UWClass

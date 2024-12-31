@@ -299,5 +299,22 @@ namespace Underworld
             }
         }
 
+
+        /// <summary>
+        /// Returns to main menu from the game (eg on player death)
+        /// </summary>
+        public static void ReturnToMainMenu()
+        {
+            //Still some weirdness with enabling the main menu again.
+            EnableDisable(instance.PanelMainMenu, true);            
+            AtMainMenu = true;
+            InGame = false;
+            Node3D the_tiles = main.instance.GetNode<Node3D>("/root/Underworld/tilemap");
+            if (the_tiles != null)
+            {
+                UWTileMap.DestroyTileMapAndContents(the_tiles);
+            }
+        }
+
     }//end class
 }//end namespace

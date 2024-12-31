@@ -144,6 +144,17 @@ namespace Underworld
         }
 
         /// <summary>
+        /// Gets the world number that the player is currently in. 
+        /// </summary>
+        public static int CurrentWorld
+        {
+            get
+            {
+                return worlds.GetWorldNo(dungeon_level);
+            }
+        }
+
+        /// <summary>
         /// The full X co-ordinate in the map
         /// </summary>
         public static int X

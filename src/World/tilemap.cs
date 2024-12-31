@@ -275,7 +275,7 @@ namespace Underworld
         public static void LoadTileMap(int newLevelNo, string datafolder, bool newGameSession = true)
         {
             PaletteLoader.NextPaletteCycle_GAME = 0;
-            PaletteLoader.NextPaletteCycle_UI  = 0;
+            PaletteLoader.NextPaletteCycle_UI = 0;
 
             tileMapRender.mapTextures = new();//refresh textures
             ObjectCreator.worldobjects = main.instance.GetNode<Node3D>("/root/Underworld/worldobjects");
@@ -289,15 +289,7 @@ namespace Underworld
                 uimanager.EnableDisable(uimanager.instance.PanelMainMenu, false);
             }
 
-            //Clear out old data
-            foreach (var child in the_tiles.GetChildren())
-            {
-                child.QueueFree();
-            }
-            foreach (var child in ObjectCreator.worldobjects.GetChildren())
-            {
-                child.QueueFree();
-            }
+            DestroyTileMapAndContents(the_tiles);
 
             //Reset timers
             timers.FrameNo = 0;
@@ -347,6 +339,20 @@ namespace Underworld
             Palette.CurrentPalette = 0;
             //Debug.Print($"{current_tilemap.NoOfActiveMobiles}");
         }
+
+        public static void DestroyTileMapAndContents(Node3D the_tiles)
+        {
+            //Clear out old data
+            foreach (var child in the_tiles.GetChildren())
+            {
+                child.QueueFree();
+            }
+            foreach (var child in ObjectCreator.worldobjects.GetChildren())
+            {
+                child.QueueFree();
+            }
+        }
+
 
 
 

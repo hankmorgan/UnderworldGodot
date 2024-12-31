@@ -135,7 +135,12 @@ namespace Underworld
                         }//end every 20 seconds update
                         PreviousClockValue = ClockValue % 20;
                     }//end seconds for loop                 
-                }  //every second              
+                }  //every second  
+                //check for player death.
+                if (play_hp<=0)
+                {
+                    PlayerDeath();
+                }            
             }//end ingame check
         }
 
