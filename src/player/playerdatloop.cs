@@ -1,4 +1,5 @@
 using System;
+using System.Data.Common;
 using System.Diagnostics;
 using Godot;
 
@@ -58,11 +59,13 @@ namespace Underworld
 
                             if (ManaRegenEnchantment)
                             {
-                                play_mana = Math.Min(play_mana + 1, max_mana);
+                                //play_mana = Math.Min(play_mana + 1, max_mana);
+                                ManaRegenChange(1);
                             }
                             if (HealthRegenEnchantment)
                             {
-                                play_hp = Math.Min(play_hp + 1, max_hp);
+                                //play_hp = Math.Min(play_hp + 1, max_hp);
+                                HPRegenerationChange(1);
                             }
 
                             SwimmingSkillCheck();
@@ -93,7 +96,8 @@ namespace Underworld
                                 var manaskillcheck = (int)SkillCheck(ManaSkill, 10);
                                 if (manaskillcheck > 0)
                                 {
-                                    play_mana = Math.Min(play_mana + manaskillcheck, max_mana);
+                                    //play_mana = Math.Min(play_mana + manaskillcheck, max_mana);
+                                    ManaRegenChange(play_mana + manaskillcheck);
                                 }
                             }//end every 60 seconds update
                             if ((playerUpdateCounter % 30) == 0)
@@ -121,7 +125,7 @@ namespace Underworld
                                 var hpskillcheck = (int)SkillCheck(STR, 10);
                                 if (hpskillcheck > 0)
                                 {//regular health regen
-                                    play_hp = Math.Min(play_hp + hpskillcheck, max_hp);
+                                    HPRegenerationChange(hpskillcheck);
                                 }
                             }//end every 5 mins update
                             if ((playerUpdateCounter % 60) == 0)//every 20 mins
@@ -144,6 +148,59 @@ namespace Underworld
             }//end ingame check
         }
 
+        /// <summary>
+        /// Regenerates HP
+        /// </summary>
+        /// <param name="regeneration"></param>
+        public static void HPRegenerationChange(int regeneration)
+        {
+            if (regeneration>=0)
+            {//when positive apply a random bonus
+                regeneration = 1 + (((Rng.r.Next(4) + regeneration) * max_hp) >> 4);                
+            }
+            else
+            {//when negative exact amount regen
+                regeneration = -regeneration;                
+            }
+            play_hp = Math.Min(play_hp + regeneration, max_hp);
+        }
+
+        public static void ManaRegenChange(int regeneration)
+        {
+            //check mana rules for the academy test.
+            if (_RES == GAME_UW2)
+            {
+                if (worlds.GetWorldNo(dungeon_level) == 5)//Academy
+                {
+                    var academylevel = 1 + dungeon_level % 8;
+                    if ((academylevel > 1) && (academylevel < 8))
+                    {
+                        return;
+                    }
+                    if (academylevel == 8)
+                    {
+                        if (tileX < 25)
+                        {
+                            return;
+                        }
+                    }
+                }
+            }
+            //TODO: see about similar logic for UW1 tybals lair
+            
+            //Apply mana boost
+            if (regeneration < 0)
+            {//boost mana by minus minus minor class. Not clear when this could happen...
+                play_mana = Math.Min(play_mana - regeneration, max_mana);
+            }
+            else
+            {
+                var increase = 1 + ((max_mana * (regeneration + Rng.r.Next(0, 4))) >> 4);
+                play_mana = Math.Min(play_mana + increase, max_mana);
+            }
+        }
+
+
 
         /// <summary>
         /// Screenshakes and damage when killorn is crashing
@@ -161,7 +218,7 @@ namespace Underworld
             //TODO
         }
 
-        static void UpdateLightStability(int updatecounter)
+        public static void UpdateLightStability(int updatecounter)
         {
             //loop each lit light source.
             //when updatecounter % lightsource class index. decrease light quality by 1 point

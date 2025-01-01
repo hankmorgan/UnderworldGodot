@@ -176,6 +176,10 @@ namespace Underworld
             ObjectCreator.RenderObject(newobj, UWTileMap.current_tilemap);
         }
 
+        public static void FindAndRunCreateObjectTraps()
+        {
+            Debug.Print("Placeholder for the function that spawns critters randomly based on create object traps on the map");
+        }
 
     }//end class
 }//end namespace

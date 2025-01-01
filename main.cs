@@ -200,6 +200,7 @@ public partial class main : Node3D
 					playerdat.zpos = newzpos;
 
 					//tmp update the player object to keep in sync with other values
+					playerdat.playerObject.item_id = 127;
 					playerdat.playerObject.xpos = (short)playerdat.xpos;
 					playerdat.playerObject.ypos = (short)playerdat.ypos;
 					playerdat.playerObject.tileX = playerdat.tileX;
@@ -351,8 +352,25 @@ public partial class main : Node3D
 							RunicMagic.CastRunicSpell(); break;
 						case Key.F9://track skill
 							Debug.Print("Track"); break;
-						case Key.F10: // make camp 
-							Debug.Print("Make camp"); break;
+						case Key.F10: // make camp
+							{
+								Debug.Print("Make camp"); 
+								//Try and find a bedroll in player inventory.
+								var bedroll = objectsearch.FindMatchInFullObjectList(
+									majorclass: 4, minorclass: 2, classindex: 1, 
+									objList: playerdat.InventoryObjects);
+								if (bedroll!=null)
+								{
+									sleep.Sleep(1);
+								}
+								else
+								{
+									sleep.Sleep(0);
+								}
+								break;							
+							} 
+							
+
 						case Key.F11://toggle position label
 							{
 								EnablePositionDebug = !EnablePositionDebug;

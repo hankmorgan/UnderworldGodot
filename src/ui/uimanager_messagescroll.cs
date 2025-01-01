@@ -42,7 +42,7 @@ namespace Underworld
                 instance.convo.Rows = 12;
                 instance.convo.Columns = 40;
 
-                instance.scroll.Columns = 44;
+                instance.scroll.Columns = 50;
             }
             else
             {

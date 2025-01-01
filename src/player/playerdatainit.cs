@@ -49,6 +49,7 @@ namespace Underworld
                 play_hp = 60;
                 max_hp = 60;
                 play_hp = 60;
+                play_hunger = 60;
                 tileX = -(int)(main.gamecam.Position.X / 1.2f);
                 tileY = (int)(main.gamecam.Position.Z / 1.2f);
                 dungeon_level = uwsettings.instance.level + 1;

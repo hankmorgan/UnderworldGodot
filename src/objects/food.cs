@@ -122,7 +122,11 @@ namespace Underworld
             {
                 case playerdat.SkillCheckResult.CritFail:
                     {
-                        uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x102));// You wake feeling somewhat unstable but better
+                        sleep.Sleep(-2);
+                        if (playerdat.play_hp>0)
+                        {
+                            uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x102));// You wake feeling somewhat unstable but better
+                        }                        
                         //TODO Screenshake
                         break;
                     }
@@ -144,11 +148,12 @@ namespace Underworld
         static void TakeShrooms(uwObject obj, bool UsedFromInventory)
         {
             var SkillCheckResult = playerdat.SkillCheck(playerdat.INT, 0x14);
-            var manachange = playerdat.play_mana = Rng.r.Next(1,4) * (int)SkillCheckResult;
-            
-            playerdat.play_mana = Math.Max(
-                Math.Min(manachange, playerdat.max_mana)
-                , 0);
+            var manachange = Rng.r.Next(1,4) * (int)SkillCheckResult;
+
+           playerdat.ManaRegenChange(manachange); 
+            // playerdat.play_mana = Math.Max(
+            //     Math.Min(manachange, playerdat.max_mana)
+            //     , 0);
 
             playerdat.shrooms = Math.Min(3, playerdat.shrooms +1);
             uimanager.AddToMessageScroll(GameStrings.GetString(1,GameStrings.str_the_mushroom_causes_your_head_to_spin_and_your_vision_to_blur_));
@@ -326,7 +331,7 @@ namespace Underworld
                 }
             }
             return false;
-        }
+        }       
 
     }//end class
 }//end namespace

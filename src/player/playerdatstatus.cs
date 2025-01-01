@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace Underworld
 {
      /// <summary>
@@ -235,11 +237,7 @@ namespace Underworld
                     SetAt16(0x3f + toMoveFromIndex * 2, 0);//clear data.
                }
                ActiveSpellEffectCount--;
-          }
-
-
-
-         
+          }      
 
 
           /// <summary>
@@ -432,6 +430,40 @@ namespace Underworld
           }
 
           private static bool _automapenabled_uw1=true;
+
+
+          /// <summary>
+          /// Bit Flags of what type of tile the player is on. Eg is it lava, water, solid etc.
+          /// </summary>
+          public static int TileState
+          {
+               get
+               {
+                    if(_RES==GAME_UW2)
+                    {
+                         return GetAt(0x307);
+                    }
+                    else
+                    {
+                         return GetAt(0xB9);
+                    }
+               }
+          }
+
+
+          public static int ZVelocity
+          {
+               get
+               {
+                    return 0;//todo
+               }
+          }
+
+
+          public static void ChangeHunger(int changeValue)
+          {
+               Debug.Print ("TODO Implement logic around changing hunger and applying healing bonuses");
+          }
 
      }//enclass
 }//end namespace

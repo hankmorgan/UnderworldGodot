@@ -7,6 +7,21 @@ namespace Underworld
     /// </summary>
     public class damage : UWClass
     {
+        public static void DamagePlayer(int basedamage, int damagetype, int damagesource)
+        {
+            Debug.Print("TODO further implement this");
+            damage.ScaleDamage(playerdat.playerObject.item_id, ref basedamage, damagetype);
+            playerdat.playerObject.ProjectileSourceID = (short)damagesource;
+
+            if (basedamage < playerdat.play_hp)
+            {
+                playerdat.play_hp -= basedamage;
+            }
+            else
+            {
+                playerdat.play_hp = 0;
+            }
+        }
 
         /// <summary>
         /// Applies damage to objects
@@ -15,7 +30,6 @@ namespace Underworld
         /// <param name="basedamage"></param>
         /// <param name="damagetype"></param>
         /// <param name="damagesource"></param>
-
         public static void DamageObject(uwObject objToDamage, int basedamage, int damagetype, uwObject[] objList, bool WorldObject, Godot.Vector3 hitCoordinate, int damagesource)
         {
             damage.ScaleDamage(objToDamage.item_id, ref basedamage, damagetype);

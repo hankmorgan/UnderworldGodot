@@ -29,7 +29,7 @@ namespace Underworld
                 //respawn in gem room.
                 if (dungeon_level==1)
                 {
-                    playerObject.ProjectileSourceID = 235;  // for testing against LB
+                    //playerObject.ProjectileSourceID = 235;  // for testing against LB
                     //Check if was killed by an ally
                     if(playerObject.ProjectileSourceID !=0)
                     {
@@ -151,6 +151,10 @@ namespace Underworld
             }
         }
 
+
+        /// <summary>
+        /// Avatar will respawn at the black rock if they die in another world
+        /// </summary>
         static void ResurrectAtBlackrockGem()
         {
             Teleportation.CodeToRunOnTeleport = null;
@@ -159,6 +163,11 @@ namespace Underworld
             uimanager.AddToMessageScroll(GameStrings.GetString(1,0x169));
         }
 
+        /// <summary>
+        /// Avatar goes to jail if killed while fighting the inhabitents of the castle.
+        /// (if this happens before talking to LB the game will leave the avatar permanently in jail), 
+        /// otherwise Lord British will teleport in to free the avatar
+        /// </summary>
         static void GoToJail()
         {        
             Teleportation.CodeToRunOnTeleport = null;    
@@ -177,6 +186,7 @@ namespace Underworld
             SetQuest(112,1);//avatar has been fighting.
 
             //TODO: calm NPCs across the map
+            Debug.Print("Add calm function here");
             
             uwObject LBritish = null;
             for (int i=1; i<256;i++)

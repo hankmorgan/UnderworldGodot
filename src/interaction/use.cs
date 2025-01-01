@@ -355,6 +355,9 @@ namespace Underworld
                     {
                         switch (obj.classindex)
                         {
+                            case 1://bedroll
+                                sleep.Sleep(1);
+                                return true;
                             case 2:
                                 {
                                     if (_RES != GAME_UW2)
@@ -442,7 +445,7 @@ namespace Underworld
                         {
                             case 7://a_shrine
                                 {
-                                    return shrine.Use(obj);
+                                    return shrine.Use(obj);                                
                                 }
                             case 0xB://barrel
                             case 0xD://chest
@@ -464,6 +467,9 @@ namespace Underworld
                                 return gravestone.Use(obj);
                             case 6: // a readable sign. interaction is also a look
                                 return writing.LookAt(obj);
+                            case 7://bed (UW2 only object)
+                                sleep.Sleep(2);
+                                return true;
                             case 0xE://tmap
                             case 0xF:
                                 return tmap.LookAt(obj);
