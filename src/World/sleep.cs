@@ -103,7 +103,7 @@ namespace Underworld
             {
                 //drunk-ass Avatar.
                 SleepOnDamagingSurface();
-                if (_RES==GAME_UW2 &&  playerdat.IsFightingInPit)
+                if (_RES == GAME_UW2 && playerdat.IsFightingInPit)
                 {//Avatar fell asleep drunk during a duel!
                     damage.DamagePlayer(
                         basedamage: 0xFF,
@@ -178,10 +178,11 @@ namespace Underworld
 
                     if (sleepmethod >= 0)
                     {
-                        DidDream = !Dreams();
+                        DidDream = !Dreams(sleepfactor: foodregenfactor_var2);
                     }
                     else
                     {
+                        uimanager.FlashColour(1, uimanager.Cuts3DWin, 0.5f);
                         uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x13 - foodregenfactor_var2));
                     }
                     if (PlayerWillDie)
@@ -191,7 +192,7 @@ namespace Underworld
                     }
                 }
 
-                uimanager.FlashColour(1, uimanager.Cuts3DWin, 0.5f);
+                
                 playerdat.PlayerStatusUpdate();
                 //Cancel all motion.
 
@@ -257,10 +258,75 @@ namespace Underworld
             return false;
         }
 
-        static bool Dreams()
+        static bool Dreams(int sleepfactor)
         {
-            Debug.Print("unimplemented dreams");
-            return false;
+
+            if (_RES == GAME_UW2)
+            {
+                return DreamsUW2(sleepfactor);
+            }
+            else
+            {
+                uimanager.FlashColour(1, uimanager.Cuts3DWin, 2f);
+                Debug.Print("unimplemented dreams uw1");
+                return false;
+            }
+        }
+
+        static bool DreamsUW2(int sleepfactor)
+        {
+            int[] DreamXClocks = new int[] { 4, 6, 0xA, 0xE };
+            if (playerdat.DreamPlantEaten)
+            {
+                uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x18));// your dreams are vivid
+                playerdat.SetQuest(48, 1);
+                Debug.Print("Do a void Dream");
+                return false;
+            }
+            else
+            {
+                var si_dreamflags = playerdat.GetQuest(145);
+                var xclock = playerdat.GetXClock(1);
+                var FoundStageVar2 = -1;
+                for (int counter_var4 = 0; counter_var4 < 4; counter_var4++)
+                {
+                    if (xclock>=DreamXClocks[counter_var4])
+                    {
+                        if ((si_dreamflags & (1<<counter_var4)) == (1<<counter_var4))
+                        {
+                            //found a dreamstage that has not yet happened
+                            FoundStageVar2 = counter_var4;
+                        }
+                    }
+                }
+                if (FoundStageVar2<0)
+                {
+                    if (playerdat.DreamPlantEaten == false)
+                    {//should always be the case.
+                        FoundStageVar2 = 4 + Rng.r.Next(3); //try and pic a random dream.
+                        if (((1<<FoundStageVar2) & si_dreamflags) !=0)
+                        {
+                            FoundStageVar2 = -1;
+                        }
+                    }
+                }
+
+                if (FoundStageVar2<0)
+                {
+                    //wait in sleep
+                    uimanager.FlashColour(1, uimanager.Cuts3DWin, 2f);
+                    uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x13-sleepfactor));//rested or uneasy message
+                    return false;
+                }
+                else
+                {
+                    Debug.Print($"play cutscene {0x18+FoundStageVar2}");
+                    playerdat.SetQuest(145, playerdat.GetQuest(145) ^ (1<<FoundStageVar2));  //XOR the new value in.
+
+                    uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x13-sleepfactor));//rested or uneasy message
+                    return true;
+                }
+            }
         }
 
     }//end class
