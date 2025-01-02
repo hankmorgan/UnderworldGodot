@@ -2397,6 +2397,16 @@ offset_right = 1280.0
 offset_bottom = 800.0
 mouse_filter = 0
 
+[node name="CutsSubtitle" type="RichTextLabel" parent="UI/Common"]
+visible = false
+offset_left = 107.0
+offset_top = 636.0
+offset_right = 1131.0
+offset_bottom = 796.0
+theme_override_fonts/normal_font = ExtResource("5_kj12g")
+theme_override_font_sizes/normal_font_size = 48
+text = "Cutscene Subtitle"
+
 [node name="MainMenu" type="Panel" parent="UI/Common"]
 visible = false
 offset_right = 40.0
@@ -2586,7 +2596,7 @@ mouse_filter = 2
 texture = ExtResource("18_tfr7p")
 script = ExtResource("4_gnu1s")
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("CompassBgUW1", "CompassBgUW2", "CompassPointsUW1", "CompassPointsUW2", "CompassPanelUW2", "ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLableFrameUW1", "NPCNameLableFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "CutsFull", "CutsSmallUW1", "CutsSmallUW2", "Cuts3DWinUW1", "Cuts3DWinUW2", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "InteractionButtonsUW1", "InteractionButtonsUW2", "PanelMainMenu", "MainMenuBG", "MainMenuButtons", "LoadingLabel", "SaveGamesNames", "AutomapPanel", "AutomapBG", "AutomapImage", "NotesPanel", "AutomapNumberLabel", "AutomapWorldGem", "messageScrollUW1", "messageScrollUW2", "TypedInput", "GameOptionButtonsUW1", "GameOptionButtonsUW2", "GameOptionsBackgroundUW1", "GameOptionsBackgroundUW2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Chains", "BackpackBG", "RuneTiles", "SelectedRunes", "ActiveSpellIcons", "StartMenuPanel", "pathuw1", "pathuw2", "filed", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSelectedUW1", "NPCTradeSelectedUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "PlayerTradeSelectedUW2", "NPCTradeSelectedUW2", "cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "weaponanimuw1", "weaponanimuw2", "placeholderuw1", "placeholderuw2", "PowerGemUW1", "PowerGemUW2")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("CompassBgUW1", "CompassBgUW2", "CompassPointsUW1", "CompassPointsUW2", "CompassPanelUW2", "ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLableFrameUW1", "NPCNameLableFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "CutsFull", "CutsSmallUW1", "CutsSmallUW2", "Cuts3DWinUW1", "Cuts3DWinUW2", "CutsSubtitle", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "InteractionButtonsUW1", "InteractionButtonsUW2", "PanelMainMenu", "MainMenuBG", "MainMenuButtons", "LoadingLabel", "SaveGamesNames", "AutomapPanel", "AutomapBG", "AutomapImage", "NotesPanel", "AutomapNumberLabel", "AutomapWorldGem", "messageScrollUW1", "messageScrollUW2", "TypedInput", "GameOptionButtonsUW1", "GameOptionButtonsUW2", "GameOptionsBackgroundUW1", "GameOptionsBackgroundUW2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Chains", "BackpackBG", "RuneTiles", "SelectedRunes", "ActiveSpellIcons", "StartMenuPanel", "pathuw1", "pathuw2", "filed", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSelectedUW1", "NPCTradeSelectedUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "PlayerTradeSelectedUW2", "NPCTradeSelectedUW2", "cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "weaponanimuw1", "weaponanimuw2", "placeholderuw1", "placeholderuw2", "PowerGemUW1", "PowerGemUW2")]
 script = ExtResource("1_lw0yg")
 CompassBgUW1 = [NodePath("../UW1/CompassUW1/CompassBg0"), NodePath("../UW1/CompassUW1/CompassBg1"), NodePath("../UW1/CompassUW1/CompassBg2"), NodePath("../UW1/CompassUW1/CompassBg3")]
 CompassBgUW2 = [NodePath("../UW2/CompassUW2/CompassBG0"), NodePath("../UW2/CompassUW2/CompassBG1"), NodePath("../UW2/CompassUW2/CompassBG2"), NodePath("../UW2/CompassUW2/CompassBG3")]
@@ -2618,6 +2628,7 @@ CutsSmallUW1 = NodePath("../UW1/CutsceneSmallUW1")
 CutsSmallUW2 = NodePath("../UW2/CutsceneSmallUW2")
 Cuts3DWinUW1 = NodePath("../UW1/Cuts3DWinUW1")
 Cuts3DWinUW2 = NodePath("../UW2/Cuts3DWinUW2")
+CutsSubtitle = NodePath("../Common/CutsSubtitle")
 HealthFlaskPanel = NodePath("../Common/HealthFlask")
 HealthFlask = [NodePath("../Common/HealthFlask/FlaskLevel0"), NodePath("../Common/HealthFlask/FlaskLevel1"), NodePath("../Common/HealthFlask/FlaskLevel2"), NodePath("../Common/HealthFlask/FlaskLevel3"), NodePath("../Common/HealthFlask/FlaskLevel4"), NodePath("../Common/HealthFlask/FlaskLevel5"), NodePath("../Common/HealthFlask/FlaskLevel6"), NodePath("../Common/HealthFlask/FlaskLevel7"), NodePath("../Common/HealthFlask/FlaskLevel8"), NodePath("../Common/HealthFlask/FlaskLevel9"), NodePath("../Common/HealthFlask/FlaskLevel10"), NodePath("../Common/HealthFlask/FlaskLevel11"), NodePath("../Common/HealthFlask/FlaskLevel12")]
 HealthFlaskBG = NodePath("../Common/HealthFlask/FlaskBorder")
@@ -2869,6 +2880,7 @@ PowerGemUW2 = NodePath("../UW2/PowerGemUW2")
 [connection signal="gui_input" from="UI/Common/Automap/Gem/World6" to="UI/uiManager" method="_on_world_gui_input" binds= [7]]
 [connection signal="gui_input" from="UI/Common/Automap/Gem/World7" to="UI/uiManager" method="_on_world_gui_input" binds= [6]]
 [connection signal="gui_input" from="UI/Common/Automap/Gem/World8" to="UI/uiManager" method="_on_world_gui_input" binds= [8]]
+[connection signal="gui_input" from="UI/Common/MainMenu/Introduction" to="UI/uiManager" method="_on_introduction_gui_input"]
 [connection signal="mouse_entered" from="UI/Common/MainMenu/Introduction" to="UI/uiManager" method="_on_introduction_mouse_entered"]
 [connection signal="mouse_exited" from="UI/Common/MainMenu/Introduction" to="UI/uiManager" method="_on_introduction_mouse_exited"]
 [connection signal="gui_input" from="UI/Common/MainMenu/CreateCharacter" to="UI/uiManager" method="_on_create_character_gui_input"]

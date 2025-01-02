@@ -65,7 +65,7 @@ public partial class main : Node3D
 		if (uwsettings.instance != null)
 		{
 			GetTree().DebugCollisionsHint = uwsettings.instance.showcolliders;
-		}
+		}		
 	}
 
 	public static void StartGame()
@@ -377,8 +377,9 @@ public partial class main : Node3D
 								uimanager.EnableDisable(lblPositionDebug, EnablePositionDebug);
 								break;
 							}
-						case Key.F12:
+						case Key.F12://debug
 							{
+								//cutsplayer.PlayCutscene(0);//test  
 								//trigger.RunTimerTriggers();
 								trigger.RunNextScheduledTrigger();
 								break;

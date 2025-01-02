@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Diagnostics;
 using System.IO;
 using Godot;
 using Peaky.Coroutines;
@@ -51,10 +52,10 @@ namespace Underworld
             //MainMenuBG.Material = bitmaps.GetMaterial(BytLoader.OPSCR_BYT);
             LoadingLabel.Text = "";
             TurnButtonsOff();
-            ToggleButtons(true);
+            ToggleMainMenuButtons(true);
             HideSaves();
             
-            AtMainMenu = true;            
+            AtMainMenu = true;   
         }
 
         /// <summary>
@@ -73,7 +74,7 @@ namespace Underworld
         /// Shows or hides the 4 main menu options
         /// </summary>
         /// <param name="show"></param>
-        private void ToggleButtons(bool show)
+        private void ToggleMainMenuButtons(bool show)
         {
             for (int i = 0; i < 4; i++)
             {
@@ -157,7 +158,7 @@ namespace Underworld
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
-                ToggleButtons(false);
+                ToggleMainMenuButtons(false);
                 ToggleSaves();
             }
         }
@@ -192,7 +193,7 @@ namespace Underworld
 
         private IEnumerator ClearMainMenu()
         {
-            ToggleButtons(false);
+            ToggleMainMenuButtons(false);
             if (UWClass._RES == UWClass.GAME_UW2)
             {
                 LoadingLabel.Text = GameStrings.GetString(1, 273);
@@ -284,6 +285,15 @@ namespace Underworld
             }
         }
 
+        private void _on_introduction_gui_input(InputEvent @event)
+        {
+            if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
+            {
+                cutsplayer.PlayCutscene(0, ReturnToMainMenu);
+            }
+        }
+
+
        public override void _Input(InputEvent @event)
         {
             if (@event is InputEventKey keyinput)
@@ -292,7 +302,7 @@ namespace Underworld
                 {
                     if(keyinput.Keycode == Key.Escape)
                     {//return to main menu
-                        ToggleButtons(true);
+                        ToggleMainMenuButtons(true);
                         ToggleSaves(false);
                     }                    
                 }
@@ -305,8 +315,10 @@ namespace Underworld
         /// </summary>
         public static void ReturnToMainMenu()
         {
-            //Still some weirdness with enabling the main menu again.
-            EnableDisable(instance.PanelMainMenu, true);            
+            Debug.Print("Return to main menu");
+            //Still some weirdness with enabling the main menu again. eg palette switch in UW1
+            EnableDisable(instance.PanelMainMenu, true);    
+            instance.ToggleMainMenuButtons(true);      
             AtMainMenu = true;
             InGame = false;
             Node3D the_tiles = main.instance.GetNode<Node3D>("/root/Underworld/tilemap");

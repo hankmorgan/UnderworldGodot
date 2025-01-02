@@ -39,10 +39,11 @@ namespace Underworld
             _alpha = UseAlpha(File);
             if (LoadImageFile())
             {
+                var filename = System.IO.Path.GetFileName(File);
                 ReadCutsFile(
                     cutsFile: ref ImageFileData, 
                     Alpha: _alpha, 
-                    ErrorHandling: UseErrorHandling(File), 
+                    ErrorHandling: UseErrorHandling(filename), 
                     file: File);
             }
             textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uisprite.gdshader");          
@@ -67,7 +68,7 @@ namespace Underworld
 
         bool UseErrorHandling(string File)
         {//Special case for bugged file
-            switch (File)
+            switch (File.ToLower())
             {
                 case "cs000.n23":
                     return true;
@@ -193,7 +194,7 @@ namespace Underworld
                     width: lpH.width, height: lpH.height, 
                     palette: pal, 
                     useAlphaChannel: Alpha, 
-                    useSingleRedChannel: true,
+                    useSingleRedChannel: false,
                     crop: UseCropping);
 
             }

@@ -17,6 +17,8 @@ namespace Underworld
         [Export] TextureRect Cuts3DWinUW1;
         [Export] TextureRect Cuts3DWinUW2;
 
+        [Export] public RichTextLabel CutsSubtitle;
+
 
         public static void InitCuts()
         {
@@ -144,6 +146,14 @@ namespace Underworld
             EnableDisable(targetControl, false);
             instance.uwsubviewport.Disable3D = false;
             yield return 0;
+        }
+
+
+        
+        public static void DisplayCutsImage(CutsLoader cuts, int imageNo, TextureRect targetControl)
+        {
+            targetControl.Texture = cuts.LoadImageAt(imageNo);
+            //targetControl.Material = cuts.GetMaterial(imageNo);
         }
 
 

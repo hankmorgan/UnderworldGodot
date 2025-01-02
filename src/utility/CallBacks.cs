@@ -1,5 +1,3 @@
-using System.Runtime.InteropServices;
-
 namespace Underworld
 {
     /// <summary>
@@ -12,6 +10,7 @@ namespace Underworld
         public delegate bool AreaEffectCallBack(int x, int y, uwObject obj, TileInfo tile, int srcIndex);
         public delegate bool SingleObjectCallBack(uwObject obj);
         public delegate void NPCChangeCallBack(uwObject critter, int[] paramsarray);
+        public delegate void CutsceneCallBack();
 
         /// <summary>
         /// Finds objects in area around tile and runs a function against them
