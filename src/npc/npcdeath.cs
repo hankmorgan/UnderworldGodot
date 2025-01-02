@@ -580,7 +580,7 @@ namespace Underworld
             //set quest variables
             var tmp = playerdat.GetQuest(37);
             tmp |= 4;
-            playerdat.SetQuest(37, tmp);
+            playerdat.SetQuest(37, tmp);//This flags that the next dream will be of garamon asking you to bury him.
             //remove a move trigger from the prison
             var tile = UWTileMap.current_tilemap.Tiles[0x17, 0x38];//trap in the nw prison area
             var next = tile.indexObjectList;

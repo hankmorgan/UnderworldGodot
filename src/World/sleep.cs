@@ -267,12 +267,85 @@ namespace Underworld
             }
             else
             {
-                uimanager.FlashColour(1, uimanager.Cuts3DWin, 2f);
-                Debug.Print("unimplemented dreams uw1");
-                return false;
+                return DreamsUW1(sleepfactor);
             }
         }
 
+
+        /// <summary>
+        /// Handles dreaming of Garamon.
+        /// </summary>
+        /// <param name="sleepfactor"></param>
+        /// <returns></returns>
+        static bool DreamsUW1(int sleepfactor)
+        {
+            var FoundStageVar2 = -1;
+
+            var si_quest = playerdat.GetQuest(37);
+
+            if ((si_quest & 1) == 1)
+            {
+                if (
+                    (playerdat.dungeon_level > 1) 
+                    && ((si_quest & 2) !=2)
+                    )
+                {
+                    FoundStageVar2 = 1;
+                }
+                else
+                {
+                    if ((si_quest & 4) == 4)
+                    {
+                        FoundStageVar2 = 2;
+                    }
+                    else
+                    {
+                        if ((si_quest & 8)== 8)
+                        {
+                            FoundStageVar2 = 3;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                FoundStageVar2 = 0;
+            }
+
+            if (FoundStageVar2 == 0)
+            {
+                if (Rng.r.Next(4+(sleepfactor<<2)) == 0)
+                {
+                    FoundStageVar2 = 4 + Rng.r.Next(6);
+                    if (((1<<FoundStageVar2) & si_quest) !=0)
+                    {
+                        FoundStageVar2 = -1;
+                    }
+                }
+            }
+
+            if ((FoundStageVar2>=0) && !playerdat.GaramonBuried)
+            {
+                Debug.Print($"play cutscene {0x18+FoundStageVar2}");
+                playerdat.SetQuest(37, playerdat.GetQuest(37) ^ (1<<FoundStageVar2));
+                uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x13-sleepfactor));
+                return true;
+            }
+            else
+            {//no more dreams.
+                uimanager.FlashColour(1, uimanager.Cuts3DWin, 2f);
+                uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x13-sleepfactor));
+                return false;
+            }
+
+        }
+
+
+        /// <summary>
+        /// Checks if a dream should play. Based on XClock and player sleeping while not famished or drunk.
+        /// </summary>
+        /// <param name="sleepfactor"></param>
+        /// <returns></returns>
         static bool DreamsUW2(int sleepfactor)
         {
             int[] DreamXClocks = new int[] { 4, 6, 0xA, 0xE };
@@ -322,7 +395,6 @@ namespace Underworld
                 {
                     Debug.Print($"play cutscene {0x18+FoundStageVar2}");
                     playerdat.SetQuest(145, playerdat.GetQuest(145) ^ (1<<FoundStageVar2));  //XOR the new value in.
-
                     uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x13-sleepfactor));//rested or uneasy message
                     return true;
                 }

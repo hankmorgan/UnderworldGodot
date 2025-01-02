@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Reflection;
 
 namespace Underworld
 {
@@ -252,6 +253,24 @@ namespace Underworld
                     return ((GetAt(0x64) >> 1) & 1) == 1;
                 }
                 return false;//not applicable to UW1
+            }
+        }
+
+        /// <summary>
+        /// True when garamon has been buried at his grave.
+        /// </summary>
+        public static bool GaramonBuried
+        {
+            get
+            {
+                if(_RES==GAME_UW2)
+                {
+                    return false;
+                }
+                else
+                {
+                    return ((GetAt(0x63) >> 3) & 1) == 1;
+                }
             }
         }
 
