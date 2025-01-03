@@ -244,6 +244,13 @@ namespace Underworld
                 }
             }
 
+            if ((_RES==GAME_UW2) && (obj.item_id == 0x114))
+            {
+                if (!playerdat.DreamingInVoid)
+                {
+                    playerdat.DreamPlantCounter = (2 + Rng.r.Next(4)) & 0x7;
+                }
+            }
             ObjectCreator.Consume(obj, UsedFromInventory);
 
             return true;

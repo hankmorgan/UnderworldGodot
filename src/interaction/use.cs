@@ -345,6 +345,8 @@ namespace Underworld
                         {//uw2
                             switch (obj.classindex)
                             {
+                                case 4://dream plant
+                                    return food.SpecialFoodCases(obj, WorldObject);
                                 case >= 8 and <= 0xF:
                                     return smallblackrockgem.Use(obj, WorldObject);
                             }
