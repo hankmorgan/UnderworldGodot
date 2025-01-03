@@ -350,11 +350,12 @@ namespace Underworld
         static bool DreamsUW2(int sleepfactor)
         {
             int[] DreamXClocks = new int[] { 4, 6, 0xA, 0xE };
-            if (playerdat.DreamPlantEaten)
+            if (playerdat.DreamPlantCounter > 0)
             {
                 uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x18));// your dreams are vivid
                 playerdat.SetQuest(48, 1);
-                Debug.Print("Do a void Dream");                
+                Debug.Print("Do a void Dream");       
+                DreamOfTheVoid();         
                 return false;
             }
             else
@@ -375,7 +376,7 @@ namespace Underworld
                 }
                 if (FoundStageVar2<0)
                 {
-                    if (playerdat.DreamPlantEaten == false)
+                    if (playerdat.DreamPlantCounter == 0)
                     {//should always be the case.
                         FoundStageVar2 = 4 + Rng.r.Next(3); //try and pic a random dream.
                         if (((1<<FoundStageVar2) & si_dreamflags) !=0)
@@ -401,6 +402,44 @@ namespace Underworld
                     return true;
                 }
             }
+        }
+
+        /// <summary>
+        /// Handles dreaming of the ethereal void.
+        /// </summary>
+        public static void DreamOfTheVoid()
+        {
+            int[] DestX = new int[] { 0x20, 0x19, 0x26, 0x20, 0x28, 0x30 };
+            int[] DestY = new int[] { 0x1C, 0xD, 0x20, 0xE, 0x20, 0xA };
+            var durationOfDream = (Rng.r.Next(4) + 2) & 0x7;
+            playerdat.DreamPlantCounter = durationOfDream;
+            playerdat.DreamingInVoid = true;
+            playerdat.DreamTileX = playerdat.tileX;
+            playerdat.DreamTileY = playerdat.tileY;
+            playerdat.DreamHeading = playerdat.heading;
+            playerdat.DreamDungeon = playerdat.dungeon_level;
+
+            //Pick a random destination in the void
+            var si = Rng.r.Next(8) & 0x7;
+
+            if (si > 4)
+            {
+                si = 0;
+            }
+            var dreamX = DestX[si];
+            var dreamY = DestY[si];
+            if (si ==0)
+            {
+                dreamX = dreamX + Rng.r.Next(2);
+            }
+
+            Teleportation.Teleport(
+                character: 0, 
+                tileX: dreamX, 
+                tileY: dreamY, 
+                newLevel: 0x45, 
+                heading: 0);
+            
         }
 
     }//end class

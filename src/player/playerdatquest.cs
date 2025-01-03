@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Diagnostics;
 
 namespace Underworld
@@ -228,15 +229,30 @@ namespace Underworld
         }
 
 
-        public static bool DreamPlantEaten
+        /// <summary>
+        /// Count of how how long player will spend in the void when dream. 
+        /// Value is set when a dream plant is eaten and replaced with a random value when actually dreaming
+        /// </summary>
+        public static int DreamPlantCounter
         {
             get
             {
                 if (_RES == GAME_UW2)
                 {
-                    return ((GetAt(0x63) >> 6) & 7) == 1;
+                    return (GetAt16(0x63) >> 6) & 7;
                 }
-                return false;//not applicable to UW1
+                return 0;//not applicable to UW1
+            }
+            set
+            {
+                if (_RES == GAME_UW2)
+                {
+                    var tmp = GetAt16(0x63);
+                    tmp = tmp & 0xFE3F; //clear existing bits
+                    value = (value & 0x7)<<6;
+                    tmp = tmp | value; //set new bits
+                    SetAt16(0x63, tmp);
+                }
             }
         }
 
@@ -252,6 +268,110 @@ namespace Underworld
                     return ((GetAt(0x64) >> 1) & 1) == 1;
                 }
                 return false;//not applicable to UW1
+            }
+            set
+            {
+                if (_RES == GAME_UW2)
+                {
+                    var tmp = GetAt(0x64);
+                    if (value)
+                    {
+                        SetAt(0x64, (byte)(tmp | 2));//set bit
+                    }
+                    else
+                    {
+                        SetAt(0x64, (byte)(tmp & 0xFD));//unset bit.
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Tile x to return to after waking from a void dream
+        /// </summary>
+        public static int DreamTileX
+        {
+            get
+            {
+                if (_RES==GAME_UW2)
+                {
+                    return GetAt16(0x2FC);
+                }
+                return 0;                
+            }
+            set
+            {
+                if(_RES==GAME_UW2)
+                {
+                    SetAt16(0x2FC, value);
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Tile y to return to after waking from a void dream
+        /// </summary>
+        public static int DreamTileY
+        {
+            get
+            {
+                if (_RES== GAME_UW2)
+                {
+                    return GetAt16(0x2FE);
+                }
+                return 0;                
+            }
+            set
+            {
+                if(_RES==GAME_UW2)
+                {
+                    SetAt16(0x2FE, value);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Heading to face when returning from a void dream
+        /// </summary>
+        public static int DreamHeading
+        {
+            get
+            {
+                if(_RES==GAME_UW2)
+                {
+                    return GetAt(0x300);
+                }
+                return 0;                
+            }
+            set
+            {
+                if(_RES==GAME_UW2)
+                {
+                    SetAt(0x300, (byte)value);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Dungeon level to return to after waking from a void dream.
+        /// </summary>
+        public static int DreamDungeon
+        {
+            get
+            {
+                if(_RES==GAME_UW2)
+                {
+                    return GetAt(0x301);
+                }
+                return 0;                
+            }
+            set
+            {
+                if(_RES==GAME_UW2)
+                {
+                    SetAt(0x301, (byte)value);
+                }
             }
         }
 

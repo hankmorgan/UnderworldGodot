@@ -119,11 +119,17 @@ namespace Underworld
         {
             if (character == 0)
             {
-                if (playerdat.DreamPlantEaten)
+                if (playerdat.DreamPlantCounter>0)
                 {
                     if (playerdat.DreamingInVoid)
                     {
-                        return 2;
+                        if (newLevel!=0)
+                        {
+                            if (worlds.GetWorldNo(newLevel) !=8)
+                            {
+                                return 2;
+                            }
+                        }                        
                     }
                 }
                 if (playerdat.GetQuest(112) != 0)//avatar fighting in the castle
