@@ -124,6 +124,12 @@ namespace Underworld
                 Debug.Print($"{cmdCount++} {cmd.FunctionName}: {paramlist}");
                 switch (cmd.functionNo)
                 {
+                    case 0: //show text with colour
+                        {
+                            Debug.Print($"Display subtitle: {GameStrings.GetString(StringBlock, cmd.functionParams[1])}");
+                            uimanager.instance.CutsSubtitle.Text = GameStrings.GetString(StringBlock, cmd.functionParams[1]);
+                            break;
+                        }
                     case 3://pause
                     {
                         FrameWait = 0;
@@ -162,12 +168,6 @@ namespace Underworld
                             }
                             break;
                         }  
-                    case 5: //show text
-                        {
-                            Debug.Print($"Display subtitle: {GameStrings.GetString(StringBlock, cmd.functionParams[0])}");
-                            uimanager.instance.CutsSubtitle.Text = GameStrings.GetString(StringBlock, cmd.functionParams[0]);
-                            break;
-                        }
                     case 6://End cutscene
                         {
                             uimanager.EnableDisable(cutscontrol,false);
@@ -212,7 +212,7 @@ namespace Underworld
                         } 
                     default:
                         {
-                            Debug.Print($"Unimplemented cutscene command {cmd.functionNo}");
+                            Debug.Print($"Unimplemented cutscene command {cmd.functionNo} {cmd.FunctionName}");
                             break;
                         }
 
