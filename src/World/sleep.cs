@@ -327,6 +327,7 @@ namespace Underworld
             if ((FoundStageVar2>=0) && !playerdat.GaramonBuried)
             {
                 Debug.Print($"play cutscene {0x18+FoundStageVar2}");
+                cutsplayer.PlayCutscene(0x18+FoundStageVar2, null);
                 playerdat.SetQuest(37, playerdat.GetQuest(37) ^ (1<<FoundStageVar2));
                 uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x13-sleepfactor));
                 return true;
@@ -353,7 +354,7 @@ namespace Underworld
             {
                 uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x18));// your dreams are vivid
                 playerdat.SetQuest(48, 1);
-                Debug.Print("Do a void Dream");
+                Debug.Print("Do a void Dream");                
                 return false;
             }
             else
@@ -393,7 +394,8 @@ namespace Underworld
                 }
                 else
                 {
-                    Debug.Print($"play cutscene {0x18+FoundStageVar2}");
+                    //Debug.Print($"play cutscene {0x18+FoundStageVar2}");
+                    cutsplayer.PlayCutscene(0x18+FoundStageVar2, null);
                     playerdat.SetQuest(145, playerdat.GetQuest(145) ^ (1<<FoundStageVar2));  //XOR the new value in.
                     uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x13-sleepfactor));//rested or uneasy message
                     return true;

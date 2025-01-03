@@ -100,15 +100,17 @@ namespace Underworld
             var FrameWait = 1;
             //load the art file
 
-            //Load the first art file.
-            var cuts = new CutsLoader(System.IO.Path.Combine(
-                    Loader.BasePath, "CUTS", GetsCutsceneFileName(CutsceneNo,1)));
+            //Art file.
+            CutsLoader cuts = null;
+            // var cuts = new CutsLoader(System.IO.Path.Combine(
+            //         Loader.BasePath, "CUTS", GetsCutsceneFileName(CutsceneNo,1)));
 
             //Set initial frame to black
-            uimanager.DisplayCutsImage(
-                cuts: cuts, 
-                imageNo: 0, 
-                targetControl: cutscontrol);
+            uimanager.FlashColour(
+                colour: 0, 
+                targetControl: cutscontrol, 
+                duration: 1, 
+                IgnoreDelay: true);
             
             int cmdCount = 0;
 
@@ -117,7 +119,7 @@ namespace Underworld
                 string paramlist="";
                 for (int p = 0; p<cmd.NoOfParams;p++)
                 {
-                    paramlist = paramlist+$"{cmd.functionParams[p]}";
+                    paramlist = paramlist+$"({cmd.functionParams[p]})";
                 }
                 Debug.Print($"{cmdCount++} {cmd.FunctionName}: {paramlist}");
                 switch (cmd.functionNo)
@@ -133,25 +135,39 @@ namespace Underworld
                             //FrameWait = cmd.functionParams[0];
                             for (int i = 0; i<cmd.functionParams[0];i++)
                             {
-                                if (FrameNo> cuts.ImageCache.GetUpperBound(0))
+                                if (cuts!=null)
                                 {
-                                    if (cmd.functionParams[1]==1) //loop?
+                                    if (FrameNo> cuts.ImageCache.GetUpperBound(0))
                                     {
-                                        FrameNo = 0;
+                                        //if (cmd.functionParams[1]==0) //loop?
+                                        //{
+                                            FrameNo = 0;
+                                        //}
+                                        //else
+                                        //{
+                                        //    break;//end loop.
+                                        //}
                                     }
-                                    else
-                                    {
-                                        break;//end loop.
-                                    }
+                                    uimanager.DisplayCutsImage(
+                                        cuts: cuts, 
+                                        imageNo: FrameNo++, 
+                                        targetControl: cutscontrol);
                                 }
-                                uimanager.DisplayCutsImage(
-                                    cuts: cuts, 
-                                    imageNo: FrameNo++, 
-                                    targetControl: cutscontrol);
+                                else
+                                {
+                                    Debug.Print ("Cuts file is null!");
+                                }
+
                                 yield return new WaitForSeconds(0.2f);
                             }
                             break;
                         }  
+                    case 5: //show text
+                        {
+                            Debug.Print($"Display subtitle: {GameStrings.GetString(StringBlock, cmd.functionParams[0])}");
+                            uimanager.instance.CutsSubtitle.Text = GameStrings.GetString(StringBlock, cmd.functionParams[0]);
+                            break;
+                        }
                     case 6://End cutscene
                         {
                             uimanager.EnableDisable(cutscontrol,false);
@@ -170,10 +186,10 @@ namespace Underworld
                         }              
                     case 13://text-play with audio.       
                         {
-                            Debug.Print(GameStrings.GetString(StringBlock, cmd.functionParams[1]));
+                            Debug.Print($"Display subtitle: {GameStrings.GetString(StringBlock, cmd.functionParams[1])}");
                             uimanager.instance.CutsSubtitle.Text = GameStrings.GetString(StringBlock, cmd.functionParams[1]);
-                            //if (cmd.functionParams[2] != 0 )
-                            //{
+                            if (cmd.functionParams[2] != 999 )
+                            {
                                 Debug.Print($"Play .voc audio {cmd.functionParams[2]}");
                                 var sound = vocLoader.Load(
                                     System.IO.Path.Combine(
@@ -185,7 +201,7 @@ namespace Underworld
                                     main.instance.audioplayer.Stream = sound.toWav();
                                     main.instance.audioplayer.Play();                                    
                                 }
-                            //}
+                            }
                             break; 
                         }     
                     case 14: //wait seconds

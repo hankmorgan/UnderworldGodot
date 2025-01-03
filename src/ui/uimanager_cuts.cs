@@ -90,7 +90,7 @@ namespace Underworld
                );
         }
 
-        public static void FlashColour(byte colour, TextureRect targetControl, float duration = 0.2f)
+        public static void FlashColour(byte colour, TextureRect targetControl, float duration = 0.2f, bool IgnoreDelay = false)
         {
             var palette = PaletteLoader.Palettes[0];
             var width = 2; var height = 2;
@@ -107,10 +107,18 @@ namespace Underworld
 
             var tex = new ImageTexture();
             tex.SetImage(img);
-            _ = Peaky.Coroutines.Coroutine.Run(
-                    FlashColourWithDelay(colorimg: tex, targetControl: targetControl, duration: duration),
-                    main.instance
-               );
+            if (!IgnoreDelay)
+            {
+                _ = Peaky.Coroutines.Coroutine.Run(
+                        FlashColourWithDelay(colorimg: tex, targetControl: targetControl, duration: duration),
+                        main.instance
+                );
+            }
+            else
+            {
+                EnableDisable(targetControl, true);
+                targetControl.Texture = tex;
+            }
         }
 
         private static IEnumerator FlashColourWithDelay(ImageTexture colorimg, TextureRect targetControl, float duration = 0.2f)
