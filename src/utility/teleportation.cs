@@ -37,10 +37,30 @@ namespace Underworld
         {
             if (TeleportLevel != -1)
             {
-                int itemToTransfer = -1;
+                //int itemToTransfer = -1;
                 if (playerdat.ObjectInHand != -1)
-                {//handle moving an object in hand through levels. Temporarily add to inventory data.
-                    itemToTransfer = playerdat.AddObjectToPlayerInventory(playerdat.ObjectInHand, false);
+                {//handle moving an object in hand through levels. 
+                    Debug.Print("Moving an object through a level while holding it! Dropping it there.");
+                    var obj = UWTileMap.current_tilemap.LevelObjects[playerdat.ObjectInHand];
+                    // if ((_RES == GAME_UW2) && playerdat.DreamingInVoid)
+                    // {
+                        //drop objects at the player tile so they cannot be taken out of the dream 
+                        //TODO. special case for the telekinesis wand in Scintillus.
+                        playerdat.ObjectInHand = -1;
+                        uimanager.instance.mousecursor.SetCursorToCursor();
+                        var tile = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY];
+                        obj.zpos = (short)(tile.floorHeight<<3);
+                        obj.xpos = 3;
+                        obj.ypos = 3;
+                        obj.next = tile.indexObjectList;
+                        tile.indexObjectList = obj.index;  
+                    // }  
+                    // else
+                    // {
+                    //     //Temporarily add to inventory data.
+                    //     itemToTransfer = playerdat.AddObjectToPlayerInventory(playerdat.ObjectInHand, false);                        
+                    // }                  
+                    
                 }
                 playerdat.dungeon_level = TeleportLevel;
                 //switch level
@@ -49,10 +69,10 @@ namespace Underworld
                         datafolder: playerdat.currentfolder,
                         newGameSession: false);
 
-                if (itemToTransfer != -1)
-                {//takes object back out of inventory.
-                    uimanager.DoPickup(itemToTransfer);
-                }
+                // if (itemToTransfer != -1)
+                // {//takes object back out of inventory.
+                //     uimanager.DoPickup(itemToTransfer);
+                // }
             }
             if ((TeleportTileX != -1) && (TeleportTileY != -1))
             {

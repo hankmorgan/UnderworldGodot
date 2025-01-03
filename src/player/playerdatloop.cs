@@ -80,6 +80,14 @@ namespace Underworld
                             if (DreamingInVoid)
                             {//TODO check if dreaming in void and count down
                                 Debug.Print("Dreaming in void. count down dream plant value");
+                                if (DreamPlantCounter>0)
+                                {
+                                    DreamPlantCounter--;
+                                    if (DreamPlantCounter == 0)
+                                    {
+                                        sleep.AwakenFromTheVoid();
+                                    }
+                                }
                             }
 
                             if ((playerUpdateCounter % 3) == 0)

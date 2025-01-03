@@ -227,9 +227,19 @@ namespace Underworld
             }
         }
 
-        static void AwakenFromTheVoid()
+        public static void AwakenFromTheVoid()
         {
-            Debug.Print("TODO: awaken from a dream in the void.");
+            Debug.Print("Awaken from a dream in the void.");
+            playerdat.DreamingInVoid = false;
+            playerdat.DreamPlantCounter = 0;
+
+            Teleportation.Teleport(
+                character: 0, tileX: 
+                playerdat.DreamTileX, tileY: playerdat.DreamTileY, 
+                newLevel: playerdat.DreamDungeon, 
+                heading: playerdat.DreamHeading);
+
+            uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x19));
         }
 
         static bool TestForNearByEnemies()

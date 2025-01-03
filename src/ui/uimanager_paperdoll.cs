@@ -521,6 +521,10 @@ namespace Underworld
                 &&  (((eventMouseButton.ButtonIndex == MouseButton.Left) || (eventMouseButton.ButtonIndex == MouseButton.Right)))
             )
             {
+                if (playerdat.DreamingInVoid)
+                {
+                    return;// to prevent inventory use while in the void.
+                }
                 bool isLeftClick = (eventMouseButton.ButtonIndex == MouseButton.Left);
                 if (uimanager.MessageScrollIsTemporary)
                 {//avoids bug involved in clicking on an object while a temp message is displayed
