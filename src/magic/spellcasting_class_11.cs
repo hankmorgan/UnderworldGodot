@@ -110,8 +110,27 @@ namespace Underworld
                         break;
                     }
                 case 0xA://gate travel
-                    {
-                        Debug.Print("GATE TRAVEL");
+                    {                        
+                        if (_RES==GAME_UW2)
+                        {
+                            Debug.Print("GATE TRAVEL UW2");
+                        }
+                        else
+                        {
+                            if (playerdat.MoonStoneDungeonUW1 ==0)
+                            {
+                                uimanager.AddToMessageScroll(GameStrings.GetString(1,0x111));//moonstone is unavailable.
+                            }
+                            else
+                            {
+                                Teleportation.CodeToRunOnTeleport = Teleportation.JumpToMoonStoneUW1;
+                                Teleportation.Teleport(
+                                    character: 0, 
+                                    tileX: 32, tileY: 32, 
+                                    newLevel: playerdat.MoonStoneDungeonUW1, 
+                                    heading: 0);    
+                                    };
+                            }
                         break;
                     }
                 case 0xB://Freeze time

@@ -209,6 +209,33 @@ namespace Underworld
             return ((1 << worldno) & WorldsVisited) != 0;
         }
 
+
+
+        /// <summary>
+        /// The level where the moonstone is located in UW1
+        /// </summary>
+        public static int MoonStoneDungeonUW1
+        {
+            get
+            {
+                if (_RES!=GAME_UW2)
+                {
+                    return GetAt(0x5F) & 0xF;
+                }
+                return 0;                
+            }
+            set
+            {
+                if (_RES!=GAME_UW2)
+                {
+                    var tmp = GetAt(0x5F);
+                    tmp = (byte)(tmp & 0xF0);
+                    tmp = (byte)(tmp | (value & 0xF));
+                    SetAt(0x5F, tmp);
+                }
+            }
+
+        }
         /// <summary>
         /// The dungeon number where the silver tree is planted
         /// </summary>

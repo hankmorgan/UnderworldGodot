@@ -31,6 +31,12 @@ namespace Underworld
                 }
                 RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.GetViewingDistance(lightlevel));
                 main.DrawPlayerPositionSprite(ObjectCreator.grObjects);
+                // for (int i = 0;i<24;i++)
+                // {//give all runes
+                //     SetRune (i, true);
+                // }
+                // max_mana = 60; play_mana = 60;
+                // Casting = 30; ManaSkill = 30;
             }
             else
             {

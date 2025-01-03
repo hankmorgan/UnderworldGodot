@@ -54,6 +54,7 @@ namespace Underworld
                         obj.ypos = 3;
                         obj.next = tile.indexObjectList;
                         tile.indexObjectList = obj.index;  
+                        pickup.DropSpecialCases(obj);
                     // }  
                     // else
                     // {
@@ -78,15 +79,7 @@ namespace Underworld
             {
                 //move to new tile
                 var targetTile = UWTileMap.current_tilemap.Tiles[TeleportTileX, TeleportTileY];
-                playerdat.zpos = targetTile.floorHeight << 3;
-                playerdat.xpos = 3; playerdat.ypos = 3;
-                playerdat.tileX = TeleportTileX; playerdat.tileY = TeleportTileY;
-                main.gamecam.Position = uwObject.GetCoordinate(
-                    tileX: playerdat.tileX,
-                    tileY: playerdat.tileY,
-                    _xpos: playerdat.xpos,
-                    _ypos: playerdat.ypos,
-                    _zpos: playerdat.camerazpos);
+                MovePlayerToTile(TeleportTileX, TeleportTileY);
             }
 
             if ((TeleportTileX != -1) || (TeleportTileY != -1) || (TeleportLevel != -1))
@@ -105,6 +98,20 @@ namespace Underworld
                 CodeToRunOnTeleport();
                 CodeToRunOnTeleport = null;//although this should be handled by the method itself
             }
+        }
+
+        private static void MovePlayerToTile(int tileX, int tileY)
+        {
+            var tile = UWTileMap.current_tilemap.Tiles[tileX,tileY];
+            playerdat.zpos = tile.floorHeight << 3;
+            playerdat.xpos = 3; playerdat.ypos = 3;
+            playerdat.tileX = tileX; playerdat.tileY = tileY;
+            main.gamecam.Position = uwObject.GetCoordinate(
+                tileX: playerdat.tileX,
+                tileY: playerdat.tileY,
+                _xpos: playerdat.xpos,
+                _ypos: playerdat.ypos,
+                _zpos: playerdat.camerazpos);
         }
 
 
@@ -269,6 +276,23 @@ namespace Underworld
             yield return new WaitForSeconds(1);
             JustTeleported = false;
             yield return 0;
+        }
+
+
+        /// <summary>
+        /// Moves the player to the position of the moonstone after teleportation using the Gate Travel Spell
+        /// </summary>
+        public static void JumpToMoonStoneUW1()
+        {
+            //find the moonstone
+            var moonstone = objectsearch.FindMatchInFullObjectList(4,2,6,UWTileMap.current_tilemap.LevelObjects);
+            if (moonstone!=null)
+            {
+                if(UWTileMap.ValidTile(moonstone.tileX, moonstone.tileY))
+                {
+                    MovePlayerToTile(moonstone.tileX, moonstone.tileY);
+                }
+            }
         }
     }//end class
 }//end namespace

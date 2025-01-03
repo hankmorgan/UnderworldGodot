@@ -30,14 +30,29 @@ namespace Underworld
                 obj.tileX = tileX; obj.tileY = tileY;
                 obj.next = t.indexObjectList;
                 t.indexObjectList = (short)index;
-                //remove the old
-                // why was this here 
-                //ObjectCreator.RemoveObject(obj);  
+
                 //create the new              
                 ObjectCreator.RenderObject(obj, UWTileMap.current_tilemap);
+
+                //Handle some special cases
+                DropSpecialCases(obj);
                 return true;
             }
         }
+
+        public static void DropSpecialCases(uwObject obj)
+        {
+            if (_RES != GAME_UW2)
+            {
+                switch (obj.item_id)
+                {
+                    case 294://moonstone
+                        playerdat.MoonStoneDungeonUW1 = playerdat.dungeon_level;
+                        break;
+                }
+            }
+        }
+
 
         static bool CanBePickedUpOverrides(int item_id)
         {
@@ -200,10 +215,19 @@ namespace Underworld
             //now handle some special cases
             if (_RES != GAME_UW2)
             {
-                if (obj.item_id == 458)//silver tree
+                switch(obj.item_id)
                 {
-                    silvertree.PickupTree(obj);
+                    case 294://Moonstone
+                        playerdat.MoonStoneDungeonUW1 = 0;
+                        break;
+                    case 458://silver tree
+                        silvertree.PickupTree(obj);
+                        break;
                 }
+            }
+            else
+            {
+
             }
         }        
     } //end class
