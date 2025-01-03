@@ -554,11 +554,12 @@ namespace Underworld
                             break;
                         case 2://spell casting
                             if (SpellCasting.currentSpell.SpellMajorClass != 5)
-                                {//as long as it's not a project try and cast on the object
+                                {//as long as it's not a project(?) try and cast on the object
                                     SpellCasting.CastCurrentSpellOnRayCastTarget(
                                         index: objAtSlot, 
                                         objList: playerdat.InventoryObjects, 
-                                        hitCoordinate: Vector3.Zero);
+                                        hitCoordinate: Vector3.Zero,
+                                        WorldObject:false);
                                 }
                             break;
                     }

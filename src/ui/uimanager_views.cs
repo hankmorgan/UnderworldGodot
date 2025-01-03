@@ -101,7 +101,8 @@ namespace Underworld
                                         SpellCasting.CastCurrentSpellOnRayCastTarget(
                                             index: 0, 
                                             objList: null, 
-                                            hitCoordinate: hitCoordinate);//not enough room to cast
+                                            hitCoordinate: hitCoordinate,
+                                            WorldObject: true);//not enough room to cast
                                         return;
                                     }
                                 }
@@ -138,7 +139,8 @@ namespace Underworld
                                         SpellCasting.CastCurrentSpellOnRayCastTarget(
                                             index: 0, 
                                             objList: null, 
-                                            hitCoordinate: Vector3.Zero);//not enough room to cast
+                                            hitCoordinate: Vector3.Zero,
+                                            WorldObject: true);//not enough room to cast
                                         return;
                                     }
                                 }
@@ -167,7 +169,8 @@ namespace Underworld
                                         SpellCasting.CastCurrentSpellOnRayCastTarget(
                                             index: index, 
                                             objList: UWTileMap.current_tilemap.LevelObjects,
-                                            hitCoordinate: hitCoordinate);
+                                            hitCoordinate: hitCoordinate,
+                                            WorldObject: true);
                                     }
                                 }
                             }

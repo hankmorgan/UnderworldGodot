@@ -5,7 +5,7 @@ namespace Underworld
     public partial class SpellCasting : UWClass
     {
         //targeted spells
-        public static void CastClass7_SpellsOnCallBack(int minorclass, int index, uwObject[] objList, Godot.Vector3 hitCoordinate, int caster = 1)
+        public static void CastClass7_SpellsOnCallBack(int minorclass, int index, uwObject[] objList, Godot.Vector3 hitCoordinate, bool WorldObject = true, int caster = 1)
         {
             if (_RES == GAME_UW2)
             {
@@ -55,7 +55,7 @@ namespace Underworld
                         break;
                     case 12:
                         //unlock spell
-                        Unlock (index, objList);
+                        Unlock(index, objList);
                         break;
                     case 13:
                         //detect trap
@@ -65,6 +65,10 @@ namespace Underworld
                         break;
                     case 15:
                         //gate travel
+                        GateTravelUW2(
+                            index: index, 
+                            objList: objList, 
+                            WorldObject: WorldObject);
                         break;
                 }
             }
@@ -119,11 +123,11 @@ namespace Underworld
                     {
                         var basedamage = 0xA + playerdat.Casting / 2;
                         damage.DamageObject(
-                            objToDamage: obj, 
-                            basedamage: basedamage, 
-                            damagetype: 4, objList: objList, 
-                            WorldObject: true, 
-                            hitCoordinate: hitCoordinate, 
+                            objToDamage: obj,
+                            basedamage: basedamage,
+                            damagetype: 4, objList: objList,
+                            WorldObject: true,
+                            hitCoordinate: hitCoordinate,
                             damagesource: 1);
                         animo.SpawnAnimoAtPoint(0, hitCoordinate);
                         // damage.ScaledDamageOnNPCWithAnimo(
@@ -296,7 +300,7 @@ namespace Underworld
             int test = 1;
             if (damage.ScaleDamage(critter.item_id, ref test, 3) != 0)
             {
-                animo.SpawnAnimoAtPoint(7, critter.GetCoordinate(critter.tileX, critter.tileY)+ Godot.Vector3.Up);                
+                animo.SpawnAnimoAtPoint(7, critter.GetCoordinate(critter.tileX, critter.tileY) + Godot.Vector3.Up);
                 if (newgoal != 0xFF)
                 {
                     critter.npc_goal = newgoal;
@@ -394,7 +398,7 @@ namespace Underworld
                 var test = 1;
                 if (damage.ScaleDamage(critter.item_id, ref test, 3) != 0)
                 {
-                    animo.SpawnAnimoAtPoint(7, critter.GetCoordinate(critter.tileX, critter.tileY)+ Godot.Vector3.Up);
+                    animo.SpawnAnimoAtPoint(7, critter.GetCoordinate(critter.tileX, critter.tileY) + Godot.Vector3.Up);
                     var whoami = critter.npc_whoami;
                     int stringoffset = 0;
                     if (whoami >= 0x8C)
@@ -448,10 +452,10 @@ namespace Underworld
             if (a_lock.GetIsLocked(target))
             {
                 a_lock.SetIsLocked(
-                    parentObject: target, 
-                    value: false, 
+                    parentObject: target,
+                    value: false,
                     character: character);
-                if (character==0)
+                if (character == 0)
                 {
                     //this has no lock.
                     uimanager.AddToMessageScroll(GameStrings.GetString(GameStrings.str_the_spell_unlocks_the_lock_));
@@ -459,7 +463,7 @@ namespace Underworld
             }
             else
             {
-                if (character==0)
+                if (character == 0)
                 {
                     //this has no lock.
                     uimanager.AddToMessageScroll(GameStrings.GetString(GameStrings.str_that_is_not_locked_));
@@ -473,6 +477,104 @@ namespace Underworld
             //         doorobj.Locked = false;
             //     }
             // }
+        }
+
+
+        private static void GateTravelUW2(int index, uwObject[] objList, bool WorldObject)
+        {
+            for (int i = 0;i<2;i++)
+            {
+                Debug.Print($"Moonstone at {playerdat.GetMoonstone(i)}");
+            }
+
+            var MoonStoneActivated = objList[index];
+            if (MoonStoneActivated.item_id != 0x126)
+            {//not a moonstone
+                uimanager.AddToMessageScroll(GameStrings.GetString(1,0x143));// that is not a moonstone.                
+            }
+            else
+            {
+                var di = 0;
+                var var9 = 1;
+                var si = 0;
+                while (si<2)
+                {
+                    if (playerdat.GetMoonstone(si) != playerdat.dungeon_level)
+                    {
+                        if (playerdat.GetMoonstone(si)!=0)
+                        {   
+                            var9 = 0;
+                            break;
+                        }
+                        else
+                        {
+                            di++;
+                        }
+                    }
+                    si++;
+                }
+
+                if ((si>=2) && (var9==0))
+                {
+                    uimanager.AddToMessageScroll(GameStrings.GetString(1,0x121));// the moonstone is not available.
+                    return;           
+                }
+                else
+                {
+                    if (di == 2)
+                    {
+                        uimanager.AddToMessageScroll(GameStrings.GetString(1,0x121));// the moonstone is not available.
+                        return;  
+                    }
+                    else
+                    {
+                        if (var9!=0)
+                        {//Moonstone on this level                            
+                            if (WorldObject)
+                            {//Used a moonstone from the ground.
+                                int targetX = MoonStoneActivated.tileX; int targetY = MoonStoneActivated.tileY;
+                                //check if this moonstone is the not as the one that has been used.
+                                for (int x = 0; x<64; x++)
+                                {
+                                    for (int y = 0; y<64; y++)
+                                    {
+                                        if ((x != targetX ) || (y!=targetY))
+                                        {
+                                            if (UWTileMap.current_tilemap.Tiles[x,y].indexObjectList!=0)
+                                            {
+                                                var foundMoonstone = objectsearch.FindMatchInTile(x,y,4,2,6);
+                                                if (foundMoonstone!=null)
+                                                {
+                                                    //Found a different moonstone. go to it.
+                                                    Teleportation.Teleport(character: 0, tileX: x, tileY: y, newLevel: 0, heading: 0);
+                                                    return;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                //No other moonstone has been found. Likely the two moonstones are on the same tile.
+                                Teleportation.Teleport(character: 0, tileX: targetX, tileY: targetY, newLevel: 0, heading: 0);
+                            }
+                            else
+                            {                                
+                                //Clicked on inventory to activate. The only moonstone on the map is a different one so use the callback.
+                                Teleportation.JumpToMoonStoneOnLevel();
+                            }
+                        }
+                        else
+                        {
+                            //moonstone on another map.
+                            Teleportation.CodeToRunOnTeleport = Teleportation.JumpToMoonStoneOnLevel;
+                            Teleportation.Teleport(
+                                character: 0, 
+                                tileX: 32, tileY: 32, 
+                                newLevel: playerdat.GetMoonstone(si), 
+                                heading: 0);
+                        }
+                    }
+                }
+            }
         }
     }//end class
 }//end namespace

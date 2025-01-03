@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using System.Diagnostics;
 
 namespace Underworld
@@ -212,30 +211,38 @@ namespace Underworld
 
 
         /// <summary>
-        /// The level where the moonstone is located in UW1
+        /// The level where the moonstone is located.
         /// </summary>
-        public static int MoonStoneDungeonUW1
+        /// <param name="moonstone">0 or 1 for the two moonstones in UW2, 0/ignored For the moonstone in UW1</param>
+        /// <returns></returns>
+        public static int GetMoonstone(int moonstone)
         {
-            get
+            if (_RES!=GAME_UW2)
             {
-                if (_RES!=GAME_UW2)
-                {
-                    return GetAt(0x5F) & 0xF;
-                }
-                return 0;                
+                return GetAt(0x5F) & 0xF;
             }
-            set
+            else
             {
-                if (_RES!=GAME_UW2)
-                {
-                    var tmp = GetAt(0x5F);
-                    tmp = (byte)(tmp & 0xF0);
-                    tmp = (byte)(tmp | (value & 0xF));
-                    SetAt(0x5F, tmp);
-                }
+                return GetAt(0x5F + moonstone);
             }
-
         }
+
+        public static void SetMoonstone(int moonstone, int value)
+        {
+            if (_RES!=GAME_UW2)
+            {
+                var tmp = GetAt(0x5F);
+                tmp = (byte)(tmp & 0xF0);
+                tmp = (byte)(tmp | (value & 0xF));
+                SetAt(0x5F, tmp);
+            }
+            else
+            {
+                SetAt(0x5F+moonstone, (byte)(value & 0xFF));
+            }
+        }
+
+
         /// <summary>
         /// The dungeon number where the silver tree is planted
         /// </summary>

@@ -109,28 +109,12 @@ namespace Underworld
                         Debug.Print("!!!!EARTHQUAKKKKEEE!!!!");
                         break;
                     }
-                case 0xA://gate travel
+                case 0xA://gate travel (UW1)
                     {                        
-                        if (_RES==GAME_UW2)
+                        if (_RES != GAME_UW2)
                         {
-                            Debug.Print("GATE TRAVEL UW2");
+                            GateTravelUW1();
                         }
-                        else
-                        {
-                            if (playerdat.MoonStoneDungeonUW1 ==0)
-                            {
-                                uimanager.AddToMessageScroll(GameStrings.GetString(1,0x111));//moonstone is unavailable.
-                            }
-                            else
-                            {
-                                Teleportation.CodeToRunOnTeleport = Teleportation.JumpToMoonStoneUW1;
-                                Teleportation.Teleport(
-                                    character: 0, 
-                                    tileX: 32, tileY: 32, 
-                                    newLevel: playerdat.MoonStoneDungeonUW1, 
-                                    heading: 0);    
-                                    };
-                            }
                         break;
                     }
                 case 0xB://Freeze time
@@ -153,6 +137,27 @@ namespace Underworld
                     }
             }
         }
+
+        /// <summary>
+        /// Teleports to the Moonstone in UW1.
+        /// </summary>
+        private static void GateTravelUW1()
+        {
+            if (playerdat.GetMoonstone(0) == 0)
+            {
+                uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x111));//moonstone is unavailable.
+            }
+            else
+            {
+                Teleportation.CodeToRunOnTeleport = Teleportation.JumpToMoonStoneOnLevel;
+                Teleportation.Teleport(
+                    character: 0,
+                    tileX: 32, tileY: 32,
+                    newLevel: playerdat.GetMoonstone(0),
+                    heading: 0);
+            };
+        }
+
 
         /// <summary>
         /// Note these enchantments don't line up exactly with the class B spell cast list. This is the correct behaviour

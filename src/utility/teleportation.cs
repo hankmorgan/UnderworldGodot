@@ -100,7 +100,7 @@ namespace Underworld
             }
         }
 
-        private static void MovePlayerToTile(int tileX, int tileY)
+        public static void MovePlayerToTile(int tileX, int tileY)
         {
             var tile = UWTileMap.current_tilemap.Tiles[tileX,tileY];
             playerdat.zpos = tile.floorHeight << 3;
@@ -282,7 +282,7 @@ namespace Underworld
         /// <summary>
         /// Moves the player to the position of the moonstone after teleportation using the Gate Travel Spell
         /// </summary>
-        public static void JumpToMoonStoneUW1()
+        public static void JumpToMoonStoneOnLevel()
         {
             //find the moonstone
             var moonstone = objectsearch.FindMatchInFullObjectList(4,2,6,UWTileMap.current_tilemap.LevelObjects);

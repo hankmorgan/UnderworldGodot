@@ -10,7 +10,7 @@ namespace Underworld
     /// </summary>
     public class pickup : UWClass
     {
-        public static bool Drop(int index, uwObject[] objList, Vector3 dropPosition, int tileX, int tileY)
+        public static bool Drop(int index, uwObject[] objList, Vector3 dropPosition, int tileX, int tileY, bool DoSpecialCases = true)
         {
             var t = UWTileMap.current_tilemap.Tiles[tileX, tileY];
             if (t.tileType == UWTileMap.TILE_SOLID)
@@ -34,8 +34,11 @@ namespace Underworld
                 //create the new              
                 ObjectCreator.RenderObject(obj, UWTileMap.current_tilemap);
 
-                //Handle some special cases
-                DropSpecialCases(obj);
+                if (DoSpecialCases)
+                {
+                    //Handle some special cases
+                    DropSpecialCases(obj);
+                }
                 return true;
             }
         }
@@ -47,8 +50,26 @@ namespace Underworld
                 switch (obj.item_id)
                 {
                     case 294://moonstone
-                        playerdat.MoonStoneDungeonUW1 = playerdat.dungeon_level;
+                        playerdat.SetMoonstone(0, playerdat.dungeon_level);
                         break;
+                }
+            }
+            else
+            {
+                switch (obj.item_id)
+                {
+                    case 294://moonstone
+                        {
+                            for (int m = 0; m<2; m++)
+                            {//Store the current level in the first free moonstone variable.
+                                if (playerdat.GetMoonstone(m)==0)
+                                {
+                                    playerdat.SetMoonstone(m, playerdat.dungeon_level);
+                                    break;
+                                }
+                            }
+                            break;
+                        }
                 }
             }
         }
@@ -218,7 +239,7 @@ namespace Underworld
                 switch(obj.item_id)
                 {
                     case 294://Moonstone
-                        playerdat.MoonStoneDungeonUW1 = 0;
+                        playerdat.SetMoonstone(0, 0);
                         break;
                     case 458://silver tree
                         silvertree.PickupTree(obj);
@@ -227,7 +248,21 @@ namespace Underworld
             }
             else
             {
-
+                switch (obj.item_id)
+                {
+                    case 294://Moonstone
+                        {
+                            for (int m = 0; m<2; m++)
+                            {//Clear the moonstone if it matches the current level.
+                                if (playerdat.GetMoonstone(m) == playerdat.dungeon_level)
+                                {
+                                    playerdat.SetMoonstone(m, 0);
+                                    break;//only do it for the first match.
+                                }
+                            }
+                            break;
+                        }
+                }
             }
         }        
     } //end class

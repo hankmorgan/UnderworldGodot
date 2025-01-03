@@ -48,7 +48,8 @@ namespace Underworld
                             objList: UWTileMap.current_tilemap.LevelObjects,
                             dropPosition: dropcoordinate,
                             tileX: playerdat.tileX,
-                            tileY: playerdat.tileY);
+                            tileY: playerdat.tileY, 
+                            DoSpecialCases:false);
                     }
                 }
                 _ObjectInHand = value;
