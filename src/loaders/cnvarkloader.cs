@@ -9,7 +9,7 @@ namespace Underworld
             if (ReadStreamFile(cnv_ark_path, out byte[] cnv_ark))
             {
                 int NoOfConversations = (int)getAt(cnv_ark, 0, 16);
-                ConversationVM.conversations = new ConversationVM.conversation[NoOfConversations];
+                ConversationVM.conversations = new Conversation[NoOfConversations];
                 for (int i = 0; i < NoOfConversations; i++)
                 {
                     ConversationVM.conversations[i]= new();
@@ -32,7 +32,7 @@ namespace Underworld
                         ConversationVM.conversations[i].StringBlock = (int)getAt(cnv_ark, add_ptr + 0xA, 16);
                         ConversationVM.conversations[i].NoOfMemorySlots = (int)getAt(cnv_ark, add_ptr + 0xC, 16);
                         ConversationVM.conversations[i].NoOfImportedGlobals = (int)getAt(cnv_ark, add_ptr + 0xE, 16);
-                        ConversationVM.conversations[i].functions = new ConversationVM.ImportedFunctions[ConversationVM.conversations[i].NoOfImportedGlobals];
+                        ConversationVM.conversations[i].functions = new ImportedFunctions[ConversationVM.conversations[i].NoOfImportedGlobals];
                         int funcptr = add_ptr + 0x10;
                         for (int f = 0; f < ConversationVM.conversations[i].NoOfImportedGlobals; f++)
                         {
@@ -60,9 +60,14 @@ namespace Underworld
                             ConversationVM.conversations[i].instuctions[counter++] = (short)getAt(cnv_ark, funcptr + c, 16);
                         }
                     }
+                    // if (ConversationVM.conversations[i].instuctions!=null)
+                    // {
+                    //     System.IO.File.WriteAllText( $"c:\\temp\\UW1_{i}_convo.txt", ConversationVM.conversations[i].PrintCode());
+                    // }                    
                 }
-                var json = System.Text.Json.JsonSerializer.Serialize(ConversationVM.conversations);
+                //var json = System.Text.Json.JsonSerializer.Serialize(ConversationVM.conversations);
                 //File.WriteAllText("c:\\temp\\conversations.txt", json);
+                
                 Loaded = true;
             }
         }
@@ -82,7 +87,7 @@ namespace Underworld
 
             int NoOfConversations = (int)getAt(tmp_ark, 0, 32);
 
-            ConversationVM.conversations = new ConversationVM.conversation[NoOfConversations];
+            ConversationVM.conversations = new Conversation[NoOfConversations];
 
             for (int i = 0; i < NoOfConversations; i++)
             {
@@ -117,7 +122,7 @@ namespace Underworld
                             Debug.Print($"Memory slots for {i} is > 0 ");
                         }
                         ConversationVM.conversations[i].NoOfImportedGlobals = (int)getAt(cnv_ark, add_ptr + 0xE, 16);
-                        ConversationVM.conversations[i].functions = new ConversationVM.ImportedFunctions[ConversationVM.conversations[i].NoOfImportedGlobals];
+                        ConversationVM.conversations[i].functions = new ImportedFunctions[ConversationVM.conversations[i].NoOfImportedGlobals];
                         long funcptr = add_ptr + 0x10;
                         for (int f = 0; f < ConversationVM.conversations[i].NoOfImportedGlobals; f++)
                         {
@@ -146,7 +151,10 @@ namespace Underworld
                             ConversationVM.conversations[i].instuctions[counter++] = (short)getAt(cnv_ark, funcptr + c, 16);
                         }
 
-
+                        // if (ConversationVM.conversations[i].instuctions!=null)
+                        // {
+                        //     System.IO.File.WriteAllText( $"c:\\temp\\UW1_{i}_convo.txt", ConversationVM.conversations[i].PrintCode());
+                        // }   
                     }
                     else
                     {

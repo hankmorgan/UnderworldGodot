@@ -16,7 +16,7 @@ namespace Underworld
 		/// <summary>
 		/// The currently referenced conversation.
 		/// </summary>
-		public static conversation currentConversation;
+		public static Conversation currentConversation;
 
 		/// <summary>
 		/// The instruction Pointer.
@@ -562,7 +562,7 @@ namespace Underworld
 			yield return null;
 		}
 
-		private static void ExitConversation(uwObject talker, conversation conv)
+		private static void ExitConversation(uwObject talker, Conversation conv)
 		{
 			ExportVariables(talker);
 			uimanager.EnableDisable(uimanager.instance.ConversationPanelUW1, false);

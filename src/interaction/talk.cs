@@ -14,7 +14,7 @@ namespace Underworld
                 {
                     case 1: //NPCs
                         {        
-                            uimanager.InteractionModeToggle(uimanager.InteractionModes.ModeTalk);//ensure this mode is on        
+                            uimanager.InteractionModeToggle(uimanager.InteractionModes.ModeTalk);//ensure this mode is on                                    
                             ConversationVM.StartConversation(obj);
                             break;
                         }
