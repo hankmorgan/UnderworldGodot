@@ -17,7 +17,7 @@ namespace Underworld
         public int NoOfMemorySlots { get; set; }//	000C   Int16   number of memory slots reserved for variables (*)
         public int NoOfImportedGlobals { get; set; }//000E   Int16   number of imported globals (functions + variables)
                                                     //0010           start of imported functions list	
-        public ImportedFunctions[] functions { get; set; }
+        public ConversationImports[] functions { get; set; }
         public short[] instuctions;
 
 

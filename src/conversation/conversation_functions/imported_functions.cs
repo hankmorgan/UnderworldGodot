@@ -8,7 +8,7 @@ namespace Underworld
     /// </summary>
     public partial class ConversationVM : UWClass
     {
-        public static IEnumerator run_imported_function(ImportedFunctions func, uwObject talker)
+        public static IEnumerator run_imported_function(ConversationImports func, uwObject talker)
         {
             result_register = 0;
             switch (func.importname.ToLower())
@@ -218,6 +218,11 @@ namespace Underworld
                 case "take_id_from_npc":
                     {
                         take_id_from_npc(talker);
+                        break;
+                    }
+                case "x_traps":
+                    {
+                        x_traps();
                         break;
                     }
                 default:

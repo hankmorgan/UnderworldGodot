@@ -3,7 +3,7 @@ namespace Underworld
     /// <summary>
     /// Imported functions and memory headers from the conv.ark file
     /// </summary>
-    public class ImportedFunctions
+    public class ConversationImports
     {
         //0000   Int16   length of function name
         //0002   n*char  name of function

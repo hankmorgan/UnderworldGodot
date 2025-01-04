@@ -32,7 +32,7 @@ namespace Underworld
                         ConversationVM.conversations[i].StringBlock = (int)getAt(cnv_ark, add_ptr + 0xA, 16);
                         ConversationVM.conversations[i].NoOfMemorySlots = (int)getAt(cnv_ark, add_ptr + 0xC, 16);
                         ConversationVM.conversations[i].NoOfImportedGlobals = (int)getAt(cnv_ark, add_ptr + 0xE, 16);
-                        ConversationVM.conversations[i].functions = new ImportedFunctions[ConversationVM.conversations[i].NoOfImportedGlobals];
+                        ConversationVM.conversations[i].functions = new ConversationImports[ConversationVM.conversations[i].NoOfImportedGlobals];
                         int funcptr = add_ptr + 0x10;
                         for (int f = 0; f < ConversationVM.conversations[i].NoOfImportedGlobals; f++)
                         {
@@ -122,7 +122,7 @@ namespace Underworld
                             Debug.Print($"Memory slots for {i} is > 0 ");
                         }
                         ConversationVM.conversations[i].NoOfImportedGlobals = (int)getAt(cnv_ark, add_ptr + 0xE, 16);
-                        ConversationVM.conversations[i].functions = new ImportedFunctions[ConversationVM.conversations[i].NoOfImportedGlobals];
+                        ConversationVM.conversations[i].functions = new ConversationImports[ConversationVM.conversations[i].NoOfImportedGlobals];
                         long funcptr = add_ptr + 0x10;
                         for (int f = 0; f < ConversationVM.conversations[i].NoOfImportedGlobals; f++)
                         {
