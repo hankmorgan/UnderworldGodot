@@ -30,7 +30,7 @@ namespace Underworld
             var tile = UWTileMap.current_tilemap.Tiles[triggerX, triggerY];
             if (tile.indexObjectList!=0)
             {
-                var ff = objectsearch.FindMatchInObjectListChain(
+                var ff = objectsearch.FindMatchInObjectListChainNextObjectsOnly(
                     ListHeadIndex: tile.indexObjectList, 
                     majorclass: 5, minorclass: 2, classindex: 0xD, 
                     objList: UWTileMap.current_tilemap.LevelObjects);

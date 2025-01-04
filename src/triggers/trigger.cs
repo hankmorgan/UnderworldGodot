@@ -134,7 +134,7 @@ namespace Underworld
             bool RunNext = true;
             if (ObjectUsed.is_quant == 0 && ObjectUsed.link > 0)
             {
-                var ObjectToTrigger = objectsearch.FindMatchInObjectListChain(
+                var ObjectToTrigger = objectsearch.FindMatchInObjectListChainNextObjectsOnly(
                     ListHeadIndex: ObjectUsed.link,
                     majorclass: 6,
                     minorclass: -1,
@@ -148,7 +148,7 @@ namespace Underworld
                     {//button is in on postion
                         if (ObjectToTrigger != null)
                         {
-                            var buttonTriggerNext = objectsearch.FindMatchInObjectListChain(
+                            var buttonTriggerNext = objectsearch.FindMatchInObjectListChainNextObjectsOnly(
                                 ListHeadIndex: ObjectUsed.link,
                                 majorclass: 6,
                                 minorclass: -1,
@@ -167,7 +167,7 @@ namespace Underworld
                     if (ObjectToTrigger.IsTrigger)
                     {
                         //Get the next of the trigger object first
-                        var toTriggerNext = objectsearch.FindMatchInObjectListChain(
+                        var toTriggerNext = objectsearch.FindMatchInObjectListChainNextObjectsOnly(
                                 ListHeadIndex: ObjectToTrigger.next,
                                 majorclass: 6,
                                 minorclass: -1,
@@ -228,7 +228,7 @@ namespace Underworld
         public static void TriggerTrapInTile(int tileX, int tileY)
         {
             var tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];
-            var traptrigger = objectsearch.FindMatchInObjectListChain(tile.indexObjectList,6,-1,-1,UWTileMap.current_tilemap.LevelObjects);
+            var traptrigger = objectsearch.FindMatchInObjectListChainNextObjectsOnly(tile.indexObjectList,6,-1,-1,UWTileMap.current_tilemap.LevelObjects);
             if (traptrigger!=null)
             {
                 if ((traptrigger.minorclass & 2) == 0)

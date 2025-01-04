@@ -22,7 +22,7 @@ namespace Underworld
                 var next = tile.indexObjectList;
                 while (next != 0)
                 {
-                    var match = objectsearch.FindMatchInObjectListChain(
+                    var match = objectsearch.FindMatchInObjectListChainNextObjectsOnly(
                         ListHeadIndex: next,
                         majorclass: 2, minorclass: 1, classindex: 3,
                         objList: UWTileMap.current_tilemap.LevelObjects);

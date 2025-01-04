@@ -104,7 +104,7 @@ namespace Underworld
                     var searchTile = UWTileMap.current_tilemap.Tiles[si, 4];
                     if (searchTile.indexObjectList != 0)
                     {
-                        var tmapObject = objectsearch.FindMatchInObjectListChain(
+                        var tmapObject = objectsearch.FindMatchInObjectListChainNextObjectsOnly(
                             ListHeadIndex: searchTile.indexObjectList,
                             majorclass: 5, minorclass: 2, classindex: 0xE,
                             objList: UWTileMap.current_tilemap.LevelObjects);

@@ -264,7 +264,7 @@ namespace Underworld
                                 Debug.Print("Special handling for deleting timer triggers");
                             }
                             Debug.Print($"Breaking link for trigger {triggerObj.index} {triggerObj.a_name}");
-                            RemoveObjectFromLinkedList(listhead, triggerObj.index, objList);
+                            RemoveObjectFromLinkedList(listhead, triggerObj.index, objList, triggerObj.PTR+6);
                             ObjectFreeLists.ReleaseFreeObject(triggerObj);
                             triggerObj.link = 0;
                             RemoveTrapFlags--;
@@ -280,8 +280,23 @@ namespace Underworld
         }
 
 
-        public static bool RemoveObjectFromLinkedList(int listhead, int toRemove, uwObject[] objlist)
+        public static bool RemoveObjectFromLinkedList(int listhead, int toRemove, uwObject[] objlist, long HeadOffset)
         {
+            if (listhead==toRemove)
+            {//Handle case where this starts at an arbitary data location and links directly to the object.
+                var ObjToRemove = objlist[toRemove]; 
+                var databuffer = ObjToRemove.DataBuffer;
+                var tmp = (int)Loader.getAt(databuffer,HeadOffset,16);
+                tmp = tmp & 0x3F;//clear the link or next.
+                
+                if (ObjToRemove!=null)
+                {
+                    tmp = tmp | (ObjToRemove.next<<6);//insert the next as the new item at the head.
+                    ObjToRemove.next = 0;
+                }
+                Loader.setAt(databuffer, HeadOffset, 16, tmp);                
+                return true;
+            }
             //var obj = objlist[toRemove];
             var next = listhead;
             while (next != 0)

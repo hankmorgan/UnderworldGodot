@@ -25,7 +25,7 @@ namespace Underworld
                     {
                         Debug.Print($"Testing tile {triggerX+offsetX},{triggerY+offsetY}");
                         var tile = UWTileMap.current_tilemap.Tiles[triggerX+offsetX, triggerY+offsetY];
-                        var emerald = objectsearch.FindMatchInObjectListChain(
+                        var emerald = objectsearch.FindMatchInObjectListChainNextObjectsOnly(
                             ListHeadIndex: tile.indexObjectList, 
                             majorclass: 2, minorclass: 2, classindex: 7, 
                             objList: UWTileMap.current_tilemap.LevelObjects);

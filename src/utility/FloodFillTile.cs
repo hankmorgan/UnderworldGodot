@@ -53,8 +53,8 @@ namespace Underworld
                             var doorObj = UWTileMap.current_tilemap.LevelObjects[UWTileMap.current_tilemap.Tiles[aX, aY].DoorIndex];
                             if (doorObj != null)
                             {
-                                var d = (door)(doorObj.instance);
-                                if (!d.isOpen)
+                                //var d = (door)(doorObj.instance);
+                                if (!door.isOpen(doorObj))
                                 {
                                     _closedDoor = true;
                                 }

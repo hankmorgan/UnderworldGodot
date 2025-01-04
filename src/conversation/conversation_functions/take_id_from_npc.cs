@@ -14,15 +14,15 @@ namespace Underworld
                 //player is holding nothing                
                 if (talker.link!=0)
                 {
-                    if (talker.link == id)
-                    {
-                        talker.link = ObjectToGive.next;
-                        ObjectToGive.next = 0;
-                    }
-                    else
-                    {
-                        ObjectRemover.RemoveObjectFromLinkedList(talker.link, id, UWTileMap.current_tilemap.LevelObjects);
-                    }
+                    // if (talker.link == id)
+                    // {
+                    //     talker.link = ObjectToGive.next;
+                    //     ObjectToGive.next = 0;
+                    // }
+                    // else
+                    // {
+                        ObjectRemover.RemoveObjectFromLinkedList(talker.link, id, UWTileMap.current_tilemap.LevelObjects, talker.PTR+6);
+                    //}
                 }
                                 
                 if (playerdat.CanCarryWeight(ObjectToGive))
@@ -48,7 +48,7 @@ namespace Underworld
                     {   //place at slot
                         uimanager.SetPlayerTradeSlot(i,ObjectToGive.index,false);
 
-                        result_register  = 1;
+                        result_register = 1;
                         return;
                     }
                 }

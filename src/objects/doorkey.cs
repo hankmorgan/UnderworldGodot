@@ -67,7 +67,7 @@ namespace Underworld
         private static void UsedOnDoor(uwObject KeyObject, uwObject targetObject)
         {
             var doorInstance = (door)targetObject.instance;
-            if (doorInstance.isOpen)
+            if (door.isOpen(targetObject))
             {
                 //6	That is already open.
                 uimanager.AddToMessageScroll(GameStrings.GetString(1, 6));
@@ -82,7 +82,7 @@ namespace Underworld
                         //Unlock door
                         a_lock.SetIsLocked(targetObject, false, 0);
                        // doorInstance.Locked = false;
-                        door.ToggleDoor(doorInstance);
+                        door.ToggleDoor(targetObject);
                         uimanager.AddToMessageScroll(GameStrings.GetString(1, 4));
                     }
                     else

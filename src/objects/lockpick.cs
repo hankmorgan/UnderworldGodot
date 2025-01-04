@@ -18,11 +18,11 @@ namespace Underworld
         public static bool UseOn(uwObject LockpickObject, uwObject targetObject)
         {//assumes lockpick is in inventory. door is in world
             var isDoor = ((targetObject.majorclass == 5) && (targetObject.minorclass == 0));
-            door doorInstance = null;
+            //door doorInstance = null;
             if (isDoor)
             {
-                doorInstance = (door)targetObject.instance;
-                if (doorInstance.isOpen)
+                //doorInstance = (door)targetObject.instance;
+                if (door.isOpen(targetObject))
                 {
                     //6	That is already open.
                     uimanager.AddToMessageScroll(GameStrings.GetString(1, 6));
@@ -51,7 +51,7 @@ namespace Underworld
                                 a_lock.SetIsLocked(targetObject, false, 0);
                                 if (isDoor)
                                 {
-                                    door.ToggleDoor(doorInstance);
+                                    door.ToggleDoor(targetObject);
                                 }
                                 
                                 uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_succeed_in_picking_the_lock_));
@@ -79,7 +79,6 @@ namespace Underworld
                                 break;
                             }
                     }
-
                 }
                 else
                 {

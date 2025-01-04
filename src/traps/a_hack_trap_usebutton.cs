@@ -8,7 +8,7 @@ namespace Underworld
         public static void Activate(uwObject trapObj, int triggerX, int triggerY)
         {
             var tile = UWTileMap.current_tilemap.Tiles[triggerX, triggerY];
-            var foundbutton = objectsearch.FindMatchInObjectListChain(
+            var foundbutton = objectsearch.FindMatchInObjectListChainNextObjectsOnly(
                 ListHeadIndex: tile.indexObjectList, 
                 majorclass: 5, 
                 minorclass: 3, 

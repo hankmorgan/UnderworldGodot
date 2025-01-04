@@ -16,7 +16,7 @@ namespace Underworld
                     var tile = UWTileMap.current_tilemap.Tiles[di_x, si_y];
                     if (tile.tileType!=0)
                     {//tile is not solid
-                        var pressureTrigger = objectsearch.FindMatchInObjectListChain(
+                        var pressureTrigger = objectsearch.FindMatchInObjectListChainNextObjectsOnly(
                             ListHeadIndex: tile.indexObjectList, 
                             majorclass: 6, 
                             minorclass: 2, 
@@ -24,7 +24,7 @@ namespace Underworld
                             objList: UWTileMap.current_tilemap.LevelObjects);
                         if (pressureTrigger==null)
                         {//find an alternative trigger
-                            pressureTrigger = objectsearch.FindMatchInObjectListChain(
+                            pressureTrigger = objectsearch.FindMatchInObjectListChainNextObjectsOnly(
                                 ListHeadIndex: tile.indexObjectList, 
                                 majorclass: 6, 
                                 minorclass: 3, 

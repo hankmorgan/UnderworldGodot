@@ -43,14 +43,14 @@ namespace Underworld
                 switch (mode)
                 {
                     case 2:
-                        door.ToggleDoor((door)doorobj.instance);
+                        door.ToggleDoor(doorobj);
                         break;
                     case 1: //try clase
-                        door.CloseDoor((door)doorobj.instance); 
+                        door.CloseDoor(doorobj); 
                         break;
                     case 0:
                     default:  //try open
-                        door.OpenDoor((door)doorobj.instance); 
+                        door.OpenDoor(doorobj); 
                         break;
                 }
             }

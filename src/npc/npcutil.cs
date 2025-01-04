@@ -131,14 +131,14 @@ namespace Underworld
             {
                 var sourceTile = UWTileMap.current_tilemap.Tiles[critter.tileX,critter.tileY];
                 var destTile = UWTileMap.current_tilemap.Tiles[destTileX,destTileY];
-                if (sourceTile.indexObjectList == critter.index)
-                {
-                    sourceTile.indexObjectList = critter.next;
-                }
-                else
-                {
-                    ObjectRemover.RemoveObjectFromLinkedList(sourceTile.indexObjectList,critter.index,UWTileMap.current_tilemap.LevelObjects);
-                }               
+                // if (sourceTile.indexObjectList == critter.index)
+                // {
+                //     sourceTile.indexObjectList = critter.next;
+                // }
+                // else
+                // {
+                ObjectRemover.RemoveObjectFromLinkedList(sourceTile.indexObjectList,critter.index,UWTileMap.current_tilemap.LevelObjects, sourceTile.Ptr+2);
+                //}               
                 critter.next = destTile.indexObjectList ;
                 destTile.indexObjectList = critter.index;
                 critter.tileX = destTileX; critter.tileY= destTileY;

@@ -204,7 +204,7 @@ namespace Underworld
                                     else
                                     {//a moving door
                                         ovl.Duration--;
-                                        door.MoveDoor((door)obj.instance, 1);
+                                        door.MoveDoor(obj, 1);
                                     }
                                 }
                             }

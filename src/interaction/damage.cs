@@ -238,7 +238,7 @@ namespace Underworld
                 if (objToDestroy.classindex <= 7)
                 {
                     a_lock.SetIsLocked(objToDestroy, false, 0);
-                    door.OpenDoor((door)objToDestroy.instance);
+                    door.OpenDoor(objToDestroy);
                     return;
                 }
             }

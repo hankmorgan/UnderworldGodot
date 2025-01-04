@@ -18,7 +18,7 @@ namespace Underworld
         public static uwObject FindMatchInTile(int tileX, int tileY, int majorclass, int minorclass, int classindex)
         {
             var tile = UWTileMap.current_tilemap.Tiles[tileX,tileY];
-            return FindMatchInObjectListChain(tile.indexObjectList, majorclass, minorclass,classindex, UWTileMap.current_tilemap.LevelObjects);
+            return FindMatchInObjectListChainNextObjectsOnly(tile.indexObjectList, majorclass, minorclass,classindex, UWTileMap.current_tilemap.LevelObjects);
         }
 
 
@@ -31,7 +31,7 @@ namespace Underworld
         /// <param name="classindex"></param>
         /// <param name="objList"></param>
         /// <returns></returns>
-        public static uwObject FindMatchInObjectListChain(int ListHeadIndex, int majorclass, int minorclass, int classindex, uwObject[] objList)
+        public static uwObject FindMatchInObjectListChainNextObjectsOnly(int ListHeadIndex, int majorclass, int minorclass, int classindex, uwObject[] objList)
         {                
             var next = ListHeadIndex;
             while (next != 0)
@@ -130,24 +130,28 @@ namespace Underworld
                         }
                     }
 
-                    if (testObj.is_quant == 0)
+                    if (!SkipLinks)
                     {
-                        if (testObj.link != 0)
+                        if (testObj.is_quant == 0)
                         {
-                            var testlinked = FindMatchInObjectChain(
-                                ListHeadIndex: testObj.link,
-                                majorclass: majorclass,
-                                minorclass: minorclass,
-                                classindex: classindex,
-                                objList: objList,
-                                SkipNext: SkipNext,
-                                SkipLinks: SkipLinks);
-                            if (testlinked != null)
+                            if (testObj.link != 0)
                             {
-                                return testlinked;
+                                var testlinked = FindMatchInObjectChain(
+                                    ListHeadIndex: testObj.link,
+                                    majorclass: majorclass,
+                                    minorclass: minorclass,
+                                    classindex: classindex,
+                                    objList: objList,
+                                    SkipNext: SkipNext,
+                                    SkipLinks: SkipLinks);
+                                if (testlinked != null)
+                                {
+                                    return testlinked;
+                                }
                             }
                         }
                     }
+
                     if (!SkipNext)
                     {
                         //no matches. Try next value. Returns null if nothing found.

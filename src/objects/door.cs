@@ -15,45 +15,33 @@ namespace Underworld
         public int floorheight;
         public Vector3 position;
 
-        public bool isMoving
+        public static bool isMoving(uwObject obj)
         {
-            get
-            {
-                return uwobject.item_id == 463;
-            }
+            return obj.item_id == 463;
         }
-        public bool isSecretDoor
+        public static bool isSecretDoor(uwObject obj)
         {
-            get
-            {
-                return (uwobject.item_id == 327) || (uwobject.item_id == 335);
-            }
+            return (obj.item_id == 327) || (obj.item_id == 335);
         }
 
         Vector3 pivot = Vector3.Zero;
 
         public const float framethickness = 0.08f;
 
-        public bool isOpen
+        public static bool isOpen(uwObject obj)
         {
-            get
-            {
-                return uwobject.classindex >= 8;
-            }
+            return obj.classindex >= 8;
         }
 
-        public bool isPortcullis
+        public static bool isPortcullis(uwObject obj)
         {
-            get
+            if (isMoving(obj))
+            {//use the owner
+                return ((obj.owner == 6) || (obj.owner == 0xE));
+            }
+            else
             {
-                if (isMoving)
-                {//use the owner
-                    return ((uwobject.owner == 6) || (uwobject.owner == 0xE));
-                }
-                else
-                {
-                    return ((uwobject.classindex == 6) || (uwobject.classindex == 0xE));
-                }
+                return ((obj.classindex == 6) || (obj.classindex == 0xE));
             }
         }
 
@@ -61,38 +49,35 @@ namespace Underworld
         /// <summary>
         /// How many animation frames this door type has.
         /// </summary>
-        public int NoOfFrames
+        public static int NoOfFrames(uwObject obj)
         {
-            get
-            {
-                if (isMoving)
-                {//return based on the owner
-                    if ((uwobject.owner == 6) || (uwobject.owner == 14))
-                    {
-                        return 4;
-                    }
-                    else
-                    {
-                        return 5;
-                    }
+            if (isMoving(obj))
+            {//return based on the owner
+                if ((obj.owner == 6) || (obj.owner == 14))
+                {
+                    return 4;
                 }
                 else
                 {
-                    if (isPortcullis)
-                    {
-                        return 4;
-                    }
-                    else
-                    {
-                        return 5;
-                    }
+                    return 5;
+                }
+            }
+            else
+            {
+                if (isPortcullis(obj))
+                {
+                    return 4;
+                }
+                else
+                {
+                    return 5;
                 }
             }
         }
 
-        public float GetRadiansForIndex(int index, int doordir)
+        public static float GetRadiansForIndex(uwObject obj, int index, int doordir)
         {
-            var unit = (Math.PI / 2) / NoOfFrames;
+            var unit = (Math.PI / 2) / NoOfFrames(obj);
             var dir = 1;
             if (doordir == 1)
             {
@@ -101,9 +86,9 @@ namespace Underworld
             return (float)(dir * index * unit);
         }
 
-        public float GetHeightForIndex(int index)
+        public static float GetHeightForIndex(uwObject obj, int index)
         {
-            var unit = 0.8 / NoOfFrames;
+            var unit = 0.8 / NoOfFrames(obj);
             return (float)(index * unit);
         }
 
@@ -122,7 +107,7 @@ namespace Underworld
                 a_tilemap.Tiles[tileX, tileY].DoorIndex = obj.index;
             }
             var d = new door(obj);
-            if (d.isSecretDoor)
+            if (isSecretDoor(obj))
             {
                 d.texture = a_tilemap.Tiles[tileX, tileY].wallTexture; //a_tilemap.texture_map[a_tilemap.Tiles[tileX, tileY].wallTexture];
             }
@@ -130,11 +115,11 @@ namespace Underworld
             {
                 if (_RES == GAME_UW2)
                 {
-                    d.texture = a_tilemap.texture_map[64 + (d.uwobject.item_id & 0x7)];
+                    d.texture = a_tilemap.texture_map[64 + (obj.item_id & 0x7)];
                 }
                 else
                 {
-                    d.texture = a_tilemap.texture_map[58 + (d.uwobject.item_id & 0x7)];
+                    d.texture = a_tilemap.texture_map[58 + (obj.item_id & 0x7)];
                 }
 
             }
@@ -143,19 +128,19 @@ namespace Underworld
             d.doorNode = d.Generate3DModel(parent, name);
             d.doorNode.Position = d.pivot;
 
-            if (d.isPortcullis)
+            if (isPortcullis(obj))
             {//translate model up 1 unit
                 d.doorNode.Position
                     = new Vector3
                         (d.doorNode.Position.X,
-                        d.doorNode.Position.Z + d.GetHeightForIndex(d.uwobject.flags),
+                        d.doorNode.Position.Z + GetHeightForIndex(obj, obj.flags),
                         d.doorNode.Position.Y
                         );
 
             }
             else
             {// rotate model 90 
-                d.doorNode.Rotate(Vector3.Up, d.GetRadiansForIndex(d.uwobject.flags, d.uwobject.doordir));
+                d.doorNode.Rotate(Vector3.Up, GetRadiansForIndex(obj, obj.flags, obj.doordir));
             }
 
             //DisplayModelPoints(d, parent, 30);
@@ -170,14 +155,14 @@ namespace Underworld
 
         public static bool Use(uwObject obj)
         {
-            var d = (door)obj.instance;
-            if (a_lock.GetIsLocked(obj) && (!d.isOpen))
+            //var d = (door)obj.instance;
+            if (a_lock.GetIsLocked(obj) && (!isOpen(obj)))
             {//door is locked and closed
                 uimanager.AddToMessageScroll("The " + GameStrings.GetObjectNounUW(obj.item_id) + " is locked.");
             }
             else
             {   //door unlocked. toggle it's state
-                ToggleDoor((door)obj.instance);
+                ToggleDoor(obj);
             }
             return true;
         }
@@ -187,33 +172,34 @@ namespace Underworld
         /// Opens the door
         /// </summary>
         /// <param name="doorObj"></param>
-        public static void OpenDoor(door doorObj)
+        public static void OpenDoor(uwObject doorObj)
         {
-            if (doorObj.isOpen) { return; }//don't reopen an open door
-            if (doorObj.isMoving) { return; } // do not allow door changes when already moving
-            doorObj.uwobject.zpos += 24;
+            var doorInstance = (door)doorObj.instance;
+            if (isOpen(doorObj)) { return; }//don't reopen an open door
+            if (isMoving(doorObj)) { return; } // do not allow door changes when already moving
+            doorObj.zpos += 24;
             if (TurnIntoMovingDoor(doorObj))
             {
 
             }
             else
             {
-                if (doorObj.isPortcullis)
+                if (isPortcullis(doorObj))
                 {
-                    doorObj.position = new Vector3(0f, doorObj.GetHeightForIndex(doorObj.NoOfFrames), 0f);
+                    doorInstance.position = new Vector3(0f, GetHeightForIndex(doorObj, NoOfFrames(doorObj)), 0f);
                 }
                 else
                 {
                     //set to open without animation
-                    doorObj.doorNode.Rotate(Vector3.Up, doorObj.GetRadiansForIndex(doorObj.NoOfFrames, doorObj.uwobject.doordir));
+                    doorInstance.doorNode.Rotate(Vector3.Up, GetRadiansForIndex(doorObj, NoOfFrames(doorObj), doorObj.doordir));
                 }
             }
             playerdat.UpdateAutomap();//trigger an update of visibility
             trigger.TriggerObjectLink(character:0, 
-                    ObjectUsed: doorObj.uwobject, 
+                    ObjectUsed: doorObj, 
                     triggerType: (int)triggerObjectDat.OPEN_TRIGGER_TYPE,
-                    triggerX: doorObj.uwobject.tileX,
-                    triggerY: doorObj.uwobject.tileY, 
+                    triggerX: doorObj.tileX,
+                    triggerY: doorObj.tileY, 
                     objList: UWTileMap.current_tilemap.LevelObjects);
         }
 
@@ -222,11 +208,13 @@ namespace Underworld
         /// Closes the door
         /// </summary>
         /// <param name="obj"></param>
-        public static void CloseDoor(door obj)
+        public static void CloseDoor(uwObject obj)
         {
-            if (!obj.isOpen) { return; }//don't reclose a closed door
-            if (obj.isMoving) { return; } // do not allow door changes when already moving
-            obj.uwobject.zpos -= 24;
+            if (obj.instance== null){return;}//no door found.
+            var doorInstance = (door)obj.instance;
+            if (!isOpen(obj)) { return; }//don't reclose a closed door
+            if (isMoving(obj)) { return; } // do not allow door changes when already moving
+            obj.zpos -= 24;
             if (TurnIntoMovingDoor(obj))
             {
                 // do something here?
@@ -234,25 +222,25 @@ namespace Underworld
             else
             {
                 //set to closed state without animation
-                if (obj.isPortcullis)
+                if (isPortcullis(obj))
                 {
-                    obj.position = new Vector3(0f, obj.GetHeightForIndex(0), 0f);
+                    doorInstance.position = new Vector3(0f, GetHeightForIndex(obj, 0), 0f);
                 }
                 else
                 {
                     //set to open without animation
-                    obj.doorNode.Rotate(Vector3.Up, obj.GetRadiansForIndex(0, obj.uwobject.doordir));
+                    doorInstance.doorNode.Rotate(Vector3.Up, GetRadiansForIndex(obj, 0, obj.doordir));
                 }
             }
-            if ((obj.uwobject.link != 0) && (_RES==GAME_UW2))
+            if ((obj.link != 0) && (_RES==GAME_UW2))
             {
                 // trigger.CloseTrigger(obj.uwobject, obj.uwobject.link, UWTileMap.current_tilemap.LevelObjects);
                 trigger.TriggerObjectLink(
                     character: 0, 
-                    ObjectUsed: obj.uwobject, 
+                    ObjectUsed: obj, 
                     triggerType: (int)triggerObjectDat.triggertypes.CLOSE, 
-                    triggerX: obj.uwobject.tileX, 
-                    triggerY: obj.uwobject.tileY, 
+                    triggerX: obj.tileX, 
+                    triggerY: obj.tileY, 
                     objList: UWTileMap.current_tilemap.LevelObjects);
             }
         }
@@ -261,10 +249,10 @@ namespace Underworld
         /// Toogles the door (ignores lock state)
         /// </summary>
         /// <param name="obj"></param>
-        public static void ToggleDoor(door obj)
+        public static void ToggleDoor(uwObject obj)
         {
-            if (obj.isMoving) { return; } // do not allow door changes when already moving
-            if (obj.isOpen)
+            if (isMoving(obj)) { return; } // do not allow door changes when already moving
+            if (isOpen(obj))
             {
                 CloseDoor(obj);
             }
@@ -280,35 +268,36 @@ namespace Underworld
         /// </summary>
         /// <param name="doorObj"></param>
         /// <returns>true if the door can be animated</returns>
-        public static bool TurnIntoMovingDoor(door doorObj)
+        public static bool TurnIntoMovingDoor(uwObject doorObj)
         {
-            if (animo.CreateAnimoLink(doorObj.uwobject, doorObj.NoOfFrames))
+            if (animo.CreateAnimoLink(doorObj, NoOfFrames(doorObj)))
             {
                 //change object props
-                doorObj.uwobject.owner = (short)doorObj.uwobject.classindex;
-                doorObj.uwobject.item_id = 0x1CF; // a moving door 
+                doorObj.owner = (short)doorObj.classindex;
+                doorObj.item_id = 0x1CF; // a moving door 
                 return true;
             }
             return false;
         }
 
-        public static void MoveDoor(door obj, int delta)
+        public static void MoveDoor(uwObject obj, int delta)
         {
-            var flags = (int)obj.uwobject.flags;
-            if (obj.uwobject.owner <= 7)
+            var flags = (int)obj.flags;
+            var doorInstance = (door)obj.instance;
+            if (obj.owner <= 7)
             {
                 //door was open and is moving towards closed. Flags increase until NoOfFrames
                 flags += delta;
-                if (flags > obj.NoOfFrames)
+                if (flags > NoOfFrames(obj))
                 {
-                    flags = obj.NoOfFrames;
+                    flags = NoOfFrames(obj);
                 }
-                if (flags == obj.NoOfFrames)
+                if (flags == NoOfFrames(obj))
                 {
                     //reset object now it has arrived at the end
-                    obj.uwobject.item_id = 320 + obj.uwobject.owner + 8;
-                    Debug.Print($"Open->Closed item id is now {obj.uwobject.item_id}");
-                    obj.uwobject.owner = 0;
+                    obj.item_id = 320 + obj.owner + 8;
+                    Debug.Print($"Open->Closed item id is now {obj.item_id}");
+                    obj.owner = 0;
                 }
             }
             else
@@ -321,23 +310,23 @@ namespace Underworld
                 if (flags == 0)
                 {
                     //reset object now it has arrived at the end
-                    obj.uwobject.item_id = 320 + obj.uwobject.owner - 8;
-                    Debug.Print($"Closed->Open item id is now {obj.uwobject.item_id}");
-                    obj.uwobject.owner = 0;
+                    obj.item_id = 320 + obj.owner - 8;
+                    Debug.Print($"Closed->Open item id is now {obj.item_id}");
+                    obj.owner = 0;
                 }
             }
-            obj.uwobject.flags = (short)flags;
-            Debug.Print($"Flags is now {obj.uwobject.flags}");
-            if (obj.isPortcullis)
+            obj.flags = (short)flags;
+            Debug.Print($"Flags is now {obj.flags}");
+            if (isPortcullis(obj))
             {
                 //Set z based on flags          
-                obj.doorNode.Position = new Vector3(0f, obj.GetHeightForIndex(obj.uwobject.flags), 0f); //? (Vector3.Up, obj.GetRadiansForIndex(obj.uwobject.flags)); 
+                doorInstance.doorNode.Position = new Vector3(0f, GetHeightForIndex(obj,obj.flags), 0f); //? (Vector3.Up, obj.GetRadiansForIndex(obj.uwobject.flags)); 
             }
             else
             {
                 //Set rotate based on flags
-                obj.doorNode.Rotation = Vector3.Zero;
-                obj.doorNode.Rotate(Vector3.Up, obj.GetRadiansForIndex(obj.uwobject.flags, obj.uwobject.doordir));
+                doorInstance.doorNode.Rotation = Vector3.Zero;
+                doorInstance.doorNode.Rotate(Vector3.Up, GetRadiansForIndex(obj, obj.flags, obj.doordir));
             }
         }
 
@@ -407,7 +396,7 @@ namespace Underworld
         //******************************RENDERING INFO**********************************/
         public override Vector3[] ModelVertices()
         {
-            if (isPortcullis)
+            if (isPortcullis(this.uwobject))
             {
                 Vector3[] v = new Vector3[28];
 
@@ -504,13 +493,13 @@ namespace Underworld
 
         public override Vector2[] ModelUVs(Vector3[] verts)
         {
-            if (isPortcullis)
+            if (isPortcullis(this.uwobject))
             {
                 return base.ModelUVs(verts);
             }
             else
             {
-                if (!isSecretDoor)
+                if (!isSecretDoor(this.uwobject))
                 { //normal door textures have a black border at the top that needs to excluded 
                     var uv = new Vector2[8];
                     uv[0] = new Vector2(1f, 1f);
@@ -558,7 +547,7 @@ namespace Underworld
 
         public override int NoOfMeshes()
         {
-            if (!isPortcullis)
+            if (!isPortcullis(this.uwobject))
             {
                 return 3;
             }
@@ -570,7 +559,7 @@ namespace Underworld
 
         public override int[] ModelTriangles(int meshNo)
         {
-            if (!isPortcullis)
+            if (!isPortcullis(this.uwobject))
             {
                 int[] tris = new int[6];
                 switch (meshNo)
@@ -752,7 +741,7 @@ namespace Underworld
 
         public override int ModelColour(int meshNo)
         {
-            if (isPortcullis)
+            if (isPortcullis(this.uwobject))
             {
                 if (_RES == GAME_UW2)
                 {
@@ -780,7 +769,7 @@ namespace Underworld
 
         public override ShaderMaterial GetMaterial(int textureno, int surface)
         {
-            if (isPortcullis)
+            if (isPortcullis(this.uwobject))
             {
                 return base.GetMaterial(textureno, surface);
             }
@@ -790,7 +779,7 @@ namespace Underworld
                 {
                     case 0: //door texture
                     case 1:
-                        if (!isSecretDoor)
+                        if (!isSecretDoor(this.uwobject))
                         {
                             return tmDoor.GetMaterial(textureno);
                         }
