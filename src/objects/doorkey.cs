@@ -42,10 +42,12 @@ namespace Underworld
                     if (a_lock.GetIsLocked(targetObject))
                     {
                         a_lock.SetIsLocked(targetObject,false,0);
+                        uimanager.AddToMessageScroll(GameStrings.GetString(1,5));
                     }
                     else
                     {
                         a_lock.SetIsLocked(targetObject,true,0);
+                        uimanager.AddToMessageScroll(GameStrings.GetString(1,4));
                     }                
                 }                
             }
