@@ -118,7 +118,7 @@ namespace Underworld
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        static int GetVarQuestOrClockValue(int index)
+        public static int GetVarQuestOrClockValue(int index)
         {
             switch (index)
             {
