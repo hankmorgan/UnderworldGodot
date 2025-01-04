@@ -101,6 +101,12 @@ namespace Underworld
 
             //Art file.
             CutsLoader cuts = null;
+            var defaultFirstFile = System.IO.Path.Combine(Loader.BasePath, "CUTS", GetsCutsceneFileName(CutsceneNo,1));
+            //Open the .n01 file for this cutscene first if it exists so some image data is available.
+            if (System.IO.File.Exists(defaultFirstFile))
+            {
+                cuts = new CutsLoader(defaultFirstFile);
+            }
             // var cuts = new CutsLoader(System.IO.Path.Combine(
             //         Loader.BasePath, "CUTS", GetsCutsceneFileName(CutsceneNo,1)));
 

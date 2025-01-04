@@ -88,6 +88,7 @@ namespace Underworld
                     CastClassD_Spells(minorclass);
                     break;
                 case 14://cutscene spells.
+                    cutsplayer.PlayCutscene(minorclass,null);
                     break;
             }
             playerdat.PlayerStatusUpdate();
