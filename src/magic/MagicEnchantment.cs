@@ -54,7 +54,7 @@ namespace Underworld
             {
                 if (obj.is_quant == 0)
                 {//check for poisoned potions
-                    var damagetrap = objectsearch.FindMatchInObjectChainIncLinks(obj.link, 6,0,0,objList);
+                    var damagetrap = objectsearch.FindMatchInObjectChain(obj.link, 6,0,0,objList);
                     if (damagetrap  != null)
                     {
                         return " of poison";
@@ -102,7 +102,7 @@ namespace Underworld
 
                 //try and determine charges
                 string charges="";
-                    var spell = objectsearch.FindMatchInObjectChainIncLinks(
+                    var spell = objectsearch.FindMatchInObjectChain(
                         ListHeadIndex: obj.index, 
                         majorclass: 4, 
                         minorclass: 2, 
@@ -190,7 +190,7 @@ namespace Underworld
                 }
                 else
                 {//try and find a linked spell
-                    obj = objectsearch.FindMatchInObjectChainIncLinks(
+                    obj = objectsearch.FindMatchInObjectChain(
                         ListHeadIndex: obj.link, 
                         majorclass: 4, 
                         minorclass: 2, 

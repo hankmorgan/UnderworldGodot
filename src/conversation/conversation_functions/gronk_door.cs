@@ -15,7 +15,7 @@ namespace Underworld
 
             Debug.Print($"Gronkdoor {tileX}, {tileY}, {mode}");
             var tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];
-            var doorobj = objectsearch.FindMatchInObjectChainIncLinks(
+            var doorobj = objectsearch.FindMatchInObjectChain(
              ListHeadIndex: tile.indexObjectList,
              majorclass: 5,
              minorclass: 0,
@@ -25,7 +25,7 @@ namespace Underworld
             if (doorobj == null)
                 {
                 //search for a moving door that matches
-                doorobj = objectsearch.FindMatchInObjectChainIncLinks(
+                doorobj = objectsearch.FindMatchInObjectChain(
                     ListHeadIndex: tile.indexObjectList,
                     majorclass: 7,
                     minorclass: 0,

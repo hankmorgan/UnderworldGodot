@@ -46,12 +46,13 @@ namespace Underworld
         /// <returns></returns>
         public static uwObject LockObject(uwObject parentObject)
         {
-            return objectsearch.FindMatchInObjectChainIncLinks(
+            return objectsearch.FindMatchInObjectChain(
                 ListHeadIndex: parentObject.link,
                 majorclass: 4,
                 minorclass: 0,
                 classindex: 0xF,
-                objList: UWTileMap.current_tilemap.LevelObjects);
+                objList: UWTileMap.current_tilemap.LevelObjects,
+                SkipLinks: true);
         }
 
 

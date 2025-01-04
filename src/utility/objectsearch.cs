@@ -108,9 +108,11 @@ namespace Underworld
         /// <param name="majorclass"></param>
         /// <param name="minorclass">use -1 to return any of the minor class</param>
         /// <param name="classindex">use -1 to return any of the class index </param>
-        /// <param name="objList"></param>
+        /// <param name="objList">The list to search within</param>
+        /// <param name="SkipNext">Search up in the next object</param>
+        /// <param name="SkipLinks">Search up in the links</param>
         /// <returns></returns>
-        public static uwObject FindMatchInObjectChainIncLinks(int ListHeadIndex, int majorclass, int minorclass, int classindex, uwObject[] objList, bool SkipNext = false)
+        public static uwObject FindMatchInObjectChain(int ListHeadIndex, int majorclass, int minorclass, int classindex, uwObject[] objList, bool SkipNext = false, bool SkipLinks = false)
         {
             if (ListHeadIndex != 0)
             {
@@ -132,12 +134,14 @@ namespace Underworld
                     {
                         if (testObj.link != 0)
                         {
-                            var testlinked = FindMatchInObjectChainIncLinks(
+                            var testlinked = FindMatchInObjectChain(
                                 ListHeadIndex: testObj.link,
                                 majorclass: majorclass,
                                 minorclass: minorclass,
                                 classindex: classindex,
-                                objList: objList);
+                                objList: objList,
+                                SkipNext: SkipNext,
+                                SkipLinks: SkipLinks);
                             if (testlinked != null)
                             {
                                 return testlinked;
@@ -147,12 +151,14 @@ namespace Underworld
                     if (!SkipNext)
                     {
                         //no matches. Try next value. Returns null if nothing found.
-                        return FindMatchInObjectChainIncLinks(
+                        return FindMatchInObjectChain(
                             ListHeadIndex: testObj.next,
                             majorclass: majorclass,
                             minorclass: minorclass,
                             classindex: classindex,
-                            objList: objList);
+                            objList: objList,
+                            SkipNext: SkipNext,
+                            SkipLinks: SkipLinks);
                     }
                 }
             }

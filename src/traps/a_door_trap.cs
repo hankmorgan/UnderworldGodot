@@ -7,7 +7,7 @@ namespace Underworld
         public static void Activate(uwObject trapObj, int triggerX, int triggerY, uwObject[] objList)
         {
             var tile = UWTileMap.current_tilemap.Tiles[triggerX, triggerY];
-            var doorObj = objectsearch.FindMatchInObjectChainIncLinks(
+            var doorObj = objectsearch.FindMatchInObjectChain(
                 ListHeadIndex: tile.indexObjectList, 
                 majorclass: 5, 
                 minorclass: 0, 
@@ -15,7 +15,7 @@ namespace Underworld
                 objList: objList);
             if (doorObj==null)
             {//check for a moving door
-                doorObj = objectsearch.FindMatchInObjectChainIncLinks(
+                doorObj = objectsearch.FindMatchInObjectChain(
                     ListHeadIndex: tile.indexObjectList, 
                     majorclass: 7, 
                     minorclass: 0, 
@@ -34,9 +34,9 @@ namespace Underworld
             {
                 switch (trapObj.quality)
                 {
-                    case 0: //Try Lock
-                        Debug.Print("Door Trap Lock");
-                        break;
+                    // case 0: //Try Lock
+                    //     Debug.Print("Door Trap Lock");
+                    //     break;
                     case 1://Try Open
                         Debug.Print("Door Trap Open");
                         door.OpenDoor((door)doorObj.instance);
