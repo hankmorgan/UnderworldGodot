@@ -225,6 +225,11 @@ namespace Underworld
                         x_traps();
                         break;
                     }
+                case "x_obj_pos":
+                    {
+                        x_obj_pos();
+                        break;
+                    }
                 default:
                     {                       
                         Debug.Print($"Unimplemented {func.importname}"); break;
