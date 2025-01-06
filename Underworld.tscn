@@ -69,7 +69,6 @@ follow_viewport_enabled = true
 stream = SubResource("AudioStreamWAV_tkk82")
 
 [node name="UW1" type="CanvasLayer" parent="UI"]
-visible = false
 
 [node name="WeaponAnimationUW1" type="TextureRect" parent="UI/UW1"]
 anchors_preset = -1
@@ -105,20 +104,26 @@ offset_bottom = 484.0
 mouse_filter = 0
 texture = ExtResource("8_mis7n")
 
-[node name="MessageScrollBackgroundUW1" type="TextureRect" parent="UI/UW1"]
+[node name="MessageScrollPanelUW1" type="Panel" parent="UI/UW1"]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="MessageScrollBackgroundUW1" type="TextureRect" parent="UI/UW1/MessageScrollPanelUW1"]
+layout_mode = 0
 offset_left = 64.0
 offset_top = 676.0
 offset_right = 1224.0
 offset_bottom = 796.0
-mouse_filter = 2
 texture = ExtResource("7_qiq8a")
 
-[node name="MessageScrollUW1" type="RichTextLabel" parent="UI/UW1"]
+[node name="MessageScrollUW1" type="RichTextLabel" parent="UI/UW1/MessageScrollPanelUW1"]
 texture_filter = 1
+layout_mode = 0
 offset_left = 64.0
 offset_top = 651.0
 offset_right = 1224.0
 offset_bottom = 791.0
+mouse_filter = 1
 theme_override_colors/default_color = Color(0.2, 0.109804, 0.0745098, 1)
 theme_override_constants/line_separation = -24
 theme_override_fonts/normal_font = ExtResource("4_pfbet")
@@ -637,7 +642,6 @@ offset_right = 140.0
 offset_bottom = 604.0
 
 [node name="UW2" type="CanvasLayer" parent="UI"]
-visible = false
 
 [node name="WeaponAnimUW2" type="TextureRect" parent="UI/UW2"]
 offset_left = 60.0
@@ -670,20 +674,24 @@ offset_bottom = 476.0
 mouse_filter = 0
 texture = ExtResource("8_mis7n")
 
-[node name="messageScrollBackgroundUW2" type="TextureRect" parent="UI/UW2"]
+[node name="MessageScrollPanelUW2" type="Panel" parent="UI/UW2"]
+
+[node name="messageScrollBackgroundUW2" type="TextureRect" parent="UI/UW2/MessageScrollPanelUW2"]
+layout_mode = 0
 offset_left = 64.0
 offset_top = 676.0
 offset_right = 904.0
 offset_bottom = 792.0
-mouse_filter = 2
 texture = ExtResource("22_vajvs")
 
-[node name="messageScrollUW2" type="RichTextLabel" parent="UI/UW2"]
+[node name="messageScrollUW2" type="RichTextLabel" parent="UI/UW2/MessageScrollPanelUW2"]
 texture_filter = 1
+layout_mode = 0
 offset_left = 73.0
 offset_top = 656.0
 offset_right = 913.0
 offset_bottom = 796.0
+mouse_filter = 1
 theme_override_colors/default_color = Color(0, 0, 0, 1)
 theme_override_constants/line_separation = -24
 theme_override_fonts/normal_font = ExtResource("4_pfbet")
@@ -905,7 +913,6 @@ offset_right = 580.0
 offset_bottom = 639.0
 
 [node name="CutsceneSmallUW2" type="TextureRect" parent="UI/UW2"]
-visible = false
 offset_left = -384.0
 offset_top = -268.0
 offset_right = 896.0
@@ -974,6 +981,7 @@ offset_right = 508.0
 offset_bottom = 624.0
 
 [node name="ConversationUW2" type="Panel" parent="UI/UW2"]
+visible = false
 offset_right = 40.0
 offset_bottom = 40.0
 
@@ -2028,7 +2036,6 @@ offset_bottom = 624.0
 texture = ExtResource("28_uj0ag")
 
 [node name="HealthFlask" type="Panel" parent="UI/Common"]
-visible = false
 offset_right = 40.0
 offset_bottom = 40.0
 
@@ -2144,7 +2151,6 @@ offset_bottom = 532.0
 mouse_filter = 2
 
 [node name="ManaFlask" type="Panel" parent="UI/Common"]
-visible = false
 offset_left = 144.0
 offset_right = 184.0
 offset_bottom = 40.0
@@ -2520,7 +2526,6 @@ middle_mouse_paste_enabled = false
 selecting_enabled = false
 
 [node name="PositionLabel" type="RichTextLabel" parent="UI/Common"]
-visible = false
 texture_filter = 1
 offset_left = 28.0
 offset_top = -9.0
@@ -2651,9 +2656,9 @@ AutomapBG = NodePath("../Common/Automap/MapBackground")
 AutomapImage = NodePath("../Common/Automap/MapImage")
 NotesPanel = NodePath("../Common/Automap/MapNotes")
 AutomapNumberLabel = NodePath("../Common/Automap/MapNo")
-AutomapWorldGem = [NodePath("../Common/Automap/Gem/World0"), NodePath("../Common/Automap/Gem/World1"), NodePath("../Common/Automap/Gem/World2"), NodePath("../Common/Automap/Gem/World3"), NodePath("../Common/Automap/Gem/World4"), NodePath("../Common/Automap/Gem/World5"), NodePath("../Common/Automap/Gem/World7"), NodePath("../Common/Automap/Gem/World6"), NodePath("../Common/Automap/Gem/World8")]
-messageScrollUW1 = NodePath("../UW1/MessageScrollUW1")
-messageScrollUW2 = NodePath("../UW2/messageScrollUW2")
+AutomapWorldGem = [NodePath("../Common/Automap/Gem/World0"), NodePath("../Common/Automap/Gem/World1"), NodePath("../Common/Automap/Gem/World2"), NodePath("../Common/Automap/Gem/World3"), NodePath("../Common/Automap/Gem/World4"), NodePath("../Common/Automap/Gem/World5"), NodePath("../Common/Automap/Gem/World6"), NodePath("../Common/Automap/Gem/World7"), NodePath("../Common/Automap/Gem/World8")]
+messageScrollUW1 = NodePath("../UW1/MessageScrollPanelUW1/MessageScrollUW1")
+messageScrollUW2 = NodePath("../UW2/MessageScrollPanelUW2/messageScrollUW2")
 TypedInput = NodePath("../Common/TypedInput")
 GameOptionButtonsUW1 = [NodePath("../UW1/GameOptionsUW1_0"), NodePath("../UW1/GameOptionsUW1_1"), NodePath("../UW1/GameOptionsUW1_2"), NodePath("../UW1/GameOptionsUW1_3"), NodePath("../UW1/GameOptionsUW1_4"), NodePath("../UW1/GameOptionsUW1_5"), NodePath("../UW1/GameOptionsUW1_6")]
 GameOptionButtonsUW2 = [NodePath("../UW2/GameOptionsUW2_0"), NodePath("../UW2/GameOptionsUW2_1"), NodePath("../UW2/GameOptionsUW2_2"), NodePath("../UW2/GameOptionsUW2_3"), NodePath("../UW2/GameOptionsUW2_4"), NodePath("../UW2/GameOptionsUW2_5"), NodePath("../UW2/GameOptionsUW2_6")]
@@ -2741,6 +2746,8 @@ PowerGemUW2 = NodePath("../UW2/PowerGemUW2")
 
 [node name="tilemap" type="Node3D" parent="."]
 
+[connection signal="mouse_entered" from="UI/UW1/MessageScrollPanelUW1" to="UI/uiManager" method="_on_message_scroll_mouse_entered"]
+[connection signal="mouse_exited" from="UI/UW1/MessageScrollPanelUW1" to="UI/uiManager" method="_on_message_scroll_mouse_exit"]
 [connection signal="gui_input" from="UI/UW1/CompassUW1/CompassClickArea" to="UI/uiManager" method="_on_compass_click"]
 [connection signal="gui_input" from="UI/UW1/ConversationUW1/PlayerTradeSelectedUW1_0" to="UI/uiManager" method="_on_player_trade_selected" binds= [0]]
 [connection signal="gui_input" from="UI/UW1/ConversationUW1/PlayerTradeSelectedUW1_1" to="UI/uiManager" method="_on_player_trade_selected" binds= [1]]
@@ -2771,6 +2778,8 @@ PowerGemUW2 = NodePath("../UW2/PowerGemUW2")
 [connection signal="gui_input" from="UI/UW1/GameOptionsUW1_4" to="UI/uiManager" method="_on_game_options_input" binds= [4]]
 [connection signal="gui_input" from="UI/UW1/GameOptionsUW1_5" to="UI/uiManager" method="_on_game_options_input" binds= [5]]
 [connection signal="gui_input" from="UI/UW1/GameOptionsUW1_6" to="UI/uiManager" method="_on_game_options_input" binds= [6]]
+[connection signal="mouse_entered" from="UI/UW2/MessageScrollPanelUW2" to="UI/uiManager" method="_on_message_scroll_mouse_entered"]
+[connection signal="mouse_exited" from="UI/UW2/MessageScrollPanelUW2" to="UI/uiManager" method="_on_message_scroll_mouse_exit"]
 [connection signal="gui_input" from="UI/UW2/OptionsButtonUW2" to="UI/uiManager" method="_on_interactionoptions_button" binds= [0]]
 [connection signal="gui_input" from="UI/UW2/TalkButtonUW2" to="UI/uiManager" method="_on_interactionoptions_button" binds= [1]]
 [connection signal="gui_input" from="UI/UW2/PickupButtonUW2" to="UI/uiManager" method="_on_interactionoptions_button" binds= [2]]
