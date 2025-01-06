@@ -449,11 +449,11 @@ namespace Underworld
 						{
 							var address = Pop();
 							var arg1 = at(address);
-							var varname = GetVariableNameAtAddress(address);
-							if (varname!="")
-							{
-								Debug.Print ($"Fetching {varname} with value {arg1}");
-							}
+							// var varname = GetVariableNameAtAddress(address);
+							// if (varname!="")
+							// {
+							// 	Debug.Print ($"Fetching {varname} with value {arg1}");
+							// }
 							if (testing) { Debug.Print($"{instrp}:FETCHM {arg1}"); }
 							Push(arg1);
 							break;
@@ -621,7 +621,7 @@ namespace Underworld
 		private static void InitialiseConversationMemory()
 		{
 			StackValues = new short[4096];
-			stackptr = 200;
+			stackptr = 200;  //vanilla behaviour this should be at offset NoOfImportedVariables of the conversation memory
 			result_register = 0;
 			instrp = 0;
 			call_level = 1;

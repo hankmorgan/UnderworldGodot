@@ -230,6 +230,11 @@ namespace Underworld
                         x_obj_pos();
                         break;
                     }
+                case "set_attitude":
+                    {
+                        set_attitude();
+                        break;
+                    }
                 default:
                     {                       
                         Debug.Print($"Unimplemented {func.importname}"); break;

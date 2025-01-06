@@ -26,8 +26,9 @@ namespace Underworld
             var sb = new StringBuilder();
             var instrp = 0;
             bool finished = false;
+            int lastPushi = -1;
             while (!finished)
-            {
+            {                
                 sb.Append($"\n{instrp}:");
                 switch (instuctions[instrp])
                 {
@@ -122,19 +123,19 @@ namespace Underworld
                         }
                     case ConversationVM.cnv_BEQ:
                         {
-                            sb.Append($"BEQ {instuctions[instrp + 1]+1}");
+                            sb.Append($"BEQ {instrp+instuctions[instrp + 1]+1}");
                             break;
                         }
 
                     case ConversationVM.cnv_BNE:
                         {
-                            sb.Append($"BNE {instuctions[instrp + 1]}");
+                            sb.Append($"BNE  {instrp+instuctions[instrp + 1]}");
                             break;
                         }
 
                     case ConversationVM.cnv_BRA:
                         {
-                            sb.Append($"BNE {instuctions[instrp + 1]}");
+                            sb.Append($"BRA {instrp+instuctions[instrp + 1]}");
                             break;
                         }
 
@@ -166,6 +167,7 @@ namespace Underworld
                         }
                     case ConversationVM.cnv_PUSHI:
                         {
+                            lastPushi = instuctions[instrp + 1];
                             sb.Append($"PUSHI {instuctions[++instrp]}");
                             break;
                         }
@@ -250,6 +252,11 @@ namespace Underworld
                     case ConversationVM.cnv_SAY_OP:
                         {
                             sb.Append("SAYOP");
+                            if (lastPushi !=-1)
+                            {
+                                sb.Append ($"  //{GameStrings.GetString(StringBlock, lastPushi)}");
+                                lastPushi = -1;
+                            }
                             break;
                         }
                     case ConversationVM.cnv_RESPOND_OP:
