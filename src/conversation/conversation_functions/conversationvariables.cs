@@ -127,19 +127,27 @@ namespace Underworld
 							{
 								if ((npc.npc_goal == 5) && (npc.npc_gtarg == 1))
 								{
-									valueToImport = 6;
+									valueToImport = 0;
 								}
 								else
 								{
-									var flag = (npc.npc_hunger & 0x40) >> 6;
-									if (flag == 0)
-									{
-										valueToImport = 6;
-									}
-									else
+									if (npc.UnkBit_0x19_6_MaybeAlly == 1)
 									{
 										valueToImport = npc.npc_attitude;
 									}
+									else
+									{
+										valueToImport = 6;
+									}
+									// var flag = (npc.npc_hunger & 0x40) >> 6;
+									// if (flag == 0)
+									// {
+									// 	valueToImport = 6;
+									// }
+									// else
+									// {
+									// 	valueToImport = npc.npc_attitude;
+									// }
 								}
 								break;
 							}
@@ -262,11 +270,12 @@ namespace Underworld
 			if (newvalue>3)
 			{
 				npc.npc_attitude = 3;
-				npc.npc_hunger = (short)(npc.npc_hunger | 0x40); //set bit 6 after conv
+				//npc.npc_hunger = (short)(npc.npc_hunger | 0x40); //set bit 6 after conv
+				npc.UnkBit_0x19_6_MaybeAlly = 1;
 			}
 			else
 			{//note this value will overwrite a set_race_attitude value, npc will become hostile later on in this case due to hardcoded behavioural code when their gtarg is the player 1
-				npc.npc_attitude = (short)Math.Max(0, (int)newvalue&0x3);
+				npc.npc_attitude = newvalue; //(short)Math.Max(0, (int)newvalue&0x3);
 			}
 
 			playerdat.play_hunger = (byte)FindVariable("play_hunger");
