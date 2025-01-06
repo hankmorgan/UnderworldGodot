@@ -108,7 +108,15 @@ namespace Underworld
 							}
 						case "npc_name":
 							{
-								valueToImport = GameStrings.AddString(currentConversation.StringBlock, npc.a_name);
+								if (npc.npc_whoami == 0)
+								{
+									valueToImport = 0x800 | npc.item_id;
+								}
+								else
+								{
+									valueToImport = 0xE00 | (0x10 + npc.npc_whoami);
+								}
+								//valueToImport = GameStrings.AddString(currentConversation.StringBlock, npc.a_name);
 								// if (npc.npc_whoami == 0)
 								// {//generic npc, name is in block 4
 								// 	valueToImport = npc.item_id;
