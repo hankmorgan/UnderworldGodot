@@ -250,6 +250,11 @@ namespace Underworld
                         length();
                         break;
                     }
+                case "take_from_npc_inv":
+                    {   
+                        take_from_npc_inv(talker);
+                        break;
+                    }
                 default:
                     {                       
                         Debug.Print($"Unimplemented {func.importname}"); break;
