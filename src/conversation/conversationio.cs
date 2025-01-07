@@ -167,7 +167,7 @@ namespace Underworld
                             {
                                 if (ReplacementValue < 0)
                                 {
-                                    FoundString = at(at(basep + ReplacementValue - 1)).ToString();//-1 for params
+                                    FoundString = at(at(basep + ReplacementValue)).ToString();//was basp+replacement-1. If I have to change again this may need deeper investigation of ConvoVM memory management
                                 }
                                 else
                                 {
