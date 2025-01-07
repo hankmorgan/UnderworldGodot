@@ -117,10 +117,10 @@ namespace Underworld
                         ConversationVM.conversations[i].CodeSize = (int)getAt(cnv_ark, add_ptr + 0x4, 16);
                         ConversationVM.conversations[i].StringBlock = (int)getAt(cnv_ark, add_ptr + 0xA, 16);
                         ConversationVM.conversations[i].NoOfMemorySlots = (int)getAt(cnv_ark, add_ptr + 0xC, 16);
-                        if (ConversationVM.conversations[i].NoOfMemorySlots>0)
-                        {
-                            Debug.Print($"Memory slots for {i} is > 0 ");
-                        }
+                        // if (ConversationVM.conversations[i].NoOfMemorySlots>0)
+                        // {
+                        //     Debug.Print($"Memory slots for {i} is > 0 ");
+                        // }
                         ConversationVM.conversations[i].NoOfImportedGlobals = (int)getAt(cnv_ark, add_ptr + 0xE, 16);
                         ConversationVM.conversations[i].functions = new ConversationImports[ConversationVM.conversations[i].NoOfImportedGlobals];
                         long funcptr = add_ptr + 0x10;

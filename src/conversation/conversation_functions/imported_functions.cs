@@ -235,6 +235,11 @@ namespace Underworld
                         set_attitude();
                         break;
                     }
+                case "transform_talker":
+                    {
+                        transform_talker(talker);
+                        break;
+                    }
                 default:
                     {                       
                         Debug.Print($"Unimplemented {func.importname}"); break;
