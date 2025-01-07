@@ -240,6 +240,11 @@ namespace Underworld
                         transform_talker(talker);
                         break;
                     }
+                case "set_inv_quality":
+                    {
+                        set_inv_quality();
+                        break;
+                    }
                 default:
                     {                       
                         Debug.Print($"Unimplemented {func.importname}"); break;
