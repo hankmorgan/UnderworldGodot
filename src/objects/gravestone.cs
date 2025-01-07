@@ -18,10 +18,12 @@ namespace Underworld
         /// <returns></returns>
         private static void DisplayGrave(uwObject obj)
         {
-            var graveid = GetGraveID(obj);
+            if (_RES != GAME_UW2)
+            {
+                uimanager.DisplayCutsImage("cs401.n01", GetGraveID(obj),  uimanager.CutsSmall);
+            }            
             uimanager.AddToMessageScroll(GameStrings.GetString(8, obj.link - 512));   
-            uimanager.DisplayCutsImage("cs401.n01", graveid,  uimanager.CutsSmall);
-            //"cs401.n01"            
+           
         }
 
         /// <summary>
