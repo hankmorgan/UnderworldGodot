@@ -139,7 +139,7 @@ namespace Underworld
 								}
 								else
 								{
-									if (npc.UnkBit_0x19_6_MaybeAlly == 1)
+									if (npc.UnkBit_0x19_6_MaybeAlly == 0)
 									{
 										valueToImport = npc.npc_attitude;
 									}
@@ -147,15 +147,6 @@ namespace Underworld
 									{
 										valueToImport = 6;
 									}
-									// var flag = (npc.npc_hunger & 0x40) >> 6;
-									// if (flag == 0)
-									// {
-									// 	valueToImport = 6;
-									// }
-									// else
-									// {
-									// 	valueToImport = npc.npc_attitude;
-									// }
 								}
 								break;
 							}
@@ -256,26 +247,26 @@ namespace Underworld
 					break;
 				}
 			}
-			
+
 			var newvalue = FindVariable("npc_hunger");
-			if (newvalue>=32)
-				{//Set bit 7
-					npc.npc_hunger = (short)((npc.npc_hunger & 0x7F) | (1<<7));
-				}
+			if (newvalue >= 32)
+			{//Set bit 7
+				npc.npc_hunger = (short)((npc.npc_hunger & 0x7F) | (1 << 7));
+			}
 			else
-				{
-					//unset bit
-					npc.npc_hunger = ((short)(npc.npc_hunger & 0x7F));
-				}
-			
+			{
+				//unset bit
+				npc.npc_hunger = ((short)(npc.npc_hunger & 0x7F));
+			}
+
 			npc.npc_hp = (byte)FindVariable("npc_hp");
 			npc.owner = FindVariable("npc_yhome");
 			npc.quality = FindVariable("npc_xhome");
 			npc.npc_goal = (byte)FindVariable("npc_goal"); //There may be deeper logic applying here
 			npc.npc_gtarg = (byte)FindVariable("npc_gtarg");
-			npc.npc_talkedto=1;// this always gets set to 1
+			npc.npc_talkedto = 1;// this always gets set to 1
 			newvalue = FindVariable("npc_attitude");
-			if (newvalue>3)
+			if (newvalue > 3)
 			{
 				npc.npc_attitude = 3;
 				//npc.npc_hunger = (short)(npc.npc_hunger | 0x40); //set bit 6 after conv
@@ -292,7 +283,7 @@ namespace Underworld
 			playerdat.play_poison = (byte)FindVariable("play_poison");
 			//Add new_exp
 			newvalue = FindVariable("new_player_exp");
-			if (newvalue!=0)
+			if (newvalue != 0)
 			{
 				Debug.Print("Change in xp in conversation. Test me.");//the exp change logic is dungeon level dependant with some randomisation
 				playerdat.ChangeExperience(newvalue);
@@ -307,16 +298,16 @@ namespace Underworld
 		/// <returns></returns>
 		public static short FindVariable(string varname)
 		{
-			for (int i=0; i<= currentConversation.functions.GetUpperBound(0); i++)
+			for (int i = 0; i <= currentConversation.functions.GetUpperBound(0); i++)
 			{
 				if (currentConversation.functions[i].import_type == 0x010F)
+				{
+					if (varname.ToLower() == currentConversation.functions[i].importname.ToLower())
 					{
-						if (varname.ToLower() == currentConversation.functions[i].importname.ToLower())
-							{
-								Debug.Print($"{varname}  = {at(currentConversation.functions[i].ID_or_Address)}");
-								return at(currentConversation.functions[i].ID_or_Address);
-							}
+						Debug.Print($"{varname}  = {at(currentConversation.functions[i].ID_or_Address)}");
+						return at(currentConversation.functions[i].ID_or_Address);
 					}
+				}
 			}
 			Debug.Print($"Imported Variable {varname} not found!");
 			return 0;
@@ -329,16 +320,16 @@ namespace Underworld
 		/// <returns></returns>
 		public static int FindVariableAddress(string varname)
 		{
-			for (int i=0; i<= currentConversation.functions.GetUpperBound(0); i++)
+			for (int i = 0; i <= currentConversation.functions.GetUpperBound(0); i++)
 			{
 				if (currentConversation.functions[i].import_type == 0x010F)
+				{
+					if (varname.ToLower() == currentConversation.functions[i].importname.ToLower())
 					{
-						if (varname.ToLower() == currentConversation.functions[i].importname.ToLower())
-							{
-								//Debug.Print($"{varname}  = {at(currentConversation.functions[i].ID_or_Address)}");
-								return currentConversation.functions[i].ID_or_Address;
-							}
+						//Debug.Print($"{varname}  = {at(currentConversation.functions[i].ID_or_Address)}");
+						return currentConversation.functions[i].ID_or_Address;
 					}
+				}
 			}
 			Debug.Print($"Imported Variable {varname} not found!");
 			return 0;
@@ -346,7 +337,7 @@ namespace Underworld
 
 		public static string GetVariableNameAtAddress(int address)
 		{
-			if (address<=currentConversation.functions.GetUpperBound(0))
+			if (address <= currentConversation.functions.GetUpperBound(0))
 			{
 				if (currentConversation.functions[address].import_type == 0x010F)
 				{
