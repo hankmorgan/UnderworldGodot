@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://ba5m1urf788ey"]
+
+[ext_resource type="Script" path="res://src/utility/LaunchScene.cs" id="1_ukjsy"]
+
+[node name="LaunchScene" type="Node2D"]
+script = ExtResource("1_ukjsy")
