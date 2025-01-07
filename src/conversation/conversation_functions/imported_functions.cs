@@ -245,6 +245,11 @@ namespace Underworld
                         set_inv_quality();
                         break;
                     }
+                case "length":
+                    {
+                        length();
+                        break;
+                    }
                 default:
                     {                       
                         Debug.Print($"Unimplemented {func.importname}"); break;

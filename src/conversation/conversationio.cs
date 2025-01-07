@@ -45,6 +45,10 @@ namespace Underworld
             //I: value is an integer value
             //<num>: decimal value
             //<extension>: format: C<number>: use array index <number-1> offset from the initial source value.
+            
+            //Remove \\1 and \\0 which wraps the reprinting of player typed input in conversations.
+            input=input.Replace("\\1","").Replace("\\0","");
+
             if (!input.Contains("@"))
             {
                 return input;
