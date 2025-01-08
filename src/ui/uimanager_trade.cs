@@ -207,11 +207,11 @@ namespace Underworld
         /// Gets the item if selected at the npc trade slot
         /// </summary>
         /// <param name="slotno"></param>
-        /// <param name="ignoreSelected"></param>
+        /// <param name="OnlySelected"></param>
         /// <returns></returns>
-        public static int GetNPCTradeSlot(int slotno, bool ignoreSelected = true)
+        public static int GetNPCTradeSlot(int slotno, bool OnlySelected = true)
         {
-            if ((NPCItemSelected[slotno]) | (!ignoreSelected))
+            if ((NPCItemSelected[slotno]) | (!OnlySelected))
             {
                 return NPCItemIDs[slotno];
             }
@@ -240,14 +240,14 @@ namespace Underworld
             }
         }
 
-        private static void PlayerTradeOn(long slotNo)
+        public static void PlayerTradeOn(long slotNo)
         {
             playerTradeSelected[slotNo].Texture = SelectionCross;
             PlayerItemSelected[slotNo] = true;
         }
 
 
-        private static void PlayerTradeOff(long slotNo)
+        public static void PlayerTradeOff(long slotNo)
         {
             playerTradeSelected[slotNo].Texture = null;
             PlayerItemSelected[slotNo] = false;
@@ -277,14 +277,14 @@ namespace Underworld
             }
         }
 
-        private static void NpcTradeOff(long slotNo)
+        public static void NpcTradeOff(long slotNo)
         {
             npcTradeSelected[slotNo].Texture = null;
             NPCItemSelected[slotNo] = false;
         }
 
 
-        private static void NPCTradeOn(long slotNo)
+        public static void NPCTradeOn(long slotNo)
         {
             npcTradeSelected[slotNo].Texture = SelectionCross;
             NPCItemSelected[slotNo] = true;
