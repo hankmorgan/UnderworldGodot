@@ -270,6 +270,11 @@ namespace Underworld
                         yield return pause();
                         break;
                     }
+                case "set_sequence":
+                    {
+                        set_sequence();
+                        break;
+                    }
                 default:
                     {                       
                         Debug.Print($"Unimplemented {func.importname}"); break;
