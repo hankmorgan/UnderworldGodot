@@ -103,7 +103,7 @@ namespace Underworld
                     if (pathfind.TestBetweenPoints(npc_xcoord,npc_ycoord,npc_zcoord, stolenitem_xcoord, stolenitem_ycoord,stolenitem_zcoord))
                     {
                         critter.npc_attitude = (short)Math.Max(critter.npc_attitude-1,0);
-                        var msg = $"{GameStrings.GetObjectNounUW(critter.item_id)}{GameStrings.GetString(1,GameStrings.str__is_angered_by_your_action_)}";
+                        var msg = $"{critter.a_name}{GameStrings.GetString(1,GameStrings.str__is_angered_by_your_action_)}";
                         uimanager.AddToMessageScroll(msg);
                     }
                 }

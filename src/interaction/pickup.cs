@@ -178,18 +178,25 @@ namespace Underworld
 
         private static void DoPickup(int index, uwObject[] objList, uwObject obj)
         {
-            //check for pickup triggers linked to this object
-            //trigger.PickupTrigger(objList, obj);
+            
+            //first handle some special cases
+            PickupSpecialCases(obj);
 
+            //check for pickup triggers linked to this object
             trigger.TriggerObjectLink(
-                    character: 0, 
-                    ObjectUsed: obj, 
-                    triggerType: (int)triggerObjectDat.triggertypes.PICKUP, 
-                    triggerX: obj.tileX, 
-                    triggerY: obj.tileY, 
+                    character: 0,
+
+                    ObjectUsed: obj,
+
+                    triggerType: (int)triggerObjectDat.triggertypes.PICKUP,
+
+                    triggerX: obj.tileX,
+
+                    triggerY: obj.tileY,
+
                     objList: UWTileMap.current_tilemap.LevelObjects);
 
-            if (obj.owner!=0)
+            if (obj.owner != 0)
             {
                 Debug.Print($"Object Owner is {obj.owner}");
                 thief.FlagTheftToObjectOwner(obj, 0);
@@ -232,11 +239,17 @@ namespace Underworld
             {
                 Debug.Print($"Trying to pick up {obj.a_name} without an instance!");
             }
+        }
 
-            //now handle some special cases
+        /// <summary>
+        /// Special events when objects are picked up and data needs to be updated.
+        /// </summary>
+        /// <param name="obj"></param>
+        private static void PickupSpecialCases(uwObject obj)
+        {
             if (_RES != GAME_UW2)
             {
-                switch(obj.item_id)
+                switch (obj.item_id)
                 {
                     case 294://Moonstone
                         playerdat.SetMoonstone(0, 0);
@@ -252,7 +265,7 @@ namespace Underworld
                 {
                     case 294://Moonstone
                         {
-                            for (int m = 0; m<2; m++)
+                            for (int m = 0; m < 2; m++)
                             {//Clear the moonstone if it matches the current level.
                                 if (playerdat.GetMoonstone(m) == playerdat.dungeon_level)
                                 {
@@ -262,8 +275,19 @@ namespace Underworld
                             }
                             break;
                         }
+                    case 312://mors gotha's spellbook
+                        {
+                            if (obj.doordir == 1)
+                            {
+                                playerdat.SetQuest(106,1);
+                                //a_do_trap_trespass.HackTrapTrespass(28);//flag trespass to human faction #28 guardian forces, note vanilla behaviour is that dropping and picking the book up again will retrigger this behaviour.
+                                thief.FlagTheftToObjectOwner(obj, 28);
+                            }
+                            break;
+                        }
                 }
             }
-        }        
+        }
+
     } //end class
 }//end namespace
