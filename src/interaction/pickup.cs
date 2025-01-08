@@ -31,7 +31,7 @@ namespace Underworld
                 obj.next = t.indexObjectList;
                 t.indexObjectList = (short)index;
 
-                //create the new              
+                //create the new   
                 ObjectCreator.RenderObject(obj, UWTileMap.current_tilemap);
 
                 if (DoSpecialCases)

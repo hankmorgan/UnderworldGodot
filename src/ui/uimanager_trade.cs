@@ -191,7 +191,7 @@ namespace Underworld
                 NPCItemIDs[slotno] = obj.index;
                 NPCTrade[slotno].Texture = grObjects.LoadImageAt(obj.item_id);
                 NPCTrade[slotno].Material = grObjects.GetMaterial(obj.item_id);
-                NPCItemSelected[slotno]  = selected;
+                NPCItemSelected[slotno]  = selected;                
                 if (selected)
                 {
                     NPCTradeOn(slotno);

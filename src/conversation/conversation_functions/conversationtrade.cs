@@ -346,6 +346,16 @@ namespace Underworld
                     container.Close(uimanager.OpenedContainerIndex, playerdat.InventoryObjects);
                 }
             }
+            
+            for (int i = 0; i < uimanager.NoOfTradeSlots; i++)
+            {//remove from the NPCs chain first
+                var objindex = uimanager.GetNPCTradeSlot(i);
+                if (objindex != -1)
+                {
+                    ObjectRemover.RemoveObjectFromLinkedList(talker.link, objindex, UWTileMap.current_tilemap.LevelObjects, talker.PTR+6);
+                }
+            }
+
             for (int i = 0; i < uimanager.NoOfTradeSlots; i++)
             {
                 var objindex = uimanager.GetNPCTradeSlot(i);
