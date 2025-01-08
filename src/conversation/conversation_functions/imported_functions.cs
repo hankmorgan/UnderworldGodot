@@ -265,6 +265,11 @@ namespace Underworld
                         do_input_wait();
                         break;
                     }
+                case "pause":
+                    {
+                        yield return pause();
+                        break;
+                    }
                 default:
                     {                       
                         Debug.Print($"Unimplemented {func.importname}"); break;
@@ -279,6 +284,7 @@ namespace Underworld
                 SwapTradedObjects(talker);
                 TradeResult = 0;
             }
+            
             yield return null;
         }
 

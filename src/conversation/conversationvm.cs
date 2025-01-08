@@ -555,8 +555,9 @@ namespace Underworld
 				}
 			} //end loop            
 
-			//should have a wait here
-			yield return new WaitForSeconds(3);
+			//wait one second and then wait until player input
+			yield return new WaitForSeconds(1);
+			yield return pause();
 
 			ExitConversation(talker, currentConversation);
 			yield return null;
