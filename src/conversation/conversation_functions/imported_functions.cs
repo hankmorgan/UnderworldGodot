@@ -260,6 +260,11 @@ namespace Underworld
                         give_all_stuff();
                         break;
                     }
+                case "do_input_wait":
+                    {
+                        do_input_wait();
+                        break;
+                    }
                 default:
                     {                       
                         Debug.Print($"Unimplemented {func.importname}"); break;
