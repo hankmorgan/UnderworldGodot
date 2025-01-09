@@ -609,6 +609,20 @@ namespace Underworld
 			}
 			uimanager.instance.convo.Clear();
 			InConversation = false;
+
+			if (_RES == GAME_UW2)
+			{
+				if (playerdat.GetQuest(143)!=0)
+				{
+					Debug.Print($"Play cutscene no {playerdat.GetQuest(143)}");
+					playerdat.SetQuest(143,0);
+				}
+
+				//Process scd.ark
+				scd.ProcessSCDArk(mode: 1);
+			}
+
+
 			main.gamecam.Set("MOVE", true);
 			if (DoTeleport)
 			{

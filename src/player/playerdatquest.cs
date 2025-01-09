@@ -562,7 +562,7 @@ namespace Underworld
 /// The X Clock is tied closely to SCD.ark and the scheduled events within that file.
 /// 1=Miranda conversations & related events in the castle
 ///     1 - Nystrul is curious about exploration.Set after entering lvl 1 from the route downwards. (set variable traps 17 may be related)
-///     2 - After you visited another world.  (variable 17 is set to 16), dupre is tempted
+///     2 - After you visited another world.  (variable 17 is set to 16)
 ///     3 - servants getting restless
 ///     4 - concerned about water, dupre is annoyed by patterson
 ///     5 - Dupre is bored / dupre is fetching water
@@ -577,7 +577,7 @@ namespace Underworld
 ///     16 - Nystrul questions have been answered Mars Gotha comes
 /// 2=Nystrul conversations and no of blackrock gems treated
 /// 3=Djinn Capture
-///     2 = balisk oil is in the mud
+///     2 = basilisk oil is in the mud
 ///     3 = bathed in oil
 ///     4 = baked in lava
 ///     5 = iron flesh cast (does not need to be still on when you break the bottle)

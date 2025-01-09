@@ -1,3 +1,5 @@
+using System;
+
 namespace Underworld
 {
         /// <summary>
@@ -12,5 +14,5 @@ namespace Underworld
             //UW2 specific
             public int CompressionFlag;
             public int ReservedSpace;
-        };
+    };
 }
