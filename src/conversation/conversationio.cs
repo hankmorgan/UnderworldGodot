@@ -24,7 +24,14 @@ namespace Underworld
             }
             else
             {
-                return GameStrings.GetString(currentConversation.StringBlock, stringno);
+                if (stringno>=512)
+                {//get string by direct full reference
+                    return GameStrings.GetString(stringno);
+                }
+                else
+                {
+                    return GameStrings.GetString(currentConversation.StringBlock, stringno);
+                }                
             }
         }
 
