@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.IO;
 
 namespace Underworld
@@ -22,6 +23,20 @@ namespace Underworld
                 return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Just prints out a row of event values in SCD.ARK
+        /// </summary>
+        /// <param name="currentblock"></param>
+        /// <param name="eventOffset"></param>
+        static void PrintRow(byte[] currentblock, int eventOffset)
+        {
+            Debug.Print($"Event Offset {eventOffset}");
+            for (int i=0; i<16;i++)
+            {
+                Debug.Print($"{i}:{currentblock[eventOffset+i]}");
+            }
         }
     }//end class
 }//end namespace
