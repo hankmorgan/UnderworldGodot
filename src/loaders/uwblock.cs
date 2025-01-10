@@ -1,11 +1,9 @@
-using System;
-
 namespace Underworld
 {
-        /// <summary>
-        /// UW block structure for .ark files.
-        /// </summary>
-        public class UWBlock :UWClass
+    /// <summary>
+    /// UW block structure for .ark files.
+    /// </summary>
+    public class UWBlock :UWClass
         {
             public byte[] Data;
             public int Address; //The file address of the block

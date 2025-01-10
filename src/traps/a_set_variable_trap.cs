@@ -206,7 +206,7 @@ namespace Underworld
         /// <param name="Operation"></param>
         /// <param name="RightOperator"></param>
         /// <returns></returns>
-        static int VariableTransformUW2(int LeftOperator, int Operation, int RightOperator)
+        public static int VariableTransformUW2(int LeftOperator, int Operation, int RightOperator)
         {
             switch (Operation)
             {

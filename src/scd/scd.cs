@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 
 namespace Underworld
 {
@@ -22,7 +21,7 @@ namespace Underworld
                 scd_data = new UWBlock[0x10];
             }
             int error_var2 = 0;//flags if an error has occurred and stop execution.
-            for (int blockno = 0; blockno < 0x10; blockno++)
+            for (int blockno = 0xF; blockno < 0x10; blockno++)
             {
                 var si_xclock = playerdat.GetXClock(blockno);
                 if (scd_data[blockno] == null)
@@ -39,7 +38,7 @@ namespace Underworld
                 if (blockno == 0)
                 {
                     error_var2 = ProcessBlock0(
-                        currentblock: scd_data[blockno],
+                        currentblock: scd_data[blockno].Data,
                         arg0_xclock: playerdat.GetXClock(0),
                         NoOfMaps: 72,
                         mode_arg4: mode);
@@ -47,7 +46,7 @@ namespace Underworld
                 else
                 {
                     error_var2 = ProcessGeneralBlock(
-                        currentblock: scd_data[blockno],
+                        currentblock: scd_data[blockno].Data,
                         XClockValue: si_xclock,
                         mode: mode);
                 }
@@ -74,11 +73,11 @@ namespace Underworld
         /// <param name="NoOfMaps"></param>
         /// <param name="mode_arg4"></param>
         /// <returns></returns>
-        static int ProcessBlock0(UWBlock currentblock, int arg0_xclock, int NoOfMaps, int mode_arg4)
+        static int ProcessBlock0(byte[] currentblock, int arg0_xclock, int NoOfMaps, int mode_arg4)
         {
             var di = arg0_xclock % NoOfMaps;
             var var1 = 0;
-            if (currentblock.Data[4 + (playerdat.dungeon_level * 4)] > di)
+            if (currentblock[4 + (playerdat.dungeon_level * 4)] > di)
             {
                 var1 = ProcessGeneralBlock(
                     currentblock: currentblock,
@@ -90,8 +89,8 @@ namespace Underworld
                 }
                 else
                 {
-                    currentblock.Data[4 + (playerdat.dungeon_level * 4)] = 0;
-                    currentblock.Data[6 + (playerdat.dungeon_level * 4)] = 0;
+                    currentblock[4 + (playerdat.dungeon_level * 4)] = 0;
+                    currentblock[6 + (playerdat.dungeon_level * 4)] = 0;
                 }
             }
 
@@ -109,11 +108,11 @@ namespace Underworld
         /// <param name="XClockValue"></param>
         /// <param name="mode"></param>
         /// <returns></returns>
-        static int ProcessGeneralBlock(UWBlock currentblock, int XClockValue, int mode)
+        static int ProcessGeneralBlock(byte[] currentblock, int XClockValue, int mode)
         {
-            var si_offset = currentblock.Data[4 + playerdat.dungeon_level * 4];
+            var si_offset = currentblock[4 + playerdat.dungeon_level * 4];
             var di = XClockValue;
-            currentblock.Data[4] = (byte)XClockValue;
+            currentblock[4 + (playerdat.dungeon_level * 4)] = (byte)XClockValue;
             if (si_offset != di)
             {
                 if (si_offset > di)
@@ -124,7 +123,7 @@ namespace Underworld
                     }
                     else
                     {
-                        currentblock.Data[4 + (playerdat.dungeon_level * 4)] = 0;
+                        currentblock[4 + (playerdat.dungeon_level * 4)] = 0;
                         return FindSCDRowsToExecute(currentblock, mode);
                     }
                 }
@@ -152,23 +151,23 @@ namespace Underworld
         /// <param name="currentblock"></param>
         /// <param name="mode"></param>
         /// <returns></returns>
-        static int FindSCDRowsToExecute(UWBlock currentblock, int mode)
+        static int FindSCDRowsToExecute(byte[] currentblock, int mode)
         {
             int var1 = 0;
             Debug.Print("Process SCD Rows");
-            var si = currentblock.Data[6];
-            if (currentblock.Data[2] == 0xF)
+            var si = currentblock[6 + (playerdat.dungeon_level * 4)];
+            if (currentblock[2] == 0xF)
             {
                 si = 0;
             }
 
-            while (currentblock.Data[0] > si)
+            while (currentblock[0] > si)
             {
-                if (currentblock.Data[324 + (si * 16)] <= currentblock.Data[4 + (playerdat.dungeon_level * 4)])
+                if (currentblock[324 + (si * 16)] <= currentblock[4 + (playerdat.dungeon_level * 4)])
                 {
                     if (mode != 0)
                     {
-                        var1 = ProcessSCDEvent(currentblock, 324 + (si * 16));
+                        var1 = ProcessSCDEventRow(currentblock, 324 + (si * 16));
                         switch (var1)
                         {
                             case 0:
@@ -182,7 +181,7 @@ namespace Underworld
                                 si++;
                                 break;
                             default:
-                                currentblock.Data[104 + playerdat.dungeon_level * 4] = si;
+                                currentblock[104 + playerdat.dungeon_level * 4] = si;
                                 return var1;
                         }
                     }
@@ -197,7 +196,7 @@ namespace Underworld
                 }
             }
 
-            currentblock.Data[6 + (playerdat.dungeon_level * 4)] = si;
+            currentblock[6 + (playerdat.dungeon_level * 4)] = si;
             // if (scd_data[2] == 0xF)
             // {
             //     si = 0;
@@ -213,25 +212,26 @@ namespace Underworld
         /// <param name="currentblock"></param>
         /// <param name="eventOffset"></param>
         /// <returns></returns>
-        static int ProcessSCDEvent(UWBlock currentblock, int eventOffset)
+        static int ProcessSCDEventRow(byte[] currentblock, int eventOffset)
         {
             if (
-                (currentblock.Data[eventOffset + 2] == playerdat.dungeon_level)
-                || (currentblock.Data[eventOffset + 2] == 0xFF)
-                || (currentblock.Data[eventOffset + 2] - 246 == playerdat.CurrentWorld)
+                (currentblock[eventOffset + 2] == playerdat.dungeon_level)
+                || (currentblock[eventOffset + 2] == 0xFF)
+                || (currentblock[eventOffset + 2] - 246 == playerdat.CurrentWorld)
                 )
             {
                 //DoEvent = true;
                 var var1 = 1;
                 var var2 = 1;
 
-                if (currentblock.Data[eventOffset + 4] >= 0)
+                if (currentblock[eventOffset + 4] >= 0)
                 {
-                    if (currentblock.Data[eventOffset + 4] <0xC)
-                    {
-                        Debug.Print($"Running SCD function {currentblock.Data[eventOffset + 4]}");
-                        //var2 = function result.
-                        if (currentblock.Data[eventOffset + 3] != 0)
+                    if (currentblock[eventOffset + 4] <0xC)
+                    {                       
+                        var2 = RunSCDFunction(
+                            currentblock: currentblock,
+                            eventOffset: eventOffset);
+                        if (currentblock[eventOffset + 3] != 0)
                         {
                             Debug.Print($"{eventOffset} needs to be deleted!");
                             return 4;

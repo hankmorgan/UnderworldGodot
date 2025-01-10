@@ -164,7 +164,7 @@ namespace Underworld
                 byteCounter++;
                 for (int i = 1; i < 0x50; ++i)
                 {
-                    if (byteCounter < 0x37D)
+                    if (byteCounter <= 0x37D)
                     {
                         buffer[i + offset] = (byte)(((pDat[i + offset] & 0xff) ^ ((buffer[i - 1 + offset] & 0xff) + (pDat[i - 1 + offset] & 0xff) + (MA[i] & 0xff))) & 0xff);
                         byteCounter++;

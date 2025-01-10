@@ -7,7 +7,7 @@ namespace Underworld
         //loads a player.dat file and initialses ui and cameras.
 
         public static void LoadPlayerDat(string datafolder)
-        {           
+        {    
             if (datafolder.ToUpper() != "DATA")
             {
                 //load player dat from a save file
@@ -139,7 +139,11 @@ namespace Underworld
                     uimanager.grWeapon = new WeaponsLoader(1); break;
             }
 
-            
+            //Clear cached UW2 SCD data.
+            if (_RES == GAME_UW2)
+            {
+                scd.scd_data = null;
+            }
 
             //Set the playerlight level;            
             //uwsettings.instance.lightlevel = light.BrightestLight();
