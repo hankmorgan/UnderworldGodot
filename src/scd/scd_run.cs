@@ -18,11 +18,15 @@ namespace Underworld
                             currentblock: currentblock,
                             eventOffset: eventOffset);
                     }
-                case 5: // Change quest
+                case 4: // Change quest
                     {
                         return ChangeQuest(
                              currentblock: currentblock,
                              eventOffset: eventOffset);
+                    }
+                case 5: //run trigger
+                    {
+                        return 0;
                     }
                 case 10:// run a block of events.
                     {
