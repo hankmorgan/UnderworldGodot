@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Godot;
 
 namespace Underworld
 {
@@ -44,34 +45,65 @@ namespace Underworld
                 tmp = 1;
             }
 
-            
-            if (di >0xFF)
-            {
-                CF = 1;//The operation has overflowed.
+
+            int dx;
+            if ((sbyte)currentblock[eventOffset+9]>0)
+            {//sbb calculation like below
+                dx = 0;
             }
+            else
+            {
+                dx = 1;
+            }
+            
+            // if (di >0xFF)
+            // {
+            //     CF = 1;//The operation has overflowed.
+            // }
             //DEST = DEST – (SRC + CF);
-            var dx = currentblock[eventOffset+9];
-            dx = (byte)- dx;
-            dx = (byte)(dx - (dx + CF) + 1);
+            // var dx = currentblock[eventOffset+9];
+            // dx = (byte)- dx;
+            // dx = (byte)(dx - (dx + CF) + 1);
             
             if (tmp != dx)
             {
+                Debug.Print("The block will try and execute");
                 while (true)
                 {
                     eventOffset = eventOffset + 0x10;
-                    if (currentblock[eventOffset+4]<0)
+                    if ((sbyte)(currentblock[eventOffset+4])>=0)
                     {
                         return 0;
                     }
+                    //if cf ==1 var = 0; if cf == 0 var = 1/
+                    //cf is 1 when [bx+3] is not zero,
 
-                    var al = currentblock[eventOffset+3];
-                    al = (byte)-al;
-                    var var7 = (byte)(al - (al + CF) + 1);
+                    //les     bx, [bp+SCDParams_arg_0]
+                    //mov     al, es:[bx+3]
+                    //mov     ah, 0
+                    //neg     ax              ; Two's Complement Negation
+                    //sbb     ax, ax          ; Integer Subtraction with Borrow
+                    //inc     ax  
+                    int var7;
+                    if ((sbyte)currentblock[eventOffset+3]>0)
+                    {
+                        var7 = 0;
+                    }
+                    else
+                    {
+                        var7 = 1;
+                    }
+                    // var al = currentblock[eventOffset+3];
+                    // al = (byte)-al;
+                    // var var7 = al - al + 1;
+                    //al = (byte)-al;
+                    //var var7 = (byte)(al - (al + CF) + 1);
                     currentblock[eventOffset+4] = (byte)-currentblock[eventOffset+4];
+                    Debug.Print($"The block will try and run {eventOffset}");
                     if (ProcessSCDEventRow(currentblock, eventOffset) == 4)
                     {
-                        Debug.Print("Row deleted. Uncomment this when functions implemented");
-                        //eventOffset = eventOffset - 0x10;
+                        Debug.Print($"Event Row deleted at {eventOffset}");
+                        eventOffset = eventOffset - 0x10;
                     }
 
                     if (var7!=0)
@@ -79,7 +111,7 @@ namespace Underworld
                         currentblock[eventOffset+4] = (byte)-currentblock[eventOffset+4];
                     }
 
-                    if ((byte)(-currentblock[eventOffset+4]) == 0xA)
+                    if ((sbyte)(-currentblock[eventOffset+4]) == 0xA)
                     {
                         return 0;
                     }
@@ -87,6 +119,7 @@ namespace Underworld
             }
             else
             {
+                Debug.Print("The block has not executed");
                 return 0;
             }
 

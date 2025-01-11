@@ -381,7 +381,11 @@ public partial class main : Node3D
 							{
 								//cutsplayer.PlayCutscene(0);//test  
 								//trigger.RunTimerTriggers();
-								trigger.RunNextScheduledTrigger();
+								if (UWClass._RES==UWClass.GAME_UW2)
+								{
+									scd.ProcessSCDArk(1);
+								}								
+								//trigger.RunNextScheduledTrigger();
 								break;
 							}
 					}

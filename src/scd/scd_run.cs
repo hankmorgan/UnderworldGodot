@@ -9,7 +9,7 @@ namespace Underworld
     {
         public static int RunSCDFunction(byte[] currentblock, int eventOffset)
         {
-            Debug.Print($"Running SCD function {currentblock[eventOffset + 4]}");
+            Debug.Print($"Running SCD function {currentblock[eventOffset + 4]} at {eventOffset}");
             switch (currentblock[eventOffset + 4])
             {
                 case 3://move npcs
@@ -26,7 +26,9 @@ namespace Underworld
                     }
                 case 5: //run trigger
                     {
-                        return 0;
+                        return RunTrigger(
+                             currentblock: currentblock,
+                             eventOffset: eventOffset);
                     }
                 case 10:// run a block of events.
                     {

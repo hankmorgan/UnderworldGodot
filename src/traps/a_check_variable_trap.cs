@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Underworld
 {
@@ -120,19 +121,31 @@ namespace Underworld
         /// <returns></returns>
         public static int GetVarQuestOrClockValue(int index)
         {
+            int value;
             switch (index)
             {
                 case < 0x100:
-                    return playerdat.GetGameVariable(index);
+                    Debug.Print($"Getting Gamevariable {index}");
+                    value = playerdat.GetGameVariable(index);
+                    break;
                 case >=0x100 and <0x180:
-                    return playerdat.GetQuest(index - 0x100);
+                    Debug.Print($"Getting Questvariable {index - 0x100}");
+                    value = playerdat.GetQuest(index - 0x100);
+                    break;
                 case >=0x180 and <=0x190:
-                    return playerdat.GetQuest(128 + index-0x180);
+                    Debug.Print($"Getting Questvariable {128 + index-0x180}");
+                    value = playerdat.GetQuest(128 + index-0x180);
+                    break;
                 case >=0x190 and <0x200:
-                    return playerdat.GetXClock(index-0x190);
+                    Debug.Print($"Getting XClock {index-0x190}");
+                    value = playerdat.GetXClock(index-0x190);
+                    break;
                 default:
-                    return 0;
+                    value =  0;
+                    break;
             }
+            Debug.Print($"And returning it's value as {value}");
+            return value;
         }
 
     }//end class

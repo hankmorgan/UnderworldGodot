@@ -16,13 +16,16 @@ namespace Underworld
         /// </summary>
         public static void ProcessSCDArk(int mode)
         {
+            Debug.Print("Starting to process SCU.ARK");
+            ArkHasBeenModified = false;
             if (scd_data == null)
             {
                 scd_data = new UWBlock[0x10];
             }
             int error_var2 = 0;//flags if an error has occurred and stop execution.
-            for (int blockno = 0xF; blockno < 0x10; blockno++)
+            for (int blockno = 0XF; blockno < 0x10; blockno++)
             {
+                Debug.Print($"Processing SCD Block {blockno}");
                 var si_xclock = playerdat.GetXClock(blockno);
                 if (scd_data[blockno] == null)
                 {
@@ -60,8 +63,11 @@ namespace Underworld
                     {
                         Debug.Print("Ark file needs to be saved with new data.");
                     }
+                    else
+                    {
+                        scd_data[blockno]= null;//simulate discarding of data that is unsaved.
+                    }
                 }
-
             }
         }
 
@@ -75,10 +81,12 @@ namespace Underworld
         /// <returns></returns>
         static int ProcessBlock0(byte[] currentblock, int arg0_xclock, int NoOfMaps, int mode_arg4)
         {
+            Debug.Print($"ProcessBlock0 for {arg0_xclock}");
             var di = arg0_xclock % NoOfMaps;
             var var1 = 0;
             if (currentblock[4 + (playerdat.dungeon_level * 4)] > di)
             {
+                Debug.Print($"ProcessBlock0: found valid block to process at {4 + (playerdat.dungeon_level * 4)}");
                 var1 = ProcessGeneralBlock(
                     currentblock: currentblock,
                     XClockValue: NoOfMaps - 1,
@@ -110,6 +118,7 @@ namespace Underworld
         /// <returns></returns>
         static int ProcessGeneralBlock(byte[] currentblock, int XClockValue, int mode)
         {
+            Debug.Print($"ProcessGeneralBlock xclockvalue {XClockValue}");
             var si_offset = currentblock[4 + playerdat.dungeon_level * 4];
             var di = XClockValue;
             currentblock[4 + (playerdat.dungeon_level * 4)] = (byte)XClockValue;
@@ -123,7 +132,7 @@ namespace Underworld
                     }
                     else
                     {
-                        currentblock[4 + (playerdat.dungeon_level * 4)] = 0;
+                        currentblock[6 + (playerdat.dungeon_level * 4)] = 0;
                         return FindSCDRowsToExecute(currentblock, mode);
                     }
                 }
@@ -154,7 +163,7 @@ namespace Underworld
         static int FindSCDRowsToExecute(byte[] currentblock, int mode)
         {
             int var1 = 0;
-            Debug.Print("Process SCD Rows");
+            Debug.Print("Trying to find SCD Rows to Execute");
             var si = currentblock[6 + (playerdat.dungeon_level * 4)];
             if (currentblock[2] == 0xF)
             {
@@ -171,17 +180,19 @@ namespace Underworld
                         switch (var1)
                         {
                             case 0:
-                            case 4: //deleted record (do not come here until record deletion is in place!)
-                                //si--; 
                                 ArkHasBeenModified = true;
-                                Debug.Print("Deleted Record");
-                                si++;//remove me!
+                                si++;
+                                break;
+                            case 4: //deleted record (do not come here until record deletion is in place!)                                
+                                ArkHasBeenModified = true;
+                                Debug.Print("Deleted Record"); 
+                                si--;                                
                                 break;
                             case 5:
                                 si++;
                                 break;
                             default:
-                                currentblock[104 + playerdat.dungeon_level * 4] = si;
+                                currentblock[6 + playerdat.dungeon_level * 4] = si;
                                 return var1;
                         }
                     }
@@ -214,6 +225,7 @@ namespace Underworld
         /// <returns></returns>
         static int ProcessSCDEventRow(byte[] currentblock, int eventOffset)
         {
+            Debug.Print($"Process Event Row at Offset {eventOffset}  #{(eventOffset-324)/16}");
             if (
                 (currentblock[eventOffset + 2] == playerdat.dungeon_level)
                 || (currentblock[eventOffset + 2] == 0xFF)
@@ -221,19 +233,21 @@ namespace Underworld
                 )
             {
                 //DoEvent = true;
-                var var1 = 1;
-                var var2 = 1;
+                // var var1 = 1;
+                // var var2 = 1;
 
-                if (currentblock[eventOffset + 4] >= 0)
+                if ((sbyte)(currentblock[eventOffset + 4]) >= 0)
                 {
-                    if (currentblock[eventOffset + 4] <0xC)
-                    {                       
-                        var2 = RunSCDFunction(
+                    if ((sbyte)(currentblock[eventOffset + 4]) <0xC)
+                    {                      
+                        var var2 = RunSCDFunction(
                             currentblock: currentblock,
                             eventOffset: eventOffset);
+                        
                         if (currentblock[eventOffset + 3] != 0)
                         {
-                            Debug.Print($"{eventOffset} needs to be deleted!");
+                            Debug.Print($"{eventOffset} to be deleted!");
+                            DeleteRow(currentblock, eventOffset);
                             return 4;
                         }
                         else

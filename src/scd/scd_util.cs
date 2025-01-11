@@ -38,5 +38,28 @@ namespace Underworld
                 Debug.Print($"{i}:{currentblock[eventOffset+i]}");
             }
         }
+
+        /// <summary>
+        /// Deletes an event row and moves following data to overwrite.
+        /// </summary>
+        /// <param name="currentblock"></param>
+        /// <param name="eventOffset"></param>
+        static void DeleteRow(byte[] currentblock, int eventOffset)
+        {
+            //ToDo Check if this delete is moving the correct amount of data. As this may not be correct behaviour...
+            var di = (eventOffset - 144)/16;
+            di--;
+            //var dataOffsetToMove = di * 16;
+            System.Buffer.BlockCopy(currentblock,eventOffset + 16, currentblock, eventOffset, 16);//This should be to end of data? Too tired to figure out now...
+
+            for (int si = 0; si<80;si++)
+            {
+                if (currentblock[6 + si*4] > di)
+                {
+                    currentblock[6 + si*4]--;
+                }
+            }
+            currentblock[0]--;
+        }
     }//end class
 }//end namespace
