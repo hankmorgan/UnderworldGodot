@@ -158,7 +158,7 @@ namespace Underworld
 		/// </summary>
 		public void _on_message_scroll_mouse_entered()
 		{
-			GD.Print("Cursor on scroll");
+			//GD.Print("Cursor on scroll");
 			CursorOverMessageScroll = true;
 		}
 		
@@ -167,7 +167,7 @@ namespace Underworld
 		/// </summary>
 		public void _on_message_scroll_mouse_exit()
 		{
-			GD.Print("Cursor exited scroll");
+			//GD.Print("Cursor exited scroll");
 			CursorOverMessageScroll = false;
 		}
 
