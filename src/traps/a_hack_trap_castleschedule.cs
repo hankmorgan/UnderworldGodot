@@ -91,9 +91,16 @@ namespace Underworld
                     CallBacks.RunCodeOnNPCS(DoCastleschedule, si_whoami, null, false);
                 }
             }
+            //Special case for Syria as her WhoAmI is out of sequence
+            CallBacks.RunCodeOnNPCS(DoCastleschedule, 0xA8, null, false);
         }
 
 
+        /// <summary>
+        /// Figures out where the castle NPC should go to and moves them
+        /// </summary>
+        /// <param name="critter"></param>
+        /// <param name="paramsarray"></param>
         static void DoCastleschedule(uwObject critter, int[] paramsarray)
         {
             short newX; short newY;
@@ -117,6 +124,12 @@ namespace Underworld
 
         }
 
+        /// <summary>
+        /// Determines where the NPC should move to based on time of day.
+        /// </summary>
+        /// <param name="critter"></param>
+        /// <param name="NewTileX"></param>
+        /// <param name="NewTileY"></param>
         static void GetCastleDestination(uwObject critter, out short NewTileX, out short NewTileY)
         {
             NewTileX = (short)critter.tileX;

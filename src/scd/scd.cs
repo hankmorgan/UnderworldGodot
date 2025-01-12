@@ -224,14 +224,14 @@ namespace Underworld
         /// <param name="eventOffset"></param>
         /// <returns></returns>
         static int ProcessSCDEventRow(byte[] currentblock, int eventOffset)
-        {
-            Debug.Print($"Process Event Row at Offset {eventOffset}  #{(eventOffset-324)/16}");
+        {            
             if (
                 (currentblock[eventOffset + 2] == playerdat.dungeon_level)
                 || (currentblock[eventOffset + 2] == 0xFF)
                 || (currentblock[eventOffset + 2] - 246 == playerdat.CurrentWorld)
                 )
             {
+                Debug.Print($"Process Event Row at Offset {eventOffset}  #{(eventOffset-324)/16}");
                 //DoEvent = true;
                 // var var1 = 1;
                 // var var2 = 1;
