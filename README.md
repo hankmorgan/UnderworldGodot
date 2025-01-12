@@ -34,7 +34,7 @@ This project supercedes the Unity-based project and reboots the code base to act
 This project is largely based on the previous reverse engineering work undertaken by various groups and individuals over the years. Without their efforts this project would not be possible please see the appendix below for the credits I have been able to attribute. If I have failed to give proper credit please let me know and I will happily correct this document.
 
 ## Before you begin.
-This is currently pre-alpha. No support is provided for it and usage is at your own risk. Please don't download this version and expect it to be usable in anyway.
+This is currently pre-alpha. No support is provided for it and usage is at your own risk. Please don't download this version and expect it to be usable in anyway. Think of it as a interactive map viewer.
 
 Requires game files for either UW1 or UW2. GOG versions need to be extracted using a zip extracter from the game.gog file
 
@@ -43,10 +43,11 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * Map loading
 * Animated doors and sprites
 * Looping NPC animations
-* Partial Conversations
-* Barter logic (partial)
-* Lighting effects
-* Basic inventory management including runebag
+* Full Conversations
+* Most game triggers and traps.
+* Barter logic
+* Lighting effects (Palette based except for correct transparencies)
+* Inventory management including runebag (excluding drag and drop)
 * Picking up and dropping of items (without checking pickup rules)
 * Usable switches
 * Reading signs
@@ -70,17 +71,15 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * Skillpoints and character advancement logic
 * Automap navigation and updating
 * Read-only automap notes.
+* Partial processing of SCD.ARK (Scheduled events in UW2)
+* Partial cutscene support
+* Sleeping and dream logic
 
 ## Whats missing
 * Player collision and regular movement
 * Object physics
 * NPC AI, movement and pathfinding
 * Sound and music
-* Combat
-* Sleeping
-* Plot events
-* Cutscenes
-* Many traps and triggers
 * Transparencies
 * Saving  
 * Character creation
@@ -98,7 +97,7 @@ See [https://godotengine.org/](https://godotengine.org/) for engine runtime down
 4. Godot project will open at ``LaunchScene.tscn``. IMPORTANT: Make sure you run BUILD on the project before continuing.
 5. Run. It might work
 
-This project is developed using VSCode using the C# Tools for Godot extensions.
+This project is developed using VSCode using the C# Tools for Godot extensions. If you are configured to use Godot in VSCode then the project can alos just be compiled and ran from there.
 
 ## UWsettings.json
 
@@ -132,8 +131,15 @@ Camera is only in fly mode currently.
 
 WSAD for movement.
 T to toggle mouse look
-
+QE to move up and down.
 Use shift and scroll to change speed.
+F1-F6 Change interaction modes
+F7 Toggle inventory panels
+F8 Cast Spell
+F9 Use Track Skill (no implemented yet)
+F10 Make camp and go to sleep.
+F11 Toggle Position label
+F12 Debug reprocess SCD.ARK
 
 
 # Appendix
