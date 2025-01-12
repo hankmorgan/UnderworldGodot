@@ -397,18 +397,43 @@ public partial class main : Node3D
 			&& !uimanager.MessageScrollIsTemporary
 			&& !MessageDisplay.WaitingForTypedInput)
 		{
-			if (@event is InputEventKey keyinput)
+			switch (@event)
 			{
-				if (keyinput.Pressed)
-				{
-					if (int.TryParse(keyinput.AsText(), out int result))
+				//Click to select options in conversation. Ensure we only allow left &right click to adhere to the original UW implementation. 
+				case InputEventMouseButton mouseEvent:
+					if (uimanager.CursorOverMessageScroll)
 					{
-						if ((result > 0) && (result <= ConversationVM.MaxAnswer))
+						if (mouseEvent.Pressed && (mouseEvent.ButtonIndex == MouseButton.Left || mouseEvent.ButtonIndex == MouseButton.Right))
 						{
-							ConversationVM.PlayerNumericAnswer = result;
-							ConversationVM.WaitingForInput = false;
+							int result = uimanager.instance.HandleMessageScrollClick(mouseEvent);
+							if ((result > 0) && (result <= ConversationVM.MaxAnswer))
+							{
+								ConversationVM.PlayerNumericAnswer = result;
+								ConversationVM.WaitingForInput = false;
+							}
+							//GD.Print("Mouse Clicked in conversation");
 						}
 					}
+	
+					break;
+				
+				//Using keyboard numbers to select options in conversation
+				case InputEventKey keyinput:
+				{
+
+					if (keyinput.Pressed)
+					{
+						if (int.TryParse(keyinput.AsText(), out int result))
+						{
+							if ((result > 0) && (result <= ConversationVM.MaxAnswer))
+							{
+								ConversationVM.PlayerNumericAnswer = result;
+								ConversationVM.WaitingForInput = false;
+							}
+						}
+					}
+
+					break;
 				}
 			}
 		}
