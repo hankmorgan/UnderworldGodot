@@ -89,7 +89,7 @@ namespace Underworld
         /// <param name="newValue"></param>
         public static void SetQuest(int questno, int newValue)
         {
-            Debug.Print($"Setting {questno} to {newValue}");
+            Debug.Print($"Setting Quest {questno} to {newValue}");
             if (_RES == GAME_UW2)
             {
                 if (questno <= 127)
