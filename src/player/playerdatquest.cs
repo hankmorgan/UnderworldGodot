@@ -154,6 +154,7 @@ namespace Underworld
 
         public static void SetXClock(int clockno, int value)
         {
+            Debug.Print($"XClock {clockno} set to {value}");
             SetAt(0x36E + clockno, (byte)value);
         }
 

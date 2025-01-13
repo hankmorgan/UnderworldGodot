@@ -25,7 +25,7 @@ namespace Underworld
             }
             whoami = whoami + trapObj.zpos;
 
-            CallBacks.RunCodeOnNPCS( 
+            CallBacks.RunCodeOnNPCS_WhoAmI( 
                 methodToCall: npc.set_goal_and_target_by_array, 
                 whoami: whoami, 
                 paramsArray: paramsarray, 

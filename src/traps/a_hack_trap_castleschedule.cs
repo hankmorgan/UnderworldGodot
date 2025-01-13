@@ -88,11 +88,11 @@ namespace Underworld
                 }
                 if (run)
                 {
-                    CallBacks.RunCodeOnNPCS(DoCastleschedule, si_whoami, null, false);
+                    CallBacks.RunCodeOnNPCS_WhoAmI(DoCastleschedule, si_whoami, null, false);
                 }
             }
             //Special case for Syria as her WhoAmI is out of sequence
-            CallBacks.RunCodeOnNPCS(DoCastleschedule, 0xA8, null, false);
+            CallBacks.RunCodeOnNPCS_WhoAmI(DoCastleschedule, 0xA8, null, false);
         }
 
 

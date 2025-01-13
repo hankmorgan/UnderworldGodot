@@ -8,8 +8,8 @@ namespace Underworld
     {
 
         public delegate bool AreaEffectCallBack(int x, int y, uwObject obj, TileInfo tile, int srcIndex);
-        public delegate bool SingleObjectCallBack(uwObject obj);
-        public delegate void NPCChangeCallBack(uwObject critter, int[] paramsarray);
+        public delegate bool UWObjectCallBackWithoutParams(uwObject obj);
+        public delegate void UWObjectCallBackWithParams(uwObject obj, int[] paramsarray);
         public delegate void CutsceneCallBack();
 
         /// <summary>
@@ -158,7 +158,7 @@ namespace Underworld
         /// <param name="obj"></param>
         /// <param name="objList"></param>
         /// <returns></returns>
-        public static bool RunCodeOnObjectsInChain(SingleObjectCallBack methodToCall, uwObject obj, uwObject[] objList)
+        public static bool RunCodeOnObjectsInChain(UWObjectCallBackWithoutParams methodToCall, uwObject obj, uwObject[] objList)
         {
             if (obj == null)
             {
@@ -212,7 +212,7 @@ namespace Underworld
         /// <param name="whoami"></param>
         /// <param name="paramsArray"></param>
         /// <param name="loopAll"></param>
-        public static void RunCodeOnNPCS(NPCChangeCallBack methodToCall, int whoami, int[] paramsArray, bool loopAll)
+        public static void RunCodeOnNPCS_WhoAmI(UWObjectCallBackWithParams methodToCall, int whoami, int[] paramsArray, bool loopAll)
         {
             for (int i = 0; i < UWTileMap.current_tilemap.NoOfActiveMobiles; i++)
             {
@@ -225,7 +225,7 @@ namespace Underworld
                         if (obj.npc_whoami == whoami)
                         {
                             methodToCall(
-                                critter: obj,
+                                obj: obj,
                                 paramsarray: paramsArray);
                             if (!loopAll)
                             {
@@ -243,7 +243,7 @@ namespace Underworld
         /// <param name="methodToCall"></param>
         /// <param name="race"></param>
         /// <param name="paramsArray"></param>
-        public static void RunCodeOnRace(NPCChangeCallBack methodToCall, int race, int[] paramsArray, bool loopAll)
+        public static void RunCodeOnRace(UWObjectCallBackWithParams methodToCall, int race, int[] paramsArray, bool loopAll)
         {
             for (int i = 0; i < UWTileMap.current_tilemap.NoOfActiveMobiles; i++)
             {

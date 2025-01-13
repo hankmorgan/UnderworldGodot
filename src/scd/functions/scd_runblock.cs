@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using Godot;
 
 namespace Underworld
 {
@@ -17,7 +16,7 @@ namespace Underworld
         {
             var si_variableindex = (int)DataLoader.getAt(currentblock, eventOffset+5, 16);// currentblock[eventOffset + 5];
             var var6_upper = si_variableindex + currentblock[eventOffset+7] - 1;
-            var CF = 0;//carry flag to detect if the variable operations have overflowed.
+            //var CF = 0;//carry flag to detect if the variable operations have overflowed.
             var di = 0; 
             var tmp = a_check_variable_trap.GetVarQuestOrClockValue(si_variableindex);
 

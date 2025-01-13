@@ -7,9 +7,6 @@ namespace Underworld
     /// </summary>
     public partial class scd : UWClass
     {
-
-        static bool ArkHasBeenModified = false;
-
         /// <summary>
         /// Starts the SCD process.
         /// Checks if scd_data is loaded and check each xclock to see if events need to be ran based on various conditions.
@@ -248,26 +245,26 @@ namespace Underworld
                         {
                             Debug.Print($"{eventOffset} to be deleted!");
                             DeleteRow(currentblock, eventOffset);
-                            return 4;
+                            return 4;//return row has been deleted.
                         }
                         else
                         {
-                            return var2;
+                            return var2;//result of function call.
                         }
                     }
                     else
                     {
-                        return 6;
+                        return 6; //error stops processing
                     }
                 }
                 else
                 {
-                    return 5;
+                    return 5;//process next
                 }
             }
             else
             {
-                return 5;
+                return 5;//process next
             }
         }
     }//end class

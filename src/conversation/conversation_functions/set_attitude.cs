@@ -10,7 +10,7 @@ namespace Underworld
         {
             var newAttitude_di = GetConvoStackValueAtPtr(stackptr - 1);
             var whoami = GetConvoStackValueAtPtr(stackptr - 2);
-            CallBacks.RunCodeOnNPCS(npc.set_attitude_by_array, whoami, new int[] { newAttitude_di }, false);
+            CallBacks.RunCodeOnNPCS_WhoAmI(npc.set_attitude_by_array, whoami, new int[] { newAttitude_di }, false);
 
             //Note there is buggy usage of this function in vanilla UW2 on the Prison Tower level 2. Goblin Guard conversation. 
             //Due to uninitialised memory caused by the reading of the conversation ARK files this will be called on an non-existant NPC to set attitude of 1.

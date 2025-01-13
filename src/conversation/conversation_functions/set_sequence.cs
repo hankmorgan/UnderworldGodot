@@ -12,7 +12,7 @@ namespace Underworld
             var whoami = GetConvoStackValueAtPtr(stackptr-3);
             var functionparam = (di<<3) | (var2 & 0x7);
 
-            CallBacks.RunCodeOnNPCS(set_sequence, whoami, new int[]{functionparam},false);
+            CallBacks.RunCodeOnNPCS_WhoAmI(set_sequence, whoami, new int[]{functionparam},false);
         }
 
         static void set_sequence(uwObject critter, int[] paramsarray)
