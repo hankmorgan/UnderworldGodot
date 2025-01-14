@@ -69,6 +69,13 @@ namespace Underworld
                         newLevelNo: playerdat.dungeon_level - 1,
                         datafolder: playerdat.currentfolder,
                         newGameSession: false);
+                
+                if (_RES==GAME_UW2)
+                {
+                    //TODO; There are also some hard coded events on level transition in UW2
+                    Debug.Print("Processing SCD due to level transition");
+                    scd.ProcessSCDArk(1);
+                }
 
                 // if (itemToTransfer != -1)
                 // {//takes object back out of inventory.
