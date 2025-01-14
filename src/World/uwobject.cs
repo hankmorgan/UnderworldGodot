@@ -45,10 +45,18 @@ namespace Underworld
 
         public bool isInventory = false;
 
+        /// <summary>
+        /// Location of the object data in the DataBuffer[]
+        /// </summary>
         public int PTR;
 
-        //The tiles these objects are in.
+        /// <summary>
+        /// The tileX this object is in. Used as a short hand for tile operations. Not vanilla and has to be managed with each move
+        /// </summary>                         
         public int tileX = 99;
+        /// <summary>
+        /// The tileY this object is in. Used as a short hand for tile operations. Not vanilla and has to be managed with each move
+        /// </summary>
         public int tileY = 99;
 
         public int majorclass
@@ -1600,6 +1608,11 @@ namespace Underworld
                     return (majorclass == 6) && (minorclass < 2);
                 }
             }
+        }
+
+        public static bool CheckIfInFrontOfPlayer(uwObject obj)
+        {
+            return false;
         }
 
     } //end class

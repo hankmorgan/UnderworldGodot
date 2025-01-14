@@ -72,5 +72,10 @@ namespace Underworld
             }   
             currentblock[0]--;
         }
+
+        static void CopyEventRow(byte[] currentblock, int eventOffset)
+        {
+
+        }
     }//end class
 }//end namespace

@@ -124,7 +124,7 @@ namespace Underworld
             }
         }
 
-        public static void moveNPCToTile(uwObject critter, int destTileX, int destTileY)
+        public static bool moveNPCToTile(uwObject critter, int destTileX, int destTileY)
         {
             Debug.Print($"Moving {critter.a_name} to {destTileX},{destTileY}");
             if (UWTileMap.ValidTile(destTileX,destTileY) && UWTileMap.ValidTile(critter.tileX,critter.tileY))
@@ -138,6 +138,8 @@ namespace Underworld
                 destTile.indexObjectList = critter.index;
                 critter.tileX = destTileX; critter.tileY= destTileY;
                 critter.zpos = (short)(destTile.floorHeight<<3);
+                critter.npc_xhome = (short)destTileX;
+                critter.npc_yhome = (short)destTileY;
 
                 //Clear some bits relating to AI
                 critter.UnkBit_0x19_4 = 0;
@@ -146,7 +148,9 @@ namespace Underworld
                 critter.UnkBit_0x19_1 = 0;
 
                 Reposition(critter);
+                return true;
             }
+            return false;
         }
 
     }//end class

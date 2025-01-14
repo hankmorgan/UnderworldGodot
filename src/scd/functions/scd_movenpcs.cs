@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Godot;
 
 namespace Underworld
 {
@@ -23,10 +24,37 @@ namespace Underworld
 
         static void MoveNPC_WithParams(uwObject obj, int[] paramsarray)
         {
-            Debug.Print("THERE is a lot more to this function but this is enough to simulate Garg behaviour for now");
-            obj.npc_xhome = (short)paramsarray[5];
-            obj.npc_yhome = (short)paramsarray[6];
-            npc.moveNPCToTile(obj, paramsarray[5], paramsarray[6]);
+            Debug.Print($"Try and move {obj.a_name} to {paramsarray[5]} {paramsarray[6]}");
+
+            if (paramsarray[0xA] == 0)
+            {
+                //Do Check if in front of player
+                if (uwObject.CheckIfInFrontOfPlayer(obj))
+                {//don't move if player can see it happening.
+                    if (paramsarray[0xC]>0)
+                    {//This probably allows for retries by copying the event to a new row in the block
+                        Debug.Print ("UNIMPLEMENTED COPY EVENT ROW");
+                        return;
+                    }
+                }    
+            }
+
+            if (npc.moveNPCToTile(obj, paramsarray[5], paramsarray[6]))
+            {
+                if (paramsarray[0xB] !=0)
+                {
+                    obj.quality = (short)paramsarray[5];
+                    obj.owner = (short)paramsarray[6];
+                }
+            }
+            else
+            {//unable to move
+                if (paramsarray[0xC]>0)
+                {
+                    Debug.Print ("UNIMPLEMENTED COPY EVENT ROW");
+                    return;
+                }
+            }
         }
     }//end class
 }//end namespace
