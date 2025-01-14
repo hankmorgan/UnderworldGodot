@@ -27,9 +27,9 @@ namespace Underworld
         public bool UseCropping = false;
 
 
-        public const float SpriteScale = 0.024f;  //height of 1px of a sprite
+        public const float SpriteScale = 0.02f;  //height of 1px of a sprite
 
-        public const float NPCSpriteScale = 0.012f;
+        public const float NPCSpriteScale = 0.009f;
 
         /// <summary>
         /// Loads the image file into the buffer
