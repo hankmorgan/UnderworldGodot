@@ -584,7 +584,7 @@ namespace Underworld
             {   //read in master object list
                 var uwobj = new uwObject
                 {
-                    isInventory = false,
+                    //isInventory = false,
                     IsStatic = (x >= 256),
                     index = x,
                     PTR = 0 + objectsAddress + address_pointer,

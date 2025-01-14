@@ -738,7 +738,7 @@ namespace Underworld
             Debug.Print($"Moving object at index {objIndex} to {newIndex}");
             InventoryObjects[newIndex] = new uwObject
             {
-                isInventory = true,
+                //isInventory = true,
                 IsStatic = true,
                 index = (short)(newIndex),
                 PTR = InventoryPtr + (newIndex - 1) * 8,

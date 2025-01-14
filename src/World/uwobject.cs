@@ -43,7 +43,7 @@ namespace Underworld
         /// </summary>
         public byte[] DataBuffer;
 
-        public bool isInventory = false;
+        //public bool isInventory = false;
 
         /// <summary>
         /// Location of the object data in the DataBuffer[]

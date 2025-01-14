@@ -23,7 +23,7 @@ namespace Underworld
             
             playerObject = new uwObject
             {
-                    isInventory = false,
+                    //isInventory = false,
                     IsStatic = false,
                     index = 0,
                     PTR = PlayerObjectPTR,

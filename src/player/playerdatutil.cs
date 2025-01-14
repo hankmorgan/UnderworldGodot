@@ -89,7 +89,7 @@ namespace Underworld
                     //Create new objects for the object list
                     var uwobj = new uwObject
                     {
-                        isInventory = true,
+                        //isInventory = true,
                         IsStatic = true,
                         index = (short)(oIndex),
                         PTR = CurrentInventoryPtr,
