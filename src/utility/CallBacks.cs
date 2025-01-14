@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Underworld
 {
     /// <summary>
@@ -245,7 +247,12 @@ namespace Underworld
         /// <param name="paramsArray"></param>
         public static void RunCodeOnRace(UWObjectCallBackWithParams methodToCall, int race, int[] paramsArray, bool loopAll)
         {
-            for (int i = 0; i < UWTileMap.current_tilemap.NoOfActiveMobiles; i++)
+            var activeMobiles = new List<int>();
+            for (var o = 0; o < UWTileMap.current_tilemap.NoOfActiveMobiles; o++)
+            {//construct a list of the mobiles first before processing as this code may cause the NoOfActiveMobiles to change.
+                activeMobiles.Add(o);
+            }
+            foreach (var i in activeMobiles)
             {
                 var index = UWTileMap.current_tilemap.GetActiveMobileAtIndex(i);
                 if ((index != 0) && (index < 256))

@@ -4,8 +4,10 @@ namespace Underworld
 {
     public partial class ConversationVM : UWClass
     {
+        public static uwObject currentTalker;
         public static void StartConversation(uwObject talker)
         {
+            currentTalker=talker;
             //talker.npc_whoami = 46; jerry the rat
             //Try and load the conversation from the ark files.
             if (!cnvArkLoader.Loaded)

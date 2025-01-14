@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 namespace Underworld
 {
     public partial class scd : UWClass

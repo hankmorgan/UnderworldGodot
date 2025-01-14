@@ -25,7 +25,9 @@ namespace Underworld
                     }
                 case 3://Kill NPCs
                     {
-                        return 0;
+                        return KillNPCs(
+                            currentblock: currentblock,
+                            eventOffset: eventOffset);
                     }
                 case 4: // Change quest
                     {
@@ -112,6 +114,12 @@ namespace Underworld
                         loopAll: loopAll);
                     break;
                 case 1:
+                    CallBacks.RunCodeOnRace(
+                        methodToCall: methodToCall, 
+                        race: filter, 
+                        paramsArray: paramsArray, 
+                        loopAll: loopAll);
+                    break;
                 case 2:
                 case 3:
                     break;

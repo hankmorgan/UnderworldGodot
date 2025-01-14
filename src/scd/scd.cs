@@ -7,6 +7,7 @@ namespace Underworld
     /// </summary>
     public partial class scd : UWClass
     {
+        static int BlockIdentifier;
         /// <summary>
         /// Starts the SCD process.
         /// Checks if scd_data is loaded and check each xclock to see if events need to be ran based on various conditions.
@@ -20,8 +21,9 @@ namespace Underworld
                 scd_data = new UWBlock[0x10];
             }
             int error_var2 = 0;//flags if an error has occurred and stop execution.
-            for (int blockno = 0XF; blockno < 0x10; blockno++)
+            for (int blockno = 0; blockno < 0x10; blockno++)
             {
+                BlockIdentifier = blockno;
                 Debug.Print($"Processing SCD Block {blockno}");
                 var si_xclock = playerdat.GetXClock(blockno);
                 if (scd_data[blockno] == null)

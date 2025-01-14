@@ -631,6 +631,7 @@ namespace Underworld
 					Teleportation.Teleport(0, TeleportTileX, TeleportTileY, TeleportToLevel, 0);
 				}				
 			}
+			currentTalker = null;
 		}
 
 		private static void InitialiseConversationMemory()
