@@ -127,23 +127,25 @@ namespace Underworld
         public static void moveNPCToTile(uwObject critter, int destTileX, int destTileY)
         {
             Debug.Print($"Moving {critter.a_name} to {destTileX},{destTileY}");
-            if ((UWTileMap.ValidTile(destTileX,destTileY) && (UWTileMap.ValidTile(critter.tileX,critter.tileY))))
+            if (UWTileMap.ValidTile(destTileX,destTileY) && UWTileMap.ValidTile(critter.tileX,critter.tileY))
             {
                 var sourceTile = UWTileMap.current_tilemap.Tiles[critter.tileX,critter.tileY];
                 var destTile = UWTileMap.current_tilemap.Tiles[destTileX,destTileY];
-                // if (sourceTile.indexObjectList == critter.index)
-                // {
-                //     sourceTile.indexObjectList = critter.next;
-                // }
-                // else
-                // {
+
                 ObjectRemover.RemoveObjectFromLinkedList(sourceTile.indexObjectList,critter.index,UWTileMap.current_tilemap.LevelObjects, sourceTile.Ptr+2);
-                //}               
+              
                 critter.next = destTile.indexObjectList ;
                 destTile.indexObjectList = critter.index;
                 critter.tileX = destTileX; critter.tileY= destTileY;
                 critter.zpos = (short)(destTile.floorHeight<<3);
-                objectInstance.Reposition(critter);
+
+                //Clear some bits relating to AI
+                critter.UnkBit_0x19_4 = 0;
+                critter.UnkBit_0x19_5 = 0;
+                critter.UnkBit_0x19_0_likelyincombat = 0;
+                critter.UnkBit_0x19_1 = 0;
+
+                Reposition(critter);
             }
         }
 
