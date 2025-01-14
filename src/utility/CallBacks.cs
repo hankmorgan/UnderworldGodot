@@ -273,5 +273,44 @@ namespace Underworld
             }
         }
 
+
+        /// <summary>
+        /// Runs a function on all NPCS in the map
+        /// </summary>
+        /// <param name="methodToCall"></param>
+        /// <param name="paramsArray"></param>
+        public static void RunCodeOnAllNPCS(UWObjectCallBackWithParams methodToCall, int[] paramsArray)
+        {
+            var activeMobiles = new List<int>();
+            for (var o = 0; o < UWTileMap.current_tilemap.NoOfActiveMobiles; o++)
+            {//construct a list of the mobiles first before processing as this code may cause the NoOfActiveMobiles to change.
+                activeMobiles.Add(o);
+            }
+            foreach (var i in activeMobiles)
+            {
+                var index = UWTileMap.current_tilemap.GetActiveMobileAtIndex(i);                
+                if ((index != 0) && (index < 256))
+                {
+                    var obj = UWTileMap.current_tilemap.LevelObjects[index];
+                    if (obj.majorclass == 1)//NPC
+                    {                        
+                        methodToCall(obj, paramsArray);
+                    }
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Runs a function on a specific object.
+        /// </summary>
+        /// <param name="methodToCall"></param>
+        /// <param name="obj"></param>
+        /// <param name="paramsArray"></param>
+        public static void RunCodeOnObject(UWObjectCallBackWithParams methodToCall, uwObject obj, int[] paramsArray)
+        {
+             methodToCall(obj, paramsArray);
+        }
+
     }//end class
 }//end namespace

@@ -16,6 +16,7 @@ namespace Underworld
                     return 0;//does nothing
                 case 1:
                     //Set goal and gtarg
+                    Debug.Print($"Unimplemented SCD function Goal and Gtarg {currentblock[eventOffset + 5]}");
                     return 0;
                 case 2://move npcs
                     {
@@ -48,6 +49,7 @@ namespace Underworld
                              currentblock: currentblock,
                              eventOffset: eventOffset);//runs extra commands defined by eventrow[5]
                 case 8://set attitude
+                    Debug.Print($"Unimplemented SCD function Set Attitude {currentblock[eventOffset + 5]}");
                     return 0;
                 case 9://perform variable operation
                     scd_variableoperation(
@@ -61,6 +63,7 @@ namespace Underworld
                             eventOffset: eventOffset);
                     }
                 case 11://remove object from tile
+                    Debug.Print($"Unimplemented SCD function Remove Object {currentblock[eventOffset + 5]}");
                     return 0;
             }
             return 0;
@@ -82,49 +85,83 @@ namespace Underworld
                     return 0;//does nothing
                 case 1:
                     changevariable_by_npcXYHome(
-                        currentblock: currentblock, 
+                        currentblock: currentblock,
                         eventOffset: eventOffset);
                     return 0;//variable operation involving NPC XY Home
-                case 2://Maybe move an NPC
+                case 2://Maybe move an NPC (with some randomness)
+                    Debug.Print($"Unimplemented SCD function maybe move npc {currentblock[eventOffset + 5]}");
                     return 0;
                 case 3: //Change a tile
+                    Debug.Print($"Unimplemented SCD function maybe tile change {currentblock[eventOffset + 5]}");
                     return 0;
                 case 4://maybe close doors
+                    Debug.Print($"Unimplemented SCD function maybe door close {currentblock[eventOffset + 5]}");
                     return 0;
                 case 5:// does nothing
                     return 0;
                 case 6: // Hp Change on npc
+                    Debug.Print($"Unimplemented SCD function maybe hp change {currentblock[eventOffset + 5]}");
                     return 0;
                 case 7://maybe move npcs
+                    Debug.Print($"Unimplemented SCD function maybe a move npc {currentblock[eventOffset + 5]}");
                     return 0;
             }
             return 0;
         }
 
+
+        /// <summary>
+        /// Dynamically select the type of callback process to run against 1 or more objects.
+        /// </summary>
+        /// <param name="methodToCall"></param>
+        /// <param name="mode"></param>
+        /// <param name="filter"></param>
+        /// <param name="loopAll"></param>
+        /// <param name="currentblock"></param>
+        /// <param name="eventOffset"></param>
         static void RunCodeOnObjects_SCD(CallBacks.UWObjectCallBackWithParams methodToCall, int mode, int filter, bool loopAll, byte[] currentblock, int eventOffset)
-        {     
+        {
             var paramsArray = MakeParamsArray(currentblock, eventOffset, 0);
-            switch(mode)
+            switch (mode)
             {
                 case 0:
-                    CallBacks.RunCodeOnNPCS_WhoAmI(
-                        methodToCall: methodToCall, 
-                        whoami: filter, 
-                        paramsArray: paramsArray, 
-                        loopAll: loopAll);
-                    break;
+                    {
+                        CallBacks.RunCodeOnNPCS_WhoAmI(
+                            methodToCall: methodToCall,
+                            whoami: filter,
+                            paramsArray: paramsArray,
+                            loopAll: loopAll);
+                        break;
+                    }
                 case 1:
-                    CallBacks.RunCodeOnRace(
-                        methodToCall: methodToCall, 
-                        race: filter, 
-                        paramsArray: paramsArray, 
-                        loopAll: loopAll);
-                    break;
+                    {
+                        CallBacks.RunCodeOnRace(
+                            methodToCall: methodToCall,
+                            race: filter,
+                            paramsArray: paramsArray,
+                            loopAll: loopAll);
+                        break;
+                    }
                 case 2:
+                    {
+                        Debug.Print("untested callback run type");
+                        var obj = UWTileMap.current_tilemap.LevelObjects[filter];
+                        CallBacks.RunCodeOnObject(
+                            methodToCall: methodToCall, 
+                            obj: obj, 
+                            paramsArray: paramsArray);
+                        break;
+                    }
                 case 3:
-                    break;
+                    {
+                        Debug.Print("untested callback run type");
+                        CallBacks.RunCodeOnAllNPCS(
+                            methodToCall: methodToCall, 
+                            paramsArray: paramsArray);
+                        break;
+                    }
             }
-        }
+        t
 
 
         /// <summary>
@@ -136,10 +173,10 @@ namespace Underworld
         /// <returns></returns>
         static int[] MakeParamsArray(byte[] currentblock, int eventOffset, int paramOffset)
         {
-            int[] paramsArray = new int[16-paramOffset];
-            for (int i= 0; i<16-paramOffset;i++)
+            int[] paramsArray = new int[16 - paramOffset];
+            for (int i = 0; i < 16 - paramOffset; i++)
             {
-                paramsArray[i] = currentblock[eventOffset+i];
+                paramsArray[i] = currentblock[eventOffset + i];
             }
             return paramsArray;
         }
