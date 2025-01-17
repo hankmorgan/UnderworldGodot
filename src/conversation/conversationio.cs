@@ -37,11 +37,12 @@ namespace Underworld
 
 
         /// <summary>
-        /// For subsituting values into strings
+        /// For substituting calculated values into strings
         /// </summary>
         /// <param name="input"></param>
+        /// <param name="doNestedSubstitute">Allows doing a recursive subsitution if the substituted value contains @. Should be only allowed once.</param>
         /// <returns></returns>
-        public static string TextSubstitute(string input)
+        public static string TextSubstitute(string input, bool doNestedSubstitute = true)
         {
             //X: source of variable to substitute, one of these: GSP
             //G: game global variable
@@ -186,6 +187,11 @@ namespace Underworld
                                 }
                                 break;
                             }
+                    }
+                    if (FoundString.Contains("@") && doNestedSubstitute)
+                    {
+                        //try one time to see if the @ in the found string can be replaced.
+                        FoundString = TextSubstitute(input: FoundString, doNestedSubstitute: false);
                     }
                     if (FoundString != "")
                     {
