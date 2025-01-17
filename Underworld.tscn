@@ -105,6 +105,7 @@ mouse_filter = 0
 texture = ExtResource("8_mis7n")
 
 [node name="MessageScrollPanelUW1" type="Panel" parent="UI/UW1"]
+self_modulate = Color(1, 1, 1, 0)
 offset_right = 40.0
 offset_bottom = 40.0
 
@@ -140,6 +141,7 @@ scroll_active = false
 autowrap_mode = 0
 
 [node name="CompassUW1" type="Panel" parent="UI/UW1"]
+self_modulate = Color(1, 1, 1, 0)
 offset_right = 40.0
 offset_bottom = 40.0
 
@@ -292,6 +294,7 @@ offset_bottom = 618.0
 
 [node name="ConversationUW1" type="Panel" parent="UI/UW1"]
 visible = false
+self_modulate = Color(1, 1, 1, 0)
 offset_right = 40.0
 offset_bottom = 40.0
 
@@ -675,6 +678,7 @@ mouse_filter = 0
 texture = ExtResource("8_mis7n")
 
 [node name="MessageScrollPanelUW2" type="Panel" parent="UI/UW2"]
+self_modulate = Color(1, 1, 1, 0)
 
 [node name="messageScrollBackgroundUW2" type="TextureRect" parent="UI/UW2/MessageScrollPanelUW2"]
 layout_mode = 0
@@ -742,6 +746,7 @@ offset_right = 1175.0
 offset_bottom = 738.0
 
 [node name="CompassUW2" type="Panel" parent="UI/UW2"]
+self_modulate = Color(1, 1, 1, 0)
 offset_right = 40.0
 offset_bottom = 40.0
 
@@ -982,6 +987,7 @@ offset_bottom = 624.0
 
 [node name="ConversationUW2" type="Panel" parent="UI/UW2"]
 visible = false
+self_modulate = Color(1, 1, 1, 0)
 offset_right = 40.0
 offset_bottom = 40.0
 
@@ -2036,6 +2042,7 @@ offset_bottom = 624.0
 texture = ExtResource("28_uj0ag")
 
 [node name="HealthFlask" type="Panel" parent="UI/Common"]
+self_modulate = Color(1, 1, 1, 0)
 offset_right = 40.0
 offset_bottom = 40.0
 
@@ -2151,6 +2158,7 @@ offset_bottom = 532.0
 mouse_filter = 2
 
 [node name="ManaFlask" type="Panel" parent="UI/Common"]
+self_modulate = Color(1, 1, 1, 0)
 offset_left = 144.0
 offset_right = 184.0
 offset_bottom = 40.0
@@ -2415,6 +2423,7 @@ text = "Cutscene Subtitle"
 
 [node name="MainMenu" type="Panel" parent="UI/Common"]
 visible = false
+self_modulate = Color(1, 1, 1, 0)
 offset_right = 40.0
 offset_bottom = 40.0
 
