@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Diagnostics;
 namespace Underworld
 {
     public partial class playerdat : Loader
@@ -144,7 +145,6 @@ namespace Underworld
             {
                 scd.scd_data = null;
             }
-
             //Set the playerlight level;            
             //uwsettings.instance.lightlevel = light.BrightestLight();
         }

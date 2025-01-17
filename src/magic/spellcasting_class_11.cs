@@ -126,6 +126,35 @@ namespace Underworld
                 case 0xC:   //armageddon
                     {
                         Debug.Print("ARMAGEDDON--> Everything vanishes");
+                        //Clear player inventory.
+                        playerdat.ClearInventory();
+                        //reset map
+                        UWTileMap.ResetMap(0);
+                        //clear rune bag
+                        for (int r=0; r<24;r++)
+                        {
+                            playerdat.SetRune(r,false);
+                            uimanager.SetRuneInBag(r, false);
+                        }
+                        //clear selected runes
+                        for (int r =0; r<3; r++)
+                        {
+                            playerdat.SetSelectedRune(r,24);
+                        }
+                        uimanager.RedrawSelectedRuneSlots();
+                        //Set weightcarried to 0
+                        //playerdat.WeightCarried = 0;
+
+                        //set flag
+                        playerdat.armageddon = true;
+
+                        if(_RES!=GAME_UW2)
+                        {
+                            playerdat.SilverTreeDungeon = 0; //stops player resurrection
+                        }
+
+                        //refresh status                        
+                        playerdat.PlayerStatusUpdate();                        
                         break;
                     }
                 case 0xD://dispel hunger

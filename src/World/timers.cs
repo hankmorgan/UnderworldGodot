@@ -10,9 +10,14 @@ namespace Underworld
     public class timers : UWClass
     {
         public static long FrameNo = 0;
-        static int GetTimer(int index)
+        public static int GetTimer(int index)
         {
             return (int)Loader.getAt(UWTileMap.current_tilemap.lev_ark_block.Data, 0x7D88 + (index * 2), 16);
+        }
+
+        public static void SetTimer(int index, int value)
+        {
+           Loader.setAt(UWTileMap.current_tilemap.lev_ark_block.Data, 0x7D88 + (index * 2), 16, value);
         }
 
         public static int NoOfTimerTriggers

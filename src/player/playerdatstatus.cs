@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 
 namespace Underworld
@@ -392,6 +393,47 @@ namespace Underworld
                }
           }
 
+          /// <summary>
+          /// Has the armageddon spell been cast.
+          /// </summary>
+          public static bool armageddon
+          {
+               get
+               {
+                    if (_RES==GAME_UW2)
+                    {
+                         return ((GetAt(0x62) >> 3) & 0x1) == 1;
+                    }
+                    else
+                    {
+                         return ((GetAt(0x61) >> 4) & 0x1) == 1;
+                    }
+               }
+               set
+               {
+                    if (_RES==GAME_UW2)
+                    {
+                         var tmp = GetAt(0x62);
+                         tmp = (byte)(tmp & 0xF7);
+                         if (value)
+                         {
+                              tmp = (byte)(tmp | 8);
+                         }
+                         SetAt(0x62,tmp);
+                    }
+                    else
+                    {
+                         var tmp = GetAt(0x61);
+                         tmp = (byte)(tmp & 0xF7);
+                         if (value)
+                         {
+                              tmp = (byte)(tmp | 8);
+                         }
+                         SetAt(0x61,tmp);
+                    }
+               }
+          }
+
 
           /// <summary>
           /// Controls if the automapping function is enabled. (A player property in UW2, a global variable in UW1)
@@ -407,7 +449,7 @@ namespace Underworld
                     }
                     else
                     {
-                         return _automapenabled_uw1;
+                         return _FIXME_automapenabled_uw1;
                     }
                }
                set
@@ -424,12 +466,15 @@ namespace Underworld
                     }
                     else
                     {
-                         _automapenabled_uw1 = value;
+                         _FIXME_automapenabled_uw1 = value;
                     }
                }
           }
 
-          private static bool _automapenabled_uw1=true;
+          /// <summary>
+          /// Temporary value until correct offset determined
+          /// </summary>
+          private static bool _FIXME_automapenabled_uw1=true;
 
 
           /// <summary>

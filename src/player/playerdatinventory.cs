@@ -782,5 +782,33 @@ namespace Underworld
             return true;
         }
 
+        /// <summary>
+        /// Destuctively clears the player inventory.
+        /// </summary>
+        public static void ClearInventory()
+        {
+            uimanager.OpenedContainerIndex = -1;
+            for (int s=0; s<8;s++)
+            {
+                uimanager.BackPackIndices[s]=-1;
+            }
+            for (int s=0;s<18;s++)
+            {
+                SetInventorySlotListHead(s,0);
+            }
+            for (int i = 0; i<InventoryObjects.GetUpperBound(0);i++)
+            {
+                var obj = InventoryObjects[i];
+                if (obj!=null)
+                {
+                    for (int b =0;b<8;b++)
+                    {
+                        pdat[obj.PTR+b] = 0;
+                    }
+                }
+            }
+            uimanager.UpdateInventoryDisplay();
+        }
+
     } //end class
 } //end namespace

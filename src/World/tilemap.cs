@@ -1383,5 +1383,54 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// Clears all objects from the map.
+        /// </summary>
+        /// <param name="mode"></param>
+        public static void ResetMap(int mode)
+        {
+            Debug.Print ("reset map!");
+            for (int x=0;x<64;x++)
+            {
+                for (int y=0;y<64;y++)
+                {
+                    var tile = current_tilemap.Tiles[x,y];
+                    tile.indexObjectList = 0;
+                }  
+            }
+
+            //reset free lists. Assumes each object can now be freed up.
+            current_tilemap.StaticFreeListPtr = 0;
+            current_tilemap.MobileFreeListPtr = 0;
+
+            for (int o =2; o<1024;o++)
+            {
+                var obj = current_tilemap.LevelObjects[o];
+                obj.next = 0;
+                obj.link = 0;
+                obj.tileX = 99; obj.tileY = 99;
+                ObjectFreeLists.ReleaseFreeObject(obj);               
+            }
+            
+            //Clear animation overlays
+            foreach (var ovl in current_tilemap.Overlays)
+            {
+                if (ovl != null)
+                {
+                    ovl.tileX =0;ovl.tileY=0;
+                    ovl.Duration=0;
+                    ovl.link=0;
+                }
+            }
+            
+            //Game specific
+            if(_RES==GAME_UW2)
+            {//clear the timer triggers in UW2
+                for (int t=0;t<64;t++)
+                {
+                    timers.SetTimer(t,0);
+                }
+            }
+        }
     } //end class
 }//end namespace

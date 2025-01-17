@@ -388,6 +388,20 @@ public partial class main : Node3D
 								//trigger.RunNextScheduledTrigger();
 								break;
 							}
+						case Key.Apostrophe:
+							{
+								//give full mage abilities
+								playerdat.max_mana = 60;
+								playerdat.play_mana = 60;
+								playerdat.Casting = 30;
+								playerdat.ManaSkill = 30;
+								playerdat.play_level = 16;
+								for (int r=0;r<24;r++)
+								{
+									playerdat.SetRune(r, true);
+								}
+								break;
+							}
 					}
 				}
 			}
