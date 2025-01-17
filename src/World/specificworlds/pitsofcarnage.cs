@@ -1,6 +1,9 @@
 using System.Diagnostics;
 namespace Underworld
 {
+    /// <summary>
+    /// Specific code for the pits of carnage
+    /// </summary>
     public class pitsofcarnage:UWClass
     {
         public static bool IsAvatarInPitFightGlobal = false;//used in babl_hack.

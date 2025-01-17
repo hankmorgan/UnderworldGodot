@@ -512,7 +512,7 @@ namespace Underworld
 /// 54: Checked by Mors Gotha? Set when re-entering the keep when it is crashing
 /// 55: Banner of Killorn returned (based on Scd.ark research)
 /// 58: Set when meeting bishop. Bishop tells you about altara
-/// 60: Probably means Goblins have been killed in the prison tower. used in check trap on second highest level
+/// 60: Have Goblins have been killed in the prison tower or is the player hostile to goblind. used in check trap on second highest level
 /// 61: You've brought water to Josie
 /// 
 /// 63: Blog has given you the gem

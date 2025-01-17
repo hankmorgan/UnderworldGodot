@@ -1,4 +1,5 @@
 using Peaky.Coroutines;
+using System;
 using System.Collections;
 using System.Diagnostics;
 
@@ -60,9 +61,12 @@ namespace Underworld
                     // {
                     //     //Temporarily add to inventory data.
                     //     itemToTransfer = playerdat.AddObjectToPlayerInventory(playerdat.ObjectInHand, false);                        
-                    // }                  
-                    
+                    // }       
                 }
+
+                //handle leave level events
+                LevelChangeEvents(1, playerdat.dungeon_level);
+
                 playerdat.dungeon_level = TeleportLevel;
                 //switch level
                 UWTileMap.LoadTileMap(
@@ -70,9 +74,11 @@ namespace Underworld
                         datafolder: playerdat.currentfolder,
                         newGameSession: false);
                 
+                //Handle enter level events
+                LevelChangeEvents(0, playerdat.dungeon_level);
+
                 if (_RES==GAME_UW2)
-                {
-                    //TODO; There are also some hard coded events on level transition in UW2
+                {//SCD.ARK then needs to be processed in UW2
                     Debug.Print("Processing SCD due to level transition");
                     scd.ProcessSCDArk(1);
                 }
@@ -301,5 +307,114 @@ namespace Underworld
                 }
             }
         }
+
+
+        /// <summary>
+        /// Handle events that happen when player leaves and enters dungeon levels
+        /// </summary>
+        /// <param name="mode">0 = new game/enter level, 1 = leave level, 2 = unused and 3 = load save game</param>
+        /// <param name="dungeon">Either the new or previous dungeon.</param>
+        static void LevelChangeEvents (int mode, int dungeon)
+        {
+            if(_RES==GAME_UW2)
+            {
+                LevelChangeEventsUW2(mode, dungeon);
+            }
+            else
+            {
+                LevelChangeEventsUW1(mode, dungeon);
+            }
+        }
+
+        static void LevelChangeEventsUW2 (int mode, int dungeon)
+        {
+            if (playerdat.armageddon && mode==0)
+            {//entering a level under the influence of armageddon
+                UWTileMap.ResetMap(0);
+            }
+            else
+            {
+                if (mode==0)
+                {
+                    playerdat.LastDamagedNPCIndex = 0; playerdat.LastDamagedNPCType = -1;
+                    CallBacks.RunCodeOnAllMobiles(ClearUnkBit_0x15_7_OnMobiles, null);
+                    if (playerdat.play_drawn==0)
+                    {
+                        //reselect level theme music.
+                        Debug.Print("Todo Refresh music themes");
+                    }
+                    if (dungeon == 1)
+                    {
+                        playerdat.playerObject.ProjectileSourceID = 0;
+                        Debug.Print($"Reentering britannia. make sure door at {TeleportTileX},{TeleportTileY} is set to closed if moving");
+                    }
+                }
+                else
+                {
+                    //Calm NPCs?
+                    Debug.Print("Todo 'Calm NPCS'");
+                }
+
+                //World specific events
+                switch ((worlds.world_ids)worlds.GetWorldNo(dungeon))
+                {
+                    case worlds.world_ids.PrisonTower:
+                        {
+                            if (mode == 1)
+                            {
+                                //do a check to see if player has been fighting goblins and set quest 60 is that is the case.
+                                prisontower.PrisonTowerQuest60();
+
+                                if (dungeon == 10)
+                                {
+                                    trigger.TriggerTrapInTile(0x1F, 0x24);
+                                    trigger.TriggerTrapInTile(0x23, 0x22);
+                                }
+                            }
+                            break;
+                        }                        
+                    case worlds.world_ids.Killorn:
+                        //handle killorn is crashing
+                        if ((playerdat.GetQuest(50) == 1) && (mode !=1))
+                        {
+                            if (playerdat.dungeon_level == 17)
+                            {
+                                killorn.KilornIsCrashing(isEnteringLevel: true);   
+                            }
+                        }
+                        break;
+                    case worlds.world_ids.Academy:
+                        //Handle removing the puzzle wand from inventory on level 3 and returning it to it's home position
+                        break;
+                    case worlds.world_ids.Tomb:
+                        //Handle killing undead when Loth has been put to rest.
+                        break;
+                    case worlds.world_ids.Ethereal:
+                        //Handle automap enabled settings
+                        break;
+                }
+
+
+            }
+        }
+
+        static void LevelChangeEventsUW1 (int mode, int dungeon)
+        {
+            if (playerdat.armageddon && mode==0)
+            {//entering a level under the influence of armageddon
+                UWTileMap.ResetMap(0);
+            }
+            else
+            {
+
+            }
+        }
+
+
+        static void ClearUnkBit_0x15_7_OnMobiles(uwObject obj, int[] paramsarray)
+        {
+            obj.UnkBit_0X15_Bit7 = 0;
+        }
+
     }//end class
 }//end namespace

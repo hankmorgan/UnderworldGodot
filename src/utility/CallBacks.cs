@@ -301,6 +301,25 @@ namespace Underworld
         }
 
 
+        public static void RunCodeOnAllMobiles(UWObjectCallBackWithParams methodToCall, int[] paramsArray)
+        {
+            var activeMobiles = new List<int>();
+            for (var o = 0; o < UWTileMap.current_tilemap.NoOfActiveMobiles; o++)
+            {//construct a list of the mobiles first before processing as this code may cause the NoOfActiveMobiles to change.
+                activeMobiles.Add(o);
+            }
+            foreach (var i in activeMobiles)
+            {
+                var index = UWTileMap.current_tilemap.GetActiveMobileAtIndex(i);                
+                if ((index != 0) && (index < 256))
+                {
+                    var obj = UWTileMap.current_tilemap.LevelObjects[index];             
+                    methodToCall(obj, paramsArray);
+                }
+            }
+        }
+
+
         /// <summary>
         /// Runs a function on a specific object.
         /// </summary>

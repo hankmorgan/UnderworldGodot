@@ -33,19 +33,19 @@ namespace Underworld
         };
 
         /// <summary>
-        /// First index of the level no for a world
+        /// World numbers
         /// </summary>
-        public enum Worlds
+        public enum world_ids
         {
             Britannia = 0,
-            PrisonTower = 8,
-            Killorn = 16,
-            Ice = 24,
-            Talorus = 32,
-            Academy = 40,
-            Tomb = 48,
-            Pits = 56,
-            Ethereal = 64
+            PrisonTower = 1,
+            Killorn = 2,
+            Ice = 3,
+            Talorus = 4,
+            Academy = 5,
+            Tomb = 6,
+            Pits = 7,
+            Ethereal = 8
         };
 
         public enum UW2_LevelNos
@@ -110,6 +110,5 @@ namespace Underworld
                     return dungeonlevel;
             }
         }
-
     }//end class
 }//end namespace

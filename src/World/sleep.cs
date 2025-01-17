@@ -79,7 +79,7 @@ namespace Underworld
             {
                 if ((playerdat.GetQuest(50) == 1) && (playerdat.GetQuest(54) != 0))//keep is crashing and has not yet crashed.
                 {
-                    KilornIsCrashing(0);
+                    killorn.KilornIsCrashing(false);
                     damage.DamagePlayer(
                         basedamage: 0xFF,
                         damagetype: 0,
@@ -252,10 +252,6 @@ namespace Underworld
             Debug.Print("Find and close doors. move me to somewhere better once I start implementing SCD.ARK!");
         }
 
-        static void KilornIsCrashing(int arg1)
-        {
-            Debug.Print("Killorn is crashing. move me to somewhere better once I start implementing Kilorn");
-        }
 
         static void SleepOnDamagingSurface()
         {
