@@ -829,7 +829,7 @@ namespace Underworld
             //a portcullis. 
 
             dw.doorFrameNode = dw.Generate3DModel(parent, name);
-            if (dw.isOpen)
+            if ((dw.isOpen) && (obj.item_id != 463))
             {//fix for map bug where some open doors extend out of the map. Force them onto a lower zpos without changing data
                 parent.Position = new Vector3(parent.Position.X, uwObject.GetZCoordinate(dw.uwobject.zpos - 24), parent.Position.Z);
             }
