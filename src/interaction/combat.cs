@@ -673,6 +673,10 @@ namespace Underworld
                 
                 if (objHit.majorclass==1)
                 {
+                    //********************//
+                    Debug.Print("Force critter hostile for debug purposes");
+                    objHit.npc_attitude = 0;
+                    //********************//
                     if (critterObjectDat.bleed(objHit.item_id) != 0)
                     {
                         animo.SpawnAnimoAtPoint(0,hitCoordinate); //blood

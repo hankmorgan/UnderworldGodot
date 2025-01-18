@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.IO;
 
@@ -31,6 +32,12 @@ namespace Underworld
                     blockNo: blockno, 
                     targetDataLen: 0, 
                     uwb: out scd_data[blockno] );
+                // if (scd_data[blockno].Data.GetUpperBound(0)>324)
+                // {
+                //     byte[] tmp = new byte[scd_data[blockno].Data.GetUpperBound(0)-324]; 
+                //     Buffer.BlockCopy(scd_data[blockno].Data,324, tmp, 0, scd_data[blockno].Data.GetUpperBound(0)-324);
+                //     File.WriteAllBytes($"c:\\temp\\scd_{blockno}.bin", tmp);
+                // }
                 return true;
             }
             return false;

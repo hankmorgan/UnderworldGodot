@@ -15,9 +15,10 @@ namespace Underworld
                 case 0:
                     return 0;//does nothing
                 case 1:
-                    //Set goal and gtarg
-                    Debug.Print($"Unimplemented SCD function Goal and Gtarg {currentblock[eventOffset + 5]}");
-                    return 0;
+                    //Set goal and gtarg                   
+                    return SetGoalAndGTarg(
+                            currentblock: currentblock,
+                            eventOffset: eventOffset); 
                 case 2://move npcs
                     {
                         return MoveNPCs(
