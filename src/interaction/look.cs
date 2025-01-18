@@ -341,54 +341,27 @@ namespace Underworld
 
             if (!((obj.majorclass == 2) && (obj.minorclass == 0))) //when not a container
             {
-                var magicenchantment = MagicEnchantment.GetSpellEnchantment(obj, objList);
+                BuildEnchantmentStrings(obj, objList, lorecheckresult, ref enchantmenttext, ref magical, ref cursed);
+            }
+            else
+            {//a container
+                //Try and check if the container directly contains a spell.
+                var linkedspell = objectsearch.FindMatchInObjectChain(
+                    ListHeadIndex: obj.link, 
+                    majorclass: 4, minorclass: 2, classindex: 0, 
+                    objList: objList, 
+                    SkipNext: false, 
+                    SkipLinks: true );
 
-                if (magicenchantment != null)
-                {
-                    System.Diagnostics.Debug.Print($"{magicenchantment.NameEnchantment(obj, objList)}");
-                    switch (lorecheckresult)
+                if (linkedspell != null)
+                {                   
+                    if (linkedspell.item_id == 288)//container is linked directly to a spell.
                     {
-                        case 2://just magical
-                            magical = "magical "; break;
-                        case 3: // full description
-                            enchantmenttext = magicenchantment.NameEnchantment(obj, objList);
-                            if (magicenchantment.SpellMajorClass != 9)
-                            {
-                                if (enchantmenttext == "")
-                                {
-                                    enchantmenttext = " of unnamed";
-                                }
-                                else
-                                {
-                                    enchantmenttext = $" of {enchantmenttext}";
-                                }
-                            }
-                            else
-                            {
-                                enchantmenttext = "";
-                                cursed = "cursed ";
-                            }
-
-                            break;
-                    }
-                }
-                else
-                {
-                    if ((obj.is_quant == 0) && (obj.link != 0))
-                    {//check for a linked damage trap
-                        var dmgtrap = objectsearch.FindMatchInObjectChain(
-                            ListHeadIndex: obj.link,
-                            majorclass: 6,
-                            minorclass: 0,
-                            classindex: 0,
-                            objList: objList);
-                        if (dmgtrap != null)
-                        {
-                            enchantmenttext = " of poison";
-                        }
+                        BuildEnchantmentStrings(obj, objList, lorecheckresult, ref enchantmenttext, ref magical, ref cursed);
                     }
                 }
             }
+
             if (objectname.StartsWith("some "))
             {
                 output += $"{qtystring}{qualitystring}{cursed}{magical}{objectname}";
@@ -417,6 +390,57 @@ namespace Underworld
 
             return $"{output}{enchantmenttext}{ownership}";
         }
+
+        private static void BuildEnchantmentStrings(uwObject obj, uwObject[] objList, int lorecheckresult, ref string enchantmenttext, ref string magical, ref string cursed)
+        {
+            var magicenchantment = MagicEnchantment.GetSpellEnchantment(obj, objList);
+
+            if (magicenchantment != null)
+            {
+                System.Diagnostics.Debug.Print($"{magicenchantment.NameEnchantment(obj, objList)}");
+                switch (lorecheckresult)
+                {
+                    case 2://just magical
+                        magical = "magical "; break;
+                    case 3: // full description
+                        enchantmenttext = magicenchantment.NameEnchantment(obj, objList);
+                        if (magicenchantment.SpellMajorClass != 9)
+                        {
+                            if (enchantmenttext == "")
+                            {
+                                enchantmenttext = " of unnamed";
+                            }
+                            else
+                            {
+                                enchantmenttext = $" of {enchantmenttext}";
+                            }
+                        }
+                        else
+                        {
+                            enchantmenttext = "";
+                            cursed = "cursed ";
+                        }
+                        break;
+                }
+            }
+            else
+            {
+                if ((obj.is_quant == 0) && (obj.link != 0))
+                {//check for a linked damage trap
+                    var dmgtrap = objectsearch.FindMatchInObjectChain(
+                        ListHeadIndex: obj.link,
+                        majorclass: 6,
+                        minorclass: 0,
+                        classindex: 0,
+                        objList: objList);
+                    if (dmgtrap != null)
+                    {
+                        enchantmenttext = " of poison";
+                    }
+                }
+            }
+        }
+
 
         public static string GetArticle(string noun, bool caps = false)
         {

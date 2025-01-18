@@ -274,7 +274,10 @@ namespace Underworld
                 var nextObj = objList[Container.link];
                 while (nextObj != null)
                 {
-                    OutputList.Add(nextObj.index);
+                    if (nextObj.item_id != 288)
+                    {//Do not display spells. Handles the box of create food.
+                        OutputList.Add(nextObj.index);
+                    }                    
                     if (nextObj.next != 0)
                     {
                         nextObj = objList[nextObj.next];

@@ -105,11 +105,22 @@ namespace Underworld
                                     {
                                         if ((obj.majorclass == 2) && (obj.minorclass == 0))
                                         {
-                                            //do not cast spells from containers. (except maybe the cornicopia?)
+                                            //do not normally cast spells from containers. Check if directly contains a spell. Eg the Cornucopia.
+                                            var linkedspell = objectsearch.FindMatchInObjectChain(
+                                                ListHeadIndex: obj.link, 
+                                                majorclass: 4, minorclass: 2, classindex: 0, 
+                                                objList: objList, 
+                                                SkipNext: false, 
+                                                SkipLinks: true );
+                                            if (linkedspell != null)
+                                            {
+                                                result = UseItemCastSpell(objList: objList, WorldObject: WorldObject, result: result, obj: obj) | result; 
+                                            }
+                                        
                                         }
                                         else
                                         {
-                                            result = UseItemCastSpell(objList, WorldObject, result, obj) | result;
+                                            result = UseItemCastSpell(objList: objList, WorldObject: WorldObject, result: result, obj: obj) | result;
                                         }
                                         break;
                                     }
