@@ -367,6 +367,31 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// Backup of players max mana for when they enter tybals lair. Also backup value for automap enabled state in UW1.
+        /// </summary>
+        public static int backup_mana
+        {
+            get
+            {
+                if (_RES!=GAME_UW2)
+                {
+                    return GetAt(0xB1);
+                }
+                else
+                {
+                    return max_mana;
+                }                
+            }
+            set
+            {
+                if (_RES!=GAME_UW2)
+                {
+                    SetAt(0xB1, (byte)value);
+                }                
+            }
+        }
+
 
         public static int difficuly
         {

@@ -449,7 +449,7 @@ namespace Underworld
                     }
                     else
                     {
-                         return _FIXME_automapenabled_uw1;
+                         return _automapenabled_uw1;
                     }
                }
                set
@@ -466,15 +466,15 @@ namespace Underworld
                     }
                     else
                     {
-                         _FIXME_automapenabled_uw1 = value;
+                         _automapenabled_uw1 = value;
                     }
                }
           }
 
           /// <summary>
-          /// Temporary value until correct offset determined
+          /// In UW1 automap enabled is a global not stored in the pdat file. It is set using levelloadevents etc.
           /// </summary>
-          private static bool _FIXME_automapenabled_uw1=true;
+          private static bool _automapenabled_uw1=true;
 
 
           /// <summary>

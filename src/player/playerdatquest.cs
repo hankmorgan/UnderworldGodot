@@ -218,7 +218,7 @@ namespace Underworld
         /// <returns></returns>
         public static int GetMoonstone(int moonstone)
         {
-            if (_RES!=GAME_UW2)
+            if (_RES != GAME_UW2)
             {
                 return GetAt(0x5F) & 0xF;
             }
@@ -230,7 +230,7 @@ namespace Underworld
 
         public static void SetMoonstone(int moonstone, int value)
         {
-            if (_RES!=GAME_UW2)
+            if (_RES != GAME_UW2)
             {
                 var tmp = GetAt(0x5F);
                 tmp = (byte)(tmp & 0xF0);
@@ -239,7 +239,7 @@ namespace Underworld
             }
             else
             {
-                SetAt(0x5F+moonstone, (byte)(value & 0xFF));
+                SetAt(0x5F + moonstone, (byte)(value & 0xFF));
             }
         }
 
@@ -284,12 +284,44 @@ namespace Underworld
                 {
                     var tmp = GetAt16(0x63);
                     tmp = tmp & 0xFE3F; //clear existing bits
-                    value = (value & 0x7)<<6;
+                    value = (value & 0x7) << 6;
                     tmp = tmp | value; //set new bits
                     SetAt16(0x63, tmp);
                 }
             }
         }
+
+        /// <summary>
+        /// Has Tybals orb been destroyed. UW1 only
+        /// </summary>
+        public static bool isOrbDestroyed
+        {
+            get
+            {
+                if (_RES == GAME_UW2)
+                {
+                    return false;//although technically by this point is has already happened
+                }
+                else
+                {
+                    return ((GetAt(0x61) >> 5) & 0x1) == 1;
+                }
+            }
+            set
+            {
+                if (_RES != GAME_UW2)
+                {
+                    var tmp = GetAt(0x61);
+                    tmp = (byte)(tmp & 0xD7);
+                    if (value)
+                    {
+                        tmp = (byte)(tmp | 20);
+                    }
+                    SetAt(0x61, tmp);
+                }
+            }
+        }
+
 
         /// <summary>
         /// True when the player has fallen asleep under the effect of dream plants
@@ -328,15 +360,15 @@ namespace Underworld
         {
             get
             {
-                if (_RES==GAME_UW2)
+                if (_RES == GAME_UW2)
                 {
                     return GetAt16(0x2FC);
                 }
-                return 0;                
+                return 0;
             }
             set
             {
-                if(_RES==GAME_UW2)
+                if (_RES == GAME_UW2)
                 {
                     SetAt16(0x2FC, value);
                 }
@@ -351,15 +383,15 @@ namespace Underworld
         {
             get
             {
-                if (_RES== GAME_UW2)
+                if (_RES == GAME_UW2)
                 {
                     return GetAt16(0x2FE);
                 }
-                return 0;                
+                return 0;
             }
             set
             {
-                if(_RES==GAME_UW2)
+                if (_RES == GAME_UW2)
                 {
                     SetAt16(0x2FE, value);
                 }
@@ -373,15 +405,15 @@ namespace Underworld
         {
             get
             {
-                if(_RES==GAME_UW2)
+                if (_RES == GAME_UW2)
                 {
                     return GetAt(0x300);
                 }
-                return 0;                
+                return 0;
             }
             set
             {
-                if(_RES==GAME_UW2)
+                if (_RES == GAME_UW2)
                 {
                     SetAt(0x300, (byte)value);
                 }
@@ -395,15 +427,15 @@ namespace Underworld
         {
             get
             {
-                if(_RES==GAME_UW2)
+                if (_RES == GAME_UW2)
                 {
                     return GetAt(0x301);
                 }
-                return 0;                
+                return 0;
             }
             set
             {
-                if(_RES==GAME_UW2)
+                if (_RES == GAME_UW2)
                 {
                     SetAt(0x301, (byte)value);
                 }
@@ -417,7 +449,7 @@ namespace Underworld
         {
             get
             {
-                if(_RES==GAME_UW2)
+                if (_RES == GAME_UW2)
                 {
                     return false;
                 }

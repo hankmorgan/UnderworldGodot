@@ -1,3 +1,4 @@
+using Godot;
 using Peaky.Coroutines;
 using System;
 using System.Collections;
@@ -8,7 +9,10 @@ namespace Underworld
 
     public class Teleportation : UWClass
     {
-
+        //Constants for level change events
+        const int EnterLevelMode = 0;
+        const int ExitLevelMode = 1;
+        const int LoadSaveMode = 2;
         /// <summary>
         /// Function to call when teleporting.
         /// </summary>
@@ -65,9 +69,10 @@ namespace Underworld
                 }
 
                 //handle leave level events
-                LevelChangeEvents(1, playerdat.dungeon_level);
+                LevelChangeEvents(ExitLevelMode, playerdat.dungeon_level);
 
                 playerdat.dungeon_level = TeleportLevel;
+                
                 //switch level
                 UWTileMap.LoadTileMap(
                         newLevelNo: playerdat.dungeon_level - 1,
@@ -75,7 +80,7 @@ namespace Underworld
                         newGameSession: false);
                 
                 //Handle enter level events
-                LevelChangeEvents(0, playerdat.dungeon_level);
+                LevelChangeEvents(EnterLevelMode, playerdat.dungeon_level);
 
                 if (_RES==GAME_UW2)
                 {//SCD.ARK then needs to be processed in UW2
@@ -326,15 +331,20 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// Handle events that happen when player leaves and enters dungeon levels in UW2
+        /// </summary>
+        /// <param name="mode">0 = new game/enter level, 1 = leave level, 2 = unused and 3 = load save game</param>
+        /// <param name="dungeon">Either the new or previous dungeon.</param>
         static void LevelChangeEventsUW2 (int mode, int dungeon)
         {
-            if (playerdat.armageddon && mode==0)
+            if (playerdat.armageddon && mode==EnterLevelMode)
             {//entering a level under the influence of armageddon
                 UWTileMap.ResetMap(0);
             }
             else
             {
-                if (mode==0)
+                if (mode == EnterLevelMode)
                 {
                     playerdat.LastDamagedNPCIndex = 0; playerdat.LastDamagedNPCType = -1;
                     CallBacks.RunCodeOnAllMobiles(ClearUnkBit_0x15_7_OnMobiles, null);
@@ -351,8 +361,11 @@ namespace Underworld
                 }
                 else
                 {
-                    //Calm NPCs?
-                    Debug.Print("Todo 'Calm NPCS'");
+                    if (mode == ExitLevelMode)
+                    {
+                        //Calm NPCs?
+                        Debug.Print("Todo 'Calm NPCS'");
+                    }
                 }
 
                 //World specific events
@@ -360,7 +373,7 @@ namespace Underworld
                 {
                     case worlds.world_ids.PrisonTower:
                         {
-                            if (mode == 1)
+                            if (mode == ExitLevelMode)
                             {
                                 //do a check to see if player has been fighting goblins and set quest 60 is that is the case.
                                 prisontower.PrisonTowerQuest60();
@@ -375,7 +388,7 @@ namespace Underworld
                         }                        
                     case worlds.world_ids.Killorn:
                         //handle killorn is crashing
-                        if ((playerdat.GetQuest(50) == 1) && (mode !=1))
+                        if ((playerdat.GetQuest(50) == 1) && (mode != EnterLevelMode))
                         {
                             if (playerdat.dungeon_level == 17)
                             {
@@ -393,20 +406,81 @@ namespace Underworld
                         //Handle automap enabled settings
                         break;
                 }
-
-
             }
         }
 
+        /// <summary>
+        /// Handle events that happen when player leaves and enters dungeon levels in UW1
+        /// </summary>
+        /// <param name="mode">0 = new game/enter level, 1 = leave level, 2 = unused and 3 = load save game</param>
+        /// <param name="dungeon">Either the new or previous dungeon.</param>
         static void LevelChangeEventsUW1 (int mode, int dungeon)
         {
-            if (playerdat.armageddon && mode==0)
+            if (playerdat.armageddon && mode == EnterLevelMode)
             {//entering a level under the influence of armageddon
                 UWTileMap.ResetMap(0);
             }
             else
             {
-
+                if (mode == EnterLevelMode)
+                {
+                    playerdat.LastDamagedNPCIndex = 0; playerdat.LastDamagedNPCType = -1;
+                    CallBacks.RunCodeOnAllMobiles(ClearUnkBit_0x15_7_OnMobiles, null);
+                }
+                else
+                {
+                    if (mode == ExitLevelMode)
+                    {
+                        //Calm NPCs?
+                        Debug.Print("Todo 'Calm NPCS'");
+                    }
+                }
+                switch ((worlds.UW1_Dungeons)dungeon)
+                {
+                    case worlds.UW1_Dungeons.Tybal:
+                        {  
+                            if (!playerdat.isOrbDestroyed)
+                            {
+                                switch (mode)
+                                {
+                                    case EnterLevelMode:
+                                        //entering lair while orb is not yet destroyed
+                                        playerdat.backup_mana = playerdat.max_mana;
+                                        playerdat.max_mana = 0;
+                                        playerdat.play_mana = 0;                                        
+                                        break;
+                                    case ExitLevelMode://restore drained mana.
+                                        playerdat.max_mana = playerdat.backup_mana;
+                                        playerdat.play_mana = (playerdat.max_mana>>2);
+                                        break;
+                                }
+                            }
+                            break;
+                        }                        
+                    case worlds.UW1_Dungeons.Ethereal:
+                        {
+                            switch (mode)
+                            {
+                                case EnterLevelMode:
+                                    if(playerdat.AutomapEnabled)
+                                    {//yes this is correct. Backup mana is repurposed for this use on the void.
+                                        playerdat.backup_mana = 1;
+                                    }
+                                    else
+                                    {
+                                        playerdat.backup_mana = 0;
+                                    }                                    
+                                    break;
+                                case ExitLevelMode:
+                                    playerdat.AutomapEnabled = (playerdat.backup_mana>0);
+                                    break;
+                                case LoadSaveMode:
+                                    playerdat.AutomapEnabled = false;
+                                    break;
+                            }
+                            break;
+                        }   
+                }
             }
         }
 

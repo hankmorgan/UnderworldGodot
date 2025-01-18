@@ -6,17 +6,17 @@ namespace Underworld
     /// </summary>
     public class worlds:UWClass
     {
-        public enum UW1_LevelNos
+        public enum UW1_Dungeons
         {
-            EntranceLevel = 0,
-            MountainMen = 1,
-            Swamp = 2,
-            Knights = 3,
-            Catacombs = 4,
-            Seers = 5,
-            Tybal = 6,
-            Volcano = 7,
-            Ethereal = 8
+            EntranceLevel = 1,
+            MountainMen = 2,
+            Swamp = 3,
+            Knights = 4,
+            Catacombs = 5,
+            Seers = 6,
+            Tybal = 7,
+            Volcano = 8,
+            Ethereal = 9
         };
 
         public static string[] UW1_LevelNames = new string[]
