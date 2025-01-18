@@ -57,7 +57,7 @@ namespace Underworld
             {
                 if (playerdat.GetQuest(7) == 1)
                 {
-                    return; //loth has been freed. no more object creation in this world
+                    return; //loth has been freed. no more object creation in this world, stops the infinite spawning skeletons
                 }
             }
 

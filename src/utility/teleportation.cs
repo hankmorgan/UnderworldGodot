@@ -404,6 +404,11 @@ namespace Underworld
                         break;
                     case worlds.world_ids.Tomb:
                         //Handle killing undead when Loth has been put to rest.
+                        if ((playerdat.GetQuest(7) == 1) && (mode == EnterLevelMode))
+                        {
+                            //loth is dead
+                            tomb.KillLothsLiches(-1);
+                        }
                         break;
                     case worlds.world_ids.Ethereal:
                         //Handle automap enabled settings

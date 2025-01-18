@@ -205,10 +205,13 @@ namespace Underworld
                         }
                     case 0x20:// Praecor Loth
                         {
-                            KillLothsLiches(0x17);
-                            playerdat.SetQuest(103, 1);
-                            playerdat.SetQuest(7,1);
-                            trigger.TriggerTrapInTile(1, 2);
+                            if (mode != 0)
+                            {
+                                tomb.KillLothsLiches(0x17);
+                                playerdat.SetQuest(103, 1);
+                                playerdat.SetQuest(7,1);
+                                trigger.TriggerTrapInTile(1, 2);
+                            }
                             break;
                         }
                     case 0x2C://mystell
@@ -640,39 +643,7 @@ namespace Underworld
             playerdat.FreezeTimeEnchantment = false;//?
             talk.Talk(critter.index, UWTileMap.current_tilemap.LevelObjects, true);
             //todo: in uw2 npc_talkedto gets cleared here. does this matter and if so how would implement it seeing as the conversation runs in a co-routine
-        }
-
-        /// <summary>
-        /// Handles killing of all undead in Loths tomb. TODO: this needs to be called when changing levels when quest 7 is set
-        /// </summary>
-        /// <param name="raceparam"></param>
-        public static void KillLothsLiches(int raceparam)
-        {
-            Debug.Print("kill all the liches");
-            for (int i = 0; i < UWTileMap.current_tilemap.NoOfActiveMobiles; i++)
-            {
-                var critterindex = UWTileMap.current_tilemap.GetActiveMobileAtIndex(i);
-                var obj = UWTileMap.current_tilemap.LevelObjects[i];
-                if (obj.majorclass == 1)
-                {//npc
-                    if (CheckIfMatchingRaceUW2(obj, raceparam))
-                    {
-                        KillCritter(obj);
-                        i--;//reduce index as list count has changed.
-                    }
-                }
-                else
-                {
-                    if (raceparam == -1)
-                    {
-                        if (obj.item_id == 0x13)
-                        {
-                            Debug.Print($"Smite {obj.a_name}");
-                        }
-                    }
-                }
-            }
-        }
+        }       
 
 
         /// <summary>

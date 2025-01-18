@@ -3,7 +3,7 @@ using System.Diagnostics;
 namespace Underworld
 {
     /// <summary>
-    /// Specific code for the killorn
+    /// Specific code for the Scintillus Academy
     /// </summary>
     public class academy : UWClass
     {
