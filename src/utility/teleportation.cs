@@ -412,6 +412,18 @@ namespace Underworld
                         break;
                     case worlds.world_ids.Ethereal:
                         //Handle automap enabled settings
+                        if (mode==EnterLevelMode)
+                        {
+                            playerdat.AutomapEnabled_backup = playerdat.AutomapEnabled;// needs to be backedup due to rarely seen mechanics involving getting lost
+                            playerdat.AutomapEnabled = false;
+                        }
+                        else
+                        {
+                            if (mode == ExitLevelMode)
+                            {
+                                playerdat.AutomapEnabled = playerdat.AutomapEnabled_backup;
+                            }
+                        }
                         break;
                 }
             }

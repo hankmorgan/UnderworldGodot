@@ -161,7 +161,7 @@ namespace Underworld
           {
                get
                {
-                    if (_RES!=GAME_UW2)
+                    if (_RES != GAME_UW2)
                     {
                          return ((GetAt(0x63) >> 4) & 0x1) == 1;
                     }
@@ -172,7 +172,7 @@ namespace Underworld
                }
                set
                {
-                    if (_RES!=GAME_UW2)
+                    if (_RES != GAME_UW2)
                     {
                          var temp = GetAt(0x63);
                          temp &= 0xEF; //clear bits
@@ -180,7 +180,7 @@ namespace Underworld
                          {
                               temp |= (1 << 4);
                          }
-                          //set new value
+                         //set new value
                          SetAt(0x63, temp);
                     }
                }
@@ -237,7 +237,7 @@ namespace Underworld
                     SetAt16(0x3f + toMoveFromIndex * 2, 0);//clear data.
                }
                ActiveSpellEffectCount--;
-          }      
+          }
 
 
           /// <summary>
@@ -269,7 +269,7 @@ namespace Underworld
                }
           }
 
-           public static byte maybefoodhealthbonus
+          public static byte maybefoodhealthbonus
           {
                get
                {
@@ -399,7 +399,7 @@ namespace Underworld
           {
                get
                {
-                    if (_RES==GAME_UW2)
+                    if (_RES == GAME_UW2)
                     {
                          return ((GetAt(0x62) >> 3) & 0x1) == 1;
                     }
@@ -410,7 +410,7 @@ namespace Underworld
                }
                set
                {
-                    if (_RES==GAME_UW2)
+                    if (_RES == GAME_UW2)
                     {
                          var tmp = GetAt(0x62);
                          tmp = (byte)(tmp & 0xF7);
@@ -418,7 +418,7 @@ namespace Underworld
                          {
                               tmp = (byte)(tmp | 8);
                          }
-                         SetAt(0x62,tmp);
+                         SetAt(0x62, tmp);
                     }
                     else
                     {
@@ -428,7 +428,7 @@ namespace Underworld
                          {
                               tmp = (byte)(tmp | 8);
                          }
-                         SetAt(0x61,tmp);
+                         SetAt(0x61, tmp);
                     }
                }
           }
@@ -441,9 +441,9 @@ namespace Underworld
           {
                get
                {
-                    if (_RES==GAME_UW2)
+                    if (_RES == GAME_UW2)
                     {
-                         return (GetAt(0x63)>>4 & 0x1)==1;
+                         return (GetAt(0x63) >> 4 & 0x1) == 1;
 
                     }
                     else
@@ -453,13 +453,13 @@ namespace Underworld
                }
                set
                {
-                    if (_RES==GAME_UW2)
+                    if (_RES == GAME_UW2)
                     {
                          var tmp = GetAt(0x63);
                          tmp &= 0xEF;
                          if (value)
                          {
-                              tmp|=0x10;
+                              tmp |= 0x10;
                          }
                          SetAt(0x63, tmp);
                     }
@@ -471,9 +471,41 @@ namespace Underworld
           }
 
           /// <summary>
+          /// Backup setting for UW2
+          /// </summary>
+          public static bool AutomapEnabled_backup
+          {
+               get
+               {
+                    if (_RES == GAME_UW2)
+                    {
+                         return (GetAt(0x2FA) & 0x1) == 1;
+                    }
+                    else
+                    {
+                         return true;
+                    }
+               }
+               set
+               {
+                    if (_RES == GAME_UW2)
+                    {
+                         if (value)
+                         {
+                              SetAt(0x2FA, 1);
+                         }
+                         else
+                         {
+                              SetAt(0x2FA, 0);
+                         }
+                    }
+               }
+          }
+
+          /// <summary>
           /// In UW1 automap enabled is a global not stored in the pdat file. It is set using levelloadevents etc.
           /// </summary>
-          private static bool _automapenabled_uw1=true;
+          private static bool _automapenabled_uw1 = true;
 
 
           /// <summary>
@@ -483,7 +515,7 @@ namespace Underworld
           {
                get
                {
-                    if(_RES==GAME_UW2)
+                    if (_RES == GAME_UW2)
                     {
                          return GetAt(0x307);
                     }
@@ -506,7 +538,7 @@ namespace Underworld
 
           public static void ChangeHunger(int changeValue)
           {
-               Debug.Print ("TODO Implement logic around changing hunger and applying healing bonuses");
+               Debug.Print("TODO Implement logic around changing hunger and applying healing bonuses");
           }
 
      }//enclass
