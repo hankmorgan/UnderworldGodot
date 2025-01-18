@@ -160,7 +160,7 @@ namespace Underworld
         /// <param name="obj"></param>
         /// <param name="objList"></param>
         /// <returns></returns>
-        public static bool RunCodeOnObjectsInChain(UWObjectCallBackWithoutParams methodToCall, uwObject obj, uwObject[] objList)
+        public static bool RunCodeOnObjectsInChain(UWObjectCallBackWithoutParams methodToCall, uwObject obj, uwObject[] objList, bool RunOnLinks = true)
         {
             if (obj == null)
             {
@@ -177,7 +177,7 @@ namespace Underworld
                     else
                     {
                         //check the link on the object
-                        if (obj.is_quant == 0 && obj.link > 0)
+                        if ((obj.is_quant == 0 && obj.link > 0) && (RunOnLinks))
                         {
                             var linkedObject = objList[obj.link];
                             if (RunCodeOnObjectsInChain(methodToCall, linkedObject, objList))
@@ -328,7 +328,12 @@ namespace Underworld
         /// <param name="paramsArray"></param>
         public static void RunCodeOnObject(UWObjectCallBackWithParams methodToCall, uwObject obj, int[] paramsArray)
         {
-             methodToCall(obj, paramsArray);
+            methodToCall(obj, paramsArray);
+        }
+
+        public static void RunCodeOnObject(UWObjectCallBackWithoutParams methodToCall, uwObject obj)
+        {
+            methodToCall(obj);
         }
 
     }//end class

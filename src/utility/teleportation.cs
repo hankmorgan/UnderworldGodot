@@ -1,6 +1,4 @@
-using Godot;
 using Peaky.Coroutines;
-using System;
 using System.Collections;
 using System.Diagnostics;
 
@@ -255,10 +253,11 @@ namespace Underworld
         }
 
 
+
         static void ChangeUW2Quests()
         {
-            playerdat.SetQuest(112, 0);
-            playerdat.SetQuest(124, 1);
+            playerdat.SetQuest(112, 0);//checked when talking to LB. You have been fighting with the others
+            playerdat.SetQuest(124, 1);//is referenced in teleport_trap in relation to quest 112 fighting in the castle. 
         }
 
         static int TeleportUW1(int character, int tileX, int tileY, int newLevel)
@@ -390,7 +389,7 @@ namespace Underworld
                         //handle killorn is crashing
                         if ((playerdat.GetQuest(50) == 1) && (mode != EnterLevelMode))
                         {
-                            if (playerdat.dungeon_level == 17)
+                            if (dungeon == 17)
                             {
                                 killorn.KilornIsCrashing(isEnteringLevel: true);   
                             }
@@ -398,6 +397,10 @@ namespace Underworld
                         break;
                     case worlds.world_ids.Academy:
                         //Handle removing the puzzle wand from inventory on level 3 and returning it to it's home position
+                        if ((dungeon==43) && (mode == ExitLevelMode))
+                        {
+                            academy.RemoveAcademyWand();
+                        }
                         break;
                     case worlds.world_ids.Tomb:
                         //Handle killing undead when Loth has been put to rest.

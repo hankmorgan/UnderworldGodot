@@ -24,6 +24,7 @@ namespace Underworld
         /// <summary>
         /// Reference to the object the player is using currently in their hand
         /// To be consistent his object MUST always be a world object. When picking inventory objects add it to world
+        /// Set to -1 when not holding anything
         /// </summary>
         public static int ObjectInHand// = -1;
         {

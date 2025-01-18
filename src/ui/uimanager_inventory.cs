@@ -576,12 +576,12 @@ namespace Underworld
 
 
         /// <summary>
-        /// Does the pickup from inventory.
+        /// Does the pickup from inventory and moves object back into the world, optionally places in the player hand.
         /// </summary>
         /// <param name="objAtSlot"></param>
         /// <param name="DestroyInventoryObject"></param>
         /// <returns></returns>
-        public static int DoPickup(int objAtSlot, bool DestroyInventoryObject = true)
+        public static int DoPickup(int objAtSlot, bool DestroyInventoryObject = true, bool ChangeHand = true)
         {
             var newIndex = playerdat.AddInventoryObjectToWorld(
                     objIndex: objAtSlot,
@@ -590,10 +590,13 @@ namespace Underworld
                     DestroyInventoryObject: DestroyInventoryObject,
                     ClearLink: true
                     );
-            var pickObject = UWTileMap.current_tilemap.LevelObjects[newIndex];
+            var pickObject = UWTileMap.current_tilemap.LevelObjects[newIndex];            
             pickObject.next=0;
-            playerdat.ObjectInHand = newIndex;
-            instance.mousecursor.SetCursorToObject(pickObject.item_id);
+            if (ChangeHand)
+            {
+                playerdat.ObjectInHand = newIndex;
+                instance.mousecursor.SetCursorToObject(pickObject.item_id);
+            }
             playerdat.PlayerStatusUpdate();//check if any enchantments need to be updated
             return newIndex;
         }

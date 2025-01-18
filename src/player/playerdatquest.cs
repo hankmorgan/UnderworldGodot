@@ -572,7 +572,7 @@ namespace Underworld
 /// 121: You have defeated Dorstag
 /// 122: You have killed the bly scup ductosnore
 /// 123: Relk is dead
-/// 124 is referenced in teleport_trap inrelateion to quest 112 fighting in the castle. 
+/// 124 is referenced in teleport_trap in relation to quest 112 fighting in the castle. 
 /// 128: 0-128 bit field of where the lines of power have been broken.
 /// 129: How many enemies killed in the pits (also xclock 14)
 /// 131: You are told that you are in the prison tower =1  
