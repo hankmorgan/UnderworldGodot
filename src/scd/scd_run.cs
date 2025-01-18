@@ -65,8 +65,9 @@ namespace Underworld
                             eventOffset: eventOffset);
                     }
                 case 11://remove object from tile
-                    Debug.Print($"Unimplemented SCD function Remove Object {currentblock[eventOffset + 5]}");
-                    return 0;
+                    return RemoveObject(
+                            currentblock: currentblock,
+                            eventOffset: eventOffset); 
             }
             return 0;
         }

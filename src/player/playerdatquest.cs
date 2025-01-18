@@ -543,6 +543,7 @@ namespace Underworld
 /// 53: You have killed Mokpo
 /// 54: Checked by Mors Gotha? Set when re-entering the keep when it is crashing
 /// 55: Banner of Killorn returned (based on Scd.ark research)
+/// 57: Felix and Marcus have left the tower?
 /// 58: Set when meeting bishop. Bishop tells you about altara
 /// 60: Have Goblins have been killed in the prison tower or is the player hostile to goblins. used in check trap on second highest level
 /// 61: You've brought water to Josie
