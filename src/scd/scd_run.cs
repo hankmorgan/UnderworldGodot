@@ -50,8 +50,9 @@ namespace Underworld
                              currentblock: currentblock,
                              eventOffset: eventOffset);//runs extra commands defined by eventrow[5]
                 case 8://set attitude
-                    Debug.Print($"Unimplemented SCD function Set Attitude {currentblock[eventOffset + 5]}");
-                    return 0;
+                    return SetAttitude(
+                            currentblock: currentblock,
+                            eventOffset: eventOffset); 
                 case 9://perform variable operation
                     scd_variableoperation(
                              currentblock: currentblock,
