@@ -513,7 +513,7 @@ namespace Underworld
 /// 18: You learn that the Trikili can talk OR you have the quest to find out about their history
 /// 19: You know Relk has found the black jewel (josie tells you)
 /// 20: You've met Mokpo
-/// 22: Blog is now your friend(?), cleared if you kill him
+/// 22: Blog is now your friend, cleared if you kill him
 /// 23: You have used Blog to defeat dorstag
 /// 24: You have won at least one duel in the arena. (Krillner does not count!)
 /// 25: You have defeated Zaria in the pits
@@ -548,7 +548,7 @@ namespace Underworld
 /// 60: Have Goblins have been killed in the prison tower or is the player hostile to goblins. used in check trap on second highest level
 /// 61: You've brought water to Josie
 /// 
-/// 63: Blog has given you the gem
+/// 63: You have met Blog.
 /// 64: Is mors finally dead
 /// 65: You have killed Blog
 /// 66: You have killed Mystell
@@ -570,7 +570,7 @@ namespace Underworld
 /// 118: The wisps tell you about the triliki
 /// 119: Fizzit the thief surrenders
 /// 120: checked by miranda?
-/// 121: You have defeated Dorstag
+/// 121: You have defeated Dorstag and/or Blog has given you the gem
 /// 122: You have killed the bly scup ductosnore
 /// 123: Relk is dead
 /// 124 is referenced in teleport_trap in relation to quest 112 fighting in the castle. 

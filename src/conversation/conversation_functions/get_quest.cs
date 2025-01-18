@@ -7,7 +7,7 @@ namespace Underworld
         {        
             var questno = GetConvoStackValueAtPtr(stackptr - 1); 
             result_register = GetQuest(questno);
-            Debug.Print($"Getting {questno} which is {result_register}");
+            Debug.Print($"Getting quest {questno} which is {result_register}");
             return;
         }
  
