@@ -13,22 +13,26 @@ namespace Underworld
         static double playertimer;
         static int playerUpdateCounter;
 
-        static int PreviousClockValue;
+        //static int PreviousClockValue;
+        static int secondcounter = 0;
         public static void PlayerTimedLoop(double delta)
         {
             if ((!main.blockmouseinput) && (uimanager.InGame))
             {
                 playertimer += delta;
                 if (playertimer >= 1f)
-                {
+                {//every second
                     var secondelasped = (int)(playertimer / 1);
-                    playertimer = 0f;
+                    playertimer = 0f;                    
                     for (int s = 0; s < secondelasped; s++)
                     {
-                        ClockValue += 0x40; //not sure what the exact rate should be here. for the moment assuming this is 1 second of time
+                        secondcounter++;
+                        ClockValue += 0x40; //not sure what the exact rate should be here. for the moment assuming this is 1 second of time in game clock terms
 
-                        if ((ClockValue % 20) < PreviousClockValue)//every 20 seconds
+                        //if ((ClockValue % 2048) < PreviousClockValue)//every 20 seconds
+                        if (secondcounter>=20)
                         {
+                            secondcounter = 0;
                             playerUpdateCounter++;
 
                             UpdateLightStability(playerUpdateCounter);
@@ -144,7 +148,7 @@ namespace Underworld
 
                             PlayerStatusUpdate();
                         }//end every 20 seconds update
-                        PreviousClockValue = ClockValue % 20;
+                        //PreviousClockValue = ClockValue % 2048;
                     }//end seconds for loop                 
                 }  //every second  
                 //check for player death.
