@@ -18,7 +18,7 @@ namespace Underworld
                     //Set goal and gtarg                   
                     return SetGoalAndGTarg(
                             currentblock: currentblock,
-                            eventOffset: eventOffset); 
+                            eventOffset: eventOffset);
                 case 2://move npcs
                     {
                         return MoveNPCs(
@@ -44,20 +44,28 @@ namespace Underworld
                              eventOffset: eventOffset);
                     }
                 case 6:// does nothing
-                    return 0;
+                    {
+                        return 0;
+                    }
                 case 7:// Run extended commands
-                    return RunSCDFunction_extended(
+                    {
+                        return RunSCDFunction_extended(
                              currentblock: currentblock,
                              eventOffset: eventOffset);//runs extra commands defined by eventrow[5]
+                    }
                 case 8://set attitude
-                    return SetAttitude(
+                    {
+                        return SetAttitude(
                             currentblock: currentblock,
-                            eventOffset: eventOffset); 
+                            eventOffset: eventOffset);
+                    }
                 case 9://perform variable operation
-                    scd_variableoperation(
+                    {
+                        scd_variableoperation(
                              currentblock: currentblock,
                              eventOffset: eventOffset);
-                    return 0;
+                        return 0;
+                    }
                 case 10:// run a block of events.
                     {
                         return RunBlock(
@@ -65,9 +73,12 @@ namespace Underworld
                             eventOffset: eventOffset);
                     }
                 case 11://remove object from tile
-                    return RemoveObject(
+                    {
+                        return RemoveObject(
                             currentblock: currentblock,
-                            eventOffset: eventOffset); 
+                            eventOffset: eventOffset);
+
+                    }
             }
             return 0;
         }
@@ -105,9 +116,13 @@ namespace Underworld
                 case 6: // Hp Change on npc
                     Debug.Print($"Unimplemented SCD function maybe hp change {currentblock[eventOffset + 5]}");
                     return 0;
-                case 7://maybe move npcs
-                    Debug.Print($"Unimplemented SCD function maybe a move npc {currentblock[eventOffset + 5]}");
-                    return 0;
+                case 7://move npc into a range of tile
+                    {                        
+                        movenpc_inrange(
+                            currentblock: currentblock,
+                            eventOffset: eventOffset);
+                        return 0;
+                    }    
             }
             return 0;
         }
@@ -150,8 +165,8 @@ namespace Underworld
                         Debug.Print("untested callback run type");
                         var obj = UWTileMap.current_tilemap.LevelObjects[filter];
                         CallBacks.RunCodeOnObject(
-                            methodToCall: methodToCall, 
-                            obj: obj, 
+                            methodToCall: methodToCall,
+                            obj: obj,
                             paramsArray: paramsArray);
                         break;
                     }
@@ -159,7 +174,7 @@ namespace Underworld
                     {
                         Debug.Print("untested callback run type");
                         CallBacks.RunCodeOnAllNPCS(
-                            methodToCall: methodToCall, 
+                            methodToCall: methodToCall,
                             paramsArray: paramsArray);
                         break;
                     }
