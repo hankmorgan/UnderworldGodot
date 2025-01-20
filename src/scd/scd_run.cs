@@ -98,13 +98,19 @@ namespace Underworld
                 case 0:
                     return 0;//does nothing
                 case 1:
-                    changevariable_by_npcXYHome(
-                        currentblock: currentblock,
-                        eventOffset: eventOffset);
-                    return 0;//variable operation involving NPC XY Home
-                case 2://Maybe move an NPC (with some randomness)
-                    Debug.Print($"Unimplemented SCD function maybe move npc {currentblock[eventOffset + 5]}");
-                    return 0;
+                    {
+                        changevariable_by_npcXYHome(
+                            currentblock: currentblock,
+                            eventOffset: eventOffset);
+                        return 0;//variable operation involving NPC XY Home
+                    }
+                case 2://Move an NPC (with some randomness)
+                    {
+                        movenpc_random(
+                            currentblock: currentblock,
+                            eventOffset: eventOffset);
+                        return 0;
+                    }
                 case 3: //Change a tile
                     Debug.Print($"Unimplemented SCD function maybe tile change {currentblock[eventOffset + 5]}");
                     return 0;
@@ -117,12 +123,12 @@ namespace Underworld
                     Debug.Print($"Unimplemented SCD function maybe hp change {currentblock[eventOffset + 5]}");
                     return 0;
                 case 7://move npc into a range of tile
-                    {                        
+                    {
                         movenpc_inrange(
                             currentblock: currentblock,
                             eventOffset: eventOffset);
                         return 0;
-                    }    
+                    }
             }
             return 0;
         }
