@@ -115,7 +115,8 @@ namespace Underworld
                     itemvalue = (itemvalue * quality) >> 6;
                     if (applyAccuracy)
                     {
-                        Rng.r = new System.Random(obj.item_id);//RNG is always re-seeded with item_id before getting offset here
+                        //Rng.r = new System.Random(obj.item_id);//RNG is always re-seeded with item_id before getting offset here
+                        Rng.Seed = (uint)obj.item_id;
                         itemvalue = Rng.RandomOffset(itemvalue, -appraise_accuracy, +appraise_accuracy);
                     }
                     return itemvalue;
