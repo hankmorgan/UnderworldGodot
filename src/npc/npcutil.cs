@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 
 namespace Underworld
@@ -131,24 +132,31 @@ namespace Underworld
             {
                 var sourceTile = UWTileMap.current_tilemap.Tiles[critter.tileX,critter.tileY];
                 var destTile = UWTileMap.current_tilemap.Tiles[destTileX,destTileY];
+                if (destTile.tileType != UWTileMap.TILE_SOLID)
+                {
+                    ObjectRemover.RemoveObjectFromLinkedList(sourceTile.indexObjectList,critter.index,UWTileMap.current_tilemap.LevelObjects, sourceTile.Ptr+2);              
+                    critter.next = destTile.indexObjectList ;
+                    destTile.indexObjectList = critter.index;
+                    critter.tileX = destTileX; critter.tileY= destTileY;
+                    critter.zpos = (short)(destTile.floorHeight<<3);
+                    critter.npc_xhome = (short)destTileX;
+                    critter.npc_yhome = (short)destTileY;
 
-                ObjectRemover.RemoveObjectFromLinkedList(sourceTile.indexObjectList,critter.index,UWTileMap.current_tilemap.LevelObjects, sourceTile.Ptr+2);
-              
-                critter.next = destTile.indexObjectList ;
-                destTile.indexObjectList = critter.index;
-                critter.tileX = destTileX; critter.tileY= destTileY;
-                critter.zpos = (short)(destTile.floorHeight<<3);
-                critter.npc_xhome = (short)destTileX;
-                critter.npc_yhome = (short)destTileY;
+                    //Clear some bits relating to AI
+                    critter.UnkBit_0x19_4 = 0;
+                    critter.UnkBit_0x19_5 = 0;
+                    critter.UnkBit_0x19_0_likelyincombat = 0;
+                    critter.UnkBit_0x19_1 = 0;
 
-                //Clear some bits relating to AI
-                critter.UnkBit_0x19_4 = 0;
-                critter.UnkBit_0x19_5 = 0;
-                critter.UnkBit_0x19_0_likelyincombat = 0;
-                critter.UnkBit_0x19_1 = 0;
+                    Reposition(critter);
+                    return true;
+                }
+                else
+                {
+                    Debug.Print($"Attempt to move {critter.a_name} to solid tile {destTileX},{destTileY}");
+                    return false;
+                }
 
-                Reposition(critter);
-                return true;
             }
             return false;
         }

@@ -35,12 +35,12 @@ namespace Underworld
             {
                 for (int x = startX; x < endX; x++)
                 {
-                    Debug.Print($"Move {obj.a_name} into {x},{y}");
+                    //Debug.Print($"Move {obj.a_name} into {x},{y}");
                     if (npc.moveNPCToTile(obj, x, y))
                     {
                         y++;//this spot is okay but vanilla behaviour is to keep trying on the next row until all possibilities are done.
                         finalX = (short)x; 
-                        finalY = (short)y;//correct to do this after y++ Blog will walk towards tile.
+                        finalY = (short)y;//correct to do this after y++ Blog will walk towards tile.                        
                     }
                 }
             }

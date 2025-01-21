@@ -119,9 +119,13 @@ namespace Underworld
                     return 0;
                 case 5:// does nothing
                     return 0;
-                case 6: // Hp Change on npc
-                    Debug.Print($"Unimplemented SCD function maybe hp change {currentblock[eventOffset + 5]}");
-                    return 0;
+                case 6: // Heading Change on npc
+                    {
+                        ChangeHeading(
+                            currentblock: currentblock,
+                            eventOffset: eventOffset);
+                        return 0;
+                    }                    
                 case 7://move npc into a range of tile
                     {
                         movenpc_inrange(

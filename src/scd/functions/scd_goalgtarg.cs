@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace Underworld
 {
     public partial class scd : UWClass
@@ -23,6 +25,7 @@ namespace Underworld
 
         static void SetGoalAndGTarg(uwObject obj, int[] paramsarray)
         {
+            Debug.Print($"Change goal/gtarg for {obj.a_name} to {paramsarray[7]}/{paramsarray[8]}");
             obj.npc_goal = (byte)paramsarray[7];
             obj.npc_gtarg = (byte)paramsarray[8];
         }
