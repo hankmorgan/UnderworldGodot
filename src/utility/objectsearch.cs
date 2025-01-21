@@ -1,3 +1,6 @@
+using System.Diagnostics;
+using System.Reflection.PortableExecutable;
+
 namespace Underworld
 {
     /// <summary>
@@ -283,6 +286,48 @@ namespace Underworld
                 next = nextObj.next;
             }
             return 0;
+        }
+
+
+        /// <summary>
+        /// Searches tiles starting at startIndex (given by x*64+y) for a matching object and returns the object, set FoundX and FoundY as the tile the object is found it.
+        /// </summary>
+        /// <param name="startX"></param>
+        /// <param name="majorclass"></param>
+        /// <param name="minorclass"></param>
+        /// <param name="classindex"></param>
+        /// <param name="objList"></param>
+        /// <param name="FoundX"></param>
+        /// <param name="FoundY"></param>
+        /// <returns></returns>
+        public static uwObject FindObjectOnMapByPosition(int startIndex, int majorclass, int minorclass, int classindex, uwObject[] objList, out int FoundX, out int FoundY)
+        {
+            FoundX = -1; FoundY = -1;
+            for (int x = 0; x<64; x++)
+            {
+                for (int y = 0; y<64;y++)
+                {
+                    if ((x * 64) + y >= startIndex)
+                    {
+                        if (UWTileMap.ValidTile(x,y))
+                        {
+                            //Debug.Print($"Searching tile {x},{y} for {majorclass},{minorclass},{classindex}");
+                            var tile = UWTileMap.current_tilemap.Tiles[x,y];
+                            if (tile.indexObjectList!=0)
+                            {
+                                var match = objectsearch.FindMatchInTile(x,y,majorclass,minorclass,classindex);
+                                if (match!=null)
+                                {
+                                    FoundX = x; FoundY = y;
+                                    return match;
+                                }
+                            }
+                        }
+                    }
+                    
+                }
+            }
+            return null;
         }
     }//end class
 }//end namespace

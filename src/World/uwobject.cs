@@ -1614,6 +1614,5 @@ namespace Underworld
         {
             return false;
         }
-
     } //end class
 }//end namespace

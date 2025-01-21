@@ -114,9 +114,13 @@ namespace Underworld
                 case 3: //Change a tile
                     Debug.Print($"Unimplemented SCD function maybe tile change {currentblock[eventOffset + 5]}");
                     return 0;
-                case 4://maybe close doors
-                    Debug.Print($"Unimplemented SCD function maybe door close {currentblock[eventOffset + 5]}");
-                    return 0;
+                case 4://Close doors
+                    {
+                        FindAndCloseDoors(
+                            currentblock: currentblock,
+                            eventOffset: eventOffset);
+                        return 0;
+                    }
                 case 5:// does nothing
                     return 0;
                 case 6: // Heading Change on npc

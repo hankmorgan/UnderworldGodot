@@ -3,7 +3,7 @@ namespace Underworld
     public partial class scd : UWClass
     {
         /// <summary>
-        /// Changes the attitude for set of NPCs.
+        /// Changes the heading for set of NPCs.
         /// </summary>
         /// <param name="currentblock"></param>
         /// <param name="eventOffset"></param>

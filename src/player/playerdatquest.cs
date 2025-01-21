@@ -594,6 +594,7 @@ namespace Underworld
 /// </summary>
 /// The xclock is a range of 16 variables. When references by traps the index is -16 to get the below values.
 /// The X Clock is tied closely to SCD.ark and the scheduled events within that file.
+/// 0=Is tied in with the game clock. Increments every 20 mins up until a max of 72 before looping around.
 /// 1=Miranda conversations & related events in the castle
 ///     1 - Nystrul is curious about exploration.Set after entering lvl 1 from the route downwards. (set variable traps 17 may be related)
 ///     2 - After you visited another world.  (variable 17 is set to 16)

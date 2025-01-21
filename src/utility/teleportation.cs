@@ -76,7 +76,14 @@ namespace Underworld
                         newLevelNo: playerdat.dungeon_level - 1,
                         datafolder: playerdat.currentfolder,
                         newGameSession: false);
-                
+
+                if ((TeleportTileX != -1) && (TeleportTileY != -1))
+                {
+                    //move to new tile
+                    //var targetTile = UWTileMap.current_tilemap.Tiles[TeleportTileX, TeleportTileY];
+                    MovePlayerToTile(TeleportTileX, TeleportTileY);
+                }
+
                 //Handle enter level events
                 LevelChangeEvents(EnterLevelMode, playerdat.dungeon_level);
 
@@ -91,12 +98,7 @@ namespace Underworld
                 //     uimanager.DoPickup(itemToTransfer);
                 // }
             }
-            if ((TeleportTileX != -1) && (TeleportTileY != -1))
-            {
-                //move to new tile
-                var targetTile = UWTileMap.current_tilemap.Tiles[TeleportTileX, TeleportTileY];
-                MovePlayerToTile(TeleportTileX, TeleportTileY);
-            }
+
 
             if ((TeleportTileX != -1) || (TeleportTileY != -1) || (TeleportLevel != -1))
             {

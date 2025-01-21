@@ -15,6 +15,8 @@ namespace Underworld
         public int floorheight;
         public Vector3 position;
 
+        public static bool SkipDoorSound;//set by SCD Door Close to stop door sound effects from playing. Unimplemented.
+
         public static bool isMoving(uwObject obj)
         {
             return obj.item_id == 463;

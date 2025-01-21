@@ -640,6 +640,32 @@ namespace Underworld
                 }
             }
         }
-    }//end class
 
+
+        /// <summary>
+        /// Returns true if playerobject is more than range tiles away from the targetX/Y. Always returns true if not player
+        /// </summary>
+        /// <param name="targetX"></param>
+        /// <param name="targetY"></param>
+        /// <param name="isPlayer"></param>
+        /// <param name="range"></param>
+        /// <returns></returns>
+        public static bool CheckIfOutsideRange(int targetX, int targetY, int isPlayer, int range = 8)
+        {
+            if (isPlayer !=0)
+            {
+                return (
+                    (System.Math.Abs(playerdat.playerObject.tileX - targetX) >= range)
+                    ||
+                    (System.Math.Abs(playerdat.playerObject.tileY - targetY) >= range)
+                );
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+
+    }//end class
 }//end namespace
