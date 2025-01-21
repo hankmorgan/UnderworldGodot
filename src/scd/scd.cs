@@ -117,6 +117,7 @@ namespace Underworld
         /// <returns></returns>
         static int ProcessGeneralBlock(byte[] currentblock, int XClockValue, int mode)
         {
+            playerdat.SetXClock(0,0);
             Debug.Print($"ProcessGeneralBlock xclockvalue {XClockValue}");
             var si_offset = currentblock[4 + playerdat.dungeon_level * 4];
             var di = XClockValue;

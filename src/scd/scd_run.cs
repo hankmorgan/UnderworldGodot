@@ -8,7 +8,7 @@ namespace Underworld
     public partial class scd : UWClass
     {
         public static int RunSCDFunction(byte[] currentblock, int eventOffset)
-        {
+        {            
             Debug.Print($"Running SCD function {currentblock[eventOffset + 4]} at {eventOffset}");
             switch (currentblock[eventOffset + 4])
             {
@@ -112,8 +112,12 @@ namespace Underworld
                         return 0;
                     }
                 case 3: //Change a tile
-                    Debug.Print($"Unimplemented SCD function maybe tile change {currentblock[eventOffset + 5]}");
-                    return 0;
+                    {
+                        ChangeTile(
+                            currentblock: currentblock,
+                            eventOffset: eventOffset);
+                        return 0;
+                    }                    
                 case 4://Close doors
                     {
                         FindAndCloseDoors(
