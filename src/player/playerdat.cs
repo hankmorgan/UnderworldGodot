@@ -118,7 +118,7 @@ namespace Underworld
                 if (_RES == GAME_UW2) { offset = 0x66; }
                 byte existingValue = GetAt(offset);
                 byte mask = (1);
-                if (value)
+                if (!value)
                 {//set
                     existingValue |= mask;
                 }
@@ -404,6 +404,17 @@ namespace Underworld
                 else
                 {
                     return GetAt(0xB5);
+                }
+            }
+            set
+            {
+                if(_RES==GAME_UW2)
+                {
+                    SetAt(0x302, (byte)value);
+                }
+                else
+                {
+                    SetAt(0xB5, (byte)value);
                 }
             }
         }

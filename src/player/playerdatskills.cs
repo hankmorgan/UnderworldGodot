@@ -178,7 +178,7 @@ namespace Underworld
             {
                 value = 30;
             }
-            Debug.Print($"Setting skill {skillNo} to {value} TODO: Refresh player stats such as mana/vit/carry weight as needed");
+            Debug.Print($"Setting skill {GameStrings.GetString(2,31+skillNo)} ({skillNo}) to {value} TODO: Refresh player stats such as mana/vit/carry weight as needed");
             SetAt(0x22 + skillNo, (byte)value);           
         }
 

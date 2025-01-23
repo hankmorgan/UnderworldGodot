@@ -226,7 +226,6 @@ namespace Underworld
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
                 playerdat.currentfolder = "DATA";
-
                 _ = Coroutine.Run(
                    ClearMainMenu()
                    , main.instance);

@@ -87,7 +87,7 @@ namespace Underworld
         {
             var newSeed = (uint)((Seed * Multiplier) + 1);
             Seed = newSeed;
-            Debug.Print($"Rng={((newSeed) & 0x7FFF) % max} out of {max}. Next Seed is {Seed}");
+            //Debug.Print($"Rng={((newSeed) & 0x7FFF) % max} out of {max}. Next Seed is {Seed}");
             return (int)(((newSeed) & 0x7FFF) % max);
         }
 
