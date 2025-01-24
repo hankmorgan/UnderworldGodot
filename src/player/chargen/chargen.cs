@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 
 namespace Underworld
 {
@@ -17,43 +18,10 @@ namespace Underworld
         static int ArrayPtr = 0;
         static bool firstSkill = true;
         public static int CurrentStage = 0;
-        // public static void SimulateChargen()
-        // {
-        //     //The abilities the player will get as part of their class selection before a individual skills are choosen
 
-        //     PresentChargenOptions(0);//init and ask gender            
-        //     SubmitChargenOption(0, 1);//pick female gender
-
-        //     PresentChargenOptions(1);//simulate handedness question
-        //     SubmitChargenOption(1, 1); //pick lefthandy
-
-        //     PresentChargenOptions(2);//simulate class question            
-        //     SubmitChargenOption(2, 7); //pick class
-
-        //     //skills
-
-        //     while (GetSkillChoices(ref ArrayPtr, ref ClassSkillChoices, 0x36))
-        //     {
-        //         if (firstSkill)
-        //         {
-        //             RollClassBaseSkills();
-        //             firstSkill = false;
-        //         }
-        //         PrintChoices(3);
-        //     }
-
-        //     SubmitChargenOption(4, 1);//pick body #1.
-
-        //     PresentChargenOptions(5);//difficulty question
-        //     SubmitChargenOption(5, 1);//difficulty #1
-
-        //     SubmitChargenOption(6, 0);//submit name
-
-        //     PresentChargenOptions(7);//confirmation
-        //     SubmitChargenOption(7, 1);//submit 1 to confirmation.
-
-        // }
-
+        /// <summary>
+        /// Rolls the starting skills for the player.
+        /// </summary>
         private static void RollClassBaseSkills()
         {
             for (int i = 0; i < 6; i++)
@@ -81,6 +49,7 @@ namespace Underworld
                 case 0: //Initiation/gender question
                     playerdat.InitEmptyPlayer();
                     playerdat.InitPlayerObject();
+                    uimanager.ClearChargenTextAndBody();
                     firstSkill = true;
                     ClassSkillChoices = new int[] { 0x14, 0x14, 0x14, 0x14, 0x14, 0x14 };
                     ArrayPtr = 0;
@@ -101,6 +70,7 @@ namespace Underworld
                         if (firstSkill)
                         {
                             RollClassBaseSkills();
+                            uimanager.PrintChargenSkills();
                             firstSkill = false;
                         }
                         PrintChoices(ChargenStageRequested);
@@ -139,6 +109,7 @@ namespace Underworld
             {
                 case 0://pick gender.
                     playerdat.isFemale = (choice == 1);
+                    uimanager.instance.ChargenGender.Text = GameStrings.GetString(2, 9 + choice);
                     //advance to next stage
                     PresentChargenOptions(++CurrentStage);
                     break;
@@ -148,10 +119,13 @@ namespace Underworld
                     break;
                 case 2://class
                     InitClassAttributes(choice);
+                    uimanager.instance.ChargenClass.Text = GameStrings.GetString(2, 23 + choice);
+                    uimanager.PrintChargenAttributes();
                     PresentChargenOptions(++CurrentStage);
                     break;
                 case 3://process skill choice 
                     RollSkill(SkillChoices[choice]);
+                    uimanager.PrintChargenSkills();
                     PresentChargenOptions(CurrentStage);
                     break;
                 case 4://portrait

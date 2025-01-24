@@ -2565,6 +2565,82 @@ theme_override_font_sizes/normal_font_size = 32
 bbcode_enabled = true
 text = "[center]Your question here[/center]"
 
+[node name="ChargenSkills" type="RichTextLabel" parent="UI/Chargen"]
+offset_left = 72.0
+offset_top = 521.0
+offset_right = 472.0
+offset_bottom = 741.0
+theme_override_fonts/normal_font = ExtResource("5_kj12g")
+theme_override_font_sizes/normal_font_size = 32
+bbcode_enabled = true
+text = "[center]Your skilss here[/center]"
+
+[node name="ChargenSkills_Values" type="RichTextLabel" parent="UI/Chargen"]
+offset_left = 501.0
+offset_top = 521.0
+offset_right = 561.0
+offset_bottom = 741.0
+theme_override_fonts/normal_font = ExtResource("5_kj12g")
+theme_override_font_sizes/normal_font_size = 32
+bbcode_enabled = true
+text = "[center]Your skilss here[/center]"
+
+[node name="ChargenStats" type="RichTextLabel" parent="UI/Chargen"]
+offset_left = 349.0
+offset_top = 197.0
+offset_right = 509.0
+offset_bottom = 537.0
+theme_override_fonts/normal_font = ExtResource("5_kj12g")
+theme_override_font_sizes/normal_font_size = 32
+bbcode_enabled = true
+text = "[center]Your stats here[/center]"
+
+[node name="ChargenStats_Values" type="RichTextLabel" parent="UI/Chargen"]
+offset_left = 521.0
+offset_top = 197.0
+offset_right = 581.0
+offset_bottom = 537.0
+theme_override_fonts/normal_font = ExtResource("5_kj12g")
+theme_override_font_sizes/normal_font_size = 32
+bbcode_enabled = true
+text = "[center]Your stats here[/center]"
+
+[node name="ChargenGender" type="RichTextLabel" parent="UI/Chargen"]
+offset_left = 74.0
+offset_top = 96.0
+offset_right = 294.0
+offset_bottom = 136.0
+theme_override_fonts/normal_font = ExtResource("5_kj12g")
+theme_override_font_sizes/normal_font_size = 32
+bbcode_enabled = true
+text = "Female"
+
+[node name="ChargenClass" type="RichTextLabel" parent="UI/Chargen"]
+offset_left = 353.0
+offset_top = 96.0
+offset_right = 573.0
+offset_bottom = 136.0
+theme_override_fonts/normal_font = ExtResource("5_kj12g")
+theme_override_font_sizes/normal_font_size = 32
+bbcode_enabled = true
+text = "[right]Fighter[/right]"
+
+[node name="ChargenName" type="RichTextLabel" parent="UI/Chargen"]
+offset_left = 94.0
+offset_top = 41.0
+offset_right = 554.0
+offset_bottom = 81.0
+theme_override_fonts/normal_font = ExtResource("5_kj12g")
+theme_override_font_sizes/normal_font_size = 32
+bbcode_enabled = true
+text = "[center]Your name goes here[/center]"
+
+[node name="ChargenBody" type="TextureRect" parent="UI/Chargen"]
+offset_left = 131.0
+offset_top = 175.0
+offset_right = 255.0
+offset_bottom = 447.0
+
 [node name="LaunchScreen" type="CanvasLayer" parent="UI"]
 
 [node name="LaunchBackground" type="TextureRect" parent="UI/LaunchScreen"]
@@ -2627,11 +2703,19 @@ mouse_filter = 2
 texture = ExtResource("18_tfr7p")
 script = ExtResource("4_gnu1s")
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("PanelChargen", "ChargenBG", "ChargenQuestion", "CompassBgUW1", "CompassBgUW2", "CompassPointsUW1", "CompassPointsUW2", "CompassPanelUW2", "ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLableFrameUW1", "NPCNameLableFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "CutsFull", "CutsSmallUW1", "CutsSmallUW2", "Cuts3DWinUW1", "Cuts3DWinUW2", "CutsSubtitle", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "InteractionButtonsUW1", "InteractionButtonsUW2", "PanelMainMenu", "MainMenuBG", "MainMenuButtons", "LoadingLabel", "SaveGamesNames", "AutomapPanel", "AutomapBG", "AutomapImage", "NotesPanel", "AutomapNumberLabel", "AutomapWorldGem", "messageScrollUW1", "messageScrollUW2", "TypedInput", "GameOptionButtonsUW1", "GameOptionButtonsUW2", "GameOptionsBackgroundUW1", "GameOptionsBackgroundUW2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Chains", "BackpackBG", "RuneTiles", "SelectedRunes", "ActiveSpellIcons", "StartMenuPanel", "pathuw1", "pathuw2", "filed", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSelectedUW1", "NPCTradeSelectedUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "PlayerTradeSelectedUW2", "NPCTradeSelectedUW2", "cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "weaponanimuw1", "weaponanimuw2", "placeholderuw1", "placeholderuw2", "PowerGemUW1", "PowerGemUW2")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("PanelChargen", "ChargenBG", "ChargenQuestion", "ChargenSkills", "ChargenSkills_values", "ChargenStats", "ChargenStats_values", "ChargenGender", "ChargenClass", "ChargenName", "ChargenBody", "CompassBgUW1", "CompassBgUW2", "CompassPointsUW1", "CompassPointsUW2", "CompassPanelUW2", "ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLableFrameUW1", "NPCNameLableFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "CutsFull", "CutsSmallUW1", "CutsSmallUW2", "Cuts3DWinUW1", "Cuts3DWinUW2", "CutsSubtitle", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "InteractionButtonsUW1", "InteractionButtonsUW2", "PanelMainMenu", "MainMenuBG", "MainMenuButtons", "LoadingLabel", "SaveGamesNames", "AutomapPanel", "AutomapBG", "AutomapImage", "NotesPanel", "AutomapNumberLabel", "AutomapWorldGem", "messageScrollUW1", "messageScrollUW2", "TypedInput", "GameOptionButtonsUW1", "GameOptionButtonsUW2", "GameOptionsBackgroundUW1", "GameOptionsBackgroundUW2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Chains", "BackpackBG", "RuneTiles", "SelectedRunes", "ActiveSpellIcons", "StartMenuPanel", "pathuw1", "pathuw2", "filed", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSelectedUW1", "NPCTradeSelectedUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "PlayerTradeSelectedUW2", "NPCTradeSelectedUW2", "cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "weaponanimuw1", "weaponanimuw2", "placeholderuw1", "placeholderuw2", "PowerGemUW1", "PowerGemUW2")]
 script = ExtResource("1_lw0yg")
 PanelChargen = NodePath("../Chargen")
 ChargenBG = NodePath("../Chargen/ChargenBG")
 ChargenQuestion = NodePath("../Chargen/ChargenQuestion")
+ChargenSkills = NodePath("../Chargen/ChargenSkills")
+ChargenSkills_values = NodePath("../Chargen/ChargenSkills_Values")
+ChargenStats = NodePath("../Chargen/ChargenStats")
+ChargenStats_values = NodePath("../Chargen/ChargenStats_Values")
+ChargenGender = NodePath("../Chargen/ChargenGender")
+ChargenClass = NodePath("../Chargen/ChargenClass")
+ChargenName = NodePath("../Chargen/ChargenName")
+ChargenBody = NodePath("../Chargen/ChargenBody")
 CompassBgUW1 = [NodePath("../UW1/CompassUW1/CompassBg0"), NodePath("../UW1/CompassUW1/CompassBg1"), NodePath("../UW1/CompassUW1/CompassBg2"), NodePath("../UW1/CompassUW1/CompassBg3")]
 CompassBgUW2 = [NodePath("../UW2/CompassUW2/CompassBG0"), NodePath("../UW2/CompassUW2/CompassBG1"), NodePath("../UW2/CompassUW2/CompassBG2"), NodePath("../UW2/CompassUW2/CompassBG3")]
 CompassPointsUW1 = [NodePath("../UW1/CompassUW1/CompassPoint0"), NodePath("../UW1/CompassUW1/CompassPoint1"), NodePath("../UW1/CompassUW1/CompassPoint2"), NodePath("../UW1/CompassUW1/CompassPoint3"), NodePath("../UW1/CompassUW1/CompassPoint4"), NodePath("../UW1/CompassUW1/CompassPoint5"), NodePath("../UW1/CompassUW1/CompassPoint6"), NodePath("../UW1/CompassUW1/CompassPoint7"), NodePath("../UW1/CompassUW1/CompassPoint8"), NodePath("../UW1/CompassUW1/CompassPoint9"), NodePath("../UW1/CompassUW1/CompassPoint10"), NodePath("../UW1/CompassUW1/CompassPoint11"), NodePath("../UW1/CompassUW1/CompassPoint12"), NodePath("../UW1/CompassUW1/CompassPoint13"), NodePath("../UW1/CompassUW1/CompassPoint14"), NodePath("../UW1/CompassUW1/CompassPoint15")]

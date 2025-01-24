@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text;
 using Godot;
 namespace Underworld
 {
@@ -8,6 +9,14 @@ namespace Underworld
         [Export] public CanvasLayer PanelChargen;
         [Export] public TextureRect ChargenBG;
         [Export] public RichTextLabel ChargenQuestion;
+        [Export] public RichTextLabel ChargenSkills;
+        [Export] public RichTextLabel ChargenSkills_values;
+        [Export] public RichTextLabel ChargenStats;
+        [Export] public RichTextLabel ChargenStats_values;
+        [Export] public RichTextLabel ChargenGender;
+        [Export] public RichTextLabel ChargenClass;
+        [Export] public RichTextLabel ChargenName;
+        [Export] public TextureRect ChargenBody;
 
         static GRLoader grCHRBTNS;
         public static int chargenRows = 8;
@@ -19,9 +28,24 @@ namespace Underworld
             instance.ChargenBG.Texture = bitmaps.LoadImageAt(BytLoader.CHARGEN_BYT);
             grCHRBTNS = new GRLoader(GRLoader.CHRBTNS_GR, GRLoader.GRShaderMode.None);
             grCHRBTNS.PaletteNo = 9;
+            ClearChargenTextAndBody();
             chargen.PresentChargenOptions(0);//ask for gender
         }
 
+        /// <summary>
+        /// Clears out text boxes on the chargen screen.
+        /// </summary>
+        public static void ClearChargenTextAndBody()
+        {
+            instance.ChargenSkills.Text ="";
+            instance.ChargenSkills_values.Text ="";
+            instance.ChargenStats.Text ="";
+            instance.ChargenStats_values.Text ="";
+            instance.ChargenGender.Text ="";
+            instance.ChargenClass.Text ="";
+            instance.ChargenName.Text ="";
+            instance.ChargenBody.Texture = null;
+        }
         public static void clearchargenbuttons()
         {
             var nodechildren = instance.PanelChargen.GetChildren();
@@ -120,6 +144,49 @@ namespace Underworld
         //         Debug.Print("CLicked on");
         //     }
         // }
+
+
+        /// <summary>
+        /// Prints the attributes display box
+        /// </summary>
+        public static void PrintChargenAttributes()
+        {
+            StringBuilder sb = new();
+            sb.Append($"[p]{GameStrings.GetString(2, 17)}[/p]");
+            sb.Append($"[p]{GameStrings.GetString(2, 18)}[/p]");
+            sb.Append($"[p]{GameStrings.GetString(2, 19)}[/p]");
+            sb.Append($"[p]{GameStrings.GetString(2, 20)}[/p]");
+            uimanager.instance.ChargenStats.Text = sb.ToString();
+
+            sb = new();
+            sb.Append($"[p]{playerdat.STR}[/p]");
+            sb.Append($"[p]{playerdat.DEX}[/p]");
+            sb.Append($"[p]{playerdat.INT}[/p]");
+            sb.Append($"[p]{playerdat.max_hp}[/p]");
+            uimanager.instance.ChargenStats_values.Text = sb.ToString();
+        }
+
+
+        /// <summary>
+        /// Prints the skills display box
+        /// </summary>
+        public static void PrintChargenSkills()
+        {
+            StringBuilder sb = new();
+            StringBuilder sb_v = new();
+            for (int i = 0; i < 20; i++)
+            {
+                if (playerdat.GetSkillValue(i) != 0)
+                {
+                    sb.Append($"[p]{GameStrings.GetString(2, 0x1F + i)}[/p]");
+                    sb_v.Append($"[p]{playerdat.GetSkillValue(i)}[/p]");
+                }
+            }
+            uimanager.instance.ChargenSkills.Text = sb.ToString();
+            uimanager.instance.ChargenSkills_values.Text = sb_v.ToString();
+        }
+
+
 
         static void HandleChargenClick(int index)
         {
