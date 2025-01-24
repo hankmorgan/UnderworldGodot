@@ -37,6 +37,7 @@ namespace Underworld
                         if (ClassSkillChoices[i] != 0x14) 
                         {
                             Debug.Print($"Innate starting Skill {GameStrings.GetString(2, 31 + ClassSkillChoices[i])}");
+                            SubmitChargenOption(3, ClassSkillChoices[i]);//calc class skills
                         }
                     }
                     firstSkill = false;
@@ -115,6 +116,7 @@ namespace Underworld
                     InitClassAttributes(choice);
                     break;
                 case 3://process skill choice
+                    RollSkill(choice);
                     break;
                 case 4://portrait
                     playerdat.Body = choice;
@@ -277,6 +279,45 @@ namespace Underworld
 
             ArrayPtr++;
             return true;
+        }
+
+        /// <summary>
+        /// Rolls for the skill increase when skillno is selected in chargen
+        /// </summary>
+        /// <param name="skillno"></param>
+        static void RollSkill(int skillno)
+        {
+            int skilldivisor;
+            int BaseIncrease;
+            int NoOfRolls;
+            int skillValue = playerdat.GetSkillValue(skillno);
+            if(skillValue == 0)
+            {
+                BaseIncrease = 3;
+                skilldivisor = 9;
+                NoOfRolls = 3;
+            }
+            else
+            {
+                BaseIncrease = 1;
+                skilldivisor = 0xD;
+                NoOfRolls = 3;
+            }
+            int governingstat = playerdat.GetAttributeValue(playerdat.GetGoverningAttribute(skillno));
+            skillValue += BaseIncrease;
+            skillValue += governingstat/skilldivisor;
+            skillValue += Rng.r.Next(NoOfRolls);
+            while (NoOfRolls>0)
+            {
+                skillValue += (int)playerdat.SkillCheck(governingstat, 0x14);
+                NoOfRolls--;
+            }
+            if (skillValue>30)
+            {
+                skillValue = 30;
+            }
+            playerdat.SetSkillValue(skillno, skillValue);
+
         }
     }//end class
 }// end namespace
