@@ -1,6 +1,3 @@
-using System.Diagnostics;
-using System.Reflection.PortableExecutable;
-
 namespace Underworld
 {
     /// <summary>

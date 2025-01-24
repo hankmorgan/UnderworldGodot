@@ -42,17 +42,9 @@ namespace Underworld
             {
 
                 //Random r = new Random();
-                InitEmptyPlayer();
-                InitPlayerObject();
-                // playerdat.STR = Rng.r.Next(10,31);
-                // playerdat.INT = Rng.r.Next(10,31);
-                // playerdat.DEX = Rng.r.Next(10,31);
-                // for (int s = 0; s<20;s++)
-                // {
-                //     playerdat.SetSkillValue(s, Rng.r.Next(1,12));
-                // }
-
-                chargen.SimulateChargen();//simulate chargen
+                // InitEmptyPlayer();
+                // InitPlayerObject();
+               
 
                 max_hp = 60;
                 play_hp = 60;
@@ -63,28 +55,6 @@ namespace Underworld
                 tileY = (int)(main.gamecam.Position.Z / 1.2f);
                 dungeon_level = uwsettings.instance.level + 1;
                 play_level = 1;
-
-                var isfemale = Rng.r.Next(0, 2) == 1;
-                isFemale = isfemale;
-
-                playerdat.AutomapEnabled = true;
-
-                uimanager.SetHelm(isfemale, -1);
-                uimanager.SetArmour(isfemale, -1);
-                uimanager.SetBoots(isfemale, -1);
-                uimanager.SetLeggings(isfemale, -1);
-                uimanager.SetGloves(isfemale, -1);
-                uimanager.SetRightShoulder(-1);
-                uimanager.SetLeftShoulder(-1);
-                uimanager.SetRightHand(-1);
-                uimanager.SetLeftHand(-1);
-                for (int i = 0; i < 8; i++)
-                {
-                    uimanager.SetBackPackArt(i, -1);
-                }
-                Body = Rng.r.Next(0, 4);
-                CharName = "GRONK";
-                playerdat.SetSelectedRune(0,24);playerdat.SetSelectedRune(1,24);playerdat.SetSelectedRune(2,24);
 
                 switch (_RES)
                 {
@@ -97,6 +67,31 @@ namespace Underworld
                         //cam.Position = new Vector3(-14.9f, 0.78f, 5.3f);
                         break;
                 }
+
+
+                // var isfemale = Rng.r.Next(0, 2) == 1;
+                // isFemale = isfemale;
+
+                playerdat.AutomapEnabled = true;
+
+                uimanager.SetHelm(playerdat.isFemale, -1);
+                uimanager.SetArmour(playerdat.isFemale, -1);
+                uimanager.SetBoots(playerdat.isFemale, -1);
+                uimanager.SetLeggings(playerdat.isFemale, -1);
+                uimanager.SetGloves(playerdat.isFemale, -1);
+                uimanager.SetRightShoulder(-1);
+                uimanager.SetLeftShoulder(-1);
+                uimanager.SetRightHand(-1);
+                uimanager.SetLeftHand(-1);
+                for (int i = 0; i < 8; i++)
+                {
+                    uimanager.SetBackPackArt(i, -1);
+                }
+                Body = Rng.r.Next(0, 4);
+                CharName = "GRONK";
+                playerdat.SetSelectedRune(0,24);playerdat.SetSelectedRune(1,24);playerdat.SetSelectedRune(2,24);
+
+
                 main.gamecam.Rotate(Vector3.Up, (float)Math.PI);
             }
 

@@ -12,86 +12,117 @@ namespace Underworld
         static byte[] skills_dat;
 
         //public static int ChargenStage = 0;
+        static int[] ClassSkillChoices = new int[] { 0x14, 0x14, 0x14, 0x14, 0x14, 0x14 };
+        static int[] SkillChoices = new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+        static int ArrayPtr = 0;
+        static bool firstSkill = true;
+        public static int CurrentStage = 0;
+        // public static void SimulateChargen()
+        // {
+        //     //The abilities the player will get as part of their class selection before a individual skills are choosen
 
-        public static void SimulateChargen()
+        //     PresentChargenOptions(0);//init and ask gender            
+        //     SubmitChargenOption(0, 1);//pick female gender
+
+        //     PresentChargenOptions(1);//simulate handedness question
+        //     SubmitChargenOption(1, 1); //pick lefthandy
+
+        //     PresentChargenOptions(2);//simulate class question            
+        //     SubmitChargenOption(2, 7); //pick class
+
+        //     //skills
+
+        //     while (GetSkillChoices(ref ArrayPtr, ref ClassSkillChoices, 0x36))
+        //     {
+        //         if (firstSkill)
+        //         {
+        //             RollClassBaseSkills();
+        //             firstSkill = false;
+        //         }
+        //         PrintChoices(3);
+        //     }
+
+        //     SubmitChargenOption(4, 1);//pick body #1.
+
+        //     PresentChargenOptions(5);//difficulty question
+        //     SubmitChargenOption(5, 1);//difficulty #1
+
+        //     SubmitChargenOption(6, 0);//submit name
+
+        //     PresentChargenOptions(7);//confirmation
+        //     SubmitChargenOption(7, 1);//submit 1 to confirmation.
+
+        // }
+
+        private static void RollClassBaseSkills()
         {
-            int[] ClassSkillChoices = new int[] { 0x14, 0x14, 0x14, 0x14, 0x14, 0x14 };//The abilities the player will get as part of their class selection before a individual skills are choosen
-            int ArrayPtr = 0;
-            PresentChargenOptions(0);//init and ask gender            
-            SubmitChargenOption(0, 1);//pick female gender
-
-            PresentChargenOptions(1);//simulate handedness question
-            SubmitChargenOption(1, 1); //pick lefthandy
-
-            PresentChargenOptions(2);//simulate class question            
-            SubmitChargenOption(2, 7); //pick class
-
-            //skills
-            bool firstSkill = true;
-            while (GetSkillChoices(ref ArrayPtr, ref ClassSkillChoices, 0x36))
+            for (int i = 0; i < 6; i++)
             {
-                if (firstSkill)
+                if (ClassSkillChoices[i] != 0x14)
                 {
-                    for (int i = 0; i < 6; i++)
-                    {
-                        if (ClassSkillChoices[i] != 0x14) 
-                        {
-                            Debug.Print($"Innate starting Skill {GameStrings.GetString(2, 31 + ClassSkillChoices[i])}");
-                            SubmitChargenOption(3, ClassSkillChoices[i]);//calc class skills
-                        }
-                    }
-                    firstSkill = false;
+                    Debug.Print($"Innate starting Skill {GameStrings.GetString(2, 31 + ClassSkillChoices[i])}");
+                    RollSkill(ClassSkillChoices[i]);//calc class skills
                 }
-                PrintChoices(3);
             }
-
-            SubmitChargenOption(4, 1);//pick body #1.
-
-            PresentChargenOptions(5);//difficulty question
-            SubmitChargenOption(5, 1);//difficulty #1
-
-            SubmitChargenOption(6, 0);//submit name
-
-            PresentChargenOptions(7);//confirmation
-            SubmitChargenOption(7, 1);//submit 1 to confirmation.
-
         }
+
         /// <summary>
         /// Processes character generation by presenting questions to the player.
         /// </summary>
-        public static void PresentChargenOptions(int ChargenStage = 0)
+        public static void PresentChargenOptions(int ChargenStageRequested = 0)
         {
             if (chargen_dat == null || skills_dat == null)
             {
                 InitChargenFiles();
             }
 
-            switch (ChargenStage)
+            switch (ChargenStageRequested)
             {
                 case 0: //Initiation/gender question
-                    //reset uI and present gender question
-                    PrintChoices(ChargenStage);//pick a gender    
+                    playerdat.InitEmptyPlayer();
+                    playerdat.InitPlayerObject();
+                    firstSkill = true;
+                    ClassSkillChoices = new int[] { 0x14, 0x14, 0x14, 0x14, 0x14, 0x14 };
+                    ArrayPtr = 0;
+
+                    PrintChoices(ChargenStageRequested);//pick a gender    
                     break;
                 case 1://handeness
-                    PrintChoices(ChargenStage);//pick handedness
+                    PrintChoices(ChargenStageRequested);//pick handedness
                     break;
                 case 2:
-                    PrintChoices(ChargenStage);//pick a class
+                    PrintChoices(ChargenStageRequested);//pick a class
                     break;
                 case 3://pick skills until all skill choices are exhausted
                     Debug.Print("skills");
+                    var res = GetSkillChoices(ref ArrayPtr, ref ClassSkillChoices, 0x36);
+                    if (res)
+                    {
+                        if (firstSkill)
+                        {
+                            RollClassBaseSkills();
+                            firstSkill = false;
+                        }
+                        PrintChoices(ChargenStageRequested);
+                    }
+                    else
+                    {
+                        //no more choices.
+                        CurrentStage = 4;//Skip over portrait for hte moment.
+                        PresentChargenOptions(++CurrentStage);
+                    }
                     break;
                 case 4: // pick portrait
                     Debug.Print("portraits");
                     break;
                 case 5:
-                    PrintChoices(ChargenStage);//pick a difficulty
+                    PrintChoices(ChargenStageRequested);//pick a difficulty
                     break;
                 case 6://enter name
                     Debug.Print("name");
                     break;
                 case 7:// confirm
-                    PrintChoices(ChargenStage);//Confirm
+                    PrintChoices(ChargenStageRequested);//Confirm
                     break;
             }
         }
@@ -99,36 +130,57 @@ namespace Underworld
         /// <summary>
         /// Accepts submitted answers to chargen questions.
         /// </summary>
-        /// <param name="ChargenStage"></param>
+        /// <param name="ChargenStageSubmitted"></param>
         /// <param name="choice"></param>
 
-        public static void SubmitChargenOption(int ChargenStage, int choice)
+        public static void SubmitChargenOption(int ChargenStageSubmitted, int choice)
         {
-            switch (ChargenStage)
+            switch (ChargenStageSubmitted)
             {
                 case 0://pick gender.
                     playerdat.isFemale = (choice == 1);
+                    //advance to next stage
+                    PresentChargenOptions(++CurrentStage);
                     break;
                 case 1://pick handedness
-                    playerdat.isLefty = (choice == 1);
+                    playerdat.isLefty = (choice == 0);
+                    PresentChargenOptions(++CurrentStage);
                     break;
                 case 2://class
                     InitClassAttributes(choice);
+                    PresentChargenOptions(++CurrentStage);
                     break;
-                case 3://process skill choice
-                    RollSkill(choice);
+                case 3://process skill choice 
+                    RollSkill(SkillChoices[choice]);
+                    PresentChargenOptions(CurrentStage);
                     break;
                 case 4://portrait
                     playerdat.Body = choice;
+                    PresentChargenOptions(++CurrentStage);
                     break;
                 case 5://diffiulty
                     playerdat.difficuly = choice;
+                    CurrentStage = 6;//skip over name
+                    PresentChargenOptions(++CurrentStage);
                     break;
                 case 6://name
                     playerdat.CharName = "Gronky";
+                    PresentChargenOptions(++CurrentStage);
                     break;
                 case 7://confirm
                     //if yes start game. if no. restart chargen.
+                    if (choice == 0)
+                    {
+                        //start game
+                        playerdat.currentfolder = "DATA";
+                        uimanager.EnableDisable(uimanager.instance.PanelChargen, false);
+                        uimanager.instance.JourneyOnwards("DATA");
+                    }
+                    else
+                    {
+                        CurrentStage = 0;
+                        PresentChargenOptions(0);
+                    }
                     break;
             }
         }
@@ -184,12 +236,42 @@ namespace Underworld
             var noOfChoices = getAt(chargen_dat, 8 + (QuestionNo * 18), 8);
             int ptrToChoices = (int)getAt(chargen_dat, 4 + (QuestionNo * 18), 32);
             int question = (int)getAt(chargen_dat, (QuestionNo * 18), 8);
-            Debug.Print($"The question is {GameStrings.GetString(2, question)}");
+            var questiontext = GameStrings.GetString(2, question);
+            Debug.Print($"The question is {questiontext}");
+
+            uimanager.clearchargenbuttons();
+
+            if (noOfChoices <= 8)
+            {
+                uimanager.chargenCols = 1;
+                uimanager.chargenRows = (int)noOfChoices;
+            }
+            else
+            {
+                uimanager.chargenCols = 2;
+                uimanager.chargenRows = (int)(noOfChoices / 2);
+            }
+
             for (int i = 0; i < noOfChoices; i++)
             {
                 int choice = (int)getAt(chargen_dat, ptrToChoices + (i * 2), 8);
+                uimanager.CreateChargenButton(
+                    index: i,
+                    text: GameStrings.GetString(2, choice));
                 Debug.Print($"{i}. {GameStrings.GetString(2, choice)}");
             }
+
+            if (questiontext != "")
+            {
+                uimanager.EnableDisable(uimanager.instance.ChargenQuestion, true);
+            }
+            else
+            {
+                uimanager.EnableDisable(uimanager.instance.ChargenQuestion, false);
+            }
+            uimanager.instance.ChargenQuestion.Text = questiontext;
+            uimanager.instance.ChargenQuestion.Position = uimanager.CalculateChargenButtonPosition(-1);
+
         }
 
         /// <summary>
@@ -230,6 +312,7 @@ namespace Underworld
         /// <returns></returns>
         static bool GetSkillChoices(ref int ArrayPtr, ref int[] outSkills, int chargenPtr)
         {
+            SkillChoices = new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
             var recordcounter_var2 = 0;
             var si_record = 0;
 
@@ -273,6 +356,7 @@ namespace Underworld
                 //store the options in skills.dat as strings in chargen.
                 var stringoffset = chargen_dat[chargenPtr + 4];
                 setAt(chargen_dat, stringoffset + di * 2, 16, 0x1F + skills_dat[32 + si_record + di + 1]);
+                SkillChoices[di] = skills_dat[32 + si_record + di + 1];//stores the actual skill number for later matching
                 //Debug.Print(GameStrings.GetString(2, (int)getAt(chargen_dat, stringoffset + di * 2, 16)));
                 di++;
             }
@@ -291,7 +375,7 @@ namespace Underworld
             int BaseIncrease;
             int NoOfRolls;
             int skillValue = playerdat.GetSkillValue(skillno);
-            if(skillValue == 0)
+            if (skillValue == 0)
             {
                 BaseIncrease = 3;
                 skilldivisor = 9;
@@ -305,14 +389,14 @@ namespace Underworld
             }
             int governingstat = playerdat.GetAttributeValue(playerdat.GetGoverningAttribute(skillno));
             skillValue += BaseIncrease;
-            skillValue += governingstat/skilldivisor;
+            skillValue += governingstat / skilldivisor;
             skillValue += Rng.r.Next(NoOfRolls);
-            while (NoOfRolls>0)
+            while (NoOfRolls > 0)
             {
                 skillValue += (int)playerdat.SkillCheck(governingstat, 0x14);
                 NoOfRolls--;
             }
-            if (skillValue>30)
+            if (skillValue > 30)
             {
                 skillValue = 30;
             }
