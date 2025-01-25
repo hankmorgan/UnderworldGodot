@@ -482,8 +482,22 @@ namespace Underworld
                 if (!ConversationVM.InConversation)
                 {
                     uimanager.AddToMessageScroll($"{GameStrings.GetString(1, GameStrings.str_you_have_attained_experience_level_)}{newLevel}");
-                }                
+                }
+                RecalculateHPManaMaxWeight(false);             
             }
+        }
+
+        public static void RecalculateHPManaMaxWeight(bool RestoreMana)
+        {
+            max_hp = 0x1E + ((STR*play_level)/5);
+            max_mana = ((ManaSkill + 1) * INT) >> 3;
+            if (RestoreMana)
+            {
+                play_mana = max_mana;
+            }
+            uimanager.RefreshManaFlask();
+            uimanager.RefreshHealthFlask();
+            //maxweight =  300 + (STR*13) //TODO
         }
     } //end class
 }//end namespace

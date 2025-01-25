@@ -43,13 +43,12 @@ namespace Underworld
 
                 //Random r = new Random();
                 // InitEmptyPlayer();
-                // InitPlayerObject();
-               
-
-                max_hp = 60;
-                play_hp = 60;
-                max_hp = 60;
-                play_hp = 60;
+                // InitPlayerObject();    
+                // max_hp = 60;
+                // play_hp = 60;
+                // max_hp = 60;
+                // play_hp = 60;
+                
                 play_hunger = 60;
                 tileX = -(int)(main.gamecam.Position.X / 1.2f);
                 tileY = (int)(main.gamecam.Position.Z / 1.2f);
@@ -60,7 +59,6 @@ namespace Underworld
                 {
                     case GAME_UW2:
                         main.gamecam.Position = new Vector3(-23f, 4.3f, 58.2f);
-
                         break;
                     default:
                         main.gamecam.Position = new Vector3(-38f, 4.2f, 2.2f);
@@ -68,17 +66,12 @@ namespace Underworld
                         break;
                 }
 
-
-                // var isfemale = Rng.r.Next(0, 2) == 1;
-                // isFemale = isfemale;
-
-                playerdat.AutomapEnabled = true;
-
-                uimanager.SetHelm(playerdat.isFemale, -1);
-                uimanager.SetArmour(playerdat.isFemale, -1);
-                uimanager.SetBoots(playerdat.isFemale, -1);
-                uimanager.SetLeggings(playerdat.isFemale, -1);
-                uimanager.SetGloves(playerdat.isFemale, -1);
+                AutomapEnabled = true;
+                uimanager.SetHelm(isFemale, -1);
+                uimanager.SetArmour(isFemale, -1);
+                uimanager.SetBoots(isFemale, -1);
+                uimanager.SetLeggings(isFemale, -1);
+                uimanager.SetGloves(isFemale, -1);
                 uimanager.SetRightShoulder(-1);
                 uimanager.SetLeftShoulder(-1);
                 uimanager.SetRightHand(-1);
@@ -88,13 +81,10 @@ namespace Underworld
                     uimanager.SetBackPackArt(i, -1);
                 }
                 Body = Rng.r.Next(0, 4);
-                //CharName = "GRONK";
-                playerdat.SetSelectedRune(0,24);playerdat.SetSelectedRune(1,24);playerdat.SetSelectedRune(2,24);
+                SetSelectedRune(0,24); SetSelectedRune(1,24); SetSelectedRune(2,24);
 
                 main.gamecam.Rotate(Vector3.Up, (float)Math.PI);
             }
-
-            //CharNameStringNo = GameStrings.AddString(0x125, CharName);
 
             //Load bablglobals
             bglobal.LoadGlobals(datafolder);
@@ -118,7 +108,7 @@ namespace Underworld
             
             SpellCasting.currentSpell = null;
             useon.CurrentItemBeingUsed = null;
-            playerdat.usingpole = false;
+            usingpole = false;
             musicalinstrument.PlayingInstrument = false;
             previousMazeNavigation = false;
             Teleportation.CodeToRunOnTeleport = null;

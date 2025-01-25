@@ -169,7 +169,7 @@ namespace Underworld
             sb.Append($"[p]{playerdat.DEX}[/p]");
             sb.Append($"[p]{playerdat.INT}[/p]");
             sb.Append($"[p]{playerdat.max_hp}[/p]");
-            uimanager.instance.ChargenStats_values.Text = sb.ToString();
+            uimanager.instance.ChargenStats_values.Text = sb.ToString();            
         }
 
 

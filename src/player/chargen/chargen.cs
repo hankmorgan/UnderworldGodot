@@ -212,6 +212,8 @@ namespace Underworld
             }
 
             Debug.Print($"Final player attributes STR:{playerdat.STR} DEX:{playerdat.DEX} INT:{playerdat.INT}");
+            playerdat.RecalculateHPManaMaxWeight(true);
+            playerdat.play_hp = playerdat.max_hp;
         }
 
         /// <summary>
