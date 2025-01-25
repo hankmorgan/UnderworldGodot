@@ -428,14 +428,19 @@ namespace Underworld
                         case 1: Debug.Print("Lifestealer"); break;
                         case 2: Debug.Print("Undeadbane"); break;
                         case 3: Debug.Print("Firedoom"); break;
-                        case 4: Debug.Print("stonestrike"); break;
+                        case 4: 
+                            {
+                                //Debug.Print("stonestrike"); 
+                                SpellCasting.Paralyse(objHit.index, UWTileMap.current_tilemap.LevelObjects,1);
+                                break;
+                            }
+                        
                         case 5: Debug.Print("unknownspecial 5"); break;
                         case 6: Debug.Print("Entry"); break;
                         case 7: Debug.Print("unknownspecial 7"); break;
                         case 8: Debug.Print("unknownspecial 8"); break;
                     }
                 }
-
             }
 
             return true;

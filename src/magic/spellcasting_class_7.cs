@@ -340,7 +340,7 @@ namespace Underworld
             }
         }
 
-        static void Paralyse(int index, uwObject[] objList, int caster = 1)
+        public static void Paralyse(int index, uwObject[] objList, int caster = 1)
         {
             var critter = objList[index];
             if (critter != null)
