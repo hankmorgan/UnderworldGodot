@@ -31,7 +31,7 @@ namespace Underworld
             grCursors = new GRLoader(GRLoader.CURSORS_GR, GRLoader.GRShaderMode.None);
             grObjects = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.UIShader);
             grObjects.UseRedChannel = true;
-            uimanager.instance.mousecursor.SetCursorToCursor(0);
+            instance.mousecursor.SetCursorToCursor(0);
             grButtons = new GRLoader(GRLoader.BUTTONS_GR, GRLoader.GRShaderMode.UIShader);
             grOptBtns = new GRLoader(GRLoader.OPTBTNS_GR, GRLoader.GRShaderMode.UIShader);
             grLfti = new GRLoader(GRLoader.LFTI_GR, GRLoader.GRShaderMode.UIShader);

@@ -436,13 +436,13 @@ namespace Underworld
         {
             if (SpriteNo == -1)
             { //clear the slot
-                uimanager.EnableDisable(uimanager.instance.OpenedContainer, false);
+                EnableDisable(instance.OpenedContainer, false);
                 instance.OpenedContainer.Texture = null;      
                 EnableDisable(instance.BackpackBG,false);          
             }
             else
             {
-                uimanager.EnableDisable(uimanager.instance.OpenedContainer, true);
+                EnableDisable(instance.OpenedContainer, true);
                 instance.OpenedContainer.Texture = grObjects.LoadImageAt(SpriteNo);
                 instance.OpenedContainer.Material = grObjects.GetMaterial(SpriteNo);
                 EnableDisable(instance.BackpackBG,true);
@@ -526,7 +526,7 @@ namespace Underworld
                     return;// to prevent inventory use while in the void.
                 }
                 bool isLeftClick = (eventMouseButton.ButtonIndex == MouseButton.Left);
-                if (uimanager.MessageScrollIsTemporary)
+                if (MessageScrollIsTemporary)
                 {//avoids bug involved in clicking on an object while a temp message is displayed
                     return;
                 }
@@ -566,7 +566,7 @@ namespace Underworld
                 }
                 else
                 {
-                    switch(uimanager.UsageMode)
+                    switch(UsageMode)
                     {
                         case 0:
                             InteractWithEmptySlot(); break;
@@ -591,14 +591,14 @@ namespace Underworld
                     case 1://move down
                         BackPackStart += 4;
                         container.DisplayContainerObjects(
-                            obj: playerdat.InventoryObjects[uimanager.OpenedContainerIndex],
+                            obj: playerdat.InventoryObjects[OpenedContainerIndex],
                             start: BackPackStart);
                         break;
                     case -1: //move up
                         BackPackStart -= 4;
                         if (BackPackStart < 0) { BackPackStart = 0; }
                         container.DisplayContainerObjects(
-                            obj: playerdat.InventoryObjects[uimanager.OpenedContainerIndex],
+                            obj: playerdat.InventoryObjects[OpenedContainerIndex],
                             start: BackPackStart);
                         break;
                 }
@@ -613,13 +613,13 @@ namespace Underworld
         {
             get
             {
-                if (uimanager.OpenedContainerIndex == -1)
+                if (OpenedContainerIndex == -1)
                 {
                     return -1;
                 }
                 for (int i = 0; i < 19; i++)
                 {
-                    if (playerdat.GetInventorySlotListHead(i) == uimanager.OpenedContainerIndex)
+                    if (playerdat.GetInventorySlotListHead(i) == OpenedContainerIndex)
                     {
                         return -1;
                     }
@@ -631,7 +631,7 @@ namespace Underworld
                     {
                         var result = objectsearch.GetContainingObject(
                             ListHead: objToCheck.index,
-                            ToFind: uimanager.OpenedContainerIndex,
+                            ToFind: OpenedContainerIndex,
                             objList: playerdat.InventoryObjects);
                         if (result != -1)
                         {//container found. Browse into it by using it

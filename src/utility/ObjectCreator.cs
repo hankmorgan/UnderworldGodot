@@ -32,7 +32,7 @@ namespace Underworld
         /// <returns></returns>
         public static uwObject spawnObjectInTile(int itemid, int tileX, int tileY, short xpos, short ypos, short zpos, ObjectFreeLists.ObjectListType WhichList = ObjectFreeLists.ObjectListType.StaticList)
         {
-            var slot = ObjectCreator.PrepareNewObject(itemid, WhichList);
+            var slot = PrepareNewObject(itemid, WhichList);
             //add to critter object list
             var obj = UWTileMap.current_tilemap.LevelObjects[slot];
             //Insert at the head of the tile list.
@@ -52,7 +52,7 @@ namespace Underworld
         /// <returns></returns>
         public static int SpawnObjectInHand(int itemid, bool changeInteractionmode = true)
         {
-            var slot = ObjectCreator.PrepareNewObject(itemid);
+            var slot = PrepareNewObject(itemid);
             var obj = UWTileMap.current_tilemap.LevelObjects[slot];
             playerdat.ObjectInHand = slot;
             uimanager.instance.mousecursor.SetCursorToObject(obj.item_id);

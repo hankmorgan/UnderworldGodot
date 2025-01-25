@@ -102,7 +102,7 @@ namespace Underworld
             int[] rngtest = new int[100];
             for (int i = 0; i<4000;i++)
             {
-                var res = Rng.r.Next(100);
+                var res = r.Next(100);
                 rngtest[res]++;
             }
         }

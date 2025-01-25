@@ -118,7 +118,7 @@ namespace Underworld
                         }
                     }
                     var stabilitymsg = GameStrings.GetString(1, stabilityresult);
-                    uimanager.AddToMessageScroll($"{spellname}{stabilitymsg}");
+                    AddToMessageScroll($"{spellname}{stabilitymsg}");
                 }
             }
         }

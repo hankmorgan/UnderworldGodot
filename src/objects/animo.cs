@@ -165,7 +165,7 @@ namespace Underworld
         public static bool CreateAnimoLink(uwObject obj, int Duration)
         {
             //Add animation overlay entry
-            var animoindex = animo.GetFreeAnimoSlot();
+            var animoindex = GetFreeAnimoSlot();
             obj.owner = (short)animationObjectDat.startFrame(obj.item_id);
             if (animoindex != -1)
             {

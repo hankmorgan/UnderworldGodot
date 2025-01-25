@@ -489,7 +489,7 @@ namespace Underworld
 
         public static void RefreshLighting()
         {
-            Godot.RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.GetViewingDistance(lightlevel));
+            RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.GetViewingDistance(lightlevel));
             if (previousLightLevel != lightlevel)
             {
                 UpdateAutomap();//refresh automap visibility

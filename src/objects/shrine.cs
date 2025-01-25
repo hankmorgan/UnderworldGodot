@@ -133,7 +133,7 @@ namespace Underworld
             uimanager.AddToMessageScroll("Chant the mantra {TYPEDINPUT}|");
             //Add a waiting co-routine to finish this interaction
 
-            _ = Peaky.Coroutines.Coroutine.Run(
+            _ = Coroutine.Run(
                    ShrineWaitForInput(),
                main.instance
                );

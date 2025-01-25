@@ -89,7 +89,7 @@ namespace Underworld
 
         static int GetLinkNext(long ptr)
         {
-            return (int)((DataLoader.getAt(UWTileMap.current_tilemap.lev_ark_block.Data, ptr, 16) >> 6) & 0x3FF);
+            return (int)((Loader.getAt(UWTileMap.current_tilemap.lev_ark_block.Data, ptr, 16) >> 6) & 0x3FF);
         }
 
         static void RemoveObjectAndChainFromLists(uwObject toRemove, long ptrListHead)
@@ -161,10 +161,10 @@ namespace Underworld
                         {
                             //Clear the links.
                             var newLink = toRemove.next;
-                            int tmp = (int)DataLoader.getAt(UWTileMap.current_tilemap.lev_ark_block.Data, ptrListHead, 16);
+                            int tmp = (int)Loader.getAt(UWTileMap.current_tilemap.lev_ark_block.Data, ptrListHead, 16);
                             tmp = tmp & 0x3F;
                             tmp = tmp | (newLink << 6);
-                            DataLoader.setAt(UWTileMap.current_tilemap.lev_ark_block.Data, ptrListHead, 16, tmp);
+                            Loader.setAt(UWTileMap.current_tilemap.lev_ark_block.Data, ptrListHead, 16, tmp);
                             return true;
                         }
                         else

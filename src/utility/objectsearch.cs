@@ -312,7 +312,7 @@ namespace Underworld
                             var tile = UWTileMap.current_tilemap.Tiles[x,y];
                             if (tile.indexObjectList!=0)
                             {
-                                var match = objectsearch.FindMatchInTile(x,y,majorclass,minorclass,classindex);
+                                var match = FindMatchInTile(x,y,majorclass,minorclass,classindex);
                                 if (match!=null)
                                 {
                                     FoundX = x; FoundY = y;

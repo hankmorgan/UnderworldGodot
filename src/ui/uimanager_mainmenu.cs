@@ -216,7 +216,7 @@ namespace Underworld
                     newLevelNo: playerdat.dungeon_level - 1,
                     datafolder: folder,
                     newGameSession: true);
-            uimanager.instance.InitViews();
+            instance.InitViews();
             
             SetPanelMode(0);
         }

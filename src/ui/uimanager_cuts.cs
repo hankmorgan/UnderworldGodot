@@ -84,7 +84,7 @@ namespace Underworld
             {
                 csCuts.Add(cutsfile, new CutsLoader(cutsfile));
             }
-            _ = Peaky.Coroutines.Coroutine.Run(
+            _ = Coroutine.Run(
                     DisplayCutsImageWithWait(cuts: csCuts[cutsfile], imageNo: imageNo, targetControl: targetControl, DisableCamera: DisableCamera),
                     main.instance
                );
@@ -94,7 +94,7 @@ namespace Underworld
         {
             var palette = PaletteLoader.Palettes[0];
             var width = 2; var height = 2;
-            var img = Godot.Image.Create(width, height, false, Godot.Image.Format.Rgb8);
+            var img = Image.Create(width, height, false, Image.Format.Rgb8);
             for (int iRow = 0; iRow < height; iRow++)
             {
                 int iCol = 0;
@@ -109,7 +109,7 @@ namespace Underworld
             tex.SetImage(img);
             if (!IgnoreDelay)
             {
-                _ = Peaky.Coroutines.Coroutine.Run(
+                _ = Coroutine.Run(
                         FlashColourWithDelay(colorimg: tex, targetControl: targetControl, duration: duration),
                         main.instance
                 );

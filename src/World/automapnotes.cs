@@ -35,7 +35,7 @@ namespace Underworld
             int noOfPossibleBlocks; 
             int thisAddress;        
             int startblock;
-            if (gameNo == UWClass.GAME_UW2)
+            if (gameNo == GAME_UW2)
             {
                 blockno = 240 + LevelNo;
                 noOfPossibleBlocks = 80;  
@@ -90,8 +90,8 @@ namespace Underworld
                             charptr++;
                             nextchar= (char)block.Data[addptr+charptr];
                         }
-                        var _posX = (int)Loader.getAt(block.Data,addptr+0x32,16);
-                        var _posY = (int)Loader.getAt(block.Data,addptr+0x34,16);
+                        var _posX = (int)getAt(block.Data,addptr+0x32,16);
+                        var _posY = (int)getAt(block.Data,addptr+0x34,16);
                         notes.Add (new mapnotetext(fullstring,_posX,_posY));
                     }
                     addptr+=54;

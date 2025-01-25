@@ -10,7 +10,7 @@ namespace Underworld
         public static void DamagePlayer(int basedamage, int damagetype, int damagesource)
         {
             Debug.Print("TODO further implement this");
-            damage.ScaleDamage(playerdat.playerObject.item_id, ref basedamage, damagetype);
+            ScaleDamage(playerdat.playerObject.item_id, ref basedamage, damagetype);
             playerdat.playerObject.ProjectileSourceID = (short)damagesource;
 
             if (basedamage < playerdat.play_hp)
@@ -32,7 +32,7 @@ namespace Underworld
         /// <param name="damagesource"></param>
         public static void DamageObject(uwObject objToDamage, int basedamage, int damagetype, uwObject[] objList, bool WorldObject, Godot.Vector3 hitCoordinate, int damagesource)
         {
-            damage.ScaleDamage(objToDamage.item_id, ref basedamage, damagetype);
+            ScaleDamage(objToDamage.item_id, ref basedamage, damagetype);
             Debug.Print($"Try and Damage {objToDamage.a_name} by {basedamage}");
             if (objToDamage.majorclass == 1)
             {
@@ -66,7 +66,7 @@ namespace Underworld
         /// <param name="damagetype"></param>
         static bool DamageNPC(uwObject critter, int basedamage, int damagetype, int damagesource)
         {
-            damage.ScaleDamage(critter.item_id, ref basedamage, damagetype);
+            ScaleDamage(critter.item_id, ref basedamage, damagetype);
 
             Debug.Print($"Damage {critter.a_name} by {basedamage}");
 
@@ -544,7 +544,7 @@ namespace Underworld
 
         static int VulnerableDamage(ref int basedamage)
         {
-            basedamage = System.Math.Min(127, basedamage << 1);
+            basedamage = Math.Min(127, basedamage << 1);
             return basedamage;
         }
 

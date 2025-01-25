@@ -436,11 +436,11 @@ namespace Underworld
                 if (System.IO.File.Exists(path))
                 {
                     var savename = System.IO.File.ReadAllText(path);
-                    uimanager.AddToMessageScroll($"{romannumerals[i - 1]}- {savename}", colour: 2);
+                    AddToMessageScroll($"{romannumerals[i - 1]}- {savename}", colour: 2);
                 }
                 else
                 {
-                    uimanager.AddToMessageScroll($"{romannumerals[i - 1]}- <not used yet>", colour: 2);
+                    AddToMessageScroll($"{romannumerals[i - 1]}- <not used yet>", colour: 2);
                 }
             }
         }

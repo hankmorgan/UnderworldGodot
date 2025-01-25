@@ -72,7 +72,7 @@ namespace Underworld
                                 {
                                     int triggerX = TriggerObject.quality;
                                     int triggerY = TriggerObject.owner;
-                                    trigger.RunTrap(
+                                    RunTrap(
                                         character: character,
                                         ObjectUsed: ObjectUsed,
                                         trapObject: trapObj,
@@ -243,7 +243,7 @@ namespace Underworld
                 }
                 else
                 {
-                    trigger.RunTrigger(
+                    RunTrigger(
                         character: 0, 
                         ObjectUsed: null, 
                         TriggerObject: traptrigger, 

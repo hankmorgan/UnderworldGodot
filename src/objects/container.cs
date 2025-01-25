@@ -64,7 +64,7 @@ namespace Underworld
                         if ((containerObj.classindex & 1) == 0)
                         {
                             containerObj.item_id |= 0x1;// set it to an opened version.
-                            objectInstance.RefreshSprite(containerObj);
+                            RefreshSprite(containerObj);
                         }
                     }
                     int nextobj = containerObj.link;

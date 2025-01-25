@@ -14,7 +14,7 @@ namespace Underworld
                 uimanager.instance.scroll.Clear();
                 InstrumentClassIndex = obj.classindex;
                 uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_play_the_instrument_));
-                musicalinstrument.notesplayed = "";
+                notesplayed = "";
                 PlayingInstrument = true;
                 return true;
             }

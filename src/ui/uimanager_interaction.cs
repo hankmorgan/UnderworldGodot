@@ -119,27 +119,27 @@ namespace Underworld
                 case InteractionModes.ModeTalk:
                     talk.Talk(
                         index: index,
-                        objList: Underworld.UWTileMap.current_tilemap.LevelObjects,
+                        objList: UWTileMap.current_tilemap.LevelObjects,
                         WorldObject: true);
                     break;
                 case InteractionModes.ModeLook:
                     //Do a look interaction with the object
                     look.LookAt(
                         index: index,
-                        objList: Underworld.UWTileMap.current_tilemap.LevelObjects,
+                        objList: UWTileMap.current_tilemap.LevelObjects,
                         WorldObject: true);
                     break;
                 case InteractionModes.ModeUse:
                     //do a use interaction with the object.
                     use.Use(
                         index: index,
-                        objList: Underworld.UWTileMap.current_tilemap.LevelObjects,
+                        objList: UWTileMap.current_tilemap.LevelObjects,
                         WorldObject: true);
                     break;
                 case InteractionModes.ModePickup:
                     pickup.PickUp(
                         index: index,
-                        objList: Underworld.UWTileMap.current_tilemap.LevelObjects,
+                        objList: UWTileMap.current_tilemap.LevelObjects,
                         WorldObject: true);
                     break;
             }
@@ -193,7 +193,7 @@ namespace Underworld
                             InteractionModeShowHide(false);//hide the interaction buttons.  
                         }
                         //turn off mouselook
-                        Godot.Input.MouseMode = Godot.Input.MouseModeEnum.Hidden;
+                        Input.MouseMode = Input.MouseModeEnum.Hidden;
                         main.gamecam.Set("MOUSELOOK", false);
 
                         ReturnToTopOptionsMenu();
@@ -257,7 +257,7 @@ namespace Underworld
                     {
                         return;
                     }
-                    uimanager.InteractionModeToggle((InteractionModes)extra_arg_0);
+                    InteractionModeToggle((InteractionModes)extra_arg_0);
                 }
             }
         }

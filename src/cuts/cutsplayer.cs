@@ -64,7 +64,7 @@ namespace Underworld
             //Read the .N00 control file
             if (Loader.ReadStreamFile(
                 System.IO.Path.Combine(
-                    Loader.BasePath, "CUTS", GetsCutsceneFileName(CutsceneNo,0)
+                    BasePath, "CUTS", GetsCutsceneFileName(CutsceneNo,0)
                     ), out byte[] CutsData)
                 )
             {
@@ -74,7 +74,7 @@ namespace Underworld
             uimanager.EnableDisable(uimanager.instance.PanelMainMenu, false);
             
             //start the cutscene
-            _ = Peaky.Coroutines.Coroutine.Run(
+            _ = Coroutine.Run(
                 RunCutscene(CutsceneNo,callBackMethod),
                 main.instance);
         }
@@ -101,7 +101,7 @@ namespace Underworld
 
             //Art file.
             CutsLoader cuts = null;
-            var defaultFirstFile = System.IO.Path.Combine(Loader.BasePath, "CUTS", GetsCutsceneFileName(CutsceneNo,1));
+            var defaultFirstFile = System.IO.Path.Combine(BasePath, "CUTS", GetsCutsceneFileName(CutsceneNo,1));
             //Open the .n01 file for this cutscene first if it exists so some image data is available.
             if (System.IO.File.Exists(defaultFirstFile))
             {
@@ -184,7 +184,7 @@ namespace Underworld
                         {
                             Debug.Print($"Open {GetsCutsceneFileName(cmd.functionParams[0],cmd.functionParams[1])}");
                             cuts = new CutsLoader(System.IO.Path.Combine(
-                                Loader.BasePath, "CUTS", GetsCutsceneFileName(cmd.functionParams[0],cmd.functionParams[1])));
+                                BasePath, "CUTS", GetsCutsceneFileName(cmd.functionParams[0],cmd.functionParams[1])));
                             FrameNo = 0;
                             FrameWait = 0;
                             break;
@@ -198,7 +198,7 @@ namespace Underworld
                                 Debug.Print($"Play .voc audio {cmd.functionParams[2]}");
                                 var sound = vocLoader.Load(
                                     System.IO.Path.Combine(
-                                        Loader.BasePath,
+                                        BasePath,
                                         "SOUND",
                                         $"{cmd.functionParams[2]:0#}.VOC"));
                                 if (sound!=null)

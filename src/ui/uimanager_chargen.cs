@@ -31,7 +31,7 @@ namespace Underworld
             EnableDisable(instance.PanelChargen, true);
             EnableDisable(instance.PanelMainMenu, false);
             instance.ChargenBG.Texture = bitmaps.LoadImageAt(BytLoader.CHARGEN_BYT);
-            grCHRBTNS = new GRLoader(GRLoader.CHRBTNS_GR, GRLoader.GRShaderMode.None);            
+            grCHRBTNS = new GRLoader(GRLoader.CHRBTNS_GR, GRLoader.GRShaderMode.None);
             grCHRBTNS.PaletteNo = 9;
             instance.ChargenNameBG.Texture = grCHRBTNS.LoadImageAt(6);
             ClearChargenTextAndBody();
@@ -78,6 +78,26 @@ namespace Underworld
 
             var newButton = new TextureRect();
             newButton.Name = $"CBTN_{index}_{System.Guid.NewGuid()}";
+            AddChargenEventHandler(index, newButton);
+
+            instance.PanelChargen.AddChild(newButton);
+            newButton.Position = buttonPos;
+            newButton.Size = new Vector2(268, 64);
+            newButton.Texture = grCHRBTNS.LoadImageAt(0, false);
+
+            var label = new RichTextLabel();
+            newButton.AddChild(label);
+            label.Position = new Vector2(18, 18);
+            label.Size = new Vector2(240, 40);
+            label.Text = text;
+            label.AddThemeFontOverride("normal_font", instance.FontBig);
+            label.AddThemeFontSizeOverride("normal_font_size", 32);
+            label.MouseFilter = Control.MouseFilterEnum.Ignore;
+            return newButton;
+        }
+
+        private static void AddChargenEventHandler(int index, TextureRect newButton)
+        {
             switch (index)
             {//I hate this!
                 case 0: newButton.GuiInput += instance._on_template_button_gui_input0; break;
@@ -92,26 +112,48 @@ namespace Underworld
                 case 9: newButton.GuiInput += instance._on_template_button_gui_input9; break;
                 case 10: newButton.GuiInput += instance._on_template_button_gui_input10; break;
             }
+        }
 
+        public static TextureRect CreateChargenPortraitButton(int index, bool isFemale)
+        {
+            var newButton = new TextureRect();
+            newButton.Name = $"CBTN_{index}_{System.Guid.NewGuid()}";
+            int StartPortrait = 7;
+            if (isFemale)
+            {
+                StartPortrait = 12;
+            }
 
-
+            Vector2 buttonPos = CalculateChargenButtonPosition(index: index, spacing: 144f, centre: 300f);
+            AddChargenEventHandler(index, newButton);
             instance.PanelChargen.AddChild(newButton);
-            newButton.Position = buttonPos; //new Vector2(200, 60);
-            newButton.Size = new Vector2(268, 64);
-            newButton.Texture = grCHRBTNS.LoadImageAt(0,false);
+            newButton.Position = buttonPos;
+            newButton.Size = new Vector2(140, 140);
+            newButton.Texture = grCHRBTNS.LoadImageAt(3, false);
 
-            var label = new RichTextLabel();
-            newButton.AddChild(label);
-            label.Position = new Vector2(18, 18);
-            label.Size = new Vector2(240, 40);
-            label.Text = text;
-            label.AddThemeFontOverride("normal_font", instance.FontBig);
-            label.AddThemeFontSizeOverride("normal_font_size", 32);
-            label.MouseFilter = Control.MouseFilterEnum.Ignore;
+            //Add the child portrait
+            var newPortrait = new TextureRect();
+            newPortrait.Texture = grCHRBTNS.LoadImageAt(StartPortrait + index, true);
+            newPortrait.Size = new Vector2(140, 140);
+            newButton.AddChild(newPortrait);
+            newPortrait.Position = Vector2.Zero;
+            newPortrait.MouseFilter = Control.MouseFilterEnum.Ignore;
             return newButton;
         }
 
-        public static Vector2 CalculateChargenButtonPosition(int index)
+        public static void SetChargenBodyImage(int body, bool isFemale)
+        {
+            if (isFemale)
+            {
+                instance.ChargenBody.Texture = grCHRBTNS.LoadImageAt(22 + body);
+            }
+            else
+            {
+                instance.ChargenBody.Texture = grCHRBTNS.LoadImageAt(17 + body);
+            }
+        }
+
+        public static Vector2 CalculateChargenButtonPosition(int index, float spacing = 70f, float centre = 400f)
         {
             int midpoint = chargenRows / 2;
             float buttonXaxis;
@@ -138,19 +180,10 @@ namespace Underworld
 
             Vector2 buttonPos;
 
-            float tmp = 400f - (midpoint - (index / chargenCols)) * 70f;
+            float tmp = centre - (midpoint - (index / chargenCols)) * spacing;
             buttonPos = new Vector2(buttonXaxis, tmp);
             return buttonPos;
         }
-
-        // private void _on_template_button_gui_input(InputEvent @event)
-        // {
-        //     if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
-        //     {
-        //         Debug.Print("CLicked on");
-        //     }
-        // }
-
 
         /// <summary>
         /// Prints the attributes display box
@@ -162,14 +195,14 @@ namespace Underworld
             sb.Append($"[p]{GameStrings.GetString(2, 18)}[/p]");
             sb.Append($"[p]{GameStrings.GetString(2, 19)}[/p]");
             sb.Append($"[p]{GameStrings.GetString(2, 20)}[/p]");
-            uimanager.instance.ChargenStats.Text = sb.ToString();
+            instance.ChargenStats.Text = sb.ToString();
 
             sb = new();
             sb.Append($"[p]{playerdat.STR}[/p]");
             sb.Append($"[p]{playerdat.DEX}[/p]");
             sb.Append($"[p]{playerdat.INT}[/p]");
             sb.Append($"[p]{playerdat.max_hp}[/p]");
-            uimanager.instance.ChargenStats_values.Text = sb.ToString();            
+            instance.ChargenStats_values.Text = sb.ToString();
         }
 
 
@@ -188,8 +221,8 @@ namespace Underworld
                     sb_v.Append($"[p]{playerdat.GetSkillValue(i)}[/p]");
                 }
             }
-            uimanager.instance.ChargenSkills.Text = sb.ToString();
-            uimanager.instance.ChargenSkills_values.Text = sb_v.ToString();
+            instance.ChargenSkills.Text = sb.ToString();
+            instance.ChargenSkills_values.Text = sb_v.ToString();
         }
 
 

@@ -7,7 +7,7 @@ namespace Underworld
         public static void PlayerCastsMagicProjectile()
         {
             uimanager.AddToMessageScroll("Woosh! Fired off a projectile");
-            SpellCasting.currentSpell = null;
+            currentSpell = null;
             uimanager.instance.mousecursor.SetCursorToCursor(0);
         }
 

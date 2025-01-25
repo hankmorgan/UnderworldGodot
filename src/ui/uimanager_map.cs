@@ -144,7 +144,7 @@ namespace Underworld
                     mapnote.BbcodeEnabled = true;
                     mapnote.AutowrapMode = TextServer.AutowrapMode.Off;
                     mapnote.Theme = MessageScroll.Theme;
-                    mapnote.AddThemeFontOverride("normal_font", uimanager.instance.Font4X5P);
+                    mapnote.AddThemeFontOverride("normal_font", instance.Font4X5P);
                     mapnote.AddThemeFontSizeOverride("normal_font_size", 48);
                     mapnote.Text = $"[color=#331C13]{n.notetext}[/color]";
                     instance.NotesPanel.AddChild(mapnote);

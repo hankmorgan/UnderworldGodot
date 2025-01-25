@@ -80,12 +80,17 @@ namespace Underworld
                     else
                     {
                         //no more choices.
-                        CurrentStage = 4;//Skip over portrait for the moment.
                         PresentChargenOptions(++CurrentStage);
                     }
                     break;
                 case 4: // pick portrait
-                    Debug.Print("portraits");
+                    uimanager.clearchargenbuttons();
+                    uimanager.chargenRows =5; uimanager.chargenCols = 1;
+                    uimanager.EnableDisable(uimanager.instance.ChargenQuestion,false);
+                    for (int i = 0; i<5;i++)
+                    {
+                        uimanager.CreateChargenPortraitButton(i, playerdat.isFemale);
+                    }
                     break;
                 case 5:
                     PrintChoices(ChargenStageRequested);//pick a difficulty
@@ -94,11 +99,11 @@ namespace Underworld
                     uimanager.clearchargenbuttons();
                     uimanager.EnableDisable(uimanager.instance.ChargenQuestion,false);
                     MessageDisplay.WaitingForTypedInput = true;
-                    chargen.ChargenWaitForInput = true;
+                    ChargenWaitForInput = true;
                     uimanager.instance.ChargenNameInput.Text = "";
                     uimanager.EnableDisable(uimanager.instance.ChargenNameBG,true);                    
                     uimanager.instance.TypedInput.Text = "";
-                    _ = Peaky.Coroutines.Coroutine.Run(
+                    _ = Coroutine.Run(
                             CharNameWaitForInput(),
                         main.instance
                         );
@@ -142,6 +147,7 @@ namespace Underworld
                     break;
                 case 4://portrait
                     playerdat.Body = choice;
+                    uimanager.SetChargenBodyImage(playerdat.Body, playerdat.isFemale);
                     PresentChargenOptions(++CurrentStage);
                     break;
                 case 5://diffiulty
@@ -159,6 +165,7 @@ namespace Underworld
                     if (choice == 0)
                     {
                         //start game
+                        playerdat.RecalculateHPManaMaxWeight(true);
                         playerdat.currentfolder = "DATA";
                         uimanager.EnableDisable(uimanager.instance.PanelChargen, false);
                         uimanager.instance.JourneyOnwards("DATA");
@@ -181,6 +188,7 @@ namespace Underworld
         {
             Debug.Print($"NewClass is {GameStrings.GetString(2, 23 + newclass)}");
             playerdat.CharClass = newclass;
+            playerdat.play_level = 1;
             playerdat.STR = skills_dat[newclass * 4];
             playerdat.DEX = skills_dat[(newclass * 4) + 1];
             playerdat.INT = skills_dat[(newclass * 4) + 2];

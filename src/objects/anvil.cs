@@ -33,7 +33,7 @@ namespace Underworld
             //Check if object can be repaired.
             if ((sbyte)itemToRepair.Durability >= 0)
             {    //can be repaired            
-                _ = Peaky.Coroutines.Coroutine.Run(
+                _ = Coroutine.Run(
                     RepairLogic(itemToRepair, playerdat.Repair, WorldObject),
                     main.instance
                     );

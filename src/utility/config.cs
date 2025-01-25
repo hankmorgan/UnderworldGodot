@@ -21,7 +21,7 @@ namespace Underworld
 
         static uwsettings()
         {
-            uwsettings.LoadSettings();
+            LoadSettings();
         }
         
         public static void Save()
@@ -55,10 +55,10 @@ namespace Underworld
             {
                 gamesettings = JsonSerializer.Deserialize<uwsettings>(File.ReadAllText(settingsfile));
             }
-            uwsettings.instance = gamesettings;
+            instance = gamesettings;
             if (main.gamecam!=null)
             {
-                main.gamecam.Fov = Math.Max(50, uwsettings.instance.FOV);
+                main.gamecam.Fov = Math.Max(50, instance.FOV);
             }
             
 

@@ -91,7 +91,7 @@ namespace Underworld
             // }
 
             //Clear the cursor icons
-            useon.CurrentItemBeingUsed = null;
+            CurrentItemBeingUsed = null;
             // playerdat.ObjectInHand = -1;
             uimanager.instance.mousecursor.SetCursorToCursor();
 

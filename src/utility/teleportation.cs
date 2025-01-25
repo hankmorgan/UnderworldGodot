@@ -103,7 +103,7 @@ namespace Underworld
             if ((TeleportTileX != -1) || (TeleportTileY != -1) || (TeleportLevel != -1))
             {
                 JustTeleported = true;
-                _ = Peaky.Coroutines.Coroutine.Run(
+                _ = Coroutine.Run(
                 PauseTeleport(),
                 main.instance
                 );

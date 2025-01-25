@@ -62,7 +62,7 @@ namespace Underworld
             var d = (a_do_trap_camera)(trapObj.instance);
             d.do_camera.MakeCurrent();
             main.gamecam.Set("MOVE", false);
-            _ = Peaky.Coroutines.Coroutine.Run(
+            _ = Coroutine.Run(
                    CameraWaitForInput(),
                     main.instance
                );

@@ -238,7 +238,7 @@ namespace Underworld
 
         public static void CastRunicSpell()
         {
-            var spell = RunicMagic.CurrentSpell();
+            var spell = CurrentSpell();
             if (spell != null)
             {
                 if ((spell.TestIfPlayerCanCastSpell()) | (true))//force this to be true for test and development

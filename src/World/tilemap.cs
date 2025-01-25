@@ -1298,49 +1298,49 @@ namespace Underworld
         {
             switch (tile.tileType)
             {
-                case UWTileMap.TILE_DIAG_NE:
+                case TILE_DIAG_NE:
                     zpos = tile.floorHeight << 3;
                     xpos = Rng.r.Next(1, 8);
                     ypos = Rng.r.Next(7 - xpos, 8); //(i >= 7 - j)
                     return;
-                case UWTileMap.TILE_DIAG_SE:
+                case TILE_DIAG_SE:
                     zpos = tile.floorHeight << 3;
                     xpos = Rng.r.Next(1, 8);
                     ypos = Rng.r.Next(1, xpos); // (i >= j)
                     return;
-                case UWTileMap.TILE_DIAG_NW:
+                case TILE_DIAG_NW:
                     zpos = tile.floorHeight << 3;
                     xpos = Rng.r.Next(1, 8);
                     ypos = Rng.r.Next(xpos, 8); // ((i <= j)
                     return;
-                case UWTileMap.TILE_DIAG_SW:
+                case TILE_DIAG_SW:
                     zpos = tile.floorHeight << 3;
                     xpos = Rng.r.Next(1, 8);
                     ypos = Rng.r.Next(0, 8 - xpos); // (7 - i >= j)
                     return;
-                case UWTileMap.TILE_SLOPE_S:
+                case TILE_SLOPE_S:
                     xpos = Rng.r.Next(0, 8);
                     ypos = Rng.r.Next(0, 8);
                     zpos = (8 - ypos) + (tile.floorHeight << 3);
                     return;
-                case UWTileMap.TILE_SLOPE_N:
+                case TILE_SLOPE_N:
                     xpos = Rng.r.Next(0, 8);
                     ypos = Rng.r.Next(0, 8);
                     zpos = (ypos) + (tile.floorHeight << 3);
                     return;
-                case UWTileMap.TILE_SLOPE_E:
+                case TILE_SLOPE_E:
                     xpos = Rng.r.Next(0, 8);
                     ypos = Rng.r.Next(0, 8);
                     zpos = (xpos) + (tile.floorHeight << 3);
                     return;
-                case UWTileMap.TILE_SLOPE_W:
+                case TILE_SLOPE_W:
                     xpos = Rng.r.Next(0, 8);
                     ypos = Rng.r.Next(0, 8);
                     zpos = (8 - xpos) + (tile.floorHeight << 3);
                     return;
                 default:
-                case UWTileMap.TILE_OPEN:
-                case UWTileMap.TILE_SOLID:
+                case TILE_OPEN:
+                case TILE_SOLID:
                     xpos = Rng.r.Next(0, 8);
                     ypos = Rng.r.Next(0, 8);
                     zpos = tile.floorHeight << 3;

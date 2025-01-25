@@ -39,7 +39,7 @@ namespace Underworld
             _alpha = UseAlpha(File);
             if (LoadImageFile())
             {
-                var filename = System.IO.Path.GetFileName(File);
+                var filename = Path.GetFileName(File);
                 ReadCutsFile(
                     cutsFile: ref ImageFileData, 
                     Alpha: _alpha, 

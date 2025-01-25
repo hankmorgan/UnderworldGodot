@@ -80,7 +80,7 @@ namespace Underworld
                         }
                     case >= 11 and <= 18:
                         //backpack
-                        if (uimanager.OpenedContainerIndex < 0)
+                        if (OpenedContainerIndex < 0)
                         {//backpackslot
                             var index = playerdat.AddObjectToPlayerInventory(ObjectToPickup, false);
                             playerdat.SetInventorySlotListHead(CurrentSlot, index);
@@ -103,7 +103,7 @@ namespace Underworld
                             {
                                 int occupiedslots;
                                 var containerobjects = container.GetObjects(
-                                    ContainerIndex: uimanager.OpenedContainerIndex,
+                                    ContainerIndex: OpenedContainerIndex,
                                     objList: playerdat.InventoryObjects,
                                     OccupiedSlots: out occupiedslots,
                                     start: 0,
@@ -136,7 +136,7 @@ namespace Underworld
                                 else
                                 {
                                     //add to the container link
-                                    var opened = playerdat.InventoryObjects[uimanager.OpenedContainerIndex];
+                                    var opened = playerdat.InventoryObjects[OpenedContainerIndex];
                                     newobj.next = opened.link;
                                     opened.link = index;
                                 }
@@ -234,7 +234,7 @@ namespace Underworld
                         {
                             //do pickup
                             //try and pickup
-                            uimanager.InteractionModeToggle(InteractionModes.ModePickup);
+                            InteractionModeToggle(InteractionModes.ModePickup);
                             PickupObjectFromSlot(objAtSlot);
                         }
                     }
@@ -255,7 +255,7 @@ namespace Underworld
                         }
                         else
                         {
-                            uimanager.InteractionModeToggle(InteractionModes.ModeUse);
+                            InteractionModeToggle(InteractionModes.ModeUse);
                             use.Use(
                                 index: objAtSlot,
                                 objList: playerdat.InventoryObjects,
@@ -423,7 +423,7 @@ namespace Underworld
                 case "Back5": { obj = GetBackPackIndex(5); CurrentSlot = 16; break; }
                 case "Back6": { obj = GetBackPackIndex(6); CurrentSlot = 17; break; }
                 case "Back7": { obj = GetBackPackIndex(7); CurrentSlot = 18; break; }
-                case "OpenedContainer": { obj = uimanager.OpenedContainerIndex; CurrentSlot = -1; break; }
+                case "OpenedContainer": { obj = OpenedContainerIndex; CurrentSlot = -1; break; }
                 default:
                     CurrentSlot = -1;
                     Debug.Print("Unimplemented inventory slot"); break;
@@ -487,7 +487,7 @@ namespace Underworld
                     AddedObj.next = target.link;
                     target.link = Added;
                     playerdat.ObjectInHand = -1;
-                    uimanager.instance.mousecursor.SetCursorToCursor();
+                    instance.mousecursor.SetCursorToCursor();
                 }
                 playerdat.PlayerStatusUpdate();
                 return;
@@ -506,7 +506,7 @@ namespace Underworld
                         //the runebag. add to runes if source is a rune.
                         int runeid = source.item_id - 232;
                         playerdat.SetRune(runeid, true);
-                        playerdat.ObjectInHand = -1; uimanager.instance.mousecursor.SetCursorToCursor();
+                        playerdat.ObjectInHand = -1; instance.mousecursor.SetCursorToCursor();
                     }
                 }
                 return;
@@ -526,7 +526,7 @@ namespace Underworld
                     UpdateInventoryDisplay();
                     //destroy the source.
                     ObjectFreeLists.ReleaseFreeObject(source); //object in hand
-                    playerdat.ObjectInHand = -1; uimanager.instance.mousecursor.SetCursorToCursor();
+                    playerdat.ObjectInHand = -1; instance.mousecursor.SetCursorToCursor();
                     return;
                 }
             }
@@ -561,7 +561,7 @@ namespace Underworld
             if (obj.ObjectQuantity > 1)
             {//object is a quantity, prompty for pickup size and then complete pickup
                 //prompt for quantity in coroutine.
-                _ = Peaky.Coroutines.Coroutine.Run(
+                _ = Coroutine.Run(
                         DoPickupQty(objAtSlot: objAtSlot, currslot: CurrentSlot),
                         main.instance
                     );

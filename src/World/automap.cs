@@ -28,7 +28,7 @@ namespace Underworld
         {
             //load buffer. then init tiles with their offsets
             int blockno;
-            if (gameNo == UWClass.GAME_UW2) //this is weird. I had to pass gameno as a parm or otherwise this if-else would not work??
+            if (gameNo == GAME_UW2) //this is weird. I had to pass gameno as a parm or otherwise this if-else would not work??
             {
                 Debug.Print("UW2");
                 blockno = 160 + LevelNo;
@@ -109,7 +109,7 @@ namespace Underworld
                     if ((FillArea[aX, aY].Tested) && (FillArea[aX, aY].Accessible) && (!literaledgecase))
                     {
                         //mark visited fileArea[aX,aY].ActualX/Y based on existing rules
-                        automap.MarkTileVisited(
+                        MarkTileVisited(
                             level: dungeon_level - 1,
                             tileX: x, tileY: y,
                             tiletype: UWTileMap.current_tilemap.Tiles[x, y].tileType,
@@ -120,14 +120,14 @@ namespace Underworld
                         if (UWTileMap.ValidTile(x, y))
                         {//mark the open tiles outside of vision range as undiscovered open tile if not already visited
                             var tile = UWTileMap.current_tilemap.Tiles[x, y];
-                            if (automap.automaps[dungeon_level - 1].tiles[x, y].visited == false)
+                            if (automaps[dungeon_level - 1].tiles[x, y].visited == false)
                             {
                                 if (UWTileMap.IsOpen(UWTileMap.current_tilemap.Tiles[x, y].tileType))
                                 {
                                     var displaytype = automaptileinfo.GetDisplayType(tile);
                                     //automap.automaps[dungeon_level - 1].tiles[northaxis, aY].DisplayType;
                                     //mark as undiscovered, open tile. 
-                                    automap.MarkTileVisited(
+                                    MarkTileVisited(
                                         level: dungeon_level - 1,
                                         tileX: x, tileY: y,
                                         tiletype: 11,

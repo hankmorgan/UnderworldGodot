@@ -39,17 +39,17 @@ namespace Underworld
                     if (_ObjectInHand != -1)
                     {
                         Debug.Print("Dropping object that was already in hand before taking new object.");
-                        var tile = UWTileMap.current_tilemap.Tiles[playerdat.tileX,playerdat.tileY];
+                        var tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];
 					    UWTileMap.GetRandomXYZForTile(tile, out int newxpos, out int newypos, out int newzpos);
-					    var dropcoordinate = uwObject.GetCoordinate(playerdat.tileX, playerdat.tileY, newxpos, newypos, newzpos);
+					    var dropcoordinate = uwObject.GetCoordinate(tileX, tileY, newxpos, newypos, newzpos);
 
                         //already holding something. Drop that item to the ground first so it does not get lost
                         pickup.Drop(
                             index: _ObjectInHand,
                             objList: UWTileMap.current_tilemap.LevelObjects,
                             dropPosition: dropcoordinate,
-                            tileX: playerdat.tileX,
-                            tileY: playerdat.tileY, 
+                            tileX: tileX,
+                            tileY: tileY, 
                             DoSpecialCases:false);
                     }
                 }
@@ -422,13 +422,13 @@ namespace Underworld
         {
             get
             {
-                if (playerdat.isLefty)
+                if (isLefty)
                 {
-                    return playerdat.LeftHandObject;
+                    return LeftHandObject;
                 }
                 else
                 {
-                    return playerdat.RightHandObject;
+                    return RightHandObject;
                 }
             }
         }

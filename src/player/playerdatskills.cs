@@ -184,11 +184,11 @@ namespace Underworld
 
         public static void UpdateAttributes(bool IncreasePlayMana = true)
         {
-            playerdat.max_mana = ((playerdat.ManaSkill + 1) * playerdat.INT) >> 3;
-            playerdat.max_hp = (30 + (playerdat.STR * playerdat.play_level) / 5);
+            max_mana = ((ManaSkill + 1) * INT) >> 3;
+            max_hp = (30 + (STR * play_level) / 5);
             if (IncreasePlayMana)
             {
-                playerdat.play_mana = playerdat.max_mana;
+                play_mana = max_mana;
             }      
             //TODO carry weight and others      
         }
@@ -518,7 +518,7 @@ namespace Underworld
                     if (r < governingAttribute - skillvalue)
                     {
                         skillvalue++;
-                        playerdat.GetSkillValue(skillno);
+                        GetSkillValue(skillno);
                         SetSkillValue(skillNo: skillno, value: skillvalue);
                     }
                 }

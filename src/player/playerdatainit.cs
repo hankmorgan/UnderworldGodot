@@ -13,8 +13,6 @@ namespace Underworld
                 //load player dat from a save file
                 Load(datafolder);
                 InitPlayerObject();
-                //Debug.Print($"You are at x:{X} y:{Y} z:{Z}");
-                //Debug.Print($"You are at x:{tileX} {xpos} y:{tileY} {ypos} z:{zpos}");
                 main.gamecam.Position = uwObject.GetCoordinate(
                     tileX: tileX, 
                     tileY: tileY, 
@@ -30,28 +28,10 @@ namespace Underworld
                     uimanager.SetBackPackIndex(i, BackPackObject(i));
                 }
                 RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.GetViewingDistance(lightlevel));
-                main.DrawPlayerPositionSprite(ObjectCreator.grObjects);
-                // for (int i = 0;i<24;i++)
-                // {//give all runes
-                //     SetRune (i, true);
-                // }
-                // max_mana = 60; play_mana = 60;
-                // Casting = 30; ManaSkill = 30;
             }
             else
-            {
-
-                //Random r = new Random();
-                // InitEmptyPlayer();
-                // InitPlayerObject();    
-                // max_hp = 60;
-                // play_hp = 60;
-                // max_hp = 60;
-                // play_hp = 60;
-                
+            {                
                 play_hunger = 60;
-                tileX = -(int)(main.gamecam.Position.X / 1.2f);
-                tileY = (int)(main.gamecam.Position.Z / 1.2f);
                 dungeon_level = uwsettings.instance.level + 1;
                 play_level = 1;
 
@@ -65,6 +45,8 @@ namespace Underworld
                         //cam.Position = new Vector3(-14.9f, 0.78f, 5.3f);
                         break;
                 }
+                tileX = -(int)(main.gamecam.Position.X / 1.2f);
+                tileY = (int)(main.gamecam.Position.Z / 1.2f);
 
                 AutomapEnabled = true;
                 uimanager.SetHelm(isFemale, -1);
@@ -80,9 +62,7 @@ namespace Underworld
                 {
                     uimanager.SetBackPackArt(i, -1);
                 }
-                Body = Rng.r.Next(0, 4);
                 SetSelectedRune(0,24); SetSelectedRune(1,24); SetSelectedRune(2,24);
-
                 main.gamecam.Rotate(Vector3.Up, (float)Math.PI);
             }
 
@@ -106,6 +86,7 @@ namespace Underworld
             uimanager.OpenedContainerIndex = -1;
             uimanager.EnableDisable(uimanager.instance.OpenedContainer, false);
             
+            //Reset some state globals
             SpellCasting.currentSpell = null;
             useon.CurrentItemBeingUsed = null;
             usingpole = false;
@@ -131,8 +112,6 @@ namespace Underworld
             {
                 scd.scd_data = null;
             }
-            //Set the playerlight level;            
-            //uwsettings.instance.lightlevel = light.BrightestLight();
         }
     }//end class
 }//end namespace

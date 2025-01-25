@@ -105,7 +105,7 @@ namespace Underworld
             var head = new GRLoader(GRLoader.HEADS_GR, GRLoader.GRShaderMode.UIShader);
             //set up relevant UI
             uimanager.EnableDisable(uimanager.instance.ConversationPanelUW1, _RES!=GAME_UW2);
-            uimanager.EnableDisable(uimanager.instance.ConversationPanelUW2, UWClass._RES==UWClass.GAME_UW2);
+            uimanager.EnableDisable(uimanager.instance.ConversationPanelUW2, _RES == GAME_UW2);
 
             //Player name and portrait
             if (playerdat.isFemale)
@@ -124,7 +124,7 @@ namespace Underworld
             }
 
             //turn off mouselook to allow clicking around the screen.
-            Godot.Input.MouseMode = Godot.Input.MouseModeEnum.Hidden;
+            Input.MouseMode = Input.MouseModeEnum.Hidden;
             main.gamecam.Set("MOUSELOOK", false);
             
 

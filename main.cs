@@ -125,9 +125,9 @@ public partial class main : Node3D
 					ArtLoader.SpriteScale * img.GetHeight()
 					);
 			a_sprite.Mesh.Set("size", NewSize);
-			Node3D worldobjects = main.instance.GetNode<Node3D>("/root/Underworld/worldobjects");
+			Node3D worldobjects = instance.GetNode<Node3D>("/root/Underworld/worldobjects");
 			worldobjects.AddChild(a_sprite);
-			a_sprite.Position = main.gamecam.Position;
+			a_sprite.Position = gamecam.Position;
 		}
 	}
 

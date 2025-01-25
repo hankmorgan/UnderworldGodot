@@ -124,7 +124,7 @@ namespace Underworld
                                     {
                                         Debug.Print($"Changing owner of {tmapObject.a_name} on tile {si},{4} to 5, Previous value was {tmapObject.owner}");
                                         tmapObject.owner = 5;//changes texture
-                                        tmap.RedrawFull(tmapObject);//force redraw.
+                                        objectInstance.RedrawFull(tmapObject);//force redraw.
                                     }
                                 }
                                 di++;

@@ -439,7 +439,7 @@ namespace Underworld
                     var world = worlds.GetWorldNo(dungeon_level);
                     world = world<<1;
                     world += 2;
-                    if (world < playerdat.play_level)
+                    if (world < play_level)
                     {//reduce xp gain if on a lower "world level" then the player level
                         newEXP = 1 + (newEXP/2);
                     }
@@ -473,11 +473,15 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// Levels up the character.
+        /// </summary>
+        /// <param name="newLevel"></param>
         static void LevelUp(int newLevel)
         {
             if (newLevel<=0x10)
             {
-                playerdat.play_level = newLevel;
+                play_level = newLevel;
                 SkillPoints += newLevel;
                 if (!ConversationVM.InConversation)
                 {
@@ -487,6 +491,10 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// Updates hp, mana and max weight values when leveling up or when related stats change.
+        /// </summary>
+        /// <param name="RestoreMana"></param>
         public static void RecalculateHPManaMaxWeight(bool RestoreMana)
         {
             max_hp = 0x1E + ((STR*play_level)/5);

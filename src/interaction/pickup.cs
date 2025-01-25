@@ -105,7 +105,7 @@ namespace Underworld
                 if (obj.ObjectQuantity > 1)
                 {
                     //prompt for quantity in coroutine.
-                    _ = Peaky.Coroutines.Coroutine.Run(
+                    _ = Coroutine.Run(
                             DoPickupQty(index, objList, obj),
                             main.instance
                         );
