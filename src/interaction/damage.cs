@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Numerics;
 namespace Underworld
 {
     /// <summary>
@@ -542,10 +543,48 @@ namespace Underworld
 
         }
 
+        /// <summary>
+        /// Applies damage increase when object is vulnerable to a damage type.
+        /// </summary>
+        /// <param name="basedamage"></param>
+        /// <returns></returns>
         static int VulnerableDamage(ref int basedamage)
         {
             basedamage = Math.Min(127, basedamage << 1);
             return basedamage;
+        }
+
+
+        public static void DamageObjectsInTile(int tileX, int tileY, int source, int spellclass)
+        {
+            if (spellclass != 0)
+            {
+                var tile =UWTileMap.current_tilemap.Tiles[tileX,tileY];
+
+                if (tile.indexObjectList!=0)
+                {
+                    var next = tile.indexObjectList;
+                    int[] damagetypes = new int[]{0xB, 3};
+                    int[] damagerange = new int[]{6,5};
+                    int[] damagerolls = new int[]{0xA,6};
+                    int index = (spellclass-1) & 1;
+                    while (next!=0)
+                    {
+                        var nextObj = UWTileMap.current_tilemap.LevelObjects[next];
+                        next = nextObj.next;
+                        var damagetoapply = Rng.DiceRoll(damagerolls[index], damagerange[index]);
+                        DamageObject(
+                            objToDamage: nextObj, 
+                            basedamage: damagetoapply, 
+                            damagetype: damagetypes[index], 
+                            objList: UWTileMap.current_tilemap.LevelObjects, 
+                            WorldObject: true, 
+                            hitCoordinate: Godot.Vector3.Zero, 
+                            damagesource: source);
+
+                    }
+                }
+            }
         }
 
 

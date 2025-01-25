@@ -451,6 +451,7 @@ namespace Underworld
                                 //Debug.Print("Firedoom"); 
                                 animo.SpawnAnimoAtPoint(2, hitCoordinate);//explosion
                                 //Do damage in area of tile.
+                                damage.DamageObjectsInTile(objHit.tileX, objHit.tileY, 1, 1);                                
                                 break;
                             }
                         case 4:
