@@ -304,6 +304,8 @@ namespace Underworld
                     {//return to main menu
                         ToggleMainMenuButtons(true);
                         ToggleSaves(false);
+                        EnableDisable(PanelChargen,false);
+                        EnableDisable(PanelMainMenu,true);
                     }                    
                 }
             }

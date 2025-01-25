@@ -321,5 +321,5 @@ namespace Underworld
                 HandleChargenClick(10);
             }
         }
-    }
-}
+    }//end class
+}//end namespace
