@@ -74,15 +74,16 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * Partial processing of SCD.ARK (Scheduled events in UW2)
 * Partial cutscene support
 * Sleeping and dream logic
+* Character creation
 
 ## Whats missing
 * Player collision and regular movement
 * Object physics
 * NPC AI, movement and pathfinding
+* NPC combat actions
 * Sound and music
 * Transparencies
 * Saving  
-* Character creation
 * and much more!
 
 ## Getting Started
