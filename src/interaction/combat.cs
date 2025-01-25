@@ -373,7 +373,7 @@ namespace Underworld
                     var obj = (StaticBody3D)result["collider"];
                     var normal = (Vector3)result["normal"];
                     var hitCoordinateEnd = (Vector3)result["position"];
-                    var hitCoordinate = rayorigin.Lerp(hitCoordinateEnd,0.9f);
+                    var hitCoordinate = rayorigin.Lerp(hitCoordinateEnd, 0.9f);
 
                     Debug.Print(obj.Name);
                     string[] vals = obj.Name.ToString().Split("_");
@@ -417,7 +417,6 @@ namespace Underworld
             CalcPlayerAttackScores();
 
             //execute attack
-
             if (PlayerExecuteAttack(objHit, hitCoordinate))
             {
                 if (_RES == GAME_UW2)
@@ -425,16 +424,28 @@ namespace Underworld
                     //post apply spell effect if applicable
                     switch (OnHitSpell)
                     {
-                        case 1: Debug.Print("Lifestealer"); break;
-                        case 2: Debug.Print("Undeadbane"); break;
-                        case 3: Debug.Print("Firedoom"); break;
-                        case 4: 
+                        case 1:
                             {
-                                //Debug.Print("stonestrike"); 
-                                SpellCasting.Paralyse(objHit.index, UWTileMap.current_tilemap.LevelObjects,1);
+                                if (currentweapon != null)
+                                {
+                                    //Debug.Print("Lifestealer");
+                                    if (isWeapon(currentweapon) > 0)
+                                    {
+                                        playerdat.HPRegenerationChange(-PlayerAttackDamage);
+                                    }
+
+                                }
                                 break;
                             }
-                        
+                        case 2: Debug.Print("Undeadbane"); break;
+                        case 3: Debug.Print("Firedoom"); break;
+                        case 4:
+                            {
+                                //Debug.Print("stonestrike"); 
+                                SpellCasting.Paralyse(objHit.index, UWTileMap.current_tilemap.LevelObjects, 1);
+                                break;
+                            }
+
                         case 5: Debug.Print("unknownspecial 5"); break;
                         case 6: Debug.Print("Entry"); break;
                         case 7: Debug.Print("unknownspecial 7"); break;
@@ -564,9 +575,9 @@ namespace Underworld
                     PlayerFlankingBonus = CalcFlankingBonus(critter);
                     Debug.Print("Hit");
                     ApplyPlayersFinalDamage(
-                        objHit: critter, 
-                        damageType: 4, 
-                        hitCoordinate: hitCoordinate, 
+                        objHit: critter,
+                        damageType: 4,
+                        hitCoordinate: hitCoordinate,
                         MissileAttack: false);
                 }
                 else
@@ -675,8 +686,8 @@ namespace Underworld
             {
                 //Do blood spatters.
                 Debug.Print("Spatter blood");
-                
-                if (objHit.majorclass==1)
+
+                if (objHit.majorclass == 1)
                 {
                     //********************//
                     Debug.Print("Force critter hostile for debug purposes");
@@ -684,20 +695,20 @@ namespace Underworld
                     //********************//
                     if (critterObjectDat.bleed(objHit.item_id) != 0)
                     {
-                        animo.SpawnAnimoAtPoint(0,hitCoordinate); //blood
+                        animo.SpawnAnimoAtPoint(0, hitCoordinate); //blood
                         if (PlayerHasCritted)
                         {
-                            animo.SpawnAnimoAtPoint(0,hitCoordinate + (Vector3.Up * 0.12f)); //blood
+                            animo.SpawnAnimoAtPoint(0, hitCoordinate + (Vector3.Up * 0.12f)); //blood
                         }
                     }
                     else
                     {//npc does not bleed
-                        animo.SpawnAnimoAtPoint(0xB,hitCoordinate);// a flash damage
+                        animo.SpawnAnimoAtPoint(0xB, hitCoordinate);// a flash damage
                     }
                 }
                 else
                 {//hit a non-npc object
-                    animo.SpawnAnimoAtPoint(0xB,hitCoordinate);// a flash/damage
+                    animo.SpawnAnimoAtPoint(0xB, hitCoordinate);// a flash/damage
                 }
             }
 
@@ -734,8 +745,8 @@ namespace Underworld
             damage.DamageObject(
                 objToDamage: objHit,
                 basedamage: finaldamage,
-                damagetype: damageType,                
-                objList: UWTileMap.current_tilemap.LevelObjects, 
+                damagetype: damageType,
+                objList: UWTileMap.current_tilemap.LevelObjects,
                 WorldObject: true,
                 damagesource: 1,
                 hitCoordinate: hitCoordinate);
@@ -864,7 +875,7 @@ namespace Underworld
             }
         }
 
- 
+
 
     }//end class
 }//end namespace
