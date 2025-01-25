@@ -16,7 +16,12 @@ namespace Underworld
         [Export] public RichTextLabel ChargenGender;
         [Export] public RichTextLabel ChargenClass;
         [Export] public RichTextLabel ChargenName;
+        [Export] public TextureRect ChargenNameBG;
+        [Export] public RichTextLabel ChargenNameInput;
+        [Export] public RichTextLabel ChargenNameQuestion;
         [Export] public TextureRect ChargenBody;
+
+
 
         static GRLoader grCHRBTNS;
         public static int chargenRows = 8;
@@ -37,13 +42,13 @@ namespace Underworld
         /// </summary>
         public static void ClearChargenTextAndBody()
         {
-            instance.ChargenSkills.Text ="";
-            instance.ChargenSkills_values.Text ="";
-            instance.ChargenStats.Text ="";
-            instance.ChargenStats_values.Text ="";
-            instance.ChargenGender.Text ="";
-            instance.ChargenClass.Text ="";
-            instance.ChargenName.Text ="";
+            instance.ChargenSkills.Text = "";
+            instance.ChargenSkills_values.Text = "";
+            instance.ChargenStats.Text = "";
+            instance.ChargenStats_values.Text = "";
+            instance.ChargenGender.Text = "";
+            instance.ChargenClass.Text = "";
+            instance.ChargenName.Text = "";
             instance.ChargenBody.Texture = null;
         }
         public static void clearchargenbuttons()
@@ -109,7 +114,7 @@ namespace Underworld
         {
             int midpoint = chargenRows / 2;
             float buttonXaxis;
-            if ((chargenCols == 1) || (index ==-1))
+            if ((chargenCols == 1) || (index == -1))
             {
                 buttonXaxis = 850f;
             }
@@ -125,7 +130,7 @@ namespace Underworld
                 }
             }
 
-            if ((chargenCols>1) && (index ==-1))
+            if ((chargenCols > 1) && (index == -1))
             {
                 index = -2; //hack for positioning for skills question for shepard
             }

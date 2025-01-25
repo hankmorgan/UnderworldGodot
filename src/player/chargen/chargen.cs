@@ -1,14 +1,16 @@
 using System.Diagnostics;
 using System.IO;
-using System.Text;
+using System.Collections;
+using Peaky.Coroutines;
 
 namespace Underworld
-{
+{    
     /// <summary>
     /// Loads and processes character generation files.
     /// </summary>
     public class chargen : Loader
     {
+        public static bool ChargenWaitForInput;
         static byte[] chargen_dat;
         static byte[] skills_dat;
 
@@ -78,7 +80,7 @@ namespace Underworld
                     else
                     {
                         //no more choices.
-                        CurrentStage = 4;//Skip over portrait for hte moment.
+                        CurrentStage = 4;//Skip over portrait for the moment.
                         PresentChargenOptions(++CurrentStage);
                     }
                     break;
@@ -89,7 +91,17 @@ namespace Underworld
                     PrintChoices(ChargenStageRequested);//pick a difficulty
                     break;
                 case 6://enter name
-                    Debug.Print("name");
+                    uimanager.clearchargenbuttons();
+                    uimanager.EnableDisable(uimanager.instance.ChargenQuestion,false);
+                    MessageDisplay.WaitingForTypedInput = true;
+                    chargen.ChargenWaitForInput = true;
+                    uimanager.instance.ChargenNameInput.Text = "";
+                    uimanager.EnableDisable(uimanager.instance.ChargenNameBG,true);                    
+                    uimanager.instance.TypedInput.Text = "";
+                    _ = Peaky.Coroutines.Coroutine.Run(
+                            CharNameWaitForInput(),
+                        main.instance
+                        );
                     break;
                 case 7:// confirm
                     PrintChoices(ChargenStageRequested);//Confirm
@@ -133,12 +145,13 @@ namespace Underworld
                     PresentChargenOptions(++CurrentStage);
                     break;
                 case 5://diffiulty
-                    playerdat.difficuly = choice;
-                    CurrentStage = 6;//skip over name
+                    playerdat.difficuly = choice;                    
                     PresentChargenOptions(++CurrentStage);
                     break;
-                case 6://name
-                    playerdat.CharName = "Gronky";
+                case 6://name              
+                    playerdat.CharName = uimanager.instance.ChargenNameInput.Text; 
+                    uimanager.EnableDisable(uimanager.instance.ChargenNameBG,false);
+                    uimanager.instance.ChargenName.Text = playerdat.CharName;                    
                     PresentChargenOptions(++CurrentStage);
                     break;
                 case 7://confirm
@@ -377,5 +390,16 @@ namespace Underworld
             playerdat.SetSkillValue(skillno, skillValue);
 
         }
+
+        static IEnumerator CharNameWaitForInput()
+        {
+            while (MessageDisplay.WaitingForTypedInput)
+            {
+                yield return new WaitOneFrame();
+            }
+            ChargenWaitForInput = false;
+            SubmitChargenOption(6,0);
+        }
+
     }//end class
 }// end namespace

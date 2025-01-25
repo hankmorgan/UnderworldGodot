@@ -88,9 +88,8 @@ namespace Underworld
                     uimanager.SetBackPackArt(i, -1);
                 }
                 Body = Rng.r.Next(0, 4);
-                CharName = "GRONK";
+                //CharName = "GRONK";
                 playerdat.SetSelectedRune(0,24);playerdat.SetSelectedRune(1,24);playerdat.SetSelectedRune(2,24);
-
 
                 main.gamecam.Rotate(Vector3.Up, (float)Math.PI);
             }

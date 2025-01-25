@@ -461,7 +461,7 @@ public partial class main : Node3D
 			}
 		}
 
-		if (MessageDisplay.WaitingForTypedInput)
+		if ((MessageDisplay.WaitingForTypedInput) && (!chargen.ChargenWaitForInput))
 		{
 			if (@event is InputEventKey keyinput)
 			{
@@ -488,7 +488,58 @@ public partial class main : Node3D
 						}
 					}
 				}
+			}
+		}
 
+		if ((MessageDisplay.WaitingForTypedInput) && (chargen.ChargenWaitForInput))
+		{//handles character name input
+			if (@event is InputEventKey keyinput)
+			{
+				if (keyinput.Pressed)
+				{
+					bool stop = false;
+					//var keyin = keyinput.GetKeycodeWithModifiers();
+					switch (keyinput.Keycode)
+					{
+						case Key.Enter:
+							stop = true;
+							break;
+						case Key.Backspace:
+							{
+								var text = uimanager.instance.ChargenNameInput.Text;
+								if (text.Length>0)
+								{
+									text = text.Remove(text.Length-1);
+									uimanager.instance.ChargenNameInput.Text = text;
+								}
+								break;
+							}
+						case >= Key.Space and <=Key.Z :
+							{
+								string inputed;// = (char)keyinput.Unicode;
+								if (Input.IsPhysicalKeyPressed(Key.Shift))
+								{
+									inputed = ((char)keyinput.Unicode).ToString().ToUpper();
+								}
+								else
+								{
+									inputed = ((char)keyinput.Unicode).ToString().ToLower();
+								}
+								var text = uimanager.instance.ChargenNameInput.Text;
+								if (text.Length<16)
+								{
+									text += inputed;
+									uimanager.instance.ChargenNameInput.Text = text;
+								}
+								break;
+							}
+					}
+					if (stop)
+					{//end typed input						
+						MessageDisplay.WaitingForTypedInput = false;
+						chargen.ChargenWaitForInput = false;						
+					}
+				}
 			}
 		}
 
