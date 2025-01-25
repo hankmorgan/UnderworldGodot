@@ -141,6 +141,7 @@ namespace Underworld
                         {
                             playerdat.SetSelectedRune(r,24);
                         }
+                        playerdat.NoOfSelectedRunes = 0;
                         uimanager.RedrawSelectedRuneSlots();
                         //Set weightcarried to 0
                         //playerdat.WeightCarried = 0;

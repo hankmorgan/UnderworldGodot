@@ -442,10 +442,39 @@ namespace Underworld
             }
         }
 
+
+        public static bool CanTalismansBeDestroyed
+        {
+            get
+            {
+                if (_RES == GAME_UW2)
+                {
+                    return false;
+                }
+                else
+                {
+                    return ((GetAt(0x63) >> 2) & 0x1) == 1;
+                }
+            }
+            set
+            {
+                if (_RES != GAME_UW2)
+                {
+                    var tmp = GetAt(0x63);
+                    tmp &= 0xFB;
+                    if (value)
+                    {
+                        tmp |= 4;
+                    }
+                    SetAt(0x63, tmp);
+                }
+            }
+        }
+
         /// <summary>
         /// True when garamon has been buried at his grave.
         /// </summary>
-        public static bool GaramonBuried
+        public static bool IsGaramonBuried
         {
             get
             {
@@ -456,6 +485,19 @@ namespace Underworld
                 else
                 {
                     return ((GetAt(0x63) >> 3) & 1) == 1;
+                }
+            }
+            set
+            {
+                if (_RES != GAME_UW2)
+                {
+                    var tmp = GetAt(0x63);
+                    tmp &= 0xF7;
+                    if (value)
+                    {
+                        tmp |= 8;
+                    }
+                    SetAt(0x63, tmp);
                 }
             }
         }

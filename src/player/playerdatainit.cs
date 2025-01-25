@@ -1,23 +1,28 @@
 using Godot;
 using System;
+using System.Runtime.ExceptionServices;
 namespace Underworld
 {
     public partial class playerdat : Loader
     {
         //loads a player.dat file and initialses ui and cameras.
 
+        /// <summary>
+        /// Loads a player.dat file and applies values to interface and game state
+        /// </summary>
+        /// <param name="datafolder"></param>
         public static void LoadPlayerDat(string datafolder)
-        {    
+        {
             if (datafolder.ToUpper() != "DATA")
             {
                 //load player dat from a save file
                 Load(datafolder);
                 InitPlayerObject();
                 main.gamecam.Position = uwObject.GetCoordinate(
-                    tileX: tileX, 
-                    tileY: tileY, 
-                    _xpos: xpos, 
-                    _ypos: ypos, 
+                    tileX: tileX,
+                    tileY: tileY,
+                    _xpos: xpos,
+                    _ypos: ypos,
                     _zpos: camerazpos);
                 main.gamecam.Rotation = Vector3.Zero;
                 main.gamecam.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
@@ -30,11 +35,7 @@ namespace Underworld
                 RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.GetViewingDistance(lightlevel));
             }
             else
-            {                
-                play_hunger = 60;
-                dungeon_level = uwsettings.instance.level + 1;
-                play_level = 1;
-
+            {
                 switch (_RES)
                 {
                     case GAME_UW2:
@@ -62,7 +63,6 @@ namespace Underworld
                 {
                     uimanager.SetBackPackArt(i, -1);
                 }
-                SetSelectedRune(0,24); SetSelectedRune(1,24); SetSelectedRune(2,24);
                 main.gamecam.Rotate(Vector3.Up, (float)Math.PI);
             }
 
@@ -85,7 +85,7 @@ namespace Underworld
             //remove opened container
             uimanager.OpenedContainerIndex = -1;
             uimanager.EnableDisable(uimanager.instance.OpenedContainer, false);
-            
+
             //Reset some state globals
             SpellCasting.currentSpell = null;
             useon.CurrentItemBeingUsed = null;
@@ -96,7 +96,7 @@ namespace Underworld
             pitsofcarnage.IsAvatarInPitFightGlobal = false;
 
             //load the correct skin tones for weapon animations
-            switch(Body)
+            switch (Body)
             {
                 case 0:
                 case 2:
@@ -113,5 +113,127 @@ namespace Underworld
                 scd.scd_data = null;
             }
         }
+
+
+        /// <summary>
+        /// Initialises the data for a new player
+        /// </summary>
+        /// <param name="new_charname"></param>
+        public static void InitEmptyPlayer(string new_charname = "Gronk")
+        {
+            var InventoryPtr = 0x138;
+            if (_RES == GAME_UW2)
+            {
+                InventoryPtr = 0x3E3;
+            }
+            pdat = new byte[InventoryPtr + 1];
+
+            Array.Resize(ref pdat, InventoryPtr + 512 * 8);
+
+            Rng.InitRng();
+
+            //Common items
+            CharName = new_charname;
+            play_level = 1;
+            Exp = 0;
+            SkillPoints = 1;
+            SkillPointsTotal = 0;
+            AutomapEnabled = true;
+            play_poison = 0;
+            ActiveSpellEffectCount = 0;
+            SetSelectedRune(0, 24);
+            SetSelectedRune(1, 24);
+            SetSelectedRune(2, 24);
+            NoOfSelectedRunes = 0;
+            armageddon = false;
+            intoxication = 0;
+            shrooms = 0;
+            play_fatigue = 0x30;
+            for (int r = 0; r < 24; r++)
+            {
+                SetRune(r, false);
+            }
+            play_hunger = 0xC0;
+            for (int s = 0; s < 0x14; s++)
+            {
+                SetSkillValue(s, 0);
+            }
+
+            dungeon_level = 1;
+
+
+            //Unimplemented common items
+            //Tilestate CLEAR GROUNDED, SWIMING and ON LAVA FLAGS
+            //SWIMDAMAGECOUNTER = 0
+            //FOODHealth Bonus = 0
+            //UNK 0x3C in UW2
+            //UNK 0xB6 in UW1
+            //UNK 0x3C in uw1
+            //Weight Carried?
+
+
+            //Game specific
+            if (_RES == GAME_UW2)
+            {
+                ClockValue = 0x465000;
+                SetXClock(0, 0xF);//this gets overwritten later?
+                //initialise the two moonstones
+                SetMoonstone(1, 3);
+                SetMoonstone(1, 45);
+                DreamPlantCounter = 0;
+                DreamingInVoid = false;
+                SetQuest(144, 8);
+                SetQuest(145, 0); //guardian dreams
+                //clear quests
+                for (int q = 0; q <= 15; q++)
+                {
+                    SetQuest(q, 0);
+                }
+                for (int q = 128; q <= 142; q++)
+                {
+                    SetQuest(q, 0);
+                }
+                for (int v = 0; v <= 128; v++)
+                {
+                    SetGameVariable(v, 0);
+                }
+                for (int l = 0; l < 80; l++)
+                {
+                    SetLevelLore(l, 0);
+                }
+                for (int x = 0; x <= 15; x++)
+                {
+                    SetXClock(X, 0);
+                }
+            }
+            else
+            {
+                ClockValue = 0x10B3000;
+                SilverTreeDungeon = 0;
+                SetMoonstone(0, 2);
+                isOrbDestroyed = false;
+                GotCupOfWonder = false;
+                GotKeyOfTruth = false;
+                CanTalismansBeDestroyed = false;
+                IsGaramonBuried = false;
+                MazeNavigation = false;
+                SetQuest(36, 8); //no of talismans to destroy
+                for (int q = 0; q <= 35; q++)
+                {
+                    SetQuest(q, 0);
+                }
+                SetQuest(37,0); //garamon dreams
+                for (int v = 0; v<=63; v++)
+                {
+                    SetGameVariable (v,0);
+                }
+                for (int l = 0; l < 9; l++)
+                {
+                    SetLevelLore(l, 0);
+                }
+                SetGameVariable(26,53);//bullfrog retries
+            }
+        }
+
     }//end class
 }//end namespace

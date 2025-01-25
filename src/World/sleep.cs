@@ -330,7 +330,7 @@ namespace Underworld
                 }
             }
 
-            if ((FoundStageVar2>=0) && !playerdat.GaramonBuried)
+            if ((FoundStageVar2>=0) && !playerdat.IsGaramonBuried)
             {
                 Debug.Print($"play cutscene {0x18+FoundStageVar2}");
                 cutsplayer.PlayCutscene(0x18+FoundStageVar2, null);

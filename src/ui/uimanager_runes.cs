@@ -62,6 +62,7 @@ namespace Underworld
                     {
                         playerdat.SetSelectedRune(i, 24);
                     }
+                    playerdat.NoOfSelectedRunes = 0;
                     RedrawSelectedRuneSlots();
                 }
             }
@@ -85,21 +86,25 @@ namespace Underworld
                         playerdat.SetSelectedRune(0, playerdat.GetSelectedRune(1));
                         playerdat.SetSelectedRune(1, playerdat.GetSelectedRune(2));
                         playerdat.SetSelectedRune(2, NewRuneToSelect);
+                        playerdat.NoOfSelectedRunes = 3;
                     }
                     else
                     {
-                        //Slot 2 is available.
+                        //Slot 3 is available.
                         playerdat.SetSelectedRune(2, NewRuneToSelect);
+                        playerdat.NoOfSelectedRunes = 3;
                     }
                 }
                 else
-                {   //slot 1 is available
+                {   //slot 2 is available
                     playerdat.SetSelectedRune(1, NewRuneToSelect);
+                    playerdat.NoOfSelectedRunes = 2;
                 }
             }
             else
             {//Slot 0 is available.
                 playerdat.SetSelectedRune(0, NewRuneToSelect);
+                playerdat.NoOfSelectedRunes = 1;
             }
             RedrawSelectedRuneSlots();
         }

@@ -16,37 +16,37 @@ namespace Underworld
         }
 
 
-    public static SkillCheckResult SkillCheck(int skillValue, int targetValue, bool debug = false)
-    {        
-        int score = (skillValue - targetValue) + Rng.r.Next(0, 31); //0 to 30;
-
-        if (score <= 0x1c)
+        public static SkillCheckResult SkillCheck(int skillValue, int targetValue, bool debug = false)
         {
-            if (score <= 0xF)
+            int score = (skillValue - targetValue) + Rng.r.Next(0, 31); //0 to 30;
+
+            if (score <= 0x1c)
             {
-                if (score <= 2)
+                if (score <= 0xF)
                 {
-                    if (debug){Debug.Print("Skill roll " + skillValue + " vs " + targetValue + " Score = " + score + " (CritFail)");}
-                    return SkillCheckResult.CritFail;//0xffff //critical failure
+                    if (score <= 2)
+                    {
+                        if (debug) { Debug.Print("Skill roll " + skillValue + " vs " + targetValue + " Score = " + score + " (CritFail)"); }
+                        return SkillCheckResult.CritFail;//0xffff //critical failure
+                    }
+                    else
+                    {
+                        if (debug) { Debug.Print("Skill roll " + skillValue + " vs " + targetValue + " Score = " + score + " (Fail)"); }
+                        return SkillCheckResult.Fail; //failure
+                    }
                 }
                 else
                 {
-                    if (debug){Debug.Print("Skill roll " + skillValue + " vs " + targetValue + " Score = " + score + " (Fail)");}
-                    return SkillCheckResult.Fail; //failure
+                    if (debug) { Debug.Print("Skill roll " + skillValue + " vs " + targetValue + " Score = " + score + " (Success)"); }
+                    return SkillCheckResult.Success; //sucess
                 }
             }
             else
-            {
-                if (debug){Debug.Print("Skill roll " + skillValue + " vs " + targetValue + " Score = " + score + " (Success)");}
-                return SkillCheckResult.Success; //sucess
+            { //more than 29
+                if (debug) { Debug.Print("Skill roll " + skillValue + " vs " + targetValue + " Score = " + score + " (CritSuccess)"); }
+                return SkillCheckResult.CritSucess; //critical sucess
             }
         }
-        else
-        { //more than 29
-            if (debug){Debug.Print("Skill roll " + skillValue + " vs " + targetValue + " Score = " + score + " (CritSuccess)");}
-            return SkillCheckResult.CritSucess; //critical sucess
-        }
-    }
 
 
 
@@ -150,9 +150,9 @@ namespace Underworld
         /// </summary>
         /// <param name="attributeNo"></param>
         /// <returns></returns>
-        public static int GetAttributeValue (int attributeNo)
+        public static int GetAttributeValue(int attributeNo)
         {
-            return (int)GetAt(0x1F+attributeNo);
+            return (int)GetAt(0x1F + attributeNo);
         }
 
 
@@ -161,10 +161,10 @@ namespace Underworld
         /// </summary>
         /// <param name="skillNo"></param>
         /// <returns></returns>
-         public static int GetSkillValue (int skillNo)
-         {
-            return (int)GetAt(0x22+skillNo);
-         }
+        public static int GetSkillValue(int skillNo)
+        {
+            return (int)GetAt(0x22 + skillNo);
+        }
 
 
         /// <summary>
@@ -172,14 +172,14 @@ namespace Underworld
         /// </summary>
         /// <param name="skillNo"></param>
         /// <param name="value"></param>
-         public static void SetSkillValue(int skillNo, int value)
+        public static void SetSkillValue(int skillNo, int value)
         {
             if (value > 30)
             {
                 value = 30;
             }
-            Debug.Print($"Setting skill {GameStrings.GetString(2,31+skillNo)} ({skillNo}) to {value} TODO: Refresh player stats such as mana/vit/carry weight as needed");
-            SetAt(0x22 + skillNo, (byte)value);           
+            Debug.Print($"Setting skill {GameStrings.GetString(2, 31 + skillNo)} ({skillNo}) to {value} TODO: Refresh player stats such as mana/vit/carry weight as needed");
+            SetAt(0x22 + skillNo, (byte)value);
         }
 
         public static void UpdateAttributes(bool IncreasePlayMana = true)
@@ -189,24 +189,24 @@ namespace Underworld
             if (IncreasePlayMana)
             {
                 play_mana = max_mana;
-            }      
+            }
             //TODO carry weight and others      
         }
 
-        public static void SetDungeonLore(int dungeon, int newLore)
+        public static void SetLevelLore(int levelno, int newLore)
         {
             switch (_RES)
-                {   
-                    case GAME_UW2:
-                        Debug.Print("Lore increase in UW2");
-                        return;//TODO
-                    default:           
-                        if (dungeon <=8)
-                        {
-                        SetAt(0xC3 + dungeon, (byte)newLore);
-                        }  
-                        break;
-                }
+            {
+                case GAME_UW2:
+                    SetAt(0x311 + levelno, (byte)newLore);
+                    return;
+                default:
+                    if (levelno <= 8)
+                    {
+                        SetAt(0xC3 + levelno, (byte)newLore);
+                    }
+                    break;
+            }
         }
 
         public static int Attack
@@ -437,11 +437,11 @@ namespace Underworld
         /// <returns></returns>
         public static int GetGoverningAttribute(int skillno)
         {
-            if (skillno<7)
+            if (skillno < 7)
             {
                 return 0;
             }
-            if (skillno<10)
+            if (skillno < 10)
             {
                 return 2;
             }
@@ -487,27 +487,27 @@ namespace Underworld
         /// <returns>1 if skill increases, 0 if no increase</returns>
         public static int IncreaseSkill(int skillno)
         {
-            int[] governingRngRanges = new int[]{0x19,0x28,0xA};
+            int[] governingRngRanges = new int[] { 0x19, 0x28, 0xA };
             var governingAttribute = GetGoverningAttribute(skillno);
-            
+
             int skillvalue = GetSkillValue(skillno);
             int attributeValue = GetAttributeValue(governingAttribute);
 
-            if ((attributeValue<<1) < skillvalue)
+            if ((attributeValue << 1) < skillvalue)
             {//cap skill at 2xAttribute value
                 return 0;
             }
-            if (skillvalue>=30)
+            if (skillvalue >= 30)
             { //already at max
                 return 0;
-            }            
+            }
             //increment by 1
             skillvalue++;
             SetSkillValue(skillNo: skillno, value: skillvalue);
 
-            if (governingAttribute!=0)
+            if (governingAttribute != 0)
             {
-                if (governingAttribute/2 > skillvalue)
+                if (governingAttribute / 2 > skillvalue)
                 {//gain another point when skill is less than half the attribute
                     skillvalue++;
                     SetSkillValue(skillNo: skillno, value: skillvalue);
@@ -524,14 +524,14 @@ namespace Underworld
                 }
             }
 
-            if (skillno==8 && dungeon_level<=8)
+            if (skillno == 8 && dungeon_level <= 8)
             {
                 //A lore skill increase has occured.
                 //we need to store the lore values per dungeon level and reset
                 //object  identification bits on every sprite object in the level.
                 //but oddly enough not on objects the player has in inventory?!?
-                SetDungeonLore(dungeon_level, Lore);
-            }            
+                SetLevelLore(dungeon_level - 1, Lore);
+            }
             return 1;
         }
 
@@ -548,7 +548,7 @@ namespace Underworld
             var StartSkillNo_var6 = 0;
             var skillsincreased = 0;
             var SkillToUpdate_varC = 0;
-            switch(SkillNo)
+            switch (SkillNo)
             {
                 case -3:
                     StartSkillNo_var6 = 10;//Dexterity skills
@@ -574,22 +574,22 @@ namespace Underworld
             }
             di = SkillRange_var8;
 
-            while (si>0 && di>0)
+            while (si > 0 && di > 0)
             {
                 if (
                     (StartSkillNo_var6 == 7)
-                    && 
-                    (ManaSkill<8)
-                    && 
-                    ((Rng.r.Next(0,0x8000) & 2) != 0)
+                    &&
+                    (ManaSkill < 8)
+                    &&
+                    ((Rng.r.Next(0, 0x8000) & 2) != 0)
                     )
-                    {
-                        SkillToUpdate_varC = 7;
-                    }
+                {
+                    SkillToUpdate_varC = 7;
+                }
                 else
-                    {
-                        SkillToUpdate_varC = StartSkillNo_var6 + Rng.r.Next(0, SkillRange_var8);
-                    }
+                {
+                    SkillToUpdate_varC = StartSkillNo_var6 + Rng.r.Next(0, SkillRange_var8);
+                }
 
                 var tmp = IncreaseSkill(SkillToUpdate_varC);
                 if (tmp == 1)

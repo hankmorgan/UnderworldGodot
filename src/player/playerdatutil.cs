@@ -5,7 +5,7 @@ namespace Underworld
 {
     //Utility code for playerdat
     public partial class playerdat : Loader
-     {
+    {
 
         /// <summary>
         /// player.dat data buffer
@@ -22,7 +22,7 @@ namespace Underworld
         public static int InventoryPtr
         {
             get
-            { 
+            {
                 if (_RES == GAME_UW2)
                 {
                     return 0x3E3;
@@ -31,26 +31,13 @@ namespace Underworld
                 {
                     return 0x138;
                 }
-
             }
-        }
-        public static void InitEmptyPlayer(string new_charname="Gronk")
-        {
-            var InventoryPtr = 0x138;
-            if (_RES == GAME_UW2)
-            {
-                InventoryPtr = 0x3E3;
-            }
-            pdat = new byte[InventoryPtr+1];
-               
-            Array.Resize(ref pdat, InventoryPtr + 512 * 8);
-            CharName = new_charname;            
-        }
+        }        
 
         // Func load pdat
         public static void Load(string folder)
         {
-            playerUpdateCounter=0;
+            playerUpdateCounter = 0;
             var path = System.IO.Path.Combine(BasePath, folder, "PLAYER.DAT");
             byte[] encoded;
             if (ReadStreamFile(path, out encoded))
@@ -71,7 +58,7 @@ namespace Underworld
                             break;
                         }
                 }
-               
+
                 //Copy and initialise inventory
                 var CurrentInventoryPtr = InventoryPtr;
                 var origUbound = pdat.GetUpperBound(0);
@@ -205,11 +192,5 @@ namespace Underworld
         {
             setAt(pdat, index, 32, value);
         }
-
-
-            // public static void WriteBytesToFile()
-            // {
-            //     System.IO.File.WriteAllBytes("c:\\temp\\debug.pdat", pdat);
-            // }
-     }
+    }//end class
 }//end namespace

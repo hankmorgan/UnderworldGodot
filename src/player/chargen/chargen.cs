@@ -187,8 +187,7 @@ namespace Underworld
         static void InitClassAttributes(int newclass)
         {
             Debug.Print($"NewClass is {GameStrings.GetString(2, 23 + newclass)}");
-            playerdat.CharClass = newclass;
-            playerdat.play_level = 1;
+            playerdat.CharClass = newclass;            
             playerdat.STR = skills_dat[newclass * 4];
             playerdat.DEX = skills_dat[(newclass * 4) + 1];
             playerdat.INT = skills_dat[(newclass * 4) + 2];
@@ -410,6 +409,5 @@ namespace Underworld
             ChargenWaitForInput = false;
             SubmitChargenOption(6,0);
         }
-
     }//end class
 }// end namespace

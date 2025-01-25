@@ -1,3 +1,5 @@
+using Godot;
+
 namespace Underworld
 {
     /// <summary>
@@ -73,6 +75,42 @@ namespace Underworld
             return GetAt(0x48+index) != 24;
         }
 
+        /// <summary>
+        /// Count of runes selected to cast a spell with
+        /// </summary>
+        public static int NoOfSelectedRunes
+        {
+            get
+            {
+                if(_RES==GAME_UW2)
+                {
+                    return (GetAt(0x62)>>2) & 3;
+                }
+                else
+                {
+                    return (GetAt(0x61)>>2) & 3;
+                }
+            }
+            set
+            {  
+                if (_RES==GAME_UW2)
+                {
+                    var tmp = GetAt(0x62);
+                    tmp = (byte)(tmp & 0xF3);
+                    value = value & 0x3;
+                    tmp |= (byte)(value<<2);
+                    SetAt(0x62,tmp);
+                }
+                else
+                {
+                    var tmp = GetAt(0x61);
+                    tmp = (byte)(tmp & 0xF3);
+                    value = value & 0x3;
+                    tmp |= (byte)(value<<2);
+                    SetAt(0x61,tmp);
+                }
+            }
+        }
 
 
     } //end class
