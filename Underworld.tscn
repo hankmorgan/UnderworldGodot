@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://xjvqmrbs28xs"]
+[gd_scene load_steps=27 format=3 uid="uid://xjvqmrbs28xs"]
 
 [ext_resource type="Script" path="res://src/ui/uimanager.cs" id="1_lw0yg"]
 [ext_resource type="FontFile" uid="uid://pdy3t627nfxw" path="res://resources/fonts/FONT5X6I.ttf" id="3_safdl"]
@@ -12,7 +12,6 @@
 [ext_resource type="Texture2D" uid="uid://plikcry1ow6q" path="res://resources/placeholder_art/textbox_fill.jpg" id="7_qiq8a"]
 [ext_resource type="Texture2D" uid="uid://ug231pvqaq1v" path="res://resources/placeholder_art/panels/panelsBlack.png" id="8_mis7n"]
 [ext_resource type="Texture2D" uid="uid://cf536ckyprfbf" path="res://resources/placeholder_art/uw1placeholdermain.png" id="9_emry3"]
-[ext_resource type="Texture2D" uid="uid://bulrhyea37327" path="res://resources/placeholder_art/chargenname.png" id="17_ic5uv"]
 [ext_resource type="Texture2D" uid="uid://b1y5rs02fgv6d" path="res://resources/cross.png" id="18_tfr7p"]
 [ext_resource type="Texture2D" uid="uid://b4hn75lfpnecd" path="res://resources/placeholder_art/grave.png" id="20_n8sfi"]
 [ext_resource type="Texture2D" uid="uid://b5mwiifn8jtb6" path="res://resources/placeholder_art/uw2placeholdermain.png" id="21_3ww2u"]
@@ -2648,7 +2647,6 @@ offset_left = 670.0
 offset_top = 99.0
 offset_right = 1250.0
 offset_bottom = 163.0
-texture = ExtResource("17_ic5uv")
 
 [node name="ChargenNameQuestion" type="RichTextLabel" parent="UI/Chargen/ChargenNameBG"]
 layout_mode = 0

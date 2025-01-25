@@ -31,8 +31,9 @@ namespace Underworld
             EnableDisable(instance.PanelChargen, true);
             EnableDisable(instance.PanelMainMenu, false);
             instance.ChargenBG.Texture = bitmaps.LoadImageAt(BytLoader.CHARGEN_BYT);
-            grCHRBTNS = new GRLoader(GRLoader.CHRBTNS_GR, GRLoader.GRShaderMode.None);
+            grCHRBTNS = new GRLoader(GRLoader.CHRBTNS_GR, GRLoader.GRShaderMode.None);            
             grCHRBTNS.PaletteNo = 9;
+            instance.ChargenNameBG.Texture = grCHRBTNS.LoadImageAt(6);
             ClearChargenTextAndBody();
             chargen.PresentChargenOptions(0);//ask for gender
         }
@@ -97,7 +98,7 @@ namespace Underworld
             instance.PanelChargen.AddChild(newButton);
             newButton.Position = buttonPos; //new Vector2(200, 60);
             newButton.Size = new Vector2(268, 64);
-            newButton.Texture = grCHRBTNS.LoadImageAt(0);
+            newButton.Texture = grCHRBTNS.LoadImageAt(0,false);
 
             var label = new RichTextLabel();
             newButton.AddChild(label);
