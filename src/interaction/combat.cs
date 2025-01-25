@@ -427,7 +427,6 @@ namespace Underworld
                         currWeaponType = isWeapon(currentweapon);
                     }
                     //post apply spell effect if applicable
-
                     switch (OnHitSpell)
                     {
                         case 1:
@@ -447,18 +446,31 @@ namespace Underworld
                                 }                                
                                 break;
                             }
-                        case 3: Debug.Print("Firedoom"); break;
+                        case 3: 
+                            {
+                                //Debug.Print("Firedoom"); 
+                                animo.SpawnAnimoAtPoint(2, hitCoordinate);//explosion
+                                //Do damage in area of tile.
+                                break;
+                            }
                         case 4:
                             {
                                 //Debug.Print("stonestrike"); 
                                 SpellCasting.Paralyse(objHit.index, UWTileMap.current_tilemap.LevelObjects, 1);
                                 break;
                             }
-
-                        case 5: Debug.Print("unknownspecial 5"); break;
-                        case 6: Debug.Print("Entry"); break;
-                        case 7: Debug.Print("unknownspecial 7"); break;
-                        case 8: Debug.Print("unknownspecial 8"); break;
+                        case 5:
+                        case 6: 
+                            {
+                                if (objHit.OneF0Class == 0x14)
+                                {
+                                    //is door
+                                    SpellCasting.Unlock(objHit.index, UWTileMap.current_tilemap.LevelObjects);
+                                }
+                            }
+                        Debug.Print("Entry"); break;
+                        //case 7: Debug.Print("unknownspecial 7"); break;
+                        //case 8: Debug.Print("unknownspecial 8"); break;
                     }
                 }
             }

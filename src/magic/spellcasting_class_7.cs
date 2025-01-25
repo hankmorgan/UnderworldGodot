@@ -505,7 +505,13 @@ namespace Underworld
             }
         }
 
-        static void Unlock(int index, uwObject[] objList, int character = 0)
+        /// <summary>
+        /// Magically unlocks a door
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="objList"></param>
+        /// <param name="character"></param>
+        public static void Unlock(int index, uwObject[] objList, int character = 0)
         {
             var target = objList[index];
             if (a_lock.GetIsLocked(target))
@@ -516,8 +522,8 @@ namespace Underworld
                     character: character);
                 if (character == 0)
                 {
-                    //this has no lock.
-                    uimanager.AddToMessageScroll(GameStrings.GetString(GameStrings.str_the_spell_unlocks_the_lock_));
+                    //this has been unlocked
+                    uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_the_spell_unlocks_the_lock_));
                 }
             }
             else
@@ -525,7 +531,7 @@ namespace Underworld
                 if (character == 0)
                 {
                     //this has no lock.
-                    uimanager.AddToMessageScroll(GameStrings.GetString(GameStrings.str_that_is_not_locked_));
+                    uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_that_is_not_locked_));
                 }
             }
             // if ((target.majorclass==5) && (target.minorclass==0))
