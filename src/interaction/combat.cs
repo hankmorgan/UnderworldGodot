@@ -421,23 +421,32 @@ namespace Underworld
             {
                 if (_RES == GAME_UW2)
                 {
+                    int currWeaponType = 0;
+                    if (currentweapon != null)
+                    {
+                        currWeaponType = isWeapon(currentweapon);
+                    }
                     //post apply spell effect if applicable
+
                     switch (OnHitSpell)
                     {
                         case 1:
                             {
-                                if (currentweapon != null)
+                                //Debug.Print("Lifestealer");
+                                if (currWeaponType > 0)
                                 {
-                                    //Debug.Print("Lifestealer");
-                                    if (isWeapon(currentweapon) > 0)
-                                    {
-                                        playerdat.HPRegenerationChange(-PlayerAttackDamage);
-                                    }
-
+                                    playerdat.HPRegenerationChange(-PlayerAttackDamage);
                                 }
                                 break;
                             }
-                        case 2: Debug.Print("Undeadbane"); break;
+                        case 2:
+                            {//Debug.Print("Undeadbane"); 
+                                if (currWeaponType > 0)
+                                {
+                                    SpellCasting.SmiteUndead(objHit.index, UWTileMap.current_tilemap.LevelObjects, hitCoordinate);
+                                }                                
+                                break;
+                            }
                         case 3: Debug.Print("Firedoom"); break;
                         case 4:
                             {

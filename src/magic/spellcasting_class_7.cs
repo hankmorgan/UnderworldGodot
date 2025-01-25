@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Numerics;
 
 namespace Underworld
 {
@@ -21,6 +22,7 @@ namespace Underworld
                         break;
                     case 2:
                         //SmiteUndead
+                        SmiteUndead(index, objList, hitCoordinate);
                         break;
                     case 3:
                         //Charm
@@ -338,6 +340,63 @@ namespace Underworld
 
                 }
             }
+        }
+
+        /// <summary>
+        /// Smites undead and damages liches by half their hp
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="objList"></param>
+        /// <param name="caster"></param>
+        /// <returns></returns>
+        public static bool SmiteUndead(int index, uwObject[] objList, Godot.Vector3 hitCoordinate, int caster = 1)
+        {
+            var obj = objList[index];
+
+            if (obj.item_id !=0x13)
+            {
+                if (obj.majorclass == 1)
+                {   
+                    var damageToApply = 0xFF;
+                    if (critterObjectDat.race(obj.item_id)== 0x17)
+                    {//a liche
+                        damageToApply = obj.npc_hp/2;
+                    }
+                    var test = 1 ;
+                    damage.ScaleDamage(obj.item_id, ref test, 0x80);
+                    if (test>0)
+                    {
+                        damage.DamageObject(
+                            objToDamage: obj, 
+                            basedamage: damageToApply, 
+                            damagetype: 3, 
+                            objList: objList, 
+                            WorldObject: true, 
+                            hitCoordinate: hitCoordinate, 
+                            damagesource: 1);
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                //a skull?
+                return SmiteUndeadObject(obj);
+            }
+        }
+
+        public static bool SmiteUndeadObject(uwObject obj)
+        {
+            Debug.Print("Smite undead object. unimplemented!");
+            return true;
         }
 
         public static void Paralyse(int index, uwObject[] objList, int caster = 1)
