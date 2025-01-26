@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Numerics;
 
 namespace Underworld
 {
@@ -64,12 +63,13 @@ namespace Underworld
                         break;
                     case 14:
                         //enchantment spell
+                        EnchantObject(index, objList, WorldObject);
                         break;
                     case 15:
                         //gate travel
                         GateTravelUW2(
-                            index: index, 
-                            objList: objList, 
+                            index: index,
+                            objList: objList,
                             WorldObject: WorldObject);
                         break;
                 }
@@ -353,26 +353,26 @@ namespace Underworld
         {
             var obj = objList[index];
 
-            if (obj.item_id !=0x13)
+            if (obj.item_id != 0x13)
             {
                 if (obj.majorclass == 1)
-                {   
+                {
                     var damageToApply = 0xFF;
-                    if (critterObjectDat.race(obj.item_id)== 0x17)
+                    if (critterObjectDat.race(obj.item_id) == 0x17)
                     {//a liche
-                        damageToApply = obj.npc_hp/2;
+                        damageToApply = obj.npc_hp / 2;
                     }
-                    var test = 1 ;
+                    var test = 1;
                     damage.ScaleDamage(obj.item_id, ref test, 0x80);
-                    if (test>0)
+                    if (test > 0)
                     {
                         damage.DamageObject(
-                            objToDamage: obj, 
-                            basedamage: damageToApply, 
-                            damagetype: 3, 
-                            objList: objList, 
-                            WorldObject: true, 
-                            hitCoordinate: hitCoordinate, 
+                            objToDamage: obj,
+                            basedamage: damageToApply,
+                            damagetype: 3,
+                            objList: objList,
+                            WorldObject: true,
+                            hitCoordinate: hitCoordinate,
                             damagesource: 1);
                         return true;
                     }
@@ -547,7 +547,7 @@ namespace Underworld
 
         private static void GateTravelUW2(int index, uwObject[] objList, bool WorldObject)
         {
-            for (int i = 0;i<2;i++)
+            for (int i = 0; i < 2; i++)
             {
                 Debug.Print($"Moonstone at {playerdat.GetMoonstone(i)}");
             }
@@ -555,19 +555,19 @@ namespace Underworld
             var MoonStoneActivated = objList[index];
             if (MoonStoneActivated.item_id != 0x126)
             {//not a moonstone
-                uimanager.AddToMessageScroll(GameStrings.GetString(1,0x143));// that is not a moonstone.                
+                uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x143));// that is not a moonstone.                
             }
             else
             {
                 var di = 0;
                 var var9 = 1;
                 var si = 0;
-                while (si<2)
+                while (si < 2)
                 {
                     if (playerdat.GetMoonstone(si) != playerdat.dungeon_level)
                     {
-                        if (playerdat.GetMoonstone(si)!=0)
-                        {   
+                        if (playerdat.GetMoonstone(si) != 0)
+                        {
                             var9 = 0;
                             break;
                         }
@@ -579,36 +579,36 @@ namespace Underworld
                     si++;
                 }
 
-                if ((si>=2) && (var9==0))
+                if ((si >= 2) && (var9 == 0))
                 {
-                    uimanager.AddToMessageScroll(GameStrings.GetString(1,0x121));// the moonstone is not available.
-                    return;           
+                    uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x121));// the moonstone is not available.
+                    return;
                 }
                 else
                 {
                     if (di == 2)
                     {
-                        uimanager.AddToMessageScroll(GameStrings.GetString(1,0x121));// the moonstone is not available.
-                        return;  
+                        uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x121));// the moonstone is not available.
+                        return;
                     }
                     else
                     {
-                        if (var9!=0)
+                        if (var9 != 0)
                         {//Moonstone on this level                            
                             if (WorldObject)
                             {//Used a moonstone from the ground.
                                 int targetX = MoonStoneActivated.tileX; int targetY = MoonStoneActivated.tileY;
                                 //check if this moonstone is the not as the one that has been used.
-                                for (int x = 0; x<64; x++)
+                                for (int x = 0; x < 64; x++)
                                 {
-                                    for (int y = 0; y<64; y++)
+                                    for (int y = 0; y < 64; y++)
                                     {
-                                        if ((x != targetX ) || (y!=targetY))
+                                        if ((x != targetX) || (y != targetY))
                                         {
-                                            if (UWTileMap.current_tilemap.Tiles[x,y].indexObjectList!=0)
+                                            if (UWTileMap.current_tilemap.Tiles[x, y].indexObjectList != 0)
                                             {
-                                                var foundMoonstone = objectsearch.FindMatchInTile(x,y,4,2,6);
-                                                if (foundMoonstone!=null)
+                                                var foundMoonstone = objectsearch.FindMatchInTile(x, y, 4, 2, 6);
+                                                if (foundMoonstone != null)
                                                 {
                                                     //Found a different moonstone. go to it.
                                                     Teleportation.Teleport(character: 0, tileX: x, tileY: y, newLevel: 0, heading: 0);
@@ -622,7 +622,7 @@ namespace Underworld
                                 Teleportation.Teleport(character: 0, tileX: targetX, tileY: targetY, newLevel: 0, heading: 0);
                             }
                             else
-                            {                                
+                            {
                                 //Clicked on inventory to activate. The only moonstone on the map is a different one so use the callback.
                                 Teleportation.JumpToMoonStoneOnLevel();
                             }
@@ -632,14 +632,187 @@ namespace Underworld
                             //moonstone on another map.
                             Teleportation.CodeToRunOnTeleport = Teleportation.JumpToMoonStoneOnLevel;
                             Teleportation.Teleport(
-                                character: 0, 
-                                tileX: 32, tileY: 32, 
-                                newLevel: playerdat.GetMoonstone(si), 
+                                character: 0,
+                                tileX: 32, tileY: 32,
+                                newLevel: playerdat.GetMoonstone(si),
                                 heading: 0);
                         }
                     }
                 }
             }
+        }
+
+
+        public static void EnchantObject(int index, uwObject[] objList, bool WorldObject)
+        {
+            var failed = true;
+            bool MakeAttemptVar8;
+            var objToEnchant = objList[index];
+
+            if (objToEnchant == null) { return; }
+
+            var ExistingEnchantment = MagicEnchantment.GetSpellEnchantment(objToEnchant, objList);
+
+            if (ExistingEnchantment != null)
+            {   //is already enchanted
+                var var2SpellMajorClass = ExistingEnchantment.SpellMajorClass;
+                if ((ExistingEnchantment.IsFlagBit2Set) && (ExistingEnchantment.SpellMajorClass == 0))
+                {
+                    ExistingEnchantment.SpellMajorClass = RunicMagic.SpellList[ExistingEnchantment.SpellMinorClass].SpellMajorClass;
+                    ExistingEnchantment.SpellMinorClass = RunicMagic.SpellList[ExistingEnchantment.SpellMinorClass].SpellMinorClass;
+                }
+                else
+                {
+
+                    if ((ExistingEnchantment.IsFlagBit2Set) && (CanObjectBeEnchanted(objToEnchant, ExistingEnchantment.SpellMajorClass, ExistingEnchantment.SpellMinorClass)))
+                    {
+                        //can object be enchanted.
+                        //EnchantObjectwithEffectId andupdate failed variable
+                        if (EnchantObjectwithEffectId())
+                        {
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        if (ExistingEnchantment.IsFlagBit2Set)
+                        {
+                            //Failenchantment
+                            return;
+                        }
+                        else
+                        {
+                            if (ExistingEnchantment.SpellMajorClass == 0xC)
+                            {
+                                MakeAttemptVar8 = false;
+                                if (objToEnchant.majorclass == 0)
+                                {
+                                    int diDifficulty = 0;
+                                    int siSkill = 0;
+                                    //ovr157_921
+                                    if (
+                                        (objToEnchant.minorclass > 1)
+                                        ||
+                                        (objToEnchant.minorclass <= 1 && ExistingEnchantment.SpellMinorClass >= 8)
+                                        ||
+                                        (objToEnchant.minorclass <= 1 && ExistingEnchantment.SpellMinorClass < 8 && (ExistingEnchantment.SpellMinorClass & 0xFFFB) < 3)
+                                    )
+                                    {
+                                        //ovr157_978:
+                                        if ((objToEnchant.minorclass >= 2) && (ExistingEnchantment.SpellMinorClass & 0xFFF7) < 7)
+                                        {
+                                            MakeAttemptVar8 = true;
+                                            diDifficulty = ExistingEnchantment.SpellMinorClass & 0xFFF7;
+                                            siSkill = playerdat.play_level + (playerdat.Casting / 0xB) - 10;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        //ovr157_943:
+                                        MakeAttemptVar8 = true;
+                                        diDifficulty = ExistingEnchantment.SpellMinorClass & 0xFFF8;
+                                        siSkill = (playerdat.Casting / 0xB) + (playerdat.play_level - 8) / 4;
+                                    }
+                                    if (MakeAttemptVar8)
+                                    {
+                                        if (diDifficulty <= siSkill)
+                                        {
+                                            failed = false;
+                                            objToEnchant.link = (short)((objToEnchant.link & 0x1F0) | ((ExistingEnchantment.SpellMinorClass + 1) & 0xF) | 0x200);//increase the power of the existing enchantment
+                                        }
+                                        else
+                                        {
+                                            //blowup
+                                            //Fail enchantment
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                //ovr157_a01, not applicable 
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {  //is not enchanted
+                if (objToEnchant.majorclass == 0)
+                {
+                    uwObject linkedspell = null;
+                    if ((objToEnchant.is_quant == 0) && (objToEnchant.link != 0))
+                    {
+                        linkedspell = objList[objToEnchant.link];
+                    }
+
+                    if (linkedspell == null)
+                    {
+                        objToEnchant.link = 201;// or maybe 102
+                        objToEnchant.enchantment = 1;
+                        objToEnchant.flags = (short)(objToEnchant.flags & 0xB); //clear flag 2
+                        objToEnchant.is_quant = 1; //?why?
+                        failed = false;
+                        switch (objToEnchant.minorclass)
+                        {
+                            case 0:
+                            case 1://weapons
+                                {
+                                    var newlink = ((((objToEnchant.link & 0xF) | 0x2C0) | ((Rng.r.Next(2) << 2) & 0xF)) & 0x1f0) | 0x200;
+                                    objToEnchant.link = (short)newlink;
+                                    break;
+                                }
+                            case 2://armour
+                            case 3:
+                                {
+                                    var newlink = ((((objToEnchant.link & 0xF) | 0x2C0) | (((Rng.r.Next(2) << 3) / 3) & 0xF)) & 0x1f0) | 0x200;
+                                    objToEnchant.link = (short)newlink;
+                                    break;
+                                }
+
+                        }
+                    }
+                }
+            }
+
+            //check SkillCheckResult
+            if (failed)
+            {
+                uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x12C));
+            }
+            else
+            {
+                uimanager.AddToMessageScroll($"{GameStrings.GetString(1, 0x12D)} {GameStrings.GetSimpleObjectNameUW(objToEnchant.item_id)}");
+            }
+        }
+
+
+        static bool CanObjectBeEnchanted(uwObject obj, int spellmajorclass, int spellminorclass)
+        {
+            if ((spellmajorclass == 7) && (spellminorclass == 0xE))
+            {//Can't enchant using enchant spell
+                return false;
+            }
+            if (spellmajorclass == 0xD && (spellminorclass >= 0xC && spellmajorclass <= 0xF))
+            {//skip mana boost spells
+                return false;
+            }
+
+            switch (obj.OneF0Class)
+            {
+                case 0xB://food
+                case 0xE://potions
+                case 0x13://books
+                    return false;
+                default:
+                    return true;
+            }
+        }
+
+        static bool EnchantObjectwithEffectId()
+        {
+            return true;
         }
     }//end class
 }//end namespace

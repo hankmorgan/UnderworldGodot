@@ -165,6 +165,10 @@ namespace Underworld
         /// <returns></returns>
         private static bool TryEatInteraction()
         {
+            if (playerdat.ObjectInHand == -1)
+            {
+                return false;
+            }
             var objInHand = UWTileMap.current_tilemap.LevelObjects[playerdat.ObjectInHand];
             if (objInHand.majorclass == 2 && objInHand.minorclass == 3)
             {
