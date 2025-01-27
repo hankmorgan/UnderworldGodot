@@ -182,30 +182,33 @@ namespace Underworld
             }
         }
 
-        public static void SpawnAnimoAtPoint(int subclass, Godot.Vector3 point, bool randomZpos = true)
+        public static void SpawnAnimoAtPoint(int subclassindex, Godot.Vector3 point, bool randomZpos = true)
         {
-            //Debug.Print($"Placeholder spawn animo {subclass}");
-            var itemid = 448 + subclass;
-            //var slot = ObjectCreator.PrepareNewObject(itemid, ObjectFreeLists.ObjectListType.StaticList);
-            //var newObject = UWTileMap.current_tilemap.LevelObjects[slot];
             var xpos = uwObject.FloatXYToXYPos(-point.X);
             var ypos = uwObject.FloatXYToXYPos(point.Z);
-            var zpos = uwObject.FloatZToZPos(point.Y); //(short)(t.floorHeight<<2);
-            var tileX = -(int)(point.X/1.2f);
-            var tileY = (int)(point.Z/1.2f);
-            var newObject =ObjectCreator.spawnObjectInTile(
-                itemid: itemid, 
-                tileX: tileX, 
-                tileY: tileY, 
-                xpos: xpos, 
-                ypos: ypos, 
-                zpos: zpos, 
-                WhichList: ObjectFreeLists.ObjectListType.StaticList);
-            if (newObject!=null)
+            var zpos = uwObject.FloatZToZPos(point.Y); 
+            var tileX = -(int)(point.X / 1.2f);
+            var tileY = (int)(point.Z / 1.2f);
+            SpawnAnimoInTile(subclassindex, xpos, ypos, zpos, tileX, tileY);
+        }
+
+        public static void SpawnAnimoInTile(int subclassindex, short xpos, short ypos, short zpos, int tileX, int tileY)
+        {
+            var itemid = 448 + subclassindex;
+            var newObject = ObjectCreator.spawnObjectInTile(
+                            itemid: itemid,
+                            tileX: tileX,
+                            tileY: tileY,
+                            xpos: xpos,
+                            ypos: ypos,
+                            zpos: zpos,
+                            WhichList: ObjectFreeLists.ObjectListType.StaticList);
+            if (newObject != null)
             {
-                var duration = animationObjectDat.endFrame(itemid)-animationObjectDat.startFrame(itemid);
+                var duration = animationObjectDat.endFrame(itemid) - animationObjectDat.startFrame(itemid);
                 CreateAnimoLink(newObject, duration);
             }
         }
+
     }//end class
 }//end namespace

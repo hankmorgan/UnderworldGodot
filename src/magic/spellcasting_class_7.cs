@@ -669,9 +669,9 @@ namespace Underworld
                     {
                         //can object be enchanted.
                         //EnchantObjectwithEffectId andupdate failed variable
-                        failed = ChargeSpellObjectwithEffectId(objToEnchant, objList, ExistingEnchantment.SpellMinorClass, playerdat.tileX, playerdat.tileY, WorldObject);                        
+                        failed = ChargeSpellObjectwithEffectId(objToEnchant, objList, ExistingEnchantment.SpellMinorClass, playerdat.tileX, playerdat.tileY, WorldObject);
                         if (failed)//if true object has been destroyed.
-                        {                           
+                        {
                             return;
                         }
                     }
@@ -787,7 +787,7 @@ namespace Underworld
             }
             else
             {
-                uimanager.AddToMessageScroll($"{GameStrings.GetString(1, 0x12D)} {GameStrings.GetSimpleObjectNameUW(objToEnchant.item_id)}");
+                uimanager.AddToMessageScroll($"{GameStrings.GetString(1, 0x12D)}{GameStrings.GetSimpleObjectNameUW(objToEnchant.item_id)}");
             }
         }
 
@@ -880,9 +880,9 @@ namespace Underworld
                 //sucess
                 var newCharge = -1 - playerdat.Casting / 0xF;
                 MagicObjectChargeUpdate(
-                    obj: obj, 
-                    objList: objList, 
-                    WorldObject: WorldObject, 
+                    obj: obj,
+                    objList: objList,
+                    WorldObject: WorldObject,
                     ChargeChangeFactor: newCharge);
                 return false;
             }
@@ -893,11 +893,29 @@ namespace Underworld
             Debug.Print("FAIL");
         }
 
+        /// <summary>
+        /// Handles an explosion when enchantment fails.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
         static void EnchantFailureExplosion(uwObject obj, int x, int y)
         {
-            Debug.Print("BANG!");
+            var tile = UWTileMap.current_tilemap.Tiles[x, y];
+            animo.SpawnAnimoInTile(
+                subclassindex: 2, xpos: 3, ypos: 3, zpos: (short)(tile.floorHeight << 3), tileX: x, tileY: y);
+            uimanager.AddToMessageScroll($"{GameStrings.GetString(1, 0x13E)}{GameStrings.GetSimpleObjectNameUW(obj.item_id)}{GameStrings.GetString(1, 0x13F)}");//your attempt to enchant X destroys it in a blaze of flame
+            damage.DamageObjectsInTile(playerdat.tileX, playerdat.tileY, 1, 1);
         }
 
+        /// <summary>
+        /// Increases the charge of a spell linked to obj
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="objList"></param>
+        /// <param name="WorldObject"></param>
+        /// <param name="ChargeChangeFactor"></param>
+        /// <returns>the final charge applied</returns>
         static int MagicObjectChargeUpdate(uwObject obj, uwObject[] objList, bool WorldObject, int ChargeChangeFactor)
         {
             if ((obj.is_quant == 0) && (obj.link != 0))
