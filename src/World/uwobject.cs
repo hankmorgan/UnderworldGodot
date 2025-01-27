@@ -1614,5 +1614,55 @@ namespace Underworld
         {
             return false;
         }
+
+        public static bool CheckIfObjectInValidSlot(uwObject obj, int slot)
+        {
+            if ((slot>=0) && (slot<4))
+            {
+                return true;
+            }
+            if ((slot== 10) || (slot==9))
+            {
+                return true;
+            }
+            if (
+                (playerdat.isLefty && slot==8)
+                ||
+                (!playerdat.isLefty && slot==7)
+                )
+            {
+                if (obj.majorclass == 0)
+                {
+                    if (obj.minorclass>=2)
+                    {
+                        if (obj.classindex<11)
+                        {
+                            return false;
+                        }
+                        if (obj.classindex<=15)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
     } //end class
 }//end namespace

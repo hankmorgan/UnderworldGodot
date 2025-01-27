@@ -104,6 +104,10 @@ namespace Underworld
                 SetAt(offset, existingValue);
             }
         }
+
+        /// <summary>
+        /// pdat[] & 1 is 1 when player is right handed
+        /// </summary>
         public static bool isLefty
         {
             get

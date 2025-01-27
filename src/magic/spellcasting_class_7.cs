@@ -680,7 +680,7 @@ namespace Underworld
                         if (ExistingEnchantment.IsFlagBit2Set)
                         {
                             //Failenchantment
-                            FailEnchantment();
+                            FailEnchantment(objToEnchant,objList, WorldObject, playerdat.tileX, playerdat.tileY);
                             return;
                         }
                         else
@@ -698,7 +698,7 @@ namespace Underworld
                                         ||
                                         (objToEnchant.minorclass <= 1 && ExistingEnchantment.SpellMinorClass >= 8)
                                         ||
-                                        (objToEnchant.minorclass <= 1 && ExistingEnchantment.SpellMinorClass < 8 && (ExistingEnchantment.SpellMinorClass & 0xFFFB) < 3)
+                                        (objToEnchant.minorclass <= 1 && ExistingEnchantment.SpellMinorClass < 8 && (ExistingEnchantment.SpellMinorClass & 0xFFFB) >= 3)
                                     )
                                     {
                                         //ovr157_978:
@@ -727,7 +727,7 @@ namespace Underworld
                                         {
                                             //blowup
                                             //Fail enchantment
-                                            FailEnchantment();
+                                            FailEnchantment(objToEnchant,objList, WorldObject, playerdat.tileX, playerdat.tileY);
                                             return;
                                         }
                                     }
@@ -888,9 +888,37 @@ namespace Underworld
             }
         }
 
-        static void FailEnchantment()
+        /// <summary>
+        /// Handles failing the enchantment and destroying the target object.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="objList"></param>
+        /// <param name="WorldObject"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        static void FailEnchantment(uwObject obj, uwObject[]objList, bool WorldObject, int x, int y)
         {
-            Debug.Print("FAIL");
+            EnchantFailureExplosion(obj, x, y);
+            if (WorldObject)
+            {
+                damage.DamageObject(
+                    objToDamage: obj, 
+                    basedamage: 0xFF, 
+                    damagetype: 0, 
+                    objList: objList, 
+                    WorldObject: WorldObject, 
+                    hitCoordinate: obj.instance.uwnode.Position, 
+                    damagesource: 1 );
+            }
+            else
+            {
+                //Apply equipment damage
+                //Find object inventory slot
+                damage.DamageEquipment(uimanager.CurrentSlot, 0xFF, 0, 2, 1);
+                
+                uimanager.UpdateInventoryDisplay();
+            }
+
         }
 
         /// <summary>

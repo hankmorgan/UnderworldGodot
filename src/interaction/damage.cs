@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Net;
 namespace Underworld
 {
     /// <summary>
@@ -30,13 +31,13 @@ namespace Underworld
         /// <param name="basedamage"></param>
         /// <param name="damagetype"></param>
         /// <param name="damagesource"></param>
-        public static void DamageObject(uwObject objToDamage, int basedamage, int damagetype, uwObject[] objList, bool WorldObject, Godot.Vector3 hitCoordinate, int damagesource)
+        public static int DamageObject(uwObject objToDamage, int basedamage, int damagetype, uwObject[] objList, bool WorldObject, Godot.Vector3 hitCoordinate, int damagesource, bool ignoreVector = false)
         {
             ScaleDamage(objToDamage.item_id, ref basedamage, damagetype);
             Debug.Print($"Try and Damage {objToDamage.a_name} by {basedamage}");
             if (objToDamage.majorclass == 1)
             {
-                DamageNPC(
+                return DamageNPC(
                     critter: objToDamage,
                     basedamage: basedamage,
                     damagetype: damagetype,
@@ -44,17 +45,19 @@ namespace Underworld
             }
             else
             {
-                if (DamageGeneralObject(objToDamage, basedamage, 0))
+                if (DamageOtherObjectTypes(objToDamage, basedamage, 0))
                 {
                     //object should be destroyed
-                    ObjectDestruction(
+                    return ObjectDestruction(
                         objToDestroy: objToDamage,
                         damagetype: damagetype,
                         objList: objList,
                         WorldObject: WorldObject,
-                        hitcoordinate: hitCoordinate);
+                        hitcoordinate: hitCoordinate,
+                        ignoreVector: ignoreVector);
                 }
             }
+            return 0;
         }
 
 
@@ -64,7 +67,7 @@ namespace Underworld
         /// <param name="critter"></param>
         /// <param name="damage"></param>
         /// <param name="damagetype"></param>
-        static bool DamageNPC(uwObject critter, int basedamage, int damagetype, int damagesource)
+        static int DamageNPC(uwObject critter, int basedamage, int damagetype, int damagesource)
         {
             ScaleDamage(critter.item_id, ref basedamage, damagetype);
 
@@ -113,12 +116,13 @@ namespace Underworld
                         npc.RedrawAnimation(critter);
                     }
                 }
+                return 1;
             }
-            return false;
+            return 0;
         }
 
 
-        static bool DamageGeneralObject(uwObject objToDamage, int basedamage, int damagesource)
+        static bool DamageOtherObjectTypes(uwObject objToDamage, int basedamage, int damagesource)
         {
             bool IsBroken = false;
             var qualityclass = commonObjDat.qualityclass(objToDamage.item_id);
@@ -163,7 +167,7 @@ namespace Underworld
                     IsBroken = (finalquality == 0);
                     if (commonObjDat.canhaveowner(objToDamage.item_id))
                     {
-                        Debug.Print($"Flag tresspass for owner {objToDamage.owner}");
+                        Debug.Print($"Flag trespass for owner {objToDamage.owner}");
                     }
                 }
             }
@@ -225,12 +229,13 @@ namespace Underworld
         /// <param name="damagetype"></param>
         /// <param name="objList"></param>
         /// <param name="WorldObject"></param>
-        public static void ObjectDestruction(uwObject objToDestroy, int damagetype, uwObject[] objList, bool WorldObject, Godot.Vector3 hitcoordinate)
+        /// <returns>1 if debris is set</returns>
+        public static int ObjectDestruction(uwObject objToDestroy, int damagetype, uwObject[] objList, bool WorldObject, Godot.Vector3 hitcoordinate, bool ignoreVector = false)
         {
-            int Debris = -1;
-            if (!UWTileMap.ValidTile(objToDestroy.tileX, objToDestroy.tileY))
+            int Debris = -2;
+            if ((!UWTileMap.ValidTile(objToDestroy.tileX, objToDestroy.tileY)) && (WorldObject))
             {
-                return;
+                return 0;
             }
             if (objToDestroy.OneF0Class == 0x14)
             {
@@ -239,7 +244,7 @@ namespace Underworld
                 {
                     a_lock.SetIsLocked(objToDestroy, false, 0);
                     door.OpenDoor(objToDestroy);
-                    return;
+                    return 1;
                 }
             }
             switch (objToDestroy.item_id)
@@ -309,16 +314,18 @@ namespace Underworld
                                                 RemoveFromWorld: true);
                                         }
                                         Debris = -1;
-                                        return;
+                                        return 1;
                                     }
                                     else
                                     {
                                         if (((Rng.r.Next(0, 0x7fff) & 0x3) != 0) || (true))
                                         {
-                                            //ObjectCreator.SpawnAnimo_Placeholder(8);
-                                            if (hitcoordinate != Godot.Vector3.Zero)
+                                            if (!ignoreVector)
                                             {
-                                                animo.SpawnAnimoAtPoint(8, hitcoordinate);
+                                                if (hitcoordinate != Godot.Vector3.Zero)
+                                                {
+                                                    animo.SpawnAnimoAtPoint(8, hitcoordinate);
+                                                }
                                             }
                                             Debris = 0xD6;
                                         }
@@ -335,7 +342,7 @@ namespace Underworld
                     }
             }
 
-            if (Debris == -1)
+            if (Debris <= -1)
             {
                 if (_RES == GAME_UW2)
                 {
@@ -347,7 +354,7 @@ namespace Underworld
                 }
             }
 
-            if (Debris != -1)
+            if (Debris >= 0)
             {
                 Debug.Print("Turn into debris");
                 objToDestroy.item_id = Debris;
@@ -366,6 +373,11 @@ namespace Underworld
                 }
                 //spawn this debris item id at the position of the old object
             }
+            if (Debris >= -1)
+            {
+                return 0;
+            }
+            return 1;
         }
 
 
@@ -551,31 +563,121 @@ namespace Underworld
         {
             if (spellclass != 0)
             {
-                var tile =UWTileMap.current_tilemap.Tiles[tileX,tileY];
+                var tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];
 
-                if (tile.indexObjectList!=0)
+                if (tile.indexObjectList != 0)
                 {
                     var next = tile.indexObjectList;
-                    int[] damagetypes = new int[]{0xB, 3};
-                    int[] damagerange = new int[]{6,5};
-                    int[] damagerolls = new int[]{0xA,6};
-                    int index = (spellclass-1) & 1;
-                    while (next!=0)
+                    int[] damagetypes = new int[] { 0xB, 3 };
+                    int[] damagerange = new int[] { 6, 5 };
+                    int[] damagerolls = new int[] { 0xA, 6 };
+                    int index = (spellclass - 1) & 1;
+                    while (next != 0)
                     {
                         var nextObj = UWTileMap.current_tilemap.LevelObjects[next];
                         next = nextObj.next;
                         var damagetoapply = Rng.DiceRoll(damagerolls[index], damagerange[index]);
                         DamageObject(
-                            objToDamage: nextObj, 
-                            basedamage: damagetoapply, 
-                            damagetype: damagetypes[index], 
-                            objList: UWTileMap.current_tilemap.LevelObjects, 
-                            WorldObject: true, 
-                            hitCoordinate: Godot.Vector3.Zero, 
+                            objToDamage: nextObj,
+                            basedamage: damagetoapply,
+                            damagetype: damagetypes[index],
+                            objList: UWTileMap.current_tilemap.LevelObjects,
+                            WorldObject: true,
+                            hitCoordinate: Godot.Vector3.Zero,
                             damagesource: source);
 
                     }
                 }
+            }
+        }
+
+
+        /// <summary>
+        /// Damages a piece of equipment in the inventory at the specified slot
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns>1 if object was destroyed, 0 if damage, negative if no change</returns>
+        public static int DamageEquipment(int slot, int damage, int damagetype, int arg6, int arg8)
+        {
+            uwObject obj = null;
+           
+            var si = 0;
+            string distring="";
+            if (slot <= 11)
+            {
+                obj = playerdat.GetInventorySlotObject(slot);
+            }
+            else
+            {
+                var index = uimanager.BackPackIndices[slot - 11];
+                if (index != -1)
+                {
+                    obj = playerdat.InventoryObjects[index];
+                }
+            }
+
+            if (obj != null)
+            {
+                var originalquality = obj.quality;
+                switch (arg6)
+                {
+                    case 2:
+                        break;
+                    case 0:
+                        if (obj.majorclass != 0)
+                        {
+                            return -2;
+
+                        }
+                        break;
+                    default:
+                        {
+                            if (!uwObject.CheckIfObjectInValidSlot(obj, uimanager.CurrentSlot))
+                            {
+                                return -2;
+                            }
+                        }
+                        break;
+                }
+
+                //apply damage
+                var result = DamageObject(obj, damage, damagetype, playerdat.InventoryObjects, false, Godot.Vector3.Zero, 0, true);
+                if (result == 1)
+                {//taken damage and can be destroyed
+                    if (arg8 != 0)
+                    {
+                        //Turn into debris? (could this have already happened inside DamageObject)
+                        var debris = GetObjectTypeDebris(obj, 0);
+                        var tile = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY];
+                        ObjectCreator.spawnObjectInTile(
+                            itemid: debris, 
+                            tileX: playerdat.tileX, tileY: playerdat.tileY, 
+                            xpos: 3, ypos: 3, zpos: (short)(tile.floorHeight<<3), 
+                            WhichList: ObjectFreeLists.ObjectListType.StaticList);
+                    }
+                    ObjectCreator.Consume(obj, true);//removes from inventory     
+                    playerdat.PlayerStatusUpdate();     
+                    distring = " destroyed";  
+                    si = 1;     
+                }
+                else
+                {//taken damage and not destroyed
+                    if (obj.quality!=originalquality)
+                    {
+                        distring = " damaged";
+                        si = 0;
+                    }
+                    else
+                    {
+                        return -1;
+                    }
+                }
+                uimanager.AddToMessageScroll($"Your {GameStrings.GetObjectNounUW(obj.item_id)} was{distring}");
+                return si;
+            }
+            else
+            {
+                return -2;
             }
         }
 

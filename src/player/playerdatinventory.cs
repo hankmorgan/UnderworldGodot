@@ -810,6 +810,5 @@ namespace Underworld
             }
             uimanager.UpdateInventoryDisplay();
         }
-
     } //end class
 } //end namespace
