@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 
 namespace Underworld
@@ -668,8 +669,9 @@ namespace Underworld
                     {
                         //can object be enchanted.
                         //EnchantObjectwithEffectId andupdate failed variable
-                        if (EnchantObjectwithEffectId())
-                        {
+                        failed = ChargeSpellObjectwithEffectId(objToEnchant, objList, ExistingEnchantment.SpellMinorClass, playerdat.tileX, playerdat.tileY, WorldObject);                        
+                        if (failed)//if true object has been destroyed.
+                        {                           
                             return;
                         }
                     }
@@ -678,6 +680,7 @@ namespace Underworld
                         if (ExistingEnchantment.IsFlagBit2Set)
                         {
                             //Failenchantment
+                            FailEnchantment();
                             return;
                         }
                         else
@@ -724,6 +727,7 @@ namespace Underworld
                                         {
                                             //blowup
                                             //Fail enchantment
+                                            FailEnchantment();
                                             return;
                                         }
                                     }
@@ -810,9 +814,142 @@ namespace Underworld
             }
         }
 
-        static bool EnchantObjectwithEffectId()
+
+        /// <summary>
+        /// Tries to charge a linked spell object with a new charge.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="objList"></param>
+        /// <param name="effectid"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="WorldObject"></param>
+        /// <returns></returns>
+        static bool ChargeSpellObjectwithEffectId(uwObject obj, uwObject[] objList, int effectid, int x, int y, bool WorldObject)
         {
-            return true;
+            int var1;
+            if (effectid >= 64)
+            {
+                var1 = 4;
+            }
+            else
+            {
+                var1 = 1 + (effectid / 8);
+            }
+
+            var var2 = 8 + ((1 + playerdat.play_level) / 2) - var1;
+
+
+            var spellobject = objectsearch.FindMatchInObjectChain(
+                ListHeadIndex: obj.link, majorclass: 4, minorclass: 2,
+                classindex: 0, objList: objList, SkipLinks: true);
+            if (spellobject == null)
+            {
+                return true;//enchanting has failed.
+            }
+
+            var var3 = spellobject.quality / Math.Abs(var2);
+
+            var si_difficulty = (var3 + (16 - var2) << 10) / (var3 + 24);
+
+            var rng = Rng.r.Next(0x3ff);
+
+            if (rng < si_difficulty)
+            {
+                //fail
+                EnchantFailureExplosion(obj, x, y);
+                ObjectRemover.RemoveObjectFromLinkedList(obj.link, spellobject.index, objList, obj.PTR + 6);
+                if (WorldObject)
+                {
+                    ObjectFreeLists.ReleaseFreeObject(spellobject);
+                }
+
+                obj.item_id = damage.GetObjectTypeDebris(obj, 0);
+                if (WorldObject)
+                {
+                    objectInstance.RedrawFull(obj);
+                }
+                else
+                {
+                    uimanager.UpdateInventoryDisplay();
+                }
+                return true;
+            }
+            else
+            {
+                //sucess
+                var newCharge = -1 - playerdat.Casting / 0xF;
+                MagicObjectChargeUpdate(
+                    obj: obj, 
+                    objList: objList, 
+                    WorldObject: WorldObject, 
+                    ChargeChangeFactor: newCharge);
+                return false;
+            }
+        }
+
+        static void FailEnchantment()
+        {
+            Debug.Print("FAIL");
+        }
+
+        static void EnchantFailureExplosion(uwObject obj, int x, int y)
+        {
+            Debug.Print("BANG!");
+        }
+
+        static int MagicObjectChargeUpdate(uwObject obj, uwObject[] objList, bool WorldObject, int ChargeChangeFactor)
+        {
+            if ((obj.is_quant == 0) && (obj.link != 0))
+            {
+                var spellobject = objectsearch.FindMatchInObjectChain(
+                    ListHeadIndex: obj.link, majorclass: 4, minorclass: 2,
+                    classindex: 0, objList: objList, SkipLinks: true);
+                if (spellobject != null)
+                {
+                    int newCharge = 0;
+                    if (spellobject.flags2 != 0)
+                    {
+                        newCharge = spellobject.quality - ChargeChangeFactor;
+                        if (newCharge >= 0)
+                        {
+                            if (newCharge >= 0x40)
+                            {
+                                newCharge = 0x3F;
+                            }
+                            spellobject.quality = (short)newCharge;
+                        }
+                        else
+                        {
+                            if (Rng.r.Next(0xA) < 4)
+                            {
+                                ObjectRemover.RemoveObjectFromLinkedList(obj.link, spellobject.index, objList, obj.PTR + 6);
+                                if (WorldObject)
+                                {
+                                    ObjectFreeLists.ReleaseFreeObject(spellobject);
+                                }
+                            }
+                        }
+                    }
+
+                    if (newCharge <= 0)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return newCharge;
+                    }
+                }
+                else
+                {
+                    return 0;//no spell object found
+                }
+            }
+            else
+            {
+                return 0; //is a quant or has no link
+            }
         }
     }//end class
 }//end namespace

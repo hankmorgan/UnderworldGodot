@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.Numerics;
 namespace Underworld
 {
     /// <summary>
@@ -359,14 +358,7 @@ namespace Underworld
                 objToDestroy.quality = 40;
                 if (WorldObject)
                 {
-                    if (objToDestroy.instance != null)
-                    {
-                        if (objToDestroy.instance.uwnode != null)
-                        {
-                            objToDestroy.instance.uwnode.QueueFree();
-                        }
-                    }
-                    ObjectCreator.RenderObject(objToDestroy, UWTileMap.current_tilemap);
+                    objectInstance.RedrawFull(objToDestroy);
                 }
                 else
                 {
@@ -383,7 +375,7 @@ namespace Underworld
         /// </summary>
         /// <param name="item_id"></param>
         /// <returns>item id of debris to spawn.</returns>
-        static int GetObjectTypeDebris(uwObject objToDestroy, int damagetype)
+        public static int GetObjectTypeDebris(uwObject objToDestroy, int damagetype)
         {//only used in uw2
             if ((objToDestroy.majorclass != 0) || (damagetype == 8))
             {
