@@ -74,8 +74,9 @@ namespace Underworld
                             result = LookMajorClass5(obj, objList);
                             break;
                         }
-
                 }
+
+                //TODO: Add checking for traps here and prompting for disarming. May require turning this function into a co-routine.
 
                 trigger.TriggerObjectLink(
                     character: 0,

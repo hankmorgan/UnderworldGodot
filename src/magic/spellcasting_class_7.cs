@@ -62,6 +62,15 @@ namespace Underworld
                         break;
                     case 13:
                         //detect trap
+                        switch (trapdisarming.DetectTrapTrigger(index,objList,45))
+                        {
+                            case playerdat.SkillCheckResult.Success:
+                            case playerdat.SkillCheckResult.CritSucess:
+                                uimanager.AddToMessageScroll(GameStrings.GetString(1,0x130)); break;//you have detected
+                            case playerdat.SkillCheckResult.Fail:
+                            case playerdat.SkillCheckResult.CritFail:
+                                uimanager.AddToMessageScroll(GameStrings.GetString(1,0x131)); break;//you hae not detected.
+                        }
                         break;
                     case 14:
                         //enchantment spell
@@ -665,6 +674,17 @@ namespace Underworld
                     }
                 }
             }
+        }
+
+
+        /// <summary>
+        /// Checks for a trap on an object.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="objList"></param>
+        static void DetectTrap(int index, uwObject[] objList)
+        {
+
         }
     }//end class
 }//end namespace
