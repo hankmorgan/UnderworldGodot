@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics;
 
 namespace Underworld
@@ -51,6 +50,7 @@ namespace Underworld
                         break;
                     case 10:
                         //disarm trap
+                        trapdisarming.TrapDisarmSpell(index, objList);
                         break;
                     case 11:
                         //name enchantment
@@ -62,14 +62,14 @@ namespace Underworld
                         break;
                     case 13:
                         //detect trap
-                        switch (trapdisarming.DetectTrapTrigger(index,objList,45))
+                        switch (trapdisarming.DetectTrapTrigger(index, objList, 45))
                         {
                             case playerdat.SkillCheckResult.Success:
                             case playerdat.SkillCheckResult.CritSucess:
-                                uimanager.AddToMessageScroll(GameStrings.GetString(1,0x130)); break;//you have detected
+                                uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x130)); break;//you have detected
                             case playerdat.SkillCheckResult.Fail:
                             case playerdat.SkillCheckResult.CritFail:
-                                uimanager.AddToMessageScroll(GameStrings.GetString(1,0x131)); break;//you hae not detected.
+                                uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x131)); break;//you hae not detected.
                         }
                         break;
                     case 14:
@@ -112,6 +112,7 @@ namespace Underworld
                 }
             }
         }
+
 
         /// <summary>
         /// UW2 only spell. Causes damage scaled by vulnerability

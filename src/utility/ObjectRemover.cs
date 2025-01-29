@@ -186,7 +186,7 @@ namespace Underworld
         }
         //Does the remove
 
-        static void RemoveTrapTriggerChain(uwObject traptrigger, long ptrListHead)
+        public static void RemoveTrapTriggerChain(uwObject traptrigger, long ptrListHead)
         {
             if (traptrigger.IsTrap)
             {
@@ -198,7 +198,7 @@ namespace Underworld
             }
         }
 
-        static void RemoveTriggerChain(uwObject TriggerHeadObj, long ptrListHead)
+        public static void RemoveTriggerChain(uwObject TriggerHeadObj, long ptrListHead)
         {
             if (TriggerHeadObj.link != 0)
             {

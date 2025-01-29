@@ -63,6 +63,9 @@ namespace Underworld
                         else
                         {
                             Debug.Print("Remove Trap");
+                            currentSpell = new RunicMagic(11, minorclass);
+                            uimanager.instance.mousecursor.SetCursorToCursor(10);
+                            break;
                         }
                         break;
                     }
@@ -231,7 +234,7 @@ namespace Underworld
                         //probably a suitable fix here would be to apply an owner value to the door, or restore the quality to max.
                         break;
                     case 3://remove trap
-                        Debug.Print("Remove trap callback");
+                        trapdisarming.TrapDisarmSpell(index, objList);
                         break;
                     case 4://Name enchantment
                         NameEnchantment(index, objList);
