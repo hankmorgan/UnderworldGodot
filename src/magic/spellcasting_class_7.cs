@@ -46,7 +46,8 @@ namespace Underworld
                         //Dispel rune
                         break;
                     case 9:
-                        //Repair
+                        //Mending
+                        repair.MendingSpell(index, objList);
                         break;
                     case 10:
                         //disarm trap
