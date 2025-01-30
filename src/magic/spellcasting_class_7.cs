@@ -28,15 +28,15 @@ namespace Underworld
                         Charm(index, objList);
                         break;
                     case 4:
-                        //smite foe
+                        //Poison
+                        PoisonSpell(index, objList, WorldObject, hitCoordinate);//unused in uw2
                         break;
                     case 5:
                         //paralyse  
                         Paralyse(index, objList, caster);
                         break;
                     case 6:
-                        ///bleed (identical)
-                        CauseBleeding(index, objList, hitCoordinate);
+                        //smite foe                        
                         break;
                     case 7:
                         StudyMonster(index, objList);
@@ -101,13 +101,15 @@ namespace Underworld
                         Causefear(index, objList);
                         break;
                     case 2:
-                        //smite undeead
+                        //smite undead
+                        SmiteUndead(index, objList, hitCoordinate);
                         break;
                     case 3:
                         //ally
                         break;
                     case 4:
                         //poison
+                        PoisonSpell(index, objList, WorldObject, hitCoordinate);
                         break;
                     case 5:
                         //paralyse
@@ -379,7 +381,7 @@ namespace Underworld
         {
             var obj = objList[index];
 
-            if (obj.item_id != 0x13)
+            if ((obj.item_id != 0x13) && (_RES==GAME_UW2))//skull check is uw2 only
             {
                 if (obj.majorclass == 1)
                 {
@@ -702,6 +704,35 @@ namespace Underworld
                         uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x12E));//that is not a rune
                         break;
                 }
+            }
+        }
+
+
+        /// <summary>
+        /// Applies poison damage to an NPC
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="objList"></param>
+        /// <param name="WorldObject"></param>
+        /// <param name="hitCoordinate"></param>
+        /// <returns></returns>
+        static bool PoisonSpell(int index, uwObject[] objList, bool WorldObject, Godot.Vector3 hitCoordinate )
+        {
+            if (!WorldObject)
+            {
+                return false;
+            }
+            var target = objList[index];
+            if (target.majorclass == 1)
+            {
+                animo.SpawnAnimoAtPoint(7, hitCoordinate);
+                var damagetoapply = Rng.DiceRoll(5,4);
+                damage.DamageObject(target, damagetoapply, 0x13, objList, WorldObject, hitCoordinate, 0);//applies raw, magic and poison damage
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
     }//end class

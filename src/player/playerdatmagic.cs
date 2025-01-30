@@ -94,17 +94,17 @@ namespace Underworld
                 if (_RES==GAME_UW2)
                 {
                     var tmp = GetAt(0x62);
-                    tmp = (byte)(tmp & 0xF3);
+                    tmp = (byte)(tmp & 0xF9);
                     value = value & 0x3;
-                    tmp |= (byte)(value<<2);
+                    tmp |= (byte)(value<<1);
                     SetAt(0x62,tmp);
                 }
                 else
                 {
                     var tmp = GetAt(0x61);
-                    tmp = (byte)(tmp & 0xF3);
+                    tmp = (byte)(tmp & 0xF9);
                     value = value & 0x3;
-                    tmp |= (byte)(value<<2);
+                    tmp |= (byte)(value<<1);
                     SetAt(0x61,tmp);
                 }
             }

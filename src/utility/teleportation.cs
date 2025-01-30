@@ -341,6 +341,7 @@ namespace Underworld
         {
             if (playerdat.armageddon && mode==EnterLevelMode)
             {//entering a level under the influence of armageddon
+                Debug.Print("Armageddon flag has been set. Resetting map!");
                 UWTileMap.ResetMap(0);
             }
             else
