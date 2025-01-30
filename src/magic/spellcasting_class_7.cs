@@ -43,6 +43,10 @@ namespace Underworld
                         break;
                     case 8:
                         //Dispel rune
+                        if (WorldObject)
+                        {
+                            DispelRune(index, objList);
+                        }                        
                         break;
                     case 9:
                         //Mending
@@ -679,13 +683,26 @@ namespace Underworld
 
 
         /// <summary>
-        /// Checks for a trap on an object.
+        /// Removes a flam or tym rune
         /// </summary>
         /// <param name="index"></param>
         /// <param name="objList"></param>
-        static void DetectTrap(int index, uwObject[] objList)
+        static void DispelRune(int index, uwObject[] objList)
         {
-
+            var objToDispel = objList[index];
+            if (objToDispel!=null)
+            {
+                switch(objToDispel.item_id)
+                {
+                    case 0x19e://flam rune
+                    case 0x19f://tym rune
+                        ObjectRemover.DeleteObjectFromTile(tileX: objToDispel.tileX, tileY: objToDispel.tileY, indexToDelete: objToDispel.index, RemoveFromWorld: true);
+                        break;
+                    default:
+                        uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x12E));//that is not a rune
+                        break;
+                }
+            }
         }
     }//end class
 }//end namespace
