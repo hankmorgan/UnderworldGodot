@@ -521,6 +521,10 @@ namespace Underworld
                 &&  (((eventMouseButton.ButtonIndex == MouseButton.Left) || (eventMouseButton.ButtonIndex == MouseButton.Right)))
             )
             {
+                if (playerdat.ParalyseTimer>0)
+                {
+                    return; //block input while paralysed
+                }
                 if (playerdat.DreamingInVoid)
                 {
                     return;// to prevent inventory use while in the void.

@@ -36,38 +36,5 @@ namespace Underworld
             }
             return true;
         }
-
-        /// <summary>
-        /// The Move trigger. A collision box that the player bumps into
-        /// </summary>
-        /// <param name="index"></param>
-        /// <param name="objList"></param>
-        /// <param name="WorldObject"></param>
-        /// <returns></returns>
-        // public static bool Move(uwObject srcObject, int triggerIndex, uwObject[] objList)
-        // {
-        //     var triggerObj = objList[triggerIndex];
-        //     if (triggerObj == null)
-        //     {
-        //         Debug.Print($"Null trigger at {triggerIndex}");
-        //         return false;
-        //     }
-        //     //a_use trigger	4	4
-        //     //if ((triggerObj.majorclass == 6) && ((triggerObj.minorclass == 2) || (triggerObj.minorclass == 3)) && (triggerObj.classindex == 2))
-        //     //{//use trigger class , 6-2-2 or 6-3-2
-        //         //activate trap
-        //         trigger.StartTriggerChainEvents();
-        //         Debug.Print($"Activating trap {triggerObj.link}");
-        //         trap.ActivateTrap(
-        //             triggerObj: triggerObj,
-        //             trapIndex: triggerObj.link,
-        //             objList: objList);
-        //         trigger.EndTriggerChainEvents();
-        //         return true;
-        //     //}
-        //     //return false;
-        // }
-
-
     }//end class    
 }//end namespace

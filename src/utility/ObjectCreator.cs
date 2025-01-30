@@ -464,17 +464,34 @@ namespace Underworld
                         }
                         break;
                     }
+                case 1:
+                    {
+                        switch (obj.classindex)
+                        {
+                            case 0xE://flam rune
+                            case 0xF://tym rune
+                                {
+                                    if(_RES==GAME_UW2)
+                                    {
+                                        return runetrap.CreateRuneTrap(obj,parent);
+                                    }
+                                    break;
+                                }
+                            
+                        }
+                        break;
+                    }
                 case 2:
                     {
                         switch (obj.classindex)
                         {
                             case 0://move trigger, 6-2-0
-                                return trigger.CreateMoveTrigger(obj, parent);
+                                return trigger.CreateMoveTrigger(obj, parent);                            
                         }
                         break;
                     }
                 case 3: //uw1 does not have class 6-3-xx
-                    {
+                    {//6-3 appears to be reserved for triggers linked to actual defusable traps.
                         switch (obj.classindex)
                         {
                             case 0://move trigger 6-3-0

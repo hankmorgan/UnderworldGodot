@@ -502,6 +502,28 @@ namespace Underworld
                }
           }
 
+          public static int ParalyseTimer
+          {
+               get
+               {
+                    if (_RES == GAME_UW2)
+                    {
+                         return GetAt(0x306);
+                    }
+                    else
+                    {
+                         return 0;//is this in UW1?
+                    }
+               }
+               set
+               {
+                  if (_RES == GAME_UW2)
+                    {
+                         SetAt(0x306, (byte)value);
+                    }  
+               }
+          }
+
           /// <summary>
           /// In UW1 automap enabled is a global not stored in the pdat file. It is set using levelloadevents etc.
           /// </summary>

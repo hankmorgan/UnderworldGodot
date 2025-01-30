@@ -114,6 +114,10 @@ namespace Underworld
         /// <param name="index"></param>
         public static void InteractWithObjectCollider(int index, bool LeftClick)
         {
+            if (playerdat.ParalyseTimer>0)
+            {
+                return;//stop interaction while player is paralysed
+            }
             switch (InteractionMode)
             {
                 case InteractionModes.ModeTalk:

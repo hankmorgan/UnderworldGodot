@@ -22,6 +22,15 @@ namespace Underworld
                 playertimer += delta;
                 if (playertimer >= 1f)
                 {//every second
+                    if (ParalyseTimer>0)
+                    {
+                        ParalyseTimer--;
+                        Debug.Print($"Paralyse timer: {ParalyseTimer}");
+                        if (ParalyseTimer==0)
+                        {
+                            main.gamecam.Set("MOVE", true);//re-enable player motion.
+                        }
+                    }
                     var secondelasped = (int)(playertimer / 1);
                     playertimer = 0f;                    
                     for (int s = 0; s < secondelasped; s++)

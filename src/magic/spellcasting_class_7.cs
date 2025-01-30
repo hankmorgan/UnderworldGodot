@@ -318,7 +318,7 @@ namespace Underworld
         /// <param name="newgoal"></param>
         /// <param name="newattitude"></param>
         /// <param name="newgtarg"></param>
-        static void ApplyAIChangingSpell(uwObject critter, byte newgoal = 0xFF, byte newattitude = 0xFF, byte newgtarg = 0xFF)
+        public static void ApplyAIChangingSpell(uwObject critter, byte newgoal = 0xFF, byte newattitude = 0xFF, byte newgtarg = 0xFF)
         {
             int test = 1;
             if (damage.ScaleDamage(critter.item_id, ref test, 3) != 0)

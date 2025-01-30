@@ -13,7 +13,7 @@ namespace Underworld
         public static bool SpellHasBeenCast = false;
         public static bool UseTriggerHasBeenActivated = false;
         public static bool Use(int index, uwObject[] objList, bool WorldObject = true)
-        {
+        {            
             SpellHasBeenCast = false;
             UseTriggerHasBeenActivated = false;
             if (useon.CurrentItemBeingUsed != null)
