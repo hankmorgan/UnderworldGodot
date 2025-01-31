@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Underworld
 {
@@ -101,6 +102,7 @@ namespace Underworld
                     yHeight = yHeight + tileY0;
                     tileY0 = 0;
                 }
+                Debug.Print($"Running code on area {tileX0},{tileY0} to {tileX0 + xWidth},{tileY0 + yHeight}");
                 if (xWidth > 0 && yHeight > 0)
                 {
                     for (int di_X = tileX0; di_X <= tileX0 + xWidth; di_X++)
@@ -126,7 +128,6 @@ namespace Underworld
                             {
                                 return;
                             }
-
                         }
                         for (int si_Y = tileY0; si_Y <= tileY0 + yHeight; si_Y++)
                         {
@@ -139,26 +140,19 @@ namespace Underworld
                                     (currenttile.tileType > 0)
                                 )
                                 {
-                                    var listIndex = currenttile.indexObjectList;
-                                    while (listIndex != 0)
+                                    //do rng call based on the distance from the centre    
+                                    var rnd = Rng.r.Next(0, 3 + xWidth * yHeight);
+                                    if ((rnd > Rng_arg0) || (typeOfTargetArg8 == 0x80))
                                     {
-                                        var nextObj = UWTileMap.current_tilemap.LevelObjects[listIndex];
-                                        //do rng call based on the distance form the centre    
-                                        var rnd = Rng.r.Next(0, 3 + xWidth * yHeight);
-                                        if ((rnd > Rng_arg0) || (typeOfTargetArg8 == 0x80))
+                                        if (methodToCall(di_X, si_Y, null, currenttile, srcItemIndex))
                                         {
-                                            if (methodToCall(di_X, si_Y, nextObj, currenttile, srcItemIndex))
+                                            Rng_arg0--;
+                                            if (Rng_arg0 == 0)
                                             {
-                                                Rng_arg0--;
-                                                if (Rng_arg0 == 0)
-                                                {
-                                                    return;
-                                                }
+                                                return;
                                             }
                                         }
-                                        listIndex = nextObj.next;
                                     }
-
                                 }
                                 if (typeOfTargetArg8 != 0x40)
                                 {
