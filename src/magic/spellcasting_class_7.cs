@@ -36,7 +36,8 @@ namespace Underworld
                         Paralyse(index, objList, caster);
                         break;
                     case 6:
-                        //smite foe                        
+                        //smite foe   
+                        SmiteFoe(index, objList, WorldObject, hitCoordinate);                     
                         break;
                     case 7:
                         StudyMonster(index, objList);
@@ -734,6 +735,38 @@ namespace Underworld
             {
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Applies heavy damage to a living target
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="objList"></param>
+        /// <param name="WorldObject"></param>
+        /// <param name="hitCoordinate"></param>
+        /// <returns></returns>
+        static bool SmiteFoe(int index, uwObject[] objList, bool WorldObject, Godot.Vector3 hitCoordinate )
+        {
+            if (!WorldObject)
+            {
+                return false;
+            }
+            var target = objList[index];
+            if (target.majorclass == 1)
+            {
+                if (critterObjectDat.bleed(target.item_id)!=0)
+                {
+                    var damagetoapply = (playerdat.Casting * 3) + 0x6E;
+                    animo.SpawnAnimoAtPoint(0, hitCoordinate);
+                    return (damage.DamageObject(target, damagetoapply, 4, objList, WorldObject, hitCoordinate, 0) !=0); 
+                }
+                else
+                {
+                    uimanager.AddToMessageScroll(GameStrings.GetString(1,0x12B));
+                    return false;
+                }
+            }
+            return false;
         }
     }//end class
 }//end namespace
