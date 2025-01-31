@@ -123,6 +123,11 @@ namespace Underworld
 
         static bool DamageOtherObjectTypes(uwObject objToDamage, int basedamage, int damagesource)
         {
+            if(objToDamage.majorclass == 6)
+            {
+                Debug.Print("Do not damage traps/trigger!");
+                return false;
+            }
             bool IsBroken = false;
             var qualityclass = commonObjDat.qualityclass(objToDamage.item_id);
             if (objToDamage.doordir == 1)

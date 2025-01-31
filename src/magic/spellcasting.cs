@@ -59,6 +59,7 @@ namespace Underworld
                     }
                     break;
                 case 6://spells that run code in an area around the player
+                    CastClass6_SpellsAroundPlayer(minorclass);
                     break;
                 case 7://spells with prompts and code callbacks.
                     {

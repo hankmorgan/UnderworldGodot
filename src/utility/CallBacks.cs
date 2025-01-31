@@ -14,6 +14,48 @@ namespace Underworld
         public delegate void UWObjectCallBackWithParams(uwObject obj, int[] paramsarray);
         public delegate void CutsceneCallBack();
 
+        public static void RunCodeOnTargetsAroundObject(AreaEffectCallBack methodToCall, int objectindex, int rngProbablity, int targetType, int distanceFromObject, int tileRadius)
+        {
+            int heading;
+            int x; int y;
+            if (objectindex == 0)
+            {//object is the player.
+                heading = (playerdat.heading << 5);// + playerdat.playerObject.npc_heading;
+                x = playerdat.tileX;
+                y = playerdat.tileY;
+
+                var fDistanceFromObject = 1.2f * ((float)distanceFromObject / 8f);//converto godot units.
+                var tile = UWTileMap.GetTileInDirectionFromCamera(fDistanceFromObject);
+                RunCodeOnTargetsInArea(
+                    methodToCall: methodToCall,
+                    Rng_arg0: rngProbablity,
+                    srcItemIndex: objectindex,
+                    typeOfTargetArg8: targetType,
+                    tileX0: tile.tileX - tileRadius,
+                    tileY0: tile.tileY - tileRadius,
+                    xWidth: 1 + (tileRadius << 1),
+                    yHeight: 1 + tileRadius << 1);
+
+
+            }
+            else
+            {
+                var obj = UWTileMap.current_tilemap.LevelObjects[objectindex];
+                x = obj.tileX; y = obj.tileY;
+                if (objectindex >= 0x100)
+                {
+                    //static object
+                    heading = obj.heading << 5;
+                }
+                else
+                {
+                    //mobile object
+                    heading = (obj.heading << 5) + obj.npc_heading;
+                }
+                //TODO
+            }
+        }
+
         /// <summary>
         /// Finds objects in area around tile and runs a function against them
         /// </summary>
@@ -97,21 +139,26 @@ namespace Underworld
                                     (currenttile.tileType > 0)
                                 )
                                 {
-                                    //TODO set linked object = 0
-
-                                    //do rng call based on the distance form the centre    
-                                    var rnd = Rng.r.Next(0, 3 + xWidth * yHeight);
-                                    if ((rnd > Rng_arg0) || (typeOfTargetArg8 == 0x80))
+                                    var listIndex = currenttile.indexObjectList;
+                                    while (listIndex != 0)
                                     {
-                                        if (methodToCall(di_X, si_Y, null, currenttile, srcItemIndex))
+                                        var nextObj = UWTileMap.current_tilemap.LevelObjects[listIndex];
+                                        //do rng call based on the distance form the centre    
+                                        var rnd = Rng.r.Next(0, 3 + xWidth * yHeight);
+                                        if ((rnd > Rng_arg0) || (typeOfTargetArg8 == 0x80))
                                         {
-                                            Rng_arg0--;
-                                            if (Rng_arg0 == 0)
+                                            if (methodToCall(di_X, si_Y, nextObj, currenttile, srcItemIndex))
                                             {
-                                                return;
+                                                Rng_arg0--;
+                                                if (Rng_arg0 == 0)
+                                                {
+                                                    return;
+                                                }
                                             }
                                         }
+                                        listIndex = nextObj.next;
                                     }
+
                                 }
                                 if (typeOfTargetArg8 != 0x40)
                                 {
@@ -191,7 +238,6 @@ namespace Underworld
                         }
                     }
 
-
                     //get next
                     if (obj.next != 0)
                     {
@@ -260,7 +306,7 @@ namespace Underworld
                     var obj = UWTileMap.current_tilemap.LevelObjects[index];
                     if (obj.majorclass == 1)//NPC
                     {
-                        if (critterObjectDat.race(obj.item_id)== race)
+                        if (critterObjectDat.race(obj.item_id) == race)
                         {
                             methodToCall(obj, paramsArray);
                             if (!loopAll)
@@ -288,12 +334,12 @@ namespace Underworld
             }
             foreach (var i in activeMobiles)
             {
-                var index = UWTileMap.current_tilemap.GetActiveMobileAtIndex(i);                
+                var index = UWTileMap.current_tilemap.GetActiveMobileAtIndex(i);
                 if ((index != 0) && (index < 256))
                 {
                     var obj = UWTileMap.current_tilemap.LevelObjects[index];
                     if (obj.majorclass == 1)//NPC
-                    {                        
+                    {
                         methodToCall(obj, paramsArray);
                     }
                 }
@@ -310,10 +356,10 @@ namespace Underworld
             }
             foreach (var i in activeMobiles)
             {
-                var index = UWTileMap.current_tilemap.GetActiveMobileAtIndex(i);                
+                var index = UWTileMap.current_tilemap.GetActiveMobileAtIndex(i);
                 if ((index != 0) && (index < 256))
                 {
-                    var obj = UWTileMap.current_tilemap.LevelObjects[index];             
+                    var obj = UWTileMap.current_tilemap.LevelObjects[index];
                     methodToCall(obj, paramsArray);
                 }
             }
