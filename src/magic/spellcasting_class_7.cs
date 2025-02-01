@@ -321,7 +321,7 @@ namespace Underworld
         /// <param name="newgoal"></param>
         /// <param name="newattitude"></param>
         /// <param name="newgtarg"></param>
-        public static void ApplyAIChangingSpell(uwObject critter, byte newgoal = 0xFF, byte newattitude = 0xFF, byte newgtarg = 0xFF)
+        public static bool ApplyAIChangingSpell(uwObject critter, byte newgoal = 0xFF, byte newattitude = 0xFF, byte newgtarg = 0xFF)
         {
             int test = 1;
             if (damage.ScaleDamage(critter.item_id, ref test, 3) != 0)
@@ -341,10 +341,12 @@ namespace Underworld
                 {
                     critter.npc_gtarg = newgtarg;
                 }
+                return true;
             }
             else
             {
                 Debug.Print("NPC has resisted spell");
+                return false;
             }
         }
 

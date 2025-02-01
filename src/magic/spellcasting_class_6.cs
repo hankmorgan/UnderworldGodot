@@ -23,8 +23,9 @@ namespace Underworld
                     case 2: //sheetlightning
                         Debug.Print("Sheetlighning");
                         break;
-                    case 3://maybe mass confuse
-                        Debug.Print("mass confuse?");
+                    case 3://maybe mass confuse                       
+                        methodtorun = Confusion;
+                        rngProbablity= 0xC; distanceFromCaster = 4; tileRadius = 2;
                         break;
                     case 4: //flame wind
                         Debug.Print("Flamewind");
@@ -56,8 +57,8 @@ namespace Underworld
                     case 2: //sheetlightning
                         Debug.Print("Sheetlighning");
                         break;
-                    case 3://maybe mass confuse
-                        Debug.Print("mass confuse?");
+                    case 3://Mass Confusion
+                        methodtorun = Confusion;
                         break;
                     case 4: //flame wind
                         methodtorun = FlameWindUW1;
@@ -94,6 +95,11 @@ namespace Underworld
             return true;
         }
 
+        /// <summary>
+        /// Just spawns a flamewind explosion in a tile.
+        /// </summary>
+        /// <param name="tileX"></param>
+        /// <param name="tileY"></param>
         private static void ExplosionInTile(int tileX, int tileY)
         {
             if (UWTileMap.ValidTile(tileX, tileY))
@@ -139,9 +145,7 @@ namespace Underworld
                         return false;
                     }
                 }
-
-                animo.SpawnAnimoInTile(2, 3, 3, (short)(tile.floorHeight << 3), tile.tileX, tile.tileY);
-                damage.DamageObjectsInTile(x, y, 1, 1);
+                ExplosionInTile(tile.tileX, tile.tileY);
                 if (isNPC)
                 {
                     si++;
@@ -173,6 +177,41 @@ namespace Underworld
                         playerdat.Search = oldSearchSkill;
                         return true;
                     }
+                }
+            }
+            return false;
+        }
+
+
+
+        /// <summary>
+        /// Makes the target confused and wander around
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="targetObject"></param>
+        /// <param name="tile"></param>
+        /// <param name="srcIndex"></param>
+        /// <returns></returns>
+        public static bool Confusion(int x, int y, uwObject targetObject, TileInfo tile, int srcIndex)
+        {  
+            if (targetObject == null)
+            {
+                if (Rng.r.Next(3)==0)
+                {
+                    if  (srcIndex == 0)
+                    {
+                        //spawn twinkies at the player position
+                        animo.SpawnAnimoAtPoint(7, main.instance.cam.Position);
+                    }
+                }                
+            }
+            else
+            {
+                if (targetObject.majorclass ==1)
+                {
+                    animo.SpawnAnimoAtPoint(7, targetObject.instance.uwnode.Position);
+                    return ApplyAIChangingSpell(targetObject, newgoal:2, newattitude: 1, newgtarg:1);
                 }
             }
             return false;

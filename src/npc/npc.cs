@@ -32,7 +32,7 @@ namespace Underworld
         {
             npc_goal_stand_still_0 = 0,
             npc_goal_goto_1 = 1,
-            npc_goal_wander_2 = 2,
+            npc_goal_wander_2_confusion = 2,  //used in confusion spell
             npc_goal_follow = 3,
             npc_goal_wander_4 = 4, //possibly this should be another standstill goal
             npc_goal_attack_5 = 5,
