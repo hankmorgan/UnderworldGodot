@@ -82,7 +82,7 @@ namespace Underworld
             {
                 if(_RES==GAME_UW2)
                 {
-                    return (GetAt(0x62)>>2) & 3;
+                    return (GetAt(0x62)>>1) & 3;
                 }
                 else
                 {
@@ -102,9 +102,9 @@ namespace Underworld
                 else
                 {
                     var tmp = GetAt(0x61);
-                    tmp = (byte)(tmp & 0xF9);
+                    tmp = (byte)(tmp & 0xF3);
                     value = value & 0x3;
-                    tmp |= (byte)(value<<1);
+                    tmp |= (byte)(value<<2);
                     SetAt(0x61,tmp);
                 }
             }

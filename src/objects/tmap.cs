@@ -42,6 +42,27 @@ namespace Underworld
             SetModelRotation(parent,t);
             centreAlongAxis(parent, t);
             
+
+            //adjust to be closer to walls
+            if (obj.xpos == 0)
+            {
+                parent.Position += new Vector3(+0.05f, 0f, 0f);
+            }
+            if (obj.ypos == 0)
+            {
+                parent.Position += new Vector3(0f, 0f, -0.05f);
+            }
+            if (obj.xpos == 7)
+            {
+                parent.Position += new Vector3(-0.05f, 0f, 0f);
+            }
+            if (obj.ypos == 7)
+            {
+                parent.Position += new Vector3(0f, 0f, +0.05f);
+            }
+
+
+
             //DisplayModelPoints(t, parent);
             return t;
         }    

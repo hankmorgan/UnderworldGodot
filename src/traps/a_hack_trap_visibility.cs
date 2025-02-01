@@ -27,10 +27,7 @@ namespace Underworld
             {
                 //show object
                 Debug.Print($"Showing {ObjToChange.a_name} {ObjToChange.index}");
-                if (ObjToChange.instance==null)
-                {
-                    ObjectCreator.RenderObject(ObjToChange, UWTileMap.current_tilemap);
-                }
+                objectInstance.RedrawFull(ObjToChange);
             }
         }
     }//end class

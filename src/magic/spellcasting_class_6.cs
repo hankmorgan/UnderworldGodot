@@ -16,13 +16,14 @@ namespace Underworld
             {
                 switch (minorclass & 0x3F)
                 {
-                    case 0: //reveal
-                        Debug.Print("reveal");
+                    case 1: //reveal
+                        methodtorun = Reveal;
+                        rngProbablity = 0x64; distanceFromCaster = 1; tileRadius = 2;
                         break;
-                    case 1: //sheetlightning
+                    case 2: //sheetlightning
                         Debug.Print("Sheetlighning");
                         break;
-                    case 2://maybe mass confuse
+                    case 3://maybe mass confuse
                         Debug.Print("mass confuse?");
                         break;
                     case 4: //flame wind
@@ -50,7 +51,7 @@ namespace Underworld
                 switch (minorclass & 0x3F)
                 {
                     case 1: //reveal
-                        Debug.Print("reveal");
+                        methodtorun = Reveal;
                         break;
                     case 2: //sheetlightning
                         Debug.Print("Sheetlighning");
@@ -76,7 +77,16 @@ namespace Underworld
         }
         
 
-        public static bool FlameWindUW2(int x, int y, uwObject critter, TileInfo tile, int srcIndex)
+        /// <summary>
+        /// Spawns fiery explosions on the target location
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="targetObject"></param>
+        /// <param name="tile"></param>
+        /// <param name="srcIndex"></param>
+        /// <returns></returns>
+        public static bool FlameWindUW2(int x, int y, uwObject targetObject, TileInfo tile, int srcIndex)
         {
             Debug.Print ($"Flamewind on tile {x},{y}");
             var di = (x<<6) + y;
@@ -84,10 +94,10 @@ namespace Underworld
             var si = FlameWindGlobal & 0xF;
             bool isNPC=false;
 
-            if (critter!=null)
+            if (targetObject!=null)
             {
-                Debug.Print($"Flamewind on {critter.a_name}");
-                isNPC = (critter.majorclass ==1);
+                Debug.Print($"Flamewind on {targetObject.a_name}");
+                isNPC = (targetObject.majorclass ==1);
             }
             if ((var6 != di) && (si<5))
             {//likely a check that the spell is cast once per tile and hits a max of 5 targets
@@ -109,6 +119,32 @@ namespace Underworld
             }
             
             return true;
+        }
+
+        public static bool Reveal(int x, int y, uwObject targetObject, TileInfo tile, int srcIndex)
+        {
+            if (targetObject !=null)
+            {
+                if ((targetObject.is_quant == 0) && (targetObject.link!=0) && (targetObject.majorclass!=6))
+                {
+                    var looktrigger = objectsearch.FindMatchInObjectChain(targetObject.link, 6, 2, 3, UWTileMap.current_tilemap.LevelObjects);
+                    if (looktrigger!=null)
+                    {
+                        var oldSearchSkill = playerdat.Search;
+                        playerdat.Search = 0x2D;
+                        trigger.TriggerObjectLink(
+                            character: 0,
+                            ObjectUsed: targetObject,
+                            triggerType: (int)triggerObjectDat.triggertypes.LOOK,
+                            triggerX: targetObject.tileX,
+                            triggerY: targetObject.tileY,
+                            objList: UWTileMap.current_tilemap.LevelObjects);
+                        playerdat.Search = oldSearchSkill;
+                        return true;
+                    }
+                }
+            }            
+            return false;            
         }
     }//end class
 }//end namespace
