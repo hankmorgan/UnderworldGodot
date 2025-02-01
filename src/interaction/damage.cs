@@ -73,8 +73,8 @@ namespace Underworld
             Debug.Print($"Damage {critter.a_name} by {basedamage}");
 
             //Note to be strictly compatable with UW behaviour the damage should be accumulated for the npc and test
-            //once per tick This is used to control the angering behaviour of the npc in checking against passiveness.
-            critter.npc_hp = (byte)Math.Max(0, critter.npc_hp - basedamage);
+            //once per tick This is used to control the angering behaviour of the npc in checking against passiveness.           
+           // critter.npc_hp = (byte)Math.Max(0, critter.npc_hp - basedamage);
             critter.AccumulatedDamage += (short)basedamage;//how much total damage has been applied in this tick.
             //make the npc react to the damage source. player if 0
             //record the damage source as the player
@@ -91,32 +91,6 @@ namespace Underworld
                 playerdat.LastDamagedNPCZpos = critter.zpos;
             }
 
-
-
-            if (critter.npc_hp == 0)
-            {
-                if (
-                    (_RES == GAME_UW2) && (critter.npc_animation != 7)
-                    ||
-                    (_RES != GAME_UW2) && (critter.npc_animation != 0xC)
-                )
-                { //if not already in the death animation
-                    if (npc.SpecialDeathCases(critter))
-                    {
-                        if (_RES == GAME_UW2)
-                        {
-                            critter.npc_animation = 7;//are these right??                            
-                        }
-                        else
-                        {
-                            critter.npc_animation = 0xC;//
-                        }
-                        critter.AnimationFrame = 0;
-                        npc.RedrawAnimation(critter);
-                    }
-                }
-                return 1;
-            }
             return 0;
         }
 
@@ -537,7 +511,7 @@ namespace Underworld
                 }
                 else
                 {
-                    //if has fire ressistance
+                    //if has fire resistance
                     if ((scales & 0x28) == 0x28) //test for fire and ice together.
                     {
                         return basedamage; //when fire and ice together ice only does regular damage

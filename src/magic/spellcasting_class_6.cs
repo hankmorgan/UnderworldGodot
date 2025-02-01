@@ -2,9 +2,20 @@ using System.Diagnostics;
 
 namespace Underworld
 {
+    /// <summary>
+    /// Area effecting spells.
+    /// </summary>
     public partial class SpellCasting : UWClass
     {
+        /// <summary>
+        /// Used to track what tiles and no of NCPS have been hit by flamewind in UW2.
+        /// </summary>
         static int FlameWindGlobal = 0;
+
+        /// <summary>
+        /// Accumulated damage caused by Repel undead.
+        /// </summary>
+        static int RepelUndeadGlobal = 0;
         public static void CastClass6_SpellsAroundPlayer(int minorclass)
         {
             CallBacks.AreaEffectCallBack methodtorun = null;
@@ -26,7 +37,7 @@ namespace Underworld
                         break;
                     case 3://maybe mass confuse                       
                         methodtorun = Confusion;
-                        rngProbablity= 0xC; distanceFromCaster = 4; tileRadius = 2;
+                        rngProbablity = 0xC; distanceFromCaster = 4; tileRadius = 2;
                         break;
                     case 4: //flame wind
                         Debug.Print("Flamewind");
@@ -35,7 +46,9 @@ namespace Underworld
                         rngProbablity = 0xA; distanceFromCaster = 4; tileRadius = 2;
                         break;
                     case 5://repel undead
-                        Debug.Print("Repel undead");
+                        RepelUndeadGlobal = 0;
+                        rngProbablity = 0x32; distanceFromCaster = 4; tileRadius = 2;
+                        methodtorun = RepelUndead;
                         break;
                     case 6://shockwave
                         Debug.Print("Shockwave");
@@ -47,10 +60,9 @@ namespace Underworld
             }
             else
             {
-                Debug.Print($"{minorclass & 0x3F}");
                 distanceFromCaster = 4;
                 rngProbablity = 2;//these values are always the same in uw1.
-                switch (minorclass & 0x3F)
+                switch (minorclass & 0x3F) //the other bits in minorclass define the target type for the area effect spell
                 {
                     case 1: //reveal
                         methodtorun = Reveal;
@@ -63,7 +75,6 @@ namespace Underworld
                         break;
                     case 4: //flame wind
                         methodtorun = FlameWindUW1;
-                        Debug.Print("Flamewind");
                         break;
                 }
             }
@@ -160,6 +171,15 @@ namespace Underworld
             return true;
         }
 
+        /// <summary>
+        /// Temporarily raises the search skill to allow for triggering of any look triggers found in the area.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="targetObject"></param>
+        /// <param name="tile"></param>
+        /// <param name="srcIndex"></param>
+        /// <returns></returns>
         public static bool Reveal(int x, int y, uwObject targetObject, TileInfo tile, int srcIndex)
         {
             if (targetObject != null)
@@ -198,33 +218,95 @@ namespace Underworld
         /// <param name="srcIndex"></param>
         /// <returns></returns>
         public static bool Confusion(int x, int y, uwObject targetObject, TileInfo tile, int srcIndex)
-        {  
+        {
             if (targetObject == null)
             {
-                if (Rng.r.Next(3)==0)
+                if (Rng.r.Next(3) == 0)
                 {
-                    if  (srcIndex == 0)
+                    if (srcIndex == 0)
                     {
                         //spawn twinkies at the player position
                         animo.SpawnAnimoAtPoint(7, main.instance.cam.Position);
                     }
-                }                
+                }
             }
             else
             {
-                if (targetObject.majorclass ==1)
+                if (targetObject.majorclass == 1)
                 {
                     animo.SpawnAnimoAtPoint(7, targetObject.instance.uwnode.Position);
-                    return ApplyAIChangingSpell(targetObject, newgoal:2, newattitude: 1, newgtarg:1);
+                    return ApplyAIChangingSpell(targetObject, newgoal: 2, newattitude: 1, newgtarg: 1);
                 }
             }
             return false;
         }
 
+        /// <summary>
+        /// Spawns lightning bolts in the area.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="targetObject"></param>
+        /// <param name="tile"></param>
+        /// <param name="srcIndex"></param>
+        /// <returns></returns>
         public static bool SheetLightning(int x, int y, uwObject targetObject, TileInfo tile, int srcIndex)
         {
             DamageEffectinTile(tile.tileX, tile.tileY, 5, 2);
             return true;
+        }
+
+
+        /// <summary>
+        /// Scares away undead. If undead already scared then applies damage.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="targetObject"></param>
+        /// <param name="tile"></param>
+        /// <param name="srcIndex"></param>
+        /// <returns></returns>
+        public static bool RepelUndead(int x, int y, uwObject targetObject, TileInfo tile, int srcIndex)
+        {
+            if (targetObject == null)
+            {
+                return false;
+            }
+            else
+            {
+                if (targetObject.item_id == 0x13)
+                {
+                    Debug.Print("A skull in Repel undead?");
+                    RepelUndeadGlobal += targetObject.quality;
+                    return SmiteUndead(targetObject.index, UWTileMap.current_tilemap.LevelObjects, targetObject.instance.uwnode.Position);
+                }
+                else
+                {
+                    if (targetObject.majorclass == 1)
+                    {
+                        var testdamage = 1;
+                        if (damage.ScaleDamage(targetObject.item_id, ref testdamage, 0x80) == 0)// check if target is undead
+                        {
+                            if (playerdat.Casting * 0xA >= RepelUndeadGlobal)
+                            {
+                                bool returnValue;
+                                if (targetObject.npc_goal == 6)
+                                {//already fleeing
+                                    returnValue = damage.DamageObject(targetObject, playerdat.Casting, 3, UWTileMap.current_tilemap.LevelObjects, true, Godot.Vector3.Zero, 1, ignoreVector: true) != 0;
+                                }
+                                else
+                                {
+                                    returnValue = ApplyAIChangingSpell(targetObject, newgoal: 6, newgtarg: 1);
+                                }
+                                animo.SpawnAnimoInTile(0xB, 3, 3, targetObject.zpos, targetObject.tileX, targetObject.tileY);
+                                RepelUndeadGlobal += targetObject.npc_hp;
+                                return returnValue;
+                            }
+                        }
+                    }
+                    return false;
+                }
+            }
         }
     }//end class
 }//end namespace

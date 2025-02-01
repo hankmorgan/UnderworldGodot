@@ -1,5 +1,3 @@
-using System;
-
 namespace Underworld
 {
     public class trapdisarming : UWClass

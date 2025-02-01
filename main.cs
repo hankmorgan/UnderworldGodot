@@ -263,8 +263,9 @@ public partial class main : Node3D
 						{
 							var obj = UWTileMap.current_tilemap.LevelObjects[index];
 							if (obj.majorclass == 1)
-							{
+							{								
 								npc.NPCInitialProcess(obj);
+								npc.ProcessDamage_TEMP(obj);
 							}
 							else
 							{

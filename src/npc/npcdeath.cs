@@ -10,6 +10,49 @@ namespace Underworld
     {
 
         /// <summary>
+        /// Temporary function to handle accumulated damage/death
+        /// </summary>
+        /// <param name="critter"></param>
+        public static void ProcessDamage_TEMP(uwObject critter)
+        {
+            if (critter.AccumulatedDamage > 0)
+            {
+                if (critter.AccumulatedDamage < critter.npc_hp)
+                {
+                    critter.npc_hp -= (byte)critter.AccumulatedDamage;
+                }
+                else
+                {
+                    critter.npc_hp = 0;
+                }
+                critter.AccumulatedDamage = 0;//reset damage for this frame.
+            }
+            if (critter.npc_hp == 0)
+            {
+                if (
+                    (_RES == GAME_UW2) && (critter.npc_animation != 7)
+                    ||
+                    (_RES != GAME_UW2) && (critter.npc_animation != 0xC)
+                )
+                { //if not already in the death animation
+                    if (npc.SpecialDeathCases(critter))
+                    {
+                        if (_RES == GAME_UW2)
+                        {
+                            critter.npc_animation = 7;//are these right??                            
+                        }
+                        else
+                        {
+                            critter.npc_animation = 0xC;//
+                        }
+                        critter.AnimationFrame = 0;
+                        npc.RedrawAnimation(critter);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Handles special death cases for npcs.
         /// </summary>
         /// <param name="critter"></param>
@@ -199,7 +242,7 @@ namespace Underworld
                             {
                                 a_set_variable_trap.VariableOperationUW2(243, 2, 1);
                                 a_do_trap_trespass.HackTrapTrespass(21);
-                                thief.FlagTheftToObjectOwner(playerdat.playerObject,21);
+                                thief.FlagTheftToObjectOwner(playerdat.playerObject, 21);
                             }
                             break;
                         }
@@ -209,7 +252,7 @@ namespace Underworld
                             {
                                 tomb.KillLothsLiches(0x17);
                                 playerdat.SetQuest(103, 1);
-                                playerdat.SetQuest(7,1);
+                                playerdat.SetQuest(7, 1);
                                 trigger.TriggerTrapInTile(1, 2);
                             }
                             break;
@@ -240,13 +283,13 @@ namespace Underworld
                         }
                     case 0x2F://Mors Gothri
                         {
-                            if (mode==0)
+                            if (mode == 0)
                             {
-                                if (worlds.GetWorldNo(playerdat.dungeon_level)==2)
+                                if (worlds.GetWorldNo(playerdat.dungeon_level) == 2)
                                 {//initial encounter in the keep
-                                    if (playerdat.GetQuest(54)==1)
+                                    if (playerdat.GetQuest(54) == 1)
                                     {
-                                        ObjectRemover.DeleteObjectFromTile(critter.tileX, critter.tileY, critter.index, true);                                       
+                                        ObjectRemover.DeleteObjectFromTile(critter.tileX, critter.tileY, critter.index, true);
                                     }
                                     else
                                     {
@@ -257,7 +300,7 @@ namespace Underworld
                                 else
                                 {//final encounter
                                     TalkToDyingNPC(critter);
-                                    playerdat.SetQuest(64,1);
+                                    playerdat.SetQuest(64, 1);
                                     playerdat.IncrementXClock(15);
                                     return true;
                                 }
@@ -433,16 +476,16 @@ namespace Underworld
                         }
                     case 0x8C://patterson. when he is hostile
                         {
-                            if (mode!=0)
+                            if (mode != 0)
                             {
                                 var originalxclock = playerdat.GetXClock(1);
                                 TalkToDyingNPC(critter);
-                                playerdat.SetXClock(1,13);
-                                if (playerdat.GetXClock(3)>=6)
+                                playerdat.SetXClock(1, 13);
+                                if (playerdat.GetXClock(3) >= 6)
                                 {
-                                    playerdat.SetXClock(1,14);
+                                    playerdat.SetXClock(1, 14);
                                 }
-                                if (playerdat.GetXClock(1)<originalxclock)
+                                if (playerdat.GetXClock(1) < originalxclock)
                                 {//xclock can't go backwards
                                     playerdat.SetXClock(1, originalxclock);
                                 }
@@ -451,7 +494,7 @@ namespace Underworld
                         }
                     case 0x8D://lady tory
                         {
-                            if (mode==0)
+                            if (mode == 0)
                             {
                                 return true;
                             }
@@ -465,7 +508,7 @@ namespace Underworld
                                 {
                                     return false;
                                 }
-                            }                            
+                            }
                         }
                     case 0x91://the listener
                         {
@@ -643,7 +686,7 @@ namespace Underworld
             playerdat.FreezeTimeEnchantment = false;//?
             talk.Talk(critter.index, UWTileMap.current_tilemap.LevelObjects, true);
             //todo: in uw2 npc_talkedto gets cleared here. does this matter and if so how would implement it seeing as the conversation runs in a co-routine
-        }       
+        }
 
 
         /// <summary>
