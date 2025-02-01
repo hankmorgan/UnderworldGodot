@@ -174,14 +174,18 @@ namespace Underworld
                                             (typeOfTargetArg8 == 0xC0)
                                         )
                                         {
-                                            if (methodToCall(di_X, si_Y, nextObj, currenttile, srcItemIndex))
+                                            if (nextObj.majorclass != 7)//this is not vanilla but I don't think these functions are meant to target animos.
                                             {
-                                                Rng_arg0--;
-                                                if (Rng_arg0 == 0)
+                                                if (methodToCall(di_X, si_Y, nextObj, currenttile, srcItemIndex))
                                                 {
-                                                    return;
+                                                    Rng_arg0--;
+                                                    if (Rng_arg0 == 0)
+                                                    {
+                                                        return;
+                                                    }
                                                 }
                                             }
+
                                         }
                                         listIndex = nextObj.next;
                                     }//while loop                                        

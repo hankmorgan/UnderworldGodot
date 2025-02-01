@@ -49,14 +49,15 @@ namespace Underworld
                     case 5://repel undead
                         RepelUndeadGlobal = 0;
                         methodtorun = RepelUndead;
-                        rngProbablity = 0x32; distanceFromCaster = 4; tileRadius = 2;                        
+                        rngProbablity = 0x32; distanceFromCaster = 4; tileRadius = 2;
                         break;
                     case 6://shockwave
                         methodtorun = Shockwave;
                         rngProbablity = 0x32; distanceFromCaster = 0; tileRadius = 1;
                         break;
                     case 7://frost
-                        Debug.Print("Frost");
+                        methodtorun = Frost;
+                        rngProbablity = 0x5; distanceFromCaster = 3; tileRadius = 1;
                         break;
                 }
             }
@@ -311,29 +312,78 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// Applies damage to targets based on player casting skill.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="targetObject"></param>
+        /// <param name="tile"></param>
+        /// <param name="srcIndex"></param>
+        /// <returns></returns>
         public static bool Shockwave(int x, int y, uwObject targetObject, TileInfo tile, int srcIndex)
         {
-            if (targetObject==null)
+            if (targetObject == null)
             {
                 return false;
             }
-            var damagetoapply = 15 + (playerdat.Casting /2);
-            if (targetObject.index!=srcIndex)
+            var damagetoapply = 15 + (playerdat.Casting / 2);
+            if (targetObject.index != srcIndex)
             {
                 if (targetObject.majorclass == 1)
                 {
                     animo.SpawnAnimoAtPoint(0xB, targetObject.instance.uwnode.Position);
                     return damage.DamageObject(
-                        objToDamage: targetObject, 
-                        basedamage: damagetoapply, 
-                        damagetype: 3, 
-                        objList: UWTileMap.current_tilemap.LevelObjects, 
-                        WorldObject: true, 
-                        hitCoordinate: Godot.Vector3.Zero, 
-                        damagesource: 1, 
-                        ignoreVector: true) !=0;
+                        objToDamage: targetObject,
+                        basedamage: damagetoapply,
+                        damagetype: 3,
+                        objList: UWTileMap.current_tilemap.LevelObjects,
+                        WorldObject: true,
+                        hitCoordinate: Godot.Vector3.Zero,
+                        damagesource: 1,
+                        ignoreVector: true) != 0;
                 }
             }
+            return false;
+        }
+
+        /// <summary>
+        /// Applies cold damage to a target.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="targetObject"></param>
+        /// <param name="tile"></param>
+        /// <param name="srcIndex"></param>
+        /// <returns></returns>
+        public static bool Frost(int x, int y, uwObject targetObject, TileInfo tile, int srcIndex)
+        {
+            if (targetObject == null)
+            {
+                animo.SpawnAnimoInTile(0xA, 3,3, (short)(tile.floorHeight<<3),  tile.tileX, tile.tileY);
+                return false;
+            }
+            else
+            {
+                var damagetoapply = 0xA;
+                if (targetObject.index != srcIndex)
+                {
+                    if (targetObject.majorclass == 1)
+                    {
+                        animo.SpawnAnimoAtPoint(0xB, targetObject.instance.uwnode.Position);                        
+                    }
+                    return damage.DamageObject(
+                        objToDamage: targetObject,
+                        basedamage: damagetoapply,
+                        damagetype: 0x23,
+                        objList: UWTileMap.current_tilemap.LevelObjects,
+                        WorldObject: true,
+                        hitCoordinate: targetObject.instance.uwnode.Position,
+                        damagesource: 1
+                        ) != 0;
+                }
+            }
+
             return false;
         }
     }//end class
