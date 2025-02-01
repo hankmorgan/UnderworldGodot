@@ -1340,7 +1340,7 @@ namespace Underworld
         /// <summary>
         /// Likely critter is an ally of the player
         /// </summary>
-        public short UnkBit_0x19_6_MaybeAlly
+        public short IsAlly
         {
             get
             {

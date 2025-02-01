@@ -12,7 +12,6 @@ namespace Underworld
             int healamount;
             if (minorclass == 0xF)
             {//what spell would do this??? Answer Greater heal.
-                healamount = -1;
                 playerdat.play_hp = playerdat.max_hp;//System.Math.Max(0, playerdat.play_hp + healamount);//negative ???
             }
             else

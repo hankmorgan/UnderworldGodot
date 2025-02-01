@@ -147,7 +147,7 @@ namespace Underworld
                         newObject.npc_yhome = (short)tile.tileY;
                         if ((caster == 0) && (minorclass == 4))
                         {
-                            newObject.UnkBit_0x19_6_MaybeAlly = 1;
+                            newObject.IsAlly = 1;
                         }
                         else
                         {

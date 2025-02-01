@@ -372,7 +372,7 @@ namespace Underworld
                 {
                     if (
                         (
-                            (critter.UnkBit_0x19_6_MaybeAlly == 0)
+                            (critter.IsAlly == 0)
                             &&
                             (critter.index == playerdat.LastDamagedNPCIndex)
                             &&
@@ -382,7 +382,7 @@ namespace Underworld
                         )
                         ||
                         (
-                            critter.UnkBit_0x19_6_MaybeAlly == 1
+                            critter.IsAlly == 1
                         )
                     )
                     {
@@ -397,7 +397,7 @@ namespace Underworld
                                 if ((critter.npc_goal != 9) && (critter.npc_goal != 6))
                                 {
                                     var gtarg = 1;
-                                    if (critter.UnkBit_0x19_6_MaybeAlly == 1)
+                                    if (critter.IsAlly == 1)
                                     {//critter is allied with the player? set them to attack the players target
                                         gtarg = playerdat.LastDamagedNPCIndex;
                                     }
@@ -414,12 +414,12 @@ namespace Underworld
                             (critter.ProjectileSourceID != 1)
                             ||
                             (
-                                (critter.ProjectileSourceID == 1) && (critter.UnkBit_0x19_6_MaybeAlly == 1)
+                                (critter.ProjectileSourceID == 1) && (critter.IsAlly == 1)
                             )
                             )
                         {
                             bool tmp = false;
-                            if (critter.UnkBit_0x19_6_MaybeAlly == 1)
+                            if (critter.IsAlly == 1)
                             {
                                 tmp = true;
                             }
@@ -434,7 +434,7 @@ namespace Underworld
                                 {
                                     lasthitobject = UWTileMap.current_tilemap.LevelObjects[critter.ProjectileSourceID];
                                 }
-                                tmp = (lasthitobject.UnkBit_0x19_6_MaybeAlly == 1);
+                                tmp = (lasthitobject.IsAlly == 1);
                             }
                             if (tmp)
                             {

@@ -94,9 +94,6 @@ namespace Underworld
             {//the uw1 list of class 7 spells is much shorter
                 switch (minorclass)
                 {
-                    case 0:
-                        //some sort of explosion?   
-                        break;
                     case 1:
                         //Cause fear
                         Causefear(index, objList);
@@ -107,6 +104,7 @@ namespace Underworld
                         break;
                     case 3:
                         //ally
+                        Ally(index, objList, hitCoordinate);
                         break;
                     case 4:
                         //poison
@@ -347,6 +345,35 @@ namespace Underworld
             {
                 Debug.Print("NPC has resisted spell");
                 return false;
+            }
+        }
+
+
+        /// <summary>
+        /// Makes the target an ally of the player
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="objList"></param>
+        static void Ally(int index, uwObject[] objList, Godot.Vector3 hitCoordinate)
+        {
+            var critter = objList[index];
+            if (critter != null)
+            {
+                if (critter.majorclass !=1)
+                {
+                    return; //not an npc
+                }
+                var testdam = 1;
+                if (damage.ScaleDamage(critter.item_id, ref testdam, 3) != 0)
+                {
+                    animo.SpawnAnimoAtPoint(7, hitCoordinate);
+                    if (critter.IsAlly == 0)
+                    {
+                        npc.SetGoalAndGtarg(critter, (int)npc.npc_goals.npc_goal_wander_2_confusion, 0);
+                        critter.IsAlly = 1;
+                        critter.npc_attitude = 3;
+                    }
+                }
             }
         }
 

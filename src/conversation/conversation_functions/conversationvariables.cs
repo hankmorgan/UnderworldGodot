@@ -138,7 +138,7 @@ namespace Underworld
 								}
 								else
 								{
-									if (npc.UnkBit_0x19_6_MaybeAlly == 0)
+									if (npc.IsAlly == 0)
 									{
 										valueToImport = npc.npc_attitude;
 									}
@@ -268,8 +268,7 @@ namespace Underworld
 			if (newvalue > 3)
 			{
 				npc.npc_attitude = 3;
-				//npc.npc_hunger = (short)(npc.npc_hunger | 0x40); //set bit 6 after conv
-				npc.UnkBit_0x19_6_MaybeAlly = 1;
+				npc.IsAlly = 1;
 			}
 			else
 			{//note this value will overwrite a set_race_attitude value, npc will become hostile later on in this case due to hardcoded behavioural code when their gtarg is the player 1
