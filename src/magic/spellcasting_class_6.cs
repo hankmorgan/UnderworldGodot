@@ -6,12 +6,12 @@ namespace Underworld
     {
         static int FlameWindGlobal = 0;
         public static void CastClass6_SpellsAroundPlayer(int minorclass)
-        {        
-            CallBacks.AreaEffectCallBack methodtorun = null;    
+        {
+            CallBacks.AreaEffectCallBack methodtorun = null;
             //These values come from a table in the exe
             int tileRadius = 0;
             int distanceFromCaster = 0;
-            int rngProbablity=0;
+            int rngProbablity = 0;
             if (_RES == GAME_UW2)
             {
                 switch (minorclass & 0x3F)
@@ -33,13 +33,13 @@ namespace Underworld
                         rngProbablity = 0xA; distanceFromCaster = 4; tileRadius = 2;
                         break;
                     case 5://repel undead
-                        Debug.Print ("Repel undead");
+                        Debug.Print("Repel undead");
                         break;
                     case 6://shockwave
                         Debug.Print("Shockwave");
                         break;
                     case 7://frost
-                        Debug.Print ("Frost");
+                        Debug.Print("Frost");
                         break;
                 }
             }
@@ -47,7 +47,7 @@ namespace Underworld
             {
                 Debug.Print($"{minorclass & 0x3F}");
                 distanceFromCaster = 4;
-                rngProbablity=2;//these values are always the same in uw1.
+                rngProbablity = 2;//these values are always the same in uw1.
                 switch (minorclass & 0x3F)
                 {
                     case 1: //reveal
@@ -57,25 +57,56 @@ namespace Underworld
                         Debug.Print("Sheetlighning");
                         break;
                     case 3://maybe mass confuse
-                       Debug.Print("mass confuse?");
-                       break;
+                        Debug.Print("mass confuse?");
+                        break;
                     case 4: //flame wind
                         methodtorun = FlameWindUW1;
                         Debug.Print("Flamewind");
                         break;
                 }
             }
-            if (methodtorun!=null)
+            if (methodtorun != null)
             {
-                CallBacks.RunCodeOnTargetsAroundObject(methodtorun,0, rngProbablity, minorclass&0xC0, distanceFromCaster, tileRadius);
-            }            
+                CallBacks.RunCodeOnTargetsAroundObject(methodtorun, 0, rngProbablity, minorclass & 0xC0, distanceFromCaster, tileRadius);
+            }
         }
 
+        /// <summary>
+        /// Casts flamewind in a cross shape around each target tile.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="critter"></param>
+        /// <param name="tile"></param>
+        /// <param name="srcIndex"></param>
+        /// <returns></returns>
         public static bool FlameWindUW1(int x, int y, uwObject critter, TileInfo tile, int srcIndex)
-        {//uw1 casts flamewind in a cross shape around each target tile.
+        {
+            //centre tile
+            ExplosionInTile(tile.tileX, tile.tileY);
+
+            //cross shape
+            ExplosionInTile(tile.tileX + 1, tile.tileY);
+            ExplosionInTile(tile.tileX - 1, tile.tileY);
+            ExplosionInTile(tile.tileX, tile.tileY + 1);
+            ExplosionInTile(tile.tileX, tile.tileY - 1);
+
             return true;
         }
-        
+
+        private static void ExplosionInTile(int tileX, int tileY)
+        {
+            if (UWTileMap.ValidTile(tileX, tileY))
+            {
+                var tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];
+                if (tile.tileType != 0)
+                {
+                    animo.SpawnAnimoInTile(2, 3, 3, (short)(tile.floorHeight << 3), tile.tileX, tile.tileY);
+                    damage.DamageObjectsInTile(tile.tileX, tile.tileY, 1, 1);
+                }
+            }
+        }
+
 
         /// <summary>
         /// Spawns fiery explosions on the target location
@@ -88,47 +119,47 @@ namespace Underworld
         /// <returns></returns>
         public static bool FlameWindUW2(int x, int y, uwObject targetObject, TileInfo tile, int srcIndex)
         {
-            Debug.Print ($"Flamewind on tile {x},{y}");
-            var di = (x<<6) + y;
-            var var6 = FlameWindGlobal >>4;
+            Debug.Print($"Flamewind on tile {x},{y}");
+            var di = (x << 6) + y;
+            var var6 = FlameWindGlobal >> 4;
             var si = FlameWindGlobal & 0xF;
-            bool isNPC=false;
+            bool isNPC = false;
 
-            if (targetObject!=null)
+            if (targetObject != null)
             {
                 Debug.Print($"Flamewind on {targetObject.a_name}");
-                isNPC = (targetObject.majorclass ==1);
+                isNPC = (targetObject.majorclass == 1);
             }
-            if ((var6 != di) && (si<5))
+            if ((var6 != di) && (si < 5))
             {//likely a check that the spell is cast once per tile and hits a max of 5 targets
                 if (!isNPC)
                 {
-                    if (Rng.r.Next(3) !=0)
+                    if (Rng.r.Next(3) != 0)
                     {
                         return false;
                     }
                 }
 
-                animo.SpawnAnimoInTile(2, 3,3, (short)(tile.floorHeight<<3), tile.tileX, tile.tileY);
+                animo.SpawnAnimoInTile(2, 3, 3, (short)(tile.floorHeight << 3), tile.tileX, tile.tileY);
                 damage.DamageObjectsInTile(x, y, 1, 1);
                 if (isNPC)
                 {
                     si++;
                 }
-                FlameWindGlobal = (di<<4) | (si & 0xF);
+                FlameWindGlobal = (di << 4) | (si & 0xF);
             }
-            
+
             return true;
         }
 
         public static bool Reveal(int x, int y, uwObject targetObject, TileInfo tile, int srcIndex)
         {
-            if (targetObject !=null)
+            if (targetObject != null)
             {
-                if ((targetObject.is_quant == 0) && (targetObject.link!=0) && (targetObject.majorclass!=6))
+                if ((targetObject.is_quant == 0) && (targetObject.link != 0) && (targetObject.majorclass != 6))
                 {
                     var looktrigger = objectsearch.FindMatchInObjectChain(targetObject.link, 6, 2, 3, UWTileMap.current_tilemap.LevelObjects);
-                    if (looktrigger!=null)
+                    if (looktrigger != null)
                     {
                         var oldSearchSkill = playerdat.Search;
                         playerdat.Search = 0x2D;
@@ -143,8 +174,8 @@ namespace Underworld
                         return true;
                     }
                 }
-            }            
-            return false;            
+            }
+            return false;
         }
     }//end class
 }//end namespace
