@@ -46,7 +46,8 @@ namespace Underworld
                         else
                         {
                             Debug.Print("Rune of warding"); //creates a move trigger linked to a trap (#9 ward)
-                            itemid = 393;
+                            CastWardTrap(tile);
+                            return;
                         }
                         break;
                     }
@@ -162,5 +163,49 @@ namespace Underworld
                 }
             }
         }
+
+
+        /// <summary>
+        /// Creates a move triggerlinked to a ward trap
+        /// </summary>
+        /// <param name="tile"></param>
+        private static void CastWardTrap(TileInfo tile)
+        {
+            //create a move trigger
+            var newMoveTrigger = ObjectCreator.spawnObjectInTile(
+                itemid: 416,
+                tileX: tile.tileX, tileY: tile.tileY,
+                xpos: 3, ypos: 3, zpos: (short)(tile.floorHeight << 3),
+                WhichList: ObjectFreeLists.ObjectListType.StaticList, RenderImmediately: false);
+            if (newMoveTrigger != null)
+            {
+                newMoveTrigger.flags = 0;//with this value set the player will not activate this move trigger.
+                newMoveTrigger.enchantment = 1;
+                newMoveTrigger.doordir = 1;
+                newMoveTrigger.is_quant = 1;
+                newMoveTrigger.invis = 1;
+                newMoveTrigger.quality = tile.tileX;
+                newMoveTrigger.owner = tile.tileY;
+                //create the ward trap
+                var newWardTrap = ObjectCreator.spawnObjectInTile(
+                    itemid: 393,
+                    tileX: tile.tileX, tileY: tile.tileY,
+                    xpos: 3, ypos: 3, zpos: (short)(tile.floorHeight << 3),
+                    WhichList: ObjectFreeLists.ObjectListType.StaticList, RenderImmediately: false);
+                if (newWardTrap != null)
+                {
+                    newMoveTrigger.link = newWardTrap.index;
+                    newWardTrap.enchantment = 0;
+                    newWardTrap.quality = 63;
+                    newWardTrap.flags = 1;
+                    newWardTrap.is_quant = 1;
+                    newWardTrap.doordir = 1;
+                    newWardTrap.invis = 1;
+                    //newWardTrap.owner = 3; // possibly this is a random value based on what was in memory already.
+                    ObjectCreator.RenderObject(newMoveTrigger, UWTileMap.current_tilemap);
+                }
+            }
+        }
+
     }   //end class
 }//end namespace

@@ -30,7 +30,7 @@ namespace Underworld
         /// <param name="tileX"></param>
         /// <param name="tileY"></param>
         /// <returns></returns>
-        public static uwObject spawnObjectInTile(int itemid, int tileX, int tileY, short xpos, short ypos, short zpos, ObjectFreeLists.ObjectListType WhichList = ObjectFreeLists.ObjectListType.StaticList)
+        public static uwObject spawnObjectInTile(int itemid, int tileX, int tileY, short xpos, short ypos, short zpos, ObjectFreeLists.ObjectListType WhichList = ObjectFreeLists.ObjectListType.StaticList, bool RenderImmediately = true)
         {
             var slot = PrepareNewObject(itemid, WhichList);
             if (slot!=0)
@@ -43,7 +43,10 @@ namespace Underworld
                 tile.indexObjectList = obj.index;
                 obj.xpos = xpos; obj.ypos = ypos; obj.zpos = zpos;
                 obj.tileX = tileX; obj.tileY = tileY;
-                RenderObject(obj, UWTileMap.current_tilemap);
+                if (RenderImmediately)
+                {
+                    RenderObject(obj, UWTileMap.current_tilemap);
+                }                
                 return obj;
             }
             else
