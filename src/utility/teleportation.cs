@@ -98,6 +98,16 @@ namespace Underworld
                 //     uimanager.DoPickup(itemToTransfer);
                 // }
             }
+            else
+            {
+                //teleport within a map
+                if ((TeleportTileX != -1) && (TeleportTileY != -1))
+                {
+                    //move to new tile
+                    //var targetTile = UWTileMap.current_tilemap.Tiles[TeleportTileX, TeleportTileY];
+                    MovePlayerToTile(TeleportTileX, TeleportTileY);
+                }
+            }
 
 
             if ((TeleportTileX != -1) || (TeleportTileY != -1) || (TeleportLevel != -1))

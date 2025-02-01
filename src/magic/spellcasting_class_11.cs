@@ -20,11 +20,25 @@ namespace Underworld
                         playerdat.PlayerStatusUpdate();
                         break;
                     }
-                case 1://
+                case 1://Portal
                     {
                         if (_RES == GAME_UW2)
                         {
-                            Debug.Print("PORTAL");
+                            var distance = 2;
+                            while (distance <= 2)
+                            {
+                                var tile = UWTileMap.GetTileInDirectionFromCamera((float)distance * 1.2f);
+                                if (tile.tileType != 0)//don't teleport into a solid tile or out of bounds. This should be replaced with a can fit in tile check later on.
+                                {
+                                    if (tile.floorHeight - (playerdat.zpos << 3) <= 2)  //the use of a right shift here is possibly a vanilla bug
+                                    {
+                                        Teleportation.Teleport(0, tile.tileX, tile.tileY, 0, playerdat.heading);
+                                        return;
+                                    }
+                                }
+                                distance++;
+                            }
+                            uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x132));//there is not enough space
                         }
                         else
                         {
@@ -50,14 +64,14 @@ namespace Underworld
                         if (_RES == GAME_UW2)
                         {
                             //Debug.Print("LOCATE");//turn automapping back on if player is lost
-                            if ((playerdat.AutomapEnabled==false) && (worlds.GetWorldNo(playerdat.dungeon_level)!=8))
+                            if ((playerdat.AutomapEnabled == false) && (worlds.GetWorldNo(playerdat.dungeon_level) != 8))
                             {
                                 playerdat.AutomapEnabled = true;
-                                uimanager.AddToMessageScroll(GameStrings.GetString(1,0x12A));//your position is revealed
+                                uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x12A));//your position is revealed
                             }
                             else
                             {
-                                uimanager.AddToMessageScroll(GameStrings.GetString(1,0x142));//no noticeable effect
+                                uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x142));//no noticeable effect
                             }
                         }
                         else
@@ -71,7 +85,7 @@ namespace Underworld
                     }
 
                 case 4:
-                    { 
+                    {
                         if (_RES != GAME_UW2)
                         {//no uw2 spells here, Name Enchantment                        
                             currentSpell = new RunicMagic(11, minorclass);
@@ -113,7 +127,7 @@ namespace Underworld
                         break;
                     }
                 case 0xA://gate travel (UW1)
-                    {                        
+                    {
                         if (_RES != GAME_UW2)
                         {
                             GateTravelUW1();
@@ -134,15 +148,15 @@ namespace Underworld
                         //reset map
                         UWTileMap.ResetMap(0);
                         //clear rune bag
-                        for (int r=0; r<24;r++)
+                        for (int r = 0; r < 24; r++)
                         {
-                            playerdat.SetRune(r,false);
+                            playerdat.SetRune(r, false);
                             uimanager.SetRuneInBag(r, false);
                         }
                         //clear selected runes
-                        for (int r =0; r<3; r++)
+                        for (int r = 0; r < 3; r++)
                         {
-                            playerdat.SetSelectedRune(r,24);
+                            playerdat.SetSelectedRune(r, 24);
                         }
                         playerdat.NoOfSelectedRunes = 0;
                         uimanager.RedrawSelectedRuneSlots();
@@ -152,20 +166,20 @@ namespace Underworld
                         //set flag
                         playerdat.armageddon = true;
 
-                        if(_RES!=GAME_UW2)
+                        if (_RES != GAME_UW2)
                         {
                             playerdat.SilverTreeDungeon = 0; //stops player resurrection
                         }
 
                         //refresh status                        
-                        playerdat.PlayerStatusUpdate();                        
+                        playerdat.PlayerStatusUpdate();
                         break;
                     }
                 case 0xD://dispel hunger
                     {
                         playerdat.play_hunger = 0xC0;
                         playerdat.maybefoodhealthbonus = 0;
-                        uimanager.AddToMessageScroll(GameStrings.GetString(1,0x134));
+                        uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x134));
                         break;
                     }
             }
@@ -188,7 +202,8 @@ namespace Underworld
                     tileX: 32, tileY: 32,
                     newLevel: playerdat.GetMoonstone(0),
                     heading: 0);
-            };
+            }
+            ;
         }
 
 
@@ -215,7 +230,7 @@ namespace Underworld
             }
         }
 
-        
+
         /// <summary>
         /// Special case for UW1 spells that are class B but have callbacks
         /// </summary>
@@ -225,7 +240,7 @@ namespace Underworld
         /// <param name="caster"></param>
         public static void CastClassB_SpellsOnCallBack(int minorclass, int index, uwObject[] objList, int caster = 1)
         {
-            if (_RES!=GAME_UW2)
+            if (_RES != GAME_UW2)
             {
                 switch (minorclass)
                 {
@@ -245,8 +260,8 @@ namespace Underworld
                 }
             }
             else
-            {  
-                    //not in uw2/
+            {
+                //not in uw2/
             }
         }
     }//end class
