@@ -16,7 +16,7 @@ namespace Underworld
         /// <param name="critter"></param>
         public static void spawnloot(uwObject critter)
         {
-            if (critter.LootSpawnedFlag==0)
+            if (critter.LootSpawnedFlag == 0)
             {
                 ValuableObjectLoot(critter);
                 FoodLoot(critter);
@@ -34,10 +34,10 @@ namespace Underworld
         {
             //The game world chooses which valuable item type is dropped in the valuables object class (starting at coin)
             var world = worlds.GetWorldNo(playerdat.dungeon_level);
-            
+
             var Critter_var_5 = critterObjectDat.valuable_multipleprobability(critter.item_id);
             var valuableDropProbability = critterObjectDat.valuable_loot_probability(critter.item_id);
-            
+
             var r = new Random();
             if (r.Next(0, 16) >= valuableDropProbability)
             {//Do not spawn a valuable.
@@ -45,15 +45,15 @@ namespace Underworld
             }
             else
             { //spawn valuable
-                int offset=0; if (_RES!=GAME_UW2){offset=3;}
+                int offset = 0; if (_RES != GAME_UW2) { offset = 3; }
                 var valuable_type_var_1 = r.Next(0, 37 + offset - world * 3) - (30 + offset - world * 3);
                 if (valuable_type_var_1 < 0) { valuable_type_var_1 = 0; }
-                if ((valuable_type_var_1 == 1) && (_RES==GAME_UW2)) { valuable_type_var_1 = 0; }//make sure no storage crystal is dropped in UW2
+                if ((valuable_type_var_1 == 1) && (_RES == GAME_UW2)) { valuable_type_var_1 = 0; }//make sure no storage crystal is dropped in UW2
 
                 //now use var_1 to look up the objects monetary value within objects.dat (starting at coin)
                 var coinitemid = 0xA0;
                 var base_objectvalue_var_2 = commonObjDat.monetaryvalue(coinitemid + valuable_type_var_1);
-                
+
                 if (base_objectvalue_var_2 == 0) { base_objectvalue_var_2 = 1; }
 
                 //Adjust the base value based on ranges, presumably to create a probability
@@ -77,7 +77,7 @@ namespace Underworld
                 }
 
                 var var_3_qty = 0;
-                
+
                 if (Critter_var_5 < base_objectvalue_var_2)
                 {
                     //do a rng roll to check if a single instance of the valuable is spawned.
@@ -102,9 +102,12 @@ namespace Underworld
                 {
                     //Create obj
                     uwObject obj = spawnLootObject(critter, valuable_type_var_1 + coinitemid);
-                    //Apply the new qty of valuables to the result
-                    obj.link = (short)var_3_qty;
-                    Debug.Print($"Spawning {var_3_qty} {GameStrings.GetObjectNounUW(coinitemid + valuable_type_var_1)}");
+                    if (obj != null)
+                    {
+                        //Apply the new qty of valuables to the result
+                        obj.link = (short)var_3_qty;
+                        Debug.Print($"Spawning {var_3_qty} {GameStrings.GetObjectNounUW(coinitemid + valuable_type_var_1)}");
+                    }
                 }
             }
         }
@@ -118,21 +121,31 @@ namespace Underworld
         private static uwObject spawnLootObject(uwObject critter, int itemid)
         {
             var slot = ObjectCreator.PrepareNewObject(itemid);
-            //add to critter object list
-            var obj = UWTileMap.current_tilemap.LevelObjects[slot];
-            //Insert at the head of the critters inventory.
-            obj.next = critter.link;
-            critter.link = (short)slot;
-            return obj;
+            if (slot != 0)
+            {
+                //add to critter object list
+                var obj = UWTileMap.current_tilemap.LevelObjects[slot];
+                //Insert at the head of the critters inventory.
+                obj.next = critter.link;
+                critter.link = (short)slot;
+                return obj;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public static void FoodLoot(uwObject critter)
         {
-            if (Rng.r.Next(0,16)<critterObjectDat.foodloot_probability(critter.item_id))
+            if (Rng.r.Next(0, 16) < critterObjectDat.foodloot_probability(critter.item_id))
             {
                 var item_id = critterObjectDat.foodloot_item(critter.item_id) + 0xB0;
                 var obj = spawnLootObject(critter, item_id);
-                Debug.Print($"Spawning {GameStrings.GetObjectNounUW(item_id)}");
+                if(obj!=null)
+                {
+                    Debug.Print($"Spawning {GameStrings.GetObjectNounUW(item_id)}");
+                }                
             }
         }
 
@@ -142,12 +155,12 @@ namespace Underworld
         /// <param name="critter"></param>
         public static void WeaponLoot(uwObject critter)
         {
-            for (int i=0; i<2;i++)
+            for (int i = 0; i < 2; i++)
             {
                 int item_id = critterObjectDat.weaponloot(critter.item_id, i);
-                int quality=0;
-                int qty=0;
-                if (item_id!=-1)
+                int quality = 0;
+                int qty = 0;
+                if (item_id != -1)
                 {
                     //Create object now. Set properties later
 
@@ -158,19 +171,21 @@ namespace Underworld
                         if (rangedObjectDat.RangedWeaponType(item_id) == 0xC0)
                         {
                             //item is ammo. it needs a qty.
-                            qty = 4 + (Rng.r.Next(0, 8));                         
+                            qty = 4 + (Rng.r.Next(0, 8));
                         }
                     }
 
                     var obj = spawnLootObject(critter, item_id);
-                    if (qty>0)
+                    if (obj != null)
                     {
-                        obj.link = (short)qty; 
-                    }                              
-                    Debug.Print($"Spawning {qty} {GameStrings.GetObjectNounUW(item_id)} of quality {quality}");
+                        if (qty > 0)
+                        {
+                            obj.link = (short)qty;
+                        }
+                        Debug.Print($"Spawning {qty} {GameStrings.GetObjectNounUW(item_id)} of quality {quality}");
+                    }
                 }
             }
-           
         }
 
         /// <summary>
@@ -199,18 +214,21 @@ namespace Underworld
         /// <param name="critter"></param>
         public static void OtherLoot(uwObject critter)
         {
-            for (int i=0;i<2;i++)
+            for (int i = 0; i < 2; i++)
             {
-                if (Rng.r.Next(0,16) <critterObjectDat.otherloot_probability(critter.item_id, i))
+                if (Rng.r.Next(0, 16) < critterObjectDat.otherloot_probability(critter.item_id, i))
                 {
                     var item_id = critterObjectDat.otherloot_item(critter.item_id, i);
                     var quality = RandomLootQuality();
-                    if (commonObjDat.qualitytype(item_id)==0xF)
-                        {
-                            quality = 0x40;
-                        }
+                    if (commonObjDat.qualitytype(item_id) == 0xF)
+                    {
+                        quality = 0x40;
+                    }
                     var obj = spawnLootObject(critter, item_id);
-                    Debug.Print($"Spawning {GameStrings.GetObjectNounUW(item_id)} of quality {quality}");
+                    if (obj!=null)
+                    {
+                        Debug.Print($"Spawning {GameStrings.GetObjectNounUW(item_id)} of quality {quality}");
+                    }                    
                 }
             }
         }

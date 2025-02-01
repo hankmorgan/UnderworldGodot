@@ -22,7 +22,7 @@ namespace Underworld
                 uimanager.instance.mousecursor.SetCursorToObject(obj.item_id);
             }
             //tranforms all red potions into poison on the tile and in the player inventory.
-           
+
             if (UWTileMap.ValidTile(triggerX, triggerY))
             {
                 //and in the tile the trigger is point at
@@ -66,29 +66,32 @@ namespace Underworld
                             Debug.Print($"Transform {objToChange.a_name}");
                             //create a damage trap
                             var slot = ObjectCreator.PrepareNewObject(0x180);
-                            var dmgtrap = UWTileMap.current_tilemap.LevelObjects[slot];
-                            dmgtrap.quality = (short)(1 + Rng.r.Next(0, 8));
-                            dmgtrap.owner = 1;
+                            if (slot != 0)
+                            {
+                                var dmgtrap = UWTileMap.current_tilemap.LevelObjects[slot];
+                                dmgtrap.quality = (short)(1 + Rng.r.Next(0, 8));
+                                dmgtrap.owner = 1;
 
-                            objToChange.is_quant = 0;
-                            if (!WorldObject)
-                            {
-                                slot = playerdat.AddObjectToPlayerInventory(slot, false);
-                            }
-                            objToChange.item_id = 228;
-                            objToChange.link = (short)slot;
-                            if (WorldObject)
-                            {
-                                //redraw object on map
-                                if (objToChange.instance != null)
+                                objToChange.is_quant = 0;
+                                if (!WorldObject)
                                 {
-                                    objToChange.instance.uwnode.QueueFree();
-                                    ObjectCreator.RenderObject(objToChange, UWTileMap.current_tilemap);
+                                    slot = playerdat.AddObjectToPlayerInventory(slot, false);
                                 }
-                            }
-                            else
-                            {
-                                uimanager.UpdateInventoryDisplay();
+                                objToChange.item_id = 228;
+                                objToChange.link = (short)slot;
+                                if (WorldObject)
+                                {
+                                    //redraw object on map
+                                    if (objToChange.instance != null)
+                                    {
+                                        objToChange.instance.uwnode.QueueFree();
+                                        ObjectCreator.RenderObject(objToChange, UWTileMap.current_tilemap);
+                                    }
+                                }
+                                else
+                                {
+                                    uimanager.UpdateInventoryDisplay();
+                                }
                             }
                         }
                     }

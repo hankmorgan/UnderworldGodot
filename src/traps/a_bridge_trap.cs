@@ -102,15 +102,19 @@ namespace Underworld
                 }
                 //not found any matching bridge add a new bridge to the tile
                 var newBridgeIndex = ObjectCreator.PrepareNewObject(0x164,ObjectFreeLists.ObjectListType.StaticList);
-                var newBridge = UWTileMap.current_tilemap.LevelObjects[newBridgeIndex];                 
-                newBridge.next = tile.indexObjectList;//insert into object list
-                tile.indexObjectList = (short)newBridgeIndex; 
-                newBridge.invis = 0;
-                newBridge.xpos = 3; newBridge.ypos = 3;
-                newBridge.zpos = (short)zpos; 
-                newBridge.heading = (short)heading;
-                newBridge.tileX = tileX; newBridge.tileY = tileY;
-                return newBridge;
+                if (newBridgeIndex!=0)
+                {
+                    var newBridge = UWTileMap.current_tilemap.LevelObjects[newBridgeIndex];                 
+                    newBridge.next = tile.indexObjectList;//insert into object list
+                    tile.indexObjectList = (short)newBridgeIndex; 
+                    newBridge.invis = 0;
+                    newBridge.xpos = 3; newBridge.ypos = 3;
+                    newBridge.zpos = (short)zpos; 
+                    newBridge.heading = (short)heading;
+                    newBridge.tileX = tileX; newBridge.tileY = tileY;
+                    return newBridge;
+                }
+
             }
             
             return null;

@@ -33,16 +33,23 @@ namespace Underworld
         public static uwObject spawnObjectInTile(int itemid, int tileX, int tileY, short xpos, short ypos, short zpos, ObjectFreeLists.ObjectListType WhichList = ObjectFreeLists.ObjectListType.StaticList)
         {
             var slot = PrepareNewObject(itemid, WhichList);
-            //add to critter object list
-            var obj = UWTileMap.current_tilemap.LevelObjects[slot];
-            //Insert at the head of the tile list.
-            var tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];
-            obj.next = tile.indexObjectList;
-            tile.indexObjectList = obj.index;
-            obj.xpos = xpos; obj.ypos = ypos; obj.zpos = zpos;
-            obj.tileX = tileX; obj.tileY = tileY;
-            RenderObject(obj, UWTileMap.current_tilemap);
-            return obj;
+            if (slot!=0)
+            {
+                //add to critter object list
+                var obj = UWTileMap.current_tilemap.LevelObjects[slot];
+                //Insert at the head of the tile list.
+                var tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];
+                obj.next = tile.indexObjectList;
+                tile.indexObjectList = obj.index;
+                obj.xpos = xpos; obj.ypos = ypos; obj.zpos = zpos;
+                obj.tileX = tileX; obj.tileY = tileY;
+                RenderObject(obj, UWTileMap.current_tilemap);
+                return obj;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -53,14 +60,18 @@ namespace Underworld
         public static int SpawnObjectInHand(int itemid, bool changeInteractionmode = true)
         {
             var slot = PrepareNewObject(itemid);
-            var obj = UWTileMap.current_tilemap.LevelObjects[slot];
-            playerdat.ObjectInHand = slot;
-            uimanager.instance.mousecursor.SetCursorToObject(obj.item_id);
-            if (changeInteractionmode)
+            if (slot!=0)
             {
-                uimanager.InteractionModeToggle(uimanager.InteractionModes.ModePickup);
+                var obj = UWTileMap.current_tilemap.LevelObjects[slot];
+                
+                playerdat.ObjectInHand = slot;
+                uimanager.instance.mousecursor.SetCursorToObject(obj.item_id);
+                if (changeInteractionmode)
+                {
+                    uimanager.InteractionModeToggle(uimanager.InteractionModes.ModePickup);
+                }               
             }
-            return slot;
+             return slot;
         }
 
         /// <summary>
@@ -145,13 +156,6 @@ namespace Underworld
                     }
                 }
             }
-            // foreach (var obj in objects)
-            // {
-            //     if (obj.item_id <= 463)
-            //     {
-            //         RenderObject(obj, a_tilemap);
-            //     }
-            // }
         }
 
 

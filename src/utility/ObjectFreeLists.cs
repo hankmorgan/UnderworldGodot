@@ -24,10 +24,18 @@ namespace Underworld
             {
                 case ObjectListType.StaticList:
                     //Move PTR down, get object at that point.
+                    if (UWTileMap.current_tilemap.StaticFreeListPtr<=1)
+                    {
+                        return 0;
+                    }
                     UWTileMap.current_tilemap.StaticFreeListPtr--;
                     Debug.Print($"Allocating Static {UWTileMap.current_tilemap.StaticFreeListObject} Pointer decremented to {UWTileMap.current_tilemap.StaticFreeListPtr}");
                     return UWTileMap.current_tilemap.StaticFreeListObject;
                 case ObjectListType.MobileList:
+                    if (UWTileMap.current_tilemap.MobileFreeListPtr<=1)
+                    {
+                        return 0;
+                    }
                     UWTileMap.current_tilemap.MobileFreeListPtr--;
                     Debug.Print($"Allocating Mobile {UWTileMap.current_tilemap.MobileFreeListObject} Pointer decremented to {UWTileMap.current_tilemap.MobileFreeListPtr}");
                     //add to the active mobiles list                    

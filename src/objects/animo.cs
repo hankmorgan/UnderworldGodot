@@ -192,22 +192,34 @@ namespace Underworld
             SpawnAnimoInTile(subclassindex, xpos, ypos, zpos, tileX, tileY);
         }
 
+        /// <summary>
+        /// Creates an animo object and links it to the running animation overlays list
+        /// </summary>
+        /// <param name="subclassindex"></param>
+        /// <param name="xpos"></param>
+        /// <param name="ypos"></param>
+        /// <param name="zpos"></param>
+        /// <param name="tileX"></param>
+        /// <param name="tileY"></param>
         public static void SpawnAnimoInTile(int subclassindex, short xpos, short ypos, short zpos, int tileX, int tileY)
         {
-            var itemid = 448 + subclassindex;
-            var newObject = ObjectCreator.spawnObjectInTile(
-                            itemid: itemid,
-                            tileX: tileX,
-                            tileY: tileY,
-                            xpos: xpos,
-                            ypos: ypos,
-                            zpos: zpos,
-                            WhichList: ObjectFreeLists.ObjectListType.StaticList);
-            if (newObject != null)
+            if (animo.GetFreeAnimoSlot()!=-1)
             {
-                var duration = animationObjectDat.endFrame(itemid) - animationObjectDat.startFrame(itemid);
-                CreateAnimoLink(newObject, duration);
-            }
+                var itemid = 448 + subclassindex;
+                var newObject = ObjectCreator.spawnObjectInTile(
+                                itemid: itemid,
+                                tileX: tileX,
+                                tileY: tileY,
+                                xpos: xpos,
+                                ypos: ypos,
+                                zpos: zpos,
+                                WhichList: ObjectFreeLists.ObjectListType.StaticList);
+                if (newObject != null)
+                {
+                    var duration = animationObjectDat.endFrame(itemid) - animationObjectDat.startFrame(itemid);
+                    CreateAnimoLink(newObject, duration);
+                }
+            }            
         }
 
     }//end class

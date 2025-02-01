@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace Underworld
 {
@@ -47,11 +48,12 @@ namespace Underworld
                         break;
                     case 5://repel undead
                         RepelUndeadGlobal = 0;
-                        rngProbablity = 0x32; distanceFromCaster = 4; tileRadius = 2;
                         methodtorun = RepelUndead;
+                        rngProbablity = 0x32; distanceFromCaster = 4; tileRadius = 2;                        
                         break;
                     case 6://shockwave
-                        Debug.Print("Shockwave");
+                        methodtorun = Shockwave;
+                        rngProbablity = 0x32; distanceFromCaster = 0; tileRadius = 1;
                         break;
                     case 7://frost
                         Debug.Print("Frost");
@@ -307,6 +309,32 @@ namespace Underworld
                     return false;
                 }
             }
+        }
+
+        public static bool Shockwave(int x, int y, uwObject targetObject, TileInfo tile, int srcIndex)
+        {
+            if (targetObject==null)
+            {
+                return false;
+            }
+            var damagetoapply = 15 + (playerdat.Casting /2);
+            if (targetObject.index!=srcIndex)
+            {
+                if (targetObject.majorclass == 1)
+                {
+                    animo.SpawnAnimoAtPoint(0xB, targetObject.instance.uwnode.Position);
+                    return damage.DamageObject(
+                        objToDamage: targetObject, 
+                        basedamage: damagetoapply, 
+                        damagetype: 3, 
+                        objList: UWTileMap.current_tilemap.LevelObjects, 
+                        WorldObject: true, 
+                        hitCoordinate: Godot.Vector3.Zero, 
+                        damagesource: 1, 
+                        ignoreVector: true) !=0;
+                }
+            }
+            return false;
         }
     }//end class
 }//end namespace
