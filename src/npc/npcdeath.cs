@@ -156,7 +156,7 @@ namespace Underworld
                     (mode == 0) && (critter.UnkBit_0XA_Bit7 == 0)
                     &&
                     (
-                        (critter.npc_whoami >= 81) && (critter.npc_whoami <= 0x8F)
+                        (critter.npc_whoami >= 0x81) && (critter.npc_whoami <= 0x8F)
                         ||
                         (critter.npc_whoami == 0xA8)
                         ||
