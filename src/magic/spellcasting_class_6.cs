@@ -21,7 +21,8 @@ namespace Underworld
                         rngProbablity = 0x64; distanceFromCaster = 1; tileRadius = 2;
                         break;
                     case 2: //sheetlightning
-                        Debug.Print("Sheetlighning");
+                        methodtorun = SheetLightning;
+                        rngProbablity = 0x6; distanceFromCaster = 4; tileRadius = 2;
                         break;
                     case 3://maybe mass confuse                       
                         methodtorun = Confusion;
@@ -55,7 +56,7 @@ namespace Underworld
                         methodtorun = Reveal;
                         break;
                     case 2: //sheetlightning
-                        Debug.Print("Sheetlighning");
+                        methodtorun = SheetLightning;
                         break;
                     case 3://Mass Confusion
                         methodtorun = Confusion;
@@ -84,34 +85,37 @@ namespace Underworld
         public static bool FlameWindUW1(int x, int y, uwObject critter, TileInfo tile, int srcIndex)
         {
             //centre tile
-            ExplosionInTile(tile.tileX, tile.tileY);
+            DamageEffectinTile(tile.tileX, tile.tileY, 2, 1);
 
             //cross shape
-            ExplosionInTile(tile.tileX + 1, tile.tileY);
-            ExplosionInTile(tile.tileX - 1, tile.tileY);
-            ExplosionInTile(tile.tileX, tile.tileY + 1);
-            ExplosionInTile(tile.tileX, tile.tileY - 1);
-
+            DamageEffectinTile(tile.tileX + 1, tile.tileY, 2, 1);
+            DamageEffectinTile(tile.tileX - 1, tile.tileY, 2, 1);
+            DamageEffectinTile(tile.tileX, tile.tileY + 1, 2, 1);
+            DamageEffectinTile(tile.tileX, tile.tileY - 1, 2, 1);
             return true;
         }
 
+
         /// <summary>
-        /// Just spawns a flamewind explosion in a tile.
+        /// Just spawns a damaging effect in a tile
         /// </summary>
         /// <param name="tileX"></param>
         /// <param name="tileY"></param>
-        private static void ExplosionInTile(int tileX, int tileY)
+        /// <param name="animoNo">The class index of the animation to play</param>
+        /// <param name="damageClass">Lookup into a table of damage parameters for DamageObjectsInTile</param>
+        private static void DamageEffectinTile(int tileX, int tileY, int animoNo, int damageClass)
         {
             if (UWTileMap.ValidTile(tileX, tileY))
             {
                 var tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];
                 if (tile.tileType != 0)
                 {
-                    animo.SpawnAnimoInTile(2, 3, 3, (short)(tile.floorHeight << 3), tile.tileX, tile.tileY);
-                    damage.DamageObjectsInTile(tile.tileX, tile.tileY, 1, 1);
+                    animo.SpawnAnimoInTile(animoNo, 3, 3, (short)(tile.floorHeight << 3), tile.tileX, tile.tileY);
+                    damage.DamageObjectsInTile(tile.tileX, tile.tileY, 1, damageClass);
                 }
             }
         }
+
 
 
         /// <summary>
@@ -145,7 +149,7 @@ namespace Underworld
                         return false;
                     }
                 }
-                ExplosionInTile(tile.tileX, tile.tileY);
+                DamageEffectinTile(tile.tileX, tile.tileY, 2, 1);
                 if (isNPC)
                 {
                     si++;
@@ -215,6 +219,12 @@ namespace Underworld
                 }
             }
             return false;
+        }
+
+        public static bool SheetLightning(int x, int y, uwObject targetObject, TileInfo tile, int srcIndex)
+        {
+            DamageEffectinTile(tile.tileX, tile.tileY, 5, 2);
+            return true;
         }
     }//end class
 }//end namespace
