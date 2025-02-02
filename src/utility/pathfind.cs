@@ -1,3 +1,5 @@
+using System;
+
 namespace Underworld
 {
     /// <summary>
@@ -491,5 +493,72 @@ namespace Underworld
                 }
             }
         } 
+
+
+        public static int ConvertTilePointsToHeading(int srcX, int srcY, int dstX, int dstY)        
+        {
+            return ConvertVectorToHeading(srcX-dstX, srcY-dstY);
+        }
+
+
+        /// <summary>
+        /// Takes a relative vector between two tiles and calculates the ordinal heading between them.
+        /// </summary>
+        /// <param name="xVector"></param>
+        /// <param name="yVector"></param>
+        /// <returns></returns>
+        public static int ConvertVectorToHeading(int xVector, int yVector)
+        {
+            if (Math.Abs(xVector)<=Math.Abs(yVector))
+            {
+                if (Math.Abs(xVector)<= Math.Abs(yVector)/2)
+                {
+                    if (xVector>=0)
+                    {
+                        if (yVector>=0)
+                        {
+                            return 1;
+                        }
+                        else
+                        {
+                            return 3;
+                        }
+                    }
+                    else
+                    {
+                        if (yVector<=0)
+                        {
+                            return 5;
+                        }
+                        else
+                        {
+                            return 7;
+                        }
+                    }
+                }
+                else
+                {
+                    if (yVector<=0)
+                    {
+                        return 4;
+                    }
+                    else
+                    {
+                        return 0;
+                    }
+                }
+            }
+            else
+            {
+                if (xVector<=0)
+                {
+                    return 6;
+                }
+                else
+                {
+                    return 2;
+                }
+            }
+        }
     }//end class
 }//end namespace

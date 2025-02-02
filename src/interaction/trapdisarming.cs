@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace Underworld
 {
     public class trapdisarming : UWClass
@@ -42,7 +44,6 @@ namespace Underworld
                             {
                                 if (foundtrigger.minorclass >= 2)
                                 {//found a trigger, getting it's trap
-
                                     foundtrigger = objList[foundtrigger.link];
                                 }
                                 if (foundtrigger.minorclass < 2)
@@ -244,6 +245,9 @@ namespace Underworld
                 case playerdat.SkillCheckResult.Success:
                 case playerdat.SkillCheckResult.CritSucess:
                     trapdisarming.DisarmTrap(index, objList, 0x2D); break;//you have detected
+                default:
+                    Debug.Print("There is no trap detected on that object!");
+                    break;
             }
         }
 

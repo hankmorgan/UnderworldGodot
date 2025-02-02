@@ -362,7 +362,12 @@ namespace Underworld
         }
 
 
-        public static int unk_1D_lowernibble(int item_id)
+        /// <summary>
+        /// Use in relation to detection checks. Likely the lower the value the more stealthy the npc (or player) is
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <returns></returns>
+        public static int maybestealth(int item_id)
         {
             return buffer[CritterOffset(item_id) + 0x1d] & 0xF ;
         }

@@ -28,7 +28,8 @@ namespace Underworld
                         }
                         else
                         {
-                            Debug.Print("DETECT MONSTER");
+                           //DETECT MONSTERS
+                            tracking.DetectMonsters(8, 0x2D);
                         }
                         break;
                     }
@@ -54,7 +55,7 @@ namespace Underworld
                         }
                         else
                         {
-                            Debug.Print("Remove Trap UW1 untested.");
+                            Debug.Print("Remove Trap UW1 untested. Since I can't find any instances of traps in UW1!");
                             currentSpell = new RunicMagic(11, minorclass);
                             uimanager.instance.mousecursor.SetCursorToCursor(10);
                             break;

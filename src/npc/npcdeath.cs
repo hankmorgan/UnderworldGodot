@@ -10,49 +10,6 @@ namespace Underworld
     {
 
         /// <summary>
-        /// Temporary function to handle accumulated damage/death
-        /// </summary>
-        /// <param name="critter"></param>
-        public static void ProcessDamage_TEMP(uwObject critter)
-        {
-            if (critter.AccumulatedDamage > 0)
-            {
-                if (critter.AccumulatedDamage < critter.npc_hp)
-                {
-                    critter.npc_hp -= (byte)critter.AccumulatedDamage;
-                }
-                else
-                {
-                    critter.npc_hp = 0;
-                }
-                critter.AccumulatedDamage = 0;//reset damage for this frame.
-            }
-            if (critter.npc_hp == 0)
-            {
-                if (
-                    (_RES == GAME_UW2) && (critter.npc_animation != 7)
-                    ||
-                    (_RES != GAME_UW2) && (critter.npc_animation != 0xC)
-                )
-                { //if not already in the death animation
-                    if (npc.SpecialDeathCases(critter))
-                    {
-                        if (_RES == GAME_UW2)
-                        {
-                            critter.npc_animation = 7;//are these right??                            
-                        }
-                        else
-                        {
-                            critter.npc_animation = 0xC;//
-                        }
-                        critter.AnimationFrame = 0;
-                        npc.RedrawAnimation(critter);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
         /// Handles special death cases for npcs.
         /// </summary>
         /// <param name="critter"></param>

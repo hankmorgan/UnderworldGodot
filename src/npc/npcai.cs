@@ -736,8 +736,8 @@ namespace Underworld
             var yvector = currentGTargXHome - critter.tileY;
 
             var si_dist = xvector ^ 2 + yvector ^ 2;
-            var tmp_critter = (critterObjectDat.combatdetectionrange(critter.item_id) * critterObjectDat.unk_1D_lowernibble(critter.item_id)) / 16;
-            var tmp_gtarg = (critterObjectDat.combatdetectionrange(currentGoalTarget.item_id) * critterObjectDat.unk_1D_lowernibble(currentGoalTarget.item_id)) / 16;
+            var tmp_critter = (critterObjectDat.combatdetectionrange(critter.item_id) * critterObjectDat.maybestealth(critter.item_id)) / 16;
+            var tmp_gtarg = (critterObjectDat.combatdetectionrange(currentGoalTarget.item_id) * critterObjectDat.maybestealth(currentGoalTarget.item_id)) / 16;
 
             var score = (tmp_critter * tmp_gtarg) / 4;
 

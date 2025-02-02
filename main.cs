@@ -265,7 +265,6 @@ public partial class main : Node3D
 							if (obj.majorclass == 1)
 							{								
 								npc.NPCInitialProcess(obj);
-								npc.ProcessDamage_TEMP(obj);
 							}
 							else
 							{
@@ -352,7 +351,7 @@ public partial class main : Node3D
 						case Key.F8: //cast spell
 							RunicMagic.CastRunicSpell(); break;
 						case Key.F9://track skill
-							Debug.Print("Track"); break;
+							tracking.DetectMonsters(8, playerdat.Track); break;
 						case Key.F10: // make camp
 							{
 								Debug.Print("Make camp"); 
