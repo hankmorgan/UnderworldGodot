@@ -1,7 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.Reflection.Emit;
-using Microsoft.VisualBasic.FileIO;
 
 namespace Underworld
 {
@@ -108,6 +106,11 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// Gets the string for "you detect a/few/many creatures"
+        /// </summary>
+        /// <param name="heading"></param>
+        /// <param name="noOfDetections"></param>
         public static void DetectCreatureString(int heading, int noOfDetections)
         {
             Debug.Print($"{noOfDetections} at {heading}");
@@ -138,6 +141,17 @@ namespace Underworld
             PrintDetectCreatureDirections(detections, 0, 0, 0, 0, 0, 0, -(heading + 1));
         }
 
+        /// <summary>
+        /// Prints the string that tells you where critters are in relation to your position.;
+        /// </summary>
+        /// <param name="detectionsprefix"></param>
+        /// <param name="playerXHome"></param>
+        /// <param name="playerYHome"></param>
+        /// <param name="RelativeDistance_arg8"></param>
+        /// <param name="ObjectX"></param>
+        /// <param name="ObjectY"></param>
+        /// <param name="argE"></param>
+        /// <param name="maybe_heading_arg10"></param>
         static void PrintDetectCreatureDirections(string detectionsprefix, int playerXHome, int playerYHome, int RelativeDistance_arg8, int ObjectX, int ObjectY, int argE, int maybe_heading_arg10)
         {
             string Output = "";
