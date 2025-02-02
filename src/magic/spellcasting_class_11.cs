@@ -24,21 +24,7 @@ namespace Underworld
                     {
                         if (_RES == GAME_UW2)
                         {
-                            var distance = 2;
-                            while (distance <= 2)
-                            {
-                                var tile = UWTileMap.GetTileInDirectionFromCamera((float)distance * 1.2f);
-                                if (tile.tileType != 0)//don't teleport into a solid tile or out of bounds. This should be replaced with a can fit in tile check later on.
-                                {
-                                    if (tile.floorHeight - (playerdat.zpos << 3) <= 2)  //the use of a right shift here is possibly a vanilla bug
-                                    {
-                                        Teleportation.Teleport(0, tile.tileX, tile.tileY, 0, playerdat.heading);
-                                        return;
-                                    }
-                                }
-                                distance++;
-                            }
-                            uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x132));//there is not enough space
+                            Portal();
                         }
                         else
                         {
@@ -50,7 +36,8 @@ namespace Underworld
                     {
                         if (_RES == GAME_UW2)
                         {
-                            Debug.Print("RESTORATION");
+                            //Debug.Print("RESTORATION");
+                            Restoration();
                         }
                         else
                         {
@@ -63,20 +50,11 @@ namespace Underworld
                     {
                         if (_RES == GAME_UW2)
                         {
-                            //Debug.Print("LOCATE");//turn automapping back on if player is lost
-                            if ((playerdat.AutomapEnabled == false) && (worlds.GetWorldNo(playerdat.dungeon_level) != 8))
-                            {
-                                playerdat.AutomapEnabled = true;
-                                uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x12A));//your position is revealed
-                            }
-                            else
-                            {
-                                uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x142));//no noticeable effect
-                            }
+                            Locate();
                         }
                         else
                         {
-                            Debug.Print("Remove Trap");
+                            Debug.Print("Remove Trap UW1 untested.");
                             currentSpell = new RunicMagic(11, minorclass);
                             uimanager.instance.mousecursor.SetCursorToCursor(10);
                             break;
@@ -110,15 +88,12 @@ namespace Underworld
                 case 7:
                     {
                         //roaming sight
-                        //Needs extra logic for UW2 (eg check if in void)
-                        PlayerActiveStatusEffectSpells(0xB, 1, stability);//Note the change in mapping here.
-                        playerdat.PlayerStatusUpdate();
+                        RoamingSight(stability);
                         break;
                     }
                 case 8://telekenesis
                     {
-                        PlayerActiveStatusEffectSpells(0xB, 3, stability);//Note the change in mapping here.
-                        playerdat.PlayerStatusUpdate();
+                        Telekinesis(stability);
                         break;
                     }
                 case 9://tremor
@@ -136,54 +111,145 @@ namespace Underworld
                     }
                 case 0xB://Freeze time
                     {
-                        PlayerActiveStatusEffectSpells(0xB, 0, stability);//Note the change in mapping here.
-                        playerdat.PlayerStatusUpdate();
+                        FreezeTime(stability);
                         break;
                     }
                 case 0xC:   //armageddon
                     {
-                        Debug.Print("ARMAGEDDON--> Everything vanishes");
-                        //Clear player inventory.
-                        playerdat.ClearInventory();
-                        //reset map
-                        UWTileMap.ResetMap(0);
-                        //clear rune bag
-                        for (int r = 0; r < 24; r++)
-                        {
-                            playerdat.SetRune(r, false);
-                            uimanager.SetRuneInBag(r, false);
-                        }
-                        //clear selected runes
-                        for (int r = 0; r < 3; r++)
-                        {
-                            playerdat.SetSelectedRune(r, 24);
-                        }
-                        playerdat.NoOfSelectedRunes = 0;
-                        uimanager.RedrawSelectedRuneSlots();
-                        //Set weightcarried to 0
-                        //playerdat.WeightCarried = 0;
-
-                        //set flag
-                        playerdat.armageddon = true;
-
-                        if (_RES != GAME_UW2)
-                        {
-                            playerdat.SilverTreeDungeon = 0; //stops player resurrection
-                        }
-
-                        //refresh status                        
-                        playerdat.PlayerStatusUpdate();
+                        Armageddon();
                         break;
                     }
                 case 0xD://dispel hunger
                     {
-                        playerdat.play_hunger = 0xC0;
-                        playerdat.maybefoodhealthbonus = 0;
-                        uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x134));
+                        DispelHunger();
                         break;
                     }
             }
         }
+
+        private static void Locate()
+        {
+            //Debug.Print("LOCATE");//turn automapping back on if player is lost
+            if ((playerdat.AutomapEnabled == false) && (worlds.GetWorldNo(playerdat.dungeon_level) != 8))
+            {
+                playerdat.AutomapEnabled = true;
+                uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x12A));//your position is revealed
+            }
+            else
+            {
+                uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x142));//no noticeable effect
+            }
+        }
+
+
+        private static void RoamingSight(int stability)
+        {
+            //Needs extra logic for UW2 (eg check if in void)
+            PlayerActiveStatusEffectSpells(0xB, 1, stability);//Note the change in mapping here.
+            playerdat.PlayerStatusUpdate();
+        }
+
+
+        private static void Telekinesis(int stability)
+        {
+            PlayerActiveStatusEffectSpells(0xB, 3, stability);//Note the change in mapping here.
+            playerdat.PlayerStatusUpdate();
+        }
+
+
+        private static void FreezeTime(int stability)
+        {
+            PlayerActiveStatusEffectSpells(0xB, 0, stability);//Note the change in mapping here.
+            playerdat.PlayerStatusUpdate();
+        }
+
+
+        private static void Armageddon()
+        {
+            Debug.Print("ARMAGEDDON--> Everything vanishes");
+            //Clear player inventory.
+            playerdat.ClearInventory();
+            //reset map
+            UWTileMap.ResetMap(0);
+            //clear rune bag
+            for (int r = 0; r < 24; r++)
+            {
+                playerdat.SetRune(r, false);
+                uimanager.SetRuneInBag(r, false);
+            }
+            //clear selected runes
+            for (int r = 0; r < 3; r++)
+            {
+                playerdat.SetSelectedRune(r, 24);
+            }
+            playerdat.NoOfSelectedRunes = 0;
+            uimanager.RedrawSelectedRuneSlots();
+            //Set weightcarried to 0
+            //playerdat.WeightCarried = 0;
+
+            //set flag
+            playerdat.armageddon = true;
+
+            if (_RES != GAME_UW2)
+            {
+                playerdat.SilverTreeDungeon = 0; //stops player resurrection
+            }
+
+            //refresh status                        
+            playerdat.PlayerStatusUpdate();
+        }
+
+
+        private static void DispelHunger()
+        {
+            playerdat.play_hunger = 0xC0;
+            playerdat.maybefoodhealthbonus = 0;
+            uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x134));
+        }
+
+
+        private static void Restoration()
+        {
+            playerdat.play_poison = 0;
+            playerdat.shrooms = 0;
+            if (playerdat.ParalyseTimer>0)
+            {
+                playerdat.ParalyseTimer = 0;
+                main.gamecam.Set("MOVE", true);
+            }
+            playerdat.intoxication = 0;
+            playerdat.play_hp = playerdat.max_hp;
+            playerdat.play_hunger = 0xFF;
+            playerdat.play_fatigue = 0;
+            playerdat.Unknown0x3DValue = 0;
+            playerdat.PlayerStatusUpdate();
+
+            uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x133));
+
+        }
+
+        /// <summary>
+        /// Teleports the player to a tile 2 units away from them.
+        /// </summary>
+        private static void Portal()
+        {
+            var distance = 2;
+            while (distance <= 2)
+            {
+                var tile = UWTileMap.GetTileInDirectionFromCamera((float)distance * 1.2f);
+                if (tile.tileType != 0)//don't teleport into a solid tile or out of bounds. This should be replaced with a can fit in tile check later on.
+                {
+                    if (tile.floorHeight - (playerdat.zpos << 3) <= 2)  //the use of a right shift here is possibly a vanilla bug
+                    {
+                        Teleportation.Teleport(0, tile.tileX, tile.tileY, 0, playerdat.heading);
+                        return;
+                    }
+                }
+                distance++;
+            }
+            uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x132));//there is not enough space
+        }
+
 
         /// <summary>
         /// Teleports to the Moonstone in UW1.

@@ -160,14 +160,12 @@ namespace Underworld
 
             dungeon_level = 1;
 
-
+            Unknown0x3DValue = 0;//unknown purpose. 
+            maybefoodhealthbonus = 0;
             //Unimplemented common items
             //Tilestate CLEAR GROUNDED, SWIMING and ON LAVA FLAGS
             //SWIMDAMAGECOUNTER = 0
-            //FOODHealth Bonus = 0
-            //UNK 0x3C in UW2
             //UNK 0xB6 in UW1
-            //UNK 0x3C in uw1
             //Weight Carried?
 
 

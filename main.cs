@@ -401,6 +401,7 @@ public partial class main : Node3D
 								{
 									playerdat.SetRune(r, true);
 								}
+								playerdat.PlayerStatusUpdate();
 								break;
 							}
 					}

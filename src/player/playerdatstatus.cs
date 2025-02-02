@@ -281,6 +281,21 @@ namespace Underworld
                }
           }
 
+          /// <summary>
+          /// A possibly unused value that is set to 0 in Restoration and initialisation. Only ever appears to be directly set to 0?? Does it get set in some undiscovered way?
+          /// </summary>
+          public static byte Unknown0x3DValue
+          {
+               get
+               {
+                    return GetAt(0x3D);
+               }
+               set
+               {
+                    SetAt(0x3D, (byte)value);
+               }
+          }
+
 
 
           public static byte play_poison
