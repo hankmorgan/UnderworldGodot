@@ -263,12 +263,14 @@ public partial class main : Node3D
 						{
 							var obj = UWTileMap.current_tilemap.LevelObjects[index];
 							if (obj.majorclass == 1)
-							{								
+							{
+								//This is an NPC						
 								npc.NPCInitialProcess(obj);
 							}
 							else
 							{
-								//TODO this is a projectile
+								//This is a projectile
+								motion.MotionProcessing(obj);
 							}
 						}
 					}

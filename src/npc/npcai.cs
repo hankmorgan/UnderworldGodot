@@ -127,10 +127,13 @@ namespace Underworld
                 {
                     //motion
                     var ProjectileHeading = critter.ProjectileHeading;
-                    motion.InitMotionParams(critter);
-                    motion.seg006_1413_9F5(critter);
-                    motion.CalculateMotion_seg006_1413_D6A(critter);
-                    motion.ApplyProjectileMotion_seg030_2BB7_689(critter);
+
+                    //TO REVISIT
+                    // motion.motionarray motionparams = new();
+                    // motion.InitMotionParams(critter,motionparams);
+                    // motion.seg006_1413_9F5(critter);
+                    // motion.CalculateMotion(critter, motionparams);
+                    // motion.ApplyProjectileMotion(critter, motionparams);
                     if (ProjectileHeading != critter.ProjectileHeading)
                     {
                         HasCurrobjHeadingChanged_dseg_67d6_2242 = 1;

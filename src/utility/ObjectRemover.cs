@@ -321,8 +321,12 @@ namespace Underworld
         /// <param name="tileX"></param>
         /// <param name="tileY"></param>
         /// <param name="indexToDelete"></param>
-        public static void DeleteObjectFromTile(int tileX, int tileY, short indexToDelete, bool RemoveFromWorld = true)
+        public static bool DeleteObjectFromTile(int tileX, int tileY, short indexToDelete, bool RemoveFromWorld = true)
         {
+            if (!UWTileMap.ValidTile(tileX, tileY))
+            {
+                return false;//not on map.
+            }
             var objList = UWTileMap.current_tilemap.LevelObjects;
             if (indexToDelete != 0)
             {
@@ -338,7 +342,7 @@ namespace Underworld
                         {
                             ObjectFreeLists.ReleaseFreeObject(objectToDelete);
                         }
-                        return;
+                        return true;
                     }
                     else
                     {
@@ -356,14 +360,15 @@ namespace Underworld
                                 {
                                     ObjectFreeLists.ReleaseFreeObject(objectToDelete);
                                 }
-                                return;
+                                return true;
                             }
                             next = nextObject.next;
                         }
                         Debug.Print($"Was unable to find {indexToDelete} to delete it in {tileX},{tileY}");
                     }
-                }
+                }                
             }
+            return false;
         }
 
 

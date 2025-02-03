@@ -8,6 +8,11 @@ namespace Underworld
     {
         static byte[] buffer;
 
+        static int PTR(int item_id)
+        {
+            return 2 + (item_id * 11);
+        }
+
         /// <summary>
         /// Height of the object. Used for collision calculations.
         /// </summary>
@@ -15,7 +20,7 @@ namespace Underworld
         /// <returns></returns>
         public static int height(int item_id)
         { // value at + 0
-            return buffer[2 + (item_id * 11) + 0];
+            return buffer[PTR(item_id) + 0];
         }
 
         /// <summary>
@@ -25,7 +30,7 @@ namespace Underworld
         /// <returns></returns>
         public static int radius(int item_id)
         {   //bits 0..2 at + 1
-            var x = getAt(buffer, 2 + (item_id*11) + 1, 16);
+            var x = getAt(buffer, PTR(item_id) + 1, 16);
             return (int)(x & 7);
         }
 
@@ -37,8 +42,13 @@ namespace Underworld
         /// <returns></returns>
         public static int mass(int item_id)
         {   //bits 4-15 at + 1
-            var x = getAt(buffer, 2 + (item_id*11) + 1, 16);
+            var x = getAt(buffer, PTR(item_id) + 1, 16);
             return (int)(x>>4 & 0xFFF);
+        }
+
+        public static bool maybeMagicObjectFlag(int item_id)
+        {//bit 3 at +3
+            return ((buffer[PTR(item_id) + 3] >>3) & 0x1)==1;
         }
 
 
@@ -49,7 +59,7 @@ namespace Underworld
         /// <returns></returns>
         public static bool CanBePickedUp(int item_id)
         {//bit 5 at + 3
-            return ((buffer[2 + item_id * 11 + 3] >>5) & 0x1)==1;
+            return ((buffer[PTR(item_id) + 3] >>5) & 0x1)==1;
         }
 
         /// <summary>
@@ -59,7 +69,7 @@ namespace Underworld
         /// <returns></returns>
         public static int stackable(int item_id)
         {
-            return ((buffer[2 + item_id * 11 + 3]>>6) & 0x3);
+            return (buffer[PTR(item_id) + 3]>>6) & 0x3;
         }
 
         /// <summary>
@@ -69,7 +79,7 @@ namespace Underworld
         /// <returns></returns>
         public static int monetaryvalue(int item_id)
         {   //int16 at + 4
-            return (int)getAt(buffer, 2 + item_id*11 + 4, 16);
+            return (int)getAt(buffer, PTR(item_id) + 4, 16);
         }
 
 
@@ -81,7 +91,7 @@ namespace Underworld
         /// <returns></returns>
         public static int ActivatedByCollision(int item_id)
         {//bits 2,3 at + 6
-            return (buffer[2 + item_id * 11 + 6]>>1 ) & 0x1;
+            return (buffer[PTR(item_id) + 6]>>1 ) & 0x1;
         }
 
 
@@ -95,12 +105,34 @@ namespace Underworld
         /// <returns></returns>
         public static int qualityclass(int item_id)
         {//bits 2,3 at + 6
-            return (buffer[2 + item_id * 11 + 6]>>2 ) & 0x3;
+            return (buffer[PTR(item_id) + 6]>>2 ) & 0x3;
+        }
+
+
+        /// <summary>
+        /// Unknown but true for items like sling stones, magic arrows. Possibly applies damage on hit?
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <returns></returns>
+        public static int unk6_4(int item_id)
+        {//bit 4 at + 6
+            return (buffer[PTR(item_id) + 6]>>4 ) & 0x1;
+        }
+
+
+        /// <summary>
+        /// Unknown but used in motion processing
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <returns></returns>
+        public static int unk6_5678(int item_id)
+        {//bit 5678 at + 6
+            return (int)((getAt(buffer, PTR(item_id) + 6, 16) >> 5) & 0xF);  
         }
 
         public static bool canhaveowner(int item_id)
         { //bit 7 at +7
-            return (buffer[2 + item_id * 11 + 7] >> 7 & 0x1)  == 1;
+            return (buffer[PTR(item_id) + 7] >> 7 & 0x1)  == 1;
         }
 
         /// <summary>
@@ -116,7 +148,7 @@ namespace Underworld
         /// <returns></returns>
         public static int projectileflag(int item_id)
         { //bits 1-4 at + 7
-            return buffer[2 + item_id * 11 + 7] >> 1  & 0xf;
+            return buffer[PTR(item_id) + 7] >> 1  & 0xf;
         }
 
         /// <summary>
@@ -126,12 +158,12 @@ namespace Underworld
         /// <returns></returns>
         public static int scaleresistances(int item_id)
         {
-            return buffer[2 + item_id * 11 + 8];
+            return buffer[PTR(item_id) + 8];
         }
 
         public static int rendertype(int item_id)
         {
-            return buffer[2 + item_id * 11 + 0x9] & 0x3;
+            return buffer[PTR(item_id) + 0x9] & 0x3;
         }
 
         /// <summary>
@@ -145,12 +177,12 @@ namespace Underworld
         /// <returns></returns>
         public static int qualitytype(int item_id)
         {
-            return buffer[2 + item_id * 11 + 0xA] & 0xF;
+            return buffer[PTR(item_id) + 0xA] & 0xF;
         }
 
         public static bool PrintableLook(int item_id)
         {
-            return ((buffer[2 + item_id * 11 + 0xA] >> 4) & 1) == 1;
+            return ((buffer[PTR(item_id) + 0xA] >> 4) & 1) == 1;
         }
 
         static commonObjDat()

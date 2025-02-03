@@ -457,7 +457,7 @@ namespace Underworld
         /// <returns></returns>
         private static bool MajorClass6(uwObject obj, Node3D parent, UWTileMap a_tilemap, string name)
         {
-            Debug.Print($"Trap {obj.a_name} {obj.index} {obj.tileX},{obj.tileY} Class {obj.majorclass}-{obj.minorclass}-{obj.classindex} Params[F:{obj.flags} Q:{obj.quality}, O:{obj.owner}] Link {obj.link}");
+            //Debug.Print($"Trap {obj.a_name} {obj.index} {obj.tileX},{obj.tileY} Class {obj.majorclass}-{obj.minorclass}-{obj.classindex} Params[F:{obj.flags} Q:{obj.quality}, O:{obj.owner}] Link {obj.link}");
             switch (obj.minorclass)
             {
                 case 0: //traps

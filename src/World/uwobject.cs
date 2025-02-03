@@ -1408,7 +1408,7 @@ namespace Underworld
         {
             get
             {
-                return (short)GetAt16(PTR + 0xc);
+                return (short)GetAt16(PTR + 0xD);
             }
         }
 
