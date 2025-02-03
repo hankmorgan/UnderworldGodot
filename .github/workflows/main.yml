@@ -39,6 +39,6 @@ jobs:
         name: Ultima Underworld Godot Build ${{github.run_number}}
         token: ${{ secrets.GITHUB_TOKEN }}
         generateReleaseNotes: true
-        tag: release
+        tag: ${{ github.ref_name }}
         artifacts: ${{ steps.export.outputs.archive_directory }}/*
         prerelease: true
