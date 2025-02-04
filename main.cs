@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Diagnostics;
+using System.IO;
 using Underworld;
 
 
@@ -65,7 +66,13 @@ public partial class main : Node3D
 		if (uwsettings.instance != null)
 		{
 			GetTree().DebugCollisionsHint = uwsettings.instance.showcolliders;
-		}		
+		}	
+
+		// var exe =File.ReadAllBytes("C:\\Games\\UW2IDA\\UW2\\uw2.exe");
+		// for (long x = 0x63D40; x<0x63e70;x = x+2)
+		// {
+		// 	Debug.Print($"{x}={Loader.getAt(exe,x,16)}");
+		// }
 	}
 
 	public static void StartGame()
