@@ -32,7 +32,7 @@ namespace Underworld
                 MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2 = 0;
             }
 
-            motionarray MotionParams = new();
+            UWMotionParamArray MotionParams = new();
 
             InitMotionParams(projectile, MotionParams);
 
@@ -65,7 +65,7 @@ namespace Underworld
 
         }
 
-        public static bool ApplyProjectileMotion(uwObject projectile, motionarray MotionParams)
+        public static bool ApplyProjectileMotion(uwObject projectile, UWMotionParamArray MotionParams)
         {//seg030_2BB7_689
             return false;
         }

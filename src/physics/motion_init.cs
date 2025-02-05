@@ -8,7 +8,7 @@ namespace Underworld
         /// </summary>
         /// <param name="projectile"></param>
         /// <param name="MotionParams"></param>
-        public static void InitMotionParams(uwObject projectile, motionarray MotionParams)
+        public static void InitMotionParams(uwObject projectile, UWMotionParamArray MotionParams)
         {           
             bool isNPC = true;
             var itemid = projectile.item_id;
