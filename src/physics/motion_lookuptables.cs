@@ -1,6 +1,6 @@
 namespace Underworld
 {
-    public partial class motion : UWClass
+    public partial class motion : Loader
     {
         /// <summary>
         /// A table of lookup values used with projectile headings. Taken from the UW2.exe at offset  0x63D40

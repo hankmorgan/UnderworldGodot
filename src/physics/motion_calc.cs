@@ -1,7 +1,7 @@
 using System;
 namespace Underworld
 {
-    public partial class motion : UWClass
+    public partial class motion : Loader
     {
 
         static int LikelyIsMagicProjectile_dseg_67d6_26B8;
@@ -64,18 +64,19 @@ namespace Underworld
                 {
                     UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer = 0;
                 }
-                UWMotionParamArray.dseg_67d6_40C_indexer = (UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer +1 )/2;
+                UWMotionParamArray.dseg_67d6_40C_indexer = (UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer + 1) / 2;
 
-                if (MotionParams.GetParam6(UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer) <=0)
+                var Param6Lookup = Loader.getAt(MotionParams.data, 6 + UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer * 2, 16);
+                if (Param6Lookup <= 0)
                 {
-                   UWMotionParamArray.dseg_67d6_404[UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer] = -8192;
+                    UWMotionParamArray.dseg_67d6_404[UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer] = -8192;
                 }
                 else
                 {
                     UWMotionParamArray.dseg_67d6_404[UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer] = +8192;
                 }
-
-                if (MotionParams.GetParam6(UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer) == 0)
+                //tmp = DataLoader.getAt(MotionParams.data, 6 + UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer*2, 16);
+                if (Param6Lookup == 0)
                 {
                     //seg031_2CFA_5D8:
                     UWMotionParamArray.dseg_67d6_404[UWMotionParamArray.dseg_67d6_40C_indexer] = 1;
@@ -85,21 +86,21 @@ namespace Underworld
                     UWMotionParamArray.dseg_67d6_412 = MotionParams.speed_12;
                 }
                 else
-                {   
+                {
                     //seg031_2CFA_54F
-                    var tmp = (UWMotionParamArray.dseg_67d6_404[UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer] / 0x100) * MotionParams.GetParam6(UWMotionParamArray.dseg_67d6_40C_indexer);
-                    tmp = tmp / MotionParams.GetParam6(UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer); 
+                    var tmp = (UWMotionParamArray.dseg_67d6_404[UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer] / 0x100) * Param6Lookup;
+                    tmp = tmp / Param6Lookup;
                     tmp = tmp << 8;
 
-                    UWMotionParamArray.dseg_67d6_404[UWMotionParamArray.dseg_67d6_40C_indexer] = tmp;
+                    UWMotionParamArray.dseg_67d6_404[UWMotionParamArray.dseg_67d6_40C_indexer] = (int)tmp;
 
-                    var8 = (short)(MotionParams.GetParam6(UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer) * MotionParams.speed_12);
+                    var8 = (short)(Param6Lookup * MotionParams.speed_12);
 
                     UWMotionParamArray.MAYBEcollisionOrGravity_dseg_67d6_40E = Math.Abs(var8) >> 0xD;
 
                     UWMotionParamArray.dseg_67d6_410 = Math.Abs(var8) & 0x1FFF;
 
-                    UWMotionParamArray.dseg_67d6_412 = Math.Abs(0x2000/MotionParams.GetParam6(UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer));
+                    UWMotionParamArray.dseg_67d6_412 = (int)Math.Abs(0x2000 / Param6Lookup);
                 }
 
                 UWMotionParamArray.GravityCollisionRelated_dseg_67d6_414 = 0;
@@ -107,19 +108,19 @@ namespace Underworld
                 if (
                     (UWMotionParamArray.MotionArrayObjectIndex_dseg_67d6_25CE != 1)
                     ||
-                    ((UWMotionParamArray.MotionArrayObjectIndex_dseg_67d6_25CE == 1) && MotionParams.unk_a !=0)
+                    ((UWMotionParamArray.MotionArrayObjectIndex_dseg_67d6_25CE == 1) && MotionParams.unk_a != 0)
                     )
                 {
                     if (arg2 != 0)
                     {
-                        RelatedToMotion_seg028_2941_385(MotionParams.unk_24);//unk24 is 0 in normal projectile processing
-                        seg028_2941_C0E(0,0);
+                        RelatedToTileAndMotion_seg028_2941_385(MotionParams, MotionParams.unk_24);//unk24 is 0 in normal projectile processing
+                        seg028_2941_C0E(0, 0);
                     }
                 }
 
                 //resume at seg031_2CFA_648:
 
-            }      
+            }
             return false;//temp      
         }
 
@@ -128,7 +129,7 @@ namespace Underworld
         {
             HeadingLookupCalc(heading, out short ax, out short bx);
             Result_arg2 = ax;
-            Result_arg4 = bx;            
+            Result_arg4 = bx;
         }
 
 
@@ -181,10 +182,10 @@ namespace Underworld
             UWMotionParamArray.Likely_RadiusInMotion_dseg_67d6_25CC = MotionParams.radius_22;
             UWMotionParamArray.Likely_HeightInMotion_dseg_67d6_25CD = MotionParams.height_23;
             UWMotionParamArray.MotionArrayObjectIndex_dseg_67d6_25CE = MotionParams.index_20;
-            
-            MotionParams.dseg_67d6_3FC_ptr_to_25C4_maybemotion.Unk0_x = MotionParams.x_0 >> 5;
-            MotionParams.dseg_67d6_3FC_ptr_to_25C4_maybemotion.Unk2_y = MotionParams.y_2 >> 5;
-            MotionParams.dseg_67d6_3FC_ptr_to_25C4_maybemotion.Unk4_z = MotionParams.z_4 >> 3;
+
+            MotionParams.SubArray.Unk0_x = MotionParams.x_0 >> 5;
+            MotionParams.SubArray.Unk2_y = MotionParams.y_2 >> 5;
+            MotionParams.SubArray.Unk3_z = MotionParams.z_4 >> 3;
 
             UWMotionParamArray.RelatedToMotionX_dseg_67d6_3FE = (MotionParams.x_0 & 0x1F) << 8;
             UWMotionParamArray.RelatedToMotionY_dseg_67d6_400 = (MotionParams.y_2 & 0x1F) << 8;
@@ -193,14 +194,178 @@ namespace Underworld
         }
 
 
-        static void RelatedToMotion_seg028_2941_385(int arg0)
+        /// <summary>
+        /// Appears to do stuff with the tile the motion is happening in.
+        /// </summary>
+        /// <param name="arg0"></param>
+        static void RelatedToTileAndMotion_seg028_2941_385(UWMotionParamArray MotionParams, int arg0)
         {
             //?
+            UWMotionParamArray.TileAttributesArray = new int[0x9]; // 9 * 0x1111 or 18 * 0x11?   0-8 entries
+            for (int i = 0; i <= UWMotionParamArray.TileAttributesArray.GetUpperBound(0); i++)
+            {
+                UWMotionParamArray.TileAttributesArray[i] = 0x1111;//default values for the tiles in a 3x3 grid
+            }
+            var tileX = MotionParams.SubArray.Unk0_x >> 3;
+            var tileY = MotionParams.SubArray.Unk2_y >> 3;
+            UWMotionParamArray.TileRelatedToMotion_dseg_67d6_257E = UWTileMap.current_tilemap.Tiles[tileX, tileY];
+
+            var xposVar8 = MotionParams.SubArray.Unk0_x & 0x7;
+            var yposVarA = MotionParams.SubArray.Unk2_y & 0x7;
+            var XYOffsetVar1 = 4;
+            MotionParams.SubArray.Unk16 = 4;
+            MotionParams.SubArray.Unk17_xpos = xposVar8;
+            MotionParams.SubArray.Unk18_ypos = yposVarA;
+            if (UWMotionParamArray.TileAttributesArray[4] == 0x1111)
+            {
+                //set value for this tile.
+                var tile = UWMotionParamArray.TileRelatedToMotion_dseg_67d6_257E;
+                int terrain = TerrainDatLoader.GetTerrainTypeNo(tile);
+                UWMotionParamArray.TileAttributesArray[4] = (int)(tile.tileType) | ((int)tile.floorHeight << 4) | (terrain << 8);
+            }
+
+            seg028_2941_2CF(MotionParams, arg0);
+            MotionParams.SubArray.UnkE = MotionParams.SubArray.Unkc_terrain;
+            MotionParams.SubArray.Unk11 = MotionParams.SubArray.Unk10;
+
+            //resume at seg028_2941_449:
+
+        }
+
+
+        static int seg028_2941_2CF(UWMotionParamArray MotionParams, int arg0)
+        {//this may behave differently in UW1?
+            MotionParams.SubArray.Unkc_terrain = (UWMotionParamArray.TileAttributesArray[4] & 0x300) >> 8;
+            int var1;
+
+            MotionParams.SubArray.Unk10 = SomethingWithTileTypes_seg028_2941_E(MotionParams, 4, out var1);
+
+            if (MotionParams.SubArray.Unk10 != 0x80)
+            {
+                if (MotionParams.SubArray.Unk4 + arg0 >= MotionParams.SubArray.Unk10)
+                {
+                    if (MotionParams.SubArray.Unk4 - arg0 <= MotionParams.SubArray.Unk10)
+                    {
+                        MotionParams.SubArray.Unkc_terrain = MotionParams.SubArray.Unkc_terrain | 0x4;
+
+                        var tmp = 8 << ((UWMotionParamArray.TileAttributesArray[4] & 0x300) >> 8);
+
+                        MotionParams.SubArray.Unkc_terrain = MotionParams.SubArray.Unkc_terrain | tmp;
+
+                    }
+                    else
+                    {
+                        MotionParams.SubArray.Unkc_terrain = MotionParams.SubArray.Unkc_terrain | 0x800;
+                    }
+                }
+                else
+                {
+                    MotionParams.SubArray.Unkc_terrain = MotionParams.SubArray.Unkc_terrain | 0x100;
+                }
+            }
+            else
+            {
+                MotionParams.SubArray.Unkc_terrain = MotionParams.SubArray.Unkc_terrain | 0x200;
+            }
+
+            if ((UWMotionParamArray.TileAttributesArray[4] & 0xF) >= 6)
+            {
+                MotionParams.SubArray.Unk0_x = MotionParams.SubArray.Unk0_x | 0x2000;
+            }
+            if (var1<0)
+            {
+                return 0;
+            }
+            else
+            {
+                if (var1>0)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return 1;
+                }                
+            }
         }
 
         static void seg028_2941_C0E(int arg0, int arg2)
         {
             //?
+        }
+
+        static int SomethingWithTileTypes_seg028_2941_E(UWMotionParamArray MotionParams, int TileArrayOffset_arg0, out int arg2)
+        {
+            arg2 = 0;
+            var temp_index = Loader.getAt(MotionParams.SubArray.data, 2 + TileArrayOffset_arg0 * 5, 8);     // MotionParams.SubArray_dseg_67d6_3FC_ptr_to_25C4_maybemotion.GetParam2_BlockSize5(TileArrayOffset_arg0);
+
+            var cl = (UWMotionParamArray.TileAttributesArray[temp_index] & 0xF0) >> 1;
+            var tiletype = UWMotionParamArray.TileAttributesArray[temp_index] & 0xF;
+
+            switch (tiletype)
+            {
+                case UWTileMap.TILE_SOLID://0
+                    {
+                        return 0x80;
+                    }
+                case UWTileMap.TILE_DIAG_SE://2
+                    {
+                        if (Loader.getAt(MotionParams.SubArray.data, 4 + TileArrayOffset_arg0 * 5, 8) < Loader.getAt(MotionParams.SubArray.data, 3 + TileArrayOffset_arg0 * 5, 8))
+                        {
+                            cl = 0x80;
+                        }
+                        arg2 = 1;
+                        return cl;
+                    }
+                case UWTileMap.TILE_DIAG_SW://3
+                    {
+                        if (Loader.getAt(MotionParams.SubArray.data, 3 + TileArrayOffset_arg0 * 5, 8) + Loader.getAt(MotionParams.SubArray.data, 4 + TileArrayOffset_arg0 * 5, 8) >= 7)
+                        {
+                            cl = 0x80;
+                        }
+                        arg2 = 1;
+                        return cl;
+                    }
+                case UWTileMap.TILE_DIAG_NE://4
+                    {
+                        if (Loader.getAt(MotionParams.SubArray.data, 3 + TileArrayOffset_arg0 * 5, 8) + Loader.getAt(MotionParams.SubArray.data, 4 + TileArrayOffset_arg0 * 5, 8) <= 7)
+                        {
+                            cl = 0x80;
+                        }
+                        arg2 = 1;
+                        return cl;
+                    }
+                case UWTileMap.TILE_DIAG_NW://5
+                    {
+                        if (Loader.getAt(MotionParams.SubArray.data, 3 + TileArrayOffset_arg0 * 5, 8) <= Loader.getAt(MotionParams.SubArray.data, 4 + TileArrayOffset_arg0 * 5, 8))
+                        {
+                            cl = 0x80;
+                        }
+                        arg2 = 1;
+                        return cl;
+                    }
+                case UWTileMap.TILE_SLOPE_N://6
+                    {
+                        return (int)(cl + (Loader.getAt(MotionParams.SubArray.data, 4 + TileArrayOffset_arg0 * 5, 8) & 0x7));
+                    }
+                case UWTileMap.TILE_SLOPE_S://7
+                    {
+                        return (int)(cl + 7 - (Loader.getAt(MotionParams.SubArray.data, 4 + TileArrayOffset_arg0 * 5, 8) & 0x7));
+                    }
+                case UWTileMap.TILE_SLOPE_E://TILE_SLOPE_E
+                    {
+                        return (int)(cl + (Loader.getAt(MotionParams.SubArray.data, 3 + TileArrayOffset_arg0 * 5, 8) & 0x7));
+                    }
+                case UWTileMap.TILE_SLOPE_W:
+                    {
+                        return (int)(cl + 7 - (Loader.getAt(MotionParams.SubArray.data, 3 + TileArrayOffset_arg0 * 5, 8) & 0x7));
+                    }
+                case UWTileMap.TILE_OPEN://1
+                default:
+                    {
+                        return cl;
+                    }
+            }
         }
 
     }//end class

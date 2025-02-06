@@ -1,6 +1,6 @@
 namespace Underworld
 {
-    public partial class motion : UWClass
+    public partial class motion : Loader
     {
         static int MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2;
 
