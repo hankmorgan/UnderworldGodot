@@ -114,7 +114,7 @@ namespace Underworld
                     if (arg2 != 0)
                     {
                         RelatedToTileAndMotion_seg028_2941_385(MotionParams.SubArray, MotionParams.unk_24);//unk24 is 0 in normal projectile processing
-                        seg028_2941_C0E(0, 0);
+                        seg028_2941_C0E(MotionParams.SubArray, 0, 0);
                     }
                 }
 
@@ -185,7 +185,7 @@ namespace Underworld
 
             MotionParams.SubArray.Unk0_x = MotionParams.x_0 >> 5;
             MotionParams.SubArray.Unk2_y = MotionParams.y_2 >> 5;
-            MotionParams.SubArray.Unk3_z = MotionParams.z_4 >> 3;
+            MotionParams.SubArray.Unk4_z = MotionParams.z_4 >> 3;
 
             UWMotionParamArray.RelatedToMotionX_dseg_67d6_3FE = (MotionParams.x_0 & 0x1F) << 8;
             UWMotionParamArray.RelatedToMotionY_dseg_67d6_400 = (MotionParams.y_2 & 0x1F) << 8;
@@ -248,8 +248,8 @@ namespace Underworld
                 }
 
                 SubArray.Unk2_y = XYOffsetVar1;
-                SubArray.Unk3_z = xposVar8;
-                SubArray.Unk4 = yposVarA;
+                SubArray.Unk3 = xposVar8;
+                SubArray.Unk4_z = yposVarA;
 
                 xposVar8 += (SubArray.Unk8 << 1);
                 while (xposVar8 > 7)
@@ -373,9 +373,9 @@ namespace Underworld
 
             if (SubArray.Unk10 != 0x80)
             {
-                if (SubArray.Unk4 + arg0 >= SubArray.Unk10)
+                if (SubArray.Unk4_z + arg0 >= SubArray.Unk10)
                 {
-                    if (SubArray.Unk4 - arg0 <= SubArray.Unk10)
+                    if (SubArray.Unk4_z - arg0 <= SubArray.Unk10)
                     {
                         SubArray.Unkc_terrain = SubArray.Unkc_terrain | 0x4;
 
@@ -420,9 +420,11 @@ namespace Underworld
             }
         }
 
-        static void seg028_2941_C0E(int arg0, int arg2)
+        static void seg028_2941_C0E(OtherMotionArray SubArray, int arg0, int arg2)
         {
             //?
+            var isNPC_var14 = 0;
+            var tile = UWTileMap.current_tilemap.Tiles[SubArray.Unk0_x >> 3,SubArray.Unk2_y>>3];
         }
 
         static sbyte SomethingWithTileTypes_seg028_2941_E(OtherMotionArray SubArray, int TileArrayOffset_arg0, out int arg2)
@@ -506,9 +508,9 @@ namespace Underworld
 
             if (var2!= -128)
             {
-                if (SubArray.Unk4 + arg2 >= var2)
+                if (SubArray.Unk4_z + arg2 >= var2)
                 {
-                    if (SubArray.Unk4 - arg2 >= var2)
+                    if (SubArray.Unk4_z - arg2 >= var2)
                     {
                         var index = getAt(SubArray.data, 2 + arg0 * 5, 8);
                         //8 << (UWMotionParamArray.TileAttributesArray[index] & 0x300) >> 8;

@@ -339,14 +339,14 @@ namespace Underworld
         {
             get
             {
-                return (int)DataLoader.getAt(data, 2, 8);
+                return (int)DataLoader.getAt(data, 2, 16);
             }
             set
             {
-                DataLoader.setAt(data, 2, 8, value);
+                DataLoader.setAt(data, 2, 16, value);
             }
         }
-        public int Unk3_z//dseg_2565
+        public int Unk3//dseg_2565
         {
             get
             {
@@ -358,7 +358,7 @@ namespace Underworld
             }
         }
 
-        public int Unk4//dseg_2566
+        public int Unk4_z//dseg_2566
         {
             get
             {
