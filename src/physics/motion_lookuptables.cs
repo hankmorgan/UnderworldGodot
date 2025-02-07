@@ -330,5 +330,15 @@ namespace Underworld
             };
 
 
+        /// <summary>
+        /// This allows for finding a relative tile by PTR
+        /// 678
+        /// 345
+        /// 012
+        /// </summary>
+        public static int[] TileOffsetArray = new int[] { -65, -64, -63, -1, 0, 1, 63, 64, 65 };
+
+        public static int[]  TileTraversalFlags_dseg_67d6_1BA6 = new int[] { 0x1E, 0, 0x13, 0x15, 0xB, 0xD, 0x20, 0x20, 0x20, 0x20, 0, 0, 0, 0, 0, 0x1E };
+
     }//end class
 }//end namespac

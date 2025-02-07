@@ -1432,5 +1432,30 @@ namespace Underworld
                 }
             }
         }
+
+
+        /// <summary>
+        /// Finds a Tile by it's address PTR
+        /// </summary>
+        /// <param name="SearchPTR"></param>
+        /// <returns></returns>
+        public static TileInfo GetTileByPTR(int SearchPTR)
+        {
+            var tileY = SearchPTR / 256;
+            var tileX = (SearchPTR - (tileY * 256))/4;
+            if (ValidTile(tileX, tileY))
+            {                
+                if (UWTileMap.current_tilemap.Tiles[tileX, tileY].Ptr == SearchPTR)
+                {
+                    Debug.Print($"Mismatch PTR in GetTileByPTR {SearchPTR}");
+                }
+                return UWTileMap.current_tilemap.Tiles[tileX, tileY];
+            }
+            else
+            {
+                Debug.Print($"Invalid PTR in GetTileByPTR {SearchPTR}");
+                return null;
+            }
+        }
     } //end class
 }//end namespace

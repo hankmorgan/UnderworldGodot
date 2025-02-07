@@ -22,6 +22,8 @@ namespace Underworld
         public static int dseg_67d6_40C_indexer;
         public static int MAYBEcollisionOrGravity_dseg_67d6_40E;
 
+        public static int dseg_67d6_2584;
+
         //The class properties
         public int x_0
         {
