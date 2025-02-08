@@ -1445,7 +1445,7 @@ namespace Underworld
             var tileX = (SearchPTR - (tileY * 256))/4;
             if (ValidTile(tileX, tileY))
             {                
-                if (UWTileMap.current_tilemap.Tiles[tileX, tileY].Ptr == SearchPTR)
+                if (UWTileMap.current_tilemap.Tiles[tileX, tileY].Ptr != SearchPTR)
                 {
                     Debug.Print($"Mismatch PTR in GetTileByPTR {SearchPTR}");
                 }
