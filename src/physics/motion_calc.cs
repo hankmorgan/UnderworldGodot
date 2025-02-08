@@ -4,12 +4,13 @@ namespace Underworld
     public partial class motion : Loader
     {
 
-        static int LikelyIsMagicProjectile_dseg_67d6_26B8;
-        static int MotionParam0x25_dseg_67d6_26A9;
-        static int CalculateMotionGlobal_dseg_67d6_25DB;
-
-        static int CalculateMotionGlobal_dseg_67d6_26B6;
-
+        /// <summary>
+        /// Kicks off the processing of motion.
+        /// </summary>
+        /// <param name="projectile"></param>
+        /// <param name="MotionParams"></param>
+        /// <param name="MaybeMagicObjectFlag"></param>
+        /// <returns></returns>
         public static bool CalculateMotion_TopLevel(uwObject projectile, UWMotionParamArray MotionParams, int MaybeMagicObjectFlag)
         {//seg006_1413_D6A
             MotionParams.speed_12 = (byte)(projectile.Projectile_Speed << 4);
@@ -18,17 +19,48 @@ namespace Underworld
         }
 
 
+        /// <summary>
+        /// A loop that goes through some steps?
+        /// </summary>
+        /// <param name="projectile"></param>
+        /// <param name="MotionParams"></param>
+        /// <param name="MaybeMagicObjectFlag"></param>
         static void CalculateMotion(uwObject projectile, UWMotionParamArray MotionParams, int MaybeMagicObjectFlag)
         {
             //TODO
-            LikelyIsMagicProjectile_dseg_67d6_26B8 = MaybeMagicObjectFlag;
-            MotionParam0x25_dseg_67d6_26A9 = MotionParams.unk_25;
-            CalculateMotionGlobal_dseg_67d6_25DB = 0;
-            CalculateMotionGlobal_dseg_67d6_26B6 = 0;
+            UWMotionParamArray.LikelyIsMagicProjectile_dseg_67d6_26B8 = MaybeMagicObjectFlag;
+            UWMotionParamArray.MotionParam0x25_dseg_67d6_26A9 = MotionParams.unk_25_tilestate;
+            UWMotionParamArray.CalculateMotionGlobal_dseg_67d6_25DB = 0;
+            UWMotionParamArray.CalculateMotionGlobal_dseg_67d6_26B6 = 0;
 
             if (seg031_2CFA_412(projectile, MotionParams, 1, 1))
             {
                 //do more processing at seg031_2CFA_69
+                while (UWMotionParamArray.MAYBEcollisionOrGravity_dseg_67d6_40E + 1 > UWMotionParamArray.GravityCollisionRelated_dseg_67d6_414)
+                {                    
+                    //seg031_2CFA_4C:
+                    if (UWMotionParamArray.CalculateMotionGlobal_dseg_67d6_26B6++ == 0x10)//note the increment
+                    {
+                        //seg031_2CFA_7A:
+                        MotionParams.unk_10 = 0;
+                        MotionParams.unk_a = 0;
+                        MotionParams.unk_14 = 0;
+                        return;
+                    }
+                    else
+                    {
+                        //seg031_2CFA_59:
+                        if (seg031_2CFA_12B8(MotionParams, 1) !=0 )//todo
+                        {
+                            //seg031_2CFA_64
+                            seg031_2CFA_179C();//todo
+                        }
+                    }
+                    return;//temp due to risk of infinite loop
+                }
+                //seg031_2CFA_73:  
+                seg031_2CFA_800();//todo
+                return;
             }
         }
 
@@ -836,6 +868,76 @@ namespace Underworld
         static void ProbablyCollisions_seg031_2CFA_10E(int arg0)
         {
             //todo
+        }
+
+        static void seg031_2CFA_800()
+        {
+
+        }
+
+        static int seg031_2CFA_12B8(UWMotionParamArray MotionParams, int arg0)
+        {
+            var var1 = 0;
+            var var2 = 0;
+            if (arg0 == -1)
+            {
+                //seg031_2CFA_12CD:
+                ScanForCollisions_seg028_2941_C0E(MotionParams, 0, 0);
+                ProbablyCollisions_seg031_2CFA_10E(0);
+                MotionParams.unk_25_tilestate = UWMotionParamArray.MotionParam0x25_dseg_67d6_26A9;//stores value
+                if (UWMotionParamArray.dseg_67d6_26A5 != 0)
+                {
+                    var1 = 1;
+                }
+            }
+            else
+            {
+                //seg031_2CFA_12F6
+                UWMotionParamArray.CalculateMotionGlobal_dseg_67d6_25DB--;
+            }
+            //seg031_2CFA_12FE
+
+            if (MotionParams.unk_a == 0)
+            {
+                var2 = seg031_2CFA_8A6(MotionParams, 0, arg0);
+            }
+            else
+            {
+                var2 = MAYBEGRAVITYZ_seg031_2CFA_1138(MotionParams, 0, arg0);
+            }
+
+            if (var1!=0)
+            {
+                var si = seg031_2CFA_13B2();
+                UWMotionParamArray.MotionParam0x25_dseg_67d6_26A9 = MotionParams.unk_25_tilestate;
+                MotionParams.unk_25_tilestate = GetTileState(si);
+            }
+
+            return var2;
+        }
+
+        static void seg031_2CFA_179C()
+        {
+
+        }
+
+        static int seg031_2CFA_8A6(UWMotionParamArray MotionParams, int arg0, int arg2)
+        {
+            return 0;//todo
+        }
+
+        static int MAYBEGRAVITYZ_seg031_2CFA_1138(UWMotionParamArray MotionParams, int arg0, int arg2)
+        {
+            return 0;//todo
+        }
+        static int seg031_2CFA_13B2()
+        {
+            return 0;//todo
+        }
+
+        public static sbyte GetTileState(int arg0)
+        {
+            return 1;//is grounded?
         }
 
     }//end class

@@ -1,3 +1,5 @@
+using System.ComponentModel;
+
 namespace Underworld
 {
     /// <summary>
@@ -45,7 +47,13 @@ namespace Underworld
         public static short[] TileAttributesArray;
         public static TileInfo TileRelatedToMotion_dseg_67d6_257E;
 
+        public static int LikelyIsMagicProjectile_dseg_67d6_26B8;
+        public static sbyte MotionParam0x25_dseg_67d6_26A9;
+        public static int CalculateMotionGlobal_dseg_67d6_25DB;
+        public static int CalculateMotionGlobal_dseg_67d6_26B6;
 
+        public static int dseg_67d6_26A5;
+        
         //The class properties
         public short x_0
         {
@@ -305,7 +313,7 @@ namespace Underworld
                 DataLoader.setAt(data, 0x24, 8, value);
             }
         }
-        public sbyte unk_25
+        public sbyte unk_25_tilestate
         {
             get
             {
