@@ -46,6 +46,11 @@ namespace Underworld
             return (int)(x>>4 & 0xFFF);
         }
 
+         public static bool UnknownFlag(int item_id)
+        {//bit 2 at +3
+            return ((buffer[PTR(item_id) + 3] >>2) & 0x1)==1;
+        }
+
         public static bool maybeMagicObjectFlag(int item_id)
         {//bit 3 at +3
             return ((buffer[PTR(item_id) + 3] >>3) & 0x1)==1;
@@ -89,9 +94,9 @@ namespace Underworld
         /// </summary>
         /// <param name="item_id"></param>
         /// <returns></returns>
-        public static int ActivatedByCollision(int item_id)
-        {//bits 2,3 at + 6
-            return (buffer[PTR(item_id) + 6]>>1 ) & 0x1;
+        public static bool ActivatedByCollision(int item_id)
+        {//bits 1 at + 6
+            return ((buffer[PTR(item_id) + 6] >> 1) & 0x1) == 1;
         }
 
 

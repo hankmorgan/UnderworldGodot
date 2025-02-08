@@ -435,6 +435,113 @@ namespace Underworld
                     isNPC_var14 = true;
                 }
             }
+
+            MotionCalcArray.Unk14 = 0;
+            UWMotionParamArray.xpos_dseg_67d6_2585 = MotionCalcArray.x0 & 0x7;
+            UWMotionParamArray.ypos_dseg_67d6_251C = MotionCalcArray.y2 & 0x7;
+
+            int Radius_var13 = 0;
+            if ((arg0 != 0) && (MotionCalcArray.Height9 == 0))
+            {
+                Radius_var13 = 0;
+                if ((isNPC_var14) && (Radius_var13 > 0))
+                {
+                    Radius_var13--;
+                }
+            }
+            else
+            {
+                Radius_var13 = MotionCalcArray.Radius8;
+            }
+
+            //seg028_2941_CAF
+            var XposPlusRad = UWMotionParamArray.xpos_dseg_67d6_2585 + Radius_var13;
+            var YposPlusRad = UWMotionParamArray.ypos_dseg_67d6_251C + Radius_var13;
+            var XposMinusRad = UWMotionParamArray.xpos_dseg_67d6_2585 - Radius_var13;
+            var YposMinusRad = UWMotionParamArray.ypos_dseg_67d6_251C - Radius_var13;
+
+            //seg028_2941_CD3:
+            var varD = (XposMinusRad - 11) / 8;
+            var varE = (YposMinusRad - 11) / 8;
+
+            //seg028_2941_CF0:
+            var varF = (XposPlusRad + 4) / 8;
+            var var10 = (YposPlusRad + 4) / 8;
+
+            var var11_maybeX = varD;
+
+            //seg028_2941_E64:
+            while (var11_maybeX > varF)
+            {
+                //seg028_2941_D13:
+                var var12_maybeY = varE;
+                while (var12_maybeY <= var10)
+                {
+                    //seg028_2941_D1C:
+                    var si = 0;
+
+                    var di = var11_maybeX + (var12_maybeY << 6);
+                    var tilePtr = (int)(tile_var4.Ptr + di);
+                    var tileAtPTR = UWTileMap.GetTileByPTR(tilePtr);
+                    int next = tileAtPTR.indexObjectList;
+                    //seg028_2941_E36:
+                    //loop the object list on the tile.
+                    var indexByte = tileAtPTR.Ptr + 2;
+                    while (next!=0 && si<=0x40)
+                    {
+                        var obj = UWTileMap.current_tilemap.LevelObjects[next];
+                        if (next != MotionCalcArray.MotionArrayObjectIndexA)
+                        {//maybe check for colliding.
+                            if (
+                                (!isNPC_var14)
+                                ||
+                                (isNPC_var14 && (commonObjDat.UnknownFlag(obj.item_id)==false))
+                            )
+                            {
+                                //seg028_2941_DA1
+                                if (
+                                    (commonObjDat.height(obj.item_id) !=0)
+                                    ||
+                                    (commonObjDat.height(obj.item_id)==0) && (!obj.IsStatic)
+                                )
+                                {
+                                    //seg028_2941_DB7:
+                                    if (
+                                        (obj.IsStatic)
+                                        ||
+                                        ((!obj.IsStatic) && (obj.majorclass !=1))
+                                        ||
+                                        ((!obj.IsStatic) && (obj.majorclass == 1) && (obj.UnkBit_0X15_Bit7 == 0))
+                                        )
+                                    {
+                                        if (
+                                            (arg2 == 0)
+                                            ||
+                                            ((arg2 !=0) && commonObjDat.ActivatedByCollision(obj.item_id))
+                                            )
+                                        {
+                                            Seg028_2941_A78(MotionParams, obj, indexByte, var11_maybeX, var12_maybeY, isNPC_var14);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        indexByte = obj.PTR + 4;
+                        next = obj.next;   
+                        si++;
+                    }
+                    if (si>0x40)
+                    {                        
+                        return;
+                    }
+                    else
+                    {
+                        var12_maybeY++;
+                    }                    
+                }
+                //seg028_2941_E61:
+                var11_maybeX++;
+            }
         }
 
         static sbyte SomethingWithTileTypes_seg028_2941_E(UWMotionParamArray MotionParams, int TileArrayOffset_arg0, out int arg2)
@@ -563,6 +670,11 @@ namespace Underworld
                 }
             }
 
+        }
+
+        static void Seg028_2941_A78(UWMotionParamArray MotionParams, uwObject OtherObject, long ListHeadPtr, int xArg6, int xArg8, bool isNPCArgA )
+        {
+//TODO Figure out what LISTHEAD refers to
         }
 
     }//end class

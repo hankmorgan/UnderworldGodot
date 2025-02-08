@@ -20,6 +20,9 @@ namespace Underworld
 
         public static int dseg_67d6_2584;
 
+        public static int xpos_dseg_67d6_2585;
+        public static int ypos_dseg_67d6_251C;
+
         //The class properties
         public short x_0
         {
@@ -317,14 +320,11 @@ namespace Underworld
         // }
     }
 
-
-
     /// <summary>
     /// Class representing data starting at DSEG:25C4
     /// </summary>
     public class MotionCalcArray : UWClass
     {
-
         /// <summary>
         /// Raw data
         /// </summary>
@@ -460,6 +460,18 @@ namespace Underworld
             set
             {
                 DataLoader.setAt(dseg_25c4, 0x11, 8, value);
+            }
+        }
+
+        public static sbyte Unk14
+        {
+            get
+            {
+                return (sbyte)DataLoader.getAt(dseg_25c4, 0x14, 8);
+            }
+            set
+            {
+                DataLoader.setAt(dseg_25c4, 0x14, 8, value);
             }
         }
 
