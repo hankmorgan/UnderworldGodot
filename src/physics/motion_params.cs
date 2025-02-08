@@ -6,14 +6,25 @@ namespace Underworld
     public class UWMotionParamArray : Loader
     {
         public byte[] data = new byte[0x26];
+        public static byte[] Collisions_dseg_2520 = new byte[0xA4]; //unknown size
+        //structure is
+        //0=counter relating to height==0,
+        //1=zpos,
+        //2=link<<6 | unk flags
+        //4= y<<6 + x
         //globals        
         public static int RelatedToMotionX_dseg_67d6_3FE;
         public static int RelatedToMotionY_dseg_67d6_400;
         public static int RelatedToMotionZ_dseg_67d6_402;
         public static int[] dseg_67d6_404 = new int[2];
+
+        public static int Gravity_related_dseg_67d6_408;
         public static int dseg_67d6_410;
         public static int dseg_67d6_412;
         public static int GravityCollisionRelated_dseg_67d6_414;
+
+        public static int Gravity_Related_dseg_67d6_41F;
+
         public static int MotionGlobal_dseg_67d6_40A_indexer;
         public static int dseg_67d6_40C_indexer;
         public static int MAYBEcollisionOrGravity_dseg_67d6_40E;
@@ -22,6 +33,18 @@ namespace Underworld
 
         public static int xpos_dseg_67d6_2585;
         public static int ypos_dseg_67d6_251C;
+
+        public static int XposPlusRad;
+        public static int YposPlusRad;
+        public static int XposMinusRad;
+        public static int YposMinusRad;
+
+        public OtherMotionArray SubArray = new OtherMotionArray();
+        public MotionCalcArray CalcArray = new MotionCalcArray();
+
+        public static short[] TileAttributesArray;
+        public static TileInfo TileRelatedToMotion_dseg_67d6_257E;
+
 
         //The class properties
         public short x_0
@@ -294,12 +317,6 @@ namespace Underworld
             }
         }
 
-        public OtherMotionArray SubArray = new OtherMotionArray();
-        public MotionCalcArray CalcArray = new MotionCalcArray();
-
-        public static short[] TileAttributesArray;
-        public static TileInfo TileRelatedToMotion_dseg_67d6_257E;
-
 
 
         // /// <summary>
@@ -329,6 +346,7 @@ namespace Underworld
         /// Raw data
         /// </summary>
         public static byte[] dseg_25c4 = new byte[0x20];
+        
 
         public static short x0
         {
@@ -463,11 +481,11 @@ namespace Underworld
             }
         }
 
-        public static sbyte Unk14
+        public static byte Unk14_collisoncount
         {
             get
             {
-                return (sbyte)DataLoader.getAt(dseg_25c4, 0x14, 8);
+                return (byte)DataLoader.getAt(dseg_25c4, 0x14, 8);
             }
             set
             {

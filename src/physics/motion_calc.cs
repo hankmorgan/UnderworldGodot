@@ -114,14 +114,74 @@ namespace Underworld
                     if (arg2 != 0)
                     {
                         RelatedToTileAndMotion_seg028_2941_385(MotionParams, MotionParams.unk_24);//unk24 is 0 in normal projectile processing
-                        seg028_2941_C0E(MotionParams, 0, 0);
+                        ScanForCollisions_seg028_2941_C0E(MotionParams, 0, 0);
                     }
                 }
 
-                //resume at seg031_2CFA_648:
+                //seg031_2CFA_648:
+                //if (DataLoader.getAt(MotionParams.data, 0xA, 16) != 0)
+                if (MotionParams.unk_a != 0)
+                {
+                    if (MotionParams.unk_a <= 0)
+                    {
+                        UWMotionParamArray.Gravity_related_dseg_67d6_408 = -2048;
+                    }
+                    else
+                    {
+                        UWMotionParamArray.Gravity_related_dseg_67d6_408 = +2048;
+                    }
+
+                    //seg031_2CFA_669
+                    ProbablyCollisions_seg031_2CFA_10E(arg2);
+
+                    if (MotionParams.data[6 + UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer] != 0)
+                    {
+                        var varC = (UWMotionParamArray.dseg_67d6_404[UWMotionParamArray.dseg_67d6_40C_indexer] / 0x2000) * MotionParams.unk_a;
+
+                        var var10 = (int)MotionParams.data[6 + UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer];
+                        var10 = var10 * (UWMotionParamArray.Gravity_related_dseg_67d6_408 / 0x800);
+
+                        varC = varC * 0x100;
+                        varC = var10 / varC;
+
+                        var varA = (sbyte)(varC & 0xFF00) >> 16; //get the sign
+                        var varC_s = (sbyte)varC & 0xFF;
+
+                        if (//ugh..
+                            (varA > 0)
+                            ||
+                            (varA == 0 && varC_s > 0x7FFF)
+                            ||
+                            (((varA == 0 && varC_s <= 0x7FFF) || varA != 0) && varA <= -1)
+                            ||
+                            ((((varA == 0 && varC_s <= 0x7FFF) || varA != 0) && varA > -1) && varC_s < 0x8000)
+                            )
+                        {
+                            //seg031_2CFA_738:
+                            UWMotionParamArray.dseg_67d6_410 = 0;
+                            var temp = DataLoader.getAt(MotionParams.data, 0xA, 16);
+                            UWMotionParamArray.Gravity_Related_dseg_67d6_41F = (int)Math.Abs(MotionParams.speed_12 * (temp >> 1) >> 5);
+                        }
+                        else
+                        {
+                            //seg031_2CFA_75B
+                            UWMotionParamArray.Gravity_Related_dseg_67d6_41F = varC_s;
+                        }
+                    }
+                    else
+                    {
+                        //seg031_2CFA_763
+                        var temp = DataLoader.getAt(MotionParams.data, 0xA, 16);
+                        UWMotionParamArray.Gravity_Related_dseg_67d6_41F = (int)Math.Abs(MotionParams.speed_12 * (temp >> 1) >> 5);
+                    }
+                }
+                else
+                {
+                    UWMotionParamArray.Gravity_related_dseg_67d6_408 = 0;
+                }
 
             }
-            return false;//temp      
+            return true;
         }
 
 
@@ -365,7 +425,6 @@ namespace Underworld
             }
         }
 
-
         static int seg028_2941_2CF_terrainrelated(UWMotionParamArray MotionParams, int arg0)
         {//this may behave differently in UW1?
             MotionParams.unk_c_terrain = (short)((UWMotionParamArray.TileAttributesArray[4] & 0x300) >> 8);
@@ -422,9 +481,14 @@ namespace Underworld
             }
         }
 
-        static void seg028_2941_C0E(UWMotionParamArray MotionParams, int arg0, int arg2)
+        /// <summary>
+        /// Looks like this checks the tile for possible objects to collide with.
+        /// </summary>
+        /// <param name="MotionParams"></param>
+        /// <param name="arg0"></param>
+        /// <param name="arg2"></param>
+        static void ScanForCollisions_seg028_2941_C0E(UWMotionParamArray MotionParams, int arg0, int arg2)
         {
-            //?
             var isNPC_var14 = false;
             var tile_var4 = UWTileMap.current_tilemap.Tiles[MotionCalcArray.x0 >> 3, MotionCalcArray.y2 >> 3];
             if (MotionCalcArray.MotionArrayObjectIndexA != 0)
@@ -436,7 +500,7 @@ namespace Underworld
                 }
             }
 
-            MotionCalcArray.Unk14 = 0;
+            MotionCalcArray.Unk14_collisoncount = 0;
             UWMotionParamArray.xpos_dseg_67d6_2585 = MotionCalcArray.x0 & 0x7;
             UWMotionParamArray.ypos_dseg_67d6_251C = MotionCalcArray.y2 & 0x7;
 
@@ -455,18 +519,18 @@ namespace Underworld
             }
 
             //seg028_2941_CAF
-            var XposPlusRad = UWMotionParamArray.xpos_dseg_67d6_2585 + Radius_var13;
-            var YposPlusRad = UWMotionParamArray.ypos_dseg_67d6_251C + Radius_var13;
-            var XposMinusRad = UWMotionParamArray.xpos_dseg_67d6_2585 - Radius_var13;
-            var YposMinusRad = UWMotionParamArray.ypos_dseg_67d6_251C - Radius_var13;
+            UWMotionParamArray.XposPlusRad = UWMotionParamArray.xpos_dseg_67d6_2585 + Radius_var13;
+            UWMotionParamArray.YposPlusRad = UWMotionParamArray.ypos_dseg_67d6_251C + Radius_var13;
+            UWMotionParamArray.XposMinusRad = UWMotionParamArray.xpos_dseg_67d6_2585 - Radius_var13;
+            UWMotionParamArray.YposMinusRad = UWMotionParamArray.ypos_dseg_67d6_251C - Radius_var13;
 
             //seg028_2941_CD3:
-            var varD = (XposMinusRad - 11) / 8;
-            var varE = (YposMinusRad - 11) / 8;
+            var varD = (UWMotionParamArray.XposMinusRad - 11) / 8;
+            var varE = (UWMotionParamArray.YposMinusRad - 11) / 8;
 
             //seg028_2941_CF0:
-            var varF = (XposPlusRad + 4) / 8;
-            var var10 = (YposPlusRad + 4) / 8;
+            var varF = (UWMotionParamArray.XposPlusRad + 4) / 8;
+            var var10 = (UWMotionParamArray.YposPlusRad + 4) / 8;
 
             var var11_maybeX = varD;
 
@@ -486,8 +550,8 @@ namespace Underworld
                     int next = tileAtPTR.indexObjectList;
                     //seg028_2941_E36:
                     //loop the object list on the tile.
-                    var indexByte = tileAtPTR.Ptr + 2;
-                    while (next!=0 && si<=0x40)
+                    var indexByte = tileAtPTR.indexObjectList;
+                    while (next != 0 && si <= 0x40)
                     {
                         var obj = UWTileMap.current_tilemap.LevelObjects[next];
                         if (next != MotionCalcArray.MotionArrayObjectIndexA)
@@ -495,21 +559,21 @@ namespace Underworld
                             if (
                                 (!isNPC_var14)
                                 ||
-                                (isNPC_var14 && (commonObjDat.UnknownFlag(obj.item_id)==false))
+                                (isNPC_var14 && (commonObjDat.UnknownFlag(obj.item_id) == false))
                             )
                             {
                                 //seg028_2941_DA1
                                 if (
-                                    (commonObjDat.height(obj.item_id) !=0)
+                                    (commonObjDat.height(obj.item_id) != 0)
                                     ||
-                                    (commonObjDat.height(obj.item_id)==0) && (!obj.IsStatic)
+                                    (commonObjDat.height(obj.item_id) == 0) && (!obj.IsStatic)
                                 )
                                 {
                                     //seg028_2941_DB7:
                                     if (
                                         (obj.IsStatic)
                                         ||
-                                        ((!obj.IsStatic) && (obj.majorclass !=1))
+                                        ((!obj.IsStatic) && (obj.majorclass != 1))
                                         ||
                                         ((!obj.IsStatic) && (obj.majorclass == 1) && (obj.UnkBit_0X15_Bit7 == 0))
                                         )
@@ -517,27 +581,27 @@ namespace Underworld
                                         if (
                                             (arg2 == 0)
                                             ||
-                                            ((arg2 !=0) && commonObjDat.ActivatedByCollision(obj.item_id))
+                                            ((arg2 != 0) && commonObjDat.ActivatedByCollision(obj.item_id))
                                             )
                                         {
-                                            Seg028_2941_A78(MotionParams, obj, indexByte, var11_maybeX, var12_maybeY, isNPC_var14);
+                                            CreateCollisonRecord_Seg028_2941_A78(MotionParams, obj, indexByte, var11_maybeX, var12_maybeY, isNPC_var14);
                                         }
                                     }
                                 }
                             }
                         }
-                        indexByte = obj.PTR + 4;
-                        next = obj.next;   
+                        indexByte = obj.index;
+                        next = obj.next;
                         si++;
                     }
-                    if (si>0x40)
-                    {                        
+                    if (si > 0x40)
+                    {
                         return;
                     }
                     else
                     {
                         var12_maybeY++;
-                    }                    
+                    }
                 }
                 //seg028_2941_E61:
                 var11_maybeX++;
@@ -672,9 +736,106 @@ namespace Underworld
 
         }
 
-        static void Seg028_2941_A78(UWMotionParamArray MotionParams, uwObject OtherObject, long ListHeadPtr, int xArg6, int xArg8, bool isNPCArgA )
+        /// <summary>
+        /// Looks like this adds the object as a possible candidate for collision checking.
+        /// </summary>
+        /// <param name="MotionParams"></param>
+        /// <param name="CollidingObject"></param>
+        /// <param name="ListHead"></param>
+        /// <param name="xArg6"></param>
+        /// <param name="yArg8"></param>
+        /// <param name="isNPCArgA"></param>
+        static void CreateCollisonRecord_Seg028_2941_A78(UWMotionParamArray MotionParams, uwObject CollidingObject, long ListHead, int xArg6, int yArg8, bool isNPCArgA)
         {
-//TODO Figure out what LISTHEAD refers to
+            if (MotionCalcArray.Unk14_collisoncount <= 8)
+            {
+                int XCoordVar1;
+                int YCoordVar2;
+                int XVar3;
+                int YVar4;
+                int cx_radius;
+                if (commonObjDat.radius(CollidingObject.item_id) == 4)
+                {
+                    XCoordVar1 = xArg6 << 3;
+                    XVar3 = 7 + xArg6 << 3;
+
+                    YCoordVar2 = yArg8 << 3;
+                    YVar4 = 7 + yArg8 << 3;
+                }
+                else
+                {
+                    XCoordVar1 = CollidingObject.xpos + (xArg6 << 3);
+                    YCoordVar2 = CollidingObject.ypos + (yArg8 << 3);
+                    cx_radius = commonObjDat.radius(CollidingObject.item_id);
+                    if ((CollidingObject.majorclass == 1) && (cx_radius > 0) && (isNPCArgA))
+                    {
+                        cx_radius--;
+                    }
+                    XVar3 = XCoordVar1 + cx_radius;
+                    YVar4 = YCoordVar2 + cx_radius;
+                    XCoordVar1 -= cx_radius;
+                    YCoordVar2 -= cx_radius;
+                    if (
+                        (XVar3 >= UWMotionParamArray.XposMinusRad)
+                        &&
+                        (XCoordVar1 <= UWMotionParamArray.XposPlusRad)
+                        &&
+                        (YVar4 >= UWMotionParamArray.YposMinusRad)
+                        &&
+                        (YCoordVar2 <= UWMotionParamArray.YposMinusRad)
+                    )
+                    {
+                        //seg028_2941_B73
+                        MotionCalcArray.Unk14_collisoncount++;
+                        var si_ptr = MotionCalcArray.Unk14_collisoncount * 6;
+
+                        DataLoader.setAt(UWMotionParamArray.Collisions_dseg_2520, si_ptr + 1, 8, CollidingObject.zpos);
+                        DataLoader.setAt(UWMotionParamArray.Collisions_dseg_2520, si_ptr, 8, commonObjDat.height(CollidingObject.item_id));
+                        if (commonObjDat.height(CollidingObject.item_id) == 0)
+                        {
+                            UWMotionParamArray.Collisions_dseg_2520[0]++;
+                        }
+
+                        //seg028_2941_BB3:
+                        var temp = DataLoader.getAt(UWMotionParamArray.Collisions_dseg_2520, si_ptr + 2, 16);
+                        temp = temp & 0x3F;
+                        temp = (uint)(temp | (ListHead << 6));
+
+                        temp = temp & 0xC0;
+                        temp = temp | 9;
+
+                        DataLoader.setAt(UWMotionParamArray.Collisions_dseg_2520, si_ptr + 2, 16, (int)temp);
+
+                        //seg028_2941_BCF
+                        if (UWMotionParamArray.xpos_dseg_67d6_2585 >= XCoordVar1)
+                        {
+                            if (UWMotionParamArray.xpos_dseg_67d6_2585 <= XVar3)
+                            {
+                                if (UWMotionParamArray.ypos_dseg_67d6_251C >= YCoordVar2)
+                                {
+                                    if (UWMotionParamArray.ypos_dseg_67d6_251C <= YVar4)
+                                    {
+                                        var tmp = DataLoader.getAt(UWMotionParamArray.Collisions_dseg_2520, si_ptr + 2, 16);
+                                        var tochange = tmp & 0x3F;
+                                        tochange = tochange | 0x10;
+                                        tmp = tmp & 0xC0;
+                                        tmp = tmp | tochange;
+                                        DataLoader.setAt(UWMotionParamArray.Collisions_dseg_2520, si_ptr + 2, 16, (int)tmp);
+                                    }
+                                }
+                            }
+                        }
+
+                        //seg028_2941_BF9:
+                        DataLoader.setAt(UWMotionParamArray.Collisions_dseg_2520, si_ptr + 4, 16, xArg6 + (yArg8 << 6));
+                    }
+                }
+            }
+        }
+
+        static void ProbablyCollisions_seg031_2CFA_10E(int arg0)
+        {
+            //todo
         }
 
     }//end class
