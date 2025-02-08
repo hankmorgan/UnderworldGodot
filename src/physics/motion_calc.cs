@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 namespace Underworld
 {
     public partial class motion : Loader
@@ -30,14 +31,15 @@ namespace Underworld
             //TODO
             UWMotionParamArray.LikelyIsMagicProjectile_dseg_67d6_26B8 = MaybeMagicObjectFlag;
             UWMotionParamArray.MotionParam0x25_dseg_67d6_26A9 = MotionParams.unk_25_tilestate;
-            UWMotionParamArray.CalculateMotionGlobal_dseg_67d6_25DB = 0;
+            //UWMotionParamArray.CalculateMotionGlobal_dseg_67d6_25DB = 0;
+            MotionCalcArray.Unk17 = 0;
             UWMotionParamArray.CalculateMotionGlobal_dseg_67d6_26B6 = 0;
 
             if (seg031_2CFA_412(projectile, MotionParams, 1, 1))
             {
                 //do more processing at seg031_2CFA_69
                 while (UWMotionParamArray.MAYBEcollisionOrGravity_dseg_67d6_40E + 1 > UWMotionParamArray.GravityCollisionRelated_dseg_67d6_414)
-                {                    
+                {
                     //seg031_2CFA_4C:
                     if (UWMotionParamArray.CalculateMotionGlobal_dseg_67d6_26B6++ == 0x10)//note the increment
                     {
@@ -50,7 +52,7 @@ namespace Underworld
                     else
                     {
                         //seg031_2CFA_59:
-                        if (seg031_2CFA_12B8(MotionParams, 1) !=0 )//todo
+                        if (seg031_2CFA_12B8(MotionParams, 1) != 0)//todo
                         {
                             //seg031_2CFA_64
                             seg031_2CFA_179C();//todo
@@ -59,7 +61,7 @@ namespace Underworld
                     return;//temp due to risk of infinite loop
                 }
                 //seg031_2CFA_73:  
-                seg031_2CFA_800();//todo
+                StoreNewXYZH_seg031_2CFA_800(MotionParams);//todo
                 return;
             }
         }
@@ -870,9 +872,33 @@ namespace Underworld
             //todo
         }
 
-        static void seg031_2CFA_800()
-        {
 
+        /// <summary>
+        /// Updates x,y,z positions and heading
+        /// </summary>
+        /// <param name="MotionParams"></param>
+        static void StoreNewXYZH_seg031_2CFA_800(UWMotionParamArray MotionParams)
+        {
+            MotionParams.x_0 = (short)((MotionCalcArray.x0 << 5) + (UWMotionParamArray.RelatedToMotionX_dseg_67d6_3FE >> 8));
+            MotionParams.y_2 = (short)((MotionCalcArray.y2 << 5) + (UWMotionParamArray.RelatedToMotionY_dseg_67d6_400 >> 8));
+            MotionParams.z_4 = (short)((MotionCalcArray.z4 << 3) + (UWMotionParamArray.RelatedToMotionZ_dseg_67d6_402 >> 8));
+
+            if ((MotionCalcArray.UnkC_terrain & 0x2000) != 0)
+            {
+                if (Math.Abs(MotionCalcArray.z4 - MotionCalcArray.Unk10) <= MotionParams.radius_22)
+                {
+                    if (MotionParams.index_20 == 1)
+                    {//the player
+                        if (MotionParams.unk_a== 0)
+                        {
+                            Debug.Print("unimplemented player function seg028_2941_1AF()");
+                            //todo seg028_2941_1AF();
+                            //param[bx+4] = result
+                        }
+                    }
+                }
+            }
+            MotionParams.heading_1E = MotionCalcArray.Heading6;
         }
 
         static int seg031_2CFA_12B8(UWMotionParamArray MotionParams, int arg0)
@@ -893,7 +919,8 @@ namespace Underworld
             else
             {
                 //seg031_2CFA_12F6
-                UWMotionParamArray.CalculateMotionGlobal_dseg_67d6_25DB--;
+                //UWMotionParamArray.CalculateMotionGlobal_dseg_67d6_25DB--;
+                MotionCalcArray.Unk17--;
             }
             //seg031_2CFA_12FE
 
@@ -906,7 +933,7 @@ namespace Underworld
                 var2 = MAYBEGRAVITYZ_seg031_2CFA_1138(MotionParams, 0, arg0);
             }
 
-            if (var1!=0)
+            if (var1 != 0)
             {
                 var si = seg031_2CFA_13B2();
                 UWMotionParamArray.MotionParam0x25_dseg_67d6_26A9 = MotionParams.unk_25_tilestate;

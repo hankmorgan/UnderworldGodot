@@ -49,7 +49,7 @@ namespace Underworld
 
         public static int LikelyIsMagicProjectile_dseg_67d6_26B8;
         public static sbyte MotionParam0x25_dseg_67d6_26A9;
-        public static int CalculateMotionGlobal_dseg_67d6_25DB;
+        //public static int CalculateMotionGlobal_dseg_67d6_25DB; //or offset 17 in calc array
         public static int CalculateMotionGlobal_dseg_67d6_26B6;
 
         public static int dseg_67d6_26A5;
@@ -353,8 +353,7 @@ namespace Underworld
         /// <summary>
         /// Raw data
         /// </summary>
-        public static byte[] dseg_25c4 = new byte[0x20];
-        
+        public static byte[] dseg_25c4 = new byte[0x20];        
 
         public static short x0
         {
@@ -498,6 +497,19 @@ namespace Underworld
             set
             {
                 DataLoader.setAt(dseg_25c4, 0x14, 8, value);
+            }
+        }
+
+
+        public static byte Unk17
+        {
+            get
+            {
+                return (byte)DataLoader.getAt(dseg_25c4, 0x17, 8);
+            }
+            set
+            {
+                DataLoader.setAt(dseg_25c4, 0x17, 8, value);
             }
         }
 
