@@ -46,7 +46,7 @@ namespace Underworld
         public static int CalculateMotionGlobal_dseg_67d6_26B6;
 
         public static int dseg_67d6_26A5;
-        
+        public static int dseg_67d6_26A8;        
         //The class properties
         public short x_0
         {
@@ -490,6 +490,31 @@ namespace Underworld
             set
             {
                 DataLoader.setAt(dseg_25c4, 0x14, 8, value);
+            }
+        }
+
+        public static byte Unk15
+            {
+                get
+                {
+                    return (byte)DataLoader.getAt(dseg_25c4, 0x15, 8);
+                }
+                set
+                {
+                    DataLoader.setAt(dseg_25c4, 0x15, 8, value);
+                }
+            }
+
+
+        public static byte Unk16
+        {
+            get
+            {
+                return (byte)DataLoader.getAt(dseg_25c4, 0x16, 8);
+            }
+            set
+            {
+                DataLoader.setAt(dseg_25c4, 0x16, 8, value);
             }
         }
 

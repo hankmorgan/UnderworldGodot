@@ -5,15 +5,123 @@ namespace Underworld
     /// </summary>
     public partial class motion : Loader
     {
-        public static CollisionRecord[] collisionTable = new CollisionRecord[32]; 
-        
+        public static CollisionRecord[] collisionTable = new CollisionRecord[32];
+
+
 
         static void ProbablyCollisions_seg031_2CFA_10E(int arg0)
         {
             //todo
+            UWMotionParamArray.dseg_67d6_26A8 = 1;
+            SortCollisions_seg028_2941_ED8();
         }
 
 
+
+
+        /// <summary>
+        /// Sorts the collision table by height and zpos.
+        /// </summary>
+        public static void SortCollisions_seg028_2941_ED8()
+        {
+            int var1;
+            var HeightIsZero_Var4 = 0;
+            if (MotionCalcArray.Height9 == 0)
+            {
+                HeightIsZero_Var4 = 1;
+            }
+
+            var var3 = 0;
+
+
+            //seg028_2941_F58:
+            while (MotionCalcArray.Unk14_collisoncount > var3)
+            {
+                var1 = MotionCalcArray.Unk14_collisoncount - 2;
+                while (var1 >= var3)
+                {
+                    if (collisionTable[var1].height > collisionTable[var1 + 1].height)
+                    {
+                        SwapCollisionRecord(var1);
+                    }
+                    var1--;
+                }  
+
+                if (collisionTable[var1].height > MotionCalcArray.z4)
+                {
+                    var3++;
+                }
+                else
+                {
+                    break;
+                }  
+            }
+
+            var1 = var3;
+
+            //seg028_2941_FB4:
+            while (true)
+            {
+                if (MotionCalcArray.Unk14_collisoncount<=var1)
+                {//seg028_2941_FC0
+                    MotionCalcArray.Unk16 = (byte)var3;
+                    MotionCalcArray.Unk15 = 0;
+                    while (MotionCalcArray.Unk15< MotionCalcArray.Unk14_collisoncount)
+                    {
+                        if ((MotionCalcArray.z4+MotionCalcArray.Height9+HeightIsZero_Var4) > collisionTable[MotionCalcArray.Unk15].zpos)
+                        {
+                            MotionCalcArray.Unk15++;
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+                    return;
+                }
+                else
+                {//seg028_2941_F6C:
+
+                    var var2 = MotionCalcArray.Unk14_collisoncount - 2;
+
+                    while (var2>=var1)
+                    {
+                        if (collisionTable[var2].zpos> collisionTable[var2+1].zpos)
+                        {
+                            SwapCollisionRecord(var2);
+                        }
+                        var2--;
+                    }
+                }
+                //seg028_2941_FB1
+                var1++;
+            }
+        }
+
+
+
+        /// <summary>
+        /// Swaps collision table record at index with the record at index+1
+        /// </summary>
+        /// <param name="index"></param>
+        static void SwapCollisionRecord(int index)
+        {
+            byte[] copy = new byte[6];
+            for (int i = 0; i < 6; i++)
+            {//backup
+                copy[i] = CollisionRecord.Collisions_dseg_2520[(index * 6) + i];
+            }
+
+            for (int i = 0; i < 6; i++)
+            {//replace
+                CollisionRecord.Collisions_dseg_2520[(index * 6) + i] = CollisionRecord.Collisions_dseg_2520[((index + 1) * 6) + i];
+            }
+
+            for (int i = 0; i < 6; i++)
+            {//restore
+                CollisionRecord.Collisions_dseg_2520[(index * 6) + i] = copy[i];
+            }
+        }
 
         /// <summary>
         /// Looks like this adds the object as a possible candidate for collision checking.
@@ -97,7 +205,7 @@ namespace Underworld
                                 {
                                     if (UWMotionParamArray.ypos_dseg_67d6_251C <= YVar4)
                                     {
-                                        collisionTable[si_ptr].quality |= 0x10; 
+                                        collisionTable[si_ptr].quality |= 0x10;
                                         // var tmp = DataLoader.getAt(motion.Collisions_dseg_2520, si_ptr + 2, 16);
                                         // var tochange = tmp & 0x3F;
                                         // tochange = tochange | 0x10;
