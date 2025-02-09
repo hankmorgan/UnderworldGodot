@@ -4,6 +4,13 @@ namespace Underworld
     {
         static int MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2;
 
+        static motion()
+        {
+            for (short i=0; i<=collisionTable.GetUpperBound(0);i++)
+            {//initialise collision records
+                collisionTable[i] = new CollisionRecord(i);
+            }
+        }
         public static bool MotionProcessing(uwObject projectile)
         {
 

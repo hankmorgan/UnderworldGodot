@@ -1,5 +1,3 @@
-using System.ComponentModel;
-
 namespace Underworld
 {
     /// <summary>
@@ -8,12 +6,7 @@ namespace Underworld
     public class UWMotionParamArray : Loader
     {
         public byte[] data = new byte[0x26];
-        public static byte[] Collisions_dseg_2520 = new byte[0xA4]; //unknown size
-        //structure is
-        //0=counter relating to height==0,
-        //1=zpos,
-        //2=link<<6 | unk flags
-        //4= y<<6 + x
+        
         //globals        
         public static int RelatedToMotionX_dseg_67d6_3FE;
         public static int RelatedToMotionY_dseg_67d6_400;
@@ -257,11 +250,11 @@ namespace Underworld
             }
         }
 
-        public short heading_1E
+        public ushort heading_1E
         {
             get
             {
-                return (short)DataLoader.getAt(data, 0x1E, 16);
+                return (ushort)DataLoader.getAt(data, 0x1E, 16);
             }
             set
             {
@@ -394,11 +387,11 @@ namespace Underworld
         /// <summary>
         /// At offset + 6
         /// </summary>
-        public static short Heading6
+        public static ushort Heading6
         {
             get
             {
-                return (short)DataLoader.getAt(dseg_25c4, 6, 16);
+                return (ushort)DataLoader.getAt(dseg_25c4, 6, 16);
             }
             set
             {
