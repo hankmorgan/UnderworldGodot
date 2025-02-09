@@ -46,7 +46,14 @@ namespace Underworld
         public static int CalculateMotionGlobal_dseg_67d6_26B6;
 
         public static int dseg_67d6_26A5;
-        public static int dseg_67d6_26A8;        
+        public static int dseg_67d6_26A8;   
+
+        
+
+        public static int ACollisionIndex_dseg_67d6_416;
+        public static int dseg_67d6_41D;//height related in collision
+        public static int CollisionHeightRelated_dseg_67d6_419;
+
         //The class properties
         public short x_0
         {

@@ -88,6 +88,15 @@ namespace Underworld
         }
 
 
+        /// <summary>
+        /// Possibly the object can collide
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <returns></returns>
+        public static bool Unk6_0(int item_id)
+        {//bits 0 at + 6
+            return ((buffer[PTR(item_id) + 6]) & 0x1) == 1;
+        }
 
         /// <summary>
         /// This object can activate switches when it collides with an object.
