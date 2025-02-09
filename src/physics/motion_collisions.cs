@@ -119,7 +119,7 @@ namespace Underworld
 
             for (int i = 0; i < 6; i++)
             {//restore
-                CollisionRecord.Collisions_dseg_2520[(index * 6) + i] = copy[i];
+                CollisionRecord.Collisions_dseg_2520[((index+1) * 6) + i] = copy[i];
             }
         }
 
