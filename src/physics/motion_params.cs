@@ -10,6 +10,7 @@ namespace Underworld
         public static byte[] data_3FC = new byte[40];//globals at 0x3FC
 
         //globals        
+        public const int RelatedToMotionX_dseg_67d6_3FE_index = 2;
         public static short RelatedToMotionX_dseg_67d6_3FE
         {//2
             get

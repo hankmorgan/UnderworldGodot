@@ -105,19 +105,19 @@ namespace Underworld
                 if (Param6Lookup <= 0)
                 {
                     //UWMotionParamArray.dseg_67d6_404[UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer] = -8192;  //data_3FC
-                    DataLoader.setAt(UWMotionParamArray.data_3FC, UWMotionParamArray.dseg_67d6_404 + UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer, 16, -8192);
+                    DataLoader.setAt(UWMotionParamArray.data_3FC, UWMotionParamArray.dseg_67d6_404 + UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer*2, 16, -8192);
                 }
                 else
                 {
                     //UWMotionParamArray.dseg_67d6_404[UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer] = +8192;
-                    DataLoader.setAt(UWMotionParamArray.data_3FC, UWMotionParamArray.dseg_67d6_404 + UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer, 16, +8192);
+                    DataLoader.setAt(UWMotionParamArray.data_3FC, UWMotionParamArray.dseg_67d6_404 + UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer*2, 16, +8192);
                 }
                 //tmp = DataLoader.getAt(MotionParams.data, 6 + UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer*2, 16);
                 if (Param6Lookup == 0)
                 {
                     //seg031_2CFA_5D8:
                     //UWMotionParamArray.dseg_67d6_404[UWMotionParamArray.dseg_67d6_40C_indexer] = 1;
-                    DataLoader.setAt(UWMotionParamArray.data_3FC, UWMotionParamArray.dseg_67d6_404 + UWMotionParamArray.dseg_67d6_40C_indexer, 16, 1);
+                    DataLoader.setAt(UWMotionParamArray.data_3FC, UWMotionParamArray.dseg_67d6_404 + UWMotionParamArray.dseg_67d6_40C_indexer*2, 16, 1);
                     var8 = 0;
                     UWMotionParamArray.MAYBEcollisionOrGravity_dseg_67d6_40E = 0;
                     UWMotionParamArray.dseg_67d6_410 = 0;
@@ -127,12 +127,12 @@ namespace Underworld
                 {
                     //seg031_2CFA_54F
                     //var tmp = (UWMotionParamArray.dseg_67d6_404[UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer] / 0x100) * Param6Lookup;
-                    var tmp = (short)(DataLoader.getAt(UWMotionParamArray.data_3FC, UWMotionParamArray.dseg_67d6_404 + UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer, 16) / 0x100) * Param6Lookup;
+                    var tmp = (short)(DataLoader.getAt(UWMotionParamArray.data_3FC, UWMotionParamArray.dseg_67d6_404 + UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer*2, 16) / 0x100) * Param6Lookup;
                     tmp = tmp / Param6Lookup;
                     tmp = tmp << 8;
 
                     //UWMotionParamArray.dseg_67d6_404[UWMotionParamArray.dseg_67d6_40C_indexer] = (int)tmp;
-                    DataLoader.setAt(UWMotionParamArray.data_3FC, UWMotionParamArray.dseg_67d6_404 + UWMotionParamArray.dseg_67d6_40C_indexer, 16, (int)tmp);
+                    DataLoader.setAt(UWMotionParamArray.data_3FC, UWMotionParamArray.dseg_67d6_404 + UWMotionParamArray.dseg_67d6_40C_indexer*2, 16, (int)tmp);
                     
 
                     var8 = (short)(Param6Lookup * MotionParams.speed_12);
@@ -175,12 +175,14 @@ namespace Underworld
                     //seg031_2CFA_669
                     SetCollisionTarget_seg031_2CFA_10E(MotionParams, arg2);
 
-                    if (MotionParams.data[6 + UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer] != 0)
+                    //if (MotionParams.data[6 + UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer] != 0)
+                    if (DataLoader.getAt(MotionParams.data, 6 +  UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer*2, 16)!=0)
                     {
                         //var varC = (UWMotionParamArray.dseg_67d6_404[UWMotionParamArray.dseg_67d6_40C_indexer] / 0x2000) * MotionParams.unk_a;
-                        var varC = (DataLoader.getAt(UWMotionParamArray.data_3FC, UWMotionParamArray.dseg_67d6_404 + UWMotionParamArray.dseg_67d6_40C_indexer, 16) / 0x2000) * MotionParams.unk_a;
-                        var var10 = (int)MotionParams.data[6 + UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer];
-                        var10 = var10 * (UWMotionParamArray.Gravity_related_dseg_67d6_408 / 0x800);
+                        var varC = (DataLoader.getAt(UWMotionParamArray.data_3FC, UWMotionParamArray.dseg_67d6_404 + UWMotionParamArray.dseg_67d6_40C_indexer *2, 16) / 0x2000) * MotionParams.unk_a;
+                        //var var10 = (int)MotionParams.data[6 + UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer];
+                        var var10 = (short)DataLoader.getAt(MotionParams.data, 6 +  UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer*2, 16);
+                        var10 = (short)(var10 * (UWMotionParamArray.Gravity_related_dseg_67d6_408 / 0x800));
 
                         varC = varC * 0x100;
                         varC = var10 / varC;
@@ -732,6 +734,7 @@ namespace Underworld
 
         static int seg031_2CFA_8A6(UWMotionParamArray MotionParams, int arg0, int arg2)
         {
+            //Working on this one currently
             return 0;//todo
         }
 
