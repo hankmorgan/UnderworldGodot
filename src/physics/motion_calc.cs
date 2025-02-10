@@ -166,7 +166,7 @@ namespace Underworld
                     }
 
                     //seg031_2CFA_669
-                    ProbablyCollisions_seg031_2CFA_10E(MotionParams, arg2);
+                    SetCollisionTarget_seg031_2CFA_10E(MotionParams, arg2);
 
                     if (MotionParams.data[6 + UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer] != 0)
                     {
@@ -682,7 +682,7 @@ namespace Underworld
             {
                 //seg031_2CFA_12CD:
                 ScanForCollisions_seg028_2941_C0E(MotionParams, 0, 0);
-                ProbablyCollisions_seg031_2CFA_10E(MotionParams, 0);
+                SetCollisionTarget_seg031_2CFA_10E(MotionParams, 0);
                 MotionParams.unk_25_tilestate = UWMotionParamArray.MotionParam0x25_dseg_67d6_26A9;//stores value
                 if (UWMotionParamArray.dseg_67d6_26A5 != 0)
                 {

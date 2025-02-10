@@ -9,7 +9,7 @@ namespace Underworld
 
 
 
-        static void ProbablyCollisions_seg031_2CFA_10E(UWMotionParamArray MotionParams, int arg0)
+        static void SetCollisionTarget_seg031_2CFA_10E(UWMotionParamArray MotionParams, int arg0)
         {
             //todo
             UWMotionParamArray.dseg_67d6_26A8 = 1;
@@ -120,7 +120,35 @@ namespace Underworld
                             }
                             else
                             {//seg031_2CFA_319
-                                //RESUME HERE when not so tired.
+                                if (var1!=0)
+                                {
+                                    if (collision_Var4.height<UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419)
+                                    {
+                                        if(UWMotionParamArray.ACollisionIndex_dseg_67d6_416 == -1)
+                                        {
+                                            UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419 = collision_Var4.height;
+                                            UWMotionParamArray.ACollisionIndex_dseg_67d6_416 = CollisionIndex_var_4;
+                                        }
+                                        else
+                                        {//seg031_2CFA_340:
+                                            var currentcollision = collisionTable[UWMotionParamArray.ACollisionIndex_dseg_67d6_416];
+                                            if ((currentcollision.quality & 0x10) == 0)
+                                            {
+                                                UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419 = collision_Var4.height;
+                                                UWMotionParamArray.ACollisionIndex_dseg_67d6_416 = CollisionIndex_var_4;
+                                            }
+                                            else
+                                            {
+                                                //seg031_2CFA_353
+                                                if (collision_Var4.quality == 0)
+                                                {
+                                                    UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419 = collision_Var4.height;
+                                                    UWMotionParamArray.ACollisionIndex_dseg_67d6_416 = CollisionIndex_var_4;
+                                                }                                                
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
 
