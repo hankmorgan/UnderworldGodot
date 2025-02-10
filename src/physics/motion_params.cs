@@ -6,53 +6,196 @@ namespace Underworld
     public class UWMotionParamArray : Loader
     {
         public byte[] data = new byte[0x26];
-        
+
+        public static byte[] data_3FC = new byte[40];//globals at 0x3FC
+
         //globals        
-        public static int RelatedToMotionX_dseg_67d6_3FE;
-        public static int RelatedToMotionY_dseg_67d6_400;
-        public static int RelatedToMotionZ_dseg_67d6_402;
-        public static int[] dseg_67d6_404 = new int[2];
+        public static short RelatedToMotionX_dseg_67d6_3FE
+        {//2
+            get
+            {
+                return (short)getAt(data_3FC, 2, 16);
+            }
+            set
+            {
+                setAt(data_3FC, 2, 16, value);
+            }
+        }
+        public static short RelatedToMotionY_dseg_67d6_400
+        {//4
+            get
+            {
+                return (short)getAt(data_3FC, 4, 16);
+            }
+            set
+            {
+                setAt(data_3FC, 4, 16, value);
+            }
+        }
+        public static short RelatedToMotionZ_dseg_67d6_402
+        {//6
+            get
+            {
+                return (short)getAt(data_3FC, 6, 16);
+            }
+            set
+            {
+                setAt(data_3FC, 6, 16, value);
+            }
+        }
 
-        public static int Gravity_related_dseg_67d6_408;
-        public static int dseg_67d6_410;
-        public static int dseg_67d6_412;
-        public static int GravityCollisionRelated_dseg_67d6_414;
+        //public static short[] dseg_67d6_404 = new short[2];//8
+        public const int dseg_67d6_404 = 8; //for indexing to this value array     
+        public static short Gravity_related_dseg_67d6_408
+        {//0xC
+            get
+            {
+                return (short)getAt(data_3FC, 0xC, 16);
+            }
+            set
+            {
+                setAt(data_3FC, 0xC, 16, value);
+            }
+        }
 
-        public static int Gravity_Related_dseg_67d6_41F;
+        public static short MotionGlobal_dseg_67d6_40A_indexer
+        {//0xE
+            get
+            {
+                return (short)getAt(data_3FC, 0xE, 16);
+            }
+            set
+            {
+                setAt(data_3FC, 0xE, 16, value);
+            }
+        }
+        public static short dseg_67d6_40C_indexer
+        {//0x10
+            get
+            {
+                return (short)getAt(data_3FC, 0x10, 16);
+            }
+            set
+            {
+                setAt(data_3FC, 0x10, 16, value);
+            }
+        }
+        public static short MAYBEcollisionOrGravity_dseg_67d6_40E
+        {//0x12
+            get
+            {
+                return (short)getAt(data_3FC, 0x12, 16);
+            }
+            set
+            {
+                setAt(data_3FC, 0x12, 16, value);
+            }
+        }
 
-        public static int MotionGlobal_dseg_67d6_40A_indexer;
-        public static int dseg_67d6_40C_indexer;
-        public static int MAYBEcollisionOrGravity_dseg_67d6_40E;
+        public static short dseg_67d6_410
+        {//0x14
+            get
+            {
+                return (short)getAt(data_3FC, 0x14, 16);
+            }
+            set
+            {
+                setAt(data_3FC, 0x14, 16, value);
+            }
+        }
+        
+        public static short dseg_67d6_412
+        {//0x16
+            get
+            {
+                return (short)getAt(data_3FC, 0x16, 16);
+            }
+            set
+            {
+                setAt(data_3FC, 0x16, 16, value);
+            }
+        }
+        public static short GravityCollisionRelated_dseg_67d6_414
+        {//0x18
+            get
+            {
+                return (short)getAt(data_3FC, 0x18, 16);
+            }
+            set
+            {
+                setAt(data_3FC, 0x18, 16, value);
+            }
+        }
+
+        public static int ACollisionIndex_dseg_67d6_416
+        {//0x1A
+            get
+            {
+                return (short)getAt(data_3FC, 0x1A, 16);
+            }
+            set
+            {
+                setAt(data_3FC, 0x1A, 16, value);
+            }
+        }
+
+        public static int CollisionHeightRelated_dseg_67d6_419
+        {//0x1D
+            get
+            {
+                return (short)getAt(data_3FC, 0x1D, 16);
+            }
+            set
+            {
+                setAt(data_3FC, 0x1D, 16, value);
+            }
+        }
+
+
+        public static int dseg_67d6_41D//height related in collision
+        {//0x21
+            get
+            {
+                return (short)getAt(data_3FC, 0x21, 16);
+            }
+            set
+            {
+                setAt(data_3FC, 0x21, 16, value);
+            }
+        }
+
+
+        public static short Gravity_Related_dseg_67d6_41F
+        {//0x23
+            get
+            {
+                return (short)getAt(data_3FC, 0x23, 16);
+            }
+            set
+            {
+                setAt(data_3FC, 0x23, 16, value);
+            }
+        }
+
 
         public static int dseg_67d6_2584;
-
         public static int xpos_dseg_67d6_2585;
         public static int ypos_dseg_67d6_251C;
-
         public static int XposPlusRad;
         public static int YposPlusRad;
         public static int XposMinusRad;
         public static int YposMinusRad;
-
         public OtherMotionArray SubArray = new OtherMotionArray();
         public MotionCalcArray CalcArray = new MotionCalcArray();
-
         public static short[] TileAttributesArray;
         public static TileInfo TileRelatedToMotion_dseg_67d6_257E;
-
         public static int LikelyIsMagicProjectile_dseg_67d6_26B8;
         public static sbyte MotionParam0x25_dseg_67d6_26A9;
         //public static int CalculateMotionGlobal_dseg_67d6_25DB; //or offset 17 in calc array
         public static int CalculateMotionGlobal_dseg_67d6_26B6;
-
         public static int dseg_67d6_26A5;
-        public static int dseg_67d6_26A8;   
+        public static int dseg_67d6_26A8;
 
-        
-
-        public static int ACollisionIndex_dseg_67d6_416;
-        public static int dseg_67d6_41D;//height related in collision
-        public static int CollisionHeightRelated_dseg_67d6_419;
 
         //The class properties
         public short x_0
@@ -353,7 +496,7 @@ namespace Underworld
         /// <summary>
         /// Raw data
         /// </summary>
-        public static byte[] dseg_25c4 = new byte[0x20];        
+        public static byte[] dseg_25c4 = new byte[0x20];
 
         public static short x0
         {
@@ -501,16 +644,16 @@ namespace Underworld
         }
 
         public static byte Unk15
+        {
+            get
             {
-                get
-                {
-                    return (byte)DataLoader.getAt(dseg_25c4, 0x15, 8);
-                }
-                set
-                {
-                    DataLoader.setAt(dseg_25c4, 0x15, 8, value);
-                }
+                return (byte)DataLoader.getAt(dseg_25c4, 0x15, 8);
             }
+            set
+            {
+                DataLoader.setAt(dseg_25c4, 0x15, 8, value);
+            }
+        }
 
 
         public static byte Unk16

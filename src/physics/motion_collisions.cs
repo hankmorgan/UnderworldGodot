@@ -8,7 +8,6 @@ namespace Underworld
         public static CollisionRecord[] collisionTable = new CollisionRecord[32];
 
 
-
         static void SetCollisionTarget_seg031_2CFA_10E(UWMotionParamArray MotionParams, int arg0)
         {
             //todo
@@ -54,7 +53,7 @@ namespace Underworld
                 if (MotionParams.unk_a == 0)
                 {//seg031_2CFA_1E0
 
-                    UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419 = MotionCalcArray.Unk10 ;
+                    UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419 = MotionCalcArray.Unk10;
 
                     //Jump when z4+param[24]<Calc11
                     if (MotionCalcArray.z4 + MotionParams.unk_24 < MotionCalcArray.Unk11)
@@ -74,11 +73,11 @@ namespace Underworld
                     //AND calc16>0
                     //AND calc16<=calc14
                     if (
-                        (MotionCalcArray.Unk15==0)
+                        (MotionCalcArray.Unk15 == 0)
                         &&
-                        (MotionCalcArray.Unk16>0)
+                        (MotionCalcArray.Unk16 > 0)
                         &&
-                        (MotionCalcArray.Unk16<=MotionCalcArray.Unk14_collisoncount)
+                        (MotionCalcArray.Unk16 <= MotionCalcArray.Unk14_collisoncount)
                     )
                     {
                         var1 = 1;
@@ -89,7 +88,7 @@ namespace Underworld
                     }
 
                     var CollisionIndex_var_4 = 0;
-                    while (MotionCalcArray.Unk14_collisoncount<=CollisionIndex_var_4)
+                    while (MotionCalcArray.Unk14_collisoncount <= CollisionIndex_var_4)
                     {
                         //seg031_2CFA_23A
                         var collision_Var4 = collisionTable[CollisionIndex_var_4];
@@ -98,16 +97,16 @@ namespace Underworld
                         {
                             if (MotionCalcArray.Unk16 <= CollisionIndex_var_4)
                             {//seg031_2CFA_281:
-                                if (collision_Var4.zpos-1 < UWMotionParamArray.dseg_67d6_41D)
+                                if (collision_Var4.zpos - 1 < UWMotionParamArray.dseg_67d6_41D)
                                 {
-                                    UWMotionParamArray.dseg_67d6_41D = collision_Var4.zpos-1;
+                                    UWMotionParamArray.dseg_67d6_41D = collision_Var4.zpos - 1;
                                 }
                                 //seg031_2CFA_2AC
                                 // when calc15+calc16>var4
                                 if (MotionCalcArray.Unk15 + MotionCalcArray.Unk16 > CollisionIndex_var_4)
                                 {
                                     //seg031_2CFA_2C0:
-                                    if (collision_Var4.height> UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419)
+                                    if (collision_Var4.height > UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419)
                                     {
                                         //collisionrecordheight<(0x80-paramheight)
                                         if (collision_Var4.height < (0x80 - MotionParams.height_23))
@@ -120,11 +119,11 @@ namespace Underworld
                             }
                             else
                             {//seg031_2CFA_319
-                                if (var1!=0)
+                                if (var1 != 0)
                                 {
-                                    if (collision_Var4.height<UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419)
+                                    if (collision_Var4.height < UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419)
                                     {
-                                        if(UWMotionParamArray.ACollisionIndex_dseg_67d6_416 == -1)
+                                        if (UWMotionParamArray.ACollisionIndex_dseg_67d6_416 == -1)
                                         {
                                             UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419 = collision_Var4.height;
                                             UWMotionParamArray.ACollisionIndex_dseg_67d6_416 = CollisionIndex_var_4;
@@ -144,7 +143,7 @@ namespace Underworld
                                                 {
                                                     UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419 = collision_Var4.height;
                                                     UWMotionParamArray.ACollisionIndex_dseg_67d6_416 = CollisionIndex_var_4;
-                                                }                                                
+                                                }
                                             }
                                         }
                                     }
