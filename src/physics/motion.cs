@@ -46,6 +46,7 @@ namespace Underworld
             CalculateMotion_TopLevel(projectile, MotionParams,MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2);
 
             //store current x/y homes in globals
+            
 
 
             var result = ApplyProjectileMotion(projectile, MotionParams);

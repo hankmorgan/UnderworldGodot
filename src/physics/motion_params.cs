@@ -1,3 +1,5 @@
+using System;
+
 namespace Underworld
 {
     /// <summary>
@@ -46,7 +48,7 @@ namespace Underworld
         }
 
         //public static short[] dseg_67d6_404 = new short[2];//8
-        public const int dseg_67d6_404 = 8; //for indexing to this value array     
+        //public const int dseg_67d6_404 = 8; //for indexing to this value array     
         public static short Gravity_related_dseg_67d6_408
         {//0xC
             get
@@ -104,7 +106,7 @@ namespace Underworld
                 setAt(data_3FC, 0x14, 16, value);
             }
         }
-        
+
         public static short dseg_67d6_412
         {//0x16
             get
@@ -176,6 +178,25 @@ namespace Underworld
             {
                 setAt(data_3FC, 0x23, 16, value);
             }
+        }
+
+        public static short GetMotionXY_3FE(int index)
+        {
+            return (short)DataLoader.getAt(data_3FC, 2 + index * 2, 16);
+        }
+        public static void SetMotionXY3FE(int index, short value)
+        {
+            DataLoader.setAt(data_3FC, 2 + index * 2, 16, value);
+        }
+
+
+        public static short GetMotionXY_404(int index)
+        {
+            return (short)DataLoader.getAt(data_3FC, 8 + index * 2, 16);
+        }
+        public static void SetMotionXY404(int index, short value)
+        {
+            DataLoader.setAt(data_3FC, 8 + index * 2, 16, value);
         }
 
 
@@ -656,7 +677,6 @@ namespace Underworld
             }
         }
 
-
         public static byte Unk16
         {
             get
@@ -669,7 +689,6 @@ namespace Underworld
             }
         }
 
-
         public static byte Unk17
         {
             get
@@ -681,10 +700,7 @@ namespace Underworld
                 DataLoader.setAt(dseg_25c4, 0x17, 8, value);
             }
         }
-
-
     }
-
 
 
     /// <summary>
