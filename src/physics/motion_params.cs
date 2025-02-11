@@ -130,15 +130,27 @@ namespace Underworld
             }
         }
 
-        public static int ACollisionIndex_dseg_67d6_416
+        public static sbyte ACollisionIndex_dseg_67d6_416
         {//0x1A
             get
             {
-                return (short)getAt(data_3FC, 0x1A, 16);
+                return (sbyte)getAt(data_3FC, 0x1A, 8);
             }
             set
             {
-                setAt(data_3FC, 0x1A, 16, value);
+                setAt(data_3FC, 0x1A, 8, value);
+            }
+        }
+
+        public static int CollisionItemID_dseg_67d6_417
+        {
+            get
+            {
+                return (short)getAt(data_3FC, 0x1B, 16);
+            }
+            set
+            {
+                setAt(data_3FC, 0x1B, 16, value);
             }
         }
 
