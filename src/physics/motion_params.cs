@@ -1,5 +1,3 @@
-using System;
-
 namespace Underworld
 {
     /// <summary>
@@ -210,11 +208,7 @@ namespace Underworld
         {
             DataLoader.setAt(data_3FC, 8 + index * 2, 16, value);
         }
-
-
-        public static int dseg_67d6_2584;
-        public static int xpos_dseg_67d6_2585;
-        public static int ypos_dseg_67d6_251C;
+        
         public static int XposPlusRad;
         public static int YposPlusRad;
         public static int XposMinusRad;
@@ -222,14 +216,23 @@ namespace Underworld
         public OtherMotionArray SubArray = new OtherMotionArray();
         public MotionCalcArray CalcArray = new MotionCalcArray();
         public static short[] TileAttributesArray;
-        public static TileInfo TileRelatedToMotion_dseg_67d6_257E;
-        public static int LikelyIsMagicProjectile_dseg_67d6_26B8;
+        public static int ypos_dseg_67d6_251C;
+        public static TileInfo TileRelatedToMotion_dseg_67d6_257E;    
+        public static int dseg_67d6_2584;
+        public static int xpos_dseg_67d6_2585;   
+        public static int dseg_67d6_25BC;
+        public static int UnknownX_dseg_67d6_25BD; 
+        public static int UnknownY_dseg_67d6_25BE;
         public static sbyte MotionParam0x25_dseg_67d6_26A9;
-        //public static int CalculateMotionGlobal_dseg_67d6_25DB; //or offset 17 in calc array
-        public static int CalculateMotionGlobal_dseg_67d6_26B6;
-        public static int dseg_67d6_26A5;
+        //public static int CalculateMotionGlobal_dseg_67d6_25DB; //or offset 17 in calc array                
+        public static byte dseg_67d6_26A4;
+        public static byte dseg_67d6_26A5;
         public static int dseg_67d6_26A8;
 
+        public static int CalculateMotionGlobal_dseg_67d6_26B6;
+        public static int LikelyIsMagicProjectile_dseg_67d6_26B8;
+        public static int dseg_67d6_25BF_X;
+        public static int dseg_67d6_25C0_Y;
 
         //The class properties
         public short x_0
@@ -289,6 +292,9 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// Possibly related to mass or force?
+        /// </summary>
         public short unk_a
         {
             get
@@ -322,6 +328,19 @@ namespace Underworld
                 DataLoader.setAt(data, 0xD, 16, value);
             }
         }
+
+        public short unk_e
+        {
+            get
+            {
+                return (short)DataLoader.getAt(data, 0xE, 16);
+            }
+            set
+            {
+                DataLoader.setAt(data, 0xE, 16, value);
+            }
+        }
+
         public short unk_10
         {
             get

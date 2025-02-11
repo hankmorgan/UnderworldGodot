@@ -1,3 +1,8 @@
+using System;
+using System.ComponentModel;
+using System.Diagnostics;
+using Godot;
+
 namespace Underworld
 {
     /// <summary>
@@ -6,6 +11,71 @@ namespace Underworld
     public partial class motion : Loader
     {
         public static CollisionRecord[] collisionTable = new CollisionRecord[32];
+
+        /// <summary>
+        /// Does/calls applicable collisions
+        /// </summary>
+        public static void DoCollision_seg031_2CFA_D1F(UWMotionParamArray MotionParams)
+        {
+            UWMotionParamArray.dseg_67d6_26A4 = 0;
+            var projectile = UWTileMap.current_tilemap.LevelObjects[MotionCalcArray.MotionArrayObjectIndexA];
+            int soundeffect;
+
+            var si_mass = commonObjDat.mass(projectile.item_id);
+            if (UWMotionParamArray.Gravity_Related_dseg_67d6_41F <= 4)
+            {
+                MotionParams.speed_12 = 0;
+            }
+            else
+            {
+                var var2 = Math.Abs(MotionCalcArray.z4 - UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419);
+                var2 = var2 * UWMotionParamArray.dseg_67d6_412;
+
+                var2 = (var2 << 4) / (UWMotionParamArray.Gravity_Related_dseg_67d6_41F / 4);
+                MotionParams.speed_12 -= (byte)var2;
+            }
+
+            if (
+                (UWMotionParamArray.ACollisionIndex_dseg_67d6_416 == -1)
+                &&
+                ((MotionCalcArray.UnkC_terrain & 0x3) == 1)
+                &&
+                (MotionCalcArray.Radius8 + MotionCalcArray.UnkC_terrain >= MotionCalcArray.z4)
+                &&
+                (MotionParams.unk_a <= 0)
+                )
+            {//seg031_2CFA_DDE: 
+                ZeroiseMotionValues_seg031_2CFA_7BF(MotionParams);
+                MotionParams.unk_25_tilestate = 2;
+
+                if (si_mass >= 0x14)
+                {
+                    if (si_mass >= 0x64)
+                    {
+                        soundeffect = 5;
+                    }
+                    else
+                    {
+                        soundeffect = 0x19;
+                    }
+                }
+                else
+                {
+                    soundeffect = 0x14;
+                }
+                Debug.Print($"play sound effect {soundeffect} at {MotionParams.x_0 >> 5} {MotionParams.y_2 >> 5}");
+            }
+            else
+            {//seg031_2CFA_E28:
+                soundeffect = (Math.Abs(MotionParams.unk_a) / 0xA) + ((si_mass - 600) / 32) - 40;
+                Debug.Print($"play sound effect {soundeffect} at {MotionParams.x_0 >> 5} {MotionParams.y_2 >> 5}");
+            }
+
+            var di_collisionresult = CollideObjects_seg030_2BB7_1CE(MotionParams, UWMotionParamArray.ACollisionIndex_dseg_67d6_416, MotionCalcArray.MotionArrayObjectIndexA);
+
+            //resume here.
+
+        }
 
 
         static void SetCollisionTarget_seg031_2CFA_10E(UWMotionParamArray MotionParams, int arg0)
@@ -519,6 +589,175 @@ namespace Underworld
                 //seg028_2941_E61:
                 var11_maybeX++;
             }
+        }
+
+
+
+
+        static int CollideObjects_seg030_2BB7_1CE(UWMotionParamArray MotionParams, int si_CollisionIndex_Arg0, int MotionObjectArg2)
+        {
+            uwObject CollidedObject_VarA;
+            bool varB;
+            int var2_collideditemid;
+            if (si_CollisionIndex_Arg0 != -1)
+            {
+                //seg030_2BB7_1E0:
+                var Collision = collisionTable[si_CollisionIndex_Arg0];
+                if (((Collision.quality & 0x20) != 0))
+                {
+                    return 2;
+                }
+                //seg030_2BB7_1F6:
+                Collision.quality |= 0x20;//make sure it collides only once?
+            }
+
+            //seg030_2BB7_220:
+            UWMotionParamArray.dseg_67d6_25BF_X = MotionCalcArray.x0 >> 3;
+            UWMotionParamArray.dseg_67d6_25C0_Y = MotionCalcArray.y2 >> 3;
+
+            var MotionObject = UWTileMap.current_tilemap.LevelObjects[MotionObjectArg2];
+            var diMotionObject_itemid = MotionObject.item_id;
+
+            if (si_CollisionIndex_Arg0 == -1)
+            {//seg030_2BB7_252:
+                CollidedObject_VarA = null;
+                varB = true;
+                var2_collideditemid = -1;
+            }
+            else
+            {
+                //seg030_2BB7_268:
+                var Collision = collisionTable[si_CollisionIndex_Arg0];
+                CollidedObject_VarA = UWTileMap.current_tilemap.LevelObjects[Collision.link];
+                var temp = Collision.unkxyvalue & 0x3F;
+
+                UWMotionParamArray.UnknownX_dseg_67d6_25BD = (temp + UWMotionParamArray.dseg_67d6_25BF_X) & 0x3F;
+                temp = UWMotionParamArray.UnknownX_dseg_67d6_25BD - UWMotionParamArray.dseg_67d6_25BF_X;
+
+                //seg030_2BB7_2B4
+                UWMotionParamArray.UnknownY_dseg_67d6_25BE = (UWMotionParamArray.dseg_67d6_25C0_Y + ((Collision.unkxyvalue - temp) / 0x40)) & 0x3F;
+
+                var2_collideditemid = CollidedObject_VarA.item_id;
+                varB = commonObjDat.Unk6_0(var2_collideditemid);
+
+                if (!MotionObject.IsStatic)
+                {
+                    //mobile
+                    //seg030_2BB7_30C:
+                    if ((MotionObject.majorclass != 1)
+                        && (MotionObject.UnkBit_0X15_Bit7 != 0)
+                        && (diMotionObject_itemid != 0x1D)
+                        && (diMotionObject_itemid != 0x13F))
+                    {
+                        return 2;
+                    }
+                    else
+                    {
+                        //an npc, or bit is zero, or  a fireball or a npc
+                        //seg030_2BB7_33E:
+                        if (MotionObject.majorclass != 1)
+                        {
+                            //seg030_2BB7_348:
+                            MotionObject.UnkBit_0X15_Bit7 = 1;
+                        }
+                    }
+                }
+            }
+
+            //seg030_2BB7_357
+            if (var2_collideditemid != -1)
+            {
+                if (commonObjDat.ActivatedByCollision(var2_collideditemid))
+                {
+                    //seg030_2BB7_374
+                    Debug.Print("Use activated by collision!");
+                    UWMotionParamArray.dseg_67d6_25BC = 0;
+                    use.Use(
+                        index: CollidedObject_VarA.index, 
+                        objList: UWTileMap.current_tilemap.LevelObjects, 
+                        WorldObject: true);//this line will probably break a lot until I make use a more vanilla compliant Use() function.
+                }
+                else
+                {
+                    //seg030_2BB7_3A1
+                    if (CollidedObject_VarA.OneF0Class == 0x1A)
+                    {
+                        //object is a trigger
+                        return trigger.RunTrigger(CollidedObject_VarA.index, MotionObject, CollidedObject_VarA, (int)triggerObjectDat.triggertypes.MOVE, UWTileMap.current_tilemap.LevelObjects);
+                    }
+                }
+            }
+            //seg030_2BB7_3CE:
+            if (varB == false)
+            {
+                return 2;
+            }
+            else
+            {
+                if (commonObjDat.ActivatedByCollision(diMotionObject_itemid))
+                {
+                    UWMotionParamArray.dseg_67d6_25BC = 1;
+                    use.Use(
+                        index: MotionObject.index, 
+                        objList: UWTileMap.current_tilemap.LevelObjects, 
+                        WorldObject: true);//this line will probably break a lot until I make use a more vanilla compliant Use() function.
+                    if (UWTileMap.ValidTile(CollidedObject_VarA.tileX, CollidedObject_VarA.tileY))
+                    {
+                        return BounceOtherObject_seg030_2BB7_8(MotionParams,CollidedObject_VarA);
+                    }
+                    else
+                    {
+                        return 0x10;
+                    }
+                }
+                else
+                {
+                    return 2;
+                }
+            }
+
+
+            //return 0;
+        }
+
+
+        /// <summary>
+        /// Applies motion to the object hit based on the motion params of the object hit with
+        /// </summary>
+        /// <param name="MotionParams"></param>
+        /// <param name="toBounce"></param>
+        /// <returns></returns>
+        static int BounceOtherObject_seg030_2BB7_8(UWMotionParamArray MotionParams, uwObject toBounce)
+        {
+            if (toBounce!=null)
+            {
+                var newMotionParams = new UWMotionParamArray();
+                InitMotionParams(toBounce, newMotionParams);
+                if (newMotionParams.mass_18 !=0)
+                {
+                    var di_mass = (newMotionParams.mass_18<<6)/newMotionParams.mass_18;
+                    if (di_mass> 0x80)
+                    {
+                        di_mass = 0x80;
+                    }
+                    newMotionParams.heading_1E = MotionParams.heading_1E;
+                    newMotionParams.unk_14 = 0xEB;
+                    newMotionParams.unk_a = (short)(MotionParams.unk_a * di_mass);
+
+                    //vanilla behaviour here is to retore currobj details
+
+                    ApplyProjectileMotion(toBounce, newMotionParams);
+                }
+                else
+                {
+                    if (newMotionParams.unk_14!=0)
+                    {
+                        newMotionParams.unk_14 = 0;
+                    }
+                }
+            }
+
+            return 4;
         }
 
     }//end class

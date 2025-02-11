@@ -953,7 +953,7 @@ namespace Underworld
                         else
                         {
                             //seg031_2CFA_12A1:
-                            seg031_2CFA_D1F();
+                            DoCollision_seg031_2CFA_D1F(MotionParams);
                             return 0;
                         }
                     }
@@ -967,7 +967,7 @@ namespace Underworld
                     MotionParams.unk_25_tilestate = 0x10;
                     if (MotionCalcArray.z4 + si > UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419)
                     {
-                        seg031_2CFA_D1F();
+                        DoCollision_seg031_2CFA_D1F(MotionParams);
                         return 0;
                     }
                     else
@@ -985,13 +985,80 @@ namespace Underworld
             return 0;//todo
         }
 
+        /// <summary>
+        /// Returns a value indicating the state of the tile the player/object has steped on or landed on.
+        /// </summary>
+        /// <param name="arg0"></param>
+        /// <returns></returns>
         public static sbyte GetTileState(int arg0)
         {
-            return 1;//is grounded?
+            if ((arg0 & 0x1000) == 0)
+            {
+                if ((arg0 & 0x4) == 0)
+                {
+                    if ((arg0 & 0x88) == 0)
+                    {
+                        if ((arg0 & 0x10) == 0)
+                        {
+                            if ((arg0 & 0x20) == 0)
+                            {
+                                return 8;// on snow/ice. (Todo check what happens here in UW1)
+                            }
+                            else
+                            {
+                                return 4;//on lava
+                            }
+                        }
+                        else
+                        {
+                            return 2;//in water?
+                        }
+                    }
+                    else
+                    {
+                        return 1;//bits 3,7 is grounded
+                    }
+                }
+                else
+                {
+                    if (
+                        (MotionCalcArray.MotionArrayObjectIndexA == 1)
+                        &&
+                        ((arg0 & 3) == 1)
+                        &&
+                        ((arg0 & 0xF8) != (arg0 & 0x90))
+                        )
+                    {
+                        return 0x20;//player about to enter water?
+                    }
+                    else
+                    {
+                        return (sbyte)(1 << (arg0 & 0x3));
+                    }
+                }
+            }
+            else
+            {
+                return 0x10;//bit 12, is jumping
+            }
         }
 
-        public static void seg031_2CFA_D1F()
+
+        /// <summary>
+        /// Sets motion params to zero (as if object has landed on the ground.)
+        /// </summary>
+        /// <param name="MotionParams"></param>
+        static void ZeroiseMotionValues_seg031_2CFA_7BF(UWMotionParamArray MotionParams)
         {
+            MotionParams.unk_8 = 0;
+            MotionParams.unk_e = 0;
+            MotionParams.unk_6 = 0;
+            MotionParams.unk_c_terrain = 0;
+            MotionParams.unk_a = 0;
+            MotionParams.unk_10 = 0;
+            MotionParams.unk_14 = 0;
+            UWMotionParamArray.MAYBEcollisionOrGravity_dseg_67d6_40E++;//Stops loop in Calculate Motion.
+            UWMotionParamArray.GravityCollisionRelated_dseg_67d6_414=0;
 
         }
 
