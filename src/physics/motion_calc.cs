@@ -1011,7 +1011,7 @@ namespace Underworld
         /// </summary>
         /// <param name="arg0"></param>
         /// <returns></returns>
-        public static sbyte GetTileState(int arg0)
+        public static byte GetTileState(int arg0)
         {
             if ((arg0 & 0x1000) == 0)
             {
@@ -1054,7 +1054,7 @@ namespace Underworld
                     }
                     else
                     {
-                        return (sbyte)(1 << (arg0 & 0x3));
+                        return (byte)(1 << (arg0 & 0x3));
                     }
                 }
             }

@@ -46,7 +46,12 @@ namespace Underworld
             return (int)(x>>4 & 0xFFF);
         }
 
-         public static bool UnknownFlag(int item_id)
+        public static bool UnknownFlag3_1(int item_id)
+        {//bit 1 at +3
+            return ((buffer[PTR(item_id) + 3] >>1) & 0x1)==1;
+        }
+
+        public static bool UnknownFlag3_2(int item_id)
         {//bit 2 at +3
             return ((buffer[PTR(item_id) + 3] >>2) & 0x1)==1;
         }

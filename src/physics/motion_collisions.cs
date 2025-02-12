@@ -67,12 +67,203 @@ namespace Underworld
             {//seg031_2CFA_E28:
                 soundeffect = (Math.Abs(MotionParams.unk_a) / 0xA) + ((si_mass - 600) / 32) - 40;
                 Debug.Print($"play sound effect {soundeffect} at {MotionParams.x_0 >> 5} {MotionParams.y_2 >> 5}");
+
+                var di_collisionresult = CollideObjects_seg030_2BB7_1CE(MotionParams, UWMotionParamArray.ACollisionIndex_dseg_67d6_416, MotionCalcArray.MotionArrayObjectIndexA);
+
+                //resume here.
+                if ((di_collisionresult & 0x18) != 0)
+                {
+                    //seg031_2CFA_E87:
+                    if ((di_collisionresult & 0x10) == 0)
+                    {//seg031_2CFA_E94: 
+                        UWMotionParamArray.GravityCollisionRelated_dseg_67d6_414 = (short)(UWMotionParamArray.MAYBEcollisionOrGravity_dseg_67d6_40E + 1);
+                    }
+                    else
+                    {
+                        //seg031_2CFA_E8E:
+                        ZeroiseMotionValues_seg031_2CFA_7BF(MotionParams);
+                    }
+                }
+                else
+                {//seg031_2CFA_E9E:
+                    if ((di_collisionresult & 0x4) == 0)
+                    {
+                        //seg031_2CFA_10FB: 
+                        if (UWMotionParamArray.ACollisionIndex_dseg_67d6_416 != -1)
+                        {
+                            var Dst = UWMotionParamArray.ACollisionIndex_dseg_67d6_416;
+                            MotionCalcArray.Unk14_collisoncount--;
+                            for (int i = 0; i < 6; i++)
+                            {
+                                CollisionRecord.Collisions_dseg_2520[(Dst * 6) + i] = CollisionRecord.Collisions_dseg_2520[(MotionCalcArray.Unk14_collisoncount * 6) + i];
+                            }
+                        }
+                    }
+                    else
+                    {
+                        int var3;
+                        int var6;
+                        if (MotionParams.unk_a > 0)
+                        {
+                            var3 = 0;
+                        }
+                        else
+                        {
+                            var3 = 1;
+                        }
+
+                        var6 = MotionParams.unk_14;
+
+                        if (
+                            (MotionParams.index_20 == 1) && ((playerdat.MagicalMotionAbilities & 0x20) == 0x20)
+                            ||
+                            (MotionParams.unk_16 == 0xF)
+                        )
+                        {
+                            //Bouncing_seg031_2CFA_EE2:
+                            MotionParams.unk_a = (short)-MotionParams.unk_a;
+                        }
+                        else
+                        {
+                            //seg031_2CFA_EF0:
+                            MotionParams.unk_a = (short)-(MotionParams.unk_a / 0xF);
+                            MotionParams.unk_26 = (short)Math.Abs((0xF - MotionParams.unk_16) * MotionParams.unk_a);
+                            MotionParams.unk_a = (short)(MotionParams.unk_a * MotionParams.unk_16);
+
+                            if (MotionParams.unk_16 == 0)
+                            {
+                                MotionParams.unk_14 = 0;
+                            }
+                            else
+                            {
+                                MotionParams.unk_14 -= (short)(MotionParams.unk_14 * (0xF - MotionParams.unk_16) / 0x1E);
+                            }
+                        }
+
+                        //seg031_2CFA_F63:
+                        if (
+                            (MotionParams.index_20 != 1)
+                            &&
+                            ((UWMotionParamArray.LikelyIsMagicProjectile_dseg_67d6_26B8 & 0x1000) == 0x1000)
+                        )
+                        {
+                            //seg031_2CFA_F7B:
+                            if (MotionParams.speed_12>1)
+                            {
+                                MotionParams.speed_12--;
+                            }
+                        }
+                        else
+                        {
+                            //seg031_2CFA_F8E
+                            if (var3!=0)
+                            {
+                                //seg031_2CFA_FA5:
+                                if (MotionParams.unk_a < 0x8D)
+                                {
+                                    MotionParams.unk_a = 0;
+                                    MotionParams.unk_10 = 0;
+                                    if (UWMotionParamArray.ACollisionIndex_dseg_67d6_416 == -1 )
+                                    {
+                                        //seg031_2CFA_102A
+                                        if (MotionCalcArray.Unk10 + MotionCalcArray.Radius8 < MotionCalcArray.z4)
+                                        {
+                                            //seg031_2CFA_1054:
+                                            var ProjectileObject = UWTileMap.current_tilemap.LevelObjects[MotionParams.index_20];
+                                            if (ProjectileObject.majorclass == 1)
+                                            {
+                                                //NPC
+                                                //seg031_2CFA_107A: 
+                                                if ((MotionCalcArray.UnkE & 0x10)== 0)
+                                                {
+                                                    //seg031_2CFA_108C
+                                                    if ((MotionCalcArray.UnkE & 0x20) == 0)
+                                                    {//seg031_2CFA_109E:
+                                                        if ((MotionCalcArray.UnkE & 0x40) == 0)
+                                                        {
+                                                            MotionParams.unk_25_tilestate = 1;
+                                                        }
+                                                        else
+                                                        {
+                                                            //seg031_2CFA_10AA:
+                                                            MotionParams.unk_25_tilestate = 8;
+                                                        }
+                                                    }
+                                                    else
+                                                    {//seg031_2CFA_1098
+                                                        MotionParams.unk_25_tilestate = 4;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    MotionParams.unk_25_tilestate = 2;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                //Not an npc
+                                                //seg031_2CFA_1075:
+                                                MaybeReflection_seg031_2CFA_CC6();
+                                            }
+                                        }
+                                        else
+                                        {
+                                            //seg031_2CFA_1040:
+                                            MotionParams.unk_25_tilestate = (byte)(1 << (MotionCalcArray.UnkC_terrain & 3));
+                                        }
+                                    }
+                                    else
+                                    {
+                                        //seg031_2CFA_FBD:
+                                        var collision = collisionTable[UWMotionParamArray.ACollisionIndex_dseg_67d6_416];
+                                        var CollisionObject = UWTileMap.current_tilemap.LevelObjects[collision.link];
+                                        if (commonObjDat.UnknownFlag3_1(CollisionObject.item_id))
+                                        {
+                                            //seg031_2CFA_FFD:
+                                            MotionParams.unk_25_tilestate = 1;
+                                        }
+                                        else
+                                        {
+                                            //seg031_2CFA_1000:
+                                            if (CollisionObject.majorclass == 1)
+                                            {
+                                                MotionParams.unk_25_tilestate = 1;
+                                            }
+                                            else
+                                            {
+                                                MaybeReflection_seg031_2CFA_CC6();
+                                            }
+                                        }
+                                    }
+                                    //seg031_2CFA_10B8:
+                                    if (UWMotionParamArray.dseg_67d6_26A4 == 0)
+                                    {
+                                        MotionParams.speed_12 = 0;
+                                    }
+                                }
+                            }
+                        }
+
+                        //seg031_2CFA_10CA:
+
+                        if (
+                            (((MotionCalcArray.UnkC_terrain & 3) == 3) && ((MotionCalcArray.UnkC_terrain & 0xC & 4) !=4))                          
+                            ||
+                            (((MotionCalcArray.UnkC_terrain & 3) == 3) && ((MotionCalcArray.UnkC_terrain & 0xC & 4) == 4) && ((MotionCalcArray.UnkE & 0x40) !=0) && ((MotionCalcArray.UnkE & 0x800) == 0x800))
+                            ||
+                            (((MotionCalcArray.UnkC_terrain & 3) != 3) && ((MotionCalcArray.UnkE & 0x40) !=0) && ((MotionCalcArray.UnkE & 0x800) == 0x800))
+                            )                            
+                            {
+                                MotionParams.unk_14 = (short)var6;
+                            }
+                    }
+
+                    //seg031_2CFA_112C:
+                    seg031_2CFA_78A(MotionParams, 0);
+
+
+                }
             }
-
-            var di_collisionresult = CollideObjects_seg030_2BB7_1CE(MotionParams, UWMotionParamArray.ACollisionIndex_dseg_67d6_416, MotionCalcArray.MotionArrayObjectIndexA);
-
-            //resume here.
-
         }
 
 
@@ -540,7 +731,7 @@ namespace Underworld
                             if (
                                 (!isNPC_var14)
                                 ||
-                                (isNPC_var14 && (commonObjDat.UnknownFlag(obj.item_id) == false))
+                                (isNPC_var14 && (commonObjDat.UnknownFlag3_2(obj.item_id) == false))
                             )
                             {
                                 //seg028_2941_DA1
@@ -671,8 +862,8 @@ namespace Underworld
                     Debug.Print("Use activated by collision!");
                     UWMotionParamArray.dseg_67d6_25BC = 0;
                     use.Use(
-                        index: CollidedObject_VarA.index, 
-                        objList: UWTileMap.current_tilemap.LevelObjects, 
+                        index: CollidedObject_VarA.index,
+                        objList: UWTileMap.current_tilemap.LevelObjects,
                         WorldObject: true);//this line will probably break a lot until I make use a more vanilla compliant Use() function.
                 }
                 else
@@ -696,12 +887,12 @@ namespace Underworld
                 {
                     UWMotionParamArray.dseg_67d6_25BC = 1;
                     use.Use(
-                        index: MotionObject.index, 
-                        objList: UWTileMap.current_tilemap.LevelObjects, 
+                        index: MotionObject.index,
+                        objList: UWTileMap.current_tilemap.LevelObjects,
                         WorldObject: true);//this line will probably break a lot until I make use a more vanilla compliant Use() function.
                     if (UWTileMap.ValidTile(CollidedObject_VarA.tileX, CollidedObject_VarA.tileY))
                     {
-                        return BounceOtherObject_seg030_2BB7_8(MotionParams,CollidedObject_VarA);
+                        return BounceOtherObject_seg030_2BB7_8(MotionParams, CollidedObject_VarA);
                     }
                     else
                     {
@@ -713,9 +904,6 @@ namespace Underworld
                     return 2;
                 }
             }
-
-
-            //return 0;
         }
 
 
@@ -727,14 +915,14 @@ namespace Underworld
         /// <returns></returns>
         static int BounceOtherObject_seg030_2BB7_8(UWMotionParamArray MotionParams, uwObject toBounce)
         {
-            if (toBounce!=null)
+            if (toBounce != null)
             {
                 var newMotionParams = new UWMotionParamArray();
                 InitMotionParams(toBounce, newMotionParams);
-                if (newMotionParams.mass_18 !=0)
+                if (newMotionParams.mass_18 != 0)
                 {
-                    var di_mass = (newMotionParams.mass_18<<6)/newMotionParams.mass_18;
-                    if (di_mass> 0x80)
+                    var di_mass = (newMotionParams.mass_18 << 6) / newMotionParams.mass_18;
+                    if (di_mass > 0x80)
                     {
                         di_mass = 0x80;
                     }
@@ -748,7 +936,7 @@ namespace Underworld
                 }
                 else
                 {
-                    if (newMotionParams.unk_14!=0)
+                    if (newMotionParams.unk_14 != 0)
                     {
                         newMotionParams.unk_14 = 0;
                     }
@@ -756,6 +944,17 @@ namespace Underworld
             }
 
             return 4;
+        }
+
+
+        static void MaybeReflection_seg031_2CFA_CC6()
+        {
+
+        }
+
+        static void seg031_2CFA_78A(UWMotionParamArray MotionParms, int arg0)
+        {
+
         }
 
     }//end class

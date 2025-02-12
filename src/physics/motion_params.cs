@@ -223,7 +223,7 @@ namespace Underworld
         public static int dseg_67d6_25BC;
         public static int UnknownX_dseg_67d6_25BD; 
         public static int UnknownY_dseg_67d6_25BE;
-        public static sbyte MotionParam0x25_dseg_67d6_26A9;
+        public static byte MotionParam0x25_dseg_67d6_26A9;
         //public static int CalculateMotionGlobal_dseg_67d6_25DB; //or offset 17 in calc array                
         public static byte dseg_67d6_26A4;
         public static byte dseg_67d6_26A5;
@@ -509,15 +509,27 @@ namespace Underworld
                 DataLoader.setAt(data, 0x24, 8, value);
             }
         }
-        public sbyte unk_25_tilestate
+        public byte unk_25_tilestate
         {
             get
             {
-                return (sbyte)DataLoader.getAt(data, 0x25, 8);
+                return (byte)DataLoader.getAt(data, 0x25, 8);
             }
             set
             {
                 DataLoader.setAt(data, 0x25, 8, value);
+            }
+        }
+
+        public short unk_26
+        {
+            get
+            {
+                return (sbyte)DataLoader.getAt(data, 0x26, 16);
+            }
+            set
+            {
+                DataLoader.setAt(data, 0x26, 16, value);
             }
         }
 
