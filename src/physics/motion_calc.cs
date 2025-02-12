@@ -35,7 +35,7 @@ namespace Underworld
             MotionCalcArray.Unk17 = 0;
             UWMotionParamArray.CalculateMotionGlobal_dseg_67d6_26B6 = 0;
 
-            if (seg031_2CFA_412(projectile, MotionParams, 1, 1))
+            if (InitialMotionCalc_seg031_2CFA_412(MotionParams, true, 1))
             {
                 //do more processing at seg031_2CFA_69
                 while (UWMotionParamArray.MAYBEcollisionOrGravity_dseg_67d6_40E + 1 > UWMotionParamArray.GravityCollisionRelated_dseg_67d6_414)
@@ -66,7 +66,7 @@ namespace Underworld
             }
         }
 
-        static bool seg031_2CFA_412(uwObject projectile, UWMotionParamArray MotionParams, int arg0, int arg2)
+        static bool InitialMotionCalc_seg031_2CFA_412(UWMotionParamArray MotionParams, bool arg0_CopyToCalcArray, int arg2)
         {
             short var2 = 0; short var4 = 0;
             short var8 = 0;
@@ -86,7 +86,7 @@ namespace Underworld
             else
             {
                 //seg031_2CFA_4D2
-                if (arg0 != 0)
+                if (arg0_CopyToCalcArray)
                 {
                     CopyMotionValsToAnotherArray_seg031_2CFA_93(MotionParams);
                 }

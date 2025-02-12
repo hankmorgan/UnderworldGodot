@@ -148,7 +148,7 @@ namespace Underworld
                         )
                         {
                             //seg031_2CFA_F7B:
-                            if (MotionParams.speed_12>1)
+                            if (MotionParams.speed_12 > 1)
                             {
                                 MotionParams.speed_12--;
                             }
@@ -156,14 +156,14 @@ namespace Underworld
                         else
                         {
                             //seg031_2CFA_F8E
-                            if (var3!=0)
+                            if (var3 != 0)
                             {
                                 //seg031_2CFA_FA5:
                                 if (MotionParams.unk_a < 0x8D)
                                 {
                                     MotionParams.unk_a = 0;
                                     MotionParams.unk_10 = 0;
-                                    if (UWMotionParamArray.ACollisionIndex_dseg_67d6_416 == -1 )
+                                    if (UWMotionParamArray.ACollisionIndex_dseg_67d6_416 == -1)
                                     {
                                         //seg031_2CFA_102A
                                         if (MotionCalcArray.Unk10 + MotionCalcArray.Radius8 < MotionCalcArray.z4)
@@ -174,7 +174,7 @@ namespace Underworld
                                             {
                                                 //NPC
                                                 //seg031_2CFA_107A: 
-                                                if ((MotionCalcArray.UnkE & 0x10)== 0)
+                                                if ((MotionCalcArray.UnkE & 0x10) == 0)
                                                 {
                                                     //seg031_2CFA_108C
                                                     if ((MotionCalcArray.UnkE & 0x20) == 0)
@@ -203,7 +203,7 @@ namespace Underworld
                                             {
                                                 //Not an npc
                                                 //seg031_2CFA_1075:
-                                                MaybeReflection_seg031_2CFA_CC6();
+                                                MaybeReflection_seg031_2CFA_CC6(MotionParams);
                                             }
                                         }
                                         else
@@ -231,7 +231,7 @@ namespace Underworld
                                             }
                                             else
                                             {
-                                                MaybeReflection_seg031_2CFA_CC6();
+                                                MaybeReflection_seg031_2CFA_CC6(MotionParams);
                                             }
                                         }
                                     }
@@ -247,15 +247,15 @@ namespace Underworld
                         //seg031_2CFA_10CA:
 
                         if (
-                            (((MotionCalcArray.UnkC_terrain & 3) == 3) && ((MotionCalcArray.UnkC_terrain & 0xC & 4) !=4))                          
+                            (((MotionCalcArray.UnkC_terrain & 3) == 3) && ((MotionCalcArray.UnkC_terrain & 0xC & 4) != 4))
                             ||
-                            (((MotionCalcArray.UnkC_terrain & 3) == 3) && ((MotionCalcArray.UnkC_terrain & 0xC & 4) == 4) && ((MotionCalcArray.UnkE & 0x40) !=0) && ((MotionCalcArray.UnkE & 0x800) == 0x800))
+                            (((MotionCalcArray.UnkC_terrain & 3) == 3) && ((MotionCalcArray.UnkC_terrain & 0xC & 4) == 4) && ((MotionCalcArray.UnkE & 0x40) != 0) && ((MotionCalcArray.UnkE & 0x800) == 0x800))
                             ||
-                            (((MotionCalcArray.UnkC_terrain & 3) != 3) && ((MotionCalcArray.UnkE & 0x40) !=0) && ((MotionCalcArray.UnkE & 0x800) == 0x800))
-                            )                            
-                            {
-                                MotionParams.unk_14 = (short)var6;
-                            }
+                            (((MotionCalcArray.UnkC_terrain & 3) != 3) && ((MotionCalcArray.UnkE & 0x40) != 0) && ((MotionCalcArray.UnkE & 0x800) == 0x800))
+                            )
+                        {
+                            MotionParams.unk_14 = (short)var6;
+                        }
                     }
 
                     //seg031_2CFA_112C:
@@ -947,14 +947,34 @@ namespace Underworld
         }
 
 
-        static void MaybeReflection_seg031_2CFA_CC6()
+        static void MaybeReflection_seg031_2CFA_CC6(UWMotionParamArray MotionParams)
         {
-
+            MotionParams.unk_a = 0x8C;
+            MotionParams.unk_10 = -4;
+            if (MotionParams.unk_14 <= 0xEB)
+            {
+                MotionParams.unk_14 = 0xEB;
+            }
+            MotionParams.unk_25_tilestate = 0x10;
+            if ((Rng.r.Next(0x7fff) & 0x3) != 0)
+            {
+                MotionParams.heading_1E -= 0x3000;
+                MotionParams.heading_1E += (ushort)Rng.r.Next(0x6000);
+            }
+            UWMotionParamArray.dseg_67d6_26A4 = 1;
         }
 
-        static void seg031_2CFA_78A(UWMotionParamArray MotionParms, int arg0)
+        static void seg031_2CFA_78A(UWMotionParamArray MotionParams, int arg0)
         {
-
+            MotionParams.speed_12 -= (byte)(UWMotionParamArray.GravityCollisionRelated_dseg_67d6_414 * UWMotionParamArray.dseg_67d6_412);
+            if (MotionParams.speed_12 > 0)
+            {
+                if (InitialMotionCalc_seg031_2CFA_412(MotionParams, false, arg0))
+                {
+                    return;
+                }
+            }
+            UWMotionParamArray.GravityCollisionRelated_dseg_67d6_414 = (short)(UWMotionParamArray.MAYBEcollisionOrGravity_dseg_67d6_40E + 1);
         }
 
     }//end class

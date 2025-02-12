@@ -63,7 +63,7 @@ namespace Underworld
                 &&
                 (commonObjDat.maybeMagicObjectFlag(itemid) == false)
                 &&
-                ( (((short)(int)MotionParams.unk_a | (int)MotionParams.unk_10) == 0))
+                ((MotionParams.unk_a | MotionParams.unk_10) == 0)
             )
             {
                 if  (2+(MotionParams.unk_1a<<1) < MotionParams.unk_14)
