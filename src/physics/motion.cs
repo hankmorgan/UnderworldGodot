@@ -79,7 +79,4 @@ namespace Underworld
         }
 
     }//end class
-
-
-    
 }//end namespace

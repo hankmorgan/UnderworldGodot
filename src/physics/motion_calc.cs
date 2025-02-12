@@ -59,7 +59,7 @@ namespace Underworld
                             seg031_2CFA_179C(MotionParams);//todo
                         }
                     }
-                    break;//temp due to risk of infinite loop
+                    //break;//temp due to risk of infinite loop
                 }
                 //seg031_2CFA_73:  
                 StoreNewXYZH_seg031_2CFA_800(MotionParams);
@@ -207,8 +207,9 @@ namespace Underworld
                         {
                             //seg031_2CFA_738:
                             UWMotionParamArray.dseg_67d6_410 = 0;
-                            var temp = DataLoader.getAt(MotionParams.data, 0xA, 16);
-                            UWMotionParamArray.Gravity_Related_dseg_67d6_41F = (short)(int)Math.Abs(MotionParams.speed_12 * (temp >> 1) >> 5);
+                            //var temp = DataLoader.getAt(MotionParams.data, 0xA, 16);
+                            //MotionParams.unk_a
+                            UWMotionParamArray.Gravity_Related_dseg_67d6_41F = (short)(int)Math.Abs(MotionParams.speed_12 * (MotionParams.unk_a >> 1) >> 5);
                         }
                         else
                         {
