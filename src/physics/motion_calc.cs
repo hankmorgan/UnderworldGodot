@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Runtime.Intrinsics.X86;
 namespace Underworld
 {
     public partial class motion : Loader
@@ -744,19 +745,19 @@ namespace Underworld
                 var2 = var2 & -tmp;
                 int result = 0;
                 if (var2 != 0)
-                {                    
-                    if ((UWMotionParamArray.dseg_67d6_26BA & var2) !=0)
+                {
+                    if ((UWMotionParamArray.dseg_67d6_26BA & var2) != 0)
                     {
                         //seg031_2CFA_180F:
                         //Debug.Print($"Call motion code at {UWMotionParamArray.dseg_67d6_26c2_LikeMagicProjectile8} with param {var2}");
                         result = AMotionCollisionFunction_seg006_1413_ABF(var2);
-                    }                    
+                    }
                 }
                 if (result == 0)
                 {//seg031_2CFA_1829:
-                    if ((var2 & 0x700) !=0)
+                    if ((var2 & 0x700) != 0)
                     {//when var2>0 then 0, when var2==0 then 1,
-                    //seg031_2CFA_1830: 
+                     //seg031_2CFA_1830: 
                         if ((var2 & 0x400) == 0)
                         {
                             seg031_2CFA_C5C(MotionParams, 1);
@@ -1043,11 +1044,6 @@ namespace Underworld
 
             //return 0;//todo
         }
-        static int seg031_2CFA_13B2()
-        {
-            //This function looks like a nightmare to implement!!
-            return 0;//todo
-        }
 
         /// <summary>
         /// Returns a value indicating the state of the tile the player/object has steped on or landed on.
@@ -1127,17 +1123,17 @@ namespace Underworld
 
         static void seg031_2CFA_C5C(UWMotionParamArray MotionParams, int arg0)
         {
-            if (MotionCalcArray.Unk17>0)
+            if (MotionCalcArray.Unk17 > 0)
             {
                 int si;
                 //seg031_2CFA_C72:
-                if (arg0 !=0)
+                if (arg0 != 0)
                 {
-                    seg028_2941_803();
+                    seg028_2941_803(MotionParams);
                     si = MotionCalcArray.Unk12;
 
-                    if (si == 9 )
-                    {                        
+                    if (si == 9)
+                    {
                         //seg031_2CFA_C8B: for arg0 !=0
                         si = UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer << 1;
                     }
@@ -1149,10 +1145,10 @@ namespace Underworld
                 }
                 //seg031_2CFA_C92:
                 ProcessCollisions_seg031_2CFA_12B8(MotionParams, -1);
-                
-                var result = seg031_2CFA_A49 (UWMotionParamArray.GetMotionXY_421(si));
 
-                if (result== 0)
+                var result = seg031_2CFA_A49(UWMotionParamArray.GetMotionXY_421(si));
+
+                if (result == 0)
                 {
                     UWMotionParamArray.GravityCollisionRelated_dseg_67d6_414 = (short)(UWMotionParamArray.MAYBEcollisionOrGravity_dseg_67d6_40E + 1);
                 }
@@ -1162,7 +1158,7 @@ namespace Underworld
                     MotionCalcArray.Unk17 = 2;
                 }
 
-                
+
             }
             else
             {
@@ -1173,15 +1169,154 @@ namespace Underworld
         }
 
 
-        static void seg028_2941_803()
+        static void seg028_2941_803(UWMotionParamArray MotionParams)
         {
             Debug.Print("TODO seg028_2941_803");
+            var si = 0;
+            var di = 0;
+            var var3 = 0;
+            var var4 = 0;
+            var var1 = 0;
+            var var2 = 0;
+            var cl = 0;
+            var var8 = 0;
+            var var9 = 0;
+
+
+            while (cl < 4)
+            {
+                //seg028_2941_821:
+                var temp = DataLoader.getAt(MotionParams.SubArray.dseg_2562, 5 + cl * 5, 8);
+                if ((temp & 0xF8) != 0)
+                {
+                    var2 += dseg_67d6_3C4_Lookup[cl];
+                    var1 += dseg_67d6_3C4_Lookup[(cl + 3) & 3];
+                    di++;
+                }
+
+                if ((temp & 0x300) != 0)
+                {
+                    var4 += dseg_67d6_3C4_Lookup[cl];
+                    var3 += dseg_67d6_3C4_Lookup[(cl + 3) & 3];
+                    si++;
+                }
+                cl++;
+            }
+
+            if (si != 0)
+            {
+                //seg028_2941_891:
+                var temp = 3 * (var4 / si) + (var3 / si);
+                MotionCalcArray.Unk12 = (byte)dseg_67d6_3C4_Lookup[8 + temp];
+
+                if (si == 1)
+                {
+                    //seg028_2941_8BB:
+                    if (MotionCalcArray.Unk12 / 2 != 0)
+                    {
+                        if (UWMotionParamArray.dseg_67d6_2584 != 0)
+                        {
+                            var var5 = (9 - MotionCalcArray.Unk12) & 0x7;
+                            var var6 = MotionCalcArray.Heading6 >> 0xD;
+                            switch ((var6 - var5) & 0x7)
+                            {
+                                case 0:
+                                case 1:
+                                    {//seg028_2941_90F
+                                        MotionCalcArray.Unk12 = 9;
+                                        break;
+                                    }
+                                case 2:
+                                case 3:
+                                    {//seg028_2941_912
+                                        MotionCalcArray.Unk12 = (byte)((MotionCalcArray.Unk12 + 1) & 0x7);
+                                        break;
+                                    }
+                                case 4:
+                                case 5:
+                                    {//seg028_2941_923:
+                                        var var7 = (MotionCalcArray.Unk12 - 1) >> 1;
+                                        MotionCalcArray.Unk12--;
+                                        switch (var7)
+                                        {
+                                            case 0: //seg028_2941_948:
+                                                {
+                                                    var8 = (int)DataLoader.getAt(MotionParams.SubArray.dseg_2562, 3 + (5 * var7), 8);
+                                                    var9 = (int)DataLoader.getAt(MotionParams.SubArray.dseg_2562, 4 + (5 * var7), 8);
+                                                    break;
+                                                }
+                                            case 1: //seg028_2941_95D:
+                                                {
+                                                    var8 = (int)DataLoader.getAt(MotionParams.SubArray.dseg_2562, 3 + (5 * var7), 8);
+                                                    var9 = 8 - (int)DataLoader.getAt(MotionParams.SubArray.dseg_2562, 4 + (5 * var7), 8);
+                                                    break;
+                                                }
+                                            case 2: //seg028_2941_987
+                                                {
+                                                    var8 = (int)DataLoader.getAt(MotionParams.SubArray.dseg_2562, 4 + (5 * var7), 8);
+                                                    var9 = (int)DataLoader.getAt(MotionParams.SubArray.dseg_2562, 3 + (5 * var7), 8);
+                                                    break;
+                                                }
+                                            case 3: //seg028_2941_9AC:
+                                                {
+                                                    var8 = (int)DataLoader.getAt(MotionParams.SubArray.dseg_2562, 3 + (5 * var7), 8);
+                                                    var9 = (int)DataLoader.getAt(MotionParams.SubArray.dseg_2562, 4 + (5 * var7), 8);
+                                                    break;
+                                                }
+                                        }
+
+                                        //seg028_2941_9D4:
+                                        if (var8<var9)
+                                        {
+                                            MotionCalcArray.Unk12 = (byte)((MotionCalcArray.Unk12+2) & 0x7);
+                                        }
+                                        if (var8==var9)
+                                        {
+                                            MotionCalcArray.Unk12++;
+                                        }
+                                        break;
+                                    }
+                            
+                                case 6:
+                                case 7:
+                                    {
+                                        MotionCalcArray.Unk12 = (byte)((MotionCalcArray.Unk12 +  7) & 7);
+                                        break;
+                                    }
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                //seg028_2941_A0B:
+                MotionCalcArray.Unk12 = 9;
+            }
+
+            //seg028_2941_A13:
+            if ((di==1) || (di==2))
+            {
+                var temp = 3*(var2/-di) + (var2/-di);
+                MotionCalcArray.Unk13 = dseg_67d6_3C4_Lookup[8 + temp];
+            }
+            else
+            {
+                MotionCalcArray.Unk13 = 9;
+            }
         }
 
         static int seg031_2CFA_A49(int arg0)
         {
             Debug.Print("TODO seg031_2CFA_A49");
             return 0;
+        }
+
+        static int seg031_2CFA_13B2()
+        {
+            Debug.Print("TODO seg031_2CFA_13B2");
+            //This function looks like a nightmare to implement!!
+            return 0;//todo
         }
     }//end class
 }//end namespace

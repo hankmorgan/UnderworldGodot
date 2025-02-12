@@ -10,6 +10,7 @@ namespace Underworld
         public static byte[] data_3FC = new byte[40];//globals at 0x3FC
         public static byte[] dseg_26b8 = new byte[16];//confirm size
        
+        
        
         public static short LikelyIsMagicProjectile_dseg_67d6_26B8;
 
@@ -729,15 +730,27 @@ namespace Underworld
             }
         }
 
-        public static sbyte Unk12
+        public static byte Unk12
         {
             get
             {
-                return (sbyte)DataLoader.getAt(dseg_25c4, 0x12, 8);
+                return (byte)DataLoader.getAt(dseg_25c4, 0x12, 8);
             }
             set
             {
                 DataLoader.setAt(dseg_25c4, 0x12, 8, value);
+            }
+        }
+
+        public static byte Unk13
+        {
+            get
+            {
+                return (byte)DataLoader.getAt(dseg_25c4, 0x13, 8);
+            }
+            set
+            {
+                DataLoader.setAt(dseg_25c4, 0x13, 8, value);
             }
         }
 
