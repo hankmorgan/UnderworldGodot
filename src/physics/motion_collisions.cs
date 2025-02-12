@@ -977,5 +977,10 @@ namespace Underworld
             UWMotionParamArray.GravityCollisionRelated_dseg_67d6_414 = (short)(UWMotionParamArray.MAYBEcollisionOrGravity_dseg_67d6_40E + 1);
         }
 
+        static int AMotionCollisionFunction_seg006_1413_ABF(int arg0)
+        {
+            return 0;
+        }
+
     }//end class
 }//end namespace

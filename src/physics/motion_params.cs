@@ -8,6 +8,26 @@ namespace Underworld
         public byte[] data = new byte[0x26];
 
         public static byte[] data_3FC = new byte[40];//globals at 0x3FC
+        public static byte[] dseg_26b8 = new byte[16];//confirm size
+       
+       
+        public static short LikelyIsMagicProjectile_dseg_67d6_26B8;
+
+        public static short dseg_67d6_26BA;
+
+        // public static short dseg_67d6_26c2_LikeMagicProjectile8
+        // {
+        //     get
+        //     {
+        //         return (short)getAt(dseg_26b8, 8, 16);
+        //     }
+        //     set
+        //     {
+        //         setAt (dseg_26b8, 8, 16, value);
+        //     }
+        // }
+
+
 
         //globals        
         public const int RelatedToMotionX_dseg_67d6_3FE_index = 2;
@@ -208,6 +228,19 @@ namespace Underworld
         {
             DataLoader.setAt(data_3FC, 8 + index * 2, 16, value);
         }
+
+
+        public static short GetMotionXY_421(int index)
+        {
+            return (short)DataLoader.getAt(data_3FC, 25 + index * 2, 16);
+        }
+        public static void SetMotionXY421(int index, short value)
+        {
+            DataLoader.setAt(data_3FC, 25 + index * 2, 16, value);
+        }
+
+
+
         
         public static int XposPlusRad;
         public static int YposPlusRad;
@@ -230,7 +263,7 @@ namespace Underworld
         public static int dseg_67d6_26A8;
 
         public static int CalculateMotionGlobal_dseg_67d6_26B6;
-        public static int LikelyIsMagicProjectile_dseg_67d6_26B8;
+       
         public static int dseg_67d6_25BF_X;
         public static int dseg_67d6_25C0_Y;
 
@@ -693,6 +726,18 @@ namespace Underworld
             set
             {
                 DataLoader.setAt(dseg_25c4, 0x11, 8, value);
+            }
+        }
+
+        public static sbyte Unk12
+        {
+            get
+            {
+                return (sbyte)DataLoader.getAt(dseg_25c4, 0x12, 8);
+            }
+            set
+            {
+                DataLoader.setAt(dseg_25c4, 0x12, 8, value);
             }
         }
 
