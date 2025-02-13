@@ -17,7 +17,7 @@ namespace Underworld
             MotionParams.index_20 = projectile.index;
             MotionParams.mass_18 = (short)commonObjDat.mass(itemid);
             MotionParams.unk_1a = (byte)commonObjDat.unk6_4(itemid);
-            MotionParams.unk_16 = (short)commonObjDat.unk6_5678(itemid);
+            MotionParams.unk_16 = (byte)commonObjDat.unk6_5678(itemid);
             MotionParams.scaleresistances_1C = (byte)commonObjDat.scaleresistances(itemid);
             MotionParams.unk_1d = 0;
             MotionParams.heading_1E = (ushort)(projectile.heading<<0xD);

@@ -425,17 +425,33 @@ namespace Underworld
                 DataLoader.setAt(data, 0x14, 16, value);
             }
         }
-        public short unk_16
+        public byte unk_16
         {
             get
             {
-                return (short)DataLoader.getAt(data, 0x16, 16);
+                return (byte)DataLoader.getAt(data, 0x16, 8);
             }
             set
             {
-                DataLoader.setAt(data, 0x16, 16, value);
+                DataLoader.setAt(data, 0x16, 8, value);
             }
         }
+
+        /// <summary>
+        /// Not sure where this is set?
+        /// </summary>
+        public short unk_17
+        {
+            get
+            {
+                return (short)DataLoader.getAt(data, 0x17, 8);
+            }
+            set
+            {
+                DataLoader.setAt(data, 0x17, 8, value);
+            }
+        }
+
         public short mass_18
         {
             get
@@ -643,7 +659,7 @@ namespace Underworld
         /// At offset + 6
         /// </summary>
         public static ushort Heading6
-        {
+        {//TO confirm should this be signed or not?
             get
             {
                 return (ushort)DataLoader.getAt(dseg_25c4, 6, 16);
