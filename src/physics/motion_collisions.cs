@@ -979,13 +979,6 @@ namespace Underworld
             UWMotionParamArray.GravityCollisionRelated_dseg_67d6_414 = (short)(UWMotionParamArray.MAYBEcollisionOrGravity_dseg_67d6_40E + 1);
         }
 
-        static int AMotionCollisionFunction_seg006_1413_ABF(int arg0)
-        {
-            Debug.Print("TODO 1413_ABF()");
-            return 0;
-        }
-
-
         /// <summary>
         /// Returns a value that is used with GetTileState.
         /// </summary>
@@ -1248,7 +1241,7 @@ namespace Underworld
             if (
                 ((MotionCalcArray.UnkE & 0x100) != 0)
                 &&
-                (var5!=0)
+                (var5 != 0)
                 &&
                 (MotionParams.unk_a == 0)
                 )
@@ -1274,14 +1267,21 @@ namespace Underworld
                 si_result |= 0x1000;
             }
 
-            if ((si_result& 0x80) == 0)
+            if ((si_result & 0x80) == 0)
             {
-                if (MotionCalcArray.z4-MotionParams.radius_22 > MotionCalcArray.Unk11)
+                if (MotionCalcArray.z4 - MotionParams.radius_22 > MotionCalcArray.Unk11)
                 {
                     si_result |= 0x1000;
                 }
             }
             return si_result;
+        }
+
+
+        static int AMotionCollisionFunction_seg006_1413_ABF(int arg0)
+        {
+            Debug.Print("TODO 1413_ABF()");
+            return 0;
         }
 
     }//end class

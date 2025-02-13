@@ -28,7 +28,6 @@ namespace Underworld
         /// <param name="MaybeMagicObjectFlag"></param>
         static void CalculateMotion(uwObject projectile, UWMotionParamArray MotionParams, int MaybeMagicObjectFlag)
         {
-            //TODO
             UWMotionParamArray.LikelyIsMagicProjectile_dseg_67d6_26B8 = (short)MaybeMagicObjectFlag;
             UWMotionParamArray.MotionParam0x25_dseg_67d6_26A9 = MotionParams.unk_25_tilestate;
             //UWMotionParamArray.CalculateMotionGlobal_dseg_67d6_25DB = 0;
@@ -52,13 +51,12 @@ namespace Underworld
                     else
                     {
                         //seg031_2CFA_59:
-                        if (ProcessCollisions_seg031_2CFA_12B8(MotionParams, 1) != 0)//todo  dseg67d6_414 increments in here.
+                        if (ProcessCollisions_seg031_2CFA_12B8(MotionParams, 1) != 0)
                         {
                             //seg031_2CFA_64
-                            seg031_2CFA_179C(MotionParams);//todo
+                            seg031_2CFA_179C(MotionParams);
                         }
                     }
-                    //break;//temp due to risk of infinite loop
                 }
                 //seg031_2CFA_73:  
                 StoreNewXYZH_seg031_2CFA_800(MotionParams);
@@ -678,9 +676,7 @@ namespace Underworld
                     {//the player
                         if (MotionParams.unk_a == 0)
                         {
-                            Debug.Print("unimplemented player function seg028_2941_1AF()");
-                            //todo seg028_2941_1AF();
-                            //param[bx+4] = result
+                            MotionParams.z_4 = (short)GetTileZOffset_seg028_2941_1AF(MotionParams.x_0, MotionParams.y_2);
                         }
                     }
                 }
@@ -735,7 +731,7 @@ namespace Underworld
         static void seg031_2CFA_179C(UWMotionParamArray MotionParams)
         {
             var var3 = 0;
-            var var2 = GetCollisionHeightState_seg031_2CFA_13B2(MotionParams);//todo
+            var var2 = GetCollisionHeightState_seg031_2CFA_13B2(MotionParams);
             UWMotionParamArray.MotionParam0x25_dseg_67d6_26A9 = MotionParams.unk_25_tilestate;
 
             MotionParams.unk_25_tilestate = GetTileState(var2);
@@ -1041,8 +1037,6 @@ namespace Underworld
                     }
                 }
             }
-
-            //return 0;//todo
         }
 
         /// <summary>
@@ -1171,7 +1165,6 @@ namespace Underworld
 
         static void seg028_2941_803(UWMotionParamArray MotionParams)
         {
-            Debug.Print("TODO seg028_2941_803");
             var si = 0;
             var di = 0;
             var var3 = 0;
@@ -1470,6 +1463,39 @@ namespace Underworld
         static int GetTileAttribute8_seg028_2941_A6D()
         {
             return UWMotionParamArray.TileAttributesArray[8] & 0xF;
+        }
+
+
+        /// <summary>
+        /// Offsets z for sloped tiles based on x/y pos within the tile.
+        /// </summary>
+        /// <param name="xArg0"></param>
+        /// <param name="yArg0"></param>
+        /// <returns></returns>
+        static int GetTileZOffset_seg028_2941_1AF(int xArg0, int yArg0)
+        {
+            var di_y = yArg0 & 0xFF;
+            var si = 0;
+            var dx = xArg0 & 0xFF;
+
+            switch (UWMotionParamArray.TileAttributesArray[8] & 0xF)
+            {
+                case UWTileMap.TILE_SLOPE_N:
+                    si = di_y;
+                    break;
+                case UWTileMap.TILE_SLOPE_S:
+                    si = 0xFF - di_y;
+                    break;
+                case UWTileMap.TILE_SLOPE_E:
+                    si = dx;
+                    break;
+                case UWTileMap.TILE_SLOPE_W:
+                    si = 0xFF-dx;
+                    break;
+            }
+            si = si >> 2;
+            si = si + ((UWMotionParamArray.TileAttributesArray[8] & 0xF0)<<2);
+            return si;
         }
 
     }//end class
