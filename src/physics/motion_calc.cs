@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.Runtime.Intrinsics.X86;
 namespace Underworld
 {
     public partial class motion : Loader
@@ -723,7 +722,7 @@ namespace Underworld
 
             if (var1 != 0)
             {
-                var si = seg031_2CFA_13B2();
+                var si = GetCollisionHeightState_seg031_2CFA_13B2(MotionParams);
                 UWMotionParamArray.MotionParam0x25_dseg_67d6_26A9 = MotionParams.unk_25_tilestate;
                 MotionParams.unk_25_tilestate = GetTileState(si);
             }
@@ -736,7 +735,7 @@ namespace Underworld
         static void seg031_2CFA_179C(UWMotionParamArray MotionParams)
         {
             var var3 = 0;
-            var var2 = seg031_2CFA_13B2();//todo
+            var var2 = GetCollisionHeightState_seg031_2CFA_13B2(MotionParams);//todo
             UWMotionParamArray.MotionParam0x25_dseg_67d6_26A9 = MotionParams.unk_25_tilestate;
 
             MotionParams.unk_25_tilestate = GetTileState(var2);
@@ -1313,11 +1312,5 @@ namespace Underworld
             return 0;
         }
 
-        static int seg031_2CFA_13B2()
-        {
-            Debug.Print("TODO seg031_2CFA_13B2");
-            //This function looks like a nightmare to implement!!
-            return 0;//todo
-        }
     }//end class
 }//end namespace

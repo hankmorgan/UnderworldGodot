@@ -16,6 +16,12 @@ namespace Underworld
 
         public static short dseg_67d6_26BA;
 
+        /// <summary>
+        /// Magic projectile + 4
+        /// </summary>
+        public static short dseg_67d6_26BC;
+
+
         // public static short dseg_67d6_26c2_LikeMagicProjectile8
         // {
         //     get

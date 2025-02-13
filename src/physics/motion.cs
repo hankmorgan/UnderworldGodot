@@ -6,7 +6,7 @@ namespace Underworld
 
         static motion()
         {
-            for (short i=0; i<=collisionTable.GetUpperBound(0);i++)
+            for (short i = 0; i <= collisionTable.GetUpperBound(0); i++)
             {//initialise collision records
                 collisionTable[i] = new CollisionRecord(i);
             }
@@ -43,10 +43,10 @@ namespace Underworld
 
             InitMotionParams(projectile, MotionParams);
 
-            CalculateMotion_TopLevel(projectile, MotionParams,MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2);
+            CalculateMotion_TopLevel(projectile, MotionParams, MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2);
 
             //store current x/y homes in globals
-            
+
 
 
             var result = ApplyProjectileMotion(projectile, MotionParams);
@@ -76,6 +76,28 @@ namespace Underworld
         public static bool ApplyProjectileMotion(uwObject projectile, UWMotionParamArray MotionParams)
         {//seg030_2BB7_689
             return false;
+        }
+
+
+
+        /// <summary>
+        /// Utililty function for mimicing the follwoing assembly
+        /// NEG AX 
+        /// SBB AX,AX
+        /// inc ax
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns>1 if value is 0, otherwise 0</returns>
+        public static int SBB(int value)
+        {
+            if (value == 0)
+            {
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
         }
 
     }//end class

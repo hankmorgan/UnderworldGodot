@@ -1,5 +1,7 @@
 using System;
 using System.Diagnostics;
+using System.Net;
+using Godot;
 
 namespace Underworld
 {
@@ -981,6 +983,305 @@ namespace Underworld
         {
             Debug.Print("TODO 1413_ABF()");
             return 0;
+        }
+
+
+        /// <summary>
+        /// Returns a value that is used with GetTileState.
+        /// </summary>
+        /// <param name="MotionParams"></param>
+        /// <returns></returns>
+        static int GetCollisionHeightState_seg031_2CFA_13B2(UWMotionParamArray MotionParams)
+        {
+            var var2 = 0;
+            var var3 = 0;
+            var var4 = SBB(UWMotionParamArray.dseg_67d6_26BC & 0x80);
+            var var6 = 0;
+            UWMotionParamArray.dseg_67d6_26A5 = 0;
+
+            RelatedToTileAndMotion_seg028_2941_385(MotionParams, MotionParams.unk_24);
+            ScanForCollisions_seg028_2941_C0E(MotionParams, 0, 0);
+            SetCollisionTarget_seg031_2CFA_10E(MotionParams, 0);
+            var si_result = MotionCalcArray.UnkC_terrain & MotionCalcArray.UnkE;
+            var var5 = SBB(UWMotionParamArray.dseg_67d6_26BC);
+
+            if (MotionCalcArray.Unk14_collisoncount > 0)
+            {
+                var di = MotionCalcArray.Unk16;
+                //seg031_2CFA_1463
+                while (MotionCalcArray.Unk16 + MotionCalcArray.Unk15 > di)
+                {
+                    var2 = CollideObjects_seg030_2BB7_1CE(MotionParams, MotionCalcArray.MotionArrayObjectIndexA, di);
+                    if ((var2 & 4) != 0)
+                    {
+                        si_result |= 0x400;
+                    }
+                    //seg031_2CFA_1440: 
+                    if ((var2 & 0x18) == 0)
+                    {
+                        if ((var2 & 0x10) == 0)
+                        {//seg031_2CFA_1455
+                            si_result |= 0x8000;
+                        }
+                        else
+                        {//seg031_2CFA_144E
+                            si_result |= 0x4000;
+                        }
+                        return si_result;
+                    }
+                    //seg031_2CFA_1462
+                    di++;
+                }
+            }
+
+            //seg031_2CFA_1473: After while loop
+
+            if (MotionCalcArray.z4 == UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419)
+            {//seg031_2CFA_166F
+                if (UWMotionParamArray.ACollisionIndex_dseg_67d6_416 != -1)
+                {
+                    //seg031_2CFA_1676:
+                    if (commonObjDat.UnknownFlag3_1(UWMotionParamArray.CollisionItemID_dseg_67d6_417))
+                    {
+                        //seg031_2CFA_168E
+                        if (var4 != 0)
+                        {
+                            si_result |= 0x80;
+                        }
+                        si_result &= 0xfffB;
+                    }
+                }
+            }
+            else
+            {//seg031_2CFA_1483:
+                if (var5 == 0 && UWMotionParamArray.ACollisionIndex_dseg_67d6_416 == -1)
+                {
+
+                    //seg031_2CFA_1493:
+                    if (Math.Abs(MotionCalcArray.z4 - UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419) > MotionParams.unk_24)
+                    {
+                        var3 = 0;
+                    }
+                    else
+                    {
+                        var3 = 1;
+                    }
+
+                    if
+                        (
+                            (var3 != 0)
+                            ||
+                            (var3 == 0 && MotionParams.unk_a == 0 && ((MotionCalcArray.UnkE & 0x800) == 0) && (MotionCalcArray.UnkC_terrain & 4) == 0)
+                        )
+                    {
+                        var3 = 1;
+                    }
+                    else
+                    {
+                        var3 = 0;
+                    }
+                }
+                else
+                {
+                    //seg031_2CFA_14DF
+
+                    if (var4 != 0)
+                    {
+                        //seg031_2CFA_14EF:
+                        if (commonObjDat.UnknownFlag3_1(UWMotionParamArray.CollisionItemID_dseg_67d6_417))
+                        {
+                            var3 = 1;
+                        }
+                        else
+                        {
+                            var3 = 0;
+                        }
+
+                        //seg031_2CFA_1504:
+                        if (var3 != 0)
+                        {
+                            //seg031_2CFA_1511:
+                            var collision = collisionTable[UWMotionParamArray.ACollisionIndex_dseg_67d6_416];
+                            if (Math.Abs(MotionCalcArray.z4 - collision.height) > MotionParams.unk_24)
+                            {
+                                var3 = 1;
+                            }
+                            else
+                            {
+                                var3 = 0;
+                            }
+                            if (var3 != 0)
+                            {
+                                si_result |= 0x80;
+                            }
+                        }
+                    }
+                }
+
+                //seg031_2CFA_154F
+                if (
+                    (var3 != 0)
+                    &&
+                    (UWMotionParamArray.dseg_67d6_26A8 != 0)
+                    &&
+                    (var6 == 0)
+                )
+                {
+                    var3 = 1;
+                }
+                else
+                {
+                    var3 = 0;
+                }
+
+                //seg031_2CFA_156F:
+                if (var3 != 0 && UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419 >= UWMotionParamArray.dseg_67d6_41D)
+                {
+                    //seg031_2CFA_1584
+                    if (var3 == 0)
+                    {
+                        if (MotionCalcArray.Unk11 > MotionCalcArray.z4)
+                        {
+                            si_result |= 0x100;
+                        }
+                    }
+                }
+                else
+                {
+                    //seg031_2CFA_157E
+                    si_result &= 0xFEFF;
+                }
+
+                //seg031_2CFA_159F:
+                if ((var3 != 0) && (UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419 + MotionParams.height_23 > 0x7F))
+                {
+                    //seg031_2CFA_15C8
+                    if (var3 != 0)
+                    {
+                        //seg031_2CFA_15CE:
+                        if (UWMotionParamArray.ACollisionIndex_dseg_67d6_416 == -1)
+                        {
+                            if (UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419 + MotionParams.height_23 > UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419)
+                            {
+                                var3 = 0;
+                                UWMotionParamArray.dseg_67d6_26A5 = 1;
+                                si_result |= 0x400;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    //seg031_2CFA_15B9:
+                    var3 = 0;
+                    UWMotionParamArray.dseg_67d6_26A5 = 1;
+                    si_result |= 0x200;
+                }
+
+                //seg031_2CFA_15F7: 
+                if (
+                    (var3 == 0)
+                    ||
+                    ((var3 != 0) && ((si_result & 0x400) != 0))
+                    )
+                {
+                    if (var3 != 0)
+                    {
+                        if (si_result != -1)
+                        {
+                            if (commonObjDat.UnknownFlag3_1(UWMotionParamArray.ACollisionIndex_dseg_67d6_416))
+                            {
+                                if (var4 == 0)
+                                {
+                                    var3 = 0;
+                                }
+                            }
+                        }
+                    }
+                }
+                //seg031_2CFA_1634:
+                if (var3 != 0)
+                {
+                    if (Math.Abs(UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419 - MotionCalcArray.Unk10) > MotionParams.radius_22)
+                    {
+                        si_result &= 0xFFFB;
+                    }
+                    else
+                    {
+                        si_result |= 4;
+                    }
+                }
+            }
+
+            //seg031_2CFA_169C after the 2nd big if split.
+            if ((UWMotionParamArray.dseg_67d6_26A5 != 0) && (var3 == 0))
+            {
+                SortCollisions_seg028_2941_ED8();
+                si_result &= 0xFBFF;
+                var di = 0;
+                while (MotionCalcArray.Unk15 > di)
+                {
+                    var2 = CollideObjects_seg030_2BB7_1CE(MotionParams, di, MotionCalcArray.MotionArrayObjectIndexA);
+                    if ((var2 & 0x4) != 0)
+                    {
+                        si_result |= 0x400;
+                    }
+                    di++;
+                }
+            }
+
+            //seg031_2CFA_16DB:
+            if (((si_result & 0x80) != 0) && (var4 != 0))
+            {
+                var collision = collisionTable[UWMotionParamArray.ACollisionIndex_dseg_67d6_416];
+                if (
+                   ((collision.quality & 0x10) != 0)
+                    ||
+                    ((collision.quality & 0x10) == 0) && ((MotionCalcArray.UnkC_terrain & 4) == 0)
+                    )
+                {
+                    si_result &= 0xF7FF;
+                }
+            }
+
+            //seg031_2CFA_170A
+            if (
+                ((MotionCalcArray.UnkE & 0x100) != 0)
+                &&
+                (var5!=0)
+                &&
+                (MotionParams.unk_a == 0)
+                )
+            {
+                if (MotionParams.unk_24 + MotionCalcArray.z4 >= MotionCalcArray.Unk11)
+                {
+                    MotionCalcArray.z4 = MotionCalcArray.Unk11;
+                    if (MotionCalcArray.z4 != MotionCalcArray.Unk10)
+                    {
+                        si_result &= 0xFFFB;
+                    }
+                    else
+                    {
+                        si_result |= 4;
+                    }
+                }
+            }
+
+            //next join seg031_2CFA_1766:
+
+            if ((si_result & 0xFC) == 0)
+            {
+                si_result |= 0x1000;
+            }
+
+            if ((si_result& 0x80) == 0)
+            {
+                if (MotionCalcArray.z4-MotionParams.radius_22 > MotionCalcArray.Unk11)
+                {
+                    si_result |= 0x1000;
+                }
+            }
+            return si_result;
         }
 
     }//end class
