@@ -46,7 +46,7 @@ namespace Underworld
                 )
             {//seg031_2CFA_DDE: 
                 ZeroiseMotionValues_seg031_2CFA_7BF(MotionParams);
-                MotionParams.unk_25_tilestate = 2;
+                MotionParams.tilestate25 = 2;
 
                 if (si_mass >= 0x14)
                 {
@@ -183,22 +183,22 @@ namespace Underworld
                                                     {//seg031_2CFA_109E:
                                                         if ((MotionCalcArray.UnkE & 0x40) == 0)
                                                         {
-                                                            MotionParams.unk_25_tilestate = 1;
+                                                            MotionParams.tilestate25 = 1;
                                                         }
                                                         else
                                                         {
                                                             //seg031_2CFA_10AA:
-                                                            MotionParams.unk_25_tilestate = 8;
+                                                            MotionParams.tilestate25 = 8;
                                                         }
                                                     }
                                                     else
                                                     {//seg031_2CFA_1098
-                                                        MotionParams.unk_25_tilestate = 4;
+                                                        MotionParams.tilestate25 = 4;
                                                     }
                                                 }
                                                 else
                                                 {
-                                                    MotionParams.unk_25_tilestate = 2;
+                                                    MotionParams.tilestate25 = 2;
                                                 }
                                             }
                                             else
@@ -211,7 +211,7 @@ namespace Underworld
                                         else
                                         {
                                             //seg031_2CFA_1040:
-                                            MotionParams.unk_25_tilestate = (byte)(1 << (MotionCalcArray.UnkC_terrain & 3));
+                                            MotionParams.tilestate25 = (byte)(1 << (MotionCalcArray.UnkC_terrain & 3));
                                         }
                                     }
                                     else
@@ -222,14 +222,14 @@ namespace Underworld
                                         if (commonObjDat.UnknownFlag3_1(CollisionObject.item_id))
                                         {
                                             //seg031_2CFA_FFD:
-                                            MotionParams.unk_25_tilestate = 1;
+                                            MotionParams.tilestate25 = 1;
                                         }
                                         else
                                         {
                                             //seg031_2CFA_1000:
                                             if (CollisionObject.majorclass == 1)
                                             {
-                                                MotionParams.unk_25_tilestate = 1;
+                                                MotionParams.tilestate25 = 1;
                                             }
                                             else
                                             {
@@ -935,6 +935,7 @@ namespace Underworld
                     //vanilla behaviour here is to retore currobj details
 
                     ApplyProjectileMotion(toBounce, newMotionParams);
+                    objectInstance.Reposition(toBounce);//finally move!
                 }
                 else
                 {
@@ -957,7 +958,7 @@ namespace Underworld
             {
                 MotionParams.unk_14 = 0xEB;
             }
-            MotionParams.unk_25_tilestate = 0x10;
+            MotionParams.tilestate25 = 0x10;
             if ((Rng.r.Next(0x7fff) & 0x3) != 0)
             {
                 MotionParams.heading_1E -= 0x3000;
@@ -1282,6 +1283,12 @@ namespace Underworld
         {
             Debug.Print("TODO 1413_ABF()");
             return 0;
+        }
+
+        static uwObject ProbablyThrownObjectCollision_seg030_2BB7_10BC(uwObject projectile, int tileX, int tileY, int arg8)
+        {
+            //Crap. this function creates a new calcarray. I will need to make my static array an instance that can change.
+            return projectile;
         }
 
     }//end class

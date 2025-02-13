@@ -29,7 +29,7 @@ namespace Underworld
         static void CalculateMotion(uwObject projectile, UWMotionParamArray MotionParams, int MaybeMagicObjectFlag)
         {
             UWMotionParamArray.LikelyIsMagicProjectile_dseg_67d6_26B8 = (short)MaybeMagicObjectFlag;
-            UWMotionParamArray.MotionParam0x25_dseg_67d6_26A9 = MotionParams.unk_25_tilestate;
+            UWMotionParamArray.MotionParam0x25_dseg_67d6_26A9 = MotionParams.tilestate25;
             //UWMotionParamArray.CalculateMotionGlobal_dseg_67d6_25DB = 0;
             MotionCalcArray.Unk17 = 0;
             UWMotionParamArray.CalculateMotionGlobal_dseg_67d6_26B6 = 0;
@@ -693,7 +693,7 @@ namespace Underworld
                 //seg031_2CFA_12CD:
                 ScanForCollisions_seg028_2941_C0E(MotionParams, 0, 0);
                 SetCollisionTarget_seg031_2CFA_10E(MotionParams, 0);
-                MotionParams.unk_25_tilestate = UWMotionParamArray.MotionParam0x25_dseg_67d6_26A9;//stores value
+                MotionParams.tilestate25 = UWMotionParamArray.MotionParam0x25_dseg_67d6_26A9;//stores value
                 if (UWMotionParamArray.dseg_67d6_26A5 != 0)
                 {
                     var1 = 1;
@@ -719,8 +719,8 @@ namespace Underworld
             if (var1 != 0)
             {
                 var si = GetCollisionHeightState_seg031_2CFA_13B2(MotionParams);
-                UWMotionParamArray.MotionParam0x25_dseg_67d6_26A9 = MotionParams.unk_25_tilestate;
-                MotionParams.unk_25_tilestate = GetTileState(si);
+                UWMotionParamArray.MotionParam0x25_dseg_67d6_26A9 = MotionParams.tilestate25;
+                MotionParams.tilestate25 = GetTileState(si);
             }
 
             return var2;
@@ -732,9 +732,9 @@ namespace Underworld
         {
             var var3 = 0;
             var var2 = GetCollisionHeightState_seg031_2CFA_13B2(MotionParams);
-            UWMotionParamArray.MotionParam0x25_dseg_67d6_26A9 = MotionParams.unk_25_tilestate;
+            UWMotionParamArray.MotionParam0x25_dseg_67d6_26A9 = MotionParams.tilestate25;
 
-            MotionParams.unk_25_tilestate = GetTileState(var2);
+            MotionParams.tilestate25 = GetTileState(var2);
             if ((var2 & 0xC000) == 0)
             {//seg031_2CFA_17ED:
                 var tmp = UWMotionParamArray.LikelyIsMagicProjectile_dseg_67d6_26B8;
@@ -1003,7 +1003,7 @@ namespace Underworld
                 {
                     if (si == 0)
                     {
-                        MotionParams.unk_25_tilestate = 0x10;
+                        MotionParams.tilestate25 = 0x10;
                         if (MotionCalcArray.z4 + si >= UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419)
                         {
                             MotionCalcArray.z4 += si;
@@ -1024,7 +1024,7 @@ namespace Underworld
                 }
                 else
                 {//si>0
-                    MotionParams.unk_25_tilestate = 0x10;
+                    MotionParams.tilestate25 = 0x10;
                     if (MotionCalcArray.z4 + si > UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419)
                     {
                         DoCollision_seg031_2CFA_D1F(MotionParams);

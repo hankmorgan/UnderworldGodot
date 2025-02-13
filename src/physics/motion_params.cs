@@ -5,7 +5,7 @@ namespace Underworld
     /// </summary>
     public class UWMotionParamArray : Loader
     {
-        public byte[] data = new byte[0x26];
+        public byte[] data = new byte[0x28];
 
         public static byte[] data_3FC = new byte[40];//globals at 0x3FC
         public static byte[] dseg_26b8 = new byte[16];//confirm size
@@ -273,6 +273,7 @@ namespace Underworld
        
         public static int dseg_67d6_25BF_X;
         public static int dseg_67d6_25C0_Y;
+        public static int dseg_67d6_25C1;
 
         //The class properties
         public short x_0
@@ -565,7 +566,12 @@ namespace Underworld
                 DataLoader.setAt(data, 0x24, 8, value);
             }
         }
-        public byte unk_25_tilestate
+
+
+        /// <summary>
+        /// indicates if on a tile and what type of surface the tile has(eg lava = 4)
+        /// </summary>
+        public byte tilestate25
         {
             get
             {
@@ -577,6 +583,10 @@ namespace Underworld
             }
         }
 
+
+        /// <summary>
+        /// Possibly related to fall damage.
+        /// </summary>
         public short unk_26
         {
             get

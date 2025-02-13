@@ -1397,6 +1397,10 @@ namespace Underworld
             {
                 return (short)GetAt16(PTR + 0xb);
             }
+            set
+            {
+                SetAt16(PTR + 0xb, value);
+            }
         }
 
 
@@ -1409,6 +1413,10 @@ namespace Underworld
             get
             {
                 return (short)GetAt16(PTR + 0xD);
+            }
+            set
+            {
+                SetAt16(PTR + 0xD, value);
             }
         }
 

@@ -342,5 +342,6 @@ namespace Underworld
 
         public static byte[] dseg_67d6_3C4_Lookup = new byte[] { 1, 0xFF, 0xFF, 1, 5, 4, 3, 6, 9, 2, 7, 0, 1 };
 
+        public static byte[] dseg_67d6_3E8 = new byte[] { 0, 0, 1, 0, 2, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 4, 0 };
     }//end class
 }//end namespac

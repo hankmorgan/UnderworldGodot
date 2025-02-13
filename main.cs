@@ -398,6 +398,11 @@ public partial class main : Node3D
 								//trigger.RunNextScheduledTrigger();
 								break;
 							}
+						case Key.Pagedown:
+							{
+								motion.MotionSingleStepEnabled = true;//for stepping through motion processing.
+								break;
+							}
 						case Key.Apostrophe:
 							{
 								//give full mage abilities
