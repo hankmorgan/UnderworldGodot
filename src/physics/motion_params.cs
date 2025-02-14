@@ -627,17 +627,45 @@ namespace Underworld
         /// <summary>
         /// Raw data
         /// </summary>
-        public static byte[] dseg_25c4 = new byte[0x20];
+        public static byte[] base_dseg_25c4 = new byte[0x20];
+
+        public static byte[] PtrToMotionCalc;
+
+        public static short x0_base
+        {
+            get
+            {
+                return (short)DataLoader.getAt(base_dseg_25c4, 0, 16);
+            }
+            set
+            {
+                DataLoader.setAt(base_dseg_25c4, 0, 16, value);
+            }
+        }
 
         public static short x0
         {
             get
             {
-                return (short)DataLoader.getAt(dseg_25c4, 0, 16);
+                return (short)DataLoader.getAt(PtrToMotionCalc, 0, 16);
             }
             set
             {
-                DataLoader.setAt(dseg_25c4, 0, 16, value);
+                DataLoader.setAt(PtrToMotionCalc, 0, 16, value);
+            }
+        }
+
+
+
+        public static short y2_base
+        {
+            get
+            {
+                return (short)DataLoader.getAt(base_dseg_25c4, 2, 16);
+            }
+            set
+            {
+                DataLoader.setAt(base_dseg_25c4, 2, 16, value);
             }
         }
 
@@ -645,11 +673,11 @@ namespace Underworld
         {
             get
             {
-                return (short)DataLoader.getAt(dseg_25c4, 2, 16);
+                return (short)DataLoader.getAt(PtrToMotionCalc, 2, 16);
             }
             set
             {
-                DataLoader.setAt(dseg_25c4, 2, 16, value);
+                DataLoader.setAt(PtrToMotionCalc, 2, 16, value);
             }
         }
 
@@ -657,11 +685,24 @@ namespace Underworld
         {
             get
             {
-                return (short)DataLoader.getAt(dseg_25c4, 4, 16);
+                return (short)DataLoader.getAt(PtrToMotionCalc, 4, 16);
             }
             set
             {
-                DataLoader.setAt(dseg_25c4, 4, 16, value);
+                DataLoader.setAt(PtrToMotionCalc, 4, 16, value);
+            }
+        }
+
+
+        public static ushort Heading6_base
+        {//TO confirm should this be signed or not?
+            get
+            {
+                return (ushort)DataLoader.getAt(base_dseg_25c4, 6, 16);
+            }
+            set
+            {
+                DataLoader.setAt(base_dseg_25c4, 6, 16, value);
             }
         }
 
@@ -672,11 +713,23 @@ namespace Underworld
         {//TO confirm should this be signed or not?
             get
             {
-                return (ushort)DataLoader.getAt(dseg_25c4, 6, 16);
+                return (ushort)DataLoader.getAt(PtrToMotionCalc, 6, 16);
             }
             set
             {
-                DataLoader.setAt(dseg_25c4, 6, 16, value);
+                DataLoader.setAt(PtrToMotionCalc, 6, 16, value);
+            }
+        }
+
+        public static byte Radius8_base
+        {
+            get
+            {
+                return (byte)DataLoader.getAt(base_dseg_25c4, 8, 8);
+            }
+            set
+            {
+                DataLoader.setAt(base_dseg_25c4, 8, 8, value);
             }
         }
 
@@ -684,33 +737,58 @@ namespace Underworld
         {
             get
             {
-                return (byte)DataLoader.getAt(dseg_25c4, 8, 8);
+                return (byte)DataLoader.getAt(PtrToMotionCalc, 8, 8);
             }
             set
             {
-                DataLoader.setAt(dseg_25c4, 8, 8, value);
+                DataLoader.setAt(PtrToMotionCalc, 8, 8, value);
             }
         }
         public static byte Height9
         {
             get
             {
-                return (byte)DataLoader.getAt(dseg_25c4, 9, 8);
+                return (byte)DataLoader.getAt(PtrToMotionCalc, 9, 8);
             }
             set
             {
-                DataLoader.setAt(dseg_25c4, 9, 8, value);
+                DataLoader.setAt(PtrToMotionCalc, 9, 8, value);
             }
         }
+
+        public static short MotionArrayObjectIndexA_base
+        {
+            get
+            {
+                return (short)DataLoader.getAt(base_dseg_25c4, 0xA, 16);
+            }
+            set
+            {
+                DataLoader.setAt(base_dseg_25c4, 0xA, 16, value);
+            }
+        }
+
         public static short MotionArrayObjectIndexA
         {
             get
             {
-                return (short)DataLoader.getAt(dseg_25c4, 0xA, 16);
+                return (short)DataLoader.getAt(PtrToMotionCalc, 0xA, 16);
             }
             set
             {
-                DataLoader.setAt(dseg_25c4, 0xA, 16, value);
+                DataLoader.setAt(PtrToMotionCalc, 0xA, 16, value);
+            }
+        }
+
+        public static short UnkC_terrain_base
+        {
+            get
+            {
+                return (short)DataLoader.getAt(base_dseg_25c4, 0xC, 16);
+            }
+            set
+            {
+                DataLoader.setAt(base_dseg_25c4, 0xC, 16, value);
             }
         }
 
@@ -718,11 +796,23 @@ namespace Underworld
         {
             get
             {
-                return (short)DataLoader.getAt(dseg_25c4, 0xC, 16);
+                return (short)DataLoader.getAt(PtrToMotionCalc, 0xC, 16);
             }
             set
             {
-                DataLoader.setAt(dseg_25c4, 0xC, 16, value);
+                DataLoader.setAt(PtrToMotionCalc, 0xC, 16, value);
+            }
+        }
+
+        public static short UnkE_base
+        {
+            get
+            {
+                return (short)DataLoader.getAt(base_dseg_25c4, 0xE, 16);
+            }
+            set
+            {
+                DataLoader.setAt(base_dseg_25c4, 0xE, 16, value);
             }
         }
 
@@ -730,11 +820,24 @@ namespace Underworld
         {
             get
             {
-                return (short)DataLoader.getAt(dseg_25c4, 0xE, 16);
+                return (short)DataLoader.getAt(PtrToMotionCalc, 0xE, 16);
             }
             set
             {
-                DataLoader.setAt(dseg_25c4, 0xE, 16, value);
+                DataLoader.setAt(PtrToMotionCalc, 0xE, 16, value);
+            }
+        }
+
+
+        public static sbyte Unk10_base
+        {
+            get
+            {
+                return (sbyte)DataLoader.getAt(base_dseg_25c4, 0x10, 8);
+            }
+            set
+            {
+                DataLoader.setAt(base_dseg_25c4, 0x10, 8, value);
             }
         }
 
@@ -742,11 +845,23 @@ namespace Underworld
         {
             get
             {
-                return (sbyte)DataLoader.getAt(dseg_25c4, 0x10, 8);
+                return (sbyte)DataLoader.getAt(PtrToMotionCalc, 0x10, 8);
             }
             set
             {
-                DataLoader.setAt(dseg_25c4, 0x10, 8, value);
+                DataLoader.setAt(PtrToMotionCalc, 0x10, 8, value);
+            }
+        }
+
+        public static sbyte Unk11_base
+        {
+            get
+            {
+                return (sbyte)DataLoader.getAt(base_dseg_25c4, 0x11, 8);
+            }
+            set
+            {
+                DataLoader.setAt(base_dseg_25c4, 0x11, 8, value);
             }
         }
 
@@ -754,11 +869,24 @@ namespace Underworld
         {
             get
             {
-                return (sbyte)DataLoader.getAt(dseg_25c4, 0x11, 8);
+                return (sbyte)DataLoader.getAt(PtrToMotionCalc, 0x11, 8);
             }
             set
             {
-                DataLoader.setAt(dseg_25c4, 0x11, 8, value);
+                DataLoader.setAt(PtrToMotionCalc, 0x11, 8, value);
+            }
+        }
+
+
+        public static byte Unk12_base
+        {
+            get
+            {
+                return (byte)DataLoader.getAt(base_dseg_25c4, 0x12, 8);
+            }
+            set
+            {
+                DataLoader.setAt(base_dseg_25c4, 0x12, 8, value);
             }
         }
 
@@ -766,11 +894,11 @@ namespace Underworld
         {
             get
             {
-                return (byte)DataLoader.getAt(dseg_25c4, 0x12, 8);
+                return (byte)DataLoader.getAt(PtrToMotionCalc, 0x12, 8);
             }
             set
             {
-                DataLoader.setAt(dseg_25c4, 0x12, 8, value);
+                DataLoader.setAt(PtrToMotionCalc, 0x12, 8, value);
             }
         }
 
@@ -778,11 +906,23 @@ namespace Underworld
         {
             get
             {
-                return (byte)DataLoader.getAt(dseg_25c4, 0x13, 8);
+                return (byte)DataLoader.getAt(PtrToMotionCalc, 0x13, 8);
             }
             set
             {
-                DataLoader.setAt(dseg_25c4, 0x13, 8, value);
+                DataLoader.setAt(PtrToMotionCalc, 0x13, 8, value);
+            }
+        }
+
+        public static byte Unk14_collisoncount_base
+        {
+            get
+            {
+                return (byte)DataLoader.getAt(base_dseg_25c4, 0x14, 8);
+            }
+            set
+            {
+                DataLoader.setAt(base_dseg_25c4, 0x14, 8, value);
             }
         }
 
@@ -790,11 +930,24 @@ namespace Underworld
         {
             get
             {
-                return (byte)DataLoader.getAt(dseg_25c4, 0x14, 8);
+                return (byte)DataLoader.getAt(PtrToMotionCalc, 0x14, 8);
             }
             set
             {
-                DataLoader.setAt(dseg_25c4, 0x14, 8, value);
+                DataLoader.setAt(PtrToMotionCalc, 0x14, 8, value);
+            }
+        }
+
+
+        public static byte Unk15_base
+        {
+            get
+            {
+                return (byte)DataLoader.getAt(base_dseg_25c4, 0x15, 8);
+            }
+            set
+            {
+                DataLoader.setAt(base_dseg_25c4, 0x15, 8, value);
             }
         }
 
@@ -802,11 +955,23 @@ namespace Underworld
         {
             get
             {
-                return (byte)DataLoader.getAt(dseg_25c4, 0x15, 8);
+                return (byte)DataLoader.getAt(PtrToMotionCalc, 0x15, 8);
             }
             set
             {
-                DataLoader.setAt(dseg_25c4, 0x15, 8, value);
+                DataLoader.setAt(PtrToMotionCalc, 0x15, 8, value);
+            }
+        }
+
+        public static byte Unk16_base
+        {
+            get
+            {
+                return (byte)DataLoader.getAt(base_dseg_25c4, 0x16, 8);
+            }
+            set
+            {
+                DataLoader.setAt(base_dseg_25c4, 0x16, 8, value);
             }
         }
 
@@ -814,11 +979,23 @@ namespace Underworld
         {
             get
             {
-                return (byte)DataLoader.getAt(dseg_25c4, 0x16, 8);
+                return (byte)DataLoader.getAt(PtrToMotionCalc, 0x16, 8);
             }
             set
             {
-                DataLoader.setAt(dseg_25c4, 0x16, 8, value);
+                DataLoader.setAt(PtrToMotionCalc, 0x16, 8, value);
+            }
+        }
+
+        public static byte Unk17_base
+        {
+            get
+            {
+                return (byte)DataLoader.getAt(base_dseg_25c4, 0x17, 8);
+            }
+            set
+            {
+                DataLoader.setAt(base_dseg_25c4, 0x17, 8, value);
             }
         }
 
@@ -826,11 +1003,11 @@ namespace Underworld
         {
             get
             {
-                return (byte)DataLoader.getAt(dseg_25c4, 0x17, 8);
+                return (byte)DataLoader.getAt(PtrToMotionCalc, 0x17, 8);
             }
             set
             {
-                DataLoader.setAt(dseg_25c4, 0x17, 8, value);
+                DataLoader.setAt(PtrToMotionCalc, 0x17, 8, value);
             }
         }
     }
