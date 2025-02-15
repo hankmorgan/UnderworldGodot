@@ -269,7 +269,6 @@ namespace Underworld
 
         static void SetCollisionTarget_seg031_2CFA_10E(UWMotionParamArray MotionParams, int arg0)
         {
-            //todo
             UWMotionParamArray.dseg_67d6_26A8 = 1;
             int var1 = 0;
             SortCollisions_seg028_2941_ED8();
@@ -348,7 +347,7 @@ namespace Underworld
                     }
 
                     var CollisionIndex_var_4 = 0;
-                    while (MotionCalcArray.Unk14_collisoncount_base <= CollisionIndex_var_4)//oob error
+                    while (MotionCalcArray.Unk14_collisoncount_base > CollisionIndex_var_4)//oob error
                     {
                         //seg031_2CFA_23A
                         var collision_Var4 = collisionTable[CollisionIndex_var_4];

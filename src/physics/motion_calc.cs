@@ -4,7 +4,7 @@ namespace Underworld
 {
     public partial class motion : Loader
     {
-
+        
         /// <summary>
         /// Kicks off the processing of motion.
         /// </summary>
@@ -28,7 +28,7 @@ namespace Underworld
         /// <param name="MotionParams"></param>
         /// <param name="MaybeMagicObjectFlag"></param>
         static void CalculateMotion(uwObject projectile, UWMotionParamArray MotionParams, int MaybeMagicObjectFlag)
-        {
+        {            
             int collisionCounter = 0;
             UWMotionParamArray.LikelyIsMagicProjectile_dseg_67d6_26B8 = (short)MaybeMagicObjectFlag;
             UWMotionParamArray.MotionParam0x25_dseg_67d6_26A9 = MotionParams.tilestate25;
@@ -238,11 +238,16 @@ namespace Underworld
             return true;
         }
 
+        /// <summary>
+        /// Dumps out some memory values for the testing of motion.
+        /// </summary>
+        /// <param name="MotionParams"></param>
+        /// <param name="stage"></param>
         private static void DumpMotionMemory(UWMotionParamArray MotionParams, string stage)
         {
-            File.WriteAllBytes($"c:\\temp\\{stage}_MotionParams", MotionParams.data);
-            File.WriteAllBytes($"c:\\temp\\{stage}_CalcArray", MotionCalcArray.base_dseg_25c4);
-            File.WriteAllBytes($"c:\\temp\\{stage}_3FC", UWMotionParamArray.data_3FC);
+            File.WriteAllBytes($"c:\\temp\\{iteration}_{stage}_MotionParams", MotionParams.data);
+            File.WriteAllBytes($"c:\\temp\\{iteration}_{stage}_CalcArray", MotionCalcArray.base_dseg_25c4);
+            File.WriteAllBytes($"c:\\temp\\{iteration}_{stage}_3FC", UWMotionParamArray.data_3FC);
         }
 
         static void SomethingProjectileHeading_seg021_22FD_EAE(short heading, ref short Result_arg2, ref short Result_arg4)

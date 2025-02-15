@@ -1,10 +1,10 @@
 using System.Diagnostics;
-using System.IO;
 
 namespace Underworld
 {
     public partial class motion : Loader
     {
+        static int iteration = 0;
         public static bool MotionSingleStepEnabled = false;
         static int MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2;
 
