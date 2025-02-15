@@ -40,7 +40,7 @@ namespace Underworld
                 &&
                 (MotionCalcArray.Radius8_base + MotionCalcArray.Unk10_base >= MotionCalcArray.z4)
                 &&
-                (MotionParams.unk_a <= 0)
+                (MotionParams.unk_a_pitch <= 0)
                 )
             {//seg031_2CFA_DDE: 
                 ZeroiseMotionValues_seg031_2CFA_7BF(MotionParams);
@@ -65,7 +65,7 @@ namespace Underworld
             }
             else
             {//seg031_2CFA_E28:
-                soundeffect = (Math.Abs(MotionParams.unk_a) / 0xA) + ((si_mass - 600) / 32) - 40;
+                soundeffect = (Math.Abs(MotionParams.unk_a_pitch) / 0xA) + ((si_mass - 600) / 32) - 40;
                 Debug.Print($"play sound effect {soundeffect} at {MotionParams.x_0 >> 5} {MotionParams.y_2 >> 5}");
 
                 var di_collisionresult = CollideObjects_seg030_2BB7_1CE(MotionParams, UWMotionParamArray.ACollisionIndex_dseg_67d6_416, MotionCalcArray.MotionArrayObjectIndexA_base);
@@ -103,7 +103,7 @@ namespace Underworld
                     {
                         int var3;
                         int var6;
-                        if (MotionParams.unk_a > 0)
+                        if (MotionParams.unk_a_pitch > 0)
                         {
                             var3 = 0;
                         }
@@ -121,14 +121,14 @@ namespace Underworld
                         )
                         {
                             //Bouncing_seg031_2CFA_EE2:
-                            MotionParams.unk_a = (short)-MotionParams.unk_a;
+                            MotionParams.unk_a_pitch = (short)-MotionParams.unk_a_pitch;
                         }
                         else
                         {
                             //seg031_2CFA_EF0:
-                            MotionParams.unk_a = (short)-(MotionParams.unk_a / 0xF);
-                            MotionParams.unk_26 = (short)Math.Abs((0xF - MotionParams.unk_16) * MotionParams.unk_a);
-                            MotionParams.unk_a = (short)(MotionParams.unk_a * MotionParams.unk_16);
+                            MotionParams.unk_a_pitch = (short)-(MotionParams.unk_a_pitch / 0xF);
+                            MotionParams.unk_26 = (short)Math.Abs((0xF - MotionParams.unk_16) * MotionParams.unk_a_pitch);
+                            MotionParams.unk_a_pitch = (short)(MotionParams.unk_a_pitch * MotionParams.unk_16);
 
                             if (MotionParams.unk_16 == 0)
                             {
@@ -159,9 +159,9 @@ namespace Underworld
                             if (var3 != 0)
                             {
                                 //seg031_2CFA_FA5:
-                                if (MotionParams.unk_a < 0x8D)
+                                if (MotionParams.unk_a_pitch < 0x8D)
                                 {
-                                    MotionParams.unk_a = 0;
+                                    MotionParams.unk_a_pitch = 0;
                                     MotionParams.unk_10 = 0;
                                     if (UWMotionParamArray.ACollisionIndex_dseg_67d6_416 == -1)
                                     {
@@ -275,8 +275,9 @@ namespace Underworld
             SortCollisions_seg028_2941_ED8();
 
             UWMotionParamArray.ACollisionIndex_dseg_67d6_416 = -1;
+            UWMotionParamArray.dseg_67d6_41D = 0x7f;
 
-            if (MotionParams.unk_a > 0)
+            if (MotionParams.unk_a_pitch > 0)
             {
                 //seg031_2CFA_136:
                 if (
@@ -309,7 +310,7 @@ namespace Underworld
             else
             {
                 //seg031_2CFA_133
-                if (MotionParams.unk_a == 0)
+                if (MotionParams.unk_a_pitch == 0)
                 {//seg031_2CFA_1E0
 
                     UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419 = MotionCalcArray.Unk10_base;
@@ -347,7 +348,7 @@ namespace Underworld
                     }
 
                     var CollisionIndex_var_4 = 0;
-                    while (MotionCalcArray.Unk14_collisoncount_base <= CollisionIndex_var_4)
+                    while (MotionCalcArray.Unk14_collisoncount_base <= CollisionIndex_var_4)//oob error
                     {
                         //seg031_2CFA_23A
                         var collision_Var4 = collisionTable[CollisionIndex_var_4];
@@ -928,7 +929,7 @@ namespace Underworld
                     }
                     newMotionParams.heading_1E = MotionParams.heading_1E;
                     newMotionParams.unk_14 = 0xEB;
-                    newMotionParams.unk_a = (short)(MotionParams.unk_a * di_mass);
+                    newMotionParams.unk_a_pitch = (short)(MotionParams.unk_a_pitch * di_mass);
 
                     //vanilla behaviour here is to retore currobj details
 
@@ -950,7 +951,7 @@ namespace Underworld
 
         static void MaybeReflection_seg031_2CFA_CC6(UWMotionParamArray MotionParams)
         {
-            MotionParams.unk_a = 0x8C;
+            MotionParams.unk_a_pitch = 0x8C;
             MotionParams.unk_10 = -4;
             if (MotionParams.unk_14 <= 0xEB)
             {
@@ -960,7 +961,7 @@ namespace Underworld
             if ((Rng.r.Next(0x7fff) & 0x3) != 0)
             {
                 MotionParams.heading_1E -= 0x3000;
-                MotionParams.heading_1E += (ushort)Rng.r.Next(0x6000);
+                MotionParams.heading_1E += (short)Rng.r.Next(0x6000);
             }
             UWMotionParamArray.dseg_67d6_26A4 = 1;
         }
@@ -1063,7 +1064,7 @@ namespace Underworld
                         (
                             (var3 != 0)
                             ||
-                            (var3 == 0 && MotionParams.unk_a == 0 && ((MotionCalcArray.UnkE_base & 0x800) == 0) && (MotionCalcArray.UnkC_terrain_base & 4) == 0)
+                            (var3 == 0 && MotionParams.unk_a_pitch == 0 && ((MotionCalcArray.UnkE_base & 0x800) == 0) && (MotionCalcArray.UnkC_terrain_base & 4) == 0)
                         )
                     {
                         var3 = 1;
@@ -1242,7 +1243,7 @@ namespace Underworld
                 &&
                 (var5 != 0)
                 &&
-                (MotionParams.unk_a == 0)
+                (MotionParams.unk_a_pitch == 0)
                 )
             {
                 if (MotionParams.unk_24 + MotionCalcArray.z4 >= MotionCalcArray.Unk11_base)

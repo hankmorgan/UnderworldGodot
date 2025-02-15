@@ -34,6 +34,8 @@ namespace Underworld
         //     }
         // }
 
+        
+
 
 
         //globals        
@@ -336,7 +338,7 @@ namespace Underworld
         /// <summary>
         /// Possibly related to mass or force?
         /// </summary>
-        public short unk_a
+        public short unk_a_pitch
         {
             get
             {
@@ -404,7 +406,7 @@ namespace Underworld
                 DataLoader.setAt(data, 0x12, 8, value);
             }
         }
-        public sbyte pitch_13
+        public sbyte unk_13
         {
             get
             {
@@ -510,11 +512,11 @@ namespace Underworld
             }
         }
 
-        public ushort heading_1E
+        public short heading_1E
         {
             get
             {
-                return (ushort)DataLoader.getAt(data, 0x1E, 16);
+                return (short)DataLoader.getAt(data, 0x1E, 16);
             }
             set
             {
@@ -599,7 +601,15 @@ namespace Underworld
             }
         }
 
+        public short GetParam6(int offset)
+        {
+            return (short)DataLoader.getAt(data, 0x6 + offset * 2, 16);
+        }
 
+        public void SetParam6(int offset, short value)
+        {
+            DataLoader.setAt(data, 0x6 + offset * 2, 16, value);
+        }
 
         // /// <summary>
         // /// Provides a look up into values starting at offset 6. To replicate vanilla array access while staying strongly typed.
@@ -694,11 +704,11 @@ namespace Underworld
         }
 
 
-        public static ushort Heading6_base
+        public static short Heading6_base
         {//TO confirm should this be signed or not?
             get
             {
-                return (ushort)DataLoader.getAt(base_dseg_25c4, 6, 16);
+                return (short)DataLoader.getAt(base_dseg_25c4, 6, 16);
             }
             set
             {
@@ -709,11 +719,11 @@ namespace Underworld
         /// <summary>
         /// At offset + 6
         /// </summary>
-        public static ushort Heading6
+        public static short Heading6
         {//TO confirm should this be signed or not?
             get
             {
-                return (ushort)DataLoader.getAt(PtrToMotionCalc, 6, 16);
+                return (short)DataLoader.getAt(PtrToMotionCalc, 6, 16);
             }
             set
             {

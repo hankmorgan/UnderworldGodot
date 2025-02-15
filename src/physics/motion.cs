@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.IO;
 
 namespace Underworld
 {
@@ -48,13 +49,14 @@ namespace Underworld
 
             UWMotionParamArray MotionParams = new();
 
-            InitMotionParams(projectile, MotionParams);
-
-            CalculateMotion_TopLevel(projectile, MotionParams, MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2);
-
-            //store current x/y homes in globals
-            
             Debug.Print($"Initial {projectile.a_name} {projectile.tileX},{projectile.tileY}, {projectile.xpos},{projectile.ypos},{projectile.zpos}");
+            
+            InitMotionParams(projectile, MotionParams);
+            
+            CalculateMotion_TopLevel(projectile, MotionParams, MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2);
+            DumpMotionMemory(MotionParams, "AfterCalculatingMotion");
+            
+            //store current x/y homes in globals                        
             var result = ApplyProjectileMotion(projectile, MotionParams);
             Debug.Print($"After {projectile.a_name} {projectile.tileX},{projectile.tileY}, {projectile.xpos},{projectile.ypos},{projectile.zpos}");
             objectInstance.Reposition(projectile);//finally move!
@@ -131,9 +133,9 @@ namespace Underworld
                 }
             }
 
-            projectile.zpos = MotionParams.z_4;
-            projectile.xpos = MotionParams.x_0;
-            projectile.ypos = MotionParams.y_2;
+            projectile.zpos = (short)(MotionParams.z_4>>3);
+            projectile.xpos = (short)(MotionParams.x_0>>5);
+            projectile.ypos = (short)(MotionParams.y_2>>5);
 
             if (projectile.IsStatic)
             {
@@ -193,7 +195,7 @@ namespace Underworld
             {
                 if (projectile.IsStatic)
                 {//seg030_2BB7_937
-                    if ((MotionParams.unk_14 | MotionParams.unk_a) != 0)
+                    if ((MotionParams.unk_14 | MotionParams.unk_a_pitch) != 0)
                     {
                         Debug.Print("Object should become mobile");
                         projectile = MoveObjectToMobileObjectList_seg030_2BB7_B0C(projectile);
@@ -202,7 +204,7 @@ namespace Underworld
                 else
                 {
                     //seg030_2BB7_956:
-                    if ((MotionParams.unk_14 | MotionParams.unk_a) == 0)
+                    if ((MotionParams.unk_14 | MotionParams.unk_a_pitch) == 0)
                     {
                         //object has likely stopped
                         projectile.UnkBit_0XA_Bit456 = (short)(dseg_67d6_3E8[MotionParams.tilestate25]);
@@ -254,7 +256,7 @@ namespace Underworld
                 {
                     projectile.UnkBit_0X13_Bit7 = 1;
                 }
-                var cx = 0x10 + (MotionParams.unk_a / 0x40);
+                var cx = 0x10 + (MotionParams.unk_a_pitch / 0x40);
                 if (cx < 0)
                 {
                     cx = 0;
@@ -318,7 +320,7 @@ namespace Underworld
         {
             if (UWMotionParamArray.dseg_67d6_25C1 == 0)
             {
-                MotionParams.heading_1E = (ushort)((Rng.r.Next(0x7FFF) & 0x3FFF) + MotionParams.heading_1E + 0xE000);
+                MotionParams.heading_1E = (short)((Rng.r.Next(0x7FFF) & 0x3FFF) + MotionParams.heading_1E + 0xE000);
                 MotionParams.unk_14 = 0xBC;
 
             }

@@ -20,7 +20,7 @@ namespace Underworld
             MotionParams.unk_16 = (byte)commonObjDat.unk6_5678(itemid);
             MotionParams.scaleresistances_1C = (byte)commonObjDat.scaleresistances(itemid);
             MotionParams.unk_1d = 0;
-            MotionParams.heading_1E = (ushort)(projectile.heading<<0xD);
+            MotionParams.heading_1E = (short)(projectile.heading<<0xD);
             MotionParams.unk_24 = 0;
             MotionParams.radius_22 = (byte)commonObjDat.radius(itemid);
             MotionParams.height_23 = (byte)commonObjDat.height(itemid);
@@ -30,7 +30,7 @@ namespace Underworld
 
             if (projectile.IsStatic)
             {//Not sure when a static projectile will hit this but including for completedness. (possibly collisions?)
-                MotionParams.unk_a = 0;
+                MotionParams.unk_a_pitch = 0;
                 MotionParams.unk_10 = 0;
                 MotionParams.unk_14 = 0;
                 MotionParams.hp_1b = (byte)projectile.quality;
@@ -41,9 +41,9 @@ namespace Underworld
             {
                 MotionParams.x_0 += (short)(projectile.npc_xhome<<3);
                 MotionParams.y_2 += (short)(projectile.npc_yhome<<3);
-                MotionParams.heading_1E = (ushort)(projectile.ProjectileHeading<<8);
+                MotionParams.heading_1E = (short)(projectile.ProjectileHeading<<8);
                 MotionParams.tilestate25 = (byte)(1 << projectile.UnkBit_0XA_Bit456);
-                MotionParams.pitch_13 = (sbyte)((projectile.Projectile_Pitch - 16) << 6);
+                MotionParams.unk_a_pitch = (sbyte)((projectile.Projectile_Pitch - 16) << 6);
                 MotionParams.unk_10 = (short)(projectile.UnkBit_0X13_Bit7 * -4);
                 MotionParams.hp_1b = projectile.npc_hp;  
 
@@ -63,7 +63,7 @@ namespace Underworld
                 &&
                 (commonObjDat.maybeMagicObjectFlag(itemid) == false)
                 &&
-                ((MotionParams.unk_a | MotionParams.unk_10) == 0)
+                ((MotionParams.unk_a_pitch | MotionParams.unk_10) == 0)
             )
             {
                 if  (2+(MotionParams.unk_1a<<1) < MotionParams.unk_14)
