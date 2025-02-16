@@ -52,7 +52,7 @@ namespace Underworld
             if (iteration == 0)
             {
                 Debug.Print($"Initial {projectile.a_name} Tile ({projectile.tileX},{projectile.tileY}), Position({projectile.xpos},{projectile.ypos},{projectile.zpos}) NPC_HP:{projectile.npc_hp} ProjectileHeading:{projectile.ProjectileHeading} UNKA_0123:{projectile.UnkBit_0XA_Bit0123} UNK_456:{projectile.UnkBit_0XA_Bit456} Coords ({projectile.CoordinateX},{projectile.CoordinateY},{projectile.CoordinateZ}) UNK13_0_6:{projectile.UnkBit_0X13_Bit0to6} UNK13_7:{projectile.UnkBit_0X13_Bit7} ProjectileSpeed:{projectile.Projectile_Speed}, ProjectilePitch:{projectile.Projectile_Pitch}");
-            }            
+            }
 
             InitMotionParams(projectile, MotionParams);
 
@@ -81,6 +81,12 @@ namespace Underworld
             return result;
         }
 
+        /// <summary>
+        /// Applies the calculated motion values to the object in motion
+        /// </summary>
+        /// <param name="projectile"></param>
+        /// <param name="MotionParams"></param>
+        /// <returns></returns>
         public static bool ApplyProjectileMotion(uwObject projectile, UWMotionParamArray MotionParams)
         {//seg030_2BB7_689
 
@@ -116,7 +122,7 @@ namespace Underworld
                 tileVar6.indexObjectList = projectile.index;
 
                 //Set zpos now as pressure triggers need this info.
-                projectile.zpos = MotionParams.z_4;
+                projectile.zpos = (short)(MotionParams.z_4 >> 3);
 
                 if (_RES == GAME_UW2)
                 {

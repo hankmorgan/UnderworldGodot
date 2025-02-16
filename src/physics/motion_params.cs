@@ -181,7 +181,7 @@ namespace Underworld
             }
         }
 
-        public static int CollisionHeightRelated_dseg_67d6_419
+        public static short CollisionHeightRelated_dseg_67d6_419
         {//0x1D
             get
             {

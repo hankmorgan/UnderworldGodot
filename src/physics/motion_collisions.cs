@@ -33,6 +33,11 @@ namespace Underworld
                 MotionParams.speed_12 -= (byte)var2;
             }
 
+            //seg031_2CFA_D9A:
+            MotionCalcArray.z4 = UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419;
+            UWMotionParamArray.RelatedToMotionZ_dseg_67d6_402 = 0;
+
+
             if (
                 (UWMotionParamArray.ACollisionIndex_dseg_67d6_416 == -1)
                 &&
@@ -288,13 +293,13 @@ namespace Underworld
                 )
                 {
                     //seg031_2CFA_15A:
-                    UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419 = collisionTable[MotionCalcArray.Unk15_base + MotionCalcArray.Unk16_base].zpos - MotionParams.height_23;
+                    UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419 = (short)(collisionTable[MotionCalcArray.Unk15_base + MotionCalcArray.Unk16_base].zpos - MotionParams.height_23);
                     UWMotionParamArray.ACollisionIndex_dseg_67d6_416 = (sbyte)(MotionCalcArray.Unk15_base + MotionCalcArray.Unk16_base);
                 }
                 else
                 {
                     //seg031_2CFA_18D:
-                    UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419 = 0x80 - MotionParams.height_23;
+                    UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419 = (short)(0x80 - MotionParams.height_23);
                 }
 
                 //seg031_2CFA_19F:
