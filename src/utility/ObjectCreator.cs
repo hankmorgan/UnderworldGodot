@@ -637,7 +637,7 @@ namespace Underworld
             critter.quality = 32;
             critter.owner = 32;
             critter.npc_hp = (byte)((0x10 + Rng.r.Next(0, 0x18)) / 0x20);
-            critter.ProjectileHeading = (short)(critter.heading << 5);
+            critter.ProjectileHeading = (ushort)(critter.heading << 5);
             critter.npc_goal = 8;
             critter.npc_gtarg = 0;
             critter.TargetTileX = 0;

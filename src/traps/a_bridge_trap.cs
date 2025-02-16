@@ -15,7 +15,7 @@ namespace Underworld
             var yStep = 0;
             int step;
 
-            trapObj.heading = (short)(trapObj.heading & 0x6);
+            trapObj.heading = (ushort)(trapObj.heading & 0x6);
             if (trapObj.heading < 4)
             {
                 step = 1;  // (1<<1)-1
@@ -110,7 +110,7 @@ namespace Underworld
                     newBridge.invis = 0;
                     newBridge.xpos = 3; newBridge.ypos = 3;
                     newBridge.zpos = (short)zpos; 
-                    newBridge.heading = (short)heading;
+                    newBridge.heading = (ushort)heading;
                     newBridge.tileX = tileX; newBridge.tileY = tileY;
                     return newBridge;
                 }

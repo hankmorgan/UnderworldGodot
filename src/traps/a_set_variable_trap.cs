@@ -30,7 +30,7 @@ namespace Underworld
                         RightOperator <<= 3;
                         RightOperator |= (int)trapObj.ypos;
                         var Operation = trapObj.heading;
-                        VariableOperationUW1(LeftOperator, Operation, RightOperator);
+                        VariableOperationUW1(LeftOperator, (short)Operation, RightOperator);
 
                         break;
                     }

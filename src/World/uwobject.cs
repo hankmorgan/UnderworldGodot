@@ -308,12 +308,12 @@ namespace Underworld
             }
         }
 
-        public short heading
+        public ushort heading
         {//;(short)(ExtractBits(Vals[1], 7, 0x7)); //bits 7-9
             get
             {
                 int val = GetAt16(PTR + 2);
-                return (short)DataLoader.ExtractBits(val, 7, 0x7);
+                return (ushort)DataLoader.ExtractBits(val, 7, 0x7);
             }
             set
             {
@@ -464,7 +464,7 @@ namespace Underworld
             }
         }
 
-        public short ProjectileHeading
+        public ushort ProjectileHeading
         {
             get
             {
@@ -535,7 +535,7 @@ namespace Underworld
         //     }
         // }
 
-         public short UnkBit_0XA_Bit0123
+        public short UnkBit_0XA_Bit0123
         {
             get
             {
@@ -1427,13 +1427,17 @@ namespace Underworld
             {
                 return (short)GetAt16(PTR + 0xf);
             }
+            set
+            {
+                SetAt16(PTR + 0xF, value);
+            }
         }
 
-        //Where are these values set???
-        public short npc_health = 0;//Is this poisoning?
-        public short npc_arms = 0;
-        public short npc_power = 0;
-        public short npc_name = 0;
+        // //Where are these values set???
+        // public short npc_health = 0;//Is this poisoning?
+        // public short npc_arms = 0;
+        // public short npc_power = 0;
+        // public short npc_name = 0;
 
         public Godot.Vector3 GetCoordinate(int tileX, int tileY)
         {//godot is y-up     

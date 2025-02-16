@@ -78,7 +78,7 @@ namespace Underworld
         {
             short var2 = 0; short var4 = 0;
             short var8 = 0;
-            SomethingProjectileHeading_seg021_22FD_EAE((short)MotionParams.heading_1E, ref var2, ref var4);
+            SomethingProjectileHeading_seg021_22FD_EAE((ushort)MotionParams.heading_1E, ref var2, ref var4);
             //seg031_2CFA_457:
             MotionParams.unk_6 = (short)((var2 * MotionParams.unk_14) >> 0xF);
             //seg031_2CFA_47F:
@@ -250,7 +250,7 @@ namespace Underworld
             File.WriteAllBytes($"c:\\temp\\{iteration}_{stage}_3FC", UWMotionParamArray.data_3FC);
         }
 
-        static void SomethingProjectileHeading_seg021_22FD_EAE(short heading, ref short Result_arg2, ref short Result_arg4)
+        static void SomethingProjectileHeading_seg021_22FD_EAE(ushort heading, ref short Result_arg2, ref short Result_arg4)
         {
             HeadingLookupCalc(heading, out short ax, out short bx);
             Result_arg2 = ax;
@@ -266,11 +266,11 @@ namespace Underworld
         /// <param name="Result_AX"></param>
         /// <param name="Result_BX"></param>
         /// <returns></returns>
-        static int HeadingLookupCalc(short bx, out short Result_AX, out short Result_BX)
+        static int HeadingLookupCalc(ushort bx, out short Result_AX, out short Result_BX)
         {
             var cx = bx & 0xff;
             //bx = (bx & 0xFF00)>>8;
-            bx = (short)(bx >> 8);
+            bx = (ushort)(bx >> 8);
             var bp = HeadingLookupTable[bx];
             var ax = HeadingLookupTable[bx + 1];
             ax = (short)(ax - bp);
@@ -303,8 +303,8 @@ namespace Underworld
             //THIS IS WHERE I GO WRONG
             var bl = ax >> 8;
             var bh = dl;
-            bx = (short)((dl << 8) | bl);
-            bx = (short)(bp + bx);
+            bx = (ushort)((dl << 8) | bl);
+            bx = (ushort)(bp + bx);
             Result_BX = (short)bx;
             return Result_AX;
 
@@ -1190,7 +1190,7 @@ namespace Underworld
                 //seg031_2CFA_C92:
                 ProcessCollisions_seg031_2CFA_12B8(MotionParams, -1);
 
-                var result = HeadingRelated_seg031_2CFA_A49(MotionParams, UWMotionParamArray.GetMotionXY_421(si));
+                var result = HeadingRelated_seg031_2CFA_A49(MotionParams, (ushort)UWMotionParamArray.GetMotionXY_421(si));
 
                 if (result == 0)
                 {
@@ -1349,7 +1349,7 @@ namespace Underworld
             }
         }
 
-        static int HeadingRelated_seg031_2CFA_A49(UWMotionParamArray MotionParams, int arg0)
+        static int HeadingRelated_seg031_2CFA_A49(UWMotionParamArray MotionParams, ushort arg0)
         {
             var di_arg0 = arg0;
             var si = 0;
@@ -1386,7 +1386,7 @@ namespace Underworld
                         if (MotionCalcArray.Heading6_base != di_arg0)
                         {
                             //seg031_2CFA_AE5:
-                            MotionCalcArray.Heading6_base = (short)di_arg0;
+                            MotionCalcArray.Heading6_base = (ushort)di_arg0;
                             if ((di_arg0 & 0x2000) != 0)
                             {
                                 //seg031_2CFA_AF2:
@@ -1483,12 +1483,12 @@ namespace Underworld
                     //seg031_2CFA_BC7:
                     if ((Math.Abs(si) > 0x3000) && (Math.Abs(si) < 0x5000))
                     {
-                        MotionCalcArray.Heading6_base = (short)(di_arg0 + si);
+                        MotionCalcArray.Heading6_base = (ushort)(di_arg0 + si);
                     }
                     else
                     {
                         var var2 = si / 0xF;
-                        MotionCalcArray.Heading6_base = (short)(di_arg0 + (var2 * MotionParams.unk_16));
+                        MotionCalcArray.Heading6_base = (ushort)(di_arg0 + (var2 * MotionParams.unk_16));
                     }
                 }
 

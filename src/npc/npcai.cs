@@ -812,7 +812,7 @@ namespace Underworld
                     {
                         newHeading = critter.heading - 1;
                     }
-                    critter.heading = (short)(newHeading & 7);
+                    critter.heading = (ushort)(newHeading & 7);
                     return false;
                 }
                 else
@@ -1154,11 +1154,11 @@ namespace Underworld
                                 deflection = deflection<<6;
 
                                 var newheading = critter.ProjectileHeading;
-                                newheading = (short)(newheading + deflection);
-                                newheading = (short)(newheading + 256);
-                                newheading = (short)(newheading % 256);
+                                newheading = (ushort)(newheading + deflection);
+                                newheading = (ushort)(newheading + 256);
+                                newheading = (ushort)(newheading % 256);
                                 critter.ProjectileHeading = newheading;
-                                critter.heading = (short)((newheading>>5) & 7);
+                                critter.heading = (ushort)((newheading>>5) & 7);
                                 critter.UnkBit_0X13_Bit0to6 = 0;
                                 return;
                             }
@@ -1203,8 +1203,8 @@ namespace Underworld
                     }
 
                     //seg007_17A2_3FF:
-                    critter.ProjectileHeading = (short)NewHeading;
-                    critter.heading = (short)((NewHeading >> 5) & 7);
+                    critter.ProjectileHeading = (ushort)NewHeading;
+                    critter.heading = (ushort)((NewHeading >> 5) & 7);
                     critter.npc_heading = ((short)(NewHeading & 0x1F));
                     bool frameadvance = false;
                     if 
@@ -1389,7 +1389,7 @@ namespace Underworld
                                 critter.AnimationFrame = (byte)((critter.AnimationFrame + 1) & 3);
                             }
                         }
-                        critter.heading = (short)heading;
+                        critter.heading = (ushort)heading;
                         critter.npc_heading = 0;
                     }
                 }

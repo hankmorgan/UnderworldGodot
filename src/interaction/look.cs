@@ -23,7 +23,7 @@ namespace Underworld
                     {
                         result = obj.heading & 0x3;//make sure identification does not lose a previous ID attempt if bit 3 has changed due to a lore skill increase
                     }
-                    obj.heading = (short)(4 | result); //store result and flag that attempt was made.
+                    obj.heading = (ushort)(4 | result); //store result and flag that attempt was made.
                     return result; //1,2 or 3
                 }
                 else

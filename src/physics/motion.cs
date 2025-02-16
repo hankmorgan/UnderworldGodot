@@ -49,20 +49,21 @@ namespace Underworld
 
             UWMotionParamArray MotionParams = new();
 
-            Debug.Print($"Initial {projectile.a_name} {projectile.tileX},{projectile.tileY}, {projectile.xpos},{projectile.ypos},{projectile.zpos}");
-            
+            if (iteration == 0)
+            {
+                Debug.Print($"Initial {projectile.a_name} Tile ({projectile.tileX},{projectile.tileY}), Position({projectile.xpos},{projectile.ypos},{projectile.zpos}) NPC_HP:{projectile.npc_hp} ProjectileHeading:{projectile.ProjectileHeading} UNKA_0123:{projectile.UnkBit_0XA_Bit0123} UNK_456:{projectile.UnkBit_0XA_Bit456} Coords ({projectile.CoordinateX},{projectile.CoordinateY},{projectile.CoordinateZ}) UNK13_0_6:{projectile.UnkBit_0X13_Bit0to6} UNK13_7:{projectile.UnkBit_0X13_Bit7} ProjectileSpeed:{projectile.Projectile_Speed}, ProjectilePitch:{projectile.Projectile_Pitch}");
+            }            
+
             InitMotionParams(projectile, MotionParams);
-            
+
             CalculateMotion_TopLevel(projectile, MotionParams, MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2);
             DumpMotionMemory(MotionParams, "AfterCalculatingMotion");
-            
+
             //store current x/y homes in globals                        
             var result = ApplyProjectileMotion(projectile, MotionParams);
-            Debug.Print($"After {projectile.a_name} {projectile.tileX},{projectile.tileY}, {projectile.xpos},{projectile.ypos},{projectile.zpos}");
-            objectInstance.Reposition(projectile);//finally move!
-
             if (result)
             {
+                projectile.UnkBit_0XA_Bit0123 = (short)((projectile.UnkBit_0XA_Bit0123 + projectile.Projectile_Speed) & 0xF);
                 if (_RES == GAME_UW2)
                 {
                     switch (projectile.item_id)
@@ -74,6 +75,9 @@ namespace Underworld
                     }
                 }
             }
+            iteration++;
+            Debug.Print($"After {iteration} {projectile.a_name} Tile ({projectile.tileX},{projectile.tileY}), Position({projectile.xpos},{projectile.ypos},{projectile.zpos}) NPC_HP:{projectile.npc_hp} ProjectileHeading:{projectile.ProjectileHeading} UNKA_0123:{projectile.UnkBit_0XA_Bit0123} UNK_456:{projectile.UnkBit_0XA_Bit456} Coords ({projectile.CoordinateX},{projectile.CoordinateY},{projectile.CoordinateZ}) UNK13_0_6:{projectile.UnkBit_0X13_Bit0to6} UNK13_7:{projectile.UnkBit_0X13_Bit7} ProjectileSpeed:{projectile.Projectile_Speed}, ProjectilePitch:{projectile.Projectile_Pitch}");
+            objectInstance.Reposition(projectile);//finally move!            
             return result;
         }
 
@@ -133,9 +137,9 @@ namespace Underworld
                 }
             }
 
-            projectile.zpos = (short)(MotionParams.z_4>>3);
-            projectile.xpos = (short)(MotionParams.x_0>>5);
-            projectile.ypos = (short)(MotionParams.y_2>>5);
+            projectile.zpos = (short)(MotionParams.z_4 >> 3);
+            projectile.xpos = (short)(MotionParams.x_0 >> 5);
+            projectile.ypos = (short)(MotionParams.y_2 >> 5);
 
             if (projectile.IsStatic)
             {
@@ -235,7 +239,7 @@ namespace Underworld
                 //seg030_2BB7_ADB: 
                 if (projectile.majorclass == 5)
                 {
-                    projectile.heading = (short)((MotionParams.heading_1E >> 0xD) & 0x7);
+                    projectile.heading = (ushort)((MotionParams.heading_1E >> 0xD) & 0x7);
                 }
                 else
                 {
@@ -245,7 +249,7 @@ namespace Underworld
             else
             {
                 //seg030_2BB7_9E1:
-                projectile.ProjectileHeading = (short)(MotionParams.heading_1E >> 8);
+                projectile.ProjectileHeading = (ushort)(MotionParams.heading_1E >> 8);
                 projectile.npc_xhome = (short)projectile.tileX;
                 projectile.npc_yhome = (short)projectile.tileY;
                 if (MotionParams.unk_10 == 0)
@@ -271,12 +275,13 @@ namespace Underworld
 
                 projectile.Projectile_Pitch = (short)cx;
                 projectile.UnkBit_0X13_Bit0to6 = (short)(MotionParams.unk_14 / 0x2F);
-                projectile.UnkBit_0XA_Bit456 = MotionParams.tilestate25;
+                projectile.UnkBit_0XA_Bit456 = dseg_67d6_3E8[MotionParams.tilestate25];
                 if (projectile.majorclass != 1)
                 {
                     projectile.CoordinateX = MotionParams.x_0;
                     projectile.CoordinateY = MotionParams.y_2;
-                }                
+                    projectile.CoordinateZ = MotionParams.z_4;
+                }
             }
             return true;
         }
@@ -320,7 +325,7 @@ namespace Underworld
         {
             if (UWMotionParamArray.dseg_67d6_25C1 == 0)
             {
-                MotionParams.heading_1E = (short)((Rng.r.Next(0x7FFF) & 0x3FFF) + MotionParams.heading_1E + 0xE000);
+                MotionParams.heading_1E = (ushort)((Rng.r.Next(0x7FFF) & 0x3FFF) + MotionParams.heading_1E + 0xE000);
                 MotionParams.unk_14 = 0xBC;
 
             }
@@ -332,7 +337,7 @@ namespace Underworld
         }
 
 
-        
+
         public static void seg006_1413_9F5(uwObject projectile)
         {//Init motion for NPCs
 

@@ -960,7 +960,7 @@ namespace Underworld
             if ((Rng.r.Next(0x7fff) & 0x3) != 0)
             {
                 MotionParams.heading_1E -= 0x3000;
-                MotionParams.heading_1E += (short)Rng.r.Next(0x6000);
+                MotionParams.heading_1E += (ushort)Rng.r.Next(0x6000);
             }
             UWMotionParamArray.dseg_67d6_26A4 = 1;
         }
