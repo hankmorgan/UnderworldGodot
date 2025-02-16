@@ -460,7 +460,7 @@ namespace Underworld
             int var1;
             var HeightIsZero_Var4 = 0;
             if (MotionCalcArray.Height9 == 0)
-            {
+            {//seg028_2941_EEC
                 HeightIsZero_Var4 = 1;
             }
 
@@ -712,7 +712,7 @@ namespace Underworld
             var var11_maybeX = varD;
 
             //seg028_2941_E64:
-            while (var11_maybeX > varF)
+            while (var11_maybeX <= varF)
             {
                 //seg028_2941_D13:
                 var var12_maybeY = varE;
@@ -722,7 +722,7 @@ namespace Underworld
                     var si = 0;
 
                     var di = var11_maybeX + (var12_maybeY << 6);
-                    var tilePtr = (int)(tile_var4.Ptr + di);
+                    var tilePtr = (int)(tile_var4.Ptr + (di<<2));
                     var tileAtPTR = UWTileMap.GetTileByPTR(tilePtr);
                     int next = tileAtPTR.indexObjectList;
                     //seg028_2941_E36:
@@ -767,7 +767,7 @@ namespace Underworld
                                 }
                             }
                         }
-                        indexByte = obj.index;
+                        indexByte = obj.index;//seg028_2941_E1E
                         next = obj.next;
                         si++;
                     }
@@ -996,7 +996,7 @@ namespace Underworld
             var var6 = 0;
             UWMotionParamArray.dseg_67d6_26A5 = 0;
 
-            RelatedToTileAndMotion_seg028_2941_385(MotionParams, MotionParams.unk_24);
+            ProcessMotionTileHeights_seg028_2941_385(MotionParams, MotionParams.unk_24);
             ScanForCollisions_seg028_2941_C0E(MotionParams, 0, 0);
             SetCollisionTarget_seg031_2CFA_10E(MotionParams, 0);
             var si_result = MotionCalcArray.UnkC_terrain_base & MotionCalcArray.UnkE_base;

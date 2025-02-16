@@ -349,7 +349,7 @@ namespace Underworld
                 DataLoader.setAt(data, 0xA, 16, value);
             }
         }
-        public short unk_c_terrain
+        public short unk_c
         {
             get
             {
@@ -839,11 +839,11 @@ namespace Underworld
         }
 
 
-        public static sbyte Unk10_base
+        public static byte Unk10_base
         {
             get
             {
-                return (sbyte)DataLoader.getAt(base_dseg_25c4, 0x10, 8);
+                return (byte)DataLoader.getAt(base_dseg_25c4, 0x10, 8);
             }
             set
             {
@@ -851,11 +851,11 @@ namespace Underworld
             }
         }
 
-        public static sbyte Unk10
+        public static byte Unk10
         {
             get
             {
-                return (sbyte)DataLoader.getAt(PtrToMotionCalc, 0x10, 8);
+                return (byte)DataLoader.getAt(PtrToMotionCalc, 0x10, 8);
             }
             set
             {
@@ -875,11 +875,11 @@ namespace Underworld
             }
         }
 
-        public static sbyte Unk11
+        public static byte Unk11
         {
             get
             {
-                return (sbyte)DataLoader.getAt(PtrToMotionCalc, 0x11, 8);
+                return (byte)DataLoader.getAt(PtrToMotionCalc, 0x11, 8);
             }
             set
             {
@@ -997,11 +997,11 @@ namespace Underworld
             }
         }
 
-        public static byte Unk17_base
+        public static sbyte Unk17_base
         {
             get
             {
-                return (byte)DataLoader.getAt(base_dseg_25c4, 0x17, 8);
+                return (sbyte)DataLoader.getAt(base_dseg_25c4, 0x17, 8);
             }
             set
             {
@@ -1009,11 +1009,11 @@ namespace Underworld
             }
         }
 
-        public static byte Unk17
+        public static sbyte Unk17
         {
             get
             {
-                return (byte)DataLoader.getAt(PtrToMotionCalc, 0x17, 8);
+                return (sbyte)DataLoader.getAt(PtrToMotionCalc, 0x17, 8);
             }
             set
             {
@@ -1171,29 +1171,29 @@ namespace Underworld
                 DataLoader.setAt(dseg_2562, 0xE, 8, value);
             }
         }
-        public int UnkF
+        public int UnkF//2571
         {
             get
             {//to confirm is this a byte or a word?
-                return (int)DataLoader.getAt(dseg_2562, 0xF, 8);
+                return (int)DataLoader.getAt(dseg_2562, 0xF, 16);
             }
             set
             {
-                DataLoader.setAt(dseg_2562, 0xF, 8, value);
+                DataLoader.setAt(dseg_2562, 0xF, 16, value);
             }
         }
 
-        public int Unk10
-        {
-            get
-            {
-                return (int)DataLoader.getAt(dseg_2562, 0x10, 8);
-            }
-            set
-            {
-                DataLoader.setAt(dseg_2562, 0x10, 8, value);
-            }
-        }
+        // public int Unk10
+        // {
+        //     get
+        //     {
+        //         return (int)DataLoader.getAt(dseg_2562, 0x10, 8);
+        //     }
+        //     set
+        //     {
+        //         DataLoader.setAt(dseg_2562, 0x10, 8, value);
+        //     }
+        // }
 
         public int Unk11_offset
         {
@@ -1228,7 +1228,7 @@ namespace Underworld
                 DataLoader.setAt(dseg_2562, 0x13, 8, value);
             }
         }
-        public int Unk14
+        public int Unk14//2576
         {
             get
             {

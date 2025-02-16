@@ -43,7 +43,7 @@ namespace Underworld
                 MotionParams.y_2 += (short)(projectile.npc_yhome<<3);
                 MotionParams.heading_1E = (ushort)(projectile.ProjectileHeading<<8);
                 MotionParams.tilestate25 = (byte)(1 << projectile.UnkBit_0XA_Bit456);
-                MotionParams.unk_a_pitch = (sbyte)((projectile.Projectile_Pitch - 16) << 6);
+                MotionParams.unk_a_pitch = (short)((projectile.Projectile_Pitch - 16) << 6);
                 MotionParams.unk_10 = (short)(projectile.UnkBit_0X13_Bit7 * -4);
                 MotionParams.hp_1b = projectile.npc_hp;  
 

@@ -1449,6 +1449,7 @@ namespace Underworld
                 {
                     Debug.Print($"Mismatch PTR in GetTileByPTR {SearchPTR}");
                 }
+                //Debug.Print($"Get tile by PTR {SearchPTR} ({tileX},{tileY})");
                 return UWTileMap.current_tilemap.Tiles[tileX, tileY];
             }
             else
