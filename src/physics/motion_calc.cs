@@ -246,12 +246,9 @@ namespace Underworld
         /// <param name="stage"></param>
         private static void DumpMotionMemory(UWMotionParamArray MotionParams, string stage)
         {
-            if (iteration == 3)
-            {
-                File.WriteAllBytes($"c:\\temp\\{iteration}_{stage}_MotionParams", MotionParams.data);
-                File.WriteAllBytes($"c:\\temp\\{iteration}_{stage}_CalcArray", MotionCalcArray.base_dseg_25c4);
-                File.WriteAllBytes($"c:\\temp\\{iteration}_{stage}_3FC", UWMotionParamArray.data_3FC);
-            }
+            File.WriteAllBytes($"c:\\temp\\{iteration}_{stage}_MotionParams", MotionParams.data);
+            File.WriteAllBytes($"c:\\temp\\{iteration}_{stage}_CalcArray", MotionCalcArray.base_dseg_25c4);
+            File.WriteAllBytes($"c:\\temp\\{iteration}_{stage}_3FC", UWMotionParamArray.data_3FC);
         }
 
         static void SomethingProjectileHeading_seg021_22FD_EAE(ushort heading, ref short Result_arg2, ref short Result_arg4)
@@ -331,9 +328,9 @@ namespace Underworld
             MotionCalcArray.Height9 = MotionParams.height_23;
             MotionCalcArray.MotionArrayObjectIndexA = MotionParams.index_20;
 
-            MotionCalcArray.x0 = (short)(MotionParams.x_0 >> 5);
-            MotionCalcArray.y2 = (short)(MotionParams.y_2 >> 5);
-            MotionCalcArray.z4 = (short)(MotionParams.z_4 >> 3);
+            MotionCalcArray.x0 = (ushort)(MotionParams.x_0 >> 5);
+            MotionCalcArray.y2 = (ushort)(MotionParams.y_2 >> 5);
+            MotionCalcArray.z4 = (ushort)(MotionParams.z_4 >> 3);
 
             UWMotionParamArray.RelatedToMotionX_dseg_67d6_3FE = (short)((MotionParams.x_0 & 0x1F) << 8);
             UWMotionParamArray.RelatedToMotionY_dseg_67d6_400 = (short)((MotionParams.y_2 & 0x1F) << 8);
@@ -786,9 +783,12 @@ namespace Underworld
             var var3 = 0;
             var var2 = GetCollisionHeightState_seg031_2CFA_13B2(MotionParams);
             UWMotionParamArray.MotionParam0x25_dseg_67d6_26A9 = MotionParams.tilestate25;
-
+            if (var2==6912)
+            {
+                Debug.Print("HERE");
+            }
             MotionParams.tilestate25 = GetTileState(var2);
-            if ((var2 & 0xC000) == 0)
+            if ((var2 & 0xC000) == 0)//var2 getting screwed up here.
             {//seg031_2CFA_17ED:
                 var tmp = UWMotionParamArray.LikelyIsMagicProjectile_dseg_67d6_26B8;
                 var2 = var2 & -tmp;
@@ -802,8 +802,8 @@ namespace Underworld
                         result = AMotionCollisionFunction_seg006_1413_ABF(var2);
                     }
                 }
-                if (result == 0)
-                {//seg031_2CFA_1829:
+                if ((result == 0) || ((UWMotionParamArray.dseg_67d6_26BA & var2) != 0))
+                {//seg031_2CFA_1829:   /logic is wrong here.
                     if ((var2 & 0x700) != 0)
                     {//when var2>0 then 0, when var2==0 then 1,
                      //seg031_2CFA_1830: 
@@ -1056,7 +1056,7 @@ namespace Underworld
 
             if (di == -1)
             {
-                MotionCalcArray.z4 += si;
+                MotionCalcArray.z4 = (ushort)(MotionCalcArray.z4 + si);
                 //seg031_2CFA_12A9
                 return LikelyTranslateXY_seg031_2CFA_8A6(MotionParams, arg0, di);
             }
@@ -1069,7 +1069,7 @@ namespace Underworld
                         MotionParams.tilestate25 = 0x10;
                         if (MotionCalcArray.z4 + si >= UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419)
                         {
-                            MotionCalcArray.z4 += si;
+                            MotionCalcArray.z4 = (ushort)(MotionCalcArray.z4 + si);
                             //seg031_2CFA_12A9
                             return LikelyTranslateXY_seg031_2CFA_8A6(MotionParams, arg0, di);
                         }
@@ -1095,7 +1095,7 @@ namespace Underworld
                     }
                     else
                     {
-                        MotionCalcArray.z4 += si;
+                        MotionCalcArray.z4 = (ushort)(MotionCalcArray.z4 + si);
                         return LikelyTranslateXY_seg031_2CFA_8A6(MotionParams, arg0, di);
                     }
                 }
@@ -1180,6 +1180,7 @@ namespace Underworld
 
         static void seg031_2CFA_C5C(UWMotionParamArray MotionParams, int arg0)
         {
+            Debug.Print("seg031_2CFA_C5C");
             if (MotionCalcArray.Unk17_base > 0)
             {
                 int si;

@@ -181,11 +181,11 @@ namespace Underworld
             }
         }
 
-        public static short CollisionHeightRelated_dseg_67d6_419
+        public static ushort CollisionHeightRelated_dseg_67d6_419
         {//0x1D
             get
             {
-                return (short)getAt(data_3FC, 0x1D, 16);
+                return (ushort)getAt(data_3FC, 0x1D, 16);
             }
             set
             {
@@ -641,11 +641,11 @@ namespace Underworld
 
         public static byte[] PtrToMotionCalc;
 
-        public static short x0_base
+        public static ushort x0_base
         {
             get
             {
-                return (short)DataLoader.getAt(base_dseg_25c4, 0, 16);
+                return (ushort)DataLoader.getAt(base_dseg_25c4, 0, 16);
             }
             set
             {
@@ -653,11 +653,11 @@ namespace Underworld
             }
         }
 
-        public static short x0
+        public static ushort x0
         {
             get
             {
-                return (short)DataLoader.getAt(PtrToMotionCalc, 0, 16);
+                return (ushort)DataLoader.getAt(PtrToMotionCalc, 0, 16);
             }
             set
             {
@@ -667,11 +667,11 @@ namespace Underworld
 
 
 
-        public static short y2_base
+        public static ushort y2_base
         {
             get
             {
-                return (short)DataLoader.getAt(base_dseg_25c4, 2, 16);
+                return (ushort)DataLoader.getAt(base_dseg_25c4, 2, 16);
             }
             set
             {
@@ -679,11 +679,11 @@ namespace Underworld
             }
         }
 
-        public static short y2
+        public static ushort y2
         {
             get
             {
-                return (short)DataLoader.getAt(PtrToMotionCalc, 2, 16);
+                return (ushort)DataLoader.getAt(PtrToMotionCalc, 2, 16);
             }
             set
             {
@@ -691,11 +691,11 @@ namespace Underworld
             }
         }
 
-        public static short z4
+        public static ushort z4
         {
             get
             {
-                return (short)DataLoader.getAt(PtrToMotionCalc, 4, 16);
+                return (ushort)DataLoader.getAt(PtrToMotionCalc, 4, 16);
             }
             set
             {
@@ -863,11 +863,11 @@ namespace Underworld
             }
         }
 
-        public static sbyte Unk11_base
+        public static byte Unk11_base
         {
             get
             {
-                return (sbyte)DataLoader.getAt(base_dseg_25c4, 0x11, 8);
+                return (byte)DataLoader.getAt(base_dseg_25c4, 0x11, 8);
             }
             set
             {

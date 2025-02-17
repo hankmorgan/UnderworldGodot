@@ -293,13 +293,13 @@ namespace Underworld
                 )
                 {
                     //seg031_2CFA_15A:
-                    UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419 = (short)(collisionTable[MotionCalcArray.Unk15_base + MotionCalcArray.Unk16_base].zpos - MotionParams.height_23);
+                    UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419 = (ushort)(collisionTable[MotionCalcArray.Unk15_base + MotionCalcArray.Unk16_base].zpos - MotionParams.height_23);
                     UWMotionParamArray.ACollisionIndex_dseg_67d6_416 = (sbyte)(MotionCalcArray.Unk15_base + MotionCalcArray.Unk16_base);
                 }
                 else
                 {
                     //seg031_2CFA_18D:
-                    UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419 = (short)(0x80 - MotionParams.height_23);
+                    UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419 = (ushort)(0x80 - MotionParams.height_23);
                 }
 
                 //seg031_2CFA_19F:
@@ -989,7 +989,7 @@ namespace Underworld
         /// <param name="MotionParams"></param>
         /// <returns></returns>
         static int GetCollisionHeightState_seg031_2CFA_13B2(UWMotionParamArray MotionParams)
-        {
+        {//funciton returns wrong result.
             var var2 = 0;
             var var3 = 0;
             var var4 = SBB(UWMotionParamArray.dseg_67d6_26BC & 0x80);
@@ -999,7 +999,7 @@ namespace Underworld
             ProcessMotionTileHeights_seg028_2941_385(MotionParams, MotionParams.unk_24);
             ScanForCollisions_seg028_2941_C0E(MotionParams, 0, 0);
             SetCollisionTarget_seg031_2CFA_10E(MotionParams, 0);
-            var si_result = MotionCalcArray.UnkC_terrain_base & MotionCalcArray.UnkE_base;
+            var si_result = MotionCalcArray.UnkC_terrain_base | MotionCalcArray.UnkE_base;
             var var5 = SBB(UWMotionParamArray.dseg_67d6_26BC);
 
             if (MotionCalcArray.Unk14_collisoncount_base > 0)
@@ -1051,9 +1051,8 @@ namespace Underworld
             }
             else
             {//seg031_2CFA_1483:
-                if (var5 == 0 && UWMotionParamArray.ACollisionIndex_dseg_67d6_416 == -1)
+                if (var5 != 0 && UWMotionParamArray.ACollisionIndex_dseg_67d6_416 == -1)
                 {
-
                     //seg031_2CFA_1493:
                     if (Math.Abs(MotionCalcArray.z4 - UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419) > MotionParams.unk_24)
                     {
@@ -1081,7 +1080,6 @@ namespace Underworld
                 else
                 {
                     //seg031_2CFA_14DF
-
                     if (var4 != 0)
                     {
                         //seg031_2CFA_14EF:
@@ -1131,8 +1129,13 @@ namespace Underworld
                     var3 = 0;
                 }
 
-                //seg031_2CFA_156F:
-                if (var3 != 0 && UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419 >= UWMotionParamArray.dseg_67d6_41D)
+                //seg031_2CFA_156F:. GOING WRONG HERE.
+                if ((var3 != 0) && (UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419 >= UWMotionParamArray.dseg_67d6_41D))
+                {
+                    //seg031_2CFA_157E
+                    si_result &= 0xFEFF;
+                }
+                else
                 {
                     //seg031_2CFA_1584
                     if (var3 == 0)
@@ -1143,14 +1146,16 @@ namespace Underworld
                         }
                     }
                 }
-                else
-                {
-                    //seg031_2CFA_157E
-                    si_result &= 0xFEFF;
-                }
 
                 //seg031_2CFA_159F:
                 if ((var3 != 0) && (UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419 + MotionParams.height_23 > 0x7F))
+                {
+                    //seg031_2CFA_15B9:
+                    var3 = 0;
+                    UWMotionParamArray.dseg_67d6_26A5 = 1;
+                    si_result |= 0x200;
+                }
+                else
                 {
                     //seg031_2CFA_15C8
                     if (var3 != 0)
@@ -1166,13 +1171,6 @@ namespace Underworld
                             }
                         }
                     }
-                }
-                else
-                {
-                    //seg031_2CFA_15B9:
-                    var3 = 0;
-                    UWMotionParamArray.dseg_67d6_26A5 = 1;
-                    si_result |= 0x200;
                 }
 
                 //seg031_2CFA_15F7: 
