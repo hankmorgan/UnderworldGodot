@@ -61,7 +61,7 @@ namespace Underworld
             InitMotionParams(projectile, MotionParams);
 
             CalculateMotion_TopLevel(projectile, MotionParams, MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2);
-            DumpMotionMemory(MotionParams, "AfterCalculatingMotion");
+            //DumpMotionMemory(MotionParams, "AfterCalculatingMotion");
 
             //store current x/y homes in globals                        
             var result = ApplyProjectileMotion(projectile, MotionParams);

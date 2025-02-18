@@ -900,11 +900,11 @@ namespace Underworld
             }
         }
 
-        public static byte Unk12
+        public static sbyte Unk12
         {
             get
             {
-                return (byte)DataLoader.getAt(PtrToMotionCalc, 0x12, 8);
+                return (sbyte)DataLoader.getAt(PtrToMotionCalc, 0x12, 8);
             }
             set
             {
@@ -912,11 +912,11 @@ namespace Underworld
             }
         }
 
-        public static byte Unk13
+        public static sbyte Unk13
         {
             get
             {
-                return (byte)DataLoader.getAt(PtrToMotionCalc, 0x13, 8);
+                return (sbyte)DataLoader.getAt(PtrToMotionCalc, 0x13, 8);
             }
             set
             {

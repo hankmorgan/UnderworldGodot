@@ -340,7 +340,7 @@ namespace Underworld
 
         public static int[] TileTraversalFlags_dseg_67d6_1BA6 = new int[] { 0x1E, 0, 0x13, 0x15, 0xB, 0xD, 0x20, 0x20, 0x20, 0x20, 0, 0, 0, 0, 0, 0x1E };
 
-        public static byte[] dseg_67d6_3C4_Lookup = new byte[] { 1, 0xFF, 0xFF, 1, 5, 4, 3, 6, 9, 2, 7, 0, 1 };
+        public static sbyte[] dseg_67d6_3C4_Lookup = new sbyte[] { 1, -1, -1, 1, 5, 4, 3, 6, 9, 2, 7, 0, 1 };
 
         public static byte[] dseg_67d6_3E8 = new byte[] { 0, 0, 1, 0, 2, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 4, 0 };
     }//end class
