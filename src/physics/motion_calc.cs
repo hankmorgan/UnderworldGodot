@@ -1362,7 +1362,7 @@ namespace Underworld
             var si = 0;
             var var3 = 0;
             var var4 = 0;
-            if (MotionParams.unk_17 == 0)
+            if ((MotionParams.unk_17 & 0x40)== 0)
             {
                 //seg031_2CFA_A63:
                 if (MotionParams.unk_a_pitch != 0)
