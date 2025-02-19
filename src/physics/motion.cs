@@ -335,7 +335,7 @@ namespace Underworld
         {
             if (UWMotionParamArray.dseg_67d6_25C1 == 0)
             {
-                MotionParams.heading_1E = (ushort)((Rng.r.Next(0x7FFF) & 0x3FFF) + MotionParams.heading_1E + 0xE000);
+                MotionParams.heading_1E = (short)((Rng.r.Next(0x7FFF) & 0x3FFF) + MotionParams.heading_1E + 0xE000);
                 MotionParams.unk_14 = 0xBC;
 
             }

@@ -243,10 +243,10 @@ namespace Underworld
         {
             return (short)DataLoader.getAt(data_3FC, 25 + index * 2, 16);
         }
-        public static void SetMotionXY421(int index, short value)
-        {
-            DataLoader.setAt(data_3FC, 25 + index * 2, 16, value);
-        }
+        // public static void SetMotionXY421(int index, short value)
+        // {
+        //     DataLoader.setAt(data_3FC, 25 + index * 2, 16, value);
+        // }
 
 
 
@@ -512,11 +512,11 @@ namespace Underworld
             }
         }
 
-        public ushort heading_1E
+        public short heading_1E
         {
             get
             {
-                return (ushort)DataLoader.getAt(data, 0x1E, 16);
+                return (short)DataLoader.getAt(data, 0x1E, 16);
             }
             set
             {
@@ -704,11 +704,11 @@ namespace Underworld
         }
 
 
-        public static ushort Heading6_base
+        public static short Heading6_base
         {//TO confirm should this be signed or not?
             get
             {
-                return (ushort)DataLoader.getAt(base_dseg_25c4, 6, 16);
+                return (short)DataLoader.getAt(base_dseg_25c4, 6, 16);
             }
             set
             {
@@ -719,11 +719,11 @@ namespace Underworld
         /// <summary>
         /// At offset + 6
         /// </summary>
-        public static ushort Heading6
+        public static short Heading6
         {//TO confirm should this be signed or not?
             get
             {
-                return (ushort)DataLoader.getAt(PtrToMotionCalc, 6, 16);
+                return (short)DataLoader.getAt(PtrToMotionCalc, 6, 16);
             }
             set
             {

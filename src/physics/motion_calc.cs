@@ -1197,7 +1197,7 @@ namespace Underworld
                 //seg031_2CFA_C92:
                 ProcessCollisions_seg031_2CFA_12B8(MotionParams, -1);
 
-                var result = HeadingRelated_seg031_2CFA_A49(MotionParams, (ushort)UWMotionParamArray.GetMotionXY_421(si));
+                var result = HeadingRelated_seg031_2CFA_A49(MotionParams, (short)dseg_67d6_421[si]);
 
                 if (result == 0)
                 {//seg31_2cfa:cbc
@@ -1356,10 +1356,10 @@ namespace Underworld
             }
         }
 
-        static int HeadingRelated_seg031_2CFA_A49(UWMotionParamArray MotionParams, ushort arg0)
+        static int HeadingRelated_seg031_2CFA_A49(UWMotionParamArray MotionParams, short arg0)
         {
             var di_arg0 = arg0;
-            var si = 0;
+            short si = 0;
             var var3 = 0;
             var var4 = 0;
             if ((MotionParams.unk_17 & 0x40)== 0)
@@ -1367,16 +1367,16 @@ namespace Underworld
                 //seg031_2CFA_A63:
                 if (MotionParams.unk_a_pitch != 0)
                 {
-                    si = MotionParams.unk_a_pitch / 0x10;
-                    si = si * (MotionParams.unk_16 + 1);
+                    si = (short)(MotionParams.unk_a_pitch / 0x10);
+                    si = (short)(si * (MotionParams.unk_16 + 1));
                     MotionParams.unk_a_pitch = (short)si;
                 }
-                si = di_arg0 - MotionCalcArray.Heading6_base;
+                si = (short)(di_arg0 - MotionCalcArray.Heading6_base);
 
-                if ((si > 0x4000) && (si < 0xC000))
+                if ((si > 0x4000)  || (si < -16384))   
                 {
-                    di_arg0 += 0x8000;
-                    si += 0x8000;
+                    di_arg0 += -32768;//  0x8000;
+                    si += -32768;
                 }
 
                 if ((MotionParams.unk_17 & 0x80) != 0)
@@ -1393,7 +1393,7 @@ namespace Underworld
                         if (MotionCalcArray.Heading6_base != di_arg0)
                         {
                             //seg031_2CFA_AE5:
-                            MotionCalcArray.Heading6_base = (ushort)di_arg0;
+                            MotionCalcArray.Heading6_base = di_arg0;
                             if ((di_arg0 & 0x2000) != 0)
                             {
                                 //seg031_2CFA_AF2:
@@ -1489,13 +1489,13 @@ namespace Underworld
                 {
                     //seg031_2CFA_BC7:
                     if ((Math.Abs(si) > 0x3000) && (Math.Abs(si) < 0x5000))
-                    {
-                        MotionCalcArray.Heading6_base = (ushort)(di_arg0 + si);
+                    {//seg31_2cfa:BDF
+                        MotionCalcArray.Heading6_base = (short)(di_arg0 + si);
                     }
                     else
-                    {
+                    {//seg31_2cfa:BDF
                         var var2 = si / 0xF;
-                        MotionCalcArray.Heading6_base = (ushort)(di_arg0 + (var2 * MotionParams.unk_16));
+                        MotionCalcArray.Heading6_base = (short)(di_arg0 + (var2 * MotionParams.unk_16));
                     }
                 }
 

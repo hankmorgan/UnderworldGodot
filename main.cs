@@ -67,8 +67,8 @@ public partial class main : Node3D
 			GetTree().DebugCollisionsHint = uwsettings.instance.showcolliders;
 		}	
 
-		// var exe = File.ReadAllBytes("C:\\Games\\UW2IDA\\UW2\\uw2.exe");
-		// int addr_ptr=0x63D40;
+		// var exe = System.IO.File.ReadAllBytes("C:\\Games\\UW2\\uw2.exe");
+		// int addr_ptr=0x68EB1;
 		// for (long x = 0; x<=320;x++)
 		// {
 		// 	Debug.Print($"{x}={(short)Loader.getAt(exe,addr_ptr,16)}");
