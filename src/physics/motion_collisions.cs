@@ -21,11 +21,11 @@ namespace Underworld
 
             var si_mass = commonObjDat.mass(projectile.item_id);
             if (UWMotionParamArray.Gravity_Related_dseg_67d6_41F <= 4)
-            {
+            {//UWMotionParamArray.Gravity_Related_dseg_67d6_41F
                 MotionParams.speed_12 = 0;
             }
             else
-            {
+            {//2CFA:0D5B
                 var var2 = Math.Abs(MotionCalcArray.z4 - UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419);
                 var2 = var2 * UWMotionParamArray.dseg_67d6_412;
 
@@ -887,16 +887,16 @@ namespace Underworld
                 return 2;
             }
             else
-            {
+            {//seg030_2bb7_d39
                 if (commonObjDat.ActivatedByCollision(diMotionObject_itemid))
-                {
+                {//seg030_2bb7_3F7
                     UWMotionParamArray.dseg_67d6_25BC = 1;
                     use.Use(
                         index: MotionObject.index,
                         objList: UWTileMap.current_tilemap.LevelObjects,
                         WorldObject: true);//this line will probably break a lot until I make use a more vanilla compliant Use() function.
                     if (UWTileMap.ValidTile(CollidedObject_VarA.tileX, CollidedObject_VarA.tileY))
-                    {
+                    {//Seg031_2bb7_421
                         return BounceOtherObject_seg030_2BB7_8(MotionParams, CollidedObject_VarA);
                     }
                     else
@@ -905,8 +905,8 @@ namespace Underworld
                     }
                 }
                 else
-                {
-                    return 2;
+                {//Seg031_2bb7_421
+                    return BounceOtherObject_seg030_2BB7_8(MotionParams, CollidedObject_VarA);
                 }
             }
         }

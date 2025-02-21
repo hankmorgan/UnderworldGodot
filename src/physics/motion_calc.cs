@@ -1010,7 +1010,7 @@ namespace Underworld
                     var2 = 0x40 * (UWMotionParamArray.Gravity_related_dseg_67d6_408 / 0x800) * di * UWMotionParamArray.Gravity_Related_dseg_67d6_41F;
                 }
                 else
-                {
+                {//Seg031_2CFA_1181
                     var2 = UWMotionParamArray.dseg_67d6_410 * (UWMotionParamArray.Gravity_related_dseg_67d6_408 / 0x800) * di * UWMotionParamArray.Gravity_Related_dseg_67d6_41F;
                     var2 = var2 / 0x100;
                 }
@@ -1058,7 +1058,7 @@ namespace Underworld
                 if (si <= 0)
                 {
                     if (si < 0)
-                    {
+                    {//2CFA:1285
                         MotionParams.tilestate25 = 0x10;
                         if (MotionCalcArray.z4 + si >= UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419)
                         {
