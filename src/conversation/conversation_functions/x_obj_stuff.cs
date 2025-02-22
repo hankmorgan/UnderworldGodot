@@ -68,7 +68,7 @@ namespace Underworld
                     {
                         if (look.CanBeIdentified(obj))
                         {
-                            obj.heading = (ushort)identifyObject;
+                            obj.heading = identifyObject;
                         }
                     }
                     if (owner!=-1)

@@ -1,9 +1,11 @@
 using System.Diagnostics;
+using System.Runtime.Serialization;
 
 namespace Underworld
 {
     public partial class motion : Loader
     {
+        static bool ObjectHasHalted = false;
         static int iteration = 0;
         public static bool MotionSingleStepEnabled = false;
         static int MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2;
@@ -17,6 +19,7 @@ namespace Underworld
         }
         public static bool MotionProcessing(uwObject projectile)
         {
+            ObjectHasHalted = false;
             if (!MotionSingleStepEnabled)
             {
                 return false;
@@ -51,17 +54,12 @@ namespace Underworld
 
             if (iteration == 0)
             {
-                Debug.Print($"Initial {projectile.a_name} Tile ({projectile.tileX},{projectile.tileY}), Position({projectile.xpos},{projectile.ypos},{projectile.zpos}) NPC_HP:{projectile.npc_hp} ProjectileHeading:{projectile.ProjectileHeading} UNKA_0123:{projectile.UnkBit_0XA_Bit0123} UNK_456:{projectile.UnkBit_0XA_Bit456} Coords ({projectile.CoordinateX},{projectile.CoordinateY},{projectile.CoordinateZ}) UNK13_0_6:{projectile.UnkBit_0X13_Bit0to6} UNK13_7:{projectile.UnkBit_0X13_Bit7} ProjectileSpeed:{projectile.Projectile_Speed}, ProjectilePitch:{projectile.Projectile_Pitch}");
-            }
-            if (iteration == 3)
-            {
-                Debug.Print("here");
+                Debug.Print($"Initial {projectile.a_name} Tile ({projectile.tileX},{projectile.tileY}), Position({projectile.xpos},{projectile.ypos},{projectile.zpos}) NPC_HP:{projectile.npc_hp} ProjectileHeading:{projectile.ProjectileHeading} UNKA_0123:{projectile.UnkBit_0XA_Bit0123} UNK_456:{projectile.UnkBit_0XA_Bit456_tilestate} Coords ({projectile.CoordinateX},{projectile.CoordinateY},{projectile.CoordinateZ}) UNK13_0_6:{projectile.UnkBit_0X13_Bit0to6} UNK13_7:{projectile.UnkBit_0X13_Bit7} ProjectileSpeed:{projectile.Projectile_Speed}, ProjectilePitch:{projectile.Projectile_Pitch}");
             }
 
             InitMotionParams(projectile, MotionParams);
 
             CalculateMotion_TopLevel(projectile, MotionParams, MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2);
-            //DumpMotionMemory(MotionParams, "AfterCalculatingMotion");
 
             //store current x/y homes in globals                        
             var result = ApplyProjectileMotion(projectile, MotionParams);
@@ -78,10 +76,14 @@ namespace Underworld
                             break;
                     }
                 }
-            }            
-            Debug.Print($"After {iteration} {projectile.a_name} Tile ({projectile.tileX},{projectile.tileY}), Position({projectile.xpos},{projectile.ypos},{projectile.zpos}) NPC_HP:{projectile.npc_hp} ProjectileHeading:{projectile.ProjectileHeading} UNKA_0123:{projectile.UnkBit_0XA_Bit0123} UNK_456:{projectile.UnkBit_0XA_Bit456} Coords ({projectile.CoordinateX},{projectile.CoordinateY},{projectile.CoordinateZ}) UNK13_0_6:{projectile.UnkBit_0X13_Bit0to6} UNK13_7:{projectile.UnkBit_0X13_Bit7} ProjectileSpeed:{projectile.Projectile_Speed}, ProjectilePitch:{projectile.Projectile_Pitch}");
+            }
+            Debug.Print($"After {iteration} {projectile.a_name} Tile ({projectile.tileX},{projectile.tileY}), Position({projectile.xpos},{projectile.ypos},{projectile.zpos}) NPC_HP:{projectile.npc_hp} ProjectileHeading:{projectile.ProjectileHeading} UNKA_0123:{projectile.UnkBit_0XA_Bit0123} UNK_456:{projectile.UnkBit_0XA_Bit456_tilestate} Coords ({projectile.CoordinateX},{projectile.CoordinateY},{projectile.CoordinateZ}) UNK13_0_6:{projectile.UnkBit_0X13_Bit0to6} UNK13_7:{projectile.UnkBit_0X13_Bit7} ProjectileSpeed:{projectile.Projectile_Speed}, ProjectilePitch:{projectile.Projectile_Pitch}");
             iteration++;
-            objectInstance.Reposition(projectile);//finally move!            
+            if (!ObjectHasHalted)
+            {
+                objectInstance.Reposition(projectile);//finally move!            
+            }
+
             return result;
         }
 
@@ -221,7 +223,7 @@ namespace Underworld
                     if ((MotionParams.unk_14 | MotionParams.unk_a_pitch) == 0)
                     {
                         //object has likely stopped
-                        projectile.UnkBit_0XA_Bit456 = (short)(dseg_67d6_3E8[MotionParams.tilestate25]);
+                        projectile.UnkBit_0XA_Bit456_tilestate = (short)(dseg_67d6_3E8[MotionParams.tilestate25]);
                         projectile = ObjectHitsFloorTile_seg030_2BB7_DDF(projectile);
                         if (projectile == null)
                         {
@@ -249,7 +251,7 @@ namespace Underworld
                 //seg030_2BB7_ADB: 
                 if (projectile.majorclass == 5)
                 {
-                    projectile.heading = (ushort)((MotionParams.heading_1E >> 0xD) & 0x7);
+                    projectile.heading = (short)((MotionParams.heading_1E >> 0xD) & 0x7);
                 }
                 else
                 {
@@ -285,7 +287,7 @@ namespace Underworld
 
                 projectile.Projectile_Pitch = (short)cx;
                 projectile.UnkBit_0X13_Bit0to6 = (short)(MotionParams.unk_14 / 0x2F);
-                projectile.UnkBit_0XA_Bit456 = dseg_67d6_3E8[MotionParams.tilestate25];
+                projectile.UnkBit_0XA_Bit456_tilestate = dseg_67d6_3E8[MotionParams.tilestate25];
                 if (projectile.majorclass != 1)
                 {
                     projectile.CoordinateX = MotionParams.x_0;
@@ -327,8 +329,109 @@ namespace Underworld
 
         static uwObject ObjectHitsFloorTile_seg030_2BB7_DDF(uwObject projectile)
         {
+            bool haltobject = true;
+            uwObject haltedObject;
             Debug.Print("object hits floor tile");
-            return projectile;
+            var si_cull = commonObjDat.projectilecullingpriority(projectile.item_id);
+            if (projectile.UnkBit_0XA_Bit456_tilestate == 1)
+            {
+                //object has landed in water.
+                si_cull = 8;
+                animo.SpawnAnimoInTile(6, projectile.xpos, projectile.ypos, projectile.zpos, projectile.tileX, projectile.tileY);//spawn a splash
+                if (_RES == GAME_UW2)
+                {
+                    OilOnMud();
+                }
+            }
+            if ((si_cull > 0) && (si_cull < 8))
+            {
+                if (ObjectRemover.ObjectCulling(projectile, 0xA))
+                {
+                    haltobject = false;
+                }
+            }
+
+            //seg_030_2bb7_e7c
+            var tile = UWTileMap.current_tilemap.Tiles[projectile.tileX, projectile.tileY];
+            if (haltobject)
+            {
+                var newSlot = ObjectFreeLists.GetAvailableObjectSlot(ObjectFreeLists.ObjectListType.StaticList);
+                haltedObject = UWTileMap.current_tilemap.LevelObjects[newSlot];
+                if (haltedObject != null)
+                {
+                    for (int i = 0; i < 8; i++)
+                    {//copy props
+                        haltedObject.DataBuffer[haltedObject.PTR + i] = projectile.DataBuffer[projectile.PTR + i];
+                    }
+                    haltedObject.tileX = projectile.tileX;
+                    haltedObject.tileY = projectile.tileY;
+                    if (haltedObject.majorclass != 7)
+                    {
+                        if (haltedObject.OneF0Class == 9)
+                        {   //light sources
+                            if ((haltedObject.classindex >= 4) && (haltedObject.classindex <= 7))
+                            {   //lit light sources
+                                haltedObject.item_id -= 4;//turn off the light.
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Debug.Print("TODO Handle halted animo");
+                    }
+                }
+                //seg030_2BB7_F43:
+                projectile.quality = projectile.npc_hp;
+
+                if ((projectile.majorclass != 5) && (projectile.majorclass != 6))
+                {   //not a 3d model or not a trap/trigger
+                    if (commonObjDat.rendertype(haltedObject.item_id) != 2)
+                    {
+                        haltedObject.heading = projectile.npc_whoami;//yes. whoami is temp storage for heading.
+                    }
+                }
+            }
+            else
+            {
+                haltedObject = null;
+            }
+
+            int varE = 0;
+            if (si_cull == 9)
+            {
+                if (projectile.majorclass == 1)
+                {
+                    varE = 0;
+                }
+                else
+                {
+                    varE = projectile.ProjectileSourceID;
+                }
+            }
+            ObjectRemover.DeleteObjectFromTile(projectile.tileX, projectile.tileY, projectile.index, true);
+            if (haltedObject != null)
+            {//is this a bit hairy under the circumstances?
+                haltedObject.next = tile.indexObjectList;
+                tile.indexObjectList = haltedObject.index;
+                objectInstance.RedrawFull(haltedObject);
+                ObjectHasHalted = true;
+                if (_RES == GAME_UW2)
+                {
+                    Debug.Print("Run Pressure triggers in tile for halted object");
+                }
+            }
+            if (si_cull == 9)
+            {
+                //detonate
+                if (DetonateProjectile(haltedObject, varE) == false)
+                {
+                    if (ObjectRemover.DeleteObjectFromTile(haltedObject.tileX, haltedObject.tileY, haltedObject.index, true))
+                    {
+                        haltedObject = null;
+                    }
+                }
+            }
+            return haltedObject;
         }
 
         static void seg030_2BB7_107A(UWMotionParamArray MotionParams)
@@ -352,6 +455,9 @@ namespace Underworld
         {//Init motion for NPCs
 
         }
+
+
+
 
     }//end class
 }//end namespace

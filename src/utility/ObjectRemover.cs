@@ -371,6 +371,19 @@ namespace Underworld
             return false;
         }
 
+        /// <summary>
+        /// Culls an object if it or all of it's contents meets certain criteria, (rng check, object flags)
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="CullingRange"></param>
+        /// <returns>True if object can be culled, false to preserve</returns>
+
+        public static bool ObjectCulling(uwObject obj, int CullingRange)
+        {
+            Debug.Print ("TODO, object culling");
+            return false;
+        }
+
 
     }//end class
 }//end namespace

@@ -308,12 +308,12 @@ namespace Underworld
             }
         }
 
-        public ushort heading
+        public short heading
         {//;(short)(ExtractBits(Vals[1], 7, 0x7)); //bits 7-9
             get
             {
                 int val = GetAt16(PTR + 2);
-                return (ushort)DataLoader.ExtractBits(val, 7, 0x7);
+                return (short)DataLoader.ExtractBits(val, 7, 0x7);
             }
             set
             {
@@ -535,6 +535,9 @@ namespace Underworld
         //     }
         // }
 
+        /// <summary>
+        /// For projectiles value incremenents by projectile speed each update. Wraps around at 15.
+        /// </summary>
         public short UnkBit_0XA_Bit0123
         {
             get
@@ -555,9 +558,9 @@ namespace Underworld
         }
 
         /// <summary>
-        /// When 0 study npc returns a hp of 30????
+        /// When 0 study npc returns a hp of 30???? For projectiles appears to indicate tile state. 4 when in the air, 0 when grounded, possibly 1 when landing in water.
         /// </summary>
-        public short UnkBit_0XA_Bit456
+        public short UnkBit_0XA_Bit456_tilestate
         {
             get
             {
@@ -964,6 +967,9 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// Possibly indicates the object should stop moving when value is 0.
+        /// </summary>
         public short UnkBit_0X13_Bit7
         {
             get

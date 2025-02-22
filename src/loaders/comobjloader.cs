@@ -155,17 +155,18 @@ namespace Underworld
         }
 
         /// <summary>
+        /// Use to control if an object is to be culled from the gameworld on projectile impact.
         /// bits 1-4  (checked when object hits the ground, 
         /// only set when object is a damaging projectile type so this is probability that
         /// the missile is removed from the world on impact when Rng (0-7) is less than the value. 
-        /// Any value >=8 means the projectile is destroyed on impact, 
+        /// Any value >=8 means the projectile is destroyed on impact (fireballs etc) and cause damge to tiles., 
         /// 0 means object is not removed on impact.
         /// If the mobile object has bits 4,5,6 at offset 0xA set to 1 
         ///  then the projectile will be removed regardless of the below value and a splash spawned. (landing in water)
         /// </summary>
         /// <param name="item_id"></param>
         /// <returns></returns>
-        public static int projectileflag(int item_id)
+        public static int projectilecullingpriority(int item_id)
         { //bits 1-4 at + 7
             return buffer[PTR(item_id) + 7] >> 1  & 0xf;
         }

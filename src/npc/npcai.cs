@@ -812,7 +812,7 @@ namespace Underworld
                     {
                         newHeading = critter.heading - 1;
                     }
-                    critter.heading = (ushort)(newHeading & 7);
+                    critter.heading = (short)(newHeading & 7);
                     return false;
                 }
                 else
@@ -1158,7 +1158,7 @@ namespace Underworld
                                 newheading = (ushort)(newheading + 256);
                                 newheading = (ushort)(newheading % 256);
                                 critter.ProjectileHeading = newheading;
-                                critter.heading = (ushort)((newheading>>5) & 7);
+                                critter.heading = (short)((newheading>>5) & 7);
                                 critter.UnkBit_0X13_Bit0to6 = 0;
                                 return;
                             }
@@ -1204,7 +1204,7 @@ namespace Underworld
 
                     //seg007_17A2_3FF:
                     critter.ProjectileHeading = (ushort)NewHeading;
-                    critter.heading = (ushort)((NewHeading >> 5) & 7);
+                    critter.heading = (short)((NewHeading >> 5) & 7);
                     critter.npc_heading = ((short)(NewHeading & 0x1F));
                     bool frameadvance = false;
                     if 
@@ -1389,7 +1389,7 @@ namespace Underworld
                                 critter.AnimationFrame = (byte)((critter.AnimationFrame + 1) & 3);
                             }
                         }
-                        critter.heading = (ushort)heading;
+                        critter.heading = (short)heading;
                         critter.npc_heading = 0;
                     }
                 }
