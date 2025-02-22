@@ -43,7 +43,7 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * Map loading
 * Animated doors and sprites
 * Looping NPC animations
-* Full Conversations
+* Full Conversations with NPCs
 * Most game triggers and traps.
 * Barter logic
 * Lighting effects (Palette based except for correct transparencies)
@@ -71,14 +71,14 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * Skillpoints and character advancement logic
 * Automap navigation and updating
 * Read-only automap notes.
-* Partial processing of SCD.ARK (Scheduled events in UW2)
+* Processing of SCD.ARK events (Scheduled events in UW2)
 * Partial cutscene support
 * Sleeping and dream logic
 * Character creation
+* Partial Object physics
 
 ## Whats missing
 * Player collision and regular movement
-* Object physics
 * NPC AI, movement and pathfinding
 * NPC combat actions
 * Sound and music
@@ -137,10 +137,12 @@ Use shift and scroll to change speed.
 F1-F6 Change interaction modes
 F7 Toggle inventory panels
 F8 Cast Spell
-F9 Use Track Skill (no implemented yet)
+F9 Use Track Skill
 F10 Make camp and go to sleep.
 F11 Toggle Position label
-F12 Debug reprocess SCD.ARK
+F12 Debug process SCD.ARK events
+Apostrophe Give all runestones, 30 mana and maximise mage skills.
+PgDn Step forward objects in motion one step
 
 
 # Appendix
