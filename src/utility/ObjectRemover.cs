@@ -10,6 +10,7 @@ namespace Underworld
         static int RemoveTrapFlags;
         static long TrapTriggerContainerListHead = 0;
 
+        static int GlobalCullingRange = 0;
         public static void RemoveTrapChain(uwObject trapObj, long ptrListHead)
         {
             //var triggertile = UWTileMap.current_tilemap.Tiles[triggerX, triggerY];
@@ -264,7 +265,7 @@ namespace Underworld
                                 Debug.Print("Special handling for deleting timer triggers");
                             }
                             Debug.Print($"Breaking link for trigger {triggerObj.index} {triggerObj.a_name}");
-                            RemoveObjectFromLinkedList(listhead, triggerObj.index, objList, triggerObj.PTR+6);
+                            RemoveObjectFromLinkedList(listhead, triggerObj.index, objList, triggerObj.PTR + 6);
                             ObjectFreeLists.ReleaseFreeObject(triggerObj);
                             triggerObj.link = 0;
                             RemoveTrapFlags--;
@@ -282,19 +283,19 @@ namespace Underworld
 
         public static bool RemoveObjectFromLinkedList(int listhead, int toRemove, uwObject[] objlist, long HeadOffset)
         {
-            if (listhead==toRemove)
+            if (listhead == toRemove)
             {//Handle case where this starts at an arbitary data location and links directly to the object.
-                var ObjToRemove = objlist[toRemove]; 
+                var ObjToRemove = objlist[toRemove];
                 var databuffer = ObjToRemove.DataBuffer;
-                var tmp = (int)Loader.getAt(databuffer,HeadOffset,16);
+                var tmp = (int)Loader.getAt(databuffer, HeadOffset, 16);
                 tmp = tmp & 0x3F;//clear the link or next.
-                
-                if (ObjToRemove!=null)
+
+                if (ObjToRemove != null)
                 {
-                    tmp = tmp | (ObjToRemove.next<<6);//insert the next as the new item at the head.
+                    tmp = tmp | (ObjToRemove.next << 6);//insert the next as the new item at the head.
                     ObjToRemove.next = 0;
                 }
-                Loader.setAt(databuffer, HeadOffset, 16, tmp);                
+                Loader.setAt(databuffer, HeadOffset, 16, tmp);
                 return true;
             }
             //var obj = objlist[toRemove];
@@ -366,13 +367,13 @@ namespace Underworld
                         }
                         Debug.Print($"Was unable to find {indexToDelete} to delete it in {tileX},{tileY}");
                     }
-                }                
+                }
             }
             return false;
         }
 
         /// <summary>
-        /// Culls an object if it or all of it's contents meets certain criteria, (rng check, object flags)
+        /// Decides if an object can be culled if it or all of it's contents meets certain criteria, (rng check, object flags)
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="CullingRange"></param>
@@ -380,8 +381,73 @@ namespace Underworld
 
         public static bool ObjectCulling(uwObject obj, int CullingRange)
         {
-            Debug.Print ("TODO, object culling");
-            return false;
+            Debug.Print("TODO, object culling");
+            if (obj == null)
+            {
+                return false;
+            }
+            if (CullingRange != 0)
+            {
+                CullingRange += Rng.r.Next(3);
+            }
+            GlobalCullingRange = CullingRange;
+            if (CheckDoNotCull(obj))
+            {
+                if ((obj.is_quant != 0) && (obj.link != 0))
+                {//object is a container that needs it's contents to be tested 
+                    if (CallBacks.RunCodeOnObjectsInChain(CheckDoNotCull, obj, UWTileMap.current_tilemap.LevelObjects))
+                    {
+                        return false;
+                    }
+                }
+                if (Rng.r.Next(0xA) < GlobalCullingRange)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+
+        /// <summary>
+        /// Checks if the object should be culled.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns>True if the object is to be preserved, false to cull</returns>
+        static bool CheckDoNotCull(uwObject obj)
+        {
+            if (obj.doordir == 1)
+            {
+                return true;
+            }
+            else
+            {
+                int si;
+                if ((obj.is_quant == 1) && ((obj.link & 0x200) == 0))
+                {
+                    si = obj.link - 1;
+                }
+                else
+                {
+                    si = 0;
+                }
+
+                if ((commonObjDat.cullingpriority(obj.item_id) + (si / 2)) <= GlobalCullingRange)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
         }
 
 

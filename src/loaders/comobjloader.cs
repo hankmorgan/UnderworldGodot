@@ -186,6 +186,11 @@ namespace Underworld
             return buffer[PTR(item_id) + 0x9] & 0x3;
         }
 
+        public static int cullingpriority(int item_id)
+        { //bits 2-5 at + 9
+            return buffer[PTR(item_id) + 9] >> 2  & 0xf;
+        }
+
         /// <summary>
         /// Each possible value of "quality type" maps onto a group of 6 strings in
         /// block 4 (???? should this be 5????) from lowest to highest quality. 

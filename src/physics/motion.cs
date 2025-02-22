@@ -331,7 +331,7 @@ namespace Underworld
         {
             bool haltobject = true;
             uwObject haltedObject;
-            Debug.Print("object hits floor tile");
+
             var si_cull = commonObjDat.projectilecullingpriority(projectile.item_id);
             if (projectile.UnkBit_0XA_Bit456_tilestate == 1)
             {
@@ -343,9 +343,9 @@ namespace Underworld
                     OilOnMud();
                 }
             }
-            if ((si_cull > 0) && (si_cull < 8))
+            if ((si_cull > 0) && (si_cull <= 8))
             {
-                if (ObjectRemover.ObjectCulling(projectile, 0xA))
+                if (!ObjectRemover.ObjectCulling(projectile, 0xA))
                 {
                     haltobject = false;
                 }
