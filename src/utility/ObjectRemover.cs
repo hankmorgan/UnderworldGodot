@@ -321,8 +321,12 @@ namespace Underworld
         /// <param name="tileX"></param>
         /// <param name="tileY"></param>
         /// <param name="indexToDelete"></param>
-        public static void DeleteObjectFromTile(int tileX, int tileY, short indexToDelete, bool RemoveFromWorld = true)
+        public static bool DeleteObjectFromTile(int tileX, int tileY, short indexToDelete, bool RemoveFromWorld = true)
         {
+            if (!UWTileMap.ValidTile(tileX, tileY))
+            {
+                return false;//not on map.
+            }
             var objList = UWTileMap.current_tilemap.LevelObjects;
             if (indexToDelete != 0)
             {
@@ -338,7 +342,7 @@ namespace Underworld
                         {
                             ObjectFreeLists.ReleaseFreeObject(objectToDelete);
                         }
-                        return;
+                        return true;
                     }
                     else
                     {
@@ -356,14 +360,28 @@ namespace Underworld
                                 {
                                     ObjectFreeLists.ReleaseFreeObject(objectToDelete);
                                 }
-                                return;
+                                return true;
                             }
                             next = nextObject.next;
                         }
                         Debug.Print($"Was unable to find {indexToDelete} to delete it in {tileX},{tileY}");
                     }
-                }
+                }                
             }
+            return false;
+        }
+
+        /// <summary>
+        /// Culls an object if it or all of it's contents meets certain criteria, (rng check, object flags)
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="CullingRange"></param>
+        /// <returns>True if object can be culled, false to preserve</returns>
+
+        public static bool ObjectCulling(uwObject obj, int CullingRange)
+        {
+            Debug.Print ("TODO, object culling");
+            return false;
         }
 
 

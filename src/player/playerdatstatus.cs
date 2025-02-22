@@ -577,6 +577,5 @@ namespace Underworld
           {
                Debug.Print("TODO Implement logic around changing hunger and applying healing bonuses");
           }
-
      }//enclass
 }//end namespace

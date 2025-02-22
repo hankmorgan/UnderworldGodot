@@ -23,7 +23,7 @@ namespace Underworld
 
         static void ChangeObjectHeading(uwObject obj, int[] paramsarray)
         {
-            obj.ProjectileHeading = (short)(paramsarray[8]<<5);
+            obj.ProjectileHeading = (ushort)(paramsarray[8]<<5);
             obj.heading = (short)paramsarray[8];
             obj.npc_heading = 0;
             objectInstance.Reposition(obj);

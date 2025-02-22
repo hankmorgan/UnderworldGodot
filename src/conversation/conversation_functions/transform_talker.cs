@@ -32,7 +32,7 @@ namespace Underworld
 
             if (ArgA != -1)
             {
-                talker.UnkBit_0XA_Bit456 = (short)ArgA;
+                talker.UnkBit_0XA_Bit456_tilestate = (short)ArgA;
             }
 
             if (!critterObjectDat.isFlier(talker.item_id))

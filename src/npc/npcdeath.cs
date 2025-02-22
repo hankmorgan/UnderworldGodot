@@ -47,9 +47,9 @@ namespace Underworld
                     {
                         if (mode == 0)
                         {
-                            if (critter.UnkBit_0XA_Bit456 == 0)
+                            if (critter.UnkBit_0XA_Bit456_tilestate == 0)
                             {
-                                critter.UnkBit_0XA_Bit456 = 1;
+                                critter.UnkBit_0XA_Bit456_tilestate = 1;
                                 playerdat.ChangeExperience(500);
                             }
                             combat.EndCombatLoop();
@@ -362,9 +362,9 @@ namespace Underworld
                                 //talk to krillner
                                 if (mode == 0)
                                 {
-                                    if (critter.UnkBit_0XA_Bit456 == 0)
+                                    if (critter.UnkBit_0XA_Bit456_tilestate == 0)
                                     {
-                                        critter.UnkBit_0XA_Bit456 = 1;
+                                        critter.UnkBit_0XA_Bit456_tilestate = 1;
                                         playerdat.ChangeExperience(0x32);
                                         //Talk to NPC
                                         TalkToDyingNPC(critter);
@@ -388,9 +388,9 @@ namespace Underworld
                             {//talk to fissif
                                 if (mode == 0)
                                 {
-                                    if (critter.UnkBit_0XA_Bit456 == 0)
+                                    if (critter.UnkBit_0XA_Bit456_tilestate == 0)
                                     {
-                                        critter.UnkBit_0XA_Bit456 = 1;
+                                        critter.UnkBit_0XA_Bit456_tilestate = 1;
                                         playerdat.ChangeExperience(0x32);
                                         //Talk to NPC
                                         TalkToDyingNPC(critter);

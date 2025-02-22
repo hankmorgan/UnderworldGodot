@@ -44,7 +44,6 @@ namespace Underworld
 
         /// <summary>
         /// How high is the floor.
-        /// Value is multipled by 2 for rendering purposes.
         /// </summary>
         public short floorHeight
         {
@@ -665,7 +664,5 @@ namespace Underworld
                 return true;
             }
         }
-
-
     }//end class
 }//end namespace

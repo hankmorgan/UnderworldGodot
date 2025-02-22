@@ -457,7 +457,7 @@ namespace Underworld
         /// <returns></returns>
         private static bool MajorClass6(uwObject obj, Node3D parent, UWTileMap a_tilemap, string name)
         {
-            Debug.Print($"Trap {obj.a_name} {obj.index} {obj.tileX},{obj.tileY} Class {obj.majorclass}-{obj.minorclass}-{obj.classindex} Params[F:{obj.flags} Q:{obj.quality}, O:{obj.owner}] Link {obj.link}");
+            //Debug.Print($"Trap {obj.a_name} {obj.index} {obj.tileX},{obj.tileY} Class {obj.majorclass}-{obj.minorclass}-{obj.classindex} Params[F:{obj.flags} Q:{obj.quality}, O:{obj.owner}] Link {obj.link}");
             switch (obj.minorclass)
             {
                 case 0: //traps
@@ -637,7 +637,7 @@ namespace Underworld
             critter.quality = 32;
             critter.owner = 32;
             critter.npc_hp = (byte)((0x10 + Rng.r.Next(0, 0x18)) / 0x20);
-            critter.ProjectileHeading = (short)(critter.heading << 5);
+            critter.ProjectileHeading = (ushort)(critter.heading << 5);
             critter.npc_goal = 8;
             critter.npc_gtarg = 0;
             critter.TargetTileX = 0;
@@ -673,7 +673,7 @@ namespace Underworld
             critter.npc_attitude = 2;
             critter.UnkBit_0XA_Bit7 = 0;//active?
             critter.npc_spellindex = 0;
-            critter.UnkBit_0XA_Bit456 = 0;
+            critter.UnkBit_0XA_Bit456_tilestate = 0;
 
         }
 

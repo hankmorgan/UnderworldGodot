@@ -464,7 +464,7 @@ namespace Underworld
             }
         }
 
-        public short ProjectileHeading
+        public ushort ProjectileHeading
         {
             get
             {
@@ -535,7 +535,10 @@ namespace Underworld
         //     }
         // }
 
-         public short UnkBit_0XA_Bit0123
+        /// <summary>
+        /// For projectiles value incremenents by projectile speed each update. Wraps around at 15.
+        /// </summary>
+        public short UnkBit_0XA_Bit0123
         {
             get
             {
@@ -555,9 +558,9 @@ namespace Underworld
         }
 
         /// <summary>
-        /// When 0 study npc returns a hp of 30????
+        /// When 0 study npc returns a hp of 30???? For projectiles appears to indicate tile state. 4 when in the air, 0 when grounded, possibly 1 when landing in water.
         /// </summary>
-        public short UnkBit_0XA_Bit456
+        public short UnkBit_0XA_Bit456_tilestate
         {
             get
             {
@@ -964,6 +967,9 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// Possibly indicates the object should stop moving when value is 0.
+        /// </summary>
         public short UnkBit_0X13_Bit7
         {
             get
@@ -1397,6 +1403,10 @@ namespace Underworld
             {
                 return (short)GetAt16(PTR + 0xb);
             }
+            set
+            {
+                SetAt16(PTR + 0xb, value);
+            }
         }
 
 
@@ -1408,7 +1418,11 @@ namespace Underworld
         {
             get
             {
-                return (short)GetAt16(PTR + 0xc);
+                return (short)GetAt16(PTR + 0xD);
+            }
+            set
+            {
+                SetAt16(PTR + 0xD, value);
             }
         }
 
@@ -1419,13 +1433,17 @@ namespace Underworld
             {
                 return (short)GetAt16(PTR + 0xf);
             }
+            set
+            {
+                SetAt16(PTR + 0xF, value);
+            }
         }
 
-        //Where are these values set???
-        public short npc_health = 0;//Is this poisoning?
-        public short npc_arms = 0;
-        public short npc_power = 0;
-        public short npc_name = 0;
+        // //Where are these values set???
+        // public short npc_health = 0;//Is this poisoning?
+        // public short npc_arms = 0;
+        // public short npc_power = 0;
+        // public short npc_name = 0;
 
         public Godot.Vector3 GetCoordinate(int tileX, int tileY)
         {//godot is y-up     

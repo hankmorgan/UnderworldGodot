@@ -65,7 +65,15 @@ public partial class main : Node3D
 		if (uwsettings.instance != null)
 		{
 			GetTree().DebugCollisionsHint = uwsettings.instance.showcolliders;
-		}		
+		}	
+
+		// var exe = System.IO.File.ReadAllBytes("C:\\Games\\UW2\\uw2.exe");
+		// int addr_ptr=0x68EB1;
+		// for (long x = 0; x<=320;x++)
+		// {
+		// 	Debug.Print($"{x}={(short)Loader.getAt(exe,addr_ptr,16)}");
+		// 	addr_ptr+=2;
+		// }
 	}
 
 	public static void StartGame()
@@ -263,12 +271,14 @@ public partial class main : Node3D
 						{
 							var obj = UWTileMap.current_tilemap.LevelObjects[index];
 							if (obj.majorclass == 1)
-							{								
+							{
+								//This is an NPC						
 								npc.NPCInitialProcess(obj);
 							}
 							else
 							{
-								//TODO this is a projectile
+								//This is a projectile
+								motion.MotionProcessing(obj);
 							}
 						}
 					}
@@ -386,6 +396,11 @@ public partial class main : Node3D
 									scd.ProcessSCDArk(1);
 								}								
 								//trigger.RunNextScheduledTrigger();
+								break;
+							}
+						case Key.Pagedown:
+							{
+								motion.MotionSingleStepEnabled = true;//for stepping through motion processing.
 								break;
 							}
 						case Key.Apostrophe:

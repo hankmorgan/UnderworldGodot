@@ -127,10 +127,13 @@ namespace Underworld
                 {
                     //motion
                     var ProjectileHeading = critter.ProjectileHeading;
-                    motion.InitMotionParams(critter);
-                    motion.seg006_1413_9F5(critter);
-                    motion.CalculateMotion_seg006_1413_D6A(critter);
-                    motion.ApplyProjectileMotion_seg030_2BB7_689(critter);
+
+                    //TO REVISIT
+                    // motion.motionarray motionparams = new();
+                    // motion.InitMotionParams(critter,motionparams);
+                    // motion.seg006_1413_9F5(critter);
+                    // motion.CalculateMotion(critter, motionparams);
+                    // motion.ApplyProjectileMotion(critter, motionparams);
                     if (ProjectileHeading != critter.ProjectileHeading)
                     {
                         HasCurrobjHeadingChanged_dseg_67d6_2242 = 1;
@@ -1151,9 +1154,9 @@ namespace Underworld
                                 deflection = deflection<<6;
 
                                 var newheading = critter.ProjectileHeading;
-                                newheading = (short)(newheading + deflection);
-                                newheading = (short)(newheading + 256);
-                                newheading = (short)(newheading % 256);
+                                newheading = (ushort)(newheading + deflection);
+                                newheading = (ushort)(newheading + 256);
+                                newheading = (ushort)(newheading % 256);
                                 critter.ProjectileHeading = newheading;
                                 critter.heading = (short)((newheading>>5) & 7);
                                 critter.UnkBit_0X13_Bit0to6 = 0;
@@ -1200,7 +1203,7 @@ namespace Underworld
                     }
 
                     //seg007_17A2_3FF:
-                    critter.ProjectileHeading = (short)NewHeading;
+                    critter.ProjectileHeading = (ushort)NewHeading;
                     critter.heading = (short)((NewHeading >> 5) & 7);
                     critter.npc_heading = ((short)(NewHeading & 0x1F));
                     bool frameadvance = false;
