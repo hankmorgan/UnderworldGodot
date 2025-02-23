@@ -389,7 +389,7 @@ namespace Underworld
                 CullingRange += Rng.r.Next(3);
             }
             GlobalCullingRange = CullingRange;
-            if (CheckDoNotCull(obj))
+            if (!CheckDoNotCull(obj))
             {
                 if ((obj.is_quant != 0) && (obj.link != 0))
                 {//object is a container that needs it's contents to be tested 
@@ -420,7 +420,7 @@ namespace Underworld
         /// <param name="obj"></param>
         /// <returns>True if the object is to be preserved, false to cull</returns>
         static bool CheckDoNotCull(uwObject obj)
-        {
+        {            
             if (obj.doordir == 1)
             {
                 return true;
