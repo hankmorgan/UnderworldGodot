@@ -340,7 +340,7 @@ namespace Underworld
                 animo.SpawnAnimoInTile(6, projectile.xpos, projectile.ypos, projectile.zpos, projectile.tileX, projectile.tileY);//spawn a splash
                 if (_RES == GAME_UW2)
                 {
-                    OilOnMud();
+                    OilOnMud(projectile);
                 }
             }
             if ((si_cull > 0) && (si_cull <= 8))

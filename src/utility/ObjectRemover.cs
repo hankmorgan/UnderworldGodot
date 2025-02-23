@@ -378,10 +378,8 @@ namespace Underworld
         /// <param name="obj"></param>
         /// <param name="CullingRange"></param>
         /// <returns>True if object can be culled, false to preserve</returns>
-
         public static bool ObjectCulling(uwObject obj, int CullingRange)
         {
-            Debug.Print("TODO, object culling");
             if (obj == null)
             {
                 return false;
