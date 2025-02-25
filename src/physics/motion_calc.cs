@@ -166,10 +166,10 @@ namespace Underworld
                 {
                     if (arg2 != 0)//seg031_2CFA_627
                     {//seg031_2CFA_62D:
-                        ProcessMotionTileHeights_seg028_2941_385(MotionParams, MotionParams.unk_24);//unk24 is 0 in normal projectile processing
+                        ProcessMotionTileHeights_seg028_2941_385(MotionParams.unk_24);//unk24 is 0 in normal projectile processing
                         //DumpMotionMemory(MotionParams, "AfterProcessMotionTileHeights");
 
-                        ScanForCollisions_seg028_2941_C0E(MotionParams, 0, 0);
+                        ScanForCollisions_seg028_2941_C0E(0, 0);
                     }
                 }
 
@@ -344,7 +344,7 @@ namespace Underworld
         /// Appears to do stuff with the tile the motion is happening in.
         /// </summary>
         /// <param name="arg0"></param>
-        static void ProcessMotionTileHeights_seg028_2941_385(UWMotionParamArray MotionParams, int arg0)
+        static void ProcessMotionTileHeights_seg028_2941_385(int arg0)
         {
             //?
             UWMotionParamArray.TileAttributesArray = new short[0x9]; // 9 * 0x1111 or 18 * 0x11?   0-8 entries
@@ -361,9 +361,9 @@ namespace Underworld
             var XYOffsetVar1 = 4;//4 means the center tile in a 3x3 grid of tiles
                                  //var YPosVarA = 0;
                                  // var XPosVarB = 0;
-            MotionParams.SubArray.Unk16 = 4;
-            MotionParams.SubArray.Unk17 = xposVar8;
-            MotionParams.SubArray.Unk18 = yposVarA;
+            UWMotionParamArray.SubArray.Unk16 = 4;
+            UWMotionParamArray.SubArray.Unk17 = xposVar8;
+            UWMotionParamArray.SubArray.Unk18 = yposVarA;
             if (UWMotionParamArray.TileAttributesArray[4] == 0x1111)
             {
                 //set value for this tile.
@@ -372,7 +372,7 @@ namespace Underworld
                 UWMotionParamArray.TileAttributesArray[4] = (short)((int)(tile.tileType) | (int)(tile.floorHeight << 4) | (int)(TerrainDatLoader.GetTerrainTypeNo(tile) << 8));
             }
 
-            seg028_2941_2CF_terrainrelated(MotionParams, arg0);
+            seg028_2941_2CF_terrainrelated(arg0);
 
             MotionCalcArray.UnkE = MotionCalcArray.UnkC_terrain;
             MotionCalcArray.Unk11 = MotionCalcArray.Unk10;
@@ -394,9 +394,9 @@ namespace Underworld
                     xposVar8 += 8;
                 }
                 //seg028_2941_48E
-                MotionParams.SubArray.Unk2_offset = XYOffsetVar1;//DS:2564
-                MotionParams.SubArray.Unk3_X = xposVar8;//DS:2565
-                MotionParams.SubArray.Unk4_Y = yposVarA;//DS:2566
+                UWMotionParamArray.SubArray.Unk2_offset = XYOffsetVar1;//DS:2564
+                UWMotionParamArray.SubArray.Unk3_X = xposVar8;//DS:2565
+                UWMotionParamArray.SubArray.Unk4_Y = yposVarA;//DS:2566
 
                 xposVar8 += (MotionCalcArray.Radius8 << 1);
                 while (xposVar8 > 7)
@@ -405,9 +405,9 @@ namespace Underworld
                     xposVar8 -= 8;
                 }
                 //seg028_2941_4C5:
-                MotionParams.SubArray.Unk7_offset = XYOffsetVar1;
-                MotionParams.SubArray.Unk8_X = xposVar8;
-                MotionParams.SubArray.Unk9_Y = yposVarA;
+                UWMotionParamArray.SubArray.Unk7_offset = XYOffsetVar1;
+                UWMotionParamArray.SubArray.Unk8_X = xposVar8;
+                UWMotionParamArray.SubArray.Unk9_Y = yposVarA;
                 yposVarA += (MotionCalcArray.Radius8 << 1);
 
                 //seg028_2941_4F0:
@@ -417,9 +417,9 @@ namespace Underworld
                     yposVarA -= 8;
                 }
                 //seg028_2941_4FF:
-                MotionParams.SubArray.Unkc_offset = XYOffsetVar1;
-                MotionParams.SubArray.UnkD_x = xposVar8;
-                MotionParams.SubArray.UnkE = yposVarA;
+                UWMotionParamArray.SubArray.Unkc_offset = XYOffsetVar1;
+                UWMotionParamArray.SubArray.UnkD_x = xposVar8;
+                UWMotionParamArray.SubArray.UnkE = yposVarA;
                 //seg028_2941_536:
                 xposVar8 -= (MotionCalcArray.Radius8 << 1);
                 while (xposVar8 < 0)
@@ -428,44 +428,44 @@ namespace Underworld
                     xposVar8 += 8;
                 }
                 //seg028_2941_536
-                MotionParams.SubArray.Unk11_offset = XYOffsetVar1;
-                MotionParams.SubArray.Unk12_x = xposVar8;
-                MotionParams.SubArray.Unk13_y = yposVarA;
+                UWMotionParamArray.SubArray.Unk11_offset = XYOffsetVar1;
+                UWMotionParamArray.SubArray.Unk12_x = xposVar8;
+                UWMotionParamArray.SubArray.Unk13_y = yposVarA;
 
 
                 //Populate tile attributes for neighbouring tiles?
 
                 //2941:543
-                var searchPTR = (int)UWMotionParamArray.TileRelatedToMotion_dseg_67d6_257E.Ptr + (TileOffsetArray[MotionParams.SubArray.Unk2_offset] * 4);
+                var searchPTR = (int)UWMotionParamArray.TileRelatedToMotion_dseg_67d6_257E.Ptr + (TileOffsetArray[UWMotionParamArray.SubArray.Unk2_offset] * 4);
                 var Tile_Var6 = UWTileMap.GetTileByPTR(searchPTR);
-                if (UWMotionParamArray.TileAttributesArray[MotionParams.SubArray.Unk2_offset] == 0x1111)
+                if (UWMotionParamArray.TileAttributesArray[UWMotionParamArray.SubArray.Unk2_offset] == 0x1111)
                 {//seg028_2941_572:
-                    UWMotionParamArray.TileAttributesArray[MotionParams.SubArray.Unk2_offset] = (short)((int)(Tile_Var6.tileType) | ((int)Tile_Var6.floorHeight << 4) | (TerrainDatLoader.GetTerrainTypeNo(Tile_Var6) << 8));
+                    UWMotionParamArray.TileAttributesArray[UWMotionParamArray.SubArray.Unk2_offset] = (short)((int)(Tile_Var6.tileType) | ((int)Tile_Var6.floorHeight << 4) | (TerrainDatLoader.GetTerrainTypeNo(Tile_Var6) << 8));
                 }
 
 
                 //seg028_2941_5AA:
-                searchPTR = (int)UWMotionParamArray.TileRelatedToMotion_dseg_67d6_257E.Ptr + (TileOffsetArray[MotionParams.SubArray.Unk7_offset] * 4);
+                searchPTR = (int)UWMotionParamArray.TileRelatedToMotion_dseg_67d6_257E.Ptr + (TileOffsetArray[UWMotionParamArray.SubArray.Unk7_offset] * 4);
                 Tile_Var6 = UWTileMap.GetTileByPTR(searchPTR);
-                if (UWMotionParamArray.TileAttributesArray[MotionParams.SubArray.Unk7_offset] == 0x1111)
+                if (UWMotionParamArray.TileAttributesArray[UWMotionParamArray.SubArray.Unk7_offset] == 0x1111)
                 {//seg028_2941_5DA
-                    UWMotionParamArray.TileAttributesArray[MotionParams.SubArray.Unk7_offset] = (short)((int)(Tile_Var6.tileType) | ((int)Tile_Var6.floorHeight << 4) | (TerrainDatLoader.GetTerrainTypeNo(Tile_Var6) << 8));
+                    UWMotionParamArray.TileAttributesArray[UWMotionParamArray.SubArray.Unk7_offset] = (short)((int)(Tile_Var6.tileType) | ((int)Tile_Var6.floorHeight << 4) | (TerrainDatLoader.GetTerrainTypeNo(Tile_Var6) << 8));
                 }
 
                 //seg028_2941_618:
-                searchPTR = (int)UWMotionParamArray.TileRelatedToMotion_dseg_67d6_257E.Ptr + (TileOffsetArray[MotionParams.SubArray.Unkc_offset] * 4);
+                searchPTR = (int)UWMotionParamArray.TileRelatedToMotion_dseg_67d6_257E.Ptr + (TileOffsetArray[UWMotionParamArray.SubArray.Unkc_offset] * 4);
                 Tile_Var6 = UWTileMap.GetTileByPTR(searchPTR);
-                if (UWMotionParamArray.TileAttributesArray[MotionParams.SubArray.Unkc_offset] == 0x1111)
+                if (UWMotionParamArray.TileAttributesArray[UWMotionParamArray.SubArray.Unkc_offset] == 0x1111)
                 {//seg028_2941_648
-                    UWMotionParamArray.TileAttributesArray[MotionParams.SubArray.Unkc_offset] = (short)((int)(Tile_Var6.tileType) | ((int)Tile_Var6.floorHeight << 4) | (TerrainDatLoader.GetTerrainTypeNo(Tile_Var6) << 8));
+                    UWMotionParamArray.TileAttributesArray[UWMotionParamArray.SubArray.Unkc_offset] = (short)((int)(Tile_Var6.tileType) | ((int)Tile_Var6.floorHeight << 4) | (TerrainDatLoader.GetTerrainTypeNo(Tile_Var6) << 8));
                 }
 
                 //seg028_2941_686:
-                searchPTR = (int)UWMotionParamArray.TileRelatedToMotion_dseg_67d6_257E.Ptr + (TileOffsetArray[MotionParams.SubArray.Unk11_offset] * 4);
+                searchPTR = (int)UWMotionParamArray.TileRelatedToMotion_dseg_67d6_257E.Ptr + (TileOffsetArray[UWMotionParamArray.SubArray.Unk11_offset] * 4);
                 Tile_Var6 = UWTileMap.GetTileByPTR(searchPTR);
-                if (UWMotionParamArray.TileAttributesArray[MotionParams.SubArray.Unk11_offset] == 0x1111)
+                if (UWMotionParamArray.TileAttributesArray[UWMotionParamArray.SubArray.Unk11_offset] == 0x1111)
                 {//seg028_2941_6B9
-                    UWMotionParamArray.TileAttributesArray[MotionParams.SubArray.Unk11_offset] = (short)((int)(Tile_Var6.tileType) | ((int)Tile_Var6.floorHeight << 4) | (TerrainDatLoader.GetTerrainTypeNo(Tile_Var6) << 8));
+                    UWMotionParamArray.TileAttributesArray[UWMotionParamArray.SubArray.Unk11_offset] = (short)((int)(Tile_Var6.tileType) | ((int)Tile_Var6.floorHeight << 4) | (TerrainDatLoader.GetTerrainTypeNo(Tile_Var6) << 8));
                 }
 
 
@@ -474,9 +474,9 @@ namespace Underworld
                 var var2 = 0;
                 while (var2 < 4)
                 {
-                    if (seg028_2941_217(MotionParams, var2, arg0) == 0)
+                    if (seg028_2941_217(var2, arg0) == 0)
                     {//seg028_2941_718:
-                        var temp = getAt(MotionParams.SubArray.dseg_2562, 5 + var2 * 5, 16);
+                        var temp = getAt(UWMotionParamArray.SubArray.dseg_2562, 5 + var2 * 5, 16);
                         if ((temp & 0x300) == 0)
                         {
                             var var10 = new byte[] { 0x4, 0x10, 0x2, 0x8, 0x4, 0x1 };   //dseg_67d6_3BF
@@ -485,18 +485,18 @@ namespace Underworld
                             while (varB <= 2)
                             {
                                 //seg028_2941_75D
-                                var tmp = getAt(MotionParams.SubArray.dseg_2562, 2 + (5 * ((1 + var2 + (varB << 1)) & 0x3)), 8);
+                                var tmp = getAt(UWMotionParamArray.SubArray.dseg_2562, 2 + (5 * ((1 + var2 + (varB << 1)) & 0x3)), 8);
 
-                                if (tmp != getAt(MotionParams.SubArray.dseg_2562, var2 * 5, 8))
+                                if (tmp != getAt(UWMotionParamArray.SubArray.dseg_2562, var2 * 5, 8))
                                 {
-                                    var tile_index = getAt(MotionParams.SubArray.dseg_2562, 2 + (var2 * 5), 8);
+                                    var tile_index = getAt(UWMotionParamArray.SubArray.dseg_2562, 2 + (var2 * 5), 8);
                                     var tiletype = UWMotionParamArray.TileAttributesArray[tile_index] & 0xF;
                                     //var10[varB+var2]
                                     //test tile attributes
                                     if ((TileTraversalFlags_dseg_67d6_1BA6[tiletype] & var10[varB + var2]) == 0)
                                     {
                                         //seg028_2941_7B2:
-                                        DataLoader.setAt(MotionParams.SubArray.dseg_2562, 5 + (var2 * 5), 16, 0x200);
+                                        DataLoader.setAt(UWMotionParamArray.SubArray.dseg_2562, 5 + (var2 * 5), 16, 0x200);
                                         MotionCalcArray.Unk11 = 0x80;
                                         varB = 2;
                                     }
@@ -509,16 +509,16 @@ namespace Underworld
                     var2++;
                 }
                 //seg028_2941_7E8:
-                MotionCalcArray.UnkE = (short)((int)MotionCalcArray.UnkE | MotionParams.SubArray.Unk5 | MotionParams.SubArray.UnkA | MotionParams.SubArray.UnkF | MotionParams.SubArray.Unk14);
+                MotionCalcArray.UnkE = (short)((int)MotionCalcArray.UnkE | UWMotionParamArray.SubArray.Unk5 | UWMotionParamArray.SubArray.UnkA | UWMotionParamArray.SubArray.UnkF | UWMotionParamArray.SubArray.Unk14);
             }
         }
 
-        static int seg028_2941_2CF_terrainrelated(UWMotionParamArray MotionParams, int arg0)
+        static int seg028_2941_2CF_terrainrelated(int arg0)
         {//this may behave differently in UW1?
             MotionCalcArray.UnkC_terrain = (short)((UWMotionParamArray.TileAttributesArray[4] & 0x300) >> 8);
             int var1;
 
-            MotionCalcArray.Unk10 = (byte)SomethingWithTileTypesAndHeight_seg028_2941_E(MotionParams, 4, out var1);
+            MotionCalcArray.Unk10 = (byte)SomethingWithTileTypesAndHeight_seg028_2941_E(4, out var1);
 
             if (MotionCalcArray.Unk10 != 0x80)
             {
@@ -577,10 +577,10 @@ namespace Underworld
         /// <param name="TileArrayOffset_arg0"></param>
         /// <param name="arg2"></param>
         /// <returns></returns>
-        static byte SomethingWithTileTypesAndHeight_seg028_2941_E(UWMotionParamArray MotionParams, int TileArrayOffset_arg0, out int arg2)
+        static byte SomethingWithTileTypesAndHeight_seg028_2941_E(int TileArrayOffset_arg0, out int arg2)
         {
             arg2 = 0;
-            var temp_index = Loader.getAt(MotionParams.SubArray.dseg_2562, 2 + TileArrayOffset_arg0 * 5, 8);     // MotionParams.SubArray_dseg_67d6_3FC_ptr_to_25C4_maybemotion.GetParam2_BlockSize5(TileArrayOffset_arg0);
+            var temp_index = Loader.getAt(UWMotionParamArray.SubArray.dseg_2562, 2 + TileArrayOffset_arg0 * 5, 8);     // UWMotionParamArray.SubArray_dseg_67d6_3FC_ptr_to_25C4_maybemotion.GetParam2_BlockSize5(TileArrayOffset_arg0);
 
             byte cl = (byte)((UWMotionParamArray.TileAttributesArray[temp_index] & 0xF0) >> 1);
             var tiletype = UWMotionParamArray.TileAttributesArray[temp_index] & 0xF;
@@ -593,7 +593,7 @@ namespace Underworld
                     }
                 case UWTileMap.TILE_DIAG_SE://2
                     {
-                        if (Loader.getAt(MotionParams.SubArray.dseg_2562, 4 + TileArrayOffset_arg0 * 5, 8) < Loader.getAt(MotionParams.SubArray.dseg_2562, 3 + TileArrayOffset_arg0 * 5, 8))
+                        if (Loader.getAt(UWMotionParamArray.SubArray.dseg_2562, 4 + TileArrayOffset_arg0 * 5, 8) < Loader.getAt(UWMotionParamArray.SubArray.dseg_2562, 3 + TileArrayOffset_arg0 * 5, 8))
                         {
                             cl = 0x80;
                         }
@@ -602,7 +602,7 @@ namespace Underworld
                     }
                 case UWTileMap.TILE_DIAG_SW://3
                     {
-                        if (Loader.getAt(MotionParams.SubArray.dseg_2562, 3 + TileArrayOffset_arg0 * 5, 8) + Loader.getAt(MotionParams.SubArray.dseg_2562, 4 + TileArrayOffset_arg0 * 5, 8) >= 7)
+                        if (Loader.getAt(UWMotionParamArray.SubArray.dseg_2562, 3 + TileArrayOffset_arg0 * 5, 8) + Loader.getAt(UWMotionParamArray.SubArray.dseg_2562, 4 + TileArrayOffset_arg0 * 5, 8) >= 7)
                         {
                             cl = 0x80;
                         }
@@ -611,7 +611,7 @@ namespace Underworld
                     }
                 case UWTileMap.TILE_DIAG_NE://4
                     {
-                        if (Loader.getAt(MotionParams.SubArray.dseg_2562, 3 + TileArrayOffset_arg0 * 5, 8) + Loader.getAt(MotionParams.SubArray.dseg_2562, 4 + TileArrayOffset_arg0 * 5, 8) <= 7)
+                        if (Loader.getAt(UWMotionParamArray.SubArray.dseg_2562, 3 + TileArrayOffset_arg0 * 5, 8) + Loader.getAt(UWMotionParamArray.SubArray.dseg_2562, 4 + TileArrayOffset_arg0 * 5, 8) <= 7)
                         {
                             cl = 0x80;
                         }
@@ -620,7 +620,7 @@ namespace Underworld
                     }
                 case UWTileMap.TILE_DIAG_NW://5
                     {
-                        if (Loader.getAt(MotionParams.SubArray.dseg_2562, 3 + TileArrayOffset_arg0 * 5, 8) <= Loader.getAt(MotionParams.SubArray.dseg_2562, 4 + TileArrayOffset_arg0 * 5, 8))
+                        if (Loader.getAt(UWMotionParamArray.SubArray.dseg_2562, 3 + TileArrayOffset_arg0 * 5, 8) <= Loader.getAt(UWMotionParamArray.SubArray.dseg_2562, 4 + TileArrayOffset_arg0 * 5, 8))
                         {
                             cl = 0x80;
                         }
@@ -629,19 +629,19 @@ namespace Underworld
                     }
                 case UWTileMap.TILE_SLOPE_N://6
                     {
-                        return (byte)(cl + (Loader.getAt(MotionParams.SubArray.dseg_2562, 4 + TileArrayOffset_arg0 * 5, 8) & 0x7));
+                        return (byte)(cl + (Loader.getAt(UWMotionParamArray.SubArray.dseg_2562, 4 + TileArrayOffset_arg0 * 5, 8) & 0x7));
                     }
                 case UWTileMap.TILE_SLOPE_S://7
                     {
-                        return (byte)(cl + 7 - (Loader.getAt(MotionParams.SubArray.dseg_2562, 4 + TileArrayOffset_arg0 * 5, 8) & 0x7));
+                        return (byte)(cl + 7 - (Loader.getAt(UWMotionParamArray.SubArray.dseg_2562, 4 + TileArrayOffset_arg0 * 5, 8) & 0x7));
                     }
                 case UWTileMap.TILE_SLOPE_E://TILE_SLOPE_E
                     {
-                        return (byte)(cl + (Loader.getAt(MotionParams.SubArray.dseg_2562, 3 + TileArrayOffset_arg0 * 5, 8) & 0x7));
+                        return (byte)(cl + (Loader.getAt(UWMotionParamArray.SubArray.dseg_2562, 3 + TileArrayOffset_arg0 * 5, 8) & 0x7));
                     }
                 case UWTileMap.TILE_SLOPE_W:
                     {
-                        return (byte)(cl + 7 - (Loader.getAt(MotionParams.SubArray.dseg_2562, 3 + TileArrayOffset_arg0 * 5, 8) & 0x7));
+                        return (byte)(cl + 7 - (Loader.getAt(UWMotionParamArray.SubArray.dseg_2562, 3 + TileArrayOffset_arg0 * 5, 8) & 0x7));
                     }
                 case UWTileMap.TILE_OPEN://1
                 default:
@@ -651,10 +651,10 @@ namespace Underworld
             }
         }
 
-        static int seg028_2941_217(UWMotionParamArray MotionParams, int arg0, int arg2)
+        static int seg028_2941_217(int arg0, int arg2)
         {
             var si = 0;
-            var var2 = SomethingWithTileTypesAndHeight_seg028_2941_E(MotionParams, arg0, out int var1);
+            var var2 = SomethingWithTileTypesAndHeight_seg028_2941_E(arg0, out int var1);
 
             if (var2 != 0x80)
             {//seg028_2941_23D
@@ -662,7 +662,7 @@ namespace Underworld
                 {//seg028_2941_25A:
                     if (MotionCalcArray.z4 - arg2 <= var2)
                     {//seg028_2941_277
-                        var index = getAt(MotionParams.SubArray.dseg_2562, 2 + arg0 * 5, 8);
+                        var index = getAt(UWMotionParamArray.SubArray.dseg_2562, 2 + arg0 * 5, 8);
                         si = si | 8 << ((UWMotionParamArray.TileAttributesArray[index] & 0x300) >> 8);
                     }
                     else
@@ -680,7 +680,7 @@ namespace Underworld
                 si = si | 0x200;
             }
             //seg028_2941_2A0:
-            setAt(MotionParams.SubArray.dseg_2562, 5 + arg0 * 5, 16, si);
+            setAt(UWMotionParamArray.SubArray.dseg_2562, 5 + arg0 * 5, 16, si);
 
             if (MotionCalcArray.Unk11 < var2)
             {//seg028_2941_2BF:
@@ -741,7 +741,7 @@ namespace Underworld
             if (arg0 == -1)
             {
                 //seg031_2CFA_12CD:
-                ScanForCollisions_seg028_2941_C0E(MotionParams, 0, 0);
+                ScanForCollisions_seg028_2941_C0E(0, 0);
                 SetCollisionTarget_seg031_2CFA_10E(MotionParams, 0);
                 MotionParams.tilestate25 = UWMotionParamArray.MotionParam0x25_dseg_67d6_26A9;//stores value
                 if (UWMotionParamArray.dseg_67d6_26A5 != 0)
@@ -1236,7 +1236,7 @@ namespace Underworld
             while (cl < 4)
             {
                 //seg028_2941_821:
-                var temp = DataLoader.getAt(MotionParams.SubArray.dseg_2562, 5 + cl * 5, 16);
+                var temp = DataLoader.getAt(UWMotionParamArray.SubArray.dseg_2562, 5 + cl * 5, 16);
                 if ((temp & 0xF8) == 0)
                 {
                     var2 += dseg_67d6_3C4_Lookup[cl];
@@ -1291,26 +1291,26 @@ namespace Underworld
                                         {
                                             case 0: //seg028_2941_948:
                                                 {
-                                                    var8 = (int)DataLoader.getAt(MotionParams.SubArray.dseg_2562, 3 + (5 * var7), 8);
-                                                    var9 = (int)DataLoader.getAt(MotionParams.SubArray.dseg_2562, 4 + (5 * var7), 8);
+                                                    var8 = (int)DataLoader.getAt(UWMotionParamArray.SubArray.dseg_2562, 3 + (5 * var7), 8);
+                                                    var9 = (int)DataLoader.getAt(UWMotionParamArray.SubArray.dseg_2562, 4 + (5 * var7), 8);
                                                     break;
                                                 }
                                             case 1: //seg028_2941_95D:
                                                 {
-                                                    var8 = (int)DataLoader.getAt(MotionParams.SubArray.dseg_2562, 3 + (5 * var7), 8);
-                                                    var9 = 8 - (int)DataLoader.getAt(MotionParams.SubArray.dseg_2562, 4 + (5 * var7), 8);
+                                                    var8 = (int)DataLoader.getAt(UWMotionParamArray.SubArray.dseg_2562, 3 + (5 * var7), 8);
+                                                    var9 = 8 - (int)DataLoader.getAt(UWMotionParamArray.SubArray.dseg_2562, 4 + (5 * var7), 8);
                                                     break;
                                                 }
                                             case 2: //seg028_2941_987
                                                 {
-                                                    var8 = (int)DataLoader.getAt(MotionParams.SubArray.dseg_2562, 4 + (5 * var7), 8);
-                                                    var9 = (int)DataLoader.getAt(MotionParams.SubArray.dseg_2562, 3 + (5 * var7), 8);
+                                                    var8 = (int)DataLoader.getAt(UWMotionParamArray.SubArray.dseg_2562, 4 + (5 * var7), 8);
+                                                    var9 = (int)DataLoader.getAt(UWMotionParamArray.SubArray.dseg_2562, 3 + (5 * var7), 8);
                                                     break;
                                                 }
                                             case 3: //seg028_2941_9AC:
                                                 {
-                                                    var8 = (int)DataLoader.getAt(MotionParams.SubArray.dseg_2562, 3 + (5 * var7), 8);
-                                                    var9 = (int)DataLoader.getAt(MotionParams.SubArray.dseg_2562, 4 + (5 * var7), 8);
+                                                    var8 = (int)DataLoader.getAt(UWMotionParamArray.SubArray.dseg_2562, 3 + (5 * var7), 8);
+                                                    var9 = (int)DataLoader.getAt(UWMotionParamArray.SubArray.dseg_2562, 4 + (5 * var7), 8);
                                                     break;
                                                 }
                                         }

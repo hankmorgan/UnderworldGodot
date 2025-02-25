@@ -479,7 +479,7 @@ namespace Underworld
                     }
                     var1--;
                 }
-
+                var1 = var3;
                 if (collisionTable[var1].height > MotionCalcArray.z4)
                 {
                     var3++;
@@ -565,7 +565,7 @@ namespace Underworld
         /// <param name="xArg6"></param>
         /// <param name="yArg8"></param>
         /// <param name="isNPCArgA"></param>
-        static void CreateCollisonRecord_Seg028_2941_A78(UWMotionParamArray MotionParams, uwObject CollidingObject, long ListHead, int xArg6, int yArg8, bool isNPCArgA)
+        static void CreateCollisonRecord_Seg028_2941_A78(uwObject CollidingObject, long ListHead, int xArg6, int yArg8, bool isNPCArgA)
         {
             if (MotionCalcArray.Unk14_collisoncount <= 8)
             {
@@ -661,10 +661,9 @@ namespace Underworld
         /// <summary>
         /// Looks like this checks the tile for possible objects to collide with.
         /// </summary>
-        /// <param name="MotionParams"></param>
         /// <param name="arg0"></param>
         /// <param name="arg2"></param>
-        static void ScanForCollisions_seg028_2941_C0E(UWMotionParamArray MotionParams, int arg0, int arg2)
+        static void ScanForCollisions_seg028_2941_C0E(int arg0, int arg2)
         {
             var isNPC_var14 = false;
             var tile_var4 = UWTileMap.current_tilemap.Tiles[MotionCalcArray.x0 >> 3, MotionCalcArray.y2 >> 3];
@@ -761,7 +760,7 @@ namespace Underworld
                                             ((arg2 != 0) && commonObjDat.ActivatedByCollision(obj.item_id))
                                             )
                                         {
-                                            CreateCollisonRecord_Seg028_2941_A78(MotionParams, obj, indexByte, var11_maybeX, var12_maybeY, isNPC_var14);
+                                            CreateCollisonRecord_Seg028_2941_A78( obj, indexByte, var11_maybeX, var12_maybeY, isNPC_var14);
                                         }
                                     }
                                 }
@@ -996,8 +995,8 @@ namespace Underworld
             var var6 = 0;
             UWMotionParamArray.dseg_67d6_26A5 = 0;
 
-            ProcessMotionTileHeights_seg028_2941_385(MotionParams, MotionParams.unk_24);
-            ScanForCollisions_seg028_2941_C0E(MotionParams, 0, 0);
+            ProcessMotionTileHeights_seg028_2941_385(MotionParams.unk_24);
+            ScanForCollisions_seg028_2941_C0E( 0, 0);
             SetCollisionTarget_seg031_2CFA_10E(MotionParams, 0);
             var si_result = MotionCalcArray.UnkC_terrain_base | MotionCalcArray.UnkE_base;
             var var5 = SBB(UWMotionParamArray.dseg_67d6_26BC);
@@ -1008,7 +1007,7 @@ namespace Underworld
                 //seg031_2CFA_1463
                 while (MotionCalcArray.Unk16_base + MotionCalcArray.Unk15_base > di)
                 {
-                    var2 = CollideObjects_seg030_2BB7_1CE(MotionParams, MotionCalcArray.MotionArrayObjectIndexA_base, di);
+                    var2 = CollideObjects_seg030_2BB7_1CE(MotionParams, di, MotionCalcArray.MotionArrayObjectIndexA_base);
                     if ((var2 & 4) != 0)
                     {
                         si_result |= 0x400;

@@ -23,6 +23,9 @@ namespace Underworld
 
         public static bool Fullscreen = false; //someday
 
+        public static float ViewPortMouseXPos;
+        public static float ViewPortMouseYPos;
+
         private void InitViews()
         {
             switch (UWClass._RES)
@@ -73,11 +76,15 @@ namespace Underworld
 
         public static void ClickOnViewPort(InputEventMouseButton eventMouseButton)
         {
-
             if (!InGame) { return; }
             bool LeftClick = (eventMouseButton.ButtonIndex == MouseButton.Left); 
-           
+            Debug.Print($"{eventMouseButton.Position.X},{eventMouseButton.Position.Y}");
             Dictionary result = DoRayCast(eventMouseButton.Position, RayDistance, out Vector3 rayOrigin);
+            
+            //store these values for use in throw and spell casting events
+            ViewPortMouseXPos = eventMouseButton.Position.X;
+            ViewPortMouseYPos = eventMouseButton.Position.Y;         
+               
             if (result != null)
             {
                 if (result.ContainsKey("collider") && result.ContainsKey("normal") && result.ContainsKey("position"))
@@ -185,7 +192,7 @@ namespace Underworld
                         //try can cast the current spell if class 5
                         if (SpellCasting.currentSpell.SpellMajorClass == 5)
                         {
-                            SpellCasting.PlayerCastsMagicProjectile();
+                            SpellCasting.CastMagicProjectile(playerdat.playerObject, SpellCasting.currentSpell.SpellMinorClass);
                             return;
                         }
                     }

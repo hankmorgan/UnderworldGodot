@@ -54,7 +54,7 @@ namespace Underworld
                         }
                         else
                         {//cast by an object, eg spell trap. fire off immediately
-                            ObjectCastsMagicProjectile(caster, minorclass);
+                            CastMagicProjectile(caster, minorclass);
                         }
                     }
                     break;

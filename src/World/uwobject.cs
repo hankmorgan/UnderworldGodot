@@ -1181,7 +1181,7 @@ namespace Underworld
             {
                 byte existingValue = GetAt(PTR + 0x18);
                 existingValue &= 0xE0; //Mask out current val
-                SetAt(PTR + 0x18, (byte)(existingValue | ((value & 0x1F) << 0x0)));
+                SetAt(PTR + 0x18, (byte)(existingValue | (value & 0x1F)));
             }
         }
 

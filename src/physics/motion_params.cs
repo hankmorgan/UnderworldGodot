@@ -255,7 +255,7 @@ namespace Underworld
         public static int YposPlusRad;
         public static int XposMinusRad;
         public static int YposMinusRad;
-        public OtherMotionArray SubArray = new OtherMotionArray();
+        public static OtherMotionArray SubArray = new OtherMotionArray();
         public MotionCalcArray CalcArray = new MotionCalcArray();
         public static short[] TileAttributesArray;
         public static int ypos_dseg_67d6_251C;

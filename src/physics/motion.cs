@@ -20,11 +20,8 @@ namespace Underworld
         public static bool MotionProcessing(uwObject projectile)
         {
             ObjectHasHalted = false;
-            if (!MotionSingleStepEnabled)
-            {
-                return false;
-            }
-            MotionSingleStepEnabled = false;//temp to only allow one step
+
+           
             //Check if object is still "alive"
             if (projectile.npc_hp == 0)
             {

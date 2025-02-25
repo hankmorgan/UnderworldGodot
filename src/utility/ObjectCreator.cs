@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime.Serialization;
 using Godot;
 
 
@@ -33,7 +34,7 @@ namespace Underworld
         public static uwObject spawnObjectInTile(int itemid, int tileX, int tileY, short xpos, short ypos, short zpos, ObjectFreeLists.ObjectListType WhichList = ObjectFreeLists.ObjectListType.StaticList, bool RenderImmediately = true)
         {
             var slot = PrepareNewObject(itemid, WhichList);
-            if (slot!=0)
+            if (slot != 0)
             {
                 //add to critter object list
                 var obj = UWTileMap.current_tilemap.LevelObjects[slot];
@@ -46,7 +47,7 @@ namespace Underworld
                 if (RenderImmediately)
                 {
                     RenderObject(obj, UWTileMap.current_tilemap);
-                }                
+                }
                 return obj;
             }
             else
@@ -63,18 +64,18 @@ namespace Underworld
         public static int SpawnObjectInHand(int itemid, bool changeInteractionmode = true)
         {
             var slot = PrepareNewObject(itemid);
-            if (slot!=0)
+            if (slot != 0)
             {
                 var obj = UWTileMap.current_tilemap.LevelObjects[slot];
-                
+
                 playerdat.ObjectInHand = slot;
                 uimanager.instance.mousecursor.SetCursorToObject(obj.item_id);
                 if (changeInteractionmode)
                 {
                     uimanager.InteractionModeToggle(uimanager.InteractionModes.ModePickup);
-                }               
+                }
             }
-             return slot;
+            return slot;
         }
 
         /// <summary>
@@ -125,15 +126,15 @@ namespace Underworld
                         //in uw2 critter is initialised here, uw1 skips this. leaving it like this for now as I've yet to find the uw1 equivilant to study
                         InitialiseCritter(obj);
                     }
-                    else
-                    {
-                        //todo projectile props
-                    }
+                    // else
+                    // {
+                    //     //todo projectile props
+                    // }
                 }
             }
             return slot;
         }
-        
+
 
         /// <summary>
         /// Process object list
@@ -145,7 +146,7 @@ namespace Underworld
         public static void GenerateObjects(uwObject[] objects, UWTileMap a_tilemap)
         {
 
-           // npcs = new();
+            // npcs = new();
             for (int x = 0; x <= a_tilemap.Tiles.GetUpperBound(0); x++)
             {
                 for (int y = 0; y <= a_tilemap.Tiles.GetUpperBound(0); y++)
@@ -188,7 +189,7 @@ namespace Underworld
                         {
                             //npcs.Add(
                             npc.CreateInstance(newNode, obj, name);
-                                //);
+                            //);
                             unimplemented = false;
                         }
                         break;
@@ -478,13 +479,13 @@ namespace Underworld
                             case 0xE://flam rune
                             case 0xF://tym rune
                                 {
-                                    if(_RES==GAME_UW2)
+                                    if (_RES == GAME_UW2)
                                     {
-                                        return runetrap.CreateRuneTrap(obj,parent);
+                                        return runetrap.CreateRuneTrap(obj, parent);
                                     }
                                     break;
                                 }
-                            
+
                         }
                         break;
                     }
@@ -493,7 +494,7 @@ namespace Underworld
                         switch (obj.classindex)
                         {
                             case 0://move trigger, 6-2-0
-                                return trigger.CreateMoveTrigger(obj, parent);                            
+                                return trigger.CreateMoveTrigger(obj, parent);
                         }
                         break;
                     }
@@ -676,6 +677,42 @@ namespace Underworld
             critter.UnkBit_0XA_Bit456_tilestate = 0;
 
         }
+
+        /// <summary>
+        /// Initialises an instance of a mobile object.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="xhome"></param>
+        /// <param name="yhome"></param>
+        public static void InitMobileObject(uwObject obj, int xhome, int yhome)
+        {
+            obj.ProjectileHeading = (ushort)(obj.heading << 5);
+            obj.Projectile_Pitch = 0x10; //set bit 7;
+            obj.npc_heading = 0;
+            if (commonObjDat.maybeMagicObjectFlag(obj.item_id))
+            {
+                obj.UnkBit_0X13_Bit7 = 0;
+            }
+            else
+            {
+                obj.UnkBit_0X13_Bit7 = 1;
+            }
+            obj.npc_xhome = (short)xhome;
+            obj.npc_yhome = (short)yhome;
+            obj.UnkBit_0XA_Bit0123 = 0;//this may be a next frame to update setting.
+            obj.Projectile_Speed = 2;
+            obj.UnkBit_0X13_Bit0to6 = 0;
+            obj.invis = 0;
+            obj.npc_hp = 0x3F;
+            obj.UnkBit_0XA_Bit0123 = 0;
+            if (obj.majorclass != 1)
+            {
+                obj.CoordinateX = (obj.xpos << 5) + (xhome << 8) + 0xF;
+                obj.CoordinateY = (obj.ypos << 5) + (yhome << 8) + 0xF;
+                obj.CoordinateZ = obj.zpos << 3;
+            }
+        }
+
 
 
         // /// <summary>
