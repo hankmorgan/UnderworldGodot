@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 
 namespace Underworld
 {
@@ -47,10 +48,12 @@ namespace Underworld
             if (caster == playerdat.playerObject)
             {
                 motion.InitPlayerProjectileValues();
+                //motion.MissileHeading = 1; motion.MissilePitch = 9;//force these values to match a test case.
                 motion.MissileFlagB = true;
                 var projectile = motion.PrepareProjectileObject(caster);
                 if (projectile != null)
                 {
+                    //motion.DumpProjectile(projectile);
                     objectInstance.RedrawFull(projectile);
                     //Todo. Some sound effect logic
                     return true;
@@ -66,6 +69,9 @@ namespace Underworld
                 return false;
             }
         }
+
+
+
     }//end class
 }//end namespace
 

@@ -480,65 +480,10 @@ namespace Underworld
             }
         }
 
-        //public short ProjectileHeadingMinor//defection to the right of the missile from the major heading.
-        //{
-        //    get
-        //    {
-        //        if (IsStatic) { return 0; }
-        //        int val = (int)DataLoader.getValAtAddress(DataBuffer, PTR + 0x9, 8);
-        //        return (short)(DataLoader.ExtractBits(val, 0, 0x1F));
-        //    }
-        //    set
-        //    {//E0
-        //        if (!IsStatic)
-        //        {
-        //            value &= 0x1F; //Keep value in range;
-        //            int val = (byte)(ProjectileHeadingMajor << 5) | (value & 0x1F);
-        //            DataBuffer[PTR + 0x9] = (byte)val;
-        //        }
-        //    }
-
-        //}
-
-        //public short ProjectileHeadingMajor //Cardinal direction 0 to 7 of the missile. North = 0 turning clockwise to North west = 7
-        //{
-        //    get
-        //    {
-        //        if (IsStatic) { return 0; }
-        //        int val = (int)DataLoader.getValAtAddress(DataBuffer, PTR + 0x9, 8);
-        //        return (short)(DataLoader.ExtractBits(val, 5, 0x7));
-        //    }
-        //    set
-        //    {
-        //        if (!IsStatic)
-        //        {
-        //            value &= 0x7; //Keep value in range;
-        //            int val = (byte)((value & 0x7) << 5) | (ProjectileHeadingMinor & 0x1F);
-        //            DataBuffer[PTR + 0x9] = (byte)val;
-        //        }
-        //    }
-        //}
-
-        // public byte MobileUnk_0xA
-        // {
-        //     get
-        //     {
-        //         if (IsStatic) { return 0; }
-        //         return GetAt(PTR + 0xa);
-        //     }
-        //     set
-        //     {
-        //         if (!IsStatic)
-        //         {
-        //             SetAt(PTR + 0xA, (byte)value);
-        //         }
-        //     }
-        // }
-
         /// <summary>
-        /// For projectiles value incremenents by projectile speed each update. Wraps around at 15.
+        /// Identifies the next frame that the projectile will move at.For projectiles value increments by projectile speed each update. Wraps around at 15.
         /// </summary>
-        public short UnkBit_0XA_Bit0123
+        public short NextFrame_0XA_Bit0123
         {
             get
             {
@@ -560,7 +505,7 @@ namespace Underworld
         /// <summary>
         /// When 0 study npc returns a hp of 30???? For projectiles appears to indicate tile state. 4 when in the air, 0 when grounded, possibly 1 when landing in water.
         /// </summary>
-        public short UnkBit_0XA_Bit456_tilestate
+        public short TileState_0XA_Bit456
         {
             get
             {
@@ -1467,7 +1412,7 @@ namespace Underworld
         public static float GetXYCoordinate(int tilexy, int xypos)
         {
             xypos = (xypos * 3) + 1;
-            float ResolutionXY = 23f;  // A tile has a 8x8 grid for object positioning.
+            float ResolutionXY = 23f;  // A tile has a 8x8 grid for object positioning? This is probably all wrong since there is a noticable "bump" in movement when crossing tiles. What was I thinking?
             float BrushXY = 120f; //game world size of a tile.
             float offXY = (tilexy * BrushXY) + xypos * (BrushXY / ResolutionXY);
             return offXY / 100f;
@@ -1490,7 +1435,7 @@ namespace Underworld
             // xypos = (xypos * 3) + 1;
             xypos = (short)((xypos-1)/3);
 
-            if (xypos > 8)
+            if (xypos > 8)//what was I thinking here???
             {
                 xypos = 4;
             }

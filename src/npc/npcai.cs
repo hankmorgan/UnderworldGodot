@@ -286,12 +286,12 @@ namespace Underworld
                         }
                     }
                     //update unk0xA, probably a refresh rate
-                    critter.UnkBit_0XA_Bit0123 = (short)((critter.UnkBit_0XA_Bit0123 + critter.Projectile_Speed) % 16);
+                    critter.NextFrame_0XA_Bit0123 = (short)((critter.NextFrame_0XA_Bit0123 + critter.Projectile_Speed) % 16);
                 }
             }
             else
             {//distance >0x64 and goal is not follow. do a calculation                
-                critter.UnkBit_0XA_Bit0123 = (short)((critter.UnkBit_0XA_Bit0123 + 8) % 16);
+                critter.NextFrame_0XA_Bit0123 = (short)((critter.NextFrame_0XA_Bit0123 + 8) % 16);
             }
         }
 

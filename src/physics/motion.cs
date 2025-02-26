@@ -51,7 +51,7 @@ namespace Underworld
 
             if (iteration == 0)
             {
-                Debug.Print($"Initial {projectile.a_name} Tile ({projectile.tileX},{projectile.tileY}), Position({projectile.xpos},{projectile.ypos},{projectile.zpos}) NPC_HP:{projectile.npc_hp} ProjectileHeading:{projectile.ProjectileHeading} UNKA_0123:{projectile.UnkBit_0XA_Bit0123} UNK_456:{projectile.UnkBit_0XA_Bit456_tilestate} Coords ({projectile.CoordinateX},{projectile.CoordinateY},{projectile.CoordinateZ}) UNK13_0_6:{projectile.UnkBit_0X13_Bit0to6} UNK13_7:{projectile.UnkBit_0X13_Bit7} ProjectileSpeed:{projectile.Projectile_Speed}, ProjectilePitch:{projectile.Projectile_Pitch}");
+                Debug.Print($"Initial {projectile.a_name} Tile ({projectile.tileX},{projectile.tileY}), Position({projectile.xpos},{projectile.ypos},{projectile.zpos}) NPC_HP:{projectile.npc_hp} ProjectileHeading:{projectile.ProjectileHeading} UNKA_0123:{projectile.NextFrame_0XA_Bit0123} UNK_456:{projectile.TileState_0XA_Bit456} Coords ({projectile.CoordinateX},{projectile.CoordinateY},{projectile.CoordinateZ}) UNK13_0_6:{projectile.UnkBit_0X13_Bit0to6} UNK13_7:{projectile.UnkBit_0X13_Bit7} ProjectileSpeed:{projectile.Projectile_Speed}, ProjectilePitch:{projectile.Projectile_Pitch}");
             }
 
             InitMotionParams(projectile, MotionParams);
@@ -62,7 +62,7 @@ namespace Underworld
             var result = ApplyProjectileMotion(projectile, MotionParams);
             if (result)
             {
-                projectile.UnkBit_0XA_Bit0123 = (short)((projectile.UnkBit_0XA_Bit0123 + projectile.Projectile_Speed) & 0xF);
+                projectile.NextFrame_0XA_Bit0123 = (short)((projectile.NextFrame_0XA_Bit0123 + projectile.Projectile_Speed) & 0xF);
                 if (_RES == GAME_UW2)
                 {
                     switch (projectile.item_id)
@@ -74,7 +74,7 @@ namespace Underworld
                     }
                 }
             }
-            Debug.Print($"After {iteration} {projectile.a_name} Tile ({projectile.tileX},{projectile.tileY}), Position({projectile.xpos},{projectile.ypos},{projectile.zpos}) NPC_HP:{projectile.npc_hp} ProjectileHeading:{projectile.ProjectileHeading} UNKA_0123:{projectile.UnkBit_0XA_Bit0123} UNK_456:{projectile.UnkBit_0XA_Bit456_tilestate} Coords ({projectile.CoordinateX},{projectile.CoordinateY},{projectile.CoordinateZ}) UNK13_0_6:{projectile.UnkBit_0X13_Bit0to6} UNK13_7:{projectile.UnkBit_0X13_Bit7} ProjectileSpeed:{projectile.Projectile_Speed}, ProjectilePitch:{projectile.Projectile_Pitch}");
+            Debug.Print($"After {iteration} {projectile.a_name} Tile ({projectile.tileX},{projectile.tileY}), Position({projectile.xpos},{projectile.ypos},{projectile.zpos}) NPC_HP:{projectile.npc_hp} ProjectileHeading:{projectile.ProjectileHeading} UNKA_0123:{projectile.NextFrame_0XA_Bit0123} UNK_456:{projectile.TileState_0XA_Bit456} Coords ({projectile.CoordinateX},{projectile.CoordinateY},{projectile.CoordinateZ}) UNK13_0_6:{projectile.UnkBit_0X13_Bit0to6} UNK13_7:{projectile.UnkBit_0X13_Bit7} ProjectileSpeed:{projectile.Projectile_Speed}, ProjectilePitch:{projectile.Projectile_Pitch}");
             iteration++;
             if (!ObjectHasHalted)
             {
@@ -220,7 +220,7 @@ namespace Underworld
                     if ((MotionParams.unk_14 | MotionParams.unk_a_pitch) == 0)
                     {
                         //object has likely stopped
-                        projectile.UnkBit_0XA_Bit456_tilestate = (short)(dseg_67d6_3E8[MotionParams.tilestate25]);
+                        projectile.TileState_0XA_Bit456 = (short)(dseg_67d6_3E8[MotionParams.tilestate25]);
                         projectile = ObjectHitsFloorTile_seg030_2BB7_DDF(projectile);
                         if (projectile == null)
                         {
@@ -284,7 +284,7 @@ namespace Underworld
 
                 projectile.Projectile_Pitch = (short)cx;
                 projectile.UnkBit_0X13_Bit0to6 = (short)(MotionParams.unk_14 / 0x2F);
-                projectile.UnkBit_0XA_Bit456_tilestate = dseg_67d6_3E8[MotionParams.tilestate25];
+                projectile.TileState_0XA_Bit456 = dseg_67d6_3E8[MotionParams.tilestate25];
                 if (projectile.majorclass != 1)
                 {
                     projectile.CoordinateX = MotionParams.x_0;
@@ -330,7 +330,7 @@ namespace Underworld
             uwObject haltedObject;
 
             var si_cull = commonObjDat.projectilecullingpriority(projectile.item_id);
-            if (projectile.UnkBit_0XA_Bit456_tilestate == 1)
+            if (projectile.TileState_0XA_Bit456 == 1)
             {
                 //object has landed in water.
                 si_cull = 8;

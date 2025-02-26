@@ -1,4 +1,6 @@
+using System.Diagnostics;
 using System.Runtime.Serialization;
+using System.Threading;
 
 namespace Underworld
 {
@@ -25,8 +27,8 @@ namespace Underworld
             //translate mouse x/y values into a pitch and heading for the projectile to follow
             if (_RES == GAME_UW2)
             {
-                var X1 = (int)(uimanager.ViewPortMouseXPos / 4) - 16f;//ofset from the left side border
-                var Y1 = (int)(200f - uimanager.ViewPortMouseYPos / 4) - 54f;
+                int X1 = (int)((uimanager.ViewPortMouseXPos / 4) - 16f);//ofset from the left side border
+                int Y1 = (int)((200f - uimanager.ViewPortMouseYPos / 4) - 54f);
 
                 if (X1 > 208)
                 {
@@ -52,9 +54,11 @@ namespace Underworld
                     }
                 }
 
-                MissileHeading = 1 + (int)(((X1 - 104f) * 5f) / 13f);
+                MissileHeading = 1 + (((X1 - 104) * 5) / 13);
                 //note missile pitch is initialised with a value from DSEG_33D6 but that value always appears to be 0.
-                MissilePitch = (int)((Y1 - 64f) / 6f);
+                MissilePitch = (Y1 - 64) / 6;
+
+                Debug.Print($"Pitch {MissilePitch} Heading {MissileHeading} at mousepos {X1},{Y1} ({(uimanager.ViewPortMouseXPos / 4)},{(uimanager.ViewPortMouseYPos / 4)})");
                 if (Y1 < 42)
                 {
                     return false;//drop action?
@@ -108,9 +112,9 @@ namespace Underworld
                 {
                     if (projectile.majorclass != 1)
                     {
-                        projectile.CoordinateX = (Launcher.npc_xhome << 8) + (Launcher.xpos << 5) + 0xF;
-                        projectile.CoordinateY = (Launcher.npc_yhome << 8) + (Launcher.ypos << 5) + 0xF;
-                        projectile.CoordinateZ = Launcher.zpos << 3;
+                        projectile.CoordinateX = (projectile.npc_xhome << 8) + (projectile.xpos << 5) + 0xF;
+                        projectile.CoordinateY = (projectile.npc_yhome << 8) + (projectile.ypos << 5) + 0xF;
+                        projectile.CoordinateZ = projectile.zpos << 3;
                         short ProjectileSourceID = 0;
 
                         if (Launcher.majorclass == 1)
@@ -167,7 +171,7 @@ namespace Underworld
         public static bool PlaceProjectileInWorld(uwObject projectile, uwObject launcher, bool ProjectFromLauncher)
         {
             MotionCalcArray.PtrToMotionCalc = new byte[0x20];
-            MotionCalcArray.MotionArrayObjectIndexA = (short)projectile.item_id;
+            MotionCalcArray.MotionArrayObjectIndexA = (short)projectile.index;
             MotionCalcArray.Radius8_base = (byte)commonObjDat.radius(projectile.item_id);
             MotionCalcArray.Height9 = (byte)commonObjDat.height(projectile.item_id);
             MotionCalcArray.x0 = (ushort)((projectile.npc_xhome << 3) + projectile.xpos);
@@ -175,16 +179,19 @@ namespace Underworld
             if (ProjectFromLauncher)
             {
                 int X = MotionCalcArray.x0; int Y = MotionCalcArray.y2;
-                GetCoordinateInDirection(projectile.ProjectileHeading, commonObjDat.radius(projectile.item_id), ref X, ref Y);
+                GetCoordinateInDirection(
+                    heading: (projectile.heading<< 5) + projectile.npc_heading, 
+                    distance: commonObjDat.radius(launcher.item_id)+commonObjDat.radius(projectile.item_id)+4, 
+                    X0: ref X, Y0: ref Y);
                 MotionCalcArray.x0 = (ushort)X; MotionCalcArray.y2 = (ushort)Y;
             }
             MotionCalcArray.z4 = (ushort)projectile.zpos;
             ScanForCollisions_seg028_2941_C0E(1, 0);
             ProcessMotionTileHeights_seg028_2941_385(0);
 
-            if (((short)MotionCalcArray.Unk14_collisoncount | (short)MotionCalcArray.Unk12) == 0)
+            if ((((short)MotionCalcArray.UnkC_terrain | (short)MotionCalcArray.UnkE) & 0x300) == 0)
             {
-                //no collisions.
+                //no collisions?
                 if (MotionCalcArray.Unk14_collisoncount != 0)
                 {
                     SortCollisions_seg028_2941_ED8();
@@ -211,44 +218,56 @@ namespace Underworld
 
         public static void GetCoordinateInDirection(int heading, int distance, ref int X0, ref int Y0)
         {
-            var si_h = (short)(((0x140 - heading) & 0xFF) << 8);
-            int xvar4 = 0; int yvar2 = 0;
-            GetVectorForDirection(heading, ref xvar4, ref yvar2);
-            xvar4 = ((X0 / 0x80) * distance) / 0x100;
-            yvar2 = ((Y0 / 0x80) * distance) / 0x100;
+            var si_h = (ushort)(((0x140 - heading) & 0xFF) << 8);
+            int Yvar4 = 0; int Xvar2 = 0;
+            GetVectorForDirection(si_h, ref Xvar2, ref Yvar4);
+            
+            Xvar2 = ((Xvar2 / 0x80) * distance) / 0x100;
+            Yvar4 = ((Yvar4 / 0x80) * distance) / 0x100;
 
-            if (yvar2 <= 0)
+            if (Xvar2 <= 0)
             {
-                if (yvar2 <= 0)
+                if (Xvar2 <= 0)
                 {
-                    yvar2--;
+                    Xvar2--;
                 }
             }
             else
             {
-                yvar2++;
+                Xvar2++;
             }
 
-            if (xvar4 <= 0)
+            if (Yvar4 <= 0)
             {
-                if (xvar4 >= 0)
+                if (Yvar4 >= 0)
                 {
-                    xvar4--;
+                    Yvar4--;
                 }
             }
             else
             {
-                xvar4++;
+                Yvar4++;
             }
-
-            X0 = X0 + xvar4;
-            Y0 = Y0 + yvar2;
+            X0 = X0 + Xvar2;
+            Y0 = Y0 + Yvar4;
+           
         }
 
         public static void GetVectorForDirection(int heading, ref int X1, ref int Y1)
         {
-            X1 = xvectors[heading >> 8];
-            Y1 = yvectors[heading >> 8];
+            X1 = HeadingLookupTable[64 + (heading >> 8)];
+            Y1 = HeadingLookupTable[heading >> 8];            
+        }
+
+
+        public static void DumpProjectile(uwObject projectile)
+        {
+            byte[] objbytes = new byte[0x1B];
+            for (int i = 0; i <= 0x1A; i++)
+            {
+                objbytes[i] = projectile.DataBuffer[projectile.PTR + i];
+            }
+            System.IO.File.WriteAllBytes("c:\\temp\\exportedobj.dat", objbytes);
         }
 
     }//end class

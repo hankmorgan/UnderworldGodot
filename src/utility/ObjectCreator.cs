@@ -650,7 +650,7 @@ namespace Underworld
             critter.UnkBit_0XD_Bit8 = 0;
             critter.UnkBit_0x18_5 = 0;//possbily used to indicate npc is at their target
             critter.Swing = 0;
-            critter.UnkBit_0XA_Bit0123 = 0;
+            critter.NextFrame_0XA_Bit0123 = 0;
             critter.Projectile_Speed = 4;
             critter.npc_animation = 0;
             critter.AnimationFrame = 0;
@@ -674,7 +674,7 @@ namespace Underworld
             critter.npc_attitude = 2;
             critter.UnkBit_0XA_Bit7 = 0;//active?
             critter.npc_spellindex = 0;
-            critter.UnkBit_0XA_Bit456_tilestate = 0;
+            critter.TileState_0XA_Bit456 = 0;
 
         }
 
@@ -686,9 +686,9 @@ namespace Underworld
         /// <param name="yhome"></param>
         public static void InitMobileObject(uwObject obj, int xhome, int yhome)
         {
-            obj.ProjectileHeading = (ushort)(obj.heading << 5);
-            obj.Projectile_Pitch = 0x10; //set bit 7;
-            obj.npc_heading = 0;
+            obj.ProjectileHeading = (ushort)(obj.heading << 5);  //bx[9h]            
+            obj.npc_heading = 0;  //bx[18h]
+            obj.Projectile_Pitch = 0x10; //  bx[14h]
             if (commonObjDat.maybeMagicObjectFlag(obj.item_id))
             {
                 obj.UnkBit_0X13_Bit7 = 0;
@@ -699,12 +699,12 @@ namespace Underworld
             }
             obj.npc_xhome = (short)xhome;
             obj.npc_yhome = (short)yhome;
-            obj.UnkBit_0XA_Bit0123 = 0;//this may be a next frame to update setting.
+            obj.NextFrame_0XA_Bit0123 = 0;//this may be a next frame to update setting.
             obj.Projectile_Speed = 2;
             obj.UnkBit_0X13_Bit0to6 = 0;
             obj.invis = 0;
             obj.npc_hp = 0x3F;
-            obj.UnkBit_0XA_Bit0123 = 0;
+            obj.TileState_0XA_Bit456 = 0;
             if (obj.majorclass != 1)
             {
                 obj.CoordinateX = (obj.xpos << 5) + (xhome << 8) + 0xF;

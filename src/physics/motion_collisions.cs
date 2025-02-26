@@ -721,7 +721,7 @@ namespace Underworld
                     var si = 0;
 
                     var di = var11_maybeX + (var12_maybeY << 6);
-                    var tilePtr = (int)(tile_var4.Ptr + (di<<2));
+                    var tilePtr = (int)(tile_var4.Ptr + (di << 2));
                     var tileAtPTR = UWTileMap.GetTileByPTR(tilePtr);
                     int next = tileAtPTR.indexObjectList;
                     //seg028_2941_E36:
@@ -760,7 +760,7 @@ namespace Underworld
                                             ((arg2 != 0) && commonObjDat.ActivatedByCollision(obj.item_id))
                                             )
                                         {
-                                            CreateCollisonRecord_Seg028_2941_A78( obj, indexByte, var11_maybeX, var12_maybeY, isNPC_var14);
+                                            CreateCollisonRecord_Seg028_2941_A78(obj, indexByte, var11_maybeX, var12_maybeY, isNPC_var14);
                                         }
                                     }
                                 }
@@ -894,8 +894,11 @@ namespace Underworld
                         index: MotionObject.index,
                         objList: UWTileMap.current_tilemap.LevelObjects,
                         WorldObject: true);//this line will probably break a lot until I make use a more vanilla compliant Use() function.
-                    if (UWTileMap.ValidTile(CollidedObject_VarA.tileX, CollidedObject_VarA.tileY))
+                    //if (UWTileMap.ValidTile(CollidedObject_VarA.tileX, CollidedObject_VarA.tileY))
+                   
+                    if ((MotionCalcArray.x0_base >> 3) >= 0)  //this needs to be changed to another global
                     {//Seg031_2bb7_421
+                        Debug.Print("FIXME seg030_2bb7_3F7");
                         return BounceOtherObject_seg030_2BB7_8(MotionParams, CollidedObject_VarA);
                     }
                     else
@@ -996,7 +999,7 @@ namespace Underworld
             UWMotionParamArray.dseg_67d6_26A5 = 0;
 
             ProcessMotionTileHeights_seg028_2941_385(MotionParams.unk_24);
-            ScanForCollisions_seg028_2941_C0E( 0, 0);
+            ScanForCollisions_seg028_2941_C0E(0, 0);
             SetCollisionTarget_seg031_2CFA_10E(MotionParams, 0);
             var si_result = MotionCalcArray.UnkC_terrain_base | MotionCalcArray.UnkE_base;
             var var5 = SBB(UWMotionParamArray.dseg_67d6_26BC);

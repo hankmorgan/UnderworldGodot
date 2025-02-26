@@ -19,14 +19,13 @@ namespace Underworld
         }
 
         /// <summary>
-        /// Returns the item id of ammo used by this ranged weapon
-        /// To keep it simple the actual value is transcoded value returned is index + 16
+        /// Returns the item id (offset by 16) of ammo used by this ranged weapon
         /// </summary>
         /// <param name="item_id"></param>
         /// <returns></returns>
         public static int ammotype(int item_id)
         {
-            return buffer[offset + 1 + (item_id & 0xf) * 3] + 16;
+            return buffer[offset + 1 + (item_id & 0xf) * 3];
         }
 
         /// <summary>

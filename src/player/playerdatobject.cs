@@ -19,13 +19,12 @@ namespace Underworld
             }
         }
         public static void InitPlayerObject()
-        {
-            
+        {//todo move this object into the tilemap objects per vanilla behaviour.            
             playerObject = new uwObject
             {
                     //isInventory = false,
                     IsStatic = false,
-                    index = 0,
+                    index = 1,
                     PTR = PlayerObjectPTR,
                     DataBuffer = pdat
             };
