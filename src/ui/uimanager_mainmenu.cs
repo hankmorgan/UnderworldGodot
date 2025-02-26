@@ -298,7 +298,7 @@ namespace Underworld
         {
             if (@event is InputEventKey keyinput)
             {
-                if (keyinput.Pressed)
+                if (keyinput.Pressed & AtMainMenu)
                 {
                     if(keyinput.Keycode == Key.Escape)
                     {//return to main menu

@@ -783,10 +783,6 @@ namespace Underworld
             var var3 = 0;
             var var2 = GetCollisionHeightState_seg031_2CFA_13B2(MotionParams);
             UWMotionParamArray.MotionParam0x25_dseg_67d6_26A9 = MotionParams.tilestate25;
-            if (var2 == 6912)
-            {
-                Debug.Print("HERE");
-            }
             MotionParams.tilestate25 = GetTileState(var2);
             if ((var2 & 0xC000) == 0)//var2 getting screwed up here?
             {//seg031_2CFA_17ED:
@@ -988,7 +984,7 @@ namespace Underworld
 
         static int MAYBEGRAVITYZ_seg031_2CFA_1138(UWMotionParamArray MotionParams, int arg0, int arg2)
         {
-            Debug.Print($"Step {iteration} Gravity");
+           // Debug.Print($"Step {iteration} Gravity");
             var di = arg2;
             short ax;
             int var2;
@@ -1173,7 +1169,7 @@ namespace Underworld
 
         static void seg031_2CFA_C5C(UWMotionParamArray MotionParams, int arg0)
         {
-            Debug.Print("seg031_2CFA_C5C");
+            //Debug.Print("seg031_2CFA_C5C");
             if (MotionCalcArray.Unk17_base <= 0)
             {
                 int si;

@@ -1418,6 +1418,11 @@ namespace Underworld
             return offXY / 100f;
         }
 
+        public static float GetXYCoordinate_newmethod(int tilexy, int xypos)
+        {
+            return (tilexy * 1.2f)  + (float)(xypos)/8f; 
+        }
+
         /// <summary>
         /// Converts an world co-ordinate into a xpos or ypos value. (ignores tileXY)
         /// </summary>

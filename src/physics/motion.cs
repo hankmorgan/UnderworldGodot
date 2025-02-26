@@ -228,7 +228,7 @@ namespace Underworld
                         }
 
                         //seg030_2BB7_99F:
-                        projectile = ProbablyThrownObjectCollision_seg030_2BB7_10BC(projectile, projectile.tileX, projectile.tileY, 0);
+                        projectile = PlacedObjectCollision_seg030_2BB7_10BC(projectile, projectile.tileX, projectile.tileY, 0);
                         if (projectile == null)
                         {
                             return false;

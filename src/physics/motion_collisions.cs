@@ -1288,9 +1288,9 @@ namespace Underworld
             return 0;
         }
 
-        static uwObject ProbablyThrownObjectCollision_seg030_2BB7_10BC(uwObject projectile, int tileX, int tileY, int arg8)
+        static uwObject PlacedObjectCollision_seg030_2BB7_10BC(uwObject projectile, int tileX, int tileY, int arg8)
         {
-            //Crap. this function creates a new calcarray. I will need to make my static array an instance that can change.
+            Debug.Print("ThrownObjectCollision!");
             return projectile;
         }
 
