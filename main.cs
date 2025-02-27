@@ -182,6 +182,7 @@ public partial class main : Node3D
 			{				
 				if ((playerdat.tileX != tileX) || (playerdat.tileY != tileY))
 				{
+					
 					var tileExited = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY];
 					if (UWClass._RES == UWClass.GAME_UW2)
 					{
@@ -201,8 +202,12 @@ public partial class main : Node3D
 							}
 						}
 					}
+					//player has changed tiles. move them to their new tile
+					var oldTileX = playerdat.tileX; var oldTileY = playerdat.tileY;
+
 					playerdat.tileX = Math.Min(Math.Max(tileX,0),63);
 					playerdat.tileY = Math.Min(Math.Max(tileY,0),63);
+					playerdat.PlacePlayerInTile(playerdat.tileX, playerdat.tileY, oldTileX, oldTileY);
 					playerdat.xpos = Math.Min(Math.Max(0,xposvecto),8);
 					playerdat.ypos = Math.Min(Math.Max(0,yposvecto),8);
 					playerdat.zpos = newzpos;

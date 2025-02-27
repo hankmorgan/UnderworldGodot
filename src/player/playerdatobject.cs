@@ -2,9 +2,33 @@ namespace Underworld
 {
     public partial class playerdat : Loader
     {
-        public static uwObject playerObject;
+        public static uwObject playerObject
+        {
+            get
+            {
+                if(UWTileMap.current_tilemap ==null)
+                {
+                    //return the local copy in pdat
+                    return new uwObject
+                        {
+                                //isInventory = false,
+                                IsStatic = false,
+                                index = 1,
+                                PTR = PlayerObjectStoragePTR,
+                                DataBuffer = pdat
+                        };
+                }
+                else
+                {//return the tilemap version of the object.
+                    return UWTileMap.current_tilemap.LevelObjects[1];
+                }                
+            }
+        }
 
-        static int PlayerObjectPTR
+        /// <summary>
+        /// place where player object data is copied to in the save file.
+        /// </summary>
+        public static int PlayerObjectStoragePTR
         {
             get
             {
@@ -18,16 +42,35 @@ namespace Underworld
                 }
             }
         }
-        public static void InitPlayerObject()
+        /// <summary>
+        /// Remove Player from 
+        /// </summary>
+        /// <param name="newTileX"></param>
+        /// <param name="newTileY"></param>
+        public static void PlacePlayerInTile(int newTileX, int newTileY, int previousTileX = -1, int previousTileY = -1)
         {//todo move this object into the tilemap objects per vanilla behaviour.            
-            playerObject = new uwObject
+            if (UWTileMap.ValidTile(previousTileX, previousTileY))
             {
-                    //isInventory = false,
-                    IsStatic = false,
-                    index = 1,
-                    PTR = PlayerObjectPTR,
-                    DataBuffer = pdat
-            };
+                //take the player object out of the previous tile
+                var tile = UWTileMap.current_tilemap.Tiles[previousTileX, previousTileY];
+                ObjectRemover.RemoveObjectFromLinkedList(tile.indexObjectList, 1, UWTileMap.current_tilemap.LevelObjects, tile.Ptr + 2);
+            }
+            if (UWTileMap.ValidTile(newTileX,newTileY))
+            {
+                var tile = UWTileMap.current_tilemap.Tiles[newTileX, newTileY];
+                var obj = UWTileMap.current_tilemap.LevelObjects[1];//the player object.
+                obj.next = tile.indexObjectList;
+                tile.indexObjectList = 1;//insert into the tile object list so it can be subject to collisions.
+
+            }
+            // playerObject = new uwObject
+            // {
+            //         //isInventory = false,
+            //         IsStatic = false,
+            //         index = 1,
+            //         PTR = PlayerObjectPTR,
+            //         DataBuffer = pdat
+            // };
         }
     }//end class
 }//end namespace

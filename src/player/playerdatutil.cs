@@ -10,7 +10,7 @@ namespace Underworld
         /// <summary>
         /// player.dat data buffer
         /// </summary>
-        private static byte[] pdat;
+        public static byte[] pdat;
         /// <summary>
         /// Size of encrypted area in UW1 player.dat
         /// </summary>

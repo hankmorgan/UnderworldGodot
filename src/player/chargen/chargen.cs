@@ -50,7 +50,7 @@ namespace Underworld
             {
                 case 0: //Initiation/gender question
                     playerdat.InitEmptyPlayer();
-                    playerdat.InitPlayerObject();
+                    
                     uimanager.ClearChargenTextAndBody();
                     firstSkill = true;
                     ClassSkillChoices = new int[] { 0x14, 0x14, 0x14, 0x14, 0x14, 0x14 };

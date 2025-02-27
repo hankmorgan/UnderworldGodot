@@ -16,7 +16,6 @@ namespace Underworld
             {
                 //load player dat from a save file
                 Load(datafolder);
-                InitPlayerObject();
                 main.gamecam.Position = uwObject.GetCoordinate(
                     tileX: tileX,
                     tileY: tileY,
@@ -35,14 +34,14 @@ namespace Underworld
             }
             else
             {
+                //default start locations.                
                 switch (_RES)
                 {
-                    case GAME_UW2:
+                    case GAME_UW2:                        
                         main.gamecam.Position = new Vector3(-23f, 4.3f, 58.2f);
                         break;
                     default:
                         main.gamecam.Position = new Vector3(-38f, 4.2f, 2.2f);
-                        //cam.Position = new Vector3(-14.9f, 0.78f, 5.3f);
                         break;
                 }
                 tileX = -(int)(main.gamecam.Position.X / 1.2f);

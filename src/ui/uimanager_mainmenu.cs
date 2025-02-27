@@ -208,16 +208,22 @@ namespace Underworld
         public void JourneyOnwards(string folder)
         {
             playerdat.currentfolder = folder;
-
             playerdat.LoadPlayerDat(datafolder: folder);
-
             // //Common launch actions            
             UWTileMap.LoadTileMap(
                     newLevelNo: playerdat.dungeon_level - 1,
                     datafolder: folder,
                     newGameSession: true);
-            instance.InitViews();
             
+            //add player object to the map
+            for (int i = 0;i <=0x1A; i++)
+            {
+                playerdat.playerObject.DataBuffer[playerdat.playerObject.PTR + i] = playerdat.pdat[playerdat.PlayerObjectStoragePTR + i];
+            }
+            playerdat.playerObject.item_id = 127;//make sure the object is an adventurer.
+            playerdat.PlacePlayerInTile(playerdat.tileX, playerdat.tileY);            
+
+            instance.InitViews();            
             SetPanelMode(0);
         }
 

@@ -1,4 +1,5 @@
 using Peaky.Coroutines;
+using System;
 using System.Collections;
 using System.Diagnostics;
 
@@ -65,6 +66,14 @@ namespace Underworld
                     //     itemToTransfer = playerdat.AddObjectToPlayerInventory(playerdat.ObjectInHand, false);                        
                     // }       
                 }
+                //remove player form the level
+                playerdat.PlacePlayerInTile(-1,-1, playerdat.tileX, playerdat.tileY);//removes the player from the tile map data
+                //move player object to the save file and clear the data out.
+                for (int i = 0;i<=0x1A; i++)
+                {
+                    playerdat.pdat[playerdat.PlayerObjectStoragePTR + i] = playerdat.playerObject.DataBuffer[playerdat.playerObject.PTR + i];
+                    playerdat.playerObject.DataBuffer[playerdat.playerObject.PTR + i] = 0;
+                }
 
                 //handle leave level events
                 LevelChangeEvents(ExitLevelMode, playerdat.dungeon_level);
@@ -76,6 +85,13 @@ namespace Underworld
                         newLevelNo: playerdat.dungeon_level - 1,
                         datafolder: playerdat.currentfolder,
                         newGameSession: false);
+
+                //copy back the player object
+                //copy player object from the save file back into the tilemap objects
+                for (int i = 0;i <=0x1A; i++)
+                {
+                    playerdat.playerObject.DataBuffer[playerdat.playerObject.PTR + i] = playerdat.pdat[playerdat.PlayerObjectStoragePTR + i];
+                }
 
                 if ((TeleportTileX != -1) && (TeleportTileY != -1))
                 {
@@ -130,7 +146,7 @@ namespace Underworld
 
         public static void MovePlayerToTile(int tileX, int tileY)
         {
-            var tile = UWTileMap.current_tilemap.Tiles[tileX,tileY];
+            var tile = UWTileMap.current_tilemap.Tiles[tileX,tileY];//place object in tile will refresh player object on next game tick.
             playerdat.zpos = tile.floorHeight << 3;
             playerdat.xpos = 3; playerdat.ypos = 3;
             playerdat.tileX = tileX; playerdat.tileY = tileY;
