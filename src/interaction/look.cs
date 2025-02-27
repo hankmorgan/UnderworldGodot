@@ -153,7 +153,7 @@ namespace Underworld
                                 case 0xB:
                                     return false;
                                 default:
-                                    return Readable.LookAt(obj, objList, WorldObject);
+                                    return Readable.LookAt(obj, WorldObject);
                             }
                         }
                         else
@@ -169,7 +169,7 @@ namespace Underworld
                                 case 0xF://a_resilient sphere 
                                     return false;
                                 default:
-                                    return Readable.LookAt(obj, objList, WorldObject);
+                                    return Readable.LookAt(obj, WorldObject);
                             }
                         }
                     }

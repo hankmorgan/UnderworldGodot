@@ -118,7 +118,8 @@ namespace Underworld
             {
                 //pickup and then drop
                 var desttile = UWTileMap.current_tilemap.Tiles[31, 29];
-                var newIndex = uimanager.DoPickup(FoundAcademyWand, ChangeHand: false);
+                var foundwand = playerdat.InventoryObjects[FoundAcademyWand];
+                var newIndex = uimanager.DoPickup(foundwand, ChangeHand: false);
                 var dropcoordinate = uwObject.GetCoordinate(desttile.tileX, desttile.tileY, 3, 3, (short)desttile.floorHeight<<3);
                 pickup.Drop(
                     index: newIndex,

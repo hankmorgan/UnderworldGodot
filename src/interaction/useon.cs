@@ -1,3 +1,5 @@
+using System;
+
 namespace Underworld
 {
     /// <summary>
@@ -29,66 +31,58 @@ namespace Underworld
             }
         }
 
-        public static bool UseOn(int index, uwObject[] targetobjList, useon srcObject, bool WorldObject)
+        public static bool UseOn(uwObject ObjectUsed, useon srcObject, bool WorldObject)
         {
-            // if (playerdat.ObjectInHand==-1)
-            // {
-            //     return false;
-            // }
-            //var ObjInHand = UWTileMap.current_tilemap.LevelObjects[playerdat.ObjectInHand];//playerdat.InventoryObjects[playerdat.ObjectInHand];
-            var ObjInHand = srcObject.itemBeingUsed;
-            if (index == -1) { return false; }
-            trap.ObjectThatStartedChain = index;
-            bool result = false;
-            if (index <= targetobjList.GetUpperBound(0))
-            {
-                var targetObj = targetobjList[index];
-                switch (ObjInHand.majorclass)
-                {
-                    case 2:
-                        {
-                            //result = UseOnMajorClass2(obj, objList, WorldObject);
-                            break;
-                        }
-                    case 3:
-                        {
-                            result = UseOnMajorClass3(ObjInHand, targetObj, WorldObject);
-                            break;
-                        }
-                    case 4:
-                        {
-                            result = UseOnMajorClass4(ObjInHand, targetObj, WorldObject);
-                            break;
-                        }
-                    case 5:
-                        {
-                            //result = UseOnMajorClass5(obj, objList, WorldObject);
-                            break;
-                        }
-                }
-                //Check for use trigger on this action and try activate if so.
-                    trigger.TriggerObjectLink
-                    (
-                        character: 0,
-                        ObjectUsed: targetObj,
-                        triggerType: (int)triggerObjectDat.triggertypes.USE,
-                        triggerX: targetObj.tileX,
-                        triggerY: targetObj.tileY,
-                        objList: targetobjList
-                    );
 
-                // if ((targetObj.is_quant == 0) && (targetObj.link != 0))
-                // {
-                //     trigger.UseTrigger(
-                //         srcObject: targetObj,
-                //         triggerIndex: targetObj.link,
-                //         objList: targetobjList);
-                // }
-            }
-            // if (!result)
+            var ObjInHand = srcObject.itemBeingUsed;
+            if (ObjectUsed == null) { return false; }
+            trap.ObjectThatStartedChain = ObjectUsed.index;
+            bool result = false;
+            // if (index <= targetobjList.GetUpperBound(0))
             // {
-            //    uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_cannot_use_that_));
-            // }
+            //     var targetObj = targetobjList[index];
+            switch (ObjInHand.majorclass)
+            {
+                case 2:
+                    {
+                        //result = UseOnMajorClass2(obj, objList, WorldObject);
+                        break;
+                    }
+                case 3:
+                    {
+                        result = UseOnMajorClass3(ObjInHand, ObjectUsed, WorldObject);
+                        break;
+                    }
+                case 4:
+                    {
+                        result = UseOnMajorClass4(ObjInHand, ObjectUsed, WorldObject);
+                        break;
+                    }
+                case 5:
+                    {
+                        //result = UseOnMajorClass5(obj, objList, WorldObject);
+                        break;
+                    }
+            }
+            uwObject[] targetobjList;
+            if (WorldObject)
+            {
+                targetobjList = UWTileMap.current_tilemap.LevelObjects;
+            }
+            else
+            {
+                targetobjList = playerdat.InventoryObjects;
+            }
+            //Check for use trigger on this action and try activate if so.
+            trigger.TriggerObjectLink
+            (
+                character: 0,
+                ObjectUsed: ObjectUsed,
+                triggerType: (int)triggerObjectDat.triggertypes.USE,
+                triggerX: ObjectUsed.tileX,
+                triggerY: ObjectUsed.tileY,
+                objList: targetobjList
+            );
 
             //Clear the cursor icons
             CurrentItemBeingUsed = null;
@@ -103,19 +97,19 @@ namespace Underworld
             switch (objInHand.minorclass)
             {
                 case 1:
-                {//some misc items                    
-                    switch(objInHand.classindex)
-                    {
-                        case 7://anvil
-                            return anvil.UseOn(objInHand, targetObject, WorldObject);
-                        case 8://pole
-                            return pole.UseOn(objInHand, targetObject, WorldObject);
+                    {//some misc items                    
+                        switch (objInHand.classindex)
+                        {
+                            case 7://anvil
+                                return anvil.UseOn(objInHand, targetObject, WorldObject);
+                            case 8://pole
+                                return pole.UseOn(objInHand, targetObject, WorldObject);
+                        }
+                        break;
                     }
-                    break;
-                }
                 case 2:
-                {
-                        if (_RES!=GAME_UW2)
+                    {
+                        if (_RES != GAME_UW2)
                         {
                             switch (objInHand.classindex)
                             {
@@ -123,8 +117,8 @@ namespace Underworld
                                     return key_of_infinity.UseOn(objInHand, targetObject, WorldObject);
                             }
                         }
-                    break;
-                }
+                        break;
+                    }
             }
             return false;
         }
@@ -160,13 +154,13 @@ namespace Underworld
                         }
                         break;
                     }
-                    case 1:
+                case 1:
                     {
-                        if (_RES==GAME_UW2)
+                        if (_RES == GAME_UW2)
                         {
-                            switch(objInHand.classindex)
+                            switch (objInHand.classindex)
                             {
-                                case >=8 and <=0xF:
+                                case >= 8 and <= 0xF:
                                     return smallblackrockgem.UseOn(objInHand, targetObject, WorldObject);
                             }
                         }
@@ -178,15 +172,15 @@ namespace Underworld
                         {
                             case 0x7:   //spike in uw1
                                 {
-                                    if (_RES!=GAME_UW2)
+                                    if (_RES != GAME_UW2)
                                     {
-                                        return spike.UseOn(objInHand, targetObject,WorldObject);
+                                        return spike.UseOn(objInHand, targetObject, WorldObject);
                                     }
                                     break;
                                 }
                             case 0x8://rock hammer
                                 {
-                                    return rockhammer.UseOn(objInHand, targetObject,WorldObject);
+                                    return rockhammer.UseOn(objInHand, targetObject, WorldObject);
                                 }
                             case 0xD://oil flask
                                 {

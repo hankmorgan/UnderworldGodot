@@ -29,7 +29,7 @@ namespace Underworld
                 if (itemTargeted.OneF0Class == 0x17)
                 {
                     uimanager.AddToMessageScroll(GameStrings.GetString(1,GameStrings.str_using_the_pole_you_trigger_the_switch_));
-                    return use.Use(itemTargeted.index,UWTileMap.current_tilemap.LevelObjects, WorldObject);
+                    return use.Use(itemTargeted, playerdat.playerObject, UWTileMap.current_tilemap.LevelObjects, WorldObject);
                 }     
                 else
                 {

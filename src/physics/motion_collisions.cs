@@ -789,6 +789,7 @@ namespace Underworld
 
         static int CollideObjects_seg030_2BB7_1CE(UWMotionParamArray MotionParams, int si_CollisionIndex_Arg0, int MotionObjectArg2)
         {
+            
             uwObject CollidedObject_VarA;
             bool varB;
             int var2_collideditemid;
@@ -866,7 +867,8 @@ namespace Underworld
                     Debug.Print("Use activated by collision!");
                     UWMotionParamArray.dseg_67d6_25BC = 0;
                     use.Use(
-                        index: CollidedObject_VarA.index,
+                        ObjectUsed: CollidedObject_VarA,
+                        UsingObjectOrCharacter: MotionObject,
                         objList: UWTileMap.current_tilemap.LevelObjects,
                         WorldObject: true);//this line will probably break a lot until I make use a more vanilla compliant Use() function.
                 }
@@ -891,7 +893,8 @@ namespace Underworld
                 {//seg030_2bb7_3F7
                     UWMotionParamArray.dseg_67d6_25BC = 1;
                     use.Use(
-                        index: MotionObject.index,
+                        ObjectUsed: MotionObject,
+                        UsingObjectOrCharacter: CollidedObject_VarA,
                         objList: UWTileMap.current_tilemap.LevelObjects,
                         WorldObject: true);//this line will probably break a lot until I make use a more vanilla compliant Use() function.
                     //if (UWTileMap.ValidTile(CollidedObject_VarA.tileX, CollidedObject_VarA.tileY))

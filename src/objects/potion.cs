@@ -2,11 +2,11 @@ namespace Underworld
 {
     public class potion : objectInstance
     {
-        public static bool Use(uwObject obj, uwObject[]objList, bool WorldObject)
+        public static bool Use(uwObject ObjectUsed, bool WorldObject)
         {
             if (!WorldObject)
             {
-                QuaffPotion(obj, true);
+                QuaffPotion(ObjectUsed, true);
                 return true;
             }
             return false;

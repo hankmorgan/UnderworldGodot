@@ -5,27 +5,27 @@ namespace Underworld
     /// </summary>
     public class talk : UWClass
     {
-        public static bool Talk(int index, uwObject[] objList, bool WorldObject = true)
+        public static bool Talk(uwObject ObjectUsed, bool WorldObject = true)
         {
-            if (index <= objList.GetUpperBound(0))
+            if (ObjectUsed != null)
             {
-                var obj = objList[index];
-                switch (obj.majorclass)
+                //var obj = objList[index];
+                switch (ObjectUsed.majorclass)
                 {
                     case 1: //NPCs
-                        {        
+                        {
                             uimanager.InteractionModeToggle(uimanager.InteractionModes.ModeTalk);//ensure this mode is on                                    
-                            ConversationVM.StartConversation(obj);
+                            ConversationVM.StartConversation(ObjectUsed);
                             break;
                         }
                     default:
                         {
-                            if (_RES==GAME_UW2)
+                            if (_RES == GAME_UW2)
                             {
-                                if (obj.item_id==461)
+                                if (ObjectUsed.item_id == 461)
                                 {//a wisp, which is a static object in UW2
-                                    
-                                    var wisp = SpawnTemporaryTalker(whoami:48, tileX:playerdat.tileX, tileY:playerdat.tileY);
+
+                                    var wisp = SpawnTemporaryTalker(whoami: 48, tileX: playerdat.tileX, tileY: playerdat.tileY);
                                     uimanager.InteractionModeToggle(uimanager.InteractionModes.ModeTalk);//ensure this mode is on        
                                     ConversationVM.StartConversation(wisp);
                                     return false;
@@ -37,7 +37,7 @@ namespace Underworld
                 }
             }
             return false;
-        }      
+        }
 
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace Underworld
         /// </summary>
         /// <param name="whoami"></param>
         /// <returns></returns>
-        public static uwObject SpawnTemporaryTalker(int whoami, int itemid=64, int tileX=32, int tileY=32, int attitude=3, int goal = 10)
+        public static uwObject SpawnTemporaryTalker(int whoami, int itemid = 64, int tileX = 32, int tileY = 32, int attitude = 3, int goal = 10)
         {
             var temporaryTalker = ObjectCreator.spawnObjectInTile(
                 itemid: itemid,

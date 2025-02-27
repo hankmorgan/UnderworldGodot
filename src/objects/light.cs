@@ -27,7 +27,7 @@ namespace Underworld
                     //move from slot by picking it up and dropping it.
                     if (obj.ObjectQuantity==1)
                     {
-                        uimanager.PickupObjectFromSlot(obj.index);      
+                        uimanager.PickupObjectFromSlot(obj);      
                     }
                     else
                     {

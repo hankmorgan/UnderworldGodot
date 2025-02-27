@@ -195,7 +195,7 @@ namespace Underworld
         /// <param name="slotname"></param>
         /// <param name="objAtSlot"></param>
         /// <param name="isLeftClick"></param>
-        private static void InteractWithObjectInSlot(string slotname, int objAtSlot, bool isLeftClick)
+        private static void InteractWithObjectInSlot(string slotname, uwObject objAtSlot, bool isLeftClick)
         {
             if ((MessageDisplay.WaitingForTypedInput) || (MessageDisplay.WaitingForYesOrNo))
             {//stop while typing in progress
@@ -230,7 +230,8 @@ namespace Underworld
                         if (isLeftClick)
                         {
                             use.Use(
-                                index: objAtSlot,
+                                ObjectUsed: objAtSlot,
+                                UsingObjectOrCharacter: playerdat.playerObject,
                                 objList: playerdat.InventoryObjects,
                                 WorldObject: false);
                         }
@@ -246,7 +247,7 @@ namespace Underworld
                     {
                         //close up opened container.
                         container.Close(
-                            index: objAtSlot,
+                            index: objAtSlot.index,
                             objList: playerdat.InventoryObjects);
                     }
                     break;
@@ -255,13 +256,14 @@ namespace Underworld
                     {
                         if (isLeftClick)
                         {
-                            look.LookAt(objAtSlot, playerdat.InventoryObjects, false);
+                            look.LookAt(objAtSlot.index, playerdat.InventoryObjects, false);
                         }
                         else
                         {
                             InteractionModeToggle(InteractionModes.ModeUse);
                             use.Use(
-                                index: objAtSlot,
+                                objAtSlot,
+                                playerdat.playerObject,
                                 objList: playerdat.InventoryObjects,
                                 WorldObject: false);
                         }
@@ -271,7 +273,7 @@ namespace Underworld
                     {
                         //close up opened container.
                         container.Close(
-                            index: objAtSlot,
+                            index: objAtSlot.index,
                             objList: playerdat.InventoryObjects);
                     }
                     break;
@@ -288,7 +290,7 @@ namespace Underworld
                         {
                             //close up opened container when no obj in hand or when leftclicking
                             container.Close(
-                                index: objAtSlot,
+                                index: objAtSlot.index,
                                 objList: playerdat.InventoryObjects);
                         }
                     }
@@ -297,7 +299,7 @@ namespace Underworld
                         if (playerdat.ObjectInHand != -1)
                         {
                             //do a use interaction on the object already there. 
-                            UseObjectsTogether(playerdat.ObjectInHand, objAtSlot);
+                            UseObjectsTogether(playerdat.ObjectInHand, objAtSlot.index);
                         }
                         else
                         {
@@ -312,7 +314,8 @@ namespace Underworld
                                 {
                                     //use the object at that slot
                                     use.Use(
-                                        index: objAtSlot,
+                                        ObjectUsed: objAtSlot,
+                                        UsingObjectOrCharacter: playerdat.playerObject,
                                         objList: playerdat.InventoryObjects,
                                         WorldObject: false);
                                 }
@@ -322,8 +325,8 @@ namespace Underworld
                                 if (isLeftClick)
                                 {
                                     //left click pickup in conversation
-                                    var obj = playerdat.InventoryObjects[objAtSlot];
-                                    if ((obj.majorclass == 2) && (obj.minorclass == 0))
+                                    //var obj = playerdat.InventoryObjects[objAtSlot];
+                                    if ((objAtSlot.majorclass == 2) && (objAtSlot.minorclass == 0))
                                     {
                                         AddToMessageScroll(
                                             stringToAdd: GameStrings.GetString(1, GameStrings.str_you_cannot_barter_a_container__instead_remove_the_contents_you_want_to_trade_),
@@ -339,27 +342,28 @@ namespace Underworld
                                 }
                                 else
                                 {//check if container.
-                                    var obj = playerdat.InventoryObjects[objAtSlot];
-                                    if ((obj.majorclass == 2) && (obj.minorclass == 0) && (obj.classindex != 0xF))
+                                    //var obj = playerdat.InventoryObjects[objAtSlot];
+                                    if ((objAtSlot.majorclass == 2) && (objAtSlot.minorclass == 0) && (objAtSlot.classindex != 0xF))
                                     {//containers, browse into
                                         use.Use(
-                                            index: objAtSlot,
+                                            objAtSlot,
+                                            playerdat.playerObject,
                                             objList: playerdat.InventoryObjects,
                                             WorldObject: false);
                                     }
                                     else
                                     {
-                                        if ((obj.majorclass == 2) && (obj.minorclass == 0) && (obj.classindex == 0xF))
+                                        if ((objAtSlot.majorclass == 2) && (objAtSlot.minorclass == 0) && (objAtSlot.classindex == 0xF))
                                         {//runebag. ignore.
 
                                         }
                                         else
                                         {//all other objects look at
                                             look.PrintLookDescription(
-                                                obj: obj,
+                                                obj: objAtSlot,
                                                 objList: playerdat.InventoryObjects,
                                                 OutputConvo: true,
-                                                lorecheckresult: look.LoreCheck(obj));
+                                                lorecheckresult: look.LoreCheck(objAtSlot));
                                         }
                                     }
                                 }
@@ -544,7 +548,7 @@ namespace Underworld
             if (ValidObjectForSlot(CurrentSlot, source))
             {
                 var backup = playerdat.ObjectInHand;
-                PickupObjectFromSlot(targetObj);
+                PickupObjectFromSlot(target);
                 PickupToEmptySlot(backup);
                 UpdateInventoryDisplay();
             }
@@ -554,15 +558,15 @@ namespace Underworld
             playerdat.PlayerStatusUpdate();
         }
 
-        public static void PickupObjectFromSlot(int objAtSlot)
+        public static void PickupObjectFromSlot(uwObject objAtSlot)
         {
             if ((MessageDisplay.WaitingForTypedInput) || (MessageDisplay.WaitingForYesOrNo))
             {//stop while another in progress
                 return;
             }
-            var obj = playerdat.InventoryObjects[objAtSlot];
+            //var obj = playerdat.InventoryObjects[objAtSlot];
 
-            if (obj.ObjectQuantity > 1)
+            if (objAtSlot.ObjectQuantity > 1)
             {//object is a quantity, prompty for pickup size and then complete pickup
                 //prompt for quantity in coroutine.
                 _ = Coroutine.Run(
@@ -585,10 +589,10 @@ namespace Underworld
         /// <param name="objAtSlot"></param>
         /// <param name="DestroyInventoryObject"></param>
         /// <returns></returns>
-        public static int DoPickup(int objAtSlot, bool DestroyInventoryObject = true, bool ChangeHand = true)
+        public static int DoPickup(uwObject objAtSlot, bool DestroyInventoryObject = true, bool ChangeHand = true)
         {
             var newIndex = playerdat.AddInventoryObjectToWorld(
-                    objIndex: objAtSlot,
+                    objIndex: objAtSlot.index,
                     updateUI: true,
                     RemoveNext: false,
                     DestroyInventoryObject: DestroyInventoryObject,
@@ -665,13 +669,13 @@ namespace Underworld
         /// <param name="objList"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public static IEnumerator DoPickupQty(int objAtSlot, int currslot)
+        public static IEnumerator DoPickupQty(uwObject objAtSlot, int currslot)
         {
             MessageScrollLine[] linesToRestore = BackupLines(instance.scroll.Lines, 5);
-            var obj = playerdat.InventoryObjects[objAtSlot];
+            //var obj = playerdat.InventoryObjects[objAtSlot];
             MessageDisplay.WaitingForTypedInput = true;
 
-            instance.TypedInput.Text = obj.ObjectQuantity.ToString();
+            instance.TypedInput.Text = objAtSlot.ObjectQuantity.ToString();
             instance.scroll.Clear();
             AddToMessageScroll("Move how many? {TYPEDINPUT}|", mode: MessageDisplay.MessageDisplayMode.TypedInput);
 
@@ -687,20 +691,20 @@ namespace Underworld
             {
                 if (result > 0)
                 {
-                    if (obj.ObjectQuantity <= result)
+                    if (objAtSlot.ObjectQuantity <= result)
                     {//at least all of the stack is selected                        
                         DoPickup(objAtSlot);
                     }
                     else
                     {
                         //if <quantity selected, split objects, pickup object of that quantity.
-                        var newObjIndex = ObjectCreator.SpawnObjectInHand(obj.item_id); //spawning in hand is very handy here
+                        var newObjIndex = ObjectCreator.SpawnObjectInHand(objAtSlot.item_id); //spawning in hand is very handy here
                         var newObj = UWTileMap.current_tilemap.LevelObjects[newObjIndex];
                         newObj.link = (short)result;
-                        newObj.quality = obj.quality;
-                        newObj.owner = obj.owner;
+                        newObj.quality = objAtSlot.quality;
+                        newObj.owner = objAtSlot.owner;
                         //TODO. see if other object properties need copying.                    
-                        obj.link = (short)(obj.link - result);//reduce the other object.
+                        objAtSlot.link = (short)(objAtSlot.link - result);//reduce the other object.
                     }
                 }
             }

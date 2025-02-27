@@ -272,7 +272,7 @@ namespace Underworld
                         }
                     }
                 }
-                if (triggerObj.is_quant == 0 && triggerObj.link > 0)
+                if (triggerObj.is_quant == 0 && triggerObj.link > 1)
                 {//try recursive
                     RemoveTriggersPointingAtTrap(triggerObj.link, trapObjIndex, objList);
                 }

@@ -34,7 +34,7 @@ namespace Underworld
                     {
                         if (mode == 0)
                         {
-                            talk.Talk(critter.index, UWTileMap.current_tilemap.LevelObjects, true);
+                            talk.Talk(critter, true);
                             critter.npc_hp = 0x3C;//thorlson is unstoppable, once enraged nothing can kill him!
                             return false;
                         }
@@ -56,7 +56,7 @@ namespace Underworld
                             critter.ProjectileSourceID = 0; //forget that the player has hit them.
                             critter.npc_animation = 32;//?
                             critter.AnimationFrame = 0;
-                            talk.Talk(critter.index, UWTileMap.current_tilemap.LevelObjects, true);
+                            talk.Talk(critter, true);
                             return false;
                         }
                         else
@@ -641,7 +641,7 @@ namespace Underworld
             critter.npc_attitude = 2;
             critter.npc_goal = 8;
             playerdat.FreezeTimeEnchantment = false;//?
-            talk.Talk(critter.index, UWTileMap.current_tilemap.LevelObjects, true);
+            talk.Talk(critter, true);
             //todo: in uw2 npc_talkedto gets cleared here. does this matter and if so how would implement it seeing as the conversation runs in a co-routine
         }
 

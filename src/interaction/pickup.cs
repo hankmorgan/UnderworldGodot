@@ -89,24 +89,23 @@ namespace Underworld
 
         public static bool PickUp(int index, uwObject[] objList, bool WorldObject = true)
         {
+            var objPicked = objList[index];
             if (useon.CurrentItemBeingUsed != null)
             {
-                return useon.UseOn(index, objList, useon.CurrentItemBeingUsed, WorldObject);
+                return useon.UseOn(objPicked, useon.CurrentItemBeingUsed, WorldObject);
             }
             else
-            {
-                var obj = objList[index];
-
-                if (!commonObjDat.CanBePickedUp(obj.item_id) && !CanBePickedUpOverrides(obj.item_id))
+            {     
+                if (!commonObjDat.CanBePickedUp(objPicked.item_id) && !CanBePickedUpOverrides(objPicked.item_id))
                 {//object cannot be picked up
                     uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_cannot_pick_that_up_));
                     return false;
                 }
-                if (obj.ObjectQuantity > 1)
+                if (objPicked.ObjectQuantity > 1)
                 {
                     //prompt for quantity in coroutine.
                     _ = Coroutine.Run(
-                            DoPickupQty(index, objList, obj),
+                            DoPickupQty(index, objList, objPicked),
                             main.instance
                         );
                     return true;
@@ -114,7 +113,7 @@ namespace Underworld
                 else
                 {
                     //single instance object
-                    DoPickup(index, objList, obj);
+                    DoPickup(index, objList, objPicked);
                 }
             }
             return true;

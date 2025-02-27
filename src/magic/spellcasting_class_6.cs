@@ -82,7 +82,7 @@ namespace Underworld
             }
             if (methodtorun != null)
             {
-                CallBacks.RunCodeOnTargetsAroundObject(methodtorun, 0, rngProbablity, minorclass & 0xC0, distanceFromCaster, tileRadius);
+                CallBacks.RunCodeOnTargetsAroundObject(methodtorun, 1, rngProbablity, minorclass & 0xC0, distanceFromCaster, tileRadius);
             }
         }
 

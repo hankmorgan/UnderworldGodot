@@ -12,60 +12,58 @@ namespace Underworld
         /// </summary>
         public static bool SpellHasBeenCast = false;
         public static bool UseTriggerHasBeenActivated = false;
-        public static bool Use(int index, uwObject[] objList, bool WorldObject = true)
+        public static bool Use(uwObject ObjectUsed, uwObject UsingObjectOrCharacter, uwObject[] objList, bool WorldObject = true)
         {            
             SpellHasBeenCast = false;
             UseTriggerHasBeenActivated = false;
             if (useon.CurrentItemBeingUsed != null)
-            {
-                return useon.UseOn(index, objList, useon.CurrentItemBeingUsed, WorldObject);
+            {                
+                return useon.UseOn(ObjectUsed, useon.CurrentItemBeingUsed, WorldObject);
             }
-            // if (playerdat.ObjectInHand != -1)
-            // {
-            //     return useon.UseOn(index, objList, WorldObject);
-            // }
-            if (index == -1) { return false; }
-            trap.ObjectThatStartedChain = index;
+
+
+            //if (index == -1) { return false; }
+            trap.ObjectThatStartedChain = ObjectUsed.index;
             bool result = false;
-            if (index <= objList.GetUpperBound(0))
+            if (ObjectUsed != null)
             {
-                var obj = objList[index];
-                Debug.Print($"Object {obj.majorclass}-{obj.minorclass}-{obj.classindex} {obj.a_name}");
-                switch (obj.majorclass)
+                //var obj = objList[index];
+                Debug.Print($"Object {ObjectUsed.majorclass}-{ObjectUsed.minorclass}-{ObjectUsed.classindex} {ObjectUsed.a_name}");
+                switch (ObjectUsed.majorclass)
                 {
                     case 0://weapons
                         {
-                            result = UseMajorClass1(WorldObject, obj);
+                            result = UseMajorClass1(ObjectUsed, WorldObject);
                             break;
                         }
                     case 1://npcs
                         {
-                            talk.Talk(index, objList, WorldObject);
+                            talk.Talk(ObjectUsed, WorldObject);
                             return true;
                         }
                     case 2:
                         {
-                            result = UseMajorClass2(obj, objList, WorldObject);
+                            result = UseMajorClass2(ObjectUsed, WorldObject);
                             break;
                         }
                     case 3:
                         {
-                            result = UseMajorClass3(obj, objList, WorldObject);
+                            result = UseMajorClass3(ObjectUsed, WorldObject);
                             break;
                         }
                     case 4:
                         {
-                            result = UseMajorClass4(obj, objList, WorldObject);
+                            result = UseMajorClass4(ObjectUsed, WorldObject);
                             break;
                         }
                     case 5:
                         {
-                            result = UseMajorClass5(obj, objList, WorldObject);
+                            result = UseMajorClass5(ObjectUsed, WorldObject);
                             break;
                         }
                     case 7:
                         {
-                            result = UseMajorClass7(obj, objList, WorldObject);
+                            result = UseMajorClass7(ObjectUsed, WorldObject);
                             break;
                         }
                 }
@@ -75,25 +73,21 @@ namespace Underworld
                     trigger.TriggerObjectLink
                     (
                         character: 0,
-                        ObjectUsed: obj,
+                        ObjectUsed: ObjectUsed,
                         triggerType: (int)triggerObjectDat.triggertypes.USE,
-                        triggerX: obj.tileX,
-                        triggerY: obj.tileY,
+                        triggerX: ObjectUsed.tileX,
+                        triggerY: ObjectUsed.tileY,
                         objList: objList
                     );
-                    // trigger.UseTrigger(
-                    //     srcObject: obj,
-                    //     triggerIndex: obj.link,
-                    //     objList: objList);
                 }
                 //check for a spell
                 if (!SpellHasBeenCast)
                 {
-                    if (obj != null)
+                    if (ObjectUsed != null)
                     {
-                        if (obj.link != 0)
+                        if (ObjectUsed.link != 0)
                         {
-                            switch (obj.majorclass)
+                            switch (ObjectUsed.majorclass)
                             {
                                 case 0:
                                 case 1:
@@ -103,24 +97,24 @@ namespace Underworld
                                     break;
                                 default:
                                     {
-                                        if ((obj.majorclass == 2) && (obj.minorclass == 0))
+                                        if ((ObjectUsed.majorclass == 2) && (ObjectUsed.minorclass == 0))
                                         {
                                             //do not normally cast spells from containers. Check if directly contains a spell. Eg the Cornucopia.
                                             var linkedspell = objectsearch.FindMatchInObjectChain(
-                                                ListHeadIndex: obj.link, 
+                                                ListHeadIndex: ObjectUsed.link, 
                                                 majorclass: 4, minorclass: 2, classindex: 0, 
                                                 objList: objList, 
                                                 SkipNext: false, 
                                                 SkipLinks: true );
                                             if (linkedspell != null)
                                             {
-                                                result = UseItemCastSpell(objList: objList, WorldObject: WorldObject, result: result, obj: obj) | result; 
+                                                result = UseItemCastSpell(objList: objList, WorldObject: WorldObject, result: result, obj: ObjectUsed) | result; 
                                             }
                                         
                                         }
                                         else
                                         {
-                                            result = UseItemCastSpell(objList: objList, WorldObject: WorldObject, result: result, obj: obj) | result;
+                                            result = UseItemCastSpell(objList: objList, WorldObject: WorldObject, result: result, obj: ObjectUsed) | result;
                                         }
                                         break;
                                     }
@@ -137,9 +131,9 @@ namespace Underworld
             return result;
         }
 
-        private static bool UseMajorClass1(bool WorldObject, uwObject obj)
+        private static bool UseMajorClass1(uwObject ObjectUsed, bool WorldObject)
         {
-            if ((obj.minorclass == 0) && (!WorldObject))
+            if ((ObjectUsed.minorclass == 0) && (!WorldObject))
             {
                 //weapons on paperdoll.
                 if (playerdat.isLefty)
@@ -206,18 +200,18 @@ namespace Underworld
         }
 
 
-        public static bool UseMajorClass3(uwObject obj, uwObject[] objList, bool WorldObject)
+        public static bool UseMajorClass3(uwObject ObjectUsed, bool WorldObject)
         {
-            switch (obj.minorclass)
+            switch (ObjectUsed.minorclass)
             {
                 case 1:
                     {//some misc items                    
-                        switch (obj.classindex)
+                        switch (ObjectUsed.classindex)
                         {
                             case 7://anvil
-                                return anvil.Use(obj, WorldObject);
+                                return anvil.Use(ObjectUsed, WorldObject);
                             case 8:
-                                return pole.Use(obj, WorldObject);
+                                return pole.Use(ObjectUsed, WorldObject);
                         }
                         break;
                     }
@@ -225,18 +219,18 @@ namespace Underworld
                     {
                         if (_RES != GAME_UW2)
                         {
-                            switch (obj.classindex)
+                            switch (ObjectUsed.classindex)
                             {
                                 case 7://key of infinity
-                                    return key_of_infinity.Use(obj, WorldObject);
+                                    return key_of_infinity.Use(ObjectUsed, WorldObject);
                             }
                         }
                         else
                         {
-                            switch (obj.classindex)
+                            switch (ObjectUsed.classindex)
                             {
                                 case > 0 and <= 7://a range of potions.
-                                    return potion.Use(obj, objList, WorldObject);
+                                    return potion.Use(ObjectUsed, WorldObject);
                             }
                         }
                         break;
@@ -245,47 +239,47 @@ namespace Underworld
             return false;
         }
 
-        public static bool UseMajorClass2(uwObject obj, uwObject[] objList, bool WorldObject)
+        public static bool UseMajorClass2(uwObject ObjectUsed, bool WorldObject)
         {
-            switch (obj.minorclass)
+            switch (ObjectUsed.minorclass)
             {
                 case 0:
                     {
-                        if (obj.classindex < 0xF)
+                        if (ObjectUsed.classindex < 0xF)
                         {//containers
-                            return container.Use(obj, WorldObject);
+                            return container.Use(ObjectUsed, WorldObject);
                         }
                         else
                         {
                             //runebag
-                            return runebag.Use(obj, WorldObject);
+                            return runebag.Use(ObjectUsed, WorldObject);
                         }
                     }
                 case 1:
                     {
-                        if (obj.classindex <= 7)
+                        if (ObjectUsed.classindex <= 7)
                         {//lights
-                            return light.Use(obj, WorldObject);
+                            return light.Use(ObjectUsed, WorldObject);
                         }
                         else
                         {
                             //wands
-                            if (obj.classindex <= 0xB)
+                            if (ObjectUsed.classindex <= 0xB)
                             {
-                                return wand.Use(obj, WorldObject);
+                                return wand.Use(ObjectUsed, WorldObject);
                             }
                         }
                         break;
                     }
                 case 2:
                     {
-                        switch (obj.classindex)
+                        switch (ObjectUsed.classindex)
                         {
                             case 0x1://Storage crystal in UW2, gold coin in uw1
                                 {
                                     if (_RES == GAME_UW2)
                                     {
-                                        return storage_crystal.Use(obj, WorldObject);
+                                        return storage_crystal.Use(ObjectUsed, WorldObject);
                                     }
                                     break;
                                 }
@@ -293,7 +287,7 @@ namespace Underworld
                                 {//picketwatch in uw2, gold nugget in uw1
                                     if (_RES == GAME_UW2)
                                     {
-                                        return pocketwatch.Use(obj, WorldObject);
+                                        return pocketwatch.Use(ObjectUsed, WorldObject);
                                     }
                                     break;
                                 }
@@ -302,39 +296,39 @@ namespace Underworld
                     }
                 case 3://food (including some potions)
                     {
-                        return food.Use(obj, WorldObject);
+                        return food.Use(ObjectUsed, WorldObject);
                     }
             }
             return false;
         }
 
-        public static bool UseMajorClass4(uwObject obj, uwObject[] objList, bool WorldObject)
+        public static bool UseMajorClass4(uwObject ObjectUsed, bool WorldObject)
         {
-            switch (obj.minorclass)
+            switch (ObjectUsed.minorclass)
             {
                 case 0: //keys up to 0xE
                     {
                         if (_RES == GAME_UW2)
                         {
-                            switch (obj.classindex)
+                            switch (ObjectUsed.classindex)
                             {
                                 case 0:
                                 case 1:
                                     //LOCKPICK and curious implement.
-                                    return lockpick.Use(obj, WorldObject);
+                                    return lockpick.Use(ObjectUsed, WorldObject);
                                 case > 1 and <= 0xE://keys
-                                    return doorkey.Use(obj, WorldObject);
+                                    return doorkey.Use(ObjectUsed, WorldObject);
                             }
                         }
                         else
                         {
-                            switch (obj.classindex)
+                            switch (ObjectUsed.classindex)
                             {
                                 case 0:
                                 case > 1 and < 0xE://keys
-                                    return doorkey.Use(obj, WorldObject);
+                                    return doorkey.Use(ObjectUsed, WorldObject);
                                 case 1://lockpick
-                                    return lockpick.Use(obj, WorldObject);
+                                    return lockpick.Use(ObjectUsed, WorldObject);
                             }
                         }
                         break;
@@ -343,30 +337,30 @@ namespace Underworld
                     {
                         if (_RES != GAME_UW2)
                         {
-                            switch(obj.classindex)
+                            switch(ObjectUsed.classindex)
                             {
                                 case 4://exploding book
-                                    return explodingbook.Use(obj, WorldObject);
+                                    return explodingbook.Use(ObjectUsed, WorldObject);
                                 case 0xB:
-                                    return rotwormstew.Use(obj, WorldObject);
+                                    return rotwormstew.Use(ObjectUsed, WorldObject);
 
                             }
                         }
                         else
                         {//uw2
-                            switch (obj.classindex)
+                            switch (ObjectUsed.classindex)
                             {
                                 case 4://dream plant
-                                    return food.SpecialFoodCases(obj, WorldObject);
+                                    return food.SpecialFoodCases(ObjectUsed, WorldObject);
                                 case >= 8 and <= 0xF:
-                                    return smallblackrockgem.Use(obj, WorldObject);
+                                    return smallblackrockgem.Use(ObjectUsed, WorldObject);
                             }
                         }
                         break;
                     }
                 case 2:
                     {
-                        switch (obj.classindex)
+                        switch (ObjectUsed.classindex)
                         {
                             case 1://bedroll
                                 sleep.Sleep(1);
@@ -375,31 +369,31 @@ namespace Underworld
                                 {
                                     if (_RES != GAME_UW2)
                                     {
-                                        return silverseed.use(obj, WorldObject);//plant silver seed
+                                        return silverseed.use(ObjectUsed, WorldObject);//plant silver seed
                                     }
                                     break;
                                 }
                             case 3:
                             case 4://musical instruments
                                 {
-                                    return musicalinstrument.use(obj, WorldObject);
+                                    return musicalinstrument.use(ObjectUsed, WorldObject);
                                 }
                             case 5://leeches
-                                return leech.use(obj, WorldObject);
+                                return leech.use(ObjectUsed, WorldObject);
                             case 8://rock hammer
-                                return rockhammer.Use(obj, WorldObject);
+                                return rockhammer.Use(ObjectUsed, WorldObject);
                             case 7: //spike and forcefield in uw2
                                 if (_RES != GAME_UW2)
                                 {
-                                    return spike.Use(obj, WorldObject);
+                                    return spike.Use(ObjectUsed, WorldObject);
                                 }
                                 break;
                             case 0xB://Fishing pole
-                                return fishingpole.use(obj, WorldObject);
+                                return fishingpole.use(ObjectUsed, WorldObject);
                             case 0xD://oilflask
-                                return oilflask.Use(obj, WorldObject);
+                                return oilflask.Use(ObjectUsed, WorldObject);
                             case 0xE://foutain
-                                return fountain.Use(obj);
+                                return fountain.Use(ObjectUsed);
                         }
 
                         break;
@@ -408,22 +402,22 @@ namespace Underworld
                     {
                         if (_RES != GAME_UW2)
                         {
-                            switch (obj.classindex)
+                            switch (ObjectUsed.classindex)
                             {
                                 case 0xB:
-                                    return map.Use(obj, WorldObject);
+                                    return map.Use(ObjectUsed, WorldObject);
                                 default:
-                                    return Readable.Use(obj, objList, WorldObject);
+                                    return Readable.Use(ObjectUsed, WorldObject);
                             }
                         }
                         else
                         {//uw2
-                            switch (obj.classindex)
+                            switch (ObjectUsed.classindex)
                             {
                                 case 0x9://a_bit of a map 
                                     return false;
                                 case 0xA://a_map 
-                                    return map.Use(obj, WorldObject);
+                                    return map.Use(ObjectUsed, WorldObject);
                                 case 0xB://a_dead plant 
                                     return false;
                                 case 0xC://a_dead plant 
@@ -435,7 +429,7 @@ namespace Underworld
                                 case 0xF://a_resilient sphere 
                                     return false;
                                 default:
-                                    return Readable.Use(obj, objList, WorldObject);
+                                    return Readable.Use(ObjectUsed, WorldObject);
                             }
                         }
                     }
@@ -443,67 +437,67 @@ namespace Underworld
             return false;
         }
 
-        public static bool UseMajorClass5(uwObject obj, uwObject[] objList, bool WorldObject)
+        public static bool UseMajorClass5(uwObject ObjectUsed, bool WorldObject)
         {
-            switch (obj.minorclass)
+            switch (ObjectUsed.minorclass)
             {
                 case 0: // Doors
                     {
-                        return door.Use(obj);
+                        return door.Use(ObjectUsed);
 
                     }
                 case 1: //3d models
                     {
-                        switch (obj.classindex)
+                        switch (ObjectUsed.classindex)
                         {
                             case 7://a_shrine
                                 {
-                                    return shrine.Use(obj);                                
+                                    return shrine.Use(ObjectUsed);                                
                                 }
                             case 0xB://barrel
                             case 0xD://chest
                             case 0xE://nightstand
                                 {
-                                    return container.Use(obj, WorldObject);
+                                    return container.Use(ObjectUsed, WorldObject);
                                 }
                         }
                         break;
                     }
                 case 2: //misc objects including readables
                     {
-                        switch (obj.classindex)
+                        switch (ObjectUsed.classindex)
                         {
                             case 1:
                             case 2: //rotary switches                                
-                                return buttonrotary.Use(obj);
+                                return buttonrotary.Use(ObjectUsed);
                             case 5://gravestone
-                                return gravestone.Use(obj);
+                                return gravestone.Use(ObjectUsed);
                             case 6: // a readable sign. interaction is also a look
-                                return writing.LookAt(obj);
+                                return writing.LookAt(ObjectUsed);
                             case 7://bed (UW2 only object)
                                 sleep.Sleep(2);
                                 return true;
                             case 0xE://tmap
                             case 0xF:
-                                return tmap.LookAt(obj);
+                                return tmap.LookAt(ObjectUsed);
                             default:
                                 return true;
                         }
                     }
                 case 3: //buttons
                     {
-                        return button.Use(obj);
+                        return button.Use(ObjectUsed);
                     }
             }
             return false;
         }
 
-        public static bool UseMajorClass7(uwObject obj, uwObject[] objList, bool WorldObject)
+        public static bool UseMajorClass7(uwObject ObjectUsed, bool WorldObject)
         {
-            switch (obj.classindex)
+            switch (ObjectUsed.classindex)
             {
                 case 9://fountain animo.
-                    return fountain.FountainAnimoUse(obj);
+                    return fountain.FountainAnimoUse(ObjectUsed);
             }
             return false;
         }

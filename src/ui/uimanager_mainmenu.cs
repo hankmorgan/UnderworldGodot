@@ -221,6 +221,7 @@ namespace Underworld
                 playerdat.playerObject.DataBuffer[playerdat.playerObject.PTR + i] = playerdat.pdat[playerdat.PlayerObjectStoragePTR + i];
             }
             playerdat.playerObject.item_id = 127;//make sure the object is an adventurer.
+            playerdat.playerObject.link = 0;//prevents infinite loops.
             playerdat.PlacePlayerInTile(playerdat.tileX, playerdat.tileY);            
 
             instance.InitViews();            

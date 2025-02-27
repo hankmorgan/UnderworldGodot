@@ -259,7 +259,7 @@ namespace Underworld
                         if (objToDestroy.doordir == 0)
                         {
                             a_lock.SetIsLocked(objToDestroy, false, 0);
-                            use.Use(objToDestroy.index, objList, WorldObject);
+                            use.Use(objToDestroy, null, objList, WorldObject);
                         }
                         break;
                     }

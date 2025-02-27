@@ -536,23 +536,23 @@ namespace Underworld
                 }
                 //LEFT CLICK ACTIONS
                 Debug.Print($"->{extra_arg_0}");
-                var objAtSlot = GetObjAtSlot(extra_arg_0);
+                var objIndexAtSlot = GetObjAtSlot(extra_arg_0);
 
                 //Do action appropiate to the interaction mode verb. use 
-                if (objAtSlot > 0)
+                if (objIndexAtSlot > 0)
                 { //there is an object in that slot.
+                    uwObject obj = playerdat.InventoryObjects[objIndexAtSlot];
                     switch(UsageMode)
                     {
                         case 0: //default
                             InteractWithObjectInSlot(
                                 slotname: extra_arg_0,
-                                objAtSlot: objAtSlot,
+                                objAtSlot: obj,
                                 isLeftClick: isLeftClick);
                             break;
                         case 1://object select to use on another. eg doorkey
                             useon.UseOn(
-                                index: objAtSlot, 
-                                targetobjList: playerdat.InventoryObjects, 
+                                ObjectUsed: playerdat.InventoryObjects[objIndexAtSlot], 
                                 srcObject: useon.CurrentItemBeingUsed, 
                                 WorldObject: false);
                             break;
@@ -560,7 +560,7 @@ namespace Underworld
                             if (SpellCasting.currentSpell.SpellMajorClass != 5)
                                 {//as long as it's not a project(?) try and cast on the object
                                     SpellCasting.CastCurrentSpellOnRayCastTarget(
-                                        index: objAtSlot, 
+                                        index: objIndexAtSlot, 
                                         objList: playerdat.InventoryObjects, 
                                         hitCoordinate: Vector3.Zero,
                                         WorldObject:false);

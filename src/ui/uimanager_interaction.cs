@@ -122,8 +122,7 @@ namespace Underworld
             {
                 case InteractionModes.ModeTalk:
                     talk.Talk(
-                        index: index,
-                        objList: UWTileMap.current_tilemap.LevelObjects,
+                        ObjectUsed: UWTileMap.current_tilemap.LevelObjects[index],
                         WorldObject: true);
                     break;
                 case InteractionModes.ModeLook:
@@ -136,7 +135,8 @@ namespace Underworld
                 case InteractionModes.ModeUse:
                     //do a use interaction with the object.
                     use.Use(
-                        index: index,
+                        ObjectUsed: UWTileMap.current_tilemap.LevelObjects[index],
+                        UsingObjectOrCharacter: playerdat.playerObject,
                         objList: UWTileMap.current_tilemap.LevelObjects,
                         WorldObject: true);
                     break;

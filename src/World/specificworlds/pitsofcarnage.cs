@@ -126,7 +126,7 @@ namespace Underworld
                     var firstfighter = UWTileMap.current_tilemap.LevelObjects[playerdat.GetPitFighter(firstFighterIndex)];
                     if (!skipConversation)
                     {
-                        talk.Talk(firstfighter.index, UWTileMap.current_tilemap.LevelObjects,true);
+                        talk.Talk(firstfighter, true);
                     }                    
                     playerdat.SetPitFighter(firstFighterIndex, 0);
                     playerdat.IsFightingInPit = false;
