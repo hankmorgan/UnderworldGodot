@@ -167,8 +167,6 @@ namespace Underworld
                     if (arg2 != 0)//seg031_2CFA_627
                     {//seg031_2CFA_62D:
                         ProcessMotionTileHeights_seg028_2941_385(MotionParams.unk_24);//unk24 is 0 in normal projectile processing
-                        //DumpMotionMemory(MotionParams, "AfterProcessMotionTileHeights");
-
                         ScanForCollisions_seg028_2941_C0E(0, 0);
                     }
                 }
@@ -237,18 +235,6 @@ namespace Underworld
 
             }
             return true;
-        }
-
-        /// <summary>
-        /// Dumps out some memory values for the testing of motion.
-        /// </summary>
-        /// <param name="MotionParams"></param>
-        /// <param name="stage"></param>
-        private static void DumpMotionMemory(UWMotionParamArray MotionParams, string stage)
-        {
-            File.WriteAllBytes($"c:\\temp\\{iteration}_{stage}_MotionParams", MotionParams.data);
-            File.WriteAllBytes($"c:\\temp\\{iteration}_{stage}_CalcArray", MotionCalcArray.base_dseg_25c4);
-            File.WriteAllBytes($"c:\\temp\\{iteration}_{stage}_3FC", UWMotionParamArray.data_3FC);
         }
 
         static void SomethingProjectileHeading_seg021_22FD_EAE(ushort heading, ref short Result_arg2, ref short Result_arg4)

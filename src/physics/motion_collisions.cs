@@ -606,11 +606,11 @@ namespace Underworld
                     )
                     {
                         //seg028_2941_B73
+                        var si_ptr = MotionCalcArray.Unk14_collisoncount;
                         MotionCalcArray.Unk14_collisoncount++;
-                        var si_ptr = MotionCalcArray.Unk14_collisoncount;// * 6;
                         collisionTable[si_ptr].zpos = (byte)CollidingObject.zpos;
                         //DataLoader.setAt(motion.Collisions_dseg_2520, si_ptr + 1, 8, CollidingObject.zpos);
-                        collisionTable[si_ptr].height = (byte)commonObjDat.height(CollidingObject.item_id);
+                        collisionTable[si_ptr].height = (byte)((CollidingObject.zpos + commonObjDat.height(CollidingObject.item_id)) & 0xFF);
                         //DataLoader.setAt(motion.Collisions_dseg_2520, si_ptr, 8, commonObjDat.height(CollidingObject.item_id));
                         if (commonObjDat.height(CollidingObject.item_id) == 0)
                         {
@@ -726,7 +726,7 @@ namespace Underworld
                     int next = tileAtPTR.indexObjectList;
                     //seg028_2941_E36:
                     //loop the object list on the tile.
-                    var indexByte = tileAtPTR.indexObjectList;
+                    //var indexByte = tileAtPTR.indexObjectList;
                     while (next != 0 && si <= 0x40)
                     {
                         var obj = UWTileMap.current_tilemap.LevelObjects[next];
@@ -760,13 +760,13 @@ namespace Underworld
                                             ((arg2 != 0) && commonObjDat.ActivatedByCollision(obj.item_id))
                                             )
                                         {
-                                            CreateCollisonRecord_Seg028_2941_A78(obj, indexByte, var11_maybeX, var12_maybeY, isNPC_var14);
+                                            CreateCollisonRecord_Seg028_2941_A78(obj, obj.index, var11_maybeX, var12_maybeY, isNPC_var14);
                                         }
                                     }
                                 }
                             }
                         }
-                        indexByte = obj.index;//seg028_2941_E1E
+                        //indexByte = obj.index;//seg028_2941_E1E
                         next = obj.next;
                         si++;
                     }

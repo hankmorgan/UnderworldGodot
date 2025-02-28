@@ -258,17 +258,5 @@ namespace Underworld
             X1 = HeadingLookupTable[64 + (heading >> 8)];
             Y1 = HeadingLookupTable[heading >> 8];            
         }
-
-
-        public static void DumpProjectile(uwObject projectile)
-        {
-            byte[] objbytes = new byte[0x1B];
-            for (int i = 0; i <= 0x1A; i++)
-            {
-                objbytes[i] = projectile.DataBuffer[projectile.PTR + i];
-            }
-            System.IO.File.WriteAllBytes("c:\\temp\\exportedobj.dat", objbytes);
-        }
-
     }//end class
 }//end namespace

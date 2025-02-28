@@ -22,6 +22,9 @@ namespace Underworld
             get { return (short)(index * 6); }
         }
 
+        /// <summary>
+        /// Object zpos + object height
+        /// </summary>
         public byte height
         {
             get
@@ -55,9 +58,9 @@ namespace Underworld
             set
             {
                 value = (short)(value & 0x3FF);
-                var tmp = getAt(Collisions_dseg_2520, ptr + 2, 16);
+                var tmp = (int)getAt(Collisions_dseg_2520, ptr + 2, 16);
                 tmp = tmp & 0x3F;
-                tmp = (uint)(tmp | ((uint)value << 6));
+                tmp = tmp | (value << 6);
                 setAt(Collisions_dseg_2520, ptr + 2, 16, (int)tmp);
             }
         }
@@ -72,7 +75,7 @@ namespace Underworld
             {
                 value = (short)(value & 0x3F);
                 var tmp = getAt(Collisions_dseg_2520, ptr + 2, 16);
-                tmp = tmp & 0xC0;
+                tmp = tmp & 0xFFC0;
                 tmp = (uint)((short)tmp | (short)value);
                 setAt(Collisions_dseg_2520, ptr + 2, 16, (int)tmp);
             }

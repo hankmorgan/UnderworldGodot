@@ -455,6 +455,38 @@ namespace Underworld
 
 
 
+        /// <summary>
+        /// Dumps out some memory values for the testing of motion.
+        /// </summary>
+        /// <param name="MotionParams"></param>
+        /// <param name="stage"></param>
+        private static void DumpMotionMemory(UWMotionParamArray MotionParams, string stage)
+        {
+            System.IO.File.WriteAllBytes($"c:\\temp\\{iteration}_{stage}_MotionParams", MotionParams.data);
+            System.IO.File.WriteAllBytes($"c:\\temp\\{iteration}_{stage}_CalcArray", MotionCalcArray.base_dseg_25c4);
+            System.IO.File.WriteAllBytes($"c:\\temp\\{iteration}_{stage}_3FC", UWMotionParamArray.data_3FC);
+        }
+
+        public static void DumpProjectile(uwObject projectile)
+        {
+            byte[] objbytes = new byte[0x1B];
+            for (int i = 0; i <= 0x1A; i++)
+            {
+                objbytes[i] = projectile.DataBuffer[projectile.PTR + i];
+            }
+            System.IO.File.WriteAllBytes("c:\\temp\\exportedobj.dat", objbytes);
+        }
+
+        public static void DumpCollisionTable()
+        {
+            byte[] collisiondata = new byte[CollisionRecord.Collisions_dseg_2520.GetUpperBound(0)+1];
+            for (int i = 0; i <= CollisionRecord.Collisions_dseg_2520.GetUpperBound(0); i++)
+            {
+                collisiondata[i] = CollisionRecord.Collisions_dseg_2520[i];
+            }
+            System.IO.File.WriteAllBytes("c:\\temp\\collisions.dat", collisiondata);
+        }
+
 
     }//end class
 }//end namespace
