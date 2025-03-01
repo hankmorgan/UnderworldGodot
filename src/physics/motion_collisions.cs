@@ -457,7 +457,7 @@ namespace Underworld
         /// </summary>
         public static void SortCollisions_seg028_2941_ED8()
         {
-            int var1;
+            int index_var1;
             var HeightIsZero_Var4 = 0;
             if (MotionCalcArray.Height9 == 0)
             {//seg028_2941_EEC
@@ -470,17 +470,19 @@ namespace Underworld
             //seg028_2941_F58:
             while (MotionCalcArray.Unk14_collisoncount > var3)
             {
-                var1 = MotionCalcArray.Unk14_collisoncount - 2;
-                while (var1 >= var3)
-                {
-                    if (collisionTable[var1].height > collisionTable[var1 + 1].height)
+                //seg028_2941_EF6:
+                index_var1 = MotionCalcArray.Unk14_collisoncount - 2;
+                while (index_var1 >= var3)
+                {//seg028_2941_F04: 
+                    if (collisionTable[index_var1].height > collisionTable[index_var1 + 1].height)
                     {
-                        SwapCollisionRecord(var1);
+                        //seg028_2941_F2B
+                        SwapCollisionRecord(index_var1);
                     }
-                    var1--;
+                    index_var1--;
                 }
-                var1 = var3;
-                if (collisionTable[var1].height > MotionCalcArray.z4)
+                //var1 = var3;
+                if (collisionTable[var3].height <= MotionCalcArray.z4)
                 {
                     var3++;
                 }
@@ -490,18 +492,20 @@ namespace Underworld
                 }
             }
 
-            var1 = var3;
+            index_var1 = var3;
 
             //seg028_2941_FB4:
             while (true)
             {
-                if (MotionCalcArray.Unk14_collisoncount <= var1)
+                if (MotionCalcArray.Unk14_collisoncount <= index_var1)
                 {//seg028_2941_FC0
                     MotionCalcArray.Unk16 = (byte)var3;
                     MotionCalcArray.Unk15 = 0;
-                    while (MotionCalcArray.Unk15 < MotionCalcArray.Unk14_collisoncount)
+
+                    //seg028_2941_FD7:
+                    while (MotionCalcArray.Unk15 + var3 < MotionCalcArray.Unk14_collisoncount)
                     {
-                        if ((MotionCalcArray.z4 + MotionCalcArray.Height9 + HeightIsZero_Var4) > collisionTable[MotionCalcArray.Unk15].zpos)
+                        if ((MotionCalcArray.z4 + MotionCalcArray.Height9 + HeightIsZero_Var4) > collisionTable[MotionCalcArray.Unk15 + var3].zpos)
                         {
                             MotionCalcArray.Unk15++;
                         }
@@ -517,7 +521,7 @@ namespace Underworld
 
                     var var2 = MotionCalcArray.Unk14_collisoncount - 2;
 
-                    while (var2 >= var1)
+                    while (var2 >= index_var1)
                     {
                         if (collisionTable[var2].zpos > collisionTable[var2 + 1].zpos)
                         {
@@ -527,7 +531,7 @@ namespace Underworld
                     }
                 }
                 //seg028_2941_FB1
-                var1++;
+                index_var1++;
             }
         }
 
@@ -789,7 +793,7 @@ namespace Underworld
 
         static int CollideObjects_seg030_2BB7_1CE(UWMotionParamArray MotionParams, int si_CollisionIndex_Arg0, int MotionObjectArg2)
         {
-            
+
             uwObject CollidedObject_VarA;
             bool varB;
             int var2_collideditemid;
@@ -897,8 +901,8 @@ namespace Underworld
                         UsingObjectOrCharacter: CollidedObject_VarA,
                         objList: UWTileMap.current_tilemap.LevelObjects,
                         WorldObject: true);//this line will probably break a lot until I make use a more vanilla compliant Use() function.
-                    //if (UWTileMap.ValidTile(CollidedObject_VarA.tileX, CollidedObject_VarA.tileY))
-                   
+                                           //if (UWTileMap.ValidTile(CollidedObject_VarA.tileX, CollidedObject_VarA.tileY))
+
                     if ((MotionCalcArray.x0_base >> 3) >= 0)  //this needs to be changed to another global
                     {//Seg031_2bb7_421
                         Debug.Print("FIXME seg030_2bb7_3F7");
