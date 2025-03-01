@@ -181,7 +181,7 @@ namespace Underworld
             }
         }
 
-        public static ushort CollisionHeightRelated_dseg_67d6_419
+        public static ushort CollisionZposHeightRelated_dseg_67d6_419
         {//0x1D
             get
             {

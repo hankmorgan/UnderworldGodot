@@ -1042,7 +1042,7 @@ namespace Underworld
                     if (si < 0)
                     {//2CFA:1285
                         MotionParams.tilestate25 = 0x10;
-                        if (MotionCalcArray.z4 + si >= UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419)
+                        if (MotionCalcArray.z4 + si >= UWMotionParamArray.CollisionZposHeightRelated_dseg_67d6_419)
                         {
                             MotionCalcArray.z4 = (ushort)(MotionCalcArray.z4 + si);
                             //seg031_2CFA_12A9
@@ -1063,7 +1063,7 @@ namespace Underworld
                 else
                 {//si>0
                     MotionParams.tilestate25 = 0x10;
-                    if (MotionCalcArray.z4 + si > UWMotionParamArray.CollisionHeightRelated_dseg_67d6_419)
+                    if (MotionCalcArray.z4 + si > UWMotionParamArray.CollisionZposHeightRelated_dseg_67d6_419)
                     {
                         DoCollision_seg031_2CFA_D1F(MotionParams);
                         return 0;
