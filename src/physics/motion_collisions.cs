@@ -838,25 +838,29 @@ namespace Underworld
                 var2_collideditemid = CollidedObject_VarA.item_id;
                 varB = commonObjDat.Unk6_0(var2_collideditemid);
 
-                if (!MotionObject.IsStatic)
+                if (!CollidedObject_VarA.IsStatic)
                 {
-                    //mobile
-                    //seg030_2BB7_30C:
-                    if ((MotionObject.majorclass != 1)
-                        && (MotionObject.UnkBit_0X15_Bit7 != 0)
-                        && (diMotionObject_itemid != 0x1D)
-                        && (diMotionObject_itemid != 0x13F))
-                    {
-                        return 2;
-                    }
-                    else
-                    {
-                        //an npc, or bit is zero, or  a fireball or a npc
-                        //seg030_2BB7_33E:
-                        if (MotionObject.majorclass != 1)
+                    //the object collided with is a mobile
+                    if (!MotionObject.IsStatic)
+                    {//the projectile is mobile
+                        //seg030_2BB7_30C:
+                        if (
+                            (MotionObject.majorclass != 1)
+                            && (MotionObject.UnkBit_0X15_Bit7 != 0)
+                            && (diMotionObject_itemid != 0x1D)
+                            && (diMotionObject_itemid != 0x13F))
                         {
-                            //seg030_2BB7_348:
-                            MotionObject.UnkBit_0X15_Bit7 = 1;
+                            return 2;
+                        }
+                        else
+                        {
+                            //an npc, or bit is zero, or  a fireball or a npc
+                            //seg030_2BB7_33E:
+                            if (MotionObject.majorclass != 1)
+                            {
+                                //seg030_2BB7_348:
+                                MotionObject.UnkBit_0X15_Bit7 = 1;
+                            }
                         }
                     }
                 }
@@ -864,7 +868,7 @@ namespace Underworld
 
             //seg030_2BB7_357
             if (var2_collideditemid != -1)
-            {
+            {//seg030_2BB7_360
                 if (commonObjDat.ActivatedByCollision(var2_collideditemid))
                 {
                     //seg030_2BB7_374
@@ -879,7 +883,7 @@ namespace Underworld
                 else
                 {
                     //seg030_2BB7_3A1
-                    if (CollidedObject_VarA.OneF0Class == 0x1A)
+                    if ((CollidedObject_VarA.OneF0Class & 0x1E) == 0x1A)  //the use of 0x1E here with 1FOclass is different from normal usage
                     {
                         //object is a trigger
                         return trigger.RunTrigger(CollidedObject_VarA.index, MotionObject, CollidedObject_VarA, (int)triggerObjectDat.triggertypes.MOVE, UWTileMap.current_tilemap.LevelObjects);

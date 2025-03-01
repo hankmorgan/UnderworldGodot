@@ -593,7 +593,7 @@ namespace Underworld
         {
             get
             {
-                return (sbyte)DataLoader.getAt(data, 0x26, 16);
+                return (short)DataLoader.getAt(data, 0x26, 16);
             }
             set
             {

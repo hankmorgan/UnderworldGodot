@@ -193,15 +193,15 @@ namespace Underworld
                     {//seg031_2CFA_686
 
 
-                        var varC = (UWMotionParamArray.GetMotionXY_404(UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer) / 0x2000) * MotionParams.unk_a_pitch;
+                        int varC = (UWMotionParamArray.GetMotionXY_404(UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer) / 0x2000) * MotionParams.unk_a_pitch;
 
                         //seg031_2CFA_6BA:
-                        var var10 = (short)DataLoader.getAt(MotionParams.data, 6 + UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer * 2, 16);
+                        var var10 = MotionParams.GetParam6(UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer);
                         //seg031_2CFA_6DD:
                         var10 = (short)(var10 * (UWMotionParamArray.Gravity_related_dseg_67d6_408 / 0x800));
                         //seg031_2CFA_6F8
-                        varC = varC * 0x100;
-                        varC = varC / var10;
+                        varC = (int)(varC * 0x100);
+                        varC = (int)(varC / var10);
 
                         //var varA = (byte)(varC & 0xFF00) >> 16; //get the sign
                         //var varC_s = (byte)varC & 0xFF;

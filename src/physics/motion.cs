@@ -139,7 +139,7 @@ namespace Underworld
                 if (_RES == GAME_UW2)
                 {
                     //seg030_2BB7_7B7:
-                    if (projectile.zpos != MotionParams.z_4)
+                    if (projectile.zpos != (MotionParams.z_4>>3))
                     {
                         //Debug.Print("TODO Run pressure trigger for projectile");                        
                     }
@@ -161,7 +161,7 @@ namespace Underworld
 
             //seg030_2BB7_83E:
             if (MotionParams.unk_26 > 0x180)
-            {
+            {//seg030_2BB7_848:
                 var var6 = MotionParams.unk_26 >> 8;
                 if (projectile.majorclass == 1)
                 {
@@ -190,7 +190,7 @@ namespace Underworld
                     damagesource: 0,
                     ignoreVector: true);
             }
-
+            //seg030_2BB7_8E1:
             if ((MotionParams.tilestate25 & 4) != 0)
             {//on lava, apply fire damage.
                 //seg030_2BB7_90C:
@@ -203,9 +203,9 @@ namespace Underworld
                     damagesource: 0,
                     ignoreVector: true);
             }
-
+            //seg030_2BB7_914:
             if (projectile.majorclass != 1)
-            {
+            {//seg030_2BB7_928:
                 if (projectile.IsStatic)
                 {//seg030_2BB7_937
                     if ((MotionParams.unk_14 | MotionParams.unk_a_pitch) != 0)
@@ -281,7 +281,7 @@ namespace Underworld
                         cx = 0x1F;
                     }
                 }
-
+                //seg030_2BB7_A5F:
                 projectile.Projectile_Pitch = (short)cx;
                 projectile.UnkBit_0X13_Bit0to6 = (short)(MotionParams.unk_14 / 0x2F);
                 projectile.TileState_0XA_Bit456 = dseg_67d6_3E8[MotionParams.tilestate25];
