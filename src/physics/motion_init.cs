@@ -1,6 +1,6 @@
 namespace Underworld
-{    
-    public partial class motion: Loader
+{
+    public partial class motion : Loader
     {
 
         /// <summary>
@@ -9,7 +9,7 @@ namespace Underworld
         /// <param name="projectile"></param>
         /// <param name="MotionParams"></param>
         public static void InitMotionParams(uwObject projectile, UWMotionParamArray MotionParams)
-        {           
+        {
             bool isNPC = true;
             var itemid = projectile.item_id;
 
@@ -20,7 +20,7 @@ namespace Underworld
             MotionParams.unk_16 = (byte)commonObjDat.unk6_5678(itemid);
             MotionParams.scaleresistances_1C = (byte)commonObjDat.scaleresistances(itemid);
             MotionParams.unk_1d = 0;
-            MotionParams.heading_1E = (short)(projectile.heading<<0xD);
+            MotionParams.heading_1E = (short)(projectile.heading << 0xD);
             MotionParams.unk_24 = 0;
             MotionParams.radius_22 = (byte)commonObjDat.radius(itemid);
             MotionParams.height_23 = (byte)commonObjDat.height(itemid);
@@ -34,21 +34,21 @@ namespace Underworld
                 MotionParams.unk_10 = 0;
                 MotionParams.unk_14 = 0;
                 MotionParams.hp_1b = (byte)projectile.quality;
-                MotionParams.x_0 += (short)(projectile.tileX<<3);
-                MotionParams.y_2 += (short)(projectile.tileY<<3);
+                MotionParams.x_0 += (short)(projectile.tileX << 3);
+                MotionParams.y_2 += (short)(projectile.tileY << 3);
             }
             else
             {
-                MotionParams.x_0 += (short)(projectile.npc_xhome<<3);
-                MotionParams.y_2 += (short)(projectile.npc_yhome<<3);
-                MotionParams.heading_1E = (short)(projectile.ProjectileHeading<<8);
+                MotionParams.x_0 += (short)(projectile.npc_xhome << 3);
+                MotionParams.y_2 += (short)(projectile.npc_yhome << 3);
+                MotionParams.heading_1E = (short)(projectile.ProjectileHeading << 8);
                 MotionParams.tilestate25 = (byte)(1 << projectile.TileState_0XA_Bit456);
                 MotionParams.unk_a_pitch = (short)((projectile.Projectile_Pitch - 16) << 6);
                 MotionParams.unk_10 = (short)(projectile.UnkBit_0X13_Bit7 * -4);
-                MotionParams.hp_1b = projectile.npc_hp;  
+                MotionParams.hp_1b = projectile.npc_hp;
 
                 if (projectile.majorclass != 1)
-                {
+                {//seg030_2BB7_583:
                     isNPC = false;
                     MotionParams.x_0 = (short)projectile.CoordinateX;
                     MotionParams.y_2 = (short)projectile.CoordinateY;
@@ -59,20 +59,21 @@ namespace Underworld
 
 
             if (
-                (projectile.majorclass!=1)
+                (projectile.majorclass != 1)
                 &&
                 (commonObjDat.maybeMagicObjectFlag(itemid) == false)
                 &&
                 ((MotionParams.unk_a_pitch | MotionParams.unk_10) == 0)
             )
             {
-                if  (2+(MotionParams.unk_1a<<1) < MotionParams.unk_14)
-                {
+                //seg030_2BB7_5CE:
+                if (2 + (MotionParams.unk_1a << 1) >= MotionParams.unk_14)
+                {//seg030_2BB7_5DA: 
                     MotionParams.unk_14 = 0;
                 }
                 else
                 {
-                    MotionParams.unk_14 = (short)(projectile.UnkBit_0X13_Bit0to6 * (0x29 + (MotionParams.unk_1a<<2)));
+                    MotionParams.unk_14 = (short)(projectile.UnkBit_0X13_Bit0to6 * (0x29 + (MotionParams.unk_1a << 2)));
                     if (projectile.majorclass == 1)
                     {
                         MotionParams.unk_24 = 8;
@@ -87,10 +88,10 @@ namespace Underworld
 
             if (isNPC)
             {
-                MotionParams.x_0 = (short)((MotionParams.x_0<<5) + Rng.r.Next(32));
-                MotionParams.y_2 = (short)((MotionParams.y_2<<5) + Rng.r.Next(32));
-                MotionParams.z_4 = (short)((MotionParams.z_4<<3) + Rng.r.Next(8));
-            }             
+                MotionParams.x_0 = (short)((MotionParams.x_0 << 5) + Rng.r.Next(32));
+                MotionParams.y_2 = (short)((MotionParams.y_2 << 5) + Rng.r.Next(32));
+                MotionParams.z_4 = (short)((MotionParams.z_4 << 3) + Rng.r.Next(8));
+            }
         }
 
 

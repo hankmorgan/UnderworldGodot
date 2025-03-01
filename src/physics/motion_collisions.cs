@@ -1301,7 +1301,7 @@ namespace Underworld
 
         static uwObject PlacedObjectCollision_seg030_2BB7_10BC(uwObject projectile, int tileX, int tileY, int arg8)
         {
-            Debug.Print("ThrownObjectCollision!");
+            Debug.Print("PlacedObjectCollision!");
             return projectile;
         }
 
