@@ -392,6 +392,7 @@ namespace Underworld
                         if (_RES==GAME_UW2)
                         {
                             a_hack_trap_changegoaltarget.Activate(trapObj: trapObj, character: character);
+                            return true;
                         }
                         break;
                     }
