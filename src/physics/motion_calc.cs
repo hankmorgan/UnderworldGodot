@@ -13,11 +13,11 @@ namespace Underworld
         /// <param name="MotionParams"></param>
         /// <param name="MaybeMagicObjectFlag"></param>
         /// <returns></returns>
-        public static bool CalculateMotion_TopLevel(uwObject projectile, UWMotionParamArray MotionParams, int MaybeMagicObjectFlag)
-        {//seg006_1413_D6A
+        public static bool CalculateMotion_TopLevel(uwObject projectile, UWMotionParamArray MotionParams)
+        {
+            //seg006_1413_D6A
             MotionParams.speed_12 = (byte)(projectile.Projectile_Speed << 4);
-            //DumpMotionMemory(MotionParams, "BeforeCalculateMotion");
-            CalculateMotion(projectile, MotionParams, MaybeMagicObjectFlag);
+            CalculateMotion(projectile, MotionParams);
             return true;
         }
 
@@ -27,11 +27,11 @@ namespace Underworld
         /// </summary>
         /// <param name="projectile"></param>
         /// <param name="MotionParams"></param>
-        /// <param name="MaybeMagicObjectFlag"></param>
-        static void CalculateMotion(uwObject projectile, UWMotionParamArray MotionParams, int MaybeMagicObjectFlag)
+        
+        static void CalculateMotion(uwObject projectile, UWMotionParamArray MotionParams)
         {
             int collisionCounter = 0;
-            UWMotionParamArray.LikelyIsMagicProjectile_dseg_67d6_26B8 = (short)MaybeMagicObjectFlag;
+            //WMotionParamArray.PtrTo267D2_dseg_67d6_26B8 = (short)MaybeMagicObjectFlag;
             UWMotionParamArray.MotionParam0x25_dseg_67d6_26A9 = MotionParams.tilestate25;
             //UWMotionParamArray.CalculateMotionGlobal_dseg_67d6_25DB = 0;
             MotionCalcArray.Unk17_base = 0;
@@ -772,12 +772,12 @@ namespace Underworld
             MotionParams.tilestate25 = GetTileState(var2);
             if ((var2 & 0xC000) == 0)//var2 getting screwed up here?
             {//seg031_2CFA_17ED:
-                var tmp = UWMotionParamArray.LikelyIsMagicProjectile_dseg_67d6_26B8;
+                var tmp = UWMotionParamArray.PtrTo267D2_dseg_67d6_26B8_table0;
                 var2 = var2 & ~tmp;
                 int result = 0;
                 if (var2 != 0)
                 {
-                    if ((UWMotionParamArray.dseg_67d6_26BA & var2) != 0)
+                    if ((UWMotionParamArray.dseg_67d6_26BA_table2 & var2) != 0)
                     {
                         //seg031_2CFA_180F:
                         //Debug.Print($"Call motion code at {UWMotionParamArray.dseg_67d6_26c2_LikeMagicProjectile8} with param {var2}");

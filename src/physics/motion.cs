@@ -8,7 +8,7 @@ namespace Underworld
         static bool ObjectHasHalted = false;
         static int iteration = 0;
         public static bool MotionSingleStepEnabled = false;
-        static int MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2;
+        //static int MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2;
 
         static motion()
         {
@@ -40,11 +40,11 @@ namespace Underworld
 
             if (commonObjDat.maybeMagicObjectFlag(projectile.item_id))
             {
-                MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2 = 0x1000;
+                UWMotionParamArray.PtrTo267D2_dseg_67d6_26B8_table0 = 0x1000;  //MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2 = 0x1000;
             }
             else
             {
-                MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2 = 0;
+                UWMotionParamArray.PtrTo267D2_dseg_67d6_26B8_table0 = 0;//MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2 = 0;
             }
 
             UWMotionParamArray MotionParams = new();
@@ -56,7 +56,7 @@ namespace Underworld
 
             InitMotionParams(projectile, MotionParams);
 
-            CalculateMotion_TopLevel(projectile, MotionParams, MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2);
+            CalculateMotion_TopLevel(projectile, MotionParams);
 
             //store current x/y homes in globals                        
             var result = ApplyProjectileMotion(projectile, MotionParams);

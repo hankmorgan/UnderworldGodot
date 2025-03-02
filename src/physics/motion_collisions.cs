@@ -149,7 +149,7 @@ namespace Underworld
                         if (
                             (MotionParams.index_20 != 1)
                             &&
-                            ((UWMotionParamArray.LikelyIsMagicProjectile_dseg_67d6_26B8 & 0x1000) == 0x1000)
+                            ((UWMotionParamArray.PtrTo267D2_dseg_67d6_26B8_table0 & 0x1000) == 0x1000)
                         )
                         {
                             //seg031_2CFA_F7B:
@@ -352,13 +352,13 @@ namespace Underworld
                     }
 
                     var CollisionIndex_var_4 = 0;
-                    while (MotionCalcArray.Unk14_collisoncount_base > CollisionIndex_var_4)//oob error
+                    while (MotionCalcArray.Unk14_collisoncount_base > CollisionIndex_var_4)//seg031_2CFA_38A
                     {
-                        //seg031_2CFA_23A
+                        //seg031_2CFA_394:  ->   seg031_2CFA_23A
                         var collision_Var4 = collisionTable[CollisionIndex_var_4];
                         var obj = UWTileMap.current_tilemap.LevelObjects[collision_Var4.link];
                         if (commonObjDat.Unk6_0(obj.item_id))
-                        {
+                        {//seg031_2CFA_275:
                             if (MotionCalcArray.Unk16_base <= CollisionIndex_var_4)
                             {//seg031_2CFA_281:
                                 if (collision_Var4.zpos - 1 < UWMotionParamArray.dseg_67d6_41D)
@@ -384,11 +384,11 @@ namespace Underworld
                             else
                             {//seg031_2CFA_319
                                 if (var1 != 0)
-                                {
-                                    if (collision_Var4.height < UWMotionParamArray.CollisionZposHeightRelated_dseg_67d6_419)
-                                    {
+                                {//seg031_2CFA_31F:
+                                    if (collision_Var4.height >= UWMotionParamArray.CollisionZposHeightRelated_dseg_67d6_419)
+                                    {//seg031_2CFA_335:
                                         if (UWMotionParamArray.ACollisionIndex_dseg_67d6_416 == -1)
-                                        {
+                                        {//seg031_2CFA_36E
                                             UWMotionParamArray.CollisionZposHeightRelated_dseg_67d6_419 = collision_Var4.height;
                                             UWMotionParamArray.ACollisionIndex_dseg_67d6_416 = (sbyte)CollisionIndex_var_4;
                                         }
@@ -403,7 +403,7 @@ namespace Underworld
                                             else
                                             {
                                                 //seg031_2CFA_353
-                                                if (collision_Var4.quality == 0)
+                                                if ((SBB(collision_Var4.quality) & 0x10) == 0)
                                                 {
                                                     UWMotionParamArray.CollisionZposHeightRelated_dseg_67d6_419 = collision_Var4.height;
                                                     UWMotionParamArray.ACollisionIndex_dseg_67d6_416 = (sbyte)CollisionIndex_var_4;
@@ -1002,10 +1002,10 @@ namespace Underworld
         /// <param name="MotionParams"></param>
         /// <returns></returns>
         static int GetCollisionHeightState_seg031_2CFA_13B2(UWMotionParamArray MotionParams)
-        {//funciton returns wrong result.
+        {//function returns wrong result.
             var var2 = 0;
             var var3 = 0;
-            var var4 = SBB(UWMotionParamArray.dseg_67d6_26BC & 0x80);
+            var var4 = SBB(UWMotionParamArray.dseg_67d6_26BC_table4 & 0x80);
             var var6 = 0;
             UWMotionParamArray.dseg_67d6_26A5 = 0;
 
@@ -1013,14 +1013,14 @@ namespace Underworld
             ScanForCollisions_seg028_2941_C0E(0, 0);
             SetCollisionTarget_seg031_2CFA_10E(MotionParams, 0);
             var si_result = MotionCalcArray.UnkC_terrain_base | MotionCalcArray.UnkE_base;
-            var var5 = SBB(UWMotionParamArray.dseg_67d6_26BC);
+            var var5 = SBB(UWMotionParamArray.dseg_67d6_26BC_table4);
 
             if (MotionCalcArray.Unk14_collisoncount_base > 0)
             {
                 var di = MotionCalcArray.Unk16_base;
                 //seg031_2CFA_1463
                 while (MotionCalcArray.Unk16_base + MotionCalcArray.Unk15_base > di)
-                {
+                {//seg031_2CFA_1425: 
                     var2 = CollideObjects_seg030_2BB7_1CE(MotionParams, di, MotionCalcArray.MotionArrayObjectIndexA_base);
                     if ((var2 & 4) != 0)
                     {
