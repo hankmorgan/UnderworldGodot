@@ -53,7 +53,6 @@ namespace Underworld
                 var projectile = motion.PrepareProjectileObject(caster);
                 if (projectile != null)
                 {
-                    //motion.DumpProjectile(projectile);
                     objectInstance.RedrawFull(projectile);
                     //Todo. Some sound effect logic
                     return true;

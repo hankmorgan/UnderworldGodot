@@ -21,54 +21,53 @@ namespace Underworld
         public static bool MissileFlagA;
         public static bool MissileFlagB;
 
-
+        
+        /// <summary>
+        /// Translate mouse x/y values into a pitch and heading for the projectile to follow by dividing the 3d window in to a grid of discrete pitches and yaws
+        /// </summary>
+        /// <returns></returns>
         public static bool InitPlayerProjectileValues()
         {
-            //translate mouse x/y values into a pitch and heading for the projectile to follow
-            if (_RES == GAME_UW2)
+            int X1 = (int)((uimanager.ViewPortMouseXPos / 4) - uimanager.Window3DLeftBorder);//ofset from the left side border
+            int Y1 = (int)((200f - uimanager.ViewPortMouseYPos / 4) - 54f);
+
+            if (X1 > uimanager.Window3DMaxX)
             {
-                int X1 = (int)((uimanager.ViewPortMouseXPos / 4) - 16f);//ofset from the left side border
-                int Y1 = (int)((200f - uimanager.ViewPortMouseYPos / 4) - 54f);
-
-                if (X1 > 208)
+                X1 = uimanager.Window3DMaxX;
+            }
+            else
+            {
+                if (X1 < 0)
                 {
-                    X1 = 208;
-                }
-                else
-                {
-                    if (X1 < 0)
-                    {
-                        X1 = 0;
-                    }
-                }
-
-                if (Y1 > 128)
-                {
-                    Y1 = 128;
-                }
-                else
-                {
-                    if (Y1 < 0)
-                    {
-                        Y1 = 0;
-                    }
-                }
-
-                MissileHeading = 1 + (((X1 - 104) * 5) / 13);
-                //note missile pitch is initialised with a value from DSEG_33D6 but that value always appears to be 0.
-                MissilePitch = (Y1 - 64) / 6;
-
-                Debug.Print($"Pitch {MissilePitch} Heading {MissileHeading} at mousepos {X1},{Y1} ({(uimanager.ViewPortMouseXPos / 4)},{(uimanager.ViewPortMouseYPos / 4)})");
-                if (Y1 < 42)
-                {
-                    return false;//drop action?
-                }
-                else
-                {
-                    return true;//throw action?
+                    X1 = 0;
                 }
             }
-            return false;//todo UW1 version of the above.
+
+            if (Y1 > uimanager.Window3DMaxY)
+            {
+                Y1 = uimanager.Window3DMaxY;
+            }
+            else
+            {
+                if (Y1 < 0)
+                {
+                    Y1 = 0;
+                }
+            }
+
+            MissileHeading = 1 + (((X1 - uimanager.Window3DHeadingAdjust) * 5) / 13);
+            //note missile pitch is initialised with a value from DSEG_33D6 but that value always appears to be 0.
+            MissilePitch = (Y1 - uimanager.Window3DPitchAdjust) / 6;
+
+            Debug.Print($"Pitch {MissilePitch} Heading {MissileHeading} at mousepos {X1},{Y1} ({(uimanager.ViewPortMouseXPos / 4)},{(uimanager.ViewPortMouseYPos / 4)})");
+            if (Y1 < uimanager.Window3DDropThreshold)
+            {
+                return false;//drop action?
+            }
+            else
+            {
+                return true;//throw action?
+            }
         }
 
         public static uwObject PrepareProjectileObject(uwObject Launcher)

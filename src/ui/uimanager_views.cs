@@ -1,3 +1,4 @@
+using System.Data;
 using System.Diagnostics;
 using Godot;
 using Godot.Collections;
@@ -25,6 +26,96 @@ namespace Underworld
 
         public static float ViewPortMouseXPos;
         public static float ViewPortMouseYPos;
+
+        public static float Window3DLeftBorder
+        {
+            get
+            {
+                if (UWClass._RES == UWClass.GAME_UW2)
+                {
+                    return 16f;
+                }
+                else
+                {
+                    return 52f;
+                }
+            }
+        }
+
+        public static int Window3DMaxX
+        {
+            get
+            {
+                if (UWClass._RES == UWClass.GAME_UW2)
+                {
+                    return 208;
+                }
+                else
+                {
+                    return 172;
+                }
+            }
+        }
+
+        public static int Window3DMaxY
+        {
+            get
+            {
+                if (UWClass._RES == UWClass.GAME_UW2)
+                {
+                    return 128;
+                }
+                else
+                {
+                    return 113;
+                }
+            }
+        }
+
+        public static int Window3DHeadingAdjust
+        {
+            get
+            {
+                if (UWClass._RES == UWClass.GAME_UW2)
+                {
+                    return 104;
+                }
+                else
+                {
+                    return 86;
+                }
+            }
+        }
+
+        public static int Window3DPitchAdjust
+        {
+            get
+            {
+                if (UWClass._RES == UWClass.GAME_UW2)
+                {
+                    return 64;
+                }
+                else
+                {
+                    return 56;
+                }
+            }
+        }
+
+        public static int Window3DDropThreshold
+        {
+            get
+            {
+                if (UWClass._RES == UWClass.GAME_UW2)
+                {
+                    return 42;
+                }
+                else
+                {
+                    return 37;
+                }
+            }
+        }
 
         private void InitViews()
         {

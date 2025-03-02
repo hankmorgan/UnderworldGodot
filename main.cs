@@ -290,7 +290,7 @@ public partial class main : Node3D
 							}
 						}
 					}
-					//motion.MotionSingleStepEnabled = false;
+					motion.MotionSingleStepEnabled = false;
 
 					AnimationOverlay.UpdateAnimationOverlays();
 					timers.RunTimerTriggers(1);
