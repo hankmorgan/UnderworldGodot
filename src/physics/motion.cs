@@ -342,9 +342,12 @@ namespace Underworld
             }
             if ((si_cull > 0) && (si_cull <= 8))
             {
-                if (!ObjectRemover.ObjectCulling(projectile, 0xA))
+                if ((Rng.r.Next(0x7FFF) & 0x7) < si_cull)
                 {
-                    haltobject = false;
+                    if (ObjectRemover.ObjectCulling(projectile, 0xA))
+                    {
+                        haltobject = false;
+                    }
                 }
             }
 

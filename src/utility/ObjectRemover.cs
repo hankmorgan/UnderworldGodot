@@ -391,7 +391,7 @@ namespace Underworld
             GlobalCullingRange = CullingRange;
             if (!CheckDoNotCull(obj))
             {
-                if ((obj.is_quant != 0) && (obj.link != 0))
+                if ((obj.is_quant == 0) && (obj.link != 0))
                 {//object is a container that needs it's contents to be tested 
                     if (CallBacks.RunCodeOnObjectsInChain(CheckDoNotCull, obj, UWTileMap.current_tilemap.LevelObjects))
                     {
