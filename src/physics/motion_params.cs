@@ -1,3 +1,5 @@
+using System.Reflection.Metadata;
+
 namespace Underworld
 {
     /// <summary>
@@ -45,24 +47,10 @@ namespace Underworld
         }
 
 
-        // public static short dseg_67d6_26c2_LikeMagicProjectile8
-        // {
-        //     get
-        //     {
-        //         return (short)getAt(dseg_26b8, 8, 16);
-        //     }
-        //     set
-        //     {
-        //         setAt (dseg_26b8, 8, 16, value);
-        //     }
-        // }
-
+        //globals        
         
 
 
-
-        //globals        
-        public const int RelatedToMotionX_dseg_67d6_3FE_index = 2;
         public static short RelatedToMotionX_dseg_67d6_3FE
         {//2
             get
@@ -299,6 +287,7 @@ namespace Underworld
         public static int dseg_67d6_25BF_X;
         public static int dseg_67d6_25C0_Y;
         public static int dseg_67d6_25C1;
+        public static int dseg_67d6_25C2;
 
         //The class properties
         public short x_0
@@ -633,23 +622,6 @@ namespace Underworld
         {
             DataLoader.setAt(data, 0x6 + offset * 2, 16, value);
         }
-
-        // /// <summary>
-        // /// Provides a look up into values starting at offset 6. To replicate vanilla array access while staying strongly typed.
-        // /// </summary>
-        // /// <param name="offset"></param>
-        // /// <returns></returns>
-        // public int GetParam6(int offset)
-        // {
-        //     switch (offset)
-        //     {
-        //         case 0:
-        //             return unk_6;
-        //         case 1:
-        //             return unk_8;
-        //     }
-        //     return 0;
-        // }
     }
 
     /// <summary>
@@ -711,6 +683,18 @@ namespace Underworld
             set
             {
                 DataLoader.setAt(PtrToMotionCalc, 2, 16, value);
+            }
+        }
+
+        public static ushort z4_base
+        {
+            get
+            {
+                return (ushort)DataLoader.getAt(base_dseg_25c4, 4, 16);
+            }
+            set
+            {
+                DataLoader.setAt(base_dseg_25c4, 4, 16, value);
             }
         }
 
@@ -996,7 +980,7 @@ namespace Underworld
             }
         }
 
-        public static byte Unk16_base
+        public static byte Unk16_collisionindex_base
         {
             get
             {
@@ -1008,7 +992,7 @@ namespace Underworld
             }
         }
 
-        public static byte Unk16
+        public static byte Unk16_collisionindex
         {
             get
             {

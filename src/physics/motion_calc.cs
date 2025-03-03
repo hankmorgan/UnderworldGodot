@@ -316,7 +316,7 @@ namespace Underworld
 
             MotionCalcArray.x0 = (ushort)(MotionParams.x_0 >> 5);
             MotionCalcArray.y2 = (ushort)(MotionParams.y_2 >> 5);
-            MotionCalcArray.z4 = (ushort)(MotionParams.z_4 >> 3);
+            MotionCalcArray.z4_base = (ushort)(MotionParams.z_4 >> 3);
 
             UWMotionParamArray.RelatedToMotionX_dseg_67d6_3FE = (short)((MotionParams.x_0 & 0x1F) << 8);
             UWMotionParamArray.RelatedToMotionY_dseg_67d6_400 = (short)((MotionParams.y_2 & 0x1F) << 8);
@@ -508,9 +508,9 @@ namespace Underworld
 
             if (MotionCalcArray.Unk10 != 0x80)
             {
-                if (MotionCalcArray.z4 + arg0 >= MotionCalcArray.Unk10)
+                if (MotionCalcArray.z4_base + arg0 >= MotionCalcArray.Unk10)
                 {
-                    if (MotionCalcArray.z4 - arg0 <= MotionCalcArray.Unk10)
+                    if (MotionCalcArray.z4_base - arg0 <= MotionCalcArray.Unk10)
                     {
                         MotionCalcArray.UnkC_terrain = (short)(MotionCalcArray.UnkC_terrain | 0x4);
 
@@ -644,9 +644,9 @@ namespace Underworld
 
             if (var2 != 0x80)
             {//seg028_2941_23D
-                if (MotionCalcArray.z4 + arg2 >= var2)
+                if (MotionCalcArray.z4_base + arg2 >= var2)
                 {//seg028_2941_25A:
-                    if (MotionCalcArray.z4 - arg2 <= var2)
+                    if (MotionCalcArray.z4_base - arg2 <= var2)
                     {//seg028_2941_277
                         var index = getAt(UWMotionParamArray.SubArray.dseg_2562, 2 + arg0 * 5, 8);
                         si = si | 8 << ((UWMotionParamArray.TileAttributesArray[index] & 0x300) >> 8);
@@ -701,11 +701,11 @@ namespace Underworld
             //DumpMotionMemory(MotionParams, "BeforeStoreXYZ");
             MotionParams.x_0 = (short)((MotionCalcArray.x0 << 5) + (UWMotionParamArray.RelatedToMotionX_dseg_67d6_3FE >> 8));
             MotionParams.y_2 = (short)((MotionCalcArray.y2 << 5) + (UWMotionParamArray.RelatedToMotionY_dseg_67d6_400 >> 8));
-            MotionParams.z_4 = (short)((MotionCalcArray.z4 << 3) + (UWMotionParamArray.RelatedToMotionZ_dseg_67d6_402 >> 8));
+            MotionParams.z_4 = (short)((MotionCalcArray.z4_base << 3) + (UWMotionParamArray.RelatedToMotionZ_dseg_67d6_402 >> 8));
 
             if ((MotionCalcArray.UnkC_terrain_base & 0x2000) != 0)
             {
-                if (Math.Abs(MotionCalcArray.z4 - MotionCalcArray.Unk10_base) <= MotionParams.radius_22)
+                if (Math.Abs(MotionCalcArray.z4_base - MotionCalcArray.Unk10_base) <= MotionParams.radius_22)
                 {
                     if (MotionCalcArray.MotionArrayObjectIndexA_base == 1)
                     {//the player
@@ -1031,7 +1031,7 @@ namespace Underworld
 
             if (di == -1)
             {
-                MotionCalcArray.z4 = (ushort)(MotionCalcArray.z4 + si);
+                MotionCalcArray.z4_base = (ushort)(MotionCalcArray.z4_base + si);
                 //seg031_2CFA_12A9
                 return LikelyTranslateXY_seg031_2CFA_8A6(MotionParams, arg0, di);
             }
@@ -1042,9 +1042,9 @@ namespace Underworld
                     if (si < 0)
                     {//2CFA:1285
                         MotionParams.tilestate25 = 0x10;
-                        if (MotionCalcArray.z4 + si >= UWMotionParamArray.CollisionZposHeightRelated_dseg_67d6_419)
+                        if (MotionCalcArray.z4_base + si >= UWMotionParamArray.CollisionZposHeightRelated_dseg_67d6_419)
                         {
-                            MotionCalcArray.z4 = (ushort)(MotionCalcArray.z4 + si);
+                            MotionCalcArray.z4_base = (ushort)(MotionCalcArray.z4_base + si);
                             //seg031_2CFA_12A9
                             return LikelyTranslateXY_seg031_2CFA_8A6(MotionParams, arg0, di);
                         }
@@ -1063,14 +1063,14 @@ namespace Underworld
                 else
                 {//si>0
                     MotionParams.tilestate25 = 0x10;
-                    if (MotionCalcArray.z4 + si > UWMotionParamArray.CollisionZposHeightRelated_dseg_67d6_419)
+                    if (MotionCalcArray.z4_base + si > UWMotionParamArray.CollisionZposHeightRelated_dseg_67d6_419)
                     {
                         DoCollision_seg031_2CFA_D1F(MotionParams);
                         return 0;
                     }
                     else
                     {
-                        MotionCalcArray.z4 = (ushort)(MotionCalcArray.z4 + si);
+                        MotionCalcArray.z4_base = (ushort)(MotionCalcArray.z4_base + si);
                         return LikelyTranslateXY_seg031_2CFA_8A6(MotionParams, arg0, di);
                     }
                 }

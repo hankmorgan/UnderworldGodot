@@ -98,7 +98,7 @@ namespace Underworld
         /// </summary>
         /// <param name="item_id"></param>
         /// <returns></returns>
-        public static bool Unk6_0(int item_id)
+        public static bool Unk6_0_maybecancollide(int item_id)
         {//bits 0 at + 6
             return ((buffer[PTR(item_id) + 6]) & 0x1) == 1;
         }
