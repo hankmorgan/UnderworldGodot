@@ -171,7 +171,7 @@ namespace Underworld
         {
             MotionCalcArray.PtrToMotionCalc = new byte[0x20];
             MotionCalcArray.MotionArrayObjectIndexA = (short)projectile.index;
-            MotionCalcArray.Radius8_base = (byte)commonObjDat.radius(projectile.item_id);
+            MotionCalcArray.Radius8 = (byte)commonObjDat.radius(projectile.item_id);
             MotionCalcArray.Height9 = (byte)commonObjDat.height(projectile.item_id);
             MotionCalcArray.x0 = (ushort)((projectile.npc_xhome << 3) + projectile.xpos);
             MotionCalcArray.y2 = (ushort)((projectile.npc_yhome << 3) + projectile.ypos);
