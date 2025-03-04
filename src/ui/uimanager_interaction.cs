@@ -134,11 +134,22 @@ namespace Underworld
                     break;
                 case InteractionModes.ModeUse:
                     //do a use interaction with the object.
-                    use.Use(
-                        ObjectUsed: UWTileMap.current_tilemap.LevelObjects[index],
-                        UsingObjectOrCharacter: playerdat.playerObject,
-                        objList: UWTileMap.current_tilemap.LevelObjects,
-                        WorldObject: true);
+                    if (useon.CurrentItemBeingUsed != null)
+                        {         
+                            //handle using an object on another.       
+                            useon.UseOn(
+                                ObjectUsed: UWTileMap.current_tilemap.LevelObjects[index], 
+                                srcObject: useon.CurrentItemBeingUsed, 
+                                WorldObject: true);
+                        }
+                        else
+                        {
+                            use.Use(
+                                ObjectUsed: UWTileMap.current_tilemap.LevelObjects[index],
+                                UsingObjectOrCharacter: playerdat.playerObject,
+                                objList: UWTileMap.current_tilemap.LevelObjects,
+                                WorldObject: true);
+                        }
                     break;
                 case InteractionModes.ModePickup:
                     pickup.PickUp(

@@ -935,7 +935,7 @@ namespace Underworld
                     newMotionParams.unk_14 = 0xEB;
                     newMotionParams.unk_a_pitch = (short)(MotionParams.unk_a_pitch * di_mass);
 
-                    //vanilla behaviour here is to retore currobj details
+                    //vanilla behaviour here is to restore currobj details
 
                     ApplyProjectileMotion(toBounce, newMotionParams);
                     objectInstance.Reposition(toBounce);//finally move!

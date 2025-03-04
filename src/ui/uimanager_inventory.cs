@@ -220,7 +220,7 @@ namespace Underworld
                     }
                 }
             }
-            
+
             switch (InteractionMode)
             {
                 case InteractionModes.ModeAttack:
@@ -229,11 +229,21 @@ namespace Underworld
                     {
                         if (isLeftClick)
                         {
-                            use.Use(
-                                ObjectUsed: objAtSlot,
-                                UsingObjectOrCharacter: playerdat.playerObject,
-                                objList: playerdat.InventoryObjects,
-                                WorldObject: false);
+                            if (useon.CurrentItemBeingUsed != null)
+                            {
+                                useon.UseOn(
+                                    ObjectUsed: objAtSlot,
+                                    srcObject: useon.CurrentItemBeingUsed,
+                                    WorldObject: true);
+                            }
+                            else
+                            {
+                                use.Use(
+                                    ObjectUsed: objAtSlot,
+                                    UsingObjectOrCharacter: playerdat.playerObject,
+                                    objList: playerdat.InventoryObjects,
+                                    WorldObject: false);
+                            }
                         }
                         else
                         {
@@ -261,11 +271,22 @@ namespace Underworld
                         else
                         {
                             InteractionModeToggle(InteractionModes.ModeUse);
-                            use.Use(
-                                objAtSlot,
-                                playerdat.playerObject,
-                                objList: playerdat.InventoryObjects,
-                                WorldObject: false);
+                            if (useon.CurrentItemBeingUsed != null)
+                            {
+                                useon.UseOn(
+                                    ObjectUsed: objAtSlot,
+                                    srcObject: useon.CurrentItemBeingUsed,
+                                    WorldObject: true);
+                            }
+                            else
+                            {
+                                use.Use(
+                                    objAtSlot,
+                                    playerdat.playerObject,
+                                    objList: playerdat.InventoryObjects,
+                                    WorldObject: false);
+                            }
+
                         }
 
                     }
@@ -598,8 +619,8 @@ namespace Underworld
                     DestroyInventoryObject: DestroyInventoryObject,
                     ClearLink: true
                     );
-            var pickObject = UWTileMap.current_tilemap.LevelObjects[newIndex];            
-            pickObject.next=0;
+            var pickObject = UWTileMap.current_tilemap.LevelObjects[newIndex];
+            pickObject.next = 0;
             if (ChangeHand)
             {
                 playerdat.ObjectInHand = newIndex;

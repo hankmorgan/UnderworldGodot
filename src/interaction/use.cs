@@ -16,11 +16,6 @@ namespace Underworld
         {            
             SpellHasBeenCast = false;
             UseTriggerHasBeenActivated = false;
-            if (useon.CurrentItemBeingUsed != null)
-            {                
-                return useon.UseOn(ObjectUsed, useon.CurrentItemBeingUsed, WorldObject);
-            }
-
 
             //if (index == -1) { return false; }
             trap.ObjectThatStartedChain = ObjectUsed.index;
