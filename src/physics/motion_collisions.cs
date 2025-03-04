@@ -1014,7 +1014,7 @@ namespace Underworld
                         si_result |= 0x400;
                     }
                     //seg031_2CFA_1440: 
-                    if ((var2 & 0x18) == 0)
+                    if ((var2 & 0x18) != 0)
                     {
                         if ((var2 & 0x10) == 0)
                         {//seg031_2CFA_1455
@@ -1126,7 +1126,7 @@ namespace Underworld
                 }
                 else
                 {
-                    var3 = 0;
+                    var3 = 0;//seg031_2CFA_156A:   
                 }
 
                 //seg031_2CFA_156F:. GOING WRONG HERE.

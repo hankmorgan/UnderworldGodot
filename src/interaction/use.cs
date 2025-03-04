@@ -28,7 +28,7 @@ namespace Underworld
                 {
                     case 0://weapons
                         {
-                            result = UseMajorClass1(ObjectUsed, WorldObject);
+                            result = UseMajorClass0(ObjectUsed, UsingObjectOrCharacter, WorldObject);
                             break;
                         }
                     case 1://npcs
@@ -126,7 +126,7 @@ namespace Underworld
             return result;
         }
 
-        private static bool UseMajorClass1(uwObject ObjectUsed, bool WorldObject)
+        private static bool UseMajorClass0(uwObject ObjectUsed, uwObject UsingObjectOrCharacter, bool WorldObject)
         {
             if ((ObjectUsed.minorclass == 0) && (!WorldObject))
             {
@@ -159,6 +159,19 @@ namespace Underworld
                             uimanager.InteractionModeToggle(uimanager.InteractionModes.ModeUse);
                         }
                         return true;
+                    }
+                }
+            }
+            else
+            {
+                if (WorldObject)
+                {
+                    if (ObjectUsed.minorclass == 1)
+                    {
+                        //projectile has hit the UsingObjectOrCharacter.
+                        combat.MissileImpact(ObjectUsed, UsingObjectOrCharacter);
+                        return true;
+
                     }
                 }
             }

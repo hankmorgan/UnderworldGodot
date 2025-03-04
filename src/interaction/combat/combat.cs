@@ -5,10 +5,12 @@ using Godot;
 namespace Underworld
 {
     /// <summary>
-    /// Class for interactions involving the look verb
+    /// Class for combat calculations.
     /// </summary>
-    public class combat : UWClass
+    public partial class combat : UWClass
     {
+        public static int CombatHitTileX;
+        public static int CombatHitTileY;
         public enum CombatStages
         {
             Ready = 0,
@@ -23,7 +25,6 @@ namespace Underworld
         public static int OnHitSpell = 0;
 
         public static int CurrentAttackSwingType = 0;
-        //public static int currentAnimationStrikeType = 0;
 
         public static int currentWeaponItemID
         {
@@ -95,11 +96,12 @@ namespace Underworld
         const int fist = 15;
 
         public static int WeaponCharge = 0;
+        public static int FinalAttackCharge = 0;
 
-        public static int PlayerAttackAccuracy = 0;
-        public static int PlayerAttackDamage = 0;
-        public static int PlayerFlankingBonus = 0;
-        public static bool PlayerHasCritted = false;
+        public static int AttackAccuracy = 0;
+        public static int AttackDamage = 0;
+        public static int AttackScoreFlankingBonus = 0;
+        public static bool AttackWasACrit = false;
 
         public static int BodyPartHit;
 
@@ -258,10 +260,10 @@ namespace Underworld
                         {
                             OnHitSpell = 0;
                             JeweledDagger = false;
-                            PlayerAttackAccuracy = 0;
-                            PlayerAttackDamage = 0;
-                            PlayerFlankingBonus = 0;
-                            PlayerHasCritted = false;
+                            AttackAccuracy = 0;
+                            AttackDamage = 0;
+                            AttackScoreFlankingBonus = 0;
+                            AttackWasACrit = false;
                             //currentAnimationStrikeType = WeaponAnimStrikeOffset;
                             CurrentAttackSwingType = Rng.r.Next(0, 4);
                             stage = CombatStages.Charging;
@@ -411,7 +413,7 @@ namespace Underworld
         static bool PlayerHitsUWObject(uwObject objHit, Godot.Vector3 hitCoordinate)
         {
             //calc final attack charge based on the % of charge built up in the weapon
-            WeaponCharge = mincharge + ((maxcharge - mincharge) * WeaponCharge) / 100; //this is kept later for damage calcs.
+            FinalAttackCharge = mincharge + ((maxcharge - mincharge) * WeaponCharge) / 100; //this is kept later for damage calcs.
 
             //do attack calcs
             CalcPlayerAttackScores();
@@ -434,7 +436,7 @@ namespace Underworld
                                 //Debug.Print("Lifestealer");
                                 if (currWeaponType > 0)
                                 {
-                                    playerdat.HPRegenerationChange(-PlayerAttackDamage);
+                                    playerdat.HPRegenerationChange(-AttackDamage);
                                 }
                                 break;
                             }
@@ -495,17 +497,17 @@ namespace Underworld
                 }
             }
 
-            PlayerAttackAccuracy = weaponskill + (playerdat.Attack >> 1) + (playerdat.DEX / 7) + playerdat.ValourBonus;
+            AttackAccuracy = weaponskill + (playerdat.Attack >> 1) + (playerdat.DEX / 7) + playerdat.ValourBonus;
             if (playerdat.difficuly == 1)
             {   //easy dificulty
-                PlayerAttackAccuracy += 7;
+                AttackAccuracy += 7;
             }
 
 
             //base damage calcs
             CalcBasicWeaponDamage();
             CalcAttackEnchantment();
-            Debug.Print($"Final scores accuracy {PlayerAttackAccuracy} basedamage {PlayerAttackDamage}");
+            Debug.Print($"Final scores accuracy {AttackAccuracy} basedamage {AttackDamage}");
         }
 
         /// <summary>
@@ -533,11 +535,11 @@ namespace Underworld
                                             Debug.Print("check me. Possibly bugged enchantment behaviour in uw2 where attack and accuracy are the wrong way around!");
                                             if (enchant.SpellMinorClass < 4)
                                             {//this is possibly a bug in uw2 since the accuracy enchantments come to here.
-                                                PlayerAttackDamage += (1 + enchant.SpellMinorClass << 1);
+                                                AttackDamage += (1 + enchant.SpellMinorClass << 1);
                                             }
                                             else
                                             {
-                                                PlayerAttackAccuracy += ((enchant.SpellMinorClass << 1) - 7);
+                                                AttackAccuracy += ((enchant.SpellMinorClass << 1) - 7);
                                             }
                                         }
                                         else
@@ -545,7 +547,7 @@ namespace Underworld
                                             OnHitSpell = enchant.SpellMinorClass - 7;//eg lifestealer, firedoom, stone strike door unlocking
                                             if (OnHitSpell == 8)
                                             {//unknown special spell.
-                                                PlayerAttackDamage += 5;
+                                                AttackDamage += 5;
                                             }
                                         }
                                         break;
@@ -555,11 +557,11 @@ namespace Underworld
 
                                         if ((enchant.SpellMinorClass & 8) == 0)
                                         {
-                                            PlayerAttackAccuracy += (1 + enchant.SpellMinorClass & 0x7);
+                                            AttackAccuracy += (1 + enchant.SpellMinorClass & 0x7);
                                         }
                                         else
                                         {
-                                            PlayerAttackDamage += (1 + enchant.SpellMinorClass & 0x7);
+                                            AttackDamage += (1 + enchant.SpellMinorClass & 0x7);
                                         }
                                         break;
                                     }
@@ -578,13 +580,13 @@ namespace Underworld
             if (currentMeleeWeaponSkillNo == 2)
             {
                 //do unarmed calcs for base damage
-                PlayerAttackDamage = 4 + (playerdat.STR / 6) + (playerdat.Unarmed << 1) / 5;
+                AttackDamage = 4 + (playerdat.STR / 6) + (playerdat.Unarmed << 1) / 5;
             }
             else
             {
                 //var attacktype = Rng.r.Next(0, 3);
                 //do weapon based calcs, using a random attack type now.
-                PlayerAttackDamage = (playerdat.STR / 9) + CurrentWeaponBaseDamage(CurrentAttackSwingType);
+                AttackDamage = (playerdat.STR / 9) + CurrentWeaponBaseDamage(CurrentAttackSwingType);
             }
         }
 
@@ -594,9 +596,9 @@ namespace Underworld
             {
                 if (CalcAttackResults(critter) == 0)
                 {//attack roll has hit
-                    PlayerFlankingBonus = CalcFlankingBonus(critter);
+                    AttackScoreFlankingBonus = CalcFlankingBonus(critter);
                     Debug.Print("Hit");
-                    ApplyPlayersFinalDamage(
+                    AttackerAppliesFinalDamage(
                         objHit: critter,
                         damageType: 4,
                         hitCoordinate: hitCoordinate,
@@ -625,7 +627,7 @@ namespace Underworld
             if (objHit.majorclass == 1)
             {//npc
                 var defencescore = critterObjectDat.defence(objHit.item_id);
-                var attackscore = PlayerAttackAccuracy + PlayerFlankingBonus;
+                var attackscore = AttackAccuracy + AttackScoreFlankingBonus;
                 var result = playerdat.SkillCheck(attackscore, defencescore);
                 if (playerdat.PoisonedWeapon)
                 {
@@ -633,16 +635,16 @@ namespace Underworld
                     {
                         if (critterObjectDat.maybepoisonvulnerability(objHit.item_id) != 0)
                         {
-                            PlayerAttackDamage += ((playerdat.Casting + 30) / 40);
+                            AttackDamage += ((playerdat.Casting + 30) / 40);
                         }
                     }
                 }
-                PlayerHasCritted = false;
+                AttackWasACrit = false;
                 if (result == playerdat.SkillCheckResult.CritSucess)
                 {
-                    PlayerHasCritted = true;
+                    AttackWasACrit = true;
                     var critbonus = (48 + Rng.r.Next(30)) >> 5;
-                    PlayerAttackDamage = PlayerAttackDamage * critbonus;
+                    AttackDamage = AttackDamage * critbonus;
                     return 0;
                 }
                 else
@@ -681,26 +683,26 @@ namespace Underworld
         }
 
 
-        static int ApplyPlayersFinalDamage(uwObject objHit, int damageType, Godot.Vector3 hitCoordinate, bool MissileAttack = false)
+        static int AttackerAppliesFinalDamage(uwObject objHit, int damageType, Godot.Vector3 hitCoordinate, bool MissileAttack = false)
         {
-            if (PlayerAttackDamage < 2)
+            if (AttackDamage < 2)
             {
-                PlayerAttackDamage = 2;
+                AttackDamage = 2;
             }
-            var damagequotient = PlayerAttackDamage / 6;
-            var damageremainder = PlayerAttackDamage % 6;
-            PlayerAttackDamage = 0;
+            var damagequotient = AttackDamage / 6;
+            var damageremainder = AttackDamage % 6;
+            AttackDamage = 0;
             if (damagequotient != 0)
             {
-                PlayerAttackDamage = Rng.DiceRoll(damagequotient, 6);
+                AttackDamage = Rng.DiceRoll(damagequotient, 6);
             }
             if (damageremainder != 0)
             {
-                PlayerAttackDamage += Rng.DiceRoll(1, damageremainder);
+                AttackDamage += Rng.DiceRoll(1, damageremainder);
             }
 
-            var finaldamage = (PlayerAttackDamage * WeaponCharge) >> 7;
-            finaldamage += PlayerFlankingBonus;
+            var finaldamage = (AttackDamage * FinalAttackCharge) >> 7;
+            finaldamage += AttackScoreFlankingBonus;
 
             //TODO figure out correct sounds
             Debug.Print("Player Weapon Hit sound");
@@ -718,7 +720,7 @@ namespace Underworld
                     if (critterObjectDat.bleed(objHit.item_id) != 0)
                     {
                         animo.SpawnAnimoAtPoint(0, hitCoordinate); //blood
-                        if (PlayerHasCritted)
+                        if (AttackWasACrit)
                         {
                             animo.SpawnAnimoAtPoint(0, hitCoordinate + (Vector3.Up * 0.12f)); //blood
                         }

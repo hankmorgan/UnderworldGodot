@@ -525,7 +525,7 @@ namespace Underworld
         }        
 
         /// <summary>
-        /// Used by create object traps. Possibly flags if npc is "live"
+        /// Used by create object traps. Possibly flags if npc is "live". For projectiles set to 1 when it has hit an NPC
         /// </summary>
         public short UnkBit_0XA_Bit7
         {

@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace Underworld
 {
 
@@ -8,6 +10,11 @@ namespace Underworld
     {
         static int offset = 0x82;
 
+        private static int PTR(int item_id)
+        {
+            return offset + (item_id & 0xf) * 3;
+        }
+
         /// <summary>
         /// Return the damage for this projectle
         /// </summary>
@@ -15,7 +22,7 @@ namespace Underworld
         /// <returns></returns>
         public static int damage(int item_id)
         {
-            return buffer[offset + (item_id & 0xf) * 3];
+            return buffer[PTR(item_id)];
         }
 
         /// <summary>
@@ -25,7 +32,7 @@ namespace Underworld
         /// <returns></returns>
         public static int ammotype(int item_id)
         {
-            return buffer[offset + 1 + (item_id & 0xf) * 3];
+            return buffer[PTR(item_id) + 1];
         }
 
         /// <summary>
@@ -35,8 +42,11 @@ namespace Underworld
         /// <returns></returns>
         public static int RangedWeaponType(int item_id)
         {
-            return buffer[offset + 2 + (item_id & 0xf) * 3];
+            return buffer[PTR(item_id) + 2];
         }
+
+
+
     }
 
 }//end namespace
