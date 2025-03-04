@@ -858,7 +858,7 @@ namespace Underworld
             }
         }
 
-        public static byte Unk10
+        public static byte Unk10_relatedtotileheight
         {
             get
             {

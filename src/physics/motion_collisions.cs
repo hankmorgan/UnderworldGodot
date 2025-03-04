@@ -1318,7 +1318,7 @@ namespace Underworld
                     MotionCalcArray.z4 = (ushort)projectile.zpos;
 
                     ProcessMotionTileHeights_seg028_2941_385(MotionCalcArray.Radius8);
-                    if (MotionCalcArray.Unk10 + MotionCalcArray.Radius8 < MotionCalcArray.z4)
+                    if (MotionCalcArray.Unk10_relatedtotileheight + MotionCalcArray.Radius8 < MotionCalcArray.z4)
                     {//seg030_2BB7_11AE
                         var3 = 0;
                     }

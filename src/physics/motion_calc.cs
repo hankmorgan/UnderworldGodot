@@ -356,7 +356,7 @@ namespace Underworld
             seg028_2941_2CF_terrainrelated(arg0);
 
             MotionCalcArray.UnkE = MotionCalcArray.UnkC_terrain;
-            MotionCalcArray.Unk11 = MotionCalcArray.Unk10;
+            MotionCalcArray.Unk11 = MotionCalcArray.Unk10_relatedtotileheight;
 
             //seg028_2941_449
             if (MotionCalcArray.Radius8 != 0)
@@ -499,13 +499,13 @@ namespace Underworld
             MotionCalcArray.UnkC_terrain = (short)((UWMotionParamArray.TileAttributesArray[4] & 0x300) >> 8);
             int var1;
 
-            MotionCalcArray.Unk10 = (byte)SomethingWithTileTypesAndHeight_seg028_2941_E(4, out var1);
+            MotionCalcArray.Unk10_relatedtotileheight = (byte)SomethingWithTileTypesAndHeight_seg028_2941_E(4, out var1);
 
-            if (MotionCalcArray.Unk10 != 0x80)
+            if (MotionCalcArray.Unk10_relatedtotileheight != 0x80)
             {
-                if (MotionCalcArray.z4_base + arg0 >= MotionCalcArray.Unk10)
+                if (MotionCalcArray.z4 + arg0 >= MotionCalcArray.Unk10_relatedtotileheight)
                 {
-                    if (MotionCalcArray.z4_base - arg0 <= MotionCalcArray.Unk10)
+                    if (MotionCalcArray.z4 - arg0 <= MotionCalcArray.Unk10_relatedtotileheight)
                     {
                         MotionCalcArray.UnkC_terrain = (short)(MotionCalcArray.UnkC_terrain | 0x4);
 
@@ -533,21 +533,7 @@ namespace Underworld
             {
                 MotionCalcArray.UnkC_terrain = (short)(MotionCalcArray.UnkC_terrain | 0x2000);
             }
-            if (var1 < 0)//TODO replace with return SBB(var1);
-            {
-                return 0;
-            }
-            else
-            {
-                if (var1 > 0)
-                {
-                    return 0;
-                }
-                else
-                {
-                    return 1;
-                }
-            }
+            return SBB(var1);
         }
 
 
@@ -639,9 +625,9 @@ namespace Underworld
 
             if (var2 != 0x80)
             {//seg028_2941_23D
-                if (MotionCalcArray.z4_base + arg2 >= var2)
+                if (MotionCalcArray.z4 + arg2 >= var2)
                 {//seg028_2941_25A:
-                    if (MotionCalcArray.z4_base - arg2 <= var2)
+                    if (MotionCalcArray.z4 - arg2 <= var2)
                     {//seg028_2941_277
                         var index = getAt(UWMotionParamArray.SubArray.dseg_2562, 2 + arg0 * 5, 8);
                         si = si | 8 << ((UWMotionParamArray.TileAttributesArray[index] & 0x300) >> 8);
