@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using Godot;
 namespace Underworld
@@ -186,7 +187,7 @@ namespace Underworld
         {
             var xpos = uwObject.FloatXYToXYPos(-point.X);
             var ypos = uwObject.FloatXYToXYPos(point.Z);
-            var zpos = uwObject.FloatZToZPos(point.Y); 
+            var zpos = uwObject.FloatZToZPos(point.Y);
             var tileX = -(int)(point.X / 1.2f);
             var tileY = (int)(point.Z / 1.2f);
             SpawnAnimoInTile(subclassindex, xpos, ypos, zpos, tileX, tileY);
@@ -203,7 +204,7 @@ namespace Underworld
         /// <param name="tileY"></param>
         public static void SpawnAnimoInTile(int subclassindex, short xpos, short ypos, short zpos, int tileX, int tileY)
         {
-            if (animo.GetFreeAnimoSlot()!=-1)
+            if (animo.GetFreeAnimoSlot() != -1)
             {
                 var itemid = 448 + subclassindex;
                 var newObject = ObjectCreator.spawnObjectInTile(
@@ -219,7 +220,27 @@ namespace Underworld
                     var duration = animationObjectDat.endFrame(itemid) - animationObjectDat.startFrame(itemid);
                     CreateAnimoLink(newObject, duration);
                 }
-            }            
+            }
+        }
+
+        /// <summary>
+        /// Spawns copies of the animo at random locations in the tile. Used primarily to simulate explosion effects.
+        /// </summary>
+        /// <param name="BaseObject"></param>
+        /// <param name="tileX"></param>
+        /// <param name="tileY"></param>
+        public static void SpawnAnimoCopies(uwObject BaseObject, int tileX, int tileY)
+        {
+            var di_rng = 2 + Rng.r.Next(3);
+
+            for (int i = 0; i<di_rng; i++)
+            {
+                var classIndex = BaseObject.classindex + Rng.r.Next(2);
+                var rndX = Math.Min(Math.Max(0, BaseObject.xpos + Rng.r.Next(5) - 2), 7);
+                var rndY = Math.Min(Math.Max(0, BaseObject.ypos + Rng.r.Next(5) - 2), 7);
+                var rndZ = Math.Min(Math.Max(0,BaseObject.zpos - 8 + Rng.r.Next(15)), 127);
+                animo.SpawnAnimoInTile(classIndex, (short)rndX, (short)rndY, (short)rndZ, tileX, tileY );
+            }
         }
 
     }//end class

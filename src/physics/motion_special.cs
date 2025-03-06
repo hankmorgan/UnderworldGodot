@@ -1,3 +1,4 @@
+using System.Data;
 using System.Diagnostics;
 
 namespace Underworld
@@ -33,10 +34,56 @@ namespace Underworld
             }
         }
 
-        static bool DetonateProjectile(uwObject projectile, int effectId)
+
+        /// <summary>
+        /// Detonates projectiles like fireballs and lightning bolts.
+        /// </summary>
+        /// <param name="projectile"></param>
+        /// <param name="Source"></param>
+        /// <returns></returns>
+        static bool DetonateProjectile(uwObject projectile, int Source)
         {
             Debug.Print("Detonate projectile");
-            return true;
+            var maxEntries = 2;
+            if (_RES==GAME_UW2)
+            {
+                maxEntries = 3;
+            }
+            var newItemID = -1;
+            var EffectIndex = 0;
+            for (int i = 0; i<maxEntries; i++)
+            {
+                if (ProjectileOldItemIDTable[i] == projectile.item_id)
+                {
+                    newItemID = ProjectileNewItemIDTable[i];
+                    EffectIndex = i;
+                    break;
+                }
+            }
+            if (newItemID == -1)
+            {
+                return false;
+            }
+
+            projectile.item_id = newItemID;
+            if(animo.CreateAnimoLink(projectile, animationObjectDat.noOfFrames(newItemID)))
+            {
+                objectInstance.RedrawFull(projectile);
+                if (EffectIndex != 1)
+                {
+                    //fireballs
+                    animo.SpawnAnimoCopies(projectile, projectile.tileX, projectile.tileY);
+                }
+                damage.DamageObjectsInTile(projectile.tileX, projectile.tileY, Source, EffectIndex);
+
+                return true;
+            }
+            else
+            {
+                //vanilla behaviour is the projectile will not damage anything if the animo cannot be created. The animo will be deleted by the calling function.
+                return false;
+            }
+            
         }
     }//end class
 }//end namespace

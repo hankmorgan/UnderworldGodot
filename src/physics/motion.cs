@@ -217,7 +217,7 @@ namespace Underworld
                 else
                 {
                     //seg030_2BB7_956:
-                    if ((MotionParams.unk_14 | MotionParams.unk_a_pitch) == 0)
+                    if ((MotionParams.unk_14 | MotionParams.unk_a_pitch | (int)MotionParams.unk_10) == 0)
                     {
                         //object has likely stopped
                         projectile.TileState_0XA_Bit456 = (short)(dseg_67d6_3E8[MotionParams.tilestate25]);

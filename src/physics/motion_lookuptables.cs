@@ -670,6 +670,15 @@ namespace Underworld
                             1792,
                             1792
                             };
-    
+
+
+
+    /// <summary>
+    /// To replace projectiles like fireballs with Animos
+    /// </summary>
+    static int[] ProjectileNewItemIDTable = new int[]{0x1C2, 0x1C5, 0x1C2};//explosion, lightning, explosion (UW2 only).
+    static int[] ProjectileOldItemIDTable = new int[]{0x14, 0x15, 0x1D};//fireball, lightning bolt, another fireball (UW2 only)
+
+
     }//end class
 }//end namespace
