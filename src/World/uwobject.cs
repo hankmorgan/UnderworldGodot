@@ -1358,7 +1358,7 @@ namespace Underworld
         /// <summary>
         /// The Y position of the projecile object in the world space (when not an NPC)
         /// </summary>
-        ///(yhome<<8) + (ypos<<5) +0xFh
+        ///(yhome<<8) + (ypos<<5) + 0xFh
         public int CoordinateY
         {
             get
@@ -1372,8 +1372,11 @@ namespace Underworld
         }
 
 
+        /// <summary>
+        /// The full Z position of a projectile object.
+        /// </summary>
         public int CoordinateZ
-        {//(zpos<<3) + 0xFh is stored here
+        {
             get
             {
                 return (short)GetAt16(PTR + 0xf);
@@ -1384,15 +1387,40 @@ namespace Underworld
             }
         }
 
-        // //Where are these values set???
-        // public short npc_health = 0;//Is this poisoning?
-        // public short npc_arms = 0;
-        // public short npc_power = 0;
-        // public short npc_name = 0;
+
 
         public Godot.Vector3 GetCoordinate(int tileX, int tileY)
         {//godot is y-up     
-            return GetCoordinate(tileX, tileY, this.xpos, this.ypos, this.zpos);
+            if ((IsStatic) || (majorclass == 1))
+            {
+                return GetCoordinate(tileX, tileY, this.xpos, this.ypos, this.zpos);
+            }
+            else
+            {
+                
+               return GetFullCoordinate(this); 
+            }            
+        }
+
+        /// <summary>
+        /// Gets the object positon unsign the coordinate x/y values. Use only with mobile objects.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        static Vector3 GetFullCoordinate(uwObject obj)
+        {  
+            float offX = GetXYCoordinate_full(obj.CoordinateX);
+            float offY = GetXYCoordinate_full(obj.CoordinateY);
+            float offZ = GetZCoordinate(obj.zpos);
+            return new Godot.Vector3(-offX, offZ, offY);  
+        }
+
+        
+        static float GetXYCoordinate_full(int fullcoordinate)
+        {           
+            return ((float)(fullcoordinate>>8) * 1.2f)
+                + ((float)((fullcoordinate>>5) & 0x7) * 0.15f)
+                + ((float)(fullcoordinate & 0xF) * 0.01f);   //this number is unconfirmed. Based on assumption that bits 0-3 of coordinate are a single xypos step in 1/15th increments.      
         }
 
         public static Vector3 GetCoordinate(int tileX, int tileY, int _xpos, int _ypos, int _zpos)
@@ -1409,7 +1437,7 @@ namespace Underworld
         /// </summary>
         /// <param name="xypos"></param>
         /// <returns></returns>
-        public static float GetXYCoordinate(int tilexy, int xypos)
+        public static float GetXYCoordinate_oldmethod(int tilexy, int xypos)
         {
             xypos = (xypos * 3) + 1;
             float ResolutionXY = 23f;  // A tile has a 8x8 grid for object positioning? This is probably all wrong since there is a noticable "bump" in movement when crossing tiles. What was I thinking?
@@ -1418,9 +1446,10 @@ namespace Underworld
             return offXY / 100f;
         }
 
-        public static float GetXYCoordinate_newmethod(int tilexy, int xypos)
+
+        public static float GetXYCoordinate(int tilexy, int xypos)
         {
-            return (tilexy * 1.2f)  + (float)(xypos)/8f; 
+            return (tilexy * 1.2f)  + (float)(xypos) *  0.15f; 
         }
 
         /// <summary>
