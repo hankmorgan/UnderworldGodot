@@ -168,7 +168,7 @@ namespace Underworld
                     {
                         //seg031_2CFA_62D:
                         ProcessMotionTileHeights_seg028_2941_385(MotionParams.unk_24);//unk24 is 0 in normal projectile processing
-                        ScanForCollisions_seg028_2941_C0E(0, 0);
+                        ScanForCollisions(0, 0);
                     }
                 }
 
@@ -324,8 +324,8 @@ namespace Underworld
         /// <summary>
         /// Appears to do stuff with the tile the motion is happening in.
         /// </summary>
-        /// <param name="arg0"></param>
-        static void ProcessMotionTileHeights_seg028_2941_385(int arg0)
+        /// <param name="distance_arg0"></param>
+        static void ProcessMotionTileHeights_seg028_2941_385(int distance_arg0)
         {
             //?
             UWMotionParamArray.TileAttributesArray = new short[0x9]; // 9 * 0x1111 or 18 * 0x11?   0-8 entries
@@ -353,7 +353,7 @@ namespace Underworld
                 UWMotionParamArray.TileAttributesArray[4] = (short)((int)(tile.tileType) | (int)(tile.floorHeight << 4) | (int)(TerrainDatLoader.GetTerrainTypeNo(tile) << 8));
             }
 
-            seg028_2941_2CF_terrainrelated(arg0);
+            seg028_2941_2CF_terrainrelated(distance_arg0);
 
             MotionCalcArray.UnkE = MotionCalcArray.UnkC_terrain;
             MotionCalcArray.Unk11 = MotionCalcArray.Unk10_relatedtotileheight;
@@ -455,7 +455,7 @@ namespace Underworld
                 var var2 = 0;
                 while (var2 < 4)
                 {
-                    if (seg028_2941_217(var2, arg0) == 0)
+                    if (seg028_2941_217(var2, distance_arg0) == 0)
                     {//seg028_2941_718:
                         var temp = getAt(UWMotionParamArray.SubArray.dseg_2562, 5 + var2 * 5, 16);
                         if ((temp & 0x300) == 0)
@@ -494,7 +494,7 @@ namespace Underworld
             }
         }
 
-        static int seg028_2941_2CF_terrainrelated(int arg0)
+        static int seg028_2941_2CF_terrainrelated(int distance_arg0)
         {//this may behave differently in UW1?
             MotionCalcArray.UnkC_terrain = (short)((UWMotionParamArray.TileAttributesArray[4] & 0x300) >> 8);
             int var1;
@@ -503,9 +503,9 @@ namespace Underworld
 
             if (MotionCalcArray.Unk10_relatedtotileheight != 0x80)
             {
-                if (MotionCalcArray.z4 + arg0 >= MotionCalcArray.Unk10_relatedtotileheight)
+                if (MotionCalcArray.z4 + distance_arg0 >= MotionCalcArray.Unk10_relatedtotileheight)
                 {
-                    if (MotionCalcArray.z4 - arg0 <= MotionCalcArray.Unk10_relatedtotileheight)
+                    if (MotionCalcArray.z4 - distance_arg0 <= MotionCalcArray.Unk10_relatedtotileheight)
                     {
                         MotionCalcArray.UnkC_terrain = (short)(MotionCalcArray.UnkC_terrain | 0x4);
 
@@ -708,7 +708,7 @@ namespace Underworld
             if (arg0 == -1)
             {
                 //seg031_2CFA_12CD:
-                ScanForCollisions_seg028_2941_C0E(0, 0);
+                ScanForCollisions(0, 0);
                 SetCollisionTarget_seg031_2CFA_10E(MotionParams, 0);
                 MotionParams.tilestate25 = UWMotionParamArray.MotionParam0x25_dseg_67d6_26A9;//stores value
                 if (UWMotionParamArray.dseg_67d6_26A5 != 0)

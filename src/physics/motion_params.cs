@@ -271,8 +271,11 @@ namespace Underworld
         public static short[] TileAttributesArray;
         public static int ypos_dseg_67d6_251C;
         public static TileInfo TileRelatedToMotion_dseg_67d6_257E;    
+
+        public static int Z_dseg_67d6_2582;
         public static int dseg_67d6_2584;
         public static int xpos_dseg_67d6_2585;   
+        public static int dseg_67d6_2586;
         public static int dseg_67d6_25BC;
         public static int UnknownX_dseg_67d6_25BD; 
         public static int UnknownY_dseg_67d6_25BE;

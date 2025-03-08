@@ -276,7 +276,7 @@ namespace Underworld
         {
             UWMotionParamArray.dseg_67d6_26A8 = 1;
             int var1 = 0;
-            SortCollisions_seg028_2941_ED8();
+            SortCollisions();
 
             UWMotionParamArray.ACollisionIndex_dseg_67d6_416 = -1;
             UWMotionParamArray.dseg_67d6_41D = 0x7f;
@@ -455,7 +455,7 @@ namespace Underworld
         /// <summary>
         /// Sorts the collision table by height and zpos.
         /// </summary>
-        public static void SortCollisions_seg028_2941_ED8()
+        public static void SortCollisions()
         {
             int index_var1;
             var HeightIsZero_Var4 = 0;
@@ -654,7 +654,7 @@ namespace Underworld
         /// </summary>
         /// <param name="arg0"></param>
         /// <param name="arg2"></param>
-        static void ScanForCollisions_seg028_2941_C0E(int arg0, int arg2)
+        static void ScanForCollisions(int arg0, int arg2)
         {
             var isNPC_var14 = false;
             var tile_var4 = UWTileMap.current_tilemap.Tiles[MotionCalcArray.x0 >> 3, MotionCalcArray.y2 >> 3];
@@ -997,7 +997,7 @@ namespace Underworld
             UWMotionParamArray.dseg_67d6_26A5 = 0;
 
             ProcessMotionTileHeights_seg028_2941_385(MotionParams.unk_24);
-            ScanForCollisions_seg028_2941_C0E(0, 0);
+            ScanForCollisions(0, 0);
             SetCollisionTarget_seg031_2CFA_10E(MotionParams, 0);
             var si_result = MotionCalcArray.UnkC_terrain_base | MotionCalcArray.UnkE_base;
             var var5 = SBB(UWMotionParamArray.dseg_67d6_26BC_table4);
@@ -1211,7 +1211,7 @@ namespace Underworld
             //seg031_2CFA_169C after the 2nd big if split.
             if ((UWMotionParamArray.dseg_67d6_26A5 != 0) && (var3 == 0))
             {
-                SortCollisions_seg028_2941_ED8();
+                SortCollisions();
                 si_result &= 0xFBFF;
                 var di = 0;
                 while (MotionCalcArray.Unk15_base > di)
@@ -1341,8 +1341,8 @@ namespace Underworld
                         }
                     }
 
-                    ScanForCollisions_seg028_2941_C0E(var3, 1);
-                    SortCollisions_seg028_2941_ED8();
+                    ScanForCollisions(var3, 1);
+                    SortCollisions();
                     UWMotionParamArray.ACollisionIndex_dseg_67d6_416 = -1;
 
                     if ((MotionCalcArray.Unk15 == 0) && (MotionCalcArray.Unk16_collisionindex > 0) && (MotionCalcArray.Unk16_collisionindex <= MotionCalcArray.Unk14_collisoncount))

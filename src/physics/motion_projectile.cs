@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 
 namespace Underworld
@@ -22,7 +23,7 @@ namespace Underworld
         public static bool MissileFlagA;
         public static bool MissileFlagB;
 
-        
+
         /// <summary>
         /// Translate mouse x/y values into a pitch and heading for the projectile to follow by dividing the 3d window in to a grid of discrete pitches and yaws
         /// </summary>
@@ -185,13 +186,13 @@ namespace Underworld
             {
                 int X = MotionCalcArray.x0; int Y = MotionCalcArray.y2;
                 GetCoordinateInDirection(
-                    heading: (projectile.heading<< 5) + projectile.npc_heading, 
-                    distance: commonObjDat.radius(launcher.item_id)+commonObjDat.radius(projectile.item_id)+4, 
+                    heading: (projectile.heading << 5) + projectile.npc_heading,
+                    distance: commonObjDat.radius(launcher.item_id) + commonObjDat.radius(projectile.item_id) + 4,
                     X0: ref X, Y0: ref Y);
                 MotionCalcArray.x0 = (ushort)X; MotionCalcArray.y2 = (ushort)Y;
             }
             MotionCalcArray.z4 = (ushort)projectile.zpos;
-            ScanForCollisions_seg028_2941_C0E(1, 0);
+            ScanForCollisions(1, 0);
             ProcessMotionTileHeights_seg028_2941_385(0);
 
             if ((((short)MotionCalcArray.UnkC_terrain | (short)MotionCalcArray.UnkE) & 0x300) == 0)
@@ -199,7 +200,7 @@ namespace Underworld
                 //no collisions?
                 if (MotionCalcArray.Unk14_collisoncount != 0)
                 {
-                    SortCollisions_seg028_2941_ED8();
+                    SortCollisions();
                     if (MotionCalcArray.Unk15 != 0)
                     {
                         return false;
@@ -226,7 +227,7 @@ namespace Underworld
             var si_h = (ushort)(((0x140 - heading) & 0xFF) << 8);
             int Yvar4 = 0; int Xvar2 = 0;
             GetVectorForDirection(si_h, ref Xvar2, ref Yvar4);
-            
+
             Xvar2 = ((Xvar2 / 0x80) * distance) / 0x100;
             Yvar4 = ((Yvar4 / 0x80) * distance) / 0x100;
 
@@ -255,19 +256,169 @@ namespace Underworld
             }
             X0 = X0 + Xvar2;
             Y0 = Y0 + Yvar4;
-           
+
         }
 
         public static void GetVectorForDirection(int heading, ref int X1, ref int Y1)
         {
-            X1 = HeadingLookupTable[64 + (heading >> 8)];    
-            Y1 = HeadingLookupTable[heading >> 8];                                
+            X1 = HeadingLookupTable[64 + (heading >> 8)];
+            Y1 = HeadingLookupTable[heading >> 8];
         }
 
 
+        /// <summary>
+        /// Determines if it is possible to fit the specified object at the coordinates.
+        /// </summary>
+        /// <param name="itemid"></param>
+        /// <param name="index"></param>
+        /// <param name="posX"></param>
+        /// <param name="posY"></param>
+        /// <param name="posZ"></param>
+        /// <param name="argA"></param>
+        /// <param name="argC_distance"></param>
+        /// <returns></returns>
         public static bool TestIfObjectFitsInTile(int itemid, int index, int posX, int posY, int posZ, int argA, int argC_distance)
         {
-            return true;//temp result
+            var result = false;
+
+
+            var OldCalcArray = MotionCalcArray.PtrToMotionCalc;//back up array
+            MotionCalcArray.PtrToMotionCalc = new byte[0x20];
+
+            MotionCalcArray.MotionArrayObjectIndexA = (short)index;
+            MotionCalcArray.Radius8 = (byte)commonObjDat.radius(itemid);
+            MotionCalcArray.Height9 = (byte)commonObjDat.height(itemid);
+            MotionCalcArray.x0 = (ushort)posX;
+            MotionCalcArray.y2 = (ushort)posY;
+            MotionCalcArray.z4 = (ushort)posZ;
+
+            if ((MotionCalcArray.Height9 != 0x80) && (MotionCalcArray.Height9 > 0x7f))
+            {
+                result = false;
+                goto ReturnResult;
+            }
+            else
+            {
+                //seg028_2941_10AA
+                ProcessMotionTileHeights_seg028_2941_385(argC_distance);
+                if (((MotionCalcArray.UnkC_terrain | MotionCalcArray.UnkE) & 0x300) == 0)
+                {
+                    //seg028_2941_10CA
+                    if (MotionCalcArray.z4 + argC_distance < MotionCalcArray.Unk11)
+                    {
+                        UWMotionParamArray.Z_dseg_67d6_2582 = MotionCalcArray.Unk10_relatedtotileheight;
+                    }
+                    else
+                    {
+                        UWMotionParamArray.Z_dseg_67d6_2582 = MotionCalcArray.Unk11;
+                    }
+                    var radius_var2 = MotionCalcArray.Radius8;
+                    //seg028_2941_10F2:
+                    if (argC_distance > radius_var2)
+                    {
+                        radius_var2 = (byte)argC_distance;
+                    }
+
+                    //seg028_2941_1110:
+                    if (MotionCalcArray.z4 > MotionCalcArray.Unk10_relatedtotileheight + radius_var2)
+                    {
+                        //seg028_2941_1135:
+                        UWMotionParamArray.dseg_67d6_2586 = 0x10;
+                    }
+                    else
+                    {
+                        UWMotionParamArray.dseg_67d6_2586 = 1 << MotionCalcArray.UnkC_terrain;
+                    }
+
+                    //seg028_2941_113B:
+                    if (index >= 0x100 && UWMotionParamArray.dseg_67d6_2586 != 0x16)
+                    {
+                        ScanForCollisions(1, 1);  //seg028_2941_1154
+                    }
+                    else
+                    {
+                        ScanForCollisions(0, 1);  //seg028_2941_1154
+                    }
+
+                    if (MotionCalcArray.Unk14_collisoncount != 0)
+                    {
+                        var di_match = -1;
+                        SortCollisions();
+                        if (MotionCalcArray.Unk15 != 0)
+                        {
+                            result = false;
+                            goto ReturnResult;
+                        }
+                        else
+                        {
+                            //seg028_2941_117F: 
+                            if (MotionCalcArray.Unk14_collisoncount != 0)
+                            {
+                                var si_index = 0;
+                                while (MotionCalcArray.Unk16_collisionindex > si_index)
+                                {//seg028_2941_11B7:
+                                    var collision = collisionTable[si_index];
+                                    di_match = si_index;
+                                    if (collision.height > UWMotionParamArray.Z_dseg_67d6_2582)
+                                    {
+                                        UWMotionParamArray.Z_dseg_67d6_2582 = collision.height;
+                                    }
+                                    si_index++;
+                                }
+                            }
+                            //seg028_2941_11C3:
+                            if (di_match != -1)
+                            {
+                                var collision = collisionTable[di_match];
+                                var collionobject = UWTileMap.current_tilemap.LevelObjects[collision.link];
+
+                                if (commonObjDat.UnknownFlag3_1(collionobject.item_id))
+                                {
+                                    UWMotionParamArray.dseg_67d6_2586 = 1;
+                                }
+                                else
+                                {
+                                    result = false;
+                                    goto ReturnResult;
+                                }
+                            }
+                        }
+                    }
+
+                    //seg028_2941_1206:
+                    if (argA == 0)
+                    {
+                        //seg028_2941_120F
+                        if (((MotionCalcArray.UnkC_terrain | MotionCalcArray.UnkE) & 0x800) == 0)
+                        {
+                            result = true;
+                        }
+                        else
+                        {
+                            if (MotionCalcArray.z4 - argC_distance <= UWMotionParamArray.Z_dseg_67d6_2582)
+                            {
+                                result = true;                                
+                            }
+                            else
+                            {
+                                result = false;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        result = true;
+                    }
+                }
+                else
+                {
+                    result = false;
+                }
+            }
+
+        ReturnResult:
+            MotionCalcArray.PtrToMotionCalc = OldCalcArray;
+            return result;//temp result
         }
     }//end class
 }//end namespace
