@@ -1,6 +1,4 @@
 using System.Diagnostics;
-using System.Runtime.Serialization;
-using System.Threading;
 
 namespace Underworld
 {
@@ -11,6 +9,9 @@ namespace Underworld
     {
         public static int AmmoItemID;
         public static int AmmoType;
+
+        public static int projectileXHome;
+        public static int projectileYHome;
         public static int spellXHome;
         public static int spellYHome;
         public static int MissileLauncherHeadingBase;
@@ -70,6 +71,11 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// Prepares a new Projectile with necessary launch parameters
+        /// </summary>
+        /// <param name="Launcher"></param>
+        /// <returns></returns>
         public static uwObject PrepareProjectileObject(uwObject Launcher)
         {
             var slot = ObjectCreator.PrepareNewObject(AmmoItemID, ObjectFreeLists.ObjectListType.MobileList);
@@ -87,7 +93,7 @@ namespace Underworld
                 MissileLauncherHeadingBase = MissileLauncherHeadingBase + (Launcher.heading << 5);
                 MissileLauncherHeadingBase = (MissileHeading + MissileLauncherHeadingBase + 0x100) & 0xFF;
 
-                ObjectCreator.InitMobileObject(projectile, motion.spellXHome, motion.spellYHome);
+                ObjectCreator.InitMobileObject(projectile, motion.projectileXHome, motion.projectileYHome);
 
                 projectile.heading = (short)(MissileLauncherHeadingBase >> 5);
                 projectile.npc_heading = (short)(MissileLauncherHeadingBase & 0x1F);
@@ -226,7 +232,7 @@ namespace Underworld
 
             if (Xvar2 <= 0)
             {
-                if (Xvar2 <= 0)
+                if (Xvar2 < 0)
                 {
                     Xvar2--;
                 }
@@ -238,7 +244,7 @@ namespace Underworld
 
             if (Yvar4 <= 0)
             {
-                if (Yvar4 >= 0)
+                if (Yvar4 < 0)
                 {
                     Yvar4--;
                 }
@@ -254,8 +260,14 @@ namespace Underworld
 
         public static void GetVectorForDirection(int heading, ref int X1, ref int Y1)
         {
-            X1 = HeadingLookupTable[64 + (heading >> 8)];
-            Y1 = HeadingLookupTable[heading >> 8];            
+            X1 = HeadingLookupTable[64 + (heading >> 8)];    
+            Y1 = HeadingLookupTable[heading >> 8];                                
+        }
+
+
+        public static bool TestIfObjectFitsInTile(int itemid, int index, int posX, int posY, int posZ, int argA, int argC_distance)
+        {
+            return true;//temp result
         }
     }//end class
 }//end namespace

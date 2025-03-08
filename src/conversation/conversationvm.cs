@@ -599,7 +599,7 @@ namespace Underworld
 					UWTileMap.GetRandomXYZForTile(tile, out int newxpos, out int newypos, out int newzpos);
 					var dropcoordinate = uwObject.GetCoordinate(playerdat.tileX, playerdat.tileY, newxpos, newypos, newzpos);
 
-					pickup.Drop(
+					pickup.Drop_old(
 						index: objindex,
 						objList: UWTileMap.current_tilemap.LevelObjects,
 						dropPosition: dropcoordinate,

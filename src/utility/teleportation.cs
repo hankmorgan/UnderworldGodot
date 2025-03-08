@@ -58,7 +58,7 @@ namespace Underworld
                         obj.ypos = 3;
                         obj.next = tile.indexObjectList;
                         tile.indexObjectList = obj.index;  
-                        pickup.DropSpecialCases(obj);
+                        pickup.DropSpecialCases(obj.item_id);
                     // }  
                     // else
                     // {

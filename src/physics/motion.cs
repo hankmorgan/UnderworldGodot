@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.Runtime.Serialization;
 
@@ -20,7 +21,10 @@ namespace Underworld
         public static bool MotionProcessing(uwObject projectile)
         {
             ObjectHasHalted = false;
-
+            if (!UWTileMap.ValidTile(projectile.tileX, projectile.tileY))
+            {
+                return false;//object is not on map
+            }
            
             //Check if object is still "alive"
             if (projectile.npc_hp == 0)

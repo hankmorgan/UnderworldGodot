@@ -10,8 +10,121 @@ namespace Underworld
     /// </summary>
     public class pickup : UWClass
     {
-        public static bool Drop(int index, uwObject[] objList, Vector3 dropPosition, int tileX, int tileY, bool DoSpecialCases = true)
+
+        public static bool DropOrThrowByPlayer(uwObject srcObject, bool printMessage)
         {
+            uwObject ThrownObject = null;
+            motion.projectileXHome = playerdat.playerObject.npc_xhome;
+            motion.projectileYHome = playerdat.playerObject.npc_yhome;
+
+            if (motion.InitPlayerProjectileValues())
+            {
+                //throw
+                motion.MissileLauncherHeadingBase = 1;
+                motion.AmmoItemID = srcObject.item_id;
+                motion.AmmoType = 0xF;
+                ThrownObject = motion.PrepareProjectileObject(playerdat.playerObject);
+                if (ThrownObject != null)
+                {
+                    //copy props to new object
+                    ThrownObject.is_quant = srcObject.is_quant;
+                    ThrownObject.link = srcObject.link;
+                    ThrownObject.flags_full = srcObject.flags_full;
+                    ThrownObject.quality = srcObject.quality;
+                    ThrownObject.owner = srcObject.owner;
+                    ThrownObject.doordir = srcObject.doordir;
+                    if (ThrownObject.majorclass != 5)
+                    {
+                        if (commonObjDat.rendertype(srcObject.item_id) != 2)
+                        {
+                            ThrownObject.npc_whoami = srcObject.heading;//preserve identification status.
+                        }
+                    }
+                    objectInstance.RedrawFull(ThrownObject);
+                    //seg027_2856_599:
+                    ObjectFreeLists.ReleaseFreeObject(srcObject);
+                    srcObject = null;
+                }
+            }
+
+            //seg027_2856_5B1:
+            if (srcObject != null)
+            {//tileY = MotionCalcArray.y2 >> 3;
+                var CannotFit = false;
+                int x_ToSpawnIn = (motion.projectileXHome << 3) + playerdat.playerObject.xpos;
+                int y_toSpawnIn = (motion.projectileYHome << 3) + playerdat.playerObject.ypos;
+                var distance = commonObjDat.radius(playerdat.playerObject.item_id) + commonObjDat.radius(srcObject.item_id) + 1;
+                srcObject.zpos =playerdat.playerObject.zpos;
+                motion.GetCoordinateInDirection(
+                    heading: playerdat.playerObject.npc_heading + (playerdat.playerObject.heading << 5),
+                    distance: distance,
+                    X0: ref x_ToSpawnIn,
+                    Y0: ref y_toSpawnIn);
+
+                CannotFit = !motion.TestIfObjectFitsInTile(srcObject.item_id, 0, x_ToSpawnIn, y_toSpawnIn, playerdat.playerObject.zpos, 1, distance);
+                if (CannotFit == false)
+                {
+                    //object cannot fit at first tried position. Try and do it 3 units from player.
+                    motion.GetCoordinateInDirection(
+                        heading: playerdat.playerObject.npc_heading + (playerdat.playerObject.heading << 5),
+                        distance: 3,
+                        X0: ref x_ToSpawnIn,
+                        Y0: ref y_toSpawnIn);
+                    CannotFit = !motion.TestIfObjectFitsInTile(srcObject.item_id, 0, x_ToSpawnIn, y_toSpawnIn, playerdat.playerObject.zpos, 1, distance);
+                }
+
+                var tileX = x_ToSpawnIn >> 3; var tileY = y_toSpawnIn >> 3;
+                var tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];
+                if (CannotFit == false)
+                {
+                    srcObject.xpos = (short)(x_ToSpawnIn & 7);
+                    srcObject.ypos = (short)(y_toSpawnIn & 7);
+                    //add to tile
+                    srcObject.next = tile.indexObjectList;
+                    tile.indexObjectList = srcObject.index;
+                    srcObject.tileX = tileX; srcObject.tileY = tileY;
+                    if (srcObject.OneF0Class == 9)
+                    {
+                        if (srcObject.classindex >= 4 && srcObject.classindex <= 6)
+                        {
+                            srcObject.item_id -= 4; //turn off lit lights.
+                        }
+                    }
+
+                    objectInstance.RedrawFull(srcObject);
+
+                    var ObjectAfterCollison = motion.PlacedObjectCollision_seg030_2BB7_10BC(
+                        projectile: srcObject, 
+                        tileX: tileX, tileY: tileY, 
+                        arg8: 1);
+                    if (ObjectAfterCollison != null)
+                    {
+                        objectInstance.RedrawFull(ObjectAfterCollison);
+                        if (ObjectAfterCollison.IsStatic)
+                        {
+                            Debug.Print("dropped object. Do check for pressure triggers here");
+                        }
+                    }
+                    srcObject = null;
+                }
+                else
+                {
+                    if (printMessage)
+                    {
+                        uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_there_is_no_space_to_drop_that_));
+                    }
+                    //Play sound effect?
+                }
+            }
+
+            //seg027_2856_845:
+            return (srcObject == null);
+        }
+
+
+        public static bool Drop_old(int index, uwObject[] objList, Vector3 dropPosition, int tileX, int tileY, bool DoSpecialCases = true)
+        {
+            Debug.Print("To Remove Drop_old()");
             var t = UWTileMap.current_tilemap.Tiles[tileX, tileY];
             if (t.tileType == UWTileMap.TILE_SOLID)
             {
@@ -37,17 +150,17 @@ namespace Underworld
                 if (DoSpecialCases)
                 {
                     //Handle some special cases
-                    DropSpecialCases(obj);
+                    DropSpecialCases(obj.item_id);
                 }
                 return true;
             }
         }
 
-        public static void DropSpecialCases(uwObject obj)
+        public static void DropSpecialCases(int item_id)
         {
             if (_RES != GAME_UW2)
             {
-                switch (obj.item_id)
+                switch (item_id)
                 {
                     case 294://moonstone
                         playerdat.SetMoonstone(0, playerdat.dungeon_level);
@@ -56,13 +169,13 @@ namespace Underworld
             }
             else
             {
-                switch (obj.item_id)
+                switch (item_id)
                 {
                     case 294://moonstone
                         {
-                            for (int m = 0; m<2; m++)
+                            for (int m = 0; m < 2; m++)
                             {//Store the current level in the first free moonstone variable.
-                                if (playerdat.GetMoonstone(m)==0)
+                                if (playerdat.GetMoonstone(m) == 0)
                                 {
                                     playerdat.SetMoonstone(m, playerdat.dungeon_level);
                                     break;
@@ -95,7 +208,7 @@ namespace Underworld
                 return useon.UseOn(objPicked, useon.CurrentItemBeingUsed, WorldObject);
             }
             else
-            {     
+            {
                 if (!commonObjDat.CanBePickedUp(objPicked.item_id) && !CanBePickedUpOverrides(objPicked.item_id))
                 {//object cannot be picked up
                     uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_cannot_pick_that_up_));
@@ -165,19 +278,19 @@ namespace Underworld
                 {
                     //<0
                     yield return false;
-                }                
+                }
             }
             else
             {
                 //invalid input. cancel                
                 yield return false;
-            }        
+            }
             yield return false;
         }
 
         private static void DoPickup(int index, uwObject[] objList, uwObject obj)
         {
-            
+
             //first handle some special cases
             PickupSpecialCases(obj);
 
@@ -278,7 +391,7 @@ namespace Underworld
                         {
                             if (obj.doordir == 1)
                             {
-                                playerdat.SetQuest(106,1);
+                                playerdat.SetQuest(106, 1);
                                 //a_do_trap_trespass.HackTrapTrespass(28);//flag trespass to human faction #28 guardian forces, note vanilla behaviour is that dropping and picking the book up again will retrigger this behaviour.
                                 thief.FlagTheftToObjectOwner(obj, 28);
                             }

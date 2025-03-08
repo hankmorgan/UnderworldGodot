@@ -378,7 +378,7 @@ namespace Underworld
 					    var dropcoordinate = uwObject.GetCoordinate(playerdat.tileX, playerdat.tileY, newxpos, newypos, newzpos);
 
                         //drop at players location
-                        pickup.Drop(
+                        pickup.Drop_old(
                             index: objindex,
                             objList: UWTileMap.current_tilemap.LevelObjects,
                             dropPosition: dropcoordinate,

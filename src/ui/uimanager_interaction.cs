@@ -152,10 +152,13 @@ namespace Underworld
                         }
                     break;
                 case InteractionModes.ModePickup:
-                    pickup.PickUp(
-                        index: index,
-                        objList: UWTileMap.current_tilemap.LevelObjects,
-                        WorldObject: true);
+                    if (playerdat.ObjectInHand == -1)//don't do pickup if holding something already.
+                    {
+                        pickup.PickUp(
+                            index: index,
+                            objList: UWTileMap.current_tilemap.LevelObjects,
+                            WorldObject: true);
+                    }
                     break;
             }
         }

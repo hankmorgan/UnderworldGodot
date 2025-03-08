@@ -41,6 +41,8 @@ namespace Underworld
         {
             motion.AmmoItemID = spellProjectileID + 16;
             motion.AmmoType = rangedObjectDat.ammotype(motion.AmmoItemID);
+            motion.projectileXHome = caster.npc_xhome;
+            motion.projectileYHome = caster.npc_yhome;
             motion.spellXHome = caster.npc_xhome;
             motion.spellYHome = caster.npc_yhome;
             motion.MissileLauncherHeadingBase = 1;
@@ -64,7 +66,15 @@ namespace Underworld
             }
             else
             {
-                //npc or spell trap launcher. To do
+                //npc or spell trap launcher
+                if (caster.IsStatic)
+                {                    
+                    motion.projectileXHome = caster.tileX;
+                    motion.projectileYHome = caster.tileY;                                    
+                    motion.MissilePitch = 0;
+                    motion.MissileLauncherHeadingBase = 0;
+                }
+                motion.MissileHeading = 0;
                 return false;
             }
         }

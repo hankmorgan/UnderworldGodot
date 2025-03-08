@@ -1286,9 +1286,16 @@ namespace Underworld
             return 0;
         }
 
-        static uwObject PlacedObjectCollision_seg030_2BB7_10BC(uwObject projectile, int tileX, int tileY, int arg8)
-        {
-            Debug.Print("PlacedObjectCollision!");
+        /// <summary>
+        /// Handles collison when an object is placed into a tile.
+        /// </summary>
+        /// <param name="projectile"></param>
+        /// <param name="tileX"></param>
+        /// <param name="tileY"></param>
+        /// <param name="arg8"></param>
+        /// <returns></returns>
+        public static uwObject PlacedObjectCollision_seg030_2BB7_10BC(uwObject projectile, int tileX, int tileY, int arg8)
+        {            
             var var1_destroyobject = false;
             var var2 = 0;
             var var3 = 0;
@@ -1474,9 +1481,11 @@ namespace Underworld
             }
             else
             {
+                Debug.Print($"Destroying {projectile.a_name}");
                 //seg030_2BB7_1410
                 if (ObjectRemover.DeleteObjectFromTile(projectile.tileX, projectile.tileY, projectile.index))
                 {
+                    
                     return null;
                 }
                 else

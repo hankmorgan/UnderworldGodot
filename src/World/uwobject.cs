@@ -1324,6 +1324,10 @@ namespace Underworld
         }
 
 
+        /// <summary>
+        /// Who the NPC is.
+        /// Also used to store object identification status of thrown magical items. (backs up the heading value)
+        /// </summary>
         public short npc_whoami
         {
             get

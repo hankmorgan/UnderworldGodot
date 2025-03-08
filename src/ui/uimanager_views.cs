@@ -1,4 +1,5 @@
 using System.Data;
+using System.Data.Common;
 using System.Diagnostics;
 using Godot;
 using Godot.Collections;
@@ -168,14 +169,14 @@ namespace Underworld
         public static void ClickOnViewPort(InputEventMouseButton eventMouseButton)
         {
             if (!InGame) { return; }
-            bool LeftClick = (eventMouseButton.ButtonIndex == MouseButton.Left); 
+            bool LeftClick = (eventMouseButton.ButtonIndex == MouseButton.Left);
             Debug.Print($"{eventMouseButton.Position.X},{eventMouseButton.Position.Y}");
             Dictionary result = DoRayCast(eventMouseButton.Position, RayDistance, out Vector3 rayOrigin);
-            
+
             //store these values for use in throw and spell casting events
             ViewPortMouseXPos = eventMouseButton.Position.X;
-            ViewPortMouseYPos = eventMouseButton.Position.Y;         
-               
+            ViewPortMouseYPos = eventMouseButton.Position.Y;
+
             if (result != null)
             {
                 if (result.ContainsKey("collider") && result.ContainsKey("normal") && result.ContainsKey("position"))
@@ -192,13 +193,13 @@ namespace Underworld
                         case "TILE":
                         case "WALL":
                             {
-                                if (SpellCasting.currentSpell!=null)
+                                if (SpellCasting.currentSpell != null)
                                 {
-                                    if (SpellCasting.currentSpell.SpellMajorClass==5)
+                                    if (SpellCasting.currentSpell.SpellMajorClass == 5)
                                     {
                                         SpellCasting.CastCurrentSpellOnRayCastTarget(
-                                            index: 0, 
-                                            objList: null, 
+                                            index: 0,
+                                            objList: null,
                                             hitCoordinate: hitCoordinate,
                                             WorldObject: true);//not enough room to cast
                                         return;
@@ -208,15 +209,7 @@ namespace Underworld
                                 {
                                     case InteractionModes.ModePickup:
                                         {
-                                            if (playerdat.ObjectInHand != -1)
-                                            {//something is held. try and drop it on this tile.
-                                             //int tileX = int.Parse(vals[1]); int tileY = int.Parse(vals[2]);
-
-                                                int tileX = (int)(-hitCoordinate.X / 1.2f);
-                                                int tileY = (int)(hitCoordinate.Z / 1.2f);
-                                                //move object to this tile if possble
-                                                DropToTileAtPosition(hitCoordinate, tileX, tileY);
-                                            }
+                                            //interaction removed from here to support new drop/throw methods.
                                             break;
                                         }
                                     case InteractionModes.ModeLook:
@@ -230,13 +223,13 @@ namespace Underworld
                             }
                         case "CEILING":
                             {
-                                if (SpellCasting.currentSpell!=null)
+                                if (SpellCasting.currentSpell != null)
                                 {
-                                    if (SpellCasting.currentSpell.SpellMajorClass==5)
+                                    if (SpellCasting.currentSpell.SpellMajorClass == 5)
                                     {
                                         SpellCasting.CastCurrentSpellOnRayCastTarget(
-                                            index: 0, 
-                                            objList: null, 
+                                            index: 0,
+                                            objList: null,
                                             hitCoordinate: Vector3.Zero,
                                             WorldObject: true);//not enough room to cast
                                         return;
@@ -259,13 +252,18 @@ namespace Underworld
                                 {
                                     if (SpellCasting.currentSpell == null)
                                     {
-                                        InteractWithObjectCollider(
-                                            index: index, LeftClick: LeftClick);
+                                        if (!(InteractionMode == InteractionModes.ModePickup && playerdat.ObjectInHand != -1))//temp to allow drop/throw below to work
+                                        {
+                                            InteractWithObjectCollider(
+                                                index: index, LeftClick: LeftClick);
+                                            return;
+                                        }
+
                                     }
                                     else
                                     {
                                         SpellCasting.CastCurrentSpellOnRayCastTarget(
-                                            index: index, 
+                                            index: index,
                                             objList: UWTileMap.current_tilemap.LevelObjects,
                                             hitCoordinate: hitCoordinate,
                                             WorldObject: true);
@@ -293,6 +291,28 @@ namespace Underworld
                     }
                 }
             }
+
+
+            //New methods that ignore the raycast
+            switch (InteractionMode)
+            {
+                case InteractionModes.ModePickup:
+                    {
+                        if (playerdat.ObjectInHand != -1)
+                        {
+                            //something is held. try and drop or throw it
+                            var objToThrow = UWTileMap.current_tilemap.LevelObjects[playerdat.ObjectInHand];
+                            var itemid = objToThrow.item_id;
+                            if (pickup.DropOrThrowByPlayer(objToThrow, true))
+                            {
+                                playerdat.ObjectInHand = -1;
+                                instance.mousecursor.SetCursorToCursor();
+                                pickup.DropSpecialCases(itemid);//primarily handle moonstones
+                            }
+                        }
+                        break;
+                    }
+            }
         }
 
         /// <summary>
@@ -301,10 +321,11 @@ namespace Underworld
         /// <param name="pos"></param>
         /// <param name="tileX"></param>
         /// <param name="tileY"></param>
-        private static void DropToTileAtPosition(Vector3 pos, int tileX, int tileY)
+        private static void DropToTileAtPosition_OLD(Vector3 pos, int tileX, int tileY)
         {
+            Debug.Print("To Remove DropToTileAtPosition_OLD()");
             if (
-                pickup.Drop(
+                pickup.Drop_old(
                 index: playerdat.ObjectInHand,
                 objList: UWTileMap.current_tilemap.LevelObjects,
                 dropPosition: pos,

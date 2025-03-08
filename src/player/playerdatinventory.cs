@@ -44,7 +44,7 @@ namespace Underworld
 					    var dropcoordinate = uwObject.GetCoordinate(tileX, tileY, newxpos, newypos, newzpos);
 
                         //already holding something. Drop that item to the ground first so it does not get lost
-                        pickup.Drop(
+                        pickup.Drop_old(
                             index: _ObjectInHand,
                             objList: UWTileMap.current_tilemap.LevelObjects,
                             dropPosition: dropcoordinate,

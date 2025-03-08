@@ -121,7 +121,7 @@ namespace Underworld
                 var foundwand = playerdat.InventoryObjects[FoundAcademyWand];
                 var newIndex = uimanager.DoPickup(foundwand, ChangeHand: false);
                 var dropcoordinate = uwObject.GetCoordinate(desttile.tileX, desttile.tileY, 3, 3, (short)desttile.floorHeight<<3);
-                pickup.Drop(
+                pickup.Drop_old(
                     index: newIndex,
                     objList: UWTileMap.current_tilemap.LevelObjects,
                     dropPosition: dropcoordinate,
