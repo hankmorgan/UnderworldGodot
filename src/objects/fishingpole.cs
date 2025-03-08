@@ -6,14 +6,16 @@ namespace Underworld
         public static bool use(uwObject obj, bool WorldObject)
         {
             if (WorldObject)
-            {                    
+            {
                 return false;
             }
             else
             {
                 //go fish
-                var tile = UWTileMap.GetTileInDirectionFromCamera(1.2f);
-                if (tile!=null)
+                int xCoord = playerdat.X >> 5; int yCoord = playerdat.Y >> 5;
+                motion.GetCoordinateInDirection(playerdat.playerObject.heading << 8, 0xB, ref xCoord, ref yCoord);
+                var tile = UWTileMap.current_tilemap.Tiles[xCoord >> 3, yCoord >> 3];
+                if (tile != null)
                 {
                     if (tile.tileType == UWTileMap.TILE_SOLID)
                     {
@@ -23,7 +25,6 @@ namespace Underworld
                     {
                         //get floor texture,
                         int terrain = TerrainDatLoader.GetTerrainTypeNo(tile);
-
 
                         if (terrain == 1)
                         {//water

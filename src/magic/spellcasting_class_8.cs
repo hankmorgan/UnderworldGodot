@@ -10,7 +10,7 @@ namespace Underworld
             var itemid = -1;
             var whichList = ObjectFreeLists.ObjectListType.StaticList;
             bool isNPCSpawn = false;
-            var tile = UWTileMap.GetTileInDirectionFromCamera(1.2f);
+            var tile = UWTileMap.GetTileInDirectionFromCamera_old(1.2f);
             if (tile != null)
             {
                 if (tile.tileType == UWTileMap.TILE_SOLID)

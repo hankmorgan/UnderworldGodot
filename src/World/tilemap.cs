@@ -1263,8 +1263,9 @@ namespace Underworld
         /// Gets the tile in the facing direction from the player at distance magnitude.
         /// </summary>
         /// <param name="magnitude"></param>
-        public static TileInfo GetTileInDirectionFromCamera(float magnitude)
+        public static TileInfo GetTileInDirectionFromCamera_old(float magnitude)
         {
+            Debug.Print("Depreciated get GetTileInDirectionFromCamera_old()");
             Vector3 targetpos = GetPositionInDirectionFromCamera(magnitude);
             var tileX = -(int)(targetpos.X / 1.2f);
             var tileY = (int)(targetpos.Z / 1.2f);

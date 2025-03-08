@@ -26,7 +26,7 @@ namespace Underworld
                 y = playerdat.tileY;
 
                 var fDistanceFromObject = 1.2f * ((float)distanceFromObject / 8f);//converto godot units.
-                var tile = UWTileMap.GetTileInDirectionFromCamera(fDistanceFromObject);
+                var tile = UWTileMap.GetTileInDirectionFromCamera_old(fDistanceFromObject);
                 RunCodeOnTargetsInArea(
                     methodToCall: methodToCall,
                     Rng_arg0: rngProbablity,

@@ -10,7 +10,7 @@ namespace Underworld
                 return false;
             }
 
-            var tile = UWTileMap.GetTileInDirectionFromCamera(0.6f);
+            var tile = UWTileMap.GetTileInDirectionFromCamera_old(0.6f);
             if (tile!=null)
             {
                 if (tile.tileType==UWTileMap.TILE_OPEN)

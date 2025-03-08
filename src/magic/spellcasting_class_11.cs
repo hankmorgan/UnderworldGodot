@@ -237,7 +237,7 @@ namespace Underworld
             var distance = 2;
             while (distance <= 2)
             {
-                var tile = UWTileMap.GetTileInDirectionFromCamera((float)distance * 1.2f);
+                var tile = UWTileMap.GetTileInDirectionFromCamera_old((float)distance * 1.2f);
                 if (tile.tileType != 0)//don't teleport into a solid tile or out of bounds. This should be replaced with a can fit in tile check later on.
                 {
                     if (tile.floorHeight - (playerdat.zpos << 3) <= 2)  //the use of a right shift here is possibly a vanilla bug
