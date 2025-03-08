@@ -28,7 +28,7 @@ namespace Underworld
                         }
                         else
                         {
-                           //DETECT MONSTERS
+                            //DETECT MONSTERS
                             tracking.DetectMonsters(8, 0x2D);
                         }
                         break;
@@ -213,7 +213,7 @@ namespace Underworld
         {
             playerdat.play_poison = 0;
             playerdat.shrooms = 0;
-            if (playerdat.ParalyseTimer>0)
+            if (playerdat.ParalyseTimer > 0)
             {
                 playerdat.ParalyseTimer = 0;
                 main.gamecam.Set("MOVE", true);
@@ -234,18 +234,25 @@ namespace Underworld
         /// </summary>
         private static void Portal()
         {
-            var distance = 2;
+            var distance = 2;//distance being 2 here is probably a vanilla bug. seems like the expected behavour is the game would test 2 then 1 and then 0.
             while (distance <= 2)
             {
-                var tile = UWTileMap.GetTileInDirectionFromCamera_old((float)distance * 1.2f);
-                if (tile.tileType != 0)//don't teleport into a solid tile or out of bounds. This should be replaced with a can fit in tile check later on.
+                int x0 = playerdat.tileX; int y0 = playerdat.tileY;
+                motion.GetCoordinateInDirection((playerdat.playerObject.heading << 5) + playerdat.playerObject.npc_heading, distance, ref x0, ref y0);
+                var tile = UWTileMap.current_tilemap.Tiles[x0, y0];
+
+                //var tile = UWTileMap.GetTileInDirectionFromCamera_old((float)distance * 1.2f);
+                // if (tile.tileType != 0)//don't teleport into a solid tile or out of bounds. This should be replaced with a can fit in tile check later on.
+                // {
+                if (tile.floorHeight - (playerdat.zpos << 3) <= 2)
                 {
-                    if (tile.floorHeight - (playerdat.zpos << 3) <= 2)  //the use of a right shift here is possibly a vanilla bug
+                    if (motion.TestIfObjectFitsInTile(playerdat.playerObject.item_id, 1, 4 + (x0 << 3), 4 + (y0 << 3), playerdat.playerObject.zpos, 1, 8))
                     {
                         Teleportation.Teleport(0, tile.tileX, tile.tileY, 0, playerdat.heading);
                         return;
                     }
                 }
+                // }
                 distance++;
             }
             uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x132));//there is not enough space
