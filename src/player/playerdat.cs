@@ -289,6 +289,9 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// Note this is not the full heading value! 
+        /// </summary>
         public static int heading
         {
             get

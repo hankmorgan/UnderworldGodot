@@ -167,7 +167,9 @@ public partial class main : Node3D
 			newzpos = Math.Max(Math.Min(newzpos,127),0);
 			var tmp = cam.Rotation;
 			tmp.Y = (float)(tmp.Y - Math.PI);
-			playerdat.heading = (int)Math.Round(-(tmp.Y * 127) / Math.PI);
+			playerdat.heading = (int)Math.Round(-(tmp.Y * 127) / Math.PI);//placeholder track these values for projectile calcs.
+			// playerdat.playerObject.heading = (short)((playerdat.headingMinor >> 0xD) & 0x7);
+			// playerdat.playerObject.npc_heading = (short)((playerdat.headingMinor>>8) & 0x1F);
 			uimanager.UpdateCompass();
 			combat.CombatInputHandler(delta);
 			playerdat.PlayerTimedLoop(delta);
