@@ -126,10 +126,6 @@ namespace Underworld
                         //in uw2 critter is initialised here, uw1 skips this. leaving it like this for now as I've yet to find the uw1 equivilant to study
                         InitialiseCritter(obj);
                     }
-                    // else
-                    // {
-                    //     //todo projectile props
-                    // }
                 }
             }
             return slot;

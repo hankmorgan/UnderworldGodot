@@ -100,8 +100,8 @@ namespace Underworld
         /// Casts appropiate spells from objects
         /// </summary>
         /// <param name="spellno"></param>
-        /// <param name="obj"></param>
-        public static void CastSpellFromObject(int spellno, uwObject obj, bool playerCast = true)
+        /// <param name="caster"></param>
+        public static void CastSpellFromObject(int spellno, uwObject caster, bool playerCast = true)
         {
             if (((spellno & 0xC0) == 0) && (spellno <= RunicMagic.SpellList.GetUpperBound(0)))
             {
@@ -116,7 +116,7 @@ namespace Underworld
                 CastSpell(
                     majorclass: major,
                     minorclass: minor,
-                    caster: obj,
+                    caster: caster,
                     target: null,
                     tileX: playerdat.tileX,
                     tileY: playerdat.tileY,

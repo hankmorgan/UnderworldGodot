@@ -9,7 +9,7 @@ namespace Underworld
         /// Special extra spells
         /// </summary>
         /// <param name="minorclass"></param>
-        public static void CastClassD_Spells(int minorclass)
+        public static void CastClassD_Spells(int minorclass, uwObject caster)
         {
             switch (minorclass)
             {
@@ -73,7 +73,7 @@ namespace Underworld
                         CastSpell(
                             majorclass: 5,
                             minorclass: 4,
-                            caster: null,
+                            caster: caster,
                             target: null,
                             tileX: playerdat.tileX,
                             tileY: playerdat.tileY,
@@ -85,7 +85,7 @@ namespace Underworld
                         CastSpell(
                             majorclass: 5,
                             minorclass: 6,
-                            caster: null,
+                            caster: caster,
                             target: null,
                             tileX: playerdat.tileX,
                             tileY: playerdat.tileY,

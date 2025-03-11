@@ -4,13 +4,27 @@ namespace Underworld
 {
     public partial class SpellCasting : UWClass
     {
-        public static void CastClass8_Summoning(int minorclass, int caster = 0)
+        public static void CastClass8_Summoning(int minorclass, uwObject caster)
         {
             //Preamble of getting positon to spawn in.  based on facing direction of the player
+            var distance = 9;
+            if ((_RES != GAME_UW2) && (minorclass == 4))
+            {//EXTRA DISTANCE FOR SUMMON MONSTER IN UW1
+                distance = 0xC;
+            }
             var itemid = -1;
-            var whichList = ObjectFreeLists.ObjectListType.StaticList;
-            bool isNPCSpawn = false;
-            var tile = UWTileMap.GetTileInDirectionFromCamera_old(1.2f);
+            //var whichList = ObjectFreeLists.ObjectListType.StaticList;
+            //bool isNPCSpawn = false;
+
+            int x0 = (caster.npc_xhome << 3) + caster.xpos;
+            int y0 = (caster.npc_yhome << 3) + caster.ypos;
+            var rngrange = Rng.r.Next(26) - 13;
+            var heading = (((caster.heading << 5) + caster.npc_heading + rngrange) & 0xFFFF) % 0xFF;
+
+            motion.GetCoordinateInDirection(heading, distance, ref x0, ref y0);
+
+            var tile = UWTileMap.current_tilemap.Tiles[x0 >> 3, y0 >> 3];
+            var z0 = tile.floorHeight << 3;
             if (tile != null)
             {
                 if (tile.tileType == UWTileMap.TILE_SOLID)
@@ -22,9 +36,9 @@ namespace Underworld
             switch (minorclass)
             {
                 case 1:
-                    {                        
-                       // Debug.Print("Create Food");
-                        itemid = Rng.r.Next(0,7) + 0xB0;                       
+                    {
+                        // Debug.Print("Create Food");
+                        itemid = Rng.r.Next(0, 7) + 0xB0;
                         break;
                     }
                 case 2:
@@ -53,9 +67,9 @@ namespace Underworld
                     }
                 case 4:
                     {          //Summon Monster (UW1 only? )  
-                        isNPCSpawn= true;            
+                        //isNPCSpawn = true;
                         var monsterlevel = 2;
-                        if (caster == 0)
+                        if (caster == playerdat.playerObject)
                         {
                             monsterlevel = System.Math.Max(monsterlevel, playerdat.Casting);
                         }
@@ -65,28 +79,29 @@ namespace Underworld
                         }
                         bool ValidMonster = false;
                         int retries = 0;//just in case probability runs against us
-                        while ((!ValidMonster) && (retries<=16))
+                        while ((!ValidMonster) && (retries <= 16))
                         {
                             itemid = 0x40 + (Rng.r.Next(0, monsterlevel) & 0x3F);
-                            whichList = ObjectFreeLists.ObjectListType.MobileList;
+                            //whichList = ObjectFreeLists.ObjectListType.MobileList;
                             if (
-                                (critterObjectDat.avghit(itemid) == 0) 
-                                || critterObjectDat.isSwimmer(itemid) 
+                                (critterObjectDat.avghit(itemid) == 0)
+                                || critterObjectDat.isSwimmer(itemid)
                                 || critterObjectDat.unkPassivenessProperty(itemid)
-                                || (itemid == 0x7b) 
+                                || (itemid == 0x7b)
                                 || (itemid == 0x7c)
                                 )
-                                {//monster types not allowed
-                                    ValidMonster = false;
-                                }
-                                else
-                                {
-                                    ValidMonster = true;
-                                }
-                            retries++;
-                            if (retries>=16)
+                            {//monster types not allowed
+                                ValidMonster = false;
+                            }
+                            else
                             {
-                                itemid=-1;//cancel
+                                ValidMonster = true;
+                            }
+                            retries++;
+                            if (retries >= 16)
+                            {
+                                itemid = -1;//cancel
+                                return;
                             }
                         }
                         break;
@@ -95,11 +110,11 @@ namespace Underworld
                     {//Summon demon. summons a hostile demon from a list of demons item ids
                         if (_RES == GAME_UW2)
                         {
-                            isNPCSpawn= true; 
-                            var demons = new int[]{0x4B, 0x4B, 0x5E, 0x64, 0x68};
-                            var demonIndex = (Rng.r.Next(0,0x1E) + playerdat.Casting)/0xC;                            
+                            //isNPCSpawn = true;
+                            var demons = new int[] { 0x4B, 0x4B, 0x5E, 0x64, 0x68 };
+                            var demonIndex = (Rng.r.Next(0, 0x1E) + playerdat.Casting) / 0xC;
                             itemid = demons[demonIndex];
-                            whichList = ObjectFreeLists.ObjectListType.MobileList;
+                            //whichList = ObjectFreeLists.ObjectListType.MobileList;
                             break;
                         }
                         else
@@ -112,7 +127,7 @@ namespace Underworld
                         if (_RES == GAME_UW2)
                         {
                             //Debug.Print("Satellite");
-                            itemid =0x1E;// spawn a satellite. it does nothing
+                            itemid = 0x1E;// spawn a satellite.
                             break;
                         }
                         else
@@ -122,44 +137,116 @@ namespace Underworld
                     }
             }
 
-            //Do the item creation.
-            if (itemid != -1)
+            if (motion.TestIfObjectFitsInTile(itemid, 0, x0, y0, tile.floorHeight << 3, 1, 8))
             {
-                UWTileMap.GetRandomXYZForTile(tile, out int newxpos, out int newypos, out int newzpos);
-                if ((whichList == ObjectFreeLists.ObjectListType.MobileList) && (isNPCSpawn))
+                int newIndex;
+                if (_RES == GAME_UW2)
                 {
-                    if (critterObjectDat.isFlier(itemid))
+                    if (minorclass >= 4)
                     {
-                        newzpos = (newzpos + 0x80) / 2;
+                        newIndex = ObjectCreator.PrepareNewObject(itemid, ObjectFreeLists.ObjectListType.MobileList);
+                    }
+                    else
+                    {
+                        newIndex = ObjectCreator.PrepareNewObject(itemid, ObjectFreeLists.ObjectListType.StaticList);
                     }
                 }
-                var newObject = ObjectCreator.spawnObjectInTile(
-                    itemid: itemid,
-                    tileX: tile.tileX,
-                    tileY: tile.tileY,
-                    xpos: (short)newxpos, ypos: (short)newypos, zpos: (short)newzpos,
-                    WhichList: whichList);
-
+                else
+                {
+                    if (minorclass == 4)
+                    {
+                        newIndex = ObjectCreator.PrepareNewObject(itemid, ObjectFreeLists.ObjectListType.MobileList);
+                    }
+                    else
+                    {
+                        newIndex = ObjectCreator.PrepareNewObject(itemid, ObjectFreeLists.ObjectListType.StaticList);
+                    }
+                }
+                var newObject = UWTileMap.current_tilemap.LevelObjects[newIndex];
+                newObject.tileX = x0 >> 3;
+                newObject.tileY = y0 >> 3;
+                newObject.xpos = (short)(x0 & 7);
+                newObject.ypos = (short)(x0 & 7);
+                if (newObject.IsStatic)
+                {
+                    newObject.quality = 0x3F;
+                }
                 switch (minorclass)
-                {//post spawn handling.
-                    case 4://summon monster
-                    case 5://summon demon
-                        newObject.npc_xhome = (short)tile.tileX;
-                        newObject.npc_yhome = (short)tile.tileY;
-                        if ((caster == 0) && (minorclass == 4))
+                {
+                    case 4:
+                    case 5://summon monster or summon demon
                         {
-                            newObject.IsAlly = 1;
+                            //vanilla behaviour calls initcritter values. This has already ran as part of PrepareNewObject so I skip.
+                            newObject.npc_xhome = (short)(x0 >> 3);
+                            newObject.npc_yhome = (short)(y0 >> 3);
+                            if (critterObjectDat.isFlier(itemid))
+                            {
+                                z0 = (z0 + 0x80) / 2;
+                            }
+                            if ((caster == playerdat.playerObject) && (minorclass == 4))
+                            {
+                                newObject.IsAlly = 1;
+                            }
+                            else
+                            {
+                                newObject.npc_attitude = 0;
+                                newObject.UnkBit_0x19_0_likelyincombat = 1;
+                                newObject.TargetTileX = playerdat.playerObject.npc_xhome;
+                                newObject.TargetTileY = playerdat.playerObject.npc_yhome;
+                            }
+                            break;
                         }
-                        else
+                    case 6:
                         {
-                            newObject.npc_attitude = 0;
-                            newObject.UnkBit_0x19_0_likelyincombat = 1;
-                            newObject.TargetTileX = (short)playerdat.tileX;
-                            newObject.TargetTileY = (short)playerdat.tileY;
+                            if (_RES==GAME_UW2)
+                            {
+                                //satellite
+                                ObjectCreator.InitMobileObject(newObject, x0 >> 3, y0 >> 3);
 
+                                newObject.ProjectileHeading = (ushort)(0x40 + heading + Rng.r.Next(2) * 0x7F);
+                                if ((caster.majorclass == 1) && (caster.IsStatic == false))
+                                {
+                                    newObject.ProjectileSourceID = caster.index;
+                                }
+                                else
+                                {
+                                    newObject.ProjectileSourceID = 0;
+                                }
+
+                                newObject.UnkBit_0X15_Bit7 = 0;
+                                z0 += 0x12;
+                                if (z0 > 0x78)
+                                {
+                                    z0++; //?
+                                }
+                                newObject.UnkBit_0X13_Bit0to6 = (short)(15 + Rng.r.Next(15));
+                            }
+                            break;
                         }
-                        break;
+                    default:
+                        {
+                            newObject.quality = 0x3F;
+                            break;
+                        }
+                }
 
+                newObject.zpos = (short)z0;
+                newObject.next = tile.indexObjectList;
+                tile.indexObjectList = newObject.index;                
+                if (minorclass != 4)
+                {
+                    newObject = motion.PlacedObjectCollision_seg030_2BB7_10BC(newObject, x0 >> 3, y0 >> 3, 1);
+                }
+                if (newObject!=null)
+                {
+                    ObjectCreator.RenderObject(newObject, UWTileMap.current_tilemap);
+                }   
+            }
+            else
+            {
+                if (caster == playerdat.playerObject)
+                {
+                    uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_there_is_no_room_to_create_that_));
                 }
             }
         }

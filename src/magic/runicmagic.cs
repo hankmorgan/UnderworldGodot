@@ -230,7 +230,7 @@ namespace Underworld
             SpellCasting.CastSpell(
                 majorclass: spell.SpellMajorClass,
                 minorclass: spell.SpellMinorClass,
-                caster: null, target: null,
+                caster: playerdat.playerObject, target: null,
                 tileX: playerdat.tileX, tileY: playerdat.tileY,
                 CastOnEquip:false,
                 PlayerCast: true);
@@ -257,7 +257,7 @@ namespace Underworld
                                 SpellCasting.CastSpell(
                                     majorclass: 9,
                                     minorclass: spell.SpellLevel / 2,
-                                    caster: null, target: null,
+                                    caster: playerdat.playerObject, target: null,
                                     tileX: playerdat.tileX, tileY: playerdat.tileY,
                                     CastOnEquip: false,
                                     PlayerCast: true);
@@ -273,7 +273,7 @@ namespace Underworld
                             SpellCasting.CastSpell(
                                 majorclass: spell.SpellMajorClass,
                                 minorclass: spell.SpellMinorClass,
-                                caster: null, target: null,
+                                caster: playerdat.playerObject, target: null,
                                 tileX: playerdat.tileX, tileY: playerdat.tileY,
                                 CastOnEquip:false,
                                 PlayerCast: true);

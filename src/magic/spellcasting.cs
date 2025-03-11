@@ -69,7 +69,8 @@ namespace Underworld
                     break;
                 case 8://spells that create or summon
                     CastClass8_Summoning(
-                        minorclass: minorclass);
+                        minorclass: minorclass, 
+                        caster: caster);
                     break;
                 case 9://curses
                     CastClass9_Curse(
@@ -86,7 +87,7 @@ namespace Underworld
                     Debug.Print("Attempt to directly cast Class 0xC spell. This should not happen");
                     break;
                 case 13://misc spells
-                    CastClassD_Spells(minorclass);
+                    CastClassD_Spells(minorclass, caster);
                     break;
                 case 14://cutscene spells.
                     cutsplayer.PlayCutscene(minorclass,null);

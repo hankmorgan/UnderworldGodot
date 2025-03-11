@@ -251,7 +251,7 @@ namespace Underworld
                                             var effectid = critterObjectDat.spell(critter.item_id, critter.npc_spellindex);
                                             SpellCasting.CastSpellFromObject(
                                                 spellno: effectid,
-                                                obj: critter,
+                                                caster: critter,
                                                 playerCast: false);
                                         }
                                     }

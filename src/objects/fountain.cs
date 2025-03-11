@@ -10,7 +10,7 @@ namespace Underworld
                 SpellCasting.CastSpell(
                     majorclass: spell.SpellMajorClass,
                     minorclass: spell.SpellMinorClass,
-                    caster: null,
+                    caster: playerdat.playerObject,
                     target: null,
                     tileX: playerdat.tileX,
                     tileY: playerdat.tileY,
