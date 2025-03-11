@@ -311,8 +311,7 @@ namespace Underworld
         /// <param name="minorclass"></param>
         /// <param name="index"></param>
         /// <param name="objList"></param>
-        /// <param name="caster"></param>
-        public static void CastClassB_SpellsOnCallBack(int minorclass, int index, uwObject[] objList, int caster = 1)
+        public static void CastClassB_SpellsOnCallBack(int minorclass, int index, uwObject[] objList)
         {
             if (_RES != GAME_UW2)
             {

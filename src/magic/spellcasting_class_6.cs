@@ -280,7 +280,7 @@ namespace Underworld
                 {
                     Debug.Print("A skull in Repel undead?");
                     RepelUndeadGlobal += targetObject.quality;
-                    return SmiteUndead(targetObject.index, UWTileMap.current_tilemap.LevelObjects, targetObject.instance.uwnode.Position);
+                    return SmiteUndead(targetObject.index, UWTileMap.current_tilemap.LevelObjects, targetObject.instance.uwnode.Position, playerdat.playerObject);
                 }
                 else
                 {

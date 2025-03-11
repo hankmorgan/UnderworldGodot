@@ -444,7 +444,7 @@ namespace Underworld
                             {//Debug.Print("Undeadbane"); 
                                 if (currWeaponType > 0)
                                 {
-                                    SpellCasting.SmiteUndead(objHit.index, UWTileMap.current_tilemap.LevelObjects, hitCoordinate);
+                                    SpellCasting.SmiteUndead(objHit.index, UWTileMap.current_tilemap.LevelObjects, hitCoordinate, playerdat.playerObject);
                                 }                                
                                 break;
                             }
@@ -459,7 +459,7 @@ namespace Underworld
                         case 4:
                             {
                                 //Debug.Print("stonestrike"); 
-                                SpellCasting.Paralyse(objHit.index, UWTileMap.current_tilemap.LevelObjects, 1);
+                                SpellCasting.Paralyse(objHit.index, UWTileMap.current_tilemap.LevelObjects, playerdat.playerObject);
                                 break;
                             }
                         case 5:

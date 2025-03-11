@@ -5,7 +5,7 @@ namespace Underworld
     public partial class SpellCasting : UWClass
     {
         //targeted spells
-        public static void CastClass7_SpellsOnCallBack(int minorclass, int index, uwObject[] objList, Godot.Vector3 hitCoordinate, bool WorldObject = true, int caster = 1)
+        public static void CastClass7_SpellsOnCallBack(int minorclass, int index, uwObject[] objList, uwObject caster, Godot.Vector3 hitCoordinate, bool WorldObject = true)
         {
             if (_RES == GAME_UW2)
             {
@@ -13,15 +13,15 @@ namespace Underworld
                 {
                     case 0:
                         //cause bleeding  
-                        CauseBleeding(index, objList, hitCoordinate);
+                        CauseBleeding(index: index, objList: objList, hitCoordinate: hitCoordinate);
                         break;
                     case 1:
                         //Causefear
-                        Causefear(index, objList);
+                        Causefear(index: index, objList: objList);
                         break;
                     case 2:
                         //SmiteUndead
-                        SmiteUndead(index, objList, hitCoordinate);
+                        SmiteUndead(index: index, objList: objList, hitCoordinate: hitCoordinate, caster: caster);
                         break;
                     case 3:
                         //Charm
@@ -29,7 +29,7 @@ namespace Underworld
                         break;
                     case 4:
                         //Poison
-                        PoisonSpell(index, objList, WorldObject, hitCoordinate);//unused in uw2
+                        PoisonSpell(index: index, objList: objList, WorldObject: WorldObject, hitCoordinate: hitCoordinate);//unused in uw2
                         break;
                     case 5:
                         //paralyse  
@@ -100,19 +100,19 @@ namespace Underworld
                         break;
                     case 2:
                         //smite undead
-                        SmiteUndead(index, objList, hitCoordinate);
+                        SmiteUndead(index: index, objList: objList, hitCoordinate: hitCoordinate, caster: caster);
                         break;
                     case 3:
                         //ally
-                        Ally(index, objList, hitCoordinate);
+                        Ally(index: index, objList: objList, hitCoordinate: hitCoordinate);
                         break;
                     case 4:
                         //poison
-                        PoisonSpell(index, objList, WorldObject, hitCoordinate);
+                        PoisonSpell(index: index, objList: objList, WorldObject: WorldObject, hitCoordinate: hitCoordinate);
                         break;
                     case 5:
                         //paralyse
-                        Paralyse(index, objList, caster);
+                        Paralyse(index: index, objList: objList, caster: caster);
                         break;
                 }
             }
@@ -407,7 +407,7 @@ namespace Underworld
         /// <param name="objList"></param>
         /// <param name="caster"></param>
         /// <returns></returns>
-        public static bool SmiteUndead(int index, uwObject[] objList, Godot.Vector3 hitCoordinate, int caster = 1)
+        public static bool SmiteUndead(int index, uwObject[] objList, Godot.Vector3 hitCoordinate, uwObject caster)
         {
             var obj = objList[index];
 
@@ -431,7 +431,7 @@ namespace Underworld
                             objList: objList,
                             WorldObject: true,
                             hitCoordinate: hitCoordinate,
-                            damagesource: 1);
+                            damagesource: caster.index);
                         return true;
                     }
                     else
@@ -463,7 +463,7 @@ namespace Underworld
         /// <param name="index"></param>
         /// <param name="objList"></param>
         /// <param name="caster"></param>
-        public static void Paralyse(int index, uwObject[] objList, int caster = 1)
+        public static void Paralyse(int index, uwObject[] objList, uwObject caster)
         {
             var critter = objList[index];
             if (critter != null)
@@ -471,7 +471,7 @@ namespace Underworld
                 if (_RES == GAME_UW2)
                 {
                     int castscore;
-                    if (caster == 1)//player has cast
+                    if (caster == playerdat.playerObject)//player has cast
                     {
                         castscore = playerdat.Casting / 3;
                     }

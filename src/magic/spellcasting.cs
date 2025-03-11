@@ -118,7 +118,7 @@ namespace Underworld
                             minorclass: currentSpell.SpellMinorClass, 
                             index: index, 
                             objList: objList,
-                            caster: 1,                           
+                            caster: playerdat.playerObject,                           
                             hitCoordinate: hitCoordinate,
                             WorldObject: WorldObject); 
                         currentSpell = null;
@@ -130,8 +130,7 @@ namespace Underworld
                         CastClassB_SpellsOnCallBack(
                             minorclass: currentSpell.SpellMinorClass, 
                             index: index, 
-                            objList: objList,
-                            caster: 1); 
+                            objList: objList); 
                         }
                         currentSpell = null;
                         uimanager.instance.mousecursor.SetCursorToCursor();
