@@ -15,46 +15,40 @@ namespace Underworld
         public delegate void UWObjectCallBackWithParams(uwObject obj, int[] paramsarray);
         public delegate void CutsceneCallBack();
 
-        public static void RunCodeOnTargetsAroundObject(AreaEffectCallBack methodToCall, int objectindex, int rngProbablity, int targetType, int distanceFromObject, int tileRadius)
+        public static void RunCodeOnTargetsAroundObject(AreaEffectCallBack methodToCall, int CentreObject, int rngProbablity, int targetType, int distanceFromObject, int tileRadius)
         {
             int heading;
-            int x; int y;
-            if (objectindex == 0)
-            {//object is the player.
-                heading = (playerdat.heading << 5);// + playerdat.playerObject.npc_heading;
-                x = playerdat.tileX;
-                y = playerdat.tileY;
+            int tileX; int tileY;
 
-                var fDistanceFromObject = 1.2f * ((float)distanceFromObject / 8f);//converto godot units.
-                var tile = UWTileMap.GetTileInDirectionFromCamera_old(fDistanceFromObject);
-                RunCodeOnTargetsInArea(
-                    methodToCall: methodToCall,
-                    Rng_arg0: rngProbablity,
-                    srcItemIndex: objectindex,
-                    typeOfTargetArg8: targetType,
-                    tileX0: tile.tileX - tileRadius,
-                    tileY0: tile.tileY - tileRadius,
-                    xWidth: 1 + (tileRadius << 1),
-                    yHeight: 1 + tileRadius << 1);
-
-
-            }
-            else
-            {
-                var obj = UWTileMap.current_tilemap.LevelObjects[objectindex];
-                x = obj.tileX; y = obj.tileY;
-                if (objectindex >= 0x100)
+                var obj = UWTileMap.current_tilemap.LevelObjects[CentreObject];
+                
+                if (obj.IsStatic)
                 {
                     //static object
                     heading = obj.heading << 5;
+                    tileX = obj.tileX; tileY = obj.tileY;
                 }
                 else
                 {
                     //mobile object
                     heading = (obj.heading << 5) + obj.npc_heading;
+                    tileX = obj.npc_xhome; tileY = obj.npc_yhome;
                 }
-                //TODO
-            }
+
+                motion.GetCoordinateInDirection(heading, distanceFromObject, ref tileX, ref tileY);
+
+                if (UWTileMap.ValidTile (tileX, tileY))
+                {
+                    RunCodeOnTargetsInArea(
+                        methodToCall: methodToCall,
+                        Rng_arg0: rngProbablity,
+                        srcItemIndex: CentreObject,
+                        typeOfTargetArg8: targetType,
+                        tileX0: tileX - tileRadius,
+                        tileY0: tileY - tileRadius,
+                        xWidth: 1 + (tileRadius << 1),
+                        yHeight: 1 + tileRadius << 1);
+                }     
         }
 
         /// <summary>

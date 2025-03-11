@@ -241,9 +241,6 @@ namespace Underworld
                 motion.GetCoordinateInDirection((playerdat.playerObject.heading << 5) + playerdat.playerObject.npc_heading, distance, ref x0, ref y0);
                 var tile = UWTileMap.current_tilemap.Tiles[x0, y0];
 
-                //var tile = UWTileMap.GetTileInDirectionFromCamera_old((float)distance * 1.2f);
-                // if (tile.tileType != 0)//don't teleport into a solid tile or out of bounds. This should be replaced with a can fit in tile check later on.
-                // {
                 if (tile.floorHeight - (playerdat.zpos << 3) <= 2)
                 {
                     if (motion.TestIfObjectFitsInTile(playerdat.playerObject.item_id, 1, 4 + (x0 << 3), 4 + (y0 << 3), playerdat.playerObject.zpos, 1, 8))
@@ -252,7 +249,6 @@ namespace Underworld
                         return;
                     }
                 }
-                // }
                 distance++;
             }
             uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x132));//there is not enough space
