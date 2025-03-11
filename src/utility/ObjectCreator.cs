@@ -165,7 +165,7 @@ namespace Underworld
         /// <param name="worldparent"></param>
         /// <param name="grObjects"></param>
         /// <param name="obj"></param>
-        /// <param name="a_tilemap"></param>
+        /// <param name="a_tilemap">Really should remove this?</param>
         public static void RenderObject(uwObject obj, UWTileMap a_tilemap)
         {
             bool unimplemented = true;
