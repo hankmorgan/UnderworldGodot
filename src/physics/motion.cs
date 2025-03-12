@@ -1,6 +1,4 @@
-using System;
 using System.Diagnostics;
-using System.Runtime.Serialization;
 
 namespace Underworld
 {
@@ -74,6 +72,7 @@ namespace Underworld
                         case 0x1B://homing dart
                             break;
                         case 0x1E://satellite
+                            Satellite(projectile);
                             break;
                     }
                 }

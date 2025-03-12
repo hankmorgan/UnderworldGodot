@@ -1,6 +1,5 @@
 
 using System;
-using System.Diagnostics;
 
 namespace Underworld
 {
@@ -13,6 +12,7 @@ namespace Underworld
         const int Multiplier = 0x15A4E35;
         public static Rng r = new();
         //public static Random r_unseeded = new(); //for rng calls where the seed never gets reset
+        static Random DotNetRng = new();
 
         public Rng()
         {
@@ -73,7 +73,7 @@ namespace Underworld
         public static void InitRng()
         {
             Seed = (ushort)(DateTimeOffset.UtcNow.ToUnixTimeSeconds() & 0xFFFF);
-            Debug.Print($"Rng Seeded to {Seed}");
+            //Debug.Print($"Rng Seeded to {Seed}");
         }
 
         /// <summary>
@@ -85,10 +85,11 @@ namespace Underworld
         /// <returns></returns>
         public int Next(int max)
         {
-            var newSeed = (uint)((Seed * Multiplier) + 1);
-            Seed = newSeed;
-            //Debug.Print($"Rng={((newSeed) & 0x7FFF) % max} out of {max}. Next Seed is {Seed}");
-            return (int)(((newSeed) & 0x7FFF) % max);
+            return DotNetRng.Next(max);
+            // var newSeed = (uint)((Seed * Multiplier) + 1);
+            // Seed = newSeed;
+            // //Debug.Print($"Rng={((newSeed) & 0x7FFF) % max} out of {max}. Next Seed is {Seed}");
+            // return (int)(((newSeed) & 0x7FFF) % max);
         }
 
         public int Next(int min, int max)
