@@ -59,6 +59,10 @@ namespace Underworld
                 //has no instance. Force a full redrawl.
                 if (UWTileMap.ValidTile(obj.tileX, obj.tileY))
                 {
+                    if (obj == playerdat.playerObject)
+                    {
+                        return;
+                    }
                     RedrawFull(obj);
                 }
             }
@@ -84,9 +88,9 @@ namespace Underworld
             var Tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];
             toPlace.next = Tile.indexObjectList;
             Tile.indexObjectList = toPlace.index;
-            toPlace.tileX = tileX; 
+            toPlace.tileX = tileX;
             toPlace.tileY = tileY;
-            toPlace.zpos = (short)(Tile.floorHeight<<3);
+            toPlace.zpos = (short)(Tile.floorHeight << 3);
             Reposition(toPlace);
         }
 

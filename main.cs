@@ -274,7 +274,7 @@ public partial class main : Node3D
 					for (int i = 0; i < UWTileMap.current_tilemap.NoOfActiveMobiles; i++)
 					{
 						var index = UWTileMap.current_tilemap.GetActiveMobileAtIndex(i);
-						if ((index != 0) && (index < 256))
+						if ((index > 1) && (index < 256))
 						{
 							var obj = UWTileMap.current_tilemap.LevelObjects[index];
 							if (obj.majorclass == 1)
@@ -292,7 +292,7 @@ public partial class main : Node3D
 							}
 						}
 					}
-					//motion.MotionSingleStepEnabled = false;
+					motion.MotionSingleStepEnabled = false;
 
 					AnimationOverlay.UpdateAnimationOverlays();
 					timers.RunTimerTriggers(1);

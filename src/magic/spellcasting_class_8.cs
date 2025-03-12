@@ -198,12 +198,12 @@ namespace Underworld
                         }
                     case 6:
                         {
-                            if (_RES==GAME_UW2)
+                            if (_RES == GAME_UW2)
                             {
                                 //satellite
                                 ObjectCreator.InitMobileObject(newObject, x0 >> 3, y0 >> 3);
 
-                                newObject.ProjectileHeading = (ushort)(0x40 + heading + Rng.r.Next(2) * 0x7F);
+                                newObject.ProjectileHeading = (byte)(0x40 + (byte)((byte)heading + (byte)(Rng.r.Next(2) * 0x7F)));
                                 if ((caster.majorclass == 1) && (caster.IsStatic == false))
                                 {
                                     newObject.ProjectileSourceID = caster.index;
@@ -219,7 +219,9 @@ namespace Underworld
                                 {
                                     z0++; //?
                                 }
+                                newObject.CoordinateZ = z0 << 3;
                                 newObject.UnkBit_0X13_Bit0to6 = (short)(15 + Rng.r.Next(15));
+
                             }
                             break;
                         }
@@ -232,15 +234,15 @@ namespace Underworld
 
                 newObject.zpos = (short)z0;
                 newObject.next = tile.indexObjectList;
-                tile.indexObjectList = newObject.index;                
-                if (minorclass != 4)
+                tile.indexObjectList = newObject.index;
+                if (minorclass < 4)
                 {
                     newObject = motion.PlacedObjectCollision_seg030_2BB7_10BC(newObject, x0 >> 3, y0 >> 3, 1);
                 }
-                if (newObject!=null)
+                if (newObject != null)
                 {
                     ObjectCreator.RenderObject(newObject, UWTileMap.current_tilemap);
-                }   
+                }
             }
             else
             {
