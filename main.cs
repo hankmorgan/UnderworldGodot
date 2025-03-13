@@ -68,7 +68,7 @@ public partial class main : Node3D
 		}	
 
 		// var exe = System.IO.File.ReadAllBytes("C:\\Games\\UW2\\uw2.exe");
-		// int addr_ptr=0x690c0;
+		// int addr_ptr=0x640c4;
 		// for (long x = 0; x<=320;x++)
 		// {
 		// 	Debug.Print($"{x}={(short)Loader.getAt(exe,addr_ptr,16)}");
