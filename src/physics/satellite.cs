@@ -1,8 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Xml.Linq;
-using Godot;
 
 namespace Underworld
 {
@@ -46,9 +43,9 @@ namespace Underworld
                 varC_orbit = 0x40;
             }
 
-            var var1A_diff = GetRelativeHeadingByMagnitude(projectile.ProjectileHeading, CalcedHeading_1C>>8, 0x20);
+            var var1A_diff = GetDefelectionMaybe((short)projectile.ProjectileHeading, (short)(CalcedHeading_1C >> 8), 0x20);
 
-            var1A_diff = GetRelativeHeadingByMagnitude(var1A_diff, di >> 8, varC_orbit);
+            var1A_diff = GetDefelectionMaybe(var1A_diff, (short)(di >> 8), varC_orbit);
 
             projectile.ProjectileHeading = (ushort)var1A_diff;
 
@@ -61,7 +58,7 @@ namespace Underworld
 
             if ((Rng.r.Next(0x7FFF) & 0x3) == 0)
             {
-                if (newPitch_var14 > 0xF)
+                if (newPitch_var14 >= 0xF)
                 {
                     if (newPitch_var14 > 0x11)
                     {
@@ -69,7 +66,7 @@ namespace Underworld
                     }
                     else
                     {
-                        newPitch_var14 = newPitch_var14 + Rng.r.Next(4) - 1;
+                        newPitch_var14 = newPitch_var14 + (Rng.r.Next(0x7fff) & 3) - 1;
                     }
                 }
                 else
@@ -160,8 +157,8 @@ namespace Underworld
             var cx = (short)(ax & 0xFF);
             bx = (short)(ax >> 8);
 
-            var bp = TangentTable[bx];
-            ax = TangentTable[bx + 1];
+            var bp = TangentTable_seg62_934[bx];
+            ax = TangentTable_seg62_934[bx + 1];
             ax = (short)(ax - bp);
             ax = (short)(ax * cx);
             var dl = (short)((int)ax) >> 16;
@@ -185,16 +182,64 @@ namespace Underworld
             return cx;
         }
 
-        static short seg021_22FD_B78_maybetangent(int ax)
+        static short seg021_22FD_B78_maybetangent(short ax)
         {
-            Debug.Print("TODO seg021_22FD_B78()");
-            return 0;
+            ax = (short)Math.Abs(ax);
+            short dx_initial = 0;
+            if (ax < 0)
+            {
+                dx_initial = -1;
+            }
+            var cx = (short)(ax & 0xFF);
+            var bx = (short)(ax >> 8);
+
+            var bp = TangentTable_seg62_832[bx];
+            ax = TangentTable_seg62_832[bx + 1];
+
+            ax = (short)(ax - bp);
+            ax = (short)(ax * cx);
+            var dl = (short)((int)ax) >> 16;
+            ax = (short)(ax >> 8);
+            if (dl < 0)
+            {
+                ax = (short)-Math.Abs(ax);
+            }
+            else
+            {
+                ax = Math.Abs(ax);
+            }
+
+            cx = (short)(ax + bp);
+
+            cx = (short)(cx ^ dx_initial);
+            cx = (short)(cx - dx_initial);
+            dx_initial = (short)(dx_initial & 0x8000);
+            cx = (short)(cx + dx_initial);
+
+            return cx;
         }
 
-        static short GetRelativeHeadingByMagnitude(int srcHeading, int dstHeading, int Magnitude)
+        static short GetDefelectionMaybe(short srcHeading, short dstHeading, short Magnitude)
         {
-            Debug.Print("TODO GetRelativeHeadingByMagnitude()");
-            return 0;
+            var si = srcHeading;
+            var di = dstHeading;
+
+            if (di - si > 0x80)
+            {
+                si += 0x100;
+                Magnitude = (short)(0x40 - Magnitude);
+                var swap = si;
+                si = di;
+                di = swap;
+            }
+            else
+            {
+                if (di - si < -128)
+                {
+                    di += 0x100;
+                }
+            }
+            return (short)((si + (((di - si) * Magnitude) / 0x40)) & 0xFF);
         }
     }//end class
 }//end namespace

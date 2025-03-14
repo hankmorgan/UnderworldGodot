@@ -61,6 +61,7 @@ namespace Underworld
                 var obj = UWTileMap.current_tilemap.LevelObjects[1];//the player object.
                 obj.next = tile.indexObjectList;
                 tile.indexObjectList = 1;//insert into the tile object list so it can be subject to collisions.
+                obj.tileX = newTileX; obj.tileY = newTileY;
 
             }
             // playerObject = new uwObject

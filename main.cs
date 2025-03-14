@@ -49,7 +49,7 @@ public partial class main : Node3D
 	[Export] public SubViewport secondarycameras;
 
 	double gameRefreshTimer = 0f;
-	
+
 	double cycletime = 0;
 
 
@@ -65,14 +65,14 @@ public partial class main : Node3D
 		if (uwsettings.instance != null)
 		{
 			GetTree().DebugCollisionsHint = uwsettings.instance.showcolliders;
-		}	
+		}
 
 		// var exe = System.IO.File.ReadAllBytes("C:\\Games\\UW2\\uw2.exe");
-		// int addr_ptr=0x640c4;
-		// for (long x = 0; x<=320;x++)
+		// int addr_ptr = 0x63FC2;
+		// for (long x = 0; x <= 320; x++)
 		// {
-		// 	Debug.Print($"{x}={(short)Loader.getAt(exe,addr_ptr,16)}");
-		// 	addr_ptr+=2;
+		// 	Debug.Print($"{x}={(short)Loader.getAt(exe, addr_ptr, 16)}");
+		// 	addr_ptr += 2;
 		// }
 	}
 
@@ -158,18 +158,18 @@ public partial class main : Node3D
 
 			int tileX = -(int)(cam.Position.X / 1.2f);
 			int tileY = (int)(cam.Position.Z / 1.2f);
-			tileX = Math.Max(Math.Min(tileX,63),0);
-			tileY = Math.Max(Math.Min(tileY,63),0);
+			tileX = Math.Max(Math.Min(tileX, 63), 0);
+			tileY = Math.Max(Math.Min(tileY, 63), 0);
 			int xposvecto = -(int)(((cam.Position.X % 1.2f) / 1.2f) * 8);
 			int yposvecto = (int)(((cam.Position.Z % 1.2f) / 1.2f) * 8);
-			int newzpos =(int)(((((cam.Position.Y) * 100)/32f)/15f)*128f)  - commonObjDat.height(127);
-			
-			newzpos = Math.Max(Math.Min(newzpos,127),0);
+			int newzpos = (int)(((((cam.Position.Y) * 100) / 32f) / 15f) * 128f) - commonObjDat.height(127);
+
+			newzpos = Math.Max(Math.Min(newzpos, 127), 0);
 			var tmp = cam.Rotation;
 			tmp.Y = (float)(tmp.Y - Math.PI);
 			playerdat.heading = (int)Math.Round(-(tmp.Y * 127) / Math.PI);//placeholder track these values for projectile calcs.
-			// playerdat.playerObject.heading = (short)((playerdat.headingMinor >> 0xD) & 0x7);
-			// playerdat.playerObject.npc_heading = (short)((playerdat.headingMinor>>8) & 0x1F);
+																		  // playerdat.playerObject.heading = (short)((playerdat.headingMinor >> 0xD) & 0x7);
+																		  // playerdat.playerObject.npc_heading = (short)((playerdat.headingMinor>>8) & 0x1F);
 			uimanager.UpdateCompass();
 			combat.CombatInputHandler(delta);
 			playerdat.PlayerTimedLoop(delta);
@@ -181,10 +181,10 @@ public partial class main : Node3D
 
 
 			if (UWTileMap.ValidTile(tileX, tileY))//((tileX < 64) && (tileX >= 0) && (tileY < 64) && (tileY >= 0))
-			{				
+			{
 				if ((playerdat.tileX != tileX) || (playerdat.tileY != tileY))
 				{
-					
+
 					var tileExited = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY];
 					if (UWClass._RES == UWClass.GAME_UW2)
 					{
@@ -207,11 +207,11 @@ public partial class main : Node3D
 					//player has changed tiles. move them to their new tile
 					var oldTileX = playerdat.tileX; var oldTileY = playerdat.tileY;
 
-					playerdat.tileX = Math.Min(Math.Max(tileX,0),63);
-					playerdat.tileY = Math.Min(Math.Max(tileY,0),63);
+					playerdat.tileX = Math.Min(Math.Max(tileX, 0), 63);
+					playerdat.tileY = Math.Min(Math.Max(tileY, 0), 63);
 					playerdat.PlacePlayerInTile(playerdat.tileX, playerdat.tileY, oldTileX, oldTileY);
-					playerdat.xpos = Math.Min(Math.Max(0,xposvecto),8);
-					playerdat.ypos = Math.Min(Math.Max(0,yposvecto),8);
+					playerdat.xpos = Math.Min(Math.Max(0, xposvecto), 8);
+					playerdat.ypos = Math.Min(Math.Max(0, yposvecto), 8);
 					playerdat.zpos = newzpos;
 
 					//tmp update the player object to keep in sync with other values
@@ -222,7 +222,7 @@ public partial class main : Node3D
 					playerdat.playerObject.npc_xhome = (short)tileX;
 					playerdat.playerObject.tileY = playerdat.tileY;
 					playerdat.playerObject.npc_yhome = (short)tileY;
-					var tileEntered = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY]; 
+					var tileEntered = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY];
 					playerdat.PlayerStatusUpdate();
 					if (UWClass._RES == UWClass.GAME_UW2)
 					{
@@ -264,6 +264,18 @@ public partial class main : Node3D
 					}
 				}
 			}
+			if (playerdat.playerObject != null)
+			{//temp crash fix
+				if (
+					(playerdat.playerObject.tileX != playerdat.tileX)
+					||
+					(playerdat.playerObject.tileY != playerdat.tileY)
+				)
+				{
+					playerdat.playerObject.tileX = playerdat.tileX;
+					playerdat.playerObject.tileY = playerdat.tileY;
+				}
+			}
 
 			gameRefreshTimer += delta;
 			if (gameRefreshTimer >= 0.3)
@@ -292,7 +304,7 @@ public partial class main : Node3D
 							}
 						}
 					}
-					motion.MotionSingleStepEnabled = false;
+					//motion.MotionSingleStepEnabled = false;
 
 					AnimationOverlay.UpdateAnimationOverlays();
 					timers.RunTimerTriggers(1);
@@ -376,12 +388,12 @@ public partial class main : Node3D
 							tracking.DetectMonsters(8, playerdat.Track); break;
 						case Key.F10: // make camp
 							{
-								Debug.Print("Make camp"); 
+								Debug.Print("Make camp");
 								//Try and find a bedroll in player inventory.
 								var bedroll = objectsearch.FindMatchInFullObjectList(
-									majorclass: 4, minorclass: 2, classindex: 1, 
+									majorclass: 4, minorclass: 2, classindex: 1,
 									objList: playerdat.InventoryObjects);
-								if (bedroll!=null)
+								if (bedroll != null)
 								{
 									sleep.Sleep(1);
 								}
@@ -389,9 +401,9 @@ public partial class main : Node3D
 								{
 									sleep.Sleep(0);
 								}
-								break;							
-							} 
-							
+								break;
+							}
+
 
 						case Key.F11://toggle position label
 							{
@@ -403,10 +415,10 @@ public partial class main : Node3D
 							{
 								//cutsplayer.PlayCutscene(0);//test  
 								//trigger.RunTimerTriggers();
-								if (UWClass._RES==UWClass.GAME_UW2)
+								if (UWClass._RES == UWClass.GAME_UW2)
 								{
 									scd.ProcessSCDArk(1);
-								}								
+								}
 								//trigger.RunNextScheduledTrigger();
 								break;
 							}
@@ -423,7 +435,7 @@ public partial class main : Node3D
 								playerdat.Casting = 30;
 								playerdat.ManaSkill = 30;
 								playerdat.play_level = 16;
-								for (int r=0;r<24;r++)
+								for (int r = 0; r < 24; r++)
 								{
 									playerdat.SetRune(r, true);
 								}
@@ -456,27 +468,27 @@ public partial class main : Node3D
 							//GD.Print("Mouse Clicked in conversation");
 						}
 					}
-	
+
 					break;
-				
+
 				//Using keyboard numbers to select options in conversation
 				case InputEventKey keyinput:
-				{
-
-					if (keyinput.Pressed)
 					{
-						if (int.TryParse(keyinput.AsText(), out int result))
+
+						if (keyinput.Pressed)
 						{
-							if ((result > 0) && (result <= ConversationVM.MaxAnswer))
+							if (int.TryParse(keyinput.AsText(), out int result))
 							{
-								ConversationVM.PlayerNumericAnswer = result;
-								ConversationVM.WaitingForInput = false;
+								if ((result > 0) && (result <= ConversationVM.MaxAnswer))
+								{
+									ConversationVM.PlayerNumericAnswer = result;
+									ConversationVM.WaitingForInput = false;
+								}
 							}
 						}
-					}
 
-					break;
-				}
+						break;
+					}
 			}
 		}
 
@@ -535,14 +547,14 @@ public partial class main : Node3D
 						case Key.Backspace:
 							{
 								var text = uimanager.instance.ChargenNameInput.Text;
-								if (text.Length>0)
+								if (text.Length > 0)
 								{
-									text = text.Remove(text.Length-1);
+									text = text.Remove(text.Length - 1);
 									uimanager.instance.ChargenNameInput.Text = text;
 								}
 								break;
 							}
-						case >= Key.Space and <=Key.Z :
+						case >= Key.Space and <= Key.Z:
 							{
 								string inputed;// = (char)keyinput.Unicode;
 								if (Input.IsPhysicalKeyPressed(Key.Shift))
@@ -554,7 +566,7 @@ public partial class main : Node3D
 									inputed = ((char)keyinput.Unicode).ToString().ToLower();
 								}
 								var text = uimanager.instance.ChargenNameInput.Text;
-								if (text.Length<16)
+								if (text.Length < 16)
 								{
 									text += inputed;
 									uimanager.instance.ChargenNameInput.Text = text;
@@ -565,7 +577,7 @@ public partial class main : Node3D
 					if (stop)
 					{//end typed input						
 						MessageDisplay.WaitingForTypedInput = false;
-						chargen.ChargenWaitForInput = false;						
+						chargen.ChargenWaitForInput = false;
 					}
 				}
 			}
@@ -651,6 +663,6 @@ public partial class main : Node3D
 
 		//Handle level transitions now since it's possible for further traps to be called after the teleport trap
 		Teleportation.HandleTeleportation();
-	}    
+	}
 
 }//end class
