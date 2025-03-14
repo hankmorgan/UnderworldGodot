@@ -112,7 +112,7 @@ namespace Underworld
             AttackerAppliesFinalDamage(
                 objHit: objectHit,
                 damageType: damageType, 
-                hitCoordinate: objectHit.instance.uwnode.Position, MissileAttack: true);
+                MissileAttack: true);
             
         }
 

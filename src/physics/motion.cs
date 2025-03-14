@@ -70,6 +70,7 @@ namespace Underworld
                     switch (projectile.item_id)
                     {
                         case 0x1B://homing dart
+                            HomingDart(projectile);
                             break;
                         case 0x1E://satellite
                             Satellite(projectile);

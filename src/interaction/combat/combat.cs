@@ -600,8 +600,7 @@ namespace Underworld
                     Debug.Print("Hit");
                     AttackerAppliesFinalDamage(
                         objHit: critter,
-                        damageType: 4,
-                        hitCoordinate: hitCoordinate,
+                        damageType: 4,                       
                         MissileAttack: false);
                 }
                 else
@@ -683,7 +682,7 @@ namespace Underworld
         }
 
 
-        static int AttackerAppliesFinalDamage(uwObject objHit, int damageType, Godot.Vector3 hitCoordinate, bool MissileAttack = false)
+        static int AttackerAppliesFinalDamage(uwObject objHit, int damageType, bool MissileAttack = false)
         {
             if (AttackDamage < 2)
             {
@@ -711,29 +710,29 @@ namespace Underworld
                 //Do blood spatters.
                 Debug.Print("Spatter blood");
 
-                if (objHit.majorclass == 1)
-                {
-                    //********************//
-                    Debug.Print("Force critter hostile for debug purposes");
-                    objHit.npc_attitude = 0;
-                    //********************//
-                    if (critterObjectDat.bleed(objHit.item_id) != 0)
-                    {
-                        animo.SpawnAnimoAtPoint(0, hitCoordinate); //blood
-                        if (AttackWasACrit)
-                        {
-                            animo.SpawnAnimoAtPoint(0, hitCoordinate + (Vector3.Up * 0.12f)); //blood
-                        }
-                    }
-                    else
-                    {//npc does not bleed
-                        animo.SpawnAnimoAtPoint(0xB, hitCoordinate);// a flash damage
-                    }
-                }
-                else
-                {//hit a non-npc object
-                    animo.SpawnAnimoAtPoint(0xB, hitCoordinate);// a flash/damage
-                }
+                // if (objHit.majorclass == 1)
+                // {
+                //     //********************//
+                //     Debug.Print("Force critter hostile for debug purposes");
+                //     objHit.npc_attitude = 0;
+                //     //********************//
+                //     if (critterObjectDat.bleed(objHit.item_id) != 0)
+                //     {
+                //         animo.SpawnAnimoAtPoint(0, hitCoordinate); //blood
+                //         if (AttackWasACrit)
+                //         {
+                //             animo.SpawnAnimoAtPoint(0, hitCoordinate + (Vector3.Up * 0.12f)); //blood
+                //         }
+                //     }
+                //     else
+                //     {//npc does not bleed
+                //         animo.SpawnAnimoAtPoint(0xB, hitCoordinate);// a flash damage
+                //     }
+                // }
+                // else
+                // {//hit a non-npc object
+                //     animo.SpawnAnimoAtPoint(0xB, hitCoordinate);// a flash/damage
+                // }
             }
 
             if (objHit.majorclass == 1)
@@ -773,7 +772,7 @@ namespace Underworld
                 objList: UWTileMap.current_tilemap.LevelObjects,
                 WorldObject: true,
                 damagesource: 1,
-                hitCoordinate: hitCoordinate);
+                hitCoordinate: Vector3.Zero, ignoreVector: true);
             return 0;
         }
 

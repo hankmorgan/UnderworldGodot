@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 
 namespace Underworld
 {
@@ -17,7 +16,7 @@ namespace Underworld
 
             var ProjXCoord = (projectile.npc_xhome << 3) + projectile.xpos;
             var ProjYCoord = (projectile.npc_yhome << 3) + projectile.ypos;
-            var di = SatelliteVectoring(ProjXCoord, ProjYCoord, casterXCoord, casterYCoord);
+            var di = SatelliteOrDartVectoring(ProjXCoord, ProjYCoord, casterXCoord, casterYCoord);
             var ax = (short)(di + 0x4000);
             var CalcedHeading_1C = ax;
             var si_projectileheading = (short)Math.Abs(projectile.ProjectileHeading - (ax >> 8));
@@ -99,7 +98,7 @@ namespace Underworld
         }
 
 
-        static short SatelliteVectoring(int projectileX, int projectileY, int sourceX, int sourceY)
+        static short SatelliteOrDartVectoring(int projectileX, int projectileY, int sourceX, int sourceY)
         {
             var xComponent = sourceX - projectileX;
             var yComponent = sourceY - projectileY;
@@ -110,8 +109,8 @@ namespace Underworld
             }
             else
             {
-                var negXComponent = (int)((xComponent & 0xFF) * 0x7FFF);
-                var negYComponent = (int)((yComponent & 0xFF) * 0x7FFF);
+                var negXComponent = (short)((xComponent & 0xFF) * 0x7FFF);
+                var negYComponent = (short)((yComponent & 0xFF) * 0x7FFF);
 
                 negXComponent = (short)(negXComponent / si);
                 negYComponent = (short)(negYComponent / si);
@@ -148,12 +147,15 @@ namespace Underworld
 
         static short seg021_22FD_BA2_MaybeTangent(short bx)
         {
-            var ax = (short)Math.Abs(bx);
+            var ax = bx;
             short dx_initial = 0;
-            if (bx < 0)
+            if (ax < 0)
             {
                 dx_initial = -1;
+                ax = (short)(ax ^ dx_initial);
+                ax -= dx_initial;
             }
+
             var cx = (short)(ax & 0xFF);
             bx = (short)(ax >> 8);
 
@@ -184,11 +186,13 @@ namespace Underworld
 
         static short seg021_22FD_B78_maybetangent(short ax)
         {
-            ax = (short)Math.Abs(ax);
+            //ax = (short)Math.Abs(ax);
             short dx_initial = 0;
             if (ax < 0)
             {
                 dx_initial = -1;
+                ax = (short)(ax ^ dx_initial);
+                ax -= dx_initial;
             }
             var cx = (short)(ax & 0xFF);
             var bx = (short)(ax >> 8);
