@@ -690,6 +690,10 @@ namespace Underworld
                             Tiles[x, y].VisibleFaces[vBOTTOM] = false;
                             Tiles[x, y].VisibleFaces[vTOP] = false;
                             break;
+                        case TILE_OPEN:
+                            Tiles[x, y].VisibleFaces[vBOTTOM] = false;
+                            Tiles[x, y].VisibleFaces[vTOP] = true;
+                            break;
                         default:
                             //Bottom and top is invisible
                             Tiles[x, y].VisibleFaces[vBOTTOM] = false;
