@@ -1411,26 +1411,31 @@ namespace Underworld
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        static Vector3 GetFullCoordinate(uwObject obj)
+        static Vector3 GetFullCoordinate(uwObject obj, bool CentreInGrid = true)
         {  
-            float offX = GetXYCoordinate_full(obj.CoordinateX);
-            float offY = GetXYCoordinate_full(obj.CoordinateY);
+            float offX = GetXYCoordinate_full(obj.CoordinateX, CentreInGrid);
+            float offY = GetXYCoordinate_full(obj.CoordinateY, CentreInGrid);
             float offZ = GetZCoordinate(obj.zpos);
             return new Godot.Vector3(-offX, offZ, offY);  
         }
 
         
-        static float GetXYCoordinate_full(int fullcoordinate)
+        static float GetXYCoordinate_full(int fullcoordinate, bool CentreInGrid)
         {           
-            return ((float)(fullcoordinate>>8) * 1.2f)
+            float adjust = 0f;
+            if (CentreInGrid)
+            {
+                adjust = 0.075f;
+            }
+            return adjust + ((float)(fullcoordinate>>8) * 1.2f)
                 + ((float)((fullcoordinate>>5) & 0x7) * 0.15f)
                 + ((float)(fullcoordinate & 0xF) * 0.01f);   //this number is unconfirmed. Based on assumption that bits 0-3 of coordinate are a single xypos step in 1/15th increments.      
         }
 
-        public static Vector3 GetCoordinate(int tileX, int tileY, int _xpos, int _ypos, int _zpos)
+        public static Vector3 GetCoordinate(int tileX, int tileY, int _xpos, int _ypos, int _zpos, bool CentreInGrid = true)
         {
-            float offX = GetXYCoordinate(tileX, _xpos);
-            float offY = GetXYCoordinate(tileY, _ypos);
+            float offX = GetXYCoordinate(tileX, _xpos,CentreInGrid);
+            float offY = GetXYCoordinate(tileY, _ypos,CentreInGrid);
             float offZ = GetZCoordinate(_zpos);
             return new Godot.Vector3(-offX, offZ, offY);  //x is neg. probably technical debt from a bug in the unity version
         }
@@ -1440,20 +1445,25 @@ namespace Underworld
         /// Gets the world x or y coordinate for a given x or y value
         /// </summary>
         /// <param name="xypos"></param>
-        /// <returns></returns>
-        public static float GetXYCoordinate_oldmethod(int tilexy, int xypos)
-        {
-            xypos = (xypos * 3) + 1;
-            float ResolutionXY = 23f;  // A tile has a 8x8 grid for object positioning? This is probably all wrong since there is a noticable "bump" in movement when crossing tiles. What was I thinking?
-            float BrushXY = 120f; //game world size of a tile.
-            float offXY = (tilexy * BrushXY) + xypos * (BrushXY / ResolutionXY);
-            return offXY / 100f;
-        }
+        // /// <returns></returns>
+        // public static float GetXYCoordinate_oldmethod(int tilexy, int xypos)
+        // {
+        //     xypos = (xypos * 3) + 1;
+        //     float ResolutionXY = 23f;  // A tile has a 8x8 grid for object positioning? This is probably all wrong since there is a noticable "bump" in movement when crossing tiles. What was I thinking?
+        //     float BrushXY = 120f; //game world size of a tile.
+        //     float offXY = (tilexy * BrushXY) + xypos * (BrushXY / ResolutionXY);
+        //     return offXY / 100f;
+        // }
 
 
-        public static float GetXYCoordinate(int tilexy, int xypos)
+        public static float GetXYCoordinate(int tilexy, int xypos, bool CentreInGrid)
         {
-            return (tilexy * 1.2f)  + (float)(xypos) *  0.15f; 
+            float adjust = 0f;
+            if (CentreInGrid)
+            {//adjusts for the object to be in the center of a tile grid segment.
+                adjust = 0.075f;
+            }
+            return adjust + (tilexy * 1.2f)  + (float)(xypos) *  0.15f; 
         }
 
         /// <summary>
