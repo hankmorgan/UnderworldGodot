@@ -102,19 +102,19 @@ namespace Underworld
         {
             var xComponent = sourceX - projectileX;
             var yComponent = sourceY - projectileY;
-            var si = (int)Math.Sqrt(Math.Pow(xComponent, 2) + Math.Pow(yComponent, 2));
+            var si = (short)Math.Sqrt(Math.Pow(xComponent, 2) + Math.Pow(yComponent, 2));
             if (si == 0)
             {
                 return 0;
             }
             else
             {
-                var negXComponent = (short)((xComponent & 0xFF) * 0x7FFF);
-                var negYComponent = (short)((yComponent & 0xFF) * 0x7FFF);
+                var negXComponent = (xComponent * 0x7FFF);
+                var negYComponent = (yComponent * 0x7FFF);
 
-                negXComponent = (short)(negXComponent / si);
-                negYComponent = (short)(negYComponent / si);
-                return seg021_22FD_EFB_MaybeGetTangent((short)negXComponent, (short)negYComponent);
+                negXComponent = (negXComponent / si);
+                negYComponent = (negYComponent / si);
+                return seg021_22FD_EFB_MaybeGetTangent((short)(negXComponent & 0xFFFF), (short)(negYComponent & 0xFFFF));
             }
 
         }

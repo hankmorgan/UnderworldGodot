@@ -101,7 +101,7 @@ namespace Underworld
                 {
                     for (int di_X = tileX0; di_X <= tileX0 + xWidth; di_X++)
                     {
-                        if (di_X >= tileX0 + xWidth)
+                        if (di_X > tileX0 + xWidth)
                         {//why is UW doing this??
                             if (typeOfTargetArg8 == 0x40)
                             {
@@ -125,6 +125,7 @@ namespace Underworld
                         }
                         for (int si_Y = tileY0; si_Y <= tileY0 + yHeight; si_Y++)
                         {
+                            //Debug.Print($"testing tile {di_X} {si_Y}");
                             if (UWTileMap.ValidTile(di_X, si_Y))
                             {
                                 var currenttile = UWTileMap.current_tilemap.Tiles[di_X, si_Y];

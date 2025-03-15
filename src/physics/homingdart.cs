@@ -50,7 +50,14 @@ namespace Underworld
             HomingDartXCoord = (short)((projectile.npc_xhome << 3) + projectile.xpos);
             HomingDartYCoord = (short)((projectile.npc_yhome << 3) + projectile.ypos);
 
-            CallBacks.RunCodeOnTargetsInArea(HomingDartTargeting, 1, projectile.ProjectileSourceID, 0, var2_x, var4_y, var6, var8);
+            CallBacks.RunCodeOnTargetsInArea(
+                methodToCall: HomingDartTargeting, 
+                Rng_arg0: 1, 
+                srcItemIndex: projectile.ProjectileSourceID, 
+                typeOfTargetArg8: 0, 
+                tileX0: var2_x, tileY0: var4_y, 
+                xWidth: var6, 
+                yHeight: var8);
 
             if (TargetForHomingDart > 0)
             {
@@ -58,8 +65,12 @@ namespace Underworld
                 var targetObject = UWTileMap.current_tilemap.LevelObjects[TargetForHomingDart];
                 var2_x = (short)((targetObject.npc_xhome << 3) + targetObject.xpos);
                 var4_y = (short)((targetObject.npc_yhome << 3) + targetObject.ypos);
-
-                var varE = SatelliteOrDartVectoring(HomingDartXCoord, HomingDartYCoord, var2_x, var4_y);
+// var4_y = 0x104;//test case
+// var2_x = 0x109;
+// HomingDartYCoord = 0xF5;
+// HomingDartXCoord = 0xF3;
+// DistanceToHomingDartTarget = 0x25;
+                var varE = SatelliteOrDartVectoring(HomingDartXCoord, HomingDartYCoord, var2_x, var4_y);//This returns wrong value in some circumstances. TO FIX
                 if (DistanceToHomingDartTarget >= 0xC)
                 {
                     if (DistanceToHomingDartTarget >= 0x20)
@@ -80,10 +91,10 @@ namespace Underworld
 
                 var var12_pitch = projectile.Projectile_Pitch;
                 
-                var var14_heightdiff = targetObject.zpos - projectile.zpos;                
-                var var16 = 0x10 + (var14_heightdiff / 0x18);
+                var var14_heightdiff = (targetObject.zpos - projectile.zpos);                
+                var var16 = 0x10 + ((ushort)var14_heightdiff / 0x18);
 
-                projectile.Projectile_Pitch = (short)((var12_pitch * (si + 4) + var16 * (8 - si)) / 0xC);
+                projectile.Projectile_Pitch = (short)((short)(((var12_pitch * (si + 4) + var16 * (8 - si)) / 0xC))  & 0x1F);
             }
             else
             {
