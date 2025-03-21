@@ -9,18 +9,23 @@ namespace Underworld
 
         public static byte[] data_3FC = new byte[40];//globals at 0x3FC
         public static byte[] dseg_26b8 = new byte[16];//confirm size
+
+        public static byte[] DSEG_27B2_SpecialMotionHandling = new byte[8];
+        public static byte[] DSEG_26BA_LandNPCMotionHandler = new byte[8];
+        public static byte[] DSEG_26DE_SwimmingNPCMotionHandler = new byte[8];
+        public static byte[] DSEG_26C6_FlyingNPCMotionHandler = new byte[8];
        
-        public static byte[] MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2 = new byte[8];
+        public static byte[] PtrTo26D2_DSEG_26B8 = new byte[8];
        
         public static short PtrTo267D2_dseg_67d6_26B8_table0
         {
             get
             {
-                return (short)DataLoader.getAt(UWMotionParamArray.MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2, 0 , 16);
+                return (short)DataLoader.getAt(UWMotionParamArray.PtrTo26D2_DSEG_26B8, 0 , 16);
             }
             set
             {
-                DataLoader.setAt(UWMotionParamArray.MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2, 0 , 16, value);
+                DataLoader.setAt(UWMotionParamArray.PtrTo26D2_DSEG_26B8, 0 , 16, value);
             }
         }
 
@@ -28,7 +33,7 @@ namespace Underworld
         {
             get
             {
-                return (short)DataLoader.getAt(UWMotionParamArray.MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2, 2 , 16);
+                return (short)DataLoader.getAt(UWMotionParamArray.PtrTo26D2_DSEG_26B8, 2 , 16);
             }
         }
 
@@ -40,7 +45,7 @@ namespace Underworld
         {
             get
             {
-                return (short)DataLoader.getAt(UWMotionParamArray.MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2, 4 , 16);
+                return (short)DataLoader.getAt(UWMotionParamArray.PtrTo26D2_DSEG_26B8, 4 , 16);
             }
         }
 

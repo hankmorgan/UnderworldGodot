@@ -58,7 +58,7 @@ namespace Underworld
 
             InitMotionParams(projectile, MotionParams);
 
-            CalculateMotion_TopLevel(projectile, MotionParams);
+            CalculateMotion_TopLevel(projectile, MotionParams, UWMotionParamArray.DSEG_27B2_SpecialMotionHandling);
 
             //store current x/y homes in globals                        
             var result = ApplyProjectileMotion(projectile, MotionParams);
@@ -455,7 +455,7 @@ namespace Underworld
 
 
 
-        public static void seg006_1413_9F5(uwObject projectile)
+        public static void InitMotionCalcForNPC(uwObject projectile)
         {//Init motion for NPCs
 
         }

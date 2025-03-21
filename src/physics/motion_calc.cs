@@ -11,9 +11,10 @@ namespace Underworld
         /// <param name="MotionParams"></param>
         /// <param name="MaybeMagicObjectFlag"></param>
         /// <returns></returns>
-        public static bool CalculateMotion_TopLevel(uwObject projectile, UWMotionParamArray MotionParams)
+        public static bool CalculateMotion_TopLevel(uwObject projectile, UWMotionParamArray MotionParams, byte[] SpecialMotionHandler)
         {
             //seg006_1413_D6A
+            UWMotionParamArray.PtrTo26D2_DSEG_26B8 = SpecialMotionHandler;
             MotionParams.speed_12 = (byte)(projectile.Projectile_Speed << 4);
             CalculateMotion(projectile, MotionParams);
             return true;
