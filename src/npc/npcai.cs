@@ -75,7 +75,7 @@ namespace Underworld
                 if (critterObjectDat.isFlier(critter.item_id))
                 {
                     //special setup for flying ai    
-                    SpecialMotionHandler = UWMotionParamArray.DSEG_26C6_FlyingNPCMotionHandler;                
+                    SpecialMotionHandler = UWMotionParamArray.DSEG_26C6_FlyingNPCMotionHandler;
                 }
                 else
                 {
@@ -132,11 +132,12 @@ namespace Underworld
                     //TO REVISIT
                     UWMotionParamArray MotionParams = new();
                     motion.InitMotionParams(critter, MotionParams);
-                    motion.InitMotionCalcForNPC(critter);
-                     motion.CalculateMotion_TopLevel(
-                        projectile: critter, 
-                        MotionParams: MotionParams, 
-                        SpecialMotionHandler: SpecialMotionHandler ) ;
+                    byte[] NPCMotionCalcArray = new byte[0x20];
+                    UWMotionParamArray.LikelyNPCTileStates_222C = motion.InitMotionCalcForNPC(critter, NPCMotionCalcArray);
+                    motion.CalculateMotion_TopLevel(
+                       projectile: critter,
+                       MotionParams: MotionParams,
+                       SpecialMotionHandler: SpecialMotionHandler);
                     motion.ApplyProjectileMotion(critter, MotionParams);
                     objectInstance.Reposition(critter);
                     if (ProjectileHeading != critter.ProjectileHeading)
@@ -147,7 +148,11 @@ namespace Underworld
 
                 if ((commonObjDat.scaleresistances(critter.item_id) & 8) != 0)
                 {
-                    //update values in motion arrays
+                    //update values in motion arrays.
+                    //TODO confirm the correct bits are being changed.
+                    SpecialMotionHandler[2] |= 0x20;
+                    SpecialMotionHandler[6] |= 0x20;
+                    SpecialMotionHandler[0] &= 0xDF;
                 }
 
                 //set some other values

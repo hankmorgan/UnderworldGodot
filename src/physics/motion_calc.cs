@@ -13,10 +13,12 @@ namespace Underworld
         /// <returns></returns>
         public static bool CalculateMotion_TopLevel(uwObject projectile, UWMotionParamArray MotionParams, byte[] SpecialMotionHandler)
         {
-            //seg006_1413_D6A
-            UWMotionParamArray.PtrTo26D2_DSEG_26B8 = SpecialMotionHandler;
+            //seg006_1413_D6A            
             MotionParams.speed_12 = (byte)(projectile.Projectile_Speed << 4);
-            CalculateMotion(projectile, MotionParams);
+            CalculateMotion(
+                projectile: projectile, 
+                MotionParams: MotionParams, 
+                SpecialMotionHandler: SpecialMotionHandler);
             return true;
         }
 
@@ -25,20 +27,18 @@ namespace Underworld
         /// A loop that goes through some steps?
         /// </summary>
         /// <param name="projectile"></param>
-        /// <param name="MotionParams"></param>
-        
-        static void CalculateMotion(uwObject projectile, UWMotionParamArray MotionParams)
+        /// <param name="MotionParams"></param>        
+        static void CalculateMotion(uwObject projectile, UWMotionParamArray MotionParams, byte[] SpecialMotionHandler)
         {
             int collisionCounter = 0;
-            //WMotionParamArray.PtrTo267D2_dseg_67d6_26B8 = (short)MaybeMagicObjectFlag;
+            UWMotionParamArray.PtrTo26D2_DSEG_26B8 = SpecialMotionHandler;
             UWMotionParamArray.MotionParam0x25_dseg_67d6_26A9 = MotionParams.tilestate25;
-            //UWMotionParamArray.CalculateMotionGlobal_dseg_67d6_25DB = 0;
+
             MotionCalcArray.Unk17_base = 0;
             UWMotionParamArray.CalculateMotionGlobal_dseg_67d6_26B6 = 0;
 
             if (InitialMotionCalc_seg031_2CFA_412(MotionParams, true, 1))
             {
-
                 //loop at seg031_2CFA_69
                 while (UWMotionParamArray.MAYBEcollisionOrGravity_dseg_67d6_40E + 1 > UWMotionParamArray.GravityCollisionRelated_dseg_67d6_414)
                 {
@@ -58,18 +58,14 @@ namespace Underworld
                         //seg031_2CFA_59:
                         if (ProcessCollisions_seg031_2CFA_12B8(MotionParams, 1) != 0)
                         {
-
                             //seg031_2CFA_64
                             seg031_2CFA_179C(MotionParams);
-
                         }
                         collisionCounter++;
                     }
                 }
-
                 //seg031_2CFA_73:  
                 StoreNewXYZH_seg031_2CFA_800(MotionParams);
-
                 return;
             }
         }

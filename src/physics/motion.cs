@@ -455,9 +455,17 @@ namespace Underworld
 
 
 
-        public static void InitMotionCalcForNPC(uwObject projectile)
+        public static short InitMotionCalcForNPC(uwObject critter, byte[] MotionCalcData)
         {//Init motion for NPCs
-
+            MotionCalcArray.PtrToMotionCalc = MotionCalcData;
+            MotionCalcArray.MotionArrayObjectIndexA = critter.index;
+            MotionCalcArray.Radius8 = (byte)commonObjDat.radius(critter.item_id);
+            MotionCalcArray.Height9 = (byte)commonObjDat.height(critter.item_id);
+            MotionCalcArray.x0 = (ushort)((critter.npc_xhome <<3) + critter.xpos);
+            MotionCalcArray.y2 = (ushort)((critter.npc_yhome<<3) + critter.ypos);
+            MotionCalcArray.z4 = (ushort)critter.zpos;
+            motion.ProcessMotionTileHeights_seg028_2941_385(8);
+            return (short)(MotionCalcArray.UnkC_terrain | MotionCalcArray.UnkE);
         }
 
 

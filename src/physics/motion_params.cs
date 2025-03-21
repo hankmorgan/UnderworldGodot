@@ -14,6 +14,7 @@ namespace Underworld
         public static byte[] DSEG_26BA_LandNPCMotionHandler = new byte[8];
         public static byte[] DSEG_26DE_SwimmingNPCMotionHandler = new byte[8];
         public static byte[] DSEG_26C6_FlyingNPCMotionHandler = new byte[8];
+        public static short LikelyNPCTileStates_222C;
        
         public static byte[] PtrTo26D2_DSEG_26B8 = new byte[8];
        
