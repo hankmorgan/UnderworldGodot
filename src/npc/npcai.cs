@@ -18,7 +18,7 @@ namespace Underworld
         static int dseg_67d6_226F;
         static int dseg_67d6_2246;
 
-        static int dseg_67d6_B4;
+        static int BitFieldForPathing_dseg_67d6_B4;
 
         static int dseg_67d6_226E;
 
@@ -112,7 +112,7 @@ namespace Underworld
                     {
                         if (critter.UnkBit_0X15_Bit7 == 1)
                         {
-                            dseg_67d6_B4 |= (1 << critter.UnkBits_0x16_0_F);
+                            BitFieldForPathing_dseg_67d6_B4 |= (1 << critter.UnkBits_0x16_0_F);
                             critter.UnkBit_0X15_Bit7 = 0;
                         }
                     }
@@ -863,7 +863,7 @@ namespace Underworld
             {
                 if (critter.UnkBit_0X15_Bit7 == 1)
                 {
-                    dseg_67d6_B4 |= (1 << critter.UnkBits_0x16_0_F);
+                    BitFieldForPathing_dseg_67d6_B4 |= (1 << critter.UnkBits_0x16_0_F);
                     critter.UnkBit_0X15_Bit7 = 0;
                 }
             }
@@ -875,7 +875,7 @@ namespace Underworld
             {
                 if (critter.UnkBit_0X15_Bit7 == 1)
                 {
-                    dseg_67d6_B4 |= (1 << critter.UnkBits_0x16_0_F);
+                    BitFieldForPathing_dseg_67d6_B4 |= (1 << critter.UnkBits_0x16_0_F);
                     critter.UnkBit_0X15_Bit7 = 0;
                 }
                 if (critter.npc_goal == 1)
@@ -896,6 +896,7 @@ namespace Underworld
             }
             if (IsNPCActive_dseg_67d6_2234 == 0)
             {
+                //Seg006_1413_312E
                 critter.Projectile_Speed = 1;
                 if (critter.UnkBit_0X15_Bit7 == 1)
                 {
@@ -907,107 +908,95 @@ namespace Underworld
                     {
                         if (tmpSeg57_y == critter.npc_yhome)
                         {
-                            SomethingWithSeg57(critter, indexSeg57);
+                            MaybeReadPath(critter, indexSeg57);
                         }
                     }
                 }
             }
             else
             {
+                //Seg006_1413_31D2
                 if (dseg_67d6_224E != 0)
                 {//seg006_1413_31DC
                     if (HasCurrobjHeadingChanged_dseg_67d6_2242 == 0)
                     {
+                        //seg006_1413_31E8: 
                         if (critter.UnkBit_0x18_6 == 0)
                         {
+                            //seg006_1413_31FF
                             if (dseg_67d6_2269 != 0)
                             {
+                                //seg006_1413_3209
                                 if (dseg_67d6_226F == 0)
                                 {
-                                    //get collision object
-                                    var siOtherItemId = collisionObject.item_id;
-                                    if (collisionObject.majorclass == 1)
-                                    {
-                                        goto seg006_1413_3290;
-                                    }
-                                    if (collisionObject.item_id == 0x7F)
-                                    {
-                                        goto seg006_1413_3290;
-                                    }
-                                    if (critter.npc_goal != 5)
-                                    {
-                                        goto seg006_1413_3290;
-                                    }
-                                    if (collisionObject.npc_goal != 5)
-                                    {
-                                        goto seg006_1413_3290;
-                                    }
-                                    else
-                                    {
-                                        goto seg006_1413_32E5;
-                                    }
-
-                                seg006_1413_3290:
-                                    if (
-                                        (collisionObject.OneF0Class == 0x14)
+                                    //seg006_1413_324E:                                    
+                                    if
+                                     (!(
+                                        (collisionObject.majorclass == 1)
                                         &&
-                                        (collisionObject.classindex >= 8)
+                                        (collisionObject.item_id == 0x7F)
+                                        &&
+                                        (critter.npc_goal == 5)
                                         )
+                                     )
                                     {
-                                        if (critterObjectDat.isFlier(critter.item_id))
-                                        {
-                                            critter.Projectile_Pitch = 14;
-                                            dseg_67d6_224E = 0;
-                                            dseg_67d6_2246 = 1;
-                                            MaybeIsFlier_Var6 = true;
-                                            goto seg006_1413_32E5;
-                                        }
-                                        else
-                                        {
-                                            goto seg006_1413_32D5;
-                                        }
+                                        //seg006_1413_3290:
+                                        //when not colliding with the avatar with a goal of 5.
+                                        if (
+                                            (collisionObject.item_id >> 4 == 0x14) 
+                                            && (collisionObject.classindex >= 8) 
+                                            && critterObjectDat.isFlier(critter.item_id)
+                                            )
+                                            {
+                                                //when a flier collides with an open door.
+                                                //seg006_1413:32B5
+                                                critter.Projectile_Pitch = 14;
+                                                dseg_67d6_224E = 0;
+                                                dseg_67d6_2246  = 1;
+                                            }
+                                            else
+                                            {
+                                                //seg006_1413_32D5
+                                                critter.UnkBit_0x18_6 = 1;
+                                            }   
                                     }
-                                    else
-                                    {
-                                        goto seg006_1413_32D5;
-                                    }
-
                                 }
                                 else
                                 {
+                                    //seg006_1413:3210
                                     critter.npc_animation = 0;
                                     critter.AnimationFrame = 0;
-                                    if (Rng.r.Next(0, 4) == 0)
+                                    if (Rng.r.Next(4) == 0)
                                     {
-                                        goto seg006_1413_32D5;
+                                        //seg006_1413_32D5: (again)
+                                        critter.UnkBit_0x18_6 = 1;
                                     }
                                     else
                                     {
-                                        //seg006_1413:323b
-                                        //push collision object
-                                        NPCTryToOpenDoor(critter, null);
+                                        //seg006_1413_323B: 
+                                        NPCTryToOpenDoor(critter, collisionObject);
                                     }
                                 }
                             }
-                            goto seg006_1413_32E5;
 
-                        seg006_1413_32D5:
-                            critter.UnkBit_0x18_6 = 1;
+                            //seg006_1413_32E5:
 
-                        seg006_1413_32E5:
                             if (dseg_67d6_224E != 0)
                             {
-                                if (critter.UnkBit_0X15_Bit7 == 1)
+                                if (critter.UnkBit_0X15_Bit7 != 0)
                                 {
-                                    dseg_67d6_B4 |= (1 << critter.UnkBits_0x16_0_F);
+                                    BitFieldForPathing_dseg_67d6_B4 = 1 << critter.UnkBits_0x16_0_F;
                                     critter.UnkBit_0X15_Bit7 = 0;
                                 }
+                                //seg006_1413_331A: 
                                 critter.UnkBit_0x18_7 = 0;
-                                Bit7Cleared_Var5 = true;
+                                Bit7Cleared_Var5 = true;  
                             }
                         }
                     }
                 }
+
+
                 //seg006_1413_332C:
                 //resume here
 
@@ -1017,7 +1006,7 @@ namespace Underworld
 
         }
 
-        static void SomethingWithSeg57(uwObject critter, int tableindex)
+        static void MaybeReadPath(uwObject critter, int tableindex)
         {
             //placeholder
         }
@@ -1036,7 +1025,7 @@ namespace Underworld
             if (critter.UnkBit_0X15_Bit7 == 1)
             {
                 var tmp = 1 << critter.UnkBits_0x16_0_F;
-                dseg_67d6_B4 |= tmp;
+                BitFieldForPathing_dseg_67d6_B4 |= tmp;
                 critter.UnkBit_0X15_Bit7 = 0;
             }
 
