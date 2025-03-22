@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Security.Permissions;
 
 
 namespace Underworld
@@ -112,7 +114,7 @@ namespace Underworld
                     {
                         if (critter.UnkBit_0X15_Bit7 == 1)
                         {
-                            BitFieldForPathing_dseg_67d6_B4 |= (1 << critter.UnkBits_0x16_0_F);
+                            BitFieldForPathing_dseg_67d6_B4 |= (1 << critter.PathFindIndex_0x16_0_F);
                             critter.UnkBit_0X15_Bit7 = 0;
                         }
                     }
@@ -534,7 +536,7 @@ namespace Underworld
                     break;
                 //and so on
                 case 2:
-                    NPCWander(critter);
+                    NPCWanderUpdate(critter);
                     break;
             }
 
@@ -711,7 +713,7 @@ namespace Underworld
                 switch (critter.npc_goal)
                 {
                     case 2:
-                        NPCWander(critter);
+                        NPCWanderUpdate(critter);
                         return;
                     case 0:
                     case 7:
@@ -761,11 +763,11 @@ namespace Underworld
                 var var8 = (tmp_critter * tmp_gtarg);
                 if (si_dist < var8)
                 {
-                    var HeadingToTarget_var3 = pathfind.GetVectorHeading(xvector, yvector);
+                    var HeadingToTarget_var3 = Pathfind.GetVectorHeading(xvector, yvector);
                     var var5 = (8 + (HeadingToTarget_var3 - critter.heading)) % 8;
                     if ((var5 == 0) || (var5 == 1) || (var5 == 7))
                     {
-                        var result = pathfind.TestBetweenPoints(
+                        var result = Pathfind.TestBetweenPoints(
                             currObjXCoordinate, currObjYCoordinate, critter.zpos + commonObjDat.height(critter.item_id),
                             currentGTargXCoord, currentGTargYCoord, currentGoalTarget.zpos + commonObjDat.height(currentGoalTarget.item_id)
                             );
@@ -806,7 +808,7 @@ namespace Underworld
         {
             var vectorX = currentGTargXCoord - currObjXCoordinate;
             var vectorY = currentGTargYCoord - currObjYCoordinate;
-            var heading_var3 = pathfind.GetVectorHeading(vectorX, vectorY);
+            var heading_var3 = Pathfind.GetVectorHeading(vectorX, vectorY);
 
             var relativeHeading_var5 = (8 + (heading_var3 - critter.heading)) % 8;
             if (arg0 == 0)
@@ -863,7 +865,7 @@ namespace Underworld
             {
                 if (critter.UnkBit_0X15_Bit7 == 1)
                 {
-                    BitFieldForPathing_dseg_67d6_B4 |= (1 << critter.UnkBits_0x16_0_F);
+                    BitFieldForPathing_dseg_67d6_B4 |= (1 << critter.PathFindIndex_0x16_0_F);
                     critter.UnkBit_0X15_Bit7 = 0;
                 }
             }
@@ -875,7 +877,7 @@ namespace Underworld
             {
                 if (critter.UnkBit_0X15_Bit7 == 1)
                 {
-                    BitFieldForPathing_dseg_67d6_B4 |= (1 << critter.UnkBits_0x16_0_F);
+                    BitFieldForPathing_dseg_67d6_B4 |= (1 << critter.PathFindIndex_0x16_0_F);
                     critter.UnkBit_0X15_Bit7 = 0;
                 }
                 if (critter.npc_goal == 1)
@@ -886,6 +888,7 @@ namespace Underworld
                 {
                     if (IsNPCActive_dseg_67d6_2234 == 1)
                     {
+                        //seg006_1413_30F6:
                         critter.UnkBit_0X13_Bit7 = 1;
                         critter.UnkBit_0X15_Bit6 = 1;
                         critter.npc_animation = 0;
@@ -900,18 +903,21 @@ namespace Underworld
                 critter.Projectile_Speed = 1;
                 if (critter.UnkBit_0X15_Bit7 == 1)
                 {
+                    //seg006_1413_3155:
                     //table look up into seg057_625F (possibly a path list)
                     var tmpSeg57_x = -1;
                     var tmpSeg57_y = -1;
-                    var indexSeg57 = critter.UnkBits_0x16_0_F;
+                    var indexSeg57 = critter.PathFindIndex_0x16_0_F;
                     if (tmpSeg57_x == critter.npc_xhome)
                     {
                         if (tmpSeg57_y == critter.npc_yhome)
                         {
+                            //seg006_1413_31B5:
                             MaybeReadPath(critter, indexSeg57);
                         }
                     }
                 }
+                return;
             }
             else
             {
@@ -943,22 +949,22 @@ namespace Underworld
                                         //seg006_1413_3290:
                                         //when not colliding with the avatar with a goal of 5.
                                         if (
-                                            (collisionObject.item_id >> 4 == 0x14) 
-                                            && (collisionObject.classindex >= 8) 
+                                            (collisionObject.item_id >> 4 == 0x14)
+                                            && (collisionObject.classindex >= 8)
                                             && critterObjectDat.isFlier(critter.item_id)
                                             )
-                                            {
-                                                //when a flier collides with an open door.
-                                                //seg006_1413:32B5
-                                                critter.Projectile_Pitch = 14;
-                                                dseg_67d6_224E = 0;
-                                                dseg_67d6_2246  = 1;
-                                            }
-                                            else
-                                            {
-                                                //seg006_1413_32D5
-                                                critter.UnkBit_0x18_6 = 1;
-                                            }   
+                                        {
+                                            //when a flier collides with an open door.
+                                            //seg006_1413:32B5
+                                            critter.Projectile_Pitch = 14;
+                                            dseg_67d6_224E = 0;
+                                            dseg_67d6_2246 = 1;
+                                        }
+                                        else
+                                        {
+                                            //seg006_1413_32D5
+                                            critter.UnkBit_0x18_6 = 1;
+                                        }
                                     }
                                 }
                                 else
@@ -985,12 +991,12 @@ namespace Underworld
                             {
                                 if (critter.UnkBit_0X15_Bit7 != 0)
                                 {
-                                    BitFieldForPathing_dseg_67d6_B4 = 1 << critter.UnkBits_0x16_0_F;
+                                    BitFieldForPathing_dseg_67d6_B4 |= 1 << critter.PathFindIndex_0x16_0_F;
                                     critter.UnkBit_0X15_Bit7 = 0;
                                 }
                                 //seg006_1413_331A: 
                                 critter.UnkBit_0x18_7 = 0;
-                                Bit7Cleared_Var5 = true;  
+                                Bit7Cleared_Var5 = true;
                             }
                         }
                     }
@@ -999,11 +1005,183 @@ namespace Underworld
 
                 //seg006_1413_332C:
                 //resume here
+                if (critter.UnkBit_0X15_Bit7 == 0)
+                {
+                    //seg006_1413_3384
+                    if ((critter.UnkBit_0x18_5 == 0) && (critter.UnkBit_0x18_7 != 0))
+                    {
+                        //seg006_1413:33A8
+                        var var3 = Pathfind.GetVectorHeading(xDiff, yDiff);
+                        ChangeNpcHeadings(var3);
+                        if (critterObjectDat.isFlier(critter.item_id))
+                        {
+                            //seg006_1413_33D8:
+                            FlyingCritterPitching_seg006_1413_36B8(targetX, targetY);                            
+                        }
+                    }
+                    else
+                    {
+                        //seg006_1413_33EB:
+                        if ((critter.UnkBit_0x18_5 == 0) && (critter.UnkBit_0x18_6 == 1))
+                        {
+                            //seg006_1413:340F
+                            if (Rng.r.Next(8) == 0)
+                            {
+                                critter.UnkBit_0x18_6 = 0;
+                            }      
+                            //seg006_1413_342C:
+                            NPCWanderUpdate(critter);
+                            return;                      
+                        }
+                        else
+                        {
+                            bool goto43D2;
+                            //seg006_1413_3434
+                            if (Bit7Cleared_Var5 == false)
+                            {
+                                goto43D2 = !seg006_1413_205B(critter.tileX, critter.tileY, targetX, targetY);
+                            }
+                            else
+                            {
+                                goto43D2 = true;
+                            }
+                            if (goto43D2)
+                            {
+                                //seg006_1413_34D2
+                                int var4 = 0;
+                                if(FindSetIndexOfBitField(out var4))
+                                {
+                                    //seg006_1413_34E3: 
+                                    if (Pathfind.PathFindBetweenTiles(
+                                        currTileX: critter.tileX, currTileY: critter.tileY, CurrFloorHeight: critter.zpos>>3, 
+                                        TargetTileX: targetX, TargetTileY: targetY, TargetFloorHeight: targetZ, 
+                                        LikelyRangeArgC: GetCritterRange_seg007_17A2_30D1(critter)))
+                                        {
+                                            //seg006_1413_351A:
+                                            Pathfind.UpdateSeg57Values();//TODO lookup the record to be used here.
+                                            critter.UnkBit_0x18_6 = 0;
+                                            critter.UnkBit_0X15_Bit7 = 1;
+                                            critter.PathFindIndex_0x16_0_F = (short)var4;
+                                            //Lookup Record
+                                            TurnTowardsPath_seg006_1413_2BF5();
+                                        }
+                                        else
+                                        {
+                                            return;//no path
+                                        }
+                                }
+                                else
+                                {
+                                    return;
+                                }
+                            }
+                            else
+                            {
+                                //seg006_1413_3470:
+                                critter.UnkBit_0x18_7 = 1;
+                                var var3 = Pathfind.GetVectorHeading(xDiff, yDiff);
+                                ChangeNpcHeadings(var3);
+                                critter.UnkBit_0x18_6 = 0;
+                                if (critter.UnkBit_0X15_Bit7 == 1)
+                                {
+                                    //seg006_1413_34B5:
+                                    BitFieldForPathing_dseg_67d6_B4 |= 1 << critter.PathFindIndex_0x16_0_F;
+                                    critter.UnkBit_0X15_Bit7 = 0;
+                                }                                
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    //seg006_1413_334C:
+                    //TODO include record parameter.
+                    if (TurnTowardsPath_seg006_1413_2BF5() == false)
+                    {
+                        BitFieldForPathing_dseg_67d6_B4 |= 1 << critter.PathFindIndex_0x16_0_F;
+                        critter.UnkBit_0X15_Bit7 = 0;
+                    }
+                }
 
+                //seg006_1413_35C1:
+                if (dseg_67d6_226E == 0)
+                {//THis is probably uw2 logic. Todo check if the same happens in uw1
+                    //seg006_1413_35CD:
+                    critter.UnkBit_0X15_Bit6 = 0;
+                    if (critter.npc_animation != 1)
+                    {
+                        critter.npc_animation = 1;
+                        GetCritterAnimationGlobalsForCurrObj(critter);
+                        if (critter.AnimationFrame> MaxAnimFrame)
+                        {
+                            critter.AnimationFrame = 0;
+                        }
+                    }
+                    else
+                    {
+                        //already in walk animation;
+                        //seg006_1413_3620:
+                        var tmp = critter.AnimationFrame+1;
+                        critter.AnimationFrame = (byte)(tmp % MaxAnimFrame);                        
+                    }
+                    //seg006_1413_3657:
+                    //set frames as in above branches   
+                    int var8;
+                    //seg006_1413_3657:
+                    if (MaybeIsFlier_Var6 == false)
+                    {
+                        //seg006_1413_3664
+                        if (critter.npc_goal == 5)
+                        {
+                            var8 = critterObjectDat.speed(critter.item_id);
+                        }
+                        else
+                        {
+                            var8 = critterObjectDat.unk_b(critter.item_id);
+                        }
+                    }
+                    else
+                    {
+                        //seg006_1413:365D
+                        var8 = 0;
+                    }
+                    critter.UnkBit_0X13_Bit0to6 = (short)var8;
+                    critter.Projectile_Speed = 4;
+                }
             }
+        }
 
 
+        static int GetCritterRange_seg007_17A2_30D1(uwObject critter)
+        {
+            return 0;
+        }
+        static bool FindSetIndexOfBitField(out int FieldIndex)
+        {
+            FieldIndex = 0;
+            return false;
+        }
 
+        static bool seg006_1413_205B(int CurrTileX, int CurrTileY, int targetX, int targetY)
+        {
+            Debug.Print("TODO seg006_1413_205B");
+            return true;
+        }
+
+        static void FlyingCritterPitching_seg006_1413_36B8(int tileX, int tileY)
+        {
+
+        }
+
+        static void ChangeNpcHeadings(int heading)
+        {
+            
+        }
+
+        static bool TurnTowardsPath_seg006_1413_2BF5()
+        {
+            Debug.Print("TODO Turn towards Path");
+            return false;
         }
 
         static void MaybeReadPath(uwObject critter, int tableindex)
@@ -1016,7 +1194,7 @@ namespace Underworld
             //playerholder
         }
 
-        static void NPCWander(uwObject critter)
+        static void NPCWanderUpdate(uwObject critter)
         {
             var newAnim_var2 = 1;
             int NewHeading = critter.ProjectileHeading;//not sure if it is initialised to this value. possibly vanilla behaviour was to use uninitialised memory in certain circumstances
@@ -1024,7 +1202,7 @@ namespace Underworld
             int si;
             if (critter.UnkBit_0X15_Bit7 == 1)
             {
-                var tmp = 1 << critter.UnkBits_0x16_0_F;
+                var tmp = 1 << critter.PathFindIndex_0x16_0_F;
                 BitFieldForPathing_dseg_67d6_B4 |= tmp;
                 critter.UnkBit_0X15_Bit7 = 0;
             }
@@ -1315,7 +1493,7 @@ namespace Underworld
             var yvector = playerYCoordinate - currentGTargYCoord;
             if ((xvector ^ 2 + yvector ^ 2) > (maybedist ^ 2))
             {
-                var HeadingVarB = ((pathfind.GetVectorHeading(xvector, yvector) + 4) % 8) << 5;
+                var HeadingVarB = ((Pathfind.GetVectorHeading(xvector, yvector) + 4) % 8) << 5;
                 HeadingVarB += 0x100;
                 HeadingVarB -= headingArg0;
                 var varD = HeadingVarB % 0x100;
@@ -1373,7 +1551,7 @@ namespace Underworld
                 GetDistancesToGTarg(critter);
                 if ((currentGTargXVector ^ 2 + currentGTargYVector ^ 2) < 0x90)
                 {
-                    var heading = pathfind.GetVectorHeading(currentGTargXVector, currentGTargYVector);
+                    var heading = Pathfind.GetVectorHeading(currentGTargXVector, currentGTargYVector);
                     critter.UnkBit_0X13_Bit0to6 = 0;
                     critter.Projectile_Speed = 6;
                     if (_RES == GAME_UW2)

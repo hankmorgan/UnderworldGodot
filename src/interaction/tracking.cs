@@ -37,7 +37,7 @@ namespace Underworld
                                 var skillcheckresult = playerdat.SkillCheck(skillvalue, 0xF - critterObjectDat.maybestealth(critter.item_id));
                                 if (skillcheckresult >= playerdat.SkillCheckResult.Success)
                                 {
-                                    headingindex = pathfind.ConvertVectorToHeading(xVector, yVector);
+                                    headingindex = Pathfind.ConvertVectorToHeading(xVector, yVector);
                                     detectioncounter[headingindex]++;
                                 }
                                 if (skillcheckresult == playerdat.SkillCheckResult.CritSucess)
@@ -175,7 +175,7 @@ namespace Underworld
             {
                 if (Math.Abs(playerXHome - ObjectX) + Math.Abs(playerYHome - ObjectY) > maybe_heading_arg10)
                 {
-                    var h = pathfind.ConvertTilePointsToHeading(playerXHome, playerYHome, ObjectX, ObjectY);
+                    var h = Pathfind.ConvertTilePointsToHeading(playerXHome, playerYHome, ObjectX, ObjectY);
                     Output += GameStrings.GetString(1, DirectionOffset + h);
                     var1 = 1;
                 }

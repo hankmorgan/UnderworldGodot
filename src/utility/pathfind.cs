@@ -5,15 +5,25 @@ namespace Underworld
     /// <summary>
     /// Functions related to thievery and illegal actions.
     /// </summary>
-    public class pathfind : UWClass
+    public class Pathfind : UWClass
     {
 
         static int[] tilewallflags = new int[] { 30, 0, 19, 21, 11, 13, 32, 32, 32, 32 };
 
+        public static void UpdateSeg57Values()
+        {
+            //does some path finding work
+        }
+
+        public static bool PathFindBetweenTiles(int currTileX, int currTileY, int CurrFloorHeight, int TargetTileX, int TargetTileY, int TargetFloorHeight, int LikelyRangeArgC)
+        {
+            return false;
+        }
 
 
         /// <summary>
         /// Looks like this tests if two points on the map are pathable? to each other.
+        /// TestBetweenCoordinates_seg006_1413_22F7
         /// </summary>
         /// <param name="srcX"></param>
         /// <param name="srcY"></param>
@@ -197,7 +207,7 @@ namespace Underworld
                     varA += var14_axismodifier;
                 }
 
-                var17 = TestTileTraversal(
+                var17 = TestBasicTileTraversal(
                     arg0: var8, arg2: var9, 
                     Tile1_X_arg4: var3, Tile1_Y_arg6: var4, 
                     Tile2_X_arg8: varA, Tile2_Y_argA: varB, 
@@ -207,7 +217,7 @@ namespace Underworld
                 {//seg006_1413_265D:
                     if ((varA==var6) && (varB==var7))
                     {
-                        var17 = TestTileTraversal(
+                        var17 = TestBasicTileTraversal(
                             arg0: var3, arg2: var4, 
                             Tile1_X_arg4: varA, Tile1_Y_arg6: varB, 
                             Tile2_X_arg8: 0, Tile2_Y_argA: 0, 
@@ -245,7 +255,7 @@ namespace Underworld
                     var5 = srcZ + (var12*var2_zdiff)/var11;
                 }
 
-                var17 = TestTileTraversal(
+                var17 = TestBasicTileTraversal(
                     arg0: var8, arg2: var9, 
                     Tile1_X_arg4: var3, Tile1_Y_arg6: var4, 
                     Tile2_X_arg8: varA, Tile2_Y_argA: varB, 
@@ -254,7 +264,7 @@ namespace Underworld
                 {
                     if ((varA==var6)&&(varB==var7))
                     {
-                        var17 = TestTileTraversal(
+                        var17 = TestBasicTileTraversal(
                             arg0: var3, arg2: var4, 
                             Tile1_X_arg4: varA, Tile1_Y_arg6: varB, 
                             Tile2_X_arg8: 0, Tile2_Y_argA: 0, 
@@ -294,7 +304,7 @@ namespace Underworld
         /// <param name="Tile2_Y_argA"></param>
         /// <param name="Height_argC"></param>
         /// <returns></returns>
-        public static bool TestTileTraversal(int arg0, int arg2, int Tile1_X_arg4, int Tile1_Y_arg6, int Tile2_X_arg8, int Tile2_Y_argA, int Height_argC)
+        public static bool TestBasicTileTraversal(int arg0, int arg2, int Tile1_X_arg4, int Tile1_Y_arg6, int Tile2_X_arg8, int Tile2_Y_argA, int Height_argC)
         {
             var tile1 = UWTileMap.current_tilemap.Tiles[Tile1_X_arg4, Tile1_Y_arg6];
             var tile2 = UWTileMap.current_tilemap.Tiles[Tile2_X_arg8, Tile2_Y_argA];

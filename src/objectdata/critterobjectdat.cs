@@ -192,6 +192,15 @@ namespace Underworld
             return (buffer[CritterOffset(item_id) + 0xA] >> 2) & 0x3F;
         }
 
+        /// <summary>
+        /// Possibly an alternative speed?
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <returns></returns>
+        public static int unk_b(int item_id)
+        {
+            return (buffer[CritterOffset(item_id) + 0xB]);
+        }
 
         public static int unk_b_0_7(int item_id)
         {
