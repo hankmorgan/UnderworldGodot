@@ -1,7 +1,4 @@
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Security.Permissions;
-
 
 namespace Underworld
 {
@@ -10,6 +7,7 @@ namespace Underworld
     /// </summary>
     public partial class npc : objectInstance
     {
+        public static byte[] SpecialMotionHandler;
 
         static int MaxAnimFrame;
         static int dseg_67d6_224E;//needs to be set in 1413:ABF
@@ -73,7 +71,7 @@ namespace Underworld
             {
 
                 var CalcedFacing = GetCritterAnimationGlobalsForCurrObj(critter);
-                byte[] SpecialMotionHandler;
+                
                 if (critterObjectDat.isFlier(critter.item_id))
                 {
                     //special setup for flying ai    
@@ -1052,8 +1050,8 @@ namespace Underworld
                                 {
                                     //seg006_1413_34E3: 
                                     if (Pathfind.PathFindBetweenTiles(
-                                        currTileX: critter.tileX, currTileY: critter.tileY, CurrFloorHeight: critter.zpos>>3, 
-                                        TargetTileX: targetX, TargetTileY: targetY, TargetFloorHeight: targetZ, 
+                                        currTileX_arg0: critter.tileX, currTileY_arg2: critter.tileY, CurrFloorHeight_arg4: critter.zpos>>3, 
+                                        TargetTileX_arg6: targetX, TargetTileY_arg8: targetY, TargetFloorHeight_argA: targetZ, 
                                         LikelyRangeArgC: GetCritterRange_seg007_17A2_30D1(critter)))
                                         {
                                             //seg006_1413_351A:
