@@ -1004,7 +1004,6 @@ namespace Underworld
 
 
                 //seg006_1413_332C:
-                //resume here
                 if (critter.UnkBit_0X15_Bit7 == 0)
                 {
                     //seg006_1413_3384
@@ -1152,9 +1151,28 @@ namespace Underworld
         }
 
 
+        /// <summary>
+        /// Seems to get a range that the NPC will use in pathfinding
+        /// </summary>
+        /// <param name="critter"></param>
+        /// <returns></returns>
         static int GetCritterRange_seg007_17A2_30D1(uwObject critter)
         {
-            return 0;
+            if (
+                (critter.npc_attitude == 0)
+                &&
+                (critterObjectDat.avghit(critter.item_id) !=0)
+                &&
+                (critter.doordir == 0)
+                )
+            {
+                //seg007_17A2_3105: 
+                return ((critter.npc_hp<<2) / critterObjectDat.avghit(critter.item_id)) + (critterObjectDat.maybemorale(critter.item_id) / 4);
+            }
+            else
+            {
+                return 0;
+            }
         }
         static bool FindSetIndexOfBitField(out int FieldIndex)
         {
