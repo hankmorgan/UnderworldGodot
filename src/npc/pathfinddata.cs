@@ -165,7 +165,7 @@ namespace Underworld
             }
         }
 
-        public int unk2
+        public int Z2
         {
             get
             {

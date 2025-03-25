@@ -13,6 +13,8 @@ namespace Underworld
         static int MaybeMaxTravelDistance_dseg_67d6_2272;
         static bool MaybePathIndexOrLength_dseg_67d6_225A;
 
+        static int TraverseRelated_dseg_67d6_224B;
+
 
         static int[] tilewallflags = new int[] { 30, 0, 19, 21, 11, 13, 32, 32, 32, 32 };
 
@@ -156,7 +158,7 @@ namespace Underworld
 
             //For some reason I'm not storing the Y tile here. Byt that is what the code is doing?
             PathFindingData49.pathfindtiles[currTileX_arg0, currTileY_arg2].X0 = currTileX_arg0;
-            PathFindingData49.pathfindtiles[currTileX_arg0, currTileY_arg2].unk2 = CurrFloorHeight_arg4;
+            PathFindingData49.pathfindtiles[currTileX_arg0, currTileY_arg2].Z2 = CurrFloorHeight_arg4;
             PathFindingData49.pathfindtiles[currTileX_arg0, currTileY_arg2].unk4 = 0;
 
             var si = 0;
@@ -168,7 +170,7 @@ namespace Underworld
                 {
                     var NeighbourPathTile = PathFindingData49.pathfindtiles[NeighbourTileX, NeighbourTileY];
                     ProbablyPathDistance_var1E = 0;
-
+                    var tmp = NeighbourPathTile.Z2;//out value from travers
                     //seg006_1413_1BC8:
                     var res = TraverseMultipleTiles(
                         tile1_X_arg0: 0, tile1_Y_arg2: 0,
@@ -176,8 +178,9 @@ namespace Underworld
                         tile3_X_arg8: NeighbourTileX, tile3_Y_argA: NeighbourTileY,
                         argC: npc.SpecialMotionHandler[4], argE: npc.SpecialMotionHandler[6],
                         ProbablyHeight_arg12: CurrFloorHeight_arg4,
-                        arg12: ref NeighbourPathTile,
+                        arg12: ref tmp,
                         PathDistanceResult_arg16: ref ProbablyPathDistance_var1E);
+                    NeighbourPathTile.Z2 = tmp;
 
                     if (res)
                     {
@@ -227,34 +230,149 @@ namespace Underworld
                 while ((var5 < NoOfStepsIndex_var13) && (Counter_var14 < 0x40))
                 {
                     //seg006_1413_1C95:
-                    
-    
-                    //fill this gap.
+                    var Tile2X_var1 = Path5859.Path5859_Records[varC.index + var5].X0;
+                    var Tile2Y_var2 = Path5859.Path5859_Records[varC.index + var5].Y1;
+                    var TileRecord_var1C = PathFindingData49.pathfindtiles[Tile2X_var1, Tile2Y_var2];
+                    si = 0;
+                    while (si < 4)
+                    {
+                        //seg006_1413_1CE1:
+                        var NeighbourTileX = Tile2X_var1 + PathXOffsetTable[si];
+                        var NeighbourTileY = Tile2Y_var2 + PathYOffsetTable[si];
+                        if (
+                                (NeighbourTileX >= X1_var6)
+                                &&
+                                (NeighbourTileX <= X2_var_7)
+                                &&
+                                (NeighbourTileY >= Y1_var8)
+                                &&
+                                (NeighbourTileY >= Y2_var_9)
+                        )
+                        {
+                            //seg006_1413_1D23: 
+                            var NeighbourPathTile = PathFindingData49.pathfindtiles[NeighbourTileX, NeighbourTileY];
+                            ProbablyPathDistance_var1E = TileRecord_var1C.unk3_bit1_7;
+                            if ((NeighbourTileX != TileRecord_var1C.X0) || (NeighbourTileY != TileRecord_var1C.Y1))
+                            {
+                                var Height_var1F = 0;
+                                //seg006_1413_1D68:
+                                var res_var20 = TraverseMultipleTiles(
+                                    tile1_X_arg0: TileRecord_var1C.X0, tile1_Y_arg2: TileRecord_var1C.Y1, 
+                                    tile2_X_arg4: Tile2X_var1, tile2_Y_arg6: Tile2Y_var2, 
+                                    tile3_X_arg8: NeighbourTileX, tile3_Y_argA: NeighbourTileY, 
+                                    argC: npc.SpecialMotionHandler[4], argE: npc.SpecialMotionHandler[6], 
+                                    ProbablyHeight_arg12: TileRecord_var1C.Z2, arg12: ref Height_var1F, 
+                                    PathDistanceResult_arg16: ref ProbablyPathDistance_var1E);
 
+                                //seg006_1413_1DBA
+                                var var21 = false;
+                                if (NeighbourPathTile.X0 == 0)
+                                {
+                                    var21 = true; 
+                                }
 
+                                if (res_var20)
+                                {
+                                    bool Run1E0D = false;
+                                    if (!var21)
+                                    {
+                                        //seg006_1413:1DCC 
+                                        if (TileRecord_var1C.unk4< NeighbourPathTile.unk4)
+                                        {
+                                            if(Math.Abs(Height_var1F - TargetFloorHeight_argA) < Math.Abs(NeighbourPathTile.Z2-TargetFloorHeight_argA))
+                                            {
+                                                Run1E0D = true;
+                                            }
+                                        }                                       
+                                    }
+                                    else
+                                    {
+                                        Run1E0D = true;
+                                    }
+                                    if (Run1E0D)
+                                    {
+                                        //seg006_1413_1E0D:
+                                        NeighbourPathTile.X0 = Tile2X_var1;
+                                        NeighbourPathTile.Y1 = Tile2Y_var2;
+                                        NeighbourPathTile.Z2 = Height_var1F;
+                                        NeighbourPathTile.unk4 = MaybePathPathLength_var1D + 1;
+                                        NeighbourPathTile.unk3_bit1_7 = ProbablyPathDistance_var1E & 0x7F;
+                                        TileRecord_var1C.unk3_bit0 = TraverseRelated_dseg_67d6_224B & 0x1;
+
+                                        if (!var21)
+                                        {
+                                            //seg006_1413_1E56:
+                                            Path5859.Path5859_Records[var12.index + Counter_var14].X0 = NeighbourTileX;
+                                            Path5859.Path5859_Records[var12.index + Counter_var14].Y1 = NeighbourTileY;
+                                            Counter_var14++;
+                                        }
+
+                                        if ((NeighbourTileX == TargetTileX_arg6) && (NeighbourTileY == TargetTileY_arg8))
+                                        {
+                                            var tmp = NeighbourPathTile.Z2;
+                                            var res = TraverseMultipleTiles(
+                                                tile1_X_arg0: Tile2X_var1, tile1_Y_arg2: Tile2Y_var2, 
+                                                tile2_X_arg4: NeighbourTileX, tile2_Y_arg6: NeighbourTileY, 
+                                                tile3_X_arg8: 0, tile3_Y_argA: 0, 
+                                                argC: npc.SpecialMotionHandler[4], argE: npc.SpecialMotionHandler[6], 
+                                                ProbablyHeight_arg12: NeighbourPathTile.Z2, 
+                                                arg12: ref tmp, PathDistanceResult_arg16: ref ProbablyPathDistance_var1E);
+                                            NeighbourPathTile.Z2 = tmp;
+
+                                            if (res)
+                                            {
+                                                //a valid path has been found. save it and return true
+                                                StorePath(
+                                                    arg0: MaybePathPathLength_var1D, 
+                                                    targetXarg2: TargetTileX_arg6, 
+                                                    targetYArg4: TargetTileY_arg8);
+                                                return true;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        si++;// to Seg006_1413_1EEA
+                    }
                     //seg006_1413_1EF3:
                     var5++;
                 }
                 //seg006_1413_1F0C
 
                 //fill this gap with ptr changes to varC/Var12
+                if (varC.index == 0)
+                {
+                    //seg006_1413:1F1A
+                    varC = Path5859.Path5859_Records[0x80];
+                    var12 = Path5859.Path5859_Records[0];
+                }
+                else
+                {
+                    //seg006_1413_1F30:
+                    varC = Path5859.Path5859_Records[0];
+                    var12 = Path5859.Path5859_Records[0x80];
+                }
 
                 //seg006_1413_1F44:
                 NoOfStepsIndex_var13 = Counter_var14;
                 MaybePathPathLength_var1D++;
             }
 
-
             return false;//while loop at 1c83 got nothing.
         }
 
 
-        static bool TraverseMultipleTiles(int tile1_X_arg0, int tile1_Y_arg2, int tile2_X_arg4, int tile2_Y_arg6, int tile3_X_arg8, int tile3_Y_argA, int argC, int argE, int ProbablyHeight_arg12, ref PathFindingData49 arg12, ref int PathDistanceResult_arg16)
+        static bool TraverseMultipleTiles(int tile1_X_arg0, int tile1_Y_arg2, int tile2_X_arg4, int tile2_Y_arg6, int tile3_X_arg8, int tile3_Y_argA, int argC, int argE, int ProbablyHeight_arg12, ref int arg12, ref int PathDistanceResult_arg16)
         {
 
             return false;
         }
 
+        static void StorePath(int arg0, int targetXarg2, int targetYArg4)
+        {
+
+        }
 
 
         /// <summary>
