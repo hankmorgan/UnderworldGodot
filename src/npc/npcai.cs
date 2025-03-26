@@ -1046,7 +1046,7 @@ namespace Underworld
                             {
                                 //seg006_1413_34D2
                                 int var4 = 0;
-                                if(FindSetIndexOfBitField(out var4))
+                                if(FindSetIndexOfBitField(ref var4))
                                 {
                                     //seg006_1413_34E3: 
                                     if (Pathfind.PathFindBetweenTiles(
@@ -1172,9 +1172,27 @@ namespace Underworld
                 return 0;
             }
         }
-        static bool FindSetIndexOfBitField(out int FieldIndex)
+
+        /// <summary>
+        /// Finds the first set bit in the global
+        /// </summary>
+        /// <param name="FieldIndex"></param>
+        /// <returns></returns>
+        static bool FindSetIndexOfBitField(ref int FieldIndex)
         {
-            FieldIndex = 0;
+            if (BitFieldForPathing_dseg_67d6_B4 != 0)
+            {
+                var dl = 0;
+                while (dl < 0x10)
+                {
+                    if ((BitFieldForPathing_dseg_67d6_B4 & (1<<dl)) != 0)
+                    {
+                        FieldIndex = dl;
+                        return true;
+                    }
+                    dl++;
+                }
+            }
             return false;
         }
 
