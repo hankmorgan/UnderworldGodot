@@ -1055,6 +1055,10 @@ namespace Underworld
                                         LikelyRangeArgC: GetCritterRange_seg007_17A2_30D1(critter)))
                                         {
                                             //seg006_1413_351A:
+                                            var mask = 1<<var4;
+                                            var4 = ~var4;
+                                            BitFieldForPathing_dseg_67d6_B4 &= mask; //unset the bit at var4
+
                                             Pathfind.UpdateSeg57Values();//TODO lookup the record to be used here.
                                             critter.UnkBit_0x18_6 = 0;
                                             critter.UnkBit_0X15_Bit7 = 1;
