@@ -21,8 +21,13 @@ namespace Underworld
         static int[] PathXOffsetTable = new int[] { 0, 1, 0, -1 };
         static int[] PathYOffsetTable = new int[] { 1, 0, -1, 0 };
 
-        public static void UpdateSeg57Values()
+        /// <summary>
+        /// Accumulates some values into Segment 57 from Seg56.
+        /// </summary>
+        /// <param name="Seg57Record"></param>
+        public static void UpdateSeg57Values(PathFind57 Seg57Record)
         {
+            //Seg006_1413_2934
             //does some path finding work
         }
 

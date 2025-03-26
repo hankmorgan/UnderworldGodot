@@ -1059,12 +1059,13 @@ namespace Underworld
                                             var4 = ~var4;
                                             BitFieldForPathing_dseg_67d6_B4 &= mask; //unset the bit at var4
 
-                                            Pathfind.UpdateSeg57Values();//TODO lookup the record to be used here.
+                                            Pathfind.UpdateSeg57Values(PathFind57.PathFind57Records[var4]);
+
                                             critter.UnkBit_0x18_6 = 0;
                                             critter.UnkBit_0X15_Bit7 = 1;
                                             critter.PathFindIndex_0x16_0_F = (short)var4;
                                             //Lookup Record
-                                            TurnTowardsPath_seg006_1413_2BF5();
+                                            TurnTowardsPath_seg006_1413_2BF5(PathFind57.PathFind57Records[critter.PathFindIndex_0x16_0_F]);
                                         }
                                         else
                                         {
@@ -1097,7 +1098,7 @@ namespace Underworld
                 {
                     //seg006_1413_334C:
                     //TODO include record parameter.
-                    if (TurnTowardsPath_seg006_1413_2BF5() == false)
+                    if (TurnTowardsPath_seg006_1413_2BF5(PathFind57.PathFind57Records[critter.PathFindIndex_0x16_0_F]) == false)
                     {
                         BitFieldForPathing_dseg_67d6_B4 |= 1 << critter.PathFindIndex_0x16_0_F;
                         critter.UnkBit_0X15_Bit7 = 0;
@@ -1216,7 +1217,7 @@ namespace Underworld
             
         }
 
-        static bool TurnTowardsPath_seg006_1413_2BF5()
+        static bool TurnTowardsPath_seg006_1413_2BF5(PathFind57 path57Record)
         {
             Debug.Print("TODO Turn towards Path");
             return false;
