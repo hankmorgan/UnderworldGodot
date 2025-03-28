@@ -1,9 +1,8 @@
 using System;
+using System.Diagnostics;
 
 namespace Underworld
 {
-
-
 
     /// <summary>
     /// Functions related to pathfinding
@@ -11,7 +10,7 @@ namespace Underworld
     public class Pathfind : UWClass
     {
         static int MaybeMaxTravelDistance_dseg_67d6_2272;
-        static bool MaybePathIndexOrLength_dseg_67d6_225A;
+        static int MaybePathIndexOrLength_dseg_67d6_225A;
 
         static int TraverseRelated_dseg_67d6_224B;
 
@@ -29,6 +28,69 @@ namespace Underworld
         {
             //Seg006_1413_2934
             //does some path finding work
+            Seg57Record.unk2_0_6 = 0;
+            Seg57Record.X0 = FinalPath56.finalpath[0].X0;
+            Seg57Record.Y1 = FinalPath56.finalpath[0].Y1;
+            Seg57Record.UNK3 = MaybePathIndexOrLength_dseg_67d6_225A;
+            var index_var1 = 0;
+
+            while (index_var1< MaybePathIndexOrLength_dseg_67d6_225A)
+            {//seg006_1413_2A42
+                var accumualted_var3 = 0;
+                var var2 = 0;
+
+                while (var2<4)
+                {
+                    //seg006_1413_2981
+                    var Seg56Record = FinalPath56.finalpath[index_var1+var2];
+                    var NextSeg56Record = Seg56Record.Next();
+                    var ax = ((NextSeg56Record.X0 - Seg56Record.X0) * 3) - (NextSeg56Record.Y1 - Seg56Record.Y1);
+
+                    accumualted_var3 += (GetTilePathingRelated_dseg_67d6_BA(ax) & 0x3) << (var2<<1);
+
+                    //seg006_1413_2A14: 
+                    var2++;
+                }
+
+
+                //seg006_1413_2A23:
+                index_var1 += 4;
+            }
+            
+            //seg006_1413_2A4E:
+            index_var1 = 0;
+            while (index_var1<MaybePathIndexOrLength_dseg_67d6_225A)
+            {
+                var var4 = 0;
+                var var2 = 0;
+
+                //seg006_1413_2A8B
+                while (var2<8)
+                {
+                    //seg006_1413_2A5E:
+                    var Seg56Record =FinalPath56.finalpath[index_var1+var2];
+                    var NextSeg56Record = Seg56Record.Next();                     
+                    var4 += (NextSeg56Record.flag3 & 0x1) << var2;
+
+                    var2++;
+                }
+                //This needs to be tested.
+                var offset = Seg57Record.PTR + (index_var1 / 8);
+                DataLoader.setAt(PathFind57.pathfind57data, offset + 0x14, 8, var4);
+
+                index_var1 += 8;
+            }
+        }
+
+        /// <summary>
+        /// Placeholder to look up a table using possibly negative values
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        static int  GetTilePathingRelated_dseg_67d6_BA(int index)
+        {
+            Debug.Print($"Todo TilePathingRelated_dseg_67d6_BA({index})");
+            return 0;
         }
 
         public static bool PathFindBetweenTiles(int currTileX_arg0, int currTileY_arg2, int CurrFloorHeight_arg4, int TargetTileX_arg6, int TargetTileY_arg8, int TargetFloorHeight_argA, int LikelyRangeArgC)
@@ -194,7 +256,7 @@ namespace Underworld
                         {
                             //seg006_1413_1BEA:
                             //Trivial case where the neighbour tile is the target.
-                            MaybePathIndexOrLength_dseg_67d6_225A = true;
+                            MaybePathIndexOrLength_dseg_67d6_225A = 1;
                             FinalPath56.finalpath[0].X0 = currTileX_arg0;
                             FinalPath56.finalpath[0].Y1 = currTileY_arg2;
                             FinalPath56.finalpath[0].flag3 = 0;

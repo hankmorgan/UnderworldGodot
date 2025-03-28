@@ -66,9 +66,17 @@ namespace Underworld
         public FinalPath56(int i)
         {
             PTR = i * 4;
+            index = i;
         }
 
         int PTR;
+        int index;
+
+        public FinalPath56 Next()
+        {
+            return finalpath[index+1];
+        }
+
         public int X0
         {
             get
@@ -111,19 +119,81 @@ namespace Underworld
     {
         public static byte[] pathfind57data = new byte[0x1C0];
         public static PathFind57[] PathFind57Records = new PathFind57[16];
-        int PTR;
+        public int PTR;
+        int index;
 
         static PathFind57()
         {
             for (int i = 0; i <= PathFind57Records.GetUpperBound(0); i++)
             {
-                PathFind57Records[i] = new PathFind57(i);
+                PathFind57Records[i] = new PathFind57(i);                
             }
         }
 
         public PathFind57(int i)
         {
             PTR = i * 0x1C;
+            index = i;
+        }
+
+        public int X0
+        {
+            get
+            {
+                return (int)getAt(pathfind57data, PTR, 8);
+            }
+            set
+            {
+                setAt(pathfind57data, PTR, 8, value);
+            }
+        }
+
+        public int Y1
+        {
+            get
+            {
+                return (int)getAt(pathfind57data, PTR + 1, 8);
+            }
+            set
+            {
+                setAt(pathfind57data, PTR + 1, 8, value);
+            }
+        }
+
+        public int unk2_0_6
+        {
+            get
+            {
+                return (int)getAt(pathfind57data, PTR + 2, 8) & 0x7F;
+            }
+            set
+            {
+                var tmp = (int)getAt(pathfind57data, PTR + 2, 8) & 0x80;
+                tmp = tmp | (value & 0x7F);
+                setAt(pathfind57data, PTR+2, 8, tmp);
+            }
+        }
+
+        public int UNK3
+        {
+            get
+            {
+                return (int)getAt(pathfind57data, PTR + 3, 8);
+            }
+            set
+            {
+                setAt(pathfind57data, PTR + 3, 8, value);
+            }
+        }
+
+
+        /// <summary>
+        /// Gets the next PathFind 57 Record.
+        /// </summary>
+        /// <returns></returns>
+        public PathFind57 Next()
+        {
+            return PathFind57Records[index+1];
         }
     }
 
