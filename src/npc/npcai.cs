@@ -1226,7 +1226,7 @@ namespace Underworld
                 flagArg0: path57Record.unk2_7,
                 xhome_arg2: currObj_XHome, yhome_arg4: currObj_YHome,
                 xpos_arg6: currObjXCoordinate & 0x7, ypos_arg8: currObjYCoordinate & 0x7,
-                PathXArgA: tileX_var5, PathXARgC: tileY_var6))
+                PathXArgA: tileX_var5, PathYArgC: tileY_var6))
             {
                 if (!MaybeUpdatePathFlag_seg006_1413_2ABB(path57Record))
                 {
@@ -1278,7 +1278,7 @@ namespace Underworld
                 }
 
                 //seg006_1413_2D16:
-                
+
                 var headingvar7 = Pathfind.GetVectorHeading(xVar2 - currObjXCoordinate, yVar4 - currObjYCoordinate);
                 ChangeNpcHeadings(critter, headingvar7);
             }
@@ -1307,10 +1307,57 @@ namespace Underworld
             return true;
         }
 
-        static bool CheckIfAtOrNearTargetTile(int flagArg0, int xhome_arg2, int yhome_arg4, int xpos_arg6, int ypos_arg8, int PathXArgA, int PathXARgC)
+        /// <summary>
+        /// Check if the tileX/Y being tested is the targetTile to get to or very close to it.
+        /// </summary>
+        /// <param name="flagArg0">If true require exact location, if false close enough should do?</param>
+        /// <param name="xhome_arg2"></param>
+        /// <param name="yhome_arg4"></param>
+        /// <param name="xpos_arg6"></param>
+        /// <param name="ypos_arg8"></param>
+        /// <param name="PathXArgA"></param>
+        /// <param name="PathYArgC"></param>
+        /// <returns></returns>
+        static bool CheckIfAtOrNearTargetTile(int flagArg0, int xhome_arg2, int yhome_arg4, int xpos_arg6, int ypos_arg8, int PathXArgA, int PathYArgC)
         {
-            //TODO
-            return true;
+            var di_x = xhome_arg2;
+            var si_y = yhome_arg4;
+            var bx_pathX = PathXArgA;
+            var dx_pathY = PathYArgC;
+
+            if (flagArg0 == 0)
+            {
+                if (xpos_arg6 >= 6 && bx_pathX > di_x)
+                {
+                    di_x++;
+                }
+                else
+                {
+                    //seg006_1413_2BBF:
+                    if ((xpos_arg6 <= 1) && (bx_pathX < di_x))
+                    {
+                        di_x--;
+                    }
+                }
+
+                //seg006_1413_2BCA: 
+                if ((xpos_arg6 >= 6) && (dx_pathY > si_y))
+                {
+                    si_y++;
+                }
+                else
+                {
+                    //seg006_1413_2BD7:
+                    if ((ypos_arg8<=1) && (dx_pathY<si_y))
+                    {
+                        si_y--;
+                    }
+                }
+            }
+
+            //seg006_1413_2BE2:
+            //true if path/destination are the same tilex/y
+            return (si_y==dx_pathY) && (di_x==bx_pathX);
         }
 
         static void MaybeReadPath(uwObject critter, int tableindex)
