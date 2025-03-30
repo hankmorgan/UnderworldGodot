@@ -1,4 +1,6 @@
+using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using Godot;
 
 namespace Underworld
@@ -17,7 +19,7 @@ namespace Underworld
         static int HasCurrobjHeadingChanged_dseg_67d6_2242;
         static int dseg_67d6_2269;
         static int dseg_67d6_226F;
-        static int dseg_67d6_2246;
+        static bool FlyingPitchingRelated_dseg_67d6_2246;
 
         static int BitFieldForPathing_dseg_67d6_B4;
 
@@ -105,7 +107,7 @@ namespace Underworld
                 HasCurrobjHeadingChanged_dseg_67d6_2242 = 0;
                 dseg_67d6_2269 = 0;
                 dseg_67d6_226F = 0;
-                dseg_67d6_2246 = 0;
+                FlyingPitchingRelated_dseg_67d6_2246 = false;
 
                 if (critter.npc_animation != 1)
                 {
@@ -957,7 +959,7 @@ namespace Underworld
                                             //seg006_1413:32B5
                                             critter.Projectile_Pitch = 14;
                                             dseg_67d6_224E = 0;
-                                            dseg_67d6_2246 = 1;
+                                            FlyingPitchingRelated_dseg_67d6_2246 = true;
                                         }
                                         else
                                         {
@@ -1292,7 +1294,77 @@ namespace Underworld
 
         static void FlyingCritterPitching_seg006_1413_36B8(uwObject critter, int DestinationTileX, int DestinationTileY)
         {
-            //TODO
+            var ChangeInPitch_varD = 0;
+
+            if (FlyingPitchingRelated_dseg_67d6_2246 == false)
+            {
+                if (UWTileMap.ValidTile(DestinationTileX, DestinationTileY))
+                {
+                    var DestinationTile = UWTileMap.current_tilemap.Tiles[DestinationTileX, DestinationTileY];
+                    var CurrObjTile = UWTileMap.current_tilemap.Tiles[critter.tileX, critter.tileY];
+
+                    var CurrObjZ_var9 = critter.zpos;
+                    var destinationTileZ_varA = 0x14 + (DestinationTile.floorHeight << 3);
+                    var CurrObjTileZ_varB = 0x14 + (CurrObjTile.floorHeight << 3);
+
+                    if (destinationTileZ_varA > 0x78)
+                    {
+                        destinationTileZ_varA = 0x78;
+                    }
+
+                    if (CurrObjTileZ_varB > 0x78)
+                    {
+                        CurrObjTileZ_varB = 0x78;
+                    }
+
+                    //seg006_1413_3749:
+                    if (CurrObjZ_var9 >= CurrObjTileZ_varB - 12)
+                    {
+                        //seg006_1413_3760:
+                        if ((dseg_67d6_225E != 0) && (CurrObjZ_var9 < 0x78))
+                        {
+                            ChangeInPitch_varD = 2;
+                        }
+                        else
+                        {
+                            //seg006_1413_376D:
+                            if (CurrObjZ_var9 >= destinationTileZ_varA - 8)
+                            {
+                                if ((CurrObjZ_var9 <= 0x78) && (CurrObjZ_var9 <= destinationTileZ_varA + 8))
+                                {
+                                    ChangeInPitch_varD = Rng.r.Next(0, 3) - 1;  //either -1,0,+1
+                                }
+                                else
+                                {
+                                    ChangeInPitch_varD = -2;
+                                }
+                            }
+                            else
+                            {
+                                ChangeInPitch_varD = 2;
+                            }
+                        }
+
+                        //seg006_1413_37B1:
+                        if (CurrObjZ_var9 < CurrObjTileZ_varB-4)
+                        {
+                            ChangeInPitch_varD++;
+                        }
+
+                        if (CurrObjZ_var9 > CurrObjTileZ_varB+12)
+                        {
+                            ChangeInPitch_varD--;
+                        }
+                    }
+                    else
+                    {
+                        ChangeInPitch_varD = 2;
+                    }
+
+                    //seg006_1413_37D9:
+                    critter.Projectile_Pitch = (short)(0x10 + ChangeInPitch_varD);
+                }
+            }
         }
 
         static void TurnTowardsPath_Adjusted_seg006_1413_2D3F(uwObject critter, PathFind57 path57Record)
