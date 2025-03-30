@@ -1216,7 +1216,9 @@ namespace Underworld
 
         static void ChangeNpcHeadings(uwObject critter, int heading)
         {
-
+            critter.ProjectileHeading = (ushort)(heading << 5);
+            critter.heading = (short)heading;
+            critter.npc_heading = 0;
         }
 
         static bool TurnTowardsPath_seg006_1413_2BF5(uwObject critter, PathFind57 path57Record)
