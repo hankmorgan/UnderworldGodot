@@ -1371,7 +1371,55 @@ namespace Underworld
 
         static void TurnTowardsPath_Adjusted_seg006_1413_2D3F(uwObject critter, PathFind57 path57Record)
         {
-            //TODO
+            var xVar2 = path57Record.X0 -2;
+            if (path57Record.X0 == currObj_XHome)
+            {
+                xVar2 += 6;
+            }
+            else
+            {
+                if (path57Record.X0<currObj_XHome)
+                {
+                    xVar2 += 0xB;
+                }
+            }
+
+            //seg006_1413_2D76:
+            var yvar4 = path57Record.Y1 - 2;
+            if (path57Record.Y1 == currObj_YHome)
+            {
+                yvar4 += 6;
+            }
+            else
+            {
+                if (path57Record.Y1<currObj_YHome)
+                {
+                    yvar4 += 0xB;
+                }
+            }
+
+            //seg006_1413_2DA9:
+            if (Math.Abs(xVar2 - currObjXCoordinate) + Math.Abs(yvar4 - currObjYCoordinate) >=3)
+            {
+                //seg006_1413_2E9E:
+                var heading = Pathfind.GetVectorHeading(xVar2-currObjXCoordinate, yvar4 - currObjYCoordinate);
+                ChangeNpcHeadings (critter, heading);
+            }
+            else
+            {
+                //seg006_1413_2DCD:
+                //This may be buggy.
+                var offset = path57Record.PathingOffsetIndex4;
+                xVar2 += Pathfind.PathXOffsetTable[offset];
+                yvar4 += Pathfind.PathYOffsetTable[offset];
+
+                var heading = Pathfind.GetVectorHeading(critter.npc_xhome - xVar2, critter.npc_yhome - yvar4);
+                critter.Projectile_Speed = 1;
+                critter.Projectile_Pitch = 16;
+                critter.UnkBit_0X13_Bit0to6 = 0xB;
+
+                ChangeNpcHeadings (critter, heading);
+            }
 
         }
 
