@@ -174,6 +174,14 @@ namespace Underworld
             }
         }
 
+        public int unk2_7
+        {
+            get
+            {
+                return (int)(getAt(pathfind57data, PTR + 2, 8) >> 7) & 0x1;
+            }
+        }
+
         public int UNK3
         {
             get

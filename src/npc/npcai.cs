@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Godot;
 
 namespace Underworld
 {
@@ -71,7 +72,7 @@ namespace Underworld
             {
 
                 var CalcedFacing = GetCritterAnimationGlobalsForCurrObj(critter);
-                
+
                 if (critterObjectDat.isFlier(critter.item_id))
                 {
                     //special setup for flying ai    
@@ -1009,11 +1010,11 @@ namespace Underworld
                     {
                         //seg006_1413:33A8
                         var var3 = Pathfind.GetVectorHeading(xDiff, yDiff);
-                        ChangeNpcHeadings(var3);
+                        ChangeNpcHeadings(critter, var3);
                         if (critterObjectDat.isFlier(critter.item_id))
                         {
                             //seg006_1413_33D8:
-                            FlyingCritterPitching_seg006_1413_36B8(targetX, targetY);                            
+                            FlyingCritterPitching_seg006_1413_36B8(targetX, targetY);
                         }
                     }
                     else
@@ -1025,10 +1026,10 @@ namespace Underworld
                             if (Rng.r.Next(8) == 0)
                             {
                                 critter.UnkBit_0x18_6 = 0;
-                            }      
+                            }
                             //seg006_1413_342C:
                             NPCWanderUpdate(critter);
-                            return;                      
+                            return;
                         }
                         else
                         {
@@ -1046,31 +1047,31 @@ namespace Underworld
                             {
                                 //seg006_1413_34D2
                                 int var4 = 0;
-                                if(FindSetIndexOfBitField(ref var4))
+                                if (FindSetIndexOfBitField(ref var4))
                                 {
                                     //seg006_1413_34E3: 
                                     if (Pathfind.PathFindBetweenTiles(
-                                        currTileX_arg0: critter.tileX, currTileY_arg2: critter.tileY, CurrFloorHeight_arg4: critter.zpos>>3, 
-                                        TargetTileX_arg6: targetX, TargetTileY_arg8: targetY, TargetFloorHeight_argA: targetZ, 
+                                        currTileX_arg0: critter.tileX, currTileY_arg2: critter.tileY, CurrFloorHeight_arg4: critter.zpos >> 3,
+                                        TargetTileX_arg6: targetX, TargetTileY_arg8: targetY, TargetFloorHeight_argA: targetZ,
                                         LikelyRangeArgC: GetCritterRange_seg007_17A2_30D1(critter)))
-                                        {
-                                            //seg006_1413_351A:
-                                            var mask = 1<<var4;
-                                            var4 = ~var4;
-                                            BitFieldForPathing_dseg_67d6_B4 &= mask; //unset the bit at var4
+                                    {
+                                        //seg006_1413_351A:
+                                        var mask = 1 << var4;
+                                        var4 = ~var4;
+                                        BitFieldForPathing_dseg_67d6_B4 &= mask; //unset the bit at var4
 
-                                            Pathfind.UpdateSeg57Values(PathFind57.PathFind57Records[var4]);
+                                        Pathfind.UpdateSeg57Values(PathFind57.PathFind57Records[var4]);
 
-                                            critter.UnkBit_0x18_6 = 0;
-                                            critter.UnkBit_0X15_Bit7 = 1;
-                                            critter.PathFindIndex_0x16_0_F = (short)var4;
-                                            //Lookup Record
-                                            TurnTowardsPath_seg006_1413_2BF5(PathFind57.PathFind57Records[critter.PathFindIndex_0x16_0_F]);
-                                        }
-                                        else
-                                        {
-                                            return;//no path
-                                        }
+                                        critter.UnkBit_0x18_6 = 0;
+                                        critter.UnkBit_0X15_Bit7 = 1;
+                                        critter.PathFindIndex_0x16_0_F = (short)var4;
+                                        //Lookup Record
+                                        TurnTowardsPath_seg006_1413_2BF5(critter, PathFind57.PathFind57Records[critter.PathFindIndex_0x16_0_F]);
+                                    }
+                                    else
+                                    {
+                                        return;//no path
+                                    }
                                 }
                                 else
                                 {
@@ -1082,14 +1083,14 @@ namespace Underworld
                                 //seg006_1413_3470:
                                 critter.UnkBit_0x18_7 = 1;
                                 var var3 = Pathfind.GetVectorHeading(xDiff, yDiff);
-                                ChangeNpcHeadings(var3);
+                                ChangeNpcHeadings(critter, var3);
                                 critter.UnkBit_0x18_6 = 0;
                                 if (critter.UnkBit_0X15_Bit7 == 1)
                                 {
                                     //seg006_1413_34B5:
                                     BitFieldForPathing_dseg_67d6_B4 |= 1 << critter.PathFindIndex_0x16_0_F;
                                     critter.UnkBit_0X15_Bit7 = 0;
-                                }                                
+                                }
                             }
                         }
                     }
@@ -1097,8 +1098,7 @@ namespace Underworld
                 else
                 {
                     //seg006_1413_334C:
-                    //TODO include record parameter.
-                    if (TurnTowardsPath_seg006_1413_2BF5(PathFind57.PathFind57Records[critter.PathFindIndex_0x16_0_F]) == false)
+                    if (TurnTowardsPath_seg006_1413_2BF5(critter, PathFind57.PathFind57Records[critter.PathFindIndex_0x16_0_F]) == false)
                     {
                         BitFieldForPathing_dseg_67d6_B4 |= 1 << critter.PathFindIndex_0x16_0_F;
                         critter.UnkBit_0X15_Bit7 = 0;
@@ -1114,7 +1114,7 @@ namespace Underworld
                     {
                         critter.npc_animation = 1;
                         GetCritterAnimationGlobalsForCurrObj(critter);
-                        if (critter.AnimationFrame> MaxAnimFrame)
+                        if (critter.AnimationFrame > MaxAnimFrame)
                         {
                             critter.AnimationFrame = 0;
                         }
@@ -1123,8 +1123,8 @@ namespace Underworld
                     {
                         //already in walk animation;
                         //seg006_1413_3620:
-                        var tmp = critter.AnimationFrame+1;
-                        critter.AnimationFrame = (byte)(tmp % MaxAnimFrame);                        
+                        var tmp = critter.AnimationFrame + 1;
+                        critter.AnimationFrame = (byte)(tmp % MaxAnimFrame);
                     }
                     //seg006_1413_3657:
                     //set frames as in above branches   
@@ -1164,13 +1164,13 @@ namespace Underworld
             if (
                 (critter.npc_attitude == 0)
                 &&
-                (critterObjectDat.avghit(critter.item_id) !=0)
+                (critterObjectDat.avghit(critter.item_id) != 0)
                 &&
                 (critter.doordir == 0)
                 )
             {
                 //seg007_17A2_3105: 
-                return ((critter.npc_hp<<2) / critterObjectDat.avghit(critter.item_id)) + (critterObjectDat.maybemorale(critter.item_id) / 4);
+                return ((critter.npc_hp << 2) / critterObjectDat.avghit(critter.item_id)) + (critterObjectDat.maybemorale(critter.item_id) / 4);
             }
             else
             {
@@ -1190,7 +1190,7 @@ namespace Underworld
                 var dl = 0;
                 while (dl < 0x10)
                 {
-                    if ((BitFieldForPathing_dseg_67d6_B4 & (1<<dl)) != 0)
+                    if ((BitFieldForPathing_dseg_67d6_B4 & (1 << dl)) != 0)
                     {
                         FieldIndex = dl;
                         return true;
@@ -1212,25 +1212,115 @@ namespace Underworld
 
         }
 
-        static void ChangeNpcHeadings(int heading)
+        static void ChangeNpcHeadings(uwObject critter, int heading)
         {
-            
+
         }
 
-        static bool TurnTowardsPath_seg006_1413_2BF5(PathFind57 path57Record)
+        static bool TurnTowardsPath_seg006_1413_2BF5(uwObject critter, PathFind57 path57Record)
         {
-            Debug.Print("TODO Turn towards Path");
-            return false;
+            var tileX_var5 = path57Record.X0;
+            var tileY_var6 = path57Record.Y1;
+
+            if (CheckIfAtOrNearTargetTile(
+                flagArg0: path57Record.unk2_7,
+                xhome_arg2: currObj_XHome, yhome_arg4: currObj_YHome,
+                xpos_arg6: currObjXCoordinate & 0x7, ypos_arg8: currObjYCoordinate & 0x7,
+                PathXArgA: tileX_var5, PathXARgC: tileY_var6))
+            {
+                if (!MaybeUpdatePathFlag_seg006_1413_2ABB(path57Record))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                //seg006_1413_2C5C:
+                tileX_var5 = currObj_XHome;
+                tileY_var6 = currObj_YHome;
+            }
+
+            //seg006_1413_2C68:
+            if (path57Record.unk2_7 == 0)
+            {
+                //seg006_1413_2C8A:
+                if (critterObjectDat.isFlier(critter.item_id))
+                {
+                    FlyingCritterPitching_seg006_1413_36B8(critter.TargetTileX, critter.TargetTileY);
+                }
+
+                //seg006_1413_2CBD:
+                var xVar2 = path57Record.X0 << 3;
+                if (path57Record.X0 == tileX_var5)
+                {
+                    xVar2 += 4;
+                }
+                else
+                {
+                    if (path57Record.X0 < tileX_var5)
+                    {
+                        xVar2 += 7;
+                    }
+                }
+
+                var yVar4 = path57Record.Y1 << 3;
+
+                if (path57Record.Y1 == tileY_var6)
+                {
+                    yVar4 += 4;
+                }
+                else
+                {
+                    if (path57Record.Y1 < tileY_var6)
+                    {
+                        yVar4 += 7;
+                    }
+                }
+
+                //seg006_1413_2D16:
+                
+                var headingvar7 = Pathfind.GetVectorHeading(xVar2 - currObjXCoordinate, yVar4 - currObjYCoordinate);
+                ChangeNpcHeadings(critter, headingvar7);
+            }
+            else
+            {
+                //seg006_1413_2C79:
+                TurnTowardsPath_Adjusted_seg006_1413_2D3F(critter, path57Record);
+            }
+            return true;
+        }
+
+        static void FlyingCritterPitching_seg006_1413_36B8(uwObject critter, int DestinationTileX, int DestinationTileY)
+        {
+            //TODO
+        }
+
+        static void TurnTowardsPath_Adjusted_seg006_1413_2D3F(uwObject critter, PathFind57 path57Record)
+        {
+            //TODO
+
+        }
+
+        static bool MaybeUpdatePathFlag_seg006_1413_2ABB(PathFind57 path57Record)
+        {
+            //TODO
+            return true;
+        }
+
+        static bool CheckIfAtOrNearTargetTile(int flagArg0, int xhome_arg2, int yhome_arg4, int xpos_arg6, int ypos_arg8, int PathXArgA, int PathXARgC)
+        {
+            //TODO
+            return true;
         }
 
         static void MaybeReadPath(uwObject critter, int tableindex)
         {
-            //placeholder
+            //TODO            
         }
 
         static void NPCTryToOpenDoor(uwObject critter, uwObject doorobject)
         {
-            //playerholder
+            //TODO
         }
 
         static void NPCWanderUpdate(uwObject critter)
