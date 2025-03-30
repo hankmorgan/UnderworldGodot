@@ -1228,7 +1228,7 @@ namespace Underworld
                 xpos_arg6: currObjXCoordinate & 0x7, ypos_arg8: currObjYCoordinate & 0x7,
                 PathXArgA: tileX_var5, PathYArgC: tileY_var6))
             {
-                if (!MaybeUpdatePathFlag_seg006_1413_2ABB(path57Record))
+                if (!UpdatePathFlag_seg006_1413_2ABB(path57Record))
                 {
                     return false;
                 }
@@ -1301,10 +1301,31 @@ namespace Underworld
 
         }
 
-        static bool MaybeUpdatePathFlag_seg006_1413_2ABB(PathFind57 path57Record)
+        static bool UpdatePathFlag_seg006_1413_2ABB(PathFind57 path57Record)
         {
-            //TODO
-            return true;
+            if (path57Record.unk2_0_6_maybeZ < path57Record.UNK3)
+            {
+                //seg006_1413_2AD4:
+                //I guarantee this will be buggy when I get to start testing!
+                var index = path57Record.PathingOffsetIndex4;
+                path57Record.X0 += Pathfind.PathXOffsetTable[index];
+                path57Record.Y1 += Pathfind.PathYOffsetTable[index];
+
+                if ((path57Record.PathingOffsetIndex8 & 0x1) == 0)
+                {
+                    path57Record.unk2_7 = 1;
+                }
+                else
+                {
+                    path57Record.unk2_7 = 0;
+                }
+                path57Record.unk2_0_6_maybeZ++;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -1348,7 +1369,7 @@ namespace Underworld
                 else
                 {
                     //seg006_1413_2BD7:
-                    if ((ypos_arg8<=1) && (dx_pathY<si_y))
+                    if ((ypos_arg8 <= 1) && (dx_pathY < si_y))
                     {
                         si_y--;
                     }
@@ -1357,7 +1378,7 @@ namespace Underworld
 
             //seg006_1413_2BE2:
             //true if path/destination are the same tilex/y
-            return (si_y==dx_pathY) && (di_x==bx_pathX);
+            return (si_y == dx_pathY) && (di_x == bx_pathX);
         }
 
         static void MaybeReadPath(uwObject critter, int tableindex)

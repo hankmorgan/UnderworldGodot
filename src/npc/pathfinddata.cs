@@ -74,7 +74,7 @@ namespace Underworld
 
         public FinalPath56 Next()
         {
-            return finalpath[index+1];
+            return finalpath[index + 1];
         }
 
         public int X0
@@ -126,7 +126,7 @@ namespace Underworld
         {
             for (int i = 0; i <= PathFind57Records.GetUpperBound(0); i++)
             {
-                PathFind57Records[i] = new PathFind57(i);                
+                PathFind57Records[i] = new PathFind57(i);
             }
         }
 
@@ -160,7 +160,7 @@ namespace Underworld
             }
         }
 
-        public int unk2_0_6
+        public int unk2_0_6_maybeZ
         {
             get
             {
@@ -170,7 +170,7 @@ namespace Underworld
             {
                 var tmp = (int)getAt(pathfind57data, PTR + 2, 8) & 0x80;
                 tmp = tmp | (value & 0x7F);
-                setAt(pathfind57data, PTR+2, 8, tmp);
+                setAt(pathfind57data, PTR + 2, 8, tmp);
             }
         }
 
@@ -179,6 +179,13 @@ namespace Underworld
             get
             {
                 return (int)(getAt(pathfind57data, PTR + 2, 8) >> 7) & 0x1;
+            }
+            set
+            {
+                var tmp = (int)(getAt(pathfind57data, PTR + 2, 8);
+                tmp = tmp & 0x7F;
+                tmp = (tmp & 0x1) << 7;
+                setAt(pathfind57data, PTR, 8, tmp);
             }
         }
 
@@ -201,8 +208,33 @@ namespace Underworld
         /// <returns></returns>
         public PathFind57 Next()
         {
-            return PathFind57Records[index+1];
+            return PathFind57Records[index + 1];
         }
+
+        public int PathingOffsetIndex4
+        {
+            get
+            {
+                var offset = unk2_7 / 4;
+                var ax = (int)getAt(pathfind57data, PTR + 4 + offset, 8);
+                var cl = (unk2_7 % 4) << 1;
+                ax = (ax >> cl) & 0x3;
+                return ax;
+            }
+        }
+
+        public int PathingOffsetIndex8
+        {
+            get
+            {
+                var offset = unk2_7 / 8;
+                var ax = (int)getAt(pathfind57data, PTR + 0x14 + offset, 8);
+                var cl = (unk2_7 % 8) << 1;
+                ax = ax >> cl;
+                return ax;
+            }
+        }
+
     }
 
     /// <summary>

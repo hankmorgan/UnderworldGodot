@@ -17,8 +17,8 @@ namespace Underworld
 
         static int[] tilewallflags = new int[] { 30, 0, 19, 21, 11, 13, 32, 32, 32, 32 };
 
-        static int[] PathXOffsetTable = new int[] { 0, 1, 0, -1 };
-        static int[] PathYOffsetTable = new int[] { 1, 0, -1, 0 };
+        public static int[] PathXOffsetTable = new int[] { 0, 1, 0, -1 };
+        public static int[] PathYOffsetTable = new int[] { 1, 0, -1, 0 };
 
         /// <summary>
         /// Accumulates some values into Segment 57 from Seg56.
@@ -28,7 +28,7 @@ namespace Underworld
         {
             //Seg006_1413_2934
             //does some path finding work
-            Seg57Record.unk2_0_6 = 0;
+            Seg57Record.unk2_0_6_maybeZ = 0;
             Seg57Record.X0 = FinalPath56.finalpath[0].X0;
             Seg57Record.Y1 = FinalPath56.finalpath[0].Y1;
             Seg57Record.UNK3 = MaybePathIndexOrLength_dseg_67d6_225A;
