@@ -17,9 +17,9 @@ namespace Underworld
 
         static int[] tilewallflags = new int[] { 30, 0, 19, 21, 11, 13, 32, 32, 32, 32 };
 
-        static int[] TilePathingFlags = new int[] { 3,  2,  0,  1};
+        static int[] TilePathingFlags = new int[] { 3, 2, 0, 1 };
 
-        static int[] SlopePathingTypes = new int[] {6,8,7,9};
+        static int[] SlopePathingTypes = new int[] { 6, 8, 7, 9 };
 
         public static int[] PathXOffsetTable = new int[] { 0, 1, 0, -1 };
         public static int[] PathYOffsetTable = new int[] { 1, 0, -1, 0 };
@@ -436,6 +436,8 @@ namespace Underworld
 
         public static bool TraverseMultipleTiles(int tile1_X_arg0, int tile1_Y_arg2, int tile2_X_arg4, int tile2_Y_arg6, int tile3_X_arg8, int tile3_Y_argA, int argC, int argE, int ProbablyHeight_arg10, ref int arg12, ref int PathDistanceResult_arg16)
         {
+            var var14 = 0;
+            var var16 = 0;
             var var17 = 0;
             var var18 = 0;
             var var21 = 0;
@@ -450,8 +452,9 @@ namespace Underworld
 
             if (tile1_X_arg0 == 0)
             {
+                //seg006_1413_E57:
                 arg12 = ProbablyHeight_arg10;
-                var var14 = tile3.floorHeight;
+                var14 = tile3.floorHeight;
 
                 if ((tile3_X_arg8 > tile2_X_arg4) && ((tilewallflags[tile3type] & 2) != 0))
                 {
@@ -506,9 +509,9 @@ namespace Underworld
                         if (SlopePathingTypes[bx] != tile3type)
                         {
                             var14++;
-                        }                        
+                        }
                     }
-                    if (var14<=ProbablyHeight_arg10+1)
+                    if (var14 <= ProbablyHeight_arg10 + 1)
                     {
                         return true;
                     }
@@ -520,9 +523,190 @@ namespace Underworld
             }
             else
             {
+                //seg006_1413_FAA:
+                if (tile3_X_arg8 != 0)
+                {
+                    //seg006_1413_10E2:
+                    arg12 = ProbablyHeight_arg10;
+                    if (tile3_X_arg8 <= tile2_X_arg4)
+                    {
+                        //seg006_1413_1117: 
+                        if (tile3_X_arg8 >= tile2_X_arg4)
+                        {
+                            //seg006_1413_1140
+                            if (tile3_Y_argA <= tile2_Y_arg6)
+                            {
+                                //seg006_1413_1169: 
+                                if (tile3_Y_argA <= tile2_Y_arg6)
+                                {
+                                    //seg006_1413_1169:
+                                    if (tile3_Y_argA < tile2_Y_arg6)
+                                    {
+                                        if ((tilewallflags[tile3type] & 0x10) != 0)
+                                        {
+                                            return false;
+                                        }
+                                        if ((tilewallflags[tile2type] & 0x8) != 0)
+                                        {
+                                            return false;
+                                        }
+                                    }
+                                    //jmp     NoBlockingTiles_seg006_1413_1192
+                                }
+                                else
+                                {
+                                    //seg006_1413:1148
+                                    if ((tilewallflags[tile3type] & 0x8) != 0)
+                                    {
+                                        return false;
+                                    }
+                                    if ((tilewallflags[tile2type] & 0x10) != 0)
+                                    {
+                                        return false;
+                                    }
+                                    //jmp     NoBlockingTiles_seg006_1413_1192
+                                }
+                            }
+                            else
+                            {
+                                //seg006_1413:1148
+                                if ((tilewallflags[tile3type] & 8) != 0)
+                                {
+                                    return false;
+                                }
+                                if ((tilewallflags[tile2type] & 0x10) != 0)
+                                {
+                                    return false;
+                                }
+                                //jmp     NoBlockingTiles_seg006_1413_1192
+                            }
+                        }
+                        else
+                        {
+                            //seg006_1413:111F
+                            if ((tilewallflags[tile3type] & 0x4) != 0)
+                            {
+                                return false;
+                            }
+                            if ((tilewallflags[tile2type] & 0x2) != 0)
+                            {
+                                return false;
+                            }
+                            //jmp     NoBlockingTiles_seg006_1413_1192
+                        }
+                    }
+                    else
+                    {
+                        //seg006_1413:10F3
+                        if ((tilewallflags[tile3type] & 0x2) != 0)
+                        {
+                            return false;
+                        }
+                        if ((tilewallflags[tile2type] & 0x4) != 0)
+                        {
+                            return false;
+                        }
+                        //jmp     NoBlockingTiles_seg006_1413_1192
+                    }
 
+
+                    //NoBlockingTiles_seg006_1413_1192:?
+
+                    //resume here
+                    
+
+                    var next = tile2.indexObjectList;
+                    //jmp     LoopObjectsNoBlockingTiles_seg006_1413_140B
+                    while ((next != 0) || (var16 == 0))
+                    {
+                        var obj = UWTileMap.current_tilemap.LevelObjects[next];
+
+
+                        //NEXT_seg006_1413_1402
+                        next = obj.next;
+                    }
+                }
+                else
+                {
+                    //seg006_1413_FB3
+                    arg12 = ProbablyHeight_arg10;
+                    if ((argC & 0x1000) == 0)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        //LoopObjectsArgC_seg006_1413_1026:
+                        var next = tile2.indexObjectList;
+                        while ((next != 0) && (var16 == 0))
+                        {
+                            var obj = UWTileMap.current_tilemap.LevelObjects[next];
+                            if (commonObjDat.UnknownFlag3_1(obj.item_id))
+                            {
+                                var16 = (obj.zpos + commonObjDat.height(obj.item_id)) >> 3;
+                            }
+                            next = obj.next;
+                        }
+
+                        //seg006_1413_1042:
+                        var14 = tile2.floorHeight;
+                        if (var16 > var14)
+                        {
+                            var14 = var16;
+                            var18 = 1;
+                        }
+
+                        //seg006_1413_1060:                        
+                        if (tile1.floorHeight > var14 + 1)
+                        {
+                            //seg006_1413_1076:
+                            arg12 = var14;
+                            PathDistanceResult_arg16 = ProbablyHeight_arg10 - arg12 - 1;
+                            if (PathDistanceResult_arg16 <= MaybeMaxTravelDistance_dseg_67d6_2272)
+                            {
+                                //seg006_1413_109E:
+                                if (var18 != 0)
+                                {
+                                    return true;
+                                }
+                                else
+                                {
+                                    //seg006_1413:10A7
+                                    if ((argC & (8 << tile2terrain)) == 0)
+                                    {
+                                        //seg006_1413_10B9:
+                                        if ((argE & (8 << tile2terrain)) == 0)
+                                        {
+                                            return true;
+                                        }
+                                        else
+                                        {
+                                            PathDistanceResult_arg16 +=2;
+                                            if (PathDistanceResult_arg16<=MaybeMaxTravelDistance_dseg_67d6_2272)
+                                            {
+                                                return true;
+                                            }
+                                            else
+                                            {
+                                                return false;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                        }
+
+                    }
+                }
             }
-
             return false;
         }
 
