@@ -114,13 +114,13 @@ namespace Underworld
 
                 negXComponent = (negXComponent / si);
                 negYComponent = (negYComponent / si);
-                return seg021_22FD_EFB_MaybeGetTangent((short)(negXComponent & 0xFFFF), (short)(negYComponent & 0xFFFF));
+                return MaybeGetTangent_seg021_22FD_EFB((short)(negXComponent & 0xFFFF), (short)(negYComponent & 0xFFFF));
             }
 
         }
 
 
-        static short seg021_22FD_EFB_MaybeGetTangent(short x, short y)
+        public static short MaybeGetTangent_seg021_22FD_EFB(short x, short y)
         {
             if ((x <= 23170) && (x >= -23042))
             {

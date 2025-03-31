@@ -835,24 +835,101 @@ namespace Underworld
             }
             else
             {
-                return Seg007_17A2_1CE5(vectorX, vectorY);
+                return TurnTowardsVectorSeg007_17A2_1CE5(critter, (short)vectorX, (short)vectorY);
             }
         }
 
         /// <summary>
-        /// Placeholder. Function only applies when npcs casting spells
+        /// Function only applies when npcs casting spells
         /// </summary>
         /// <param name="vectorX"></param>
         /// <param name="vectorY"></param>
         /// <returns></returns>
-        static bool Seg007_17A2_1CE5(int vectorX, int vectorY)
+        static bool TurnTowardsVectorSeg007_17A2_1CE5(uwObject critter, short vectorX, short vectorY)
         {
-            return true;
+            bool result = false;
+
+            var totalHeading_var7 = (short)((critter.heading << 5) + critter.npc_heading);
+
+            var si_distance = (short)Math.Sqrt((currentGTargXVector ^ 2) + (currentGTargYVector ^ 2));
+
+            var xVar10 = vectorX;
+            var yVar14 = vectorY;
+
+            if (si_distance == 0)
+            {
+                return true;
+            }
+            else
+            {
+                short varC = 0; short di = 0;
+                if ((yVar14 >= 0) && (yVar14 == si_distance))
+                {
+                    varC = 0x7FFF;
+                }
+                else
+                {
+                    if ((yVar14 == -1 && si_distance == 1) || (yVar14 == 0 && si_distance == 0))//this logic appears to be what the disassembly does. logically the 2nd condition cannot happen?
+                    {
+                        varC = -32768;
+                    }
+                    else
+                    {
+                        varC = (short)((yVar14 << 0xF) / si_distance);
+                    }
+                }
+
+                if ((xVar10 >= 0) && (xVar10 == si_distance))
+                {
+                    di = 0x7FFF;
+                }
+                else
+                {
+                    if ((xVar10 == -1 && si_distance == 1) || (xVar10 == 0 && si_distance == 0))//this logic appears to be what the disassembly does. logically the 2nd condition cannot happen?
+                    {
+                        di = -32768;
+                    }
+                    else
+                    {
+                        di = (short)((xVar10 << 0xF) / si_distance);
+                    }
+                }
+
+                //seg007_17A2_1DE5
+                var tangent_var6 = motion.MaybeGetTangent_seg021_22FD_EFB(varC, di);
+
+                var var8 = (0x40 - (tangent_var6 >> 8)) & 0xFF;
+                var var9 = var8 - totalHeading_var7;
+                var HeadingVarA = 0;
+                //seg007_17A2_1DFE:
+                if ((var9 >= 0x20) && (var9 <= 0xE0))
+                {
+                    if (var9 >= 0x80)
+                    {
+                        HeadingVarA = (totalHeading_var7 + 0xE0) / 0x100;
+                    }
+                    else
+                    {
+                        HeadingVarA = (totalHeading_var7 + 0x20) / 0x100;
+                    }
+                }
+                else
+                {
+                    //seg007_17A2_1E16:
+                    HeadingVarA = var8;
+                    result = true;
+                }
+
+                critter.heading = (short)(HeadingVarA >> 5);
+                critter.npc_heading = (short)(HeadingVarA & 0x1F);
+
+                return result;
+            }
         }
 
         static void NPC_Goto(uwObject critter, int targetX, int targetY, int targetZ)
         {
-            //placeholder
+
             var Bit7Cleared_Var5 = false;
             var MaybeIsFlier_Var6 = false;
 
@@ -1016,7 +1093,7 @@ namespace Underworld
                         if (critterObjectDat.isFlier(critter.item_id))
                         {
                             //seg006_1413_33D8:
-                            FlyingCritterPitching_seg006_1413_36B8(targetX, targetY);
+                            FlyingCritterPitching_seg006_1413_36B8(critter, targetX, targetY);
                         }
                     }
                     else
@@ -1209,11 +1286,6 @@ namespace Underworld
             return true;
         }
 
-        static void FlyingCritterPitching_seg006_1413_36B8(int tileX, int tileY)
-        {
-
-        }
-
         static void ChangeNpcHeadings(uwObject critter, int heading)
         {
             critter.ProjectileHeading = (ushort)(heading << 5);
@@ -1250,7 +1322,7 @@ namespace Underworld
                 //seg006_1413_2C8A:
                 if (critterObjectDat.isFlier(critter.item_id))
                 {
-                    FlyingCritterPitching_seg006_1413_36B8(critter.TargetTileX, critter.TargetTileY);
+                    FlyingCritterPitching_seg006_1413_36B8(critter, critter.TargetTileX, critter.TargetTileY);
                 }
 
                 //seg006_1413_2CBD:
@@ -1348,12 +1420,12 @@ namespace Underworld
                         }
 
                         //seg006_1413_37B1:
-                        if (CurrObjZ_var9 < CurrObjTileZ_varB-4)
+                        if (CurrObjZ_var9 < CurrObjTileZ_varB - 4)
                         {
                             ChangeInPitch_varD++;
                         }
 
-                        if (CurrObjZ_var9 > CurrObjTileZ_varB+12)
+                        if (CurrObjZ_var9 > CurrObjTileZ_varB + 12)
                         {
                             ChangeInPitch_varD--;
                         }
@@ -1371,14 +1443,14 @@ namespace Underworld
 
         static void TurnTowardsPath_Adjusted_seg006_1413_2D3F(uwObject critter, PathFind57 path57Record)
         {
-            var xVar2 = path57Record.X0 -2;
+            var xVar2 = path57Record.X0 - 2;
             if (path57Record.X0 == currObj_XHome)
             {
                 xVar2 += 6;
             }
             else
             {
-                if (path57Record.X0<currObj_XHome)
+                if (path57Record.X0 < currObj_XHome)
                 {
                     xVar2 += 0xB;
                 }
@@ -1392,18 +1464,18 @@ namespace Underworld
             }
             else
             {
-                if (path57Record.Y1<currObj_YHome)
+                if (path57Record.Y1 < currObj_YHome)
                 {
                     yvar4 += 0xB;
                 }
             }
 
             //seg006_1413_2DA9:
-            if (Math.Abs(xVar2 - currObjXCoordinate) + Math.Abs(yvar4 - currObjYCoordinate) >=3)
+            if (Math.Abs(xVar2 - currObjXCoordinate) + Math.Abs(yvar4 - currObjYCoordinate) >= 3)
             {
                 //seg006_1413_2E9E:
-                var heading = Pathfind.GetVectorHeading(xVar2-currObjXCoordinate, yvar4 - currObjYCoordinate);
-                ChangeNpcHeadings (critter, heading);
+                var heading = Pathfind.GetVectorHeading(xVar2 - currObjXCoordinate, yvar4 - currObjYCoordinate);
+                ChangeNpcHeadings(critter, heading);
             }
             else
             {
@@ -1418,7 +1490,7 @@ namespace Underworld
                 critter.Projectile_Pitch = 16;
                 critter.UnkBit_0X13_Bit0to6 = 0xB;
 
-                ChangeNpcHeadings (critter, heading);
+                ChangeNpcHeadings(critter, heading);
             }
 
         }
@@ -1777,7 +1849,7 @@ namespace Underworld
 
         static void NPC_Goal8(uwObject critter)
         {
-            //placeholder
+            //TODO
         }
 
         static int GetCritterAnimationGlobalsForCurrObj(uwObject critter)
