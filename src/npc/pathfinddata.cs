@@ -77,6 +77,11 @@ namespace Underworld
             return finalpath[index + 1];
         }
 
+        public FinalPath56 Previous()
+        {
+            return finalpath[index - 1];
+        }
+
         public int X0
         {
             get
@@ -97,6 +102,17 @@ namespace Underworld
             set
             {
                 setAt(data056, PTR + 1, 8, value);
+            }
+        }
+        public int Z2
+        {
+            get
+            {
+                return (int)getAt(data056, PTR + 2, 8);
+            }
+            set
+            {
+                setAt(data056, PTR + 2, 8, value);
             }
         }
 
@@ -182,7 +198,7 @@ namespace Underworld
             }
             set
             {
-                var tmp = (int)(getAt(pathfind57data, PTR + 2, 8);
+                var tmp = (int)(getAt(pathfind57data, PTR + 2, 8));
                 tmp = tmp & 0x7F;
                 tmp = (tmp & 0x1) << 7;
                 setAt(pathfind57data, PTR, 8, tmp);

@@ -9,8 +9,8 @@ namespace Underworld
     /// </summary>
     public class Pathfind : UWClass
     {
-        static int MaybeMaxTravelDistance_dseg_67d6_2272;
-        static int MaybePathIndexOrLength_dseg_67d6_225A;
+        public static int MaybeMaxTravelDistance_dseg_67d6_2272;
+        public static int MaybePathIndexOrLength_dseg_67d6_225A;
 
         static int TraverseRelated_dseg_67d6_224B;
 
@@ -244,7 +244,7 @@ namespace Underworld
                         tile2_X_arg4: currTileX_arg0, tile2_Y_arg6: currTileY_arg2,
                         tile3_X_arg8: NeighbourTileX, tile3_Y_argA: NeighbourTileY,
                         argC: npc.SpecialMotionHandler[4], argE: npc.SpecialMotionHandler[6],
-                        ProbablyHeight_arg12: CurrFloorHeight_arg4,
+                        ProbablyHeight_arg10: CurrFloorHeight_arg4,
                         arg12: ref tmp,
                         PathDistanceResult_arg16: ref ProbablyPathDistance_var1E);
                     NeighbourPathTile.Z2 = tmp;
@@ -328,7 +328,7 @@ namespace Underworld
                                     tile2_X_arg4: Tile2X_var1, tile2_Y_arg6: Tile2Y_var2, 
                                     tile3_X_arg8: NeighbourTileX, tile3_Y_argA: NeighbourTileY, 
                                     argC: npc.SpecialMotionHandler[4], argE: npc.SpecialMotionHandler[6], 
-                                    ProbablyHeight_arg12: TileRecord_var1C.Z2, arg12: ref Height_var1F, 
+                                    ProbablyHeight_arg10: TileRecord_var1C.Z2, arg12: ref Height_var1F, 
                                     PathDistanceResult_arg16: ref ProbablyPathDistance_var1E);
 
                                 //seg006_1413_1DBA
@@ -382,7 +382,7 @@ namespace Underworld
                                                 tile2_X_arg4: NeighbourTileX, tile2_Y_arg6: NeighbourTileY, 
                                                 tile3_X_arg8: 0, tile3_Y_argA: 0, 
                                                 argC: npc.SpecialMotionHandler[4], argE: npc.SpecialMotionHandler[6], 
-                                                ProbablyHeight_arg12: NeighbourPathTile.Z2, 
+                                                ProbablyHeight_arg10: NeighbourPathTile.Z2, 
                                                 arg12: ref tmp, PathDistanceResult_arg16: ref ProbablyPathDistance_var1E);
                                             NeighbourPathTile.Z2 = tmp;
 
@@ -430,7 +430,7 @@ namespace Underworld
         }
 
 
-        static bool TraverseMultipleTiles(int tile1_X_arg0, int tile1_Y_arg2, int tile2_X_arg4, int tile2_Y_arg6, int tile3_X_arg8, int tile3_Y_argA, int argC, int argE, int ProbablyHeight_arg12, ref int arg12, ref int PathDistanceResult_arg16)
+        public static bool TraverseMultipleTiles(int tile1_X_arg0, int tile1_Y_arg2, int tile2_X_arg4, int tile2_Y_arg6, int tile3_X_arg8, int tile3_Y_argA, int argC, int argE, int ProbablyHeight_arg10, ref int arg12, ref int PathDistanceResult_arg16)
         {
 
             return false;
@@ -441,6 +441,182 @@ namespace Underworld
 
         }
 
+
+        public static int seg006_1413_205B(int CurrTileX, int CurrTileY, int targetX, int targetY)
+        {
+            var var8 = 0x40;
+            var xVector_var1 = targetX - CurrTileX;
+            var yVector_var2 = targetY - CurrTileY;
+            var xVar3 = CurrTileX;
+            var yVar4 = CurrTileY;
+            var var6 = 0;
+            bool UseVar3_si = false;//reference var3 of var4 in later calcs.
+            bool UseVar3_di = false;//reference var3 of var4 in later calcs.
+            var divisionVar7 = 0;
+            var directionVar5 = 0;
+
+
+            var TileVarC = UWTileMap.current_tilemap.Tiles[CurrTileX, CurrTileY];
+            Pathfind.MaybeMaxTravelDistance_dseg_67d6_2272 = 0;
+
+            if ((xVector_var1 == 0) && (yVector_var2 == 0))
+            {
+                return -1;
+            }
+            else
+            {
+                //seg006_1413_20B0:
+                if (xVector_var1 >= yVector_var2)
+                {
+                    //seg006_1413_20BB:
+                    if (xVector_var1 < -yVector_var2)
+                    {
+                        //seg006_1413_2104
+                        UseVar3_di = false;
+                        UseVar3_si = true;
+                        divisionVar7 = (xVector_var1 << 7) / yVector_var2;
+                        directionVar5 = -1;
+                        if (xVector_var1 <= 0)
+                        {
+                            //seg006_1413_213A:
+                            var6 = -1;
+                        }
+                        else
+                        {
+                            var6 = 1;
+                        }
+                    }
+                    else
+                    {
+                        //seg006_1413:20C8
+                        UseVar3_di = true;
+                        UseVar3_si = false;
+                        divisionVar7 = (yVector_var2 << 7) / xVector_var1;
+                        directionVar5 = 1;
+                        if (yVector_var2 <= 0)
+                        {
+                            var6 = -1;
+                        }
+                        else
+                        {
+                            var6 = 1;
+                        }
+                    }
+                }
+                else
+                {
+                    //seg006_1413_2140:
+                    if (xVector_var1 >= -yVector_var2)
+                    {
+                        UseVar3_di = false;
+                        UseVar3_si = true;
+                        divisionVar7 = (xVector_var1 << 7) / yVector_var2;
+                        directionVar5 = 1;
+                        if (xVector_var1 <= 0)
+                        {
+                            var6 = -1;
+                        }
+                        else
+                        {
+                            var6 = 1;
+                        }
+                    }
+                    else
+                    {
+                        //seg006_1413_2189:
+                        UseVar3_di = true;
+                        UseVar3_si = false;
+                        divisionVar7 = (yVector_var2 << 7) / xVector_var1;
+                        directionVar5 = 1;
+                        if (yVector_var2 <= 0)
+                        {
+                            var6 = -1;
+                        }
+                        else
+                        {
+                            var6 = 1;
+                        }
+                    }
+                }
+
+
+                //seg006_1413_21C0:
+                FinalPath56.finalpath[0].X0 = CurrTileX;
+                FinalPath56.finalpath[0].Y1 = CurrTileY;
+                Pathfind.MaybePathIndexOrLength_dseg_67d6_225A = 1;
+                FinalPath56.finalpath[0].Z2 = TileVarC.floorHeight;
+
+                do
+                {
+                    if (UseVar3_di)
+                    {
+                        xVar3 += directionVar5;
+                    }
+                    else
+                    {
+                        yVar4 += directionVar5;
+                    }
+
+                    if (Pathfind.seg006_1413_2769(xVar3, yVar4))
+                    {
+                        //seg006_1413_2214    
+                        var8 += divisionVar7;
+                        if ((var8 & 0x80) != 0)
+                        {
+                            if (UseVar3_si)
+                            {
+                                xVar3 += var6;
+                            }
+                            else
+                            {
+                                yVar4 += var6;
+                            }
+                            if (Pathfind.seg006_1413_2769(xVar3, yVar4)==false)
+                            {
+                                return 0;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        return 0;
+                    }
+                } while ((xVar3 != targetX) && (yVar4 != targetY));
+
+                //seg006_1413:225C
+                var Step1 = FinalPath56.finalpath[Pathfind.MaybePathIndexOrLength_dseg_67d6_225A];
+                var Step2 = Step1.Previous();
+                var Step3 = Step2.Previous();
+
+                int varE = 0;
+                var tmp = Step2.Z2; //this may be wrong.
+                var res = Pathfind.TraverseMultipleTiles(
+                    tile1_X_arg0: Step3.X0, tile1_Y_arg2: Step3.Y1, 
+                    tile2_X_arg4: Step2.X0, tile2_Y_arg6: Step2.Y1, 
+                    tile3_X_arg8: 0, tile3_Y_argA: 0, 
+                    argC: npc.SpecialMotionHandler[4], argE: npc.SpecialMotionHandler[6], 
+                    ProbablyHeight_arg10: Step3.Z2, 
+                    arg12: ref xVar3, 
+                    PathDistanceResult_arg16: ref varE);
+                Step2.Z2 = tmp;
+                if (res)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+        }
+
+
+        static bool seg006_1413_2769(int x, int y)
+        {
+            //TODO
+            return false;
+        }
+        
 
         /// <summary>
         /// Looks like this tests if two points on the map are pathable? to each other.

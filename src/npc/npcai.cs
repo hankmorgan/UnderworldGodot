@@ -1116,7 +1116,7 @@ namespace Underworld
                             //seg006_1413_3434
                             if (Bit7Cleared_Var5 == false)
                             {
-                                goto43D2 = !seg006_1413_205B(critter.tileX, critter.tileY, targetX, targetY);
+                                goto43D2 = !(Pathfind.seg006_1413_205B(critter.tileX, critter.tileY, targetX, targetY) == 1);
                             }
                             else
                             {
@@ -1278,13 +1278,10 @@ namespace Underworld
                 }
             }
             return false;
-        }
+        }       
 
-        static bool seg006_1413_205B(int CurrTileX, int CurrTileY, int targetX, int targetY)
-        {
-            Debug.Print("TODO seg006_1413_205B");
-            return true;
-        }
+
+
 
         static void ChangeNpcHeadings(uwObject critter, int heading)
         {
