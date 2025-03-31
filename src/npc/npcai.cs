@@ -991,7 +991,8 @@ namespace Underworld
                         if (tmpSeg57_y == critter.npc_yhome)
                         {
                             //seg006_1413_31B5:
-                            MaybeReadPath(critter, indexSeg57);
+                            //MaybeReadPath(critter, indexSeg57);
+                            UpdatePathFlag_seg006_1413_2ABB(PathFind57.PathFind57Records[indexSeg57]);
                         }
                     }
                 }
@@ -1570,11 +1571,6 @@ namespace Underworld
             //seg006_1413_2BE2:
             //true if path/destination are the same tilex/y
             return (si_y == dx_pathY) && (di_x == bx_pathX);
-        }
-
-        static void MaybeReadPath(uwObject critter, int tableindex)
-        {
-            //TODO            
         }
 
         static void NPCTryToOpenDoor(uwObject critter, uwObject doorobject)

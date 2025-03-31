@@ -17,6 +17,10 @@ namespace Underworld
 
         static int[] tilewallflags = new int[] { 30, 0, 19, 21, 11, 13, 32, 32, 32, 32 };
 
+        static int[] TilePathingFlags = new int[] { 3,  2,  0,  1};
+
+        static int[] SlopePathingTypes = new int[] {6,8,7,9};
+
         public static int[] PathXOffsetTable = new int[] { 0, 1, 0, -1 };
         public static int[] PathYOffsetTable = new int[] { 1, 0, -1, 0 };
 
@@ -34,19 +38,19 @@ namespace Underworld
             Seg57Record.UNK3 = MaybePathIndexOrLength_dseg_67d6_225A;
             var index_var1 = 0;
 
-            while (index_var1< MaybePathIndexOrLength_dseg_67d6_225A)
+            while (index_var1 < MaybePathIndexOrLength_dseg_67d6_225A)
             {//seg006_1413_2A42
                 var accumualted_var3 = 0;
                 var var2 = 0;
 
-                while (var2<4)
+                while (var2 < 4)
                 {
                     //seg006_1413_2981
-                    var Seg56Record = FinalPath56.finalpath[index_var1+var2];
+                    var Seg56Record = FinalPath56.finalpath[index_var1 + var2];
                     var NextSeg56Record = Seg56Record.Next();
                     var ax = ((NextSeg56Record.X0 - Seg56Record.X0) * 3) - (NextSeg56Record.Y1 - Seg56Record.Y1);
 
-                    accumualted_var3 += (GetTilePathingRelated_dseg_67d6_BA(ax) & 0x3) << (var2<<1);
+                    accumualted_var3 += (GetTilePathingRelated_dseg_67d6_BA(ax) & 0x3) << (var2 << 1);
 
                     //seg006_1413_2A14: 
                     var2++;
@@ -56,20 +60,20 @@ namespace Underworld
                 //seg006_1413_2A23:
                 index_var1 += 4;
             }
-            
+
             //seg006_1413_2A4E:
             index_var1 = 0;
-            while (index_var1<MaybePathIndexOrLength_dseg_67d6_225A)
+            while (index_var1 < MaybePathIndexOrLength_dseg_67d6_225A)
             {
                 var var4 = 0;
                 var var2 = 0;
 
                 //seg006_1413_2A8B
-                while (var2<8)
+                while (var2 < 8)
                 {
                     //seg006_1413_2A5E:
-                    var Seg56Record =FinalPath56.finalpath[index_var1+var2];
-                    var NextSeg56Record = Seg56Record.Next();                     
+                    var Seg56Record = FinalPath56.finalpath[index_var1 + var2];
+                    var NextSeg56Record = Seg56Record.Next();
                     var4 += (NextSeg56Record.flag3 & 0x1) << var2;
 
                     var2++;
@@ -87,7 +91,7 @@ namespace Underworld
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        static int  GetTilePathingRelated_dseg_67d6_BA(int index)
+        static int GetTilePathingRelated_dseg_67d6_BA(int index)
         {
             Debug.Print($"Todo TilePathingRelated_dseg_67d6_BA({index})");
             return 0;
@@ -324,18 +328,18 @@ namespace Underworld
                                 var Height_var1F = 0;
                                 //seg006_1413_1D68:
                                 var res_var20 = TraverseMultipleTiles(
-                                    tile1_X_arg0: TileRecord_var1C.X0, tile1_Y_arg2: TileRecord_var1C.Y1, 
-                                    tile2_X_arg4: Tile2X_var1, tile2_Y_arg6: Tile2Y_var2, 
-                                    tile3_X_arg8: NeighbourTileX, tile3_Y_argA: NeighbourTileY, 
-                                    argC: npc.SpecialMotionHandler[4], argE: npc.SpecialMotionHandler[6], 
-                                    ProbablyHeight_arg10: TileRecord_var1C.Z2, arg12: ref Height_var1F, 
+                                    tile1_X_arg0: TileRecord_var1C.X0, tile1_Y_arg2: TileRecord_var1C.Y1,
+                                    tile2_X_arg4: Tile2X_var1, tile2_Y_arg6: Tile2Y_var2,
+                                    tile3_X_arg8: NeighbourTileX, tile3_Y_argA: NeighbourTileY,
+                                    argC: npc.SpecialMotionHandler[4], argE: npc.SpecialMotionHandler[6],
+                                    ProbablyHeight_arg10: TileRecord_var1C.Z2, arg12: ref Height_var1F,
                                     PathDistanceResult_arg16: ref ProbablyPathDistance_var1E);
 
                                 //seg006_1413_1DBA
                                 var var21 = false;
                                 if (NeighbourPathTile.X0 == 0)
                                 {
-                                    var21 = true; 
+                                    var21 = true;
                                 }
 
                                 if (res_var20)
@@ -344,13 +348,13 @@ namespace Underworld
                                     if (!var21)
                                     {
                                         //seg006_1413:1DCC 
-                                        if (TileRecord_var1C.unk4< NeighbourPathTile.unk4)
+                                        if (TileRecord_var1C.unk4 < NeighbourPathTile.unk4)
                                         {
-                                            if(Math.Abs(Height_var1F - TargetFloorHeight_argA) < Math.Abs(NeighbourPathTile.Z2-TargetFloorHeight_argA))
+                                            if (Math.Abs(Height_var1F - TargetFloorHeight_argA) < Math.Abs(NeighbourPathTile.Z2 - TargetFloorHeight_argA))
                                             {
                                                 Run1E0D = true;
                                             }
-                                        }                                       
+                                        }
                                     }
                                     else
                                     {
@@ -378,11 +382,11 @@ namespace Underworld
                                         {
                                             var tmp = NeighbourPathTile.Z2;
                                             var res = TraverseMultipleTiles(
-                                                tile1_X_arg0: Tile2X_var1, tile1_Y_arg2: Tile2Y_var2, 
-                                                tile2_X_arg4: NeighbourTileX, tile2_Y_arg6: NeighbourTileY, 
-                                                tile3_X_arg8: 0, tile3_Y_argA: 0, 
-                                                argC: npc.SpecialMotionHandler[4], argE: npc.SpecialMotionHandler[6], 
-                                                ProbablyHeight_arg10: NeighbourPathTile.Z2, 
+                                                tile1_X_arg0: Tile2X_var1, tile1_Y_arg2: Tile2Y_var2,
+                                                tile2_X_arg4: NeighbourTileX, tile2_Y_arg6: NeighbourTileY,
+                                                tile3_X_arg8: 0, tile3_Y_argA: 0,
+                                                argC: npc.SpecialMotionHandler[4], argE: npc.SpecialMotionHandler[6],
+                                                ProbablyHeight_arg10: NeighbourPathTile.Z2,
                                                 arg12: ref tmp, PathDistanceResult_arg16: ref ProbablyPathDistance_var1E);
                                             NeighbourPathTile.Z2 = tmp;
 
@@ -390,8 +394,8 @@ namespace Underworld
                                             {
                                                 //a valid path has been found. save it and return true
                                                 StorePath(
-                                                    arg0: MaybePathPathLength_var1D, 
-                                                    targetXarg2: TargetTileX_arg6, 
+                                                    arg0: MaybePathPathLength_var1D,
+                                                    targetXarg2: TargetTileX_arg6,
                                                     targetYArg4: TargetTileY_arg8);
                                                 return true;
                                             }
@@ -432,6 +436,92 @@ namespace Underworld
 
         public static bool TraverseMultipleTiles(int tile1_X_arg0, int tile1_Y_arg2, int tile2_X_arg4, int tile2_Y_arg6, int tile3_X_arg8, int tile3_Y_argA, int argC, int argE, int ProbablyHeight_arg10, ref int arg12, ref int PathDistanceResult_arg16)
         {
+            var var17 = 0;
+            var var18 = 0;
+            var var21 = 0;
+            TraverseRelated_dseg_67d6_224B = 0;
+            var tile1 = UWTileMap.current_tilemap.Tiles[tile1_X_arg0, tile1_Y_arg2];
+            var tile2 = UWTileMap.current_tilemap.Tiles[tile2_X_arg4, tile2_Y_arg6];
+            var tile3 = UWTileMap.current_tilemap.Tiles[tile3_X_arg8, tile3_Y_argA];
+            var tile2type = tile2.tileType;
+            var tile3type = tile3.tileType;
+            var tile2terrain = TerrainDatLoader.GetTerrainTypeNo(tile2);
+            var tile3terrain = TerrainDatLoader.GetTerrainTypeNo(tile3);
+
+            if (tile1_X_arg0 == 0)
+            {
+                arg12 = ProbablyHeight_arg10;
+                var var14 = tile3.floorHeight;
+
+                if ((tile3_X_arg8 > tile2_X_arg4) && ((tilewallflags[tile3type] & 2) != 0))
+                {
+                    return false;
+                }
+
+                if ((tile3_X_arg8 < tile2_X_arg4) && ((tilewallflags[tile3type] & 4) != 0))
+                {
+                    return false;
+                }
+
+                if ((tile3_Y_argA > tile2_Y_arg6) && ((tilewallflags[tile3type] & 8) != 0))
+                {
+                    return false;
+                }
+
+                if ((tile3_Y_argA < tile2_Y_arg6) && ((tilewallflags[tile3type] & 0x10) != 0))
+                {
+                    return false;
+                }
+
+                if ((tile3_X_arg8 > tile2_X_arg4) && ((tilewallflags[tile2type] & 0x4) != 0))
+                {
+                    return false;
+                }
+
+                if ((tile3_X_arg8 < tile2_X_arg4) && ((tilewallflags[tile2type] & 0x2) != 0))
+                {
+                    return false;
+                }
+
+                if ((tile3_Y_argA > tile2_Y_arg6) && ((tilewallflags[tile2type] & 0x10) != 0))
+                {
+                    return false;
+                }
+
+                if ((tile3_Y_argA < tile2_Y_arg6) && ((tilewallflags[tile2type] & 0x8) != 0))
+                {
+                    return false;
+                }
+
+                if ((argC & 0x1000) == 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    if ((tile3type >= 6) && (tile3type <= 9))
+                    {
+                        var idx = ((tile3_X_arg8 - tile2_X_arg4) * 3) - (tile3_Y_argA - tile2_Y_arg6);
+                        var bx = TilePathingFlags[4 + idx];//This may be wrong!
+                        if (SlopePathingTypes[bx] != tile3type)
+                        {
+                            var14++;
+                        }                        
+                    }
+                    if (var14<=ProbablyHeight_arg10+1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+
+            }
 
             return false;
         }
@@ -571,7 +661,7 @@ namespace Underworld
                             {
                                 yVar4 += var6;
                             }
-                            if (Pathfind.seg006_1413_2769(xVar3, yVar4)==false)
+                            if (Pathfind.seg006_1413_2769(xVar3, yVar4) == false)
                             {
                                 return 0;
                             }
@@ -591,12 +681,12 @@ namespace Underworld
                 int varE = 0;
                 var tmp = Step2.Z2; //this may be wrong.
                 var res = Pathfind.TraverseMultipleTiles(
-                    tile1_X_arg0: Step3.X0, tile1_Y_arg2: Step3.Y1, 
-                    tile2_X_arg4: Step2.X0, tile2_Y_arg6: Step2.Y1, 
-                    tile3_X_arg8: 0, tile3_Y_argA: 0, 
-                    argC: npc.SpecialMotionHandler[4], argE: npc.SpecialMotionHandler[6], 
-                    ProbablyHeight_arg10: Step3.Z2, 
-                    arg12: ref xVar3, 
+                    tile1_X_arg0: Step3.X0, tile1_Y_arg2: Step3.Y1,
+                    tile2_X_arg4: Step2.X0, tile2_Y_arg6: Step2.Y1,
+                    tile3_X_arg8: 0, tile3_Y_argA: 0,
+                    argC: npc.SpecialMotionHandler[4], argE: npc.SpecialMotionHandler[6],
+                    ProbablyHeight_arg10: Step3.Z2,
+                    arg12: ref xVar3,
                     PathDistanceResult_arg16: ref varE);
                 Step2.Z2 = tmp;
                 if (res)
@@ -616,7 +706,7 @@ namespace Underworld
             //TODO
             return false;
         }
-        
+
 
         /// <summary>
         /// Looks like this tests if two points on the map are pathable? to each other.
