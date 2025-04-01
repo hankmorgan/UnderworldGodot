@@ -527,7 +527,7 @@ namespace Underworld
                     StandStillGoal(critter);
                     break;
                 case 1: //goto
-                    NPC_Goto(
+                    NPC_Goto(4
                         critter: critter,
                         targetX: currObjQualityX,
                         targetY: currObjOwnerY,
@@ -536,6 +536,9 @@ namespace Underworld
                 //and so on
                 case 2:
                     NPCWanderUpdate(critter);
+                    break;
+                case 12://stand at location
+                    Debug.Print("TODO GOAL 12");
                     break;
             }
 

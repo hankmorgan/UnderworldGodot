@@ -52,7 +52,7 @@ namespace Underworld
                     var NextSeg56Record = Seg56Record.Next();
                     var ax = ((NextSeg56Record.X0 - Seg56Record.X0) * 3) - (NextSeg56Record.Y1 - Seg56Record.Y1);
 
-                    accumualted_var3 += (GetTilePathingRelated_dseg_67d6_BA(ax) & 0x3) << (var2 << 1);
+                    accumualted_var3 += (TilePathingFlags[4+ax] & 0x3) << (var2 << 1);
 
                     //seg006_1413_2A14: 
                     var2++;
@@ -86,17 +86,6 @@ namespace Underworld
 
                 index_var1 += 8;
             }
-        }
-
-        /// <summary>
-        /// Placeholder to look up a table using possibly negative values
-        /// </summary>
-        /// <param name="index"></param>
-        /// <returns></returns>
-        static int GetTilePathingRelated_dseg_67d6_BA(int index)
-        {
-            Debug.Print($"Todo TilePathingRelated_dseg_67d6_BA({index})");
-            return 0;
         }
 
         public static bool PathFindBetweenTiles(uwObject critter, int currTileX_arg0, int currTileY_arg2, int CurrFloorHeight_arg4, int TargetTileX_arg6, int TargetTileY_arg8, int TargetFloorHeight_argA, int LikelyRangeArgC)
@@ -406,7 +395,7 @@ namespace Underworld
                                             {
                                                 //a valid path has been found. save it and return true
                                                 StorePath(
-                                                    arg0: MaybePathPathLength_var1D,
+                                                    MaybeLength_Arg0: MaybePathPathLength_var1D,
                                                     targetXarg2: TargetTileX_arg6,
                                                     targetYArg4: TargetTileY_arg8);
                                                 return true;
@@ -1156,9 +1145,25 @@ namespace Underworld
             }
         }
 
-        static void StorePath(int arg0, int targetXarg2, int targetYArg4)
+        static void StorePath(int MaybeLength_Arg0, int targetXarg2, int targetYArg4)
         {
+            MaybePathIndexOrLength_dseg_67d6_225A = MaybeLength_Arg0 + 1;
+            var EndPath56 = FinalPath56.finalpath[MaybeLength_Arg0].Next();
+            EndPath56.X0 = targetXarg2;
+            EndPath56.Y1 = targetYArg4;
+            FinalPath56.finalpath[0].flag3 = 0;
 
+            var cl = MaybeLength_Arg0 + 1;
+            while (cl>0)
+            {
+                var clPath56 = FinalPath56.finalpath[cl];
+                var pathtile = PathFindingData49.pathfindtiles[clPath56.X0, clPath56.Y1];
+                var PreviousClPath = clPath56.Previous();
+                PreviousClPath.X0 = pathtile.X0;
+                PreviousClPath.Y1 = pathtile.Y1;                
+                clPath56.Z2 = pathtile.Z2;
+                cl--;
+            }
         }
 
 
