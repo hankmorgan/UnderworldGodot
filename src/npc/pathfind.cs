@@ -1,7 +1,4 @@
 using System;
-using System.Diagnostics;
-using System.Net.Sockets;
-using System.Runtime.CompilerServices;
 
 namespace Underworld
 {
@@ -1282,7 +1279,7 @@ namespace Underworld
                         yVar4 += directionVar5;
                     }
 
-                    if (Pathfind.seg006_1413_2769(xVar3, yVar4))
+                    if (Pathfind.TestPathTraverse_seg006_1413_2769(critter, xVar3, yVar4))
                     {
                         //seg006_1413_2214    
                         var8 += divisionVar7;
@@ -1296,7 +1293,7 @@ namespace Underworld
                             {
                                 yVar4 += var6;
                             }
-                            if (Pathfind.seg006_1413_2769(xVar3, yVar4) == false)
+                            if (Pathfind.TestPathTraverse_seg006_1413_2769(critter, xVar3, yVar4) == false)
                             {
                                 return 0;
                             }
@@ -1337,10 +1334,81 @@ namespace Underworld
         }
 
 
-        static bool seg006_1413_2769(int x, int y)
+        /// <summary>
+        /// Looks like it checks the 3 tiles in the path if they are traversable.
+        /// </summary>
+        /// <param name="critter"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        static bool TestPathTraverse_seg006_1413_2769(uwObject critter, int x, int y)
         {
-            //TODO
-            return false;
+            MaybeMaxTravelDistance_dseg_67d6_2272 = 0;
+            var path56 = FinalPath56.finalpath[MaybePathIndexOrLength_dseg_67d6_225A];
+            path56.X0 = x;
+            path56.Y1 = y;
+            MaybePathIndexOrLength_dseg_67d6_225A++;
+
+            if (MaybePathIndexOrLength_dseg_67d6_225A <= 0x3F)
+            {
+                //seg006_1413_27B1:
+                if (MaybePathIndexOrLength_dseg_67d6_225A == 2)
+                {
+                    //"trivial" case!
+                    var height1 = FinalPath56.finalpath[1].Z2;
+                    var var2 = 0;
+                    var CanTraverse_var1 = TraverseMultipleTiles(
+                        critter: critter, 
+                        tile1_X_arg0: FinalPath56.finalpath[0].X0, tile1_Y_arg2: FinalPath56.finalpath[0].Y1, 
+                        tile2_X_arg4: FinalPath56.finalpath[1].X0, tile2_Y_arg6: FinalPath56.finalpath[1].Y1, 
+                        tile3_X_arg8: FinalPath56.finalpath[2].X0, tile3_Y_argA: FinalPath56.finalpath[2].Y1, 
+                        argC: npc.SpecialMotionHandler[4], argE: npc.SpecialMotionHandler[6], 
+                        ProbablyHeight_arg10: FinalPath56.finalpath[0].Z2, arg12: ref height1, 
+                        PathDistanceResult_arg16: ref var2);
+                    FinalPath56.finalpath[1].Z2 = height1;
+
+                    if (CanTraverse_var1)
+                    {
+                        return !TraverseRelated_dseg_67d6_224B;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    //seg006_1413_2828:
+                    var Prev1 = path56.Previous(); //record -1
+                    var Prev2 = Prev1.Previous(); //record -2
+                    var Prev3 = Prev2.Previous(); //record -3
+                    var var2 = 0;
+                    var height = Prev2.Z2;
+                    //I will need to check if these params are all correct!
+                    var CanTraverse_var1 = TraverseMultipleTiles(
+                        critter: critter, 
+                        tile1_X_arg0: Prev3.X0, tile1_Y_arg2: Prev3.Y1, 
+                        tile2_X_arg4: Prev2.X0, tile2_Y_arg6: Prev2.Y1, 
+                        tile3_X_arg8: Prev1.X0, tile3_Y_argA: Prev1.Y1, 
+                        argC: npc.SpecialMotionHandler[4], argE: npc.SpecialMotionHandler[6], 
+                        ProbablyHeight_arg10: Prev3.Z2, arg12: ref height, 
+                        PathDistanceResult_arg16: ref var2);
+                    Prev2.Z2 = height;
+
+                    if (CanTraverse_var1 == true)
+                    {
+                        return !TraverseRelated_dseg_67d6_224B;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                return false;//path too long.
+            }
         }
 
 
