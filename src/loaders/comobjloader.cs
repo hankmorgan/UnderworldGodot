@@ -46,6 +46,11 @@ namespace Underworld
             return (int)(x>>4 & 0xFFF);
         }
 
+        /// <summary>
+        /// Maybe related to collision
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <returns></returns>
         public static bool UnknownFlag3_1(int item_id)
         {//bit 1 at +3
             return ((buffer[PTR(item_id) + 3] >>1) & 0x1)==1;

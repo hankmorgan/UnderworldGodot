@@ -347,53 +347,7 @@ namespace Underworld
                 objList: UWTileMap.current_tilemap.LevelObjects, 
                 lorecheckresult: 3);
         }
-
-        // public static void DamageDoor(uwObject doorobject, int damage, int damagesource)
-        // {
-        //     var doorcontrol = (door)doorobject.instance;
-        //     if (doorobject.classindex<=7)
-        //     {
-        //         var qualityclass = commonObjDat.qualityclass(doorobject.item_id);
-        //         if (qualityclass != 3)
-        //         {
-        //             damage >>= qualityclass;
-        //             Debug.Print($"Final door damage is {damage}");
-
-        //             if (damage>0)
-        //             {
-        //                 var finalquality = Math.Max(0, doorobject.quality-damage);
-        //                 if (doorobject.classindex<=7)
-        //                 {//closed doors
-        //                     if (doorobject.owner)                       
-
-        //                     Debug.Print($"Door quality is now {finalquality}");
-        //                     doorobject.quality = (short)finalquality;
-        //                     if ()
-        //                 }
-                         
-        //                 if (finalquality==0)
-        //                 {
-        //                     trigger.TriggerObjectLink(
-        //                         character: damagesource, 
-        //                         ObjectUsed: doorobject, 
-        //                         triggerType: (int)triggerObjectDat.triggertypes.USE, 
-        //                         triggerX: doorobject.tileX, 
-        //                         triggerY: doorobject.tileY, 
-        //                         objList: UWTileMap.current_tilemap.LevelObjects);
-
-        //                     a_lock.SetIsLocked(doorobject, false, 0);
-        //                     //doorcontrol.Locked=false;
-        //                     OpenDoor(doorcontrol);                                
-        //                 }
-        //             }
-        //         }
-        //         else
-        //         {
-        //             Debug.Print("invulnerable door");
-        //         }
-        //     }
-        // }
-
+        
 
         //******************************RENDERING INFO**********************************/
         public override Vector3[] ModelVertices()

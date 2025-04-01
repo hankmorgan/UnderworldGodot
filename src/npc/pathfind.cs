@@ -1,5 +1,7 @@
 using System;
 using System.Diagnostics;
+using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 
 namespace Underworld
 {
@@ -12,12 +14,12 @@ namespace Underworld
         public static int MaybeMaxTravelDistance_dseg_67d6_2272;
         public static int MaybePathIndexOrLength_dseg_67d6_225A;
 
-        static int TraverseRelated_dseg_67d6_224B;
+        static bool TraverseRelated_dseg_67d6_224B;
 
 
         static int[] tilewallflags = new int[] { 30, 0, 19, 21, 11, 13, 32, 32, 32, 32 };
 
-        static int[] TilePathingFlags = new int[] { 3, 2, 0, 1 };
+        static int[] TilePathingFlags = new int[] { 0xFF, 3, 0xFF, 2, 0xFF, 0, 0xFF, 1, 0xFF };
 
         static int[] SlopePathingTypes = new int[] { 6, 8, 7, 9 };
 
@@ -97,7 +99,7 @@ namespace Underworld
             return 0;
         }
 
-        public static bool PathFindBetweenTiles(int currTileX_arg0, int currTileY_arg2, int CurrFloorHeight_arg4, int TargetTileX_arg6, int TargetTileY_arg8, int TargetFloorHeight_argA, int LikelyRangeArgC)
+        public static bool PathFindBetweenTiles(uwObject critter, int currTileX_arg0, int currTileY_arg2, int CurrFloorHeight_arg4, int TargetTileX_arg6, int TargetTileY_arg8, int TargetFloorHeight_argA, int LikelyRangeArgC)
         {
             var MaybePathPathLength_var1D = 0;
             MaybeMaxTravelDistance_dseg_67d6_2272 = LikelyRangeArgC;
@@ -244,6 +246,7 @@ namespace Underworld
                     var tmp = NeighbourPathTile.Z2;//out value from travers
                     //seg006_1413_1BC8:
                     var res = TraverseMultipleTiles(
+                        critter: critter,
                         tile1_X_arg0: 0, tile1_Y_arg2: 0,
                         tile2_X_arg4: currTileX_arg0, tile2_Y_arg6: currTileY_arg2,
                         tile3_X_arg8: NeighbourTileX, tile3_Y_argA: NeighbourTileY,
@@ -328,6 +331,7 @@ namespace Underworld
                                 var Height_var1F = 0;
                                 //seg006_1413_1D68:
                                 var res_var20 = TraverseMultipleTiles(
+                                    critter: critter,
                                     tile1_X_arg0: TileRecord_var1C.X0, tile1_Y_arg2: TileRecord_var1C.Y1,
                                     tile2_X_arg4: Tile2X_var1, tile2_Y_arg6: Tile2Y_var2,
                                     tile3_X_arg8: NeighbourTileX, tile3_Y_argA: NeighbourTileY,
@@ -368,7 +372,14 @@ namespace Underworld
                                         NeighbourPathTile.Z2 = Height_var1F;
                                         NeighbourPathTile.unk4 = MaybePathPathLength_var1D + 1;
                                         NeighbourPathTile.unk3_bit1_7 = ProbablyPathDistance_var1E & 0x7F;
-                                        TileRecord_var1C.unk3_bit0 = TraverseRelated_dseg_67d6_224B & 0x1;
+                                        if (TraverseRelated_dseg_67d6_224B)
+                                        {
+                                            TileRecord_var1C.unk3_bit0 = 1;
+                                        }
+                                        else
+                                        {
+                                            TileRecord_var1C.unk3_bit0 = 0;
+                                        }
 
                                         if (!var21)
                                         {
@@ -382,6 +393,7 @@ namespace Underworld
                                         {
                                             var tmp = NeighbourPathTile.Z2;
                                             var res = TraverseMultipleTiles(
+                                                critter: critter,
                                                 tile1_X_arg0: Tile2X_var1, tile1_Y_arg2: Tile2Y_var2,
                                                 tile2_X_arg4: NeighbourTileX, tile2_Y_arg6: NeighbourTileY,
                                                 tile3_X_arg8: 0, tile3_Y_argA: 0,
@@ -434,14 +446,16 @@ namespace Underworld
         }
 
 
-        public static bool TraverseMultipleTiles(int tile1_X_arg0, int tile1_Y_arg2, int tile2_X_arg4, int tile2_Y_arg6, int tile3_X_arg8, int tile3_Y_argA, int argC, int argE, int ProbablyHeight_arg10, ref int arg12, ref int PathDistanceResult_arg16)
+        public static bool TraverseMultipleTiles(uwObject critter, int tile1_X_arg0, int tile1_Y_arg2, int tile2_X_arg4, int tile2_Y_arg6, int tile3_X_arg8, int tile3_Y_argA, int argC, int argE, int ProbablyHeight_arg10, ref int arg12, ref int PathDistanceResult_arg16)
         {
-            var var14 = 0;
-            var var16 = 0;
-            var var17 = 0;
-            var var18 = 0;
-            var var21 = 0;
-            TraverseRelated_dseg_67d6_224B = 0;
+            var TallestHeight_Tile1_2_var13 = 0;
+            var TallestHeight_Tile2_3_var14 = 0;
+            var TallestHeight_Tile2_3_var15 = 0;
+            var ObjectHeight_var16 = 0;
+            var var17 = false;
+            var var18 = false;
+            var TestedDoors_var21 = false;
+            TraverseRelated_dseg_67d6_224B = false;
             var tile1 = UWTileMap.current_tilemap.Tiles[tile1_X_arg0, tile1_Y_arg2];
             var tile2 = UWTileMap.current_tilemap.Tiles[tile2_X_arg4, tile2_Y_arg6];
             var tile3 = UWTileMap.current_tilemap.Tiles[tile3_X_arg8, tile3_Y_argA];
@@ -449,12 +463,13 @@ namespace Underworld
             var tile3type = tile3.tileType;
             var tile2terrain = TerrainDatLoader.GetTerrainTypeNo(tile2);
             var tile3terrain = TerrainDatLoader.GetTerrainTypeNo(tile3);
+            var si = 0;
 
             if (tile1_X_arg0 == 0)
             {
                 //seg006_1413_E57:
                 arg12 = ProbablyHeight_arg10;
-                var14 = tile3.floorHeight;
+                TallestHeight_Tile2_3_var14 = tile3.floorHeight;
 
                 if ((tile3_X_arg8 > tile2_X_arg4) && ((tilewallflags[tile3type] & 2) != 0))
                 {
@@ -504,14 +519,14 @@ namespace Underworld
                 {
                     if ((tile3type >= 6) && (tile3type <= 9))
                     {
-                        var idx = ((tile3_X_arg8 - tile2_X_arg4) * 3) - (tile3_Y_argA - tile2_Y_arg6);
+                        var idx = ((tile3_X_arg8 - tile2_X_arg4) * 3) - (tile3_Y_argA - tile2_Y_arg6); // should only return 1,-1 (yaxis), 3,-3(xaxis) in a cross pattern
                         var bx = TilePathingFlags[4 + idx];//This may be wrong!
                         if (SlopePathingTypes[bx] != tile3type)
                         {
-                            var14++;
+                            TallestHeight_Tile2_3_var14++;
                         }
                     }
-                    if (var14 <= ProbablyHeight_arg10 + 1)
+                    if (TallestHeight_Tile2_3_var14 <= ProbablyHeight_arg10 + 1)
                     {
                         return true;
                     }
@@ -523,6 +538,7 @@ namespace Underworld
             }
             else
             {
+
                 //seg006_1413_FAA:
                 if (tile3_X_arg8 != 0)
                 {
@@ -612,18 +628,453 @@ namespace Underworld
 
                     //NoBlockingTiles_seg006_1413_1192:?
 
-                    //resume here
-                    
-
                     var next = tile2.indexObjectList;
                     //jmp     LoopObjectsNoBlockingTiles_seg006_1413_140B
-                    while ((next != 0) || (var16 == 0))
+                    while ((next != 0) || (ObjectHeight_var16 == 0))
                     {
                         var obj = UWTileMap.current_tilemap.LevelObjects[next];
+                        if ((obj.majorclass == 5) && (obj.minorclass == 0) && (obj.classindex < 8))
+                        {
+                            // is a closed door
+                            if (npc.CharacterDoorLockAndKeyInteraction(critter, obj, 0) == 0)
+                            {
+                                //seg006_1413_1216:
+                                var DoorHeading_var22 = obj.heading;
+                                var DoorXPos_var23 = obj.xpos;
+                                var DoorYPos_var24 = obj.ypos;
+                                if (TestedDoors_var21 == false)
+                                {
+                                    if (tile1_X_arg0 >= tile2_X_arg4)
+                                    {
+                                        //seg006_1413_1274:
+                                        if (tile1_X_arg0 <= tile2_X_arg4)
+                                        {
+                                            //seg006_1413_129B
+                                            if (tile1_Y_arg2 >= tile2_Y_arg6)
+                                            {
+                                                //seg006_1413_12C2:
+                                                if (tile2_X_arg4 >= tile3_X_arg8)
+                                                {
+                                                    //seg006_1413_12CF:
+                                                    if (tile2_X_arg4 <= tile3_X_arg8)
+                                                    {
+                                                        //seg006_1413_12DC:
+                                                        si = 0xA;
+                                                    }
+                                                    else
+                                                    {
+                                                        si = 9;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    si = 0xB;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                //seg006_1413:12A3
+                                                if (tile2_X_arg4 >= tile3_X_arg8)
+                                                {
+                                                    //seg006_1413_12B0:
+                                                    if (tile2_X_arg4 <= tile3_X_arg8)
+                                                    {
+                                                        //seg006_1413_12BD:
+                                                        si = 7;
+                                                    }
+                                                    else
+                                                    {
+                                                        si = 6;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    si = 8;
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            //seg006_1413:127C
+                                            if (tile2_Y_arg6 >= tile3_Y_argA)
+                                            {
+                                                //seg006_1413_1289
+                                                if (tile2_Y_arg6 <= tile3_Y_argA)
+                                                {
+                                                    //seg006_1413_1296: 
+                                                    si = 4;
+                                                }
+                                                else
+                                                {
+                                                    si = 5;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                si = 3;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        //seg006_1413:1256
+                                        if (tile2_Y_arg6 >= tile3_Y_argA)
+                                        {
+                                            //seg006_1413_1262:
+                                            if (tile2_Y_arg6 <= tile3_Y_argA)
+                                            {
+                                                //seg006_1413_126F:
+                                                si = 1;
+                                            }
+                                            else
+                                            {
+                                                si = 2;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            si = 0;
+                                        }
+                                    }
+                                    TestedDoors_var21 = true;
+                                }
 
+                                //seg006_1413_12E3:
+                                switch (si)
+                                {
+
+                                    case 0:
+                                    case 9:
+                                        {
+                                            if (DoorHeading_var22 == 0)
+                                            {
+                                                //seg006_1413_1326:
+                                                if (DoorYPos_var24 > 3)
+                                                {
+                                                    return false;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (DoorHeading_var22 == 1)
+                                                {
+                                                    return false;
+                                                }
+                                                if (DoorHeading_var22 == 2)
+                                                {
+                                                    //seg006_1413_1339: 
+                                                    if (DoorXPos_var23 < 4)
+                                                    {
+                                                        return false;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        break;
+                                    case 1:
+                                    case 4:
+                                        {
+                                            if (DoorHeading_var22 != 0)
+                                            {
+                                                return false;
+                                            }
+                                        }
+                                        break;
+                                    case 2:
+                                    case 6:
+                                        {
+                                            if (DoorHeading_var22 != 0)
+                                            {
+                                                if (DoorHeading_var22 == 2)
+                                                {
+                                                    //seg006_1413_136B:
+                                                    if (DoorXPos_var23 < 4)
+                                                    {
+                                                        return false;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    if (DoorHeading_var22 == 3)
+                                                    {
+                                                        return false;
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                //seg006_1413_135D: 
+                                                if (DoorYPos_var24 < 4)
+                                                {
+                                                    return false;
+                                                }
+                                            }
+                                        }
+                                        break;
+                                    case 3:
+                                    case 11:
+                                        {
+                                            if (DoorHeading_var22 == 0)
+                                            {
+                                                //seg006_1413_1393:
+                                                if (DoorYPos_var24 > 3)
+                                                {
+                                                    return false;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (DoorHeading_var22 == 2)
+                                                {
+                                                    //seg006_1413_139E:
+                                                    if (DoorXPos_var23 > 3)
+                                                    {
+                                                        return false;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    if (DoorHeading_var22 == 3)
+                                                    {
+                                                        return false;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        break;
+                                    case 5:
+                                    case 8:
+                                        {
+                                            if (DoorHeading_var22 == 0)
+                                            {
+                                                if (DoorYPos_var24 < 4)
+                                                {
+                                                    return false;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (DoorXPos_var23 == 1)
+                                                {
+                                                    return false;
+                                                }
+                                                if (DoorHeading_var22 == 2)
+                                                {
+                                                    if (DoorXPos_var23 > 3)
+                                                    {
+                                                        return false;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        break;
+                                    case 7:
+                                    case 10:
+                                        {
+                                            if (DoorHeading_var22 != 2)
+                                            {
+                                                return false;
+                                            }
+                                        }
+                                        break;
+                                }
+
+                            }
+                        }
+                        else
+                        {
+                            //not a closed door
+                            if (commonObjDat.UnknownFlag3_1(obj.item_id))
+                            {
+                                ObjectHeight_var16 = commonObjDat.height(obj.item_id) + obj.zpos;
+                            }
+                        }
 
                         //NEXT_seg006_1413_1402
                         next = obj.next;
+                    }
+                    //AfterLoop_seg006_1413_142A:
+                    if ((argC & 0x1000) != 0)
+                    {
+                        // seg006_1413_144A
+                        TallestHeight_Tile1_2_var13 = Math.Max(tile1.floorHeight, tile2.floorHeight);
+                        TallestHeight_Tile2_3_var14 = Math.Max(tile2.floorHeight, tile3.floorHeight);
+                        TallestHeight_Tile2_3_var15 = TallestHeight_Tile2_3_var14;
+                        TallestHeight_Tile1_2_var13 = Math.Max(ProbablyHeight_arg10, TallestHeight_Tile1_2_var13);
+
+
+                        //seg006_1413_14CC:
+                        if ((tile3type >= 6) && (tile3type <= 9))
+                        {
+                            var idx = ((tile3_X_arg8 - tile2_X_arg4) * 3) - (tile3_Y_argA - tile2_Y_arg6);
+                            var bx = TilePathingFlags[4 + idx];//This may be wrong!
+                            if (SlopePathingTypes[bx] != tile3type)
+                            {
+                                TallestHeight_Tile2_3_var14++;
+                            }
+                        }
+
+                        //seg006_1413_151A:
+                        var tallest = Math.Max(TallestHeight_Tile1_2_var13, TallestHeight_Tile2_3_var14);
+
+                        if (npc.currObjHeight + (tallest << 3) <= 0x7F)
+                        {
+                            //seg006_1413_1531:
+                            if (TallestHeight_Tile1_2_var13 <= TallestHeight_Tile2_3_var14 + 1)
+                            {
+                                //seg006_1413:1540
+                                if (TallestHeight_Tile1_2_var13 <= ObjectHeight_var16 + 1)
+                                {
+                                    //seg006_1413_1585:
+                                    TallestHeight_Tile2_3_var14 = ObjectHeight_var16;
+                                    TallestHeight_Tile2_3_var15 = ObjectHeight_var16;
+                                    var18 = true;
+                                    //jump seg006_1413_15AE:
+                                }
+                                else
+                                {
+                                    //seg006_1413:154F
+                                    var17 = true;
+                                    if (TallestHeight_Tile2_3_var14 <= ObjectHeight_var16)
+                                    {
+                                        //seg006_1413_155D
+                                        arg12 = ObjectHeight_var16;
+                                    }
+                                    else
+                                    {
+                                        arg12 = TallestHeight_Tile2_3_var14;
+                                    }
+                                    PathDistanceResult_arg16 = TallestHeight_Tile1_2_var13 - arg12 - 1;
+                                    if (PathDistanceResult_arg16 > MaybeMaxTravelDistance_dseg_67d6_2272)
+                                    {
+                                        return false;
+                                    }
+                                    //else jump seg006_1413_15AE:
+                                }
+                            }
+                            else
+                            {
+                                //seg006_1413_1590:
+                                if ((ObjectHeight_var16 != 0) && (TallestHeight_Tile1_2_var13 >= ObjectHeight_var16))
+                                {
+                                    if (TallestHeight_Tile1_2_var13 <= ObjectHeight_var16 + 1)
+                                    {
+                                        var18 = true;
+                                    }
+                                }
+                            }
+
+                            //seg006_1413_15AE:
+                            if (TallestHeight_Tile2_3_var14 > TallestHeight_Tile1_2_var13 + 1)
+                            {
+                                return false;
+                            }
+
+                            //seg006_1413_15C2:
+                            if (
+                                (TallestHeight_Tile1_2_var13 > tile2.floorHeight + 1)
+                                &&
+                                (var17 == false)
+                                &&
+                                (var18 == false)
+                            )
+                            {
+                                //seg006_1413_15F4:
+                                if ((argC & (8 << tile2terrain)) != 0)
+                                {
+                                    return false;
+                                }
+                                //seg006_1413_1606:
+                                if (
+                                    ((argE & (8 << tile3terrain)) != 0)
+                                    &&
+                                    (PathDistanceResult_arg16 + 2 >= MaybeMaxTravelDistance_dseg_67d6_2272)
+                                    )
+                                {
+                                    return false;
+                                }
+
+                                //seg006_1413_162C:
+                                if (TallestHeight_Tile1_2_var13 > ObjectHeight_var16 + 1)
+                                {
+                                    arg12 = TallestHeight_Tile1_2_var13;
+                                    if (TallestHeight_Tile1_2_var13 < TallestHeight_Tile2_3_var14)
+                                    {
+                                        return false;
+                                    }
+                                    if (critterObjectDat.unk0xA_5(critter.item_id) == false)
+                                    {
+                                        return false;
+                                    }
+                                    PathDistanceResult_arg16++;
+                                    if (PathDistanceResult_arg16 < MaybeMaxTravelDistance_dseg_67d6_2272)
+                                    {
+                                        TraverseRelated_dseg_67d6_224B = true;
+                                        return true;
+                                    }
+                                    else
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                //seg006_1413_1688:
+                                if (
+                                    (((argC) & (8 << tile2terrain)) != 0)
+                                    &&
+                                    var18 == false
+                                    )
+                                {
+                                    //seg006_1413:169E
+                                    if ((argC & (8 << tile3terrain)) != 0)
+                                    {
+                                        return false;
+                                    }
+                                    //seg006_1413_16AF
+                                    if ((argE & (8 << tile3terrain)) == 0)
+                                    {
+                                        PathDistanceResult_arg16 += 2;
+                                        if (PathDistanceResult_arg16 > MaybeMaxTravelDistance_dseg_67d6_2272)
+                                        {
+                                            return false;
+                                        }
+                                    }
+                                    //seg006_1413_16D4:
+                                    if (critterObjectDat.unk0xA_5(critter.item_id) == false)
+                                    {
+                                        return false;
+                                    }
+                                    //seg006_1413_16E8:
+                                    PathDistanceResult_arg16++;
+                                    if (PathDistanceResult_arg16 < MaybeMaxTravelDistance_dseg_67d6_2272)
+                                    {
+                                        TraverseRelated_dseg_67d6_224B = true;
+                                        return true;
+                                    }
+                                    else
+                                    {
+                                        return false;
+                                    }
+                                }
+
+                            }
+
+                            //seg006_1413_1708:
+                            arg12 = TallestHeight_Tile2_3_var15;
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        //seg006_1413:1432
+                        arg12 = 0x10 - (npc.currObjHeight + 3) >> 2;
+                        return true;
                     }
                 }
                 else
@@ -638,59 +1089,56 @@ namespace Underworld
                     {
                         //LoopObjectsArgC_seg006_1413_1026:
                         var next = tile2.indexObjectList;
-                        while ((next != 0) && (var16 == 0))
+                        while ((next != 0) && (ObjectHeight_var16 == 0))
                         {
                             var obj = UWTileMap.current_tilemap.LevelObjects[next];
                             if (commonObjDat.UnknownFlag3_1(obj.item_id))
                             {
-                                var16 = (obj.zpos + commonObjDat.height(obj.item_id)) >> 3;
+                                ObjectHeight_var16 = (obj.zpos + commonObjDat.height(obj.item_id)) >> 3;
                             }
                             next = obj.next;
                         }
 
                         //seg006_1413_1042:
-                        var14 = tile2.floorHeight;
-                        if (var16 > var14)
+                        TallestHeight_Tile2_3_var14 = tile2.floorHeight;
+                        if (ObjectHeight_var16 > TallestHeight_Tile2_3_var14)
                         {
-                            var14 = var16;
-                            var18 = 1;
+                            TallestHeight_Tile2_3_var14 = ObjectHeight_var16;
+                            var18 = true;
                         }
 
                         //seg006_1413_1060:                        
-                        if (tile1.floorHeight > var14 + 1)
+                        if (tile1.floorHeight > TallestHeight_Tile2_3_var14 + 1)
                         {
                             //seg006_1413_1076:
-                            arg12 = var14;
+                            arg12 = TallestHeight_Tile2_3_var14;
                             PathDistanceResult_arg16 = ProbablyHeight_arg10 - arg12 - 1;
-                            if (PathDistanceResult_arg16 <= MaybeMaxTravelDistance_dseg_67d6_2272)
+                            if (PathDistanceResult_arg16 > MaybeMaxTravelDistance_dseg_67d6_2272)
                             {
-                                //seg006_1413_109E:
-                                if (var18 != 0)
+                                return false;
+                            }
+                        }
+                        //seg006_1413_109E:
+                        if (var18 != false)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            //seg006_1413:10A7
+                            if ((argC & (8 << tile2terrain)) == 0)
+                            {
+                                //seg006_1413_10B9:
+                                if ((argE & (8 << tile2terrain)) == 0)
                                 {
                                     return true;
                                 }
                                 else
                                 {
-                                    //seg006_1413:10A7
-                                    if ((argC & (8 << tile2terrain)) == 0)
+                                    PathDistanceResult_arg16 += 2;
+                                    if (PathDistanceResult_arg16 <= MaybeMaxTravelDistance_dseg_67d6_2272)
                                     {
-                                        //seg006_1413_10B9:
-                                        if ((argE & (8 << tile2terrain)) == 0)
-                                        {
-                                            return true;
-                                        }
-                                        else
-                                        {
-                                            PathDistanceResult_arg16 +=2;
-                                            if (PathDistanceResult_arg16<=MaybeMaxTravelDistance_dseg_67d6_2272)
-                                            {
-                                                return true;
-                                            }
-                                            else
-                                            {
-                                                return false;
-                                            }
-                                        }
+                                        return true;
                                     }
                                     else
                                     {
@@ -703,11 +1151,9 @@ namespace Underworld
                                 return false;
                             }
                         }
-
                     }
                 }
             }
-            return false;
         }
 
         static void StorePath(int arg0, int targetXarg2, int targetYArg4)
@@ -716,7 +1162,7 @@ namespace Underworld
         }
 
 
-        public static int seg006_1413_205B(int CurrTileX, int CurrTileY, int targetX, int targetY)
+        public static int seg006_1413_205B(uwObject critter, int CurrTileX, int CurrTileY, int targetX, int targetY)
         {
             var var8 = 0x40;
             var xVector_var1 = targetX - CurrTileX;
@@ -865,6 +1311,7 @@ namespace Underworld
                 int varE = 0;
                 var tmp = Step2.Z2; //this may be wrong.
                 var res = Pathfind.TraverseMultipleTiles(
+                    critter: critter,
                     tile1_X_arg0: Step3.X0, tile1_Y_arg2: Step3.Y1,
                     tile2_X_arg4: Step2.X0, tile2_Y_arg6: Step2.Y1,
                     tile3_X_arg8: 0, tile3_Y_argA: 0,

@@ -157,6 +157,16 @@ namespace Underworld
         {   
             return ((buffer[CritterOffset(item_id) + 0xA] >> 1) & 0x1) == 1;
         }
+
+        /// <summary>
+        /// Used in path finding.
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <returns></returns>
+        public static bool unk0xA_5(int item_id)
+        {   
+            return ((buffer[CritterOffset(item_id) + 0xA] >> 5) & 0x1) == 1;
+        }
         
 
         /// <summary>

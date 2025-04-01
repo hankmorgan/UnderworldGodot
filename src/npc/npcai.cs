@@ -1,7 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
-using Godot;
 
 namespace Underworld
 {
@@ -35,7 +33,7 @@ namespace Underworld
         static int currObjProjectileHeading;
         static int currObjTotalHeading;
         static int currObjUnk13;
-        static int currObjHeight;
+        public static int currObjHeight;
 
         static uwObject currentGoalTarget;
         static int currentGTargXHome;
@@ -1117,7 +1115,7 @@ namespace Underworld
                             //seg006_1413_3434
                             if (Bit7Cleared_Var5 == false)
                             {
-                                goto43D2 = !(Pathfind.seg006_1413_205B(critter.tileX, critter.tileY, targetX, targetY) == 1);
+                                goto43D2 = !(Pathfind.seg006_1413_205B(critter, critter.tileX, critter.tileY, targetX, targetY) == 1);
                             }
                             else
                             {
@@ -1131,6 +1129,7 @@ namespace Underworld
                                 {
                                     //seg006_1413_34E3: 
                                     if (Pathfind.PathFindBetweenTiles(
+                                        critter: critter,
                                         currTileX_arg0: critter.tileX, currTileY_arg2: critter.tileY, CurrFloorHeight_arg4: critter.zpos >> 3,
                                         TargetTileX_arg6: targetX, TargetTileY_arg8: targetY, TargetFloorHeight_argA: targetZ,
                                         LikelyRangeArgC: GetCritterRange_seg007_17A2_30D1(critter)))
@@ -1954,6 +1953,19 @@ namespace Underworld
                     critter.npc_heading = 0;
                 }
             }
+        }
+
+        /// <summary>
+        /// Handles checking if the critter can operate this door or lock
+        /// </summary>
+        /// <param name="critter"></param>
+        /// <param name="Door"></param>
+        /// <param name="skillnegated"></param>
+        /// <returns></returns>
+        public static int CharacterDoorLockAndKeyInteraction(uwObject critter, uwObject Door, int skillnegated)
+        {
+            //todo
+            return 0;
         }
     } //end class
 }//end namespace
