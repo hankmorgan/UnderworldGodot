@@ -1045,6 +1045,7 @@ namespace Underworld
 
             if (critter.UnkBit_0x18_5 == 1)
             {
+                //seg006_1413_303E
                 if (critter.UnkBit_0X15_Bit7 == 1)
                 {
                     BitFieldForPathing_dseg_67d6_B4 |= (1 << critter.PathFindIndex_0x16_0_F);
@@ -1055,19 +1056,21 @@ namespace Underworld
             var xDiff = targetX - currObj_XHome;
             var yDiff = targetY - currObj_YHome;
 
-            if ((xDiff == 0) && (xDiff == 0))
+            if ((xDiff == 0) && (yDiff == 0))
             {
                 if (critter.UnkBit_0X15_Bit7 == 1)
                 {
                     BitFieldForPathing_dseg_67d6_B4 |= (1 << critter.PathFindIndex_0x16_0_F);
                     critter.UnkBit_0X15_Bit7 = 0;
                 }
+                //seg006_1413_30BC:
                 if (critter.npc_goal == 1)
                 {
                     SetGoalAndGtarg(critter, 8, 0);
                 }
                 else
                 {
+                    //seg006_1413_30DD:
                     if (IsNPCActive_dseg_67d6_2234)
                     {
                         //seg006_1413_30F6:
