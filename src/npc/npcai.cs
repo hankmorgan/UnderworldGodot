@@ -19,7 +19,7 @@ namespace Underworld
         static int dseg_67d6_226F;
         static bool FlyingPitchingRelated_dseg_67d6_2246;
 
-        static int BitFieldForPathing_dseg_67d6_B4;
+        static int BitFieldForPathing_dseg_67d6_B4 = 0xFFFF;
 
         static int dseg_67d6_226E;
 

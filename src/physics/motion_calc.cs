@@ -31,7 +31,7 @@ namespace Underworld
         static void CalculateMotion(uwObject projectile, UWMotionParamArray MotionParams, byte[] SpecialMotionHandler)
         {
             int collisionCounter = 0;
-            UWMotionParamArray.PtrTo26D2_DSEG_26B8 = SpecialMotionHandler;
+            UWMotionParamArray.PtrTo26D2_DSEG_26B8_MotionHandler = SpecialMotionHandler;
             UWMotionParamArray.MotionParam0x25_dseg_67d6_26A9 = MotionParams.tilestate25;
 
             MotionCalcArray.Unk17_base = 0;
@@ -59,7 +59,7 @@ namespace Underworld
                         if (ProcessCollisions_seg031_2CFA_12B8(MotionParams, 1) != 0)
                         {
                             //seg031_2CFA_64
-                            seg031_2CFA_179C(MotionParams);
+                            DoTileCollisionMaybe_seg031_2CFA_179C(MotionParams);
                         }
                         collisionCounter++;
                     }
@@ -740,7 +740,7 @@ namespace Underworld
 
 
 
-        static void seg031_2CFA_179C(UWMotionParamArray MotionParams)
+        static void DoTileCollisionMaybe_seg031_2CFA_179C(UWMotionParamArray MotionParams)
         {
             var var3 = 0;
             var var2 = GetCollisionHeightState_seg031_2CFA_13B2(MotionParams);
@@ -753,11 +753,11 @@ namespace Underworld
                 int result = 0;
                 if (var2 != 0)
                 {
-                    if ((UWMotionParamArray.dseg_67d6_26BA_table2 & var2) != 0)
+                    if ((UWMotionParamArray.dseg_67d6_26BA_MotionHandler2 & var2) != 0)
                     {
                         //seg031_2CFA_180F:
                         //Debug.Print($"Call motion code at {UWMotionParamArray.dseg_67d6_26c2_LikeMagicProjectile8} with param {var2}");
-                        result = AMotionCollisionFunction_seg006_1413_ABF(var2);
+                        result = NPCMotionCollision_seg006_1413_ABF(var2);
                         if (result == 1)
                         {
                             //seg031_2CFA_1818:

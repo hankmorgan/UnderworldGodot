@@ -1280,7 +1280,7 @@ namespace Underworld
         }
 
 
-        static int AMotionCollisionFunction_seg006_1413_ABF(int arg0)
+        static int NPCMotionCollision_seg006_1413_ABF(int arg0)
         {
             Debug.Print("TODO 1413_ABF()");
             return 0;
