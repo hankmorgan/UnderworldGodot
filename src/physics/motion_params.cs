@@ -295,6 +295,12 @@ namespace Underworld
         public static int dseg_67d6_25C0_Y;
         public static int dseg_67d6_25C1;
         public static int dseg_67d6_25C2;
+        public static int dseg_67d6_2614;
+        public static bool dseg_67d6_260C;
+        public static bool dseg_67d6_260A;
+
+        public static int DoorX_222E;
+        public static int DoorY_222F;
 
         //The class properties
         public short x_0

@@ -16,8 +16,8 @@ namespace Underworld
             //seg006_1413_D6A            
             MotionParams.speed_12 = (byte)(projectile.Projectile_Speed << 4);
             CalculateMotion(
-                projectile: projectile, 
-                MotionParams: MotionParams, 
+                projectile: projectile,
+                MotionParams: MotionParams,
                 SpecialMotionHandler: SpecialMotionHandler);
             return true;
         }
@@ -59,7 +59,7 @@ namespace Underworld
                         if (ProcessCollisions_seg031_2CFA_12B8(MotionParams, 1) != 0)
                         {
                             //seg031_2CFA_64
-                            DoTileCollisionMaybe_seg031_2CFA_179C(MotionParams);
+                            DoTileCollisionMaybe_seg031_2CFA_179C(projectile, MotionParams);
                         }
                         collisionCounter++;
                     }
@@ -740,7 +740,7 @@ namespace Underworld
 
 
 
-        static void DoTileCollisionMaybe_seg031_2CFA_179C(UWMotionParamArray MotionParams)
+        static void DoTileCollisionMaybe_seg031_2CFA_179C(uwObject projectile, UWMotionParamArray MotionParams)
         {
             var var3 = 0;
             var var2 = GetCollisionHeightState_seg031_2CFA_13B2(MotionParams);
@@ -750,15 +750,15 @@ namespace Underworld
             {//seg031_2CFA_17ED:
                 var tmp = UWMotionParamArray.PtrTo267D2_dseg_67d6_26B8_table0;
                 var2 = var2 & ~tmp;
-                int result = 0;
+                var result = false;
                 if (var2 != 0)
                 {
                     if ((UWMotionParamArray.dseg_67d6_26BA_MotionHandler2 & var2) != 0)
                     {
                         //seg031_2CFA_180F:
                         //Debug.Print($"Call motion code at {UWMotionParamArray.dseg_67d6_26c2_LikeMagicProjectile8} with param {var2}");
-                        result = NPCMotionCollision_seg006_1413_ABF(var2);
-                        if (result == 1)
+                        result = NPCMotionCollision_seg006_1413_ABF(critter: projectile, arg0: var2, motionparams: MotionParams);
+                        if (result)
                         {
                             //seg031_2CFA_1818:
                             ProcessCollisions_seg031_2CFA_12B8(MotionParams, -1);
@@ -771,7 +771,7 @@ namespace Underworld
                     {//when var2>0 then 0, when var2==0 then 1,
                         //seg031_2CFA_1830: 
                         seg031_2CFA_C5C(MotionParams, SBB(var2 & 0x400));
-                        
+
                         var3 = 1;
                         if (
                             ((var2 & 0x1000) != 0)
@@ -946,7 +946,7 @@ namespace Underworld
 
         static int MAYBEGRAVITYZ_seg031_2CFA_1138(UWMotionParamArray MotionParams, int arg0, int arg2)
         {
-           // Debug.Print($"Step {iteration} Gravity");
+            // Debug.Print($"Step {iteration} Gravity");
             var di = arg2;
             short ax;
             int var2;
@@ -1320,7 +1320,7 @@ namespace Underworld
             short si = 0;
             var var3 = 0;
             var var4 = 0;
-            if ((MotionParams.unk_17 & 0x40)== 0)
+            if ((MotionParams.unk_17 & 0x40) == 0)
             {
                 //seg031_2CFA_A63:
                 if (MotionParams.unk_a_pitch != 0)
@@ -1331,7 +1331,7 @@ namespace Underworld
                 }
                 si = (short)(di_arg0 - MotionCalcArray.Heading6_base);
 
-                if ((si > 0x4000)  || (si < -16384))   
+                if ((si > 0x4000) || (si < -16384))
                 {
                     di_arg0 += -32768;//  0x8000;
                     si += -32768;

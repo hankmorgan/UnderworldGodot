@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using Godot;
 
 namespace Underworld
 {
@@ -1280,10 +1281,169 @@ namespace Underworld
         }
 
 
-        static int NPCMotionCollision_seg006_1413_ABF(int arg0)
+        static bool NPCMotionCollision_seg006_1413_ABF(uwObject critter, int arg0, UWMotionParamArray motionparams)
         {
-            Debug.Print("TODO 1413_ABF()");
-            return 0;
+            if ((arg0 & 0x1000) == 0)
+            {
+                //seg006_1413_AFB:  
+                if ((arg0 & 0x10) != 0)
+                {
+                    if ((arg0 & 0xF8) != 0x10)
+                    {
+                        //seg006_1413_B86:
+                        if (critter.UnkBit_0X15_Bit7 == 0)
+                        {
+                            npc.RelatedToMotionCollision_dseg_67d6_224E = true;
+                            UWMotionParamArray.dseg_67d6_260C = false;
+                            UWMotionParamArray.dseg_67d6_260A = false;
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        //seg006_1413_B0E: 
+                        //likely land based NPC has landed in water.
+                        npc.RelatedToMotionCollision_dseg_67d6_224E = true;
+                        npc.IsNPCActive_dseg_67d6_2234 = false;
+                        var tile = UWTileMap.current_tilemap.Tiles[motionparams.x_0 >> 8, motionparams.y_2 >> 8];
+                        //spawn a splash
+                        animo.SpawnAnimoInTile(subclassindex: 6, xpos: 3, ypos: 3, zpos: (short)(tile.floorHeight << 3), tileX: tile.tileX, tileY: tile.tileY);
+                        critter.npc_animation = 7;
+                        npc.GetCritterAnimationGlobalsForCurrObj(critter);
+                        critter.AnimationFrame = (byte)npc.MaxAnimFrame;
+                        critter.Projectile_Speed = 1;
+                        return true;
+                    }
+                }
+                //seg006_1413_BAC
+                if (
+                    ((arg0 & 0x800) != 0)
+                    &&
+                    ((UWMotionParamArray.LikelyNPCTileStates_222C & 0x800) == 0)
+                )
+                {
+                    //seg006_1413:0BBA
+                    if (critter.UnkBit_0X15_Bit7 == 0)
+                    {
+                        //seg006_1413_BD3
+                        npc.RelatedToMotionCollision_dseg_67d6_224E = true;
+                        UWMotionParamArray.dseg_67d6_260C = false;
+                        UWMotionParamArray.dseg_67d6_260A = false;
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (
+                     ((arg0 & 0x20) != 0)
+                     &&
+                      ((UWMotionParamArray.LikelyNPCTileStates_222C & 0x20) == 0)
+                    )
+                    {
+                        if (critter.UnkBit_0X15_Bit7 == 0)
+                        {
+                            npc.RelatedToMotionCollision_dseg_67d6_224E = true;
+                            UWMotionParamArray.dseg_67d6_260C = false;
+                            UWMotionParamArray.dseg_67d6_260A = false;
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        if ((arg0 & 0x300) == 0)
+                        {
+                            if ((arg0 & 0x400) != 0)
+                            {
+                                var DoorCollision = FindClosedDoorCollision(ref UWMotionParamArray.DoorX_222E, ref UWMotionParamArray.DoorY_222F);
+                                if (DoorCollision == null)
+                                {
+                                    npc.RelatedToMotionCollision_dseg_67d6_224E = true;
+                                    npc.dseg_67d6_2269 = true;
+                                    npc.collisionObject = FindCollisionObject();
+                                }
+                                else
+                                {
+                                    npc.collisionObject = DoorCollision;
+                                    npc.RelatedToColliding_dseg_67d6_226F = true;
+                                    npc.RelatedToMotionCollision_dseg_67d6_224E = true;
+                                    npc.dseg_67d6_2269 = true;
+                                }
+                            }
+                            //seg006_1413_C7E
+                            return (npc.IsNPCActive_dseg_67d6_2234 && npc.RelatedToMotionCollision_dseg_67d6_224E);
+                        }
+                        else
+                        {
+                            npc.RelatedToMotionCollision_dseg_67d6_224E = true;
+                            return false;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (UWMotionParamArray.dseg_67d6_2614 == 0)
+                {
+                    UWMotionParamArray.dseg_67d6_2614 = -4;
+                }
+                critter.Projectile_Speed = 1;
+                npc.RelatedToMotionCollision_dseg_67d6_224E = true;
+                npc.IsNPCActive_dseg_67d6_2234 = false;
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Returns the first object in the collision table.
+        /// </summary>
+        /// <returns></returns>
+        static uwObject FindCollisionObject()
+        {
+            if (MotionCalcArray.Unk15_base != 0)
+            {
+                var collision = collisionTable[MotionCalcArray.Unk16_collisionindex_base];
+                return UWTileMap.current_tilemap.LevelObjects[collision.link];
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Finds the first closed door in the collision table
+        /// </summary>
+        /// <param name="DoorX"></param>
+        /// <param name="DoorY"></param>
+        /// <returns></returns>
+        static uwObject FindClosedDoorCollision(ref int DoorX, ref int DoorY)
+        {
+            var si = 0;
+            while (MotionCalcArray.Unk15_base > si)
+            {
+                var collision = collisionTable[si];
+                var obj = UWTileMap.current_tilemap.LevelObjects[collision.link];
+                DoorX = obj.tileX;
+                DoorY = obj.tileY;
+                if (obj.OneF0Class == 0x14)
+                {
+                    if (obj.classindex < 8)
+                    {
+                        //closed door
+                        return obj;
+                    }
+                }
+                si++;
+            }
+            return null;
         }
 
         /// <summary>
@@ -1295,7 +1455,7 @@ namespace Underworld
         /// <param name="arg8"></param>
         /// <returns></returns>
         public static uwObject PlacedObjectCollision_seg030_2BB7_10BC(uwObject projectile, int tileX, int tileY, int arg8)
-        {            
+        {
             var var1_destroyobject = false;
             var var2 = 0;
             var var3 = 0;
@@ -1319,7 +1479,7 @@ namespace Underworld
                     //seg030_2BB7_1119
                     MotionCalcArray.Radius8 = (byte)commonObjDat.radius(projectile.item_id);
                     MotionCalcArray.Height9 = (byte)commonObjDat.height(projectile.item_id);
-                    
+
                     MotionCalcArray.x0 = (ushort)((tileX << 3) + projectile.xpos);
                     MotionCalcArray.y2 = (ushort)((tileY << 3) + projectile.ypos);
                     MotionCalcArray.z4 = (ushort)projectile.zpos;
@@ -1403,7 +1563,7 @@ namespace Underworld
                         var terrainvalue = MotionCalcArray.UnkC_terrain & 0x7;
                         if (terrainvalue == 5)
                         {//is this uw2 only?
-                            //seg030_2BB7_12AE:
+                         //seg030_2BB7_12AE:
                             animo.SpawnAnimoInTile(6, projectile.xpos, projectile.ypos, projectile.zpos, projectile.tileX, projectile.tileY);
                             if (_RES == GAME_UW2)
                             {
@@ -1485,7 +1645,7 @@ namespace Underworld
                 //seg030_2BB7_1410
                 if (ObjectRemover.DeleteObjectFromTile(projectile.tileX, projectile.tileY, projectile.index))
                 {
-                    
+
                     return null;
                 }
                 else
