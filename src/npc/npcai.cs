@@ -1836,14 +1836,11 @@ namespace Underworld
 
                         if (Rng.r.Next(0, 0x40) >= critterObjectDat.unk_1F_lowernibble(critter.item_id) + 8)
                         {
-                            var tmp = Rng.r.Next(0, 0x40);
-                            tmp = tmp + critter.ProjectileHeading + 224;
-                            tmp = tmp % 0x100;
-                            NewHeading = (short)tmp;
+                            NewHeading = critter.ProjectileHeading;
                         }
                         else
                         {
-                            NewHeading = critter.ProjectileHeading;
+                            NewHeading = (Rng.r.Next(0, 0x40) + critter.ProjectileHeading + 224) % 0x100;
                         }
 
                         if (HasCurrobjHeadingChanged_dseg_67d6_2242 == false)
