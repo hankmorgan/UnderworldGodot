@@ -59,8 +59,8 @@ namespace Underworld
         /// <param name="critter"></param>
         public static void NPCInitialProcess(uwObject critter)
         {
-            var distancesquaredtoplayer = ((critter.npc_yhome - playerdat.tileY) ^ 2)
-                                            + ((critter.npc_xhome - playerdat.tileX) ^ 2);
+            var distancesquaredtoplayer = Math.Pow(critter.npc_yhome - playerdat.tileY, 2)
+                                            + Math.Pow(critter.npc_xhome - playerdat.tileX, 2);
 
             var n = (npc)critter.instance;
 
@@ -687,8 +687,8 @@ namespace Underworld
                 currentGTargXVector = currentGTargXCoord - currObjXCoordinate;
                 currentGTargYVector = currentGTargYCoord - currObjYCoordinate;
                 zposofGTARG = currentGoalTarget.zpos >> 3;
-                currentGTargSquaredDistanceByTiles = (currentGTargXHome - currObj_XHome) ^ 2 + (currentGTargYHome - currObj_YHome) ^ 2;
-                currentGTargSquaredDistanceByCoordinates = (currentGTargXCoord - currObjXCoordinate) ^ 2 + (currentGTargYCoord - currObjYCoordinate) ^ 2;
+                currentGTargSquaredDistanceByTiles = (int)(Math.Pow(currentGTargXHome - currObj_XHome, 2) + Math.Pow(currentGTargYHome - currObj_YHome, 2));
+                currentGTargSquaredDistanceByCoordinates = (int)(Math.Pow(currentGTargXCoord - currObjXCoordinate, 2) + Math.Pow(currentGTargYCoord - currObjYCoordinate, 2));
                 return true;
             }
         }
@@ -823,7 +823,7 @@ namespace Underworld
             var xvector = currentGTargXHome - critter.tileX;
             var yvector = currentGTargXHome - critter.tileY;
 
-            var si_dist = xvector ^ 2 + yvector ^ 2;
+            var si_dist = Math.Pow(xvector, 2) + Math.Pow(yvector, 2);
             var tmp_critter = (critterObjectDat.combatdetectionrange(critter.item_id) * critterObjectDat.maybestealth(critter.item_id)) / 16;
             var tmp_gtarg = (critterObjectDat.combatdetectionrange(currentGoalTarget.item_id) * critterObjectDat.maybestealth(currentGoalTarget.item_id)) / 16;
 
@@ -923,7 +923,7 @@ namespace Underworld
 
             var totalHeading_var7 = (short)((critter.heading << 5) + critter.npc_heading);
 
-            var si_distance = (short)Math.Sqrt((currentGTargXVector ^ 2) + (currentGTargYVector ^ 2));
+            var si_distance = (short)Math.Sqrt(Math.Pow(currentGTargXVector, 2) + Math.Pow(currentGTargYVector, 2));
 
             var xVar10 = vectorX;
             var yVar14 = vectorY;
@@ -1979,7 +1979,7 @@ namespace Underworld
             var playerYCoordinate = playerdat.ypos + (playerdat.playerObject.npc_yhome << 3);
             var xvector = playerXCoordinate - currentGTargXCoord;
             var yvector = playerYCoordinate - currentGTargYCoord;
-            if ((xvector ^ 2 + yvector ^ 2) > (maybedist ^ 2))
+            if (Math.Pow(xvector, 2) + Math.Pow(yvector, 2) > Math.Pow(maybedist,2))
             {
                 var HeadingVarB = ((Pathfind.GetVectorHeading(xvector, yvector) + 4) % 8) << 5;
                 HeadingVarB += 0x100;
@@ -2037,7 +2037,7 @@ namespace Underworld
             {
                 critter.npc_gtarg = 1;
                 GetDistancesToGTarg(critter);
-                if ((currentGTargXVector ^ 2 + currentGTargYVector ^ 2) < 0x90)
+                if (Math.Pow(currentGTargXVector, 2) + Math.Pow(currentGTargYVector, 2) < 0x90)
                 {
                     var heading = Pathfind.GetVectorHeading(currentGTargXVector, currentGTargYVector);
                     critter.UnkBit_0X13_Bit0to6 = 0;
