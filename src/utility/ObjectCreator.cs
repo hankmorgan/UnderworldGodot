@@ -657,7 +657,7 @@ namespace Underworld
             critter.UnkBit_0x18_7 = 0;
             critter.UnkBit_0x18_6 = 0;
             critter.PathFindIndex_0x16_0_F = 0;
-            critter.UnkBit_0X15_Bit6 = 0;
+            critter.UnkBit_0X15_6 = 0;
             critter.npc_whoami = 0;
             critter.UnkBit_0x19_0_likelyincombat = 0;
             critter.UnkBit_0x19_4 = 0;

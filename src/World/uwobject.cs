@@ -1000,7 +1000,7 @@ namespace Underworld
         /// <summary>
         /// Maybe determines if npc needs to move
         /// </summary>
-        public short UnkBit_0X15_Bit6
+        public short UnkBit_0X15_6
         {
             get
             {

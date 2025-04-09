@@ -616,7 +616,7 @@ namespace Underworld
 
                     var next = tile2.indexObjectList;
                     //jmp     LoopObjectsNoBlockingTiles_seg006_1413_140B
-                    while ((next != 0) || (ObjectHeight_var16 == 0))
+                    while ((next != 0) && (ObjectHeight_var16 == 0))
                     {
                         var obj = UWTileMap.current_tilemap.LevelObjects[next];
                         if ((obj.majorclass == 5) && (obj.minorclass == 0) && (obj.classindex < 8))
@@ -1379,6 +1379,7 @@ namespace Underworld
                 else
                 {
                     //seg006_1413_2828:
+                    path56 = FinalPath56.finalpath[MaybePathIndexOrLength_dseg_67d6_225A];
                     var Prev1 = path56.Previous(); //record -1
                     var Prev2 = Prev1.Previous(); //record -2
                     var Prev3 = Prev2.Previous(); //record -3

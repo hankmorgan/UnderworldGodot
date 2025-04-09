@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Diagnostics;
+using System.Runtime.Serialization;
 using Underworld;
 
 
@@ -291,8 +292,16 @@ public partial class main : Node3D
 							var obj = UWTileMap.current_tilemap.LevelObjects[index];
 							if (obj.majorclass == 1)
 							{
-								//This is an NPC						
+								//This is an NPC	
+								var n = (npc)obj.instance;	
+												
 								npc.NPCInitialProcess(obj);
+								if (n!=null)
+								{
+									var CalcedFacing = npc.CalculateFacingAngleToNPC(obj);
+									n.SetAnimSprite(obj.npc_animation, obj.AnimationFrame, CalcedFacing);
+								}
+								
 							}
 							else
 							{
