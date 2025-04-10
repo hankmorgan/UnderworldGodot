@@ -11,7 +11,7 @@ namespace Underworld
     {
         //List of active NPCs
         //public static List<npc> npcs;
-        public static bool printlabels = false;
+        public static bool printlabels = true;
 
         /// <summary>
         /// object art
@@ -241,9 +241,10 @@ namespace Underworld
 
         private static void PrintObjectLabel(uwObject obj, string name, Node3D newNode)
         {
+            return;
             var collider = commonObjDat.ActivatedByCollision(obj.item_id);
             Label3D obj_lbl = new();
-            obj_lbl.Text = $"{name} {obj.xpos},{obj.ypos},{obj.zpos} Activated by collision:{collider}";
+            obj_lbl.Text = $"{name} {obj.xpos},{obj.ypos},{obj.zpos}";
             obj_lbl.Font = uimanager.instance.Font4X5P;
             obj_lbl.FontSize = 16;
             obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;

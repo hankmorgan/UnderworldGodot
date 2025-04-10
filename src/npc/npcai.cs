@@ -520,6 +520,9 @@ namespace Underworld
                 case 2:
                     NPCWanderUpdate(critter);
                     break;
+                case 8:
+                    NPC_Goal8(critter);
+                    break;
                 case 12://stand at location
                     NPCGoalC_StandAtLocation(critter);
                     break;
@@ -1925,9 +1928,33 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// NPC Wanders around until it gets too far from home.
+        /// </summary>
+        /// <param name="critter"></param>
         static void NPC_Goal8(uwObject critter)
         {
-            //TODO
+            if (IsNPCActive_dseg_67d6_2234)
+            {
+                if ((critter.npc_attitude == 0) && (critter.npc_goal != 4))
+                {
+                    SetGoalAndGtarg(critter, 4, 1);
+                }
+                else
+                {
+                    var xDiff = Math.Pow(currObjQualityX - currObj_XHome, 2);
+                    var yDiff = Math.Pow(currObjOwnerY - currObj_YHome, 2);
+                    if (xDiff + yDiff <= critterObjectDat.maybeNPCTravelRange(critter.item_id))
+                    {
+                        NPCWanderUpdate(critter);
+                    }
+                    else
+                    {
+                        var tile = UWTileMap.current_tilemap.Tiles[currObjQualityX, currObjOwnerY];
+                        NPC_Goto(critter, currObjQualityX, currObjOwnerY, tile.floorHeight);
+                    }
+                }
+            }
         }
 
         public static int GetCritterAnimationGlobalsForCurrObj(uwObject critter)

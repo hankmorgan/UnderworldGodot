@@ -10,7 +10,7 @@ namespace Underworld
         int PTR;
         static Path5859()
         {
-            for (int i = 0; i <= data.GetUpperBound(0); i++)
+            for (int i = 0; i <= Path5859_Records.GetUpperBound(0); i++)
             {
                 Path5859_Records[i] = new Path5859(i);
             }

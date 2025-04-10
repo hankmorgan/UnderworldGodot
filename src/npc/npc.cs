@@ -7,6 +7,7 @@ namespace Underworld
 {
     public partial class npc : objectInstance
     {
+        Label3D myLabel;
 
         /// <summary>
         /// global shader for npcs.
@@ -97,8 +98,9 @@ namespace Underworld
                 obj_lbl.Font = uimanager.instance.Font4X5P;
                 obj_lbl.FontSize = 16;
                 obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
-                obj_lbl.Position = new Vector3(0f, 0.4f, 0f);
+                obj_lbl.Position = new Vector3(0f, 0.8f, 0f);
                 parent.AddChild(obj_lbl);
+                n.myLabel = obj_lbl;
             }
             obj.instance = n;
             return n;
@@ -128,6 +130,13 @@ namespace Underworld
                 uwobject.npc_animation = 0; //default animation to zero;
                 Debug.Print($"{animname} ({animationNo}) was not found for {this.uwobject.item_id & 0x3F}");
                 uwobject.AnimationFrame = (byte)ApplyCritterAnimation(animationNo, frameNo, CritterArt.GetAnimName(0, 0), crit);
+            }
+            if (ObjectCreator.printlabels)
+            {
+                if (myLabel!=null)
+                {
+                    myLabel.Text = $"{uwobject.a_name} {uwobject.item_id & 0x3F} \nAnim={uwobject.npc_animation} Frame={uwobject.AnimationFrame} {animname}\n Goal {uwobject.npc_goal}";
+                }
             }
         }
 

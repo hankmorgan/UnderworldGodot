@@ -4,7 +4,7 @@ namespace Underworld
     /// Object.dat information for npcs.
     /// UNTESTED. USE AT OWN RISK!!
     /// </summary>
-    public class critterObjectDat:objectDat
+    public class critterObjectDat : objectDat
     {
         const int offset = 0x132;
 
@@ -19,7 +19,7 @@ namespace Underworld
         /// </summary>
         /// <param name="item_id"></param>
         /// <returns></returns>
-        public static int level (int item_id)
+        public static int level(int item_id)
         {
             return buffer[CritterOffset(item_id)];
         }
@@ -123,7 +123,7 @@ namespace Underworld
 
         public static int generaltype(int item_id)
         {
-           // Debug.Print("Race. Needs to be reconfirmed");
+            // Debug.Print("Race. Needs to be reconfirmed");
             return buffer[CritterOffset(item_id) + 0x9];
         }
 
@@ -144,7 +144,7 @@ namespace Underworld
         /// <param name="item_id"></param>
         /// <returns></returns>
         public static bool damagesWeaponOnCritMiss(int item_id)
-        {   
+        {
             return ((buffer[CritterOffset(item_id) + 0xA]) & 0x1) == 1;
         }
 
@@ -154,7 +154,7 @@ namespace Underworld
         /// <param name="item_id"></param>
         /// <returns></returns>
         public static bool unkPassivenessProperty(int item_id)
-        {   
+        {
             return ((buffer[CritterOffset(item_id) + 0xA] >> 1) & 0x1) == 1;
         }
 
@@ -164,10 +164,10 @@ namespace Underworld
         /// <param name="item_id"></param>
         /// <returns></returns>
         public static bool unk0xA_5(int item_id)
-        {   
+        {
             return ((buffer[CritterOffset(item_id) + 0xA] >> 5) & 0x1) == 1;
         }
-        
+
 
         /// <summary>
         /// True if NPC is a swimmer.
@@ -175,10 +175,10 @@ namespace Underworld
         /// <param name="item_id"></param>
         /// <returns></returns>
         public static bool isSwimmer(int item_id)
-        {   
+        {
             return ((buffer[CritterOffset(item_id) + 0xA] >> 6) & 0x1) == 1;
         }
-        
+
         /// <summary>
         /// True if NPC is a flier
         /// </summary>
@@ -244,7 +244,7 @@ namespace Underworld
         /// <returns></returns>
         public static int TradeAppraisal(int item_id)
         {
-            return ((buffer[CritterOffset(item_id) + 0xD])>>4) & 0xF;
+            return ((buffer[CritterOffset(item_id) + 0xD]) >> 4) & 0xF;
         }
 
         /// <summary>
@@ -254,7 +254,7 @@ namespace Underworld
         /// <returns></returns>
         public static int TradeThreshold(int item_id)
         {
-             return buffer[CritterOffset(item_id) + 0xE] & 0xF;            
+            return buffer[CritterOffset(item_id) + 0xE] & 0xF;
         }
 
 
@@ -265,7 +265,7 @@ namespace Underworld
         /// <returns></returns>
         public static int TradePatience(int item_id)
         {
-             return (buffer[CritterOffset(item_id) + 0xE]>>4) & 0xF;            
+            return (buffer[CritterOffset(item_id) + 0xE] >> 4) & 0xF;
         }
 
         /// <summary>
@@ -292,7 +292,7 @@ namespace Underworld
         /// <returns></returns>
         public static int category(int item_id)
         {//=BITAND(HEX2DEC(AE4),15)
-            return (buffer[CritterOffset(item_id) + 0x10] ) & 0xF;
+            return (buffer[CritterOffset(item_id) + 0x10]) & 0xF;
         }
 
 
@@ -303,8 +303,8 @@ namespace Underworld
         /// <returns></returns>
         public static int equipmentdamage(int item_id)
         {
-            return buffer[CritterOffset(item_id) + 0x11] ;
-        }   
+            return buffer[CritterOffset(item_id) + 0x11];
+        }
 
         /// <summary>
         /// The defence stat for the NPC
@@ -313,7 +313,7 @@ namespace Underworld
         /// <returns></returns>
         public static int defence(int item_id)
         {
-            return buffer[CritterOffset(item_id) + 0x12] ;
+            return buffer[CritterOffset(item_id) + 0x12];
         }
 
 
@@ -326,7 +326,7 @@ namespace Underworld
         /// <returns></returns>
         public static int chancetohit(int item_id, int attackno)
         {
-            return buffer[CritterOffset(item_id) + 0x13 + (attackno*3)] ;
+            return buffer[CritterOffset(item_id) + 0x13 + (attackno * 3)];
         }
 
         /// <summary>
@@ -337,7 +337,7 @@ namespace Underworld
         /// <returns></returns>
         public static int attackdamage(int item_id, int attackno)
         {
-            return buffer[CritterOffset(item_id) + 0x14 + (attackno*3)] ;
+            return buffer[CritterOffset(item_id) + 0x14 + (attackno * 3)];
         }
 
         /// <summary>
@@ -360,24 +360,24 @@ namespace Underworld
         /// <returns></returns>
         public static int attackprobability(int item_id, int attackno)
         {
-            return buffer[CritterOffset(item_id) + 0x15 + (attackno*3)] ;//TODO double check this
+            return buffer[CritterOffset(item_id) + 0x15 + (attackno * 3)];//TODO double check this
         }
 
-        /// <summary>
-        /// Likely how far away the npc will search (or maybe follow the player)
-        /// This value squared + 3 is used to compare with player distance from npc.
-        /// </summary>
-        /// <param name="item_id"></param>
-        /// <returns></returns>
-        // public static int probablydetectionrange(int item_id)
-        // {
-        //     return buffer[CritterOffset(item_id) + 0x1c] ;
-        // }
+
+       /// <summary>
+       /// Likely how far the npc will range away from it's home
+       /// </summary>
+       /// <param name="item_id"></param>
+       /// <returns></returns>
+        public static int maybeNPCTravelRange(int item_id)
+        {
+            return (buffer[CritterOffset(item_id) + 0x1c] >> 4) & 0xF;
+        }
 
 
         public static int maybemorale(int item_id)
         {
-            return buffer[CritterOffset(item_id) + 0x1c] & 0xF ;
+            return buffer[CritterOffset(item_id) + 0x1c] & 0xF;
         }
 
 
@@ -388,12 +388,12 @@ namespace Underworld
         /// <returns></returns>
         public static int maybestealth(int item_id)
         {
-            return buffer[CritterOffset(item_id) + 0x1d] & 0xF ;
+            return buffer[CritterOffset(item_id) + 0x1d] & 0xF;
         }
 
         public static int unk_1D_uppernibble(int item_id)
         {
-            return (buffer[CritterOffset(item_id) + 0x1d]>>4) & 0xF ;
+            return (buffer[CritterOffset(item_id) + 0x1d] >> 4) & 0xF;
         }
 
 
@@ -454,7 +454,7 @@ namespace Underworld
             {
                 //get initial value
                 var val = 0x7f & buffer[CritterOffset(item_id) + 0x20 + loot_no] >> 1;
-                return (((val >> 4) & 0x3)<<4) + (val & 0xf);  
+                return (((val >> 4) & 0x3) << 4) + (val & 0xf);
             }
             return -1; // no loot item.
         }
@@ -467,8 +467,8 @@ namespace Underworld
         /// <returns></returns>
         public static int otherloot_probability(int item_id, int loot_no)
         {
-            var val = (int)getAt(buffer,CritterOffset(item_id) + 0x22 + (loot_no * 2), 16);
-            return val & 0xF;            
+            var val = (int)getAt(buffer, CritterOffset(item_id) + 0x22 + (loot_no * 2), 16);
+            return val & 0xF;
         }
 
         /// <summary>
@@ -479,15 +479,15 @@ namespace Underworld
         /// <returns></returns>
         public static int otherloot_item(int item_id, int loot_no)
         {
-            var val = (int)getAt(buffer,CritterOffset(item_id) + 0x22 + (loot_no*2), 16);
-            return (val >> 4) & 0xFFF;            
+            var val = (int)getAt(buffer, CritterOffset(item_id) + 0x22 + (loot_no * 2), 16);
+            return (val >> 4) & 0xFFF;
         }
 
 
         public static int foodloot_probability(int item_id)
         {
             var val = buffer[CritterOffset(item_id) + 0x27];
-            return val & 0xF;            
+            return val & 0xF;
         }
 
         /// <summary>
@@ -499,7 +499,7 @@ namespace Underworld
         public static int foodloot_item(int item_id)
         {
             var val = buffer[CritterOffset(item_id) + 0x27];
-            return (val >> 4) & 0xF;            
+            return (val >> 4) & 0xF;
         }
 
         /// <summary>
@@ -509,10 +509,10 @@ namespace Underworld
         /// <returns></returns>
         public static int valuable_loot_probability(int item_id)
         {
-            return (buffer[CritterOffset(item_id) + 0x26] >>4 ) & 0xF;
+            return (buffer[CritterOffset(item_id) + 0x26] >> 4) & 0xF;
         }
 
-    public static int valuable_multipleprobability(int item_id)
+        public static int valuable_multipleprobability(int item_id)
         {
             return (buffer[CritterOffset(item_id) + 0x26]) & 0xF;
         }
@@ -533,9 +533,9 @@ namespace Underworld
         /// <param name="item_id"></param>
         /// <param name="spell_index"></param>
         /// <returns></returns>
-        public static int spell (int item_id, int spell_index)
+        public static int spell(int item_id, int spell_index)
         {
-            return buffer[CritterOffset(item_id) + 0x2a + spell_index] ;
+            return buffer[CritterOffset(item_id) + 0x2a + spell_index];
         }
 
 
@@ -545,16 +545,16 @@ namespace Underworld
         /// </summary>
         /// <param name="item_id"></param>
         /// <returns></returns>
-        public static int UNK0x2DBits1To7( int item_id)
+        public static int UNK0x2DBits1To7(int item_id)
         {
-            return (buffer[CritterOffset(item_id) + 0x2D]>>1) & 0x7f;
+            return (buffer[CritterOffset(item_id) + 0x2D] >> 1) & 0x7f;
         }
         /// <summary>
         /// Returns true if the NPC uses a spell list
         /// </summary>
         /// <param name="item_id"></param>
         /// <returns></returns>
-        public static bool isCaster( int item_id)
+        public static bool isCaster(int item_id)
         {
             return (buffer[CritterOffset(item_id) + 0x2D] & 0x1) == 1;
         }
@@ -566,7 +566,7 @@ namespace Underworld
         /// <returns></returns>
         public static int dooropenskill(int item_id) //possibly this is not just door open skill...
         {
-            return buffer[CritterOffset(item_id) + 0x2E] ;
+            return buffer[CritterOffset(item_id) + 0x2E];
         }
 
     } //end class

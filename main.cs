@@ -292,16 +292,22 @@ public partial class main : Node3D
 							var obj = UWTileMap.current_tilemap.LevelObjects[index];
 							if (obj.majorclass == 1)
 							{
-								//This is an NPC	
-								var n = (npc)obj.instance;	
-												
-								npc.NPCInitialProcess(obj);
-								if (n!=null)
+								if (UWTileMap.ValidTile(obj.tileX, obj.tileY))
 								{
-									var CalcedFacing = npc.CalculateFacingAngleToNPC(obj);
-									n.SetAnimSprite(obj.npc_animation, obj.AnimationFrame, CalcedFacing);
+									//This is an NPC on the map	
+									var n = (npc)obj.instance;	
+													
+									npc.NPCInitialProcess(obj);
+									if (n!=null)
+									{
+										var CalcedFacing = npc.CalculateFacingAngleToNPC(obj);
+										n.SetAnimSprite(obj.npc_animation, obj.AnimationFrame, CalcedFacing);
+									}
 								}
-								
+								else
+								{
+									Debug.Print($"{obj.a_name} {obj.index} is off map");
+								}								
 							}
 							else
 							{
