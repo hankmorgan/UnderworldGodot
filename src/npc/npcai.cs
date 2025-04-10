@@ -807,22 +807,23 @@ namespace Underworld
         /// <returns></returns>
         static int SearchForGoalTarget(uwObject critter, ref int xHomeFound, ref int yHomeFound)
         {
+            var gtargObject = UWTileMap.current_tilemap.LevelObjects[critter.npc_gtarg];
             xHomeFound = currentGTargXHome; yHomeFound = currentGTargYHome;
 
-            var xvector = currentGTargXHome - critter.tileX;
-            var yvector = currentGTargXHome - critter.tileY;
+            var xvector = currentGTargXHome - currObj_XHome;
+            var yvector = currentGTargYHome - currObj_YHome;
 
             var si_dist = Math.Pow(xvector, 2) + Math.Pow(yvector, 2);
-            var tmp_critter = (critterObjectDat.combatdetectionrange(critter.item_id) * critterObjectDat.maybestealth(critter.item_id)) / 16;
-            var tmp_gtarg = (critterObjectDat.combatdetectionrange(currentGoalTarget.item_id) * critterObjectDat.maybestealth(currentGoalTarget.item_id)) / 16;
+            var tmp_critter = (critterObjectDat.combatdetectionrange(critter.item_id) * critterObjectDat.maybestealth(gtargObject.item_id)) / 16;
+            //var tmp_gtarg = (critterObjectDat.combatdetectionrange(currentGoalTarget.item_id) * critterObjectDat.maybestealth(currentGoalTarget.item_id)) / 16;
 
-            var score = (tmp_critter * tmp_gtarg) / 4;
+            var score = (tmp_critter * tmp_critter) / 4;
 
             if (score < si_dist)
             {
-                tmp_critter = (critterObjectDat.theftdetectionrange(critter.item_id) * critterObjectDat.unk_1D_uppernibble(critter.item_id)) / 16;
-                tmp_gtarg = (critterObjectDat.theftdetectionrange(currentGoalTarget.item_id) * critterObjectDat.unk_1D_uppernibble(currentGoalTarget.item_id)) / 16;
-                var var8 = (tmp_critter * tmp_gtarg);
+                tmp_critter = (critterObjectDat.theftdetectionrange(critter.item_id) * critterObjectDat.unk_1D_uppernibble_stealthrelated(gtargObject.item_id)) / 16;
+                //tmp_gtarg = (critterObjectDat.theftdetectionrange(currentGoalTarget.item_id) * critterObjectDat.unk_1D_uppernibble(currentGoalTarget.item_id)) / 16;
+                var var8 = (tmp_critter * tmp_critter);
                 if (si_dist < var8)
                 {
                     var HeadingToTarget_var3 = Pathfind.GetVectorHeading(xvector, yvector);
@@ -987,6 +988,53 @@ namespace Underworld
                 return result;
             }
         }
+
+
+        /// <summary>
+        /// NPC will wait for the player to face them from a close range and initiates conversation.
+        /// </summary>
+        /// <param name="critter"></param>
+        static void NPCGoal_TalkTo(uwObject critter)
+        {
+            if (IsNPCActive_dseg_67d6_2234)
+            {
+                if ((critter.npc_attitude == 0) && (critter.npc_goal != 4))
+                {
+                    SetGoalAndGtarg(critter, 4, 1);//critter becomes hostile
+                }
+                else
+                {
+                    critter.npc_gtarg = 1;
+                    GetDistancesToGTarg(critter);
+                    var si_dist = (currentGTargXVector * currentGTargXVector) + (currentGTargYVector * currentGTargXVector);
+                    int targetX = 0;
+                    int targetY = 0;
+                    var gtargFound = SearchForGoalTarget(critter, ref targetX, ref targetY);
+                    critter.Projectile_Speed = 6;
+                    critter.UnkBit_0X13_Bit0to6 = 0;
+                    UpdateAnimation(critter, 0, false);
+                    if (gtargFound != 1)
+                    {
+                        if (si_dist < 0x190)
+                        {
+                            //player is relatively close, turn to face the player
+                            var heading = Pathfind.GetVectorHeading(currentGTargXVector, currentGTargYVector);
+                            ChangeNpcHeadings(critter, heading);
+                            if (si_dist < 0x90)
+                            {
+                                var RelativeHeading = (playerdat.playerObject.heading + 8 - heading) & 0x7;
+                                if ((RelativeHeading >= 3) && (RelativeHeading <= 5))
+                                {
+                                    //player is facing the npc.
+                                    talk.Talk(critter, true);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
 
         /// <summary>
         /// Goal 12. NPC will attempt to stand at the specified spot. If not there will pathfind to that location.
@@ -1992,7 +2040,7 @@ namespace Underworld
             var playerYCoordinate = playerdat.ypos + (playerdat.playerObject.npc_yhome << 3);
             var xvector = playerXCoordinate - currentGTargXCoord;
             var yvector = playerYCoordinate - currentGTargYCoord;
-            if (Math.Pow(xvector, 2) + Math.Pow(yvector, 2) > Math.Pow(maybedist,2))
+            if (Math.Pow(xvector, 2) + Math.Pow(yvector, 2) > Math.Pow(maybedist, 2))
             {
                 var HeadingVarB = ((Pathfind.GetVectorHeading(xvector, yvector) + 4) % 8) << 5;
                 HeadingVarB += 0x100;

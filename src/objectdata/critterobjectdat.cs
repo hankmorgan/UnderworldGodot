@@ -391,7 +391,7 @@ namespace Underworld
             return buffer[CritterOffset(item_id) + 0x1d] & 0xF;
         }
 
-        public static int unk_1D_uppernibble(int item_id)
+        public static int unk_1D_uppernibble_stealthrelated(int item_id)
         {
             return (buffer[CritterOffset(item_id) + 0x1d] >> 4) & 0xF;
         }

@@ -6,7 +6,7 @@ namespace Underworld
         //public byte[] data058 = new byte[0x80];      
         public static byte[] data = new byte[0x80 * 2];
 
-        public static Path5859[] Path5859_Records = new Path5859[64];
+        public static Path5859[] Path5859_Records = new Path5859[0x80];
         int PTR;
         static Path5859()
         {
