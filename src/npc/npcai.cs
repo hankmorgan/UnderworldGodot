@@ -514,7 +514,6 @@ namespace Underworld
                         targetY: currObjOwnerY,
                         targetZ: UWTileMap.current_tilemap.Tiles[currObjQualityX, currObjOwnerY].floorHeight);
                     break;
-                //and so on
                 case 3://move/follow
                     break;
                 case 2:
@@ -523,8 +522,14 @@ namespace Underworld
                 case 8:
                     NPC_Goal8(critter);
                     break;
+                case 10: //talkto
+                    NPCGoal_TalkTo(critter);
+                    break;
                 case 12://stand at location
                     NPCGoalC_StandAtLocation(critter);
+                    break;
+                default:
+                    Debug.Print($"unhandled goal {critter.npc_goal} for {critter.a_name}");
                     break;
             }
 

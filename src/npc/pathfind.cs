@@ -94,7 +94,7 @@ namespace Underworld
             var ProbablyPathDistance_var1E = 0;
 
             var varC = Path5859.Path5859_Records[0];
-            var var12 = Path5859.Path5859_Records[0x80];
+            var var12 = Path5859.Path5859_Records[0x40];
 
             PathFindingData49.pathfindmap49 = new byte[0x5000];
             var LikelyPathFindRange_var22 = 5;
@@ -413,14 +413,14 @@ namespace Underworld
                 if (varC.index == 0)
                 {
                     //seg006_1413:1F1A
-                    varC = Path5859.Path5859_Records[0x80];
+                    varC = Path5859.Path5859_Records[0x40];
                     var12 = Path5859.Path5859_Records[0];
                 }
                 else
                 {
                     //seg006_1413_1F30:
                     varC = Path5859.Path5859_Records[0];
-                    var12 = Path5859.Path5859_Records[0x80];
+                    var12 = Path5859.Path5859_Records[0x40];
                 }
 
                 //seg006_1413_1F44:
