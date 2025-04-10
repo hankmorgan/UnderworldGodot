@@ -75,11 +75,11 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * Partial cutscene support
 * Sleeping and dream logic
 * Character creation
-* Partial Object physics
+* Mostly complete Object physics
+* Partial NPC AI, movement and pathfinding
 
 ## Whats missing
-* Player collision and regular movement
-* NPC AI, movement and pathfinding
+* Player movement and collision
 * NPC combat actions
 * Sound and music
 * Transparencies
