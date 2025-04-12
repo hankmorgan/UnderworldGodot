@@ -351,7 +351,7 @@ namespace Underworld
             var propertycount = 0;
             byte[] prop = new byte[] { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
             propertystring = "";
-            if (critterObjectDat.UNK0x2DBits1To7(critter.item_id) != 0)
+            if (critterObjectDat.NPCPower_0x2DBits1To7(critter.item_id) != 0)
             {
                 int si = 0;
 
@@ -377,7 +377,7 @@ namespace Underworld
                         prop[si++] = 0x1C; //can cast flameproof
                     }
 
-                    if (critterObjectDat.UNK0x2DBits1To7(critter.item_id) >= 0x19)
+                    if (critterObjectDat.NPCPower_0x2DBits1To7(critter.item_id) >= 0x19)
                     {
                         if (critterObjectDat.level(critter.item_id) >= 9)
                         {

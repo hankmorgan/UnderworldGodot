@@ -448,9 +448,8 @@ namespace Underworld
         /// <param name="loot_no"></param>
         /// <returns></returns>
         public static int weaponloot(int item_id, int loot_no)
-        {
-            bool enabled = (buffer[CritterOffset(item_id) + 0x20 + loot_no] & 0x1) == 1;
-            if (enabled)
+        {            
+            if (WeaponLootEnabled(item_id, loot_no))
             {
                 //get initial value
                 var val = 0x7f & buffer[CritterOffset(item_id) + 0x20 + loot_no] >> 1;
@@ -458,6 +457,18 @@ namespace Underworld
             }
             return -1; // no loot item.
         }
+
+        /// <summary>
+        /// Indicates if the specified loot item is active
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <param name="loot_no"></param>
+        /// <returns></returns>
+        public static bool WeaponLootEnabled(int item_id, int loot_no)
+        {
+            return (buffer[CritterOffset(item_id) + 0x20 + loot_no] & 0x1) == 1;
+        }
+
 
         /// <summary>
         /// The other loot will spawn. Higher values are better. Vs an Rng(0-16)
@@ -545,7 +556,7 @@ namespace Underworld
         /// </summary>
         /// <param name="item_id"></param>
         /// <returns></returns>
-        public static int UNK0x2DBits1To7(int item_id)
+        public static int NPCPower_0x2DBits1To7(int item_id)
         {
             return (buffer[CritterOffset(item_id) + 0x2D] >> 1) & 0x7f;
         }

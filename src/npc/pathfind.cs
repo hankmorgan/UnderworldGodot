@@ -47,7 +47,8 @@ namespace Underworld
                     //seg006_1413_2981
                     var Seg56Record = FinalPath56.finalpath[index_var1 + var2];
                     var NextSeg56Record = Seg56Record.Next();
-                    var ax = ((NextSeg56Record.X0 - Seg56Record.X0) * 3) - (NextSeg56Record.Y1 - Seg56Record.Y1);
+
+                    var ax = ((NextSeg56Record.X0 - Seg56Record.X0) * 3) + (NextSeg56Record.Y1 - Seg56Record.Y1);
 
                     accumualted_var3 += (TilePathingFlags[4+ax] & 0x3) << (var2 << 1);
 
@@ -96,7 +97,7 @@ namespace Underworld
             var varC = Path5859.Path5859_Records[0];
             var var12 = Path5859.Path5859_Records[0x40];
 
-            PathFindingData49.pathfindmap49 = new byte[0x5000];
+            PathFindingData49.pathfindmap49 = new byte[0x5000]; 
             var LikelyPathFindRange_var22 = 5;
             if (_RES == GAME_UW2)
             {
@@ -215,8 +216,10 @@ namespace Underworld
 
             //seg006_1413_1AEE:
 
-            //For some reason I'm not storing the Y tile here. Byt that is what the code is doing?
+            //For some reason I'm not storing the Y tile here. But that is what the code is doing?
             PathFindingData49.pathfindtiles[currTileX_arg0, currTileY_arg2].X0 = currTileX_arg0;
+            //lets try adding y here
+            PathFindingData49.pathfindtiles[currTileX_arg0, currTileY_arg2].Y1 = currTileY_arg2;
             PathFindingData49.pathfindtiles[currTileX_arg0, currTileY_arg2].Z2 = CurrFloorHeight_arg4;
             PathFindingData49.pathfindtiles[currTileX_arg0, currTileY_arg2].unk4 = 0;
 
@@ -496,7 +499,7 @@ namespace Underworld
                 {
                     return false;
                 }
-
+                //seg006_1413_F47
                 if ((argC & 0x1000) == 0)
                 {
                     return true;
@@ -1059,7 +1062,7 @@ namespace Underworld
                     else
                     {
                         //seg006_1413:1432
-                        arg12 = 0x10 - (npc.currObjHeight + 3) >> 2;
+                        arg12 = 0x10 - ((npc.currObjHeight + 3) >> 2);
                         return true;
                     }
                 }
@@ -1164,16 +1167,25 @@ namespace Underworld
         }
 
 
+        /// <summary>
+        /// This is returning an incorrect value
+        /// </summary>
+        /// <param name="critter"></param>
+        /// <param name="CurrTileX"></param>
+        /// <param name="CurrTileY"></param>
+        /// <param name="targetX"></param>
+        /// <param name="targetY"></param>
+        /// <returns></returns>
         public static int seg006_1413_205B(uwObject critter, int CurrTileX, int CurrTileY, int targetX, int targetY)
         {
-            var var8 = 0x40;
+            var var8 = 0x40;//is a byte
             var xVector_var1 = targetX - CurrTileX;
             var yVector_var2 = targetY - CurrTileY;
             var xVar3 = CurrTileX;
             var yVar4 = CurrTileY;
             var var6 = 0;
-            bool UseVar3_si = false;//reference var3 of var4 in later calcs.
-            bool UseVar3_di = false;//reference var3 of var4 in later calcs.
+            bool UseVar3_si = false;//reference var3 or var4 in later calcs.
+            bool UseVar3_di = false;//reference var3 or var4 in later calcs.
             var divisionVar7 = 0;
             var directionVar5 = 0;
 
@@ -1249,7 +1261,7 @@ namespace Underworld
                         UseVar3_di = true;
                         UseVar3_si = false;
                         divisionVar7 = (yVector_var2 << 7) / xVector_var1;
-                        directionVar5 = 1;
+                        directionVar5 = -1;
                         if (yVector_var2 <= 0)
                         {
                             var6 = -1;
@@ -1282,9 +1294,10 @@ namespace Underworld
                     if (Pathfind.TestPathTraverse_seg006_1413_2769(critter, xVar3, yVar4))
                     {
                         //seg006_1413_2214    
-                        var8 += divisionVar7;
+                        var8 = var8 & 0x7F
+                        var8 = ((var8 + (byte)(divisionVar7 & 0xFF)) & 0xFF);
                         if ((var8 & 0x80) != 0)
-                        {
+                        {//seg006_1413:2220
                             if (UseVar3_si)
                             {
                                 xVar3 += var6;
@@ -1359,9 +1372,9 @@ namespace Underworld
                     var var2 = 0;
                     var CanTraverse_var1 = TraverseMultipleTiles(
                         critter: critter, 
-                        tile1_X_arg0: FinalPath56.finalpath[0].X0, tile1_Y_arg2: FinalPath56.finalpath[0].Y1, 
-                        tile2_X_arg4: FinalPath56.finalpath[1].X0, tile2_Y_arg6: FinalPath56.finalpath[1].Y1, 
-                        tile3_X_arg8: FinalPath56.finalpath[2].X0, tile3_Y_argA: FinalPath56.finalpath[2].Y1, 
+                        tile1_X_arg0: 0, tile1_Y_arg2: 0, 
+                        tile2_X_arg4: FinalPath56.finalpath[0].X0, tile2_Y_arg6: FinalPath56.finalpath[0].Y1, 
+                        tile3_X_arg8: FinalPath56.finalpath[1].X0, tile3_Y_argA: FinalPath56.finalpath[1].Y1, 
                         argC: npc.SpecialMotionHandler[4], argE: npc.SpecialMotionHandler[6], 
                         ProbablyHeight_arg10: FinalPath56.finalpath[0].Z2, arg12: ref height1, 
                         PathDistanceResult_arg16: ref var2);

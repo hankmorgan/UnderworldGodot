@@ -77,7 +77,7 @@ namespace Underworld
 						case "npc_power":
 							{
 								var str = critterObjectDat.strength(npc.item_id);
-								var unk = critterObjectDat.UNK0x2DBits1To7(npc.item_id);
+								var unk = critterObjectDat.NPCPower_0x2DBits1To7(npc.item_id);
 								valueToImport = str + unk;
 								break;
 							}

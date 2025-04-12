@@ -124,7 +124,7 @@ namespace Underworld
             }
             set
             {
-                setAt(data056, PTR + 1, 8, value);
+                setAt(data056, PTR + 3, 8, value);
             }
         }
 

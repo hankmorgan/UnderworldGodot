@@ -514,10 +514,25 @@ namespace Underworld
                         targetY: currObjOwnerY,
                         targetZ: UWTileMap.current_tilemap.Tiles[currObjQualityX, currObjOwnerY].floorHeight);
                     break;
-                case 3://move/follow
-                    break;
                 case 2:
                     NPCWanderUpdate(critter);
+                    break;
+                case 3://move/follow (skip to NPC_Move below)
+                    break;
+                case 4:
+                    StandStillGoal(critter);
+                    break;
+                case 5:
+                    if (!gtargFound)
+                    {
+                        if (!GetDistancesToGTarg(critter))
+                        {
+                            ResetGoalAndTarget(critter);
+                            break;
+                        }
+                    }
+                    NPC_Goal5_Attack(critter);
+
                     break;
                 case 8:
                     NPC_Goal8(critter);
@@ -536,6 +551,27 @@ namespace Underworld
             NPC_Move(critter);
         }
 
+
+        static void ResetGoalAndTarget(uwObject critter)
+        {
+            //; if npc_level is set then
+            //;        change npc_goal to npc_level aimed at avatar,
+            //;        clear npc_level
+            //; else
+            //;    set goal to 2 (Wander)
+            if (critter.npc_level == 0)
+            {
+                critter.npc_goal = 2;
+                critter.npc_gtarg = 0;
+            }
+            else
+            {
+                critter.npc_goal = critter.npc_level;
+                critter.npc_gtarg = 1;
+                critter.npc_level = 0;
+            }
+
+        }
 
         /// <summary>
         /// Updates critter headings. seg007_17A2_1B9E
@@ -654,14 +690,7 @@ namespace Underworld
         /// <returns>true if target hp>0</returns>
         public static bool GetDistancesToGTarg(uwObject critter)
         {
-            if (critter.npc_gtarg == 1)
-            {
-                currentGoalTarget = playerdat.playerObject;
-            }
-            else
-            {
-                currentGoalTarget = UWTileMap.current_tilemap.LevelObjects[critter.npc_gtarg];
-            }
+            currentGoalTarget = UWTileMap.current_tilemap.LevelObjects[critter.npc_gtarg];
             if (currentGoalTarget.npc_hp <= 0)
             {
                 return false;
@@ -725,6 +754,7 @@ namespace Underworld
             {
                 if (critter.npc_attitude == 0)
                 {
+                    critter.npc_gtarg = 1;
                     GetDistancesToGTarg(critter);
                     if (critter.UnkBit_0x19_0_likelyincombat == 0)
                     {
@@ -795,6 +825,86 @@ namespace Underworld
                         return;
                 }
             }
+        }
+
+
+        static void AttackGoalSearchForTarget(uwObject critter, ref int xhome, ref int yhome, int arg4)
+        {
+            if ((xhome != critter.TargetTileX) && (yhome != critter.TargetTileY))
+            {
+                if (Rng.r.Next(8) == 0)
+                {
+                    var result = SearchForGoalTarget(critter, ref xhome, ref yhome);
+                    switch (result)
+                    {
+                        case 0:
+                            {//npc is aware of target
+                                SetNPCTargetDestination(critter, xhome, yhome, zposofGTARG);
+                                break;
+                            }
+                        case 1:
+                            {//npc loses target?
+                                critter.UnkBit_0x19_0_likelyincombat = 0;
+                                critter.UnkBit_0x19_1 = 1;
+                                ResetGoalAndTarget(critter);
+                                break;
+                            }
+                        case 2:
+                            {//no change to detection.
+                                if (Rng.r.Next(2) == 1)
+                                {
+                                    SetNPCTargetDestination(critter, xhome, yhome, zposofGTARG);
+                                }
+                                else
+                                {
+                                    critter.UnkBit_0x19_0_likelyincombat = 0;
+                                    critter.UnkBit_0x19_1 = 0;
+                                    ResetGoalAndTarget(critter);
+                                }
+                                break;
+                            }
+                        default:
+                            Debug.Print("unknown detection state. Exiting AttackGoalSearchForTarget()");
+                            return;//not a valid case
+                    }
+
+                }
+            }
+            //seg007_17A2_D3D:
+            if ((xhome == currObj_YHome) && (yhome == currObj_YHome) && (Math.Abs(currObj_Zpos - zposofGTARG) < 4))
+            {
+                //close to target
+                return;
+            }
+            else
+            {
+                //seg007_17A2_D68:
+                //This chain of logic is fairly complex. Bet I made a mistake here.
+                if ((arg4 <= 1) || ((arg4 > 1) && (arg4 * arg4 >= currentGTargSquaredDistanceByTiles)))
+                {//seg007_17A2_D80:
+                    if ((((arg4 * arg4) << 3) << 3) >= currentGTargSquaredDistanceByCoordinates)
+                    {
+                        if (arg4 > 1)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            if (Math.Abs(zposofGTARG - currObj_Zpos) < 4)
+                            {
+                                return;
+                            }
+                        }
+                    }
+                }
+                //seg007_17A2_DBD:
+                NPC_Goto(critter, xhome, yhome, zposofGTARG);
+                if (critter.UnkBit_0x18_6 != 0)
+                {
+                    critter.UnkBit_0x19_1 = 0;
+                }
+            }
+
         }
 
         /// <summary>
@@ -1068,6 +1178,13 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// Directs the NPC to travel towards a target location
+        /// </summary>
+        /// <param name="critter"></param>
+        /// <param name="targetX"></param>
+        /// <param name="targetY"></param>
+        /// <param name="targetZ"></param>
         static void NPC_Goto(uwObject critter, int targetX, int targetY, int targetZ)
         {
 
@@ -1261,7 +1378,7 @@ namespace Underworld
                             //seg006_1413_3434
                             if (Bit7Cleared_Var5 == false)
                             {
-                                goto43D2 = !(Pathfind.seg006_1413_205B(critter, critter.tileX, critter.tileY, targetX, targetY) == 1);
+                                goto43D2 = (Pathfind.seg006_1413_205B(critter, currObj_XHome, currObj_YHome, targetX, targetY) != 1);
                             }
                             else
                             {
@@ -1270,36 +1387,43 @@ namespace Underworld
                             if (goto43D2)
                             {
                                 //seg006_1413_34D2
-                                int var4 = 0;
-                                if (FindSetIndexOfBitField(ref var4))
+                                int BitFieldIndex_var4 = 0;
+                                if (FindSetIndexOfBitField(ref BitFieldIndex_var4))
                                 {
                                     //seg006_1413_34E3: 
                                     if (Pathfind.PathFindBetweenTiles(
                                         critter: critter,
-                                        currTileX_arg0: critter.tileX, currTileY_arg2: critter.tileY, CurrFloorHeight_arg4: critter.zpos >> 3,
+                                        currTileX_arg0: currObj_XHome, currTileY_arg2: currObj_YHome, CurrFloorHeight_arg4: critter.zpos >> 3,
                                         TargetTileX_arg6: targetX, TargetTileY_arg8: targetY, TargetFloorHeight_argA: targetZ,
                                         LikelyRangeArgC: GetCritterRange_seg007_17A2_30D1(critter)))
                                     {
                                         //seg006_1413_351A:
-                                        var mask = 1 << var4;
-                                        var4 = ~var4;
+                                        var mask = ~( 1 << BitFieldIndex_var4);
                                         BitFieldForPathing_dseg_67d6_B4 &= mask; //unset the bit at var4
 
-                                        Pathfind.UpdateSeg57Values(PathFind57.PathFind57Records[var4]);
+                                        Pathfind.UpdateSeg57Values(PathFind57.PathFind57Records[BitFieldIndex_var4]);
 
                                         critter.UnkBit_0x18_6 = 0;
                                         critter.UnkBit_0X15_Bit7 = 1;
-                                        critter.PathFindIndex_0x16_0_F = (short)var4;
+                                        critter.PathFindIndex_0x16_0_F = (short)BitFieldIndex_var4;
                                         //Lookup Record
                                         TurnTowardsPath_seg006_1413_2BF5(critter, PathFind57.PathFind57Records[critter.PathFindIndex_0x16_0_F]);
                                     }
                                     else
                                     {
-                                        return;//no path
+                                        //seg006_1413_359B:
+                                        critter.UnkBit_0x18_6 = 1;
+                                        critter.UnkBit_0x18_7 = 0;
+                                        NPCWanderUpdate(critter);
+                                        return;
                                     }
                                 }
                                 else
                                 {
+                                    //seg006_1413_359B:
+                                    critter.UnkBit_0x18_6 = 1;
+                                    critter.UnkBit_0x18_7 = 0;
+                                    NPCWanderUpdate(critter);
                                     return;
                                 }
                             }
@@ -1978,6 +2102,120 @@ namespace Underworld
                 //reset
                 critter.npc_animation = (short)NewAnimation_arg0;
                 critter.AnimationFrame = 0;
+            }
+        }
+
+
+        /// <summary>
+        /// Combat goal
+        /// </summary>
+        /// <param name="critter"></param>
+        static void NPC_Goal5_Attack(uwObject critter)
+        {
+            if (IsNPCActive_dseg_67d6_2234)
+            {
+                var RangeAttackStarted = false;
+                var var4 = 4;
+                var siDist = (currentGTargXVector * currentGTargXVector) + (currentGTargYVector * currentGTargYVector);
+                var xDist = currObjQualityX - currObj_XHome;
+                var yDist = currObjOwnerY - currObjOwnerY;
+                var diDistFromHome = (xDist * xDist) + (yDist * yDist);
+                if (critter.npc_gtarg == 1)
+                {
+                    critter.npc_attitude = 0;
+                }
+
+                if ((siDist < 0x64) || ((siDist >= 0x64) && (currObj_XHome == currentGTargXHome) && (currObj_YHome == currentGTargYHome)))
+                {
+                    //seg007_17A2_81D: 
+                    if (Math.Abs(currObj_Zpos - zposofGTARG) < 4)
+                    {
+                        //seg007_17A2_844:
+                        Debug.Print("ChooseAttackToMake");
+                        return;
+                    }
+                    else
+                    {
+                        if (critterObjectDat.isFlier(critter.item_id))
+                        {
+                            //seg007_17A2_844:
+                            Debug.Print("ChooseAttackToMake");
+                            return;
+                        }
+                    }
+                }
+
+                //seg007_17A2_84F:
+                if (critterObjectDat.NPCPower_0x2DBits1To7(critter.item_id) <= 0)
+                {
+                    //seg007_17A2_87F:
+                    if (critterObjectDat.WeaponLootEnabled(critter.item_id, 0))
+                    {
+                        //seg007_17A2_895:
+                        Debug.Print("NPCStartRangedAttack()");
+                        RangeAttackStarted = true;//TODO add the correct value
+                    }
+
+                }
+                else
+                {
+                    Debug.Print("TryToDoMagicAttack()");
+                    if (true)//TODO correct value
+                    {
+                        //seg007_17A2_86E
+                        if (critterObjectDat.isCaster(critter.item_id))
+                        {
+                            Debug.Print("NPCStartMagicAttack");
+                            RangeAttackStarted = true;//TODO add the correct value
+                        }
+                    }
+                }
+
+                //seg007_17A2_89D:
+                if (RangeAttackStarted)
+                {
+                    //seg007_17A2_8AD:
+                    if ((critter.npc_animation != 6) && (critter.npc_animation != 3))
+                    {
+                        UpdateAnimation(critter, 2, true);
+                        critter.Projectile_Speed = 4;
+                        critter.UnkBit_0X13_Bit0to6 = 0;
+                    }
+                }
+                else
+                {
+                    //seg007_17A2_906
+                    if (siDist > 0x100)
+                    {
+                        if (critter.npc_level == 4)
+                        {
+                            if (critter.UnkBit_0x19_5 == 0)
+                            {
+                                if (Math.Pow(critterObjectDat.maybemorale(critter.item_id), 2) < diDistFromHome)
+                                {
+                                    //seg007_17A2_953:
+                                    //NPC Gives up.
+                                    critter.UnkBit_0x19_0_likelyincombat = 0;
+                                    critter.UnkBit_0x19_1 = 0;
+                                    SetGoalAndGtarg(critter, 4, 0);
+                                    return;
+                                }
+                            }
+                        }
+                    }
+
+                    //seg007_17A2_97D: 
+                    if (critterObjectDat.isCaster(critter.item_id))
+                    {
+                        // Debug.Print("AttackGoalSearchForTarget(x,y, var4)");
+                        AttackGoalSearchForTarget(critter, ref currentGTargXHome, ref currentGTargYHome, var4);
+                    }
+                    else
+                    {
+                        //Debug.Print("AttackGoalSearchForTarget(24,32, 1)");
+                        AttackGoalSearchForTarget(critter, ref currentGTargXHome, ref currentGTargYHome, 1);
+                    }
+                }
             }
         }
 
