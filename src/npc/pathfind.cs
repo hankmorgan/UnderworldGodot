@@ -1293,11 +1293,12 @@ namespace Underworld
 
                     if (Pathfind.TestPathTraverse_seg006_1413_2769(critter, xVar3, yVar4))
                     {
-                        //seg006_1413_2214    
-                        var8 = var8 & 0x7F
+                        //seg006_1413_2214                           
                         var8 = ((var8 + (byte)(divisionVar7 & 0xFF)) & 0xFF);
                         if ((var8 & 0x80) != 0)
-                        {//seg006_1413:2220
+                        {
+                            //seg006_1413:2220
+                            var8 = var8 & 0x7F;
                             if (UseVar3_si)
                             {
                                 xVar3 += var6;
@@ -1324,7 +1325,7 @@ namespace Underworld
                 var Step3 = Step2.Previous();
 
                 int varE = 0;
-                var tmp = Step2.Z2; //this may be wrong.
+                var tmp = Step3.Z2; //this may be wrong.
                 var res = Pathfind.TraverseMultipleTiles(
                     critter: critter,
                     tile1_X_arg0: Step3.X0, tile1_Y_arg2: Step3.Y1,
@@ -1334,7 +1335,7 @@ namespace Underworld
                     ProbablyHeight_arg10: Step3.Z2,
                     arg12: ref xVar3,
                     PathDistanceResult_arg16: ref varE);
-                Step2.Z2 = tmp;
+                Step3.Z2 = tmp;
                 if (res)
                 {
                     return 1;
@@ -1853,7 +1854,7 @@ namespace Underworld
         public static int GetVectorHeading(int xVector, int yVector)
         {
             var cl_x = xVector << 1;
-            var bl_y = yVector << 2;
+            var bl_y = yVector << 1;
 
             if (yVector <= cl_x)
             {
