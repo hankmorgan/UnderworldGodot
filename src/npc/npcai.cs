@@ -1398,7 +1398,7 @@ namespace Underworld
                                         LikelyRangeArgC: GetCritterRange_seg007_17A2_30D1(critter)))
                                     {
                                         //seg006_1413_351A:
-                                        var mask = ~( 1 << BitFieldIndex_var4);
+                                        var mask = ~(1 << BitFieldIndex_var4);
                                         BitFieldForPathing_dseg_67d6_B4 &= mask; //unset the bit at var4
 
                                         Pathfind.UpdateSeg57Values(PathFind57.PathFind57Records[BitFieldIndex_var4]);
@@ -2131,7 +2131,7 @@ namespace Underworld
                     if (Math.Abs(currObj_Zpos - zposofGTARG) < 4)
                     {
                         //seg007_17A2_844:
-                        Debug.Print("ChooseAttackToMake");
+                        ChooseMeleeAttackToMake(critter, siDist);
                         return;
                     }
                     else
@@ -2139,7 +2139,7 @@ namespace Underworld
                         if (critterObjectDat.isFlier(critter.item_id))
                         {
                             //seg007_17A2_844:
-                            Debug.Print("ChooseAttackToMake");
+                            ChooseMeleeAttackToMake(critter, siDist);
                             return;
                         }
                     }
@@ -2370,6 +2370,126 @@ namespace Underworld
         {
             //todo
             return 0;
+        }
+
+        /// <summary>
+        /// Critter checks distances to player and chooses melee attack based on defined probabilities
+        /// </summary>
+        /// <param name="critter"></param>
+        /// <param name="DistArg0"></param>
+        static void ChooseMeleeAttackToMake(uwObject critter, int DistArg0)
+        {
+            var headingvar2 = Pathfind.GetVectorHeading(currentGTargXVector, currentGTargYVector);
+            ChangeNpcHeadings(critter, headingvar2);
+            critter.UnkBit_0X15_6 = 0;
+
+            var animVar4 = 0x20;
+            var AttackTypeVar6 = 0;
+
+            if (DistArg0 >= 0x31)
+            {
+                if (DistArg0 <= 0x51)
+                {
+                    //seg007_17A2_A61:
+                    if (Rng.r.Next(0x40) >= critterObjectDat.dexterity(critter.item_id))
+                    {
+                        animVar4 = 2;
+                        AttackTypeVar6 = 0;
+                    }
+                    else
+                    {
+                        headingvar2 = Rng.r.Next(8);
+                        animVar4 = 2;
+                        AttackTypeVar6 = 1;
+                    }
+                }
+                else
+                {
+                    //seg007_17A2_A55:
+                    animVar4 = 1;
+                    AttackTypeVar6 = 2;
+                }
+            }
+            else
+            {
+                if (Rng.r.Next(4) != 0)
+                {
+                    //seg007_17A2_A33:
+                    headingvar2 = (headingvar2 + 4) % 8;
+                    animVar4 = 1;
+                    AttackTypeVar6 = 2;
+                }
+                else
+                {
+                    //seg007_17A2_9F5:
+                    headingvar2 = ((headingvar2 + (Rng.r.Next(2) << 1) - 1) + 8) % 8;
+                    animVar4 = 2;
+                    AttackTypeVar6 = (critterObjectDat.unk_b(critter.item_id) << 1) / 3;
+                }
+            }
+
+            //seg007_17A2_A9D:
+            critter.ProjectileHeading = (ushort)(headingvar2 << 5);
+            critter.UnkBit_0X13_Bit0to6 = (short)AttackTypeVar6;
+            if (critter.npc_animation != animVar4)
+            {
+                critter.npc_animation = (short)animVar4;
+                critter.AnimationFrame = 0;
+            }
+            else
+            {
+                critter.AnimationFrame = (byte)((critter.AnimationFrame + 1) % MaxAnimFrame);
+            }
+
+            if (critterObjectDat.isFlier(critter.item_id))
+            {
+                var zposDiffVar1 = currentGoalTarget.zpos + 14 - critter.zpos;
+                if (zposDiffVar1 <= 1)
+                {
+                    //seg007_17A2_B6C:
+                    if (zposDiffVar1 >= -1)
+                    {
+                        //seg007_17A2_B80:
+                        critter.Projectile_Pitch = (short)(Rng.r.Next(3) + 0xF);
+                    }
+                    else
+                    {
+                        critter.Projectile_Pitch = 0xE;
+                    }
+                }
+                else
+                {
+                    critter.Projectile_Pitch = 0xA;
+                }
+            }
+
+            //seg007_17A2_BA8: 
+            if (DistArg0<= 0x100)
+            {
+                if (Rng.r.Next(4) != 0)
+                {
+                    //seg007_17A2_C35
+                    if (critter.Swing < 0xF)
+                    {
+                        critter.Swing++;
+                    }
+                }
+                else
+                {
+                    var rngSI = Rng.r.Next(0x64);
+                    var attackNoVar8 = 0;
+                    while ((critterObjectDat.attackprobability(critter.item_id, attackNoVar8)>= rngSI) && (attackNoVar8 < 2))
+                    {
+                        rngSI -= critterObjectDat.attackprobability(critter.item_id, attackNoVar8);//reduce probability threshold for next check.
+                        attackNoVar8++;
+                    }
+                    critter.npc_animation = (short)(attackNoVar8 + 3);
+                    critter.AnimationFrame = 0;
+                }
+            }
+
+            //seg007_17A2_C68:
+            critter.Projectile_Speed = 4;
         }
     } //end class
 }//end namespace

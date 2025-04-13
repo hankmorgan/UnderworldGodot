@@ -299,8 +299,11 @@ public partial class main : Node3D
 									npc.NPCInitialProcess(obj);
 									if (n!=null)
 									{
-										var CalcedFacing = npc.CalculateFacingAngleToNPC(obj);
-										n.SetAnimSprite(obj.npc_animation, obj.AnimationFrame, CalcedFacing);
+										if (obj.instance!=null)
+										{
+											var CalcedFacing = npc.CalculateFacingAngleToNPC(obj);
+											n.SetAnimSprite(obj.npc_animation, obj.AnimationFrame, CalcedFacing);
+										}
 									}
 								}
 								else
