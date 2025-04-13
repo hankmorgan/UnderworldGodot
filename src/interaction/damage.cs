@@ -92,7 +92,7 @@ namespace Underworld
                 playerdat.LastDamagedNPCZpos = critter.zpos;
             }
 
-            if (critter.npc_hp == 0)
+            if ((critter.npc_hp == 0) & (critter.index != 1))
             {
                 if (
                     (_RES == GAME_UW2) && (critter.npc_animation != 7)

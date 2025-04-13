@@ -6,7 +6,7 @@ namespace Underworld
     {
         static bool ObjectHasHalted = false;
         static int iteration = 0;
-        public static bool MotionSingleStepEnabled = false;
+        public static bool MotionSingleStepEnabled = true;
         //static int MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2;
 
         static motion()

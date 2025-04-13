@@ -107,7 +107,7 @@ namespace Underworld
             {
                 //do a runic table lookup
                 var spell = RunicMagic.SpellList[spellno];
-                RunicMagic.CastRunicSpellWithoutRules(spell);
+                RunicMagic.CastRunicSpellWithoutRules(spell, caster);
             }
             else
             {

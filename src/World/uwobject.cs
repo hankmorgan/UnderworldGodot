@@ -1234,6 +1234,27 @@ namespace Underworld
                 SetAt(PTR + 0x19, (byte)(existingValue | ((value & 0x1) << 1)));
             }
         }
+
+
+        /// <summary>
+        /// Relates to magic attacks
+        /// </summary>
+        public short UnkBit_0x19_2And3_MagicAttack
+        {
+             get
+            {
+                if (IsStatic) { return 0; }
+                int val = GetAt(PTR + 0x19);
+                return (short)DataLoader.ExtractBits(val, 2, 0x3);
+            }
+            set
+            {
+                byte existingValue = GetAt(PTR + 0x19);
+                existingValue &= 0xF3; //Mask out current val
+                SetAt(PTR + 0x19, (byte)(existingValue | ((value & 0x3) << 2)));
+            }
+        }
+
         
         public short UnkBit_0x19_4
         {

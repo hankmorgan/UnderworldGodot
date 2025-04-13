@@ -1025,8 +1025,11 @@ namespace Underworld
 
             var si_distance = (short)Math.Sqrt(Math.Pow(currentGTargXVector, 2) + Math.Pow(currentGTargYVector, 2));
 
-            var xVar10 = vectorX;
-            var yVar14 = vectorY;
+            var xVar10 = (int)vectorX;
+            var xVarE_Sign = (short)(xVar10 >> 0xF);
+
+            var yVar14 = (int)vectorY;
+            var yVar12_Sign = (short)(yVar14 >> 0xF);
 
             if (si_distance == 0)
             {
@@ -1034,36 +1037,40 @@ namespace Underworld
             }
             else
             {
+                //seg007_17A2_1D58:
                 short varC = 0; short di = 0;
-                if ((yVar14 >= 0) && (yVar14 == si_distance))
+                if ((yVar12_Sign == 0) && (yVar14 == si_distance))
                 {
                     varC = 0x7FFF;
                 }
                 else
                 {
-                    if ((yVar14 == -1 && si_distance == 1) || (yVar14 == 0 && si_distance == 0))//this logic appears to be what the disassembly does. logically the 2nd condition cannot happen?
+                    //seg007_17A2_1D6B:
+                    //THIS SECTION IS possibly WRONG! 
+                    if ((yVar14 < 1) && (-yVar14 == si_distance))
                     {
                         varC = -32768;
                     }
                     else
                     {
-                        varC = (short)((yVar14 << 0xF) / si_distance);
+                        varC = (short)((vectorY << 0xF) / si_distance);
                     }
                 }
 
-                if ((xVar10 >= 0) && (xVar10 == si_distance))
+                //seg007_17A2_1DA1:
+                if ((xVarE_Sign == 0) && (xVar10 == si_distance))
                 {
                     di = 0x7FFF;
                 }
                 else
                 {
-                    if ((xVar10 == -1 && si_distance == 1) || (xVar10 == 0 && si_distance == 0))//this logic appears to be what the disassembly does. logically the 2nd condition cannot happen?
+                    if ((xVar10 < 1) && (-xVar10 == si_distance))
                     {
                         di = -32768;
                     }
                     else
                     {
-                        di = (short)((xVar10 << 0xF) / si_distance);
+                        di = (short)((vectorX << 0xF) / si_distance);
                     }
                 }
 
@@ -1078,11 +1085,11 @@ namespace Underworld
                 {
                     if (var9 >= 0x80)
                     {
-                        HeadingVarA = (totalHeading_var7 + 0xE0) / 0x100;
+                        HeadingVarA = (totalHeading_var7 + 0xE0) % 0x100;
                     }
                     else
                     {
-                        HeadingVarA = (totalHeading_var7 + 0x20) / 0x100;
+                        HeadingVarA = (totalHeading_var7 + 0x20) % 0x100;
                     }
                 }
                 else
@@ -2159,14 +2166,12 @@ namespace Underworld
                 }
                 else
                 {
-                    Debug.Print("TryToDoMagicAttack()");
-                    if (true)//TODO correct value
+                    if (!TryToDoMagicAttack(critter))
                     {
                         //seg007_17A2_86E
                         if (critterObjectDat.isCaster(critter.item_id))
                         {
-                            Debug.Print("NPCStartMagicAttack");
-                            RangeAttackStarted = true;//TODO add the correct value
+                            RangeAttackStarted = NPCStartMagicAttack(critter);
                         }
                     }
                 }
@@ -2459,12 +2464,12 @@ namespace Underworld
                 }
                 else
                 {
-                    critter.Projectile_Pitch = 0xA;
+                    critter.Projectile_Pitch = 0x12;
                 }
             }
 
             //seg007_17A2_BA8: 
-            if (DistArg0<= 0x100)
+            if (DistArg0 <= 0x100)
             {
                 if (Rng.r.Next(4) != 0)
                 {
@@ -2478,7 +2483,7 @@ namespace Underworld
                 {
                     var rngSI = Rng.r.Next(0x64);
                     var attackNoVar8 = 0;
-                    while ((critterObjectDat.attackprobability(critter.item_id, attackNoVar8)>= rngSI) && (attackNoVar8 < 2))
+                    while ((critterObjectDat.attackprobability(critter.item_id, attackNoVar8) >= rngSI) && (attackNoVar8 < 2))
                     {
                         rngSI -= critterObjectDat.attackprobability(critter.item_id, attackNoVar8);//reduce probability threshold for next check.
                         attackNoVar8++;
@@ -2490,6 +2495,74 @@ namespace Underworld
 
             //seg007_17A2_C68:
             critter.Projectile_Speed = 4;
+        }
+
+        static bool TryToDoMagicAttack(uwObject critter)
+        {
+            if (critterObjectDat.spell2C(critter.item_id) == -1)
+            {
+                return false;
+            }
+
+            if (Rng.r.Next(0x100) >= critterObjectDat.NPCPower_0x2DBits1To7(critter.item_id))
+            {
+                return false;
+            }
+
+            if (UWTileMap.current_tilemap.Tiles[currObj_XHome, currObj_YHome].noMagic != 0)
+            {
+                return false;
+            }
+
+            critter.UnkBit_0X13_Bit0to6 = 0;
+            critter.npc_animation = 6;
+            critter.AnimationFrame = 0;
+            critter.UnkBit_0x19_2And3_MagicAttack = 3;
+            return true;
+        }
+
+        static bool NPCStartMagicAttack(uwObject critter)
+        {
+            if (UWTileMap.current_tilemap.Tiles[currObj_XHome, currObj_YHome].noMagic != 0)
+            {
+                return false;
+            }
+
+            if (currentGTargSquaredDistanceByTiles >= 0x40)
+            {
+                return false;
+            }
+            if (!Pathfind.TestBetweenPoints(
+                srcX: currObjXCoordinate, srcY: currObjYCoordinate, srcZ: critter.zpos + commonObjDat.height(critter.item_id),
+                dstX: currentGTargXCoord, dstY: currentGTargYCoord, dstZ: currentGoalTarget.zpos + commonObjDat.height(currentGoalTarget.item_id)))
+            {
+                return false;
+            }
+
+            if (!TurnTowardsTarget(critter, 1))
+            {
+                return false;
+            }
+
+            if (critterObjectDat.NPCPower_0x2DBits1To7(critter.item_id) <= Rng.r.Next(0x80))
+            {
+                return true;
+            }
+            else
+            {
+                critter.UnkBit_0X13_Bit0to6 = 0;
+                critter.npc_animation = 6;
+                critter.AnimationFrame = 0;
+                if (Rng.r.Next(0x10) >= 0xB)
+                {
+                    critter.UnkBit_0x19_2And3_MagicAttack = 2;
+                }
+                else
+                {
+                    critter.UnkBit_0x19_2And3_MagicAttack = 1;
+                }
+                return true;
+            }
         }
     } //end class
 }//end namespace

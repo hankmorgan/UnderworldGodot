@@ -44,23 +44,9 @@ namespace Underworld
             motion.spellXHome = caster.npc_xhome;
             motion.spellYHome = caster.npc_yhome;
             motion.MissileLauncherHeadingBase = 1;
-
             if (caster == playerdat.playerObject)
             {
-                motion.InitPlayerProjectileValues();
-                //motion.MissileHeading = 1; motion.MissilePitch = 9;//force these values to match a test case.
-                motion.MissileFlagB = true;
-                var projectile = motion.PrepareProjectileObject(caster);
-                if (projectile != null)
-                {
-                    objectInstance.RedrawFull(projectile);
-                    //Todo. Some sound effect logic
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                motion.InitPlayerProjectileValues();               
             }
             else
             {
@@ -73,12 +59,22 @@ namespace Underworld
                     motion.MissileLauncherHeadingBase = 0;
                 }
                 motion.MissileHeading = 0;
+            }
+
+            motion.MissileFlagB = true;
+            var projectile = motion.PrepareProjectileObject(caster);
+            motion.MissileFlagB = false;
+            if (projectile != null)
+            {
+                objectInstance.RedrawFull(projectile);
+                //Todo. Some sound effect logic
+                return true;
+            }
+            else
+            {
                 return false;
             }
         }
-
-
-
     }//end class
 }//end namespace
 

@@ -549,6 +549,11 @@ namespace Underworld
             return buffer[CritterOffset(item_id) + 0x2a + spell_index];
         }
 
+        public static sbyte spell2C(int item_id)
+        {
+            return (sbyte)buffer[CritterOffset(item_id) + 0x2c];
+        }
+
 
 
         /// <summary>

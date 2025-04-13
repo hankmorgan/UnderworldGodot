@@ -94,7 +94,7 @@ namespace Underworld
             if (ObjectCreator.printlabels)
             {
                 Label3D obj_lbl = new();
-                obj_lbl.Text = $"{name} {obj.item_id & 0x3F} \nAnim={obj.npc_animation} Frame={obj.AnimationFrame} {animname}\n Goal {obj.npc_goal}";
+                obj_lbl.Text = $"{name} {obj.item_id & 0x3F} \nAnim={obj.npc_animation} Frame={obj.AnimationFrame} {animname}\n Goal {obj.npc_goal} Gtarg{obj.npc_gtarg}";
                 obj_lbl.Font = uimanager.instance.Font4X5P;
                 obj_lbl.FontSize = 16;
                 obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
@@ -135,7 +135,7 @@ namespace Underworld
             {
                 if (myLabel!=null)
                 {
-                    myLabel.Text = $"{uwobject.a_name} {uwobject.item_id & 0x3F} \nAnim={uwobject.npc_animation} Frame={uwobject.AnimationFrame} {animname}\n Goal {uwobject.npc_goal}";
+                    myLabel.Text = $"{uwobject.a_name} {uwobject.item_id & 0x3F} \nAnim={uwobject.npc_animation} Frame={uwobject.AnimationFrame} {animname}\n Goal {uwobject.npc_goal} Gtarg{uwobject.npc_gtarg}";
                 }
             }
         }
