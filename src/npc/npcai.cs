@@ -381,7 +381,7 @@ namespace Underworld
                         )
                     )
                     {
-                        if (playerdat.LastDamagedNPCTime + 512 < playerdat.game_time)
+                        if (playerdat.LastDamagedNPCTime + 512 >= playerdat.ClockValue)
                         {
                             //do detection
                             var dist = System.Math.Abs(critter.tileX - playerdat.LastDamagedNPCTileX) + System.Math.Abs(critter.tileY - playerdat.LastDamagedNPCTileY);
@@ -396,7 +396,7 @@ namespace Underworld
                                     {//critter is allied with the player? set them to attack the players target
                                         gtarg = playerdat.LastDamagedNPCIndex;
                                     }
-                                    SetGoalAndGtarg(critter, gtarg, 5);
+                                    SetGoalAndGtarg(critter, 5, gtarg);
                                     SetNPCTargetDestination(critter, playerdat.LastDamagedNPCTileX, playerdat.LastDamagedNPCTileY, playerdat.LastDamagedNPCZpos);
                                 }
                             }
