@@ -75,9 +75,10 @@ namespace Underworld
                             minorclass: 4,
                             caster: caster,
                             target: null,
-                            tileX: playerdat.tileX,
-                            tileY: playerdat.tileY,
-                            CastOnEquip: false);
+                            tileX: caster.tileX,
+                            tileY: caster.tileY,
+                            CastOnEquip: false
+                            );
                         break;
                     }
                 case 9:
@@ -87,8 +88,8 @@ namespace Underworld
                             minorclass: 6,
                             caster: caster,
                             target: null,
-                            tileX: playerdat.tileX,
-                            tileY: playerdat.tileY,
+                            tileX: caster.tileX,
+                            tileY: caster.tileY,
                             CastOnEquip: false);
                         break;
                     }

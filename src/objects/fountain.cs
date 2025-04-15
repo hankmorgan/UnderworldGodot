@@ -14,8 +14,7 @@ namespace Underworld
                     target: null,
                     tileX: playerdat.tileX,
                     tileY: playerdat.tileY,
-                    CastOnEquip: false,
-                    PlayerCast: true);
+                    CastOnEquip: false);
                 use.SpellHasBeenCast = true;
                 if (spell.SpellMajorClass == 4)
                 {

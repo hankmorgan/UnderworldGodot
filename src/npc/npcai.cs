@@ -253,8 +253,7 @@ namespace Underworld
                                             var effectid = critterObjectDat.spell(critter.item_id, critter.npc_spellindex);
                                             SpellCasting.CastSpellFromObject(
                                                 spellno: effectid,
-                                                caster: critter,
-                                                playerCast: false);
+                                                caster: critter);
                                         }
                                     }
 
@@ -1385,7 +1384,7 @@ namespace Underworld
                             //seg006_1413_3434
                             if (Bit7Cleared_Var5 == false)
                             {
-                                goto43D2 = (Pathfind.seg006_1413_205B(critter, currObj_XHome, currObj_YHome, targetX, targetY) != 1);
+                                goto43D2 = (Pathfind.PathAlongXYAxis_seg006_1413_205B(critter, currObj_XHome, currObj_YHome, targetX, targetY) != 1);
                             }
                             else
                             {

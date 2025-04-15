@@ -101,7 +101,7 @@ namespace Underworld
         /// </summary>
         /// <param name="spellno"></param>
         /// <param name="caster"></param>
-        public static void CastSpellFromObject(int spellno, uwObject caster, bool playerCast = true)
+        public static void CastSpellFromObject(int spellno, uwObject caster)
         {
             if (((spellno & 0xC0) == 0) && (spellno <= RunicMagic.SpellList.GetUpperBound(0)))
             {
@@ -120,8 +120,7 @@ namespace Underworld
                     target: null,
                     tileX: playerdat.tileX,
                     tileY: playerdat.tileY,
-                    CastOnEquip: false,
-                    PlayerCast: playerCast);
+                    CastOnEquip: false);
             }
         }
 

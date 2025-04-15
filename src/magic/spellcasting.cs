@@ -18,8 +18,9 @@ namespace Underworld
         /// <param name="caster">Casting object (use if not the player casting)</param>
         /// <param name="target"></param>
         /// <returns></returns>
-        public static void CastSpell(int majorclass, int minorclass, uwObject caster, uwObject target, int tileX, int tileY, bool CastOnEquip, bool PlayerCast = true)
+        public static void CastSpell(int majorclass, int minorclass, uwObject caster, uwObject target, int tileX, int tileY, bool CastOnEquip)
         {
+            bool PlayerCast = caster == playerdat.playerObject;
             Debug.Print($"Casting {majorclass},{minorclass}");
             if (_RES==GAME_UW1)
             {

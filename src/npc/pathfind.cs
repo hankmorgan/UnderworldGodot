@@ -50,7 +50,7 @@ namespace Underworld
 
                     var ax = ((NextSeg56Record.X0 - Seg56Record.X0) * 3) + (NextSeg56Record.Y1 - Seg56Record.Y1);
 
-                    accumualted_var3 += (TilePathingFlags[4+ax] & 0x3) << (var2 << 1);
+                    accumualted_var3 += (TilePathingFlags[4 + ax] & 0x3) << (var2 << 1);
 
                     //seg006_1413_2A14: 
                     var2++;
@@ -97,7 +97,7 @@ namespace Underworld
             var varC = Path5859.Path5859_Records[0];
             var var12 = Path5859.Path5859_Records[0x40];
 
-            PathFindingData49.pathfindmap49 = new byte[0x5000]; 
+            PathFindingData49.pathfindmap49 = new byte[0x5000];
             var LikelyPathFindRange_var22 = 5;
             if (_RES == GAME_UW2)
             {
@@ -1154,13 +1154,13 @@ namespace Underworld
             FinalPath56.finalpath[0].flag3 = 0;
 
             var cl = MaybeLength_Arg0 + 1;
-            while (cl>0)
+            while (cl > 0)
             {
                 var clPath56 = FinalPath56.finalpath[cl];
                 var pathtile = PathFindingData49.pathfindtiles[clPath56.X0, clPath56.Y1];
                 var PreviousClPath = clPath56.Previous();
                 PreviousClPath.X0 = pathtile.X0;
-                PreviousClPath.Y1 = pathtile.Y1;                
+                PreviousClPath.Y1 = pathtile.Y1;
                 clPath56.Z2 = pathtile.Z2;
                 cl--;
             }
@@ -1176,7 +1176,7 @@ namespace Underworld
         /// <param name="targetX"></param>
         /// <param name="targetY"></param>
         /// <returns></returns>
-        public static int seg006_1413_205B(uwObject critter, int CurrTileX, int CurrTileY, int targetX, int targetY)
+        public static int PathAlongXYAxis_seg006_1413_205B(uwObject critter, int CurrTileX, int CurrTileY, int targetX, int targetY)
         {
             var var8 = 0x40;//is a byte
             var xVector_var1 = targetX - CurrTileX;
@@ -1372,12 +1372,12 @@ namespace Underworld
                     var height1 = FinalPath56.finalpath[1].Z2;
                     var var2 = 0;
                     var CanTraverse_var1 = TraverseMultipleTiles(
-                        critter: critter, 
-                        tile1_X_arg0: 0, tile1_Y_arg2: 0, 
-                        tile2_X_arg4: FinalPath56.finalpath[0].X0, tile2_Y_arg6: FinalPath56.finalpath[0].Y1, 
-                        tile3_X_arg8: FinalPath56.finalpath[1].X0, tile3_Y_argA: FinalPath56.finalpath[1].Y1, 
-                        argC: npc.SpecialMotionHandler[4], argE: npc.SpecialMotionHandler[6], 
-                        ProbablyHeight_arg10: FinalPath56.finalpath[0].Z2, arg12: ref height1, 
+                        critter: critter,
+                        tile1_X_arg0: 0, tile1_Y_arg2: 0,
+                        tile2_X_arg4: FinalPath56.finalpath[0].X0, tile2_Y_arg6: FinalPath56.finalpath[0].Y1,
+                        tile3_X_arg8: FinalPath56.finalpath[1].X0, tile3_Y_argA: FinalPath56.finalpath[1].Y1,
+                        argC: npc.SpecialMotionHandler[4], argE: npc.SpecialMotionHandler[6],
+                        ProbablyHeight_arg10: FinalPath56.finalpath[0].Z2, arg12: ref height1,
                         PathDistanceResult_arg16: ref var2);
                     FinalPath56.finalpath[1].Z2 = height1;
 
@@ -1401,12 +1401,12 @@ namespace Underworld
                     var height = Prev2.Z2;
                     //I will need to check if these params are all correct!
                     var CanTraverse_var1 = TraverseMultipleTiles(
-                        critter: critter, 
-                        tile1_X_arg0: Prev3.X0, tile1_Y_arg2: Prev3.Y1, 
-                        tile2_X_arg4: Prev2.X0, tile2_Y_arg6: Prev2.Y1, 
-                        tile3_X_arg8: Prev1.X0, tile3_Y_argA: Prev1.Y1, 
-                        argC: npc.SpecialMotionHandler[4], argE: npc.SpecialMotionHandler[6], 
-                        ProbablyHeight_arg10: Prev3.Z2, arg12: ref height, 
+                        critter: critter,
+                        tile1_X_arg0: Prev3.X0, tile1_Y_arg2: Prev3.Y1,
+                        tile2_X_arg4: Prev2.X0, tile2_Y_arg6: Prev2.Y1,
+                        tile3_X_arg8: Prev1.X0, tile3_Y_argA: Prev1.Y1,
+                        argC: npc.SpecialMotionHandler[4], argE: npc.SpecialMotionHandler[6],
+                        ProbablyHeight_arg10: Prev3.Z2, arg12: ref height,
                         PathDistanceResult_arg16: ref var2);
                     Prev2.Z2 = height;
 
@@ -1454,78 +1454,97 @@ namespace Underworld
             int var13_axismodifier;
             int var12;
             int var11;
-            //int var10;
-            bool var10_axis;
+
+            bool var10_axisIsX;
             //int varE; //in uw this was a ptr to either srcX or srcY. this needs to be worked around
-            bool varE_axis; // true if point to srcX, false to srcY
-            int varB = srcY >> 3;
-            int varA = srcX >> 3;
-            int var9 = srcY >> 3;
-            int var8 = srcX >> 3;
-            int var7 = dstY >> 3;
-            int var6 = dstX >> 3;
-            int var5 = dstZ >> 3;
-            int var4 = srcY >> 3;
-            int var3 = srcX >> 3;
+            bool varE_axisIsX; // true if VarE points to srcX, false to srcY
+
+
+
+            int X_var3 = srcX >> 3;
+            int X_var8 = srcX >> 3;
+            int X_varA = srcX >> 3;
+
+            int Y_var4 = srcY >> 3;
+            int Y_var9 = srcY >> 3;
+            int Y_varB = srcY >> 3;
+
             int var2_zdiff = dstZ - srcZ;
 
+            int Xvar6 = dstX >> 3;
+            int Yvar7 = dstY >> 3;
+            int Height_var5 = dstZ >> 3;
+
+            int srcXpos = srcX & 0x7;
+            int srcYpos = srcY & 0x7;
+
+            //seg006_1413_235E
             if (di_xdiff >= si_ydiff)
             {
+                //seg006_1413_2365:
                 if (-si_ydiff <= di_xdiff)
-                {//seg006_1413_2370
+                {
+                    //seg006_1413_2370
                     //varE = srcX;
-                    varE_axis = true;
+                    varE_axisIsX = true;
                     var11 = di_xdiff >> 3;
                     //var10 = srcY;
-                    var10_axis = false;
+                    var10_axisIsX = false;
                     var13_axismodifier = 1;
                     if (si_ydiff <= 0)
                     {
                         var14_axismodifier = -1;
-                        var15 = (-si_ydiff << 7) / di_xdiff;
-                        var ax = var15;
-                        var bx = 7 - (srcX & 7);
-                        ax = (ax * bx) / 8;
-                        var16 = ((7 - (srcY & 7)) << 4) + ax;
                     }
                     else
                     {
                         var14_axismodifier = 1;
-                        var15 = (si_ydiff << 7) / di_xdiff;
-                        var ax = var15;
-                        var bx = 7 - (srcX & 7);
-                        ax = (ax * bx) / 8;
-                        var16 = ((srcY & 7) << 4) + ax;
+                    }
+                    //seg006_1413_2392:
+                    if (var14_axismodifier == 1)
+                    {
+                        //seg006_1413_23A5:
+                        //seg006_1413_25F5:
+                        //seg006_1413_25FE:
+                        var15 = ((si_ydiff << 7) / di_xdiff) & 0xFF;
+                        var16 = (srcYpos << 4) + ((var15 * (7 - srcXpos)) / 8);
+                    }
+                    else
+                    {
+                        //seg006_1413_23C7
+                        var15 = ((-si_ydiff << 7) / di_xdiff) & 0xFF;
+                        var16 = ((7 - srcYpos) << 4) + (var15 * (7 - srcXpos) / 8);
                     }
                 }
                 else
-                {//seg006_1413_240D
+                {
+                    //seg006_1413_240D
                     //varE = srcY;
-                    varE_axis = false;
+                    varE_axisIsX = false;
                     var11 = -si_ydiff >> 3;
                     //var10 = srcX;
-                    var10_axis = true;
+                    var10_axisIsX = true;
                     var13_axismodifier = -1;
                     if (di_xdiff <= 0)
                     {
+                        //seg006_1413_242F:
                         var14_axismodifier = -1;
-                        //seg006_1413_247B:
-                        var15 = (-di_xdiff << 7) / -si_ydiff;
-                        var ax = var15;
-                        var dx = (srcY & 7);
-                        ax = (ax * dx) / 8;
-                        var16 = ((srcX & 7) << 4) + ax;
                     }
                     else
                     {
                         var14_axismodifier = 1;
-                        var15 = (di_xdiff << 7) / -si_ydiff;
-                        var ax = var15;
-                        var dx = (srcY & 7);
-                        ax = (ax * dx) / 8;
-                        dx = srcX & 7;
-                        var bx = 7 - dx;
-                        var16 = (bx << 4) + ax;
+                    }
+                    //seg006_1413_2431:
+                    if (var14_axismodifier != 1)
+                    {
+                        //seg006_1413_247B
+                        var15 = ((-di_xdiff << 7) / si_ydiff) & 0xFF;
+                        var16 = (srcXpos << 4) + ((var15 * srcYpos) / 8);
+                    }
+                    else
+                    {
+                        //seg006_1413:243A
+                        var15 = ((di_xdiff << 7) / -si_ydiff) & 0xFF;
+                        var16 = ((7 - srcXpos) << 4) + ((var15 * srcYpos) / 8);
                     }
                 }
             }
@@ -1534,69 +1553,68 @@ namespace Underworld
                 if (-si_ydiff <= di_xdiff)
                 {//seg006_1413_24BA
                     //varE = srcY;
-                    varE_axis = false; //changes y-axis
+                    varE_axisIsX = false; //changes y-axis
                     var11 = si_ydiff >> 3;
                     //var10 = srcX;
-                    var10_axis = true;
+                    var10_axisIsX = true;
                     var13_axismodifier = 1;
                     if (di_xdiff <= 0)
-                    {//seg006_1413_251A
+                    {
+                        //seg006_1413_251A
                         var14_axismodifier = -1;
-                        var15 = (-di_xdiff << 7) / si_ydiff;
-                        var ax = var15;
-                        var dx = srcY & 7;
-                        var bx = 7 - dx;
-                        ax = (ax * bx) / 8;
-                        dx = srcX & 7;
-                        bx = 7 - dx;
-                        var16 = (bx << 4) + ax;
                     }
                     else
                     {
                         var14_axismodifier = 1;
-                        var15 = (di_xdiff << 7) / si_ydiff;
-                        var ax = var15;
-                        var dx = srcY & 7;
-                        var bx = 7 - dx;
-                        ax = (ax * bx) / 8;
-                        dx = srcX & 7;
-                        var16 = (dx << 4) + ax;
                     }
+                    //seg006_1413_24DF:
+                    if (var14_axismodifier != 1)
+                    {
+                        //seg006_1413_251A
+                        var15 = ((-di_xdiff << 7) / si_ydiff) & 0xFF;
+                        var16 = ((7 - srcXpos) << 4) + ((var15 * (7 - srcYpos)) / 8);
+                    }
+                    else
+                    {
+                        //seg006_1413:24E5
+                        var15 = ((di_xdiff << 7) / si_ydiff) & 0xFF;
+                        var16 = (srcXpos << 4) + ((var15) * (7 - srcYpos) / 8);
+                    }
+
                 }
                 else
                 {//seg006_1413_2560
                     //varE = srcX;
-                    varE_axis = true;
+                    varE_axisIsX = true;
                     var11 = -di_xdiff >> 3;
                     //var10 = srcY;
-                    var10_axis = false;
+                    var10_axisIsX = false;
                     var13_axismodifier = -1;
                     if (si_ydiff <= 0)
                     {
                         var14_axismodifier = -1;
-                        var15 = (-si_ydiff << 7) / -di_xdiff;
-                        var ax = var15;
-                        var dx = srcX & 7;
-                        ax = (ax * dx) / 8;
-                        var16 = ((srcY & 7) << 4) + ax;
                     }
                     else
                     {
                         var14_axismodifier = 1;
-                        var15 = (si_ydiff << 7) / -di_xdiff;
-                        var ax = var15;
-                        var dx = srcX & 7;
-                        ax = (ax * dx) / 8;
-                        dx = srcY & 7;
-                        var bx = 7 - dx;
-                        var16 = (bx << 4) + ax;
+                    }
+                    //seg006_1413_2584
+                    if (var14_axismodifier != 1)
+                    {
+                        //seg006_1413_25CD
+                        var15 = ((-si_ydiff << 7) / -di_xdiff) & 0xFF;
+                        var16 = (srcYpos << 4) + ((srcXpos * var15) / 8);
+                    }
+                    else
+                    {
+                        var15 = ((si_ydiff << 7) / di_xdiff) & 0xFF;
+                        var16 = ((7 - srcYpos) << 4) + ((var15 * srcXpos) / 8);
                     }
                 }
             }
 
             //seg006_1413_2609:
-
-            var5 = srcZ;
+            Height_var5 = srcZ;
             var12 = 0;
 
         Loop_seg006_1413_2613:
@@ -1604,38 +1622,38 @@ namespace Underworld
             if ((var16 & 0x80) != 0)
             { //seg006_1413_261C
                 var16 = var16 & 0x7f;
-                if (var10_axis)
+                if (var10_axisIsX)
                 {
-                    varB += var14_axismodifier;
+                    X_varA += var14_axismodifier;                    
                 }
                 else
                 {
-                    varA += var14_axismodifier;
+                   Y_varB += var14_axismodifier;
                 }
 
                 var17 = TestBasicTileTraversal(
-                    arg0: var8, arg2: var9,
-                    Tile1_X_arg4: var3, Tile1_Y_arg6: var4,
-                    Tile2_X_arg8: varA, Tile2_Y_argA: varB,
-                    Height_argC: var5);
+                    arg0: X_var8, arg2: Y_var9,
+                    Tile1_X_arg4: X_var3, Tile1_Y_arg6: Y_var4,
+                    Tile2_X_arg8: X_varA, Tile2_Y_argA: Y_varB,
+                    Height_argC: Height_var5);
 
                 if (var17)
                 {//seg006_1413_265D:
-                    if ((varA == var6) && (varB == var7))
+                    if ((X_varA == Xvar6) && (Y_varB == Yvar7))
                     {
                         var17 = TestBasicTileTraversal(
-                            arg0: var3, arg2: var4,
-                            Tile1_X_arg4: varA, Tile1_Y_arg6: varB,
+                            arg0: X_var3, arg2: Y_var4,
+                            Tile1_X_arg4: X_varA, Tile1_Y_arg6: Y_varB,
                             Tile2_X_arg8: 0, Tile2_Y_argA: 0,
-                            Height_argC: var5);
+                            Height_argC: Height_var5);
                         return var17;
                     }
                     else
                     {
-                        var8 = var3;
-                        var9 = var4;
-                        var3 = varA;
-                        var4 = varB;
+                        X_var8 = X_var3;
+                        Y_var9 = Y_var4;
+                        X_var3 = X_varA;
+                        Y_var4 = Y_varB;
                     }
                 }
                 else
@@ -1645,44 +1663,48 @@ namespace Underworld
             }
 
             //seg006_1413_26AA
-            if (varE_axis)
+            if (varE_axisIsX)
             {
-                varA += var13_axismodifier;
+                X_varA += var13_axismodifier;
             }
             else
             {
-                varB += var13_axismodifier;
+                Y_varB += var13_axismodifier;
             }
             var12++;
             if (var12 <= 0xA)
             {
+                //seg006_1413_26C0:
                 if (var11 != 0)
                 {
-                    var5 = srcZ + (var12 * var2_zdiff) / var11;
+                    Height_var5 = srcZ + ((var12 * var2_zdiff) / var11);
                 }
 
                 var17 = TestBasicTileTraversal(
-                    arg0: var8, arg2: var9,
-                    Tile1_X_arg4: var3, Tile1_Y_arg6: var4,
-                    Tile2_X_arg8: varA, Tile2_Y_argA: varB,
-                    Height_argC: var5);
+                    arg0: X_var8, arg2: Y_var9,
+                    Tile1_X_arg4: X_var3, Tile1_Y_arg6: Y_var4,
+                    Tile2_X_arg8: X_varA, Tile2_Y_argA: Y_varB,
+                    Height_argC: Height_var5);
                 if (var17)
                 {
-                    if ((varA == var6) && (varB == var7))
+                    //seg006_1413_2710:
+                    if ((X_varA == Xvar6) && (Y_varB == Yvar7))
                     {
+                        //seg006_1413_2728:
                         var17 = TestBasicTileTraversal(
-                            arg0: var3, arg2: var4,
-                            Tile1_X_arg4: varA, Tile1_Y_arg6: varB,
+                            arg0: X_var3, arg2: Y_var4,
+                            Tile1_X_arg4: X_varA, Tile1_Y_arg6: Y_varB,
                             Tile2_X_arg8: 0, Tile2_Y_argA: 0,
-                            Height_argC: var5);
+                            Height_argC: Height_var5);
                         return var17;
                     }
                     else
-                    {//seg006_1413_2744:
-                        var8 = var3;
-                        var9 = var4;
-                        var3 = varA;
-                        var4 = varB;
+                    {
+                        //seg006_1413_2744:
+                        X_var8 = X_var3;
+                        Y_var9 = Y_var4;
+                        X_var3 = X_varA;
+                        Y_var4 = Y_varB;
                         var16 += var15;
                         goto Loop_seg006_1413_2613; //loop around and try again
                     }

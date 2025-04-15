@@ -15,8 +15,7 @@ namespace Underworld
                 target: target, 
                 tileX: trapObj.tileX, 
                 tileY: trapObj.tileY, 
-                CastOnEquip: false, 
-                PlayerCast: false);
+                CastOnEquip: false);
         }
     }//end class
 }//end namespace

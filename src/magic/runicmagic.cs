@@ -232,8 +232,8 @@ namespace Underworld
                 minorclass: spell.SpellMinorClass,
                 caster: caster, target: null,
                 tileX: caster.tileX, tileY: caster.tileY,
-                CastOnEquip:false,
-                PlayerCast: caster == playerdat.playerObject);
+                CastOnEquip:false
+                );
         }
 
         public static void CastRunicSpell()
@@ -259,8 +259,7 @@ namespace Underworld
                                     minorclass: spell.SpellLevel / 2,
                                     caster: playerdat.playerObject, target: null,
                                     tileX: playerdat.tileX, tileY: playerdat.tileY,
-                                    CastOnEquip: false,
-                                    PlayerCast: true);
+                                    CastOnEquip: false);
                                 uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_the_spell_backfires_));
                                 break;
                             }
@@ -275,8 +274,7 @@ namespace Underworld
                                 minorclass: spell.SpellMinorClass,
                                 caster: playerdat.playerObject, target: null,
                                 tileX: playerdat.tileX, tileY: playerdat.tileY,
-                                CastOnEquip:false,
-                                PlayerCast: true);
+                                CastOnEquip:false);
                             break;
                     }
                 }
