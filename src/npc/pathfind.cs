@@ -112,19 +112,8 @@ namespace Underworld
             int X2_var_7;
             int Y2_var_9;
 
-            if (currTileX_arg0 < TargetTileX_arg6)
-            {
-                if (currTileX_arg0 - LikelyPathFindRange_var22 <= 1)
-                {
-                    //seg006_1413_1A13
-                    X1_var6 = 1;
-                }
-                else
-                {
-                    X1_var6 = currTileX_arg0 - LikelyPathFindRange_var22;
-                }
-            }
-            else
+            //seg006_1413_19F6:
+            if (currTileX_arg0 >= TargetTileX_arg6)
             {
                 //seg006_1413_1A17:
                 if (TargetTileX_arg6 - LikelyPathFindRange_var22 <= 1)
@@ -135,6 +124,19 @@ namespace Underworld
                 else
                 {
                     X1_var6 = TargetTileX_arg6 - LikelyPathFindRange_var22;
+                }
+            }
+            else
+            {
+                //seg006_1413:19FE
+                if (currTileX_arg0 - LikelyPathFindRange_var22 <= 1)
+                {
+                    //seg006_1413_1A13
+                    X1_var6 = 1;
+                }
+                else
+                {
+                    X1_var6 = currTileX_arg0 - LikelyPathFindRange_var22;
                 }
             }
 
@@ -218,8 +220,6 @@ namespace Underworld
 
             //For some reason I'm not storing the Y tile here. But that is what the code is doing?
             PathFindingData49.pathfindtiles[currTileX_arg0, currTileY_arg2].X0 = currTileX_arg0;
-            //lets try adding y here
-            PathFindingData49.pathfindtiles[currTileX_arg0, currTileY_arg2].Y1 = currTileY_arg2;
             PathFindingData49.pathfindtiles[currTileX_arg0, currTileY_arg2].Z2 = CurrFloorHeight_arg4;
             PathFindingData49.pathfindtiles[currTileX_arg0, currTileY_arg2].unk4 = 0;
 
@@ -228,11 +228,11 @@ namespace Underworld
             {
                 var NeighbourTileX = currTileX_arg0 + PathXOffsetTable[si];
                 var NeighbourTileY = currTileY_arg2 + PathYOffsetTable[si];
-                if (UWTileMap.ValidTile(NeighbourTileX, NeighbourTileY))
-                {
+                // if (UWTileMap.ValidTile(NeighbourTileX, NeighbourTileY))
+                // {
                     var NeighbourPathTile = PathFindingData49.pathfindtiles[NeighbourTileX, NeighbourTileY];
                     ProbablyPathDistance_var1E = 0;
-                    var tmp = NeighbourPathTile.Z2;//out value from travers
+                    var tmp = NeighbourPathTile.Z2;//out value from traverse
                     //seg006_1413_1BC8:
                     var res = TraverseMultipleTiles(
                         critter: critter,
@@ -276,7 +276,7 @@ namespace Underworld
                             NoOfStepsIndex_var13++;
                         }
                     }
-                }
+                //}
                 //seg006_1413_1C7A:
                 si++;
             }
@@ -309,7 +309,7 @@ namespace Underworld
                                 &&
                                 (NeighbourTileY >= Y1_var8)
                                 &&
-                                (NeighbourTileY >= Y2_var_9)
+                                (NeighbourTileY <= Y2_var_9)
                         )
                         {
                             //seg006_1413_1D23: 
