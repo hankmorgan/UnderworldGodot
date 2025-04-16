@@ -289,7 +289,7 @@ namespace Underworld
                 //seg006_1413_1C8A:
                 Counter_var14 = 0;
                 var var5 = 0;
-                //seg006_1413_1EFB
+                //seg006_1413_1EFB  
                 while ((var5 < NoOfStepsIndex_var13) && (Counter_var14 < 0x40))
                 {
                     //seg006_1413_1C95:
@@ -297,12 +297,12 @@ namespace Underworld
                     var Tile2Y_var2 = Path5859.Path5859_Records[varC.index + var5].Y1;
                     var TileRecord_var1C = PathFindingData49.pathfindtiles[Tile2X_var1, Tile2Y_var2];
                     si = 0;
-                    while (si < 4)
+                    while (si < 4)//1413:1EEB
                     {
                         //seg006_1413_1CE1:
                         var NeighbourTileX = Tile2X_var1 + PathXOffsetTable[si];
                         var NeighbourTileY = Tile2Y_var2 + PathYOffsetTable[si];
-                        if (
+                        if (//check if tile is within the search bounds for pathfinding
                                 (NeighbourTileX >= X1_var6)
                                 &&
                                 (NeighbourTileX <= X2_var_7)
@@ -317,7 +317,7 @@ namespace Underworld
                             ProbablyPathDistance_var1E = TileRecord_var1C.unk3_bit1_7;
                             if ((NeighbourTileX != TileRecord_var1C.X0) || (NeighbourTileY != TileRecord_var1C.Y1))
                             {
-                                var Height_var1F = 0;
+                                var Height_var1F = 0;  //This value is coming back wrong?
                                 //seg006_1413_1D68:
                                 var res_var20 = TraverseMultipleTiles(
                                     critter: critter,
@@ -370,7 +370,7 @@ namespace Underworld
                                             TileRecord_var1C.unk3_bit0 = 0;
                                         }
 
-                                        if (!var21)
+                                        if (var21)
                                         {
                                             //seg006_1413_1E56:
                                             Path5859.Path5859_Records[var12.index + Counter_var14].X0 = NeighbourTileX;
