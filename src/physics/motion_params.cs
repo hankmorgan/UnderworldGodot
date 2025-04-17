@@ -11,30 +11,30 @@ namespace Underworld
         public static byte[] dseg_26b8 = new byte[16];//confirm size
 
         public static byte[] DSEG_27B2_SpecialMotionHandling = new byte[8];
-        public static byte[] DSEG_26BA_LandNPCMotionHandler = new byte[]{0, 0, 0x30, 0x1F, 0, 0, 0, 0};
-        public static byte[] DSEG_26DE_SwimmingNPCMotionHandler = new byte[8];
-        public static byte[] DSEG_26C6_FlyingNPCMotionHandler = new byte[8];
+        public static byte[] DSEG_26BA_LandNPCMotionHandler = new byte[] { 0x0, 0x0, 0x30, 0x1F, 0x10, 0x10, 0x20, 0x0 };
+        public static byte[] DSEG_26DE_SwimmingNPCMotionHandler = new byte[] { 0x10, 0, 0x28, 0x17, 0x10, 0x10, 0x20, 0 };
+        public static byte[] DSEG_26C6_FlyingNPCMotionHandler = new byte[] { 0x0, 0x10, 0x0, 0x7, 0x80, 0x0, 0x0, 0x0 };
         public static short LikelyNPCTileStates_222C;
-       
+
         public static byte[] PtrTo26D2_DSEG_26B8_MotionHandler = new byte[8];
-       
+
         public static short PtrTo267D2_dseg_67d6_26B8_table0
         {
             get
             {
-                return (short)DataLoader.getAt(UWMotionParamArray.PtrTo26D2_DSEG_26B8_MotionHandler, 0 , 16);
+                return (short)DataLoader.getAt(UWMotionParamArray.PtrTo26D2_DSEG_26B8_MotionHandler, 0, 16);
             }
             set
             {
-                DataLoader.setAt(UWMotionParamArray.PtrTo26D2_DSEG_26B8_MotionHandler, 0 , 16, value);
+                DataLoader.setAt(UWMotionParamArray.PtrTo26D2_DSEG_26B8_MotionHandler, 0, 16, value);
             }
         }
 
-        public static short dseg_67d6_26BA_MotionHandler2        
+        public static short dseg_67d6_26BA_MotionHandler2
         {
             get
             {
-                return (short)DataLoader.getAt(UWMotionParamArray.PtrTo26D2_DSEG_26B8_MotionHandler, 2 , 16);
+                return (short)DataLoader.getAt(UWMotionParamArray.PtrTo26D2_DSEG_26B8_MotionHandler, 2, 16);
             }
         }
 
@@ -46,13 +46,13 @@ namespace Underworld
         {
             get
             {
-                return (short)DataLoader.getAt(UWMotionParamArray.PtrTo26D2_DSEG_26B8_MotionHandler, 4 , 16);
+                return (short)DataLoader.getAt(UWMotionParamArray.PtrTo26D2_DSEG_26B8_MotionHandler, 4, 16);
             }
         }
 
 
         //globals        
-        
+
 
 
         public static short RelatedToMotionX_dseg_67d6_3FE
@@ -265,7 +265,7 @@ namespace Underworld
 
 
 
-        
+
         public static int XposPlusRad;
         public static int YposPlusRad;
         public static int XposMinusRad;
@@ -274,14 +274,14 @@ namespace Underworld
         public MotionCalcArray CalcArray = new MotionCalcArray();
         public static short[] TileAttributesArray;
         public static int ypos_dseg_67d6_251C;
-        public static TileInfo TileRelatedToMotion_dseg_67d6_257E;    
+        public static TileInfo TileRelatedToMotion_dseg_67d6_257E;
 
         public static int Z_dseg_67d6_2582;
         public static int dseg_67d6_2584;
-        public static int xpos_dseg_67d6_2585;   
+        public static int xpos_dseg_67d6_2585;
         public static int dseg_67d6_2586;
         public static int dseg_67d6_25BC;
-        public static int UnknownX_dseg_67d6_25BD; 
+        public static int UnknownX_dseg_67d6_25BD;
         public static int UnknownY_dseg_67d6_25BE;
         public static byte MotionParam0x25_dseg_67d6_26A9;
         //public static int CalculateMotionGlobal_dseg_67d6_25DB; //or offset 17 in calc array                
@@ -290,7 +290,7 @@ namespace Underworld
         public static int dseg_67d6_26A8;
 
         public static int CalculateMotionGlobal_dseg_67d6_26B6;
-       
+
         public static int dseg_67d6_25BF_X;
         public static int dseg_67d6_25C0_Y;
         public static int dseg_67d6_25C1;
