@@ -1384,7 +1384,7 @@ namespace Underworld
                             //seg006_1413_3434
                             if (Bit7Cleared_Var5 == false)
                             {
-                                goto43D2 = (Pathfind.PathAlongXYAxis_seg006_1413_205B(critter, currObj_XHome, currObj_YHome, targetX, targetY) != 1);
+                                goto43D2 = (Pathfind.PathAlongStraightLine_seg006_1413_205B(critter, currObj_XHome, currObj_YHome, targetX, targetY) != 1);
                             }
                             else
                             {

@@ -231,52 +231,52 @@ namespace Underworld
                 var NeighbourTileY = currTileY_arg2 + PathYOffsetTable[si];
                 // if (UWTileMap.ValidTile(NeighbourTileX, NeighbourTileY))
                 // {
-                    var NeighbourPathTile = PathFindingData49.pathfindtiles[NeighbourTileX, NeighbourTileY];
-                    ProbablyPathDistance_var1E = 0;
-                    var tmp = NeighbourPathTile.Z2;//out value from traverse
-                    //seg006_1413_1BC8:
-                    var res = TraverseMultipleTiles(
-                        critter: critter,
-                        tile1_X_arg0: 0, tile1_Y_arg2: 0,
-                        tile2_X_arg4: currTileX_arg0, tile2_Y_arg6: currTileY_arg2,
-                        tile3_X_arg8: NeighbourTileX, tile3_Y_argA: NeighbourTileY,
-                        argC: (int)Loader.getAt(npc.SpecialMotionHandler,4,16), argE: (int)Loader.getAt(npc.SpecialMotionHandler,6,16),
-                        ProbablyHeight_arg10: CurrFloorHeight_arg4,
-                        arg12: ref tmp,
-                        PathDistanceResult_arg16: ref ProbablyPathDistance_var1E);
-                    NeighbourPathTile.Z2 = tmp;
+                var NeighbourPathTile = PathFindingData49.pathfindtiles[NeighbourTileX, NeighbourTileY];
+                ProbablyPathDistance_var1E = 0;
+                var tmp = NeighbourPathTile.Z2;//out value from traverse
+                                               //seg006_1413_1BC8:
+                var res = TraverseMultipleTiles(
+                    critter: critter,
+                    tile1_X_arg0: 0, tile1_Y_arg2: 0,
+                    tile2_X_arg4: currTileX_arg0, tile2_Y_arg6: currTileY_arg2,
+                    tile3_X_arg8: NeighbourTileX, tile3_Y_argA: NeighbourTileY,
+                    argC: (int)Loader.getAt(npc.SpecialMotionHandler, 4, 16), argE: (int)Loader.getAt(npc.SpecialMotionHandler, 6, 16),
+                    ProbablyHeight_arg10: CurrFloorHeight_arg4,
+                    arg12: ref tmp,
+                    PathDistanceResult_arg16: ref ProbablyPathDistance_var1E);
+                NeighbourPathTile.Z2 = tmp;
 
-                    if (res)
+                if (res)
+                {
+                    //seg006_1413_1BDA:
+                    if ((NeighbourTileX == TargetTileX_arg6) && (NeighbourTileY == TargetTileY_arg8))
                     {
-                        //seg006_1413_1BDA:
-                        if ((NeighbourTileX == TargetTileX_arg6) && (NeighbourTileY == TargetTileY_arg8))
-                        {
-                            //seg006_1413_1BEA:
-                            //Trivial case where the neighbour tile is the target.
-                            MaybePathIndexOrLength_dseg_67d6_225A = 1;
-                            FinalPath56.finalpath[0].X0 = currTileX_arg0;
-                            FinalPath56.finalpath[0].Y1 = currTileY_arg2;
-                            FinalPath56.finalpath[0].flag3 = 0;
+                        //seg006_1413_1BEA:
+                        //Trivial case where the neighbour tile is the target.
+                        MaybePathIndexOrLength_dseg_67d6_225A = 1;
+                        FinalPath56.finalpath[0].X0 = currTileX_arg0;
+                        FinalPath56.finalpath[0].Y1 = currTileY_arg2;
+                        FinalPath56.finalpath[0].flag3 = 0;
 
-                            FinalPath56.finalpath[1].X0 = NeighbourTileX;
-                            FinalPath56.finalpath[1].Y1 = NeighbourTileY;
-                            return true;
-                        }
-                        else
-                        {
-                            //seg006_1413_1C27
-                            //traversable case
-                            NeighbourPathTile.X0 = currTileX_arg0;
-                            NeighbourPathTile.Y1 = currTileY_arg2;
-                            NeighbourPathTile.unk4 = 1; //mark as traversable?
-                            NeighbourPathTile.unk3_bit1_7 = ProbablyPathDistance_var1E;
-
-                            Path5859.Path5859_Records[NoOfStepsIndex_var13].X0 = NeighbourTileX;
-                            Path5859.Path5859_Records[NoOfStepsIndex_var13].Y1 = NeighbourTileY;
-
-                            NoOfStepsIndex_var13++;
-                        }
+                        FinalPath56.finalpath[1].X0 = NeighbourTileX;
+                        FinalPath56.finalpath[1].Y1 = NeighbourTileY;
+                        return true;
                     }
+                    else
+                    {
+                        //seg006_1413_1C27
+                        //traversable case
+                        NeighbourPathTile.X0 = currTileX_arg0;
+                        NeighbourPathTile.Y1 = currTileY_arg2;
+                        NeighbourPathTile.unk4 = 1; //mark as traversable?
+                        NeighbourPathTile.unk3_bit1_7 = ProbablyPathDistance_var1E;
+
+                        Path5859.Path5859_Records[NoOfStepsIndex_var13].X0 = NeighbourTileX;
+                        Path5859.Path5859_Records[NoOfStepsIndex_var13].Y1 = NeighbourTileY;
+
+                        NoOfStepsIndex_var13++;
+                    }
+                }
                 //}
                 //seg006_1413_1C7A:
                 si++;
@@ -318,15 +318,15 @@ namespace Underworld
                             ProbablyPathDistance_var1E = TileRecord_var1C.unk3_bit1_7;
                             if ((NeighbourTileX != TileRecord_var1C.X0) || (NeighbourTileY != TileRecord_var1C.Y1))
                             {
-                                var Height_var1F = 0; 
+                                var Height_var1F = 0;
                                 //seg006_1413_1D68:    //This traverse is coming back wrong
                                 var res_var20 = TraverseMultipleTiles(
                                     critter: critter,
                                     tile1_X_arg0: TileRecord_var1C.X0, tile1_Y_arg2: TileRecord_var1C.Y1,
                                     tile2_X_arg4: Tile2X_var1, tile2_Y_arg6: Tile2Y_var2,
                                     tile3_X_arg8: NeighbourTileX, tile3_Y_argA: NeighbourTileY,
-                                    argC: (int)Loader.getAt(npc.SpecialMotionHandler,4,16), argE: (int)Loader.getAt(npc.SpecialMotionHandler,6,16),
-                                    ProbablyHeight_arg10: TileRecord_var1C.Z2, 
+                                    argC: (int)Loader.getAt(npc.SpecialMotionHandler, 4, 16), argE: (int)Loader.getAt(npc.SpecialMotionHandler, 6, 16),
+                                    ProbablyHeight_arg10: TileRecord_var1C.Z2,
                                     arg12: ref Height_var1F,
                                     PathDistanceResult_arg16: ref ProbablyPathDistance_var1E);
 
@@ -388,7 +388,7 @@ namespace Underworld
                                                 tile1_X_arg0: Tile2X_var1, tile1_Y_arg2: Tile2Y_var2,
                                                 tile2_X_arg4: NeighbourTileX, tile2_Y_arg6: NeighbourTileY,
                                                 tile3_X_arg8: 0, tile3_Y_argA: 0,
-                                                argC: (int)Loader.getAt(npc.SpecialMotionHandler,4,16), argE: (int)Loader.getAt(npc.SpecialMotionHandler,6,16),
+                                                argC: (int)Loader.getAt(npc.SpecialMotionHandler, 4, 16), argE: (int)Loader.getAt(npc.SpecialMotionHandler, 6, 16),
                                                 ProbablyHeight_arg10: NeighbourPathTile.Z2,
                                                 arg12: ref tmp, PathDistanceResult_arg16: ref ProbablyPathDistance_var1E);
                                             NeighbourPathTile.Z2 = tmp;
@@ -618,7 +618,7 @@ namespace Underworld
 
 
                     //NoBlockingTiles_seg006_1413_1192:?
-
+                    ObjectHeight_var16 = 0;
                     var next = tile2.indexObjectList;
                     //jmp     LoopObjectsNoBlockingTiles_seg006_1413_140B
                     while ((next != 0) && (ObjectHeight_var16 == 0))
@@ -873,11 +873,11 @@ namespace Underworld
                             }
                         }
                         else
-                        {
+                        {//seg006_1413_13DE
                             //not a closed door
                             if (commonObjDat.UnknownFlag3_1(obj.item_id))
-                            {
-                                ObjectHeight_var16 = commonObjDat.height(obj.item_id) + obj.zpos;
+                            {//seg006_1413:13EA
+                                ObjectHeight_var16 = (commonObjDat.height(obj.item_id) + obj.zpos) >> 3;
                             }
                         }
 
@@ -913,6 +913,17 @@ namespace Underworld
                             //seg006_1413_1531:
                             if (TallestHeight_Tile1_2_var13 <= TallestHeight_Tile2_3_var14 + 1)
                             {
+                                //seg006_1413_1590:
+                                if ((ObjectHeight_var16 != 0) && (TallestHeight_Tile1_2_var13 >= ObjectHeight_var16))
+                                {//seg006_1413:159E 
+                                    if (TallestHeight_Tile1_2_var13 <= ObjectHeight_var16 + 1)
+                                    {
+                                        var18 = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
                                 //seg006_1413:1540
                                 if (TallestHeight_Tile1_2_var13 <= ObjectHeight_var16 + 1)
                                 {
@@ -941,17 +952,6 @@ namespace Underworld
                                         return false;
                                     }
                                     //else jump seg006_1413_15AE:
-                                }
-                            }
-                            else
-                            {
-                                //seg006_1413_1590:
-                                if ((ObjectHeight_var16 != 0) && (TallestHeight_Tile1_2_var13 >= ObjectHeight_var16))
-                                {
-                                    if (TallestHeight_Tile1_2_var13 <= ObjectHeight_var16 + 1)
-                                    {
-                                        var18 = true;
-                                    }
                                 }
                             }
 
@@ -1163,15 +1163,15 @@ namespace Underworld
                 var PreviousClPath = clPath56.Previous();
                 PreviousClPath.X0 = pathtile.X0;
                 PreviousClPath.Y1 = pathtile.Y1;
-                clPath56.Z2 = pathtile.Z2;
+                clPath56.flag3 = pathtile.unk3_bit0;
                 cl--;
             }
-            File.WriteAllBytes("c:\\temp\\finalpath", FinalPath56.data056);
+            //File.WriteAllBytes("c:\\temp\\finalpath", FinalPath56.data056);
         }
 
 
         /// <summary>
-        /// This is returning an incorrect value
+        /// Tries to find a path in a straight line to the target.
         /// </summary>
         /// <param name="critter"></param>
         /// <param name="CurrTileX"></param>
@@ -1179,7 +1179,7 @@ namespace Underworld
         /// <param name="targetX"></param>
         /// <param name="targetY"></param>
         /// <returns></returns>
-        public static int PathAlongXYAxis_seg006_1413_205B(uwObject critter, int CurrTileX, int CurrTileY, int targetX, int targetY)
+        public static int PathAlongStraightLine_seg006_1413_205B(uwObject critter, int CurrTileX, int CurrTileY, int targetX, int targetY)
         {
             var var8 = 0x40;//is a byte
             var xVector_var1 = targetX - CurrTileX;
@@ -1188,7 +1188,7 @@ namespace Underworld
             var yVar4 = CurrTileY;
             var var6 = 0;
             bool UseVar3_si = false;//reference var3 or var4 in later calcs.
-            bool UseVar3_di = false;//reference var3 or var4 in later calcs.
+            bool UseVar3_diForX = false;//reference var3 or var4 in later calcs.
             var divisionVar7 = 0;
             var directionVar5 = 0;
 
@@ -1198,7 +1198,7 @@ namespace Underworld
 
             if ((xVector_var1 == 0) && (yVector_var2 == 0))
             {
-                return -1;
+                return -1; //already at the target
             }
             else
             {
@@ -1209,7 +1209,7 @@ namespace Underworld
                     if (xVector_var1 < -yVector_var2)
                     {
                         //seg006_1413_2104
-                        UseVar3_di = false;
+                        UseVar3_diForX = false;
                         UseVar3_si = true;
                         divisionVar7 = (xVector_var1 << 7) / yVector_var2;
                         directionVar5 = -1;
@@ -1226,7 +1226,7 @@ namespace Underworld
                     else
                     {
                         //seg006_1413:20C8
-                        UseVar3_di = true;
+                        UseVar3_diForX = true;
                         UseVar3_si = false;
                         divisionVar7 = (yVector_var2 << 7) / xVector_var1;
                         directionVar5 = 1;
@@ -1245,7 +1245,7 @@ namespace Underworld
                     //seg006_1413_2140:
                     if (xVector_var1 >= -yVector_var2)
                     {
-                        UseVar3_di = false;
+                        UseVar3_diForX = false;
                         UseVar3_si = true;
                         divisionVar7 = (xVector_var1 << 7) / yVector_var2;
                         directionVar5 = 1;
@@ -1261,7 +1261,7 @@ namespace Underworld
                     else
                     {
                         //seg006_1413_2189:
-                        UseVar3_di = true;
+                        UseVar3_diForX = true;
                         UseVar3_si = false;
                         divisionVar7 = (yVector_var2 << 7) / xVector_var1;
                         directionVar5 = -1;
@@ -1282,10 +1282,10 @@ namespace Underworld
                 FinalPath56.finalpath[0].Y1 = CurrTileY;
                 Pathfind.MaybePathIndexOrLength_dseg_67d6_225A = 1;
                 FinalPath56.finalpath[0].Z2 = TileVarC.floorHeight;
-
+                //seg006_1413_21F4:
                 do
                 {
-                    if (UseVar3_di)
+                    if (UseVar3_diForX)
                     {
                         xVar3 += directionVar5;
                     }
@@ -1294,7 +1294,7 @@ namespace Underworld
                         yVar4 += directionVar5;
                     }
 
-                    if (Pathfind.TestPathTraverse_seg006_1413_2769(critter, xVar3, yVar4))
+                    if (Pathfind.TestStraightPathTraversal_seg006_1413_2769(critter, xVar3, yVar4))
                     {
                         //seg006_1413_2214                           
                         var8 = ((var8 + (byte)(divisionVar7 & 0xFF)) & 0xFF);
@@ -1310,7 +1310,7 @@ namespace Underworld
                             {
                                 yVar4 += var6;
                             }
-                            if (Pathfind.TestPathTraverse_seg006_1413_2769(critter, xVar3, yVar4) == false)
+                            if (Pathfind.TestStraightPathTraversal_seg006_1413_2769(critter, xVar3, yVar4) == false)
                             {
                                 return 0;
                             }
@@ -1334,7 +1334,7 @@ namespace Underworld
                     tile1_X_arg0: Step3.X0, tile1_Y_arg2: Step3.Y1,
                     tile2_X_arg4: Step2.X0, tile2_Y_arg6: Step2.Y1,
                     tile3_X_arg8: 0, tile3_Y_argA: 0,
-                    argC: (int)Loader.getAt(npc.SpecialMotionHandler,4,16), argE: (int)Loader.getAt(npc.SpecialMotionHandler,6,16),
+                    argC: (int)Loader.getAt(npc.SpecialMotionHandler, 4, 16), argE: (int)Loader.getAt(npc.SpecialMotionHandler, 6, 16),
                     ProbablyHeight_arg10: Step3.Z2,
                     arg12: ref xVar3,
                     PathDistanceResult_arg16: ref varE);
@@ -1352,13 +1352,13 @@ namespace Underworld
 
 
         /// <summary>
-        /// Looks like it checks the 3 tiles in the path if they are traversable.
+        /// Checks if the proposed next step in the path will allow continued traversal following the last 2 tiles in the stored path
         /// </summary>
         /// <param name="critter"></param>
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        static bool TestPathTraverse_seg006_1413_2769(uwObject critter, int x, int y)
+        static bool TestStraightPathTraversal_seg006_1413_2769(uwObject critter, int x, int y)
         {
             MaybeMaxTravelDistance_dseg_67d6_2272 = 0;
             var path56 = FinalPath56.finalpath[MaybePathIndexOrLength_dseg_67d6_225A];
@@ -1379,7 +1379,7 @@ namespace Underworld
                         tile1_X_arg0: 0, tile1_Y_arg2: 0,
                         tile2_X_arg4: FinalPath56.finalpath[0].X0, tile2_Y_arg6: FinalPath56.finalpath[0].Y1,
                         tile3_X_arg8: FinalPath56.finalpath[1].X0, tile3_Y_argA: FinalPath56.finalpath[1].Y1,
-                        argC: (int)Loader.getAt(npc.SpecialMotionHandler,4,16), argE: (int)Loader.getAt(npc.SpecialMotionHandler,6,16),
+                        argC: (int)Loader.getAt(npc.SpecialMotionHandler, 4, 16), argE: (int)Loader.getAt(npc.SpecialMotionHandler, 6, 16),
                         ProbablyHeight_arg10: FinalPath56.finalpath[0].Z2, arg12: ref height1,
                         PathDistanceResult_arg16: ref var2);
                     FinalPath56.finalpath[1].Z2 = height1;
@@ -1408,7 +1408,7 @@ namespace Underworld
                         tile1_X_arg0: Prev3.X0, tile1_Y_arg2: Prev3.Y1,
                         tile2_X_arg4: Prev2.X0, tile2_Y_arg6: Prev2.Y1,
                         tile3_X_arg8: Prev1.X0, tile3_Y_argA: Prev1.Y1,
-                        argC: (int)Loader.getAt(npc.SpecialMotionHandler,4,16), argE: (int)Loader.getAt(npc.SpecialMotionHandler,6,16),
+                        argC: (int)Loader.getAt(npc.SpecialMotionHandler, 4, 16), argE: (int)Loader.getAt(npc.SpecialMotionHandler, 6, 16),
                         ProbablyHeight_arg10: Prev3.Z2, arg12: ref height,
                         PathDistanceResult_arg16: ref var2);
                     Prev2.Z2 = height;
@@ -1627,11 +1627,11 @@ namespace Underworld
                 var16 = var16 & 0x7f;
                 if (var10_axisIsX)
                 {
-                    X_varA += var14_axismodifier;                    
+                    X_varA += var14_axismodifier;
                 }
                 else
                 {
-                   Y_varB += var14_axismodifier;
+                    Y_varB += var14_axismodifier;
                 }
 
                 var17 = TestBasicTileTraversal(
