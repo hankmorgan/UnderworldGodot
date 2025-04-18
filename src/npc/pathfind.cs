@@ -28,7 +28,7 @@ namespace Underworld
         /// Accumulates some values into Segment 57 from Seg56.
         /// </summary>
         /// <param name="Seg57Record"></param>
-        public static void UpdateSeg57Values(PathFind57 Seg57Record)
+        public static void UpdateSeg57TurningValues(PathFind57_Turning Seg57Record)
         {
             //Seg006_1413_2934
             //does some path finding work
@@ -43,22 +43,28 @@ namespace Underworld
                 var accumualted_var3 = 0;
                 var var2 = 0;
 
-                while (var2 < 4)
+                while (var2 < 4)//crash index=8, var2=3
                 {
                     //seg006_1413_2981
                     var Seg56Record = FinalPath56.finalpath[index_var1 + var2];
                     var NextSeg56Record = Seg56Record.Next();
 
                     var ax = ((NextSeg56Record.X0 - Seg56Record.X0) * 3) + (NextSeg56Record.Y1 - Seg56Record.Y1);
+                    //vanilla underworld is perfectly fine with this array going out of bounds and reading arbitary data.
+                    //I'm not so if the file goes out of bounds I don't change values when that happens
+                    if ((ax >= 0) && (ax <= TilePathingFlags.GetUpperBound(0)))
+                    {
+                        accumualted_var3 += (TilePathingFlags[4 + ax] & 0x3) << (var2 << 1);//this should be a byte
+                    }
 
-                    accumualted_var3 += (TilePathingFlags[4 + ax] & 0x3) << (var2 << 1);
 
                     //seg006_1413_2A14: 
                     var2++;
                 }
 
 
-                //seg006_1413_2A23:
+                //seg006_1413_2A23:  (THIS BIT IS MISSING CODE!!)
+                Seg57Record.SetPossibleHeadingAtIndex4(index_var1 / 4, accumualted_var3);
                 index_var1 += 4;
             }
 
@@ -80,8 +86,9 @@ namespace Underworld
                     var2++;
                 }
                 //This needs to be tested.
-                var offset = Seg57Record.PTR + (index_var1 / 8);
-                DataLoader.setAt(PathFind57.pathfind57data, offset + 0x14, 8, var4);
+                // var offset = Seg57Record.PTR + (index_var1 / 8);
+                // DataLoader.setAt(PathFind57_Turning.pathfind57data, offset + 0x14, 8, var4);
+                Seg57Record.SetPossibleHeadingAtIndex14(index_var1/8, var4);
 
                 index_var1 += 8;
             }

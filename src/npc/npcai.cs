@@ -1259,7 +1259,7 @@ namespace Underworld
                         {
                             //seg006_1413_31B5:
                             //MaybeReadPath(critter, indexSeg57);
-                            UpdatePathFlag_seg006_1413_2ABB(PathFind57.PathFind57Records[indexSeg57]);
+                            UpdatePathFlag_seg006_1413_2ABB(PathFind57_Turning.PathFind57Records[indexSeg57]);
                         }
                     }
                 }
@@ -1407,13 +1407,13 @@ namespace Underworld
                                         var mask = ~(1 << BitFieldIndex_var4);
                                         BitFieldForPathing_dseg_67d6_B4 &= mask; //unset the bit at var4
 
-                                        Pathfind.UpdateSeg57Values(PathFind57.PathFind57Records[BitFieldIndex_var4]);
+                                        Pathfind.UpdateSeg57TurningValues(PathFind57_Turning.PathFind57Records[BitFieldIndex_var4]);
 
                                         critter.UnkBit_0x18_6 = 0;
                                         critter.UnkBit_0X15_Bit7 = 1;
                                         critter.PathFindIndex_0x16_0_F = (short)BitFieldIndex_var4;
                                         //Lookup Record
-                                        TurnTowardsPath_seg006_1413_2BF5(critter, PathFind57.PathFind57Records[critter.PathFindIndex_0x16_0_F]);
+                                        TurnTowardsPath_seg006_1413_2BF5(critter, PathFind57_Turning.PathFind57Records[critter.PathFindIndex_0x16_0_F]);
                                     }
                                     else
                                     {
@@ -1453,7 +1453,7 @@ namespace Underworld
                 else
                 {
                     //seg006_1413_334C:
-                    if (TurnTowardsPath_seg006_1413_2BF5(critter, PathFind57.PathFind57Records[critter.PathFindIndex_0x16_0_F]) == false)
+                    if (TurnTowardsPath_seg006_1413_2BF5(critter, PathFind57_Turning.PathFind57Records[critter.PathFindIndex_0x16_0_F]) == false)
                     {
                         BitFieldForPathing_dseg_67d6_B4 |= 1 << critter.PathFindIndex_0x16_0_F;
                         critter.UnkBit_0X15_Bit7 = 0;
@@ -1566,7 +1566,7 @@ namespace Underworld
             critter.npc_heading = 0;
         }
 
-        static bool TurnTowardsPath_seg006_1413_2BF5(uwObject critter, PathFind57 path57Record)
+        static bool TurnTowardsPath_seg006_1413_2BF5(uwObject critter, PathFind57_Turning path57Record)
         {
             var tileX_var5 = path57Record.X0;
             var tileY_var6 = path57Record.Y1;
@@ -1714,7 +1714,7 @@ namespace Underworld
             }
         }
 
-        static void TurnTowardsPath_Adjusted_seg006_1413_2D3F(uwObject critter, PathFind57 path57Record)
+        static void TurnTowardsPath_Adjusted_seg006_1413_2D3F(uwObject critter, PathFind57_Turning path57Record)
         {
             var xVar2 = path57Record.X0 - 2;
             if (path57Record.X0 == currObj_XHome)
@@ -1768,7 +1768,7 @@ namespace Underworld
 
         }
 
-        static bool UpdatePathFlag_seg006_1413_2ABB(PathFind57 path57Record)
+        static bool UpdatePathFlag_seg006_1413_2ABB(PathFind57_Turning path57Record)
         {
             if (path57Record.unk2_0_6_maybeZ < path57Record.UNK3)
             {

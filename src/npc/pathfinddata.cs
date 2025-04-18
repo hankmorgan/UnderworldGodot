@@ -131,22 +131,26 @@ namespace Underworld
     }
 
 
-    public class PathFind57 : Loader
+    /// <summary>
+    /// Likely data to track the turns the NPC needs to make when following their path
+    /// </summary>
+
+    public class PathFind57_Turning : Loader
     {
         public static byte[] pathfind57data = new byte[0x1C0];
-        public static PathFind57[] PathFind57Records = new PathFind57[16];
+        public static PathFind57_Turning[] PathFind57Records = new PathFind57_Turning[16];
         public int PTR;
         int index;
 
-        static PathFind57()
+        static PathFind57_Turning()
         {
             for (int i = 0; i <= PathFind57Records.GetUpperBound(0); i++)
             {
-                PathFind57Records[i] = new PathFind57(i);
+                PathFind57Records[i] = new PathFind57_Turning(i);
             }
         }
 
-        public PathFind57(int i)
+        public PathFind57_Turning(int i)
         {
             PTR = i * 0x1C;
             index = i;
@@ -222,10 +226,11 @@ namespace Underworld
         /// Gets the next PathFind 57 Record.
         /// </summary>
         /// <returns></returns>
-        public PathFind57 Next()
+        public PathFind57_Turning Next()
         {
             return PathFind57Records[index + 1];
         }
+        
 
         public int PathingOffsetIndex4
         {
@@ -249,6 +254,16 @@ namespace Underworld
                 ax = ax >> cl;
                 return ax;
             }
+        }
+
+        public void SetPossibleHeadingAtIndex4(int index, int maybeHeading)
+        {
+            setAt(pathfind57data, PTR + 0x4 + index, 8, maybeHeading);
+        }
+
+        public void SetPossibleHeadingAtIndex14(int index, int maybeHeading)
+        {
+            setAt(pathfind57data, PTR + 0x14 + index, 8, maybeHeading);
         }
 
     }
