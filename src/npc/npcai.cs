@@ -131,9 +131,8 @@ namespace Underworld
                 {
                     //NeedsToMove_seg007_17A2_22DA
                     var ProjectileHeading = critter.ProjectileHeading;
-
-                    //TO REVISIT
                     UWMotionParamArray MotionParams = new();
+                    MotionParams.unk_17 = 0x80;
                     motion.InitMotionParams(critter, MotionParams);
                     var NPCMotionCalcArray = new byte[0x20];
                     UWMotionParamArray.LikelyNPCTileStates_222C = motion.InitMotionCalcForNPC(critter, NPCMotionCalcArray);
@@ -161,7 +160,7 @@ namespace Underworld
                 //To update globals after motion has taken place
                 currObj_XHome = critter.npc_xhome;
                 currObj_YHome = critter.npc_yhome;
-                currObj_Zpos = critter.zpos;
+                currObj_Zpos = critter.zpos >> 3;
                 currObjXCoordinate = (currObj_XHome << 3) + critter.xpos;
                 currObjYCoordinate = (currObj_YHome << 3) + critter.ypos;
                 currObjQualityX = critter.quality;
@@ -271,7 +270,12 @@ namespace Underworld
                                 }
                             default:
                                 {//17A2:27F0
+                                    var proj = critter.ProjectileHeading;
                                     NpcBehaviours(critter);
+                                    // if (proj != critter.ProjectileHeading)
+                                    // {
+                                    //     Debug.Print($"Projectile heading has changed to {critter.ProjectileHeading}");
+                                    // }
                                     break;
                                 }
                         }
@@ -1193,7 +1197,6 @@ namespace Underworld
         /// <param name="targetZ"></param>
         static void NPC_Goto(uwObject critter, int targetX, int targetY, int targetZ)
         {
-
             var Bit7Cleared_Var5 = false;
             var MaybeIsFlier_Var6 = false;
 
@@ -1570,7 +1573,10 @@ namespace Underworld
         {
             var tileX_var5 = path57Record.X0;
             var tileY_var6 = path57Record.Y1;
-
+            if (currObjYCoordinate== 0x106)
+            {
+                Debug.Print("turn here");
+            }
             if (CheckIfAtOrNearTargetTile(
                 flagArg0: path57Record.unk2_7,
                 xhome_arg2: currObj_XHome, yhome_arg4: currObj_YHome,
@@ -1716,7 +1722,7 @@ namespace Underworld
 
         static void TurnTowardsPath_Adjusted_seg006_1413_2D3F(uwObject critter, PathFind57_Turning path57Record)
         {
-            var xVar2 = path57Record.X0 - 2;
+            var xVar2 = (path57Record.X0 <<3) - 2;
             if (path57Record.X0 == currObj_XHome)
             {
                 xVar2 += 6;
@@ -1730,7 +1736,7 @@ namespace Underworld
             }
 
             //seg006_1413_2D76:
-            var yvar4 = path57Record.Y1 - 2;
+            var yvar4 = (path57Record.Y1<<3) - 2;
             if (path57Record.Y1 == currObj_YHome)
             {
                 yvar4 += 6;
@@ -1770,7 +1776,7 @@ namespace Underworld
 
         static bool UpdatePathFlag_seg006_1413_2ABB(PathFind57_Turning path57Record)
         {
-            if (path57Record.unk2_0_6_maybeZ < path57Record.UNK3)
+            if (path57Record.unk2_0_6_PathingIndex < path57Record.UNK3)
             {
                 //seg006_1413_2AD4:
                 //I guarantee this will be buggy when I get to start testing!
@@ -1780,13 +1786,13 @@ namespace Underworld
 
                 if ((path57Record.PathingOffsetIndex8 & 0x1) == 0)
                 {
-                    path57Record.unk2_7 = 1;
+                    path57Record.unk2_7 = 0;
                 }
                 else
                 {
-                    path57Record.unk2_7 = 0;
+                    path57Record.unk2_7 = 1;
                 }
-                path57Record.unk2_0_6_maybeZ++;
+                path57Record.unk2_0_6_PathingIndex++;
                 return true;
             }
             else
@@ -1796,7 +1802,7 @@ namespace Underworld
         }
 
         /// <summary>
-        /// Check if the tileX/Y being tested is the targetTile to get to or very close to it.
+        /// Check if the tileX/Y being tested is the targetTile (or next tile in path) to get to or very close to it.
         /// </summary>
         /// <param name="flagArg0">If true require exact location, if false close enough should do?</param>
         /// <param name="xhome_arg2"></param>
@@ -1829,7 +1835,7 @@ namespace Underworld
                 }
 
                 //seg006_1413_2BCA: 
-                if ((xpos_arg6 >= 6) && (dx_pathY > si_y))
+                if ((ypos_arg8 >= 6) && (dx_pathY > si_y))
                 {
                     si_y++;
                 }

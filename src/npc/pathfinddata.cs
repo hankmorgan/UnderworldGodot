@@ -180,7 +180,7 @@ namespace Underworld
             }
         }
 
-        public int unk2_0_6_maybeZ
+        public int unk2_0_6_PathingIndex
         {
             get
             {
@@ -204,8 +204,8 @@ namespace Underworld
             {
                 var tmp = (int)(getAt(pathfind57data, PTR + 2, 8));
                 tmp = tmp & 0x7F;
-                tmp = (tmp & 0x1) << 7;
-                setAt(pathfind57data, PTR, 8, tmp);
+                tmp = tmp | ((value & 0x1) << 7);
+                setAt(pathfind57data, PTR + 2, 8, tmp);
             }
         }
 
@@ -236,9 +236,9 @@ namespace Underworld
         {
             get
             {
-                var offset = unk2_7 / 4;
+                var offset = unk2_0_6_PathingIndex / 4;
                 var ax = (int)getAt(pathfind57data, PTR + 4 + offset, 8);
-                var cl = (unk2_7 % 4) << 1;
+                var cl = (unk2_0_6_PathingIndex % 4) << 1;
                 ax = (ax >> cl) & 0x3;
                 return ax;
             }
@@ -248,9 +248,9 @@ namespace Underworld
         {
             get
             {
-                var offset = unk2_7 / 8;
+                var offset = unk2_0_6_PathingIndex / 8;
                 var ax = (int)getAt(pathfind57data, PTR + 0x14 + offset, 8);
-                var cl = (unk2_7 % 8) << 1;
+                var cl = (unk2_0_6_PathingIndex % 8) << 1;
                 ax = ax >> cl;
                 return ax;
             }

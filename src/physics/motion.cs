@@ -113,6 +113,7 @@ namespace Underworld
             {
                 //seg030_2BB7_6C7:
                 //object has changed tiles
+                Debug.Print($"{projectile.a_name} has changed tiles from {projectile.tileX},{projectile.tileY} to {MotionParams.x_0 >> 8},{MotionParams.y_2 >> 8}");
                 var tileVar6 = UWTileMap.current_tilemap.Tiles[projectile.tileX, projectile.tileY];//the current tile.
                 ObjectRemover.RemoveObjectFromLinkedList(tileVar6.indexObjectList, projectile.index, UWTileMap.current_tilemap.LevelObjects, tileVar6.Ptr + 2);
 

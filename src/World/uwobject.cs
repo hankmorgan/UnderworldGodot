@@ -1019,6 +1019,9 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// Likely means that the PathFindIndex_0x16_0_F has been set.
+        /// </summary>
         public short UnkBit_0X15_Bit7
         {
             get
@@ -1131,7 +1134,7 @@ namespace Underworld
         }
 
         /// <summary>
-        /// Possibly used to indicate if npc is at their target
+        /// Possibly used to indicate if npc is at their target (or maybe if their target has changed)
         /// </summary>
         public short UnkBit_0x18_5
         {

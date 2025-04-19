@@ -83,15 +83,20 @@ namespace Underworld
             else
             {//seg030_2BB7_5F8
                 MotionParams.unk_14 = (short)(MotionParams.unk_14 * 0x2F);
+                if (projectile.majorclass == 1)
+                {
+                    MotionParams.unk_24 = 8;
+                }
             }
 
 
             if (isNPC)
             {
-                MotionParams.x_0 = (short)((MotionParams.x_0 << 5) + Rng.r.Next(32));
-                MotionParams.y_2 = (short)((MotionParams.y_2 << 5) + Rng.r.Next(32));
-                MotionParams.z_4 = (short)((MotionParams.z_4 << 3) + Rng.r.Next(8));
+                MotionParams.x_0 = (short)((MotionParams.x_0 << 5) + Rng.r.Next(32));//This randomness is used to give npcs a nudge
+                MotionParams.y_2 = (short)((MotionParams.y_2 << 5) + Rng.r.Next(32));//and prevents them from getting
+                MotionParams.z_4 = (short)((MotionParams.z_4 << 3) + Rng.r.Next(8));//stuck when following a path
             }
+            MotionParams.unk_26 = 0;
         }
 
 

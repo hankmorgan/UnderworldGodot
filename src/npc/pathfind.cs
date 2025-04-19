@@ -32,7 +32,7 @@ namespace Underworld
         {
             //Seg006_1413_2934
             //does some path finding work
-            Seg57Record.unk2_0_6_maybeZ = 0;
+            Seg57Record.unk2_0_6_PathingIndex = 0;
             Seg57Record.X0 = FinalPath56.finalpath[0].X0;
             Seg57Record.Y1 = FinalPath56.finalpath[0].Y1;
             Seg57Record.UNK3 = MaybePathIndexOrLength_dseg_67d6_225A;
@@ -52,18 +52,16 @@ namespace Underworld
                     var ax = ((NextSeg56Record.X0 - Seg56Record.X0) * 3) + (NextSeg56Record.Y1 - Seg56Record.Y1);
                     //vanilla underworld is perfectly fine with this array going out of bounds and reading arbitary data.
                     //I'm not so if the file goes out of bounds I don't change values when that happens
+                    ax = 4 + ax;
                     if ((ax >= 0) && (ax <= TilePathingFlags.GetUpperBound(0)))
                     {
-                        accumualted_var3 += (TilePathingFlags[4 + ax] & 0x3) << (var2 << 1);//this should be a byte
+                        accumualted_var3 += (TilePathingFlags[ax] & 0x3) << (var2 << 1);//this should be a byte
                     }
 
 
                     //seg006_1413_2A14: 
                     var2++;
                 }
-
-
-                //seg006_1413_2A23:  (THIS BIT IS MISSING CODE!!)
                 Seg57Record.SetPossibleHeadingAtIndex4(index_var1 / 4, accumualted_var3);
                 index_var1 += 4;
             }
@@ -1889,7 +1887,7 @@ namespace Underworld
             var bl_y = yVector << 1;
 
             if (yVector <= cl_x)
-            {
+            {//seg006_1413_2F1A:
                 if (xVector <= -bl_y)
                 {
                     if (yVector <= -cl_x)
@@ -1902,7 +1900,7 @@ namespace Underworld
                     }
                 }
                 else
-                {
+                {//1413:2F29
                     if (xVector <= bl_y)
                     {
                         return 1;
@@ -1914,7 +1912,7 @@ namespace Underworld
                 }
             }
             else
-            {
+            {//seg006_1413:2EE1
                 if (xVector <= -bl_y)
                 {
                     if (xVector <= bl_y)
@@ -1927,13 +1925,13 @@ namespace Underworld
                     }
                 }
                 else
-                {
+                {//seg006_1413:2EF0
                     if (yVector <= -cl_x)
                     {
                         return 7;
                     }
                     else
-                    {
+                    {//1413:2EFF
                         return 0;
                     }
                 }
