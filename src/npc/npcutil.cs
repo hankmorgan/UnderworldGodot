@@ -138,9 +138,10 @@ namespace Underworld
                     destTile.indexObjectList = critter.index;
                     critter.tileX = destTileX; critter.tileY= destTileY;
                     critter.zpos = (short)(destTile.floorHeight<<3);
+                    critter.xpos = 3; critter.ypos = 3;
                     critter.npc_xhome = (short)destTileX;
                     critter.npc_yhome = (short)destTileY;
-
+                 
                     //Clear some bits relating to AI
                     critter.UnkBit_0x19_4 = 0;
                     critter.UnkBit_0x19_5 = 0;
