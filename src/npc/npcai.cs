@@ -930,7 +930,7 @@ namespace Underworld
 
             if (score / 4 < si_dist)
             {
-                var var8 = (int)Math.Pow((critterObjectDat.theftdetectionrange(critter.item_id) * critterObjectDat.unk_1D_uppernibble_stealthrelated(gtargObject.item_id)) / 16, 2);
+                var var8 = (int)Math.Pow((critterObjectDat.theftdetectionrange(critter.item_id) * critterObjectDat.StealthScore2(gtargObject.item_id)) / 16, 2);
 
                 if (si_dist < var8)
                 {
