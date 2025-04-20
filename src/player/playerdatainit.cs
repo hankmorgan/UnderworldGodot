@@ -93,6 +93,9 @@ namespace Underworld
             Teleportation.CodeToRunOnTeleport = null;
             pitsofcarnage.IsAvatarInPitFightGlobal = false;
 
+            playerObject.npc_xhome = (short)playerdat.tileX;
+            playerObject.npc_yhome = (short)playerdat.tileY;
+
             //load the correct skin tones for weapon animations
             switch (Body)
             {
