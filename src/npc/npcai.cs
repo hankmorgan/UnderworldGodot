@@ -25,7 +25,7 @@ namespace Underworld
 
         static int currObj_XHome;
         static int currObj_YHome;
-        static int currObj_Zpos;
+        static int currObj_FloorHeight;
         static int currObjXCoordinate;
         static int currObjYCoordinate;
         static int currObjQualityX;
@@ -38,7 +38,6 @@ namespace Underworld
         static uwObject currentGoalTarget;
         static int currentGTargXHome;
         static int currentGTargYHome;
-        static int currentGTargHeight;
 
         static int currentGTargXCoord;
         static int currentGTargYCoord;
@@ -49,7 +48,7 @@ namespace Underworld
         static int currentGTargSquaredDistanceByTiles;
         static int currentGTargSquaredDistanceByCoordinates;
 
-        static int zposofGTARG;
+        static int currentGTargFloorHeight;
 
         public static uwObject collisionObject; //tmp
 
@@ -160,7 +159,7 @@ namespace Underworld
                 //To update globals after motion has taken place
                 currObj_XHome = critter.npc_xhome;
                 currObj_YHome = critter.npc_yhome;
-                currObj_Zpos = critter.zpos >> 3;
+                currObj_FloorHeight = critter.zpos >> 3;
                 currObjXCoordinate = (currObj_XHome << 3) + critter.xpos;
                 currObjYCoordinate = (currObj_YHome << 3) + critter.ypos;
                 currObjQualityX = critter.quality;
@@ -702,12 +701,12 @@ namespace Underworld
             {
                 currentGTargXHome = currentGoalTarget.npc_xhome;
                 currentGTargYHome = currentGoalTarget.npc_yhome;
-                currentGTargHeight = currentGoalTarget.zpos >> 3;
+                
                 currentGTargXCoord = currentGoalTarget.xpos + (currentGoalTarget.npc_xhome << 3);
                 currentGTargYCoord = currentGoalTarget.ypos + (currentGoalTarget.npc_yhome << 3);
                 currentGTargXVector = currentGTargXCoord - currObjXCoordinate;
                 currentGTargYVector = currentGTargYCoord - currObjYCoordinate;
-                zposofGTARG = currentGoalTarget.zpos >> 3;
+                currentGTargFloorHeight = currentGoalTarget.zpos >> 3;
                 currentGTargSquaredDistanceByTiles = (int)(Math.Pow(currentGTargXHome - currObj_XHome, 2) + Math.Pow(currentGTargYHome - currObj_YHome, 2));
                 currentGTargSquaredDistanceByCoordinates = (int)(Math.Pow(currentGTargXCoord - currObjXCoordinate, 2) + Math.Pow(currentGTargYCoord - currObjYCoordinate, 2));
                 return true;
@@ -779,7 +778,7 @@ namespace Underworld
                             if (result == 0)
                             {
                                 critter.UnkBit_0x19_0_likelyincombat = 1;
-                                SetNPCTargetDestination(critter, gtarg_x, gtarg_y, zposofGTARG);
+                                SetNPCTargetDestination(critter, gtarg_x, gtarg_y, currentGTargFloorHeight);
                                 SetGoalAndGtarg(critter, 5, 1);
                                 return;
                             }
@@ -790,7 +789,7 @@ namespace Underworld
                                     critter.UnkBit_0x19_1 = 1;
                                     if (Rng.r.Next(0, 2) == 1)
                                     {
-                                        NPC_Goto(critter, gtarg_x, gtarg_y, zposofGTARG);
+                                        NPC_Goto(critter, gtarg_x, gtarg_y, currentGTargFloorHeight);
                                         return;
                                     }
                                 }
@@ -842,7 +841,7 @@ namespace Underworld
                     {
                         case 0:
                             {//npc is aware of target
-                                SetNPCTargetDestination(critter, xhome, yhome, zposofGTARG);
+                                SetNPCTargetDestination(critter, xhome, yhome, currentGTargFloorHeight);
                                 break;
                             }
                         case 1:
@@ -856,7 +855,7 @@ namespace Underworld
                             {//no change to detection.
                                 if (Rng.r.Next(2) == 1)
                                 {
-                                    SetNPCTargetDestination(critter, xhome, yhome, zposofGTARG);
+                                    SetNPCTargetDestination(critter, xhome, yhome, currentGTargFloorHeight);
                                 }
                                 else
                                 {
@@ -874,7 +873,7 @@ namespace Underworld
                 }
             }
             //seg007_17A2_D3D:
-            if ((xhome == currObj_YHome) && (yhome == currObj_YHome) && (Math.Abs(currObj_Zpos - zposofGTARG) < 4))
+            if ((xhome == currObj_YHome) && (yhome == currObj_YHome) && (Math.Abs(currObj_FloorHeight - currentGTargFloorHeight) < 4))
             {
                 //close to target
                 return;
@@ -893,7 +892,7 @@ namespace Underworld
                         }
                         else
                         {
-                            if (Math.Abs(zposofGTARG - currObj_Zpos) < 4)
+                            if (Math.Abs(currentGTargFloorHeight - currObj_FloorHeight) < 4)
                             {
                                 return;
                             }
@@ -901,7 +900,7 @@ namespace Underworld
                     }
                 }
                 //seg007_17A2_DBD:
-                NPC_Goto(critter, xhome, yhome, zposofGTARG);
+                NPC_Goto(critter, xhome, yhome, currentGTargFloorHeight);
                 if (critter.UnkBit_0x18_6 != 0)
                 {
                     critter.UnkBit_0x19_1 = 0;
@@ -926,17 +925,13 @@ namespace Underworld
             var xvector = currentGTargXHome - currObj_XHome;
             var yvector = currentGTargYHome - currObj_YHome;
 
-            var si_dist = Math.Pow(xvector, 2) + Math.Pow(yvector, 2);
-            var tmp_critter = (critterObjectDat.combatdetectionrange(critter.item_id) * critterObjectDat.maybestealth(gtargObject.item_id)) / 16;
-            //var tmp_gtarg = (critterObjectDat.combatdetectionrange(currentGoalTarget.item_id) * critterObjectDat.maybestealth(currentGoalTarget.item_id)) / 16;
+            var si_dist = (int)Math.Pow(xvector, 2) + Math.Pow(yvector, 2);
+            var score = (int)Math.Pow((critterObjectDat.combatdetectionrange(critter.item_id) * critterObjectDat.maybestealth(gtargObject.item_id)) / 16, 2);
 
-            var score = (tmp_critter * tmp_critter) / 4;
-
-            if (score < si_dist)
+            if (score / 4 < si_dist)
             {
-                tmp_critter = (critterObjectDat.theftdetectionrange(critter.item_id) * critterObjectDat.unk_1D_uppernibble_stealthrelated(gtargObject.item_id)) / 16;
-                //tmp_gtarg = (critterObjectDat.theftdetectionrange(currentGoalTarget.item_id) * critterObjectDat.unk_1D_uppernibble(currentGoalTarget.item_id)) / 16;
-                var var8 = (tmp_critter * tmp_critter);
+                var var8 = (int)Math.Pow((critterObjectDat.theftdetectionrange(critter.item_id) * critterObjectDat.unk_1D_uppernibble_stealthrelated(gtargObject.item_id)) / 16, 2);
+
                 if (si_dist < var8)
                 {
                     var HeadingToTarget_var3 = Pathfind.GetVectorHeading(xvector, yvector);
@@ -957,7 +952,7 @@ namespace Underworld
 
                 if ((score << 2) < si_dist)
                 {
-                    critter.UnkBit_0x19_0_likelyincombat = 1;
+                    critter.UnkBit_0x19_0_likelyincombat = 0;
                     return 1;
                 }
                 else
@@ -1573,10 +1568,7 @@ namespace Underworld
         {
             var tileX_var5 = path57Record.X0;
             var tileY_var6 = path57Record.Y1;
-            if (currObjYCoordinate== 0x106)
-            {
-                Debug.Print("turn here");
-            }
+
             if (CheckIfAtOrNearTargetTile(
                 flagArg0: path57Record.unk2_7,
                 xhome_arg2: currObj_XHome, yhome_arg4: currObj_YHome,
@@ -1722,7 +1714,7 @@ namespace Underworld
 
         static void TurnTowardsPath_Adjusted_seg006_1413_2D3F(uwObject critter, PathFind57_Turning path57Record)
         {
-            var xVar2 = (path57Record.X0 <<3) - 2;
+            var xVar2 = (path57Record.X0 << 3) - 2;
             if (path57Record.X0 == currObj_XHome)
             {
                 xVar2 += 6;
@@ -1736,7 +1728,7 @@ namespace Underworld
             }
 
             //seg006_1413_2D76:
-            var yvar4 = (path57Record.Y1<<3) - 2;
+            var yvar4 = (path57Record.Y1 << 3) - 2;
             if (path57Record.Y1 == currObj_YHome)
             {
                 yvar4 += 6;
@@ -1889,9 +1881,9 @@ namespace Underworld
                 {//POSSIBLY this if else is wrong!
                     PitchVarA = 0xE;
                     si = 3;
-                    if (currObj_Zpos <= 0xE)
+                    if (currObj_FloorHeight <= 0xE)
                     {
-                        if (currObj_Zpos < tileVar8.floorHeight + 2)
+                        if (currObj_FloorHeight < tileVar8.floorHeight + 2)
                         {
                             PitchVarA = 0x10;
                         }
@@ -2130,7 +2122,7 @@ namespace Underworld
                 var var4 = 4;
                 var siDist = (currentGTargXVector * currentGTargXVector) + (currentGTargYVector * currentGTargYVector);
                 var xDist = currObjQualityX - currObj_XHome;
-                var yDist = currObjOwnerY - currObjOwnerY;
+                var yDist = currObjOwnerY - currObj_YHome;
                 var diDistFromHome = (xDist * xDist) + (yDist * yDist);
                 if (critter.npc_gtarg == 1)
                 {
@@ -2140,7 +2132,7 @@ namespace Underworld
                 if ((siDist < 0x64) || ((siDist >= 0x64) && (currObj_XHome == currentGTargXHome) && (currObj_YHome == currentGTargYHome)))
                 {
                     //seg007_17A2_81D: 
-                    if (Math.Abs(currObj_Zpos - zposofGTARG) < 4)
+                    if (Math.Abs(currObj_FloorHeight - currentGTargFloorHeight) < 4)
                     {
                         //seg007_17A2_844:
                         ChooseMeleeAttackToMake(critter, siDist);
@@ -2217,12 +2209,10 @@ namespace Underworld
                     //seg007_17A2_97D: 
                     if (critterObjectDat.isCaster(critter.item_id))
                     {
-                        // Debug.Print("AttackGoalSearchForTarget(x,y, var4)");
                         AttackGoalSearchForTarget(critter, ref currentGTargXHome, ref currentGTargYHome, var4);
                     }
                     else
                     {
-                        //Debug.Print("AttackGoalSearchForTarget(24,32, 1)");
                         AttackGoalSearchForTarget(critter, ref currentGTargXHome, ref currentGTargYHome, 1);
                     }
                 }
