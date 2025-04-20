@@ -76,6 +76,10 @@ namespace Underworld
             //once per tick This is used to control the angering behaviour of the npc in checking against passiveness.   
             critter.AccumulatedDamage += (short)basedamage;//how much total damage has been applied in this tick.        
             critter.npc_hp = (byte)Math.Max(0, critter.npc_hp - basedamage);
+            if (critter == playerdat.playerObject)
+            {
+                playerdat.play_hp = critter.npc_hp;
+            }
             
             //make the npc react to the damage source. player if 0
             //record the damage source as the player

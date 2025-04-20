@@ -163,6 +163,7 @@ namespace Underworld
                 //check for player death.
                 if (play_hp<=0)
                 {
+                    Debug.Print ("player has died");
                     PlayerDeath();
                 }            
             }//end ingame check
