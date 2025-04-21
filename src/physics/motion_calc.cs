@@ -674,10 +674,9 @@ namespace Underworld
         /// <param name="MotionParams"></param>
         static void StoreNewXYZH_seg031_2CFA_800(UWMotionParamArray MotionParams)
         {
-            //DumpMotionMemory(MotionParams, "BeforeStoreXYZ");
             MotionParams.x_0 = (short)((MotionCalcArray.x0 << 5) + (UWMotionParamArray.RelatedToMotionX_dseg_67d6_3FE >> 8));
             MotionParams.y_2 = (short)((MotionCalcArray.y2 << 5) + (UWMotionParamArray.RelatedToMotionY_dseg_67d6_400 >> 8));
-            MotionParams.z_4 = (short)((MotionCalcArray.z4_base << 3) + (UWMotionParamArray.RelatedToMotionZ_dseg_67d6_402 >> 8));
+            MotionParams.z_4 = (short)((MotionCalcArray.z4 << 3) + (UWMotionParamArray.RelatedToMotionZ_dseg_67d6_402 >> 8));
 
             if ((MotionCalcArray.UnkC_terrain_base & 0x2000) != 0)
             {
@@ -693,7 +692,6 @@ namespace Underworld
                 }
             }
             MotionParams.heading_1E = MotionCalcArray.Heading6_base;
-            //DumpMotionMemory(MotionParams, "AfterStoreXYZ");
         }
 
         static int ProcessCollisions_seg031_2CFA_12B8(UWMotionParamArray MotionParams, int arg0)

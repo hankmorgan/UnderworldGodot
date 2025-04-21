@@ -146,12 +146,17 @@ namespace Underworld
                     //seg030_2BB7_7B7:
                     if (projectile.zpos != (MotionParams.z_4>>3))
                     {
+                        projectile.zpos = (short)(MotionParams.z_4 >> 3);
                         //Debug.Print("TODO Run pressure trigger for projectile");                        
                     }
                 }
+                else
+                {
+                    projectile.zpos = (short)(MotionParams.z_4 >> 3);
+                }
             }
 
-            projectile.zpos = (short)(MotionParams.z_4 >> 3);
+            
             projectile.xpos = (short)(MotionParams.x_0 >> 5);
             projectile.ypos = (short)(MotionParams.y_2 >> 5);
 
