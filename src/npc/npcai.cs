@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using Godot;
 
 namespace Underworld
 {
@@ -366,7 +367,8 @@ namespace Underworld
                 }//end sound block
                 //seg007_17A2_29A5:  passive test?
                 if (critterObjectDat.unkPassivenessProperty(critter.item_id) == false)
-                {//seg007_17A2_29B8:
+                {
+                    //seg007_17A2_29B8:
                     if (
                         (
                             (critter.IsAlly == 0)
@@ -385,6 +387,7 @@ namespace Underworld
                     {
                         if (playerdat.LastDamagedNPCTime + 512 >= playerdat.ClockValue)
                         {
+                            //seg007_17A2_2A0D:
                             //do detection
                             var dist = System.Math.Abs(critter.tileX - playerdat.LastDamagedNPCTileX) + System.Math.Abs(critter.tileY - playerdat.LastDamagedNPCTileY);
                             if (dist < critterObjectDat.combatdetectionrange(critter.item_id))
@@ -404,99 +407,95 @@ namespace Underworld
                             }
                         }
                     }
-                    if (critter.ProjectileSourceID > 0)//seg007_17A2_2AEA:
-                    {//HasLastHitNPC_seg007_17A2_2AF8:
-                        if
-                            (
-                            (critter.ProjectileSourceID != 1)
-                            ||
-                            (
-                                (critter.ProjectileSourceID == 1) && (critter.IsAlly == 1)
-                            )
-                            )
+                    //seg007_17A2_2AEA:
+                    if (critter.ProjectileSourceID > 0)
+                    {
+                        //HasLastHitNPC_seg007_17A2_2AF8:                        
+                        var run2b48 = false;
+                        if (critter.ProjectileSourceID == 1 && critter.IsAlly == 0)
                         {
-                            bool tmp = false;
-                            if (critter.IsAlly == 1)
+                            run2b48 = true;
+                        }
+                        else
+                        {
+                            if (critter.IsAlly != 0)
                             {
-                                tmp = true;
+                                run2b48 = true;
                             }
                             else
                             {
-                                uwObject lasthitobject;
-                                if (critter.ProjectileSourceID == 1)
+                                var LastHitChar = UWTileMap.current_tilemap.LevelObjects[critter.ProjectileSourceID];
+                                if (LastHitChar.IsAlly != 0)
                                 {
-                                    lasthitobject = playerdat.playerObject;
+                                    run2b48 = true;
                                 }
-                                else
-                                {
-                                    lasthitobject = UWTileMap.current_tilemap.LevelObjects[critter.ProjectileSourceID];
-                                }
-                                tmp = (lasthitobject.IsAlly == 1);
                             }
-                            if (tmp)
+                        }
+
+                        if (run2b48)
+                        {
+                            //seg007_17A2_2B48
+                            if (critter.npc_gtarg != critter.ProjectileSourceID)
                             {
-                                if (critter.npc_gtarg != critter.ProjectileSourceID)
-                                {
-                                    critter.npc_gtarg = (byte)critter.ProjectileSourceID;
+                                critter.npc_gtarg = (byte)critter.ProjectileSourceID;
+                            }
+
+                            if (GetDistancesToGTarg(critter))
+                            {
+                                int newGoal;
+                                //int newGtarg  = critter.ProjectileSourceID;;
+                                gtargFound = true;
+                                if (critter.ProjectileSourceID == 1)
+                                {//player has attacked
+                                    critter.npc_attitude = 0;
+                                    SetNPCTargetDestination(critter, playerdat.tileX, playerdat.tileY, playerdat.zpos);
+                                    critter.UnkBit_0x19_0_likelyincombat = 1;
                                 }
 
-                                if (GetDistancesToGTarg(critter))
-                                {
-                                    int newGoal;
-                                    //int newGtarg  = critter.ProjectileSourceID;;
-                                    gtargFound = true;
-                                    if (critter.ProjectileSourceID == 1)
-                                    {//player has attacked
-                                        critter.npc_attitude = 0;
-                                        SetNPCTargetDestination(critter, playerdat.tileX, playerdat.tileY, playerdat.zpos);
-                                        critter.UnkBit_0x19_0_likelyincombat = 1;
-                                    }
-
-                                    //now eval distances to decide attack types
-                                    if
+                                //now eval distances to decide attack types
+                                if
+                                    (
+                                    currentGTargSquaredDistanceByTiles <= 2
+                                    ||
                                         (
-                                        currentGTargSquaredDistanceByTiles <= 2
-                                        ||
-                                            (
-                                            currentGTargSquaredDistanceByTiles > 2
-                                            && critterObjectDat.isCaster(critter.item_id)
-                                            && (UWTileMap.current_tilemap.Tiles[critter.tileX, critter.tileY].noMagic == 0)
-                                            )
+                                        currentGTargSquaredDistanceByTiles > 2
+                                        && critterObjectDat.isCaster(critter.item_id)
+                                        && (UWTileMap.current_tilemap.Tiles[critter.tileX, critter.tileY].noMagic == 0)
                                         )
-                                    {//npc is close, or is a caster who is at range and can cast
-                                        if (critter.UnkBit_0x19_5 == 0)
+                                    )
+                                {//npc is close, or is a caster who is at range and can cast
+                                    if (critter.UnkBit_0x19_5 == 0)
+                                    {
+                                        if (critter.UnkBit_0x19_4 == 0)
                                         {
-                                            if (critter.UnkBit_0x19_4 == 0)
+                                            if (ShouldNPCWithdraw(critter))
                                             {
-                                                if (ShouldNPCWithdraw(critter))
-                                                {
-                                                    newGoal = 6;
-                                                }
-                                                else
-                                                {
-                                                    newGoal = 5;
-                                                }
+                                                newGoal = 6;
                                             }
                                             else
                                             {
-                                                newGoal = 9;
+                                                newGoal = 5;
                                             }
                                         }
                                         else
                                         {
-                                            newGoal = 5;
+                                            newGoal = 9;
                                         }
                                     }
                                     else
-                                    {//non caster at range/ caster who is unable to cast spell
-                                        critter.UnkBit_0x19_5 = 1;
+                                    {
                                         newGoal = 5;
                                     }
-
-                                    SetGoalAndGtarg(critter, newGoal, critter.ProjectileSourceID);
-                                    critter.ProjectileSourceID = 0;
-                                    critter.AccumulatedDamage = 0;
                                 }
+                                else
+                                {//non caster at range/ caster who is unable to cast spell
+                                    critter.UnkBit_0x19_5 = 1;
+                                    newGoal = 5;
+                                }
+
+                                SetGoalAndGtarg(critter, newGoal, critter.ProjectileSourceID);
+                                critter.ProjectileSourceID = 0;
+                                critter.AccumulatedDamage = 0;
                             }
                         }
                     }
@@ -534,7 +533,17 @@ namespace Underworld
                         }
                     }
                     NPC_Goal5_Attack(critter);
-
+                    break;
+                case 6:
+                    if (!gtargFound)
+                    {
+                        if (!GetDistancesToGTarg(critter))
+                        {
+                            ResetGoalAndTarget(critter);
+                            break;
+                        }
+                    }
+                    NPC_Goal6(critter);
                     break;
                 case 8:
                     NPC_Goal8(critter);
@@ -701,7 +710,7 @@ namespace Underworld
             {
                 currentGTargXHome = currentGoalTarget.npc_xhome;
                 currentGTargYHome = currentGoalTarget.npc_yhome;
-                
+
                 currentGTargXCoord = currentGoalTarget.xpos + (currentGoalTarget.npc_xhome << 3);
                 currentGTargYCoord = currentGoalTarget.ypos + (currentGoalTarget.npc_yhome << 3);
                 currentGTargXVector = currentGTargXCoord - currObjXCoordinate;
@@ -2216,6 +2225,134 @@ namespace Underworld
                         AttackGoalSearchForTarget(critter, ref currentGTargXHome, ref currentGTargYHome, 1);
                     }
                 }
+            }
+        }
+
+
+        /// <summary>
+        /// Possibly attack at a distance or flee from player.
+        /// </summary>
+        /// <param name="critter"></param>
+        static void NPC_Goal6(uwObject critter)
+        {
+            if (IsNPCActive_dseg_67d6_2234)
+            {
+                //seg007_17A2_1179:
+
+                var headingvar1 = Pathfind.GetVectorHeading(currentGTargXVector, currentGTargYVector);
+                var zDiffVar4 = currentGoalTarget.zpos - critter.zpos;
+                var HeadingVar3 = 0;
+                if (critterObjectDat.isFlier(critter.item_id))
+                {
+                    //seg007_17A2_11B7:
+                    var var6 = 0;
+                    if (critter.zpos <= 0x6E)
+                    {
+                        var6 = 2;
+                    }
+                    //seg007_17A2_11D1
+                    critter.Projectile_Pitch = (short)(var6 + Rng.r.Next(5) + 13);
+                }
+
+                if (currentGTargSquaredDistanceByTiles <= 3 && zDiffVar4 < 0x10)
+                {
+                    //seg007_17A2_1214:
+                    if (Rng.r.Next(0x100) >= (critterObjectDat.maybemorale(critter.item_id) >> 3))
+                    {
+                        if ((RelatedToMotionCollision_dseg_67d6_224E == false) || HasCurrobjHeadingChanged_dseg_67d6_2242)
+                        {
+                            //seg007_17A2_126E:
+                            critter.ProjectileHeading = (ushort)(((headingvar1 + 4) % 8) << 5);
+                            critter.heading = (short)headingvar1;
+                            critter.npc_heading = 0;
+                            UpdateAnimation(critter, 1, true);
+                            critter.UnkBit_0X13_Bit0to6 = (short)((critterObjectDat.unk_b(critter.item_id) + 1) / 2);
+                            return;
+                        }
+                    }
+
+                    //seg007_17A2_1242:
+                    critter.UnkBit_0x19_4 = 1;
+                    SetGoalAndGtarg(critter, 9, critter.npc_gtarg);
+                    return;
+                }
+                else
+                {
+                    //seg007_17A2_12ED:
+                    if ((RelatedToMotionCollision_dseg_67d6_224E) && (HasCurrobjHeadingChanged_dseg_67d6_2242 == false))
+                    {
+                        //seg007_17A2_1303 
+                        if (currentGTargSquaredDistanceByTiles >= 9)
+                        {
+                            //seg007_17A2_137D
+                            HeadingVar3 = Rng.r.Next(0x20) + (((critter.ProjectileHeading >> 5) + ((Rng.r.Next(2) << 1) - 1) + 8) % 5) << 5;
+                            //goto 17a2:1444
+                        }
+                        else
+                        {
+                            //seg007_17A2_137D
+                            if (critter.npc_goal == 9)
+                            {
+                                critter.UnkBit_0X13_Bit0to6 = 0;
+                                ChangeNpcHeadings(critter, headingvar1);
+                                critter.Projectile_Speed = 4;
+                                UpdateAnimation(critter, 2, true);
+                                return;
+                            }
+                            else
+                            {
+                                critter.UnkBit_0x19_4 = 1;
+                                SetGoalAndGtarg(critter, 9, critter.npc_gtarg);
+                                return;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        //seg007_17A2_13BD:
+                        if (TryToDoMagicAttack(critter))
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            //seg007_17A2_13C8
+                            var rngvar2 = Rng.r.Next(0x40);
+                            if (rngvar2 >= critterObjectDat.unk_1F_lowernibble(critter.item_id) + 8)
+                            {
+                                //seg007_17A2_1414:
+                                HeadingVar3 = critter.ProjectileHeading;
+                            }
+                            else
+                            {
+                                HeadingVar3 = (Rng.r.Next(0x40) + critter.ProjectileHeading + 0xE0) % 0x100;
+                            }
+                            if (!HasCurrobjHeadingChanged_dseg_67d6_2242)
+                            {
+                                HeadingVar3 = VectorsToPlayer(HeadingVar3, 0x18);
+                            }
+                            //goto 17a2:1444
+                        }
+                    }
+                }               
+
+                //seg007_17A2_1444
+                //rejoin here
+                critter.ProjectileHeading = (ushort)HeadingVar3;
+                critter.heading = (short)(HeadingVar3 >> 5);
+                critter.npc_heading = (short)(HeadingVar3 & 0x1F);
+                if (currentGTargSquaredDistanceByTiles >= 0x40)
+                {
+                    //seg007_17A2_14A2:
+                    critter.UnkBit_0X13_Bit0to6 = (short)critterObjectDat.unk_b(critter.item_id);
+                }
+                else
+                {
+                    //seg007_17A2_1493
+                    critter.UnkBit_0X13_Bit0to6 = (short)critterObjectDat.speed(critter.item_id);
+                }
+                UpdateAnimation(critter, 1, true);
+                critter.Projectile_Speed = 4;
             }
         }
 
