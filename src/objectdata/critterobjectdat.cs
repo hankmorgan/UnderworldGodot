@@ -364,11 +364,11 @@ namespace Underworld
         }
 
 
-       /// <summary>
-       /// Likely how far the npc will range away from it's home
-       /// </summary>
-       /// <param name="item_id"></param>
-       /// <returns></returns>
+        /// <summary>
+        /// Likely how far the npc will range away from it's home
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <returns></returns>
         public static int maybeNPCTravelRange(int item_id)
         {
             return (buffer[CritterOffset(item_id) + 0x1c] >> 4) & 0xF;
@@ -401,7 +401,7 @@ namespace Underworld
             else
             {
                 return (buffer[CritterOffset(item_id) + 0x1d] >> 4) & 0xF;
-            }            
+            }
         }
 
 
@@ -456,11 +456,11 @@ namespace Underworld
         /// <param name="loot_no"></param>
         /// <returns></returns>
         public static int weaponloot(int item_id, int loot_no)
-        {            
+        {
             if (WeaponLootEnabled(item_id, loot_no))
             {
                 //get initial value
-                var val = 0x7f & buffer[CritterOffset(item_id) + 0x20 + loot_no] >> 1;
+                var val = 0x7f & (buffer[CritterOffset(item_id) + 0x20 + loot_no] >> 1);
                 return (((val >> 4) & 0x3) << 4) + (val & 0xf);
             }
             return -1; // no loot item.
@@ -475,6 +475,11 @@ namespace Underworld
         public static bool WeaponLootEnabled(int item_id, int loot_no)
         {
             return (buffer[CritterOffset(item_id) + 0x20 + loot_no] & 0x1) == 1;
+        }
+
+        public static int WeaponLootHighNibble(int item_id)
+        {
+            return ((buffer[CritterOffset(item_id) + 0x20]>>1) & 0x7F) >> 4;
         }
 
 

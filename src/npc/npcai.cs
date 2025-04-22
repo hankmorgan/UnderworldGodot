@@ -548,6 +548,17 @@ namespace Underworld
                 case 8:
                     NPC_Goal8(critter);
                     break;
+                case 9:
+                    if (!gtargFound)
+                    {
+                        if (!GetDistancesToGTarg(critter))
+                        {
+                            ResetGoalAndTarget(critter);
+                            break;
+                        }
+                    }
+                    NPC_Goal9(critter);
+                    break;
                 case 10: //talkto
                     NPCGoal_TalkTo(critter);
                     break;
@@ -2165,8 +2176,7 @@ namespace Underworld
                     if (critterObjectDat.WeaponLootEnabled(critter.item_id, 0))
                     {
                         //seg007_17A2_895:
-                        Debug.Print("NPCStartRangedAttack()");
-                        RangeAttackStarted = true;//TODO add the correct value
+                        RangeAttackStarted = NPCStartRangedAttack(critter);
                     }
 
                 }
@@ -2334,7 +2344,7 @@ namespace Underworld
                             //goto 17a2:1444
                         }
                     }
-                }               
+                }
 
                 //seg007_17A2_1444
                 //rejoin here
@@ -2380,6 +2390,58 @@ namespace Underworld
                     {
                         var tile = UWTileMap.current_tilemap.Tiles[currObjQualityX, currObjOwnerY];
                         NPC_Goto(critter, currObjQualityX, currObjOwnerY, tile.floorHeight);
+                    }
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Try and do ranged or melee attacks based on range.
+        /// </summary>
+        /// <param name="critter"></param>
+        static void NPC_Goal9(uwObject critter)
+        {
+            if (IsNPCActive_dseg_67d6_2234)
+            {
+                var si_dist = (currentGTargXVector * currentGTargXVector)  + (currentGTargYVector * currentGTargYVector);
+                if ((si_dist < 0x90) || ((currObj_XHome==currentGTargXHome) && (currObj_YHome == currentGTargYHome)))
+                {
+                    //seg007_17A2_10C7
+                    ChooseMeleeAttackToMake(critter, si_dist);
+                }
+                else
+                {
+                    if (currentGTargSquaredDistanceByTiles <= 4)
+                    {
+                        //seg007_17A2_111C: 
+                        var heading_var1 = Pathfind.GetVectorHeading(currentGTargXVector,currentGTargYVector);
+                        critter.UnkBit_0X13_Bit0to6 = 0;
+                        ChangeNpcHeadings(critter, heading_var1);
+                        critter.Projectile_Speed = 4;
+                        UpdateAnimation(critter, 2, true);
+                    }
+                    else
+                    {
+                        if (!TryToDoMagicAttack(critter))
+                        {
+                            //seg007_17A2_10E3
+                            if (critterObjectDat.NPCPower_0x2DBits1To7(critter.item_id) > 0)
+                            {
+                                NPCStartMagicAttack(critter);
+                            }
+                            else
+                            {
+                                if (critterObjectDat.WeaponLootHighNibble(critter.item_id) == 1)
+                                {
+                                    NPCStartRangedAttack(critter);
+                                }
+                                else
+                                {
+                                    NPC_Goal6(critter);
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -2695,6 +2757,13 @@ namespace Underworld
                 }
                 return true;
             }
+        }
+
+        static bool NPCStartRangedAttack(uwObject critter)
+        {
+            //TODO
+            Debug.Print("Start ranged attack");            
+            return true;
         }
     } //end class
 }//end namespace
