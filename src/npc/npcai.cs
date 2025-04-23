@@ -191,7 +191,6 @@ namespace Underworld
                             //Special death cases
                             SpecialDeathCases(critter, 1); //mode 1
                             DropRemainsAndLoot(critter);
-
                             //remove from tile and free object
                             ObjectRemover.DeleteObjectFromTile(critter.tileX, critter.tileY, critter.index, true);
                             return;
@@ -199,7 +198,6 @@ namespace Underworld
                         else
                         {
                             critter.AnimationFrame++;
-                            //n.SetAnimSprite(critter.npc_animation, critter.AnimationFrame, CalcedFacing);
                         }
                     }
                     else
@@ -232,8 +230,6 @@ namespace Underworld
                                     {
                                         critter.AnimationFrame++;
                                     }
-                                    //n.SetAnimSprite(critter.npc_animation, critter.AnimationFrame, CalcedFacing);
-
                                     break;
                                 }
                             case 6://ranged attack/ magic attack
@@ -241,15 +237,20 @@ namespace Underworld
                                     if (critter.AnimationFrame == 3)
                                     {
                                         if (critter.npc_spellindex == 0)
-                                        {//ranged weapon
-                                         //var rangedweapon = critterObjectDat.weaponloot(critter.item_id,0);
-                                         //get pitch to gtarg
-                                         //launch missile using rangedwweapon                                        
+                                        {
+                                            //ranged weapon
+                                            //var rangedweapon = critterObjectDat.weaponloot(critter.item_id,0);
+                                            //get pitch to gtarg
+                                            //motion.MissilePitch = GetPitchToGTarg()
+                                            //launch missile using rangedwweapon  
+
                                         }
                                         else
-                                        {//magic spell
-                                         //get pitch to gtarg
-                                            var effectid = critterObjectDat.spell(critter.item_id, critter.npc_spellindex);
+                                        {
+                                            //magic spell
+                                            //get pitch to gtarg
+                                            motion.MissilePitch = GetPitchToGTarg(critter, 0, 0);
+                                            var effectid = critterObjectDat.spell(critter.item_id, critter.npc_spellindex - 1); //minus 1 to offset lookup array.
                                             SpellCasting.CastSpellFromObject(
                                                 spellno: effectid,
                                                 caster: critter);
@@ -2404,8 +2405,8 @@ namespace Underworld
         {
             if (IsNPCActive_dseg_67d6_2234)
             {
-                var si_dist = (currentGTargXVector * currentGTargXVector)  + (currentGTargYVector * currentGTargYVector);
-                if ((si_dist < 0x90) || ((currObj_XHome==currentGTargXHome) && (currObj_YHome == currentGTargYHome)))
+                var si_dist = (currentGTargXVector * currentGTargXVector) + (currentGTargYVector * currentGTargYVector);
+                if ((si_dist < 0x90) || ((currObj_XHome == currentGTargXHome) && (currObj_YHome == currentGTargYHome)))
                 {
                     //seg007_17A2_10C7
                     ChooseMeleeAttackToMake(critter, si_dist);
@@ -2415,7 +2416,7 @@ namespace Underworld
                     if (currentGTargSquaredDistanceByTiles <= 4)
                     {
                         //seg007_17A2_111C: 
-                        var heading_var1 = Pathfind.GetVectorHeading(currentGTargXVector,currentGTargYVector);
+                        var heading_var1 = Pathfind.GetVectorHeading(currentGTargXVector, currentGTargYVector);
                         critter.UnkBit_0X13_Bit0to6 = 0;
                         ChangeNpcHeadings(critter, heading_var1);
                         critter.Projectile_Speed = 4;
@@ -2457,10 +2458,6 @@ namespace Underworld
                 var anim = crit.Animations[animname];
                 MaxAnimFrame = anim.maxNoOfFrames;
             }
-            // else
-            // {
-            //     return;//no animation data.
-            // }
             return CalcedFacing;
         }
 
@@ -2691,6 +2688,11 @@ namespace Underworld
             critter.Projectile_Speed = 4;
         }
 
+        /// <summary>
+        /// Tries to do a special? magic attack
+        /// </summary>
+        /// <param name="critter"></param>
+        /// <returns></returns>
         static bool TryToDoMagicAttack(uwObject critter)
         {
             if (critterObjectDat.spell2C(critter.item_id) == -1)
@@ -2711,10 +2713,15 @@ namespace Underworld
             critter.UnkBit_0X13_Bit0to6 = 0;
             critter.npc_animation = 6;
             critter.AnimationFrame = 0;
-            critter.UnkBit_0x19_2And3_MagicAttack = 3;
+            critter.npc_spellindex = 3;
             return true;
         }
 
+        /// <summary>
+        /// Starts the magic attack animation
+        /// </summary>
+        /// <param name="critter"></param>
+        /// <returns></returns>
         static bool NPCStartMagicAttack(uwObject critter)
         {
             if (UWTileMap.current_tilemap.Tiles[currObj_XHome, currObj_YHome].noMagic != 0)
@@ -2749,37 +2756,86 @@ namespace Underworld
                 critter.AnimationFrame = 0;
                 if (Rng.r.Next(0x10) >= 0xB)
                 {
-                    critter.UnkBit_0x19_2And3_MagicAttack = 2;
+                    critter.npc_spellindex = 2;
                 }
                 else
                 {
-                    critter.UnkBit_0x19_2And3_MagicAttack = 1;
+                    critter.npc_spellindex = 1;
                 }
                 return true;
             }
         }
 
+        /// <summary>
+        /// Starts the ranged attack animation.
+        /// </summary>
+        /// <param name="critter"></param>
+        /// <returns></returns>
         static bool NPCStartRangedAttack(uwObject critter)
         {
             if (currentGTargSquaredDistanceByTiles < 0x10)
             {
                 if (Pathfind.TestBetweenPoints(
-                    srcX: currObjXCoordinate, srcY: currObjYCoordinate, srcZ: critter.zpos + commonObjDat.height(critter.item_id), 
+                    srcX: currObjXCoordinate, srcY: currObjYCoordinate, srcZ: critter.zpos + commonObjDat.height(critter.item_id),
                     dstX: currentGTargXCoord, dstY: currentGTargYCoord, dstZ: currentGoalTarget.zpos + commonObjDat.height(currentGoalTarget.item_id)))
+                {
+                    if (TurnTowardsTarget(critter, 1))
                     {
-                        if (TurnTowardsTarget(critter, 1))
+                        if (Rng.r.Next(0xc0) <= critterObjectDat.dexterity(critter.item_id))
                         {
-                            if (Rng.r.Next(0xc0)<= critterObjectDat.dexterity(critter.item_id))
-                            {
-                                critter.UnkBit_0X13_Bit0to6 = 0;
-                                critter.npc_animation = 6;//todo update animation value for UW1
-                                critter.AnimationFrame = 0;
-                            }
-                            return true;
+                            critter.UnkBit_0X13_Bit0to6 = 0;
+                            critter.npc_animation = 6;//todo update animation value for UW1
+                            critter.AnimationFrame = 0;
                         }
+                        return true;
                     }
-            }   
-            return false;        
+                }
+            }
+            return false;
         }
+
+
+        /// <summary>
+        /// Calculates the pitch to apply to thrown missiles or magic spells to hit the target.
+        /// </summary>
+        /// <param name="critter"></param>
+        /// <param name="arg0"></param>
+        /// <param name="arg2"></param>
+        /// <returns></returns>
+        static int GetPitchToGTarg(uwObject critter, int arg0, int arg2)
+        {
+            GetDistancesToGTarg(critter);
+            var di_ZDist = currentGoalTarget.zpos - critter.zpos;
+            var siDist = (int)Math.Sqrt(currentGTargSquaredDistanceByCoordinates);
+            if (siDist != 0)
+            {
+                var var2Pitch = (di_ZDist << 2) / siDist;
+                if (var2Pitch > 0xF)
+                {
+                    var2Pitch = 0xF;
+                }
+                if (var2Pitch < -15)
+                {
+                    var2Pitch = -15;
+                }
+                if ((arg2 != 0) && (arg0 != 0))
+                {
+                    var2Pitch = var2Pitch + ((siDist * 3) / arg0);
+                }
+                return var2Pitch;
+            }
+            else
+            {
+                if (di_ZDist <= 0)
+                {
+                    return -15;
+                }
+                else
+                {
+                    return 15;
+                }
+            }
+        }
+
     } //end class
 }//end namespace
