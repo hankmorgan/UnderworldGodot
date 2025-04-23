@@ -66,12 +66,12 @@ namespace Underworld
                 {
                     soundeffect = 0x14;
                 }
-                Debug.Print($"play sound effect {soundeffect} at {MotionParams.x_0 >> 5} {MotionParams.y_2 >> 5}");
+                //Debug.Print($"play sound effect {soundeffect} at {MotionParams.x_0 >> 5} {MotionParams.y_2 >> 5}");
             }
             else
             {//seg031_2CFA_E28:
                 soundeffect = (Math.Abs(MotionParams.unk_a_pitch) / 0xA) + ((si_mass - 600) / 32) - 40;
-                Debug.Print($"play sound effect {soundeffect} at {MotionParams.x_0 >> 5} {MotionParams.y_2 >> 5}");
+                //Debug.Print($"play sound effect {soundeffect} at {MotionParams.x_0 >> 5} {MotionParams.y_2 >> 5}");
 
                 var di_collisionresult = CollideObjects_seg030_2BB7_1CE(MotionParams, UWMotionParamArray.ACollisionIndex_dseg_67d6_416, MotionCalcArray.MotionArrayObjectIndexA_base);
 

@@ -44,18 +44,18 @@ namespace Underworld
                     playerdat.SetQuest(130, quest130);
 
                    ObjectCreator.Consume(smallGem, true);
-                    Debug.Print("Play sound effect 0x12h");
+                    //Debug.Print("Play sound effect 0x12h");
 
                     quest130 = playerdat.GetQuest(130);
                     if (quest130==0xFF)
                     {
                         //all gems used
-                         Debug.Print("Play Sound Effect 0x14h at 0x40,0x2c");
+                         //Debug.Print("Play Sound Effect 0x14h at 0x40,0x2c");
                        
                     }
                     else
                     {
-                         Debug.Print("Play Sound Effect 0x14h  at 0x40,0x2a");
+                         //Debug.Print("Play Sound Effect 0x14h  at 0x40,0x2a");
                     }
                     return true;
                 }

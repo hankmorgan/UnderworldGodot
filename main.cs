@@ -213,11 +213,17 @@ public partial class main : Node3D
 					playerdat.xpos = Math.Min(Math.Max(0, xposvecto), 8);
 					playerdat.ypos = Math.Min(Math.Max(0, yposvecto), 8);
 					playerdat.zpos = newzpos;
+					// if( UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY].tileType != 0)
+					// {//TMP put player Zpos at tile height
+					// 	playerdat.zpos = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY].floorHeight<<3;
+					// }
+					
 
 					//tmp update the player object to keep in sync with other values
 					playerdat.playerObject.item_id = 127;
 					playerdat.playerObject.xpos = (short)playerdat.xpos;
 					playerdat.playerObject.ypos = (short)playerdat.ypos;
+					playerdat.playerObject.zpos = (short)playerdat.zpos;
 					playerdat.playerObject.tileX = playerdat.tileX;
 					playerdat.playerObject.npc_xhome = (short)tileX;
 					playerdat.playerObject.tileY = playerdat.tileY;

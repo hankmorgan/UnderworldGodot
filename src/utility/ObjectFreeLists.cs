@@ -29,7 +29,7 @@ namespace Underworld
                         return 0;
                     }
                     UWTileMap.current_tilemap.StaticFreeListPtr--;
-                    Debug.Print($"Allocating Static {UWTileMap.current_tilemap.StaticFreeListObject} Pointer decremented to {UWTileMap.current_tilemap.StaticFreeListPtr}");
+                    //Debug.Print($"Allocating Static {UWTileMap.current_tilemap.StaticFreeListObject} Pointer decremented to {UWTileMap.current_tilemap.StaticFreeListPtr}");
                     return UWTileMap.current_tilemap.StaticFreeListObject;
                 case ObjectListType.MobileList:
                     if (UWTileMap.current_tilemap.MobileFreeListPtr<=1)
@@ -37,7 +37,7 @@ namespace Underworld
                         return 0;
                     }
                     UWTileMap.current_tilemap.MobileFreeListPtr--;
-                    Debug.Print($"Allocating Mobile {UWTileMap.current_tilemap.MobileFreeListObject} Pointer decremented to {UWTileMap.current_tilemap.MobileFreeListPtr}");
+                    //Debug.Print($"Allocating Mobile {UWTileMap.current_tilemap.MobileFreeListObject} Pointer decremented to {UWTileMap.current_tilemap.MobileFreeListPtr}");
                     //add to the active mobiles list                    
                     var newslot = UWTileMap.current_tilemap.MobileFreeListObject;
                     UWTileMap.current_tilemap.SetActiveMobileAtIndex(UWTileMap.current_tilemap.NoOfActiveMobiles, newslot);
@@ -59,7 +59,7 @@ namespace Underworld
             {//mobile
                 UWTileMap.current_tilemap.MobileFreeListObject = obj.index;
                 UWTileMap.current_tilemap.MobileFreeListPtr++;
-                Debug.Print($"Freeing Mobile {obj.index} Pointer incremented to {UWTileMap.current_tilemap.MobileFreeListPtr}");
+                //Debug.Print($"Freeing Mobile {obj.index} Pointer incremented to {UWTileMap.current_tilemap.MobileFreeListPtr}");
                 for (int i = 0; i < UWTileMap.current_tilemap.NoOfActiveMobiles; i++)
                 {
                     var atSlot = UWTileMap.current_tilemap.GetActiveMobileAtIndex(i);
@@ -80,7 +80,7 @@ namespace Underworld
             {//static
                 UWTileMap.current_tilemap.StaticFreeListObject = obj.index;
                 UWTileMap.current_tilemap.StaticFreeListPtr++;
-                Debug.Print($"Freeing Static {obj.index} {obj.a_name} Pointer incremented to {UWTileMap.current_tilemap.StaticFreeListPtr}");
+                //Debug.Print($"Freeing Static {obj.index} {obj.a_name} Pointer incremented to {UWTileMap.current_tilemap.StaticFreeListPtr}");
             }
 
             if (obj.instance != null)

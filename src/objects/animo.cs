@@ -146,7 +146,7 @@ namespace Underworld
                 {
                     if (a.Duration == 0)
                     {
-                        Debug.Print($"Free animo slot {a.index}");
+                        //Debug.Print($"Free animo slot {a.index}");
                         return a.index;
                     }
                 }
