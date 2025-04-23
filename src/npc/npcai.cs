@@ -2761,9 +2761,25 @@ namespace Underworld
 
         static bool NPCStartRangedAttack(uwObject critter)
         {
-            //TODO
-            Debug.Print("Start ranged attack");            
-            return true;
+            if (currentGTargSquaredDistanceByTiles < 0x10)
+            {
+                if (Pathfind.TestBetweenPoints(
+                    srcX: currObjXCoordinate, srcY: currObjYCoordinate, srcZ: critter.zpos + commonObjDat.height(critter.item_id), 
+                    dstX: currentGTargXCoord, dstY: currentGTargYCoord, dstZ: currentGoalTarget.zpos + commonObjDat.height(currentGoalTarget.item_id)))
+                    {
+                        if (TurnTowardsTarget(critter, 1))
+                        {
+                            if (Rng.r.Next(0xc0)<= critterObjectDat.dexterity(critter.item_id))
+                            {
+                                critter.UnkBit_0X13_Bit0to6 = 0;
+                                critter.npc_animation = 6;//todo update animation value for UW1
+                                critter.AnimationFrame = 0;
+                            }
+                            return true;
+                        }
+                    }
+            }   
+            return false;        
         }
     } //end class
 }//end namespace
