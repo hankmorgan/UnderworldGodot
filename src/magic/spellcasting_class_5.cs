@@ -37,8 +37,8 @@ namespace Underworld
 
         static bool ProjectileSpell(uwObject caster, int spellProjectileID)
         {
-            motion.AmmoItemID = spellProjectileID + 16;
-            motion.AmmoType = rangedObjectDat.ammotype(motion.AmmoItemID);
+            motion.RangedAmmoItemID = spellProjectileID + 16;
+            motion.RangedAmmoType = rangedObjectDat.ammotype(motion.RangedAmmoItemID);
             motion.projectileXHome = caster.npc_xhome;
             motion.projectileYHome = caster.npc_yhome;
             motion.spellXHome = caster.npc_xhome;

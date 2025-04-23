@@ -7,8 +7,8 @@ namespace Underworld
     /// </summary>
     public partial class motion : Loader
     {
-        public static int AmmoItemID;
-        public static int AmmoType;
+        public static int RangedAmmoItemID;
+        public static int RangedAmmoType;
 
         public static int projectileXHome;
         public static int projectileYHome;
@@ -78,7 +78,7 @@ namespace Underworld
         /// <returns></returns>
         public static uwObject PrepareProjectileObject(uwObject Launcher)
         {
-            var slot = ObjectCreator.PrepareNewObject(AmmoItemID, ObjectFreeLists.ObjectListType.MobileList);
+            var slot = ObjectCreator.PrepareNewObject(RangedAmmoItemID, ObjectFreeLists.ObjectListType.MobileList);
             if (slot != -1)
             {
                 var projectile = UWTileMap.current_tilemap.LevelObjects[slot];
@@ -136,9 +136,9 @@ namespace Underworld
 
                     projectile.Projectile_Pitch = (short)(MissilePitch + 0x10);
                     projectile.Projectile_Speed = 1;
-                    projectile.UnkBit_0X13_Bit0to6 = (short)AmmoType;
+                    projectile.UnkBit_0X13_Bit0to6 = (short)RangedAmmoType;
 
-                    if (commonObjDat.canhaveowner(AmmoType))
+                    if (commonObjDat.canhaveowner(RangedAmmoType))
                     {
                         projectile.owner = 0;
                     }
@@ -418,6 +418,33 @@ namespace Underworld
         ReturnResult:
             MotionCalcArray.PtrToMotionCalc = OldCalcArray;
             return result;//temp result
+        }
+
+
+
+        /// <summary>
+        /// Handles the NPC launching a projectile in combat
+        /// </summary>
+        /// <param name="critter"></param>
+        /// <param name="itemid"></param>
+        /// <param name="ammotype"></param>
+        public static void NPCMissileLaunch(uwObject critter, int itemid, int ammotype)
+        {
+            RangedAmmoItemID = 0x10 + itemid;
+            RangedAmmoType = ammotype;
+            MissileHeading = 0;
+            MissileFlagA = true;
+            projectileXHome = critter.npc_xhome;
+            projectileYHome = critter.npc_yhome;
+
+            MissileLauncherHeadingBase = 1;
+            var projectile = PrepareProjectileObject(critter);
+            MissileFlagA = false;
+            if (projectile!=null)
+            {
+                //TODO make a launch sound
+                //MakeASound();
+            }        
         }
     }//end class
 }//end namespace

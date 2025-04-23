@@ -21,8 +21,8 @@ namespace Underworld
             {
                 //throw
                 motion.MissileLauncherHeadingBase = 1;
-                motion.AmmoItemID = srcObject.item_id;
-                motion.AmmoType = 0xF;
+                motion.RangedAmmoItemID = srcObject.item_id;
+                motion.RangedAmmoType = 0xF;
                 ThrownObject = motion.PrepareProjectileObject(playerdat.playerObject);
                 if (ThrownObject != null)
                 {

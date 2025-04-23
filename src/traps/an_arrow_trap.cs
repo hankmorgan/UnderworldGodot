@@ -5,8 +5,8 @@ namespace Underworld
         public static void Activate(uwObject trapObj, int triggerX, int triggerY, uwObject[] objList)
         {
             
-            motion.AmmoItemID = (int)trapObj.owner | ((int)trapObj.quality<<5);
-            motion.AmmoType = 0x14;
+            motion.RangedAmmoItemID = (int)trapObj.owner | ((int)trapObj.quality<<5);
+            motion.RangedAmmoType = 0x14;
             motion.MissileHeading = 2;
             motion.MissilePitch = 2;
             motion.projectileXHome = triggerX;

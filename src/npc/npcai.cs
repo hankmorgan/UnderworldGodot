@@ -238,12 +238,10 @@ namespace Underworld
                                     {
                                         if (critter.npc_spellindex == 0)
                                         {
-                                            //ranged weapon
-                                            //var rangedweapon = critterObjectDat.weaponloot(critter.item_id,0);
-                                            //get pitch to gtarg
-                                            //motion.MissilePitch = GetPitchToGTarg()
-                                            //launch missile using rangedwweapon  
-
+                                            //launch missile using rangedwweapon data in critter.dat 
+                                            var si_ammoitemid = critterObjectDat.WeaponLootTableLookup(critter.item_id);
+                                            motion.MissilePitch = GetPitchToGTarg(critter, rangedObjectDat.ammotype(si_ammoitemid), 1);
+                                            motion.NPCMissileLaunch(critter, si_ammoitemid, rangedObjectDat.ammotype(si_ammoitemid));
                                         }
                                         else
                                         {
@@ -2173,13 +2171,13 @@ namespace Underworld
                 //seg007_17A2_84F:
                 if (critterObjectDat.NPCPower_0x2DBits1To7(critter.item_id) <= 0)
                 {
+                    //Check if NPC Weapon loot is a ranged weapon
                     //seg007_17A2_87F:
-                    if (critterObjectDat.WeaponLootEnabled(critter.item_id, 0))
-                    {
+                    if ((critterObjectDat.weaponloot(critter.item_id, 0) >> 4) == 1)
+                    {                        
                         //seg007_17A2_895:
                         RangeAttackStarted = NPCStartRangedAttack(critter);
                     }
-
                 }
                 else
                 {
@@ -2835,7 +2833,6 @@ namespace Underworld
                     return 15;
                 }
             }
-        }
-
+        }    
     } //end class
 }//end namespace
