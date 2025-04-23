@@ -1140,7 +1140,7 @@ namespace Underworld
                 {
                     critter.npc_gtarg = 1;
                     GetDistancesToGTarg(critter);
-                    var si_dist = (currentGTargXVector * currentGTargXVector) + (currentGTargYVector * currentGTargXVector);
+                    var si_dist = (currentGTargXVector * currentGTargXVector) + (currentGTargYVector * currentGTargYVector);
                     int targetX = 0;
                     int targetY = 0;
                     var gtargFound = SearchForGoalTarget(critter, ref targetX, ref targetY);
@@ -1160,7 +1160,7 @@ namespace Underworld
                                 if ((RelativeHeading >= 3) && (RelativeHeading <= 5))
                                 {
                                     //player is facing the npc.
-                                    talk.Talk(critter, true);
+                                    w
                                 }
                             }
                         }
