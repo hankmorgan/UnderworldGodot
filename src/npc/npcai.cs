@@ -1160,7 +1160,7 @@ namespace Underworld
                                 if ((RelativeHeading >= 3) && (RelativeHeading <= 5))
                                 {
                                     //player is facing the npc.
-                                    w
+                                    talk.Talk(critter, true);
                                 }
                             }
                         }
@@ -1867,7 +1867,44 @@ namespace Underworld
 
         static void NPCTryToOpenDoor(uwObject critter, uwObject doorobject)
         {
-            //TODO
+            if (doorobject.classindex != 7)
+            {
+                if ((_RES == GAME_UW2) && (playerdat.dungeon_level == 0xA))
+                {
+                    return;//stops goblins from opening doors in the prison tower.
+                }
+                if (critterObjectDat.dooropenskill(critter.item_id) != 0)
+                {
+                    use.Use(doorobject, critter, UWTileMap.current_tilemap.LevelObjects, true);
+                }
+                if (doorobject.OneF0Class == 0x14)
+                {
+                    if (doorobject.classindex < 8)
+                    {
+                        //door is closed
+                        if ((critterObjectDat.dooropenskill(critter.item_id) != 0) && (Rng.r.Next(2) != 0))
+                        {
+                            //seg006_1413_3887: 
+                            door.CharacterDoorLockAndKeyInteraction(critter, doorobject, -critterObjectDat.dooropenskill(critter.item_id));
+                        }
+                        else
+                        {
+                            if (Rng.r.Next(4) == 0)
+                            {
+                                //NPC will try and bash door
+                                //seg006_1413_38BA:
+                                damage.DamageObject(objToDamage: doorobject, 
+                                    basedamage: Rng.r.Next(critterObjectDat.attackdamage(critter.item_id, 0)), 
+                                    damagetype: 4, 
+                                    objList: UWTileMap.current_tilemap.LevelObjects, WorldObject: true, 
+                                    hitCoordinate: Vector3.Zero, 
+                                    damagesource: critter.index, 
+                                    ignoreVector: true);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         static void NPCWanderUpdate(uwObject critter)
@@ -2174,7 +2211,7 @@ namespace Underworld
                     //Check if NPC Weapon loot is a ranged weapon
                     //seg007_17A2_87F:
                     if ((critterObjectDat.weaponloot(critter.item_id, 0) >> 4) == 1)
-                    {                        
+                    {
                         //seg007_17A2_895:
                         RangeAttackStarted = NPCStartRangedAttack(critter);
                     }
@@ -2554,19 +2591,6 @@ namespace Underworld
         }
 
         /// <summary>
-        /// Handles checking if the critter can operate this door or lock
-        /// </summary>
-        /// <param name="critter"></param>
-        /// <param name="Door"></param>
-        /// <param name="skillnegated"></param>
-        /// <returns></returns>
-        public static int CharacterDoorLockAndKeyInteraction(uwObject critter, uwObject Door, int skillnegated)
-        {
-            //todo
-            return 0;
-        }
-
-        /// <summary>
         /// Critter checks distances to player and chooses melee attack based on defined probabilities
         /// </summary>
         /// <param name="critter"></param>
@@ -2833,6 +2857,6 @@ namespace Underworld
                     return 15;
                 }
             }
-        }    
+        }
     } //end class
 }//end namespace

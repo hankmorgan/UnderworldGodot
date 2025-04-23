@@ -632,7 +632,7 @@ namespace Underworld
                         if ((obj.majorclass == 5) && (obj.minorclass == 0) && (obj.classindex < 8))
                         {
                             // is a closed door
-                            if (npc.CharacterDoorLockAndKeyInteraction(critter, obj, 0) == 0)
+                            if (door.CharacterDoorLockAndKeyInteraction(critter, obj, 0) == 0)
                             {
                                 //seg006_1413_1216:
                                 var DoorHeading_var22 = obj.heading;
