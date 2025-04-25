@@ -217,7 +217,7 @@ public partial class main : Node3D
 					// {//TMP put player Zpos at tile height
 					// 	playerdat.zpos = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY].floorHeight<<3;
 					// }
-					
+
 
 					//tmp update the player object to keep in sync with other values
 					playerdat.playerObject.item_id = 127;
@@ -300,12 +300,12 @@ public partial class main : Node3D
 								if (UWTileMap.ValidTile(obj.tileX, obj.tileY))
 								{
 									//This is an NPC on the map	
-									var n = (npc)obj.instance;	
-													
+									var n = (npc)obj.instance;
+
 									npc.NPCInitialProcess(obj);
-									if (n!=null)
+									if (n != null)
 									{
-										if (obj.instance!=null)
+										if (obj.instance != null)
 										{
 											var CalcedFacing = npc.CalculateFacingAngleToNPC(obj);
 											n.SetAnimSprite(obj.npc_animation, obj.AnimationFrame, CalcedFacing);
@@ -315,7 +315,7 @@ public partial class main : Node3D
 								else
 								{
 									Debug.Print($"{obj.a_name} {obj.index} is off map");
-								}								
+								}
 							}
 							else
 							{

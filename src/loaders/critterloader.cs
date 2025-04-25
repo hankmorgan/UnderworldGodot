@@ -379,6 +379,14 @@ namespace Underworld
             }
             else
             {
+                switch (animation)
+                {
+                    case 32: // idle
+                        return $"{AppendAngleToAnimationName(angle, "idle_")}";
+                    case 44: // walk
+                        return $"{AppendAngleToAnimationName(angle, "walking_")}";
+                }
+
                 if ((animation>=0x20) && (animation<=0x27))
                 {
                     return $"idle_{angleToString(angle)}";
@@ -452,7 +460,6 @@ namespace Underworld
                     output = "attack_secondary_"; break;
                 case 7:
                     output = "death_"; break;
-
             }
 
             //[SC] +0000 : [AS] rear  0
@@ -464,6 +471,13 @@ namespace Underworld
             //[SC]+0030 : [AS] left  6
             //[SC] + 0038 : [AS] rear left 7
 
+            output = AppendAngleToAnimationName(angle, output);
+
+            return output;
+        }
+
+        private static string AppendAngleToAnimationName(int angle, string output)
+        {
             switch (angle)
             {
                 case 0:
@@ -486,6 +500,7 @@ namespace Underworld
 
             return output;
         }
+
 
         public static string GetUW1AnimName(int animNo)
         {

@@ -636,7 +636,7 @@ namespace Underworld
         {
             combat.EndCombatLoop();
             critter.ProjectileSourceID = 0;
-            critter.npc_animation = 0;
+            critter.npc_animation = ANIMATION_IDLE;
             critter.AnimationFrame = 0;
             critter.npc_attitude = 2;
             critter.npc_goal = 8;

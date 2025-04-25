@@ -648,7 +648,7 @@ namespace Underworld
             critter.Swing = 0;
             critter.NextFrame_0XA_Bit0123 = 0;
             critter.Projectile_Speed = 4;
-            critter.npc_animation = 0;
+            critter.npc_animation = 0;//is this right for UW1?
             critter.AnimationFrame = 0;
             critter.npc_attack = 10;
             critter.UnkBit_0X13_Bit7 = 0;

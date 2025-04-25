@@ -98,22 +98,11 @@ namespace Underworld
 
             if ((critter.npc_hp == 0) & (critter.index != 1))
             {
-                if (
-                    (_RES == GAME_UW2) && (critter.npc_animation != 7)
-                    ||
-                    (_RES != GAME_UW2) && (critter.npc_animation != 0xC)
-                )
+                if (critter.npc_animation != npc.ANIMATION_DEATH)
                 { //if not already in the death animation
                     if (npc.SpecialDeathCases(critter))
                     {
-                        if (_RES == GAME_UW2)
-                        {
-                            critter.npc_animation = 7;//are these right??                            
-                        }
-                        else
-                        {
-                            critter.npc_animation = 0xC;//
-                        }
+                        critter.npc_animation = npc.ANIMATION_DEATH;
                         critter.AnimationFrame = 0;
                         npc.RedrawAnimation(critter);
                         return 1;

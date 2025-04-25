@@ -1309,7 +1309,7 @@ namespace Underworld
                         var tile = UWTileMap.current_tilemap.Tiles[motionparams.x_0 >> 8, motionparams.y_2 >> 8];
                         //spawn a splash
                         animo.SpawnAnimoInTile(subclassindex: 6, xpos: 3, ypos: 3, zpos: (short)(tile.floorHeight << 3), tileX: tile.tileX, tileY: tile.tileY);
-                        critter.npc_animation = 7;
+                        critter.npc_animation = npc.ANIMATION_DEATH;
                         npc.GetCritterAnimationGlobalsForCurrObj(critter);
                         critter.AnimationFrame = (byte)npc.MaxAnimFrame;
                         critter.Projectile_Speed = 1;

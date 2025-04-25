@@ -9,6 +9,99 @@ namespace Underworld
     /// </summary>
     public partial class npc : objectInstance
     {
+
+        public static short ANIMATION_IDLE
+        {
+            get
+            {
+                if (_RES == GAME_UW2)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return 32;
+                }
+            }
+        }
+
+
+        public static short ANIMATION_WALK
+        {
+            get
+            {
+                if (_RES == GAME_UW2)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return 44;
+                }
+            }
+        }
+
+
+        public static short ANIMATION_DEATH
+        {
+            get
+            {
+                if (_RES == GAME_UW2)
+                {
+                    return 7;
+                }
+                else
+                {
+                    return 0xC;
+                }
+            }
+        }
+
+        public static short ANIMATION_COMBAT_IDLE
+        {
+            get
+            {
+                if (_RES == GAME_UW2)
+                {
+                    return 2;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+        }
+
+        public static short ANIMATION_MAGICATTACK
+        {
+            get
+            {
+                if (_RES == GAME_UW2)
+                {
+                    return 6;
+                }
+                else
+                {
+                    return 0xD;
+                }
+            }
+        }
+
+        public static short ANIMATION_RANGEDATTACK
+        {
+            get
+            {
+                if (_RES == GAME_UW2)
+                {
+                    return 6;//appears to use same animation as magic attack in UW2. Only 2 npc types in the game actually do magic attacks!
+                }
+                else
+                {
+                    return 5;
+                }
+            }
+        }
+
         public static byte[] SpecialMotionHandler;
 
         public static int MaxAnimFrame;
@@ -65,7 +158,6 @@ namespace Underworld
                                             + Math.Pow(critter.npc_xhome - playerdat.tileX, 2);
 
             //var n = (npc)critter.instance;
-
             if (
                 (distancesquaredtoplayer <= 0x64)
                 ||
@@ -109,9 +201,9 @@ namespace Underworld
                 RelatedToColliding_dseg_67d6_226F = false;
                 FlyingPitchingRelated_dseg_67d6_2246 = false;
                 //seg007_17A2_2268: 
-                if (critter.npc_animation != 1)
+                if (critter.npc_animation != ANIMATION_WALK)
                 {//seg007_17A2:227A
-                    if (critter.npc_animation != 0)
+                    if (critter.npc_animation != ANIMATION_IDLE)
                     {
                         if (critter.UnkBit_0X15_Bit7 == 1)
                         {
@@ -179,11 +271,7 @@ namespace Underworld
                 }
                 else
                 {//seg007_17A2_246A
-                    if (
-                    ((critter.npc_animation == 7) && (_RES == GAME_UW2))
-                    ||
-                    ((critter.npc_animation == 0xC) && (_RES != GAME_UW2))
-                    )
+                    if (critter.npc_animation == ANIMATION_DEATH)
                     {
                         //death animation
                         if (critter.AnimationFrame >= MaxAnimFrame)
@@ -202,6 +290,7 @@ namespace Underworld
                     }
                     else
                     {//seg007_17A2_2575:    check and process combat anims and other goals
+                     //TODO these animation values are UW2 values. UW1 has some differing logic.
                         switch (critter.npc_animation)
                         {
                             case 3://weapon swings
@@ -223,7 +312,7 @@ namespace Underworld
                                     }
                                     if (critter.AnimationFrame >= MaxAnimFrame)
                                     {
-                                        critter.npc_animation = 2;
+                                        critter.npc_animation = ANIMATION_COMBAT_IDLE;
                                         critter.AnimationFrame = 0;
                                     }
                                     else
@@ -257,24 +346,19 @@ namespace Underworld
 
                                     if (critter.AnimationFrame >= MaxAnimFrame)
                                     {
-                                        critter.npc_animation = 2;
+                                        critter.npc_animation = ANIMATION_COMBAT_IDLE;
                                         critter.AnimationFrame = 0;
                                     }
                                     else
                                     {
                                         critter.AnimationFrame++;
                                     }
-                                    //n.SetAnimSprite(critter.npc_animation, critter.AnimationFrame, CalcedFacing);
                                     break;
                                 }
                             default:
-                                {//17A2:27F0
-                                    var proj = critter.ProjectileHeading;
+                                {
+                                    //17A2:27F0
                                     NpcBehaviours(critter);
-                                    // if (proj != critter.ProjectileHeading)
-                                    // {
-                                    //     Debug.Print($"Projectile heading has changed to {critter.ProjectileHeading}");
-                                    // }
                                     break;
                                 }
                         }
@@ -301,7 +385,7 @@ namespace Underworld
 
             if ((critter.npc_goal != 0xB) && (critter.npc_goal != 0xF))
             {//seg007_17A2_2886:
-                if ((critter.npc_animation == 1) && ((critter.AnimationFrame & 0x1) == 1))
+                if ((critter.npc_animation == ANIMATION_WALK) && ((critter.AnimationFrame & 0x1) == 1))
                 {
                     int soundeffect = -1;
                     switch (critterObjectDat.category(critter.item_id))
@@ -832,14 +916,7 @@ namespace Underworld
                     case 7:
                         critter.Projectile_Speed = 6;
                         critter.UnkBit_0X13_Bit0to6 = 0;
-                        if (_RES == GAME_UW2)
-                        {
-                            UpdateAnimation(critter, 0, false);
-                        }
-                        else
-                        {
-                            UpdateAnimation(critter, 32, false);
-                        }
+                        UpdateAnimation(critter, ANIMATION_IDLE, false);
                         return;
                     default:
                         NPC_Goal8(critter);
@@ -1146,7 +1223,7 @@ namespace Underworld
                     var gtargFound = SearchForGoalTarget(critter, ref targetX, ref targetY);
                     critter.Projectile_Speed = 6;
                     critter.UnkBit_0X13_Bit0to6 = 0;
-                    UpdateAnimation(critter, 0, false);
+                    UpdateAnimation(critter, ANIMATION_IDLE, false);
                     if (gtargFound != 1)
                     {
                         if (si_dist < 0x190)
@@ -1190,7 +1267,7 @@ namespace Underworld
                     {//seg007_17A2_1882:
                         critter.Projectile_Speed = 6;
                         critter.UnkBit_0X13_Bit0to6 = 0;
-                        UpdateAnimation(critter, 0, false);
+                        UpdateAnimation(critter, ANIMATION_IDLE, false);
                     }
                     else
                     {
@@ -1253,7 +1330,7 @@ namespace Underworld
                         //seg006_1413_30F6:
                         critter.UnkBit_0X13_Bit7 = 1;
                         critter.UnkBit_0X15_6 = 1;
-                        critter.npc_animation = 0;
+                        critter.npc_animation = ANIMATION_IDLE;
                         critter.AnimationFrame = 0;
                         return;
                     }
@@ -1333,7 +1410,7 @@ namespace Underworld
                                 else
                                 {
                                     //seg006_1413:3210
-                                    critter.npc_animation = 0;
+                                    critter.npc_animation = ANIMATION_IDLE;
                                     critter.AnimationFrame = 0;
                                     if (Rng.r.Next(4) == 0)
                                     {
@@ -1482,9 +1559,9 @@ namespace Underworld
                 {//THis is probably uw2 logic. Todo check if the same happens in uw1
                     //seg006_1413_35CD:
                     critter.UnkBit_0X15_6 = 0;
-                    if (critter.npc_animation != 1)
+                    if (critter.npc_animation != ANIMATION_WALK)
                     {
-                        critter.npc_animation = 1;
+                        critter.npc_animation = ANIMATION_WALK;
                         GetCritterAnimationGlobalsForCurrObj(critter);
                         if (critter.AnimationFrame > MaxAnimFrame)
                         {
@@ -1893,12 +1970,12 @@ namespace Underworld
                             {
                                 //NPC will try and bash door
                                 //seg006_1413_38BA:
-                                damage.DamageObject(objToDamage: doorobject, 
-                                    basedamage: Rng.r.Next(critterObjectDat.attackdamage(critter.item_id, 0)), 
-                                    damagetype: 4, 
-                                    objList: UWTileMap.current_tilemap.LevelObjects, WorldObject: true, 
-                                    hitCoordinate: Vector3.Zero, 
-                                    damagesource: critter.index, 
+                                damage.DamageObject(objToDamage: doorobject,
+                                    basedamage: Rng.r.Next(critterObjectDat.attackdamage(critter.item_id, 0)),
+                                    damagetype: 4,
+                                    objList: UWTileMap.current_tilemap.LevelObjects, WorldObject: true,
+                                    hitCoordinate: Vector3.Zero,
+                                    damagesource: critter.index,
                                     ignoreVector: true);
                             }
                         }
@@ -1956,7 +2033,7 @@ namespace Underworld
                 //seg007_17A2_1C2://TODO include UW1 logic
                 if (_RES == GAME_UW2)
                 {
-                    if (critter.npc_animation == 0)
+                    if (critter.npc_animation == ANIMATION_IDLE)
                     {//Seg007_17A2_1CD:
                         if (critterObjectDat.unk_1F_lowernibble(critter.item_id) <= Rng.r.Next(0, 0x10))
                         {//seg007_17A2:01EA
@@ -2000,13 +2077,13 @@ namespace Underworld
                     //todo
                     //from X to 
                     //seg007_1798_193: uw1
-                    if (critter.npc_animation == 32)
+                    if (critter.npc_animation == ANIMATION_IDLE)
                     {
                         if (critterObjectDat.unk_1F_lowernibble(critter.item_id) > Rng.r.Next(0, 0x10))
                         {
                             if (critter.AnimationFrame == 3)
                             {
-                                critter.npc_animation = 44;
+                                critter.npc_animation = ANIMATION_WALK;
                             }
                         }
                     }
@@ -2016,11 +2093,11 @@ namespace Underworld
                         {
                             if (critter.AnimationFrame == 3)
                             {
-                                critter.npc_animation = 32;
+                                critter.npc_animation = ANIMATION_IDLE;
                             }
                             else
                             {
-                                critter.npc_animation = 44;
+                                critter.npc_animation = ANIMATION_WALK;
                             }
                         }
                     }
@@ -2028,12 +2105,7 @@ namespace Underworld
 
                 //seg007_17A2_2A9: uw2
                 //seg007_1798_193: uw1
-                if
-                (
-                    (_RES == GAME_UW2 && critter.npc_animation == 1)
-                    ||
-                    (_RES != GAME_UW2 && critter.npc_animation == 44)
-                )
+                if (critter.npc_animation == ANIMATION_WALK)
                 {
                     if (RelatedToMotionCollision_dseg_67d6_224E != false)
                     {
@@ -2095,12 +2167,7 @@ namespace Underworld
                 critter.heading = (short)((NewHeading >> 5) & 7);
                 critter.npc_heading = ((short)(NewHeading & 0x1F));
                 bool frameadvance = false;
-                if
-                (
-                    (_RES == GAME_UW2 && critter.npc_animation == 0)
-                    ||
-                    (_RES != GAME_UW2 && critter.npc_animation == 32)
-                )
+                if (critter.npc_animation == ANIMATION_IDLE)
                 {//seg007_17A2:044E
                     critter.UnkBit_0X15_6 = 1;
                     critter.UnkBit_0X13_Bit0to6 = 0;
@@ -2232,9 +2299,19 @@ namespace Underworld
                 if (RangeAttackStarted)
                 {
                     //seg007_17A2_8AD:
-                    if ((critter.npc_animation != 6) && (critter.npc_animation != 3))
+                    if (
+                        (critter.npc_animation != ANIMATION_MAGICATTACK)
+                        &&
+                        (critter.npc_animation != ANIMATION_RANGEDATTACK)
+                        &&
+                            (
+                                (_RES == GAME_UW2 && critter.npc_animation != 3)
+                                ||
+                                (_RES != GAME_UW2 && critter.npc_animation != 1)
+                            )
+                        )
                     {
-                        UpdateAnimation(critter, 2, true);
+                        UpdateAnimation(critter, ANIMATION_COMBAT_IDLE, true);
                         critter.Projectile_Speed = 4;
                         critter.UnkBit_0X13_Bit0to6 = 0;
                     }
@@ -2574,11 +2651,11 @@ namespace Underworld
                     critter.Projectile_Speed = 6;
                     if (_RES == GAME_UW2)
                     {
-                        UpdateAnimation(critter, 0, false);
+                        UpdateAnimation(critter, ANIMATION_IDLE, false);
                     }
                     else
                     {
-                        critter.npc_animation = 32;
+                        critter.npc_animation = ANIMATION_IDLE;
                         if (Rng.r.Next(0, 2) == 1)
                         {
                             critter.AnimationFrame = (byte)((critter.AnimationFrame + 1) & 3);
@@ -2701,7 +2778,15 @@ namespace Underworld
                         rngSI -= critterObjectDat.attackprobability(critter.item_id, attackNoVar8);//reduce probability threshold for next check.
                         attackNoVar8++;
                     }
-                    critter.npc_animation = (short)(attackNoVar8 + 3);
+                    if (_RES == GAME_UW2)
+                    {
+                        critter.npc_animation = (short)(attackNoVar8 + 3);
+                    }
+                    else
+                    {
+                        critter.npc_animation = (short)(attackNoVar8 + 1);
+                    }
+
                     critter.AnimationFrame = 0;
                 }
             }
@@ -2733,7 +2818,7 @@ namespace Underworld
             }
 
             critter.UnkBit_0X13_Bit0to6 = 0;
-            critter.npc_animation = 6;
+            critter.npc_animation = ANIMATION_MAGICATTACK;
             critter.AnimationFrame = 0;
             critter.npc_spellindex = 3;
             return true;
@@ -2774,7 +2859,7 @@ namespace Underworld
             else
             {
                 critter.UnkBit_0X13_Bit0to6 = 0;
-                critter.npc_animation = 6;
+                critter.npc_animation = ANIMATION_MAGICATTACK;
                 critter.AnimationFrame = 0;
                 if (Rng.r.Next(0x10) >= 0xB)
                 {
@@ -2806,7 +2891,7 @@ namespace Underworld
                         if (Rng.r.Next(0xc0) <= critterObjectDat.dexterity(critter.item_id))
                         {
                             critter.UnkBit_0X13_Bit0to6 = 0;
-                            critter.npc_animation = 6;//todo update animation value for UW1
+                            critter.npc_animation = ANIMATION_RANGEDATTACK;//todo update animation value for UW1
                             critter.AnimationFrame = 0;
                         }
                         return true;

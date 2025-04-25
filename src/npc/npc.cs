@@ -119,7 +119,6 @@ namespace Underworld
                 uwobject.AnimationFrame = 0;
             }
             string animname = CritterArt.GetAnimName(animationNo, relativeHeading); // "idle_front";
-            //var crit = CritLoader.GetCritter(this.uwobject.item_id & 0x3F);
             var crit = CritterArt.GetCritter(this.uwobject.item_id & 0x3F);
             if (crit.Animations.ContainsKey(animname))
             {
@@ -173,7 +172,14 @@ namespace Underworld
                 material.SetShaderParameter("texture_albedo", (Texture)texture);
                 if (sprite!=null)
                 {
-                    sprite.Mesh.Set("size", FrameSize * 1.5f);
+                    if (_RES==GAME_UW2)
+                    {
+                        sprite.Mesh.Set("size", FrameSize * 1.5f);
+                    }
+                    else
+                    {
+                        sprite.Mesh.Set("size", FrameSize * 1.8f);//make uw1 npcs a bit bigger
+                    }                    
                 }                
                 //sprite.Mesh.Set("size",FrameSize*1.5f);//TODO fix so this does not call a null crash and sprite mesh keeps size
                 return frameNo;
