@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Underworld
 {
@@ -31,6 +32,11 @@ namespace Underworld
                     }
                 }
             }
+        }
+
+        static void TalismanOnLava(uwObject obj)
+        {
+            
         }
 
 

@@ -1560,7 +1560,8 @@ namespace Underworld
                         break;//to seg030_2BB7_140A:
                     }
                     else
-                    {//seg030_2BB7_1299:
+                    {
+                        //seg030_2BB7_1299:
                         var terrainvalue = MotionCalcArray.UnkC_terrain & 0x7;
                         if (terrainvalue == 5)
                         {//is this uw2 only?
@@ -1642,16 +1643,23 @@ namespace Underworld
             }
             else
             {
-                Debug.Print($"Destroying {projectile.a_name}");
-                //seg030_2BB7_1410
-                if (ObjectRemover.DeleteObjectFromTile(projectile.tileX, projectile.tileY, projectile.index))
+                if (!ObjectRemover.ObjectCulling(projectile, 0xA))
                 {
-
-                    return null;
+                    return projectile;
                 }
                 else
                 {
-                    return projectile;
+                    Debug.Print($"Destroying {projectile.a_name}");
+                    //seg030_2BB7_1410
+                    if (ObjectRemover.DeleteObjectFromTile(projectile.tileX, projectile.tileY, projectile.index))
+                    {
+
+                        return null;
+                    }
+                    else
+                    {
+                        return projectile;
+                    }
                 }
             }
         }

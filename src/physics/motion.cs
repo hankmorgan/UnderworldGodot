@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 
 namespace Underworld
@@ -354,6 +355,54 @@ namespace Underworld
                     OilOnMud(projectile);
                 }
             }
+            else
+            {
+                if (_RES != GAME_UW2)
+                {
+                    if (projectile.TileState_0XA_Bit456 == 2)
+                    {
+                        //on lava
+                        if (si_cull == 0xA)
+                        {
+                            if (playerdat.dungeon_level == 8)
+                            {
+                                if (Math.Abs(projectile.tileX - 32) + Math.Abs(projectile.tileY - 32) < 6)
+                                {
+                                    if (playerdat.playerObject.npc_hp != 0)
+                                    {
+                                        if (playerdat.CanTalismansBeDestroyed)//set when garamon has been buried and you have answered his questions re volcano and talismans
+                                        {
+                                            si_cull = 8;
+                                            haltobject = false;
+                                            playerdat.SetQuest(36, playerdat.GetQuest(36) - 1);  // reduce count of talismans to destroy. 
+                                            if (playerdat.GetQuest(36) == 0)//All talismans destroyed
+                                            {
+                                                uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x116));// A Rending Sound fills the air.
+                                                Debug.Print("To do spawn a moongate and pull the avatar through it");
+                                            }
+                                            else
+                                            {
+                                                projectile.item_id = 0x1C2;
+                                                var counter = 8;
+                                                while (playerdat.GetQuest(36) <= counter)
+                                                {
+                                                    animo.SpawnAnimoCopies(projectile, projectile.tileX, projectile.tileY);
+                                                    counter--;
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            playerdat.SetQuest(37, playerdat.GetQuest(37) | 8); //set dream bit 3
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             if ((si_cull > 0) && (si_cull <= 8))
             {
                 if ((Rng.r.Next(0x7FFF) & 0x7) < si_cull)
