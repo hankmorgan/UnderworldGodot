@@ -24,7 +24,7 @@ namespace Underworld
             Debug.Print($"{caster.a_name} is casting {majorclass},{minorclass}");
             if (_RES==GAME_UW1)
             {
-                if (playerdat.dungeon_level==8)
+                if (playerdat.dungeon_level==9)
                 {
                     return; //no casting in the ethereal void.
                 }

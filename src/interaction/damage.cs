@@ -32,14 +32,16 @@ namespace Underworld
         /// <param name="damagesource"></param>
         public static int DamageObject(uwObject objToDamage, int basedamage, int damagetype, uwObject[] objList, bool WorldObject, Godot.Vector3 hitCoordinate, int damagesource, bool ignoreVector = false)
         {
-            ScaleDamage(objToDamage.item_id, ref basedamage, damagetype);
-            Debug.Print($"Try and Damage {objToDamage.a_name} by {basedamage}");
+            basedamage = ScaleDamage(objToDamage.item_id, ref basedamage, damagetype);          
+            if (basedamage !=0)
+            {
+                Debug.Print($"Try and Damage {objToDamage.a_name} by {basedamage}");
+            }              
             if (objToDamage.majorclass == 1)
             {
                 return DamageNPC(
                     critter: objToDamage,
                     basedamage: basedamage,
-                    damagetype: damagetype,
                     damagesource: damagesource);
             }
             else
@@ -66,11 +68,13 @@ namespace Underworld
         /// <param name="critter"></param>
         /// <param name="damage"></param>
         /// <param name="damagetype"></param>
-        static int DamageNPC(uwObject critter, int basedamage, int damagetype, int damagesource)
+        static int DamageNPC(uwObject critter, int basedamage, int damagesource)
         {
-            ScaleDamage(critter.item_id, ref basedamage, damagetype);
-
-            Debug.Print($"Damage {critter.a_name} by {basedamage}");
+            //basedamage = ScaleDamage(critter.item_id, ref basedamage, damagetype);
+            if (basedamage !=0)
+            {
+                Debug.Print($"Damage {critter.a_name} by {basedamage}");
+            }            
 
             //Note to be strictly compatable with UW behaviour the damage should be accumulated for the npc and test
             //once per tick This is used to control the angering behaviour of the npc in checking against passiveness.   
@@ -81,10 +85,7 @@ namespace Underworld
                 playerdat.play_hp = critter.npc_hp;
             }
             
-            //make the npc react to the damage source. player if 0
-            //record the damage source as the player
-            Debug.Print($"Record damage source as {damagesource}");
-
+            //make the npc react to the damage source. player if 1 
             critter.ProjectileSourceID = (short)damagesource;
             if (damagesource == 1)
             {//player applied damage

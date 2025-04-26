@@ -29,10 +29,9 @@ namespace Underworld
                 {
                     uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_there_is_not_enough_room_to_release_that_spell_));
                 }
+                currentSpell = null;
+                uimanager.instance.mousecursor.SetCursorToCursor(0);
             }
-
-            currentSpell = null;
-            uimanager.instance.mousecursor.SetCursorToCursor(0);
         }
 
         static bool ProjectileSpell(uwObject caster, int spellProjectileID)
