@@ -2112,10 +2112,7 @@ namespace Underworld
                         {
                             si = 5;
                         }
-                        var tmp = Rng.r.Next(0, si) + PitchVarA;
-                        tmp = tmp & 0x1F;
-                        tmp = tmp << 3;
-                        critter.Projectile_Pitch = (short)tmp;
+                        critter.Projectile_Pitch = (short)(Rng.r.Next(0, si) + PitchVarA );
                     }
                 }
                 //seg007_17A2_1C2://TODO include UW1 logic
