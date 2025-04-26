@@ -321,7 +321,7 @@ namespace Underworld
                             //seg006_1413_1D23: 
                             var NeighbourPathTile = PathFindingData49.pathfindtiles[NeighbourTileX, NeighbourTileY];
                             ProbablyPathDistance_var1E = TileRecord_var1C.unk3_bit1_7;
-                            if ((NeighbourTileX != TileRecord_var1C.X0) || (NeighbourTileY != TileRecord_var1C.Y1))
+                            if ((NeighbourTileX != TileRecord_var1C.X0) || (NeighbourTileY != TileRecord_var1C.Y1)) //check I am not going backwards in the path
                             {
                                 var Height_var1F = 0;
                                 //seg006_1413_1D68:    //This traverse is coming back wrong

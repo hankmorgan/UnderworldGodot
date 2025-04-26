@@ -2074,7 +2074,7 @@ namespace Underworld
 
         static void NPCWanderUpdate(uwObject critter)
         {
-            var newAnim_var2 = 1;
+            var newAnim_var2 = ANIMATION_WALK;
             int NewHeading = critter.ProjectileHeading;//not sure if it is initialised to this value. possibly vanilla behaviour was to use uninitialised memory in certain circumstances
             int PitchVarA;
             int si;
@@ -2125,7 +2125,7 @@ namespace Underworld
                     {//Seg007_17A2_1CD:
                         if (critterObjectDat.unk_1F_lowernibble(critter.item_id) <= Rng.r.Next(0, 0x10))
                         {//seg007_17A2:01EA
-                            if (critter.AnimationFrame != MaxAnimFrame + 1)
+                            if (critter.AnimationFrame != MaxAnimFrame)
                             {
                                 newAnim_var2 = -1;
                             }
@@ -2140,7 +2140,8 @@ namespace Underworld
                     {//seg007_17A2_208:
                         if (critterObjectDat.unk_1F_lowernibble(critter.item_id) < Rng.r.Next(0, 0x10))
                         {
-                            if (critter.AnimationFrame == MaxAnimFrame + 1)
+                            //seg007_17A2_225:
+                            if (critter.AnimationFrame == MaxAnimFrame)
                             {
                                 newAnim_var2 = 0;
                             }
@@ -2195,26 +2196,30 @@ namespace Underworld
                 //seg007_1798_193: uw1
                 if (critter.npc_animation == ANIMATION_WALK)
                 {
-                    if (RelatedToMotionCollision_dseg_67d6_224E != false)
+                    if (
+                        (RelatedToMotionCollision_dseg_67d6_224E != false)
+                        &&
+                        (HasCurrobjHeadingChanged_dseg_67d6_2242 == false)
+                    )
                     {
-                        if (HasCurrobjHeadingChanged_dseg_67d6_2242 == false)
-                        {
-                            //seg007_17A2_2D1
-                            var deflection = Rng.r.Next(0, 2);
-                            deflection--;
-                            deflection = deflection << 6;
 
-                            var newheading = critter.ProjectileHeading;
-                            newheading = (ushort)(newheading + deflection);
-                            newheading = (ushort)(newheading + 256);
-                            newheading = (ushort)(newheading % 256);
-                            critter.ProjectileHeading = newheading;
-                            critter.heading = (short)((newheading >> 5) & 7);
-                            critter.UnkBit_0X13_Bit0to6 = 0;
-                            return;
-                        }
+                        //seg007_17A2_2D1
+                        var deflection = Rng.r.Next(0, 2);
+                        deflection--;
+                        deflection = deflection << 6;
+
+                        var newheading = critter.ProjectileHeading;
+                        newheading = (ushort)(newheading + deflection);
+                        newheading = (ushort)(newheading + 256);
+                        newheading = (ushort)(newheading % 256);
+                        critter.ProjectileHeading = newheading;
+                        critter.heading = (short)((newheading >> 5) & 7);
+                        critter.UnkBit_0X13_Bit0to6 = 0;
+                        return;
+                    }
+                    else
+                    {
                         //seg007_17A2_34C
-
                         if (Rng.r.Next(0, 0x40) >= critterObjectDat.unk_1F_lowernibble(critter.item_id) + 8)
                         {
                             NewHeading = critter.ProjectileHeading;
@@ -2223,10 +2228,10 @@ namespace Underworld
                         {
                             NewHeading = (Rng.r.Next(0, 0x40) + critter.ProjectileHeading + 224) % 0x100;
                         }
-
+                        //seg007_17A2_3A3
                         if (HasCurrobjHeadingChanged_dseg_67d6_2242 == false)
                         {
-                            NewHeading = VectorsToPlayer(NewHeading, 0xA);
+                            NewHeading = VectorsToPlayer(NewHeading, 0xA);//seg007_17A2_3B2:
                         }
                     }
                 }
@@ -2583,7 +2588,7 @@ namespace Underworld
                 {
                     var xDiff = Math.Pow(currObjQualityX - currObj_XHome, 2);
                     var yDiff = Math.Pow(currObjOwnerY - currObj_YHome, 2);
-                    if (xDiff + yDiff <= critterObjectDat.maybeNPCTravelRange(critter.item_id))
+                    if (xDiff + yDiff <= critterObjectDat.maybeNPCTravelRange(critter.item_id) * critterObjectDat.maybeNPCTravelRange(critter.item_id))
                     {
                         NPCWanderUpdate(critter);
                     }
