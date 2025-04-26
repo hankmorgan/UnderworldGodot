@@ -163,24 +163,23 @@ namespace Underworld
         /// <returns></returns>
         public static int GetTerrainTypeNo(TileInfo tile)
         {
-            var terrain = 0;
             if (_RES == GAME_UW2)
             {//TOTEST
              //var floorterrain = tileMapRender.FloorTexture(tile);
                 var floorterrain = tileMapRender.FloorTexture_MapIndex(tile);
                 var ActualTexture = UWTileMap.current_tilemap.texture_map[floorterrain];
-                terrain = TerrainDatLoader.Terrain[ActualTexture];//tile.floorTexture];// floorterrain];
+                var terrain = TerrainDatLoader.Terrain[ActualTexture];//tile.floorTexture];// floorterrain];
                 terrain = (terrain & 0xC0) >> 6;
+                return terrain;
             }
             else
             {
+                //This is probably wrong as NPCS in UW1 are pathfinding into lava!
                 var floorterrain = tileMapRender.FloorTexture_MapIndex(tile);
                 var ActualTexture = UWTileMap.current_tilemap.texture_map[floorterrain];
-                terrain = TerrainDatLoader.Terrain[46 + ActualTexture];//floorterrain+46]; //46=256-210
-                terrain >>= 4;
+                var terrain = TerrainDatLoader.Terrain[46 + ActualTexture];//floorterrain+46]; //46=256-210
+                return terrain >> 4;
             }
-
-            return terrain;
         }
 
 

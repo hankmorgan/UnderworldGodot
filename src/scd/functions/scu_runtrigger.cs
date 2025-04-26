@@ -29,7 +29,7 @@ namespace Underworld
                         if (obj.IsTrigger)
                         {
                             trigger.RunTrigger(
-                                character: 0, 
+                                character: 1, 
                                 ObjectUsed: obj, 
                                 TriggerObject: obj, 
                                 triggerType: (int)triggerObjectDat.triggertypes.SCHEDULED, 

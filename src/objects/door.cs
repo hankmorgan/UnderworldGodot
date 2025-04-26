@@ -197,7 +197,7 @@ namespace Underworld
                 }
             }
             playerdat.UpdateAutomap();//trigger an update of visibility
-            trigger.TriggerObjectLink(character: 0,
+            trigger.TriggerObjectLink(character: 1,
                     ObjectUsed: doorObj,
                     triggerType: (int)triggerObjectDat.OPEN_TRIGGER_TYPE,
                     triggerX: doorObj.tileX,
@@ -238,7 +238,7 @@ namespace Underworld
             {
                 // trigger.CloseTrigger(obj.uwobject, obj.uwobject.link, UWTileMap.current_tilemap.LevelObjects);
                 trigger.TriggerObjectLink(
-                    character: 0,
+                    character: 1,
                     ObjectUsed: obj,
                     triggerType: (int)triggerObjectDat.triggertypes.CLOSE,
                     triggerX: obj.tileX,

@@ -67,7 +67,7 @@ namespace Underworld
                 {
                     trigger.TriggerObjectLink
                     (
-                        character: 0,
+                        character: 1,
                         ObjectUsed: ObjectUsed,
                         triggerType: (int)triggerObjectDat.triggertypes.USE,
                         triggerX: ObjectUsed.tileX,

@@ -74,7 +74,7 @@ namespace Underworld
             //Check for use trigger on this action and try activate if so.
             trigger.TriggerObjectLink
             (
-                character: 0,
+                character: 1,
                 ObjectUsed: ObjectUsed,
                 triggerType: (int)triggerObjectDat.triggertypes.USE,
                 triggerX: ObjectUsed.tileX,

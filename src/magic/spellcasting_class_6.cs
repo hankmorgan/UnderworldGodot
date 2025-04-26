@@ -194,7 +194,7 @@ namespace Underworld
                         var oldSearchSkill = playerdat.Search;
                         playerdat.Search = 0x2D;
                         trigger.TriggerObjectLink(
-                            character: 0,
+                            character: 1,
                             ObjectUsed: targetObject,
                             triggerType: (int)triggerObjectDat.triggertypes.LOOK,
                             triggerX: targetObject.tileX,

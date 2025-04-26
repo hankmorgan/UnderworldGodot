@@ -79,7 +79,7 @@ namespace Underworld
                             containerObj.link = objToSpill.index;
                             //run it if it is a use trigger
                             trigger.TriggerObjectLink(
-                                character: 0, 
+                                character: 1, 
                                 ObjectUsed: containerObj,
                                 triggerX: containerObj.tileX,
                                 triggerY: containerObj.tileY,                              

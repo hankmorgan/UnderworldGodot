@@ -73,7 +73,7 @@ namespace Underworld
                                     while (noOfRuns>0)
                                     {                                        
                                         trigger.RunTrigger(
-                                            character: 0,
+                                            character: 1,
                                             ObjectUsed: null,
                                             TriggerObject: tTrigger,
                                             triggerType: (int)triggerObjectDat.triggertypes.TIMER,

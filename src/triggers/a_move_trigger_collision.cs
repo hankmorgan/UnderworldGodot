@@ -16,7 +16,7 @@ public partial class a_movetriggercollision:  Area3D
             Debug.Print($"{body.Name} collides with {uwObjectIndex}");
            
             trigger.RunTrigger(
-                character: 0, 
+                character: 1, 
                 ObjectUsed: null, 
                 triggerType: (int)triggerObjectDat.triggertypes.MOVE, 
                 TriggerObject: UWTileMap.current_tilemap.LevelObjects[uwObjectIndex],                

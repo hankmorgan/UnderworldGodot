@@ -49,7 +49,7 @@ namespace Underworld
                 }
                 if (triggerType == triggerObjectDat.triggertype(TriggerObject.item_id) || (triggerType == (int)triggerObjectDat.triggertypes.ALL))
                 {
-                    if (character == 0)
+                    if (character == 1)
                     {//player
                         if (TriggerObject.flags2 != 0)
                         {
@@ -234,7 +234,7 @@ namespace Underworld
                 if ((traptrigger.minorclass & 2) == 0)
                 {
                     trap.ActivateTrap(
-                        character: 0, 
+                        character: 1, 
                         trapObj: traptrigger, 
                         ObjectUsed: null, 
                         triggerX: tileX, 
@@ -244,7 +244,7 @@ namespace Underworld
                 else
                 {
                     RunTrigger(
-                        character: 0, 
+                        character: 1, 
                         ObjectUsed: null, 
                         TriggerObject: traptrigger, 
                         triggerType: -1, 
@@ -272,7 +272,7 @@ namespace Underworld
                 if ((UWTileMap.current_tilemap.LevelObjects[i].item_id==425) || (UWTileMap.current_tilemap.LevelObjects[i].item_id==441))
                     {
                         RunTrigger(
-                            character: 0, 
+                            character: 1, 
                             ObjectUsed: null, 
                             TriggerObject: UWTileMap.current_tilemap.LevelObjects[i], 
                             triggerType: (int)triggerObjectDat.triggertypes.TIMER, 
@@ -299,7 +299,7 @@ namespace Underworld
                 {                    
                     Debug.Print($"Testing scheduled trigger {scheduledtriggerindex}");
                     RunTrigger(
-                        character: 0, 
+                        character: 1, 
                         ObjectUsed: null, 
                         TriggerObject: UWTileMap.current_tilemap.LevelObjects[scheduledtriggerindex], 
                         triggerType: (int)triggerObjectDat.triggertypes.SCHEDULED, 

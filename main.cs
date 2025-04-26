@@ -196,7 +196,7 @@ public partial class main : Node3D
 							while (next != 0)
 							{
 								var nextObj = UWTileMap.current_tilemap.LevelObjects[next];
-								trigger.RunTrigger(character: 0,
+								trigger.RunTrigger(character: 1,
 										ObjectUsed: nextObj,
 										TriggerObject: nextObj,
 										triggerType: (int)triggerObjectDat.triggertypes.EXIT,
@@ -241,7 +241,7 @@ public partial class main : Node3D
 							while (next != 0)
 							{
 								var nextObj = UWTileMap.current_tilemap.LevelObjects[next];
-								trigger.RunTrigger(character: 0,
+								trigger.RunTrigger(character: 1,
 										ObjectUsed: nextObj,
 										TriggerObject: nextObj,
 										triggerType: (int)triggerObjectDat.triggertypes.ENTER,
@@ -259,7 +259,7 @@ public partial class main : Node3D
 								while (next != 0)
 								{
 									var nextObj = UWTileMap.current_tilemap.LevelObjects[next];
-									trigger.RunTrigger(character: 0,
+									trigger.RunTrigger(character: 1,
 											ObjectUsed: nextObj,
 											TriggerObject: nextObj,
 											triggerType: (int)triggerObjectDat.triggertypes.PRESSURE,

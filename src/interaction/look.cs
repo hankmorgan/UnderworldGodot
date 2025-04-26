@@ -79,7 +79,7 @@ namespace Underworld
                 //TODO: Add checking for traps here and prompting for disarming. May require turning this function into a co-routine.
 
                 trigger.TriggerObjectLink(
-                    character: 0,
+                    character: 1,
                     ObjectUsed: obj,
                     triggerType: (int)triggerObjectDat.triggertypes.LOOK,
                     triggerX: obj.tileX,

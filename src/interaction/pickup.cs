@@ -296,7 +296,7 @@ namespace Underworld
 
             //check for pickup triggers linked to this object
             trigger.TriggerObjectLink(
-                    character: 0,
+                    character: 1,
 
                     ObjectUsed: obj,
 

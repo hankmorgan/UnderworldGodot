@@ -20,7 +20,7 @@ namespace Underworld
                 if (button.TryAndUse(foundbutton, trapObj.owner))
                 {
                     trigger.TriggerObjectLink(
-                        character: 0, 
+                        character: 1, 
                         ObjectUsed: foundbutton, 
                         triggerType: (int)triggerObjectDat.triggertypes.USE,
                         triggerX: triggerX, 
