@@ -31,7 +31,7 @@ namespace Underworld
                 }
                 else
                 {
-                    return (critterObjectDat.race(critter.item_id) == targetRace);
+                    return (critterObjectDat.faction(critter.item_id) == targetRace);
                 }
             }
             else
@@ -69,7 +69,7 @@ namespace Underworld
                             var obj = UWTileMap.current_tilemap.LevelObjects[next];
                             if(obj.majorclass == 1)
                             {//npc
-                                if (critterObjectDat.race(obj.item_id) == targetrace)
+                                if (critterObjectDat.faction(obj.item_id) == targetrace)
                                 {                                   
                                     obj.npc_attitude = (short)newAttitute;
                                     if (newAttitute==0)

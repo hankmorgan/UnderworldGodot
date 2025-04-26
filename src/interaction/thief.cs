@@ -98,7 +98,7 @@ namespace Underworld
                 var ydiff = (npc_ycoord-stolenitem_ycoord) /8;
 
                 var dist = xdiff*xdiff + ydiff*ydiff;
-                if (dist <= critterObjectDat.theftdetectionrange(critter.item_id))
+                if (dist <= critterObjectDat.theftdetectionrange(critter.item_id) * critterObjectDat.theftdetectionrange(critter.item_id))
                 {
                     if (Pathfind.TestBetweenPoints(npc_xcoord,npc_ycoord,npc_zcoord, stolenitem_xcoord, stolenitem_ycoord,stolenitem_zcoord))
                     {

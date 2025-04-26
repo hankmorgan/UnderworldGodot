@@ -72,6 +72,52 @@ namespace Underworld
             }
         }
 
+
+        public static short ANIMATION_COMBAT_BASH
+        {
+            get
+            {
+                if (_RES == GAME_UW2)
+                {
+                    return 3;
+                }
+                else
+                {
+                    return 1;
+                }
+            }
+        }
+
+        public static short ANIMATION_COMBAT_SLASH
+        {
+            get
+            {
+                if (_RES == GAME_UW2)
+                {
+                    return 4;
+                }
+                else
+                {
+                    return 2;
+                }
+            }
+        }
+
+        public static short ANIMATION_COMBAT_STAB
+        {
+            get
+            {
+                if (_RES == GAME_UW2)
+                {
+                    return 5;
+                }
+                else
+                {
+                    return 3;
+                }
+            }
+        }
+
         public static short ANIMATION_MAGICATTACK
         {
             get
@@ -98,6 +144,24 @@ namespace Underworld
                 else
                 {
                     return 5;
+                }
+            }
+        }
+
+        /// <summary>
+        /// The animation frame on which the NPC makes a melee attack
+        /// </summary>
+        static int COMBAT_HITFRAME
+        {
+            get
+            {
+                if (_RES == GAME_UW2)
+                {
+                    return 3;
+                }
+                else
+                {
+                    return 4;
                 }
             }
         }
@@ -270,7 +334,8 @@ namespace Underworld
                     NpcBehaviours(critter);
                 }
                 else
-                {//seg007_17A2_246A
+                {
+                    //seg007_17A2_246A
                     if (critter.npc_animation == ANIMATION_DEATH)
                     {
                         //death animation
@@ -289,81 +354,85 @@ namespace Underworld
                         }
                     }
                     else
-                    {//seg007_17A2_2575:    check and process combat anims and other goals
-                     //TODO these animation values are UW2 values. UW1 has some differing logic.
-                        switch (critter.npc_animation)
+                    {
+                        //seg007_17A2_2575:    check and process combat anims and other goals                     
+                        //Check for melee animation
+                        if (
+                            (critter.npc_animation == ANIMATION_COMBAT_BASH)
+                            ||
+                            (critter.npc_animation == ANIMATION_COMBAT_SLASH)
+                            ||
+                            (critter.npc_animation == ANIMATION_COMBAT_STAB)
+                        )
                         {
-                            case 3://weapon swings
-                            case 4:
-                            case 5:
+                            if (critter.AnimationFrame == 0)
+                            {
+                                if (critter.npc_gtarg == 1)
                                 {
-                                    if (critter.AnimationFrame == 0)
+                                    //TODO set music if not playing any combat theme
+                                    //todo set combat music timer
+                                }
+                            }
+                            if (critter.AnimationFrame == COMBAT_HITFRAME)
+                            {
+                                //apply attack
+                                Debug.Print("NPC makes attack");
+                            }
+                            if (critter.AnimationFrame >= MaxAnimFrame)
+                            {
+                                critter.npc_animation = ANIMATION_COMBAT_IDLE;
+                                critter.AnimationFrame = 0;
+                            }
+                            else
+                            {
+                                critter.AnimationFrame++;
+                            }
+                        }
+                        else
+                        {
+                            //Check for ranged attacks
+                            if ((critter.npc_animation == ANIMATION_RANGEDATTACK) || (critter.npc_animation == ANIMATION_MAGICATTACK))
+                            {
+                                if (critter.AnimationFrame == COMBAT_HITFRAME)
+                                {
+                                    if (critter.npc_spellindex == 0)
                                     {
-                                        if (critter.npc_gtarg == 1)
-                                        {
-                                            //TODO set music if not playing any combat theme
-                                            //todo set combat music timer
-                                        }
-                                    }
-                                    if (critter.AnimationFrame == 3)
-                                    {
-                                        //apply attack
-                                        Debug.Print("NPC makes attack");
-                                    }
-                                    if (critter.AnimationFrame >= MaxAnimFrame)
-                                    {
-                                        critter.npc_animation = ANIMATION_COMBAT_IDLE;
-                                        critter.AnimationFrame = 0;
+                                        //launch missile using rangedwweapon data in critter.dat 
+                                        var si_ammoitemid = critterObjectDat.WeaponLootTableLookup(critter.item_id);
+                                        motion.MissilePitch = GetPitchToGTarg(critter, rangedObjectDat.ammotype(si_ammoitemid), 1);
+                                        motion.NPCMissileLaunch(critter, si_ammoitemid, rangedObjectDat.ammotype(si_ammoitemid));
                                     }
                                     else
                                     {
-                                        critter.AnimationFrame++;
+                                        //magic spell
+                                        //get pitch to gtarg
+                                        motion.MissilePitch = GetPitchToGTarg(critter, 0, 0);
+                                        var effectid = critterObjectDat.spell(critter.item_id, critter.npc_spellindex - 1); //minus 1 to offset lookup array.
+                                        SpellCasting.CastSpellFromObject(
+                                            spellno: effectid,
+                                            caster: critter);
                                     }
-                                    break;
                                 }
-                            case 6://ranged attack/ magic attack
-                                {
-                                    if (critter.AnimationFrame == 3)
-                                    {
-                                        if (critter.npc_spellindex == 0)
-                                        {
-                                            //launch missile using rangedwweapon data in critter.dat 
-                                            var si_ammoitemid = critterObjectDat.WeaponLootTableLookup(critter.item_id);
-                                            motion.MissilePitch = GetPitchToGTarg(critter, rangedObjectDat.ammotype(si_ammoitemid), 1);
-                                            motion.NPCMissileLaunch(critter, si_ammoitemid, rangedObjectDat.ammotype(si_ammoitemid));
-                                        }
-                                        else
-                                        {
-                                            //magic spell
-                                            //get pitch to gtarg
-                                            motion.MissilePitch = GetPitchToGTarg(critter, 0, 0);
-                                            var effectid = critterObjectDat.spell(critter.item_id, critter.npc_spellindex - 1); //minus 1 to offset lookup array.
-                                            SpellCasting.CastSpellFromObject(
-                                                spellno: effectid,
-                                                caster: critter);
-                                        }
-                                    }
 
-                                    if (critter.AnimationFrame >= MaxAnimFrame)
-                                    {
-                                        critter.npc_animation = ANIMATION_COMBAT_IDLE;
-                                        critter.AnimationFrame = 0;
-                                    }
-                                    else
-                                    {
-                                        critter.AnimationFrame++;
-                                    }
-                                    break;
-                                }
-                            default:
+                                if (critter.AnimationFrame >= MaxAnimFrame)
                                 {
-                                    //17A2:27F0
-                                    NpcBehaviours(critter);
-                                    break;
+                                    critter.npc_animation = ANIMATION_COMBAT_IDLE;
+                                    critter.AnimationFrame = 0;
                                 }
+                                else
+                                {
+                                    critter.AnimationFrame++;
+                                }
+                            }
+                            else
+                            {
+                                //Not making a melee/ranged attack. Process goals and behaviours instead.
+                                //17A2:27F0
+                                NpcBehaviours(critter);
+                            }
                         }
                     }
-                    //update unk0xA, probably a refresh rate
+                    //update next frame, probably a refresh rate
                     critter.NextFrame_0XA_Bit0123 = (short)((critter.NextFrame_0XA_Bit0123 + critter.Projectile_Speed) % 16);
                 }
             }

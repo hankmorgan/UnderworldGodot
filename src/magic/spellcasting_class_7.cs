@@ -416,7 +416,7 @@ namespace Underworld
                 if (obj.majorclass == 1)
                 {
                     var damageToApply = 0xFF;
-                    if (critterObjectDat.race(obj.item_id) == 0x17)
+                    if (critterObjectDat.faction(obj.item_id) == 0x17)
                     {//a liche
                         damageToApply = obj.npc_hp / 2;
                     }

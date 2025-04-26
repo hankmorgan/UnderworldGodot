@@ -23,7 +23,7 @@ namespace Underworld
             {
                 return false;//object is not on map
             }
-           
+
             //Check if object is still "alive"
             if (projectile.npc_hp == 0)
             {
@@ -144,7 +144,7 @@ namespace Underworld
                 if (_RES == GAME_UW2)
                 {
                     //seg030_2BB7_7B7:
-                    if (projectile.zpos != (MotionParams.z_4>>3))
+                    if (projectile.zpos != (MotionParams.z_4 >> 3))
                     {
                         projectile.zpos = (short)(MotionParams.z_4 >> 3);
                         //Debug.Print("TODO Run pressure trigger for projectile");                        
@@ -156,7 +156,7 @@ namespace Underworld
                 }
             }
 
-            
+
             projectile.xpos = (short)(MotionParams.x_0 >> 5);
             projectile.ypos = (short)(MotionParams.y_2 >> 5);
 
@@ -172,16 +172,16 @@ namespace Underworld
             //seg030_2BB7_83E:
             if (MotionParams.unk_26 > 0x180)
             {//seg030_2BB7_848:
-                var var6 = MotionParams.unk_26 >> 8;
+                var var6FallDamage = MotionParams.unk_26 >> 8;
                 if (projectile.majorclass == 1)
                 {
-                    var6 = var6 >> 2;
+                    var6FallDamage = var6FallDamage >> 2;
                 }
                 else
                 {
                     if (projectile.npc_hp < 0x20)
                     {
-                        var6 = var6 << 2;
+                        var6FallDamage = var6FallDamage << 2;
                     }
                 }
                 var var4_mass = commonObjDat.mass(projectile.item_id);
@@ -191,14 +191,18 @@ namespace Underworld
                     Debug.Print($"seg030_2BB7_8B9 playsound effect {(var4_mass - 600) / 0x32}");
                 }
                 //fall damage?
-                damage.DamageObject(
-                    objToDamage: projectile,
-                    basedamage: var6,
-                    damagetype: 0,
-                    objList: UWTileMap.current_tilemap.LevelObjects,
-                    WorldObject: true, hitCoordinate: Godot.Vector3.Zero,
-                    damagesource: 0,
-                    ignoreVector: true);
+                if (var6FallDamage != 0)
+                {
+                    damage.DamageObject(
+                        objToDamage: projectile,
+                        basedamage: var6FallDamage,
+                        damagetype: 0,
+                        objList: UWTileMap.current_tilemap.LevelObjects,
+                        WorldObject: true, hitCoordinate: Godot.Vector3.Zero,
+                        damagesource: 0,
+                        ignoreVector: true);
+                }
+
             }
             //seg030_2BB7_8E1:
             if ((MotionParams.tilestate25 & 4) != 0)
@@ -467,8 +471,8 @@ namespace Underworld
             MotionCalcArray.MotionArrayObjectIndexA = critter.index;
             MotionCalcArray.Radius8 = (byte)commonObjDat.radius(critter.item_id);
             MotionCalcArray.Height9 = (byte)commonObjDat.height(critter.item_id);
-            MotionCalcArray.x0 = (ushort)((critter.npc_xhome <<3) + critter.xpos);
-            MotionCalcArray.y2 = (ushort)((critter.npc_yhome<<3) + critter.ypos);
+            MotionCalcArray.x0 = (ushort)((critter.npc_xhome << 3) + critter.xpos);
+            MotionCalcArray.y2 = (ushort)((critter.npc_yhome << 3) + critter.ypos);
             MotionCalcArray.z4 = (ushort)critter.zpos;
             motion.ProcessMotionTileHeights_seg028_2941_385(8);
             return (short)(MotionCalcArray.UnkC_terrain | MotionCalcArray.UnkE);
@@ -500,7 +504,7 @@ namespace Underworld
 
         public static void DumpCollisionTable()
         {
-            byte[] collisiondata = new byte[CollisionRecord.Collisions_dseg_2520.GetUpperBound(0)+1];
+            byte[] collisiondata = new byte[CollisionRecord.Collisions_dseg_2520.GetUpperBound(0) + 1];
             for (int i = 0; i <= CollisionRecord.Collisions_dseg_2520.GetUpperBound(0); i++)
             {
                 collisiondata[i] = CollisionRecord.Collisions_dseg_2520[i];

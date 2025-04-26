@@ -33,7 +33,7 @@ namespace Underworld
                                 {
                                     if (obj.UnkBit_0XA_Bit7 == 0 ) //  .MobileUnk_0xA & 0x80) >> 7) == 0)
                                     {
-                                        if (critterObjectDat.race(obj.item_id) == race)
+                                        if (critterObjectDat.faction(obj.item_id) == race)
                                         {
                                             obj.npc_attitude = newAttitute;
                                         }

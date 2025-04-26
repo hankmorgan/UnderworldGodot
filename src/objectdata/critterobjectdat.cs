@@ -123,16 +123,15 @@ namespace Underworld
 
         public static int generaltype(int item_id)
         {
-            // Debug.Print("Race. Needs to be reconfirmed");
             return buffer[CritterOffset(item_id) + 0x9];
         }
 
         /// <summary>
-        /// The race this npc is part of.
+        /// The faction this npc is part of.
         /// </summary>
         /// <param name="item_id"></param>
         /// <returns></returns>
-        public static int race(int item_id)
+        public static int faction(int item_id)
         {
             return (buffer[CritterOffset(item_id) + 0x9]) & 0x3F;
         }

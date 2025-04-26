@@ -299,7 +299,7 @@ namespace Underworld
                     var obj = UWTileMap.current_tilemap.LevelObjects[index];
                     if (obj.majorclass == 1)//NPC
                     {
-                        if (critterObjectDat.race(obj.item_id) == race)
+                        if (critterObjectDat.faction(obj.item_id) == race)
                         {
                             methodToCall(obj, paramsArray);
                             if (!loopAll)
