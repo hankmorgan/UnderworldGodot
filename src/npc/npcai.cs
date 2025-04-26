@@ -2886,6 +2886,21 @@ namespace Underworld
                 return false;
             }
 
+            if (_RES != GAME_UW2)
+            {
+                //check for members of a mage faction casting spells in tybals lair while the Orb is not destroyed.
+                if (playerdat.dungeon_level == 7)
+                {
+                    if (playerdat.isOrbDestroyed == false)
+                    {
+                        if (critterObjectDat.generaltype(critter.item_id) == 0x13)
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+
             critter.UnkBit_0X13_Bit0to6 = 0;
             critter.npc_animation = ANIMATION_MAGICATTACK;
             critter.AnimationFrame = 0;
@@ -2903,6 +2918,21 @@ namespace Underworld
             if (UWTileMap.current_tilemap.Tiles[currObj_XHome, currObj_YHome].noMagic != 0)
             {
                 return false;
+            }
+
+            if (_RES != GAME_UW2)
+            {
+                //check for members of a mage faction casting spells in tybals lair while the Orb is not destroyed.
+                if (playerdat.dungeon_level == 7)
+                {
+                    if (playerdat.isOrbDestroyed == false)
+                    {
+                        if (critterObjectDat.generaltype(critter.item_id) == 0x13)
+                        {
+                            return false;
+                        }
+                    }
+                }
             }
 
             if (currentGTargSquaredDistanceByTiles >= 0x40)
