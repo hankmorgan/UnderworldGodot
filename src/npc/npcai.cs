@@ -2061,10 +2061,9 @@ namespace Underworld
                                 damage.DamageObject(objToDamage: doorobject,
                                     basedamage: Rng.r.Next(critterObjectDat.attackdamage(critter.item_id, 0)),
                                     damagetype: 4,
-                                    objList: UWTileMap.current_tilemap.LevelObjects, WorldObject: true,
-                                    hitCoordinate: Vector3.Zero,
-                                    damagesource: critter.index,
-                                    ignoreVector: true);
+                                    objList: UWTileMap.current_tilemap.LevelObjects, 
+                                    WorldObject: true,
+                                    damagesource: critter.index);
                             }
                         }
                     }

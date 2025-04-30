@@ -183,14 +183,77 @@ namespace Underworld
             }
         }
 
-        public static void SpawnAnimoAtPoint(int subclassindex, Godot.Vector3 point, bool randomZpos = true)
+        // public static void SpawnAnimoAtPoint(int subclassindex, Godot.Vector3 point, bool randomZpos = true)
+        // {
+        //     Debug.Print("DEPRECIATED SpawnAnimoAtPoint");
+        //     short xpos, ypos, zpos;
+        //     int tileX, tileY;
+        //     PointToXYZ(point, out xpos, out ypos, out zpos, out tileX, out tileY);
+        //     SpawnAnimoInTile(subclassindex, xpos, ypos, zpos, tileX, tileY);
+        // }
+
+        /// <summary>
+        /// Converts a Godot vector3 to tileX/Y and xyzpos values
+        /// </summary>
+        /// <param name="point"></param>
+        /// <param name="xpos"></param>
+        /// <param name="ypos"></param>
+        /// <param name="zpos"></param>
+        /// <param name="tileX"></param>
+        /// <param name="tileY"></param>
+        public static void PointToXYZ(Vector3 point, out short xpos, out short ypos, out short zpos, out int tileX, out int tileY)
         {
-            var xpos = uwObject.FloatXYToXYPos(-point.X);
-            var ypos = uwObject.FloatXYToXYPos(point.Z);
-            var zpos = uwObject.FloatZToZPos(point.Y);
-            var tileX = -(int)(point.X / 1.2f);
-            var tileY = (int)(point.Z / 1.2f);
-            SpawnAnimoInTile(subclassindex, xpos, ypos, zpos, tileX, tileY);
+            xpos = uwObject.FloatXYToXYPos(-point.X);
+            ypos = uwObject.FloatXYToXYPos(point.Z);
+            zpos = uwObject.FloatZToZPos(point.Y);
+            tileX = -(int)(point.X / 1.2f);
+            tileY = (int)(point.Z / 1.2f);
+        }
+
+
+        /// <summary>
+        /// Creates an animo at the target object (eg blood spatters)
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="subclassindex"></param>
+        /// <param name="si_zpos"></param>
+        /// <param name="tileX"></param>
+        /// <param name="tileY"></param>
+        /// <returns></returns>
+        public static bool SpawnAnimoAtTarget(uwObject target, int subclassindex, int si_zpos, int tileX, int tileY)
+        {
+            var animoObject = SpawnAnimoInTile(subclassindex, 3, 3, 0, tileX, tileY);
+            if (animoObject != null)
+            {
+                if (target != null)
+                {
+                    animoObject.xpos = target.xpos;
+                    animoObject.ypos = target.ypos;
+                    if (si_zpos >= 0)
+                    {
+                        var Height = commonObjDat.height(target.item_id) >> 3;
+                        if (Height == 0)
+                        {
+                            Height = 1;
+                        }
+                        animoObject.zpos = (short)(target.zpos + (Height * si_zpos));
+                    }
+                    else
+                    {
+                        animoObject.zpos = (short)-si_zpos;
+                    }  
+                    objectInstance.Reposition(animoObject);
+                    return true;
+                }
+                else
+                {
+                    return false;//target is null
+                }
+            }
+            else
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -202,7 +265,7 @@ namespace Underworld
         /// <param name="zpos"></param>
         /// <param name="tileX"></param>
         /// <param name="tileY"></param>
-        public static void SpawnAnimoInTile(int subclassindex, short xpos, short ypos, short zpos, int tileX, int tileY)
+        public static uwObject SpawnAnimoInTile(int subclassindex, short xpos, short ypos, short zpos, int tileX, int tileY)
         {
             if (animo.GetFreeAnimoSlot() != -1)
             {
@@ -220,7 +283,9 @@ namespace Underworld
                     var duration = animationObjectDat.endFrame(itemid) - animationObjectDat.startFrame(itemid);
                     CreateAnimoLink(newObject, duration);
                 }
+                return newObject;
             }
+            return null;
         }
 
         /// <summary>
@@ -233,13 +298,13 @@ namespace Underworld
         {
             var di_rng = 2 + Rng.r.Next(3);
 
-            for (int i = 0; i<di_rng; i++)
+            for (int i = 0; i < di_rng; i++)
             {
                 var classIndex = BaseObject.classindex + Rng.r.Next(2);
                 var rndX = Math.Min(Math.Max(0, BaseObject.xpos + Rng.r.Next(5) - 2), 7);
                 var rndY = Math.Min(Math.Max(0, BaseObject.ypos + Rng.r.Next(5) - 2), 7);
-                var rndZ = Math.Min(Math.Max(0,BaseObject.zpos - 8 + Rng.r.Next(15)), 127);
-                animo.SpawnAnimoInTile(classIndex, (short)rndX, (short)rndY, (short)rndZ, tileX, tileY );
+                var rndZ = Math.Min(Math.Max(0, BaseObject.zpos - 8 + Rng.r.Next(15)), 127);
+                animo.SpawnAnimoInTile(classIndex, (short)rndX, (short)rndY, (short)rndZ, tileX, tileY);
             }
         }
 

@@ -199,9 +199,8 @@ namespace Underworld
                         basedamage: var6FallDamage,
                         damagetype: 0,
                         objList: UWTileMap.current_tilemap.LevelObjects,
-                        WorldObject: true, hitCoordinate: Godot.Vector3.Zero,
-                        damagesource: 0,
-                        ignoreVector: true);
+                        WorldObject: true,
+                        damagesource: 0);
                 }
 
             }
@@ -214,9 +213,8 @@ namespace Underworld
                     basedamage: 1,
                     damagetype: 8,
                     objList: UWTileMap.current_tilemap.LevelObjects,
-                    WorldObject: true, hitCoordinate: Godot.Vector3.Zero,
-                    damagesource: 0,
-                    ignoreVector: true);
+                    WorldObject: true,
+                    damagesource: 0);
             }
             //seg030_2BB7_914:
             if (projectile.majorclass != 1)

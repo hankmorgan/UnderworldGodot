@@ -168,7 +168,7 @@ namespace Underworld
                                         {//all lines cut.
                                             playerdat.SetQuest(14, 1);
                                         }
-                                        animo.SpawnAnimoAtPoint(7, nextObj.GetCoordinate(nextObj.tileX, nextObj.tileY));
+                                        animo.SpawnAnimoInTile(7, nextObj.xpos, nextObj.ypos, nextObj.zpos,nextObj.tileX, nextObj.tileY);
                                         ObjectRemover.DeleteObjectFromTile(nextObj.tileX, nextObj.tileY, nextObj.index);
 
                                         if (worlds.GetWorldNo(playerdat.dungeon_level) == 3)

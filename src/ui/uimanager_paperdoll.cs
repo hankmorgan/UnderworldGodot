@@ -562,7 +562,6 @@ namespace Underworld
                                     SpellCasting.CastCurrentSpellOnRayCastTarget(
                                         index: objIndexAtSlot, 
                                         objList: playerdat.InventoryObjects, 
-                                        hitCoordinate: Vector3.Zero,
                                         WorldObject:false);
                                 }
                             break;

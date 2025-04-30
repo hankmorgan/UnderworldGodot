@@ -30,7 +30,7 @@ namespace Underworld
         /// <param name="basedamage"></param>
         /// <param name="damagetype"></param>
         /// <param name="damagesource"></param>
-        public static int DamageObject(uwObject objToDamage, int basedamage, int damagetype, uwObject[] objList, bool WorldObject, Godot.Vector3 hitCoordinate, int damagesource, bool ignoreVector = false)
+        public static int DamageObject(uwObject objToDamage, int basedamage, int damagetype, uwObject[] objList, bool WorldObject, int damagesource)
         {
             basedamage = ScaleDamage(objToDamage.item_id, ref basedamage, damagetype);          
             if (basedamage !=0)
@@ -53,9 +53,7 @@ namespace Underworld
                         objToDestroy: objToDamage,
                         damagetype: damagetype,
                         objList: objList,
-                        WorldObject: WorldObject,
-                        hitcoordinate: hitCoordinate,
-                        ignoreVector: ignoreVector);
+                        WorldObject: WorldObject);
                 }
             }
             return 0;
@@ -195,32 +193,6 @@ namespace Underworld
 
 
         /// <summary>
-        /// Scales damage on the NPC based on it's vulnerabilities defined in critter object data
-        /// Spawns an animo of the specified type to represent blood etc
-        /// </summary>
-        /// <param name="critter"></param>
-        /// <param name="basedamage"></param>
-        /// <param name="damagetype"></param>
-        /// <param name="UpdateUI"></param>
-        // public static void ScaledDamageOnNPCWithAnimo(uwObject critter, int basedamage, int damagetype, int animoclassindex, Godot.Vector3 hitCoordinate, bool UpdateUI = true)
-        // {
-        //     var noOfSplatters = basedamage;
-
-        //     noOfSplatters = noOfSplatters / 4;
-        //     if (noOfSplatters > 3)
-        //     {
-        //         noOfSplatters = 3;
-        //     }
-        //     if (hitCoordinate!=Vector3.Zero)
-        //     {
-        //         animo.SpawnAnimoAtPoint(animoclassindex, hitCoordinate);
-        //     }            
-        //     Debug.Print($"Spawn animo {animoclassindex} {noOfSplatters} times");
-
-        //     DamageNPC(critter, basedamage, damagetype);
-        // }
-
-        /// <summary>
         /// Handles destruction of a damage object and replaces it with appropiate debris objects
         /// </summary>
         /// <param name="objToDestroy"></param>
@@ -228,7 +200,7 @@ namespace Underworld
         /// <param name="objList"></param>
         /// <param name="WorldObject"></param>
         /// <returns>1 if debris is set</returns>
-        public static int ObjectDestruction(uwObject objToDestroy, int damagetype, uwObject[] objList, bool WorldObject, Godot.Vector3 hitcoordinate, bool ignoreVector = false)
+        public static int ObjectDestruction(uwObject objToDestroy, int damagetype, uwObject[] objList, bool WorldObject)
         {
             int Debris = -2;
             if ((!UWTileMap.ValidTile(objToDestroy.tileX, objToDestroy.tileY)) && (WorldObject))
@@ -243,6 +215,10 @@ namespace Underworld
                     a_lock.SetIsLocked(objToDestroy, false, 0);
                     door.OpenDoor(objToDestroy);
                     return 1;
+                }
+                else
+                {
+                    //TODO handle open doors getting destroyed.
                 }
             }
             switch (objToDestroy.item_id)
@@ -318,13 +294,7 @@ namespace Underworld
                                     {
                                         if (((Rng.r.Next(0, 0x7fff) & 0x3) != 0) || (true))
                                         {
-                                            if (!ignoreVector)
-                                            {
-                                                if (hitcoordinate != Godot.Vector3.Zero)
-                                                {
-                                                    animo.SpawnAnimoAtPoint(8, hitcoordinate);
-                                                }
-                                            }
+                                            animo.SpawnAnimoAtTarget(objToDestroy, 8, 0, objToDestroy.tileX, objToDestroy.tileY);
                                             Debris = 0xD6;
                                         }
 
@@ -581,7 +551,6 @@ namespace Underworld
                             damagetype: damagetypes[index],
                             objList: UWTileMap.current_tilemap.LevelObjects,
                             WorldObject: true,
-                            hitCoordinate: Godot.Vector3.Zero,
                             damagesource: source);
 
                     }
@@ -639,7 +608,7 @@ namespace Underworld
                 }
 
                 //apply damage
-                var result = DamageObject(obj, damage, damagetype, playerdat.InventoryObjects, false, Godot.Vector3.Zero, 0, true);
+                var result = DamageObject(objToDamage: obj, basedamage: damage, damagetype: damagetype, objList: playerdat.InventoryObjects, WorldObject: false, damagesource: 0);
                 if (result == 1)
                 {//taken damage and can be destroyed
                     if (arg8 != 0)

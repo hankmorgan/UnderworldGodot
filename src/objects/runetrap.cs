@@ -44,9 +44,10 @@ namespace Underworld
                     else
                     {//damage other objects
                         var objToDamage = UWTileMap.current_tilemap.LevelObjects[indexCharacter];
-                        damage.DamageObject(objToDamage, damageToApply, 8, UWTileMap.current_tilemap.LevelObjects, true, objToDamage.instance.uwnode.Position, 0);                    
+                        damage.DamageObject(objToDamage: objToDamage, basedamage: damageToApply, damagetype: 8, objList: UWTileMap.current_tilemap.LevelObjects, WorldObject: true, damagesource: 0);                    
                     }
-                    animo.SpawnAnimoAtPoint(2, objRuneTrap.instance.uwnode.Position);//explosion
+                    //explosion
+                    animo.SpawnAnimoInTile(2, objRuneTrap.xpos,objRuneTrap.ypos, objRuneTrap.zpos, objRuneTrap.tileX, objRuneTrap.tileY);
                     ObjectRemover.DeleteObjectFromTile(objRuneTrap.tileX, objRuneTrap.tileY, objRuneTrap.index); 
                     return true;
                 case 0x19F://tym rune
@@ -64,7 +65,7 @@ namespace Underworld
                         var objToDamage = UWTileMap.current_tilemap.LevelObjects[indexCharacter];
                         var duration = 64 + (Rng.r.Next(63)>>2);
                         SpellCasting.ApplyAIChangingSpell(
-                            critter:  objToDamage,
+                            targetObject:  objToDamage,
                             newgoal: (byte)npc.npc_goals.npc_goal_petrified,
                             newgtarg: (byte)duration, 
                             newattitude: 1);

@@ -29,7 +29,7 @@ namespace Underworld
 
                     if (match != null)
                     {//the object is either a light sphere or is a container that holds one.
-                        animo.SpawnAnimoAtPoint(0xC, UWTileMap.current_tilemap.LevelObjects[next].GetCoordinate(triggerX, triggerY));
+                        animo.SpawnAnimoInTile(0xC,match.xpos, match.ypos, match.zpos, match.tileX, match.tileY);
                     }
                     next = UWTileMap.current_tilemap.LevelObjects[next].next;
                 }

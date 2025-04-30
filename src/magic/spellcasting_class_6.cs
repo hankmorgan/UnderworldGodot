@@ -228,7 +228,7 @@ namespace Underworld
                     if (srcIndex == 0)
                     {
                         //spawn twinkies at the player position
-                        animo.SpawnAnimoAtPoint(7, main.instance.cam.Position);
+                        animo.SpawnAnimoInTile(subclassindex: 7, xpos: (short)playerdat.xpos, ypos: (short)playerdat.ypos, zpos: (short)playerdat.zpos, tileX: playerdat.tileX, tileY: playerdat.tileY);
                     }
                 }
             }
@@ -236,7 +236,7 @@ namespace Underworld
             {
                 if (targetObject.majorclass == 1)
                 {
-                    animo.SpawnAnimoAtPoint(7, targetObject.instance.uwnode.Position);
+                    animo.SpawnAnimoAtTarget(target: targetObject, subclassindex: 7, si_zpos: 2, tileX: targetObject.tileX, tileY: targetObject.tileY);
                     return ApplyAIChangingSpell(targetObject, newgoal: 2, newattitude: 1, newgtarg: 1);
                 }
             }
@@ -280,7 +280,7 @@ namespace Underworld
                 {
                     Debug.Print("A skull in Repel undead?");
                     RepelUndeadGlobal += targetObject.quality;
-                    return SmiteUndead(targetObject.index, UWTileMap.current_tilemap.LevelObjects, targetObject.instance.uwnode.Position, playerdat.playerObject);
+                    return SmiteUndead(targetObject.index, UWTileMap.current_tilemap.LevelObjects, playerdat.playerObject);
                 }
                 else
                 {
@@ -294,7 +294,7 @@ namespace Underworld
                                 bool returnValue;
                                 if (targetObject.npc_goal == 6)
                                 {//already fleeing
-                                    returnValue = damage.DamageObject(targetObject, playerdat.Casting, 3, UWTileMap.current_tilemap.LevelObjects, true, Godot.Vector3.Zero, 1, ignoreVector: true) != 0;
+                                    returnValue = damage.DamageObject(objToDamage: targetObject, basedamage: playerdat.Casting, damagetype: 3, objList: UWTileMap.current_tilemap.LevelObjects, WorldObject: true, damagesource: 1) != 0;
                                 }
                                 else
                                 {
@@ -331,16 +331,14 @@ namespace Underworld
             {
                 if (targetObject.majorclass == 1)
                 {
-                    animo.SpawnAnimoAtPoint(0xB, targetObject.instance.uwnode.Position);
+                    animo.SpawnAnimoAtTarget(target: targetObject, subclassindex: 0xB, si_zpos: 2, tileX: targetObject.tileX, tileY: targetObject.tileY);
                     return damage.DamageObject(
                         objToDamage: targetObject,
                         basedamage: damagetoapply,
                         damagetype: 3,
                         objList: UWTileMap.current_tilemap.LevelObjects,
-                        WorldObject: true,
-                        hitCoordinate: Godot.Vector3.Zero,
-                        damagesource: 1,
-                        ignoreVector: true) != 0;
+                        WorldObject: true,                       
+                        damagesource: 1) != 0;
                 }
             }
             return false;
@@ -369,7 +367,7 @@ namespace Underworld
                 {
                     if (targetObject.majorclass == 1)
                     {
-                        animo.SpawnAnimoAtPoint(0xB, targetObject.instance.uwnode.Position);                        
+                        animo.SpawnAnimoAtTarget(target: targetObject, subclassindex: 0xB, si_zpos: 2, tileX: targetObject.tileX, tileY: targetObject.tileY);                     
                     }
                     return damage.DamageObject(
                         objToDamage: targetObject,
@@ -377,7 +375,6 @@ namespace Underworld
                         damagetype: 0x23,
                         objList: UWTileMap.current_tilemap.LevelObjects,
                         WorldObject: true,
-                        hitCoordinate: targetObject.instance.uwnode.Position,
                         damagesource: 1
                         ) != 0;
                 }

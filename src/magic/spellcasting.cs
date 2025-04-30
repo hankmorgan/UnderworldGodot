@@ -97,13 +97,13 @@ namespace Underworld
             playerdat.PlayerStatusUpdate();
         } 
         
-
         /// <summary>
         /// Casts the pre-stored spell on the currently clicked object
         /// </summary>
         /// <param name="index"></param>
         /// <param name="objList"></param>
-        public static void CastCurrentSpellOnRayCastTarget(int index, uwObject[] objList, Godot.Vector3 hitCoordinate, bool WorldObject)
+        /// <param name="WorldObject"></param>
+        public static void CastCurrentSpellOnRayCastTarget(int index, uwObject[] objList, bool WorldObject)
         {
             if (currentSpell != null)
             {
@@ -120,7 +120,6 @@ namespace Underworld
                             index: index, 
                             objList: objList,
                             caster: playerdat.playerObject,                           
-                            hitCoordinate: hitCoordinate,
                             WorldObject: WorldObject); 
                         currentSpell = null;
                         uimanager.instance.mousecursor.SetCursorToCursor();

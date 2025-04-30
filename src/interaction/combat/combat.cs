@@ -385,7 +385,10 @@ namespace Underworld
                         case "WALL":
                         case "CEILING"://hit a wall/surface
                             Debug.Print("hit a wall. do selfdamage to the weapon");
-                            animo.SpawnAnimoAtPoint(0xB, hitCoordinate);
+                            short xpos, ypos, zpos;
+                            int tileX, tileY;
+                            animo.PointToXYZ(point: hitCoordinate, xpos: out xpos, ypos: out ypos, zpos: out zpos, tileX: out tileX, tileY: out tileY);
+                            animo.SpawnAnimoInTile(subclassindex: 0xB, xpos: xpos, ypos: ypos, zpos: (short)(zpos - 3), tileX: tileX, tileY: tileY);
                             return false;
                         default:
                             if (int.TryParse(vals[0], out int index))
@@ -394,7 +397,7 @@ namespace Underworld
                                 if (hitobject != null)
                                 {
                                     Debug.Print($"{hitobject.a_name}");
-                                    return PlayerHitsUWObject(hitobject, hitCoordinate);
+                                    return PlayerHitsUWObject(hitobject);
                                 }
                             }
                             break;
@@ -410,7 +413,7 @@ namespace Underworld
         /// </summary>
         /// <param name="objHit"></param>
         /// <returns></returns>
-        static bool PlayerHitsUWObject(uwObject objHit, Godot.Vector3 hitCoordinate)
+        static bool PlayerHitsUWObject(uwObject objHit)
         {
             //calc final attack charge based on the % of charge built up in the weapon
             FinalAttackCharge = mincharge + ((maxcharge - mincharge) * WeaponCharge) / 100; //this is kept later for damage calcs.
@@ -419,7 +422,7 @@ namespace Underworld
             CalcPlayerAttackScores();
 
             //execute attack
-            if (PlayerExecuteAttack(objHit, hitCoordinate))
+            if (PlayerExecuteAttack(objHit))
             {
                 if (_RES == GAME_UW2)
                 {
@@ -444,14 +447,21 @@ namespace Underworld
                             {//Debug.Print("Undeadbane"); 
                                 if (currWeaponType > 0)
                                 {
-                                    SpellCasting.SmiteUndead(objHit.index, UWTileMap.current_tilemap.LevelObjects, hitCoordinate, playerdat.playerObject);
+                                    SpellCasting.SmiteUndead(objHit.index, UWTileMap.current_tilemap.LevelObjects, playerdat.playerObject);
                                 }                                
                                 break;
                             }
                         case 3: 
                             {
                                 //Debug.Print("Firedoom"); 
-                                animo.SpawnAnimoAtPoint(2, hitCoordinate);//explosion
+                                //explosion
+                                var tile = UWTileMap.current_tilemap.Tiles[objHit.tileX,objHit.tileY];
+                                var height = tile.floorHeight<<3;
+                                if ( height< 0x80)
+                                {
+                                    height = height + Rng.r.Next(0x80 - height);
+                                }
+                                animo.SpawnAnimoInTile(subclassindex: 2, xpos: 3, ypos: 3, zpos: (short)height, tileX: objHit.tileX, tileY: objHit.tileY);
                                 //Do damage in area of tile.
                                 damage.DamageObjectsInTile(objHit.tileX, objHit.tileY, 0, 1);                                
                                 break;
@@ -590,7 +600,7 @@ namespace Underworld
             }
         }
 
-        static bool PlayerExecuteAttack(uwObject critter, Godot.Vector3 hitCoordinate)
+        static bool PlayerExecuteAttack(uwObject critter)
         {
             if (checkAttackHit())
             {
@@ -710,29 +720,27 @@ namespace Underworld
                 //Do blood spatters.
                 Debug.Print("Spatter blood");
 
-                // if (objHit.majorclass == 1)
-                // {
-                //     //********************//
-                //     Debug.Print("Force critter hostile for debug purposes");
-                //     objHit.npc_attitude = 0;
-                //     //********************//
-                //     if (critterObjectDat.bleed(objHit.item_id) != 0)
-                //     {
-                //         animo.SpawnAnimoAtPoint(0, hitCoordinate); //blood
-                //         if (AttackWasACrit)
-                //         {
-                //             animo.SpawnAnimoAtPoint(0, hitCoordinate + (Vector3.Up * 0.12f)); //blood
-                //         }
-                //     }
-                //     else
-                //     {//npc does not bleed
-                //         animo.SpawnAnimoAtPoint(0xB, hitCoordinate);// a flash damage
-                //     }
-                // }
-                // else
-                // {//hit a non-npc object
-                //     animo.SpawnAnimoAtPoint(0xB, hitCoordinate);// a flash/damage
-                // }
+                if (objHit.majorclass == 1)
+                {
+                    if (critterObjectDat.bleed(objHit.item_id) != 0)
+                    {
+                        Debug.Print("TODO. place animo at hit body part");
+                        animo.SpawnAnimoAtTarget(target: objHit, subclassindex: 0, si_zpos: 5, tileX: objHit.tileX, tileY: objHit.tileY); //blood
+                        if (AttackWasACrit)
+                        {
+                            animo.SpawnAnimoAtTarget(target: objHit, subclassindex: 0, si_zpos: 3, tileX: objHit.tileX, tileY: objHit.tileY); //blood
+                        }
+                    }
+                    else
+                    {//npc does not bleed
+                        animo.SpawnAnimoAtTarget(target: objHit, subclassindex: 0xB, si_zpos: 3, tileX: objHit.tileX, tileY: objHit.tileY); // a flash damage
+                    }
+                }
+                else
+                {
+                    //hit a non-npc object
+                    animo.SpawnAnimoAtTarget(target: objHit, subclassindex: 0xB, si_zpos: 3, tileX: objHit.tileX, tileY: objHit.tileY); // a flash damage
+                }
             }
 
             if (objHit.majorclass == 1)
@@ -771,8 +779,7 @@ namespace Underworld
                 damagetype: damageType,
                 objList: UWTileMap.current_tilemap.LevelObjects,
                 WorldObject: true,
-                damagesource: 1,
-                hitCoordinate: Vector3.Zero, ignoreVector: true);
+                damagesource: 1);
             return 0;
         }
 

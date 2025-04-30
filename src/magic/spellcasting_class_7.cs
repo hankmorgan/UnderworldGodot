@@ -5,7 +5,7 @@ namespace Underworld
     public partial class SpellCasting : UWClass
     {
         //targeted spells
-        public static void CastClass7_SpellsOnCallBack(int minorclass, int index, uwObject[] objList, uwObject caster, Godot.Vector3 hitCoordinate, bool WorldObject = true)
+        public static void CastClass7_SpellsOnCallBack(int minorclass, int index, uwObject[] objList, uwObject caster, bool WorldObject = true)
         {
             if (_RES == GAME_UW2)
             {
@@ -13,7 +13,7 @@ namespace Underworld
                 {
                     case 0:
                         //cause bleeding  
-                        CauseBleeding(index: index, objList: objList, hitCoordinate: hitCoordinate);
+                        CauseBleeding(index: index, objList: objList);
                         break;
                     case 1:
                         //Causefear
@@ -21,7 +21,7 @@ namespace Underworld
                         break;
                     case 2:
                         //SmiteUndead
-                        SmiteUndead(index: index, objList: objList, hitCoordinate: hitCoordinate, caster: caster);
+                        SmiteUndead(index: index, objList: objList, caster: caster);
                         break;
                     case 3:
                         //Charm
@@ -29,7 +29,7 @@ namespace Underworld
                         break;
                     case 4:
                         //Poison
-                        PoisonSpell(index: index, objList: objList, WorldObject: WorldObject, hitCoordinate: hitCoordinate);//unused in uw2
+                        PoisonSpell(index: index, objList: objList, WorldObject: WorldObject);//unused in uw2
                         break;
                     case 5:
                         //paralyse  
@@ -37,7 +37,7 @@ namespace Underworld
                         break;
                     case 6:
                         //smite foe   
-                        SmiteFoe(index, objList, WorldObject, hitCoordinate);                     
+                        SmiteFoe(index, objList, WorldObject);                     
                         break;
                     case 7:
                         StudyMonster(index, objList);
@@ -100,15 +100,15 @@ namespace Underworld
                         break;
                     case 2:
                         //smite undead
-                        SmiteUndead(index: index, objList: objList, hitCoordinate: hitCoordinate, caster: caster);
+                        SmiteUndead(index: index, objList: objList, caster: caster);
                         break;
                     case 3:
                         //ally
-                        Ally(index: index, objList: objList, hitCoordinate: hitCoordinate);
+                        Ally(index: index, objList: objList);
                         break;
                     case 4:
                         //poison
-                        PoisonSpell(index: index, objList: objList, WorldObject: WorldObject, hitCoordinate: hitCoordinate);
+                        PoisonSpell(index: index, objList: objList, WorldObject: WorldObject);
                         break;
                     case 5:
                         //paralyse
@@ -124,16 +124,16 @@ namespace Underworld
         /// </summary>
         /// <param name="index"></param>
         /// <param name="objList"></param>
-        static void CauseBleeding(int index, uwObject[] objList, Godot.Vector3 hitCoordinate)
-        {
-            var obj = objList[index];
-            if (obj != null)
+        static void CauseBleeding(int index, uwObject[] objList)
+        {  
+            var target = objList[index];
+            if (target != null)
             {
-                if (obj.majorclass == 1)
+                if (target.majorclass == 1)
                 {
                     //npc
 
-                    var bleed = critterObjectDat.bleed(obj.item_id);
+                    var bleed = critterObjectDat.bleed(target.item_id);
                     if (bleed == 0)
                     {
                         uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x12B));
@@ -142,19 +142,12 @@ namespace Underworld
                     {
                         var basedamage = 0xA + playerdat.Casting / 2;
                         damage.DamageObject(
-                            objToDamage: obj,
+                            objToDamage: target,
                             basedamage: basedamage,
-                            damagetype: 4, objList: objList,
+                            damagetype: 4, objList: UWTileMap.current_tilemap.LevelObjects,
                             WorldObject: true,
-                            hitCoordinate: hitCoordinate,
                             damagesource: 1);
-                        animo.SpawnAnimoAtPoint(0, hitCoordinate);
-                        // damage.ScaledDamageOnNPCWithAnimo(
-                        //     critter: obj,
-                        //     basedamage: basedamage,
-                        //     damagetype: 4,
-                        //     animoclassindex: 0, 
-                        //     hitCoordinate: obj.GetCoordinate(obj.tileX, obj.tileY)+ Godot.Vector3.Up);
+                        animo.SpawnAnimoAtTarget(target: target, subclassindex: 0, si_zpos: 2, tileX: target.tileX, tileY: target.tileY );
                     }
                 }
             }
@@ -315,29 +308,29 @@ namespace Underworld
         /// <summary>
         /// Changes the AI attitudes and goals if npc is not resistant to raw/magic damage
         /// </summary>
-        /// <param name="critter"></param>
+        /// <param name="targetObject"></param>
         /// <param name="newgoal"></param>
         /// <param name="newattitude"></param>
         /// <param name="newgtarg"></param>
-        public static bool ApplyAIChangingSpell(uwObject critter, byte newgoal = 0xFF, byte newattitude = 0xFF, byte newgtarg = 0xFF)
+        public static bool ApplyAIChangingSpell(uwObject targetObject, byte newgoal = 0xFF, byte newattitude = 0xFF, byte newgtarg = 0xFF)
         {
             int test = 1;
-            if (damage.ScaleDamage(critter.item_id, ref test, 3) != 0)
+            if (damage.ScaleDamage(targetObject.item_id, ref test, 3) != 0)
             {
-                animo.SpawnAnimoAtPoint(7, critter.GetCoordinate(critter.tileX, critter.tileY) + Godot.Vector3.Up);
+                animo.SpawnAnimoAtTarget(target: targetObject, subclassindex: 7, si_zpos: 2, tileX: targetObject.tileX, tileY: targetObject.tileY);
                 if (newgoal != 0xFF)
                 {
-                    critter.npc_goal = newgoal;
+                    targetObject.npc_goal = newgoal;
                 }
 
                 if (newattitude != 0xFF)
                 {
-                    critter.npc_attitude = newattitude;
+                    targetObject.npc_attitude = newattitude;
                 }
 
                 if (newgtarg != 0xFF)
                 {
-                    critter.npc_gtarg = newgtarg;
+                    targetObject.npc_gtarg = newgtarg;
                 }
                 return true;
             }
@@ -354,7 +347,7 @@ namespace Underworld
         /// </summary>
         /// <param name="index"></param>
         /// <param name="objList"></param>
-        static void Ally(int index, uwObject[] objList, Godot.Vector3 hitCoordinate)
+        static void Ally(int index, uwObject[] objList)
         {
             var critter = objList[index];
             if (critter != null)
@@ -366,7 +359,7 @@ namespace Underworld
                 var testdam = 1;
                 if (damage.ScaleDamage(critter.item_id, ref testdam, 3) != 0)
                 {
-                    animo.SpawnAnimoAtPoint(7, hitCoordinate);
+                    animo.SpawnAnimoAtTarget(target: critter, subclassindex: 7, si_zpos: 2, tileX: critter.tileX, tileY: critter.tileY);
                     if (critter.IsAlly == 0)
                     {
                         npc.SetGoalAndGtarg(critter, (int)npc.npc_goals.npc_goal_wander_2_confusion, 0);
@@ -392,7 +385,7 @@ namespace Underworld
                     critter.npc_attitude = 1;
 
                     ApplyAIChangingSpell(
-                        critter: critter,
+                        targetObject: critter,
                         newgoal: (byte)npc.npc_goals.npc_goal_fear_6,
                         newgtarg: 1);
 
@@ -407,7 +400,7 @@ namespace Underworld
         /// <param name="objList"></param>
         /// <param name="caster"></param>
         /// <returns></returns>
-        public static bool SmiteUndead(int index, uwObject[] objList, Godot.Vector3 hitCoordinate, uwObject caster)
+        public static bool SmiteUndead(int index, uwObject[] objList, uwObject caster)
         {
             var obj = objList[index];
 
@@ -429,8 +422,7 @@ namespace Underworld
                             basedamage: damageToApply,
                             damagetype: 3,
                             objList: objList,
-                            WorldObject: true,
-                            hitCoordinate: hitCoordinate,
+                            WorldObject: true,                            
                             damagesource: caster.index);
                         return true;
                     }
@@ -488,7 +480,7 @@ namespace Underworld
                         if (damage.ScaleDamage(critter.item_id, ref test, 0x80) != 0)
                         {//check for undead, immune
                             ApplyAIChangingSpell(
-                                critter: critter,
+                                targetObject: critter,
                                 newgoal: (byte)npc.npc_goals.npc_goal_petrified,
                                 newattitude: 1,
                                 newgtarg: (byte)duration);
@@ -500,7 +492,7 @@ namespace Underworld
                     if (critter.majorclass == 1)
                     {
                         ApplyAIChangingSpell(
-                            critter: critter,
+                            targetObject: critter,
                             newgoal: (byte)npc.npc_goals.npc_goal_stand_still_7,
                             newattitude: 1);
                     }
@@ -521,7 +513,7 @@ namespace Underworld
                 var test = 1;
                 if (damage.ScaleDamage(critter.item_id, ref test, 3) != 0)
                 {
-                    animo.SpawnAnimoAtPoint(7, critter.GetCoordinate(critter.tileX, critter.tileY) + Godot.Vector3.Up);
+                    animo.SpawnAnimoAtTarget(target: critter, subclassindex: 7, si_zpos: 2, tileX: critter.tileX, tileY: critter.tileY);
                     var whoami = critter.npc_whoami;
                     int stringoffset = 0;
                     if (whoami >= 0x8C)
@@ -744,9 +736,8 @@ namespace Underworld
         /// <param name="index"></param>
         /// <param name="objList"></param>
         /// <param name="WorldObject"></param>
-        /// <param name="hitCoordinate"></param>
         /// <returns></returns>
-        static bool PoisonSpell(int index, uwObject[] objList, bool WorldObject, Godot.Vector3 hitCoordinate )
+        static bool PoisonSpell(int index, uwObject[] objList, bool WorldObject)
         {
             if (!WorldObject)
             {
@@ -755,9 +746,9 @@ namespace Underworld
             var target = objList[index];
             if (target.majorclass == 1)
             {
-                animo.SpawnAnimoAtPoint(7, hitCoordinate);
+                animo.SpawnAnimoAtTarget(target: target, subclassindex: 7, si_zpos: 7, tileX: target.tileX, tileY: target.tileY);
                 var damagetoapply = Rng.DiceRoll(5,4);
-                damage.DamageObject(target, damagetoapply, 0x13, objList, WorldObject, hitCoordinate, 0);//applies raw, magic and poison damage
+                damage.DamageObject(objToDamage: target, basedamage: damagetoapply, damagetype: 0x13, objList: objList, WorldObject: WorldObject, damagesource: 0);//applies raw, magic and poison damage
                 return true;
             }
             else
@@ -772,9 +763,8 @@ namespace Underworld
         /// <param name="index"></param>
         /// <param name="objList"></param>
         /// <param name="WorldObject"></param>
-        /// <param name="hitCoordinate"></param>
         /// <returns></returns>
-        static bool SmiteFoe(int index, uwObject[] objList, bool WorldObject, Godot.Vector3 hitCoordinate )
+        static bool SmiteFoe(int index, uwObject[] objList, bool WorldObject)
         {
             if (!WorldObject)
             {
@@ -786,8 +776,8 @@ namespace Underworld
                 if (critterObjectDat.bleed(target.item_id)!=0)
                 {
                     var damagetoapply = (playerdat.Casting * 3) + 0x6E;
-                    animo.SpawnAnimoAtPoint(0, hitCoordinate);
-                    return (damage.DamageObject(target, damagetoapply, 4, objList, WorldObject, hitCoordinate, 0) !=0); 
+                    animo.SpawnAnimoAtTarget(target: target, subclassindex: 0, si_zpos: 2, tileX: target.tileX, tileY: target.tileY);
+                    return (damage.DamageObject(objToDamage: target, basedamage: damagetoapply, damagetype: 4, objList: objList, WorldObject: WorldObject, damagesource: 0) !=0); 
                 }
                 else
                 {

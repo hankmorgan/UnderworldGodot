@@ -285,7 +285,6 @@ namespace Underworld
                     damagetype: 0,
                     objList: objList,
                     WorldObject: WorldObject,
-                    hitCoordinate: obj.instance.uwnode.Position,
                     damagesource: 1);
             }
             else
