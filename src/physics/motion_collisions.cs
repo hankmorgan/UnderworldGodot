@@ -643,7 +643,7 @@ namespace Underworld
                         }
 
                         //seg028_2941_BF9:
-                        collisionTable[si_ptr].unkxyvalue = (short)(xArg6 + (yArg8 << 6));
+                        collisionTable[si_ptr].xyvalue = (short)(xArg6 + (yArg8 << 6));
                     }
                 }
             }
@@ -654,7 +654,7 @@ namespace Underworld
         /// </summary>
         /// <param name="arg0"></param>
         /// <param name="arg2"></param>
-        static void ScanForCollisions(int arg0, int arg2)
+        public static void ScanForCollisions(int arg0, int arg2)
         {
             var isNPC_var14 = false;
             var tile_var4 = UWTileMap.current_tilemap.Tiles[MotionCalcArray.x0 >> 3, MotionCalcArray.y2 >> 3];
@@ -814,13 +814,13 @@ namespace Underworld
                 //seg030_2BB7_268:
                 var Collision = collisionTable[si_CollisionIndex_Arg0];
                 CollidedObject_VarA = UWTileMap.current_tilemap.LevelObjects[Collision.link];
-                var temp = Collision.unkxyvalue & 0x3F;
+                var temp = Collision.xyvalue & 0x3F;
 
                 UWMotionParamArray.UnknownX_dseg_67d6_25BD = (temp + UWMotionParamArray.dseg_67d6_25BF_X) & 0x3F;
                 temp = UWMotionParamArray.UnknownX_dseg_67d6_25BD - UWMotionParamArray.dseg_67d6_25BF_X;
 
                 //seg030_2BB7_2B4
-                UWMotionParamArray.UnknownY_dseg_67d6_25BE = (UWMotionParamArray.dseg_67d6_25C0_Y + ((Collision.unkxyvalue - temp) / 0x40)) & 0x3F;
+                UWMotionParamArray.UnknownY_dseg_67d6_25BE = (UWMotionParamArray.dseg_67d6_25C0_Y + ((Collision.xyvalue - temp) / 0x40)) & 0x3F;
 
                 var2_collideditemid = CollidedObject_VarA.item_id;
                 varB = commonObjDat.Unk6_0_maybecancollide(var2_collideditemid);

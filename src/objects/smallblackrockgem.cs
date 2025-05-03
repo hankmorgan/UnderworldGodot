@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 namespace Underworld
 {
     public class smallblackrockgem:objectInstance

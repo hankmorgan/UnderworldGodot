@@ -320,7 +320,7 @@ namespace Underworld
         /// Appears to do stuff with the tile the motion is happening in.
         /// </summary>
         /// <param name="distance_arg0"></param>
-        static void ProcessMotionTileHeights_seg028_2941_385(int distance_arg0)
+        public static void ProcessMotionTileHeights_seg028_2941_385(int distance_arg0)
         {
             //?
             UWMotionParamArray.TileAttributesArray = new short[0x9]; // 9 * 0x1111 or 18 * 0x11?   0-8 entries

@@ -820,15 +820,15 @@ namespace Underworld
         }
 
         /// <summary>
-        /// Possibliy the type of weapon swing the NPC is doing
+        /// The attack charge table index lookup value for the NPC
         /// </summary>
-        public short Swing
-        {///Possibly used as a look up in to NPC charge modifiers?
+        public short SwingChargeIndex
+        {
             get
             {
                 if (IsStatic) { return 0; }
                 int val = GetAt16(PTR + 0xf);
-                return (short)(DataLoader.ExtractBits(val, 0xC, 0xF));
+                return (short)(DataLoader.ExtractBits(value: val, Shift: 0xC, Mask: 0xF));
             }
             set
             {

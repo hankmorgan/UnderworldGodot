@@ -2,7 +2,6 @@ namespace Underworld
 {
     /// <summary>
     /// Object.dat information for npcs.
-    /// UNTESTED. USE AT OWN RISK!!
     /// </summary>
     public class critterObjectDat : objectDat
     {
@@ -105,7 +104,7 @@ namespace Underworld
         /// </summary>
         /// <param name="item_id"></param>
         /// <returns></returns>
-        public static int maybepoisonvulnerability(int item_id)
+        public static int PoisonVulnerability(int item_id)
         {
             return (buffer[CritterOffset(item_id) + 0x8] >> 3) & 0x3;
         }
@@ -296,11 +295,11 @@ namespace Underworld
 
 
         /// <summary>
-        /// How much equipment damage the NPC is capable of applying?
+        /// How much equipment damage the NPC is capable of applying? Or possibly a base hit chance
         /// </summary>
         /// <param name="item_id"></param>
         /// <returns></returns>
-        public static int equipmentdamage(int item_id)
+        public static int EquipmentDamageOrBaseHitChance(int item_id)
         {
             return buffer[CritterOffset(item_id) + 0x11];
         }
