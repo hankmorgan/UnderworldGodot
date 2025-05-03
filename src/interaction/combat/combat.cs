@@ -393,25 +393,16 @@ namespace Underworld
                 else
                 {
                     // a miss
-                    damage.DamageObject(DefendingCharacter, 0, 4, UWTileMap.current_tilemap.LevelObjects, true, AttackingCharacter.index);
+                    damage.DamageObject(
+                        objToDamage: DefendingCharacter, 
+                        basedamage: 0, 
+                        damagetype: 4, 
+                        objList: UWTileMap.current_tilemap.LevelObjects, 
+                        WorldObject: true, 
+                        damagesource: AttackingCharacter.index);
                     Debug.Print("Todo CombatMissImpactSound();");
                     return false;
                 }
-                // if (CalcAttackResults(defender) == 0)
-                // {//attack roll has hit
-                //     AttackScoreFlankingBonus = CalcFlankingBonus(defender);
-                //     Debug.Print("Hit");
-                //     AttackerAppliesFinalDamage(
-                //         defender: defender,
-                //         attacker: attacker.index,
-                //         damageType: 4,                                             
-                //         MissileAttack: false);
-                // }
-                // else
-                // {//attack roll has missed
-                //     Debug.Print("Miss");
-                // }
-                // return true;
             }
             else
             {
@@ -421,7 +412,7 @@ namespace Underworld
 
 
         /// <summary>
-        /// Finalises the attack results
+        /// Finalises the attack results. Updates AttackDamage value and applies equipment damage on misses, critical hits to player and strikes on doors
         /// </summary>
         /// <param name="objHit"></param>
         /// <returns>0 if attack hit</returns>
@@ -433,11 +424,10 @@ namespace Underworld
                 if (DefendingCharacter.index == 1)
                 {
                     //defender is the player. apply locational protections
-
+                    AttackScore -= playerdat.LocationalProtectionValues[BodyPartHit];
                 }
-                var defencescore = critterObjectDat.defence(DefendingCharacter.item_id);
-                var attackscore = AttackScore + AttackScoreFlankingBonus;
-                var result = playerdat.SkillCheck(attackscore, defencescore);
+
+                var result = playerdat.SkillCheck(skillValue: AttackScore + AttackScoreFlankingBonus, targetValue: critterObjectDat.defence(DefendingCharacter.item_id));
                 if (playerdat.PoisonedWeapon)
                 {
                     if (checkforPoisonableWeapon())
@@ -454,45 +444,79 @@ namespace Underworld
                     AttackWasACrit = true;
                     var critbonus = (48 + Rng.r.Next(30)) >> 5;
                     AttackDamage = AttackDamage * critbonus;
-                    return 0;
+
+                    if (DefendingCharacter.index == 1)
+                    {
+                        //a critical hit has landed on the player. Damage equipment
+                        uimanager.FlashColour(0x23, uimanager.Cuts3DWin, 0.1f);
+                        var si_slot = (BodyPartHit + 1) & 0x3;
+                        if (si_slot == 3)
+                        {
+                            if (Rng.r.Next(5) == 0)
+                            {
+                                si_slot++;
+                            }
+                        }
+                        else
+                        {
+                            if (si_slot <= 2)
+                            {
+                                si_slot = 7 + playerdat.handednessvalue;
+                            }
+                        }
+                        Debug.Print($"Equipment damage to slot {si_slot} of {Rng.DiceRoll(2, 4)}");
+                    }
+
+                    return 0;//a hit
                 }
                 else
                 {
                     if (result == playerdat.SkillCheckResult.CritFail)
                     {
-                        if (critterObjectDat.damagesWeaponOnCritMiss(DefendingCharacter.item_id))
+                        if (AttackingCharacter.index == 1)
                         {
-                            var weaponselfdamage = Rng.DiceRoll(2, 3);
-                            Debug.Print($"Damage primary weapon by {weaponselfdamage}");
+                            if (critterObjectDat.damagesWeaponOnCritMiss(DefendingCharacter.item_id))
+                            {
+                                var weaponselfdamage = Rng.DiceRoll(2, 3);
+                                var si_slot = 8 - playerdat.handednessvalue;
+                                Debug.Print($"Equipment damage to slot {si_slot} of {Rng.DiceRoll(2, 3)}");
+                            }
                         }
+
                     }
                     return 1 - (int)result;
-
                 }
             }
             else
             {
-                //did not hit an npc                
-                if (DefendingCharacter.OneF0Class == 0x14)
+                // //did not hit an npc                
+
+                if (AttackingCharacter.index == 1)
                 {
-                    //doors
-                    var hitroll = Rng.r.Next(0, 0xC);
-                    var checkvalue = (DefendingCharacter.item_id & 0x7) << 1;
-                    if (hitroll < checkvalue)
+                    //attack is player
+                    if (DefendingCharacter.OneF0Class == 0x14)
                     {
-                        var equipdam = Rng.DiceRoll(2, 4);
-                        Debug.Print($"Do weapon self damage of {equipdam}");
+                        //doors       
+                        if (Rng.r.Next(0, 0xC) < (DefendingCharacter.item_id & 0x7) << 1)
+                        {
+                            var si_slot = 8 - playerdat.handednessvalue;
+                            Debug.Print($"Equipment damage to slot {si_slot} of {Rng.DiceRoll(2, 4)}");
+                        }
+                       
                     }
-                    return 0; //0 is a hit!
                 }
-                else
-                {
-                    return 0;
-                }
+                return 0; //0 is a hit!
             }
         }
 
 
+        /// <summary>
+        /// Calculates the actual damage that applies on a sucessful attack
+        /// </summary>
+        /// <param name="damageType"></param>
+        /// <param name="attacker"></param>
+        /// <param name="MissileAttack"></param>
+        /// <returns></returns>
         static int AttackerAppliesFinalDamage(int damageType, int attacker, bool MissileAttack = false)
         {
             if (AttackDamage < 2)
@@ -502,6 +526,7 @@ namespace Underworld
             var damagequotient = AttackDamage / 6;
             var damageremainder = AttackDamage % 6;
             AttackDamage = 0;
+            
             if (damagequotient != 0)
             {
                 AttackDamage = Rng.DiceRoll(damagequotient, 6);
@@ -515,37 +540,47 @@ namespace Underworld
             finaldamage += AttackScoreFlankingBonus;
 
             //TODO figure out correct sounds
-            Debug.Print("Player Weapon Hit sound");
+            if (DefendingCharacter.index ==1)
+            {
+                //Debug.Print("playSoundEffect(3)");
+            }
+            else
+            {
+                //Debug.print(playsoundeffectAtcombatxy);
+            }
+
             if (!MissileAttack)
             {
                 //Do blood spatters.
                 Debug.Print("Spatter blood");
-
-                if (DefendingCharacter.majorclass == 1)
-                {
-                    if (critterObjectDat.bleed(DefendingCharacter.item_id) != 0)
-                    {
-                        Debug.Print("TODO. place animo at hit body part");
-                        animo.SpawnAnimoAtTarget(target: DefendingCharacter, subclassindex: 0, si_zpos: 5, tileX: DefendingCharacter.tileX, tileY: DefendingCharacter.tileY); //blood
-                        if (AttackWasACrit)
-                        {
-                            animo.SpawnAnimoAtTarget(target: DefendingCharacter, subclassindex: 0, si_zpos: 3, tileX: DefendingCharacter.tileX, tileY: DefendingCharacter.tileY); //blood
-                        }
-                    }
-                    else
-                    {//npc does not bleed
-                        animo.SpawnAnimoAtTarget(target: DefendingCharacter, subclassindex: 0xB, si_zpos: 3, tileX: DefendingCharacter.tileX, tileY: DefendingCharacter.tileY); // a flash damage
-                    }
-                }
-                else
-                {
-                    //hit a non-npc object
-                    animo.SpawnAnimoAtTarget(target: DefendingCharacter, subclassindex: 0xB, si_zpos: 3, tileX: DefendingCharacter.tileX, tileY: DefendingCharacter.tileY); // a flash damage
-                }
             }
 
             if (DefendingCharacter.majorclass == 1)
-            {//npc has been hit, apply defenses
+            {
+                if (critterObjectDat.bleed(DefendingCharacter.item_id) != 0)
+                {
+                    Debug.Print("TODO. place animo at hit body part");
+                    animo.SpawnAnimoAtTarget(target: DefendingCharacter, subclassindex: 0, si_zpos: 5, tileX: DefendingCharacter.tileX, tileY: DefendingCharacter.tileY); //blood
+                    if (AttackWasACrit)
+                    {
+                        animo.SpawnAnimoAtTarget(target: DefendingCharacter, subclassindex: 0, si_zpos: 3, tileX: DefendingCharacter.tileX, tileY: DefendingCharacter.tileY); //blood
+                    }
+                }
+                else
+                {//npc does not bleed
+                    animo.SpawnAnimoAtTarget(target: DefendingCharacter, subclassindex: 0xB, si_zpos: 3, tileX: DefendingCharacter.tileX, tileY: DefendingCharacter.tileY); // a flash damage
+                }
+            }
+            else
+            {
+                //hit a non-npc object
+                animo.SpawnAnimoAtTarget(target: DefendingCharacter, subclassindex: 0xB, si_zpos: 3, tileX: DefendingCharacter.tileX, tileY: DefendingCharacter.tileY); // a flash damage
+            }
+        
+
+            if (DefendingCharacter.majorclass == 1)
+            {
+                //npc has been hit, apply defenses
                 var bodypartindex = BodyPartHit / 4;
                 int cx = (int)critterObjectDat.toughness(DefendingCharacter.item_id, bodypartindex);
                 if (cx == -1)
@@ -566,11 +601,18 @@ namespace Underworld
                 {
                     finaldamage -= cx;
                 }
+            }
 
-                var di = finaldamage / 4;
-                if (di <= 3)
+            var di = finaldamage / 4;
+            if (di <= 3)
+            {
+                di = 3;//this is used for animo later on?
+            }
+            if (DefendingCharacter.index == 1)
+            {
+                if (playerdat.difficuly == 1)
                 {
-                    di = 3;//this is used for animo later on?
+                    finaldamage >>= 1;
                 }
             }
             //apply damage
@@ -581,6 +623,10 @@ namespace Underworld
                 objList: UWTileMap.current_tilemap.LevelObjects,
                 WorldObject: true,
                 damagesource: attacker);
+            
+            //Resume here.
+            
+            
             return 0;
         }
 
@@ -863,6 +909,7 @@ namespace Underworld
         /// <returns></returns>
         static bool checkforPoisonableWeapon()
         {
+            Debug.Print("Checkforpoisonableweapon()");
             return true;
         }
 

@@ -121,8 +121,6 @@ namespace Underworld
                 Debug.Print("The block has not executed");
                 return 0;
             }
-
-            return 0;
         }
     }//end class
 }//end namespace

@@ -31,7 +31,14 @@ namespace Underworld
         /// <returns></returns>
         public static sbyte toughness(int item_id, int bodypart)
         {
-            return (sbyte)buffer[CritterOffset(item_id) + bodypart];
+            if (item_id != 127)
+            {
+                return (sbyte)buffer[CritterOffset(item_id) + bodypart];
+            }
+            else
+            {
+                return (sbyte)playerdat.LocationalArmourValues[bodypart];
+            }            
         }
 
         /// <summary>
@@ -311,7 +318,14 @@ namespace Underworld
         /// <returns></returns>
         public static int defence(int item_id)
         {
-            return buffer[CritterOffset(item_id) + 0x12];
+            if (item_id != 127)
+            {
+                return buffer[CritterOffset(item_id) + 0x12];
+            }
+            else
+            {
+                return playerdat.Defense;
+            }
         }
 
 
