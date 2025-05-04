@@ -122,7 +122,7 @@ namespace Underworld
             var crit = CritterArt.GetCritter(this.uwobject.item_id & 0x3F);
             if (crit.Animations.ContainsKey(animname))
             {
-                uwobject.AnimationFrame = (byte)ApplyCritterAnimation(animationNo, frameNo, animname, crit);
+                uwobject.AnimationFrame = (byte)ApplyCritterAnimation(animationNo: animationNo, frameNo: frameNo, animname: animname, crit: crit);
             }
             else
             {

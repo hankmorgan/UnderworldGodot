@@ -264,7 +264,7 @@ namespace Underworld
                     tmp = Loader.getAt(SpecialMotionHandler, 0, 16);
                     tmp = tmp | 0x20;
                     Loader.setAt(SpecialMotionHandler, 0, 16, (int)tmp);
-                    
+
                 }
 
                 //set some globals
@@ -395,24 +395,24 @@ namespace Underworld
                             {
                                 //apply attack
                                 Debug.Print("NPC makes attack");
-                                if (_RES==GAME_UW2)
+                                if (_RES == GAME_UW2)
                                 {
                                     combat.NPCExecuteAttack(
-                                        attacker: critter, 
-                                        swingtype: Rng.r.Next(9), 
-                                        attackcharge: combat.NPCSwingCharges[critter.SwingChargeIndex], 
-                                        attacktype: critter.npc_animation - 3, 
+                                        attacker: critter,
+                                        swingtype: Rng.r.Next(9),
+                                        attackcharge: combat.NPCSwingCharges[critter.SwingChargeIndex],
+                                        attacktype: critter.npc_animation - 3,
                                         poisondamage: critterObjectDat.poisondamage(critter.item_id));
                                 }
                                 else
                                 {
                                     combat.NPCExecuteAttack(
-                                        attacker: critter, 
-                                        swingtype:  Rng.r.Next(9), 
-                                        attackcharge: combat.NPCSwingCharges[critter.SwingChargeIndex], 
-                                        attacktype: critter.npc_animation - 1, 
+                                        attacker: critter,
+                                        swingtype: Rng.r.Next(9),
+                                        attackcharge: combat.NPCSwingCharges[critter.SwingChargeIndex],
+                                        attacktype: critter.npc_animation - 1,
                                         poisondamage: critterObjectDat.poisondamage(critter.item_id));
-                                }                                
+                                }
                             }
                             if (critter.AnimationFrame >= MaxAnimFrame)
                             {
@@ -693,7 +693,6 @@ namespace Underworld
             switch (critter.npc_goal)
             {
                 case 0://standstill
-                case 7:
                     StandStillGoal(critter);
                     break;
                 case 1: //goto
@@ -733,6 +732,9 @@ namespace Underworld
                     }
                     NPC_Goal6(critter);
                     break;
+                case 7:
+                    StandStillGoal(critter);
+                    break;
                 case 8:
                     NPC_Goal8(critter);
                     break;
@@ -747,11 +749,39 @@ namespace Underworld
                     }
                     NPC_Goal9(critter);
                     break;
-                case 10: //talkto
+                case 0xA: //talkto
                     NPCGoal_TalkTo(critter);
                     break;
-                case 12://stand at location
+                case 0xB://ethereal void creatures
+                    critter.Projectile_Speed = 4;
+                    critter.UnkBit_0X13_Bit0to6 = (short)Rng.r.Next(2);
+                    critter.ProjectileHeading = (ushort)Rng.r.Next(0x100);
+                    critter.Projectile_Pitch = (short)(0xF + Rng.r.Next(3));
+                    critter.AnimationFrame = (byte)((critter.AnimationFrame + 1) % MaxAnimFrame);
+                    critter.UnkBit_0X15_6 = 1;
+                    break;
+                case 0xC://stand at location
                     NPCGoalC_StandAtLocation(critter);
+                    break;
+                case 0xD:
+                case 0xE:
+                    critter.Projectile_Speed = 7;
+                    break;
+                case 0xF://petrified
+                    if (IsNPCActive_dseg_67d6_2234)
+                    {
+                        critter.UnkBit_0X13_Bit0to6 = 0;
+                        critter.Projectile_Pitch = 0x10;
+                    }
+                    critter.Projectile_Speed = 7;
+                    if (critter.npc_gtarg <= 0)
+                    {
+                        critter.npc_gtarg--;
+                    }
+                    else
+                    {
+                        ResetGoalAndTarget(critter);
+                    }
                     break;
                 default:
                     Debug.Print($"unhandled goal {critter.npc_goal} for {critter.a_name}");
@@ -2078,7 +2108,7 @@ namespace Underworld
                                 damage.DamageObject(objToDamage: doorobject,
                                     basedamage: Rng.r.Next(critterObjectDat.attackdamage(critter.item_id, 0)),
                                     damagetype: 4,
-                                    objList: UWTileMap.current_tilemap.LevelObjects, 
+                                    objList: UWTileMap.current_tilemap.LevelObjects,
                                     WorldObject: true,
                                     damagesource: critter.index);
                             }
@@ -2128,7 +2158,7 @@ namespace Underworld
                         {
                             si = 5;
                         }
-                        critter.Projectile_Pitch = (short)(Rng.r.Next(0, si) + PitchVarA );
+                        critter.Projectile_Pitch = (short)(Rng.r.Next(0, si) + PitchVarA);
                     }
                 }
                 //seg007_17A2_1C2://TODO include UW1 logic
