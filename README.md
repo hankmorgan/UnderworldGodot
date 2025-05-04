@@ -65,7 +65,7 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * Game variables and quest variables (partial support, not all scenarios may work)
 * Level transitions
 * Partial options menu. In game loading of saves
-* Fishing
+* Many Object interactions
 * Combat attack charge buildup and combat accuracy calcuations for player
 * In game advancement and player status changes over time (hunger, fatigue, mana regeneration)
 * Skillpoints and character advancement logic
@@ -76,14 +76,15 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * Sleeping and dream logic
 * Character creation
 * Mostly complete Object physics
-* Partial NPC AI, movement and pathfinding
+* Most NPC AI, movement and pathfinding
+* NPC Combat Actions
 
 ## Whats missing
 * Player movement and collision
-* NPC combat actions
 * Sound and music
 * Transparencies
 * Saving  
+* Animated Dragon UI Elements
 * and much more!
 
 ## Getting Started
