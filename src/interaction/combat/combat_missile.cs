@@ -110,7 +110,7 @@ namespace Underworld
                 //todo sound effect at hit position.
             }
             AttackerAppliesFinalDamage(
-                objHit: objectHit,
+                attacker: projectileSource,
                 damageType: damageType, 
                 MissileAttack: true);
             

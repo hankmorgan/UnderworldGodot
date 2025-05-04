@@ -81,7 +81,7 @@ namespace Underworld
             }
         }
 
-        public short unkxyvalue
+        public short xyvalue
         {
             get
             {

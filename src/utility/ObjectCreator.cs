@@ -242,14 +242,14 @@ namespace Underworld
         private static void PrintObjectLabel(uwObject obj, string name, Node3D newNode)
         {
             return;
-            var collider = commonObjDat.ActivatedByCollision(obj.item_id);
-            Label3D obj_lbl = new();
-            obj_lbl.Text = $"{name} {obj.xpos},{obj.ypos},{obj.zpos}";
-            obj_lbl.Font = uimanager.instance.Font4X5P;
-            obj_lbl.FontSize = 16;
-            obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
-            obj_lbl.Position = new Vector3(0f, 0.4f, 0f);
-            newNode.AddChild(obj_lbl);
+            // var collider = commonObjDat.ActivatedByCollision(obj.item_id);
+            // Label3D obj_lbl = new();
+            // obj_lbl.Text = $"{name} {obj.xpos},{obj.ypos},{obj.zpos}";
+            // obj_lbl.Font = uimanager.instance.Font4X5P;
+            // obj_lbl.FontSize = 16;
+            // obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
+            // obj_lbl.Position = new Vector3(0f, 0.4f, 0f);
+            // newNode.AddChild(obj_lbl);
         }
 
 
@@ -645,7 +645,7 @@ namespace Underworld
             critter.UnkBit_0XD_Bit11 = 0;
             critter.UnkBit_0XD_Bit8 = 0;
             critter.UnkBit_0x18_5 = 0;//possbily used to indicate npc is at their target
-            critter.Swing = 0;
+            critter.SwingChargeIndex = 0;
             critter.NextFrame_0XA_Bit0123 = 0;
             critter.Projectile_Speed = 4;
             critter.npc_animation = 0;//is this right for UW1?

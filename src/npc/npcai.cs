@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using Godot;
 
 namespace Underworld
 {
@@ -396,6 +395,24 @@ namespace Underworld
                             {
                                 //apply attack
                                 Debug.Print("NPC makes attack");
+                                if (_RES==GAME_UW2)
+                                {
+                                    combat.NPCExecuteAttack(
+                                        attacker: critter, 
+                                        swingtype: Rng.r.Next(9), 
+                                        attackcharge: combat.NPCSwingCharges[critter.SwingChargeIndex], 
+                                        attacktype: critter.npc_animation - 3, 
+                                        poisondamage: critterObjectDat.poisondamage(critter.item_id));
+                                }
+                                else
+                                {
+                                    combat.NPCExecuteAttack(
+                                        attacker: critter, 
+                                        swingtype:  Rng.r.Next(9), 
+                                        attackcharge: combat.NPCSwingCharges[critter.SwingChargeIndex], 
+                                        attacktype: critter.npc_animation - 1, 
+                                        poisondamage: critterObjectDat.poisondamage(critter.item_id));
+                                }                                
                             }
                             if (critter.AnimationFrame >= MaxAnimFrame)
                             {
@@ -2853,9 +2870,9 @@ namespace Underworld
                 if (Rng.r.Next(4) != 0)
                 {
                     //seg007_17A2_C35
-                    if (critter.Swing < 0xF)
+                    if (critter.SwingChargeIndex < 0xF)
                     {
-                        critter.Swing++;
+                        critter.SwingChargeIndex++;
                     }
                 }
                 else

@@ -105,6 +105,16 @@ namespace Underworld
             }
         }
 
+        public static int handednessvalue
+        {
+            get
+            {
+                int offset = 0x65;
+                if (_RES == GAME_UW2) { offset = 0x66; }
+                return (int)GetAt(offset) & 0x1;
+            }
+        }
+
         /// <summary>
         /// pdat[] & 1 is 1 when player is right handed
         /// </summary>
@@ -200,9 +210,9 @@ namespace Underworld
             set
             {
                 var tmp = X & 0xFF1F;
-                tmp |= (value<<5);
+                tmp |= (value << 5);
                 X = tmp;
-            }        
+            }
         }
 
         /// <summary>
@@ -252,7 +262,7 @@ namespace Underworld
             set
             {
                 var tmp = Y & 0xFF1F;
-                tmp |= (value<<5);
+                tmp |= (value << 5);
                 Y = tmp;
             }
         }
@@ -313,7 +323,7 @@ namespace Underworld
             }
             set
             {
-                if (value>max_hp)
+                if (value > max_hp)
                 {
                     value = max_hp;
                 }
@@ -321,7 +331,7 @@ namespace Underworld
                 uimanager.RefreshHealthFlask();
                 uimanager.RefreshStatsDisplay();
                 playerObject.npc_hp = (byte)value;
-            }            
+            }
         }
 
 
@@ -349,7 +359,7 @@ namespace Underworld
             }
             set
             {
-                if (value>max_mana)
+                if (value > max_mana)
                 {
                     value = max_mana;
                 }
@@ -381,30 +391,33 @@ namespace Underworld
         {
             get
             {
-                if (_RES!=GAME_UW2)
+                if (_RES != GAME_UW2)
                 {
                     return GetAt(0xB1);
                 }
                 else
                 {
                     return max_mana;
-                }                
+                }
             }
             set
             {
-                if (_RES!=GAME_UW2)
+                if (_RES != GAME_UW2)
                 {
                     SetAt(0xB1, (byte)value);
-                }                
+                }
             }
         }
 
 
+        /// <summary>
+        /// Diffculty level of the game, 0 for normal difficulty, 1 for easy difficulty. Affects mainly combat calcs
+        /// </summary>
         public static int difficuly
         {
             get
             {
-                if(_RES==GAME_UW2)
+                if (_RES == GAME_UW2)
                 {
                     return GetAt(0x302);
                 }
@@ -415,7 +428,7 @@ namespace Underworld
             }
             set
             {
-                if(_RES==GAME_UW2)
+                if (_RES == GAME_UW2)
                 {
                     SetAt(0x302, (byte)value);
                 }
@@ -433,26 +446,26 @@ namespace Underworld
         public static void ChangeExperience(int newEXP)
         {
             //value * 500 is the exp needed for next level up
-            int[] LevelUpAt = new int[]{0,1,2,3,4,6,8,0xC,0x10,0x18,0x20,0x30,0x40,0x60,0x80,0xC0};
-            if (newEXP>0)
+            int[] LevelUpAt = new int[] { 0, 1, 2, 3, 4, 6, 8, 0xC, 0x10, 0x18, 0x20, 0x30, 0x40, 0x60, 0x80, 0xC0 };
+            if (newEXP > 0)
             {
-                newEXP = (newEXP + Rng.r.Next(0,2))/2;
+                newEXP = (newEXP + Rng.r.Next(0, 2)) / 2;
             }
 
-            if (newEXP>=0)
+            if (newEXP >= 0)
             {
-                if (_RES==GAME_UW2)
+                if (_RES == GAME_UW2)
                 {
                     var world = worlds.GetWorldNo(dungeon_level);
-                    world = world<<1;
+                    world = world << 1;
                     world += 2;
                     if (world < play_level)
                     {//reduce xp gain if on a lower "world level" then the player level
-                        newEXP = 1 + (newEXP/2);
+                        newEXP = 1 + (newEXP / 2);
                     }
                 }
-                var newTotalSkillPoints = (Exp + newEXP)/1500; //how many skill points the player will have gained at their total exp level
-                if (SkillPointsTotal<newTotalSkillPoints)
+                var newTotalSkillPoints = (Exp + newEXP) / 1500; //how many skill points the player will have gained at their total exp level
+                if (SkillPointsTotal < newTotalSkillPoints)
                 {
                     SkillPoints = SkillPoints + (newTotalSkillPoints - SkillPointsTotal);// calculate new level of skill points available to spend.
                     SkillPointsTotal = newTotalSkillPoints; //store total earned.
@@ -460,13 +473,13 @@ namespace Underworld
                 Exp = Math.Min(Exp + newEXP, 0x17700);//96000 (exp points are in units of 0.1)
 
                 //Check if player can level up
-                if (play_level<0x10)
+                if (play_level < 0x10)
                 {
-                    var PointsToCheck = Exp/500;
+                    var PointsToCheck = Exp / 500;
                     var pointsNeeded = LevelUpAt[play_level];
-                    if (pointsNeeded<=PointsToCheck)
+                    if (pointsNeeded <= PointsToCheck)
                     {//player can level up
-                        LevelUp(play_level+1);
+                        LevelUp(play_level + 1);
                     }
                 }
 
@@ -476,7 +489,7 @@ namespace Underworld
             else
             {
                 //negative exp
-                Exp = Math.Max(0, Exp-newEXP);                
+                Exp = Math.Max(0, Exp - newEXP);
             }
         }
 
@@ -486,7 +499,7 @@ namespace Underworld
         /// <param name="newLevel"></param>
         static void LevelUp(int newLevel)
         {
-            if (newLevel<=0x10)
+            if (newLevel <= 0x10)
             {
                 play_level = newLevel;
                 SkillPoints += newLevel;
@@ -494,7 +507,7 @@ namespace Underworld
                 {
                     uimanager.AddToMessageScroll($"{GameStrings.GetString(1, GameStrings.str_you_have_attained_experience_level_)}{newLevel}");
                 }
-                RecalculateHPManaMaxWeight(false);             
+                RecalculateHPManaMaxWeight(false);
             }
         }
 
@@ -504,7 +517,7 @@ namespace Underworld
         /// <param name="RestoreMana"></param>
         public static void RecalculateHPManaMaxWeight(bool RestoreMana)
         {
-            max_hp = 0x1E + ((STR*play_level)/5);
+            max_hp = 0x1E + ((STR * play_level) / 5);
             max_mana = ((ManaSkill + 1) * INT) >> 3;
             if (RestoreMana)
             {

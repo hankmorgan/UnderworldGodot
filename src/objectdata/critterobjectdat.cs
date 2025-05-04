@@ -2,7 +2,6 @@ namespace Underworld
 {
     /// <summary>
     /// Object.dat information for npcs.
-    /// UNTESTED. USE AT OWN RISK!!
     /// </summary>
     public class critterObjectDat : objectDat
     {
@@ -32,7 +31,14 @@ namespace Underworld
         /// <returns></returns>
         public static sbyte toughness(int item_id, int bodypart)
         {
-            return (sbyte)buffer[CritterOffset(item_id) + bodypart];
+            if (item_id != 127)
+            {
+                return (sbyte)buffer[CritterOffset(item_id) + bodypart];
+            }
+            else
+            {
+                return (sbyte)playerdat.LocationalArmourValues[bodypart];
+            }            
         }
 
         /// <summary>
@@ -100,15 +106,15 @@ namespace Underworld
         }
 
 
-        /// <summary>
-        /// Index no of a (likely) damage vulnerability this npc has
-        /// </summary>
-        /// <param name="item_id"></param>
-        /// <returns></returns>
-        public static int maybepoisonvulnerability(int item_id)
-        {
-            return (buffer[CritterOffset(item_id) + 0x8] >> 3) & 0x3;
-        }
+        // /// <summary>
+        // /// Index no of a (likely) damage vulnerability this npc has
+        // /// </summary>
+        // /// <param name="item_id"></param>
+        // /// <returns></returns>
+        // public static int PoisonVulnerability(int item_id)
+        // {
+        //     return (buffer[CritterOffset(item_id) + 0x8] >> 3) & 0x3;
+        // }
 
         /// <summary>
         /// The sound to play on this NPCs death
@@ -296,11 +302,11 @@ namespace Underworld
 
 
         /// <summary>
-        /// How much equipment damage the NPC is capable of applying?
+        /// How much equipment damage the NPC is capable of applying? Or possibly a base hit chance
         /// </summary>
         /// <param name="item_id"></param>
         /// <returns></returns>
-        public static int equipmentdamage(int item_id)
+        public static int EquipmentDamageOrBaseHitChance(int item_id)
         {
             return buffer[CritterOffset(item_id) + 0x11];
         }
@@ -312,7 +318,14 @@ namespace Underworld
         /// <returns></returns>
         public static int defence(int item_id)
         {
-            return buffer[CritterOffset(item_id) + 0x12];
+            if (item_id != 127)
+            {
+                return buffer[CritterOffset(item_id) + 0x12];
+            }
+            else
+            {
+                return playerdat.Defense;
+            }
         }
 
 
