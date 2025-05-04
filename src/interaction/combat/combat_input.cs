@@ -197,9 +197,19 @@ namespace Underworld
                             //Calculate player attack score here.
 
                             CalculatePlayerAttackScores();
-                            
+
                             ExecuteAttack(playerdat.playerObject);
-                            
+                            if (_RES == GAME_UW2)
+                            {
+                                if (OnHitSpell>0)
+                                {
+                                    if (AttackWasACrit || OnHitSpell == 6)
+                                    {
+                                        CastOnWeaponHitSpells();
+                                    }                                
+                                }
+                            }
+
                             //when done start reset
                             stage = CombatStages.Resetting;
                             combattimer = 0;
@@ -227,8 +237,6 @@ namespace Underworld
                 }
             }
         }
-
-
 
     }//end class
 }//end namespace

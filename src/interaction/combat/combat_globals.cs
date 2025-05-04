@@ -72,6 +72,8 @@ namespace Underworld
         /// </summary>
         public static short[] NPCSwingCharges = new short[] { 0x32, 0x3C, 0x46, 0x50, 0x5A, 0x64, 0x6E, 0x78, 0x82, 0x8C, 0x9B, 0xAA, 0xB9, 0xCD, 0xE6, 0xFF };
 
+        public static short[] BodyHitZ = new short[] { 5, 3, 1, 7, 0 };
+
 
     }//end class
 }//end namespace

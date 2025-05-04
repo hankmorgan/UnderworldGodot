@@ -1,5 +1,6 @@
 using System.Diagnostics;
 
+
 namespace Underworld
 {
     /// <summary>
@@ -394,11 +395,11 @@ namespace Underworld
                 {
                     // a miss
                     damage.DamageObject(
-                        objToDamage: DefendingCharacter, 
-                        basedamage: 0, 
-                        damagetype: 4, 
-                        objList: UWTileMap.current_tilemap.LevelObjects, 
-                        WorldObject: true, 
+                        objToDamage: DefendingCharacter,
+                        basedamage: 0,
+                        damagetype: 4,
+                        objList: UWTileMap.current_tilemap.LevelObjects,
+                        WorldObject: true,
                         damagesource: AttackingCharacter.index);
                     Debug.Print("Todo CombatMissImpactSound();");
                     return false;
@@ -432,7 +433,7 @@ namespace Underworld
                 {
                     if (checkforPoisonableWeapon())
                     {
-                        if (critterObjectDat.PoisonVulnerability(DefendingCharacter.item_id) != 0)
+                        if (critterObjectDat.bleed(DefendingCharacter.item_id) != 0)
                         {
                             AttackDamage += ((playerdat.Casting + 30) / 40);
                         }
@@ -502,7 +503,7 @@ namespace Underworld
                             var si_slot = 8 - playerdat.handednessvalue;
                             Debug.Print($"Equipment damage to slot {si_slot} of {Rng.DiceRoll(2, 4)}");
                         }
-                       
+
                     }
                 }
                 return 0; //0 is a hit!
@@ -517,7 +518,7 @@ namespace Underworld
         /// <param name="attacker"></param>
         /// <param name="MissileAttack"></param>
         /// <returns></returns>
-        static int AttackerAppliesFinalDamage(int damageType, int attacker, bool MissileAttack = false)
+        static void AttackerAppliesFinalDamage(int damageType, int attacker, bool MissileAttack = false)
         {
             if (AttackDamage < 2)
             {
@@ -526,7 +527,7 @@ namespace Underworld
             var damagequotient = AttackDamage / 6;
             var damageremainder = AttackDamage % 6;
             AttackDamage = 0;
-            
+
             if (damagequotient != 0)
             {
                 AttackDamage = Rng.DiceRoll(damagequotient, 6);
@@ -540,48 +541,50 @@ namespace Underworld
             finaldamage += AttackScoreFlankingBonus;
 
             //TODO figure out correct sounds
-            if (DefendingCharacter.index ==1)
+            if (DefendingCharacter.index == 1)
             {
+                //seg024_24E9_A25:
                 //Debug.Print("playSoundEffect(3)");
             }
             else
             {
-                //Debug.print(playsoundeffectAtcombatxy);
-            }
-
-            if (!MissileAttack)
-            {
-                //Do blood spatters.
-                Debug.Print("Spatter blood");
-            }
-
-            if (DefendingCharacter.majorclass == 1)
-            {
-                if (critterObjectDat.bleed(DefendingCharacter.item_id) != 0)
+                //seg024_24E9_A33:
+                if (!MissileAttack)
                 {
-                    Debug.Print("TODO. place animo at hit body part");
-                    animo.SpawnAnimoAtTarget(target: DefendingCharacter, subclassindex: 0, si_zpos: 5, tileX: DefendingCharacter.tileX, tileY: DefendingCharacter.tileY); //blood
-                    if (AttackWasACrit)
-                    {
-                        animo.SpawnAnimoAtTarget(target: DefendingCharacter, subclassindex: 0, si_zpos: 3, tileX: DefendingCharacter.tileX, tileY: DefendingCharacter.tileY); //blood
-                    }
-                }
-                else
-                {//npc does not bleed
-                    animo.SpawnAnimoAtTarget(target: DefendingCharacter, subclassindex: 0xB, si_zpos: 3, tileX: DefendingCharacter.tileX, tileY: DefendingCharacter.tileY); // a flash damage
+                    //Debug.print(playsoundeffectAtcombatxy);
                 }
             }
-            else
-            {
-                //hit a non-npc object
-                animo.SpawnAnimoAtTarget(target: DefendingCharacter, subclassindex: 0xB, si_zpos: 3, tileX: DefendingCharacter.tileX, tileY: DefendingCharacter.tileY); // a flash damage
-            }
-        
 
+
+            // //THIS SECTION HAS TO MOVE?
+            // if (DefendingCharacter.majorclass == 1)
+            // {
+            //     if (critterObjectDat.bleed(DefendingCharacter.item_id) != 0)
+            //     {
+            //         Debug.Print("TODO. place animo at hit body part");
+            //         animo.SpawnAnimoAtTarget(target: DefendingCharacter, subclassindex: 0, si_zpos: 5, tileX: DefendingCharacter.tileX, tileY: DefendingCharacter.tileY); //blood
+            //         if (AttackWasACrit)
+            //         {
+            //             animo.SpawnAnimoAtTarget(target: DefendingCharacter, subclassindex: 0, si_zpos: 3, tileX: DefendingCharacter.tileX, tileY: DefendingCharacter.tileY); //blood
+            //         }
+            //     }
+            //     else
+            //     {//npc does not bleed
+            //         animo.SpawnAnimoAtTarget(target: DefendingCharacter, subclassindex: 0xB, si_zpos: 3, tileX: DefendingCharacter.tileX, tileY: DefendingCharacter.tileY); // a flash damage
+            //     }
+            // }
+            // else
+            // {
+            //     //hit a non-npc object
+            //     animo.SpawnAnimoAtTarget(target: DefendingCharacter, subclassindex: 0xB, si_zpos: 3, tileX: DefendingCharacter.tileX, tileY: DefendingCharacter.tileY); // a flash damage
+            // }
+
+
+            //seg024_24E9_A9B:
             if (DefendingCharacter.majorclass == 1)
             {
                 //npc has been hit, apply defenses
-                var bodypartindex = BodyPartHit / 4;
+                var bodypartindex = BodyPartHit % 4;
                 int cx = (int)critterObjectDat.toughness(DefendingCharacter.item_id, bodypartindex);
                 if (cx == -1)
                 {
@@ -616,18 +619,83 @@ namespace Underworld
                 }
             }
             //apply damage
-            damage.DamageObject(
+            var DamageObjectResult = damage.DamageObject(
                 objToDamage: DefendingCharacter,
                 basedamage: finaldamage,
                 damagetype: damageType,
                 objList: UWTileMap.current_tilemap.LevelObjects,
                 WorldObject: true,
                 damagesource: attacker);
-            
+
             //Resume here.
-            
-            
-            return 0;
+            if (finaldamage != 0)
+            {
+                if (!MissileAttack)//should be attackingcharacter != -1
+                {
+                    if (BodyPartHit >= 4)
+                    {
+                        BodyPartHit = 4;
+                    }
+                    if (DefendingCharacter.index != 1)
+                    {
+                        //seg024_24E9_BD5:
+                        if (DefendingCharacter.majorclass == 1)
+                        {
+                            if (AttackingCharacter.index == 1)
+                            {
+                                //seg024_24E9_BEB
+                                int eyevalue;
+                                if (critterObjectDat.avghit(DefendingCharacter.item_id) != 0)
+                                {
+                                    eyevalue = (DefendingCharacter.npc_hp * 3) / critterObjectDat.avghit(DefendingCharacter.item_id);
+                                }
+                                else
+                                {
+                                    eyevalue = 0;
+                                }
+                                if (eyevalue >= 3)
+                                {
+                                    eyevalue = 2;
+                                }
+                                Debug.Print($"Update Eye Animation {3 - eyevalue}");
+                            }
+                            //seg024_24E9_C49:
+                            if (critterObjectDat.bleed(DefendingCharacter.item_id) != 0)
+                            {
+                                animo.SpawnAnimoAtTarget(DefendingCharacter, 0, BodyHitZ[BodyPartHit], CombatHitTileX, CombatHitTileY);
+                                if (AttackWasACrit && (AttackingCharacter.index == 1))
+                                {
+                                    animo.SpawnAnimoAtTarget(DefendingCharacter, 0, BodyHitZ[BodyPartHit] - 2, CombatHitTileX, CombatHitTileY);
+                                }
+                                return;
+                            }
+                            else
+                            {
+                                DamageObjectResult = 0;
+                            }
+                        }
+                        //seg024_24E9_CCD
+                        // if (DamageObjectResult !=0)
+                        // {
+                        //     DefendingCharacter = null;//?
+                        // }
+                        if ((DefendingCharacter.OneF0Class == 0x14) || (DefendingCharacter.item_id == 0x1CF))
+                        {
+                            //door or moving door
+                            if (AttackHitZ_dseg_67d6_24CE > DefendingCharacter.zpos)
+                            {
+                                AttackHitZ_dseg_67d6_24CE = DefendingCharacter.zpos + 2;
+                            }
+                        }
+                        animo.SpawnAnimoAtTarget(DefendingCharacter, 1, -AttackHitZ_dseg_67d6_24CE, CombatHitTileX, CombatHitTileY);//a flash
+                    }
+                    else
+                    {
+                        //player was the defender.
+                        Debug.Print("Screenshake");
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -817,7 +885,7 @@ namespace Underworld
                             var yDiff = AttackerY - collisonYCoord;
 
                             var DistanceSquared_var14 = (xDiff * xDiff) + (yDiff * yDiff);
-                            if (DistanceSquared_var14 >= var18_nearestcollision)
+                            if (DistanceSquared_var14 < var18_nearestcollision)
                             {
                                 var18_nearestcollision = DistanceSquared_var14;
                                 result = di_collisionindex;
