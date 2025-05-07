@@ -245,7 +245,7 @@ namespace Underworld
                 {
                     if (motion.TestIfObjectFitsInTile(playerdat.playerObject.item_id, 1, 4 + (x0 << 3), 4 + (y0 << 3), playerdat.playerObject.zpos, 1, 8))
                     {
-                        Teleportation.Teleport(0, tile.tileX, tile.tileY, 0, playerdat.heading);
+                        Teleportation.Teleport(0, tile.tileX, tile.tileY, 0, playerdat.heading_major);
                         return;
                     }
                 }

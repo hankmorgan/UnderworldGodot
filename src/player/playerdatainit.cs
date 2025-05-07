@@ -24,7 +24,7 @@ namespace Underworld
                     _zpos: camerazpos);
                 main.gamecam.Rotation = Vector3.Zero;
                 main.gamecam.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
-                main.gamecam.Rotate(Vector3.Up, (float)(-heading / 127f * Math.PI));
+                main.gamecam.Rotate(Vector3.Up, (float)(-heading_major / 127f * Math.PI));
 
                 for (int i = 0; i < 8; i++)
                 {//Init the backpack indices
@@ -113,6 +113,14 @@ namespace Underworld
             {
                 scd.scd_data = null;
             }
+
+
+            //Motion params
+            motion.playerMotionParams.x_0 = (short)playerdat.X;
+            motion.playerMotionParams.y_2 = (short)playerdat.Y;
+            motion.playerMotionParams.z_4 = (short)playerdat.Z;
+
+            
         }
 
 

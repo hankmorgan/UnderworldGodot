@@ -299,10 +299,23 @@ namespace Underworld
             }
         }
 
+        public static int heading_minor
+        {
+            get
+            {
+                return GetAt(0x5B);
+            }
+            set
+            {
+                SetAt(0x5B, (byte)value);
+            }
+        }
+
+
         /// <summary>
         /// Note this is not the full heading value! 
         /// </summary>
-        public static int heading
+        public static int heading_major
         {
             get
             {

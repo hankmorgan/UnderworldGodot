@@ -167,7 +167,7 @@ public partial class main : Node3D
 			newzpos = Math.Max(Math.Min(newzpos, 127), 0);
 			var tmp = cam.Rotation;
 			tmp.Y = (float)(tmp.Y - Math.PI);
-			playerdat.heading = (int)Math.Round(-(tmp.Y * 127) / Math.PI);//placeholder track these values for projectile calcs.
+			playerdat.heading_major = (int)Math.Round(-(tmp.Y * 127) / Math.PI);//placeholder track these values for projectile calcs.
 																		  // playerdat.playerObject.heading = (short)((playerdat.headingMinor >> 0xD) & 0x7);
 																		  // playerdat.playerObject.npc_heading = (short)((playerdat.headingMinor>>8) & 0x1F);
 			uimanager.UpdateCompass();
@@ -176,7 +176,7 @@ public partial class main : Node3D
 			if (EnablePositionDebug)
 			{
 				var fps = Engine.GetFramesPerSecond();
-				lblPositionDebug.Text = $"FPS:{fps} Time:{playerdat.game_time}\nL:{playerdat.dungeon_level} X:{tileX} Y:{tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}\n{cam.Rotation} {playerdat.heading} {(playerdat.heading >> 4) % 4} {xposvecto} {yposvecto} {newzpos}";
+				lblPositionDebug.Text = $"FPS:{fps} Time:{playerdat.game_time}\nL:{playerdat.dungeon_level} X:{tileX} Y:{tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}\n{cam.Rotation} {playerdat.heading_major} {(playerdat.heading_major >> 4) % 4} {xposvecto} {yposvecto} {newzpos}";
 			}
 
 
@@ -289,6 +289,29 @@ public partial class main : Node3D
 				gameRefreshTimer = 0;
 				if (!blockmouseinput)
 				{
+					//Player motion.
+					if (
+						(motion.MotionInputPressed != 0)
+						||
+						(motion.playerMotionParams.unk_14 != 0)
+						||
+						(motion.playerMotionParams.unk_a_pitch != 0)
+						||
+						(motion.playerMotionParams.unk_10 != 0)
+						||
+						(motion.playerMotionParams.unk_e != 0)
+						||
+						(motion.playerMotionParams.unk_6_x!= 0)
+						||
+						(motion.Examine_dseg_D3 != 0)
+
+					)
+					{
+						//when any forced movement or player input is not 0
+						motion.PlayerMotion(0xF); //todo confirm increments
+					}
+
+
 					for (int i = 0; i < UWTileMap.current_tilemap.NoOfActiveMobiles; i++)
 					{
 						var index = UWTileMap.current_tilemap.GetActiveMobileAtIndex(i);

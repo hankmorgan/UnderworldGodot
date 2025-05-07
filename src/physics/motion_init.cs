@@ -17,7 +17,7 @@ namespace Underworld
             MotionParams.index_20 = projectile.index;
             MotionParams.mass_18 = (short)commonObjDat.mass(itemid);
             MotionParams.unk_1a = (byte)commonObjDat.unk6_4(itemid);
-            MotionParams.unk_16 = (byte)commonObjDat.unk6_5678(itemid);
+            MotionParams.unk_16_relatedtoPitch = (byte)commonObjDat.unk6_5678(itemid);
             MotionParams.scaleresistances_1C = (byte)commonObjDat.scaleresistances(itemid);
             MotionParams.unk_1d = 0;
             MotionParams.heading_1E = (short)(projectile.heading << 0xD);
@@ -96,7 +96,7 @@ namespace Underworld
                 MotionParams.y_2 = (short)((MotionParams.y_2 << 5) + Rng.r.Next(32));//and prevents them from getting
                 MotionParams.z_4 = (short)((MotionParams.z_4 << 3) + Rng.r.Next(8));//stuck when following a path
             }
-            MotionParams.unk_26 = 0;
+            MotionParams.unk_26_falldamage = 0;
         }
 
 

@@ -422,7 +422,7 @@ namespace Underworld
             playerdat.DreamingInVoid = true;
             playerdat.DreamTileX = playerdat.tileX;
             playerdat.DreamTileY = playerdat.tileY;
-            playerdat.DreamHeading = playerdat.heading;
+            playerdat.DreamHeading = playerdat.heading_major;
             playerdat.DreamDungeon = playerdat.dungeon_level;
 
             //Pick a random destination in the void

@@ -171,9 +171,9 @@ namespace Underworld
             }
 
             //seg030_2BB7_83E:
-            if (MotionParams.unk_26 > 0x180)
+            if (MotionParams.unk_26_falldamage > 0x180)
             {//seg030_2BB7_848:
-                var var6FallDamage = MotionParams.unk_26 >> 8;
+                var var6FallDamage = MotionParams.unk_26_falldamage >> 8;
                 if (projectile.majorclass == 1)
                 {
                     var6FallDamage = var6FallDamage >> 2;
