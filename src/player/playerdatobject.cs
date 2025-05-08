@@ -43,7 +43,7 @@ namespace Underworld
             }
         }
         /// <summary>
-        /// Remove Player from 
+        /// Remove Player from tile and add in new one
         /// </summary>
         /// <param name="newTileX"></param>
         /// <param name="newTileY"></param>
@@ -64,14 +64,9 @@ namespace Underworld
                 obj.tileX = newTileX; obj.tileY = newTileY;
 
             }
-            // playerObject = new uwObject
-            // {
-            //         //isInventory = false,
-            //         IsStatic = false,
-            //         index = 1,
-            //         PTR = PlayerObjectPTR,
-            //         DataBuffer = pdat
-            // };
+
+            //TODO update lighting, pressure triggers
+
         }
     }//end class
 }//end namespace
