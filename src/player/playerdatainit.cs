@@ -16,15 +16,7 @@ namespace Underworld
             {
                 //load player dat from a save file
                 Load(datafolder);
-                main.gamecam.Position = uwObject.GetCoordinate(
-                    tileX: tileX,
-                    tileY: tileY,
-                    _xpos: xpos,
-                    _ypos: ypos,
-                    _zpos: camerazpos);
-                main.gamecam.Rotation = Vector3.Zero;
-                main.gamecam.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
-                main.gamecam.Rotate(Vector3.Up, (float)(-heading_major / 127f * Math.PI));
+                PositionPlayerObject();
 
                 for (int i = 0; i < 8; i++)
                 {//Init the backpack indices
@@ -122,6 +114,20 @@ namespace Underworld
 
             
         }
+
+        public static void PositionPlayerObject()
+        {
+            main.gamecam.Position = uwObject.GetCoordinate(
+                tileX: tileX,
+                tileY: tileY,
+                _xpos: xpos,
+                _ypos: ypos,
+                _zpos: camerazpos);
+            main.gamecam.Rotation = Vector3.Zero;
+            main.gamecam.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
+            main.gamecam.Rotate(Vector3.Up, (float)(-heading_major / 127f * Math.PI));
+        }
+
 
 
         /// <summary>

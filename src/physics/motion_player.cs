@@ -65,6 +65,8 @@ namespace Underworld
 
             ApplyPlayerMotion(playerdat.playerObject);
 
+            playerdat.PositionPlayerObject();
+
 
         }
 
@@ -74,6 +76,7 @@ namespace Underworld
             //todo
             short di = 0;
             short var2 = 0;
+            playerMotionParams.speed_12 = (byte)ClockIncrement;
             playerMotionParams.unk_16_relatedtoPitch = 5;
             playerMotionParams.unk_17 = 0;
 
@@ -132,8 +135,38 @@ namespace Underworld
 
 
                 //
-
             }
+
+
+
+            if (_RES == GAME_UW2)
+            {
+                if (
+                    ((((int)playerMotionParams.unk_c_X | (int)playerMotionParams.unk_e | (int)playerMotionParams.unk_10) == 0))
+                            && ((playerdat.TileState & 0x84) == 0)
+                    )
+                {
+                    playerMotionParams.unk_17 = 0x80;
+                }
+                else
+                {
+                    if (playerMotionParams.unk_10 != 0)
+                    {
+                        if ((playerdat.TileState & 0x84) != 0)
+                        {
+                            playerMotionParams.unk_16_relatedtoPitch = 5;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (((int)playerMotionParams.unk_c_X | (int)playerMotionParams.unk_e | (int)playerMotionParams.unk_10) == 0)
+                {
+                    playerMotionParams.unk_17 = 0x80;
+                }
+            }
+
 
             //seg008_1B09_A9D:
             //UW1 and UW2 realign here.
@@ -267,7 +300,7 @@ namespace Underworld
                     if ((int)skillCheckResult > 0)
                     {
                         //passed check
-                        FallDamage = ((0x1E-playerdat.Acrobat) * FallDamage) / 0x1E;
+                        FallDamage = ((0x1E - playerdat.Acrobat) * FallDamage) / 0x1E;
                     }
                     if (FallDamage > 3)
                     {
@@ -289,7 +322,7 @@ namespace Underworld
             //likely uw2 only
             if ((playerdat.TileState & 0x4) == 0)
             {
-                if  ((playerdat.TileState & 0x1) == 0)
+                if ((playerdat.TileState & 0x1) == 0)
                 {
                     Examine_dseg_D3 = 0;
                 }

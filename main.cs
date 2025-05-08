@@ -402,6 +402,13 @@ public partial class main : Node3D
 				{
 					switch (keyinput.Keycode)
 					{
+						case Key.O:
+							{
+								//test motion
+								motion.PlayerMotionWalk_77C = 0x70;
+								motion.MotionInputPressed = 1;
+								break;
+							}
 						case Key.T:
 							var mouselook = (bool)gamecam.Get("MOUSELOOK");
 							if (mouselook)
