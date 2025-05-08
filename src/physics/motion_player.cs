@@ -1,6 +1,4 @@
 using System;
-using System.Data;
-using System.Net.Sockets;
 
 namespace Underworld
 {
@@ -36,9 +34,13 @@ namespace Underworld
         static short dseg_67d6_22A6;
         static short dseg_67d6_22A8;
 
+        static short dseg_67d6_22A0;
+
         static short MotionWeightRelated_dseg_67d6_C8;
 
         static short MotionRelated_dseg_67d6_775 = 0xF;
+
+        static short SomeTileOrTerrainDatInfo_seg_67d6_D4;
        
         public static void PlayerMotion(short ClockIncrement)
         {
@@ -111,10 +113,41 @@ namespace Underworld
 
 
             //seg008_1B09_83E:
+            if (playerMotionParams.unk_10 != 0)
+            {
+                playerdat.heading_minor += ((ClockIncrement * MotionRelated_dseg_67d6_775) * (PlayerMotionHeading_77E / 4))/ 4;
+            }
 
 
+            if (_RES == GAME_UW2)
+            {
+                //seg008_1B09_862:
+                //TODO UW2 specific code for ice and water currents
 
 
+                //
+                
+            }
+
+            //seg008_1B09_A9D:
+            //UW1 and UW2 realign here.
+            if (playerMotionParams.unk_14 == 0)
+            {
+                //seg008_1B09_AAA:
+                playerdat.heading_major = playerdat.heading_minor;
+            }
+
+            if ((playerdat.MagicalMotionAbilities & 0x14) != 0)
+            {
+                //seg008_1B09_ABD:
+                //player is flying or levitating
+                setAt(UWMotionParamArray.PlayerMotionHandler_dseg_67d6_26AA, 0, 16, 0x1000);
+                playerMotionParams.unk_17 = 0x80;
+            }
+
+            //seg008_1B09_AC8:
+            playerMotionParams.unk_26_falldamage = 0;
+            dseg_67d6_22A0 = playerMotionParams.unk_10;
         }
 
         static void ApplyPlayerMotion(UWMotionParamArray MotionParams)
