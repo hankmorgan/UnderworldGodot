@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 
 namespace Underworld
 {
@@ -47,6 +46,9 @@ namespace Underworld
         static short MotionRelated_dseg_67d6_775 = 0xF;
 
         static short SomeTileOrTerrainDatInfo_seg_67d6_D4;
+
+        public static short PlayerHeadingMinor_dseg_8294;
+        public static short PlayerHeadingMajor_dseg_67d6_8296;
 
         public static void PlayerMotion(short ClockIncrement)
         {
@@ -124,7 +126,7 @@ namespace Underworld
             //seg008_1B09_83E:
             if (playerMotionParams.unk_10 != 0)
             {
-                playerdat.heading_minor += ((ClockIncrement * MotionRelated_dseg_67d6_775) * (PlayerMotionHeading_77E / 4)) / 4;
+                PlayerHeadingMinor_dseg_8294 += (short)(((ClockIncrement * MotionRelated_dseg_67d6_775) * (PlayerMotionHeading_77E / 4)) / 4);
             }
 
 
@@ -173,7 +175,7 @@ namespace Underworld
             if (playerMotionParams.unk_14 == 0)
             {
                 //seg008_1B09_AAA:
-                playerdat.heading_major = playerdat.heading_minor;
+                PlayerHeadingMajor_dseg_67d6_8296 = PlayerHeadingMinor_dseg_8294;
             }
 
             if ((playerdat.MagicalMotionAbilities & 0x14) != 0)
@@ -195,7 +197,7 @@ namespace Underworld
 
             if (dseg_67d6_22AE != -1)
             {
-                playerdat.heading_major = dseg_67d6_22AC;
+                PlayerHeadingMajor_dseg_67d6_8296 = dseg_67d6_22AC;
                 playerMotionParams.unk_14 = dseg_67d6_22AE;
             }
 
@@ -228,7 +230,7 @@ namespace Underworld
             //seg008_1B09_E5B
             if (playerMotionParams.unk_26_falldamage != 0)
             {
-                if (playerMotionParams.heading_1E == playerdat.heading_major)
+                if (playerMotionParams.heading_1E == PlayerHeadingMajor_dseg_67d6_8296)
                 {
                     if ((playerdat.TileState & 0x4) == 0)
                     {
@@ -241,41 +243,41 @@ namespace Underworld
             }
 
             //seg008_1B09_E8A:
-            if (playerMotionParams.heading_1E != playerdat.heading_major)
+            if (playerMotionParams.heading_1E != PlayerHeadingMajor_dseg_67d6_8296)
             {
                 //this may be uw2 specific
-                playerdat.heading_major = playerMotionParams.heading_1E;
+                PlayerHeadingMajor_dseg_67d6_8296 = playerMotionParams.heading_1E;
 
                 var si = playerMotionParams.heading_1E - (dseg_67d6_D0 << 0xE);
                 if ((playerMotionParams.unk_17 & 0x80) != 0)
                 {
                     if (SomeTileOrTerrainDatInfo_seg_67d6_D4 == -1)
                     {
-                        if (Math.Abs(playerdat.heading_minor - si) >= 0x600)
+                        if (Math.Abs(PlayerHeadingMinor_dseg_8294 - si) >= 0x600)
                         {
                             //seg008_1B09_EC7
-                            if (playerdat.heading_minor - si >= 0x7FFF)
+                            if (PlayerHeadingMinor_dseg_8294 - si >= 0x7FFF)
                             {
                                 //seg008_1B09_ED9: 
-                                playerdat.heading_minor += 0x600;
+                                PlayerHeadingMinor_dseg_8294 += 0x600;
                             }
                             else
                             {
-                                playerdat.heading_minor -= 0x600;
+                                PlayerHeadingMinor_dseg_8294 -= 0x600;
                             }
                         }
                         else
                         {
                             //seg008_1B09_EC1:
-                            playerdat.heading_minor = si;
+                            PlayerHeadingMinor_dseg_8294 = (short)si;
                         }
                     }
                 }
 
             }
             //seg008_1B09_EDF:
-            playerObj.heading = (short)((playerdat.heading_minor >> 0xD) & 0x7);
-            playerObj.npc_heading = (short)((playerdat.heading_minor >> 8) & 0x1F);
+            playerObj.heading = (short)((PlayerHeadingMinor_dseg_8294 >> 0xD) & 0x7);
+            playerObj.npc_heading = (short)((PlayerHeadingMinor_dseg_8294 >> 8) & 0x1F);
 
             if (playerMotionParams.unk_26_falldamage != 0)
             {
@@ -362,16 +364,16 @@ namespace Underworld
             }
             else
             {
-                var di = playerdat.heading_minor;
+                var di = PlayerHeadingMinor_dseg_8294;
                 switch (inputcmd)
                 {
                     case 0:
                         arg4 = 0; break;
                     case 1://walk,run,turn
                         {
-                            playerdat.heading_minor += (MotionRelated_dseg_67d6_775 * ClockIncrement) * (PlayerMotionHeading_77E / 4);
-                            di = playerdat.heading_minor;
-                            playerdat.heading_major = di;
+                            PlayerHeadingMinor_dseg_8294 += (short)((MotionRelated_dseg_67d6_775 * ClockIncrement) * (PlayerMotionHeading_77E / 4));
+                            di = PlayerHeadingMinor_dseg_8294;
+                            PlayerHeadingMajor_dseg_67d6_8296 = di;
                             arg4 = (short)(((PlayerMotionWalk_77C >> 2) * dseg_67d6_22A6) / 0x20);
                             break;
                         }
@@ -387,8 +389,8 @@ namespace Underworld
                                         if (playerMotionParams.unk_14 == 0)
                                         {
                                             //seg008_1B09_1158:
-                                            di = playerdat.heading_minor;
-                                            playerdat.heading_major = di;
+                                            di = PlayerHeadingMinor_dseg_8294;
+                                            PlayerHeadingMajor_dseg_67d6_8296 = di;
                                             arg4 = (short)(dseg_67d6_22A6 / 2);
                                             playerMotionParams.unk_14 = arg4;
                                             dseg_67d6_D0 = 0;
@@ -419,19 +421,19 @@ namespace Underworld
                         }
                     case 8://walk backwards
                         {
-                            di = di - 0x8000;
+                            di = (short)(di - 0x8000);
                             arg4 = dseg_67d6_22AA;
                             dseg_67d6_D0 = -2;
-                            playerdat.heading_major = di;
+                            PlayerHeadingMajor_dseg_67d6_8296 = di;
                             break;
                         }
                     case 9://slide
                     case 0xA:
                         {
-                            di = di - 0x4000;
+                            di = (short)(di - 0x4000);
                             arg4 = dseg_67d6_22A8;
                             dseg_67d6_D0 = -1;
-                            playerdat.heading_major = di;
+                            PlayerHeadingMajor_dseg_67d6_8296 = di;
                             break;
                         }
                     case 0xC://flying up?
@@ -439,7 +441,7 @@ namespace Underworld
                             dseg_67d6_D0 = 0;
                             playerMotionParams.unk_a_pitch = 0x8D;
                             playerMotionParams.unk_10 = 0;
-                            playerdat.heading_major = di;
+                            PlayerHeadingMajor_dseg_67d6_8296 = di;
                             break;
                         }
                     case 0xD://flying down?
@@ -447,12 +449,12 @@ namespace Underworld
                             dseg_67d6_D0 = 0;
                             playerMotionParams.unk_a_pitch = -141;
                             playerMotionParams.unk_10 = 0;
-                            playerdat.heading_major = di;
+                            PlayerHeadingMajor_dseg_67d6_8296 = di;
                             break;
                         }
                     default:
                         {
-                            playerdat.heading_major = di;
+                            PlayerHeadingMajor_dseg_67d6_8296 = di;
                             break;
                         }
                 }

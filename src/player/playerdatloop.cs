@@ -323,7 +323,18 @@ namespace Underworld
 
 
             RefreshLighting();//either brightest physical light or brightest magical light
-            ApplyMazeNavigation();//handles tybals maze
+
+            //Handle game specific items
+            if (_RES != GAME_UW2)
+            {
+                ApplyMazeNavigation();//handles tybals maze
+            }
+            else
+            {
+                FlyingInVoid();//handles flying in the ethereal void
+            }
+            
+
             if ((!AutomapEnabled) && (_RES==GAME_UW2))
             {
                 //Do a test here to see if the player has entered a previously visible tile. If so renable automap.                
@@ -575,33 +586,48 @@ namespace Underworld
                 );
         }
 
+        /// <summary>
+        /// Changes the colour of the maze tiles in Tybals Lair in UW1 when the maze navigation crown is work
+        /// </summary>
         static void ApplyMazeNavigation()
         {
-            if (_RES != GAME_UW2)
+            if (dungeon_level == 7)
             {
-                if (dungeon_level == 7)
+                if (previousMazeNavigation != MazeNavigation)
                 {
-                    if (previousMazeNavigation != MazeNavigation)
+                    //change in stage
+                    if (MazeNavigation)
                     {
-                        //change in stage
-                        if (MazeNavigation)
-                        {
-                            //apply effect
-                            //set tiles to use texture 222
-                            var material = tileMapRender.mapTextures.GetMaterial(52, UWTileMap.current_tilemap.texture_map);
-                            material.SetShaderParameter("texture_albedo", (Texture)tileMapRender.mapTextures.LoadImageAt(222));
-                        }
-                        else
-                        {
-                            //remove effect
-                            //set tiles to us texture 224
-                            var material = tileMapRender.mapTextures.GetMaterial(52, UWTileMap.current_tilemap.texture_map);
-                            material.SetShaderParameter("texture_albedo", (Texture)tileMapRender.mapTextures.LoadImageAt(224));
-                        }
+                        //apply effect
+                        //set tiles to use texture 222
+                        var material = tileMapRender.mapTextures.GetMaterial(52, UWTileMap.current_tilemap.texture_map);
+                        material.SetShaderParameter("texture_albedo", (Texture)tileMapRender.mapTextures.LoadImageAt(222));
+                    }
+                    else
+                    {
+                        //remove effect
+                        //set tiles to us texture 224
+                        var material = tileMapRender.mapTextures.GetMaterial(52, UWTileMap.current_tilemap.texture_map);
+                        material.SetShaderParameter("texture_albedo", (Texture)tileMapRender.mapTextures.LoadImageAt(224));
                     }
                 }
             }
             previousMazeNavigation = MazeNavigation;
+        }
+
+
+        /// <summary>
+        /// Forces fly mode when the player is dreaming in the void
+        /// </summary>
+        static void FlyingInVoid()
+        {
+            if (DreamPlantCounter!=0)
+            {
+                if (DreamingInVoid)
+                {
+                    MagicalMotionAbilities |= 0x10;   //Set bit 4 for flying
+                }
+            }            
         }
 
     }//end class
