@@ -343,8 +343,146 @@ namespace Underworld
             {
                 UpdateAutomap();//update the visited status of nearby tiles
             }
+
+            RefreshPlayerTileState();
+
+            UpdateMotionStateAndSwimming(-1);
         }
 
+        static void RefreshPlayerTileState()
+        {
+            //todo
+            ProcessPlayerTileState( motion.playerMotionParams.tilestate25, 1);
+            motion.Examine_dseg_D3 = 1;
+        }
+
+        static void UpdateMotionStateAndSwimming(int arg0)
+        {
+            //todo
+        }
+
+        static void ProcessPlayerTileState(short tilestate, int arg2)
+        {
+            var InWater = false;
+            if ((motion.PreviousTileState_dseg_67d6_22B4 != tilestate) || (arg2 == 0))
+            {
+                InWater = false;
+                var NewMotionState = 0;
+                motion.PreviousTileState_dseg_67d6_22B4 = tilestate;
+
+                //Test if in water (or water current?)
+                if ((tilestate & 0x22) == 0)
+                {
+                    //seg008_1B09_83:
+                    //not in water
+                    if ((tilestate & 4) != 0)
+                    {
+                        //in lava
+                        NewMotionState = 2;
+                    }
+                    else
+                    {
+                        if ((tilestate & 8) != 0)
+                        {
+                            //in lava
+                            NewMotionState = 3;
+                        }
+                        else
+                        {
+                            if ((tilestate & 0x10) !=0)
+                            {
+                                //in the air?
+                                if ((MagicalMotionAbilities & 0x4) !=0)
+                                {
+                                    NewMotionState = 4;
+                                }
+                                else
+                                {
+                                    if ((MagicalMotionAbilities & 0x10) !=0)
+                                    {
+                                        NewMotionState = 5;
+                                    }
+                                    else
+                                    {
+                                        if ((MagicalMotionAbilities & 0x2) !=0)
+                                        {
+                                            NewMotionState = 6;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    //seg008_1B09_CB:
+                    UpdateMotionStateAndSwimming(NewMotionState);
+                    if (InWater == false)
+                    {
+                        playerdat.SwimCounter = 0;
+                    }
+                }
+                else
+                {
+                    //in water
+                    //seg008_1B09_6B
+                    //test for waterwalking
+                    if ((MagicalMotionAbilities & 0x8)==0)
+                    {
+                        //waterwalk not active
+                        StartSwimming(tilestate);
+                        InWater = true;
+                        NewMotionState = 1;
+                    }
+
+                }
+            }
+
+            //seg008_1B09_E8
+            if ((tilestate & 0x10) !=0)
+            {
+                //when jumping?
+                if ((MagicalMotionAbilities & 0x14) !=0)
+                {
+                    //flying or levitating
+                    motion.playerMotionParams.unk_10_Z = 0;
+                    if (Math.Abs(motion.playerMotionParams.unk_a_pitch) <= 0xA)
+                    {
+                        motion.playerMotionParams.unk_a_pitch = 0;
+                    }
+                    else
+                    {
+                        motion.playerMotionParams.unk_a_pitch = (short)((motion.playerMotionParams.unk_a_pitch << 2) / 5);
+                    }
+                }
+                else
+                {
+                    if (motion.playerMotionParams.unk_10_Z == 0)
+                    {
+                        motion.playerMotionParams.unk_10_Z = -4;
+                    }
+                    if ((MagicalMotionAbilities & 0x2) == 0) // slowfall
+                    {
+                        if (motion.playerMotionParams.unk_a_pitch <= -94)
+                        {
+                            motion.playerMotionParams.unk_a_pitch = -94;
+                            if (motion.playerMotionParams.unk_14 > 0x14)
+                            {
+                                motion.playerMotionParams.unk_14 = (short)(motion.playerMotionParams.unk_14 / 2);
+                            }
+                            else
+                            {
+                                motion.playerMotionParams.unk_14 = 0;
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+
+        static void StartSwimming(int tilestate)
+        {
+            //todo
+        }
 
         /// <summary>
         /// Casts the 3 spell effects stored in the player data.

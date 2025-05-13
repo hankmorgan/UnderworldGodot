@@ -47,7 +47,7 @@ namespace Underworld
                     if (UWMotionParamArray.CalculateMotionGlobal_dseg_67d6_26B6 == 0x10)//note the increment
                     {
                         //seg031_2CFA_7A:
-                        MotionParams.unk_10 = 0;
+                        MotionParams.unk_10_Z = 0;
                         MotionParams.unk_a_pitch = 0;
                         MotionParams.unk_14 = 0;
                         return;
@@ -86,7 +86,7 @@ namespace Underworld
             //seg031_2CFA_4AB:
             MotionParams.unk_8_y = (short)(MotionParams.unk_8_y + (MotionParams.unk_e * MotionParams.speed_12));
             //seg031_2CFA_4B2:
-            MotionParams.unk_a_pitch = (short)(MotionParams.unk_a_pitch + (MotionParams.unk_10 * MotionParams.speed_12));
+            MotionParams.unk_a_pitch = (short)(MotionParams.unk_a_pitch + (MotionParams.unk_10_Z * MotionParams.speed_12));
 
             if (((int)MotionParams.unk_6_x | (int)MotionParams.unk_8_y | (int)MotionParams.unk_a_pitch) == 0)
             {
@@ -774,10 +774,10 @@ namespace Underworld
                         if (
                             ((var2 & 0x1000) != 0)
                             &&
-                            (MotionParams.unk_10 == 0)
+                            (MotionParams.unk_10_Z == 0)
                             )
                         {
-                            MotionParams.unk_10 = -4;
+                            MotionParams.unk_10_Z = -4;
                             seg031_2CFA_78A(MotionParams, var3);
                         }
 
@@ -1121,7 +1121,7 @@ namespace Underworld
             MotionParams.unk_6_x = 0;
             MotionParams.unk_c_X = 0;
             MotionParams.unk_a_pitch = 0;
-            MotionParams.unk_10 = 0;
+            MotionParams.unk_10_Z = 0;
             MotionParams.unk_14 = 0;
             UWMotionParamArray.MAYBEcollisionOrGravity_dseg_67d6_40E++;//Stops loop in Calculate Motion.
             UWMotionParamArray.GravityCollisionRelated_dseg_67d6_414 = 0;

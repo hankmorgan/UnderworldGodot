@@ -50,6 +50,8 @@ namespace Underworld
         public static short PlayerHeadingMinor_dseg_8294;
         public static short PlayerHeadingMajor_dseg_67d6_8296;
 
+        public static short PreviousTileState_dseg_67d6_22B4 = 0;
+
         public static void PlayerMotion(short ClockIncrement)
         {
             dseg_67d6_33D4 = 0;
@@ -86,10 +88,10 @@ namespace Underworld
             dseg_67d6_229C = playerMotionParams.unk_14;
 
 
-            if (playerMotionParams.unk_10 == 0)
+            if (playerMotionParams.unk_10_Z == 0)
             {
                 CalculateMotionFromCommand_seg008_1B09_108E(MotionInputPressed, ClockIncrement, out var2);
-                if (playerMotionParams.unk_10 == 0)
+                if (playerMotionParams.unk_10_Z == 0)
                 {
                     //seg008_1B09_7F6
                     di = (short)(var2 - playerMotionParams.unk_14);
@@ -124,7 +126,7 @@ namespace Underworld
 
 
             //seg008_1B09_83E:
-            if (playerMotionParams.unk_10 != 0)
+            if (playerMotionParams.unk_10_Z != 0)
             {
                 PlayerHeadingMinor_dseg_8294 += (short)(((ClockIncrement * MotionRelated_dseg_67d6_775) * (PlayerMotionHeading_77E / 4)) / 4);
             }
@@ -144,7 +146,7 @@ namespace Underworld
             if (_RES == GAME_UW2)
             {
                 if (
-                    ((((int)playerMotionParams.unk_c_X | (int)playerMotionParams.unk_e | (int)playerMotionParams.unk_10) == 0))
+                    ((((int)playerMotionParams.unk_c_X | (int)playerMotionParams.unk_e | (int)playerMotionParams.unk_10_Z) == 0))
                             && ((playerdat.TileState & 0x84) == 0)
                     )
                 {
@@ -152,7 +154,7 @@ namespace Underworld
                 }
                 else
                 {
-                    if (playerMotionParams.unk_10 != 0)
+                    if (playerMotionParams.unk_10_Z != 0)
                     {
                         if ((playerdat.TileState & 0x84) != 0)
                         {
@@ -163,7 +165,7 @@ namespace Underworld
             }
             else
             {
-                if (((int)playerMotionParams.unk_c_X | (int)playerMotionParams.unk_e | (int)playerMotionParams.unk_10) == 0)
+                if (((int)playerMotionParams.unk_c_X | (int)playerMotionParams.unk_e | (int)playerMotionParams.unk_10_Z) == 0)
                 {
                     playerMotionParams.unk_17 = 0x80;
                 }
@@ -188,7 +190,7 @@ namespace Underworld
 
             //seg008_1B09_AC8:
             playerMotionParams.unk_26_falldamage = 0;
-            dseg_67d6_22A0 = playerMotionParams.unk_10;
+            dseg_67d6_22A0 = playerMotionParams.unk_10_Z;
         }
 
         static void ApplyPlayerMotion(uwObject playerObj)
@@ -384,7 +386,7 @@ namespace Underworld
                             {
                                 if (playerMotionParams.unk_a_pitch == 0)
                                 {
-                                    if (playerMotionParams.unk_10 == 0)
+                                    if (playerMotionParams.unk_10_Z == 0)
                                     {
                                         if (playerMotionParams.unk_14 == 0)
                                         {
@@ -410,11 +412,11 @@ namespace Underworld
                             }
                             if ((playerdat.MagicalMotionAbilities & 0x1) == 0) //leaping
                             {
-                                playerMotionParams.unk_10 = -4;
+                                playerMotionParams.unk_10_Z = -4;
                             }
                             else
                             {
-                                playerMotionParams.unk_10 = -2;
+                                playerMotionParams.unk_10_Z = -2;
                             }
 
                             break;
@@ -440,7 +442,7 @@ namespace Underworld
                         {
                             dseg_67d6_D0 = 0;
                             playerMotionParams.unk_a_pitch = 0x8D;
-                            playerMotionParams.unk_10 = 0;
+                            playerMotionParams.unk_10_Z = 0;
                             PlayerHeadingMajor_dseg_67d6_8296 = di;
                             break;
                         }
@@ -448,7 +450,7 @@ namespace Underworld
                         {
                             dseg_67d6_D0 = 0;
                             playerMotionParams.unk_a_pitch = -141;
-                            playerMotionParams.unk_10 = 0;
+                            playerMotionParams.unk_10_Z = 0;
                             PlayerHeadingMajor_dseg_67d6_8296 = di;
                             break;
                         }

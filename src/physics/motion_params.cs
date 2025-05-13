@@ -413,7 +413,7 @@ namespace Underworld
         /// <summary>
         /// Possibly a Z speedvalue
         /// </summary>
-        public short unk_10
+        public short unk_10_Z
         {
             get
             {

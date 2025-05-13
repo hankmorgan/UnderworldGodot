@@ -564,6 +564,37 @@ namespace Underworld
           }
 
 
+          /// <summary>
+          /// Either how long the player has been swimming or a counter for swimming damage to apply
+          /// </summary>
+           public static int SwimCounter
+          {
+               get
+               {
+                    if (_RES == GAME_UW2)
+                    {
+                         return GetAt(0x308);
+                    }
+                    else
+                    {
+                         return GetAt(0xBA);
+                    }
+               }
+               set
+               {
+                    if (_RES == GAME_UW2)
+                    {
+                         SetAt(0x308, (byte)value);
+                    }
+                    else
+                    {
+                       SetAt(0xBA, (byte)value);  
+                    }
+               }
+
+          }
+
+
           public static int ZVelocity
           {
                get

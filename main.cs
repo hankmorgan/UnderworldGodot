@@ -245,7 +245,9 @@ public partial class main : Node3D
 										TriggerObject: nextObj,
 										triggerType: (int)triggerObjectDat.triggertypes.ENTER,
 										objList: UWTileMap.current_tilemap.LevelObjects);
-								next = nextObj.next;
+									
+								next = nextObj.next; //risk of infinite loop where while player motion is being reworked
+								
 							}
 						}
 						//Debug.Print($"{playerdat.zpos} vs {(tileEntered.floorHeight << 3)}");
@@ -297,7 +299,7 @@ public partial class main : Node3D
 						||
 						(motion.playerMotionParams.unk_a_pitch != 0)
 						||
-						(motion.playerMotionParams.unk_10 != 0)
+						(motion.playerMotionParams.unk_10_Z != 0)
 						||
 						(motion.playerMotionParams.unk_e != 0)
 						||
