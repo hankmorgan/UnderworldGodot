@@ -479,9 +479,31 @@ namespace Underworld
 
         }
 
-        static void StartSwimming(int tilestate)
+
+        /// <summary>
+        /// Initiates the act of swimming in water.
+        /// </summary>
+        /// <param name="tilestate"></param>
+        /// <returns></returns>
+        static bool StartSwimming(int tilestate)
         {
-            //todo
+            bool result = false;
+            if ((tilestate & 0x2) != 0)
+            {
+                result = true;
+                SwimCounter = 0x60;
+                PutWeaponAway();
+            }
+            else
+            {
+                SwimCounter = 0x10;
+            }
+            return result;
+        }
+
+        static void PutWeaponAway()
+        {
+            Debug.Print("put away weapon");
         }
 
         /// <summary>
