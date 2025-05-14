@@ -22,24 +22,24 @@ namespace Underworld
                 playertimer += delta;
                 if (playertimer >= 1f)
                 {//every second
-                    if (ParalyseTimer>0)
+                    if (ParalyseTimer > 0)
                     {
                         ParalyseTimer--;
                         Debug.Print($"Paralyse timer: {ParalyseTimer}");
-                        if (ParalyseTimer==0)
+                        if (ParalyseTimer == 0)
                         {
                             main.gamecam.Set("MOVE", true);//re-enable player motion.
                         }
                     }
                     var secondelasped = (int)(playertimer / 1);
-                    playertimer = 0f;                    
+                    playertimer = 0f;
                     for (int s = 0; s < secondelasped; s++)
                     {
                         secondcounter++;
                         ClockValue += 0x40; //not sure what the exact rate should be here. for the moment assuming this is 1 second of time in game clock terms
 
                         //if ((ClockValue % 2048) < PreviousClockValue)//every 20 seconds
-                        if (secondcounter>=20)
+                        if (secondcounter >= 20)
                         {
                             secondcounter = 0;
                             playerUpdateCounter++;
@@ -93,7 +93,7 @@ namespace Underworld
                             if (DreamingInVoid)
                             {//TODO check if dreaming in void and count down
                                 Debug.Print("Dreaming in void. count down dream plant value");
-                                if (DreamPlantCounter>0)
+                                if (DreamPlantCounter > 0)
                                 {
                                     DreamPlantCounter--;
                                     if (DreamPlantCounter == 0)
@@ -161,11 +161,11 @@ namespace Underworld
                     }//end seconds for loop                 
                 }  //every second  
                 //check for player death.
-                if (play_hp<=0)
+                if (play_hp <= 0)
                 {
-                    Debug.Print ("player has died");
+                    Debug.Print("player has died");
                     PlayerDeath();
-                }            
+                }
             }//end ingame check
         }
 
@@ -175,13 +175,13 @@ namespace Underworld
         /// <param name="regeneration"></param>
         public static void HPRegenerationChange(int regeneration)
         {
-            if (regeneration>=0)
+            if (regeneration >= 0)
             {//when positive apply a random bonus
-                regeneration = 1 + (((Rng.r.Next(4) + regeneration) * max_hp) >> 4);                
+                regeneration = 1 + (((Rng.r.Next(4) + regeneration) * max_hp) >> 4);
             }
             else
             {//when negative exact amount regen
-                regeneration = -regeneration;                
+                regeneration = -regeneration;
             }
             play_hp = Math.Min(play_hp + regeneration, max_hp);
         }
@@ -208,7 +208,7 @@ namespace Underworld
                 }
             }
             //TODO: see about similar logic for UW1 tybals lair
-            
+
             //Apply mana boost
             if (regeneration < 0)
             {//boost mana by minus minus minor class. Not clear when this could happen...
@@ -333,9 +333,9 @@ namespace Underworld
             {
                 FlyingInVoid();//handles flying in the ethereal void
             }
-            
 
-            if ((!AutomapEnabled) && (_RES==GAME_UW2))
+
+            if ((!AutomapEnabled) && (_RES == GAME_UW2))
             {
                 //Do a test here to see if the player has entered a previously visible tile. If so renable automap.                
             }
@@ -352,13 +352,67 @@ namespace Underworld
         static void RefreshPlayerTileState()
         {
             //todo
-            ProcessPlayerTileState( motion.playerMotionParams.tilestate25, 1);
+            ProcessPlayerTileState(motion.playerMotionParams.tilestate25, 1);
             motion.Examine_dseg_D3 = 1;
         }
 
         static void UpdateMotionStateAndSwimming(int arg0)
         {
-            //todo
+            //todo, check if UW1 has the same array values
+            var tilestatetable_var8 = new short[] { 0x14, 0x6, 0xE, 0x14, 0x1, 0xE, 0x4 }; //likely speeds?
+            var tilestatestranslation_var10 = new short[] { 0, 1, 2, 4, 8, 8, 0 };
+            //             ; State   | table value
+            //             ; normal  |     0
+            //             ; swim    |     1
+            //             ; lava    |     2
+            //             ; snow/ice|     4
+            //             ; levitate|     8
+            //             ; fly     |     8
+            //             ; slowfall|     0
+
+            if (arg0 != -1)
+            {
+                TileState = (TileState & 0xE0) + tilestatetable_var8[tilestatestranslation_var10[arg0]];
+                RelatedToMotionState = (RelatedToMotionState & 0xF8) | arg0;
+            }
+            else
+            {
+                arg0 = RelatedToMotionState & 0x7;
+            }
+            int si = 0;
+            if (arg0 != 1)
+            {
+                //not swimming?
+                si = tilestatetable_var8[arg0];
+                
+            }
+            else
+            {
+                si = 4 + (Swimming/2);
+            }
+            //seg008_1B09_12F0: 
+            motion.MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6 = (short)((motion.MaybeBaseForwardSpeed_1_dseg_67d6_CE * si) / 0x14);
+            motion.MaybePlayerActualSlideSpeed_2_dseg_67d6_22A8 = (short)((motion.MaybeBaseSlideSpeed_2_dseg_67d6_CC * si) / 0x14);
+            motion.MaybePlayerActualBackwardsSpeed_3_dseg_67d6_22AA = (short)((motion.MaybeBaseBackwardsSpeed_3_dseg_67d6_CA * si) / 0x14);
+
+            if (arg0>=4)
+            {
+                motion.dseg_67d6_22A2 = motion.MotionRelated_dseg_67d6_775;
+            }
+            else
+            {
+                motion.dseg_67d6_22A2 = (short)((motion.MotionRelated_dseg_67d6_775 * tilestatetable_var8[arg0]) / 0x14);
+            }
+            //seg008_1B09_1342
+
+            if ((WeightMax != 0) && ((WeightCarried << 1) <= WeightMax))
+            {
+                motion.MotionWeightRelated_dseg_67d6_C8 = (short)(0x60 - ((WeightCarried * 0x60) / (WeightMax << 1)));
+            }
+            else
+            {
+                motion.MotionWeightRelated_dseg_67d6_C8 = 0x60;
+            }
         }
 
         static void ProcessPlayerTileState(short tilestate, int arg2)
@@ -389,22 +443,22 @@ namespace Underworld
                         }
                         else
                         {
-                            if ((tilestate & 0x10) !=0)
+                            if ((tilestate & 0x10) != 0)
                             {
                                 //in the air?
-                                if ((MagicalMotionAbilities & 0x4) !=0)
+                                if ((MagicalMotionAbilities & 0x4) != 0)
                                 {
                                     NewMotionState = 4;
                                 }
                                 else
                                 {
-                                    if ((MagicalMotionAbilities & 0x10) !=0)
+                                    if ((MagicalMotionAbilities & 0x10) != 0)
                                     {
                                         NewMotionState = 5;
                                     }
                                     else
                                     {
-                                        if ((MagicalMotionAbilities & 0x2) !=0)
+                                        if ((MagicalMotionAbilities & 0x2) != 0)
                                         {
                                             NewMotionState = 6;
                                         }
@@ -425,7 +479,7 @@ namespace Underworld
                     //in water
                     //seg008_1B09_6B
                     //test for waterwalking
-                    if ((MagicalMotionAbilities & 0x8)==0)
+                    if ((MagicalMotionAbilities & 0x8) == 0)
                     {
                         //waterwalk not active
                         StartSwimming(tilestate);
@@ -437,10 +491,10 @@ namespace Underworld
             }
 
             //seg008_1B09_E8
-            if ((tilestate & 0x10) !=0)
+            if ((tilestate & 0x10) != 0)
             {
                 //when jumping?
-                if ((MagicalMotionAbilities & 0x14) !=0)
+                if ((MagicalMotionAbilities & 0x14) != 0)
                 {
                     //flying or levitating
                     motion.playerMotionParams.unk_10_Z = 0;
@@ -476,7 +530,6 @@ namespace Underworld
                     }
                 }
             }
-
         }
 
 
@@ -781,13 +834,13 @@ namespace Underworld
         /// </summary>
         static void FlyingInVoid()
         {
-            if (DreamPlantCounter!=0)
+            if (DreamPlantCounter != 0)
             {
                 if (DreamingInVoid)
                 {
                     MagicalMotionAbilities |= 0x10;   //Set bit 4 for flying
                 }
-            }            
+            }
         }
 
     }//end class

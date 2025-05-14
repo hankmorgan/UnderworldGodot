@@ -83,6 +83,7 @@ func _process(delta):
 
 # Updates camera movement
 func _update_movement(delta):
+	return
 	# Computes desired direction from key states
 	_direction = Vector3(
 		(_d as float) - (_a as float), 

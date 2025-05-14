@@ -120,11 +120,11 @@ namespace Underworld
         public static void PositionPlayerObject()
         {
             main.gamecam.Position = uwObject.GetCoordinate(
-                tileX: tileX,
-                tileY: tileY,
-                _xpos: xpos,
-                _ypos: ypos,
-                _zpos: camerazpos);
+                tileX: playerObject.tileX,
+                tileY: playerObject.tileY,
+                _xpos: playerObject.xpos,
+                _ypos: playerObject.ypos,
+                _zpos: playerObject.zpos + commonObjDat.height(127));
             main.gamecam.Rotation = Vector3.Zero;
             main.gamecam.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
             main.gamecam.Rotate(Vector3.Up, (float)(-heading_major / 127f * Math.PI));

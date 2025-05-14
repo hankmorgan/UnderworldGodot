@@ -164,10 +164,10 @@ public partial class main : Node3D
 			int yposvecto = (int)(((cam.Position.Z % 1.2f) / 1.2f) * 8);
 			int newzpos = (int)(((((cam.Position.Y) * 100) / 32f) / 15f) * 128f) - commonObjDat.height(127);
 
-			newzpos = Math.Max(Math.Min(newzpos, 127), 0);
-			var tmp = cam.Rotation;
-			tmp.Y = (float)(tmp.Y - Math.PI);
-			playerdat.heading_major = (int)Math.Round(-(tmp.Y * 127) / Math.PI);//placeholder track these values for projectile calcs.
+			// newzpos = Math.Max(Math.Min(newzpos, 127), 0);
+			// var tmp = cam.Rotation;
+			// tmp.Y = (float)(tmp.Y - Math.PI);
+			// playerdat.heading_major = (int)Math.Round(-(tmp.Y * 127) / Math.PI);//placeholder track these values for projectile calcs.
 																		  // playerdat.playerObject.heading = (short)((playerdat.headingMinor >> 0xD) & 0x7);
 																		  // playerdat.playerObject.npc_heading = (short)((playerdat.headingMinor>>8) & 0x1F);
 			uimanager.UpdateCompass();
@@ -180,110 +180,110 @@ public partial class main : Node3D
 			}
 
 
-			if (UWTileMap.ValidTile(tileX, tileY))//((tileX < 64) && (tileX >= 0) && (tileY < 64) && (tileY >= 0))
-			{
-				if ((playerdat.tileX != tileX) || (playerdat.tileY != tileY))
-				{
+			// if (UWTileMap.ValidTile(tileX, tileY))//((tileX < 64) && (tileX >= 0) && (tileY < 64) && (tileY >= 0))
+			// {
+			// 	if ((playerdat.tileX != tileX) || (playerdat.tileY != tileY))
+			// 	{
 
-					var tileExited = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY];
-					if (UWClass._RES == UWClass.GAME_UW2)
-					{
-						//find exit triggers.
-						if (tileExited.indexObjectList != 0)
-						{
-							var next = tileExited.indexObjectList;
-							while (next != 0)
-							{
-								var nextObj = UWTileMap.current_tilemap.LevelObjects[next];
-								trigger.RunTrigger(character: 1,
-										ObjectUsed: nextObj,
-										TriggerObject: nextObj,
-										triggerType: (int)triggerObjectDat.triggertypes.EXIT,
-										objList: UWTileMap.current_tilemap.LevelObjects);
-								next = nextObj.next;
-							}
-						}
-					}
-					//player has changed tiles. move them to their new tile
-					var oldTileX = playerdat.tileX; var oldTileY = playerdat.tileY;
+			// 		var tileExited = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY];
+			// 		if (UWClass._RES == UWClass.GAME_UW2)
+			// 		{
+			// 			//find exit triggers.
+			// 			if (tileExited.indexObjectList != 0)
+			// 			{
+			// 				var next = tileExited.indexObjectList;
+			// 				while (next != 0)
+			// 				{
+			// 					var nextObj = UWTileMap.current_tilemap.LevelObjects[next];
+			// 					trigger.RunTrigger(character: 1,
+			// 							ObjectUsed: nextObj,
+			// 							TriggerObject: nextObj,
+			// 							triggerType: (int)triggerObjectDat.triggertypes.EXIT,
+			// 							objList: UWTileMap.current_tilemap.LevelObjects);
+			// 					next = nextObj.next;
+			// 				}
+			// 			}
+			// 		}
+			// 		//player has changed tiles. move them to their new tile
+			// 		var oldTileX = playerdat.tileX; var oldTileY = playerdat.tileY;
 
-					playerdat.tileX = Math.Min(Math.Max(tileX, 0), 63);
-					playerdat.tileY = Math.Min(Math.Max(tileY, 0), 63);
-					playerdat.PlacePlayerInTile(playerdat.tileX, playerdat.tileY, oldTileX, oldTileY);
-					playerdat.xpos = Math.Min(Math.Max(0, xposvecto), 8);
-					playerdat.ypos = Math.Min(Math.Max(0, yposvecto), 8);
-					playerdat.zpos = newzpos;
-					// if( UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY].tileType != 0)
-					// {//TMP put player Zpos at tile height
-					// 	playerdat.zpos = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY].floorHeight<<3;
-					// }
+			// 		playerdat.tileX = Math.Min(Math.Max(tileX, 0), 63);
+			// 		playerdat.tileY = Math.Min(Math.Max(tileY, 0), 63);
+			// 		playerdat.PlacePlayerInTile(playerdat.tileX, playerdat.tileY, oldTileX, oldTileY);
+			// 		playerdat.xpos = Math.Min(Math.Max(0, xposvecto), 8);
+			// 		playerdat.ypos = Math.Min(Math.Max(0, yposvecto), 8);
+			// 		playerdat.zpos = newzpos;
+			// 		// if( UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY].tileType != 0)
+			// 		// {//TMP put player Zpos at tile height
+			// 		// 	playerdat.zpos = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY].floorHeight<<3;
+			// 		// }
 
 
-					//tmp update the player object to keep in sync with other values
-					playerdat.playerObject.item_id = 127;
-					playerdat.playerObject.xpos = (short)playerdat.xpos;
-					playerdat.playerObject.ypos = (short)playerdat.ypos;
-					playerdat.playerObject.zpos = (short)playerdat.zpos;
-					playerdat.playerObject.tileX = playerdat.tileX;
-					playerdat.playerObject.npc_xhome = (short)tileX;
-					playerdat.playerObject.tileY = playerdat.tileY;
-					playerdat.playerObject.npc_yhome = (short)tileY;
-					var tileEntered = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY];
-					playerdat.PlayerStatusUpdate();
-					if (UWClass._RES == UWClass.GAME_UW2)
-					{
-						//find enter triggers.
-						//find exit triggers.
-						if (tileEntered.indexObjectList != 0)
-						{
-							var next = tileEntered.indexObjectList;
-							while (next != 0)
-							{
-								var nextObj = UWTileMap.current_tilemap.LevelObjects[next];
-								trigger.RunTrigger(character: 1,
-										ObjectUsed: nextObj,
-										TriggerObject: nextObj,
-										triggerType: (int)triggerObjectDat.triggertypes.ENTER,
-										objList: UWTileMap.current_tilemap.LevelObjects);
+			// 		//tmp update the player object to keep in sync with other values
+			// 		playerdat.playerObject.item_id = 127;
+			// 		playerdat.playerObject.xpos = (short)playerdat.xpos;
+			// 		playerdat.playerObject.ypos = (short)playerdat.ypos;
+			// 		playerdat.playerObject.zpos = (short)playerdat.zpos;
+			// 		playerdat.playerObject.tileX = playerdat.tileX;
+			// 		playerdat.playerObject.npc_xhome = (short)tileX;
+			// 		playerdat.playerObject.tileY = playerdat.tileY;
+			// 		playerdat.playerObject.npc_yhome = (short)tileY;
+			// 		var tileEntered = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY];
+			// 		playerdat.PlayerStatusUpdate();
+			// 		if (UWClass._RES == UWClass.GAME_UW2)
+			// 		{
+			// 			//find enter triggers.
+			// 			//find exit triggers.
+			// 			if (tileEntered.indexObjectList != 0)
+			// 			{
+			// 				var next = tileEntered.indexObjectList;
+			// 				while (next != 0)
+			// 				{
+			// 					var nextObj = UWTileMap.current_tilemap.LevelObjects[next];
+			// 					trigger.RunTrigger(character: 1,
+			// 							ObjectUsed: nextObj,
+			// 							TriggerObject: nextObj,
+			// 							triggerType: (int)triggerObjectDat.triggertypes.ENTER,
+			// 							objList: UWTileMap.current_tilemap.LevelObjects);
 									
-								next = nextObj.next; //risk of infinite loop where while player motion is being reworked
+			// 					next = nextObj.next; //risk of infinite loop where while player motion is being reworked
 								
-							}
-						}
-						//Debug.Print($"{playerdat.zpos} vs {(tileEntered.floorHeight << 3)}");
-						// If grounded try and find pressure triggers. for the moment ground is just zpos less than floorheight.
-						if (playerdat.zpos <= (tileEntered.floorHeight << 3))//Janky temp implementation. player must be on/below the height before changing tiles.
-						{
-							if (tileEntered.indexObjectList != 0)
-							{
-								var next = tileEntered.indexObjectList;
-								while (next != 0)
-								{
-									var nextObj = UWTileMap.current_tilemap.LevelObjects[next];
-									trigger.RunTrigger(character: 1,
-											ObjectUsed: nextObj,
-											TriggerObject: nextObj,
-											triggerType: (int)triggerObjectDat.triggertypes.PRESSURE,
-											objList: UWTileMap.current_tilemap.LevelObjects);
-									next = nextObj.next;
-								}
-							}
-						}
-					}
-				}
-			}
-			if (playerdat.playerObject != null)
-			{//temp crash fix
-				if (
-					(playerdat.playerObject.tileX != playerdat.tileX)
-					||
-					(playerdat.playerObject.tileY != playerdat.tileY)
-				)
-				{
-					playerdat.playerObject.tileX = playerdat.tileX;
-					playerdat.playerObject.tileY = playerdat.tileY;
-				}
-			}
+			// 				}
+			// 			}
+			// 			//Debug.Print($"{playerdat.zpos} vs {(tileEntered.floorHeight << 3)}");
+			// 			// If grounded try and find pressure triggers. for the moment ground is just zpos less than floorheight.
+			// 			if (playerdat.zpos <= (tileEntered.floorHeight << 3))//Janky temp implementation. player must be on/below the height before changing tiles.
+			// 			{
+			// 				if (tileEntered.indexObjectList != 0)
+			// 				{
+			// 					var next = tileEntered.indexObjectList;
+			// 					while (next != 0)
+			// 					{
+			// 						var nextObj = UWTileMap.current_tilemap.LevelObjects[next];
+			// 						trigger.RunTrigger(character: 1,
+			// 								ObjectUsed: nextObj,
+			// 								TriggerObject: nextObj,
+			// 								triggerType: (int)triggerObjectDat.triggertypes.PRESSURE,
+			// 								objList: UWTileMap.current_tilemap.LevelObjects);
+			// 						next = nextObj.next;
+			// 					}
+			// 				}
+			// 			}
+			// 		}
+			// 	}
+			// }
+			// if (playerdat.playerObject != null)
+			// {//temp crash fix
+			// 	if (
+			// 		(playerdat.playerObject.tileX != playerdat.tileX)
+			// 		||
+			// 		(playerdat.playerObject.tileY != playerdat.tileY)
+			// 	)
+			// 	{
+			// 		playerdat.playerObject.tileX = playerdat.tileX;
+			// 		playerdat.playerObject.tileY = playerdat.tileY;
+			// 	}
+			// }
 
 			gameRefreshTimer += delta;
 			if (gameRefreshTimer >= 0.3)

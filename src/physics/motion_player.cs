@@ -29,21 +29,25 @@ namespace Underworld
 
         static short dseg_67d6_229A;
         static short dseg_67d6_229C;
+        public static short dseg_67d6_22A2;
 
-        static short dseg_67d6_22AA;
-        static short dseg_67d6_22A6;
-        static short dseg_67d6_22A8;
+        
+        public const short MaybeBaseForwardSpeed_1_dseg_67d6_CE = 0x3AC;
+        public const short MaybeBaseSlideSpeed_2_dseg_67d6_CC = 0xEB;
+        public const short MaybeBaseBackwardsSpeed_3_dseg_67d6_CA = 0xBC;
+        public static short MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6;
+        public static short MaybePlayerActualSlideSpeed_2_dseg_67d6_22A8;
+        public static short MaybePlayerActualBackwardsSpeed_3_dseg_67d6_22AA;
+        
 
         static short dseg_67d6_22A0;
-
         static short dseg_67d6_22AC;
-
         static short dseg_67d6_22AE = -1;//tmp
 
 
-        static short MotionWeightRelated_dseg_67d6_C8;
+        public static short MotionWeightRelated_dseg_67d6_C8;
 
-        static short MotionRelated_dseg_67d6_775 = 0xF;
+        public static short MotionRelated_dseg_67d6_775 = 0xF;
 
         static short SomeTileOrTerrainDatInfo_seg_67d6_D4;
 
@@ -51,6 +55,8 @@ namespace Underworld
         public static short PlayerHeadingMajor_dseg_67d6_8296;
 
         public static short PreviousTileState_dseg_67d6_22B4 = 0;
+
+
 
         public static void PlayerMotion(short ClockIncrement)
         {
@@ -110,7 +116,7 @@ namespace Underworld
                     }
                     //seg008_1B09_81C
                     playerMotionParams.unk_14 += di;
-                    if (playerMotionParams.unk_14 <= dseg_67d6_22A6)
+                    if (playerMotionParams.unk_14 <= MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6)
                     {
                         if (playerMotionParams.unk_14 < 0)
                         {
@@ -119,7 +125,7 @@ namespace Underworld
                     }
                     else
                     {
-                        playerMotionParams.unk_14 = dseg_67d6_22A6;
+                        playerMotionParams.unk_14 = MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6;
                     }
                 }
             }
@@ -376,7 +382,7 @@ namespace Underworld
                             PlayerHeadingMinor_dseg_8294 += (short)((MotionRelated_dseg_67d6_775 * ClockIncrement) * (PlayerMotionHeading_77E / 4));
                             di = PlayerHeadingMinor_dseg_8294;
                             PlayerHeadingMajor_dseg_67d6_8296 = di;
-                            arg4 = (short)(((PlayerMotionWalk_77C >> 2) * dseg_67d6_22A6) / 0x20);
+                            arg4 = (short)(((PlayerMotionWalk_77C >> 2) * MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6) / 0x20);
                             break;
                         }
                     case 6:
@@ -393,7 +399,7 @@ namespace Underworld
                                             //seg008_1B09_1158:
                                             di = PlayerHeadingMinor_dseg_8294;
                                             PlayerHeadingMajor_dseg_67d6_8296 = di;
-                                            arg4 = (short)(dseg_67d6_22A6 / 2);
+                                            arg4 = (short)(MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6 / 2);
                                             playerMotionParams.unk_14 = arg4;
                                             dseg_67d6_D0 = 0;
                                         }
@@ -424,7 +430,7 @@ namespace Underworld
                     case 8://walk backwards
                         {
                             di = (short)(di - 0x8000);
-                            arg4 = dseg_67d6_22AA;
+                            arg4 = MaybePlayerActualBackwardsSpeed_3_dseg_67d6_22AA;
                             dseg_67d6_D0 = -2;
                             PlayerHeadingMajor_dseg_67d6_8296 = di;
                             break;
@@ -433,7 +439,7 @@ namespace Underworld
                     case 0xA:
                         {
                             di = (short)(di - 0x4000);
-                            arg4 = dseg_67d6_22A8;
+                            arg4 = MaybePlayerActualSlideSpeed_2_dseg_67d6_22A8;
                             dseg_67d6_D0 = -1;
                             PlayerHeadingMajor_dseg_67d6_8296 = di;
                             break;
