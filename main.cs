@@ -293,7 +293,7 @@ public partial class main : Node3D
 				{
 					//Player motion.
 					if (
-						(motion.MotionInputPressed != 0)
+						(motion.MotionInputPressed !=0 )
 						||
 						(motion.playerMotionParams.unk_14 != 0)
 						||
@@ -301,12 +301,11 @@ public partial class main : Node3D
 						||
 						(motion.playerMotionParams.unk_10_Z != 0)
 						||
-						(motion.playerMotionParams.unk_e != 0)
+						(motion.playerMotionParams.unk_e_Y != 0)
 						||
-						(motion.playerMotionParams.unk_6_x!= 0)
+						(motion.playerMotionParams.unk_c_X!= 0)
 						||
 						(motion.Examine_dseg_D3 != 0)
-
 					)
 					{
 						//when any forced movement or player input is not 0

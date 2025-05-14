@@ -78,6 +78,12 @@ namespace Underworld
             playerdat.PositionPlayerObject();
 
 
+
+
+            //motion.MotionInputPressed
+            MotionInputPressed = 0;
+
+
         }
 
 
@@ -152,7 +158,7 @@ namespace Underworld
             if (_RES == GAME_UW2)
             {
                 if (
-                    ((((int)playerMotionParams.unk_c_X | (int)playerMotionParams.unk_e | (int)playerMotionParams.unk_10_Z) == 0))
+                    ((((int)playerMotionParams.unk_c_X | (int)playerMotionParams.unk_e_Y | (int)playerMotionParams.unk_10_Z) == 0))
                             && ((playerdat.TileState & 0x84) == 0)
                     )
                 {
@@ -171,7 +177,7 @@ namespace Underworld
             }
             else
             {
-                if (((int)playerMotionParams.unk_c_X | (int)playerMotionParams.unk_e | (int)playerMotionParams.unk_10_Z) == 0)
+                if (((int)playerMotionParams.unk_c_X | (int)playerMotionParams.unk_e_Y | (int)playerMotionParams.unk_10_Z) == 0)
                 {
                     playerMotionParams.unk_17 = 0x80;
                 }
@@ -469,9 +475,210 @@ namespace Underworld
             }
         }
 
-        static void ProcessPlayerTileState(int newTileState_arg0, int arg2)
+static void ProcessPlayerTileState(short tilestate, int arg2)
         {
-            //TODO
+            var InWater = false;
+            if ((motion.PreviousTileState_dseg_67d6_22B4 != tilestate) || (arg2 == 0))
+            {
+                InWater = false;
+                var NewMotionState = 0;
+                motion.PreviousTileState_dseg_67d6_22B4 = tilestate;
+
+                //Test if in water (or water current?)
+                if ((tilestate & 0x22) == 0)
+                {
+                    //seg008_1B09_83:
+                    //not in water
+                    if ((tilestate & 4) != 0)
+                    {
+                        //in lava
+                        NewMotionState = 2;
+                    }
+                    else
+                    {
+                        if ((tilestate & 8) != 0)
+                        {
+                            //in lava
+                            NewMotionState = 3;
+                        }
+                        else
+                        {
+                            if ((tilestate & 0x10) != 0)
+                            {
+                                //in the air?
+                                if ((playerdat.MagicalMotionAbilities & 0x4) != 0)
+                                {
+                                    NewMotionState = 4;
+                                }
+                                else
+                                {
+                                    if ((playerdat.MagicalMotionAbilities & 0x10) != 0)
+                                    {
+                                        NewMotionState = 5;
+                                    }
+                                    else
+                                    {
+                                        if ((playerdat.MagicalMotionAbilities & 0x2) != 0)
+                                        {
+                                            NewMotionState = 6;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    //seg008_1B09_CB:
+                    UpdateMotionStateAndSwimming(NewMotionState);
+                    if (InWater == false)
+                    {
+                        playerdat.SwimCounter = 0;
+                    }
+                }
+                else
+                {
+                    //in water
+                    //seg008_1B09_6B
+                    //test for waterwalking
+                    if ((playerdat.MagicalMotionAbilities & 0x8) == 0)
+                    {
+                        //waterwalk not active
+                        StartSwimming(tilestate);
+                        InWater = true;
+                        NewMotionState = 1;
+                    }
+
+                }
+            }
+
+            //seg008_1B09_E8
+            if ((tilestate & 0x10) != 0)
+            {
+                //when jumping?
+                if ((playerdat.MagicalMotionAbilities & 0x14) != 0)
+                {
+                    //flying or levitating
+                    motion.playerMotionParams.unk_10_Z = 0;
+                    if (Math.Abs(motion.playerMotionParams.unk_a_pitch) <= 0xA)
+                    {
+                        motion.playerMotionParams.unk_a_pitch = 0;
+                    }
+                    else
+                    {
+                        motion.playerMotionParams.unk_a_pitch = (short)((motion.playerMotionParams.unk_a_pitch << 2) / 5);
+                    }
+                }
+                else
+                {
+                    if (motion.playerMotionParams.unk_10_Z == 0)
+                    {
+                        motion.playerMotionParams.unk_10_Z = -4;
+                    }
+                    if ((playerdat.MagicalMotionAbilities & 0x2) == 0) // slowfall
+                    {
+                        if (motion.playerMotionParams.unk_a_pitch <= -94)
+                        {
+                            motion.playerMotionParams.unk_a_pitch = -94;
+                            if (motion.playerMotionParams.unk_14 > 0x14)
+                            {
+                                motion.playerMotionParams.unk_14 = (short)(motion.playerMotionParams.unk_14 / 2);
+                            }
+                            else
+                            {
+                                motion.playerMotionParams.unk_14 = 0;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        public static void RefreshPlayerTileState()
+        {
+            ProcessPlayerTileState(motion.playerMotionParams.tilestate25, 1);
+            motion.Examine_dseg_D3 = 1;
+        }
+
+        public static void UpdateMotionStateAndSwimming(int arg0)
+        {
+            //todo, check if UW1 has the same array values
+            var tilestatetable_var8 = new short[] { 0x14, 0x6, 0xE, 0x14, 0x1, 0xE, 0x4 }; //likely speeds?
+            var tilestatestranslation_var10 = new short[] { 0, 1, 2, 4, 8, 8, 0 };
+            //             ; State   | table value
+            //             ; normal  |     0
+            //             ; swim    |     1
+            //             ; lava    |     2
+            //             ; snow/ice|     4
+            //             ; levitate|     8
+            //             ; fly     |     8
+            //             ; slowfall|     0
+
+            if (arg0 != -1)
+            {
+                playerdat.TileState = (playerdat.TileState & 0xE0) + tilestatestranslation_var10[arg0];
+                playerdat.RelatedToMotionState = (playerdat.RelatedToMotionState & 0xF8) | arg0;
+            }
+            else
+            {
+                arg0 = playerdat.RelatedToMotionState & 0x7;
+            }
+            int si = 0;
+            if (arg0 != 1)
+            {
+                //not swimming?
+                si = tilestatetable_var8[arg0];
+                
+            }
+            else
+            {
+                si = 4 + (playerdat.Swimming/2);
+            }
+            //seg008_1B09_12F0: 
+            motion.MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6 = (short)((motion.MaybeBaseForwardSpeed_1_dseg_67d6_CE * si) / 0x14);
+            motion.MaybePlayerActualSlideSpeed_2_dseg_67d6_22A8 = (short)((motion.MaybeBaseSlideSpeed_2_dseg_67d6_CC * si) / 0x14);
+            motion.MaybePlayerActualBackwardsSpeed_3_dseg_67d6_22AA = (short)((motion.MaybeBaseBackwardsSpeed_3_dseg_67d6_CA * si) / 0x14);
+
+            if (arg0>=4)
+            {
+                motion.dseg_67d6_22A2 = motion.MotionRelated_dseg_67d6_775;
+            }
+            else
+            {
+                motion.dseg_67d6_22A2 = (short)((motion.MotionRelated_dseg_67d6_775 * tilestatetable_var8[arg0]) / 0x14);
+            }
+            //seg008_1B09_1342
+
+            if ((playerdat.WeightMax != 0) && ((playerdat.WeightCarried << 1) <= playerdat.WeightMax))
+            {
+                motion.MotionWeightRelated_dseg_67d6_C8 = (short)(0x60 - ((playerdat.WeightCarried * 0x60) / (playerdat.WeightMax << 1)));
+            }
+            else
+            {
+                motion.MotionWeightRelated_dseg_67d6_C8 = 0x60;
+            }
+        }
+        
+
+
+        /// <summary>
+        /// Initiates the act of swimming in water.
+        /// </summary>
+        /// <param name="tilestate"></param>
+        /// <returns></returns>
+        static bool StartSwimming(int tilestate)
+        {
+            bool result = false;
+            if ((tilestate & 0x2) != 0)
+            {
+                result = true;
+                playerdat.SwimCounter = 0x60;
+                playerdat.PutWeaponAway();
+            }
+            else
+            {
+                playerdat.SwimCounter = 0x10;
+            }
+            return result;
         }
 
     }//end class

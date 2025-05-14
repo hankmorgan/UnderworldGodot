@@ -398,7 +398,7 @@ namespace Underworld
         //     }
         // }
 
-        public short unk_e
+        public short unk_e_Y
         {
             get
             {

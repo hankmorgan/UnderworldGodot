@@ -84,7 +84,7 @@ namespace Underworld
             //seg031_2CFA_494:          
             MotionParams.unk_6_x = (short)(MotionParams.unk_6_x + (MotionParams.unk_c_X * MotionParams.speed_12));
             //seg031_2CFA_4AB:
-            MotionParams.unk_8_y = (short)(MotionParams.unk_8_y + (MotionParams.unk_e * MotionParams.speed_12));
+            MotionParams.unk_8_y = (short)(MotionParams.unk_8_y + (MotionParams.unk_e_Y * MotionParams.speed_12));
             //seg031_2CFA_4B2:
             MotionParams.unk_a_pitch = (short)(MotionParams.unk_a_pitch + (MotionParams.unk_10_Z * MotionParams.speed_12));
 
@@ -1117,7 +1117,7 @@ namespace Underworld
         static void ZeroiseMotionValues_seg031_2CFA_7BF(UWMotionParamArray MotionParams)
         {
             MotionParams.unk_8_y = 0;
-            MotionParams.unk_e = 0;
+            MotionParams.unk_e_Y = 0;
             MotionParams.unk_6_x = 0;
             MotionParams.unk_c_X = 0;
             MotionParams.unk_a_pitch = 0;
