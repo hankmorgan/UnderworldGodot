@@ -241,7 +241,7 @@ namespace Underworld
                 motion.GetCoordinateInDirection((playerdat.playerObject.heading << 5) + playerdat.playerObject.npc_heading, distance, ref x0, ref y0);
                 var tile = UWTileMap.current_tilemap.Tiles[x0, y0];
 
-                if (tile.floorHeight - (playerdat.zpos << 3) <= 2)
+                if (tile.floorHeight - (playerdat.playerObject.zpos << 3) <= 2)
                 {
                     if (motion.TestIfObjectFitsInTile(playerdat.playerObject.item_id, 1, 4 + (x0 << 3), 4 + (y0 << 3), playerdat.playerObject.zpos, 1, 8))
                     {

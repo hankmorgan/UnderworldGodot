@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 
 namespace Underworld
 {
@@ -65,7 +66,8 @@ namespace Underworld
             dseg_67d6_33D0 = 0;
             playerMotionParams.radius_22 = (byte)commonObjDat.radius(playerdat.playerObject.item_id);
             playerMotionParams.height_23 = (byte)commonObjDat.height(playerdat.playerObject.item_id);
-
+            var x_init = playerMotionParams.x_0;
+            var y_init = playerMotionParams.y_2;
             PlayerMotionInitialCalculation_seg008_1B09_7B2(ClockIncrement);
 
             CalculateMotion(
@@ -77,13 +79,14 @@ namespace Underworld
 
             playerdat.PositionPlayerObject();
 
-
+            if ((x_init != playerMotionParams.x_0) || (y_init != playerMotionParams.y_2))
+            {
+                Debug.Print($"Move from {x_init},{y_init} to {playerMotionParams.x_0},{playerMotionParams.y_2}");
+            }
 
 
             //motion.MotionInputPressed
             MotionInputPressed = 0;
-
-
         }
 
 
@@ -217,6 +220,9 @@ namespace Underworld
 
             playerObj.xpos = (short)((playerMotionParams.x_0 >> 5) & 0x7);
             playerObj.ypos = (short)((playerMotionParams.y_2 >> 5) & 0x7);
+
+            Debug.Print($"player high precision x,y = {playerMotionParams.x_0 & 0x1F},{playerMotionParams.x_0 & 0x1F}" );
+
             //TODO update playerObj.goal with value based on system clock
 
             var newTileX = playerMotionParams.x_0 >> 8;
@@ -389,6 +395,7 @@ namespace Underworld
                             di = PlayerHeadingMinor_dseg_8294;
                             PlayerHeadingMajor_dseg_67d6_8296 = di;
                             arg4 = (short)(((PlayerMotionWalk_77C >> 2) * MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6) / 0x20);
+                            dseg_67d6_D0 = 0;
                             break;
                         }
                     case 6:

@@ -201,19 +201,19 @@ namespace Underworld
             }
         }
 
-        public static int xpos
-        {
-            get
-            {
-                return (X & 0xff) >> 5;
-            }
-            set
-            {
-                var tmp = X & 0xFF1F;
-                tmp |= (value << 5);
-                X = tmp;
-            }
-        }
+        // public static int xpos
+        // {
+        //     get
+        //     {
+        //         return (X & 0xff) >> 5;
+        //     }
+        //     set
+        //     {
+        //         var tmp = X & 0xFF1F;
+        //         tmp |= (value << 5);
+        //         X = tmp;
+        //     }
+        // }
 
         /// <summary>
         /// The full Y Coordinate in the map
@@ -253,19 +253,19 @@ namespace Underworld
         /// Player yposition in the tile. Player position appears to be a higher resolution than object positioning 
         /// so the below calc is a hack for initial development positioning of the player char
         /// </summary>
-        public static int ypos
-        {
-            get
-            {
-                return (Y & 0xff) >> 5;// need to confirm if correct
-            }
-            set
-            {
-                var tmp = Y & 0xFF1F;
-                tmp |= (value << 5);
-                Y = tmp;
-            }
-        }
+        // public static int ypos
+        // {
+        //     get
+        //     {
+        //         return (Y & 0xff) >> 5;// need to confirm if correct
+        //     }
+        //     set
+        //     {
+        //         var tmp = Y & 0xFF1F;
+        //         tmp |= (value << 5);
+        //         Y = tmp;
+        //     }
+        // }
 
         public static int Z
         {
@@ -279,25 +279,25 @@ namespace Underworld
             }
         }
 
-        public static int zpos
-        {
-            get
-            {
-                return Z >> 3;
-            }
-            set
-            {
-                Z = (value << 3);
-            }
-        }
+        // public static int zpos
+        // {
+        //     get
+        //     {
+        //         return Z >> 3;
+        //     }
+        //     set
+        //     {
+        //         Z = (value << 3);
+        //     }
+        // }
 
-        public static int camerazpos
-        {
-            get
-            {
-                return zpos + commonObjDat.height(127);
-            }
-        }
+        // public static int camerazpos
+        // {
+        //     get
+        //     {
+        //         return zpos + commonObjDat.height(127);
+        //     }
+        // }
 
         public static int heading_minor
         {

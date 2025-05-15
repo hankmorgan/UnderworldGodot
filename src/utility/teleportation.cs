@@ -145,16 +145,19 @@ namespace Underworld
 
         public static void MovePlayerToTile(int tileX, int tileY)
         {
-            var tile = UWTileMap.current_tilemap.Tiles[tileX,tileY];//place object in tile will refresh player object on next game tick.
-            playerdat.zpos = tile.floorHeight << 3;
-            playerdat.xpos = 3; playerdat.ypos = 3;
+            var tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];//place object in tile will refresh player object on next game tick.
+            playerdat.playerObject.zpos = (short)(tile.floorHeight << 3);
+            playerdat.playerObject.xpos = 3; playerdat.playerObject.ypos = 3;
             playerdat.tileX = tileX; playerdat.tileY = tileY;
-            main.gamecam.Position = uwObject.GetCoordinate(
-                tileX: playerdat.tileX,
-                tileY: playerdat.tileY,
-                _xpos: playerdat.xpos,
-                _ypos: playerdat.ypos,
-                _zpos: playerdat.camerazpos);
+            
+            playerdat.PositionPlayerObject();
+
+            // main.gamecam.Position = uwObject.GetCoordinate(
+            //     tileX: playerdat.tileX,
+            //     tileY: playerdat.tileY,
+            //     _xpos: playerdat.xpos,
+            //     _ypos: playerdat.ypos,
+            //     _zpos: playerdat.camerazpos);
         }
 
 

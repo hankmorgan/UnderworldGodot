@@ -636,7 +636,7 @@ namespace Underworld
                                 if (critter.ProjectileSourceID == 1)
                                 {//player has attacked
                                     critter.npc_attitude = 0;
-                                    SetNPCTargetDestination(critter, playerdat.tileX, playerdat.tileY, playerdat.zpos);
+                                    SetNPCTargetDestination(critter, playerdat.playerObject.tileX, playerdat.playerObject.tileY, playerdat.playerObject.zpos);
                                     critter.UnkBit_0x19_0_likelyincombat = 1;
                                 }
 
@@ -2718,8 +2718,8 @@ namespace Underworld
         /// <returns></returns>
         static int VectorsToPlayer(int headingArg0, int maybedist)
         {
-            var playerXCoordinate = playerdat.xpos + (playerdat.playerObject.npc_xhome << 3);
-            var playerYCoordinate = playerdat.ypos + (playerdat.playerObject.npc_yhome << 3);
+            var playerXCoordinate = playerdat.playerObject.xpos + (playerdat.playerObject.npc_xhome << 3);
+            var playerYCoordinate = playerdat.playerObject.ypos + (playerdat.playerObject.npc_yhome << 3);
             var xvector = playerXCoordinate - currentGTargXCoord;
             var yvector = playerYCoordinate - currentGTargYCoord;
             if (Math.Pow(xvector, 2) + Math.Pow(yvector, 2) > Math.Pow(maybedist, 2))

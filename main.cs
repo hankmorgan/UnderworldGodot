@@ -245,9 +245,9 @@ public partial class main : Node3D
 			// 							TriggerObject: nextObj,
 			// 							triggerType: (int)triggerObjectDat.triggertypes.ENTER,
 			// 							objList: UWTileMap.current_tilemap.LevelObjects);
-									
+
 			// 					next = nextObj.next; //risk of infinite loop where while player motion is being reworked
-								
+
 			// 				}
 			// 			}
 			// 			//Debug.Print($"{playerdat.zpos} vs {(tileEntered.floorHeight << 3)}");
@@ -286,14 +286,14 @@ public partial class main : Node3D
 			// }
 
 			gameRefreshTimer += delta;
-			if (gameRefreshTimer >= 0.3)
+			if (gameRefreshTimer >= 0.1)
 			{
 				gameRefreshTimer = 0;
 				if (!blockmouseinput)
 				{
 					//Player motion.
 					if (
-						(motion.MotionInputPressed !=0 )
+						(motion.MotionInputPressed != 0)
 						||
 						(motion.playerMotionParams.unk_14 != 0)
 						||

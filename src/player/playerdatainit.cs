@@ -117,6 +117,10 @@ namespace Underworld
             
         }
 
+        /// <summary>
+        /// Positions the player game camera based on x/y/z pos and current tileX/Y
+        /// Note this does not provide enough precision to fully reflect all the positions the player camera can be  at.
+        /// </summary>
         public static void PositionPlayerObject()
         {
             main.gamecam.Position = uwObject.GetCoordinate(
