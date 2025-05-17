@@ -112,8 +112,10 @@ namespace Underworld
             motion.playerMotionParams.y_2 = (short)playerdat.Y;
             motion.playerMotionParams.z_4 = (short)playerdat.Z;
 
-            motion.PlayerHeadingMinor_dseg_8294 = (short)playerdat.heading_minor;
+            motion.playerMotionParams.index_20 = 1;
+            motion.playerMotionParams.unk_24 = 8;
 
+            motion.PlayerHeadingMinor_dseg_8294 = (short)playerdat.heading_minor;
 
         }
 
