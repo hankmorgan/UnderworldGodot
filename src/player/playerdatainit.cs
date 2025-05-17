@@ -29,7 +29,7 @@ namespace Underworld
                 //default start locations.                
                 switch (_RES)
                 {
-                    case GAME_UW2:                        
+                    case GAME_UW2:
                         main.gamecam.Position = new Vector3(-23f, 4.3f, 58.2f);
                         break;
                     default:
@@ -114,7 +114,7 @@ namespace Underworld
 
             motion.PlayerHeadingMinor_dseg_8294 = (short)playerdat.heading_minor;
 
-            
+
         }
 
         /// <summary>
@@ -123,12 +123,26 @@ namespace Underworld
         /// </summary>
         public static void PositionPlayerObject()
         {
-            main.gamecam.Position = uwObject.GetCoordinate(
+            var x_adj = 0f;
+            var y_adj = 0f;
+            if ((motion.playerMotionParams.x_0 & 0x1F) != 0)
+            {
+                x_adj = 0.15F / ((float)(motion.playerMotionParams.x_0 & 0x1F));
+            }
+            if ((motion.playerMotionParams.y_2 & 0x1F) != 0)
+            {
+                y_adj = 0.15F / ((float)(motion.playerMotionParams.y_2 & 0x1F));
+            }
+            Vector3 adjust = new Vector3(
+                x: x_adj,
+                z: y_adj,
+                y: 0); //y-up
+            main.gamecam.Position = adjust + uwObject.GetCoordinate(
                 tileX: playerObject.tileX,
                 tileY: playerObject.tileY,
                 _xpos: playerObject.xpos,
                 _ypos: playerObject.ypos,
-                _zpos: playerObject.zpos + commonObjDat.height(127));
+                _zpos: playerObject.zpos + commonObjDat.height(127), CentreInGrid: false);
             main.gamecam.Rotation = Vector3.Zero;
             main.gamecam.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
             main.gamecam.Rotate(Vector3.Up, (float)(-heading_major / 127f * Math.PI));
@@ -241,16 +255,16 @@ namespace Underworld
                 {
                     SetQuest(q, 0);
                 }
-                SetQuest(37,0); //garamon dreams
-                for (int v = 0; v<=63; v++)
+                SetQuest(37, 0); //garamon dreams
+                for (int v = 0; v <= 63; v++)
                 {
-                    SetGameVariable (v,0);
+                    SetGameVariable(v, 0);
                 }
                 for (int l = 0; l < 9; l++)
                 {
                     SetLevelLore(l, 0);
                 }
-                SetGameVariable(26,53);//bullfrog retries
+                SetGameVariable(26, 53);//bullfrog retries
             }
         }
 

@@ -190,10 +190,13 @@ namespace Underworld
             //seg008_1B09_A9D:
             //UW1 and UW2 realign here.
             if (playerMotionParams.unk_14 == 0)
-            {
-                //seg008_1B09_AAA:
+            {                
                 PlayerHeadingMajor_dseg_67d6_8296 = PlayerHeadingMinor_dseg_8294;
             }
+            
+            //seg008_1B09_AAA:
+            playerMotionParams.heading_1E = PlayerHeadingMajor_dseg_67d6_8296;
+            setAt(UWMotionParamArray.PlayerMotionHandler_dseg_67d6_26AA, 0, 16, 0x0);
 
             if ((playerdat.MagicalMotionAbilities & 0x14) != 0)
             {
@@ -221,7 +224,7 @@ namespace Underworld
             playerObj.xpos = (short)((playerMotionParams.x_0 >> 5) & 0x7);
             playerObj.ypos = (short)((playerMotionParams.y_2 >> 5) & 0x7);
 
-            Debug.Print($"player high precision x,y = {playerMotionParams.x_0 & 0x1F},{playerMotionParams.x_0 & 0x1F}" );
+            Debug.Print($"player high precision x,y = {playerMotionParams.x_0 & 0x1F},{playerMotionParams.y_2 & 0x1F}" );
 
             //TODO update playerObj.goal with value based on system clock
 

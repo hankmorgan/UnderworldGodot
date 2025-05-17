@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 
 namespace Underworld
 {
@@ -886,6 +887,11 @@ namespace Underworld
                         }
 
                         //NEXT_seg006_1413_1402
+                        if (next == obj.next)
+                        {
+                            Debug.Print("Finite loop in TraverseMultipleTiles. Probably player has not been correctly moved between tiles");
+                            break;//stop infit loop due to bug with playermotion.
+                        }
                         next = obj.next;
                     }
                     //AfterLoop_seg006_1413_142A:
