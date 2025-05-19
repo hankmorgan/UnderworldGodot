@@ -36,7 +36,7 @@ namespace Underworld
                     for (int s = 0; s < secondelasped; s++)
                     {
                         secondcounter++;
-                        ClockValue += 0x40; //not sure what the exact rate should be here. for the moment assuming this is 1 second of time in game clock terms
+                        //ClockValue += 0x40; //not sure what the exact rate should be here. for the moment assuming this is 1 second of time in game clock terms
 
                         //if ((ClockValue % 2048) < PreviousClockValue)//every 20 seconds
                         if (secondcounter >= 20)

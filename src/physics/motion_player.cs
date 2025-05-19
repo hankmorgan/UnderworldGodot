@@ -58,6 +58,10 @@ namespace Underworld
         public static short PreviousTileState_dseg_67d6_22B4 = 0;
 
 
+        public static short RelatedToSwimDmg_dseg_67d6_33CE = 0;
+        public static byte RelatedToClockIncrement_67d6_742;
+
+
 
         public static void PlayerMotion(short ClockIncrement)
         {

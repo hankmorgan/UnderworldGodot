@@ -52,9 +52,14 @@ public partial class main : Node3D
 
 	double cycletime = 0;
 
-
-
 	public static bool DoRedraw = false;
+
+
+	//DOS INT8 (PIT) timer interupt. updates 18.2 times a second.
+	double Pit = 0f;
+	uint PitTimer = 0;
+	uint LastPitTimer = 0;
+	static byte EasyMoveFrameIncrement = 0;
 
 	public override void _Ready()
 	{
@@ -138,6 +143,7 @@ public partial class main : Node3D
 			a_sprite.Position = gamecam.Position;
 		}
 	}
+	
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
@@ -151,6 +157,97 @@ public partial class main : Node3D
 				PaletteLoader.UpdatePaletteCycles();
 			}
 		}
+
+		//DOS interupt 8
+		Pit += delta;
+		//
+		if (Pit > 0.054945)
+		{
+			PitTimer++;
+			Pit = 0;
+		}
+
+		if ((uimanager.InGame) && (!blockmouseinput))
+		{
+			byte AnimationFrameDelta = 0;
+
+			var ClockIncrement = PitTimer - LastPitTimer;
+			if ((ClockIncrement < 0) || (ClockIncrement > 0x40))
+			{
+				ClockIncrement = 0x40;
+				AnimationFrameDelta = 1;
+				EasyMoveFrameIncrement += 4;
+			}
+			else
+			{
+				EasyMoveFrameIncrement = (byte)(((PitTimer >> 4) & 0xFF) - ((LastPitTimer >> 4) & 0xFF));
+				AnimationFrameDelta = (byte)(((PitTimer >> 6) & 0xFF) - ((LastPitTimer >> 6) & 0xFF));
+			}
+
+			if (ClockIncrement != 0)
+			{
+				if (AnimationFrameDelta != 0)
+				{
+					//if animations enabled
+					if ((uimanager.InGame) && (!blockmouseinput))
+					{
+						AnimationOverlay.UpdateAnimationOverlays();
+						timers.RunTimerTriggers(AnimationFrameDelta);
+					}
+				}
+				playerdat.ClockValue += (int)ClockIncrement;
+				LastPitTimer = PitTimer;
+				AnimationFrameDelta = EasyMoveFrameIncrement;
+				if (playerdat.SpeedEnchantment)
+				{
+					EasyMoveFrameIncrement = (byte)((AnimationFrameDelta >> 1) & 0x1);
+				}
+				else
+				{
+					EasyMoveFrameIncrement = 0;
+				}
+
+				GameObjectLoop((byte)ClockIncrement, AnimationFrameDelta, false);
+			}
+		}
+
+
+
+
+		//Other updates
+		if (uimanager.InGame)
+		{
+			RefreshWorldState();//handles teleports, tile redraws
+			uimanager.UpdateCompass();
+			combat.CombatInputHandler(delta);
+			playerdat.PlayerTimedLoop(delta);
+
+			int tileX = -(int)(cam.Position.X / 1.2f);
+			int tileY = (int)(cam.Position.Z / 1.2f);
+			tileX = Math.Max(Math.Min(tileX, 63), 0);
+			tileY = Math.Max(Math.Min(tileY, 63), 0);
+			int xposvecto = -(int)(((cam.Position.X % 1.2f) / 1.2f) * 8);
+			int yposvecto = (int)(((cam.Position.Z % 1.2f) / 1.2f) * 8);
+			int newzpos = (int)(((((cam.Position.Y) * 100) / 32f) / 15f) * 128f) - commonObjDat.height(127);
+			if (EnablePositionDebug)
+			{
+				var fps = Engine.GetFramesPerSecond();
+				lblPositionDebug.Text = $"FPS:{fps} Time:{playerdat.game_time}\nL:{playerdat.dungeon_level} X:{tileX} Y:{tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}\n{cam.Rotation} {playerdat.heading_major} {(playerdat.heading_major >> 4) % 4} {xposvecto} {yposvecto} {newzpos}";
+			}
+
+			if ((MessageDisplay.WaitingForTypedInput) || (MessageDisplay.WaitingForYesOrNo))
+			{
+				if (!uimanager.instance.TypedInput.HasFocus())
+				{
+					uimanager.instance.TypedInput.GrabFocus();
+				}
+				uimanager.instance.scroll.UpdateMessageDisplay();
+			}
+		}
+
+
+
+		return;
 
 		if (uimanager.InGame)
 		{
@@ -168,8 +265,8 @@ public partial class main : Node3D
 			// var tmp = cam.Rotation;
 			// tmp.Y = (float)(tmp.Y - Math.PI);
 			// playerdat.heading_major = (int)Math.Round(-(tmp.Y * 127) / Math.PI);//placeholder track these values for projectile calcs.
-																		  // playerdat.playerObject.heading = (short)((playerdat.headingMinor >> 0xD) & 0x7);
-																		  // playerdat.playerObject.npc_heading = (short)((playerdat.headingMinor>>8) & 0x1F);
+			// playerdat.playerObject.heading = (short)((playerdat.headingMinor >> 0xD) & 0x7);
+			// playerdat.playerObject.npc_heading = (short)((playerdat.headingMinor>>8) & 0x1F);
 			uimanager.UpdateCompass();
 			combat.CombatInputHandler(delta);
 			playerdat.PlayerTimedLoop(delta);
@@ -303,7 +400,7 @@ public partial class main : Node3D
 						||
 						(motion.playerMotionParams.unk_e_Y != 0)
 						||
-						(motion.playerMotionParams.unk_c_X!= 0)
+						(motion.playerMotionParams.unk_c_X != 0)
 						||
 						(motion.Examine_dseg_D3 != 0)
 					)
@@ -365,6 +462,100 @@ public partial class main : Node3D
 					uimanager.instance.TypedInput.GrabFocus();
 				}
 				uimanager.instance.scroll.UpdateMessageDisplay();
+			}
+		}
+	}
+
+
+	static void GameObjectLoop(byte ClockIncrement, short AnimationFrameDelta, bool EasyMove)
+	{
+		motion.RelatedToSwimDmg_dseg_67d6_33CE = 0;
+		motion.RelatedToClockIncrement_67d6_742 += ClockIncrement;
+
+		if (motion.MotionInputPressed == 0)
+		{
+			if (playerdat.RoamingSightEnchantment == false)
+			{
+				//ProcessMotionInputs
+			}
+		}
+		if (
+			(motion.MotionInputPressed != 0)
+			||
+			(motion.playerMotionParams.unk_14 != 0)
+			||
+			(motion.playerMotionParams.unk_a_pitch != 0)
+			||
+			(motion.playerMotionParams.unk_10_Z != 0)
+			||
+			(motion.playerMotionParams.unk_e_Y != 0)
+			||
+			(motion.playerMotionParams.unk_c_X != 0)
+			||
+			(motion.Examine_dseg_D3 != 0)
+		)
+		{
+			if (EasyMove == false)
+			{
+				//when any forced movement or player input is not 0
+				motion.PlayerMotion(ClockIncrement); //todo confirm increments
+			}
+
+		}
+		if (playerdat.FreezeTimeEnchantment == false)
+		{
+			if (AnimationFrameDelta != 0)
+			{
+				ProcessMobileObjects(AnimationFrameDelta);
+			}
+		}
+		if (playerdat.TileState != 0)
+		{
+			//WalkOnSpecialTerrain();
+		}
+		//playerdat.ApplyPlayerSneakScore(EasyMove);
+
+		//Footsteps()
+	}
+
+	static void ProcessMobileObjects(short AnimationFrameDelta)
+	{
+		for (int i = 0; i < UWTileMap.current_tilemap.NoOfActiveMobiles; i++)
+		{
+			var index = UWTileMap.current_tilemap.GetActiveMobileAtIndex(i);
+			if ((index > 1) && (index < 256))
+			{
+				var obj = UWTileMap.current_tilemap.LevelObjects[index];
+				if (obj.majorclass == 1)
+				{
+					if (UWTileMap.ValidTile(obj.tileX, obj.tileY))
+					{
+						//This is an NPC on the map	
+						var n = (npc)obj.instance;
+
+						npc.NPCInitialProcess(obj);
+						if (n != null)
+						{
+							if (obj.instance != null)
+							{
+								var CalcedFacing = npc.CalculateFacingAngleToNPC(obj);
+								n.SetAnimSprite(obj.npc_animation, obj.AnimationFrame, CalcedFacing);
+							}
+						}
+					}
+					else
+					{
+						Debug.Print($"{obj.a_name} {obj.index} is off map");
+					}
+				}
+				else
+				{
+					if (motion.MotionSingleStepEnabled)
+					{
+						//This is a projectile
+						motion.MotionProcessing(obj);
+					}
+				}
 			}
 		}
 	}
