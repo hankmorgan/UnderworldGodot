@@ -61,6 +61,9 @@ public partial class main : Node3D
 	uint LastPitTimer = 0;
 	static byte EasyMoveFrameIncrement = 0;
 
+	static byte ThisFrameDelta = 0;
+	static byte PreviousFrameDelta = 0;
+
 	public override void _Ready()
 	{
 		instance = this;
@@ -143,7 +146,6 @@ public partial class main : Node3D
 			a_sprite.Position = gamecam.Position;
 		}
 	}
-	
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
@@ -161,57 +163,65 @@ public partial class main : Node3D
 		//DOS interupt 8
 		Pit += delta;
 		//
-		if (Pit > 0.054945)
+		if (Pit >= 0.054945)
 		{
 			PitTimer++;
 			Pit = 0;
+			//Debug.Print($"{Pit}, {PitTimer}, {delta}");
 		}
+
 
 		if ((uimanager.InGame) && (!blockmouseinput))
 		{
-			byte AnimationFrameDelta = 0;
+
+			byte AnimationFrameDeltaIncrement = 0;
 
 			var ClockIncrement = PitTimer - LastPitTimer;
 			if ((ClockIncrement < 0) || (ClockIncrement > 0x40))
 			{
 				ClockIncrement = 0x40;
-				AnimationFrameDelta = 1;
+				AnimationFrameDeltaIncrement = 1;
 				EasyMoveFrameIncrement += 4;
 			}
 			else
 			{
-				EasyMoveFrameIncrement = (byte)(((PitTimer >> 4) & 0xFF) - ((LastPitTimer >> 4) & 0xFF));
-				AnimationFrameDelta = (byte)(((PitTimer >> 6) & 0xFF) - ((LastPitTimer >> 6) & 0xFF));
+				//Debug.Print($"{PitTimer - LastPitTimer}");
+				EasyMoveFrameIncrement += (byte)(((PitTimer >> 4) & 0xFFFF) - ((LastPitTimer >> 4) & 0xFFFF));
+				AnimationFrameDeltaIncrement = (byte)(((PitTimer >> 6) & 0xFFFF) - ((LastPitTimer >> 6) & 0xFFFF));
+
+
+				//HACK the above appears to be what should be happening but is very slow to process, but the below gives the appearance of normal movement. 
+				 EasyMoveFrameIncrement = 1;
+				 AnimationFrameDeltaIncrement = 1;
 			}
 
 			if (ClockIncrement != 0)
 			{
-				if (AnimationFrameDelta != 0)
+				if (AnimationFrameDeltaIncrement != 0)
 				{
 					//if animations enabled
 					if ((uimanager.InGame) && (!blockmouseinput))
 					{
 						AnimationOverlay.UpdateAnimationOverlays();
-						timers.RunTimerTriggers(AnimationFrameDelta);
+						timers.RunTimerTriggers(AnimationFrameDeltaIncrement);
 					}
 				}
 				playerdat.ClockValue += (int)ClockIncrement;
 				LastPitTimer = PitTimer;
-				AnimationFrameDelta = EasyMoveFrameIncrement;
+				AnimationFrameDeltaIncrement = EasyMoveFrameIncrement;
 				if (playerdat.SpeedEnchantment)
 				{
-					EasyMoveFrameIncrement = (byte)((AnimationFrameDelta >> 1) & 0x1);
+					EasyMoveFrameIncrement = (byte)((AnimationFrameDeltaIncrement >> 1) & 0x1);
 				}
 				else
 				{
 					EasyMoveFrameIncrement = 0;
 				}
 
-				GameObjectLoop((byte)ClockIncrement, AnimationFrameDelta, false);
+				GameObjectLoop((byte)ClockIncrement, AnimationFrameDeltaIncrement, false);
 			}
+
 		}
-
-
 
 
 		//Other updates
@@ -467,7 +477,7 @@ public partial class main : Node3D
 	}
 
 
-	static void GameObjectLoop(byte ClockIncrement, short AnimationFrameDelta, bool EasyMove)
+	static void GameObjectLoop(byte ClockIncrement, byte AnimationFrameDelta, bool EasyMove)
 	{
 		motion.RelatedToSwimDmg_dseg_67d6_33CE = 0;
 		motion.RelatedToClockIncrement_67d6_742 += ClockIncrement;
@@ -518,45 +528,87 @@ public partial class main : Node3D
 		//Footsteps()
 	}
 
-	static void ProcessMobileObjects(short AnimationFrameDelta)
+	static void ProcessMobileObjects(byte AnimationFrameDelta)
 	{
+		ThisFrameDelta = (byte)((PreviousFrameDelta + AnimationFrameDelta) & 0xF);
 		for (int i = 0; i < UWTileMap.current_tilemap.NoOfActiveMobiles; i++)
 		{
 			var index = UWTileMap.current_tilemap.GetActiveMobileAtIndex(i);
 			if ((index > 1) && (index < 256))
 			{
 				var obj = UWTileMap.current_tilemap.LevelObjects[index];
-				if (obj.majorclass == 1)
+				//Loop update for a many times as the frame deltas require the object to be updated in this loop.
+				while (CheckIfUpdateNeeded(nextFrame: obj.NextFrame_0XA_Bit0123))
 				{
-					if (UWTileMap.ValidTile(obj.tileX, obj.tileY))
+					if (obj.majorclass == 1)
 					{
-						//This is an NPC on the map	
-						var n = (npc)obj.instance;
-
-						npc.NPCInitialProcess(obj);
-						if (n != null)
+						if (UWTileMap.ValidTile(obj.tileX, obj.tileY))
 						{
-							if (obj.instance != null)
+							//This is an NPC on the map	
+							var n = (npc)obj.instance;
+
+							npc.NPCInitialProcess(obj);
+							if (n != null)
 							{
-								var CalcedFacing = npc.CalculateFacingAngleToNPC(obj);
-								n.SetAnimSprite(obj.npc_animation, obj.AnimationFrame, CalcedFacing);
+								if (obj.instance != null)
+								{
+									var CalcedFacing = npc.CalculateFacingAngleToNPC(obj);
+									n.SetAnimSprite(obj.npc_animation, obj.AnimationFrame, CalcedFacing);
+								}
 							}
+						}
+						else
+						{
+							Debug.Print($"{obj.a_name} {obj.index} is off map");
 						}
 					}
 					else
 					{
-						Debug.Print($"{obj.a_name} {obj.index} is off map");
-					}
-				}
-				else
-				{
-					if (motion.MotionSingleStepEnabled)
-					{
+						//if (motion.MotionSingleStepEnabled)
+						//{
 						//This is a projectile
 						motion.MotionProcessing(obj);
+						//}
 					}
+
 				}
 			}
+		}
+		PreviousFrameDelta = ThisFrameDelta;
+	}
+
+	/// <summary>
+	/// Checks if object/npc needs to move based on their nextFrame value and the current Animation Frame Delta
+	/// </summary>
+	/// <param name="nextFrame"></param>
+	/// <param name="AnimationFrameDelta"></param>
+	/// <returns></returns>
+	static bool CheckIfUpdateNeeded(int nextFrame)
+	{
+		//if (AnimationFrameDelta)
+		if (ThisFrameDelta > nextFrame)
+		{
+			if (nextFrame + 4 >= ThisFrameDelta)
+			{
+				return true;
+			}
+		}
+		//seg007_17A2_357A
+		if (ThisFrameDelta + 0x10 <= nextFrame)
+		{
+			return false;
+		}
+		if (PreviousFrameDelta > nextFrame)
+		{
+			return false;
+		}
+		if (PreviousFrameDelta <= ThisFrameDelta)
+		{
+			return false;
+		}
+		else
+		{
+			return true;
 		}
 	}
 
