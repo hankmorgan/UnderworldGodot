@@ -135,14 +135,14 @@ namespace Underworld
             var y_adj = 0f;
             if ((motion.playerMotionParams.x_0 & 0x1F) != 0)
             {
-                x_adj = 0.15F / ((float)(motion.playerMotionParams.x_0 & 0x1F));
+                x_adj = 0.0046875f * ((float)(motion.playerMotionParams.x_0 & 0x1F));
             }
             if ((motion.playerMotionParams.y_2 & 0x1F) != 0)
             {
-                y_adj = 0.15F / ((float)(motion.playerMotionParams.y_2 & 0x1F));
+                y_adj = 0.0046875f * ((float)(motion.playerMotionParams.y_2 & 0x1F));
             }
             Vector3 adjust = new Vector3(
-                x: x_adj,
+                x: -x_adj,
                 z: y_adj,
                 y: 0); //y-up
             main.gamecam.Position = adjust + uwObject.GetCoordinate(

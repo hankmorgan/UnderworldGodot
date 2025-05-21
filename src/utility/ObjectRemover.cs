@@ -311,6 +311,11 @@ namespace Underworld
                     return true;
                 }
                 listhead = next;//move the listhead on.
+                if (next == objlist[next].next)
+                {
+                    Debug.Print("Infinite loop in RemoveObjectFromLinkedList()");
+                    return false;
+                }
                 next = objlist[next].next;//get the next object
             }
             return false;
