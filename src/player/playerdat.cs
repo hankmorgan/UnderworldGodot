@@ -299,6 +299,23 @@ namespace Underworld
         //     }
         // }
 
+
+        /// <summary>
+        /// heading minor and heading major. this is getting confusing...
+        /// </summary>
+        public static int heading_full
+        {
+            get
+            {
+                return GetAt16(0x5B);
+            }
+            set
+            {
+                SetAt16(0x5B, (byte)value);
+            }
+        }
+
+
         public static int heading_minor
         {
             get

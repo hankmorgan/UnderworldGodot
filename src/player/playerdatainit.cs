@@ -115,7 +115,13 @@ namespace Underworld
             motion.playerMotionParams.index_20 = 1;
             motion.playerMotionParams.unk_24 = 8;
 
-            motion.PlayerHeadingMinor_dseg_8294 = (short)playerdat.heading_minor;
+            motion.playerMotionParams.tilestate25 = (byte)(playerdat.RelatedToMotionState >> 3);
+
+            motion.PlayerHeadingMinor_dseg_8294 = (short)playerdat.heading_full;
+
+            motion.UpdateMotionStateAndSwimming(playerdat.RelatedToMotionState & 0x7);
+
+            //TODO process detail and music/sound options
 
         }
 
