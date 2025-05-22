@@ -147,9 +147,9 @@ public partial class main : Node3D
 		}
 	}
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
-	{
+    // Called every frame. 'delta' is the elapsed time since the previous frame.
+    public override void _PhysicsProcess(double delta)
+    {
 		if ((uimanager.InGame) || (uimanager.AtMainMenu))
 		{
 			cycletime += delta;
@@ -191,8 +191,9 @@ public partial class main : Node3D
 
 
 				//HACK the above appears to be what should be happening but is very slow to process, but the below gives the appearance of normal movement. 
-				 EasyMoveFrameIncrement = 1;
-				 AnimationFrameDeltaIncrement = 1;
+				EasyMoveFrameIncrement = 1;
+				AnimationFrameDeltaIncrement = 1;
+				ClockIncrement = 0xF;
 			}
 
 			if (ClockIncrement != 0)
