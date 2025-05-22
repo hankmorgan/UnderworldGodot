@@ -127,7 +127,6 @@ namespace Underworld
 
         /// <summary>
         /// Positions the player game camera based on x/y/z pos and current tileX/Y
-        /// Note this does not provide enough precision to fully reflect all the positions the player camera can be  at.
         /// </summary>
         public static void PositionPlayerObject()
         {
@@ -150,7 +149,7 @@ namespace Underworld
                 tileY: playerObject.tileY,
                 _xpos: playerObject.xpos,
                 _ypos: playerObject.ypos,
-                _zpos: playerObject.zpos + commonObjDat.height(127), CentreInGrid: false);
+                _zpos: playerObject.zpos + commonObjDat.height(127));
             main.gamecam.Rotation = Vector3.Zero;
             main.gamecam.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
             main.gamecam.Rotate(Vector3.Up, (float)(-heading_major / 127f * Math.PI));

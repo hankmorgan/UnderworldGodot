@@ -647,11 +647,60 @@ public partial class main : Node3D
 				{
 					switch (keyinput.Keycode)
 					{
-						case Key.O:
+						case Key.W:
 							{
-								//test motion
-								motion.PlayerMotionWalk_77C = 0x70;
+								if (Input.IsKeyPressed(Key.Shift))
+								{
+									//walk forwards
+									motion.PlayerMotionWalk_77C = 0x32;
+									motion.PlayerMotionHeading_77E = 0;
+								}
+								else
+								{
+									//run forwards
+									motion.PlayerMotionWalk_77C = 0x70;
+									motion.PlayerMotionHeading_77E = 0;
+								}
 								motion.MotionInputPressed = 1;
+
+								break;
+							}
+						case Key.Q: //not vanilla key
+							{
+								//turn left
+								motion.PlayerMotionHeading_77E = -90;
+								motion.MotionInputPressed = 1;
+								break;							
+							}
+						case Key.E: //not vanilla key
+							{
+								//turn right
+								motion.PlayerMotionHeading_77E = +90;
+								motion.MotionInputPressed = 1;
+								break;							
+							}
+						case Key.S: //not vanilla key
+							{
+								//move backwards
+								motion.PlayerMotionWalk_77C = 0;
+								motion.PlayerMotionHeading_77E = 0;
+								motion.MotionInputPressed = 8;
+								break;
+							}
+						case Key.A: //not vanilla key
+							{
+								//slide left
+								motion.PlayerMotionWalk_77C = 0;
+								motion.PlayerMotionHeading_77E = 0;
+								motion.MotionInputPressed = 9;
+								break;
+							}
+						case Key.D: //not vanilla key
+							{
+								//slide right
+								motion.PlayerMotionWalk_77C = 0;
+								motion.PlayerMotionHeading_77E = 0;
+								motion.MotionInputPressed = 0xA;
 								break;
 							}
 						case Key.T:

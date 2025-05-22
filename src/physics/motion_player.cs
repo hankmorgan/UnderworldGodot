@@ -81,6 +81,8 @@ namespace Underworld
 
             ApplyPlayerMotion(playerdat.playerObject);
 
+            playerdat.heading_major = PlayerHeadingMajor_dseg_67d6_8296 >> 8;//?
+
             playerdat.PositionPlayerObject();
 
             if ((x_init != playerMotionParams.x_0) || (y_init != playerMotionParams.y_2))
@@ -455,12 +457,19 @@ namespace Underworld
                             PlayerHeadingMajor_dseg_67d6_8296 = di;
                             break;
                         }
-                    case 9://slide
-                    case 0xA:
+                    case 9://slide left
                         {
                             di = (short)(di - 0x4000);
                             arg4 = MaybePlayerActualSlideSpeed_2_dseg_67d6_22A8;
                             dseg_67d6_D0 = -1;
+                            PlayerHeadingMajor_dseg_67d6_8296 = di;
+                            break;
+                        }
+                    case 0xA://slide right
+                        {
+                            di = (short)(di + 0x4000);
+                            arg4 = MaybePlayerActualSlideSpeed_2_dseg_67d6_22A8;
+                            dseg_67d6_D0 = 1;
                             PlayerHeadingMajor_dseg_67d6_8296 = di;
                             break;
                         }
