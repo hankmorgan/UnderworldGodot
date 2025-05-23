@@ -89,6 +89,7 @@ namespace Underworld
         static void MissileAttackHit(int projectileSource, uwObject Projectile, uwObject objectHit, int X, int Y, int damage, byte damageType)
         {
             Debug.Print("Missile Attack Hit");
+            DefendingCharacter = objectHit;
             CombatHitTileX = X; CombatHitTileY = Y;
             AttackWasACrit = false;
             AttackScoreFlankingBonus = 0;

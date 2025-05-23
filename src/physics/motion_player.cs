@@ -237,10 +237,10 @@ namespace Underworld
             var newTileX = playerMotionParams.x_0 >> 8;
             var newTileY = playerMotionParams.y_2 >> 8;
 
-            if ((newTileX != playerdat.tileX) || (newTileY != playerdat.tileY))
+            if ((newTileX != playerObj.tileX) || (newTileY != playerObj.tileY))
             {
                 //player has changed tiles
-                playerdat.PlacePlayerInTile(newTileX, newTileY, playerdat.tileX, playerdat.tileY);
+                playerdat.PlacePlayerInTile(newTileX: newTileX, newTileY: newTileY, previousTileX: playerObj.tileX, previousTileY: playerObj.tileY);
                 playerObj.npc_xhome = (short)(playerMotionParams.x_0 >> 8);
                 playerObj.npc_yhome = (short)(playerMotionParams.y_2 >> 8);
 

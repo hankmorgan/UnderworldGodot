@@ -213,7 +213,7 @@ namespace Underworld
         /// Initial stage of processing AI. Handles the execution of attacks, NPCs reacting to combat and then jumps into handling of goals.
         /// </summary>
         /// <param name="critter"></param>
-        public static void NPCInitialProcess(uwObject critter)
+        public static bool NPCInitialProcess(uwObject critter)
         {
             currObj_XHome = critter.npc_xhome;
             currObj_YHome = critter.npc_yhome;
@@ -364,7 +364,7 @@ namespace Underworld
                             DropRemainsAndLoot(critter);
                             //remove from tile and free object
                             ObjectRemover.DeleteObjectFromTile(critter.tileX, critter.tileY, critter.index, true);
-                            return;
+                            return false;
                         }
                         else
                         {
@@ -476,6 +476,7 @@ namespace Underworld
             {//distance >0x64 and goal is not follow. do a calculation                
                 critter.NextFrame_0XA_Bit0123 = (short)((critter.NextFrame_0XA_Bit0123 + 8) % 16);
             }
+            return true;
         }
 
         /// <summary>

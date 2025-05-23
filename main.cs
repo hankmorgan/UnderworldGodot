@@ -539,6 +539,7 @@ public partial class main : Node3D
 			{
 				var obj = UWTileMap.current_tilemap.LevelObjects[index];
 				//Loop update for a many times as the frame deltas require the object to be updated in this loop.
+				var initialnextframe = obj.NextFrame_0XA_Bit0123;
 				while (CheckIfUpdateNeeded(nextFrame: obj.NextFrame_0XA_Bit0123))
 				{
 					if (obj.majorclass == 1)
@@ -548,7 +549,7 @@ public partial class main : Node3D
 							//This is an NPC on the map	
 							var n = (npc)obj.instance;
 
-							npc.NPCInitialProcess(obj);
+							var result = npc.NPCInitialProcess(obj);
 							if (n != null)
 							{
 								if (obj.instance != null)
@@ -556,6 +557,10 @@ public partial class main : Node3D
 									var CalcedFacing = npc.CalculateFacingAngleToNPC(obj);
 									n.SetAnimSprite(obj.npc_animation, obj.AnimationFrame, CalcedFacing);
 								}
+							}
+							if (result == false)
+							{
+								break;
 							}
 						}
 						else
@@ -568,8 +573,15 @@ public partial class main : Node3D
 						//if (motion.MotionSingleStepEnabled)
 						//{
 						//This is a projectile
-						motion.MotionProcessing(obj);
+						if (motion.MotionProcessing(obj) == false)
+						{
+							break;
+						}
 						//}
+					}
+					if (initialnextframe == obj.NextFrame_0XA_Bit0123)
+					{
+						Debug.Print($"{obj.a_name} {obj.index} has bugged out in ProcessMobileObjects(), probably needs to be made static.");
 					}
 
 				}
