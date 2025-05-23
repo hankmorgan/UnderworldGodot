@@ -157,7 +157,9 @@ namespace Underworld
             //this is causing visual glitching when sliding?  
             main.gamecam.Rotation = Vector3.Zero;
             main.gamecam.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
-            main.gamecam.Rotate(Vector3.Up, (float)(-heading_major / 127f * Math.PI));
+                                                              //main.gamecam.Rotate(Vector3.Up, (float)(-heading_major / 127f * Math.PI));
+            float fullheading = (float)((playerObject.heading << 5) + playerObject.npc_heading);
+            main.gamecam.Rotate(Vector3.Up, (float)(-fullheading / 127f * Math.PI));
         }
 
 
