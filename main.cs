@@ -186,11 +186,11 @@ public partial class main : Node3D
 			else
 			{
 				//Debug.Print($"{PitTimer - LastPitTimer}");
-				EasyMoveFrameIncrement += (byte)(((PitTimer >> 4) & 0xFFFF) - ((LastPitTimer >> 4) & 0xFFFF));
-				AnimationFrameDeltaIncrement = (byte)(((PitTimer >> 6) & 0xFFFF) - ((LastPitTimer >> 6) & 0xFFFF));
+				EasyMoveFrameIncrement += (byte)(((PitTimer >> 4) & 0xFF) - ((LastPitTimer >> 4) & 0xFF));
+				AnimationFrameDeltaIncrement = (byte)(((PitTimer >> 6) & 0xFF) - ((LastPitTimer >> 6) & 0xFF));
 
 
-				//HACK the above appears to be what should be happening but is very slow to process, but the below gives the appearance of normal movement. 
+				//HACK the above appears to be what should be happening in vanilla code but is very slow to process, but the below gives the appearance of normal movement but may cause frame rate issues. 
 				EasyMoveFrameIncrement = 1;
 				AnimationFrameDeltaIncrement = 1;
 				ClockIncrement = 0xF;
@@ -703,6 +703,32 @@ public partial class main : Node3D
 								motion.PlayerMotionWalk_77C = 0;
 								motion.PlayerMotionHeading_77E = 0;
 								motion.MotionInputPressed = 0xA;
+								break;
+							}
+						case Key.J:
+							{
+								//jump
+								//todo: Do a test that the player is grounded.
+								motion.MotionInputPressed = 7;
+								motion.playerMotionParams.unk_a_pitch = 0x263;
+								if (motion.playerMotionParams.z_4 > 0x280)
+								{
+									var tmp = (short)((motion.playerMotionParams.unk_a_pitch * 5) / 6);
+									motion.playerMotionParams.unk_a_pitch = tmp;
+									if (motion.playerMotionParams.z_4 > 0x2C0)
+									{
+										motion.playerMotionParams.unk_a_pitch = (short)((tmp << 1) / 3);
+									}
+								}
+								if ((playerdat.MagicalMotionAbilities & 0x1) != 0)
+								{//player has leap ability.
+									motion.playerMotionParams.unk_10_Z = -2;
+								}
+								else
+								{
+									motion.playerMotionParams.unk_10_Z = -4;
+								}
+
 								break;
 							}
 						case Key.T:
