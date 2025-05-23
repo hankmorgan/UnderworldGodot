@@ -21,6 +21,21 @@ namespace Underworld
             }
         }
 
+        public static int WeightMax
+        {
+            get
+            {
+                if(_RES==GAME_UW2)
+                {
+                    return GetAt16(0x4C);
+                }
+                else
+                {
+                    return GetAt16(0x4D);
+                }
+            }
+        }
+
         /// <summary>
         /// Reference to the object the player is using currently in their hand
         /// To be consistent his object MUST always be a world object. When picking inventory objects add it to world

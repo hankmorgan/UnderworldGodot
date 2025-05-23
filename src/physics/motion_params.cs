@@ -3,7 +3,7 @@ namespace Underworld
     /// <summary>
     /// A class based implementation of an array of motion params that UW uses for projectile calcs
     /// </summary>
-    public class UWMotionParamArray : Loader
+    public class UWMotionParamArray : UWClass
     {
         public byte[] data = new byte[0x28];
 
@@ -14,6 +14,7 @@ namespace Underworld
         public static byte[] DSEG_26BA_LandNPCMotionHandler = new byte[] { 0x0, 0x0, 0x30, 0x1F, 0x10, 0x10, 0x20, 0x0 };
         public static byte[] DSEG_26DE_SwimmingNPCMotionHandler = new byte[] { 0x10, 0, 0x28, 0x17, 0x10, 0x10, 0x20, 0 };
         public static byte[] DSEG_26C6_FlyingNPCMotionHandler = new byte[] { 0x0, 0x10, 0x0, 0x7, 0x80, 0x0, 0x0, 0x0 };
+        public static byte[] PlayerMotionHandler_dseg_67d6_26AA = new byte[] { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 };
         public static short LikelyNPCTileStates_222C;
 
         public static byte[] PtrTo26D2_DSEG_26B8_MotionHandler = new byte[8];
@@ -59,33 +60,33 @@ namespace Underworld
         {//2
             get
             {
-                return (short)getAt(data_3FC, 2, 16);
+                return (short)DataLoader.getAt(data_3FC, 2, 16);
             }
             set
             {
-                setAt(data_3FC, 2, 16, value);
+                DataLoader.setAt(data_3FC, 2, 16, value);
             }
         }
         public static short RelatedToMotionY_dseg_67d6_400
         {//4
             get
             {
-                return (short)getAt(data_3FC, 4, 16);
+                return (short)DataLoader.getAt(data_3FC, 4, 16);
             }
             set
             {
-                setAt(data_3FC, 4, 16, value);
+                DataLoader.setAt(data_3FC, 4, 16, value);
             }
         }
         public static short RelatedToMotionZ_dseg_67d6_402
         {//6
             get
             {
-                return (short)getAt(data_3FC, 6, 16);
+                return (short)DataLoader.getAt(data_3FC, 6, 16);
             }
             set
             {
-                setAt(data_3FC, 6, 16, value);
+                DataLoader.setAt(data_3FC, 6, 16, value);
             }
         }
 
@@ -95,11 +96,11 @@ namespace Underworld
         {//0xC
             get
             {
-                return (short)getAt(data_3FC, 0xC, 16);
+                return (short)DataLoader.getAt(data_3FC, 0xC, 16);
             }
             set
             {
-                setAt(data_3FC, 0xC, 16, value);
+                DataLoader.setAt(data_3FC, 0xC, 16, value);
             }
         }
 
@@ -107,33 +108,33 @@ namespace Underworld
         {//0xE
             get
             {
-                return (short)getAt(data_3FC, 0xE, 16);
+                return (short)DataLoader.getAt(data_3FC, 0xE, 16);
             }
             set
             {
-                setAt(data_3FC, 0xE, 16, value);
+                DataLoader.setAt(data_3FC, 0xE, 16, value);
             }
         }
         public static short dseg_67d6_40C_indexer
         {//0x10
             get
             {
-                return (short)getAt(data_3FC, 0x10, 16);
+                return (short)DataLoader.getAt(data_3FC, 0x10, 16);
             }
             set
             {
-                setAt(data_3FC, 0x10, 16, value);
+                DataLoader.setAt(data_3FC, 0x10, 16, value);
             }
         }
         public static short MAYBEcollisionOrGravity_dseg_67d6_40E
         {//0x12
             get
             {
-                return (short)getAt(data_3FC, 0x12, 16);
+                return (short)DataLoader.getAt(data_3FC, 0x12, 16);
             }
             set
             {
-                setAt(data_3FC, 0x12, 16, value);
+                DataLoader.setAt(data_3FC, 0x12, 16, value);
             }
         }
 
@@ -141,11 +142,11 @@ namespace Underworld
         {//0x14
             get
             {
-                return (short)getAt(data_3FC, 0x14, 16);
+                return (short)DataLoader.getAt(data_3FC, 0x14, 16);
             }
             set
             {
-                setAt(data_3FC, 0x14, 16, value);
+                DataLoader.setAt(data_3FC, 0x14, 16, value);
             }
         }
 
@@ -153,22 +154,22 @@ namespace Underworld
         {//0x16
             get
             {
-                return (short)getAt(data_3FC, 0x16, 16);
+                return (short)DataLoader.getAt(data_3FC, 0x16, 16);
             }
             set
             {
-                setAt(data_3FC, 0x16, 16, value);
+                DataLoader.setAt(data_3FC, 0x16, 16, value);
             }
         }
         public static short GravityCollisionRelated_dseg_67d6_414
         {//0x18
             get
             {
-                return (short)getAt(data_3FC, 0x18, 16);
+                return (short)DataLoader.getAt(data_3FC, 0x18, 16);
             }
             set
             {
-                setAt(data_3FC, 0x18, 16, value);
+                DataLoader.setAt(data_3FC, 0x18, 16, value);
             }
         }
 
@@ -176,11 +177,11 @@ namespace Underworld
         {//0x1A
             get
             {
-                return (sbyte)getAt(data_3FC, 0x1A, 8);
+                return (sbyte)DataLoader.getAt(data_3FC, 0x1A, 8);
             }
             set
             {
-                setAt(data_3FC, 0x1A, 8, value);
+                DataLoader.setAt(data_3FC, 0x1A, 8, value);
             }
         }
 
@@ -188,11 +189,11 @@ namespace Underworld
         {
             get
             {
-                return (short)getAt(data_3FC, 0x1B, 16);
+                return (short)DataLoader.getAt(data_3FC, 0x1B, 16);
             }
             set
             {
-                setAt(data_3FC, 0x1B, 16, value);
+                DataLoader.setAt(data_3FC, 0x1B, 16, value);
             }
         }
 
@@ -200,11 +201,11 @@ namespace Underworld
         {//0x1D
             get
             {
-                return (ushort)getAt(data_3FC, 0x1D, 16);
+                return (ushort)DataLoader.getAt(data_3FC, 0x1D, 16);
             }
             set
             {
-                setAt(data_3FC, 0x1D, 16, value);
+                DataLoader.setAt(data_3FC, 0x1D, 16, value);
             }
         }
 
@@ -213,11 +214,11 @@ namespace Underworld
         {//0x21
             get
             {
-                return (short)getAt(data_3FC, 0x21, 16);
+                return (short)DataLoader.getAt(data_3FC, 0x21, 16);
             }
             set
             {
-                setAt(data_3FC, 0x21, 16, value);
+                DataLoader.setAt(data_3FC, 0x21, 16, value);
             }
         }
 
@@ -226,11 +227,11 @@ namespace Underworld
         {//0x23
             get
             {
-                return (short)getAt(data_3FC, 0x23, 16);
+                return (short)DataLoader.getAt(data_3FC, 0x23, 16);
             }
             set
             {
-                setAt(data_3FC, 0x23, 16, value);
+                DataLoader.setAt(data_3FC, 0x23, 16, value);
             }
         }
 
@@ -337,7 +338,7 @@ namespace Underworld
             }
         }
 
-        public short unk_6
+        public short unk_6_x
         {
             get
             {
@@ -348,7 +349,7 @@ namespace Underworld
                 DataLoader.setAt(data, 6, 16, value);
             }
         }
-        public short unk_8
+        public short unk_8_y
         {
             get
             {
@@ -374,7 +375,7 @@ namespace Underworld
                 DataLoader.setAt(data, 0xA, 16, value);
             }
         }
-        public short unk_c
+        public short unk_c_X
         {
             get
             {
@@ -385,19 +386,19 @@ namespace Underworld
                 DataLoader.setAt(data, 0xC, 16, value);
             }
         }
-        public short unk_d
-        {
-            get
-            {
-                return (short)DataLoader.getAt(data, 0xD, 16);
-            }
-            set
-            {
-                DataLoader.setAt(data, 0xD, 16, value);
-            }
-        }
+        // public short unk_d
+        // {
+        //     get
+        //     {
+        //         return (short)DataLoader.getAt(data, 0xD, 16);
+        //     }
+        //     set
+        //     {
+        //         DataLoader.setAt(data, 0xD, 16, value);
+        //     }
+        // }
 
-        public short unk_e
+        public short unk_e_Y
         {
             get
             {
@@ -409,7 +410,10 @@ namespace Underworld
             }
         }
 
-        public short unk_10
+        /// <summary>
+        /// Possibly a Z speedvalue
+        /// </summary>
+        public short unk_10_Z
         {
             get
             {
@@ -431,17 +435,17 @@ namespace Underworld
                 DataLoader.setAt(data, 0x12, 8, value);
             }
         }
-        public sbyte unk_13
-        {
-            get
-            {
-                return (sbyte)DataLoader.getAt(data, 0x13, 8);
-            }
-            set
-            {
-                DataLoader.setAt(data, 0x13, 8, value);
-            }
-        }
+        // public sbyte unk_13_falldamage
+        // {
+        //     get
+        //     {
+        //         return (sbyte)DataLoader.getAt(data, 0x13, 8);
+        //     }
+        //     set
+        //     {
+        //         DataLoader.setAt(data, 0x13, 8, value);
+        //     }
+        // }
         public short unk_14
         {
             get
@@ -453,7 +457,7 @@ namespace Underworld
                 DataLoader.setAt(data, 0x14, 16, value);
             }
         }
-        public byte unk_16
+        public byte unk_16_relatedtoPitch
         {
             get
             {
@@ -614,7 +618,7 @@ namespace Underworld
         /// <summary>
         /// Possibly related to fall damage.
         /// </summary>
-        public short unk_26
+        public short unk_26_falldamage
         {
             get
             {
@@ -626,12 +630,12 @@ namespace Underworld
             }
         }
 
-        public short GetParam6(int offset)
+        public short GetParam6_XorYValue(int offset)
         {
             return (short)DataLoader.getAt(data, 0x6 + offset * 2, 16);
         }
 
-        public void SetParam6(int offset, short value)
+        public void SetParam6_XorYValue(int offset, short value)
         {
             DataLoader.setAt(data, 0x6 + offset * 2, 16, value);
         }
@@ -1046,7 +1050,7 @@ namespace Underworld
     /// <summary>
     /// This may need to be removed as it's just globals.
     /// </summary>
-    public class OtherMotionArray : UWClass
+    public class OtherMotionArray : Loader
     {
         public static OtherMotionArray instance;
         public byte[] dseg_2562 = new byte[0x20];

@@ -167,7 +167,7 @@ namespace Underworld
                     {
                         if (ass == CritterToLoad)
                         {
-                            critterArt[CritterToLoad] = new CritterArt(FileID, PaletteLoader.Palettes[0], auxPal, pgmp, cran);
+                            critterArt[CritterToLoad] = new CritterArt(critter_id: FileID, paletteToUse: PaletteLoader.Palettes[0], palno: auxPal, PGMP: pgmp, cran: cran);
                         }
                     }
                 }

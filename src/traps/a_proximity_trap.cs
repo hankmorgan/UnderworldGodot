@@ -14,7 +14,7 @@ namespace Underworld
             int xhome; int yhome;
             if (character==0)
             {
-                zpos = playerdat.zpos;
+                zpos = playerdat.playerObject.zpos;
                 xhome = playerdat.tileX;
                 yhome = playerdat.tileY;
 

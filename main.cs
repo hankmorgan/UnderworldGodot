@@ -52,9 +52,17 @@ public partial class main : Node3D
 
 	double cycletime = 0;
 
-
-
 	public static bool DoRedraw = false;
+
+
+	//DOS INT8 (PIT) timer interupt. updates 18.2 times a second.
+	double Pit = 0f;
+	uint PitTimer = 0;
+	uint LastPitTimer = 0;
+	static byte EasyMoveFrameIncrement = 0;
+
+	static byte ThisFrameDelta = 0;
+	static byte PreviousFrameDelta = 0;
 
 	public override void _Ready()
 	{
@@ -140,7 +148,7 @@ public partial class main : Node3D
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
+	public override void _PhysicsProcess(double delta)
 	{
 		if ((uimanager.InGame) || (uimanager.AtMainMenu))
 		{
@@ -151,6 +159,106 @@ public partial class main : Node3D
 				PaletteLoader.UpdatePaletteCycles();
 			}
 		}
+
+		//DOS interupt 8
+		Pit += delta;
+		//
+		if (Pit >= 0.054945)
+		{
+			PitTimer += (uint)(Pit / 0.054945f);
+			Pit = 0;
+			//Debug.Print($"{Pit}, {PitTimer}, {delta}");
+		}
+
+
+		if ((uimanager.InGame) && (!blockmouseinput))
+		{
+
+			byte AnimationFrameDeltaIncrement = 0;
+
+			var ClockIncrement = PitTimer - LastPitTimer;
+			if ((ClockIncrement < 0) || (ClockIncrement > 0x40))
+			{
+				ClockIncrement = 0x40;
+				AnimationFrameDeltaIncrement = 1;
+				EasyMoveFrameIncrement += 4;
+			}
+			else
+			{
+				//Debug.Print($"{PitTimer - LastPitTimer}");
+				EasyMoveFrameIncrement += (byte)(((PitTimer >> 4) & 0xFF) - ((LastPitTimer >> 4) & 0xFF));
+				AnimationFrameDeltaIncrement = (byte)(((PitTimer >> 6) & 0xFF) - ((LastPitTimer >> 6) & 0xFF));
+
+
+				//HACK the above appears to be what should be happening in vanilla code but is very slow to process, but the below gives the appearance of normal movement but may cause frame rate issues. 
+				EasyMoveFrameIncrement = 1;
+				AnimationFrameDeltaIncrement = 1;
+				ClockIncrement = 0xF;
+			}
+
+			if (ClockIncrement != 0)
+			{
+				if (AnimationFrameDeltaIncrement != 0)
+				{
+					//if animations enabled
+					if ((uimanager.InGame) && (!blockmouseinput))
+					{
+						AnimationOverlay.UpdateAnimationOverlays();
+						timers.RunTimerTriggers(AnimationFrameDeltaIncrement);
+					}
+				}
+				playerdat.ClockValue += (int)ClockIncrement;
+				LastPitTimer = PitTimer;
+				AnimationFrameDeltaIncrement = EasyMoveFrameIncrement;
+				if (playerdat.SpeedEnchantment)
+				{
+					EasyMoveFrameIncrement = (byte)((AnimationFrameDeltaIncrement >> 1) & 0x1);
+				}
+				else
+				{
+					EasyMoveFrameIncrement = 0;
+				}
+
+				GameObjectLoop((byte)ClockIncrement, AnimationFrameDeltaIncrement, false);
+			}
+
+		}
+
+
+		//Other updates
+		if (uimanager.InGame)
+		{
+			RefreshWorldState();//handles teleports, tile redraws
+			uimanager.UpdateCompass();
+			combat.CombatInputHandler(delta);
+			playerdat.PlayerTimedLoop(delta);
+
+			int tileX = -(int)(cam.Position.X / 1.2f);
+			int tileY = (int)(cam.Position.Z / 1.2f);
+			tileX = Math.Max(Math.Min(tileX, 63), 0);
+			tileY = Math.Max(Math.Min(tileY, 63), 0);
+			int xposvecto = -(int)(((cam.Position.X % 1.2f) / 1.2f) * 8);
+			int yposvecto = (int)(((cam.Position.Z % 1.2f) / 1.2f) * 8);
+			int newzpos = (int)(((((cam.Position.Y) * 100) / 32f) / 15f) * 128f) - commonObjDat.height(127);
+			if (EnablePositionDebug)
+			{
+				var fps = Engine.GetFramesPerSecond();
+				lblPositionDebug.Text = $"FPS:{fps} Time:{playerdat.game_time}\nL:{playerdat.dungeon_level} X:{tileX} Y:{tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}\n{cam.Rotation} {playerdat.heading_major} {(playerdat.heading_major >> 4) % 4} {xposvecto} {yposvecto} {newzpos}";
+			}
+
+			if ((MessageDisplay.WaitingForTypedInput) || (MessageDisplay.WaitingForYesOrNo))
+			{
+				if (!uimanager.instance.TypedInput.HasFocus())
+				{
+					uimanager.instance.TypedInput.GrabFocus();
+				}
+				uimanager.instance.scroll.UpdateMessageDisplay();
+			}
+		}
+
+
+
+		return;
 
 		if (uimanager.InGame)
 		{
@@ -164,131 +272,155 @@ public partial class main : Node3D
 			int yposvecto = (int)(((cam.Position.Z % 1.2f) / 1.2f) * 8);
 			int newzpos = (int)(((((cam.Position.Y) * 100) / 32f) / 15f) * 128f) - commonObjDat.height(127);
 
-			newzpos = Math.Max(Math.Min(newzpos, 127), 0);
-			var tmp = cam.Rotation;
-			tmp.Y = (float)(tmp.Y - Math.PI);
-			playerdat.heading = (int)Math.Round(-(tmp.Y * 127) / Math.PI);//placeholder track these values for projectile calcs.
-																		  // playerdat.playerObject.heading = (short)((playerdat.headingMinor >> 0xD) & 0x7);
-																		  // playerdat.playerObject.npc_heading = (short)((playerdat.headingMinor>>8) & 0x1F);
+			// newzpos = Math.Max(Math.Min(newzpos, 127), 0);
+			// var tmp = cam.Rotation;
+			// tmp.Y = (float)(tmp.Y - Math.PI);
+			// playerdat.heading_major = (int)Math.Round(-(tmp.Y * 127) / Math.PI);//placeholder track these values for projectile calcs.
+			// playerdat.playerObject.heading = (short)((playerdat.headingMinor >> 0xD) & 0x7);
+			// playerdat.playerObject.npc_heading = (short)((playerdat.headingMinor>>8) & 0x1F);
 			uimanager.UpdateCompass();
 			combat.CombatInputHandler(delta);
 			playerdat.PlayerTimedLoop(delta);
 			if (EnablePositionDebug)
 			{
 				var fps = Engine.GetFramesPerSecond();
-				lblPositionDebug.Text = $"FPS:{fps} Time:{playerdat.game_time}\nL:{playerdat.dungeon_level} X:{tileX} Y:{tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}\n{cam.Rotation} {playerdat.heading} {(playerdat.heading >> 4) % 4} {xposvecto} {yposvecto} {newzpos}";
+				lblPositionDebug.Text = $"FPS:{fps} Time:{playerdat.game_time}\nL:{playerdat.dungeon_level} X:{tileX} Y:{tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}\n{cam.Rotation} {playerdat.heading_major} {(playerdat.heading_major >> 4) % 4} {xposvecto} {yposvecto} {newzpos}";
 			}
 
 
-			if (UWTileMap.ValidTile(tileX, tileY))//((tileX < 64) && (tileX >= 0) && (tileY < 64) && (tileY >= 0))
-			{
-				if ((playerdat.tileX != tileX) || (playerdat.tileY != tileY))
-				{
+			// if (UWTileMap.ValidTile(tileX, tileY))//((tileX < 64) && (tileX >= 0) && (tileY < 64) && (tileY >= 0))
+			// {
+			// 	if ((playerdat.tileX != tileX) || (playerdat.tileY != tileY))
+			// 	{
 
-					var tileExited = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY];
-					if (UWClass._RES == UWClass.GAME_UW2)
-					{
-						//find exit triggers.
-						if (tileExited.indexObjectList != 0)
-						{
-							var next = tileExited.indexObjectList;
-							while (next != 0)
-							{
-								var nextObj = UWTileMap.current_tilemap.LevelObjects[next];
-								trigger.RunTrigger(character: 1,
-										ObjectUsed: nextObj,
-										TriggerObject: nextObj,
-										triggerType: (int)triggerObjectDat.triggertypes.EXIT,
-										objList: UWTileMap.current_tilemap.LevelObjects);
-								next = nextObj.next;
-							}
-						}
-					}
-					//player has changed tiles. move them to their new tile
-					var oldTileX = playerdat.tileX; var oldTileY = playerdat.tileY;
+			// 		var tileExited = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY];
+			// 		if (UWClass._RES == UWClass.GAME_UW2)
+			// 		{
+			// 			//find exit triggers.
+			// 			if (tileExited.indexObjectList != 0)
+			// 			{
+			// 				var next = tileExited.indexObjectList;
+			// 				while (next != 0)
+			// 				{
+			// 					var nextObj = UWTileMap.current_tilemap.LevelObjects[next];
+			// 					trigger.RunTrigger(character: 1,
+			// 							ObjectUsed: nextObj,
+			// 							TriggerObject: nextObj,
+			// 							triggerType: (int)triggerObjectDat.triggertypes.EXIT,
+			// 							objList: UWTileMap.current_tilemap.LevelObjects);
+			// 					next = nextObj.next;
+			// 				}
+			// 			}
+			// 		}
+			// 		//player has changed tiles. move them to their new tile
+			// 		var oldTileX = playerdat.tileX; var oldTileY = playerdat.tileY;
 
-					playerdat.tileX = Math.Min(Math.Max(tileX, 0), 63);
-					playerdat.tileY = Math.Min(Math.Max(tileY, 0), 63);
-					playerdat.PlacePlayerInTile(playerdat.tileX, playerdat.tileY, oldTileX, oldTileY);
-					playerdat.xpos = Math.Min(Math.Max(0, xposvecto), 8);
-					playerdat.ypos = Math.Min(Math.Max(0, yposvecto), 8);
-					playerdat.zpos = newzpos;
-					// if( UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY].tileType != 0)
-					// {//TMP put player Zpos at tile height
-					// 	playerdat.zpos = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY].floorHeight<<3;
-					// }
+			// 		playerdat.tileX = Math.Min(Math.Max(tileX, 0), 63);
+			// 		playerdat.tileY = Math.Min(Math.Max(tileY, 0), 63);
+			// 		playerdat.PlacePlayerInTile(playerdat.tileX, playerdat.tileY, oldTileX, oldTileY);
+			// 		playerdat.xpos = Math.Min(Math.Max(0, xposvecto), 8);
+			// 		playerdat.ypos = Math.Min(Math.Max(0, yposvecto), 8);
+			// 		playerdat.zpos = newzpos;
+			// 		// if( UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY].tileType != 0)
+			// 		// {//TMP put player Zpos at tile height
+			// 		// 	playerdat.zpos = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY].floorHeight<<3;
+			// 		// }
 
 
-					//tmp update the player object to keep in sync with other values
-					playerdat.playerObject.item_id = 127;
-					playerdat.playerObject.xpos = (short)playerdat.xpos;
-					playerdat.playerObject.ypos = (short)playerdat.ypos;
-					playerdat.playerObject.zpos = (short)playerdat.zpos;
-					playerdat.playerObject.tileX = playerdat.tileX;
-					playerdat.playerObject.npc_xhome = (short)tileX;
-					playerdat.playerObject.tileY = playerdat.tileY;
-					playerdat.playerObject.npc_yhome = (short)tileY;
-					var tileEntered = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY];
-					playerdat.PlayerStatusUpdate();
-					if (UWClass._RES == UWClass.GAME_UW2)
-					{
-						//find enter triggers.
-						//find exit triggers.
-						if (tileEntered.indexObjectList != 0)
-						{
-							var next = tileEntered.indexObjectList;
-							while (next != 0)
-							{
-								var nextObj = UWTileMap.current_tilemap.LevelObjects[next];
-								trigger.RunTrigger(character: 1,
-										ObjectUsed: nextObj,
-										TriggerObject: nextObj,
-										triggerType: (int)triggerObjectDat.triggertypes.ENTER,
-										objList: UWTileMap.current_tilemap.LevelObjects);
-								next = nextObj.next;
-							}
-						}
-						//Debug.Print($"{playerdat.zpos} vs {(tileEntered.floorHeight << 3)}");
-						// If grounded try and find pressure triggers. for the moment ground is just zpos less than floorheight.
-						if (playerdat.zpos <= (tileEntered.floorHeight << 3))//Janky temp implementation. player must be on/below the height before changing tiles.
-						{
-							if (tileEntered.indexObjectList != 0)
-							{
-								var next = tileEntered.indexObjectList;
-								while (next != 0)
-								{
-									var nextObj = UWTileMap.current_tilemap.LevelObjects[next];
-									trigger.RunTrigger(character: 1,
-											ObjectUsed: nextObj,
-											TriggerObject: nextObj,
-											triggerType: (int)triggerObjectDat.triggertypes.PRESSURE,
-											objList: UWTileMap.current_tilemap.LevelObjects);
-									next = nextObj.next;
-								}
-							}
-						}
-					}
-				}
-			}
-			if (playerdat.playerObject != null)
-			{//temp crash fix
-				if (
-					(playerdat.playerObject.tileX != playerdat.tileX)
-					||
-					(playerdat.playerObject.tileY != playerdat.tileY)
-				)
-				{
-					playerdat.playerObject.tileX = playerdat.tileX;
-					playerdat.playerObject.tileY = playerdat.tileY;
-				}
-			}
+			// 		//tmp update the player object to keep in sync with other values
+			// 		playerdat.playerObject.item_id = 127;
+			// 		playerdat.playerObject.xpos = (short)playerdat.xpos;
+			// 		playerdat.playerObject.ypos = (short)playerdat.ypos;
+			// 		playerdat.playerObject.zpos = (short)playerdat.zpos;
+			// 		playerdat.playerObject.tileX = playerdat.tileX;
+			// 		playerdat.playerObject.npc_xhome = (short)tileX;
+			// 		playerdat.playerObject.tileY = playerdat.tileY;
+			// 		playerdat.playerObject.npc_yhome = (short)tileY;
+			// 		var tileEntered = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY];
+			// 		playerdat.PlayerStatusUpdate();
+			// 		if (UWClass._RES == UWClass.GAME_UW2)
+			// 		{
+			// 			//find enter triggers.
+			// 			//find exit triggers.
+			// 			if (tileEntered.indexObjectList != 0)
+			// 			{
+			// 				var next = tileEntered.indexObjectList;
+			// 				while (next != 0)
+			// 				{
+			// 					var nextObj = UWTileMap.current_tilemap.LevelObjects[next];
+			// 					trigger.RunTrigger(character: 1,
+			// 							ObjectUsed: nextObj,
+			// 							TriggerObject: nextObj,
+			// 							triggerType: (int)triggerObjectDat.triggertypes.ENTER,
+			// 							objList: UWTileMap.current_tilemap.LevelObjects);
+
+			// 					next = nextObj.next; //risk of infinite loop where while player motion is being reworked
+
+			// 				}
+			// 			}
+			// 			//Debug.Print($"{playerdat.zpos} vs {(tileEntered.floorHeight << 3)}");
+			// 			// If grounded try and find pressure triggers. for the moment ground is just zpos less than floorheight.
+			// 			if (playerdat.zpos <= (tileEntered.floorHeight << 3))//Janky temp implementation. player must be on/below the height before changing tiles.
+			// 			{
+			// 				if (tileEntered.indexObjectList != 0)
+			// 				{
+			// 					var next = tileEntered.indexObjectList;
+			// 					while (next != 0)
+			// 					{
+			// 						var nextObj = UWTileMap.current_tilemap.LevelObjects[next];
+			// 						trigger.RunTrigger(character: 1,
+			// 								ObjectUsed: nextObj,
+			// 								TriggerObject: nextObj,
+			// 								triggerType: (int)triggerObjectDat.triggertypes.PRESSURE,
+			// 								objList: UWTileMap.current_tilemap.LevelObjects);
+			// 						next = nextObj.next;
+			// 					}
+			// 				}
+			// 			}
+			// 		}
+			// 	}
+			// }
+			// if (playerdat.playerObject != null)
+			// {//temp crash fix
+			// 	if (
+			// 		(playerdat.playerObject.tileX != playerdat.tileX)
+			// 		||
+			// 		(playerdat.playerObject.tileY != playerdat.tileY)
+			// 	)
+			// 	{
+			// 		playerdat.playerObject.tileX = playerdat.tileX;
+			// 		playerdat.playerObject.tileY = playerdat.tileY;
+			// 	}
+			// }
 
 			gameRefreshTimer += delta;
-			if (gameRefreshTimer >= 0.3)
+			if (gameRefreshTimer >= 0.1)
 			{
 				gameRefreshTimer = 0;
 				if (!blockmouseinput)
 				{
+					//Player motion.
+					if (
+						(motion.MotionInputPressed != 0)
+						||
+						(motion.playerMotionParams.unk_14 != 0)
+						||
+						(motion.playerMotionParams.unk_a_pitch != 0)
+						||
+						(motion.playerMotionParams.unk_10_Z != 0)
+						||
+						(motion.playerMotionParams.unk_e_Y != 0)
+						||
+						(motion.playerMotionParams.unk_c_X != 0)
+						||
+						(motion.Examine_dseg_D3 != 0)
+					)
+					{
+						//when any forced movement or player input is not 0
+						motion.PlayerMotion(0xF); //todo confirm increments
+					}
+
+
 					for (int i = 0; i < UWTileMap.current_tilemap.NoOfActiveMobiles; i++)
 					{
 						var index = UWTileMap.current_tilemap.GetActiveMobileAtIndex(i);
@@ -345,6 +477,142 @@ public partial class main : Node3D
 		}
 	}
 
+
+	static void GameObjectLoop(byte ClockIncrement, byte AnimationFrameDelta, bool EasyMove)
+	{
+		motion.RelatedToSwimDmg_dseg_67d6_33CE = 0;
+		motion.RelatedToClockIncrement_67d6_742 += ClockIncrement;
+
+		if (motion.MotionInputPressed == 0)
+		{
+			if (playerdat.RoamingSightEnchantment == false)
+			{
+				//ProcessMotionInputs
+			}
+		}
+		if (
+			(motion.MotionInputPressed != 0)
+			||
+			(motion.playerMotionParams.unk_14 != 0)
+			||
+			(motion.playerMotionParams.unk_a_pitch != 0)
+			||
+			(motion.playerMotionParams.unk_10_Z != 0)
+			||
+			(motion.playerMotionParams.unk_e_Y != 0)
+			||
+			(motion.playerMotionParams.unk_c_X != 0)
+			||
+			(motion.Examine_dseg_D3 != 0)
+		)
+		{
+			if (EasyMove == false)
+			{
+				//when any forced movement or player input is not 0
+				motion.PlayerMotion(ClockIncrement); //todo confirm increments
+			}
+
+		}
+		if (playerdat.FreezeTimeEnchantment == false)
+		{
+			if (AnimationFrameDelta != 0)
+			{
+				ProcessMobileObjects(AnimationFrameDelta);
+			}
+		}
+		if (playerdat.TileState != 0)
+		{
+			//WalkOnSpecialTerrain();
+		}
+		//playerdat.ApplyPlayerSneakScore(EasyMove);
+
+		//Footsteps()
+	}
+
+	static void ProcessMobileObjects(byte AnimationFrameDelta)
+	{
+		ThisFrameDelta = (byte)((PreviousFrameDelta + AnimationFrameDelta) & 0xF);
+		for (int i = 0; i < UWTileMap.current_tilemap.NoOfActiveMobiles; i++)
+		{
+			var index = UWTileMap.current_tilemap.GetActiveMobileAtIndex(i);
+			if ((index > 1) && (index < 256))
+			{
+				var obj = UWTileMap.current_tilemap.LevelObjects[index];
+				//Loop update for a many times as the frame deltas require the object to be updated in this loop.
+				while (CheckIfUpdateNeeded(nextFrame: obj.NextFrame_0XA_Bit0123))
+				{
+					if (obj.majorclass == 1)
+					{
+						if (UWTileMap.ValidTile(obj.tileX, obj.tileY))
+						{
+							//This is an NPC on the map	
+							var n = (npc)obj.instance;
+
+							npc.NPCInitialProcess(obj);
+							if (n != null)
+							{
+								if (obj.instance != null)
+								{
+									var CalcedFacing = npc.CalculateFacingAngleToNPC(obj);
+									n.SetAnimSprite(obj.npc_animation, obj.AnimationFrame, CalcedFacing);
+								}
+							}
+						}
+						else
+						{
+							Debug.Print($"{obj.a_name} {obj.index} is off map");
+						}
+					}
+					else
+					{
+						//if (motion.MotionSingleStepEnabled)
+						//{
+						//This is a projectile
+						motion.MotionProcessing(obj);
+						//}
+					}
+
+				}
+			}
+		}
+		PreviousFrameDelta = ThisFrameDelta;
+	}
+
+	/// <summary>
+	/// Checks if object/npc needs to move based on their nextFrame value and the current Animation Frame Delta
+	/// </summary>
+	/// <param name="nextFrame"></param>
+	/// <param name="AnimationFrameDelta"></param>
+	/// <returns></returns>
+	static bool CheckIfUpdateNeeded(int nextFrame)
+	{
+		//if (AnimationFrameDelta)
+		if (ThisFrameDelta > nextFrame)
+		{
+			if (nextFrame + 4 >= ThisFrameDelta)
+			{
+				return true;
+			}
+		}
+		//seg007_17A2_357A
+		if (ThisFrameDelta + 0x10 <= nextFrame)
+		{
+			return false;
+		}
+		if (PreviousFrameDelta > nextFrame)
+		{
+			return false;
+		}
+		if (PreviousFrameDelta <= ThisFrameDelta)
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
+
 	public override void _Input(InputEvent @event)
 	{
 		if ((@event is InputEventMouseButton eventMouseButton)
@@ -379,6 +647,80 @@ public partial class main : Node3D
 				{
 					switch (keyinput.Keycode)
 					{
+						case Key.W:
+							{
+								if (Input.IsKeyPressed(Key.Shift))
+								{
+									//walk forwards
+									motion.PlayerMotionWalk_77C = 0x32;
+									motion.PlayerMotionHeading_77E = 0;
+								}
+								else
+								{
+									//run forwards
+									motion.PlayerMotionWalk_77C = 0x70;
+									motion.PlayerMotionHeading_77E = 0;
+								}
+								motion.MotionInputPressed = 1;
+
+								break;
+							}
+						case Key.Q: //not vanilla key
+							{
+								motion.PlayerMotionWalk_77C = 0;
+								//turn left
+								motion.PlayerMotionHeading_77E = -90;
+								motion.MotionInputPressed = 1;
+								break;
+							}
+						case Key.E: //not vanilla key
+							{
+								motion.PlayerMotionWalk_77C = 0;
+								//turn right
+								motion.PlayerMotionHeading_77E = +90;
+								motion.MotionInputPressed = 1;
+								break;
+							}
+						case Key.S: //not vanilla key
+							{
+								//move backwards
+								motion.PlayerMotionWalk_77C = 0;
+								motion.PlayerMotionHeading_77E = 0;
+								motion.MotionInputPressed = 8;
+								break;
+							}
+						case Key.A: //not vanilla key
+							{
+								//slide left
+								motion.PlayerMotionWalk_77C = 0;
+								motion.PlayerMotionHeading_77E = 0;
+								motion.MotionInputPressed = 9;
+								break;
+							}
+						case Key.D: //not vanilla key
+							{
+								//slide right
+								motion.PlayerMotionWalk_77C = 0;
+								motion.PlayerMotionHeading_77E = 0;
+								motion.MotionInputPressed = 0xA;
+								break;
+							}
+						case Key.J:
+							{
+								if (Input.IsKeyPressed(Key.Shift))
+								{
+									//long jump
+									motion.MotionInputPressed = 6;
+
+								}
+								else
+								{
+									//jump
+									//todo: Do a test that the player is grounded.
+									motion.MotionInputPressed = 7;									
+								}
+								break;
+							}
 						case Key.T:
 							var mouselook = (bool)gamecam.Get("MOUSELOOK");
 							if (mouselook)

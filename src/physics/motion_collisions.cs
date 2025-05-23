@@ -122,7 +122,7 @@ namespace Underworld
                         if (
                             (MotionParams.index_20 == 1) && ((playerdat.MagicalMotionAbilities & 0x20) == 0x20)
                             ||
-                            (MotionParams.unk_16 == 0xF)
+                            (MotionParams.unk_16_relatedtoPitch == 0xF)
                         )
                         {
                             //Bouncing_seg031_2CFA_EE2:
@@ -132,16 +132,16 @@ namespace Underworld
                         {
                             //seg031_2CFA_EF0:
                             MotionParams.unk_a_pitch = (short)-(MotionParams.unk_a_pitch / 0xF);
-                            MotionParams.unk_26 = (short)Math.Abs((0xF - MotionParams.unk_16) * MotionParams.unk_a_pitch);
-                            MotionParams.unk_a_pitch = (short)(MotionParams.unk_a_pitch * MotionParams.unk_16);
+                            MotionParams.unk_26_falldamage = (short)Math.Abs((0xF - MotionParams.unk_16_relatedtoPitch) * MotionParams.unk_a_pitch);
+                            MotionParams.unk_a_pitch = (short)(MotionParams.unk_a_pitch * MotionParams.unk_16_relatedtoPitch);
 
-                            if (MotionParams.unk_16 == 0)
+                            if (MotionParams.unk_16_relatedtoPitch == 0)
                             {
                                 MotionParams.unk_14 = 0;
                             }
                             else
                             {
-                                MotionParams.unk_14 -= (short)(MotionParams.unk_14 * (0xF - MotionParams.unk_16) / 0x1E);
+                                MotionParams.unk_14 -= (short)(MotionParams.unk_14 * (0xF - MotionParams.unk_16_relatedtoPitch) / 0x1E);
                             }
                         }
 
@@ -167,7 +167,7 @@ namespace Underworld
                                 if (MotionParams.unk_a_pitch < 0x8D)
                                 {
                                     MotionParams.unk_a_pitch = 0;
-                                    MotionParams.unk_10 = 0;
+                                    MotionParams.unk_10_Z = 0;
                                     if (UWMotionParamArray.ACollisionIndex_dseg_67d6_416 == -1)
                                     {
                                         //seg031_2CFA_102A
@@ -956,7 +956,7 @@ namespace Underworld
         static void MaybeReflection_seg031_2CFA_CC6(UWMotionParamArray MotionParams)
         {
             MotionParams.unk_a_pitch = 0x8C;
-            MotionParams.unk_10 = -4;
+            MotionParams.unk_10_Z = -4;
             if (MotionParams.unk_14 <= 0xEB)
             {
                 MotionParams.unk_14 = 0xEB;

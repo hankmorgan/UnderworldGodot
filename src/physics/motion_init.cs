@@ -17,7 +17,7 @@ namespace Underworld
             MotionParams.index_20 = projectile.index;
             MotionParams.mass_18 = (short)commonObjDat.mass(itemid);
             MotionParams.unk_1a = (byte)commonObjDat.unk6_4(itemid);
-            MotionParams.unk_16 = (byte)commonObjDat.unk6_5678(itemid);
+            MotionParams.unk_16_relatedtoPitch = (byte)commonObjDat.unk6_5678(itemid);
             MotionParams.scaleresistances_1C = (byte)commonObjDat.scaleresistances(itemid);
             MotionParams.unk_1d = 0;
             MotionParams.heading_1E = (short)(projectile.heading << 0xD);
@@ -31,7 +31,7 @@ namespace Underworld
             if (projectile.IsStatic)
             {//Not sure when a static projectile will hit this but including for completedness. (possibly collisions?)
                 MotionParams.unk_a_pitch = 0;
-                MotionParams.unk_10 = 0;
+                MotionParams.unk_10_Z = 0;
                 MotionParams.unk_14 = 0;
                 MotionParams.hp_1b = (byte)projectile.quality;
                 MotionParams.x_0 += (short)(projectile.tileX << 3);
@@ -44,7 +44,7 @@ namespace Underworld
                 MotionParams.heading_1E = (short)(projectile.ProjectileHeading << 8);
                 MotionParams.tilestate25 = (byte)(1 << projectile.TileState_0XA_Bit456);
                 MotionParams.unk_a_pitch = (short)((projectile.Projectile_Pitch - 16) << 6);
-                MotionParams.unk_10 = (short)(projectile.UnkBit_0X13_Bit7 * -4);
+                MotionParams.unk_10_Z = (short)(projectile.UnkBit_0X13_Bit7 * -4);
                 MotionParams.hp_1b = projectile.npc_hp;
 
                 if (projectile.majorclass != 1)
@@ -63,7 +63,7 @@ namespace Underworld
                 &&
                 (commonObjDat.maybeMagicObjectFlag(itemid) == false)
                 &&
-                ((MotionParams.unk_a_pitch | MotionParams.unk_10) == 0)
+                ((MotionParams.unk_a_pitch | MotionParams.unk_10_Z) == 0)
             )
             {
                 //seg030_2BB7_5CE:
@@ -96,7 +96,7 @@ namespace Underworld
                 MotionParams.y_2 = (short)((MotionParams.y_2 << 5) + Rng.r.Next(32));//and prevents them from getting
                 MotionParams.z_4 = (short)((MotionParams.z_4 << 3) + Rng.r.Next(8));//stuck when following a path
             }
-            MotionParams.unk_26 = 0;
+            MotionParams.unk_26_falldamage = 0;
         }
 
 

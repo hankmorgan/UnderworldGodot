@@ -532,10 +532,10 @@ namespace Underworld
                }
                set
                {
-                  if (_RES == GAME_UW2)
+                    if (_RES == GAME_UW2)
                     {
                          SetAt(0x306, (byte)value);
-                    }  
+                    }
                }
           }
 
@@ -543,6 +543,35 @@ namespace Underworld
           /// In UW1 automap enabled is a global not stored in the pdat file. It is set using levelloadevents etc.
           /// </summary>
           private static bool _automapenabled_uw1 = true;
+
+
+
+          public static int RelatedToMotionState
+          {
+               get
+               {
+                    if (_RES == GAME_UW2)
+                    {
+                         return GetAt(0x304);
+                    }
+                    else
+                    {
+                         return GetAt(0xB7);
+                    }
+               }
+               set
+               {
+                    if (_RES == GAME_UW2)
+                    {
+                         SetAt(0x304, (byte)value);
+                    }
+                    else
+                    {
+                         SetAt(0xB7, (byte)value);
+                    }
+               }
+          }
+
 
 
           /// <summary>
@@ -559,6 +588,51 @@ namespace Underworld
                     else
                     {
                          return GetAt(0xB9);
+                    }
+               }
+               set
+               {
+                    if (_RES == GAME_UW2)
+                    {
+                         if (value != TileState)
+                         {
+                              Debug.Print("change in tilestate");
+                         }
+                         SetAt(0x307, (byte)value);
+                    }
+                    else
+                    {
+                         SetAt(0xB9, (byte)value);
+                    }
+               }
+          }
+
+
+          /// <summary>
+          /// Either how long the player has been swimming or a counter for swimming damage to apply
+          /// </summary>
+          public static int SwimCounter
+          {
+               get
+               {
+                    if (_RES == GAME_UW2)
+                    {
+                         return GetAt(0x308);
+                    }
+                    else
+                    {
+                         return GetAt(0xBA);
+                    }
+               }
+               set
+               {
+                    if (_RES == GAME_UW2)
+                    {
+                         SetAt(0x308, (byte)value);
+                    }
+                    else
+                    {
+                         SetAt(0xBA, (byte)value);
                     }
                }
           }

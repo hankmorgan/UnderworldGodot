@@ -38,7 +38,7 @@ namespace Underworld
             else
             {
                 return (sbyte)playerdat.LocationalArmourValues[bodypart];
-            }            
+            }
         }
 
         /// <summary>
@@ -60,7 +60,14 @@ namespace Underworld
         /// <returns></returns>
         public static int strength(int item_id)
         {
-            return buffer[CritterOffset(item_id) + 0x5];
+            if (item_id != 127)
+            {
+                return buffer[CritterOffset(item_id) + 0x5];
+            }
+            else
+            {
+                return playerdat.STR;
+            }
         }
 
         /// <summary>
@@ -70,7 +77,14 @@ namespace Underworld
         /// <returns></returns>
         public static int dexterity(int item_id)
         {
-            return buffer[CritterOffset(item_id) + 0x6];
+            if (item_id != 127)
+            {
+                return buffer[CritterOffset(item_id) + 0x6];
+            }
+            else
+            {
+                return playerdat.DEX;
+            }
         }
 
         /// <summary>
@@ -80,7 +94,14 @@ namespace Underworld
         /// <returns></returns>
         public static int intelligence(int item_id)
         {
-            return buffer[CritterOffset(item_id) + 0x7];
+            if (item_id != 127)
+            {
+                return buffer[CritterOffset(item_id) + 0x7];
+            }
+            else
+            {
+                return playerdat.INT;
+            }
         }
 
         /// <summary>

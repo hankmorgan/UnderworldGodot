@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Diagnostics;
 namespace Underworld
 {
     public partial class playerdat : Loader
@@ -16,15 +17,7 @@ namespace Underworld
             {
                 //load player dat from a save file
                 Load(datafolder);
-                main.gamecam.Position = uwObject.GetCoordinate(
-                    tileX: tileX,
-                    tileY: tileY,
-                    _xpos: xpos,
-                    _ypos: ypos,
-                    _zpos: camerazpos);
-                main.gamecam.Rotation = Vector3.Zero;
-                main.gamecam.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
-                main.gamecam.Rotate(Vector3.Up, (float)(-heading / 127f * Math.PI));
+                PositionPlayerObject();
 
                 for (int i = 0; i < 8; i++)
                 {//Init the backpack indices
@@ -37,7 +30,7 @@ namespace Underworld
                 //default start locations.                
                 switch (_RES)
                 {
-                    case GAME_UW2:                        
+                    case GAME_UW2:
                         main.gamecam.Position = new Vector3(-23f, 4.3f, 58.2f);
                         break;
                     default:
@@ -113,7 +106,62 @@ namespace Underworld
             {
                 scd.scd_data = null;
             }
+
+
+            //Motion params
+            motion.playerMotionParams.x_0 = (short)playerdat.X;
+            motion.playerMotionParams.y_2 = (short)playerdat.Y;
+            motion.playerMotionParams.z_4 = (short)playerdat.Z;
+
+            motion.playerMotionParams.index_20 = 1;
+            motion.playerMotionParams.unk_24 = 8;
+
+            motion.playerMotionParams.tilestate25 = (byte)(playerdat.RelatedToMotionState >> 3);
+
+            motion.PlayerHeadingMinor_dseg_8294 = (short)playerdat.heading_full;
+
+            motion.UpdateMotionStateAndSwimming(playerdat.RelatedToMotionState & 0x7);
+
+            //TODO process detail and music/sound options
+
         }
+
+        /// <summary>
+        /// Positions the player game camera based on x/y/z pos and current tileX/Y
+        /// </summary>
+        public static void PositionPlayerObject()
+        {
+            var x_adj = 0f;
+            var y_adj = 0f;
+            if ((motion.playerMotionParams.x_0 & 0x1F) != 0)
+            {
+                x_adj = 0.0046875f * ((float)(motion.playerMotionParams.x_0 & 0x1F));
+            }
+            if ((motion.playerMotionParams.y_2 & 0x1F) != 0)
+            {
+                y_adj = 0.0046875f * ((float)(motion.playerMotionParams.y_2 & 0x1F));
+            }
+            Vector3 adjust = new Vector3(
+                x: -x_adj,
+                z: y_adj,
+                y: 0); //y-up
+            Debug.Print($"High precision adjustment {adjust}");
+            main.gamecam.Position = adjust + uwObject.GetCoordinate(
+                tileX: motion.playerMotionParams.x_0 >> 8,
+                tileY: motion.playerMotionParams.y_2 >> 8,
+                _xpos: (motion.playerMotionParams.x_0 >> 5) & 0x7,
+                _ypos: (motion.playerMotionParams.y_2 >> 5) & 0x7,
+                _zpos: (motion.playerMotionParams.z_4 >> 3) + commonObjDat.height(127));  //+ playerObject.zpos + commonObjDat.height(127)
+
+
+            //this is causing visual glitching when sliding?  
+            main.gamecam.Rotation = Vector3.Zero;
+            main.gamecam.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
+                                                              //main.gamecam.Rotate(Vector3.Up, (float)(-heading_major / 127f * Math.PI));
+            float fullheading = (float)((playerObject.heading << 5) + playerObject.npc_heading);
+            main.gamecam.Rotate(Vector3.Up, (float)(-fullheading / 127f * Math.PI));
+        }
+
 
 
         /// <summary>
@@ -221,16 +269,16 @@ namespace Underworld
                 {
                     SetQuest(q, 0);
                 }
-                SetQuest(37,0); //garamon dreams
-                for (int v = 0; v<=63; v++)
+                SetQuest(37, 0); //garamon dreams
+                for (int v = 0; v <= 63; v++)
                 {
-                    SetGameVariable (v,0);
+                    SetGameVariable(v, 0);
                 }
                 for (int l = 0; l < 9; l++)
                 {
                     SetLevelLore(l, 0);
                 }
-                SetGameVariable(26,53);//bullfrog retries
+                SetGameVariable(26, 53);//bullfrog retries
             }
         }
 

@@ -22,24 +22,24 @@ namespace Underworld
                 playertimer += delta;
                 if (playertimer >= 1f)
                 {//every second
-                    if (ParalyseTimer>0)
+                    if (ParalyseTimer > 0)
                     {
                         ParalyseTimer--;
                         Debug.Print($"Paralyse timer: {ParalyseTimer}");
-                        if (ParalyseTimer==0)
+                        if (ParalyseTimer == 0)
                         {
                             main.gamecam.Set("MOVE", true);//re-enable player motion.
                         }
                     }
                     var secondelasped = (int)(playertimer / 1);
-                    playertimer = 0f;                    
+                    playertimer = 0f;
                     for (int s = 0; s < secondelasped; s++)
                     {
                         secondcounter++;
-                        ClockValue += 0x40; //not sure what the exact rate should be here. for the moment assuming this is 1 second of time in game clock terms
+                        //ClockValue += 0x40; //not sure what the exact rate should be here. for the moment assuming this is 1 second of time in game clock terms
 
                         //if ((ClockValue % 2048) < PreviousClockValue)//every 20 seconds
-                        if (secondcounter>=20)
+                        if (secondcounter >= 20)
                         {
                             secondcounter = 0;
                             playerUpdateCounter++;
@@ -93,7 +93,7 @@ namespace Underworld
                             if (DreamingInVoid)
                             {//TODO check if dreaming in void and count down
                                 Debug.Print("Dreaming in void. count down dream plant value");
-                                if (DreamPlantCounter>0)
+                                if (DreamPlantCounter > 0)
                                 {
                                     DreamPlantCounter--;
                                     if (DreamPlantCounter == 0)
@@ -161,11 +161,11 @@ namespace Underworld
                     }//end seconds for loop                 
                 }  //every second  
                 //check for player death.
-                if (play_hp<=0)
+                if (play_hp <= 0)
                 {
-                    Debug.Print ("player has died");
+                    Debug.Print("player has died");
                     PlayerDeath();
-                }            
+                }
             }//end ingame check
         }
 
@@ -175,13 +175,13 @@ namespace Underworld
         /// <param name="regeneration"></param>
         public static void HPRegenerationChange(int regeneration)
         {
-            if (regeneration>=0)
+            if (regeneration >= 0)
             {//when positive apply a random bonus
-                regeneration = 1 + (((Rng.r.Next(4) + regeneration) * max_hp) >> 4);                
+                regeneration = 1 + (((Rng.r.Next(4) + regeneration) * max_hp) >> 4);
             }
             else
             {//when negative exact amount regen
-                regeneration = -regeneration;                
+                regeneration = -regeneration;
             }
             play_hp = Math.Min(play_hp + regeneration, max_hp);
         }
@@ -208,7 +208,7 @@ namespace Underworld
                 }
             }
             //TODO: see about similar logic for UW1 tybals lair
-            
+
             //Apply mana boost
             if (regeneration < 0)
             {//boost mana by minus minus minor class. Not clear when this could happen...
@@ -323,8 +323,19 @@ namespace Underworld
 
 
             RefreshLighting();//either brightest physical light or brightest magical light
-            ApplyMazeNavigation();//handles tybals maze
-            if ((!AutomapEnabled) && (_RES==GAME_UW2))
+
+            //Handle game specific items
+            if (_RES != GAME_UW2)
+            {
+                ApplyMazeNavigation();//handles tybals maze
+            }
+            else
+            {
+                FlyingInVoid();//handles flying in the ethereal void
+            }
+
+
+            if ((!AutomapEnabled) && (_RES == GAME_UW2))
             {
                 //Do a test here to see if the player has entered a previously visible tile. If so renable automap.                
             }
@@ -332,8 +343,17 @@ namespace Underworld
             {
                 UpdateAutomap();//update the visited status of nearby tiles
             }
-        }
 
+            motion.RefreshPlayerTileState();
+
+            motion.UpdateMotionStateAndSwimming(-1);
+        }
+        
+
+        public static void PutWeaponAway()
+        {
+            Debug.Print("put away weapon");
+        }
 
         /// <summary>
         /// Casts the 3 spell effects stored in the player data.
@@ -575,33 +595,48 @@ namespace Underworld
                 );
         }
 
+        /// <summary>
+        /// Changes the colour of the maze tiles in Tybals Lair in UW1 when the maze navigation crown is work
+        /// </summary>
         static void ApplyMazeNavigation()
         {
-            if (_RES != GAME_UW2)
+            if (dungeon_level == 7)
             {
-                if (dungeon_level == 7)
+                if (previousMazeNavigation != MazeNavigation)
                 {
-                    if (previousMazeNavigation != MazeNavigation)
+                    //change in stage
+                    if (MazeNavigation)
                     {
-                        //change in stage
-                        if (MazeNavigation)
-                        {
-                            //apply effect
-                            //set tiles to use texture 222
-                            var material = tileMapRender.mapTextures.GetMaterial(52, UWTileMap.current_tilemap.texture_map);
-                            material.SetShaderParameter("texture_albedo", (Texture)tileMapRender.mapTextures.LoadImageAt(222));
-                        }
-                        else
-                        {
-                            //remove effect
-                            //set tiles to us texture 224
-                            var material = tileMapRender.mapTextures.GetMaterial(52, UWTileMap.current_tilemap.texture_map);
-                            material.SetShaderParameter("texture_albedo", (Texture)tileMapRender.mapTextures.LoadImageAt(224));
-                        }
+                        //apply effect
+                        //set tiles to use texture 222
+                        var material = tileMapRender.mapTextures.GetMaterial(52, UWTileMap.current_tilemap.texture_map);
+                        material.SetShaderParameter("texture_albedo", (Texture)tileMapRender.mapTextures.LoadImageAt(222));
+                    }
+                    else
+                    {
+                        //remove effect
+                        //set tiles to us texture 224
+                        var material = tileMapRender.mapTextures.GetMaterial(52, UWTileMap.current_tilemap.texture_map);
+                        material.SetShaderParameter("texture_albedo", (Texture)tileMapRender.mapTextures.LoadImageAt(224));
                     }
                 }
             }
             previousMazeNavigation = MazeNavigation;
+        }
+
+
+        /// <summary>
+        /// Forces fly mode when the player is dreaming in the void
+        /// </summary>
+        static void FlyingInVoid()
+        {
+            if (DreamPlantCounter != 0)
+            {
+                if (DreamingInVoid)
+                {
+                    MagicalMotionAbilities |= 0x10;   //Set bit 4 for flying
+                }
+            }
         }
 
     }//end class

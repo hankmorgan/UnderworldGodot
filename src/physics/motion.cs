@@ -171,9 +171,9 @@ namespace Underworld
             }
 
             //seg030_2BB7_83E:
-            if (MotionParams.unk_26 > 0x180)
+            if (MotionParams.unk_26_falldamage > 0x180)
             {//seg030_2BB7_848:
-                var var6FallDamage = MotionParams.unk_26 >> 8;
+                var var6FallDamage = MotionParams.unk_26_falldamage >> 8;
                 if (projectile.majorclass == 1)
                 {
                     var6FallDamage = var6FallDamage >> 2;
@@ -230,7 +230,7 @@ namespace Underworld
                 else
                 {
                     //seg030_2BB7_956:
-                    if ((MotionParams.unk_14 | MotionParams.unk_a_pitch | (int)MotionParams.unk_10) == 0)
+                    if ((MotionParams.unk_14 | MotionParams.unk_a_pitch | (int)MotionParams.unk_10_Z) == 0)
                     {
                         //object has likely stopped
                         projectile.TileState_0XA_Bit456 = (short)(dseg_67d6_3E8[MotionParams.tilestate25]);
@@ -274,7 +274,7 @@ namespace Underworld
                 projectile.ProjectileHeading = (ushort)(MotionParams.heading_1E >> 8);
                 projectile.npc_xhome = (short)projectile.tileX;
                 projectile.npc_yhome = (short)projectile.tileY;
-                if (MotionParams.unk_10 == 0)
+                if (MotionParams.unk_10_Z == 0)
                 {
                     projectile.UnkBit_0X13_Bit7 = 0;
                 }
@@ -506,7 +506,7 @@ namespace Underworld
             else
             {
                 MotionParams.unk_14 = (short)(0x2F * ((Rng.r.Next(0x7FFF) + 1) & 0x3));
-                MotionParams.unk_10 = -4;
+                MotionParams.unk_10_Z = -4;
             }
         }
 
