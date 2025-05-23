@@ -147,9 +147,9 @@ public partial class main : Node3D
 		}
 	}
 
-    // Called every frame. 'delta' is the elapsed time since the previous frame.
-    public override void _PhysicsProcess(double delta)
-    {
+	// Called every frame. 'delta' is the elapsed time since the previous frame.
+	public override void _PhysicsProcess(double delta)
+	{
 		if ((uimanager.InGame) || (uimanager.AtMainMenu))
 		{
 			cycletime += delta;
@@ -165,7 +165,7 @@ public partial class main : Node3D
 		//
 		if (Pit >= 0.054945)
 		{
-			PitTimer += (uint)(Pit /0.054945f);
+			PitTimer += (uint)(Pit / 0.054945f);
 			Pit = 0;
 			//Debug.Print($"{Pit}, {PitTimer}, {delta}");
 		}
@@ -671,7 +671,7 @@ public partial class main : Node3D
 								//turn left
 								motion.PlayerMotionHeading_77E = -90;
 								motion.MotionInputPressed = 1;
-								break;							
+								break;
 							}
 						case Key.E: //not vanilla key
 							{
@@ -679,7 +679,7 @@ public partial class main : Node3D
 								//turn right
 								motion.PlayerMotionHeading_77E = +90;
 								motion.MotionInputPressed = 1;
-								break;							
+								break;
 							}
 						case Key.S: //not vanilla key
 							{
@@ -707,28 +707,18 @@ public partial class main : Node3D
 							}
 						case Key.J:
 							{
-								//jump
-								//todo: Do a test that the player is grounded.
-								motion.MotionInputPressed = 7;
-								motion.playerMotionParams.unk_a_pitch = 0x263;
-								if (motion.playerMotionParams.z_4 > 0x280)
+								if (Input.IsKeyPressed(Key.Shift))
 								{
-									var tmp = (short)((motion.playerMotionParams.unk_a_pitch * 5) / 6);
-									motion.playerMotionParams.unk_a_pitch = tmp;
-									if (motion.playerMotionParams.z_4 > 0x2C0)
-									{
-										motion.playerMotionParams.unk_a_pitch = (short)((tmp << 1) / 3);
-									}
-								}
-								if ((playerdat.MagicalMotionAbilities & 0x1) != 0)
-								{//player has leap ability.
-									motion.playerMotionParams.unk_10_Z = -2;
+									//long jump
+									motion.MotionInputPressed = 6;
+
 								}
 								else
 								{
-									motion.playerMotionParams.unk_10_Z = -4;
+									//jump
+									//todo: Do a test that the player is grounded.
+									motion.MotionInputPressed = 7;									
 								}
-
 								break;
 							}
 						case Key.T:
