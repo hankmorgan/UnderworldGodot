@@ -165,7 +165,7 @@ public partial class main : Node3D
 		//
 		if (Pit >= 0.054945)
 		{
-			PitTimer++;
+			PitTimer += (uint)(Pit /0.054945f);
 			Pit = 0;
 			//Debug.Print($"{Pit}, {PitTimer}, {delta}");
 		}
@@ -667,6 +667,7 @@ public partial class main : Node3D
 							}
 						case Key.Q: //not vanilla key
 							{
+								motion.PlayerMotionWalk_77C = 0;
 								//turn left
 								motion.PlayerMotionHeading_77E = -90;
 								motion.MotionInputPressed = 1;
@@ -674,6 +675,7 @@ public partial class main : Node3D
 							}
 						case Key.E: //not vanilla key
 							{
+								motion.PlayerMotionWalk_77C = 0;
 								//turn right
 								motion.PlayerMotionHeading_77E = +90;
 								motion.MotionInputPressed = 1;

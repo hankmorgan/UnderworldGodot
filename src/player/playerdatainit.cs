@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Diagnostics;
 namespace Underworld
 {
     public partial class playerdat : Loader
@@ -144,12 +145,16 @@ namespace Underworld
                 x: -x_adj,
                 z: y_adj,
                 y: 0); //y-up
+            Debug.Print($"High precision adjustment {adjust}");
             main.gamecam.Position = adjust + uwObject.GetCoordinate(
-                tileX: playerObject.tileX,
-                tileY: playerObject.tileY,
-                _xpos: playerObject.xpos,
-                _ypos: playerObject.ypos,
-                _zpos: playerObject.zpos + commonObjDat.height(127));
+                tileX: motion.playerMotionParams.x_0 >> 8,
+                tileY: motion.playerMotionParams.y_2 >> 8,
+                _xpos: (motion.playerMotionParams.x_0 >> 5) & 0x7,
+                _ypos: (motion.playerMotionParams.y_2 >> 5) & 0x7,
+                _zpos: (motion.playerMotionParams.z_4 >> 3) + commonObjDat.height(127));  //+ playerObject.zpos + commonObjDat.height(127)
+
+
+            //this is causing visual glitching when sliding?  
             main.gamecam.Rotation = Vector3.Zero;
             main.gamecam.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
             main.gamecam.Rotate(Vector3.Up, (float)(-heading_major / 127f * Math.PI));

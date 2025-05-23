@@ -32,6 +32,7 @@ var _shift = false
 var _alt = false
 
 func _input(event):
+	return
 	# Receives mouse motion
 	if event is InputEventMouseMotion:
 		_mouse_position = event.relative
@@ -77,6 +78,7 @@ func _input(event):
 
 # Updates mouselook and movement every frame
 func _process(delta):
+	return
 	_update_mouselook()
 	if MOVE:
 		_update_movement(delta)
@@ -118,6 +120,7 @@ func _update_mouselook():
 	# Only rotates mouse if the mouse is captured
 	#if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 	if MOUSELOOK:
+		return
 		_mouse_position *= sensitivity
 		var yaw = _mouse_position.x
 		var pitch = _mouse_position.y
