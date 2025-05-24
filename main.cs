@@ -719,6 +719,7 @@ public partial class main : Node3D
 							}
 						case Key.J:
 							{
+								motion.PlayerMotionHeading_77E = 0;//cancel turn movement when juming
 								if (Input.IsKeyPressed(Key.Shift))
 								{
 									//long jump
@@ -729,7 +730,7 @@ public partial class main : Node3D
 								{
 									//jump
 									//todo: Do a test that the player is grounded.
-									motion.MotionInputPressed = 7;									
+									motion.MotionInputPressed = 7;
 								}
 								break;
 							}
