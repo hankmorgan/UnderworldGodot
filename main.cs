@@ -482,6 +482,7 @@ public partial class main : Node3D
 	{
 		motion.RelatedToSwimDmg_dseg_67d6_33CE = 0;
 		motion.RelatedToClockIncrement_67d6_742 += ClockIncrement;
+		motion.dseg_67d6_33c6 = false;
 
 		if (motion.MotionInputPressed == 0)
 		{

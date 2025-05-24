@@ -32,14 +32,14 @@ namespace Underworld
         static short dseg_67d6_229C;
         public static short dseg_67d6_22A2;
 
-        
+
         public const short MaybeBaseForwardSpeed_1_dseg_67d6_CE = 0x3AC;
         public const short MaybeBaseSlideSpeed_2_dseg_67d6_CC = 0xEB;
         public const short MaybeBaseBackwardsSpeed_3_dseg_67d6_CA = 0xBC;
         public static short MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6;
         public static short MaybePlayerActualSlideSpeed_2_dseg_67d6_22A8;
         public static short MaybePlayerActualBackwardsSpeed_3_dseg_67d6_22AA;
-        
+
 
         static short dseg_67d6_22A0;
         static short dseg_67d6_22AC;
@@ -61,6 +61,10 @@ namespace Underworld
         public static short RelatedToSwimDmg_dseg_67d6_33CE = 0;
         public static byte RelatedToClockIncrement_67d6_742;
 
+        public static bool dseg_67d6_33c6;
+
+        static sbyte[] dseg_67d6_743 = new sbyte[] { 1, 3, 4, 3, 1, -3, 0, 0, 1, 3, 4, 3, 1, -3, 0, 0 };
+        static sbyte[] dseg_67d6_753 = new sbyte[] { 0, 0, -1, -2, -3 - 4, -5, -6, -6, -4, -3, -4, -1, 0, 0, 0, };
 
 
         public static void PlayerMotion(short ClockIncrement)
@@ -70,8 +74,8 @@ namespace Underworld
             dseg_67d6_33D0 = 0;
             playerMotionParams.radius_22 = (byte)commonObjDat.radius(playerdat.playerObject.item_id);
             playerMotionParams.height_23 = (byte)commonObjDat.height(playerdat.playerObject.item_id);
-            var x_init = playerMotionParams.x_0;
-            var y_init = playerMotionParams.y_2;
+            // var x_init = playerMotionParams.x_0;
+            // var y_init = playerMotionParams.y_2;
             PlayerMotionInitialCalculation_seg008_1B09_7B2(ClockIncrement);
 
             CalculateMotion(
@@ -85,13 +89,41 @@ namespace Underworld
 
             playerdat.PositionPlayerObject();
 
-            if ((x_init != playerMotionParams.x_0) || (y_init != playerMotionParams.y_2))
+            // if ((x_init != playerMotionParams.x_0) || (y_init != playerMotionParams.y_2))
+            // {
+            //     Debug.Print($"Move from {x_init},{y_init} to {playerMotionParams.x_0},{playerMotionParams.y_2}   ({playerdat.playerObject.tileX}, {playerdat.playerObject.tileY})  {playerdat.playerObject.xpos},{playerdat.playerObject.ypos} ");
+            // }
+
+            if ((playerMotionParams.tilestate25 & 0x10) == 0)
             {
-                Debug.Print($"Move from {x_init},{y_init} to {playerMotionParams.x_0},{playerMotionParams.y_2}   ({playerdat.playerObject.tileX}, {playerdat.playerObject.tileY})  {playerdat.playerObject.xpos},{playerdat.playerObject.ypos} ");
+                //THIS SECTION MAY BE SOMETHING TO DO WITH MOMENTUM OR SWIMMING
+                if ((MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6 >> 2) < playerMotionParams.unk_14)
+                {
+                    if (MotionInputPressed == 1)
+                    {
+                        var cl = (playerMotionParams.unk_14 << 2) / (MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6 >> 1) - 1;
+                        if (cl < 2)
+                        {
+                            cl = 2;
+                        }
+                        dseg_67d6_33c6 = false;
+
+                        RelatedToSwimDmg_dseg_67d6_33CE = (short)(dseg_67d6_743[RelatedToClockIncrement_67d6_742 >> 4] * cl);
+                    }
+                }
+                if (MotionInputPressed == 7)
+                {
+                    RelatedToSwimDmg_dseg_67d6_33CE = -32;
+                    dseg_67d6_33D2 = -256;
+                    dseg_67d6_33c6 = true;
+                    MotionInputPressed = 0;
+                }
+                if ((MotionInputPressed == 9) || (MotionInputPressed == 0xA))
+                {
+                    dseg_67d6_33c6 = true;
+                    RelatedToSwimDmg_dseg_67d6_33CE = (short)(dseg_67d6_753[RelatedToClockIncrement_67d6_742 >> 4] << 1);
+                }
             }
-
-
-            //motion.MotionInputPressed
             MotionInputPressed = 0;
         }
 
@@ -196,10 +228,10 @@ namespace Underworld
             //seg008_1B09_A9D:
             //UW1 and UW2 realign here.
             if (playerMotionParams.unk_14 == 0)
-            {                
+            {
                 PlayerHeadingMajor_dseg_67d6_8296 = PlayerHeadingMinor_dseg_8294;
             }
-            
+
             //seg008_1B09_AAA:
             playerMotionParams.heading_1E = PlayerHeadingMajor_dseg_67d6_8296;
             setAt(UWMotionParamArray.PlayerMotionHandler_dseg_67d6_26AA, 0, 16, 0x0);
@@ -498,7 +530,7 @@ namespace Underworld
             }
         }
 
-static void ProcessPlayerTileState(short tilestate, int arg2)
+        static void ProcessPlayerTileState(short tilestate, int arg2)
         {
             var InWater = false;
             if ((motion.PreviousTileState_dseg_67d6_22B4 != tilestate) || (arg2 == 0))
@@ -650,18 +682,18 @@ static void ProcessPlayerTileState(short tilestate, int arg2)
             {
                 //not swimming?
                 si = tilestatetable_var8[arg0];
-                
+
             }
             else
             {
-                si = 4 + (playerdat.Swimming/2);
+                si = 4 + (playerdat.Swimming / 2);
             }
             //seg008_1B09_12F0: 
             motion.MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6 = (short)((motion.MaybeBaseForwardSpeed_1_dseg_67d6_CE * si) / 0x14);
             motion.MaybePlayerActualSlideSpeed_2_dseg_67d6_22A8 = (short)((motion.MaybeBaseSlideSpeed_2_dseg_67d6_CC * si) / 0x14);
             motion.MaybePlayerActualBackwardsSpeed_3_dseg_67d6_22AA = (short)((motion.MaybeBaseBackwardsSpeed_3_dseg_67d6_CA * si) / 0x14);
 
-            if (arg0>=4)
+            if (arg0 >= 4)
             {
                 motion.dseg_67d6_22A2 = motion.MotionRelated_dseg_67d6_775;
             }
@@ -680,7 +712,7 @@ static void ProcessPlayerTileState(short tilestate, int arg2)
                 motion.MotionWeightRelated_dseg_67d6_C8 = 0x60;
             }
         }
-        
+
 
 
         /// <summary>
