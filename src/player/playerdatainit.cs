@@ -133,6 +133,7 @@ namespace Underworld
         {
             var x_adj = 0f;
             var y_adj = 0f;
+            var z_adj = 0f;
             if ((motion.playerMotionParams.x_0 & 0x1F) != 0)
             {
                 x_adj = 0.0046875f * ((float)(motion.playerMotionParams.x_0 & 0x1F));
@@ -141,10 +142,15 @@ namespace Underworld
             {
                 y_adj = 0.0046875f * ((float)(motion.playerMotionParams.y_2 & 0x1F));
             }
+            if ((motion.playerMotionParams.z_4 & 0x7) != 0)
+            {
+                //Debug.Print($"z high precision is {motion.playerMotionParams.z_4 & 0x7}");
+                z_adj = (float)(0.001875f * (float)(motion.playerMotionParams.z_4 & 0x7));
+            }
             Vector3 adjust = new Vector3(
                 x: -x_adj,
                 z: y_adj,
-                y: 0); //y-up
+                y: z_adj); //y-up
             Debug.Print($"High precision adjustment {adjust}");
             main.gamecam.Position = adjust + uwObject.GetCoordinate(
                 tileX: motion.playerMotionParams.x_0 >> 8,

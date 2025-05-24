@@ -8,7 +8,7 @@ namespace Underworld
     /// </summary>
     public class uwObject : UWClass
     {
-        const float _ResolutionZ = 128.0f; //UW has 127 posible z positions for an object in tile.
+        const float _ResolutionZ = 128.0f; //UW has 0-127 posible z positions for an object in tile.
         const float _ceil = 32;// tileMap.CEILING_HEIGHT;
         const float _BrushZ = 15f;
         public objectInstance instance;//TODO: this needs to be linked in all the object creation code.

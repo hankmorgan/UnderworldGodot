@@ -1490,7 +1490,7 @@ namespace Underworld
             var si = 0;
             var dx = xArg0 & 0xFF;
 
-            switch (UWMotionParamArray.TileAttributesArray[8] & 0xF)
+            switch (UWMotionParamArray.TileAttributesArray[4] & 0xF)
             {
                 case UWTileMap.TILE_SLOPE_N:
                     si = di_y;
@@ -1506,7 +1506,7 @@ namespace Underworld
                     break;
             }
             si = si >> 2;
-            si = si + ((UWMotionParamArray.TileAttributesArray[8] & 0xF0) << 2);
+            si = si + ((UWMotionParamArray.TileAttributesArray[4] & 0xF0) << 2);
             return si;
         }
 
