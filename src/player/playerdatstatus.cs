@@ -594,10 +594,6 @@ namespace Underworld
                {
                     if (_RES == GAME_UW2)
                     {
-                         if (value != TileState)
-                         {
-                              Debug.Print("change in tilestate");
-                         }
                          SetAt(0x307, (byte)value);
                     }
                     else

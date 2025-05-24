@@ -16,7 +16,23 @@ namespace Underworld
             if (datafolder.ToUpper() != "DATA")
             {
                 //load player dat from a save file
-                Load(datafolder);
+                Load(datafolder);     
+
+                //Motion params
+                motion.playerMotionParams.x_0 = (short)playerdat.X;
+                motion.playerMotionParams.y_2 = (short)playerdat.Y;
+                motion.playerMotionParams.z_4 = (short)playerdat.Z;
+
+                motion.playerMotionParams.index_20 = 1;
+                motion.playerMotionParams.unk_24 = 8;
+
+                motion.playerMotionParams.tilestate25 = (byte)(playerdat.RelatedToMotionState >> 3);
+
+                motion.PlayerHeadingMinor_dseg_8294 = (short)playerdat.heading_full;
+
+                motion.UpdateMotionStateAndSwimming(playerdat.RelatedToMotionState & 0x7);
+
+
                 PositionPlayerObject();
 
                 for (int i = 0; i < 8; i++)
@@ -27,18 +43,10 @@ namespace Underworld
             }
             else
             {
-                //default start locations.                
-                switch (_RES)
-                {
-                    case GAME_UW2:
-                        main.gamecam.Position = new Vector3(-23f, 4.3f, 58.2f);
-                        break;
-                    default:
-                        main.gamecam.Position = new Vector3(-38f, 4.2f, 2.2f);
-                        break;
-                }
-                tileX = -(int)(main.gamecam.Position.X / 1.2f);
-                tileY = (int)(main.gamecam.Position.Z / 1.2f);
+                //starting a new player
+
+                // tileX = -(int)(main.gamecam.Position.X / 1.2f);
+                // tileY = (int)(main.gamecam.Position.Z / 1.2f);
 
                 AutomapEnabled = true;
                 uimanager.SetHelm(isFemale, -1);
@@ -54,8 +62,8 @@ namespace Underworld
                 {
                     uimanager.SetBackPackArt(i, -1);
                 }
-                main.gamecam.Rotate(Vector3.Up, (float)Math.PI);
-            }
+                //main.gamecam.Rotate(Vector3.Up, (float)Math.PI);
+            }//end standard setup.
 
             //Load bablglobals
             bglobal.LoadGlobals(datafolder);
@@ -86,8 +94,8 @@ namespace Underworld
             Teleportation.CodeToRunOnTeleport = null;
             pitsofcarnage.IsAvatarInPitFightGlobal = false;
 
-            playerObject.npc_xhome = (short)playerdat.tileX;
-            playerObject.npc_yhome = (short)playerdat.tileY;
+            // playerObject.npc_xhome = (short)playerdat.tileX;
+            // playerObject.npc_yhome = (short)playerdat.tileY;
 
             //load the correct skin tones for weapon animations
             switch (Body)
@@ -106,21 +114,6 @@ namespace Underworld
             {
                 scd.scd_data = null;
             }
-
-
-            //Motion params
-            motion.playerMotionParams.x_0 = (short)playerdat.X;
-            motion.playerMotionParams.y_2 = (short)playerdat.Y;
-            motion.playerMotionParams.z_4 = (short)playerdat.Z;
-
-            motion.playerMotionParams.index_20 = 1;
-            motion.playerMotionParams.unk_24 = 8;
-
-            motion.playerMotionParams.tilestate25 = (byte)(playerdat.RelatedToMotionState >> 3);
-
-            motion.PlayerHeadingMinor_dseg_8294 = (short)playerdat.heading_full;
-
-            motion.UpdateMotionStateAndSwimming(playerdat.RelatedToMotionState & 0x7);
 
             //TODO process detail and music/sound options
 

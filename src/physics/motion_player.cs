@@ -64,7 +64,7 @@ namespace Underworld
         public static bool dseg_67d6_33c6;
 
         static sbyte[] dseg_67d6_743 = new sbyte[] { 1, 3, 4, 3, 1, -3, 0, 0, 1, 3, 4, 3, 1, -3, 0, 0 };
-        static sbyte[] dseg_67d6_753 = new sbyte[] { 0, 0, -1, -2, -3 - 4, -5, -6, -6, -4, -3, -4, -1, 0, 0, 0, };
+        static sbyte[] dseg_67d6_753 = new sbyte[] { 0, 0, -1, -2, -3 - 4, -5, -6, -6, -4, -3, -2, -1, 0, 0, 0, -4};
 
 
         public static void PlayerMotion(short ClockIncrement)
@@ -530,7 +530,7 @@ namespace Underworld
             }
         }
 
-        static void ProcessPlayerTileState(short tilestate, int arg2)
+        public static void ProcessPlayerTileState(short tilestate, int arg2)
         {
             var InWater = false;
             if ((motion.PreviousTileState_dseg_67d6_22B4 != tilestate) || (arg2 == 0))
@@ -734,6 +734,11 @@ namespace Underworld
                 playerdat.SwimCounter = 0x10;
             }
             return result;
+        }
+
+        public static void WalkOnSpecialTerrain()
+        {
+            //Debug.Print("Walkonspecialterrain todo");
         }
 
     }//end class

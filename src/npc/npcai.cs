@@ -217,8 +217,8 @@ namespace Underworld
         {
             currObj_XHome = critter.npc_xhome;
             currObj_YHome = critter.npc_yhome;
-            var distancesquaredtoplayer = Math.Pow(critter.npc_yhome - playerdat.tileY, 2)
-                                            + Math.Pow(critter.npc_xhome - playerdat.tileX, 2);
+            var distancesquaredtoplayer = Math.Pow(critter.npc_yhome - playerdat.playerObject.tileY, 2)
+                                            + Math.Pow(critter.npc_xhome - playerdat.playerObject.tileX, 2);
 
             //var n = (npc)critter.instance;
             if (

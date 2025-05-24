@@ -420,8 +420,8 @@ namespace Underworld
             var durationOfDream = (Rng.r.Next(4) + 2) & 0x7;
             playerdat.DreamPlantCounter = durationOfDream;
             playerdat.DreamingInVoid = true;
-            playerdat.DreamTileX = playerdat.tileX;
-            playerdat.DreamTileY = playerdat.tileY;
+            playerdat.DreamTileX = playerdat.playerObject.tileX;
+            playerdat.DreamTileY = playerdat.playerObject.tileY;
             playerdat.DreamHeading = playerdat.heading_major;
             playerdat.DreamDungeon = playerdat.dungeon_level;
 

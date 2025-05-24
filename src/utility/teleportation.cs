@@ -45,30 +45,27 @@ namespace Underworld
                 {//handle moving an object in hand through levels. 
                     Debug.Print("Moving an object through a level while holding it! Dropping it there.");
                     var obj = UWTileMap.current_tilemap.LevelObjects[playerdat.ObjectInHand];
-                    // if ((_RES == GAME_UW2) && playerdat.DreamingInVoid)
-                    // {
-                        //drop objects at the player tile so they cannot be taken out of the dream 
-                        //TODO. special case for the telekinesis wand in Scintillus.
-                        playerdat.ObjectInHand = -1;
-                        uimanager.instance.mousecursor.SetCursorToCursor();
-                        var tile = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY];
-                        obj.zpos = (short)(tile.floorHeight<<3);
-                        obj.xpos = 3;
-                        obj.ypos = 3;
-                        obj.next = tile.indexObjectList;
-                        tile.indexObjectList = obj.index;  
-                        pickup.DropSpecialCases(obj.item_id);
-                    // }  
-                    // else
-                    // {
-                    //     //Temporarily add to inventory data.
-                    //     itemToTransfer = playerdat.AddObjectToPlayerInventory(playerdat.ObjectInHand, false);                        
-                    // }       
+
+                    //drop objects at the player tile so they cannot be taken out of the dream 
+                    //TODO. special case for the telekinesis wand in Scintillus.
+                    playerdat.ObjectInHand = -1;
+                    uimanager.instance.mousecursor.SetCursorToCursor();
+                    var tile = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY];
+                    obj.zpos = (short)(tile.floorHeight << 3);
+                    obj.xpos = 3;
+                    obj.ypos = 3;
+                    obj.next = tile.indexObjectList;
+                    tile.indexObjectList = obj.index;
+                    pickup.DropSpecialCases(obj.item_id);
+
                 }
-                //remove player form the level
-                playerdat.PlacePlayerInTile(-1,-1, playerdat.tileX, playerdat.tileY);//removes the player from the tile map data
+
+                //remove player from the level
+                playerdat.PlacePlayerInTile(newTileX: -1, newTileY: -1, previousTileX: playerdat.tileX, previousTileY: playerdat.tileY);//removes the player from the tile map data
+
+
                 //move player object to the save file and clear the data out.
-                for (int i = 0;i<=0x1A; i++)
+                for (int i = 0; i <= 0x1A; i++)
                 {
                     playerdat.pdat[playerdat.PlayerObjectStoragePTR + i] = playerdat.playerObject.DataBuffer[playerdat.playerObject.PTR + i];
                     playerdat.playerObject.DataBuffer[playerdat.playerObject.PTR + i] = 0;
@@ -78,7 +75,7 @@ namespace Underworld
                 LevelChangeEvents(ExitLevelMode, playerdat.dungeon_level);
 
                 playerdat.dungeon_level = TeleportLevel;
-                
+
                 //switch level
                 UWTileMap.LoadTileMap(
                         newLevelNo: playerdat.dungeon_level - 1,
@@ -87,31 +84,25 @@ namespace Underworld
 
                 //copy back the player object
                 //copy player object from the save file back into the tilemap objects
-                for (int i = 0;i <=0x1A; i++)
+                for (int i = 0; i <= 0x1A; i++)
                 {
                     playerdat.playerObject.DataBuffer[playerdat.playerObject.PTR + i] = playerdat.pdat[playerdat.PlayerObjectStoragePTR + i];
                 }
 
                 if ((TeleportTileX != -1) && (TeleportTileY != -1))
                 {
-                    //move to new tile
-                    //var targetTile = UWTileMap.current_tilemap.Tiles[TeleportTileX, TeleportTileY];
-                    MovePlayerToTile(TeleportTileX, TeleportTileY);
+                    //move to new tile on different level
+                    InitialisePlayerOnLevelOrPositionChange(TeleportTileX, TeleportTileY);
                 }
 
                 //Handle enter level events
                 LevelChangeEvents(EnterLevelMode, playerdat.dungeon_level);
 
-                if (_RES==GAME_UW2)
+                if (_RES == GAME_UW2)
                 {//SCD.ARK then needs to be processed in UW2
                     Debug.Print("Processing SCD due to level transition");
                     scd.ProcessSCDArk(1);
                 }
-
-                // if (itemToTransfer != -1)
-                // {//takes object back out of inventory.
-                //     uimanager.DoPickup(itemToTransfer);
-                // }
             }
             else
             {
@@ -120,7 +111,7 @@ namespace Underworld
                 {
                     //move to new tile
                     //var targetTile = UWTileMap.current_tilemap.Tiles[TeleportTileX, TeleportTileY];
-                    MovePlayerToTile(TeleportTileX, TeleportTileY);
+                    InitialisePlayerOnLevelOrPositionChange(tileX: TeleportTileX, tileY: TeleportTileY, removefromtile: true);
                 }
             }
 
@@ -136,20 +127,96 @@ namespace Underworld
             TeleportLevel = -1;
             TeleportTileX = -1;
             TeleportTileY = -1;
-            if (CodeToRunOnTeleport!=null)
+            if (CodeToRunOnTeleport != null)
             {//handle a callback.
                 CodeToRunOnTeleport();
                 CodeToRunOnTeleport = null;//although this should be handled by the method itself
             }
         }
 
-        public static void MovePlayerToTile(int tileX, int tileY)
+
+
+        /// <summary>
+        /// Handles the reseting of the player motion params when teleporting to a new tile, starting a new game or changing levels
+        /// </summary>
+        /// <param name="tileX"></param>
+        /// <param name="tileY"></param>
+        /// <param name="arg4"></param>
+        /// <param name="removefromtile"></param>
+        public static void InitialisePlayerOnLevelOrPositionChange(int tileX, int tileY, int arg4 = -1, bool removefromtile = false)
         {
             var tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];//place object in tile will refresh player object on next game tick.
-            playerdat.playerObject.zpos = (short)(tile.floorHeight << 3);
-            playerdat.playerObject.xpos = 3; playerdat.playerObject.ypos = 3;
-            playerdat.tileX = tileX; playerdat.tileY = tileY;
-            
+
+            if (removefromtile)
+            {
+                playerdat.PlacePlayerInTile(-1, -1, -1, -1);
+            }
+
+            Loader.setAt(UWMotionParamArray.PlayerMotionHandler_dseg_67d6_26AA, 0, 16, 0);
+            motion.playerMotionParams.unk_14 = 0;
+            motion.playerMotionParams.unk_10_Z = 0;
+            motion.playerMotionParams.unk_e_Y = 0;
+
+            motion.playerMotionParams.unk_c_X = 0;
+            motion.playerMotionParams.unk_a_pitch = 0;
+            motion.playerMotionParams.unk_8_y = 0;
+
+            motion.playerMotionParams.unk_6_x = 0;
+
+            motion.playerMotionParams.x_0 = (short)((tileX << 8) + 0x80);
+
+            motion.playerMotionParams.y_2 = (short)((tileY << 8) + 0x80);
+
+
+            motion.playerMotionParams.unk_24 = 8;
+            motion.playerMotionParams.index_20 = 1;
+            motion.playerMotionParams.z_4 = (short)(tile.floorHeight * 0x40);
+            if ((motion.TileTraversalFlags_dseg_67d6_1BA6[tile.tileType] & 0x20) != 0)
+            {
+                motion.playerMotionParams.z_4 += 0x20;
+            }
+
+            if (arg4 != -1)
+            {
+                if (1000 - commonObjDat.height(127) > motion.playerMotionParams.z_4)
+                {
+                    motion.playerMotionParams.z_4 = (short)(1000 - (commonObjDat.height(127) << 3));
+                    motion.playerMotionParams.unk_10_Z = -4;
+                }
+            }
+            playerdat.playerObject.zpos = (short)(motion.playerMotionParams.z_4 >> 3);
+            playerdat.playerObject.xpos = 6;
+            playerdat.playerObject.ypos = 6;
+            playerdat.playerObject.npc_animation = 1;
+            playerdat.playerObject.npc_xhome = (short)tileX;
+            playerdat.playerObject.npc_yhome = (short)tileY;
+            playerdat.playerObject.tileX = tileX;
+            playerdat.playerObject.tileY = tileY;
+            playerdat.playerObject.next = 0;
+
+            MotionCalcArray.PtrToMotionCalc = new byte[0x20];
+
+            MotionCalcArray.MotionArrayObjectIndexA = 1;
+            MotionCalcArray.Radius8 = (byte)commonObjDat.radius(127);
+            MotionCalcArray.Height9 = (byte)commonObjDat.height(127);
+            MotionCalcArray.x0 = (ushort)(3 + (tileX << 3));
+            MotionCalcArray.y2 = (ushort)(3 + (tileY << 3));
+            MotionCalcArray.z4 = (ushort)(motion.playerMotionParams.z_4 >> 3);
+
+            motion.ProcessMotionTileHeights_seg028_2941_385(motion.playerMotionParams.unk_24);
+            motion.playerMotionParams.tilestate25 = motion.GetTileState(MotionCalcArray.UnkC_terrain | MotionCalcArray.UnkE);
+
+            motion.ProcessPlayerTileState(motion.playerMotionParams.tilestate25, 0);
+            motion.WalkOnSpecialTerrain();
+            motion.Examine_dseg_D3 = 1;
+
+            playerdat.PlacePlayerInTile(newTileX: tileX, newTileY: tileY, previousTileX: -1, previousTileY: -1);
+
+
+            // playerdat.playerObject.zpos = (short)(tile.floorHeight << 3);
+            // playerdat.playerObject.xpos = 3; playerdat.playerObject.ypos = 3;
+            // playerdat.tileX = tileX; playerdat.tileY = tileY;
+
             playerdat.PositionPlayerObject();
 
             // main.gamecam.Position = uwObject.GetCoordinate(
@@ -192,17 +259,17 @@ namespace Underworld
         {
             if (character == 0)
             {
-                if (playerdat.DreamPlantCounter>0)
+                if (playerdat.DreamPlantCounter > 0)
                 {
                     if (playerdat.DreamingInVoid)
                     {
-                        if (newLevel!=0)
+                        if (newLevel != 0)
                         {
-                            if (worlds.GetWorldNo(newLevel) !=8)
+                            if (worlds.GetWorldNo(newLevel) != 8)
                             {
                                 return 2;
                             }
-                        }                        
+                        }
                     }
                 }
                 if (playerdat.GetQuest(112) != 0)//avatar fighting in the castle
@@ -215,18 +282,18 @@ namespace Underworld
                             goto ProcessTeleport;
                         }
                     }
-                    if ((tileY != 38) || (tileX<42)  || (tileX >43))
+                    if ((tileY != 38) || (tileX < 42) || (tileX > 43))
                     {//when not in tile 38,43?
                         ChangeUW2Quests();
                         goto ProcessTeleport;
-                    }                    
-                }   
+                    }
+                }
 
             ProcessTeleport:
                 //todo
                 if (newLevel != playerdat.dungeon_level)
                 {
-                    if (character!=0)
+                    if (character != 0)
                     {
                         //non PC teleport to a new level. Should not happen.
                         return 2;
@@ -234,43 +301,43 @@ namespace Underworld
                 }
 
                 //queue up the teleport.
-                if (newLevel==0)
+                if (newLevel == 0)
                 {
                     TeleportLevel = -1;
                 }
                 else
                 {
                     TeleportLevel = newLevel;
-                }                
+                }
                 TeleportTileX = tileX;
                 TeleportTileY = tileY;
 
-                if (newLevel !=0)
+                if (newLevel != 0)
                 {
                     if (newLevel == playerdat.dungeon_level)
                     {
                         TeleportLevel = -1;//same level.
-                    }                    
+                    }
                 }
-                
+
                 bool coward = false;
                 if (playerdat.IsFightingInPit)
+                {
+
+                    if (newLevel != playerdat.dungeon_level)
                     {
-                        
-                        if (newLevel!=playerdat.dungeon_level)
-                        {
-                            //avatar is a coward
-                            coward = true;
-                        }
-                        else
-                        {
-                            //Check if avatar is a coward by checking if they are still in an arena.
-                            Debug.Print ("todo check if avatar is a coward and has left the arena!");
-                        }
+                        //avatar is a coward
+                        coward = true;
                     }
+                    else
+                    {
+                        //Check if avatar is a coward by checking if they are still in an arena.
+                        Debug.Print("todo check if avatar is a coward and has left the arena!");
+                    }
+                }
                 if (coward)
-                {                    
-                     pitsofcarnage.AvatarIsACoward(skipConversation:true);
+                {
+                    pitsofcarnage.AvatarIsACoward(skipConversation: true);
                 }
 
                 //TODO: Handle moonstones.
@@ -292,16 +359,16 @@ namespace Underworld
 
         static int TeleportUW1(int character, int tileX, int tileY, int newLevel)
         {
-            if (newLevel !=0)
+            if (newLevel != 0)
             {
                 if (newLevel == playerdat.dungeon_level)
                 {
                     TeleportLevel = -1;//same level.
-                }    
+                }
                 else
                 {
                     TeleportLevel = newLevel;
-                }                
+                }
             }
             else
             {
@@ -332,12 +399,12 @@ namespace Underworld
         public static void JumpToMoonStoneOnLevel()
         {
             //find the moonstone
-            var moonstone = objectsearch.FindMatchInFullObjectList(4,2,6,UWTileMap.current_tilemap.LevelObjects);
-            if (moonstone!=null)
+            var moonstone = objectsearch.FindMatchInFullObjectList(4, 2, 6, UWTileMap.current_tilemap.LevelObjects);
+            if (moonstone != null)
             {
-                if(UWTileMap.ValidTile(moonstone.tileX, moonstone.tileY))
+                if (UWTileMap.ValidTile(moonstone.tileX, moonstone.tileY))
                 {
-                    MovePlayerToTile(moonstone.tileX, moonstone.tileY);
+                    InitialisePlayerOnLevelOrPositionChange(moonstone.tileX, moonstone.tileY);
                 }
             }
         }
@@ -348,9 +415,9 @@ namespace Underworld
         /// </summary>
         /// <param name="mode">0 = new game/enter level, 1 = leave level, 2 = unused and 3 = load save game</param>
         /// <param name="dungeon">Either the new or previous dungeon.</param>
-        static void LevelChangeEvents (int mode, int dungeon)
+        static void LevelChangeEvents(int mode, int dungeon)
         {
-            if(_RES==GAME_UW2)
+            if (_RES == GAME_UW2)
             {
                 LevelChangeEventsUW2(mode, dungeon);
             }
@@ -365,9 +432,9 @@ namespace Underworld
         /// </summary>
         /// <param name="mode">0 = new game/enter level, 1 = leave level, 2 = unused and 3 = load save game</param>
         /// <param name="dungeon">Either the new or previous dungeon.</param>
-        static void LevelChangeEventsUW2 (int mode, int dungeon)
+        static void LevelChangeEventsUW2(int mode, int dungeon)
         {
-            if (playerdat.armageddon && mode==EnterLevelMode)
+            if (playerdat.armageddon && mode == EnterLevelMode)
             {//entering a level under the influence of armageddon
                 Debug.Print("Armageddon flag has been set. Resetting map!");
                 UWTileMap.ResetMap(0);
@@ -378,7 +445,7 @@ namespace Underworld
                 {
                     playerdat.LastDamagedNPCIndex = 0; playerdat.LastDamagedNPCType = -1;
                     CallBacks.RunCodeOnAllMobiles(ClearUnkBit_0x15_7_OnMobiles, null);
-                    if (playerdat.play_drawn==0)
+                    if (playerdat.play_drawn == 0)
                     {
                         //reselect level theme music.
                         Debug.Print("Todo Refresh music themes");
@@ -415,20 +482,20 @@ namespace Underworld
                                 }
                             }
                             break;
-                        }                        
+                        }
                     case worlds.world_ids.Killorn:
                         //handle killorn is crashing
                         if ((playerdat.GetQuest(50) == 1) && (mode != EnterLevelMode))
                         {
                             if (dungeon == 17)
                             {
-                                killorn.KilornIsCrashing(isEnteringLevel: true);   
+                                killorn.KilornIsCrashing(isEnteringLevel: true);
                             }
                         }
                         break;
                     case worlds.world_ids.Academy:
                         //Handle removing the puzzle wand from inventory on level 3 and returning it to it's home position
-                        if ((dungeon==43) && (mode == ExitLevelMode))
+                        if ((dungeon == 43) && (mode == ExitLevelMode))
                         {
                             academy.RemoveAcademyWand();
                         }
@@ -443,7 +510,7 @@ namespace Underworld
                         break;
                     case worlds.world_ids.Ethereal:
                         //Handle automap enabled settings
-                        if (mode==EnterLevelMode)
+                        if (mode == EnterLevelMode)
                         {
                             playerdat.AutomapEnabled_backup = playerdat.AutomapEnabled;// needs to be backedup due to rarely seen mechanics involving getting lost
                             playerdat.AutomapEnabled = false;
@@ -465,7 +532,7 @@ namespace Underworld
         /// </summary>
         /// <param name="mode">0 = new game/enter level, 1 = leave level, 2 = unused and 3 = load save game</param>
         /// <param name="dungeon">Either the new or previous dungeon.</param>
-        static void LevelChangeEventsUW1 (int mode, int dungeon)
+        static void LevelChangeEventsUW1(int mode, int dungeon)
         {
             if (playerdat.armageddon && mode == EnterLevelMode)
             {//entering a level under the influence of armageddon
@@ -489,7 +556,7 @@ namespace Underworld
                 switch ((worlds.UW1_Dungeons)dungeon)
                 {
                     case worlds.UW1_Dungeons.Tybal:
-                        {  
+                        {
                             if (!playerdat.isOrbDestroyed)
                             {
                                 switch (mode)
@@ -498,39 +565,39 @@ namespace Underworld
                                         //entering lair while orb is not yet destroyed
                                         playerdat.backup_mana = playerdat.max_mana;
                                         playerdat.max_mana = 0;
-                                        playerdat.play_mana = 0;                                        
+                                        playerdat.play_mana = 0;
                                         break;
                                     case ExitLevelMode://restore drained mana.
                                         playerdat.max_mana = playerdat.backup_mana;
-                                        playerdat.play_mana = (playerdat.max_mana>>2);
+                                        playerdat.play_mana = (playerdat.max_mana >> 2);
                                         break;
                                 }
                             }
                             break;
-                        }                        
+                        }
                     case worlds.UW1_Dungeons.Ethereal:
                         {
                             switch (mode)
                             {
                                 case EnterLevelMode:
-                                    if(playerdat.AutomapEnabled)
+                                    if (playerdat.AutomapEnabled)
                                     {//yes this is correct. Backup mana is repurposed for this use on the void.
                                         playerdat.backup_mana = 1;
                                     }
                                     else
                                     {
                                         playerdat.backup_mana = 0;
-                                    }                                    
+                                    }
                                     break;
                                 case ExitLevelMode:
-                                    playerdat.AutomapEnabled = (playerdat.backup_mana>0);
+                                    playerdat.AutomapEnabled = (playerdat.backup_mana > 0);
                                     break;
                                 case LoadSaveMode:
                                     playerdat.AutomapEnabled = false;
                                     break;
                             }
                             break;
-                        }   
+                        }
                 }
             }
         }

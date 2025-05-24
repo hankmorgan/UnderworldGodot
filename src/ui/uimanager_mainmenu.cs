@@ -213,16 +213,37 @@ namespace Underworld
             UWTileMap.LoadTileMap(
                     newLevelNo: playerdat.dungeon_level - 1,
                     datafolder: folder,
-                    newGameSession: true);
+                    newGameSession: true);                   
             
-            //add player object to the map
-            for (int i = 0;i <=0x1A; i++)
+            
+            //add player object data to the map
+            for (int i = 0; i <= 0x1A; i++)
             {
                 playerdat.playerObject.DataBuffer[playerdat.playerObject.PTR + i] = playerdat.pdat[playerdat.PlayerObjectStoragePTR + i];
             }
             playerdat.playerObject.item_id = 127;//make sure the object is an adventurer.
             playerdat.playerObject.link = 0;//prevents infinite loops.
-            playerdat.PlacePlayerInTile(playerdat.tileX, playerdat.tileY);            
+
+            if (folder.ToUpper() == "DATA")
+            {
+                //default start locations.                
+                switch (UWClass._RES)
+                {
+                    case UWClass.GAME_UW2:
+                        //main.gamecam.Position = new Vector3(-23f, 4.3f, 58.2f);
+                        Teleportation.InitialisePlayerOnLevelOrPositionChange(0x13, 0x30);
+                        break;
+                    default:
+                        //main.gamecam.Position = new Vector3(-38f, 4.2f, 2.2f);
+                        Teleportation.InitialisePlayerOnLevelOrPositionChange(32, 1);
+                        break;
+                }
+            }
+            else
+            {
+                playerdat.PlacePlayerInTile(playerdat.playerObject.tileX, playerdat.playerObject.tileY); 
+            }
+       
 
             instance.InitViews();            
             SetPanelMode(0);
