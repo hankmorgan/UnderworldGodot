@@ -51,7 +51,30 @@ namespace Underworld
             {
                 if (obj.instance.uwnode != null)
                 {
-                    obj.instance.uwnode.Position = obj.GetCoordinate(obj.tileX, obj.tileY);
+                    var adjust = Vector3.Zero;
+                    if ((obj.IsStatic == false) && (obj.majorclass != 1))
+                    {
+                        var x_adj = 0f;
+                        var y_adj = 0f;
+                        var z_adj = 0f;
+                        if ((obj.CoordinateX & 0x1F) != 0)
+                        {
+                            x_adj = 0.0046875f * ((float)(obj.CoordinateX & 0x1F));
+                        }
+                        if ((obj.CoordinateY & 0x1F) != 0)
+                        {
+                            y_adj = 0.0046875f * ((float)(obj.CoordinateY & 0x1F));
+                        }
+                        if ((obj.CoordinateZ & 0x7) != 0)
+                        {
+                            z_adj = (float)(0.001875f * (float)(obj.CoordinateZ & 0x7));
+                        }
+                        adjust = new Vector3(
+                            x: -x_adj,
+                            z: y_adj,
+                            y: z_adj);
+                    }
+                    obj.instance.uwnode.Position = adjust + obj.GetCoordinate(obj.tileX, obj.tileY);
                 }
             }
             else

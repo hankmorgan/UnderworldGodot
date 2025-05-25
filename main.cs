@@ -163,9 +163,9 @@ public partial class main : Node3D
 		//DOS interupt 8
 		Pit += delta;
 		//
-		if (Pit >= 1.054945)
+		if (Pit >= 0.0054945)
 		{
-			PitTimer += (uint)(Pit / 1.054945f);
+			PitTimer +=  (uint)(Pit / 0.0054945f);
 			Pit = 0;
 			//Debug.Print($"{Pit}, {PitTimer}, {delta}");
 		}
@@ -186,14 +186,16 @@ public partial class main : Node3D
 			else
 			{
 				//Debug.Print($"{PitTimer - LastPitTimer}");
-				EasyMoveFrameIncrement += (byte)(((PitTimer >> 4) & 0xFF) - ((LastPitTimer >> 4) & 0xFF));
-				AnimationFrameDeltaIncrement = (byte)(((PitTimer >> 6) & 0xFF) - ((LastPitTimer >> 6) & 0xFF));
+				EasyMoveFrameIncrement += (byte)((PitTimer >> 4) - (LastPitTimer >> 4));  //every 16 pits?
+				AnimationFrameDeltaIncrement = (byte)((PitTimer >> 6) - (LastPitTimer >> 6));//every 63 pits?
 
 
 				//HACK the above appears to be what should be happening in vanilla code but is very slow to process, but the below gives the appearance of normal movement but may cause frame rate issues. 
-				EasyMoveFrameIncrement = 1;
-				AnimationFrameDeltaIncrement = 1;
-				ClockIncrement = 0xF;
+				//This whole section will need to be fixed in the future.
+				// EasyMoveFrameIncrement = 1;
+				// AnimationFrameDeltaIncrement = 1;
+				//ClockIncrement = 0xF;
+				ClockIncrement = ClockIncrement * 4;
 			}
 
 			if (ClockIncrement != 0)
