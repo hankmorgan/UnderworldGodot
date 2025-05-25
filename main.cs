@@ -163,9 +163,9 @@ public partial class main : Node3D
 		//DOS interupt 8
 		Pit += delta;
 		//
-		if (Pit >= 0.054945)
+		if (Pit >= 1.054945)
 		{
-			PitTimer += (uint)(Pit / 0.054945f);
+			PitTimer += (uint)(Pit / 1.054945f);
 			Pit = 0;
 			//Debug.Print($"{Pit}, {PitTimer}, {delta}");
 		}

@@ -450,7 +450,7 @@ namespace Underworld
                 var var2 = 0;
                 while (var2 < 4)
                 {
-                    if (seg028_2941_217(var2, distance_arg0) == 0)
+                    if (GetNeighbourTileHeightDetails_seg028_2941_217(var2, distance_arg0) == 0)
                     {//seg028_2941_718:
                         var temp = getAt(UWMotionParamArray.SubArray.dseg_2562, 5 + var2 * 5, 16);
                         if ((temp & 0x300) == 0)
@@ -458,22 +458,22 @@ namespace Underworld
                             var var10 = new byte[] { 0x4, 0x10, 0x2, 0x8, 0x4, 0x1 };   //dseg_67d6_3BF
                             var varB = 0;
 
-                            while (varB <= 2)
+                            while (varB < 2)
                             {
                                 //seg028_2941_75D
                                 var tmp = getAt(UWMotionParamArray.SubArray.dseg_2562, 2 + (5 * ((1 + var2 + (varB << 1)) & 0x3)), 8);
 
-                                if (tmp != getAt(UWMotionParamArray.SubArray.dseg_2562, var2 * 5, 8))
+                                if (tmp != getAt(UWMotionParamArray.SubArray.dseg_2562, 2 + var2 * 5, 8))
                                 {
                                     var tile_index = getAt(UWMotionParamArray.SubArray.dseg_2562, 2 + (var2 * 5), 8);
                                     var tiletype = UWMotionParamArray.TileAttributesArray[tile_index] & 0xF;
                                     //var10[varB+var2]
                                     //test tile attributes
-                                    if ((TileTraversalFlags_dseg_67d6_1BA6[tiletype] & var10[varB + var2]) == 0)
+                                    if ((TileTraversalFlags_dseg_67d6_1BA6[tiletype] & var10[varB + var2]) != 0)
                                     {
                                         //seg028_2941_7B2:
                                         DataLoader.setAt(UWMotionParamArray.SubArray.dseg_2562, 5 + (var2 * 5), 16, 0x200);
-                                        MotionCalcArray.Unk11 = 0x80;
+                                        MotionCalcArray.Unk11 = 0x80; //blocks movement into tile.
                                         varB = 2;
                                     }
                                 }
@@ -494,7 +494,7 @@ namespace Underworld
             MotionCalcArray.UnkC_terrain = (short)((UWMotionParamArray.TileAttributesArray[4] & 0x300) >> 8);
             int var1;
 
-            MotionCalcArray.Unk10_relatedtotileheight = (byte)SomethingWithTileTypesAndHeight_seg028_2941_E(4, out var1);
+            MotionCalcArray.Unk10_relatedtotileheight = (byte)GetTileHeightAdjustedByTileType_seg028_2941_E(4, out var1);
 
             if (MotionCalcArray.Unk10_relatedtotileheight != 0x80)
             {
@@ -539,7 +539,7 @@ namespace Underworld
         /// <param name="TileArrayOffset_arg0"></param>
         /// <param name="arg2"></param>
         /// <returns></returns>
-        static byte SomethingWithTileTypesAndHeight_seg028_2941_E(int TileArrayOffset_arg0, out int arg2)
+        static byte GetTileHeightAdjustedByTileType_seg028_2941_E(int TileArrayOffset_arg0, out int arg2)
         {
             arg2 = 0;
             var temp_index = Loader.getAt(UWMotionParamArray.SubArray.dseg_2562, 2 + TileArrayOffset_arg0 * 5, 8);     // UWMotionParamArray.SubArray_dseg_67d6_3FC_ptr_to_25C4_maybemotion.GetParam2_BlockSize5(TileArrayOffset_arg0);
@@ -555,7 +555,7 @@ namespace Underworld
                     }
                 case UWTileMap.TILE_DIAG_SE://2
                     {
-                        if (Loader.getAt(UWMotionParamArray.SubArray.dseg_2562, 4 + TileArrayOffset_arg0 * 5, 8) < Loader.getAt(UWMotionParamArray.SubArray.dseg_2562, 3 + TileArrayOffset_arg0 * 5, 8))
+                        if (Loader.getAt(UWMotionParamArray.SubArray.dseg_2562, 4 + TileArrayOffset_arg0 * 5, 8) >= Loader.getAt(UWMotionParamArray.SubArray.dseg_2562, 3 + TileArrayOffset_arg0 * 5, 8))
                         {
                             cl = 0x80;
                         }
@@ -582,7 +582,7 @@ namespace Underworld
                     }
                 case UWTileMap.TILE_DIAG_NW://5
                     {
-                        if (Loader.getAt(UWMotionParamArray.SubArray.dseg_2562, 3 + TileArrayOffset_arg0 * 5, 8) <= Loader.getAt(UWMotionParamArray.SubArray.dseg_2562, 4 + TileArrayOffset_arg0 * 5, 8))
+                        if ( Loader.getAt(UWMotionParamArray.SubArray.dseg_2562, 4 + TileArrayOffset_arg0 * 5, 8)  <= Loader.getAt(UWMotionParamArray.SubArray.dseg_2562, 3 + TileArrayOffset_arg0 * 5, 8))
                         {
                             cl = 0x80;
                         }
@@ -613,10 +613,10 @@ namespace Underworld
             }
         }
 
-        static int seg028_2941_217(int arg0, int arg2)
+        static int GetNeighbourTileHeightDetails_seg028_2941_217(int arg0, int arg2)
         {
             var si = 0;
-            var var2 = SomethingWithTileTypesAndHeight_seg028_2941_E(arg0, out int var1);
+            var var2 = GetTileHeightAdjustedByTileType_seg028_2941_E(arg0, out int var1);
 
             if (var2 != 0x80)
             {//seg028_2941_23D

@@ -67,6 +67,10 @@ namespace Underworld
         static sbyte[] dseg_67d6_753 = new sbyte[] { 0, 0, -1, -2, -3 - 4, -5, -6, -6, -4, -3, -2, -1, 0, 0, 0, -4};
 
 
+        /// <summary>
+        /// Moves the player by processing inputs and forces acting on the player
+        /// </summary>
+        /// <param name="ClockIncrement"></param>
         public static void PlayerMotion(short ClockIncrement)
         {
             dseg_67d6_33D4 = 0;

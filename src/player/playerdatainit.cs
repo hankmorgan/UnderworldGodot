@@ -144,7 +144,7 @@ namespace Underworld
                 x: -x_adj,
                 z: y_adj,
                 y: z_adj); //y-up
-            Debug.Print($"High precision adjustment {adjust}");
+            //Debug.Print($"High precision adjustment {adjust}");
             main.gamecam.Position = adjust + uwObject.GetCoordinate(
                 tileX: motion.playerMotionParams.x_0 >> 8,
                 tileY: motion.playerMotionParams.y_2 >> 8,
