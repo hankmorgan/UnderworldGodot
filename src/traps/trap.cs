@@ -45,27 +45,27 @@ namespace Underworld
                                     {
                                         implemented = true;
                                         a_teleport_trap.Activate(
-                                                trapObj: trapObj,                                              
+                                                trapObj: trapObj,
                                                 objList: objList);
                                         break;
                                     }
                                 case 2://arrow trap
                                     {
-                                        implemented =true;//-ish
+                                        implemented = true;//-ish
                                         an_arrow_trap.Activate(
-                                            trapObj: trapObj, 
+                                            trapObj: trapObj,
                                             triggerX: triggerX,
                                             triggerY: triggerY,
                                             objList: objList);
                                         break;
                                     }
                                 case 3:// Do and hack traps
-                                    {                                        
+                                    {
                                         implemented = hack_trap.ActivateHackTrap(
                                                 trapObj: trapObj,
                                                 ObjectUsed: ObjectUsed,
                                                 triggerX: triggerX,
-                                                triggerY: triggerY,                                                
+                                                triggerY: triggerY,
                                                 objList: objList,
                                                 character: character,
                                                 ref triggerNextIndex);
@@ -73,13 +73,13 @@ namespace Underworld
                                     }
                                 case 4: // pit trap 6-0-4 in uw1, special effects in uw2
                                     {
-                                        if (_RES!=GAME_UW2)
+                                        if (_RES != GAME_UW2)
                                         {//uw1 pit trap
                                             implemented = true;//to continue the chain
                                         }
                                         else
                                         {
-                                            implemented =true;
+                                            implemented = true;
                                             a_specialeffect_trap.Activate(trapObj);
                                         }
                                         break;
@@ -89,7 +89,7 @@ namespace Underworld
                                         implemented = true;
                                         a_change_terrain_trap.Activate(
                                             triggerX: triggerX,
-                                            triggerY: triggerY, 
+                                            triggerY: triggerY,
                                             trapObj: trapObj);
                                         break;
                                     }
@@ -107,8 +107,8 @@ namespace Underworld
                                         implemented = true;
                                         a_create_object_trap.Activate(
                                             triggerX: triggerX,
-                                            triggerY: triggerY, 
-                                            trapObj: trapObj, 
+                                            triggerY: triggerY,
+                                            trapObj: trapObj,
                                             objList: objList);
                                         triggerNextIndex = 0;//always stop on create object trap
                                         break;
@@ -118,8 +118,8 @@ namespace Underworld
                                         implemented = true;
                                         a_door_trap.Activate(
                                             triggerX: triggerX,
-                                            triggerY: triggerY, 
-                                            trapObj: trapObj, 
+                                            triggerY: triggerY,
+                                            trapObj: trapObj,
                                             objList: objList);
                                         break;
                                     }
@@ -127,15 +127,15 @@ namespace Underworld
                                     {
                                         implemented = true;
                                         a_delete_object_trap.Activate(
-                                            trapObj:trapObj, 
+                                            trapObj: trapObj,
                                             objList: objList);
-                                        triggerNextIndex = 0;;//always stop on delete object trap
+                                        triggerNextIndex = 0; ;//always stop on delete object trap
                                         break;
                                     }
                                 case 0xC: // 6-0-C, inventory trap
-                                    {   
-                                        triggerNextIndex  = an_inventory_trap.Activate(trapObj, objList);
-                                        implemented =true;
+                                    {
+                                        triggerNextIndex = an_inventory_trap.Activate(trapObj, objList);
+                                        implemented = true;
                                         break;
                                     }
                                 case 0xD://set variable trap
@@ -149,12 +149,12 @@ namespace Underworld
                                     {
                                         implemented = true;
                                         triggerNextIndex = a_check_variable_trap.Activate(
-                                            trapObj: trapObj, 
+                                            trapObj: trapObj,
                                             objList: objList);
                                         break;
                                     }
                                 case 0xF://nulltrap/combination trap
-                                    {   
+                                    {
                                         implemented = true;//null trap does nothing.
                                         break;
                                     }
@@ -169,34 +169,44 @@ namespace Underworld
                                     {
                                         implemented = true;
                                         a_text_string_trap.Activate(
-                                            trapObj: trapObj, 
+                                            trapObj: trapObj,
                                             objList: objList);
                                         break;
                                     }
                                 case 1:
                                     {//6-1-1 experience trap
-                                        if(_RES==GAME_UW2)
+                                        if (_RES == GAME_UW2)
                                         {
                                             implemented = true;
                                             an_experience_trap.Activate(trapObj: trapObj);
                                         }
                                         break;
                                     }
+                                case 2:
+                                    {
+                                        //6-1-2 jump trap
+                                        if (_RES == GAME_UW2)
+                                        {
+                                            implemented = true;
+                                            a_jump_trap.Activate(trapObj: trapObj);
+                                        }
+                                        break;
+                                    }
                                 case 3:// a change_from_trap.
                                     {
-                                        if(_RES==GAME_UW2)
+                                        if (_RES == GAME_UW2)
                                         {
                                             implemented = true;
                                             a_change_from_trap.Activate(
-                                                trapObj: trapObj, 
-                                                triggerX: triggerX, 
+                                                trapObj: trapObj,
+                                                triggerX: triggerX,
                                                 triggerY: triggerY);
                                         }
                                         break;
                                     }
                                 case 4:
                                     {//A change_to_trap. Does nothing but continues execution.
-                                        if(_RES==GAME_UW2)
+                                        if (_RES == GAME_UW2)
                                         {
                                             implemented = true;
                                         }
@@ -204,7 +214,7 @@ namespace Underworld
                                     }
                                 case 5://oscillator (uw2)
                                     {
-                                        if (_RES==GAME_UW2)
+                                        if (_RES == GAME_UW2)
                                         {
                                             implemented = true;
                                             an_oscillator_trap.Activate(
@@ -218,39 +228,39 @@ namespace Underworld
                                     }
                                 case 6://proximity trap (uw2)
                                     {
-                                        if (_RES==GAME_UW2)
+                                        if (_RES == GAME_UW2)
                                         {
-                                        //Debug.Print("Skipping proximity trap for testing of chains");
-                                        implemented =true;
-                                        triggerNextIndex = a_proximity_trap.Activate(
-                                            trapObj: trapObj, 
-                                            triggerX: triggerX, 
-                                            triggerY: triggerY, 
-                                            character: character);
+                                            //Debug.Print("Skipping proximity trap for testing of chains");
+                                            implemented = true;
+                                            triggerNextIndex = a_proximity_trap.Activate(
+                                                trapObj: trapObj,
+                                                triggerX: triggerX,
+                                                triggerY: triggerY,
+                                                character: character);
                                         }
 
                                         break;
                                     }
                                 case 7://Pit trap (UW2) In UW1 Pit trap is 6,0,4 and does nothing.
                                     {
-                                        if (_RES==GAME_UW2)
+                                        if (_RES == GAME_UW2)
                                         {
                                             implemented = true;
                                             a_pit_trap.Activate(
-                                                trapObj:trapObj, 
-                                                triggerX: triggerX, 
+                                                trapObj: trapObj,
+                                                triggerX: triggerX,
                                                 triggerY: triggerY);
                                         }
                                         break;
                                     }
                                 case 8: //Bridge trap
                                     {
-                                        if (_RES==GAME_UW2)
+                                        if (_RES == GAME_UW2)
                                         {
                                             implemented = true;
                                             a_bridge_trap.Activate(
-                                                trapObj:trapObj, 
-                                                triggerX: triggerX, 
+                                                trapObj: trapObj,
+                                                triggerX: triggerX,
                                                 triggerY: triggerY);
                                         }
                                         break;
@@ -272,10 +282,10 @@ namespace Underworld
             }
             else
             {
-                if (triggerNextIndex!=0)
+                if (triggerNextIndex != 0)
                 {
                     var triggerNextObject = objList[triggerNextIndex];
-                    if (triggerNextObject!=null)
+                    if (triggerNextObject != null)
                     {
                         if (triggerNextObject.majorclass == 6)//only trigger next a trap/trigger.
                         {
@@ -293,17 +303,17 @@ namespace Underworld
                                     break;
                                 case 2:
                                 case 3://triggers
-                                    trigger.RunTrigger(character:character, 
-                                        ObjectUsed: ObjectUsed, 
-                                        TriggerObject: triggerNextObject, 
-                                        triggerType: (int)triggerObjectDat.triggertypes.ALL, 
+                                    trigger.RunTrigger(character: character,
+                                        ObjectUsed: ObjectUsed,
+                                        TriggerObject: triggerNextObject,
+                                        triggerType: (int)triggerObjectDat.triggertypes.ALL,
                                         objList: objList);
-                                        break;
+                                    break;
 
-                            }                            
+                            }
                         }
-                    }                    
-                }                
+                    }
+                }
             }
         }
     }//end class

@@ -778,6 +778,13 @@ namespace Underworld
 
 
 
+        /// <summary>
+        /// Handles two objects bumping into each other.
+        /// </summary>
+        /// <param name="MotionParams"></param>
+        /// <param name="si_CollisionIndex_Arg0"></param>
+        /// <param name="MotionObjectArg2"></param>
+        /// <returns></returns>
         static int CollideObjects_seg030_2BB7_1CE(UWMotionParamArray MotionParams, int si_CollisionIndex_Arg0, int MotionObjectArg2)
         {
 
@@ -873,7 +880,8 @@ namespace Underworld
                     if ((CollidedObject_VarA.OneF0Class & 0x1E) == 0x1A)  //the use of 0x1E here with 1FOclass is different from normal usage
                     {
                         //object is a trigger
-                        return trigger.RunTrigger(CollidedObject_VarA.index, MotionObject, CollidedObject_VarA, (int)triggerObjectDat.triggertypes.MOVE, UWTileMap.current_tilemap.LevelObjects);
+                        //This probably needs to be checked. I may have objects in this function mixed up.
+                        return trigger.RunTrigger(character: MotionObject.index, ObjectUsed: null, TriggerObject: CollidedObject_VarA, triggerType: (int)triggerObjectDat.triggertypes.MOVE, objList: UWTileMap.current_tilemap.LevelObjects);
                     }
                 }
             }

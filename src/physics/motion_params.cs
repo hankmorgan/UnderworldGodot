@@ -303,6 +303,13 @@ namespace Underworld
         public static int DoorX_222E;
         public static int DoorY_222F;
 
+        public static UWMotionParamArray instance;
+
+        public UWMotionParamArray()
+        {
+            instance = this;
+        }
+
         //The class properties
         public short x_0
         {

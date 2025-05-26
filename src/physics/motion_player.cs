@@ -73,6 +73,7 @@ namespace Underworld
         /// <param name="ClockIncrement"></param>
         public static void PlayerMotion(short ClockIncrement)
         {
+            UWMotionParamArray.instance = motion.playerMotionParams;
             dseg_67d6_33D4 = 0;
             dseg_67d6_33D2 = 0;
             dseg_67d6_33D0 = 0;
