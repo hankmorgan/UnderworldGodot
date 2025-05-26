@@ -6,9 +6,13 @@
   - [Before you begin.](#before-you-begin)
   - [Current features](#current-features)
   - [Whats missing](#whats-missing)
+  - [Known Issues](#known-issues)
   - [Getting Started](#getting-started)
   - [UWsettings.json](#uwsettingsjson)
   - [Controls](#controls)
+    - [Movement](#movement)
+    - [Modes](#modes)
+    - [Cheats](#cheats)
 - [Appendix](#appendix)
   - [Guide to the Underworld and Reverse Engineering](#guide-to-the-underworld-and-reverse-engineering)
   - [Sources/Previous Projects](#sourcesprevious-projects)
@@ -34,9 +38,9 @@ This project supercedes the Unity-based project and reboots the code base to act
 This project is largely based on the previous reverse engineering work undertaken by various groups and individuals over the years. Without their efforts this project would not be possible please see the appendix below for the credits I have been able to attribute. If I have failed to give proper credit please let me know and I will happily correct this document.
 
 ## Before you begin.
-This is currently pre-alpha. No support is provided for it and usage is at your own risk. Please don't download this version and expect it to be usable in anyway. Think of it as a interactive map viewer.
+This is currently pre-alpha. No support is provided for it and usage is at your own risk. Please don't download this version and expect it to be usable in anyway. Think of it as a interactive map viewer with a lot of game logic implemented
 
-Requires game files for either UW1 or UW2. GOG versions need to be extracted using a zip extracter from the game.gog file
+Requires game files for either UW1 or UW2. GOG versions need to be extracted using a zip extracter (eg 7-Zip) from the game.gog file
 
 
 ## Current features
@@ -44,7 +48,7 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * Animated doors and sprites
 * Looping NPC animations
 * Full Conversations with NPCs
-* Most game triggers and traps.
+* Almost all game triggers and traps.
 * Barter logic
 * Lighting effects (Palette based except for correct transparencies)
 * Inventory management including runebag (excluding drag and drop)
@@ -59,9 +63,9 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * Compass status message
 * 3D Models
 * Food consumption
-* Spell casting (partial) and vanilla decoding of object enchantment values into actual spell effects. Some spells implemented.
+* Spell casting. Most spells implemented.
 * Usable wands, scrolls and potions.
-* Small window cutscenes
+* Small window cutscenes (partial)
 * Game variables and quest variables (partial support, not all scenarios may work)
 * Level transitions
 * Partial options menu. In game loading of saves
@@ -78,14 +82,31 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * Mostly complete Object physics
 * Most NPC AI, movement and pathfinding
 * NPC Combat Actions
+* Player movement and collision (with a lot of jank attached incl framerate/speed issues)
 
 ## Whats missing
-* Player movement and collision
+
 * Sound and music
-* Transparencies
+* Sprite transparencies
 * Saving  
+* Cutscene bitmap scrolling
+* Those weird ethereal void monsters
 * Animated Dragon UI Elements
-* and much more!
+* Endgame screens
+* Editing of automap notes
+* Weight and encumberance mechanics
+* Swimming
+* Slings and crossbow combat
+* Getting lost mechanics
+* Stealth mechanics (partial)
+* Splash screens and game credits
+and much more!
+
+## Known Issues
+* Some NPC sprites are incorrectly cropped.
+* Player motion is sluggish (timing need tuning)
+* Some cutscenes are missing frames or have visual distortions
+* Enter/Exit/Pressure triggers currently not working
 
 ## Getting Started
 
@@ -129,12 +150,17 @@ To select maps to load.
 
 
 ## Controls
-Camera is only in fly mode currently.
+Note controls are sluggish due to ongoing implementation and debugging of player motion.
 
-WSAD for movement.
-T to toggle mouse look
-QE to move up and down.
-Use shift and scroll to change speed.
+### Movement
+W run forward
+Shift+W walk forward
+S walk backwards
+AD strafe left and right
+QE turn left and right
+T to toggle freemouse
+
+### Modes
 F1-F6 Change interaction modes
 F7 Toggle inventory panels
 F8 Cast Spell
@@ -142,8 +168,9 @@ F9 Use Track Skill
 F10 Make camp and go to sleep.
 F11 Toggle Position label
 F12 Debug process SCD.ARK events
-Apostrophe Give all runestones, 30 mana and maximise mage skills.
-PgDn Step forward objects in motion one step
+
+### Cheats
+Apostrophe (') Give all runestones, 30 mana and maximise mage skills.
 
 
 # Appendix
