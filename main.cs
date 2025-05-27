@@ -161,11 +161,11 @@ public partial class main : Node3D
 		}
 
 		//DOS interupt 8
-		Pit += delta;
+		Pit += (delta * 30);  //seem smoother
 		//
-		if (Pit >= 0.0054945)
+		if (Pit >= 0.054945) // DOS PIT Timer interupt 8 is 18.2 times a second
 		{
-			PitTimer +=  (uint)(Pit / 0.0054945f);
+			PitTimer +=  (uint)(Pit / 0.054945);
 			Pit = 0;
 			//Debug.Print($"{Pit}, {PitTimer}, {delta}");
 		}
@@ -195,7 +195,7 @@ public partial class main : Node3D
 				// EasyMoveFrameIncrement = 1;
 				// AnimationFrameDeltaIncrement = 1;
 				//ClockIncrement = 0xF;
-				ClockIncrement = ClockIncrement * 4;
+				//ClockIncrement = ClockIncrement * 4;
 			}
 
 			if (ClockIncrement != 0)

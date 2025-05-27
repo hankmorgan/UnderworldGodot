@@ -633,7 +633,7 @@ namespace Underworld
                     {
                         motion.playerMotionParams.unk_10_Z = -4;
                     }
-                    if ((playerdat.MagicalMotionAbilities & 0x2) == 0) // slowfall
+                    if ((playerdat.MagicalMotionAbilities & 0x2) != 0) // slowfall
                     {
                         if (motion.playerMotionParams.unk_a_pitch <= -94)
                         {
