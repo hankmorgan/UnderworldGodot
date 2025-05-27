@@ -72,13 +72,13 @@ namespace Underworld
 
         static bool InitialMotionCalc_seg031_2CFA_412(UWMotionParamArray MotionParams, bool arg0_CopyToCalcArray, int arg2)
         {
-            short var2 = 0; short var4 = 0;
+            short var2_xvector = 0; short var4_yvector = 0;
             short var8 = 0;
-            SomethingProjectileHeading_seg021_22FD_EAE((ushort)MotionParams.heading_1E, ref var2, ref var4);
+            SomethingProjectileHeading_seg021_22FD_EAE((ushort)MotionParams.heading_1E, ref var2_xvector, ref var4_yvector);
             //seg031_2CFA_457:
-            MotionParams.unk_6_x = (short)((var2 * MotionParams.unk_14) >> 0xF);
+            MotionParams.unk_6_x = (short)((var2_xvector * MotionParams.unk_14) >> 0xF);
             //seg031_2CFA_47F:
-            MotionParams.unk_8_y = (short)((var4 * MotionParams.unk_14) >> 0xF);
+            MotionParams.unk_8_y = (short)((var4_yvector * MotionParams.unk_14) >> 0xF);
 
             //possibly the following are translation vectors  
             //seg031_2CFA_494:          
@@ -254,7 +254,7 @@ namespace Underworld
             ax = (short)(ax * cx);
             if (ax < 0)
             {
-                ax = (short)(ax >> 8);
+                ax = (short)((ax & 0xFFFF) >> 8);
                 ax = (short)-Math.Abs(ax);
             }
             else
@@ -267,19 +267,21 @@ namespace Underworld
             bp = HeadingLookupTable[64 + bx];
             ax = HeadingLookupTable[65 + bx];
             ax = (short)(ax - bp);
-            ax = (short)(ax * cx);
-            sbyte dl;
-            if (ax >= 0)
-            {
-                dl = 0;
-            }
-            else
-            {
-                dl = -1;
-            }
+            var tmp = (ax * cx);
+            ax = (short)(tmp & 0xFFFF);
+            var dl = (short)((tmp >> 16) & 0xFF);
+            // sbyte dl;
+            // if (ax >= 0)
+            // {
+            //     dl = 0;
+            // }
+            // else
+            // {
+            //     dl = -1;
+            // }
             //THIS IS WHERE I GO WRONG
-            var bl = ax >> 8;
-            var bh = dl;
+            var bl = (ax & 0xFFFF) >> 8;
+            //var bh = dl;
             bx = (ushort)((dl << 8) | bl);
             bx = (ushort)(bp + bx);
             Result_BX = (short)bx;
