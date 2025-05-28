@@ -818,11 +818,11 @@ namespace Underworld
                         &&
                         (obj.classindex >= 9 || obj.classindex <= 0xB);
                 case 9:
-                case 10:
+                case 10://rings
                     return
                         obj.majorclass == 0
                         &&
-                        obj.minorclass == 2
+                        obj.minorclass == 3
                         &&
                         (obj.classindex >= 9 || obj.classindex <= 0xB);
             }

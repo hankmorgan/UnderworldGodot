@@ -83,7 +83,7 @@ namespace Underworld
                     return;
                 }
                 var i = (int)extra_arg_0;
-                if (eventMouseButton.ButtonIndex == MouseButton.Left)
+                if ((eventMouseButton.ButtonIndex == MouseButton.Left) && (InteractionMode != InteractionModes.ModeLook))
                 {
                     //left click. cancel spell
                     playerdat.CancelEffect(i);

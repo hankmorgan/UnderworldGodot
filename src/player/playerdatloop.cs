@@ -54,8 +54,13 @@ namespace Underworld
                                     stability--;
                                     if (stability == 1)
                                     {
+                                        bool FlyingSpell = (GetEffectClass(i) == 49) || (GetEffectClass(i) == 81);
                                         CancelEffect(i);
-                                        break; //breaking here since cancelling effects changes the order of the list. too annoying a problem to solve now.
+                                        if (FlyingSpell)
+                                        {
+                                            SpellCasting.CastClass0123_Spells(majorclass: 1, minorclass: 2);//cast slowfall
+                                        }
+                                        i = 0;//restart loop                                        
                                     }
                                     else
                                     {

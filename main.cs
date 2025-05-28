@@ -720,9 +720,9 @@ public partial class main : Node3D
 								motion.MotionInputPressed = 0xA;
 								break;
 							}
-						case Key.J:
+						case Key.J://jumps
 							{
-								motion.PlayerMotionHeading_77E = 0;//cancel turn movement when juming
+								motion.PlayerMotionHeading_77E = 0;//cancel turn movement when jumping
 								if (Input.IsKeyPressed(Key.Shift))
 								{
 									//long jump
@@ -748,6 +748,26 @@ public partial class main : Node3D
 								Input.MouseMode = Input.MouseModeEnum.Captured;
 							}
 							gamecam.Set("MOUSELOOK", !mouselook);
+							break;
+						case Key.R: //fly up (not vanilla)
+							if ((playerdat.MagicalMotionAbilities & 0x14) != 0)
+							{
+								motion.MotionInputPressed = 0xC;
+							}
+							else
+							{
+								motion.MotionInputPressed = 0;
+							}
+							break;
+						case Key.F: //fly down (not vanilla)
+							if ((playerdat.MagicalMotionAbilities & 0x14) != 0)
+							{
+								motion.MotionInputPressed = 0xD;
+							}
+							else
+							{
+								motion.MotionInputPressed = 0;
+							}
 							break;
 						case Key.F1: //open options menu
 							uimanager.InteractionModeToggle(0); break;

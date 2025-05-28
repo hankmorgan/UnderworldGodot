@@ -159,6 +159,7 @@ S walk backwards
 AD strafe left and right
 QE turn left and right
 T to toggle freemouse
+RF fly up and down when a magic fly/levitate spell is active
 
 ### Modes
 F1-F6 Change interaction modes
@@ -170,7 +171,7 @@ F11 Toggle Position label
 F12 Debug process SCD.ARK events
 
 ### Cheats
-Apostrophe (') Give all runestones, 30 mana and maximise mage skills.
+Tilde (~) Give all runestones, 30 mana and maximise mage skills.
 
 
 # Appendix

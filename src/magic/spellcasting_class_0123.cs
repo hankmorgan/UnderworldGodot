@@ -3,7 +3,7 @@ namespace Underworld
 {
     public partial class SpellCasting : UWClass
     {
-        private static void CastClass0123_Spells(int majorclass, int minorclass)
+        public static void CastClass0123_Spells(int majorclass, int minorclass)
         {
             //TODO add special handling for ironflesh (plot handling for xclock3) and leviation/fly spells (stop falling)
             if ((majorclass == 1) && (((minorclass & 0x3F) == 3) || ((minorclass & 0x3F) == 5)))
