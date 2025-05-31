@@ -121,7 +121,11 @@ namespace Underworld
                 if (_RES == GAME_UW2)
                 {
                     //seg030_2BB7_718:         
-                    //Debug.Print("TODO Run Exit trigger for projectile");
+                    trigger.RunPressureEnterExitTriggersInTile(
+                        triggeringObject: projectile,
+                        tile: tileVar6,
+                        ZParam: projectile.zpos,
+                        triggerType: (int)triggerObjectDat.triggertypes.EXIT);
                 }
 
                 projectile.tileX = MotionParams.x_0 >> 8;
@@ -137,6 +141,11 @@ namespace Underworld
                 {
                     //seg030_2BB7_796:      
                     //Debug.Print("TODO Run enter trigger for projectile");
+                    trigger.RunPressureEnterExitTriggersInTile(
+                        triggeringObject: projectile,
+                        tile: tileVar6,
+                        ZParam: projectile.zpos,
+                        triggerType: (int)triggerObjectDat.triggertypes.ENTER);
                 }
             }
             else

@@ -54,15 +54,25 @@ namespace Underworld
                 //take the player object out of the previous tile
                 var tile = UWTileMap.current_tilemap.Tiles[previousTileX, previousTileY];
                 ObjectRemover.RemoveObjectFromLinkedList(tile.indexObjectList, 1, UWTileMap.current_tilemap.LevelObjects, tile.Ptr + 2);
+                trigger.RunPressureEnterExitTriggersInTile(
+                    triggeringObject: playerObject,
+                    tile: tile,
+                    ZParam: motion.playerMotionParams.z_4 >> 3,
+                    triggerType: (int)triggerObjectDat.triggertypes.EXIT);
+
             }
-            if (UWTileMap.ValidTile(newTileX,newTileY))
+            if (UWTileMap.ValidTile(newTileX, newTileY))
             {
                 var tile = UWTileMap.current_tilemap.Tiles[newTileX, newTileY];
                 var obj = UWTileMap.current_tilemap.LevelObjects[1];//the player object.
                 obj.next = tile.indexObjectList;
                 tile.indexObjectList = 1;//insert into the tile object list so it can be subject to collisions.
                 obj.tileX = newTileX; obj.tileY = newTileY;
-
+                trigger.RunPressureEnterExitTriggersInTile(
+                    triggeringObject: playerObject,
+                    tile: tile,
+                    ZParam: motion.playerMotionParams.z_4 >> 3,
+                    triggerType: (int)triggerObjectDat.triggertypes.ENTER);
             }
 
             //TODO update lighting, pressure triggers

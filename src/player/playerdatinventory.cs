@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Diagnostics;
 
 namespace Underworld
@@ -5,33 +6,53 @@ namespace Underworld
     //Player dat inventory
     public partial class playerdat : Loader
     {
+        public static uwObject[] InventoryObjects = new uwObject[512];
 
-        public static int WeightCarried
+        public static short WeightCarried
         {
             get
             {
-                if(_RES==GAME_UW2)
+                if (_RES == GAME_UW2)
                 {
-                    return GetAt16(0x4B);
+                    return (short)GetAt16(0x4B);
                 }
                 else
                 {
-                    return GetAt16(0x4C);
+                    return (short)GetAt16(0x4C);
                 }
             }
         }
 
-        public static int WeightMax
+        public static short WeightMax
         {
             get
             {
                 if(_RES==GAME_UW2)
                 {
-                    return GetAt16(0x4C);
+                    return (short)GetAt16(0x4C);
                 }
                 else
                 {
-                    return GetAt16(0x4D);
+                    return (short)GetAt16(0x4D);
+                }
+            }
+        }
+        
+        
+        /// <summary>
+        /// Gets the player weight plus what object is being held in hand
+        /// </summary>
+        public static short PlayerWeightPlusObjectInHand
+        {
+            get
+            {
+                if (ObjectInHand == -1)
+                {
+                    return WeightCarried;
+                }
+                else
+                {
+                    return (short)(WeightCarried + container.GetTotalMass(UWTileMap.current_tilemap.LevelObjects[ObjectInHand], UWTileMap.current_tilemap.LevelObjects, false));
                 }
             }
         }
@@ -55,8 +76,8 @@ namespace Underworld
                     {
                         Debug.Print("Dropping object that was already in hand before taking new object.");
                         var tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];
-					    UWTileMap.GetRandomXYZForTile(tile, out int newxpos, out int newypos, out int newzpos);
-					    var dropcoordinate = uwObject.GetCoordinate(tileX, tileY, newxpos, newypos, newzpos);
+                        UWTileMap.GetRandomXYZForTile(tile, out int newxpos, out int newypos, out int newzpos);
+                        var dropcoordinate = uwObject.GetCoordinate(tileX, tileY, newxpos, newypos, newzpos);
 
                         //already holding something. Drop that item to the ground first so it does not get lost
                         pickup.Drop_old(
@@ -64,25 +85,18 @@ namespace Underworld
                             objList: UWTileMap.current_tilemap.LevelObjects,
                             dropPosition: dropcoordinate,
                             tileX: tileX,
-                            tileY: tileY, 
-                            DoSpecialCases:false);
+                            tileY: tileY,
+                            DoSpecialCases: false);
                     }
                 }
                 _ObjectInHand = value;
             }
         }
 
-
         static int _ObjectInHand = -1;
 
 
-        public static uwObject[] InventoryObjects = new uwObject[512];
-        //public static byte[] InventoryBuffer = new byte[512 * 8];
-
-        /// <summary>
-        /// The last item in the inventory
-        /// </summary>
-        //public static int LastItemIndex;
+        
 
         /// <summary>
         /// Gets the next memory slot in the inventory that does not have an object.
