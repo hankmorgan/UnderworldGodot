@@ -579,7 +579,7 @@ namespace Underworld
         {
             LevelObjects = new uwObject[1024];
             int address_pointer = 0;
-            int objectsAddress = (64 * 64 * 4);
+            int objectsAddress = 0x4000;  // (64 * 64 * 4);
             for (short x = 0; x < 1024; x++)
             {   //read in master object list
                 var uwobj = new uwObject

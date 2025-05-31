@@ -11,7 +11,7 @@ namespace Underworld
     public class pickup : UWClass
     {
 
-        public static bool DropOrThrowByPlayer(uwObject srcObject, bool printMessage)
+        public static bool DropObjectByPlayer(uwObject srcObject, bool printMessage)
         {
             uwObject ThrownObject = null;
             motion.projectileXHome = playerdat.playerObject.npc_xhome;
@@ -102,8 +102,13 @@ namespace Underworld
                         objectInstance.RedrawFull(ObjectAfterCollison);
                         if (ObjectAfterCollison.IsStatic)
                         {
-                            Debug.Print("dropped object. Do check for pressure triggers here");
-                        }
+                            //Debug.Print("dropped object. Do check for pressure triggers here");
+                            trigger.RunPressureEnterExitTriggersInTile(
+                                triggeringObject: ObjectAfterCollison,
+                                tile: tile,
+                                ZParam: ObjectAfterCollison.zpos,
+                                triggerType: (int)triggerObjectDat.triggertypes.PRESSURE);
+                                }
                     }
                     srcObject = null;
                 }
@@ -290,7 +295,7 @@ namespace Underworld
 
         private static void DoPickup(int index, uwObject[] objList, uwObject obj)
         {
-
+            var tile = UWTileMap.current_tilemap.Tiles[obj.tileX, obj.tileY];
             //first handle some special cases
             PickupSpecialCases(obj);
 
@@ -318,8 +323,18 @@ namespace Underworld
             playerdat.ObjectInHand = index;
             uimanager.instance.mousecursor.SetCursorToObject(obj.item_id);
 
+            //pressure release trigger
+            if (_RES == GAME_UW2)
+            {
+                trigger.RunPressureEnterExitTriggersInTile(
+                    triggeringObject: obj,
+                    tile: tile,
+                    ZParam: obj.zpos,
+                    triggerType: (int)triggerObjectDat.triggertypes.PRESSURE_RELEASE);
+            }
+
             //remove from it's tile
-            var tile = UWTileMap.current_tilemap.Tiles[obj.tileX, obj.tileY];
+                //var tile = UWTileMap.current_tilemap.Tiles[obj.tileX, obj.tileY];
             int nextObjectIndex = tile.indexObjectList;
             if (nextObjectIndex == index)
             {//object is first in list, easy swap

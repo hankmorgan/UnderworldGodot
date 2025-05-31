@@ -150,14 +150,17 @@ namespace Underworld
             }
             else
             {
+                //in same tile but check if zpos has changed for the purposes of triggering pressure triggers.
                 //seg030_2BB7_7A3:
                 if (_RES == GAME_UW2)
                 {
                     //seg030_2BB7_7B7:
                     if (projectile.zpos != (MotionParams.z_4 >> 3))
                     {
-                        projectile.zpos = (short)(MotionParams.z_4 >> 3);
-                        //Debug.Print("TODO Run pressure trigger for projectile");                        
+                        trigger.PressureTriggerZChange(
+                            obj: projectile,
+                            tile: UWTileMap.current_tilemap.Tiles[projectile.tileX, projectile.tileY],
+                            zParam: playerMotionParams.z_4>>3);              
                     }
                 }
                 else
@@ -487,7 +490,12 @@ namespace Underworld
                 ObjectHasHalted = true;
                 if (_RES == GAME_UW2)
                 {
-                    Debug.Print("Run Pressure triggers in tile for halted object");
+                    //Run Pressure triggers in tile for halted object
+                    trigger.RunPressureEnterExitTriggersInTile(
+                        triggeringObject: haltedObject,
+                        tile: tile,
+                        ZParam: 0,
+                        triggerType: (int)triggerObjectDat.triggertypes.PRESSURE);
                 }
             }
             if (si_cull == 9)

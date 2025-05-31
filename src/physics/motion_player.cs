@@ -286,10 +286,13 @@ namespace Underworld
             else
             {
                 //player is in same tile
-                if (di_zpos != playerMotionParams.z_4)
+                if (di_zpos != (playerMotionParams.z_4>>3))
                 {
-                    //player has changed height in the same tile.
-                    //TODO run pressure triggers in UW2
+                    //player has changed height in the same tile. Check if pressure triggers in the tile need to be ran
+                    trigger.PressureTriggerZChange(
+                        obj: playerObj,
+                        tile: UWTileMap.current_tilemap.Tiles[playerObj.tileX, playerObj.tileY],
+                        zParam: playerMotionParams.z_4>>3);
                 }
             }
 

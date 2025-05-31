@@ -337,63 +337,64 @@ namespace Underworld
                 while (next != 0)
                 {
                     var NextObject = UWTileMap.current_tilemap.LevelObjects[next];
-                    if (NextObject.OneF0Class == 0x1A)
+                    if ((NextObject.OneF0Class & 0x1E) == 0x1A)
                     {
                         //NextObject is a trigger.
                         if (triggerObjectDat.triggertype(NextObject.item_id) == triggerType)
                         {
-                            if ((triggerType == (int)triggerObjectDat.triggertypes.ENTER) || (triggerType == (int)triggerObjectDat.triggertypes.EXIT))
+                            if (((triggerType & 0x7) == (int)triggerObjectDat.triggertypes.ENTER) || ((triggerType & 0x7) == (int)triggerObjectDat.triggertypes.EXIT))
                             {
                                 RunTrigger(triggeringObject.index, null, NextObject, triggerType, UWTileMap.current_tilemap.LevelObjects);
                             }
-                            if ((triggerType & 7) == 6)
+                        }
+                        if ((triggerType & 7) == 6)
+                        {
+                            //pressure trigger
+                            triggerType++;
+                        }
+                        if (((triggerType & 7) == 7) && (triggerType == triggerObjectDat.triggertype(NextObject.item_id)))
+                        {
+                            //ovr166_29A2:
+                            Result = true;
+                            if (NextObject.zpos == ZParam)
                             {
-                                //pressure trigger
-                                triggerType++;
-                            }
-                            if (((triggerType & 7) == 7) && (triggerType == triggerObjectDat.triggertype(NextObject.item_id)))
-                            {
-                                //ovr166_29A2:
-                                Result = true;
-                                if (NextObject.zpos == ZParam)
+                                if
+                                (
+                                    (((NextObject.ypos & 0x1) == 1) && (triggerType == 0xF))
+                                    ||
+                                    (((NextObject.ypos & 0x1) == 0) && (triggerType == 0x7))
+                                )
                                 {
-                                    if
-                                    (
-                                        (((NextObject.ypos & 0x1) == 1) && (triggerType == 0xF))
-                                        ||
-                                        (((NextObject.ypos & 0x1) == 0) && (triggerType == 0x7))
-                                    )
-                                    {
-                                        var WeightCheck = CheckWeightOnPressureTrigger(
-                                            ListHead: tile.indexObjectList,
-                                            MinWeight: (short)(4 + (((NextObject.ypos & 0x4) >> 2) * 0x50)),
-                                            TileHeight: NextObject.zpos,
-                                            PlayerInventoryWeightAdjustment: playerdat.PlayerWeightPlusObjectInHand);
+                                    var WeightCheck = CheckWeightOnPressureTrigger(
+                                        ListHead: tile.indexObjectList,
+                                        MinWeight: (short)(4 + (((NextObject.ypos & 0x4) >> 2) * 0x50)),
+                                        TileHeight: NextObject.zpos,
+                                        PlayerInventoryWeightAdjustment: playerdat.PlayerWeightPlusObjectInHand);
 
-                                        if (
-                                            ((WeightCheck == 0) && (triggerType == 0xF))
-                                            ||
-                                            ((WeightCheck != 0) && (triggerType == 7))
-                                            )
-                                        {
-                                            RunTrigger(playerdat.playerObject.index, null, NextObject, triggerType, UWTileMap.current_tilemap.LevelObjects);
-                                            PressureTriggerHasBeenRan = true;
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                //ovr166_2A5B:
-                                if ((triggerType & 7) == 7)
-                                {
-                                    if ((triggerObjectDat.triggertype(NextObject.item_id) & 0x7) == 7)
+                                    if (
+                                        ((WeightCheck == 0) && (triggerType == 0xF))
+                                        ||
+                                        ((WeightCheck != 0) && (triggerType == 7))
+                                        )
                                     {
-                                        PressureTriggerObject = NextObject;
+                                        RunTrigger(playerdat.playerObject.index, null, NextObject, triggerType, UWTileMap.current_tilemap.LevelObjects);
+                                        PressureTriggerHasBeenRan = true;
                                     }
                                 }
                             }
                         }
+                        else
+                        {
+                            //ovr166_2A5B:
+                            if ((triggerType & 7) == 7)
+                            {
+                                if ((triggerObjectDat.triggertype(NextObject.item_id) & 0x7) == 7)
+                                {
+                                    PressureTriggerObject = NextObject;
+                                }
+                            }
+                        }
+
 
                     }
                     next = NextObject.next;

@@ -334,7 +334,7 @@ namespace Underworld
         }
 
         public short ypos
-        {//(short)(ExtractBits(Vals[1], 10, 0x7));
+        {
             get
             {
                 int val = GetAt16(PTR + 2);
@@ -357,7 +357,7 @@ namespace Underworld
 
 
         public short xpos
-        {// (short)(ExtractBits(Vals[1], 13, 0x7));
+        {
             get
             {
                 int val = GetAt16(PTR + 2);

@@ -298,7 +298,7 @@ namespace Underworld
                             //something is held. try and drop or throw it
                             var objToThrow = UWTileMap.current_tilemap.LevelObjects[playerdat.ObjectInHand];
                             var itemid = objToThrow.item_id;
-                            if (pickup.DropOrThrowByPlayer(objToThrow, true))
+                            if (pickup.DropObjectByPlayer(objToThrow, true))
                             {
                                 playerdat.ObjectInHand = -1;
                                 instance.mousecursor.SetCursorToCursor();

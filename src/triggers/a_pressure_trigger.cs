@@ -1,3 +1,4 @@
+using System.Data.Common;
 using System.Diagnostics;
 
 namespace Underworld
@@ -5,6 +6,39 @@ namespace Underworld
     public partial class trigger : UWClass
     {
         static short TotalWeight = 0;
+
+        /// <summary>
+        /// Processes a change in height of an object that may potentially be on a pressure trigger or pressure release trigger
+        /// Side effect updates object zpos to zParam.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="tile"></param>
+        /// <param name="zParam"></param>
+        public static void PressureTriggerZChange(uwObject obj, TileInfo tile, int zParam)
+        {
+            bool result;
+            var originalzpos = obj.zpos;
+            obj.zpos = (short)zParam;
+
+            //pressure releae
+            result = trigger.RunPressureEnterExitTriggersInTile(
+                triggeringObject: obj,
+                tile: tile,
+                ZParam: originalzpos,
+                triggerType: (int)triggerObjectDat.triggertypes.PRESSURE_RELEASE);
+
+            if (result)
+            {
+                result = trigger.RunPressureEnterExitTriggersInTile(
+                    triggeringObject: obj,
+                    tile: tile,
+                    ZParam: zParam,
+                    triggerType: (int)triggerObjectDat.triggertypes.PRESSURE);
+            }
+
+
+        }
+
         public static short CheckWeightOnPressureTrigger(short ListHead, short MinWeight, short TileHeight, short PlayerInventoryWeightAdjustment)
         {
 
@@ -36,7 +70,7 @@ namespace Underworld
                         //recursive
                         if ((NextObject.is_quant == 0) && (NextObject.link != 0))
                         {
-                            CheckWeightOnPressureTrigger(NextObject.link, -2, TileHeight, PlayerInventoryWeightAdjustment);
+                            CheckWeightOnPressureTrigger(ListHead: NextObject.link, MinWeight: -2, TileHeight: TileHeight, PlayerInventoryWeightAdjustment: PlayerInventoryWeightAdjustment);
                         }
                     }
                     if (MinWeight >= 0)
@@ -65,7 +99,7 @@ namespace Underworld
                     return 1;
                 }
             }
-            
+
         }
 
 
