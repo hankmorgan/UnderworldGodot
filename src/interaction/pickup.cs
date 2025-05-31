@@ -103,12 +103,15 @@ namespace Underworld
                         if (ObjectAfterCollison.IsStatic)
                         {
                             //Debug.Print("dropped object. Do check for pressure triggers here");
-                            trigger.RunPressureEnterExitTriggersInTile(
-                                triggeringObject: ObjectAfterCollison,
-                                tile: tile,
-                                ZParam: ObjectAfterCollison.zpos,
-                                triggerType: (int)triggerObjectDat.triggertypes.PRESSURE);
-                                }
+                            if (_RES == GAME_UW2)
+                            {
+                                trigger.RunPressureEnterExitTriggersInTile(
+                                    triggeringObject: ObjectAfterCollison,
+                                    tile: tile,
+                                    ZParam: ObjectAfterCollison.zpos,
+                                    triggerType: (int)triggerObjectDat.triggertypes.PRESSURE);
+                                    }
+                            }
                     }
                     srcObject = null;
                 }
@@ -323,18 +326,8 @@ namespace Underworld
             playerdat.ObjectInHand = index;
             uimanager.instance.mousecursor.SetCursorToObject(obj.item_id);
 
-            //pressure release trigger
-            if (_RES == GAME_UW2)
-            {
-                trigger.RunPressureEnterExitTriggersInTile(
-                    triggeringObject: obj,
-                    tile: tile,
-                    ZParam: obj.zpos,
-                    triggerType: (int)triggerObjectDat.triggertypes.PRESSURE_RELEASE);
-            }
-
             //remove from it's tile
-                //var tile = UWTileMap.current_tilemap.Tiles[obj.tileX, obj.tileY];
+            //var tile = UWTileMap.current_tilemap.Tiles[obj.tileX, obj.tileY];
             int nextObjectIndex = tile.indexObjectList;
             if (nextObjectIndex == index)
             {//object is first in list, easy swap
@@ -356,8 +349,18 @@ namespace Underworld
                     }
                 }
             }
-            obj.next = 0; //ensure end of chain.               
+            obj.next = 0; //ensure end of chain. 
             obj.tileX = 99; obj.tileY = 99;
+            //pressure release trigger
+            if (_RES == GAME_UW2)
+            {
+                trigger.RunPressureEnterExitTriggersInTile(
+                    triggeringObject: obj,
+                    tile: tile,
+                    ZParam: obj.zpos,
+                    triggerType: (int)triggerObjectDat.triggertypes.PRESSURE_RELEASE);
+            }
+
             if (obj.instance != null)
             {
                 obj.instance.uwnode.Position = obj.GetCoordinate(obj.tileX, obj.tileY);

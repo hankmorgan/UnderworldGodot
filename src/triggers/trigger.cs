@@ -81,10 +81,11 @@ namespace Underworld
                                         triggerY: triggerY,
                                         objList: objList);
 
+                                    
                                     //Test for trap repeat.
                                     if (TriggerObject.flags1 == 0)
-                                    {
-                                        var tile = UWTileMap.current_tilemap.Tiles[triggerX, triggerY];
+                                    {           
+                                        var tile = UWTileMap.current_tilemap.Tiles[triggerX, triggerY];                             
                                         //Debug.Print($"Test me. remove trap {trapObj.index} {trapObj.a_name} from object list here");
                                         ObjectRemover.RemoveTrapChain(
                                             trapObj: trapObj,
@@ -95,7 +96,8 @@ namespace Underworld
                                     {
                                         if ((triggerType & 0xF07) == 7)
                                         {
-                                            Debug.Print("Do something with pressure triggers and texures");
+                                            var tile = UWTileMap.current_tilemap.Tiles[TriggerObject.tileX, TriggerObject.tileY];
+                                            ChangePressureTriggerTexture(tile, TriggerObject);
                                         }
                                     }
                                 }
@@ -339,11 +341,13 @@ namespace Underworld
                     var NextObject = UWTileMap.current_tilemap.LevelObjects[next];
                     if ((NextObject.OneF0Class & 0x1E) == 0x1A)
                     {
+                        Debug.Print($"{NextObject.index} {NextObject.a_name} is a trigger to test");
                         //NextObject is a trigger.
                         if (triggerObjectDat.triggertype(NextObject.item_id) == triggerType)
                         {
                             if (((triggerType & 0x7) == (int)triggerObjectDat.triggertypes.ENTER) || ((triggerType & 0x7) == (int)triggerObjectDat.triggertypes.EXIT))
                             {
+                                Debug.Print($"Running {NextObject.index} {NextObject.a_name}");
                                 RunTrigger(triggeringObject.index, null, NextObject, triggerType, UWTileMap.current_tilemap.LevelObjects);
                             }
                         }
@@ -365,6 +369,7 @@ namespace Underworld
                                     (((NextObject.ypos & 0x1) == 0) && (triggerType == 0x7))
                                 )
                                 {
+                                    Debug.Print($"Weighing {NextObject.index} {NextObject.a_name}");
                                     var WeightCheck = CheckWeightOnPressureTrigger(
                                         ListHead: tile.indexObjectList,
                                         MinWeight: (short)(4 + (((NextObject.ypos & 0x4) >> 2) * 0x50)),
@@ -374,9 +379,10 @@ namespace Underworld
                                     if (
                                         ((WeightCheck == 0) && (triggerType == 0xF))
                                         ||
-                                        ((WeightCheck != 0) && (triggerType == 7))
+                                        ((WeightCheck == 1) && (triggerType == 7))
                                         )
                                     {
+                                        Debug.Print($"Running {NextObject.index} {NextObject.a_name} after weigh check");
                                         RunTrigger(playerdat.playerObject.index, null, NextObject, triggerType, UWTileMap.current_tilemap.LevelObjects);
                                         PressureTriggerHasBeenRan = true;
                                     }
@@ -386,7 +392,7 @@ namespace Underworld
                         else
                         {
                             //ovr166_2A5B:
-                            if ((triggerType & 7) == 7)
+                            if ((triggerType & 7) == 7) //was looking for a pressure/pressure release trigger
                             {
                                 if ((triggerObjectDat.triggertype(NextObject.item_id) & 0x7) == 7)
                                 {
@@ -422,10 +428,10 @@ namespace Underworld
                             if (
                                 ((WeightCheck == 0) && (triggerType == 0xF))
                                 ||
-                                ((WeightCheck != 0) && (triggerType == 7))
+                                ((WeightCheck == 1) && (triggerType == 7))
                                 )
                             {
-                                ChangePressureTriggerTexture(PressureTriggerObject);
+                                ChangePressureTriggerTexture(tile, PressureTriggerObject);
                             }
                         }
                     }

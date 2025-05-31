@@ -33,7 +33,7 @@ namespace Underworld
                     {
                         if ((trapObj.quality == 1) || (trapObj.quality == 3))
                         {
-                            Debug.Print("Moving Door Trap Open (not implemented)");
+                            Debug.Print("Moving Door Trap Open (not implemented) This will glitch out doorways.");
                             door.OpenDoor(doorObj);
                         }
                     }
@@ -42,7 +42,7 @@ namespace Underworld
                         if ((trapObj.quality == 2) || (trapObj.quality == 3))
                         {
                             //try close
-                            Debug.Print("Moving Door Trap Close (not implemented)");
+                            Debug.Print("Moving Door Trap Close (not implemented) This will glitch out doorways.");
                             door.CloseDoor(doorObj);
                         }
                     }

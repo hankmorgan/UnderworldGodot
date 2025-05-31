@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime.Serialization;
 using Godot;
 
 namespace Underworld
@@ -342,13 +343,17 @@ namespace Underworld
             }
             set
             {
-                if (index > 256)
+                if (index == 1015)
                 {
-                    if (value != ypos)
-                    {
-                        Debug.Print("Changing ypos for static object " + index);
-                    }
+                    Debug.Print("Here");
                 }
+                if (index > 256)
+                    {
+                        if (value != ypos)
+                        {
+                            Debug.Print("Changing ypos for static object " + index);
+                        }
+                    }
                 int existingValue = GetAt16(PTR + 2);
                 existingValue &= 0xE3FF; //Mask out current val
                 SetAt16(PTR + 2, existingValue | ((value & 0x7) << 10));

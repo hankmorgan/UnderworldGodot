@@ -102,10 +102,58 @@ namespace Underworld
 
         }
 
-
-        static void ChangePressureTriggerTexture(uwObject pressuretrigger)
+        /// <summary>
+        /// Update the texture on the pressure plate. Note this function is evaluated at save/load
+        /// </summary>
+        /// <param name="tile"></param>
+        /// <param name="pressuretrigger"></param>
+        static void ChangePressureTriggerTexture(TileInfo tile, uwObject pressuretrigger)
         {
-            Debug.Print("Change texture on pressure trigger");
+            var si_yset = pressuretrigger.ypos & 0x1;
+            short di_notyset;
+            if (si_yset == 0)
+            {
+                di_notyset = 1;
+            }
+            else
+            {
+                di_notyset = 0;
+            }
+
+            var next = tile.indexObjectList;
+            while (next != 0)
+            {
+                var NextObject = UWTileMap.current_tilemap.LevelObjects[next];
+                if ((NextObject.OneF0Class & 0x1E) == 0x1A)
+                {
+                    if ((triggerObjectDat.triggertype(NextObject.item_id) & 0x7) == 7)
+                    {
+                        //is a pressure release/pressure trigger 
+                        //THis is probably done because on save game pressure triggers are re-evaluated.
+                        Debug.Print($"Setting ypos of {NextObject.index} {NextObject.a_name} from {NextObject.ypos} to {((NextObject.ypos & 0x6) + di_notyset)}");
+                        NextObject.ypos = (short)((NextObject.ypos & 0x6) + di_notyset);
+                    }
+                }
+                next = NextObject.next;
+            }
+
+            //evaluate new texture
+            if (((pressuretrigger.ypos & 2) >> 0x1) != 0)
+            {
+                si_yset = tile.floorTexture;
+                if (di_notyset == 0)
+                {
+                    si_yset--;
+                }
+                else
+                {
+                    si_yset++;
+                }
+                Debug.Print($"Changing Floor texture from {tile.floorTexture} to {si_yset}");
+                tile.floorTexture = (short)si_yset;
+                tile.Redraw = true;
+                main.DoRedraw = true;
+            }
         }
 
     }//end class
