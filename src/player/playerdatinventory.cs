@@ -12,14 +12,7 @@ namespace Underworld
         {
             get
             {
-                if (_RES == GAME_UW2)
-                {
-                    return (short)GetAt16(0x4B);
-                }
-                else
-                {
-                    return (short)GetAt16(0x4C);
-                }
+                return (short)GetAt16(0x4B);
             }
         }
 
@@ -27,14 +20,7 @@ namespace Underworld
         {
             get
             {
-                if(_RES==GAME_UW2)
-                {
-                    return (short)GetAt16(0x4C);
-                }
-                else
-                {
-                    return (short)GetAt16(0x4D);
-                }
+                return (short)GetAt16(0x4D);
             }
         }
         

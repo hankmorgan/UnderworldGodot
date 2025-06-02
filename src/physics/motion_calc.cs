@@ -109,8 +109,6 @@ namespace Underworld
                 }
                 UWMotionParamArray.dseg_67d6_40C_indexer = (short)((UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer + 1) % 2);// note the %
 
-                //var Param6Lookup = Loader.getAt(MotionParams.data, 6 + UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer * 2, 16);
-
                 if (MotionParams.GetParam6_XorYValue(UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer) <= 0)
                 {//seg031_2CFA_530:
                     UWMotionParamArray.SetMotionXY404(UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer, -8192);
@@ -119,7 +117,7 @@ namespace Underworld
                 {//seg031_2CFA_526:
                     UWMotionParamArray.SetMotionXY404(UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer, +8192);
                 }
-                //tmp = DataLoader.getAt(MotionParams.data, 6 + UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer*2, 16);
+
                 //seg031_2CFA_53C
                 if (MotionParams.GetParam6_XorYValue(UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer) == 0)
                 {
@@ -138,14 +136,19 @@ namespace Underworld
                     tmp = (short)(MotionParams.GetParam6_XorYValue(UWMotionParamArray.dseg_67d6_40C_indexer) * tmp);
                     tmp = (short)(tmp / MotionParams.GetParam6_XorYValue(UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer));
                     tmp = (short)(tmp << 8);
+
                     //seg031_2CFA_585:  
                     UWMotionParamArray.SetMotionXY404(UWMotionParamArray.dseg_67d6_40C_indexer, tmp);
+
                     //seg031_2CFA_59E:
                     var8 = (short)(MotionParams.GetParam6_XorYValue(UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer) * MotionParams.speed_12); //(short)(Param6Lookup * MotionParams.speed_12);
+
                     //seg031_2CFA_5A4:
                     UWMotionParamArray.MAYBEcollisionOrGravity_dseg_67d6_40E = (short)(Math.Abs(var8) >> 0xD);
+
                     //seg031_2CFA_5BA:
                     UWMotionParamArray.dseg_67d6_410 = (short)(Math.Abs(var8) & 0x1FFF);
+
                     //seg031_2CFA_5C0:
                     UWMotionParamArray.dseg_67d6_412 = (short)Math.Abs(0x2000 / MotionParams.GetParam6_XorYValue(UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer));
                 }
@@ -168,7 +171,6 @@ namespace Underworld
                 }
 
                 //seg031_2CFA_648:
-                //if (DataLoader.getAt(MotionParams.data, 0xA, 16) != 0)
                 if (MotionParams.unk_a_pitch != 0)//seg031_2CFA_648:
                 {//seg031_2CFA_655:
                     if (MotionParams.unk_a_pitch <= 0)

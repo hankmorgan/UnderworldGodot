@@ -138,9 +138,9 @@ namespace Underworld
             //todo
             short di = 0;
             short var2 = 0;
-            playerMotionParams.speed_12 = (byte)ClockIncrement;
             playerMotionParams.unk_16_relatedtoPitch = 5;
             playerMotionParams.unk_17 = 0;
+                                  
 
             dseg_67d6_229A = playerMotionParams.heading_1E;
             dseg_67d6_229C = playerMotionParams.unk_14;
@@ -158,7 +158,7 @@ namespace Underworld
                     {
                         if (di > 0)
                         {
-                            di = (short)(1 * MotionWeightRelated_dseg_67d6_C8);
+                            di = (short)(1 * MotionWeightRelated_dseg_67d6_C8);//this global is wrong!
                         }
                         else
                         {
@@ -229,6 +229,8 @@ namespace Underworld
                 }
             }
 
+            //Seg1b09_a61
+            playerMotionParams.speed_12 = (byte)ClockIncrement;
 
             //seg008_1B09_A9D:
             //UW1 and UW2 realign here.
@@ -714,7 +716,7 @@ namespace Underworld
             }
             //seg008_1B09_1342
 
-            if ((playerdat.WeightMax != 0) && ((playerdat.WeightCarried << 1) <= playerdat.WeightMax))
+            if ((playerdat.WeightMax != 0) && ((playerdat.WeightCarried << 1) > playerdat.WeightMax))
             {
                 motion.MotionWeightRelated_dseg_67d6_C8 = (short)(0x60 - ((playerdat.WeightCarried * 0x60) / (playerdat.WeightMax << 1)));
             }
