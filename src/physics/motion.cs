@@ -160,7 +160,7 @@ namespace Underworld
                         trigger.PressureTriggerZChange(
                             obj: projectile,
                             tile: UWTileMap.current_tilemap.Tiles[projectile.tileX, projectile.tileY],
-                            zParam: playerMotionParams.z_4>>3);              
+                            zParam: MotionParams.z_4>>3);              
                     }
                 }
                 else

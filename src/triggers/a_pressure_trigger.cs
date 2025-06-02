@@ -20,7 +20,7 @@ namespace Underworld
             var originalzpos = obj.zpos;
             obj.zpos = (short)zParam;
 
-            //pressure releae
+            //pressure release
             result = trigger.RunPressureEnterExitTriggersInTile(
                 triggeringObject: obj,
                 tile: tile,

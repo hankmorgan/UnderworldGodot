@@ -161,7 +161,7 @@ public partial class main : Node3D
 		}
 
 		//DOS interupt 8
-		Pit += (delta * 30);  //seem smoother
+		Pit += (delta*5);  //seem smoother
 		//
 		if (Pit >= 0.054945) // DOS PIT Timer interupt 8 is 18.2 times a second
 		{
@@ -173,6 +173,7 @@ public partial class main : Node3D
 
 		if ((uimanager.InGame) && (!blockmouseinput))
 		{
+			
 
 			byte AnimationFrameDeltaIncrement = 0;
 
@@ -200,6 +201,7 @@ public partial class main : Node3D
 
 			if (ClockIncrement != 0)
 			{
+				ProcessMotionInputs();
 				if (AnimationFrameDeltaIncrement != 0)
 				{
 					//if animations enabled
@@ -532,6 +534,90 @@ public partial class main : Node3D
 		//Footsteps()
 	}
 
+	static void ProcessMotionInputs()
+	{
+		motion.PlayerMotionWalk_77C = 0;
+		motion.PlayerMotionHeading_77E = 0;
+		if (Input.IsKeyPressed(Key.W))
+		{
+			if (Input.IsKeyPressed(Key.Shift))//forwards
+			{
+				//walk forwards
+				motion.PlayerMotionWalk_77C = 0x32;
+			}
+			else
+			{
+				//run forwards
+				motion.PlayerMotionWalk_77C = 0x70;
+			}
+			motion.MotionInputPressed = 1;
+		}
+		if (Input.IsKeyPressed(Key.Q))//turn left
+		{
+			motion.PlayerMotionHeading_77E = -90;
+			motion.MotionInputPressed = 1;
+		}
+		if (Input.IsKeyPressed(Key.E))//turn right
+		{
+			motion.PlayerMotionHeading_77E = +90;
+			motion.MotionInputPressed = 1;
+		}
+		if (Input.IsKeyPressed(Key.S))//walk backwards
+		{
+			motion.PlayerMotionWalk_77C = 0;
+			motion.PlayerMotionHeading_77E = 0;
+			motion.MotionInputPressed = 8;
+		}
+		if (Input.IsKeyPressed(Key.A))//slide left
+		{
+			motion.PlayerMotionWalk_77C = 0;
+			motion.PlayerMotionHeading_77E = 0;
+			motion.MotionInputPressed = 9;
+		}
+		if (Input.IsKeyPressed(Key.D))//slide right
+		{
+			motion.PlayerMotionWalk_77C = 0;
+			motion.PlayerMotionHeading_77E = 0;
+			motion.MotionInputPressed = 0xA;
+		}
+		if (Input.IsKeyPressed(Key.J))//jump.
+		{
+			if (Input.IsKeyPressed(Key.Shift))
+			{
+				//long jump
+				motion.MotionInputPressed = 6;
+			}
+			else
+			{
+				//jump
+				//todo: Do a test that the player is grounded.
+				motion.MotionInputPressed = 7;
+			}
+		}
+		if (Input.IsKeyPressed(Key.R))//fly up
+		{
+			if ((playerdat.MagicalMotionAbilities & 0x14) != 0)
+			{
+				motion.MotionInputPressed = 0xC;
+			}
+			else
+			{
+				motion.MotionInputPressed = 0;
+			}
+		}
+		if (Input.IsKeyPressed(Key.F))//fly down
+		{
+			if ((playerdat.MagicalMotionAbilities & 0x14) != 0)
+			{
+				motion.MotionInputPressed = 0xD;
+			}
+			else
+			{
+				motion.MotionInputPressed = 0;
+			}
+		}
+	}
+
 	static void ProcessMobileObjects(byte AnimationFrameDelta)
 	{
 		ThisFrameDelta = (byte)((PreviousFrameDelta + AnimationFrameDelta) & 0xF);
@@ -662,81 +748,81 @@ public partial class main : Node3D
 				{
 					switch (keyinput.Keycode)
 					{
-						case Key.W:
-							{
-								if (Input.IsKeyPressed(Key.Shift))
-								{
-									//walk forwards
-									motion.PlayerMotionWalk_77C = 0x32;
-									motion.PlayerMotionHeading_77E = 0;
-								}
-								else
-								{
-									//run forwards
-									motion.PlayerMotionWalk_77C = 0x70;
-									motion.PlayerMotionHeading_77E = 0;
-								}
-								motion.MotionInputPressed = 1;
+						// case Key.W:
+						// 	{
+						// 		// if (Input.IsKeyPressed(Key.Shift))
+						// 		// {
+						// 		// 	//walk forwards
+						// 		// 	motion.PlayerMotionWalk_77C = 0x32;
+						// 		// 	motion.PlayerMotionHeading_77E = 0;
+						// 		// }
+						// 		// else
+						// 		// {
+						// 		// 	//run forwards
+						// 		// 	motion.PlayerMotionWalk_77C = 0x70;
+						// 		// 	motion.PlayerMotionHeading_77E = 0;
+						// 		// }
+						// 		// motion.MotionInputPressed = 1;
 
-								break;
-							}
-						case Key.Q: //not vanilla key
-							{
-								motion.PlayerMotionWalk_77C = 0;
-								//turn left
-								motion.PlayerMotionHeading_77E = -90;
-								motion.MotionInputPressed = 1;
-								break;
-							}
-						case Key.E: //not vanilla key
-							{
-								motion.PlayerMotionWalk_77C = 0;
-								//turn right
-								motion.PlayerMotionHeading_77E = +90;
-								motion.MotionInputPressed = 1;
-								break;
-							}
-						case Key.S: //not vanilla key
-							{
-								//move backwards
-								motion.PlayerMotionWalk_77C = 0;
-								motion.PlayerMotionHeading_77E = 0;
-								motion.MotionInputPressed = 8;
-								break;
-							}
-						case Key.A: //not vanilla key
-							{
-								//slide left
-								motion.PlayerMotionWalk_77C = 0;
-								motion.PlayerMotionHeading_77E = 0;
-								motion.MotionInputPressed = 9;
-								break;
-							}
-						case Key.D: //not vanilla key
-							{
-								//slide right
-								motion.PlayerMotionWalk_77C = 0;
-								motion.PlayerMotionHeading_77E = 0;
-								motion.MotionInputPressed = 0xA;
-								break;
-							}
-						case Key.J://jumps
-							{
-								motion.PlayerMotionHeading_77E = 0;//cancel turn movement when jumping
-								if (Input.IsKeyPressed(Key.Shift))
-								{
-									//long jump
-									motion.MotionInputPressed = 6;
+						// 		break;
+						// 	}
+						// case Key.Q: //not vanilla key
+						// 	{
+						// 		// motion.PlayerMotionWalk_77C = 0;
+						// 		// //turn left
+						// 		// motion.PlayerMotionHeading_77E = -90;
+						// 		// motion.MotionInputPressed = 1;
+						// 		break;
+						// 	}
+						// case Key.E: //not vanilla key
+						// 	{
+						// 		//motion.PlayerMotionWalk_77C = 0;
+						// 		//turn right
+						// 		// motion.PlayerMotionHeading_77E = +90;
+						// 		// motion.MotionInputPressed = 1;
+						// 		break;
+						// 	}
+						// case Key.S: //not vanilla key
+						// 	{
+						// 		//move backwards
+						// 		// motion.PlayerMotionWalk_77C = 0;
+						// 		// motion.PlayerMotionHeading_77E = 0;
+						// 		// motion.MotionInputPressed = 8;
+						// 		break;
+						// 	}
+						// case Key.A: //not vanilla key
+						// 	{
+						// 		//slide left
+						// 		motion.PlayerMotionWalk_77C = 0;
+						// 		motion.PlayerMotionHeading_77E = 0;
+						// 		motion.MotionInputPressed = 9;
+						// 		break;
+						// 	}
+						// case Key.D: //not vanilla key
+						// 	{
+						// 		//slide right
+						// 		motion.PlayerMotionWalk_77C = 0;
+						// 		motion.PlayerMotionHeading_77E = 0;
+						// 		motion.MotionInputPressed = 0xA;
+						// 		break;
+						// 	}
+						// case Key.J://jumps
+						// 	{
+						// 		motion.PlayerMotionHeading_77E = 0;//cancel turn movement when jumping
+						// 		if (Input.IsKeyPressed(Key.Shift))
+						// 		{
+						// 			//long jump
+						// 			motion.MotionInputPressed = 6;
 
-								}
-								else
-								{
-									//jump
-									//todo: Do a test that the player is grounded.
-									motion.MotionInputPressed = 7;
-								}
-								break;
-							}
+						// 		}
+						// 		else
+						// 		{
+						// 			//jump
+						// 			//todo: Do a test that the player is grounded.
+						// 			motion.MotionInputPressed = 7;
+						// 		}
+						// 		break;
+						// 	}
 						case Key.T:
 							var mouselook = (bool)gamecam.Get("MOUSELOOK");
 							if (mouselook)
@@ -749,26 +835,26 @@ public partial class main : Node3D
 							}
 							gamecam.Set("MOUSELOOK", !mouselook);
 							break;
-						case Key.R: //fly up (not vanilla)
-							if ((playerdat.MagicalMotionAbilities & 0x14) != 0)
-							{
-								motion.MotionInputPressed = 0xC;
-							}
-							else
-							{
-								motion.MotionInputPressed = 0;
-							}
-							break;
-						case Key.F: //fly down (not vanilla)
-							if ((playerdat.MagicalMotionAbilities & 0x14) != 0)
-							{
-								motion.MotionInputPressed = 0xD;
-							}
-							else
-							{
-								motion.MotionInputPressed = 0;
-							}
-							break;
+						// case Key.R: //fly up (not vanilla)
+						// 	if ((playerdat.MagicalMotionAbilities & 0x14) != 0)
+						// 	{
+						// 		motion.MotionInputPressed = 0xC;
+						// 	}
+						// 	else
+						// 	{
+						// 		motion.MotionInputPressed = 0;
+						// 	}
+						// 	break;
+						// case Key.F: //fly down (not vanilla)
+						// 	if ((playerdat.MagicalMotionAbilities & 0x14) != 0)
+						// 	{
+						// 		motion.MotionInputPressed = 0xD;
+						// 	}
+						// 	else
+						// 	{
+						// 		motion.MotionInputPressed = 0;
+						// 	}
+						// 	break;
 						case Key.F1: //open options menu
 							uimanager.InteractionModeToggle(0); break;
 						case Key.F2: //talk
