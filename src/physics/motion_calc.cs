@@ -251,25 +251,27 @@ namespace Underworld
             var bp = HeadingLookupTable[bx];
             var ax = HeadingLookupTable[bx + 1];
             ax = (short)(ax - bp);
-            ax = (short)(ax * cx);
-            if (ax < 0)
-            {
-                ax = (short)((ax & 0xFFFF) >> 8);
-                ax = (short)-Math.Abs(ax);
-            }
-            else
-            {
-                ax = (short)(ax >> 8);
-            }
+            var tmp_1 = (ax * cx);
+            ax = (short)((tmp_1 & 0xFFFF) >> 8);
+            ax = (short)(ax | ((tmp_1 >> 16) & 0xFF) << 8);
+            // if (ax < 0)
+            // {
+            //     ax = (short)((ax & 0xFFFF) >> 8);
+            //     ax = (short)-Math.Abs(ax);
+            // }
+            // else
+            // {
+            //     ax = (short)(ax >> 8);
+            // }
             ax = (short)(ax + bp);
             Result_AX = ax;
 
             bp = HeadingLookupTable[64 + bx];
             ax = HeadingLookupTable[65 + bx];
             ax = (short)(ax - bp);
-            var tmp = (ax * cx);
-            ax = (short)(tmp & 0xFFFF);
-            var dl = (short)((tmp >> 16) & 0xFF);
+            var tmp_2 = (ax * cx);
+            ax = (short)(tmp_2 & 0xFFFF);
+            var dl = (short)((tmp_2 >> 16) & 0xFF);
             // sbyte dl;
             // if (ax >= 0)
             // {
