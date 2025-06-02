@@ -193,6 +193,7 @@ public partial class main : Node3D
 
 				//HACK the above appears to be what should be happening in vanilla code but is very slow to process, but the below gives the appearance of normal movement but may cause frame rate issues. 
 				//This whole section will need to be fixed in the future.
+				//A clock increment of 1 will cause strafing to fail when moving to the east!
 				// EasyMoveFrameIncrement = 1;
 				// AnimationFrameDeltaIncrement = 1;
 				//ClockIncrement = 0xF;
@@ -201,6 +202,7 @@ public partial class main : Node3D
 
 			if (ClockIncrement != 0)
 			{
+				ClockIncrement = Math.Max(ClockIncrement, 2);
 				ProcessMotionInputs();
 				if (AnimationFrameDeltaIncrement != 0)
 				{

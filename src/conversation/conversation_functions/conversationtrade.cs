@@ -373,17 +373,17 @@ namespace Underworld
                     }
                     else
                     {
-                        var tile = UWTileMap.current_tilemap.Tiles[playerdat.tileX,playerdat.tileY];
+                        var tile = UWTileMap.current_tilemap.Tiles[playerdat.tileX_depreciated,playerdat.tileY_depreciated];
 					    UWTileMap.GetRandomXYZForTile(tile, out int newxpos, out int newypos, out int newzpos);
-					    var dropcoordinate = uwObject.GetCoordinate(playerdat.tileX, playerdat.tileY, newxpos, newypos, newzpos);
+					    var dropcoordinate = uwObject.GetCoordinate(playerdat.tileX_depreciated, playerdat.tileY_depreciated, newxpos, newypos, newzpos);
 
                         //drop at players location
                         pickup.Drop_old(
                             index: objindex,
                             objList: UWTileMap.current_tilemap.LevelObjects,
                             dropPosition: dropcoordinate,
-                            tileX: playerdat.tileX,
-                            tileY: playerdat.tileY);
+                            tileX: playerdat.tileX_depreciated,
+                            tileY: playerdat.tileY_depreciated);
                     }
                     uimanager.SetNPCTradeSlot(i, -1, false);
                 }

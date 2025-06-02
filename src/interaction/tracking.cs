@@ -29,8 +29,8 @@ namespace Underworld
                     {
                         if (critter.majorclass == 1)
                         {
-                            var xVector = critter.npc_xhome - playerdat.tileX;
-                            var yVector = critter.npc_yhome - playerdat.tileY;
+                            var xVector = critter.npc_xhome - playerdat.tileX_depreciated;
+                            var yVector = critter.npc_yhome - playerdat.tileY_depreciated;
                             if ((Math.Abs(xVector) <= range) && (Math.Abs(yVector) <= range))
                             {
                                 int headingindex = 0;

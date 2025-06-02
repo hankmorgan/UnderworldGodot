@@ -16,8 +16,8 @@ namespace Underworld
 
         public static int Activate()
         {
-            var var4X = (playerdat.tileX << 3) + playerdat.playerObject.xpos - 227;
-            var cxY = (playerdat.tileY << 3) + playerdat.playerObject.ypos - 323;
+            var var4X = (playerdat.tileX_depreciated << 3) + playerdat.playerObject.xpos - 227;
+            var cxY = (playerdat.tileY_depreciated << 3) + playerdat.playerObject.ypos - 323;
             int si_world = -1;
 
             int di_var2;

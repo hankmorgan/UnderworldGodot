@@ -185,8 +185,9 @@ namespace Underworld
 
         /// <summary>
         /// The X tile the Player is in
+        /// Note. Proper usage in game should be of the playerObject.tileY
         /// </summary>
-        public static int tileX
+        public static int tileX_depreciated
         {
             get
             {
@@ -233,8 +234,9 @@ namespace Underworld
 
         /// <summary>
         /// The Y tile the player is in
+        /// Note. Proper usage in game should be of the playerObject.tileY
         /// </summary>
-        public static int tileY
+        public static int tileY_depreciated
         {
             get
             {

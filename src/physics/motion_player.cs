@@ -124,7 +124,7 @@ namespace Underworld
                     MotionInputPressed = 0;
                 }
                 if ((MotionInputPressed == 9) || (MotionInputPressed == 0xA))
-                {
+                {//strafe motion.
                     dseg_67d6_33c6 = true;
                     RelatedToSwimDmg_dseg_67d6_33CE = (short)(dseg_67d6_753[RelatedToClockIncrement_67d6_742 >> 4] << 1);
                 }

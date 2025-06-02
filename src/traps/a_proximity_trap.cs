@@ -15,8 +15,8 @@ namespace Underworld
             if (character==0)
             {
                 zpos = playerdat.playerObject.zpos;
-                xhome = playerdat.tileX;
-                yhome = playerdat.tileY;
+                xhome = playerdat.tileX_depreciated;
+                yhome = playerdat.tileY_depreciated;
 
             }
             else

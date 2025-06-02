@@ -25,7 +25,7 @@ namespace Underworld
                                 if (ObjectUsed.item_id == 461)
                                 {//a wisp, which is a static object in UW2
 
-                                    var wisp = SpawnTemporaryTalker(whoami: 48, tileX: playerdat.tileX, tileY: playerdat.tileY);
+                                    var wisp = SpawnTemporaryTalker(whoami: 48, tileX: playerdat.tileX_depreciated, tileY: playerdat.tileY_depreciated);
                                     uimanager.InteractionModeToggle(uimanager.InteractionModes.ModeTalk);//ensure this mode is on        
                                     ConversationVM.StartConversation(wisp);
                                     return false;

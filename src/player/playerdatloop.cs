@@ -205,7 +205,7 @@ namespace Underworld
                     }
                     if (academylevel == 8)
                     {
-                        if (tileX < 25)
+                        if (tileX_depreciated < 25)
                         {
                             return;
                         }
@@ -564,9 +564,9 @@ namespace Underworld
                 {
                     dlFlag = 1;
                 }
-                if (UWTileMap.ValidTile(tileX, tileY))
+                if (UWTileMap.ValidTile(tileX_depreciated, tileY_depreciated))
                 {
-                    int tileLightFlag = UWTileMap.current_tilemap.Tiles[tileX, tileY].lightFlag;
+                    int tileLightFlag = UWTileMap.current_tilemap.Tiles[tileX_depreciated, tileY_depreciated].lightFlag;
                     if ((tileLightFlag ^ dlFlag) == 1)
                     {
                         dungeon_ambientlight = remainder;
@@ -594,8 +594,8 @@ namespace Underworld
             var range = 1 + (lightlevel / 2);
             automap.MarkRangeOfTilesVisited(
                 range: range,
-                cX: tileX,
-                cY: tileY,
+                cX: tileX_depreciated,
+                cY: tileY_depreciated,
                 dungeon_level: dungeon_level
                 );
         }

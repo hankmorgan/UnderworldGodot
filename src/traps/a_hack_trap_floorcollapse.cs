@@ -9,7 +9,7 @@ namespace Underworld
         public static void Activate(uwObject trapObj, int triggerX, int triggerY, uwObject[] objList)
         {
 
-            var playerTile = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY];
+            var playerTile = UWTileMap.current_tilemap.Tiles[playerdat.tileX_depreciated, playerdat.tileY_depreciated];
             if (playerTile.floorTexture == trapObj.owner)
             {
                 var playerWeight = playerdat.WeightCarried;
@@ -32,8 +32,8 @@ namespace Underworld
                     }
                     
                     TileInfo.ChangeTile(
-                        StartTileX: playerdat.tileX,
-                        StartTileY: playerdat.tileY,
+                        StartTileX: playerdat.tileX_depreciated,
+                        StartTileY: playerdat.tileY_depreciated,
                         newHeight: si_floorheight,
                         newFloorTexture: newTexture
                        );                   

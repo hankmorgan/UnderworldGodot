@@ -66,9 +66,9 @@ namespace Underworld
                         var noOfRuns = ((FrameNo + delta) / (tTrigger.zpos + 1)) - (FrameNo / (tTrigger.zpos + 1));
                         if (noOfRuns > 0)
                         {
-                            if (Math.Abs(playerdat.tileX - tTrigger.tileX) <= 8)
+                            if (Math.Abs(playerdat.playerObject.tileX - tTrigger.tileX) <= 8)
                             {
-                                if (Math.Abs(playerdat.tileY - tTrigger.tileY) <= 8)
+                                if (Math.Abs(playerdat.playerObject.tileY - tTrigger.tileY) <= 8)
                                 {
                                     while (noOfRuns>0)
                                     {                                        

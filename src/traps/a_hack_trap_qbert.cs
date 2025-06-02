@@ -95,7 +95,7 @@ namespace Underworld
             bool ShowMoongate;
             var var4_puzzleactive = playerdat.GetGameVariable(114);
             int var8 = 0;
-            var currentTile = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY];
+            var currentTile = UWTileMap.current_tilemap.Tiles[playerdat.tileX_depreciated, playerdat.tileY_depreciated];
             if (currentTile.Ptr == 0x33C4)//should be tile 49,51 -> pyramid top
             {
                 var si = 29;
@@ -385,7 +385,7 @@ namespace Underworld
                 }
                 else
                 {
-                    if ((Math.Abs(teleportX - playerdat.tileX) >= 3) || (Math.Abs(teleportY - playerdat.tileY) >= 3))
+                    if ((Math.Abs(teleportX - playerdat.tileX_depreciated) >= 3) || (Math.Abs(teleportY - playerdat.tileY_depreciated) >= 3))
                     {//only teleport if destination is away from the current location.
                         DoTeleport(
                             teleportX: teleportX,
