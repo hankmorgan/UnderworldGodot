@@ -41,7 +41,7 @@ namespace Underworld
                     {
                         //can object be enchanted.
                         //EnchantObjectwithEffectId andupdate failed variable
-                        failed = ChargeSpellObjectwithEffectId(objToEnchant, objList, ExistingEnchantment.SpellMinorClass, playerdat.tileX_depreciated, playerdat.tileY_depreciated, WorldObject);
+                        failed = ChargeSpellObjectwithEffectId(objToEnchant, objList, ExistingEnchantment.SpellMinorClass, playerdat.playerObject.tileX, playerdat.playerObject.tileY, WorldObject);
                         if (failed)//if true object has been destroyed.
                         {
                             return;
@@ -52,7 +52,7 @@ namespace Underworld
                         if (ExistingEnchantment.IsFlagBit2Set)
                         {
                             //Failenchantment
-                            FailEnchantment(objToEnchant, objList, WorldObject, playerdat.tileX_depreciated, playerdat.tileY_depreciated);
+                            FailEnchantment(objToEnchant, objList, WorldObject, playerdat.playerObject.tileX, playerdat.playerObject.tileY);
                             return;
                         }
                         else
@@ -99,7 +99,7 @@ namespace Underworld
                                         {
                                             //blowup
                                             //Fail enchantment
-                                            FailEnchantment(objToEnchant, objList, WorldObject, playerdat.tileX_depreciated, playerdat.tileY_depreciated);
+                                            FailEnchantment(objToEnchant, objList, WorldObject, playerdat.playerObject.tileX, playerdat.playerObject.tileY);
                                             return;
                                         }
                                     }
@@ -310,7 +310,7 @@ namespace Underworld
             animo.SpawnAnimoInTile(
                 subclassindex: 2, xpos: 3, ypos: 3, zpos: (short)(tile.floorHeight << 3), tileX: x, tileY: y);
             uimanager.AddToMessageScroll($"{GameStrings.GetString(1, 0x13E)}{GameStrings.GetSimpleObjectNameUW(obj.item_id)}{GameStrings.GetString(1, 0x13F)}");//your attempt to enchant X destroys it in a blaze of flame
-            damage.DamageObjectsInTile(playerdat.tileX_depreciated, playerdat.tileY_depreciated, 1, 1);
+            damage.DamageObjectsInTile(playerdat.playerObject.tileX, playerdat.playerObject.tileY, 1, 1);
         }
 
         /// <summary>

@@ -237,7 +237,7 @@ namespace Underworld
             var distance = 2;//distance being 2 here is probably a vanilla bug. seems like the expected behavour is the game would test 2 then 1 and then 0.
             while (distance <= 2)
             {
-                int x0 = playerdat.tileX_depreciated; int y0 = playerdat.tileY_depreciated;
+                int x0 = playerdat.playerObject.tileX; int y0 = playerdat.playerObject.tileY;
                 motion.GetCoordinateInDirection((playerdat.playerObject.heading << 5) + playerdat.playerObject.npc_heading, distance, ref x0, ref y0);
                 var tile = UWTileMap.current_tilemap.Tiles[x0, y0];
 

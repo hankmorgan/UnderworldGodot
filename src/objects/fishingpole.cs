@@ -12,8 +12,8 @@ namespace Underworld
             else
             {
                 //go fish
-                int xCoord = playerdat.X >> 5; int yCoord = playerdat.Y >> 5;
-                motion.GetCoordinateInDirection(playerdat.playerObject.heading << 8, 0xB, ref xCoord, ref yCoord);
+                int xCoord = motion.playerMotionParams.x_0 >> 5; int yCoord = motion.playerMotionParams.y_2 >> 5;
+                motion.GetCoordinateInDirection(motion.PlayerHeadingMinor_dseg_8294 >> 8, 0xB, ref xCoord, ref yCoord);
                 var tile = UWTileMap.current_tilemap.Tiles[xCoord >> 3, yCoord >> 3];
                 if (tile != null)
                 {

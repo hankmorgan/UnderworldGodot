@@ -118,8 +118,8 @@ namespace Underworld
                     minorclass: minor,
                     caster: caster,
                     target: null,
-                    tileX: playerdat.tileX_depreciated,
-                    tileY: playerdat.tileY_depreciated,
+                    tileX: playerdat.playerObject.tileX,
+                    tileY: playerdat.playerObject.tileY,
                     CastOnEquip: false);
             }
         }

@@ -341,8 +341,8 @@ namespace Underworld
         /// <returns></returns>
         private static int GetDirectionHeadingToCup(int targetX = 24, int targetY = 45)
         {
-            var x = targetX - playerdat.tileX_depreciated;
-            var y = targetY - playerdat.tileY_depreciated;
+            var x = targetX - playerdat.playerObject.tileX;
+            var y = targetY - playerdat.playerObject.tileY;
 
             if (Math.Abs(x)/2 > Math.Abs(y))
             {

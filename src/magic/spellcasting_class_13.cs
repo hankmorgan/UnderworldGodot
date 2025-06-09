@@ -57,8 +57,8 @@ namespace Underworld
 
                             automap.MarkRangeOfTilesVisited(
                                 range: range,
-                                cX: playerdat.tileX_depreciated,
-                                cY: playerdat.tileY_depreciated,
+                                cX: playerdat.playerObject.tileX,
+                                cY: playerdat.playerObject.tileY,
                                 dungeon_level: playerdat.dungeon_level
                                 );
                         }
@@ -135,7 +135,7 @@ namespace Underworld
         {
             var worldflag = 1 << ((worlds.GetWorldNo(playerdat.dungeon_level)) - 1);
             var range = 2;
-            var cX = playerdat.tileX_depreciated; var cY = playerdat.tileY_depreciated;
+            var cX = playerdat.playerObject.tileX; var cY = playerdat.playerObject.tileY;
             var linesOfPower = playerdat.GetQuest(128);
 
             //try and find a guardian signet ring in the area

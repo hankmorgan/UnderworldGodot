@@ -19,8 +19,8 @@ namespace Underworld
                 Load(datafolder);     
 
                 //Motion params
-                motion.playerMotionParams.x_0 = (short)playerdat.X;
-                motion.playerMotionParams.y_2 = (short)playerdat.Y;
+                motion.playerMotionParams.x_0 = (short)playerdat.XCoordinate;
+                motion.playerMotionParams.y_2 = (short)playerdat.YCoordinate;
                 motion.playerMotionParams.z_4 = (short)playerdat.Z;
 
                 motion.playerMotionParams.index_20 = 1;
@@ -249,7 +249,7 @@ namespace Underworld
                 }
                 for (int x = 0; x <= 15; x++)
                 {
-                    SetXClock(X, 0);
+                    SetXClock(x, 0);
                 }
             }
             else

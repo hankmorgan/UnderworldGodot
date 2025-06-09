@@ -40,7 +40,7 @@ namespace Underworld
                     {
                         if (playerdat.dungeon_level == 3)
                         {
-                            if ((playerdat.tileX_depreciated >= 23) && (playerdat.tileX_depreciated <= 27) && (playerdat.tileY_depreciated >= 43) && (playerdat.tileY_depreciated <= 45))
+                            if ((playerdat.playerObject.tileX >= 23) && (playerdat.playerObject.tileX <= 27) && (playerdat.playerObject.tileY >= 43) && (playerdat.playerObject.tileY <= 45))
                             {
                                 if (notesplayed == "354237875")
                                 {

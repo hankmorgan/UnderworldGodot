@@ -171,7 +171,7 @@ namespace Underworld
         /// <summary>
         /// The full X co-ordinate in the map
         /// </summary>
-        public static int X
+        public static int XCoordinate
         {
             get
             {
@@ -187,20 +187,20 @@ namespace Underworld
         /// The X tile the Player is in
         /// Note. Proper usage in game should be of the playerObject.tileY
         /// </summary>
-        public static int tileX_depreciated
-        {
-            get
-            {
-                return X >> 8;
-            }
-            set
-            {
-                var tmp = GetAt16(0x55) & 0xFF;
-                value = value & 0x3F;
-                tmp |= value << 8;
-                SetAt16(0x55, tmp);
-            }
-        }
+        // public static int tileX_depreciated
+        // {
+        //     get
+        //     {
+        //         return X_depreciated >> 8;
+        //     }
+        //     set
+        //     {
+        //         var tmp = GetAt16(0x55) & 0xFF;
+        //         value = value & 0x3F;
+        //         tmp |= value << 8;
+        //         SetAt16(0x55, tmp);
+        //     }
+        // }
 
         // public static int xpos
         // {
@@ -219,7 +219,7 @@ namespace Underworld
         /// <summary>
         /// The full Y Coordinate in the map
         /// </summary>
-        public static int Y
+        public static int YCoordinate
         {
             get
             {
@@ -236,20 +236,20 @@ namespace Underworld
         /// The Y tile the player is in
         /// Note. Proper usage in game should be of the playerObject.tileY
         /// </summary>
-        public static int tileY_depreciated
-        {
-            get
-            {
-                return Y >> 8;
-            }
-            set
-            {
-                var tmp = GetAt16(0x57) & 0xFF;
-                value = value & 0x3F;
-                tmp |= value << 8;
-                SetAt16(0x57, tmp);
-            }
-        }
+        // public static int tileY_depreciated
+        // {
+        //     get
+        //     {
+        //         return Y_depreciated >> 8;
+        //     }
+        //     set
+        //     {
+        //         var tmp = GetAt16(0x57) & 0xFF;
+        //         value = value & 0x3F;
+        //         tmp |= value << 8;
+        //         SetAt16(0x57, tmp);
+        //     }
+        // }
 
         /// <summary>
         /// Player yposition in the tile. Player position appears to be a higher resolution than object positioning 

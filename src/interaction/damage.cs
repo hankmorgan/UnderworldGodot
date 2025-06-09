@@ -615,10 +615,10 @@ namespace Underworld
                     {
                         //Turn into debris? (could this have already happened inside DamageObject)
                         var debris = GetObjectTypeDebris(obj, 0);
-                        var tile = UWTileMap.current_tilemap.Tiles[playerdat.tileX_depreciated, playerdat.tileY_depreciated];
+                        var tile = UWTileMap.current_tilemap.Tiles[playerdat.playerObject.tileX, playerdat.playerObject.tileY];
                         ObjectCreator.spawnObjectInTile(
                             itemid: debris, 
-                            tileX: playerdat.tileX_depreciated, tileY: playerdat.tileY_depreciated, 
+                            tileX: playerdat.playerObject.tileX, tileY: playerdat.playerObject.tileY, 
                             xpos: 3, ypos: 3, zpos: (short)(tile.floorHeight<<3), 
                             WhichList: ObjectFreeLists.ObjectListType.StaticList);
                     }

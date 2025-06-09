@@ -191,7 +191,7 @@ namespace Underworld
                     uimanager.AddToMessageScroll($"{GameStrings.GetString(1, 0x166)} {traptype}");//your bumbling efforts
                     if (foundtrigger == null)
                     {
-                        trap.ActivateTrap(character: 1, trapObj: foundtrap, ObjectUsed: objToCheck, triggerX: playerdat.tileX_depreciated, triggerY: playerdat.tileY_depreciated, objList: objList);
+                        trap.ActivateTrap(character: 1, trapObj: foundtrap, ObjectUsed: objToCheck, triggerX: playerdat.playerObject.tileX, triggerY: playerdat.playerObject.tileY, objList: objList);
                     }
                     else
                     {

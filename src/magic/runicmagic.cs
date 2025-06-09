@@ -258,7 +258,7 @@ namespace Underworld
                                     majorclass: 9,
                                     minorclass: spell.SpellLevel / 2,
                                     caster: playerdat.playerObject, target: null,
-                                    tileX: playerdat.tileX_depreciated, tileY: playerdat.tileY_depreciated,
+                                    tileX: playerdat.playerObject.tileX, tileY: playerdat.playerObject.tileY,
                                     CastOnEquip: false);
                                 uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_the_spell_backfires_));
                                 break;
@@ -273,7 +273,7 @@ namespace Underworld
                                 majorclass: spell.SpellMajorClass,
                                 minorclass: spell.SpellMinorClass,
                                 caster: playerdat.playerObject, target: null,
-                                tileX: playerdat.tileX_depreciated, tileY: playerdat.tileY_depreciated,
+                                tileX: playerdat.playerObject.tileX, tileY: playerdat.playerObject.tileY,
                                 CastOnEquip:false);
                             break;
                     }

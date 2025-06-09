@@ -14,8 +14,8 @@ namespace Underworld
                 return false;
             }
 
-            int x0 = playerdat.X >> 5; int y0 = playerdat.Y >> 5;
-            motion.GetCoordinateInDirection(playerdat.heading_major, 0xB, ref x0, ref y0);//note vanilla is a global full heading value>>8. This heading value gives the same result.
+            int x0 =motion.playerMotionParams.x_0 >> 5; int y0 = motion.playerMotionParams.y_2 >> 5;
+            motion.GetCoordinateInDirection(motion.PlayerHeadingMinor_dseg_8294 >> 8, 0xB, ref x0, ref y0);//note vanilla is a global full heading value>>8. This heading value gives the same result.
             if (UWTileMap.ValidTile(x0 >> 3, y0 >> 3))
             {
                 var tile = UWTileMap.current_tilemap.Tiles[x0 >> 3, y0 >> 3];

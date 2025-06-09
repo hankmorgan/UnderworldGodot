@@ -228,7 +228,7 @@ namespace Underworld
                     if (srcIndex == 0)
                     {
                         //spawn twinkies at the player position
-                        animo.SpawnAnimoInTile(subclassindex: 7, xpos: (short)playerdat.playerObject.xpos, ypos: (short)playerdat.playerObject.ypos, zpos: (short)playerdat.playerObject.zpos, tileX: playerdat.tileX_depreciated, tileY: playerdat.tileY_depreciated);
+                        animo.SpawnAnimoInTile(subclassindex: 7, xpos: (short)playerdat.playerObject.xpos, ypos: (short)playerdat.playerObject.ypos, zpos: (short)playerdat.playerObject.zpos, tileX: playerdat.playerObject.tileX, tileY: playerdat.playerObject.tileY);
                     }
                 }
             }

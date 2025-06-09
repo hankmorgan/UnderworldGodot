@@ -50,7 +50,7 @@ namespace Underworld
                     //TODO. special case for the telekinesis wand in Scintillus.
                     playerdat.ObjectInHand = -1;
                     uimanager.instance.mousecursor.SetCursorToCursor();
-                    var tile = UWTileMap.current_tilemap.Tiles[playerdat.tileX_depreciated, playerdat.tileY_depreciated];
+                    var tile = UWTileMap.current_tilemap.Tiles[playerdat.playerObject.tileX, playerdat.playerObject.tileY];
                     obj.zpos = (short)(tile.floorHeight << 3);
                     obj.xpos = 3;
                     obj.ypos = 3;
@@ -61,7 +61,7 @@ namespace Underworld
                 }
 
                 //remove player from the level
-                playerdat.PlacePlayerInTile(newTileX: -1, newTileY: -1, previousTileX: playerdat.tileX_depreciated, previousTileY: playerdat.tileY_depreciated);//removes the player from the tile map data
+                playerdat.PlacePlayerInTile(newTileX: -1, newTileY: -1, previousTileX: playerdat.playerObject.tileX, previousTileY: playerdat.playerObject.tileY);//removes the player from the tile map data
 
 
                 //move player object to the save file and clear the data out.

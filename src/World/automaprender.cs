@@ -187,8 +187,8 @@ namespace Underworld
                     width: uimanager.instance.cross.GetWidth(), 
                     height: uimanager.instance.cross.GetHeight());
                 var dst = new Vector2I(
-                    x: playerdat.tileX_depreciated*TileSize, 
-                    y: playerdat.tileY_depreciated*TileSize);
+                    x: playerdat.playerObject.tileX*TileSize, 
+                    y: playerdat.playerObject.tileY*TileSize);
                 //Draw player icon at 
                 OutputTileMapImage.BlendRect(uimanager.instance.cross.GetImage(), src, dst);
             }

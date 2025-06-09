@@ -34,7 +34,7 @@ namespace Underworld
                 }
                 else
                 {   //player cannot hold. Try and place on ground
-                    objectInstance.PlaceObjectInTile(playerdat.tileX_depreciated, playerdat.tileY_depreciated, ObjectToGive);
+                    objectInstance.PlaceObjectInTile(playerdat.playerObject.tileX, playerdat.playerObject.tileY, ObjectToGive);
                     result_register = 2;
                 }
             }   
@@ -53,7 +53,7 @@ namespace Underworld
                     }
                 }
                 //cannot place in trade slot. drop on ground.
-                objectInstance.PlaceObjectInTile(playerdat.tileX_depreciated, playerdat.tileY_depreciated, ObjectToGive);
+                objectInstance.PlaceObjectInTile(playerdat.playerObject.tileX, playerdat.playerObject.tileY, ObjectToGive);
                 result_register = 2;
             }
         }

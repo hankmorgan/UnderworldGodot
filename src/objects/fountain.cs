@@ -12,8 +12,8 @@ namespace Underworld
                     minorclass: spell.SpellMinorClass,
                     caster: playerdat.playerObject,
                     target: null,
-                    tileX: playerdat.tileX_depreciated,
-                    tileY: playerdat.tileY_depreciated,
+                    tileX: playerdat.playerObject.tileX,
+                    tileY: playerdat.playerObject.tileY,
                     CastOnEquip: false);
                 use.SpellHasBeenCast = true;
                 if (spell.SpellMajorClass == 4)
