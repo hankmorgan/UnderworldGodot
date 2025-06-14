@@ -87,7 +87,7 @@ namespace Underworld
             {
                 WeaponCharge = Math.Min(WeaponCharge + ChargeSpeed, 100);
                 var frame = 1 + (WeaponCharge / 12);
-                //Debug.Print($"{frame} at {WeaponCharge}");
+                Debug.Print($"{frame} at {WeaponCharge} of {mincharge}");
                 uimanager.ChangePower(frame);
                 combattimer = 0f;
             }
@@ -98,6 +98,7 @@ namespace Underworld
         /// </summary>
         public static void EndCombatLoop()
         {
+            uimanager.instance.mousecursor.SetCursorToCursor(0);
             WeaponCharge = 0;
             stage = CombatStages.Ready;
             uimanager.ResetPower();
@@ -126,14 +127,33 @@ namespace Underworld
                     case CombatStages.Ready:
                         if (MouseHeldDown)
                         {
+                            if (isWeapon(playerdat.PrimaryHandObject) == 2)
+                            {
+                                //ranged combat targeting (if player has ammo)
+                                //check for ammo
+                                //if no ammo cancel
+                                //uimanager.instance.mousecursor.SetCursorToCursor(9);
+                                var ammoType = rangedObjectDat.RangedWeaponType(playerdat.PrimaryHandObject.item_id);
+                                var match = objectsearch.FindMatchInFullObjectList(0, 1, ammoType, playerdat.InventoryObjects);
+                                if (match == null)
+                                {
+                                    uimanager.AddToMessageScroll($"{GameStrings.GetString(1, 207)}{GameStrings.GetSimpleObjectNameUW(16 + ammoType)}s");//sorry you have no Xs
+                                    return;
+                                }
+                            }
+                            else
+                            {
+                                //default mouse (in case cursor is stuck)
+                                //uimanager.instance.mousecursor.SetCursorToCursor(0);
+                                CurrentAttackSwingType = Rng.r.Next(0, 4);
+                            }
+
                             OnHitSpell = 0;
                             JeweledDagger = false;
                             AttackScore = 0;
                             AttackDamage = 0;
                             AttackScoreFlankingBonus = 0;
-                            AttackWasACrit = false;
-                            //currentAnimationStrikeType = WeaponAnimStrikeOffset;
-                            CurrentAttackSwingType = Rng.r.Next(0, 4);
+                            AttackWasACrit = false;                            
                             stage = CombatStages.Charging;
                         }
                         else
@@ -147,7 +167,20 @@ namespace Underworld
                             if (MouseHeldDown)
                             {
                                 CombatChargingLoop(delta);
-                                uimanager.currentWeaponAnim = WeaponAnimGroup + WeaponAnimStrikeOffset + WeaponAnimHandednessOffset;
+                                switch (isWeapon(playerdat.PrimaryHandObject))
+                                {
+                                    case 1:
+                                        //melee or fist
+                                        uimanager.currentWeaponAnim = WeaponAnimGroup + WeaponAnimStrikeOffset + WeaponAnimHandednessOffset;
+                                        break;
+                                    case 2://ranged
+                                        if (WeaponCharge >= mincharge)
+                                        {
+                                            //ranged weapon change targeting icon
+                                            uimanager.instance.mousecursor.SetCursorToCursor(9);
+                                        }
+                                        break;
+                                }                          
                             }
                             else
                             {
@@ -163,9 +196,24 @@ namespace Underworld
                                 {
                                     //start return swing   swing                            
                                     Debug.Print($"Releasing attack at charge {WeaponCharge}");
-                                    stage = CombatStages.Swinging;
+                                    
                                     combattimer = 0;
-                                    uimanager.currentWeaponAnim = WeaponAnimGroup + WeaponAnimStrikeOffset + WeaponAnimHandednessOffset + 1;
+                                    if (isWeapon(playerdat.PrimaryHandObject) == 2)
+                                    {
+                                        //ranged
+                                        //launch projectile if has ammo
+                                        //check for ammo
+
+                                        //if has ammo launch projectile
+
+                                        EndCombatLoop();//reset
+                                    }
+                                    else
+                                    {
+                                        //melee
+                                        uimanager.currentWeaponAnim = WeaponAnimGroup + WeaponAnimStrikeOffset + WeaponAnimHandednessOffset + 1;
+                                        stage = CombatStages.Swinging;
+                                    }                                    
                                 }
                                 else
                                 {//cancel. not enough charge built up
@@ -193,8 +241,6 @@ namespace Underworld
                     case CombatStages.Striking:
                         {
                             //weapon has struck do combat calcs  (if melee) 
-                            //ProcessAttackHit_DEPRECIATED();
-                            //Calculate player attack score here.
 
                             CalculatePlayerAttackScores();
 

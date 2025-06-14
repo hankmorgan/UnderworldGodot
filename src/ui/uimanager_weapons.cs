@@ -118,22 +118,22 @@ namespace Underworld
                     WeaponAnimTimer += delta;
                     if (WeaponAnimTimer > 0.2f)
                     {
-                        if (currentWeaponAnim!=PreviousWeaponAnimation)
+                        if (currentWeaponAnim != PreviousWeaponAnimation)
                         {
                             CurrentWeaponFrame = 0;
                         }
                         WeaponAnimTimer = 0;
-                        if (playerdat.play_drawn == 1)
-                        {//weapon is drawn                            
-                            var frame =  weaponframes[currentWeaponAnim,CurrentWeaponFrame];
-                            if (frame!=-1)
+                        if ((playerdat.play_drawn == 1) && (combat.isWeapon(playerdat.PrimaryHandObject) != 2))
+                        {//weapon is drawn and is a melee weapon or fist                    
+                            var frame = weaponframes[currentWeaponAnim, CurrentWeaponFrame];
+                            if (frame != -1)
                             {
                                 WeaponAnim.Texture = grWeapon.LoadImageAt(frame);
-                            } 
-                            CurrentWeaponFrame = Math.Min(CurrentWeaponFrame+1, 5);
+                            }
+                            CurrentWeaponFrame = Math.Min(CurrentWeaponFrame + 1, 5);
                         }
                         else
-                        {//weapon is put away
+                        {//weapon is put away or is a ranged weapon
                             WeaponAnim.Texture = null;
                         }
                         PreviousWeaponAnimation = currentWeaponAnim;
