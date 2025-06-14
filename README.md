@@ -71,6 +71,7 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * Partial options menu. In game loading of saves
 * Many Object interactions
 * Combat attack charge buildup and combat accuracy calcuations for player
+* Missile combat
 * In game advancement and player status changes over time (hunger, fatigue, mana regeneration)
 * Skillpoints and character advancement logic
 * Automap navigation and updating
@@ -96,7 +97,6 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * Editing of automap notes
 * Weight and encumberance mechanics
 * Swimming
-* Slings and crossbow combat
 * Getting lost mechanics
 * Stealth mechanics (partial)
 * Splash screens and game credits

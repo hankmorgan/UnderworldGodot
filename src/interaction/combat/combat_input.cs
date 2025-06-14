@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Runtime.Serialization;
 using Godot;
 
 namespace Underworld
@@ -134,8 +135,8 @@ namespace Underworld
                                 //if no ammo cancel
                                 //uimanager.instance.mousecursor.SetCursorToCursor(9);
                                 var ammoType = rangedObjectDat.RangedWeaponType(playerdat.PrimaryHandObject.item_id);
-                                var match = objectsearch.FindMatchInFullObjectList(0, 1, ammoType, playerdat.InventoryObjects);
-                                if (match == null)
+                                var foundammo = objectsearch.FindMatchInFullObjectList(0, 1, ammoType, playerdat.InventoryObjects);
+                                if (foundammo == null)
                                 {
                                     uimanager.AddToMessageScroll($"{GameStrings.GetString(1, 207)}{GameStrings.GetSimpleObjectNameUW(16 + ammoType)}s");//sorry you have no Xs
                                     return;
@@ -153,7 +154,7 @@ namespace Underworld
                             AttackScore = 0;
                             AttackDamage = 0;
                             AttackScoreFlankingBonus = 0;
-                            AttackWasACrit = false;                            
+                            AttackWasACrit = false;
                             stage = CombatStages.Charging;
                         }
                         else
@@ -180,7 +181,7 @@ namespace Underworld
                                             uimanager.instance.mousecursor.SetCursorToCursor(9);
                                         }
                                         break;
-                                }                          
+                                }
                             }
                             else
                             {
@@ -196,16 +197,25 @@ namespace Underworld
                                 {
                                     //start return swing   swing                            
                                     Debug.Print($"Releasing attack at charge {WeaponCharge}");
-                                    
+
                                     combattimer = 0;
                                     if (isWeapon(playerdat.PrimaryHandObject) == 2)
                                     {
                                         //ranged
                                         //launch projectile if has ammo
-                                        //check for ammo
-
+                                        var ammoType = rangedObjectDat.RangedWeaponType(playerdat.PrimaryHandObject.item_id);
+                                        //check if player has one some ammo.
+                                        var foundammo = objectsearch.FindMatchInFullObjectList(0, 1, ammoType, playerdat.InventoryObjects);
+                                        if (foundammo == null)
+                                        {
+                                            uimanager.AddToMessageScroll($"{GameStrings.GetString(1, 207)}{GameStrings.GetSimpleObjectNameUW(16 + ammoType)}s");//sorry you have no Xs
+                                            return;
+                                        }
+                                        else
+                                        {
+                                            MissileRelease(playerdat.PrimaryHandObject.classindex, foundammo);
+                                        }
                                         //if has ammo launch projectile
-
                                         EndCombatLoop();//reset
                                     }
                                     else
@@ -213,7 +223,7 @@ namespace Underworld
                                         //melee
                                         uimanager.currentWeaponAnim = WeaponAnimGroup + WeaponAnimStrikeOffset + WeaponAnimHandednessOffset + 1;
                                         stage = CombatStages.Swinging;
-                                    }                                    
+                                    }
                                 }
                                 else
                                 {//cancel. not enough charge built up
@@ -247,12 +257,12 @@ namespace Underworld
                             ExecuteAttack(playerdat.playerObject);
                             if (_RES == GAME_UW2)
                             {
-                                if (OnHitSpell>0)
+                                if (OnHitSpell > 0)
                                 {
                                     if (AttackWasACrit || OnHitSpell == 6)
                                     {
                                         CastOnWeaponHitSpells();
-                                    }                                
+                                    }
                                 }
                             }
 
@@ -282,6 +292,68 @@ namespace Underworld
                     EndCombatLoop();
                 }
             }
+        }
+
+        static void MissileRelease(int RangedWeaponSubclass, uwObject foundAmmo)
+        {
+            //remove ammo from inventory
+            var PlayerLaunched = true;
+
+            if ((_RES == GAME_UW2) && (
+                (RangedWeaponSubclass == 8) || (RangedWeaponSubclass == 9) || (RangedWeaponSubclass == 0xA)
+            ))
+            {
+                motion.MissileFlagB = true;
+            }
+            else
+            {
+                motion.MissileFlagB = false;
+            }
+
+            motion.RangedAmmoItemID = foundAmmo.item_id;
+            motion.RangedAmmoType = rangedObjectDat.ammotype(foundAmmo.item_id);
+
+            motion.projectileXHome = playerdat.playerObject.npc_xhome;
+            motion.projectileYHome = playerdat.playerObject.npc_yhome;
+            motion.MissileLauncherHeadingBase = 1;
+            motion.InitPlayerProjectileValues();
+
+            var projectile = motion.PrepareProjectileObject(playerdat.playerObject);
+
+            if (projectile != null)
+            {
+                projectile.flags = foundAmmo.flags;
+                projectile.is_quant = foundAmmo.is_quant;
+                projectile.link = 1;
+                projectile.owner = foundAmmo.owner;
+                projectile.doordir = foundAmmo.doordir;
+
+                if (projectile.majorclass != 5)
+                {
+                    if (commonObjDat.rendertype(foundAmmo.item_id) != 2)
+                    {
+                        projectile.npc_whoami = projectile.heading;
+                    }
+                }
+                ObjectCreator.Consume(foundAmmo, true);
+            }
+            else
+            {
+                //play soundeffect
+                uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_need_more_space_to_fire_that_weapon_));
+            }
+
+            if ((motion.MissileFlagA == false) && (RangedWeaponSubclass == 8))
+            {
+                if (PlayerLaunched)
+                {
+                    //make a sound.
+                }
+            }
+            motion.MissileFlagA = false;
+            
+
+
         }
 
     }//end class
