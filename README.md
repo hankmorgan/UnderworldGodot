@@ -120,7 +120,9 @@ See [https://godotengine.org/](https://godotengine.org/) for engine runtime down
 4. Godot project will open at ``LaunchScene.tscn``. IMPORTANT: Make sure you run BUILD on the project before continuing.
 5. Run. It might work
 
-This project is developed using VSCode using the C# Tools for Godot extensions. If you are configured to use Godot in VSCode then the project can alos just be compiled and ran from there.
+This project is developed using VSCode using the C# Tools for Godot extensions. If you are configured to use Godot in VSCode then the project can also just be compiled and ran from there.
+
+You may require the Vulkan SDK to make particular shaders available. It can be downloaded from https://vulkan.lunarg.com/.
 
 ## UWsettings.json
 
