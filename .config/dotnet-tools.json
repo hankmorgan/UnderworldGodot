@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "chickensoft.godotenv": {
+      "version": "2.13.0",
+      "commands": [
+        "godotenv"
+      ],
+      "rollForward": false
+    }
+  }
+}
