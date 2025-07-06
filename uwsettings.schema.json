@@ -1,0 +1,74 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "UnderWorldSettings",
+    "description": "Configuration for running the UnderworldGodot project.",
+    "type": "object",
+    "properties": {
+
+        "pathuw1": {
+            "description": "Folder location of the Underworld 1 game files.",
+            "type": "string",
+            "default": "C:\\Games\\UW1"
+        },
+
+        "pathuw2": {
+            "description": "Folder location of the Underworld 2 game files.",
+            "type": "string",
+            "default": "C:\\Games\\UW2"
+        },
+
+        "gametoload": {
+            "description": "Which of the two games to load.",
+            "type": "string",
+            "enum": [ "UW1", "UW2" ],
+            "default": "UW1"
+        },
+
+        "level": {
+            "description": "The level of the abyss to load.",
+            "type": "integer",
+            "minimum": 0,
+            "default": 0
+        },
+
+        "lightlevel": {
+            "description": "Set the lighting level of the dungeon. Value is ignored.",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 7,
+            "default": 6
+        },
+
+        "levarkfolder": {
+            "description": "Which save context to load.",
+            "type": "string",
+            "default": "DATA",
+            "enum": [ "DATA", "SAVE1", "SAVE2", "SAVE3", "SAVE4" ]
+        },
+
+        "shader": {
+            "description": "Default shader used. Value is ignored.",
+            "type": "string",
+            "default": "UWSHADER"
+        },
+
+        "FOV": {
+            "description": "Default field of view.",
+            "type": "number",
+            "default": 75.0
+        },
+
+        "showcolliders": {
+            "description": "???",
+            "type": "boolean",
+            "default": false
+        },
+
+        "shaderbandsize": {
+            "description": "???",
+            "type": "integer",
+            "default": 8
+        }
+
+    }
+}

@@ -1,4 +1,5 @@
 {
+	"$schema": "uwsettings.schema.json",
     "pathuw1": "C:\\Games\\UW1\\game\\UW",
     "pathuw2": "C:\\Games\\UW2IDA\\UW2",
     "gametoload": "UW1",
