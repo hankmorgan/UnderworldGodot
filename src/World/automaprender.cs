@@ -138,7 +138,7 @@ namespace Underworld
         public static ImageTexture MapImage(int levelno)
         {
             //rnd = new System.Random();
-            var OutputTileMapImage = Image.Create(64 * TileSize, 64 * TileSize, false, Image.Format.Rgba8);
+            var OutputTileMapImage = Image.CreateEmpty(64 * TileSize, 64 * TileSize, false, Image.Format.Rgba8);
             mapToRender = automap.automaps[levelno];
 
             //Fills in the tile background colour first
