@@ -1,3 +1,4 @@
+using System;
 using Godot;
 namespace Underworld
 {
@@ -524,15 +525,15 @@ namespace Underworld
         /// <param name="DimX"></param>
         /// <param name="DimY"></param>
         /// <param name="HeightAdjustFlag"></param>
-        public static void ChangeTile(int StartTileX, int StartTileY, int newWallTexture =0x3F, int newFloorTexture = 0xF, int newHeight=0xF,int newType = 0xA, int DimX = 0, int DimY = 0, int HeightAdjustFlag = 0 )
+        public static void ChangeTile(int StartTileX, int StartTileY, int newWallTexture = 0x3F, int newFloorTexture = 0xF, int newHeight = 0xF, int newType = 0xA, int DimX = 0, int DimY = 0, int HeightAdjustFlag = 0)
         {
-            for (int x = StartTileX; x <= StartTileX + DimX; x++)
+            for (int currentX = StartTileX; currentX <= StartTileX + DimX; currentX++)
             {
-                for (int y = StartTileY; y <= StartTileY + DimY; y++)
+                for (int currentY = StartTileY; currentY <= StartTileY + DimY; currentY++)
                 {
-                    if (UWTileMap.ValidTile(x, y))
+                    if (UWTileMap.ValidTile(currentX, currentY))
                     {
-                        var tileToChange = UWTileMap.current_tilemap.Tiles[x, y];
+                        var tileToChange = UWTileMap.current_tilemap.Tiles[currentX, currentY];
                         var initialheight = tileToChange.floorHeight;//to later check if objects need to be moved.
 
                         if ((HeightAdjustFlag == 1) || (HeightAdjustFlag == 3))
@@ -551,29 +552,70 @@ namespace Underworld
                             tileToChange.floorHeight = 0xF;
                         }
 
-                        if ((newFloorTexture < 0xF) && (_RES==GAME_UW2) || ((newFloorTexture < 0xB) && (_RES!=GAME_UW2)))
+                        if ((newFloorTexture < 0xF) && (_RES == GAME_UW2) || ((newFloorTexture < 0xB) && (_RES != GAME_UW2)))
                         {
                             tileToChange.floorTexture = (short)newFloorTexture;
                             //TODO some terrain changes happen here too.
                         }
 
                         //TODO wall textures
-                        if (newWallTexture<0x3F)
+                        if (newWallTexture < 0x3F)
                         {
                             tileToChange.wallTexture = (short)newWallTexture;
                             //Update NSEW of neighbours
                         }
 
-                        if (newType<0xA)
+                        bool NewTileIsSolid = false;
+                        if (newType < 0xA)
                         {
                             tileToChange.tileType = (short)newType;
+                            if (newType == UWTileMap.TILE_SOLID)
+                            {
+                                NewTileIsSolid = true;
+                            }
                         }
 
-                        
-                        if (tileToChange.floorHeight!=initialheight)
+
+
+
+                        var tileObjectMoveXMin = Math.Max(currentX - 1, 0);
+                        var tileObjectMoveYMin = Math.Max(currentY - 1, 0);
+                        var tileObjectMoveXMax = Math.Max(currentX + 1, 63);
+                        var tileObjectMoveYMax = Math.Max(currentY + 1, 63);
+                        if (tileToChange.floorHeight != initialheight)
                         {
+                            tileToChange.floorHeight = (short)newHeight; //UW seems to set this again here?
+                            bool HasLowered = tileToChange.floorHeight < initialheight;
                             //TODO move objects in the affected tiles
                             //move objects in tile up or down
+                            for (int xObjectMove = tileObjectMoveXMin; xObjectMove <= tileObjectMoveXMax; xObjectMove++)
+                            {
+                                for (int yObjectMove = tileObjectMoveYMin; yObjectMove <= tileObjectMoveYMax; yObjectMove++)
+                                {
+                                    var tileForObjectHeightChange = UWTileMap.current_tilemap.Tiles[xObjectMove, yObjectMove];
+
+                                    var next = tileForObjectHeightChange.indexObjectList;
+                                    while (next != 0)
+                                    {
+                                        var obj = UWTileMap.current_tilemap.LevelObjects[next];
+                                        if (WillObjectMoveWithTileHeightChange(xObjectMove, yObjectMove, currentX, currentY, initialheight, newHeight, obj.index))//Checks if the object (based on it's position will move with this tile height change)
+                                        {
+                                            if (HasLowered)
+                                            {
+                                                next = (short)LowerObjectInChangingTile(tileObjectChange: tileForObjectHeightChange, ObjectMoving: obj, NewTileHeight: newHeight, currentX: currentX, currentY: currentY, RemoveObject: NewTileIsSolid);
+                                            }
+                                            else
+                                            {
+                                                next = (short)RaiseObjectInChangingTile(tileObjectChange: tileForObjectHeightChange, ObjectMoving: obj, NewTileHeight: newHeight, currentX: currentX, currentY: currentY, RemoveObject: NewTileIsSolid);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            next = obj.next;
+                                        }
+                                    }
+                                }
+                            }
                         }
 
                         tileToChange.Render = true;
@@ -588,39 +630,65 @@ namespace Underworld
             }
         }
 
-        private static void MakeNeighbourTileFacesVisible(TileInfo tileToChange, int newWall=0x3F)
+        /// <summary>
+        /// Checks if object should move with a tile height change
+        /// </summary>
+        /// <returns></returns>
+        static bool WillObjectMoveWithTileHeightChange(int tileXToCheck, int tileYToCheck, int currentX, int currentY, int InitialTileHeight, int NewHeight, int ObjectIndex)
+        {
+            //if not a 3d model or trap/trigger it will move
+
+            //if in the same tile and height clips it will move
+
+            //if it clips the other tile it will move
+            return false;
+        }
+
+        static int LowerObjectInChangingTile(TileInfo tileObjectChange, uwObject ObjectMoving, int NewTileHeight, int currentX, int currentY, bool RemoveObject)
+        {
+            //todo, moves the object in a moving and returns the relevant NEXT index to assess as the object may be destroyed by this action
+            return 0;
+        }
+
+        static int RaiseObjectInChangingTile(TileInfo tileObjectChange, uwObject ObjectMoving, int NewTileHeight, int currentX, int currentY, bool RemoveObject)
+        {
+            //todo
+            return 0;
+        }
+
+        private static void MakeNeighbourTileFacesVisible(TileInfo tileToChange, int newWall = 0x3F)
         {
             if (UWTileMap.ValidTile(tileToChange.tileX + 1, tileToChange.tileY))
             {
                 MakeFacesVisible(UWTileMap.current_tilemap.Tiles[tileToChange.tileX + 1, tileToChange.tileY]);
-                if (newWall<0x3F)
+                if (newWall < 0x3F)
                 {
                     UWTileMap.current_tilemap.Tiles[tileToChange.tileX + 1, tileToChange.tileY].South = (short)newWall;
-                }                
+                }
             }
             if (UWTileMap.ValidTile(tileToChange.tileX - 1, tileToChange.tileY))
             {
                 MakeFacesVisible(UWTileMap.current_tilemap.Tiles[tileToChange.tileX - 1, tileToChange.tileY]);
-                if (newWall<0x3F)
+                if (newWall < 0x3F)
                 {
                     UWTileMap.current_tilemap.Tiles[tileToChange.tileX - 1, tileToChange.tileY].North = (short)newWall;
-                }   
+                }
             }
             if (UWTileMap.ValidTile(tileToChange.tileX, tileToChange.tileY + 1))
             {
                 MakeFacesVisible(UWTileMap.current_tilemap.Tiles[tileToChange.tileX, tileToChange.tileY + 1]);
-                if (newWall<0x3F)
+                if (newWall < 0x3F)
                 {
-                    UWTileMap.current_tilemap.Tiles[tileToChange.tileX , tileToChange.tileY + 1].West = (short)newWall;
-                }   
+                    UWTileMap.current_tilemap.Tiles[tileToChange.tileX, tileToChange.tileY + 1].West = (short)newWall;
+                }
             }
             if (UWTileMap.ValidTile(tileToChange.tileX, tileToChange.tileY - 1))
             {
                 MakeFacesVisible(UWTileMap.current_tilemap.Tiles[tileToChange.tileX, tileToChange.tileY - 1]);
-                if (newWall<0x3F)
+                if (newWall < 0x3F)
                 {
-                    UWTileMap.current_tilemap.Tiles[tileToChange.tileX , tileToChange.tileY - 1].East = (short)newWall;
-                }   
+                    UWTileMap.current_tilemap.Tiles[tileToChange.tileX, tileToChange.tileY - 1].East = (short)newWall;
+                }
             }
         }
 
@@ -651,7 +719,7 @@ namespace Underworld
         /// <returns></returns>
         public static bool CheckIfOutsideRange(int targetX, int targetY, int isPlayer, int range = 8)
         {
-            if (isPlayer !=0)
+            if (isPlayer != 0)
             {
                 return (
                     (System.Math.Abs(playerdat.playerObject.tileX - targetX) >= range)
