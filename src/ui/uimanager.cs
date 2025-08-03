@@ -15,19 +15,10 @@ namespace Underworld
 
 
 		public override void _Ready()
-		{			
+		{
 			//Debug.Print("Uimanager about to set instance to this");
 			instance = this;
-
-			// if (uwsettings.instance==null)
-			// {				
-			// 	uwsettings.LoadSettings();
-			// }			
-			instance.pathuw1.Text = uwsettings.instance.pathuw1;
-			Debug.Print(uwsettings.instance.pathuw1);
-			instance.pathuw2.Text = uwsettings.instance.pathuw2;
-			Debug.Print(uwsettings.instance.pathuw2);
-			Debug.Print("Settings loaded");
+			_Ready_Start();
 		}
 
 		public void InitUI()
