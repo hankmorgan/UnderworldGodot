@@ -147,7 +147,7 @@ public partial class uimanager : Node2D
         }
 
         // Save any changes to our settings, start the game.
-        uwsettings.Save();
+        settings.Save();
         main.StartGame();
 
     }

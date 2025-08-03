@@ -4,92 +4,82 @@ using System;
 using Godot;
 using System.Diagnostics;
 
-namespace Underworld
+namespace Underworld;
+
+public class uwsettings
 {
-    public class uwsettings
+
+    static readonly JsonSerializerOptions jsonOpts = new()
     {
-        public string pathuw1 { get; set; }
-        public string pathuw2 { get; set; }
-        public string gametoload { get; set; }
-        public int level { get; set; }
+        WriteIndented = true,
+        IgnoreReadOnlyProperties = true,
+        PropertyNameCaseInsensitive = true,
+    };
+    static readonly string filePath = Path.Join(
+        Path.GetDirectoryName(
+            OS.GetExecutablePath()),
+        "settings.json");
 
-        public float FOV { get; set; }
+    public static uwsettings instance;
 
-        public bool showcolliders { get; set; }
-        public int shaderbandsize { get; set; }
-        public static uwsettings instance;
+    // This initialises our instance as soon as the class is loaded.
+    static uwsettings() => LoadSettings();
 
-        static uwsettings()
+    public static void LoadSettings()
+    {
+
+        if (File.Exists(filePath))
         {
-            LoadSettings();
+            Debug.Print($"Loading settings from {filePath}");
+            using var stream = File.OpenRead(filePath);
+            instance = JsonSerializer.Deserialize<uwsettings>(stream, jsonOpts);
         }
-        
-        public static void Save()
+        else
         {
-            var appfolder = OS.GetExecutablePath();
-            appfolder = Path.GetDirectoryName(appfolder);
-            var json = JsonSerializer.Serialize(instance);
-            Debug.Print($"If I was to save settings now the value would be\n{json}");
-        }
-
-        public static void LoadSettings()
-        {
-            var appfolder = OS.GetExecutablePath();
-            appfolder = Path.GetDirectoryName(appfolder);
-            var settingsfile = Path.Combine(appfolder, "uwsettings.json");
-            Debug.Print($"Loading settings at {settingsfile}");
-            uwsettings gamesettings;
-
-            if (!File.Exists(settingsfile))
-            {
-                //OS.Alert($"Missing file uwsettings.json at {settingsfile}\nCreating defaults.");
-                gamesettings = new uwsettings();
-                gamesettings.FOV=75;
-                gamesettings.level = 0;
-                gamesettings.shaderbandsize = 8;
-                gamesettings.gametoload = "UW1";
-                gamesettings.pathuw1 = "c:\\games";
-                gamesettings.pathuw2 = "c:\\games";
-            }
-            else
-            {
-                gamesettings = JsonSerializer.Deserialize<uwsettings>(File.ReadAllText(settingsfile));
-            }
-            instance = gamesettings;
-            if (main.gamecam!=null)
-            {
-                main.gamecam.Fov = Math.Max(50, instance.FOV);
-            }
-            
-
-            setGame(gamesettings.gametoload);
-            switch (UWClass._RES)
-            {
-                case UWClass.GAME_UW1:
-                    UWClass.BasePath = gamesettings.pathuw1; break;
-                case UWClass.GAME_UW2:
-                    UWClass.BasePath = gamesettings.pathuw2; break;
-                default:
-                    throw new InvalidOperationException("Invalid Game Selected");
-            }
+            Debug.Print($"No existing settings at {filePath}. Loading defaults.");
+            instance = new();
         }
 
-        public static void setGame(string gamemode)
+        if (main.gamecam != null)
         {
-            switch (gamemode.ToUpper())
-            {
-                case "UW2":
-                case "2":
-                    UWClass._RES = UWClass.GAME_UW2; break;
-                case "UW1":
-                case "1":
-                    UWClass._RES = UWClass.GAME_UW1; break;                
-                case "UWDEMO":
-                case "0":
-                    UWClass._RES = UWClass.GAME_UWDEMO; break;
-            }
+            main.gamecam.Fov = Math.Max(50, instance.FOV);
         }
 
+        switch (instance.gametoload.ToUpper())
+        {
+            case "UW2":
+            case "2":
+                UWClass._RES = UWClass.GAME_UW2;
+                UWClass.BasePath = instance.pathuw1;
+                break;
+            case "UW1":
+            case "1":
+                UWClass._RES = UWClass.GAME_UW1;
+                UWClass.BasePath = instance.pathuw2;
+                break;
+            case "UWDEMO":
+            case "0":
+                UWClass._RES = UWClass.GAME_UWDEMO;
+                break;
+            default:
+                throw new InvalidOperationException("Invalid Game Selected");
+        }
 
-    } //end class
-}//end namespace
+    }
+
+    public string pathuw1 { get; set; } = "c:\\games";
+    public string pathuw2 { get; set; } = "c:\\games";
+    public string gametoload { get; set; } = "UW1";
+    public int level { get; set; } = 0;
+    public float FOV { get; set; } = 75;
+    public bool showcolliders { get; set; }
+    public int shaderbandsize { get; set; } = 8;
+
+    public void Save()
+    {
+        Debug.Print($"Saving settings to {filePath}");
+        using var stream = File.OpenWrite(filePath);
+        JsonSerializer.Serialize(stream, this, jsonOpts);
+    }
+
+}
