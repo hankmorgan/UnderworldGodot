@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Godot;
 namespace Underworld
 {
@@ -602,11 +603,11 @@ namespace Underworld
                                         {
                                             if (HasRaised)
                                             {
-                                                next = (short)LowerObjectInChangingTile(tileObjectChange: tileForObjectHeightChange, obj: obj, NewTileHeight: newHeight, currentX: currentX, currentY: currentY, TileIsSolid: NewTileIsSolid);
+                                                next = (short)RaiseObjectInChangingTile(obj: obj, NewTileHeight: newHeight, TileIsSolid: NewTileIsSolid);
                                             }
                                             else
                                             {
-                                                next = (short)RaiseObjectInChangingTile(tileObjectChange: tileForObjectHeightChange, obj: obj, NewTileHeight: newHeight, currentX: currentX, currentY: currentY, TileIsSolid: NewTileIsSolid);
+                                                next = (short)LowerObjectInChangingTile(obj: obj, InitialTileHeight: initialheight,  NewTileHeight: newHeight, TileIsSolid: NewTileIsSolid, HeightAdjustFlag: HeightAdjustFlag);                                                
                                             }
                                         }
                                         else
@@ -727,25 +728,63 @@ namespace Underworld
             }
         }
 
-        static int LowerObjectInChangingTile(TileInfo tileObjectChange, uwObject obj, int NewTileHeight, int currentX, int currentY, bool TileIsSolid)
+        static int LowerObjectInChangingTile(uwObject obj, int NewTileHeight, int InitialTileHeight, bool TileIsSolid, int HeightAdjustFlag)
         {
             //todo, moves the object in a moving and returns the relevant NEXT index to assess as the object may be destroyed by this action
-            
-
-            return 0;
+            var nextObj = obj.next;
+            if (obj.zpos == InitialTileHeight << 3)
+            {
+                obj.zpos = (short)NewTileHeight;
+                if (obj == playerdat.playerObject)
+                {
+                    if ((HeightAdjustFlag == 1) || (HeightAdjustFlag == 3))
+                    {
+                        motion.playerMotionParams.z_4 = (short)(NewTileHeight << 6);
+                    }
+                    else
+                    {
+                        motion.ProcessPlayerTileState(0x10, 1);
+                    }
+                    playerdat.PositionPlayerObject();
+                }
+                else
+                {
+                    if (obj.IsStatic)
+                    {
+                        if (TileIsSolid)
+                        {
+                            Debug.Print("Object deletion in LowerObject, Replace this function call with proper version of RemoveObject()");
+                            ObjectRemover.DeleteObjectFromTile(obj.tileX, obj.tileY, obj.index, true);
+                        }
+                    }
+                    else
+                    {
+                        if (obj.majorclass == 1)
+                        {
+                            // mobile npc
+                            obj.UnkBit_0X13_Bit7 = 1;
+                        }
+                        else
+                        {
+                            //non npc mobile
+                            obj.CoordinateZ = NewTileHeight << 6;
+                        }
+                        objectInstance.Reposition(obj);
+                    }
+                }
+            }
+            //ovr110_DF9
+            return nextObj;
         }
 
         /// <summary>
         /// Moves the object up in the tile. If the tile has become solid may destroy the object if static, will apply raw crushing damage if the height of the object clips the ceiling.
         /// </summary>
-        /// <param name="tileObjectChange"></param>
         /// <param name="obj"></param>
         /// <param name="NewTileHeight"></param>
-        /// <param name="currentX"></param>
-        /// <param name="currentY"></param>
         /// <param name="TileIsSolid"></param>
         /// <returns>The objects Next value</returns>
-        static int RaiseObjectInChangingTile(TileInfo tileObjectChange, uwObject obj, int NewTileHeight, int currentX, int currentY, bool TileIsSolid)
+        static int RaiseObjectInChangingTile(uwObject obj, int NewTileHeight, bool TileIsSolid)
         {
             var nextObj = obj.next;
             if ((NewTileHeight << 3) + commonObjDat.height(obj.item_id) >= 0x7F)
@@ -754,14 +793,16 @@ namespace Underworld
             }
             if (obj.zpos < (NewTileHeight << 3))
             {
-                //object is located below tileheight.
+                //object is located below new tileheight.
                 obj.zpos = (short)(NewTileHeight << 3);
+                
                 if ((obj.IsStatic) || (obj.majorclass == 1))  //static or npc
                 {
                     if (obj == playerdat.playerObject)
                     {
                         //object is the player.
                         motion.playerMotionParams.z_4 = (short)(NewTileHeight << 6);
+                        playerdat.PositionPlayerObject();
                     }
                     else
                     {
@@ -770,7 +811,12 @@ namespace Underworld
                             //static objects
                             if (TileIsSolid)
                             {
+                                Debug.Print("Object deletion in RaiseObject, Replace this function call with proper version of RemoveObject()");
                                 ObjectRemover.DeleteObjectFromTile(obj.tileX, obj.tileY, obj.index, true);
+                            }
+                            else
+                            {
+                                objectInstance.Reposition(obj);
                             }
                         }
                     }
@@ -779,6 +825,7 @@ namespace Underworld
                 {
                     //mobile non-npc
                     obj.CoordinateZ = NewTileHeight << 6;
+                    objectInstance.Reposition(obj);
                 }
             }
 
