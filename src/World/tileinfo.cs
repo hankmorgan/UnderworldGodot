@@ -585,7 +585,7 @@ namespace Underworld
                         if (tileToChange.floorHeight != initialheight)
                         {
                             tileToChange.floorHeight = (short)newHeight; //UW seems to set this again here?
-                            bool HasLowered = tileToChange.floorHeight < initialheight;
+                            bool HasRaised = tileToChange.floorHeight >= initialheight;
                             //TODO move objects in the affected tiles
                             //move objects in tile up or down
                             for (int xObjectMove = tileObjectMoveXMin; xObjectMove <= tileObjectMoveXMax; xObjectMove++)
@@ -598,15 +598,15 @@ namespace Underworld
                                     while (next != 0)
                                     {
                                         var obj = UWTileMap.current_tilemap.LevelObjects[next];
-                                        if (WillObjectMoveWithTileHeightChange(xObjectMove, yObjectMove, currentX, currentY, initialheight, newHeight, obj))//Checks if the object (based on it's position will move with this tile height change)
+                                        if (WillObjectMoveWithTileHeightChange(tileXToCheck: xObjectMove, tileYToCheck: yObjectMove, currentX: currentX, currentY: currentY, InitialTileHeight: initialheight, NewHeight: newHeight, obj: obj))//Checks if the object (based on it's position will move with this tile height change)
                                         {
-                                            if (HasLowered)
+                                            if (HasRaised)
                                             {
-                                                next = (short)LowerObjectInChangingTile(tileObjectChange: tileForObjectHeightChange, ObjectMoving: obj, NewTileHeight: newHeight, currentX: currentX, currentY: currentY, RemoveObject: NewTileIsSolid);
+                                                next = (short)LowerObjectInChangingTile(tileObjectChange: tileForObjectHeightChange, obj: obj, NewTileHeight: newHeight, currentX: currentX, currentY: currentY, TileIsSolid: NewTileIsSolid);
                                             }
                                             else
                                             {
-                                                next = (short)RaiseObjectInChangingTile(tileObjectChange: tileForObjectHeightChange, ObjectMoving: obj, NewTileHeight: newHeight, currentX: currentX, currentY: currentY, RemoveObject: NewTileIsSolid);
+                                                next = (short)RaiseObjectInChangingTile(tileObjectChange: tileForObjectHeightChange, obj: obj, NewTileHeight: newHeight, currentX: currentX, currentY: currentY, TileIsSolid: NewTileIsSolid);
                                             }
                                         }
                                         else
@@ -727,16 +727,63 @@ namespace Underworld
             }
         }
 
-        static int LowerObjectInChangingTile(TileInfo tileObjectChange, uwObject ObjectMoving, int NewTileHeight, int currentX, int currentY, bool RemoveObject)
+        static int LowerObjectInChangingTile(TileInfo tileObjectChange, uwObject obj, int NewTileHeight, int currentX, int currentY, bool TileIsSolid)
         {
             //todo, moves the object in a moving and returns the relevant NEXT index to assess as the object may be destroyed by this action
+            
+
             return 0;
         }
 
-        static int RaiseObjectInChangingTile(TileInfo tileObjectChange, uwObject ObjectMoving, int NewTileHeight, int currentX, int currentY, bool RemoveObject)
+        /// <summary>
+        /// Moves the object up in the tile. If the tile has become solid may destroy the object if static, will apply raw crushing damage if the height of the object clips the ceiling.
+        /// </summary>
+        /// <param name="tileObjectChange"></param>
+        /// <param name="obj"></param>
+        /// <param name="NewTileHeight"></param>
+        /// <param name="currentX"></param>
+        /// <param name="currentY"></param>
+        /// <param name="TileIsSolid"></param>
+        /// <returns>The objects Next value</returns>
+        static int RaiseObjectInChangingTile(TileInfo tileObjectChange, uwObject obj, int NewTileHeight, int currentX, int currentY, bool TileIsSolid)
         {
-            //todo
-            return 0;
+            var nextObj = obj.next;
+            if ((NewTileHeight << 3) + commonObjDat.height(obj.item_id) >= 0x7F)
+            {
+                damage.DamageObject(obj, 0xFF, 0, UWTileMap.current_tilemap.LevelObjects, true, 0); //apply raw crushing damage to the object.
+            }
+            if (obj.zpos < (NewTileHeight << 3))
+            {
+                //object is located below tileheight.
+                obj.zpos = (short)(NewTileHeight << 3);
+                if ((obj.IsStatic) || (obj.majorclass == 1))  //static or npc
+                {
+                    if (obj == playerdat.playerObject)
+                    {
+                        //object is the player.
+                        motion.playerMotionParams.z_4 = (short)(NewTileHeight << 6);
+                    }
+                    else
+                    {
+                        if (obj.IsStatic)
+                        {
+                            //static objects
+                            if (TileIsSolid)
+                            {
+                                ObjectRemover.DeleteObjectFromTile(obj.tileX, obj.tileY, obj.index, true);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    //mobile non-npc
+                    obj.CoordinateZ = NewTileHeight << 6;
+                }
+            }
+
+            // ovr110_CEE
+            return nextObj;
         }
 
         private static void MakeNeighbourTileFacesVisible(TileInfo tileToChange, int newWall = 0x3F)
