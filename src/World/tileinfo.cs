@@ -598,7 +598,7 @@ namespace Underworld
                                     while (next != 0)
                                     {
                                         var obj = UWTileMap.current_tilemap.LevelObjects[next];
-                                        if (WillObjectMoveWithTileHeightChange(xObjectMove, yObjectMove, currentX, currentY, initialheight, newHeight, obj.index))//Checks if the object (based on it's position will move with this tile height change)
+                                        if (WillObjectMoveWithTileHeightChange(xObjectMove, yObjectMove, currentX, currentY, initialheight, newHeight, obj))//Checks if the object (based on it's position will move with this tile height change)
                                         {
                                             if (HasLowered)
                                             {
@@ -634,14 +634,97 @@ namespace Underworld
         /// Checks if object should move with a tile height change
         /// </summary>
         /// <returns></returns>
-        static bool WillObjectMoveWithTileHeightChange(int tileXToCheck, int tileYToCheck, int currentX, int currentY, int InitialTileHeight, int NewHeight, int ObjectIndex)
+        static bool WillObjectMoveWithTileHeightChange(int tileXToCheck, int tileYToCheck, int currentX, int currentY, int InitialTileHeight, int NewHeight, uwObject obj)
         {
-            //if not a 3d model or trap/trigger it will move
+            //if a 3d model or trap/trigger it will not move
+            if ((obj.majorclass == 6) || (obj.majorclass == 5))
+            {
+                return false;
+            }
+            //Will possibly move if in the same tile. (height checks happen in the move up/down function later on)
+            if ((tileXToCheck == currentX) && (tileYToCheck == currentY))
+            {
+                return true;
+            }
+            else
+            {
+                InitialTileHeight = InitialTileHeight << 3; // convert to a zpos value
+                NewHeight = NewHeight << 3;
+                if (InitialTileHeight <= NewHeight)
+                {
+                    //tile has raised
+                    if (obj.zpos < InitialTileHeight)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        if (obj.zpos >= NewHeight)
+                        {
+                            return false;
+                        }
+                    }
+                }
+                else
+                {
+                    //tile has lowered.
+                    if (obj.zpos != InitialTileHeight)
+                    {
+                        return false;
+                    }
+                }
+                //ovr110_E9E
+                //if in the same tile and height clips it will move
+            }
 
-            //if in the same tile and height clips it will move
+            var XCoordinate = ((tileXToCheck - currentX) << 3) + obj.xpos;
+            var YCoordinate = ((tileYToCheck - currentY) << 3) + obj.ypos;
+            var radius = commonObjDat.radius(obj.item_id);
 
-            //if it clips the other tile it will move
-            return false;
+            if (XCoordinate < 0)
+            {
+                if (XCoordinate + radius >= 0)
+                {
+                    goto evalY;
+                }
+            }
+
+            if (XCoordinate > 7)
+            {
+                if (XCoordinate + radius <= 7)
+                {
+                    goto evalY;
+                }
+            }
+            if (tileXToCheck != currentX)
+            {
+                return false;
+            }
+
+
+        evalY:
+            if (YCoordinate < 0)
+            {
+                if (YCoordinate + radius >= 0)
+                {
+                    return true;
+                }
+            }
+            if (YCoordinate > 7)
+            {
+                if (YCoordinate - radius <= 7)
+                {
+                    return true;
+                }
+            }
+            if (tileYToCheck != currentY)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
 
         static int LowerObjectInChangingTile(TileInfo tileObjectChange, uwObject ObjectMoving, int NewTileHeight, int currentX, int currentY, bool RemoveObject)
