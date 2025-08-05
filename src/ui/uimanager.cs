@@ -18,7 +18,7 @@ namespace Underworld
 		{
 			//Debug.Print("Uimanager about to set instance to this");
 			instance = this;
-			_Ready_Start();
+			main.StartGame();
 		}
 
 		public void InitUI()

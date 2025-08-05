@@ -111,7 +111,6 @@ public partial class main : Node3D
 		}
 		gamecam.Fov = Math.Max(50, uwsettings.instance.FOV);
 		uimanager.EnableDisable(instance.lblPositionDebug, EnablePositionDebug);
-		uimanager.EnableDisable(uimanager.instance.StartMenuPanel, false);
 		ObjectCreator.grObjects = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
 		ObjectCreator.grObjects.UseRedChannel = true;
 		ObjectCreator.grObjects.UseCropping = true;
