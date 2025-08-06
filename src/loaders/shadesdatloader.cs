@@ -34,7 +34,7 @@ namespace Underworld
         public static Godot.ImageTexture GetFullShadingImage(Palette pal, lightmap[] maps, int index, string filename)
         {
             int BandSize = Math.Max(uwsettings.instance.shaderbandsize,1);
-            var img = Godot.Image.Create(256, BandSize * 15, false, Godot.Image.Format.Rgba8);
+            var img = Godot.Image.CreateEmpty(256, BandSize * 15, false, Godot.Image.Format.Rgba8);
             var arr = shadesdata[index].ExtractShadeArray();
             //int y = 0;
             lightmap basemap = maps[0];
@@ -218,7 +218,7 @@ namespace Underworld
             var AllShades = ExtractShadingTable(shadearray);
             var width = AllShades.GetUpperBound(0);
             var height = AllShades.GetUpperBound(1);
-            var img = Godot.Image.Create(width, height, false, Godot.Image.Format.R8);
+            var img = Godot.Image.CreateEmpty(width, height, false, Godot.Image.Format.R8);
 
             for (int x = 0; x < width; x++)
             {

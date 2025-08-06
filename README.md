@@ -115,7 +115,7 @@ No exe builds yet. This is just a glorified map viewer at this point that you wi
 See [https://godotengine.org/](https://godotengine.org/) for engine runtime downloads.
 
 1. Clone the repository
-2. Install the Godot engine (version 4.1.1) dev  https://godotengine.org/ and run it.
+2. Install the Godot engine (version 4.3-stable) from https://godotengine.org/ and run it.
 3. Save a file called ``uwsettings.json`` in the Godot Folder. See below for format of the file
 4. Godot project will open at ``LaunchScene.tscn``. IMPORTANT: Make sure you run BUILD on the project before continuing.
 5. Run. It might work

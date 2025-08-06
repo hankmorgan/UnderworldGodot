@@ -94,7 +94,7 @@ namespace Underworld
         {
             var palette = PaletteLoader.Palettes[0];
             var width = 2; var height = 2;
-            var img = Image.Create(width, height, false, Image.Format.Rgb8);
+            var img = Image.CreateEmpty(width, height, false, Image.Format.Rgb8);
             for (int iRow = 0; iRow < height; iRow++)
             {
                 int iCol = 0;
