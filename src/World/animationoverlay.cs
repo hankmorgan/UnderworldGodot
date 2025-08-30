@@ -241,7 +241,7 @@ namespace Underworld
         public static void EndOverlay(AnimationOverlay ovl)
         {
             ovl.Duration = 0;
-            ObjectRemover.DeleteObjectFromTile(
+            ObjectRemover.DeleteObjectFromTile_DEPRECIATED(
                 tileX: ovl.tileX,
                 tileY: ovl.tileY,
                 indexToDelete: (short)ovl.link);

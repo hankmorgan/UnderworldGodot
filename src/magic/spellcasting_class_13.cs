@@ -169,7 +169,7 @@ namespace Underworld
                                             playerdat.SetQuest(14, 1);
                                         }
                                         animo.SpawnAnimoInTile(7, nextObj.xpos, nextObj.ypos, nextObj.zpos,nextObj.tileX, nextObj.tileY);
-                                        ObjectRemover.DeleteObjectFromTile(nextObj.tileX, nextObj.tileY, nextObj.index);
+                                        ObjectRemover.DeleteObjectFromTile_DEPRECIATED(nextObj.tileX, nextObj.tileY, nextObj.index);
 
                                         if (worlds.GetWorldNo(playerdat.dungeon_level) == 3)
                                         {//in ice caverns

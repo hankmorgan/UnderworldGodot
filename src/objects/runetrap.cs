@@ -48,7 +48,7 @@ namespace Underworld
                     }
                     //explosion
                     animo.SpawnAnimoInTile(2, objRuneTrap.xpos,objRuneTrap.ypos, objRuneTrap.zpos, objRuneTrap.tileX, objRuneTrap.tileY);
-                    ObjectRemover.DeleteObjectFromTile(objRuneTrap.tileX, objRuneTrap.tileY, objRuneTrap.index); 
+                    ObjectRemover.DeleteObjectFromTile_DEPRECIATED(objRuneTrap.tileX, objRuneTrap.tileY, objRuneTrap.index); 
                     return true;
                 case 0x19F://tym rune
                     if (indexCharacter==0)
@@ -70,7 +70,7 @@ namespace Underworld
                             newgtarg: (byte)duration, 
                             newattitude: 1);
                     }
-                    ObjectRemover.DeleteObjectFromTile(objRuneTrap.tileX, objRuneTrap.tileY, objRuneTrap.index); 
+                    ObjectRemover.DeleteObjectFromTile_DEPRECIATED(objRuneTrap.tileX, objRuneTrap.tileY, objRuneTrap.index); 
                     return true;
                 default:
                     return false;

@@ -136,7 +136,7 @@ namespace Underworld
                         {
                             if ((obj.heading == heading) && (obj.zpos == zpos))
                             {   //found a matching bridge.
-                                ObjectRemover.DeleteObjectFromTile(
+                                ObjectRemover.DeleteObjectFromTile_DEPRECIATED(
                                     tileX: tileX, 
                                     tileY: tileY, 
                                     indexToDelete: obj.index, 

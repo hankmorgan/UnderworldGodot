@@ -327,8 +327,9 @@ namespace Underworld
         /// <param name="tileX"></param>
         /// <param name="tileY"></param>
         /// <param name="indexToDelete"></param>
-        public static bool DeleteObjectFromTile(int tileX, int tileY, short indexToDelete, bool RemoveFromWorld = true)
+        public static bool DeleteObjectFromTile_DEPRECIATED(int tileX, int tileY, short indexToDelete, bool RemoveFromWorld = true)
         {
+            Debug.Print("todo assess if this DeleteObjectFromTile function needs to be replaced with RemoveObject() (to be implemented)")
             if (!UWTileMap.ValidTile(tileX, tileY))
             {
                 return false;//not on map.

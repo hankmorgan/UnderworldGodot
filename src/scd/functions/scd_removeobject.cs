@@ -26,7 +26,7 @@ namespace Underworld
             //TODO: there is more logic here including stuff with animation overlays.
             if (UWTileMap.ValidTile(obj.tileX, obj.tileY))
             {
-                ObjectRemover.DeleteObjectFromTile(
+                ObjectRemover.DeleteObjectFromTile_DEPRECIATED(
                     tileX: obj.tileX, tileY: obj.tileY, 
                     indexToDelete: obj.index);
             }

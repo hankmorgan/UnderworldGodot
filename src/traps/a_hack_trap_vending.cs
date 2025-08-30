@@ -125,7 +125,7 @@ namespace Underworld
                     {//target value is greater or equal to the stack size. the stack must be consumed.
                         if (!CountOnly)
                         {//consume the stack
-                            ObjectRemover.DeleteObjectFromTile(tileX, tileY, objectToCheck.index);
+                            ObjectRemover.DeleteObjectFromTile_DEPRECIATED(tileX, tileY, objectToCheck.index);
                         }
                         AmountToCollect -=coinsdeposited;//update the remainin count.
                     }

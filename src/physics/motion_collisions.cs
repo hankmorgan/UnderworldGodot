@@ -1659,7 +1659,7 @@ namespace Underworld
                 {
                     Debug.Print($"Destroying {projectile.a_name}");
                     //seg030_2BB7_1410
-                    if (ObjectRemover.DeleteObjectFromTile(projectile.tileX, projectile.tileY, projectile.index))
+                    if (ObjectRemover.DeleteObjectFromTile_DEPRECIATED(projectile.tileX, projectile.tileY, projectile.index))
                     {
 
                         return null;
