@@ -25,7 +25,7 @@
         },
 
         "level": {
-            "description": "The level of the abyss to load.",
+            "description": "The game level to load. (0-8 in UW1, 0-71 in UW2)",
             "type": "integer",
             "minimum": 0,
             "default": 0
@@ -47,7 +47,7 @@
         },
 
         "shader": {
-            "description": "Default shader used. Value is ignored.",
+            "description": "Default shader used. Value is ignored. (was previously used to allow for selection of different shaders during experimentation of palette effects)",
             "type": "string",
             "default": "UWSHADER"
         },
@@ -59,13 +59,13 @@
         },
 
         "showcolliders": {
-            "description": "???",
+            "description": "Enables displaying of collision meshes and colliders in game",
             "type": "boolean",
             "default": false
         },
 
         "shaderbandsize": {
-            "description": "???",
+            "description": "Controls how many light shades are calculated in between the vanilla shades.dat colour palette values to smooth light shading. (no of interpolated colours between the vanilla colours)",
             "type": "integer",
             "default": 8
         }
