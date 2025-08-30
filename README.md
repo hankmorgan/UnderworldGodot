@@ -13,6 +13,7 @@
     - [Movement](#movement)
     - [Modes](#modes)
     - [Cheats](#cheats)
+  - [Code Contributions](#code-contributions)
 - [Appendix](#appendix)
   - [Guide to the Underworld and Reverse Engineering](#guide-to-the-underworld-and-reverse-engineering)
   - [Sources/Previous Projects](#sourcesprevious-projects)
@@ -175,6 +176,10 @@ F12 Debug process SCD.ARK events
 ### Cheats
 Tilde (~) Give all runestones, 30 mana and maximise mage skills.
 
+## Code Contributions
+Additional code has been directly contributed by the following. Thanks to these contributors for their efforts.
+* Peter Cummuskey <github.com/Tzrlk>
+* Shortbeard <github.com/ShortBeard>
 
 # Appendix
 ## Guide to the Underworld and Reverse Engineering
@@ -196,7 +201,7 @@ Mitch Aigner FAQs for [UW1](https://gamefaqs.gamespot.com/pc/562665-ultima-under
 #### Credits
 The following credits are taken verbatim from the files shared by named projects.
 
-The "me" mentioned in the credits is not the author of this guide.
+The "me" mentioned in the credits is not the author of this guide. (Not Hank Morgan)
 
 ##### Credits from the Abysmal Project
    My thanks go out to Jim Cameron that started the original "uw-specs.txt"
@@ -248,3 +253,4 @@ The "me" mentioned in the credits is not the author of this guide.
 ##### Other contributions to this document
 [KarlClinckspoor](https://github.com/KarlClinckspoor) on ``cmb.dat``
 Information on cutscene animation commands from khedoros at https://github.com/khedoros/uw-engine/blob/master/csparse.cpp
+
