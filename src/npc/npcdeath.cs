@@ -246,7 +246,7 @@ namespace Underworld
                                 {//initial encounter in the keep
                                     if (playerdat.GetQuest(54) == 1)
                                     {
-                                        ObjectRemover.DeleteObjectFromTile(critter.tileX, critter.tileY, critter.index, true);
+                                        ObjectRemover.DeleteObjectFromTile_DEPRECIATED(critter.tileX, critter.tileY, critter.index, true);
                                     }
                                     else
                                     {
@@ -625,7 +625,7 @@ namespace Underworld
                     {
                         if (WhotoRemove.Contains(n.npc_whoami))
                         {
-                            ObjectRemover.DeleteObjectFromTile(n.tileX, n.tileY, n.index, true);
+                            ObjectRemover.DeleteObjectFromTile_DEPRECIATED(n.tileX, n.tileY, n.index, true);
                         }
                     }
                 }
@@ -656,7 +656,7 @@ namespace Underworld
             SpecialDeathCases(critter, 1);
             DropRemainsAndLoot(critter);
             //remove from tile and free object
-            ObjectRemover.DeleteObjectFromTile(critter.tileX, critter.tileY, critter.index, true);
+            ObjectRemover.DeleteObjectFromTile_DEPRECIATED(critter.tileX, critter.tileY, critter.index, true);
         }
     }//end class
 }//end namespace

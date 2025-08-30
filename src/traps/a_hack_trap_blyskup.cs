@@ -40,12 +40,12 @@ namespace Underworld
                                     if (storagecrystal_2.quality == 2 || storagecrystal_2.quality == 6 )
                                     {
                                         //remove crystal1 from 57,4
-                                        ObjectRemover.DeleteObjectFromTile(
+                                        ObjectRemover.DeleteObjectFromTile_DEPRECIATED(
                                             tileX: storagecrystal_1.tileX, 
                                             tileY: storagecrystal_1.tileY, 
                                             indexToDelete: storagecrystal_1.index);
                                                                                 //remove crystal1 from 59,4
-                                        ObjectRemover.DeleteObjectFromTile(
+                                        ObjectRemover.DeleteObjectFromTile_DEPRECIATED(
                                             tileX: storagecrystal_2.tileX, 
                                             tileY: storagecrystal_2.tileY, 
                                             indexToDelete: storagecrystal_2.index);

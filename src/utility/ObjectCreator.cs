@@ -615,7 +615,7 @@ namespace Underworld
                     }
                     else
                     {//used from a tile
-                        ObjectRemover.DeleteObjectFromTile(obj.tileX, obj.tileY, obj.index);
+                        ObjectRemover.DeleteObjectFromTile_DEPRECIATED(obj.tileX, obj.tileY, obj.index);
                     }
                 }
             }

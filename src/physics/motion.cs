@@ -30,7 +30,7 @@ namespace Underworld
             {
                 if (commonObjDat.qualityclass(projectile.item_id) < 3)
                 {
-                    if (ObjectRemover.DeleteObjectFromTile(projectile.tileX, projectile.tileY, projectile.index))
+                    if (ObjectRemover.DeleteObjectFromTile_DEPRECIATED(projectile.tileX, projectile.tileY, projectile.index))
                     {
                         return false;
                     }
@@ -481,7 +481,7 @@ namespace Underworld
                     varE = projectile.ProjectileSourceID;
                 }
             }
-            ObjectRemover.DeleteObjectFromTile(projectile.tileX, projectile.tileY, projectile.index, true);
+            ObjectRemover.DeleteObjectFromTile_DEPRECIATED(projectile.tileX, projectile.tileY, projectile.index, true);
             if (haltedObject != null)
             {//is this a bit hairy under the circumstances?
                 haltedObject.next = tile.indexObjectList;
@@ -503,7 +503,7 @@ namespace Underworld
                 //detonate
                 if (DetonateProjectile(haltedObject, varE) == false)
                 {
-                    if (ObjectRemover.DeleteObjectFromTile(haltedObject.tileX, haltedObject.tileY, haltedObject.index, true))
+                    if (ObjectRemover.DeleteObjectFromTile_DEPRECIATED(haltedObject.tileX, haltedObject.tileY, haltedObject.index, true))
                     {
                         haltedObject = null;
                     }

@@ -116,6 +116,8 @@ See [https://godotengine.org/](https://godotengine.org/) for engine runtime down
 
 1. Clone the repository
 2. Install the Godot engine (version 4.1.1) dev  https://godotengine.org/ and run it.
+    > [!NOTE]
+    > You can use the [`godotenv`](https://github.com/chickensoft-games/GodotEnv) tool to help with this. Just run ``dotnet tool run godotenv godot install 4.1.1`` and ``dotnet tool run godotenv godot env setup`` then restart your shell and everything should be ready to go.
 3. Save a file called ``uwsettings.json`` in the Godot Folder. See below for format of the file
 4. Godot project will open at ``LaunchScene.tscn``. IMPORTANT: Make sure you run BUILD on the project before continuing.
 5. Run. It might work

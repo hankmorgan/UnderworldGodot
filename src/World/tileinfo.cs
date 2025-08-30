@@ -1,3 +1,5 @@
+using System;
+using System.Diagnostics;
 using Godot;
 namespace Underworld
 {
@@ -524,15 +526,15 @@ namespace Underworld
         /// <param name="DimX"></param>
         /// <param name="DimY"></param>
         /// <param name="HeightAdjustFlag"></param>
-        public static void ChangeTile(int StartTileX, int StartTileY, int newWallTexture =0x3F, int newFloorTexture = 0xF, int newHeight=0xF,int newType = 0xA, int DimX = 0, int DimY = 0, int HeightAdjustFlag = 0 )
+        public static void ChangeTile(int StartTileX, int StartTileY, int newWallTexture = 0x3F, int newFloorTexture = 0xF, int newHeight = 0xF, int newType = 0xA, int DimX = 0, int DimY = 0, int HeightAdjustFlag = 0)
         {
-            for (int x = StartTileX; x <= StartTileX + DimX; x++)
+            for (int currentX = StartTileX; currentX <= StartTileX + DimX; currentX++)
             {
-                for (int y = StartTileY; y <= StartTileY + DimY; y++)
+                for (int currentY = StartTileY; currentY <= StartTileY + DimY; currentY++)
                 {
-                    if (UWTileMap.ValidTile(x, y))
+                    if (UWTileMap.ValidTile(currentX, currentY))
                     {
-                        var tileToChange = UWTileMap.current_tilemap.Tiles[x, y];
+                        var tileToChange = UWTileMap.current_tilemap.Tiles[currentX, currentY];
                         var initialheight = tileToChange.floorHeight;//to later check if objects need to be moved.
 
                         if ((HeightAdjustFlag == 1) || (HeightAdjustFlag == 3))
@@ -551,29 +553,70 @@ namespace Underworld
                             tileToChange.floorHeight = 0xF;
                         }
 
-                        if ((newFloorTexture < 0xF) && (_RES==GAME_UW2) || ((newFloorTexture < 0xB) && (_RES!=GAME_UW2)))
+                        if ((newFloorTexture < 0xF) && (_RES == GAME_UW2) || ((newFloorTexture < 0xB) && (_RES != GAME_UW2)))
                         {
                             tileToChange.floorTexture = (short)newFloorTexture;
                             //TODO some terrain changes happen here too.
                         }
 
                         //TODO wall textures
-                        if (newWallTexture<0x3F)
+                        if (newWallTexture < 0x3F)
                         {
                             tileToChange.wallTexture = (short)newWallTexture;
                             //Update NSEW of neighbours
                         }
 
-                        if (newType<0xA)
+                        bool NewTileIsSolid = false;
+                        if (newType < 0xA)
                         {
                             tileToChange.tileType = (short)newType;
+                            if (newType == UWTileMap.TILE_SOLID)
+                            {
+                                NewTileIsSolid = true;
+                            }
                         }
 
-                        
-                        if (tileToChange.floorHeight!=initialheight)
+
+
+
+                        var tileObjectMoveXMin = Math.Max(currentX - 1, 0);
+                        var tileObjectMoveYMin = Math.Max(currentY - 1, 0);
+                        var tileObjectMoveXMax = Math.Max(currentX + 1, 63);
+                        var tileObjectMoveYMax = Math.Max(currentY + 1, 63);
+                        if (tileToChange.floorHeight != initialheight)
                         {
+                            tileToChange.floorHeight = (short)newHeight; //UW seems to set this again here?
+                            bool HasRaised = tileToChange.floorHeight >= initialheight;
                             //TODO move objects in the affected tiles
                             //move objects in tile up or down
+                            for (int xObjectMove = tileObjectMoveXMin; xObjectMove <= tileObjectMoveXMax; xObjectMove++)
+                            {
+                                for (int yObjectMove = tileObjectMoveYMin; yObjectMove <= tileObjectMoveYMax; yObjectMove++)
+                                {
+                                    var tileForObjectHeightChange = UWTileMap.current_tilemap.Tiles[xObjectMove, yObjectMove];
+
+                                    var next = tileForObjectHeightChange.indexObjectList;
+                                    while (next != 0)
+                                    {
+                                        var obj = UWTileMap.current_tilemap.LevelObjects[next];
+                                        if (WillObjectMoveWithTileHeightChange(tileXToCheck: xObjectMove, tileYToCheck: yObjectMove, currentX: currentX, currentY: currentY, InitialTileHeight: initialheight, NewHeight: newHeight, obj: obj))//Checks if the object (based on it's position will move with this tile height change)
+                                        {
+                                            if (HasRaised)
+                                            {
+                                                next = (short)RaiseObjectInChangingTile(obj: obj, NewTileHeight: newHeight, TileIsSolid: NewTileIsSolid);
+                                            }
+                                            else
+                                            {
+                                                next = (short)LowerObjectInChangingTile(obj: obj, InitialTileHeight: initialheight,  NewTileHeight: newHeight, TileIsSolid: NewTileIsSolid, HeightAdjustFlag: HeightAdjustFlag);                                                
+                                            }
+                                        }
+                                        else
+                                        {
+                                            next = obj.next;
+                                        }
+                                    }
+                                }
+                            }
                         }
 
                         tileToChange.Render = true;
@@ -588,39 +631,241 @@ namespace Underworld
             }
         }
 
-        private static void MakeNeighbourTileFacesVisible(TileInfo tileToChange, int newWall=0x3F)
+        /// <summary>
+        /// Checks if object should move with a tile height change
+        /// </summary>
+        /// <returns></returns>
+        static bool WillObjectMoveWithTileHeightChange(int tileXToCheck, int tileYToCheck, int currentX, int currentY, int InitialTileHeight, int NewHeight, uwObject obj)
+        {
+            //if a 3d model or trap/trigger it will not move
+            if ((obj.majorclass == 6) || (obj.majorclass == 5))
+            {
+                return false;
+            }
+            //Will possibly move if in the same tile. (height checks happen in the move up/down function later on)
+            if ((tileXToCheck == currentX) && (tileYToCheck == currentY))
+            {
+                return true;
+            }
+            else
+            {
+                InitialTileHeight = InitialTileHeight << 3; // convert to a zpos value
+                NewHeight = NewHeight << 3;
+                if (InitialTileHeight <= NewHeight)
+                {
+                    //tile has raised
+                    if (obj.zpos < InitialTileHeight)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        if (obj.zpos >= NewHeight)
+                        {
+                            return false;
+                        }
+                    }
+                }
+                else
+                {
+                    //tile has lowered.
+                    if (obj.zpos != InitialTileHeight)
+                    {
+                        return false;
+                    }
+                }
+                //ovr110_E9E
+                //if in the same tile and height clips it will move
+            }
+
+            var XCoordinate = ((tileXToCheck - currentX) << 3) + obj.xpos;
+            var YCoordinate = ((tileYToCheck - currentY) << 3) + obj.ypos;
+            var radius = commonObjDat.radius(obj.item_id);
+
+            if (XCoordinate < 0)
+            {
+                if (XCoordinate + radius >= 0)
+                {
+                    goto evalY;
+                }
+            }
+
+            if (XCoordinate > 7)
+            {
+                if (XCoordinate + radius <= 7)
+                {
+                    goto evalY;
+                }
+            }
+            if (tileXToCheck != currentX)
+            {
+                return false;
+            }
+
+
+        evalY:
+            if (YCoordinate < 0)
+            {
+                if (YCoordinate + radius >= 0)
+                {
+                    return true;
+                }
+            }
+            if (YCoordinate > 7)
+            {
+                if (YCoordinate - radius <= 7)
+                {
+                    return true;
+                }
+            }
+            if (tileYToCheck != currentY)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        static int LowerObjectInChangingTile(uwObject obj, int NewTileHeight, int InitialTileHeight, bool TileIsSolid, int HeightAdjustFlag)
+        {
+            //todo, moves the object in a moving and returns the relevant NEXT index to assess as the object may be destroyed by this action
+            var nextObj = obj.next;
+            if (obj.zpos == InitialTileHeight << 3)
+            {
+                obj.zpos = (short)NewTileHeight;
+                if (obj == playerdat.playerObject)
+                {
+                    if ((HeightAdjustFlag == 1) || (HeightAdjustFlag == 3))
+                    {
+                        motion.playerMotionParams.z_4 = (short)(NewTileHeight << 6);
+                    }
+                    else
+                    {
+                        motion.ProcessPlayerTileState(0x10, 1);
+                    }
+                    playerdat.PositionPlayerObject();
+                }
+                else
+                {
+                    if (obj.IsStatic)
+                    {
+                        if (TileIsSolid)
+                        {
+                            Debug.Print("Object deletion in LowerObject, Replace this function call with proper version of RemoveObject()");
+                            ObjectRemover.DeleteObjectFromTile_DEPRECIATED(obj.tileX, obj.tileY, obj.index, true);
+                        }
+                    }
+                    else
+                    {
+                        if (obj.majorclass == 1)
+                        {
+                            // mobile npc
+                            obj.UnkBit_0X13_Bit7 = 1;
+                        }
+                        else
+                        {
+                            //non npc mobile
+                            obj.CoordinateZ = NewTileHeight << 6;
+                        }
+                        objectInstance.Reposition(obj);
+                    }
+                }
+            }
+            //ovr110_DF9
+            return nextObj;
+        }
+
+        /// <summary>
+        /// Moves the object up in the tile. If the tile has become solid may destroy the object if static, will apply raw crushing damage if the height of the object clips the ceiling.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="NewTileHeight"></param>
+        /// <param name="TileIsSolid"></param>
+        /// <returns>The objects Next value</returns>
+        static int RaiseObjectInChangingTile(uwObject obj, int NewTileHeight, bool TileIsSolid)
+        {
+            var nextObj = obj.next;
+            if ((NewTileHeight << 3) + commonObjDat.height(obj.item_id) >= 0x7F)
+            {
+                damage.DamageObject(obj, 0xFF, 0, UWTileMap.current_tilemap.LevelObjects, true, 0); //apply raw crushing damage to the object.
+            }
+            if (obj.zpos < (NewTileHeight << 3))
+            {
+                //object is located below new tileheight.
+                obj.zpos = (short)(NewTileHeight << 3);
+                
+                if ((obj.IsStatic) || (obj.majorclass == 1))  //static or npc
+                {
+                    if (obj == playerdat.playerObject)
+                    {
+                        //object is the player.
+                        motion.playerMotionParams.z_4 = (short)(NewTileHeight << 6);
+                        playerdat.PositionPlayerObject();
+                    }
+                    else
+                    {
+                        if (obj.IsStatic)
+                        {
+                            //static objects
+                            if (TileIsSolid)
+                            {
+                                Debug.Print("Object deletion in RaiseObject, Replace this function call with proper version of RemoveObject()");
+                                ObjectRemover.DeleteObjectFromTile_DEPRECIATED(obj.tileX, obj.tileY, obj.index, true);
+                            }
+                            else
+                            {
+                                objectInstance.Reposition(obj);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    //mobile non-npc
+                    obj.CoordinateZ = NewTileHeight << 6;
+                    objectInstance.Reposition(obj);
+                }
+            }
+
+            // ovr110_CEE
+            return nextObj;
+        }
+
+        private static void MakeNeighbourTileFacesVisible(TileInfo tileToChange, int newWall = 0x3F)
         {
             if (UWTileMap.ValidTile(tileToChange.tileX + 1, tileToChange.tileY))
             {
                 MakeFacesVisible(UWTileMap.current_tilemap.Tiles[tileToChange.tileX + 1, tileToChange.tileY]);
-                if (newWall<0x3F)
+                if (newWall < 0x3F)
                 {
                     UWTileMap.current_tilemap.Tiles[tileToChange.tileX + 1, tileToChange.tileY].South = (short)newWall;
-                }                
+                }
             }
             if (UWTileMap.ValidTile(tileToChange.tileX - 1, tileToChange.tileY))
             {
                 MakeFacesVisible(UWTileMap.current_tilemap.Tiles[tileToChange.tileX - 1, tileToChange.tileY]);
-                if (newWall<0x3F)
+                if (newWall < 0x3F)
                 {
                     UWTileMap.current_tilemap.Tiles[tileToChange.tileX - 1, tileToChange.tileY].North = (short)newWall;
-                }   
+                }
             }
             if (UWTileMap.ValidTile(tileToChange.tileX, tileToChange.tileY + 1))
             {
                 MakeFacesVisible(UWTileMap.current_tilemap.Tiles[tileToChange.tileX, tileToChange.tileY + 1]);
-                if (newWall<0x3F)
+                if (newWall < 0x3F)
                 {
-                    UWTileMap.current_tilemap.Tiles[tileToChange.tileX , tileToChange.tileY + 1].West = (short)newWall;
-                }   
+                    UWTileMap.current_tilemap.Tiles[tileToChange.tileX, tileToChange.tileY + 1].West = (short)newWall;
+                }
             }
             if (UWTileMap.ValidTile(tileToChange.tileX, tileToChange.tileY - 1))
             {
                 MakeFacesVisible(UWTileMap.current_tilemap.Tiles[tileToChange.tileX, tileToChange.tileY - 1]);
-                if (newWall<0x3F)
+                if (newWall < 0x3F)
                 {
-                    UWTileMap.current_tilemap.Tiles[tileToChange.tileX , tileToChange.tileY - 1].East = (short)newWall;
-                }   
+                    UWTileMap.current_tilemap.Tiles[tileToChange.tileX, tileToChange.tileY - 1].East = (short)newWall;
+                }
             }
         }
 
@@ -651,7 +896,7 @@ namespace Underworld
         /// <returns></returns>
         public static bool CheckIfOutsideRange(int targetX, int targetY, int isPlayer, int range = 8)
         {
-            if (isPlayer !=0)
+            if (isPlayer != 0)
             {
                 return (
                     (System.Math.Abs(playerdat.playerObject.tileX - targetX) >= range)

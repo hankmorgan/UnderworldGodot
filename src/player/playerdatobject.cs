@@ -51,7 +51,7 @@ namespace Underworld
         /// <param name="newTileY"></param>
         public static void PlacePlayerInTile(int newTileX, int newTileY, int previousTileX = -1, int previousTileY = -1)
         {//todo move this object into the tilemap objects per vanilla behaviour.            
-            Debug.Print($"{UWTileMap.current_tilemap.LevelObjects[1015].ypos}");
+            
             if (UWTileMap.ValidTile(previousTileX, previousTileY))
             {
                 //take the player object out of the previous tile
