@@ -1,7 +1,12 @@
+using System;
+using Godot;
+
 namespace Underworld
 {
     public class AnimationOverlay : UWClass
     {
+
+        public static int NoOfAnimationOverlays;
         public int PTR; //PTR to where the data is located in the file data.
 
         public int index;
@@ -170,8 +175,11 @@ namespace Underworld
         /// </summary>
         public static void UpdateAnimationOverlays()
         {
-            foreach (var ovl in UWTileMap.current_tilemap.Overlays)
+            for (int i = 0; i < NoOfAnimationOverlays; i++)
+            //{
+            //foreach (var ovl in UWTileMap.current_tilemap.Overlays)
             {
+                var ovl = UWTileMap.current_tilemap.Overlays[i];
                 if (ovl != null)
                 {
                     if (ovl.link != 0)
@@ -197,7 +205,13 @@ namespace Underworld
                                             }
                                             else
                                             {
-                                                EndOverlay(ovl);
+                                                var linktoremove = ovl.link;
+                                                RemoveAnimationOverlay(ovl.link);
+                                                ObjectRemover.DeleteObjectFromTile_DEPRECIATED(
+                                                    tileX: ovl.tileX,
+                                                    tileY: ovl.tileY,
+                                                    indexToDelete: (short)linktoremove);
+                                                //EndOverlay_DEPRECIATED(ovl);
                                             }
                                         }
                                     }
@@ -238,7 +252,7 @@ namespace Underworld
         /// Ends a running overlay and destroys it's world instance.
         /// </summary>
         /// <param name="ovl"></param>
-        public static void EndOverlay(AnimationOverlay ovl)
+        public static void EndOverlay_DEPRECIATED(AnimationOverlay ovl)
         {
             ovl.Duration = 0;
             ObjectRemover.DeleteObjectFromTile_DEPRECIATED(
@@ -248,6 +262,38 @@ namespace Underworld
             ovl.link = 0;
             ovl.tileX = 0;
             ovl.tileY = 0;
+        }
+
+
+        /// <summary>
+        /// Removes animation overlays by the vanilla method which is to move the overlay data in the last overlay to replace the overlay data to be removed.
+        /// </summary>
+        /// <param name="overlaylink"></param>
+        public static void RemoveAnimationOverlay(int overlaylink)
+        {
+            for (int i = 0; i < NoOfAnimationOverlays; i++)
+            {
+                if (UWTileMap.current_tilemap.Overlays[i].link == overlaylink)
+                {
+                    var toRemove = UWTileMap.current_tilemap.Overlays[i];
+
+                    //copy the raw data of the last overlay over the current overlay
+                    var lastOverlay = UWTileMap.current_tilemap.Overlays[NoOfAnimationOverlays-1];
+                    if (lastOverlay.index != i)
+                    {
+                        //copy the last overlay over the overlay to remove if it is a different overlay.
+                        Buffer.BlockCopy(src: UWTileMap.current_tilemap.lev_ark_block.Data, srcOffset: lastOverlay.PTR, dst: UWTileMap.current_tilemap.lev_ark_block.Data, dstOffset: toRemove.PTR, count: 6);
+                    }
+                    //clear the data of the last overlay.                    
+                    for (int b = 0; b < 6; b++)
+                    {
+                        UWTileMap.current_tilemap.lev_ark_block.Data[lastOverlay.PTR + b] = 0;
+                    }
+                    UWTileMap.current_tilemap.Overlays[NoOfAnimationOverlays-1] = null;
+                    NoOfAnimationOverlays--;
+                    return;
+                }
+            }
         }
     }//end class
 }//end namespace

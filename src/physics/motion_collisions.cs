@@ -1651,7 +1651,7 @@ namespace Underworld
             }
             else
             {
-                if (!ObjectRemover.ObjectCulling(projectile, 0xA))
+                if (!ObjectRemover.ObjectCullingTest(projectile, 0xA))
                 {
                     return projectile;
                 }

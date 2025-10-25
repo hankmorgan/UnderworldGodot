@@ -515,26 +515,28 @@ namespace Underworld
             }
 
             //if (OverlayAddress!=0)
+            AnimationOverlay.NoOfAnimationOverlays = 0;
             switch (_RES)
             {
                 case GAME_UW1:
                     {
                         if (ovl_ark.DataLen != 0)
-                        {//read in the next 64 entries of length 6 bytes	
-                            //long OverlayAddress = 0;
+                        {
+                            //read in the next 64 entries of length 6 bytes	
                             for (int overlayIndex = 0; overlayIndex < 64; overlayIndex++)
                             {
                                 Overlays[overlayIndex] = new AnimationOverlay(overlayIndex);
+                                AnimationOverlay.NoOfAnimationOverlays++;
                             }
                         }
                         break;
                     }
                 case GAME_UW2:
                     {
-                        //long OverlayAddress = 31752;
                         for (int overlayIndex = 0; overlayIndex < 64; overlayIndex++)
                         {
                             Overlays[overlayIndex] = new AnimationOverlay(overlayIndex);
+                            AnimationOverlay.NoOfAnimationOverlays++;
                         }
                         break;
                     }

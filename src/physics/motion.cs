@@ -417,7 +417,7 @@ namespace Underworld
             {
                 if ((Rng.r.Next(0x7FFF) & 0x7) < si_cull)
                 {
-                    if (ObjectRemover.ObjectCulling(projectile, 0xA))
+                    if (ObjectRemover.ObjectCullingTest(projectile, 0xA))
                     {
                         haltobject = false;
                     }

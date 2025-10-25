@@ -327,9 +327,8 @@ namespace Underworld
         /// <param name="tileX"></param>
         /// <param name="tileY"></param>
         /// <param name="indexToDelete"></param>
-        public static bool DeleteObjectFromTile_DEPRECIATED(int tileX, int tileY, short indexToDelete, bool RemoveFromWorld = true)
+        public static bool DeleteObjectFromTile_DEPRECIATED(int tileX, int tileY, short indexToDelete, bool RemoveFromWorld = true, bool forceDelete = false)
         {
-            Debug.Print("todo assess if this DeleteObjectFromTile function needs to be replaced with RemoveObject() (to be implemented)")
             if (!UWTileMap.ValidTile(tileX, tileY))
             {
                 return false;//not on map.
@@ -384,7 +383,7 @@ namespace Underworld
         /// <param name="obj"></param>
         /// <param name="CullingRange"></param>
         /// <returns>True if object can be culled, false to preserve</returns>
-        public static bool ObjectCulling(uwObject obj, int CullingRange)
+        public static bool ObjectCullingTest(uwObject obj, int CullingRange)
         {
             if (obj == null)
             {
@@ -426,7 +425,7 @@ namespace Underworld
         /// <param name="obj"></param>
         /// <returns>True if the object is to be preserved, false to cull</returns>
         static bool CheckDoNotCull(uwObject obj)
-        {            
+        {
             if (obj.doordir == 1)
             {
                 return true;
@@ -454,6 +453,45 @@ namespace Underworld
             }
         }
 
+        //****************************************************** UPDATED FUNCS ********************************************//
+
+
+        /// <summary>
+        /// Vanilla remove object behaviour. Remove object will obey object culling rules and clean linked lists/object overlays if needed.
+        /// This function needs to be completed fully and 
+        /// </summary>
+        /// <param name="ListHeadValue"></param>
+        /// <param name="objToRemove"></param>
+        /// <param name="ForceCull"></param>
+        /// <returns></returns>
+        public static uwObject RemoveObject(int ListHeadValue, uwObject objToRemove, bool ForceCull)
+        {
+            if (!ForceCull)
+            {
+                if (!ObjectCullingTest(objToRemove, 0xA))
+                {
+                    return objToRemove;
+                }
+            }
+
+            //construct a link/next byte
+            var LinkNext = objToRemove.index << 6;
+
+            if (objToRemove.majorclass == 7)
+            {
+                //remove the animation overlay
+                AnimationOverlay.RemoveAnimationOverlay(objToRemove.index);
+            }
+            if (ListHeadValue == 0)
+            {
+                //ClearLinkedList(LinkNext)//to implement.
+            }
+            else
+            {
+                //RemoveObjectAndChainFromLists(ListHeadValue, ObjtoRemove)//to implement
+            }
+            return null;
+        }
 
     }//end class
 }//end namespace

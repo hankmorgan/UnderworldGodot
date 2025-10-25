@@ -74,11 +74,14 @@ namespace Underworld
                 classindex: 9);
             if (fountainWaterSpout != null)
             {
-                var ovl = AnimationOverlay.FindOverlay(fountainWaterSpout.index);
-                if (ovl != null)
-                {
-                    AnimationOverlay.EndOverlay(ovl);
-                }
+                // var ovl = AnimationOverlay.FindOverlay(fountainWaterSpout.index);
+                // if (ovl != null)
+                // {
+                //     //AnimationOverlay.EndOverlay_DEPRECIATED(ovl);
+                
+                AnimationOverlay.RemoveAnimationOverlay(fountainWaterSpout.index);
+                ObjectRemover.DeleteObjectFromTile_DEPRECIATED(di_x, si_y, fountainWaterSpout.index, true, true);
+                //}
 
                 TileInfo.ChangeTile(di_x, si_y, newFloorTexture: trapObj.owner);//turn the base pedestal into ice
             }
