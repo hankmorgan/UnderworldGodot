@@ -135,7 +135,7 @@ namespace Underworld
                     var tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];
                     if (tile.indexObjectList != 0)
                     {
-                        if (ObjectRemover.RemoveObjectFromLinkedList(tile.indexObjectList, FoundAcademyWand, UWTileMap.current_tilemap.LevelObjects, tile.Ptr + 2))
+                        if (ObjectRemover_OLD.RemoveObjectFromLinkedList(tile.indexObjectList, FoundAcademyWand, UWTileMap.current_tilemap.LevelObjects, tile.Ptr + 2))
                         {
                             var wand = UWTileMap.current_tilemap.LevelObjects[FoundAcademyWand];
                             var desttile = UWTileMap.current_tilemap.Tiles[31, 29];

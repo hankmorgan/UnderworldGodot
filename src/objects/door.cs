@@ -404,7 +404,7 @@ namespace Underworld
                                         if (LockObject.flags1 == 0)
                                         {
                                             //seg040_34E7_963:
-                                            if (ObjectRemover.RemoveObjectFromLinkedList(doorobj.link, LockObject.index, UWTileMap.current_tilemap.LevelObjects, doorobj.PTR + 6))
+                                            if (ObjectRemover_OLD.RemoveObjectFromLinkedList(doorobj.link, LockObject.index, UWTileMap.current_tilemap.LevelObjects, doorobj.PTR + 6))
                                             {
                                                 ObjectFreeLists.ReleaseFreeObject(LockObject);
                                             }
@@ -464,7 +464,7 @@ namespace Underworld
                                     if (LockObject.flags1 == 0)
                                     {
                                         //seg040_34E7_963:
-                                        if (ObjectRemover.RemoveObjectFromLinkedList(doorobj.link, LockObject.index, UWTileMap.current_tilemap.LevelObjects, doorobj.PTR + 6))
+                                        if (ObjectRemover_OLD.RemoveObjectFromLinkedList(doorobj.link, LockObject.index, UWTileMap.current_tilemap.LevelObjects, doorobj.PTR + 6))
                                         {
                                             ObjectFreeLists.ReleaseFreeObject(LockObject);
                                         }

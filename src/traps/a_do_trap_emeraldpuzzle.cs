@@ -48,7 +48,7 @@ namespace Underworld
                 {
                     if (UWTileMap.ValidTile(foundEmeraldsX[i], foundEmeraldsY[i]))
                     {
-                        ObjectRemover.DeleteObjectFromTile_DEPRECIATED(
+                        ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(
                             tileX: foundEmeraldsX[i], tileY: 
                             foundEmeraldsY[i], 
                             indexToDelete: (short)foundEmeralds[i]);

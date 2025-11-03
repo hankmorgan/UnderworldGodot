@@ -42,7 +42,7 @@ public partial class glowing_rock_collision : Area3D
                 var toRemove = UWTileMap.current_tilemap.LevelObjects[uwObjectIndex];
                 if (toRemove!=null)
                 {
-                    ObjectRemover.DeleteObjectFromTile_DEPRECIATED(toRemove.tileX,toRemove.tileY,toRemove.index);
+                    ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(toRemove.tileX,toRemove.tileY,toRemove.index);
                 }               
             }
         }

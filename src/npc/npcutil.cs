@@ -133,7 +133,7 @@ namespace Underworld
                 var destTile = UWTileMap.current_tilemap.Tiles[destTileX,destTileY];
                 if (destTile.tileType != UWTileMap.TILE_SOLID)
                 {
-                    ObjectRemover.RemoveObjectFromLinkedList(sourceTile.indexObjectList,critter.index,UWTileMap.current_tilemap.LevelObjects, sourceTile.Ptr+2);              
+                    ObjectRemover_OLD.RemoveObjectFromLinkedList(sourceTile.indexObjectList,critter.index,UWTileMap.current_tilemap.LevelObjects, sourceTile.Ptr+2);              
                     critter.next = destTile.indexObjectList ;
                     destTile.indexObjectList = critter.index;
                     critter.tileX = destTileX; critter.tileY= destTileY;

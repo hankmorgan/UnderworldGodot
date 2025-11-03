@@ -87,7 +87,7 @@ namespace Underworld
                                     {           
                                         var tile = UWTileMap.current_tilemap.Tiles[triggerX, triggerY];                             
                                         //Debug.Print($"Test me. remove trap {trapObj.index} {trapObj.a_name} from object list here");
-                                        ObjectRemover.RemoveTrapChain(
+                                        ObjectRemover_OLD.RemoveTrapChain(
                                             trapObj: trapObj,
                                             ptrListHead: tile.Ptr + 2);
                                     }

@@ -80,7 +80,7 @@ namespace Underworld
                 //     //AnimationOverlay.EndOverlay_DEPRECIATED(ovl);
                 
                 AnimationOverlay.RemoveAnimationOverlay(fountainWaterSpout.index);
-                ObjectRemover.DeleteObjectFromTile_DEPRECIATED(di_x, si_y, fountainWaterSpout.index, true, true);
+                ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(di_x, si_y, fountainWaterSpout.index, true, true);
                 //}
 
                 TileInfo.ChangeTile(di_x, si_y, newFloorTexture: trapObj.owner);//turn the base pedestal into ice

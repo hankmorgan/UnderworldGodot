@@ -207,7 +207,7 @@ namespace Underworld
                                             {
                                                 var linktoremove = ovl.link;
                                                 RemoveAnimationOverlay(ovl.link);
-                                                ObjectRemover.DeleteObjectFromTile_DEPRECIATED(
+                                                ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(
                                                     tileX: ovl.tileX,
                                                     tileY: ovl.tileY,
                                                     indexToDelete: (short)linktoremove);
@@ -255,7 +255,7 @@ namespace Underworld
         public static void EndOverlay_DEPRECIATED(AnimationOverlay ovl)
         {
             ovl.Duration = 0;
-            ObjectRemover.DeleteObjectFromTile_DEPRECIATED(
+            ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(
                 tileX: ovl.tileX,
                 tileY: ovl.tileY,
                 indexToDelete: (short)ovl.link);

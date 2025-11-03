@@ -754,7 +754,7 @@ namespace Underworld
                         if (TileIsSolid)
                         {
                             Debug.Print("Object deletion in LowerObject, Replace this function call with proper version of RemoveObject()");
-                            ObjectRemover.DeleteObjectFromTile_DEPRECIATED(obj.tileX, obj.tileY, obj.index, true);
+                            ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(obj.tileX, obj.tileY, obj.index, true);
                         }
                     }
                     else
@@ -812,7 +812,7 @@ namespace Underworld
                             if (TileIsSolid)
                             {
                                 Debug.Print("Object deletion in RaiseObject, Replace this function call with proper version of RemoveObject()");
-                                ObjectRemover.DeleteObjectFromTile_DEPRECIATED(obj.tileX, obj.tileY, obj.index, true);
+                                ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(obj.tileX, obj.tileY, obj.index, true);
                             }
                             else
                             {

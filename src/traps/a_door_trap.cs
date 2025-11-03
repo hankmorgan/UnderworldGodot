@@ -90,7 +90,7 @@ namespace Underworld
                             // }
                             // else
                             // {
-                            if (ObjectRemover.RemoveObjectFromLinkedList(doorObj.link, lockObject.index, objList, doorObj.PTR+6))
+                            if (ObjectRemover_OLD.RemoveObjectFromLinkedList(doorObj.link, lockObject.index, objList, doorObj.PTR+6))
                             {
                                 ObjectFreeLists.ReleaseFreeObject(lockObject);
                             }

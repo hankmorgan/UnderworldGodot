@@ -21,7 +21,7 @@ namespace Underworld
                     // }
                     // else
                     // {
-                        ObjectRemover.RemoveObjectFromLinkedList(talker.link, id, UWTileMap.current_tilemap.LevelObjects, talker.PTR+6);
+                        ObjectRemover_OLD.RemoveObjectFromLinkedList(talker.link, id, UWTileMap.current_tilemap.LevelObjects, talker.PTR+6);
                     //}
                 }
                                 

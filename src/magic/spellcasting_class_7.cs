@@ -720,7 +720,7 @@ namespace Underworld
                 {
                     case 0x19e://flam rune
                     case 0x19f://tym rune
-                        ObjectRemover.DeleteObjectFromTile_DEPRECIATED(tileX: objToDispel.tileX, tileY: objToDispel.tileY, indexToDelete: objToDispel.index, RemoveFromWorld: true);
+                        ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(tileX: objToDispel.tileX, tileY: objToDispel.tileY, indexToDelete: objToDispel.index, RemoveFromWorld: true);
                         break;
                     default:
                         uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x12E));//that is not a rune

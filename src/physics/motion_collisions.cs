@@ -1651,7 +1651,7 @@ namespace Underworld
             }
             else
             {
-                if (!ObjectRemover.ObjectCullingTest(projectile, 0xA))
+                if (!ObjectRemover_OLD.ObjectCullingTest(projectile, 0xA))
                 {
                     return projectile;
                 }
@@ -1659,7 +1659,7 @@ namespace Underworld
                 {
                     Debug.Print($"Destroying {projectile.a_name}");
                     //seg030_2BB7_1410
-                    if (ObjectRemover.DeleteObjectFromTile_DEPRECIATED(projectile.tileX, projectile.tileY, projectile.index))
+                    if (ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(projectile.tileX, projectile.tileY, projectile.index))
                     {
 
                         return null;

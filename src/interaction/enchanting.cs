@@ -236,7 +236,7 @@ namespace Underworld
             {
                 //fail
                 EnchantFailureExplosion(obj, x, y);
-                ObjectRemover.RemoveObjectFromLinkedList(obj.link, spellobject.index, objList, obj.PTR + 6);
+                ObjectRemover_OLD.RemoveObjectFromLinkedList(obj.link, spellobject.index, objList, obj.PTR + 6);
                 if (WorldObject)
                 {
                     ObjectFreeLists.ReleaseFreeObject(spellobject);
@@ -346,7 +346,7 @@ namespace Underworld
                         {
                             if (Rng.r.Next(0xA) < 4)
                             {
-                                ObjectRemover.RemoveObjectFromLinkedList(obj.link, spellobject.index, objList, obj.PTR + 6);
+                                ObjectRemover_OLD.RemoveObjectFromLinkedList(obj.link, spellobject.index, objList, obj.PTR + 6);
                                 if (WorldObject)
                                 {
                                     ObjectFreeLists.ReleaseFreeObject(spellobject);

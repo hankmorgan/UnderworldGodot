@@ -30,7 +30,7 @@ namespace Underworld
             {
                 if (commonObjDat.qualityclass(projectile.item_id) < 3)
                 {
-                    if (ObjectRemover.DeleteObjectFromTile_DEPRECIATED(projectile.tileX, projectile.tileY, projectile.index))
+                    if (ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(projectile.tileX, projectile.tileY, projectile.index))
                     {
                         return false;
                     }
@@ -116,7 +116,7 @@ namespace Underworld
                 //object has changed tiles
                 //Debug.Print($"{projectile.a_name} has changed tiles from {projectile.tileX},{projectile.tileY} to {MotionParams.x_0 >> 8},{MotionParams.y_2 >> 8}");
                 var tileVar6 = UWTileMap.current_tilemap.Tiles[projectile.tileX, projectile.tileY];//the current tile.
-                ObjectRemover.RemoveObjectFromLinkedList(tileVar6.indexObjectList, projectile.index, UWTileMap.current_tilemap.LevelObjects, tileVar6.Ptr + 2);
+                ObjectRemover_OLD.RemoveObjectFromLinkedList(tileVar6.indexObjectList, projectile.index, UWTileMap.current_tilemap.LevelObjects, tileVar6.Ptr + 2);
 
                 if (_RES == GAME_UW2)
                 {
@@ -417,7 +417,7 @@ namespace Underworld
             {
                 if ((Rng.r.Next(0x7FFF) & 0x7) < si_cull)
                 {
-                    if (ObjectRemover.ObjectCullingTest(projectile, 0xA))
+                    if (ObjectRemover_OLD.ObjectCullingTest(projectile, 0xA))
                     {
                         haltobject = false;
                     }
@@ -481,7 +481,7 @@ namespace Underworld
                     varE = projectile.ProjectileSourceID;
                 }
             }
-            ObjectRemover.DeleteObjectFromTile_DEPRECIATED(projectile.tileX, projectile.tileY, projectile.index, true);
+            ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(projectile.tileX, projectile.tileY, projectile.index, true);
             if (haltedObject != null)
             {//is this a bit hairy under the circumstances?
                 haltedObject.next = tile.indexObjectList;
@@ -503,7 +503,7 @@ namespace Underworld
                 //detonate
                 if (DetonateProjectile(haltedObject, varE) == false)
                 {
-                    if (ObjectRemover.DeleteObjectFromTile_DEPRECIATED(haltedObject.tileX, haltedObject.tileY, haltedObject.index, true))
+                    if (ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(haltedObject.tileX, haltedObject.tileY, haltedObject.index, true))
                     {
                         haltedObject = null;
                     }

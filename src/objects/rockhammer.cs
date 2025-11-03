@@ -45,7 +45,7 @@ namespace Underworld
                     newobj.link = (short)(3 + Rng.r.Next(0,6));
                 }
 
-                ObjectRemover.DeleteObjectFromTile_DEPRECIATED(itemTargeted.tileX, itemTargeted.tileY, itemTargeted.index);
+                ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(itemTargeted.tileX, itemTargeted.tileY, itemTargeted.index);
                 return true;
             }
             else

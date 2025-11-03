@@ -5,7 +5,7 @@ namespace Underworld
     /// <summary>
     /// Class for removing instances of objects from object index chains
     /// </summary>
-    public class ObjectRemover : UWClass
+    public class ObjectRemover_OLD : UWClass
     {
         static int RemoveTrapFlags;
         static long TrapTriggerContainerListHead = 0;
@@ -43,7 +43,6 @@ namespace Underworld
                 RemoveObjectAndChainFromLists(trapObj, TrapTriggerContainerListHead);
             }
         }
-
 
         static uwObject FindObjectListHeadObject(long ptrListHead, uwObject toFind, int searchmode)
         {

@@ -9,7 +9,7 @@ namespace Underworld
             var NPC = (npc)talker.instance;
             //ObjectCreator.npcs.Remove(NPC);
             
-            ObjectRemover.DeleteObjectFromTile_DEPRECIATED(                
+            ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(                
                 tileX: (short)talker.npc_xhome,
                 tileY: (short)talker.npc_yhome,
                 indexToDelete: talker.index);

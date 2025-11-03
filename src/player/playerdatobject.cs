@@ -56,7 +56,7 @@ namespace Underworld
             {
                 //take the player object out of the previous tile
                 var tile = UWTileMap.current_tilemap.Tiles[previousTileX, previousTileY];
-                ObjectRemover.RemoveObjectFromLinkedList(tile.indexObjectList, 1, UWTileMap.current_tilemap.LevelObjects, tile.Ptr + 2);
+                ObjectRemover_OLD.RemoveObjectFromLinkedList(tile.indexObjectList, 1, UWTileMap.current_tilemap.LevelObjects, tile.Ptr + 2);
                 if (_RES == GAME_UW2)
                 {
                     trigger.RunPressureEnterExitTriggersInTile(

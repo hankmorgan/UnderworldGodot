@@ -587,7 +587,7 @@ namespace Underworld
 			if (TemporaryTalker)
 			{
 				//a talking door or a wisp. remove the temporary NPC
-				ObjectRemover.DeleteObjectFromTile_DEPRECIATED(talker.tileX,talker.tileY,talker.index, true);
+				ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(talker.tileX,talker.tileY,talker.index, true);
 			}
 			TemporaryTalker = false;
 			for (int i = 0; i < uimanager.NoOfTradeSlots; i++)

@@ -353,7 +353,7 @@ namespace Underworld
                 var objindex = uimanager.GetNPCTradeSlot(i);
                 if (objindex != -1)
                 {
-                    ObjectRemover.RemoveObjectFromLinkedList(talker.link, objindex, UWTileMap.current_tilemap.LevelObjects, talker.PTR+6);
+                    ObjectRemover_OLD.RemoveObjectFromLinkedList(talker.link, objindex, UWTileMap.current_tilemap.LevelObjects, talker.PTR+6);
                 }
             }
 
