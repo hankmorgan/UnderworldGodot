@@ -8,7 +8,7 @@ namespace Underworld
         public static bool Use(uwObject obj, bool WorldObject)
         {
             if (WorldObject){return false;}
-            return food.SpecialFoodCases(obj,!WorldObject);
+            return Food.SpecialFoodCases(obj,!WorldObject);
         }
 
         public static bool MixRotwormStew()

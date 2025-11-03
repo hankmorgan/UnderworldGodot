@@ -1,8 +1,9 @@
 using System;
+using System.Diagnostics;
 
 namespace Underworld
 {
-    public class food : objectInstance
+    public class Food : objectInstance
     {
         public static bool Use(uwObject obj, bool WorldObject)
         {
@@ -66,6 +67,11 @@ namespace Underworld
             return true;
         }
 
+        /// <summary>
+        /// Handles eating of regular food items.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="UsedFromInventory"></param>
         static void EatFood(uwObject obj, bool UsedFromInventory)
         {
             var nutrition = foodObjectDat.nutrition(obj.item_id);
@@ -78,36 +84,116 @@ namespace Underworld
                 }
                 else
                 {
-                    var objname = "That " + GameStrings.GetObjectNounUW(obj.item_id, 1);
-                    //TODO play eating sound. (sound played depends on how hungry the player is)
-                    var r = new Random();
-                    playerdat.play_hunger = (byte)(playerdat.play_hunger + (byte)nutrition);
+                    //update hunger
+                    playerdat.ChangeHunger(nutrition);
 
-                    //Taste string
-                    var taste = (obj.quality + r.Next(0, 0x14)) >> 4;
-                    if (taste > 4) { taste = 4; }
+                    PlayEatingSounds();
+                    TasteDescriptionString(obj);
 
-                    //;  tasted putrid. \n
-                    //;  tasted a little rancid. \n
-                    //;  tasted kind of bland. \n
-                    //;  tasted pretty good. \n
-                    //;  tasted great. \n
+                    int foodItemID = obj.item_id;
+                    ObjectCreator.Consume(obj, UsedFromInventory);
                     if (_RES == GAME_UW2)
                     {
-                        uimanager.AddToMessageScroll($"{objname}{GameStrings.GetString(1, 0xBB + taste)}");
+                        SpawnLeftOvers(foodItemID);
                     }
-                    else
-                    {
-                        uimanager.AddToMessageScroll($"{objname}{GameStrings.GetString(1, 0xAC + taste)}");
-                    }
-
-                    ObjectCreator.Consume(obj, UsedFromInventory);
-                    //TODO Leave left overs in the player cursor.  
                 }
             }
         }
- 
 
+        /// <summary>
+        /// Generates the text describing how the food tasted
+        /// </summary>
+        /// <param name="obj"></param>
+        private static void TasteDescriptionString(uwObject obj)
+        {
+            var objname = "That " + GameStrings.GetObjectNounUW(obj.item_id, 1);
+            // Build the string for the taste description.
+            var r = new Random();
+            //Taste string
+            var taste = (obj.quality + r.Next(0, 0x14)) >> 4;
+            if (taste > 4) { taste = 4; }
+
+            //;  tasted putrid. \n
+            //;  tasted a little rancid. \n
+            //;  tasted kind of bland. \n
+            //;  tasted pretty good. \n
+            //;  tasted great. \n
+            if (_RES == GAME_UW2)
+            {
+                uimanager.AddToMessageScroll($"{objname}{GameStrings.GetString(1, 0xBB + taste)}");
+            }
+            else
+            {
+                uimanager.AddToMessageScroll($"{objname}{GameStrings.GetString(1, 0xAC + taste)}");
+            }
+        }
+
+
+        /// <summary>
+        /// Play eating sound. (sound played depends on how hungry the player is)  
+        /// </summary>
+        private static void PlayEatingSounds()
+        {
+           
+            if (playerdat.play_hunger >= 192)
+            {
+                Debug.Print("Play Sound Effect 0x25 (eating)");
+            }
+            else
+            {
+                if (playerdat.play_hunger > 90)
+                {
+                    Debug.Print("Play Sound Effect 0x1F (eating)");
+                }
+                else
+                {
+                    Debug.Print("Play Sound Effect 0x21h (eating)");
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Spawns leftovers in the players hand after eating certain foods and drinks
+        /// </summary>
+        /// <param name="foodItemId"></param>
+        private static void SpawnLeftOvers(int foodItemId)
+        {
+            var leftOvers = -1;
+            if (_RES == GAME_UW2)
+            {
+                switch (foodItemId)
+                {
+                    case 0xB0://piece of meat
+                    case 0xB1:
+                        leftOvers = 0xC5; break;
+                    case 0xBA://candle
+                        leftOvers = 0xD2; break;
+                    case 0xBB: //bottles
+                    case 0xBC:
+                    case 0xBD:
+                        leftOvers = 0x13D; break;
+                    case 0xBE://meat on a stick
+                        leftOvers = 0x13E; break;                        
+                    default:
+                        //leftOvers = 0;
+                        break;
+                }
+            }
+            if (leftOvers != -1)
+            {
+                //create the left overs in the players hand
+                ObjectCreator.SpawnObjectInHand(leftOvers);
+            }
+        }
+
+
+
+        /// <summary>
+        /// Handles the drinking of alcohol and water(?)
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="UsedFromInventory"></param>
         static void DrinkLiquid(uwObject obj, bool UsedFromInventory)
         {
             var nutrition = -foodObjectDat.nutrition(obj.item_id);
@@ -123,10 +209,10 @@ namespace Underworld
                 case playerdat.SkillCheckResult.CritFail:
                     {
                         sleep.Sleep(-2);
-                        if (playerdat.play_hp>0)
+                        if (playerdat.play_hp > 0)
                         {
                             uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x102));// You wake feeling somewhat unstable but better
-                        }                        
+                        }
                         //TODO Screenshake
                         break;
                     }
@@ -142,22 +228,29 @@ namespace Underworld
                         break;
                     }
             }
+            var foodItemID = obj.item_id;
             ObjectCreator.Consume(obj, UsedFromInventory);
+            if (_RES == GAME_UW2)
+            {
+                SpawnLeftOvers(foodItemID);
+            }
         }
 
+        /// <summary>
+        /// Applies the effects of mushroom consumption.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="UsedFromInventory"></param>
         static void TakeShrooms(uwObject obj, bool UsedFromInventory)
         {
             var SkillCheckResult = playerdat.SkillCheck(playerdat.INT, 0x14);
-            var manachange = Rng.r.Next(1,4) * (int)SkillCheckResult;
+            var manachange = Rng.r.Next(1, 4) * (int)SkillCheckResult;
 
-           playerdat.ManaRegenChange(manachange); 
-            // playerdat.play_mana = Math.Max(
-            //     Math.Min(manachange, playerdat.max_mana)
-            //     , 0);
+            playerdat.ManaRegenChange(manachange);
 
-            playerdat.shrooms = Math.Min(3, playerdat.shrooms +1);
-            uimanager.AddToMessageScroll(GameStrings.GetString(1,GameStrings.str_the_mushroom_causes_your_head_to_spin_and_your_vision_to_blur_));
-            ObjectCreator.Consume(obj,UsedFromInventory);
+            playerdat.shrooms = Math.Min(3, playerdat.shrooms + 1);
+            uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_the_mushroom_causes_your_head_to_spin_and_your_vision_to_blur_));
+            ObjectCreator.Consume(obj, UsedFromInventory);
             playerdat.PlayerStatusUpdate();
         }
 
@@ -235,7 +328,7 @@ namespace Underworld
                 if (playerdat.play_hunger + nutrition <= 255)
                 {
                     uimanager.AddToMessageScroll(GameStrings.GetString(1, tastestring));
-                    playerdat.play_hunger = (byte)(playerdat.play_hunger + nutrition);
+                    playerdat.ChangeHunger(nutrition);
                 }
                 else
                 {
@@ -244,15 +337,22 @@ namespace Underworld
                 }
             }
 
-            if ((_RES==GAME_UW2) && (obj.item_id == 0x114))
+            if ((_RES == GAME_UW2) && (obj.item_id == 0x114))
             {
                 if (!playerdat.DreamingInVoid)
                 {
                     playerdat.DreamPlantCounter = (2 + Rng.r.Next(4)) & 0x7;
                 }
             }
+           
+            var foodItemID = obj.item_id;
+            
             ObjectCreator.Consume(obj, UsedFromInventory);
-
+            
+            if (_RES == GAME_UW2)
+            {
+                SpawnLeftOvers(foodItemID);
+            }
             return true;
         }
 

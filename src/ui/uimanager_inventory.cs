@@ -172,12 +172,12 @@ namespace Underworld
             var objInHand = UWTileMap.current_tilemap.LevelObjects[playerdat.ObjectInHand];
             if (objInHand.majorclass == 2 && objInHand.minorclass == 3)
             {
-                food.Use(objInHand, true);
+                Food.Use(objInHand, true);
                 return true;
             }
             else
             {
-                if (food.SpecialFoodCases(
+                if (Food.SpecialFoodCases(
                     obj: objInHand,
                     UsedFromInventory: false))
                 {//if any food special case occurs exit sub

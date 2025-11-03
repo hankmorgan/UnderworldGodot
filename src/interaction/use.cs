@@ -307,7 +307,7 @@ namespace Underworld
                     }
                 case 3://food (including some potions)
                     {
-                        return food.Use(ObjectUsed, WorldObject);
+                        return Food.Use(ObjectUsed, WorldObject);
                     }
             }
             return false;
@@ -362,7 +362,7 @@ namespace Underworld
                             switch (ObjectUsed.classindex)
                             {
                                 case 4://dream plant
-                                    return food.SpecialFoodCases(ObjectUsed, WorldObject);
+                                    return Food.SpecialFoodCases(ObjectUsed, WorldObject);
                                 case >= 8 and <= 0xF:
                                     return smallblackrockgem.Use(ObjectUsed, WorldObject);
                             }

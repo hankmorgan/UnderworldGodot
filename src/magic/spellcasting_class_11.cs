@@ -204,7 +204,7 @@ namespace Underworld
         private static void DispelHunger()
         {
             playerdat.play_hunger = 0xC0;
-            playerdat.maybefoodhealthbonus = 0;
+            playerdat.foodhealthbonus = 0;
             uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x134));
         }
 

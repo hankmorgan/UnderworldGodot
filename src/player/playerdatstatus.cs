@@ -269,7 +269,10 @@ namespace Underworld
                }
           }
 
-          public static byte maybefoodhealthbonus
+          /// <summary>
+          /// Factor controlling how much hp (to a max of 8 points) is restored when eating food. Set to 0 after healing with food and bonus will regenerate/increase slowly over time
+          /// </summary>
+          public static byte foodhealthbonus
           {
                get
                {
@@ -643,9 +646,42 @@ namespace Underworld
           }
 
 
-          public static void ChangeHunger(int changeValue)
+          /// <summary>
+          /// Changes hunger levels and if necessary applies a health bonus for eating
+          /// </summary>
+          /// <param name="nutritionValue"></param>
+          /// <returns></returns>
+          public static bool ChangeHunger(int nutritionValue)
           {
-               Debug.Print("TODO Implement logic around changing hunger and applying healing bonuses");
+               var ChangeValue = (int)play_hunger + nutritionValue;
+               if (ChangeValue <= 255)
+               {
+                    //player has room in their belly
+                    if (ChangeValue < 0)
+                    {
+                         play_hunger = 0;
+                    }
+                    else
+                    {
+                         play_hunger = (byte)ChangeValue;
+                    }
+                    if (nutritionValue > 0)
+                    {
+                         //apply food health boost
+                         var hpbonusToApply = foodhealthbonus / 6;
+                         if (hpbonusToApply > 8)
+                         {
+                              hpbonusToApply = 8;
+                         }
+                         playerdat.play_hp = System.Math.Min(playerdat.max_hp, playerdat.play_hp + hpbonusToApply);
+                         foodhealthbonus = 0;//Note this is vanilla behaviour and probably a bug. If food is eaten too often the bonus health factor will never accumulate enough to grant the healing. The player will need to space out their meals!
+                    }
+                    return true;
+               }
+               else
+               {
+                    return false;
+               }
           }
      }//enclass
 }//end namespace

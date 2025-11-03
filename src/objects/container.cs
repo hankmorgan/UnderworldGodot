@@ -382,7 +382,7 @@ namespace Underworld
                             }
                         case 515://bowl/food
                             {
-                                if (food.IsFood(objectToAdd))
+                                if (Food.IsFood(objectToAdd))
                                 {
                                     ContainerCanHold = true;
                                 }
