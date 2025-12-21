@@ -36,6 +36,8 @@ namespace Underworld
         [Export] public TextureRect Chains;
         [Export] public TextureRect BackpackBG;
 
+        [Export] public Label WeightCapacity;        
+
         public static int CurrentSlot;
         public static int BackPackStart = 0;
 

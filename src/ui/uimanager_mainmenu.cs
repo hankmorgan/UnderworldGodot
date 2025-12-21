@@ -243,7 +243,9 @@ namespace Underworld
             {
                 playerdat.PlacePlayerInTile(playerdat.playerObject.tileX, playerdat.playerObject.tileY); 
             }
-       
+
+            //Update weight display
+            instance.WeightCapacity.Text = (playerdat.WeightCapacity / 0xA).ToString();       
 
             instance.InitViews();            
             SetPanelMode(0);

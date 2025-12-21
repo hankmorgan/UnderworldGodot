@@ -24,6 +24,14 @@ namespace Underworld
             }
         }
         
+
+        public static short WeightCapacity
+        {
+            get
+            {
+                return (short)(WeightMax - WeightCarried);
+            }
+        }
         
         /// <summary>
         /// Gets the player weight plus what object is being held in hand
