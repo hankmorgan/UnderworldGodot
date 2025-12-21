@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using System.Diagnostics;
 
 namespace Underworld
@@ -8,23 +7,40 @@ namespace Underworld
     {
         public static uwObject[] InventoryObjects = new uwObject[512];
 
+        /// <summary>
+        /// The current weight carried by the player
+        /// </summary>
         public static short WeightCarried
         {
             get
             {
                 return (short)GetAt16(0x4B);
             }
+            set
+            {
+                SetAt16(0x4B, value);
+            }
         }
 
+        /// <summary>
+        /// The max capacity of weight the player can hold.
+        /// </summary>
         public static short WeightMax
         {
             get
             {
                 return (short)GetAt16(0x4D);
             }
+            set
+            {
+                SetAt16(0x4D, value);
+            }
         }
         
 
+        /// <summary>
+        /// How much more weight the player can carry.
+        /// </summary>
         public static short WeightCapacity
         {
             get

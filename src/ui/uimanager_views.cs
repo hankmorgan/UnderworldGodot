@@ -298,11 +298,16 @@ namespace Underworld
                             //something is held. try and drop or throw it
                             var objToThrow = UWTileMap.current_tilemap.LevelObjects[playerdat.ObjectInHand];
                             var itemid = objToThrow.item_id;
+                            //Remove weight from player
+                            var ObjectMass = container.GetTotalMass(objToThrow, UWTileMap.current_tilemap.LevelObjects, false);
                             if (pickup.DropObjectByPlayer(objToThrow, true))
                             {
                                 playerdat.ObjectInHand = -1;
                                 instance.mousecursor.SetCursorToCursor();
                                 pickup.DropSpecialCases(itemid);//primarily handle moonstones
+                                playerdat.WeightCarried -= (short)ObjectMass;
+                                //Update weight display
+                                uimanager.instance.WeightCapacity.Text = (playerdat.WeightCapacity / 0xA).ToString(); 
                             }
                         }
                         break;

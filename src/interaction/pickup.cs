@@ -82,7 +82,8 @@ namespace Underworld
                     //add to tile
                     srcObject.next = tile.indexObjectList;
                     tile.indexObjectList = srcObject.index;
-                    srcObject.tileX = tileX; srcObject.tileY = tileY;
+                    srcObject.tileX = tileX; srcObject.tileY = tileY;  
+
                     if (srcObject.OneF0Class == 9)
                     {
                         if (srcObject.classindex >= 4 && srcObject.classindex <= 6)
@@ -211,6 +212,15 @@ namespace Underworld
         public static bool PickUp(int index, uwObject[] objList, bool WorldObject = true)
         {
             var objPicked = objList[index];
+            var ObjectMass = container.GetTotalMass(objPicked, UWTileMap.current_tilemap.LevelObjects,false);
+            if (playerdat.WeightCapacity < ObjectMass)
+            {
+                //Object is too heavy to pick up
+                uimanager.AddToMessageScroll(GameStrings.GetString(1,GameStrings.str_that_is_too_heavy_for_you_to_pick_up_));
+                return false;
+            }
+            
+
             if (useon.CurrentItemBeingUsed != null)
             {
                 return useon.UseOn(objPicked, useon.CurrentItemBeingUsed, WorldObject);
@@ -325,6 +335,10 @@ namespace Underworld
             //player is trying to pick something up
             playerdat.ObjectInHand = index;
             uimanager.instance.mousecursor.SetCursorToObject(obj.item_id);
+            var ObjectMass = container.GetTotalMass(obj, UWTileMap.current_tilemap.LevelObjects, false);
+            playerdat.WeightCarried += (short)ObjectMass;
+            //Update weight display
+            uimanager.instance.WeightCapacity.Text = (playerdat.WeightCapacity / 0xA).ToString();   
 
             //remove from it's tile
             //var tile = UWTileMap.current_tilemap.Tiles[obj.tileX, obj.tileY];

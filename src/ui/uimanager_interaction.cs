@@ -154,6 +154,7 @@ namespace Underworld
                 case InteractionModes.ModePickup:
                     if (playerdat.ObjectInHand == -1)//don't do pickup if holding something already.
                     {
+                        //get weight of object being picked
                         pickup.PickUp(
                             index: index,
                             objList: UWTileMap.current_tilemap.LevelObjects,

@@ -557,7 +557,7 @@ namespace Underworld
             }
             uimanager.RefreshManaFlask();
             uimanager.RefreshHealthFlask();
-            //maxweight =  300 + (STR*13) //TODO
+            WeightMax = (short)(300 + (STR*13));
         }
     } //end class
 }//end namespace
