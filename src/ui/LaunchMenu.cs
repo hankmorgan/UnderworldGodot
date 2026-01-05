@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using Godot;
 
 namespace Underworld;
@@ -7,7 +8,7 @@ namespace Underworld;
 // This script node backs-up the initial launch scene for the game, allowing
 // the user to configure paths and pick between UW 1 & 2.
 // </summary>
-public partial class LaunchScreen : Control
+public partial class LaunchMenu : Control
 {
 
 	[Export]
@@ -26,15 +27,17 @@ public partial class LaunchScreen : Control
 	public FileDialog GameFilesSelector;
 
 	// Allows easy storage and retrieval of mouse mode overrides.
-	readonly Stack<Input.MouseModeEnum> mouseModeHistory = new();
+	private readonly Stack<Input.MouseModeEnum> _mouseModeHistory = new();
+
+	private readonly uwsettings _uwSettings = uwsettings.instance;
 
 	public override void _Ready()
 	{
-		var settings = uwsettings.instance;
+		Debug.Print($"_Ready fired");
 
 		// Load initial paths from settings.
-		PathUW1.Text = settings.pathuw1;
-		PathUW2.Text = settings.pathuw2;
+		PathUW1.Text = _uwSettings.pathuw1;
+		PathUW2.Text = _uwSettings.pathuw2;
 
 		// Set the initial focus selection.
 		switch (UWClass._RES)
@@ -69,6 +72,8 @@ public partial class LaunchScreen : Control
 			default:
 				return;
 		}
+		
+		Debug.Print($"OnPathInput: {@event}");
 
 		// Select which path we're going to edit.
 		UWClass._RES = (byte)selection;
@@ -97,7 +102,7 @@ public partial class LaunchScreen : Control
 
 		// Switch to the regular cursor, saving the previous state so we
 		// can revert to it later.
-		mouseModeHistory.Push(Input.MouseMode);
+		_mouseModeHistory.Push(Input.MouseMode);
 		Input.MouseMode = Input.MouseModeEnum.Visible;
 
 		// Finally display the
@@ -107,7 +112,7 @@ public partial class LaunchScreen : Control
 
 	public void OnGameFilesSelectorSubmitted(string path)
 	{
-		var settings = uwsettings.instance;
+		Debug.Print($"GameFilesSelector submitted {path}");
 
 		// Save the selected directory back, and clear the selection for
 		// no good reason in particular.
@@ -117,11 +122,13 @@ public partial class LaunchScreen : Control
 			case UWClass.GAME_UWDEMO:
 			case UWClass.GAME_UW1:
 				PathUW1.Text = selectedDir;
-				settings.pathuw1 = selectedDir;
+				_uwSettings.pathuw1 = selectedDir;
+				_uwSettings.Save();
 				break;
 			case UWClass.GAME_UW2:
 				PathUW2.Text = selectedDir;
-				settings.pathuw2 = selectedDir;
+				_uwSettings.pathuw2 = selectedDir;
+				_uwSettings.Save();
 				break;
 			default:
 				// Non-blocking at this point. Just notify and do no more.
@@ -130,7 +137,7 @@ public partial class LaunchScreen : Control
 		}
 
 		// Revert the cursor. Yes I'm not checking that it's there first.
-		Input.MouseMode = mouseModeHistory.Pop();
+		Input.MouseMode = _mouseModeHistory.Pop();
 
 	}
 
@@ -147,8 +154,8 @@ public partial class LaunchScreen : Control
 			default:
 				return;
 		}
-
-		var settings = uwsettings.instance;
+		
+		Debug.Print($"OnPathInput: {@event}");
 
 		// Update settings and the current state.
 		UWClass._RES = (byte)selection;
@@ -156,12 +163,12 @@ public partial class LaunchScreen : Control
 		{
 			case UWClass.GAME_UWDEMO:
 			case UWClass.GAME_UW1:
-				settings.gametoload = "UW1";
-				UWClass.BasePath = settings.pathuw1;
+				UWClass.BasePath = _uwSettings.pathuw1;
+				_uwSettings.gametoload = "UW1";
 				break;
 			case UWClass.GAME_UW2:
-				settings.gametoload = "UW2";
-				UWClass.BasePath = settings.pathuw2;
+				UWClass.BasePath = _uwSettings.pathuw2;
+				_uwSettings.gametoload = "UW2";
 				break;
 			default:
 				// Non-blocking at this point. Just notify and do no more.
@@ -170,7 +177,7 @@ public partial class LaunchScreen : Control
 		}
 
 		// Save any changes to our settings.
-		settings.Save();
+		_uwSettings.Save();
 
 		// Switch scenes to start the game.
 		GetTree().ChangeSceneToFile("res://scenes/Underworld.tscn");

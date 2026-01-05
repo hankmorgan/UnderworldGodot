@@ -9,16 +9,15 @@ namespace Underworld;
 public class uwsettings
 {
 
-    static readonly JsonSerializerOptions jsonOpts = new()
+	private static readonly JsonSerializerOptions JsonOpts = new()
     {
         WriteIndented = true,
         IgnoreReadOnlyProperties = true,
         PropertyNameCaseInsensitive = true,
     };
-    static readonly string filePath = Path.Join(
-        Path.GetDirectoryName(
-            OS.GetExecutablePath()),
-        "settings.json");
+
+	private static readonly string FilePath
+		= ProjectSettings.GlobalizePath("user://settings.json");
 
     public static uwsettings instance;
 
@@ -28,15 +27,15 @@ public class uwsettings
     public static void LoadSettings()
     {
 
-        if (File.Exists(filePath))
+        if (File.Exists(FilePath))
         {
-            Debug.Print($"Loading settings from {filePath}");
-            using var stream = File.OpenRead(filePath);
-            instance = JsonSerializer.Deserialize<uwsettings>(stream, jsonOpts);
+            Debug.Print($"Loading settings from {FilePath}");
+            using var stream = File.OpenRead(FilePath);
+            instance = JsonSerializer.Deserialize<uwsettings>(stream, JsonOpts);
         }
         else
         {
-            Debug.Print($"No existing settings at {filePath}. Loading defaults.");
+            Debug.Print($"No existing settings at {FilePath}. Loading defaults.");
             instance = new();
         }
 
@@ -67,8 +66,8 @@ public class uwsettings
 
     }
 
-    public string pathuw1 { get; set; } = "c:\\games";
-    public string pathuw2 { get; set; } = "c:\\games";
+    public string pathuw1 { get; set; } = @"C:\Games\UW";
+    public string pathuw2 { get; set; } = @"C:\Games\UW2";
     public string gametoload { get; set; } = "UW1";
     public int level { get; set; } = 0;
     public float FOV { get; set; } = 75;
@@ -77,9 +76,9 @@ public class uwsettings
 
     public void Save()
     {
-        Debug.Print($"Saving settings to {filePath}");
-        using var stream = File.OpenWrite(filePath);
-        JsonSerializer.Serialize(stream, this, jsonOpts);
+        Debug.Print($"Saving settings to {FilePath}");
+        using var stream = File.OpenWrite(FilePath);
+        JsonSerializer.Serialize(stream, this, JsonOpts);
     }
 
 }

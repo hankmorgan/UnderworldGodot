@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://ba5m1urf788ey"]
 
-[ext_resource type="Script" path="res://src/ui/LaunchScreen.cs" id="1_ukjsy"]
+[ext_resource type="Script" path="res://src/ui/LaunchMenu.cs" id="1_ukjsy"]
 [ext_resource type="FontFile" uid="uid://bas6pohxbpgah" path="res://resources/fonts/FONT5X6P.ttf" id="4_pfbet"]
 [ext_resource type="Texture2D" uid="uid://ciqrdjocqcm2p" path="res://resources/splash/uw1_poster.jpg" id="22_2v7cv"]
 [ext_resource type="Texture2D" uid="uid://cxu7fxiybk3ee" path="res://resources/splash/uw2_poster.jpg" id="23_f4jqj"]
@@ -79,12 +79,10 @@ theme_override_font_sizes/font_size = 64
 text = "c:\\games\\uw1"
 editable = false
 context_menu_enabled = false
-emoji_menu_enabled = false
 shortcut_keys_enabled = false
 drag_and_drop_selection_enabled = false
 virtual_keyboard_enabled = false
 middle_mouse_paste_enabled = false
-empty_selection_clipboard_enabled = false
 autowrap_mode = 0
 
 [node name="LabyrinthItems" type="VBoxContainer" parent="MenuMargins/Selections"]
@@ -123,12 +121,10 @@ theme_override_font_sizes/font_size = 64
 text = "c:\\games\\uw2"
 editable = false
 context_menu_enabled = false
-emoji_menu_enabled = false
 shortcut_keys_enabled = false
 drag_and_drop_selection_enabled = false
 virtual_keyboard_enabled = false
 middle_mouse_paste_enabled = false
-empty_selection_clipboard_enabled = false
 autowrap_mode = 0
 
 [node name="GameFilesSelector" type="FileDialog" parent="MenuMargins"]
@@ -145,3 +141,4 @@ filters = PackedStringArray("uw*.exe")
 [connection signal="gui_input" from="MenuMargins/Selections/Stygian/StygianPath" to="." method="OnPathInput" binds= [1]]
 [connection signal="gui_input" from="MenuMargins/Selections/LabyrinthItems/LabyrinthPadding/LabyrinthPoster" to="." method="OnLaunchInput" binds= [2]]
 [connection signal="gui_input" from="MenuMargins/Selections/LabyrinthItems/LabyrinthPath" to="." method="OnPathInput" binds= [2]]
+[connection signal="file_selected" from="MenuMargins/GameFilesSelector" to="." method="OnGameFilesSelectorSubmitted"]
