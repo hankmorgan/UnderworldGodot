@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Godot;
@@ -8,8 +9,9 @@ namespace Underworld;
 // This script node backs-up the initial launch scene for the game, allowing
 // the user to configure paths and pick between UW 1 & 2.
 // </summary>
-public partial class LaunchMenu : Control
-{
+public partial class LaunchMenu : Control {
+
+	private const string NextScene = "res://scenes/Underworld.tscn";
 
 	[Export]
 	public TextureRect SelectUW1;
@@ -29,6 +31,7 @@ public partial class LaunchMenu : Control
 	// Allows easy storage and retrieval of mouse mode overrides.
 	private readonly Stack<Input.MouseModeEnum> _mouseModeHistory = new();
 
+	// Only need one reference to the current settings.
 	private readonly uwsettings _uwSettings = uwsettings.instance;
 
 	public override void _Ready()
@@ -55,6 +58,10 @@ public partial class LaunchMenu : Control
 				return;
 		}
 
+		// Start loading the main scene as soon as practicable.
+		var error = ResourceLoader.LoadThreadedRequest(NextScene, "PackedScene", true);
+		GD.PushError($"{Enum.GetName(error)} while preloading main scene.");
+
 	}
 
 	public void OnPathInput(InputEvent @event, int selection)
@@ -72,7 +79,7 @@ public partial class LaunchMenu : Control
 			default:
 				return;
 		}
-		
+
 		Debug.Print($"OnPathInput: {@event}");
 
 		// Select which path we're going to edit.
@@ -105,7 +112,7 @@ public partial class LaunchMenu : Control
 		_mouseModeHistory.Push(Input.MouseMode);
 		Input.MouseMode = Input.MouseModeEnum.Visible;
 
-		// Finally display the
+		// Finally display the selector
 		GameFilesSelector.Show();
 
 	}
@@ -154,7 +161,7 @@ public partial class LaunchMenu : Control
 			default:
 				return;
 		}
-		
+
 		Debug.Print($"OnPathInput: {@event}");
 
 		// Update settings and the current state.
@@ -180,7 +187,8 @@ public partial class LaunchMenu : Control
 		_uwSettings.Save();
 
 		// Switch scenes to start the game.
-		GetTree().ChangeSceneToFile("res://scenes/Underworld.tscn");
+		var scene = (PackedScene)ResourceLoader.LoadThreadedGet(NextScene);
+		GetTree().ChangeSceneToPacked(scene);
 
 	}
 
