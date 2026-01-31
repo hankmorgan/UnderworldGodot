@@ -60,7 +60,7 @@ namespace Underworld
         /// </summary>
         /// <param name="itemid"></param>
         /// <returns></returns>
-        public static int SpawnObjectInHand(int itemid, bool changeInteractionmode = true)
+        public static int SpawnObjectInHand(int itemid, bool changeInteractionmode = true, int weightmultiplier = 1)
         {
             var slot = PrepareNewObject(itemid);
             if (slot != 0)
@@ -69,6 +69,8 @@ namespace Underworld
 
                 playerdat.ObjectInHand = slot;
                 uimanager.instance.mousecursor.SetCursorToObject(obj.item_id);
+                // playerdat.WeightCarried += (short)(commonObjDat.mass(obj.item_id) * weightmultiplier);//assumed any weight checks have occurred elsewhere...
+                // uimanager.RefreshWeightDisplay();
                 if (changeInteractionmode)
                 {
                     uimanager.InteractionModeToggle(uimanager.InteractionModes.ModePickup);
@@ -594,6 +596,10 @@ namespace Underworld
                 obj.link--;
                 if (UsedFromInventory)
                 {
+                    //remove the weight of a single instance of the object
+                    playerdat.WeightCarried -= commonObjDat.mass(obj.item_id);
+                    Debug.Print ($"Removing weight of {obj.a_name} {commonObjDat.mass(obj.item_id)}");
+                    uimanager.RefreshWeightDisplay();
                     uimanager.UpdateInventoryDisplay();
                 }
             }

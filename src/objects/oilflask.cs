@@ -36,11 +36,18 @@ namespace Underworld
                         if (targetObject.ObjectQuantity > 1)
                         {//remove one instance and make the held object in hand a new torch
                             targetObject.link--;
+                            playerdat.WeightCarried -= commonObjDat.mass(targetObject.item_id); //remove the weight of a piece of wood
                             ObjectCreator.SpawnObjectInHand(0x91);
                         }
                         else
-                        {//turn the target into a torch
+                        {
+                            //turn the target into a torch
+                            //remove the weight of the wood
+                            playerdat.WeightCarried -= commonObjDat.mass(targetObject.item_id);
                             targetObject.item_id = 0x91;
+                            //add the weight of a torch
+                            playerdat.WeightCarried += commonObjDat.mass(targetObject.item_id);
+                            uimanager.RefreshWeightDisplay();
                         }
                         targetObject.quality = 40;
                         uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_dousing_a_cloth_with_oil_and_applying_it_to_the_wood_you_make_a_torch_));
@@ -53,6 +60,7 @@ namespace Underworld
                         if (targetObject.ObjectQuantity>1)
                         {
                             targetObject.link--;
+                            playerdat.WeightCarried -= commonObjDat.mass(targetObject.item_id); //remove the weight of one instance.
                             ObjectCreator.SpawnObjectInHand(targetObject.item_id);
                             var obj = UWTileMap.current_tilemap.LevelObjects[playerdat.ObjectInHand];
                             ApplyOilToUnlit(obj, stringno);

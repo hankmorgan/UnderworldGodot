@@ -245,7 +245,7 @@ namespace Underworld
             }
 
             //Update weight display
-            instance.WeightCapacity.Text = (playerdat.WeightCapacity / 0xA).ToString();       
+            uimanager.RefreshWeightDisplay();     
 
             instance.InitViews();            
             SetPanelMode(0);

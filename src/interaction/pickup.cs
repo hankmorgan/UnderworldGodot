@@ -335,11 +335,12 @@ namespace Underworld
             //player is trying to pick something up
             playerdat.ObjectInHand = index;
             uimanager.instance.mousecursor.SetCursorToObject(obj.item_id);
-            var ObjectMass = container.GetTotalMass(obj, UWTileMap.current_tilemap.LevelObjects, false);
-            playerdat.WeightCarried += (short)ObjectMass;
-            //Update weight display
-            uimanager.instance.WeightCapacity.Text = (playerdat.WeightCapacity / 0xA).ToString();   
-
+            // var ObjectMass = container.GetTotalMass(obj, UWTileMap.current_tilemap.LevelObjects, false);
+            // playerdat.WeightCarried += (short)ObjectMass;
+            // Debug.Print ($"Adding weight of {obj.a_name} {ObjectMass}");
+            // //Update weight display
+            // uimanager.RefreshWeightDisplay();
+  
             //remove from it's tile
             //var tile = UWTileMap.current_tilemap.Tiles[obj.tileX, obj.tileY];
             int nextObjectIndex = tile.indexObjectList;

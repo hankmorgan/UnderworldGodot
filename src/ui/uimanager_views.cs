@@ -305,15 +305,19 @@ namespace Underworld
                                 playerdat.ObjectInHand = -1;
                                 instance.mousecursor.SetCursorToCursor();
                                 pickup.DropSpecialCases(itemid);//primarily handle moonstones
-                                playerdat.WeightCarried -= (short)ObjectMass;
-                                //Update weight display
-                                uimanager.instance.WeightCapacity.Text = (playerdat.WeightCapacity / 0xA).ToString(); 
                             }
                         }
                         break;
                     }
             }
         }
+
+        public static void RefreshWeightDisplay()
+        {
+            uimanager.instance.WeightCapacity.Text = (playerdat.WeightCapacity / 0xA).ToString();
+            Debug.Print($"player weight capacity is now {playerdat.WeightCapacity}");
+        }
+
 
         /// <summary>
         /// Drops an object at the clicked on tile position.
