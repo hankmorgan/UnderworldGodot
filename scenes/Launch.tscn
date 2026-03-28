@@ -1,0 +1,144 @@
+[gd_scene load_steps=6 format=3 uid="uid://ba5m1urf788ey"]
+
+[ext_resource type="Script" path="res://src/ui/LaunchMenu.cs" id="1_ukjsy"]
+[ext_resource type="FontFile" uid="uid://bas6pohxbpgah" path="res://resources/fonts/FONT5X6P.ttf" id="4_pfbet"]
+[ext_resource type="Texture2D" uid="uid://ciqrdjocqcm2p" path="res://resources/splash/uw1_poster.jpg" id="22_2v7cv"]
+[ext_resource type="Texture2D" uid="uid://cxu7fxiybk3ee" path="res://resources/splash/uw2_poster.jpg" id="23_f4jqj"]
+[ext_resource type="Texture2D" uid="uid://dlhf0nj7vj1o2" path="res://resources/placeholder_art/PanelBlack.jpg" id="29_aiei8"]
+
+[node name="LaunchMenu" type="Control" node_paths=PackedStringArray("SelectUW1", "PathUW1", "SelectUW2", "PathUW2", "GameFilesSelector")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ukjsy")
+SelectUW1 = NodePath("MenuMargins/Selections/Stygian/StygianPadding/StygianPoster")
+PathUW1 = NodePath("MenuMargins/Selections/Stygian/StygianPath")
+SelectUW2 = NodePath("MenuMargins/Selections/LabyrinthItems/LabyrinthPadding/LabyrinthPoster")
+PathUW2 = NodePath("MenuMargins/Selections/LabyrinthItems/LabyrinthPath")
+GameFilesSelector = NodePath("MenuMargins/GameFilesSelector")
+
+[node name="LaunchBackground" type="TextureRect" parent="."]
+layout_mode = 2
+offset_right = 1280.0
+offset_bottom = 800.0
+texture = ExtResource("29_aiei8")
+
+[node name="MenuMargins" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 80
+theme_override_constants/margin_top = 80
+theme_override_constants/margin_right = 80
+theme_override_constants/margin_bottom = 80
+
+[node name="Selections" type="HBoxContainer" parent="MenuMargins"]
+layout_mode = 2
+theme_override_constants/separation = 80
+alignment = 1
+
+[node name="Stygian" type="VBoxContainer" parent="MenuMargins/Selections"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="StygianPadding" type="MarginContainer" parent="MenuMargins/Selections/Stygian"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="StygianPoster" type="TextureRect" parent="MenuMargins/Selections/Stygian/StygianPadding"]
+custom_minimum_size = Vector2(250, 400)
+layout_mode = 2
+focus_neighbor_right = NodePath("../../../LabyrinthItems/LabyrinthPadding/LabyrinthPoster")
+focus_neighbor_bottom = NodePath("../../StygianPath")
+focus_next = NodePath("../../StygianPath")
+focus_mode = 2
+texture = ExtResource("22_2v7cv")
+expand_mode = 4
+stretch_mode = 5
+
+[node name="StygianPath" type="TextEdit" parent="MenuMargins/Selections/Stygian"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+focus_neighbor_top = NodePath("../StygianPadding/StygianPoster")
+focus_neighbor_right = NodePath("../../LabyrinthItems/LabyrinthPath")
+focus_next = NodePath("../../LabyrinthItems/LabyrinthPadding/LabyrinthPoster")
+focus_previous = NodePath("../StygianPadding/StygianPoster")
+theme_override_fonts/font = ExtResource("4_pfbet")
+theme_override_font_sizes/font_size = 64
+text = "c:\\games\\uw1"
+editable = false
+context_menu_enabled = false
+shortcut_keys_enabled = false
+drag_and_drop_selection_enabled = false
+virtual_keyboard_enabled = false
+middle_mouse_paste_enabled = false
+autowrap_mode = 0
+
+[node name="LabyrinthItems" type="VBoxContainer" parent="MenuMargins/Selections"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="LabyrinthPadding" type="MarginContainer" parent="MenuMargins/Selections/LabyrinthItems"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="LabyrinthPoster" type="TextureRect" parent="MenuMargins/Selections/LabyrinthItems/LabyrinthPadding"]
+custom_minimum_size = Vector2(250, 400)
+layout_mode = 2
+focus_neighbor_left = NodePath("../../../Stygian/StygianPadding/StygianPoster")
+focus_neighbor_bottom = NodePath("../../LabyrinthPath")
+focus_next = NodePath("../../LabyrinthPath")
+focus_previous = NodePath("../../../Stygian/StygianPath")
+focus_mode = 2
+texture = ExtResource("23_f4jqj")
+expand_mode = 4
+stretch_mode = 5
+
+[node name="LabyrinthPath" type="TextEdit" parent="MenuMargins/Selections/LabyrinthItems"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+focus_neighbor_left = NodePath("../../Stygian/StygianPath")
+focus_neighbor_top = NodePath("../LabyrinthPadding/LabyrinthPoster")
+focus_previous = NodePath("../LabyrinthPadding/LabyrinthPoster")
+theme_override_fonts/font = ExtResource("4_pfbet")
+theme_override_font_sizes/font_size = 64
+text = "c:\\games\\uw2"
+editable = false
+context_menu_enabled = false
+shortcut_keys_enabled = false
+drag_and_drop_selection_enabled = false
+virtual_keyboard_enabled = false
+middle_mouse_paste_enabled = false
+autowrap_mode = 0
+
+[node name="GameFilesSelector" type="FileDialog" parent="MenuMargins"]
+mode = 3
+title = "Open a File"
+initial_position = 1
+size = Vector2i(1200, 700)
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+filters = PackedStringArray("uw*.exe")
+
+[connection signal="gui_input" from="MenuMargins/Selections/Stygian/StygianPadding/StygianPoster" to="." method="OnLaunchInput" binds= [1]]
+[connection signal="gui_input" from="MenuMargins/Selections/Stygian/StygianPath" to="." method="OnPathInput" binds= [1]]
+[connection signal="gui_input" from="MenuMargins/Selections/LabyrinthItems/LabyrinthPadding/LabyrinthPoster" to="." method="OnLaunchInput" binds= [2]]
+[connection signal="gui_input" from="MenuMargins/Selections/LabyrinthItems/LabyrinthPath" to="." method="OnPathInput" binds= [2]]
+[connection signal="file_selected" from="MenuMargins/GameFilesSelector" to="." method="OnGameFilesSelectorSubmitted"]
