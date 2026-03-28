@@ -5,6 +5,13 @@
 
 # Custom project settings
 uwsettings.json
+.runsettings
+.idea/
+.env
+
+# Backup files
+*.old
+*.old.*
 
 # User-specific files
 *.rsuser

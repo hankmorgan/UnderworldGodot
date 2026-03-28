@@ -117,12 +117,15 @@ See [https://godotengine.org/](https://godotengine.org/) for engine runtime down
 
 1. Clone the repository
 2. Install .Net 9.0 (https://dotnet.microsoft.com/en-us/download).
-2. Install the Godot engine (version 4.1.1) dev  https://godotengine.org/ and run it.
+3. Install the Godot engine (version 4.3.0)  https://godotengine.org/ and run it.
     > [!NOTE]
-    > You can use the [`godotenv`](https://github.com/chickensoft-games/GodotEnv) tool to help with this. Just run ``dotnet tool run godotenv godot install 4.1.1`` and ``dotnet tool run godotenv godot env setup`` then restart your shell and everything should be ready to go.
-3. Save a file called ``uwsettings.json`` in the Godot Folder. See below for format of the file
-4. Godot project will open at ``LaunchScene.tscn``. IMPORTANT: Make sure you run BUILD on the project before continuing.
-5. Run. It might work
+    > Either make sure you have a ``GODOT`` environment variable pointing to the godot executable, or manage your godot version automatically with [`godotenv`](https://github.com/chickensoft-games/GodotEnv).
+    > Just run ``dotnet tool run godotenv godot install 4.3-stable`` and ``dotnet tool run godotenv godot env setup`` then restart your shell and everything should be ready to go.
+4. Save a file called ``uwsettings.json`` in the Godot Folder. See below for format of the file.
+5. Godot project will open at ``LaunchScene.tscn``.
+    > [!IMPORTANT]
+    > Make sure you run BUILD on the project before continuing.
+6. Run. It might work
 
 This project is developed using VSCode using the C# Tools for Godot extensions. If you are configured to use Godot in VSCode then the project can alos just be compiled and ran from there.
 
@@ -254,4 +257,3 @@ The "me" mentioned in the credits is not the author of this guide. (Not Hank Mor
 ##### Other contributions to this document
 [KarlClinckspoor](https://github.com/KarlClinckspoor) on ``cmb.dat``
 Information on cutscene animation commands from khedoros at https://github.com/khedoros/uw-engine/blob/master/csparse.cpp
-
