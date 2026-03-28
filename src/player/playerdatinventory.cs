@@ -544,12 +544,6 @@ namespace Underworld
         }
 
 
-
-
-
-
-
-
         /// <summary>
         /// Removes the object data at index from the player inventory.
         /// </summary>
@@ -558,6 +552,11 @@ namespace Underworld
         {
             var obj = InventoryObjects[index];
             var next = obj.next;
+            
+            //Remove the weight from the player inventory.
+            playerdat.WeightCarried -= (short)(commonObjDat.mass(obj.item_id) * obj.ObjectQuantity);
+            Debug.Print ($"Removing weight of {obj.a_name}(x{obj.ObjectQuantity}) {commonObjDat.mass(obj.item_id) * obj.ObjectQuantity}");
+            uimanager.RefreshWeightDisplay();
 
             if (ClearLink)
             {
@@ -726,7 +725,8 @@ namespace Underworld
         public static short AddObjectToPlayerInventory(int objIndex, bool IncludeNext)
         {
             var oldObj = UWTileMap.current_tilemap.LevelObjects[objIndex];
-
+            playerdat.WeightCarried += (short)(commonObjDat.mass(oldObj.item_id) * oldObj.ObjectQuantity);
+            uimanager.RefreshWeightDisplay();
             // recursively add linked/next objects
             if (oldObj.link != 0 && oldObj.is_quant == 0)
             {
@@ -807,8 +807,14 @@ namespace Underworld
         /// <returns></returns>
         public static bool CanCarryWeight(uwObject obj)
         {
-            Debug.Print("unimplemented weight check");
-            return true;
+            if (playerdat.WeightCapacity > playerdat.WeightCarried + (commonObjDat.mass(obj.item_id) * obj.ObjectQuantity))
+            {
+                return true; //playerdat can carry weight.
+            }
+            else
+            {
+                return false; //player has no capacity to carry item    
+            }
         }
 
         /// <summary>
@@ -818,8 +824,14 @@ namespace Underworld
         /// <returns></returns>
         public static bool CanCarryWeight(int item_id)
         {
-            Debug.Print("unimplemented weight check");
-            return true;
+            if (playerdat.WeightCapacity > playerdat.WeightCarried + commonObjDat.mass(item_id))
+            {
+                return true; //playerdat can carry weight.
+            }
+            else
+            {
+                return false; //player has no capacity to carry item    
+            }
         }
 
         /// <summary>

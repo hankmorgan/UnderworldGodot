@@ -708,24 +708,24 @@ namespace Underworld
             CurrentSlot = currslot;
 
             var response = instance.TypedInput.Text;
-            if (int.TryParse(response, out int result))
+            if (int.TryParse(response, out int NoOfItemsPickedUp))
             {
-                if (result > 0)
+                if (NoOfItemsPickedUp > 0)
                 {
-                    if (objAtSlot.ObjectQuantity <= result)
+                    if (objAtSlot.ObjectQuantity <= NoOfItemsPickedUp)
                     {//at least all of the stack is selected                        
                         DoPickup(objAtSlot);
                     }
                     else
                     {
                         //if <quantity selected, split objects, pickup object of that quantity.
-                        var newObjIndex = ObjectCreator.SpawnObjectInHand(objAtSlot.item_id); //spawning in hand is very handy here
+                        var newObjIndex = ObjectCreator.SpawnObjectInHand(itemid: objAtSlot.item_id, weightmultiplier: NoOfItemsPickedUp); //spawning in hand is very handy here
                         var newObj = UWTileMap.current_tilemap.LevelObjects[newObjIndex];
-                        newObj.link = (short)result;
+                        newObj.link = (short)NoOfItemsPickedUp;
                         newObj.quality = objAtSlot.quality;
                         newObj.owner = objAtSlot.owner;
                         //TODO. see if other object properties need copying.                    
-                        objAtSlot.link = (short)(objAtSlot.link - result);//reduce the other object.
+                        objAtSlot.link = (short)(objAtSlot.link - NoOfItemsPickedUp);//reduce the other object.
                     }
                 }
             }

@@ -40,10 +40,10 @@ namespace Underworld
         /// </summary>
         /// <param name="item_id"></param>
         /// <returns></returns>
-        public static int mass(int item_id)
+        public static short mass(int item_id)
         {   //bits 4-15 at + 1
             var x = getAt(buffer, PTR(item_id) + 1, 16);
-            return (int)(x>>4 & 0xFFF);
+            return (short)(x>>4 & 0xFFF);
         }
 
         /// <summary>

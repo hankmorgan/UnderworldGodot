@@ -312,7 +312,7 @@ namespace Underworld
                             playerdat.ObjectInHand = PlayerItemIDs[extra_arg_0];
                             var obj = UWTileMap.current_tilemap.LevelObjects[playerdat.ObjectInHand];
                             mousecursor.SetCursorToObject(obj.item_id);
-                            SetPlayerTradeSlot((int)extra_arg_0, -1, false);
+                            SetPlayerTradeSlot((int)extra_arg_0, -1, false);                            
                         }
                         else
                         {
