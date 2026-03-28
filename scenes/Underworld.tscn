@@ -1295,31 +1295,31 @@ mouse_filter = 2
 
 [node name="ArmourInput" type="TextureRect" parent="UI/Common/PaperDoll"]
 layout_mode = 0
-offset_left = -25.0
-offset_top = 111.0
-offset_right = 25.0
-offset_bottom = 191.0
+offset_left = -36.0
+offset_top = 113.0
+offset_right = 34.0
+offset_bottom = 193.0
 
 [node name="LeggingsInput" type="TextureRect" parent="UI/Common/PaperDoll"]
 layout_mode = 0
 offset_left = -23.0
-offset_top = 185.0
+offset_top = 196.0
 offset_right = 27.0
-offset_bottom = 275.0
+offset_bottom = 286.0
 
 [node name="GlovesInput1" type="TextureRect" parent="UI/Common/PaperDoll"]
 layout_mode = 0
-offset_left = -54.0
+offset_left = -58.0
 offset_top = 195.0
-offset_right = -34.0
-offset_bottom = 225.0
+offset_right = -26.0
+offset_bottom = 227.0
 
 [node name="GlovesInput2" type="TextureRect" parent="UI/Common/PaperDoll"]
 layout_mode = 0
-offset_left = 32.0
+offset_left = 30.0
 offset_top = 195.0
-offset_right = 52.0
-offset_bottom = 225.0
+offset_right = 62.0
+offset_bottom = 227.0
 
 [node name="LeftShoulder" type="TextureRect" parent="UI/Common/PaperDoll"]
 layout_mode = 0
@@ -1407,17 +1407,17 @@ visible_characters = 3
 
 [node name="RightRingInput" type="TextureRect" parent="UI/Common/PaperDoll"]
 layout_mode = 0
-offset_left = -70.0
-offset_top = 227.0
-offset_right = -54.0
-offset_bottom = 243.0
+offset_left = -78.0
+offset_top = 222.0
+offset_right = -46.0
+offset_bottom = 254.0
 
 [node name="LeftRingInput" type="TextureRect" parent="UI/Common/PaperDoll"]
 layout_mode = 0
-offset_left = 54.0
-offset_top = 228.0
-offset_right = 70.0
-offset_bottom = 244.0
+offset_left = 47.0
+offset_top = 222.0
+offset_right = 79.0
+offset_bottom = 254.0
 
 [node name="BackPackBG" type="TextureRect" parent="UI/Common/PaperDoll"]
 layout_mode = 0
@@ -2795,7 +2795,7 @@ LeftHand = NodePath("../Common/PaperDoll/LeftHand")
 LeftHandQTY = NodePath("../Common/PaperDoll/LeftHand/lblLeftHand")
 RightRing = NodePath("../Common/PaperDoll/RightRing")
 RightRingInput = NodePath("../Common/PaperDoll/RightRingInput")
-LeftRing = NodePath("../Common/PaperDoll/LeftRingInput")
+LeftRing = NodePath("../Common/PaperDoll/LeftRing")
 LeftRingInput = NodePath("../Common/PaperDoll/LeftRingInput")
 Backpack = [NodePath("../Common/PaperDoll/Back0"), NodePath("../Common/PaperDoll/Back1"), NodePath("../Common/PaperDoll/Back2"), NodePath("../Common/PaperDoll/Back3"), NodePath("../Common/PaperDoll/Back4"), NodePath("../Common/PaperDoll/Back5"), NodePath("../Common/PaperDoll/Back6"), NodePath("../Common/PaperDoll/Back7")]
 BackpackQTY = [NodePath("../Common/PaperDoll/Back0/lblBack0"), NodePath("../Common/PaperDoll/Back1/lblBack1"), NodePath("../Common/PaperDoll/Back2/lblBack2"), NodePath("../Common/PaperDoll/Back3/lblBack3"), NodePath("../Common/PaperDoll/Back4/lblBack4"), NodePath("../Common/PaperDoll/Back5/lblBack5"), NodePath("../Common/PaperDoll/Back6/lblBack6"), NodePath("../Common/PaperDoll/Back7/lblBack7")]
