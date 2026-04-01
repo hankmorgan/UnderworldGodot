@@ -2434,7 +2434,6 @@ theme_override_font_sizes/normal_font_size = 48
 text = "Cutscene Subtitle"
 
 [node name="MainMenu" type="Panel" parent="UI/Common"]
-visible = false
 self_modulate = Color(1, 1, 1, 0)
 offset_right = 40.0
 offset_bottom = 40.0
@@ -2493,47 +2492,47 @@ text = "You reenter the abyss..."
 
 [node name="Save1" type="Label" parent="UI/Common/MainMenu"]
 layout_mode = 0
-offset_left = 525.0
 offset_top = 365.0
-offset_right = 717.0
+offset_right = 1280.0
 offset_bottom = 430.0
 mouse_filter = 1
 theme_override_fonts/font = ExtResource("5_kj12g")
 theme_override_font_sizes/font_size = 65
 text = "SAVE1"
+horizontal_alignment = 1
 
 [node name="Save2" type="Label" parent="UI/Common/MainMenu"]
 layout_mode = 0
-offset_left = 525.0
 offset_top = 459.0
-offset_right = 717.0
+offset_right = 1280.0
 offset_bottom = 524.0
 mouse_filter = 1
 theme_override_fonts/font = ExtResource("5_kj12g")
 theme_override_font_sizes/font_size = 65
 text = "SAVE1"
+horizontal_alignment = 1
 
 [node name="Save3" type="Label" parent="UI/Common/MainMenu"]
 layout_mode = 0
-offset_left = 524.0
 offset_top = 558.0
-offset_right = 716.0
+offset_right = 1280.0
 offset_bottom = 623.0
 mouse_filter = 1
 theme_override_fonts/font = ExtResource("5_kj12g")
 theme_override_font_sizes/font_size = 65
 text = "SAVE1"
+horizontal_alignment = 1
 
 [node name="Save4" type="Label" parent="UI/Common/MainMenu"]
 layout_mode = 0
-offset_left = 524.0
 offset_top = 648.0
-offset_right = 716.0
+offset_right = 1280.0
 offset_bottom = 713.0
 mouse_filter = 1
 theme_override_fonts/font = ExtResource("5_kj12g")
 theme_override_font_sizes/font_size = 65
 text = "SAVE1"
+horizontal_alignment = 1
 
 [node name="TypedInput" type="LineEdit" parent="UI/Common"]
 offset_left = 81.0
