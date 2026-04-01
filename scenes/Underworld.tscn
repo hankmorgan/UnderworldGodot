@@ -1832,147 +1832,149 @@ offset_right = 166.0
 offset_bottom = 484.0
 texture = ExtResource("24_filpa")
 
-[node name="Charname" type="Label" parent="UI/Common/StatsDisplay"]
+[node name="Charname" type="RichTextLabel" parent="UI/Common/StatsDisplay"]
 layout_mode = 0
 offset_left = -150.0
 offset_top = 31.0
 offset_right = 150.0
 offset_bottom = 96.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_safdl")
-theme_override_font_sizes/font_size = 64
+theme_override_fonts/normal_font = ExtResource("3_safdl")
+theme_override_font_sizes/normal_font_size = 64
+bbcode_enabled = true
 text = "Gronk"
-horizontal_alignment = 1
+scroll_active = false
 
-[node name="CharClass" type="Label" parent="UI/Common/StatsDisplay"]
+[node name="CharClass" type="RichTextLabel" parent="UI/Common/StatsDisplay"]
 layout_mode = 0
 offset_left = -136.0
 offset_top = 64.0
 offset_right = 164.0
 offset_bottom = 129.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_safdl")
-theme_override_font_sizes/font_size = 64
+theme_override_fonts/normal_font = ExtResource("3_safdl")
+theme_override_font_sizes/normal_font_size = 64
+bbcode_enabled = true
 text = "Avatar"
+scroll_active = false
 
-[node name="CharLevel" type="Label" parent="UI/Common/StatsDisplay"]
+[node name="CharLevel" type="RichTextLabel" parent="UI/Common/StatsDisplay"]
 layout_mode = 0
 offset_left = 50.0
 offset_top = 66.0
 offset_right = 134.0
 offset_bottom = 131.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_safdl")
-theme_override_font_sizes/font_size = 64
+theme_override_fonts/normal_font = ExtResource("3_safdl")
+theme_override_font_sizes/normal_font_size = 64
+bbcode_enabled = true
 text = "00th"
-horizontal_alignment = 2
+scroll_active = false
 
-[node name="STR" type="Label" parent="UI/Common/StatsDisplay"]
+[node name="STR" type="RichTextLabel" parent="UI/Common/StatsDisplay"]
 layout_mode = 0
 offset_left = 84.0
 offset_top = 94.0
 offset_right = 136.0
 offset_bottom = 159.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_safdl")
-theme_override_font_sizes/font_size = 64
+theme_override_fonts/normal_font = ExtResource("3_safdl")
+theme_override_font_sizes/normal_font_size = 64
+bbcode_enabled = true
 text = "00"
-horizontal_alignment = 2
+scroll_active = false
 
-[node name="DEX" type="Label" parent="UI/Common/StatsDisplay"]
+[node name="DEX" type="RichTextLabel" parent="UI/Common/StatsDisplay"]
 layout_mode = 0
 offset_left = 84.0
 offset_top = 122.0
 offset_right = 136.0
 offset_bottom = 187.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_safdl")
-theme_override_font_sizes/font_size = 64
+theme_override_fonts/normal_font = ExtResource("3_safdl")
+theme_override_font_sizes/normal_font_size = 64
+bbcode_enabled = true
 text = "00"
-horizontal_alignment = 2
+scroll_active = false
 
-[node name="INT" type="Label" parent="UI/Common/StatsDisplay"]
+[node name="INT" type="RichTextLabel" parent="UI/Common/StatsDisplay"]
 layout_mode = 0
 offset_left = 84.0
 offset_top = 150.0
 offset_right = 136.0
 offset_bottom = 215.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_safdl")
-theme_override_font_sizes/font_size = 64
+theme_override_fonts/normal_font = ExtResource("3_safdl")
+theme_override_font_sizes/normal_font_size = 64
+bbcode_enabled = true
 text = "00"
-horizontal_alignment = 2
+scroll_active = false
 
-[node name="VIT" type="Label" parent="UI/Common/StatsDisplay"]
+[node name="VIT" type="RichTextLabel" parent="UI/Common/StatsDisplay"]
 layout_mode = 0
 offset_left = 16.0
 offset_top = 177.0
 offset_right = 136.0
 offset_bottom = 242.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_safdl")
-theme_override_font_sizes/font_size = 64
+theme_override_fonts/normal_font = ExtResource("3_safdl")
+theme_override_font_sizes/normal_font_size = 64
+bbcode_enabled = true
 text = "00/00"
-horizontal_alignment = 2
+scroll_active = false
 
-[node name="MANA" type="Label" parent="UI/Common/StatsDisplay"]
+[node name="MANA" type="RichTextLabel" parent="UI/Common/StatsDisplay"]
 layout_mode = 0
 offset_left = 16.0
 offset_top = 204.0
 offset_right = 136.0
 offset_bottom = 269.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_safdl")
-theme_override_font_sizes/font_size = 64
+theme_override_fonts/normal_font = ExtResource("3_safdl")
+theme_override_font_sizes/normal_font_size = 64
+bbcode_enabled = true
 text = "00/00"
-horizontal_alignment = 2
+scroll_active = false
 
-[node name="EXP" type="Label" parent="UI/Common/StatsDisplay"]
+[node name="EXP" type="RichTextLabel" parent="UI/Common/StatsDisplay"]
 layout_mode = 0
 offset_left = 16.0
 offset_top = 232.0
 offset_right = 136.0
 offset_bottom = 297.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_safdl")
-theme_override_font_sizes/font_size = 64
+theme_override_fonts/normal_font = ExtResource("3_safdl")
+theme_override_font_sizes/normal_font_size = 64
+bbcode_enabled = true
 text = "00000"
-horizontal_alignment = 2
+scroll_active = false
 
-[node name="StatNames" type="Label" parent="UI/Common/StatsDisplay"]
+[node name="StatNames" type="RichTextLabel" parent="UI/Common/StatsDisplay"]
 layout_mode = 0
 offset_left = -137.0
 offset_top = 272.0
 offset_right = 63.0
 offset_bottom = 452.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_constants/line_spacing = -21
-theme_override_fonts/font = ExtResource("3_safdl")
-theme_override_font_sizes/font_size = 64
+theme_override_constants/line_separation = -20
+theme_override_fonts/normal_font = ExtResource("3_safdl")
+theme_override_font_sizes/normal_font_size = 64
+bbcode_enabled = true
 text = "00000
 00001
 00002
 00003
 00004
 00005"
+scroll_active = false
 
-[node name="StatValues" type="Label" parent="UI/Common/StatsDisplay"]
+[node name="StatValues" type="RichTextLabel" parent="UI/Common/StatsDisplay"]
 layout_mode = 0
 offset_left = 52.0
 offset_top = 272.0
 offset_right = 132.0
 offset_bottom = 452.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_constants/line_spacing = -21
-theme_override_fonts/font = ExtResource("3_safdl")
-theme_override_font_sizes/font_size = 64
+theme_override_constants/line_separation = -20
+theme_override_fonts/normal_font = ExtResource("3_safdl")
+theme_override_font_sizes/normal_font_size = 64
+bbcode_enabled = true
 text = "00
 01
 02
 03
 04
 05"
-horizontal_alignment = 2
+scroll_active = false
 
 [node name="StatsUp" type="TextureRect" parent="UI/Common/StatsDisplay"]
 layout_mode = 0
