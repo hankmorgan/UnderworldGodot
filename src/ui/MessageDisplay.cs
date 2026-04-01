@@ -10,6 +10,22 @@ namespace Underworld
     /// </summary>
     public class MessageDisplay
     {
+        string DefaultSay
+        {
+            get
+            {
+                if (UWClass._RES == UWClass.GAME_UW2)
+                {
+                    var col = PaletteLoader.Palettes[0].ColorAtIndex(0x76,false,false);
+                    return $"#{col.R8.ToString("X2")}{col.G8.ToString("X2")}{col.B8.ToString("X2")}";
+                }
+                else
+                {
+                    var col = PaletteLoader.Palettes[0].ColorAtIndex(0x2e,false,false);
+                    return $"#{col.R8.ToString("X2")}{col.G8.ToString("X2")}{col.B8.ToString("X2")}";
+                }
+            }
+        }
         public enum MessageDisplayMode
         {
             NormalMode = 0,
@@ -61,7 +77,7 @@ namespace Underworld
                 case ConversationVM.PC_SAY:
                     newText = $"[color=#883E14]{newText}[/color]";
                     break;
-                case ConversationVM.PRINT_SAY:
+                case ConversationVM.PRINT_SAY:                    
                     newText = $"[color=black]{newText}[/color]";
                     break;
                 case ConversationVM.UI_SAY:
@@ -69,7 +85,7 @@ namespace Underworld
                     break;
                 case ConversationVM.NPC_SAY:
                 default:
-                    newText = $"[color=#331C13]{newText}[/color]";
+                    newText = $"[color={DefaultSay}]{newText}[/color]";  //#331C13
                     break;
             }
             if (LinePtr <= Lines.GetUpperBound(0))
