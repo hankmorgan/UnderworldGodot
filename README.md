@@ -13,7 +13,10 @@
     - [Movement](#movement)
     - [Modes](#modes)
     - [Cheats](#cheats)
+  - [Music](#music)
   - [Code Contributions](#code-contributions)
+    - [Referenced code projects](#referenced-code-projects)
+  - [AI Policy](#ai-policy)
 - [Appendix](#appendix)
   - [Guide to the Underworld and Reverse Engineering](#guide-to-the-underworld-and-reverse-engineering)
   - [Sources/Previous Projects](#sourcesprevious-projects)
@@ -42,7 +45,6 @@ This project is largely based on the previous reverse engineering work undertake
 This is currently pre-alpha. No support is provided for it and usage is at your own risk. Please don't download this version and expect it to be usable in anyway. Think of it as a interactive map viewer with a lot of game logic implemented
 
 Requires game files for either UW1 or UW2. GOG versions need to be extracted using a zip extracter (eg 7-Zip) from the game.gog file
-
 
 ## Current features
 * Map loading
@@ -85,10 +87,12 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * Most NPC AI, movement and pathfinding
 * NPC Combat Actions
 * Player movement and collision (with a lot of jank attached incl framerate/speed issues)
+* Speech from VOC files
+* Music conversion from XMI to WAV for runtime loading of music. (partial implementation currently of just the main intro themes)
 
 ## Whats missing
 
-* Sound and music
+* Foley sound effects.
 * Sprite transparencies
 * Saving  
 * Cutscene bitmap scrolling
@@ -135,7 +139,7 @@ Enter optional paths for each game. Select the folder with the .exe file.
 If using the gog versions extract the file ``game.gog`` using a tool like 7-zip and point to that folder.
 
 To select maps to load.
-1. Choose the game mode by editing the gametoload param in the file ``uwsettings.json``. This file should be located in the same path as Godot or a built exe.
+1. Choose the game mode by editing the gametoload param in the file ``uwsettings.json``. This file should be located in the same path as Godot or a built exe, or in recent version at %AppData%\Roaming\Godot\app_userdata\Underworld
    1.  UW1 or UW2 are the valid values.
 2. Enter the level number. Values start at 0.
 3. Other values
@@ -180,10 +184,25 @@ F12 Debug process SCD.ARK events
 ### Cheats
 Tilde (~) Give all runestones, 30 mana and maximise mage skills.
 
+## Music
+Music themes can now be loaded. This relies on the Ùnderworld project referencing libADLMIDI via the AdlMidi wrapper project at https://github.com/csinkers/AdlMidi.NET 
+Themes are converted at runtime into .wav files which can them be loaded via the XMIMusic class ``ChangeTheme`` function.
+
 ## Code Contributions
 Additional code has been directly contributed by the following. Thanks to these contributors for their efforts.
 * Peter Cummuskey <github.com/Tzrlk>
 * Shortbeard <github.com/ShortBeard>
+
+### Referenced code projects
+AdlMidi.NET
+https://github.com/csinkers/AdlMidi.NET
+
+Peaky GodotCoroutineslikeUnity
+https://godotengine.org/asset-library/asset/2144
+
+## AI Policy
+
+This project is an (ocassionally) fun hobby for me and is focused on the creation of a vanilla/vanilla plus implementation of Underworld that is closely tied to the original look and feel of the games. It is not planned to support use of AI upscaled assets or other AI generated artifacts within this project.
 
 # Appendix
 ## Guide to the Underworld and Reverse Engineering

@@ -42,7 +42,8 @@ public partial class main : Node3D
 	// Called when the node enters the scene tree for the first time.
 	[Export] public Camera3D cam;
 	public static Camera3D gamecam; //static ref to the above camera
-	[Export] public AudioStreamPlayer audioplayer;
+	[Export] public AudioStreamPlayer DigitalAudioPlayer;
+	[Export] public AudioStreamPlayer MusicPlayer;
 	[Export] public RichTextLabel lblPositionDebug;
 	//[Export] public uimanager uwUI;
 
@@ -109,13 +110,27 @@ public partial class main : Node3D
 				Debug.Print("UIManager is still null!!");
 			}
 		}
+		//Init Music
+		Underworld.XMIMusic.ConvertXMIMusic();
+		//Play intro themes
+		switch(Loader._RES)
+		{
+			case Loader.GAME_UW2:
+				Underworld.XMIMusic.ChangeTheme("UWA01.WAV");
+				break;
+			default:
+				Underworld.XMIMusic.ChangeTheme("UW01.WAV");				
+				break;
+		}
+  
+
 		gamecam.Fov = Math.Max(50, uwsettings.instance.FOV);
 		uimanager.EnableDisable(instance.lblPositionDebug, EnablePositionDebug);
 		ObjectCreator.grObjects = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
 		ObjectCreator.grObjects.UseRedChannel = true;
 		ObjectCreator.grObjects.UseCropping = true;
 		Palette.CurrentPalette = 0;
-		uimanager.instance.InitUI();
+		uimanager.instance.InitUI();		
 		uimanager.AddToMessageScroll(GameStrings.GetString(1, 13));//welcome message
 	}
 

@@ -33,10 +33,11 @@ shader = ExtResource("6_x6exc")
 
 [node name="Underworld" type="Node3D"]
 
-[node name="main" type="Node3D" parent="." node_paths=PackedStringArray("cam", "audioplayer", "lblPositionDebug", "secondarycameras")]
+[node name="main" type="Node3D" parent="." node_paths=PackedStringArray("cam", "DigitalAudioPlayer", "MusicPlayer", "lblPositionDebug", "secondarycameras")]
 script = ExtResource("6_3y8oy")
 cam = NodePath("../WorldViewContainer/SubViewport/Camera3D")
-audioplayer = NodePath("../UI/AudioPlayer")
+DigitalAudioPlayer = NodePath("../UI/DigitalAudioPlayer")
+MusicPlayer = NodePath("../UI/MusicPlayer")
 lblPositionDebug = NodePath("../UI/Common/PositionLabel")
 secondarycameras = NodePath("../WorldViewContainer/SubViewport")
 
@@ -63,8 +64,12 @@ shape = SubResource("CapsuleShape3D_1c8r5")
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
 
-[node name="AudioPlayer" type="AudioStreamPlayer" parent="UI"]
+[node name="DigitalAudioPlayer" type="AudioStreamPlayer" parent="UI"]
 stream = SubResource("AudioStreamWAV_tkk82")
+
+[node name="MusicPlayer" type="AudioStreamPlayer" parent="UI"]
+stream = SubResource("AudioStreamWAV_tkk82")
+playback_type = 1
 
 [node name="UW1" type="CanvasLayer" parent="UI"]
 
