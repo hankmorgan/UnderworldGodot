@@ -13,6 +13,8 @@ namespace Underworld
             {
                 var worldno = worlds.GetWorldNo(playerdat.dungeon_level);
                 uimanager.DrawAutoMap(playerdat.dungeon_level-1, worldno);
+                //TODO: if a theme such as the combat theme is playing then that theme will be overridden by an exploration theme. 
+                
             }
             else
             {

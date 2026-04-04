@@ -195,11 +195,11 @@ namespace Underworld
                 UW2OptionButtons[(int)OptionButtonIndices.VHighDetailOff] = ArtLoader.CropImage(grOptBtns.LoadImageAt(4).GetImage(), croppingareas[5]);
                 UW2OptionButtons[(int)OptionButtonIndices.VHighDetailOn] = ArtLoader.CropImage(grOptBtns.LoadImageAt(9).GetImage(), croppingareas[5]);
                 UW2OptionButtons[(int)OptionButtonIndices.RestoreGameLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(14).GetImage(), croppingareas[7]);
-                UW2OptionButtons[(int)OptionButtonIndices.MusicIsOnLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(15).GetImage(), croppingareas[7]);
-                UW2OptionButtons[(int)OptionButtonIndices.MusicIsOffLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(15).GetImage(), croppingareas[6]);
+                UW2OptionButtons[(int)OptionButtonIndices.MusicIsOnLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(15).GetImage(), croppingareas[8]);
+                UW2OptionButtons[(int)OptionButtonIndices.MusicIsOffLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(15).GetImage(), croppingareas[7]);
                 UW2OptionButtons[(int)OptionButtonIndices.SoundIsOnLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(15).GetImage(), croppingareas[9]);
                 UW2OptionButtons[(int)OptionButtonIndices.SoundIsOffLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(15).GetImage(), croppingareas[8]);
-                UW2OptionButtons[(int)OptionButtonIndices.TurnMusicLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(12).GetImage(), croppingareas[7]);
+                UW2OptionButtons[(int)OptionButtonIndices.TurnMusicLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(7).GetImage(), croppingareas[1]);
                 UW2OptionButtons[(int)OptionButtonIndices.TurnSoundLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(14).GetImage(), croppingareas[8]);
                 UW2OptionButtons[(int)OptionButtonIndices.DetailLowLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(13).GetImage(), croppingareas[6]);
                 UW2OptionButtons[(int)OptionButtonIndices.DetailMedLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(13).GetImage(), croppingareas[7]);
@@ -309,6 +309,33 @@ namespace Underworld
                                         listsaves();
                                         break;
                                     }
+                                case 2: // switch to music options
+                                    {
+                                        CurrentGameOptionMenu = OptionMenus.MusicMenu;
+                                        SetGameOptionsBackground((int)OptionButtonIndices.MusicButtons);
+                                        if (playerdat.MusicEnabled)
+                                        {
+                                            SetGameOptionButtons(new int[]{
+                                                (int)OptionButtonIndices.MusicIsOnLabel,
+                                                (int)OptionButtonIndices.TurnMusicLabel,
+                                                (int)OptionButtonIndices.OnButtonOn,
+                                                (int)OptionButtonIndices.OffButtonOff,
+                                                (int)OptionButtonIndices.DoneOff,
+                                                -1,-1 });
+                                        }
+                                        else
+                                        {
+                                            SetGameOptionButtons(new int[]{
+                                                (int)OptionButtonIndices.MusicIsOffLabel,
+                                                (int)OptionButtonIndices.TurnMusicLabel,
+                                                (int)OptionButtonIndices.OnButtonOff,
+                                                (int)OptionButtonIndices.OffButtonOn,
+                                                (int)OptionButtonIndices.DoneOff,
+                                                -1,-1 });
+                                        }
+
+                                        break;
+                                    }
                                 case 5: // return to game
                                     {
                                         ReturnToGameFromOptions();
@@ -357,6 +384,47 @@ namespace Underworld
                                         break;
                                     }
                                 case 5://cancel and return to top
+                                    {
+                                        ReturnToTopOptionsMenu();
+                                        break;
+                                    }
+                            }
+                            break;
+                        }
+                    case OptionMenus.MusicMenu:
+                        {
+                            switch (extra_arg_0)
+                            {
+                                case 2://turn on
+                                    {
+                                        playerdat.MusicEnabled = true;
+                                        if (!main.instance.MusicPlayer.Playing)
+                                        {//restart music if not already playing.
+                                            XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic());
+                                        }
+                                        SetGameOptionButtons(new int[]{
+                                                (int)OptionButtonIndices.MusicIsOnLabel,
+                                                (int)OptionButtonIndices.TurnMusicLabel,
+                                                (int)OptionButtonIndices.OnButtonOn,
+                                                (int)OptionButtonIndices.OffButtonOff,
+                                                (int)OptionButtonIndices.DoneOff,
+                                                -1,-1 });
+                                        break;
+                                    }
+                                case 3: //turn off
+                                    {
+                                        playerdat.MusicEnabled = false;
+                                        main.instance.MusicPlayer.Stop();
+                                        SetGameOptionButtons(new int[]{
+                                            (int)OptionButtonIndices.MusicIsOffLabel,
+                                            (int)OptionButtonIndices.TurnMusicLabel,
+                                            (int)OptionButtonIndices.OnButtonOff,
+                                            (int)OptionButtonIndices.OffButtonOn,
+                                            (int)OptionButtonIndices.DoneOff,
+                                            -1,-1 });
+                                        break;
+                                    }
+                                case 4: // done
                                     {
                                         ReturnToTopOptionsMenu();
                                         break;

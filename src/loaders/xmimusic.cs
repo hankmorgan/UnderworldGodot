@@ -5,8 +5,7 @@ using System.Runtime.InteropServices;
 using ADLMidi.NET;
 using SerdesNet;
 using System;
-using System.Data;
-using System.Xml.Linq;
+
 
 namespace Underworld
 {
@@ -67,12 +66,16 @@ namespace Underworld
         /// </summary>
         /// <param name="filename"></param>
         public static void ChangeTheme(string filename)
-        {
+        {   
+            if (!playerdat.MusicEnabled)
+            {
+                return;
+            }
             filename = filename.ToUpper().Replace(".XMI",".WAV");//since I keep putting in XMI instead of WAV this will always force the WAV version to play...
             //var Result = new AudioSample();
             var fullPath = Path.Combine(ProjectSettings.GlobalizePath("user://"), _RES.ToString(), "SOUND", filename); 
             if (File.Exists(fullPath))
-            {
+            {                
                 var stream = new AudioStreamWav();
                 stream.Data = File.ReadAllBytes(fullPath);//TODO: cache these themes
                 stream.Format = AudioStreamWav.FormatEnum.Format16Bits;
