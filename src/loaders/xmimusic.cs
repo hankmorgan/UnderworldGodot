@@ -15,7 +15,7 @@ namespace Underworld
     public class XMIMusic : UWClass
     {      
         public static byte CurrentThemeNo;
-
+        public static bool LoopTheme = false;
         static byte[] UW2WorldThemes = [0xA, 0xC, 0xE, 0x9, 0xA, 0xF, 0xB, 0xD, 0xA, 0xC, 0xD, 0x9, 0x8, 0xB, 0xE, 0xD, 0x8, 0xF, 0xE, 0x9, 0x8, 0xF, 0xB, 0xA, 0x8, 0xC, 0x9];
         static int CurrentWorldTheme;
         const int SampleRate = 44100;
@@ -41,22 +41,36 @@ namespace Underworld
         public const byte IntroTheme = 1;
         public const byte MapsAndLegends = 15;// UW1 specific conversations and maps viewing them
 
+        public static byte Armed
+        {
+            get
+            {
+                if (_RES==GAME_UW2)
+                {
+                    return 5;
+                }
+                else
+                {
+                    return 10;
+                }
+            }
+        } 
 
 
         /// <summary>
         /// Changes the music theme that is playing based on theme file number.
         /// </summary>
         /// <param name="themeNo"></param>
-        public static void ChangeTheme(byte themeNo)
+        public static void ChangeTheme(byte themeNo, bool Loop = false)
         {
             CurrentThemeNo = themeNo;
             switch(_RES)
             {
                 case GAME_UW2:
-                    ChangeTheme($"UWA{themeNo:D2}.WAV");//TODO provide a way to choose between playing UWAxx.xmi or UWRxx.xmi)
+                    ChangeTheme($"UWA{themeNo:D2}.WAV",Loop);//TODO provide a way to choose between playing UWAxx.xmi or UWRxx.xmi)
                     break;
                 default:
-                    ChangeTheme($"UW{themeNo:D2}.WAV");
+                    ChangeTheme($"UW{themeNo:D2}.WAV",Loop);
                     break;
             }
         }
@@ -65,7 +79,7 @@ namespace Underworld
         /// Changes the theme that is playing based on the .WAV filename.
         /// </summary>
         /// <param name="filename"></param>
-        public static void ChangeTheme(string filename)
+        static void ChangeTheme(string filename, bool Loop = false)
         {   
             if (!playerdat.MusicEnabled)
             {
@@ -82,6 +96,7 @@ namespace Underworld
                 stream.Stereo = true;
                 stream.MixRate = SampleRate;
                 main.instance.MusicPlayer.Stream = stream;
+                LoopTheme = Loop;
                 main.instance.MusicPlayer.Play(); 
             }
             else

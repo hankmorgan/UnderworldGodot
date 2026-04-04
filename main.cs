@@ -1163,7 +1163,14 @@ public partial class main : Node3D
 	public static void _on_music_player_finished()
 	{
 		Debug.Print("Music finished, picking next theme");
-		XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic());
+		if (XMIMusic.LoopTheme)
+		{
+			main.instance.MusicPlayer.Play();//restart the playing theme, used mainly for the armed theme
+		}
+		else
+		{
+			XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic());
+		}
 	}
 
 }//end class

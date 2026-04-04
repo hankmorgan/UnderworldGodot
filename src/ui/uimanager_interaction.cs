@@ -223,6 +223,7 @@ namespace Underworld
                     {
                         PreviousWeaponAnimation = -1; //force redraw.
                         playerdat.play_drawn = 1;//draw the weapon
+                        XMIMusic.ChangeTheme(themeNo: XMIMusic.Armed, Loop: true);
                         var obj = playerdat.PrimaryHandObject;
                         switch (combat.isWeapon(obj))
                         {
@@ -236,6 +237,7 @@ namespace Underworld
                     }
                 default:
                     playerdat.play_drawn = 0; //ensure weapon is not drawn.
+                    XMIMusic.PickLevelThemeMusic(); //in future this needs to take into account combat state.
                     break;
 
             }
