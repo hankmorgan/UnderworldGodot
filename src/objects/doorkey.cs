@@ -83,7 +83,7 @@ namespace Underworld
                         a_lock.SetIsLocked(targetObject, false, 0);
                        // doorInstance.Locked = false;
                         door.ToggleDoor(targetObject);
-                        uimanager.AddToMessageScroll(GameStrings.GetString(1, 4));
+                        uimanager.AddToMessageScroll(GameStrings.GetString(1, 5));
                     }
                     else
                     {
@@ -100,6 +100,7 @@ namespace Underworld
                         //lock door
                         //doorInstance.Locked = true;
                         a_lock.SetIsLocked(targetObject, true, 0);
+                        uimanager.AddToMessageScroll(GameStrings.GetString(1, 4));
                     }
                     else
                     {

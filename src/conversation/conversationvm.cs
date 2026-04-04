@@ -9,10 +9,10 @@ namespace Underworld
 	/// </summary>
 	public partial class ConversationVM : UWClass
 	{
-		public static bool InConversation = false;				
-				
+		public static bool InConversation = false;
+
 		public static bool TemporaryTalker = false;
-	
+
 		/// <summary>
 		/// The currently referenced conversation.
 		/// </summary>
@@ -32,7 +32,7 @@ namespace Underworld
 		//To handle teleportation requests for the player
 		static bool DoTeleport = false;
 		static int TeleportToLevel = -1;
-		static int TeleportTileX = - 1;
+		static int TeleportTileX = -1;
 		static int TeleportTileY = -1;
 
 		public static IEnumerator RunConversationVM(uwObject talker)
@@ -548,7 +548,7 @@ namespace Underworld
 
 				// process next instruction or decide if finished.
 				instrp++;
-				if ((instrp > currentConversation.instuctions.GetUpperBound(0)) || (instrp<0))
+				if ((instrp > currentConversation.instuctions.GetUpperBound(0)) || (instrp < 0))
 				{//if out of bounds safely end conversation
 					Debug.Print($"Conversation has gone out of bounds!");
 					finished = true;
@@ -565,6 +565,12 @@ namespace Underworld
 
 		private static void ExitConversation(uwObject talker, Conversation conv)
 		{
+
+			if (UWClass._RES != UWClass.GAME_UW2)
+			{
+				XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic());//restart a music theme for UW1 as maps&legends plays for convos in UW1 only.
+			}
+
 			ExportVariables(talker);
 			uimanager.EnableDisable(uimanager.instance.ConversationPanelUW1, false);
 			uimanager.EnableDisable(uimanager.instance.ConversationPanelUW2, false);
@@ -579,15 +585,15 @@ namespace Underworld
 				{//disable interaction buttons
 					uimanager.EnableDisable(uimanager.instance.InteractionButtonsUW2[i], true);
 				}
-				uimanager.EnableDisable(uimanager.instance.CompassPanelUW2,true);
-				uimanager.EnableDisable(uimanager.instance.PowerGemUW2,true);
-				uimanager.instance.messageScrollUW2.Size = new Godot.Vector2(840,140);
-				uimanager.instance.scroll.Columns = 44;				
-			}			
+				uimanager.EnableDisable(uimanager.instance.CompassPanelUW2, true);
+				uimanager.EnableDisable(uimanager.instance.PowerGemUW2, true);
+				uimanager.instance.messageScrollUW2.Size = new Godot.Vector2(840, 140);
+				uimanager.instance.scroll.Columns = 44;
+			}
 			if (TemporaryTalker)
 			{
 				//a talking door or a wisp. remove the temporary NPC
-				ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(talker.tileX,talker.tileY,talker.index, true);
+				ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(talker.tileX, talker.tileY, talker.index, true);
 			}
 			TemporaryTalker = false;
 			for (int i = 0; i < uimanager.NoOfTradeSlots; i++)
@@ -595,7 +601,7 @@ namespace Underworld
 				var objindex = uimanager.GetPlayerTradeSlot(i, true);
 				if (objindex != -1)
 				{
-					var tile = UWTileMap.current_tilemap.Tiles[playerdat.playerObject.tileX,playerdat.playerObject.tileY];
+					var tile = UWTileMap.current_tilemap.Tiles[playerdat.playerObject.tileX, playerdat.playerObject.tileY];
 					UWTileMap.GetRandomXYZForTile(tile, out int newxpos, out int newypos, out int newzpos);
 					var dropcoordinate = uwObject.GetCoordinate(playerdat.playerObject.tileX, playerdat.playerObject.tileY, newxpos, newypos, newzpos);
 
@@ -612,10 +618,10 @@ namespace Underworld
 
 			if (_RES == GAME_UW2)
 			{
-				if (playerdat.GetQuest(143)!=0)
+				if (playerdat.GetQuest(143) != 0)
 				{
 					Debug.Print($"Play cutscene no {playerdat.GetQuest(143)}");
-					playerdat.SetQuest(143,0);
+					playerdat.SetQuest(143, 0);
 				}
 
 				//Process scd.ark
@@ -629,7 +635,7 @@ namespace Underworld
 				if (UWTileMap.ValidTile(TeleportTileX, TeleportTileY))
 				{
 					Teleportation.Teleport(0, TeleportTileX, TeleportTileY, TeleportToLevel, 0);
-				}				
+				}
 			}
 			currentTalker = null;
 		}

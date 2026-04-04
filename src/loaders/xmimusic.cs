@@ -1,12 +1,12 @@
 using System.IO;
 using System.Diagnostics;
 using Godot;
-using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
 using ADLMidi.NET;
 using SerdesNet;
 using System;
+using System.Data;
+using System.Xml.Linq;
 
 namespace Underworld
 {
@@ -14,7 +14,11 @@ namespace Underworld
     /// Converts the UW xmi files to WAV files. Based on example implementation from ADLMidi https://github.com/csinkers/AdlMidi.NET
     /// </summary>
     public class XMIMusic : UWClass
-    {
+    {      
+        public static byte CurrentThemeNo;
+
+        static byte[] UW2WorldThemes = [0xA, 0xC, 0xE, 0x9, 0xA, 0xF, 0xB, 0xD, 0xA, 0xC, 0xD, 0x9, 0x8, 0xB, 0xE, 0xD, 0x8, 0xF, 0xE, 0x9, 0x8, 0xF, 0xB, 0xA, 0x8, 0xC, 0x9];
+        static int CurrentWorldTheme;
         const int SampleRate = 44100;
         static double _time;
 
@@ -33,8 +37,38 @@ namespace Underworld
             }
         }
 
+
+        //Playlists, returns a possibly random theme tune to play in a particular scenario.
+        public const byte IntroTheme = 1;
+        public const byte MapsAndLegends = 15;// UW1 specific conversations and maps viewing them
+
+
+
+        /// <summary>
+        /// Changes the music theme that is playing based on theme file number.
+        /// </summary>
+        /// <param name="themeNo"></param>
+        public static void ChangeTheme(byte themeNo)
+        {
+            CurrentThemeNo = themeNo;
+            switch(_RES)
+            {
+                case GAME_UW2:
+                    ChangeTheme($"UWA{themeNo:D2}.WAV");//TODO provide a way to choose between playing UWAxx.xmi or UWRxx.xmi)
+                    break;
+                default:
+                    ChangeTheme($"UW{themeNo:D2}.WAV");
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Changes the theme that is playing based on the .WAV filename.
+        /// </summary>
+        /// <param name="filename"></param>
         public static void ChangeTheme(string filename)
         {
+            filename = filename.ToUpper().Replace(".XMI",".WAV");//since I keep putting in XMI instead of WAV this will always force the WAV version to play...
             //var Result = new AudioSample();
             var fullPath = Path.Combine(ProjectSettings.GlobalizePath("user://"), _RES.ToString(), "SOUND", filename); 
             if (File.Exists(fullPath))
@@ -52,6 +86,43 @@ namespace Underworld
                 Debug.Print($"Theme {filename} not found1");
             }
         }
+
+
+        /// <summary>
+        /// For UW1 the theme one of tracks 2 to 5, for UW2 the theme is selected based on the game world the player is in.
+        /// </summary>
+        public static byte PickLevelThemeMusic(int arg0 = -1)
+        {
+            {
+               switch(_RES)
+               {
+                case GAME_UW2:
+                    //playerdat.CurrentWorld;
+                    if (CurrentWorldTheme != playerdat.CurrentWorld)
+                        {
+                            CurrentWorldTheme = playerdat.CurrentWorld;
+                            arg0 = 0;
+                        }
+                    else
+                        {
+                            if (arg0 == -2 )
+                            {
+                                return CurrentThemeNo;//No change in theme. Probably this is triggered by a level change to the same world.
+                            }
+                        }
+                    if (arg0 == -1)
+                        {
+                            arg0 = Rng.r.Next(3);
+                        }
+                    
+                    //Look up table.
+                    return UW2WorldThemes[(playerdat.CurrentWorld * 3) + arg0];
+                default:
+                    return (byte)(2 + Rng.r.Next(3));
+               } 
+            }
+        }
+
 
         /// <summary>
         /// Converts XMI files to WAV files and saves them to appdata folder. If files already exist do nothing.

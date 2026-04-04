@@ -166,6 +166,10 @@ namespace Underworld
             {
                 EnableDisable(AutomapPanel, false);
                 InAutomap = false;
+                if (UWClass._RES != UWClass.GAME_UW2)
+                {
+                    XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic());//restart a music theme for UW1 as maps&legends plays when the map is viewed in UW1 only.
+                }
             }
         }
 

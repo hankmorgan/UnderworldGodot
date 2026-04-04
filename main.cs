@@ -111,18 +111,9 @@ public partial class main : Node3D
 			}
 		}
 		//Init Music
-		Underworld.XMIMusic.ConvertXMIMusic();
+		XMIMusic.ConvertXMIMusic();
 		//Play intro themes
-		switch(Loader._RES)
-		{
-			case Loader.GAME_UW2:
-				Underworld.XMIMusic.ChangeTheme("UWA01.WAV");
-				break;
-			default:
-				Underworld.XMIMusic.ChangeTheme("UW01.WAV");				
-				break;
-		}
-  
+		XMIMusic.ChangeTheme(XMIMusic.IntroTheme);	  
 
 		gamecam.Fov = Math.Max(50, uwsettings.instance.FOV);
 		uimanager.EnableDisable(instance.lblPositionDebug, EnablePositionDebug);
@@ -1166,6 +1157,13 @@ public partial class main : Node3D
 
 		//Handle level transitions now since it's possible for further traps to be called after the teleport trap
 		Teleportation.HandleTeleportation();
+	}
+
+
+	public static void _on_music_player_finished()
+	{
+		Debug.Print("Music finished, picking next theme");
+		XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic());
 	}
 
 }//end class

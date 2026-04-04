@@ -7,6 +7,10 @@ namespace Underworld
         public static uwObject currentTalker;
         public static void StartConversation(uwObject talker)
         {
+            if (_RES != GAME_UW2)
+            {
+                XMIMusic.ChangeTheme(XMIMusic.MapsAndLegends);
+            }
             currentTalker=talker;
             //talker.npc_whoami = 46; jerry the rat
             //Try and load the conversation from the ark files.

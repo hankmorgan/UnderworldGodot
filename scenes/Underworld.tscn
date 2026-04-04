@@ -2854,6 +2854,7 @@ PowerGemUW2 = NodePath("../UW2/PowerGemUW2")
 
 [node name="tilemap" type="Node3D" parent="."]
 
+[connection signal="finished" from="UI/MusicPlayer" to="main" method="_on_music_player_finished"]
 [connection signal="mouse_entered" from="UI/UW1/MessageScrollPanelUW1" to="UI/uiManager" method="_on_message_scroll_mouse_entered"]
 [connection signal="mouse_exited" from="UI/UW1/MessageScrollPanelUW1" to="UI/uiManager" method="_on_message_scroll_mouse_exit"]
 [connection signal="gui_input" from="UI/UW1/CompassUW1/CompassClickArea" to="UI/uiManager" method="_on_compass_click"]

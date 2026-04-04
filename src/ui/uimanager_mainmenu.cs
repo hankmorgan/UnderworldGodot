@@ -245,8 +245,10 @@ namespace Underworld
 
         public void JourneyOnwards(string folder)
         {
+            playerdat.previousLightLevel = -1;
             playerdat.currentfolder = folder;
             playerdat.LoadPlayerDat(datafolder: folder);
+            
             // //Common launch actions            
             UWTileMap.LoadTileMap(
                     newLevelNo: playerdat.dungeon_level - 1,
@@ -261,6 +263,8 @@ namespace Underworld
             }
             playerdat.playerObject.item_id = 127;//make sure the object is an adventurer.
             playerdat.playerObject.link = 0;//prevents infinite loops.
+            playerdat.playerObject.tileX = playerdat.playerObject.npc_xhome;
+            playerdat.playerObject.tileY = playerdat.playerObject.npc_yhome;
 
             if (folder.ToUpper() == "DATA")
             {
@@ -284,9 +288,12 @@ namespace Underworld
 
             //Update weight display
             uimanager.RefreshWeightDisplay();
+            playerdat.PlayerStatusUpdate();
+
 
             instance.InitViews();
             SetPanelMode(0);
+
         }
 
         private void _on_create_character_gui_input(InputEvent @event)
