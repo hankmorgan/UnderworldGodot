@@ -11,12 +11,12 @@ namespace Underworld
         [Export] public Panel ConversationPanelUW1;
         [Export] public TextureRect PlayerPortraitUW1;
         [Export] public TextureRect NPCPortraitUW1;
-        [Export] public Label PlayerNameLabelUW1;
-        [Export] public Label NPCNameLabelUW1;
+        [Export] public RichTextLabel PlayerNameLabelUW1;
+        [Export] public RichTextLabel NPCNameLabelUW1;
         [Export] public TextureRect PlayerPortraitFrameUW1;
         [Export] public TextureRect NPCPortraitFrameUW1;
-        [Export] public TextureRect PlayerNameLableFrameUW1;
-        [Export] public TextureRect NPCNameLableFrameUW1;
+        [Export] public TextureRect PlayerNameLabelFrameUW1;
+        [Export] public TextureRect NPCNameLabelFrameUW1;
         [Export] public TextureRect PlayerTradeAreaUW1;
         [Export] public TextureRect NPCTradeAreaUW1;
 
@@ -30,8 +30,8 @@ namespace Underworld
         [Export] public Panel ConversationPanelUW2;
         [Export] public TextureRect PlayerPortraitUW2;
         [Export] public TextureRect NPCPortraitUW2;
-        [Export] public Label PlayerNameLabelUW2;
-        [Export] public Label NPCNameLabelUW2;
+        [Export] public RichTextLabel PlayerNameLabelUW2;
+        [Export] public RichTextLabel NPCNameLabelUW2;
         [Export] public RichTextLabel ConversationTextUW2;
 
         //Conversation reference handlers to ensure the game appropiate ui element is always accessed.
@@ -81,7 +81,7 @@ namespace Underworld
             }
         }
 
-        public Label PlayerNameLabel
+        public RichTextLabel PlayerNameLabel
         {
             get
             {
@@ -96,7 +96,7 @@ namespace Underworld
             }
         }
 
-        public Label NPCNameLabel
+        public RichTextLabel NPCNameLabel
         {
             get
             {
@@ -111,6 +111,23 @@ namespace Underworld
             }
         }
 
+        public static string CharNameColour
+        {
+            get
+            {
+                if (UWClass._RES == UWClass.GAME_UW2)
+                {
+                    var col = PaletteLoader.Palettes[0].ColorAtIndex(0xC7,false,false);
+                    return $"#{col.R8.ToString("X2")}{col.G8.ToString("X2")}{col.B8.ToString("X2")}";
+                }
+                else
+                {
+                    var col = PaletteLoader.Palettes[0].ColorAtIndex(0x65,false,false);
+                    return $"#{col.R8.ToString("X2")}{col.G8.ToString("X2")}{col.B8.ToString("X2")}";
+                }
+            }
+        }
+
 
         private void InitCoversation()
         {
@@ -118,8 +135,8 @@ namespace Underworld
             EnableDisable(ConversationPanelUW2,false);
             if (UWClass._RES != UWClass.GAME_UW2)
             {
-                NPCNameLableFrameUW1.Texture = grConverse.LoadImageAt(0);
-                PlayerNameLableFrameUW1.Texture = grConverse.LoadImageAt(0);
+                NPCNameLabelFrameUW1.Texture = grConverse.LoadImageAt(0);
+                PlayerNameLabelFrameUW1.Texture = grConverse.LoadImageAt(0);
                 PlayerTradeAreaUW1.Texture = grConverse.LoadImageAt(1);
                 NPCTradeAreaUW1.Texture = grConverse.LoadImageAt(1);
                 PlayerPortraitFrameUW1.Texture = grConverse.LoadImageAt(2);

@@ -7,10 +7,6 @@ namespace Underworld
         public static uwObject currentTalker;
         public static void StartConversation(uwObject talker)
         {
-            if (_RES != GAME_UW2)
-            {
-                XMIMusic.ChangeTheme(XMIMusic.MapsAndLegends);
-            }
             currentTalker=talker;
             //talker.npc_whoami = 46; jerry the rat
             //Try and load the conversation from the ark files.
@@ -51,6 +47,11 @@ namespace Underworld
                     TeleportTileY = -1;
 
                     SetupConversationUI(talker);
+
+                    if (_RES != GAME_UW2)
+                        {
+                            XMIMusic.ChangeTheme(XMIMusic.MapsAndLegends);
+                        }
 
                     InitialiseConversationMemory();
 
@@ -120,8 +121,15 @@ namespace Underworld
             {
                 uimanager.instance.PlayerPortrait.Texture = head.LoadImageAt(playerdat.Body);
             }
-            uimanager.instance.PlayerNameLabel.Text = playerdat.CharName;
-
+            if (_RES == GAME_UW2)
+            {//charname is right aligned in UW2
+                uimanager.instance.PlayerNameLabel.Text = $"[right][color={uimanager.CharNameColour}]{playerdat.CharName}[/color][/right]";
+            }
+            else
+            {
+                uimanager.instance.PlayerNameLabel.Text = $"[color={uimanager.CharNameColour}]{playerdat.CharName}[/color]";
+            }
+            
             if(uimanager.PanelMode!=0)
             {
                 uimanager.SetPanelMode(0);//make sure inventory paperdoll is displayed
@@ -133,7 +141,7 @@ namespace Underworld
             
 
             //npc name and portrait
-            uimanager.instance.NPCNameLabel.Text = talker.a_name;
+            uimanager.instance.NPCNameLabel.Text = $"[color={uimanager.CharNameColour}]{talker.a_name}[/color]";
             uimanager.instance.NPCPortrait.Texture = NPCPortrait(talker.npc_whoami, talker.item_id);
 
             //Init conversation trade globals

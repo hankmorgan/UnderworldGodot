@@ -322,15 +322,15 @@ offset_left = 556.0
 offset_right = 932.0
 offset_bottom = 36.0
 
-[node name="PlayerNameLabelUW1" type="Label" parent="UI/UW1/ConversationUW1"]
+[node name="PlayerNameLabelUW1" type="RichTextLabel" parent="UI/UW1/ConversationUW1"]
 layout_mode = 0
 offset_left = 572.0
 offset_top = -16.0
-offset_right = 820.0
+offset_right = 844.0
 offset_bottom = 34.0
-theme_override_colors/font_color = Color(0.454902, 0.627451, 1, 1)
-theme_override_fonts/font = ExtResource("4_pfbet")
-theme_override_font_sizes/font_size = 64
+theme_override_fonts/normal_font = ExtResource("5_8iiwt")
+theme_override_font_sizes/normal_font_size = 64
+bbcode_enabled = true
 text = "Character Name"
 
 [node name="PlayerTradeAreaUW1" type="TextureRect" parent="UI/UW1/ConversationUW1"]
@@ -360,15 +360,15 @@ offset_left = 172.0
 offset_right = 548.0
 offset_bottom = 36.0
 
-[node name="NPCNameLabelUW1" type="Label" parent="UI/UW1/ConversationUW1"]
+[node name="NPCNameLabelUW1" type="RichTextLabel" parent="UI/UW1/ConversationUW1"]
 layout_mode = 0
 offset_left = 188.0
 offset_top = -16.0
 offset_right = 516.0
 offset_bottom = 34.0
-theme_override_colors/font_color = Color(0.454902, 0.627451, 1, 1)
-theme_override_fonts/font = ExtResource("4_pfbet")
-theme_override_font_sizes/font_size = 64
+theme_override_fonts/normal_font = ExtResource("5_8iiwt")
+theme_override_font_sizes/normal_font_size = 64
+bbcode_enabled = true
 text = "Character Name"
 
 [node name="NPCTradeAreaUW1" type="TextureRect" parent="UI/UW1/ConversationUW1"]
@@ -1010,27 +1010,26 @@ offset_top = 13.0
 offset_right = 264.0
 offset_bottom = 293.0
 
-[node name="PlayerNameLabelUW1" type="Label" parent="UI/UW2/ConversationUW2"]
+[node name="PlayerNameLabelUW1" type="RichTextLabel" parent="UI/UW2/ConversationUW2"]
 layout_mode = 0
 offset_left = 282.0
 offset_top = -16.0
 offset_right = 662.0
 offset_bottom = 34.0
-theme_override_colors/font_color = Color(0.454902, 0.627451, 1, 1)
-theme_override_fonts/font = ExtResource("4_pfbet")
-theme_override_font_sizes/font_size = 64
+theme_override_fonts/normal_font = ExtResource("5_8iiwt")
+theme_override_font_sizes/normal_font_size = 64
+bbcode_enabled = true
 text = "Character Name"
-horizontal_alignment = 2
 
-[node name="NPCNameLabelUW2" type="Label" parent="UI/UW2/ConversationUW2"]
+[node name="NPCNameLabelUW2" type="RichTextLabel" parent="UI/UW2/ConversationUW2"]
 layout_mode = 0
 offset_left = 273.0
 offset_top = 258.0
 offset_right = 653.0
 offset_bottom = 308.0
-theme_override_colors/font_color = Color(0.454902, 0.627451, 1, 1)
-theme_override_fonts/font = ExtResource("4_pfbet")
-theme_override_font_sizes/font_size = 64
+theme_override_fonts/normal_font = ExtResource("5_8iiwt")
+theme_override_font_sizes/normal_font_size = 64
+bbcode_enabled = true
 text = "Character Name"
 
 [node name="ConversationTextUW2" type="RichTextLabel" parent="UI/UW2/ConversationUW2"]
@@ -2700,7 +2699,7 @@ mouse_filter = 2
 texture = ExtResource("18_tfr7p")
 script = ExtResource("4_gnu1s")
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("PanelChargen", "ChargenBG", "ChargenQuestion", "ChargenSkills", "ChargenSkills_values", "ChargenStats", "ChargenStats_values", "ChargenGender", "ChargenClass", "ChargenName", "ChargenNameBG", "ChargenNameInput", "ChargenNameQuestion", "ChargenBody", "CompassBgUW1", "CompassBgUW2", "CompassPointsUW1", "CompassPointsUW2", "CompassPanelUW2", "ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLableFrameUW1", "NPCNameLableFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "CutsFull", "CutsSmallUW1", "CutsSmallUW2", "Cuts3DWinUW1", "Cuts3DWinUW2", "CutsSubtitle", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "InteractionButtonsUW1", "InteractionButtonsUW2", "PanelMainMenu", "MainMenuBG", "MainMenuButtons", "LoadingLabel", "SaveGamesNames", "AutomapPanel", "AutomapBG", "AutomapImage", "NotesPanel", "AutomapNumberLabel", "AutomapWorldGem", "messageScrollUW1", "messageScrollUW2", "TypedInput", "GameOptionButtonsUW1", "GameOptionButtonsUW2", "GameOptionsBackgroundUW1", "GameOptionsBackgroundUW2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Chains", "BackpackBG", "WeightCapacity", "RuneTiles", "SelectedRunes", "ActiveSpellIcons", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSelectedUW1", "NPCTradeSelectedUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "PlayerTradeSelectedUW2", "NPCTradeSelectedUW2", "cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "weaponanimuw1", "weaponanimuw2", "placeholderuw1", "placeholderuw2", "PowerGemUW1", "PowerGemUW2")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("PanelChargen", "ChargenBG", "ChargenQuestion", "ChargenSkills", "ChargenSkills_values", "ChargenStats", "ChargenStats_values", "ChargenGender", "ChargenClass", "ChargenName", "ChargenNameBG", "ChargenNameInput", "ChargenNameQuestion", "ChargenBody", "CompassBgUW1", "CompassBgUW2", "CompassPointsUW1", "CompassPointsUW2", "CompassPanelUW2", "ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLabelFrameUW1", "NPCNameLabelFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "CutsFull", "CutsSmallUW1", "CutsSmallUW2", "Cuts3DWinUW1", "Cuts3DWinUW2", "CutsSubtitle", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "InteractionButtonsUW1", "InteractionButtonsUW2", "PanelMainMenu", "MainMenuBG", "MainMenuButtons", "LoadingLabel", "SaveGamesNames", "AutomapPanel", "AutomapBG", "AutomapImage", "NotesPanel", "AutomapNumberLabel", "AutomapWorldGem", "messageScrollUW1", "messageScrollUW2", "TypedInput", "GameOptionButtonsUW1", "GameOptionButtonsUW2", "GameOptionsBackgroundUW1", "GameOptionsBackgroundUW2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Chains", "BackpackBG", "WeightCapacity", "RuneTiles", "SelectedRunes", "ActiveSpellIcons", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSelectedUW1", "NPCTradeSelectedUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "PlayerTradeSelectedUW2", "NPCTradeSelectedUW2", "cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "weaponanimuw1", "weaponanimuw2", "placeholderuw1", "placeholderuw2", "PowerGemUW1", "PowerGemUW2")]
 script = ExtResource("1_lw0yg")
 PanelChargen = NodePath("../Chargen")
 ChargenBG = NodePath("../Chargen/ChargenBG")
@@ -2728,8 +2727,8 @@ PlayerNameLabelUW1 = NodePath("../UW1/ConversationUW1/PlayerNameLabelUW1")
 NPCNameLabelUW1 = NodePath("../UW1/ConversationUW1/NPCNameLabelUW1")
 PlayerPortraitFrameUW1 = NodePath("../UW1/ConversationUW1/PlayerPortraitFrameUW1")
 NPCPortraitFrameUW1 = NodePath("../UW1/ConversationUW1/NPCPortraitFrameUW1")
-PlayerNameLableFrameUW1 = NodePath("../UW1/ConversationUW1/PlayerNameFrameUW1")
-NPCNameLableFrameUW1 = NodePath("../UW1/ConversationUW1/NPCNameFrameUW1")
+PlayerNameLabelFrameUW1 = NodePath("../UW1/ConversationUW1/PlayerNameFrameUW1")
+NPCNameLabelFrameUW1 = NodePath("../UW1/ConversationUW1/NPCNameFrameUW1")
 PlayerTradeAreaUW1 = NodePath("../UW1/ConversationUW1/PlayerTradeAreaUW1")
 NPCTradeAreaUW1 = NodePath("../UW1/ConversationUW1/NPCTradeAreaUW1")
 ConversationScrollTopUW1 = NodePath("../UW1/ConversationUW1/ConversationTopBorderUW1")
