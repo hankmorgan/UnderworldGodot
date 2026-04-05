@@ -290,6 +290,12 @@ namespace Underworld
             uimanager.RefreshWeightDisplay();
             playerdat.PlayerStatusUpdate();
 
+            //restore some UI elements that have been previously hidden as part of the splash intro
+            uimanager.EnableDisable(uimanager.instance.uw1UI, UWClass._RES != UWClass.GAME_UW2);
+            uimanager.EnableDisable(uimanager.instance.uw2UI, UWClass._RES == UWClass.GAME_UW2);
+            uimanager.EnableDisable(uimanager.instance.PanelInventory,true);
+            uimanager.EnableDisable(uimanager.instance.ManaFlaskPanel,true);
+            uimanager.EnableDisable(uimanager.instance.HealthFlaskPanel,true);
 
             instance.InitViews();
             SetPanelMode(0);

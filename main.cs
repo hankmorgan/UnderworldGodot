@@ -121,7 +121,12 @@ public partial class main : Node3D
 		ObjectCreator.grObjects.UseRedChannel = true;
 		ObjectCreator.grObjects.UseCropping = true;
 		Palette.CurrentPalette = 0;
-		uimanager.instance.InitUI();	
+		uimanager.instance.InitUI();
+		uimanager.EnableDisable(uimanager.instance.uw1UI,false);
+		uimanager.EnableDisable(uimanager.instance.uw2UI,false);
+		uimanager.EnableDisable(uimanager.instance.PanelInventory,false);
+		uimanager.EnableDisable(uimanager.instance.ManaFlaskPanel,false);
+		uimanager.EnableDisable(uimanager.instance.HealthFlaskPanel,false);
 		cutsplayer.PlayCutscene(9, uimanager.ReturnToMainMenu);	
 		uimanager.AddToMessageScroll(GameStrings.GetString(1, 13));//welcome message
 	}
