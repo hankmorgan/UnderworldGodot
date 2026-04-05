@@ -90,6 +90,13 @@ namespace Underworld
                );
         }
 
+        /// <summary>
+        /// Flashes a COLOUR from the palette on the screen
+        /// </summary>
+        /// <param name="colour"></param>
+        /// <param name="targetControl"></param>
+        /// <param name="duration"></param>
+        /// <param name="IgnoreDelay"></param>
         public static void FlashColour(byte colour, TextureRect targetControl, float duration = 0.2f, bool IgnoreDelay = false)
         {
             var palette = PaletteLoader.Palettes[0];

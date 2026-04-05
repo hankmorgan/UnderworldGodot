@@ -121,10 +121,10 @@ public partial class main : Node3D
 		ObjectCreator.grObjects.UseRedChannel = true;
 		ObjectCreator.grObjects.UseCropping = true;
 		Palette.CurrentPalette = 0;
-		uimanager.instance.InitUI();		
+		uimanager.instance.InitUI();	
+		cutsplayer.PlayCutscene(9, uimanager.ReturnToMainMenu);	
 		uimanager.AddToMessageScroll(GameStrings.GetString(1, 13));//welcome message
 	}
-
 
 	/// <summary>
 	/// Draws a debug marker sprite on game load to show where the character is positioned

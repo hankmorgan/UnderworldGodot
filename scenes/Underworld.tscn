@@ -72,6 +72,7 @@ stream = SubResource("AudioStreamWAV_tkk82")
 playback_type = 1
 
 [node name="UW1" type="CanvasLayer" parent="UI"]
+visible = false
 
 [node name="WeaponAnimationUW1" type="TextureRect" parent="UI/UW1"]
 anchors_preset = -1
@@ -648,6 +649,7 @@ offset_right = 140.0
 offset_bottom = 604.0
 
 [node name="UW2" type="CanvasLayer" parent="UI"]
+visible = false
 
 [node name="WeaponAnimUW2" type="TextureRect" parent="UI/UW2"]
 offset_left = 60.0

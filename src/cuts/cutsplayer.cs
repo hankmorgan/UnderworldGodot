@@ -10,7 +10,7 @@ namespace Underworld
     /// The main virtual machine for running the cutscenes
     /// </summary>
     public partial class cutsplayer : UWClass
-	{       
+    {
 
         static int FrameNo = 0;
         static bool FullScreen;
@@ -18,8 +18,8 @@ namespace Underworld
         static int StringBlock;
 
         public static List<CutSceneCommand> commands;
-        
-        
+
+
         /// <summary>
         /// Loads and begins a cutscene
         /// </summary>
@@ -27,8 +27,8 @@ namespace Underworld
         /// <param name="callBackMethod">Function to call after the cutscene has played</param>
 
         public static void PlayCutscene(int CutsceneNo, CallBacks.CutsceneCallBack callBackMethod)
-        {           
-            if (CutsceneNo>=256)
+        {
+            if (CutsceneNo >= 256)
             {
                 FullScreen = false;
             }
@@ -36,7 +36,7 @@ namespace Underworld
             {
                 FullScreen = true;
             }
-            if (_RES==GAME_UW2)
+            if (_RES == GAME_UW2)
             {
                 if (CutsceneNo == 2)
                 {
@@ -59,12 +59,12 @@ namespace Underworld
             }
 
             //Debug.Print(GetsCutsceneFileName(0,0));
-            
+
 
             //Read the .N00 control file
             if (Loader.ReadStreamFile(
                 System.IO.Path.Combine(
-                    BasePath, "CUTS", GetsCutsceneFileName(CutsceneNo,0)
+                    BasePath, "CUTS", GetsCutsceneFileName(CutsceneNo, 0)
                     ), out byte[] CutsData)
                 )
             {
@@ -72,17 +72,17 @@ namespace Underworld
             }
 
             uimanager.EnableDisable(uimanager.instance.PanelMainMenu, false);
-            
+
             //start the cutscene
             _ = Coroutine.Run(
-                RunCutscene(CutsceneNo,callBackMethod),
+                RunCutscene(CutsceneNo: CutsceneNo, callBackMethod: callBackMethod),
                 main.instance);
         }
 
         public static IEnumerator RunCutscene(int CutsceneNo, CallBacks.CutsceneCallBack callBackMethod = null)
-        {       
-            TextureRect cutscontrol;   
-            
+        {
+            TextureRect cutscontrol;
+
             if (FullScreen)
             {
                 cutscontrol = uimanager.CutsFullscreen;
@@ -91,8 +91,8 @@ namespace Underworld
             {
                 cutscontrol = uimanager.CutsSmall;
             }
-            uimanager.EnableDisable(cutscontrol,true);
-            uimanager.EnableDisable(uimanager.instance.CutsSubtitle,true);
+            uimanager.EnableDisable(cutscontrol, true);
+            uimanager.EnableDisable(uimanager.instance.CutsSubtitle, true);
             uimanager.instance.CutsSubtitle.Text = "";
 
             FrameNo = 0;
@@ -101,7 +101,7 @@ namespace Underworld
 
             //Art file.
             CutsLoader cuts = null;
-            var defaultFirstFile = System.IO.Path.Combine(BasePath, "CUTS", GetsCutsceneFileName(CutsceneNo,1));
+            var defaultFirstFile = System.IO.Path.Combine(BasePath, "CUTS", GetsCutsceneFileName(CutsceneNo, 1));
             //Open the .n01 file for this cutscene first if it exists so some image data is available.
             if (System.IO.File.Exists(defaultFirstFile))
             {
@@ -112,19 +112,30 @@ namespace Underworld
 
             //Set initial frame to black
             uimanager.FlashColour(
-                colour: 0, 
-                targetControl: cutscontrol, 
-                duration: 1, 
+                colour: 0,
+                targetControl: cutscontrol,
+                duration: 1,
                 IgnoreDelay: true);
-            
+
             int cmdCount = 0;
 
+            //Special cases. Intro cutscene displays the splash screens
+
+            if (CutsceneNo == 9)
+            {
+                cutscontrol.Texture = uimanager.bitmaps.LoadImageAt(BytLoader.PRES1_BYT);
+                yield return new WaitForSeconds(0.5f);
+                cutscontrol.Texture = uimanager.bitmaps.LoadImageAt(BytLoader.PRES2_BYT);
+                yield return new WaitForSeconds(0.5f);
+            }
+
+            //This is very bad... I need to run commands based on the frame position...
             foreach (var cmd in commands)
             {
-                string paramlist="";
-                for (int p = 0; p<cmd.NoOfParams;p++)
+                string paramlist = "";
+                for (int p = 0; p < cmd.NoOfParams; p++)
                 {
-                    paramlist = paramlist+$"({cmd.functionParams[p]})";
+                    paramlist = paramlist + $"({cmd.functionParams[p]})";
                 }
                 Debug.Print($"{cmdCount++} {cmd.FunctionName}: {paramlist}");
                 switch (cmd.functionNo)
@@ -136,23 +147,23 @@ namespace Underworld
                             break;
                         }
                     case 3://pause
-                    {
-                        FrameWait = 0;
-                        yield return new WaitForSeconds(cmd.functionParams[0]);
-                        break;
-                    }
+                        {
+                            FrameWait = 0;
+                            yield return new WaitForSeconds(cmd.functionParams[0]);
+                            break;
+                        }
                     case 4://to frame
-                        {                            
+                        {
                             //FrameWait = cmd.functionParams[0];
-                            for (int i = 0; i<cmd.functionParams[0];i++)
+                            for (int i = 0; i < cmd.functionParams[0]; i++)
                             {
-                                if (cuts!=null)
+                                if (cuts != null)
                                 {
-                                    if (FrameNo> cuts.ImageCache.GetUpperBound(0))
+                                    if (FrameNo > cuts.ImageCache.GetUpperBound(0))
                                     {
                                         //if (cmd.functionParams[1]==0) //loop?
                                         //{
-                                            FrameNo = 0;
+                                        FrameNo = 0;
                                         //}
                                         //else
                                         //{
@@ -160,40 +171,59 @@ namespace Underworld
                                         //}
                                     }
                                     uimanager.DisplayCutsImage(
-                                        cuts: cuts, 
-                                        imageNo: FrameNo++, 
+                                        cuts: cuts,
+                                        imageNo: FrameNo++,
                                         targetControl: cutscontrol);
                                 }
                                 else
                                 {
-                                    Debug.Print ("Cuts file is null!");
+                                    Debug.Print("Cuts file is null!");
                                 }
 
                                 yield return new WaitForSeconds(0.2f);
                             }
                             break;
-                        }  
+                        }
                     case 6://End cutscene
                         {
-                            uimanager.EnableDisable(cutscontrol,false);
-                            uimanager.EnableDisable(uimanager.instance.CutsSubtitle,false);
+                            uimanager.EnableDisable(cutscontrol, false);
+                            uimanager.EnableDisable(uimanager.instance.CutsSubtitle, false);
                             yield return null;
+                            break;
+                        }
+                    case 7://rep-seg Repeats the animation sequence arg0 times
+                        {
+
+                            int rep_frame = 0;
+                            for (int i = 0; i < cmd.functionParams[0]; i++)
+                            {
+                                uimanager.DisplayCutsImage(
+                                cuts: cuts,
+                                imageNo: rep_frame++,
+                                targetControl: cutscontrol);
+                                yield return new WaitForSeconds(0.2f);
+                            }
                             break;
                         }
                     case 8://open file
                         {
-                            Debug.Print($"Open {GetsCutsceneFileName(cmd.functionParams[0],cmd.functionParams[1])}");
+                            Debug.Print($"Open {GetsCutsceneFileName(cmd.functionParams[0], cmd.functionParams[1])}");
                             cuts = new CutsLoader(System.IO.Path.Combine(
-                                BasePath, "CUTS", GetsCutsceneFileName(cmd.functionParams[0],cmd.functionParams[1])));
+                                BasePath, "CUTS", GetsCutsceneFileName(cmd.functionParams[0], cmd.functionParams[1])));
                             FrameNo = 0;
                             FrameWait = 0;
                             break;
-                        }              
+                        }
+                    case 10:
+                        {
+                            Debug.Print($"Fade In ({cmd.functionParams[0]})");
+                            break;
+                        }
                     case 13://text-play with audio.       
                         {
                             Debug.Print($"Display subtitle: {GameStrings.GetString(StringBlock, cmd.functionParams[1])}");
                             uimanager.instance.CutsSubtitle.Text = GameStrings.GetString(StringBlock, cmd.functionParams[1]);
-                            if (cmd.functionParams[2] != 999 )
+                            if (cmd.functionParams[2] != 999)
                             {
                                 Debug.Print($"Play .voc audio {cmd.functionParams[2]}");
                                 var sound = vocLoader.Load(
@@ -201,20 +231,21 @@ namespace Underworld
                                         BasePath,
                                         "SOUND",
                                         $"{cmd.functionParams[2]:0#}.VOC"));
-                                if (sound!=null)
-                                {//TODO: make sure a wait for as long as the audio needs to play occurs.
+                                if (sound != null)
+                                {
+                                    //TODO: make sure a wait for as long as the audio needs to play occurs.
                                     main.instance.DigitalAudioPlayer.Stream = sound.toWav();
-                                    main.instance.DigitalAudioPlayer.Play();                                    
+                                    main.instance.DigitalAudioPlayer.Play();
                                 }
                             }
-                            break; 
-                        }     
+                            break;
+                        }
                     case 14: //wait seconds
                         {
                             FrameWait = 0;
                             yield return new WaitForSeconds(cmd.functionParams[0]);
                             break;
-                        } 
+                        }
                     default:
                         {
                             Debug.Print($"Unimplemented cutscene command {cmd.functionNo} {cmd.FunctionName}");
@@ -222,18 +253,18 @@ namespace Underworld
                         }
 
                 }
-                for (int f = 0; f<FrameWait;f++)
+                for (int f = 0; f < FrameWait; f++)
                 {
                     yield return new WaitForSeconds(0.2f);
-                }               
- 
+                }
+
             }
 
-            if (callBackMethod!=null)
+            if (callBackMethod != null)
             {
                 callBackMethod();
             }
-            
+
             yield return null;
         }
 
