@@ -51,20 +51,21 @@ namespace Underworld
             };
 
 
-        // UW2 BYT.ARK palette indices (from disassembly SplashPart1_ovr112_36)
-        // Entry 6 = Origin logo (palette 5), Entry 7 = Looking Glass logo (palette 6)
+        // UW2 BYT.ARK palette indices
+        // Entries 4-9 confirmed from disassembly (LoadBitMap calls in ovr112, ovr147, ovr154)
+        // 0xFFFF in assembly = keep current palette; mapped to 0 here as default
         private readonly int[] PaletteIndicesUW2 =
         {
-                3,  // 0: BLNKMAP (empty in UW2)
-                1,  // 1: CHARGEN / Automap
+                1,  // 0: BLNKMAP (confirmed visually; loaded without explicit palette, uses game palette 1)
+                3,  // 1: CHARGEN (assembly: OpenPalsData called with palette 3 after load)
                 0,  // 2: CONV
                 0,  // 3: MAIN
-                0,  // 4: UW2 3D window
-                0,  // 5: UW2 MAIN
-                5,  // 6: Origin logo ("ORIGIN Presents")
-                5,  // 7: Looking Glass logo ("A Looking Glass Technologies Game")
-                0,  // 8: WIN1
-                0,  // 9: WIN2
+                0,  // 4: UW2 3D window (assembly: 0xFFFF = keep current)
+                0,  // 5: UW2 MAIN (assembly: 0xFFFF = keep current)
+                5,  // 6: Origin logo (assembly: SplashPart1, palette 5)
+                6,  // 7: Looking Glass logo (assembly: SplashPart1, palette 6)
+                7,  // 8: Victory screen 1 (assembly: RunVictorySequence, palette 7)
+                0,  // 9: Victory screen 2 (assembly: 0xFFFF = keep current)
                 0   // 10: UNK
             };
 
