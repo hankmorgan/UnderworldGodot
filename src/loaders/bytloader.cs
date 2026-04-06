@@ -55,8 +55,8 @@ namespace Underworld
         // Entry 6 = Origin logo (palette 5), Entry 7 = Looking Glass logo (palette 6)
         private readonly int[] PaletteIndicesUW2 =
         {
-                3,  // 0: BLNKMAP
-                0,  // 1: CHARGEN
+                3,  // 0: BLNKMAP (empty in UW2)
+                1,  // 1: CHARGEN / Automap
                 0,  // 2: CONV
                 0,  // 3: MAIN
                 0,  // 4: UW2 3D window
