@@ -161,11 +161,17 @@ namespace Underworld
             lpH.hasLastDelta = cutsFile[0x1A] != 0;
             FramesPerSecond = lpH.framesPerSecond;
             addptr += 128;//past header.
-            addptr += 128;//colour cycling info.
+            // Color cycling block (128 bytes): 16 entries of 8 bytes each (IFF CRNG format).
+            // Bytes 6-7 of each entry = low/high palette index for cycling range.
+            // Used by palette interpolation (func 19) to determine which entries to animate.
+            addptr += 128;
 
             // DPaint LPF: if hasLastDelta, the last frame is a loop-back delta
-            // that resets the pixel buffer to frame 0. It should not be displayed,
-            // and FinalPixelBuffer should be captured before it's decoded.
+            // that resets the pixel buffer to frame 0. It should NOT be displayed.
+            // FinalPixelBuffer must be captured BEFORE this frame is decoded,
+            // because it provides the base for delta-chaining to the next LPF file
+            // (e.g. N01→N02→N03). Each subsequent file's RLE deltas are applied
+            // on top of the previous file's FinalPixelBuffer.
             int nDisplayFrames = lpH.hasLastDelta ? lpH.nFrames - 1 : lpH.nFrames;
 
             //Init the buffer
@@ -263,8 +269,12 @@ namespace Underworld
 
                 // Sprite mode: reset buffer to LBACK base before each keyframe
                 // so each keyframe independently shows its sprite pixels without
-                // accumulation from prior keyframes. Empty frames (recordSize<=4)
-                // keep previous keyframe's data.
+                // accumulation from prior keyframes. This is necessary because
+                // each keyframe only updates ONE animated element (e.g. one flag
+                // out of three) — without reset, all previous keyframes' writes
+                // would accumulate, creating smearing artifacts.
+                // Empty frames (recordSize<=4) keep previous keyframe's data
+                // so the sprite persists between keyframes.
                 if (isSpriteMode && recordSize > 4)
                 {
                     System.Array.Copy(spriteBasePixels, dstImage,

@@ -375,6 +375,13 @@ namespace Underworld
 
                 case 13: // text-play with audio
                     {
+                        // Subtitle rendering: uses FONTBIG.SYS (font index 3),
+                        // hardcoded via OpenFont(3) at ovr108_2E1A (line 445603).
+                        // Text positioning from RenderCutsceneText_ovr108_157B (line 441321):
+                        //   line spacing = font height (TextPos[bx+6], line 441390)
+                        //   bottom margin = 2px (inc dx; inc dx at ovr108_15CE, lines 441401-441403)
+                        //   word wrap at 320px, no inter-character spacing
+                        // NOTE: game uses underscore-as-dot convention: "_." should render as " ."
                         if ((short)cmd.functionParams[1] >= 0)
                         {
                             uimanager.instance.CutsSubtitle.Text = GameStrings.GetString(StringBlock, cmd.functionParams[1]);
@@ -646,9 +653,14 @@ namespace Underworld
                         }
 
                         // Display animation frame.
-                        // When panorama scroll is active, crop viewport from LBACK
-                        // composite and overlay animated sprites at fixed screen
-                        // positions. Otherwise display normal LPF frames.
+                        // When panorama mode is active ([si+4Fh]!=0, set by func 20
+                        // when canvas != 320x200), the normal DrawBitMap call is SKIPPED
+                        // (ovr108_24AB, line 443935). Instead:
+                        // 1. AnimateViewportScroll shifts the VGA CRT start address
+                        // 2. LPF frame decoded into persistent buffer (delta chaining)
+                        // 3. DrawArtToScreen draws at fixed screen position
+                        // We simulate this by cropping the LBACK composite and overlaying
+                        // sprite pixels via write masks at fixed screen positions.
                         if (vpScrollActive && vpComposite != null)
                         {
                             int totalFrame = vpFrameOffset + frame;
