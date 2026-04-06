@@ -35,6 +35,23 @@ namespace Underworld
         static bool vpScrollActive;
         static int vpFrameOffset;
 
+        /// <summary>
+        /// True when a panorama viewport is active (canvas differs from 320x200).
+        /// </summary>
+        static bool PanoramaActive =>
+            vpCanvasWidth != 0 && vpCanvasHeight != 0 &&
+            (vpCanvasWidth != 320 || vpCanvasHeight != 200);
+
+        /// <summary>
+        /// Height of the scene area on the 320x200 display.
+        /// When a panorama viewport is active and vpOffsetY is set, the scene
+        /// occupies 200 - vpOffsetY pixels, with the remainder reserved for
+        /// subtitles. Otherwise the full 200 pixels are used.
+        /// Derived from viewport-setup (func 20) bytecode parameters.
+        /// </summary>
+        static int SceneDisplayH =>
+            PanoramaActive && vpOffsetY > 0 ? 200 - vpOffsetY : 200;
+
         // Palette interpolation state (func 19)
         static bool palInterpActive;
         static int palInterpSpeed;
@@ -397,7 +414,8 @@ namespace Underworld
                             if (FrameNo > cuts.ImageCache.GetUpperBound(0))
                                 FrameNo = 0;
                             uimanager.DisplayCutsImage(
-                                cuts: cuts, imageNo: FrameNo++, targetControl: cutscontrol);
+                                cuts: cuts, imageNo: FrameNo++, targetControl: cutscontrol,
+                                cropHeight: SceneDisplayH);
                         }
                         yield return new WaitForSeconds(frameTime);
                     }
