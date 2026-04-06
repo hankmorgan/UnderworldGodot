@@ -175,6 +175,86 @@ namespace Underworld
         }
 
         /// <summary>
+        /// Extract the visible viewport region from the panorama composite at the
+        /// current scroll position. Implements the scroll formula from
+        /// AnimateViewportScroll_ovr108_B8E (line 439098 in uw2_asm.asm):
+        ///   pos = start + (frame+1) * delta * direction_table[index]
+        /// The (frame+1) comes from `inc ax` at line 439116 before the multiply.
+        /// Direction tables at dseg_67d6+0x1068 (DX) and +0x1070 (DY) (line 358318).
+        /// VGA hardware wraps the CRT start address; we use linear equivalents.
+        /// </summary>
+        static Godot.Image GetScrollFrame(int totalFrame)
+        {
+            if (vpComposite == null) return null;
+
+            int frameAdj = totalFrame + 1; // assembly uses frame+1 (ovr108_B9E, line 439116)
+            int displayH = SceneDisplayH;
+
+            Godot.Image region;
+            if (vpIsHorizontal)
+            {
+                int scrollX = vpStartX + vpScrollDX * frameAdj;
+                int maxScroll = vpComposite.GetWidth() - 320;
+                int scrollPos = System.Math.Clamp(scrollX, 0, maxScroll);
+                region = Godot.Image.Create(320, vpComposite.GetHeight(), false, vpComposite.GetFormat());
+                region.BlitRect(vpComposite,
+                    new Rect2I(scrollPos, 0, 320, vpComposite.GetHeight()),
+                    Vector2I.Zero);
+            }
+            else
+            {
+                // Linear scroll equivalent of VGA wrapping scroll.
+                // Assembly starts at vpStartY (e.g. 359) and decreases, wrapping
+                // around the buffer. The effective linear scroll is top-to-bottom.
+                int scrollPos = System.Math.Abs(vpScrollDY) * frameAdj;
+                int maxScroll = vpComposite.GetHeight() - displayH;
+                scrollPos = System.Math.Clamp(scrollPos, 0, maxScroll);
+                region = Godot.Image.Create(320, displayH, false, vpComposite.GetFormat());
+                region.BlitRect(vpComposite,
+                    new Rect2I(0, scrollPos, 320, displayH),
+                    Vector2I.Zero);
+            }
+
+            return region;
+        }
+
+        /// <summary>
+        /// Overlay animated sprite pixels onto the viewport region at fixed screen
+        /// positions. Uses RLE write masks to draw only explicitly written pixels
+        /// (the animated flags/cart), preserving the scrolling LBACK background.
+        /// Matches the original engine's DrawArtToScreen (line 444058) which draws
+        /// at a fixed VGA screen position ([si+13h]=0, [si+15h]=0), not into the
+        /// scrolling panorama buffer. The LPF animation already compensates for
+        /// scroll progression in its coordinate space.
+        /// </summary>
+        static void ApplySpriteOverlay(Godot.Image region)
+        {
+            if (vpSpriteLoader == null || vpSpriteLoader.WriteMasks == null) return;
+            if (vpSpriteFrame >= vpSpriteLoader.ImageCache.Length) return;
+
+            var spriteTex = vpSpriteLoader.ImageCache[vpSpriteFrame];
+            var mask = vpSpriteLoader.WriteMasks[vpSpriteFrame];
+            if (spriteTex == null || mask == null) { vpSpriteFrame++; return; }
+
+            var spriteImg = spriteTex.GetImage();
+            int rw = region.GetWidth();
+            int rh = region.GetHeight();
+            int sw = spriteImg.GetWidth();
+            int sh = spriteImg.GetHeight();
+            int h = System.Math.Min(sh, rh);
+            int w = System.Math.Min(sw, rw);
+
+            for (int y = 0; y < h; y++)
+                for (int x = 0; x < w; x++)
+                {
+                    if (mask[y * sw + x] != 0)
+                        region.SetPixel(x, y, spriteImg.GetPixel(x, y));
+                }
+
+            vpSpriteFrame++;
+        }
+
+        /// <summary>
         /// Executes a single cutscene command. Returns the number of params consumed.
         /// </summary>
         static void ExecuteCommand(CutSceneCommand cmd, TextureRect cutscontrol, int CutsceneNo)
@@ -486,11 +566,12 @@ namespace Underworld
                 // Execute the segment
                 if (hasFrameSet && segmentFrameCount > 0)
                 {
-                    // Calculate frame timing from LPF fps
-                    float frameTime = 0.1f; // default 10fps
-                    if (cuts != null)
+                    // Frame timing from LPF file header fps field (offset 0x44).
+                    // Each LPF specifies its own playback rate (e.g. N03: 14fps, N06: 40fps).
+                    float frameTime = 0.1f; // default 10fps fallback
+                    if (cuts != null && cuts.FramesPerSecond > 0)
                     {
-                        // TODO: use cuts.framesPerSecond when exposed from CutsLoader
+                        frameTime = 1.0f / cuts.FramesPerSecond;
                     }
 
                     for (int frame = 0; frame < segmentFrameCount; frame++)
@@ -504,8 +585,22 @@ namespace Underworld
                             }
                         }
 
-                        // Display animation frame
-                        if (cuts != null)
+                        // Display animation frame.
+                        // When panorama scroll is active, crop viewport from LBACK
+                        // composite and overlay animated sprites at fixed screen
+                        // positions. Otherwise display normal LPF frames.
+                        if (vpScrollActive && vpComposite != null)
+                        {
+                            int totalFrame = vpFrameOffset + frame;
+                            var scrollRegion = GetScrollFrame(totalFrame);
+                            if (scrollRegion != null)
+                            {
+                                ApplySpriteOverlay(scrollRegion);
+                                uimanager.DisplayScrollFrame(scrollRegion, cutscontrol);
+                            }
+                            FrameNo++; // advance LPF frame for delta chaining
+                        }
+                        else if (cuts != null)
                         {
                             if (FrameNo > cuts.ImageCache.GetUpperBound(0))
                                 FrameNo = 0;

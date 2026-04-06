@@ -187,5 +187,30 @@ namespace Underworld
         }
 
 
+        /// <summary>
+        /// Display a panorama scroll frame. The region is the cropped viewport
+        /// from the LBACK composite with sprite overlay already applied.
+        /// Pads to 320x200 with black subtitle bar below when region is shorter.
+        /// </summary>
+        public static void DisplayScrollFrame(Godot.Image region, TextureRect targetControl)
+        {
+            Godot.Image output;
+            if (region.GetHeight() < 200)
+            {
+                output = Godot.Image.Create(320, 200, false, region.GetFormat());
+                output.BlitRect(region,
+                    new Rect2I(0, 0, region.GetWidth(), region.GetHeight()),
+                    Vector2I.Zero);
+            }
+            else
+            {
+                output = region;
+            }
+
+            var tex = new ImageTexture();
+            tex.SetImage(output);
+            targetControl.Texture = tex;
+        }
+
     }//end class
 }//end namespace
