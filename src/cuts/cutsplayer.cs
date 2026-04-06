@@ -35,6 +35,22 @@ namespace Underworld
         static bool vpScrollActive;
         static int vpFrameOffset;
 
+        // LBACK panorama composite — built from LBACK*.BYT files by func 22/21.
+        // The composite is wider (horizontal) or taller (vertical) than 320x200.
+        // See CutsceneBitmap_ovr108_33E0 (line 446657) for LBACK loading.
+        static Godot.Image vpComposite;
+        static Godot.Image vpCompositeClean;  // pristine LBACK for per-frame reset
+        static bool vpIsHorizontal;
+        static System.Collections.Generic.List<(int pos, int extent, int fileIdx, byte[] rawPixels)> vpFileMappings = new();
+
+        // Sprite overlay state for scroll animation (N03 cart, N06 flags).
+        // DrawArtToScreen (line 444058) draws at fixed screen position.
+        static CutsLoader vpSpriteLoader;
+        static int vpSpriteFrame;
+
+        // CutsceneNo accessible to ExecuteCommand for sprite path construction
+        static int currentCutsceneNo;
+
         /// <summary>
         /// True when a panorama viewport is active (canvas differs from 320x200).
         /// </summary>
@@ -78,6 +94,7 @@ namespace Underworld
             }
 
             StringBlock = 0xC00 + CutsceneNo;
+            currentCutsceneNo = CutsceneNo;
 
             // Read the .N00 control file
             if (Loader.ReadStreamFile(
@@ -95,6 +112,66 @@ namespace Underworld
             _ = Coroutine.Run(
                 RunCutscene(CutsceneNo, callBackMethod),
                 main.instance);
+        }
+
+        /// <summary>
+        /// Build the panorama composite from mapped LBACK files.
+        /// Horizontal panoramas (canvas width > 320): LBACKs side by side,
+        /// composite width = 320 + vpStartX.
+        /// Vertical panoramas (canvas height > 200): LBACKs stacked vertically.
+        /// Uses the current LPF file's embedded palette to render indexed pixels.
+        /// See CutsceneBitmap_ovr108_33E0 (line 446657) for LBACK loading,
+        /// DrawBitmapScreen (line 446795) for VGA buffer placement.
+        /// </summary>
+        static void BuildPanoramaComposite()
+        {
+            vpIsHorizontal = vpCanvasWidth > 320;
+            var pal = cuts.EmbeddedPalette;
+
+            int compW = vpIsHorizontal ? 320 + vpStartX : vpCanvasWidth;
+            int compH = vpCanvasHeight;
+
+            var img = Godot.Image.Create(compW, compH, false, Godot.Image.Format.Rgb8);
+
+            int runningY = 0;
+            int lbackIndex = 0;
+            foreach (var mapping in vpFileMappings)
+            {
+                var (pos, extent, fileIdx, rawPixels) = mapping;
+                if (rawPixels == null) { lbackIndex++; continue; }
+
+                if (vpIsHorizontal)
+                {
+                    // Horizontal: first LBACK at x=0, second at x=320
+                    int blitX = lbackIndex * 320;
+                    int blitW = System.Math.Min(320, compW - blitX);
+                    int blitH = System.Math.Min(200, compH);
+                    for (int y = 0; y < blitH; y++)
+                        for (int x = 0; x < blitW; x++)
+                        {
+                            byte idx = rawPixels[y * 320 + x];
+                            img.SetPixel(blitX + x, y, pal.ColorAtIndex(idx, false, false));
+                        }
+                }
+                else
+                {
+                    // Vertical: stack LBACKs sequentially
+                    int blitH = System.Math.Min(200, compH - runningY);
+                    int blitW = System.Math.Min(320, compW);
+                    for (int y = 0; y < blitH; y++)
+                        for (int x = 0; x < blitW; x++)
+                        {
+                            byte idx = rawPixels[y * 320 + x];
+                            img.SetPixel(x, runningY + y, pal.ColorAtIndex(idx, false, false));
+                        }
+                    runningY += 200;
+                }
+                lbackIndex++;
+            }
+
+            vpComposite = img;
+            vpCompositeClean = (Godot.Image)img.Duplicate();
+            Debug.Print($"  Composite: {compW}x{compH}, scroll={(vpIsHorizontal ? "horizontal" : "vertical")}");
         }
 
         /// <summary>
@@ -225,11 +302,19 @@ namespace Underworld
 
                 case 20: // viewport-setup
                     {
+                        // Sets panorama canvas dimensions and subtitle offset.
+                        // When canvas != 320x200, sets [si+4Fh] panorama mode flag
+                        // (ovr108_12D3, line 440713).
                         vpCanvasWidth = cmd.functionParams[0];
                         vpCanvasHeight = cmd.functionParams[1];
                         vpOffsetY = cmd.NoOfParams > 2 ? cmd.functionParams[2] : 0;
                         vpScrollActive = false;
                         vpFrameOffset = 0;
+                        vpFileMappings.Clear();
+                        vpComposite = null;
+                        vpCompositeClean = null;
+                        vpSpriteLoader = null;
+                        vpSpriteFrame = 0;
                         Debug.Print($"  Viewport: {vpCanvasWidth}x{vpCanvasHeight} offsetY={vpOffsetY}");
                         break;
                     }
@@ -239,15 +324,26 @@ namespace Underworld
                         vpStartX = cmd.functionParams[0];
                         vpStartY = cmd.NoOfParams > 1 ? cmd.functionParams[1] : 0;
                         Debug.Print($"  Start: x={vpStartX} y={vpStartY}");
+                        // Build composite now so pre-scroll segment can display it
+                        if (vpFileMappings.Count > 0 && cuts != null)
+                            BuildPanoramaComposite();
                         break;
                     }
 
                 case 22: // map-file — load LBACK background bitmap
                     {
+                        // LBACK*.BYT files are raw 320x200 indexed pixel data (64000 bytes, no header).
+                        // Loaded by CutsceneBitmap_ovr108_33E0 (line 446657) via LoadDATFile.
                         var fileIdx = cmd.functionParams[2];
-                        var lbackName = $"LBACK{fileIdx:000}.BYT";
+                        var lbackName = $"LBACK{fileIdx:D3}.BYT";
+                        var lbackPath = System.IO.Path.Combine(BasePath, "CUTS", lbackName);
+                        byte[] rawPixels = null;
+                        if (Loader.ReadStreamFile(lbackPath, out byte[] lbackData) && lbackData.Length >= 64000)
+                        {
+                            rawPixels = lbackData;
+                        }
+                        vpFileMappings.Add((cmd.functionParams[0], cmd.functionParams[1], fileIdx, rawPixels));
                         Debug.Print($"  Map: fileIdx={fileIdx} -> {lbackName}");
-                        // TODO: load LBACK file and add to panorama composite
                         break;
                     }
 
