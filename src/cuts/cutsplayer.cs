@@ -255,6 +255,48 @@ namespace Underworld
         }
 
         /// <summary>
+        /// Build raw indexed pixel buffer from LBACK data at the sprite position.
+        /// Used as the decode base for sprite LPF files so that RLE skip areas
+        /// contain LBACK content (matching the VGA screen during panorama scroll).
+        /// For vertical scroll (vpStartX=0): base = first LBACK raw pixels.
+        /// For horizontal scroll (vpStartX=70): base = LBACK000[70:] + LBACK001[:70].
+        /// The LPF frame covers a 320px-wide region starting at vpStartX in the
+        /// VGA buffer, so the base must contain the LBACK pixels at those positions.
+        /// </summary>
+        static byte[] BuildLbackBase()
+        {
+            if (vpFileMappings.Count == 0) return null;
+            var lbackBase = new byte[320 * 200];
+            int fx = vpStartX;
+
+            if (vpIsHorizontal)
+            {
+                var raws = new System.Collections.Generic.List<byte[]>();
+                foreach (var m in vpFileMappings)
+                    raws.Add(m.rawPixels ?? new byte[64000]);
+
+                for (int y = 0; y < 200; y++)
+                    for (int c = 0; c < 320; c++)
+                    {
+                        int vgaX = fx + c;
+                        int lbackIdx = vgaX / 320;
+                        int localX = vgaX % 320;
+                        if (lbackIdx < raws.Count)
+                            lbackBase[y * 320 + c] = raws[lbackIdx][y * 320 + localX];
+                    }
+            }
+            else
+            {
+                // Vertical: sprite covers full width at x=0, use first LBACK
+                var firstRaw = vpFileMappings[0].rawPixels;
+                if (firstRaw != null)
+                    System.Array.Copy(firstRaw, lbackBase,
+                        System.Math.Min(firstRaw.Length, lbackBase.Length));
+            }
+            return lbackBase;
+        }
+
+        /// <summary>
         /// Executes a single cutscene command. Returns the number of params consumed.
         /// </summary>
         static void ExecuteCommand(CutSceneCommand cmd, TextureRect cutscontrol, int CutsceneNo)
@@ -442,6 +484,24 @@ namespace Underworld
                         vpFrameOffset = 0;
                         string[] dirs = { "Down", "Right", "Up", "Left" };
                         Debug.Print($"  Scroll: {dirs[tableIdx % 4]}, delta={delta}, dx={vpScrollDX} dy={vpScrollDY}");
+
+                        // Prepare sprite overlay: decode current LPF file in sprite mode
+                        // with LBACK as base. Resets buffer to LBACK before each keyframe
+                        // so RLE skip areas contain LBACK content. Write masks track which
+                        // pixels the RLE explicitly wrote (animated flags/cart).
+                        var lbackBase = BuildLbackBase();
+                        if (lbackBase != null)
+                        {
+                            var spritePath = System.IO.Path.Combine(
+                                BasePath, "CUTS", GetsCutsceneFileName(currentCutsceneNo, currentFileExt));
+                            if (System.IO.File.Exists(spritePath))
+                            {
+                                vpSpriteLoader = new CutsLoader(
+                                    GetsCutsceneFileName(currentCutsceneNo, currentFileExt), lbackBase);
+                                vpSpriteFrame = 0;
+                                Debug.Print($"  Sprite overlay: ext {currentFileExt} (LBACK base, per-keyframe reset)");
+                            }
+                        }
                         break;
                     }
 
