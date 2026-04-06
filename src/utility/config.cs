@@ -40,6 +40,17 @@ namespace Underworld
             Debug.Print($"Loading settings at {settingsfile}");
             uwsettings gamesettings;
 
+            // Fallback: if not found next to executable, try res:// (project root)
+            if (!File.Exists(settingsfile))
+            {
+                var resPath = ProjectSettings.GlobalizePath("res://uwsettings.json");
+                if (File.Exists(resPath))
+                {
+                    settingsfile = resPath;
+                    Debug.Print($"Fallback to res:// settings at {settingsfile}");
+                }
+            }
+
             if (!File.Exists(settingsfile))
             {
                 //OS.Alert($"Missing file uwsettings.json at {settingsfile}\nCreating defaults.");

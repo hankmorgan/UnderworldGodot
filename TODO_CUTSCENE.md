@@ -20,55 +20,42 @@ and the Python reference extractor at `UW2/extract_intro_frames.py`.
 - [x] Animated fade-in/fade-out with rate control (func 9/10)
 - [x] Blocking post-segment commands (frame=999)
 
-### TODO — Panorama Scrolling
+### Panorama Scrolling — Mostly Complete
 
-The original engine uses a **640-pixel-wide VGA offscreen buffer** for hardware scrolling
-(confirmed from disassembly: SetViewportFar writes to VGA CRT registers 0x0C/0x0D).
+The original engine uses a VGA offscreen buffer for hardware scrolling
+(SetViewportFar writes to VGA CRT registers 0x0C/0x0D). See RE Notes
+for full rendering pipeline details.
 
-#### LBACK Background Loading (func 22 — map-file)
-- [ ] Load `CUTS/LBACK{idx:03d}.BYT` files (raw 320x200 pixel data, no header)
-- [ ] Render LBACK using the current LPF file's palette
-- [ ] Build panorama composite:
+#### LBACK Background Loading (func 22 — map-file) ✅
+- [x] Load `CUTS/LBACK{idx:03d}.BYT` files (raw 320x200 pixel data, no header)
+- [x] Render LBACK using the current LPF file's palette
+- [x] Build panorama composite:
   - Horizontal: width = 320 + vp_start_x. First LBACK at x=0, second at x=320.
-    Clip second to `vp_start_x` pixels wide.
   - Vertical: stack LBACKs sequentially (LBACK at y=0, next at y=200, etc.)
-- [ ] Composite should be built when `set-start` (func 21) fires (before scroll starts)
-  so that the pre-scroll segment can display it
+- [x] Composite built when `set-start` (func 21) fires
 
-#### Scroll Viewport (func 23 — start-scroll)
-- [ ] Each frame, crop 320-pixel viewport from the composite at the current scroll position
-- [ ] Horizontal: `scroll_pos = vp_start_x + dx * frame` (dx from direction table)
-- [ ] Vertical: `scroll_pos = dy * frame` (start at 0, scroll down for "Up" direction)
-- [ ] Panorama content at top of 200px display, black below for subtitles
-- [ ] Pre-scroll segment (before start-scroll fires): display current LPF animation frames directly,
-  NOT the composite — so the pre-scroll animation (cart, flags) plays correctly
+#### Scroll Viewport (func 23 — start-scroll) ✅
+- [x] Each frame, crop viewport from the composite at the current scroll position
+- [x] Scroll formula: `pos = start + (frame+1) * delta * direction_table[index]`
+  (frame+1 from `inc ax` at ovr108_B9E, line 439116)
+- [x] Scene height = 200 - vpOffsetY, with black subtitle bar below
+- [x] Frame timing from LPF fps header (not hardcoded)
 
-#### Sprite Overlay During Scroll
-- [ ] The current auto-advanced LPF file (e.g. N03, N06) provides the animated overlay
-- [ ] Original engine applies LPF RLE directly to the VGA screen (which has LBACK background).
-  RLE skip operations preserve screen pixels. Our approach options:
-  1. **Standalone sprite** (is_sprite mode): zero buffer before each keyframe, overlay non-zero
-     pixels onto the viewport. Works but doesn't handle the LBACK000 frozen cart correctly.
-  2. **VGA screen simulation**: apply each frame's RLE to a buffer initialized with LBACK content.
-     More accurate but requires per-frame LBACK reset.
-  3. **Accumulated buffer at fixed position**: write the accumulated N02→N03 buffer into the
-     composite at vp_start_x. The LPF frame overwrites the LBACK in the viewport area.
-     Simpler but has cart smearing from accumulated deltas.
-- [ ] The file role pattern is consistent across all scroll scenes:
-  - N02/N05: pre-scroll animation (contains animated element)
-  - N03/N06: sprite overlay during scroll (mostly empty, index 0 = transparent)
-  - N04/N07: post-scroll clean scene (no animated element)
-  - LBACK000/002: panorama background (has animated element frozen at last pre-scroll position)
+#### Sprite Overlay During Scroll ✅
+- [x] Decode sprite LPF with LBACK raw pixels as base, resetting to LBACK before
+  each keyframe (is_sprite mode). Prevents accumulation from prior keyframes.
+- [x] Generate RLE write masks in the decoder to track which pixels were explicitly
+  written (dump/run) vs skipped
+- [x] Overlay only RLE-written pixels onto the cropped viewport region at **fixed
+  screen positions** (not into the scrolling composite). This matches the original
+  engine's DrawArtToScreen (line 444058) which draws at a fixed VGA screen position.
+- [x] The LPF animation already compensates for scroll progression in its coordinate
+  space — drawing into the composite would cause double-scrolling.
 
-#### Cart Rendering — Open Issue
-- [ ] LBACK000 has the cart frozen at N02 frame-23 position (x=158-225, y=92-115)
-- [ ] DOSBox pixel analysis shows N04 values at the cart position — meaning the engine masks it
-- [ ] The original engine applies RLE to the VGA screen (LBACK background). Skip operations
-  preserve LBACK pixels, writes draw the cart. Since the engine renders the full LPF frame
-  at the fixed position (vp_start_x), it overwrites LBACK's frozen cart.
-- [ ] Our accumulated buffer has N02 background pixels (different from LBACK), causing visual
-  differences. The VGA screen simulation approach would fix this.
-- [ ] This is a subtle issue — at 320x200 resolution the difference is barely noticeable
+#### Remaining Panorama Issues
+- [ ] Fine pixel panning: original engine uses VGA register 0x3C0 index 0x33 for
+  sub-pixel horizontal scroll. Our implementation rounds to whole pixels.
+- [ ] Verify sprite alignment on all scroll scenes (CS000 horizontal/vertical tested)
 
 ### TODO — Palette Interpolation (func 19)
 
@@ -88,8 +75,18 @@ This creates effects like sunset-to-night transitions and is NOT palette rotatio
 - [ ] Expose `framesPerSecond` field as a public property for cutsplayer to use
 - [ ] Expose color cycling ranges (from LPF header offset 0x80) for palette interpolation
 - [ ] Expose `hasLastDelta` flag as public property
-- [ ] Consider adding a mode for decoding with an external base image (for sprite overlays
-  where the base is LBACK pixel data instead of the persistent buffer)
+- [ ] Add LBACK-base sprite decode mode: reset buffer to LBACK raw pixels before each
+  keyframe, with RLE write mask generation to track written vs skipped pixels
+- [ ] Expose palette as public property (needed for LBACK rendering)
+
+### Subtitle Rendering — Verified from Disassembly
+
+- [x] Font: FONTBIG.SYS (index 3), hardcoded via OpenFont(3) at ovr108_2E1A (line 445603)
+- [x] No inter-character spacing — glyph width used directly (no +1 pixel gap)
+- [x] Word wrap at 320px (full display width)
+- [x] Line spacing = font.height (from TextPos[bx+6], ovr108_15C4, line 441390)
+- [x] Bottom margin = 2px (from `inc dx; inc dx` at ovr108_15CE, lines 441401-441403)
+- [x] Subtitle bar height = vpOffsetY from viewport-setup (func 20) when panorama active
 
 ### TODO — Other Cutscenes
 
