@@ -51,19 +51,21 @@ namespace Underworld
             };
 
 
+        // UW2 BYT.ARK palette indices (from disassembly SplashPart1_ovr112_36)
+        // Entry 6 = Origin logo (palette 5), Entry 7 = Looking Glass logo (palette 6)
         private readonly int[] PaletteIndicesUW2 =
         {
-                3,
-                0,
-                0,
-                0,
-                0,
-                0,
-                15,
-                15,
-                0,
-                0,
-                0
+                3,  // 0: BLNKMAP
+                0,  // 1: CHARGEN
+                0,  // 2: CONV
+                0,  // 3: MAIN
+                0,  // 4: UW2 3D window
+                0,  // 5: UW2 MAIN
+                5,  // 6: Origin logo ("ORIGIN Presents")
+                5,  // 7: Looking Glass logo ("A Looking Glass Technologies Game")
+                0,  // 8: WIN1
+                0,  // 9: WIN2
+                0   // 10: UNK
             };
 
         public Shader textureshader;

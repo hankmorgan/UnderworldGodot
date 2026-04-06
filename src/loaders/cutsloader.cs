@@ -9,6 +9,7 @@ namespace Underworld
 
         public ImageTexture[] ImageCache = new ImageTexture[1];
         byte[] dstImage; //repeating buffer
+        public byte[] FinalPixelBuffer; // raw pixel data after last displayable frame (for delta chaining)
 
         public ShaderMaterial[] materials = new ShaderMaterial[1];
         public Shader textureshader;
@@ -21,6 +22,8 @@ namespace Underworld
             public int width;
             public int height;
             public int nFrames;
+            public int framesPerSecond;
+            public bool hasLastDelta;  // DPaint LPF: last frame is a loop-back delta, not displayable
         };
 
         struct lp_descriptor
@@ -107,9 +110,16 @@ namespace Underworld
             lpH.NoOfRecords = (int)getAt(cutsFile, 0x8, 32);
             lpH.width = (int)getAt(cutsFile, 0x14, 16);
             lpH.height = (int)getAt(cutsFile, 0x16, 16);
-            lpH.nFrames = (int)getAt(cutsFile, 0x40, 16);
+            lpH.nFrames = (int)getAt(cutsFile, 0x40, 32);
+            lpH.framesPerSecond = (int)getAt(cutsFile, 0x44, 16);
+            lpH.hasLastDelta = cutsFile[0x1A] != 0;
             addptr += 128;//past header.
             addptr += 128;//colour cycling info.
+
+            // DPaint LPF: if hasLastDelta, the last frame is a loop-back delta
+            // that resets the pixel buffer to frame 0. It should not be displayed,
+            // and FinalPixelBuffer should be captured before it's decoded.
+            int nDisplayFrames = lpH.hasLastDelta ? lpH.nFrames - 1 : lpH.nFrames;
 
             //Init the buffer
             dstImage = new byte[lpH.height * lpH.width]; //+ 4000];
@@ -138,8 +148,8 @@ namespace Underworld
             {
                 pages[i] = cutsFile[i + 2816];
             }
-            ImageCache = new ImageTexture[lpH.nFrames];
-            materials = new ShaderMaterial[lpH.nFrames];
+            ImageCache = new ImageTexture[nDisplayFrames];
+            materials = new ShaderMaterial[nDisplayFrames];
             for (int framenumber = 0; framenumber < lpH.nFrames; framenumber++)
             {
                 if ((ErrorHandling == true) && (framenumber == 10))
@@ -171,6 +181,9 @@ namespace Underworld
                 //offset+= (int)cutsFile[k+pagepointer];//offset += pagepointer[i];
                 //offset += (int)DataLoader.getValAtAddress(cutsFile,thepage,16);
 
+                // Get the record size for this frame to detect empty delta frames
+                int recordSize = (int)getAt(pages, pagepointer + (destframe * 2), 16);
+
                 long ppointer = thepage + (curl.nRecords * 2) + offset;
 
                 //Uint16 *ppointer16 = (Uint16*)(ppointer);
@@ -183,20 +196,50 @@ namespace Underworld
                     ppointer += 4;
                 }
                 //	byte[] imgOut ;//= //new byte[lpH.height*lpH.width+ 4000];
+                // Capture FinalPixelBuffer before the loop delta frame
+                if (lpH.hasLastDelta && framenumber == nDisplayFrames)
+                {
+                    FinalPixelBuffer = (byte[])dstImage.Clone();
+                }
+
                 if (!SkipImage(file, imagecount))
                 {
-                    myPlayRunSkipDump(ppointer, pages);//Stores in the global memory
-                }                
-                                               
-                ImageCache[imagecount++] = Image(
-                    databuffer: dstImage, 
-                    dataOffSet: 0, 
-                    width: lpH.width, height: lpH.height, 
-                    palette: pal, 
-                    useAlphaChannel: Alpha, 
-                    useSingleRedChannel: false,
-                    crop: UseCropping);
+                    if (recordSize > 4) // Only decode if there's RLE data beyond the 4-byte record header
+                    {
+                        try
+                        {
+                            myPlayRunSkipDump(ppointer, pages);//Stores in the global memory
+                        }
+                        catch (System.IndexOutOfRangeException)
+                        {
+                            // RLE decoder ran past the data boundary for this frame.
+                            // Use whatever is in dstImage from the previous frame (delta buffer).
+                            System.Diagnostics.Debug.Print($"  Warning: RLE decode failed for frame {imagecount} in {file}");
+                        }
+                    }
+                    // else: empty delta frame — dstImage stays unchanged (correct for delta encoding)
+                }
 
+                // Don't store the loop delta frame in ImageCache
+                if (framenumber < nDisplayFrames)
+                {
+                    ImageCache[imagecount++] = Image(
+                        databuffer: dstImage,
+                        dataOffSet: 0,
+                        width: lpH.width, height: lpH.height,
+                        palette: pal,
+                        useAlphaChannel: Alpha,
+                        useSingleRedChannel: false,
+                        crop: UseCropping);
+                }
+
+            }
+            // Save final pixel buffer for chaining delta-dependent files.
+            // If hasLastDelta, this was captured before the loop delta above.
+            // Otherwise, save after the last frame.
+            if (FinalPixelBuffer == null)
+            {
+                FinalPixelBuffer = (byte[])dstImage.Clone();
             }
         }
 
