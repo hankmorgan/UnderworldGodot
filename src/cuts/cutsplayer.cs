@@ -82,6 +82,8 @@ namespace Underworld
         /// <summary>
         /// Loads and begins a cutscene
         /// </summary>
+        /// <param name="CutsceneNo">The index number of the cutscene to play</param>
+        /// <param name="callBackMethod">Function to call after the cutscene has played</param>
         public static void PlayCutscene(int CutsceneNo, CallBacks.CutsceneCallBack callBackMethod)
         {
             if (CutsceneNo >= 256)
