@@ -150,10 +150,10 @@ namespace Underworld
         {
             if (string.Equals(uwsettings.instance.synth, "cm32l", StringComparison.OrdinalIgnoreCase))
             {
-                var romPath = FindRomPath();
-                if (romPath != null)
+                var roms = FindRoms();
+                if (roms != null)
                 {
-                    ConvertXMIMusic_CM32L(romPath);
+                    ConvertXMIMusic_CM32L(roms.Value.control, roms.Value.pcm);
                     return;
                 }
                 Debug.Print("CM-32L ROMs not found, falling back to OPL");
@@ -405,7 +405,7 @@ namespace Underworld
             });
         }
 
-        static string FindRomPath()
+        static (string control, string pcm)? FindRoms()
         {
             string[] searchPaths;
             if (!string.IsNullOrEmpty(uwsettings.instance.rompath))
@@ -421,19 +421,30 @@ namespace Underworld
                 };
             }
 
+            // Standard and MAME-style ROM name pairs (control, pcm)
+            var namePairs = new[]
+            {
+                ("CM32L_CONTROL.ROM", "CM32L_PCM.ROM"),
+                ("cm32l_ctrl_1_02.rom", "cm32l_pcm.rom"),
+                ("cm32l_ctrl_1_00.rom", "cm32l_pcm.rom"),
+            };
+
             foreach (var dir in searchPaths)
             {
                 if (!System.IO.Directory.Exists(dir)) continue;
-                var control = Path.Combine(dir, "CM32L_CONTROL.ROM");
-                var pcm = Path.Combine(dir, "CM32L_PCM.ROM");
-                if (File.Exists(control) && File.Exists(pcm))
-                    return dir;
+                foreach (var (ctrlName, pcmName) in namePairs)
+                {
+                    var control = Path.Combine(dir, ctrlName);
+                    var pcm = Path.Combine(dir, pcmName);
+                    if (File.Exists(control) && File.Exists(pcm))
+                        return (control, pcm);
+                }
             }
 
             return null;
         }
 
-        static void ConvertXMIMusic_CM32L(string romDir)
+        static void ConvertXMIMusic_CM32L(string controlRomPath, string pcmRomPath)
         {
             SetupMt32DllLoader();
             var outputfolder = Path.Combine(ProjectSettings.GlobalizePath("user://"), _RES.ToString(), "SOUND");
@@ -443,9 +454,7 @@ namespace Underworld
             }
 
             using var synth = new Mt32EmuSynth();
-            synth.LoadRoms(
-                Path.Combine(romDir, "CM32L_CONTROL.ROM"),
-                Path.Combine(romDir, "CM32L_PCM.ROM"));
+            synth.LoadRoms(controlRomPath, pcmRomPath);
             synth.SetSampleRate(SampleRate);
             synth.Open();
 
