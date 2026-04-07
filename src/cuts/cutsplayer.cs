@@ -213,10 +213,16 @@ namespace Underworld
             }
             else
             {
-                // Linear scroll equivalent of VGA wrapping scroll.
-                // Assembly starts at vpStartY (e.g. 359) and decreases, wrapping
-                // around the buffer. The effective linear scroll is top-to-bottom.
-                int scrollPos = System.Math.Abs(vpScrollDY) * frameAdj;
+                // Vertical scroll: convert VGA wrapping start position to composite Y.
+                // initial_y = (vp_start_y + 1) % canvas_h maps VGA start to composite.
+                // DY direction is inverted for composite: DY=-1 → pos increases,
+                // DY=+1 → pos decreases. This inversion occurs because VGA CRT start
+                // address increase pans content upward on screen.
+                // Examples from bytecode:
+                //   CS000: set-start [0,359], scroll Up (DY=-1): initial=0, increases 0→200
+                //   CS002: set-start [0,199], scroll Down (DY=+1): initial=200, decreases 200→0
+                int initialY = (vpStartY + 1) % vpComposite.GetHeight();
+                int scrollPos = initialY + (-vpScrollDY) * totalFrame;
                 int maxScroll = vpComposite.GetHeight() - displayH;
                 scrollPos = System.Math.Clamp(scrollPos, 0, maxScroll);
                 region = Godot.Image.Create(320, displayH, false, vpComposite.GetFormat());

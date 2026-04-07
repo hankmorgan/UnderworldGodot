@@ -319,7 +319,10 @@ namespace Underworld
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
-                cutsplayer.PlayCutscene(0, ReturnToMainMenu);
+                // The UW2 intro plays CS000 then CS001 in sequence.
+                // CS000 = Lord British's letter, panorama scrolls, feast, fireworks
+                // CS001 = Dawn/dusk transitions
+                cutsplayer.PlayCutscene(0, () => cutsplayer.PlayCutscene(1, ReturnToMainMenu));
             }
         }
 
