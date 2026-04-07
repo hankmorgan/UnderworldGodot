@@ -59,7 +59,9 @@ namespace Underworld
 
             if (UWClass._RES == UWClass.GAME_UW2)
             {
-                MainMenuBG.Texture = bitmaps.LoadImageAt(5);
+                var bgTex = bitmaps.LoadImageAt(5);
+                Debug.Print($"MainMenu BG texture: {(bgTex != null ? $"{bgTex.GetWidth()}x{bgTex.GetHeight()}" : "NULL")}");
+                MainMenuBG.Texture = bgTex;
                 //move main menu buttons
                 MainMenuButtons[0].Size = new Vector2(436, 68);
                 MainMenuButtons[0].Position = new Vector2(420, 308);
@@ -101,9 +103,11 @@ namespace Underworld
         /// </summary>
         private void TurnButtonsOff()
         {
+            if (grOptbtn == null) return;
             for (int i = 0; i < 4; i++)
             {
-                MainMenuButtons[i].Texture = grOptbtn.LoadImageAt(i * 2);
+                if (MainMenuButtons[i] != null)
+                    MainMenuButtons[i].Texture = grOptbtn.LoadImageAt(i * 2);
             }
         }
 

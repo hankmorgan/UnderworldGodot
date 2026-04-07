@@ -49,12 +49,12 @@ public class uwsettings
             case "UW2":
             case "2":
                 UWClass._RES = UWClass.GAME_UW2;
-                UWClass.BasePath = instance.pathuw1;
+                UWClass.BasePath = instance.pathuw2;
                 break;
             case "UW1":
             case "1":
                 UWClass._RES = UWClass.GAME_UW1;
-                UWClass.BasePath = instance.pathuw2;
+                UWClass.BasePath = instance.pathuw1;
                 break;
             case "UWDEMO":
             case "0":

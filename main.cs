@@ -111,9 +111,16 @@ public partial class main : Node3D
 			}
 		}
 		//Init Music
-		XMIMusic.ConvertXMIMusic();
-		//Play intro themes
-		XMIMusic.ChangeTheme(XMIMusic.IntroTheme);	  
+		try
+		{
+			XMIMusic.ConvertXMIMusic();
+			//Play intro themes
+			XMIMusic.ChangeTheme(XMIMusic.IntroTheme);
+		}
+		catch (System.PlatformNotSupportedException)
+		{
+			Debug.Print("XMI music not available on this platform (AdlMidi native library missing)");
+		}
 
 		gamecam.Fov = Math.Max(50, uwsettings.instance.FOV);
 		uimanager.EnableDisable(instance.lblPositionDebug, EnablePositionDebug);
