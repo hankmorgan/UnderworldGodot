@@ -568,6 +568,17 @@ namespace Underworld
             FrameNo = 0;
             currentFileExt = 1;
             vpScrollActive = false;
+
+            // Special case: CS011 (title screen, CutsceneNo=9 decimal) displays
+            // the Origin and Looking Glass splash screens before the cutscene.
+            // Added by upstream commit 04aced7.
+            if (CutsceneNo == 9)
+            {
+                cutscontrol.Texture = uimanager.bitmaps.LoadImageAt(BytLoader.PRES1_BYT);
+                yield return new WaitForSeconds(0.5f);
+                cutscontrol.Texture = uimanager.bitmaps.LoadImageAt(BytLoader.PRES2_BYT);
+                yield return new WaitForSeconds(0.5f);
+            }
             palInterpActive = false;
 
             // Load the first animation file (.N01)
