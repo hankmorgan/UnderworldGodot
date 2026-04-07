@@ -569,14 +569,23 @@ namespace Underworld
             currentFileExt = 1;
             vpScrollActive = false;
 
-            // Special case: CS011 (title screen, CutsceneNo=9 decimal) displays
-            // the Origin and Looking Glass splash screens before the cutscene.
-            // Added by upstream commit 04aced7.
-            if (CutsceneNo == 9)
+            // Splash screen sequence for the intro, matching the original engine's
+            // SplashPart1_ovr112_36 (line 461013) → SplashPart2 (line 461467):
+            //   1. Origin logo: BYT.ARK entry 6, palette 5 (LoadBitMap line 461220)
+            //   2. LGS logo: BYT.ARK entry 7, palette 6 (LoadBitMap line 461269)
+            //   3. CS011 animated title (PlayCutscene(9) from SplashPart2 line 461480)
+            // CutsceneNo 9 = CS011 (octal 011, the title screen cutscene).
+            // DOSBox capture: Origin at frame 1, LGS at frame 20, title at frame 89.
+            if (CutsceneNo == 9 && _RES == GAME_UW2)
             {
-                cutscontrol.Texture = uimanager.bitmaps.LoadImageAt(BytLoader.PRES1_BYT);
+                cutscontrol.Modulate = new Color(1f, 1f, 1f, 1f);
+                cutscontrol.Texture = uimanager.bitmaps.LoadImageAt(6); // Origin logo
+                yield return new WaitForSeconds(2.0f);
+                cutscontrol.Texture = null;
                 yield return new WaitForSeconds(0.5f);
-                cutscontrol.Texture = uimanager.bitmaps.LoadImageAt(BytLoader.PRES2_BYT);
+                cutscontrol.Texture = uimanager.bitmaps.LoadImageAt(7); // LGS logo
+                yield return new WaitForSeconds(2.0f);
+                cutscontrol.Texture = null;
                 yield return new WaitForSeconds(0.5f);
             }
             palInterpActive = false;
@@ -744,7 +753,47 @@ namespace Underworld
                 }
                 else
                 {
-                    // No frames or end-cutsc: execute commands sequentially
+                    // No frame-set: commands have varying frame numbers.
+                    // Use the max frame number as the segment length and
+                    // interleave commands with frame display.
+                    int maxFrame = 0;
+                    foreach (var cmd in scheduledCmds)
+                        if (cmd.frame < 999 && cmd.frame > maxFrame)
+                            maxFrame = cmd.frame;
+
+                    if (maxFrame > 0)
+                    {
+                        // Frame timing from LPF fps
+                        float frameTime = 0.1f;
+                        if (cuts != null && cuts.FramesPerSecond > 0)
+                            frameTime = 1.0f / cuts.FramesPerSecond;
+
+                        for (int frame = 0; frame <= maxFrame; frame++)
+                        {
+                            foreach (var cmd in scheduledCmds)
+                            {
+                                if (cmd.frame == frame)
+                                    ExecuteCommand(cmd, cutscontrol, CutsceneNo);
+                            }
+
+                            // Display frame
+                            if (cuts != null)
+                            {
+                                if (FrameNo > cuts.ImageCache.GetUpperBound(0))
+                                    FrameNo = 0;
+                                if (FrameNo <= cuts.ImageCache.GetUpperBound(0))
+                                {
+                                    uimanager.DisplayCutsImage(
+                                        cuts: cuts, imageNo: FrameNo++, targetControl: cutscontrol,
+                                        cropHeight: SceneDisplayH);
+                                }
+                            }
+                            yield return new WaitForSeconds(frameTime);
+                        }
+                    }
+                    else
+                    {
+                    // All commands at frame 0: execute sequentially (blocking)
                     foreach (var cmd in scheduledCmds)
                     {
                         ExecuteCommand(cmd, cutscontrol, CutsceneNo);
@@ -801,7 +850,8 @@ namespace Underworld
                             Debug.Print($"  Rep-seg: repeat {cmd.functionParams[0]} times");
                         }
                     }
-                }
+                    } // end else (all commands at frame 0)
+                } // end else (no frame-set)
 
                 // Execute post-animation (frame=999) commands with blocking
                 foreach (var cmd in postCmds)

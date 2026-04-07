@@ -402,8 +402,10 @@ namespace Underworld
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
-                // The UW2 intro plays CS000 then CS001 in sequence.
-                cutsplayer.PlayCutscene(0, () => cutsplayer.PlayCutscene(1, ReturnToMainMenu));
+                // Introduction button plays CS000 → CS001 only.
+                // Splash screens (Origin, LGS, title) play on game startup.
+                cutsplayer.PlayCutscene(0, () =>
+                    cutsplayer.PlayCutscene(1, ReturnToMainMenu));
             }
         }
 
