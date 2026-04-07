@@ -53,22 +53,29 @@ for full rendering pipeline details.
   space — drawing into the composite would cause double-scrolling.
 
 #### Remaining Panorama Issues
-- [ ] Fine pixel panning: original engine uses VGA register 0x3C0 index 0x33 for
-  sub-pixel horizontal scroll. Our implementation rounds to whole pixels.
+- [x] Fine pixel panning: original engine uses VGA register 0x3C0 index 0x33 for
+  sub-byte pixel offset within Mode X's 4-pixel byte groups
+  (ConfigureDisplayTiming_seg003_0272_2A0D, line 11584). The fine pan value is
+  `(scrollX & 3) << 1` (lines 11677-11679). Since our composite is pixel-addressed
+  (not byte-addressed like Mode X), we don't need to simulate this — our whole-pixel
+  scroll from the composite is equivalent to the combined coarse+fine VGA scroll.
 - [ ] Verify sprite alignment on all scroll scenes (CS000 horizontal/vertical tested)
 
-### TODO — Palette Interpolation (func 19)
+### Palette Interpolation (func 19) ✅
 
 The engine interpolates the LPF's embedded palette toward a target palette from PALS.DAT.
-This creates effects like sunset-to-night transitions and is NOT palette rotation.
+This creates effects like sunset-to-night transitions (CS000 N13) and dawn colour shifts
+(CS001 N04). NOT palette rotation.
 
-- [ ] Load target palette from `PaletteLoader.Palettes[targetIndex]`
-- [ ] Each step: move each color channel by 4 (VGA DAC granularity: 6-bit mapped to 8-bit)
-- [ ] Only interpolate palette entries within the LPF's color cycling ranges
-  (from the 128-byte block at LPF offset 0x80, 16 entries of 8 bytes, bytes 6-7 = low/high)
-- [ ] Speed parameter: interpolate every N frames
-- [ ] Need to re-render the current frame with the updated palette each step
-- [ ] Color cycling ranges need to be exposed from CutsLoader (currently parsed but not stored)
+- [x] Load target palette from PALS.DAT via OpenPalsData (ovr108_1229, line 440668)
+- [x] Linear interpolation matching InterpolatePaletteRange_ovr108_32CC (line 446461):
+  `result = source + (step * (target - source)) / total`
+- [x] Interpolates ALL 256 palette entries ([bx+5974h] = 0x100, line 440656)
+  NOT just cycling ranges — the earlier RE notes were wrong about this
+- [x] Source palette snapshot stored at [si+55CAh] (lines 440689-440699)
+- [x] Speed parameter: interpolate every N frames (timer delay)
+- [x] Re-render current frame with updated palette each step
+- [x] Params: [0]=PALS.DAT index, [1]=speed, [2]=total frames
 
 ### TODO — CutsLoader Enhancements
 
@@ -93,26 +100,43 @@ This creates effects like sunset-to-night transitions and is NOT palette rotatio
 Only CS000 (intro) and CS001 (dawn/dome) have been tested. Other cutscenes may exercise
 different command combinations:
 
-- [ ] CS002: Guardian's appearance (triggered in-game, has panorama scroll)
-- [ ] CS004-007: Stub cutscenes (have .N00 but no .N01 — empty?)
-- [ ] CS011: Title screen animation ("Ultima Underworld II / Labyrinth of Worlds")
-- [ ] CS012: Credits/acknowledgements
-- [ ] CS030-036: Dream/vision sequences (from sleep?)
-- [ ] CS040: Unknown
-- [ ] CS403: Death animation (has alpha channel sprites)
+- [ ] CS002: has panorama scroll + palette interp (renders in Python extractor)
+- [ ] CS004-007: have .N00 but no .N01 LPF files — stub/empty
+- [ ] CS011: title animation (renders in Python extractor)
+- [ ] CS012: acknowledgements (renders in Python extractor)
+- [ ] CS030-036: triggered from sleep code (sleep.cs line 336)
+- [ ] CS040: unknown trigger
+- [ ] CS403: has alpha channel sprites (UseAlpha in cutsloader.cs)
 
 Note: CS000 bytecode references N11 which contains unfinished art not in the final game.
 The bytecode for CS000 may contain stale references from an earlier build.
 
-### TODO — BYT.ARK Screens
+### BYT.ARK Screens — Verified from Disassembly ✅
 
-- [ ] Entry 0 (BLNKMAP): palette 1 — uses current game palette, no explicit set in assembly
-- [ ] Entry 1 (CHARGEN): palette 3 — assembly confirms OpenPalsData(3) called after load
-- [ ] Entries 4, 5, 9: assembly passes 0xFFFF (keep current palette).
-  The Godot code uses palette 0 as fallback — may need dynamic palette selection.
-- [ ] ALLPALS.DAT (513 bytes, 32 x 16-byte entries): auxiliary palette mapping data used by
-  the rendering pipeline. Purpose not fully understood — each entry appears to contain
-  a list of palette indices for remapping. Accessed via `shl ax, 4; add ax, AllPals_dseg_6742`.
+All palette indices confirmed from assembly (`LoadBitMap` calls):
+
+| Entry | Content | Palette | Assembly Location |
+|-------|---------|---------|-------------------|
+| 0 | BLNKMAP | 1 | Uses game palette, no explicit set |
+| 1 | CHARGEN | 3 | OpenPalsData(3) after load |
+| 2 | CONV | 0 | Game palette |
+| 3 | MAIN | 0 | Game palette |
+| 4 | UW2 3D win | 0xFFFF→0 | `LoadBitMap(4, 0xFFFF)` ovr112_3E7, line 461928 |
+| 5 | UW2 MAIN | 0xFFFF→0 | `LoadBitMap(5, 0xFFFF)` ovr147_8EB, line 523480 |
+| 6 | Origin logo | 5 | `LoadBitMap(6, 5)` SplashPart1, line 461214 |
+| 7 | LGS logo | 6 | `LoadBitMap(7, 6)` SplashPart1, line 461263 |
+| 8 | Victory 1 | 7 | `LoadBitMap(8, 7)` RunVictorySequence, line 535059 |
+| 9 | Victory 2 | 0xFFFF→0 | `LoadBitMap(9, 0xFFFF)` RunVictorySequence, line 535081 |
+
+Entries with 0xFFFF keep current palette — palette 0 fallback is correct since
+the game palette is active when these screens load.
+
+- [x] All palette indices match PaletteIndicesUW2 in bytloader.cs
+- [x] ALLPALS.DAT (512 bytes, 32 x 16-byte entries): auxiliary palette mapping for
+  **sprite rendering** (cursor/object bitmaps), not BYT.ARK screens. Loaded at
+  ovr119_A0F (line 473528), accessed via `shl ax, 4; add ax, AllPals_dseg_6742`
+  in seg009 (line 67189). Each entry contains 16 palette indices for remapping
+  sprite colours in different contexts.
 
 ## Reference Files
 
