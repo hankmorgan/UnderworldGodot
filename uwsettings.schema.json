@@ -68,6 +68,19 @@
             "description": "Controls how many light shades are calculated in between the vanilla shades.dat colour palette values to smooth light shading. (no of interpolated colours between the vanilla colours)",
             "type": "integer",
             "default": 8
+        },
+
+        "synth": {
+            "description": "Music synthesizer to use. 'opl' for AdLib/OPL emulation, 'cm32l' for Roland CM-32L/MT-32 emulation (requires ROM files).",
+            "type": "string",
+            "enum": ["opl", "cm32l"],
+            "default": "opl"
+        },
+
+        "rompath": {
+            "description": "Optional path to directory containing CM-32L ROM files (CM32L_CONTROL.ROM and CM32L_PCM.ROM). If empty, searches game SOUND folder and user://roms/.",
+            "type": "string",
+            "default": ""
         }
 
     }
