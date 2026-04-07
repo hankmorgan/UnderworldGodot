@@ -128,22 +128,33 @@ namespace Underworld
             vpIsHorizontal = vpCanvasWidth > 320;
             var pal = cuts.EmbeddedPalette;
 
-            int compW = vpIsHorizontal ? 320 + vpStartX : vpCanvasWidth;
+            // Composite width: for horizontal, use the map-file position params
+            // to determine width (rightmost LBACK position + 320).
+            int compW = vpIsHorizontal ? vpCanvasWidth : vpCanvasWidth;
             int compH = vpCanvasHeight;
 
             var img = Godot.Image.Create(compW, compH, false, Godot.Image.Format.Rgb8);
 
             int runningY = 0;
-            int lbackIndex = 0;
             foreach (var mapping in vpFileMappings)
             {
                 var (pos, extent, fileIdx, rawPixels) = mapping;
-                if (rawPixels == null) { lbackIndex++; continue; }
+                if (rawPixels == null) continue;
 
                 if (vpIsHorizontal)
                 {
-                    // Horizontal: first LBACK at x=0, second at x=320
-                    int blitX = lbackIndex * 320;
+                    // Horizontal: each LBACK placed at its position parameter
+                    // from the map-file command. Composite grows to fit.
+                    int blitX = pos;
+                    int totalW = System.Math.Max(img.GetWidth(), blitX + 320);
+                    if (img.GetWidth() < totalW)
+                    {
+                        var newImg = Godot.Image.Create(totalW, compH, false, Godot.Image.Format.Rgb8);
+                        newImg.BlitRect(img, new Rect2I(0, 0, img.GetWidth(), compH), Vector2I.Zero);
+                        img = newImg;
+                        vpCanvasWidth = totalW;
+                        compW = totalW;
+                    }
                     int blitW = System.Math.Min(320, compW - blitX);
                     int blitH = System.Math.Min(200, compH);
                     for (int y = 0; y < blitH; y++)
@@ -166,7 +177,6 @@ namespace Underworld
                         }
                     runningY += 200;
                 }
-                lbackIndex++;
             }
 
             vpComposite = img;
@@ -572,10 +582,12 @@ namespace Underworld
             bool cutsceneRunning = true;
             bool firstSegment = true;
 
+            bool fileChanged = false;
+
             while (cutsceneRunning && cmdIndex < commands.Count)
             {
-                // Auto-advance to the next animation file
-                if (!firstSegment)
+                // Auto-advance to the next animation file (unless open-file changed it)
+                if (!firstSegment && !fileChanged)
                 {
                     int nextExt = currentFileExt + 1;
                     var nextFile = System.IO.Path.Combine(
@@ -588,8 +600,9 @@ namespace Underworld
                     FrameNo = 0;
                 }
                 firstSegment = false;
+                fileChanged = false;
 
-                // Reset palette interpolation for new segment
+                // Reset palette interpolation per segment (func 19 re-enables it).
                 palInterpActive = false;
 
                 // Collect this segment's commands
@@ -630,6 +643,16 @@ namespace Underworld
 
                 Debug.Print($"--- Segment: {scheduledCmds.Count} cmds, {postCmds.Count} post-cmds, {segmentFrameCount} frames, ext={currentFileExt} ---");
 
+                // Scroll state: if this segment has no start-scroll command,
+                // deactivate scrolling. The panorama composite persists (only
+                // cleared by viewport-setup func 20) but the viewport stops moving.
+                // Segments without start-scroll render LPF frames directly.
+                bool hasScrollCmd = false;
+                foreach (var cmd in scheduledCmds)
+                    if (cmd.functionNo == 23) { hasScrollCmd = true; break; }
+                if (!hasScrollCmd)
+                    vpScrollActive = false;
+
                 // Execute the segment
                 if (hasFrameSet && segmentFrameCount > 0)
                 {
@@ -649,6 +672,8 @@ namespace Underworld
                             if (cmd.frame == frame && cmd.functionNo != 5)
                             {
                                 ExecuteCommand(cmd, cutscontrol, CutsceneNo);
+                                if (cmd.functionNo == 8) // open-file
+                                    fileChanged = true;
                             }
                         }
 
@@ -681,6 +706,20 @@ namespace Underworld
                                 cropHeight: SceneDisplayH);
                         }
                         yield return new WaitForSeconds(frameTime);
+                    }
+
+                    // Execute commands at the frame-set boundary frame number.
+                    // These fire after the last displayed frame (frame-set frame
+                    // is not displayed per DPaint LPF format). Typically fade or
+                    // open-file commands that carry over into the next segment.
+                    foreach (var cmd in scheduledCmds)
+                    {
+                        if (cmd.frame == segmentFrameCount && cmd.functionNo != 5)
+                        {
+                            ExecuteCommand(cmd, cutscontrol, CutsceneNo);
+                            if (cmd.functionNo == 8) // open-file
+                                fileChanged = true;
+                        }
                     }
 
                     if (vpScrollActive)

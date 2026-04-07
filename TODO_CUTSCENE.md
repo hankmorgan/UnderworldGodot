@@ -100,7 +100,9 @@ This creates effects like sunset-to-night transitions (CS000 N13) and dawn colou
 Only CS000 (intro) and CS001 (dawn/dome) have been tested. Other cutscenes may exercise
 different command combinations:
 
-- [ ] CS002: has panorama scroll + palette interp (renders in Python extractor)
+- [x] CS002: vertical scroll (stained glass), palette interp, horizontal scroll (victory flags),
+  open-file skips, breaking glass animation — all rendering in Python extractor.
+  Known issue: pre-scroll/scroll alignment offset at throne room→stained glass transition.
 - [ ] CS004-007: have .N00 but no .N01 LPF files — stub/empty
 - [ ] CS011: title animation (renders in Python extractor)
 - [ ] CS012: acknowledgements (renders in Python extractor)
@@ -108,8 +110,17 @@ different command combinations:
 - [ ] CS040: unknown trigger
 - [ ] CS403: has alpha channel sprites (UseAlpha in cutsloader.cs)
 
-Note: CS000 bytecode references N11 which contains unfinished art not in the final game.
-The bytecode for CS000 may contain stale references from an earlier build.
+Note: CS000's bytecode uses open-file commands to deliberately skip N11, which contains
+unfinished art from an earlier build. The skip pattern is:
+N10 → open-file jumps to N12 → open-file jumps back to N10 → open-file jumps to N13.
+N11 is never reached through normal playback. See RE Notes for details.
+
+### Segment Boundary Fixes ✅
+- [x] Commands at frame-set frame number fire after last displayed frame (DPaint format)
+- [x] Cross-segment fade completion: fade-out completes before new content renders
+- [x] open-file at boundary correctly prevents auto-advance
+- [x] Scroll state is segment-scoped (only active when segment has start-scroll)
+- [x] Horizontal composite width from map-file position params (not vpStartX)
 
 ### BYT.ARK Screens — Verified from Disassembly ✅
 
