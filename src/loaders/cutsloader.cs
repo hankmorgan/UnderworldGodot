@@ -12,6 +12,13 @@ namespace Underworld
         public byte[] FinalPixelBuffer; // raw pixel data after last displayable frame (for delta chaining)
 
         /// <summary>
+        /// Raw indexed pixel data per frame (palette indices, not RGB).
+        /// Used for palette interpolation — the frame can be re-rendered with
+        /// a modified palette without re-decoding the RLE data.
+        /// </summary>
+        public byte[][] RawPixelData;
+
+        /// <summary>
         /// The embedded palette from the LPF file header (offset 0x100-0x4FF).
         /// Needed to render LBACK*.BYT files which are raw indexed pixel data.
         /// </summary>
@@ -212,6 +219,7 @@ namespace Underworld
                 pages[i] = cutsFile[i + 2816];
             }
             ImageCache = new ImageTexture[nDisplayFrames];
+            RawPixelData = new byte[nDisplayFrames][];
             materials = new ShaderMaterial[nDisplayFrames];
             if (isSpriteMode)
                 WriteMasks = new byte[nDisplayFrames][];
@@ -306,6 +314,9 @@ namespace Underworld
                 {
                     if (isSpriteMode && writeMask != null)
                         WriteMasks[imagecount] = (byte[])writeMask.Clone();
+
+                    // Store raw indexed pixel data for palette interpolation
+                    RawPixelData[imagecount] = (byte[])dstImage.Clone();
 
                     ImageCache[imagecount++] = Image(
                         databuffer: dstImage,

@@ -68,11 +68,16 @@ namespace Underworld
         static int SceneDisplayH =>
             PanoramaActive && vpOffsetY > 0 ? 200 - vpOffsetY : 200;
 
-        // Palette interpolation state (func 19)
+        // Palette interpolation state (func 19).
+        // Linear interpolation matching InterpolatePaletteRange_ovr108_32CC (line 446461):
+        //   result = source + (step * (target - source)) / total
         static bool palInterpActive;
-        static int palInterpSpeed;
-        static int palInterpStep;
+        static int palInterpSpeed;     // interpolate every N frames
+        static int palInterpStep;      // current step counter
+        static int palInterpTotal;     // total frames from bytecode param[2]
         static int palInterpTargetIndex;
+        static Palette palInterpSource;  // snapshot of palette when func 19 fires
+        static Palette palInterpTarget;  // target from PALS.DAT
 
         static int StringBlock;
 
@@ -437,11 +442,47 @@ namespace Underworld
 
                 case 19: // pal-interp — interpolate palette toward PALS.DAT target
                     {
+                        // Cutscene_19_Unk_ovr108_1229 (line 440603):
+                        //   param[0] = PALS.DAT index (loaded via OpenPalsData, line 440668)
+                        //   param[1] = speed (timer delay — interpolate every N frames)
+                        //   param[2] = total frames
+                        // Source palette snapshot stored at [si+55CAh] (lines 440689-440699).
                         palInterpTargetIndex = cmd.functionParams[0];
                         palInterpSpeed = cmd.functionParams[1];
+                        palInterpTotal = cmd.NoOfParams > 2 ? cmd.functionParams[2] : 80;
                         palInterpStep = 0;
-                        palInterpActive = true;
-                        Debug.Print($"  Palette interp: target PALS.DAT[{palInterpTargetIndex}], speed={palInterpSpeed}");
+                        // Snapshot current palette as source
+                        if (cuts != null && cuts.EmbeddedPalette != null)
+                        {
+                            palInterpSource = new Palette();
+                            for (int i = 0; i < 256; i++)
+                            {
+                                palInterpSource.red[i] = cuts.EmbeddedPalette.red[i];
+                                palInterpSource.green[i] = cuts.EmbeddedPalette.green[i];
+                                palInterpSource.blue[i] = cuts.EmbeddedPalette.blue[i];
+                            }
+                        }
+                        // Load target palette directly from PALS.DAT file.
+                        // Note: PaletteLoader.Palettes has a bug (uses palNo*256 instead
+                        // of palNo*768 for record size), so we load directly here.
+                        var palsPath = System.IO.Path.Combine(BasePath, "DATA", "PALS.DAT");
+                        if (Loader.ReadStreamFile(palsPath, out byte[] palsData))
+                        {
+                            int palOffset = palInterpTargetIndex * 768; // 256 entries * 3 bytes
+                            if (palOffset + 768 <= palsData.Length)
+                            {
+                                palInterpTarget = new Palette();
+                                for (int i = 0; i < 256; i++)
+                                {
+                                    // VGA 6-bit to 8-bit: shift left 2 (same as PaletteLoader)
+                                    palInterpTarget.red[i] = (byte)((palsData[palOffset + i * 3] & 0x3F) << 2);
+                                    palInterpTarget.green[i] = (byte)((palsData[palOffset + i * 3 + 1] & 0x3F) << 2);
+                                    palInterpTarget.blue[i] = (byte)((palsData[palOffset + i * 3 + 2] & 0x3F) << 2);
+                                }
+                                palInterpActive = true;
+                            }
+                        }
+                        Debug.Print($"  Palette interp: target PALS.DAT[{palInterpTargetIndex}], speed={palInterpSpeed}, total={palInterpTotal}");
                         // TODO: implement actual palette interpolation using PaletteLoader
                         // and the LPF's color cycling ranges
                         break;
@@ -455,6 +496,22 @@ namespace Underworld
                         vpCanvasWidth = cmd.functionParams[0];
                         vpCanvasHeight = cmd.functionParams[1];
                         vpOffsetY = cmd.NoOfParams > 2 ? cmd.functionParams[2] : 0;
+
+                        // Position subtitle label in the black bar area.
+                        // From RenderCutsceneText_ovr108_157B (line 441321):
+                        //   text is bottom-aligned with 2px margin (ovr108_15CE lines 441401-441403)
+                        //   scene height = 200 - vpOffsetY
+                        // The fullscreen cutscene renders at 4x scale (1280x800 for 320x200).
+                        if (PanoramaActive && vpOffsetY > 0)
+                        {
+                            float scale = cutscontrol.Size.Y / 200f;
+                            float subtitleTop = (200 - vpOffsetY) * scale;
+                            float subtitleBottom = cutscontrol.Size.Y;
+                            uimanager.instance.CutsSubtitle.Position = new Vector2(
+                                uimanager.instance.CutsSubtitle.Position.X, subtitleTop);
+                            uimanager.instance.CutsSubtitle.Size = new Vector2(
+                                uimanager.instance.CutsSubtitle.Size.X, subtitleBottom - subtitleTop);
+                        }
                         vpScrollActive = false;
                         vpFrameOffset = 0;
                         vpFileMappings.Clear();
@@ -729,9 +786,49 @@ namespace Underworld
                         {
                             if (FrameNo > cuts.ImageCache.GetUpperBound(0))
                                 FrameNo = 0;
-                            uimanager.DisplayCutsImage(
-                                cuts: cuts, imageNo: FrameNo++, targetControl: cutscontrol,
-                                cropHeight: SceneDisplayH);
+
+                            // Palette interpolation: re-render frame with interpolated palette.
+                            // Linear interpolation from InterpolatePaletteRange_ovr108_32CC (line 446461):
+                            //   result = source + (step * (target - source)) / total
+                            if (palInterpActive && palInterpSource != null && palInterpTarget != null
+                                && cuts.RawPixelData != null && FrameNo < cuts.RawPixelData.Length
+                                && cuts.RawPixelData[FrameNo] != null)
+                            {
+                                palInterpStep++;
+                                // Update interpolated palette on speed-divisible frames
+                                int actualStep = System.Math.Max(1, palInterpStep / System.Math.Max(1, palInterpSpeed));
+                                int totalSteps = System.Math.Max(1, palInterpTotal / System.Math.Max(1, palInterpSpeed));
+                                actualStep = System.Math.Min(actualStep, totalSteps);
+
+                                // Build interpolated palette
+                                var interpPal = new Palette();
+                                for (int i = 0; i < 256; i++)
+                                {
+                                    int sr = palInterpSource.red[i], sg = palInterpSource.green[i], sb = palInterpSource.blue[i];
+                                    int tr = palInterpTarget.red[i], tg = palInterpTarget.green[i], tb = palInterpTarget.blue[i];
+                                    interpPal.red[i] = (byte)System.Math.Clamp(sr + (actualStep * (tr - sr)) / totalSteps, 0, 255);
+                                    interpPal.green[i] = (byte)System.Math.Clamp(sg + (actualStep * (tg - sg)) / totalSteps, 0, 255);
+                                    interpPal.blue[i] = (byte)System.Math.Clamp(sb + (actualStep * (tb - sb)) / totalSteps, 0, 255);
+                                }
+
+                                // Re-render frame with interpolated palette
+                                var rerendered = ArtLoader.Image(
+                                    databuffer: cuts.RawPixelData[FrameNo],
+                                    dataOffSet: 0,
+                                    width: 320, height: 200,
+                                    palette: interpPal,
+                                    useAlphaChannel: false,
+                                    useSingleRedChannel: false,
+                                    crop: false);
+                                cutscontrol.Texture = rerendered;
+                                FrameNo++;
+                            }
+                            else
+                            {
+                                uimanager.DisplayCutsImage(
+                                    cuts: cuts, imageNo: FrameNo++, targetControl: cutscontrol,
+                                    cropHeight: SceneDisplayH);
+                            }
                         }
                         yield return new WaitForSeconds(frameTime);
                     }
