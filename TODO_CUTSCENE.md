@@ -142,7 +142,12 @@ All palette indices confirmed from assembly (`LoadBitMap` calls):
 Entries with 0xFFFF keep current palette — palette 0 fallback is correct since
 the game palette is active when these screens load.
 
-- [x] All palette indices match PaletteIndicesUW2 in bytloader.cs
+- [ ] PaletteIndicesUW2 in bytloader.cs does NOT match assembly — reverted to
+  upstream values `{3,0,0,0,0,0,15,15,0,0,0}` because applying assembly values
+  broke chargen and other screens. The upstream array appears to be missing
+  entry 0 (BLNKMAP), shifting all indices. Assembly values documented as
+  comments in bytloader.cs. Needs investigation: palettes may be set before
+  load in some contexts, and palette 15 doesn't exist in PALS.DAT (only 11).
 - [x] ALLPALS.DAT (512 bytes, 32 x 16-byte entries): auxiliary palette mapping for
   **sprite rendering** (cursor/object bitmaps), not BYT.ARK screens. Loaded at
   ovr119_A0F (line 473528), accessed via `shl ax, 4; add ax, AllPals_dseg_6742`
