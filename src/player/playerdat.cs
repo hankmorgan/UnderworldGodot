@@ -471,6 +471,65 @@ namespace Underworld
             }
         }
 
+
+        public static bool MusicEnabled
+        {
+            get
+            {
+                if (pdat==null)
+                {
+                    //game has not loaded yet. Return true
+                    return true;
+                }
+                if (_RES == GAME_UW2)
+                {
+                    return ((GetAt(0x303) >> 2) & 0x3) != 0;
+                }
+                else
+                {
+                    return ((GetAt(0xB6) >> 2) & 0x3) != 0;
+                }
+            }
+
+            set
+            {
+                if(_RES == GAME_UW2)
+                {
+                    var tmp = GetAt(0x303) & 0xF3;
+                    if (value)
+                    {
+                        tmp = tmp | 8;
+                    }
+                    SetAt(0x303, (byte)tmp);
+                }
+                else
+                {
+                    var tmp = GetAt(0xB6) & 0xF3;
+                    if (value)
+                    {
+                        tmp = tmp | 8;
+                    }
+                    SetAt(0xB6, (byte)tmp);
+                }
+            }
+        }
+
+        public static bool SoundEffectsEnabled
+        {
+            get
+            {
+                if (_RES == GAME_UW2)
+                {
+                    return (GetAt(0x303) & 0x1) == 1;
+                }
+                else
+                {
+                    return (GetAt(0xB6) & 0x1) == 1;
+                }
+            }
+        }
+
+
         /// <summary>
         /// Changes the player EXP using the vanilla logic for EXP gains
         /// </summary>
@@ -557,7 +616,7 @@ namespace Underworld
             }
             uimanager.RefreshManaFlask();
             uimanager.RefreshHealthFlask();
-            WeightMax = (short)(300 + (STR*13));
+            WeightMax = (short)(300 + (STR * 13));
         }
     } //end class
 }//end namespace

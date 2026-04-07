@@ -42,7 +42,8 @@ public partial class main : Node3D
 	// Called when the node enters the scene tree for the first time.
 	[Export] public Camera3D cam;
 	public static Camera3D gamecam; //static ref to the above camera
-	[Export] public AudioStreamPlayer audioplayer;
+	[Export] public AudioStreamPlayer DigitalAudioPlayer;
+	[Export] public AudioStreamPlayer MusicPlayer;
 	[Export] public RichTextLabel lblPositionDebug;
 	//[Export] public uimanager uwUI;
 
@@ -109,17 +110,33 @@ public partial class main : Node3D
 				Debug.Print("UIManager is still null!!");
 			}
 		}
+		//Init Music
+		try
+		{
+			XMIMusic.ConvertXMIMusic();
+			//Play intro themes
+			XMIMusic.ChangeTheme(XMIMusic.IntroTheme);
+		}
+		catch (System.PlatformNotSupportedException)
+		{
+			Debug.Print("XMI music not available on this platform (AdlMidi native library missing)");
+		}
+
 		gamecam.Fov = Math.Max(50, uwsettings.instance.FOV);
 		uimanager.EnableDisable(instance.lblPositionDebug, EnablePositionDebug);
-		uimanager.EnableDisable(uimanager.instance.StartMenuPanel, false);
 		ObjectCreator.grObjects = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
 		ObjectCreator.grObjects.UseRedChannel = true;
 		ObjectCreator.grObjects.UseCropping = true;
 		Palette.CurrentPalette = 0;
 		uimanager.instance.InitUI();
+		uimanager.EnableDisable(uimanager.instance.uw1UI,false);
+		uimanager.EnableDisable(uimanager.instance.uw2UI,false);
+		uimanager.EnableDisable(uimanager.instance.PanelInventory,false);
+		uimanager.EnableDisable(uimanager.instance.ManaFlaskPanel,false);
+		uimanager.EnableDisable(uimanager.instance.HealthFlaskPanel,false);
+		cutsplayer.PlayCutscene(9, uimanager.ReturnToMainMenu);	
 		uimanager.AddToMessageScroll(GameStrings.GetString(1, 13));//welcome message
 	}
-
 
 	/// <summary>
 	/// Draws a debug marker sprite on game load to show where the character is positioned
@@ -1152,6 +1169,20 @@ public partial class main : Node3D
 
 		//Handle level transitions now since it's possible for further traps to be called after the teleport trap
 		Teleportation.HandleTeleportation();
+	}
+
+
+	public static void _on_music_player_finished()
+	{
+		Debug.Print("Music finished, picking next theme");
+		if (XMIMusic.LoopTheme)
+		{
+			main.instance.MusicPlayer.Play();//restart the playing theme, used mainly for the armed theme
+		}
+		else
+		{
+			XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic());
+		}
 	}
 
 }//end class

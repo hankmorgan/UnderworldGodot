@@ -7,7 +7,7 @@ namespace Underworld
     //for handling loop updates for the player.
     public partial class playerdat : Loader
     {
-        static int previousLightLevel;
+        public static int previousLightLevel = -1;
         public static bool previousMazeNavigation = false;
 
         static double playertimer;

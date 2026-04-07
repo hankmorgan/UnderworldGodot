@@ -5,6 +5,13 @@
 
 # Custom project settings
 uwsettings.json
+.runsettings
+.idea/
+.env
+
+# Backup files
+*.old
+*.old.*
 
 # User-specific files
 *.rsuser
@@ -414,3 +421,4 @@ export.cfg
 .mono/
 data_*/
 mono_crash.*.json
+tmp/

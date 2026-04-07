@@ -126,7 +126,7 @@ namespace Underworld
             {
                 case 0://pick gender.
                     playerdat.isFemale = (choice == 1);
-                    uimanager.instance.ChargenGender.Text = GameStrings.GetString(2, 9 + choice);
+                    uimanager.instance.ChargenGender.Text = $"[color={uimanager.ChargenFontColour}]{GameStrings.GetString(2, 9 + choice)}[/color]";
                     //advance to next stage
                     PresentChargenOptions(++CurrentStage);
                     break;
@@ -136,7 +136,7 @@ namespace Underworld
                     break;
                 case 2://class
                     InitClassAttributes(choice);
-                    uimanager.instance.ChargenClass.Text = GameStrings.GetString(2, 23 + choice);
+                    uimanager.instance.ChargenClass.Text = $"[color={uimanager.ChargenFontColour}]{GameStrings.GetString(2, 23 + choice)}[/color]";
                     uimanager.PrintChargenAttributes();
                     PresentChargenOptions(++CurrentStage);
                     break;
@@ -157,7 +157,7 @@ namespace Underworld
                 case 6://name              
                     playerdat.CharName = uimanager.instance.ChargenNameInput.Text; 
                     uimanager.EnableDisable(uimanager.instance.ChargenNameBG,false);
-                    uimanager.instance.ChargenName.Text = playerdat.CharName;                    
+                    uimanager.instance.ChargenName.Text = $"[color={uimanager.ChargenFontColour}]{playerdat.CharName}[/color]";                    
                     PresentChargenOptions(++CurrentStage);
                     break;
                 case 7://confirm
@@ -265,7 +265,7 @@ namespace Underworld
             {
                 uimanager.EnableDisable(uimanager.instance.ChargenQuestion, false);
             }
-            uimanager.instance.ChargenQuestion.Text = questiontext;
+            uimanager.instance.ChargenQuestion.Text = $"[color={uimanager.ChargenFontColour}]{questiontext}[/color]";
             uimanager.instance.ChargenQuestion.Position = uimanager.CalculateChargenButtonPosition(-1);
 
         }

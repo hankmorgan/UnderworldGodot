@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.Runtime.Serialization;
 using Godot;
 
 namespace Underworld
@@ -88,7 +87,7 @@ namespace Underworld
             {
                 WeaponCharge = Math.Min(WeaponCharge + ChargeSpeed, 100);
                 var frame = 1 + (WeaponCharge / 12);
-                Debug.Print($"{frame} at {WeaponCharge} of {mincharge}");
+                //Debug.Print($"{frame} at {WeaponCharge} of {mincharge}");
                 uimanager.ChangePower(frame);
                 combattimer = 0f;
             }

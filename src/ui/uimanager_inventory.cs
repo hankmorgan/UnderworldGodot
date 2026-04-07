@@ -795,28 +795,28 @@ namespace Underworld
                         &&
                         obj.minorclass == 2
                         &&
-                        (obj.classindex >= 0 || obj.classindex <= 2);
+                        (obj.classindex >= 0 && obj.classindex <= 2);
                 case 2://gloves
                     return
                         obj.majorclass == 0
                         &&
                         obj.minorclass == 2
                         &&
-                        (obj.classindex >= 7 || obj.classindex <= 8);
+                        (obj.classindex >= 7 && obj.classindex <= 8);
                 case 3://leggings
                     return
                         obj.majorclass == 0
                         &&
                         obj.minorclass == 2
                         &&
-                        (obj.classindex >= 3 || obj.classindex <= 5);
+                        (obj.classindex >= 3 && obj.classindex <= 5);
                 case 4://boots
                     return
                         obj.majorclass == 0
                         &&
                         obj.minorclass == 2
                         &&
-                        (obj.classindex >= 9 || obj.classindex <= 0xB);
+                        (obj.classindex >= 9 && obj.classindex <= 0xB);
                 case 9:
                 case 10://rings
                     return
@@ -824,7 +824,7 @@ namespace Underworld
                         &&
                         obj.minorclass == 3
                         &&
-                        (obj.classindex >= 9 || obj.classindex <= 0xB);
+                        (obj.classindex >= 9 && obj.classindex <= 0xB);
             }
 
             return true;

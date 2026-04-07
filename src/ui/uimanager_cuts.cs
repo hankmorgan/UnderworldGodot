@@ -90,11 +90,18 @@ namespace Underworld
                );
         }
 
+        /// <summary>
+        /// Flashes a COLOUR from the palette on the screen
+        /// </summary>
+        /// <param name="colour"></param>
+        /// <param name="targetControl"></param>
+        /// <param name="duration"></param>
+        /// <param name="IgnoreDelay"></param>
         public static void FlashColour(byte colour, TextureRect targetControl, float duration = 0.2f, bool IgnoreDelay = false)
         {
             var palette = PaletteLoader.Palettes[0];
             var width = 2; var height = 2;
-            var img = Image.Create(width, height, false, Image.Format.Rgb8);
+            var img = Image.CreateEmpty(width, height, false, Image.Format.Rgb8);
             for (int iRow = 0; iRow < height; iRow++)
             {
                 int iCol = 0;

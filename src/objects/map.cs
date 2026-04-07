@@ -13,10 +13,13 @@ namespace Underworld
             {
                 var worldno = worlds.GetWorldNo(playerdat.dungeon_level);
                 uimanager.DrawAutoMap(playerdat.dungeon_level-1, worldno);
+                //TODO: if a theme such as the combat theme is playing then that theme will be overridden by an exploration theme. 
+                
             }
             else
             {
                 uimanager.DrawAutoMap(playerdat.dungeon_level-1, 0);
+                XMIMusic.ChangeTheme(XMIMusic.MapsAndLegends);//play maps and legends in UW1 only.
             }
             
             return false;

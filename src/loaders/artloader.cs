@@ -105,7 +105,7 @@ namespace Underworld
                 }
             }
 
-            var img = Godot.Image.Create(width, height, false, imgformat);
+            var img = Godot.Image.CreateEmpty(width, height, false, imgformat);
             for (int iRow = 0; iRow < height; iRow++)
             {
                 int iCol = 0;
@@ -263,7 +263,7 @@ namespace Underworld
 
         public static ImageTexture CropImage(Image src, Rect2I rect)
         {
-            var img = Godot.Image.Create(rect.Size.X, rect.Size.Y, false, src.GetFormat());
+            var img = Godot.Image.CreateEmpty(rect.Size.X, rect.Size.Y, false, src.GetFormat());
             img.BlitRect(src, rect, Vector2I.Zero);
             var tex = new ImageTexture();
             tex.SetImage(img);

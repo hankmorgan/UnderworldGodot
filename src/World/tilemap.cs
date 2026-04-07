@@ -125,7 +125,7 @@ namespace Underworld
         {
             get
             {
-                return thisLevelNo+1;
+                return thisLevelNo + 1;
             }
         }
         public const int UW_CEILING_HEIGHT = 32;
@@ -222,7 +222,7 @@ namespace Underworld
                 setAt(lev_ark_block.Data, 0x7C00, 16, value);
             }
         }
-        
+
         /// <summary>
         /// Returns the mobile object index number at the specified slotindex in the list of active mobiles
         /// </summary>
@@ -347,9 +347,12 @@ namespace Underworld
             {
                 child.QueueFree();
             }
-            foreach (var child in ObjectCreator.worldobjects.GetChildren())
+            if (ObjectCreator.worldobjects != null)
             {
-                child.QueueFree();
+                foreach (var child in ObjectCreator.worldobjects.GetChildren())
+                {
+                    child.QueueFree();
+                }
             }
         }
 
@@ -547,7 +550,7 @@ namespace Underworld
 
             return true;
         }
-       
+
 
         private void ListEnchantmentsInLinkedList(int listhead, int x, int y)
         {
@@ -677,7 +680,7 @@ namespace Underworld
         /// <param name="game">Game.</param>
         /// Although the tile map renderer supports tiles of size X*Y I'm only smart enought to optimise the tilemap into strips of X*1 or Y*1 !!
         public void CleanUp()
-        {            
+        {
             int x; int y;
 
             for (x = 0; x <= TileMapSizeX; x++)
@@ -1191,22 +1194,22 @@ namespace Underworld
                                 offset += 2;
                             }
                             else
-                            if (i <= 57)//Floor textures are 49 to 56, ceiling is 57
-                            {
-                                texture_map[i] = (short)(DataLoader.getValAtAddress(tex_ark, offset, 16) + 48);
-                                offset += 2;
-                                if (i == 57)
+                                if (i <= 57)//Floor textures are 49 to 56, ceiling is 57
                                 {
-                                    CeilingTexture = (short)i;
+                                    texture_map[i] = (short)(DataLoader.getValAtAddress(tex_ark, offset, 16) + 48);
+                                    offset += 2;
+                                    if (i == 57)
+                                    {
+                                        CeilingTexture = (short)i;
+                                    }
                                 }
-                            }
-                            else
-                            {
-                                //door textures are int 8s
-                                texture_map[i] = (short)DataLoader.getValAtAddress(tex_ark, offset, 8);
-                                //+210; //(i * 1)
-                                offset++;
-                            }
+                                else
+                                {
+                                    //door textures are int 8s
+                                    texture_map[i] = (short)DataLoader.getValAtAddress(tex_ark, offset, 8);
+                                    //+210; //(i * 1)
+                                    offset++;
+                                }
                             break;
                         }
                     case GAME_UW1:
@@ -1217,21 +1220,21 @@ namespace Underworld
                                 offset += 2;
                             }
                             else
-                            if (i <= 57)//Floor textures are 48 to 56, ceiling is 57
-                            {
-                                texture_map[i] = (short)(DataLoader.getValAtAddress(tex_ark, offset, 16) + 210);
-                                offset += 2;
-                                if (i == 57)
+                                if (i <= 57)//Floor textures are 48 to 56, ceiling is 57
                                 {
-                                    CeilingTexture = (short)i;
+                                    texture_map[i] = (short)(DataLoader.getValAtAddress(tex_ark, offset, 16) + 210);
+                                    offset += 2;
+                                    if (i == 57)
+                                    {
+                                        CeilingTexture = (short)i;
+                                    }
                                 }
-                            }
-                            else
-                            {
-                                //door textures are int 8s
-                                texture_map[i] = (short)DataLoader.getValAtAddress(tex_ark, offset, 8);
-                                offset++;
-                            }
+                                else
+                                {
+                                    //door textures are int 8s
+                                    texture_map[i] = (short)DataLoader.getValAtAddress(tex_ark, offset, 8);
+                                    offset++;
+                                }
                             break;
                         }
                     case GAME_UW2://uw2
@@ -1396,46 +1399,46 @@ namespace Underworld
         /// <param name="mode"></param>
         public static void ResetMap(int mode)
         {
-            Debug.Print ("reset map!");
-            for (int x=0;x<64;x++)
+            Debug.Print("reset map!");
+            for (int x = 0; x < 64; x++)
             {
-                for (int y=0;y<64;y++)
+                for (int y = 0; y < 64; y++)
                 {
-                    var tile = current_tilemap.Tiles[x,y];
+                    var tile = current_tilemap.Tiles[x, y];
                     tile.indexObjectList = 0;
-                }  
+                }
             }
 
             //reset free lists. Assumes each object can now be freed up.
             current_tilemap.StaticFreeListPtr = 0;
             current_tilemap.MobileFreeListPtr = 0;
 
-            for (int o =2; o<1024;o++)
+            for (int o = 2; o < 1024; o++)
             {
                 var obj = current_tilemap.LevelObjects[o];
                 obj.next = 0;
                 obj.link = 0;
                 obj.tileX = 99; obj.tileY = 99;
-                ObjectFreeLists.ReleaseFreeObject(obj);               
+                ObjectFreeLists.ReleaseFreeObject(obj);
             }
-            
+
             //Clear animation overlays
             foreach (var ovl in current_tilemap.Overlays)
             {
                 if (ovl != null)
                 {
-                    ovl.tileX =0;ovl.tileY=0;
-                    ovl.Duration=0;
-                    ovl.link=0;
+                    ovl.tileX = 0; ovl.tileY = 0;
+                    ovl.Duration = 0;
+                    ovl.link = 0;
                 }
             }
-            
+
             //Game specific
-            if(_RES==GAME_UW2)
+            if (_RES == GAME_UW2)
             {//clear the timer triggers in UW2
-                for (int t=0;t<64;t++)
+                for (int t = 0; t < 64; t++)
                 {
-                    timers.SetTimer(t,0);
+                    timers.SetTimer(t, 0);
                 }
             }
         }
@@ -1449,9 +1452,9 @@ namespace Underworld
         public static TileInfo GetTileByPTR(int SearchPTR)
         {
             var tileY = SearchPTR / 256;
-            var tileX = (SearchPTR - (tileY * 256))/4;
+            var tileX = (SearchPTR - (tileY * 256)) / 4;
             if (ValidTile(tileX, tileY))
-            {                
+            {
                 if (UWTileMap.current_tilemap.Tiles[tileX, tileY].Ptr != SearchPTR)
                 {
                     Debug.Print($"Mismatch PTR in GetTileByPTR {SearchPTR}");

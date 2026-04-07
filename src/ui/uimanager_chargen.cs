@@ -4,6 +4,23 @@ namespace Underworld
 {
     public partial class uimanager : Node2D
     {
+        public static string ChargenFontColour
+        {
+            get
+            {
+                if (UWClass._RES == UWClass.GAME_UW2)
+                {
+                    var col = PaletteLoader.Palettes[0].ColorAtIndex(0xC4,false,false);
+                    return $"#{col.R8.ToString("X2")}{col.G8.ToString("X2")}{col.B8.ToString("X2")}";
+                }
+                else
+                {
+                    var col = PaletteLoader.Palettes[9].ColorAtIndex(0x49,false,false);
+                    return $"#{col.R8.ToString("X2")}{col.G8.ToString("X2")}{col.B8.ToString("X2")}";
+                }
+            }
+        }
+         
         [ExportGroup("Chargen")]
         [Export] public CanvasLayer PanelChargen;
         [Export] public TextureRect ChargenBG;
@@ -27,6 +44,18 @@ namespace Underworld
         public static int chargenCols = 1;
         static void InitChargenUI()
         {
+            if (UWClass._RES == UWClass.GAME_UW2)
+            {
+                instance.ChargenNameInput.Modulate=PaletteLoader.Palettes[0].ColorAtIndex((byte)0xC4, false, false) ;
+                instance.ChargenNameBG.Modulate=PaletteLoader.Palettes[0].ColorAtIndex((byte)0xC4, false, false) ;
+            }
+            else
+            {
+                instance.ChargenNameInput.Modulate=PaletteLoader.Palettes[9].ColorAtIndex((byte)0x49, false, false) ;
+                instance.ChargenNameBG.Modulate=PaletteLoader.Palettes[9].ColorAtIndex((byte)0x49, false, false) ;
+            }
+
+
             EnableDisable(instance.PanelChargen, true);
             EnableDisable(instance.PanelMainMenu, false);
             instance.ChargenBG.Texture = bitmaps.LoadImageAt(BytLoader.CHARGEN_BYT);
@@ -88,7 +117,8 @@ namespace Underworld
             newButton.AddChild(label);
             label.Position = new Vector2(18, 18);
             label.Size = new Vector2(240, 40);
-            label.Text = text;
+            label.BbcodeEnabled = true;
+            label.Text = $"[color={uimanager.ChargenFontColour}]{text}[/color]";
             label.AddThemeFontOverride("normal_font", instance.FontBig);
             label.AddThemeFontSizeOverride("normal_font_size", 32);
             label.MouseFilter = Control.MouseFilterEnum.Ignore;
@@ -194,14 +224,14 @@ namespace Underworld
             sb.Append($"[p]{GameStrings.GetString(2, 18)}[/p]");
             sb.Append($"[p]{GameStrings.GetString(2, 19)}[/p]");
             sb.Append($"[p]{GameStrings.GetString(2, 20)}[/p]");
-            instance.ChargenStats.Text = sb.ToString();
+            instance.ChargenStats.Text = $"[color={uimanager.ChargenFontColour}]{sb.ToString()}[/color]";
 
             sb = new();
             sb.Append($"[p]{playerdat.STR}[/p]");
             sb.Append($"[p]{playerdat.DEX}[/p]");
             sb.Append($"[p]{playerdat.INT}[/p]");
             sb.Append($"[p]{playerdat.max_hp}[/p]");
-            instance.ChargenStats_values.Text = sb.ToString();
+            instance.ChargenStats_values.Text = $"[color={uimanager.ChargenFontColour}]{sb.ToString()}[/color]";
         }
 
 
@@ -220,8 +250,8 @@ namespace Underworld
                     sb_v.Append($"[p]{playerdat.GetSkillValue(i)}[/p]");
                 }
             }
-            instance.ChargenSkills.Text = sb.ToString();
-            instance.ChargenSkills_values.Text = sb_v.ToString();
+            instance.ChargenSkills.Text = $"[color={uimanager.ChargenFontColour}]{sb.ToString()}[/color]";
+            instance.ChargenSkills_values.Text = $"[color={uimanager.ChargenFontColour}]{sb_v.ToString()}[/color]";
         }
 
 

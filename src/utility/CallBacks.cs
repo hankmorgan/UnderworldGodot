@@ -10,9 +10,22 @@ namespace Underworld
     public class CallBacks : UWClass
     {
 
+        /// <summary>
+        /// A function that runs in an area of effect.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="obj"></param>
+        /// <param name="tile"></param>
+        /// <param name="srcIndex"></param>
+        /// <returns></returns>
         public delegate bool AreaEffectCallBack(int x, int y, uwObject obj, TileInfo tile, int srcIndex);
         public delegate bool UWObjectCallBackWithoutParams(uwObject obj);
         public delegate void UWObjectCallBackWithParams(uwObject obj, int[] paramsarray);
+
+        /// <summary>
+        /// A function that will run after a cutscene is finished. Eg Display victory screen, reset UI, set up main menu after splash screen.
+        /// </summary>
         public delegate void CutsceneCallBack();
 
         public static void RunCodeOnTargetsAroundObject(AreaEffectCallBack methodToCall, int CentreObject, int rngProbablity, int targetType, int distanceFromObject, int tileRadius)

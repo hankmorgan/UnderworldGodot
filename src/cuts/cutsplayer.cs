@@ -414,8 +414,8 @@ namespace Underworld
                                     $"{cmd.functionParams[2]:0#}.VOC"));
                             if (sound != null)
                             {
-                                main.instance.audioplayer.Stream = sound.toWav();
-                                main.instance.audioplayer.Play();
+                                main.instance.DigitalAudioPlayer.Stream = sound.toWav();
+                                main.instance.DigitalAudioPlayer.Play();
                             }
                         }
                         break;

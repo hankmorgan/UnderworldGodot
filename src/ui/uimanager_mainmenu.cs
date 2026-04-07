@@ -8,6 +8,38 @@ namespace Underworld
 {
     public partial class uimanager : Node2D
     {
+        byte PaletteIndexSaveGameSelected
+        {
+            get
+            {
+                if (UWClass._RES == UWClass.GAME_UW2)
+                {
+                    return 7;
+                }
+                else
+                {
+                    return 0xA2;
+                }
+
+            }
+        }
+
+        byte PaletteIndexSaveGameUnSelected
+        {
+            get
+            {
+                if (UWClass._RES == UWClass.GAME_UW2)
+                {
+                    return 0xCD;
+                }
+                else
+                {
+                    return 0xAA;
+                }
+
+            }
+        }
+
         [ExportGroup("MainMenu")]
         [Export]
         public Panel PanelMainMenu;
@@ -24,15 +56,17 @@ namespace Underworld
         public static bool AtMainMenu;
         private void InitMainMenu()
         {
-            
+
             if (UWClass._RES == UWClass.GAME_UW2)
             {
-                MainMenuBG.Texture = bitmaps.LoadImageAt(5);
+                var bgTex = bitmaps.LoadImageAt(5);
+                Debug.Print($"MainMenu BG texture: {(bgTex != null ? $"{bgTex.GetWidth()}x{bgTex.GetHeight()}" : "NULL")}");
+                MainMenuBG.Texture = bgTex;
                 //move main menu buttons
                 MainMenuButtons[0].Size = new Vector2(436, 68);
                 MainMenuButtons[0].Position = new Vector2(420, 308);
-                MainMenuButtons[1].Position =  new Vector2(324, 392);
-                
+                MainMenuButtons[1].Position = new Vector2(324, 392);
+
                 MainMenuButtons[2].Size = new Vector2(668, 96);
                 MainMenuButtons[2].Position = new Vector2(300, 484);
 
@@ -45,17 +79,23 @@ namespace Underworld
                 MainMenuBG.Texture = bitmaps.LoadImageAt(BytLoader.OPSCR_BYT);
                 MainMenuBG.Material = bitmaps.GetMaterial(BytLoader.OPSCR_BYT);
                 var img = bitmaps.LoadImageAt(BytLoader.OPSCR_BYT);
-                Palette.CurrentPalette = 6;  
+                Palette.CurrentPalette = 6;
                 bitmaps.UseRedChannel = false;             
             }
+
+            //Set the font for the save games.
+            foreach (var sgn in SaveGamesNames)
+            {
+                sgn.Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
+            }   
 
             //MainMenuBG.Material = bitmaps.GetMaterial(BytLoader.OPSCR_BYT);
             LoadingLabel.Text = "";
             TurnButtonsOff();
             ToggleMainMenuButtons(true);
             HideSaves();
-            
-            AtMainMenu = true;   
+
+            AtMainMenu = true;
         }
 
         /// <summary>
@@ -63,9 +103,11 @@ namespace Underworld
         /// </summary>
         private void TurnButtonsOff()
         {
+            if (grOptbtn == null) return;
             for (int i = 0; i < 4; i++)
             {
-                MainMenuButtons[i].Texture = grOptbtn.LoadImageAt(i * 2);
+                if (MainMenuButtons[i] != null)
+                    MainMenuButtons[i].Texture = grOptbtn.LoadImageAt(i * 2);
             }
         }
 
@@ -186,7 +228,7 @@ namespace Underworld
             {
                 for (int i = 1; i <= 4; i++)
                 {
-                     EnableDisable(SaveGamesNames[i - 1], false);
+                    EnableDisable(SaveGamesNames[i - 1], false);
                 }
             }
         }
@@ -207,15 +249,17 @@ namespace Underworld
 
         public void JourneyOnwards(string folder)
         {
+            playerdat.previousLightLevel = -1;
             playerdat.currentfolder = folder;
             playerdat.LoadPlayerDat(datafolder: folder);
+            
             // //Common launch actions            
             UWTileMap.LoadTileMap(
                     newLevelNo: playerdat.dungeon_level - 1,
                     datafolder: folder,
-                    newGameSession: true);                   
-            
-            
+                    newGameSession: true);
+
+
             //add player object data to the map
             for (int i = 0; i <= 0x1A; i++)
             {
@@ -223,6 +267,8 @@ namespace Underworld
             }
             playerdat.playerObject.item_id = 127;//make sure the object is an adventurer.
             playerdat.playerObject.link = 0;//prevents infinite loops.
+            playerdat.playerObject.tileX = playerdat.playerObject.npc_xhome;
+            playerdat.playerObject.tileY = playerdat.playerObject.npc_yhome;
 
             if (folder.ToUpper() == "DATA")
             {
@@ -241,14 +287,23 @@ namespace Underworld
             }
             else
             {
-                playerdat.PlacePlayerInTile(playerdat.playerObject.tileX, playerdat.playerObject.tileY); 
+                playerdat.PlacePlayerInTile(playerdat.playerObject.tileX, playerdat.playerObject.tileY);
             }
 
             //Update weight display
-            uimanager.RefreshWeightDisplay();     
+            uimanager.RefreshWeightDisplay();
+            playerdat.PlayerStatusUpdate();
 
-            instance.InitViews();            
+            //restore some UI elements that have been previously hidden as part of the splash intro
+            uimanager.EnableDisable(uimanager.instance.uw1UI, UWClass._RES != UWClass.GAME_UW2);
+            uimanager.EnableDisable(uimanager.instance.uw2UI, UWClass._RES == UWClass.GAME_UW2);
+            uimanager.EnableDisable(uimanager.instance.PanelInventory,true);
+            uimanager.EnableDisable(uimanager.instance.ManaFlaskPanel,true);
+            uimanager.EnableDisable(uimanager.instance.HealthFlaskPanel,true);
+
+            instance.InitViews();
             SetPanelMode(0);
+
         }
 
         private void _on_create_character_gui_input(InputEvent @event)
@@ -256,11 +311,6 @@ namespace Underworld
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
                 InitChargenUI();
-                // playerdat.currentfolder = "DATA";
-                // _ = Coroutine.Run(
-                //    ClearMainMenu()
-                //    , main.instance);
-                // JourneyOnwards("DATA");
             }
         }
 
@@ -268,6 +318,14 @@ namespace Underworld
 
         private void _on_save_1_gui_input(InputEvent @event)
         {
+            if (@event is InputEventMouse eventMouse)
+            {
+                //Set the font for the save games.
+                SaveGamesNames[0].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameSelected, false, false)); 
+                SaveGamesNames[1].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false)); 
+                SaveGamesNames[2].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false)); 
+                SaveGamesNames[3].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false)); 
+            }
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
                 _ = Coroutine.Run(
@@ -279,6 +337,14 @@ namespace Underworld
 
         private void _on_save_2_gui_input(InputEvent @event)
         {
+            if (@event is InputEventMouse eventMouse)
+            {
+                //Set the font for the save games.
+                SaveGamesNames[0].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false)); 
+                SaveGamesNames[1].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameSelected, false, false)); 
+                SaveGamesNames[2].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false)); 
+                SaveGamesNames[3].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false)); 
+            }
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
                 _ = Coroutine.Run(
@@ -292,6 +358,14 @@ namespace Underworld
 
         private void _on_save_3_gui_input(InputEvent @event)
         {
+            if (@event is InputEventMouse eventMouse)
+            {
+                //Set the font for the save games.
+                SaveGamesNames[0].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false)); 
+                SaveGamesNames[1].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false)); 
+                SaveGamesNames[2].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameSelected, false, false)); 
+                SaveGamesNames[3].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false)); 
+            }
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
                 _ = Coroutine.Run(
@@ -305,6 +379,15 @@ namespace Underworld
 
         private void _on_save_4_gui_input(InputEvent @event)
         {
+            if (@event is InputEventMouse eventMouse)
+            {
+                //Set the font for the save games.
+                SaveGamesNames[0].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false)); 
+                SaveGamesNames[1].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false)); 
+                SaveGamesNames[2].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false)); 
+                SaveGamesNames[3].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameSelected, false, false)); 
+            }
+
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
                 _ = Coroutine.Run(
@@ -320,26 +403,24 @@ namespace Underworld
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
                 // The UW2 intro plays CS000 then CS001 in sequence.
-                // CS000 = Lord British's letter, panorama scrolls, feast, fireworks
-                // CS001 = Dawn/dusk transitions
                 cutsplayer.PlayCutscene(0, () => cutsplayer.PlayCutscene(1, ReturnToMainMenu));
             }
         }
 
 
-       public override void _Input(InputEvent @event)
+        public override void _Input(InputEvent @event)
         {
             if (@event is InputEventKey keyinput)
             {
                 if (keyinput.Pressed & AtMainMenu)
                 {
-                    if(keyinput.Keycode == Key.Escape)
+                    if (keyinput.Keycode == Key.Escape)
                     {//return to main menu
                         ToggleMainMenuButtons(true);
                         ToggleSaves(false);
-                        EnableDisable(PanelChargen,false);
-                        EnableDisable(PanelMainMenu,true);
-                    }                    
+                        EnableDisable(PanelChargen, false);
+                        EnableDisable(PanelMainMenu, true);
+                    }
                 }
             }
         }
@@ -352,8 +433,8 @@ namespace Underworld
         {
             Debug.Print("Return to main menu");
             //Still some weirdness with enabling the main menu again. eg palette switch in UW1
-            EnableDisable(instance.PanelMainMenu, true);    
-            instance.ToggleMainMenuButtons(true);      
+            EnableDisable(instance.PanelMainMenu, true);
+            instance.ToggleMainMenuButtons(true);
             AtMainMenu = true;
             InGame = false;
             Node3D the_tiles = main.instance.GetNode<Node3D>("/root/Underworld/tilemap");
