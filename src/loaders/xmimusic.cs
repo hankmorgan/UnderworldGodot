@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Godot;
 using System.Runtime.InteropServices;
 using ADLMidi.NET;
+using Mt32Emu.NET;
 using SerdesNet;
 using System;
 
@@ -342,6 +343,43 @@ namespace Underworld
                     filename = string.Equals(Path.GetExtension(name), ".DLL", StringComparison.OrdinalIgnoreCase)
                         ? name
                         : name + ".dll";
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    filename = string.Equals(Path.GetExtension(name), ".SO", StringComparison.OrdinalIgnoreCase)
+                        ? name
+                        : name + ".so";
+                }
+                else throw new PlatformNotSupportedException();
+
+                var fullPath = Path.Combine(root, "runtimes", runtime, "native", filename);
+                return File.Exists(fullPath)
+                    ? NativeLibrary.Load(fullPath)
+                    : IntPtr.Zero;
+            });
+        }
+
+        static void SetupMt32DllLoader()
+        {
+            NativeLibrary.SetDllImportResolver(
+                typeof(Mt32EmuSynth).Assembly,
+                (name, assembly, path) =>
+            {
+                var root = AppContext.BaseDirectory;
+
+                string filename;
+                string runtime = RuntimeInformation.RuntimeIdentifier;
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    filename = string.Equals(Path.GetExtension(name), ".DLL", StringComparison.OrdinalIgnoreCase)
+                        ? name
+                        : name + ".dll";
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    filename = string.Equals(Path.GetExtension(name), ".DYLIB", StringComparison.OrdinalIgnoreCase)
+                        ? name
+                        : name + ".dylib";
                 }
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 {
