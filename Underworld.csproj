@@ -5,5 +5,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\AdlMidi.NET\src\ADLMidi.NET\ADLMidi.NET.csproj" />
+    <ProjectReference Include="..\Mt32Emu.NET\src\Munt.NET\Munt.NET.csproj" />
   </ItemGroup>
 </Project>

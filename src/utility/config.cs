@@ -73,6 +73,8 @@ public class uwsettings
     public float FOV { get; set; } = 75;
     public bool showcolliders { get; set; }
     public int shaderbandsize { get; set; } = 8;
+    public string synth { get; set; } = "opl";
+    public string rompath { get; set; } = "";
 
     public void Save()
     {

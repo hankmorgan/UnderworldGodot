@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Godot;
 using System.Runtime.InteropServices;
 using ADLMidi.NET;
+using Munt.NET;
 using SerdesNet;
 using System;
 
@@ -147,8 +148,22 @@ namespace Underworld
         /// </summary>
         public static void ConvertXMIMusic()
         {
+            if (string.Equals(uwsettings.instance.synth, "cm32l", StringComparison.OrdinalIgnoreCase))
+            {
+                var roms = FindRoms();
+                if (roms != null)
+                {
+                    ConvertXMIMusic_CM32L(roms.Value.control, roms.Value.pcm);
+                    return;
+                }
+                Debug.Print("CM-32L ROMs not found, falling back to OPL");
+            }
+            ConvertXMIMusic_OPL();
+        }
+
+        static void ConvertXMIMusic_OPL()
+        {
             SetupDllLoader();
-            //var toLoad = Path.Combine(BasePath, "SOUND", bankfile);
             var outputfolder = Path.Combine(ProjectSettings.GlobalizePath("user://"), _RES.ToString(), "SOUND");
             if (!Path.Exists(outputfolder))
             {
@@ -169,11 +184,6 @@ namespace Underworld
                     ExportXMI(xmifile: f, outfile: Path.Combine(outputfolder,outputFile ), bankData: bankData);
                 }
             }
-            // for (int i = 0; i <= 45; i++)
-            // {
-            //     Console.WriteLine($"Dumping {i}");
-            //     ExportXMI(i, bankData);
-            // }
         }
 
         static void ExportXMI(string xmifile, string outfile, byte[] bankData)
@@ -362,6 +372,112 @@ namespace Underworld
                     ? NativeLibrary.Load(fullPath)
                     : IntPtr.Zero;
             });
+        }
+
+        static void SetupMt32DllLoader()
+        {
+            NativeLibrary.SetDllImportResolver(
+                typeof(Mt32EmuSynth).Assembly,
+                (name, assembly, path) =>
+            {
+                var root = AppContext.BaseDirectory;
+
+                string filename;
+                string runtime = RuntimeInformation.RuntimeIdentifier;
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    filename = string.Equals(Path.GetExtension(name), ".DLL", StringComparison.OrdinalIgnoreCase)
+                        ? name
+                        : name + ".dll";
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    filename = string.Equals(Path.GetExtension(name), ".DYLIB", StringComparison.OrdinalIgnoreCase)
+                        ? name
+                        : name + ".dylib";
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    filename = string.Equals(Path.GetExtension(name), ".SO", StringComparison.OrdinalIgnoreCase)
+                        ? name
+                        : name + ".so";
+                }
+                else throw new PlatformNotSupportedException();
+
+                var fullPath = Path.Combine(root, "runtimes", runtime, "native", filename);
+                return File.Exists(fullPath)
+                    ? NativeLibrary.Load(fullPath)
+                    : IntPtr.Zero;
+            });
+        }
+
+        static (string control, string pcm)? FindRoms()
+        {
+            string[] searchPaths;
+            if (!string.IsNullOrEmpty(uwsettings.instance.rompath))
+            {
+                searchPaths = new[] { uwsettings.instance.rompath };
+            }
+            else
+            {
+                searchPaths = new[]
+                {
+                    Path.Combine(BasePath, "SOUND"),
+                    ProjectSettings.GlobalizePath("user://roms/")
+                };
+            }
+
+            // Standard and MAME-style ROM name pairs (control, pcm)
+            var namePairs = new[]
+            {
+                ("CM32L_CONTROL.ROM", "CM32L_PCM.ROM"),
+                ("cm32l_ctrl_1_02.rom", "cm32l_pcm.rom"),
+                ("cm32l_ctrl_1_00.rom", "cm32l_pcm.rom"),
+            };
+
+            foreach (var dir in searchPaths)
+            {
+                if (!System.IO.Directory.Exists(dir)) continue;
+                foreach (var (ctrlName, pcmName) in namePairs)
+                {
+                    var control = Path.Combine(dir, ctrlName);
+                    var pcm = Path.Combine(dir, pcmName);
+                    if (File.Exists(control) && File.Exists(pcm))
+                        return (control, pcm);
+                }
+            }
+
+            return null;
+        }
+
+        static void ConvertXMIMusic_CM32L(string controlRomPath, string pcmRomPath)
+        {
+            SetupMt32DllLoader();
+            var outputfolder = Path.Combine(ProjectSettings.GlobalizePath("user://"), _RES.ToString(), "SOUND");
+            if (!Path.Exists(outputfolder))
+            {
+                System.IO.Directory.CreateDirectory(outputfolder);
+            }
+
+            using var synth = new Mt32EmuSynth();
+            synth.LoadRoms(controlRomPath, pcmRomPath);
+            synth.SetSampleRate(SampleRate);
+            synth.Open();
+
+            var filelist = System.IO.Directory.EnumerateFiles(Path.Combine(BasePath, "SOUND"), "*.XMI");
+            foreach (var f in filelist)
+            {
+                var outputFile = f.GetFile().Replace(".XMI", ".WAV");
+                var outputPath = Path.Combine(outputfolder, outputFile);
+                if (!System.IO.File.Exists(outputPath))
+                {
+                    Debug.Print($"Converting {f.GetFile()} via CM-32L...");
+                    short[] pcm = XmiSequencer.RenderXmiToPcm(synth, f, SampleRate);
+                    using var wav = new WavFile(outputPath, (uint)SampleRate, 2, 2);
+                    var byteSpan = MemoryMarshal.Cast<short, byte>(new ReadOnlySpan<short>(pcm));
+                    wav.Write(byteSpan);
+                }
+            }
         }
 
     }//end class
