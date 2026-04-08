@@ -428,11 +428,7 @@ namespace Underworld
                 {
                     if (keyinput.Keycode == Key.Escape)
                     {//return to main menu
-                        if (cutsplayer.cutsceneRunning)
-                        {
-                            Debug.Print ("End running cutscene");
-                            cutsplayer.cutsceneRunning = false;
-                        }
+                        //TODO: if a running cutscene is playing it needs to be stopped.
                         ToggleMainMenuButtons(true);
                         ToggleSaves(false);
                         EnableDisable(PanelChargen, false);

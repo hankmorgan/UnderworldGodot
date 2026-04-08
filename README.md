@@ -192,6 +192,7 @@ Themes are converted at runtime into .wav files which can them be loaded via the
 Additional code has been directly contributed by the following. Thanks to these contributors for their efforts.
 * Peter Cummuskey <github.com/Tzrlk>
 * Shortbeard <github.com/ShortBeard>
+* Abedegno https://github.com/abedegno
 
 ### Referenced code projects
 AdlMidi.NET
