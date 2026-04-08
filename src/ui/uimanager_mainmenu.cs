@@ -177,6 +177,16 @@ namespace Underworld
             MainMenuButtons[2].Texture = grOptbtn.LoadImageAt(4);
         }
 
+        //
+        private void _on_acknowledgements_gui_input(InputEvent @event)
+        {
+            if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
+            {
+                // Introduction button plays CS000 → CS001 only.
+                // Splash screens (Origin, LGS, title) play on game startup.
+                cutsplayer.PlayCutscene(0xA, ReturnToMainMenu);
+            }
+        }
 
         private void _on_journey_onwards_mouse_entered()
         {
@@ -418,6 +428,11 @@ namespace Underworld
                 {
                     if (keyinput.Keycode == Key.Escape)
                     {//return to main menu
+                        if (cutsplayer.cutsceneRunning)
+                        {
+                            Debug.Print ("End running cutscene");
+                            cutsplayer.cutsceneRunning = false;
+                        }
                         ToggleMainMenuButtons(true);
                         ToggleSaves(false);
                         EnableDisable(PanelChargen, false);
@@ -444,7 +459,7 @@ namespace Underworld
             {
                 UWTileMap.DestroyTileMapAndContents(the_tiles);
             }
-        }
+        }        
 
     }//end class
 }//end namespace

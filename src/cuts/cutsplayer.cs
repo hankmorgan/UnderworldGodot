@@ -334,7 +334,7 @@ namespace Underworld
             switch (cmd.functionNo)
             {
                 case 0: // show-text with colour (palette index)
-                    uimanager.instance.CutsSubtitle.Text = GameStrings.GetString(StringBlock, cmd.functionParams[1]);
+                    uimanager.instance.CutsSubtitle.Text = $"[center]{GameStrings.GetString(StringBlock, cmd.functionParams[1])}[/center]";
                     break;
 
                 case 1: // set-flag — clears internal animation flag
@@ -407,7 +407,7 @@ namespace Underworld
                         // NOTE: game uses underscore-as-dot convention: "_." should render as " ."
                         if ((short)cmd.functionParams[1] >= 0)
                         {
-                            uimanager.instance.CutsSubtitle.Text = GameStrings.GetString(StringBlock, cmd.functionParams[1]);
+                            uimanager.instance.CutsSubtitle.Text = $"[center]{GameStrings.GetString(StringBlock, cmd.functionParams[1])}[/center]";
                         }
                         else
                         {

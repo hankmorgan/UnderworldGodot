@@ -2433,12 +2433,12 @@ mouse_filter = 0
 
 [node name="CutsSubtitle" type="RichTextLabel" parent="UI/Common"]
 visible = false
-offset_left = 107.0
 offset_top = 636.0
-offset_right = 1131.0
+offset_right = 1280.0
 offset_bottom = 796.0
 theme_override_fonts/normal_font = ExtResource("5_kj12g")
 theme_override_font_sizes/normal_font_size = 48
+bbcode_enabled = true
 text = "Cutscene Subtitle"
 
 [node name="MainMenu" type="Panel" parent="UI/Common"]
@@ -3005,6 +3005,7 @@ PowerGemUW2 = NodePath("../UW2/PowerGemUW2")
 [connection signal="gui_input" from="UI/Common/MainMenu/CreateCharacter" to="UI/uiManager" method="_on_create_character_gui_input"]
 [connection signal="mouse_entered" from="UI/Common/MainMenu/CreateCharacter" to="UI/uiManager" method="_on_create_character_mouse_entered"]
 [connection signal="mouse_exited" from="UI/Common/MainMenu/CreateCharacter" to="UI/uiManager" method="_on_create_character_mouse_exited"]
+[connection signal="gui_input" from="UI/Common/MainMenu/Acknowledgements" to="UI/uiManager" method="_on_acknowledgements_gui_input"]
 [connection signal="mouse_entered" from="UI/Common/MainMenu/Acknowledgements" to="UI/uiManager" method="_on_acknowledgements_mouse_entered"]
 [connection signal="mouse_exited" from="UI/Common/MainMenu/Acknowledgements" to="UI/uiManager" method="_on_acknowledgements_mouse_exited"]
 [connection signal="gui_input" from="UI/Common/MainMenu/JourneyOnwards" to="UI/uiManager" method="_on_journey_onwards_gui_input"]
