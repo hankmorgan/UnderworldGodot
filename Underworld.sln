@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Underworld", "Underworld.csproj", "{24A08942-84C0-4463-9309-FE0737F94F59}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ADLMidi.NET", "..\..\AdlMidi.NET\src\ADLMidi.NET\ADLMidi.NET.csproj", "{2D39821A-C241-4154-8996-AF2F989B196F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ADLMidi.NET", "..\AdlMidi.NET\src\ADLMidi.NET\ADLMidi.NET.csproj", "{2D39821A-C241-4154-8996-AF2F989B196F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

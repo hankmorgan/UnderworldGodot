@@ -185,8 +185,24 @@ F12 Debug process SCD.ARK events
 Tilde (~) Give all runestones, 30 mana and maximise mage skills.
 
 ## Music
-Music themes can now be loaded. This relies on the Ùnderworld project referencing libADLMIDI via the AdlMidi wrapper project at https://github.com/csinkers/AdlMidi.NET 
+Music themes can now be loaded. This relies on the Ùnderworld project referencing libADLMIDI via the AdlMidi wrapper project at https://github.com/csinkers/AdlMidi.NET for Opl/Adlib style or MUNT.NET https://github.com/abedegno/Munt.NET for MT-32
 Themes are converted at runtime into .wav files which can them be loaded via the XMIMusic class ``ChangeTheme`` function.
+
+To use OPL set the synth setting in settings.json to ``opl``
+To use MT-32 set the synth setting in settings.json to ``cm32l``
+
+To use MT-32 you will need to have a suitable MT-32 Rom files (see list below) stored in either the ``%appdata%\Roaming\Godot\app_userdata\Underworld`` folder or the underworld ``SOUND`` folder
+
+```
+    "CM32L_CONTROL.ROM", "CM32L_PCM.ROM",
+    "cm32l_ctrl_1_02.rom", "cm32l_pcm.rom"
+    "cm32l_ctrl_1_00.rom", "cm32l_pcm.rom"
+```
+
+The .wav files are generated at game start up. The first time they are created game start-up will be slower. 
+
+In order to switch between ``opl`` and ``cm32l`` settings the files will need to be deleted/removed from the ``%appdata%\Roaming\Godot\app_userdata\Underworld\SOUND\{1 or 2}`` folder
+
 
 ## Code Contributions
 Additional code has been directly contributed by the following. Thanks to these contributors for their efforts.
