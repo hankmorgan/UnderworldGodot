@@ -40,7 +40,7 @@ namespace Underworld
 
         //Playlists, returns a possibly random theme tune to play in a particular scenario.
         public const byte IntroTheme = 1;
-        public const byte MapsAndLegends = 15;// UW1 specific conversations and maps viewing them
+        public const byte MapsAndLegends = 0xD;// UW1 specific conversations and maps viewing them
 
         public static byte Armed
         {
@@ -52,7 +52,7 @@ namespace Underworld
                 }
                 else
                 {
-                    return 10;
+                    return 8;
                 }
             }
         } 
