@@ -2,6 +2,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.IO;
 using Godot;
+using Munt.NET;
 using Peaky.Coroutines;
 
 namespace Underworld
@@ -446,6 +447,10 @@ namespace Underworld
         {
             Debug.Print("Return to main menu");
             //Still some weirdness with enabling the main menu again. eg palette switch in UW1
+            if (XMIMusic.CurrentThemeNo != 1)
+            {
+                XMIMusic.ChangeTheme(1);
+            }
             EnableDisable(instance.PanelMainMenu, true);
             instance.ToggleMainMenuButtons(true);
             AtMainMenu = true;

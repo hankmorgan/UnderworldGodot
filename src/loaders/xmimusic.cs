@@ -64,14 +64,17 @@ namespace Underworld
         /// <param name="themeNo"></param>
         public static void ChangeTheme(byte themeNo, bool Loop = false)
         {
+            //Calculate file number to play
+            var digit1 = (char)(0x30 + (themeNo >> 3));
+            var digit2 = (char)(0x30 + (themeNo & 0x7));
             CurrentThemeNo = themeNo;
             switch(_RES)
             {
                 case GAME_UW2:
-                    ChangeTheme($"UWA{themeNo:D2}.WAV",Loop);//TODO provide a way to choose between playing UWAxx.xmi or UWRxx.xmi)
+                    ChangeTheme($"UWA{digit1}{digit2}.WAV",Loop);//TODO provide a way to choose between playing UWAxx.xmi or UWRxx.xmi)
                     break;
                 default:
-                    ChangeTheme($"UW{themeNo:D2}.WAV",Loop);
+                    ChangeTheme($"UW{digit1}{digit2}.WAV",Loop);
                     break;
             }
         }

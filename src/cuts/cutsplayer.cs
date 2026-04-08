@@ -596,6 +596,7 @@ namespace Underworld
 
                 case 25: // music
                     Debug.Print($"  Music: theme {cmd.functionParams[0]}");
+                    XMIMusic.ChangeTheme((byte)cmd.functionParams[0]);
                     break;
 
                 case 27: // audio-wait
