@@ -349,6 +349,12 @@ namespace Underworld
                         ? name
                         : name + ".so";
                 }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    filename = string.Equals(Path.GetExtension(name), ".DYLIB", StringComparison.OrdinalIgnoreCase)
+                        ? name
+                        : name + ".dylib";
+                }
                 else throw new PlatformNotSupportedException();
 
                 var fullPath = Path.Combine(root, "runtimes", runtime, "native", filename);
