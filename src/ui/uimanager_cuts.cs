@@ -165,12 +165,59 @@ namespace Underworld
 
 
         
-        public static void DisplayCutsImage(CutsLoader cuts, int imageNo, TextureRect targetControl)
+        /// <summary>
+        /// Display a cutscene frame, optionally cropping to a scene height.
+        /// When cropHeight &lt; 200, the frame is cropped to that height with black
+        /// below, creating the subtitle bar area. Driven by viewport-setup (func 20)
+        /// vpOffsetY parameter: scene height = 200 - vpOffsetY.
+        /// </summary>
+        public static void DisplayCutsImage(CutsLoader cuts, int imageNo, TextureRect targetControl,
+            int cropHeight = 200)
         {
-            targetControl.Texture = cuts.LoadImageAt(imageNo);
-            //targetControl.Material = cuts.GetMaterial(imageNo);
+            var srcTex = cuts.LoadImageAt(imageNo);
+            if (cropHeight < 200 && srcTex != null)
+            {
+                // Crop scene to cropHeight pixels, pad to 320x200 with black below.
+                var srcImg = srcTex.GetImage();
+                var cropped = Image.Create(srcImg.GetWidth(), 200, false, srcImg.GetFormat());
+                cropped.BlitRect(srcImg,
+                    new Rect2I(0, 0, srcImg.GetWidth(), cropHeight),
+                    new Vector2I(0, 0));
+                var croppedTex = new ImageTexture();
+                croppedTex.SetImage(cropped);
+                targetControl.Texture = croppedTex;
+            }
+            else
+            {
+                targetControl.Texture = srcTex;
+            }
         }
 
+
+        /// <summary>
+        /// Display a panorama scroll frame. The region is the cropped viewport
+        /// from the LBACK composite with sprite overlay already applied.
+        /// Pads to 320x200 with black subtitle bar below when region is shorter.
+        /// </summary>
+        public static void DisplayScrollFrame(Godot.Image region, TextureRect targetControl)
+        {
+            Godot.Image output;
+            if (region.GetHeight() < 200)
+            {
+                output = Godot.Image.Create(320, 200, false, region.GetFormat());
+                output.BlitRect(region,
+                    new Rect2I(0, 0, region.GetWidth(), region.GetHeight()),
+                    Vector2I.Zero);
+            }
+            else
+            {
+                output = region;
+            }
+
+            var tex = new ImageTexture();
+            tex.SetImage(output);
+            targetControl.Texture = tex;
+        }
 
     }//end class
 }//end namespace

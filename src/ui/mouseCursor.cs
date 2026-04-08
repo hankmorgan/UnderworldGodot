@@ -62,9 +62,12 @@ namespace Underworld
 				}
 				else
 				{//follow the mouse
-					var offset = new Vector2(Texture.GetWidth() / 1f, Texture.GetHeight() / 1f);
-					var pos = GetViewport().GetMousePosition() - offset;
-					this.Position = pos;
+					if (Texture != null)
+					{
+						var offset = new Vector2(Texture.GetWidth() / 1f, Texture.GetHeight() / 1f);
+						var pos = GetViewport().GetMousePosition() - offset;
+						this.Position = pos;
+					}
 				}
 			}
 		}

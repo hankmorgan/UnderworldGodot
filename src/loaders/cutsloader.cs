@@ -9,6 +9,35 @@ namespace Underworld
 
         public ImageTexture[] ImageCache = new ImageTexture[1];
         byte[] dstImage; //repeating buffer
+        public byte[] FinalPixelBuffer; // raw pixel data after last displayable frame (for delta chaining)
+
+        /// <summary>
+        /// Raw indexed pixel data per frame (palette indices, not RGB).
+        /// Used for palette interpolation — the frame can be re-rendered with
+        /// a modified palette without re-decoding the RLE data.
+        /// </summary>
+        public byte[][] RawPixelData;
+
+        /// <summary>
+        /// The embedded palette from the LPF file header (offset 0x100-0x4FF).
+        /// Needed to render LBACK*.BYT files which are raw indexed pixel data.
+        /// </summary>
+        public Palette EmbeddedPalette;
+
+        /// <summary>
+        /// Frames per second from the LPF file header (offset 0x44).
+        /// Used for frame timing instead of hardcoded values.
+        /// </summary>
+        public int FramesPerSecond;
+
+        /// <summary>
+        /// RLE write masks for sprite mode — tracks which pixels were explicitly
+        /// written (dump/run) vs skipped by the RLE decoder. Used to overlay only
+        /// animated sprite pixels onto the scrolling panorama without overwriting
+        /// the LBACK background. One byte per pixel: 1 = written, 0 = skipped.
+        /// Only populated when decoded in sprite mode (CutsLoader(file, basePixels)).
+        /// </summary>
+        public byte[][] WriteMasks;
 
         public ShaderMaterial[] materials = new ShaderMaterial[1];
         public Shader textureshader;
@@ -21,6 +50,8 @@ namespace Underworld
             public int width;
             public int height;
             public int nFrames;
+            public int framesPerSecond;
+            public bool hasLastDelta;  // DPaint LPF: last frame is a loop-back delta, not displayable
         };
 
         struct lp_descriptor
@@ -41,12 +72,36 @@ namespace Underworld
             {
                 var filename = Path.GetFileName(File);
                 ReadCutsFile(
-                    cutsFile: ref ImageFileData, 
-                    Alpha: _alpha, 
-                    ErrorHandling: UseErrorHandling(filename), 
+                    cutsFile: ref ImageFileData,
+                    Alpha: _alpha,
+                    ErrorHandling: UseErrorHandling(filename),
                     file: File);
             }
-            textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uisprite.gdshader");          
+            textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uisprite.gdshader");
+        }
+
+        /// <summary>
+        /// Load an LPF file in sprite mode for panorama overlay.
+        /// Resets the pixel buffer to basePixels before each keyframe (record_size > 4)
+        /// so that RLE skip areas contain LBACK content and writes contain animated
+        /// sprite pixels. Generates WriteMasks to track which pixels were written.
+        /// See "Cutscene Engine RE Notes.md" — Sprite Overlay Approach.
+        /// </summary>
+        public CutsLoader(string File, byte[] basePixels)
+        {
+            filePath = Path.Combine(BasePath, "CUTS", File.ToUpper());
+            _alpha = UseAlpha(File);
+            if (LoadImageFile())
+            {
+                var filename = Path.GetFileName(File);
+                ReadCutsFile(
+                    cutsFile: ref ImageFileData,
+                    Alpha: _alpha,
+                    ErrorHandling: UseErrorHandling(filename),
+                    file: File,
+                    spriteBasePixels: basePixels);
+            }
+            textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uisprite.gdshader");
         }
 
         static bool UseAlpha(string File)
@@ -81,7 +136,8 @@ namespace Underworld
         /// Reads the cuts file.
         /// </summary>
         /// <param name="cutsFile">Cuts file.</param>
-        public void ReadCutsFile(ref byte[] cutsFile, bool Alpha, bool ErrorHandling, string file)
+        public void ReadCutsFile(ref byte[] cutsFile, bool Alpha, bool ErrorHandling, string file,
+            byte[] spriteBasePixels = null)
         {
             long addptr = 0;
             int imagecount = 0;
@@ -107,12 +163,34 @@ namespace Underworld
             lpH.NoOfRecords = (int)getAt(cutsFile, 0x8, 32);
             lpH.width = (int)getAt(cutsFile, 0x14, 16);
             lpH.height = (int)getAt(cutsFile, 0x16, 16);
-            lpH.nFrames = (int)getAt(cutsFile, 0x40, 16);
+            lpH.nFrames = (int)getAt(cutsFile, 0x40, 32);
+            lpH.framesPerSecond = (int)getAt(cutsFile, 0x44, 16);
+            lpH.hasLastDelta = cutsFile[0x1A] != 0;
+            FramesPerSecond = lpH.framesPerSecond;
             addptr += 128;//past header.
-            addptr += 128;//colour cycling info.
+            // Color cycling block (128 bytes): 16 entries of 8 bytes each (IFF CRNG format).
+            // Bytes 6-7 of each entry = low/high palette index for cycling range.
+            // Used by palette interpolation (func 19) to determine which entries to animate.
+            addptr += 128;
+
+            // DPaint LPF: if hasLastDelta, the last frame is a loop-back delta
+            // that resets the pixel buffer to frame 0. It should NOT be displayed.
+            // FinalPixelBuffer must be captured BEFORE this frame is decoded,
+            // because it provides the base for delta-chaining to the next LPF file
+            // (e.g. N01→N02→N03). Each subsequent file's RLE deltas are applied
+            // on top of the previous file's FinalPixelBuffer.
+            int nDisplayFrames = lpH.hasLastDelta ? lpH.nFrames - 1 : lpH.nFrames;
 
             //Init the buffer
             dstImage = new byte[lpH.height * lpH.width]; //+ 4000];
+            bool isSpriteMode = spriteBasePixels != null;
+            byte[] writeMask = isSpriteMode ? new byte[lpH.height * lpH.width] : null;
+            if (isSpriteMode)
+            {
+                // Initialize with LBACK content so RLE skip areas match the panorama
+                System.Array.Copy(spriteBasePixels, dstImage,
+                    System.Math.Min(spriteBasePixels.Length, dstImage.Length));
+            }
 
             //Read in the palette
             for (int i = 0; i < 256; i++)
@@ -123,6 +201,8 @@ namespace Underworld
                 addptr++;//skip reserved.
                         //pal.reserved = fgetc(fd);
             }
+
+            EmbeddedPalette = pal;
 
             //Read in 256 lp descriptors
             lp_descriptor[] lpd = new lp_descriptor[256];
@@ -138,8 +218,11 @@ namespace Underworld
             {
                 pages[i] = cutsFile[i + 2816];
             }
-            ImageCache = new ImageTexture[lpH.nFrames];
-            materials = new ShaderMaterial[lpH.nFrames];
+            ImageCache = new ImageTexture[nDisplayFrames];
+            RawPixelData = new byte[nDisplayFrames][];
+            materials = new ShaderMaterial[nDisplayFrames];
+            if (isSpriteMode)
+                WriteMasks = new byte[nDisplayFrames][];
             for (int framenumber = 0; framenumber < lpH.nFrames; framenumber++)
             {
                 if ((ErrorHandling == true) && (framenumber == 10))
@@ -171,6 +254,9 @@ namespace Underworld
                 //offset+= (int)cutsFile[k+pagepointer];//offset += pagepointer[i];
                 //offset += (int)DataLoader.getValAtAddress(cutsFile,thepage,16);
 
+                // Get the record size for this frame to detect empty delta frames
+                int recordSize = (int)getAt(pages, pagepointer + (destframe * 2), 16);
+
                 long ppointer = thepage + (curl.nRecords * 2) + offset;
 
                 //Uint16 *ppointer16 = (Uint16*)(ppointer);
@@ -183,20 +269,72 @@ namespace Underworld
                     ppointer += 4;
                 }
                 //	byte[] imgOut ;//= //new byte[lpH.height*lpH.width+ 4000];
+                // Capture FinalPixelBuffer before the loop delta frame
+                if (lpH.hasLastDelta && framenumber == nDisplayFrames)
+                {
+                    FinalPixelBuffer = (byte[])dstImage.Clone();
+                }
+
+                // Sprite mode: reset buffer to LBACK base before each keyframe
+                // so each keyframe independently shows its sprite pixels without
+                // accumulation from prior keyframes. This is necessary because
+                // each keyframe only updates ONE animated element (e.g. one flag
+                // out of three) — without reset, all previous keyframes' writes
+                // would accumulate, creating smearing artifacts.
+                // Empty frames (recordSize<=4) keep previous keyframe's data
+                // so the sprite persists between keyframes.
+                if (isSpriteMode && recordSize > 4)
+                {
+                    System.Array.Copy(spriteBasePixels, dstImage,
+                        System.Math.Min(spriteBasePixels.Length, dstImage.Length));
+                    if (writeMask != null)
+                        System.Array.Clear(writeMask, 0, writeMask.Length);
+                }
+
                 if (!SkipImage(file, imagecount))
                 {
-                    myPlayRunSkipDump(ppointer, pages);//Stores in the global memory
-                }                
-                                               
-                ImageCache[imagecount++] = Image(
-                    databuffer: dstImage, 
-                    dataOffSet: 0, 
-                    width: lpH.width, height: lpH.height, 
-                    palette: pal, 
-                    useAlphaChannel: Alpha, 
-                    useSingleRedChannel: false,
-                    crop: UseCropping);
+                    if (recordSize > 4) // Only decode if there's RLE data beyond the 4-byte record header
+                    {
+                        try
+                        {
+                            myPlayRunSkipDump(ppointer, pages, writeMask);//Stores in the global memory
+                        }
+                        catch (System.IndexOutOfRangeException)
+                        {
+                            // RLE decoder ran past the data boundary for this frame.
+                            // Use whatever is in dstImage from the previous frame (delta buffer).
+                            System.Diagnostics.Debug.Print($"  Warning: RLE decode failed for frame {imagecount} in {file}");
+                        }
+                    }
+                    // else: empty delta frame — dstImage stays unchanged (correct for delta encoding)
+                }
 
+                // Don't store the loop delta frame in ImageCache
+                if (framenumber < nDisplayFrames)
+                {
+                    if (isSpriteMode && writeMask != null)
+                        WriteMasks[imagecount] = (byte[])writeMask.Clone();
+
+                    // Store raw indexed pixel data for palette interpolation
+                    RawPixelData[imagecount] = (byte[])dstImage.Clone();
+
+                    ImageCache[imagecount++] = Image(
+                        databuffer: dstImage,
+                        dataOffSet: 0,
+                        width: lpH.width, height: lpH.height,
+                        palette: pal,
+                        useAlphaChannel: Alpha,
+                        useSingleRedChannel: false,
+                        crop: UseCropping);
+                }
+
+            }
+            // Save final pixel buffer for chaining delta-dependent files.
+            // If hasLastDelta, this was captured before the loop delta above.
+            // Otherwise, save after the last frame.
+            if (FinalPixelBuffer == null)
+            {
+                FinalPixelBuffer = (byte[])dstImage.Clone();
             }
         }
 
@@ -206,7 +344,14 @@ namespace Underworld
         /// </summary>
         /// <param name="inptr">Inptr.</param>
         /// <param name="srcData">Source data.</param>
-        void myPlayRunSkipDump(long inptr, byte[] srcData)
+        /// <summary>
+        /// DPaint LPF Run/Skip/Dump RLE decoder.
+        /// If writeMask is provided, marks each pixel as 1 if written by a
+        /// dump/run operation, 0 if skipped. This distinguishes between
+        /// 'RLE explicitly wrote index 0' and 'RLE skipped this pixel',
+        /// which is critical for sprite overlay during panorama scroll.
+        /// </summary>
+        void myPlayRunSkipDump(long inptr, byte[] srcData, byte[] writeMask = null)
         {//From an implemtation by Underworld Adventures (hacking tools)
             long outPtr = 0;
 
@@ -226,17 +371,19 @@ namespace Underworld
                                             //cnt=cnt*sgn;
                 if (cnt * sgn > 0)
                 {
-                    // dump
+                    // dump: copy raw pixels
                     while (cnt > 0)
                     {
                         //*dstP++ = *srcP++;
-                        dstImage[outPtr++] = srcData[inptr++];
+                        dstImage[outPtr] = srcData[inptr++];
+                        if (writeMask != null) writeMask[outPtr] = 1;
+                        outPtr++;
                         cnt--;
                     }
                 }
                 else if (cnt == 0)
                 {
-                    // run
+                    // run: fill with single pixel
                     //Uint8 wordCnt = *srcP++;
                     int wordCnt = srcData[inptr++];
                     //Uint8 pixel = *srcP++;
@@ -244,7 +391,9 @@ namespace Underworld
                     while (wordCnt > 0)
                     {
                         //*dstP++ = pixel;
-                        dstImage[outPtr++] = pixel;
+                        dstImage[outPtr] = pixel;
+                        if (writeMask != null) writeMask[outPtr] = 1;
+                        outPtr++;
                         wordCnt--;
                     }
                 }
@@ -253,7 +402,7 @@ namespace Underworld
                     cnt &= 0x7f; // cnt -= 0x80;
                     if (cnt != 0)
                     {
-                        // shortSkip
+                        // shortSkip — advance without writing (preserves existing buffer content)
                         //dstP += cnt;
                         outPtr += cnt;
                     }
@@ -291,7 +440,9 @@ namespace Underworld
                                 while (wordCnt > 0)
                                 {
                                     //*dstP++ = pixel;
-                                    dstImage[outPtr++] = pixel;
+                                    dstImage[outPtr] = pixel;
+                                    if (writeMask != null) writeMask[outPtr] = 1;
+                                    outPtr++;
                                     wordCnt--;
                                 }
                                 //                  dstP += wordCnt;
@@ -302,7 +453,9 @@ namespace Underworld
                                 while (wordCnt > 0)
                                 {
                                     //*dstP++ = *srcP++;
-                                    dstImage[outPtr++] = srcData[inptr++];
+                                    dstImage[outPtr] = srcData[inptr++];
+                                    if (writeMask != null) writeMask[outPtr] = 1;
+                                    outPtr++;
                                     wordCnt--;
                                 }
 
@@ -312,7 +465,7 @@ namespace Underworld
                         }
                         else
                         {
-                            // longSkip
+                            // longSkip — advance without writing
                             //dstP += wordCnt;
                             outPtr += wordCnt;
                         }

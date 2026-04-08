@@ -51,6 +51,22 @@ namespace Underworld
             };
 
 
+        // UW2 BYT.ARK palette indices.
+        // NOTE: These values do NOT match the assembly. The assembly-confirmed
+        // palette indices from LoadBitMap calls (uw2_asm.asm) are:
+        //   [0]=1 (BLNKMAP, game palette)
+        //   [1]=3 (CHARGEN, OpenPalsData(3) after load)
+        //   [2]=0 (CONV)   [3]=0 (MAIN)
+        //   [4]=0xFFFF→0 (UW2 3D win, ovr112_3E7 line 461928)
+        //   [5]=0xFFFF→0 (UW2 MAIN, ovr147_8EB line 523480)
+        //   [6]=5 (Origin logo, SplashPart1 line 461214)
+        //   [7]=6 (LGS logo, SplashPart1 line 461263)
+        //   [8]=7 (Victory 1, RunVictorySequence line 535059)
+        //   [9]=0xFFFF→0 (Victory 2, RunVictorySequence line 535081)
+        // However, applying these values breaks chargen and other screens.
+        // The array below appears to be shifted (missing entry 0 for BLNKMAP).
+        // This needs careful investigation — the assembly values may only apply
+        // in specific contexts where the palette is set before the bitmap loads.
         private readonly int[] PaletteIndicesUW2 =
         {
                 3,
