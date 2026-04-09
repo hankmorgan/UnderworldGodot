@@ -79,10 +79,99 @@ namespace Underworld
         static Palette palInterpSource;  // snapshot of palette when func 19 fires
         static Palette palInterpTarget;  // target from PALS.DAT
 
+        // Colour cycling state (CRNG from LPF header).
+        // Applied per-frame by UpdatePaletteFadeTimers_ovr108_934 (line 438583)
+        // which calls RotatePaletteEntry_seg023_9 (line 98009).
+        static Palette crngPalette;  // working copy of palette for cycling
+        static CutsLoader.CrngEntry[] crngRanges;
+        static int[] crngCounters;   // per-range accumulator (mirrors disasm pad field)
+
         static int StringBlock;
+        static bool cancelRequested;
+
+        public static bool IsPlaying { get; private set; }
 
         public static List<CutSceneCommand> commands;
 
+
+        /// <summary>
+        /// Initialise colour cycling state from an LPF file's CRNG block.
+        /// Called each time a new LPF animation file is loaded.
+        /// </summary>
+        static void InitCrngCycling(CutsLoader loader)
+        {
+            crngRanges = loader?.CrngRanges;
+            crngCounters = crngRanges != null ? new int[crngRanges.Length] : null;
+            if (loader?.EmbeddedPalette != null)
+            {
+                // Take a working copy of the palette for cycling
+                crngPalette = new Palette();
+                System.Array.Copy(loader.EmbeddedPalette.red, crngPalette.red, 256);
+                System.Array.Copy(loader.EmbeddedPalette.green, crngPalette.green, 256);
+                System.Array.Copy(loader.EmbeddedPalette.blue, crngPalette.blue, 256);
+            }
+            else
+            {
+                crngPalette = null;
+            }
+        }
+
+        /// <summary>
+        /// Returns true if any CRNG ranges are active (rate > 0 with valid indices).
+        /// </summary>
+        static bool HasActiveCrng()
+        {
+            if (crngRanges == null || crngPalette == null) return false;
+            for (int i = 0; i < crngRanges.Length; i++)
+            {
+                if (crngRanges[i].Rate > 0 && crngRanges[i].Low >= 0 &&
+                    crngRanges[i].High > crngRanges[i].Low && crngRanges[i].High < 256)
+                    return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Apply one tick of CRNG colour cycling to the working palette.
+        /// Mirrors UpdatePaletteFadeTimers_ovr108_934 (line 438583):
+        /// for each range with rate > 0, accumulate the counter and rotate
+        /// when it overflows. RotatePaletteEntry_seg023_9 (line 98009)
+        /// rotates forward: save first, shift entries down, wrap to end.
+        /// </summary>
+        static void ApplyCrngCycling()
+        {
+            if (crngRanges == null || crngPalette == null || crngCounters == null) return;
+            for (int i = 0; i < crngRanges.Length; i++)
+            {
+                if (crngRanges[i].Rate <= 0) continue;
+                int low = crngRanges[i].Low;
+                int high = crngRanges[i].High;
+                if (low < 0 || high < 0 || high >= 256 || low >= high) continue;
+
+                crngCounters[i] += crngRanges[i].Rate;
+                // The disasm accumulates rate per tick; rotate when counter >= threshold.
+                // From DOSBox frame capture analysis (frames 425-750):
+                //   CRNG 0 (rate 18): 1 step every 14 DOSBox frames at ~70fps = 5.0 steps/sec
+                //   CRNG 3 (rate 14): 1 step every 17 DOSBox frames at ~70fps = 4.1 steps/sec
+                // At PIT timer rate 18.2 Hz, threshold = 65 gives:
+                //   rate 18: 18/65 * 18.2 = 5.04/sec ✓
+                //   rate 14: 14/65 * 18.2 = 3.92/sec ✓
+                while (crngCounters[i] >= 65)
+                {
+                    crngCounters[i] -= 65;
+                    // Forward rotation: save first, shift down, wrap to end
+                    // Matches RotatePaletteEntry_seg023_9 (line 98009)
+                    Palette.cyclePalette(crngPalette, low, high - low + 1);
+                }
+            }
+        }
+
+        public static void StopCutscene()
+        {
+            cancelRequested = true;
+            main.instance.MusicPlayer.Stop();
+            XMIMusic.CurrentThemeNo = 0;
+        }
 
         /// <summary>
         /// Loads and begins a cutscene
@@ -91,6 +180,10 @@ namespace Underworld
         /// <param name="callBackMethod">Function to call after the cutscene has played</param>
         public static void PlayCutscene(int CutsceneNo, CallBacks.CutsceneCallBack callBackMethod)
         {
+            cancelRequested = false;
+            crngRanges = null;
+            crngCounters = null;
+            crngPalette = null;
             if (CutsceneNo >= 256)
             {
                 FullScreen = false;
@@ -354,6 +447,7 @@ namespace Underworld
                         if (System.IO.File.Exists(filePath))
                         {
                             cuts = new CutsLoader(filePath);
+                            InitCrngCycling(cuts);
                             currentFileExt = extNo;
                             FrameNo = 0;
                         }
@@ -603,6 +697,13 @@ namespace Underworld
                     Debug.Print($"  Audio wait: timeout={cmd.functionParams[0]}");
                     break;
 
+                case 3: // pause — wait arg[0] / 2 seconds (from disassembly)
+                    if (cmd.functionParams[0] > 0)
+                    {
+                        Debug.Print($"  Pause: {cmd.functionParams[0] / 2.0f}s");
+                    }
+                    break;
+
                 default:
                     Debug.Print($"  Unimplemented cmd {cmd.functionNo} {cmd.FunctionName}");
                     break;
@@ -615,6 +716,7 @@ namespace Underworld
         /// </summary>
         public static IEnumerator RunCutscene(int CutsceneNo, CallBacks.CutsceneCallBack callBackMethod = null)
         {
+            IsPlaying = true;
             TextureRect cutscontrol;
             if (FullScreen)
                 cutscontrol = uimanager.CutsFullscreen;
@@ -636,17 +738,21 @@ namespace Underworld
             //   3. CS011 animated title (PlayCutscene(9) from SplashPart2 line 461480)
             // CutsceneNo 9 = CS011 (octal 011, the title screen cutscene).
             // DOSBox capture: Origin at frame 1, LGS at frame 20, title at frame 89.
-            if (CutsceneNo == 9 && _RES == GAME_UW2)
+            if (CutsceneNo == 9 && _RES == GAME_UW2 && !cancelRequested)
             {
                 cutscontrol.Modulate = new Color(1f, 1f, 1f, 1f);
                 cutscontrol.Texture = uimanager.bitmaps.LoadImageAt(6); // Origin logo
                 yield return new WaitForSeconds(2.0f);
+                if (cancelRequested) goto cleanup;
                 cutscontrol.Texture = null;
                 yield return new WaitForSeconds(0.5f);
+                if (cancelRequested) goto cleanup;
                 cutscontrol.Texture = uimanager.bitmaps.LoadImageAt(7); // LGS logo
                 yield return new WaitForSeconds(2.0f);
+                if (cancelRequested) goto cleanup;
                 cutscontrol.Texture = null;
                 yield return new WaitForSeconds(0.5f);
+                if (cancelRequested) goto cleanup;
             }
             palInterpActive = false;
 
@@ -657,6 +763,7 @@ namespace Underworld
             {
                 cuts = new CutsLoader(firstFile);
             }
+            InitCrngCycling(cuts);
 
             // Set initial frame to black
             cutscontrol.Modulate = new Color(0f, 0f, 0f, 1f);
@@ -670,7 +777,7 @@ namespace Underworld
 
             bool fileChanged = false;
 
-            while (cutsceneRunning && cmdIndex < commands.Count)
+            while (cutsceneRunning && !cancelRequested && cmdIndex < commands.Count)
             {
                 // Auto-advance to the next animation file (unless open-file changed it)
                 if (!firstSegment && !fileChanged)
@@ -681,6 +788,7 @@ namespace Underworld
                     if (System.IO.File.Exists(nextFile))
                     {
                         cuts = new CutsLoader(nextFile);
+                        InitCrngCycling(cuts);
                     }
                     currentFileExt = nextExt;
                     FrameNo = 0;
@@ -713,6 +821,17 @@ namespace Underworld
                     }
                     if (cmd.functionNo == 6) // end-cutsc
                     {
+                        // If no frame-set was found in this segment AND no frame-set
+                        // has been seen in any prior segment, use end-cutsc frame as
+                        // the segment length. CS011 (title screen) uses this: fade-in
+                        // at frame 1, end at frame 37, with CRNG cycling across 37 frames.
+                        // Multi-segment cutscenes (e.g. CS000) have frame-sets in earlier
+                        // segments, so their trailing end-cutsc won't trigger this.
+                        if (!hasFrameSet && cmd.frame > 0)
+                        {
+                            segmentFrameCount = cmd.frame;
+                            hasFrameSet = true;
+                        }
                         scheduledCmds.Add(cmd);
                         isEndCutscene = true;
                         break;
@@ -822,6 +941,36 @@ namespace Underworld
                                     useSingleRedChannel: false,
                                     crop: false);
                                 cutscontrol.Texture = rerendered;
+                                FrameNo++;
+                            }
+                            else if (HasActiveCrng()
+                                && cuts.RawPixelData != null && FrameNo < cuts.RawPixelData.Length
+                                && cuts.RawPixelData[FrameNo] != null)
+                            {
+                                // CRNG colour cycling: the DOS engine updates VGA palette
+                                // at the PIT timer rate (~18.2 Hz), independently of the
+                                // LPF animation frame rate. We render multiple cycling
+                                // ticks per LPF frame to match, then hold the last result.
+                                byte[] pixelData = cuts.RawPixelData[FrameNo];
+                                int cycleTicksPerFrame = System.Math.Max(1,
+                                    (int)(18.2f / System.Math.Max(1, cuts.FramesPerSecond)));
+                                float tickTime = frameTime / cycleTicksPerFrame;
+
+                                for (int tick = 0; tick < cycleTicksPerFrame; tick++)
+                                {
+                                    ApplyCrngCycling();
+                                    var rerendered = ArtLoader.Image(
+                                        databuffer: pixelData,
+                                        dataOffSet: 0,
+                                        width: 320, height: 200,
+                                        palette: crngPalette,
+                                        useAlphaChannel: false,
+                                        useSingleRedChannel: false,
+                                        crop: false);
+                                    cutscontrol.Texture = rerendered;
+                                    if (tick < cycleTicksPerFrame - 1)
+                                        yield return new WaitForSeconds(tickTime);
+                                }
                                 FrameNo++;
                             }
                             else
@@ -991,6 +1140,11 @@ namespace Underworld
 
                 cmdIndex = scanIndex;
             }
+
+        cleanup:
+            IsPlaying = false;
+            uimanager.EnableDisable(cutscontrol, false);
+            uimanager.EnableDisable(uimanager.instance.CutsSubtitle, false);
 
             if (callBackMethod != null)
             {
