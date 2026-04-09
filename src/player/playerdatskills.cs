@@ -73,6 +73,14 @@ namespace Underworld
             }
         }
 
+        public static string CharClassName
+        {
+            get
+            {
+                return GameStrings.GetString(2, 0x17 + CharClass);
+            }
+        }
+
         /// <summary>
         /// The progression level the player is at
         /// </summary>

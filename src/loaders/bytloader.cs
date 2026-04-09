@@ -20,6 +20,8 @@ namespace Underworld
         //UW2 bitmap indices
         public const int UW2MAIN_BYT = 5;
         public const int UW2ThreeDWin_BYT = 4;
+        public const int UW2WIN1_BYT = 8;
+        public const int UW2WIN2_BYT = 9;
 
         private readonly int currentIndex = -1;
 

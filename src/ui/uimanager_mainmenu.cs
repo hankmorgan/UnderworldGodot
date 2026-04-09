@@ -314,7 +314,6 @@ namespace Underworld
 
             instance.InitViews();
             SetPanelMode(0);
-
         }
 
         private void _on_create_character_gui_input(InputEvent @event)
@@ -451,8 +450,9 @@ namespace Underworld
             {
                 XMIMusic.ChangeTheme(1);
             }
-            EnableDisable(instance.PanelMainMenu, true);
-            instance.ToggleMainMenuButtons(true);
+            EnableDisable(instance.PanelMainMenu, true);    
+            instance.ToggleMainMenuButtons(true);            
+            instance.ToggleSaves(false);
             AtMainMenu = true;
             InGame = false;
             Node3D the_tiles = main.instance.GetNode<Node3D>("/root/Underworld/tilemap");
