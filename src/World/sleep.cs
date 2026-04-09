@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Munt.NET;
 
 
 namespace Underworld
@@ -37,14 +38,24 @@ namespace Underworld
                         }
                         else
                         {//no enemies.
-                            if (sleepmethod == 0 || sleepmethod > 2)
+                            if (_RES == GAME_UW2)
                             {
-                                uimanager.AddToMessageScroll(GameStrings.GetString(1, 0xF));//you make camp
+                                //choose the strings to display when going to sleep. depending how the player goes to sleep (making a camp, bedroll, using a bed, drunkeness a different string displays )
+                                if (sleepmethod == 0 || sleepmethod > 2)
+                                {
+                                    uimanager.AddToMessageScroll(GameStrings.GetString(1, 0xF));//you make camp
+                                }
+                                else
+                                {
+                                    uimanager.AddToMessageScroll(GameStrings.GetString(1, sleepmethod + 0x15));//various strings relating to how you go to sleep
+                                }                                
                             }
                             else
                             {
-                                uimanager.AddToMessageScroll(GameStrings.GetString(1, sleepmethod + 0x15));//various strings relating to how you go to sleep
+                                //uw1 
+                                uimanager.AddToMessageScroll(GameStrings.GetString(1, 0xF)); // you make camp
                             }
+
                         }
                     }
                 }
@@ -58,10 +69,18 @@ namespace Underworld
             //ovr154_BCA
             //fade to black
             //pick music
+            if (_RES == GAME_UW2)
+            {
+                XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic(0));                
+            }
+            else
+            {
+                XMIMusic.ChangeTheme(0xD);
+            }
 
             if (sleepmethod >= 0)
             {
-                uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x10));//you go to sleep
+                uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x10));//you go to sleep           
             }
 
             FindAndCloseDoors(0);
