@@ -12,7 +12,7 @@ namespace Underworld
             var arg1  = GetConvoStackValueAtPtr(stackptr - 1);  
             uimanager.AddToConvoScroll(
                 stringToAdd: getString(arg1,true),
-                colour: 2
+                colour: PRINT_SAY
                 );     
             yield return null;
         }

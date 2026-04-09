@@ -424,6 +424,15 @@ namespace Underworld
                         }
                         break;
                     }
+                case 63: // endgame for UW1
+                    {
+                        //TODO: I have no way of testing this yet since
+                        if(_RES != GAME_UW1)
+                        {
+                            a_do_trap_endgame.Activate();
+                        }
+                        break;
+                    }
             }//end switch
 
             Debug.Print($"Unimplemented hack trap {trapObj.quality}");
