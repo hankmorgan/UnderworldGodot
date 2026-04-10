@@ -39,6 +39,22 @@ namespace Underworld
         /// </summary>
         public byte[][] WriteMasks;
 
+        /// <summary>
+        /// IFF CRNG colour cycling range from LPF header (offset 0x80-0xFF).
+        /// 16 entries of 8 bytes each. Used by RotatePaletteEntry (seg023_9)
+        /// called from UpdatePaletteFadeTimers (ovr108_934) every frame.
+        /// </summary>
+        public struct CrngEntry
+        {
+            public int Pad;    // bytes 0-1: counter/accumulator
+            public int Rate;   // bytes 2-3: cycling speed
+            public int Flags;  // bytes 4-5: flags (bit 0 = active in standard IFF)
+            public int Low;    // byte 6: low palette index
+            public int High;   // byte 7: high palette index
+        }
+
+        public CrngEntry[] CrngRanges;
+
         public ShaderMaterial[] materials = new ShaderMaterial[1];
         public Shader textureshader;
 
@@ -169,9 +185,19 @@ namespace Underworld
             FramesPerSecond = lpH.framesPerSecond;
             addptr += 128;//past header.
             // Color cycling block (128 bytes): 16 entries of 8 bytes each (IFF CRNG format).
-            // Bytes 6-7 of each entry = low/high palette index for cycling range.
-            // Used by palette interpolation (func 19) to determine which entries to animate.
-            addptr += 128;
+            // Parsed by ReadAnimationHeader_ovr108_751 (line 438142).
+            // Applied per-frame by UpdatePaletteFadeTimers_ovr108_934 (line 438583)
+            // which calls RotatePaletteEntry_seg023_9 (line 98009) for each active range.
+            CrngRanges = new CrngEntry[16];
+            for (int i = 0; i < 16; i++)
+            {
+                CrngRanges[i].Pad = ((int)getAt(cutsFile, addptr, 8) << 8) | (int)getAt(cutsFile, addptr + 1, 8);
+                CrngRanges[i].Rate = ((int)getAt(cutsFile, addptr + 2, 8) << 8) | (int)getAt(cutsFile, addptr + 3, 8);
+                CrngRanges[i].Flags = ((int)getAt(cutsFile, addptr + 4, 8) << 8) | (int)getAt(cutsFile, addptr + 5, 8);
+                CrngRanges[i].Low = (int)getAt(cutsFile, addptr + 6, 8);
+                CrngRanges[i].High = (int)getAt(cutsFile, addptr + 7, 8);
+                addptr += 8;
+            }
 
             // DPaint LPF: if hasLastDelta, the last frame is a loop-back delta
             // that resets the pixel buffer to frame 0. It should NOT be displayed.

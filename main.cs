@@ -114,8 +114,6 @@ public partial class main : Node3D
 		try
 		{
 			XMIMusic.ConvertXMIMusic();
-			//Play intro themes
-			XMIMusic.ChangeTheme(XMIMusic.IntroTheme);
 		}
 		catch (System.PlatformNotSupportedException)
 		{
@@ -134,7 +132,9 @@ public partial class main : Node3D
 		uimanager.EnableDisable(uimanager.instance.PanelInventory,false);
 		uimanager.EnableDisable(uimanager.instance.ManaFlaskPanel,false);
 		uimanager.EnableDisable(uimanager.instance.HealthFlaskPanel,false);
-		cutsplayer.PlayCutscene(9, uimanager.ReturnToMainMenu);	
+		cutsplayer.PlayCutscene(9, uimanager.ReturnToMainMenu);
+		//Play intro theme after cutscene coroutine is queued, so music and graphics start together
+		XMIMusic.ChangeTheme(XMIMusic.IntroTheme);	
 		uimanager.AddToMessageScroll(GameStrings.GetString(1, 13));//welcome message
 	}
 
