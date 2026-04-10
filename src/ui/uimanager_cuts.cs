@@ -30,7 +30,6 @@ namespace Underworld
         public static TextureRect CutsFullscreen
         {
             get
-
             {
                 return instance.CutsFull;
             }

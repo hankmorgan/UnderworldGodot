@@ -117,13 +117,11 @@ namespace Underworld
             {
                 if (UWClass._RES == UWClass.GAME_UW2)
                 {
-                    var col = PaletteLoader.Palettes[0].ColorAtIndex(0xC7,false,false);
-                    return $"#{col.R8.ToString("X2")}{col.G8.ToString("X2")}{col.B8.ToString("X2")}";
+                    return PaletteLoader.ToBBCode(0, 0xc7);
                 }
                 else
                 {
-                    var col = PaletteLoader.Palettes[0].ColorAtIndex(0x65,false,false);
-                    return $"#{col.R8.ToString("X2")}{col.G8.ToString("X2")}{col.B8.ToString("X2")}";
+                    return PaletteLoader.ToBBCode(0, 0x65);
                 }
             }
         }

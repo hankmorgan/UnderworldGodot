@@ -27,13 +27,11 @@ namespace Underworld
             {
                 if (UWClass._RES == UWClass.GAME_UW2)
                 {
-                    var col = PaletteLoader.Palettes[0].ColorAtIndex(0xC4,false,false);
-                    return $"#{col.R8.ToString("X2")}{col.G8.ToString("X2")}{col.B8.ToString("X2")}";
+                    return PaletteLoader.ToBBCode(0,0xC4);
                 }
                 else
                 {
-                    var col = PaletteLoader.Palettes[0].ColorAtIndex(0xF1,false,false);
-                    return $"#{col.R8.ToString("X2")}{col.G8.ToString("X2")}{col.B8.ToString("X2")}";
+                    return PaletteLoader.ToBBCode(0,0xF1);
                 }
             }
 		}
@@ -44,13 +42,11 @@ namespace Underworld
             {
                 if (UWClass._RES == UWClass.GAME_UW2)
                 {
-                    var col = PaletteLoader.Palettes[0].ColorAtIndex(0xC9,false,false);
-                    return $"#{col.R8.ToString("X2")}{col.G8.ToString("X2")}{col.B8.ToString("X2")}";
+                    return PaletteLoader.ToBBCode(0,0xC9);
                 }
                 else
                 {
-                    var col = PaletteLoader.Palettes[0].ColorAtIndex(0x68,false,false);
-                    return $"#{col.R8.ToString("X2")}{col.G8.ToString("X2")}{col.B8.ToString("X2")}";
+                    return PaletteLoader.ToBBCode(0,0x68);
                 }
             }
 		}
@@ -66,7 +62,7 @@ namespace Underworld
 		public static void RefreshStatsDisplay()
 		{
 			instance.Charname.Text = $"[color={AttributesFontColor}]{playerdat.CharName.ToUpper()}[/color]";
-			instance.CharClass.Text = $"[color={AttributesFontColor}]{GameStrings.GetString(2, 23 + playerdat.CharClass).ToUpper()}[/color]";
+			instance.CharClass.Text = $"[color={AttributesFontColor}]{playerdat.CharClassName.ToUpper()}[/color]";
 			instance.CharLevel.Text = $"[color={AttributesFontColor}]{playerdat.play_level}{GameStrings.GetOrdinal(playerdat.play_level).ToUpper()}[/color]";
 			instance.STR.Text = $"[color={AttributesFontColor}]{playerdat.STR}[/color]";
 			instance.DEX.Text = $"[color={AttributesFontColor}]{playerdat.DEX}[/color]";

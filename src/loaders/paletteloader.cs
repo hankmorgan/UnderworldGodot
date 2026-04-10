@@ -356,5 +356,12 @@ namespace Underworld
                     value: (Texture)Palettes[Palette.CurrentPalette].cycledUIPalette[NextPaletteCycle_UI]);
             }
         }
+
+        //Provides a bbcode string for the specified palette colour
+        public static string ToBBCode(int palette, byte colourindex)
+        {
+            var col = PaletteLoader.Palettes[palette].ColorAtIndex(colourindex,false,false);
+            return $"#{col.R8.ToString("X2")}{col.G8.ToString("X2")}{col.B8.ToString("X2")}";
+        }
     }//end class
 }//end namespace

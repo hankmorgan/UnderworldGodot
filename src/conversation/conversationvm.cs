@@ -618,9 +618,18 @@ namespace Underworld
 
 			if (_RES == GAME_UW2)
 			{
-				if (playerdat.GetQuest(143) != 0)
+				if (playerdat.GetQuest(143) != 0) //if this quest variable has a value then a cutscene will play at the end of the conversation
 				{
-					Debug.Print($"Play cutscene no {playerdat.GetQuest(143)}");
+					if ((playerdat.GetQuest(143)-1) == 2)
+					{
+						//play the victory cutscene.
+						cutsplayer.PlayCutscene(playerdat.GetQuest(143)-1 , uimanager.VictoryScreen);						
+					}
+					else
+					{
+						Debug.Print($"Play cutscene no {playerdat.GetQuest(143)-1} at end of conversation");
+						cutsplayer.PlayCutscene(playerdat.GetQuest(143)-1, null);
+					}					
 					playerdat.SetQuest(143, 0);
 				}
 
