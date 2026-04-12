@@ -26,9 +26,16 @@ public sealed class AdlMidiEngine : ISynthEngine
         SetupDllLoader();
 
         _player = AdlMidi.Init(sampleRate);
-
-        var bankData = LoadGameBank();
-        _player.OpenBankData(bankData);
+        try
+        {
+            var bankData = LoadGameBank();
+            _player.OpenBankData(bankData);
+        }
+        catch
+        {
+            _player.Dispose();
+            throw;
+        }
     }
 
     public void PlayMsg(uint msg)
