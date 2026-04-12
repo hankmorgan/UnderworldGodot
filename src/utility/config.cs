@@ -64,6 +64,14 @@ public class uwsettings
                 throw new InvalidOperationException("Invalid Game Selected");
         }
 
+        // Backward compat: if legacy 'rompath' is set but new 'synthpath' isn't,
+        // promote rompath to synthpath.
+        if (string.IsNullOrEmpty(instance.synthpath) && !string.IsNullOrEmpty(instance.rompath))
+        {
+            instance.synthpath = instance.rompath;
+            Debug.Print("Warning: 'rompath' setting is deprecated, use 'synthpath' instead.");
+        }
+
     }
 
     public string pathuw1 { get; set; } = @"C:\Games\UW";
@@ -73,7 +81,10 @@ public class uwsettings
     public float FOV { get; set; } = 75;
     public bool showcolliders { get; set; }
     public int shaderbandsize { get; set; } = 8;
-    public string synth { get; set; } = "opl";
+    public string synth { get; set; } = "soundfont";
+    public string synthpath { get; set; } = "";
+    // Legacy field, still read for backward compatibility. If set and synthpath is empty,
+    // synthpath is populated from this in LoadSettings.
     public string rompath { get; set; } = "";
 
     public void Save()
