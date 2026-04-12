@@ -48,6 +48,11 @@ namespace Underworld
         static CutsLoader vpSpriteLoader;
         static int vpSpriteFrame;
 
+        // Deferred backdrop swap: set true at start-scroll; swap triggers on the
+        // first sprite frame that has any RLE writes (non-empty mask).
+        static bool vpPendingBackdropSwap;
+        static bool vpBackdropSwapped;
+
         // CutsceneNo accessible to ExecuteCommand for sprite path construction
         static int currentCutsceneNo;
 
@@ -352,6 +357,24 @@ namespace Underworld
             var mask = vpSpriteLoader.WriteMasks[vpSpriteFrame];
             if (spriteTex == null || mask == null) { vpSpriteFrame++; return; }
 
+            // Trigger deferred backdrop swap on first non-empty sprite frame.
+            if (vpPendingBackdropSwap && !vpBackdropSwapped)
+            {
+                bool hasWrites = false;
+                for (int i = 0; i < mask.Length; i++) { if (mask[i] != 0) { hasWrites = true; break; } }
+                if (hasWrites)
+                {
+                    SwapBackdropToNextFile();
+                    vpBackdropSwapped = true;
+                    // Rebuild this frame's region from the swapped composite.
+                    var rebuilt = GetScrollFrame(vpFrameOffset + vpSpriteFrame);
+                    if (rebuilt != null)
+                        region.BlitRect(rebuilt,
+                            new Rect2I(0, 0, rebuilt.GetWidth(), rebuilt.GetHeight()),
+                            Vector2I.Zero);
+                }
+            }
+
             var spriteImg = spriteTex.GetImage();
             int rw = region.GetWidth();
             int rh = region.GetHeight();
@@ -379,6 +402,40 @@ namespace Underworld
         /// The LPF frame covers a 320px-wide region starting at vpStartX in the
         /// VGA buffer, so the base must contain the LBACK pixels at those positions.
         /// </summary>
+        // Debug frame dumping for pixel-perfect comparison against DOSBox captures.
+        // Enable by setting DumpScrollFrames = true; frames write to
+        // user://cuts_dump/CSnnn_Nxx/frame_YYY.png
+        // (~/Library/Application Support/Godot/app_userdata/Underworld/cuts_dump on macOS).
+        public static bool DumpScrollFrames = false;
+
+        static void DumpFrame(Godot.Image img, int cutsNo, int fileExt, int totalFrame)
+        {
+            if (!DumpScrollFrames || img == null) return;
+            string subdir = $"CS{cutsNo:D3}_N{fileExt:D2}";
+            string dirAbs = Godot.ProjectSettings.GlobalizePath($"user://cuts_dump/{subdir}");
+            Godot.DirAccess.MakeDirRecursiveAbsolute(dirAbs);
+            img.SavePng($"{dirAbs}/frame_{totalFrame:D3}.png");
+        }
+
+        static void SwapBackdropToNextFile()
+        {
+            if (vpComposite == null) return;
+            int nextExt = currentFileExt + 1;
+            var backdropPath = System.IO.Path.Combine(
+                BasePath, "CUTS", GetsCutsceneFileName(currentCutsceneNo, nextExt));
+            if (!System.IO.File.Exists(backdropPath)) return;
+            var backdrop = new CutsLoader(GetsCutsceneFileName(currentCutsceneNo, nextExt));
+            var tex = backdrop.LoadImageAt(0);
+            if (tex == null) return;
+            var img = tex.GetImage();
+            int blitH = System.Math.Min(img.GetHeight(), vpComposite.GetHeight());
+            int blitW = System.Math.Min(320, vpComposite.GetWidth());
+            vpComposite.BlitRect(img, new Rect2I(0, 0, blitW, blitH), Vector2I.Zero);
+            if (vpCompositeClean != null)
+                vpCompositeClean.BlitRect(img, new Rect2I(0, 0, blitW, blitH), Vector2I.Zero);
+            Debug.Print($"  Backdrop swap: N{nextExt:D2} frame 0 -> composite[0:{blitW}]");
+        }
+
         static byte[] BuildLbackBase()
         {
             if (vpFileMappings.Count == 0) return null;
@@ -682,6 +739,17 @@ namespace Underworld
                                 Debug.Print($"  Sprite overlay: ext {currentFileExt} (LBACK base, per-keyframe reset)");
                             }
                         }
+
+                        // Backdrop swap (horizontal only): LBACK000 has the cart at its
+                        // rest position; the next LPF (N04) is a cart-less variant and
+                        // N03 is the cart-only sprite overlay. N03's first 3 frames are
+                        // all-Skip (no writes) so LBACK shows through unchanged — cart
+                        // stays visible. When the sprite starts writing (frame 3+), the
+                        // backdrop flips to N04 and the sprite picks up the cart from
+                        // ~the same rest position, giving a seamless hand-off.
+                        // Vertical scenes (N06) include erase writes so no swap needed.
+                        vpPendingBackdropSwap = vpIsHorizontal;
+                        vpBackdropSwapped = false;
                         break;
                     }
 
@@ -919,6 +987,7 @@ namespace Underworld
                             {
                                 ApplySpriteOverlay(scrollRegion);
                                 uimanager.DisplayScrollFrame(scrollRegion, cutscontrol);
+                                DumpFrame(scrollRegion, CutsceneNo, currentFileExt, totalFrame);
                             }
                             FrameNo++; // advance LPF frame for delta chaining
                         }
