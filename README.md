@@ -88,7 +88,7 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * NPC Combat Actions
 * Player movement and collision (with a lot of jank attached incl framerate/speed issues)
 * Speech from VOC files
-* Music conversion from XMI to WAV for runtime loading of music. (partial implementation currently of just the main intro themes)
+* Real-time music synthesis from XMI via four selectable synth engines (CM-32L/MT-32 via mt32emu, SoundFont via MeltySynth, or AdLib/OPL).
 
 ## Whats missing
 
@@ -186,7 +186,7 @@ Tilde (~) Give all runestones, 30 mana and maximise mage skills.
 
 ## Music
 Music themes can now be loaded. This relies on the Ùnderworld project referencing libADLMIDI via the AdlMidi wrapper project at https://github.com/csinkers/AdlMidi.NET for Opl/Adlib style or MUNT.NET https://github.com/abedegno/Munt.NET for MT-32
-Themes are converted at runtime into .wav files which can them be loaded via the XMIMusic class ``ChangeTheme`` function.
+Music is rendered in real time via one of four synth engines: Roland CM-32L or MT-32 (via mt32emu, requires user-supplied ROM files), SoundFont (via MeltySynth, ships with a bundled GeneralUser GS soundfont), or AdLib/OPL (via AdlMidi.NET). The synth engine is selected by the `synth` setting in `uwsettings.json`. Themes are played via the `XMIMusic.ChangeTheme` function, which delegates to the `MusicStreamPlayer` node.
 
 To use OPL set the synth setting in settings.json to ``opl``
 To use MT-32 set the synth setting in settings.json to ``cm32l``
@@ -198,8 +198,6 @@ To use MT-32 you will need to have a suitable MT-32 Rom files (see list below) s
     "cm32l_ctrl_1_02.rom", "cm32l_pcm.rom"
     "cm32l_ctrl_1_00.rom", "cm32l_pcm.rom"
 ```
-
-The .wav files are generated at game start up. The first time they are created game start-up will be slower. 
 
 In order to switch between ``opl`` and ``cm32l`` settings the files will need to be deleted/removed from the ``%appdata%\Roaming\Godot\app_userdata\Underworld\SOUND\{1 or 2}`` folder
 
