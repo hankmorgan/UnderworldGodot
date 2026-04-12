@@ -15,7 +15,9 @@ public partial class MusicStreamPlayer : Node
     public static MusicStreamPlayer Instance { get; private set; }
 
     private const int SampleRate = 44100;
-    private const float BufferLengthSec = 0.1f;
+    // Larger buffer to absorb main-thread hitches during cutscene scrolling.
+    // Godot rounds up to nearest power-of-2, so actual buffer ~371ms.
+    private const float BufferLengthSec = 0.25f;
 
     private ISynthEngine _synth;
     private XmiPlayer _xmiPlayer;
@@ -37,8 +39,9 @@ public partial class MusicStreamPlayer : Node
             return;
         }
 
-        _renderBuffer = new short[8192];
-        _frames = new Vector2[4096];
+        // Sized to cover the ~370ms buffer at 44100 Hz: 16384 frames = 32768 samples.
+        _renderBuffer = new short[32768];
+        _frames = new Vector2[16384];
 
         _synth = CreateSynthEngine();
         if (_synth == null)

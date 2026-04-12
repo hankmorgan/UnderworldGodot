@@ -18,7 +18,7 @@ namespace Underworld
 
         public static byte Armed => _RES == GAME_UW2 ? (byte)5 : (byte)10;
 
-        public static void ChangeTheme(byte themeNo, bool Loop = false)
+        public static void ChangeTheme(byte themeNo, bool Loop = true)
         {
             // Theme numbers are octal-encoded: upper 5 bits = first digit, lower 3 bits = second digit.
             // Matches original engine behaviour (see commit 9beb7e6 upstream).
