@@ -169,7 +169,7 @@ namespace Underworld
         public static void StopCutscene()
         {
             cancelRequested = true;
-            main.instance.MusicPlayer.Stop();
+            MusicStreamPlayer.Instance?.Stop();
             XMIMusic.CurrentThemeNo = 0;
         }
 

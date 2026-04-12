@@ -1162,25 +1162,5 @@ public partial class main : Node3D
 	}
 
 
-	public static void _on_music_player_finished()
-	{
-		Debug.Print("Music finished, picking next theme");
-		
-		if (XMIMusic.LoopTheme)
-		{
-			main.instance.MusicPlayer.Play();//restart the playing theme, used mainly for the armed theme
-		}
-		else
-		{
-			if (!uimanager.InGame)
-			{
-				main.instance.MusicPlayer.Play();//restart the playing theme, if we are not in game and it is not possible to pick a different level theme.
-			}
-			else
-			{
-				XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic());
-			}			
-		}
-	}
 
 }//end class
