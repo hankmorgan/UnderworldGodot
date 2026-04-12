@@ -1146,7 +1146,14 @@ namespace Underworld
             uimanager.EnableDisable(cutscontrol, false);
             uimanager.EnableDisable(uimanager.instance.CutsSubtitle, false);
 
-            if (callBackMethod != null)
+            if (cancelRequested)
+            {
+                // Escape was pressed — skip the chained callback (which would play
+                // the next cutscene in the intro sequence) and return straight to
+                // the main menu.
+                uimanager.ReturnToMainMenu();
+            }
+            else if (callBackMethod != null)
             {
                 callBackMethod();
             }
