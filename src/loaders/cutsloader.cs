@@ -38,6 +38,10 @@ namespace Underworld
         /// Only populated when decoded in sprite mode (CutsLoader(file, basePixels)).
         /// </summary>
         public byte[][] WriteMasks;
+        // True when this frame's LPF record contained actual RLE writes (recordSize>4).
+        // False = null-delta frame where the sprite image is identical to the prior frame.
+        // Used by cutsplayer to detect "stale" sprite frames that need pan-compensation.
+        public bool[] IsKeyFrame;
 
         /// <summary>
         /// IFF CRNG colour cycling range from LPF header (offset 0x80-0xFF).
@@ -249,6 +253,7 @@ namespace Underworld
             materials = new ShaderMaterial[nDisplayFrames];
             if (isSpriteMode)
                 WriteMasks = new byte[nDisplayFrames][];
+            IsKeyFrame = new bool[nDisplayFrames];
             for (int framenumber = 0; framenumber < lpH.nFrames; framenumber++)
             {
                 if ((ErrorHandling == true) && (framenumber == 10))
@@ -338,6 +343,7 @@ namespace Underworld
                 // Don't store the loop delta frame in ImageCache
                 if (framenumber < nDisplayFrames)
                 {
+                    IsKeyFrame[imagecount] = recordSize > 4;
                     if (isSpriteMode && writeMask != null)
                         WriteMasks[imagecount] = (byte[])writeMask.Clone();
 

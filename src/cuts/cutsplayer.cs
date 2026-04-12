@@ -53,6 +53,25 @@ namespace Underworld
         static bool vpPendingBackdropSwap;
         static bool vpBackdropSwapped;
 
+        // Sprite-stale offset: N03's LPF has delta-encoded frames where sprite
+        // pixel content only actually updates every ~5 frames (null-delta frames
+        // in between). Between updates, the sprite image stays identical while the
+        // panorama pans 1 pixel per frame — without compensation, the sprite would
+        // drift relative to the scene. Each frame where the sprite image is
+        // byte-identical to the previous frame's sprite image, we offset the draw
+        // position by +1 in the pan direction to keep the sprite scene-aligned.
+        // On a real sprite-image change (RLE delta with pixel writes), the offset
+        // resets to 0 — the new sprite image is authored to align at offX=0.
+        static ImageTexture vpPrevSpriteTex;
+        static int vpSpriteStaleOffset;
+
+        // Pan sub-ticks per sprite-animation frame. The DOS engine pans the CRT
+        // start address faster than the LPF sprite rate, giving smooth inter-frame
+        // scrolling while the sprite stays fixed for a sprite-frame duration.
+        // Total pan distance = panorama_width pixels clamps after the first N ticks
+        // (the sprite continues animating with pan held at end).
+        const int PanSubTicks = 1;
+
         // CutsceneNo accessible to ExecuteCommand for sprite path construction
         static int currentCutsceneNo;
 
@@ -348,14 +367,19 @@ namespace Underworld
         /// scrolling panorama buffer. The LPF animation already compensates for
         /// scroll progression in its coordinate space.
         /// </summary>
-        static void ApplySpriteOverlay(Godot.Image region)
+        static void ApplySpriteOverlay(Godot.Image region, bool advance = true)
+        {
+            ApplySpriteOverlay(region, 0, 0, advance);
+        }
+
+        static void ApplySpriteOverlay(Godot.Image region, int offX, int offY, bool advance)
         {
             if (vpSpriteLoader == null || vpSpriteLoader.WriteMasks == null) return;
             if (vpSpriteFrame >= vpSpriteLoader.ImageCache.Length) return;
 
             var spriteTex = vpSpriteLoader.ImageCache[vpSpriteFrame];
             var mask = vpSpriteLoader.WriteMasks[vpSpriteFrame];
-            if (spriteTex == null || mask == null) { vpSpriteFrame++; return; }
+            if (spriteTex == null || mask == null) { if (advance) vpSpriteFrame++; return; }
 
             // Trigger deferred backdrop swap on first non-empty sprite frame.
             if (vpPendingBackdropSwap && !vpBackdropSwapped)
@@ -386,11 +410,14 @@ namespace Underworld
             for (int y = 0; y < h; y++)
                 for (int x = 0; x < w; x++)
                 {
+                    int rx = x + offX;
+                    int ry = y + offY;
+                    if (rx < 0 || rx >= rw || ry < 0 || ry >= rh) continue;
                     if (mask[y * sw + x] != 0)
-                        region.SetPixel(x, y, spriteImg.GetPixel(x, y));
+                        region.SetPixel(rx, ry, spriteImg.GetPixel(x, y));
                 }
 
-            vpSpriteFrame++;
+            if (advance) vpSpriteFrame++;
         }
 
         /// <summary>
@@ -750,6 +777,8 @@ namespace Underworld
                         // Vertical scenes (N06) include erase writes so no swap needed.
                         vpPendingBackdropSwap = vpIsHorizontal;
                         vpBackdropSwapped = false;
+                        vpPrevSpriteTex = null;
+                        vpSpriteStaleOffset = 0;
                         break;
                     }
 
@@ -981,15 +1010,59 @@ namespace Underworld
                         // sprite pixels via write masks at fixed screen positions.
                         if (vpScrollActive && vpComposite != null)
                         {
-                            int totalFrame = vpFrameOffset + frame;
-                            var scrollRegion = GetScrollFrame(totalFrame);
-                            if (scrollRegion != null)
+                            // Sub-tick pan: render PanSubTicks times per sprite frame,
+                            // advancing pan 1 pixel per sub-tick but holding the sprite
+                            // image constant until the last sub-tick. Gives smooth
+                            // panning between sprite-animation frames.
+                            int spriteFrameIdx = vpFrameOffset + frame;
+                            float subFrameTime = frameTime / PanSubTicks;
+                            for (int sub = 0; sub < PanSubTicks; sub++)
                             {
-                                ApplySpriteOverlay(scrollRegion);
-                                uimanager.DisplayScrollFrame(scrollRegion, cutscontrol);
-                                DumpFrame(scrollRegion, CutsceneNo, currentFileExt, totalFrame);
+                                int panTick = spriteFrameIdx * PanSubTicks + sub;
+                                var scrollRegion = GetScrollFrame(panTick);
+                                if (scrollRegion != null)
+                                {
+                                    // Sprite is logically painted into the panorama
+                                    // buffer at fixed buffer position (vpStartX for
+                                    // horizontal, initialY for vertical). As viewport
+                                    // pans, sprite slides with scene — handled by
+                                    // drawing at offset = bufferPos - currentScrollPos.
+                                    // N03's LPF has delta-encoded frames where cart-pose
+                                    // only updates every ~5 sprite frames; without this
+                                    // offset the sprite image would stay at fixed screen
+                                    // position for 4 frames while scene drifts under it.
+                                    // Sprite-stale offset: if the current LPF frame's
+                                    // write mask is all zeros (no RLE writes = LPF
+                                    // delta is a no-op), the sprite image is
+                                    // unchanged from the prior frame. Increment
+                                    // a stale-offset to keep the sprite scene-aligned
+                                    // while the panorama pans 1px underneath. On a
+                                    // frame with actual writes, reset to 0 — the
+                                    // new sprite image's internal cart position is
+                                    // authored to align at offX=0.
+                                    int offX = 0, offY = 0;
+                                    if (vpSpriteLoader != null
+                                        && vpSpriteLoader.IsKeyFrame != null
+                                        && vpSpriteFrame < vpSpriteLoader.IsKeyFrame.Length)
+                                    {
+                                        if (vpSpriteLoader.IsKeyFrame[vpSpriteFrame])
+                                            vpSpriteStaleOffset = 0;
+                                        else
+                                            vpSpriteStaleOffset++;
+                                        if (vpIsHorizontal)
+                                            offX = -vpSpriteStaleOffset * vpScrollDX;
+                                        else
+                                            offY = vpSpriteStaleOffset * vpScrollDY;
+                                    }
+                                    bool advanceSprite = (sub == PanSubTicks - 1);
+                                    ApplySpriteOverlay(scrollRegion, offX, offY, advanceSprite);
+                                    uimanager.DisplayScrollFrame(scrollRegion, cutscontrol);
+                                    DumpFrame(scrollRegion, CutsceneNo, currentFileExt, panTick);
+                                }
+                                yield return new WaitForSeconds(subFrameTime);
                             }
                             FrameNo++; // advance LPF frame for delta chaining
+                            continue; // sub-ticks handled timing; skip outer yield
                         }
                         else if (cuts != null)
                         {
