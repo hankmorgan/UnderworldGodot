@@ -93,8 +93,8 @@ public sealed class MeltySynthEngine : ISynthEngine
         CheckDisposed();
         for (int ch = 0; ch < 16; ch++)
         {
+            _synth.ProcessMidiMessage(ch, 0xB0, 120, 0); // All Sound Off (hard cut — panic first)
             _synth.ProcessMidiMessage(ch, 0xB0, 123, 0); // All Notes Off
-            _synth.ProcessMidiMessage(ch, 0xB0, 120, 0); // All Sound Off
             _synth.ProcessMidiMessage(ch, 0xB0, 121, 0); // Reset All Controllers
         }
     }
