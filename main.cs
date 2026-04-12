@@ -43,7 +43,6 @@ public partial class main : Node3D
 	[Export] public Camera3D cam;
 	public static Camera3D gamecam; //static ref to the above camera
 	[Export] public AudioStreamPlayer DigitalAudioPlayer;
-	[Export] public AudioStreamPlayer MusicPlayer;
 	[Export] public RichTextLabel lblPositionDebug;
 	//[Export] public uimanager uwUI;
 

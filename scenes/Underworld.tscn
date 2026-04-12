@@ -37,11 +37,10 @@ shader = ExtResource("6_x6exc")
 [node name="MusicStreamPlayer" type="Node" parent="."]
 script = ExtResource("N_music_stream")
 
-[node name="main" type="Node3D" parent="." node_paths=PackedStringArray("cam", "DigitalAudioPlayer", "MusicPlayer", "lblPositionDebug", "secondarycameras")]
+[node name="main" type="Node3D" parent="." node_paths=PackedStringArray("cam", "DigitalAudioPlayer", "lblPositionDebug", "secondarycameras")]
 script = ExtResource("6_3y8oy")
 cam = NodePath("../WorldViewContainer/SubViewport/Camera3D")
 DigitalAudioPlayer = NodePath("../UI/DigitalAudioPlayer")
-MusicPlayer = NodePath("../UI/MusicPlayer")
 lblPositionDebug = NodePath("../UI/Common/PositionLabel")
 secondarycameras = NodePath("../WorldViewContainer/SubViewport")
 
@@ -70,10 +69,6 @@ follow_viewport_enabled = true
 
 [node name="DigitalAudioPlayer" type="AudioStreamPlayer" parent="UI"]
 stream = SubResource("AudioStreamWAV_tkk82")
-
-[node name="MusicPlayer" type="AudioStreamPlayer" parent="UI"]
-stream = SubResource("AudioStreamWAV_tkk82")
-playback_type = 1
 
 [node name="UW1" type="CanvasLayer" parent="UI"]
 visible = false
