@@ -38,9 +38,18 @@ namespace Underworld
         /// Only populated when decoded in sprite mode (CutsLoader(file, basePixels)).
         /// </summary>
         public byte[][] WriteMasks;
-        // True when this frame's LPF record contained actual RLE writes (recordSize>4).
-        // False = null-delta frame where the sprite image is identical to the prior frame.
-        // Used by cutsplayer to detect "stale" sprite frames that need pan-compensation.
+        /// <summary>
+        /// True when this frame's LPF record has actual RLE data (recordSize > 4).
+        /// False when it's a null-delta frame (recordSize ≤ 4) — the RLE decoder is
+        /// skipped and the pixel buffer is left unchanged from the prior frame, so
+        /// the displayed image is pixel-identical to the previous one.
+        ///
+        /// Used by cutsplayer's panorama-scroll path to detect "stale" sprite
+        /// frames: between LPF keyframes the sprite image doesn't change, but the
+        /// backdrop pans 1 pixel per frame, so the sprite needs a compensating
+        /// draw-offset to stay scene-aligned. See the block comment in
+        /// cutsplayer.cs (panorama horizontal-scroll fixes).
+        /// </summary>
         public bool[] IsKeyFrame;
 
         /// <summary>

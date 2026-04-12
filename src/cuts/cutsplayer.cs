@@ -48,29 +48,67 @@ namespace Underworld
         static CutsLoader vpSpriteLoader;
         static int vpSpriteFrame;
 
+        // === Panorama horizontal-scroll fixes ===
+        //
+        // Original symptom: CS000's horizontal scroll (cart heading to bridge)
+        // showed two carts — one pre-rendered in LBACK000 and a second animating
+        // via N03. N03 is a cart-only sprite with no background-erase writes, so
+        // it couldn't paint over LBACK's cart.
+        //
+        // Secondary symptom: once (a) was fixed, the cart drifted left 1,2,3,4
+        // pixels every 4 frames before snapping back on the 5th frame.
+        //
+        // Root causes:
+        //   (a) LBACK000.BYT contains the cart at rest. During scroll the DOS
+        //       engine substitutes a cart-less backdrop (CS000.N04's frame 0).
+        //       We couldn't locate the exact engine mechanism in the disassembly
+        //       — `Cutscene_23_Unk_ovr108_1393` (start-scroll) only stores scroll
+        //       state and doesn't touch the panorama buffer — but empirically
+        //       N04's frame 0 is what DOSBox ends up with as the scroll backdrop.
+        //       We reproduce this visually by swapping the LBACK000 region of
+        //       vpComposite with N04's frame 0 at the moment the sprite first
+        //       writes pixels (see vpPendingBackdropSwap).
+        //
+        //   (b) N03's LPF is delta-encoded: roughly every 5th frame carries a
+        //       real RLE payload (recordSize > 4), the intervening 4 frames are
+        //       empty deltas (recordSize ≤ 4) that keep the pixel buffer as-is.
+        //       The panorama, however, pans 1 pixel per display frame. Without
+        //       compensation, the sprite image stays pinned at the viewport
+        //       origin while the scene drifts under it, producing the 1,2,3,4
+        //       pixel drift. Between LPF keyframes we offset the sprite draw by
+        //       `vpSpriteStaleOffset` pixels in the pan direction; the offset
+        //       resets to 0 at each keyframe, at which point the new sprite
+        //       image's internal cart position is already authored to align
+        //       with the panned scene (see CutsLoader.IsKeyFrame).
+        //
+        // This only applies to horizontal scrolls (CS000 intro's cart, and
+        // CS002's later scroll). Vertical scenes (N05/N06/N07) have dense
+        // sprites with their own erase writes and align naturally.
+        //
+        // Verification:
+        //   - DOSBox per-capture-frame pixel diff from frame 1796 (scroll start)
+        //     through 2310 (fade): content changes every 5 capture frames at
+        //     70 fps = 14 fps effective render rate, matching N03's authored
+        //     fps header and our frameTime.
+        //   - Our dump frames 1-69 compared against DOSBox frames 1851+N*5
+        //     align with zero horizontal offset and <1% pixel diff (palette
+        //     conversion variance).
+
         // Deferred backdrop swap: set true at start-scroll; swap triggers on the
-        // first sprite frame that has any RLE writes (non-empty mask).
+        // first sprite frame that has any RLE writes (non-empty mask). N03's
+        // first few frames are all-Skip so LBACK's cart remains visible during
+        // that grace window — a seamless hand-off between LBACK's cart and the
+        // sprite's cart.
         static bool vpPendingBackdropSwap;
         static bool vpBackdropSwapped;
 
-        // Sprite-stale offset: N03's LPF has delta-encoded frames where sprite
-        // pixel content only actually updates every ~5 frames (null-delta frames
-        // in between). Between updates, the sprite image stays identical while the
-        // panorama pans 1 pixel per frame — without compensation, the sprite would
-        // drift relative to the scene. Each frame where the sprite image is
-        // byte-identical to the previous frame's sprite image, we offset the draw
-        // position by +1 in the pan direction to keep the sprite scene-aligned.
-        // On a real sprite-image change (RLE delta with pixel writes), the offset
-        // resets to 0 — the new sprite image is authored to align at offX=0.
-        static ImageTexture vpPrevSpriteTex;
+        // Sprite-stale offset: pixel offset applied to sprite draw position on
+        // null-delta LPF frames, to keep the sprite scene-aligned while the
+        // panorama pans underneath. See the block comment above for why.
+        // Resets to 0 on each LPF keyframe; increments by 1 on each null-delta
+        // frame. Offset direction = opposite of scroll direction (sprite slides
+        // in the same direction the scene is panning).
         static int vpSpriteStaleOffset;
-
-        // Pan sub-ticks per sprite-animation frame. The DOS engine pans the CRT
-        // start address faster than the LPF sprite rate, giving smooth inter-frame
-        // scrolling while the sprite stays fixed for a sprite-frame duration.
-        // Total pan distance = panorama_width pixels clamps after the first N ticks
-        // (the sprite continues animating with pan held at end).
-        const int PanSubTicks = 1;
 
         // CutsceneNo accessible to ExecuteCommand for sprite path construction
         static int currentCutsceneNo;
@@ -359,13 +397,24 @@ namespace Underworld
         }
 
         /// <summary>
-        /// Overlay animated sprite pixels onto the viewport region at fixed screen
-        /// positions. Uses RLE write masks to draw only explicitly written pixels
-        /// (the animated flags/cart), preserving the scrolling LBACK background.
-        /// Matches the original engine's DrawArtToScreen (line 444058) which draws
-        /// at a fixed VGA screen position ([si+13h]=0, [si+15h]=0), not into the
-        /// scrolling panorama buffer. The LPF animation already compensates for
-        /// scroll progression in its coordinate space.
+        /// Overlay animated sprite pixels (cart, flags) onto a scroll viewport
+        /// region. Uses the sprite LPF's per-frame RLE write mask so we only
+        /// paint pixels explicitly written by the sprite animation, preserving
+        /// the scrolling LBACK background under RLE Skip regions.
+        ///
+        /// (offX, offY) shift the sprite's draw position within the region. For
+        /// horizontal scroll this is the stale-offset compensation for null-delta
+        /// LPF frames (see the panorama-scroll block comment at the top of the
+        /// file). For the unshifted call path it defaults to (0, 0).
+        ///
+        /// `advance` controls whether vpSpriteFrame increments — retained for
+        /// the (currently unused) sub-tick path where multiple display frames
+        /// render the same sprite frame during a finer pan interpolation.
+        ///
+        /// Also hosts the one-shot deferred-backdrop swap: on the first sprite
+        /// frame whose RLE actually writes pixels we replace the LBACK000 half
+        /// of the panorama with the next LPF's frame 0 (e.g. CS000.N04 for the
+        /// cart scroll), removing the at-rest cart that was baked into LBACK.
         /// </summary>
         static void ApplySpriteOverlay(Godot.Image region, bool advance = true)
         {
@@ -420,19 +469,11 @@ namespace Underworld
             if (advance) vpSpriteFrame++;
         }
 
-        /// <summary>
-        /// Build raw indexed pixel buffer from LBACK data at the sprite position.
-        /// Used as the decode base for sprite LPF files so that RLE skip areas
-        /// contain LBACK content (matching the VGA screen during panorama scroll).
-        /// For vertical scroll (vpStartX=0): base = first LBACK raw pixels.
-        /// For horizontal scroll (vpStartX=70): base = LBACK000[70:] + LBACK001[:70].
-        /// The LPF frame covers a 320px-wide region starting at vpStartX in the
-        /// VGA buffer, so the base must contain the LBACK pixels at those positions.
-        /// </summary>
-        // Debug frame dumping for pixel-perfect comparison against DOSBox captures.
-        // Enable by setting DumpScrollFrames = true; frames write to
-        // user://cuts_dump/CSnnn_Nxx/frame_YYY.png
-        // (~/Library/Application Support/Godot/app_userdata/Underworld/cuts_dump on macOS).
+        // --- Debug: dump composited scroll frames for pixel-perfect comparison
+        // against DOSBox captures. Off by default; flip DumpScrollFrames=true to
+        // enable. Frames land at user://cuts_dump/CSnnn_Nxx/frame_YYY.png
+        // (~/Library/Application Support/Godot/app_userdata/Underworld/cuts_dump
+        // on macOS). Use with the pixel-diff scripts in the PR description.
         public static bool DumpScrollFrames = false;
 
         static void DumpFrame(Godot.Image img, int cutsNo, int fileExt, int totalFrame)
@@ -444,6 +485,13 @@ namespace Underworld
             img.SavePng($"{dirAbs}/frame_{totalFrame:D3}.png");
         }
 
+        /// <summary>
+        /// Replace the LBACK000 region of the panorama composite with the next
+        /// LPF file's frame 0 content. Called on the first sprite frame that
+        /// actually writes pixels, to remove the at-rest cart baked into
+        /// LBACK000 so the animated sprite cart is the only cart visible.
+        /// Horizontal scroll only; see the block comment at the top of the file.
+        /// </summary>
         static void SwapBackdropToNextFile()
         {
             if (vpComposite == null) return;
@@ -463,6 +511,16 @@ namespace Underworld
             Debug.Print($"  Backdrop swap: N{nextExt:D2} frame 0 -> composite[0:{blitW}]");
         }
 
+        /// <summary>
+        /// Build a 320x200 indexed-pixel "base" for sprite LPF decoding. The
+        /// sprite LPFs (N03, N06) are authored as deltas against the backdrop
+        /// pixels at their draw position; if we decoded them onto a black buffer
+        /// their RLE Skip regions would leave voids. Feeding LBACK pixels as the
+        /// decode base means Skip regions show LBACK content, matching the DOS
+        /// engine's VGA screen where Skip opcodes leave existing pixels alone.
+        /// For vertical scroll (vpStartX=0): base = first LBACK raw pixels.
+        /// For horizontal scroll (vpStartX=70): base = LBACK000[70:] + LBACK001[:70].
+        /// </summary>
         static byte[] BuildLbackBase()
         {
             if (vpFileMappings.Count == 0) return null;
@@ -777,7 +835,6 @@ namespace Underworld
                         // Vertical scenes (N06) include erase writes so no swap needed.
                         vpPendingBackdropSwap = vpIsHorizontal;
                         vpBackdropSwapped = false;
-                        vpPrevSpriteTex = null;
                         vpSpriteStaleOffset = 0;
                         break;
                     }
@@ -1006,63 +1063,42 @@ namespace Underworld
                         // 1. AnimateViewportScroll shifts the VGA CRT start address
                         // 2. LPF frame decoded into persistent buffer (delta chaining)
                         // 3. DrawArtToScreen draws at fixed screen position
-                        // We simulate this by cropping the LBACK composite and overlaying
-                        // sprite pixels via write masks at fixed screen positions.
+                        // We simulate this by cropping the LBACK composite and
+                        // overlaying sprite pixels via the LPF's RLE write mask.
+                        // See the panorama-scroll block comment at the top of the
+                        // file for the horizontal-scroll fixes layered on top.
                         if (vpScrollActive && vpComposite != null)
                         {
-                            // Sub-tick pan: render PanSubTicks times per sprite frame,
-                            // advancing pan 1 pixel per sub-tick but holding the sprite
-                            // image constant until the last sub-tick. Gives smooth
-                            // panning between sprite-animation frames.
-                            int spriteFrameIdx = vpFrameOffset + frame;
-                            float subFrameTime = frameTime / PanSubTicks;
-                            for (int sub = 0; sub < PanSubTicks; sub++)
+                            int totalFrame = vpFrameOffset + frame;
+                            var scrollRegion = GetScrollFrame(totalFrame);
+                            if (scrollRegion != null)
                             {
-                                int panTick = spriteFrameIdx * PanSubTicks + sub;
-                                var scrollRegion = GetScrollFrame(panTick);
-                                if (scrollRegion != null)
+                                // Null-delta stale-offset: keep the sprite
+                                // scene-aligned while the panorama pans between
+                                // LPF keyframes. Resets on each LPF keyframe;
+                                // increments on each null-delta frame. Offset
+                                // direction is opposite the scroll delta so the
+                                // sprite slides in the same direction the scene
+                                // is moving.
+                                int offX = 0, offY = 0;
+                                if (vpSpriteLoader != null
+                                    && vpSpriteLoader.IsKeyFrame != null
+                                    && vpSpriteFrame < vpSpriteLoader.IsKeyFrame.Length)
                                 {
-                                    // Sprite is logically painted into the panorama
-                                    // buffer at fixed buffer position (vpStartX for
-                                    // horizontal, initialY for vertical). As viewport
-                                    // pans, sprite slides with scene — handled by
-                                    // drawing at offset = bufferPos - currentScrollPos.
-                                    // N03's LPF has delta-encoded frames where cart-pose
-                                    // only updates every ~5 sprite frames; without this
-                                    // offset the sprite image would stay at fixed screen
-                                    // position for 4 frames while scene drifts under it.
-                                    // Sprite-stale offset: if the current LPF frame's
-                                    // write mask is all zeros (no RLE writes = LPF
-                                    // delta is a no-op), the sprite image is
-                                    // unchanged from the prior frame. Increment
-                                    // a stale-offset to keep the sprite scene-aligned
-                                    // while the panorama pans 1px underneath. On a
-                                    // frame with actual writes, reset to 0 — the
-                                    // new sprite image's internal cart position is
-                                    // authored to align at offX=0.
-                                    int offX = 0, offY = 0;
-                                    if (vpSpriteLoader != null
-                                        && vpSpriteLoader.IsKeyFrame != null
-                                        && vpSpriteFrame < vpSpriteLoader.IsKeyFrame.Length)
-                                    {
-                                        if (vpSpriteLoader.IsKeyFrame[vpSpriteFrame])
-                                            vpSpriteStaleOffset = 0;
-                                        else
-                                            vpSpriteStaleOffset++;
-                                        if (vpIsHorizontal)
-                                            offX = -vpSpriteStaleOffset * vpScrollDX;
-                                        else
-                                            offY = vpSpriteStaleOffset * vpScrollDY;
-                                    }
-                                    bool advanceSprite = (sub == PanSubTicks - 1);
-                                    ApplySpriteOverlay(scrollRegion, offX, offY, advanceSprite);
-                                    uimanager.DisplayScrollFrame(scrollRegion, cutscontrol);
-                                    DumpFrame(scrollRegion, CutsceneNo, currentFileExt, panTick);
+                                    if (vpSpriteLoader.IsKeyFrame[vpSpriteFrame])
+                                        vpSpriteStaleOffset = 0;
+                                    else
+                                        vpSpriteStaleOffset++;
+                                    if (vpIsHorizontal)
+                                        offX = -vpSpriteStaleOffset * vpScrollDX;
+                                    else
+                                        offY = vpSpriteStaleOffset * vpScrollDY;
                                 }
-                                yield return new WaitForSeconds(subFrameTime);
+                                ApplySpriteOverlay(scrollRegion, offX, offY, advance: true);
+                                uimanager.DisplayScrollFrame(scrollRegion, cutscontrol);
+                                DumpFrame(scrollRegion, CutsceneNo, currentFileExt, totalFrame);
                             }
                             FrameNo++; // advance LPF frame for delta chaining
-                            continue; // sub-ticks handled timing; skip outer yield
                         }
                         else if (cuts != null)
                         {
