@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Runtime.InteropServices;
 using Godot;
 using Munt.NET;
 
@@ -125,6 +127,7 @@ public partial class MusicStreamPlayer : Node
             {
                 case "cm32l":
                 case "mt32":
+                    SetupMuntDllLoader();
                     return new Mt32EmuEngine(path, SampleRate);
                 case "opl":
                     return new AdlMidiEngine(SampleRate);
@@ -142,6 +145,46 @@ public partial class MusicStreamPlayer : Node
                 GD.Print($"OPL fallback also failed: {ex2.Message}. Music disabled.");
                 return null;
             }
+        }
+    }
+
+    private static bool _muntDllLoaderSetUp;
+    private static readonly object _muntDllLoaderLock = new();
+
+    /// <summary>
+    /// One-time DllImportResolver setup for libmt32emu. Munt.NET targets
+    /// netstandard2.0 so it can't register the resolver itself — we do it here.
+    /// </summary>
+    private static void SetupMuntDllLoader()
+    {
+        lock (_muntDllLoaderLock)
+        {
+            if (_muntDllLoaderSetUp) return;
+            _muntDllLoaderSetUp = true;
+
+            NativeLibrary.SetDllImportResolver(
+                typeof(Mt32EmuSynth).Assembly,
+                (name, assembly, path) =>
+                {
+                    var root = AppContext.BaseDirectory;
+                    string runtime = RuntimeInformation.RuntimeIdentifier;
+
+                    string filename;
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                        filename = Path.GetExtension(name).Equals(".dll", StringComparison.OrdinalIgnoreCase)
+                            ? name : name + ".dll";
+                    else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                        filename = Path.GetExtension(name).Equals(".dylib", StringComparison.OrdinalIgnoreCase)
+                            ? name : name + ".dylib";
+                    else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                        filename = Path.GetExtension(name).Equals(".so", StringComparison.OrdinalIgnoreCase)
+                            ? name : name + ".so";
+                    else
+                        throw new PlatformNotSupportedException();
+
+                    var fullPath = Path.Combine(root, "runtimes", runtime, "native", filename);
+                    return File.Exists(fullPath) ? NativeLibrary.Load(fullPath) : IntPtr.Zero;
+                });
         }
     }
 }
