@@ -12,7 +12,7 @@ synth engines are supported, selected by the `synth` setting in `uwsettings.json
 |---------|--------|-------|
 | `cm32l` | [mt32emu](https://github.com/munt/munt) via [Munt.NET](https://github.com/abedegno/Munt.NET) | Circuit-level Roland CM-32L emulation. Requires ROM files. Authentic Ultima Underworld sound. |
 | `mt32`  | mt32emu via Munt.NET | Same engine, MT-32 ROMs instead of CM-32L. |
-| `soundfont` (default) | [MeltySynth](https://github.com/sinshu/meltysynth) | Pure C# SoundFont synth. Bundled GeneralUser GS works out of the box. |
+| `soundfont` (default) | [MeltySynth](https://github.com/sinshu/meltysynth) | Pure C# SoundFont synth. Bundled Phoenix MT-32 soundfont works out of the box. |
 | `opl`   | [AdlMidi.NET](https://github.com/csinkers/AdlMidi.NET) | OPL3 FM synthesis. AdLib/SoundBlaster-era sound. |
 
 ## Data flow
@@ -77,7 +77,7 @@ Godot-specific audio plumbing:
 - **`src/loaders/xmimusic.cs`** — static `XMIMusic` class, now a thin facade:
   resolves theme numbers to XMI filenames (octal-encoded per original engine)
   and delegates playback to `MusicStreamPlayer.Instance.PlayXmi`.
-- **`soundfonts/default.sf2`** — bundled GeneralUser GS soundfont (MIT license),
+- **`soundfonts/default.sf2`** — bundled Phoenix MT-32 soundfont (CC BY 3.0),
   used by MeltySynthEngine when no override is given.
 
 ## Why a dedicated producer thread
@@ -196,8 +196,8 @@ before constructing `Mt32EmuEngine`.
 | `src/audio/MeltySynthEngine.cs` | SoundFont backend |
 | `src/audio/AdlMidiEngine.cs` | OPL/AdLib backend (includes OPL→WOPL bank conversion) |
 | `src/loaders/xmimusic.cs` | Theme-number facade (thin) |
-| `soundfonts/default.sf2` | Bundled GeneralUser GS soundfont |
-| `soundfonts/LICENSE.txt` | GeneralUser GS license |
+| `soundfonts/default.sf2` | Bundled Phoenix MT-32 soundfont (CC BY 3.0) |
+| `soundfonts/LICENSE.txt` | Phoenix MT-32 attribution and license |
 
 External dependencies:
 

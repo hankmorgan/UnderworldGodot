@@ -188,7 +188,7 @@ Tilde (~) Give all runestones, 30 mana and maximise mage skills.
 Music is rendered in real time via one of four synth engines, selected by the `synth` setting in `uwsettings.json`:
 
 * `cm32l` or `mt32` — authentic Roland CM-32L/MT-32 emulation via [Munt.NET](https://github.com/abedegno/Munt.NET), requires user-supplied ROM files
-* `soundfont` (default) — [MeltySynth](https://github.com/sinshu/meltysynth) with a bundled GeneralUser GS SoundFont, works out of the box
+* `soundfont` (default) — [MeltySynth](https://github.com/sinshu/meltysynth) with a bundled [Phoenix MT-32 SoundFont](https://musical-artifacts.com/artifacts/1481) (6 MB, CC BY 3.0). Works out of the box, approximates MT-32 character. For best quality, point `synthpath` at a larger MT-32 soundfont (e.g. Hedsound) or use the `cm32l`/`mt32` engines with actual ROMs.
 * `opl` — AdLib/OPL FM synthesis via [AdlMidi.NET](https://github.com/csinkers/AdlMidi.NET)
 
 Themes are played via the `XMIMusic.ChangeTheme` function, which delegates to the `MusicStreamPlayer` node. No pre-rendering or WAV caching — audio is synthesised on demand.
