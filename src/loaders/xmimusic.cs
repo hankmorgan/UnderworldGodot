@@ -9,7 +9,6 @@ namespace Underworld
     public class XMIMusic : UWClass
     {
         public static byte CurrentThemeNo;
-        public static bool LoopTheme = false;
         static readonly byte[] UW2WorldThemes = [0xA, 0xC, 0xE, 0x9, 0xA, 0xF, 0xB, 0xD, 0xA, 0xC, 0xD, 0x9, 0x8, 0xB, 0xE, 0xD, 0x8, 0xF, 0xE, 0x9, 0x8, 0xF, 0xB, 0xA, 0x8, 0xC, 0x9];
         static int CurrentWorldTheme;
 
@@ -44,7 +43,6 @@ namespace Underworld
             }
 
             MusicStreamPlayer.Instance.PlayXmi(xmiPath, Loop);
-            LoopTheme = Loop;
         }
 
         public static byte PickLevelThemeMusic(int arg0 = -1)
