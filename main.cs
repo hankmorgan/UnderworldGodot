@@ -110,16 +110,6 @@ public partial class main : Node3D
 				Debug.Print("UIManager is still null!!");
 			}
 		}
-		//Init Music
-		try
-		{
-			XMIMusic.ConvertXMIMusic();
-		}
-		catch (System.PlatformNotSupportedException)
-		{
-			Debug.Print("XMI music not available on this platform (AdlMidi native library missing)");
-		}
-
 		gamecam.Fov = Math.Max(50, uwsettings.instance.FOV);
 		uimanager.EnableDisable(instance.lblPositionDebug, EnablePositionDebug);
 		ObjectCreator.grObjects = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
