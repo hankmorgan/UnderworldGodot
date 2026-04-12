@@ -20,10 +20,14 @@ namespace Underworld
 
         public static void ChangeTheme(byte themeNo, bool Loop = false)
         {
+            // Theme numbers are octal-encoded: upper 5 bits = first digit, lower 3 bits = second digit.
+            // Matches original engine behaviour (see commit 9beb7e6 upstream).
+            var digit1 = (char)(0x30 + (themeNo >> 3));
+            var digit2 = (char)(0x30 + (themeNo & 0x7));
             CurrentThemeNo = themeNo;
             string filename = _RES == GAME_UW2
-                ? $"UWA{themeNo:D2}.XMI"
-                : $"UW{themeNo:D2}.XMI";
+                ? $"UWA{digit1}{digit2}.XMI"
+                : $"UW{digit1}{digit2}.XMI";
             ChangeTheme(filename, Loop);
         }
 
