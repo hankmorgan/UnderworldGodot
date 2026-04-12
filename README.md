@@ -207,7 +207,7 @@ If you use `cm32l` or `mt32`, set `synthpath` to a directory containing the ROM 
 
 If the selected engine fails to initialise (missing ROMs, bad soundfont, etc.) the system silently falls back to OPL. Changing the `synth` setting requires a game restart.
 
-### Conceptual inspiration
+### Design inspiration
 
 The real-time synthesis approach was inspired by [Kweepa](https://github.com/Kweepa)'s Unity-based Ultima Underworld port, which demonstrated that playing XMI music through a MIDI sequencer in real time (rather than pre-rendering to WAV) gives gapless looping and avoids startup conversion delay.
 
