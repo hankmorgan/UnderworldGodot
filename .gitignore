@@ -422,3 +422,7 @@ export.cfg
 data_*/
 mono_crash.*.json
 tmp/
+
+# Only the bundled default.sf2 is committed; other soundfonts are user-supplied
+soundfonts/*.sf2
+!soundfonts/default.sf2

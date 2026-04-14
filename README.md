@@ -88,7 +88,7 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * NPC Combat Actions
 * Player movement and collision (with a lot of jank attached incl framerate/speed issues)
 * Speech from VOC files
-* Music conversion from XMI to WAV for runtime loading of music. (partial implementation currently of just the main intro themes)
+* Real-time music synthesis from XMI via four selectable synth engines (CM-32L/MT-32 via mt32emu, SoundFont via MeltySynth, or AdLib/OPL via AdlMidi).
 
 ## Whats missing
 
@@ -185,23 +185,33 @@ F12 Debug process SCD.ARK events
 Tilde (~) Give all runestones, 30 mana and maximise mage skills.
 
 ## Music
-Music themes can now be loaded. This relies on the Ùnderworld project referencing libADLMIDI via the AdlMidi wrapper project at https://github.com/csinkers/AdlMidi.NET for Opl/Adlib style or MUNT.NET https://github.com/abedegno/Munt.NET for MT-32
-Themes are converted at runtime into .wav files which can them be loaded via the XMIMusic class ``ChangeTheme`` function.
+Music is rendered in real time via one of four synth engines, selected by the `synth` setting in `uwsettings.json`:
 
-To use OPL set the synth setting in settings.json to ``opl``
-To use MT-32 set the synth setting in settings.json to ``cm32l``
+* `cm32l` or `mt32` — authentic Roland CM-32L/MT-32 emulation via [Munt.NET](https://github.com/abedegno/Munt.NET), requires user-supplied ROM files
+* `soundfont` (default) — [MeltySynth](https://github.com/sinshu/meltysynth) with a bundled [Phoenix MT-32 SoundFont](https://musical-artifacts.com/artifacts/1481) (6 MB, CC BY 3.0). Works out of the box, approximates MT-32 character. For best quality, point `synthpath` at a larger MT-32 soundfont (e.g. Hedsound) or use the `cm32l`/`mt32` engines with actual ROMs.
+* `opl` — AdLib/OPL FM synthesis via [AdlMidi.NET](https://github.com/csinkers/AdlMidi.NET)
 
-To use MT-32 you will need to have a suitable MT-32 Rom files (see list below) stored in either the ``%appdata%\Roaming\Godot\app_userdata\Underworld`` folder or the underworld ``SOUND`` folder
+Themes are played via the `XMIMusic.ChangeTheme` function, which delegates to the `MusicStreamPlayer` node. No pre-rendering or WAV caching — audio is synthesised on demand.
+
+### ROM files (cm32l / mt32 only)
+
+If you use `cm32l` or `mt32`, set `synthpath` to a directory containing the ROM files. Standard and MAME-style filenames are both recognised:
 
 ```
-    "CM32L_CONTROL.ROM", "CM32L_PCM.ROM",
-    "cm32l_ctrl_1_02.rom", "cm32l_pcm.rom"
-    "cm32l_ctrl_1_00.rom", "cm32l_pcm.rom"
+    CM32L_CONTROL.ROM   / CM32L_PCM.ROM
+    cm32l_ctrl_1_02.rom / cm32l_pcm.rom
+    cm32l_ctrl_1_00.rom / cm32l_pcm.rom
+    MT32_CONTROL.ROM    / MT32_PCM.ROM
+    mt32_ctrl_1_07.rom  / mt32_pcm.rom  (and 1.04/1.05/1.06)
 ```
 
-The .wav files are generated at game start up. The first time they are created game start-up will be slower. 
+If the selected engine fails to initialise (missing ROMs, bad soundfont, etc.) the system silently falls back to OPL. Changing the `synth` setting requires a game restart.
 
-In order to switch between ``opl`` and ``cm32l`` settings the files will need to be deleted/removed from the ``%appdata%\Roaming\Godot\app_userdata\Underworld\SOUND\{1 or 2}`` folder
+See [docs/audio-architecture.md](docs/audio-architecture.md) for a detailed walkthrough of the audio system (data flow, components, threading model, design rationale).
+
+### Design inspiration
+
+The real-time synthesis approach was inspired by [Kweepa](https://github.com/Kweepa)'s Unity-based Ultima Underworld port, which demonstrated that playing XMI music through a MIDI sequencer in real time (rather than pre-rendering to WAV) gives gapless looping and avoids startup conversion delay.
 
 
 ## Code Contributions

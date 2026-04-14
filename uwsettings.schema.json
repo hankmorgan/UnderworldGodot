@@ -71,14 +71,20 @@
         },
 
         "synth": {
-            "description": "Music synthesizer to use. 'opl' for AdLib/OPL emulation, 'cm32l' for Roland CM-32L/MT-32 emulation (requires ROM files).",
+            "description": "Music synthesizer engine. 'cm32l' and 'mt32' use mt32emu (require ROM files). 'soundfont' uses a SoundFont (SF2) file. 'opl' uses AdLib/OPL FM synthesis.",
             "type": "string",
-            "enum": ["opl", "cm32l"],
-            "default": "opl"
+            "enum": ["cm32l", "mt32", "soundfont", "opl"],
+            "default": "soundfont"
+        },
+
+        "synthpath": {
+            "description": "Path to ROM directory (for cm32l/mt32) or .sf2 file (for soundfont). Empty = use defaults.",
+            "type": "string",
+            "default": ""
         },
 
         "rompath": {
-            "description": "Optional path to directory containing CM-32L ROM files (CM32L_CONTROL.ROM and CM32L_PCM.ROM). If empty, searches game SOUND folder and user://roms/.",
+            "description": "DEPRECATED: use 'synthpath'. Legacy path to ROM directory — still read if synthpath is empty.",
             "type": "string",
             "default": ""
         }

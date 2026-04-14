@@ -43,7 +43,6 @@ public partial class main : Node3D
 	[Export] public Camera3D cam;
 	public static Camera3D gamecam; //static ref to the above camera
 	[Export] public AudioStreamPlayer DigitalAudioPlayer;
-	[Export] public AudioStreamPlayer MusicPlayer;
 	[Export] public RichTextLabel lblPositionDebug;
 	//[Export] public uimanager uwUI;
 
@@ -110,16 +109,6 @@ public partial class main : Node3D
 				Debug.Print("UIManager is still null!!");
 			}
 		}
-		//Init Music
-		try
-		{
-			XMIMusic.ConvertXMIMusic();
-		}
-		catch (System.PlatformNotSupportedException)
-		{
-			Debug.Print("XMI music not available on this platform (AdlMidi native library missing)");
-		}
-
 		gamecam.Fov = Math.Max(50, uwsettings.instance.FOV);
 		uimanager.EnableDisable(instance.lblPositionDebug, EnablePositionDebug);
 		ObjectCreator.grObjects = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
@@ -1172,25 +1161,5 @@ public partial class main : Node3D
 	}
 
 
-	public static void _on_music_player_finished()
-	{
-		Debug.Print("Music finished, picking next theme");
-		
-		if (XMIMusic.LoopTheme)
-		{
-			main.instance.MusicPlayer.Play();//restart the playing theme, used mainly for the armed theme
-		}
-		else
-		{
-			if (!uimanager.InGame)
-			{
-				main.instance.MusicPlayer.Play();//restart the playing theme, if we are not in game and it is not possible to pick a different level theme.
-			}
-			else
-			{
-				XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic());
-			}			
-		}
-	}
 
 }//end class

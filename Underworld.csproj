@@ -2,12 +2,11 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AdlMidi.NET\src\ADLMidi.NET\ADLMidi.NET.csproj" />
+    <ProjectReference Include="..\..\AdlMidi.NET\src\ADLMidi.NET\ADLMidi.NET.csproj" />
     <ProjectReference Include="..\Mt32Emu.NET\src\Munt.NET\Munt.NET.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Munt.NET" Version="0.1.0" />
+    <PackageReference Include="MeltySynth" Version="2.4.1" />
   </ItemGroup>
 </Project>

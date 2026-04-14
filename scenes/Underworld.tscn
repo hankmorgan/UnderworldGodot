@@ -20,6 +20,7 @@
 [ext_resource type="Texture2D" uid="uid://51go53yqj8oq" path="res://resources/placeholder_art/panels/panelsstats.png" id="24_filpa"]
 [ext_resource type="Texture2D" uid="uid://1ecbe7htlqun" path="res://resources/placeholder_art/spellicon.png" id="28_uj0ag"]
 [ext_resource type="Texture2D" uid="uid://dlhf0nj7vj1o2" path="res://resources/placeholder_art/PanelBlack.jpg" id="29_aiei8"]
+[ext_resource type="Script" path="res://src/audio/MusicStreamPlayer.cs" id="N_music_stream"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1c8r5"]
 
@@ -33,11 +34,13 @@ shader = ExtResource("6_x6exc")
 
 [node name="Underworld" type="Node3D"]
 
-[node name="main" type="Node3D" parent="." node_paths=PackedStringArray("cam", "DigitalAudioPlayer", "MusicPlayer", "lblPositionDebug", "secondarycameras")]
+[node name="MusicStreamPlayer" type="Node" parent="."]
+script = ExtResource("N_music_stream")
+
+[node name="main" type="Node3D" parent="." node_paths=PackedStringArray("cam", "DigitalAudioPlayer", "lblPositionDebug", "secondarycameras")]
 script = ExtResource("6_3y8oy")
 cam = NodePath("../WorldViewContainer/SubViewport/Camera3D")
 DigitalAudioPlayer = NodePath("../UI/DigitalAudioPlayer")
-MusicPlayer = NodePath("../UI/MusicPlayer")
 lblPositionDebug = NodePath("../UI/Common/PositionLabel")
 secondarycameras = NodePath("../WorldViewContainer/SubViewport")
 
@@ -66,10 +69,6 @@ follow_viewport_enabled = true
 
 [node name="DigitalAudioPlayer" type="AudioStreamPlayer" parent="UI"]
 stream = SubResource("AudioStreamWAV_tkk82")
-
-[node name="MusicPlayer" type="AudioStreamPlayer" parent="UI"]
-stream = SubResource("AudioStreamWAV_tkk82")
-playback_type = 1
 
 [node name="UW1" type="CanvasLayer" parent="UI"]
 visible = false
@@ -2882,7 +2881,6 @@ PowerGemUW2 = NodePath("../UW2/PowerGemUW2")
 
 [node name="tilemap" type="Node3D" parent="."]
 
-[connection signal="finished" from="UI/MusicPlayer" to="main" method="_on_music_player_finished"]
 [connection signal="mouse_entered" from="UI/UW1/MessageScrollPanelUW1" to="UI/uiManager" method="_on_message_scroll_mouse_entered"]
 [connection signal="mouse_exited" from="UI/UW1/MessageScrollPanelUW1" to="UI/uiManager" method="_on_message_scroll_mouse_exit"]
 [connection signal="gui_input" from="UI/UW1/CompassUW1/CompassClickArea" to="UI/uiManager" method="_on_compass_click"]

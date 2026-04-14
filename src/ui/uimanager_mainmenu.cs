@@ -449,7 +449,7 @@ namespace Underworld
         {
             Debug.Print("Return to main menu");
             //Still some weirdness with enabling the main menu again. eg palette switch in UW1
-            if (XMIMusic.CurrentThemeNo != 1)
+            if (MusicStreamPlayer.Instance?.IsPlaying != true || XMIMusic.CurrentThemeNo != 1)
             {
                 XMIMusic.ChangeTheme(1);
             }
