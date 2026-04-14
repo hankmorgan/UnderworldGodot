@@ -417,6 +417,10 @@ namespace Underworld
         /// </summary>
         static void ExecuteCommand(CutSceneCommand cmd, TextureRect cutscontrol, int CutsceneNo)
         {
+            if (cancelRequested)
+            {
+                return;
+            }
             string paramlist = "";
             for (int p = 0; p < cmd.NoOfParams; p++)
             {
