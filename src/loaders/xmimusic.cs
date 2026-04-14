@@ -13,9 +13,9 @@ namespace Underworld
         static int CurrentWorldTheme;
 
         public const byte IntroTheme = 1;
-        public const byte MapsAndLegends = 15;
+        public const byte MapsAndLegends = 0xD;
 
-        public static byte Armed => _RES == GAME_UW2 ? (byte)5 : (byte)10;
+        public static byte Armed => _RES == GAME_UW2 ? (byte)5 : (byte)8;
 
         public static void ChangeTheme(byte themeNo, bool Loop = true)
         {

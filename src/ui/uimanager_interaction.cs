@@ -222,8 +222,25 @@ namespace Underworld
                 case InteractionModes.ModeAttack:
                     {
                         PreviousWeaponAnimation = -1; //force redraw.
-                        playerdat.play_drawn = 1;//draw the weapon
-                        XMIMusic.ChangeTheme(themeNo: XMIMusic.Armed, Loop: true);
+                        if (playerdat.play_drawn !=1)
+                        {
+                            playerdat.play_drawn = 1;//draw the weapon
+                            XMIMusic.ChangeTheme(themeNo: XMIMusic.Armed, Loop: true);
+                        }
+                        else
+                        {
+                            playerdat.play_drawn = 0; //ensure weapon is not drawn.
+                            XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic()); //in future this needs to take into account combat state.
+                            if (UWClass._RES == UWClass.GAME_UW2)
+                            {
+                                instance.InteractionButtonsUW2[(int)(InteractionModes.ModeAttack)].Texture = instance.UW2InteractionBtnsOff[(int)(InteractionModes.ModeAttack)];
+                            }
+                            else
+                            {
+                                instance.InteractionButtonsUW1[(int)(InteractionModes.ModeAttack)].Texture = grLfti.LoadImageAt((int)(InteractionModes.ModeAttack)*2, false);
+                            }  
+                        }
+
                         var obj = playerdat.PrimaryHandObject;
                         switch (combat.isWeapon(obj))
                         {

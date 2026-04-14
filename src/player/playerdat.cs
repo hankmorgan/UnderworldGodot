@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 
 namespace Underworld
 {
@@ -526,6 +527,10 @@ namespace Underworld
                 {
                     return (GetAt(0xB6) & 0x1) == 1;
                 }
+            }
+            set
+            {
+                Debug.Print ("TODO Implement enable sound effects");
             }
         }
 

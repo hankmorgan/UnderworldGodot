@@ -217,6 +217,9 @@ namespace Underworld
             //UNK 0xB6 in UW1
             //Weight Carried?
 
+            //default game options
+            MusicEnabled = true;
+            SoundEffectsEnabled = true;
 
             //Game specific
             if (_RES == GAME_UW2)
