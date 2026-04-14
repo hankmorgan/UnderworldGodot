@@ -754,6 +754,22 @@ namespace Underworld
                 yield return new WaitForSeconds(0.5f);
                 if (cancelRequested) goto cleanup;
             }
+            else if (CutsceneNo == 9 && _RES != GAME_UW2 && !cancelRequested)
+            {
+                cutscontrol.Modulate = new Color(1f, 1f, 1f, 1f);
+                cutscontrol.Texture = uimanager.bitmaps.LoadImageAt(5); // Origin logo
+                yield return new WaitForSeconds(2.0f);
+                if (cancelRequested) goto cleanup;
+                cutscontrol.Texture = null;
+                yield return new WaitForSeconds(0.5f);
+                if (cancelRequested) goto cleanup;
+                cutscontrol.Texture = uimanager.bitmaps.LoadImageAt(6); // Blue sky logo
+                yield return new WaitForSeconds(2.0f);
+                if (cancelRequested) goto cleanup;
+                cutscontrol.Texture = null;
+                yield return new WaitForSeconds(0.5f);
+                if (cancelRequested) goto cleanup;
+            }
             palInterpActive = false;
 
             // Load the first animation file (.N01)
