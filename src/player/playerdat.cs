@@ -530,7 +530,24 @@ namespace Underworld
             }
             set
             {
-                Debug.Print ("TODO Implement enable sound effects");
+                if(_RES == GAME_UW2)
+                {
+                    var tmp = GetAt(0x303) & 0xFE;
+                    if (value)
+                    {
+                        tmp = tmp | 1;
+                    }
+                    SetAt(0x303, (byte)tmp);
+                }
+                else
+                {
+                    var tmp = GetAt(0xB6) & 0xFE;
+                    if (value)
+                    {
+                        tmp = tmp | 1;
+                    }
+                    SetAt(0xB6, (byte)tmp);
+                }
             }
         }
 

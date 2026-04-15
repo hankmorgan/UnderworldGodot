@@ -311,7 +311,10 @@ namespace Underworld
             uimanager.EnableDisable(uimanager.instance.PanelInventory,true);
             uimanager.EnableDisable(uimanager.instance.ManaFlaskPanel,true);
             uimanager.EnableDisable(uimanager.instance.HealthFlaskPanel,true);
-
+            if (!playerdat.MusicEnabled)
+            {
+                MusicStreamPlayer.Instance.Stop(); 
+            }
             instance.InitViews();
             SetPanelMode(0);
         }
