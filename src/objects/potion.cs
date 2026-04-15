@@ -16,7 +16,8 @@ namespace Underworld
         public static void QuaffPotion(uwObject potion, bool UsedFromInventory)
         {
             uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_quaff_the_potion_in_one_gulp_));
-
+            //play drinking sound.
+            soundeffects.PlaySoundEffect(0x1E, 0x40, 0);
             uwObject[] objList;
 
             MagicEnchantment spell;

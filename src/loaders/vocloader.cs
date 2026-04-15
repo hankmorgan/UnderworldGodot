@@ -123,8 +123,69 @@ namespace Underworld
                     }
                 }
             }
+            else
+            {
+                Debug.Print ($"unable to find sfx {vocfile}");
+            }
             return Result;
         }
     }//end class
+
+    /// <summary>
+    /// Placeholder to start including sfx calls in code
+    /// </summary>
+    public class soundeffects : UWClass
+    {
+        public static void PlaySoundEffect(byte effectno, int arg2, int arg4)
+        {
+            if (playerdat.SoundEffectsEnabled)
+            {
+                //Only UW2 voc support so far
+                if (_RES == GAME_UW2)
+                {
+                    if (effectno != 0xFF)
+                    {
+                        var sound = vocLoader.Load(
+                                    System.IO.Path.Combine(
+                                        BasePath, "SOUND",
+                                        $"SP{effectno:0#}.VOC"));
+
+                        if (sound.AudioBuffer != null)
+                        {
+                            //TODO: only one audio player is set up so far. Integrate with better sound output methods
+                            main.instance.DigitalAudioPlayer.Stream = sound.toWav();
+                            main.instance.DigitalAudioPlayer.Play();
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void PlaySoundEffectAtObject(byte effectNo, uwObject obj, int arg6)
+        {
+            PlaySoundEffectAtCoordinate(effectNo, obj.tileX, obj.tileY, arg6);
+        }
+
+        public static void PlaySoundEffectAtCoordinate(byte effectNo, int x, int y, int arg6)
+        {
+            var var8 = CalculateSoundFallOff(x, y, 0, 0);
+            //TODO.. all this stuff.
+            PlaySoundEffect(effectNo, 0, 0);
+        }
+
+
+        /// <summary>
+        /// Based on values in sounds.dat work out how loud the sound should be at a distance.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="SoundDatByte"></param>
+        /// <param name="arg6"></param>
+        /// <returns></returns>
+        public static int CalculateSoundFallOff(int x, int y, int SoundDatByte, int arg6)
+        {
+            return 0x7F;
+        }
+    }
 
 }//end namespace

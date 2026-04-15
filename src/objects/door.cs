@@ -196,6 +196,7 @@ namespace Underworld
                     doorInstance.doorNode.Rotate(Vector3.Up, GetRadiansForIndex(doorObj, NoOfFrames(doorObj), doorObj.doordir));
                 }
             }
+            soundeffects.PlaySoundEffectAtObject(11, doorObj, 0 );
             playerdat.UpdateAutomap();//trigger an update of visibility
             trigger.TriggerObjectLink(character: 1,
                     ObjectUsed: doorObj,
@@ -209,40 +210,41 @@ namespace Underworld
         /// <summary>
         /// Closes the door
         /// </summary>
-        /// <param name="obj"></param>
-        public static void CloseDoor(uwObject obj)
+        /// <param name="doorObj"></param>
+        public static void CloseDoor(uwObject doorObj)
         {
-            if (obj.instance == null) { return; }//no door found.
-            var doorInstance = (door)obj.instance;
-            if (!isOpen(obj)) { return; }//don't reclose a closed door
-            if (isMoving(obj)) { return; } // do not allow door changes when already moving
-            obj.zpos -= 24;
-            if (TurnIntoMovingDoor(obj))
+            if (doorObj.instance == null) { return; }//no door found.
+            var doorInstance = (door)doorObj.instance;
+            if (!isOpen(doorObj)) { return; }//don't reclose a closed door
+            if (isMoving(doorObj)) { return; } // do not allow door changes when already moving
+            doorObj.zpos -= 24;
+            if (TurnIntoMovingDoor(doorObj))
             {
                 // do something here?
             }
             else
             {
                 //set to closed state without animation
-                if (isPortcullis(obj))
+                if (isPortcullis(doorObj))
                 {
-                    doorInstance.position = new Vector3(0f, GetHeightForIndex(obj, 0), 0f);
+                    doorInstance.position = new Vector3(0f, GetHeightForIndex(doorObj, 0), 0f);
                 }
                 else
                 {
                     //set to open without animation
-                    doorInstance.doorNode.Rotate(Vector3.Up, GetRadiansForIndex(obj, 0, obj.doordir));
+                    doorInstance.doorNode.Rotate(Vector3.Up, GetRadiansForIndex(doorObj, 0, doorObj.doordir));
                 }
             }
-            if ((obj.link != 0) && (_RES == GAME_UW2))
+            soundeffects.PlaySoundEffectAtObject(11, doorObj, 0 );
+            if ((doorObj.link != 0) && (_RES == GAME_UW2))
             {
                 // trigger.CloseTrigger(obj.uwobject, obj.uwobject.link, UWTileMap.current_tilemap.LevelObjects);
                 trigger.TriggerObjectLink(
                     character: 1,
-                    ObjectUsed: obj,
+                    ObjectUsed: doorObj,
                     triggerType: (int)triggerObjectDat.triggertypes.CLOSE,
-                    triggerX: obj.tileX,
-                    triggerY: obj.tileY,
+                    triggerX: doorObj.tileX,
+                    triggerY: doorObj.tileY,
                     objList: UWTileMap.current_tilemap.LevelObjects);
             }
         }

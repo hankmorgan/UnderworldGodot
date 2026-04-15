@@ -269,6 +269,9 @@ namespace Underworld
                                 break;
                             }
                         default:
+                            
+                            soundeffects.PlaySoundEffect(effectno: GetSpellSFX(spell.SpellMajorClass, spell.SpellMinorClass), arg2: 0x40, arg4: 0);
+
                             SpellCasting.CastSpell(
                                 majorclass: spell.SpellMajorClass,
                                 minorclass: spell.SpellMinorClass,
@@ -284,6 +287,85 @@ namespace Underworld
                 uimanager.AddToMessageScroll("Not a spell.");
             }
         }
+
+
+        /// <summary>
+        /// Calcs what sound should play when this specified spell is cast by the player. Wasted my time coding this since spell sounds are midi based and I only have a .voc loader....
+        /// </summary>
+        /// <param name="majorclass"></param>
+        /// <param name="minorclass"></param>
+        /// <returns></returns>
+        static byte GetSpellSFX(int majorclass, int minorclass)
+        {
+            if (_RES == GAME_UW2)
+            {
+                switch(majorclass)
+                {
+                    case 0:
+                    case 3:
+                        return 0x2A;
+                    case 2:
+                        return 0x2C;
+                    case 5:
+                        return 0xFF;
+                    case 6:
+                        if (minorclass == 0x81)
+                        {
+                            return 0x2A;
+                        }
+                        else
+                        {
+                            return 0x2B;
+                        }
+                    case 7:
+                        {
+                            switch (minorclass)
+                            {
+                                case 0:
+                                case 2:
+                                case 6:
+                                case 8:
+                                    return 0x2B;                                
+                                default:
+                                    return 0x2A;
+                            }
+                        }
+                    case 1:
+                    case 4:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    default:
+                        {
+                            if ((majorclass == 8) && (minorclass == 5))
+                            {
+                                return 0x29;
+                            }
+                            if (minorclass == 0xC)
+                            {
+                                return 0x29;
+                            }
+                            else
+                            {
+                                if (minorclass == 9)
+                                {
+                                    return 0x28;
+                                }
+                                else
+                                {
+                                    return 0x10;
+                                }
+                            }
+                        }
+                }
+            }
+            else
+            {
+                return 0xFF;
+            }
+        }
+
 
         /// <summary>
         /// Checks Mana,level and plot requirements to cast a spell.

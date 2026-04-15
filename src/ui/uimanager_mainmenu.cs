@@ -311,6 +311,14 @@ namespace Underworld
             uimanager.EnableDisable(uimanager.instance.PanelInventory,true);
             uimanager.EnableDisable(uimanager.instance.ManaFlaskPanel,true);
             uimanager.EnableDisable(uimanager.instance.HealthFlaskPanel,true);
+            
+
+            uimanager.OpenedContainerIndex = -1;//clear slot graphics
+            uimanager.SetOpenedContainer(0, -1); 
+            uimanager.BackPackStart = 0;
+            uimanager.EnableDisable(uimanager.instance.ArrowUp, false);
+            uimanager.EnableDisable(uimanager.instance.ArrowDown, false);
+
             if (!playerdat.MusicEnabled)
             {
                 MusicStreamPlayer.Instance.Stop(); 

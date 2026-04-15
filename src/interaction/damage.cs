@@ -171,7 +171,7 @@ namespace Underworld
             {//damage to a mobile object (excl NPCS)
                 var finalquality = Math.Max(0, objToDamage.npc_hp - basedamage);
                 objToDamage.npc_hp = (byte)finalquality;
-                Debug.Print("Final hp is {objToDamage.npc_hp}");
+                Debug.Print($"Final hp is {objToDamage.npc_hp}");
                 IsBroken = (finalquality == 0);
             }
 

@@ -385,7 +385,8 @@ namespace Underworld
                     if (!((FallDamage <= 1) && ((playerMotionParams.tilestate25 & 0x10) == 0)))
                     {
                         //seg008_1B09_FBF:
-                        //TODO play landing sound effect
+                        //play landing sound effect
+                        soundeffects.PlaySoundEffect(0xF, 0x40, ((FallDamage<<2)-60));
                     }
                 }
                 //seg008_1B09_FDB:
