@@ -38,6 +38,19 @@ namespace Underworld
         /// Only populated when decoded in sprite mode (CutsLoader(file, basePixels)).
         /// </summary>
         public byte[][] WriteMasks;
+        /// <summary>
+        /// True when this frame's LPF record has actual RLE data (recordSize > 4).
+        /// False when it's a null-delta frame (recordSize ≤ 4) — the RLE decoder is
+        /// skipped and the pixel buffer is left unchanged from the prior frame, so
+        /// the displayed image is pixel-identical to the previous one.
+        ///
+        /// Used by cutsplayer's panorama-scroll path to detect "stale" sprite
+        /// frames: between LPF keyframes the sprite image doesn't change, but the
+        /// backdrop pans 1 pixel per frame, so the sprite needs a compensating
+        /// draw-offset to stay scene-aligned. See the block comment in
+        /// cutsplayer.cs (panorama horizontal-scroll fixes).
+        /// </summary>
+        public bool[] IsKeyFrame;
 
         /// <summary>
         /// IFF CRNG colour cycling range from LPF header (offset 0x80-0xFF).
@@ -249,6 +262,7 @@ namespace Underworld
             materials = new ShaderMaterial[nDisplayFrames];
             if (isSpriteMode)
                 WriteMasks = new byte[nDisplayFrames][];
+            IsKeyFrame = new bool[nDisplayFrames];
             for (int framenumber = 0; framenumber < lpH.nFrames; framenumber++)
             {
                 if ((ErrorHandling == true) && (framenumber == 10))
@@ -338,6 +352,7 @@ namespace Underworld
                 // Don't store the loop delta frame in ImageCache
                 if (framenumber < nDisplayFrames)
                 {
+                    IsKeyFrame[imagecount] = recordSize > 4;
                     if (isSpriteMode && writeMask != null)
                         WriteMasks[imagecount] = (byte[])writeMask.Clone();
 
