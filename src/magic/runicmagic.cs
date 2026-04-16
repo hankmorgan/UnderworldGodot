@@ -270,7 +270,7 @@ namespace Underworld
                             }
                         default:
                             
-                            soundeffects.PlaySoundEffect(effectno: GetSpellSFX(spell.SpellMajorClass, spell.SpellMinorClass), arg2: 0x40, arg4: 0);
+                            soundeffects.PlaySoundEffectAtAvatar(effectno: GetSpellSFX(spell.SpellMajorClass, spell.SpellMinorClass), arg2: 0x40, arg4: 0);
 
                             SpellCasting.CastSpell(
                                 majorclass: spell.SpellMajorClass,

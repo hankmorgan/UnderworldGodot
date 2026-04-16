@@ -386,7 +386,7 @@ namespace Underworld
                     {
                         //seg008_1B09_FBF:
                         //play landing sound effect
-                        soundeffects.PlaySoundEffect(0xF, 0x40, ((FallDamage<<2)-60));
+                        soundeffects.PlaySoundEffectAtAvatar(0xF, 0x40, (byte)((FallDamage<<2)-60));
                     }
                 }
                 //seg008_1B09_FDB:

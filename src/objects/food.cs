@@ -139,19 +139,19 @@ namespace Underworld
             if (playerdat.play_hunger >= 192)
             {
                 Debug.Print("Play Sound Effect 0x25 (eating)");
-                soundeffects.PlaySoundEffect(0x25,0x40,0);
+                soundeffects.PlaySoundEffectAtAvatar(0x25,0x40,0);
             }
             else
             {
                 if (playerdat.play_hunger > 90)
                 {
                     Debug.Print("Play Sound Effect 0x1F (eating)");
-                    soundeffects.PlaySoundEffect(0x1F,0x40,0);
+                    soundeffects.PlaySoundEffectAtAvatar(0x1F,0x40,0);
                 }
                 else
                 {
                     Debug.Print("Play Sound Effect 0x21h (eating)");
-                    soundeffects.PlaySoundEffect(0x21,0x40,0);
+                    soundeffects.PlaySoundEffectAtAvatar(0x21,0x40,0);
                 }
             }
         }
@@ -202,7 +202,7 @@ namespace Underworld
         {
             var nutrition = -foodObjectDat.nutrition(obj.item_id);
             //play drinking sound.
-            soundeffects.PlaySoundEffect(0x1E, 0x40, 0);
+            soundeffects.PlaySoundEffectAtAvatar(0x1E, 0x40, 0);
             //intoxication change is -nutrition
             playerdat.intoxication += (nutrition);
             //do a strength skill check against drunkeness
