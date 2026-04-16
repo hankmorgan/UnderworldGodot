@@ -1,6 +1,14 @@
 # Audio architecture
 
-How the music system works, end to end.
+How music and sound effects work, end to end. The two systems are independent
+producers that share the Godot audio bus; they do not interact.
+
+- **[Music](#music)** — XMI theme playback via one of four synth engines.
+- **[Sound effects](#sound-effects)** — UW1 TVFX state-machine rendering through a bare OPL2 chip.
+
+---
+
+# Music
 
 ## Overview
 
@@ -204,3 +212,294 @@ External dependencies:
 - `Munt.NET` (NuGet or ProjectReference) — XmiPlayer, ISynthEngine, Mt32EmuEngine, Mt32EmuSynth
 - `MeltySynth` (NuGet) — SoundFont synth engine
 - `AdlMidi.NET` (ProjectReference, abedegno fork) — OPL synth engine
+
+---
+
+# Sound effects
+
+UW1 ships SFX as a set of 24 "TVFX" (Time-Varying Effects) patches in
+`SOUND/UW.AD` — not MIDI patches, but proprietary byte-code state machines that
+animate 8 OPL2 parameters per voice at 60 Hz. Each per-game-event trigger
+kicks off one voice; up to 9 voices (one per OPL2 channel) play concurrently.
+Implementation lives in `src/audio/sfx/`.
+
+UW2's SFX use pre-recorded `.voc` files for most sounds, falling back to the
+same TVFX path when a `.voc` is absent. Only the TVFX path is implemented in
+v1; UW2's VOC + fallback wiring is deferred.
+
+## Data flow
+
+```
+ SOUNDS.DAT (24 × 5-byte records) ──┐
+                                    ├──► SoundEntry[]    [Godot main thread]
+ UW.AD (TVFX patch bank)  ──────────┤
+                                    └──► TvfxPatch[]
+                                           │
+ special_effects.SpecialEffect(2,id)       │
+            │                              │
+            ▼                              ▼
+ SoundEffects.Play(id, pan)     →  TvfxSfxBackend (lifetime conversion)
+                                        │
+                                        ▼  SfxCommand via lock-free SPSC ring
+ SfxStreamPlayer producer thread (60 Hz TVFX tick):
+   1. drain SPSC → StartKeyon on allocated voice
+   2. TvfxVoiceAllocator.ServiceAll:
+        for each non-Idle voice:
+          ServiceTick()    — advance 8-param state machine, phase check
+          EmitRegisters()  — write dirty OPL regs via IOplRegisterSink
+   3. OplChip.GenerateFrames(735)  (44100 Hz / 60 Hz = 735)
+   4. PushBuffer → AudioStreamGenerator
+                                        │
+                                        ▼
+                          Godot audio thread → Speakers / AudioBus
+```
+
+## Backend selection
+
+v1 ships the OPL/TVFX backend only. Other `synth` settings log a one-time
+warning and SFX are silent for those users (no regression — they had no SFX
+before).
+
+| `synth` | SFX backend | Status |
+|---|---|---|
+| `opl` | TVFX over bare OPL2 chip (this doc) | shipping |
+| `cm32l` / `mt32` / `soundfont` | MT-32 over the shared music `ISynthEngine` | deferred follow-up |
+
+## Components
+
+### `ADLMidi.NET` upstream addition
+
+- **`OplChip`** — bare-chip wrapper around libadlmidi's embedded nuked-opl3.
+  Exposes `Create(sampleRateHz)`, `WriteReg(addr, val)`, `GenerateFrames(buf, frames)`,
+  `Reset`, `Dispose`. No MIDI / bank / sequencer layer. Pinned via local
+  `feat/bare-opl-chip` branch until merged upstream ([PR #3](https://github.com/csinkers/AdlMidi.NET/pull/3)).
+
+### TVFX engine (`src/audio/sfx/`, Godot-independent)
+
+- **`SoundsDatLoader`** — 5-byte record parser. Returns `SoundEntry[]` (PatchNum,
+  Note, Velocity, DurationWord).
+- **`TvfxPatch`** — header parser. Fixed 54-byte header + optional 8-byte ADSR
+  block (present iff `keyon_f_offset != 0x34`). Reads 8 `(InitVal, KeyonOffset,
+  ReleaseOffset)` param triples.
+- **`TvfxPatchBank`** — UW.AD index walker. Dispatches patches by size:
+  14→OPL2 melodic (skipped), 248→MT-32 (skipped), else→TVFX.
+- **`TvfxVoice`** — the per-voice state machine. Holds 8 parameter accumulators,
+  counters, increments, stream cursors; aux OPL register bases; ADSR bytes;
+  phase (Idle/Keyon/Release) and tick counters. Methods: `StartKeyon`,
+  `ServiceTick`, `EmitRegisters(IOplRegisterSink)`, `EnterRelease` (private).
+- **`TvfxVoiceAllocator`** — 9-slot voice pool (one per OPL2 channel).
+  Allocate-first-free; returns null when saturated (drops the trigger, matching
+  authentic UW behavior rather than voice-stealing).
+- **`IOplRegisterSink`** — `WriteReg(addr, val)`. Decouples the TVFX engine
+  from the specific OPL chip so tests can substitute a capturing/counting sink.
+- **`SfxCommand`** + **`SpscQueue<T>`** — SPSC lock-free ring for crossing the
+  game-thread → audio-thread boundary on trigger.
+
+### Godot-facing layer (`src/audio/sfx/godot/`)
+
+- **`SoundEffects`** — static façade. `Initialize(synth, soundDir)` loads
+  SOUNDS.DAT once at boot; `Play(soundId, pan, velOffset)` dispatches to the
+  active backend.
+- **`TvfxSfxBackend`** — wraps `TvfxPatchBank` + `SfxStreamPlayer`. Translates
+  SOUNDS.DAT `DurationWord` into service-tick lifetime (see asm derivation
+  below). Pan is accepted but ignored — OPL2 hardware is mono.
+- **`SfxStreamPlayer`** — Godot `Node`. Owns the `OplChip` instance + voice
+  allocator + producer thread + `AudioStreamGenerator`. Mirrors
+  `MusicStreamPlayer`'s threading pattern. Also hosts the dev-menu **backtick**
+  trigger (`Shift+backtick` backward) that cycles through SOUNDS.DAT ids 0..23.
+
+## TVFX format (on disk)
+
+Every value reconciled against the original Miles driver's assembly source
+(`audio/kail/ALE.INC` in [khedoros/uw-engine](https://github.com/khedoros/uw-engine)).
+
+### SOUNDS.DAT (121 bytes)
+
+```
+offset 0   : uint8 count                         // 0x18 = 24
+offset 1   : SoundEntry[count]                   // 5 bytes each
+
+SoundEntry {
+    uint8  patchNum         // TVFX bank-1 patch number
+    uint8  note             // MIDI note — unused by TVFX
+    uint8  velocity         // base velocity 0..127
+    uint16 durationWord     // bytes 3..4 LE; lifetime encoding (see below)
+}
+```
+
+### UW.AD index
+
+Variable-length. Each entry is 6 bytes: `uint8 patch, uint8 bank, uint32 offset`.
+Terminated by `(0xFF, 0xFF)`. UW1 SFX are all `bank=1`.
+
+### TVFX patch
+
+```
+0x00 uint16  size                    // total patch bytes incl. header
+0x02 uint8   transpose
+0x03 uint8   type                    // 1=TV_INST, 2=TV_EFFECT (UW SFX are all 2)
+0x04 uint16  duration                // 60 Hz ticks before EnterRelease
+0x06 .. 0x35   8 × 6-byte param triples:
+                uint16 initVal, uint16 keyonOffset, uint16 releaseOffset
+[optional, present iff keyonOffset != 0x34:]
+0x36 uint8   keyon_sr_car            // ALE.INC field labels are backwards;
+0x37 uint8   keyon_ad_car            //   the HIGH byte of each WORD is AD,
+0x38 uint8   keyon_sr_mod            //   the LOW byte is SR
+0x39 uint8   keyon_ad_mod
+0x3A uint8   release_sr_car
+0x3B uint8   release_ad_car
+0x3C uint8   release_sr_mod
+0x3D uint8   release_ad_mod
+[stream data follows, starting at keyonOffset + 2 (the +2 skips a size-padding
+ word that ALE.INC unconditionally jumps over at init via `add ax, 2`)]
+```
+
+### Stream VM opcodes
+
+Each entry is 4 bytes = two u16 little-endian words `(w0, w1)`.
+
+| `w0` | opcode | action |
+|---|---|---|
+| `0x0000` | JUMP | `cursor += (int16)w1 / 2` words (signed — matches ALE.INC's modular `add di, dx`) |
+| `0xFFFF` | SET_VAL | `acc = w1`; continue reading |
+| `0xFFFE` | SET_BASE | update aux OPL register per param (freq→B0, level0→KSL mod, ...); continue |
+| else | STEP | `counter = w0`, `increment = (int16)w1`; **return** |
+
+## SOUNDS.DAT lifetime derivation
+
+Traced from `UW1_asm.asm`:
+
+- **Storage:** SOUNDS.DAT's byte3-4 word is signed-divided by 16
+  (`cwd; idiv bx` with `bx=0x10`) at the trigger site (`seg014_F69`,
+  `UW1_asm.asm:65827-65834`) and stashed at `dseg+0x262C` per-voice.
+- **Decrement:** `seg014_D15` runs as an **AIL PIT-timer callback at 16 Hz**
+  (derivation: `UW1_asm.asm:65608-65620` pushes `0x10` as the Hz argument to
+  `seg020_94D`; internal math `1,000,000 µs/s ÷ 16 Hz = 62,500 µs period`).
+  Each callback decrements the counter; when it hits 0, the driver emits MIDI
+  All-Notes-Off on the voice's channel.
+- **Conversion to our 60 Hz service ticks:** `service_ticks = raw × 60 / 256 =
+  raw × 15 / 64`. Applied in `TvfxSfxBackend.Play`.
+- **Infinite sentinel:** `0xFFFF` is an explicit no-expiry flag in the driver.
+  Values with bit-15 set (`0x8000`, `0x8001`, etc.) produce a large negative
+  signed quotient that takes ~66 minutes to decrement to zero — effectively
+  infinite. Both map to `-1` internally; patches with this value rely on
+  game-side logic (trap handlers etc.) to terminate voices.
+
+## Why nuked-opl3
+
+libadlmidi embeds [nuked-opl3](https://github.com/nukeykt/Nuked-OPL3), a
+bit-accurate OPL3 emulator validated against real silicon. We use it in
+OPL2-compat mode (the OPL3 "new" bit stays 0 at reset). The sister project
+[pyopl](https://pypi.org/project/pyopl/) uses DOSBox's **dbopl** — an older,
+faster, less-accurate emulator. Both implement the OPL2 register spec, but
+their internal waveform and envelope tables differ enough to produce
+audibly different harmonic content on identical register sequences. This is
+a known difference in the retro-audio community; neither is "wrong".
+
+## Reverse-engineering notes
+
+The TVFX engine went through 13 asm-verified bug fixes during development.
+Notable ones (each cites the ALE.INC line that resolved it):
+
+1. **AD/SR byte order** (ALE.INC:414-424) — struct field names like
+   `T_play_ad_1` at offset 0x36 are misleading. The asm reads a WORD into AX/DX
+   and stores DH→S_AD, DL→S_SR: HIGH byte is AD, LOW byte is SR. khedoros's
+   field names match the asm; psmitty7373's writeup swapped them.
+2. **+2 stream padding** (ALE.INC:442-485) — every keyon/release offset is
+   incremented by 2 bytes at init. psmitty's Python is explicit about it;
+   khedoros bakes the +2 into `update_data[]`'s memcpy base so it's invisible
+   in the VM code.
+3. **Voice-lifetime rate** — 16 Hz PIT callback, not 60 Hz.
+   Derivation in "SOUNDS.DAT lifetime" above.
+4. **OPL2 waveform-select enable** — `reg 0x01 = 0x20`. Without it the chip
+   forces all operators to sine regardless of the `0xE0+op` waveform register.
+5. **HasAdsrBlock sentinel** — `!= 0x34`, not `== 0x3C` (ALE.INC:410-412).
+   Same for real UW.AD patches (which only use 0x34 or 0x3C) but diverges
+   from the asm's actual test.
+6. **TV_INST freq SET_BASE mask** (ALE.INC:__TV_inst branch) — `_b0Base &= 0xE0`
+   only for `Type == TV_INST`. khedoros omits this mask.
+7. **TV_INST duration** (ALE.INC:428-434) — S_duration overrides to `0xFFFF`
+   for `TV_INST`; patches of that type are held until externally note-off'd.
+8. **Release-to-Idle unsigned compare** (ALE.INC:371-376) — `cmp ax, 400h; jnb`
+   is an unsigned-not-below branch. We were using a signed cast.
+9. **EnterRelease aux-reg reset** (ALE.INC:393-407) — `TV_phase` runs the full
+   aux-register reset (S_FBC=0, S_KSLTL_*=0, S_AVEKM_*=0x20, S_BLOCK=0x20 or
+   0x28) before **both** keyon and release branches.
+10. **Mark-dirty-always after VM** (ALE.INC:242) — `or S_update, U_FREQ`
+    **unconditionally** after `call TVFX_increment_stage`. khedoros overwrites
+    `changed` with the VM's bool return, dropping the flag when the VM ran
+    STEP-only.
+11. **Duration off-by-one** (ALE.INC:428-436, 365) — `S_duration = T_duration + 1`,
+    then `dec; jnz` fires KEYOFF on the `(T_duration + 1)`-th tick. Our
+    `>` should be `>=`.
+12. **Level clamp bidirectional** (ALE.INC:287-298) — clamp fires when the top
+    bit of the accumulator flipped AND new+increment have the same top bit.
+    Catches positive-increment-wrap-downward as well as the more common
+    negative-increment-wrap-upward. Our simplified check missed the first case.
+13. **KeyOff on voice termination** (khedoros `tvfx_note_free`, behavior implied
+    by ALE.INC's release-voice path) — clear bit 0x20 of B0 when a voice
+    transitions to Idle. Without it the OPL envelope keeps the note keyed
+    forever.
+
+The bug-finding pattern was consistent: **khedoros's C++ port often hides
+structural details inside data construction that aren't visible in the
+runtime code**. Porting from khedoros's VM was the mistake that made several
+of these bugs latent; comparing against ALE.INC's asm directly is the
+authoritative path.
+
+## Tooling
+
+Under `tools/` — not shipped to end users, but useful for verification:
+
+- **`tools/SfxWav`** — CLI that runs the full TVFX engine + `OplChip` and dumps
+  one WAV per SOUNDS.DAT entry. `--trace` also writes per-sound register-write
+  traces for diffing. `--ignore-lifetime` plays the full patch duration
+  (matches psmitty's reference render for A/B comparison).
+- **`tools/psmitty_reference`** — vendored Python TVFX renderer from
+  [hankmorgan/UnderworldGodot#28](https://github.com/hankmorgan/UnderworldGodot/issues/28)
+  (uses DOSBox's dbopl via pyopl). Authored by @psmitty7373 as an independent
+  reference oracle. README in-tree documents its known inaccuracies.
+- **`tools/sfx-compare/index.html`** — browser-based A/B page. Plays our
+  render vs psmitty's for each of the 24 sounds, with optional full-duration
+  mode and cache-busting so regenerated WAVs are always fresh.
+
+## Unit tests
+
+`tests/Underworld.Sfx.Tests/` — xUnit project targeting `net10.0`. Compiles the
+pure-logic SFX source files (everything not under `godot/`) via `<Compile Include>`
+so tests run on plain .NET without a Godot runtime. 47 tests covering:
+
+- `SoundsDatLoader` — golden UW1 fixture, field ranges, LE decode.
+- `TvfxPatchBank` / `TvfxPatch` — index parsing, opt-block sentinel, per-field
+  parsing, coverage check (all 24 SFX resolve to valid TVFX patches).
+- `TvfxVoice` — scaffold / StartKeyon init / counter priming.
+- Stream VM — each opcode (JUMP, SET_ACC, SET_BASE, STEP) + JUMP budget +
+  out-of-bounds halt.
+- Per-tick register writes — 13-write count, channel-to-operator mapping on
+  channels 0 and 5.
+- Phase transitions — Keyon→Release timing, lifetime expiry to Idle,
+  release-phase level clamp.
+- Voice allocator — 9-slot saturation, reallocation of Idle voices.
+- SPSC queue — FIFO, full-detection, concurrent-producer-consumer smoke.
+
+## File index (SFX)
+
+| File | Purpose |
+|------|---------|
+| `src/audio/sfx/SoundEntry.cs` | SOUNDS.DAT record (pure data) |
+| `src/audio/sfx/SoundsDatLoader.cs` | 5-byte record parser |
+| `src/audio/sfx/TvfxPatch.cs` | Header parser, opt-block detect |
+| `src/audio/sfx/TvfxPatchBank.cs` | UW.AD index walker + lazy patch load |
+| `src/audio/sfx/TvfxVoice.cs` | State machine, stream VM, register emitter |
+| `src/audio/sfx/TvfxVoiceAllocator.cs` | 9-voice pool |
+| `src/audio/sfx/IOplRegisterSink.cs` | OPL write abstraction |
+| `src/audio/sfx/SfxCommand.cs` | Trigger command value type |
+| `src/audio/sfx/SpscQueue.cs` | Lock-free SPSC ring |
+| `src/audio/sfx/ISfxBackend.cs` | Backend interface |
+| `src/audio/sfx/godot/SoundEffects.cs` | Static façade + backend selection |
+| `src/audio/sfx/godot/SfxStreamPlayer.cs` | Godot node, producer thread, OplChip owner, dev-menu |
+| `src/audio/sfx/godot/TvfxSfxBackend.cs` | Bank + player wiring + lifetime conversion |
+
+External additions:
+
+- `AdlMidi.NET` `feat/bare-opl-chip` — `OplChip` bare-chip wrapper (upstream PR open).
