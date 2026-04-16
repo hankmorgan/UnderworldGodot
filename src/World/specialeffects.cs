@@ -16,9 +16,29 @@ namespace Underworld
             switch (effecttype)
             {
                 case 2://sound effect
-                    Debug.Print($"Playsound effect id {0x64+effectparam}");
-                    //vocLoader.ReadStreamFile()
-                    //main.instance.audioplayer.Play()
+                    // Dispatch per UW2's PlaySoundEffect (uw2_asm.asm:77819 —
+                    // seg016_1E73 sub cmp 0x63; jbe SP-path else UW-path):
+                    //   id <= 99 → SOUND/SP{id:00}.VOC (UW2) or UW.AD-TVFX (UW1)
+                    //   id >= 100 → SOUND/UW{id-100:00}.VOC (guardian laughter
+                    //               etc.) — UW2 only; UW1 SFX is TVFX-only.
+                    Debug.Print($"Playsound effect id {effectparam}");
+                    if (_RES == GAME_UW1)
+                    {
+                        // UW1 SFX all come from UW.AD (24 entries). Anything
+                        // outside that range has no UW1 mapping.
+                        if (effectparam >= 0 && effectparam < 24)
+                            Sfx.SoundEffects.Play(effectparam);
+                        else
+                            Debug.Print($"  UW1 SFX id {effectparam} out of range (0..23)");
+                    }
+                    else
+                    {
+                        // UW2 path: delegate to the VOC soundeffects class
+                        // (src/loaders/vocloader.cs). That currently handles
+                        // SP{NN}.VOC only; UW{NN-100}.VOC for id>=100 is still
+                        // a TODO on that side.
+                        soundeffects.PlaySoundEffect((byte)effectparam, 0, 0);
+                    }
                     break;
                 case 4://screenshake
                     Debug.Print($"screenshake left/right with duration {effectparam}");

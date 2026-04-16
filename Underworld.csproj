@@ -5,6 +5,12 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="tests/**/*.cs" />
+    <None Remove="tests/**/*" />
+    <Compile Remove="tools/**/*.cs" />
+    <None Remove="tools/**/*" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Munt.NET" Version="0.2.1" />
     <ProjectReference Include="..\..\AdlMidi.NET\src\ADLMidi.NET\ADLMidi.NET.csproj" />
     <ProjectReference Include="..\Mt32Emu.NET\src\Munt.NET\Munt.NET.csproj" />

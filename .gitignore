@@ -426,3 +426,13 @@ tmp/
 # Only the bundled default.sf2 is committed; other soundfonts are user-supplied
 soundfonts/*.sf2
 !soundfonts/default.sf2
+
+# UW1 game data — copyright-protected, don't commit to the repo.
+# Local-only; test fixtures and dev tools read them from user-provided paths.
+tests/Underworld.Sfx.Tests/fixtures/uw1/*.DAT
+tests/Underworld.Sfx.Tests/fixtures/uw1/*.AD
+tests/Underworld.Sfx.Tests/fixtures/uw1/*.MT
+
+# Local development tools (SFX renderers, A/B pages, trace dumpers). Not part
+# of the shipping game; kept outside the repo to reduce PR noise.
+tools/
