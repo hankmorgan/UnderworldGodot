@@ -16,9 +16,13 @@ namespace Underworld
             switch (effecttype)
             {
                 case 2://sound effect
-                    Debug.Print($"Playsound effect id {0x64+effectparam}");
-                    //vocLoader.ReadStreamFile()
-                    //main.instance.audioplayer.Play()
+                    // Trap-script SFX ids: original code passes effectparam directly
+                    // here. The 0x64 offset that earlier debug code printed appears
+                    // to be a mis-trace — SOUNDS.DAT only has 24 entries so an
+                    // 0x64+ id would never resolve. Trigger by raw id and log if
+                    // it falls outside the SOUNDS.DAT range.
+                    Debug.Print($"Playsound effect raw id {effectparam}");
+                    Sfx.SoundEffects.Play(effectparam);
                     break;
                 case 4://screenshake
                     Debug.Print($"screenshake left/right with duration {effectparam}");
