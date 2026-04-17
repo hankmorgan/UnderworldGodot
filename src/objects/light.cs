@@ -8,7 +8,10 @@ namespace Underworld
 
             if (uimanager.CurrentSlot >= 5 && uimanager.CurrentSlot <= 8)
             {
-                ToggleLight(obj);
+                if (ToggleLight(obj))
+                {
+                    UWsoundeffects.PlaySoundEffectAtAvatar(UWsoundeffects.SoundEffectLight,0x40,0);
+                }
             }
             else
             {
@@ -42,7 +45,8 @@ namespace Underworld
                     }
                                   
                     var newObj = UWTileMap.current_tilemap.LevelObjects[playerdat.ObjectInHand];
-                    LightOn(newObj); //assuming light starts in an off state
+                    LightOn(newObj); //assuming light starts in an off state    
+                    UWsoundeffects.PlaySoundEffectAtAvatar(UWsoundeffects.SoundEffectLight,0x40,0);                
                     uimanager.CurrentSlot = freeslot;
                     uimanager.PickupToEmptySlot(playerdat.ObjectInHand);
                 }
@@ -53,16 +57,23 @@ namespace Underworld
             return true;
         }
 
-        public static void ToggleLight(uwObject obj)
+        /// <summary>
+        /// Return true if light is now on.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static bool ToggleLight(uwObject obj)
         {
             //turn light on or off.
             if (obj.classindex <= 3)
             {
-                LightOn(obj);
+                LightOn(obj); 
+                return true;               
             }
             else
             {
                 LightOff(obj);
+                return false;
             }
         }
 

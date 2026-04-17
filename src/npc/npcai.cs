@@ -493,7 +493,7 @@ namespace Underworld
             {//seg007_17A2_2886:
                 if ((critter.npc_animation == ANIMATION_WALK) && ((critter.AnimationFrame & 0x1) == 1))
                 {
-                    int soundeffect = -1;
+                    byte soundeffect = 0xFF;
                     switch (critterObjectDat.category(critter.item_id))
                     {
                         case 1://humanoids
@@ -549,9 +549,10 @@ namespace Underworld
                                 break;
                             }
                     }
-                    if (soundeffect != -1)
+                    if (soundeffect != 0xFF)
                     {
                         //play sound effect at critter x,y coordinate
+                        UWsoundeffects.PlaySoundEffectAtCoordinate(soundeffect, critter.tileX, critter.tileY,0);
                     }
                 }//end sound block
                 //seg007_17A2_29A5:  passive test?

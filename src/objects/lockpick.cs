@@ -53,7 +53,7 @@ namespace Underworld
                                 {
                                     door.ToggleDoor(targetObject);
                                 }
-                                
+                                UWsoundeffects.PlaySoundEffectAtAvatar(UWsoundeffects.SoundEffectLockPick, 0x40, 0);
                                 uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_succeed_in_picking_the_lock_));
                                 break;
                             }

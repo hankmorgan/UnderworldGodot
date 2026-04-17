@@ -270,7 +270,7 @@ namespace Underworld
                             }
                         default:
                             
-                            UWsoundeffects.PlaySoundEffectAtAvatar(effectno: GetSpellSFX(spell.SpellMajorClass, spell.SpellMinorClass), arg2: 0x40, arg4: 0);
+                            UWsoundeffects.PlaySoundEffectAtAvatar(effectno: GetSpellSFX(spell.SpellMajorClass, spell.SpellMinorClass), arg2: 0x40, arg4: 0); 
 
                             SpellCasting.CastSpell(
                                 majorclass: spell.SpellMajorClass,
@@ -354,7 +354,7 @@ namespace Underworld
                                 }
                                 else
                                 {
-                                    return 0x10;
+                                    return UWsoundeffects.SoundEffectSpell;
                                 }
                             }
                         }
@@ -362,7 +362,7 @@ namespace Underworld
             }
             else
             {
-                return 0xFF;
+                return UWsoundeffects.SoundEffectSpell; //UW1
             }
         }
 

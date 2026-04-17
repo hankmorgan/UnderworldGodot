@@ -123,7 +123,15 @@ namespace Underworld
                         uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_there_is_no_space_to_drop_that_));
                     }
                     //Play sound effect
-                    UWsoundeffects.PlaySoundEffectAtAvatar(UWsoundeffects.SoundEffectFail, 0x40, 0);
+                    if (_RES == GAME_UW2)
+                    {
+                        UWsoundeffects.PlaySoundEffectAtAvatar(UWsoundeffects.SoundEffectFail, 0x40, 0);    
+                    }
+                    else
+                    {
+                        UWsoundeffects.PlaySoundEffectAtAvatar(UWsoundeffects.SoundEffectLanding, 0x40, 0);
+                    }
+                    
                 }
             }
 

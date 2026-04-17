@@ -43,17 +43,17 @@ namespace Underworld
 
                    ObjectCreator.Consume(smallGem, true);
                     //Debug.Print("Play sound effect 0x12h");
-
+                    UWsoundeffects.PlaySoundEffectAtAvatar(0x12, 0x40,0x28);
                     quest130 = playerdat.GetQuest(130);
                     if (quest130==0xFF)
                     {
                         //all gems used
                          //Debug.Print("Play Sound Effect 0x14h at 0x40,0x2c");
-                       
+                        UWsoundeffects.PlaySoundEffectAtAvatar(UWsoundeffects.SoundEffectSpellRing2, 0x40, 0x14);                       
                     }
                     else
                     {
-                         //Debug.Print("Play Sound Effect 0x14h  at 0x40,0x2a");
+                        UWsoundeffects.PlaySoundEffectAtAvatar(UWsoundeffects.SoundEffectSpellRing1, 0x40,0x14);
                     }
                     return true;
                 }

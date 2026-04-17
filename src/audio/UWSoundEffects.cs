@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.IO;
+using System.Reflection.Metadata;
 
 namespace Underworld
 {
@@ -15,7 +16,14 @@ namespace Underworld
         public const byte SoundEffectDoor = 0xB;
         public const byte SoundEffectLanding = 0xF;
         public const byte SoundEffectSpellNotReady = 0xB;//spell timers are not yet implemented.
-        public const byte SoundEffectSpellFailure = 0x16;
+        public const byte SoundEffectSpell = 0x10;
+        public const byte SoundEffectKlang = 0x11;
+        public const byte SoundEffectRumble = 0x12;
+        public const byte SoundEffectLockPick = 0x13;
+        public const byte SoundEffectSpellFailure = 0x16;   
+        public const byte SoundEffectLight = 0x20; 
+        public const byte SoundEffectSpellRing1 = 0x2A;     
+        public const byte SoundEffectSpellRing2 = 0x2c;
         public const byte SoundEffectFail = 0x2D;
 
         /// <summary>
@@ -24,8 +32,13 @@ namespace Underworld
         /// <param name="effectno"></param>
         /// <param name="arg2"></param>
         /// <param name="arg4"></param>
-        public static void PlaySoundEffectAtAvatar(byte effectno, byte arg2, byte arg4)
+        public static void PlaySoundEffectAtAvatar(byte effectno, byte arg2, byte arg4)        
         {
+            if ((effectno == 90)|| (effectno==91))
+                    {
+                        //TODO foot step sounds from NPCS, needs special handling.
+                        return;
+                    }
             if (playerdat.SoundEffectsEnabled)
             {
                 //Only UW2 voc support so far
@@ -33,6 +46,11 @@ namespace Underworld
                 {
                     if (effectno != 0xFF)
                     {
+                        if ((effectno == 90)|| (effectno==91))
+                        {
+                            //TODO foot step sounds from NPCS, needs special handling.
+                            return;
+                        }
                         string filepath;
                         if (effectno>=100)
                         {

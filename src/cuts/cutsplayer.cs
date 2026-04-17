@@ -670,6 +670,7 @@ namespace Underworld
 
                 case 15: // klang — play klang sound (UW1 only)
                     Debug.Print("  Klang sound");
+                    UWsoundeffects.PlaySoundEffectAtAvatar(UWsoundeffects.SoundEffectKlang, 0x40,0);
                     break;
 
                 case 16: // pal-copy — palette data copy
