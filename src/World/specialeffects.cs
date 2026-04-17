@@ -37,7 +37,7 @@ namespace Underworld
                         // (src/loaders/vocloader.cs). That currently handles
                         // SP{NN}.VOC only; UW{NN-100}.VOC for id>=100 is still
                         // a TODO on that side.
-                        soundeffects.PlaySoundEffectAtAvatar((byte)effectparam, 0, 0);
+                        UWsoundeffects.PlaySoundEffectAtAvatar((byte)effectparam, 0, 0);
                     }
                     break;
                 case 4://screenshake

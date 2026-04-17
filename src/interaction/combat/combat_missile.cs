@@ -104,11 +104,13 @@ namespace Underworld
 
             if (objectHit == playerdat.playerObject)
             {
-                //todo sound effect at player position
+                //sound effect at player position
+                UWsoundeffects.PlaySoundEffectAtAvatar(UWsoundeffects.SoundEffectHit1, 0, 0);
             }
             else
             {
-                //todo sound effect at hit position.
+                //sound effect at hit position.
+                UWsoundeffects.PlaySoundEffectAtObject(UWsoundeffects.SoundEffectHit2, objectHit, 0);
             }
             AttackerAppliesFinalDamage(
                 attacker: projectileSource,

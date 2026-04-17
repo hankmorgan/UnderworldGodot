@@ -270,7 +270,7 @@ namespace Underworld
                             }
                         default:
                             
-                            soundeffects.PlaySoundEffectAtAvatar(effectno: GetSpellSFX(spell.SpellMajorClass, spell.SpellMinorClass), arg2: 0x40, arg4: 0);
+                            UWsoundeffects.PlaySoundEffectAtAvatar(effectno: GetSpellSFX(spell.SpellMajorClass, spell.SpellMinorClass), arg2: 0x40, arg4: 0);
 
                             SpellCasting.CastSpell(
                                 majorclass: spell.SpellMajorClass,
@@ -379,6 +379,7 @@ namespace Underworld
                 {//check if spell is allowed in britannia
                     if (SpellLevel >= 3)
                     {
+                        Sfx.SoundEffects.Play(UWsoundeffects.SoundEffectSpellFailure, 0x40,0);
                         uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_the_incantation_failed_));//incantation failed
                         return false;
                     }
@@ -386,6 +387,7 @@ namespace Underworld
             }
             if (((playerdat.play_level + 1) / 2) < SpellLevel)
             {
+                Sfx.SoundEffects.Play(UWsoundeffects.SoundEffectSpellFailure, 0x40,0);
                 if (_RES == GAME_UW2)
                 {
                     uimanager.AddToMessageScroll(GameStrings.GetString(1, 225)); //you are not experienced enough
@@ -400,6 +402,7 @@ namespace Underworld
             {
                 if (playerdat.play_mana < ManaCost)
                 {
+                    Sfx.SoundEffects.Play(UWsoundeffects.SoundEffectSpellFailure, 0x40,0);
                     uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_do_not_have_enough_mana_to_cast_the_spell_));
                     return false;
                 }

@@ -339,6 +339,7 @@ namespace Underworld
             else
             {
                 //play soundeffect
+                UWsoundeffects.PlaySoundEffectAtAvatar(UWsoundeffects.SoundEffectFail, 0x40, 0);
                 uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_need_more_space_to_fire_that_weapon_));
             }
 
@@ -346,7 +347,8 @@ namespace Underworld
             {
                 if (PlayerLaunched)
                 {
-                    //make a sound.
+                    //make a sound
+                    UWsoundeffects.PlaySoundEffectAtAvatar(UWsoundeffects.SoundEffectBowTwang, 0x40, 0);
                 }
             }
             motion.MissileFlagA = false;

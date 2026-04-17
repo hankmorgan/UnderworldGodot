@@ -544,14 +544,15 @@ namespace Underworld
             if (DefendingCharacter.index == 1)
             {
                 //seg024_24E9_A25:
-                //Debug.Print("playSoundEffect(3)");
+                UWsoundeffects.PlaySoundEffectAtAvatar(UWsoundeffects.SoundEffectHit1, 0x40, (byte)(AttackDamage << 2));
             }
             else
             {
                 //seg024_24E9_A33:
                 if (!MissileAttack)
                 {
-                    //Debug.print(playsoundeffectAtcombatxy);
+                    Debug.Print("TODO this sound is based on the weapon selected.");
+                    
                 }
             }
 

@@ -539,7 +539,7 @@ public partial class main : Node3D
 		}
 		//playerdat.ApplyPlayerSneakScore(EasyMove);
 
-		//Footsteps()
+		//Footsteps();
 	}
 
 	static void ProcessMotionInputs()

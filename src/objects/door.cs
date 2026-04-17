@@ -196,7 +196,7 @@ namespace Underworld
                     doorInstance.doorNode.Rotate(Vector3.Up, GetRadiansForIndex(doorObj, NoOfFrames(doorObj), doorObj.doordir));
                 }
             }
-            soundeffects.PlaySoundEffectAtObject(11, doorObj, 0 );
+            UWsoundeffects.PlaySoundEffectAtObject(11, doorObj, 0 );
             playerdat.UpdateAutomap();//trigger an update of visibility
             trigger.TriggerObjectLink(character: 1,
                     ObjectUsed: doorObj,
@@ -235,7 +235,8 @@ namespace Underworld
                     doorInstance.doorNode.Rotate(Vector3.Up, GetRadiansForIndex(doorObj, 0, doorObj.doordir));
                 }
             }
-            soundeffects.PlaySoundEffectAtObject(11, doorObj, 0 );
+            UWsoundeffects.PlaySoundEffectAtObject(UWsoundeffects.SoundEffectDoor, doorObj, 0 );
+            
             if ((doorObj.link != 0) && (_RES == GAME_UW2))
             {
                 // trigger.CloseTrigger(obj.uwobject, obj.uwobject.link, UWTileMap.current_tilemap.LevelObjects);
