@@ -91,6 +91,10 @@ namespace Underworld
                 }
                 //Debug.Print($"toggle button {obj.a_name} {obj.index}");
                 ToggleItemID(obj);
+                if (obj.invis == 0)
+                {
+                    UWsoundeffects.PlaySoundEffectAtCoordinate(UWsoundeffects.SoundEffectLockPick, 3 + obj.tileX<<3,  3 + obj.tileY<<3, 0);
+                }
                 RefreshButtonSprite(obj);
                 return true;
             }

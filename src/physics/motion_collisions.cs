@@ -17,7 +17,7 @@ namespace Underworld
         {
             UWMotionParamArray.dseg_67d6_26A4 = 0;
             var projectile = UWTileMap.current_tilemap.LevelObjects[MotionCalcArray.MotionArrayObjectIndexA_base];
-            int soundeffect;
+            byte soundeffect;
 
             var si_mass = commonObjDat.mass(projectile.item_id);
             if (UWMotionParamArray.Gravity_Related_dseg_67d6_41F <= 4)
@@ -64,15 +64,16 @@ namespace Underworld
                 }
                 else
                 {
-                    soundeffect = 0x14;
+                    soundeffect = 0x18;
                 }
                 //Debug.Print($"play sound effect {soundeffect} at {MotionParams.x_0 >> 5} {MotionParams.y_2 >> 5}");
+                UWsoundeffects.PlaySoundEffectAtCoordinate(soundeffect,MotionParams.x_0 >> 5,MotionParams.y_2 >> 5,0);
             }
             else
             {//seg031_2CFA_E28:
-                soundeffect = (Math.Abs(MotionParams.unk_a_pitch) / 0xA) + ((si_mass - 600) / 32) - 40;
+                soundeffect = (byte)((Math.Abs(MotionParams.unk_a_pitch) / 0xA) + ((si_mass - 600) / 32) - 40);//now reused as volume?/
                 //Debug.Print($"play sound effect {soundeffect} at {MotionParams.x_0 >> 5} {MotionParams.y_2 >> 5}");
-
+                UWsoundeffects.PlaySoundEffectAtCoordinate(0xF,MotionParams.x_0 >> 5,MotionParams.y_2 >> 5,soundeffect);
                 var di_collisionresult = CollideObjects_seg030_2BB7_1CE(MotionParams, UWMotionParamArray.ACollisionIndex_dseg_67d6_416, MotionCalcArray.MotionArrayObjectIndexA_base);
 
                 //resume here.
@@ -499,7 +500,7 @@ namespace Underworld
             {
                 if (MotionCalcArray.Unk14_collisoncount <= index_var1)
                 {//seg028_2941_FC0
-                    MotionCalcArray.Unk16_collisionindex = (byte)var3;
+                    MotionCalcArray.Unk16_collisionindex = (sbyte)var3;
                     MotionCalcArray.Unk15 = 0;
 
                     //seg028_2941_FD7:
@@ -1527,7 +1528,7 @@ namespace Underworld
                             else
                             {
                                 //seg030_2BB7_11ED
-                                var collision = collisionTable[MotionCalcArray.Unk16_collisionindex];
+                                var collision = collisionTable[MotionCalcArray.Unk16_collisionindex]; //TODO. this causes an outofrange exception when I throw a backpack at Bragit!
                                 if (collision.height != MotionCalcArray.z4)
                                 {
                                     break;//to 2bb7:127D

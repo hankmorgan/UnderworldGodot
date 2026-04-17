@@ -43,8 +43,8 @@ namespace Underworld
         [Export] public Godot.TextureRect[] InteractionButtonsUW1 = new Godot.TextureRect[6];
         [Export] public Godot.TextureRect[] InteractionButtonsUW2 = new Godot.TextureRect[6];
 
-        private ImageTexture[] UW2InteractionBtnsOff;
-        private ImageTexture[] UW2InteractionButtonsOn;
+        public ImageTexture[] UW2InteractionBtnsOff;
+        public ImageTexture[] UW2InteractionButtonsOn;
 
         private void InitInteraction()
         {

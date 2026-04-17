@@ -43,7 +43,10 @@ namespace Underworld
                 var mdl = (MeshInstance3D)(_button.modelNode);
                 mdl.Mesh.SurfaceSetMaterial(0,newmaterial);         
             }    
-
+            if (obj.invis == 0)
+            {
+                UWsoundeffects.PlaySoundEffectAtCoordinate(UWsoundeffects.SoundEffectLockPick, 3 + obj.tileX<<3,  3 + obj.tileY<<3, 0);
+            }
             return true;
         }
 

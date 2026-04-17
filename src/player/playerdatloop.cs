@@ -205,7 +205,7 @@ namespace Underworld
                     }
                     if (academylevel == 8)
                     {
-                        if (playerObject.tileX< 25)
+                        if (playerObject.tileX < 25)
                         {
                             return;
                         }
@@ -353,11 +353,24 @@ namespace Underworld
 
             motion.UpdateMotionStateAndSwimming(-1);
         }
-        
 
-        public static void PutWeaponAway()
+
+        public static void PutWeaponAwayWhenSwimming()
         {
-            Debug.Print("put away weapon");
+            if (playerdat.play_drawn == 1)
+            {
+                Debug.Print("put away weapon");
+                playerdat.play_drawn = 0; //ensure weapon is not drawn.
+                XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic()); //in future this needs to take into account combat state.
+                if (UWClass._RES == UWClass.GAME_UW2)
+                {
+                    uimanager.instance.InteractionButtonsUW2[(int)(uimanager.InteractionModes.ModeAttack)].Texture = uimanager.instance.UW2InteractionBtnsOff[(int)(uimanager.InteractionModes.ModeAttack)];
+                }
+                else
+                {
+                    uimanager.instance.InteractionButtonsUW1[(int)(uimanager.InteractionModes.ModeAttack)].Texture = uimanager.grLfti.LoadImageAt((int)(uimanager.InteractionModes.ModeAttack) * 2, false);
+                }
+            }
         }
 
         /// <summary>

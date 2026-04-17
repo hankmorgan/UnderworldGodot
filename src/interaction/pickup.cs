@@ -221,7 +221,7 @@ namespace Underworld
         public static bool PickUp(int index, uwObject[] objList, bool WorldObject = true)
         {
             var objPicked = objList[index];
-            var ObjectMass = container.GetTotalMass(objPicked, UWTileMap.current_tilemap.LevelObjects,false);
+            var ObjectMass = container.GetTotalMass(objectToWeight: objPicked, objList: UWTileMap.current_tilemap.LevelObjects, IgnoreNext: true);
             if (playerdat.WeightCapacity < ObjectMass)
             {
                 //Object is too heavy to pick up

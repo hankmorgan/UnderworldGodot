@@ -22,22 +22,14 @@ namespace Underworld
                     //   id >= 100 → SOUND/UW{id-100:00}.VOC (guardian laughter
                     //               etc.) — UW2 only; UW1 SFX is TVFX-only.
                     Debug.Print($"Playsound effect id {effectparam}");
-                    if (_RES == GAME_UW1)
+                    if (_RES == GAME_UW2)
                     {
-                        // UW1 SFX all come from UW.AD (24 entries). Anything
-                        // outside that range has no UW1 mapping.
-                        if (effectparam >= 0 && effectparam < 24)
-                            Sfx.SoundEffects.Play(effectparam);
-                        else
-                            Debug.Print($"  UW1 SFX id {effectparam} out of range (0..23)");
+                        //Plays a guardian laugh sound.
+                        UWsoundeffects.PlaySoundEffectAtCoordinate((byte)(effectparam + 0x64), 0 ,0, 0);// Sound number being >=100 tells the game to load uw##.voc files
                     }
                     else
                     {
-                        // UW2 path: delegate to the VOC soundeffects class
-                        // (src/loaders/vocloader.cs). That currently handles
-                        // SP{NN}.VOC only; UW{NN-100}.VOC for id>=100 is still
-                        // a TODO on that side.
-                        UWsoundeffects.PlaySoundEffectAtAvatar((byte)effectparam, 0, 0);
+                        Debug.Print("Usage of special effect in UW1. Should not occur?");
                     }
                     break;
                 case 4://screenshake

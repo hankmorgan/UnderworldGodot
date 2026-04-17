@@ -67,7 +67,7 @@ namespace Underworld
         /// <param name="damage"></param>
         /// <param name="damagetype"></param>
         static int DamageNPC(uwObject critter, int basedamage, int damagesource)
-        {
+        {            
             //basedamage = ScaleDamage(critter.item_id, ref basedamage, damagetype);
             if (basedamage !=0)
             {
@@ -99,6 +99,7 @@ namespace Underworld
             {
                 if (critter.npc_animation != npc.ANIMATION_DEATH)
                 { //if not already in the death animation
+                //TODO death has some extra behaviours that needs to be supported in a seperate Eg death rattles. Move the below into a seperate func
                     if (npc.SpecialDeathCases(critter))
                     {
                         critter.npc_animation = npc.ANIMATION_DEATH;

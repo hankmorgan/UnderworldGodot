@@ -1016,11 +1016,11 @@ namespace Underworld
             }
         }
 
-        public static byte Unk16_collisionindex
+        public static sbyte Unk16_collisionindex
         {
             get
             {
-                return (byte)DataLoader.getAt(PtrToMotionCalc, 0x16, 8);
+                return (sbyte)DataLoader.getAt(PtrToMotionCalc, 0x16, 8);
             }
             set
             {
