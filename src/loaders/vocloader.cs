@@ -125,269 +125,89 @@ namespace Underworld
             }
             else
             {
-                Debug.Print($"unable to find sfx {vocfile}");
+                Debug.Print ($"unable to find sfx {vocfile}");
             }
             return Result;
         }
     }//end class
 
-
-    public class sounddat : Loader
-    {
-        static byte[] buffer;
-        public static sounddat[] SoundData;
-        int index;
-        int blocksize
-        {
-            get
-            {
-                if (_RES == GAME_UW2)
-                {
-                    return 8;
-                }
-                else
-                {
-                    return 5;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Byte 0 in sound.dat record.
-        /// </summary>
-        public byte tvfx_num
-        {
-            get
-            {
-                return (byte)getAt(buffer, (index * blocksize) + 1 + 0, 8); //skip over first byte.               
-            }
-        }
-
-        public byte note
-        {
-            get
-            {
-                return (byte)getAt(buffer, (index * blocksize) + 1 + 2, 8); //skip over first byte.               
-            }
-        }
-
-
-        /// <summary>
-        /// Aka loudness
-        /// </summary>
-        public byte velocity
-        {
-            get
-            {
-                return (byte)getAt(buffer, (index * blocksize) + 1 + 2, 8); //skip over first byte.               
-            }
-        }
-
-        public byte pan
-        {
-            get
-            {
-                return (byte)getAt(buffer, (index * blocksize) + 1 + 3, 16);
-            }
-        }
-
-        public byte unk5
-        {
-            get
-            {
-                if (_RES == GAME_UW2)
-                {
-                    return (byte)getAt(buffer, (index * blocksize) + 1 + 5, 8);
-                }
-                else
-                {
-                    return 0;
-                }
-            }
-        }
-
-        public byte unk6
-        {
-            get
-            {
-                if (_RES == GAME_UW2)
-                {
-                    return (byte)getAt(buffer, (index * blocksize) + 1 + 6, 16);
-                }
-                else
-                {
-                    return 0;
-                }
-            }
-        }
-
-        static sounddat()
-        {
-            var path = System.IO.Path.Combine(Loader.BasePath, "SOUND", "SOUNDS.DAT");
-            if (System.IO.File.Exists(path))
-            {
-                buffer = File.ReadAllBytes(path);
-                var noOfSounds = getAt(buffer, 0, 8);
-                SoundData = new sounddat[noOfSounds];
-                for (int i = 0; i <= SoundData.GetUpperBound(0); i++)
-                {
-                    SoundData[i] = new sounddat(i);
-                }
-            }
-            else
-            {
-                Debug.Print($"File not found. {path}");
-            }
-
-        }
-
-        public sounddat(int _index)
-        {
-            index = _index;
-        }
-    }
     /// <summary>
     /// Placeholder to start including sfx calls in code
     /// </summary>
     public class soundeffects : UWClass
     {
-
-        static bool LoadAndPlayVocFile(int EffectNo, int volumerelatedarg2, int arg4)
-        {
-            if (_RES == GAME_UW2)
-            {
-                var sound = vocLoader.Load(
-                            System.IO.Path.Combine(
-                                BasePath, "SOUND",
-                                $"SP{EffectNo:0#}.VOC"));
-
-                if (sound.AudioBuffer != null)
-                {
-                    //TODO: only one audio player is set up so far. Integrate with better sound output methods
-                    main.instance.DigitalAudioPlayer.Stream = sound.toWav();
-                    main.instance.DigitalAudioPlayer.Play();
-                    return true;
-                }
-            }
-            return false;
-        }
-
-
         /// <summary>
-        /// UW2 version of load basic sound.
-        /// </summary>
-        /// <param name="EffectNo"></param>
-        /// <param name="tvfx_num_arg2"></param>
-        /// <param name="note_arg4"></param>
-        /// <param name="velocity_arg6"></param>
-        /// <param name="arg8"></param>
-        /// <param name="pan_arga"></param>
-        /// <returns></returns>
-        static bool LoadBasicSound(int EffectNo, byte tvfx_num_arg2, byte note_arg4, sbyte velocity_arg6, byte arg8, byte pan_arga)
-        {
-            return false;
-        }
-
-        /// <summary>
-        /// Plays a sound that the avatar has generated themselves. Eg eating noises.
+        /// The sound is played at the location of the avatar.
         /// </summary>
         /// <param name="effectno"></param>
         /// <param name="arg2"></param>
         /// <param name="arg4"></param>
         public static void PlaySoundEffectAtAvatar(byte effectno, byte arg2, byte arg4)
         {
-            sbyte var2_velocity;
-            if (_RES == GAME_UW2)
+            if (playerdat.SoundEffectsEnabled)
             {
-                if (playerdat.SoundEffectsEnabled)
+                //Only UW2 voc support so far
+                if (_RES == GAME_UW2)
                 {
-
-                    if (playerdat.SoundEffectsEnabled)
+                    if (effectno != 0xFF)
                     {
-                        if (effectno != 0xFF)
+                        string filepath;
+                        if (effectno>=100)
                         {
-                            if (effectno <= 0x63)
-                            {
-                                //Seg_16_1DE2
-                                //Lookup sound effect in sounds.dat
-                                var2_velocity = (sbyte)(arg4 + sounddat.SoundData[effectno].velocity);
-                                if (var2_velocity > 0x7F)
-                                {
-                                    var2_velocity = 0x7F;
-                                }
-                                else
-                                {
-                                    if (var2_velocity < 0)
-                                    {
-                                        var2_velocity = 0;
-                                    }
-                                }
-                                if (var2_velocity == 0)
-                                {
-                                    return;
-                                }
-                            }
-                            else
-                            {
-                                var2_velocity = 0x7F;
-                            }
-                            //seg16_1E2B
-                            if (LoadAndPlayVocFile(effectno, var2_velocity, arg2))
-                            {
-                                //in disassembly a global value is set to 0 here? possibly controlling if the sound is directional?
-                            }
-                            else
-                            {
-                                //fall back to basic sound
-                                if (effectno <= 0x63)
-                                {
-                                    //Load basic sound.
-                                    LoadBasicSound(
-                                        EffectNo: effectno,
-                                        tvfx_num_arg2: sounddat.SoundData[effectno].tvfx_num,
-                                        note_arg4: sounddat.SoundData[effectno].note,
-                                        velocity_arg6: var2_velocity,
-                                        arg8: arg2,
-                                        pan_arga: sounddat.SoundData[effectno].pan);
-                                }
-                            }
-
+                            //guardian laughter
+                            filepath = System.IO.Path.Combine(
+                                BasePath, "SOUND",
+                                $"UW{effectno-100:0#}.VOC");
                         }
+                        else
+                        {
+                            filepath = System.IO.Path.Combine(
+                                BasePath, "SOUND",
+                                $"SP{effectno:0#}.VOC");
+                        }
+                        
+                        if (File.Exists(filepath))
+                        {
+                            Debug.Print($"Playing sound {filepath}");
+                            var sound = vocLoader.Load(
+                                    System.IO.Path.Combine(
+                                        BasePath, "SOUND",
+                                        $"SP{effectno:0#}.VOC"));
+                            if (sound.AudioBuffer != null)
+                            {                                
+                                //TODO: only one audio player is set up so far. Integrate with better sound output methods
+                                //TODO: calculations on sound falloff need to be made.
+                                main.instance.DigitalAudioPlayer.Stream = sound.toWav();
+                                main.instance.DigitalAudioPlayer.Play();
+                            }
+                        }
+                        else
+                        {
+                            //fallback to midi sound if not .voc file.
+                            Sfx.SoundEffects.Play(effectno);
+                        }
+
                     }
                 }
-            }
-            else
-            {
-                //uw1 logic (only supports basic sounds)
+                else
+                {
+                    //UW1
+                    Sfx.SoundEffects.Play(effectno);
+                }
             }
         }
 
-        /// <summary>
-        /// Generate a sound that comes from an object. Eg a door opening/closing
-        /// </summary>
-        /// <param name="effectNo"></param>
-        /// <param name="obj"></param>
-        /// <param name="arg6"></param>
         public static void PlaySoundEffectAtObject(byte effectNo, uwObject obj, int arg6)
         {
             PlaySoundEffectAtCoordinate(effectNo, obj.tileX, obj.tileY, arg6);
         }
 
-        /// <summary>
-        /// Generate a sound that comes from a location. Eg a missile impacting on a target.
-        /// </summary>
-        /// <param name="effectNo"></param>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="arg6"></param>
         public static void PlaySoundEffectAtCoordinate(byte effectNo, int x, int y, int arg6)
         {
             var var8 = CalculateSoundFallOff(x, y, 0, 0);
             //TODO.. all this stuff.
             PlaySoundEffectAtAvatar(effectNo, 0, 0);
         }
-
-
 
 
         /// <summary>

@@ -104,11 +104,11 @@ public partial class SfxStreamPlayer : Node
         // path falls back to .voc files which we don't yet wire). Initialising
         // SoundEffects here means the singleton + scene-tree timing matches
         // MusicStreamPlayer's lifecycle.
-        if (UWClass._RES == UWClass.GAME_UW1)
-        {
+        //if (UWClass._RES == UWClass.GAME_UW1)
+       // {
             string soundDir = Path.Combine(UWClass.BasePath, "SOUND");
             SoundEffects.Initialize(uwsettings.instance.synth, soundDir);
-        }
+        //}
     }
 
     /// <summary>

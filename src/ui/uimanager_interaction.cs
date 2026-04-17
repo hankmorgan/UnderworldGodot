@@ -1,4 +1,5 @@
 using Godot;
+using Underworld.Sfx;
 
 namespace Underworld
 {
@@ -45,6 +46,8 @@ namespace Underworld
 
         private ImageTexture[] UW2InteractionBtnsOff;
         private ImageTexture[] UW2InteractionButtonsOn;
+
+        static int soundcheck = 0;
 
         private void InitInteraction()
         {
@@ -166,6 +169,7 @@ namespace Underworld
 
         public static void InteractionModeToggle(InteractionModes index)
         {
+            soundeffects.PlaySoundEffectAtAvatar((byte)soundcheck++, 0x40, 0);            
             PreviousInteractionMode = InteractionMode;
             if (UWClass._RES == UWClass.GAME_UW2)
             {
