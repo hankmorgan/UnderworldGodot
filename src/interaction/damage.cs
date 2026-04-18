@@ -129,7 +129,7 @@ namespace Underworld
                         }
                         if (DeathSound != 0xFF)
                         {
-                            UWsoundeffects.PlaySoundEffectAtCoordinate(DeathSound, critter.tileX<<3 + critter.xpos, critter.tileY<<3 + critter.ypos, 0);
+                            UWsoundeffects.PlaySoundEffectAtCoordinate(DeathSound, (critter.tileX<<3) + critter.xpos, (critter.tileY<<3) + critter.ypos, 0);
                         }     
                         return 1;
                     }

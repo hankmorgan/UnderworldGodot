@@ -50,30 +50,37 @@ namespace Underworld
             {//seg031_2CFA_DDE: 
                 ZeroiseMotionValues_seg031_2CFA_7BF(MotionParams);
                 MotionParams.tilestate25 = 2;
-
-                if (si_mass >= 0x14)
+                if (_RES == GAME_UW2)
                 {
-                    if (si_mass >= 0x64)
-                    {
-                        soundeffect = 5;
-                    }
-                    else
-                    {
-                        soundeffect = 0x19;
-                    }
+                    soundeffect = 5;
                 }
                 else
                 {
-                    soundeffect = 0x18;
+                    if (si_mass >= 0x14)
+                    {
+                        if (si_mass >= 0x64)
+                        {
+                            soundeffect = 5;
+                        }
+                        else
+                        {
+                            soundeffect = 0x19;
+                        }
+                    }
+                    else
+                    {
+                        soundeffect = 0x18;
+                    }
                 }
+
                 //Debug.Print($"play sound effect {soundeffect} at {MotionParams.x_0 >> 5} {MotionParams.y_2 >> 5}");
-                UWsoundeffects.PlaySoundEffectAtCoordinate(soundeffect,MotionParams.x_0 >> 5,MotionParams.y_2 >> 5,0);
+                UWsoundeffects.PlaySoundEffectAtCoordinate(soundeffect, MotionParams.x_0 >> 5, MotionParams.y_2 >> 5, 0);
             }
             else
             {//seg031_2CFA_E28:
                 soundeffect = (byte)((Math.Abs(MotionParams.unk_a_pitch) / 0xA) + ((si_mass - 600) / 32) - 40);//now reused as volume?/
                 //Debug.Print($"play sound effect {soundeffect} at {MotionParams.x_0 >> 5} {MotionParams.y_2 >> 5}");
-                UWsoundeffects.PlaySoundEffectAtCoordinate(0xF,MotionParams.x_0 >> 5,MotionParams.y_2 >> 5,soundeffect);
+                UWsoundeffects.PlaySoundEffectAtCoordinate(0xF, MotionParams.x_0 >> 5, MotionParams.y_2 >> 5, soundeffect);
                 var di_collisionresult = CollideObjects_seg030_2BB7_1CE(MotionParams, UWMotionParamArray.ACollisionIndex_dseg_67d6_416, MotionCalcArray.MotionArrayObjectIndexA_base);
 
                 //resume here.

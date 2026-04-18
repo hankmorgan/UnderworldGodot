@@ -1,6 +1,9 @@
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection.Metadata;
+using Godot;
+using Underworld.Sfx;
 
 namespace Underworld
 {
@@ -31,9 +34,9 @@ namespace Underworld
         /// The sound is played at the location of the avatar.
         /// </summary>
         /// <param name="effectno"></param>
-        /// <param name="arg2"></param>
-        /// <param name="arg4"></param>
-        public static void PlaySoundEffectAtAvatar(byte effectno, byte arg2, byte arg4)        
+        /// <param name="arg2_volume"></param>
+        /// <param name="arg4_panning"></param>
+        public static void PlaySoundEffectAtAvatar(byte effectno, byte arg2_volume, byte arg4_panning)        
         {
             if ((effectno == 90)|| (effectno==91))
                     {
@@ -47,48 +50,8 @@ namespace Underworld
                 {
                     if (effectno != 0xFF)
                     {
-                        if ((effectno == 90)|| (effectno==91))
-                        {
-                            //TODO foot step sounds from NPCS, needs special handling.
-                            return;
-                        }
-                        string filepath;
-                        if (effectno>=100)
-                        {
-                            //guardian laughter
-                            filepath = System.IO.Path.Combine(
-                                BasePath, "SOUND",
-                                $"UW{effectno-100:0#}.VOC");
-                        }
-                        else
-                        {
-                            filepath = System.IO.Path.Combine(
-                                BasePath, "SOUND",
-                                $"SP{effectno:0#}.VOC");
-                        }
-                        
-                        if (File.Exists(filepath))
-                        {
-                            Debug.Print($"Playing sound {filepath}");
-                            var sound = vocLoader.Load(
-                                    System.IO.Path.Combine(
-                                        BasePath, "SOUND",
-                                        $"SP{effectno:0#}.VOC"));
-                            if (sound.AudioBuffer != null)
-                            {                                
-                                //TODO: only one audio player is set up so far. Integrate with better sound output methods
-                                //TODO: calculations on sound falloff need to be made.
-                                main.instance.DigitalAudioPlayer.Stream = sound.toWav();
-                                main.instance.DigitalAudioPlayer.Play();
-                            }
-                        }
-                        else
-                        {
-                            //fallback to midi sound if not .voc file.
-                            Sfx.SoundEffects.Play(effectno);
-                        }
-
-                    }
+                        PlayVocFile(effectno,arg2_volume, arg4_panning);
+                      }
                 }
                 else
                 {
@@ -98,30 +61,188 @@ namespace Underworld
             }
         }
 
-        public static void PlaySoundEffectAtObject(byte effectNo, uwObject obj, int arg6)
-        {            
-            PlaySoundEffectAtCoordinate(effectNo, obj.tileX<<3 + obj.xpos, obj.tileY<<3 + obj.xpos, arg6);
+
+        /// <summary>
+        /// Loads and plays a .voc file from \SOUNDS folder.
+        /// </summary>
+        /// <param name="effectno"></param>
+        /// <param name="Volume"></param>
+        /// <param name="Panning"></param>
+        private static void PlayVocFile(byte effectno, int Volume, int Panning)
+        {
+            if ((effectno == 90) || (effectno == 91))
+            {
+                //TODO foot step sounds from NPCS, needs special handling.
+                return;
+            }
+            string filepath;
+            if (effectno >= 100)
+            {
+                //guardian laughter
+                filepath = System.IO.Path.Combine(
+                    BasePath, "SOUND",
+                    $"UW{effectno - 100:0#}.VOC");
+            }
+            else
+            {
+                filepath = System.IO.Path.Combine(
+                    BasePath, "SOUND",
+                    $"SP{effectno:0#}.VOC");
+            }
+
+            if (File.Exists(filepath))
+            {
+                Debug.Print($"Playing sound {filepath}");
+                var sound = vocLoader.Load(
+                        System.IO.Path.Combine(
+                            BasePath, "SOUND",
+                            $"SP{effectno:0#}.VOC"));
+                if (sound.AudioBuffer != null)
+                {
+                    //TODO: only one audio player is set up so far. Integrate with better sound output methods
+                    //TODO: calculations on sound falloff need to be made.
+                    main.instance.DigitalAudioPlayer.Stream = sound.toWav();
+                    main.instance.DigitalAudioPlayer.Play();
+                }
+            }
+            else
+            {
+                //fallback to midi sound if not .voc file.
+                Sfx.SoundEffects.Play(effectno);
+            }
         }
 
-        public static void PlaySoundEffectAtCoordinate(byte effectNo, int x, int y, int arg6)
+        public static void PlaySoundEffectAtObject(byte effectNo, uwObject obj, int arg6)
+        {            
+            PlaySoundEffectAtCoordinate(effectNo, (obj.tileX<<3) + obj.xpos, (obj.tileY<<3) + obj.xpos, arg6);
+        }
+
+        /// <summary>
+        /// Plays a sound at the specified coordinates and calculates the volume and panning of the sound based on position relative to the player.
+        /// </summary>
+        /// <param name="effectNo"></param>
+        /// <param name="xCoordinate"></param>
+        /// <param name="yCoordinate"></param>
+        /// <param name="arg6_velocityoffset"></param>
+        public static void PlaySoundEffectAtCoordinate(byte effectNo, int xCoordinate, int yCoordinate, int arg6_velocityoffset)
         {
-            var var8 = CalculateSoundFallOff(x, y, 0, 0);
-            //TODO.. all this stuff, for the moment play at the avatars position.
-            PlaySoundEffectAtAvatar(effectNo, 0x40, 0);
+            SoundEntry effectData;
+            bool isFootStep=false;
+            byte varA_panning; 
+            byte var8_volume;
+            if (playerdat.SoundEffectsEnabled)
+            {
+                if (effectNo >= 100)
+                {
+                    var8_volume = 0x7F;
+                    varA_panning = 0x40;
+                }
+                else
+                {
+                    if (effectNo == 90)
+                    {//footstep
+                        effectData =  SoundEffects.SoundDat[1];
+                    }
+                    else if (effectNo == 91)
+                    {
+                        effectData =  SoundEffects.SoundDat[2];
+                    }
+                    else
+                    {
+                        effectData = SoundEffects.SoundDat[effectNo];
+                    }
+
+                    CalculateSoundFallOff(xCoordinate, yCoordinate, (byte)(effectData.Velocity + arg6_velocityoffset), out varA_panning, out var8_volume);
+                    if (var8_volume != 0)
+                    {
+                        if ((effectNo == 90) )
+                        {
+                            isFootStep = true;
+                            effectNo = 1;
+                        }
+                        else if (effectNo == 91)
+                        {
+                            isFootStep = true;
+                            effectNo = 2;
+                        }
+                        else
+                        {
+                            isFootStep = false;
+                        }
+                    }
+
+                    if (isFootStep)
+                    {
+                        Sfx.SoundEffects.Play(effectNo, varA_panning, var8_volume);
+                    }
+                    else
+                    {
+                        PlayVocFile(effectNo, var8_volume, varA_panning);
+                    }
+                }                
+
+            }
         }
 
 
         /// <summary>
         /// Based on values in sounds.dat work out how loud the sound should be at a distance.
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="SoundDatByte"></param>
-        /// <param name="arg6"></param>
+        /// <param name="XCoordinate"></param>
+        /// <param name="YCoordinate"></param>
+        /// <param name="Velocity"></param>
+        /// <param name="arg6_panning"></param>
         /// <returns></returns>
-        public static int CalculateSoundFallOff(int x, int y, int SoundDatByte, int arg6)
+        public static void CalculateSoundFallOff(int XCoordinate, int YCoordinate, byte Velocity, out byte arg6_panning, out byte arg8_volume)
         {
-            return 0x7F;
+            // arg6 = 0;
+            // arg8 =  0x7F;
+            var var10_heading = (short)(0x4000 - (((playerdat.playerObject.heading<<5) + playerdat.playerObject.npc_heading)<<8))& 0xFFFF;
+            int YComponent_var18 = 0; int XComponent_var1A = 0;
+            motion.GetVectorForDirection(var10_heading, ref YComponent_var18, ref XComponent_var1A);
+            var xDiffVar2 = XCoordinate - ((playerdat.playerObject.npc_xhome<<3) + playerdat.playerObject.xpos);
+            var yDiffVar4 = YCoordinate - ((playerdat.playerObject.npc_yhome<<3) + playerdat.playerObject.ypos);
+            var distVarE = (int)(Math.Sqrt(xDiffVar2*xDiffVar2 + yDiffVar4*yDiffVar4));
+            if (distVarE != 0)
+            {//1E73:0E72
+                var var14X = (int)((xDiffVar2 * 0x7F)/distVarE);
+                var var16Y = (int)((yDiffVar4 * 0x7F)/distVarE);
+
+                XComponent_var1A >>= 8;
+                YComponent_var18 >>= 8;
+
+                var var12 = (((XComponent_var1A * var14X) - (YComponent_var18 * var16Y)) >> 8); 
+                arg6_panning = (byte)(0x40 - var12);
+                if (arg6_panning > 0x7F)
+                {
+                    arg6_panning = 0x7F;
+                }
+                else if (arg6_panning <0)
+                {
+                    arg6_panning = 0;
+                }
+            }
+            else
+            {
+                arg6_panning = 0x40;
+            }
+
+            if (distVarE > 0x30)
+            {
+                arg8_volume = 0;
+            }
+            else
+            {
+                if (distVarE >= 8)
+                {
+                    arg8_volume = (byte)((Velocity * (0x30-distVarE))/0x28);
+                }
+                else
+                {
+                    //dist<8
+                    arg8_volume = Velocity;
+                }
+            }
         }
     }
 }

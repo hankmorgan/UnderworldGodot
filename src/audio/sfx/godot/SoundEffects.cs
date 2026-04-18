@@ -16,7 +16,7 @@ namespace Underworld.Sfx;
 /// </summary>
 public static class SoundEffects
 {
-    private static SoundEntry[] _sounds = Array.Empty<SoundEntry>();
+    public static SoundEntry[] SoundDat = Array.Empty<SoundEntry>();
     private static ISfxBackend _backend;
 
     /// <summary>
@@ -29,7 +29,7 @@ public static class SoundEffects
     /// <param name="uw1SoundDir">absolute path to UW1's SOUND/ directory.</param>
     public static void Initialize(string synth, string uw1SoundDir)
     {
-        _sounds = Array.Empty<SoundEntry>();
+        SoundDat = Array.Empty<SoundEntry>();
         _backend = null;
 
         // Always load SOUNDS.DAT — the file is small and the trigger lookups
@@ -41,7 +41,7 @@ public static class SoundEffects
             GD.PushWarning($"SoundEffects: SOUNDS.DAT not found at {soundsPath}; SFX disabled.");
             return;
         }
-        try { _sounds = SoundsDatLoader.Load(soundsPath); }
+        try { SoundDat = SoundsDatLoader.Load(soundsPath); }
         catch (Exception e)
         {
             GD.PushWarning($"SoundEffects: SOUNDS.DAT parse failed: {e.Message}; SFX disabled.");
@@ -105,12 +105,12 @@ public static class SoundEffects
     public static void Play(int soundId, byte pan = 0x40, byte velocityOffset = 0)
     {
         if (_backend == null) return;
-        if ((uint)soundId >= (uint)_sounds.Length)
+        if ((uint)soundId >= (uint)SoundDat.Length)
         {
-            GD.PushWarning($"SoundEffects.Play: id {soundId} out of range (have {_sounds.Length} entries)");
+            GD.PushWarning($"SoundEffects.Play: id {soundId} out of range (have {SoundDat.Length} entries)");
             return;
         }
-        _backend.Play(_sounds[soundId], pan, velocityOffset);
+        _backend.Play(SoundDat[soundId], pan, velocityOffset);
     }
 
     /// <summary>Tear-down for orderly shutdown. Does not destroy the
@@ -119,6 +119,6 @@ public static class SoundEffects
     {
         _backend?.Dispose();
         _backend = null;
-        _sounds = Array.Empty<SoundEntry>();
+        SoundDat = Array.Empty<SoundEntry>();
     }
 }

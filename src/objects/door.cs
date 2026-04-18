@@ -198,11 +198,11 @@ namespace Underworld
             }
             if (isPortcullis(doorObj))
             {
-                UWsoundeffects.PlaySoundEffectAtCoordinate(UWsoundeffects.SoundEffectPortcullis, doorObj.tileX<<3 + doorObj.xpos, doorObj.tileY<<3 + doorObj.ypos, 0 );  
+                UWsoundeffects.PlaySoundEffectAtCoordinate(UWsoundeffects.SoundEffectPortcullis, (doorObj.tileX<<3) + doorObj.xpos, (doorObj.tileY<<3) + doorObj.ypos, 0 );  
             }
             else
             {
-                UWsoundeffects.PlaySoundEffectAtCoordinate(UWsoundeffects.SoundEffectDoor, doorObj.tileX<<3 + doorObj.xpos, doorObj.tileY<<3 + doorObj.ypos, 0 );  
+                UWsoundeffects.PlaySoundEffectAtCoordinate(UWsoundeffects.SoundEffectDoor, (doorObj.tileX<<3) + doorObj.xpos, (doorObj.tileY<<3) + doorObj.ypos, 0 );  
             }
             playerdat.UpdateAutomap();//trigger an update of visibility
             trigger.TriggerObjectLink(character: 1,
@@ -244,11 +244,11 @@ namespace Underworld
             }
             if (isPortcullis(doorObj))
             {
-                UWsoundeffects.PlaySoundEffectAtCoordinate(UWsoundeffects.SoundEffectPortcullis, doorObj.tileX<<3 + doorObj.xpos, doorObj.tileY<<3 + doorObj.ypos, 0 );  
+                UWsoundeffects.PlaySoundEffectAtCoordinate(UWsoundeffects.SoundEffectPortcullis, (doorObj.tileX<<3) + doorObj.xpos, (doorObj.tileY<<3) + doorObj.ypos, 0 );  
             }
             else
             {
-                UWsoundeffects.PlaySoundEffectAtCoordinate(UWsoundeffects.SoundEffectDoor, doorObj.tileX<<3 + doorObj.xpos, doorObj.tileY<<3 + doorObj.ypos, 0 );     
+                UWsoundeffects.PlaySoundEffectAtCoordinate(UWsoundeffects.SoundEffectDoor, (doorObj.tileX<<3) + doorObj.xpos, (doorObj.tileY<<3) + doorObj.ypos, 0 );     
             }
             
             
