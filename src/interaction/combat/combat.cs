@@ -781,7 +781,7 @@ namespace Underworld
             motion.GetCoordinateInDirection(di_heading, CurrentWeaponRadius + 3, ref x0, ref y2);
             MotionCalcArray.x0 = (ushort)x0; MotionCalcArray.y2 = (ushort)y2;
 
-            motion.ScanForCollisions(0, 1);
+            motion.ScanForCollisions(0, 1); //TODO. this check is failing to scan for some NPCs. 
             if (MotionCalcArray.Unk14_collisoncount != 0)
             {
                 motion.SortCollisions();

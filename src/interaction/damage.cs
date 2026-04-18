@@ -99,12 +99,38 @@ namespace Underworld
             {
                 if (critter.npc_animation != npc.ANIMATION_DEATH)
                 { //if not already in the death animation
-                //TODO death has some extra behaviours that needs to be supported in a seperate Eg death rattles. Move the below into a seperate func
+                    //TODO death has some extra behaviours that needs to be supported in a seperate Eg death rattles. Move the below into a seperate func
                     if (npc.SpecialDeathCases(critter))
                     {
                         critter.npc_animation = npc.ANIMATION_DEATH;
                         critter.AnimationFrame = 0;
                         npc.RedrawAnimation(critter);
+                        byte DeathSound = 0xFF;
+                        if (_RES == GAME_UW2)
+                        {                            
+                            switch(critterObjectDat.deathsound(critter.item_id))
+                            {
+                                case 1://humanoids
+                                    DeathSound = 0x6;break;
+                                case 2://creepycrawlies
+                                    DeathSound = 0x22;break;
+                                case 3://Undead/Demons
+                                    DeathSound = 0x23;break;
+                                case 4://Monsters
+                                    DeathSound = 0x24;break;                           
+                            }
+                        }
+                        else
+                        {
+                            if (critterObjectDat.deathsound(critter.item_id)==1)
+                            {
+                                DeathSound = 0x6; //only the avatar has this sound effect?
+                            }                         
+                        }
+                        if (DeathSound != 0xFF)
+                        {
+                            UWsoundeffects.PlaySoundEffectAtCoordinate(DeathSound, critter.tileX<<3 + critter.xpos, critter.tileY<<3 + critter.ypos, 0);
+                        }     
                         return 1;
                     }
                 }
