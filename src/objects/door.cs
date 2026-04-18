@@ -196,7 +196,14 @@ namespace Underworld
                     doorInstance.doorNode.Rotate(Vector3.Up, GetRadiansForIndex(doorObj, NoOfFrames(doorObj), doorObj.doordir));
                 }
             }
-            UWsoundeffects.PlaySoundEffectAtObject(11, doorObj, 0 );
+            if (isPortcullis(doorObj))
+            {
+                UWsoundeffects.PlaySoundEffectAtObject(UWsoundeffects.SoundEffectPortcullis, doorObj, 0 );  
+            }
+            else
+            {
+                UWsoundeffects.PlaySoundEffectAtObject(UWsoundeffects.SoundEffectDoor, doorObj, 0 );    
+            }
             playerdat.UpdateAutomap();//trigger an update of visibility
             trigger.TriggerObjectLink(character: 1,
                     ObjectUsed: doorObj,
@@ -235,7 +242,15 @@ namespace Underworld
                     doorInstance.doorNode.Rotate(Vector3.Up, GetRadiansForIndex(doorObj, 0, doorObj.doordir));
                 }
             }
-            UWsoundeffects.PlaySoundEffectAtObject(UWsoundeffects.SoundEffectDoor, doorObj, 0 );
+            if (isPortcullis(doorObj))
+            {
+                UWsoundeffects.PlaySoundEffectAtObject(UWsoundeffects.SoundEffectPortcullis, doorObj, 0 );  
+            }
+            else
+            {
+                UWsoundeffects.PlaySoundEffectAtObject(UWsoundeffects.SoundEffectDoor, doorObj, 0 );    
+            }
+            
             
             if ((doorObj.link != 0) && (_RES == GAME_UW2))
             {

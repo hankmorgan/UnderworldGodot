@@ -20,6 +20,7 @@ namespace Underworld
         public const byte SoundEffectKlang = 0x11;
         public const byte SoundEffectRumble = 0x12;
         public const byte SoundEffectLockPick = 0x13;
+        public const byte SoundEffectPortcullis = 0x14;
         public const byte SoundEffectSpellFailure = 0x16;   
         public const byte SoundEffectLight = 0x20; 
         public const byte SoundEffectSpellRing1 = 0x2A;     
