@@ -31,14 +31,23 @@ public static class SoundsDatLoader
                 $"SOUNDS.DAT truncated: need {need} bytes for {count} entries, got {data.Length}");
 
         var entries = new SoundEntry[count];
+        bool uw2 = UWClass._RES == UWClass.GAME_UW2;
         for (int i = 0; i < count; i++)
         {
             int o = 1 + i * BlockSize;
+            // Duration word endianness differs by game:
+            //   UW1 SOUNDS.DAT: bytes 3..4 are little-endian.
+            //   UW2 SOUNDS.DAT: bytes 3..4 are big-endian. Source:
+            //     uw2_asm.asm:83683-83688  "shl ax, 8 ; add ax, dx"
+            //     with al=byte[3], dl=byte[4] → word = (byte[3] << 8) | byte[4].
+            ushort dur = uw2
+                ? (ushort)((data[o + 3] << 8) | data[o + 4])
+                : (ushort)(data[o + 3] | (data[o + 4] << 8));
             entries[i] = new SoundEntry(
                 PatchNum:     data[o + 0],
                 Note:         data[o + 1],
                 Velocity:     data[o + 2],
-                DurationWord: (ushort)(data[o + 3] | (data[o + 4] << 8)));
+                DurationWord: dur);
         }
         return entries;
     }
