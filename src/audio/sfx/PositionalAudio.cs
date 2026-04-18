@@ -81,12 +81,13 @@ public static class PositionalAudio
     // 64657, 64678 for dy; 64709, 64728 for dx). It then looks up sin/cos of
     // the rotated heading (angle = 0x4000 - (heading<<8) → 90° rotation;
     // UW1_asm.asm:64777) and forms a cross-product term:
-    //   offset = (dyNorm * cosTerm - dxNorm * sinTerm) >> 8
+    //   offset = (dyNorm * tB - dxNorm * tA) >> 8     // tB = sin term, tA = cos term
     //   pan    = clamp(0x40 - offset, 0, 0x7F)
     //
     // The sin-vs-cos assignment of the two table outputs was not verified
     // from the seg063 data bytes (see spec §Testing → sin/cos operand order).
-    // If in-game test shows pan reversed, swap `sinTerm` and `cosTerm` below.
+    // If in-game test shows pan reversed, swap `tA` and `tB` in the two
+    // Math.Round(...) lookups below — NOT the cross-product expression.
     // Using Math.Sin/Cos here instead of the seg063 LUT — drift at ≤1 LSB
     // is inaudible at 7-bit pan resolution.
     private static byte ComputePan(int dx, int dy, int dist, byte heading8)
