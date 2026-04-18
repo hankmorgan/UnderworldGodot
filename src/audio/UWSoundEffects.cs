@@ -1,248 +1,240 @@
-using System;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection.Metadata;
 using Godot;
 using Underworld.Sfx;
 
 namespace Underworld
 {
     /// <summary>
-    /// Wrapper for calling appropriate Sound Effects in Game.
+    /// Wrapper for calling appropriate Sound Effects in game. Entry points
+    /// mirror the UW1/UW2 asm:
+    ///   PlaySoundEffectAtAvatar         — non-positional (UW1 seg014_B1B / UW2 1DB2)
+    ///   PlaySoundEffectAtCoordinate     — positional (UW1 seg014_8AE / UW2 1C50)
+    ///   PlaySoundEffectAtObject         — object-based wrapper (UW1 seg014_B9C / UW2 1E7E)
     /// </summary>
     public class UWsoundeffects : UWClass
     {
-
         public const byte SoundEffectHit1 = 0x3;
         public const byte SoundEffectHit2 = 0x4;
         public const byte SoundEffectBowTwang = 0x9;
         public const byte SoundEffectDoor = 0xB;
         public const byte SoundEffectLanding = 0xF;
-        public const byte SoundEffectSpellNotReady = 0xB;//spell timers are not yet implemented.
+        public const byte SoundEffectSpellNotReady = 0xB; // spell timers are not yet implemented.
         public const byte SoundEffectSpell = 0x10;
         public const byte SoundEffectKlang = 0x11;
         public const byte SoundEffectRumble = 0x12;
         public const byte SoundEffectLockPick = 0x13;
         public const byte SoundEffectPortcullis = 0x14;
-        public const byte SoundEffectSpellFailure = 0x16;   
-        public const byte SoundEffectLight = 0x20; 
-        public const byte SoundEffectSpellRing1 = 0x2A;     
+        public const byte SoundEffectSpellFailure = 0x16;
+        public const byte SoundEffectLight = 0x20;
+        public const byte SoundEffectSpellRing1 = 0x2A;
         public const byte SoundEffectSpellRing2 = 0x2c;
         public const byte SoundEffectFail = 0x2D;
 
         /// <summary>
-        /// The sound is played at the location of the avatar.
+        /// The sink every sound eventually flows through. pan is 0..0x7F
+        /// (0x40 = centre); velocityOffset is a signed-byte delta added to
+        /// the SOUNDS.DAT[+2] base velocity before clamping.
+        /// Source: UW1 seg014_B1B (UW1_asm.asm:64927-65021) for UW1 path,
+        ///         UW2 PlaySoundEffect_1DB2 (uw2_asm.asm:82585-82751) for UW2 path.
         /// </summary>
-        /// <param name="effectno"></param>
-        /// <param name="arg2_volume"></param>
-        /// <param name="arg4_panning"></param>
-        public static void PlaySoundEffectAtAvatar(byte effectno, byte arg2_volume, byte arg4_panning)        
-        {
-            if ((effectno == 90)|| (effectno==91))
-                    {
-                        //TODO foot step sounds from NPCS, needs special handling.
-                        return;
-                    }
-            if (playerdat.SoundEffectsEnabled)
-            {
-                //Only UW2 voc support so far
-                if (_RES == GAME_UW2)
-                {
-                    if (effectno != 0xFF)
-                    {
-                        PlayVocFile(effectno,arg2_volume, arg4_panning);
-                      }
-                }
-                else
-                {
-                    //UW1
-                    Sfx.SoundEffects.Play(effectno);
-                }
-            }
-        }
-
-
-        /// <summary>
-        /// Loads and plays a .voc file from \SOUNDS folder.
-        /// </summary>
-        /// <param name="effectno"></param>
-        /// <param name="Volume"></param>
-        /// <param name="Panning"></param>
-        private static void PlayVocFile(byte effectno, int Volume, int Panning)
+        public static void PlaySoundEffectAtAvatar(byte effectno, byte pan, byte velocityOffset)
         {
             if ((effectno == 90) || (effectno == 91))
             {
-                //TODO foot step sounds from NPCS, needs special handling.
+                // TODO footstep sounds from NPCs, needs special handling
                 return;
             }
-            string filepath;
-            if (effectno >= 100)
+            if (!playerdat.SoundEffectsEnabled) return;
+
+            if (_RES == GAME_UW2)
             {
-                //guardian laughter
-                filepath = System.IO.Path.Combine(
-                    BasePath, "SOUND",
-                    $"UW{effectno - 100:0#}.VOC");
+                PlayUw2(effectno, pan, velocityOffset);
             }
             else
             {
-                filepath = System.IO.Path.Combine(
-                    BasePath, "SOUND",
-                    $"SP{effectno:0#}.VOC");
+                // UW1 OPL/TVFX path — mono hardware, pan is ignored by
+                // the TVFX backend (authentic AdLib behaviour). Volume
+                // attenuation flows through the backend's velocityOffset
+                // hook. See src/audio/sfx/godot/SoundEffects.cs.
+                Sfx.SoundEffects.Play(effectno, pan: pan, velocityOffset: velocityOffset);
+            }
+        }
+
+        /// <summary>
+        /// Object-based positional emit. Source: UW1 seg014_B9C
+        /// (UW1_asm.asm:65027-65091), UW2 PlaySoundEffectAtObject_1E7E
+        /// (uw2_asm.asm:82757-82863). Extracts packed (tile&lt;&lt;3 | fine)
+        /// coords from the object and forwards.
+        /// </summary>
+        public static void PlaySoundEffectAtObject(byte effectNo, uwObject obj, int volDelta)
+        {
+            // Packed coords: (tile << 3) | fine. 8 units per tile.
+            // uw2_asm.asm:82814-82848 pattern.
+            int packedX = (obj.tileX << 3) | (obj.xpos & 0x7);
+            int packedY = (obj.tileY << 3) | (obj.ypos & 0x7);
+            PlaySoundEffectAtCoordinate(effectNo, packedX, packedY, volDelta);
+        }
+
+        /// <summary>
+        /// Positional emit by packed coord. Source: UW1 seg014_8AE
+        /// (UW1_asm.asm:64454-64921), UW2 PlaySoundEffect_1C50
+        /// (uw2_asm.asm:82356-82579).
+        ///
+        /// Special-cases:
+        ///   effectNo >= 100  — guardian laughter, played full-volume centre-pan.
+        ///   effectNo == 90   — NPC walk footstep, redirects to SOUNDS.DAT entry 1.
+        ///   effectNo == 91   — NPC run footstep, redirects to SOUNDS.DAT entry 2.
+        /// (uw2_asm.asm:82405-82425 in PlaySoundEffect_1C50.)
+        /// </summary>
+        public static void PlaySoundEffectAtCoordinate(byte effectNo, int packedX, int packedY, int volDelta)
+        {
+            if (!playerdat.SoundEffectsEnabled) return;
+
+            // Guardian laughter bypasses distance attenuation entirely.
+            if (effectNo >= 100)
+            {
+                PlaySoundEffectAtAvatar(effectNo, pan: 0x40, velocityOffset: 0);
+                return;
             }
 
-            if (File.Exists(filepath))
+            // Footstep id redirection — uw2_asm.asm:82405-82425.
+            byte lookupId = effectNo switch
             {
-                Debug.Print($"Playing sound {filepath}");
-                var sound = vocLoader.Load(
-                        System.IO.Path.Combine(
-                            BasePath, "SOUND",
-                            $"SP{effectno:0#}.VOC"));
-                if (sound.AudioBuffer != null)
+                90 => 1,
+                91 => 2,
+                _ => effectNo,
+            };
+
+            var r = CalculateSoundFallOff(packedX, packedY, lookupId, volDelta);
+            if (r.Culled) return;
+
+            // Convert absolute vol back into a velocityOffset for the sink,
+            // which adds it to SOUNDS.DAT[+2] before clamping. Round-trip is
+            // exact: baseVel + (r.Vol - baseVel) = r.Vol.
+            byte baseVel = LookupBaseVelocity(lookupId);
+            sbyte velocityOffset = (sbyte)(r.Vol - baseVel);
+            PlaySoundEffectAtAvatar(lookupId, pan: r.Pan, velocityOffset: (byte)velocityOffset);
+        }
+
+        /// <summary>
+        /// Compute (vol, pan, culled) from source position, player state,
+        /// and a SOUNDS.DAT entry id. Pure pass-through to
+        /// <see cref="PositionalAudio.Sample"/> with the coord + heading
+        /// extraction wired to the port's player object.
+        /// </summary>
+        public static SoundFalloff CalculateSoundFallOff(int packedX, int packedY, int effectNo, int volDelta)
+        {
+            var player = playerdat.playerObject;
+
+            // Player coords: (npc_xhome << 3) + xpos, matching
+            // uw2_asm.asm:79391-79421 which reads obj+0x16 tile-home bits
+            // shifted up 3, then adds obj+2 fine-fraction bits.
+            int playerX = (player.npc_xhome << 3) + (player.xpos & 0x7);
+            int playerY = (player.npc_yhome << 3) + (player.ypos & 0x7);
+
+            // 8-bit heading. Per UW2 uw2_asm.asm:79427-79441:
+            //   heading8 = (tileOctant << 5) | subAngle.
+            byte heading8 = (byte)(((player.heading & 0x07) << 5) | (player.npc_heading & 0x1F));
+
+            int baseVelocity = LookupBaseVelocity((byte)effectNo);
+
+            return PositionalAudio.Sample(
+                srcX: packedX, srcY: packedY,
+                playerX: playerX, playerY: playerY,
+                heading8: heading8,
+                baseVelocity: baseVelocity,
+                volDelta: (sbyte)volDelta);
+        }
+
+        /// <summary>
+        /// SOUNDS.DAT[+2] per-sound base velocity. Returns 0x7F as a
+        /// conservative default when the SFX subsystem hasn't loaded
+        /// its entry table. Source: UW1_asm.asm:64622, uw2_asm.asm:82447.
+        /// </summary>
+        private static byte LookupBaseVelocity(byte effectNo)
+        {
+            var table = Sfx.SoundEffects.SoundDat;
+            return effectNo < table.Length ? table[effectNo].Velocity : (byte)0x7F;
+        }
+
+        /// <summary>
+        /// UW2 VOC digital-sample playback path. Loads the VOC, bakes the
+        /// mono sample into stereo-interleaved int16 using Miles AIL2's
+        /// pan_graph × V / 16129 curve (external/AIL2/DMASOUND.ASM:287-294
+        /// and :993-1006), wraps in an AudioStreamWav, plays through
+        /// DigitalAudioPlayer. Falls back to the MIDI sink on missing VOC
+        /// (uw2_asm.asm:82573 analogue).
+        /// </summary>
+        private static void PlayUw2(byte effectno, byte pan, byte velocityOffset)
+        {
+            if (effectno == 0xFF) return;
+
+            // Effective vol = clamp(baseVel + signed velocityOffset, 0..0x7F).
+            // Matches UW1_asm.asm:64836-64849 / uw2_asm.asm:82447-82638.
+            byte baseVel = LookupBaseVelocity(effectno);
+            int effective = baseVel + (sbyte)velocityOffset;
+            if (effective < 0) effective = 0;
+            if (effective > 0x7F) effective = 0x7F;
+            byte vol = (byte)effective;
+
+            // vocLoader.Load prepends BasePath/SOUND/ internally
+            // (src/loaders/vocloader.cs:55).
+            string vocName = effectno >= 100
+                ? $"UW{effectno - 100:0#}.VOC"   // guardian laughter
+                : $"SP{effectno:0#}.VOC";
+            string fullPath = Path.Combine(BasePath, "SOUND", vocName);
+
+            if (File.Exists(fullPath))
+            {
+                Debug.Print($"Playing sound {vocName} vol={vol:X2} pan={pan:X2}");
+                AudioSample sound = vocLoader.Load(vocName);
+                if (sound != null && sound.AudioBuffer != null)
                 {
-                    //TODO: only one audio player is set up so far. Integrate with better sound output methods
-                    //TODO: calculations on sound falloff need to be made.
-                    main.instance.DigitalAudioPlayer.Stream = sound.toWav();
+                    // AudioSample.AudioBuffer is signed 8-bit PCM already
+                    // (vocLoader subtracts 128 at src/loaders/vocloader.cs:96,114).
+                    short[] mono = VocToPcm16Mono(sound);
+                    short[] stereo = StereoPanBake.Apply(mono, vol, pan);
+
+                    var wav = new AudioStreamWav();
+                    wav.Format = AudioStreamWav.FormatEnum.Format16Bits;
+                    wav.Stereo = true;
+                    wav.MixRate = sound.SampleRate;
+                    wav.Data = Int16ToBytesLE(stereo);
+
+                    main.instance.DigitalAudioPlayer.Stream = wav;
                     main.instance.DigitalAudioPlayer.Play();
                 }
             }
             else
             {
-                //fallback to midi sound if not .voc file.
-                Sfx.SoundEffects.Play(effectno);
+                // Missing VOC — fall back to MIDI sink.
+                Sfx.SoundEffects.Play(effectno, pan: pan, velocityOffset: velocityOffset);
             }
         }
 
-        public static void PlaySoundEffectAtObject(byte effectNo, uwObject obj, int arg6)
-        {            
-            PlaySoundEffectAtCoordinate(effectNo, (obj.tileX<<3) + obj.xpos, (obj.tileY<<3) + obj.xpos, arg6);
-        }
-
-        /// <summary>
-        /// Plays a sound at the specified coordinates and calculates the volume and panning of the sound based on position relative to the player.
-        /// </summary>
-        /// <param name="effectNo"></param>
-        /// <param name="xCoordinate"></param>
-        /// <param name="yCoordinate"></param>
-        /// <param name="arg6_velocityoffset"></param>
-        public static void PlaySoundEffectAtCoordinate(byte effectNo, int xCoordinate, int yCoordinate, int arg6_velocityoffset)
+        private static short[] VocToPcm16Mono(AudioSample sound)
         {
-            SoundEntry effectData;
-            bool isFootStep=false;
-            byte varA_panning; 
-            byte var8_volume;
-            if (playerdat.SoundEffectsEnabled)
-            {
-                if (effectNo >= 100)
-                {
-                    var8_volume = 0x7F;
-                    varA_panning = 0x40;
-                }
-                else
-                {
-                    if (effectNo == 90)
-                    {//footstep
-                        effectData =  SoundEffects.SoundDat[1];
-                    }
-                    else if (effectNo == 91)
-                    {
-                        effectData =  SoundEffects.SoundDat[2];
-                    }
-                    else
-                    {
-                        effectData = SoundEffects.SoundDat[effectNo];
-                    }
-
-                    CalculateSoundFallOff(xCoordinate, yCoordinate, (byte)(effectData.Velocity + arg6_velocityoffset), out varA_panning, out var8_volume);
-                    if (var8_volume != 0)
-                    {
-                        if ((effectNo == 90) )
-                        {
-                            isFootStep = true;
-                            effectNo = 1;
-                        }
-                        else if (effectNo == 91)
-                        {
-                            isFootStep = true;
-                            effectNo = 2;
-                        }
-                        else
-                        {
-                            isFootStep = false;
-                        }
-                    }
-
-                    if (isFootStep)
-                    {
-                        Sfx.SoundEffects.Play(effectNo, varA_panning, var8_volume);
-                    }
-                    else
-                    {
-                        PlayVocFile(effectNo, var8_volume, varA_panning);
-                    }
-                }                
-
-            }
+            // AudioSample.AudioBuffer stores signed 8-bit PCM (already
+            // centred on 0; see src/loaders/vocloader.cs:96,114). Interpret
+            // each byte as an sbyte and promote to int16 by shift-left 8.
+            byte[] src = sound.AudioBuffer;
+            var dst = new short[src.Length];
+            for (int i = 0; i < src.Length; i++)
+                dst[i] = (short)((sbyte)src[i] << 8);
+            return dst;
         }
 
-
-        /// <summary>
-        /// Based on values in sounds.dat work out how loud the sound should be at a distance.
-        /// </summary>
-        /// <param name="XCoordinate"></param>
-        /// <param name="YCoordinate"></param>
-        /// <param name="Velocity"></param>
-        /// <param name="arg6_panning"></param>
-        /// <returns></returns>
-        public static void CalculateSoundFallOff(int XCoordinate, int YCoordinate, byte Velocity, out byte arg6_panning, out byte arg8_volume)
+        private static byte[] Int16ToBytesLE(short[] samples)
         {
-            // arg6 = 0;
-            // arg8 =  0x7F;
-            var var10_heading = (short)(0x4000 - (((playerdat.playerObject.heading<<5) + playerdat.playerObject.npc_heading)<<8))& 0xFFFF;
-            int YComponent_var18 = 0; int XComponent_var1A = 0;
-            motion.GetVectorForDirection(var10_heading, ref YComponent_var18, ref XComponent_var1A);
-            var xDiffVar2 = XCoordinate - ((playerdat.playerObject.npc_xhome<<3) + playerdat.playerObject.xpos);
-            var yDiffVar4 = YCoordinate - ((playerdat.playerObject.npc_yhome<<3) + playerdat.playerObject.ypos);
-            var distVarE = (int)(Math.Sqrt(xDiffVar2*xDiffVar2 + yDiffVar4*yDiffVar4));
-            if (distVarE != 0)
-            {//1E73:0E72
-                var var14X = (int)((xDiffVar2 * 0x7F)/distVarE);
-                var var16Y = (int)((yDiffVar4 * 0x7F)/distVarE);
-
-                XComponent_var1A >>= 8;
-                YComponent_var18 >>= 8;
-
-                var var12 = (((XComponent_var1A * var14X) - (YComponent_var18 * var16Y)) >> 8); 
-                arg6_panning = (byte)(0x40 - var12);
-                if (arg6_panning > 0x7F)
-                {
-                    arg6_panning = 0x7F;
-                }
-                else if (arg6_panning <0)
-                {
-                    arg6_panning = 0;
-                }
-            }
-            else
+            var bytes = new byte[samples.Length * 2];
+            for (int i = 0, j = 0; i < samples.Length; i++)
             {
-                arg6_panning = 0x40;
+                short s = samples[i];
+                bytes[j++] = (byte)(s & 0xFF);
+                bytes[j++] = (byte)((s >> 8) & 0xFF);
             }
-
-            if (distVarE > 0x30)
-            {
-                arg8_volume = 0;
-            }
-            else
-            {
-                if (distVarE >= 8)
-                {
-                    arg8_volume = (byte)((Velocity * (0x30-distVarE))/0x28);
-                }
-                else
-                {
-                    //dist<8
-                    arg8_volume = Velocity;
-                }
-            }
+            return bytes;
         }
     }
 }
