@@ -98,8 +98,8 @@ namespace Underworld
         }
 
         public static void PlaySoundEffectAtObject(byte effectNo, uwObject obj, int arg6)
-        {
-            PlaySoundEffectAtCoordinate(effectNo, obj.tileX, obj.tileY, arg6);
+        {            
+            PlaySoundEffectAtCoordinate(effectNo, obj.tileX<<3 + obj.xpos, obj.tileY<<3 + obj.xpos, arg6);
         }
 
         public static void PlaySoundEffectAtCoordinate(byte effectNo, int x, int y, int arg6)

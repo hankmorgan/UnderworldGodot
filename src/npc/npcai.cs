@@ -552,7 +552,7 @@ namespace Underworld
                     if (soundeffect != 0xFF)
                     {
                         //play sound effect at critter x,y coordinate
-                        UWsoundeffects.PlaySoundEffectAtCoordinate(soundeffect, critter.tileX, critter.tileY,0);
+                        UWsoundeffects.PlaySoundEffectAtCoordinate(soundeffect, currObjXCoordinate, currObjYCoordinate,0);
                     }
                 }//end sound block
                 //seg007_17A2_29A5:  passive test?
