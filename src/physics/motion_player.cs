@@ -284,6 +284,8 @@ namespace Underworld
                 playerObj.npc_yhome = (short)(playerMotionParams.y_2 >> 8);
 
                 //TODO Check if player is no longer lost
+
+                playerdat.PlayerStatusUpdate();//to force lighting refreshes when player has changed tile.
             }
             else
             {
@@ -419,8 +421,6 @@ namespace Underworld
             {
                 Examine_dseg_D3 = 1;
             }
-
-
         }
 
         /// <summary>
