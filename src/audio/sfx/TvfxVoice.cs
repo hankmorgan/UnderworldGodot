@@ -39,11 +39,12 @@ public sealed class TvfxVoice
     private int _phaseTicks;
     private int _lifetimeTicks;        // -1 == infinite (game's 0xFFFF sentinel)
 
-    // Composite volume scale (0..127) applied to the carrier's linear volIn
-    // before TL inversion. Miles AIL 2.0 curve; see TvfxVelocity.VelGraph
-    // and TvfxVelocity.ComputeVolScale. 127 = identity (matches pre-Task-8
-    // behaviour). Source: YAMAHA.INC:1491-1502 (composite compute) +
-    // :1748-1756 (carrier TL write with vol scaling).
+    // Composite volume scale applied to the carrier's linear volIn before
+    // TL inversion. Valid range is 0..127; the upstream pipeline (TvfxVelocity
+    // .ComputeVolScale → VelGraph) guarantees values in 82..127. 127 is the
+    // identity (byte-identical to the pre-scaling carrier TL). No clamp here
+    // — callers are responsible for the 0..127 invariant. Source: YAMAHA.INC:
+    // 1491-1502 (composite compute) + :1748-1756 (carrier TL write scaling).
     private byte _volScale = 127;
 
     public TvfxVoice(int channel) { Channel = channel; }
