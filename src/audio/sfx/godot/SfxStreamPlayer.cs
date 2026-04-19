@@ -137,7 +137,7 @@ public partial class SfxStreamPlayer : Node
                 while (_commands.TryDequeue(out var cmd))
                 {
                     var voice = _allocator.Allocate();
-                    voice?.StartKeyon(cmd.Patch, cmd.LifetimeTicks);
+                    voice?.StartKeyon(cmd.Patch, cmd.LifetimeTicks, cmd.VolScale);
                     // null = saturated (all 9 voices busy) → drop trigger silently,
                     // matching authentic UW behaviour.
                 }

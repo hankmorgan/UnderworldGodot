@@ -39,6 +39,14 @@ public sealed class TvfxVoice
     private int _phaseTicks;
     private int _lifetimeTicks;        // -1 == infinite (game's 0xFFFF sentinel)
 
+    // Composite volume scale applied to the carrier's linear volIn before
+    // TL inversion. Valid range is 0..127; the upstream pipeline (TvfxVelocity
+    // .ComputeVolScale → VelGraph) guarantees values in 82..127. 127 is the
+    // identity (byte-identical to the pre-scaling carrier TL). No clamp here
+    // — callers are responsible for the 0..127 invariant. Source: YAMAHA.INC:
+    // 1491-1502 (composite compute) + :1748-1756 (carrier TL write scaling).
+    private byte _volScale = 127;
+
     public TvfxVoice(int channel) { Channel = channel; }
 
     public ushort Acc(int paramIndex) => _acc[paramIndex];
@@ -266,12 +274,13 @@ public sealed class TvfxVoice
     /// handover. No runtime assertion is raised; restart is safe.
     /// </para>
     /// </summary>
-    public void StartKeyon(TvfxPatch patch, int lifetimeTicks)
+    public void StartKeyon(TvfxPatch patch, int lifetimeTicks, byte volScale = 127)
     {
         Patch = patch;
         Phase = TvfxPhase.Keyon;
         _phaseTicks = 0;
         _lifetimeTicks = lifetimeTicks;
+        _volScale = volScale;
 
         for (int i = 0; i < 8; i++)
         {
@@ -337,9 +346,24 @@ public sealed class TvfxVoice
         if ((_updateMask & (1 << 1)) != 0)   // level0 → KSL/TL mod
             sink.WriteReg(0x40 + mod, (byte)(((~(_acc[1] >> 10)) & 0x3F) | _kslMod));
         if ((_updateMask & (1 << 2)) != 0)   // level1 → KSL/TL car
-            sink.WriteReg(0x40 + car, (byte)(((~(_acc[2] >> 10)) & 0x3F) | _kslCar));
+        {
+            // Miles AIL 2.0 carrier TL scaling (YAMAHA.INC:1748-1756):
+            //   volIn  = (~patch_TL) & 0x3F  — but TVFX stores volume-form
+            //                                 directly in _acc[2] >> 10.
+            //   scaled = volIn * vol / 127   — multiplication in linear space.
+            //   TL     = (~scaled) & 0x3F    — invert back to attenuation.
+            int volIn = (_acc[2] >> 10) & 0x3F;
+            int scaled = (volIn * _volScale) / 127;
+            int tl = (~scaled) & 0x3F;
+            sink.WriteReg(0x40 + car, (byte)(tl | _kslCar));
+        }
         if ((_updateMask & (1 << 4)) != 0)   // feedback → FBC
-            sink.WriteReg(0xC0 + Channel, (byte)(((_acc[4] >> 12) & 0x0E) | (_fconBase & 1)));
+            // Bits 4-5 (L/R pan enable) MUST be set on OPL3-emulating backends
+            // such as libadlmidi's nuked-opl3, which always emulates OPL3 even
+            // when driving OPL2-style TVFX. On a real OPL2 these bits don't
+            // exist and are ignored. Without them every voice is routed to
+            // neither output channel — silent.
+            sink.WriteReg(0xC0 + Channel, (byte)(0x30 | ((_acc[4] >> 12) & 0x0E) | (_fconBase & 1)));
         if ((_updateMask & (1 << 7)) != 0)   // waveform → both ops
         {
             sink.WriteReg(0xE0 + mod, (byte)((_acc[7] >> 8) & 0x07));

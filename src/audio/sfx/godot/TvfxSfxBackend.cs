@@ -23,12 +23,9 @@ public sealed class TvfxSfxBackend : ISfxBackend
 
     public void Play(SoundEntry entry, byte pan, byte velocityOffset)
     {
-        // TODO(Task 8): velocityOffset is accepted here but not forwarded to
-        // the voice pipeline — SfxCommand carries only (patch, lifetime).
-        // As a result UW1 positional-audio volume attenuation is currently
-        // inaudible on the OPL backend. Wiring this to per-voice velocity
-        // scaling is a follow-up. See docs/audio-architecture.md §Positional
-        // audio → UW1 OPL path. `pan` is authentic no-op (OPL is mono).
+        // pan is authentic no-op (OPL is mono). velocityOffset drives the
+        // carrier TL scaling — see TvfxVelocity.ComputeVolScale (Miles
+        // YAMAHA.INC:1491-1502 with C = E = 127 defaults).
         var patch = _bank.GetTvfx(entry.PatchNum);
         if (patch == null)
         {
@@ -65,7 +62,8 @@ public sealed class TvfxSfxBackend : ISfxBackend
         else
             lifetime = entry.DurationWord * 15 / 64;
 
-        _player.Enqueue(new SfxCommand(patch, lifetime));
+        byte volScale = TvfxVelocity.ComputeVolScale(entry.Velocity, velocityOffset);
+        _player.Enqueue(new SfxCommand(patch, lifetime, volScale));
     }
 
     public void Dispose() { /* SfxStreamPlayer is owned by the Godot scene tree */ }

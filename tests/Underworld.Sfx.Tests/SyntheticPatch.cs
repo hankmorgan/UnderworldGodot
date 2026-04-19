@@ -12,7 +12,12 @@ internal static class SyntheticPatch
     // padding that ALE.INC skips via "add ax, 2" at init. We include that
     // padding so the VM's cursor (_cursorWord[i] = offset/2 + 1) lands on the
     // first supplied stream word.
-    public static TvfxPatch Build(params ushort[] freqStreamWords)
+    public static TvfxPatch Build(params ushort[] freqStreamWords) =>
+        BuildWithLevels(0x0000, 0x0000, freqStreamWords);
+
+    // Variant: supply non-zero InitVal for level0 and level1 accumulators.
+    // This allows testing envelope behavior at specific starting volumes.
+    public static TvfxPatch BuildWithLevels(ushort level0Init, ushort level1Init, params ushort[] freqStreamWords)
     {
         // Use 0x34 as the declared freq keyon offset so HasAdsrBlock is false
         // (anything != 0x34 triggers opt-block parsing which our tiny synthetic
@@ -28,14 +33,17 @@ internal static class SyntheticPatch
         raw[3] = (byte)TvfxType.TvEffect;
         raw[4] = 60; raw[5] = 0;   // duration = 60
 
-        void WriteParam(int idx, ushort keyon, ushort release)
+        void WriteParam(int idx, ushort keyon, ushort release, ushort initVal = 0)
         {
             int o = 6 + idx * 6;
+            raw[o + 0] = (byte)(initVal & 0xFF); raw[o + 1] = (byte)(initVal >> 8);
             raw[o + 2] = (byte)(keyon & 0xFF); raw[o + 3] = (byte)(keyon >> 8);
             raw[o + 4] = (byte)(release & 0xFF); raw[o + 5] = (byte)(release >> 8);
         }
         WriteParam(0, (ushort)freqStart, (ushort)freqStart);
-        for (int i = 1; i < 8; i++) WriteParam(i, (ushort)deadStart, (ushort)deadStart);
+        WriteParam(1, (ushort)deadStart, (ushort)deadStart, level0Init);
+        WriteParam(2, (ushort)deadStart, (ushort)deadStart, level1Init);
+        for (int i = 3; i < 8; i++) WriteParam(i, (ushort)deadStart, (ushort)deadStart);
 
         for (int i = 0; i < freqStreamWords.Length; i++)
         {
