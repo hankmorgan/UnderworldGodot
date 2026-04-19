@@ -401,10 +401,25 @@ namespace Underworld
                                         string description = System.IO.File.Exists(descPath)
                                             ? System.IO.File.ReadAllText(descPath)
                                             : $"Save {extra_arg_0}";
-                                        SaveGame.Save((int)extra_arg_0, description);
+                                        int stringId;
+                                        try
+                                        {
+                                            SaveGame.Save((int)extra_arg_0, description);
+                                            stringId = GameStrings.str_save_game_succeeded_;
+                                        }
+                                        catch (System.IO.IOException ex)
+                                        {
+                                            GD.PrintErr($"SaveGame.Save failed: {ex}");
+                                            stringId = GameStrings.str_save_game_failed_;
+                                        }
+                                        catch (System.UnauthorizedAccessException ex)
+                                        {
+                                            GD.PrintErr($"SaveGame.Save failed: {ex}");
+                                            stringId = GameStrings.str_save_game_failed_;
+                                        }
                                         listsaves();
                                         instance.scroll.Clear();
-                                        AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_save_game_succeeded_));
+                                        AddToMessageScroll(GameStrings.GetString(1, stringId));
                                         ReturnToGameFromOptions();
                                         break;
                                     }
