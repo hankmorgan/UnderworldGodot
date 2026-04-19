@@ -39,6 +39,13 @@ public sealed class TvfxVoice
     private int _phaseTicks;
     private int _lifetimeTicks;        // -1 == infinite (game's 0xFFFF sentinel)
 
+    // Composite volume scale (0..127) applied to the carrier's linear volIn
+    // before TL inversion. Miles AIL 2.0 curve; see TvfxVelocity.VelGraph
+    // and TvfxVelocity.ComputeVolScale. 127 = identity (matches pre-Task-8
+    // behaviour). Source: YAMAHA.INC:1491-1502 (composite compute) +
+    // :1748-1756 (carrier TL write with vol scaling).
+    private byte _volScale = 127;
+
     public TvfxVoice(int channel) { Channel = channel; }
 
     public ushort Acc(int paramIndex) => _acc[paramIndex];
@@ -266,12 +273,13 @@ public sealed class TvfxVoice
     /// handover. No runtime assertion is raised; restart is safe.
     /// </para>
     /// </summary>
-    public void StartKeyon(TvfxPatch patch, int lifetimeTicks)
+    public void StartKeyon(TvfxPatch patch, int lifetimeTicks, byte volScale = 127)
     {
         Patch = patch;
         Phase = TvfxPhase.Keyon;
         _phaseTicks = 0;
         _lifetimeTicks = lifetimeTicks;
+        _volScale = volScale;
 
         for (int i = 0; i < 8; i++)
         {
@@ -337,7 +345,17 @@ public sealed class TvfxVoice
         if ((_updateMask & (1 << 1)) != 0)   // level0 → KSL/TL mod
             sink.WriteReg(0x40 + mod, (byte)(((~(_acc[1] >> 10)) & 0x3F) | _kslMod));
         if ((_updateMask & (1 << 2)) != 0)   // level1 → KSL/TL car
-            sink.WriteReg(0x40 + car, (byte)(((~(_acc[2] >> 10)) & 0x3F) | _kslCar));
+        {
+            // Miles AIL 2.0 carrier TL scaling (YAMAHA.INC:1748-1756):
+            //   volIn  = (~patch_TL) & 0x3F  — but TVFX stores volume-form
+            //                                 directly in _acc[2] >> 10.
+            //   scaled = volIn * vol / 127   — multiplication in linear space.
+            //   TL     = (~scaled) & 0x3F    — invert back to attenuation.
+            int volIn = (_acc[2] >> 10) & 0x3F;
+            int scaled = (volIn * _volScale) / 127;
+            int tl = (~scaled) & 0x3F;
+            sink.WriteReg(0x40 + car, (byte)(tl | _kslCar));
+        }
         if ((_updateMask & (1 << 4)) != 0)   // feedback → FBC
             sink.WriteReg(0xC0 + Channel, (byte)(((_acc[4] >> 12) & 0x0E) | (_fconBase & 1)));
         if ((_updateMask & (1 << 7)) != 0)   // waveform → both ops
