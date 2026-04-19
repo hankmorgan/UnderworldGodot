@@ -293,13 +293,29 @@ namespace Underworld
                         {   //at main menu. will switch to menu specified by arg0
                             switch (extra_arg_0)
                             {
-                                case 1://switch to save menu
+                                case 0://switch to save menu
                                     {
                                         CurrentGameOptionMenu = OptionMenus.SaveMenu;
                                         SetGameOptionsBackground((int)OptionButtonIndices.AllSaveButtons);
                                         SetGameOptionButtons(
                                             new int[]{
                                                 (int)OptionButtonIndices.SaveGameOff,
+                                                (int)OptionButtonIndices.Save1Off,
+                                                (int)OptionButtonIndices.Save2Off,
+                                                (int)OptionButtonIndices.Save3Off,
+                                                (int)OptionButtonIndices.Save4Off,
+                                                (int)OptionButtonIndices.CancelOff,
+                                                -1});
+                                        listsaves();
+                                        break;
+                                    }
+                                case 1://switch to restore menu
+                                    {
+                                        CurrentGameOptionMenu = OptionMenus.RestoreMenu;
+                                        SetGameOptionsBackground((int)OptionButtonIndices.AllSaveButtons);
+                                        SetGameOptionButtons(
+                                            new int[]{
+                                                (int)OptionButtonIndices.RestoreGameLabel,
                                                 (int)OptionButtonIndices.Save1Off,
                                                 (int)OptionButtonIndices.Save2Off,
                                                 (int)OptionButtonIndices.Save3Off,
