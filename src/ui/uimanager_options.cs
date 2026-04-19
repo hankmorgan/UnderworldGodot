@@ -293,13 +293,13 @@ namespace Underworld
                         {   //at main menu. will switch to menu specified by arg0
                             switch (extra_arg_0)
                             {
-                                case 1://switch to restore menu
+                                case 1://switch to save menu
                                     {
-                                        CurrentGameOptionMenu = OptionMenus.RestoreMenu;
+                                        CurrentGameOptionMenu = OptionMenus.SaveMenu;
                                         SetGameOptionsBackground((int)OptionButtonIndices.AllSaveButtons);
                                         SetGameOptionButtons(
                                             new int[]{
-                                                (int)OptionButtonIndices.RestoreGameLabel,
+                                                (int)OptionButtonIndices.SaveGameOff,
                                                 (int)OptionButtonIndices.Save1Off,
                                                 (int)OptionButtonIndices.Save2Off,
                                                 (int)OptionButtonIndices.Save3Off,
@@ -385,6 +385,35 @@ namespace Underworld
                                     }
                             }
 
+                            break;
+                        }
+                    case OptionMenus.SaveMenu:
+                        {
+                            switch (extra_arg_0)
+                            {
+                                case 1:
+                                case 2:
+                                case 3:
+                                case 4://save to chosen slot
+                                    {
+                                        // Description uses existing slot name if present, otherwise a default.
+                                        var descPath = System.IO.Path.Combine(UWClass.BasePath, $"SAVE{extra_arg_0}", "DESC");
+                                        string description = System.IO.File.Exists(descPath)
+                                            ? System.IO.File.ReadAllText(descPath)
+                                            : $"Save {extra_arg_0}";
+                                        SaveGame.Save((int)extra_arg_0, description);
+                                        listsaves();
+                                        instance.scroll.Clear();
+                                        AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_save_game_succeeded_));
+                                        ReturnToGameFromOptions();
+                                        break;
+                                    }
+                                case 5://cancel and return to top
+                                    {
+                                        ReturnToTopOptionsMenu();
+                                        break;
+                                    }
+                            }
                             break;
                         }
                     case OptionMenus.RestoreMenu:
