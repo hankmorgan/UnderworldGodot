@@ -107,6 +107,23 @@ public class TvfxRegisterWriteTests
         Assert.True(true);
     }
 
+    [Fact]
+    public void Fbc_register_sets_opl3_LR_pan_bits()
+    {
+        // Register 0xC0 bits 4-5 are the OPL3 L/R pan enables. Real OPL2
+        // doesn't have them; libadlmidi's nuked-opl3 always runs in OPL3
+        // mode, so voices with bits 4-5 clear are routed to NEITHER output
+        // channel — silent. Every FBC write must set 0x30 to keep audio
+        // alive on OPL3-emulating backends.
+        var v = PrimeVoice(0);
+        var sink = new CapturingSink();
+        v.EmitRegisters(sink);
+
+        byte fbc = 0;
+        foreach (var (a, val) in sink.Writes) if (a == 0xC0) fbc = val;
+        Assert.Equal(0x30, fbc & 0x30);
+    }
+
     // --- Task 3 tests: VolScale applied at carrier TL write ---
     //
     // Source: Miles AIL 2.0 YAMAHA.INC:1748-1756 (carrier scaling path).

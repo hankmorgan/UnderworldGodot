@@ -358,7 +358,12 @@ public sealed class TvfxVoice
             sink.WriteReg(0x40 + car, (byte)(tl | _kslCar));
         }
         if ((_updateMask & (1 << 4)) != 0)   // feedback → FBC
-            sink.WriteReg(0xC0 + Channel, (byte)(((_acc[4] >> 12) & 0x0E) | (_fconBase & 1)));
+            // Bits 4-5 (L/R pan enable) MUST be set on OPL3-emulating backends
+            // such as libadlmidi's nuked-opl3, which always emulates OPL3 even
+            // when driving OPL2-style TVFX. On a real OPL2 these bits don't
+            // exist and are ignored. Without them every voice is routed to
+            // neither output channel — silent.
+            sink.WriteReg(0xC0 + Channel, (byte)(0x30 | ((_acc[4] >> 12) & 0x0E) | (_fconBase & 1)));
         if ((_updateMask & (1 << 7)) != 0)   // waveform → both ops
         {
             sink.WriteReg(0xE0 + mod, (byte)((_acc[7] >> 8) & 0x07));
