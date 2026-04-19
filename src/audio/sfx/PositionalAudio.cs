@@ -81,15 +81,14 @@ public static class PositionalAudio
     // 64657, 64678 for dy; 64709, 64728 for dx). It then looks up sin/cos of
     // the rotated heading (angle = 0x4000 - (heading<<8) → 90° rotation;
     // UW1_asm.asm:64777) and forms a cross-product term:
-    //   offset = (dyNorm * tB - dxNorm * tA) >> 8     // tB = sin term, tA = cos term
+    //   offset = (dxNorm * fwdX - dyNorm * fwdY) >> 8
     //   pan    = clamp(0x40 - offset, 0, 0x7F)
     //
-    // The sin-vs-cos assignment of the two table outputs was not verified
-    // from the seg063 data bytes (see spec §Testing → sin/cos operand order).
-    // If in-game test shows pan reversed, swap `tA` and `tB` in the two
-    // Math.Round(...) lookups below — NOT the cross-product expression.
-    // Using Math.Sin/Cos here instead of the seg063 LUT — drift at ≤1 LSB
-    // is inaudible at 7-bit pan resolution.
+    // Operand order was resolved audibly: with the operands reversed
+    // (dyNorm*fwdY - dxNorm*fwdX), L/R sounded swapped in-game. The current
+    // order matches uw2_asm.asm:79596-79622 literally and matches Hank's
+    // upstream implementation. Using Math.Sin/Cos here instead of the seg063
+    // LUT — drift at ≤1 LSB is inaudible at 7-bit pan resolution.
     private static byte ComputePan(int dx, int dy, int dist, byte heading8)
     {
         // Normalise with endpoint saturation. At exactly ±dist the division
@@ -108,13 +107,14 @@ public static class PositionalAudio
         byte rotated8 = (byte)((0x40 - heading8) & 0xFF);
         double theta = rotated8 * System.Math.PI * 2.0 / 256.0;
 
-        // Table A and Table B outputs — shifted right 8 in the asm
+        // Forward-vector components — shifted right 8 in the asm
         // (UW1_asm.asm:64798, 64801) to yield a signed byte in [-0x7F..0x7F].
-        int tA = (int)System.Math.Round(System.Math.Cos(theta) * 0x7F);
-        int tB = (int)System.Math.Round(System.Math.Sin(theta) * 0x7F);
+        int fwdX = (int)System.Math.Round(System.Math.Cos(theta) * 0x7F);
+        int fwdY = (int)System.Math.Round(System.Math.Sin(theta) * 0x7F);
 
-        // Cross product — UW1_asm.asm:64803-64816.
-        int offset = (dyNorm * tB - dxNorm * tA) >> 8;
+        // Cross product — uw2_asm.asm:79596-79616 / UW1_asm.asm:64803-64816.
+        //   var_12 = fwdX*dxNorm - fwdY*dyNorm
+        int offset = (dxNorm * fwdX - dyNorm * fwdY) >> 8;
 
         // Clamp — UW1_asm.asm:64822-64835.
         return (byte)Clamp(PanCentre - offset, 0, PanMax);
