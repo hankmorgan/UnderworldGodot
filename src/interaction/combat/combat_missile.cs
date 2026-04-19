@@ -105,7 +105,7 @@ namespace Underworld
             if (objectHit == playerdat.playerObject)
             {
                 //sound effect at player position
-                UWsoundeffects.PlaySoundEffectAtAvatar(UWsoundeffects.SoundEffectHit1, 0, 0);
+                UWsoundeffects.PlaySoundEffectAtAvatar(UWsoundeffects.SoundEffectHit1, pan: 0x40, velocityOffset: 0);
             }
             else
             {

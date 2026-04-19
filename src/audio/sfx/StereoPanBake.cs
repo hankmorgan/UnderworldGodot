@@ -8,8 +8,9 @@ namespace Underworld.Sfx;
 ///   external/AIL2/DMASOUND.ASM:993-1006  set_volume gain compute
 ///
 /// Pan polarity: Miles native. P=0 → hard right, P=127 → hard left.
-/// If in-game test shows the stereo image reversed, swap the two pan_graph
-/// lookups in <see cref="Apply"/>.
+/// Audibly confirmed in-game on UW2 — no swap needed. This polarity matches
+/// the AIL 2.0 driver convention that the reverse-engineered pan bytes from
+/// <see cref="PositionalAudio.Sample"/> target.
 /// </summary>
 public static class StereoPanBake
 {
