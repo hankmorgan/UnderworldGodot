@@ -309,7 +309,22 @@ source this port targets.
 
 **UW1 OPL path:** the TVFX backend is mono hardware — pan is silently
 dropped (authentic AdLib behaviour). Volume attenuation flows through
-`velocityOffset` on `Sfx.SoundEffects.Play`.
+`velocityOffset` on `Sfx.SoundEffects.Play` →
+`TvfxSfxBackend.ComputeVolScale` → `SfxCommand.VolScale` →
+`TvfxVoice.EmitRegisters`, which multiplies the carrier's linear volume
+by `VolScale / 127` before inverting to OPL Total Level. Uses Miles
+AIL 2.0's 16-entry `VelGraph` LUT (`YAMAHA.INC:240`) with a 82/127
+loudness floor — full silence comes from the `dist > 48` cull in
+`PositionalAudio`, not from velocity scaling. Modulator TL stays
+patch-static (algorithm-0 FM convention, `YAMAHA.INC:1746`).
+
+**OPL3 pan bits (load-bearing):** the TVFX engine runs on top of
+libadlmidi's nuked-opl3 emulator, which always operates in OPL3 mode
+even when driving OPL2-style patches. Register `0xC0` bits 4-5 are the
+OPL3 L/R pan enables; `TvfxVoice.EmitRegisters` ORs `0x30` into every
+FBC write so voices are routed to both output channels. Real OPL2
+hardware lacks those bits and ignores them, but on an OPL3 emulator
+clearing them routes the voice to NEITHER channel → silence.
 
 **Round-trip encoding:** `PlaySoundEffectAtCoordinate` computes an absolute
 vol from `PositionalAudio.Sample`, converts back to `velocityOffset =
@@ -544,7 +559,7 @@ Under `tools/` — not shipped to end users, but useful for verification:
 
 `tests/Underworld.Sfx.Tests/` — xUnit project targeting `net10.0`. Compiles the
 pure-logic SFX source files (everything not under `godot/`) via `<Compile Include>`
-so tests run on plain .NET without a Godot runtime. 68 tests covering:
+so tests run on plain .NET without a Godot runtime. 80 tests covering:
 
 - `SoundsDatLoader` — golden UW1 fixture, field ranges, UW1 LE decode,
   UW2 BE decode regression (per `uw2_asm.asm:83683-83688`).
@@ -565,6 +580,12 @@ so tests run on plain .NET without a Godot runtime. 68 tests covering:
 - `StereoPanBake` — 8 tests: pan centre equality, hard-left/right Miles native,
   saturation edge at pan 63/64, volume attenuation scaling, interleaved output
   length, pan_graph LUT spot-checks (0, 1, 62, 63, 64, 127).
+- `TvfxVelocity` — 7 tests: `vel_graph` LUT byte-for-byte match against
+  `YAMAHA.INC:240`, `ComputeVolScale` boundaries + clamps.
+- TVFX carrier TL scaling — 4 tests: VolScale=127 backward-compat identity,
+  linear-space multiplication, modulator unaffected, 82-floor quieter-but-not-silent.
+- OPL3 pan bits — 1 test: every FBC write sets bits 4-5 so voices are
+  routed to both output channels (audible on libadlmidi's nuked-opl3).
 
 ## File index (SFX)
 
@@ -574,6 +595,7 @@ so tests run on plain .NET without a Godot runtime. 68 tests covering:
 | `src/audio/sfx/SoundsDatLoader.cs` | 5-byte (UW1 LE) / 8-byte (UW2 BE) record parser |
 | `src/audio/sfx/PositionalAudio.cs` | Pure falloff math (vol, pan, cull) |
 | `src/audio/sfx/StereoPanBake.cs` | Miles AIL2 pan_graph × V / 16129 stereo bake |
+| `src/audio/sfx/TvfxVelocity.cs` | Miles AIL2 `vel_graph` LUT + `ComputeVolScale` for UW1 OPL carrier TL scaling |
 | `src/audio/sfx/TvfxPatch.cs` | Header parser, opt-block detect |
 | `src/audio/sfx/TvfxPatchBank.cs` | UW.AD index walker + lazy patch load |
 | `src/audio/sfx/TvfxVoice.cs` | State machine, stream VM, register emitter |
