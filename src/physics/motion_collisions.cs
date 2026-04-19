@@ -589,10 +589,10 @@ namespace Underworld
                 if (commonObjDat.radius(CollidingObject.item_id) == 4)
                 {//seg028_2941_AB7:
                     XCoordVar1 = xArg6 << 3;
-                    XVar3 = 7 + xArg6 << 3;
+                    XVar3 = XCoordVar1 + 7;  // 7 + (xArg6 << 3);
 
                     YCoordVar2 = yArg8 << 3;
-                    YVar4 = 7 + yArg8 << 3;
+                    YVar4 = YCoordVar2 + 7;// 7  + (yArg8 << 3);
                 }
                 else
                 {//seg028_2941_AD5
@@ -606,54 +606,57 @@ namespace Underworld
                     XVar3 = XCoordVar1 + cx_radius;  //seg028_2941_B23:
                     YVar4 = YCoordVar2 + cx_radius;
                     XCoordVar1 -= cx_radius;
-                    YCoordVar2 -= cx_radius;//seg028_2941_B43:
-                    if (
-                        (XVar3 >= UWMotionParamArray.XposMinusRad)
-                        &&
-                        (XCoordVar1 <= UWMotionParamArray.XposPlusRad)
-                        &&
-                        (YVar4 >= UWMotionParamArray.YposMinusRad)
-                        &&
-                        (YCoordVar2 <= UWMotionParamArray.YposPlusRad)
-                    )
+                    YCoordVar2 -= cx_radius;
+                }
+
+                //seg028_2941_B43:
+                if (
+                    (XVar3 >= UWMotionParamArray.XposMinusRad)
+                    &&
+                    (XCoordVar1 <= UWMotionParamArray.XposPlusRad)
+                    &&
+                    (YVar4 >= UWMotionParamArray.YposMinusRad)
+                    &&
+                    (YCoordVar2 <= UWMotionParamArray.YposPlusRad)
+                )
+                {
+                    //seg028_2941_B73
+                    var si_ptr = MotionCalcArray.Unk14_collisoncount;
+                    MotionCalcArray.Unk14_collisoncount++;
+                    collisionTable[si_ptr].zpos = (byte)CollidingObject.zpos;
+
+                    collisionTable[si_ptr].height = (byte)((CollidingObject.zpos + commonObjDat.height(CollidingObject.item_id)) & 0xFF);
+
+                    if (commonObjDat.height(CollidingObject.item_id) == 0)
                     {
-                        //seg028_2941_B73
-                        var si_ptr = MotionCalcArray.Unk14_collisoncount;
-                        MotionCalcArray.Unk14_collisoncount++;
-                        collisionTable[si_ptr].zpos = (byte)CollidingObject.zpos;
+                        //seg028_2941_BB1:
+                        collisionTable[si_ptr].height++;
+                    }
 
-                        collisionTable[si_ptr].height = (byte)((CollidingObject.zpos + commonObjDat.height(CollidingObject.item_id)) & 0xFF);
+                    //seg028_2941_BB3:
+                    collisionTable[si_ptr].link = (short)ListHead;
 
-                        if (commonObjDat.height(CollidingObject.item_id) == 0)
+                    collisionTable[si_ptr].quality = 9;
+
+                    //seg028_2941_BCF
+                    if (UWMotionParamArray.xpos_dseg_67d6_2585 >= XCoordVar1)
+                    {
+                        if (UWMotionParamArray.xpos_dseg_67d6_2585 <= XVar3)
                         {
-                            //seg028_2941_BB1:
-                            collisionTable[si_ptr].height++;
-                        }
-
-                        //seg028_2941_BB3:
-                        collisionTable[si_ptr].link = (short)ListHead;
-
-                        collisionTable[si_ptr].quality = 9;
-
-                        //seg028_2941_BCF
-                        if (UWMotionParamArray.xpos_dseg_67d6_2585 >= XCoordVar1)
-                        {
-                            if (UWMotionParamArray.xpos_dseg_67d6_2585 <= XVar3)
+                            if (UWMotionParamArray.ypos_dseg_67d6_251C >= YCoordVar2)
                             {
-                                if (UWMotionParamArray.ypos_dseg_67d6_251C >= YCoordVar2)
+                                if (UWMotionParamArray.ypos_dseg_67d6_251C <= YVar4)
                                 {
-                                    if (UWMotionParamArray.ypos_dseg_67d6_251C <= YVar4)
-                                    {
-                                        collisionTable[si_ptr].quality |= 0x10;
-                                    }
+                                    collisionTable[si_ptr].quality |= 0x10;
                                 }
                             }
                         }
-
-                        //seg028_2941_BF9:
-                        collisionTable[si_ptr].xyvalue = (short)(xArg6 + (yArg8 << 6));
                     }
+
+                    //seg028_2941_BF9:
+                    collisionTable[si_ptr].xyvalue = (short)(xArg6 + (yArg8 << 6));
                 }
+
             }
         }
 

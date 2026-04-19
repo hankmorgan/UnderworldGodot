@@ -325,6 +325,9 @@ namespace Underworld
             }
             instance.InitViews();
             SetPanelMode(0);
+            
+            //Apply player motion on game load.
+            motion.PlayerMotion(0x40);
         }
 
         private void _on_create_character_gui_input(InputEvent @event)

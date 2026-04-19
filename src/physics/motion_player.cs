@@ -82,7 +82,7 @@ namespace Underworld
             // var x_init = playerMotionParams.x_0;
             // var y_init = playerMotionParams.y_2;
             PlayerMotionInitialCalculation_seg008_1B09_7B2(ClockIncrement);
-
+            //Debug.Print($"playerpos is at {playerMotionParams.z_4}");
             CalculateMotion(
                 projectile: playerdat.playerObject,
                 MotionParams: playerMotionParams,
@@ -93,7 +93,7 @@ namespace Underworld
             playerdat.heading_major = PlayerHeadingMajor_dseg_67d6_8296 >> 8;//this hack fixes turning but the heading value here is actually direction of motion so the camera turns during backwards and sideways motion
 
             playerdat.PositionPlayerObject();
-
+            //Debug.Print($"playerpos is now {playerMotionParams.z_4}");
             // if ((x_init != playerMotionParams.x_0) || (y_init != playerMotionParams.y_2))
             // {
             //     Debug.Print($"Move from {x_init},{y_init} to {playerMotionParams.x_0},{playerMotionParams.y_2}   ({playerdat.playerObject.tileX}, {playerdat.playerObject.tileY})  {playerdat.playerObject.xpos},{playerdat.playerObject.ypos} ");
