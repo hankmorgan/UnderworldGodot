@@ -194,7 +194,7 @@ namespace Underworld
                 UW2OptionButtons[(int)OptionButtonIndices.HighDetailOn] = ArtLoader.CropImage(grOptBtns.LoadImageAt(9).GetImage(), croppingareas[4]);
                 UW2OptionButtons[(int)OptionButtonIndices.VHighDetailOff] = ArtLoader.CropImage(grOptBtns.LoadImageAt(4).GetImage(), croppingareas[5]);
                 UW2OptionButtons[(int)OptionButtonIndices.VHighDetailOn] = ArtLoader.CropImage(grOptBtns.LoadImageAt(9).GetImage(), croppingareas[5]);
-                UW2OptionButtons[(int)OptionButtonIndices.RestoreGameLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(14).GetImage(), croppingareas[7]);
+                UW2OptionButtons[(int)OptionButtonIndices.RestoreGameLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(14).GetImage(), croppingareas[8]);
                 UW2OptionButtons[(int)OptionButtonIndices.MusicIsOnLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(15).GetImage(), croppingareas[8]);
                 UW2OptionButtons[(int)OptionButtonIndices.MusicIsOffLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(15).GetImage(), croppingareas[7]);
                 UW2OptionButtons[(int)OptionButtonIndices.SoundIsOnLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(15).GetImage(), croppingareas[10]);
