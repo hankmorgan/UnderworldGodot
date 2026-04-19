@@ -6,8 +6,24 @@ namespace Underworld.Save.Tests;
 /// <summary>
 /// Round-trip tests for BGlobalWriter: load → serialize → byte-identical.
 /// </summary>
-public class BGlobalRoundTripTests
+[Collection("UWClassState")]
+public class BGlobalRoundTripTests : IDisposable
 {
+    private readonly string _origBasePath;
+    private readonly byte _origRes;
+
+    public BGlobalRoundTripTests()
+    {
+        _origBasePath = UWClass.BasePath;
+        _origRes = UWClass._RES;
+    }
+
+    public void Dispose()
+    {
+        UWClass.BasePath = _origBasePath;
+        UWClass._RES = _origRes;
+    }
+
     /// <summary>
     /// Load UW2 BGLOBALS.DAT, serialize via BGlobalWriter, assert byte-identical to original.
     /// </summary>

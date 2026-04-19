@@ -36,6 +36,7 @@ namespace Underworld
 
         public static void RefreshHealthFlask()
         {
+            if (instance == null) return;
             int level = (int)((float)((float)playerdat.play_hp / (float)playerdat.max_hp) * 12f);
             int startOffset = 0;
             if (playerdat.play_poison > 0)
@@ -57,6 +58,7 @@ namespace Underworld
 
         public static void RefreshManaFlask()
         {
+            if (instance == null) return;
             int level = (int)((float)((float)playerdat.play_mana / (float)playerdat.max_mana) * 12f);
             int startOffset = 25;
             for (int i = 0; i < 13; i++)
