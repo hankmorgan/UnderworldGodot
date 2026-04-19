@@ -18,6 +18,9 @@
     <!-- Pull in pure-logic SFX source files directly. Godot-dependent files
          live in src/audio/sfx/godot/ and are NOT referenced here. -->
     <Compile Include="..\..\src\audio\sfx\*.cs" />
+    <!-- SoundsDatLoader references UWClass for UW1/UW2 block-size selection;
+         include it so the test project can compile in isolation. -->
+    <Compile Include="..\..\src\base\UWClass.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -224,41 +224,116 @@ kicks off one voice; up to 9 voices (one per OPL2 channel) play concurrently.
 Implementation lives in `src/audio/sfx/`.
 
 UW2's SFX use pre-recorded `.voc` files for most sounds, falling back to the
-same TVFX path when a `.voc` is absent. Only the TVFX path is implemented in
-v1; UW2's VOC + fallback wiring is deferred.
+same TVFX path when a `.voc` is absent. The UW2 VOC path is fully implemented:
+mono 8-bit samples are stereo-baked at emit time using Miles AIL 2.0's
+`pan_graph` × V / 16129 curve (see [Positional audio](#positional-audio)
+below), then played through `AudioStreamPlayer`. Missing-VOC ids fall back
+to the TVFX sink.
 
 ## Data flow
 
 ```
- SOUNDS.DAT (24 × 5-byte records) ──┐
-                                    ├──► SoundEntry[]    [Godot main thread]
- UW.AD (TVFX patch bank)  ──────────┤
-                                    └──► TvfxPatch[]
-                                           │
- special_effects.SpecialEffect(2,id)       │
-            │                              │
-            ▼                              ▼
- SoundEffects.Play(id, pan)     →  TvfxSfxBackend (lifetime conversion)
-                                        │
-                                        ▼  SfxCommand via lock-free SPSC ring
- SfxStreamPlayer producer thread (60 Hz TVFX tick):
-   1. drain SPSC → StartKeyon on allocated voice
-   2. TvfxVoiceAllocator.ServiceAll:
-        for each non-Idle voice:
-          ServiceTick()    — advance 8-param state machine, phase check
-          EmitRegisters()  — write dirty OPL regs via IOplRegisterSink
-   3. OplChip.GenerateFrames(735)  (44100 Hz / 60 Hz = 735)
-   4. PushBuffer → AudioStreamGenerator
-                                        │
-                                        ▼
-                          Godot audio thread → Speakers / AudioBus
+ SOUNDS.DAT (UW1: 24 × 5-byte, UW2: 31 × 8-byte) ──┐
+                                                   ├─► SoundEntry[]   [Godot main thread]
+ UW.AD (TVFX patch bank) ──────────────────────────┤
+                                                   └─► TvfxPatch[]
+
+ Game event (trap / object / combat / etc.)
+   │
+   ├── UWsoundeffects.PlaySoundEffectAtAvatar(id, pan, velOffset)       — non-positional
+   ├── UWsoundeffects.PlaySoundEffectAtObject(id, uwObject, volDelta)   — positional, object-based
+   └── UWsoundeffects.PlaySoundEffectAtCoordinate(id, packedX, packedY, volDelta)
+            │
+            ▼
+       PositionalAudio.Sample(src, player, heading, baseVel, volDelta)
+            │                                    [pure math, no Godot/game deps]
+            ▼  SoundFalloff { Vol, Pan, Culled }
+       (if Culled → drop)
+            │
+            ▼
+       PlaySoundEffectAtAvatar(id, pan, velocityOffset = Vol - baseVel)
+            │
+  ┌─────────┴───────────────┐
+  │                         │
+  ▼ UW1                     ▼ UW2
+ Sfx.SoundEffects.Play   vocLoader.Load → mono int16
+  → TvfxSfxBackend        → StereoPanBake.Apply(vol, pan)  [Miles AIL2 pan_graph × V / 16129]
+  → SfxCommand via SPSC   → AudioStreamWav (16-bit stereo)
+  → producer thread       → main.instance.DigitalAudioPlayer
+  → OplChip → frames       → Godot audio thread
+  → AudioStreamGenerator
+            │
+            ▼
+ Godot audio thread → Speakers / AudioBus
 ```
+
+## Positional audio
+
+UW1 and UW2 compute a `(vol, pan)` pair per SFX trigger from source position,
+player position, player heading, and SOUNDS.DAT's per-sound base velocity.
+Both games use byte-for-byte identical math — traced from
+`UW1_asm.asm:64454-64921` (seg014_8AE) and `uw2_asm.asm:79351-79706`
+(Maybe3DAudioSource).
+
+**Math** lives in `src/audio/sfx/PositionalAudio.cs` as a pure function:
+
+```csharp
+SoundFalloff Sample(int srcX, int srcY, int playerX, int playerY,
+                    byte heading8, int baseVelocity, sbyte volDelta)
+    → { byte Vol; byte Pan; bool Culled; }
+```
+
+- **Coordinates** are packed `(tile << 3) | fine` — 8 units per tile.
+- **Distance** is Euclidean `sqrt(dx² + dy²)` via Newton-Raphson isqrt.
+- **Volume** — `raw = baseVel + volDelta`; if `dist < 8` unattenuated,
+  if `dist > 48` culled (sound dropped), else `raw × (48 - dist) / 40`,
+  clamped 0..0x7F.
+- **Pan** — cross-product `(dxNorm×cosθ - dyNorm×sinθ) >> 8` applied to
+  a 0x40-centred byte, where θ is the heading rotated 90° (matches the
+  asm's `0x4000 - (heading << 8)` trick). Operand order was resolved
+  audibly: see the code comment in `PositionalAudio.ComputePan` for the
+  asm-authoritative expression.
+
+**Stereo bake (UW2 VOC only).** `src/audio/sfx/StereoPanBake.cs` applies
+Miles AIL 2.0's `pan_graph × V / 16129` L/R split to a mono int16 buffer,
+producing stereo interleaved int16. Byte-accurate to the driver source at
+`external/AIL2/DMASOUND.ASM:287-294` (pan_graph LUT) and `:993-1006`
+(set_volume gain compute). The LUT is piecewise-linear with saturation at
+index 63 — both channels run at full 127 in the "centre dead zone"
+(`pan ∈ [63, 64]`), so only clearly off-centre pans produce audible
+stereo separation.
+
+**Miles native polarity:** pan byte 0 → hard right, 127 → hard left. This
+is the AIL 2.0 convention, opposite to MIDI CC 10 but matches the driver
+source this port targets.
+
+**UW1 OPL path:** the TVFX backend is mono hardware — pan is silently
+dropped (authentic AdLib behaviour). Volume attenuation flows through
+`velocityOffset` on `Sfx.SoundEffects.Play`.
+
+**Round-trip encoding:** `PlaySoundEffectAtCoordinate` computes an absolute
+vol from `PositionalAudio.Sample`, converts back to `velocityOffset =
+Vol - baseVel`, and forwards to `PlaySoundEffectAtAvatar`. The sink then
+recomputes `baseVel + velocityOffset = Vol`. This keeps a single internal
+API (`PlaySoundEffectAtAvatar(effectno, pan, velocityOffset)`) for both
+positional and non-positional callers without changing 22 existing call
+sites.
+
+**Test-time resolutions** — three ambiguities the RE traces couldn't pin
+down from the asm alone, all resolved audibly in-game:
+
+| Ambiguity | Resolution |
+|---|---|
+| Heading bit-packing | `heading8 = (octant << 5) \| subAngle`, UW2 form |
+| Sin/cos operand order | `(dxNorm × fwdX - dyNorm × fwdY) >> 8`, matches asm & upstream |
+| L/R polarity | Miles native (pan=0 → right) |
 
 ## Backend selection
 
 v1 ships the OPL/TVFX backend only. Other `synth` settings log a one-time
 warning and SFX are silent for those users (no regression — they had no SFX
-before).
+before). Note that the OPL backend is UW1-specific; UW2 uses the VOC path
+regardless of `synth`, so UW2 SFX are audible on all synth choices.
 
 | `synth` | SFX backend | Status |
 |---|---|---|
@@ -276,8 +351,10 @@ before).
 
 ### TVFX engine (`src/audio/sfx/`, Godot-independent)
 
-- **`SoundsDatLoader`** — 5-byte record parser. Returns `SoundEntry[]` (PatchNum,
-  Note, Velocity, DurationWord).
+- **`SoundsDatLoader`** — record parser for both games. UW1 uses 5-byte records
+  (little-endian DurationWord); UW2 uses 8-byte records (big-endian DurationWord,
+  per `uw2_asm.asm:83683-83688`). Block size and endianness are selected from
+  `UWClass._RES`. Returns `SoundEntry[]` (PatchNum, Note, Velocity, DurationWord).
 - **`TvfxPatch`** — header parser. Fixed 54-byte header + optional 8-byte ADSR
   block (present iff `keyon_f_offset != 0x34`). Reads 8 `(InitVal, KeyonOffset,
   ReleaseOffset)` param triples.
@@ -467,9 +544,10 @@ Under `tools/` — not shipped to end users, but useful for verification:
 
 `tests/Underworld.Sfx.Tests/` — xUnit project targeting `net10.0`. Compiles the
 pure-logic SFX source files (everything not under `godot/`) via `<Compile Include>`
-so tests run on plain .NET without a Godot runtime. 47 tests covering:
+so tests run on plain .NET without a Godot runtime. 68 tests covering:
 
-- `SoundsDatLoader` — golden UW1 fixture, field ranges, LE decode.
+- `SoundsDatLoader` — golden UW1 fixture, field ranges, UW1 LE decode,
+  UW2 BE decode regression (per `uw2_asm.asm:83683-83688`).
 - `TvfxPatchBank` / `TvfxPatch` — index parsing, opt-block sentinel, per-field
   parsing, coverage check (all 24 SFX resolve to valid TVFX patches).
 - `TvfxVoice` — scaffold / StartKeyon init / counter priming.
@@ -481,13 +559,21 @@ so tests run on plain .NET without a Godot runtime. 47 tests covering:
   release-phase level clamp.
 - Voice allocator — 9-slot saturation, reallocation of Idle voices.
 - SPSC queue — FIFO, full-detection, concurrent-producer-consumer smoke.
+- `PositionalAudio` — 12 tests: distance bands (0/7/8/28/48/49), cull, volume
+  clamp edges, pan symmetry under mirror sources, pan behaviour under heading
+  rotation, pan in-range clamping.
+- `StereoPanBake` — 8 tests: pan centre equality, hard-left/right Miles native,
+  saturation edge at pan 63/64, volume attenuation scaling, interleaved output
+  length, pan_graph LUT spot-checks (0, 1, 62, 63, 64, 127).
 
 ## File index (SFX)
 
 | File | Purpose |
 |------|---------|
 | `src/audio/sfx/SoundEntry.cs` | SOUNDS.DAT record (pure data) |
-| `src/audio/sfx/SoundsDatLoader.cs` | 5-byte record parser |
+| `src/audio/sfx/SoundsDatLoader.cs` | 5-byte (UW1 LE) / 8-byte (UW2 BE) record parser |
+| `src/audio/sfx/PositionalAudio.cs` | Pure falloff math (vol, pan, cull) |
+| `src/audio/sfx/StereoPanBake.cs` | Miles AIL2 pan_graph × V / 16129 stereo bake |
 | `src/audio/sfx/TvfxPatch.cs` | Header parser, opt-block detect |
 | `src/audio/sfx/TvfxPatchBank.cs` | UW.AD index walker + lazy patch load |
 | `src/audio/sfx/TvfxVoice.cs` | State machine, stream VM, register emitter |
@@ -499,6 +585,7 @@ so tests run on plain .NET without a Godot runtime. 47 tests covering:
 | `src/audio/sfx/godot/SoundEffects.cs` | Static façade + backend selection |
 | `src/audio/sfx/godot/SfxStreamPlayer.cs` | Godot node, producer thread, OplChip owner, dev-menu |
 | `src/audio/sfx/godot/TvfxSfxBackend.cs` | Bank + player wiring + lifetime conversion |
+| `src/audio/UWSoundEffects.cs` | Public `PlaySoundEffect*` façade; UW1/UW2 dispatch; UW2 VOC stereo bake |
 
 External additions:
 

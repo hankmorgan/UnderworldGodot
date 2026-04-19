@@ -12,6 +12,8 @@ public readonly record struct SoundEntry(
     byte PatchNum,      // TVFX patch number (bank=1 for SFX).
     byte Note,          // MIDI note — used by MT-32 backend; TVFX engine ignores it.
     byte Velocity,      // 0..127, clamped on trigger after any per-call offset.
-    ushort DurationWord // bytes 3..4 LE. Divided by 16 in UW1 to yield a voice-lifetime
-                        // counter. 0xFFFF = infinite (caller stops externally).
+    ushort DurationWord // Raw duration word from SOUNDS.DAT bytes 3..4.
+                        // UW1: little-endian. UW2: big-endian (uw2_asm.asm:83683-83688).
+                        // UW1 voice-lifetime: divide by 16 (seg014_F69 etc.).
+                        // 0xFFFF = infinite (caller stops externally).
 );
