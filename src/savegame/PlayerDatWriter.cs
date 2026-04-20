@@ -15,7 +15,10 @@ namespace Underworld
         public static byte[] Serialize()
         {
             int lastSlot = LastPopulatedInventorySlot();
-            int fileLen = playerdat.InventoryPtr + (lastSlot + 1) * 8;
+            // Slot i is stored at PTR = InventoryPtr + (i-1)*8 per the load loop in
+            // playerdatutil.cs:Load which starts oIndex=1 at CurrentInventoryPtr=InventoryPtr.
+            // So N populated slots occupy [InventoryPtr, InventoryPtr + N*8).
+            int fileLen = playerdat.InventoryPtr + lastSlot * 8;
 
             // pdat is oversized (InventoryPtr + 512*8) after load; trim to real file length.
             byte[] plain = new byte[fileLen];

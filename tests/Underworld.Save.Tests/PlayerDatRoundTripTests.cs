@@ -36,8 +36,10 @@ public class PlayerDatRoundTripTests : IDisposable
         byte[] encrypted = Underworld.PlayerDatWriter.Serialize();
         byte[] decrypted = Underworld.playerdat.EncryptDecryptUW1(encrypted, encrypted[0]);
 
+        // File length mirrors the load loop in playerdatutil.cs:Load: slot i lives at
+        // PTR = InventoryPtr + (i-1)*8, so N populated slots occupy N*8 bytes past InventoryPtr.
         int expectedLen = Underworld.playerdat.InventoryPtr
-            + (Underworld.PlayerDatWriter.LastPopulatedInventorySlot() + 1) * 8;
+            + Underworld.PlayerDatWriter.LastPopulatedInventorySlot() * 8;
         Assert.Equal(expectedLen, decrypted.Length);
         for (int i = 0; i < expectedLen; i++)
         {
@@ -58,8 +60,10 @@ public class PlayerDatRoundTripTests : IDisposable
         byte[] encrypted = Underworld.PlayerDatWriter.Serialize();
         byte[] decrypted = Underworld.playerdat.EncryptDecryptUW2(encrypted, encrypted[0]);
 
+        // File length mirrors the load loop in playerdatutil.cs:Load: slot i lives at
+        // PTR = InventoryPtr + (i-1)*8, so N populated slots occupy N*8 bytes past InventoryPtr.
         int expectedLen = Underworld.playerdat.InventoryPtr
-            + (Underworld.PlayerDatWriter.LastPopulatedInventorySlot() + 1) * 8;
+            + Underworld.PlayerDatWriter.LastPopulatedInventorySlot() * 8;
         Assert.Equal(expectedLen, decrypted.Length);
         for (int i = 0; i < expectedLen; i++)
         {
