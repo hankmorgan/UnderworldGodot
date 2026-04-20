@@ -263,18 +263,15 @@ namespace Underworld
         /// <param name="folder"></param>
         public void JourneyOnwards(string folder)
         {
-            GD.Print($"[JourneyOnwards] enter folder={folder}");
             playerdat.previousLightLevel = -1;
             playerdat.currentfolder = folder;
             playerdat.LoadPlayerDat(datafolder: folder);
-            GD.Print("[JourneyOnwards] after LoadPlayerDat");
 
             // //Common launch actions
             UWTileMap.LoadTileMap(
                     newLevelNo: playerdat.dungeon_level - 1,
                     datafolder: folder,
                     newGameSession: true);
-            GD.Print("[JourneyOnwards] after LoadTileMap");
 
             //add player object data to the map
             for (int i = 0; i <= 0x1A; i++)
@@ -285,7 +282,6 @@ namespace Underworld
             playerdat.playerObject.link = 0;//prevents infinite loops.
             playerdat.playerObject.tileX = playerdat.playerObject.npc_xhome;
             playerdat.playerObject.tileY = playerdat.playerObject.npc_yhome;
-            GD.Print($"[JourneyOnwards] after 27-byte copy+fixups; tileX={playerdat.playerObject.tileX} tileY={playerdat.playerObject.tileY} next={playerdat.playerObject.next} link={playerdat.playerObject.link}");
 
             if (folder.ToUpper() == "DATA")
             {
@@ -301,19 +297,15 @@ namespace Underworld
                         Teleportation.InitialisePlayerOnLevelOrPositionChange(32, 1);
                         break;
                 }
-                GD.Print("[JourneyOnwards] after Teleportation (new game path)");
             }
             else
             {
                 playerdat.PlacePlayerInTile(playerdat.playerObject.tileX, playerdat.playerObject.tileY);
-                GD.Print("[JourneyOnwards] after PlacePlayerInTile (restore path)");
             }
 
             //Update weight display
             uimanager.RefreshWeightDisplay();
-            GD.Print("[JourneyOnwards] after RefreshWeightDisplay");
             playerdat.PlayerStatusUpdate();
-            GD.Print("[JourneyOnwards] after PlayerStatusUpdate");
 
             //restore some UI elements that have been previously hidden as part of the splash intro
             uimanager.EnableDisable(uimanager.instance.uw1UI, UWClass._RES != UWClass.GAME_UW2);
@@ -328,7 +320,6 @@ namespace Underworld
             uimanager.BackPackStart = 0;
             uimanager.EnableDisable(uimanager.instance.ArrowUp, false);
             uimanager.EnableDisable(uimanager.instance.ArrowDown, false);
-            GD.Print("[JourneyOnwards] after UI enable/disable block");
 
             if (!playerdat.MusicEnabled)
             {
@@ -336,7 +327,6 @@ namespace Underworld
             }
             instance.InitViews();
             SetPanelMode(0);
-            GD.Print("[JourneyOnwards] after InitViews+SetPanelMode");
 
             //Apply player motion on game load.
             motion.PlayerMotion(0x40);
@@ -344,7 +334,6 @@ namespace Underworld
             {//In UW2 the theme music will always change on game load or if coming from main menu. In UW1 it will only happen when loading a game from the options menu. In that case the call to change themes is in the ui code for the options menu
                 XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic(0));
             }
-            GD.Print("[JourneyOnwards] after PlayerMotion — load complete");
         }
 
         private void _on_create_character_gui_input(InputEvent @event)
