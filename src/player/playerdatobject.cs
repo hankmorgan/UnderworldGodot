@@ -70,8 +70,15 @@ namespace Underworld
             {
                 var tile = UWTileMap.current_tilemap.Tiles[newTileX, newTileY];
                 var obj = UWTileMap.current_tilemap.LevelObjects[1];//the player object.
-                obj.next = tile.indexObjectList;
-                tile.indexObjectList = 1;//insert into the tile object list so it can be subject to collisions.
+                // Idempotent insertion: if the player is already at the head of this
+                // tile's object list (e.g. on restore from a save written mid-tile),
+                // reinserting would set obj.next = 1 and create a self-loop — which
+                // hangs any later walker of the tile chain (motion, triggers, etc).
+                if (tile.indexObjectList != 1)
+                {
+                    obj.next = tile.indexObjectList;
+                    tile.indexObjectList = 1;//insert into the tile object list so it can be subject to collisions.
+                }
                 obj.tileX = newTileX; obj.tileY = newTileY;
                 if (_RES == GAME_UW2)
                 {
