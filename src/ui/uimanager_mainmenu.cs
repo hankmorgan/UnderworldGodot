@@ -258,6 +258,10 @@ namespace Underworld
             yield return 0;
         }
 
+        /// <summary>
+        /// Loads the save game and map from the selected SAVE game folder ".\SAVEx"
+        /// </summary>
+        /// <param name="folder"></param>
         public void JourneyOnwards(string folder)
         {
             playerdat.previousLightLevel = -1;
@@ -328,6 +332,10 @@ namespace Underworld
             
             //Apply player motion on game load.
             motion.PlayerMotion(0x40);
+            if (UWClass._RES == UWClass.GAME_UW2)
+            {//In UW2 the theme music will always change on game load or if coming from main menu. In UW1 it will only happen when loading a game from the options menu. In that case the call to change themes is in the ui code for the options menu
+                XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic(0));
+            }
         }
 
         private void _on_create_character_gui_input(InputEvent @event)

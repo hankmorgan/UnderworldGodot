@@ -408,6 +408,10 @@ namespace Underworld
                                             AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_no_save_game_there_));
                                         }
                                         ReturnToGameFromOptions();
+                                        if (UWClass._RES != UWClass.GAME_UW2)
+                                        {//UW1 will only change theme on in-game save load. Not when loading from main menu. See JourneyOnwards() for change of theme handling in UW2
+                                            XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic(0));
+                                        }
                                         break;
                                     }
                                 case 5://cancel and return to top
