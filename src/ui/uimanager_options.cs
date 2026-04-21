@@ -418,20 +418,31 @@ namespace Underworld
                                             ? System.IO.File.ReadAllText(descPath)
                                             : $"Save {extra_arg_0}";
                                         int stringId;
-                                        try
+                                        if (UWClass._RES != UWClass.GAME_UW1)
                                         {
-                                            SaveGame.Save((int)extra_arg_0, description);
-                                            stringId = GameStrings.str_save_game_succeeded_;
-                                        }
-                                        catch (System.IO.IOException ex)
-                                        {
-                                            GD.PrintErr($"SaveGame.Save failed: {ex}");
+                                            // UW2 save is unsupported pending an upstream UW2 lev.ark compressor.
+                                            // Writing uncompressed UW2 blocks would fail DOS load (>80 uncompressed
+                                            // blocks crash vanilla UW2.EXE). Until the compressor is ported, refuse.
+                                            GD.PrintErr("UW2 save pending upstream compressor — not yet supported");
                                             stringId = GameStrings.str_save_game_failed_;
                                         }
-                                        catch (System.UnauthorizedAccessException ex)
+                                        else
                                         {
-                                            GD.PrintErr($"SaveGame.Save failed: {ex}");
-                                            stringId = GameStrings.str_save_game_failed_;
+                                            try
+                                            {
+                                                SaveGame.Save((int)extra_arg_0, description);
+                                                stringId = GameStrings.str_save_game_succeeded_;
+                                            }
+                                            catch (System.IO.IOException ex)
+                                            {
+                                                GD.PrintErr($"SaveGame.Save failed: {ex}");
+                                                stringId = GameStrings.str_save_game_failed_;
+                                            }
+                                            catch (System.UnauthorizedAccessException ex)
+                                            {
+                                                GD.PrintErr($"SaveGame.Save failed: {ex}");
+                                                stringId = GameStrings.str_save_game_failed_;
+                                            }
                                         }
                                         listsaves();
                                         instance.scroll.Clear();
