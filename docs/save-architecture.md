@@ -99,23 +99,28 @@ re-reads unmutated blocks from disk at save time.
 
 ## Known limitations
 
-**UW2 lev.ark is written uncompressed (compression flag = 0).** The port's
-`RepackUW2` compressor in `dataloader.cs:148` is a documented stub (copy-
-record logic commented out as "THIS IS WRONG"). Writing uncompressed
-sidesteps it. Files are roughly 3.8× larger than DOS originals
-(~1.4 MB vs ~367 KB for a saved level). **DOS `UW.EXE` cannot load these
-files.** Cross-compat is a follow-up; finish `RepackUW2` first.
+**UW2 save is UI-gated pending upstream compressor.** The `SaveGame.Save`
+orchestrator and all UW2 writers are still present and tested — they produce
+files that round-trip through the port's own loader — but the Save button
+in the UW2 Options menu refuses to invoke them. Rationale: the port's
+`RepackUW2` is a stub, and writing uncompressed UW2 blocks (which load
+fine in the port) causes DOS `UW.EXE` to crash on any save with >80
+uncompressed blocks. Once the upstream compressor lands, remove the gate.
+
+**UW1 save is DOS-compatible in format.** UW1 `lev.ark` is uncompressed by
+spec, so the compression issue doesn't apply. DOS round-trip compatibility
+has been format-checked but not yet verified by an end-to-end DOSBox test
+— that is the next validation step.
 
 **No atomic write.** If `File.WriteAllBytes` fails mid-sequence (disk full,
 permission loss), `SAVE{n}/` is left in a partial state that the loader may
 crash on. Mitigation: write all files to `SAVE{n}.tmp/` then
 `Directory.Move` on success. Not implemented.
 
-**Automap visited-tile state and map-notes pass through from the source
-ARK.** If the player walked new tiles since last level-load, those visited
-tiles are not yet saved back to `lev.ark` automap block. UW1 same issue.
-Requires serialising `automap.automaps[i]` and `automapnote.automapsnotes[i]`
-back into ARK blocks `i+27`/`i+36` (UW1) or `i+160`/`i+240` (UW2).
+**Automap visited-tile state passes through from source ARK.** Map notes
+ARE now persisted (see `LevArkWriter` automap-notes reconstruction), but
+visited-tile shading is not: requires serialising `automap.automaps[i]`
+back into ARK blocks `i+27` (UW1) or `i+160` (UW2). Noted as follow-up.
 
 **UI polish.** Description fallback is `"Save {slot}"`; no text-input prompt
 for custom descriptions. Existing slot DESC is reused on overwrite. Save-menu
