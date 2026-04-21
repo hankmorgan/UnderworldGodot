@@ -342,6 +342,23 @@ namespace Underworld
 
         public static void DestroyTileMapAndContents(Node3D the_tiles)
         {
+            // Clear uwObject.instance references before freeing the scene nodes they
+            // point at. Without this, LevelObjects[].instance retains stale references
+            // to QueueFree'd nodes until ObjectCreator.RenderObject overwrites them on
+            // the next level load — a one-frame window where touching instance.uwnode
+            // dereferences a freed Godot node. Mirrors the per-object cleanup already
+            // in objectInstance.RedrawFull.
+            if (current_tilemap != null && current_tilemap.LevelObjects != null)
+            {
+                foreach (var obj in current_tilemap.LevelObjects)
+                {
+                    if (obj != null && obj.instance != null)
+                    {
+                        obj.instance = null;
+                    }
+                }
+            }
+
             //Clear out old data
             foreach (var child in the_tiles.GetChildren())
             {
