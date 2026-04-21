@@ -647,12 +647,18 @@ namespace Underworld
 
 
         /// <summary>
-        /// Outright kills an npc
+        /// Outright kills an npc, unless SpecialDeathCases mode 0 signals "stay alive"
+        /// (e.g. Thorlson regenerates, Golem becomes non-hostile instead of dying).
         /// </summary>
         /// <param name="critter"></param>
         public static void KillCritter(uwObject critter)
         {
-            SpecialDeathCases(critter, 0);
+            if (!SpecialDeathCases(critter, 0))
+            {
+                // e.g. Thorlson (npc_whoami == 0xB) and Golem (0x16) set HP / state
+                // inside SpecialDeathCases and signal "do not proceed with death".
+                return;
+            }
             SpecialDeathCases(critter, 1);
             DropRemainsAndLoot(critter);
             //remove from tile and free object
