@@ -75,7 +75,7 @@ namespace Underworld
             {
                 var addptr = 0;
                 int counter =0;
-                var NoOfNotes = block.Data.GetUpperBound(0) / 54;
+                var NoOfNotes = block.Data.Length / 54;
                 while ((addptr<= block.Data.GetUpperBound(0)) && (counter<NoOfNotes))
                 {
                     //construct note
