@@ -105,6 +105,18 @@ namespace Underworld
                 }
             }
 
+            // Replace automap-note blocks (240..319) with the in-memory notes when non-empty.
+            if (automapnote.automapsnotes != null)
+            {
+                for (int lvl = 0; lvl < 80; lvl++)
+                {
+                    if (automapnote.automapsnotes[lvl] != null && automapnote.automapsnotes[lvl].notes.Count > 0)
+                    {
+                        blockData[240 + lvl] = automapnote.automapsnotes[lvl].Serialize();
+                    }
+                }
+            }
+
             // ---- Step 2: compute layout ----------------------------------------
             // Header size: 4 (count) + 2 (padding) + N * (4+4+4+4) = 6 + N*16
             int headerSize = 6 + noOfBlocks * 16;
@@ -256,6 +268,20 @@ namespace Underworld
                         {
                             blockData[lvl] = SerializeLevelBlock(live);
                         }
+                    }
+                }
+            }
+
+            // Replace automap-note blocks (36..44) with the in-memory notes when non-empty.
+            // Without this, newly-created notes are silently lost on save because
+            // ExtractSourceBlock returns the pre-play bytes from the source ARK.
+            if (automapnote.automapsnotes != null)
+            {
+                for (int lvl = 0; lvl < 9; lvl++)
+                {
+                    if (automapnote.automapsnotes[lvl] != null && automapnote.automapsnotes[lvl].notes.Count > 0)
+                    {
+                        blockData[36 + lvl] = automapnote.automapsnotes[lvl].Serialize();
                     }
                 }
             }
