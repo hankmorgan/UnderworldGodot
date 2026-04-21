@@ -31,21 +31,21 @@ namespace Underworld
         }
         public automapnote(int LevelNo, int gameNo)
         {
-            int blockno;  
-            int noOfPossibleBlocks; 
-            int thisAddress;        
+            int blockno;
+            int noOfPossibleBlocks;
+            int thisAddress;
             int startblock;
             if (gameNo == GAME_UW2)
             {
                 blockno = 240 + LevelNo;
-                noOfPossibleBlocks = 80;  
-                startblock =240;              
+                noOfPossibleBlocks = 80;
+                startblock =240;
             }
             else
             {
                 blockno = LevelNo + 36;
-                noOfPossibleBlocks = 9; 
-                startblock = 36;              
+                noOfPossibleBlocks = 9;
+                startblock = 36;
             }
             thisAddress = GetBlockAddress(blockno, LevArkLoader.lev_ark_file_data);
             if (thisAddress==0)
@@ -68,15 +68,15 @@ namespace Underworld
                     }
                 }
             }
-            
-            
-            
+
+
+
             if (DataLoader.LoadUWBlock(LevArkLoader.lev_ark_file_data, blockno, EOF-thisAddress, out UWBlock block))
             {
                 var addptr = 0;
                 int counter =0;
                 var NoOfNotes = block.Data.GetUpperBound(0) / 54;
-                while ((addptr<= block.Data.GetUpperBound(0)) && (counter<NoOfNotes))  
+                while ((addptr<= block.Data.GetUpperBound(0)) && (counter<NoOfNotes))
                 {
                     //construct note
                     if (block.Data[addptr]!='\0')//if not null
@@ -85,7 +85,7 @@ namespace Underworld
                         var nextchar = (char)block.Data[addptr];
                         var fullstring = "";
                         while ((charptr<0x31) && (nextchar!='\0'))
-                        {                            
+                        {
                             fullstring+=(char)block.Data[addptr+charptr];
                             charptr++;
                             nextchar= (char)block.Data[addptr+charptr];
@@ -96,8 +96,46 @@ namespace Underworld
                     }
                     addptr+=54;
                     counter++;
-                }                        
+                }
             }
+        }
+
+        /// <summary>
+        /// Parameterless constructor for tests and for writer flows that populate
+        /// the notes list independently of lev.ark load.
+        /// </summary>
+        public automapnote() { }
+
+        /// <summary>
+        /// Serialises the notes list back to the 54-byte-per-record block layout
+        /// used in lev.ark map-notes blocks (UW1 blocks 36..44, UW2 blocks 240..319).
+        /// Each record: zero-terminated string from offset 0 (max 0x31 bytes),
+        /// Int16 posX at offset 0x32, Int16 posY at offset 0x34.
+        /// Returns an empty byte array when there are no notes.
+        /// </summary>
+        public byte[] Serialize()
+        {
+            if (notes == null || notes.Count == 0) return System.Array.Empty<byte>();
+
+            byte[] output = new byte[notes.Count * 54];
+            for (int i = 0; i < notes.Count; i++)
+            {
+                int recordStart = i * 54;
+                var n = notes[i];
+                string text = n.notetext ?? "";
+
+                int copyLen = System.Math.Min(text.Length, 0x31);
+                for (int c = 0; c < copyLen; c++)
+                {
+                    output[recordStart + c] = (byte)text[c];
+                }
+
+                output[recordStart + 0x32] = (byte)(n.posX & 0xFF);
+                output[recordStart + 0x33] = (byte)((n.posX >> 8) & 0xFF);
+                output[recordStart + 0x34] = (byte)(n.posY & 0xFF);
+                output[recordStart + 0x35] = (byte)((n.posY >> 8) & 0xFF);
+            }
+            return output;
         }    
 
         public class mapnotetext:UWClass
