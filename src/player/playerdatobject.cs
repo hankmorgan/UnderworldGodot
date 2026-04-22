@@ -70,15 +70,17 @@ namespace Underworld
             {
                 var tile = UWTileMap.current_tilemap.Tiles[newTileX, newTileY];
                 var obj = UWTileMap.current_tilemap.LevelObjects[1];//the player object.
-                // Idempotent insertion: if the player is already at the head of this
-                // tile's object list (e.g. on restore from a save written mid-tile),
-                // reinserting would set obj.next = 1 and create a self-loop — which
-                // hangs any later walker of the tile chain (motion, triggers, etc).
-                if (tile.indexObjectList != 1)
-                {
-                    obj.next = tile.indexObjectList;
-                    tile.indexObjectList = 1;//insert into the tile object list so it can be subject to collisions.
-                }
+                // Unlink slot 1 (player) from this tile's chain if it appears anywhere
+                // in it — otherwise inserting at head again creates a cycle. On restore
+                // from a save written while the player was in this tile, slot 1 may be:
+                //   - at the head (player last placed),
+                //   - mid-chain (NPCs moved into the tile after the player was placed),
+                //   - absent (player arrived from elsewhere).
+                // RemoveObjectFromLinkedList handles all three cases; for "absent" it
+                // walks the chain to 0 and returns false, leaving the chain intact.
+                ObjectRemover_OLD.RemoveObjectFromLinkedList(tile.indexObjectList, 1, UWTileMap.current_tilemap.LevelObjects, tile.Ptr + 2);
+                obj.next = tile.indexObjectList;
+                tile.indexObjectList = 1;//insert into the tile object list so it can be subject to collisions.
                 obj.tileX = newTileX; obj.tileY = newTileY;
                 if (_RES == GAME_UW2)
                 {
