@@ -73,6 +73,9 @@ namespace Underworld
 
                 MainMenuButtons[3].Size = new Vector2(580, 100);
                 MainMenuButtons[3].Position = new Vector2(348, 584);
+
+                //Call repack test
+                Repacker.TestRepack(0);
             }
             else
             {
