@@ -20,7 +20,22 @@ namespace Underworld
 
             StashLiveStateToPdat();
 
-            File.WriteAllBytes(Path.Combine(saveDir, "DESC"), Encoding.ASCII.GetBytes(description ?? "Quick save"));
+            // DESC in UW1 DOS saves is a single byte — seemingly an in-use/slot
+            // indicator rather than a textual description. Writing a multi-byte
+            // ASCII description leaves trailing junk that DOS interprets
+            // inconsistently when enumerating save slots.
+            //
+            // We pack the first character of `description` into the single
+            // byte when possible; the UI doesn't actually surface the string
+            // in the DOS load picker anyway (it shows "Save 1", "Save 2" etc.
+            // based on slot number).
+            byte descByte = 0x01;
+            if (!string.IsNullOrEmpty(description))
+            {
+                byte firstChar = Encoding.ASCII.GetBytes(description.Substring(0, 1))[0];
+                if (firstChar != 0) descByte = firstChar;
+            }
+            File.WriteAllBytes(Path.Combine(saveDir, "DESC"), new[] { descByte });
             File.WriteAllBytes(Path.Combine(saveDir, "PLAYER.DAT"), PlayerDatWriter.Serialize());
             File.WriteAllBytes(Path.Combine(saveDir, "BGLOBALS.DAT"), BGlobalWriter.Serialize(bglobal.bGlobals));
             File.WriteAllBytes(Path.Combine(saveDir, "LEV.ARK"), LevArkWriter.Serialize());

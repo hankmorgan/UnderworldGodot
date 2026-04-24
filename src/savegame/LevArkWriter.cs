@@ -272,6 +272,25 @@ namespace Underworld
                 }
             }
 
+            // Replace automap blocks (27..35) with the in-memory automap buffer
+            // for any visited level. DOS UW.EXE writes at least block 27 (the
+            // current level's automap) on every save; without it, UW.EXE treats
+            // the level as un-automapped and may mis-render the automap view.
+            //
+            // Each per-level automap buffer is a fixed 4096 bytes (64×64 tiles
+            // × 1 byte/tile of visited+display flags).
+            if (automap.automaps != null)
+            {
+                for (int lvl = 0; lvl < 9; lvl++)
+                {
+                    if (automap.automaps[lvl]?.buffer != null &&
+                        automap.automaps[lvl].buffer.Length == 64 * 64)
+                    {
+                        blockData[27 + lvl] = automap.automaps[lvl].buffer;
+                    }
+                }
+            }
+
             // Replace automap-note blocks (36..44) with the in-memory notes when non-empty.
             // Without this, newly-created notes are silently lost on save because
             // ExtractSourceBlock returns the pre-play bytes from the source ARK.

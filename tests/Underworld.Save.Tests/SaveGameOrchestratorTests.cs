@@ -164,30 +164,31 @@ public class SaveGameOrchestratorTests : IDisposable
     // -------------------------------------------------------------------------
 
     [Fact]
-    public void Save_DescContainsExactAsciiBytes()
+    public void Save_DescIsExactlyOneByte()
     {
+        // DOS UW.EXE writes a single-byte DESC file (an in-use flag, not a
+        // user-visible description). Writing more than one byte causes the
+        // DOS load picker to read trailing junk.
         SetupUw1State();
         UWClass.BasePath = _tempRoot;
-        const string desc = "test desc";
 
-        SaveGame.Save(3, desc);
+        SaveGame.Save(3, "test desc");
 
-        string written = File.ReadAllText(Path.Combine(_tempRoot, "SAVE3", "DESC"), Encoding.ASCII);
-        Assert.Equal(desc, written);
+        byte[] raw = File.ReadAllBytes(Path.Combine(_tempRoot, "SAVE3", "DESC"));
+        Assert.Equal(1, raw.Length);
     }
 
     [Fact]
-    public void Save_DescContainsNoNullTerminator()
+    public void Save_DescEncodesFirstCharacter()
     {
         SetupUw1State();
         UWClass.BasePath = _tempRoot;
-        const string desc = "no null";
 
-        SaveGame.Save(4, desc);
+        SaveGame.Save(4, "hello");
 
         byte[] raw = File.ReadAllBytes(Path.Combine(_tempRoot, "SAVE4", "DESC"));
-        Assert.Equal(Encoding.ASCII.GetByteCount(desc), raw.Length);
-        Assert.DoesNotContain((byte)0x00, raw);
+        Assert.Single(raw);
+        Assert.Equal((byte)'h', raw[0]);
     }
 
     // -------------------------------------------------------------------------
@@ -228,18 +229,19 @@ public class SaveGameOrchestratorTests : IDisposable
     [Fact]
     public void Save_Uw2_OverwritesExistingFiles()
     {
-        // First save
+        // DESC is a single byte (DOS format) — the first character encodes
+        // something close to a slot-in-use flag. Overwrite must still replace
+        // the byte, not append.
         SetupUw2State();
         UWClass.BasePath = _tempRoot;
         SaveGame.Save(3, "first");
 
         string descPath = Path.Combine(_tempRoot, "SAVE3", "DESC");
-        Assert.Equal("first", File.ReadAllText(descPath, Encoding.ASCII));
+        Assert.Equal(new byte[] { (byte)'f' }, File.ReadAllBytes(descPath));
 
-        // Second save — must overwrite DESC (re-setup state since BasePath changed)
         SetupUw2State();
         UWClass.BasePath = _tempRoot;
         SaveGame.Save(3, "second");
-        Assert.Equal("second", File.ReadAllText(descPath, Encoding.ASCII));
+        Assert.Equal(new byte[] { (byte)'s' }, File.ReadAllBytes(descPath));
     }
 }

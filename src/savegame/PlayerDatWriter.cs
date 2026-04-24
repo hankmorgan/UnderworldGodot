@@ -32,16 +32,23 @@ namespace Underworld
         }
 
         /// <summary>
-        /// Returns the highest index i where playerdat.InventoryObjects[i] != null.
-        /// Returns 0 if no slots are populated (slot 0 is unused by convention — see
-        /// the load loop in playerdatutil.cs which starts oIndex at 1).
+        /// Returns the highest index i where playerdat.InventoryObjects[i] refers
+        /// to an object with item_id != 0. Slots with item_id == 0 are empty and
+        /// DOS saves truncate them off the end of the file — an empty-inventory
+        /// DOS PLAYER.DAT is exactly InventoryPtr bytes long.
+        ///
+        /// Checking != null is not enough: playerdatutil.cs:Load creates a
+        /// non-null uwObject for every 8-byte chunk past InventoryPtr in the
+        /// source file, regardless of the item_id stored there. If a previous
+        /// save wrote N slots, we'd carry them forward as "populated" even
+        /// after they were cleared.
         /// </summary>
         public static int LastPopulatedInventorySlot()
         {
             var inv = playerdat.InventoryObjects;
             for (int i = inv.GetUpperBound(0); i >= 1; i--)
             {
-                if (inv[i] != null) return i;
+                if (inv[i] != null && inv[i].item_id != 0) return i;
             }
             return 0;
         }
