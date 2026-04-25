@@ -292,8 +292,18 @@ own loader would re-read it and hit the cycle). Instead,
 PLAYER.DAT bytes only** after the writer returns and before the
 file write. In-memory pdat stays at 0; on-disk pdat has `link = 1`.
 
-**Semantics: TBD.** "What does `link = 1` actually flag?" — same
-RE follow-up as §5.
+**Semantics: partially understood.** A code-review pass on the UW.EXE
+disassembly identified `PlayerObject_dseg_7274` as the far-pointer slot
+DOS code uses to address the player object record (`les bx, ...`),
+which lines up the player's `link` field at `[bx+6]` — exactly
+pdat[0xDB-0xDC] given `PlayerObjectStoragePTR = 0xD5`. The reset/
+teardown routine `ovr134_22` is observed masking `[bx+6]` with `0x3F`
+(clearing link bits, preserving owner) AND writing `[bx+1Ah] = 0xFD`
+(the `npc_whoami` sentinel — confirms the §3 marker), which strongly
+implies the link bits gate something the reset path tears down. The
+exact Journey-Onward read site that propagates link → "show inventory"
+hasn't been pinned without IDA database access. Filed as the same
+follow-up as §5.
 
 ### Diagnostic workflow
 
@@ -308,9 +318,9 @@ routine for PLAYER.DAT comparison. Tools:
   startup, so pushed files only register if they were in the
   host source dir at `load_bundle` time — populate the host save
   dir before reloading the bundle.
-- A small Python helper in `tests/scripts/decrypt_pdat.py`
-  (TODO: extract from the inline scripts used during diagnosis)
-  decrypts UW1 PLAYER.DAT for byte-level comparison.
+- UW1 PLAYER.DAT decryption is symmetric (same routine encrypts and
+  decrypts); a 6-line Python implementation of the loop in
+  `playerdatutil.cs:99` is sufficient for byte-level diff work.
 
 ### Open follow-ups
 

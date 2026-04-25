@@ -23,7 +23,7 @@ namespace Underworld
             // a clean .next = 0 player rather than the chain-inserted
             // next = <previous head> that PlacePlayerInTile produced during
             // play. DOS expects the player object to have next = 0.
-            int savedChainHead = DetachPlayerFromCurrentTile();
+            DetachPlayerFromCurrentTile();
             StashLiveStateToPdat();
             ApplySlot1Markers();
 
@@ -43,8 +43,11 @@ namespace Underworld
             finally
             {
                 // Re-insert slot 1 so in-memory game state stays consistent
-                // if the user keeps playing after saving.
-                ReattachPlayerToCurrentTile(savedChainHead);
+                // if the user keeps playing after saving. The post-detach
+                // tile.indexObjectList already holds the previous chain
+                // head (sans slot 1), so head-inserting slot 1 restores the
+                // PlacePlayerInTile invariant — no saved-head value needed.
+                ReattachPlayerToCurrentTile();
             }
         }
 
@@ -78,25 +81,24 @@ namespace Underworld
         }
 
         /// <summary>
-        /// Unlink slot 1 (player) from its current tile's object chain and
-        /// return the chain head as it was before the detach, so the caller
-        /// can restore it. The tile head is rewritten to slot 1's .next,
-        /// and slot 1's .next is cleared so the serialised slot looks like
-        /// a DOS-format untethered player slot.
+        /// Unlink slot 1 (player) from its current tile's object chain so
+        /// the serialised LEV.ARK slot looks like a DOS-format untethered
+        /// player slot. RemoveObjectFromLinkedList rewrites tile.indexObjectList
+        /// to slot 1's old .next (or leaves it alone if slot 1 was mid-chain
+        /// with the parent's .next rewritten). slot 1's .next is then cleared.
         /// </summary>
-        private static int DetachPlayerFromCurrentTile()
+        private static void DetachPlayerFromCurrentTile()
         {
             if (UWTileMap.current_tilemap == null ||
                 UWTileMap.current_tilemap.LevelObjects == null ||
                 UWTileMap.current_tilemap.LevelObjects[1] == null)
             {
-                return 0;
+                return;
             }
             int tx = motion.playerMotionParams.x_0 >> 8;
             int ty = motion.playerMotionParams.y_2 >> 8;
-            if (!UWTileMap.ValidTile(tx, ty)) return 0;
+            if (!UWTileMap.ValidTile(tx, ty)) return;
             var tile = UWTileMap.current_tilemap.Tiles[tx, ty];
-            int prevHead = tile.indexObjectList;
             ObjectRemover_OLD.RemoveObjectFromLinkedList(
                 tile.indexObjectList, 1,
                 UWTileMap.current_tilemap.LevelObjects,
@@ -104,7 +106,6 @@ namespace Underworld
             // Clear slot 1's next so a freshly loaded save has a clean player
             // slot with no dangling chain pointer.
             UWTileMap.current_tilemap.LevelObjects[1].next = 0;
-            return prevHead;
         }
 
         /// <summary>
@@ -177,7 +178,7 @@ namespace Underworld
             return serialised;
         }
 
-        private static void ReattachPlayerToCurrentTile(int _)
+        private static void ReattachPlayerToCurrentTile()
         {
             if (UWTileMap.current_tilemap == null ||
                 UWTileMap.current_tilemap.LevelObjects == null ||

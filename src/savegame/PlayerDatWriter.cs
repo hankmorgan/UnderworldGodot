@@ -175,6 +175,12 @@ namespace Underworld
             return playerdat.EncryptDecryptUW1(plain, seed);
         }
 
+        // Hard cap on emitted slots — defends against a pathological source
+        // chain (cycle that survives remap.ContainsKey via a free-list
+        // duplicate, or a deeper-than-realistic nested-container tree) blowing
+        // the stack in VisitDfs's recursion.
+        private const int MaxInventoryEmit = 1024;
+
         // Depth-first: assign new slot to src, then walk contents (src.link +
         // sibling chain via .next) recursively. Returns src's new slot index.
         // Empty source slots (item_id=0) — left behind in the link chain by
@@ -186,6 +192,12 @@ namespace Underworld
         // tile object chain (e.g. before pickup) on non-container items.
         private static int VisitDfs(int src, List<int> order, Dictionary<int, int> remap, Dictionary<int, int> firstChildOf)
         {
+            if (order.Count >= MaxInventoryEmit)
+            {
+                throw new InvalidOperationException(
+                    $"PlayerDatWriter: inventory emission exceeded {MaxInventoryEmit} slots — " +
+                    "likely a cycle or unbounded nesting in the source chain.");
+            }
             order.Add(src);
             int newIdx = order.Count;
             remap[src] = newIdx;
