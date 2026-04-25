@@ -25,6 +25,7 @@ namespace Underworld
             // play. DOS expects the player object to have next = 0.
             int savedChainHead = DetachPlayerFromCurrentTile();
             StashLiveStateToPdat();
+            ApplySlot1Markers();
 
             // DOS UW.EXE never writes the player (slot 1) into a tile's
             // indexObjectList — it tracks player position separately via the
@@ -103,17 +104,47 @@ namespace Underworld
             // Clear slot 1's next so a freshly loaded save has a clean player
             // slot with no dangling chain pointer.
             UWTileMap.current_tilemap.LevelObjects[1].next = 0;
-
-            // DOS UW.EXE writes mobile slot 1 with item_id bit 6 cleared
-            // (port stores 0x7F = 127 / Avatar; DOS stores 0x3F = 63, an
-            // invisible placeholder NPC). If we save id=127 at slot 1, DOS
-            // happily loads but then renders an Avatar NPC at the player's
-            // own position — the Avatar mesh fills the camera frustum,
-            // producing the "no textures, just dark surfaces" appearance.
-            // Match DOS by clearing bit 6 of the slot-1 item_id.
-            var pobj = UWTileMap.current_tilemap.LevelObjects[1];
-            pobj.DataBuffer[pobj.PTR] = (byte)(pobj.DataBuffer[pobj.PTR] & 0x3F);
             return prevHead;
+        }
+
+        /// <summary>
+        /// Apply the DOS-format slot-1 player markers AFTER the pdat stash so
+        /// the byte-0 mask doesn't propagate into pdat (DOS keeps
+        /// pdat[0xD5]=0x7F = avatar item_id while masking LEV.ARK slot1[0] to
+        /// 0x3F = invisible placeholder; cross-file mismatch on byte 0 is
+        /// expected, but bytes 1..26 must match between the two stores).
+        ///
+        /// Markers DOS writes for the player avatar:
+        ///   - LEV.ARK slot1 byte 0: item_id bit 6 cleared (127 → 63)
+        ///   - LEV.ARK slot1 byte 1: doordir flag set (bit 5 of high byte)
+        ///   - LEV.ARK slot1 byte 26 (npc_whoami): 0xFD sentinel
+        ///   - pdat 0xD5+1, 0xD5+26: same as LEV.ARK (markers go in both)
+        ///   - pdat 0xD5+0: untouched (stays 0x7F = avatar)
+        ///
+        /// Without these, DOS UW.EXE renders the Avatar NPC mesh at the
+        /// player's own world position — the camera ends up inside the mesh,
+        /// producing the "wall/floor/ceiling textures missing" symptom.
+        /// </summary>
+        private static void ApplySlot1Markers()
+        {
+            if (UWTileMap.current_tilemap == null ||
+                UWTileMap.current_tilemap.LevelObjects == null ||
+                UWTileMap.current_tilemap.LevelObjects[1] == null)
+            {
+                return;
+            }
+            var pobj = UWTileMap.current_tilemap.LevelObjects[1];
+            int p0 = pobj.PTR;
+            byte[] buf = pobj.DataBuffer;
+            buf[p0]      = (byte)(buf[p0] & 0x3F);
+            buf[p0 + 1]  = (byte)(buf[p0 + 1] | 0x20);
+            buf[p0 + 26] = 0xFD;
+
+            int pp = playerdat.PlayerObjectStoragePTR;
+            // pdat byte 0 (item_id) stays as the avatar (0x7F); only mirror
+            // the marker bits at byte 1 and the whoami sentinel at byte 26.
+            playerdat.pdat[pp + 1]  = (byte)(playerdat.pdat[pp + 1] | 0x20);
+            playerdat.pdat[pp + 26] = 0xFD;
         }
 
         private static void ReattachPlayerToCurrentTile(int _)

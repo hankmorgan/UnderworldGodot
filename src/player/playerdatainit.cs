@@ -220,6 +220,14 @@ namespace Underworld
             //default game options
             MusicEnabled = true;
             SoundEffectsEnabled = true;
+            // pdat[0xB6] bits 4-5 = UW1 graphics detail level
+            // (0=Low, 1=Medium, 2=High, 3=Very High). DOS UW.EXE chargen
+            // sets this to Very High; without it, DOS-loaded port saves
+            // render walls/floor/ceiling as untextured flat polygons.
+            if (_RES != GAME_UW2)
+            {
+                DetailLevel = 3;
+            }
 
             //Game specific
             if (_RES == GAME_UW2)
