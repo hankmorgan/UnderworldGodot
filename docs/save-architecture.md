@@ -99,13 +99,18 @@ re-reads unmutated blocks from disk at save time.
 
 ## Known limitations
 
-**UW2 save is UI-gated pending upstream compressor.** The `SaveGame.Save`
-orchestrator and all UW2 writers are still present and tested — they produce
-files that round-trip through the port's own loader — but the Save button
-in the UW2 Options menu refuses to invoke them. Rationale: the port's
-`RepackUW2` is a stub, and writing uncompressed UW2 blocks (which load
-fine in the port) causes DOS `UW.EXE` to crash on any save with >80
-uncompressed blocks. Once the upstream compressor lands, remove the gate.
+**UW2 save is UI-gated pending validation.** The `SaveGame.Save`
+orchestrator and all UW2 writers are still present and tested - they
+produce files that round-trip through the port's own loader - but the
+Save button in the UW2 Options menu refuses to invoke them. Per
+@AlistairBrown (PR #33 review), DOS UW2 accepts uncompressed level
+blocks fine as long as the per-block compression flag is set
+correctly; an earlier theory that >80 uncompressed blocks crashed
+DOS UW2 was incorrect. Re-validating UW2 round-trip under the same
+matched-state byte-diff workflow used for UW1 (see "UW1 DOS round-trip"
+section below) is the right next step before un-gating the UI; the
+six byte-level adjustments needed for UW1 likely have UW2 analogues
+that haven't been pinned yet.
 
 **UW1 save is DOS-compatible in format.** UW1 `lev.ark` is uncompressed by
 spec, so the compression issue doesn't apply. DOS round-trip is verified
