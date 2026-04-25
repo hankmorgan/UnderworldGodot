@@ -66,7 +66,7 @@ namespace Underworld
                 if (firstChar != 0) descByte = firstChar;
             }
             File.WriteAllBytes(Path.Combine(saveDir, "DESC"), new[] { descByte });
-            File.WriteAllBytes(Path.Combine(saveDir, "PLAYER.DAT"), PlayerDatWriter.Serialize());
+            File.WriteAllBytes(Path.Combine(saveDir, "PLAYER.DAT"), PatchPlayerLinkInSerialised(PlayerDatWriter.Serialize()));
             File.WriteAllBytes(Path.Combine(saveDir, "BGLOBALS.DAT"), BGlobalWriter.Serialize(bglobal.bGlobals));
             File.WriteAllBytes(Path.Combine(saveDir, "LEV.ARK"), LevArkWriter.Serialize());
 
@@ -145,6 +145,36 @@ namespace Underworld
             // the marker bits at byte 1 and the whoami sentinel at byte 26.
             playerdat.pdat[pp + 1]  = (byte)(playerdat.pdat[pp + 1] | 0x20);
             playerdat.pdat[pp + 26] = 0xFD;
+        }
+
+        /// <summary>
+        /// DOS UW.EXE stores the avatar's pdat `link` field = 1 — a self-
+        /// reference that DOS reads as "this character HAS inventory" when
+        /// populating paperdoll/backpack on Journey Onward. The port's load
+        /// code at uimanager_mainmenu.cs:283 forces LevelObjects[1].link = 0
+        /// to prevent in-memory chain cycles, and that 0 propagates back to
+        /// pdat[0xDB-0xDC] on save → DOS renders an empty inventory.
+        ///
+        /// We can't write link=1 to in-memory pdat permanently because the
+        /// port's own loader would re-read it and hit the cycle on the next
+        /// Journey Onward. So serialise PLAYER.DAT once, patch the link
+        /// bytes in the SERIALISED ciphertext only, write that to disk, and
+        /// leave in-memory pdat untouched.
+        ///
+        /// pdat post-encryption layout for UW1: bytes 0..0xD2 are XOR-
+        /// encrypted with a position-dependent key; pdat[0xD3+] is plain.
+        /// PlayerObjectStoragePTR = 0xD5, so bytes 6-7 of the player obj
+        /// copy live at file offsets 0xDB and 0xDC — both in the plaintext
+        /// region. We can write to them directly without touching the seed.
+        /// </summary>
+        private static byte[] PatchPlayerLinkInSerialised(byte[] serialised)
+        {
+            int linkOff = playerdat.PlayerObjectStoragePTR + 6;
+            if (linkOff + 1 >= serialised.Length) return serialised;
+            // Set link bits 6-15 = 1, preserve owner bits 0-5 of byte 6.
+            serialised[linkOff]     = (byte)((serialised[linkOff] & 0x3F) | 0x40);
+            serialised[linkOff + 1] = 0;
+            return serialised;
         }
 
         private static void ReattachPlayerToCurrentTile(int _)

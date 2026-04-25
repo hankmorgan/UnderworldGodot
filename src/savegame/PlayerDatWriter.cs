@@ -82,13 +82,14 @@ namespace Underworld
             //    slot is assigned a new slot index in emission order.
             var order = new List<int>();         // new_slot_index -> source_slot
             var remap = new Dictionary<int, int>(); // source_slot -> new_slot_index
+            var firstChildOf = new Dictionary<int, int>(); // src_slot -> first emitted child src_slot
             remap[0] = 0;
             var topLevelNewSlots = new List<int>();
 
             foreach (int root in topLevel)
             {
                 if (remap.ContainsKey(root)) continue; // shouldn't happen; defensive
-                int rootNew = VisitDfs(root, order, remap);
+                int rootNew = VisitDfs(root, order, remap, firstChildOf);
                 topLevelNewSlots.Add(rootNew);
             }
 
@@ -105,10 +106,43 @@ namespace Underworld
                 int dstOff = playerdat.InventoryPtr + (newIdx - 1) * 8;
                 Array.Copy(playerdat.pdat, srcOff, plain, dstOff, 8);
 
+                // Close any opened sacks in the saved inventory. UW1 toggles
+                // a sack's classindex bit 0 (item_id 128 closed → 129 open)
+                // when the player double-clicks it; the open state is a UI
+                // affordance that should not persist to disk. DOS UW.EXE
+                // doesn't recognise an open sack at BP0 as a valid container
+                // and renders the inventory as empty. Detect sack class
+                // (majorclass=2, minorclass=0) and force bit 0 = 0.
+                int origItemId = (plain[dstOff] | (plain[dstOff + 1] << 8)) & 0x1FF;
+                int majorclass = origItemId >> 6;
+                int minorclass = (origItemId & 0x30) >> 4;
+                if (majorclass == 2 && minorclass == 0 && (origItemId & 0x1) != 0)
+                {
+                    plain[dstOff] = (byte)(plain[dstOff] & 0xFE);
+                }
+
                 int srcNext = ExtractBits10(playerdat.pdat, srcOff + 4, 6);
-                int srcLink = ExtractBits10(playerdat.pdat, srcOff + 6, 6);
+                srcNext = SkipEmpties(srcNext);
                 int newNext = remap.TryGetValue(srcNext, out var nn) ? nn : 0;
-                int newLink = remap.TryGetValue(srcLink, out var nl) ? nl : 0;
+                // link semantics depend on the is_quant flag (word0 bit 15):
+                //   is_quant=1  → link is a literal quantity/special property
+                //                 (NOT a slot reference). Preserve verbatim.
+                //   is_quant=0  → link is a slot reference: first child for
+                //                 containers (rewritten via firstChildOf so
+                //                 stale pickup-time pointers are cleared),
+                //                 or sp_link for leaf items (default 0).
+                int word0 = playerdat.pdat[srcOff] | (playerdat.pdat[srcOff + 1] << 8);
+                bool isQuant = (word0 & 0x8000) != 0;
+                int newLink;
+                if (isQuant)
+                {
+                    newLink = ExtractBits10(playerdat.pdat, srcOff + 6, 6);
+                }
+                else
+                {
+                    int firstChildSrc = firstChildOf.TryGetValue(srcSlot, out var fc) ? fc : 0;
+                    newLink = (firstChildSrc != 0 && remap.TryGetValue(firstChildSrc, out var nl)) ? nl : 0;
+                }
                 WriteBits10(plain, dstOff + 4, 6, newNext);
                 WriteBits10(plain, dstOff + 6, 6, newLink);
             }
@@ -143,19 +177,56 @@ namespace Underworld
 
         // Depth-first: assign new slot to src, then walk contents (src.link +
         // sibling chain via .next) recursively. Returns src's new slot index.
-        private static int VisitDfs(int src, List<int> order, Dictionary<int, int> remap)
+        // Empty source slots (item_id=0) — left behind in the link chain by
+        // pickup/drop activity that didn't compact the linked list — are
+        // skipped during the walk so the serialised output has no holes.
+        // Tracks the first DFS-visited child of each parent in firstChildOf
+        // so the emit pass can rewrite parent.link unconditionally — clearing
+        // any stale link bytes carried over from when an item was last in a
+        // tile object chain (e.g. before pickup) on non-container items.
+        private static int VisitDfs(int src, List<int> order, Dictionary<int, int> remap, Dictionary<int, int> firstChildOf)
         {
             order.Add(src);
             int newIdx = order.Count;
             remap[src] = newIdx;
 
             int child = ExtractBits10(playerdat.pdat, InvOff(src) + 6, 6); // src.link
+            int firstVisited = 0;
             while (child != 0 && !remap.ContainsKey(child))
             {
-                VisitDfs(child, order, remap);
+                if (ItemIdAt(child) == 0)
+                {
+                    // Hop past the empty slot via its .next without recursing.
+                    child = ExtractBits10(playerdat.pdat, InvOff(child) + 4, 6);
+                    continue;
+                }
+                if (firstVisited == 0) firstVisited = child;
+                VisitDfs(child, order, remap, firstChildOf);
                 child = ExtractBits10(playerdat.pdat, InvOff(child) + 4, 6); // child.next
             }
+            firstChildOf[src] = firstVisited;
             return newIdx;
+        }
+
+        private static int ItemIdAt(int slot)
+        {
+            int o = InvOff(slot);
+            int w = playerdat.pdat[o] | (playerdat.pdat[o + 1] << 8);
+            return w & 0x1FF;
+        }
+
+        // Walk the source .next chain past any empty (item_id=0) slots and
+        // return the first non-empty slot index (or 0 if the chain ends in
+        // empties). Defends against unbounded chains.
+        private static int SkipEmpties(int slot)
+        {
+            int hops = 0;
+            while (slot != 0 && ItemIdAt(slot) == 0 && hops < 1024)
+            {
+                slot = ExtractBits10(playerdat.pdat, InvOff(slot) + 4, 6);
+                hops++;
+            }
+            return slot;
         }
 
         private static int InvOff(int slot) => playerdat.InventoryPtr + (slot - 1) * 8;

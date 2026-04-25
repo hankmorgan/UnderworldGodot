@@ -227,6 +227,13 @@ namespace Underworld
             if (_RES != GAME_UW2)
             {
                 DetailLevel = 3;
+
+                // pdat[0xD3] = 0x08 — undocumented byte that DOS UW.EXE
+                // chargen sets and Journey-Onward validates. Leaving it 0
+                // (port default) hangs the DOS load before the inventory/
+                // paperdoll UI populates. Empirically pinned by byte-diff
+                // against a fresh-chargen DOS save with matched state.
+                SetAt(0xD3, 0x08);
             }
 
             //Game specific
