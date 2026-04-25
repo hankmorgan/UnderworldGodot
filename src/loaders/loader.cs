@@ -49,8 +49,6 @@ namespace Underworld
         {
             return (uint)(Byte4 << 24 | Byte3 << 16 | Byte2 << 8 | Byte1); 
         }
-
-
         
 
         /// <summary>
@@ -79,6 +77,26 @@ namespace Underworld
                         //return 0;
                     }
             }
+        }
+
+        public static uint getAt8(byte[] buffer, long Address)
+        {
+            return getAt(buffer,Address, 8);
+        }
+
+        public static uint getAt16(byte[] buffer, long Address)
+        {
+            return getAt(buffer,Address, 16);
+        }
+
+        public static uint getAt24(byte[] buffer, long Address)
+        {
+            return getAt(buffer,Address, 24);
+        }
+
+        public static uint getAt32(byte[] buffer, long Address)
+        {
+            return getAt(buffer,Address, 32);
         }
 
         public static void setAt8(byte[]buffer, int address, int val)

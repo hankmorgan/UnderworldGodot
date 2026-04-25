@@ -142,7 +142,7 @@ namespace Underworld
                 {
                     argc_datasize--;
                     //read in the next byte from the input data
-                    DataBufferByte_varE = (byte)getAt(InputArk_arg0.Data, ReadDataBufferPtrArg0, 8);
+                    DataBufferByte_varE = (byte)getAt8(InputArk_arg0.Data, ReadDataBufferPtrArg0);
                     ReadDataBufferPtrArg0++;
                     CurrentByte_var2 = DataBufferByte_varE;
                 }
@@ -175,25 +175,25 @@ namespace Underworld
 
                 //ovr127_8f5
             ovr127_8f5:
-                if (getAt(ArkWorkData, ArkWorkDataPtr + 0x10, 16) > ByteCounter_var4)
+                if (getAt16(ArkWorkData, ArkWorkDataPtr + 0x10) > ByteCounter_var4)
                 {
                     //ovr127_902
                     setAt16(buffer: ArkWorkData, address: ArkWorkDataPtr + 0x10, val: ByteCounter_var4);
                 }
                 //ovr127_909
-                if (getAt(ArkWorkData, ArkWorkDataPtr + 0x10, 16) > 2)
+                if (getAt16(ArkWorkData, ArkWorkDataPtr + 0x10) > 2)
                 {
                     //copy
                     //ovr127_92D
                     //ovr127_93D
-                    var28[varA] = (byte)getAt(ArkWorkData, Address: ArkWorkDataPtr + 0xE, size: 8);
+                    var28[varA] = (byte)getAt8(ArkWorkData, Address: ArkWorkDataPtr + 0xE);
                     varA++;
 
                     //ovr127_958
-                    var ax_temp = getAt(ArkWorkData, ArkWorkDataPtr + 0xE, 16);
+                    var ax_temp = getAt16(ArkWorkData, ArkWorkDataPtr + 0xE);
                     ax_temp = ax_temp >> 4;
                     byte al = (byte)(ax_temp & 0xF0);
-                    var dl = (byte)getAt(ArkWorkData, ArkWorkDataPtr + 0x10, 8);
+                    var dl = (byte)getAt8(ArkWorkData, ArkWorkDataPtr + 0x10);
                     dl = (byte)(dl + 0xFD);//should this calc as -3
                     al = (byte)(al | dl);
 
@@ -209,7 +209,7 @@ namespace Underworld
                     ArkWorkDataPtr += var6;
 
                     //ovr127_958
-                    var28[varA] = (byte)getAt(ArkWorkData, ArkWorkDataPtr + 0x12, 8);
+                    var28[varA] = (byte)getAt8(ArkWorkData, ArkWorkDataPtr + 0x12);
                 }
                 //ovr127_958->> ovr 127_962
                 varA++;
@@ -246,7 +246,7 @@ namespace Underworld
                     }
 
                     //ovr127_9EE
-                    var tmp = (short)getAt(ArkWorkData, ArkWorkDataPtr + 5, 32);
+                    var tmp = (short)getAt32(ArkWorkData, ArkWorkDataPtr + 5);
                     tmp += varA;
                     setAt32(ArkWorkData, ArkWorkDataPtr + 5, tmp);
 
@@ -256,7 +256,7 @@ namespace Underworld
                 }
 
                 //ovr127_A0C
-                byte var8 = (byte)getAt(ArkWorkData, ArkWorkDataPtr + 0x10, 8);
+                byte var8 = (byte)getAt8(ArkWorkData, ArkWorkDataPtr + 0x10);
                 si = 0;
 
                 //Ovr127_a57
@@ -271,7 +271,7 @@ namespace Underworld
                     {
                         //ovr127_A65
                         argc_datasize--;
-                        CurrentByte_var2 = (byte)getAt(InputArk_arg0.Data, ReadDataBufferPtrArg0, 8);
+                        CurrentByte_var2 = (byte)getAt8(InputArk_arg0.Data, ReadDataBufferPtrArg0);
                         ReadDataBufferPtrArg0++;
                     }
 
@@ -296,30 +296,30 @@ namespace Underworld
                         //ovr127_A80
                         var ax_si = (short)((int)si & 0xFFFF);  //CWD AX->DX:AX
                         var dx_si = (short)((int)(si >> 16));
-                        var tmp = (short)getAt(ArkWorkData, ArkWorkDataPtr + 1, 16);
+                        var tmp = (short)getAt16(ArkWorkData, ArkWorkDataPtr + 1);
                         tmp += ax_si;
                         setAt16(ArkWorkData, ArkWorkDataPtr + 1, tmp);
-                        tmp = (short)getAt(ArkWorkData, ArkWorkDataPtr + 3, 16);
+                        tmp = (short)getAt16(ArkWorkData, ArkWorkDataPtr + 3);
                         tmp += dx_si;
                         setAt16(ArkWorkData, ArkWorkDataPtr + 3, tmp);
-                        ax_si = (short)getAt(ArkWorkData, ArkWorkDataPtr + 1, 16);
-                        dx_si = (short)getAt(ArkWorkData, ArkWorkDataPtr + 3, 16);
-                        tmp = (short)getAt(ArkWorkData, ArkWorkDataPtr + 0xB, 16);
+                        ax_si = (short)getAt16(ArkWorkData, ArkWorkDataPtr + 1);
+                        dx_si = (short)getAt16(ArkWorkData, ArkWorkDataPtr + 3);
+                        tmp = (short)getAt16(ArkWorkData, ArkWorkDataPtr + 0xB);
                         if (dx_si >= tmp)
                         {
                             if (dx_si <= tmp)
                             {
                                 //ovr127_aa9
-                                var tmp2 = (int)getAt(ArkWorkData, ArkWorkDataPtr + 0x9, 32);
+                                var tmp2 = (int)getAt32(ArkWorkData, ArkWorkDataPtr + 0x9);
                                 tmp2 += 0x400;
                                 setAt32(ArkWorkData, ArkWorkDataPtr + 0x9, tmp2);
                             }
                             else
                             {
-                                if (ax_si > (short)getAt(ArkWorkData, ArkWorkDataPtr + 9, 16))
+                                if (ax_si > (short)getAt16(ArkWorkData, ArkWorkDataPtr + 9))
                                 {
                                     //ovr127_aa9 again.
-                                    var tmp2 = (int)getAt(ArkWorkData, ArkWorkDataPtr + 0x9, 32);
+                                    var tmp2 = (int)getAt32(ArkWorkData, ArkWorkDataPtr + 0x9);
                                     tmp2 += 0x400;
                                     setAt32(ArkWorkData, ArkWorkDataPtr + 0x9, tmp2);
                                 }
@@ -367,7 +367,7 @@ namespace Underworld
                                 si++;
                             }
                             //ovr127_B7B
-                            var ax_temp = (int)getAt(ArkWorkData, ArkWorkDataPtr + 5, 32);
+                            var ax_temp = (int)getAt32(ArkWorkData, ArkWorkDataPtr + 5);
                             ax_temp += varA;
                             setAt32(ArkWorkData, ArkWorkDataPtr + 0x5, ax_temp);
                         }
@@ -411,23 +411,23 @@ namespace Underworld
             short ax;
             var di_arg0 = arg0;
             //ovr127_24E
-            if (getAt(buffer: ArkWorkData, ArkWorkDataPtr + 0x5229 + (di_arg0 * 2), 16) != 0x1000)
+            if (getAt16(buffer: ArkWorkData, ArkWorkDataPtr + 0x5229 + (di_arg0 * 2)) != 0x1000)
             {
                 //ovr127_25A
-                if (getAt(buffer: ArkWorkData, Address: ArkWorkDataPtr + 0x3027 + (di_arg0 * 2), size: 16) != 0x1000)
+                if (getAt16(buffer: ArkWorkData, Address: ArkWorkDataPtr + 0x3027 + (di_arg0 * 2)) != 0x1000)
                 {
                     //ovr127_27F
-                    if (getAt(buffer: ArkWorkData, ArkWorkDataPtr + 0x1025 + (di_arg0 * 2), 16) != 0x1000)
+                    if (getAt16(buffer: ArkWorkData, ArkWorkDataPtr + 0x1025 + (di_arg0 * 2)) != 0x1000)
                     {
                         //ovr127_2A4
-                        si = (int)getAt(buffer: ArkWorkData, Address: ArkWorkDataPtr + 0x1025 + (di_arg0 * 2), size: 16);
-                        if (getAt(buffer: ArkWorkData, Address: ArkWorkDataPtr + 0x3027 + (si * 2), size: 16) != 0x1000)
+                        si = (int)getAt16(buffer: ArkWorkData, Address: ArkWorkDataPtr + 0x1025 + (di_arg0 * 2));
+                        if (getAt16(buffer: ArkWorkData, Address: ArkWorkDataPtr + 0x3027 + (si * 2)) != 0x1000)
                         {
                             //ovr127_2C9
                         ovr127_2c9:
 
-                            si = (int)getAt(buffer: ArkWorkData, Address: ArkWorkDataPtr + 0x3027 + (si * 2), size: 16);
-                            if ((int)getAt(buffer: ArkWorkData, Address: ArkWorkDataPtr + 0x3027 + (si * 2), size: 16) != 0x1000)
+                            si = (int)getAt16(buffer: ArkWorkData, Address: ArkWorkDataPtr + 0x3027 + (si * 2));
+                            if ((int)getAt16(buffer: ArkWorkData, Address: ArkWorkDataPtr + 0x3027 + (si * 2)) != 0x1000)
                             {
                                 goto ovr127_2c9;
                             }
@@ -436,69 +436,185 @@ namespace Underworld
                                 //these are probably all wrong until I can step through and test properly...
                                 //ovr127_2ED
                                 setAt16(buffer: ArkWorkData, address: ArkWorkDataPtr + 0x3027 + (si * 2),
-                                    val: (int)getAt(ArkWorkData, ArkWorkDataPtr + 0x1025 + (si * 2), 16));
+                                    val: (int)getAt16(ArkWorkData, ArkWorkDataPtr + 0x1025 + (si * 2)));
 
                                 //ovr127_31A
-                                var dx = (short)getAt(buffer: ArkWorkData, Address: ArkWorkDataPtr + 0x1025, size: 16);
+                                var dx = (short)getAt16(buffer: ArkWorkData, Address: ArkWorkDataPtr + 0x1025);
                                 setAt16(buffer: ArkWorkData, address: ArkWorkDataPtr + 0x5229 + (dx * 2),
-                                    val: (int)getAt(ArkWorkData, ArkWorkDataPtr + 0x5229 + (si * 2), 16));
+                                    val: (int)getAt16(ArkWorkData, ArkWorkDataPtr + 0x5229 + (si * 2)));
 
                                 //ovr127_343
                                 setAt16(buffer: ArkWorkData, address: ArkWorkDataPtr + 0x1025 + (si * 2),
-                                    val: (int)getAt(ArkWorkData, ArkWorkDataPtr + 0x1025 + (di_arg0 * 2), 16));
+                                    val: (int)getAt16(ArkWorkData, ArkWorkDataPtr + 0x1025 + (di_arg0 * 2)));
 
                                 //ovr127_363
-                                ax = (short)getAt(buffer: ArkWorkData, Address: ArkWorkDataPtr + 0x1025 + (di_arg0 * 2), size: 16);
+                                ax = (short)getAt16(buffer: ArkWorkData, Address: ArkWorkDataPtr + 0x1025 + (di_arg0 * 2));
                                 setAt16(ArkWorkData, ArkWorkDataPtr + 0x5229 + (ax * 2), si);
                             }
                         }
 
                         //ovr127_37B
                         setAt16(buffer: ArkWorkData, address: ArkWorkDataPtr + 0x3027 + (si * 2),
-                            val: (int)getAt(ArkWorkData, ArkWorkDataPtr + 0x3027 + (di_arg0 * 2), 16));
+                            val: (int)getAt16(ArkWorkData, ArkWorkDataPtr + 0x3027 + (di_arg0 * 2)));
                         //ovr127_39D
-                        ax = (short)getAt(buffer: ArkWorkData, Address: ArkWorkDataPtr + 0x3027 + (di_arg0 * 2), size: 16);
+                        ax = (short)getAt16(buffer: ArkWorkData, Address: ArkWorkDataPtr + 0x3027 + (di_arg0 * 2));
                         setAt16(ArkWorkData, ArkWorkDataPtr + 0x5229 + (ax * 2), si);
 
                     }
                     else
                     {
                         //ovr127_29A
-                        si = (int)getAt(ArkWorkData, ArkWorkDataPtr + 0x3027 + (di_arg0 * 2), 16);
+                        si = (int)getAt16(ArkWorkData, ArkWorkDataPtr + 0x3027 + (di_arg0 * 2));
                     }
                 }
                 else
                 {
                     //ovr127_26D
-                    si = (int)getAt(ArkWorkData, ArkWorkDataPtr + 0x1025 + (di_arg0 * 2), 16);
+                    si = (int)getAt16(ArkWorkData, ArkWorkDataPtr + 0x1025 + (di_arg0 * 2));
                 }
 
                 //ovr127_3B5
                 setAt16(buffer: ArkWorkData, address: ArkWorkDataPtr + 0x5229 + (si * 2),
-                    val: (int)getAt(ArkWorkData, ArkWorkDataPtr + 0x5229 + (di_arg0 * 2), 16));
+                    val: (int)getAt16(ArkWorkData, ArkWorkDataPtr + 0x5229 + (di_arg0 * 2)));
 
                 //ovr127_3D7
-                ax = (short)getAt(buffer: ArkWorkData, Address: ArkWorkDataPtr + 0x5999 + (di_arg0*2), size: 16);
-                if (getAt(ArkWorkData, ArkWorkDataPtr + 0x3027 + (ax*2),16) != di_arg0)
+                ax = (short)getAt16(buffer: ArkWorkData, Address: ArkWorkDataPtr + 0x5999 + (di_arg0 * 2));
+                if (getAt16(ArkWorkData, ArkWorkDataPtr + 0x3027 + (ax * 2)) != di_arg0)
                 {
-                   //ovr127_40F 
-                   //ax = (short)getAt(buffer: ArkWorkData, Address: ArkWorkDataPtr + 0x5999 + (di_arg0*2), size: 16);
-                   setAt16(ArkWorkData, ArkWorkDataPtr + 0x1025 + (ax*2), si);
+                    //ovr127_40F 
+                    //ax = (short)getAt16(buffer: ArkWorkData, Address: ArkWorkDataPtr + 0x5999 + (di_arg0*2));
+                    setAt16(ArkWorkData, ArkWorkDataPtr + 0x1025 + (ax * 2), si);
                 }
                 else
                 {
                     //ovr127_3F5
-                    setAt16(ArkWorkData, ArkWorkDataPtr + 0x3027 + (ax*2), si);
+                    setAt16(ArkWorkData, ArkWorkDataPtr + 0x3027 + (ax * 2), si);
                 }
-                
+
                 //ovr128_42b
-                setAt16(ArkWorkData, ArkWorkDataPtr + 0x3027 + (di_arg0*2), 0x1000);
+                setAt16(ArkWorkData, ArkWorkDataPtr + 0x3027 + (di_arg0 * 2), 0x1000);
             }
         }
 
         static void DataCompressionSubfunction_127_0(short arg0)
         {
+            var cx = arg0;
+            var var2 = 1;
 
+            int ArrayPtrVar6 = ArkWorkDataPtr + 0x12 + cx;
+
+            var di = (int)getAt16(buffer: ArkWorkData, Address: ArrayPtrVar6);
+
+            setAt16(ArkWorkData, ArkWorkDataPtr + 0x1025, 0x1000);
+            setAt16(ArkWorkData, ArkWorkDataPtr + 0x3027, 0x1000);
+            setAt16(ArkWorkData, ArkWorkDataPtr + 0x10, 0);
+
+        ovr127_5A:
+            if (var2 < 0)
+            {
+                //ovr127_A5
+                if (getAt16(ArkWorkData, ArkWorkDataPtr + 0x1025 + (di * 2)) == 0x1000)
+                {
+                    //ovr127_C9
+                    setAt16(ArkWorkData, ArkWorkDataPtr + 0x1025 + (di * 2), cx);
+                    setAt16(ArkWorkData, ArkWorkDataPtr + 0x5229 + (cx * 2), di);
+                    return;
+                }
+                else
+                {
+                    //ovr127_B8
+                    di = (int)getAt16(ArkWorkData, ArkWorkDataPtr + 0x1025 + (di * 2));
+                }
+            }
+            else
+            {
+                //ovr127_60
+                if (getAt16(ArkWorkData, ArkWorkDataPtr + 0x3027) == 0x1000)
+                {
+                    //ovr127_84
+                    setAt16(ArkWorkData, ArkWorkDataPtr + 0x3027 + di * 2, cx);
+                    setAt16(ArkWorkData, ArkWorkDataPtr + 0x5229 + cx * 2, di);
+                    return;
+                }
+                else
+                {
+                    //ovr127_73
+                    di = (int)getAt16(ArkWorkData, ArkWorkDataPtr + 0x3027 + di * 2);
+                }
+            }
+            //ovr127_EA
+            var si = 1;
+
+            if (si >= 0x12)
+            {
+                //ovr127_EF
+                var ax = getAt8(ArkWorkData, ArrayPtrVar6 + si);
+                var dx = getAt8(ArkWorkData, ArkWorkDataPtr + di + si + 0x12);
+                var2 = (int)(ax - dx);
+
+                if (var2 == 0)
+                {
+                    si++;
+                    goto ovr127_5A;
+                }
+            }
+
+            //ovr127_112
+            if (getAt16(ArkWorkData, ArkWorkDataPtr + 0x10) >= si)
+            {
+                //ovr127_11C
+                goto ovr127_5A;
+            }
+            else
+            {
+                //ovr127_11F
+                setAt16(ArkWorkData, ArkWorkDataPtr + 0xE, di);//todo is this 8 bits or 16 bits
+                setAt16(ArkWorkData, ArkWorkDataPtr + 0x10, si);
+                if (si < 0x12)
+                {
+                    goto ovr127_5A;
+                }
+                else
+                {
+                    //ovr127_135
+                    var ax = (int)getAt16(ArkWorkData, ArkWorkDataPtr + 0x5229 + (di * 2));
+                    setAt16(ArkWorkData, ArkWorkDataPtr + 0x5229 + (cx * 2), ax);
+
+                    //ovr127_15D
+                    ax = (int)getAt16(ArkWorkData, ArkWorkDataPtr + 0x1025 + (di * 2));
+                    setAt16(ArkWorkData, ArkWorkDataPtr + 0x1025 + (cx * 2), ax);
+
+                    //ovr127_171
+                    ax = (int)getAt16(ArkWorkData, ArkWorkDataPtr + 0x3027 + (di * 2));
+                    setAt16(ArkWorkData, ArkWorkDataPtr + 0x3027 + (cx * 2), ax);
+
+                    //ovr127_18F
+                    ax = (int)getAt16(ArkWorkData, ArkWorkDataPtr + 0x1025 + (di * 2));
+                    setAt16(ArkWorkData, ArkWorkDataPtr + 0x5229 + (ax * 2), cx);
+
+                    //ovr127_1AF
+                    ax = (int)getAt16(ArkWorkData, ArkWorkDataPtr + 0x3027 + (di*2));
+                    setAt16(ArkWorkData, ArkWorkDataPtr + 0x5229 + (ax * 2), cx);
+
+                    //ovr127_1CB
+                    ax = (int)getAt16(ArkWorkData, ArkWorkDataPtr + 0x5229 + (di*2));
+                    if ((getAt16(ArkWorkData, ArkWorkDataPtr + 0x3027 + (ax*2))) != di)
+                    {
+                        //ovr127_209
+                        ax = (int)getAt16(ArkWorkData, ArkWorkDataPtr + 0x5229 + (di*2));
+                        setAt16(ArkWorkData, ArkWorkDataPtr + 0x1025 + (ax*2), cx);
+                    }
+                    else
+                    {
+                        //ovr127_1E9
+                        ax = (int)getAt16(ArkWorkData, ArkWorkDataPtr + 0x5229 + (di*2));
+                        setAt16(ArkWorkData, ArkWorkDataPtr + 0x3027 + (ax*2), cx);
+                    }
+                    //ovr 127_227
+                    setAt16(ArkWorkData, ArkWorkDataPtr + 0x5229 + (di*2), 0x1000);
+                    return;
+                }
+            }
         }
     }
 }
