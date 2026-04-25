@@ -124,7 +124,7 @@ namespace Underworld
 
             byte[] var28 = new byte[12]; //guess at size based on next var allocated is at 0x16
             byte varb = 1;
-            short varA = 0;// index into var28
+            short varA = 1;// index into var28
             short di = 0;
             short var6 = 0xFEE;
             si = 0;
@@ -214,10 +214,10 @@ namespace Underworld
                     //ovr127_914
                     setAt16(ArkWorkData, ArkWorkDataPtr + 0x10, 1);
                     var28[0] |= varb;
-                    ArkWorkDataPtr += var6;
+                    //ArkWorkDataPtr += var6;
 
                     //ovr127_958
-                    var28[varA] = (byte)getAt8(ArkWorkData, ArkWorkDataPtr + 0x12);
+                    var28[varA] = (byte)getAt8(ArkWorkData, ArkWorkDataPtr + var6 + 0x12);
                 }
                 //ovr127_958->> ovr 127_962
                 varA++;
@@ -277,7 +277,7 @@ namespace Underworld
                     }
                     else
                     {
-                        //ovr127_A65
+                        //ovr127_A62
                         argc_datasize--;
                         CurrentByte_var2 = (byte)getAt8(InputArk_arg0.Data, ReadDataBufferPtrArg0);
                         ReadDataBufferPtrArg0++;
@@ -553,6 +553,7 @@ namespace Underworld
             //ovr127_EA
             var si = 1;
 
+            ovr127_10D:
             if (si < 0x12)
             {
                 //ovr127_EF
@@ -563,7 +564,7 @@ namespace Underworld
                 if (var2 == 0)
                 {//ovr127_10C
                     si++;
-                    goto ovr127_5A;
+                    goto ovr127_10D;
                 }
             }
 
