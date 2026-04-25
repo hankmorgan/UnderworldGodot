@@ -145,75 +145,75 @@ namespace Underworld
         /// this is a transfer record
         ///else
         ///this is a transfer record
-        public static byte[] RepackUW2(byte[] srcData)
-        {
-            List<byte> Input = new List<byte>();
-            List<byte> Output = new List<byte>();
-            int addptr = 0;
-            int bit = 0;
-            //int PrevMatchingOffset=-1; 
-            //int CopyRecordOffset=0;
-            int copycount = 0; int HeaderIndex = 0;
-            while (addptr <= srcData.GetUpperBound(0))
-            {
-                //Read in the data to the input list
-                Input.Add(srcData[addptr++]);
-                if (Input.Count > 3)//One I have at least 3 bytes I can test its contents
-                {//THIS IS WRONG> Code will only match up to size 3.
-                //At this point I need to start testing increasing sizes of data up to 18 bytes until I find the max copy record to create;
-                    if (FindMatchingSequence(ref Output, ref Input, out int MatchingOffset))
-                    {//the data is part of a copy sequence. Try and find the biggest block and make a copy record out of that.
-                    //TODO
-                    //
-                        /*	if (MatchingOffset == PrevMatchingOffset )	
-                            {//Increment copy count
-                                copycount++;
-                                IncrementCopyRecord(ref Output, CopyRecordOffset);
-                                if (copycount>=18)
-                                {
-                                    PrevMatchingOffset=-1; //force a new copy record on next loop	
-                                    Input.Clear();
-                                }								
-                            }
-                            else
-                            {//Create copy record
-                                copycount=0;
-                                if (bit==0)
-                                {
-                                        HeaderIndex=CreateHeader(ref Output);	
-                                }
-                                CopyRecordOffset = CreateCopyRecord(ref Output, MatchingOffset, copycount, HeaderIndex, bit++ );
-                            }*/
-                    }
-                    else
-                    {//There is no copy for the specified data. Transfer data that is not copied and clear out the input buffer
-                        for (int i = copycount; i < Input.Count; i++)
-                        {
-                            if (bit == 0)
-                            {
-                                HeaderIndex = CreateHeader(ref Output);
-                            }
-                            CreateTransferRecord(ref Output, Input[i], HeaderIndex, bit++);
-                        }
-                        Input.Clear();
-                    }
-                }
-                if (bit == 8)
-                {
-                    bit = 0;
-                }
-            }
+        // public static byte[] RepackUW2(byte[] srcData)
+        // {
+        //     List<byte> Input = new List<byte>();
+        //     List<byte> Output = new List<byte>();
+        //     int addptr = 0;
+        //     int bit = 0;
+        //     //int PrevMatchingOffset=-1; 
+        //     //int CopyRecordOffset=0;
+        //     int copycount = 0; int HeaderIndex = 0;
+        //     while (addptr <= srcData.GetUpperBound(0))
+        //     {
+        //         //Read in the data to the input list
+        //         Input.Add(srcData[addptr++]);
+        //         if (Input.Count > 3)//One I have at least 3 bytes I can test its contents
+        //         {//THIS IS WRONG> Code will only match up to size 3.
+        //         //At this point I need to start testing increasing sizes of data up to 18 bytes until I find the max copy record to create;
+        //             if (FindMatchingSequence(ref Output, ref Input, out int MatchingOffset))
+        //             {//the data is part of a copy sequence. Try and find the biggest block and make a copy record out of that.
+        //             //TODO
+        //             //
+        //                 /*	if (MatchingOffset == PrevMatchingOffset )	
+        //                     {//Increment copy count
+        //                         copycount++;
+        //                         IncrementCopyRecord(ref Output, CopyRecordOffset);
+        //                         if (copycount>=18)
+        //                         {
+        //                             PrevMatchingOffset=-1; //force a new copy record on next loop	
+        //                             Input.Clear();
+        //                         }								
+        //                     }
+        //                     else
+        //                     {//Create copy record
+        //                         copycount=0;
+        //                         if (bit==0)
+        //                         {
+        //                                 HeaderIndex=CreateHeader(ref Output);	
+        //                         }
+        //                         CopyRecordOffset = CreateCopyRecord(ref Output, MatchingOffset, copycount, HeaderIndex, bit++ );
+        //                     }*/
+        //             }
+        //             else
+        //             {//There is no copy for the specified data. Transfer data that is not copied and clear out the input buffer
+        //                 for (int i = copycount; i < Input.Count; i++)
+        //                 {
+        //                     if (bit == 0)
+        //                     {
+        //                         HeaderIndex = CreateHeader(ref Output);
+        //                     }
+        //                     CreateTransferRecord(ref Output, Input[i], HeaderIndex, bit++);
+        //                 }
+        //                 Input.Clear();
+        //             }
+        //         }
+        //         if (bit == 8)
+        //         {
+        //             bit = 0;
+        //         }
+        //     }
 
-            //Write the data to a file.
+        //     //Write the data to a file.
 
-            WriteListToBytes(Output, Path.Combine(BasePath, "DATA", "recodetest.dat"));
-            byte[] outchar = new byte[Output.Count];
-            for (int i = 0; i < Output.Count; i++)
-            {
-                outchar[i] = Output[i];
-            }
-            return outchar;
-        }
+        //     WriteListToBytes(Output, Path.Combine(BasePath, "DATA", "recodetest.dat"));
+        //     byte[] outchar = new byte[Output.Count];
+        //     for (int i = 0; i < Output.Count; i++)
+        //     {
+        //         outchar[i] = Output[i];
+        //     }
+        //     return outchar;
+        // }
 
         static int CreateHeader(ref List<byte> Output)
         {

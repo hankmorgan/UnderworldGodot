@@ -90,11 +90,11 @@ namespace Underworld
             ushort CurrentByte_var2;
 
             //implementation
-            var WriteAddress_arg8 = 0;
+            var WriteAddress_arg8 = 0x722F; //allocated in ovr153_0
             var WriteAddress_var12 = WriteAddress_arg8;
             //set some values first in CompressedData.
             //ovr_127_7C3
-            var var14 = MaybeMaxSize_argA; //probably not needed in this implementation.
+            var var14 = WriteAddress_arg8 + MaybeMaxSize_argA; //probably not needed in this implementation.
 
             setAt16(buffer: ArkWorkData, address: ArkWorkDataPtr + 1, val: 0);
             setAt16(buffer: ArkWorkData, address: ArkWorkDataPtr + 3, val: 0);
@@ -104,6 +104,7 @@ namespace Underworld
             setAt16(buffer: ArkWorkData, address: ArkWorkDataPtr + 0xB, val: 0);
             setAt8(buffer: ArkWorkData, address: ArkWorkDataPtr + 0xD, val: 1);
             setAt16(buffer: ArkWorkData, address: ArkWorkDataPtr + 0x722B, val: 0xFFFF);
+            setAt16(buffer: ArkWorkData, address: ArkWorkDataPtr + 0x722D, val: 0x0);
 
             short si = 0x1001;
             //ovr_127_82F
@@ -121,7 +122,7 @@ namespace Underworld
                 si++;
             }
 
-            byte[] var28 = new byte[12]; //guess at size passed on next var allocated is at 0x16
+            byte[] var28 = new byte[12]; //guess at size based on next var allocated is at 0x16
             byte varb = 1;
             short varA = 0;// index into var28
             short di = 0;
@@ -135,24 +136,24 @@ namespace Underworld
                 si++;
             }
             short ByteCounter_var4 = 0;
-
+            //ovr127_894
             while (ByteCounter_var4 < 0x12)//read in the next 18 bytes
             {
-
+                //ovr127_89A
                 byte DataBufferByte_varE;
                 if (argc_datasize == 0)
                 {
                     CurrentByte_var2 = 0xFFFF;
                 }
                 else
-                {
+                {//ovr127_8A6
                     argc_datasize--;
                     //read in the next byte from the input data
                     DataBufferByte_varE = (byte)getAt8(InputArk_arg0.Data, ReadDataBufferPtrArg0);
                     ReadDataBufferPtrArg0++;
                     CurrentByte_var2 = DataBufferByte_varE;
                 }
-
+                //ovr127_8B6
                 if (CurrentByte_var2 != 0xFFFF)
                 {
                     //ovr127_880
@@ -173,7 +174,7 @@ namespace Underworld
             {
                 si = 1;
                 while (si <= 0x12)
-                {
+                {//ovr127_8DA
                     DataCompressionSubfunction_127_0((short)(var6 - si));
                     si++;
                 }
@@ -285,7 +286,7 @@ namespace Underworld
                     if (CurrentByte_var2 != 0xFFFF)
                     {
                         //ovr_127_A1B
-                        DataCompressionSubfunction_127_23C(di);
+                        DataCompressionSubfunction_127_23C(di);//infinite loop in here.
                         setAt8(ArkWorkData, ArkWorkDataPtr + di + 0x12, CurrentByte_var2);
                         if (di < 0x11)
                         {
@@ -433,7 +434,7 @@ namespace Underworld
                             //ovr127_2C9
                         ovr127_2c9:
 
-                            si = (int)getAt16(buffer: ArkWorkData, Address: ArkWorkDataPtr + 0x3027 + (si * 2));
+                            si = (int)getAt16(buffer: ArkWorkData, Address: ArkWorkDataPtr + 0x3027 + (si * 2));  //infinite loop here!
                             if ((int)getAt16(buffer: ArkWorkData, Address: ArkWorkDataPtr + 0x3027 + (si * 2)) != 0x1000)
                             {
                                 goto ovr127_2c9;
@@ -510,10 +511,10 @@ namespace Underworld
 
             int ArrayPtrVar6 = ArkWorkDataPtr + 0x12 + cx;
 
-            var di = (int)getAt16(buffer: ArkWorkData, Address: ArrayPtrVar6);
+            var di = (int)getAt8(buffer: ArkWorkData, Address: ArrayPtrVar6) + 0x1001;
 
-            setAt16(ArkWorkData, ArkWorkDataPtr + 0x1025, 0x1000);
-            setAt16(ArkWorkData, ArkWorkDataPtr + 0x3027, 0x1000);
+            setAt16(ArkWorkData, ArkWorkDataPtr + 0x1025 + (cx*2), 0x1000);
+            setAt16(ArkWorkData, ArkWorkDataPtr + 0x3027 + (cx*2), 0x1000);
             setAt16(ArkWorkData, ArkWorkDataPtr + 0x10, 0);
 
         ovr127_5A:
@@ -536,11 +537,11 @@ namespace Underworld
             else
             {
                 //ovr127_60
-                if (getAt16(ArkWorkData, ArkWorkDataPtr + 0x3027) == 0x1000)
+                if (getAt16(ArkWorkData, ArkWorkDataPtr + 0x3027 + (di*2)) == 0x1000)
                 {
                     //ovr127_84
-                    setAt16(ArkWorkData, ArkWorkDataPtr + 0x3027 + di * 2, cx);
-                    setAt16(ArkWorkData, ArkWorkDataPtr + 0x5229 + cx * 2, di);
+                    setAt16(ArkWorkData, ArkWorkDataPtr + 0x3027 + (di * 2), cx);
+                    setAt16(ArkWorkData, ArkWorkDataPtr + 0x5229 + (cx * 2), di);
                     return;
                 }
                 else
@@ -552,7 +553,7 @@ namespace Underworld
             //ovr127_EA
             var si = 1;
 
-            if (si >= 0x12)
+            if (si < 0x12)
             {
                 //ovr127_EF
                 var ax = getAt8(ArkWorkData, ArrayPtrVar6 + si);
@@ -560,7 +561,7 @@ namespace Underworld
                 var2 = (int)(ax - dx);
 
                 if (var2 == 0)
-                {
+                {//ovr127_10C
                     si++;
                     goto ovr127_5A;
                 }
@@ -575,7 +576,7 @@ namespace Underworld
             else
             {
                 //ovr127_11F
-                setAt16(ArkWorkData, ArkWorkDataPtr + 0xE, di);//todo is this 8 bits or 16 bits
+                setAt16(ArkWorkData, ArkWorkDataPtr + 0xE, di);
                 setAt16(ArkWorkData, ArkWorkDataPtr + 0x10, si);
                 if (si < 0x12)
                 {
