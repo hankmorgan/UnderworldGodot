@@ -81,6 +81,7 @@ namespace Underworld
 
         static bool CompressData(UWBlock InputArk_arg0, int MaybeMaxSize_argA = 0x8DD0, int argc_datasize = 0x7E08)
         {
+            return;//remove this line for infinite loops.
             short ReadDataBufferPtrArg0 = 0;
             ArkWorkDataPtr = 0;
             ArkWorkData = new byte[0x10000]; //to confirm size requirements. possibly should be  0x722f (29231d). Ref GetOffsetsForCompression_ovr153_
@@ -525,10 +526,7 @@ namespace Underworld
             int ArrayPtrVar6 = ArkWorkDataPtr + 0x12 + cx;
 
             var di = (int)getAt8(buffer: ArkWorkData, Address: ArrayPtrVar6) + 0x1001;
-            if (ArkWorkData[1] == 0x60)
-            {
-                Debug.Print("HERE");
-            }
+
             setAt16(ArkWorkData, ArkWorkDataPtr + 0x1025 + (cx * 2), 0x1000);
             setAt16(ArkWorkData, ArkWorkDataPtr + 0x3027 + (cx * 2), 0x1000);
             setAt16(ArkWorkData, ArkWorkDataPtr + 0x10, 0);
