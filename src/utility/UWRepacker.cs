@@ -8,8 +8,6 @@ namespace Underworld
     /// </summary>
     public class Repacker : Loader
     {
-
-        static byte[] packed;
         static byte[] ArkWorkData = new byte[0x40000];
         static short ArkWorkDataPtr = 0;
 
@@ -19,43 +17,47 @@ namespace Underworld
         /// <param name="blockNoToCompress"></param>
         public static void TestRepack(int blockNoToCompress)
         {
-            return;
+            //return;
+
+            //load raw data
             LevArkLoader.LoadLevArkFileData();
             bool Pass = true;
-            var lev_ark_block = LevArkLoader.LoadLevArkBlock(blockNoToCompress);
-
+            //var lev_ark_block = LevArkLoader.LoadLevArkBlock(blockNoToCompress);
+            UWBlock lev_ark_block;
+            //load a level map
+            DataLoader.LoadUWBlock(LevArkLoader.lev_ark_file_data, 0, -1, out lev_ark_block);
 
             if (((lev_ark_block.CompressionFlag >> 1) & 0x01) == 1)
             {
-                byte[] repacked = new byte[1];//todo replace with compress output.
+                //byte[] repacked = new byte[1];//todo replace with compress output.
                 Pass = CompressData(lev_ark_block);
-                if (Pass)
-                {
+                // if (Pass)
+                // {
 
-                    for (int i = 0; i <= lev_ark_block.Data.GetUpperBound(0); i++)
-                    {
-                        if (i <= repacked.GetUpperBound(0))
-                        {
-                            if (repacked[i] != lev_ark_block.Data[i])
-                            {
-                                Debug.Print($"Data mismatch at offset {i}");
-                                Pass = false;
-                                break;
-                            }
-                        }
-                        else
-                        {
-                            Debug.Print("Out of bounds error on repacked block.");
-                            Pass = false;
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                    Debug.Print("Result of compression is false");
-                    Pass = false;
-                }
+                //     for (int i = 0; i <= lev_ark_block.Data.GetUpperBound(0); i++)
+                //     {
+                //         if (i <= repacked.GetUpperBound(0))
+                //         {
+                //             if (repacked[i] != lev_ark_block.Data[i])
+                //             {
+                //                 Debug.Print($"Data mismatch at offset {i}");
+                //                 Pass = false;
+                //                 break;
+                //             }
+                //         }
+                //         else
+                //         {
+                //             Debug.Print("Out of bounds error on repacked block.");
+                //             Pass = false;
+                //             break;
+                //         }
+                //     }
+                // }
+                // else
+                // {
+                //     Debug.Print("Result of compression is false");
+                //     Pass = false;
+                // }
             }
             else
             {
@@ -72,11 +74,15 @@ namespace Underworld
             }
         }
 
+        public static void DumpCompressionMemory()
+        {
+            System.IO.File.WriteAllBytes("C:\\temp\\arkcompress.dat", ArkWorkData);
+        }
 
         static bool CompressData(UWBlock InputArk_arg0, int MaybeMaxSize_argA = 0x8DD0, int argc_datasize = 0x7E08)
         {
             short ReadDataBufferPtrArg0 = 0;
-
+            ArkWorkDataPtr = 0;
             ArkWorkData = new byte[0x40000]; //to confirm size requirements. possibly should be  0x722f (29231d). Ref GetOffsetsForCompression_ovr153_
             //Do stuff with the data to repack it.
             var Packed = new UWBlock();
@@ -130,7 +136,7 @@ namespace Underworld
             }
             short ByteCounter_var4 = 0;
 
-            while (ByteCounter_var4 < 0x12)
+            while (ByteCounter_var4 < 0x12)//read in the next 18 bytes
             {
 
                 byte DataBufferByte_varE;
@@ -169,6 +175,7 @@ namespace Underworld
                 while (si <= 0x12)
                 {
                     DataCompressionSubfunction_127_0((short)(var6 - si));
+                    si++;
                 }
                 //ovr127_8f0
                 DataCompressionSubfunction_127_0(var6);
