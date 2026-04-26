@@ -81,7 +81,7 @@ namespace Underworld
 
         static bool CompressData(UWBlock InputArk_arg0, int MaybeMaxSize_argA = 0x8DD0, int argc_datasize = 0x7E08)
         {
-            return;//remove this line for infinite loops.
+            //return;//remove this line for infinite loops.
             short ReadDataBufferPtrArg0 = 0;
             ArkWorkDataPtr = 0;
             ArkWorkData = new byte[0x10000]; //to confirm size requirements. possibly should be  0x722f (29231d). Ref GetOffsetsForCompression_ovr153_
@@ -208,7 +208,7 @@ namespace Underworld
                     al = (byte)(al | dl);
 
                     //ovr127_958
-                    var28[varA] = al; 
+                    var28[varA] = al;
                 }
                 else
                 {
@@ -456,30 +456,37 @@ namespace Underworld
                             {
                                 //these are probably all wrong until I can step through and test properly...
                                 //ovr127_2ED
-                                setAt16(buffer: ArkWorkData, address: ArkWorkDataPtr + 0x3027 + (si * 2),
-                                    val: (int)getAt16(ArkWorkData, ArkWorkDataPtr + 0x1025 + (si * 2)));
+                                ax = (short)getAt16(ArkWorkData, ArkWorkDataPtr + 0x1025 + (si * 2));
+                                //ovr127_304
+                                var dx = (short)getAt16(ArkWorkData, ArkWorkDataPtr + 0x5229 + (si * 2));
+                                //ov127_311
+                                setAt16(ArkWorkData, ArkWorkDataPtr + 0x3027 + (dx * 2), ax);
 
-                                //ovr127_31A
-                                var dx = (short)getAt16(buffer: ArkWorkData, Address: ArkWorkDataPtr + 0x1025);
-                                setAt16(buffer: ArkWorkData, address: ArkWorkDataPtr + 0x5229 + (dx * 2),
-                                    val: (int)getAt16(ArkWorkData, ArkWorkDataPtr + 0x5229 + (si * 2)));
+                                //ovr127_A1A
+                                ax = (short)getAt16(ArkWorkData, ArkWorkDataPtr + 0x5229 + (si * 2));
+                                //ovr127_32F
+                                dx = (short)getAt16(ArkWorkData, ArkWorkDataPtr + 0x1025 + (si * 2));
+                                //ovr127_33C
+                                setAt16(ArkWorkData, ArkWorkDataPtr + 0x5229 + (dx * 2), ax);
 
-                                //ovr127_343
-                                setAt16(buffer: ArkWorkData, address: ArkWorkDataPtr + 0x1025 + (si * 2),
-                                    val: (int)getAt16(ArkWorkData, ArkWorkDataPtr + 0x1025 + (di_arg0 * 2)));
+                                //ovr127_345
+                                ax = (short)getAt16(ArkWorkData, ArkWorkDataPtr + 0x1025 + (di_arg0 * 2));
+                                //ovr127_354
+                                setAt16(ArkWorkData, ArkWorkDataPtr + 0x1025 + si * 2, ax);
 
-                                //ovr127_363
-                                ax = (short)getAt16(buffer: ArkWorkData, Address: ArkWorkDataPtr + 0x1025 + (di_arg0 * 2));
-                                setAt16(ArkWorkData, ArkWorkDataPtr + 0x5229 + (ax * 2), si);
+                                //ovr127_35F
+                                ax = (short)getAt16(ArkWorkData, ArkWorkDataPtr + 0x1025 + (di_arg0 * 2));
+                                setAt16(ArkWorkData, ArkWorkDataPtr + 0x5229 + ax * 2, si);
                             }
                         }
 
                         //ovr127_37B
-                        setAt16(buffer: ArkWorkData, address: ArkWorkDataPtr + 0x3027 + (si * 2),
-                            val: (int)getAt16(ArkWorkData, ArkWorkDataPtr + 0x3027 + (di_arg0 * 2)));
+                        ax = (short)getAt16(ArkWorkData, ArkWorkDataPtr + 0x3027 + (di_arg0*2));
+                        setAt16(ArkWorkData, ArkWorkDataPtr + 0x3027 + (si*2), ax);
+
                         //ovr127_39D
-                        ax = (short)getAt16(buffer: ArkWorkData, Address: ArkWorkDataPtr + 0x3027 + (di_arg0 * 2));
-                        setAt16(ArkWorkData, ArkWorkDataPtr + 0x5229 + (ax * 2), si);
+                        ax = (short)getAt16(ArkWorkData, ArkWorkDataPtr + 0x3027 + (di_arg0*2));
+                        setAt16(ArkWorkData, ArkWorkDataPtr + 0x5229 + (ax*2), si);
 
                     }
                     else
@@ -522,7 +529,7 @@ namespace Underworld
         {
             var cx = arg0;
             var var2 = 1;
-            DumpCompressionMemory();
+            //DumpCompressionMemory();
             int ArrayPtrVar6 = ArkWorkDataPtr + 0x12 + cx;
 
             var di = (int)getAt8(buffer: ArkWorkData, Address: ArrayPtrVar6) + 0x1001;
