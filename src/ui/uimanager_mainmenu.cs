@@ -57,7 +57,6 @@ namespace Underworld
         public static bool AtMainMenu;
         private void InitMainMenu()
         {
-
             if (UWClass._RES == UWClass.GAME_UW2)
             {
                 var bgTex = bitmaps.LoadImageAt(5);

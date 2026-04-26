@@ -49,8 +49,7 @@ namespace Underworld
         {
             return (uint)(Byte4 << 24 | Byte3 << 16 | Byte2 << 8 | Byte1); 
         }
-
-
+        
 
         /// <summary>
         /// Gets the value at the specified address in the file buffer and performs any necessary -endian conversions
@@ -80,6 +79,41 @@ namespace Underworld
             }
         }
 
+        public static uint getAt8(byte[] buffer, long Address)
+        {
+            return getAt(buffer,Address, 8);
+        }
+
+        public static uint getAt16(byte[] buffer, long Address)
+        {
+            return getAt(buffer,Address, 16);
+        }
+
+        public static uint getAt24(byte[] buffer, long Address)
+        {
+            return getAt(buffer,Address, 24);
+        }
+
+        public static uint getAt32(byte[] buffer, long Address)
+        {
+            return getAt(buffer,Address, 32);
+        }
+
+        public static void setAt8(byte[]buffer, int address, int val)
+        {
+            setAt(buffer: buffer, address: address, size: 8, val: val);
+        }
+
+        public static void setAt16(byte[]buffer, int address, int val)
+        {
+            setAt(buffer: buffer, address: address, size: 16, val: val);
+        }
+
+        public static void setAt32(byte[]buffer, int address, int val)
+        {
+            setAt(buffer: buffer, address: address, size: 32, val: val);
+        }
+
         public static void setAt(byte[] buffer, long address, int size, int val)
         {
             byte valOut;
@@ -95,7 +129,9 @@ namespace Underworld
                     valOut = (byte)(val >> 8 & 0xff);
                     buffer[address + 1] = valOut;
                     break;
-                case 24: break;
+                case 24: 
+                    Debug.Print("Unimplemented SetAt24");
+                    break;
                 case 32:
                     valOut = (byte)(val & 0xff);
                     buffer[address] = valOut;
