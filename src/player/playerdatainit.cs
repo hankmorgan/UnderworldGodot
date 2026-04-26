@@ -224,10 +224,9 @@ namespace Underworld
             // (0=Low, 1=Medium, 2=High, 3=Very High). DOS UW.EXE chargen
             // sets this to Very High; without it, DOS-loaded port saves
             // render walls/floor/ceiling as untextured flat polygons.
+            DetailLevel = 3;
             if (_RES != GAME_UW2)
             {
-                DetailLevel = 3;
-
                 // pdat[0xD3] = 0x08 — undocumented byte that DOS UW.EXE
                 // chargen sets and Journey-Onward validates. Leaving it 0
                 // (port default) hangs the DOS load before the inventory/
