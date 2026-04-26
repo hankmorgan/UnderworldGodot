@@ -98,6 +98,8 @@ namespace Underworld
             byte[] plain = new byte[fileLen];
             Array.Copy(playerdat.pdat, plain, playerdat.InventoryPtr);
 
+            var topLevelNewSet = new HashSet<int>(topLevelNewSlots);
+
             // 3. Emit each slot's 8 bytes at its new location, remapping next/link.
             for (int newIdx = 1; newIdx <= newLast; newIdx++)
             {
@@ -106,19 +108,40 @@ namespace Underworld
                 int dstOff = playerdat.InventoryPtr + (newIdx - 1) * 8;
                 Array.Copy(playerdat.pdat, srcOff, plain, dstOff, 8);
 
-                // Close any opened sacks in the saved inventory. UW1 toggles
-                // a sack's classindex bit 0 (item_id 128 closed → 129 open)
-                // when the player double-clicks it; the open state is a UI
-                // affordance that should not persist to disk. DOS UW.EXE
-                // doesn't recognise an open sack at BP0 as a valid container
-                // and renders the inventory as empty. Detect sack class
-                // (majorclass=2, minorclass=0) and force bit 0 = 0.
-                int origItemId = (plain[dstOff] | (plain[dstOff + 1] << 8)) & 0x1FF;
-                int majorclass = origItemId >> 6;
-                int minorclass = (origItemId & 0x30) >> 4;
-                if (majorclass == 2 && minorclass == 0 && (origItemId & 0x1) != 0)
+                // Close opened sacks ONLY at top-level positions (referenced
+                // by BP0..BP7 or paperdoll). UW1 toggles a sack's classindex
+                // bit 0 (item_id 128 closed → 129 open) when the player
+                // opens the bag UI; that open state is a UI affordance and
+                // must not persist on the equipped container — DOS UW.EXE
+                // sees an open BP0 sack as invalid and renders inventory
+                // empty. But for sack-class items NESTED INSIDE another
+                // container, item_id bit 0 is part of the genuine item
+                // distinction (e.g. Hank's DOS save Save4-Carrying-Backpack
+                // has id=143 in slot 3 inside the BP0 pack). Restricting
+                // the close-bit toggle to top-level prevents corrupting
+                // those nested values.
+                if (topLevelNewSet.Contains(newIdx))
                 {
-                    plain[dstOff] = (byte)(plain[dstOff] & 0xFE);
+                    int origItemId = (plain[dstOff] | (plain[dstOff + 1] << 8)) & 0x1FF;
+                    int majorclass = origItemId >> 6;
+                    int minorclass = (origItemId & 0x30) >> 4;
+                    int classindex = origItemId & 0xF;
+                    // Container-class items 128-143 are majorclass=2, minorclass=0
+                    // but only classindex 0..0xB use the bit-0 open/closed
+                    // toggle (per src/objects/container.cs:26 — open code only
+                    // fires for classindex <= 0xB). Items 140-143 (incl. the
+                    // runebag at 143) are distinct items with their own
+                    // identities, NOT open variants of 140/142 — restricting
+                    // the close-bit toggle prevents corrupting a runebag-on-
+                    // paperdoll save (143 → 142 was Hank's exact diagnostic
+                    // scenario for nested items; the same bug applies to
+                    // top-level placement).
+                    if (majorclass == 2 && minorclass == 0
+                        && classindex <= 0xB
+                        && (origItemId & 0x1) != 0)
+                    {
+                        plain[dstOff] = (byte)(plain[dstOff] & 0xFE);
+                    }
                 }
 
                 int srcNext = ExtractBits10(playerdat.pdat, srcOff + 4, 6);
@@ -192,6 +215,17 @@ namespace Underworld
         // tile object chain (e.g. before pickup) on non-container items.
         private static int VisitDfs(int src, List<int> order, Dictionary<int, int> remap, Dictionary<int, int> firstChildOf)
         {
+            // Bounds-check src BEFORE emitting it, otherwise the emit pass
+            // hits Array.Copy(pdat, srcOff, ...) and throws ArgumentException
+            // for out-of-range slot indices. is_quant skip + SkipEmpties
+            // normally prevent OOB src reaching here, but defensive: 0 is a
+            // sentinel that callers' link-rewrite logic (remap.TryGetValue
+            // returning false → 0) treats as "no slot".
+            int srcOff = InvOff(src);
+            if (srcOff < 0 || srcOff + 8 > playerdat.pdat.Length)
+            {
+                return 0;
+            }
             if (order.Count >= MaxInventoryEmit)
             {
                 throw new InvalidOperationException(
@@ -202,19 +236,34 @@ namespace Underworld
             int newIdx = order.Count;
             remap[src] = newIdx;
 
-            int child = ExtractBits10(playerdat.pdat, InvOff(src) + 6, 6); // src.link
+            int linkOff = srcOff + 6;
+            // is_quant items reuse the link bits to encode quantity / special
+            // property (NOT a slot index — see uw-formats §4.2 and Alfred's
+            // letter at item 312 with link=514 = property 2 in Hank's
+            // sample save Save4-Carrying-Backpack). Following an is_quant
+            // link as a child slot blew up the DFS prior to bounds-checking
+            // (Hank's IndexOutOfRange report on PR #33). Even with the
+            // bounds-check it's still wrong semantically — skip cleanly.
+            if (IsQuantAt(src))
+            {
+                firstChildOf[src] = 0;
+                return newIdx;
+            }
+            int child = ExtractBits10(playerdat.pdat, linkOff, 6); // src.link
             int firstVisited = 0;
             while (child != 0 && !remap.ContainsKey(child))
             {
+                int childNextOff = InvOff(child) + 4;
+                if (childNextOff + 1 >= playerdat.pdat.Length) break;
                 if (ItemIdAt(child) == 0)
                 {
                     // Hop past the empty slot via its .next without recursing.
-                    child = ExtractBits10(playerdat.pdat, InvOff(child) + 4, 6);
+                    child = ExtractBits10(playerdat.pdat, childNextOff, 6);
                     continue;
                 }
                 if (firstVisited == 0) firstVisited = child;
                 VisitDfs(child, order, remap, firstChildOf);
-                child = ExtractBits10(playerdat.pdat, InvOff(child) + 4, 6); // child.next
+                child = ExtractBits10(playerdat.pdat, childNextOff, 6); // child.next
             }
             firstChildOf[src] = firstVisited;
             return newIdx;
@@ -223,8 +272,22 @@ namespace Underworld
         private static int ItemIdAt(int slot)
         {
             int o = InvOff(slot);
+            // The link / next fields are 10-bit (slots 0..1023) but port pdat
+            // is only allocated up to InventoryPtr + 512*8. Defensive bound
+            // check belt-and-braces with the is_quant skip in VisitDfs:
+            // either path on its own should prevent OOB, both together also
+            // protect against any future edge case.
+            if (o < 0 || o + 1 >= playerdat.pdat.Length) return 0;
             int w = playerdat.pdat[o] | (playerdat.pdat[o + 1] << 8);
             return w & 0x1FF;
+        }
+
+        private static bool IsQuantAt(int slot)
+        {
+            int o = InvOff(slot);
+            if (o < 0 || o + 1 >= playerdat.pdat.Length) return false;
+            // is_quant flag = bit 15 of word 0 = bit 7 of byte 1.
+            return (playerdat.pdat[o + 1] & 0x80) != 0;
         }
 
         // Walk the source .next chain past any empty (item_id=0) slots and
@@ -235,7 +298,9 @@ namespace Underworld
             int hops = 0;
             while (slot != 0 && ItemIdAt(slot) == 0 && hops < 1024)
             {
-                slot = ExtractBits10(playerdat.pdat, InvOff(slot) + 4, 6);
+                int o = InvOff(slot) + 4;
+                if (o + 1 >= playerdat.pdat.Length) return 0;
+                slot = ExtractBits10(playerdat.pdat, o, 6);
                 hops++;
             }
             return slot;

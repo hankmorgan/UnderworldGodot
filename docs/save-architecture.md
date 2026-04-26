@@ -251,25 +251,38 @@ the field, and `InitEmptyPlayer` sets `DetailLevel = 3` for UW1.
 UW2 storage offset is TBD; the accessor short-circuits to 3 for
 UW2 to avoid touching unknown bytes.
 
-### 5. pdat[0xD3] = 0x08 (UW1 chargen, semantics TBD)
+### 5. pdat[0xD3] = ShadeCutOff (shade-table index)
 
-DOS UW.EXE chargen writes `0x08` at `pdat[0xD3]` and the Journey-
-Onward path validates it. Port chargen left this byte at `0`; on
-DOS load, that 0 sends UW.EXE into a non-returning loop somewhere
-in the load sequence (player UI never appears, game hangs after
-"You enter the Abyss" splash).
+DOS UW.EXE chargen writes a non-zero value at `pdat[0xD3]` and the
+Journey-Onward path validates it. Port chargen left this byte at `0`;
+on DOS load, that 0 sent UW.EXE into a non-returning loop in the
+load sequence (player UI never appeared, game hung after the "You
+enter the Abyss" splash).
 
-Setting `pdat[0xD3] = 0x08` in `InitEmptyPlayer` (UW1 branch only)
-unblocks the load. Empirically pinned by single-byte bisection
-between matched fresh-chargen+bag-pickup port and DOS saves.
+**Semantics** (per @hankmorgan, PR #33 review, confirmed by
+disassembly): the byte is the **shade-table index** — the global
+named `ShadeCutOff_dseg_67d6_8622` in the UW2 disassembly, written
+by `ovr142_0` (`OpenAndApplyShadesDat_ovr142_0` in UW2; same
+function in UW1 at `UW1_asm.asm:385926-386218`). Indexes into
+`shades.dat`: `0=Darkness, 1=Burning Match, 2=Candlelight,
+3=Light, 4=Magic Lantern, 5=Night Vision, 6=Daylight, 7=Sunlight`.
+SHADES.DAT is exactly 96 bytes (8 entries × 12 bytes); valid
+range is `0..7`. UW2 stores it at `pdat[0x37F]`. Both format-doc
+projects had it labelled incorrectly as "no of items+1".
 
-**Semantics: TBD.** The byte sits between `pdat[0xCE-0xD1]` (Int32
-game time per uw-formats Abysmal — port treats it as 0xCF-0xD2,
-1-byte off from the docs) and `pdat[0xDC]` (current vitality), in
-a 10-byte region that neither uw-formats project documents. The
-exported `UW1_asm.asm` has no symbol-named annotation for this
-offset; finding the read site needs UW.idb opened in IDA Pro to
-dereference `pdat_base + 0xD3`. Filed as a follow-up RE task.
+The function does NOT bound-check the input — passing `8` reads
+12 bytes off EOF; DOS tolerates because subsequent gameplay
+overwrites the shading params before they're rendered. An
+earlier diagnostic write of `0x08` therefore "worked" by
+accident. The correct chargen value is `3` (Light); see
+`InitEmptyPlayer`.
+
+The port already tracks an analogous `playerdat.lightlevel`
+accessor at `pdat[0x64]` bits 4-7 (different storage). Long-term:
+keep these in sync at light-source change events. Short-term:
+`InitEmptyPlayer` (UW1) writes `pdat[0xD3] = 0x03` (Light) at
+chargen; replacing the literal with a derived-from-lightlevel
+expression is a follow-up.
 
 ### 6. Avatar self-link `pdat[0xDB-0xDC] = 0x0040` (link = 1)
 
