@@ -409,7 +409,7 @@ namespace Underworld
                         repacked[3] = 0x00;
                         for (int i = 4; i<=repacked.GetUpperBound(0);i++)
                         {
-                            if (i<= ArkWorkData.GetUpperBound(0))
+                            if (i-4<= ArkWorkData.GetUpperBound(0))
                             {
                                 repacked[i] = ArkWorkData[CompressedDataStartAddress_arg8 + i - 4];//accounting for 4 bytes at start of data.
                             }
