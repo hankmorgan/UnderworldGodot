@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 
 namespace Underworld
@@ -17,61 +18,59 @@ namespace Underworld
         /// <param name="blockNoToCompress"></param>
         public static void TestRepack(int blockNoToCompress)
         {
-            //return;
-
+            
             //load raw data
             LevArkLoader.LoadLevArkFileData();
             bool Pass = true;
             //var lev_ark_block = LevArkLoader.LoadLevArkBlock(blockNoToCompress);
             UWBlock lev_ark_block;
             //load a level map
-            DataLoader.LoadUWBlock(LevArkLoader.lev_ark_file_data, 0, -1, out lev_ark_block);
+            DataLoader.LoadUWBlock(arkData: LevArkLoader.lev_ark_file_data, blockNo: 0, targetDataLen: -1, uwb: out lev_ark_block);
 
-            if (((lev_ark_block.CompressionFlag >> 1) & 0x01) == 1)
-            {
-                //byte[] repacked = new byte[1];//todo replace with compress output.
-                Pass = CompressData(lev_ark_block);
-                // if (Pass)
-                // {
-
-                //     for (int i = 0; i <= lev_ark_block.Data.GetUpperBound(0); i++)
-                //     {
-                //         if (i <= repacked.GetUpperBound(0))
-                //         {
-                //             if (repacked[i] != lev_ark_block.Data[i])
-                //             {
-                //                 Debug.Print($"Data mismatch at offset {i}");
-                //                 Pass = false;
-                //                 break;
-                //             }
-                //         }
-                //         else
-                //         {
-                //             Debug.Print("Out of bounds error on repacked block.");
-                //             Pass = false;
-                //             break;
-                //         }
-                //     }
-                // }
-                // else
-                // {
-                //     Debug.Print("Result of compression is false");
-                //     Pass = false;
-                // }
-            }
-            else
-            {
-                Debug.Print("Test file is not a compressed Ark file");
-                Pass = false;
-            }
-            if (Pass)
-            {
-                Debug.Print("Repack has suceeded. What a day!");
-            }
-            else
-            {
-                Debug.Print("Repack has failed. Try try agin.!");
-            }
+        //     if (((lev_ark_block.CompressionFlag >> 1) & 0x01) == 1)
+        //     {
+            byte[] repacked; //= new byte[1];//todo replace with compress output.
+            Pass = CompressData(lev_ark_block, out repacked);
+        //         if (Pass)
+        //         {
+        //             for (int i = 0; i <= lev_ark_block.Data.GetUpperBound(0); i++)
+        //             {
+        //                 if (i <= repacked.GetUpperBound(0))
+        //                 {
+        //                     if (repacked[i] != LevArkLoader.lev_ark_file_data[lev_ark_block.Address + i + 4])  //first 4 bytes are ignored?
+        //                     {
+        //                         Debug.Print($"Data mismatch at offset {i}");
+        //                         Pass = false;
+        //                         break;
+        //                     }
+        //                 }
+        //                 else
+        //                 {
+        //                     Debug.Print("Out of bounds error on repacked block.");
+        //                     Pass = false;
+        //                     break;
+        //                 }
+        //             }
+        //         }
+        //         else
+        //         {
+        //             Debug.Print("Result of compression is false");
+        //             Pass = false;
+        //         }
+        //     }
+        //     else
+        //     {
+        //         Debug.Print("Test file is not a compressed Ark file");
+        //         Pass = false;
+        //     }
+        //     if (Pass)
+        //     {
+        //         Debug.Print("Repack has suceeded. What a day!");
+        //     }
+        //     else
+        //     {
+        //         Debug.Print("Repack has failed. Try try agin.!");
+        //     }
         }
 
         public static void DumpCompressionMemory()
@@ -79,7 +78,7 @@ namespace Underworld
             System.IO.File.WriteAllBytes("C:\\temp\\arkcompress.dat", ArkWorkData);
         }
 
-        static bool CompressData(UWBlock InputArk_arg0, int MaybeMaxSize_argA = 0x8DD0, int argc_datasize = 0x7E08)
+        static bool CompressData(UWBlock InputArk_arg0, out byte[] repacked, int MaxSize_argA = 0x8DD0, int argc_datasize = 0x7E08, int CompressedDataStartAddress_arg8 = 0x722F)
         {
             //return;//remove this line for infinite loops.
             short ReadDataBufferPtrArg0 = 0;
@@ -92,11 +91,13 @@ namespace Underworld
             short tmp;
 
             //implementation
-            var WriteAddress_arg8 = 0x722F; //allocated in ovr153_0
-            var WriteAddress_var12 = WriteAddress_arg8;
+            //var CompressedDataStartAddress_arg8 = 0x722F; //allocated in ovr153_0
+            var CompressedDataOutputPtr_var12 = CompressedDataStartAddress_arg8;
+            var var16_MaxOutputPtr = CompressedDataStartAddress_arg8 + MaxSize_argA;
+            //TODO figure out how to handle var10
             //set some values first in CompressedData.
             //ovr_127_7C3
-            var var14 = WriteAddress_arg8 + MaybeMaxSize_argA; //probably not needed in this implementation.
+            //var var14 = WriteAddress_arg8 + MaybeMaxSize_argA; //probably not needed in this implementation.
 
             setAt16(buffer: ArkWorkData, address: ArkWorkDataPtr + 1, val: 0);
             setAt16(buffer: ArkWorkData, address: ArkWorkDataPtr + 3, val: 0);
@@ -124,7 +125,7 @@ namespace Underworld
                 si++;
             }
 
-            byte[] var28 = new byte[0x12];
+            byte[] BytesToCompress_var28 = new byte[0x12];
             byte varb = 1;
             short varA = 1;// index into var28
             short di = 0;
@@ -196,7 +197,7 @@ namespace Underworld
                     //copy
                     //ovr127_92D
                     //ovr127_93D
-                    var28[varA] = (byte)getAt8(ArkWorkData, Address: ArkWorkDataPtr + 0xE);
+                    BytesToCompress_var28[varA] = (byte)getAt8(ArkWorkData, Address: ArkWorkDataPtr + 0xE);
                     varA++;
 
                     //ovr127_958
@@ -208,18 +209,18 @@ namespace Underworld
                     al = (byte)(al | dl);
 
                     //ovr127_958
-                    var28[varA] = al;
+                    BytesToCompress_var28[varA] = al;
                 }
                 else
                 {
                     //transfer
                     //ovr127_914
                     setAt16(ArkWorkData, ArkWorkDataPtr + 0x10, 1);
-                    var28[0] |= varb;
+                    BytesToCompress_var28[0] |= varb;
                     //ArkWorkDataPtr += var6;
 
                     //ovr127_958
-                    var28[varA] = (byte)getAt8(ArkWorkData, ArkWorkDataPtr + var6 + 0x12);
+                    BytesToCompress_var28[varA] = (byte)getAt8(ArkWorkData, ArkWorkDataPtr + var6 + 0x12);
                 }
                 //ovr127_958->> ovr 127_962
                 varA++;
@@ -227,17 +228,21 @@ namespace Underworld
 
                 if (varb == 0)
                 {
+                    //ovr127_972
                     si = 0;
+
+                    //ovr127_9E9
                     while (si < varA)
                     {
                         //ovr127_976
-                        if (WriteAddress_var12 >= var14) //could be var16 instead/
+                        if (CompressedDataOutputPtr_var12 >= var16_MaxOutputPtr) 
                         {
+                            //out of space. should not happen?
                             //ovr127_992
                             //write out some data to a tmp file.
                             //If no of bytes written out <> expected bytes
                             // return error
-
+                            Debug.Print("OUT OF SPACE! ovr127_976. Recheck compression!");
                             //ovr127_9C
 
                             //todo update write pointers
@@ -245,13 +250,12 @@ namespace Underworld
                         else
                         {
                             //ovr127_97E
-                            //todo update write pointer with value from var28 array 
-                            //new add = var28[si];
-                            //var12++
+                            //output compressed values from var28[] to arkdata[var12++];
+                            setAt8(ArkWorkData, ArkWorkDataPtr + CompressedDataOutputPtr_var12, BytesToCompress_var28[si]);
+                            CompressedDataOutputPtr_var12++;
 
                         }
                         //ovr127_9E8
-
                         si++;    //loop back to ovr127_976
                     }
 
@@ -260,9 +264,9 @@ namespace Underworld
                     tmp += varA;
                     setAt32(ArkWorkData, ArkWorkDataPtr + 5, tmp);
 
-                    var28[0] = 0;
+                    BytesToCompress_var28[0] = 0;
                     varb = 1;
-                    varA = 0;
+                    varA = 1;
                 }
 
                 //ovr127_A0C
@@ -368,22 +372,25 @@ namespace Underworld
                             while (si < varA)
                             {
                                 //ovr127_AFF
-                                if (WriteAddress_var12 > var14)//todo var12 and var14 need to be sorted out as to what they are
+                                if (CompressedDataOutputPtr_var12 >= var16_MaxOutputPtr)
                                 {
+                                    //out of space.
+                                    Debug.Print("OUT OF SPACE! ovr127_aff. Recheck compression!");
                                     //ovr127_B1B
                                     //write out some data to file at writeAddress
                                     //do a check for remaining space. if none raise an error
 
                                     //ovr127_b53
-                                    WriteAddress_var12 = WriteAddress_arg8;
+                                    CompressedDataOutputPtr_var12 = CompressedDataStartAddress_arg8;
                                     //change value at write address to array28[si]
-                                    WriteAddress_var12++;
+                                    CompressedDataOutputPtr_var12++;
                                 }
                                 else
                                 {
                                     //ovr127_B10
-                                    WriteAddress_var12 = var28[si];
-                                    WriteAddress_var12++;
+                                    //save out the compressed bytes.
+                                    setAt8(ArkWorkData, ArkWorkDataPtr + CompressedDataOutputPtr_var12, BytesToCompress_var28[si]);
+                                    CompressedDataOutputPtr_var12++;
                                 }
                                 si++;
                             }
@@ -394,11 +401,21 @@ namespace Underworld
                         }
 
                         //ovr127_B87
-
-                        //more to do here but basically write out some data to file
-
+                        //In vanilla the data is saved to file mem.tmp in the save0. Here I'm just saving to a byte array.
+                        repacked = new byte[CompressedDataOutputPtr_var12-CompressedDataStartAddress_arg8+ 4 ]; //opening 4 bytes are always 08 7E 00 00  (32264d)
+                        repacked[0] = 0x08;
+                        repacked[1] = 0x7E;
+                        repacked[2] = 0x00;
+                        repacked[3] = 0x00;
+                        for (int i = 4; i<=repacked.GetUpperBound(0);i++)
+                        {
+                            if (i<= ArkWorkData.GetUpperBound(0))
+                            {
+                                repacked[i] = ArkWorkData[CompressedDataStartAddress_arg8 + i - 4];//accounting for 4 bytes at start of data.
+                            }
+                        }
+                        //System.IO.File.WriteAllBytes("c:\\temp\\compressed.dat", repacked);
                         return true;
-
                     }
                 }
                 else
@@ -422,6 +439,7 @@ namespace Underworld
             else
             {
                 //ovr 127_c0b;
+                repacked = null;
                 return false;
             }
         }
@@ -462,7 +480,7 @@ namespace Underworld
                                 //ov127_311
                                 setAt16(ArkWorkData, ArkWorkDataPtr + 0x3027 + (dx * 2), ax);
 
-                                //ovr127_A1A
+                                //ovr127_31A
                                 ax = (short)getAt16(ArkWorkData, ArkWorkDataPtr + 0x5229 + (si * 2));
                                 //ovr127_32F
                                 dx = (short)getAt16(ArkWorkData, ArkWorkDataPtr + 0x1025 + (si * 2));
