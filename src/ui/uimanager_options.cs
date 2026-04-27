@@ -524,7 +524,14 @@ namespace Underworld
                 EnableDisable(instance.PanelInventory, true);
                 PanelMode = 0;
             }
-            InteractionModeToggle(PreviousInteractionMode);
+            if (PreviousInteractionMode != InteractionMode)
+            {
+               InteractionModeToggle(PreviousInteractionMode); 
+            } 
+            else
+            {
+                ToggleInteractionButtonDisplay(InteractionMode);//only visualy change.
+            }       
             InteractionModeShowHide(true);
             SetGameOptionsBackground(-1);
             SetGameOptionButtons(

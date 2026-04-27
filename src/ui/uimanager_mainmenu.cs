@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
 using Godot;
@@ -334,6 +335,19 @@ namespace Underworld
             if (UWClass._RES == UWClass.GAME_UW2)
             {//In UW2 the theme music will always change on game load or if coming from main menu. In UW1 it will only happen when loading a game from the options menu. In that case the call to change themes is in the ui code for the options menu
                 XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic(0));
+            }
+               
+            //Set up the weapon animations.
+            ToggleWeaponAnimationState(playerdat.play_drawn == 1);
+            if (playerdat.play_drawn == 1)
+            {
+                InteractionMode = InteractionModes.ModeAttack;
+                PreviousInteractionMode = InteractionModes.ModeAttack;            
+            }
+            else
+            {
+                InteractionMode = InteractionModes.ModeUse;
+                PreviousInteractionMode = InteractionModes.ModeUse; 
             }
         }
 

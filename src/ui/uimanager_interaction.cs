@@ -165,8 +165,51 @@ namespace Underworld
         }
 
         public static void InteractionModeToggle(InteractionModes index)
-        {        
+        {
+
             PreviousInteractionMode = InteractionMode;
+            ToggleInteractionButtonDisplay(index);
+
+            ///special handling for some modes
+            switch (index)
+            {
+                case InteractionModes.ModeOptions:
+                    {
+                        if (UWClass._RES == UWClass.GAME_UW2)
+                        {
+
+                        }
+                        else
+                        {
+                            InteractionModeShowHide(false);//hide the interaction buttons.  
+                        }
+                        //turn off mouselook
+                        Input.MouseMode = Input.MouseModeEnum.Hidden;
+                        main.gamecam.Set("MOUSELOOK", false);
+
+                        ReturnToTopOptionsMenu();
+                        main.gamecam.Set("MOVE", false);
+                        break;
+                    }
+                case InteractionModes.ModeAttack:
+                    {
+                        ToggleWeaponAnimationState(playerdat.play_drawn != 1);
+                        break;
+                    }
+                default:
+                    playerdat.play_drawn = 0; //ensure weapon is not drawn.
+                    XMIMusic.PickLevelThemeMusic(); //in future this needs to take into account combat state.
+                    break;
+
+            }
+        }
+
+        /// <summary>
+        /// Sets the on button for the interaction buttons to the specified index.
+        /// </summary>
+        /// <param name="index"></param>
+        private static void ToggleInteractionButtonDisplay(InteractionModes index)
+        {
             if (UWClass._RES == UWClass.GAME_UW2)
             {
                 for (int i = 0; i <= instance.InteractionButtonsUW2.GetUpperBound(0); i++)
@@ -197,69 +240,41 @@ namespace Underworld
                     }
                 }
             }
-
-            ///special handling for some modes
-            switch (index)
-            {
-                case InteractionModes.ModeOptions:
-                    {
-                        if (UWClass._RES == UWClass.GAME_UW2)
-                        {
-
-                        }
-                        else
-                        {
-                            InteractionModeShowHide(false);//hide the interaction buttons.  
-                        }
-                        //turn off mouselook
-                        Input.MouseMode = Input.MouseModeEnum.Hidden;
-                        main.gamecam.Set("MOUSELOOK", false);
-
-                        ReturnToTopOptionsMenu();
-                        main.gamecam.Set("MOVE", false);
-                        break;
-                    }
-                case InteractionModes.ModeAttack:
-                    {
-                        PreviousWeaponAnimation = -1; //force redraw.
-                        if (playerdat.play_drawn !=1)
-                        {
-                            playerdat.play_drawn = 1;//draw the weapon
-                            XMIMusic.ChangeTheme(themeNo: XMIMusic.Armed, Loop: true);
-                        }
-                        else
-                        {
-                            playerdat.play_drawn = 0; //ensure weapon is not drawn.
-                            XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic()); //in future this needs to take into account combat state.
-                            if (UWClass._RES == UWClass.GAME_UW2)
-                            {
-                                instance.InteractionButtonsUW2[(int)(InteractionModes.ModeAttack)].Texture = instance.UW2InteractionBtnsOff[(int)(InteractionModes.ModeAttack)];
-                            }
-                            else
-                            {
-                                instance.InteractionButtonsUW1[(int)(InteractionModes.ModeAttack)].Texture = grLfti.LoadImageAt((int)(InteractionModes.ModeAttack)*2, false);
-                            }  
-                        }
-
-                        var obj = playerdat.PrimaryHandObject;
-                        switch (combat.isWeapon(obj))
-                        {
-                            case 1://melee weapon
-                            case 2: //rangedweapon
-                                combat.currentweapon = obj; break;
-                            default:
-                                combat.currentweapon = null; break;
-                        }
-                        break;
-                    }
-                default:
-                    playerdat.play_drawn = 0; //ensure weapon is not drawn.
-                    XMIMusic.PickLevelThemeMusic(); //in future this needs to take into account combat state.
-                    break;
-
-            }
         }
 
+
+        public static void ToggleWeaponAnimationState(bool drawWeapon)
+        {
+            PreviousWeaponAnimation = -1; //force redraw.
+            if (drawWeapon)     //(playerdat.play_drawn != 1)
+            {
+                playerdat.play_drawn = 1;//draw the weapon
+                XMIMusic.ChangeTheme(themeNo: XMIMusic.Armed, Loop: true);
+            }
+            else
+            {
+                playerdat.play_drawn = 0; //ensure weapon is not drawn.
+                XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic()); //in future this needs to take into account combat state.
+                if (UWClass._RES == UWClass.GAME_UW2)
+                {
+                    instance.InteractionButtonsUW2[(int)(InteractionModes.ModeAttack)].Texture = instance.UW2InteractionBtnsOff[(int)(InteractionModes.ModeAttack)];
+                }
+                else
+                {
+                    instance.InteractionButtonsUW1[(int)(InteractionModes.ModeAttack)].Texture = grLfti.LoadImageAt((int)(InteractionModes.ModeAttack) * 2, false);
+                }
+            }
+
+            var obj = playerdat.PrimaryHandObject;
+            switch (combat.isWeapon(obj))
+            {
+                case 1://melee weapon
+                case 2: //rangedweapon
+                    combat.currentweapon = obj; break;
+                default:
+                    combat.currentweapon = null; break;
+            }
+        }
 
         public static void InteractionModeShowHide(bool state)
         {
