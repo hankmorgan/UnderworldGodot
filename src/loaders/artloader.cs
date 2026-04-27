@@ -271,6 +271,20 @@ namespace Underworld
             return tex;
         }
 
+        /// <summary>
+        /// Combines the ToInsert image onto the BackgroundImage.
+        /// </summary>
+        /// <param name="ToInsert"></param>
+        /// <param name="background"></param>
+        /// <param name="offX"></param>
+        /// <param name="offY"></param>
+        /// <returns></returns>
+        public static Godot.Image InsertImage(Image ToInsert, Image background, int offX, int offY)
+        {
+            background.BlendRect(ToInsert, new Rect2I(0,0,ToInsert.GetWidth(),ToInsert.GetHeight()), Vector2I.Zero);
+            return background;
+        }
+
     }//class artloader
 
 } //namespace

@@ -41,6 +41,7 @@ namespace Underworld
 			InitStats();
 			InitWeaponAnimation();
 			InitEyes();
+			InitDragons();
 
 			AutomapBG.Texture = bitmaps.LoadImageAt(BytLoader.BLNKMAP_BYT);
 			EnableDisable(AutomapPanel,false);
