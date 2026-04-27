@@ -94,7 +94,16 @@ namespace Underworld
             }
 
             int newLast = order.Count;
-            int fileLen = playerdat.InventoryPtr + newLast * 8;
+            // DOS UW.EXE hangs at "You reenter the Abyss..." when PLAYER.DAT
+            // ends exactly at InventoryPtr (0x138) with no inventory slots
+            // emitted. Padding to at least one zero slot (file >= 0x140) is
+            // sufficient to unstick the load path — verified empirically
+            // against UW.EXE under js-dos. A fresh port chargen with all
+            // BP0..BP7 + paperdoll pointers = 0 (no items) used to produce a
+            // 312-byte file; bumping the floor to (InventoryPtr + 8) makes it
+            // 320 bytes and DOS loads cleanly.
+            int slotsToEmit = Math.Max(newLast, 1);
+            int fileLen = playerdat.InventoryPtr + slotsToEmit * 8;
             byte[] plain = new byte[fileLen];
             Array.Copy(playerdat.pdat, plain, playerdat.InventoryPtr);
 

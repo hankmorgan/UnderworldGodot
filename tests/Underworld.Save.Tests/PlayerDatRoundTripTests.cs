@@ -38,10 +38,14 @@ public class PlayerDatRoundTripTests : IDisposable
 
         // File length mirrors the load loop in playerdatutil.cs:Load: slot i lives at
         // PTR = InventoryPtr + (i-1)*8, so N populated slots occupy N*8 bytes past InventoryPtr.
-        int expectedLen = Underworld.playerdat.InventoryPtr
-            + Underworld.PlayerDatWriter.LastPopulatedInventorySlot() * 8;
+        // Floor of one zero slot is enforced by SerializeUw1Canonical to avoid the
+        // DOS UW.EXE Journey-Onward hang when PLAYER.DAT ends exactly at InventoryPtr.
+        int slotsExpected = Math.Max(Underworld.PlayerDatWriter.LastPopulatedInventorySlot(), 1);
+        int expectedLen = Underworld.playerdat.InventoryPtr + slotsExpected * 8;
         Assert.Equal(expectedLen, decrypted.Length);
-        for (int i = 0; i < expectedLen; i++)
+        // Compare only the populated header region; padded trailing slot is
+        // zeros and is not present in the in-memory pdat at the same offset.
+        for (int i = 0; i < Underworld.playerdat.InventoryPtr; i++)
         {
             Assert.True(originalPdat[i] == decrypted[i],
                 $"Byte mismatch at 0x{i:X4}: expected 0x{originalPdat[i]:X2}, got 0x{decrypted[i]:X2}");
@@ -258,5 +262,25 @@ public class PlayerDatRoundTripTests : IDisposable
         var s1 = ReadSlotFromDecrypted(decrypted, 1);
         Assert.Equal(130, s1.itemId);
         Assert.Equal(0, s1.link);  // out-of-range slot resolves to 0 (no link)
+    }
+
+    [Fact]
+    public void Uw1Serialize_EmptyInventory_PadsToAtLeastOneSlot()
+    {
+        // DOS UW.EXE hangs at "You reenter the Abyss..." when PLAYER.DAT
+        // ends exactly at InventoryPtr (0x138) with zero inventory slots.
+        // A fresh port chargen with no items in BP0..BP7 + paperdoll used
+        // to produce a 312-byte file. Verified empirically against UW.EXE
+        // under js-dos that one zero slot (file >= 0x140 = 320 bytes) is
+        // sufficient to unstick the load path.
+        SetupUw1WithPdat();
+        // Leave BP0..BP7 + paperdoll all zero — no items anywhere.
+
+        byte[] encrypted = Underworld.PlayerDatWriter.Serialize();
+        Assert.NotNull(encrypted);
+        Assert.True(
+            encrypted.Length >= Underworld.playerdat.InventoryPtr + 8,
+            $"empty-inventory PLAYER.DAT must be at least {Underworld.playerdat.InventoryPtr + 8} bytes " +
+            $"to unstick DOS UW.EXE Journey-Onward; got {encrypted.Length}");
     }
 }
