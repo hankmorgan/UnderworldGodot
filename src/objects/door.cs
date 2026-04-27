@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Security.AccessControl;
 using Godot;
 
 namespace Underworld
@@ -974,9 +975,20 @@ namespace Underworld
             //a portcullis. 
 
             dw.doorFrameNode = dw.Generate3DModel(parent, name);
-            if ((dw.isOpen) && (obj.item_id != 463))
+            if (dw.isOpen )//&& (obj.item_id != 463))
             {//fix for map bug where some open doors extend out of the map. Force them onto a lower zpos without changing data
-                parent.Position = new Vector3(parent.Position.X, uwObject.GetZCoordinate(dw.uwobject.zpos - 24), parent.Position.Z);
+                var newZ = dw.uwobject.zpos - 24;
+                if (UWTileMap.ValidTile(tileX, tileY))
+                {
+                    var floorHeight = UWTileMap.current_tilemap.Tiles[tileX, tileY].floorHeight<<3;
+                    if (newZ< floorHeight)
+                    {
+                        newZ = floorHeight;
+                        Debug.Print($"Repositioning {obj.a_name} {obj.index} zpos {obj.zpos} to floor height {tileX},{tileY}");
+                    }
+                }
+                
+                parent.Position = new Vector3(parent.Position.X, uwObject.GetZCoordinate(newZ), parent.Position.Z);
             }
 
             SetModelRotation(parent, dw);
