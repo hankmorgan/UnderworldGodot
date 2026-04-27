@@ -100,7 +100,7 @@ namespace Underworld
                 attackerTop: commonObjDat.height(Projectile.item_id));
 
             AttackDamage = damage;
-            FinalAttackCharge = 0x80;
+            NPCFinalAttackCharge = 0x80;
 
             if (objectHit == playerdat.playerObject)
             {

@@ -206,10 +206,11 @@ namespace Underworld
                                             else
                                             {
                                                 var linktoremove = ovl.link;
+                                                var x = ovl.tileX; var y = ovl.tileY;
                                                 RemoveAnimationOverlay(ovl.link);
                                                 ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(
-                                                    tileX: ovl.tileX,
-                                                    tileY: ovl.tileY,
+                                                    tileX: x,
+                                                    tileY: y,
                                                     indexToDelete: (short)linktoremove);
                                                 //EndOverlay_DEPRECIATED(ovl);
                                             }

@@ -49,8 +49,8 @@ namespace Underworld
         /// </summary>
         const int fist = 15;
 
-        public static int WeaponCharge = 0;
-        public static int FinalAttackCharge = 0;
+        public static int PlayerAttackCharge = 0;
+        public static int NPCFinalAttackCharge = 0;
 
         public static int AttackScore = 0;
         public static int AttackDamage = 0;

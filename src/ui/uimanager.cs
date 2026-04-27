@@ -40,6 +40,7 @@ namespace Underworld
 			InitPower();
 			InitStats();
 			InitWeaponAnimation();
+			InitEyes();
 
 			AutomapBG.Texture = bitmaps.LoadImageAt(BytLoader.BLNKMAP_BYT);
 			EnableDisable(AutomapPanel,false);
@@ -59,6 +60,7 @@ namespace Underworld
 		{
 			_ProcessPanels(delta);
 			_ProcessWeaponAnims(delta);
+			_ProcessEyeAnims(delta);
 		}
 
 		public static void EnableDisable(Control ctrl, bool state)

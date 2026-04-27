@@ -268,7 +268,9 @@ namespace Underworld
 
             playerObj.xpos = (short)((playerMotionParams.x_0 >> 5) & 0x7);
             playerObj.ypos = (short)((playerMotionParams.y_2 >> 5) & 0x7);
-
+            //Addition. change of zpos
+            playerObj.zpos = (short)(playerMotionParams.z_4>>3);
+        
             //Debug.Print($"player high precision x,y = {playerMotionParams.x_0 & 0x1F},{playerMotionParams.y_2 & 0x1F}" );
 
             //TODO update playerObj.goal with value based on system clock
