@@ -1345,11 +1345,13 @@ namespace Underworld
             uimanager.EnableDisable(cutscontrol, false);
             uimanager.EnableDisable(uimanager.instance.CutsSubtitle, false);
 
-            if (cancelRequested)
+            if ((cancelRequested) && (_RES == GAME_UW2) && (CutsceneNo ==0))
             {
                 // Escape was pressed — skip the chained callback (which would play
                 // the next cutscene in the intro sequence) and return straight to
-                // the main menu.
+                // the main menu. 
+                // Done for UW2 intro cutscene only. Otherwise always make sure to run the callback as it may be game critical. 
+                // Eg endgame sequence or if a cutscene is interupted during normal gameplay.
                 uimanager.ReturnToMainMenu();
             }
             else if (callBackMethod != null)
