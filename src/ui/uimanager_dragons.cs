@@ -189,7 +189,7 @@ namespace Underworld
                         case 11:
                         case 12:
                         case 13://max image for right, needs to be increased due to lack of uniformity in images sizes on the right side.
-                             _tempDragonFrames[i] = ArtLoader.InsertImage(srcImg: dragonsGr.LoadImageAt(i).GetImage(), dstImg: ArtLoader.BlankCanvas(37, 23), cornerX: 0, cornerY: 0); break;
+                             _tempDragonFrames[i] = ArtLoader.InsertImage(srcImg: dragonsGr.LoadImageAt(i).GetImage(), dstImg: ArtLoader.BlankCanvas(40, 25), cornerX: 0, cornerY: 0); break;
                         case 19:
                             _tempDragonFrames[i] = ArtLoader.InsertImage(srcImg: dragonsGr.LoadImageAt(i).GetImage(), dstImg: ArtLoader.BlankCanvas(40, 25), cornerX: 6, cornerY: 0); break;
                         case 20:
@@ -208,16 +208,21 @@ namespace Underworld
                         case 25:
                         case 26: //right heads
                         case 27:
+                            {
+                                var tmp = ArtLoader.InsertImage(srcImg: dragonsGr.LoadImageAt(19).GetImage(), dstImg: ArtLoader.BlankCanvas(40, 25), cornerX: 6, cornerY: 0);
+                                _tempDragonFrames[i] = ArtLoader.InsertImage(srcImg: dragonsGr.LoadImageAt(i).GetImage(), dstImg: tmp, cornerX: 6, cornerY: 0); break;
+                            }
                         case 29:
                         case 30:
                         case 31:
-                            {
-                                var tmp = ArtLoader.InsertImage(srcImg: dragonsGr.LoadImageAt(19).GetImage(), dstImg: ArtLoader.BlankCanvas(40, 25), cornerX: 6, cornerY: 0);
-                                 _tempDragonFrames[i] = ArtLoader.InsertImage(srcImg: dragonsGr.LoadImageAt(i).GetImage(), dstImg: tmp, cornerX: 6, cornerY: 0); break;
+                            {                                
+                                _tempDragonFrames[i] = ArtLoader.InsertImage(srcImg: dragonsGr.LoadImageAt(i).GetImage(), dstImg: ArtLoader.BlankCanvas(40, 25), cornerX: 0, cornerY: 0); break;    
                             }
+                            
                         default:
                              _tempDragonFrames[i] = dragonsGr.LoadImageAt(i).GetImage(); break;//  ArtLoader.InsertImage(srcImg: dragonsGr.LoadImageAt(i).GetImage(), dstImg: ArtLoader.BlankCanvas(40, 23), cornerX: 0, cornerY: 0); break;
                     }
+                    //_tempDragonFrames[i].SavePng($"C:\\Temp\\resize\\dragon_{i.ToString("d2")}.png");
                     var tex = new ImageTexture();
                     tex.SetImage( _tempDragonFrames[i]);
                     DragonFrames[i] = tex;   
