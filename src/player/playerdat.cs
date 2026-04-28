@@ -515,6 +515,46 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// UW1 graphics-detail level (DOS Options menu setting). Stored in
+        /// bits 4-5 of pdat[0xB6] in UW1 (untouched-by-port until 2026-04-25,
+        /// which left fresh-chargen saves at LOW detail when round-tripped
+        /// through DOS UW.EXE — walls/floor/ceiling rendered as flat
+        /// untextured polygons in the 3D viewport).
+        /// 0 = LOW (no textures), 1 = MEDIUM (walls textured),
+        /// 2 = HIGH (walls + floor), 3 = VERY HIGH (walls + floor + ceiling).
+        /// DOS UW.EXE chargen defaults to 3. UW2 storage is at pdat[0x303] bits 4-5.
+        /// </summary>
+        public static int DetailLevel
+        {
+            get
+            {
+                if (_RES == GAME_UW2)
+                {
+                    return (GetAt(0x303) >> 4) & 0x3;
+                } 
+                else
+                {
+                    return (GetAt(0xB6) >> 4) & 0x3;    
+                }                
+            }
+            set
+            {
+                if (_RES == GAME_UW2)
+                {
+                    var tmp = GetAt(0x303) & 0xCF;
+                    tmp |= (value & 0x3) << 4;
+                    SetAt(0x303, (byte)tmp);
+                }
+                else
+                {
+                    var tmp = GetAt(0xB6) & 0xCF;
+                    tmp |= (value & 0x3) << 4;
+                    SetAt(0xB6, (byte)tmp);
+                }
+            }
+        }
+
         public static bool SoundEffectsEnabled
         {
             get

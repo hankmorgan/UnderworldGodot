@@ -70,6 +70,15 @@ namespace Underworld
             {
                 var tile = UWTileMap.current_tilemap.Tiles[newTileX, newTileY];
                 var obj = UWTileMap.current_tilemap.LevelObjects[1];//the player object.
+                // Unlink slot 1 (player) from this tile's chain if it appears anywhere
+                // in it — otherwise inserting at head again creates a cycle. On restore
+                // from a save written while the player was in this tile, slot 1 may be:
+                //   - at the head (player last placed),
+                //   - mid-chain (NPCs moved into the tile after the player was placed),
+                //   - absent (player arrived from elsewhere).
+                // RemoveObjectFromLinkedList handles all three cases; for "absent" it
+                // walks the chain to 0 and returns false, leaving the chain intact.
+                ObjectRemover_OLD.RemoveObjectFromLinkedList(tile.indexObjectList, 1, UWTileMap.current_tilemap.LevelObjects, tile.Ptr + 2);
                 obj.next = tile.indexObjectList;
                 tile.indexObjectList = 1;//insert into the tile object list so it can be subject to collisions.
                 obj.tileX = newTileX; obj.tileY = newTileY;

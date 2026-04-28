@@ -169,6 +169,12 @@ namespace Underworld
         /// <param name="a_tilemap">Really should remove this?</param>
         public static void RenderObject(uwObject obj, UWTileMap a_tilemap)
         {
+            // LevelObjects[1] is the player's own slot. Restoring a save inserts the
+            // player into the tile's indexObjectList via PlacePlayerInTile, so without
+            // this filter the player's adventurer sprite (item_id=127) renders at
+            // their own position — visible as a smiley in front of the camera.
+            if (obj.index == 1) return;
+
             bool unimplemented = true;
             var name = $"{obj.index}_{GameStrings.GetObjectNounUW(obj.item_id)}";
             var newNode = new Node3D();

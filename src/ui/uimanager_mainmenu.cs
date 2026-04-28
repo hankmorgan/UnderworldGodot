@@ -267,13 +267,12 @@ namespace Underworld
             playerdat.previousLightLevel = -1;
             playerdat.currentfolder = folder;
             playerdat.LoadPlayerDat(datafolder: folder);
-            
-            // //Common launch actions            
+
+            // //Common launch actions
             UWTileMap.LoadTileMap(
                     newLevelNo: playerdat.dungeon_level - 1,
                     datafolder: folder,
                     newGameSession: true);
-
 
             //add player object data to the map
             for (int i = 0; i <= 0x1A; i++)
@@ -287,7 +286,7 @@ namespace Underworld
 
             if (folder.ToUpper() == "DATA")
             {
-                //default start locations.                
+                //default start locations.
                 switch (UWClass._RES)
                 {
                     case UWClass.GAME_UW2:
@@ -296,7 +295,13 @@ namespace Underworld
                         break;
                     default:
                         //main.gamecam.Position = new Vector3(-38f, 4.2f, 2.2f);
-                        Teleportation.InitialisePlayerOnLevelOrPositionChange(32, 1);
+                        // DOS UW.EXE chargen spawns the Avatar at tile (32, 2) —
+                        // the centre of the starting room. (32, 1) puts the
+                        // player jammed against the north wall, which looks
+                        // fine in the port but produces awful renders when the
+                        // save is loaded in DOS UW.EXE (backed-against-wall
+                        // view = mostly wall surface at close range).
+                        Teleportation.InitialisePlayerOnLevelOrPositionChange(32, 2);
                         break;
                 }
             }
@@ -315,21 +320,21 @@ namespace Underworld
             uimanager.EnableDisable(uimanager.instance.PanelInventory,true);
             uimanager.EnableDisable(uimanager.instance.ManaFlaskPanel,true);
             uimanager.EnableDisable(uimanager.instance.HealthFlaskPanel,true);
-            
+
 
             uimanager.OpenedContainerIndex = -1;//clear slot graphics
-            uimanager.SetOpenedContainer(0, -1); 
+            uimanager.SetOpenedContainer(0, -1);
             uimanager.BackPackStart = 0;
             uimanager.EnableDisable(uimanager.instance.ArrowUp, false);
             uimanager.EnableDisable(uimanager.instance.ArrowDown, false);
 
             if (!playerdat.MusicEnabled)
             {
-                MusicStreamPlayer.Instance.Stop(); 
+                MusicStreamPlayer.Instance.Stop();
             }
             instance.InitViews();
             SetPanelMode(0);
-            
+
             //Apply player motion on game load.
             motion.PlayerMotion(0x40);
             if (UWClass._RES == UWClass.GAME_UW2)
