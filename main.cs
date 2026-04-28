@@ -240,8 +240,7 @@ public partial class main : Node3D
 		//Other updates
 		if (uimanager.InGame)
 		{
-			RefreshWorldState();//handles teleports, tile redraws
-			uimanager.UpdateCompass();
+			RefreshWorldState();//handles teleports, tile redraws			
 			combat.CombatInputHandler(delta);
 			playerdat.PlayerTimedLoop(delta);
 

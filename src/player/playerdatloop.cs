@@ -20,6 +20,25 @@ namespace Underworld
             if ((!main.blockmouseinput) && (uimanager.InGame))
             {
                 playertimer += delta;
+
+                //every frame
+                //Compass updates
+                if (_RES== GAME_UW2)
+                {
+                    if (playerdat.CurrentWorld != 8)
+                    {
+                        uimanager.UpdateCompass();
+                    }
+                }
+                else
+                {
+                    if (playerdat.dungeon_level != 9)
+                    {
+                        uimanager.UpdateCompass();
+                    }
+                }
+
+
                 if (playertimer >= 1f)
                 {//every second
                     if (ParalyseTimer > 0)
@@ -31,6 +50,7 @@ namespace Underworld
                             main.gamecam.Set("MOVE", true);//re-enable player motion.
                         }
                     }
+
                     var secondelasped = (int)(playertimer / 1);
                     playertimer = 0f;
                     for (int s = 0; s < secondelasped; s++)
