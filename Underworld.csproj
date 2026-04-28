@@ -13,7 +13,6 @@
   <ItemGroup>
     <PackageReference Include="Munt.NET" Version="0.2.1" />
     <ProjectReference Include="..\AdlMidi.NET\src\ADLMidi.NET\ADLMidi.NET.csproj" />
-    <ProjectReference Include="..\Mt32Emu.NET\src\Munt.NET\Munt.NET.csproj" />
     <PackageReference Include="MeltySynth" Version="2.4.1" />
   </ItemGroup>
 </Project>
