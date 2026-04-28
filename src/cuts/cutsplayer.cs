@@ -670,7 +670,7 @@ namespace Underworld
 
                 case 15: // klang — play klang sound (UW1 only)
                     Debug.Print("  Klang sound");
-                    UWsoundeffects.PlaySoundEffectAtAvatar(UWsoundeffects.SoundEffectKlang, 0x40,0);
+                    UWsoundeffects.PlaySoundEffectAtAvatar(UWsoundeffects.SoundEffectKlang, 0x40, 0);
                     break;
 
                 case 16: // pal-copy — palette data copy
@@ -901,6 +901,10 @@ namespace Underworld
             {
                 cutscontrol.Modulate = new Color(1f, 1f, 1f, 1f);
                 cutscontrol.Texture = uimanager.bitmaps.LoadImageAt(6); // Origin logo
+                if (cancelRequested)
+                {
+                    goto cleanup;
+                }
                 yield return new WaitForSeconds(2.0f);
                 if (cancelRequested) goto cleanup;
                 cutscontrol.Texture = null;
@@ -917,6 +921,10 @@ namespace Underworld
             {
                 cutscontrol.Modulate = new Color(1f, 1f, 1f, 1f);
                 cutscontrol.Texture = uimanager.bitmaps.LoadImageAt(5); // Origin logo
+                if (cancelRequested)
+                {
+                    goto cleanup;
+                }
                 yield return new WaitForSeconds(2.0f);
                 if (cancelRequested) goto cleanup;
                 cutscontrol.Texture = null;
@@ -930,7 +938,10 @@ namespace Underworld
                 if (cancelRequested) goto cleanup;
             }
             palInterpActive = false;
-
+            if (cancelRequested)
+            {
+                goto cleanup;
+            }
             // Load the first animation file (.N01)
             cuts = null;
             var firstFile = System.IO.Path.Combine(BasePath, "CUTS", GetsCutsceneFileName(CutsceneNo, 1));
@@ -954,6 +965,10 @@ namespace Underworld
 
             while (cutsceneRunning && !cancelRequested && cmdIndex < commands.Count)
             {
+                if (cancelRequested)
+                {
+                    goto cleanup;
+                }
                 // Auto-advance to the next animation file (unless open-file changed it)
                 if (!firstSegment && !fileChanged)
                 {
@@ -984,6 +999,10 @@ namespace Underworld
                 int scanIndex = cmdIndex;
                 while (scanIndex < commands.Count)
                 {
+                    if (cancelRequested)
+                    {
+                        goto cleanup;
+                    }
                     var cmd = commands[scanIndex];
                     scanIndex++;
 
@@ -1046,11 +1065,19 @@ namespace Underworld
 
                     for (int frame = 0; frame < segmentFrameCount; frame++)
                     {
+                        if (cancelRequested)
+                        {
+                            goto cleanup;
+                        }
                         // Fire commands scheduled for this frame
                         foreach (var cmd in scheduledCmds)
                         {
                             if (cmd.frame == frame && cmd.functionNo != 5)
                             {
+                                if (cancelRequested)
+                                {
+                                    goto cleanup;
+                                }
                                 ExecuteCommand(cmd, cutscontrol, CutsceneNo);
                                 if (cmd.functionNo == 8) // open-file
                                     fileChanged = true;
@@ -1157,6 +1184,10 @@ namespace Underworld
 
                                 for (int tick = 0; tick < cycleTicksPerFrame; tick++)
                                 {
+                                    if (cancelRequested)
+                                    {
+                                        goto cleanup;
+                                    }
                                     ApplyCrngCycling();
                                     var rerendered = ArtLoader.Image(
                                         databuffer: pixelData,
@@ -1180,6 +1211,10 @@ namespace Underworld
                             }
                         }
                         yield return new WaitForSeconds(frameTime);
+                        if (cancelRequested)
+                        {
+                            goto cleanup;
+                        }
                     }
 
                     // Execute commands at the frame-set boundary frame number.
@@ -1237,75 +1272,133 @@ namespace Underworld
                                 }
                             }
                             yield return new WaitForSeconds(frameTime);
+                            if (cancelRequested)
+                            {
+                                goto cleanup;
+                            }
                         }
                     }
                     else
                     {
-                    // All commands at frame 0: execute sequentially (blocking)
-                    foreach (var cmd in scheduledCmds)
-                    {
-                        ExecuteCommand(cmd, cutscontrol, CutsceneNo);
-
-                        // Blocking waits
-                        if (cmd.functionNo == 3) // pause
+                        // All commands at frame 0: execute sequentially (blocking)
+                        foreach (var cmd in scheduledCmds)
                         {
-                            yield return new WaitForSeconds(cmd.functionParams[0] / 2f);
-                        }
-                        else if (cmd.functionNo == 14) // wait-secs
-                        {
-                            yield return new WaitForSeconds(cmd.functionParams[0]);
-                        }
-                        else if (cmd.functionNo == 9 && cmd.functionParams[0] > 0) // blocking fade-out
-                        {
-                            float duration = 2.0f / cmd.functionParams[0];
-                            int steps = 10;
-                            float stepTime = duration / steps;
-                            for (int i = 1; i <= steps; i++)
+                            if (cancelRequested)
                             {
-                                float t = (float)i / steps;
-                                cutscontrol.Modulate = new Color(1f - t, 1f - t, 1f - t, 1f);
-                                yield return new WaitForSeconds(stepTime);
+                                goto cleanup;
                             }
-                        }
-                        else if (cmd.functionNo == 10 && cmd.functionParams[0] > 0) // blocking fade-in
-                        {
-                            float duration = 2.0f / cmd.functionParams[0];
-                            int steps = 10;
-                            float stepTime = duration / steps;
-                            for (int i = 1; i <= steps; i++)
+                            ExecuteCommand(cmd, cutscontrol, CutsceneNo);
+                            if (cancelRequested)
                             {
-                                float t = (float)i / steps;
-                                cutscontrol.Modulate = new Color(t, t, t, 1f);
-                                yield return new WaitForSeconds(stepTime);
+                                goto cleanup;
                             }
-                        }
-                        else if (cmd.functionNo == 4) // to-frame (inline)
-                        {
-                            for (int i = 0; i < cmd.functionParams[0]; i++)
+                            // Blocking waits
+                            if (cmd.functionNo == 3) // pause
                             {
-                                if (cuts != null)
+                                if (cancelRequested)
                                 {
-                                    if (FrameNo > cuts.ImageCache.GetUpperBound(0))
-                                        FrameNo = 0;
-                                    uimanager.DisplayCutsImage(
-                                        cuts: cuts, imageNo: FrameNo++, targetControl: cutscontrol);
+                                    goto cleanup;
                                 }
-                                yield return new WaitForSeconds(0.2f);
+                                yield return new WaitForSeconds(cmd.functionParams[0] / 2f);
+                                if (cancelRequested)
+                                {
+                                    goto cleanup;
+                                }
+                            }
+                            else if (cmd.functionNo == 14) // wait-secs
+                            {
+                                if (cancelRequested)
+                                {
+                                    goto cleanup;
+                                }
+                                yield return new WaitForSeconds(cmd.functionParams[0]);
+                                if (cancelRequested)
+                                {
+                                    goto cleanup;
+                                }
+                            }
+                            else if (cmd.functionNo == 9 && cmd.functionParams[0] > 0) // blocking fade-out
+                            {
+                                float duration = 2.0f / cmd.functionParams[0];
+                                int steps = 10;
+                                float stepTime = duration / steps;
+                                for (int i = 1; i <= steps; i++)
+                                {
+                                    float t = (float)i / steps;
+                                    cutscontrol.Modulate = new Color(1f - t, 1f - t, 1f - t, 1f);
+                                    if (cancelRequested)
+                                    {
+                                        goto cleanup;
+                                    }
+                                    yield return new WaitForSeconds(stepTime);
+                                    if (cancelRequested)
+                                    {
+                                        goto cleanup;
+                                    }
+                                }
+                            }
+                            else if (cmd.functionNo == 10 && cmd.functionParams[0] > 0) // blocking fade-in
+                            {
+                                float duration = 2.0f / cmd.functionParams[0];
+                                int steps = 10;
+                                float stepTime = duration / steps;
+                                for (int i = 1; i <= steps; i++)
+                                {
+                                    float t = (float)i / steps;
+                                    cutscontrol.Modulate = new Color(t, t, t, 1f);
+                                    if (cancelRequested)
+                                    {
+                                        goto cleanup;
+                                    }
+                                    yield return new WaitForSeconds(stepTime);
+                                    if (cancelRequested)
+                                    {
+                                        goto cleanup;
+                                    }
+                                }
+                            }
+                            else if (cmd.functionNo == 4) // to-frame (inline)
+                            {
+                                for (int i = 0; i < cmd.functionParams[0]; i++)
+                                {
+                                    if (cuts != null)
+                                    {
+                                        if (FrameNo > cuts.ImageCache.GetUpperBound(0))
+                                            FrameNo = 0;
+                                        uimanager.DisplayCutsImage(
+                                            cuts: cuts, imageNo: FrameNo++, targetControl: cutscontrol);
+                                    }
+                                    if (cancelRequested)
+                                    {
+                                        goto cleanup;
+                                    }
+                                    yield return new WaitForSeconds(0.2f);
+                                    if (cancelRequested)
+                                    {
+                                        goto cleanup;
+                                    }
+                                }
+                            }
+                            else if (cmd.functionNo == 7) // rep-seg
+                            {
+                                Debug.Print($"  Rep-seg: repeat {cmd.functionParams[0]} times");
                             }
                         }
-                        else if (cmd.functionNo == 7) // rep-seg
-                        {
-                            Debug.Print($"  Rep-seg: repeat {cmd.functionParams[0]} times");
-                        }
-                    }
                     } // end else (all commands at frame 0)
                 } // end else (no frame-set)
 
                 // Execute post-animation (frame=999) commands with blocking
                 foreach (var cmd in postCmds)
                 {
+                    if (cancelRequested)
+                    {
+                        goto cleanup;
+                    }
                     ExecuteCommand(cmd, cutscontrol, CutsceneNo);
-
+                    if (cancelRequested)
+                    {
+                        goto cleanup;
+                    }
                     if (cmd.functionNo == 9 && cmd.functionParams[0] > 0) // fade-out
                     {
                         float duration = 2.0f / cmd.functionParams[0];
@@ -1315,11 +1408,23 @@ namespace Underworld
                         {
                             float t = (float)i / steps;
                             cutscontrol.Modulate = new Color(1f - t, 1f - t, 1f - t, 1f);
+                            if (cancelRequested)
+                            {
+                                goto cleanup;
+                            }
                             yield return new WaitForSeconds(stepTime);
+                            if (cancelRequested)
+                            {
+                                goto cleanup;
+                            }
                         }
                     }
                     else if (cmd.functionNo == 10 && cmd.functionParams[0] > 0) // fade-in
                     {
+                        if (cancelRequested)
+                        {
+                            goto cleanup;
+                        }
                         float duration = 2.0f / cmd.functionParams[0];
                         int steps = 10;
                         float stepTime = duration / steps;
@@ -1327,7 +1432,15 @@ namespace Underworld
                         {
                             float t = (float)i / steps;
                             cutscontrol.Modulate = new Color(t, t, t, 1f);
+                            if (cancelRequested)
+                            {
+                                goto cleanup;
+                            }
                             yield return new WaitForSeconds(stepTime);
+                            if (cancelRequested)
+                            {
+                                goto cleanup;
+                            }
                         }
                     }
                 }
@@ -1345,7 +1458,7 @@ namespace Underworld
             uimanager.EnableDisable(cutscontrol, false);
             uimanager.EnableDisable(uimanager.instance.CutsSubtitle, false);
 
-            if ((cancelRequested) && (_RES == GAME_UW2) && (CutsceneNo ==0))
+            if ((cancelRequested) && (_RES == GAME_UW2) && (CutsceneNo == 0))
             {
                 // Escape was pressed — skip the chained callback (which would play
                 // the next cutscene in the intro sequence) and return straight to
