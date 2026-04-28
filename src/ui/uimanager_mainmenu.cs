@@ -334,7 +334,8 @@ namespace Underworld
             motion.PlayerMotion(0x40);
             if (UWClass._RES == UWClass.GAME_UW2)
             {//In UW2 the theme music will always change on game load or if coming from main menu. In UW1 it will only happen when loading a game from the options menu. In that case the call to change themes is in the ui code for the options menu
-                XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic(0));
+                //XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic(0));
+                XMIMusic.PickLevelThemeMusic(0);
             }
                
             //Set up the weapon animations.
@@ -492,9 +493,9 @@ namespace Underworld
         {
             Debug.Print("Return to main menu");
             //Still some weirdness with enabling the main menu again. eg palette switch in UW1
-            if (MusicStreamPlayer.Instance?.IsPlaying != true || XMIMusic.CurrentThemeNo != 1)
+            if (MusicStreamPlayer.Instance?.IsPlaying != true || XMIMusic.CurrentlyPlayingThemeNo != 1)
             {
-                XMIMusic.ChangeTheme(1);
+                XMIMusic.LoadXMI(1);
             }
             EnableDisable(instance.PanelMainMenu, true);    
             instance.ToggleMainMenuButtons(true);            

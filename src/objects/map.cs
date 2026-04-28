@@ -19,7 +19,7 @@ namespace Underworld
             else
             {
                 uimanager.DrawAutoMap(playerdat.dungeon_level-1, 0);
-                XMIMusic.ChangeTheme(XMIMusic.MapsAndLegends);//play maps and legends in UW1 only.
+                XMIMusic.ChangeThemeMusic(XMIMusic.MapsAndLegends);//play maps and legends in UW1 only.
             }
             
             return false;

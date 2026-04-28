@@ -561,8 +561,7 @@ namespace Underworld
                 //seg024_24E9_A33:
                 if (!MissileAttack)
                 {
-                    Debug.Print("TODO this sound is based on the weapon selected.");
-                    
+                    Debug.Print("TODO this sound is based on the weapon selected.");                    
                 }
             }
 
@@ -656,20 +655,6 @@ namespace Underworld
                             {
                                 //seg024_24E9_BEB
                                 uimanager.SetEyeLevel(DefendingCharacter.npc_hp, critterObjectDat.avghit(DefendingCharacter.item_id));
-                                // int eyevalue;
-                                // if (critterObjectDat.avghit(DefendingCharacter.item_id) != 0)
-                                // {
-                                //     eyevalue = (DefendingCharacter.npc_hp * 3) / critterObjectDat.avghit(DefendingCharacter.item_id);
-                                // }
-                                // else
-                                // {
-                                //     eyevalue = 0;
-                                // }
-                                // if (eyevalue >= 3)
-                                // {
-                                //     eyevalue = 2;
-                                // }
-                                // Debug.Print($"Update Eye Animation {3 - eyevalue}");
                             }
                             //seg024_24E9_C49:
                             if (critterObjectDat.bleed(DefendingCharacter.item_id) != 0)
@@ -704,7 +689,7 @@ namespace Underworld
                     else
                     {
                         //player was the defender.
-                        special_effects.Screenshake(-1,-1);
+                        special_effects.Screenshake(-1,-1);  
                     }
                 }
             }

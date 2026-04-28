@@ -1,4 +1,5 @@
 using Godot;
+using Munt.NET;
 
 namespace Underworld
 {
@@ -198,7 +199,8 @@ namespace Underworld
                     }
                 default:
                     playerdat.play_drawn = 0; //ensure weapon is not drawn.
-                    XMIMusic.PickLevelThemeMusic(); //in future this needs to take into account combat state.
+                    //XMIMusic.PickLevelThemeMusic(); //in future this needs to take into account combat state.
+                    XMIMusic.PickLevelThemeMusic(0);
                     break;
 
             }
@@ -249,12 +251,14 @@ namespace Underworld
             if (drawWeapon)     //(playerdat.play_drawn != 1)
             {
                 playerdat.play_drawn = 1;//draw the weapon
-                XMIMusic.ChangeTheme(themeNo: XMIMusic.Armed, Loop: true);
+                XMIMusic.ChangeThemeMusic(XMIMusic.Armed);
+                //XMIMusic.ChangePlayingTheme(themeNo: XMIMusic.Armed, Loop: true);
             }
             else
             {
                 playerdat.play_drawn = 0; //ensure weapon is not drawn.
-                XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic()); //in future this needs to take into account combat state.
+                XMIMusic.PickLevelThemeMusic(0);
+                //XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic()); //in future this needs to take into account combat state.
                 if (UWClass._RES == UWClass.GAME_UW2)
                 {
                     instance.InteractionButtonsUW2[(int)(InteractionModes.ModeAttack)].Texture = instance.UW2InteractionBtnsOff[(int)(InteractionModes.ModeAttack)];

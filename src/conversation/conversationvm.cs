@@ -568,7 +568,8 @@ namespace Underworld
 
 			if (UWClass._RES != UWClass.GAME_UW2)
 			{
-				XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic());//restart a music theme for UW1 as maps&legends plays for convos in UW1 only.
+				XMIMusic.PickLevelThemeMusic(0);
+				//XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic());//restart a music theme for UW1 as maps&legends plays for convos in UW1 only.
 			}
 
 			ExportVariables(talker);

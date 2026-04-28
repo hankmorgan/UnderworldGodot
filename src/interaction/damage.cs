@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using Munt.NET;
 namespace Underworld
 {
     /// <summary>
@@ -32,11 +33,11 @@ namespace Underworld
         /// <param name="damagesource"></param>
         public static int DamageObject(uwObject objToDamage, int basedamage, int damagetype, uwObject[] objList, bool WorldObject, int damagesource)
         {
-            basedamage = ScaleDamage(objToDamage.item_id, ref basedamage, damagetype);          
-            if (basedamage !=0)
+            basedamage = ScaleDamage(objToDamage.item_id, ref basedamage, damagetype);
+            if (basedamage != 0)
             {
                 Debug.Print($"Try and Damage {objToDamage.a_name} by {basedamage}");
-            }              
+            }
             if (objToDamage.majorclass == 1)
             {
                 return DamageNPC(
@@ -67,12 +68,12 @@ namespace Underworld
         /// <param name="damage"></param>
         /// <param name="damagetype"></param>
         static int DamageNPC(uwObject critter, int basedamage, int damagesource)
-        {            
+        {
             //basedamage = ScaleDamage(critter.item_id, ref basedamage, damagetype);
-            if (basedamage !=0)
+            if (basedamage != 0)
             {
                 Debug.Print($"Damage {critter.a_name} by {basedamage}");
-            }            
+            }
 
             //Note to be strictly compatable with UW behaviour the damage should be accumulated for the npc and test
             //once per tick This is used to control the angering behaviour of the npc in checking against passiveness and for music/gui updates on the avatar.
@@ -82,7 +83,7 @@ namespace Underworld
             {
                 playerdat.play_hp = critter.npc_hp;
             }
-            
+
             //make the npc react to the damage source. player if 1 
             critter.ProjectileSourceID = (short)damagesource;
             if (damagesource == 1)
@@ -95,6 +96,32 @@ namespace Underworld
                 playerdat.LastDamagedNPCZpos = critter.zpos;
             }
 
+            if (_RES == GAME_UW2)
+            {
+                //todo confirm uw1 logic
+                if (critter.index == 1)
+                {
+                    //damage applied to player.
+                    if ((playerdat.play_hp << 6 / (playerdat.max_hp + 1)) >= 0x10)
+                    {
+                        XMIMusic.ChangeThemeMusic(3); //standard combat theme.                     
+                    }
+                    else
+                    {
+                        XMIMusic.ChangeThemeMusic(4); // player losing combat theme.
+                    }
+                    XMIMusic.CombatMusicTimer = main.Pit;
+                }
+                else
+                {
+                    if (((critter.npc_hp << 6) / (critterObjectDat.avghit(critter.item_id) + 1) >= 0x10) && (damagesource == 1))
+                    {
+                        XMIMusic.ChangeThemeMusic(3);//player winning combat theme
+                    }
+                }
+            }
+
+
             if ((critter.npc_hp == 0) & (critter.index != 1))
             {
                 if (critter.npc_animation != npc.ANIMATION_DEATH)
@@ -102,35 +129,36 @@ namespace Underworld
                     //TODO death has some extra behaviours that needs to be supported in a seperate Eg death rattles. Move the below into a seperate func
                     if (npc.SpecialDeathCases(critter))
                     {
+                        AwardXPKill(critter);
                         critter.npc_animation = npc.ANIMATION_DEATH;
                         critter.AnimationFrame = 0;
                         npc.RedrawAnimation(critter);
                         byte DeathSound = 0xFF;
                         if (_RES == GAME_UW2)
-                        {                            
-                            switch(critterObjectDat.deathsound(critter.item_id))
+                        {
+                            switch (critterObjectDat.deathsound(critter.item_id))
                             {
                                 case 1://humanoids
-                                    DeathSound = 0x6;break;
+                                    DeathSound = 0x6; break;
                                 case 2://creepycrawlies
-                                    DeathSound = 0x22;break;
+                                    DeathSound = 0x22; break;
                                 case 3://Undead/Demons
-                                    DeathSound = 0x23;break;
+                                    DeathSound = 0x23; break;
                                 case 4://Monsters
-                                    DeathSound = 0x24;break;                           
+                                    DeathSound = 0x24; break;
                             }
                         }
                         else
                         {
-                            if (critterObjectDat.deathsound(critter.item_id)==1)
+                            if (critterObjectDat.deathsound(critter.item_id) == 1)
                             {
                                 DeathSound = 0x6; //only the avatar has this sound effect?
-                            }                         
+                            }
                         }
                         if (DeathSound != 0xFF)
                         {
-                            UWsoundeffects.PlaySoundEffectAtCoordinate(DeathSound, (critter.tileX<<3) + critter.xpos, (critter.tileY<<3) + critter.ypos, 0);
-                        }     
+                            UWsoundeffects.PlaySoundEffectAtCoordinate(DeathSound, (critter.tileX << 3) + critter.xpos, (critter.tileY << 3) + critter.ypos, 0);
+                        }
                         return 1;
                     }
                 }
@@ -139,10 +167,16 @@ namespace Underworld
             return 0;
         }
 
+        static void AwardXPKill(uwObject critter)
+        {
+            XMIMusic.LoadXMI(XMIMusic.Fanfare); //fanfare
+            //do math for xp
+            Debug.Print("DON'T FORGET TO GAIN EXP WHEN KILLING CRITTERS!");
+        }
 
         static bool DamageOtherObjectTypes(uwObject objToDamage, int basedamage, int damagesource)
         {
-            if(objToDamage.majorclass == 6)
+            if (objToDamage.majorclass == 6)
             {
                 Debug.Print("Do not damage traps/trigger!");
                 return false;
@@ -594,9 +628,9 @@ namespace Underworld
         public static int DamageEquipment(int slot, int damage, int damagetype, int arg6, int arg8)
         {
             uwObject obj = null;
-           
+
             var si = 0;
-            string distring="";
+            string distring = "";
             if (slot <= 11)
             {
                 obj = playerdat.GetInventorySlotObject(slot);
@@ -644,19 +678,19 @@ namespace Underworld
                         var debris = GetObjectTypeDebris(obj, 0);
                         var tile = UWTileMap.current_tilemap.Tiles[playerdat.playerObject.tileX, playerdat.playerObject.tileY];
                         ObjectCreator.spawnObjectInTile(
-                            itemid: debris, 
-                            tileX: playerdat.playerObject.tileX, tileY: playerdat.playerObject.tileY, 
-                            xpos: 3, ypos: 3, zpos: (short)(tile.floorHeight<<3), 
+                            itemid: debris,
+                            tileX: playerdat.playerObject.tileX, tileY: playerdat.playerObject.tileY,
+                            xpos: 3, ypos: 3, zpos: (short)(tile.floorHeight << 3),
                             WhichList: ObjectFreeLists.ObjectListType.StaticList);
                     }
                     ObjectCreator.Consume(obj, true);//removes from inventory     
-                    playerdat.PlayerStatusUpdate();     
-                    distring = " destroyed";  
-                    si = 1;     
+                    playerdat.PlayerStatusUpdate();
+                    distring = " destroyed";
+                    si = 1;
                 }
                 else
                 {//taken damage and not destroyed
-                    if (obj.quality!=originalquality)
+                    if (obj.quality != originalquality)
                     {
                         distring = " damaged";
                         si = 0;

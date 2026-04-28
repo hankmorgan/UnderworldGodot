@@ -84,6 +84,7 @@ namespace Underworld
                         secondcounter++;
                         //ClockValue += 0x40; //not sure what the exact rate should be here. for the moment assuming this is 1 second of time in game clock terms
 
+                        XMIMusic.RefreshMusic();//checks the playing themes and updates accordingly
                         //if ((ClockValue % 2048) < PreviousClockValue)//every 20 seconds
                         if (secondcounter >= 20)
                         {                            
@@ -408,7 +409,7 @@ namespace Underworld
             {
                 Debug.Print("put away weapon");
                 playerdat.play_drawn = 0; //ensure weapon is not drawn.
-                XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic()); //in future this needs to take into account combat state.
+                //XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic(0)); //in future this needs to take into account combat state.
                 if (UWClass._RES == UWClass.GAME_UW2)
                 {
                     uimanager.instance.InteractionButtonsUW2[(int)(uimanager.InteractionModes.ModeAttack)].Texture = uimanager.instance.UW2InteractionBtnsOff[(int)(uimanager.InteractionModes.ModeAttack)];

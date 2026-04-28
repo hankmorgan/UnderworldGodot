@@ -50,7 +50,7 @@ namespace Underworld
 
                     if (_RES != GAME_UW2)
                         {
-                            XMIMusic.ChangeTheme(XMIMusic.MapsAndLegends);
+                            XMIMusic.ChangeThemeMusic(XMIMusic.MapsAndLegends);
                         }
 
                     InitialiseConversationMemory();
