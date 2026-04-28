@@ -115,7 +115,7 @@ that haven't been pinned yet.
 **UW1 save is DOS-compatible in format.** UW1 `lev.ark` is uncompressed by
 spec, so the compression issue doesn't apply. DOS round-trip is verified
 end-to-end via dos-mcp / DOSBox — see "UW1 DOS round-trip" section below
-for the four byte-level fixes that were required.
+for the seven byte-level fixes that were required.
 
 **No atomic write.** If `File.WriteAllBytes` fails mid-sequence (disk full,
 permission loss), `SAVE{n}/` is left in a partial state that the loader may
@@ -318,9 +318,38 @@ exact Journey-Onward read site that propagates link → "show inventory"
 hasn't been pinned without IDA database access. Filed as the same
 follow-up as §5.
 
+### 7. Empty-inventory PLAYER.DAT must be at least `InventoryPtr + 8` bytes
+
+`SerializeUw1Canonical` sizes the output at `InventoryPtr + N*8` where
+`N` is the count of emitted inventory slots. A fresh port chargen has
+no items in BP0..BP7 + paperdoll, so `N = 0` and the file ends at
+exactly `InventoryPtr` (= 312 bytes for UW1).
+
+DOS UW.EXE Journey-Onward then hangs at "You reenter the Abyss…"
+(infinite loop reading past EOF — Escape no-ops; the load routine
+never returns). One zero slot (file ≥ 320 bytes) is sufficient to
+unstick the load path. Verified empirically: padding a 312-byte
+port-chargen save to 320 bytes makes UW.EXE load it cleanly with
+textured walls, HP bar, empty paperdoll, and the correct chargen
+spawn tile. Bisected — even a single zero slot is enough; the loader
+isn't checking for a particular minimum slot count, just refusing to
+work when the file ends exactly at `InventoryPtr`.
+
+The fix in `PlayerDatWriter.SerializeUw1Canonical` floors `slotsToEmit`
+at 1. Regression test:
+`Uw1Serialize_EmptyInventory_PadsToAtLeastOneSlot`.
+
+**Why this is empirical, not disasm-derived.** The exact UW.EXE site
+that loops on EOF hasn't been pinned. Likely candidates: the inventory
+DFS the port mirrors (object-link traversal that reads slot 1 even when
+all roots point to slot 0), or a cooked-vs-raw file-size check before
+the inventory loop. Either way, the empirical floor is sound — DOS
+chargen always writes more than 0 slots, so the port is just matching
+DOS's de facto minimum.
+
 ### Diagnostic workflow
 
-The four issues above were each found by byte-diffing a
+The issues above were each found by byte-diffing a
 fresh-chargen port save against a fresh-chargen DOS save — `cmp -l`
 on the raw files for LEV.ARK, plus the symmetric `EncryptDecryptUW1`
 routine for PLAYER.DAT comparison. Tools:
@@ -337,15 +366,20 @@ routine for PLAYER.DAT comparison. Tools:
 
 ### Open follow-ups
 
-- **Identify pdat[0xD3] and pdat[0xDB] semantics from disassembly.**
-  Both fields are documented above only by their empirical effect
-  on DOS Journey-Onward. Open `UWReverseEngineering/UW.idb` in IDA
-  Pro, find the function that reads each offset during the load
-  sequence, and update the doc with the field's actual meaning.
-  The exported `UW1_asm.asm` doesn't preserve enough symbol
-  context for grep-style searches against the raw text.
-- **DOS → port round-trip** (DOS chargen + play, then port load)
-  has not been tested under the new fixes.
+- **Identify pdat[0xD3], pdat[0xDB], and the empty-inventory EOF-loop
+  site from disassembly.** All three are documented above only by
+  their empirical effect on DOS Journey-Onward. Open
+  `UWReverseEngineering/UW.idb` in IDA Pro, find the function that
+  reads each offset (and the loader site that loops when PLAYER.DAT
+  ends exactly at InventoryPtr), and update the doc with each field's
+  actual meaning. The exported `UW1_asm.asm` doesn't preserve enough
+  symbol context for grep-style searches against the raw text.
+- **DOS → port → DOS round-trip** validated on Hank's
+  Carrying-Backpack save: byte-identical inventory region after
+  re-save, all items intact (Alfred's letter, runebag, 4 runes,
+  key). Other in-progress saves with moving doors / thrown
+  projectiles still trip bug (c) and bug (d) on Hank's PR #33
+  review — pending.
 - **Description text input.** UI still uses `"Save {slot}"` as
   the description. DESC writes only the first ASCII byte
   regardless, so this is cosmetic.
