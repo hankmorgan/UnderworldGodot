@@ -75,7 +75,7 @@ namespace Underworld
             }            
 
             //Note to be strictly compatable with UW behaviour the damage should be accumulated for the npc and test
-            //once per tick This is used to control the angering behaviour of the npc in checking against passiveness.   
+            //once per tick This is used to control the angering behaviour of the npc in checking against passiveness and for music/gui updates on the avatar.
             critter.AccumulatedDamage += (short)basedamage;//how much total damage has been applied in this tick.        
             critter.npc_hp = (byte)Math.Max(0, critter.npc_hp - basedamage);
             if (critter == playerdat.playerObject)

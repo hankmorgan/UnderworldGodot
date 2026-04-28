@@ -391,10 +391,15 @@ namespace Underworld
                                     //todo set combat music timer
                                 }
                             }
-                            if (critter.AnimationFrame == COMBAT_HITFRAME)
+                            //either hit at the standard hit frame or if the animation is short of frames hit at the last frame in the sequence.
+                            if (
+                                (critter.AnimationFrame == COMBAT_HITFRAME)
+                                ||
+                                ((MaxAnimFrame<COMBAT_HITFRAME) && (critter.AnimationFrame == MaxAnimFrame))
+                            )
                             {
                                 //apply attack
-                                Debug.Print("NPC makes attack");
+                                Debug.Print($"{critter.a_name} makes attack");
                                 if (_RES == GAME_UW2)
                                 {
                                     combat.NPCExecuteAttack(

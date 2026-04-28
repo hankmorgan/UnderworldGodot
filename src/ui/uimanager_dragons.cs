@@ -132,7 +132,7 @@ namespace Underworld
                 var toDisplay = AnimFrames[animationNo, frame++];
                 targetcontrol.Texture = DragonFrames[toDisplay];
 
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSeconds(0.2f);
             }
 
             //clear busy flags
@@ -208,6 +208,9 @@ namespace Underworld
                         case 25:
                         case 26: //right heads
                         case 27:
+                        case 29:
+                        case 30:
+                        case 31:
                             {
                                 var tmp = ArtLoader.InsertImage(srcImg: dragonsGr.LoadImageAt(19).GetImage(), dstImg: ArtLoader.BlankCanvas(40, 25), cornerX: 6, cornerY: 0);
                                  _tempDragonFrames[i] = ArtLoader.InsertImage(srcImg: dragonsGr.LoadImageAt(i).GetImage(), dstImg: tmp, cornerX: 6, cornerY: 0); break;

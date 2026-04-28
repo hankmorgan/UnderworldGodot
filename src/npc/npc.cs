@@ -126,8 +126,16 @@ namespace Underworld
             }
             else
             {
-                uwobject.npc_animation = 0; //default animation to zero;
-                Debug.Print($"{animname} ({animationNo}) was not found for {this.uwobject.item_id & 0x3F}");
+                if ((animationNo == ANIMATION_COMBAT_SLASH) || (animationNo == ANIMATION_COMBAT_STAB))
+                {
+                    animationNo = ANIMATION_COMBAT_BASH;//fallback to bash when unable to load slash or stab.
+                }
+                else
+                {
+                    uwobject.npc_animation = 0; //default animation to zero;
+                    Debug.Print($"{animname} ({animationNo}) was not found for {this.uwobject.a_name}");
+                }               
+                
                 uwobject.AnimationFrame = (byte)ApplyCritterAnimation(animationNo, frameNo, CritterArt.GetAnimName(0, 0), crit);
             }
             if (ObjectCreator.printlabels)

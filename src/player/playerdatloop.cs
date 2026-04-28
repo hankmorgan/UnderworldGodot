@@ -20,23 +20,40 @@ namespace Underworld
             if ((!main.blockmouseinput) && (uimanager.InGame))
             {
                 playertimer += delta;
+                
 
                 //every frame
                 //Compass updates
                 if (_RES== GAME_UW2)
                 {
-                    if (playerdat.CurrentWorld != 8)
+                    if (CurrentWorld != 8)
                     {
                         uimanager.UpdateCompass();
                     }
                 }
                 else
                 {
-                    if (playerdat.dungeon_level != 9)
+                    if (dungeon_level != 9)
                     {
                         uimanager.UpdateCompass();
                     }
                 }
+
+                //Use accumulated damage to see if the dragons need to start cowering.
+                if ((_RES != GAME_UW2) && (playerObject.AccumulatedDamage>0))
+                {
+                    if (
+                        (playerObject.AccumulatedDamage<<2 > max_hp)
+                        ||
+                        (play_hp < 0x10)
+                        )
+                    {
+                        uimanager.StartDragonAnimation(2);
+                    }    
+                }
+
+                playerObject.AccumulatedDamage = 0;//clear accumulated damage
+                
 
 
                 if (playertimer >= 1f)

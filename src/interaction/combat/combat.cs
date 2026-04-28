@@ -339,7 +339,7 @@ namespace Underworld
         {
             CurrentAttackSwingType = swingtype;
             NPCFinalAttackCharge = attackcharge;
-            CurrentWeaponRadius = 2;//always his for NPCS.
+            CurrentWeaponRadius = 2;//always this for NPCS.
             AttackingCharacter = attacker;
             AttackDamage = critterObjectDat.attackdamage(attacker.item_id, attacktype) + (critterObjectDat.strength(attacker.item_id) / 5);
             AttackScore = critterObjectDat.chancetohit(attacker.item_id, attacktype) + (critterObjectDat.EquipmentDamageOrBaseHitChance(attacker.item_id) >> 1);
