@@ -16,7 +16,17 @@ jobs:
       # Always include the checkout step so that 
       # your project is available for Godot to export
     - name: checkout
-      uses: actions/checkout@v3.3.0
+      uses: actions/checkout@v6
+
+    - name: checkoutADLMidi
+      uses: actions/checkout@v6
+      with:
+        repository: https://github.com/abedegno/AdlMidi.NET
+
+    - name: checkoutMt32Emu
+      uses: actions/checkout@v6
+      with:
+        repository: https://github.com/abedegno/Munt.NET
   
     - name: export game
       id: export
