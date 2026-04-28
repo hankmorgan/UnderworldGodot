@@ -1,4 +1,5 @@
 using Godot;
+using Godot.NativeInterop;
 
 namespace Underworld
 {
@@ -274,15 +275,35 @@ namespace Underworld
         /// <summary>
         /// Combines the ToInsert image onto the BackgroundImage.
         /// </summary>
-        /// <param name="ToInsert"></param>
-        /// <param name="background"></param>
-        /// <param name="offX"></param>
-        /// <param name="offY"></param>
+        /// <param name="srcImg"></param>
+        /// <param name="dstImg"></param>
+        /// <param name="cornerX"></param>
+        /// <param name="cornerY"></param>
         /// <returns></returns>
-        public static Godot.Image InsertImage(Image ToInsert, Image background, int offX, int offY)
+        public static Godot.Image InsertImage(Image srcImg, Image dstImg, int cornerX, int cornerY)
         {
-            background.BlendRect(ToInsert, new Rect2I(0,0,ToInsert.GetWidth(),ToInsert.GetHeight()), Vector2I.Zero);
-            return background;
+            //from the unity implementation.
+            var result = dstImg; //Godot.Image.CreateEmpty(dstImg.GetWidth(), dstImg.GetHeight(), false, Godot.Image.Format.Rgba8);
+            for (int x = 0; x< srcImg.GetWidth(); x++)
+            {
+                for (int y = 0; y< srcImg.GetHeight(); y++)
+                {
+                    if ((x+cornerX < dstImg.GetWidth()) && (y+cornerY < dstImg.GetHeight()))
+                    {
+                        if ((cornerX + x >=0) && (cornerY + y >=0))
+                        {
+                            result.SetPixel(cornerX+x, cornerY+y, srcImg.GetPixel(x,y));
+                        }
+                    }
+                }
+            }
+            // background.BlendRect(src: ToInsert, srcRect: new Rect2I(0,0,ToInsert.GetWidth(),ToInsert.GetHeight()), dst: new Vector2I(offX, offY));
+            return result;
+        }
+
+        public static Godot.Image BlankCanvas(int h, int w)
+        {
+            return Godot.Image.CreateEmpty(h, w, false, Godot.Image.Format.Rgba8);
         }
 
     }//class artloader
