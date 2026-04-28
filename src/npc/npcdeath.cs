@@ -280,7 +280,7 @@ namespace Underworld
                                 if (playerdat.GetQuest(134) >= 2)
                                 {
                                     playerdat.SetQuest(50, 1);
-                                    special_effects.SpecialEffect(4, 44);//screen shake
+                                    special_effects.Screenshake(0x40,44);
                                     playerdat.SetQuest(134, 24);
                                 }
                             }

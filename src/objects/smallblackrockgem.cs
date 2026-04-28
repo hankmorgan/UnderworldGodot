@@ -28,7 +28,7 @@ namespace Underworld
                             playerdat.IncrementXClock(1);
                         }
                     var shakeintensity = playerdat.GetXClock(2)<<2;
-                    special_effects.SpecialEffect(4, shakeintensity);
+                    special_effects.Screenshake(-1, shakeintensity);
                     uimanager.AddToMessageScroll(GameStrings.GetString(1,0x152));
                     playerdat.IncrementXClock(2);
                     var shakemessage = 0x152 + playerdat.GetXClock(2);

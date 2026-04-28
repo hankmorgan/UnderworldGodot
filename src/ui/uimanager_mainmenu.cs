@@ -349,6 +349,7 @@ namespace Underworld
                 InteractionMode = InteractionModes.ModeUse;
                 PreviousInteractionMode = InteractionModes.ModeUse; 
             }
+            uimanager.UpdateCompass();
         }
 
         private void _on_create_character_gui_input(InputEvent @event)

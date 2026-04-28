@@ -175,7 +175,8 @@ namespace Underworld
                                         {//in ice caverns
                                             playerdat.SetQuest(52,1);
                                         }
-                                        special_effects.SpecialEffect(4, 15);//screenshake
+                                        
+                                        special_effects.Screenshake(0x40,0xF);
 
                                         UWsoundeffects.PlaySoundEffectAtAvatar(UWsoundeffects.SoundEffectRumble,0x40, 0x28);
                                         UWsoundeffects.PlaySoundEffectAtAvatar(UWsoundeffects.SoundEffectSpellRing1, 0x40,0x14);

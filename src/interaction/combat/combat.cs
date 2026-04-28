@@ -704,7 +704,7 @@ namespace Underworld
                     else
                     {
                         //player was the defender.
-                        Debug.Print("Screenshake");
+                        special_effects.Screenshake(-1,-1);
                     }
                 }
             }

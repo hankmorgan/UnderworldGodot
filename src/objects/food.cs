@@ -218,6 +218,7 @@ namespace Underworld
                             uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x102));// You wake feeling somewhat unstable but better
                         }
                         //TODO Screenshake
+                        special_effects.Screenshake(0x40,-1);
                         break;
                     }
                 case playerdat.SkillCheckResult.CritSucess:

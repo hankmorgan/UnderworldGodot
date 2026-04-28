@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Diagnostics;
 
 namespace Underworld
@@ -33,7 +34,8 @@ namespace Underworld
                     }
                     break;
                 case 4://screenshake
-                    Debug.Print($"screenshake left/right with duration {effectparam}");
+                    
+                    Screenshake(0x40, effectparam << 1);
                     break;
                 case 5:
                     uimanager.FlashColour((byte)(64*3 + effectparam), uimanager.CutsSmall);break;
@@ -44,6 +46,11 @@ namespace Underworld
                 case 8:
                     uimanager.FlashColour((byte)(effectparam), uimanager.CutsSmall);break;
             }
+        }
+
+        public static void Screenshake (int shaketype, int Duration)
+        {
+            Debug.Print($"screenshake of type {shaketype} with duration {Duration}");
         }
     }
 }//end namespace

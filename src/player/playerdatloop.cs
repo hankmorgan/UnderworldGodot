@@ -52,9 +52,18 @@ namespace Underworld
                     }    
                 }
 
-                playerObject.AccumulatedDamage = 0;//clear accumulated damage
-                
+                if (_RES!=GAME_UW2)
+                {
+                    if ((dungeon_level == 9) && (playertimer>0.2f)) //todo need to figure out the correct timing on this.
+                    {
+                        if ((Rng.r.Next(0x7FFF) & 0x1F) == 0)
+                        {
+                            Etherealvoid.EtherealVoidEndGameSpecialEffects();
+                        }
+                    }
+                }
 
+                playerObject.AccumulatedDamage = 0;//clear accumulated damage
 
                 if (playertimer >= 1f)
                 {//every second
@@ -77,7 +86,7 @@ namespace Underworld
 
                         //if ((ClockValue % 2048) < PreviousClockValue)//every 20 seconds
                         if (secondcounter >= 20)
-                        {
+                        {                            
                             secondcounter = 0;
                             playerUpdateCounter++;
 
@@ -271,6 +280,7 @@ namespace Underworld
         public static void KillornKeepEvent()
         {
             Debug.Print("Killorn is crashing!!");
+            special_effects.Screenshake(0x40, -1);
         }
 
         /// <summary>

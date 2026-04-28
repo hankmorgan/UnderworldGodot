@@ -46,7 +46,12 @@ namespace Underworld
 
         public static void UpdateCompass()
         {
-            var heading = (playerdat.heading_major>>4);//get full heading into a range of 0-f
+            var heading = (playerdat.heading_major >> 4);//get full heading into a range of 0-f
+            PointCompassInDirection(heading);
+        }
+
+        public static void PointCompassInDirection(int heading)
+        {
             if (UWClass._RES != UWClass.GAME_UW2)
             {
                 for (int i = 0; i <= instance.CompassBgUW1.GetUpperBound(0); i++)
@@ -70,6 +75,7 @@ namespace Underworld
                 }
             }
         }
+
 
         private void _on_compass_click(InputEvent @event)
         {
