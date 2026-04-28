@@ -447,10 +447,17 @@ namespace Underworld
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
-                // Introduction button plays CS000 → CS001 only.
-                // Splash screens (Origin, LGS, title) play on game startup.
-                cutsplayer.PlayCutscene(0, () =>
-                    cutsplayer.PlayCutscene(1, ReturnToMainMenu));
+                if (UWClass._RES == UWClass.GAME_UW2)
+                {
+                    // Introduction button plays CS000 → CS001 only.
+                    cutsplayer.PlayCutscene(0, () =>
+                        cutsplayer.PlayCutscene(1, ReturnToMainMenu));
+                }
+                else
+                {
+                    // Introduction button plays CS000 only.
+                    cutsplayer.PlayCutscene(0, ReturnToMainMenu);
+                }
             }
         }
 

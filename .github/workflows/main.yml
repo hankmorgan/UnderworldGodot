@@ -16,20 +16,34 @@ jobs:
       # Always include the checkout step so that 
       # your project is available for Godot to export
     - name: checkout
-      uses: actions/checkout@v3.3.0
+      uses: actions/checkout@v6
+      with:
+        path: main
+
+    - name: checkoutADLMidi
+      uses: actions/checkout@v6
+      with:
+        repository: abedegno/AdlMidi.NET
+        path: AdlMidi.NET
+
+    - name: checkoutMt32Emu
+      uses: actions/checkout@v6
+      with:
+        repository: abedegno/Munt.NET
+        path: Mt32Emu.NET
   
     - name: export game
       id: export
       # Use latest version (see releases for all versions)
-      uses: firebelley/godot-export@v5.2.0
+      uses: firebelley/godot-export@v7.0.0
       with:
         # Defining all the required inputs
-        godot_executable_download_url: https://github.com/godotengine/godot-builds/releases/download/4.1.1-stable/Godot_v4.1.1-stable_mono_linux_x86_64.zip
-        godot_export_templates_download_url: https://github.com/godotengine/godot-builds/releases/download/4.1.1-stable/Godot_v4.1.1-stable_mono_export_templates.tpz
-        relative_project_path: ./
+        godot_executable_download_url: https://github.com/godotengine/godot-builds/releases/download/4.6.1-stable/Godot_v4.6.1-stable_mono_linux_x86_64.zip
+        godot_export_templates_download_url: https://github.com/godotengine/godot-builds/releases/download/4.6.1-stable/Godot_v4.6.1-stable_mono_export_templates.tpz
+        relative_project_path: ./main
         archive_output: true
         export_debug: false
-        verbose: false
+        verbose: true
 
       # This release action has worked well for me. However, you can most likely use any release action of your choosing.
       # https://github.com/ncipollo/release-action
