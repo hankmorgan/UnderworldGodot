@@ -21,12 +21,12 @@ jobs:
     - name: checkoutADLMidi
       uses: actions/checkout@v6
       with:
-        repository: https://github.com/abedegno/AdlMidi.NET
+        repository: abedegno/AdlMidi.NET
 
     - name: checkoutMt32Emu
       uses: actions/checkout@v6
       with:
-        repository: https://github.com/abedegno/Munt.NET
+        repository: abedegno/Munt.NET
   
     - name: export game
       id: export
