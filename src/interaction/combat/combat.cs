@@ -338,7 +338,7 @@ namespace Underworld
         public static bool NPCExecuteAttack(uwObject attacker, int swingtype, int attackcharge, int attacktype, int poisondamage)
         {
             CurrentAttackSwingType = swingtype;
-            FinalAttackCharge = attackcharge;
+            NPCFinalAttackCharge = attackcharge;
             CurrentWeaponRadius = 2;//always his for NPCS.
             AttackingCharacter = attacker;
             AttackDamage = critterObjectDat.attackdamage(attacker.item_id, attacktype) + (critterObjectDat.strength(attacker.item_id) / 5);
@@ -375,6 +375,7 @@ namespace Underworld
             DefendingCharacter = null;
             if (checkAttackHit())
             {
+                Debug.Print($"CheckAttackHit = HIT on {DefendingCharacter.a_name} {DefendingCharacter.index}");
                 //var defender = UWTileMap.current_tilemap.LevelObjects[DefenderIndex];
                 if ((AttackingCharacter.index != 1) && (DefendingCharacter.index != 1) && (!DefendingCharacter.IsStatic))
                 {
@@ -407,6 +408,7 @@ namespace Underworld
             }
             else
             {
+                Debug.Print("CheckAttackHit = MISS");
                 return false;//swing and a miss
             }
         }
@@ -536,8 +538,16 @@ namespace Underworld
             {
                 AttackDamage += Rng.DiceRoll(1, damageremainder);
             }
-
-            var finaldamage = (AttackDamage * FinalAttackCharge) >> 7;
+            int finaldamage;
+            if (attacker == 1)
+            {
+                finaldamage = (AttackDamage * PlayerAttackCharge) >> 7;
+            }
+            else
+            {
+                finaldamage = (AttackDamage * NPCFinalAttackCharge) >> 7;
+            }
+            //var finaldamage = (AttackDamage * NPCFinalAttackCharge) >> 7;
             finaldamage += AttackScoreFlankingBonus;
 
             //TODO figure out correct sounds
@@ -645,20 +655,21 @@ namespace Underworld
                             if (AttackingCharacter.index == 1)
                             {
                                 //seg024_24E9_BEB
-                                int eyevalue;
-                                if (critterObjectDat.avghit(DefendingCharacter.item_id) != 0)
-                                {
-                                    eyevalue = (DefendingCharacter.npc_hp * 3) / critterObjectDat.avghit(DefendingCharacter.item_id);
-                                }
-                                else
-                                {
-                                    eyevalue = 0;
-                                }
-                                if (eyevalue >= 3)
-                                {
-                                    eyevalue = 2;
-                                }
-                                Debug.Print($"Update Eye Animation {3 - eyevalue}");
+                                uimanager.SetEyeLevel(DefendingCharacter.npc_hp, critterObjectDat.avghit(DefendingCharacter.item_id));
+                                // int eyevalue;
+                                // if (critterObjectDat.avghit(DefendingCharacter.item_id) != 0)
+                                // {
+                                //     eyevalue = (DefendingCharacter.npc_hp * 3) / critterObjectDat.avghit(DefendingCharacter.item_id);
+                                // }
+                                // else
+                                // {
+                                //     eyevalue = 0;
+                                // }
+                                // if (eyevalue >= 3)
+                                // {
+                                //     eyevalue = 2;
+                                // }
+                                // Debug.Print($"Update Eye Animation {3 - eyevalue}");
                             }
                             //seg024_24E9_C49:
                             if (critterObjectDat.bleed(DefendingCharacter.item_id) != 0)
@@ -766,7 +777,7 @@ namespace Underworld
             MotionCalcArray.Radius8 = (byte)(CurrentWeaponRadius + 1);
             MotionCalcArray.Height9 = (byte)(((CurrentWeaponRadius << 1) + 1) << 2);
             MotionCalcArray.z4 = (ushort)(AttackingCharacter.zpos + (commonObjDat.height(AttackingCharacter.item_id) * (CurrentAttackSwingType / 3) / 3));
-
+            
             if (AttackingCharacter.index == 1)
             {
                 MotionCalcArray.z4 += (ushort)(motion.PlayerHeadingRelated_dseg_67d6_33D6 / 0x200);//this value is set in player motion. Assume 0 for now.
@@ -776,11 +787,11 @@ namespace Underworld
             MotionCalcArray.x0 = (ushort)(AttackingCharacter.xpos + (AttackingCharacter.tileX << 3));
             MotionCalcArray.y2 = (ushort)(AttackingCharacter.ypos + (AttackingCharacter.tileY << 3));
             var di_heading = (AttackingCharacter.heading << 5) + AttackingCharacter.npc_heading;
-
+            
             int x0 = MotionCalcArray.x0; int y2 = MotionCalcArray.y2;
             motion.GetCoordinateInDirection(di_heading, CurrentWeaponRadius + 3, ref x0, ref y2);
             MotionCalcArray.x0 = (ushort)x0; MotionCalcArray.y2 = (ushort)y2;
-
+            Debug.Print($"Calculating attack hit at point {MotionCalcArray.x0},{MotionCalcArray.y2},{MotionCalcArray.z4}");
             motion.ScanForCollisions(0, 1); //TODO. this check is failing to scan for some NPCs. 
             if (MotionCalcArray.Unk14_collisoncount != 0)
             {

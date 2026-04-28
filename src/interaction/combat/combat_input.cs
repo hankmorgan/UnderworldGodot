@@ -85,8 +85,8 @@ namespace Underworld
             combattimer += delta;
             if (combattimer > 0.0625) // = should be every 16 units between a previuosly stored timer in vanilla but I'm unsure what time units they are. assuming 1 second. Feels a bit fast
             {
-                WeaponCharge = Math.Min(WeaponCharge + ChargeSpeed, 100);
-                var frame = 1 + (WeaponCharge / 12);
+                PlayerAttackCharge = Math.Min(PlayerAttackCharge + ChargeSpeed, 100);
+                var frame = 1 + (PlayerAttackCharge / 12);
                 //Debug.Print($"{frame} at {WeaponCharge} of {mincharge}");
                 uimanager.ChangePower(frame);
                 combattimer = 0f;
@@ -99,7 +99,7 @@ namespace Underworld
         public static void EndCombatLoop()
         {
             uimanager.instance.mousecursor.SetCursorToCursor(0);
-            WeaponCharge = 0;
+            PlayerAttackCharge = 0;
             stage = CombatStages.Ready;
             uimanager.ResetPower();
             combattimer = 0;
@@ -174,7 +174,7 @@ namespace Underworld
                                         uimanager.currentWeaponAnim = WeaponAnimGroup + WeaponAnimStrikeOffset + WeaponAnimHandednessOffset;
                                         break;
                                     case 2://ranged
-                                        if (WeaponCharge >= mincharge)
+                                        if (PlayerAttackCharge >= mincharge)
                                         {
                                             //ranged weapon change targeting icon
                                             uimanager.instance.mousecursor.SetCursorToCursor(9);
@@ -192,10 +192,10 @@ namespace Underworld
                         {
                             if (uimanager.IsMouseInViewPort())
                             {
-                                if (WeaponCharge >= mincharge)
+                                if (PlayerAttackCharge >= mincharge)
                                 {
                                     //start return swing   swing                            
-                                    Debug.Print($"Releasing attack at charge {WeaponCharge}");
+                                    Debug.Print($"Releasing attack at charge {PlayerAttackCharge}");
 
                                     combattimer = 0;
                                     if (isWeapon(playerdat.PrimaryHandObject) == 2)

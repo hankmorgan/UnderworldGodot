@@ -22,7 +22,8 @@ namespace Underworld
         public static GRLoader grPower;
         public static BytLoader bitmaps;  
         public static WeaponsLoader grWeapon;   
-        public static GRLoader grInv;  
+        public static GRLoader grInv; 
+        public static GRLoader grEyes; 
 
         public static Dictionary<string, CutsLoader> csCuts;
 

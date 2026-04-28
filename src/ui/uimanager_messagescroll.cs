@@ -125,6 +125,14 @@ namespace Underworld
 						break;
 					}
 			}
+			if (UWClass._RES!=UWClass.GAME_UW2)
+			{
+				if (instance.scroll.LinePtr>=5)
+				{
+					//in Uw1 after 5 lines of text are filled the dragons can start animating the message bar
+					uimanager.StartDragonAnimation(1);
+				}
+			}
 		}
 
 		public static MessageScrollLine[] BackupLines(MessageScrollLine[] toBackup, int size)
