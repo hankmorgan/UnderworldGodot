@@ -71,11 +71,12 @@ namespace Underworld
             //pick music
             if (_RES == GAME_UW2)
             {
-                XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic(0));                
+                //XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic(0));                
+                XMIMusic.PickLevelThemeMusic(0);
             }
             else
             {
-                XMIMusic.ChangeTheme(0xD);
+                XMIMusic.ChangeThemeMusic(0xD);
             }
 
             if (sleepmethod >= 0)

@@ -231,8 +231,8 @@ namespace Underworld
         public static void StopCutscene()
         {
             cancelRequested = true;
-            MusicStreamPlayer.Instance?.Stop();
-            XMIMusic.CurrentThemeNo = 0;
+            //MusicStreamPlayer.Instance?.Stop();
+            //XMIMusic.CurrentlyPlayingThemeNo = 0;
         }
 
         /// <summary>
@@ -849,7 +849,7 @@ namespace Underworld
 
                 case 25: // music
                     Debug.Print($"  Music: theme {cmd.functionParams[0]}");
-                    XMIMusic.ChangeTheme((byte)cmd.functionParams[0]);
+                    XMIMusic.LoadXMI((byte)cmd.functionParams[0]);
                     break;
 
                 case 27: // audio-wait

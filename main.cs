@@ -56,9 +56,10 @@ public partial class main : Node3D
 
 
 	//DOS INT8 (PIT) timer interupt. updates 18.2 times a second.
-	double Pit = 0f;
-	uint PitTimer = 0;
-	uint LastPitTimer = 0;
+	public static double Pit = 0f;
+	public static double GlobalPITTimer = 0f;
+	static uint PitTimer = 0;
+	static uint LastPitTimer = 0;
 	static byte EasyMoveFrameIncrement = 0;
 
 	static byte ThisFrameDelta = 0;
@@ -123,7 +124,7 @@ public partial class main : Node3D
 		uimanager.EnableDisable(uimanager.instance.HealthFlaskPanel,false);
 		cutsplayer.PlayCutscene(9, uimanager.ReturnToMainMenu);
 		//Play intro theme after cutscene coroutine is queued, so music and graphics start together
-		XMIMusic.ChangeTheme(XMIMusic.IntroTheme);	
+		XMIMusic.LoadXMI(XMIMusic.IntroTheme);	
 		uimanager.AddToMessageScroll(GameStrings.GetString(1, 13));//welcome message
 	}
 
@@ -167,8 +168,8 @@ public partial class main : Node3D
 		}
 
 		//DOS interupt 8
-		Pit += (delta*5);  //seem smoother
-		//
+		Pit += (delta*5);  //seem smoother		
+		GlobalPITTimer += delta;
 		if (Pit >= 0.054945) // DOS PIT Timer interupt 8 is 18.2 times a second
 		{
 			PitTimer +=  (uint)(Pit / 0.054945);

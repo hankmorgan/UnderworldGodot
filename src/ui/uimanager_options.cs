@@ -410,7 +410,8 @@ namespace Underworld
                                         ReturnToGameFromOptions();
                                         if (UWClass._RES != UWClass.GAME_UW2)
                                         {//UW1 will only change theme on in-game save load. Not when loading from main menu. See JourneyOnwards() for change of theme handling in UW2
-                                            XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic(0));
+                                            //XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic(0));
+                                            XMIMusic.PickLevelThemeMusic(0);
                                         }
                                         break;
                                     }
@@ -431,7 +432,8 @@ namespace Underworld
                                         playerdat.MusicEnabled = true;
                                         if (MusicStreamPlayer.Instance != null)
                                         {//restart music if not already playing.
-                                            XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic());
+                                            //XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic());
+                                            XMIMusic.PickLevelThemeMusic(0);
                                         }
                                         SetGameOptionButtons(new int[]{
                                                 (int)OptionButtonIndices.MusicIsOnLabel,
