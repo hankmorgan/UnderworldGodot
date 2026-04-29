@@ -645,8 +645,16 @@ public partial class main : Node3D
 						{
 							//This is an NPC on the map	
 							var n = (npc)obj.instance;
-
-							var result = npc.NPCInitialProcess(obj);
+							bool result;
+							// if ((obj.item_id==124) && (UWClass._RES == UWClass.GAME_UW1) )
+							// {
+							// 	result = false;//currently the slasher is bugging out.
+							// }
+							// else
+							// {
+								result = npc.NPCInitialProcess(obj);
+							//}
+	
 							if (n != null)
 							{
 								if (obj.instance != null)
@@ -678,7 +686,8 @@ public partial class main : Node3D
 					}
 					if (initialnextframe == obj.NextFrame_0XA_Bit0123)
 					{
-						Debug.Print($"{obj.a_name} {obj.index} has bugged out in ProcessMobileObjects(), probably needs to be made static.");
+						obj.NextFrame_0XA_Bit0123 += 4; //hack. this will prevent an infinite loop occurring.
+						//Debug.Print($"{obj.a_name} {obj.index} has bugged out in ProcessMobileObjects(), probably needs to be made static.");
 					}
 
 				}

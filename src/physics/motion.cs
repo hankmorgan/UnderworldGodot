@@ -309,7 +309,16 @@ namespace Underworld
                 //seg030_2BB7_A5F:
                 projectile.Projectile_Pitch = (short)cx;
                 projectile.UnkBit_0X13_Bit0to6 = (short)(MotionParams.unk_14 / 0x2F);
-                projectile.TileState_0XA_Bit456 = dseg_67d6_3E8[MotionParams.tilestate25];
+                //Hack added mask to tilestate
+                if (projectile.item_id == 124 && _RES == GAME_UW1)
+                {
+                    projectile.TileState_0XA_Bit456 = dseg_67d6_3E8[MotionParams.tilestate25 & 0xF];
+                }
+                else
+                {
+                    projectile.TileState_0XA_Bit456 = dseg_67d6_3E8[MotionParams.tilestate25];
+                }
+                
                 if (projectile.majorclass != 1)
                 {
                     projectile.CoordinateX = MotionParams.x_0;
@@ -387,8 +396,8 @@ namespace Underworld
                                             playerdat.SetQuest(36, playerdat.GetQuest(36) - 1);  // reduce count of talismans to destroy. 
                                             if (playerdat.GetQuest(36) == 0)//All talismans destroyed
                                             {
-                                                uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x116));// A Rending Sound fills the air.
-                                                Debug.Print("To do spawn a moongate and pull the avatar through it");
+                                                playerdat.SetQuest(36,0xFF);
+                                                Etherealvoid.LaunchPlayerIntoTheVoid();                                                
                                             }
                                             else
                                             {
