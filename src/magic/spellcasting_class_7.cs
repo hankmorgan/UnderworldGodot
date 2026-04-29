@@ -168,7 +168,7 @@ namespace Underworld
             int var6 = 0;
             if (isNPC)
             {
-                if (critter.IsPowerfull == 1)
+                if (critter.IsPowerful == 1)
                 {
                     var6 |= 1;
                 }

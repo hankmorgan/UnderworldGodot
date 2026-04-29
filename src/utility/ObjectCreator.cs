@@ -647,7 +647,7 @@ namespace Underworld
             critter.TargetTileY = 0;
             critter.TargetZHeight = 0;
             critter.UnkBit_0XD_Bit9 = 0;
-            critter.IsPowerfull = 0;
+            critter.IsPowerful = 0;
             critter.UnkBit_0XD_Bit11 = 0;
             critter.UnkBit_0XD_Bit8 = 0;
             critter.UnkBit_0x18_5 = 0;//possbily used to indicate npc is at their target

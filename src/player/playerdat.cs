@@ -477,7 +477,7 @@ namespace Underworld
         {
             get
             {
-                if (pdat==null)
+                if (pdat == null)
                 {
                     //game has not loaded yet. Return true
                     return true;
@@ -494,7 +494,7 @@ namespace Underworld
 
             set
             {
-                if(_RES == GAME_UW2)
+                if (_RES == GAME_UW2)
                 {
                     var tmp = GetAt(0x303) & 0xF3;
                     if (value)
@@ -530,7 +530,7 @@ namespace Underworld
             }
             set
             {
-                if(_RES == GAME_UW2)
+                if (_RES == GAME_UW2)
                 {
                     var tmp = GetAt(0x303) & 0xFE;
                     if (value)
@@ -621,8 +621,32 @@ namespace Underworld
                     uimanager.AddToMessageScroll($"{GameStrings.GetString(1, GameStrings.str_you_have_attained_experience_level_)}{newLevel}");
                 }
                 RecalculateHPManaMaxWeight(false);
+                uimanager.RefreshStatsDisplay();
             }
         }
+
+        /// <summary>
+        /// Calculates the base exp to be awarded when the player kills an NPC and plays fanfare.
+        /// </summary>
+        /// <param name="critter"></param>
+        public static void AwardXPKill(uwObject critter)
+        {
+            if (critter.majorclass == 1)
+            {
+                XMIMusic.ChangeTheme(XMIMusic.Fanfare,false); //fanfare
+                var exp_reward = critterObjectDat.experience(critter.item_id);
+                exp_reward = exp_reward + Rng.DiceRoll(2, exp_reward);
+                if (critter.IsPowerful == 1)
+                {
+                    exp_reward = exp_reward + (((0x18 + Rng.r.Next(0x18)) * exp_reward) / 0x10);
+                }
+                ChangeExperience(exp_reward);
+            }
+
+            //do math for xp
+            //Debug.Print("DON'T FORGET TO GAIN EXP WHEN KILLING CRITTERS!");
+        }
+
 
         /// <summary>
         /// Updates hp, mana and max weight values when leveling up or when related stats change.

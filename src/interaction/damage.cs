@@ -129,7 +129,7 @@ namespace Underworld
                     //TODO death has some extra behaviours that needs to be supported in a seperate Eg death rattles. Move the below into a seperate func
                     if (npc.SpecialDeathCases(critter))
                     {
-                        AwardXPKill(critter);
+                        playerdat.AwardXPKill(critter);
                         critter.npc_animation = npc.ANIMATION_DEATH;
                         critter.AnimationFrame = 0;
                         npc.RedrawAnimation(critter);

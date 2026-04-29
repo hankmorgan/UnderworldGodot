@@ -27,7 +27,7 @@ namespace Underworld
 
             if (newIsPowerful != -1)
             {
-                talker.IsPowerfull = (short)newIsPowerful;
+                talker.IsPowerful = (short)newIsPowerful;
             }
 
             if (ArgA != -1)
