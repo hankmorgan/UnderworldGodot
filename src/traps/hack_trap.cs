@@ -427,7 +427,7 @@ namespace Underworld
                 case 63: // endgame for UW1
                     {
                         //TODO: I have no way of testing this yet since
-                        if(_RES != GAME_UW1)
+                        if(_RES != GAME_UW2)
                         {
                             a_do_trap_endgame.Activate();
                         }

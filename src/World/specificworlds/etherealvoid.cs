@@ -1,5 +1,8 @@
 
-using System;
+using System.Collections;
+using System.Numerics;
+using Godot;
+using Peaky.Coroutines;
 
 namespace Underworld
 {
@@ -57,5 +60,54 @@ namespace Underworld
             //randomise compass
             uimanager.PointCompassInDirection(Rng.r.Next(0x7FFF) & 0xF);
         }
-    }//end class
+
+        /// <summary>
+        /// As part of the UW1 end game spawn a moongate and suck the avatar into the ethereal void.
+        /// </summary>
+        public static void LaunchPlayerIntoTheVoid()
+        {
+            uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x116));// A Rending Sound fills the air.
+
+            //Spawn moongate
+            var newmoongate  = ObjectCreator.PrepareNewObject(0x15A,ObjectFreeLists.ObjectListType.StaticList);
+            var obj = UWTileMap.current_tilemap.LevelObjects[newmoongate];
+            obj.is_quant = 1;
+            var moontile = UWTileMap.current_tilemap.Tiles[0x20,0x20];
+            obj.tileX= 0x20; obj.tileY = 0x20;
+            //insert object to tile.
+            obj.link = 0x2C0;
+            obj.next = moontile.indexObjectList;
+            moontile.indexObjectList = obj.index;
+            ObjectCreator.RenderObject(obj, UWTileMap.current_tilemap);
+
+
+            _ = Peaky.Coroutines.Coroutine.Run(
+                        MoveCameraToVoid(obj),
+                        main.instance);            
+        }
+
+
+        /// <summary>
+        /// Janky effect to move the player to the camera.
+        /// </summary>
+        /// <param name="moongate"></param>
+        /// <returns></returns>
+        public static IEnumerator MoveCameraToVoid(uwObject moongate)
+        {
+            var initial = main.gamecam.Position;            
+            var traveltime = 0f;
+            var speed = 0.2f;
+            while (traveltime<5f)
+            {
+                yield return new WaitForSeconds(speed);  
+                traveltime+=speed;
+                main.gamecam.Position = new Godot.Vector3(Mathf.Lerp(initial.X, moongate.instance.uwnode.Position.X, traveltime/5f), initial.Y, Mathf.Lerp(initial.Z, moongate.instance.uwnode.Position.Z, traveltime/5f));  
+            }            
+            
+            Teleportation.Teleport(character: 1, tileX: 0x1B, tileY: 0x17, newLevel: 9, heading: 0);
+
+            //Do teleports
+        }
+
+    }//end class    
 }//end namespace
