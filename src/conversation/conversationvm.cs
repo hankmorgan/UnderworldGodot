@@ -566,10 +566,16 @@ namespace Underworld
 		private static void ExitConversation(uwObject talker, Conversation conv)
 		{
 
-			if (UWClass._RES != UWClass.GAME_UW2)
+			if (_RES != GAME_UW2)
 			{
 				XMIMusic.PickLevelThemeMusic(0);
-				//XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic());//restart a music theme for UW1 as maps&legends plays for convos in UW1 only.
+			}
+			else
+			{
+				if (playerdat.play_drawn == 1)
+				{
+					XMIMusic.ChangeThemeMusic(XMIMusic.Armed);
+				}
 			}
 
 			ExportVariables(talker);

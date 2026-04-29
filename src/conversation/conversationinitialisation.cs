@@ -52,6 +52,13 @@ namespace Underworld
                         {
                             XMIMusic.ChangeThemeMusic(XMIMusic.MapsAndLegends);
                         }
+                    else
+                    {
+                        if (playerdat.play_drawn == 1)
+                        {
+                            XMIMusic.PickLevelThemeMusic(0);
+                        }
+                    }
 
                     InitialiseConversationMemory();
 
