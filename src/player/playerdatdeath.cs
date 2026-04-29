@@ -5,20 +5,20 @@ namespace Underworld
 {
     //for handling loop updates for the player.
     public partial class playerdat : Loader
-    {        
+    {
         static bool PlayerInDeathMode;
         /// <summary>
         /// Handles player death.
         /// </summary>
         static void PlayerDeath()
         {
-            if ( PlayerInDeathMode)
+            if (PlayerInDeathMode)
             {
                 return;
             }
             PlayerInDeathMode = true;
 
-            if(_RES == GAME_UW2)
+            if (_RES == GAME_UW2)
             {
                 //If in Britannia.
                 //Check if was killed by a castle inhabitant.get sent to jail. otherwise die.
@@ -26,17 +26,17 @@ namespace Underworld
                 //Check if dreaming in void. then so wake up where you were sleeping
                 //If dueling in the pits then lose duel
                 //respawn in gem room.
-                if (dungeon_level==1)
+                if (dungeon_level == 1)
                 {
                     //playerObject.ProjectileSourceID = 235;  // for testing against LB
                     //Check if was killed by an ally
-                    if(playerObject.ProjectileSourceID !=0)
+                    if (playerObject.ProjectileSourceID != 0)
                     {
                         var killer = UWTileMap.current_tilemap.LevelObjects[playerObject.ProjectileSourceID];
-                        if (killer!=null)
+                        if (killer != null)
                         {   //was avatar killed by a castle inhabitant or Syria or a castle guard.
                             if (
-                                ((killer.npc_whoami >=0x81) && (killer.npc_whoami<0x8F))
+                                ((killer.npc_whoami >= 0x81) && (killer.npc_whoami < 0x8F))
                                 ||
                                 (killer.npc_whoami == 0xA8)
                                 ||
@@ -48,14 +48,14 @@ namespace Underworld
                                     //send to jail
                                     Teleportation.CodeToRunOnTeleport = GoToJail;
                                     Teleportation.Teleport(
-                                        character: 0, 
-                                        tileX: 42, tileY: 38, 
-                                        newLevel: 1, 
+                                        character: 0,
+                                        tileX: 42, tileY: 38,
+                                        newLevel: 1,
                                         heading: 0);
                                     return;
-                                }                                
+                                }
                             }
-                        }                        
+                        }
                     }
 
                 }
@@ -73,23 +73,23 @@ namespace Underworld
                     //respawn in the gem chamber                        
                     if (IsFightingInPit)
                     {
-                        SetQuest(129,0);//arena win record
-                        SetQuest(133,0);//jospur debt
+                        SetQuest(129, 0);//arena win record
+                        SetQuest(133, 0);//jospur debt
                         //clear fighters
-                        for(int i = 0; i<5;i++)
+                        for (int i = 0; i < 5; i++)
                         {
-                            SetPitFighter(i,0);//clear opponents.
+                            SetPitFighter(i, 0);//clear opponents.
                         }
                         IsFightingInPit = false;
                     }
 
-                    
+
                     Teleportation.CodeToRunOnTeleport = ResurrectAtBlackrockGem;
                     Teleportation.Teleport(
-                        character: 0, 
-                        tileX: 28, tileY: 37, 
-                        newLevel: 5, 
-                        heading: 0);                    
+                        character: 0,
+                        tileX: 28, tileY: 37,
+                        newLevel: 5,
+                        heading: 0);
                 }
                 else
                 {
@@ -108,16 +108,16 @@ namespace Underworld
                 //Start death animation.
 
                 Debug.Print("Do Death Animation");
-                if (SilverTreeDungeon !=0)
+                if (SilverTreeDungeon != 0)
                 {
                     Debug.Print("Do Silver Tree Animation");
                     Teleportation.CodeToRunOnTeleport = ResurrectAtSilverTree;
                     Teleportation.Teleport(
-                        character: 0, 
-                        tileX: 32, tileY: 32, 
-                        newLevel: SilverTreeDungeon, 
+                        character: 0,
+                        tileX: 32, tileY: 32,
+                        newLevel: SilverTreeDungeon,
                         heading: 0);
-                    
+
                 }
                 else
                 {//die fully
@@ -137,14 +137,14 @@ namespace Underworld
             Teleportation.CodeToRunOnTeleport = null;
             play_hp = max_hp;
             PlayerInDeathMode = false;
-            var tree = objectsearch.FindMatchInFullObjectList(7,0,0xA,UWTileMap.current_tilemap.LevelObjects);
+            var tree = objectsearch.FindMatchInFullObjectList(7, 0, 0xA, UWTileMap.current_tilemap.LevelObjects);
             if (tree != null)
             {
                 if (UWTileMap.ValidTile(tree.tileX, tree.tileY))
                 {
                     Teleportation.Teleport(
-                        character: 0, 
-                        tileX: tree.tileX, tileY: tree.tileY, 
+                        character: 0,
+                        tileX: tree.tileX, tileY: tree.tileY,
                         newLevel: 0, heading: 0);
                 }
             }
@@ -159,7 +159,7 @@ namespace Underworld
             Teleportation.CodeToRunOnTeleport = null;
             play_hp = max_hp;
             PlayerInDeathMode = false;
-            uimanager.AddToMessageScroll(GameStrings.GetString(1,0x169));
+            uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x169));
         }
 
         /// <summary>
@@ -168,30 +168,30 @@ namespace Underworld
         /// otherwise Lord British will teleport in to free the avatar
         /// </summary>
         static void GoToJail()
-        {        
-            Teleportation.CodeToRunOnTeleport = null;    
+        {
+            Teleportation.CodeToRunOnTeleport = null;
             play_hp = max_hp;
-            ChangeExperience(-Exp/9);//loss of exp
-            PlayerInDeathMode = false;        
-            //TODO: make humans friendly, set quests, run a trap, advance the clock and move LB to the prison to release you.
-            var newtime =  (ClockValue / 0x3C00) % 20;        
+            ChangeExperience(-Exp / 9);//loss of exp
+            PlayerInDeathMode = false;
+            playerdat.playerObject.npc_animation = 1;
+            XMIMusic.ChangeThemeMusic(0xA);//play depressed theme
+            //make humans friendly, set quests, run a trap, advance the clock and move LB to the prison to release you.
+            var newtime = (ClockValue / 0x3C00) % 20;
             newtime = Math.Abs(0x28 - newtime);
             newtime = newtime * 0x3C;
-            newtime = newtime - Rng.r.Next(0x5A) + 0x3C; 
+            newtime = newtime - Rng.r.Next(0x5A) + 0x3C;
             Debug.Print($"Advancing time by {newtime}");
             AdvanceTime(newtime);
-            CallBacks.RunCodeOnRace(npc.set_attitude_by_array,0x1C, new int[]{2}, true);
-            CallBacks.RunCodeOnRace(npc.set_goal_and_target_by_array,0x1C, new int[]{0,1}, true); // goal=1, gtarg=0
-            SetQuest(112,1);//avatar has been fighting.
+            CallBacks.RunCodeOnRace(npc.set_attitude_by_array, 0x1C, new int[] { 2 }, true);
+            CallBacks.RunCodeOnRace(npc.set_goal_and_target_by_array, 0x1C, new int[] { 0, 1 }, true); // goal=1, gtarg=0
+            SetQuest(112, 1);//avatar has been fighting.
 
-            //TODO: calm NPCs across the map
-            Debug.Print("Add calm function here");
-            
+
             uwObject LBritish = null;
-            for (int i=1; i<256;i++)
+            for (int i = 1; i < 256; i++)
             {//find lord british
                 LBritish = UWTileMap.current_tilemap.LevelObjects[i];
-                if (LBritish.npc_whoami== 0x8E)
+                if (LBritish.npc_whoami == 0x8E)
                 {
                     break;
                 }
@@ -205,10 +205,13 @@ namespace Underworld
                 LBritish.npc_goal = 1;
             }
 
-            trigger.TriggerTrapInTile(39,37);
+            trigger.TriggerTrapInTile(39, 37);
 
             //put weapons away.
-            
+            playerdat.PutWeaponAway();
+            //Close doors in tile 0x2A, 0x26
+            Debug.Print($"TODO Close door at {0x2A},{0x26}");
+
         }
 
     }//end class

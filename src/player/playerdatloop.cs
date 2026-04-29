@@ -403,7 +403,7 @@ namespace Underworld
         }
 
 
-        public static void PutWeaponAwayWhenSwimming()
+        public static void PutWeaponAway()
         {
             if (playerdat.play_drawn == 1)
             {

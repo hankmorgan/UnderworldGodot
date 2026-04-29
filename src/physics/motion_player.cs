@@ -743,7 +743,7 @@ namespace Underworld
             {
                 result = true;
                 playerdat.SwimCounter = 0x60;
-                playerdat.PutWeaponAwayWhenSwimming();
+                playerdat.PutWeaponAway();
             }
             else
             {
