@@ -389,6 +389,21 @@ namespace Underworld
                                 {
                                     //TODO set music if not playing any combat theme
                                     //todo set combat music timer
+                                    if (_RES == GAME_UW2)
+                                    {
+                                        if (XMIMusic.CurrentlyPlayingThemeNo<=2 || XMIMusic.CurrentlyPlayingThemeNo >4)
+                                        {
+                                            XMIMusic.ChangeThemeMusic(3);
+                                        }                                        
+                                    }
+                                    else
+                                    {
+                                        if (XMIMusic.CurrentlyPlayingThemeNo<=5 || XMIMusic.CurrentlyPlayingThemeNo >7)
+                                        {
+                                            XMIMusic.ChangeThemeMusic(6);
+                                        }   
+                                    }
+                                    XMIMusic.CombatMusicTimer = main.GlobalPITTimer;
                                 }
                             }
                             //either hit at the standard hit frame or if the animation is short of frames hit at the last frame in the sequence.
