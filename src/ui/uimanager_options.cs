@@ -293,6 +293,22 @@ namespace Underworld
                         {   //at main menu. will switch to menu specified by arg0
                             switch (extra_arg_0)
                             {
+                                case 0://switch to save menu
+                                    {
+                                        CurrentGameOptionMenu = OptionMenus.SaveMenu;
+                                        SetGameOptionsBackground((int)OptionButtonIndices.AllSaveButtons);
+                                        SetGameOptionButtons(
+                                            new int[]{
+                                                (int)OptionButtonIndices.SaveGameOff,
+                                                (int)OptionButtonIndices.Save1Off,
+                                                (int)OptionButtonIndices.Save2Off,
+                                                (int)OptionButtonIndices.Save3Off,
+                                                (int)OptionButtonIndices.Save4Off,
+                                                (int)OptionButtonIndices.CancelOff,
+                                                -1});
+                                        listsaves();
+                                        break;
+                                    }
                                 case 1://switch to restore menu
                                     {
                                         CurrentGameOptionMenu = OptionMenus.RestoreMenu;
@@ -385,6 +401,61 @@ namespace Underworld
                                     }
                             }
 
+                            break;
+                        }
+                    case OptionMenus.SaveMenu:
+                        {
+                            switch (extra_arg_0)
+                            {
+                                case 1:
+                                case 2:
+                                case 3:
+                                case 4://save to chosen slot
+                                    {
+                                        // Description uses existing slot name if present, otherwise a default.
+                                        var descPath = System.IO.Path.Combine(UWClass.BasePath, $"SAVE{extra_arg_0}", "DESC");
+                                        string description = System.IO.File.Exists(descPath)
+                                            ? System.IO.File.ReadAllText(descPath)
+                                            : $"Save {extra_arg_0}";
+                                        int stringId;
+                                        if (UWClass._RES != UWClass.GAME_UW1)
+                                        {
+                                            // UW2 save is unsupported pending an upstream UW2 lev.ark compressor.
+                                            // Writing uncompressed UW2 blocks would fail DOS load (>80 uncompressed
+                                            // blocks crash vanilla UW2.EXE). Until the compressor is ported, refuse.
+                                            GD.PrintErr("UW2 save pending upstream compressor — not yet supported");
+                                            stringId = GameStrings.str_save_game_failed_;
+                                        }
+                                        else
+                                        {
+                                            try
+                                            {
+                                                SaveGame.Save((int)extra_arg_0, description);
+                                                stringId = GameStrings.str_save_game_succeeded_;
+                                            }
+                                            catch (System.IO.IOException ex)
+                                            {
+                                                GD.PrintErr($"SaveGame.Save failed: {ex}");
+                                                stringId = GameStrings.str_save_game_failed_;
+                                            }
+                                            catch (System.UnauthorizedAccessException ex)
+                                            {
+                                                GD.PrintErr($"SaveGame.Save failed: {ex}");
+                                                stringId = GameStrings.str_save_game_failed_;
+                                            }
+                                        }
+                                        listsaves();
+                                        instance.scroll.Clear();
+                                        AddToMessageScroll(GameStrings.GetString(1, stringId));
+                                        ReturnToGameFromOptions();
+                                        break;
+                                    }
+                                case 5://cancel and return to top
+                                    {
+                                        ReturnToTopOptionsMenu();
+                                        break;
+                                    }
+                            }
                             break;
                         }
                     case OptionMenus.RestoreMenu:
