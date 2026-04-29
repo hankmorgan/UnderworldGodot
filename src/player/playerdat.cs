@@ -633,7 +633,7 @@ namespace Underworld
         {
             if (critter.majorclass == 1)
             {
-                XMIMusic.ChangeTheme(XMIMusic.Fanfare,false); //fanfare
+                XMIMusic.ChangeThemeMusic(XMIMusic.Fanfare); //fanfare
                 var exp_reward = critterObjectDat.experience(critter.item_id);
                 exp_reward = exp_reward + Rng.DiceRoll(2, exp_reward);
                 if (critter.IsPowerful == 1)
