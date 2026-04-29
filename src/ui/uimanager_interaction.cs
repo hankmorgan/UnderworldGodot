@@ -258,7 +258,7 @@ namespace Underworld
             {
                 playerdat.play_drawn = 0; //ensure weapon is not drawn.
                 XMIMusic.PickLevelThemeMusic(0);
-                //XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic()); //in future this needs to take into account combat state.
+                //XMIMusic.ChangeTheme(XMIMwusic.PickLevelThemeMusic()); //in future this needs to take into account combat state.
                 if (UWClass._RES == UWClass.GAME_UW2)
                 {
                     instance.InteractionButtonsUW2[(int)(InteractionModes.ModeAttack)].Texture = instance.UW2InteractionBtnsOff[(int)(InteractionModes.ModeAttack)];

@@ -1,8 +1,4 @@
-using System;
 using System.IO;
-using System.Reflection.Emit;
-using Godot;
-using Munt.NET;
 
 namespace Underworld
 {
@@ -12,6 +8,7 @@ namespace Underworld
     /// </summary>
     public class XMIMusic : UWClass
     {
+        public static bool DEBUG_MUSIC_HASSTOPPED = false;//for simulating stopping of music themes, until a reliable way of detecting that the music player is not playing music is set up to toggle value click on the compass ui.
         public static byte CurrentlyPlayingThemeNo;
         public static byte NewThemeToPlay;
         static readonly byte[] UW2WorldThemes = [0xA, 0xC, 0xE, 0x9, 0xA, 0xF, 0xB, 0xD, 0xA, 0xC, 0xD, 0x9, 0x8, 0xB, 0xE, 0xD, 0x8, 0xF, 0xE, 0x9, 0x8, 0xF, 0xB, 0xA, 0x8, 0xC, 0x9];
@@ -37,8 +34,9 @@ namespace Underworld
                 {
                     if (CurrentlyPlayingThemeNo == Fanfare)//fanfare
                     {
-                        if (MusicStreamPlayer.Instance.IsPlaying)
+                        if (MusicStreamPlayer.Instance.IsPlaying && !DEBUG_MUSIC_HASSTOPPED)//this is a guess.
                         {
+                            DEBUG_MUSIC_HASSTOPPED = false;
                             return; //Do not interupt the fanfare until finished.
                         }
                     }
@@ -66,106 +64,104 @@ namespace Underworld
                         )
                     {
                         //2cdc
-                        if (MusicStreamPlayer.Instance.IsPlaying)
+                        //the source logic in the disassembly from here on is hard to parse but I think this is what it means.
+
+                        // currently bugged and not returning correct value, 
+                        // /there is ambiguity as to what the call to SEG16_2DB8 is doing.  
+                        // current assumption based on usage above with fanfare is it is a test to see if a track is playing
+                        // if that case the usage here must be a check to see if the music is not playing. 
+                        if (!MusicStreamPlayer.Instance.IsPlaying | DEBUG_MUSIC_HASSTOPPED)
                         {
-                            if (CurrentlyPlayingThemeNo < 8)
+                            DEBUG_MUSIC_HASSTOPPED = false;
+                            switch (CurrentlyPlayingThemeNo)
                             {
-                                goto seg_2CF6;
-                            }
-                            else
-                            {
-                                if (CurrentlyPlayingThemeNo <= 0xF)
-                                {
-                                    goto Seg_2D0B;
-                                }
-                            }
-                        seg_2CF6:
-                            if (CurrentlyPlayingThemeNo < 2)
-                            {
-                                goto Seg_2D04;
-                            }
-                            if (CurrentlyPlayingThemeNo <= 4)
-                            {
-                                goto Seg_2D0B;
-                            }
-
-                        Seg_2D04:
-                            if (CurrentlyPlayingThemeNo != 0x18)
-                            {
-                                goto Seg_2D19;
-                            }
-
-                        Seg_2D0B:
-                            if (CurrentlyPlayingThemeNo < 8)
-                            {
-                                goto WeapDrawn_2D28;
+                                case 2://combat themes
+                                case 3:
+                                case 4:
+                                    {
+                                        //do nothing?
+                                        break;
+                                    }
+                                case >= 8 and <= 0xF://map themes.
+                                    {
+                                        if (uimanager.InGame)
+                                        {
+                                            PickLevelThemeMusic(-1);
+                                        }
+                                        break;
+                                    }
+                                case > 0xF: //cutscene themes
+                                    {
+                                        //do nothing.
+                                        break;
+                                    }
+                                default:
+                                    {
+                                        //do nothing.
+                                        break;
+                                    }
                             }
 
-                            //seg2d12
-                            if (CurrentlyPlayingThemeNo > 0xF)
-                            {
-                                goto WeapDrawn_2D28;
-                            }
-                        Seg_2D19:
-                            if (!uimanager.InGame)
-                            {
-                                goto WeapDrawn_2D28;
-                            }
-
-                            //PickTheme_2D20:
-                            if (!MusicStreamPlayer.Instance.IsPlaying)//BUG. When a theme has stopped playing isPlaying still returns true;
-                            {
-                                PickLevelThemeMusic(-1);
-                            }
-                            
 
 
-                        WeapDrawn_2D28:
+                            // WeapDrawn_2D28:
                             if (
                                 (playerdat.play_drawn != 0) && (CurrentlyPlayingThemeNo < 2)
                                 ||
                                 (playerdat.play_drawn != 0) && (CurrentlyPlayingThemeNo >= 5)
                                 )
                             {
-                                NewThemeToPlay = 5;
+                                NewThemeToPlay = Armed;//set to armed theme if not already in a combat theme.
                             }
                             else
                             {
-                                //SEG16_2D4B
-                                if (CurrentlyPlayingThemeNo < 8)
+                                switch (CurrentlyPlayingThemeNo)
                                 {
-                                    goto seg_2D59;
+                                    case >= 2 and <= 4: //combat
+                                    case >= 8 and <= 0xF: //level themes
+                                    case 0x18:  // cutscene
+                                        if (NewThemeToPlay == 0)
+                                        {
+                                            NewThemeToPlay = CurrentlyPlayingThemeNo;//repeat theme.
+                                        }
+                                        break;
                                 }
-                                if (CurrentlyPlayingThemeNo <= 0xF)
-                                {
-                                    goto seg_2D6E;
-                                }
-
-                            seg_2D59:
-                                if (CurrentlyPlayingThemeNo < 2)
-                                {
-                                    goto seg_2D67;
-                                }
-                                //seg 22d60:
-                                if (CurrentlyPlayingThemeNo <= 4)
-                                {
-                                    goto seg_2D6E;
-                                }
-                            seg_2D67:
-                                if (CurrentlyPlayingThemeNo!= 0x18)
-                                {
-                                    goto seg_2D7B;
-                                }
-                            seg_2D6E:
-                            if (NewThemeToPlay == 0)
-                                {
-                                    NewThemeToPlay = CurrentlyPlayingThemeNo;
-                                }
+                                // //seg16_2D4B
+                                // if ((CurrentlyPlayingThemeNo >= 8) && (CurrentlyPlayingThemeNo <= 0xF))
+                                // {
+                                //     //2D6E
+                                //     if (NewThemeToPlay == 0)
+                                //     {
+                                //         NewThemeToPlay = CurrentlyPlayingThemeNo;
+                                //     }
+                                // }
+                                // else
+                                // {
+                                //     if (CurrentlyPlayingThemeNo >= 2 && CurrentlyPlayingThemeNo <= 4)
+                                //     {
+                                //         //2D6E
+                                //         if (NewThemeToPlay == 0)
+                                //         {
+                                //             NewThemeToPlay = CurrentlyPlayingThemeNo;
+                                //         }
+                                //     }
+                                //     else
+                                //     {
+                                //         if (CurrentlyPlayingThemeNo == 0x18)//0x18 is the intro theme.
+                                //         {
+                                //             if (NewThemeToPlay == 0)
+                                //             {
+                                //                 NewThemeToPlay = CurrentlyPlayingThemeNo;
+                                //             }
+                                //         }
+                                //     }
+                                // }
                             }
-                        
-                        seg_2D7B:
-                        LoadXMI(NewThemeToPlay);
-                        if ((NewThemeToPlay>=2) && (NewThemeToPlay<=4))
+
+
+                            //seg_2D7B:
+                            LoadXMI(NewThemeToPlay);
+                            if ((NewThemeToPlay >= 2) && (NewThemeToPlay <= 4))
                             {
                                 LastCombatMusicThemeChange = main.GlobalPITTimer;
                             }
@@ -220,10 +216,10 @@ namespace Underworld
 
 
         }
-        
+
         public static void ChangeThemeMusic(byte newTheme)
         {
-            if (CurrentlyPlayingThemeNo == Fanfare)
+            if (CurrentlyPlayingThemeNo != Fanfare)
             {
                 NewThemeToPlay = newTheme;
             }
@@ -241,6 +237,7 @@ namespace Underworld
                 //
 
                 CurrentlyPlayingThemeNo = themeNo;
+                NewThemeToPlay = 0;
 
                 string filename = _RES == GAME_UW2
                     ? $"UWA{digit1}{digit2}.XMI"

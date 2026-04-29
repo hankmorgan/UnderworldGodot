@@ -80,7 +80,7 @@ namespace Underworld
         private void _on_compass_click(InputEvent @event)
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed)
-            {
+            {  XMIMusic.DEBUG_MUSIC_HASSTOPPED = !XMIMusic.DEBUG_MUSIC_HASSTOPPED;//toggle for debugging
                 scroll.Clear();
                 AddToMessageScroll("\n");
                 if (UWClass._RES == UWClass.GAME_UW2)

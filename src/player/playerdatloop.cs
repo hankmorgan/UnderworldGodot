@@ -21,7 +21,7 @@ namespace Underworld
             {
                 playertimer += delta;
                 
-
+                XMIMusic.RefreshMusic();//checks the playing themes and updates accordingly
                 //every frame
                 //Compass updates
                 if (_RES== GAME_UW2)
@@ -84,7 +84,7 @@ namespace Underworld
                         secondcounter++;
                         //ClockValue += 0x40; //not sure what the exact rate should be here. for the moment assuming this is 1 second of time in game clock terms
 
-                        XMIMusic.RefreshMusic();//checks the playing themes and updates accordingly
+                        
                         //if ((ClockValue % 2048) < PreviousClockValue)//every 20 seconds
                         if (secondcounter >= 20)
                         {                            
