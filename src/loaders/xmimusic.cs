@@ -16,6 +16,7 @@ namespace Underworld
         public const byte MapsAndLegends = 0xD;
 
         public static byte Armed => _RES == GAME_UW2 ? (byte)5 : (byte)8;
+        public static byte Fanfare => _RES == GAME_UW2 ? (byte)6 : (byte)9;
 
         public static void ChangeTheme(byte themeNo, bool Loop = true)
         {

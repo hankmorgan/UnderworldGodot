@@ -55,11 +55,11 @@ namespace Underworld
             obj.npc_whoami = 0x66;
             if (isPowerfull)
             {
-                obj.IsPowerfull = 1;
+                obj.IsPowerful = 1;
             }
             else
             {
-                obj.IsPowerfull = 0;
+                obj.IsPowerful = 0;
             }
 
             obj.UnkBit_0XD_Bit8 = 1;

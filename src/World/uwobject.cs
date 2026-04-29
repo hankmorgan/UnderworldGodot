@@ -686,7 +686,7 @@ namespace Underworld
         /// <summary>
         /// When set the npc is powerful and does extra damage and so on.
         /// </summary>
-        public short IsPowerfull
+        public short IsPowerful
         {
             get
             {

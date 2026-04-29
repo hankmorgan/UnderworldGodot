@@ -344,7 +344,7 @@ namespace Underworld
             AttackDamage = critterObjectDat.attackdamage(attacker.item_id, attacktype) + (critterObjectDat.strength(attacker.item_id) / 5);
             AttackScore = critterObjectDat.chancetohit(attacker.item_id, attacktype) + (critterObjectDat.EquipmentDamageOrBaseHitChance(attacker.item_id) >> 1);
 
-            if (attacker.IsPowerfull == 1)
+            if (attacker.IsPowerful == 1)
             {
                 AttackScore += 7 + Rng.r.Next(6);
                 AttackDamage += 4 + Rng.r.Next(0xC);
@@ -602,7 +602,7 @@ namespace Underworld
                     BodyPartHit = BodyPartHit & 4;
                     cx = critterObjectDat.toughness(DefendingCharacter.item_id, 0);
                 }
-                if (DefendingCharacter.IsPowerfull == 1)
+                if (DefendingCharacter.IsPowerful == 1)
                 {
                     cx = (cx * 5) / 3;
                 }
