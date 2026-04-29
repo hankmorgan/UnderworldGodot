@@ -70,10 +70,10 @@ namespace Underworld
         static int DamageNPC(uwObject critter, int basedamage, int damagesource)
         {
             //basedamage = ScaleDamage(critter.item_id, ref basedamage, damagetype);
-            //if (basedamage != 0)
-            //{
+            if (basedamage != 0)
+            {
             Debug.Print($"Damage {critter.a_name} by {basedamage}");
-            //}
+            }
 
             //Note to be strictly compatable with UW behaviour the damage should be accumulated for the npc and test
             //once per tick This is used to control the angering behaviour of the npc in checking against passiveness and for music/gui updates on the avatar.

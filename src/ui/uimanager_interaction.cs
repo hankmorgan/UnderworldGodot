@@ -245,20 +245,24 @@ namespace Underworld
         }
 
 
-        public static void ToggleWeaponAnimationState(bool drawWeapon)
+        public static void ToggleWeaponAnimationState(bool drawWeapon, bool updateThemes = true)
         {
             PreviousWeaponAnimation = -1; //force redraw.
             if (drawWeapon)     //(playerdat.play_drawn != 1)
             {
-                playerdat.play_drawn = 1;//draw the weapon
-                XMIMusic.ChangeThemeMusic(XMIMusic.Armed);
-                //XMIMusic.ChangePlayingTheme(themeNo: XMIMusic.Armed, Loop: true);
+                playerdat.play_drawn = 1;//draw the weapon 
+                if (updateThemes)
+                {
+                    XMIMusic.ChangeThemeMusic(XMIMusic.Armed);    
+                }                 
             }
             else
             {
                 playerdat.play_drawn = 0; //ensure weapon is not drawn.
-                XMIMusic.PickLevelThemeMusic(0);
-                //XMIMusic.ChangeTheme(XMIMwusic.PickLevelThemeMusic()); //in future this needs to take into account combat state.
+                if (updateThemes)
+                {
+                   XMIMusic.PickLevelThemeMusic(0); 
+                }
                 if (UWClass._RES == UWClass.GAME_UW2)
                 {
                     instance.InteractionButtonsUW2[(int)(InteractionModes.ModeAttack)].Texture = instance.UW2InteractionBtnsOff[(int)(InteractionModes.ModeAttack)];

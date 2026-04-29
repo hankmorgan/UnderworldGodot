@@ -344,7 +344,7 @@ namespace Underworld
             }
                
             //Set up the weapon animations.
-            ToggleWeaponAnimationState(playerdat.play_drawn == 1);
+            ToggleWeaponAnimationState(drawWeapon: playerdat.play_drawn == 1, updateThemes: false);
             if (playerdat.play_drawn == 1)
             {
                 InteractionMode = InteractionModes.ModeAttack;
