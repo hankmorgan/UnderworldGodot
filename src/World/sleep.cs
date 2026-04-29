@@ -250,6 +250,9 @@ namespace Underworld
         public static void AwakenFromTheVoid()
         {
             Debug.Print("Awaken from a dream in the void.");
+
+            XMIMusic.ChangeThemeMusic(0xA);
+
             playerdat.DreamingInVoid = false;
             playerdat.DreamPlantCounter = 0;
 
