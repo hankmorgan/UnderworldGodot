@@ -45,6 +45,7 @@ namespace Underworld
                             {
                                 if (killer.UnkBit_0XA_Bit7 == 0)
                                 {
+                                    ResurrectionEffects();
                                     //send to jail
                                     Teleportation.CodeToRunOnTeleport = GoToJail;
                                     Teleportation.Teleport(
@@ -63,8 +64,7 @@ namespace Underworld
                 if (DreamingInVoid)
                 {
                     //check if died while dreaming
-                    Debug.Print("Wake up!");
-                    uimanager.ReturnToMainMenu();
+                    sleep.AwakenFromTheVoid();
                     return;
                 }
 
@@ -82,8 +82,7 @@ namespace Underworld
                         }
                         IsFightingInPit = false;
                     }
-
-
+                    ResurrectionEffects();
                     Teleportation.CodeToRunOnTeleport = ResurrectAtBlackrockGem;
                     Teleportation.Teleport(
                         character: 0,
@@ -110,6 +109,7 @@ namespace Underworld
                 Debug.Print("Do Death Animation");
                 if (SilverTreeDungeon != 0)
                 {
+                    ResurrectionEffects();
                     Debug.Print("Do Silver Tree Animation");
                     Teleportation.CodeToRunOnTeleport = ResurrectAtSilverTree;
                     Teleportation.Teleport(
@@ -212,6 +212,59 @@ namespace Underworld
             //Close doors in tile 0x2A, 0x26
             Debug.Print($"TODO Close door at {0x2A},{0x26}");
 
+        }
+
+
+
+        /// <summary>
+        /// Processes standard character changes when resurrected.
+        /// </summary>
+        static void ResurrectionEffects()
+        {
+            ResurrectionHPRestoration();
+            ResurrectionManaRestoration();
+            play_poison = 0;
+            ActiveSpellEffectCount = 0;
+
+            //IN UW2 a blood stain should be spawned at where the player has died.
+            if (_RES == GAME_UW2)
+            {
+                var bloodstain = UWTileMap.current_tilemap.LevelObjects[ObjectCreator.PrepareNewObject(0xDF)];
+                bloodstain.tileX = playerObject.tileX; bloodstain.tileY= playerObject.tileY;
+                bloodstain.xpos = playerObject.xpos; 
+                bloodstain.ypos= playerObject.ypos;
+                var tile = UWTileMap.current_tilemap.Tiles[playerObject.tileX, playerObject.tileY];
+                bloodstain.zpos = (short)(tile.floorHeight<<3);
+                ObjectCreator.RenderObject(bloodstain, UWTileMap.current_tilemap);                
+            }
+            AutomapEnabled = true;
+        }
+
+        /// <summary>
+        /// Restores an amount of HP on resurrection
+        /// </summary>
+        static void ResurrectionHPRestoration()
+        {
+            if (max_hp > 8)
+            {
+                play_hp = max_hp - 2 - Rng.r.Next(3);
+            }
+            else
+            {
+                play_hp = max_hp;
+            }
+        }
+
+        static void ResurrectionManaRestoration()
+        {
+            if (max_mana > 8)
+            {
+                play_mana = max_mana - (2 + max_mana/8);
+            }
+            else
+            {
+                play_mana = max_mana;
+            }
         }
 
     }//end class

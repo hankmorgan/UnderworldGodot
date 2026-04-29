@@ -250,6 +250,8 @@ namespace Underworld
         public static void AwakenFromTheVoid()
         {
             Debug.Print("Awaken from a dream in the void.");
+            playerdat.play_hp = playerdat.max_hp;
+            playerdat.play_mana = playerdat.max_mana;
 
             XMIMusic.ChangeThemeMusic(0xA);
 
