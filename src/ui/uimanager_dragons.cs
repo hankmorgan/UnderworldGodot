@@ -9,7 +9,7 @@ namespace Underworld
     /// </summary>
     public partial class uimanager : Node2D
     {
-        
+
         static ImageTexture[] DragonFrames;
 
         const int LeftTailShakeIndex = 0;
@@ -32,10 +32,12 @@ namespace Underworld
 				{2, 3, 4, 5, 4, 3 },	//left head scroll	
 				{10,11,12,13,12,11},	//left head cower
 				{1, 1, 1, 1, 1, 1 },	//left head idle
+                {8 ,9 ,8 ,9, 8, 8 },    // left head nod
 				{32,33,34,35,34,33},	//right tail shake
 				{20,21,22,23,22,21},	//right head scroll
 				{28,29,30,31,30,29},	//right head cower
-				{19,19,19,19,19,19}		//right head idle
+				{19,19,19,19,19,19},	//right head idle
+                {26,27,26,27,26,26}     // right head nod
 		};
 
         [ExportGroup("Dragons")]
@@ -43,6 +45,15 @@ namespace Underworld
         [Export] public TextureRect[] DragonTails = new TextureRect[2];
         [Export] public TextureRect[] DragonTorsos = new TextureRect[2];
 
+
+        /// <summary>
+        /// 0=shake tail.
+        /// 1=scroll
+        /// 2=cower
+        /// 3=idle
+        /// 4=nod
+        /// </summary>
+        /// <param name="animationNo"></param>
         public static void StartDragonAnimation(int animationNo)
         {
             if (UWClass._RES == UWClass.GAME_UW2)
@@ -53,11 +64,8 @@ namespace Underworld
             {
                 return;
             }
-            //0=shake tail.
-            //1=scroll
-            //2=cower
-            //3=idle
-            //if right side offset index by +4
+
+            //if right side offset index by +5
             bool IsRightSide = false;
             bool IsTail = false;
             if (animationNo == 0)
@@ -68,7 +76,7 @@ namespace Underworld
             if (Rng.r.Next(2) >= 1)
             {
                 IsRightSide = true;
-                animationNo = animationNo + 4;
+                animationNo = animationNo + 5;
             }
 
             if ((IsTail == false))
@@ -126,7 +134,7 @@ namespace Underworld
                     targetcontrol = instance.DragonHeads[0];
                 }
             }
-            
+
             for (int i = 0; i <= AnimFrames.GetUpperBound(1); i++)
             {
                 var toDisplay = AnimFrames[animationNo, frame++];
@@ -160,7 +168,7 @@ namespace Underworld
         private void InitDragons()
         {
             if (UWClass._RES != UWClass.GAME_UW2)
-            {                                
+            {
                 //prepare the images by taking the images from dragons.gr and inserting them into a set of blank frames.
                 var dragonsGr = new GRLoader(GRLoader.DRAGONS_GR, GRLoader.GRShaderMode.UIShader);
                 //first resize all dragon heads to their max size
@@ -171,14 +179,14 @@ namespace Underworld
                     switch (i)
                     {
                         case 1:// max size image, no changes needed.
-                             _tempDragonFrames[i] = dragonsGr.LoadImageAt(i).GetImage(); break;//ArtLoader.InsertImage(dragonsGr.LoadImageAt(i).GetImage(), ArtLoader.BlankCanvas(37, 23), 0, 0); break;
+                            _tempDragonFrames[i] = dragonsGr.LoadImageAt(i).GetImage(); break;//ArtLoader.InsertImage(dragonsGr.LoadImageAt(i).GetImage(), ArtLoader.BlankCanvas(37, 23), 0, 0); break;
                         case 2:// body and hands moving
                         case 3:
                         case 4:
                         case 5:
                             {
                                 var tmp = dragonsGr.LoadImageAt(1).GetImage();//load key frame
-                                 _tempDragonFrames[i] = ArtLoader.InsertImage(srcImg: dragonsGr.LoadImageAt(i).GetImage(), dstImg: tmp, cornerX: 4, cornerY: 10); break;
+                                _tempDragonFrames[i] = ArtLoader.InsertImage(srcImg: dragonsGr.LoadImageAt(i).GetImage(), dstImg: tmp, cornerX: 4, cornerY: 10); break;
                             }
                         case 6://left haders
                         case 7:
@@ -189,20 +197,20 @@ namespace Underworld
                         case 11:
                         case 12:
                         case 13://max image for right, needs to be increased due to lack of uniformity in images sizes on the right side.
-                             _tempDragonFrames[i] = ArtLoader.InsertImage(srcImg: dragonsGr.LoadImageAt(i).GetImage(), dstImg: ArtLoader.BlankCanvas(40, 25), cornerX: 0, cornerY: 0); break;
+                            _tempDragonFrames[i] = ArtLoader.InsertImage(srcImg: dragonsGr.LoadImageAt(i).GetImage(), dstImg: ArtLoader.BlankCanvas(40, 25), cornerX: 0, cornerY: 0); break;
                         case 19:
                             _tempDragonFrames[i] = ArtLoader.InsertImage(srcImg: dragonsGr.LoadImageAt(i).GetImage(), dstImg: ArtLoader.BlankCanvas(40, 25), cornerX: 6, cornerY: 0); break;
                         case 20:
                             {
                                 var tmp = ArtLoader.InsertImage(srcImg: dragonsGr.LoadImageAt(19).GetImage(), dstImg: ArtLoader.BlankCanvas(40, 25), cornerX: 6, cornerY: 0);
-                                 _tempDragonFrames[i] = ArtLoader.InsertImage(srcImg: dragonsGr.LoadImageAt(i).GetImage(), dstImg: tmp, cornerX: 5, cornerY: 12); break;
+                                _tempDragonFrames[i] = ArtLoader.InsertImage(srcImg: dragonsGr.LoadImageAt(i).GetImage(), dstImg: tmp, cornerX: 5, cornerY: 12); break;
                             }
                         case 21:
                         case 22:
                         case 23:
                             {
                                 var tmp = ArtLoader.InsertImage(srcImg: dragonsGr.LoadImageAt(19).GetImage(), dstImg: ArtLoader.BlankCanvas(40, 25), cornerX: 6, cornerY: 0);
-                                 _tempDragonFrames[i] = ArtLoader.InsertImage(srcImg: dragonsGr.LoadImageAt(i).GetImage(), dstImg: tmp, cornerX: 6, cornerY: 10); break;
+                                _tempDragonFrames[i] = ArtLoader.InsertImage(srcImg: dragonsGr.LoadImageAt(i).GetImage(), dstImg: tmp, cornerX: 6, cornerY: 10); break;
                             }
                         case 24:
                         case 25:
@@ -215,17 +223,17 @@ namespace Underworld
                         case 29:
                         case 30:
                         case 31:
-                            {                                
-                                _tempDragonFrames[i] = ArtLoader.InsertImage(srcImg: dragonsGr.LoadImageAt(i).GetImage(), dstImg: ArtLoader.BlankCanvas(40, 25), cornerX: 0, cornerY: 0); break;    
+                            {
+                                _tempDragonFrames[i] = ArtLoader.InsertImage(srcImg: dragonsGr.LoadImageAt(i).GetImage(), dstImg: ArtLoader.BlankCanvas(40, 25), cornerX: 0, cornerY: 0); break;
                             }
-                            
+
                         default:
-                             _tempDragonFrames[i] = dragonsGr.LoadImageAt(i).GetImage(); break;//  ArtLoader.InsertImage(srcImg: dragonsGr.LoadImageAt(i).GetImage(), dstImg: ArtLoader.BlankCanvas(40, 23), cornerX: 0, cornerY: 0); break;
+                            _tempDragonFrames[i] = dragonsGr.LoadImageAt(i).GetImage(); break;//  ArtLoader.InsertImage(srcImg: dragonsGr.LoadImageAt(i).GetImage(), dstImg: ArtLoader.BlankCanvas(40, 23), cornerX: 0, cornerY: 0); break;
                     }
                     //_tempDragonFrames[i].SavePng($"C:\\Temp\\resize\\dragon_{i.ToString("d2")}.png");
                     var tex = new ImageTexture();
-                    tex.SetImage( _tempDragonFrames[i]);
-                    DragonFrames[i] = tex;   
+                    tex.SetImage(_tempDragonFrames[i]);
+                    DragonFrames[i] = tex;
                 }
 
                 //load ui
@@ -233,8 +241,8 @@ namespace Underworld
                 instance.DragonHeads[1].Texture = dragonsGr.LoadImageAt(19);
                 instance.DragonTorsos[0].Texture = dragonsGr.LoadImageAt(0);
                 instance.DragonTorsos[1].Texture = dragonsGr.LoadImageAt(18);
-                instance.DragonTails[0].Texture =  dragonsGr.LoadImageAt(14);
-                instance.DragonTails[1].Texture =  dragonsGr.LoadImageAt(32);
+                instance.DragonTails[0].Texture = dragonsGr.LoadImageAt(14);
+                instance.DragonTails[1].Texture = dragonsGr.LoadImageAt(32);
             }
         }
 

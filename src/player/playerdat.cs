@@ -532,11 +532,11 @@ namespace Underworld
                 if (_RES == GAME_UW2)
                 {
                     return (GetAt(0x303) >> 4) & 0x3;
-                } 
+                }
                 else
                 {
-                    return (GetAt(0xB6) >> 4) & 0x3;    
-                }                
+                    return (GetAt(0xB6) >> 4) & 0x3;
+                }
             }
             set
             {
@@ -673,6 +673,11 @@ namespace Underworld
         {
             if (critter.majorclass == 1)
             {
+                if (_RES != GAME_UW2)
+                {
+                    //play dragon animation
+                    uimanager.StartDragonAnimation(4);//nod
+                }
                 XMIMusic.ChangeThemeMusic(XMIMusic.Fanfare); //fanfare
                 var exp_reward = critterObjectDat.experience(critter.item_id);
                 exp_reward = exp_reward + Rng.DiceRoll(2, exp_reward);
