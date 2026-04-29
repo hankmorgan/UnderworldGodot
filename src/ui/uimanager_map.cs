@@ -64,7 +64,7 @@ namespace Underworld
             {
                 for (int i = 0; i <= instance.AutomapWorldGem.GetUpperBound(0); i++)
                 {
-                    EnableDisable(instance.AutomapWorldGem[i],false);
+                    EnableDisable(instance.AutomapWorldGem[i], false);
                 }
             }
         }
@@ -95,7 +95,7 @@ namespace Underworld
             //TODO update UW2 Map gem
 
             if (UWClass._RES == UWClass.GAME_UW2)
-            {                
+            {
                 int[] worldmappingSelected = new int[] { 16, 8, 9, 10, 11, 12, 13, 14, 15 }; //the order of worlds is not the same as the order of images. this maps the world number to the on version of the image
                 int[] worldmappingVisited = new int[] { 16, 0, 1, 2, 3, 4, 5, 6, 7 };
                 for (int i = 0; i <= instance.AutomapWorldGem.GetUpperBound(0); i++)
@@ -108,13 +108,13 @@ namespace Underworld
                     {
                         if (i != 0)
                         {
-                            if (playerdat.HasWorldBeenVisited(i-1))
+                            if (playerdat.HasWorldBeenVisited(i - 1))
                             {
                                 instance.AutomapWorldGem[i].Texture = grGempt.LoadImageAt(worldmappingVisited[i]);
                             }
                             else
                             {
-                                instance.AutomapWorldGem[i].Texture  = null; //clear, unselected and unvisited.
+                                instance.AutomapWorldGem[i].Texture = null; //clear, unselected and unvisited.
                             }
                         }
                         else
@@ -168,8 +168,21 @@ namespace Underworld
                 InAutomap = false;
                 if (UWClass._RES != UWClass.GAME_UW2)
                 {
-                    XMIMusic.PickLevelThemeMusic(0);
-                    //XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic());//restart a music theme for UW1 as maps&legends plays when the map is viewed in UW1 only.
+                    if (playerdat.play_drawn == 1)
+                    {
+                        XMIMusic.ChangeThemeMusic(XMIMusic.Armed);
+                    }
+                    else
+                    {
+                        XMIMusic.PickLevelThemeMusic(-1);
+                    }
+                }
+                else
+                {
+                    if (playerdat.play_drawn == 1)
+                    {
+                        XMIMusic.ChangeThemeMusic(XMIMusic.Armed);
+                    }
                 }
             }
         }
@@ -203,7 +216,7 @@ namespace Underworld
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
-                Debug.Print ($"World {extra_arg_0}");
+                Debug.Print($"World {extra_arg_0}");
                 if (extra_arg_0 != automap.currentworld)
                 {
                     DrawAutoMap(automap.currentautomap, (int)extra_arg_0);
