@@ -70,10 +70,10 @@ namespace Underworld
         static int DamageNPC(uwObject critter, int basedamage, int damagesource)
         {
             //basedamage = ScaleDamage(critter.item_id, ref basedamage, damagetype);
-            if (basedamage != 0)
-            {
-                Debug.Print($"Damage {critter.a_name} by {basedamage}");
-            }
+            //if (basedamage != 0)
+            //{
+            Debug.Print($"Damage {critter.a_name} by {basedamage}");
+            //}
 
             //Note to be strictly compatable with UW behaviour the damage should be accumulated for the npc and test
             //once per tick This is used to control the angering behaviour of the npc in checking against passiveness and for music/gui updates on the avatar.
@@ -96,31 +96,66 @@ namespace Underworld
                 playerdat.LastDamagedNPCZpos = critter.zpos;
             }
 
-            if (_RES == GAME_UW2)
+
+            if (critter.index == 1)
             {
-                //todo confirm uw1 logic
-                if (critter.index == 1)
+                //damage applied to player.
+                if ((playerdat.play_hp << 6 / (playerdat.max_hp + 1)) >= 0x10)
                 {
-                    //damage applied to player.
-                    if ((playerdat.play_hp << 6 / (playerdat.max_hp + 1)) >= 0x10)
+                    //standard combat theme.
+                    if (_RES == GAME_UW2)
                     {
-                        XMIMusic.ChangeThemeMusic(3); //standard combat theme.                     
+                        XMIMusic.ChangeThemeMusic(3);
                     }
                     else
                     {
-                        XMIMusic.ChangeThemeMusic(4); // player losing combat theme.
+                        XMIMusic.ChangeThemeMusic(6);
                     }
-                    XMIMusic.CombatMusicTimer = main.Pit;
                 }
                 else
                 {
-                    if (((critter.npc_hp << 6) / (critterObjectDat.avghit(critter.item_id) + 1) >= 0x10) && (damagesource == 1))
+                    // player losing combat theme.
+                    if (_RES == GAME_UW2)
                     {
-                        XMIMusic.ChangeThemeMusic(3);//player winning combat theme
+                        XMIMusic.ChangeThemeMusic(4);
+                    }
+                    else
+                    {
+                        XMIMusic.ChangeThemeMusic(7);
+                    }
+                }
+            }
+            else
+            {
+                if (damagesource == 1)
+                {
+                    //See how badly hurt the npc is. pick player winning music or continue combat music.
+                    if (((critter.npc_hp << 6) / (critterObjectDat.avghit(critter.item_id) + 1) >= 0x10))
+                    {
+                        if (_RES == GAME_UW2)
+                        {
+                            XMIMusic.ChangeThemeMusic(3);
+                        }
+                        else
+                        {
+                            XMIMusic.ChangeThemeMusic(6);
+                        }
+                    }
+                    else
+                    {
+                        if (_RES == GAME_UW2)
+                        {
+                            XMIMusic.ChangeThemeMusic(2);
+                        }
+                        else
+                        {
+                            XMIMusic.ChangeThemeMusic(5);//combat theme
+                        }
                     }
                 }
             }
 
+            XMIMusic.CombatMusicTimer = main.GlobalPITTimer;
 
             if ((critter.npc_hp == 0) & (critter.index != 1))
             {
@@ -165,13 +200,6 @@ namespace Underworld
             }
 
             return 0;
-        }
-
-        static void AwardXPKill(uwObject critter)
-        {
-            XMIMusic.LoadXMI(XMIMusic.Fanfare); //fanfare
-            //do math for xp
-            Debug.Print("DON'T FORGET TO GAIN EXP WHEN KILLING CRITTERS!");
         }
 
         static bool DamageOtherObjectTypes(uwObject objToDamage, int basedamage, int damagesource)

@@ -74,7 +74,7 @@ namespace Underworld
                     // if that case the usage here must be a check to see if the music is not playing. 
                     if (!MusicStreamPlayer.Instance.IsPlaying | DEBUG_MUSIC_HASSTOPPED)
                     {
-                        DEBUG_MUSIC_HASSTOPPED = false;
+                        //DEBUG_MUSIC_HASSTOPPED = false;
                         switch (CurrentlyPlayingThemeNo)
                         {
                             case >= 8 and <= 0xF://map themes.
