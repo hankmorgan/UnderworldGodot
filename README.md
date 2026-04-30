@@ -79,8 +79,8 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * Skillpoints and character advancement logic
 * Automap navigation and updating
 * Read-only automap notes.
-* Processing of SCD.ARK events (Scheduled events in UW2)
-* Partial cutscene support
+* Partial Processing of SCD.ARK events (Scheduled events in UW2)
+* Nearly complete cutscene support including scrolling bitmaps
 * Sleeping and dream logic
 * Character creation
 * Mostly complete Object physics
@@ -89,27 +89,26 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * Player movement and collision (with a lot of jank attached incl framerate/speed issues)
 * Speech from VOC files
 * Real-time music synthesis from XMI via four selectable synth engines (CM-32L/MT-32 via mt32emu, SoundFont via MeltySynth, or AdLib/OPL via AdlMidi).
+* Sound effects.
+* Saving (partial support)
+* Endgame screens
+* Animated Dragon UI Elements
+* Partial Weight and encumberance mechanics
+* Splash screens and game credits
 
 ## Whats missing
-
-* Foley sound effects.
-* Sprite transparencies
-* Saving  
-* Cutscene bitmap scrolling
+* Sprite transparencies 
 * Those weird ethereal void monsters
-* Animated Dragon UI Elements
-* Endgame screens
 * Editing of automap notes
-* Weight and encumberance mechanics
 * Swimming
 * Getting lost mechanics
 * Stealth mechanics (partial)
-* Splash screens and game credits
 and much more!
 
 ## Known Issues
 * Some NPC sprites are incorrectly cropped.
-* Player motion is sluggish (timing need tuning)
+* NPCs and mobile objects move at a slow rate of refresh (timing configuration)
+* Player motion is sluggish (timing need tuning), player strafing is unreliable
 * Some cutscenes are missing frames or have visual distortions
 * Enter/Exit/Pressure triggers currently not working
 
