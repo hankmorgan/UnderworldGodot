@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using Underworld.Sfx;
 
 namespace Underworld
 {
@@ -203,7 +204,8 @@ namespace Underworld
                 if (projectile.majorclass != 1)
                 {
                     //not an npc
-                    Debug.Print($"seg030_2BB7_8B9 playsound effect {(var4_mass - 600) / 0x32}");
+                    UWsoundeffects.PlaySoundEffectAtObject(effectNo: 0xF, obj: projectile, volDelta: (var4_mass - 600) / 0x32);
+                    //Debug.Print($"seg030_2BB7_8B9 playsound effect {(var4_mass - 600) / 0x32}");
                 }
                 //fall damage?
                 if (var6FallDamage != 0)

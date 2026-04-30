@@ -371,7 +371,7 @@ namespace Underworld
         }
 
         /// <summary>
-        /// Possibly related to mass or force?
+        /// Possibly related to mass or force? TODO this value incorrectly set may possibly be the cause of the slash of veils collision bug
         /// </summary>
         public short unk_a_pitch
         {

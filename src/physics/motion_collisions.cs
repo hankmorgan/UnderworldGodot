@@ -78,9 +78,9 @@ namespace Underworld
             }
             else
             {//seg031_2CFA_E28:
-                soundeffect = (byte)((Math.Abs(MotionParams.unk_a_pitch) / 0xA) + ((si_mass - 600) / 32) - 40);//now reused as volume?/
+                var volume = (byte)((Math.Abs(MotionParams.unk_a_pitch) / 0xA) + ((si_mass - 600) / 32) - 40);//now reused as volume?/
                 //Debug.Print($"play sound effect {soundeffect} at {MotionParams.x_0 >> 5} {MotionParams.y_2 >> 5}");
-                UWsoundeffects.PlaySoundEffectAtCoordinate(0xF, MotionParams.x_0 >> 5, MotionParams.y_2 >> 5, soundeffect);
+                UWsoundeffects.PlaySoundEffectAtCoordinate(effectNo: 0xF, packedX: MotionParams.x_0 >> 5, packedY: MotionParams.y_2 >> 5, volDelta: volume);
                 var di_collisionresult = CollideObjects_seg030_2BB7_1CE(MotionParams, UWMotionParamArray.ACollisionIndex_dseg_67d6_416, MotionCalcArray.MotionArrayObjectIndexA_base);
 
                 //resume here.
