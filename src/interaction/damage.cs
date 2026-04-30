@@ -97,7 +97,7 @@ namespace Underworld
             }
 
 
-            if (critter.index == 1)
+            if ((critter.index == 1) && (damagesource > 1))
             {
                 //damage applied to player.
                 if ((playerdat.play_hp << 6 / (playerdat.max_hp + 1)) >= 0x10)
