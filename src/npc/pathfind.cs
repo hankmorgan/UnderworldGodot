@@ -1747,6 +1747,10 @@ namespace Underworld
         /// <returns></returns>
         public static bool TestBasicTileTraversal(int arg0, int arg2, int Tile1_X_arg4, int Tile1_Y_arg6, int Tile2_X_arg8, int Tile2_Y_argA, int Height_argC)
         {
+            if (!(UWTileMap.ValidTile(Tile1_X_arg4, Tile1_Y_arg6) && UWTileMap.ValidTile(Tile2_X_arg8, Tile2_Y_argA)))
+            {
+                return false;//traversal is off map
+            }
             var tile1 = UWTileMap.current_tilemap.Tiles[Tile1_X_arg4, Tile1_Y_arg6];
             var tile2 = UWTileMap.current_tilemap.Tiles[Tile2_X_arg8, Tile2_Y_argA];
 

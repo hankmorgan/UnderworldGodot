@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 
 namespace Underworld
 {
@@ -18,19 +17,32 @@ namespace Underworld
                         AltarasWand();
                         break;
                     }
-                case 2://mind blast
+                case 2://mind blast, this spell is normally only castable by npcs
                     {
-                        Debug.Print("Mind blast");
+                        var casterIntelligence = critterObjectDat.intelligence(caster.item_id);
                         //do math for mindblast
-                        if (true)
+                        var MindBlastResult = (casterIntelligence - playerdat.INT) + Rng.r.Next(6) - Rng.r.Next(6);
+                        if (MindBlastResult < 2)
                         {
-                            motion.SetScreenShake (TypeOfShake: 0x40, duration: 2); //duration needs to be updated based on damage.
+                            MindBlastResult = 2;
                         }
+
+                        motion.SetScreenShake(TypeOfShake: 0x40, duration: (byte)MindBlastResult); //duration needs to be updated based on damage.
+                        damage.DamageObject(objToDamage: playerdat.playerObject, basedamage: MindBlastResult / 2, damagetype: 0, objList: UWTileMap.current_tilemap.LevelObjects, WorldObject: true, damagesource: caster.index);
+                        if ((MindBlastResult / 4) > playerdat.play_mana)
+                        {
+                            playerdat.play_mana = 0;
+                        }
+                        else
+                        {
+                            playerdat.play_mana -= MindBlastResult / 4;
+                        }
+
                         break;
                     }
                 case 3://basilisk oil and bullfrog
                     {
-                        if (_RES==GAME_UW2)
+                        if (_RES == GAME_UW2)
                         {
                             Hallucination();
                         }
@@ -38,7 +50,7 @@ namespace Underworld
                         {
                             //bullfrog reset
                             a_do_trap_bullfrog.Bullfrog(mode: 4, triggerX: 0, triggerY: 0);
-                        }                        
+                        }
                         break;
                     }
                 case 4:
@@ -167,23 +179,23 @@ namespace Underworld
                                         linesOfPower |= worldflag;
                                         playerdat.SetQuest(128, linesOfPower);
                                         linesOfPower = playerdat.GetQuest(128);
-                                        
+
                                         if (linesOfPower == 0xFF)
                                         {//all lines cut.
                                             playerdat.SetQuest(14, 1);
                                         }
-                                        animo.SpawnAnimoInTile(7, nextObj.xpos, nextObj.ypos, nextObj.zpos,nextObj.tileX, nextObj.tileY);
+                                        animo.SpawnAnimoInTile(7, nextObj.xpos, nextObj.ypos, nextObj.zpos, nextObj.tileX, nextObj.tileY);
                                         ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(nextObj.tileX, nextObj.tileY, nextObj.index);
 
                                         if (worlds.GetWorldNo(playerdat.dungeon_level) == 3)
                                         {//in ice caverns
-                                            playerdat.SetQuest(52,1);
+                                            playerdat.SetQuest(52, 1);
                                         }
-                                        
+
                                         special_effects.SpecialEffect(effecttype: 0x4, effectparam: 0xF);
 
-                                        UWsoundeffects.PlaySoundEffectAtAvatar(UWsoundeffects.SoundEffectRumble,0x40, 0x28);
-                                        UWsoundeffects.PlaySoundEffectAtAvatar(UWsoundeffects.SoundEffectSpellRing1, 0x40,0x14);
+                                        UWsoundeffects.PlaySoundEffectAtAvatar(UWsoundeffects.SoundEffectRumble, 0x40, 0x28);
+                                        UWsoundeffects.PlaySoundEffectAtAvatar(UWsoundeffects.SoundEffectSpellRing1, 0x40, 0x14);
                                         return;
                                     }
                                 }
@@ -193,7 +205,7 @@ namespace Underworld
                     }
                 }
             }
-            uimanager.AddToMessageScroll(GameStrings.GetString(1,GameStrings.str_the_spell_has_no_discernable_effect_));
+            uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_the_spell_has_no_discernable_effect_));
         }
     }//end class
 }//end namespace
