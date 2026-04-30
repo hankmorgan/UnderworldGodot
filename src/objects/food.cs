@@ -217,8 +217,7 @@ namespace Underworld
                         {
                             uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x102));// You wake feeling somewhat unstable but better
                         }
-                        //TODO Screenshake
-                        special_effects.Screenshake(0x40,-1);
+                        motion.SetScreenShake (TypeOfShake: 0x40, duration: (byte)(0xA + (playerdat.intoxication / 6)));
                         break;
                     }
                 case playerdat.SkillCheckResult.CritSucess:
@@ -229,7 +228,7 @@ namespace Underworld
                     }
                 case playerdat.SkillCheckResult.Fail:
                     {
-                        //TODO Screenshake
+                        motion.SetScreenShake (TypeOfShake: 0x40, duration: (byte)(0xA + (playerdat.intoxication / 6)));
                         break;
                     }
             }

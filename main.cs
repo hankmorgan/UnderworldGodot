@@ -535,7 +535,7 @@ public partial class main : Node3D
 		}
 		if (playerdat.TileState != 0)
 		{
-			motion.WalkOnSpecialTerrain();
+			motion.WalkOnSurfaceType();
 		}
 		//playerdat.ApplyPlayerSneakScore(EasyMove);
 

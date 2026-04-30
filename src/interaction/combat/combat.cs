@@ -616,10 +616,11 @@ namespace Underworld
                 }
             }
 
-            var di = finaldamage / 4;
-            if (di <= 3)
+            //Seg24_B23
+            var di_damage_level = finaldamage / 4;
+            if (di_damage_level >= 4)
             {
-                di = 3;//this is used for animo later on?
+                di_damage_level = 3;//used later on to set the intesity of the screen shake
             }
             if (DefendingCharacter.index == 1)
             {
@@ -688,8 +689,9 @@ namespace Underworld
                     }
                     else
                     {
+                        //Seg24_BC0
                         //player was the defender.
-                        special_effects.Screenshake(-1,-1);  
+                        motion.SetScreenShake(TypeOfShake: 0x20, duration: (byte)(di_damage_level * 5)) ;
                     }
                 }
             }

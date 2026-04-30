@@ -17,6 +17,11 @@ namespace Underworld
         public static short PlayerMotionHeading_77E = 0;
         public static short MotionInputPressed = 0;
 
+        //These are used in shaking
+        public static byte Shake20_Duration_73F;
+        public static byte Shake40_Duration_740;
+        public static byte Shake80_Duration_741; //not used in UW1
+
 
         //Player Vectors (to be identified)
         static short dseg_67d6_D0 = 0;
@@ -752,8 +757,42 @@ namespace Underworld
             return result;
         }
 
-        public static void WalkOnSpecialTerrain()
+                /// <summary>
+        /// Sets up the type and duration of screenshake to be applied on the next iteration of WalkOnSurfaceType
+        /// </summary>
+        /// <param name="TypeOfShake"></param>
+        /// <param name="duration"></param>
+        public static void SetScreenShake(byte TypeOfShake, byte duration)
         {
+            switch(TypeOfShake)
+            {
+                case 0x20:                    
+                    Shake20_Duration_73F = duration;
+                    break;
+                case 0x40:  
+                    Shake40_Duration_740 = duration;                  
+                    break;
+                case 0x80:
+                    if(_RES == GAME_UW2)
+                    {
+                        //UW2 only form of shaking
+                        Shake80_Duration_741 = duration;
+                        break;
+                    }
+                    return;
+                default:
+                    Debug.Print($"invalid TypeOfShake {TypeOfShake}");
+                    return;//not valid. do not apply
+            }
+            playerdat.TileState |= TypeOfShake;
+        }
+
+        /// <summary>
+        /// Handles walking on lava, ice and water. Does calcs for screen shaking adjustments.
+        /// </summary>
+        public static void WalkOnSurfaceType()
+        {
+            //Seg35_A0C
             //Debug.Print("Walkonspecialterrain todo");
         }
 

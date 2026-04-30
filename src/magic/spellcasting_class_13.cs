@@ -15,13 +15,17 @@ namespace Underworld
             {
                 case 0://altaras wand
                     {
-                        Debug.Print("Altaras wand");
                         AltarasWand();
                         break;
                     }
                 case 2://mind blast
                     {
                         Debug.Print("Mind blast");
+                        //do math for mindblast
+                        if (true)
+                        {
+                            motion.SetScreenShake (TypeOfShake: 0x40, duration: 2); //duration needs to be updated based on damage.
+                        }
                         break;
                     }
                 case 3://basilisk oil and bullfrog
@@ -176,7 +180,7 @@ namespace Underworld
                                             playerdat.SetQuest(52,1);
                                         }
                                         
-                                        special_effects.Screenshake(0x40,0xF);
+                                        special_effects.SpecialEffect(effecttype: 0x4, effectparam: 0xF);
 
                                         UWsoundeffects.PlaySoundEffectAtAvatar(UWsoundeffects.SoundEffectRumble,0x40, 0x28);
                                         UWsoundeffects.PlaySoundEffectAtAvatar(UWsoundeffects.SoundEffectSpellRing1, 0x40,0x14);

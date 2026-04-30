@@ -55,7 +55,7 @@ namespace Underworld
             }
 
             //shake screen
-            special_effects.Screenshake(0x40, 0xF + Rng.r.Next(0x1E));
+            motion.SetScreenShake (TypeOfShake: 0x40, duration: (byte)(0xF + Rng.r.Next(0x1E)));
 
             //randomise compass
             uimanager.PointCompassInDirection(Rng.r.Next(0x7FFF) & 0xF);

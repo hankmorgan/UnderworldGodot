@@ -100,6 +100,7 @@ namespace Underworld
                 case 9://tremor
                     {
                         Debug.Print("!!!!EARTHQUAKKKKEEE!!!!");
+                        motion.SetScreenShake (TypeOfShake: 0x40, duration: 0x28);
                         break;
                     }
                 case 0xA://gate travel (UW1)

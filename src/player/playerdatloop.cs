@@ -20,11 +20,11 @@ namespace Underworld
             if ((!main.blockmouseinput) && (uimanager.InGame))
             {
                 playertimer += delta;
-                
+
                 XMIMusic.RefreshMusic();//checks the playing themes and updates accordingly
                 //every frame
                 //Compass updates
-                if (_RES== GAME_UW2)
+                if (_RES == GAME_UW2)
                 {
                     if (CurrentWorld != 8)
                     {
@@ -40,21 +40,21 @@ namespace Underworld
                 }
 
                 //Use accumulated damage to see if the dragons need to start cowering.
-                if ((_RES != GAME_UW2) && (playerObject.AccumulatedDamage>0))
+                if ((_RES != GAME_UW2) && (playerObject.AccumulatedDamage > 0))
                 {
                     if (
-                        (playerObject.AccumulatedDamage<<2 > max_hp)
+                        (playerObject.AccumulatedDamage << 2 > max_hp)
                         ||
                         (play_hp < 0x10)
                         )
                     {
                         uimanager.StartDragonAnimation(2);
-                    }    
+                    }
                 }
 
-                if (_RES!=GAME_UW2)
+                if (_RES != GAME_UW2)
                 {
-                    if ((dungeon_level == 9) && (playertimer>0.2f)) //todo need to figure out the correct timing on this.
+                    if ((dungeon_level == 9) && (playertimer > 0.2f)) //todo need to figure out the correct timing on this.
                     {
                         if ((Rng.r.Next(0x7FFF) & 0x1F) == 0)
                         {
@@ -84,10 +84,10 @@ namespace Underworld
                         secondcounter++;
                         //ClockValue += 0x40; //not sure what the exact rate should be here. for the moment assuming this is 1 second of time in game clock terms
 
-                        
+
                         //if ((ClockValue % 2048) < PreviousClockValue)//every 20 seconds
                         if (secondcounter >= 20)
-                        {                            
+                        {
                             secondcounter = 0;
                             playerUpdateCounter++;
 
@@ -280,8 +280,9 @@ namespace Underworld
         /// </summary>
         public static void KillornKeepEvent()
         {
+            //ovr135_250
             Debug.Print("Killorn is crashing!!");
-            special_effects.Screenshake(0x40, -1);
+            special_effects.SpecialEffect(effecttype: 4, effectparam: 0x2C);
         }
 
         /// <summary>

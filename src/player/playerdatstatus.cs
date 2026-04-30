@@ -579,6 +579,7 @@ namespace Underworld
 
           /// <summary>
           /// Bit Flags of what type of tile the player is on. Eg is it lava, water, solid etc.
+          /// upper bits of this byte controls screenshake.
           /// </summary>
           public static int TileState
           {

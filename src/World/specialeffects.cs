@@ -33,9 +33,8 @@ namespace Underworld
                         Debug.Print("Usage of special effect in UW1. Should not occur?");
                     }
                     break;
-                case 4://screenshake
-                    
-                    Screenshake(0x40, effectparam << 1);
+                case 4://screenshake                    
+                    motion.SetScreenShake(0x40, (byte)(effectparam << 1));
                     break;
                 case 5:
                     uimanager.FlashColour((byte)(64*3 + effectparam), uimanager.CutsSmall);break;
@@ -47,10 +46,5 @@ namespace Underworld
                     uimanager.FlashColour((byte)(effectparam), uimanager.CutsSmall);break;
             }
         }
-
-        public static void Screenshake (int shaketype, int Duration)
-        {
-            Debug.Print($"screenshake of type {shaketype} with duration {Duration}");
-        }
-    }
+    }//end class
 }//end namespace
