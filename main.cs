@@ -62,7 +62,7 @@ public partial class main : Node3D
 	static uint LastPitTimer = 0;
 	static byte EasyMoveFrameIncrement = 0;
 
-	static byte ThisFrameDelta = 0;
+	public static byte ThisFrameDelta = 0;
 	static byte PreviousFrameDelta = 0;
 
 	public override void _Ready()

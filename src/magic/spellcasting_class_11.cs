@@ -10,7 +10,7 @@ namespace Underworld
         /// </summary>
         /// <param name="minorclass"></param>
         /// <param name="stability"></param>
-        public static void CastClassB_Spells(int minorclass, int stability)
+        public static void CastClassB_Spells(uwObject caster, int minorclass, int stability)
         {
             switch (minorclass)
             {
@@ -99,8 +99,9 @@ namespace Underworld
                     }
                 case 9://tremor
                     {
-                        Debug.Print("!!!!EARTHQUAKKKKEEE!!!!");
-                        motion.SetScreenShake (TypeOfShake: 0x40, duration: 0x28);
+                        CallBacks.RunCodeOnTargetsAroundObject(methodToCall: Tremor, CentreObject: caster.index, rngProbablity: Rng.DiceRoll(8, 3), targetType: 0x40, distanceFromObject: 5, tileRadius: 3);
+                        motion.SetScreenShake(TypeOfShake: 0x40, duration: 0x28);
+                        UWsoundeffects.PlaySoundEffectAtObject(0x12, caster, 0);
                         break;
                     }
                 case 0xA://gate travel (UW1)
@@ -127,6 +128,51 @@ namespace Underworld
                         break;
                     }
             }
+        }
+
+
+        static bool Tremor(int x, int y, uwObject obj, TileInfo tile, int srcIndex)
+        {            
+            int SpawnItemID = 0;
+            if ((playerdat.CurrentWorld == 8) && (_RES == GAME_UW2))
+            {
+                if (tile.floorTexture < 5)
+                {
+                    short[] quakeitemsinvoid = { 0xC2, 0xB9, 0xB6, 0x129, 0xA0 };
+                    SpawnItemID = quakeitemsinvoid[tile.floorTexture];
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                SpawnItemID = 0x154 + Rng.r.Next(3);
+            }
+           
+            var newobj = ObjectCreator.spawnObjectInTile(
+                itemid: SpawnItemID,
+                tileX: tile.tileX,
+                tileY: tile.tileY,
+                xpos: 3,
+                ypos: 3,
+                zpos: 0x6e,
+                WhichList: ObjectFreeLists.ObjectListType.MobileList);
+            Debug.Print($"Spawning tremor object {newobj.a_name} ({newobj.index}) at {x},{y}");
+            //These are here to stop physics breaking due to usage of spawnobjectintile instead of unimplemented moveobjecttocoordinate
+            newobj.npc_xhome = (short)(tile.tileX);
+            newobj.npc_yhome = (short)(tile.tileY );
+            newobj.CoordinateX = (newobj.npc_xhome << 8) + (newobj.xpos << 5) + 0xF;
+            newobj.CoordinateY = (newobj.npc_yhome << 8) + (newobj.ypos << 5) + 0xF;
+            newobj.CoordinateZ = newobj.zpos << 3;
+
+            newobj.UnkBit_0X13_Bit0to6 = (short)(Rng.r.Next(3) + 2);
+            newobj.ProjectileHeading = (ushort)(Rng.r.Next(0x7FFF) & 0xFF);
+            newobj.NextFrame_0XA_Bit0123 = (short)((Rng.r.Next(0x7FFF) & 0x3) + main.ThisFrameDelta);
+            newobj.Projectile_Speed = (short)((1 + Rng.r.Next(3)) & 0x7);
+
+            return true;
         }
 
         private static void Locate()

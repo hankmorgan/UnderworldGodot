@@ -79,19 +79,19 @@ namespace Underworld
                         CastOnEquip: CastOnEquip);
                     break;
                 case 10://mana change spells
-                    CastClass10_ManaBoost(minorclass);
+                    CastClass10_ManaBoost(minorclass: minorclass);
                     break;
                 case 11://misc or special spells
-                    CastClassB_Spells(minorclass, minorclass & 0xC0);                    
+                    CastClassB_Spells(caster: caster, minorclass: minorclass, stability: minorclass & 0xC0);                    
                     break;
                 case 12://not castable here
                     Debug.Print("Attempt to directly cast Class 0xC spell. This should not happen");
                     break;
                 case 13://misc spells
-                    CastClassD_Spells(minorclass, caster);
+                    CastClassD_Spells(minorclass: minorclass, caster);
                     break;
                 case 14://cutscene spells.
-                    cutsplayer.PlayCutscene(minorclass,null);
+                    cutsplayer.PlayCutscene(CutsceneNo: minorclass, callBackMethod: null);
                     break;
             }
             playerdat.PlayerStatusUpdate();

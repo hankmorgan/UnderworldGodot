@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace Underworld
 {
     /// <summary>
@@ -706,6 +708,10 @@ namespace Underworld
             }
             set
             {
+                if (value <=5)
+                {
+                    Debug.Print("here");
+                }
                 DataLoader.setAt(PtrToMotionCalc, 2, 16, value);
             }
         }

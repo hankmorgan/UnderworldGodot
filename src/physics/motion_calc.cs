@@ -419,7 +419,7 @@ namespace Underworld
 
                 //2941:543
                 var searchPTR = (int)UWMotionParamArray.TileRelatedToMotion_dseg_67d6_257E.Ptr + (TileOffsetArray[UWMotionParamArray.SubArray.Unk2_offset] * 4);
-                var Tile_Var6 = UWTileMap.GetTileByPTR(searchPTR);
+                var Tile_Var6 = UWTileMap.GetTileByPTR(searchPTR);//this can be unsafe and finds tiles out of bound when ran at the screen edge. TODO when failing to find a valid tile overwrite the data wiht 0x1111
                 if (UWMotionParamArray.TileAttributesArray[UWMotionParamArray.SubArray.Unk2_offset] == 0x1111)
                 {//seg028_2941_572:
                     UWMotionParamArray.TileAttributesArray[UWMotionParamArray.SubArray.Unk2_offset] = (short)((int)(Tile_Var6.tileType) | ((int)Tile_Var6.floorHeight << 4) | (TerrainDatLoader.GetTerrainTypeNo(Tile_Var6) << 8));

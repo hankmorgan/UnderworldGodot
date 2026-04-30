@@ -32,6 +32,10 @@ namespace Underworld
         /// <returns></returns>
         public static uwObject spawnObjectInTile(int itemid, int tileX, int tileY, short xpos, short ypos, short zpos, ObjectFreeLists.ObjectListType WhichList = ObjectFreeLists.ObjectListType.StaticList, bool RenderImmediately = true)
         {
+            if (WhichList == ObjectFreeLists.ObjectListType.MobileList)
+            {
+               Debug.Print("WARNING Spawn Object in Tile used to spawn object in mobile list. Object projectile properties may be invalid");
+            }            
             var slot = PrepareNewObject(itemid, WhichList);
             if (slot != 0)
             {
