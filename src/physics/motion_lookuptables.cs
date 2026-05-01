@@ -1068,12 +1068,16 @@ namespace Underworld
         };
 
 
-    /// <summary>
-    /// To replace projectiles like fireballs with Animos
-    /// </summary>
-    static int[] ProjectileNewItemIDTable = new int[] { 0x1C2, 0x1C5, 0x1C2 };//explosion, lightning, explosion (UW2 only).
+        /// <summary>
+        /// To replace projectiles like fireballs with Animos
+        /// </summary>
+        static int[] ProjectileNewItemIDTable = new int[] { 0x1C2, 0x1C5, 0x1C2 };//explosion, lightning, explosion (UW2 only).
         static int[] ProjectileOldItemIDTable = new int[] { 0x14, 0x15, 0x1D };//fireball, lightning bolt, another fireball (UW2 only)
 
+        /// <summary>
+        /// Used in calculating the bob/shake effect
+        /// </summary>
+        static sbyte[] CameraBobArray = { -4, -3, -2, -1, 0, 1, 2, 3, 4, 3, 2, 1, 0, -1, -2, -3 };
 
     }//end class
 }//end namespace

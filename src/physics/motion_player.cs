@@ -31,7 +31,7 @@ namespace Underworld
         //Possibly some of these are actually part of the player motion params. to do map them out.
         static short dseg_67d6_33D4;
         static short dseg_67d6_33D2;
-        static short dseg_67d6_33D0;
+        static short dseg_67d6_33D0_forward;
 
         static short dseg_67d6_229A;
         static short dseg_67d6_229C;
@@ -81,7 +81,7 @@ namespace Underworld
             UWMotionParamArray.instance = motion.playerMotionParams;//in case we step on a jump trap...
             dseg_67d6_33D4 = 0;
             dseg_67d6_33D2 = 0;
-            dseg_67d6_33D0 = 0;
+            dseg_67d6_33D0_forward = 0;
             playerMotionParams.radius_22 = (byte)commonObjDat.radius(playerdat.playerObject.item_id);
             playerMotionParams.height_23 = (byte)commonObjDat.height(playerdat.playerObject.item_id);
             // var x_init = playerMotionParams.x_0;
@@ -802,13 +802,13 @@ namespace Underworld
             //Seg35_A0C
             //Debug.Print("Walkonspecialterrain todo");
             var var1 = 1;
-            var var2 = 1;
+            var var2_incrementrelated = 1;
             if (playerdat.TileState != 0)
             {
                 relatedtocameradseg_67d6_33c6 = true; //probably means the camera will need to be adjusted.
-                dseg_67d6_33D4 = 0;//possibly the camera adjustements
+                dseg_67d6_33D4 = 0;//possibly the camera adjustments
                 dseg_67d6_33D2 = 0;
-                dseg_67d6_33D0 = 0; // this moves the camera forward.
+                dseg_67d6_33D0_forward = 0; // this moves the camera forward.
 
                 if ((playerdat.TileState & 0x11) != 0)
                 {
@@ -818,9 +818,128 @@ namespace Underworld
                     {
                         //seg35_A6E
                         var1 = (playerMotionParams.unk_14 << 2) / (MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6 >> 1) - 3;
+                        if (var1 < 1)
+                        {
+                            var1 = 1;
+                        }
+                        var2_incrementrelated = RelatedToClockIncrement_67d6_742 >> 4;
+                        if (playerMotionParams.unk_14 != 0)
+                        {
+                            //Seg31AB_AAD                            
+                            dseg_67d6_33D4 = (short)((CameraBobArray[var2_incrementrelated] * var1) << 6);
+                        }
+                        else
+                        {
+                            dseg_67d6_33D4 = (short)((Rng.r.Next(0x7FFF) & 0x1FF) - 256);
+                        }
+
+                        //seg35_AC5
+                        RelatedToSwim_MaybeCameraAdjust_dseg_67d6_33CE += (short)((CameraBobArray[(var2_incrementrelated + 2) & 0xF] << 1) * var1);
+
+                        dseg_67d6_33D0_forward = (short)(((Rng.r.Next(0x7FFF) & 0x7F) - 64) * var1);
+                        dseg_67d6_33D2 = (short)(((Rng.r.Next(0x7FFF) & 0x7F) - 64) * var1);
+                        
+                        Debug.Print($"swimbob {RelatedToSwim_MaybeCameraAdjust_dseg_67d6_33CE},{dseg_67d6_33D4}");
+                        Debug.Print($"swim adjust by {dseg_67d6_33D0_forward},{dseg_67d6_33D2},{dseg_67d6_33D4}");
                     }
                 }
                 //seg35_b14
+                if ((playerdat.TileState & 0x2) != 0)
+                {
+                    //Seg35_B1F
+                    //On lava
+                    if (Rng.r.Next(5) == 0)
+                    {
+                        //seg35_B30
+                        damage.DamageObject(objToDamage: playerdat.playerObject, basedamage: 1, damagetype: 8, objList: UWTileMap.current_tilemap.LevelObjects, WorldObject: true, damagesource: 0);
+                        if (_RES == GAME_UW2)
+                        {
+                            //Handle player steping on lava for baking mud.
+                            //Seg35_B4A
+                            if (playerdat.GetXClock(3) == 3)
+                            {
+                                //seg35_B55
+                                playerdat.SetXClock(3, 4);
+                                uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x14E));//the oily mud bakes on your skin.
+                            }
+                        }
+                    }
+
+                }
+
+                //Seg35_B64
+                if ((playerdat.TileState & 8) != 0)
+                {
+                    //seg35_B74
+                    RelatedToSwim_MaybeCameraAdjust_dseg_67d6_33CE = (short)(Math.Abs(0x10 - (RelatedToClockIncrement_67d6_742 >> 3)) * 3);
+                }
+
+                //Seg35_B88
+                if ((playerdat.TileState & 0xE0) != 0) //checking for screenshaking
+                {
+                    //seg35_B99
+                    if ((playerdat.TileState & 0x40) != 0)
+                    {
+                        //shake40,
+                        var tmp = Shake40_Duration_740;
+                        Shake40_Duration_740--;
+                        if (tmp == 0)
+                        {
+                            //seg35_BAB
+                            //end shake
+                            playerdat.TileState = playerdat.TileState & 0xBF;//clear bit 6
+                        }
+                        //seg35_BBE
+                        var1 = Shake40_Duration_740 / 0xA;
+                        if (var1 > 8)
+                        {
+                            //seg35_BD2
+                            var1 = 8;
+                        }
+                    }
+                    //Seg35_BD6
+                    if ((playerdat.TileState & 0x20) != 0)
+                    {
+                        var tmp = Shake20_Duration_73F;
+                        Shake20_Duration_73F--;
+                        if (tmp == 0)
+                        {
+                            //seg35_BF2
+                            //turn off shake
+                            playerdat.TileState = playerdat.TileState & 0xDF;//clear bit 5
+                        }
+                        //seg35_BFF
+                        var2_incrementrelated = Shake20_Duration_73F / 0xA;
+                        if (var2_incrementrelated > 3)
+                        {
+                            var2_incrementrelated = 3;
+                        }
+                    }
+                    
+                    
+                    //Seg35_C17                    
+                    if ((playerdat.TileState & 0x80) != 0)
+                    {
+                        var tmp = Shake80_Duration_741;
+                        Shake80_Duration_741--;
+                        if (tmp==0)
+                        {
+                            //seg35_C2D
+                            //turn off shake
+                            playerdat.TileState = playerdat.TileState & 0x7F;
+                        }
+                        //Seg_C40
+                        var2_incrementrelated = 0;
+                        dseg_67d6_33D0_forward = (short)(((Rng.r.Next(0x7FFF) & 0x1FF) - 256) << 2);
+                    }
+                    //seg35_C56
+                    
+                    var1+=var2_incrementrelated;
+                    dseg_67d6_33D0_forward = (short)(var1 * ((Rng.r.Next(0x7FFF) & 0xFF) - 128));
+                    dseg_67d6_33D2 = (short)(var1 * ((Rng.r.Next(0x7FFF) & 0x7F) - 64));
+                    dseg_67d6_33D4 = (short)(var1 * ((Rng.r.Next(0x7FFF) & 0x1FF) - 256));
+                    Debug.Print($"Screenshake by {dseg_67d6_33D0_forward},{dseg_67d6_33D2},{dseg_67d6_33D4}");
+                }
             }
             else
             {

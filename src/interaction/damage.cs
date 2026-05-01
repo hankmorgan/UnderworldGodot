@@ -33,6 +33,7 @@ namespace Underworld
         /// <param name="damagesource"></param>
         public static int DamageObject(uwObject objToDamage, int basedamage, int damagetype, uwObject[] objList, bool WorldObject, int damagesource)
         {
+            //TODO: The order of params here is different to that in disassembly. There is a risk that basedamage/damage type is wrongly assigned. Review usage.
             basedamage = ScaleDamage(objToDamage.item_id, ref basedamage, damagetype);
             if (basedamage != 0)
             {
