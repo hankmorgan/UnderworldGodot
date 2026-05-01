@@ -677,8 +677,16 @@ namespace Underworld
 
         public static void UpdateMotionStateAndSwimming(int arg0)
         {
-            //todo, check if UW1 has the same array values
-            var tilestatetable_var8 = new short[] { 0x14, 0x6, 0xE, 0x14, 0x1, 0xE, 0x4 }; //likely speeds?
+            //todo, uw1 version of this function has some differences.
+            short[] tilestatetable_var8;
+            if (_RES==GAME_UW2)
+            {
+                tilestatetable_var8 = new short[] { 0x14, 0x6, 0xE, 0x14, 0x1, 0xE, 0x4 }; //likely speeds?
+            }
+            else
+            {
+                tilestatetable_var8 = new short[] { 0xA, 0x3, 0x5, 0xA, 0x1, 0x7, 0x2 };
+            }
             var tilestatestranslation_var10 = new short[] { 0, 1, 2, 4, 8, 8, 0 };
             //             ; State   | table value
             //             ; normal  |     0
