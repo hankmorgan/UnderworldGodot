@@ -172,7 +172,7 @@ public partial class main : Node3D
 		GlobalPITTimer += delta;
 		if (Pit >= 0.054945) // DOS PIT Timer interupt 8 is 18.2 times a second
 		{
-			PitTimer +=  (uint)(Pit / 0.054945);
+			PitTimer +=  (uint)(Pit / 0.054945);//This is probably all wrong. needs revisiting.
 			Pit = 0;
 			//Debug.Print($"{Pit}, {PitTimer}, {delta}");
 		}
@@ -199,8 +199,10 @@ public partial class main : Node3D
 
 
 				//HACK the above appears to be what should be happening in vanilla code but is very slow to process, but the below gives the appearance of normal movement but may cause frame rate issues. 
-				//This whole section will need to be fixed in the future.
-				//A clock increment of 1 will cause strafing to fail when moving to the east!
+				//Issues caused by this hacking.
+				//-Levitation does not work going north ->a higher increment fixes the motionparams.y0 but makes other motion really fast.
+				//-A clock increment of 1 will cause strafing to fail when moving to the east!
+				//This whole section will need to be fixed in the future.				
 				// EasyMoveFrameIncrement = 1;
 				// AnimationFrameDeltaIncrement = 1;
 				//ClockIncrement = 0xF;
@@ -209,7 +211,7 @@ public partial class main : Node3D
 
 			if (ClockIncrement != 0)
 			{
-				ClockIncrement = Math.Max(ClockIncrement, 2);
+				ClockIncrement = Math.Max(ClockIncrement, 2);//TODO: This low value breaks some motion. See above.
 				ProcessMotionInputs();
 				if (AnimationFrameDeltaIncrement != 0)
 				{

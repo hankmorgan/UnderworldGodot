@@ -554,7 +554,7 @@ namespace Underworld
         public static void ProcessPlayerTileState(short tilestate, int arg2)
         {
             var InWater = false;
-            if ((motion.PreviousTileState_dseg_67d6_22B4 != tilestate) || (arg2 == 0))
+            if ((motion.PreviousTileState_dseg_67d6_22B4 != tilestate) || (arg2 != 0))
             {
                 InWater = false;
                 var NewMotionState = 0;
