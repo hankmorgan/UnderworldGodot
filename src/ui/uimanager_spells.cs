@@ -35,7 +35,7 @@ namespace Underworld
         public static void SetSpellIcon(int index, int major, int minor)
         {
             var spellno = GetSpellNoIndex(major, minor);
-            if (spellno>= 0x80)
+            if (spellno >= 0x80)
             {//out of range value/not applicable
                 ClearSpellIcon(index);
             }
@@ -82,17 +82,30 @@ namespace Underworld
                 {
                     return;
                 }
-                var i = (int)extra_arg_0;
+                var effectindex = (int)extra_arg_0;
                 if ((eventMouseButton.ButtonIndex == MouseButton.Left) && (InteractionMode != InteractionModes.ModeLook))
                 {
                     //left click. cancel spell
-                    playerdat.CancelEffect(i);
+                    //Special case. If levitate/fly turn into slow fall
+                    var effectclass = playerdat.GetEffectClass(effectindex);
+                    var majorclass = effectclass & 0xF;
+                    var minorclass = effectclass >> 4;
+                    if ((majorclass == 1) && (((minorclass & 0x3F) == 3) || ((minorclass & 0x3F) == 5)))
+                    {
+                        var neweffectid = (2 << 4) + majorclass;
+                        //Fly or levitate.
+                        playerdat.SetSpellEffect(index: effectindex, effectid: neweffectid, stability: playerdat.GetEffectStability(effectindex));
+                    }
+                    else
+                    {
+                        playerdat.CancelEffect(effectindex);
+                    }
                     playerdat.PlayerStatusUpdate();
                 }
                 else
                 {//get spell description                    
-                    var stability = playerdat.GetEffectStability(i);
-                    var effectclass = playerdat.GetEffectClass(i);
+                    var stability = playerdat.GetEffectStability(effectindex);
+                    var effectclass = playerdat.GetEffectClass(effectindex);
                     var major = effectclass & 0xF;
                     var minor = effectclass >> 4;
                     var index = GetSpellNoIndex(major, minor);

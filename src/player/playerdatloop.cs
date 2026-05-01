@@ -93,25 +93,32 @@ namespace Underworld
 
                             UpdateLightStability(playerUpdateCounter);
 
-                            for (int i = 0; i < 3; i++)
+                            for (int effectindex = 0; effectindex < 3; effectindex++)
                             {
-                                if (i < ActiveSpellEffectCount)
+                                if (effectindex < ActiveSpellEffectCount)
                                 {
-                                    var stability = GetEffectStability(i);
+                                    var stability = GetEffectStability(effectindex);
                                     stability--;
                                     if (stability == 1)
                                     {
-                                        bool FlyingSpell = (GetEffectClass(i) == 49) || (GetEffectClass(i) == 81);
-                                        CancelEffect(i);
-                                        if (FlyingSpell)
+                                        var effectclass = playerdat.GetEffectClass(effectindex);
+                                        var majorclass = effectclass & 0xF;
+                                        var minorclass = effectclass >> 4;
+                                        if ((majorclass == 1) && (((minorclass & 0x3F) == 3) || ((minorclass & 0x3F) == 5)))
                                         {
-                                            SpellCasting.CastClass0123_Spells(majorclass: 1, minorclass: 2);//cast slowfall
+                                            var neweffectid = (2 << 4) + majorclass;
+                                            //Fly or levitate.
+                                            playerdat.SetSpellEffect(index: effectindex, effectid: neweffectid, stability: playerdat.GetEffectStability(effectindex));
                                         }
-                                        i = 0;//restart loop                                        
+                                        else
+                                        {
+                                            playerdat.CancelEffect(effectindex);
+                                        }
+                                        effectindex = 0;//restart loop                                        
                                     }
                                     else
                                     {
-                                        SetEffectStability(i, stability);
+                                        SetEffectStability(effectindex, stability);
                                     }
                                 }
                             }
