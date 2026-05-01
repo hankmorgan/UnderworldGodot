@@ -494,9 +494,9 @@ public partial class main : Node3D
 
 	static void GameObjectLoop(byte ClockIncrement, byte AnimationFrameDelta, bool EasyMove)
 	{
-		motion.RelatedToSwimDmg_dseg_67d6_33CE = 0;
+		motion.RelatedToSwim_MaybeCameraAdjust_dseg_67d6_33CE = 0;
 		motion.RelatedToClockIncrement_67d6_742 += ClockIncrement;
-		motion.dseg_67d6_33c6 = false;
+		motion.relatedtocameradseg_67d6_33c6 = false;
 
 		if (motion.MotionInputPressed == 0)
 		{
@@ -562,9 +562,10 @@ public partial class main : Node3D
 			}
 			motion.MotionInputPressed = 1;
 		}
+		//TODO: using this method probably leads to a lot of jank with requiring input on the correct frame?
 		if (Input.IsKeyPressed(Key.Q))//turn left
 		{
-			motion.PlayerMotionHeading_77E = -90;
+			motion.PlayerMotionHeading_77E = -90;//should this be scaled?
 			motion.MotionInputPressed = 1;
 		}
 		if (Input.IsKeyPressed(Key.E))//turn right

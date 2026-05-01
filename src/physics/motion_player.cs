@@ -63,13 +63,13 @@ namespace Underworld
         public static short PreviousTileState_dseg_67d6_22B4 = 0;
 
 
-        public static short RelatedToSwimDmg_dseg_67d6_33CE = 0;
+        public static short RelatedToSwim_MaybeCameraAdjust_dseg_67d6_33CE = 0;
         public static byte RelatedToClockIncrement_67d6_742;
 
-        public static bool dseg_67d6_33c6;
+        public static bool relatedtocameradseg_67d6_33c6;
 
         static sbyte[] dseg_67d6_743 = new sbyte[] { 1, 3, 4, 3, 1, -3, 0, 0, 1, 3, 4, 3, 1, -3, 0, 0 };
-        static sbyte[] dseg_67d6_753 = new sbyte[] { 0, 0, -1, -2, -3 - 4, -5, -6, -6, -4, -3, -2, -1, 0, 0, 0, -4};
+        static sbyte[] dseg_67d6_753 = new sbyte[] { 0, 0, -1, -2, -3 - 4, -5, -6, -6, -4, -3, -2, -1, 0, 0, 0, -4 };
 
 
         /// <summary>
@@ -116,22 +116,22 @@ namespace Underworld
                         {
                             cl = 2;
                         }
-                        dseg_67d6_33c6 = false;
+                        relatedtocameradseg_67d6_33c6 = false;
 
-                        RelatedToSwimDmg_dseg_67d6_33CE = (short)(dseg_67d6_743[RelatedToClockIncrement_67d6_742 >> 4] * cl);
+                        RelatedToSwim_MaybeCameraAdjust_dseg_67d6_33CE = (short)(dseg_67d6_743[RelatedToClockIncrement_67d6_742 >> 4] * cl);
                     }
                 }
                 if (MotionInputPressed == 7)
                 {
-                    RelatedToSwimDmg_dseg_67d6_33CE = -32;
+                    RelatedToSwim_MaybeCameraAdjust_dseg_67d6_33CE = -32;
                     dseg_67d6_33D2 = -256;
-                    dseg_67d6_33c6 = true;
+                    relatedtocameradseg_67d6_33c6 = true;
                     MotionInputPressed = 0;
                 }
                 if ((MotionInputPressed == 9) || (MotionInputPressed == 0xA))
                 {//strafe motion.
-                    dseg_67d6_33c6 = true;
-                    RelatedToSwimDmg_dseg_67d6_33CE = (short)(dseg_67d6_753[RelatedToClockIncrement_67d6_742 >> 4] << 1);
+                    relatedtocameradseg_67d6_33c6 = true;
+                    RelatedToSwim_MaybeCameraAdjust_dseg_67d6_33CE = (short)(dseg_67d6_753[RelatedToClockIncrement_67d6_742 >> 4] << 1);
                 }
             }
             MotionInputPressed = 0;
@@ -145,7 +145,7 @@ namespace Underworld
             short var2 = 0;
             playerMotionParams.unk_16_relatedtoPitch = 5;
             playerMotionParams.unk_17 = 0;
-                                  
+
 
             dseg_67d6_229A = playerMotionParams.heading_1E;
             dseg_67d6_229C = playerMotionParams.unk_14;
@@ -274,8 +274,8 @@ namespace Underworld
             playerObj.xpos = (short)((playerMotionParams.x_0 >> 5) & 0x7);
             playerObj.ypos = (short)((playerMotionParams.y_2 >> 5) & 0x7);
             //Addition. change of zpos
-            playerObj.zpos = (short)(playerMotionParams.z_4>>3);
-        
+            playerObj.zpos = (short)(playerMotionParams.z_4 >> 3);
+
             //Debug.Print($"player high precision x,y = {playerMotionParams.x_0 & 0x1F},{playerMotionParams.y_2 & 0x1F}" );
 
             //TODO update playerObj.goal with value based on system clock
@@ -297,7 +297,7 @@ namespace Underworld
             else
             {
                 //player is in same tile
-                if (di_zpos != (playerMotionParams.z_4>>3))
+                if (di_zpos != (playerMotionParams.z_4 >> 3))
                 {
                     if (_RES == GAME_UW2)
                     {
@@ -305,7 +305,7 @@ namespace Underworld
                         trigger.PressureTriggerZChange(
                         obj: playerObj,
                         tile: UWTileMap.current_tilemap.Tiles[playerObj.tileX, playerObj.tileY],
-                        zParam: playerMotionParams.z_4>>3);
+                        zParam: playerMotionParams.z_4 >> 3);
                     }
                 }
             }
@@ -395,7 +395,7 @@ namespace Underworld
                     {
                         //seg008_1B09_FBF:
                         //play landing sound effect
-                        UWsoundeffects.PlaySoundEffectAtAvatar(UWsoundeffects.SoundEffectLanding, 0x40, (byte)((FallDamage<<2)-60));
+                        UWsoundeffects.PlaySoundEffectAtAvatar(UWsoundeffects.SoundEffectLanding, 0x40, (byte)((FallDamage << 2) - 60));
                     }
                 }
                 //seg008_1B09_FDB:
@@ -603,12 +603,6 @@ namespace Underworld
                             }
                         }
                     }
-                    //seg008_1B09_CB:
-                    UpdateMotionStateAndSwimming(NewMotionState);
-                    if (InWater == false)
-                    {
-                        playerdat.SwimCounter = 0;
-                    }
                 }
                 else
                 {
@@ -622,7 +616,12 @@ namespace Underworld
                         InWater = true;
                         NewMotionState = 1;
                     }
-
+                }
+                //seg008_1B09_CB:
+                UpdateMotionStateAndSwimming(NewMotionState);
+                if (InWater == false)
+                {
+                    playerdat.SwimCounter = 0;
                 }
             }
 
@@ -679,7 +678,7 @@ namespace Underworld
         {
             //todo, uw1 version of this function has some differences.
             short[] tilestatetable_var8;
-            if (_RES==GAME_UW2)
+            if (_RES == GAME_UW2)
             {
                 tilestatetable_var8 = new short[] { 0x14, 0x6, 0xE, 0x14, 0x1, 0xE, 0x4 }; //likely speeds?
             }
@@ -765,23 +764,23 @@ namespace Underworld
             return result;
         }
 
-                /// <summary>
+        /// <summary>
         /// Sets up the type and duration of screenshake to be applied on the next iteration of WalkOnSurfaceType
         /// </summary>
         /// <param name="TypeOfShake"></param>
         /// <param name="duration"></param>
         public static void SetScreenShake(byte TypeOfShake, byte duration)
         {
-            switch(TypeOfShake)
+            switch (TypeOfShake)
             {
-                case 0x20:                    
+                case 0x20:
                     Shake20_Duration_73F = duration;
                     break;
-                case 0x40:  
-                    Shake40_Duration_740 = duration;                  
+                case 0x40:
+                    Shake40_Duration_740 = duration;
                     break;
                 case 0x80:
-                    if(_RES == GAME_UW2)
+                    if (_RES == GAME_UW2)
                     {
                         //UW2 only form of shaking
                         Shake80_Duration_741 = duration;
@@ -802,6 +801,33 @@ namespace Underworld
         {
             //Seg35_A0C
             //Debug.Print("Walkonspecialterrain todo");
+            var var1 = 1;
+            var var2 = 1;
+            if (playerdat.TileState != 0)
+            {
+                relatedtocameradseg_67d6_33c6 = true; //probably means the camera will need to be adjusted.
+                dseg_67d6_33D4 = 0;//possibly the camera adjustements
+                dseg_67d6_33D2 = 0;
+                dseg_67d6_33D0 = 0; // this moves the camera forward.
+
+                if ((playerdat.TileState & 0x11) != 0)
+                {
+                    //seg35_A59
+                    RelatedToSwim_MaybeCameraAdjust_dseg_67d6_33CE = (short)-playerdat.SwimCounter;
+                    if (playerdat.SwimCounter > 0x50)
+                    {
+                        //seg35_A6E
+                        var1 = (playerMotionParams.unk_14 << 2) / (MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6 >> 1) - 3;
+                    }
+                }
+                //seg35_b14
+            }
+            else
+            {
+                //Seg35_A24
+                relatedtocameradseg_67d6_33c6 = false;
+                RelatedToSwim_MaybeCameraAdjust_dseg_67d6_33CE = 0;
+            }
         }
 
     }//end class

@@ -611,7 +611,7 @@ namespace Underworld
           /// <summary>
           /// Either how long the player has been swimming or a counter for swimming damage to apply
           /// </summary>
-          public static int SwimCounter
+          public static byte SwimCounter
           {
                get
                {
