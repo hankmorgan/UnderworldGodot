@@ -134,6 +134,7 @@ namespace Underworld
                         )
                         {
                             //Bouncing_seg031_2CFA_EE2:
+                            //TODO: it looks like this code is not present in UW1. Determine if this will cause issues?
                             MotionParams.unk_a_pitch = (short)-MotionParams.unk_a_pitch;
                         }
                         else
@@ -952,7 +953,7 @@ namespace Underworld
                     }
                     newMotionParams.heading_1E = MotionParams.heading_1E;
                     newMotionParams.unk_14 = 0xEB;
-                    newMotionParams.unk_a_pitch = (short)(MotionParams.unk_a_pitch * di_mass);
+                    newMotionParams.unk_a_pitch = (short)((MotionParams.unk_a_pitch * di_mass) / 0x40);
 
                     //vanilla behaviour here is to restore currobj details
 
