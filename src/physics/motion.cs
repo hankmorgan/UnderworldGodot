@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using Underworld.Sfx;
 
 namespace Underworld
 {
@@ -173,8 +172,8 @@ namespace Underworld
             }
 
 
-            projectile.xpos = (short)(MotionParams.x_0 >> 5);
-            projectile.ypos = (short)(MotionParams.y_2 >> 5);
+            projectile.xpos = (short)((MotionParams.x_0 >> 5) & 0x7);
+            projectile.ypos = (short)((MotionParams.y_2 >> 5) & 0x7);
 
             if (projectile.IsStatic)
             {

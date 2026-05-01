@@ -494,9 +494,9 @@ public partial class main : Node3D
 
 	static void GameObjectLoop(byte ClockIncrement, byte AnimationFrameDelta, bool EasyMove)
 	{
-		motion.RelatedToSwim_MaybeCameraAdjust_dseg_67d6_33CE = 0;
+		motion.CameraBobZAdjust_dseg_67d6_33CE = 0;
 		motion.RelatedToClockIncrement_67d6_742 += ClockIncrement;
-		motion.relatedtocameradseg_67d6_33c6 = false;
+		motion.CameraIsBobbing_dseg_67d6_33c6 = false;
 
 		if (motion.MotionInputPressed == 0)
 		{
@@ -542,6 +542,9 @@ public partial class main : Node3D
 		//playerdat.ApplyPlayerSneakScore(EasyMove);
 
 		//Footsteps();
+
+		//Position player object now after all possible calcs have been completed
+		playerdat.PositionPlayerObject();
 	}
 
 	static void ProcessMotionInputs()

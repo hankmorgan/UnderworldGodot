@@ -29,9 +29,13 @@ namespace Underworld
 
         //globals used in player motion calcs
         //Possibly some of these are actually part of the player motion params. to do map them out.
-        static short dseg_67d6_33D4;
-        static short dseg_67d6_33D2;
-        static short dseg_67d6_33D0_forward;
+        
+
+        //Camera bob adjustments, 
+        public static short dseg_67d6_33D0_modifiescamera2c;//changes the camera angle that is set by PlayerHeadingMinor8294
+        public static short dseg_67d6_33D2_modifiescamera28;//changes the camera angle that is set by PlayerHeadingRelated33D6        
+        public static short dseg_67d6_33D4_modifiescamera2A;//changes the camera angle that is set by PlayerHeadingRelated33D8, i need to figure these out.
+        
 
         static short dseg_67d6_229A;
         static short dseg_67d6_229C;
@@ -63,10 +67,10 @@ namespace Underworld
         public static short PreviousTileState_dseg_67d6_22B4 = 0;
 
 
-        public static short RelatedToSwim_MaybeCameraAdjust_dseg_67d6_33CE = 0;
+        public static short CameraBobZAdjust_dseg_67d6_33CE = 0;
         public static byte RelatedToClockIncrement_67d6_742;
 
-        public static bool relatedtocameradseg_67d6_33c6;
+        public static bool CameraIsBobbing_dseg_67d6_33c6;
 
         static sbyte[] dseg_67d6_743 = new sbyte[] { 1, 3, 4, 3, 1, -3, 0, 0, 1, 3, 4, 3, 1, -3, 0, 0 };
         static sbyte[] dseg_67d6_753 = new sbyte[] { 0, 0, -1, -2, -3 - 4, -5, -6, -6, -4, -3, -2, -1, 0, 0, 0, -4 };
@@ -79,9 +83,9 @@ namespace Underworld
         public static void PlayerMotion(short ClockIncrement)
         {
             UWMotionParamArray.instance = motion.playerMotionParams;//in case we step on a jump trap...
-            dseg_67d6_33D4 = 0;
-            dseg_67d6_33D2 = 0;
-            dseg_67d6_33D0_forward = 0;
+            dseg_67d6_33D4_modifiescamera2A = 0;
+            dseg_67d6_33D2_modifiescamera28 = 0;
+            dseg_67d6_33D0_modifiescamera2c = 0;
             playerMotionParams.radius_22 = (byte)commonObjDat.radius(playerdat.playerObject.item_id);
             playerMotionParams.height_23 = (byte)commonObjDat.height(playerdat.playerObject.item_id);
             // var x_init = playerMotionParams.x_0;
@@ -96,8 +100,7 @@ namespace Underworld
             ApplyPlayerMotion(playerdat.playerObject);
 
             playerdat.heading_major = PlayerHeadingMajor_dseg_67d6_8296 >> 8;//this hack fixes turning but the heading value here is actually direction of motion so the camera turns during backwards and sideways motion
-
-            playerdat.PositionPlayerObject();
+           
             //Debug.Print($"playerpos is now {playerMotionParams.z_4}");
             // if ((x_init != playerMotionParams.x_0) || (y_init != playerMotionParams.y_2))
             // {
@@ -116,22 +119,22 @@ namespace Underworld
                         {
                             cl = 2;
                         }
-                        relatedtocameradseg_67d6_33c6 = false;
+                        CameraIsBobbing_dseg_67d6_33c6 = false;
 
-                        RelatedToSwim_MaybeCameraAdjust_dseg_67d6_33CE = (short)(dseg_67d6_743[RelatedToClockIncrement_67d6_742 >> 4] * cl);
+                        CameraBobZAdjust_dseg_67d6_33CE = (short)(dseg_67d6_743[RelatedToClockIncrement_67d6_742 >> 4] * cl);
                     }
                 }
                 if (MotionInputPressed == 7)
                 {
-                    RelatedToSwim_MaybeCameraAdjust_dseg_67d6_33CE = -32;
-                    dseg_67d6_33D2 = -256;
-                    relatedtocameradseg_67d6_33c6 = true;
+                    CameraBobZAdjust_dseg_67d6_33CE = -32;
+                    dseg_67d6_33D2_modifiescamera28 = -256;
+                    CameraIsBobbing_dseg_67d6_33c6 = true;
                     MotionInputPressed = 0;
                 }
                 if ((MotionInputPressed == 9) || (MotionInputPressed == 0xA))
                 {//strafe motion.
-                    relatedtocameradseg_67d6_33c6 = true;
-                    RelatedToSwim_MaybeCameraAdjust_dseg_67d6_33CE = (short)(dseg_67d6_753[RelatedToClockIncrement_67d6_742 >> 4] << 1);
+                    CameraIsBobbing_dseg_67d6_33c6 = true;
+                    CameraBobZAdjust_dseg_67d6_33CE = (short)(dseg_67d6_753[RelatedToClockIncrement_67d6_742 >> 4] << 1);
                 }
             }
             MotionInputPressed = 0;
@@ -805,15 +808,15 @@ namespace Underworld
             var var2_incrementrelated = 1;
             if (playerdat.TileState != 0)
             {
-                relatedtocameradseg_67d6_33c6 = true; //probably means the camera will need to be adjusted.
-                dseg_67d6_33D4 = 0;//possibly the camera adjustments
-                dseg_67d6_33D2 = 0;
-                dseg_67d6_33D0_forward = 0; // this moves the camera forward.
+                CameraIsBobbing_dseg_67d6_33c6 = true; //probably means the camera will need to be adjusted.
+                dseg_67d6_33D4_modifiescamera2A = 0;//possibly the camera adjustments
+                dseg_67d6_33D2_modifiescamera28 = 0;
+                dseg_67d6_33D0_modifiescamera2c = 0; // this moves the camera forward.
 
                 if ((playerdat.TileState & 0x11) != 0)
                 {
                     //seg35_A59
-                    RelatedToSwim_MaybeCameraAdjust_dseg_67d6_33CE = (short)-playerdat.SwimCounter;
+                    CameraBobZAdjust_dseg_67d6_33CE = (short)-playerdat.SwimCounter;
                     if (playerdat.SwimCounter > 0x50)
                     {
                         //seg35_A6E
@@ -826,21 +829,21 @@ namespace Underworld
                         if (playerMotionParams.unk_14 != 0)
                         {
                             //Seg31AB_AAD                            
-                            dseg_67d6_33D4 = (short)((CameraBobArray[var2_incrementrelated] * var1) << 6);
+                            dseg_67d6_33D4_modifiescamera2A = (short)((CameraBobArray[var2_incrementrelated] * var1) << 6);
                         }
                         else
                         {
-                            dseg_67d6_33D4 = (short)((Rng.r.Next(0x7FFF) & 0x1FF) - 256);
+                            dseg_67d6_33D4_modifiescamera2A = (short)((Rng.r.Next(0x7FFF) & 0x1FF) - 256);
                         }
 
                         //seg35_AC5
-                        RelatedToSwim_MaybeCameraAdjust_dseg_67d6_33CE += (short)((CameraBobArray[(var2_incrementrelated + 2) & 0xF] << 1) * var1);
+                        CameraBobZAdjust_dseg_67d6_33CE += (short)((CameraBobArray[(var2_incrementrelated + 2) & 0xF] << 1) * var1);
 
-                        dseg_67d6_33D0_forward = (short)(((Rng.r.Next(0x7FFF) & 0x7F) - 64) * var1);
-                        dseg_67d6_33D2 = (short)(((Rng.r.Next(0x7FFF) & 0x7F) - 64) * var1);
+                        dseg_67d6_33D0_modifiescamera2c = (short)(((Rng.r.Next(0x7FFF) & 0x7F) - 64) * var1);
+                        dseg_67d6_33D2_modifiescamera28 = (short)(((Rng.r.Next(0x7FFF) & 0x7F) - 64) * var1);
                         
-                        Debug.Print($"swimbob {RelatedToSwim_MaybeCameraAdjust_dseg_67d6_33CE},{dseg_67d6_33D4}");
-                        Debug.Print($"swim adjust by {dseg_67d6_33D0_forward},{dseg_67d6_33D2},{dseg_67d6_33D4}");
+                        //Debug.Print($"swimbob {CameraBobZAdjust_dseg_67d6_33CE},{dseg_67d6_33D4_modifiescamera2A}");
+                        //Debug.Print($"swim adjust by {dseg_67d6_33D0_modifiescamera2c},{dseg_67d6_33D2_modifiescamera28},{dseg_67d6_33D4_modifiescamera2A}");
                     }
                 }
                 //seg35_b14
@@ -871,7 +874,7 @@ namespace Underworld
                 if ((playerdat.TileState & 8) != 0)
                 {
                     //seg35_B74
-                    RelatedToSwim_MaybeCameraAdjust_dseg_67d6_33CE = (short)(Math.Abs(0x10 - (RelatedToClockIncrement_67d6_742 >> 3)) * 3);
+                    CameraBobZAdjust_dseg_67d6_33CE = (short)(Math.Abs(0x10 - (RelatedToClockIncrement_67d6_742 >> 3)) * 3);
                 }
 
                 //Seg35_B88
@@ -930,22 +933,22 @@ namespace Underworld
                         }
                         //Seg_C40
                         var2_incrementrelated = 0;
-                        dseg_67d6_33D0_forward = (short)(((Rng.r.Next(0x7FFF) & 0x1FF) - 256) << 2);
+                        dseg_67d6_33D0_modifiescamera2c = (short)(((Rng.r.Next(0x7FFF) & 0x1FF) - 256) << 2);
                     }
                     //seg35_C56
                     
                     var1+=var2_incrementrelated;
-                    dseg_67d6_33D0_forward = (short)(var1 * ((Rng.r.Next(0x7FFF) & 0xFF) - 128));
-                    dseg_67d6_33D2 = (short)(var1 * ((Rng.r.Next(0x7FFF) & 0x7F) - 64));
-                    dseg_67d6_33D4 = (short)(var1 * ((Rng.r.Next(0x7FFF) & 0x1FF) - 256));
-                    Debug.Print($"Screenshake by {dseg_67d6_33D0_forward},{dseg_67d6_33D2},{dseg_67d6_33D4}");
+                    dseg_67d6_33D0_modifiescamera2c = (short)(var1 * ((Rng.r.Next(0x7FFF) & 0xFF) - 128));
+                    dseg_67d6_33D2_modifiescamera28 = (short)(var1 * ((Rng.r.Next(0x7FFF) & 0x7F) - 64));
+                    dseg_67d6_33D4_modifiescamera2A = (short)(var1 * ((Rng.r.Next(0x7FFF) & 0x1FF) - 256));
+                    Debug.Print($"Screenshake by {dseg_67d6_33D0_modifiescamera2c},{dseg_67d6_33D2_modifiescamera28},{dseg_67d6_33D4_modifiescamera2A}");
                 }
             }
             else
             {
                 //Seg35_A24
-                relatedtocameradseg_67d6_33c6 = false;
-                RelatedToSwim_MaybeCameraAdjust_dseg_67d6_33CE = 0;
+                CameraIsBobbing_dseg_67d6_33c6 = false;
+                CameraBobZAdjust_dseg_67d6_33CE = 0;
             }
         }
 

@@ -1466,12 +1466,13 @@ namespace Underworld
 
         public static float GetXYCoordinate(int tilexy, int xypos, bool CentreInGrid)
         {
+            //TODO: The coordinates probably need to have more "resolution"
             float adjust = 0f;
             if (CentreInGrid)
             {//adjusts for the object to be in the center of a tile grid segment.
                 adjust = 0.075f;
             }
-            return adjust + (tilexy * 1.2f)  + (float)(xypos) *  0.15f; 
+            return adjust + (tilexy * 1.2f)  + (float)(xypos) *  0.15f; //TODO: this 0.15f gives a range of 0-7 steps in x/y pos. More resolution is needed to smooth mobile objects and adjust screenshake?
         }
 
         /// <summary>

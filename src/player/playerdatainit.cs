@@ -145,6 +145,7 @@ namespace Underworld
                 z: y_adj,
                 y: z_adj); //y-up
             //Debug.Print($"High precision adjustment {adjust}");
+
             main.gamecam.Position = adjust + uwObject.GetCoordinate(
                 tileX: motion.playerMotionParams.x_0 >> 8,
                 tileY: motion.playerMotionParams.y_2 >> 8,
@@ -152,13 +153,32 @@ namespace Underworld
                 _ypos: (motion.playerMotionParams.y_2 >> 5) & 0x7,
                 _zpos: (motion.playerMotionParams.z_4 >> 3) + commonObjDat.height(127));  //+ playerObject.zpos + commonObjDat.height(127)
 
+            if (motion.CameraIsBobbing_dseg_67d6_33c6)
+            {
+                //Hacky placeholder calculate
+                var tmpz =  uwObject.GetCoordinate(
+                    tileX: 0,
+                    tileY: 0,
+                    _xpos: 0,
+                    _ypos: 0,
+                    _zpos: motion.CameraBobZAdjust_dseg_67d6_33CE >> 3);
 
-            //this is causing visual glitching when sliding?  
+                //todo allow for zpos going out of bounds.
+                main.gamecam.Position += new Vector3(0, tmpz.Y, 0);
+            }
+
+
+//Commonobjdat.height in zpos adjustment is wrong. Based on disassebly the camera Z is adjusted by a value of 165. The Z is based on playermotion.Z4
+//This needs to be fixed when the coordinate/object rendering is given more resolution.
+
+            //this is causing visual glitching when sliding?              
             main.gamecam.Rotation = Vector3.Zero;
             main.gamecam.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
                                                               //main.gamecam.Rotate(Vector3.Up, (float)(-heading_major / 127f * Math.PI));
             float fullheading = (float)((playerObject.heading << 5) + playerObject.npc_heading);
             main.gamecam.Rotate(Vector3.Up, (float)(-fullheading / 127f * Math.PI));
+
+            //TODO this camera angle should be based on global values Dseg8294,Dseg33D6,Dseg33D8. The should be (not in order) pitch, yaw and roll?
         }
 
 
