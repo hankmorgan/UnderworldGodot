@@ -463,9 +463,9 @@ namespace Underworld
         private static void ApplyEquipmentEffects(bool CastOnEquip, ref int DamageResistance, ref int StealthBonus)
         {
             //apply spell effects from inventory objects
-            for (int i = 0; i < 10; i++)
+            for (int slot = 0; slot < 10; slot++)
             {
-                var objindex = uimanager.GetPaperDollObjAtSlot(i);
+                var objindex = uimanager.GetPaperDollObjAtSlot(slot);
                 if (objindex != -1)
                 {
                     var obj = InventoryObjects[objindex];
@@ -473,11 +473,39 @@ namespace Underworld
                     {
                         bool isValid = true;
 
-                        if (!uimanager.ValidObjectForSlot(i, obj))
+                        if (!uimanager.ValidObjectForSlot(slot, obj))
                         {
                             isValid = false;
                         }
-                        if (uimanager.DominantHandSlot == i)
+
+                        //filter for other scenarios that are not valid.  
+                        //Rings not in the ring slot.     
+                        if ((obj.majorclass == 0) && (obj.minorclass == 3))
+                        {
+                            if (_RES == GAME_UW2)
+                            {
+                                if (((obj.classindex >= 7) && (obj.classindex <= 0xA)) || obj.classindex == 5)//rings
+                                {
+                                    if ((slot != 9) && (slot != 10))
+                                    {
+                                        isValid = false;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (((obj.classindex >= 7) && (obj.classindex <= 0xA)) || obj.classindex == 6)//rings
+                                {
+                                    if ((slot != 9) && (slot != 10))
+                                    {
+                                        isValid = false;
+                                    }
+                                }
+                            }
+                        }
+
+
+                        if (uimanager.DominantHandSlot == slot)
                         {//Check for weapon in dominant hand.
                             if (
                                 !
@@ -492,6 +520,8 @@ namespace Underworld
                             }
                         }
 
+
+
                         if (isValid)
                         {
                             var spell = MagicEnchantment.GetSpellEnchantment(obj: obj, InventoryObjects);
@@ -503,7 +533,7 @@ namespace Underworld
                                     TriggeredByInventoryEvent: CastOnEquip,
                                     DamageResistance: ref DamageResistance,
                                     StealthBonus: ref StealthBonus,
-                                    PaperDollSlot: i
+                                    PaperDollSlot: slot
                                     );
                             }
                         }

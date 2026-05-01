@@ -150,7 +150,7 @@ namespace Underworld
             dseg_67d6_229A = playerMotionParams.heading_1E;
             dseg_67d6_229C = playerMotionParams.unk_14;
 
-
+            //TODO: Motion with levitation on does not work in some directions.
             if (playerMotionParams.unk_10_Z == 0)
             {
                 CalculateMotionFromCommand_seg008_1B09_108E(MotionInputPressed, ClockIncrement, out var2);
