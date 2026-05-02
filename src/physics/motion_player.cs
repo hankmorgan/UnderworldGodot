@@ -854,7 +854,11 @@ namespace Underworld
                     if (Rng.r.Next(5) == 0)
                     {
                         //seg35_B30
-                        damage.DamageObject(objToDamage: playerdat.playerObject, basedamage: 1, damagetype: 8, objList: UWTileMap.current_tilemap.LevelObjects, WorldObject: true, damagesource: 0);
+                        if (playerdat.DragonSkinBoots == false)
+                        {
+                            damage.DamageObject(objToDamage: playerdat.playerObject, basedamage: 1, damagetype: 8, objList: UWTileMap.current_tilemap.LevelObjects, WorldObject: true, damagesource: 0);
+                        }
+                        
                         if (_RES == GAME_UW2)
                         {
                             //Handle player steping on lava for baking mud.

@@ -358,6 +358,7 @@ namespace Underworld
             HealthRegenEnchantment = false;
             ManaRegenEnchantment = false;
             MazeNavigation = false;
+            DragonSkinBoots = false;
         }
 
         public static void PlayerStatusUpdate(bool CastOnEquip = false)
@@ -534,7 +535,13 @@ namespace Underworld
                             }
                         }
 
-
+                        if ((slot==4) && (_RES!=GAME_UW2))
+                        {
+                            if (obj.item_id == 0x2F)//dragon skin boots
+                            {
+                                playerdat.DragonSkinBoots = true;
+                            }
+                        }
 
                         if (isValid)
                         {

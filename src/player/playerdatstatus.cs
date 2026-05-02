@@ -22,6 +22,8 @@ namespace Underworld
           public static bool ManaRegenEnchantment;
           public static bool usingpole = false;
 
+          public static bool DragonSkinBoots = false;//special global value in UW1 that is set when dragon skin boots are equipped.
+
           /// <summary>
           /// Bit 0=Leap (1)
           /// Bit 1=Slow Fall (2)
