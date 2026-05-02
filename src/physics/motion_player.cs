@@ -109,7 +109,7 @@ namespace Underworld
 
             if ((playerMotionParams.tilestate25 & 0x10) == 0)
             {
-                //THIS SECTION MAY BE SOMETHING TO DO WITH MOMENTUM OR SWIMMING
+                //THIS SECTION SETS UP WALKING CAMERA BOB
                 if ((MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6 >> 2) < playerMotionParams.unk_14)
                 {
                     if (MotionInputPressed == 1)
@@ -119,7 +119,7 @@ namespace Underworld
                         {
                             cl = 2;
                         }
-                        CameraIsBobbing_dseg_67d6_33c6 = false;
+                        CameraIsBobbing_dseg_67d6_33c6 = true;
 
                         CameraBobZAdjust_dseg_67d6_33CE = (short)(dseg_67d6_743[RelatedToClockIncrement_67d6_742 >> 4] * cl);
                     }
