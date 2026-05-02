@@ -52,7 +52,7 @@ public partial class main : Node3D
 
 	double cycletime = 0;
 
-	double playingnotetimer =0;
+	public static double playingnotetimer =0;
 
 	public static bool DoRedraw = false;
 
@@ -183,12 +183,10 @@ public partial class main : Node3D
 		{
 			playingnotetimer +=delta;
 			if (playingnotetimer >= 0.2f)
-			{
-				//Send Midi note off
-				MusicStreamPlayer.Instance.SendMidiMsg((uint)(0x80 | musicalinstrument.channel | (musicalinstrument.PlayingNote<<8) | (0x1<<16)));
-				musicalinstrument.PlayingNote = 0;
-			}
-		}
+            {
+                musicalinstrument.StopMusicalNote();
+            }
+        }
 
 		if ((uimanager.InGame) && (!blockmouseinput))
 		{
@@ -503,8 +501,7 @@ public partial class main : Node3D
 		}
 	}
 
-
-	static void GameObjectLoop(byte ClockIncrement, byte AnimationFrameDelta, bool EasyMove)
+    static void GameObjectLoop(byte ClockIncrement, byte AnimationFrameDelta, bool EasyMove)
 	{
 		motion.CameraBobZAdjust_dseg_67d6_33CE = 0;
 		motion.RelatedToClockIncrement_67d6_742 += ClockIncrement;
@@ -1113,18 +1110,11 @@ public partial class main : Node3D
 				{
 					switch (keyinput.Keycode)
 					{
-						case >= Key.Key0 and <= Key.Key9:
-						case >= Key.Kp0 and <= Key.Kp9:
-							if (musicalinstrument.PlayingNote == 0)
-							{
-								musicalinstrument.notesplayed += keyinput.AsText();
-								playingnotetimer = 0;
-								musicalinstrument.PlayingNote = (byte)(60 + int.Parse(keyinput.AsText().ToString())); //taking 60 as middle C or button 0
-								//Send note On
-								MusicStreamPlayer.Instance.SendMidiMsg((uint)(0x90 | musicalinstrument.channel | (musicalinstrument.PlayingNote<<8) | (0x70<<16)));
-							}
-							break;
-						case Key.Escape:
+                        case >= Key.Key0 and <= Key.Key9:
+                        case >= Key.Kp0 and <= Key.Kp9:
+                            musicalinstrument.PlayMusicalNote(keyinput);
+                            break;
+                        case Key.Escape:
 							musicalinstrument.StopPlaying();
 							break;
 					}
@@ -1164,10 +1154,10 @@ public partial class main : Node3D
 		}
 	}
 
-	/// <summary>
-	/// Handles the end of chain events.
-	/// </summary>
-	public static void RefreshWorldState()
+    /// <summary>
+    /// Handles the end of chain events.
+    /// </summary>
+    public static void RefreshWorldState()
 	{
 		if (DoRedraw)
 		{
