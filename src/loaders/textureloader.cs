@@ -87,7 +87,7 @@ namespace Underworld
                             useAlphaChannel: false, 
                             useSingleRedChannel: UseRedChannel,
                             crop: UseCropping, 
-                            LowDetailMode: UseLowDetail);
+                            OutputInLowDetail: UseLowDetail);
                     }
 
 
@@ -116,7 +116,8 @@ namespace Underworld
                                 palette: palToUse, 
                                 useAlphaChannel: false, 
                                 useSingleRedChannel: UseRedChannel,
-                                crop: UseCropping);
+                                crop: UseCropping, 
+                                OutputInLowDetail: UseLowDetail);
                         }
                         else
                         {//Floor textures (to match my list of textures)
@@ -139,7 +140,8 @@ namespace Underworld
                                 palette: palToUse, 
                                 useAlphaChannel: false, 
                                 useSingleRedChannel: UseRedChannel,
-                                crop: UseCropping);
+                                crop: UseCropping,
+                                OutputInLowDetail: UseLowDetail);
                         }
                     }//end switch	
             }

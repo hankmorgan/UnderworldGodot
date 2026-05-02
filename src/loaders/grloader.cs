@@ -224,7 +224,7 @@ namespace Underworld
                             useAlphaChannel: UseAlphaChannel, 
                             useSingleRedChannel: UseRedChannel,
                             crop: UseCropping, 
-                            LowDetailMode: UseLowDetail);
+                            OutputInLowDetail: UseLowDetail);
                         return ImageCache[index];
                     }
                 case 0x8://4 bit run-length
@@ -252,7 +252,7 @@ namespace Underworld
                             useAlphaChannel: UseAlphaChannel, 
                             useSingleRedChannel: UseRedChannel, 
                             crop: UseCropping, 
-                            LowDetailMode: UseLowDetail);
+                            OutputInLowDetail: UseLowDetail);
                         return ImageCache[index];
                     }
                 case 0xA://4 bit uncompressed//Same as above???
@@ -278,7 +278,7 @@ namespace Underworld
                             useAlphaChannel: UseAlphaChannel , 
                             useSingleRedChannel: UseRedChannel,
                             crop: UseCropping, 
-                            LowDetailMode: UseLowDetail);
+                            OutputInLowDetail: UseLowDetail);
                         return ImageCache[index];
                     }
                 //break;
@@ -302,7 +302,7 @@ namespace Underworld
                             useAlphaChannel: UseAlphaChannel, 
                             useSingleRedChannel: UseRedChannel,
                             crop: UseCropping, 
-                            LowDetailMode: UseLowDetail);
+                            OutputInLowDetail: UseLowDetail);
                         return ImageCache[index];
                     }
                     break;

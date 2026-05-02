@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.Security.AccessControl;
 using Godot;
 
 namespace Underworld
@@ -10,7 +9,7 @@ namespace Underworld
     /// </summary>
     public class door : model3D
     {
-        static GRLoader tmDoor;
+        public static GRLoader tmDoor;
         public Node3D doorNode;
         public int texture;
         public int floorheight;
@@ -97,7 +96,7 @@ namespace Underworld
 
         static door()
         {
-            tmDoor = new GRLoader(GRLoader.DOORS_GR, GRLoader.GRShaderMode.TextureShader);
+            tmDoor = new GRLoader(GRLoader.DOORS_GR, GRLoader.GRShaderMode.TextureShader, playerdat.DetailLevel > 0);
             tmDoor.UseRedChannel = true;
         }
 
@@ -199,11 +198,11 @@ namespace Underworld
             }
             if (isPortcullis(doorObj))
             {
-                UWsoundeffects.PlaySoundEffectAtCoordinate(UWsoundeffects.SoundEffectPortcullis, (doorObj.tileX<<3) + doorObj.xpos, (doorObj.tileY<<3) + doorObj.ypos, 0 );  
+                UWsoundeffects.PlaySoundEffectAtCoordinate(UWsoundeffects.SoundEffectPortcullis, (doorObj.tileX << 3) + doorObj.xpos, (doorObj.tileY << 3) + doorObj.ypos, 0);
             }
             else
             {
-                UWsoundeffects.PlaySoundEffectAtCoordinate(UWsoundeffects.SoundEffectDoor, (doorObj.tileX<<3) + doorObj.xpos, (doorObj.tileY<<3) + doorObj.ypos, 0 );  
+                UWsoundeffects.PlaySoundEffectAtCoordinate(UWsoundeffects.SoundEffectDoor, (doorObj.tileX << 3) + doorObj.xpos, (doorObj.tileY << 3) + doorObj.ypos, 0);
             }
             playerdat.UpdateAutomap();//trigger an update of visibility
             trigger.TriggerObjectLink(character: 1,
@@ -245,14 +244,14 @@ namespace Underworld
             }
             if (isPortcullis(doorObj))
             {
-                UWsoundeffects.PlaySoundEffectAtCoordinate(UWsoundeffects.SoundEffectPortcullis, (doorObj.tileX<<3) + doorObj.xpos, (doorObj.tileY<<3) + doorObj.ypos, 0 );  
+                UWsoundeffects.PlaySoundEffectAtCoordinate(UWsoundeffects.SoundEffectPortcullis, (doorObj.tileX << 3) + doorObj.xpos, (doorObj.tileY << 3) + doorObj.ypos, 0);
             }
             else
             {
-                UWsoundeffects.PlaySoundEffectAtCoordinate(UWsoundeffects.SoundEffectDoor, (doorObj.tileX<<3) + doorObj.xpos, (doorObj.tileY<<3) + doorObj.ypos, 0 );     
+                UWsoundeffects.PlaySoundEffectAtCoordinate(UWsoundeffects.SoundEffectDoor, (doorObj.tileX << 3) + doorObj.xpos, (doorObj.tileY << 3) + doorObj.ypos, 0);
             }
-            
-            
+
+
             if ((doorObj.link != 0) && (_RES == GAME_UW2))
             {
                 // trigger.CloseTrigger(obj.uwobject, obj.uwobject.link, UWTileMap.current_tilemap.LevelObjects);
@@ -975,19 +974,19 @@ namespace Underworld
             //a portcullis. 
 
             dw.doorFrameNode = dw.Generate3DModel(parent, name);
-            if (dw.isOpen )//&& (obj.item_id != 463))
+            if (dw.isOpen)//&& (obj.item_id != 463))
             {//fix for map bug where some open doors extend out of the map. Force them onto a lower zpos without changing data
                 var newZ = dw.uwobject.zpos - 24;
                 if (UWTileMap.ValidTile(tileX, tileY))
                 {
-                    var floorHeight = UWTileMap.current_tilemap.Tiles[tileX, tileY].floorHeight<<3;
-                    if (newZ< floorHeight)
+                    var floorHeight = UWTileMap.current_tilemap.Tiles[tileX, tileY].floorHeight << 3;
+                    if (newZ < floorHeight)
                     {
                         newZ = floorHeight;
                         Debug.Print($"Repositioning {obj.a_name} {obj.index} zpos {obj.zpos} to floor height {tileX},{tileY}");
                     }
                 }
-                
+
                 parent.Position = new Vector3(parent.Position.X, uwObject.GetZCoordinate(newZ), parent.Position.Z);
             }
 

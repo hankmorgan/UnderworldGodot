@@ -93,7 +93,7 @@ namespace Underworld
             bool useAlphaChannel,
             bool useSingleRedChannel,
             bool crop,
-            bool LowDetailMode = false)
+            bool OutputInLowDetail = false)
         {
             Godot.Image.Format imgformat;
             if (useSingleRedChannel)
@@ -111,7 +111,7 @@ namespace Underworld
                     imgformat = Godot.Image.Format.Rgb8;
                 }
             }
-            if (LowDetailMode)
+            if (OutputInLowDetail)
             {
                 //special mode for low detail levels.
                 //returns an image that is based on the pixel colour of the first byte (top left pixel) of the image.

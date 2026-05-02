@@ -374,6 +374,8 @@ namespace Underworld
             tileMapRender.mapTexturesCeilings = new(_usehighdetail: playerdat.RenderCeilings);
 
             model3D.ClearTmObj(); // to force modesl to use refreshed textures. 
+            door.tmDoor = new GRLoader(GRLoader.DOORS_GR, GRLoader.GRShaderMode.TextureShader, playerdat.DetailLevel > 0);
+            door.tmDoor.UseRedChannel = true;
         }
 
 
