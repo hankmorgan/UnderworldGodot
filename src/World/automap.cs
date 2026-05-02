@@ -119,27 +119,27 @@ namespace Underworld
                             tiletype: UWTileMap.current_tilemap.Tiles[x, y].tileType,
                             displaytype: automaptileinfo.GetDisplayType(UWTileMap.current_tilemap.Tiles[x, y]));
                     }
-                    else
-                    {
-                        if (UWTileMap.ValidTile(x, y))
-                        {//mark the open tiles outside of vision range as undiscovered open tile if not already visited
-                            var tile = UWTileMap.current_tilemap.Tiles[x, y];
-                            if (automaps[dungeon_level - 1].tiles[x, y].visited == false)
-                            {
-                                if (UWTileMap.IsOpen(UWTileMap.current_tilemap.Tiles[x, y].tileType))
-                                {
-                                    var displaytype = automaptileinfo.GetDisplayType(tile);
-                                    //automap.automaps[dungeon_level - 1].tiles[northaxis, aY].DisplayType;
-                                    //mark as undiscovered, open tile. 
-                                    MarkTileVisited(
-                                        level: dungeon_level - 1,
-                                        tileX: x, tileY: y,
-                                        tiletype: 11,
-                                        displaytype: displaytype);
-                                }
-                            }
-                        }
-                    }
+                    // else
+                    // {
+                    //     if (UWTileMap.ValidTile(x, y))
+                    //     {//mark the open tiles outside of vision range as undiscovered open tile if not already visited
+                    //         var tile = UWTileMap.current_tilemap.Tiles[x, y];
+                    //         if (automaps[dungeon_level - 1].tiles[x, y].visited == false)
+                    //         {
+                    //             if (UWTileMap.IsOpen(UWTileMap.current_tilemap.Tiles[x, y].tileType))
+                    //             {
+                    //                 var displaytype = automaptileinfo.GetDisplayType(tile);
+                    //                 //automap.automaps[dungeon_level - 1].tiles[northaxis, aY].DisplayType;
+                    //                 //mark as undiscovered, open tile. 
+                    //                 MarkTileVisited(
+                    //                     level: dungeon_level - 1,
+                    //                     tileX: x, tileY: y,
+                    //                     tiletype: 11,
+                    //                     displaytype: displaytype);
+                    //             }
+                    //         }
+                    //     }
+                    // }
                 }
             }
             return range;
