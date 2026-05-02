@@ -369,9 +369,11 @@ namespace Underworld
         /// </summary>
         public static void LoadTextures()
         {
-            tileMapRender.mapTexturesWalls = new(_detaillevel: playerdat.RenderWalls);//refresh textures
-            tileMapRender.mapTexturesFloors = new(_detaillevel: playerdat.RenderFloors);
-            tileMapRender.mapTexturesCeilings = new(_detaillevel: playerdat.RenderCeilings);
+            tileMapRender.mapTexturesWalls = new(_usehighdetail: playerdat.RenderWalls);//refresh textures
+            tileMapRender.mapTexturesFloors = new(_usehighdetail: playerdat.RenderFloors);
+            tileMapRender.mapTexturesCeilings = new(_usehighdetail: playerdat.RenderCeilings);
+
+            model3D.ClearTmObj(); // to force modesl to use refreshed textures. 
         }
 
 

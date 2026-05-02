@@ -33,6 +33,11 @@ namespace Underworld
         public const float NPCSpriteScale = 0.009f;
 
         /// <summary>
+        /// Load art in a low detail mode based on the first pixel color (top left) in the image
+        /// </summary>
+        public bool UseLowDetail = false;
+
+        /// <summary>
         /// Loads the image file into the buffer
         /// </summary>
         /// <returns><c>true</c>, if image file was loaded, <c>false</c> otherwise.</returns>
