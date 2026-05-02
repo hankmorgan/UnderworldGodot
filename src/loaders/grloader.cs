@@ -101,15 +101,6 @@ namespace Underworld
 
         public ShaderMaterial[] materials = new ShaderMaterial[1];
 
-        // public GRLoader(int File, int PalToUse)
-        // {
-        //     // AuxPalPath = AuxPalPath.Replace("--", sep.ToString());
-        //     useOverrideAuxPalIndex = false;
-        //     OverrideAuxPalIndex = 0;
-        //     FileToLoad = File;
-        //     PaletteNo = (short)PalToUse;
-        //     LoadImageFile();
-        // }
         public enum GRShaderMode
         {
             None = 0, 
@@ -120,8 +111,9 @@ namespace Underworld
 
         };
 
-        public GRLoader(int File, GRShaderMode shadermode)
+        public GRLoader(int File, GRShaderMode shadermode, bool _usehighdetail = true)
         {      
+            UseLowDetail = !_usehighdetail;//sets the texture load to just return the colour define by the first pixel(top left of the texture loader)
             switch (shadermode)
             {
                 case GRShaderMode.None:
@@ -138,7 +130,7 @@ namespace Underworld
                     textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uisprite.gdshader");
                     break;
             }     
-            // AuxPalPath = AuxPalPath.Replace("--", sep.ToString());
+
             useOverrideAuxPalIndex = false;
             OverrideAuxPalIndex = 0;
             FileToLoad = File;
@@ -231,7 +223,8 @@ namespace Underworld
                             palette: PaletteLoader.Palettes[PaletteNo], 
                             useAlphaChannel: UseAlphaChannel, 
                             useSingleRedChannel: UseRedChannel,
-                            crop: UseCropping);
+                            crop: UseCropping, 
+                            OutputInLowDetail: UseLowDetail);
                         return ImageCache[index];
                     }
                 case 0x8://4 bit run-length
@@ -258,7 +251,8 @@ namespace Underworld
                             palette: PaletteLoader.Palettes[PaletteNo], 
                             useAlphaChannel: UseAlphaChannel, 
                             useSingleRedChannel: UseRedChannel, 
-                            crop: UseCropping);
+                            crop: UseCropping, 
+                            OutputInLowDetail: UseLowDetail);
                         return ImageCache[index];
                     }
                 case 0xA://4 bit uncompressed//Same as above???
@@ -283,7 +277,8 @@ namespace Underworld
                             palette: auxpal, 
                             useAlphaChannel: UseAlphaChannel , 
                             useSingleRedChannel: UseRedChannel,
-                            crop: UseCropping);
+                            crop: UseCropping, 
+                            OutputInLowDetail: UseLowDetail);
                         return ImageCache[index];
                     }
                 //break;
@@ -306,7 +301,8 @@ namespace Underworld
                             palette: PaletteLoader.Palettes[PaletteNo], 
                             useAlphaChannel: UseAlphaChannel, 
                             useSingleRedChannel: UseRedChannel,
-                            crop: UseCropping);
+                            crop: UseCropping, 
+                            OutputInLowDetail: UseLowDetail);
                         return ImageCache[index];
                     }
                     break;

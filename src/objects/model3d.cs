@@ -14,7 +14,7 @@ namespace Underworld
         //public Material material;
         public static Shader textureshader;
         public static Shader transparentshader;
-        static GRLoader tmObj; //3d model textures.
+        static GRLoader tmObj; //3d model textures at 
 
         public static GRLoader GetTmObj
         {
@@ -24,6 +24,7 @@ namespace Underworld
                 return tmObj;
             }
         }
+
         static GRLoader tmFlat; //button.
 
         public static GRLoader GetTmFlat
@@ -35,7 +36,15 @@ namespace Underworld
             }
         }
         
-        
+        /// <summary>
+        /// Sets the tmobj to null so that the next time a texture is requested for a model the tmobj is recreated with fresh images (respecting detail levels)
+        /// </summary>
+        public static void ClearTmObj()
+        {
+            tmObj = null;
+        }
+
+
         /// <summary>
         /// Generates the defined 3d model and adds as a child to the parent node.
         /// </summary>
@@ -48,9 +57,9 @@ namespace Underworld
             var verts = ModelVertices();
             Vector2[] uvs = ModelUVs(verts);
             int MeshCount = NoOfMeshes();
-            
+
             for (int i = 0; i < MeshCount; i++)
-            {  
+            {
                 mats[i] = ModelColour(i); //index into the appropiate palette(default) or material list
             }
 
@@ -60,7 +69,7 @@ namespace Underworld
                 normals.Add(vert.Normalized());
             }
 
-            for (int i=0; i<MeshCount;i++)
+            for (int i = 0; i < MeshCount; i++)
             {
                 AddSurfaceToMesh(this, verts, uvs, mats, i, a_mesh, normals, ModelTriangles(i));
             }
@@ -115,7 +124,7 @@ namespace Underworld
             return 1f;
         }
 
-        protected static Node3D CreateMeshInstance(Node3D parent,string ModelName, ArrayMesh a_mesh, bool EnableCollision = true)
+        protected static Node3D CreateMeshInstance(Node3D parent, string ModelName, ArrayMesh a_mesh, bool EnableCollision = true)
         {
             var final_mesh = new MeshInstance3D();
             parent.AddChild(final_mesh);
@@ -125,7 +134,7 @@ namespace Underworld
             if (EnableCollision)
             {
                 final_mesh.CreateTrimeshCollision();
-               // final_mesh.CreateConvexCollision();
+                // final_mesh.CreateConvexCollision();
             }
             return final_mesh;
         }
@@ -162,9 +171,9 @@ namespace Underworld
         /// </summary>
         /// <param name="textureno"></param>
         /// <returns></returns>
-        public  virtual ShaderMaterial GetMaterial(int textureno, int surface)
+        public virtual ShaderMaterial GetMaterial(int textureno, int surface)
         {
-            if (textureshader==null)
+            if (textureshader == null)
             {
                 textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwshader.gdshader");
             }
@@ -180,7 +189,7 @@ namespace Underworld
 
         public ShaderMaterial GetMaterial_alphacolour(int textureno, int surface)
         {
-            if (transparentshader==null)
+            if (transparentshader == null)
             {
                 transparentshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwshader_alpha.gdshader");
             }
@@ -194,7 +203,7 @@ namespace Underworld
             return newmaterial;
         }
 
-        public static void DisplayModelPoints(model3D m, Node3D n, int maxpoints=20)
+        public static void DisplayModelPoints(model3D m, Node3D n, int maxpoints = 20)
         {
             //render the points for debugging
             var vs = m.ModelVertices();
@@ -211,7 +220,7 @@ namespace Underworld
                 {
                     Label3D obj_lbl = new();
                     obj_lbl.Text = $".{vindex}";
-                    obj_lbl.FontSize=8;
+                    obj_lbl.FontSize = 8;
                     obj_lbl.Position = new Vector3(v.X, v.Y, v.Z);
                     obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
                     n.AddChild(obj_lbl);
@@ -220,7 +229,7 @@ namespace Underworld
             }
         }
 
-        
+
 
         /// <summary>
         /// Rotates the model along it's axis
@@ -233,28 +242,28 @@ namespace Underworld
         {
             switch (n.uwobject.heading * 45)
             {
-               case tileMapRender.heading0: 
-                    parent.Rotate(Vector3.Up, (float)Math.PI);                
+                case tileMapRender.heading0:
+                    parent.Rotate(Vector3.Up, (float)Math.PI);
                     break;
                 case tileMapRender.heading1:
-                    parent.Rotate(Vector3.Up, (float)Math.PI * 3f/4f); break;  
-                 case tileMapRender.heading2: //90 works
+                    parent.Rotate(Vector3.Up, (float)Math.PI * 3f / 4f); break;
+                case tileMapRender.heading2: //90 works
                     parent.Rotate(Vector3.Up, (float)Math.PI / 2f);
                     break;
                 case tileMapRender.heading3:
                     parent.Rotate(Vector3.Up, (float)Math.PI / 4f);
                     break;
-                case tileMapRender.heading4: 
+                case tileMapRender.heading4:
                     //default. no rotation
                     break;
                 case tileMapRender.heading5:
-                    parent.Rotate(Vector3.Up, (float)Math.PI * 7f/4f);
+                    parent.Rotate(Vector3.Up, (float)Math.PI * 7f / 4f);
                     break;
-                case tileMapRender.Heading6: 
+                case tileMapRender.Heading6:
                     parent.Rotate(Vector3.Up, (float)Math.PI * 1.5f);
                     break;
                 case tileMapRender.Heading7:
-                    parent.Rotate(Vector3.Up, (float)Math.PI * 5f/4f);
+                    parent.Rotate(Vector3.Up, (float)Math.PI * 5f / 4f);
                     break;
                 default:
                     System.Diagnostics.Debug.Print($"Unhandled model heading. {n.uwobject.item_id} h:{n.uwobject.heading}");
@@ -266,28 +275,28 @@ namespace Underworld
         {
             switch (obj.heading * 45)
             {
-                case tileMapRender.heading0: 
-                    parent.Rotate(Vector3.Up, (float)Math.PI);                
+                case tileMapRender.heading0:
+                    parent.Rotate(Vector3.Up, (float)Math.PI);
                     break;
                 case tileMapRender.heading1:
-                    parent.Rotate(Vector3.Up, (float)Math.PI * 3f/4f); break;  
-                 case tileMapRender.heading2: //90 works
+                    parent.Rotate(Vector3.Up, (float)Math.PI * 3f / 4f); break;
+                case tileMapRender.heading2: //90 works
                     parent.Rotate(Vector3.Up, (float)Math.PI / 2f);
                     break;
                 case tileMapRender.heading3:
                     parent.Rotate(Vector3.Up, (float)Math.PI / 4f);
                     break;
-                case tileMapRender.heading4: 
+                case tileMapRender.heading4:
                     //default. no rotation
                     break;
                 case tileMapRender.heading5:
-                    parent.Rotate(Vector3.Up, (float)Math.PI * 7f/4f);
+                    parent.Rotate(Vector3.Up, (float)Math.PI * 7f / 4f);
                     break;
-                case tileMapRender.Heading6: 
+                case tileMapRender.Heading6:
                     parent.Rotate(Vector3.Up, (float)Math.PI * 1.5f);
                     break;
                 case tileMapRender.Heading7:
-                    parent.Rotate(Vector3.Up, (float)Math.PI * 5f/4f);
+                    parent.Rotate(Vector3.Up, (float)Math.PI * 5f / 4f);
                     break;
                 default:
                     System.Diagnostics.Debug.Print($"Unhandled model heading. {obj.item_id} h:{obj.heading}");
@@ -302,10 +311,10 @@ namespace Underworld
         {
             if (tmObj == null)
             {
-                tmObj = new GRLoader(GRLoader.TMOBJ_GR, GRLoader.GRShaderMode.TextureShader);
+                tmObj = new GRLoader(GRLoader.TMOBJ_GR, GRLoader.GRShaderMode.TextureShader, playerdat.DetailLevel > 1);
                 tmObj.UseRedChannel = true;
             }
-        }  
+        }
 
         /// <summary>
         /// Checks if tmFlat is loaded and if not load. Call before returning a new material shader using tmObjl
@@ -317,7 +326,7 @@ namespace Underworld
                 tmFlat = new GRLoader(GRLoader.TMFLAT_GR, GRLoader.GRShaderMode.TextureShader);
                 tmFlat.UseRedChannel = true;
             }
-        }        
+        }
 
 
         //Center the model in the tile it is in along it's heading
@@ -327,17 +336,17 @@ namespace Underworld
             int y = modelObj.uwobject.tileY;
             switch (modelObj.uwobject.heading * 45)
             {
-                case tileMapRender.heading0: 
-                    ModelParentNode.Position = new Vector3(-(x * 1.2f + 0.6f), ModelParentNode.Position.Y, ModelParentNode.Position.Z);              
+                case tileMapRender.heading0:
+                    ModelParentNode.Position = new Vector3(-(x * 1.2f + 0.6f), ModelParentNode.Position.Y, ModelParentNode.Position.Z);
                     break;
-                case tileMapRender.heading2: 
-                     ModelParentNode.Position = new Vector3(ModelParentNode.Position.X, ModelParentNode.Position.Y, y * 1.2f + 0.6f); 
+                case tileMapRender.heading2:
+                    ModelParentNode.Position = new Vector3(ModelParentNode.Position.X, ModelParentNode.Position.Y, y * 1.2f + 0.6f);
                     break;
-                case tileMapRender.heading4: 
-                    ModelParentNode.Position = new Vector3(-(x * 1.2f + 0.6f), ModelParentNode.Position.Y, ModelParentNode.Position.Z); 
+                case tileMapRender.heading4:
+                    ModelParentNode.Position = new Vector3(-(x * 1.2f + 0.6f), ModelParentNode.Position.Y, ModelParentNode.Position.Z);
                     break;
-                case tileMapRender.Heading6: 
-                    ModelParentNode.Position = new Vector3(ModelParentNode.Position.X, ModelParentNode.Position.Y, y * 1.2f + 0.6f); 
+                case tileMapRender.Heading6:
+                    ModelParentNode.Position = new Vector3(ModelParentNode.Position.X, ModelParentNode.Position.Y, y * 1.2f + 0.6f);
                     break;
                 default:
                     System.Diagnostics.Debug.Print($"Unhandled model axis heading. {modelObj.uwobject.item_id} h:{modelObj.uwobject.heading}");
@@ -350,7 +359,7 @@ namespace Underworld
         {
             int x = modelObj.uwobject.tileX;
             int y = modelObj.uwobject.tileY;
-           
+
             modelParentNode.Position = new Vector3(-(x * 1.2f + 0.6f), modelParentNode.Position.Y, y * 1.2f + 0.6f);
         }
 

@@ -277,7 +277,8 @@ namespace Underworld
             PaletteLoader.NextPaletteCycle_GAME = 0;
             PaletteLoader.NextPaletteCycle_UI = 0;
 
-            tileMapRender.mapTextures = new();//refresh textures
+            LoadTextures();
+
             ObjectCreator.worldobjects = main.instance.GetNode<Node3D>("/root/Underworld/worldobjects");
             Node3D the_tiles = main.instance.GetNode<Node3D>("/root/Underworld/tilemap");
             if (newGameSession)
@@ -337,8 +338,46 @@ namespace Underworld
             uimanager.InGame = true;
             uimanager.AtMainMenu = false;
             Palette.CurrentPalette = 0;
-            //Debug.Print($"{current_tilemap.NoOfActiveMobiles}");
         }
+
+
+        /// <summary>
+        /// Calls a redraw of the current level without reloading data from file/memory.
+        /// Used to handle detail changes.
+        /// </summary>
+        public static void RedrawCurrentTileMap()
+        {
+            Node3D the_tiles = main.instance.GetNode<Node3D>("/root/Underworld/tilemap");
+            
+            DestroyTileMapAndContents(the_tiles);
+
+            LoadTextures();
+
+            ObjectCreator.GenerateObjects(
+                objects: current_tilemap.LevelObjects,
+                a_tilemap: current_tilemap);
+
+            tileMapRender.GenerateLevelFromTileMap(
+                parent: the_tiles,
+                Level: current_tilemap,
+                objList: current_tilemap.LevelObjects,
+                UpdateOnly: false);
+        }
+
+        /// <summary>
+        /// Initialises the textureloaders based on the detail settings defined.
+        /// </summary>
+        public static void LoadTextures()
+        {
+            tileMapRender.mapTexturesWalls = new(_usehighdetail: playerdat.RenderWalls);//refresh textures
+            tileMapRender.mapTexturesFloors = new(_usehighdetail: playerdat.RenderFloors);
+            tileMapRender.mapTexturesCeilings = new(_usehighdetail: playerdat.RenderCeilings);
+
+            model3D.ClearTmObj(); // to force modesl to use refreshed textures. 
+            door.tmDoor = new GRLoader(GRLoader.DOORS_GR, GRLoader.GRShaderMode.TextureShader, playerdat.DetailLevel > 0);
+            door.tmDoor.UseRedChannel = true;
+        }
+
 
         public static void DestroyTileMapAndContents(Node3D the_tiles)
         {
@@ -364,6 +403,7 @@ namespace Underworld
             {
                 child.QueueFree();
             }
+
             if (ObjectCreator.worldobjects != null)
             {
                 foreach (var child in ObjectCreator.worldobjects.GetChildren())

@@ -212,6 +212,10 @@ namespace Underworld
 
         public static short CalculateFacingAngleToNPC(uwObject n)
         {
+            if (n.instance == null)
+            {
+                return 0;
+            }
             var direction = -main.gamecam.Position + n.instance.uwnode.Position;
             var angle = Mathf.RadToDeg(Mathf.Atan2(direction.X, direction.Z));
             var facingIndex = facing(angle);
