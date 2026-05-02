@@ -52,6 +52,8 @@ public partial class main : Node3D
 
 	double cycletime = 0;
 
+	double playingnotetimer =0;
+
 	public static bool DoRedraw = false;
 
 
@@ -177,6 +179,16 @@ public partial class main : Node3D
 			//Debug.Print($"{Pit}, {PitTimer}, {delta}");
 		}
 
+		if (musicalinstrument.PlayingNote>0)
+		{
+			playingnotetimer +=delta;
+			if (playingnotetimer >= 0.2f)
+			{
+				//Send Midi note off
+				MusicStreamPlayer.Instance.SendMidiMsg((uint)(0x80 | musicalinstrument.channel | (musicalinstrument.PlayingNote<<8) | (0x1<<16)));
+				musicalinstrument.PlayingNote = 0;
+			}
+		}
 
 		if ((uimanager.InGame) && (!blockmouseinput))
 		{
@@ -1103,8 +1115,14 @@ public partial class main : Node3D
 					{
 						case >= Key.Key0 and <= Key.Key9:
 						case >= Key.Kp0 and <= Key.Kp9:
-							musicalinstrument.notesplayed += keyinput.AsText();
-							Debug.Print($"Imagine musical note {keyinput.AsText()}");
+							if (musicalinstrument.PlayingNote == 0)
+							{
+								musicalinstrument.notesplayed += keyinput.AsText();
+								playingnotetimer = 0;
+								musicalinstrument.PlayingNote = (byte)(60 + int.Parse(keyinput.AsText().ToString())); //taking 60 as middle C or button 0
+								//Send note On
+								MusicStreamPlayer.Instance.SendMidiMsg((uint)(0x90 | musicalinstrument.channel | (musicalinstrument.PlayingNote<<8) | (0x70<<16)));
+							}
 							break;
 						case Key.Escape:
 							musicalinstrument.StopPlaying();

@@ -1,9 +1,11 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Godot;
 using Munt.NET;
+using Underworld.Sfx;
 
 namespace Underworld;
 
@@ -324,6 +326,19 @@ public partial class MusicStreamPlayer : Node
                     var fullPath = Path.Combine(root, "runtimes", runtime, "native", filename);
                     return File.Exists(fullPath) ? NativeLibrary.Load(fullPath) : IntPtr.Zero;
                 });
+        }
+    }
+
+    /// <summary>
+    /// Sends a direct midi message to synth.
+    /// </summary>
+    /// <param name="message"></param>
+    public void SendMidiMsg(uint message)
+    {
+        Debug.Print($"Midi message {message.ToString("X")}");
+        lock (_playerLock)
+        {
+            _synth.PlayMsg(message);
         }
     }
 }

@@ -1,11 +1,15 @@
 using System.Diagnostics;
+using ADLMidi.NET;
+using Godot;
 
 namespace Underworld
 {
     public class musicalinstrument : objectInstance
     {
         public static string notesplayed;
+        public static byte channel = 8;
         public static bool PlayingInstrument;
+        public static byte PlayingNote;//what note is currently playing
         public static int InstrumentClassIndex;
         public static bool use(uwObject obj, bool WorldObject)
         {
@@ -16,6 +20,18 @@ namespace Underworld
                 uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_play_the_instrument_));
                 notesplayed = "";
                 PlayingInstrument = true;
+                byte timbre;
+                switch (obj.item_id)
+                {
+                    case 291://mandolin
+                        timbre = 24; break;
+                    case 292://flute
+                    default:
+                        timbre = 73; break;
+                    
+                }
+                //change the timbre
+                MusicStreamPlayer.Instance.SendMidiMsg((uint)(0xC0 | channel | timbre << 8));
                 return true;
             }
             else
