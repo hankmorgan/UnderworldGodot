@@ -70,6 +70,8 @@ namespace Underworld
         public static string guid;
 
         public static TextureLoader mapTextures;
+        public static TextureLoader mapTexturesFloors;
+        public static TextureLoader mapTexturesCeilings;
 
         static tileMapRender()
         {

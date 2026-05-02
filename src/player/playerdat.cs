@@ -555,6 +555,30 @@ namespace Underworld
             }
         }
 
+        public static bool RenderWalls
+        {
+            get
+            {
+                return DetailLevel > 0;
+            }
+        }
+
+        public static bool RenderFloors
+        {
+            get
+            {
+                return DetailLevel > 1;
+            }
+        }
+
+        public static bool RenderCeilings
+        {
+            get
+            {
+                return DetailLevel > 2;
+            }
+        }
+
         public static bool SoundEffectsEnabled
         {
             get

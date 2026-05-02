@@ -277,7 +277,9 @@ namespace Underworld
             PaletteLoader.NextPaletteCycle_GAME = 0;
             PaletteLoader.NextPaletteCycle_UI = 0;
 
-            tileMapRender.mapTextures = new();//refresh textures
+            tileMapRender.mapTextures = new(_detaillevel: playerdat.RenderWalls);//refresh textures
+            tileMapRender.mapTexturesFloors = new(_detaillevel: playerdat.RenderFloors);
+            tileMapRender.mapTexturesCeilings = new(_detaillevel: playerdat.RenderCeilings);
             ObjectCreator.worldobjects = main.instance.GetNode<Node3D>("/root/Underworld/worldobjects");
             Node3D the_tiles = main.instance.GetNode<Node3D>("/root/Underworld/tilemap");
             if (newGameSession)
@@ -337,7 +339,6 @@ namespace Underworld
             uimanager.InGame = true;
             uimanager.AtMainMenu = false;
             Palette.CurrentPalette = 0;
-            //Debug.Print($"{current_tilemap.NoOfActiveMobiles}");
         }
 
         public static void DestroyTileMapAndContents(Node3D the_tiles)

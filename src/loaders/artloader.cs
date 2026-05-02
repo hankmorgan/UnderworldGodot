@@ -87,7 +87,8 @@ namespace Underworld
             Palette palette,
             bool useAlphaChannel,
             bool useSingleRedChannel,
-            bool crop)
+            bool crop,
+            bool LowDetailMode = false)
         {
             Godot.Image.Format imgformat;
             if (useSingleRedChannel)
@@ -105,29 +106,52 @@ namespace Underworld
                     imgformat = Godot.Image.Format.Rgb8;
                 }
             }
-
-            var img = Godot.Image.CreateEmpty(width, height, false, imgformat);
-            for (int iRow = 0; iRow < height; iRow++)
+            if (LowDetailMode)
             {
-                int iCol = 0;
-                for (int j = iRow * width; j < (iRow * width) + width; j++)
+                //special mode for low detail levels.
+                //returns an image that is based on the pixel colour of the first byte (top left pixel) of the image.
+                width = 2;
+                height = 2;
+                var img = Godot.Image.CreateEmpty(width, height, false, imgformat);
+                byte pixel = (byte)getAt(databuffer, dataOffSet + 0, 8);
+                for (int iRow = 0; iRow < height; iRow++)
                 {
-                    byte pixel = (byte)getAt(databuffer, dataOffSet + j, 8);
-                    img.SetPixel(iCol, iRow, palette.ColorAtIndex(pixel, useAlphaChannel, useSingleRedChannel));
-                    iCol++;
+                    int iCol = 0;
+                    for (int j = iRow * width; j < (iRow * width) + width; j++)
+                    {
+                        img.SetPixel(iCol, iRow, palette.ColorAtIndex(index: pixel, useAlphaChannel: useAlphaChannel, useSingleRedChannel: useSingleRedChannel));
+                        iCol++;
+                    }
                 }
-            }
-
-            if (crop)
-            {
-                var bound = GetBoundingBox(databuffer, (int)dataOffSet, width, height);
-                return CropImage(img, bound);
-            }
-            else
-            {
                 var tex = new ImageTexture();
                 tex.SetImage(img);
                 return tex;
+            }
+            else
+            {
+                var img = Godot.Image.CreateEmpty(width, height, false, imgformat);
+                for (int iRow = 0; iRow < height; iRow++)
+                {
+                    int iCol = 0;
+                    for (int j = iRow * width; j < (iRow * width) + width; j++)
+                    {
+                        byte pixel = (byte)getAt(databuffer, dataOffSet + j, 8);
+                        img.SetPixel(iCol, iRow, palette.ColorAtIndex(index: pixel, useAlphaChannel: useAlphaChannel, useSingleRedChannel: useSingleRedChannel));
+                        iCol++;
+                    }
+                }
+
+                if (crop)
+                {
+                    var bound = GetBoundingBox(databuffer, (int)dataOffSet, width, height);
+                    return CropImage(img, bound);
+                }
+                else
+                {
+                    var tex = new ImageTexture();
+                    tex.SetImage(img);
+                    return tex;
+                }
             }
         }
 
@@ -284,15 +308,15 @@ namespace Underworld
         {
             //from the unity implementation.
             var result = dstImg; //Godot.Image.CreateEmpty(dstImg.GetWidth(), dstImg.GetHeight(), false, Godot.Image.Format.Rgba8);
-            for (int x = 0; x< srcImg.GetWidth(); x++)
+            for (int x = 0; x < srcImg.GetWidth(); x++)
             {
-                for (int y = 0; y< srcImg.GetHeight(); y++)
+                for (int y = 0; y < srcImg.GetHeight(); y++)
                 {
-                    if ((x+cornerX < dstImg.GetWidth()) && (y+cornerY < dstImg.GetHeight()))
+                    if ((x + cornerX < dstImg.GetWidth()) && (y + cornerY < dstImg.GetHeight()))
                     {
-                        if ((cornerX + x >=0) && (cornerY + y >=0))
+                        if ((cornerX + x >= 0) && (cornerY + y >= 0))
                         {
-                            result.SetPixel(cornerX+x, cornerY+y, srcImg.GetPixel(x,y));
+                            result.SetPixel(cornerX + x, cornerY + y, srcImg.GetPixel(x, y));
                         }
                     }
                 }
