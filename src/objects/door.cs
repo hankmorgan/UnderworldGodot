@@ -931,7 +931,7 @@ namespace Underworld
                         }
                         else
                         {
-                            return tileMapRender.mapTextures.GetMaterial(textureno, UWTileMap.current_tilemap.texture_map);
+                            return tileMapRender.mapTexturesWalls.GetMaterial(textureno, UWTileMap.current_tilemap.texture_map);
                         }
                 }
             }
@@ -1219,7 +1219,7 @@ namespace Underworld
         {//Get the material texture from tmobj   
             if (surface != 6)
             {
-                return tileMapRender.mapTextures.GetMaterial(texture, UWTileMap.current_tilemap.texture_map);
+                return tileMapRender.mapTexturesWalls.GetMaterial(texture, UWTileMap.current_tilemap.texture_map);
             }
             else
             {

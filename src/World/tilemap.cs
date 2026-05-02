@@ -277,7 +277,7 @@ namespace Underworld
             PaletteLoader.NextPaletteCycle_GAME = 0;
             PaletteLoader.NextPaletteCycle_UI = 0;
 
-            tileMapRender.mapTextures = new(_detaillevel: playerdat.RenderWalls);//refresh textures
+            tileMapRender.mapTexturesWalls = new(_detaillevel: playerdat.RenderWalls);//refresh textures
             tileMapRender.mapTexturesFloors = new(_detaillevel: playerdat.RenderFloors);
             tileMapRender.mapTexturesCeilings = new(_detaillevel: playerdat.RenderCeilings);
             ObjectCreator.worldobjects = main.instance.GetNode<Node3D>("/root/Underworld/worldobjects");

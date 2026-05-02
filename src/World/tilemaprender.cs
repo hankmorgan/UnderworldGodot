@@ -56,8 +56,8 @@ namespace Underworld
         public const int heading5 = 225; // 7PI/4
         public const int Heading6 = 270;// in uw 3PI/2
         public const int Heading7 = 315; // 5PI/4
- 
- 
+
+
         public static bool EnableCollision = true;
         public static bool SkipRender = false;
 
@@ -69,22 +69,22 @@ namespace Underworld
 
         public static string guid;
 
-        public static TextureLoader mapTextures;
+        public static TextureLoader mapTexturesWalls;
         public static TextureLoader mapTexturesFloors;
         public static TextureLoader mapTexturesCeilings;
 
         static tileMapRender()
         {
-           // if (mapTextures==null)
-          //  {
+            // if (mapTextures==null)
+            //  {
             //    mapTextures = new();
-           // }
+            // }
         }
 
         public static void GenerateLevelFromTileMap(Node3D parent, UWTileMap Level, uwObject[] objList, bool UpdateOnly)
         {
-           var g= Guid.NewGuid();
-           guid = g.ToString();
+            var g = Guid.NewGuid();
+            guid = g.ToString();
 
             worldnode = parent;
             CEILING_HEIGHT = UWTileMap.UW_CEILING_HEIGHT;
@@ -97,7 +97,7 @@ namespace Underworld
                     child.QueueFree();
                 }
             }
-            if (SkipRender){return;}
+            if (SkipRender) { return; }
             for (int y = 0; y <= UWTileMap.TileMapSizeY; y++)
             {
                 for (int x = 0; x <= UWTileMap.TileMapSizeX; x++)
@@ -119,7 +119,7 @@ namespace Underworld
         /// <param name="y">The y coordinate.</param>
         /// <param name="t">T.</param>
         public static Node3D RenderTile(Node3D parent, int x, int y, TileInfo t)
-        {                      
+        {
             //Picks the tile to render based on tile type/flags.
             switch (t.tileType)
             {
@@ -133,7 +133,7 @@ namespace Underworld
                     }
                 case TILE_DIAG_SE:
                     {//diag se
-                       RenderDiagSETile(parent, x, y, t); //floor                      
+                        RenderDiagSETile(parent, x, y, t); //floor                      
                         return null;
                     }
 
@@ -174,7 +174,7 @@ namespace Underworld
                     { //slope w                        
                         RenderSlopeWTile(parent, x, y, t); //floor                                  
                         return null;
-                    }                    
+                    }
             }
             return null;
         }
@@ -277,7 +277,15 @@ namespace Underworld
             indices[4] = 2 + (4 * FaceCounter);
             indices[5] = 3 + (4 * FaceCounter);
             //mesh.SetTriangles(indices, FaceCounter);
-            AddSurfaceToMesh(verts, uvs, MatsToUse, 0, a_mesh, normals, indices);
+            AddSurfaceToMesh(
+                mapTextures: mapTexturesCeilings,
+                verts: verts,
+                uvs: uvs,
+                MatsToUse: MatsToUse,
+                FaceCounter: 0,
+                a_mesh: a_mesh,
+                normals: normals,
+                indices: indices);
 
             return CreateMeshInstance(parent, x, y, TileName, a_mesh);
         }
@@ -308,7 +316,7 @@ namespace Underworld
                 //the wall part
                 string TileName = "Wall_" + x.ToString("D2") + "_" + y.ToString("D2");
                 RenderDiagSEPortion(parent, FLOOR_ADJ, CEILING_HEIGHT + CEIL_ADJ, t, TileName);
-            
+
                 //it's floor
                 bool PreviousNorth = t.VisibleFaces[vNORTH];
                 bool PreviousWest = t.VisibleFaces[vWEST];
@@ -316,7 +324,7 @@ namespace Underworld
                 t.VisibleFaces[vWEST] = false;
                 RenderDiagOpenTile(parent, x, y, t);
                 t.VisibleFaces[vNORTH] = PreviousNorth;
-                t.VisibleFaces[vWEST] = PreviousWest;                    
+                t.VisibleFaces[vWEST] = PreviousWest;
             }
             return;
         }
@@ -344,7 +352,7 @@ namespace Underworld
                 t.VisibleFaces[vEAST] = false;
                 RenderDiagOpenTile(parent, x, y, t);
                 t.VisibleFaces[vNORTH] = PreviousNorth;
-                t.VisibleFaces[vEAST] = PreviousEast; 
+                t.VisibleFaces[vEAST] = PreviousEast;
             }
             return;
         }
@@ -453,7 +461,7 @@ namespace Underworld
                                 uvs[0 + (4 * FaceCounter)] = new Vector2(-1.0f * dimX, 0.0f);
                                 uvs[1 + (4 * FaceCounter)] = new Vector2(-1.0f * dimX, 1.0f * dimY);
                                 uvs[2 + (4 * FaceCounter)] = new Vector2(0.0f, 1.0f * dimY);
-                                uvs[3 + (4 * FaceCounter)] = new Vector2(0.0f, 0.0f);                               
+                                uvs[3 + (4 * FaceCounter)] = new Vector2(0.0f, 0.0f);
 
                                 break;
                             }
@@ -469,7 +477,7 @@ namespace Underworld
 
                                 uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0);
                                 uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1);
-                                uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, uv1 );
+                                uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, uv1);
                                 uvs[3 + (4 * FaceCounter)] = new Vector2(dimX, uv0);
 
 
@@ -509,7 +517,7 @@ namespace Underworld
                             }
 
                         case vSOUTH:
-                            {                               
+                            {
                                 MatsToUse[FaceCounter] = WallTexture(fSOUTH, t);
                                 //south wall vertices
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 0f);
@@ -564,16 +572,32 @@ namespace Underworld
             {
                 if (t.VisibleFaces[i] == true)
                 {
+                    var mapTextures = mapTexturesWalls;//default
+                    switch (i)
+                    {
+                        case vTOP:
+                        case vBOTTOM:
+                            mapTextures = mapTexturesFloors;//textures for floors
+                            break;
+                    }
+
                     indices[0] = 0 + (4 * FaceCounter);
                     indices[1] = 1 + (4 * FaceCounter);
                     indices[2] = 2 + (4 * FaceCounter);
                     indices[3] = 0 + (4 * FaceCounter);
                     indices[4] = 2 + (4 * FaceCounter);
                     indices[5] = 3 + (4 * FaceCounter);
-                    //mesh.SetTriangles(indices, FaceCounter);
 
                     //Create the surface.
-                    AddSurfaceToMesh(verts, uvs, MatsToUse, FaceCounter, a_mesh, normals, indices);
+                    AddSurfaceToMesh(
+                        mapTextures: mapTextures,
+                        verts: verts,
+                        uvs: uvs,
+                        MatsToUse: MatsToUse,
+                        FaceCounter: FaceCounter,
+                        a_mesh: a_mesh,
+                        normals: normals,
+                        indices: indices);
                     FaceCounter++;
                 }
             }
@@ -614,14 +638,14 @@ namespace Underworld
                 //A floor
                 TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
                 RenderSlopedCuboid(
-                    parent: parent, 
-                    x: x, 
-                    y: y, 
-                    t: t, 
-                    Bottom: FLOOR_ADJ, 
-                    Top: t.floorHeight * 2, 
-                    SlopeDir: TILE_SLOPE_N, 
-                    Steepness: t.TileSlopeSteepness, 
+                    parent: parent,
+                    x: x,
+                    y: y,
+                    t: t,
+                    Bottom: FLOOR_ADJ,
+                    Top: t.floorHeight * 2,
+                    SlopeDir: TILE_SLOPE_N,
+                    Steepness: t.TileSlopeSteepness,
                     TileName: TileName);
             }
             return;
@@ -644,14 +668,14 @@ namespace Underworld
                 //A floor
                 TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
                 RenderSlopedCuboid(
-                    parent: parent, 
-                    x: x, 
-                    y: y, 
-                    t: t, 
-                    Bottom: FLOOR_ADJ, 
-                    Top: t.floorHeight * 2, 
-                    SlopeDir: TILE_SLOPE_S, 
-                    Steepness: t.TileSlopeSteepness, 
+                    parent: parent,
+                    x: x,
+                    y: y,
+                    t: t,
+                    Bottom: FLOOR_ADJ,
+                    Top: t.floorHeight * 2,
+                    SlopeDir: TILE_SLOPE_S,
+                    Steepness: t.TileSlopeSteepness,
                     TileName: TileName);
             }
             return;
@@ -674,14 +698,14 @@ namespace Underworld
                 //A floor
                 TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
                 RenderSlopedCuboid(
-                    parent: parent, 
-                    x: x, 
-                    y: y, 
-                    t: t, 
-                    Bottom: FLOOR_ADJ, 
-                    Top: t.floorHeight * 2, 
-                    SlopeDir: TILE_SLOPE_W, 
-                    Steepness: t.TileSlopeSteepness, 
+                    parent: parent,
+                    x: x,
+                    y: y,
+                    t: t,
+                    Bottom: FLOOR_ADJ,
+                    Top: t.floorHeight * 2,
+                    SlopeDir: TILE_SLOPE_W,
+                    Steepness: t.TileSlopeSteepness,
                     TileName: TileName);
             }
             return;
@@ -704,57 +728,19 @@ namespace Underworld
                 //A floor
                 TileName = "Tile_" + x.ToString("D2") + "_" + y.ToString("D2");
                 RenderSlopedCuboid(
-                    parent: parent, 
-                    x: x, 
-                    y: y, 
-                    t: t, 
-                    Bottom: FLOOR_ADJ, 
-                    Top: t.floorHeight * 2, 
-                    SlopeDir: TILE_SLOPE_E, 
-                    Steepness: t.TileSlopeSteepness, 
+                    parent: parent,
+                    x: x,
+                    y: y,
+                    t: t,
+                    Bottom: FLOOR_ADJ,
+                    Top: t.floorHeight * 2,
+                    SlopeDir: TILE_SLOPE_E,
+                    Steepness: t.TileSlopeSteepness,
                     TileName: TileName);
             }
             return;
         }
 
-
-
-        // /// <summary>
-        // /// Use to calculate texture offsets.
-        // /// </summary>
-        // /// <param name="face"></param>
-        // /// <param name="t"></param>
-        // /// <returns>0 always since this is UW and this is only needed for shock tiles</returns>
-        // static float CalcCeilOffset(int face, TileInfo t)
-        // {
-        //     // int ceilOffset = t.ceilingHeight;
-
-        //     // if (_RES != GAME_SHOCK)
-        //     // {
-        //     return 0;
-        //     // }
-        //     // else
-        //     // {
-        //     //     switch (face)
-        //     //     {
-        //     //         case fEAST:
-        //     //             ceilOffset = t.shockEastCeilHeight; break;
-        //     //         case fWEST:
-        //     //             ceilOffset = t.shockWestCeilHeight; break;
-        //     //         case fSOUTH:
-        //     //             ceilOffset = t.shockSouthCeilHeight; break;
-        //     //         case fNORTH:
-        //     //             ceilOffset = t.shockNorthCeilHeight; break;
-        //     //     }
-        //     //     float shock_ceil = CurrentTileMap().SHOCK_CEILING_HEIGHT;
-        //     //     float floorOffset = shock_ceil - ceilOffset - 8;  //The floor of the tile if it is 1 texture tall.
-        //     //     while (floorOffset >= 8)  //Reduce the offset to 0 to 7 since textures go up in steps of 1/8ths
-        //     //     {
-        //     //         floorOffset -= 8;
-        //     //     }
-        //     //     return floorOffset * 0.125f;
-        //     // }
-        // }
 
         /// <summary>
         /// Gets the wall texture for the specified face
@@ -850,24 +836,6 @@ namespace Underworld
             float floorHeight = (float)(Top * 0.15f);
             float baseHeight = (float)(Bottom * 0.15f);
             float dimX = t.DimX;
-            //    //Now create the mesh
-            //    GameObject Tile = new GameObject(TileName)
-            //    {
-            //        layer = LayerMask.NameToLayer("MapMesh")
-            //    };
-            //    Tile.transform.parent = parent.transform;
-            //    Tile.transform.position = new Vector3(t.tileX * 1.2f, 0.0f, t.tileY * 1.2f);
-
-            //    Tile.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
-            //    MeshFilter mf = Tile.AddComponent<MeshFilter>();
-            //    MeshRenderer mr = Tile.AddComponent<MeshRenderer>();
-            //MeshCollider mc = Tile.AddComponent<MeshCollider>();
-            //mc.sharedMesh=null;
-
-            //    Mesh mesh = new Mesh
-            //    {
-            //        subMeshCount = NumberOfVisibleFaces//Should be no of visible faces
-            //    };
 
             var a_mesh = new ArrayMesh();
 
@@ -947,7 +915,15 @@ namespace Underworld
             indices[4] = 2;
             indices[5] = 3;
             // mesh.SetTriangles(indices, 0);
-            AddSurfaceToMesh(verts, uvs, MatsToUse, FaceCounter, a_mesh, normals, indices);
+            AddSurfaceToMesh(
+                mapTextures: mapTexturesFloors,
+                verts: verts,
+                uvs: uvs,
+                MatsToUse: MatsToUse,
+                FaceCounter: FaceCounter,
+                a_mesh: a_mesh,
+                normals: normals,
+                indices: indices);
 
             FaceCounter = 1;
 
@@ -964,7 +940,15 @@ namespace Underworld
                         indices[4] = 2 + (4 * FaceCounter);
                         indices[5] = 3 + (4 * FaceCounter);
                         //mesh.SetTriangles(indices, FaceCounter);
-                        AddSurfaceToMesh(verts, uvs, MatsToUse, FaceCounter, a_mesh, normals, indices);
+                        AddSurfaceToMesh(
+                            mapTextures: mapTexturesWalls,
+                            verts: verts,
+                            uvs: uvs,
+                            MatsToUse: MatsToUse,
+                            FaceCounter: FaceCounter,
+                            a_mesh: a_mesh,
+                            normals: normals,
+                            indices: indices);
                         FaceCounter++;
                     }
                 }
@@ -1089,7 +1073,15 @@ namespace Underworld
             indices[3] = 0;
             indices[4] = 2;
             indices[5] = 3;
-            AddSurfaceToMesh(verts, uvs, MatsToUse, FaceCounter, a_mesh, normals, indices);
+            AddSurfaceToMesh(
+                mapTextures: mapTexturesFloors,
+                verts: verts,
+                uvs: uvs,
+                MatsToUse: MatsToUse,
+                FaceCounter: FaceCounter,
+                a_mesh: a_mesh,
+                normals: normals,
+                indices: indices);
 
             // mesh.SetTriangles(indices, 0);
             FaceCounter = 1;
@@ -1107,7 +1099,15 @@ namespace Underworld
                         indices[4] = 2 + (4 * FaceCounter);
                         indices[5] = 3 + (4 * FaceCounter);
                         //mesh.SetTriangles(indices, FaceCounter);
-                        AddSurfaceToMesh(verts, uvs, MatsToUse, FaceCounter, a_mesh, normals, indices);
+                        AddSurfaceToMesh(
+                            mapTextures: mapTexturesWalls,
+                            verts: verts,
+                            uvs: uvs,
+                            MatsToUse: MatsToUse,
+                            FaceCounter: FaceCounter,
+                            a_mesh: a_mesh,
+                            normals: normals,
+                            indices: indices);
                         FaceCounter++;
                     }
                 }
@@ -1133,7 +1133,7 @@ namespace Underworld
 
                 //Bottom face 
                 if (t.TerrainChange)
-                {                    
+                {
                     return RenderPrism(parent, x, y, t, -16, t.floorHeight * 2, TileName);
                 }
                 else
@@ -1282,7 +1282,15 @@ namespace Underworld
             indices[4] = 2;
             indices[5] = 3;
             //mesh.SetTriangles(indices, 0);
-            AddSurfaceToMesh(verts, uvs, MatsToUse, FaceCounter, a_mesh, normals, indices);
+            AddSurfaceToMesh(
+                mapTextures: mapTexturesFloors,
+                verts: verts,
+                uvs: uvs,
+                MatsToUse: MatsToUse,
+                FaceCounter: FaceCounter,
+                a_mesh: a_mesh,
+                normals: normals,
+                indices: indices);
 
             FaceCounter = 1;
 
@@ -1299,27 +1307,21 @@ namespace Underworld
                         indices[4] = 2 + (4 * FaceCounter);
                         indices[5] = 3 + (4 * FaceCounter);
                         //mesh.SetTriangles(indices, FaceCounter);
-                        AddSurfaceToMesh(verts, uvs, MatsToUse, FaceCounter, a_mesh, normals, indices);
+                        AddSurfaceToMesh(
+                            mapTextures: mapTexturesWalls,
+                            verts: verts,
+                            uvs: uvs,
+                            MatsToUse: MatsToUse,
+                            FaceCounter: FaceCounter,
+                            a_mesh: a_mesh,
+                            normals: normals,
+                            indices: indices);
                         FaceCounter++;
                     }
                 }
             }
 
-            // mr.materials = MatsToUse;
-            // mesh.RecalculateNormals();
-            // mesh.RecalculateBounds();
-            // mf.mesh = mesh;
-            // if (EnableCollision)
-            // {
-            //     MeshCollider mc = Tile.AddComponent<MeshCollider>();
-            //     mc.sharedMesh = null;
-            //     mc.sharedMesh = mesh;
-            // }
-
             return CreateMeshInstance(parent, t.tileX, t.tileY, TileName, a_mesh);
-
-            //mc.sharedMesh=mesh;
-
         }
         /// <summary>
         /// Renders the diag NW portion.
@@ -1348,7 +1350,7 @@ namespace Underworld
                     }
                 }
             }
-            //Allocate enough verticea and UVs for the faces
+            //Allocate enough vertice and UVs for the faces
             int[] MatsToUse = new int[NumberOfVisibleFaces];
             Vector3[] verts = new Vector3[NumberOfVisibleFaces * 4];
             Vector2[] uvs = new Vector2[NumberOfVisibleFaces * 4];
@@ -1358,7 +1360,6 @@ namespace Underworld
             float dimY = t.DimY;
 
             var a_mesh = new ArrayMesh();
-
 
             //Now allocate the visible faces to triangles.
             int FaceCounter = 0;//Tracks which number face we are now on.
@@ -1426,9 +1427,8 @@ namespace Underworld
             {
                 normals.Add(vert.Normalized());
             }
-            //Apply the uvs and create my tris
-            //    mesh.vertices = verts;
-            //    mesh.uv = uvs;
+
+
             int[] indices = new int[6];
             //Tris for diagonal.
 
@@ -1438,9 +1438,16 @@ namespace Underworld
             indices[3] = 0;
             indices[4] = 2;
             indices[5] = 3;
-            //mesh.SetTriangles(indices, 0);
 
-            AddSurfaceToMesh(verts, uvs, MatsToUse, FaceCounter, a_mesh, normals, indices);
+            AddSurfaceToMesh(
+                mapTextures: mapTexturesWalls,
+                verts: verts,
+                uvs: uvs,
+                MatsToUse: MatsToUse,
+                FaceCounter: FaceCounter,
+                a_mesh: a_mesh,
+                normals: normals,
+                indices: indices);
 
             FaceCounter = 1;
 
@@ -1457,7 +1464,15 @@ namespace Underworld
                         indices[4] = 2 + (4 * FaceCounter);
                         indices[5] = 3 + (4 * FaceCounter);
                         // mesh.SetTriangles(indices, FaceCounter);
-                        AddSurfaceToMesh(verts, uvs, MatsToUse, FaceCounter, a_mesh, normals, indices);
+                        AddSurfaceToMesh(
+                            mapTextures: mapTexturesFloors,
+                            verts: verts,
+                            uvs: uvs,
+                            MatsToUse: MatsToUse,
+                            FaceCounter: FaceCounter,
+                            a_mesh: a_mesh,
+                            normals: normals,
+                            indices: indices);
                         FaceCounter++;
                     }
                 }
@@ -1542,9 +1557,7 @@ namespace Underworld
 
             //Now allocate the visible faces to triangles.
             int FaceCounter = 0;//Tracks which number face we are now on.
-                                //float PolySize= Top-Bottom;
-                                //float uv0= (float)(Bottom*0.125f);
-                                //float uv1=(PolySize / 8.0f) + (uv0);
+
             CalcUVForSlopedCuboid(Top, Bottom, out float uv0, out float uv1);
             float slopeHeight;
             float uv0Slope;
@@ -1573,8 +1586,8 @@ namespace Underworld
                                 uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, 1.0f * dimY);
                                 uvs[2 + (4 * FaceCounter)] = new Vector2(1.0f * dimX, 1.0f * dimY);
                                 uvs[3 + (4 * FaceCounter)] = new Vector2(1.0f * dimX, 0.0f);
-                                uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, 0.0f);                           
-                                
+                                uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, 0.0f);
+
                                 break;
                             }
 
@@ -1601,7 +1614,7 @@ namespace Underworld
                                         verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 1.2f * dimY); //top left (0,0)
                                         verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 1.2f * dimY);//top right (1,0)
                                         verts[3 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 1.2f * dimY); //bottom left ()
-                                        uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0 );//0,0?
+                                        uvs[0 + (4 * FaceCounter)] = new Vector2(0.0f, uv0);//0,0?
                                         uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, -uv1);//0,1?
                                         uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, -uv1);//1,1?
                                         uvs[3 + (4 * FaceCounter)] = new Vector2(dimX, uv0);//1,0?
@@ -1696,7 +1709,7 @@ namespace Underworld
                                                 verts[index + 2] = new Vector3(-1.2f * dimX, slopeHeight + AdjustUpperSouth + AdjustUpperEast, 0f);
                                                 float uv0edge;
                                                 float uv1edge;
-                                               // float uvToUse;
+                                                // float uvToUse;
                                                 CalcUVForSlopedCuboid(Top + Steepness, Top, out uv0edge, out uv1edge);
                                                 //if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
                                                 uvs[index + 0] = new Vector2(0, -uv0edge);//0, vertical alignment
@@ -1728,7 +1741,7 @@ namespace Underworld
                             }//end south
 
                         case vWEST:
-                            {                                
+                            {
                                 MatsToUse[FaceCounter] = WallTexture(fWEST, t);
 
                                 switch (SlopeDir)
@@ -1789,7 +1802,7 @@ namespace Underworld
                                                 float uv1edge;
                                                 //float uvToUse;
                                                 CalcUVForSlopedCuboid(Top + Steepness, Top, out uv0edge, out uv1edge);
-                                               // if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
+                                                // if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
                                                 uvs[index + 0] = new Vector2(0, -uv0edge);//0, vertical alignment
                                                 uvs[index + 1] = new Vector2(1, -(uv0edge + Steepness * 0.125f)); //vertical + scale
                                                 uvs[index + 2] = new Vector2(1, -uv0edge);   //1, vertical alignment	
@@ -1919,6 +1932,14 @@ namespace Underworld
             {
                 if (t.VisibleFaces[i] == true)
                 {
+                    var mapTextures = mapTexturesWalls;//default
+                    switch (i)
+                    {
+                        case vTOP:
+                        case vBOTTOM:
+                            mapTextures = mapTexturesFloors;//textures for floors
+                            break;
+                    }
                     indices[0] = 0 + (4 * FaceCounter);
                     indices[1] = 1 + (4 * FaceCounter);
                     indices[2] = 2 + (4 * FaceCounter);
@@ -1926,7 +1947,15 @@ namespace Underworld
                     indices[4] = 2 + (4 * FaceCounter);
                     indices[5] = 3 + (4 * FaceCounter);
                     LastIndex = 3 + (4 * FaceCounter);
-                    AddSurfaceToMesh(verts, uvs, MatsToUse, FaceCounter, a_mesh, normals, indices);
+                    AddSurfaceToMesh(
+                        mapTextures: mapTextures,
+                        verts: verts,
+                        uvs: uvs,
+                        MatsToUse: MatsToUse,
+                        FaceCounter: FaceCounter,
+                        a_mesh: a_mesh,
+                        normals: normals,
+                        indices: indices);
                     FaceCounter++;
                 }
             }
@@ -1945,29 +1974,34 @@ namespace Underworld
                             (((SlopeDir == TILE_SLOPE_E) || (SlopeDir == TILE_SLOPE_W)) && ((i == vNORTH) || (i == vSOUTH)))
                     )
                     {
+                        var mapTextures = mapTexturesWalls;//default
+                        switch (i)
+                        {
+                            case vTOP:
+                            case vBOTTOM:
+                                mapTextures = mapTexturesFloors;//textures for floors
+                                break;
+                        }
+                        
                         indices[0] = 0 + LastIndex + (3 * SlopesAdded);
                         indices[1] = 1 + LastIndex + (3 * SlopesAdded);
                         indices[2] = 2 + LastIndex + (3 * SlopesAdded);
-                        //mesh.SetTriangles(indices, FaceCounter + SlopesAdded);
-                        AddSurfaceToMesh(verts, uvs, MatsToUse, FaceCounter + SlopesAdded, a_mesh, normals, indices);
+
+                        AddSurfaceToMesh(
+                            mapTextures: mapTextures, 
+                            verts: verts, 
+                            uvs: uvs, 
+                            MatsToUse: MatsToUse, 
+                            FaceCounter: FaceCounter + SlopesAdded, 
+                            a_mesh: a_mesh, 
+                            normals: normals, 
+                            indices: indices);
                         SlopesAdded++;
                     }
                 }
             }
 
             return CreateMeshInstance(parent, x, y, TileName, a_mesh);
-            // mr.materials = MatsToUse;
-            // mesh.RecalculateNormals();
-            // mesh.RecalculateBounds();
-            // mf.mesh = mesh;
-            // if (EnableCollision)
-            // {
-            //     MeshCollider mc = Tile.AddComponent<MeshCollider>();
-            //     mc.sharedMesh = null;
-            //     mc.sharedMesh = mesh;
-            // }
-            //mc.sharedMesh=mesh;
-
         }
 
 
@@ -2035,8 +2069,6 @@ namespace Underworld
                                 uvs[0 + (4 * FaceCounter)] = new Vector2(-1.0f * dimX, -1.0f * dimY); //1,1
                                 uvs[1 + (4 * FaceCounter)] = new Vector2(-1.0f * dimX, 0.0f);  //1,0
                                 uvs[2 + (4 * FaceCounter)] = new Vector2(0.0f, 0.0f);         //0,0
-                                
-                               
                                 break;
                             }
 
@@ -2068,7 +2100,6 @@ namespace Underworld
                                 uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1);
                                 uvs[2 + (4 * FaceCounter)] = new Vector2(dimY, uv1);
                                 uvs[3 + (4 * FaceCounter)] = new Vector2(dimY, uv0);
-
                                 break;
                             }
 
@@ -2179,11 +2210,15 @@ namespace Underworld
                                 break;
                         }
 
-                        //tris[3]=0+(4*FaceCounter);
-                        //tris[4]=2+(4*FaceCounter);
-                        //tris[5]=3+(4*FaceCounter);
-                        //mesh.SetTriangles(indices, FaceCounter);
-                        AddSurfaceToMesh(verts, uvs, MatsToUse, FaceCounter, a_mesh, normals, indices);
+                        AddSurfaceToMesh(
+                            mapTextures: mapTexturesFloors, 
+                            verts: verts, 
+                            uvs: uvs, 
+                            MatsToUse: MatsToUse, 
+                            FaceCounter: FaceCounter, 
+                            a_mesh: a_mesh, 
+                            normals: normals, 
+                            indices: indices);
                     }
                     else
                     {
@@ -2194,7 +2229,15 @@ namespace Underworld
                         indices[4] = 2 + (4 * FaceCounter);
                         indices[5] = 3 + (4 * FaceCounter);
                         // mesh.SetTriangles(indices, FaceCounter);
-                        AddSurfaceToMesh(verts, uvs, MatsToUse, FaceCounter, a_mesh, normals, indices);
+                        AddSurfaceToMesh(
+                            mapTextures: mapTexturesWalls, 
+                            verts: verts, 
+                            uvs: uvs, 
+                            MatsToUse: MatsToUse, 
+                            FaceCounter: FaceCounter, 
+                            a_mesh: a_mesh, 
+                            normals: normals, 
+                            indices: indices);
                     }
                     FaceCounter++;
                     curFace++;
@@ -2202,18 +2245,6 @@ namespace Underworld
             }
 
             return CreateMeshInstance(parent, x, y, TileName, a_mesh);
-
-            // mr.materials = MatsToUse;//mats;
-            // mesh.RecalculateNormals();
-            // mesh.RecalculateBounds();
-            // mf.mesh = mesh;
-            // if (EnableCollision)
-            // {
-            //     MeshCollider mc = Tile.AddComponent<MeshCollider>();
-            //     mc.sharedMesh = null;
-            //     mc.sharedMesh = mesh;
-            // }
-            // return Tile;
         }
 
 
@@ -2227,7 +2258,7 @@ namespace Underworld
         /// <param name="a_mesh"></param>
         /// <param name="normals"></param>
         /// <param name="indices"></param>
-        private static void AddSurfaceToMesh(Vector3[] verts, Vector2[] uvs, int[] MatsToUse, int FaceCounter, ArrayMesh a_mesh, List<Vector3> normals, int[] indices, int faceCounterAdj = 0)
+        private static void AddSurfaceToMesh(TextureLoader mapTextures, Vector3[] verts, Vector2[] uvs, int[] MatsToUse, int FaceCounter, ArrayMesh a_mesh, List<Vector3> normals, int[] indices, int faceCounterAdj = 0)
         {
             var surfaceArray = new Godot.Collections.Array();
             surfaceArray.Resize((int)Mesh.ArrayType.Max);
@@ -2239,7 +2270,10 @@ namespace Underworld
 
             //Add the new surface to the mesh
             a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
-            a_mesh.SurfaceSetMaterial(FaceCounter + faceCounterAdj, mapTextures.GetMaterial(MatsToUse[FaceCounter], UWTileMap.current_tilemap.texture_map)); //  surfacematerial.Get(MatsToUse[FaceCounter]));
+            a_mesh.SurfaceSetMaterial(
+                surfIdx: FaceCounter + faceCounterAdj,
+                material: mapTextures.GetMaterial(MatsToUse[FaceCounter], UWTileMap.current_tilemap.texture_map)
+                ); //  surfacematerial.Get(MatsToUse[FaceCounter]));
         }
 
 
@@ -2248,7 +2282,7 @@ namespace Underworld
             float PolySize = Top - Bottom;
             uv0 = (float)(Bottom * 0.125f);
             uv1 = +(PolySize / 8.0f) + (uv0);
-        }         
+        }
 
 
 
