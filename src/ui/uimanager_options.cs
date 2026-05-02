@@ -201,10 +201,10 @@ namespace Underworld
                 UW2OptionButtons[(int)OptionButtonIndices.SoundIsOffLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(15).GetImage(), croppingareas[9]);
                 UW2OptionButtons[(int)OptionButtonIndices.TurnMusicLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(7).GetImage(), croppingareas[1]);
                 UW2OptionButtons[(int)OptionButtonIndices.TurnSoundLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(14).GetImage(), croppingareas[9]);
-                UW2OptionButtons[(int)OptionButtonIndices.DetailLowLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(13).GetImage(), croppingareas[6]);
-                UW2OptionButtons[(int)OptionButtonIndices.DetailMedLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(13).GetImage(), croppingareas[7]);
-                UW2OptionButtons[(int)OptionButtonIndices.DetailHighLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(13).GetImage(), croppingareas[8]);
-                UW2OptionButtons[(int)OptionButtonIndices.DetailVHighLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(13).GetImage(), croppingareas[9]);
+                UW2OptionButtons[(int)OptionButtonIndices.DetailLowLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(13).GetImage(), croppingareas[7]);
+                UW2OptionButtons[(int)OptionButtonIndices.DetailMedLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(13).GetImage(), croppingareas[8]);
+                UW2OptionButtons[(int)OptionButtonIndices.DetailHighLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(13).GetImage(), croppingareas[9]);
+                UW2OptionButtons[(int)OptionButtonIndices.DetailVHighLabel] = ArtLoader.CropImage(grOptBtns.LoadImageAt(13).GetImage(), croppingareas[10]);
                 UW2OptionButtons[(int)OptionButtonIndices.YesOff] = ArtLoader.CropImage(grOptBtns.LoadImageAt(5).GetImage(), croppingareas[2]);
                 UW2OptionButtons[(int)OptionButtonIndices.YesOn] = ArtLoader.CropImage(grOptBtns.LoadImageAt(10).GetImage(), croppingareas[2]);
                 UW2OptionButtons[(int)OptionButtonIndices.NoOff] = ArtLoader.CropImage(grOptBtns.LoadImageAt(5).GetImage(), croppingareas[3]);
@@ -381,15 +381,7 @@ namespace Underworld
                                     }
                                 case 4: //detail options.
                                     {
-                                        if (playerdat.DetailLevel == 3)
-                                        {
-                                            playerdat.DetailLevel = 0;                                            
-                                        }
-                                        else
-                                        {
-                                            playerdat.DetailLevel++;
-                                        }
-                                        UWTileMap.RedrawCurrentTileMap();
+                                        SetupDetailMenu();
                                         break;
                                     }
                                 case 5: // return to game
@@ -585,6 +577,28 @@ namespace Underworld
                             }
                             break;
                         }
+                    case OptionMenus.DetailMenu:
+                        {
+                            switch (extra_arg_0)
+                            {
+                                case 2://low detail.
+                                case 3://med
+                                case 4://high
+                                case 5://vhigh
+                                    if (playerdat.DetailLevel != (byte)(extra_arg_0 - 2))
+                                    {
+                                        playerdat.DetailLevel = (byte)(extra_arg_0 - 2); 
+                                        //detail level has changed->redraw tile map
+                                        UWTileMap.RedrawCurrentTileMap();  
+                                        SetupDetailMenu();  
+                                    }     
+                                    break;
+                                case 6://done
+                                    ReturnToTopOptionsMenu(); break;                                
+                            }
+                            break;
+                        }
+
                     case OptionMenus.ConfirmQuit:
                         {
                             switch (extra_arg_0)
@@ -602,6 +616,32 @@ namespace Underworld
                 }
             }
         }
+
+        private static void SetupDetailMenu()
+        {
+            CurrentGameOptionMenu = OptionMenus.DetailMenu;
+            var lowbutton = (int)OptionButtonIndices.LowDetailOff;
+            var medbutton = (int)OptionButtonIndices.MediumDetailOff;
+            var highbutton = (int)OptionButtonIndices.HighDetailOff;
+            var vhighbutton = (int)OptionButtonIndices.VHighDetailOff;
+            switch (playerdat.DetailLevel)
+            {
+                case 0: lowbutton = (int)OptionButtonIndices.LowDetailOn; break;
+                case 1: medbutton = (int)OptionButtonIndices.MediumDetailOn; break;
+                case 2: highbutton = (int)OptionButtonIndices.HighDetailOn; break;
+                case 3: vhighbutton = (int)OptionButtonIndices.VHighDetailOn; break;
+            }
+            SetGameOptionsBackground((int)OptionButtonIndices.DetailButtons);
+            SetGameOptionButtons(new int[]{
+                                            (int)OptionButtonIndices.DetailLowLabel + playerdat.DetailLevel,
+                                            -1,  //no turn detail label unless i crop image 5
+                                            lowbutton,
+                                            medbutton,
+                                            highbutton,
+                                            vhighbutton,
+                                            (int)OptionButtonIndices.DoneOff});
+        }
+
 
         public static void ReturnToGameFromOptions()
         {

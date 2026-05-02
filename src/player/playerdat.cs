@@ -525,17 +525,17 @@ namespace Underworld
         /// 2 = HIGH (walls + floor), 3 = VERY HIGH (walls + floor + ceiling).
         /// DOS UW.EXE chargen defaults to 3. UW2 storage is at pdat[0x303] bits 4-5.
         /// </summary>
-        public static int DetailLevel
+        public static byte DetailLevel
         {
             get
             {
                 if (_RES == GAME_UW2)
                 {
-                    return (GetAt(0x303) >> 4) & 0x3;
+                    return (byte)((GetAt(0x303) >> 4) & 0x3);
                 }
                 else
                 {
-                    return (GetAt(0xB6) >> 4) & 0x3;
+                    return (byte)((GetAt(0xB6) >> 4) & 0x3);
                 }
             }
             set
