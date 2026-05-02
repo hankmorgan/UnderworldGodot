@@ -313,14 +313,14 @@ namespace Underworld
                 projectile.Projectile_Pitch = (short)cx;
                 projectile.UnkBit_0X13_Bit0to6 = (short)(MotionParams.unk_14 / 0x2F);
                 //Hack added mask to tilestate
-                if (projectile.item_id == 124 && _RES == GAME_UW1)
-                {
+                // if (projectile.item_id == 124 && _RES == GAME_UW1)
+                // {
                     projectile.TileState_0XA_Bit456 = dseg_67d6_3E8[MotionParams.tilestate25 & 0xF];
-                }
-                else
-                {
-                    projectile.TileState_0XA_Bit456 = dseg_67d6_3E8[MotionParams.tilestate25];
-                }
+                // }
+                // else
+                // {
+                //     projectile.TileState_0XA_Bit456 = dseg_67d6_3E8[MotionParams.tilestate25];
+                // }
                 
                 if (projectile.majorclass != 1)
                 {
