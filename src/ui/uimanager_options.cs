@@ -379,6 +379,19 @@ namespace Underworld
 
                                         break;
                                     }
+                                case 4: //detail options.
+                                    {
+                                        if (playerdat.DetailLevel == 3)
+                                        {
+                                            playerdat.DetailLevel = 0;                                            
+                                        }
+                                        else
+                                        {
+                                            playerdat.DetailLevel++;
+                                        }
+                                        UWTileMap.RedrawCurrentTileMap();
+                                        break;
+                                    }
                                 case 5: // return to game
                                     {
                                         ReturnToGameFromOptions();
