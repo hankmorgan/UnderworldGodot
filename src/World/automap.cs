@@ -58,6 +58,10 @@ namespace Underworld
 
         public static void MarkTileVisited(int level, int tileX, int tileY, int tiletype, int displaytype = automaptileinfo.DisplayTypeClear)
         {
+            if ((tiletype != UWTileMap.TILE_SOLID) && (automaps[level].tiles[tileX, tileY].tileType == UWTileMap.TILE_SOLID))
+            {
+                playerdat.NoOfTilesDiscovered++;//for exp gain on discovering new tiles. Skipping over solid tiles.
+            }            
             automaps[level].tiles[tileX, tileY].tileType = (short)tiletype;
             automaps[level].tiles[tileX, tileY].DisplayType = (short)displaytype;
         }

@@ -15,6 +15,8 @@ namespace Underworld
 
         //static int PreviousClockValue;
         static int secondcounter = 0;
+
+        public static int NoOfTilesDiscovered = 0;
         public static void PlayerTimedLoop(double delta)
         {
             if ((!main.blockmouseinput) && (uimanager.InGame))
@@ -398,14 +400,12 @@ namespace Underworld
 
             if ((!AutomapEnabled) && (_RES == GAME_UW2))
             {
-                //Do a test here to see if the player has entered a previously visible tile. If so renable automap, not sure where in the game the getting lost mechanic 
-                  
+                //Do a test here to see if the player has entered a previously visible tile. If so renable automap, not sure where in the game the getting lost mechanic occurs but possibly caused by some teleportation effects.                  
                 if (automap.automaps[dungeon_level - 1].tiles[playerObject.tileX, playerObject.tileY].visited)
                 {
                     Debug.Print("Visiting a previously discovered tile. You remember where you are and automap is reenabled");
                     AutomapEnabled = true;
                 }
-      
             }
             if (automap.CanMap(dungeon_level) && (AutomapEnabled))
             {
@@ -697,6 +697,7 @@ namespace Underworld
         public static void UpdateAutomap()
         {
             //depending on light level. need to confirm if below math is okay
+            NoOfTilesDiscovered = 0;
             var range = 1 + (lightlevel / 2);
             automap.MarkRangeOfTilesVisited(
                 range: range,
@@ -704,6 +705,25 @@ namespace Underworld
                 cY: playerObject.tileY,
                 dungeon_level: dungeon_level
                 );
+
+            //This should cause an exp gain but the effect is limited because the automap is currently not doing the same map revealing as vanilla.
+            if (NoOfTilesDiscovered > 0)
+            {
+                int gain = 0;
+                if (_RES == GAME_UW2)
+                {
+                    var world = 1 + (dungeon_level / 8);
+                    gain = (NoOfTilesDiscovered * world) / 0xA;
+                }
+                else
+                {
+                    gain = (NoOfTilesDiscovered * dungeon_level) / 0xA;
+                }
+                if (gain!=0)
+                {
+                    ChangeExperience(gain);
+                }
+            }
         }
 
         /// <summary>
