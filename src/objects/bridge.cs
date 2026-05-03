@@ -5,10 +5,30 @@ namespace Underworld
 {
     public class bridge : model3D
     {
-        UWTileMap tilemap;
+        //UWTileMap tilemap;
+
+        public static bool LookAt (uwObject obj)
+        {
+
+            string desc;
+            if (obj.flags_full>=2)
+            {
+                //a world texture -2
+                desc = $"{TileInfo.TextureName(obj.flags_full-2)}";
+            }
+            else
+            {
+                //a bridge 
+                desc = "a " + GameStrings.GetObjectNounUW(obj.item_id);            
+            }
+            uimanager.AddToMessageScroll($"{GameStrings.GetString(1,GameStrings.str_you_see_)}{desc}");
+
+            return true;
+        }
+
         public static bridge CreateInstance(Node3D parent, uwObject obj, string name, UWTileMap a_tilemap)
         {
-            var b = new bridge(obj, a_tilemap);
+            var b = new bridge(obj);
             //TODO: some bridges can be invisible. instead of a model with texture do a 3d collider with no texture
             var modelNode = b.Generate3DModel(parent, name);
             modelNode.Rotate(Vector3.Up, (float)Math.PI/2);
@@ -27,10 +47,10 @@ namespace Underworld
             return b;
         }
 
-        public bridge(uwObject _uwobject, UWTileMap _tilemap)
+        public bridge(uwObject _uwobject)
         {            
             uwobject = _uwobject;
-            tilemap = _tilemap;
+            //tilemap = _tilemap;
         }
 
         public override int NoOfMeshes()
@@ -174,11 +194,11 @@ namespace Underworld
                         {
                             textureindex = textureindex-2+48; //tilemap.texture_map[textureindex-2+48];
                         }
-                        return tileMapRender.mapTexturesFloors.GetMaterial(textureindex, tilemap.texture_map);
+                        return tileMapRender.mapTexturesFloors.GetMaterial(textureindex, UWTileMap.current_tilemap.texture_map);
                     }
                     else
                     {
-                    return GetTmObj.GetMaterial(30 + textureindex);
+                        return GetTmObj.GetMaterial(30 + textureindex);
                     }
                 }
             }

@@ -427,7 +427,7 @@ namespace Underworld
         /// <param name="index"></param>
         /// <param name="floor"></param>
         /// <returns></returns>
-        static string TextureName(int index, bool floor = true)
+        public static string TextureName(int index, bool floor = true)
         {
             int offset = 0;
             if ((_RES != GAME_UW2) && (floor)) { offset = 48; }
