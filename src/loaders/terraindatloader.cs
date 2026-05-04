@@ -1,5 +1,6 @@
 using System.IO;
 using System.Diagnostics;
+using System.ComponentModel;
 
 namespace Underworld
 {
@@ -48,8 +49,8 @@ namespace Underworld
         public const int Lava = 0x20;//(not lavafall)
         public const int Waterfall = 0x40;//     - UW2
         public const int Ice_wall = 0xC0; //     - UW2
-                                        //TODO:ID more water types
-                                        //00D8
+                                          //TODO:ID more water types
+                                          //00D8
         public const int Ice_walls = 0xE8;// (crumbling?)
         public const int Lavafall = 0x80;   //  - UW2
         public const int IceNonSlip = 0xF8; //   - UW2
@@ -167,7 +168,7 @@ namespace Underworld
             {//TOTEST
              //var floorterrain = tileMapRender.FloorTexture(tile);
                 var floorterrain = tileMapRender.FloorTexture_MapIndex(tile);
-                var ActualTexture = UWTileMap.current_tilemap.texture_map[floorterrain];
+                var ActualTexture = UWTileMap.current_tilemap.texture_map[floorterrain]; 
                 var terrain = TerrainDatLoader.Terrain[ActualTexture];//tile.floorTexture];// floorterrain];
                 terrain = (terrain & 0xC0) >> 6;
                 return terrain;
@@ -179,6 +180,25 @@ namespace Underworld
                 var ActualTexture = UWTileMap.current_tilemap.texture_map[floorterrain];
                 var terrain = TerrainDatLoader.Terrain[46 + ActualTexture];//floorterrain+46]; //46=256-210
                 return terrain >> 4;
+            }
+        }
+
+        public static short GetTerrainDataBit345(TileInfo tile)
+        {
+            if (_RES == GAME_UW2)
+            {//TOTEST
+             //var floorterrain = tileMapRender.FloorTexture(tile);
+                var floorterrain = tileMapRender.FloorTexture_MapIndex(tile);
+                var ActualTexture = UWTileMap.current_tilemap.texture_map[floorterrain];
+                var terrain = Terrain[ActualTexture];
+                return (short)((terrain & 0x38) >> 3);
+            }
+            else
+            {
+                var floorterrain = tileMapRender.FloorTexture_MapIndex(tile);
+                var ActualTexture = UWTileMap.current_tilemap.texture_map[floorterrain];
+                var terrain = TerrainDatLoader.Terrain[46 + ActualTexture];//floorterrain+46]; //46=256-210
+                return (short)((terrain & 0x38) >> 3);
             }
         }
 

@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 
 namespace Underworld
@@ -212,7 +213,7 @@ namespace Underworld
                 if ((playerdat.TileState & 0x4) != 0)
                 {
                     //seg008_870 -> ice/snow                    
-                    var terrainVarA = (short)((TerrainDatLoader.Terrain[tile.floorTexture] & 0x38) >> 3);
+                    var terrainVarA = TerrainDatLoader.GetTerrainDataBit345(tile);  // (short)((TerrainDatLoader.Terrain[tile.floorTexture] & 0x38) >> 3);
 
                     if (terrainVarA != 7)
                     {
@@ -256,7 +257,7 @@ namespace Underworld
                             TypeOfMotionArg0: 2,
                             HeadingArg2: copyofheading1E_dseg_67d6_229A,
                             arg4: copyofunk14_dseg_67d6_229C,
-                            headingArg6: PlayerHeadingMajor_dseg_67d6_8296,
+                            HeadingArg6: PlayerHeadingMajor_dseg_67d6_8296,
                             INunk14_arg8: playerMotionParams.unk_14,
                             argA: terrainVarA,
                             newHeading1E_argC: out HeadingVar6,
@@ -315,7 +316,8 @@ namespace Underworld
                     {
                         //seg008_997
                         var si = SomeTileOrTerrainDatInfo_seg_67d6_D4;
-                        SomeTileOrTerrainDatInfo_seg_67d6_D4 = (short)(((TerrainDatLoader.Terrain[tile.floorTexture] & 0x38) >> 3) - 1);
+                        //SomeTileOrTerrainDatInfo_seg_67d6_D4 = (short)(((TerrainDatLoader.Terrain[tile.floorTexture] & 0x38) >> 3) - 1);
+                        SomeTileOrTerrainDatInfo_seg_67d6_D4 = (short)(TerrainDatLoader.GetTerrainDataBit345(tile)-1);
                         if (SomeTileOrTerrainDatInfo_seg_67d6_D4 == -1)
                         {
                             SomeTileOrTerrainDatInfo_seg_67d6_D4 = si;
@@ -330,8 +332,8 @@ namespace Underworld
                 if (SomeTileOrTerrainDatInfo_seg_67d6_D4 != -1)
                 {
                     //seg008_9E3
-                    short si= 0;
-                    if (SomeTileOrTerrainDatInfo_seg_67d6_D4 <=3)
+                    short si = 0;
+                    if (SomeTileOrTerrainDatInfo_seg_67d6_D4 <= 3)
                     {
                         if (SomeTileOrTerrainDatInfo_seg_67d6_D4 > 1)
                         {
@@ -348,23 +350,23 @@ namespace Underworld
                     copyofheading1E_dseg_67d6_229A = PlayerHeadingMajor_dseg_67d6_8296;
                     copyofunk14_dseg_67d6_229C = playerMotionParams.unk_14;
                     ApplyWaterCurrentIceSliding(
-                        TypeOfMotionArg0: 3, 
-                        HeadingArg2: PlayerHeadingMajor_dseg_67d6_8296, 
-                        arg4: playerMotionParams.unk_14, 
-                        headingArg6: si, 
-                        INunk14_arg8: HeadingVar6, 
-                        argA: 0x20, 
-                        newHeading1E_argC: out copyofheading1E_dseg_67d6_229A, 
+                        TypeOfMotionArg0: 3,
+                        HeadingArg2: PlayerHeadingMajor_dseg_67d6_8296,
+                        arg4: playerMotionParams.unk_14,
+                        HeadingArg6: si,
+                        INunk14_arg8: HeadingVar6,
+                        argA: 0x20,
+                        newHeading1E_argC: out copyofheading1E_dseg_67d6_229A,
                         newUnk14_argE: out copyofunk14_dseg_67d6_229C);
 
-                    if (var4!= 0x2F)
+                    if (var4 != 0x2F)
                     {
                         //seg008_A40
                         dseg_67d6_22AC = PlayerHeadingMajor_dseg_67d6_8296;
                         dseg_67d6_22AE = playerMotionParams.unk_14;
                     }
                     //seg008_A46
-                    if (copyofunk14_dseg_67d6_229C >MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6)
+                    if (copyofunk14_dseg_67d6_229C > MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6)
                     {
                         //seg008_A52
                         copyofunk14_dseg_67d6_229C = MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6;
@@ -1123,10 +1125,93 @@ namespace Underworld
             }
         }
 
-        static void ApplyWaterCurrentIceSliding(short TypeOfMotionArg0, short HeadingArg2, short arg4, short headingArg6, short INunk14_arg8, short argA, out short newHeading1E_argC, out short newUnk14_argE)
+        static void ApplyWaterCurrentIceSliding(short TypeOfMotionArg0, short HeadingArg2, short arg4, short HeadingArg6, short INunk14_arg8, short argA, out short newHeading1E_argC, out short newUnk14_argE)
         {
-            Debug.Print("zip");
-            newHeading1E_argC = 0; newUnk14_argE = 0;//tmp
+            if (argA > 0)
+            {
+                //seg008_5DD
+                if (argA > 0x40)
+                {
+                    //seg008_5E3
+                    argA = 0x40;
+                }
+
+                //Seg008_5E8
+                var xvar2 = 0; var yvar4 = 0;
+                GetVectorForDirection((ushort)HeadingArg2, ref xvar2, ref yvar4);
+
+                var xvar6 = 0; var yvar8 = 0;
+                GetVectorForDirection((ushort)HeadingArg6, ref xvar6, ref yvar8);
+
+                xvar2 = xvar2 / 0x800;
+                yvar4 = yvar4 / 0x800;
+                xvar6 = xvar6 / 0x800;
+                yvar8 = yvar8 / 0x800;
+
+                xvar2 = xvar2 * arg4;
+                yvar4 = yvar4 * arg4;
+
+                xvar6 = xvar6 * INunk14_arg8;
+                yvar8 = yvar8 * INunk14_arg8;
+
+
+                var varE = 0; var di = 0;
+                switch (TypeOfMotionArg0)
+                {
+                    case 2:
+                        {
+                            //seg008_668
+                            var varA = xvar6 - xvar2;
+                            var varC = yvar8 - yvar4;
+
+                            varE = xvar2 + ((argA * varA) / 0x40);
+                            di = yvar4 + ((argA * varC) / 0x40);
+                            break;
+                        }
+                    case 3:
+                        {
+                            //seg008_6C3
+                            varE = xvar6 + xvar2;
+                            di = yvar8 + yvar4;
+                            break;
+                        }
+                }
+
+                //seg008_6D4
+                var var12 = varE / 0x10;
+                var var16 = di / 0x10;
+                newUnk14_argE = (short)(Math.Sqrt(var12 * var12) + (var16 * var16));
+                if (newUnk14_argE <= 1)
+                {
+                    //seg008_72F
+                    newUnk14_argE = 0;
+                }
+                if (newUnk14_argE == 0)
+                {
+                    //Seg008_7A6
+                    newHeading1E_argC = HeadingArg2;
+                }
+                else
+                {
+                    //Seg008_73F
+                    var12 = var12 * 0x7FFF;
+                    var16 = var16 * 0x7FFF;
+
+                    var12 = var12 / newUnk14_argE;
+                    var16 = var16 / newUnk14_argE;
+
+                    varE  = var12;
+                    di = var16;
+                    newHeading1E_argC = MaybeGetTangent_seg021_22FD_EFB((short)varE, (short)di);
+                }
+            }
+            else
+            {
+                //seg008_5D5
+                newUnk14_argE = arg4;
+                //->Seg008_7A6
+                newHeading1E_argC = HeadingArg2;
+            }
         }
 
     }//end class
