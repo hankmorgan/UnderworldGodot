@@ -29,16 +29,16 @@ namespace Underworld
 
         //globals used in player motion calcs
         //Possibly some of these are actually part of the player motion params. to do map them out.
-        
+
 
         //Camera bob adjustments, 
         public static short dseg_67d6_33D0_modifiescamera2c;//changes the camera angle that is set by PlayerHeadingMinor8294
         public static short dseg_67d6_33D2_modifiescamera28;//changes the camera angle that is set by PlayerHeadingRelated33D6        
         public static short dseg_67d6_33D4_modifiescamera2A;//changes the camera angle that is set by PlayerHeadingRelated33D8, i need to figure these out.
-        
 
-        static short dseg_67d6_229A;
-        static short dseg_67d6_229C;
+
+        static short copyofheading1E_dseg_67d6_229A;
+        static short copyofunk14_dseg_67d6_229C;
         public static short dseg_67d6_22A2;
 
 
@@ -72,26 +72,31 @@ namespace Underworld
 
         public static bool CameraIsBobbing_dseg_67d6_33c6;
 
+        public static bool ICYFloor_dseg_229E = false;
+
         static sbyte[] dseg_67d6_743 = new sbyte[] { 1, 3, 4, 3, 1, -3, 0, 0, 1, 3, 4, 3, 1, -3, 0, 0 };
         static sbyte[] dseg_67d6_753 = new sbyte[] { 0, 0, -1, -2, -3 - 4, -5, -6, -6, -4, -3, -2, -1, 0, 0, 0, -4 };
 
 
         /// <summary>
-        /// Moves the player by processing inputs and forces acting on the player
+        /// Moves the player by processing the inputs and forces acting on the player
         /// </summary>
         /// <param name="ClockIncrement"></param>
         public static void PlayerMotion(short ClockIncrement)
         {
             UWMotionParamArray.instance = motion.playerMotionParams;//in case we step on a jump trap...
+
+            //These values are used in camera bobbing/shaking
             dseg_67d6_33D4_modifiescamera2A = 0;
             dseg_67d6_33D2_modifiescamera28 = 0;
             dseg_67d6_33D0_modifiescamera2c = 0;
+
+
             playerMotionParams.radius_22 = (byte)commonObjDat.radius(playerdat.playerObject.item_id);
             playerMotionParams.height_23 = (byte)commonObjDat.height(playerdat.playerObject.item_id);
-            // var x_init = playerMotionParams.x_0;
-            // var y_init = playerMotionParams.y_2;
+
             PlayerMotionInitialCalculation_seg008_1B09_7B2(ClockIncrement);
-            //Debug.Print($"playerpos is at {playerMotionParams.z_4}");
+
             CalculateMotion(
                 projectile: playerdat.playerObject,
                 MotionParams: playerMotionParams,
@@ -100,7 +105,7 @@ namespace Underworld
             ApplyPlayerMotion(playerdat.playerObject);
 
             playerdat.heading_major = PlayerHeadingMajor_dseg_67d6_8296 >> 8;//this hack fixes turning but the heading value here is actually direction of motion so the camera turns during backwards and sideways motion
-           
+
             //Debug.Print($"playerpos is now {playerMotionParams.z_4}");
             // if ((x_init != playerMotionParams.x_0) || (y_init != playerMotionParams.y_2))
             // {
@@ -139,8 +144,6 @@ namespace Underworld
             }
             MotionInputPressed = 0;
         }
-
-
         static void PlayerMotionInitialCalculation_seg008_1B09_7B2(short ClockIncrement)
         {
             //todo
@@ -148,12 +151,13 @@ namespace Underworld
             short var2 = 0;
             playerMotionParams.unk_16_relatedtoPitch = 5;
             playerMotionParams.unk_17 = 0;
+            byte var4 = 0;
 
 
-            dseg_67d6_229A = playerMotionParams.heading_1E;
-            dseg_67d6_229C = playerMotionParams.unk_14;
+            copyofheading1E_dseg_67d6_229A = playerMotionParams.heading_1E;
+            copyofunk14_dseg_67d6_229C = playerMotionParams.unk_14;
 
-            //TODO: Motion with levitation on does not work in some directions.
+            //TODO: Motion with levitation on does not work in some directions. -> Cause is low ClockIncrement...
             if (playerMotionParams.unk_10_Z == 0)
             {
                 CalculateMotionFromCommand_seg008_1B09_108E(MotionInputPressed, ClockIncrement, out var2);
@@ -200,17 +204,184 @@ namespace Underworld
 
             if (_RES == GAME_UW2)
             {
+                short HeadingVar6;
+                short MaybeMovementVectorVar8;
+                var tile = UWTileMap.current_tilemap.Tiles[playerdat.playerObject.tileX, playerdat.playerObject.tileY];
                 //seg008_1B09_862:
                 //TODO UW2 specific code for ice and water currents
+                if ((playerdat.TileState & 0x4) != 0)
+                {
+                    //seg008_870 -> ice/snow                    
+                    var terrainVarA = (short)((TerrainDatLoader.Terrain[tile.floorTexture] & 0x38) >> 3);
+
+                    if (terrainVarA != 7)
+                    {
+                        //seg008_89F
+                        ICYFloor_dseg_229E = true;
 
 
-                //
-            }
+                        if ((tile.tileType >= 6) && (tile.tileType <= 9))
+                        {
+                            //seg008_8C8
+                            SomeTileOrTerrainDatInfo_seg_67d6_D4 = (short)(tile.tileType - 6);
+                            var4 = 0x2F;
+                        }
+                        //seg008_8CD
+                        playerMotionParams.unk_16_relatedtoPitch = (byte)(0xF - terrainVarA);
+                        terrainVarA = (short)(((terrainVarA << 3) + 8) - ((copyofunk14_dseg_67d6_229C / 0x2F) << 2));
 
+                        if (copyofunk14_dseg_67d6_229C >= 0x2F)
+                        {
+                            //seg008_8FE
+                            if (playerMotionParams.unk_14 > copyofunk14_dseg_67d6_229C)
+                            {
+                                if (SomeTileOrTerrainDatInfo_seg_67d6_D4 == -1)
+                                {
+                                    terrainVarA += 8;
+                                }
+                                else
+                                {
+                                    terrainVarA += 4;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            //seg008_8F8
+                            terrainVarA += 0x10;
+                        }
 
+                        //seg008_918
+                        ApplyWaterCurrentIceSliding(
+                            TypeOfMotionArg0: 2,
+                            HeadingArg2: copyofheading1E_dseg_67d6_229A,
+                            arg4: copyofunk14_dseg_67d6_229C,
+                            headingArg6: PlayerHeadingMajor_dseg_67d6_8296,
+                            INunk14_arg8: playerMotionParams.unk_14,
+                            argA: terrainVarA,
+                            newHeading1E_argC: out HeadingVar6,
+                            newUnk14_argE: out MaybeMovementVectorVar8);
+
+                        PlayerHeadingMajor_dseg_67d6_8296 = HeadingVar6;
+                        playerMotionParams.unk_14 = MaybeMovementVectorVar8;
+
+                        if (copyofunk14_dseg_67d6_229C + MotionWeightRelated_dseg_67d6_C8 <= playerMotionParams.unk_14)
+                        {
+                            if ((Rng.r.Next(0x7fff) & 0x3) == 0)
+                            {
+                                //Seg008_96C
+                                SetScreenShake(0x80, 4);
+                                //--> seg008_9D6
+                            }
+                            else
+                            {
+                                // seg008_95F
+                                if (copyofunk14_dseg_67d6_229C - MotionWeightRelated_dseg_67d6_C8 >= playerMotionParams.unk_14)
+                                {
+                                    //Seg008_96C
+                                    SetScreenShake(0x80, 4);
+                                    //--> seg008_9D6
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // seg008_95F
+                            if (copyofunk14_dseg_67d6_229C - MotionWeightRelated_dseg_67d6_C8 >= playerMotionParams.unk_14)
+                            {
+                                //Seg008_96C
+                                SetScreenShake(0x80, 4);
+                                //--> seg008_9D6
+                            }
+                        }
+                    }
+                    else
+                    {
+                        //Seg008_87B
+                        SomeTileOrTerrainDatInfo_seg_67d6_D4 = -1;
+                        ICYFloor_dseg_229E = false;
+                        //-->Seg008_9D6
+                    }
+                }
+                else
+                {
+                    //Set 1B09_988 
+                    if ((playerdat.TileState & 0x1) == 0)
+                    {
+                        //seg008_9D0
+                        SomeTileOrTerrainDatInfo_seg_67d6_D4 = -1;
+                    }
+                    else
+                    {
+                        //seg008_997
+                        var si = SomeTileOrTerrainDatInfo_seg_67d6_D4;
+                        SomeTileOrTerrainDatInfo_seg_67d6_D4 = (short)(((TerrainDatLoader.Terrain[tile.floorTexture] & 0x38) >> 3) - 1);
+                        if (SomeTileOrTerrainDatInfo_seg_67d6_D4 == -1)
+                        {
+                            SomeTileOrTerrainDatInfo_seg_67d6_D4 = si;
+                        }
+                        //seg008_9C9
+                        var4 = 0x8D;
+                    }
+
+                }
+                //Seg008_1B08_9D6
+                dseg_67d6_22AE = -1;
+                if (SomeTileOrTerrainDatInfo_seg_67d6_D4 != -1)
+                {
+                    //seg008_9E3
+                    short si= 0;
+                    if (SomeTileOrTerrainDatInfo_seg_67d6_D4 <=3)
+                    {
+                        if (SomeTileOrTerrainDatInfo_seg_67d6_D4 > 1)
+                        {
+                            si = 0x4000;
+                        }
+                        if ((SomeTileOrTerrainDatInfo_seg_67d6_D4 & 0x1) == 0)
+                        {
+                            si = (short)(si + 0x8000);
+                        }
+                    }
+
+                    //seg008_A05
+                    HeadingVar6 = var4; //note. I had to initialise var4 with 0..
+                    copyofheading1E_dseg_67d6_229A = PlayerHeadingMajor_dseg_67d6_8296;
+                    copyofunk14_dseg_67d6_229C = playerMotionParams.unk_14;
+                    ApplyWaterCurrentIceSliding(
+                        TypeOfMotionArg0: 3, 
+                        HeadingArg2: PlayerHeadingMajor_dseg_67d6_8296, 
+                        arg4: playerMotionParams.unk_14, 
+                        headingArg6: si, 
+                        INunk14_arg8: HeadingVar6, 
+                        argA: 0x20, 
+                        newHeading1E_argC: out copyofheading1E_dseg_67d6_229A, 
+                        newUnk14_argE: out copyofunk14_dseg_67d6_229C);
+
+                    if (var4!= 0x2F)
+                    {
+                        //seg008_A40
+                        dseg_67d6_22AC = PlayerHeadingMajor_dseg_67d6_8296;
+                        dseg_67d6_22AE = playerMotionParams.unk_14;
+                    }
+                    //seg008_A46
+                    if (copyofunk14_dseg_67d6_229C >MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6)
+                    {
+                        //seg008_A52
+                        copyofunk14_dseg_67d6_229C = MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6;
+                    }
+                    //seg008_A55
+                    PlayerHeadingMajor_dseg_67d6_8296 = copyofheading1E_dseg_67d6_229A;
+                    playerMotionParams.unk_14 = copyofunk14_dseg_67d6_229C;
+                }
+                // rejoin at Seg008_A61 
+            }//end uw2 specific code.
+
+            //Seg008_a61
+            playerMotionParams.speed_12 = (byte)ClockIncrement;
 
             if (_RES == GAME_UW2)
             {
+                //Seg008_A61
                 if (
                     ((((int)playerMotionParams.unk_c_X | (int)playerMotionParams.unk_e_Y | (int)playerMotionParams.unk_10_Z) == 0))
                             && ((playerdat.TileState & 0x84) == 0)
@@ -237,8 +408,7 @@ namespace Underworld
                 }
             }
 
-            //Seg1b09_a61
-            playerMotionParams.speed_12 = (byte)ClockIncrement;
+
 
             //seg008_1B09_A9D:
             //UW1 and UW2 realign here.
@@ -670,7 +840,6 @@ namespace Underworld
             }
         }
 
-
         public static void RefreshPlayerTileState()
         {
             ProcessPlayerTileState(motion.playerMotionParams.tilestate25, 1);
@@ -743,8 +912,6 @@ namespace Underworld
                 motion.MotionWeightRelated_dseg_67d6_C8 = 0x60;
             }
         }
-
-
 
         /// <summary>
         /// Initiates the act of swimming in water.
@@ -841,7 +1008,7 @@ namespace Underworld
 
                         dseg_67d6_33D0_modifiescamera2c = (short)(((Rng.r.Next(0x7FFF) & 0x7F) - 64) * var1);
                         dseg_67d6_33D2_modifiescamera28 = (short)(((Rng.r.Next(0x7FFF) & 0x7F) - 64) * var1);
-                        
+
                         //Debug.Print($"swimbob {CameraBobZAdjust_dseg_67d6_33CE},{dseg_67d6_33D4_modifiescamera2A}");
                         //Debug.Print($"swim adjust by {dseg_67d6_33D0_modifiescamera2c},{dseg_67d6_33D2_modifiescamera28},{dseg_67d6_33D4_modifiescamera2A}");
                     }
@@ -858,7 +1025,7 @@ namespace Underworld
                         {
                             damage.DamageObject(objToDamage: playerdat.playerObject, basedamage: 1, damagetype: 8, objList: UWTileMap.current_tilemap.LevelObjects, WorldObject: true, damagesource: 0);
                         }
-                        
+
                         if (_RES == GAME_UW2)
                         {
                             //Handle player steping on lava for baking mud.
@@ -922,14 +1089,14 @@ namespace Underworld
                             var2_incrementrelated = 3;
                         }
                     }
-                    
-                    
+
+
                     //Seg35_C17                    
                     if ((playerdat.TileState & 0x80) != 0)
                     {
                         var tmp = Shake80_Duration_741;
                         Shake80_Duration_741--;
-                        if (tmp==0)
+                        if (tmp == 0)
                         {
                             //seg35_C2D
                             //turn off shake
@@ -940,8 +1107,8 @@ namespace Underworld
                         dseg_67d6_33D0_modifiescamera2c = (short)(((Rng.r.Next(0x7FFF) & 0x1FF) - 256) << 2);
                     }
                     //seg35_C56
-                    
-                    var1+=var2_incrementrelated;
+
+                    var1 += var2_incrementrelated;
                     dseg_67d6_33D0_modifiescamera2c = (short)(var1 * ((Rng.r.Next(0x7FFF) & 0xFF) - 128));
                     dseg_67d6_33D2_modifiescamera28 = (short)(var1 * ((Rng.r.Next(0x7FFF) & 0x7F) - 64));
                     dseg_67d6_33D4_modifiescamera2A = (short)(var1 * ((Rng.r.Next(0x7FFF) & 0x1FF) - 256));
@@ -954,6 +1121,12 @@ namespace Underworld
                 CameraIsBobbing_dseg_67d6_33c6 = false;
                 CameraBobZAdjust_dseg_67d6_33CE = 0;
             }
+        }
+
+        static void ApplyWaterCurrentIceSliding(short TypeOfMotionArg0, short HeadingArg2, short arg4, short headingArg6, short INunk14_arg8, short argA, out short newHeading1E_argC, out short newUnk14_argE)
+        {
+            Debug.Print("zip");
+            newHeading1E_argC = 0; newUnk14_argE = 0;//tmp
         }
 
     }//end class
