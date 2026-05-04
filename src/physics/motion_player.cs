@@ -335,6 +335,7 @@ namespace Underworld
                     short si = 0;
                     if (SomeTileOrTerrainDatInfo_seg_67d6_D4 <= 3)
                     {
+                        //seg008_9EC
                         if (SomeTileOrTerrainDatInfo_seg_67d6_D4 > 1)
                         {
                             si = 0x4000;
@@ -379,7 +380,7 @@ namespace Underworld
             }//end uw2 specific code.
 
             //Seg008_a61
-            playerMotionParams.speed_12 = (byte)ClockIncrement;
+            playerMotionParams.speed_12 = (byte)ClockIncrement;//too low a value breaks some motion. too high a value makes turning too fast.
 
             if (_RES == GAME_UW2)
             {
@@ -1138,10 +1139,10 @@ namespace Underworld
 
                 //Seg008_5E8
                 var xvar2 = 0; var yvar4 = 0;
-                GetVectorForDirection((ushort)HeadingArg2, ref xvar2, ref yvar4);
+                GetVectorForDirection((ushort)HeadingArg2, ref yvar4, ref xvar2);
 
                 var xvar6 = 0; var yvar8 = 0;
-                GetVectorForDirection((ushort)HeadingArg6, ref xvar6, ref yvar8);
+                GetVectorForDirection((ushort)HeadingArg6, ref yvar8, ref xvar6);
 
                 xvar2 = xvar2 / 0x800;
                 yvar4 = yvar4 / 0x800;

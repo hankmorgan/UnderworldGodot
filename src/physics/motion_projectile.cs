@@ -258,6 +258,13 @@ namespace Underworld
 
         }
 
+
+        /// <summary>
+        /// X&Y are wrong way around!!
+        /// </summary>
+        /// <param name="heading"></param>
+        /// <param name="X1"></param>
+        /// <param name="Y1"></param>
         public static void GetVectorForDirection(int heading, ref int X1, ref int Y1)
         {
             X1 = HeadingLookupTable[64 + (heading >> 8)];
