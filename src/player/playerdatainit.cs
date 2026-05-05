@@ -176,7 +176,8 @@ namespace Underworld
             main.gamecam.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
                                                               //main.gamecam.Rotate(Vector3.Up, (float)(-heading_major / 127f * Math.PI));
             float fullheading = (float)((playerObject.heading << 5) + playerObject.npc_heading);
-            main.gamecam.Rotate(Vector3.Up, (float)(-fullheading / 127f * Math.PI));
+            //main.gamecam.Rotate(Vector3.Up, (float)(-fullheading / 127f * Math.PI));
+            main.gamecam.Rotate(Vector3.Up, (float)(-((float)motion.PlayerCameraYaw_dseg_8294 / 32767f) * Math.PI));
 
             //TODO this camera angle should be based on global values Dseg8294,Dseg33D6,Dseg33D8. The should be (not in order) pitch, yaw and roll?
         }

@@ -105,7 +105,7 @@ namespace Underworld
 
             ApplyPlayerMotion(playerdat.playerObject);
 
-            playerdat.heading_major = PlayerHeadingMajor_dseg_67d6_8296 >> 8;//this hack fixes turning but the heading value here is actually direction of motion so the camera turns during backwards and sideways motion
+           // playerdat.heading_major = PlayerHeadingMajor_dseg_67d6_8296 >> 8;//this hack fixes turning but the heading value here is actually direction of motion so the camera turns during backwards and sideways motion
 
             //Debug.Print($"playerpos is now {playerMotionParams.z_4}");
             // if ((x_init != playerMotionParams.x_0) || (y_init != playerMotionParams.y_2))
