@@ -62,7 +62,7 @@ namespace Underworld
 
         static short SomeTileOrTerrainDatInfo_seg_67d6_D4;
 
-        public static short PlayerHeadingMinor_dseg_8294;
+        public static short PlayerCameraYaw_dseg_8294;
         public static short PlayerHeadingMajor_dseg_67d6_8296;
 
         public static short PreviousTileState_dseg_67d6_22B4 = 0;
@@ -199,7 +199,7 @@ namespace Underworld
             //seg008_1B09_83E:
             if (playerMotionParams.unk_10_Z != 0)
             {
-                PlayerHeadingMinor_dseg_8294 += (short)(((ClockIncrement * MotionRelated_dseg_67d6_775) * (PlayerMotionHeading_77E / 4)) / 4);
+                PlayerCameraYaw_dseg_8294 += (short)(((ClockIncrement * MotionRelated_dseg_67d6_775) * (PlayerMotionHeading_77E / 4)) / 4);
             }
 
 
@@ -417,7 +417,7 @@ namespace Underworld
             //UW1 and UW2 realign here.
             if (playerMotionParams.unk_14 == 0)
             {
-                PlayerHeadingMajor_dseg_67d6_8296 = PlayerHeadingMinor_dseg_8294;
+                PlayerHeadingMajor_dseg_67d6_8296 = PlayerCameraYaw_dseg_8294;
             }
 
             //seg008_1B09_AAA:
@@ -512,31 +512,31 @@ namespace Underworld
                 {
                     if (SomeTileOrTerrainDatInfo_seg_67d6_D4 == -1)
                     {
-                        if (Math.Abs(PlayerHeadingMinor_dseg_8294 - si) >= 0x600)
+                        if (Math.Abs(PlayerCameraYaw_dseg_8294 - si) >= 0x600)
                         {
                             //seg008_1B09_EC7
-                            if (PlayerHeadingMinor_dseg_8294 - si >= 0x7FFF)
+                            if (PlayerCameraYaw_dseg_8294 - si >= 0x7FFF)
                             {
                                 //seg008_1B09_ED9: 
-                                PlayerHeadingMinor_dseg_8294 += 0x600;
+                                PlayerCameraYaw_dseg_8294 += 0x600;
                             }
                             else
                             {
-                                PlayerHeadingMinor_dseg_8294 -= 0x600;
+                                PlayerCameraYaw_dseg_8294 -= 0x600;
                             }
                         }
                         else
                         {
                             //seg008_1B09_EC1:
-                            PlayerHeadingMinor_dseg_8294 = (short)si;
+                            PlayerCameraYaw_dseg_8294 = (short)si;
                         }
                     }
                 }
 
             }
             //seg008_1B09_EDF:
-            playerObj.heading = (short)((PlayerHeadingMinor_dseg_8294 >> 0xD) & 0x7);
-            playerObj.npc_heading = (short)((PlayerHeadingMinor_dseg_8294 >> 8) & 0x1F);
+            playerObj.heading = (short)((PlayerCameraYaw_dseg_8294 >> 0xD) & 0x7);
+            playerObj.npc_heading = (short)((PlayerCameraYaw_dseg_8294 >> 8) & 0x1F);
 
             if (playerMotionParams.unk_26_falldamage != 0)
             {
@@ -622,15 +622,15 @@ namespace Underworld
             }
             else
             {
-                var di = PlayerHeadingMinor_dseg_8294;
+                var di = PlayerCameraYaw_dseg_8294;
                 switch (inputcmd)
                 {
                     case 0:
                         arg4 = 0; break;
                     case 1://walk,run,turn
                         {
-                            PlayerHeadingMinor_dseg_8294 += (short)((MotionRelated_dseg_67d6_775 * ClockIncrement) * (PlayerMotionHeading_77E / 4));
-                            di = PlayerHeadingMinor_dseg_8294;
+                            PlayerCameraYaw_dseg_8294 += (short)((((MotionRelated_dseg_67d6_775 * ClockIncrement)) * (PlayerMotionHeading_77E / 4)));
+                            di = PlayerCameraYaw_dseg_8294;
                             PlayerHeadingMajor_dseg_67d6_8296 = di;
                             arg4 = (short)(((PlayerMotionWalk_77C >> 2) * MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6) / 0x20);
                             dseg_67d6_D0 = 0;
@@ -648,7 +648,7 @@ namespace Underworld
                                         if (playerMotionParams.unk_14 == 0)
                                         {
                                             //seg008_1B09_1158:
-                                            di = PlayerHeadingMinor_dseg_8294;
+                                            di = PlayerCameraYaw_dseg_8294;
                                             PlayerHeadingMajor_dseg_67d6_8296 = di;
                                             arg4 = (short)(MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6 / 2);
                                             playerMotionParams.unk_14 = arg4;

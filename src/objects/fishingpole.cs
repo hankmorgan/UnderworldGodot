@@ -13,7 +13,7 @@ namespace Underworld
             {
                 //go fish
                 int xCoord = motion.playerMotionParams.x_0 >> 5; int yCoord = motion.playerMotionParams.y_2 >> 5;
-                motion.GetCoordinateInDirection(motion.PlayerHeadingMinor_dseg_8294 >> 8, 0xB, ref xCoord, ref yCoord);
+                motion.GetCoordinateInDirection(motion.PlayerCameraYaw_dseg_8294 >> 8, 0xB, ref xCoord, ref yCoord);
                 var tile = UWTileMap.current_tilemap.Tiles[xCoord >> 3, yCoord >> 3];
                 if (tile != null)
                 {
