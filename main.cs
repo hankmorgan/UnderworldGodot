@@ -205,7 +205,7 @@ public partial class main : Node3D
 				//Debug.Print($"{PitTimer - LastPitTimer}");
 				EasyMoveFrameIncrement += (byte)((GlobalPITTimer >> 4) - (LastPitTimer >> 4));  //every 16 pits?
 				AnimationFrameDeltaIncrement = (byte)((GlobalPITTimer >> 6) - (LastPitTimer >> 6));//every 63 pits?
-ClockIncrement = 0x8;
+ClockIncrement = 0x20;
 
 				//HACK the above appears to be what should be happening in vanilla code but is very slow to process, but the below gives the appearance of normal movement but may cause frame rate issues. 
 				//Issues caused by this hacking.

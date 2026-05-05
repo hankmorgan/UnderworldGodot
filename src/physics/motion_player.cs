@@ -629,7 +629,7 @@ namespace Underworld
                         arg4 = 0; break;
                     case 1://walk,run,turn
                         {
-                            PlayerCameraYaw_dseg_8294 += (short)((((MotionRelated_dseg_67d6_775 * ClockIncrement)) * (PlayerMotionHeading_77E / 4)));
+                            PlayerCameraYaw_dseg_8294 += (short)((((MotionRelated_dseg_67d6_775 * ClockIncrement)) * (PlayerMotionHeading_77E / 4))/4);
                             di = PlayerCameraYaw_dseg_8294;
                             PlayerHeadingMajor_dseg_67d6_8296 = di;
                             arg4 = (short)(((PlayerMotionWalk_77C >> 2) * MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6) / 0x20);
