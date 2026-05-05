@@ -1181,7 +1181,7 @@ namespace Underworld
                 //seg008_6D4
                 var var12 = varE / 0x10;
                 var var16 = di / 0x10;
-                newUnk14_argE = (short)(Math.Sqrt(var12 * var12) + (var16 * var16));
+                newUnk14_argE = (short)(Math.Sqrt((var12 * var12) + (var16 * var16)));
                 if (newUnk14_argE <= 1)
                 {
                     //seg008_72F
