@@ -2,7 +2,8 @@ using Godot;
 using System;
 using System.Diagnostics;
 using Underworld;
-
+using Peaky.Coroutines;
+using System.Collections;
 
 /// <summary>
 /// Node to initialise the game
@@ -57,8 +58,8 @@ public partial class main : Node3D
 
 	//DOS INT8 (PIT) timer interupt. updates 18.2 times a second.
 	public static double Pit = 0f;
-	public static double GlobalPITTimer = 0f;
-	static uint PitTimer = 0;
+	public static uint GlobalPITTimer = 0;
+	//static uint PitTimer = 0;
 	static uint LastPitTimer = 0;
 	static byte EasyMoveFrameIncrement = 0;
 
@@ -76,14 +77,25 @@ public partial class main : Node3D
 			GetTree().DebugCollisionsHint = uwsettings.instance.showcolliders;
 		}
 
-		// var exe = System.IO.File.ReadAllBytes("C:\\Games\\UW2\\uw2.exe");
-		// int addr_ptr = 0x63FC2;
-		// for (long x = 0; x <= 320; x++)
-		// {
-		// 	Debug.Print($"{x}={(short)Loader.getAt(exe, addr_ptr, 16)}");
-		// 	addr_ptr += 2;
-		// }
+
+		 _ = Peaky.Coroutines.Coroutine.Run(PITTIMER(), main.instance);
+
 	}
+
+	/// <summary>
+	/// Experiment Emulation of an old skol PIT Timer
+	/// </summary>
+	/// <returns></returns>
+	static IEnumerator PITTIMER()
+	{
+		while (true)
+		{
+			yield return new WaitForSeconds(0.00391f);  //0.054945f
+			GlobalPITTimer++;
+		}
+		yield return null;
+	}
+
 
 	public static void StartGame()
 	{
@@ -167,24 +179,21 @@ public partial class main : Node3D
 			}
 		}
 
-		//DOS interupt 8
-		Pit += (delta*5);  //seem smoother		
-		GlobalPITTimer += delta;
-		if (Pit >= 0.054945) // DOS PIT Timer interupt 8 is 18.2 times a second
-		{
-			PitTimer +=  (uint)(Pit / 0.054945);//This is probably all wrong. needs revisiting.
-			Pit = 0;
-			//Debug.Print($"{Pit}, {PitTimer}, {delta}");
-		}
+		// //DOS interupt 8
+		// Pit += (delta*5);  //seem smoother		
+		//GlobalPITTimer += delta;
+		// if (Pit >= 0.054945) // DOS PIT Timer interupt 8 is 18.2 times a second
+		// {
+		// 	PitTimer++;   // (uint)(Pit / 0.054945);//This is probably all wrong. needs revisiting.
+		// 	Pit = 0;
+		// }
 
 
 		if ((uimanager.InGame) && (!blockmouseinput))
 		{
-			
-
 			byte AnimationFrameDeltaIncrement = 0;
 
-			var ClockIncrement = PitTimer - LastPitTimer;
+			var ClockIncrement = GlobalPITTimer - LastPitTimer;
 			if ((ClockIncrement < 0) || (ClockIncrement > 0x40))
 			{
 				ClockIncrement = 0x40;
@@ -194,9 +203,9 @@ public partial class main : Node3D
 			else
 			{
 				//Debug.Print($"{PitTimer - LastPitTimer}");
-				EasyMoveFrameIncrement += (byte)((PitTimer >> 4) - (LastPitTimer >> 4));  //every 16 pits?
-				AnimationFrameDeltaIncrement = (byte)((PitTimer >> 6) - (LastPitTimer >> 6));//every 63 pits?
-
+				EasyMoveFrameIncrement += (byte)((GlobalPITTimer >> 4) - (LastPitTimer >> 4));  //every 16 pits?
+				AnimationFrameDeltaIncrement = (byte)((GlobalPITTimer >> 6) - (LastPitTimer >> 6));//every 63 pits?
+ClockIncrement = 0x8;
 
 				//HACK the above appears to be what should be happening in vanilla code but is very slow to process, but the below gives the appearance of normal movement but may cause frame rate issues. 
 				//Issues caused by this hacking.
@@ -211,7 +220,7 @@ public partial class main : Node3D
 
 			if (ClockIncrement != 0)
 			{
-				ClockIncrement = Math.Max(ClockIncrement, 2);//TODO: This low value breaks some motion. See above.
+				//ClockIncrement = Math.Max(ClockIncrement, 2);//TODO: This low value breaks some motion. See above.
 				ProcessMotionInputs();
 				if (AnimationFrameDeltaIncrement != 0)
 				{
@@ -223,7 +232,7 @@ public partial class main : Node3D
 					}
 				}
 				playerdat.ClockValue += (int)ClockIncrement;
-				LastPitTimer = PitTimer;
+				LastPitTimer = GlobalPITTimer;
 				AnimationFrameDeltaIncrement = EasyMoveFrameIncrement;
 				if (playerdat.SpeedEnchantment)
 				{
