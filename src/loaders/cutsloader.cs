@@ -93,30 +93,7 @@ namespace Underworld
         };
 
 
-        public CutsLoader(string File)
-        {
-            filePath = Path.Combine(BasePath, "CUTS", File.ToUpper());
-            _alpha = UseAlpha(File);
-            if (LoadImageFile())
-            {
-                var filename = Path.GetFileName(File);
-                ReadCutsFile(
-                    cutsFile: ref ImageFileData,
-                    Alpha: _alpha,
-                    ErrorHandling: UseErrorHandling(filename),
-                    file: File);
-            }
-            textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uisprite.gdshader");
-        }
-
-        /// <summary>
-        /// Load an LPF file in sprite mode for panorama overlay.
-        /// Resets the pixel buffer to basePixels before each keyframe (record_size > 4)
-        /// so that RLE skip areas contain LBACK content and writes contain animated
-        /// sprite pixels. Generates WriteMasks to track which pixels were written.
-        /// See "Cutscene Engine RE Notes.md" — Sprite Overlay Approach.
-        /// </summary>
-        public CutsLoader(string File, byte[] basePixels)
+        public CutsLoader(string File, bool useSingleRedChannel = false)
         {
             filePath = Path.Combine(BasePath, "CUTS", File.ToUpper());
             _alpha = UseAlpha(File);
@@ -128,7 +105,32 @@ namespace Underworld
                     Alpha: _alpha,
                     ErrorHandling: UseErrorHandling(filename),
                     file: File,
-                    spriteBasePixels: basePixels);
+                    useSingleRedChannel: useSingleRedChannel);
+            }
+            textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uisprite.gdshader");
+        }
+
+        /// <summary>
+        /// Load an LPF file in sprite mode for panorama overlay.
+        /// Resets the pixel buffer to basePixels before each keyframe (record_size > 4)
+        /// so that RLE skip areas contain LBACK content and writes contain animated
+        /// sprite pixels. Generates WriteMasks to track which pixels were written.
+        /// See "Cutscene Engine RE Notes.md" — Sprite Overlay Approach.
+        /// </summary>
+        public CutsLoader(string File, byte[] basePixels, bool useSingleRedChannel = false)
+        {
+            filePath = Path.Combine(BasePath, "CUTS", File.ToUpper());
+            _alpha = UseAlpha(File);
+            if (LoadImageFile())
+            {
+                var filename = Path.GetFileName(File);
+                ReadCutsFile(
+                    cutsFile: ref ImageFileData,
+                    Alpha: _alpha,
+                    ErrorHandling: UseErrorHandling(filename),
+                    file: File,
+                    spriteBasePixels: basePixels,
+                    useSingleRedChannel: useSingleRedChannel);
             }
             textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uisprite.gdshader");
         }
@@ -166,7 +168,7 @@ namespace Underworld
         /// </summary>
         /// <param name="cutsFile">Cuts file.</param>
         public void ReadCutsFile(ref byte[] cutsFile, bool Alpha, bool ErrorHandling, string file,
-            byte[] spriteBasePixels = null)
+            byte[] spriteBasePixels = null, bool useSingleRedChannel = false)
         {
             long addptr = 0;
             int imagecount = 0;
@@ -365,7 +367,7 @@ namespace Underworld
                         width: lpH.width, height: lpH.height,
                         palette: pal,
                         useAlphaChannel: Alpha,
-                        useSingleRedChannel: false,
+                        useSingleRedChannel: useSingleRedChannel,
                         crop: UseCropping);
                 }
 

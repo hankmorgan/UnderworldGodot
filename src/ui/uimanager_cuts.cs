@@ -76,12 +76,12 @@ namespace Underworld
         /// <param name="cutsfile"></param>
         /// <param name="imageNo"></param>
         /// <param name="targetControl"></param>
-        public static void DisplayCutsImage(string cutsfile, int imageNo, TextureRect targetControl, bool DisableCamera = true)
+        public static void DisplayCutsImage(string cutsfile, int imageNo, TextureRect targetControl, bool DisableCamera = true, bool useSingleRedChannel = true)
         {
             var cuts = new CutsLoader(cutsfile);
             if (!csCuts.ContainsKey(cutsfile))
             {
-                csCuts.Add(cutsfile, new CutsLoader(cutsfile));
+                csCuts.Add(cutsfile, new CutsLoader(File: cutsfile, useSingleRedChannel: true));
             }
             _ = Coroutine.Run(
                     DisplayCutsImageWithWait(cuts: csCuts[cutsfile], imageNo: imageNo, targetControl: targetControl, DisableCamera: DisableCamera),
