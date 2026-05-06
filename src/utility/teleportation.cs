@@ -208,7 +208,7 @@ namespace Underworld
 
             motion.ProcessPlayerTileState(motion.playerMotionParams.tilestate25, 0);
             motion.WalkOnSurfaceType();
-            motion.Examine_dseg_D3 = 1;
+            motion.PlayerIsSliding_dseg_D3 = 1;
 
             playerdat.PlacePlayerInTile(newTileX: tileX, newTileY: tileY, previousTileX: -1, previousTileY: -1);
 

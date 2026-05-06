@@ -767,7 +767,7 @@ namespace Underworld
             
             if (AttackingCharacter.index == 1)
             {
-                MotionCalcArray.z4 += (ushort)(motion.PlayerHeadingRelated_dseg_67d6_33D6 / 0x200);//this value is set in player motion. Assume 0 for now.
+                MotionCalcArray.z4 += (ushort)(motion.PlayerCameraPitch_dseg_67d6_33D6 / 0x200);//this value is set in player motion. Assume 0 for now.
             }
 
             AttackHitZ_dseg_67d6_24CE = (commonObjDat.height(AttackingCharacter.item_id) / 6) + MotionCalcArray.z4;

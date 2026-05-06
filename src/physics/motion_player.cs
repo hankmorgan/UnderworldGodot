@@ -10,75 +10,70 @@ namespace Underworld
     {
         public static UWMotionParamArray playerMotionParams = new UWMotionParamArray();
 
-        public static short PlayerHeadingRelated_dseg_67d6_33D6 = 0;
-
         //These 2 globals are used to determine the heading/velocity for the player.
         public static short PlayerMotionWalk_77C = 0;
         public static short PlayerMotionHeading_77E = 0;
+
+        /// <summary>
+        /// What key is inputed. Prompts the game to process player motion.
+        /// </summary>
         public static short MotionInputPressed = 0;
 
-        //These are used in shaking
+        
+        static short dseg_67d6_D0 = 0;
+        public static bool PlayerIsSliding_dseg_D3 = false;
+
+
+        //Camera Globals
+        public static short PlayerCameraYaw_dseg_8294;
+        public static short PlayerCameraPitch_dseg_67d6_33D6 = 0; //unimplemented
+        public static short PlayerCameraRoll_dseg_67d6_33D8 = 0; //unimplemented
+
+
+        //Camera bob adjustments, 
+        public static short CameraBobZAdjust_dseg_67d6_33CE = 0;
+        public static short CameraYawModifier_dseg_67d6_33D0_modifiescamera2c;//changes the camera angle that is set by PlayerHeadingMinor8294
+        public static short CameraPitchModifier_dseg_67d6_33D2;//changes the camera angle that is set by PlayerHeadingRelated33D6        
+        public static short CameraRollModifier_dseg_67d6_33D4;//changes the camera angle that is set by PlayerHeadingRelated33D8, 
+        
+        //These are used in shaking and are used to calculate the camera modifiers
         public static byte Shake20_Duration_73F;
         public static byte Shake40_Duration_740;
         public static byte Shake80_Duration_741; //not used in UW1
 
-
-        //Player Vectors (to be identified)
-        static short dseg_67d6_D0 = 0;
-        public static short Examine_dseg_D3 = 0;
-
-        //globals used in player motion calcs
-        //Possibly some of these are actually part of the player motion params. to do map them out.
-
-
-        //Camera bob adjustments, 
-        public static short dseg_67d6_33D0_modifiescamera2c;//changes the camera angle that is set by PlayerHeadingMinor8294
-        public static short dseg_67d6_33D2_modifiescamera28;//changes the camera angle that is set by PlayerHeadingRelated33D6        
-        public static short dseg_67d6_33D4_modifiescamera2A;//changes the camera angle that is set by PlayerHeadingRelated33D8, i need to figure these out.
+        
+        //These are used to backup the player motion values when subject to sliding
         static short copyofheading1E_dseg_67d6_229A;
         static short copyofunk14_dseg_67d6_229C;
+        static short copyofplayerheading_dseg_67d6_22AC;
+
         public static short dseg_67d6_22A2;
 
+        public const short BaseForwardSpeed_1_dseg_67d6_CE = 0x3AC;
+        public const short BaseSlideSpeed_2_dseg_67d6_CC = 0xEB;
+        public const short BaseBackwardsSpeed_3_dseg_67d6_CA = 0xBC;
+        public static short PlayerActualForwardSpeed_1_dseg_67d6_22A6;
+        public static short PlayerActualSlideSpeed_2_dseg_67d6_22A8;
+        public static short PlayerActualBackwardsSpeed_3_dseg_67d6_22AA;
 
-        public const short MaybeBaseForwardSpeed_1_dseg_67d6_CE = 0x3AC;
-        public const short MaybeBaseSlideSpeed_2_dseg_67d6_CC = 0xEB;
-        public const short MaybeBaseBackwardsSpeed_3_dseg_67d6_CA = 0xBC;
-        public static short MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6;
-        public static short MaybePlayerActualSlideSpeed_2_dseg_67d6_22A8;
-        public static short MaybePlayerActualBackwardsSpeed_3_dseg_67d6_22AA;
 
-
-        static short dseg_67d6_22A0;
-        static short dseg_67d6_22AC;
+        static short dseg_67d6_22A0;//.possibly unused.
+        
         static short dseg_67d6_22AE;//tmp
-
 
         public static short MotionWeightRelated_dseg_67d6_C8;
 
         public static short MotionRelated_dseg_67d6_775 = 0xF;
 
-        static short SomeTileOrTerrainDatInfo_seg_67d6_D4;
-
-        public static short PlayerCameraYaw_dseg_8294;
-        static short testvalue;
-        public static short PlayerHeadingMajor_dseg_67d6_8296
-        {
-            get
-            {
-                return testvalue;
-            }
-            set
-            {
-                testvalue = value;
-            }
-        }
-
-
+        /// <summary>
+        /// Value is > -1 when on a sliding tile.
+        /// </summary>
+        static short TypeOfSlidingFloor_seg_67d6_D4;
+        
+        public static short PlayerMotionYaw_dseg_67d6_8296;//set by the camera yaw at the start of motion input
 
         public static short PreviousTileState_dseg_67d6_22B4 = 0;
-
-
-        public static short CameraBobZAdjust_dseg_67d6_33CE = 0;
+        
         public static byte RelatedToClockIncrement_67d6_742;
 
         public static bool CameraIsBobbing_dseg_67d6_33c6;
@@ -98,15 +93,15 @@ namespace Underworld
             UWMotionParamArray.instance = motion.playerMotionParams;//in case we step on a jump trap...
 
             //These values are used in camera bobbing/shaking
-            dseg_67d6_33D4_modifiescamera2A = 0;
-            dseg_67d6_33D2_modifiescamera28 = 0;
-            dseg_67d6_33D0_modifiescamera2c = 0;
+            CameraRollModifier_dseg_67d6_33D4 = 0;
+            CameraPitchModifier_dseg_67d6_33D2 = 0;
+            CameraYawModifier_dseg_67d6_33D0_modifiescamera2c = 0;
 
-var x_init = playerMotionParams.x_0;
-var  y_init = playerMotionParams.y_2;
+            // var x_init = playerMotionParams.x_0;
+            // var  y_init = playerMotionParams.y_2;
             playerMotionParams.radius_22 = (byte)commonObjDat.radius(playerdat.playerObject.item_id);
             playerMotionParams.height_23 = (byte)commonObjDat.height(playerdat.playerObject.item_id);
-            var initial = PlayerHeadingMajor_dseg_67d6_8296;
+            var initial = PlayerMotionYaw_dseg_67d6_8296;
             PlayerMotionInitialCalculation_seg008_1B09_7B2(ClockIncrement);
 
             CalculateMotion(
@@ -115,27 +110,27 @@ var  y_init = playerMotionParams.y_2;
                 SpecialMotionHandler: UWMotionParamArray.PlayerMotionHandler_dseg_67d6_26AA);
 
             ApplyPlayerMotion(playerdat.playerObject);
-            if (initial != PlayerHeadingMajor_dseg_67d6_8296)
+            if (initial != PlayerMotionYaw_dseg_67d6_8296)
             {
-                Debug.Print($"{initial} -> {PlayerHeadingMajor_dseg_67d6_8296}");
+                Debug.Print($"{initial} -> {PlayerMotionYaw_dseg_67d6_8296}");
             }
 
             // playerdat.heading_major = PlayerHeadingMajor_dseg_67d6_8296 >> 8;//this hack fixes turning but the heading value here is actually direction of motion so the camera turns during backwards and sideways motion
 
             //Debug.Print($"playerpos is now {playerMotionParams.z_4}");
-            if ((x_init != playerMotionParams.x_0) || (y_init != playerMotionParams.y_2))
-            {
-                Debug.Print($"Move from {x_init},{y_init} to {playerMotionParams.x_0},{playerMotionParams.y_2}   ({playerdat.playerObject.tileX}, {playerdat.playerObject.tileY})  {playerdat.playerObject.xpos},{playerdat.playerObject.ypos} ");
-            }
+            // if ((x_init != playerMotionParams.x_0) || (y_init != playerMotionParams.y_2))
+            // {
+            //     Debug.Print($"Move from {x_init},{y_init} to {playerMotionParams.x_0},{playerMotionParams.y_2}   ({playerdat.playerObject.tileX}, {playerdat.playerObject.tileY})  {playerdat.playerObject.xpos},{playerdat.playerObject.ypos} ");
+            // }
 
             if ((playerMotionParams.tilestate25 & 0x10) == 0)
             {
                 //THIS SECTION SETS UP WALKING CAMERA BOB
-                if ((MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6 >> 2) < playerMotionParams.unk_14)
+                if ((PlayerActualForwardSpeed_1_dseg_67d6_22A6 >> 2) < playerMotionParams.unk_14)
                 {
                     if (MotionInputPressed == 1)
                     {
-                        var cl = (playerMotionParams.unk_14 << 2) / (MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6 >> 1) - 1;
+                        var cl = (playerMotionParams.unk_14 << 2) / (PlayerActualForwardSpeed_1_dseg_67d6_22A6 >> 1) - 1;
                         if (cl < 2)
                         {
                             cl = 2;
@@ -148,7 +143,7 @@ var  y_init = playerMotionParams.y_2;
                 if (MotionInputPressed == 7)
                 {
                     CameraBobZAdjust_dseg_67d6_33CE = -32;
-                    dseg_67d6_33D2_modifiescamera28 = -256;
+                    CameraPitchModifier_dseg_67d6_33D2 = -256;
                     CameraIsBobbing_dseg_67d6_33c6 = true;
                     MotionInputPressed = 0;
                 }
@@ -196,7 +191,7 @@ var  y_init = playerMotionParams.y_2;
                     }
                     //seg008_1B09_81C
                     playerMotionParams.unk_14 += di;
-                    if (playerMotionParams.unk_14 <= MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6)
+                    if (playerMotionParams.unk_14 <= PlayerActualForwardSpeed_1_dseg_67d6_22A6)
                     {
                         if (playerMotionParams.unk_14 < 0)
                         {
@@ -205,7 +200,7 @@ var  y_init = playerMotionParams.y_2;
                     }
                     else
                     {
-                        playerMotionParams.unk_14 = MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6;
+                        playerMotionParams.unk_14 = PlayerActualForwardSpeed_1_dseg_67d6_22A6;
                     }
                 }
             }
@@ -239,7 +234,7 @@ var  y_init = playerMotionParams.y_2;
                         if ((tile.tileType >= 6) && (tile.tileType <= 9))
                         {
                             //seg008_8C8
-                            SomeTileOrTerrainDatInfo_seg_67d6_D4 = (short)(tile.tileType - 6);
+                            TypeOfSlidingFloor_seg_67d6_D4 = (short)(tile.tileType - 6);
                             var4 = 0x2F;
                         }
                         //seg008_8CD
@@ -251,7 +246,7 @@ var  y_init = playerMotionParams.y_2;
                             //seg008_8FE
                             if (playerMotionParams.unk_14 > copyofunk14_dseg_67d6_229C)
                             {
-                                if (SomeTileOrTerrainDatInfo_seg_67d6_D4 == -1)
+                                if (TypeOfSlidingFloor_seg_67d6_D4 == -1)
                                 {
                                     terrainVarA += 8;
                                 }
@@ -272,13 +267,13 @@ HeadingVar6= 0;
                             TypeOfMotionArg0: 2,
                             HeadingArg2: copyofheading1E_dseg_67d6_229A,
                             arg4: copyofunk14_dseg_67d6_229C,
-                            HeadingArg6: PlayerHeadingMajor_dseg_67d6_8296,
+                            HeadingArg6: PlayerMotionYaw_dseg_67d6_8296,
                             INunk14_arg8: playerMotionParams.unk_14,
                             argA: terrainVarA,
                             newHeading1E_argC: out HeadingVar6,
                             newUnk14_argE: out MaybeMovementVectorVar8, test: HeadingVar6);
 
-                        PlayerHeadingMajor_dseg_67d6_8296 = HeadingVar6;
+                        PlayerMotionYaw_dseg_67d6_8296 = HeadingVar6;
                         playerMotionParams.unk_14 = MaybeMovementVectorVar8;
 
                         if (copyofunk14_dseg_67d6_229C + MotionWeightRelated_dseg_67d6_C8 <= playerMotionParams.unk_14)
@@ -314,7 +309,7 @@ HeadingVar6= 0;
                     else
                     {
                         //Seg008_87B
-                        SomeTileOrTerrainDatInfo_seg_67d6_D4 = -1;
+                        TypeOfSlidingFloor_seg_67d6_D4 = -1;
                         ICYFloor_dseg_229E = false;
                         //-->Seg008_9D6
                     }
@@ -325,17 +320,17 @@ HeadingVar6= 0;
                     if ((playerdat.TileState & 0x1) == 0)
                     {
                         //seg008_9D0
-                        SomeTileOrTerrainDatInfo_seg_67d6_D4 = -1;
+                        TypeOfSlidingFloor_seg_67d6_D4 = -1;
                     }
                     else
                     {
                         //seg008_997
-                        var si = SomeTileOrTerrainDatInfo_seg_67d6_D4;
+                        var si = TypeOfSlidingFloor_seg_67d6_D4;
                         //SomeTileOrTerrainDatInfo_seg_67d6_D4 = (short)(((TerrainDatLoader.Terrain[tile.floorTexture] & 0x38) >> 3) - 1);
-                        SomeTileOrTerrainDatInfo_seg_67d6_D4 = (short)(TerrainDatLoader.GetTerrainDataBit345(tile) - 1);
-                        if (SomeTileOrTerrainDatInfo_seg_67d6_D4 == -1)
+                        TypeOfSlidingFloor_seg_67d6_D4 = (short)(TerrainDatLoader.GetTerrainDataBit345(tile) - 1);
+                        if (TypeOfSlidingFloor_seg_67d6_D4 == -1)
                         {
-                            SomeTileOrTerrainDatInfo_seg_67d6_D4 = si;
+                            TypeOfSlidingFloor_seg_67d6_D4 = si;
                         }
                         //seg008_9C9
                         var4 = 0x8D;
@@ -344,18 +339,18 @@ HeadingVar6= 0;
                 }
                 //Seg008_1B08_9D6
                 dseg_67d6_22AE = -1;
-                if (SomeTileOrTerrainDatInfo_seg_67d6_D4 != -1)
+                if (TypeOfSlidingFloor_seg_67d6_D4 != -1)
                 {
                     //seg008_9E3
                     short si = 0;
-                    if (SomeTileOrTerrainDatInfo_seg_67d6_D4 <= 3)
+                    if (TypeOfSlidingFloor_seg_67d6_D4 <= 3)
                     {
                         //seg008_9EC
-                        if (SomeTileOrTerrainDatInfo_seg_67d6_D4 > 1)
+                        if (TypeOfSlidingFloor_seg_67d6_D4 > 1)
                         {
                             si = 0x4000;
                         }
-                        if ((SomeTileOrTerrainDatInfo_seg_67d6_D4 & 0x1) == 0)
+                        if ((TypeOfSlidingFloor_seg_67d6_D4 & 0x1) == 0)
                         {
                             si = (short)(si + 0x8000);
                         }
@@ -363,11 +358,11 @@ HeadingVar6= 0;
 
                     //seg008_A05
                     HeadingVar6 = var4; //note. I had to initialise var4 with 0..
-                    copyofheading1E_dseg_67d6_229A = PlayerHeadingMajor_dseg_67d6_8296;
+                    copyofheading1E_dseg_67d6_229A = PlayerMotionYaw_dseg_67d6_8296;
                     copyofunk14_dseg_67d6_229C = playerMotionParams.unk_14;
                     ApplyWaterCurrentIceSliding(
                         TypeOfMotionArg0: 3,
-                        HeadingArg2: PlayerHeadingMajor_dseg_67d6_8296,
+                        HeadingArg2: PlayerMotionYaw_dseg_67d6_8296,
                         arg4: playerMotionParams.unk_14,
                         HeadingArg6: si,
                         INunk14_arg8: HeadingVar6,
@@ -378,17 +373,17 @@ HeadingVar6= 0;
                     if (var4 != 0x2F)
                     {
                         //seg008_A40
-                        dseg_67d6_22AC = PlayerHeadingMajor_dseg_67d6_8296;
+                        copyofplayerheading_dseg_67d6_22AC = PlayerMotionYaw_dseg_67d6_8296;
                         dseg_67d6_22AE = playerMotionParams.unk_14;
                     }
                     //seg008_A46
-                    if (copyofunk14_dseg_67d6_229C > MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6)
+                    if (copyofunk14_dseg_67d6_229C > PlayerActualForwardSpeed_1_dseg_67d6_22A6)
                     {
                         //seg008_A52
-                        copyofunk14_dseg_67d6_229C = MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6;
+                        copyofunk14_dseg_67d6_229C = PlayerActualForwardSpeed_1_dseg_67d6_22A6;
                     }
                     //seg008_A55
-                    PlayerHeadingMajor_dseg_67d6_8296 = copyofheading1E_dseg_67d6_229A;
+                    PlayerMotionYaw_dseg_67d6_8296 = copyofheading1E_dseg_67d6_229A;
                     playerMotionParams.unk_14 = copyofunk14_dseg_67d6_229C;
                 }
                 // rejoin at Seg008_A61 
@@ -432,11 +427,11 @@ HeadingVar6= 0;
             //UW1 and UW2 realign here.
             if (playerMotionParams.unk_14 == 0)
             {
-                PlayerHeadingMajor_dseg_67d6_8296 = PlayerCameraYaw_dseg_8294;
+                PlayerMotionYaw_dseg_67d6_8296 = PlayerCameraYaw_dseg_8294;
             }
 
             //seg008_1B09_AAA:
-            playerMotionParams.heading_1E = PlayerHeadingMajor_dseg_67d6_8296;
+            playerMotionParams.heading_1E = PlayerMotionYaw_dseg_67d6_8296;
             setAt(UWMotionParamArray.PlayerMotionHandler_dseg_67d6_26AA, 0, 16, 0x0);
 
             if ((playerdat.MagicalMotionAbilities & 0x14) != 0)
@@ -458,7 +453,7 @@ HeadingVar6= 0;
 
             if (dseg_67d6_22AE != -1)
             {
-                PlayerHeadingMajor_dseg_67d6_8296 = dseg_67d6_22AC;
+                PlayerMotionYaw_dseg_67d6_8296 = copyofplayerheading_dseg_67d6_22AC;
                 playerMotionParams.unk_14 = dseg_67d6_22AE;
             }
 
@@ -510,7 +505,7 @@ HeadingVar6= 0;
             //seg008_1B09_E5B
             if (playerMotionParams.unk_26_falldamage != 0)
             {
-                if (playerMotionParams.heading_1E == PlayerHeadingMajor_dseg_67d6_8296)
+                if (playerMotionParams.heading_1E == PlayerMotionYaw_dseg_67d6_8296)
                 {
                     if ((playerdat.TileState & 0x4) == 0)
                     {
@@ -523,15 +518,15 @@ HeadingVar6= 0;
             }
 
             //seg008_1B09_E8A:
-            if (playerMotionParams.heading_1E != PlayerHeadingMajor_dseg_67d6_8296)
+            if (playerMotionParams.heading_1E != PlayerMotionYaw_dseg_67d6_8296)
             {
                 //this may be uw2 specific
-                PlayerHeadingMajor_dseg_67d6_8296 = playerMotionParams.heading_1E;
+                PlayerMotionYaw_dseg_67d6_8296 = playerMotionParams.heading_1E;
 
                 var si = playerMotionParams.heading_1E - (dseg_67d6_D0 << 0xE);
                 if ((playerMotionParams.unk_17 & 0x80) != 0)
                 {
-                    if (SomeTileOrTerrainDatInfo_seg_67d6_D4 == -1)
+                    if (TypeOfSlidingFloor_seg_67d6_D4 == -1)
                     {
                         if (Math.Abs(PlayerCameraYaw_dseg_8294 - si) >= 0x600)
                         {
@@ -607,23 +602,23 @@ HeadingVar6= 0;
             {//Seg008_DDB
                 if ((playerdat.TileState & 0x1) == 0)
                 {
-                    Examine_dseg_D3 = 0;
+                    PlayerIsSliding_dseg_D3 = false;
                 }
                 else
                 {
-                    if (SomeTileOrTerrainDatInfo_seg_67d6_D4 == -1)
+                    if (TypeOfSlidingFloor_seg_67d6_D4 == -1)
                     {
-                        Examine_dseg_D3 = 0;
+                        PlayerIsSliding_dseg_D3 = false;
                     }
                     else
                     {
-                        Examine_dseg_D3 = 1; //subject to water current/ice sliding
+                        PlayerIsSliding_dseg_D3 = true; //subject to water current/ice sliding
                     }
                 }
             }
             else
             {
-                Examine_dseg_D3 = 1;
+                PlayerIsSliding_dseg_D3 = true;
             }
         }
 
@@ -652,8 +647,8 @@ HeadingVar6= 0;
                         {
                             PlayerCameraYaw_dseg_8294 += (short)((((MotionRelated_dseg_67d6_775 * ClockIncrement)) * (PlayerMotionHeading_77E / 4)) / 4);
                             di = PlayerCameraYaw_dseg_8294;
-                            PlayerHeadingMajor_dseg_67d6_8296 = PlayerCameraYaw_dseg_8294;
-                            arg4 = (short)(((PlayerMotionWalk_77C >> 2) * MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6) / 0x20);
+                            PlayerMotionYaw_dseg_67d6_8296 = PlayerCameraYaw_dseg_8294;
+                            arg4 = (short)(((PlayerMotionWalk_77C >> 2) * PlayerActualForwardSpeed_1_dseg_67d6_22A6) / 0x20);
                             dseg_67d6_D0 = 0;
                             break;
                         }
@@ -670,8 +665,8 @@ HeadingVar6= 0;
                                         {
                                             //seg008_1B09_1158:
                                             di = PlayerCameraYaw_dseg_8294;
-                                            PlayerHeadingMajor_dseg_67d6_8296 = di;
-                                            arg4 = (short)(MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6 / 2);
+                                            PlayerMotionYaw_dseg_67d6_8296 = di;
+                                            arg4 = (short)(PlayerActualForwardSpeed_1_dseg_67d6_22A6 / 2);
                                             playerMotionParams.unk_14 = arg4;
                                             dseg_67d6_D0 = 0;
                                         }
@@ -702,25 +697,25 @@ HeadingVar6= 0;
                     case 8://walk backwards
                         {
                             di = (short)(di - 0x8000);
-                            arg4 = MaybePlayerActualBackwardsSpeed_3_dseg_67d6_22AA;
+                            arg4 = PlayerActualBackwardsSpeed_3_dseg_67d6_22AA;
                             dseg_67d6_D0 = -2;
-                            PlayerHeadingMajor_dseg_67d6_8296 = di;
+                            PlayerMotionYaw_dseg_67d6_8296 = di;
                             break;
                         }
                     case 9://slide left
                         {
                             di = (short)(di - 0x4000);
-                            arg4 = MaybePlayerActualSlideSpeed_2_dseg_67d6_22A8;
+                            arg4 = PlayerActualSlideSpeed_2_dseg_67d6_22A8;
                             dseg_67d6_D0 = -1;
-                            PlayerHeadingMajor_dseg_67d6_8296 = di;
+                            PlayerMotionYaw_dseg_67d6_8296 = di;
                             break;
                         }
                     case 0xA://slide right
                         {
                             di = (short)(di + 0x4000);
-                            arg4 = MaybePlayerActualSlideSpeed_2_dseg_67d6_22A8;
+                            arg4 = PlayerActualSlideSpeed_2_dseg_67d6_22A8;
                             dseg_67d6_D0 = 1;
-                            PlayerHeadingMajor_dseg_67d6_8296 = di;
+                            PlayerMotionYaw_dseg_67d6_8296 = di;
                             break;
                         }
                     case 0xC://flying up?
@@ -728,7 +723,7 @@ HeadingVar6= 0;
                             dseg_67d6_D0 = 0;
                             playerMotionParams.unk_a_pitch = 0x8D;
                             playerMotionParams.unk_10_Z = 0;
-                            PlayerHeadingMajor_dseg_67d6_8296 = di;
+                            PlayerMotionYaw_dseg_67d6_8296 = di;
                             break;
                         }
                     case 0xD://flying down?
@@ -736,12 +731,12 @@ HeadingVar6= 0;
                             dseg_67d6_D0 = 0;
                             playerMotionParams.unk_a_pitch = -141;
                             playerMotionParams.unk_10_Z = 0;
-                            PlayerHeadingMajor_dseg_67d6_8296 = di;
+                            PlayerMotionYaw_dseg_67d6_8296 = di;
                             break;
                         }
                     default:
                         {
-                            PlayerHeadingMajor_dseg_67d6_8296 = di;
+                            PlayerMotionYaw_dseg_67d6_8296 = di;
                             break;
                         }
                 }
@@ -867,7 +862,7 @@ HeadingVar6= 0;
         public static void RefreshPlayerTileState()
         {
             ProcessPlayerTileState(motion.playerMotionParams.tilestate25, 1);
-            motion.Examine_dseg_D3 = 1;
+            PlayerIsSliding_dseg_D3 = true;
         }
 
         public static void UpdateMotionStateAndSwimming(int arg0)
@@ -913,9 +908,9 @@ HeadingVar6= 0;
                 si = 4 + (playerdat.Swimming / 2);
             }
             //seg008_1B09_12F0: 
-            motion.MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6 = (short)((motion.MaybeBaseForwardSpeed_1_dseg_67d6_CE * si) / 0x14);
-            motion.MaybePlayerActualSlideSpeed_2_dseg_67d6_22A8 = (short)((motion.MaybeBaseSlideSpeed_2_dseg_67d6_CC * si) / 0x14);
-            motion.MaybePlayerActualBackwardsSpeed_3_dseg_67d6_22AA = (short)((motion.MaybeBaseBackwardsSpeed_3_dseg_67d6_CA * si) / 0x14);
+            motion.PlayerActualForwardSpeed_1_dseg_67d6_22A6 = (short)((motion.BaseForwardSpeed_1_dseg_67d6_CE * si) / 0x14);
+            motion.PlayerActualSlideSpeed_2_dseg_67d6_22A8 = (short)((motion.BaseSlideSpeed_2_dseg_67d6_CC * si) / 0x14);
+            motion.PlayerActualBackwardsSpeed_3_dseg_67d6_22AA = (short)((motion.BaseBackwardsSpeed_3_dseg_67d6_CA * si) / 0x14);
 
             if (arg0 >= 4)
             {
@@ -1000,9 +995,9 @@ HeadingVar6= 0;
             if (playerdat.TileState != 0)
             {
                 CameraIsBobbing_dseg_67d6_33c6 = true; //probably means the camera will need to be adjusted.
-                dseg_67d6_33D4_modifiescamera2A = 0;//possibly the camera adjustments
-                dseg_67d6_33D2_modifiescamera28 = 0;
-                dseg_67d6_33D0_modifiescamera2c = 0; // this moves the camera forward.
+                CameraRollModifier_dseg_67d6_33D4 = 0;//possibly the camera adjustments
+                CameraPitchModifier_dseg_67d6_33D2 = 0;
+                CameraYawModifier_dseg_67d6_33D0_modifiescamera2c = 0; // this moves the camera forward.
 
                 if ((playerdat.TileState & 0x11) != 0)
                 {
@@ -1011,7 +1006,7 @@ HeadingVar6= 0;
                     if (playerdat.SwimCounter > 0x50)
                     {
                         //seg35_A6E
-                        var1 = (playerMotionParams.unk_14 << 2) / (MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6 >> 1) - 3;
+                        var1 = (playerMotionParams.unk_14 << 2) / (PlayerActualForwardSpeed_1_dseg_67d6_22A6 >> 1) - 3;
                         if (var1 < 1)
                         {
                             var1 = 1;
@@ -1020,18 +1015,18 @@ HeadingVar6= 0;
                         if (playerMotionParams.unk_14 != 0)
                         {
                             //Seg31AB_AAD                            
-                            dseg_67d6_33D4_modifiescamera2A = (short)((CameraBobArray[var2_incrementrelated] * var1) << 6);
+                            CameraRollModifier_dseg_67d6_33D4 = (short)((CameraBobArray[var2_incrementrelated] * var1) << 6);
                         }
                         else
                         {
-                            dseg_67d6_33D4_modifiescamera2A = (short)((Rng.r.Next(0x7FFF) & 0x1FF) - 256);
+                            CameraRollModifier_dseg_67d6_33D4 = (short)((Rng.r.Next(0x7FFF) & 0x1FF) - 256);
                         }
 
                         //seg35_AC5
                         CameraBobZAdjust_dseg_67d6_33CE += (short)((CameraBobArray[(var2_incrementrelated + 2) & 0xF] << 1) * var1);
 
-                        dseg_67d6_33D0_modifiescamera2c = (short)(((Rng.r.Next(0x7FFF) & 0x7F) - 64) * var1);
-                        dseg_67d6_33D2_modifiescamera28 = (short)(((Rng.r.Next(0x7FFF) & 0x7F) - 64) * var1);
+                        CameraYawModifier_dseg_67d6_33D0_modifiescamera2c = (short)(((Rng.r.Next(0x7FFF) & 0x7F) - 64) * var1);
+                        CameraPitchModifier_dseg_67d6_33D2 = (short)(((Rng.r.Next(0x7FFF) & 0x7F) - 64) * var1);
 
                         //Debug.Print($"swimbob {CameraBobZAdjust_dseg_67d6_33CE},{dseg_67d6_33D4_modifiescamera2A}");
                         //Debug.Print($"swim adjust by {dseg_67d6_33D0_modifiescamera2c},{dseg_67d6_33D2_modifiescamera28},{dseg_67d6_33D4_modifiescamera2A}");
@@ -1128,15 +1123,15 @@ HeadingVar6= 0;
                         }
                         //Seg_C40
                         var2_incrementrelated = 0;
-                        dseg_67d6_33D0_modifiescamera2c = (short)(((Rng.r.Next(0x7FFF) & 0x1FF) - 256) << 2);
+                        CameraYawModifier_dseg_67d6_33D0_modifiescamera2c = (short)(((Rng.r.Next(0x7FFF) & 0x1FF) - 256) << 2);
                     }
                     //seg35_C56
 
                     var1 += var2_incrementrelated;
-                    dseg_67d6_33D0_modifiescamera2c = (short)(var1 * ((Rng.r.Next(0x7FFF) & 0xFF) - 128));
-                    dseg_67d6_33D2_modifiescamera28 = (short)(var1 * ((Rng.r.Next(0x7FFF) & 0x7F) - 64));
-                    dseg_67d6_33D4_modifiescamera2A = (short)(var1 * ((Rng.r.Next(0x7FFF) & 0x1FF) - 256));
-                    Debug.Print($"Screenshake by {dseg_67d6_33D0_modifiescamera2c},{dseg_67d6_33D2_modifiescamera28},{dseg_67d6_33D4_modifiescamera2A}");
+                    CameraYawModifier_dseg_67d6_33D0_modifiescamera2c = (short)(var1 * ((Rng.r.Next(0x7FFF) & 0xFF) - 128));
+                    CameraPitchModifier_dseg_67d6_33D2 = (short)(var1 * ((Rng.r.Next(0x7FFF) & 0x7F) - 64));
+                    CameraRollModifier_dseg_67d6_33D4 = (short)(var1 * ((Rng.r.Next(0x7FFF) & 0x1FF) - 256));
+                    Debug.Print($"Screenshake by {CameraYawModifier_dseg_67d6_33D0_modifiescamera2c},{CameraPitchModifier_dseg_67d6_33D2},{CameraRollModifier_dseg_67d6_33D4}");
                 }
             }
             else
