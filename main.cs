@@ -441,7 +441,7 @@ public partial class main : Node3D
 						||
 						(motion.playerMotionParams.unk_c_X != 0)
 						||
-						(motion.PlayerIsSliding_dseg_D3 != false)
+						(motion.PlayerMotionUpdateRequired_dseg_D3 != false)
 					)
 					{
 						//when any forced movement or player input is not 0
@@ -532,7 +532,7 @@ public partial class main : Node3D
 			||
 			(motion.playerMotionParams.unk_c_X != 0)
 			||
-			(motion.PlayerIsSliding_dseg_D3 != false)
+			(motion.PlayerMotionUpdateRequired_dseg_D3 != false)
 		)
 		{
 			if (EasyMove == false)

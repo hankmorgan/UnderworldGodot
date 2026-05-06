@@ -239,6 +239,7 @@ namespace Underworld
                     SetAt16(0x3f + toMoveFromIndex * 2, 0);//clear data.
                }
                ActiveSpellEffectCount--;
+               motion.PlayerMotionUpdateRequired_dseg_D3 = true;
           }
 
 

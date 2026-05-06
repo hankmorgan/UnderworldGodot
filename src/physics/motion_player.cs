@@ -21,7 +21,7 @@ namespace Underworld
 
         
         static short dseg_67d6_D0 = 0;
-        public static bool PlayerIsSliding_dseg_D3 = false;
+        public static bool PlayerMotionUpdateRequired_dseg_D3 = false;
 
 
         //Camera Globals
@@ -602,23 +602,23 @@ HeadingVar6= 0;
             {//Seg008_DDB
                 if ((playerdat.TileState & 0x1) == 0)
                 {
-                    PlayerIsSliding_dseg_D3 = false;
+                    PlayerMotionUpdateRequired_dseg_D3 = false;
                 }
                 else
                 {
                     if (TypeOfSlidingFloor_seg_67d6_D4 == -1)
                     {
-                        PlayerIsSliding_dseg_D3 = false;
+                        PlayerMotionUpdateRequired_dseg_D3 = false;
                     }
                     else
                     {
-                        PlayerIsSliding_dseg_D3 = true; //subject to water current/ice sliding
+                        PlayerMotionUpdateRequired_dseg_D3 = true; //subject to water current/ice sliding
                     }
                 }
             }
             else
             {
-                PlayerIsSliding_dseg_D3 = true;
+                PlayerMotionUpdateRequired_dseg_D3 = true;
             }
         }
 
@@ -862,7 +862,7 @@ HeadingVar6= 0;
         public static void RefreshPlayerTileState()
         {
             ProcessPlayerTileState(motion.playerMotionParams.tilestate25, 1);
-            PlayerIsSliding_dseg_D3 = true;
+            PlayerMotionUpdateRequired_dseg_D3 = true;
         }
 
         public static void UpdateMotionStateAndSwimming(int arg0)
