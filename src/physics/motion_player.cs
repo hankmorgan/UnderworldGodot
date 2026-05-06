@@ -110,10 +110,10 @@ namespace Underworld
                 SpecialMotionHandler: UWMotionParamArray.PlayerMotionHandler_dseg_67d6_26AA);
 
             ApplyPlayerMotion(playerdat.playerObject);
-            if (initial != PlayerMotionYaw_dseg_67d6_8296)
-            {
-                Debug.Print($"{initial} -> {PlayerMotionYaw_dseg_67d6_8296}");
-            }
+            // if (initial != PlayerMotionYaw_dseg_67d6_8296)
+            // {
+            //     Debug.Print($"{initial} -> {PlayerMotionYaw_dseg_67d6_8296}");
+            // }
 
             // playerdat.heading_major = PlayerHeadingMajor_dseg_67d6_8296 >> 8;//this hack fixes turning but the heading value here is actually direction of motion so the camera turns during backwards and sideways motion
 
@@ -458,13 +458,8 @@ HeadingVar6= 0;
             }
 
             playerObj.xpos = (short)((playerMotionParams.x_0 >> 5) & 0x7);
-            var orig = playerObj.ypos;
-            
             playerObj.ypos = (short)((playerMotionParams.y_2 >> 5) & 0x7);
-            if (playerObj.ypos != orig)
-            {
-                Debug.Print("Change of ypos");
-            }
+
             //Addition. change of zpos
             playerObj.zpos = (short)(playerMotionParams.z_4 >> 3);
 
