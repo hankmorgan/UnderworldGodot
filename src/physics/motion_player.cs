@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 
 namespace Underworld
@@ -36,8 +35,6 @@ namespace Underworld
         public static short dseg_67d6_33D0_modifiescamera2c;//changes the camera angle that is set by PlayerHeadingMinor8294
         public static short dseg_67d6_33D2_modifiescamera28;//changes the camera angle that is set by PlayerHeadingRelated33D6        
         public static short dseg_67d6_33D4_modifiescamera2A;//changes the camera angle that is set by PlayerHeadingRelated33D8, i need to figure these out.
-
-
         static short copyofheading1E_dseg_67d6_229A;
         static short copyofunk14_dseg_67d6_229C;
         public static short dseg_67d6_22A2;
@@ -53,7 +50,7 @@ namespace Underworld
 
         static short dseg_67d6_22A0;
         static short dseg_67d6_22AC;
-        static short dseg_67d6_22AE = -1;//tmp
+        static short dseg_67d6_22AE;//tmp
 
 
         public static short MotionWeightRelated_dseg_67d6_C8;
@@ -63,7 +60,20 @@ namespace Underworld
         static short SomeTileOrTerrainDatInfo_seg_67d6_D4;
 
         public static short PlayerCameraYaw_dseg_8294;
-        public static short PlayerHeadingMajor_dseg_67d6_8296;
+        static short testvalue;
+        public static short PlayerHeadingMajor_dseg_67d6_8296
+        {
+            get
+            {
+                return testvalue;
+            }
+            set
+            {
+                testvalue = value;
+            }
+        }
+
+
 
         public static short PreviousTileState_dseg_67d6_22B4 = 0;
 
@@ -92,10 +102,11 @@ namespace Underworld
             dseg_67d6_33D2_modifiescamera28 = 0;
             dseg_67d6_33D0_modifiescamera2c = 0;
 
-
+var x_init = playerMotionParams.x_0;
+var  y_init = playerMotionParams.y_2;
             playerMotionParams.radius_22 = (byte)commonObjDat.radius(playerdat.playerObject.item_id);
             playerMotionParams.height_23 = (byte)commonObjDat.height(playerdat.playerObject.item_id);
-
+            var initial = PlayerHeadingMajor_dseg_67d6_8296;
             PlayerMotionInitialCalculation_seg008_1B09_7B2(ClockIncrement);
 
             CalculateMotion(
@@ -104,14 +115,18 @@ namespace Underworld
                 SpecialMotionHandler: UWMotionParamArray.PlayerMotionHandler_dseg_67d6_26AA);
 
             ApplyPlayerMotion(playerdat.playerObject);
+            if (initial != PlayerHeadingMajor_dseg_67d6_8296)
+            {
+                Debug.Print($"{initial} -> {PlayerHeadingMajor_dseg_67d6_8296}");
+            }
 
-           // playerdat.heading_major = PlayerHeadingMajor_dseg_67d6_8296 >> 8;//this hack fixes turning but the heading value here is actually direction of motion so the camera turns during backwards and sideways motion
+            // playerdat.heading_major = PlayerHeadingMajor_dseg_67d6_8296 >> 8;//this hack fixes turning but the heading value here is actually direction of motion so the camera turns during backwards and sideways motion
 
             //Debug.Print($"playerpos is now {playerMotionParams.z_4}");
-            // if ((x_init != playerMotionParams.x_0) || (y_init != playerMotionParams.y_2))
-            // {
-            //     Debug.Print($"Move from {x_init},{y_init} to {playerMotionParams.x_0},{playerMotionParams.y_2}   ({playerdat.playerObject.tileX}, {playerdat.playerObject.tileY})  {playerdat.playerObject.xpos},{playerdat.playerObject.ypos} ");
-            // }
+            if ((x_init != playerMotionParams.x_0) || (y_init != playerMotionParams.y_2))
+            {
+                Debug.Print($"Move from {x_init},{y_init} to {playerMotionParams.x_0},{playerMotionParams.y_2}   ({playerdat.playerObject.tileX}, {playerdat.playerObject.tileY})  {playerdat.playerObject.xpos},{playerdat.playerObject.ypos} ");
+            }
 
             if ((playerMotionParams.tilestate25 & 0x10) == 0)
             {
@@ -147,7 +162,7 @@ namespace Underworld
         }
         static void PlayerMotionInitialCalculation_seg008_1B09_7B2(short ClockIncrement)
         {
-            //todo
+
             short di = 0;
             short var2 = 0;
             playerMotionParams.unk_16_relatedtoPitch = 5;
@@ -209,7 +224,7 @@ namespace Underworld
                 short MaybeMovementVectorVar8;
                 var tile = UWTileMap.current_tilemap.Tiles[playerdat.playerObject.tileX, playerdat.playerObject.tileY];
                 //seg008_1B09_862:
-                //TODO UW2 specific code for ice and water currents
+
                 if ((playerdat.TileState & 0x4) != 0)
                 {
                     //seg008_870 -> ice/snow                    
@@ -251,7 +266,7 @@ namespace Underworld
                             //seg008_8F8
                             terrainVarA += 0x10;
                         }
-
+HeadingVar6= 0;
                         //seg008_918
                         ApplyWaterCurrentIceSliding(
                             TypeOfMotionArg0: 2,
@@ -261,7 +276,7 @@ namespace Underworld
                             INunk14_arg8: playerMotionParams.unk_14,
                             argA: terrainVarA,
                             newHeading1E_argC: out HeadingVar6,
-                            newUnk14_argE: out MaybeMovementVectorVar8);
+                            newUnk14_argE: out MaybeMovementVectorVar8, test: HeadingVar6);
 
                         PlayerHeadingMajor_dseg_67d6_8296 = HeadingVar6;
                         playerMotionParams.unk_14 = MaybeMovementVectorVar8;
@@ -317,7 +332,7 @@ namespace Underworld
                         //seg008_997
                         var si = SomeTileOrTerrainDatInfo_seg_67d6_D4;
                         //SomeTileOrTerrainDatInfo_seg_67d6_D4 = (short)(((TerrainDatLoader.Terrain[tile.floorTexture] & 0x38) >> 3) - 1);
-                        SomeTileOrTerrainDatInfo_seg_67d6_D4 = (short)(TerrainDatLoader.GetTerrainDataBit345(tile)-1);
+                        SomeTileOrTerrainDatInfo_seg_67d6_D4 = (short)(TerrainDatLoader.GetTerrainDataBit345(tile) - 1);
                         if (SomeTileOrTerrainDatInfo_seg_67d6_D4 == -1)
                         {
                             SomeTileOrTerrainDatInfo_seg_67d6_D4 = si;
@@ -358,7 +373,7 @@ namespace Underworld
                         INunk14_arg8: HeadingVar6,
                         argA: 0x20,
                         newHeading1E_argC: out copyofheading1E_dseg_67d6_229A,
-                        newUnk14_argE: out copyofunk14_dseg_67d6_229C);
+                        newUnk14_argE: out copyofunk14_dseg_67d6_229C, test:copyofheading1E_dseg_67d6_229A);
 
                     if (var4 != 0x2F)
                     {
@@ -448,7 +463,13 @@ namespace Underworld
             }
 
             playerObj.xpos = (short)((playerMotionParams.x_0 >> 5) & 0x7);
+            var orig = playerObj.ypos;
+            
             playerObj.ypos = (short)((playerMotionParams.y_2 >> 5) & 0x7);
+            if (playerObj.ypos != orig)
+            {
+                Debug.Print("Change of ypos");
+            }
             //Addition. change of zpos
             playerObj.zpos = (short)(playerMotionParams.z_4 >> 3);
 
@@ -583,7 +604,7 @@ namespace Underworld
 
             //likely uw2 only
             if ((playerdat.TileState & 0x4) == 0)
-            {
+            {//Seg008_DDB
                 if ((playerdat.TileState & 0x1) == 0)
                 {
                     Examine_dseg_D3 = 0;
@@ -596,7 +617,7 @@ namespace Underworld
                     }
                     else
                     {
-                        Examine_dseg_D3 = 1;
+                        Examine_dseg_D3 = 1; //subject to water current/ice sliding
                     }
                 }
             }
@@ -629,9 +650,9 @@ namespace Underworld
                         arg4 = 0; break;
                     case 1://walk,run,turn
                         {
-                            PlayerCameraYaw_dseg_8294 += (short)((((MotionRelated_dseg_67d6_775 * ClockIncrement)) * (PlayerMotionHeading_77E / 4))/4);
+                            PlayerCameraYaw_dseg_8294 += (short)((((MotionRelated_dseg_67d6_775 * ClockIncrement)) * (PlayerMotionHeading_77E / 4)) / 4);
                             di = PlayerCameraYaw_dseg_8294;
-                            PlayerHeadingMajor_dseg_67d6_8296 = di;
+                            PlayerHeadingMajor_dseg_67d6_8296 = PlayerCameraYaw_dseg_8294;
                             arg4 = (short)(((PlayerMotionWalk_77C >> 2) * MaybePlayerActualForwardSpeed_1_dseg_67d6_22A6) / 0x20);
                             dseg_67d6_D0 = 0;
                             break;
@@ -1126,7 +1147,7 @@ namespace Underworld
             }
         }
 
-        static void ApplyWaterCurrentIceSliding(short TypeOfMotionArg0, short HeadingArg2, short arg4, short HeadingArg6, short INunk14_arg8, short argA, out short newHeading1E_argC, out short newUnk14_argE)
+        static void ApplyWaterCurrentIceSliding(short TypeOfMotionArg0, short HeadingArg2, short arg4, short HeadingArg6, short INunk14_arg8, short argA, out short newHeading1E_argC, out short newUnk14_argE, short test)
         {
             if (argA > 0)
             {
@@ -1201,9 +1222,15 @@ namespace Underworld
                     var12 = var12 / newUnk14_argE;
                     var16 = var16 / newUnk14_argE;
 
-                    varE  = var12;
+                    varE = var12;
                     di = var16;
+                    
+                    // if (di == -27336)
+                    // {
+                    //     Debug.Print("HERE");//varE =-18284
+                    // }
                     newHeading1E_argC = MaybeGetTangent_seg021_22FD_EFB((short)varE, (short)di);
+                    //Debug.Print($"tangent vare{varE.ToString("X")}, sr di {di.ToString("X")} = {newHeading1E_argC.ToString("X")}");
                 }
             }
             else
