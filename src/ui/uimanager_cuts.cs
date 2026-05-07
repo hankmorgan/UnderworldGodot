@@ -171,7 +171,7 @@ namespace Underworld
         /// vpOffsetY parameter: scene height = 200 - vpOffsetY.
         /// </summary>
         public static void DisplayCutsImage(CutsLoader cuts, int imageNo, TextureRect targetControl,
-            int cropHeight = 200)
+            int cropHeight = 200, bool useSingleRedChannel = false)
         {
             var srcTex = cuts.LoadImageAt(imageNo);
             if (cropHeight < 200 && srcTex != null)
@@ -189,6 +189,12 @@ namespace Underworld
             else
             {
                 targetControl.Texture = srcTex;
+                if (useSingleRedChannel)
+                {
+                    //Use a material if the source image is a singlered channel. This applies when the image is windows cutscene. eg repair animation.
+                    targetControl.Material = cuts.GetMaterial(imageNo);    
+                }
+                
             }
         }
 

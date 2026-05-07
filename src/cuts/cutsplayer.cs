@@ -240,7 +240,7 @@ namespace Underworld
         /// </summary>
         /// <param name="CutsceneNo">The index number of the cutscene to play</param>
         /// <param name="callBackMethod">Function to call after the cutscene has played</param>
-        public static void PlayCutscene(int CutsceneNo, CallBacks.CutsceneCallBack callBackMethod)
+        public static void PlayCutscene(int CutsceneNo, CallBacks.CutsceneCallBack callBackMethod, bool useSingleRedChannel = false)
         {
             cancelRequested = false;
             crngRanges = null;
@@ -272,7 +272,7 @@ namespace Underworld
 
             // Start the cutscene
             _ = Coroutine.Run(
-                RunCutscene(CutsceneNo, callBackMethod),
+                RunCutscene(CutsceneNo: CutsceneNo, callBackMethod: callBackMethod, useSingleRedChannel: useSingleRedChannel),
                 main.instance);
         }
 
@@ -873,7 +873,7 @@ namespace Underworld
         /// Main cutscene playback coroutine. Processes commands in segments.
         /// Each segment ends at a frame-set (func 5) or end-cutsc (func 6).
         /// </summary>
-        public static IEnumerator RunCutscene(int CutsceneNo, CallBacks.CutsceneCallBack callBackMethod = null)
+        public static IEnumerator RunCutscene(int CutsceneNo, CallBacks.CutsceneCallBack callBackMethod = null, bool useSingleRedChannel = false)
         {
             IsPlaying = true;
             TextureRect cutscontrol;
@@ -947,7 +947,7 @@ namespace Underworld
             var firstFile = System.IO.Path.Combine(BasePath, "CUTS", GetsCutsceneFileName(CutsceneNo, 1));
             if (System.IO.File.Exists(firstFile))
             {
-                cuts = new CutsLoader(firstFile);
+                cuts = new CutsLoader(firstFile, useSingleRedChannel);
             }
             InitCrngCycling(cuts);
 
@@ -1207,8 +1207,12 @@ namespace Underworld
                             {
                                 uimanager.DisplayCutsImage(
                                     cuts: cuts, imageNo: FrameNo++, targetControl: cutscontrol,
-                                    cropHeight: SceneDisplayH);
+                                    cropHeight: SceneDisplayH, useSingleRedChannel: useSingleRedChannel);
                             }
+                        }
+                        if (cancelRequested)
+                        {
+                            goto cleanup;
                         }
                         yield return new WaitForSeconds(frameTime);
                         if (cancelRequested)
@@ -1268,7 +1272,7 @@ namespace Underworld
                                 {
                                     uimanager.DisplayCutsImage(
                                         cuts: cuts, imageNo: FrameNo++, targetControl: cutscontrol,
-                                        cropHeight: SceneDisplayH);
+                                        cropHeight: SceneDisplayH, useSingleRedChannel: useSingleRedChannel);
                                 }
                             }
                             yield return new WaitForSeconds(frameTime);
@@ -1366,7 +1370,7 @@ namespace Underworld
                                         if (FrameNo > cuts.ImageCache.GetUpperBound(0))
                                             FrameNo = 0;
                                         uimanager.DisplayCutsImage(
-                                            cuts: cuts, imageNo: FrameNo++, targetControl: cutscontrol);
+                                            cuts: cuts, imageNo: FrameNo++, targetControl: cutscontrol, useSingleRedChannel: useSingleRedChannel);
                                     }
                                     if (cancelRequested)
                                     {

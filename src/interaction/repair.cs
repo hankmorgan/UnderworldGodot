@@ -92,11 +92,11 @@ namespace Underworld
 
                     if (PlayerRepair)
                     {
-                        Debug.Print("play repair cutscene");
                         Debug.Print("CHANGE 0x1D of player critter data to 0xF during repair?? This is the search distances value...");
                         if (_RES != GAME_UW2)
-                        {
-                            cutsplayer.PlayCutscene(260, DoRepair);
+                        {                 
+                            uimanager.EnableDisable(uimanager.instance.uwviewport,false);           
+                            cutsplayer.PlayCutscene(CutsceneNo: 260, callBackMethod: DoRepair, useSingleRedChannel:true);
                         }
                         else
                         {
@@ -138,6 +138,7 @@ namespace Underworld
 
         private static void DoRepair()
         {
+            uimanager.EnableDisable(uimanager.instance.uwviewport,true); 
             playerdat.AdvanceTime(CallBackRepairTime);
 
             switch (CallBackRepairResult)
