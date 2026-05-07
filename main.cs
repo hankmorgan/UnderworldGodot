@@ -79,7 +79,7 @@ public partial class main : Node3D
 		}
 
 
-		// _ = Peaky.Coroutines.Coroutine.Run(PITTIMER(), main.instance);
+		_ = Peaky.Coroutines.Coroutine.Run(PITTIMER(), main.instance);
 
 	}
 
