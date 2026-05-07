@@ -304,7 +304,7 @@ namespace Underworld
 
 
         /// <summary>
-        /// heading minor and heading major. this is getting confusing...
+        /// Full camera Yaw
         /// </summary>
         public static int heading_full
         {
@@ -319,21 +319,21 @@ namespace Underworld
         }
 
 
-        public static int heading_minor
-        {
-            get
-            {
-                return GetAt(0x5B);
-            }
-            set
-            {
-                SetAt(0x5B, (byte)value);
-            }
-        }
+        // public static int heading_minor_camerayaw
+        // {
+        //     get
+        //     {
+        //         return GetAt(0x5B);
+        //     }
+        //     set
+        //     {
+        //         SetAt(0x5B, (byte)value);
+        //     }
+        // }
 
 
         /// <summary>
-        /// Note this is not the full heading value! 
+        /// Note this is not the full heading value but the upper nibble of the camera yaw.
         /// </summary>
         public static int heading_major
         {
