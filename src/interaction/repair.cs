@@ -11,7 +11,10 @@ namespace Underworld
     public class repair : UWClass
     {
 
-
+        static uwObject CallBackItemToRepair; 
+        static bool CallBackWorldObject; 
+        static int CallBackRepairTime; 
+        static int CallBackRepairResult;
 
         /// <summary>
         /// Prompts the player 
@@ -22,7 +25,7 @@ namespace Underworld
         /// <param name="PlayerRepair"></param>
         /// <returns></returns>
         public static IEnumerator RepairLogic(uwObject itemToRepair, int repairskill, bool WorldObject, bool PlayerRepair = true)
-        {
+        {         
             if (PlayerRepair)
             {
                 //do estimate of difficulty
@@ -79,54 +82,26 @@ namespace Underworld
                     //Attempt repair
                     var repairtime = Math.Min(15, ((itemToRepair.Durability * 3) - repairskill) - (itemToRepair.quality / 2));
                     repairtime = Math.Abs(repairtime * 60);
-                    var result = RepairObject(repairskill, itemToRepair);
+                    var result = RepairObjectSkillCheck(repairskill, itemToRepair);
+                    
+                    //Set variables for the function callback.
+                    CallBackItemToRepair = itemToRepair;
+                    CallBackRepairResult = result;
+                    CallBackRepairTime = repairtime;
+                    CallBackWorldObject = WorldObject;
+
                     if (PlayerRepair)
                     {
                         Debug.Print("play repair cutscene");
-                        Debug.Print("BANG BANG BANG. I THINK A LOAD OF NOISE HAPPENS HERE. CHANGE 0x1D of player critter data to 0xF ");
-                        playerdat.AdvanceTime(repairtime);
-
-                        switch (result)
+                        Debug.Print("CHANGE 0x1D of player critter data to 0xF during repair?? This is the search distances value...");
+                        if (_RES != GAME_UW2)
                         {
-                            case -2: //critical fail
-                                {
-                                    uimanager.AddToMessageScroll($"{GameStrings.GetString(1, GameStrings.str_you_destroyed_the_)}{GameStrings.GetSimpleObjectNameUW(itemToRepair.item_id)}");
-                                    if (WorldObject)
-                                    {
-                                        ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(itemToRepair.tileX, itemToRepair.tileY, itemToRepair.index);
-                                    }
-                                    else
-                                    {
-                                        playerdat.RemoveFromInventory(itemToRepair.index, true, true);
-                                    }
-                                    break;
-                                }
-                            case -1:// crit fail with parital damage
-                            {
-                                uimanager.AddToMessageScroll($"{GameStrings.GetString(1, GameStrings.str_you_damaged_the_)}{GameStrings.GetSimpleObjectNameUW(itemToRepair.item_id)}");
-                                break;
-                            }
-                            case 0://unable to repair
-                                {
-                                    break;
-                                }
-                            case 1:
-                                {
-                                    uimanager.AddToMessageScroll($"{GameStrings.GetString(1, GameStrings.str_your_attempt_has_no_effect_on_the_)}{GameStrings.GetSimpleObjectNameUW(itemToRepair.item_id)}");
-                                    break;
-                                }
-                            case 2://partial repair
-                                {
-                                    uimanager.AddToMessageScroll($"{GameStrings.GetString(1, GameStrings.str_you_have_partially_repaired_the_)}{GameStrings.GetSimpleObjectNameUW(itemToRepair.item_id)}");
-                                    break;
-                                }
-                            case 3://full repair
-                                {
-                                    uimanager.AddToMessageScroll($"{GameStrings.GetString(1, GameStrings.str_you_have_fully_repaired_the_)}{GameStrings.GetSimpleObjectNameUW(itemToRepair.item_id)}");
-                                    break;
-                                }
+                            cutsplayer.PlayCutscene(260, DoRepair);
                         }
-                        uimanager.UpdateInventoryDisplay();
+                        else
+                        {
+                            DoRepair();
+                        } 
                     }
                     else
                     {
@@ -145,7 +120,7 @@ namespace Underworld
             }
             else
             {//npc repair
-                var result = RepairObject(repairskill, itemToRepair);
+                var result = RepairObjectSkillCheck(repairskill, itemToRepair);
                 if (result == -2)
                 {
                     //npc failed to repair the object
@@ -161,6 +136,54 @@ namespace Underworld
             }
         }
 
+        private static void DoRepair()
+        {
+            playerdat.AdvanceTime(CallBackRepairTime);
+
+            switch (CallBackRepairResult)
+            {
+                case -2: //critical fail
+                    {
+                        uimanager.AddToMessageScroll($"{GameStrings.GetString(1, GameStrings.str_you_destroyed_the_)}{GameStrings.GetSimpleObjectNameUW(CallBackItemToRepair.item_id)}");
+                        if (CallBackWorldObject)
+                        {
+                            ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(CallBackItemToRepair.tileX, CallBackItemToRepair.tileY, CallBackItemToRepair.index);
+                        }
+                        else
+                        {
+                            playerdat.RemoveFromInventory(CallBackItemToRepair.index, true, true);
+                        }
+                        break;
+                    }
+                case -1:// crit fail with parital damage
+                    {
+                        uimanager.AddToMessageScroll($"{GameStrings.GetString(1, GameStrings.str_you_damaged_the_)}{GameStrings.GetSimpleObjectNameUW(CallBackItemToRepair.item_id)}");
+                        break;
+                    }
+                case 0://unable to repair
+                    {
+                        break;
+                    }
+                case 1:
+                    {
+                        uimanager.AddToMessageScroll($"{GameStrings.GetString(1, GameStrings.str_your_attempt_has_no_effect_on_the_)}{GameStrings.GetSimpleObjectNameUW(CallBackItemToRepair.item_id)}");
+                        break;
+                    }
+                case 2://partial repair
+                    {
+                        uimanager.AddToMessageScroll($"{GameStrings.GetString(1, GameStrings.str_you_have_partially_repaired_the_)}{GameStrings.GetSimpleObjectNameUW(CallBackItemToRepair.item_id)}");
+                        break;
+                    }
+                case 3://full repair
+                    {
+                        uimanager.AddToMessageScroll($"{GameStrings.GetString(1, GameStrings.str_you_have_fully_repaired_the_)}{GameStrings.GetSimpleObjectNameUW(CallBackItemToRepair.item_id)}");
+                        break;
+                    }
+            }
+            uimanager.UpdateInventoryDisplay();
+        }
+
+
 
         /// <summary>
         /// Attempts a repair on the specified object using the repair skill value
@@ -169,7 +192,7 @@ namespace Underworld
         /// <param name="repairskill"></param>
         /// <param name="itemToRepair"></param>
         /// <returns>3= fully repaired, 2=partial repair, 1=fail/no effect, 0=not allowed to repair, -1=partial damage, -2=destroy object</returns>
-        public static int RepairObject(int repairskill, uwObject itemToRepair)
+        public static int RepairObjectSkillCheck(int repairskill, uwObject itemToRepair)
         {
             if (itemToRepair.Durability < 0)
             {
