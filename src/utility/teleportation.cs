@@ -153,7 +153,7 @@ namespace Underworld
             }
 
             Loader.setAt(UWMotionParamArray.PlayerMotionHandler_dseg_67d6_26AA, 0, 16, 0);
-            motion.playerMotionParams.unk_14 = 0;
+            motion.playerMotionParams.momentum_14 = 0;
             motion.playerMotionParams.unk_10_Z = 0;
             motion.playerMotionParams.unk_e_Y = 0;
 

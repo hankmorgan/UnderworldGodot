@@ -347,6 +347,9 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// Probably a delta X
+        /// </summary>
         public short unk_6_x
         {
             get
@@ -384,6 +387,10 @@ namespace Underworld
                 DataLoader.setAt(data, 0xA, 16, value);
             }
         }
+
+        /// <summary>
+        /// related to delta X
+        /// </summary>
         public short unk_c_X
         {
             get
@@ -444,18 +451,11 @@ namespace Underworld
                 DataLoader.setAt(data, 0x12, 8, value);
             }
         }
-        // public sbyte unk_13_falldamage
-        // {
-        //     get
-        //     {
-        //         return (sbyte)DataLoader.getAt(data, 0x13, 8);
-        //     }
-        //     set
-        //     {
-        //         DataLoader.setAt(data, 0x13, 8, value);
-        //     }
-        // }
-        public short unk_14
+
+        /// <summary>
+        /// Controls the acceleration of the player
+        /// </summary>
+        public short momentum_14
         {
             get
             {

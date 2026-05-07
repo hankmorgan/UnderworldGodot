@@ -125,7 +125,7 @@ namespace Underworld
                             var3 = 1;
                         }
 
-                        var6 = MotionParams.unk_14;
+                        var6 = MotionParams.momentum_14;
 
                         if (
                             (MotionParams.index_20 == 1) && ((playerdat.MagicalMotionAbilities & 0x20) == 0x20)
@@ -146,11 +146,11 @@ namespace Underworld
 
                             if (MotionParams.unk_16_relatedtoPitch == 0)
                             {
-                                MotionParams.unk_14 = 0;
+                                MotionParams.momentum_14 = 0;
                             }
                             else
                             {
-                                MotionParams.unk_14 -= (short)(MotionParams.unk_14 * (0xF - MotionParams.unk_16_relatedtoPitch) / 0x1E);
+                                MotionParams.momentum_14 -= (short)(MotionParams.momentum_14 * (0xF - MotionParams.unk_16_relatedtoPitch) / 0x1E);
                             }
                         }
 
@@ -268,7 +268,7 @@ namespace Underworld
                             (((MotionCalcArray.UnkC_terrain_base & 3) != 3) && ((MotionCalcArray.UnkE_base & 0x40) != 0) && ((MotionCalcArray.UnkE_base & 0x800) == 0x800))
                             )
                         {
-                            MotionParams.unk_14 = (short)var6;
+                            MotionParams.momentum_14 = (short)var6;
                         }
                     }
 
@@ -952,7 +952,7 @@ namespace Underworld
                         di_mass = 0x80;
                     }
                     newMotionParams.heading_1E = MotionParams.heading_1E;
-                    newMotionParams.unk_14 = 0xEB;
+                    newMotionParams.momentum_14 = 0xEB;
                     newMotionParams.unk_a_pitch = (short)((MotionParams.unk_a_pitch * di_mass) / 0x40);
 
                     //vanilla behaviour here is to restore currobj details
@@ -962,9 +962,9 @@ namespace Underworld
                 }
                 else
                 {
-                    if (newMotionParams.unk_14 != 0)
+                    if (newMotionParams.momentum_14 != 0)
                     {
-                        newMotionParams.unk_14 = 0;
+                        newMotionParams.momentum_14 = 0;
                     }
                 }
             }
@@ -977,9 +977,9 @@ namespace Underworld
         {
             MotionParams.unk_a_pitch = 0x8C;
             MotionParams.unk_10_Z = -4;
-            if (MotionParams.unk_14 <= 0xEB)
+            if (MotionParams.momentum_14 <= 0xEB)
             {
-                MotionParams.unk_14 = 0xEB;
+                MotionParams.momentum_14 = 0xEB;
             }
             MotionParams.tilestate25 = 0x10;
             if ((Rng.r.Next(0x7fff) & 0x3) != 0)

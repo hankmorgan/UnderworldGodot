@@ -236,7 +236,7 @@ namespace Underworld
             {//seg030_2BB7_928:
                 if (projectile.IsStatic)
                 {//seg030_2BB7_937
-                    if ((MotionParams.unk_14 | MotionParams.unk_a_pitch) != 0)
+                    if ((MotionParams.momentum_14 | MotionParams.unk_a_pitch) != 0)
                     {
                         Debug.Print("Object should become mobile");
                         projectile = MoveObjectToMobileObjectList_seg030_2BB7_B0C(projectile);
@@ -245,7 +245,7 @@ namespace Underworld
                 else
                 {
                     //seg030_2BB7_956:
-                    if ((MotionParams.unk_14 | MotionParams.unk_a_pitch | (int)MotionParams.unk_10_Z) == 0)
+                    if ((MotionParams.momentum_14 | MotionParams.unk_a_pitch | (int)MotionParams.unk_10_Z) == 0)
                     {
                         //object has likely stopped
                         projectile.TileState_0XA_Bit456 = (short)(dseg_67d6_3E8[MotionParams.tilestate25]);
@@ -311,7 +311,7 @@ namespace Underworld
                 }
                 //seg030_2BB7_A5F:
                 projectile.Projectile_Pitch = (short)cx;
-                projectile.UnkBit_0X13_Bit0to6 = (short)(MotionParams.unk_14 / 0x2F);
+                projectile.UnkBit_0X13_Bit0to6 = (short)(MotionParams.momentum_14 / 0x2F);
                 //Hack added mask to tilestate
                 // if (projectile.item_id == 124 && _RES == GAME_UW1)
                 // {
@@ -529,12 +529,12 @@ namespace Underworld
             if (UWMotionParamArray.dseg_67d6_25C1 == 0)
             {
                 MotionParams.heading_1E = (short)((Rng.r.Next(0x7FFF) & 0x3FFF) + MotionParams.heading_1E + 0xE000);
-                MotionParams.unk_14 = 0xBC;
+                MotionParams.momentum_14 = 0xBC;
 
             }
             else
             {
-                MotionParams.unk_14 = (short)(0x2F * ((Rng.r.Next(0x7FFF) + 1) & 0x3));
+                MotionParams.momentum_14 = (short)(0x2F * ((Rng.r.Next(0x7FFF) + 1) & 0x3));
                 MotionParams.unk_10_Z = -4;
             }
         }

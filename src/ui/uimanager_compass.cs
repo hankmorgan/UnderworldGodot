@@ -45,7 +45,7 @@ namespace Underworld
         }
 
         public static void UpdateCompass()
-        {
+        {//TODO playerdat.heading_major is no longer updated.This should be based on CameraYaw or equivilant value from playerObject.
             var heading = (playerdat.heading_major >> 4);//get full heading into a range of 0-f
             PointCompassInDirection(heading);
         }
