@@ -69,16 +69,16 @@ namespace Underworld
             var MainPos =  eventMousePosition; //eventMouseButton.Position;
             var mousepos  = instance.uwsubviewport.GetMousePosition();
 
-            var mouselook = (bool)main.gamecam.Get("MOUSELOOK");
+            var mouselook = (bool)main.cameraPitchGimbal.Get("MOUSELOOK");
             if (mouselook)
             {//get centred mouse cursor positions when in mouselook mode to account for off-centre vanilla ui
                 MainPos = mouseCursor.CursorPosition;
                 mousepos = mouseCursor.CursorPositionSub;
             }
 
-            var from = main.gamecam.ProjectRayOrigin(MainPos);
+            var from = main.cameraPitchGimbal.ProjectRayOrigin(MainPos);
             RayOrigin = from;
-            var to = from + main.gamecam.ProjectRayNormal(mousepos) * RayLength;
+            var to = from + main.cameraPitchGimbal.ProjectRayNormal(mousepos) * RayLength;
             var query = PhysicsRayQueryParameters3D.Create(from, to);
             var spaceState = main.instance.GetWorld3D().DirectSpaceState;
             var result = spaceState.IntersectRay(query);

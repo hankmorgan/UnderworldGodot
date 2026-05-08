@@ -16,7 +16,7 @@ namespace Underworld
             if (datafolder.ToUpper() != "DATA")
             {
                 //load player dat from a save file
-                Load(datafolder);     
+                Load(datafolder);
 
                 //Motion params
                 motion.playerMotionParams.x_0 = (short)playerdat.XCoordinate;
@@ -146,17 +146,17 @@ namespace Underworld
                 y: z_adj); //y-up
             //Debug.Print($"High precision adjustment {adjust}");
 
-            main.gamecam.Position = adjust + uwObject.GetCoordinate(
+            main.cameraYawGimbal.Position = adjust + uwObject.GetCoordinate(
                 tileX: motion.playerMotionParams.x_0 >> 8,
                 tileY: motion.playerMotionParams.y_2 >> 8,
                 _xpos: (motion.playerMotionParams.x_0 >> 5) & 0x7,
                 _ypos: (motion.playerMotionParams.y_2 >> 5) & 0x7,
-                _zpos: ((motion.playerMotionParams.z_4+ 0xA4) >> 3) );  //commonObjDat.height(127)
+                _zpos: ((motion.playerMotionParams.z_4 + 0xA4) >> 3));  //commonObjDat.height(127)
 
             if (motion.CameraIsBobbing_dseg_67d6_33c6)
             {
                 //Hacky placeholder calculate
-                var tmpz =  uwObject.GetCoordinate(
+                var tmpz = uwObject.GetCoordinate(
                     tileX: 0,
                     tileY: 0,
                     _xpos: 0,
@@ -164,22 +164,34 @@ namespace Underworld
                     _zpos: motion.CameraBobZAdjust_dseg_67d6_33CE >> 3);
 
                 //todo allow for zpos going out of bounds.
-                main.gamecam.Position += new Vector3(0, tmpz.Y, 0);
+                main.cameraYawGimbal.Position += new Vector3(0, tmpz.Y, 0);
             }
 
+            //This needs to be fixed when the coordinate/object rendering is given more resolution.
 
-//Commonobjdat.height in zpos adjustment is wrong. Based on disassebly the camera Z is adjusted by a value of 165. The Z is based on playermotion.Z4
-//This needs to be fixed when the coordinate/object rendering is given more resolution.
+            
+            var yaw = (float)motion.PlayerCameraYaw_dseg_8294;
+            var roll = (float)(motion.PlayerCameraRoll_dseg_67d6_33D8);
+            var pitch = 0f;
+            roll = 0x7FFF;
+            if (motion.CameraIsBobbing_dseg_67d6_33c6)
+            {
+                yaw += (float)(motion.CameraYawModifier_dseg_67d6_33D0_modifiescamera2c);
+                roll += (float)(motion.CameraRollModifier_dseg_67d6_33D4);
+                pitch += (float)(motion.CameraPitchModifier_dseg_67d6_33D2);
+            }
 
             //this is causing visual glitching when sliding?              
-            main.gamecam.Rotation = Vector3.Zero;
-            main.gamecam.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
-                                                              //main.gamecam.Rotate(Vector3.Up, (float)(-heading_major / 127f * Math.PI));
-            float fullheading = (float)((playerObject.heading << 5) + playerObject.npc_heading);
-            //main.gamecam.Rotate(Vector3.Up, (float)(-fullheading / 127f * Math.PI));
-            main.gamecam.Rotate(Vector3.Up, (float)(-((float)motion.PlayerCameraYaw_dseg_8294 / 32767f) * Math.PI));
+            main.cameraYawGimbal.Rotation = Vector3.Zero;
+            main.cameraYawGimbal.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
+            main.cameraYawGimbal.Rotate(Vector3.Up, (float)(-(yaw / 32767f) * Math.PI));
+            
+            main.cameraRollGimbal.Rotation = Vector3.Zero;
+            // //main.gamecamGimbalYaw.Rotate(Vector3.Forward, (float)(Math.PI));
+            main.cameraRollGimbal.Rotate(Vector3.Forward, (float)(-(roll / 32767f) * Math.PI));
 
-            //TODO this camera angle should be based on global values Dseg8294,Dseg33D6,Dseg33D8. The should be (not in order) pitch, yaw and roll?
+
+            //TODO this camera angle should be based on global values Dseg8294(yaw),Dseg33D6(pitch),Dseg33D8(roll) . The should be (not in order) pitch, yaw and roll?
         }
 
 

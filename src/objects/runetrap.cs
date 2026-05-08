@@ -56,7 +56,7 @@ namespace Underworld
                         var duration = 4 + Rng.r.Next(0xF);
                         //set paralyse timer
                         playerdat.ParalyseTimer = duration;                        
-                        main.gamecam.Set("MOVE", false);
+                        main.cameraPitchGimbal.Set("MOVE", false);
                         uimanager.AddToMessageScroll(GameStrings.GetString(1,0x163));//your limbs stiffen
                     }
                     else

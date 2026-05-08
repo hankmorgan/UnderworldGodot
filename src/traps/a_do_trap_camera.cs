@@ -20,7 +20,7 @@ namespace Underworld
         public static bool CreateDoTrapCamera(Node3D parent, uwObject trapObj, string name)
         {//maybe consider creating this camera only when needed
             Camera3D newcam = new();
-            newcam.Fov = main.gamecam.Fov;      
+            newcam.Fov = main.cameraPitchGimbal.Fov;      
             main.instance.secondarycameras.AddChild(newcam);
             newcam.Current=false;
             newcam.Position = trapObj.GetCoordinate(trapObj.tileX, trapObj.tileY);
@@ -45,8 +45,8 @@ namespace Underworld
                 yield return new WaitOneFrame();
             }
             playerdat.AutomapEnabled = automap;
-            main.gamecam.MakeCurrent();
-            main.gamecam.Set("MOVE", true);
+            main.cameraPitchGimbal.MakeCurrent();
+            main.cameraPitchGimbal.Set("MOVE", true);
         }
         
 
@@ -61,7 +61,7 @@ namespace Underworld
             //switch camera            
             var d = (a_do_trap_camera)(trapObj.instance);
             d.do_camera.MakeCurrent();
-            main.gamecam.Set("MOVE", false);
+            main.cameraPitchGimbal.Set("MOVE", false);
             _ = Coroutine.Run(
                    CameraWaitForInput(),
                     main.instance

@@ -42,7 +42,11 @@ public partial class main : Node3D
 
 	// Called when the node enters the scene tree for the first time.
 	[Export] public Camera3D cam;
-	public static Camera3D gamecam; //static ref to the above camera
+	[Export] public Node3D GimbalYaw;
+	[Export] public Node3D GimbalRoll;
+	public static Camera3D cameraPitchGimbal; //pitch
+	public static Node3D cameraRollGimbal; // up/down
+	public static Node3D cameraYawGimbal; // yaw
 	[Export] public AudioStreamPlayer DigitalAudioPlayer;
 	[Export] public RichTextLabel lblPositionDebug;
 	//[Export] public uimanager uwUI;
@@ -70,7 +74,9 @@ public partial class main : Node3D
 	public override void _Ready()
 	{
 		instance = this;
-		gamecam = cam;
+		cameraPitchGimbal = cam;
+		cameraRollGimbal = GimbalRoll;
+		cameraYawGimbal = GimbalYaw;
 
 		//uimanager.instance = uwUI;	
 		if (uwsettings.instance != null)
@@ -100,15 +106,15 @@ public partial class main : Node3D
 
 	public static void StartGame()
 	{
-		if (gamecam == null)
+		if (cameraPitchGimbal == null)
 		{
 			if (instance.cam == null)
 			{
 				Debug.Print("Main Cam instance is null. trying to find it's node");
 				instance.cam = (Camera3D)instance.GetNode("/root/Underworld/WorldViewContainer/SubViewport/Camera3D");
 			}
-			gamecam = instance.cam;
-			if (gamecam == null)
+			cameraPitchGimbal = instance.cam;
+			if (cameraPitchGimbal == null)
 			{
 				Debug.Print("Gamecam is still null!");
 			}
@@ -123,7 +129,7 @@ public partial class main : Node3D
 				Debug.Print("UIManager is still null!!");
 			}
 		}
-		gamecam.Fov = Math.Max(50, uwsettings.instance.FOV);
+		cameraPitchGimbal.Fov = Math.Max(50, uwsettings.instance.FOV);
 		uimanager.EnableDisable(instance.lblPositionDebug, EnablePositionDebug);
 		ObjectCreator.grObjects = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
 		ObjectCreator.grObjects.UseRedChannel = true;
@@ -163,7 +169,7 @@ public partial class main : Node3D
 			a_sprite.Mesh.Set("size", NewSize);
 			Node3D worldobjects = instance.GetNode<Node3D>("/root/Underworld/worldobjects");
 			worldobjects.AddChild(a_sprite);
-			a_sprite.Position = gamecam.Position;
+			a_sprite.Position = cameraPitchGimbal.Position;
 		}
 	}
 
@@ -658,7 +664,7 @@ public partial class main : Node3D
 						// 		break;
 						// 	}
 						case Key.T:
-							var mouselook = (bool)gamecam.Get("MOUSELOOK");
+							var mouselook = (bool)cameraPitchGimbal.Get("MOUSELOOK");
 							if (mouselook)
 							{//toggle to free curso
 								Input.MouseMode = Input.MouseModeEnum.Hidden;
@@ -667,7 +673,7 @@ public partial class main : Node3D
 							{//toogle to mouselook
 								Input.MouseMode = Input.MouseModeEnum.Captured;
 							}
-							gamecam.Set("MOUSELOOK", !mouselook);
+							cameraPitchGimbal.Set("MOUSELOOK", !mouselook);
 							break;
 						// case Key.R: //fly up (not vanilla)
 						// 	if ((playerdat.MagicalMotionAbilities & 0x14) != 0)
@@ -845,7 +851,7 @@ public partial class main : Node3D
 						MessageDisplay.WaitingForTypedInput = false;
 						if (ConversationVM.InConversation == false)
 						{
-							gamecam.Set("MOVE", true);//re-enable movement
+							cameraPitchGimbal.Set("MOVE", true);//re-enable movement
 						}
 					}
 				}
@@ -950,7 +956,7 @@ public partial class main : Node3D
 					{//end typed input
 						uimanager.instance.scroll.Clear();
 						MessageDisplay.WaitingForYesOrNo = false;
-						gamecam.Set("MOVE", true);//re-enable movement
+						cameraPitchGimbal.Set("MOVE", true);//re-enable movement
 					}
 				}
 			}

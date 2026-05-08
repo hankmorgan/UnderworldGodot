@@ -75,7 +75,7 @@ namespace Underworld
                         Debug.Print($"Paralyse timer: {ParalyseTimer}");
                         if (ParalyseTimer == 0)
                         {
-                            main.gamecam.Set("MOVE", true);//re-enable player motion.
+                            main.cameraPitchGimbal.Set("MOVE", true);//re-enable player motion.
                         }
                     }
 

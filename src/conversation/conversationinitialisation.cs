@@ -65,7 +65,7 @@ namespace Underworld
                     ImportVariables(talker);
                     
                     //stop player motion
-                    main.gamecam.Set("MOVE", false);
+                    main.cameraPitchGimbal.Set("MOVE", false);
 
                     //Launch conversation VM co-routine 
                     _ = Peaky.Coroutines.Coroutine.Run(
@@ -144,7 +144,7 @@ namespace Underworld
 
             //turn off mouselook to allow clicking around the screen.
             Input.MouseMode = Input.MouseModeEnum.Hidden;
-            main.gamecam.Set("MOUSELOOK", false);
+            main.cameraPitchGimbal.Set("MOUSELOOK", false);
             
 
             //npc name and portrait

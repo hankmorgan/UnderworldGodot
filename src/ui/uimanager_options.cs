@@ -669,7 +669,7 @@ namespace Underworld
                                                 -1,
                                                 -1,
                                                 -1});
-            main.gamecam.Set("MOVE", true);
+            main.cameraPitchGimbal.Set("MOVE", true);
         }
 
 

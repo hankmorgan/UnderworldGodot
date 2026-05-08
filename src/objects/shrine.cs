@@ -126,7 +126,7 @@ namespace Underworld
         /// <returns></returns>
         public static bool Use(uwObject obj)
         {//node.Set("variable_name", value);
-            main.gamecam.Set("MOVE", false);
+            main.cameraPitchGimbal.Set("MOVE", false);
             MessageDisplay.WaitingForTypedInput = true;
             uimanager.instance.TypedInput.Text = "";
             uimanager.instance.scroll.Clear();

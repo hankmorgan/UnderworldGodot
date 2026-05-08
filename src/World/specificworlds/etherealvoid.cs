@@ -94,14 +94,14 @@ namespace Underworld
         /// <returns></returns>
         public static IEnumerator MoveCameraToVoid(uwObject moongate)
         {
-            var initial = main.gamecam.Position;            
+            var initial = main.cameraPitchGimbal.Position;            
             var traveltime = 0f;
             var speed = 0.2f;
             while (traveltime<5f)
             {
                 yield return new WaitForSeconds(speed);  
                 traveltime+=speed;
-                main.gamecam.Position = new Godot.Vector3(Mathf.Lerp(initial.X, moongate.instance.uwnode.Position.X, traveltime/5f), initial.Y, Mathf.Lerp(initial.Z, moongate.instance.uwnode.Position.Z, traveltime/5f));  
+                main.cameraPitchGimbal.Position = new Godot.Vector3(Mathf.Lerp(initial.X, moongate.instance.uwnode.Position.X, traveltime/5f), initial.Y, Mathf.Lerp(initial.Z, moongate.instance.uwnode.Position.Z, traveltime/5f));  
             }            
             
             Teleportation.Teleport(character: 1, tileX: 0x1B, tileY: 0x17, newLevel: 9, heading: 0);

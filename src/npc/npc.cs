@@ -216,7 +216,7 @@ namespace Underworld
             {
                 return 0;
             }
-            var direction = -main.gamecam.Position + n.instance.uwnode.Position;
+            var direction = -main.cameraPitchGimbal.Position + n.instance.uwnode.Position;
             var angle = Mathf.RadToDeg(Mathf.Atan2(direction.X, direction.Z));
             var facingIndex = facing(angle);
             var CalcedFacing = (short)(facingIndex + n.heading);

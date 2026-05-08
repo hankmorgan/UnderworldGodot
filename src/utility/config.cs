@@ -39,9 +39,9 @@ public class uwsettings
             instance = new();
         }
 
-        if (main.gamecam != null)
+        if (main.cameraPitchGimbal != null)
         {
-            main.gamecam.Fov = Math.Max(50, instance.FOV);
+            main.cameraPitchGimbal.Fov = Math.Max(50, instance.FOV);
         }
 
         switch (instance.gametoload.ToUpper())

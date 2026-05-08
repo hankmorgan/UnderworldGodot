@@ -186,10 +186,10 @@ namespace Underworld
                         }
                         //turn off mouselook
                         Input.MouseMode = Input.MouseModeEnum.Hidden;
-                        main.gamecam.Set("MOUSELOOK", false);
+                        main.cameraPitchGimbal.Set("MOUSELOOK", false);
 
                         ReturnToTopOptionsMenu();
-                        main.gamecam.Set("MOVE", false);
+                        main.cameraPitchGimbal.Set("MOVE", false);
                         break;
                     }
                 case InteractionModes.ModeAttack:

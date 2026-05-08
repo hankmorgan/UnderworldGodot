@@ -645,7 +645,7 @@ namespace Underworld
 			}
 
 
-			main.gamecam.Set("MOVE", true);
+			main.cameraPitchGimbal.Set("MOVE", true);
 			if (DoTeleport)
 			{
 				if (UWTileMap.ValidTile(TeleportTileX, TeleportTileY))

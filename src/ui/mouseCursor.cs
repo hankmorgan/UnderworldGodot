@@ -52,9 +52,9 @@ namespace Underworld
 		// Called every frame. 'delta' is the elapsed time since the previous frame.
 		public override void _Process(double delta)
 		{
-			if (main.gamecam != null)
+			if (main.cameraPitchGimbal != null)
 			{
-				var mouselook = (bool)main.gamecam.Get("MOUSELOOK");
+				var mouselook = (bool)main.cameraPitchGimbal.Get("MOUSELOOK");
 
 				if (mouselook)
 				{
