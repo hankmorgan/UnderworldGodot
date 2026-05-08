@@ -151,7 +151,7 @@ namespace Underworld
                 tileY: motion.playerMotionParams.y_2 >> 8,
                 _xpos: (motion.playerMotionParams.x_0 >> 5) & 0x7,
                 _ypos: (motion.playerMotionParams.y_2 >> 5) & 0x7,
-                _zpos: (motion.playerMotionParams.z_4 >> 3) + commonObjDat.height(127));  //+ playerObject.zpos + commonObjDat.height(127)
+                _zpos: ((motion.playerMotionParams.z_4+ 0xA4) >> 3) );  //commonObjDat.height(127)
 
             if (motion.CameraIsBobbing_dseg_67d6_33c6)
             {
