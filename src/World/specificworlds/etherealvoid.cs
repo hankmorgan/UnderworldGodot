@@ -94,6 +94,7 @@ namespace Underworld
         /// <returns></returns>
         public static IEnumerator MoveCameraToVoid(uwObject moongate)
         {
+            //TODO, now that I have full support for camera yaw,roll and banking I can look into making this effect follow vanilla behaviour.
             var initial = main.cameraPitchGimbal.Position;            
             var traveltime = 0f;
             var speed = 0.2f;

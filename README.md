@@ -53,27 +53,26 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * Animated doors and sprites
 * Looping NPC animations
 * Full Conversations with NPCs
-* Almost all game triggers and traps.
+* Almost all game triggers and traps. Incl some that are not used in the original game.
 * Barter logic
 * Lighting effects (Palette based except for correct transparencies)
 * Inventory management including runebag (excluding drag and drop)
 * Picking up and dropping of items (without checking pickup rules)
 * Usable switches
-* Reading signs
-* Game strings
-* Palette cycling and shading
+* Readables and all Game strings
+* Palette cycling and shading effect
 * Save file loading
 * Player stats display
 * HP and Mana Displays
 * Compass status message
 * 3D Models
 * Food consumption
-* Spell casting. Most spells implemented.
+* Spell casting. Most spells implemented with original logic.
 * Usable wands, scrolls and potions.
 * Small window cutscenes (partial)
 * Game variables and quest variables (partial support, not all scenarios may work)
-* Level transitions
-* Partial options menu. In game loading of saves
+* Level transitions and persistance.
+* Options menu incl sound, music and low quality detail levels (try it out if you still use a 486!)
 * Many Object interactions
 * Combat attack charge buildup and combat accuracy calcuations for player
 * Missile combat
@@ -88,31 +87,43 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * Mostly complete Object physics
 * Most NPC AI, movement and pathfinding
 * NPC Combat Actions
-* Player movement and collision (with a lot of jank attached incl framerate/speed issues)
+* Player movement and collision (with a small amount of jank)
+* Swimming
 * Speech from VOC files
 * Real-time music synthesis from XMI via four selectable synth engines (CM-32L/MT-32 via mt32emu, SoundFont via MeltySynth, or AdLib/OPL via AdlMidi).
 * Sound effects.
+* In camera special effects, screenshaking and colour flashing
 * Saving (partial support)
+* Loading (full support)
 * Endgame screens
 * Animated Dragon UI Elements
 * Partial Weight and encumberance mechanics
 * Splash screens and game credits
 
 ## Whats missing
-* Sprite transparencies 
+* Sprite transparencies (e.g. creature shadows)
 * Those weird ethereal void monsters
 * Editing of automap notes
-* Swimming
-* Getting lost mechanics
-* Stealth mechanics (partial)
+* Getting lost mechanics (UW2)
+* Stealth mechanics
+* Full implementation of death and resurrection with cutscenes.
+* Dragging of items on UI
+* Minor unimplemented physics features. Eg support for static objects that now need to move due to changes in situation.
+* Message scroll edges
+* Health and mana flask animation effects.
 and much more!
 
 ## Known Issues
 * Some NPC sprites are incorrectly cropped.
+* UW1 NPCs are not as tall as they should be.
+* Co-ordinates precision needs to be more granular.
 * NPCs and mobile objects move at a slow rate of refresh (timing configuration)
-* Player motion is sluggish (timing need tuning), player strafing is unreliable
+* Player strafing is unreliable
 * Some cutscenes are missing frames or have visual distortions
+* NPCs like to walk on top of furniture
 * Enter/Exit/Pressure triggers currently not working
+* Music stops playing because game cannot detect when a playing music track is finished.
+* Sprite billboarding is always "UP" even when the player camera is being rolled.
 
 ## Getting Started
 
