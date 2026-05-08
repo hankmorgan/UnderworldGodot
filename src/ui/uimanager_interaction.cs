@@ -198,9 +198,14 @@ namespace Underworld
                         break;
                     }
                 default:
-                    playerdat.play_drawn = 0; //ensure weapon is not drawn.
+                    //ensure weapon is not drawn.
+                    if (playerdat.play_drawn == 1)
+                    {
+                        ToggleWeaponAnimationState(false);
+                    }
+                     
                     //XMIMusic.PickLevelThemeMusic(); //in future this needs to take into account combat state.
-                    XMIMusic.PickLevelThemeMusic(0);
+                    //
                     break;
 
             }
