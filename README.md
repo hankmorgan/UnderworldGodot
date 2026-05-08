@@ -14,6 +14,8 @@
     - [Modes](#modes)
     - [Cheats](#cheats)
   - [Music](#music)
+    - [ROM files (cm32l / mt32 only)](#rom-files-cm32l--mt32-only)
+    - [Design inspiration](#design-inspiration)
   - [Code Contributions](#code-contributions)
     - [Referenced code projects](#referenced-code-projects)
   - [AI Policy](#ai-policy)
@@ -160,16 +162,19 @@ To select maps to load.
 
 
 ## Controls
-Note controls are sluggish due to ongoing implementation and debugging of player motion.
 
 ### Movement
 W run forward
 Shift+W walk forward
 S walk backwards
-AD strafe left and right
-QE turn left and right
+A,D strafe left and right
+J Jump
+Q, E turn left and right
 T to toggle freemouse
-RF fly up and down when a magic fly/levitate spell is active
+R,F fly up and down when a magic fly/levitate spell is active
+1 Look down
+2 Look straight ahead
+3 Look up
 
 ### Modes
 F1-F6 Change interaction modes

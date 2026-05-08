@@ -33,7 +33,7 @@ namespace Underworld
 
         //Camera bob adjustments, 
         public static short CameraBobZAdjust_dseg_67d6_33CE = 0;
-        public static short CameraYawModifier_dseg_67d6_33D0_modifiescamera2c;//changes the camera angle that is set by PlayerHeadingMinor8294
+        public static short CameraYawModifier_dseg_67d6_33D0;//changes the camera angle that is set by PlayerHeadingMinor8294
         public static short CameraPitchModifier_dseg_67d6_33D2;//changes the camera angle that is set by PlayerHeadingRelated33D6        
         public static short CameraRollModifier_dseg_67d6_33D4;//changes the camera angle that is set by PlayerHeadingRelated33D8, 
 
@@ -95,7 +95,7 @@ namespace Underworld
             //These values are used in camera bobbing/shaking
             CameraRollModifier_dseg_67d6_33D4 = 0;
             CameraPitchModifier_dseg_67d6_33D2 = 0;
-            CameraYawModifier_dseg_67d6_33D0_modifiescamera2c = 0;
+            CameraYawModifier_dseg_67d6_33D0 = 0;
 
             // var x_init = playerMotionParams.x_0;
             // var y_init = playerMotionParams.y_2;
@@ -1044,7 +1044,7 @@ namespace Underworld
                 CameraIsBobbing_dseg_67d6_33c6 = true; //probably means the camera will need to be adjusted.
                 CameraRollModifier_dseg_67d6_33D4 = 0;//possibly the camera adjustments
                 CameraPitchModifier_dseg_67d6_33D2 = 0;
-                CameraYawModifier_dseg_67d6_33D0_modifiescamera2c = 0; // this moves the camera forward.
+                CameraYawModifier_dseg_67d6_33D0 = 0; // this moves the camera forward.
 
                 if ((playerdat.TileState & 0x11) != 0)
                 {
@@ -1072,7 +1072,7 @@ namespace Underworld
                         //seg35_AC5
                         CameraBobZAdjust_dseg_67d6_33CE += (short)((CameraBobArray[(var2_incrementrelated + 2) & 0xF] << 1) * var1);
 
-                        CameraYawModifier_dseg_67d6_33D0_modifiescamera2c = (short)(((Rng.r.Next(0x7FFF) & 0x7F) - 64) * var1);
+                        CameraYawModifier_dseg_67d6_33D0 = (short)(((Rng.r.Next(0x7FFF) & 0x7F) - 64) * var1);
                         CameraPitchModifier_dseg_67d6_33D2 = (short)(((Rng.r.Next(0x7FFF) & 0x7F) - 64) * var1);
 
                         //Debug.Print($"swimbob {CameraBobZAdjust_dseg_67d6_33CE},{dseg_67d6_33D4_modifiescamera2A}");
@@ -1170,15 +1170,15 @@ namespace Underworld
                         }
                         //Seg_C40
                         var2_incrementrelated = 0;
-                        CameraYawModifier_dseg_67d6_33D0_modifiescamera2c = (short)(((Rng.r.Next(0x7FFF) & 0x1FF) - 256) << 2);
+                        CameraYawModifier_dseg_67d6_33D0 = (short)(((Rng.r.Next(0x7FFF) & 0x1FF) - 256) << 2);
                     }
                     //seg35_C56
 
                     var1 += var2_incrementrelated;
-                    CameraYawModifier_dseg_67d6_33D0_modifiescamera2c = (short)(var1 * ((Rng.r.Next(0x7FFF) & 0xFF) - 128));
+                    CameraYawModifier_dseg_67d6_33D0 = (short)(var1 * ((Rng.r.Next(0x7FFF) & 0xFF) - 128));
                     CameraPitchModifier_dseg_67d6_33D2 = (short)(var1 * ((Rng.r.Next(0x7FFF) & 0x7F) - 64));
                     CameraRollModifier_dseg_67d6_33D4 = (short)(var1 * ((Rng.r.Next(0x7FFF) & 0x1FF) - 256));
-                    Debug.Print($"Screenshake by {CameraYawModifier_dseg_67d6_33D0_modifiescamera2c},{CameraPitchModifier_dseg_67d6_33D2},{CameraRollModifier_dseg_67d6_33D4}");
+                    Debug.Print($"Screenshake by {CameraYawModifier_dseg_67d6_33D0},{CameraPitchModifier_dseg_67d6_33D2},{CameraRollModifier_dseg_67d6_33D4}");
                 }
             }
             else

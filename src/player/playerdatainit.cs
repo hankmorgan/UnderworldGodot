@@ -137,14 +137,12 @@ namespace Underworld
             }
             if ((motion.playerMotionParams.z_4 & 0x7) != 0)
             {
-                //Debug.Print($"z high precision is {motion.playerMotionParams.z_4 & 0x7}");
                 z_adj = (float)(0.001875f * (float)(motion.playerMotionParams.z_4 & 0x7));
             }
             Vector3 adjust = new Vector3(
                 x: -x_adj,
                 z: y_adj,
                 y: z_adj); //y-up
-            //Debug.Print($"High precision adjustment {adjust}");
 
             main.cameraYawGimbal.Position = adjust + uwObject.GetCoordinate(
                 tileX: motion.playerMotionParams.x_0 >> 8,
@@ -163,35 +161,36 @@ namespace Underworld
                     _ypos: 0,
                     _zpos: motion.CameraBobZAdjust_dseg_67d6_33CE >> 3);
 
-                //todo allow for zpos going out of bounds.
+                //todo allow for zpos going out of bounds. (the total zpos must be <1000 underworld space units)
                 main.cameraYawGimbal.Position += new Vector3(0, tmpz.Y, 0);
             }
 
-            //This needs to be fixed when the coordinate/object rendering is given more resolution.
+           
 
             
             var yaw = (float)motion.PlayerCameraYaw_dseg_8294;
-            var roll = (float)(motion.PlayerCameraRoll_dseg_67d6_33D8);
-            var pitch = 0f;
-            roll = 0x7FFF;
+            var roll = (float)motion.PlayerCameraRoll_dseg_67d6_33D8;
+            var pitch = (float)motion.PlayerCameraPitch_dseg_67d6_33D6;
+            
             if (motion.CameraIsBobbing_dseg_67d6_33c6)
             {
-                yaw += (float)(motion.CameraYawModifier_dseg_67d6_33D0_modifiescamera2c);
-                roll += (float)(motion.CameraRollModifier_dseg_67d6_33D4);
-                pitch += (float)(motion.CameraPitchModifier_dseg_67d6_33D2);
+                yaw += (float)motion.CameraYawModifier_dseg_67d6_33D0;
+                roll += (float)motion.CameraRollModifier_dseg_67d6_33D4;
+                pitch += (float)motion.CameraPitchModifier_dseg_67d6_33D2;
             }
 
-            //this is causing visual glitching when sliding?              
+            //Set up the Yaw gimbal             
             main.cameraYawGimbal.Rotation = Vector3.Zero;
             main.cameraYawGimbal.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
             main.cameraYawGimbal.Rotate(Vector3.Up, (float)(-(yaw / 32767f) * Math.PI));
             
-            main.cameraRollGimbal.Rotation = Vector3.Zero;
-            // //main.gamecamGimbalYaw.Rotate(Vector3.Forward, (float)(Math.PI));
+            //Set up the Roll Gimbal
+            main.cameraRollGimbal.Rotation = Vector3.Zero;            
             main.cameraRollGimbal.Rotate(Vector3.Forward, (float)(-(roll / 32767f) * Math.PI));
 
-
-            //TODO this camera angle should be based on global values Dseg8294(yaw),Dseg33D6(pitch),Dseg33D8(roll) . The should be (not in order) pitch, yaw and roll?
+            //Set up the pitch gimbal.
+            main.cameraPitchGimbal.Rotation = Vector3.Zero;
+            main.cameraPitchGimbal.Rotate(Vector3.Right,(float)(+(pitch / 32767f) * Math.PI) );            
         }
 
 

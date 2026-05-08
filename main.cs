@@ -136,14 +136,14 @@ public partial class main : Node3D
 		ObjectCreator.grObjects.UseCropping = true;
 		Palette.CurrentPalette = 0;
 		uimanager.instance.InitUI();
-		uimanager.EnableDisable(uimanager.instance.uw1UI,false);
-		uimanager.EnableDisable(uimanager.instance.uw2UI,false);
-		uimanager.EnableDisable(uimanager.instance.PanelInventory,false);
-		uimanager.EnableDisable(uimanager.instance.ManaFlaskPanel,false);
-		uimanager.EnableDisable(uimanager.instance.HealthFlaskPanel,false);
+		uimanager.EnableDisable(uimanager.instance.uw1UI, false);
+		uimanager.EnableDisable(uimanager.instance.uw2UI, false);
+		uimanager.EnableDisable(uimanager.instance.PanelInventory, false);
+		uimanager.EnableDisable(uimanager.instance.ManaFlaskPanel, false);
+		uimanager.EnableDisable(uimanager.instance.HealthFlaskPanel, false);
 		cutsplayer.PlayCutscene(9, uimanager.ReturnToMainMenu);
 		//Play intro theme after cutscene coroutine is queued, so music and graphics start together
-		XMIMusic.LoadXMI(XMIMusic.IntroTheme);	
+		XMIMusic.LoadXMI(XMIMusic.IntroTheme);
 		uimanager.AddToMessageScroll(GameStrings.GetString(1, 13));//welcome message
 	}
 
@@ -178,7 +178,7 @@ public partial class main : Node3D
 	public override void _PhysicsProcess(double delta)
 	{
 		if ((uimanager.InGame) || (uimanager.AtMainMenu))
-		{			
+		{
 			cycletime += delta;
 			if (cycletime > 0.2)
 			{
@@ -203,13 +203,13 @@ public partial class main : Node3D
 		//Dosbox  PIT:PIT 0 Timer at 255.9927 Hz mode 3 
 
 
-//UGH
+		//UGH
 
 		testclock += delta;
 
 		if ((uimanager.InGame) && (!blockmouseinput) && (testclock >= 0.097659))
 		{
-			testclock =0;
+			testclock = 0;
 			byte AnimationFrameDeltaIncrement = 0;
 
 			var ClockIncrement = GlobalPITTimer - LastPitTimer;
@@ -224,12 +224,12 @@ public partial class main : Node3D
 				//Debug.Print($"{PitTimer - LastPitTimer}");
 				EasyMoveFrameIncrement += (byte)((GlobalPITTimer >> 4) - (LastPitTimer >> 4));  //every 16 pits?
 				AnimationFrameDeltaIncrement = (byte)((GlobalPITTimer >> 6) - (LastPitTimer >> 6));//every 63 pits?
-				// ClockIncrement = 0x5;//i've added this to temporarily control motion frame rate.
-				// if ((playerdat.MagicalMotionAbilities & 0x4) !=0)
-				// {
-				// 	//Hack for levitate
+																								   // ClockIncrement = 0x5;//i've added this to temporarily control motion frame rate.
+																								   // if ((playerdat.MagicalMotionAbilities & 0x4) !=0)
+																								   // {
+																								   // 	//Hack for levitate
 				ClockIncrement = 0x19;//ignore original calc
-				// }
+									  // }
 
 				//HACK the above appears to be what should be happening in vanilla code but is very slow to process, but the below gives the appearance of normal movement but may cause frame rate issues. 
 				//Issues caused by this hacking.
@@ -268,8 +268,8 @@ public partial class main : Node3D
 				}
 
 				GameObjectLoop(
-					ClockIncrement: (byte)ClockIncrement, 
-					AnimationFrameDelta: AnimationFrameDeltaIncrement, 
+					ClockIncrement: (byte)ClockIncrement,
+					AnimationFrameDelta: AnimationFrameDeltaIncrement,
 					EasyMove: false);
 			}
 
@@ -355,7 +355,7 @@ public partial class main : Node3D
 		{
 			motion.WalkOnSurfaceType();
 		}
-		
+
 		//playerdat.ApplyPlayerSneakScore(EasyMove);
 
 		//Footsteps();
@@ -447,6 +447,33 @@ public partial class main : Node3D
 				motion.MotionInputPressed = 0;
 			}
 		}
+
+		//Addition. capture look up and down
+		if (Input.IsKeyPressed(Key.Key1))
+		{
+			//lookdown
+			if (motion.PlayerCameraPitch_dseg_67d6_33D6 >= -4096)
+			{
+				motion.PlayerCameraPitch_dseg_67d6_33D6 = (short)Math.Max(-4096, motion.PlayerCameraPitch_dseg_67d6_33D6 - 0x400);
+				Debug.Print($"{motion.PlayerCameraPitch_dseg_67d6_33D6}");
+			}
+		}
+		else if (Input.IsKeyPressed(Key.Key3))
+		{
+			//lookup
+			if (motion.PlayerCameraPitch_dseg_67d6_33D6 <= 4096)
+			{
+				motion.PlayerCameraPitch_dseg_67d6_33D6 = (short)Math.Min(4096, motion.PlayerCameraPitch_dseg_67d6_33D6 + 0x400);
+				Debug.Print($"{motion.PlayerCameraPitch_dseg_67d6_33D6}");
+			}
+		}
+		else if (Input.IsKeyPressed(Key.Key2))
+		{
+			motion.PlayerCameraPitch_dseg_67d6_33D6 = 0;
+			Debug.Print($"{motion.PlayerCameraPitch_dseg_67d6_33D6}");
+		}
+
+
 	}
 
 	static void ProcessMobileObjects(byte AnimationFrameDelta)
@@ -475,9 +502,9 @@ public partial class main : Node3D
 							// }
 							// else
 							// {
-								result = npc.NPCInitialProcess(obj);
+							result = npc.NPCInitialProcess(obj);
 							//}
-	
+
 							if (n != null)
 							{
 								if (obj.instance != null)
@@ -510,7 +537,7 @@ public partial class main : Node3D
 					if (initialnextframe == obj.NextFrame_0XA_Bit0123)
 					{
 						obj.NextFrame_0XA_Bit0123 += 4; //hack. this will prevent an infinite loop occurring.
-						//Debug.Print($"{obj.a_name} {obj.index} has bugged out in ProcessMobileObjects(), probably needs to be made static.");
+														//Debug.Print($"{obj.a_name} {obj.index} has bugged out in ProcessMobileObjects(), probably needs to be made static.");
 					}
 
 				}
