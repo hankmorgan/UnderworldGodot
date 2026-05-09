@@ -22,7 +22,7 @@ namespace Underworld
                 objList = playerdat.InventoryObjects;
             }
             if (_RES == GAME_UW2)
-            {//TODO implement the UW2 logic.
+            {
                 var magicenchantment = MagicEnchantment.GetSpellEnchantment(ObjectUsed, objList);
                 if ((magicenchantment != null) && (!WorldObject))
                 {
@@ -124,6 +124,10 @@ namespace Underworld
                                 }
                                 else
                                 {
+                                    if ((ObjectUsed.link & 0x1FF) == 6)
+                                    {
+                                        playerdat.SetQuest(106,1);//You have looked at Mors Gothris spellbook.
+                                    }
                                     ReadObject(ObjectUsed);
                                 }
                             }
