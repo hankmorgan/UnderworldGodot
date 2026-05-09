@@ -901,6 +901,7 @@ namespace Underworld
         /// </summary>
         public static IEnumerator RunCutscene(int CutsceneNo, CallBacks.CutsceneCallBack callBackMethod = null, bool useSingleRedChannel = false)
         {
+            Debug.Print($"Running cutscene {CutsceneNo}");
             IsPlaying = true;
             TextureRect cutscontrol;
             if (FullScreen)
@@ -1496,10 +1497,14 @@ namespace Underworld
                 // Done for UW2 intro cutscene only. Otherwise always make sure to run the callback as it may be game critical. 
                 // Eg endgame sequence or if a cutscene is interupted during normal gameplay.
                 uimanager.ReturnToMainMenu();
+                callBackMethod = null;
             }
             else if (callBackMethod != null)
             {
-                callBackMethod();               
+                Debug.Print($"Running callback {callBackMethod}");
+                callBackMethod();
+                     Debug.Print($"Running callback {callBackMethod} is finished.");
+                callBackMethod = null;          
             }
             
             yield return null;
