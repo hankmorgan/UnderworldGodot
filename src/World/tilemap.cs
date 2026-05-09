@@ -335,7 +335,7 @@ namespace Underworld
 
             Debug.Print($"{current_tilemap.uw}");
 
-            uimanager.InGame = true;
+            //uimanager.InGame = true;
 
             Palette.CurrentPalette = 0;
         }

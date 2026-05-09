@@ -8,7 +8,34 @@ namespace Underworld
 	{
 		public static uimanager instance;
 
-		public static bool InGame = false;
+
+        public enum GameModes
+        {
+            SPLASH,
+            MAIN,
+            INTRO,
+            JOURNEY,
+            ACK,
+            CHARGEN,
+            GAME,
+            AUTOMAP,
+            CONVERSATION,
+            CUTSCENE,
+            ENDGAME
+        }
+
+        public static GameModes CurrentGameMode = GameModes.SPLASH;
+
+
+		public static bool InGame
+		{
+			get
+			{
+				return (uimanager.CurrentGameMode == uimanager.GameModes.GAME);
+			}
+		}
+		
+		
 		[ExportGroup("Placeholders")]
 		[Export] public TextureRect placeholderuw1;
 		[Export] public TextureRect placeholderuw2;

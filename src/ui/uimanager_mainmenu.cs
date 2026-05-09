@@ -54,20 +54,6 @@ namespace Underworld
 
         [Export] public Label[] SaveGamesNames = new Label[4];
 
-
-        public enum MainMenuEnum
-        {
-            SPLASH,
-            MAIN,
-            INTRO,
-            JOURNEY,
-            ACK,
-            CHARGEN,
-            GAME
-        }
-
-        public static MainMenuEnum AtMainMenu = MainMenuEnum.SPLASH;
-
         private void InitMainMenu()
         {
             if (UWClass._RES == UWClass.GAME_UW2)
@@ -197,7 +183,7 @@ namespace Underworld
             {
                 // Introduction button plays CS000 → CS001 only.
                 // Splash screens (Origin, LGS, title) play on game startup.
-                AtMainMenu = MainMenuEnum.ACK;
+                CurrentGameMode = GameModes.ACK;
                 cutsplayer.PlayCutscene(0xA, ReturnToMainMenu);
             }
         }
@@ -224,7 +210,7 @@ namespace Underworld
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
-                AtMainMenu = MainMenuEnum.JOURNEY;
+                CurrentGameMode = GameModes.JOURNEY;
                 ToggleMainMenuButtons(false);
                 ToggleSaves();
             }
@@ -278,7 +264,7 @@ namespace Underworld
         /// <param name="folder"></param>
         public void JourneyOnwards(string folder)
         {
-            uimanager.AtMainMenu = MainMenuEnum.GAME;
+            uimanager.CurrentGameMode = GameModes.GAME;
             
             playerdat.previousLightLevel = -1;
             playerdat.currentfolder = folder;
@@ -378,7 +364,7 @@ namespace Underworld
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
-                AtMainMenu = MainMenuEnum.CHARGEN;
+                CurrentGameMode = GameModes.CHARGEN;
                 InitChargenUI();
             }
         }
@@ -471,7 +457,7 @@ namespace Underworld
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
-                AtMainMenu = MainMenuEnum.INTRO;
+                CurrentGameMode = GameModes.INTRO;
                 if (UWClass._RES == UWClass.GAME_UW2)
                 {
                     // Introduction button plays CS000 → CS001 only.
@@ -496,11 +482,11 @@ namespace Underworld
 
                     if (keyinput.Keycode == Key.Escape)
                     {
-                        switch (AtMainMenu)
+                        switch (CurrentGameMode)
                         {
-                            case MainMenuEnum.SPLASH:
-                            case MainMenuEnum.INTRO:
-                            case MainMenuEnum.ACK:
+                            case GameModes.SPLASH:
+                            case GameModes.INTRO:
+                            case GameModes.ACK:
                                 {
                                     if (cutsplayer.IsPlaying)
                                     {
@@ -512,8 +498,8 @@ namespace Underworld
                                     // EnableDisable(PanelMainMenu, true);
                                     break;
                                 }
-                            case MainMenuEnum.CHARGEN:
-                            case MainMenuEnum.JOURNEY:
+                            case GameModes.CHARGEN:
+                            case GameModes.JOURNEY:
                                 {
                                     ToggleMainMenuButtons(true);
                                     ToggleSaves(false);
@@ -521,7 +507,7 @@ namespace Underworld
                                     EnableDisable(PanelMainMenu, true);
                                     break;
                                 }
-                            case MainMenuEnum.GAME://ingame
+                            case GameModes.GAME://ingame
                                 {
                                     if (cutsplayer.IsPlaying)
                                     {
@@ -542,7 +528,7 @@ namespace Underworld
         public static void ReturnToMainMenu()
         {
             Debug.Print("Return to main menu");
-            uimanager.AtMainMenu = uimanager.MainMenuEnum.MAIN;
+            uimanager.CurrentGameMode = uimanager.GameModes.MAIN;
             //Still some weirdness with enabling the main menu again. eg palette switch in UW1
             if (MusicStreamPlayer.Instance?.IsPlaying != true || XMIMusic.CurrentlyPlayingThemeNo != 1)
             {
@@ -551,7 +537,7 @@ namespace Underworld
             EnableDisable(instance.PanelMainMenu, true);
             instance.ToggleMainMenuButtons(true);
             instance.ToggleSaves(false);            
-            InGame = false;
+            //InGame = false;
             Node3D the_tiles = main.instance.GetNode<Node3D>("/root/Underworld/tilemap");
             if (the_tiles != null)
             {

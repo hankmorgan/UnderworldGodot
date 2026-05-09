@@ -60,7 +60,7 @@ namespace Underworld
             {
                 return;
             }
-            if (!InGame)
+            if (!((uimanager.CurrentGameMode == GameModes.GAME) || (uimanager.CurrentGameMode == GameModes.CONVERSATION)))
             {
                 return;
             }
