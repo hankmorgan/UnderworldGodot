@@ -149,7 +149,7 @@ namespace Underworld
                 notetext = _notetext;
                 posX = _posX;
                 posY = _posY;
-                Debug.Print($"{posX},{posY} {notetext}");
+                //Debug.Print($"{posX},{posY} {notetext}");
             }
         }
     }//end class
