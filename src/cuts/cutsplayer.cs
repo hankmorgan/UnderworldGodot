@@ -883,6 +883,7 @@ namespace Underworld
                                 {
                                     break;
                                 }
+                                pausecounter--;
                                 yield return new WaitForSeconds (0.25f);
                             }
                         }
@@ -1504,9 +1505,7 @@ namespace Underworld
             }
             else if (callBackMethod != null)
             {
-                Debug.Print($"Running callback {callBackMethod}");
                 callBackMethod();
-                     Debug.Print($"Running callback {callBackMethod} is finished.");
                 callBackMethod = null;          
             }
             

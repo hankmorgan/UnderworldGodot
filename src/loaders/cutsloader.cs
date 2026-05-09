@@ -138,7 +138,7 @@ namespace Underworld
 
         static bool UseAlpha(string File)
         {
-            switch (System.IO.Path.GetFileName(File).ToLower())
+            switch (Path.GetFileName(File).ToLower())
             {
                 //case "cs400.n01"://  Look graphics for volcano
                 case "cs401.n01"://   grave stones

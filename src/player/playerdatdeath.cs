@@ -20,119 +20,136 @@ namespace Underworld
 
             if (_RES == GAME_UW2)
             {
-                //If in Britannia.
-                //Check if was killed by a castle inhabitant.get sent to jail. otherwise die.
-                //else If in other dimension.
-                //Check if dreaming in void. then so wake up where you were sleeping
-                //If dueling in the pits then lose duel
-                //respawn in gem room.
-                if (dungeon_level == 1)
+                PlayerDeathUW2();
+            }
+            else
+            {
+                //uw1
+                PlayerDeathUW1();
+            }
+        }
+
+
+        /// <summary>
+        /// if silver tree planted. do the tree animation. 
+        /// respawn at tree level via a delegate function.        
+        /// otherwise return to main menu and Start death animation.
+        /// </summary>
+        private static void PlayerDeathUW1()
+        {
+
+            if (SilverTreeDungeon != 0)
+            {
+                //resurrect at silver tree
+                cutsplayer.PlayCutscene(0x102, ResurrectAtSilverTree);
+            }
+            else
+            {
+                //die fully with cutscene.
+                cutsplayer.PlayCutscene(0x103, uimanager.ReturnToMainMenu);
+            }
+        }
+
+        public static void ResurrectAtSilverTree()
+        {
+            ChangeExperience(-Exp >> 3);
+            ResurrectionEffects();
+            Teleportation.CodeToRunOnTeleport = TeleportToSilverTree;
+            Teleportation.Teleport(
+                character: 0,
+                tileX: 32, tileY: 32,
+                newLevel: SilverTreeDungeon,
+                heading: 0);
+        }
+
+        private static bool PlayerDeathUW2()
+        {
+            //If in Britannia.
+            //Check if was killed by a castle inhabitant.get sent to jail. otherwise die.
+            //else If in other dimension.
+            //Check if dreaming in void. then so wake up where you were sleeping
+            //If dueling in the pits then lose duel
+            //respawn in gem room.
+            if (dungeon_level == 1)
+            {
+                //playerObject.ProjectileSourceID = 235;  // for testing against LB
+                //Check if was killed by an ally
+                if (playerObject.ProjectileSourceID != 0)
                 {
-                    //playerObject.ProjectileSourceID = 235;  // for testing against LB
-                    //Check if was killed by an ally
-                    if (playerObject.ProjectileSourceID != 0)
-                    {
-                        var killer = UWTileMap.current_tilemap.LevelObjects[playerObject.ProjectileSourceID];
-                        if (killer != null)
-                        {   //was avatar killed by a castle inhabitant or Syria or a castle guard.
-                            if (
-                                ((killer.npc_whoami >= 0x81) && (killer.npc_whoami < 0x8F))
-                                ||
-                                (killer.npc_whoami == 0xA8)
-                                ||
-                                (killer.npc_whoami == 0x95)
-                                )
+                    var killer = UWTileMap.current_tilemap.LevelObjects[playerObject.ProjectileSourceID];
+                    if (killer != null)
+                    {   //was avatar killed by a castle inhabitant or Syria or a castle guard.
+                        if (
+                            ((killer.npc_whoami >= 0x81) && (killer.npc_whoami < 0x8F))
+                            ||
+                            (killer.npc_whoami == 0xA8)
+                            ||
+                            (killer.npc_whoami == 0x95)
+                            )
+                        {
+                            if (killer.UnkBit_0XA_Bit7 == 0)
                             {
-                                if (killer.UnkBit_0XA_Bit7 == 0)
-                                {
-                                    ResurrectionEffects();
-                                    //send to jail
-                                    Teleportation.CodeToRunOnTeleport = GoToJail;
-                                    Teleportation.Teleport(
-                                        character: 0,
-                                        tileX: 42, tileY: 38,
-                                        newLevel: 1,
-                                        heading: 0);
-                                    return;
-                                }
+                                ResurrectionEffects();
+                                //send to jail
+                                Teleportation.CodeToRunOnTeleport = GoToJail;
+                                Teleportation.Teleport(
+                                    character: 0,
+                                    tileX: 42, tileY: 38,
+                                    newLevel: 1,
+                                    heading: 0);
+                                return false;
                             }
                         }
                     }
-
                 }
 
-                if (DreamingInVoid)
-                {
-                    //check if died while dreaming
-                    sleep.AwakenFromTheVoid();
-                    return;
-                }
+            }
 
-                if (CurrentWorld != 0)
+            if (DreamingInVoid)
+            {
+                //check if died while dreaming
+                sleep.AwakenFromTheVoid();
+                return false;
+            }
+
+            if (CurrentWorld != 0)
+            {
+                //respawn in the gem chamber                        
+                if (IsFightingInPit)
                 {
-                    //respawn in the gem chamber                        
-                    if (IsFightingInPit)
+                    SetQuest(129, 0);//arena win record
+                    SetQuest(133, 0);//jospur debt
+                                     //clear fighters
+                    for (int i = 0; i < 5; i++)
                     {
-                        SetQuest(129, 0);//arena win record
-                        SetQuest(133, 0);//jospur debt
-                        //clear fighters
-                        for (int i = 0; i < 5; i++)
-                        {
-                            SetPitFighter(i, 0);//clear opponents.
-                        }
-                        IsFightingInPit = false;
+                        SetPitFighter(i, 0);//clear opponents.
                     }
-                    ResurrectionEffects();
-                    Teleportation.CodeToRunOnTeleport = ResurrectAtBlackrockGem;
-                    Teleportation.Teleport(
-                        character: 0,
-                        tileX: 28, tileY: 37,
-                        newLevel: 5,
-                        heading: 0);
+                    IsFightingInPit = false;
                 }
-                else
-                {
-                    //die fully
-                    Debug.Print("Return to main menu");
-                    uimanager.ReturnToMainMenu();
-                }
-
+                ResurrectionEffects();
+                Teleportation.CodeToRunOnTeleport = ResurrectAtBlackrockGem;
+                Teleportation.Teleport(
+                    character: 0,
+                    tileX: 28, tileY: 37,
+                    newLevel: 5,
+                    heading: 0);
             }
             else
-            {//uw1
-
-                //if silver tree planted. do the tree animation.
-                //respawn at tree level via a delegate function.
-                //otherwise return to main menu
-                //Start death animation.
-
-                Debug.Print("Do Death Animation");
-                if (SilverTreeDungeon != 0)
-                {
-                    ResurrectionEffects();
-                    Debug.Print("Do Silver Tree Animation");
-                    Teleportation.CodeToRunOnTeleport = ResurrectAtSilverTree;
-                    Teleportation.Teleport(
-                        character: 0,
-                        tileX: 32, tileY: 32,
-                        newLevel: SilverTreeDungeon,
-                        heading: 0);
-
-                }
-                else
-                {//die fully
-                    Debug.Print("Return to main menu");
-                    uimanager.ReturnToMainMenu();
-                }
+            {
+                //die fully with cutscene.
+                cutsplayer.PlayCutscene(0x103, uimanager.ReturnToMainMenu);
             }
+
+            return true;
         }
+
 
 
 
         /// <summary>
         /// In UW1 finds the silver tree on a level and jumps to it's location, heals the player. Runs as a teleport callback
         /// </summary>
-        static void ResurrectAtSilverTree()
+        static void TeleportToSilverTree()
         {
             Teleportation.CodeToRunOnTeleport = null;
             play_hp = max_hp;
@@ -156,6 +173,7 @@ namespace Underworld
         /// </summary>
         static void ResurrectAtBlackrockGem()
         {
+            ChangeExperience(-Exp / 9);
             Teleportation.CodeToRunOnTeleport = null;
             play_hp = max_hp;
             PlayerInDeathMode = false;
@@ -175,18 +193,23 @@ namespace Underworld
             PlayerInDeathMode = false;
             playerdat.playerObject.npc_animation = 1;
             XMIMusic.ChangeThemeMusic(0xA);//play depressed theme
+            
             //make humans friendly, set quests, run a trap, advance the clock and move LB to the prison to release you.
+            
             var newtime = (ClockValue / 0x3C00) % 20;
             newtime = Math.Abs(0x28 - newtime);
             newtime = newtime * 0x3C;
-            newtime = newtime - Rng.r.Next(0x5A) + 0x3C;
-            Debug.Print($"Advancing time by {newtime}");
+            newtime = newtime - Rng.r.Next(0x5A) + 0x3C;            
             AdvanceTime(newtime);
+            
             CallBacks.RunCodeOnRace(npc.set_attitude_by_array, 0x1C, new int[] { 2 }, true);
             CallBacks.RunCodeOnRace(npc.set_goal_and_target_by_array, 0x1C, new int[] { 0, 1 }, true); // goal=1, gtarg=0
+            
             SetQuest(112, 1);//avatar has been fighting.
+            
+            uimanager.AddToMessageScroll(GameStrings.GetString(9, 4));//you awaken in jail.
 
-
+            //Find LB and move him to outside the jail doorway.
             uwObject LBritish = null;
             for (int i = 1; i < 256; i++)
             {//find lord british
@@ -209,9 +232,17 @@ namespace Underworld
 
             //put weapons away.
             playerdat.PutWeaponAway();
-            //Close doors in tile 0x2A, 0x26
-            Debug.Print($"TODO Close door at {0x2A},{0x26}");
 
+            //Close doors in tile 0x2A, 0x26
+            var tile = UWTileMap.current_tilemap.Tiles[0x2A, 0x26];
+            var doorObj = objectsearch.FindMatchInTile(tileX: 0x2A, tileY: 0x26, majorclass: 5, minorclass: 0, classindex: -1);
+            if (doorObj != null)
+            {
+                if (doorObj.classindex > 0x8)
+                {
+                    door.CloseDoor(doorObj);    
+                }                
+            }
         }
 
 

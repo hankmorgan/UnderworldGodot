@@ -734,42 +734,49 @@ namespace Underworld
                     {
                         var obj = UWTileMap.current_tilemap.LevelObjects[next];
                         if (next != MotionCalcArray.MotionArrayObjectIndexA)
-                        {//maybe check for colliding.
-                            if (
-                                (!isNPC_var14)
-                                ||
-                                (isNPC_var14 && (commonObjDat.UnknownFlag3_2(obj.item_id) == false))
-                            )
+                        {
+                            if (isNPC_var14)
                             {
-                                //seg028_2941_DA1
-                                if (
-                                    (commonObjDat.height(obj.item_id) != 0)
-                                    ||
-                                    (commonObjDat.height(obj.item_id) == 0) && (!obj.IsStatic)
-                                )
+                                if (commonObjDat.UnknownFlag3_2(obj.item_id))
                                 {
-                                    //seg028_2941_DB7:
-                                    if (
-                                        (obj.IsStatic)
-                                        ||
-                                        ((!obj.IsStatic) && (obj.majorclass != 1))
-                                        ||
-                                        ((!obj.IsStatic) && (obj.majorclass == 1) && (obj.UnkBit_0X15_Bit7 == 0))
-                                        )
+                                    goto GetNextObject;
+                                }
+                            }
+
+                            //seg28_DA1
+                            if (commonObjDat.height(obj.item_id) == 0)
+                            {
+                                if (obj.IsStatic)
+                                {
+                                    goto GetNextObject;
+                                }
+                            }
+
+                            //seg28_Db7
+                            if (!obj.IsStatic)
+                            {
+                                if (obj.majorclass != 1)
+                                {
+                                    if (obj.UnkBit_0X15_Bit7 != 0)
                                     {
-                                        if (
-                                            (arg2 == 0)
-                                            ||
-                                            ((arg2 != 0) && commonObjDat.Unk6_0_maybecancollide(obj.item_id))
-                                            )
-                                        {
-                                            CreateCollisonRecord_Seg028_2941_A78(obj, obj.index, var11_maybeX, var12_maybeY, isNPC_var14);
-                                        }
+                                        goto GetNextObject;
                                     }
                                 }
                             }
+
+                            //seg28_DE1
+                            if (arg2 != 0)
+                            {
+                                if (commonObjDat.Unk6_0_maybecancollide(obj.item_id) == false)
+                                {
+                                    goto GetNextObject;
+                                }
+                            }
+
+                            CreateCollisonRecord_Seg028_2941_A78(obj, obj.index, var11_maybeX, var12_maybeY, isNPC_var14);
                         }
-                        //indexByte = obj.index;//seg028_2941_E1E
+
+                        GetNextObject:
                         next = obj.next;
                         si++;
                     }

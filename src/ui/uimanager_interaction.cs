@@ -166,7 +166,6 @@ namespace Underworld
 
         public static void InteractionModeToggle(InteractionModes index)
         {
-
             PreviousInteractionMode = InteractionMode;
             ToggleInteractionButtonDisplay(index);
 
