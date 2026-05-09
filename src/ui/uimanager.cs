@@ -34,6 +34,31 @@ namespace Underworld
 				return (uimanager.CurrentGameMode == uimanager.GameModes.GAME);
 			}
 		}
+
+	public static bool blockmouseinput
+	{
+		get
+		{
+			return
+			 ConversationVM.InConversation
+			 ||
+			 uimanager.InAutomap
+			 ||
+			 MessageDisplay.WaitingForTypedInput
+			 ||
+			 MessageDisplay.WaitingForMore
+			 ||
+			 MessageDisplay.WaitingForYesOrNo
+			 ||
+			 musicalinstrument.PlayingInstrument
+			 ||
+			 uimanager.InteractionMode == uimanager.InteractionModes.ModeOptions
+			 ;
+
+			; //TODO and other menu modes that will stop input
+		}
+	}
+
 		
 		
 		[ExportGroup("Placeholders")]

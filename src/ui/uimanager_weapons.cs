@@ -113,7 +113,7 @@ namespace Underworld
         {
             if (InGame)
             {
-                if (!main.blockmouseinput)
+                if (!uimanager.blockmouseinput)
                 {
                     WeaponAnimTimer += delta;
                     if (WeaponAnimTimer > 0.2f)

@@ -19,7 +19,7 @@ namespace Underworld
         public static int NoOfTilesDiscovered = 0;
         public static void PlayerTimedLoop(double delta)
         {
-            if ((!main.blockmouseinput) && (uimanager.InGame))
+            if ((!uimanager.blockmouseinput) && (uimanager.InGame))
             {
                 playertimer += delta;
 

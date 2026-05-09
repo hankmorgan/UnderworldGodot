@@ -15,29 +15,7 @@ public partial class main : Node3D
 	/// <summary>
 	/// Blocks input for certain modes
 	/// </summary>
-	public static bool blockmouseinput
-	{
-		get
-		{
-			return
-			 ConversationVM.InConversation
-			 ||
-			 uimanager.InAutomap
-			 ||
-			 MessageDisplay.WaitingForTypedInput
-			 ||
-			 MessageDisplay.WaitingForMore
-			 ||
-			 MessageDisplay.WaitingForYesOrNo
-			 ||
-			 musicalinstrument.PlayingInstrument
-			 ||
-			 uimanager.InteractionMode == uimanager.InteractionModes.ModeOptions
-			 ;
 
-			; //TODO and other menu modes that will stop input
-		}
-	}
 	public static main instance;
 
 	// Called when the node enters the scene tree for the first time.
@@ -207,7 +185,7 @@ public partial class main : Node3D
 
 		testclock += delta;
 
-		if ((uimanager.InGame) && (!blockmouseinput) && (testclock >= 0.097659))
+		if ((uimanager.InGame) && (!uimanager.blockmouseinput) && (testclock >= 0.097659))
 		{
 			testclock = 0;
 			byte AnimationFrameDeltaIncrement = 0;
@@ -249,7 +227,7 @@ public partial class main : Node3D
 				if (AnimationFrameDeltaIncrement != 0)
 				{
 					//if animations enabled
-					if ((uimanager.InGame) && (!blockmouseinput))
+					if ((uimanager.InGame) && (!uimanager.blockmouseinput))
 					{
 						AnimationOverlay.UpdateAnimationOverlays();
 						timers.RunTimerTriggers(AnimationFrameDeltaIncrement);
@@ -595,7 +573,7 @@ public partial class main : Node3D
 					MessageDisplay.WaitingForMore = false;
 					return; //don't process any more clicks here.
 				}
-				if (!blockmouseinput)
+				if (!uimanager.blockmouseinput)
 				{
 					if (uimanager.IsMouseInViewPort())
 					{
@@ -607,7 +585,7 @@ public partial class main : Node3D
 		}
 
 
-		if ((!blockmouseinput) && (uimanager.InGame))
+		if ((!uimanager.blockmouseinput) && (uimanager.InGame))
 		{
 			if (@event is InputEventKey keyinput)
 			{
