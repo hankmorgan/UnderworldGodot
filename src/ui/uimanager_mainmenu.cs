@@ -81,14 +81,14 @@ namespace Underworld
                 MainMenuBG.Material = bitmaps.GetMaterial(BytLoader.OPSCR_BYT);
                 var img = bitmaps.LoadImageAt(BytLoader.OPSCR_BYT);
                 Palette.CurrentPalette = 6;
-                bitmaps.UseRedChannel = false;             
+                bitmaps.UseRedChannel = false;
             }
 
             //Set the font for the save games.
             foreach (var sgn in SaveGamesNames)
             {
                 sgn.Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
-            }   
+            }
 
             //MainMenuBG.Material = bitmaps.GetMaterial(BytLoader.OPSCR_BYT);
             LoadingLabel.Text = "";
@@ -317,9 +317,9 @@ namespace Underworld
             //restore some UI elements that have been previously hidden as part of the splash intro
             uimanager.EnableDisable(uimanager.instance.uw1UI, UWClass._RES != UWClass.GAME_UW2);
             uimanager.EnableDisable(uimanager.instance.uw2UI, UWClass._RES == UWClass.GAME_UW2);
-            uimanager.EnableDisable(uimanager.instance.PanelInventory,true);
-            uimanager.EnableDisable(uimanager.instance.ManaFlaskPanel,true);
-            uimanager.EnableDisable(uimanager.instance.HealthFlaskPanel,true);
+            uimanager.EnableDisable(uimanager.instance.PanelInventory, true);
+            uimanager.EnableDisable(uimanager.instance.ManaFlaskPanel, true);
+            uimanager.EnableDisable(uimanager.instance.HealthFlaskPanel, true);
 
 
             uimanager.OpenedContainerIndex = -1;//clear slot graphics
@@ -342,18 +342,18 @@ namespace Underworld
                 //XMIMusic.ChangeTheme(XMIMusic.PickLevelThemeMusic(0));
                 XMIMusic.PickLevelThemeMusic(0);
             }
-               
+
             //Set up the weapon animations.
             ToggleWeaponAnimationState(drawWeapon: playerdat.play_drawn == 1, updateThemes: false);
             if (playerdat.play_drawn == 1)
             {
                 InteractionMode = InteractionModes.ModeAttack;
-                PreviousInteractionMode = InteractionModes.ModeAttack;            
+                PreviousInteractionMode = InteractionModes.ModeAttack;
             }
             else
             {
                 InteractionMode = InteractionModes.ModeUse;
-                PreviousInteractionMode = InteractionModes.ModeUse; 
+                PreviousInteractionMode = InteractionModes.ModeUse;
             }
             uimanager.UpdateCompass();
         }
@@ -373,10 +373,10 @@ namespace Underworld
             if (@event is InputEventMouse eventMouse)
             {
                 //Set the font for the save games.
-                SaveGamesNames[0].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameSelected, false, false)); 
-                SaveGamesNames[1].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false)); 
-                SaveGamesNames[2].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false)); 
-                SaveGamesNames[3].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false)); 
+                SaveGamesNames[0].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameSelected, false, false));
+                SaveGamesNames[1].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
+                SaveGamesNames[2].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
+                SaveGamesNames[3].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
             }
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
@@ -392,10 +392,10 @@ namespace Underworld
             if (@event is InputEventMouse eventMouse)
             {
                 //Set the font for the save games.
-                SaveGamesNames[0].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false)); 
-                SaveGamesNames[1].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameSelected, false, false)); 
-                SaveGamesNames[2].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false)); 
-                SaveGamesNames[3].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false)); 
+                SaveGamesNames[0].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
+                SaveGamesNames[1].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameSelected, false, false));
+                SaveGamesNames[2].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
+                SaveGamesNames[3].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
             }
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
@@ -413,10 +413,10 @@ namespace Underworld
             if (@event is InputEventMouse eventMouse)
             {
                 //Set the font for the save games.
-                SaveGamesNames[0].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false)); 
-                SaveGamesNames[1].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false)); 
-                SaveGamesNames[2].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameSelected, false, false)); 
-                SaveGamesNames[3].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false)); 
+                SaveGamesNames[0].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
+                SaveGamesNames[1].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
+                SaveGamesNames[2].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameSelected, false, false));
+                SaveGamesNames[3].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
             }
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
@@ -434,10 +434,10 @@ namespace Underworld
             if (@event is InputEventMouse eventMouse)
             {
                 //Set the font for the save games.
-                SaveGamesNames[0].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false)); 
-                SaveGamesNames[1].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false)); 
-                SaveGamesNames[2].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false)); 
-                SaveGamesNames[3].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameSelected, false, false)); 
+                SaveGamesNames[0].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
+                SaveGamesNames[1].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
+                SaveGamesNames[2].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameUnSelected, false, false));
+                SaveGamesNames[3].Set("theme_override_colors/font_color", PaletteLoader.Palettes[0].ColorAtIndex(PaletteIndexSaveGameSelected, false, false));
             }
 
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
@@ -473,18 +473,30 @@ namespace Underworld
         {
             if (@event is InputEventKey keyinput)
             {
-                if (keyinput.Pressed & AtMainMenu)
+                if (keyinput.Pressed)
                 {
+
                     if (keyinput.Keycode == Key.Escape)
-                    {//return to main menu
-                        if (cutsplayer.IsPlaying)
+                    {
+                        if (AtMainMenu)
                         {
-                            cutsplayer.StopCutscene();
+                            //return to main menu
+                            if (cutsplayer.IsPlaying)
+                            {
+                                cutsplayer.StopCutscene();
+                            }
+                            ToggleMainMenuButtons(true);
+                            ToggleSaves(false);
+                            EnableDisable(PanelChargen, false);
+                            EnableDisable(PanelMainMenu, true);
                         }
-                        ToggleMainMenuButtons(true);
-                        ToggleSaves(false);
-                        EnableDisable(PanelChargen, false);
-                        EnableDisable(PanelMainMenu, true);
+                        else
+                        {
+                            if (cutsplayer.IsPlaying)
+                            {
+                                cutsplayer.StopCutscene();
+                            }
+                        }
                     }
                 }
             }
@@ -502,8 +514,8 @@ namespace Underworld
             {
                 XMIMusic.LoadXMI(1);
             }
-            EnableDisable(instance.PanelMainMenu, true);    
-            instance.ToggleMainMenuButtons(true);            
+            EnableDisable(instance.PanelMainMenu, true);
+            instance.ToggleMainMenuButtons(true);
             instance.ToggleSaves(false);
             AtMainMenu = true;
             InGame = false;
@@ -512,7 +524,7 @@ namespace Underworld
             {
                 UWTileMap.DestroyTileMapAndContents(the_tiles);
             }
-        }        
+        }
 
     }//end class
 }//end namespace

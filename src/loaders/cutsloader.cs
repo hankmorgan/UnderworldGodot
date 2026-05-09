@@ -1,4 +1,5 @@
 using Godot;
+using Godot.NativeInterop;
 using System.IO;
 
 namespace Underworld
@@ -137,7 +138,7 @@ namespace Underworld
 
         static bool UseAlpha(string File)
         {
-            switch (File.ToLower())
+            switch (System.IO.Path.GetFileName(File).ToLower())
             {
                 //case "cs400.n01"://  Look graphics for volcano
                 case "cs401.n01"://   grave stones
@@ -360,6 +361,20 @@ namespace Underworld
 
                     // Store raw indexed pixel data for palette interpolation
                     RawPixelData[imagecount] = (byte[])dstImage.Clone();
+                    if (_RES != GAME_UW2)
+                    {
+                        if (System.IO.Path.GetFileName(file).ToLower() == "cs410.n01")
+                        {
+                            //special case. This image loads with a gray background rather than a transparency.
+                            for (int pixel = 0; pixel<= dstImage.GetUpperBound(0);pixel++)
+                            {
+                                if (dstImage[pixel] == 255)
+                                {
+                                    dstImage[pixel] = 0;
+                                }
+                            }
+                        }
+                    }
 
                     ImageCache[imagecount++] = Image(
                         databuffer: dstImage,

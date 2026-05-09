@@ -56,7 +56,8 @@ namespace Underworld
                     {
                         var cutsno = (ObjectUsed.link & 0x1ff) + 0x100;
                         //uimanager.AddToMessageScroll($"Display Cutscene {cutsno}", colour: 2);
-                        cutsplayer.PlayCutscene(CutsceneNo: 0x100 + (ObjectUsed.link & 0x1FF), callBackMethod: null, useSingleRedChannel: true);
+                        uimanager.EnableDisable(uimanager.instance.uwviewport,false); 
+                        cutsplayer.PlayCutscene(CutsceneNo: 0x100 + (ObjectUsed.link & 0x1FF), callBackMethod: cutsplayer.RestoreViewPort, useSingleRedChannel: true);
                         return true;
                     }
                 }
@@ -160,7 +161,8 @@ namespace Underworld
             }
             else
             {
-                cutsplayer.PlayCutscene(CutsceneNo: 0x100 + (ObjectUsed.link & 0x1FF), callBackMethod: null, useSingleRedChannel: true);
+                uimanager.EnableDisable(uimanager.instance.uwviewport,false); 
+                cutsplayer.PlayCutscene(CutsceneNo: 0x100 + (ObjectUsed.link & 0x1FF), callBackMethod: cutsplayer.RestoreViewPort, useSingleRedChannel: true);
             }
         }
 

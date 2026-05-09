@@ -557,11 +557,11 @@ namespace Underworld
         /// <summary>
         /// Executes a single cutscene command. Returns the number of params consumed.
         /// </summary>
-        static void ExecuteCommand(CutSceneCommand cmd, TextureRect cutscontrol, int CutsceneNo)
+        public static IEnumerator ExecuteCommand(CutSceneCommand cmd, TextureRect cutscontrol, int CutsceneNo)
         {
             if (cancelRequested)
             {
-                return;
+                yield return null;
             }
             string paramlist = "";
             for (int p = 0; p < cmd.NoOfParams; p++)
@@ -859,7 +859,33 @@ namespace Underworld
                 case 3: // pause — wait arg[0] / 2 seconds (from disassembly)
                     if (cmd.functionParams[0] > 0)
                     {
-                        Debug.Print($"  Pause: {cmd.functionParams[0] / 2.0f}s");
+                        if (cmd.functionParams[0] >= 999)
+                        {
+                            //pause indefinately.
+                            Debug.Print($"  Pause: {cmd.functionParams[0]}");
+                            while (true)
+                            {
+                                yield return new WaitForSeconds (0.25f);
+                                if (cancelRequested)
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            //pause for  
+                            Debug.Print($"  Pause: {cmd.functionParams[0] / 2.0f}s");                            
+                            var pausecounter = (cmd.functionParams[0] / 2) * 4;//increase by 4 to give more responsive cancelling.
+                            while (pausecounter > 0)
+                            {
+                                if (cancelRequested)
+                                {
+                                    break;
+                                }
+                                yield return new WaitForSeconds (0.25f);
+                            }
+                        }
                     }
                     break;
 
@@ -1078,7 +1104,7 @@ namespace Underworld
                                 {
                                     goto cleanup;
                                 }
-                                ExecuteCommand(cmd, cutscontrol, CutsceneNo);
+                                yield return ExecuteCommand(cmd, cutscontrol, CutsceneNo);
                                 if (cmd.functionNo == 8) // open-file
                                     fileChanged = true;
                             }
@@ -1229,7 +1255,7 @@ namespace Underworld
                     {
                         if (cmd.frame == segmentFrameCount && cmd.functionNo != 5)
                         {
-                            ExecuteCommand(cmd, cutscontrol, CutsceneNo);
+                            yield return ExecuteCommand(cmd, cutscontrol, CutsceneNo);
                             if (cmd.functionNo == 8) // open-file
                                 fileChanged = true;
                         }
@@ -1260,7 +1286,7 @@ namespace Underworld
                             foreach (var cmd in scheduledCmds)
                             {
                                 if (cmd.frame == frame)
-                                    ExecuteCommand(cmd, cutscontrol, CutsceneNo);
+                                    yield return ExecuteCommand(cmd, cutscontrol, CutsceneNo);
                             }
 
                             // Display frame
@@ -1291,7 +1317,7 @@ namespace Underworld
                             {
                                 goto cleanup;
                             }
-                            ExecuteCommand(cmd, cutscontrol, CutsceneNo);
+                            yield return ExecuteCommand(cmd, cutscontrol, CutsceneNo);
                             if (cancelRequested)
                             {
                                 goto cleanup;
@@ -1398,7 +1424,7 @@ namespace Underworld
                     {
                         goto cleanup;
                     }
-                    ExecuteCommand(cmd, cutscontrol, CutsceneNo);
+                    yield return ExecuteCommand(cmd, cutscontrol, CutsceneNo);
                     if (cancelRequested)
                     {
                         goto cleanup;
@@ -1473,10 +1499,18 @@ namespace Underworld
             }
             else if (callBackMethod != null)
             {
-                callBackMethod();
+                callBackMethod();               
             }
-
+            
             yield return null;
+        }
+
+        /// <summary>
+        /// Used to support some windowed cutscenes that turn off the cameras.
+        /// </summary>
+        public static void RestoreViewPort()
+        {
+            uimanager.EnableDisable(uimanager.instance.uwviewport,true); 
         }
 
     } // end class
