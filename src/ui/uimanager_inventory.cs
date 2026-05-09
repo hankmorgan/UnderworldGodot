@@ -392,7 +392,7 @@ namespace Underworld
                         }
                     }
                     break;
-                case InteractionModes.ModeOptions;
+                case InteractionModes.ModeOptions:
                     break;//donothing.
                 default:
                     Debug.Print("Unimplemented inventory use verb-object combination"); break;

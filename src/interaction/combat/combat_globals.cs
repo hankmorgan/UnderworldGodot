@@ -21,6 +21,24 @@ namespace Underworld
 
         public static int CurrentAttackSwingType = 0;
 
+        public static int AttackSwingHeightAdjust
+        {
+            get
+            {
+                switch (CurrentAttackSwingType)
+                {
+                    case 0: //stab
+                        return 2;
+                    case 2: //bash
+                        return 8;
+                    case 1:
+                    default:
+                        return 5; //slash
+
+                }
+            }
+        }
+
         public static int currentWeaponItemID
         {
             get

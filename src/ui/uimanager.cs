@@ -8,12 +8,9 @@ namespace Underworld
 
 
         public enum GameModes
-        {
-            SPLASH,
+        { 
             MAIN,
-            INTRO,
             JOURNEY,
-            ACK,
             CHARGEN,
             GAME,
 			OPTIONS,
@@ -23,9 +20,12 @@ namespace Underworld
             ENDGAME
         }
 
-        public static GameModes CurrentGameMode = GameModes.SPLASH;
+        public static GameModes CurrentGameMode = GameModes.CUTSCENE;
 
 
+		/// <summary>
+		/// Game activity will only current during this mode.
+		/// </summary>
 		public static bool InGame
 		{
 			get

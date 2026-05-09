@@ -763,11 +763,11 @@ namespace Underworld
             //var radius = (byte)commonObjDat.radius(currentWeaponItemID);
             MotionCalcArray.Radius8 = (byte)(CurrentWeaponRadius + 1);
             MotionCalcArray.Height9 = (byte)(((CurrentWeaponRadius << 1) + 1) << 2);
-            MotionCalcArray.z4 = (ushort)(AttackingCharacter.zpos + (commonObjDat.height(AttackingCharacter.item_id) * (CurrentAttackSwingType / 3) / 3));
+            MotionCalcArray.z4 = (ushort)(AttackingCharacter.zpos + (commonObjDat.height(AttackingCharacter.item_id) * (AttackSwingHeightAdjust / 3) / 3)); //note when on zpos=0 and using a stab attack the calculated z4 will be out of bounds. this is vanilla behaviour.
             
             if (AttackingCharacter.index == 1)
             {
-                MotionCalcArray.z4 += (ushort)(motion.PlayerCameraPitch_dseg_67d6_33D6 / 0x200);//this value is set in player motion. Assume 0 for now.
+                MotionCalcArray.z4 += (ushort)(motion.PlayerCameraPitch_dseg_67d6_33D6 / 0x200);
             }
 
             AttackHitZ_dseg_67d6_24CE = (commonObjDat.height(AttackingCharacter.item_id) / 6) + MotionCalcArray.z4;

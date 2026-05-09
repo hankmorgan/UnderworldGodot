@@ -183,7 +183,7 @@ namespace Underworld
             {
                 // Introduction button plays CS000 → CS001 only.
                 // Splash screens (Origin, LGS, title) play on game startup.
-                CurrentGameMode = GameModes.ACK;
+                CurrentGameMode = GameModes.CUTSCENE;
                 cutsplayer.PlayCutscene(0xA, ReturnToMainMenu);
             }
         }
@@ -457,7 +457,7 @@ namespace Underworld
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
-                CurrentGameMode = GameModes.INTRO;
+                CurrentGameMode = GameModes.CUTSCENE;
                 if (UWClass._RES == UWClass.GAME_UW2)
                 {
                     // Introduction button plays CS000 → CS001 only.
@@ -484,18 +484,12 @@ namespace Underworld
                     {
                         switch (CurrentGameMode)
                         {
-                            case GameModes.SPLASH:
-                            case GameModes.INTRO:
-                            case GameModes.ACK:
+                            case GameModes.CUTSCENE:
                                 {
                                     if (cutsplayer.IsPlaying)
                                     {
                                         cutsplayer.StopCutscene();//rely on callback to restore menu.
                                     }
-                                    // ToggleMainMenuButtons(true);
-                                    // ToggleSaves(false);
-                                    // EnableDisable(PanelChargen, false);
-                                    // EnableDisable(PanelMainMenu, true);
                                     break;
                                 }
                             case GameModes.CHARGEN:

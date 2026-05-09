@@ -155,7 +155,7 @@ public partial class main : Node3D
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _PhysicsProcess(double delta)
 	{
-		if ((uimanager.InGame) || (uimanager.AtMainMenu))
+		if ((uimanager.InGame) || (uimanager.AtMainMenu) || (uimanager.CurrentGameMode == uimanager.GameModes.CUTSCENE))
 		{
 			cycletime += delta;
 			if (cycletime > 0.2)
@@ -261,7 +261,7 @@ public partial class main : Node3D
 			combat.CombatInputHandler(delta);
 			playerdat.PlayerTimedLoop(delta);
 
-			
+
 			if (EnablePositionDebug)
 			{
 				int tileX = -(int)(cam.Position.X / 1.2f);

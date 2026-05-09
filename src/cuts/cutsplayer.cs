@@ -241,7 +241,7 @@ namespace Underworld
         /// <param name="CutsceneNo">The index number of the cutscene to play</param>
         /// <param name="callBackMethod">Function to call after the cutscene has played</param>
         public static void PlayCutscene(int CutsceneNo, CallBacks.CutsceneCallBack callBackMethod, bool useSingleRedChannel = false)
-        {
+        {            
             cancelRequested = false;
             crngRanges = null;
             crngCounters = null;
@@ -901,6 +901,8 @@ namespace Underworld
         /// </summary>
         public static IEnumerator RunCutscene(int CutsceneNo, CallBacks.CutsceneCallBack callBackMethod = null, bool useSingleRedChannel = false)
         {
+            var OrigGameMode = uimanager.CurrentGameMode;
+            uimanager.CurrentGameMode = uimanager.GameModes.CUTSCENE;
             Debug.Print($"Running cutscene {CutsceneNo}");
             IsPlaying = true;
             TextureRect cutscontrol;
@@ -1486,6 +1488,7 @@ namespace Underworld
 
         cleanup:
             IsPlaying = false;
+            uimanager.CurrentGameMode = OrigGameMode;//restore gamemode before any new cutscenes start.
             uimanager.EnableDisable(cutscontrol, false);
             uimanager.EnableDisable(uimanager.instance.CutsSubtitle, false);
 
