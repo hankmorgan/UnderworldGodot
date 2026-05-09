@@ -854,10 +854,6 @@ public partial class main : Node3D
 					{//end typed input
 						uimanager.instance.scroll.Clear();
 						MessageDisplay.WaitingForTypedInput = false;
-						if (ConversationVM.InConversation == false)
-						{
-							cameraPitchGimbal.Set("MOVE", true);//re-enable movement
-						}
 					}
 				}
 			}

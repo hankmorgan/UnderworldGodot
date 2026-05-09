@@ -644,8 +644,6 @@ namespace Underworld
 				scd.ProcessSCDArk(mode: 1);
 			}
 
-
-			main.cameraPitchGimbal.Set("MOVE", true);
 			if (DoTeleport)
 			{
 				if (UWTileMap.ValidTile(TeleportTileX, TeleportTileY))

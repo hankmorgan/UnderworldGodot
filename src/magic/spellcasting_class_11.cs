@@ -263,7 +263,6 @@ namespace Underworld
             if (playerdat.ParalyseTimer > 0)
             {
                 playerdat.ParalyseTimer = 0;
-                main.cameraPitchGimbal.Set("MOVE", true);
             }
             playerdat.intoxication = 0;
             playerdat.play_hp = playerdat.max_hp;

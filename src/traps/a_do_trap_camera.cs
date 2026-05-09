@@ -46,7 +46,6 @@ namespace Underworld
             }
             playerdat.AutomapEnabled = automap;
             main.cameraPitchGimbal.MakeCurrent();
-            main.cameraPitchGimbal.Set("MOVE", true);
         }
         
 
@@ -61,7 +60,6 @@ namespace Underworld
             //switch camera            
             var d = (a_do_trap_camera)(trapObj.instance);
             d.do_camera.MakeCurrent();
-            main.cameraPitchGimbal.Set("MOVE", false);
             _ = Coroutine.Run(
                    CameraWaitForInput(),
                     main.instance

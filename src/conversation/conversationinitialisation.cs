@@ -64,9 +64,6 @@ namespace Underworld
 
                     ImportVariables(talker);
                     
-                    //stop player motion
-                    main.cameraPitchGimbal.Set("MOVE", false);
-
                     //Launch conversation VM co-routine 
                     _ = Peaky.Coroutines.Coroutine.Run(
                         RunConversationVM(talker),

@@ -66,7 +66,6 @@ namespace Underworld
                 
 
                 //Ask y/n to repair
-                main.cameraPitchGimbal.Set("MOVE", false);
                 uimanager.instance.TypedInput.Text="Yes";
                 MessageDisplay.WaitingForYesOrNo = true;
                 uimanager.instance.scroll.Clear();

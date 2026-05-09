@@ -184,12 +184,9 @@ namespace Underworld
                         {
                             InteractionModeShowHide(false);//hide the interaction buttons.  
                         }
-                        //turn off mouselook
+                        //turn off mouselook (obsolete?)
                         Input.MouseMode = Input.MouseModeEnum.Hidden;
-                        main.cameraPitchGimbal.Set("MOUSELOOK", false);
-
                         ReturnToTopOptionsMenu();
-                        main.cameraPitchGimbal.Set("MOVE", false);
                         break;
                     }
                 case InteractionModes.ModeAttack:
