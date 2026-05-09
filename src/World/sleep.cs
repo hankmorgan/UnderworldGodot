@@ -1,6 +1,4 @@
 using System.Diagnostics;
-using Munt.NET;
-
 
 namespace Underworld
 {
@@ -86,7 +84,7 @@ namespace Underworld
 
             FindAndCloseDoors(0);
 
-            //Cull objects.
+            //TODO Cull objects.
 
             var si_hourstosleep = 2 + Rng.r.Next(5);
 
