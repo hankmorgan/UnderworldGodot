@@ -1,6 +1,4 @@
 using Godot;
-using System.Diagnostics;
-
 
 namespace Underworld
 {
@@ -18,6 +16,7 @@ namespace Underworld
             ACK,
             CHARGEN,
             GAME,
+			OPTIONS,
             AUTOMAP,
             CONVERSATION,
             CUTSCENE,
@@ -35,12 +34,43 @@ namespace Underworld
 			}
 		}
 
+		public static bool AtMainMenu
+		{
+			get 
+			{
+				return 
+					(uimanager.CurrentGameMode == uimanager.GameModes.JOURNEY)
+					||
+					(uimanager.CurrentGameMode == uimanager.GameModes.CHARGEN)
+					||
+					(uimanager.CurrentGameMode == uimanager.GameModes.MAIN);
+			}
+		}
+
+		public static bool InConversation
+		{
+			get
+			{
+				return (uimanager.CurrentGameMode == uimanager.GameModes.CONVERSATION);
+			}
+		}
+
+		public static bool InAutomap
+		{
+			get
+			{
+				return (uimanager.CurrentGameMode == uimanager.GameModes.AUTOMAP);
+			}			
+		}
+
+		
+
 	public static bool blockmouseinput
 	{
 		get
 		{
 			return
-			 ConversationVM.InConversation
+			 uimanager.InConversation
 			 ||
 			 uimanager.InAutomap
 			 ||
@@ -52,7 +82,7 @@ namespace Underworld
 			 ||
 			 musicalinstrument.PlayingInstrument
 			 ||
-			 uimanager.InteractionMode == uimanager.InteractionModes.ModeOptions
+			 uimanager.CurrentGameMode == GameModes.OPTIONS
 			 ;
 
 			; //TODO and other menu modes that will stop input

@@ -680,7 +680,7 @@ namespace Underworld
             {
                 play_level = newLevel;
                 SkillPoints += newLevel;
-                if (!ConversationVM.InConversation)
+                if (!uimanager.InConversation)
                 {
                     uimanager.AddToMessageScroll($"{GameStrings.GetString(1, GameStrings.str_you_have_attained_experience_level_)}{newLevel}");
                 }

@@ -9,8 +9,11 @@ namespace Underworld
 	/// </summary>
 	public partial class ConversationVM : UWClass
 	{
-		public static bool InConversation = false;
+		//public static bool InConversation = false;
 
+		/// <summary>
+		/// Used for the talking door and the wisp in uw2. Game spawns a temporary npc for these conversations.
+		/// </summary>
 		public static bool TemporaryTalker = false;
 
 		/// <summary>
@@ -621,7 +624,7 @@ namespace Underworld
 				}
 			}
 			uimanager.instance.convo.Clear();
-			InConversation = false;
+			uimanager.CurrentGameMode = uimanager.GameModes.GAME;
 
 			if (_RES == GAME_UW2)
 			{

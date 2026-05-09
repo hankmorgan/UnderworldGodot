@@ -645,6 +645,7 @@ namespace Underworld
 
         public static void ReturnToGameFromOptions()
         {
+            uimanager.CurrentGameMode = GameModes.GAME;
             if (UWClass._RES == UWClass.GAME_UW2)
             {
                 EnableDisable(instance.PanelInventory, true);
@@ -675,6 +676,7 @@ namespace Underworld
 
         private static void ReturnToTopOptionsMenu()
         {
+            uimanager.CurrentGameMode = GameModes.OPTIONS;
             if (UWClass._RES == UWClass.GAME_UW2)
             {
                 EnableDisable(instance.PanelInventory, false);

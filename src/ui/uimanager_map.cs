@@ -12,8 +12,7 @@ namespace Underworld
         [Export] public Panel AutomapPanel;
         [Export] public TextureRect AutomapBG;
         [Export] public TextureRect AutomapImage;
-        public static bool InAutomap = false;
-        [Export] public Panel NotesPanel;
+                [Export] public Panel NotesPanel;
 
         [Export] public RichTextLabel AutomapNumberLabel;
 
@@ -153,7 +152,7 @@ namespace Underworld
 
             automap.currentautomap = level;
             automap.currentworld = worldno;
-            InAutomap = true;//to block input
+            uimanager.CurrentGameMode = GameModes.AUTOMAP;//to block input and other game motion.
         }
 
         /// <summary>
@@ -165,7 +164,7 @@ namespace Underworld
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
                 EnableDisable(AutomapPanel, false);
-                InAutomap = false;
+                uimanager.CurrentGameMode = GameModes.GAME;
                 if (UWClass._RES != UWClass.GAME_UW2)
                 {
                     if (playerdat.play_drawn == 1)

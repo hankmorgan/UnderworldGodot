@@ -40,7 +40,7 @@ namespace Underworld
                 else
                 { //a conversation can be had (TODO take hostility into account. Some special NPCs can be talked to in combat. eg rodric and patterson)
                     currentConversation = conversations[conversationNo];
-                    InConversation = true;
+                    uimanager.CurrentGameMode = uimanager.GameModes.CONVERSATION;
                     DoTeleport = false;
                     TeleportToLevel = -1;
                     TeleportTileX = - 1;

@@ -324,7 +324,7 @@ namespace Underworld
                         }
                         else
                         {
-                            if (!ConversationVM.InConversation)
+                            if (!uimanager.InConversation)
                             {
                                 if (isLeftClick)
                                 {
@@ -392,6 +392,8 @@ namespace Underworld
                         }
                     }
                     break;
+                case InteractionModes.ModeOptions;
+                    break;//donothing.
                 default:
                     Debug.Print("Unimplemented inventory use verb-object combination"); break;
             }
@@ -730,7 +732,7 @@ namespace Underworld
                 }
             }
             UpdateInventoryDisplay();
-            if (ConversationVM.InConversation)
+            if (uimanager.InConversation)
             {
                 //restore lines.
                 for (int i = 0; i <= linesToRestore.GetUpperBound(0); i++)

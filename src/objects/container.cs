@@ -297,7 +297,7 @@ namespace Underworld
         public static bool TestContainerCanHold(uwObject containerobject, uwObject objectToAdd, bool printReason = true)
         {//assume containerobject = in player object list, objecttoadd in level objects list
             MessageDisplay.MessageDisplayMode printmode = MessageDisplay.MessageDisplayMode.NormalMode;
-            if (ConversationVM.InConversation)
+            if (uimanager.InConversation)
             {
                 printmode = MessageDisplay.MessageDisplayMode.TemporaryMessage;
             }
@@ -317,7 +317,7 @@ namespace Underworld
                     {
                         if (printReason)
                         {
-                            if (ConversationVM.InConversation)
+                            if (uimanager.InConversation)
                             {
                                 uimanager.AddToMessageScroll(
                                     stringToAdd: GameStrings.GetString(1, GameStrings.str_that_item_does_not_fit_),

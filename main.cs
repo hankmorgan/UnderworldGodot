@@ -155,14 +155,14 @@ public partial class main : Node3D
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _PhysicsProcess(double delta)
 	{
-		// if ((uimanager.InGame) || (uimanager.AtMainMenu))
-		// {
+		if ((uimanager.InGame) || (uimanager.AtMainMenu))
+		{
 			cycletime += delta;
 			if (cycletime > 0.2)
 			{
 				cycletime = 0;
 				PaletteLoader.UpdatePaletteCycles();
-		//	}
+			}
 		}
 
 
@@ -261,15 +261,16 @@ public partial class main : Node3D
 			combat.CombatInputHandler(delta);
 			playerdat.PlayerTimedLoop(delta);
 
-			int tileX = -(int)(cam.Position.X / 1.2f);
-			int tileY = (int)(cam.Position.Z / 1.2f);
-			tileX = Math.Max(Math.Min(tileX, 63), 0);
-			tileY = Math.Max(Math.Min(tileY, 63), 0);
-			int xposvecto = -(int)(((cam.Position.X % 1.2f) / 1.2f) * 8);
-			int yposvecto = (int)(((cam.Position.Z % 1.2f) / 1.2f) * 8);
-			int newzpos = (int)(((((cam.Position.Y) * 100) / 32f) / 15f) * 128f) - commonObjDat.height(127);
+			
 			if (EnablePositionDebug)
 			{
+				int tileX = -(int)(cam.Position.X / 1.2f);
+				int tileY = (int)(cam.Position.Z / 1.2f);
+				tileX = Math.Max(Math.Min(tileX, 63), 0);
+				tileY = Math.Max(Math.Min(tileY, 63), 0);
+				int xposvecto = -(int)(((cam.Position.X % 1.2f) / 1.2f) * 8);
+				int yposvecto = (int)(((cam.Position.Z % 1.2f) / 1.2f) * 8);
+				int newzpos = (int)(((((cam.Position.Y) * 100) / 32f) / 15f) * 128f) - commonObjDat.height(127);
 				var fps = Engine.GetFramesPerSecond();
 				lblPositionDebug.Text = $"FPS:{fps} Time:{playerdat.game_time}\nL:{playerdat.dungeon_level} X:{tileX} Y:{tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}\n {motion.playerMotionParams.x_0} {motion.playerMotionParams.y_2} {motion.playerMotionParams.z_4}";
 			}
