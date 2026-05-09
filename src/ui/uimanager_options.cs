@@ -653,7 +653,24 @@ namespace Underworld
             }
             if (PreviousInteractionMode != InteractionMode)
             {
-               InteractionModeToggle(PreviousInteractionMode); 
+                if (PreviousInteractionMode != InteractionModes.ModeAttack)
+                {
+                    InteractionModeToggle(PreviousInteractionMode);      
+                }
+                else
+                {
+                    InteractionMode = InteractionModes.ModeAttack;
+                    //Turn on attack interaction button.
+                    if (UWClass._RES == UWClass.GAME_UW2)
+                    {
+                        instance.InteractionButtonsUW2[(int)(InteractionModes.ModeAttack)].Texture = instance.UW2InteractionBtnsOff[(int)(InteractionModes.ModeAttack)];
+                    }
+                    else
+                    {
+                        instance.InteractionButtonsUW1[(int)(InteractionModes.ModeAttack)].Texture = grLfti.LoadImageAt((int)(InteractionModes.ModeAttack) * 2, false);
+                    }
+                }
+               
             } 
             else
             {
