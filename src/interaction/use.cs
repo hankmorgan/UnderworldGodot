@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Diagnostics;
 
 namespace Underworld
@@ -352,6 +353,8 @@ namespace Underworld
                             {
                                 case 4://exploding book
                                     return explodingbook.Use(ObjectUsed, WorldObject);
+                                case 5://burning incense.
+                                    return incense.Use(ObjectUsed, WorldObject);
                                 case 0xB:
                                     return rotwormstew.Use(ObjectUsed, WorldObject);
 
