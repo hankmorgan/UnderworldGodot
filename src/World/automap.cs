@@ -25,11 +25,11 @@ namespace Underworld
         /// Initialises an automap for the specified level no and loads the automap data from the lev.ark file
         /// </summary>
         /// <param name="LevelNo"></param>
-        public automap(int LevelNo, int gameNo)
+        public automap(int LevelNo)
         {
             //load buffer. then init tiles with their offsets
             int blockno;
-            if (_RES == GAME_UW2) //this is weird. I had to pass gameno as a parm or otherwise this if-else would not work??
+            if (_RES == GAME_UW2)
             {
                 blockno = 160 + LevelNo;
             }

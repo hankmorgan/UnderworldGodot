@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 namespace Underworld
 {
 
@@ -8,6 +6,15 @@ namespace Underworld
     /// </summary>
     public class a_bit_of_a_map : objectInstance
     {
+
+        //Map pieces
+        //index     link
+        //925       520
+        //931       528
+        //964       516  
+        //975       513
+        //997       514
+        //999       544
         public static bool Use(uwObject obj, bool WorldObject)
         {
             if (WorldObject)
@@ -27,9 +34,15 @@ namespace Underworld
 
                     if (mapPieceLink != 0)
                     {
-                        obj.link = 0x400;
+                        obj.link = 512;
                         uimanager.AddToMessageScroll(GameStrings.GetString(1, 9));
                         CopyMapPiece(SourceMapNo: dungeon, TargetMapNo: obj.owner, SegmentToCopy: mapPieceLink);
+                    }
+                    else
+                    {
+                        //display the automap of the target level
+                        var worldno = worlds.GetWorldNo(obj.owner);
+                        uimanager.DrawAutoMap(obj.owner - 1, worldno);
                     }
                 }
             }
@@ -45,13 +58,13 @@ namespace Underworld
             int expgain = 0;
             //if (automap.automaps[SourceMapNo - 1] == null)
             //{
-            var sourcemap = new automap(SourceMapNo - 1, _RES);//this map is only temporarily loaded. the data is has to be removed as subsequent uses of map pieces will not work if the actual map data is changed.
+            var sourcemap = new automap(SourceMapNo - 1);//this map is only temporarily loaded. the data is has to be removed as subsequent uses of map pieces will not work if the actual map data is changed.
             //}
             //var sourcemap = automap.automaps[SourceMapNo - 1];
 
             if (automap.automaps[TargetMapNo - 1] == null)
             {
-                automap.automaps[TargetMapNo - 1] = new automap(TargetMapNo - 1, _RES);
+                automap.automaps[TargetMapNo - 1] = new automap(TargetMapNo - 1);
             }
             var targetmap = automap.automaps[TargetMapNo - 1];
 
@@ -70,7 +83,7 @@ namespace Underworld
                     {
                         var TestSegmentNo = GetMapPieceSegmentNo(si - 32, di - 32); //find which eight the x/y value is in.
 
-                        if (((SegmentToCopy >> TestSegmentNo) & 1) == 0) 
+                        if (((SegmentToCopy >> TestSegmentNo) & 1) == 0)
                         {
                             //ovr094_168F
                             var index = (di << 6) + si;
@@ -87,7 +100,7 @@ namespace Underworld
                                 }
                             }
                             currentmap.buffer[index] |= nibblevar9;
-l                        }
+                        }
 
                         si++;
                     }
@@ -137,11 +150,41 @@ l                        }
                     di--;
                 }
             }
-            
+
             //Apply exp gain
             playerdat.ChangeExperience(expgain / 0x14);
 
-            
+            var sourcenotes = new automapnote(SourceMapNo - 1);
+            if (automapnote.automapsnotes[TargetMapNo - 1] == null)
+            {
+                automapnote.automapsnotes[TargetMapNo - 1] = new(TargetMapNo - 1);
+            }
+            var targetnotes = automapnote.automapsnotes[TargetMapNo - 1];
+
+            //var si = 0;
+            foreach (var srcNote in sourcenotes.notes)
+            {                
+                var NoteX_var14 = (srcNote.posX - 10) / 3;
+                var NoteY_var16 = (srcNote.posY - 9) / 3;
+                var var6 = GetMapPieceSegmentNo(NoteX_var14 - 32, NoteY_var16-32);
+                if (((SegmentToCopy >> var6) & 0x1) != 0)
+                {
+                    if (targetnotes.NoOfNotes < 0x64)
+                    {
+                        // there is space to store the note.
+                        targetnotes.notes.Add(
+                            new(
+                                _notetext: srcNote.notetext, 
+                                _posX: srcNote.posX, 
+                                _posY: srcNote.posY)
+                            );
+                    }
+                }
+
+            }
+
+
+
 
 
         }
@@ -160,7 +203,7 @@ l                        }
             var si = 0;
             var cx = arg0;
             var di = arg2;
-            
+
             if ((di * di) + (cx * cx) < 0x51)
             {
                 return 0;

@@ -320,12 +320,12 @@ namespace Underworld
 
             if (automap.automaps[newLevelNo] == null)
             {
-                automap.automaps[newLevelNo] = new automap(newLevelNo, (int)_RES);
+                automap.automaps[newLevelNo] = new automap(newLevelNo);
             }
 
             if (automapnote.automapsnotes[newLevelNo] == null)
             {
-                automapnote.automapsnotes[newLevelNo] = new automapnote(newLevelNo, (int)_RES);
+                automapnote.automapsnotes[newLevelNo] = new automapnote(newLevelNo);
             }
 
 

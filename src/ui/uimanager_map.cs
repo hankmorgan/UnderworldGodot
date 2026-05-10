@@ -84,7 +84,7 @@ namespace Underworld
             Debug.Print($"Displaying automap {blockno}");
             if (automap.automaps[blockno] == null)
             {
-                automap.automaps[blockno] = new automap(blockno, UWClass._RES);
+                automap.automaps[blockno] = new automap(blockno);
             }
             if (automap.automaps[blockno] == null)
             {
@@ -133,7 +133,7 @@ namespace Underworld
             }
             if (automapnote.automapsnotes[blockno] == null)
             {//load data if not ready.
-                automapnote.automapsnotes[blockno] = new automapnote(blockno, UWClass._RES);
+                automapnote.automapsnotes[blockno] = new automapnote(blockno);
             }
             if (automapnote.automapsnotes[blockno] != null)
             {
