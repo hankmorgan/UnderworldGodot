@@ -93,7 +93,7 @@ namespace Underworld
             instance.AutomapImage.Texture = AutomapRender.MapImage(blockno);
             instance.AutomapNumberLabel.Text = $"{level + 1}";
             EnableDisable(instance.AutomapPanel, true);
-            //TODO update UW2 Map gem
+
 
             if (UWClass._RES == UWClass.GAME_UW2)
             {
@@ -166,6 +166,9 @@ namespace Underworld
             automap.currentautomap = level;
             automap.currentworld = worldno;
             uimanager.CurrentGameMode = GameModes.AUTOMAP;//to block input and other game motion.
+
+            //change the cursor to the quill
+            uimanager.instance.mousecursor.SetCursorToCursor(14);
         }
 
         /// <summary>
@@ -196,7 +199,8 @@ namespace Underworld
                         XMIMusic.ChangeThemeMusic(XMIMusic.Armed);
                     }
                 }
-            }
+                uimanager.instance.mousecursor.SetCursorToCursor();
+            }            
         }
 
 

@@ -88,6 +88,15 @@ namespace Underworld
 
 		public void SetCursorToCursor(int index = 0)
 		{
+			if (((index==14) || (index==12)) && (UWClass._RES==UWClass.GAME_UW2))
+			{
+				//Special case for the quill
+				uimanager.grCursors.PaletteNo = 2;
+			}
+			else
+			{
+				uimanager.grCursors.PaletteNo = 0;
+			}
 			Texture = uimanager.grCursors.LoadImageAt(index);
 			//Material= uimanager.grCursors.GetMaterial(index);//no shader is applied here
 			Material = null;
