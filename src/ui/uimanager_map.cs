@@ -70,6 +70,7 @@ namespace Underworld
 
         public static void DrawAutoMap(int level, int worldno)
         {
+            
             int blockno;
             if (UWClass._RES == UWClass.GAME_UW2)
             {
@@ -80,6 +81,7 @@ namespace Underworld
             {
                 blockno = level;
             }
+            Debug.Print($"Displaying automap {blockno}");
             if (automap.automaps[blockno] == null)
             {
                 automap.automaps[blockno] = new automap(blockno, UWClass._RES);

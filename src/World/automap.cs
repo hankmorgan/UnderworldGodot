@@ -29,9 +29,8 @@ namespace Underworld
         {
             //load buffer. then init tiles with their offsets
             int blockno;
-            if (gameNo == GAME_UW2) //this is weird. I had to pass gameno as a parm or otherwise this if-else would not work??
+            if (_RES == GAME_UW2) //this is weird. I had to pass gameno as a parm or otherwise this if-else would not work??
             {
-                Debug.Print("UW2");
                 blockno = 160 + LevelNo;
             }
             else

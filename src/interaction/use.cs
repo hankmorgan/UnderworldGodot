@@ -429,7 +429,7 @@ namespace Underworld
                             switch (ObjectUsed.classindex)
                             {
                                 case 0x9://a_bit of a map 
-                                    return false;
+                                    return a_bit_of_a_map.Use(ObjectUsed, WorldObject);
                                 case 0xA://a_map 
                                     return map.Use(ObjectUsed, WorldObject);
                                 case 0xB://a_dead plant 
