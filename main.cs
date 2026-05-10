@@ -4,6 +4,7 @@ using System.Diagnostics;
 using Underworld;
 using Peaky.Coroutines;
 using System.Collections;
+using System.ComponentModel;
 
 /// <summary>
 /// Node to initialise the game
@@ -907,6 +908,48 @@ public partial class main : Node3D
 					{//end typed input						
 						MessageDisplay.WaitingForTypedInput = false;
 						chargen.ChargenWaitForInput = false;
+					}
+				}
+			}
+		}
+
+		if (uimanager.CurrentAutomapAction == uimanager.automapactions.WRITING)
+		{
+			if (@event is InputEventKey keyinput)
+			{
+				if (keyinput.Pressed)
+				{
+					switch (keyinput.Keycode)
+					{
+						case Key.Enter:
+							uimanager.StopWritingAutomapNote(false);
+							break;
+						case Key.Escape:
+							uimanager.StopWritingAutomapNote(true);
+							break;
+						case Key.Backspace:
+							{
+								var text = uimanager.currentmapnote.notetext;
+								if (text.Length > 0)
+								{
+									text = text.Remove(text.Length - 1);
+									uimanager.currentmapnote.notetext = text;
+									uimanager.currentmapnote.textlabel.Text = $"[color=#331C13]{text}[/color]";
+								}
+								break;
+							}
+
+						default://TODO: Default is too broad. must exclude special chars
+							{
+								var text = uimanager.currentmapnote.notetext;
+								if (text.Length < 0x30)//allowing space for \0 ending.
+								{
+									text += ((char)keyinput.Unicode).ToString();
+									uimanager.currentmapnote.notetext = text;
+									uimanager.currentmapnote.textlabel.Text = $"[color=#331C13]{text}[/color]";
+								}
+								break;
+							}
 					}
 				}
 			}

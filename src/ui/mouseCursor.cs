@@ -64,6 +64,13 @@ namespace Underworld
 				{//follow the mouse
 					if (Texture != null)
 					{
+						if (uimanager.CurrentGameMode == uimanager.GameModes.AUTOMAP)
+						{
+							if (uimanager.CurrentAutomapAction == uimanager.automapactions.WRITING)
+							{
+								return; //don't move mouse while writing.
+							}
+						}
 						var offset = new Vector2(Texture.GetWidth() / 1f, Texture.GetHeight() / 1f);
 						var pos = GetViewport().GetMousePosition() - offset;
 						this.Position = pos;

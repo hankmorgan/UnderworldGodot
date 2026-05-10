@@ -17,16 +17,19 @@ namespace Underworld
         [Export] public RichTextLabel AutomapNumberLabel;
 
         [Export] public TextureRect[] AutomapWorldGem = new TextureRect[9];
-
-
-        enum automapactions
+        
+        public enum automapactions
         {
             NONE,
             WRITING,
-            DELETING 
+            DELETING
         }
 
-        static automapactions CurrentAutomapAction = automapactions.NONE;
+        public static automapnote.mapnotetext currentmapnote;
+
+        public static automapactions CurrentAutomapAction = automapactions.NONE;
+
+        static int writingX = 0; static int writingY = 0;
 
         public static int MaxLevels
         {
@@ -79,17 +82,8 @@ namespace Underworld
 
         public static void DrawAutoMap(int level, int worldno)
         {
-            
-            int blockno;
-            if (UWClass._RES == UWClass.GAME_UW2)
-            {
-                level = level % 8;
-                blockno = (worldno * 8) + level;
-            }
-            else
-            {
-                blockno = level;
-            }
+            uimanager.CurrentGameMode = GameModes.AUTOMAP;
+            int blockno = GetAutomapBlock(ref level, worldno);
             Debug.Print($"Displaying automap {blockno}");
             if (automap.automaps[blockno] == null)
             {
@@ -122,7 +116,7 @@ namespace Underworld
                 {
                     if (i == tmpworld)
                     {
-                        
+
                         instance.AutomapWorldGem[i].Texture = grGempt.LoadImageAt(worldmappingSelected[tmpworld]);
                     }
                     else
@@ -159,16 +153,7 @@ namespace Underworld
             {
                 foreach (var n in automapnote.automapsnotes[blockno].notes)
                 {
-                    RichTextLabel mapnote = new();
-                    mapnote.Position = new Vector2(-4 + n.posX * 4, 780 - (n.posY * 4));
-                    mapnote.FitContent = true;
-                    mapnote.BbcodeEnabled = true;
-                    mapnote.AutowrapMode = TextServer.AutowrapMode.Off;
-                    mapnote.Theme = MessageScroll.Theme;
-                    mapnote.AddThemeFontOverride("normal_font", instance.Font4X5P);
-                    mapnote.AddThemeFontSizeOverride("normal_font_size", 48);
-                    mapnote.Text = $"[color=#331C13]{n.notetext}[/color]";
-                    instance.NotesPanel.AddChild(mapnote);
+                    AddAutoMapNoteToScreen(n);
                 }
             }
 
@@ -181,6 +166,39 @@ namespace Underworld
             uimanager.instance.mousecursor.SetCursorToCursor(14);
         }
 
+        private static int GetAutomapBlock(ref int level, int worldno)
+        {
+            int blockno;
+            if (UWClass._RES == UWClass.GAME_UW2)
+            {
+                level = level % 8;
+                blockno = (worldno * 8) + level;
+            }
+            else
+            {
+                blockno = level;
+            }
+
+            return blockno;
+        }
+
+
+        private static RichTextLabel AddAutoMapNoteToScreen(automapnote.mapnotetext n)
+        {
+            RichTextLabel mapnote = new();
+            mapnote.Position = new Vector2(-4 + n.posX * 4, 780 - (n.posY * 4));
+            mapnote.FitContent = true;
+            mapnote.BbcodeEnabled = true;
+            mapnote.AutowrapMode = TextServer.AutowrapMode.Off;
+            mapnote.Theme = MessageScroll.Theme;
+            mapnote.AddThemeFontOverride("normal_font", instance.Font4X5P);
+            mapnote.AddThemeFontSizeOverride("normal_font_size", 48);
+            mapnote.Text = $"[color=#331C13]{n.notetext}[/color]";
+            instance.NotesPanel.AddChild(mapnote);
+            return mapnote;
+        }
+
+
         /// <summary>
         /// Closes the automap window
         /// </summary>
@@ -189,6 +207,10 @@ namespace Underworld
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
+                if (CurrentAutomapAction != automapactions.NONE)
+                {
+                    return;//don't do anything while writing.
+                }
                 CurrentAutomapAction = automapactions.NONE;
                 EnableDisable(AutomapPanel, false);
                 uimanager.CurrentGameMode = GameModes.GAME;
@@ -211,7 +233,7 @@ namespace Underworld
                     }
                 }
                 uimanager.instance.mousecursor.SetCursorToCursor();
-            }            
+            }
         }
 
 
@@ -219,6 +241,10 @@ namespace Underworld
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
+                if (CurrentAutomapAction != automapactions.NONE)
+                {
+                    return;//don't do anything while writing.
+                }
                 var newlevel = Math.Min(MapsPerWorld, automap.currentautomap + 1);
                 if (newlevel != automap.currentautomap)
                 {
@@ -231,6 +257,10 @@ namespace Underworld
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
+                if (CurrentAutomapAction != automapactions.NONE)
+                {
+                    return;//don't do anything while writing.
+                }
                 var newlevel = Math.Max(0, automap.currentautomap - 1);
                 if (newlevel != automap.currentautomap)
                 {
@@ -250,7 +280,7 @@ namespace Underworld
                 }
             }
         }
-        //_on_map_background_gui_input
+        
         private void _on_map_background_gui_input(InputEvent @event)
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
@@ -261,19 +291,52 @@ namespace Underworld
                         //start writing
                         CurrentAutomapAction = automapactions.WRITING;
                         uimanager.instance.mousecursor.SetCursorToCursor(12);
+                                                
+                        Debug.Print($"Begin writing at {eventMouseButton.Position.X / 4},{eventMouseButton.Position.Y / 4}");
+                        writingX = (int)(-1 + (eventMouseButton.Position.X / 4));
+                        writingY = (int)(195 - (eventMouseButton.Position.Y / 4));                        
+                        currentmapnote = new automapnote.mapnotetext("", writingX, writingY);                                          
+                        currentmapnote.textlabel = AddAutoMapNoteToScreen(currentmapnote);
                         break;
+
                     case automapactions.WRITING:
                         //stop writing
-                        CurrentAutomapAction = automapactions.NONE;
-                        uimanager.instance.mousecursor.SetCursorToCursor(14);
+                        //StopWritingAutomapNote();
                         break;
+
                     case automapactions.DELETING: //to be implemented.
                         CurrentAutomapAction = automapactions.NONE;
-                        uimanager.instance.mousecursor.SetCursorToCursor(14);
+                        instance.mousecursor.SetCursorToCursor(14);
                         break;
                 }
 
             }
         }
+
+        public static void StopWritingAutomapNote(bool cancelled)
+        {            
+            CurrentAutomapAction = automapactions.NONE;
+            instance.mousecursor.SetCursorToCursor(14);
+
+            if (!cancelled)
+            {
+                //Add note to memory
+                var level = automap.currentautomap;
+                int blockno = GetAutomapBlock(ref level, automap.currentworld);
+                if (automapnote.automapsnotes[blockno] == null)
+                {//load data if not ready.
+                    automapnote.automapsnotes[blockno] = new automapnote(blockno);
+                }
+                automapnote.automapsnotes[blockno].notes.Add(currentmapnote);
+
+                //TODO fill out remainer of string with nulls.
+            }
+            else
+            {
+                currentmapnote.textlabel.QueueFree();
+                currentmapnote = null;
+            }
+        }
+
     }//end class
 }//end namespace

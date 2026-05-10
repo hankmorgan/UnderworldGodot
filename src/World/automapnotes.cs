@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Reflection.Emit;
+using Godot;
 
 namespace Underworld
 {
@@ -156,6 +158,7 @@ namespace Underworld
             public string notetext;
             public int posX; 
             public int posY;
+            public RichTextLabel textlabel;//reference to the label created by this note.
 
             public mapnotetext(string _notetext, int _posX, int _posY)
             {
