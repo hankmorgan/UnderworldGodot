@@ -3061,6 +3061,8 @@ PowerGemUW2 = NodePath("../UW2/PowerGemUW2")
 [connection signal="gui_input" from="UI/Common/OtherControls/SpellIcon2" to="UI/uiManager" method="_on_spell_icon_gui_input" binds= [2]]
 [connection signal="gui_input" from="UI/Common/HealthFlask/FlaskBorder" to="UI/uiManager" method="_on_healthflask_gui_input"]
 [connection signal="gui_input" from="UI/Common/ManaFlask/FlaskBorder" to="UI/uiManager" method="_on_manaflask_gui_input"]
+[connection signal="gui_input" from="UI/Common/Automap/MapBackground" to="UI/uiManager" method="_on_map_background_gui_input"]
+[connection signal="gui_input" from="UI/Common/Automap/MapImage" to="UI/uiManager" method="_on_map_background_gui_input"]
 [connection signal="gui_input" from="UI/Common/Automap/Close" to="UI/uiManager" method="CloseAutomap"]
 [connection signal="gui_input" from="UI/Common/Automap/MapUp" to="UI/uiManager" method="_on_map_up_gui_input"]
 [connection signal="gui_input" from="UI/Common/Automap/MapDown" to="UI/uiManager" method="_on_map_down_gui_input"]

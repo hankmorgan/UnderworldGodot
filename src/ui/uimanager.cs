@@ -7,20 +7,20 @@ namespace Underworld
 		public static uimanager instance;
 
 
-        public enum GameModes
-        { 
-            MAIN,
-            JOURNEY,
-            CHARGEN,
-            GAME,
+		public enum GameModes
+		{ 
+			MAIN,
+			JOURNEY,
+			CHARGEN,
+			GAME,
 			OPTIONS,
-            AUTOMAP,
-            CONVERSATION,
-            CUTSCENE,
-            ENDGAME
-        }
+			AUTOMAP,
+			CONVERSATION,
+			CUTSCENE,
+			ENDGAME
+		}
 
-        public static GameModes CurrentGameMode = GameModes.CUTSCENE;
+		public static GameModes CurrentGameMode = GameModes.CUTSCENE;
 
 
 		/// <summary>

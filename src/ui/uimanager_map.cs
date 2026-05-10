@@ -12,12 +12,21 @@ namespace Underworld
         [Export] public Panel AutomapPanel;
         [Export] public TextureRect AutomapBG;
         [Export] public TextureRect AutomapImage;
-                [Export] public Panel NotesPanel;
+        [Export] public Panel NotesPanel;
 
         [Export] public RichTextLabel AutomapNumberLabel;
 
         [Export] public TextureRect[] AutomapWorldGem = new TextureRect[9];
 
+
+        enum automapactions
+        {
+            NONE,
+            WRITING,
+            DELETING 
+        }
+
+        static automapactions CurrentAutomapAction = automapactions.NONE;
 
         public static int MaxLevels
         {
@@ -168,6 +177,7 @@ namespace Underworld
             uimanager.CurrentGameMode = GameModes.AUTOMAP;//to block input and other game motion.
 
             //change the cursor to the quill
+            uimanager.CurrentAutomapAction = automapactions.NONE;
             uimanager.instance.mousecursor.SetCursorToCursor(14);
         }
 
@@ -179,6 +189,7 @@ namespace Underworld
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
+                CurrentAutomapAction = automapactions.NONE;
                 EnableDisable(AutomapPanel, false);
                 uimanager.CurrentGameMode = GameModes.GAME;
                 if (UWClass._RES != UWClass.GAME_UW2)
@@ -239,6 +250,30 @@ namespace Underworld
                 }
             }
         }
+        //_on_map_background_gui_input
+        private void _on_map_background_gui_input(InputEvent @event)
+        {
+            if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
+            {
+                switch (CurrentAutomapAction)
+                {
+                    case automapactions.NONE:
+                        //start writing
+                        CurrentAutomapAction = automapactions.WRITING;
+                        uimanager.instance.mousecursor.SetCursorToCursor(12);
+                        break;
+                    case automapactions.WRITING:
+                        //stop writing
+                        CurrentAutomapAction = automapactions.NONE;
+                        uimanager.instance.mousecursor.SetCursorToCursor(14);
+                        break;
+                    case automapactions.DELETING: //to be implemented.
+                        CurrentAutomapAction = automapactions.NONE;
+                        uimanager.instance.mousecursor.SetCursorToCursor(14);
+                        break;
+                }
 
+            }
+        }
     }//end class
 }//end namespace
