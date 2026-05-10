@@ -97,13 +97,24 @@ namespace Underworld
 
             if (UWClass._RES == UWClass.GAME_UW2)
             {
-                int[] worldmappingSelected = new int[] { 16, 8, 9, 10, 11, 12, 13, 14, 15 }; //the order of worlds is not the same as the order of images. this maps the world number to the on version of the image
-                int[] worldmappingVisited = new int[] { 16, 0, 1, 2, 3, 4, 5, 6, 7 };
+                var tmpworld = worldno;
+                //Annoyingly Loths tomb and pits of carnage are swapped.
+                if (tmpworld == 6)
+                {
+                    tmpworld = 7;
+                }
+                else if (tmpworld == 7)
+                {
+                    tmpworld = 6;
+                }
+                int[] worldmappingSelected = new int[] { 16, 8, 9, 10, 11, 12, 14, 13, 15 }; //the order of worlds is not the same as the order of images. this maps the world number to the on version of the image
+                int[] worldmappingVisited = new int[] { 16, 0, 1, 2, 3, 4, 6, 5, 7 };
                 for (int i = 0; i <= instance.AutomapWorldGem.GetUpperBound(0); i++)
                 {
-                    if (i == worldno)
+                    if (i == tmpworld)
                     {
-                        instance.AutomapWorldGem[i].Texture = grGempt.LoadImageAt(worldmappingSelected[worldno]);
+                        
+                        instance.AutomapWorldGem[i].Texture = grGempt.LoadImageAt(worldmappingSelected[tmpworld]);
                     }
                     else
                     {
