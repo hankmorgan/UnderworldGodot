@@ -87,8 +87,7 @@ namespace Underworld
                                 }
                             }
                             currentmap.buffer[index] |= nibblevar9;
-                            Debug.Print($"{di},{si}->{currentmap.buffer[index]}");
-                        }
+l                        }
 
                         si++;
                     }
@@ -138,7 +137,13 @@ namespace Underworld
                     di--;
                 }
             }
-            //automap.automaps[SourceMapNo - 1] = null;
+            
+            //Apply exp gain
+            playerdat.ChangeExperience(expgain / 0x14);
+
+            
+
+
         }
 
 
