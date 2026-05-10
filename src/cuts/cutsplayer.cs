@@ -3,6 +3,7 @@ using System.Collections;
 using Peaky.Coroutines;
 using System.Collections.Generic;
 using Godot;
+using Underworld.Sfx;
 
 namespace Underworld
 {
@@ -241,7 +242,7 @@ namespace Underworld
         /// <param name="CutsceneNo">The index number of the cutscene to play</param>
         /// <param name="callBackMethod">Function to call after the cutscene has played</param>
         public static void PlayCutscene(int CutsceneNo, CallBacks.CutsceneCallBack callBackMethod, bool useSingleRedChannel = false)
-        {            
+        {
             cancelRequested = false;
             crngRanges = null;
             crngCounters = null;
@@ -587,9 +588,27 @@ namespace Underworld
                 case 8: // open-file
                     {
                         var extNo = cmd.functionParams[1];
-                        Debug.Print($"  Open {GetsCutsceneFileName(cmd.functionParams[0], extNo)}");
                         var filePath = System.IO.Path.Combine(
                             BasePath, "CUTS", GetsCutsceneFileName(cmd.functionParams[0], extNo));
+
+                        if (cmd.functionParams[0] == 996)
+                        {
+                            if (_RES == GAME_UW2)
+                            {
+                                Debug.Print("opening random guardian background.");
+                                //when file no is 996 then a random file is opened from index 0x1C onwards (guardian taunts.
+                                var randomfile = 0x1C + Rng.r.Next(4);
+                                filePath = System.IO.Path.Combine(
+                                    BasePath, "CUTS", GetsCutsceneFileName(randomfile, extNo));
+                            }
+                            else
+                            {
+                                Debug.Print("use of 996 open-file in uw1. fixme.");
+                            }
+                        }
+
+                        Debug.Print($"  Open {GetsCutsceneFileName(cmd.functionParams[0], extNo)}");
+
                         if (System.IO.File.Exists(filePath))
                         {
                             cuts = new CutsLoader(filePath);
@@ -655,10 +674,21 @@ namespace Underworld
                         }
                         if (cmd.functionParams[2] != 999)
                         {
-                            var sound = vocLoader.Load(
-                                System.IO.Path.Combine(
+                            string vocfile;
+                            if (_RES == GAME_UW2)
+                            {
+                                //in UW2 the cutscene audio is the guardian speech.
+                                vocfile = System.IO.Path.Combine(
                                     BasePath, "SOUND",
-                                    $"{cmd.functionParams[2]:0#}.VOC"));
+                                    $"BSP{cmd.functionParams[2]:0#}.VOC");
+                            }
+                            else
+                            {
+                                vocfile = System.IO.Path.Combine(
+                                    BasePath, "SOUND",
+                                    $"{cmd.functionParams[2]:0#}.VOC");
+                            }
+                            var sound = vocLoader.Load(vocfile);
                             if (sound != null)
                             {
                                 main.instance.DigitalAudioPlayer.Stream = sound.toWav();
@@ -865,7 +895,7 @@ namespace Underworld
                             Debug.Print($"  Pause: {cmd.functionParams[0]}");
                             while (true)
                             {
-                                yield return new WaitForSeconds (0.25f);
+                                yield return new WaitForSeconds(0.25f);
                                 if (cancelRequested)
                                 {
                                     break;
@@ -875,7 +905,7 @@ namespace Underworld
                         else
                         {
                             //pause for  
-                            Debug.Print($"  Pause: {cmd.functionParams[0] / 2.0f}s");                            
+                            Debug.Print($"  Pause: {cmd.functionParams[0] / 2.0f}s");
                             var pausecounter = (cmd.functionParams[0] / 2) * 4;//increase by 4 to give more responsive cancelling.
                             while (pausecounter > 0)
                             {
@@ -884,7 +914,7 @@ namespace Underworld
                                     break;
                                 }
                                 pausecounter--;
-                                yield return new WaitForSeconds (0.25f);
+                                yield return new WaitForSeconds(0.25f);
                             }
                         }
                     }
@@ -931,10 +961,7 @@ namespace Underworld
             {
                 cutscontrol.Modulate = new Color(1f, 1f, 1f, 1f);
                 cutscontrol.Texture = uimanager.bitmaps.LoadImageAt(6); // Origin logo
-                if (cancelRequested)
-                {
-                    goto cleanup;
-                }
+                if (cancelRequested) goto cleanup;
                 yield return new WaitForSeconds(2.0f);
                 if (cancelRequested) goto cleanup;
                 cutscontrol.Texture = null;
@@ -951,10 +978,7 @@ namespace Underworld
             {
                 cutscontrol.Modulate = new Color(1f, 1f, 1f, 1f);
                 cutscontrol.Texture = uimanager.bitmaps.LoadImageAt(5); // Origin logo
-                if (cancelRequested)
-                {
-                    goto cleanup;
-                }
+                if (cancelRequested) goto cleanup;
                 yield return new WaitForSeconds(2.0f);
                 if (cancelRequested) goto cleanup;
                 cutscontrol.Texture = null;
@@ -968,16 +992,39 @@ namespace Underworld
                 if (cancelRequested) goto cleanup;
             }
             palInterpActive = false;
-            if (cancelRequested)
-            {
-                goto cleanup;
-            }
+
             // Load the first animation file (.N01)
             cuts = null;
             var firstFile = System.IO.Path.Combine(BasePath, "CUTS", GetsCutsceneFileName(CutsceneNo, 1));
+            //check if the first command in the n01 file is not a change file command.
+            if (commands[0] != null)
+            {
+                if (commands[0].functionNo == 8)
+                {
+                    if (commands[0].functionParams[0] == 996)
+                        {
+                            if (_RES == GAME_UW2)
+                            {
+                                Debug.Print("opening random guardian background.");
+                                //when file no is 996 then a random file is opened from index 0x1C onwards (guardian taunts.
+                                var randomfile = 0x1C + Rng.r.Next(4);
+                                firstFile = System.IO.Path.Combine(
+                                    BasePath, "CUTS", GetsCutsceneFileName(randomfile, 1));
+                            }
+                            else
+                            {
+                                Debug.Print("use of 996 open-file in uw1. fixme.");
+                            }
+                        }
+                }
+            }
             if (System.IO.File.Exists(firstFile))
             {
                 cuts = new CutsLoader(firstFile, useSingleRedChannel);
+            }
+            else
+            {
+                Debug.Print($"File not found {firstFile}");
             }
             InitCrngCycling(cuts);
 
@@ -1506,9 +1553,9 @@ namespace Underworld
             else if (callBackMethod != null)
             {
                 callBackMethod();
-                callBackMethod = null;          
+                callBackMethod = null;
             }
-            
+
             yield return null;
         }
 
@@ -1517,7 +1564,7 @@ namespace Underworld
         /// </summary>
         public static void RestoreViewPort()
         {
-            uimanager.EnableDisable(uimanager.instance.uwviewport,true); 
+            uimanager.EnableDisable(uimanager.instance.uwviewport, true);
         }
 
     } // end class

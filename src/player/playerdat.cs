@@ -583,6 +583,10 @@ namespace Underworld
         {
             get
             {
+                if (pdat == null)
+                {
+                    return true;
+                }
                 if (_RES == GAME_UW2)
                 {
                     return (GetAt(0x303) & 0x1) == 1;
