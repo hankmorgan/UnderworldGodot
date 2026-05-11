@@ -670,18 +670,18 @@ public partial class main : Node3D
 						// 		}
 						// 		break;
 						// 	}
-						case Key.T:
-							var mouselook = (bool)cameraPitchGimbal.Get("MOUSELOOK");
-							if (mouselook)
-							{//toggle to free curso
-								Input.MouseMode = Input.MouseModeEnum.Hidden;
-							}
-							else
-							{//toogle to mouselook
-								Input.MouseMode = Input.MouseModeEnum.Captured;
-							}
-							cameraPitchGimbal.Set("MOUSELOOK", !mouselook);
-							break;
+						//case Key.T:
+							// var mouselook = (bool)cameraPitchGimbal.Get("MOUSELOOK");
+							// if (mouselook)
+							// {//toggle to free curso
+							// 	Input.MouseMode = Input.MouseModeEnum.Hidden;
+							// }
+							// else
+							// {//toogle to mouselook
+							// 	Input.MouseMode = Input.MouseModeEnum.Captured;
+							// }
+							// cameraPitchGimbal.Set("MOUSELOOK", !mouselook);
+							//break;
 						// case Key.R: //fly up (not vanilla)
 						// 	if ((playerdat.MagicalMotionAbilities & 0x14) != 0)
 						// 	{
