@@ -2362,6 +2362,14 @@ offset_top = 604.0
 offset_right = 1240.0
 offset_bottom = 704.0
 
+[node name="Eraser" type="TextureRect" parent="UI/Common/Automap"]
+layout_mode = 0
+offset_left = 1072.0
+offset_top = 480.0
+offset_right = 1252.0
+offset_bottom = 580.0
+scale = Vector2(0.839995, 1)
+
 [node name="MapNo" type="RichTextLabel" parent="UI/Common/Automap"]
 clip_contents = false
 layout_mode = 0
@@ -3069,6 +3077,7 @@ PowerGemUW2 = NodePath("../UW2/PowerGemUW2")
 [connection signal="gui_input" from="UI/Common/Automap/MapBackground" to="UI/uiManager" method="_on_map_background_gui_input"]
 [connection signal="gui_input" from="UI/Common/Automap/MapImage" to="UI/uiManager" method="_on_map_background_gui_input"]
 [connection signal="gui_input" from="UI/Common/Automap/Close" to="UI/uiManager" method="CloseAutomap"]
+[connection signal="gui_input" from="UI/Common/Automap/Eraser" to="UI/uiManager" method="EraseMapNote"]
 [connection signal="gui_input" from="UI/Common/Automap/MapUp" to="UI/uiManager" method="_on_map_up_gui_input"]
 [connection signal="gui_input" from="UI/Common/Automap/MapDown" to="UI/uiManager" method="_on_map_down_gui_input"]
 [connection signal="gui_input" from="UI/Common/Automap/Gem/World0" to="UI/uiManager" method="_on_world_gui_input" binds= [0]]

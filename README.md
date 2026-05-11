@@ -99,11 +99,11 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * Animated Dragon UI Elements
 * Partial Weight and encumberance mechanics
 * Splash screens and game credits
+* Adding and deleting automap notes
 
 ## Whats missing
 * Sprite transparencies (e.g. creature shadows)
 * Those weird ethereal void monsters
-* Editing of automap notes
 * Getting lost mechanics (UW2)
 * Stealth mechanics
 * Full implementation of death and resurrection with cutscenes.

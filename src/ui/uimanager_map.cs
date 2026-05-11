@@ -17,6 +17,7 @@ namespace Underworld
         [Export] public RichTextLabel AutomapNumberLabel;
 
         [Export] public TextureRect[] AutomapWorldGem = new TextureRect[9];
+        [Export] public TextureRect Eraser;
         
         public enum automapactions
         {
@@ -153,7 +154,7 @@ namespace Underworld
             {
                 foreach (var n in automapnote.automapsnotes[blockno].notes)
                 {
-                    AddAutoMapNoteToScreen(n);
+                    n.textlabel =  RichTextLabelMapNote.AddAutoMapNoteToScreen(n);
                 }
             }
 
@@ -166,7 +167,7 @@ namespace Underworld
             uimanager.instance.mousecursor.SetCursorToCursor(14);
         }
 
-        private static int GetAutomapBlock(ref int level, int worldno)
+        public static int GetAutomapBlock(ref int level, int worldno)
         {
             int blockno;
             if (UWClass._RES == UWClass.GAME_UW2)
@@ -183,20 +184,7 @@ namespace Underworld
         }
 
 
-        private static RichTextLabel AddAutoMapNoteToScreen(automapnote.mapnotetext n)
-        {
-            RichTextLabel mapnote = new();
-            mapnote.Position = new Vector2(-4 + n.posX * 4, 780 - (n.posY * 4));
-            mapnote.FitContent = true;
-            mapnote.BbcodeEnabled = true;
-            mapnote.AutowrapMode = TextServer.AutowrapMode.Off;
-            mapnote.Theme = MessageScroll.Theme;
-            mapnote.AddThemeFontOverride("normal_font", instance.Font4X5P);
-            mapnote.AddThemeFontSizeOverride("normal_font_size", 48);
-            mapnote.Text = $"[color=#331C13]{n.notetext}[/color]";
-            instance.NotesPanel.AddChild(mapnote);
-            return mapnote;
-        }
+
 
 
         /// <summary>
@@ -233,6 +221,15 @@ namespace Underworld
                     }
                 }
                 uimanager.instance.mousecursor.SetCursorToCursor();
+            }
+        }
+
+        private void EraseMapNote(InputEvent @event)
+        {
+            if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
+            {
+                uimanager.CurrentAutomapAction = automapactions.DELETING;
+                uimanager.instance.mousecursor.SetCursorToCursor(13);//this is probably the wrong cursor but I can't find the right one in the art files..
             }
         }
 
@@ -296,7 +293,7 @@ namespace Underworld
                         writingX = (int)(-1 + (eventMouseButton.Position.X / 4));
                         writingY = (int)(195 - (eventMouseButton.Position.Y / 4));                        
                         currentmapnote = new automapnote.mapnotetext("", writingX, writingY);                                          
-                        currentmapnote.textlabel = AddAutoMapNoteToScreen(currentmapnote);
+                        currentmapnote.textlabel =  RichTextLabelMapNote.AddAutoMapNoteToScreen(currentmapnote);
                         break;
 
                     case automapactions.WRITING:
@@ -337,6 +334,8 @@ namespace Underworld
                 currentmapnote = null;
             }
         }
+
+
 
     }//end class
 }//end namespace
