@@ -285,6 +285,10 @@ namespace Underworld
                 switch (CurrentAutomapAction)
                 {
                     case automapactions.NONE:
+                        if (eventMouseButton.Position.X >=1000)
+                        {
+                            return;//don't allow writing on the right hand side near ui elements.
+                        }
                         //start writing
                         CurrentAutomapAction = automapactions.WRITING;
                         uimanager.instance.mousecursor.SetCursorToCursor(12);

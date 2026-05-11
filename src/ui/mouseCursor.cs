@@ -97,9 +97,9 @@ namespace Underworld
 
 		public void SetCursorToCursor(int index = 0)
 		{
-			if (((index == 14) || (index == 12)) && (UWClass._RES == UWClass.GAME_UW2))
+			if (((index == 14) || (index == 12) || (index==13)) && (UWClass._RES == UWClass.GAME_UW2))
 			{
-				//Special case for the quill
+				//Special case for the quill and other map cursors
 				uimanager.grCursors.PaletteNo = 2;
 			}
 			else
