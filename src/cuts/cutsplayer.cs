@@ -1076,10 +1076,6 @@ namespace Underworld
                 int scanIndex = cmdIndex;
                 while (scanIndex < commands.Count)
                 {
-                    if (cancelRequested)
-                    {
-                        goto cleanup;
-                    }
                     var cmd = commands[scanIndex];
                     scanIndex++;
 
@@ -1463,6 +1459,9 @@ namespace Underworld
                             else if (cmd.functionNo == 7) // rep-seg
                             {
                                 Debug.Print($"  Rep-seg: repeat {cmd.functionParams[0]} times");
+                                //NOTE. From what it appears to do. 
+                                // For the frame from the previous frame-set function. 
+                                // Repeats that frame and frame + 1 , arg[0] times. Eg death skulls eye flashing                            
                             }
                         }
                     } // end else (all commands at frame 0)

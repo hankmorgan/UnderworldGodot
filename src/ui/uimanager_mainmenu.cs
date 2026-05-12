@@ -358,6 +358,8 @@ namespace Underworld
                 PreviousInteractionMode = InteractionModes.ModeUse;
             }
             uimanager.UpdateCompass();
+
+            uimanager.EnableDisable(uimanager.instance.uwviewport,true); //turn on camera, this might be turned off due to player death
         }
 
         private void _on_create_character_gui_input(InputEvent @event)
@@ -521,7 +523,8 @@ namespace Underworld
         /// </summary>
         public static void ReturnToMainMenu()
         {
-            Debug.Print("Return to main menu");
+            playerdat.PlayerInDeathMode = false;
+            Palette.CurrentPalette = 6; //ensure no graphical glitching
             uimanager.CurrentGameMode = uimanager.GameModes.MAIN;
             //Still some weirdness with enabling the main menu again. eg palette switch in UW1
             if (MusicStreamPlayer.Instance?.IsPlaying != true || XMIMusic.CurrentlyPlayingThemeNo != 1)

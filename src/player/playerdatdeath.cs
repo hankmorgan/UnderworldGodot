@@ -1,12 +1,11 @@
 using System;
-using System.Diagnostics;
 
 namespace Underworld
 {
     //for handling loop updates for the player.
     public partial class playerdat : Loader
     {
-        static bool PlayerInDeathMode;
+        public static bool PlayerInDeathMode;
         /// <summary>
         /// Handles player death.
         /// </summary>
@@ -37,21 +36,23 @@ namespace Underworld
         /// </summary>
         private static void PlayerDeathUW1()
         {
-
             if (SilverTreeDungeon != 0)
             {
                 //resurrect at silver tree
-                cutsplayer.PlayCutscene(0x102, ResurrectAtSilverTree);
+                uimanager.EnableDisable(uimanager.instance.uwviewport,false); 
+                cutsplayer.PlayCutscene(CutsceneNo: 0x102, callBackMethod: ResurrectAtSilverTree, useSingleRedChannel: true);
             }
             else
             {
                 //die fully with cutscene.
-                cutsplayer.PlayCutscene(0x103, uimanager.ReturnToMainMenu);
+                uimanager.EnableDisable(uimanager.instance.uwviewport,false); 
+                cutsplayer.PlayCutscene(CutsceneNo: 0x103, callBackMethod: uimanager.ReturnToMainMenu, useSingleRedChannel: true);
             }
         }
 
         public static void ResurrectAtSilverTree()
         {
+            uimanager.EnableDisable(uimanager.instance.uwviewport,true); 
             ChangeExperience(-Exp >> 3);
             ResurrectionEffects();
             Teleportation.CodeToRunOnTeleport = TeleportToSilverTree;
@@ -137,6 +138,7 @@ namespace Underworld
             else
             {
                 //die fully with cutscene.
+                uimanager.EnableDisable(uimanager.instance.uwviewport,false); 
                 cutsplayer.PlayCutscene(0x103, uimanager.ReturnToMainMenu);
             }
 
