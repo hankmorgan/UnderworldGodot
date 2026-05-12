@@ -776,7 +776,7 @@ namespace Underworld
                             CreateCollisonRecord_Seg028_2941_A78(obj, obj.index, var11_maybeX, var12_maybeY, isNPC_var14);
                         }
 
-                        GetNextObject:
+                    GetNextObject:
                         next = obj.next;
                         si++;
                     }
@@ -810,6 +810,8 @@ namespace Underworld
             uwObject CollidedObject_VarA;
             bool varB;
             int var2_collideditemid;
+            int objectusage24f8_X;
+            int objectusage25c0_Y;
             if (si_CollisionIndex_Arg0 != -1)
             {
                 //seg030_2BB7_1E0:
@@ -851,30 +853,72 @@ namespace Underworld
                 var2_collideditemid = CollidedObject_VarA.item_id;
                 varB = commonObjDat.Unk6_0_maybecancollide(var2_collideditemid);
 
-                if (!CollidedObject_VarA.IsStatic)
+                //Seg030_2bb7_307
+                if (CollidedObject_VarA.index < 256)
                 {
-                    //the object collided with is a mobile
-                    if (!MotionObject.IsStatic)
-                    {//the projectile is mobile
-                        //seg030_2BB7_30C:
-                        if (
-                            (MotionObject.majorclass != 1)
-                            && (MotionObject.UnkBit_0X15_Bit7 != 0)
-                            && (diMotionObject_itemid != 0x1D)
-                            && (diMotionObject_itemid != 0x13F))
+                    //seg030_2bb7_30C
+                    if (MotionObject.index < 256)
+                    {
+                        //seg030_2bb7_313
+                        if (MotionObject.majorclass != 1)
                         {
-                            return 2;
+
+                            if (_RES == GAME_UW2)
+                            {
+                                //seg030_22b7_31D
+                                if (MotionObject.UnkBit_0X15_Bit7 == 0)
+                                {
+                                    //seg030_2bb7_33E
+                                    goto seg030_2bb7_33E;
+                                }
+                                else
+                                {
+                                    if ((MotionObject.item_id == 0x1D) || (MotionObject.item_id == 0x13F))  //firewall or resilient sphere.
+                                    {
+                                        //seg030_2bb7_33E
+                                        goto seg030_2bb7_33E;
+                                    }
+                                    else
+                                    {
+                                        return 2;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                //UW1 does not check for fireball or resilient sphere
+                                if (MotionObject.UnkBit_0X15_Bit7 == 0)
+                                {
+                                    //seg030_2bb7_33E
+                                    goto seg030_2bb7_33E;
+                                }
+                                else
+                                {
+                                    return 2;
+                                }
+                            }
                         }
                         else
                         {
-                            //an npc, or bit is zero, or  a fireball or a npc
-                            //seg030_2BB7_33E:
+                            //seg030_2bb7_33E
+                            goto seg030_2bb7_33E;
+                        }
+
+                    seg030_2bb7_33E:
+                        if (_RES == GAME_UW2)
+                        {
                             if (MotionObject.majorclass != 1)
                             {
-                                //seg030_2BB7_348:
+                                //seg030_2bb7_348
                                 MotionObject.UnkBit_0X15_Bit7 = 1;
                             }
                         }
+                        else
+                        {
+                            //uw1 variation does not check for major class
+                            MotionObject.UnkBit_0X15_Bit7 = 1;
+                        }
+
                     }
                 }
             }
@@ -885,7 +929,9 @@ namespace Underworld
                 if (commonObjDat.ActivatedByCollision(var2_collideditemid))
                 {
                     //seg030_2BB7_374
-                    Debug.Print("Use activated by collision!");
+                    Debug.Print($"Use activated by collision! {CollidedObject_VarA.a_name} by {MotionObject.a_name}");
+                    objectusage24f8_X = UWMotionParamArray.UnknownX_dseg_67d6_25BD;
+                    objectusage25c0_Y = UWMotionParamArray.UnknownY_dseg_67d6_25BE;
                     UWMotionParamArray.dseg_67d6_25BC = 0;
                     use.Use(
                         ObjectUsed: CollidedObject_VarA,
@@ -912,7 +958,11 @@ namespace Underworld
             else
             {//seg030_2bb7_d39
                 if (commonObjDat.ActivatedByCollision(diMotionObject_itemid))
-                {//seg030_2bb7_3F7
+                {
+                    //seg030_2bb7_3F7
+                    objectusage24f8_X = UWMotionParamArray.dseg_67d6_25BF_X;
+                    objectusage25c0_Y = UWMotionParamArray.dseg_67d6_25C0_Y;
+
                     UWMotionParamArray.dseg_67d6_25BC = 1;
                     use.Use(
                         ObjectUsed: MotionObject,
@@ -921,9 +971,9 @@ namespace Underworld
                         WorldObject: true);//this line will probably break a lot until I make use a more vanilla compliant Use() function.
                                            //if (UWTileMap.ValidTile(CollidedObject_VarA.tileX, CollidedObject_VarA.tileY))
 
-                    if ((MotionCalcArray.x0_base >> 3) >= 0)  //this needs to be changed to another global
-                    {//Seg031_2bb7_421
-                        Debug.Print("FIXME seg030_2bb7_3F7");
+                    //if ((MotionCalcArray.x0_base >> 3) >= 0)  //this needs to be changed to another global
+                    if (objectusage24f8_X >= 0)  // in original code this is dseg_24f8(object usage X which I don't track.)
+                    {
                         return BounceOtherObject_seg030_2BB7_8(MotionParams, CollidedObject_VarA);
                     }
                     else
