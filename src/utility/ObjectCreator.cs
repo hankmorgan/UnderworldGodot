@@ -293,25 +293,25 @@ namespace Underworld
 
         private static bool MajorClass4(uwObject obj, Node3D parent, GRLoader grObjects, string name)
         {
-            switch (obj.minorclass)
-            {
-                case 2:
-                    {
-                        switch (obj.classindex)
-                        {
-                            case 9:
-                                {
-                                    if (_RES != GAME_UW2)
-                                    {
-                                        glowing_rock.CreateGlowingRock(grObjects, obj, parent, name);
-                                        return false;
-                                    }
-                                    break;
-                                }
-                        }
-                        break;
-                    }
-            }
+            // switch (obj.minorclass)
+            // {
+            //     case 2:
+            //         {
+            //             switch (obj.classindex)
+            //             {
+            //                 case 9:
+            //                     {
+            //                         if (_RES != GAME_UW2)
+            //                         {
+            //                             //glowing_rock.CreateGlowingRock(grObjects, obj, parent, name);
+            //                             return true;
+            //                         }
+            //                         break;
+            //                     }
+            //             }
+            //             break;
+            //         }
+            // }
             return true;
         }
 
