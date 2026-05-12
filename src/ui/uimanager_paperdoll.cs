@@ -511,6 +511,7 @@ namespace Underworld
                     SetBackPackArt(i, -1);
                 }
             }
+            RefreshWeightDisplay();
         }
 
 

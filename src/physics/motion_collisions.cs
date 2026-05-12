@@ -50,7 +50,7 @@ namespace Underworld
             {//seg031_2CFA_DDE: 
                 ZeroiseMotionValues_seg031_2CFA_7BF(MotionParams);
                 MotionParams.tilestate25 = 2;
-                if (_RES == GAME_UW2)
+                if (_RES != GAME_UW2)
                 {
                     soundeffect = 5;
                 }
@@ -929,7 +929,7 @@ namespace Underworld
                 if (commonObjDat.ActivatedByCollision(var2_collideditemid))
                 {
                     //seg030_2BB7_374
-                    Debug.Print($"Use activated by collision! {CollidedObject_VarA.a_name} by {MotionObject.a_name}");
+                    //Debug.Print($"Use activated by collision! {CollidedObject_VarA.a_name} by {MotionObject.a_name}");
                     objectusage24f8_X = UWMotionParamArray.UnknownX_dseg_67d6_25BD;
                     objectusage25c0_Y = UWMotionParamArray.UnknownY_dseg_67d6_25BE;
                     UWMotionParamArray.dseg_67d6_25BC = 0;
@@ -956,7 +956,7 @@ namespace Underworld
                 return 2;
             }
             else
-            {//seg030_2bb7_d39
+            {//seg030_2bb7_3d9
                 if (commonObjDat.ActivatedByCollision(diMotionObject_itemid))
                 {
                     //seg030_2bb7_3F7
@@ -965,8 +965,8 @@ namespace Underworld
 
                     UWMotionParamArray.dseg_67d6_25BC = 1;
                     use.Use(
-                        ObjectUsed: MotionObject,
-                        UsingObjectOrCharacter: CollidedObject_VarA,
+                        ObjectUsed: CollidedObject_VarA,
+                        UsingObjectOrCharacter: MotionObject,
                         objList: UWTileMap.current_tilemap.LevelObjects,
                         WorldObject: true);//this line will probably break a lot until I make use a more vanilla compliant Use() function.
                                            //if (UWTileMap.ValidTile(CollidedObject_VarA.tileX, CollidedObject_VarA.tileY))

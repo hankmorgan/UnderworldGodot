@@ -3,6 +3,53 @@ namespace Underworld
 {
     public class glowing_rock : objectInstance
     {
+        public static bool Use(uwObject obj, uwObject UsingObjectOrCharacter, bool WorldObject)
+        {
+            if (!WorldObject)
+            {
+                return false;
+            }
+            if (UsingObjectOrCharacter == null)
+            {
+                return true;
+            }
+            if (UsingObjectOrCharacter.index != 1)
+            {
+                return true;//just in case Blinky, Pinky, Inky and Clyde happen to collide and cause this interaction to occur! Or if you throw an object at the rock
+            }
+            bool DestroyZanium = false;
+            var zanium = objectsearch.FindMatchInFullObjectList(4, 2, 9, playerdat.InventoryObjects);
+            if (zanium != null)
+            {    //player has zanium. add to the pile.
+                zanium.link++;
+                uimanager.UpdateInventoryDisplay();
+                DestroyZanium = true;
+            }
+            else
+            {
+                //try object in hand
+                if (playerdat.ObjectInHand != -1)
+                {
+                    var objInHand = UWTileMap.current_tilemap.LevelObjects[playerdat.ObjectInHand];
+                    if (objInHand!=null)
+                    {
+                        //increase counter on object.
+                        objInHand.link++;
+                        DestroyZanium = true;
+                    }
+                }
+            }
+            if (DestroyZanium)
+            {
+                
+                if (obj !=null)
+                {
+                    ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(obj.tileX,obj.tileY,obj.index);
+                }               
+            }
+            return true;
+        }
+
         //public glowing_rock_collision collision;
 
         // public glowing_rock(uwObject _uwobject)

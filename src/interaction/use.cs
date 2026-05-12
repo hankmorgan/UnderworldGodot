@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Diagnostics;
 
@@ -17,12 +18,14 @@ namespace Underworld
         {            
             SpellHasBeenCast = false;
             UseTriggerHasBeenActivated = false;
-
-            //if (index == -1) { return false; }
-            trap.ObjectThatStartedChain = ObjectUsed.index;
             bool result = false;
             if (ObjectUsed != null)
             {
+                if (ObjectUsed.index == 1)
+                {
+                    return true;//You can't use yourself
+                }
+                trap.ObjectThatStartedChain = ObjectUsed.index;
                 //var obj = objList[index];
                 Debug.Print($"Object {ObjectUsed.majorclass}-{ObjectUsed.minorclass}-{ObjectUsed.classindex} {ObjectUsed.a_name}");
                 switch (ObjectUsed.majorclass)
@@ -49,7 +52,7 @@ namespace Underworld
                         }
                     case 4:
                         {
-                            result = UseMajorClass4(ObjectUsed, WorldObject);
+                            result = UseMajorClass4(ObjectUsed, UsingObjectOrCharacter, WorldObject);
                             break;
                         }
                     case 5:
@@ -118,6 +121,10 @@ namespace Underworld
                         }
                     }
                 }
+            }
+            else
+            {
+                result = true;//supress messaging.
             }
             if (!result)
             {
@@ -314,7 +321,7 @@ namespace Underworld
             return false;
         }
 
-        public static bool UseMajorClass4(uwObject ObjectUsed, bool WorldObject)
+        public static bool UseMajorClass4(uwObject ObjectUsed, uwObject UsingObjectOrCharacter, bool WorldObject)
         {
             switch (ObjectUsed.minorclass)
             {
@@ -402,6 +409,14 @@ namespace Underworld
                                     return spike.Use(ObjectUsed, WorldObject);
                                 }
                                 break;
+                            case 9:
+                                {
+                                    if (_RES!=GAME_UW2)
+                                    {
+                                        return glowing_rock.Use(ObjectUsed, UsingObjectOrCharacter, WorldObject);
+                                    }
+                                    break;
+                                }
                             case 0xB://Fishing pole
                                 return fishingpole.use(ObjectUsed, WorldObject);
                             case 0xD://oilflask
