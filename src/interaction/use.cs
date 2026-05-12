@@ -37,7 +37,13 @@ namespace Underworld
                         }
                     case 1://npcs
                         {
-                            talk.Talk(ObjectUsed, WorldObject);
+                            if (UsingObjectOrCharacter != null)
+                            {
+                                if (UsingObjectOrCharacter.index == 1)//Ensure only the player can initiate conversations.
+                                {
+                                    talk.Talk(ObjectUsed, WorldObject);                                    
+                                }
+                            }
                             return true;
                         }
                     case 2:

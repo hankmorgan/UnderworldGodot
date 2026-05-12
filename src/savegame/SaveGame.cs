@@ -48,6 +48,8 @@ namespace Underworld
                 // head (sans slot 1), so head-inserting slot 1 restores the
                 // PlacePlayerInTile invariant — no saved-head value needed.
                 ReattachPlayerToCurrentTile();
+                //Set the player back to being an adventurer                
+                playerdat.playerObject.item_id = 127;
             }
         }
 
