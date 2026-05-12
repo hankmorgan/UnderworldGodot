@@ -255,7 +255,7 @@ namespace Underworld
 
 
         /// <summary>
-        /// Creates a move triggerlinked to a ward trap
+        /// Creates a move trigger linked to a ward trap
         /// </summary>
         /// <param name="tile"></param>
         private static void CastWardTrap(TileInfo tile)

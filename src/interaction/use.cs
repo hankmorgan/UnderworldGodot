@@ -66,6 +66,11 @@ namespace Underworld
                             result = UseMajorClass5(ObjectUsed, WorldObject);
                             break;
                         }
+                    case 6:
+                        {
+                            result = UseMajorClass6(ObjectUsed, UsingObjectOrCharacter, WorldObject);
+                            break;   
+                        }                
                     case 7:
                         {
                             result = UseMajorClass7(ObjectUsed, WorldObject);
@@ -524,6 +529,29 @@ namespace Underworld
                         return button.Use(ObjectUsed);
                     }
             }
+            return false;
+        }
+
+        public static bool UseMajorClass4(uwObject ObjectUsed, uwObject UsingObjectOrCharacter, bool WorldObject)
+        {
+            switch (ObjectUsed.minorclass)
+            {
+                case 1://rune traps
+                    {
+                        if (_RES == GAME_UW2)
+                        {
+                            switch (ObjectUsed.classindex)
+                         {
+                            case 0xE:
+                            case 0xF:
+                                return runetrap.Use()
+                            } 
+                        }
+
+                    }
+                    
+            }
+
             return false;
         }
 

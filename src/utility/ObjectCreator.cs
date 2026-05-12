@@ -482,19 +482,19 @@ namespace Underworld
                     }
                 case 1:
                     {
-                        switch (obj.classindex)
-                        {
-                            case 0xE://flam rune
-                            case 0xF://tym rune
-                                {
-                                    if (_RES == GAME_UW2)
-                                    {
-                                        return runetrap.CreateRuneTrap(obj, parent);
-                                    }
-                                    break;
-                                }
+                        // switch (obj.classindex)
+                        // {
+                        //     case 0xE://flam rune
+                        //     case 0xF://tym rune
+                        //         {
+                        //             if (_RES == GAME_UW2)
+                        //             {
+                        //                 return runetrap.CreateRuneTrap(obj, parent);
+                        //             }
+                        //             break;
+                        //         }
 
-                        }
+                        // }
                         break;
                     }
                 case 2:
