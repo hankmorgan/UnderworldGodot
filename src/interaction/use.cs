@@ -15,7 +15,7 @@ namespace Underworld
         public static bool SpellHasBeenCast = false;
         public static bool UseTriggerHasBeenActivated = false;
         public static bool Use(uwObject ObjectUsed, uwObject UsingObjectOrCharacter, uwObject[] objList, bool WorldObject = true)
-        {            
+        {
             SpellHasBeenCast = false;
             UseTriggerHasBeenActivated = false;
             bool result = false;
@@ -41,7 +41,7 @@ namespace Underworld
                             {
                                 if (UsingObjectOrCharacter.index == 1)//Ensure only the player can initiate conversations.
                                 {
-                                    talk.Talk(ObjectUsed, WorldObject);                                    
+                                    talk.Talk(ObjectUsed, WorldObject);
                                 }
                             }
                             return true;
@@ -69,8 +69,8 @@ namespace Underworld
                     case 6:
                         {
                             result = UseMajorClass6(ObjectUsed, UsingObjectOrCharacter, WorldObject);
-                            break;   
-                        }                
+                            break;
+                        }
                     case 7:
                         {
                             result = UseMajorClass7(ObjectUsed, WorldObject);
@@ -111,16 +111,16 @@ namespace Underworld
                                         {
                                             //do not normally cast spells from containers. Check if directly contains a spell. Eg the Cornucopia.
                                             var linkedspell = objectsearch.FindMatchInObjectChain(
-                                                ListHeadIndex: ObjectUsed.link, 
-                                                majorclass: 4, minorclass: 2, classindex: 0, 
-                                                objList: objList, 
-                                                SkipNext: false, 
-                                                SkipLinks: true );
+                                                ListHeadIndex: ObjectUsed.link,
+                                                majorclass: 4, minorclass: 2, classindex: 0,
+                                                objList: objList,
+                                                SkipNext: false,
+                                                SkipLinks: true);
                                             if (linkedspell != null)
                                             {
-                                                result = UseItemCastSpell(objList: objList, WorldObject: WorldObject, result: result, obj: ObjectUsed) | result; 
+                                                result = UseItemCastSpell(objList: objList, WorldObject: WorldObject, result: result, obj: ObjectUsed) | result;
                                             }
-                                        
+
                                         }
                                         else
                                         {
@@ -188,10 +188,10 @@ namespace Underworld
                     if (ObjectUsed.minorclass == 1)
                     {
                         //projectile has hit the UsingObjectOrCharacter.
-                        if (UsingObjectOrCharacter!=null)
+                        if (UsingObjectOrCharacter != null)
                         {
                             combat.MissileImpact(ObjectUsed, UsingObjectOrCharacter);
-                        }                        
+                        }
                         return true;
 
                     }
@@ -367,7 +367,7 @@ namespace Underworld
                     {
                         if (_RES != GAME_UW2)
                         {
-                            switch(ObjectUsed.classindex)
+                            switch (ObjectUsed.classindex)
                             {
                                 case 4://exploding book
                                     return explodingbook.Use(ObjectUsed, WorldObject);
@@ -422,7 +422,7 @@ namespace Underworld
                                 break;
                             case 9:
                                 {
-                                    if (_RES!=GAME_UW2)
+                                    if (_RES != GAME_UW2)
                                     {
                                         return glowing_rock.Use(ObjectUsed, UsingObjectOrCharacter, WorldObject);
                                     }
@@ -492,7 +492,7 @@ namespace Underworld
                         {
                             case 7://a_shrine
                                 {
-                                    return shrine.Use(ObjectUsed);                                
+                                    return shrine.Use(ObjectUsed);
                                 }
                             case 0xB://barrel
                             case 0xD://chest
@@ -532,7 +532,7 @@ namespace Underworld
             return false;
         }
 
-        public static bool UseMajorClass4(uwObject ObjectUsed, uwObject UsingObjectOrCharacter, bool WorldObject)
+        public static bool UseMajorClass6(uwObject ObjectUsed, uwObject UsingObjectOrCharacter, bool WorldObject)
         {
             switch (ObjectUsed.minorclass)
             {
@@ -541,17 +541,15 @@ namespace Underworld
                         if (_RES == GAME_UW2)
                         {
                             switch (ObjectUsed.classindex)
-                         {
-                            case 0xE:
-                            case 0xF:
-                                return runetrap.Use()
-                            } 
+                            {
+                                case 0xE:
+                                case 0xF:
+                                    return runetrap.Use(ObjectUsed, UsingObjectOrCharacter);
+                            }
                         }
-
+                        return false;
                     }
-                    
             }
-
             return false;
         }
 
