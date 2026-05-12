@@ -369,13 +369,6 @@ namespace Underworld
             }
             set
             {
-                if (index > 256)
-                {
-                    if (value != xpos)
-                    {
-                        Debug.Print("Changing xpos for static object  " + index);
-                    }
-                }
                 int existingValue = GetAt16(PTR + 2);
                 existingValue &= 0x1FFF; //Mask out current val
                 SetAt16(PTR + 2, existingValue | ((value & 0x7) << 13));

@@ -523,7 +523,7 @@ namespace Underworld
         /// </summary>
         public static void ReturnToMainMenu()
         {
-            playerdat.PlayerInDeathMode = false;
+            //playerdat.PlayerInDeathMode = false;
             Palette.CurrentPalette = 6; //ensure no graphical glitching
             uimanager.CurrentGameMode = uimanager.GameModes.MAIN;
             //Still some weirdness with enabling the main menu again. eg palette switch in UW1

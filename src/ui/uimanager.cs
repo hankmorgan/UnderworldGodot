@@ -17,6 +17,7 @@ namespace Underworld
 			AUTOMAP,
 			CONVERSATION,
 			CUTSCENE,
+			DEATH,
 			ENDGAME
 		}
 

@@ -392,7 +392,7 @@ public partial class main : Node3D
 			motion.MotionInputPressed = 0xA;
 		}
 		if (Input.IsKeyPressed(Key.J))//jump.
-		{
+		{			
 			if (Input.IsKeyPressed(Key.Shift))
 			{
 				//long jump

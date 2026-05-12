@@ -5,17 +5,17 @@ namespace Underworld
     //for handling loop updates for the player.
     public partial class playerdat : Loader
     {
-        public static bool PlayerInDeathMode;
+        //public static bool PlayerInDeathMode;
         /// <summary>
         /// Handles player death.
         /// </summary>
         static void PlayerDeath()
         {
-            if (PlayerInDeathMode)
-            {
-                return;
-            }
-            PlayerInDeathMode = true;
+            // if (PlayerInDeathMode)
+            // {
+            //     return;
+            // }
+            // PlayerInDeathMode = true;
 
             if (_RES == GAME_UW2)
             {
@@ -155,7 +155,7 @@ namespace Underworld
         {
             Teleportation.CodeToRunOnTeleport = null;
             play_hp = max_hp;
-            PlayerInDeathMode = false;
+            //PlayerInDeathMode = false;
             var tree = objectsearch.FindMatchInFullObjectList(7, 0, 0xA, UWTileMap.current_tilemap.LevelObjects);
             if (tree != null)
             {
@@ -178,7 +178,7 @@ namespace Underworld
             ChangeExperience(-Exp / 9);
             Teleportation.CodeToRunOnTeleport = null;
             play_hp = max_hp;
-            PlayerInDeathMode = false;
+            //PlayerInDeathMode = false;
             uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x169));
         }
 
@@ -192,7 +192,7 @@ namespace Underworld
             Teleportation.CodeToRunOnTeleport = null;
             play_hp = max_hp;
             ChangeExperience(-Exp / 9);//loss of exp
-            PlayerInDeathMode = false;
+            //PlayerInDeathMode = false;
             playerdat.playerObject.npc_animation = 1;
             XMIMusic.ChangeThemeMusic(0xA);//play depressed theme
             
