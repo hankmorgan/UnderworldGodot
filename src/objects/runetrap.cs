@@ -59,13 +59,15 @@ namespace Underworld
                     else
                     {
                         //paralyse
-                        //var objToDamage = UWTileMap.current_tilemap.LevelObjects[indexCharacter];
-                        var duration = 64 + (Rng.r.Next(63) >> 2);
-                        SpellCasting.ApplyAIChangingSpell(
-                            targetObject: usingObject,
-                            newgoal: (byte)npc.npc_goals.npc_goal_petrified,
-                            newgtarg: (byte)duration,
-                            newattitude: 1);
+                        if (usingObject.majorclass == 1)//npc only
+                        {
+                            var duration = 64 + (Rng.r.Next(63) >> 2);
+                            SpellCasting.ApplyAIChangingSpell(
+                                targetObject: usingObject,
+                                newgoal: (byte)npc.npc_goals.npc_goal_petrified,
+                                newgtarg: (byte)duration,
+                                newattitude: 1);
+                        }
                     }
                     ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(objRuneTrap.tileX, objRuneTrap.tileY, objRuneTrap.index);
                     return true;
