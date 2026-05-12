@@ -392,18 +392,22 @@ public partial class main : Node3D
 			motion.MotionInputPressed = 0xA;
 		}
 		if (Input.IsKeyPressed(Key.J))//jump.
-		{			
-			if (Input.IsKeyPressed(Key.Shift))
+		{
+			if (playerdat.TileState != 1)//ensure we are not swimming
 			{
-				//long jump
-				motion.MotionInputPressed = 6;
+				if (Input.IsKeyPressed(Key.Shift))
+				{
+					//long jump
+					motion.MotionInputPressed = 6;
+				}
+				else
+				{
+					//jump
+					//todo: Do a test that the player is grounded.
+					motion.MotionInputPressed = 7;
+				}
 			}
-			else
-			{
-				//jump
-				//todo: Do a test that the player is grounded.
-				motion.MotionInputPressed = 7;
-			}
+
 		}
 		if (Input.IsKeyPressed(Key.R))//fly up
 		{
@@ -671,17 +675,17 @@ public partial class main : Node3D
 						// 		break;
 						// 	}
 						//case Key.T:
-							// var mouselook = (bool)cameraPitchGimbal.Get("MOUSELOOK");
-							// if (mouselook)
-							// {//toggle to free curso
-							// 	Input.MouseMode = Input.MouseModeEnum.Hidden;
-							// }
-							// else
-							// {//toogle to mouselook
-							// 	Input.MouseMode = Input.MouseModeEnum.Captured;
-							// }
-							// cameraPitchGimbal.Set("MOUSELOOK", !mouselook);
-							//break;
+						// var mouselook = (bool)cameraPitchGimbal.Get("MOUSELOOK");
+						// if (mouselook)
+						// {//toggle to free curso
+						// 	Input.MouseMode = Input.MouseModeEnum.Hidden;
+						// }
+						// else
+						// {//toogle to mouselook
+						// 	Input.MouseMode = Input.MouseModeEnum.Captured;
+						// }
+						// cameraPitchGimbal.Set("MOUSELOOK", !mouselook);
+						//break;
 						// case Key.R: //fly up (not vanilla)
 						// 	if ((playerdat.MagicalMotionAbilities & 0x14) != 0)
 						// 	{
