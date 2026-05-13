@@ -30,7 +30,21 @@ namespace Underworld
 
         public const float SpriteScale = 0.02f;  //height of 1px of a sprite
 
-        public const float NPCSpriteScale = 0.009f;
+        public static float NPCSpriteScale 
+        {
+            get
+            {
+                if (_RES==GAME_UW2)
+                {
+                    return 0.009f;
+                }
+                else
+                {
+                    return 0.015f;
+                }
+            }
+        }
+       
 
         /// <summary>
         /// Load art in a low detail mode based on the first pixel color (top left) in the image

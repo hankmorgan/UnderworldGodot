@@ -180,16 +180,15 @@ namespace Underworld
                 material.SetShaderParameter("texture_albedo", (Texture)texture);
                 if (sprite!=null)
                 {
-                    if (_RES==GAME_UW2)
-                    {
-                        sprite.Mesh.Set("size", FrameSize * 1.5f);
-                    }
-                    else
-                    {
-                        sprite.Mesh.Set("size", FrameSize * 1.8f);//make uw1 npcs a bit bigger
-                    }                    
+                    // if (_RES==GAME_UW2)
+                    // {
+                        sprite.Mesh.Set("size", FrameSize);// * 1.5f);
+                    // }
+                    // else
+                    // {
+                    //     sprite.Mesh.Set("size", FrameSize * 2f);//make uw1 npcs a bit bigger
+                    // }                    
                 }                
-                //sprite.Mesh.Set("size",FrameSize*1.5f);//TODO fix so this does not call a null crash and sprite mesh keeps size
                 return frameNo;
             }
             else
