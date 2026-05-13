@@ -14,7 +14,7 @@ namespace Underworld
         /// <returns></returns>
         public static int slash(int item_id)
         {
-            return buffer[offset + (item_id & 0xf) * 8];
+            return buffer[offset + ((item_id & 0xf) * 8)];
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace Underworld
         /// <returns></returns>
         public static int stab(int item_id)
         {
-            return buffer[offset + 2 + (item_id & 0xf) * 8];
+            return buffer[offset + 2 + ((item_id & 0xf) * 8)];
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Underworld
         /// <returns></returns>
         public static int mincharge(int item_id)
         {
-            return buffer[offset + 3 + (item_id & 0xf) * 8];
+            return buffer[offset + 3 + ((item_id & 0xf) * 8)];
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace Underworld
         /// <returns></returns>
         public static int chargespeed(int item_id)
         {
-            return buffer[offset + 4 + (item_id & 0xf) * 8];
+            return buffer[offset + 4 + ((item_id & 0xf) * 8)];
         }
         
         /// <summary>
@@ -64,7 +64,7 @@ namespace Underworld
         /// <returns></returns>
         public static int maxcharge(int item_id)
         {
-            return buffer[offset + 5 + (item_id & 0xf) * 8];
+            return buffer[offset + 5 + ((item_id & 0xf) * 8)];
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace Underworld
         /// <returns></returns>
         public static int skill(int item_id)
         {
-            return buffer[offset + 6 + (item_id & 0xf) * 8];
+            return buffer[offset + 6 + ((item_id & 0xf) * 8)];
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace Underworld
         /// <returns></returns>
         public static int durability(int item_id)
         {
-            return buffer[offset + 7 + (item_id & 0xf) * 8];
+            return buffer[offset + 7 + ((item_id & 0xf) * 8)];
         }
 
     }//end class

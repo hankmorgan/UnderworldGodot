@@ -491,7 +491,7 @@ namespace Underworld
 
             if (damagequotient != 0)
             {
-                AttackDamage = Rng.DiceRoll(damagequotient, 6);
+                AttackDamage = Rng.DiceRoll(NoOfLoops: damagequotient, diceRange: 6);
             }
             if (damageremainder != 0)
             {
@@ -509,7 +509,7 @@ namespace Underworld
             //var finaldamage = (AttackDamage * NPCFinalAttackCharge) >> 7;
             finaldamage += AttackScoreFlankingBonus;
 
-            //TODO figure out correct sounds
+            //Play hit sounds
             if (DefendingCharacter.index == 1)
             {
                 //seg024_24E9_A25:
@@ -520,33 +520,23 @@ namespace Underworld
                 //seg024_24E9_A33:
                 if (!MissileAttack)
                 {
-                    Debug.Print("TODO this sound is based on the weapon selected.");
+                    var SoundEffectVarC = 04;
+                    if (_RES == GAME_UW2)
+                    {
+                        switch (PlayerWeaponSound)
+                        {
+                            case 2:
+                                SoundEffectVarC = 0x1B; break;
+                            case 0:
+                            case 1:
+                            default:
+                                SoundEffectVarC = 4; break;
+                        }
+                    }
+
+                    UWsoundeffects.PlaySoundEffectAtCoordinate((byte)SoundEffectVarC, CombatHitTileX, CombatHitTileY, finaldamage << 2);
                 }
             }
-
-
-            // //THIS SECTION HAS TO MOVE?
-            // if (DefendingCharacter.majorclass == 1)
-            // {
-            //     if (critterObjectDat.bleed(DefendingCharacter.item_id) != 0)
-            //     {
-            //         Debug.Print("TODO. place animo at hit body part");
-            //         animo.SpawnAnimoAtTarget(target: DefendingCharacter, subclassindex: 0, si_zpos: 5, tileX: DefendingCharacter.tileX, tileY: DefendingCharacter.tileY); //blood
-            //         if (AttackWasACrit)
-            //         {
-            //             animo.SpawnAnimoAtTarget(target: DefendingCharacter, subclassindex: 0, si_zpos: 3, tileX: DefendingCharacter.tileX, tileY: DefendingCharacter.tileY); //blood
-            //         }
-            //     }
-            //     else
-            //     {//npc does not bleed
-            //         animo.SpawnAnimoAtTarget(target: DefendingCharacter, subclassindex: 0xB, si_zpos: 3, tileX: DefendingCharacter.tileX, tileY: DefendingCharacter.tileY); // a flash damage
-            //     }
-            // }
-            // else
-            // {
-            //     //hit a non-npc object
-            //     animo.SpawnAnimoAtTarget(target: DefendingCharacter, subclassindex: 0xB, si_zpos: 3, tileX: DefendingCharacter.tileX, tileY: DefendingCharacter.tileY); // a flash damage
-            // }
 
 
             //seg024_24E9_A9B:
