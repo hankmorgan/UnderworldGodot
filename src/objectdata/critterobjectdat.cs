@@ -317,9 +317,19 @@ namespace Underworld
         /// <param name="item_id"></param>
         /// <returns></returns>
         public static int category(int item_id)
-        {//=BITAND(HEX2DEC(AE4),15)
+        {
             return (buffer[CritterOffset(item_id) + 0x10]) & 0xF;
         }
+        public static int combatimpactsound_4_3(int item_id)
+        {
+            return (buffer[CritterOffset(item_id) + 0x10] >> 4) & 0x3;
+        }
+
+        public static int combatimpactsound_7_3(int item_id)
+        {
+            return (buffer[CritterOffset(item_id) + 0x10] >> 6) & 0x3;
+        }
+
 
 
         /// <summary>

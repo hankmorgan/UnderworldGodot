@@ -147,7 +147,6 @@ namespace Underworld
                             }
                             else
                             {
-
                                 //Non vanilla behaviour. work out the attack type now based on where the mouse is in the view port.
                                 int X1 = (int)((uimanager.ViewPortMouseXPos / 4) - uimanager.Window3DLeftBorder);//offset from the left side border
                                 int Y1 = (int)((200f - uimanager.ViewPortMouseYPos / 4) - 54f);
@@ -200,6 +199,9 @@ namespace Underworld
                             AttackDamage = 0;
                             AttackScoreFlankingBonus = 0;
                             AttackWasACrit = false;
+
+                            Debug.Print("PlacehholderInitialising PlayerWeaponSound to 1");
+                            PlayerWeaponSound = 1;
                             stage = CombatStages.Charging;
                         }
                         else

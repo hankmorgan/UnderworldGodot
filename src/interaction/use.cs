@@ -14,7 +14,7 @@ namespace Underworld
         /// </summary>
         public static bool SpellHasBeenCast = false;
         public static bool UseTriggerHasBeenActivated = false;
-        public static bool Use(uwObject ObjectUsed, uwObject UsingObjectOrCharacter, uwObject[] objList, bool WorldObject = true)
+        public static bool Use(uwObject ObjectUsed, uwObject UsingObjectOrCharacter, uwObject[] objList, bool WorldObject = true, bool UsedFromCollision = false)
         {
             SpellHasBeenCast = false;
             UseTriggerHasBeenActivated = false;
@@ -137,7 +137,7 @@ namespace Underworld
             {
                 result = true;//supress messaging.
             }
-            if (!result)
+            if ((!result) && (!UsedFromCollision))
             {
                 uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_cannot_use_that_));
             }

@@ -17,6 +17,7 @@ namespace Underworld
         public static uwObject currentweapon;  //if null then using fist
         public static int CurrentWeaponRadius = 0;
 
+        public static int PlayerWeaponSound = 1;
         public static int OnHitSpell = 0;
 
         public static int WeaponSwingTypePlayer = 0;

@@ -937,7 +937,7 @@ namespace Underworld
                         ObjectUsed: CollidedObject_VarA,
                         UsingObjectOrCharacter: MotionObject,
                         objList: UWTileMap.current_tilemap.LevelObjects,
-                        WorldObject: true);//this line will probably break a lot until I make use a more vanilla compliant Use() function.
+                        WorldObject: true, UsedFromCollision: true);//this line will probably break a lot until I make use a more vanilla compliant Use() function.
                 }
                 else
                 {
@@ -968,7 +968,7 @@ namespace Underworld
                         ObjectUsed: CollidedObject_VarA,
                         UsingObjectOrCharacter: MotionObject,
                         objList: UWTileMap.current_tilemap.LevelObjects,
-                        WorldObject: true);//this line will probably break a lot until I make use a more vanilla compliant Use() function.
+                        WorldObject: true, UsedFromCollision: true);//this line will probably break a lot until I make use a more vanilla compliant Use() function.
                                            //if (UWTileMap.ValidTile(CollidedObject_VarA.tileX, CollidedObject_VarA.tileY))
 
                     //if ((MotionCalcArray.x0_base >> 3) >= 0)  //this needs to be changed to another global
