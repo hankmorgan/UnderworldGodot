@@ -29,7 +29,7 @@ namespace Underworld
         /// <returns></returns>
         public static bool InitPlayerProjectileValues()
         {
-            int X1 = (int)((uimanager.ViewPortMouseXPos / 4) - uimanager.Window3DLeftBorder);//ofset from the left side border
+            int X1 = (int)((uimanager.ViewPortMouseXPos / 4) - uimanager.Window3DLeftBorder);//offset from the left side border
             int Y1 = (int)((200f - uimanager.ViewPortMouseYPos / 4) - 54f);
 
             if (X1 > uimanager.Window3DMaxX)

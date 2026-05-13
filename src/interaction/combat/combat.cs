@@ -262,7 +262,7 @@ namespace Underworld
             else
             {
                 //Adjust damage by player str and swing type damage.
-                AttackDamage = (playerdat.STR / 9) + CurrentWeaponBaseDamage(CurrentAttackSwingType);
+                AttackDamage = (playerdat.STR / 9) + CurrentWeaponBaseDamage(WeaponSwingTypePlayer);
             }
 
             //Then get weapon enchantments
@@ -337,7 +337,6 @@ namespace Underworld
         /// <returns></returns>
         public static bool NPCExecuteAttack(uwObject attacker, int swingtype, int attackcharge, int attacktype, int poisondamage)
         {
-            CurrentAttackSwingType = swingtype;
             NPCFinalAttackCharge = attackcharge;
             CurrentWeaponRadius = 2;//always this for NPCS.
             AttackingCharacter = attacker;
@@ -738,7 +737,7 @@ namespace Underworld
         {
             get
             {
-                switch (CurrentAttackSwingType) //random for now
+                switch (WeaponSwingTypePlayer) //random for now
                 {
                     case 1:
                         return 2; //bash

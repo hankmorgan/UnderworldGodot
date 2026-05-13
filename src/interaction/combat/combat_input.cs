@@ -145,7 +145,7 @@ namespace Underworld
                             {
                                 //default mouse (in case cursor is stuck)
                                 //uimanager.instance.mousecursor.SetCursorToCursor(0);
-                                CurrentAttackSwingType = Rng.r.Next(0, 3);
+                                WeaponSwingTypePlayer = Rng.r.Next(0, 3);
                             }
 
                             OnHitSpell = 0;

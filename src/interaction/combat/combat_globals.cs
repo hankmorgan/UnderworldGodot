@@ -19,13 +19,13 @@ namespace Underworld
 
         public static int OnHitSpell = 0;
 
-        public static int CurrentAttackSwingType = 0;
+        public static int WeaponSwingTypePlayer = 0;
 
         public static int AttackSwingHeightAdjust
         {
             get
             {
-                switch (CurrentAttackSwingType)
+                switch (WeaponSwingTypePlayer)
                 {
                     case 0: //stab
                         return 2;
