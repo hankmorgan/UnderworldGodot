@@ -250,6 +250,11 @@ public partial class main : Node3D
 					ClockIncrement: (byte)ClockIncrement,
 					AnimationFrameDelta: AnimationFrameDeltaIncrement,
 					EasyMove: false);
+
+				
+				combat.CombatInputHandler(delta);
+				playerdat.PlayerTimedLoop(delta);
+				RefreshWorldState();//handles teleports, tile redraws	
 			}
 
 		}
@@ -258,10 +263,6 @@ public partial class main : Node3D
 		//Other updates
 		if (uimanager.InGame)
 		{
-			RefreshWorldState();//handles teleports, tile redraws			
-			combat.CombatInputHandler(delta);
-			playerdat.PlayerTimedLoop(delta);
-
 
 			if (EnablePositionDebug)
 			{

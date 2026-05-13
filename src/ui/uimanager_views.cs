@@ -167,13 +167,19 @@ namespace Underworld
         public static void ClickOnViewPort(InputEventMouseButton eventMouseButton)
         {
             if (!InGame) { return; }
-            bool LeftClick = (eventMouseButton.ButtonIndex == MouseButton.Left);
-            Debug.Print($"{eventMouseButton.Position.X},{eventMouseButton.Position.Y}");
-            Dictionary result = DoRayCast(eventMouseButton.Position, RayDistance, out Vector3 rayOrigin);
-
             //store these values for use in throw and spell casting events
             ViewPortMouseXPos = eventMouseButton.Position.X;
             ViewPortMouseYPos = eventMouseButton.Position.Y;
+            if (uimanager.InteractionMode == InteractionModes.ModeAttack)
+            {
+                return;//no more needs to be done.
+            }
+            
+            bool LeftClick = (eventMouseButton.ButtonIndex == MouseButton.Left);
+            //Debug.Print($"{eventMouseButton.Position.X},{eventMouseButton.Position.Y}");
+            Dictionary result = DoRayCast(eventMouseButton.Position, RayDistance, out Vector3 rayOrigin);
+
+
 
             if (result != null)
             {

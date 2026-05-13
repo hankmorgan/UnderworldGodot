@@ -55,7 +55,9 @@ namespace Underworld
         }
 
         public static CombatStages stage = 0;
-        public static double combattimer = 0.0;
+        public static double combatanimationtimer = 0.0;
+        public static uint PreviousCombatPITTimer = 0;
+        public static uint CombatTimerDifference = 0;
 
         /// <summary>
         /// tracks if a jewelled dagger is being used in order to ensure the listener in the sewers can be killed with it
