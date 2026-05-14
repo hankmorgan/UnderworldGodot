@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using Godot;
 
 namespace Underworld
 {
@@ -391,17 +392,17 @@ namespace Underworld
                                     //todo set combat music timer
                                     if (_RES == GAME_UW2)
                                     {
-                                        if (XMIMusic.CurrentlyPlayingThemeNo<=2 || XMIMusic.CurrentlyPlayingThemeNo >4)
+                                        if (XMIMusic.CurrentlyPlayingThemeNo <= 2 || XMIMusic.CurrentlyPlayingThemeNo > 4)
                                         {
                                             XMIMusic.ChangeThemeMusic(3);
-                                        }                                        
+                                        }
                                     }
                                     else
                                     {
-                                        if (XMIMusic.CurrentlyPlayingThemeNo<=5 || XMIMusic.CurrentlyPlayingThemeNo >7)
+                                        if (XMIMusic.CurrentlyPlayingThemeNo <= 5 || XMIMusic.CurrentlyPlayingThemeNo > 7)
                                         {
                                             XMIMusic.ChangeThemeMusic(6);
-                                        }   
+                                        }
                                     }
                                     XMIMusic.CombatMusicTimer = main.GlobalPITTimer;
                                 }
@@ -410,7 +411,7 @@ namespace Underworld
                             if (
                                 (critter.AnimationFrame == COMBAT_HITFRAME)
                                 ||
-                                ((MaxAnimFrame<COMBAT_HITFRAME) && (critter.AnimationFrame == MaxAnimFrame))
+                                ((MaxAnimFrame < COMBAT_HITFRAME) && (critter.AnimationFrame == MaxAnimFrame))
                             )
                             {
                                 //apply attack
@@ -572,52 +573,67 @@ namespace Underworld
                     if (soundeffect != 0xFF)
                     {
                         //play sound effect at critter x,y coordinate
-                        UWsoundeffects.PlaySoundEffectAtCoordinate(soundeffect, currObjXCoordinate, currObjYCoordinate,0);
+                        UWsoundeffects.PlaySoundEffectAtCoordinate(soundeffect, currObjXCoordinate, currObjYCoordinate, 0);
                     }
                 }//end sound block
                 //seg007_17A2_29A5:  passive test?
                 if (critterObjectDat.unkPassivenessProperty(critter.item_id) == false)
                 {
                     //seg007_17A2_29B8:
-                    if (
-                        (
-                            (critter.IsAlly == 0)
-                            &&
-                            (critter.index == playerdat.LastDamagedNPCIndex)
-                            &&
-                            (critterObjectDat.generaltype(critter.item_id) == playerdat.LastDamagedNPCType)
-                            &&
-                            (critter.UnkBit_0XA_Bit7 == 0)
-                        )
-                        ||
-                        (
-                            critter.IsAlly == 1
-                        )
-                    )
+                    if (critter.IsAlly != 0)
                     {
-                        if (playerdat.LastDamagedNPCTime + 512 >= playerdat.ClockValue)
-                        {
-                            //seg007_17A2_2A0D:
-                            //do detection
-                            var dist = System.Math.Abs(critter.tileX - playerdat.LastDamagedNPCTileX) + System.Math.Abs(critter.tileY - playerdat.LastDamagedNPCTileY);
-                            if (dist < critterObjectDat.combatdetectionrange(critter.item_id))
-                            {//npc has detected hostility to themselves or to an ally
-                                critter.npc_attitude = 0;
-                                critter.UnkBit_0x19_0_likelyincombat = 1;
-                                if ((critter.npc_goal != 9) && (critter.npc_goal != 6))
-                                {
-                                    var gtarg = 1;
-                                    if (critter.IsAlly == 1)
-                                    {//critter is allied with the player? set them to attack the players target
-                                        gtarg = playerdat.LastDamagedNPCIndex;
-                                    }
-                                    SetGoalAndGtarg(critter, 5, gtarg);
-                                    SetNPCTargetDestination(critter, playerdat.LastDamagedNPCTileX, playerdat.LastDamagedNPCTileY, playerdat.LastDamagedNPCZpos);
+                        goto seg007_17A2_2AEA;
+                    }
+                    if (critter.index == playerdat.LastDamagedNPCIndex)
+                    {
+                        goto Seg007_17A2_29F6;
+                    }
+                    if (critterObjectDat.generaltype(critter.item_id) != playerdat.LastDamagedNPCType)
+                    {
+                        goto Seg007_17A2_29F6;
+                    }
+                    if (critter.UnkBit_0XA_Bit7 == 0)
+                    {
+                        goto Seg007_17A2_2A0D;
+                    }
+
+
+
+                Seg007_17A2_29F6:
+                    if (critter.IsAlly == 1)
+                    {
+                        goto Seg007_17A2_2A0D;
+                    }
+                    else
+                    {
+                        goto seg007_17A2_2AEA;
+                    }
+
+                Seg007_17A2_2A0D:
+
+                    if (playerdat.LastDamagedNPCTime + 512 >= playerdat.ClockValue)
+                    {
+                        //seg007_17A2_2A0D:
+                        //do detection
+                        var dist = System.Math.Abs(critter.tileX - playerdat.LastDamagedNPCTileX) + System.Math.Abs(critter.tileY - playerdat.LastDamagedNPCTileY);
+                        if (dist < critterObjectDat.combatdetectionrange(critter.item_id))
+                        {//npc has detected hostility to themselves or to an ally
+                            critter.npc_attitude = 0;
+                            critter.UnkBit_0x19_0_likelyincombat = 1;
+                            if ((critter.npc_goal != 9) && (critter.npc_goal != 6))
+                            {
+                                var gtarg = 1;
+                                if (critter.IsAlly == 1)
+                                {//critter is allied with the player? set them to attack the players target
+                                    gtarg = playerdat.LastDamagedNPCIndex;
                                 }
+                                SetGoalAndGtarg(critter: critter, 5, gtarg);
+                                SetNPCTargetDestination(critter: critter, newTargetX: playerdat.LastDamagedNPCTileX, newTargetY: playerdat.LastDamagedNPCTileY, newHeight: playerdat.LastDamagedNPCZpos);
                             }
                         }
                     }
-                    //seg007_17A2_2AEA:
+
+                seg007_17A2_2AEA:
                     if (critter.ProjectileSourceID > 0)
                     {
                         //HasLastHitNPC_seg007_17A2_2AF8:                        
