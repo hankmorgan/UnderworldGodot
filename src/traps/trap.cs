@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Diagnostics;
 
 namespace Underworld
@@ -123,6 +124,24 @@ namespace Underworld
                                             objList: objList);
                                         break;
                                     }
+                                case 0x9: //6-0-9
+                                    {
+                                        Debug.Print("Ward trap");
+                                        break;
+                                    }
+                                case 0xA://6-0-A, skill trap uw2, tell trap uw1
+                                    {
+                                        if(_RES==GAME_UW2)
+                                        {
+                                            Debug.Print("SKILL TRAP.Does as skill check and controls execution of other traps");
+                                        }
+                                        else
+                                        {
+                                            Debug.Print("TELLTRAP, Works the same as a WARD TRAP");
+                                        }
+                                        break;
+                                    }
+
                                 case 0xB: //6-0-B, delete object
                                     {
                                         implemented = true;

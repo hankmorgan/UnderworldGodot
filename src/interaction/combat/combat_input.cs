@@ -82,10 +82,10 @@ namespace Underworld
         {
             if (CombatTimerDifference >= 0) // = should be every 16 units between a previuosly stored timer in vanilla but I'm unsure what time units they are. assuming 1 second. Feels a bit fast
             {
-                
+
                 CombatTimerDifference += (main.GlobalPITTimer - PreviousCombatPITTimer);
                 PreviousCombatPITTimer = main.GlobalPITTimer;
-                while (CombatTimerDifference>0x10)
+                while (CombatTimerDifference > 0x10)
                 {
                     PlayerAttackCharge = Math.Min(PlayerAttackCharge + ChargeSpeed, 100);
                     var frame = 1 + (PlayerAttackCharge / 12);
@@ -127,7 +127,7 @@ namespace Underworld
                 {
                     case CombatStages.Ready:
                         if (MouseHeldDown)
-                        {    
+                        {
                             PreviousCombatPITTimer = main.GlobalPITTimer;
                             CombatTimerDifference = 0;
 
@@ -297,6 +297,11 @@ namespace Underworld
                     case CombatStages.Striking:
                         {
                             //weapon has struck do combat calcs  (if melee) 
+                            uimanager.ResetPower();
+
+                            var ChargeAdjust = maxcharge - mincharge;
+                            ChargeAdjust = (ChargeAdjust * PlayerAttackCharge) / 100;
+                            PlayerAttackCharge = mincharge + ChargeAdjust;
                             CalculatePlayerAttackScores();
 
                             ExecuteAttack(playerdat.playerObject);
@@ -313,7 +318,7 @@ namespace Underworld
 
                             //when done start reset
                             stage = CombatStages.Resetting;
-                            combatanimationtimer=0;
+                            combatanimationtimer = 0;
                             break;
                         }
                     case CombatStages.Resetting:

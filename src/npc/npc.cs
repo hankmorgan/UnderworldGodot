@@ -216,6 +216,7 @@ namespace Underworld
                 return 0;
             }
             var direction = -main.cameraPitchGimbal.Position + n.instance.uwnode.Position;
+            Debug.Print($"npc {n.a_name} npc heading {n.npc_heading} player heading {playerdat.playerObject.npc_heading} = {n.npc_heading-playerdat.playerObject.npc_heading}");
             var angle = Mathf.RadToDeg(Mathf.Atan2(direction.X, direction.Z));
             var facingIndex = facing(angle);
             var CalcedFacing = (short)(facingIndex + n.heading);
