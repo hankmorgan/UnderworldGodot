@@ -429,7 +429,7 @@ namespace Underworld
                     {
                         if (_RES == GAME_UW2)
                         {
-                            a_hack_trap_changegoal.Activate(trapObj, character);//some sort of goal change for npcs. possibly does nothing in practice do to trap setup
+                            a_hack_trap_changegoal.Activate(trapObj, character);//some sort of goal change for npcs. possibly does nothing in practice due to trap setup
                         }
                         else
                         {
