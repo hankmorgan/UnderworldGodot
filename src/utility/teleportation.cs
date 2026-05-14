@@ -217,7 +217,7 @@ namespace Underworld
             // playerdat.playerObject.xpos = 3; playerdat.playerObject.ypos = 3;
             // playerdat.tileX = tileX; playerdat.tileY = tileY;
 
-            playerdat.PositionPlayerObject();
+            playerdat.PositionPlayerCamera();
 
             // main.gamecam.Position = uwObject.GetCoordinate(
             //     tileX: playerdat.tileX,

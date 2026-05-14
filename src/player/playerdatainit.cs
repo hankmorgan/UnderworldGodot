@@ -33,7 +33,7 @@ namespace Underworld
                 motion.UpdateMotionStateAndSwimming(playerdat.RelatedToMotionState & 0x7);
 
 
-                PositionPlayerObject();
+                PositionPlayerCamera();
 
                 for (int i = 0; i < 8; i++)
                 {//Init the backpack indices
@@ -122,7 +122,7 @@ namespace Underworld
         /// <summary>
         /// Positions the player game camera based on x/y/z pos and current tileX/Y
         /// </summary>
-        public static void PositionPlayerObject()
+        public static void PositionPlayerCamera()
         {
             var x_adj = 0f;
             var y_adj = 0f;
@@ -190,7 +190,11 @@ namespace Underworld
 
             //Set up the pitch gimbal.
             main.cameraPitchGimbal.Rotation = Vector3.Zero;
-            main.cameraPitchGimbal.Rotate(Vector3.Right,(float)(+(pitch / 32767f) * Math.PI) );            
+            main.cameraPitchGimbal.Rotate(Vector3.Right,(float)(+(pitch / 32767f) * Math.PI) );   
+
+            //Set this value to calculate npc angles
+            motion.CameraYawHeadingRelated_2B52 = (short)(((1 + (motion.PlayerCameraYaw_dseg_8294 >> 0xD)) & 0x7) >> 1);
+            motion.CameraPointer2C = (short)(motion.PlayerCameraYaw_dseg_8294 - motion.PlayerCardinalHeadingLookupTable[motion.CameraYawHeadingRelated_2B52]);
         }
 
 

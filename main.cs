@@ -4,7 +4,6 @@ using System.Diagnostics;
 using Underworld;
 using Peaky.Coroutines;
 using System.Collections;
-using System.ComponentModel;
 
 /// <summary>
 /// Node to initialise the game
@@ -342,7 +341,7 @@ public partial class main : Node3D
 		//Footsteps();
 
 		//Position player object now after all possible calcs have been completed
-		playerdat.PositionPlayerObject();
+		playerdat.PositionPlayerCamera();
 	}
 
 	static void ProcessMotionInputs()

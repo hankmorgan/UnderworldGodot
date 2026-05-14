@@ -745,7 +745,7 @@ namespace Underworld
                     {
                         motion.ProcessPlayerTileState(0x10, 1);
                     }
-                    playerdat.PositionPlayerObject();
+                    playerdat.PositionPlayerCamera();
                 }
                 else
                 {
@@ -802,7 +802,7 @@ namespace Underworld
                     {
                         //object is the player.
                         motion.playerMotionParams.z_4 = (short)(NewTileHeight << 6);
-                        playerdat.PositionPlayerObject();
+                        playerdat.PositionPlayerCamera();
                     }
                     else
                     {

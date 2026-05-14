@@ -9,6 +9,8 @@ namespace Underworld
     /// </summary>
     public partial class motion : Loader
     {
+        public static short[] PlayerCardinalHeadingLookupTable = { 0, 16384, -32768, -16384 };
+
         public static UWMotionParamArray playerMotionParams = new UWMotionParamArray();
 
         //These 2 globals are used to determine the heading/velocity for the player.
@@ -41,6 +43,10 @@ namespace Underworld
         public static byte Shake20_Duration_73F;
         public static byte Shake40_Duration_740;
         public static byte Shake80_Duration_741; //not used in UW1
+
+        //Used to calulate the angle for npc sprites
+        public static short CameraYawHeadingRelated_2B52=0;
+        public static short CameraPointer2C=0;
 
 
         //These are used to backup the player motion values when subject to sliding

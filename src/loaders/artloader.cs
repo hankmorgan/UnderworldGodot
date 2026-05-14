@@ -36,7 +36,7 @@ namespace Underworld
             {
                 if (_RES==GAME_UW2)
                 {
-                    return 0.009f;
+                    return 0.012f;
                 }
                 else
                 {
