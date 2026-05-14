@@ -133,7 +133,8 @@ namespace Underworld
                                     {
                                         if(_RES==GAME_UW2)
                                         {
-                                            Debug.Print("SKILL TRAP.Does as skill check and controls execution of other traps");
+                                            implemented = true;                                            
+                                            triggerNextIndex = a_skill_trap.Activate(trapObj);
                                         }
                                         else
                                         {
