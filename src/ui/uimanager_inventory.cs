@@ -329,7 +329,10 @@ namespace Underworld
                                 if (isLeftClick)
                                 {
                                     //try and pickup
-                                    PickupObjectFromSlot(objAtSlot);
+                                    if (objAtSlot.index != OpenedContainerIndex)
+                                    {
+                                        PickupObjectFromSlot(objAtSlot);    
+                                    }                                    
                                 }
                                 else
                                 {
