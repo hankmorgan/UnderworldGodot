@@ -272,27 +272,41 @@ namespace Underworld
                 newMoveTrigger.enchantment = 1;
                 newMoveTrigger.doordir = 1;
                 newMoveTrigger.is_quant = 1;
-                newMoveTrigger.invis = 1;
+                newMoveTrigger.invis = 0;
                 newMoveTrigger.quality = tile.tileX;
                 newMoveTrigger.owner = tile.tileY;
+                ObjectCreator.RenderObject(newMoveTrigger, UWTileMap.current_tilemap);
                 //create the ward trap
-                var newWardTrap = ObjectCreator.spawnObjectInTile(
-                    itemid: 393,
-                    tileX: tile.tileX, tileY: tile.tileY,
-                    xpos: 3, ypos: 3, zpos: (short)(tile.floorHeight << 3),
-                    WhichList: ObjectFreeLists.ObjectListType.StaticList, RenderImmediately: false);
-                if (newWardTrap != null)
+                var idxNewWardTrap = ObjectCreator.PrepareNewObject(393, ObjectFreeLists.ObjectListType.StaticList);
+                if (idxNewWardTrap != 0)
                 {
+                    var newWardTrap = UWTileMap.current_tilemap.LevelObjects[idxNewWardTrap];
+                    newWardTrap.xpos =3; newWardTrap.ypos =3; newWardTrap.zpos =0;
                     newMoveTrigger.link = newWardTrap.index;
                     newWardTrap.enchantment = 0;
                     newWardTrap.quality = 63;
                     newWardTrap.flags = 1;
                     newWardTrap.is_quant = 1;
                     newWardTrap.doordir = 1;
-                    newWardTrap.invis = 1;
-                    //newWardTrap.owner = 3; // possibly this is a random value based on what was in memory already.
-                    ObjectCreator.RenderObject(newMoveTrigger, UWTileMap.current_tilemap);
+                    newWardTrap.invis = 1;                    
                 }
+                // var newWardTrap = ObjectCreator.spawnObjectInTile(
+                //     itemid: 393,
+                //     tileX: tile.tileX, tileY: tile.tileY,
+                //     xpos: 3, ypos: 3, zpos: (short)(tile.floorHeight << 3),
+                //     WhichList: ObjectFreeLists.ObjectListType.StaticList, RenderImmediately: false);
+                //if (newWardTrap != null)
+                //{
+                    // newMoveTrigger.link = newWardTrap.index;
+                    // newWardTrap.enchantment = 0;
+                    // newWardTrap.quality = 63;
+                    // newWardTrap.flags = 1;
+                    // newWardTrap.is_quant = 1;
+                    // newWardTrap.doordir = 1;
+                    // newWardTrap.invis = 1;
+                    //newWardTrap.owner = 3; // possibly this is a random value based on what was in memory already.
+                   // ObjectCreator.RenderObject(newMoveTrigger, UWTileMap.current_tilemap);
+               // }
             }
         }
 

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Underworld
@@ -264,9 +265,18 @@ namespace Underworld
                                 Debug.Print("Special handling for deleting timer triggers");
                             }
                             Debug.Print($"Breaking link for trigger {triggerObj.index} {triggerObj.a_name}");
-                            RemoveObjectFromLinkedList(listhead, triggerObj.index, objList, triggerObj.PTR + 6);
-                            ObjectFreeLists.ReleaseFreeObject(triggerObj);
+                            //This is bugging out and may cause list corruption.
+                            //RemoveObjectFromLinkedList(listhead: listhead, toRemove: triggerObj.index, objlist: objList, HeadOffset: triggerObj.PTR + 6);
+                            //replacing instead with a simplified break to the link
                             triggerObj.link = 0;
+                            //ObjectFreeLists.ReleaseFreeObject(triggerObj);
+                            if (UWTileMap.ValidTile(triggerObj.tileX, triggerObj.tileY))
+                            {
+                                //triggers is on map.
+                                ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(triggerObj.tileX, triggerObj.tileY, triggerObj.index, true);
+                            }
+                            
+                            //triggerObj.link = 0;
                             RemoveTrapFlags--;
                         }
                     }
@@ -328,6 +338,7 @@ namespace Underworld
         /// <param name="indexToDelete"></param>
         public static bool DeleteObjectFromTile_DEPRECIATED(int tileX, int tileY, short indexToDelete, bool RemoveFromWorld = true, bool forceDelete = false)
         {
+            List<int> tested = new();
             if (!UWTileMap.ValidTile(tileX, tileY))
             {
                 return false;//not on map.
@@ -353,9 +364,20 @@ namespace Underworld
                     {
                         //search
                         var next = tile.indexObjectList;
-
+                        uwObject PreviousObject = null;
                         while (next != 0)
                         {
+                            if (tested.Contains(next))
+                            {
+                                Debug.Print($"Likely loop in object chain. Index {next} has already been tested in DeleteObjectFromTile.");
+                                if (PreviousObject!=null)
+                                {
+                                    Debug.Print($"Fixing loop by setting the next of {PreviousObject.a_name} {PreviousObject.index} to 0. Objects may be missing from tile at next reload!");
+                                    PreviousObject.next = 0;
+                                    return false;
+                                }
+                            }
+                            tested.Add(next);//to track for infinite loops.
                             var nextObject = objList[next];
                             if (nextObject.next == indexToDelete)
                             {
@@ -367,6 +389,7 @@ namespace Underworld
                                 }
                                 return true;
                             }
+                            PreviousObject = nextObject;
                             next = nextObject.next;
                         }
                         Debug.Print($"Was unable to find {indexToDelete} to delete it in {tileX},{tileY}");

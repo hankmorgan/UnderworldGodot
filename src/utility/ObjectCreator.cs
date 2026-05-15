@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Diagnostics;
 using Godot;
 
@@ -34,8 +35,8 @@ namespace Underworld
         {
             if (WhichList == ObjectFreeLists.ObjectListType.MobileList)
             {
-               Debug.Print("WARNING Spawn Object in Tile used to spawn object in mobile list. Object projectile properties may be invalid");
-            }            
+                Debug.Print("WARNING Spawn Object in Tile used to spawn object in mobile list. Object projectile properties may be invalid");
+            }
             var slot = PrepareNewObject(itemid, WhichList);
             if (slot != 0)
             {
@@ -51,6 +52,7 @@ namespace Underworld
                 {
                     RenderObject(obj, UWTileMap.current_tilemap);
                 }
+                Debug.Print($"Spawning {obj.a_name} at index:{obj.index} with next:{obj.next}");
                 return obj;
             }
             else
@@ -608,7 +610,7 @@ namespace Underworld
                 {
                     //remove the weight of a single instance of the object
                     playerdat.WeightCarried -= commonObjDat.mass(obj.item_id);
-                    Debug.Print ($"Removing weight of {obj.a_name} {commonObjDat.mass(obj.item_id)}");
+                    Debug.Print($"Removing weight of {obj.a_name} {commonObjDat.mass(obj.item_id)}");
                     uimanager.RefreshWeightDisplay();
                     uimanager.UpdateInventoryDisplay();
                 }
@@ -760,5 +762,35 @@ namespace Underworld
         //     }
         //     return false;//no unlinking
         // }
+
+        public static void PrintChainInTile(int tileX, int tileY, string source)
+        {
+            var tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];
+            if (tile.indexObjectList == 0)
+            {
+                Debug.Print($"No objects in Tile {tileX} {tileY}");
+            }
+            List<int> tested = new();
+            var next = tile.indexObjectList;
+            var output = $"Objects in Tile {tileX} {tileY} after {source} ";
+            while (next != 0)
+            {
+                output += $"{next} => ";
+                var obj = UWTileMap.current_tilemap.LevelObjects[next];
+                if (tested.Contains(next))
+                {
+                    Debug.Print($"Infinite loop in Tile {tileX}, {tileY} on next {next}");
+                    break;
+                }
+                tested.Add(next);
+                next = obj.next;
+                if (next == 0)
+                {
+                    output += "0";
+                }
+            }
+
+            Debug.Print(output);
+        }
     } //end class
 } //end namesace

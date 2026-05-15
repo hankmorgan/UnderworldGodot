@@ -89,7 +89,7 @@ namespace Underworld
                         }
                         else
                         {
-                            Debug.Print($"Spilling {objToSpill.a_name}");
+                            Debug.Print($"Spilling {objToSpill.index} {objToSpill.a_name}");
                             objToSpill.tileX = containerObj.tileX;
                             objToSpill.tileY = containerObj.tileY;
                             UWTileMap.GetRandomXYZForTile(tile, out int newxpos, out int newypos, out int newzpos);

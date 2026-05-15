@@ -525,7 +525,7 @@ namespace Underworld
             {
                 spawnloot(critter);
             }
-            container.SpillWorldContainer(critter);
+            container.SpillWorldContainer(critter); //spill the items added in spawnloot or that are already heald
 
             var fluids = critterObjectDat.fluids(critter.item_id);
             if (fluids != 0)

@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace Underworld
 {
     /// <summary>
@@ -28,7 +30,7 @@ namespace Underworld
                         return 0;
                     }
                     UWTileMap.current_tilemap.StaticFreeListPtr--;
-                    //Debug.Print($"Allocating Static {UWTileMap.current_tilemap.StaticFreeListObject} Pointer decremented to {UWTileMap.current_tilemap.StaticFreeListPtr}");
+                    Debug.Print($"Allocating Static {UWTileMap.current_tilemap.StaticFreeListObject} Pointer decremented to {UWTileMap.current_tilemap.StaticFreeListPtr}");
                     return UWTileMap.current_tilemap.StaticFreeListObject;
                 case ObjectListType.MobileList:
                     if (UWTileMap.current_tilemap.MobileFreeListPtr<=0)
@@ -79,7 +81,7 @@ namespace Underworld
             {//static
                 UWTileMap.current_tilemap.StaticFreeListObject = obj.index;
                 UWTileMap.current_tilemap.StaticFreeListPtr++;
-                //Debug.Print($"Freeing Static {obj.index} {obj.a_name} Pointer incremented to {UWTileMap.current_tilemap.StaticFreeListPtr}");
+                Debug.Print($"Freeing Static {obj.index} {obj.a_name} Pointer incremented to {UWTileMap.current_tilemap.StaticFreeListPtr}");
             }
 
             if (obj.instance != null)
