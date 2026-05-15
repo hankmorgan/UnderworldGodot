@@ -37,9 +37,7 @@ namespace Underworld
                                 case 0://damage traps
                                     {
                                         implemented = true;
-                                        a_damage_trap.Activate(
-                                                trapObj: trapObj,
-                                                objList: objList);
+                                        a_damage_trap.Activate(triggeringCharacter:objList[character], trapObj: trapObj);
                                         break;
                                     }
                                 case 1: // a teleport trap
@@ -126,19 +124,23 @@ namespace Underworld
                                     }
                                 case 0x9: //6-0-9
                                     {
-                                        Debug.Print("Ward trap");
+                                        implemented = true;
+                                        triggerNextIndex = a_ward_trap.Activate(trapObj, objList[character], triggerNextIndex);
                                         break;
                                     }
                                 case 0xA://6-0-A, skill trap uw2, tell trap uw1
                                     {
-                                        if(_RES==GAME_UW2)
+                                        if (_RES == GAME_UW2)
                                         {
-                                            implemented = true;                                            
+                                            implemented = true;
                                             triggerNextIndex = a_skill_trap.Activate(trapObj);
                                         }
                                         else
                                         {
-                                            Debug.Print("TELLTRAP, Works the same as a WARD TRAP");
+                                            //Tell Trap, Works the same as a Ward Trap");
+                                            implemented = true;
+                                            triggerNextIndex = a_ward_trap.Activate(trapObj, objList[character], triggerNextIndex);
+                                            break;
                                         }
                                         break;
                                     }

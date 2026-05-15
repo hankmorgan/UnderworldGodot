@@ -76,9 +76,10 @@ namespace Underworld
                     {
                         //Detect creature string
                         DetectCreatureString(index_var15, detectioncounter[index_var15]);
-                        if (Candidates[index_var15] == 0)
+                        if (Candidates[index_var15] != 0)
                         {
                             //Do some more strings incl directions
+                            Debug.Print("TODO OVR157_13D6");
                         }
                         maxNoOfDetections_var16 = var17;
                         var17 = index_var15;

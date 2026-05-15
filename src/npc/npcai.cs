@@ -364,7 +364,7 @@ namespace Underworld
                             SpecialDeathCases(critter, 1); //mode 1
                             DropRemainsAndLoot(critter);
                             //remove from tile and free object
-                            ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(critter.tileX, critter.tileY, critter.index, true);
+                            ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(tileX: critter.tileX, tileY: critter.tileY, indexToDelete: critter.index, RemoveFromWorld: true);
                             return false;
                         }
                         else

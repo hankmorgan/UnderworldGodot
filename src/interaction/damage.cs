@@ -37,7 +37,7 @@ namespace Underworld
             basedamage = ScaleDamage(objToDamage.item_id, ref basedamage, damagetype);
             if (basedamage != 0)
             {
-                Debug.Print($"Try and Damage {objToDamage.a_name} by {basedamage}");
+                Debug.Print($"Damage {objToDamage.a_name} by {basedamage} type {damagetype} source {damagesource}");
             }
             if (objToDamage.majorclass == 1)
             {
@@ -73,7 +73,7 @@ namespace Underworld
             //basedamage = ScaleDamage(critter.item_id, ref basedamage, damagetype);
             if (basedamage != 0)
             {
-            Debug.Print($"Damage {critter.a_name} by {basedamage}");
+                Debug.Print($"Damage {critter.a_name} by {basedamage}");
             }
 
             //Note to be strictly compatable with UW behaviour the damage should be accumulated for the npc and test

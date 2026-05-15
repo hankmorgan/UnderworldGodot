@@ -1,32 +1,51 @@
 using System;
+using System.Runtime.Serialization;
 
 namespace Underworld
 {
-    public class a_damage_trap:trap
+    public class a_damage_trap : trap
     {
 
-         public static void Activate(uwObject trapObj, uwObject[] objList)
+        public static void Activate(uwObject trapObj, uwObject triggeringCharacter)
         {
-            ApplyDamageTrap(trapObj.owner!=0, trapObj.quality);
+            ApplyDamageTrap(triggeringCharacter, trapObj.owner != 0, trapObj.quality);
         }
 
 
-        public static void ApplyDamageTrap(bool Poison, int basedamage)
+        public static void ApplyDamageTrap(uwObject triggeringCharacter, bool Poison, int basedamage)
         {
-            if (Poison)
+            if (triggeringCharacter == playerdat.playerObject)
             {
-                //apply poisoning
-                //int test = basedamage;
-                //var scale = damage.ScaleDamage(127, ref test, 0x10); //player;
-                if (basedamage> playerdat.play_poison)
+                if (Poison)
                 {
-                    playerdat.play_poison = (byte)Math.Min(basedamage,0xF);
+                    //apply poisoning
+                    //int test = basedamage;
+                    //var scale = damage.ScaleDamage(127, ref test, 0x10); //player;
+                    if (basedamage > playerdat.play_poison)
+                    {
+                        playerdat.play_poison = (byte)Math.Min(basedamage, 0xF);
+                    }
+                }
+                else
+                {
+                    //appy damage
+                    if (basedamage>0)
+                    {
+                        playerdat.play_hp = Math.Max(0, playerdat.play_hp - basedamage);
+                    }                    
                 }
             }
             else
             {
-                //appy damage
-                playerdat.play_hp  = Math.Max(0, playerdat.play_hp-basedamage);
+                //npc
+                if (Poison)
+                {
+                    basedamage = -basedamage;
+                }
+                if (basedamage>0)
+                {
+                    damage.DamageObject(objToDamage: triggeringCharacter, basedamage: basedamage, damagetype: 4, objList: UWTileMap.current_tilemap.LevelObjects, WorldObject: true, damagesource: 0);
+                }                
             }
         }
     }
