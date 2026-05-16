@@ -1384,16 +1384,42 @@ namespace Underworld
 
 
         public Godot.Vector3 GetCoordinate(int tileX, int tileY)
-        {//godot is y-up     
+        {//godot is y-up    
+
             if ((IsStatic) || (majorclass == 1))
             {
-                return GetCoordinate(tileX, tileY, this.xpos, this.ypos, this.zpos);
-            }
+                //(xhome<< 8) + (xpos <<5) note this may need to be offset in the future.
+                var x = (xpos<<5) + (tileX<<8);
+                var y = (ypos<<5) + (tileY<<8);
+                var z = zpos<<3;
+
+                //Get a vector for the object that is relative to the bounds of an underworld level map.
+                Vector3 underworldVector = new(x: -(float)x / 16384f, y: (float)z / 1000f, z: (float)y / 16384f);
+           
+                //then transform it into godot positioning using a vector based on the size we are rendering the gameworld in.
+                return underworldVector * UWTileMap.godotscale;
+            } 
             else
             {
+                var x = CoordinateX;
+                var y = CoordinateY;
+                var z = CoordinateZ;
+
+                //Get a vector for the object that is relative to the bounds of an underworld level map.
+                Vector3 underworldVector = new(x: -(float)x / 16384f, y: (float)z / 1000f, z: (float)y / 16384f);
+           
+                //then transform it into godot positioning using a vector based on the size we are rendering the gameworld in.
+                return underworldVector * UWTileMap.godotscale;
+            }
+            // if ((IsStatic) || (majorclass == 1))
+            // {
+            //     return GetCoordinate(tileX, tileY, this.xpos, this.ypos, this.zpos);
+            // }
+            // else
+            // {
                 
-               return GetFullCoordinate(this); 
-            }            
+            //    return GetFullCoordinate(this); 
+            // }            
         }
 
         /// <summary>
@@ -1401,29 +1427,30 @@ namespace Underworld
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        static Vector3 GetFullCoordinate(uwObject obj, bool CentreInGrid = true)
-        {  
-            float offX = GetXYCoordinate_full(obj.CoordinateX, CentreInGrid);
-            float offY = GetXYCoordinate_full(obj.CoordinateY, CentreInGrid);
-            float offZ = GetZCoordinate(obj.zpos);
-            return new Godot.Vector3(-offX, offZ, offY);  
-        }
+        // static Vector3 GetFullCoordinate(uwObject obj, bool CentreInGrid = true)
+        // {  
+        //     float offX = GetXYCoordinate_full(obj.CoordinateX, CentreInGrid);
+        //     float offY = GetXYCoordinate_full(obj.CoordinateY, CentreInGrid);
+        //     float offZ = GetZCoordinate(obj.zpos);
+        //     return new Godot.Vector3(-offX, offZ, offY);  
+        // }
 
         
-        static float GetXYCoordinate_full(int fullcoordinate, bool CentreInGrid)
-        {           
-            float adjust = 0f;
-            if (CentreInGrid)
-            {
-                adjust = 0.075f;
-            }
-            return adjust + ((float)(fullcoordinate>>8) * 1.2f)
-                + ((float)((fullcoordinate>>5) & 0x7) * 0.15f)
-                + ((float)(fullcoordinate & 0xF) * 0.01f);   //this number is unconfirmed. Based on assumption that bits 0-3 of coordinate are a single xypos step in 1/15th increments.      
-        }
+        // static float GetXYCoordinate_full(int fullcoordinate, bool CentreInGrid)
+        // {           
+        //     float adjust = 0f;
+        //     if (CentreInGrid)
+        //     {
+        //         adjust = 0.075f;
+        //     }
+        //     return adjust + ((float)(fullcoordinate>>8) * 1.2f)
+        //         + ((float)((fullcoordinate>>5) & 0x7) * 0.15f)
+        //         + ((float)(fullcoordinate & 0xF) * 0.01f);   //this number is unconfirmed. Based on assumption that bits 0-3 of coordinate are a single xypos step in 1/15th increments.      
+        // }
 
-        public static Vector3 GetCoordinate(int tileX, int tileY, int _xpos, int _ypos, int _zpos, bool CentreInGrid = true)
+        public static Vector3 GetCoordinate_OBSOLETE(int tileX, int tileY, int _xpos, int _ypos, int _zpos, bool CentreInGrid = true)
         {
+            Debug.Print("|Obsolete Usage of GetCoordinate");
             float offX = GetXYCoordinate(tileX, _xpos,CentreInGrid);
             float offY = GetXYCoordinate(tileY, _ypos,CentreInGrid);
             float offZ = GetZCoordinate(_zpos);

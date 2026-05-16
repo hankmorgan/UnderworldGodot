@@ -613,7 +613,7 @@ namespace Underworld
 				{
 					var tile = UWTileMap.current_tilemap.Tiles[playerdat.playerObject.tileX, playerdat.playerObject.tileY];
 					UWTileMap.GetRandomXYZForTile(tile, out int newxpos, out int newypos, out int newzpos);
-					var dropcoordinate = uwObject.GetCoordinate(playerdat.playerObject.tileX, playerdat.playerObject.tileY, newxpos, newypos, newzpos);
+					var dropcoordinate = uwObject.GetCoordinate_OBSOLETE(playerdat.playerObject.tileX, playerdat.playerObject.tileY, newxpos, newypos, newzpos);
 
 					pickup.Drop_old(
 						index: objindex,
