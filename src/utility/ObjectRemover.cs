@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -29,10 +30,13 @@ namespace Underworld
                         if (tile.indexObjectList != 0)
                         {
                             RemoveTriggersPointingAtTrap(
-                                listhead: tile.indexObjectList,
-                                trapObjIndex: trapObj.index,
-                                objList: UWTileMap.current_tilemap.LevelObjects,
-                                tile: tile);
+                                ToRemove: trapObj.index,
+                                ptrListHead: tile.indexObjectList);
+                            // RemoveTriggersPointingAtTrap(
+                            //     listhead: tile.indexObjectList,
+                            //     trapObjIndex: trapObj.index,
+                            //     objList: UWTileMap.current_tilemap.LevelObjects,
+                            //     tile: tile);
                         }
                     }
                 }
@@ -91,6 +95,19 @@ namespace Underworld
         static int GetLinkNext(long ptr)
         {
             return (int)((Loader.getAt(UWTileMap.current_tilemap.lev_ark_block.Data, ptr, 16) >> 6) & 0x3FF);
+        }
+
+        static uwObject GetLinkNextObject(long ptr)
+        {
+            var index = (int)((Loader.getAt(UWTileMap.current_tilemap.lev_ark_block.Data, ptr, 16) >> 6) & 0x3FF);
+            if (index > 0)
+            {
+                return UWTileMap.current_tilemap.LevelObjects[index];
+            }
+            else
+            {
+                return null;
+            }
         }
 
         static void RemoveObjectAndChainFromLists(uwObject toRemove, long ptrListHead)
@@ -229,74 +246,119 @@ namespace Underworld
         }
 
 
-
-        static void RemoveTriggersPointingAtTrap(int listhead, int trapObjIndex, uwObject[] objList, TileInfo tile = null)
+        static void RemoveTriggersPointingAtTrap(int ToRemove, long ptrListHead)
         {
-            if (listhead == 0) { return; }
-
-            var triggerObj = objList[listhead];
-            var trapObj = objList[trapObjIndex];
-
-            if (tile != null)
-            {//special case for start of tile list.
-                if (tile.indexObjectList == trapObjIndex)
-                {
-                    tile.indexObjectList = trapObj.next;
-                    trapObj.next = 0;
-                    return;
-                }
-            }
-
-            while (triggerObj != null)
+            var Obj = GetLinkNextObject(ptrListHead);
+            while (Obj != null)
             {
-                uwObject nextObj = null;
-                if (triggerObj.next != 0)
+                //get the next of the object
+                var NextObject = GetLinkNextObject(Obj.PTR + 4); //get the next object.
+
+                if (Obj.IsTrigger)
                 {
-                    nextObj = objList[triggerObj.next];
-                }
-                if (triggerObj.IsTrigger)
-                {
-                    if (triggerObj.IsTrigger)
+                    if (Obj.link == ToRemove)
                     {
-                        if (triggerObj.link == trapObj.index)
+                        if (_RES == GAME_UW2)
                         {
-                            if (triggerObjectDat.triggertype(triggerObj.item_id) == (int)triggerObjectDat.triggertypes.TIMER)
+                            if (triggerObjectDat.triggertype(Obj.item_id) == 0xA)
                             {
-                                Debug.Print("Special handling for deleting timer triggers");
+                                Debug.Print("TODO special handling for deleting timer triggers.");
                             }
-                            Debug.Print($"Breaking link for trigger {triggerObj.index} {triggerObj.a_name}");
-                            //This is bugging out and may cause list corruption.
-                            //RemoveObjectFromLinkedList(listhead: listhead, toRemove: triggerObj.index, objlist: objList, HeadOffset: triggerObj.PTR + 6);
-                            //replacing instead with a simplified break to the link
-                            triggerObj.link = 0;
-                            //ObjectFreeLists.ReleaseFreeObject(triggerObj);
-                            if (UWTileMap.ValidTile(triggerObj.tileX, triggerObj.tileY))
-                            {
-                                //triggers is on map.
-                                ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(triggerObj.tileX, triggerObj.tileY, triggerObj.index, true);
-                            }
-                            
-                            //triggerObj.link = 0;
-                            RemoveTrapFlags--;
                         }
+                        //unlink object and replace with it's next
+                        int tmp = (int)(DataLoader.getAt16(UWTileMap.current_tilemap.lev_ark_block.Data, ptrListHead) & 0x3F);//clear the next/link
+                        tmp = (tmp | (Obj.next << 6));
+                        DataLoader.setAt16(UWTileMap.current_tilemap.lev_ark_block.Data, (int)ptrListHead, (int)tmp);
+                        Obj.link = 0;
+                        ObjectFreeLists.ReleaseFreeObject(Obj);
+
                     }
                 }
-                if (triggerObj.is_quant == 0 && triggerObj.link > 1)
-                {//try recursive
-                    RemoveTriggersPointingAtTrap(triggerObj.link, trapObjIndex, objList);
+
+                //ovr166_1C3F;
+                if (Obj.is_quant == 0)
+                {
+                    //recurse on it's linked, this means it's not been removed by the previous loop.
+                    if (Obj.link > 0)
+                    {
+                        RemoveTriggersPointingAtTrap(ToRemove, Obj.PTR + 6);
+                    }
                 }
-                triggerObj = nextObj;
+
+                ptrListHead = Obj.PTR + 4; //set to the int16 that contains the next value.
+                Obj = NextObject;
             }
         }
 
 
-        public static bool RemoveObjectFromLinkedList(int listhead, int toRemove, uwObject[] objlist, long HeadOffset)
+
+        // static void RemoveTriggersPointingAtTrap(int listhead, int trapObjIndex, uwObject[] objList, TileInfo tile = null)
+        // {
+        //     if (listhead == 0) { return; }
+
+        //     var triggerObj = objList[listhead];
+        //     var trapObj = objList[trapObjIndex];
+
+        //     if (tile != null)
+        //     {//special case for start of tile list.
+        //         if (tile.indexObjectList == trapObjIndex)
+        //         {
+        //             tile.indexObjectList = trapObj.next;
+        //             trapObj.next = 0;
+        //             return;
+        //         }
+        //     }
+
+        //     while (triggerObj != null)
+        //     {
+        //         uwObject nextObj = null;
+        //         if (triggerObj.next != 0)
+        //         {
+        //             nextObj = objList[triggerObj.next];
+        //         }
+        //         if (triggerObj.IsTrigger)
+        //         {
+        //             if (triggerObj.IsTrigger)
+        //             {
+        //                 if (triggerObj.link == trapObj.index)
+        //                 {
+        //                     if (triggerObjectDat.triggertype(triggerObj.item_id) == (int)triggerObjectDat.triggertypes.TIMER)
+        //                     {
+        //                         Debug.Print("Special handling for deleting timer triggers");
+        //                     }
+        //                     Debug.Print($"Breaking link for trigger {triggerObj.index} {triggerObj.a_name}");
+        //                     //This is bugging out and may cause list corruption.
+        //                     RemoveObjectFromLinkedList(listhead: listhead, toRemove: triggerObj.index, objlist: objList, OffsetToListHeadConnection: objList[listhead].PTR + 4);
+        //                     //replacing instead with a simplified break to the link
+        //                     //triggerObj.link = 0;
+        //                     ObjectFreeLists.ReleaseFreeObject(triggerObj);
+        //                     if (UWTileMap.ValidTile(triggerObj.tileX, triggerObj.tileY))
+        //                     {
+        //                         //triggers is on map.
+        //                         ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(triggerObj.tileX, triggerObj.tileY, triggerObj.index, true);
+        //                     }
+
+        //                     //triggerObj.link = 0;
+        //                     RemoveTrapFlags--;
+        //                 }
+        //             }
+        //         }
+        //         if (triggerObj.is_quant == 0 && triggerObj.link > 1)
+        //         {//try recursive
+        //             RemoveTriggersPointingAtTrap(triggerObj.link, trapObjIndex, objList);
+        //         }
+        //         triggerObj = nextObj;
+        //     }
+        // }
+
+
+        public static bool RemoveObjectFromLinkedList(int listhead, int toRemove, uwObject[] objlist, long OffsetToListHeadConnection)
         {
             if (listhead == toRemove)
             {//Handle case where this starts at an arbitary data location and links directly to the object.
                 var ObjToRemove = objlist[toRemove];
                 var databuffer = ObjToRemove.DataBuffer;
-                var tmp = (int)Loader.getAt(databuffer, HeadOffset, 16);
+                var tmp = (int)Loader.getAt(databuffer, OffsetToListHeadConnection, 16);
                 tmp = tmp & 0x3F;//clear the link or next.
 
                 if (ObjToRemove != null)
@@ -304,7 +366,7 @@ namespace Underworld
                     tmp = tmp | (ObjToRemove.next << 6);//insert the next as the new item at the head.
                     ObjToRemove.next = 0;
                 }
-                Loader.setAt(databuffer, HeadOffset, 16, tmp);
+                Loader.setAt(databuffer, OffsetToListHeadConnection, 16, tmp);
                 return true;
             }
             //var obj = objlist[toRemove];
@@ -370,7 +432,7 @@ namespace Underworld
                             if (tested.Contains(next))
                             {
                                 Debug.Print($"Likely loop in object chain. Index {next} has already been tested in DeleteObjectFromTile.");
-                                if (PreviousObject!=null)
+                                if (PreviousObject != null)
                                 {
                                     Debug.Print($"Fixing loop by setting the next of {PreviousObject.a_name} {PreviousObject.index} to 0. Objects may be missing from tile at next reload!");
                                     PreviousObject.next = 0;

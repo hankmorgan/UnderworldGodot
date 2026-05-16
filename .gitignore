@@ -436,3 +436,4 @@ tests/Underworld.Sfx.Tests/fixtures/uw1/*.MT
 # Local development tools (SFX renderers, A/B pages, trace dumpers). Not part
 # of the shipping game; kept outside the repo to reduce PR noise.
 tools/
+Underworld.csproj.lscache

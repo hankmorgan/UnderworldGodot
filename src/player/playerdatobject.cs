@@ -78,7 +78,7 @@ namespace Underworld
                 //   - absent (player arrived from elsewhere).
                 // RemoveObjectFromLinkedList handles all three cases; for "absent" it
                 // walks the chain to 0 and returns false, leaving the chain intact.
-                ObjectRemover_OLD.RemoveObjectFromLinkedList(listhead: tile.indexObjectList, toRemove: 1, objlist: UWTileMap.current_tilemap.LevelObjects, HeadOffset: tile.Ptr + 2);
+                ObjectRemover_OLD.RemoveObjectFromLinkedList(listhead: tile.indexObjectList, toRemove: 1, objlist: UWTileMap.current_tilemap.LevelObjects, OffsetToListHeadConnection: tile.Ptr + 2);
                 obj.next = tile.indexObjectList;
                 tile.indexObjectList = 1;//insert into the tile object list so it can be subject to collisions.
                 obj.tileX = newTileX; obj.tileY = newTileY;
