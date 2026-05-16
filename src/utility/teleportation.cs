@@ -41,7 +41,7 @@ namespace Underworld
         {
             if (TeleportLevel != -1)
             {
-  
+
                 if (playerdat.ObjectInHand != -1)
                 {
                     //handle moving an object in hand through levels. 
@@ -97,6 +97,13 @@ namespace Underworld
                     {
                         //move to new tile on different level
                         InitialisePlayerOnLevelOrPositionChange(tileX: TeleportTileX, tileY: TeleportTileY, CeilingSpawn: (HeadingHeightTeleportFlag & 0x1) == 1);
+                        if ((HeadingHeightTeleportFlag & 0x20) != 0)
+                        {
+                            HeadingHeightTeleportFlag &= 0xFFDC;
+                            playerdat.playerObject.heading = (short)((HeadingHeightTeleportFlag >> 2) & 0x7);
+                            motion.PlayerCameraYaw_dseg_8294 = (short)(HeadingHeightTeleportFlag << 0xB);
+                            motion.PlayerMotionYaw_dseg_67d6_8296 = (short)(HeadingHeightTeleportFlag << 0xB);
+                        }
                     }
                     else
                     {
@@ -120,14 +127,21 @@ namespace Underworld
                 if ((TeleportTileX != -1) && (TeleportTileY != -1))
                 {
                     //move to new tile
-                    if(_RES== GAME_UW2)
+                    if (_RES == GAME_UW2)
                     {
                         InitialisePlayerOnLevelOrPositionChange(tileX: TeleportTileX, tileY: TeleportTileY, CeilingSpawn: (HeadingHeightTeleportFlag & 0x1) == 1, removefromtile: true);
+                        if ((HeadingHeightTeleportFlag & 0x20) != 0)
+                        {
+                            HeadingHeightTeleportFlag &= 0xFFDC;
+                            playerdat.playerObject.heading = (short)((HeadingHeightTeleportFlag >> 2) & 0x7);
+                            motion.PlayerCameraYaw_dseg_8294 = (short)(HeadingHeightTeleportFlag << 0xB);
+                            motion.PlayerMotionYaw_dseg_67d6_8296 = (short)(HeadingHeightTeleportFlag << 0xB);
+                        }
                     }
                     else
                     {
-                       InitialisePlayerOnLevelOrPositionChange(tileX: TeleportTileX, tileY: TeleportTileY, CeilingSpawn: false, removefromtile: true);
-                    }                    
+                        InitialisePlayerOnLevelOrPositionChange(tileX: TeleportTileX, tileY: TeleportTileY, CeilingSpawn: false, removefromtile: true);
+                    }
                 }
             }
 
@@ -167,7 +181,7 @@ namespace Underworld
             {
                 playerdat.PlacePlayerInTile(-1, -1, -1, -1);
             }
-            
+
 
 
 
@@ -191,11 +205,11 @@ namespace Underworld
             motion.playerMotionParams.index_20 = 1;
 
             var newZ = (short)(tile.floorHeight * 0x40);
-            if (_RES==GAME_UW2)
+            if (_RES == GAME_UW2)
             {
-                if (HeadingHeightTeleportFlag!=0)
+                if (HeadingHeightTeleportFlag != 0)
                 {
-                    if ((HeadingHeightTeleportFlag & 0x1 )==1)
+                    if ((HeadingHeightTeleportFlag & 0x1) == 1)
                     {
                         //spawn at ceiling
                         newZ = (short)(0x3e8 - commonObjDat.height(playerdat.playerObject.item_id));
