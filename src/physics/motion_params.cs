@@ -313,6 +313,10 @@ namespace Underworld
         }
 
         //The class properties
+
+        /// <summary>
+        /// Value can be 0-0x4000 (assumed)
+        /// </summary>
         public short x_0
         {
             get
@@ -335,6 +339,10 @@ namespace Underworld
                 DataLoader.setAt(data, 2, 16, value);
             }
         }
+
+        /// <summary>
+        /// Value can be 0 to 0x3E8
+        /// </summary>
         public short z_4
         {
             get
