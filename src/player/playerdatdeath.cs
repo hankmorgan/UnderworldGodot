@@ -60,7 +60,7 @@ namespace Underworld
                 character: 0,
                 tileX: 32, tileY: 32,
                 newLevel: SilverTreeDungeon,
-                heading: 0);
+                HeadingHeightFlag: 0);
         }
 
         private static bool PlayerDeathUW2()
@@ -97,7 +97,7 @@ namespace Underworld
                                     character: 0,
                                     tileX: 42, tileY: 38,
                                     newLevel: 1,
-                                    heading: 0);
+                                    HeadingHeightFlag: 0);
                                 return false;
                             }
                         }
@@ -133,7 +133,7 @@ namespace Underworld
                     character: 0,
                     tileX: 28, tileY: 37,
                     newLevel: 5,
-                    heading: 0);
+                    HeadingHeightFlag: 0);
             }
             else
             {
@@ -164,7 +164,7 @@ namespace Underworld
                     Teleportation.Teleport(
                         character: 0,
                         tileX: tree.tileX, tileY: tree.tileY,
-                        newLevel: 0, heading: 0);
+                        newLevel: 0, HeadingHeightFlag: 0);
                 }
             }
         }

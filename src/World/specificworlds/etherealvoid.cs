@@ -105,7 +105,7 @@ namespace Underworld
                 main.cameraPitchGimbal.Position = new Godot.Vector3(Mathf.Lerp(initial.X, moongate.instance.uwnode.Position.X, traveltime/5f), initial.Y, Mathf.Lerp(initial.Z, moongate.instance.uwnode.Position.Z, traveltime/5f));  
             }            
             
-            Teleportation.Teleport(character: 1, tileX: 0x1B, tileY: 0x17, newLevel: 9, heading: 0);
+            Teleportation.Teleport(character: 1, tileX: 0x1B, tileY: 0x17, newLevel: 9, HeadingHeightFlag: 0);
 
             //Do teleports
         }

@@ -1,6 +1,7 @@
 using Peaky.Coroutines;
 using System.Collections;
 using System.Diagnostics;
+using System.Runtime.Serialization.Formatters;
 
 namespace Underworld
 {
@@ -24,7 +25,7 @@ namespace Underworld
         static int TeleportLevel = -1;//make these private.
         static int TeleportTileX = -1;
         static int TeleportTileY = -1;
-        static int TeleportRotation = 0;//not yet implemented.
+        static int HeadingHeightTeleportFlag = -1;//used in uw2 to control teleporting in to levels at the ceiling.
 
 
         /// <summary>
@@ -40,9 +41,10 @@ namespace Underworld
         {
             if (TeleportLevel != -1)
             {
-                //int itemToTransfer = -1;
+  
                 if (playerdat.ObjectInHand != -1)
-                {//handle moving an object in hand through levels. 
+                {
+                    //handle moving an object in hand through levels. 
                     Debug.Print("Moving an object through a level while holding it! Dropping it there.");
                     var obj = UWTileMap.current_tilemap.LevelObjects[playerdat.ObjectInHand];
 
@@ -91,8 +93,16 @@ namespace Underworld
 
                 if ((TeleportTileX != -1) && (TeleportTileY != -1))
                 {
-                    //move to new tile on different level
-                    InitialisePlayerOnLevelOrPositionChange(TeleportTileX, TeleportTileY);
+                    if (_RES == GAME_UW2)
+                    {
+                        //move to new tile on different level
+                        InitialisePlayerOnLevelOrPositionChange(tileX: TeleportTileX, tileY: TeleportTileY, CeilingSpawn: (HeadingHeightTeleportFlag & 0x1) == 1);
+                    }
+                    else
+                    {
+                        //move to new tile on different level
+                        InitialisePlayerOnLevelOrPositionChange(tileX: TeleportTileX, tileY: TeleportTileY, CeilingSpawn: false);
+                    }
                 }
 
                 //Handle enter level events
@@ -110,8 +120,14 @@ namespace Underworld
                 if ((TeleportTileX != -1) && (TeleportTileY != -1))
                 {
                     //move to new tile
-                    //var targetTile = UWTileMap.current_tilemap.Tiles[TeleportTileX, TeleportTileY];
-                    InitialisePlayerOnLevelOrPositionChange(tileX: TeleportTileX, tileY: TeleportTileY, removefromtile: true);
+                    if(_RES== GAME_UW2)
+                    {
+                        InitialisePlayerOnLevelOrPositionChange(tileX: TeleportTileX, tileY: TeleportTileY, CeilingSpawn: (HeadingHeightTeleportFlag & 0x1) == 1, removefromtile: true);
+                    }
+                    else
+                    {
+                       InitialisePlayerOnLevelOrPositionChange(tileX: TeleportTileX, tileY: TeleportTileY, CeilingSpawn: false, removefromtile: true);
+                    }                    
                 }
             }
 
@@ -141,9 +157,9 @@ namespace Underworld
         /// </summary>
         /// <param name="tileX"></param>
         /// <param name="tileY"></param>
-        /// <param name="arg4"></param>
+        /// <param name="CeilingSpawn"></param>
         /// <param name="removefromtile"></param>
-        public static void InitialisePlayerOnLevelOrPositionChange(int tileX, int tileY, int arg4 = -1, bool removefromtile = false)
+        public static void InitialisePlayerOnLevelOrPositionChange(int tileX, int tileY, bool CeilingSpawn, bool removefromtile = false)
         {
             var tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];//place object in tile will refresh player object on next game tick.
 
@@ -151,6 +167,9 @@ namespace Underworld
             {
                 playerdat.PlacePlayerInTile(-1, -1, -1, -1);
             }
+            
+
+
 
             Loader.setAt(UWMotionParamArray.PlayerMotionHandler_dseg_67d6_26AA, 0, 16, 0);
             motion.playerMotionParams.momentum_14 = 0;
@@ -170,13 +189,28 @@ namespace Underworld
 
             motion.playerMotionParams.unk_24 = 8;
             motion.playerMotionParams.index_20 = 1;
-            motion.playerMotionParams.z_4 = (short)(tile.floorHeight * 0x40);
+
+            var newZ = (short)(tile.floorHeight * 0x40);
+            if (_RES==GAME_UW2)
+            {
+                if (HeadingHeightTeleportFlag!=0)
+                {
+                    if ((HeadingHeightTeleportFlag & 0x1 )==1)
+                    {
+                        //spawn at ceiling
+                        newZ = (short)(0x3e8 - commonObjDat.height(playerdat.playerObject.item_id));
+                        motion.playerMotionParams.unk_10_Z = -4;//apply gravity
+                    }
+                }
+            }
+
+            motion.playerMotionParams.z_4 = newZ; //(short)(tile.floorHeight * 0x40);
             if ((motion.TileTraversalFlags_dseg_67d6_1BA6[tile.tileType] & 0x20) != 0)
             {
                 motion.playerMotionParams.z_4 += 0x20;
             }
 
-            if (arg4 != -1)
+            if (CeilingSpawn)
             {
                 if (1000 - commonObjDat.height(127) > motion.playerMotionParams.z_4)
                 {
@@ -213,6 +247,7 @@ namespace Underworld
             playerdat.PlacePlayerInTile(newTileX: tileX, newTileY: tileY, previousTileX: -1, previousTileY: -1);
 
 
+
             // playerdat.playerObject.zpos = (short)(tile.floorHeight << 3);
             // playerdat.playerObject.xpos = 3; playerdat.playerObject.ypos = 3;
             // playerdat.tileX = tileX; playerdat.tileY = tileY;
@@ -236,15 +271,15 @@ namespace Underworld
         /// <param name="tileX"></param>
         /// <param name="tileY"></param>
         /// <param name="newLevel"></param>
-        public static int Teleport(int character, int tileX, int tileY, int newLevel, int heading)
+        public static int Teleport(int character, int tileX, int tileY, int newLevel, int HeadingHeightFlag)
         {
             if (_RES == GAME_UW2)
             {
-                return TeleportUW2(character, tileX, tileY, newLevel);
+                return TeleportUW2(character: character, tileX: tileX, tileY: tileY, newLevel: newLevel, NewHeadingHeightFlag: HeadingHeightFlag);
             }
             else
             {
-                return TeleportUW1(character, tileX, tileY, newLevel);
+                return TeleportUW1(character: character, tileX: tileX, tileY: tileY, newLevel: newLevel);
             }
         }
 
@@ -255,7 +290,8 @@ namespace Underworld
         /// <param name="tileX"></param>
         /// <param name="tileY"></param>
         /// <param name="newLevel"></param>
-        static int TeleportUW2(int character, int tileX, int tileY, int newLevel)
+        /// <param name="NewHeadingHeightFlag"></param>
+        static int TeleportUW2(int character, int tileX, int tileY, int newLevel, int NewHeadingHeightFlag)
         {
             if (character == 0)
             {
@@ -311,6 +347,8 @@ namespace Underworld
                 }
                 TeleportTileX = tileX;
                 TeleportTileY = tileY;
+                HeadingHeightTeleportFlag = NewHeadingHeightFlag;
+                //
 
                 if (newLevel != 0)
                 {
@@ -331,7 +369,7 @@ namespace Underworld
                     }
                     else
                     {
-                        //Check if avatar is a coward by checking if they are still in an arena.
+                        //Check if avatar is a coward by checking if they are still in an arena, when teleporting outside the arenas but still within the level. (eg using a moonstone)
                         Debug.Print("todo check if avatar is a coward and has left the arena!");
                     }
                 }
@@ -340,7 +378,6 @@ namespace Underworld
                     pitsofcarnage.AvatarIsACoward(skipConversation: true);
                 }
 
-                //TODO: Handle moonstones.
                 return 0x10;
             }
             else
@@ -404,7 +441,7 @@ namespace Underworld
             {
                 if (UWTileMap.ValidTile(moonstone.tileX, moonstone.tileY))
                 {
-                    InitialisePlayerOnLevelOrPositionChange(moonstone.tileX, moonstone.tileY);
+                    InitialisePlayerOnLevelOrPositionChange(moonstone.tileX, moonstone.tileY, CeilingSpawn: false);
                 }
             }
         }

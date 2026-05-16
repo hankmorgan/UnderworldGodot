@@ -260,7 +260,7 @@ namespace Underworld
                 character: 0, tileX: 
                 playerdat.DreamTileX, tileY: playerdat.DreamTileY, 
                 newLevel: playerdat.DreamDungeon, 
-                heading: playerdat.DreamHeading);
+                HeadingHeightFlag: playerdat.DreamHeading);
 
             uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x19));
         }
@@ -467,7 +467,7 @@ namespace Underworld
                 tileX: dreamX, 
                 tileY: dreamY, 
                 newLevel: 0x45, 
-                heading: 0);
+                HeadingHeightFlag: 0);
             
         }
 

@@ -428,7 +428,7 @@ namespace Underworld
                 tileX: teleportX, 
                 tileY: teleportY, 
                 newLevel: newLevel, 
-                heading: heading);
+                HeadingHeightFlag: heading);
 
             //TODO: include heading after teleport
         }

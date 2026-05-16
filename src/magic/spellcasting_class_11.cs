@@ -317,7 +317,7 @@ namespace Underworld
                     character: 0,
                     tileX: 32, tileY: 32,
                     newLevel: playerdat.GetMoonstone(0),
-                    heading: 0);
+                    HeadingHeightFlag: 0);
             }
             ;
         }

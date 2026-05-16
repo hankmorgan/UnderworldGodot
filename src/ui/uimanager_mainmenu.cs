@@ -292,18 +292,16 @@ namespace Underworld
                 switch (UWClass._RES)
                 {
                     case UWClass.GAME_UW2:
-                        //main.gamecam.Position = new Vector3(-23f, 4.3f, 58.2f);
-                        Teleportation.InitialisePlayerOnLevelOrPositionChange(0x13, 0x30);
+                        Teleportation.InitialisePlayerOnLevelOrPositionChange(tileX: 0x13, tileY: 0x30, CeilingSpawn: false);
                         break;
                     default:
-                        //main.gamecam.Position = new Vector3(-38f, 4.2f, 2.2f);
                         // DOS UW.EXE chargen spawns the Avatar at tile (32, 2) —
                         // the centre of the starting room. (32, 1) puts the
                         // player jammed against the north wall, which looks
                         // fine in the port but produces awful renders when the
                         // save is loaded in DOS UW.EXE (backed-against-wall
                         // view = mostly wall surface at close range).
-                        Teleportation.InitialisePlayerOnLevelOrPositionChange(32, 2);
+                        Teleportation.InitialisePlayerOnLevelOrPositionChange(32, 2, CeilingSpawn: false);
                         break;
                 }
             }
