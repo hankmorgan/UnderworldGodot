@@ -1,19 +1,38 @@
+using System.Reflection.Metadata.Ecma335;
 using Godot;
 namespace Underworld
 {
     public class largeblackrockgem : model3D
     {
-
-         public static largeblackrockgem CreateInstance(Node3D parent, uwObject obj, string name)
+        public static Node3D node;
+        public static uwObject modelThreeD;
+        public static largeblackrockgem CreateInstance(Node3D parent, uwObject obj, string name)
         {
             var g = new largeblackrockgem(obj);
-            var modelNode = g.Generate3DModel(parent, name);
+            node = g.Generate3DModel(parent, name);
+            modelThreeD = obj;
+            CycleGemColours();
             return g;
         }
 
         public largeblackrockgem(uwObject _uwobject)
         {
             uwobject = _uwobject;
+        }
+
+
+        public static void CycleGemColours()
+        {
+            for (int i = 0; i < 9; i++)
+            {
+                var gem = (model3D)modelThreeD.instance;
+                if (gem != null)
+                {
+                    var newmaterial = gem.GetMaterial(textureno: gem.ModelColour(i), surface: i);
+                    var mdl = (MeshInstance3D)(node);
+                    mdl.Mesh.SurfaceSetMaterial(surfIdx: i, material: newmaterial);
+                }
+            }
         }
 
 
@@ -104,13 +123,54 @@ namespace Underworld
         }
 
         public override int ModelColour(int meshNo)
-        {//224 ,225
+        {
+            var quest130 = playerdat.GetQuest(130);
+            var gamevar6 = playerdat.GetGameVariable(6);
             switch (meshNo)
             {
-            case 8:
-                return 224;
-            default:
-                return 224;
+                case >=0 and <8: //gem faces
+                    {                        
+                        if (quest130 != 0xFF)
+                        {
+                            var colour = 0x52;
+                            var mask = 1 << meshNo;
+                            if ((quest130 & mask) == 0)
+                            {
+                                if ((gamevar6 & 0x7) == meshNo)
+                                {
+                                    colour = 0x4F;
+                                }
+                            }
+                            else
+                            {
+                                colour = 0x4D;
+                            }
+                            return colour;
+                        }
+                        else
+                        {
+                            //all gems used
+                            var varE = (main.GlobalPITTimer >> 7) & 0x1;
+                            var ax = ((meshNo + varE) & 0x1) * 3;
+                            return (int)(0x4C + ax);//flashing display.
+                        }
+                    }
+                default:
+                    {
+                        if (quest130 == 0xFF)
+                        {
+                            return 0x50;
+                        }
+                        else
+                        {
+                            var di = (main.GlobalPITTimer>>6) & 0x7;
+                            if (di>3)
+                            {
+                                di = di - 7;
+                            }
+                            return (int)(0x53 + di);
+                        }
+                    }                
             }
         }
     }//end class

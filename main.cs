@@ -252,7 +252,7 @@ public partial class main : Node3D
 
 				
 				combat.CombatInputHandler(delta);
-				playerdat.PlayerTimedLoop(delta);
+				playerdat.PlayerTimedLoop(delta);				
 				RefreshWorldState();//handles teleports, tile redraws	
 			}
 
@@ -1034,6 +1034,13 @@ public partial class main : Node3D
 					tileMapRender.RenderTile(tileMapRender.worldnode, t.tileX, t.tileY, t);
 					t.Redraw = false;
 				}
+			}
+		}
+		if (UWClass._RES == UWClass.GAME_UW2)
+		{
+			if (playerdat.dungeon_level == 5)
+			{
+				largeblackrockgem.CycleGemColours();
 			}
 		}
 

@@ -157,6 +157,7 @@ namespace Underworld
             TeleportLevel = -1;
             TeleportTileX = -1;
             TeleportTileY = -1;
+            HeadingHeightTeleportFlag = 0;
             if (CodeToRunOnTeleport != null)
             {//handle a callback.
                 CodeToRunOnTeleport();
