@@ -15,7 +15,7 @@ namespace Underworld
                     {
                         motion.playerMotionParams.unk_a_pitch = 0x8D;
                     }
-                    motion.playerMotionParams.unk_10_Z = 0;
+                    motion.playerMotionParams.gravity_10_Z = 0;
                 }
             }
             if ((_RES == GAME_UW2) && (majorclass == 2) && ((minorclass & 0x3F) == 5))

@@ -176,7 +176,7 @@ namespace Underworld
                                 if (MotionParams.unk_a_pitch < 0x8D)
                                 {
                                     MotionParams.unk_a_pitch = 0;
-                                    MotionParams.unk_10_Z = 0;
+                                    MotionParams.gravity_10_Z = 0;
                                     if (UWMotionParamArray.ACollisionIndex_dseg_67d6_416 == -1)
                                     {
                                         //seg031_2CFA_102A
@@ -1033,7 +1033,7 @@ namespace Underworld
         static void MaybeReflection_seg031_2CFA_CC6(UWMotionParamArray MotionParams)
         {
             MotionParams.unk_a_pitch = 0x8C;
-            MotionParams.unk_10_Z = -4;
+            MotionParams.gravity_10_Z = -4;
             if (MotionParams.momentum_14 <= 0xEB)
             {
                 MotionParams.momentum_14 = 0xEB;

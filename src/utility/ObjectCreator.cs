@@ -185,7 +185,7 @@ namespace Underworld
             var name = $"{obj.index}_{GameStrings.GetObjectNounUW(obj.item_id)}";
             var newNode = new Node3D();
             newNode.Name = name;
-            newNode.Position = obj.GetCoordinate(obj.tileX, obj.tileY);
+            newNode.Position = obj.GetCoordinate();
             worldobjects.AddChild(newNode);
 
             switch (obj.majorclass)

@@ -245,7 +245,7 @@ namespace Underworld
                 else
                 {
                     //seg030_2BB7_956:
-                    if ((MotionParams.momentum_14 | MotionParams.unk_a_pitch | (int)MotionParams.unk_10_Z) == 0)
+                    if ((MotionParams.momentum_14 | MotionParams.unk_a_pitch | (int)MotionParams.gravity_10_Z) == 0)
                     {
                         //object has likely stopped
                         projectile.TileState_0XA_Bit456 = (short)(dseg_67d6_3E8[MotionParams.tilestate25]);
@@ -289,7 +289,7 @@ namespace Underworld
                 projectile.ProjectileHeading = (ushort)(MotionParams.heading_1E >> 8);
                 projectile.npc_xhome = (short)projectile.tileX;
                 projectile.npc_yhome = (short)projectile.tileY;
-                if (MotionParams.unk_10_Z == 0)
+                if (MotionParams.gravity_10_Z == 0)
                 {
                     projectile.UnkBit_0X13_Bit7 = 0;
                 }
@@ -535,7 +535,7 @@ namespace Underworld
             else
             {
                 MotionParams.momentum_14 = (short)(0x2F * ((Rng.r.Next(0x7FFF) + 1) & 0x3));
-                MotionParams.unk_10_Z = -4;
+                MotionParams.gravity_10_Z = -4;
             }
         }
 

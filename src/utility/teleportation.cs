@@ -183,12 +183,9 @@ namespace Underworld
                 playerdat.PlacePlayerInTile(-1, -1, -1, -1);
             }
 
-
-
-
             Loader.setAt(UWMotionParamArray.PlayerMotionHandler_dseg_67d6_26AA, 0, 16, 0);
             motion.playerMotionParams.momentum_14 = 0;
-            motion.playerMotionParams.unk_10_Z = 0;
+            motion.playerMotionParams.gravity_10_Z = 0;
             motion.playerMotionParams.unk_e_Y = 0;
 
             motion.playerMotionParams.unk_c_X = 0;
@@ -200,26 +197,14 @@ namespace Underworld
             motion.playerMotionParams.x_0 = (short)((tileX << 8) + 0x80);
 
             motion.playerMotionParams.y_2 = (short)((tileY << 8) + 0x80);
-
+            motion.playerMotionParams.z_4 = (short)(tile.floorHeight * 0x40);
 
             motion.playerMotionParams.unk_24 = 8;
             motion.playerMotionParams.index_20 = 1;
 
-            var newZ = (short)(tile.floorHeight * 0x40);
-            if (_RES == GAME_UW2)
-            {
-                if (HeadingHeightTeleportFlag != 0)
-                {
-                    if ((HeadingHeightTeleportFlag & 0x1) == 1)
-                    {
-                        //spawn at ceiling
-                        newZ = (short)(0x3e8 - commonObjDat.height(playerdat.playerObject.item_id));
-                        motion.playerMotionParams.unk_10_Z = -4;//apply gravity
-                    }
-                }
-            }
 
-            motion.playerMotionParams.z_4 = newZ; //(short)(tile.floorHeight * 0x40);
+
+            
             if ((motion.TileTraversalFlags_dseg_67d6_1BA6[tile.tileType] & 0x20) != 0)
             {
                 motion.playerMotionParams.z_4 += 0x20;
@@ -230,7 +215,7 @@ namespace Underworld
                 if (1000 - commonObjDat.height(127) > motion.playerMotionParams.z_4)
                 {
                     motion.playerMotionParams.z_4 = (short)(1000 - (commonObjDat.height(127) << 3));
-                    motion.playerMotionParams.unk_10_Z = -4;
+                    motion.playerMotionParams.gravity_10_Z = -4;
                 }
             }
             playerdat.playerObject.zpos = (short)(motion.playerMotionParams.z_4 >> 3);

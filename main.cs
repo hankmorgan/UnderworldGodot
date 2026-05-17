@@ -308,7 +308,7 @@ public partial class main : Node3D
 			||
 			(motion.playerMotionParams.unk_a_pitch != 0)
 			||
-			(motion.playerMotionParams.unk_10_Z != 0)
+			(motion.playerMotionParams.gravity_10_Z != 0)
 			||
 			(motion.playerMotionParams.unk_e_Y != 0)
 			||

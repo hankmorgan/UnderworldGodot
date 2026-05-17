@@ -18,12 +18,12 @@ namespace Underworld
         }
 
         public static bool CreateDoTrapCamera(Node3D parent, uwObject trapObj, string name)
-        {//maybe consider creating this camera only when needed
+        {//maybe consider creating this camera only when needed or just using it's value to override the player camera position set in PositionPlayerCamera()
             Camera3D newcam = new();
             newcam.Fov = main.cameraPitchGimbal.Fov;      
             main.instance.secondarycameras.AddChild(newcam);
             newcam.Current=false;
-            newcam.Position = trapObj.GetCoordinate(trapObj.tileX, trapObj.tileY);
+            newcam.Position = trapObj.GetCoordinate();
             model3D.SetObjectRotation(newcam, trapObj);
             trapObj.instance = new a_do_trap_camera(newcam, trapObj);
             secondarycameras.Add(newcam);// to track cameras so that when loading is implemented I can destroy old cameras

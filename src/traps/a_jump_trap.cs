@@ -11,9 +11,9 @@ namespace Underworld
         {
             if (Math.Abs(UWMotionParamArray.instance.unk_6_x) + Math.Abs(UWMotionParamArray.instance.unk_8_y) >= trapObj.heading * 0x2F)
             {
-                if (UWMotionParamArray.instance.unk_10_Z != -4)
+                if (UWMotionParamArray.instance.gravity_10_Z != -4)
                 {
-                    UWMotionParamArray.instance.unk_10_Z = -2;
+                    UWMotionParamArray.instance.gravity_10_Z = -2;
                 }
             }
 

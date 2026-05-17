@@ -1383,10 +1383,14 @@ namespace Underworld
 
 
 
-        public Godot.Vector3 GetCoordinate(int tileX, int tileY)
+        /// <summary>
+        /// Obtains the godot vector3 that the object will be at based on it's tileXY and xypos and it's zpos
+        /// </summary>
+        /// <returns></returns>
+        public Godot.Vector3 GetCoordinate()
         {//godot is y-up    
 
-            if ((IsStatic) || (majorclass == 1))
+            if ((IsStatic) || (majorclass == 1))  //static objects and npcs.
             {
                 //(xhome<< 8) + (xpos <<5) note this may need to be offset in the future.
                 var x = (xpos<<5) + (tileX<<8);
@@ -1394,7 +1398,7 @@ namespace Underworld
                 var z = zpos<<3;
 
                 //Get a vector for the object that is relative to the bounds of an underworld level map.
-                Vector3 underworldVector = new(x: -(float)x / 16384f, y: (float)z / 1000f, z: (float)y / 16384f);
+                Vector3 underworldVector = new(x: -(float)x / 16384f, y: (float)z / 1024f, z: (float)y / 16384f);
            
                 //then transform it into godot positioning using a vector based on the size we are rendering the gameworld in.
                 return underworldVector * UWTileMap.godotscale;
@@ -1406,20 +1410,12 @@ namespace Underworld
                 var z = CoordinateZ;
 
                 //Get a vector for the object that is relative to the bounds of an underworld level map.
-                Vector3 underworldVector = new(x: -(float)x / 16384f, y: (float)z / 1000f, z: (float)y / 16384f);
+                Vector3 underworldVector = new(x: -(float)x / 16384f, y: (float)z / 1024f, z: (float)y / 16384f);
            
                 //then transform it into godot positioning using a vector based on the size we are rendering the gameworld in.
                 return underworldVector * UWTileMap.godotscale;
             }
-            // if ((IsStatic) || (majorclass == 1))
-            // {
-            //     return GetCoordinate(tileX, tileY, this.xpos, this.ypos, this.zpos);
-            // }
-            // else
-            // {
-                
-            //    return GetFullCoordinate(this); 
-            // }            
+          
         }
 
         /// <summary>
