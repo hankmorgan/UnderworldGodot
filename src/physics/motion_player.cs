@@ -992,18 +992,17 @@ namespace Underworld
         /// <returns></returns>
         static bool StartSwimming(int tilestate)
         {
-            bool result = false;
             if ((tilestate & 0x2) != 0)
             {
-                result = true;
                 playerdat.SwimCounter = 0x60;
                 playerdat.PutWeaponAway();
+                return true;
             }
             else
             {
                 playerdat.SwimCounter = 0x10;
+                return false;
             }
-            return result;
         }
 
         /// <summary>

@@ -137,7 +137,11 @@ namespace Underworld
                                 HPRegenerationChange(1);
                             }
 
-                            SwimmingSkillCheck();
+                            if (playerdat.SwimCounter> 0x50)
+                            {
+                                SwimmingSkillCheck();    
+                            }
+                            
 
                             if (_RES == GAME_UW2)
                             {
@@ -295,7 +299,36 @@ namespace Underworld
         /// </summary>
         public static void SwimmingSkillCheck()
         {
-            //TODO
+            var checkvalue = 0;
+            if (playerdat.WeightMax != 0)
+            {
+                checkvalue = (playerdat.WeightCarried<<5)/playerdat.WeightMax;
+            }
+            var result = SkillCheck(skillValue: playerdat.Swimming, targetValue: checkvalue, debug: true);
+            if (result<=0)
+            {
+                //fail or crit fail, dice roll and increase the swim counter.
+                var roll = Rng.DiceRoll(NoOfLoops: (int)(3 - result), diceRange: 4);
+                playerdat.SwimCounter += (byte)roll;  //this is what the vanilla code does but what will stop it from overflowing and stop applying damage.
+            }
+            if (playerdat.SwimCounter> 0x78)
+            {
+                result = SkillCheck(skillValue: playerdat.Swimming, targetValue: checkvalue, debug: true );
+                if (result != SkillCheckResult.CritSucess)
+                {
+                    //apply damage
+                    var damagerange = 2 - result;
+                    if (_RES == GAME_UW2)
+                    {
+                        uimanager.FlashColour(colour: 0x50, targetControl: uimanager.CutsSmall);
+                    }
+                    else
+                    {
+                        uimanager.FlashColour(colour: 0xC6, targetControl: uimanager.CutsSmall);
+                    }                    
+                    damage.DamageObject(objToDamage: playerdat.playerObject, basedamage: Rng.DiceRoll(2, (int)(2 + damagerange)), damagetype: 0, objList: UWTileMap.current_tilemap.LevelObjects, WorldObject: true, damagesource: 0);
+                }
+            }
         }
 
         public static void UpdateLightStability(int updatecounter)
@@ -409,9 +442,9 @@ namespace Underworld
                 UpdateAutomap();//update the visited status of nearby tiles
             }
 
-            motion.RefreshPlayerTileState();
+            //motion.RefreshPlayerTileState();
 
-            motion.UpdateMotionStateAndSwimming(-1);
+            //motion.UpdateMotionStateAndSwimming(-1);
         }
 
 

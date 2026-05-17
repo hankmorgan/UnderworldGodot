@@ -612,7 +612,7 @@ namespace Underworld
 
 
           /// <summary>
-          /// Either how long the player has been swimming or a counter for swimming damage to apply
+          /// Either how long the player has been swimming or a counter for swimming damage to apply. Or possibly this is a set of flags indicating their swimming state.
           /// </summary>
           public static byte SwimCounter
           {

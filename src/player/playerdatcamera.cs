@@ -21,7 +21,7 @@ namespace Underworld
             var z = motion.playerMotionParams.z_4 + 0xA4;//offset for player head. This is lower than player height.
             if (motion.CameraIsBobbing_dseg_67d6_33c6)
             {
-                z += motion.CameraBobZAdjust_dseg_67d6_33CE;
+                z += motion.CameraBobZAdjust_dseg_67d6_33CE; //note that over time when in water the camera will go beneath the water level due to the swimmingcounter getting larger
             }
 
 

@@ -251,13 +251,16 @@ public partial class main : Node3D
 					EasyMove: false);
 
 				
-				combat.CombatInputHandler(delta);
-				playerdat.PlayerTimedLoop(delta);				
-				RefreshWorldState();//handles teleports, tile redraws	
+
 			}
-
 		}
-
+		
+		if (uimanager.InGame)
+		{
+			combat.CombatInputHandler(delta);//may need to be moved outside this block
+			playerdat.PlayerTimedLoop(delta);				
+			RefreshWorldState();//handles teleports, tile redraws	
+		}
 
 		//Other updates
 		if (uimanager.InGame)
