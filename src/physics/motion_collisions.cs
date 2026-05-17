@@ -969,7 +969,7 @@ namespace Underworld
                         UsingObjectOrCharacter: MotionObject,
                         objList: UWTileMap.current_tilemap.LevelObjects,
                         WorldObject: true, UsedFromCollision: true);//this line will probably break a lot until I make use a more vanilla compliant Use() function.
-                                           //if (UWTileMap.ValidTile(CollidedObject_VarA.tileX, CollidedObject_VarA.tileY))
+                                                                    //if (UWTileMap.ValidTile(CollidedObject_VarA.tileX, CollidedObject_VarA.tileY))
 
                     //if ((MotionCalcArray.x0_base >> 3) >= 0)  //this needs to be changed to another global
                     if (objectusage24f8_X >= 0)  // in original code this is dseg_24f8(object usage X which I don't track.)
@@ -1173,18 +1173,27 @@ namespace Underworld
                         if (var3)
                         {
                             //seg031_2CFA_1511:
-                            var collision = collisionTable[UWMotionParamArray.ACollisionIndex_dseg_67d6_416];
-                            if (Math.Abs(MotionCalcArray.z4_base - collision.height) > MotionParams.unk_24)
+                            if (UWMotionParamArray.ACollisionIndex_dseg_67d6_416 < 0)
                             {
-                                var3 = true;
+                                //temp fix. getting a collisionindex of -1  when I bump into the lurker at 14,25 in UW1 level 1.
+                                Debug.Print("Warning collision index of -1.");
+                                var3= false;//?
                             }
                             else
                             {
-                                var3 = false;
-                            }
-                            if (var3)
-                            {
-                                si_result |= 0x80;
+                                var collision = collisionTable[UWMotionParamArray.ACollisionIndex_dseg_67d6_416]; 
+                                if (Math.Abs(MotionCalcArray.z4_base - collision.height) > MotionParams.unk_24)
+                                {
+                                    var3 = true;
+                                }
+                                else
+                                {
+                                    var3 = false;
+                                }
+                                if (var3)
+                                {
+                                    si_result |= 0x80;
+                                }
                             }
                         }
                     }
