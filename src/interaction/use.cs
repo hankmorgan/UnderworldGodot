@@ -21,7 +21,7 @@ namespace Underworld
             bool result = false;
             if (ObjectUsed != null)
             {
-                if (ObjectUsed.index == 1)
+                if ((ObjectUsed.index == 1) && (WorldObject))
                 {
                     return true;//You can't use yourself
                 }

@@ -329,10 +329,41 @@ namespace Underworld
                                 if (isLeftClick)
                                 {
                                     //try and pickup
-                                    if (objAtSlot.index != OpenedContainerIndex)
+                                    switch (slotname)
                                     {
-                                        PickupObjectFromSlot(objAtSlot);    
-                                    }                                    
+                                        case "RightShoulder":
+                                        case "LeftShoulder": 
+                                        case "RightHand": 
+                                        case "LeftHand": 
+                                            if (objAtSlot.index != OpenedContainerIndex)
+                                            {
+                                                if ((OpenedContainerIndex == -1))
+                                                {
+                                                    PickupObjectFromSlot(objAtSlot);
+                                                }
+                                                else
+                                                {
+                                                    //check if the opened container is not in the object chain of the object list
+                                                    var match = objectsearch.FindMatchInObjectChain(objAtSlot.index, OpenedContainerIndex,playerdat.InventoryObjects);
+                                                    if (match == null)
+                                                    {
+                                                        PickupObjectFromSlot(objAtSlot);
+                                                    }
+                                                    else
+                                                    {
+                                                        Debug.Print("attempt to pickup container while it or sub-object is opened");
+                                                    }
+                                                }
+                                            }
+                                            break;
+                                        default:
+                                            if (objAtSlot.index != OpenedContainerIndex)
+                                            {
+                                                PickupObjectFromSlot(objAtSlot);
+                                            }
+                                            break;
+                                    }
+
                                 }
                                 else
                                 {

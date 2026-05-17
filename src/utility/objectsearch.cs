@@ -17,8 +17,8 @@ namespace Underworld
         /// <returns></returns>
         public static uwObject FindMatchInTile(int tileX, int tileY, int majorclass, int minorclass, int classindex)
         {
-            var tile = UWTileMap.current_tilemap.Tiles[tileX,tileY];
-            return FindMatchInObjectListChainNextObjectsOnly(tile.indexObjectList, majorclass, minorclass,classindex, UWTileMap.current_tilemap.LevelObjects);
+            var tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];
+            return FindMatchInObjectListChainNextObjectsOnly(tile.indexObjectList, majorclass, minorclass, classindex, UWTileMap.current_tilemap.LevelObjects);
         }
 
 
@@ -32,7 +32,7 @@ namespace Underworld
         /// <param name="objList"></param>
         /// <returns></returns>
         public static uwObject FindMatchInObjectListChainNextObjectsOnly(int ListHeadIndex, int majorclass, int minorclass, int classindex, uwObject[] objList)
-        {                
+        {
             var next = ListHeadIndex;
             while (next != 0)
             {
@@ -48,7 +48,7 @@ namespace Underworld
                     }
                 }
                 next = testObj.next;
-            }                        
+            }
             return null; //nothing found. 
         }
 
@@ -169,6 +169,53 @@ namespace Underworld
             return null; //nothing found. 
         }
 
+        public static uwObject FindMatchInObjectChain(int ListHeadIndex, int itemIndex, uwObject[] objList, bool SkipNext = false, bool SkipLinks = false)
+        {
+            if (ListHeadIndex != 0)
+            {
+                var testObj = objList[ListHeadIndex];
+                if (testObj != null)
+                {
+                    if (testObj.index == itemIndex)
+                    { 
+                        return testObj;   
+                    }
+
+                    if (!SkipLinks)
+                    {
+                        if (testObj.is_quant == 0)
+                        {
+                            if (testObj.link != 0)
+                            {
+                                var testlinked = FindMatchInObjectChain(
+                                    ListHeadIndex: testObj.link,
+                                    itemIndex: itemIndex,
+                                    objList: objList,
+                                    SkipNext: SkipNext,
+                                    SkipLinks: SkipLinks);
+                                if (testlinked != null)
+                                {
+                                    return testlinked;
+                                }
+                            }
+                        }
+                    }
+
+                    if (!SkipNext)
+                    {
+                        //no matches. Try next value. Returns null if nothing found.
+                        return FindMatchInObjectChain(
+                            ListHeadIndex: testObj.next,
+                            itemIndex: itemIndex,
+                            objList: objList,
+                            SkipNext: SkipNext,
+                            SkipLinks: SkipLinks);
+                    }
+                }
+            }
+            return null; //nothing found. 
+        }
+
         /// <summary>
         /// Finds a matching object in a full list of objects
         /// </summary>
@@ -272,7 +319,7 @@ namespace Underworld
                 {
                     return next;
                 }
-                if (nextObj.is_quant==0 && nextObj.link>0)
+                if (nextObj.is_quant == 0 && nextObj.link > 0)
                 {
                     var result = GetObjectParent(nextObj.link, indexToFind, objList);
                     if (result != 0)
@@ -300,20 +347,20 @@ namespace Underworld
         public static uwObject FindObjectOnMapByPosition(int startIndex, int majorclass, int minorclass, int classindex, uwObject[] objList, out int FoundX, out int FoundY)
         {
             FoundX = -1; FoundY = -1;
-            for (int x = 0; x<64; x++)
+            for (int x = 0; x < 64; x++)
             {
-                for (int y = 0; y<64;y++)
+                for (int y = 0; y < 64; y++)
                 {
                     if ((x * 64) + y >= startIndex)
                     {
-                        if (UWTileMap.ValidTile(x,y))
+                        if (UWTileMap.ValidTile(x, y))
                         {
                             //Debug.Print($"Searching tile {x},{y} for {majorclass},{minorclass},{classindex}");
-                            var tile = UWTileMap.current_tilemap.Tiles[x,y];
-                            if (tile.indexObjectList!=0)
+                            var tile = UWTileMap.current_tilemap.Tiles[x, y];
+                            if (tile.indexObjectList != 0)
                             {
-                                var match = FindMatchInTile(x,y,majorclass,minorclass,classindex);
-                                if (match!=null)
+                                var match = FindMatchInTile(x, y, majorclass, minorclass, classindex);
+                                if (match != null)
                                 {
                                     FoundX = x; FoundY = y;
                                     return match;
@@ -321,7 +368,7 @@ namespace Underworld
                             }
                         }
                     }
-                    
+
                 }
             }
             return null;
