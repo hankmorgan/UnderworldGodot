@@ -212,7 +212,6 @@ namespace Underworld
                                                     tileX: x,
                                                     tileY: y,
                                                     indexToDelete: (short)linktoremove);
-                                                //EndOverlay_DEPRECIATED(ovl);
                                             }
                                         }
                                     }

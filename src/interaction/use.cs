@@ -23,6 +23,20 @@ namespace Underworld
             {
                 if ((ObjectUsed.index == 1) && (WorldObject))
                 {
+                    if (WorldObject)
+                    {
+                        if (UsingObjectOrCharacter != null)
+                        {
+                            if ((UsingObjectOrCharacter.majorclass == 0) && (UsingObjectOrCharacter.minorclass == 1))
+                            {
+                                //projectile has hit the player.
+                                combat.MissileImpact(projectile: UsingObjectOrCharacter, objectHit: ObjectUsed);
+                                return true;
+                            }
+                        }
+                    }
+
+                    Debug.Print("using yourself");
                     return true;//You can't use yourself
                 }
                 trap.ObjectThatStartedChain = ObjectUsed.index;
@@ -42,9 +56,10 @@ namespace Underworld
                                 if (UsingObjectOrCharacter.index == 1)//Ensure only the player can initiate conversations.
                                 {
                                     talk.Talk(ObjectUsed, WorldObject);
+                                    return true;
                                 }
                             }
-                            return true;
+                            break;
                         }
                     case 2:
                         {
@@ -89,6 +104,18 @@ namespace Underworld
                         triggerY: ObjectUsed.tileY,
                         objList: objList
                     );
+                }
+
+                if (result == false)
+                {
+                    if (UsingObjectOrCharacter != null)
+                    {
+                        if ((UsingObjectOrCharacter.majorclass == 0) && (UsingObjectOrCharacter.minorclass == 1))//a missile projectile
+                        {
+                            combat.MissileImpact(projectile: UsingObjectOrCharacter, objectHit: ObjectUsed);
+                            result = true;
+                        }
+                    }
                 }
                 //check for a spell
                 if (!SpellHasBeenCast)
@@ -193,7 +220,6 @@ namespace Underworld
                             combat.MissileImpact(ObjectUsed, UsingObjectOrCharacter);
                         }
                         return true;
-
                     }
                 }
             }

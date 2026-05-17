@@ -590,7 +590,7 @@ namespace Underworld
             //Resume here.
             if (finaldamage != 0)
             {
-                if (!MissileAttack)//should be attackingcharacter != -1
+                if (attacker != -1)//should be attackingcharacter != -1
                 {
                     if (BodyPartHit >= 4)
                     {
@@ -601,7 +601,7 @@ namespace Underworld
                         //seg024_24E9_BD5:
                         if (DefendingCharacter.majorclass == 1)
                         {
-                            if (AttackingCharacter.index == 1)
+                            if (attacker == 1)
                             {
                                 //seg024_24E9_BEB
                                 uimanager.SetEyeLevel(DefendingCharacter.npc_hp, critterObjectDat.avghit(DefendingCharacter.item_id));
@@ -610,7 +610,7 @@ namespace Underworld
                             if (critterObjectDat.bleed(DefendingCharacter.item_id) != 0)
                             {
                                 animo.SpawnAnimoAtTarget(DefendingCharacter, 0, BodyHitZ[BodyPartHit], CombatHitTileX, CombatHitTileY);
-                                if (AttackWasACrit && (AttackingCharacter.index == 1))
+                                if (AttackWasACrit && (attacker == 1))
                                 {
                                     animo.SpawnAnimoAtTarget(DefendingCharacter, 0, BodyHitZ[BodyPartHit] - 2, CombatHitTileX, CombatHitTileY);
                                 }
