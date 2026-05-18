@@ -214,6 +214,7 @@ namespace Underworld
                         {
                             if (MouseHeldDown)
                             {
+                                playerdat.PlayerQuietness = 0xA;
                                 CombatChargingLoop();
                                 switch (isWeapon(playerdat.PrimaryHandObject))
                                 {
@@ -298,7 +299,7 @@ namespace Underworld
                         {
                             //weapon has struck do combat calcs  (if melee) 
                             uimanager.ResetPower();
-
+                            playerdat.PlayerQuietness = 0xF;
                             var ChargeAdjust = maxcharge - mincharge;
                             ChargeAdjust = (ChargeAdjust * PlayerAttackCharge) / 100;
                             PlayerAttackCharge = mincharge + ChargeAdjust;

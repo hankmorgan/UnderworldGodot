@@ -91,7 +91,8 @@ namespace Underworld
 
                     if (PlayerRepair)
                     {
-                        Debug.Print("CHANGE 0x1D of player critter data to 0xF during repair?? This is the search distances value...");
+                        //Debug.Print("CHANGE 0x1D of player critter data to 0xF during repair?? This is the search distances value...");
+                        playerdat.PlayerQuietness = 0xF;
                         if (_RES != GAME_UW2)
                         {                 
                             uimanager.EnableDisable(uimanager.instance.uwviewport,false);           

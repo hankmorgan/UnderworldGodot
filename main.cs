@@ -339,7 +339,7 @@ public partial class main : Node3D
 			motion.WalkOnSurfaceType();
 		}
 
-		//playerdat.ApplyPlayerSneakScore(EasyMove);
+		playerdat.ApplyPlayerSneakScore(EasyMove);
 
 		//Footsteps();
 

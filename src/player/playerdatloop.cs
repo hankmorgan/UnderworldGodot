@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices.Marshalling;
 using Godot;
 
 namespace Underworld
@@ -137,11 +138,11 @@ namespace Underworld
                                 HPRegenerationChange(1);
                             }
 
-                            if (playerdat.SwimCounter> 0x50)
+                            if (playerdat.SwimCounter > 0x50)
                             {
-                                SwimmingSkillCheck();    
+                                SwimmingSkillCheck();
                             }
-                            
+
 
                             if (_RES == GAME_UW2)
                             {
@@ -302,18 +303,18 @@ namespace Underworld
             var checkvalue = 0;
             if (playerdat.WeightMax != 0)
             {
-                checkvalue = (playerdat.WeightCarried<<5)/playerdat.WeightMax;
+                checkvalue = (playerdat.WeightCarried << 5) / playerdat.WeightMax;
             }
             var result = SkillCheck(skillValue: playerdat.Swimming, targetValue: checkvalue, debug: true);
-            if (result<=0)
+            if (result <= 0)
             {
                 //fail or crit fail, dice roll and increase the swim counter.
                 var roll = Rng.DiceRoll(NoOfLoops: (int)(3 - result), diceRange: 4);
                 playerdat.SwimCounter += (byte)roll;  //this is what the vanilla code does but what will stop it from overflowing and stop applying damage.
             }
-            if (playerdat.SwimCounter> 0x78)
+            if (playerdat.SwimCounter > 0x78)
             {
-                result = SkillCheck(skillValue: playerdat.Swimming, targetValue: checkvalue, debug: true );
+                result = SkillCheck(skillValue: playerdat.Swimming, targetValue: checkvalue, debug: true);
                 if (result != SkillCheckResult.CritSucess)
                 {
                     //apply damage
@@ -325,7 +326,7 @@ namespace Underworld
                     else
                     {
                         uimanager.FlashColour(colour: 0xC6, targetControl: uimanager.CutsSmall);
-                    }                    
+                    }
                     damage.DamageObject(objToDamage: playerdat.playerObject, basedamage: Rng.DiceRoll(2, (int)(2 + damagerange)), damagetype: 0, objList: UWTileMap.current_tilemap.LevelObjects, WorldObject: true, damagesource: 0);
                 }
             }
@@ -373,8 +374,8 @@ namespace Underworld
                 LocationalArmourValues[i] = 0;
                 LocationalProtectionValues[i] = 0;
             }
-            StealthScore1 = 13 - (Sneak / 3);
-            StealthScore2 = 15 - (Sneak / 5);
+            StealthCalculationScoreQuietness = 13 - (Sneak / 3);
+            StealthCalculationScoreVisibility = 15 - (Sneak / 5);
 
             PlayerDamageTypeScale = 0;
             ValourBonus = 0;
@@ -564,7 +565,7 @@ namespace Underworld
                             }
                         }
 
-                        if ((slot==4) && (_RES!=GAME_UW2))
+                        if ((slot == 4) && (_RES != GAME_UW2))
                         {
                             if (obj.item_id == 0x2F)//dragon skin boots
                             {
@@ -645,19 +646,45 @@ namespace Underworld
         /// <param name="StealthBonus"></param>
         public static void ApplyStealthBonus(int StealthBonus)
         {
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 4; i++)
             {
                 var bit = (StealthBonus >> i) & 1;
                 if (bit == 1)
                 {//bit is set
                     switch (i)
                     {
-                        case 0:
-                            StealthScore1 = Math.Max(StealthScore1 - 0x10, 0); break;
-                        case 1:
-                            StealthScore2 = Math.Max(StealthScore2 - 5, 0); break;
+                        case 1: 
+                            if (StealthCalculationScoreQuietness <= 0x10)
+                            {
+                                StealthCalculationScoreQuietness = 0;
+                            }
+                            else
+                            {
+                                StealthCalculationScoreQuietness = StealthCalculationScoreQuietness - 0x10;
+                            }
+                            break;
                         case 2:
-                            StealthScore2 = Math.Max(StealthScore2 - 0x10, 0); break;
+                            if (StealthCalculationScoreVisibility <= 5)
+                            {
+                                StealthCalculationScoreVisibility = 0;
+                            }
+                            else
+                            {
+                                StealthCalculationScoreVisibility = StealthCalculationScoreVisibility - 5;
+                            }
+                            break;
+                        case 3:
+                            {
+                                if (StealthCalculationScoreVisibility <= 0x10)
+                                {
+                                    StealthCalculationScoreVisibility = 0;
+                                }
+                                else
+                                {
+                                    StealthCalculationScoreVisibility = StealthCalculationScoreVisibility - 0x10;
+                                }
+                                break;
+                            }
                     }
                 }
             }
@@ -755,7 +782,7 @@ namespace Underworld
                 {
                     gain = (NoOfTilesDiscovered * dungeon_level) / 0xA;
                 }
-                if (gain!=0)
+                if (gain != 0)
                 {
                     ChangeExperience(gain);
                 }
@@ -804,6 +831,64 @@ namespace Underworld
                     MagicalMotionAbilities |= 0x10;   //Set bit 4 for flying
                 }
             }
+        }
+
+
+        /// <summary>
+        /// Calculates and sets the values used in CritterObject.Dat to represent how visible and quiet the player is.
+        /// </summary>
+        /// <param name="EasyMove"></param>
+        public static void ApplyPlayerSneakScore(bool EasyMove = false)
+        {
+            var cl = playerdat.StealthCalculationScoreQuietness;
+            if (EasyMove)
+            {
+                cl += 4;
+            }
+            else
+            {
+                if (motion.playerMotionParams.momentum_14 != 0)
+                {
+                    cl += ((motion.playerMotionParams.momentum_14 / 0xA) / motion.PlayerActualForwardSpeed_1_dseg_67d6_22A6) - 5;  //could this work out to be negative?
+                }
+                else
+                {
+                    cl = 0; //standing still?
+                }
+            }
+
+            if (playerdat.TileState != 0)
+            {
+                cl += 4;
+            }
+
+            if (cl >= 0)
+            {
+                if (cl > 0xF)
+                {
+                    cl = 0xF;
+                }
+            }
+            else
+            {
+                cl = 0;
+            }
+
+            if (critterObjectDat.StealthQuietness(127) <= cl)
+            {
+                playerdat.PlayerQuietness = cl;
+            }
+            else
+            {
+                if (SneakSoundCooldown_79D == 0)
+                {
+                    playerdat.PlayerQuietness--;
+                }
+            }
+
+            SneakSoundCooldown_79D = (SneakSoundCooldown_79D + 1) % 8;
+            playerdat.PlayerVisibility = playerdat.StealthCalculationScoreVisibility;
+           //Debug.Print($"Stealth sound {PlayerQuietness} visibility {PlayerVisibility}");
         }
 
     }//end class

@@ -616,7 +616,7 @@ namespace Underworld
                         //seg007_17A2_2A0D:
                         //do detection
                         var dist = System.Math.Abs(critter.tileX - playerdat.LastDamagedNPCTileX) + System.Math.Abs(critter.tileY - playerdat.LastDamagedNPCTileY);
-                        if (dist < critterObjectDat.combatdetectionrange(critter.item_id))
+                        if (dist < critterObjectDat.noisedetectionrange(critter.item_id))
                         {//npc has detected hostility to themselves or to an ally
                             critter.npc_attitude = 0;
                             critter.UnkBit_0x19_0_likelyincombat = 1;
@@ -1195,11 +1195,11 @@ namespace Underworld
             var yvector = currentGTargYHome - currObj_YHome;
 
             var si_dist = (int)Math.Pow(xvector, 2) + Math.Pow(yvector, 2);
-            var score = (int)Math.Pow((critterObjectDat.combatdetectionrange(critter.item_id) * critterObjectDat.maybestealth(gtargObject.item_id)) / 16, 2);
+            var score = (int)Math.Pow((critterObjectDat.noisedetectionrange(critter.item_id) * critterObjectDat.StealthQuietness(gtargObject.item_id)) / 16, 2);
 
             if (score / 4 < si_dist)
             {
-                var var8 = (int)Math.Pow((critterObjectDat.theftdetectionrange(critter.item_id) * critterObjectDat.StealthScore2(gtargObject.item_id)) / 16, 2);
+                var var8 = (int)Math.Pow((critterObjectDat.sightdetectionrange(critter.item_id) * critterObjectDat.StealthVisibility(gtargObject.item_id)) / 16, 2);
 
                 if (si_dist < var8)
                 {

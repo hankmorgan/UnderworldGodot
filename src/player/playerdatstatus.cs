@@ -10,8 +10,12 @@ namespace Underworld
 
           //Stealth scores. One of these is probably noise detection range, the other visual detection range.
           //Not known yet which is which
-          public static int StealthScore1;
-          public static int StealthScore2;
+          public static int StealthCalculationScoreQuietness;//used in calculations
+          public static int StealthCalculationScoreVisibility;
+
+          public static int PlayerQuietness = 0; // represents value at critterobject.dat[127] + 0x1D lower nibble.
+          public static int PlayerVisibility = 0; // represents value at critterobject.dat[127] + 0x1D upper nibble.
+          public static int SneakSoundCooldown_79D = 0; //possible counter for reestablishing stealth 
 
           //Various class B enchantments
           public static bool FreezeTimeEnchantment;

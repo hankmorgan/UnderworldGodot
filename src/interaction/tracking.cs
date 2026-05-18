@@ -34,7 +34,7 @@ namespace Underworld
                             if ((Math.Abs(xVector) <= range) && (Math.Abs(yVector) <= range))
                             {
                                 int headingindex = 0;
-                                var skillcheckresult = playerdat.SkillCheck(skillvalue, 0xF - critterObjectDat.maybestealth(critter.item_id));
+                                var skillcheckresult = playerdat.SkillCheck(skillvalue, 0xF - critterObjectDat.StealthQuietness(critter.item_id));
                                 if (skillcheckresult >= playerdat.SkillCheckResult.Success)
                                 {
                                     headingindex = Pathfind.ConvertVectorToHeading(xVector, yVector);

@@ -429,17 +429,23 @@ namespace Underworld
         /// </summary>
         /// <param name="item_id"></param>
         /// <returns></returns>
-        public static int maybestealth(int item_id)
-        {
-            return buffer[CritterOffset(item_id) + 0x1d] & 0xF;
-        }
-
-        public static int StealthScore2(int item_id)
+        public static int StealthQuietness(int item_id)
         {
             if (item_id == 127)
             {
-                return playerdat.StealthScore2;
+                return playerdat.PlayerQuietness;
+            }
+            else
+            {
+                return buffer[CritterOffset(item_id) + 0x1d] & 0xF;    
+            }            
+        }
 
+        public static int StealthVisibility(int item_id)
+        {
+            if (item_id == 127)
+            {
+                return playerdat.PlayerVisibility; 
             }
             else
             {
@@ -453,7 +459,7 @@ namespace Underworld
         /// </summary>
         /// <param name="item_id"></param>
         /// <returns></returns>
-        public static int combatdetectionrange(int item_id)
+        public static int noisedetectionrange(int item_id)
         {
             return (buffer[CritterOffset(item_id) + 0x1E]) & 0xF;
         }
@@ -463,7 +469,7 @@ namespace Underworld
         /// </summary>
         /// <param name="item_id"></param>
         /// <returns></returns>
-        public static int theftdetectionrange(int item_id)
+        public static int sightdetectionrange(int item_id)
         {
             return (buffer[CritterOffset(item_id) + 0x1E] >> 4) & 0xF;
         }
