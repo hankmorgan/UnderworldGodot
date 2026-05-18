@@ -207,11 +207,16 @@ namespace Underworld
                                             {
                                                 var linktoremove = ovl.link;
                                                 var x = ovl.tileX; var y = ovl.tileY;
+                                                var objToRemove = UWTileMap.current_tilemap.LevelObjects[ovl.link];
+                                                if (objToRemove!=null)
+                                                {
+                                                    ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(
+                                                        tileX: objToRemove.tileX,
+                                                        tileY: objToRemove.tileY,
+                                                        indexToDelete: (short)linktoremove);
+                                                }
                                                 RemoveAnimationOverlay(ovl.link);                                                
-                                                ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(
-                                                    tileX: x,
-                                                    tileY: y,
-                                                    indexToDelete: (short)linktoremove);
+
                                             }
                                         }
                                     }
