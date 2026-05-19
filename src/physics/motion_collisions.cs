@@ -104,12 +104,12 @@ namespace Underworld
                         //seg031_2CFA_10FB: 
                         if (UWMotionParamArray.ACollisionIndex_dseg_67d6_416 != -1)
                         {
-                            var Dst = UWMotionParamArray.ACollisionIndex_dseg_67d6_416;
-                            MotionCalcArray.Unk14_collisoncount_base--;
+                            var Dst = UWMotionParamArray.ACollisionIndex_dseg_67d6_416;                            
                             for (int i = 0; i < 6; i++)
                             {
                                 CollisionRecord.Collisions_dseg_2520[(Dst * 6) + i] = CollisionRecord.Collisions_dseg_2520[(MotionCalcArray.Unk14_collisoncount_base * 6) + i];
                             }
+                            MotionCalcArray.Unk14_collisoncount_base--;
                         }
                     }
                     else
@@ -290,6 +290,7 @@ namespace Underworld
             UWMotionParamArray.ACollisionIndex_dseg_67d6_416 = -1;
             UWMotionParamArray.dseg_67d6_41D = 0x7f;
 
+            //seg031_2CFA_131
             if (MotionParams.unk_a_pitch > 0)
             {
                 //seg031_2CFA_136:
@@ -324,8 +325,8 @@ namespace Underworld
             {
                 //seg031_2CFA_133
                 if (MotionParams.unk_a_pitch == 0)
-                {//seg031_2CFA_1E0
-
+                {
+                    //seg031_2CFA_1E0
                     UWMotionParamArray.CollisionZposHeightRelated_dseg_67d6_419 = MotionCalcArray.Unk10_base;
 
                     //Jump when z4+param[24]<Calc11
@@ -341,24 +342,44 @@ namespace Underworld
                     }
 
                     //seg031_2CFA_20C:
-
-                    //when calc15 == 0
-                    //AND calc16>0
-                    //AND calc16<=calc14
-                    if (
-                        (MotionCalcArray.Unk15_base == 0)
-                        &&
-                        (MotionCalcArray.Unk16_collisionindex_base > 0)
-                        &&
-                        (MotionCalcArray.Unk16_collisionindex_base <= MotionCalcArray.Unk14_collisoncount_base)
-                    )
-                    {
-                        var1 = 1;
-                    }
-                    else
+                    if (MotionCalcArray.Unk15_base != 0)
                     {
                         var1 = 0;
                     }
+                    else
+                    {
+                        if (MotionCalcArray.Unk16_collisionindex_base <= 0)
+                        {
+                            var1 = 0;
+                        }
+                        else
+                        {
+                            if (MotionCalcArray.Unk16_collisionindex_base > MotionCalcArray.Unk14_collisoncount_base)
+                            {
+                                var1 = 0;
+                            }
+                            else
+                            {
+                                var1 = 1;
+                            }
+                        }   
+                    }
+
+
+                    // if (
+                    //     (MotionCalcArray.Unk15_base == 0)
+                    //     &&
+                    //     (MotionCalcArray.Unk16_collisionindex_base > 0)
+                    //     &&
+                    //     (MotionCalcArray.Unk16_collisionindex_base <= MotionCalcArray.Unk14_collisoncount_base)
+                    // )
+                    // {
+                    //     var1 = 1;
+                    // }
+                    // else
+                    // {
+                    //     var1 = 0;
+                    // }
 
                     var CollisionIndex_var_4 = 0;
                     while (MotionCalcArray.Unk14_collisoncount_base > CollisionIndex_var_4)//seg031_2CFA_38A
@@ -381,7 +402,7 @@ namespace Underworld
                                     //seg031_2CFA_2C0:
                                     if (collision_Var4.height > UWMotionParamArray.CollisionZposHeightRelated_dseg_67d6_419)
                                     {
-                                        //collisionrecordheight<(0x80-paramheight)
+                                        //seg031_2cf_2D9
                                         if (collision_Var4.height < (0x80 - MotionParams.height_23))
                                         {
                                             UWMotionParamArray.ACollisionIndex_dseg_67d6_416 = (sbyte)CollisionIndex_var_4;
@@ -423,9 +444,9 @@ namespace Underworld
                                 }
                             }
                         }
-
+                        //Seg031_387
                         CollisionIndex_var_4++;
-                    }
+                    }//end while
 
 
                 }
@@ -580,6 +601,7 @@ namespace Underworld
         /// <param name="isNPCArgA"></param>
         static void CreateCollisonRecord_Seg028_2941_A78(uwObject CollidingObject, long ListHead, int xArg6, int yArg8, bool isNPCArgA)
         {
+            Debug.Print($"adding collison record {CollidingObject.a_name}");
             if (MotionCalcArray.Unk14_collisoncount <= 8)
             {
                 int XCoordVar1;

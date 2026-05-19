@@ -12,6 +12,8 @@ namespace Underworld
         public static byte[] data_3FC = new byte[40];//globals at 0x3FC
         public static byte[] dseg_26b8 = new byte[16];//confirm size
 
+
+        //These likey need to be references to delegate functions... In dosvalue at array +8 is a function call that triggers during collisions
         public static byte[] DSEG_27B2_SpecialMotionHandling = new byte[8];
         public static byte[] DSEG_26BA_LandNPCMotionHandler = new byte[] { 0x0, 0x0, 0x30, 0x1F, 0x10, 0x10, 0x20, 0x0 };
         public static byte[] DSEG_26DE_SwimmingNPCMotionHandler = new byte[] { 0x10, 0, 0x28, 0x17, 0x10, 0x10, 0x20, 0 };
@@ -212,7 +214,7 @@ namespace Underworld
         }
 
 
-        public static int dseg_67d6_41D//height related in collision
+        public static int dseg_67d6_41D//height related in collision.likely upper height of collision
         {//0x21
             get
             {
@@ -1220,25 +1222,25 @@ namespace Underworld
         {
             get
             {//to confirm is this a byte or a word?
-                return (int)DataLoader.getAt(dseg_2562, 0xF, 16);
+                return (int)DataLoader.getAt(dseg_2562, 0xF, 8);
             }
             set
             {
-                DataLoader.setAt(dseg_2562, 0xF, 16, value);
+                DataLoader.setAt(dseg_2562, 0xF, 8, value);
             }
         }
 
-        // public int Unk10
-        // {
-        //     get
-        //     {
-        //         return (int)DataLoader.getAt(dseg_2562, 0x10, 8);
-        //     }
-        //     set
-        //     {
-        //         DataLoader.setAt(dseg_2562, 0x10, 8, value);
-        //     }
-        // }
+        public int Unk10
+        {
+            get
+            {
+                return (int)DataLoader.getAt(dseg_2562, 0x10, 8);
+            }
+            set
+            {
+                DataLoader.setAt(dseg_2562, 0x10, 8, value);
+            }
+        }
 
         public int Unk11_offset
         {

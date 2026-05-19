@@ -313,7 +313,7 @@ namespace Underworld
 
             MotionCalcArray.x0 = (ushort)(MotionParams.x_0 >> 5);
             MotionCalcArray.y2 = (ushort)(MotionParams.y_2 >> 5);
-            MotionCalcArray.z4_base = (ushort)(MotionParams.z_4 >> 3);
+            MotionCalcArray.z4 = (ushort)(MotionParams.z_4 >> 3);
 
             UWMotionParamArray.RelatedToMotionX_dseg_67d6_3FE = (short)((MotionParams.x_0 & 0x1F) << 8);
             UWMotionParamArray.RelatedToMotionY_dseg_67d6_400 = (short)((MotionParams.y_2 & 0x1F) << 8);
@@ -352,11 +352,11 @@ namespace Underworld
                 //int terrain = TerrainDatLoader.GetTerrainTypeNo(tile);
                 UWMotionParamArray.TileAttributesArray[4] = (short)((int)(tile.tileType) | (int)(tile.floorHeight << 4) | (int)(TerrainDatLoader.GetTerrainTypeNo(tile) << 8));
             }
-
+            //SEG_028_2941_423
             seg028_2941_2CF_terrainrelated(distance_arg0);
 
             MotionCalcArray.UnkE = MotionCalcArray.UnkC_terrain;
-            MotionCalcArray.Unk11 = MotionCalcArray.Unk10_relatedtotileheight;
+            MotionCalcArray.Unk11 = MotionCalcArray.Unk10_relatedtotileheight; //set in previous function
 
             //seg028_2941_449
             if (MotionCalcArray.Radius8 != 0)
@@ -760,6 +760,7 @@ namespace Underworld
                     {
                         //seg031_2CFA_180F:
                         //Debug.Print($"Call motion code at {UWMotionParamArray.dseg_67d6_26c2_LikeMagicProjectile8} with param {var2}");
+                        //TODO. other functions are called here as delegates. I need to add support for Seg008_104D (a stop motion function on the player that may be related to the bridge multiple collison bug)
                         result = NPCMotionCollision_seg006_1413_ABF(critter: projectile, arg0: var2, motionparams: MotionParams);
                         if (result)
                         {
@@ -1110,7 +1111,7 @@ namespace Underworld
             }
             else
             {
-                return 0x10;//bit 12, is jumping
+                return 0x10;//bit 12, is jumping (also up on a bridge)
             }
         }
 

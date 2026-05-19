@@ -201,23 +201,10 @@ public partial class main : Node3D
 			{
 				//Debug.Print($"{PitTimer - LastPitTimer}");
 				EasyMoveFrameIncrement += (byte)((GlobalPITTimer >> 4) - (LastPitTimer >> 4));  //every 16 pits?
-				AnimationFrameDeltaIncrement = (byte)((GlobalPITTimer >> 6) - (LastPitTimer >> 6));//every 63 pits?
-																								   // ClockIncrement = 0x5;//i've added this to temporarily control motion frame rate.
-																								   // if ((playerdat.MagicalMotionAbilities & 0x4) !=0)
-																								   // {
-																								   // 	//Hack for levitate
-				ClockIncrement = 0x19;//ignore original calc
-									  // }
+				AnimationFrameDeltaIncrement = (byte)((GlobalPITTimer >> 6) - (LastPitTimer >> 6));//every 63 pits? This controls how often NPCs and mobile objects move. It could stand to be faster.
 
-				//HACK the above appears to be what should be happening in vanilla code but is very slow to process, but the below gives the appearance of normal movement but may cause frame rate issues. 
-				//Issues caused by this hacking.
-				//-Levitation does not work going north ->a higher increment fixes the motionparams.y0 but makes other motion really fast.
-				//-A clock increment of 1 will cause strafing to fail when moving to the east!
-				//This whole section will need to be fixed in the future.				
-				// EasyMoveFrameIncrement = 1;
-				// AnimationFrameDeltaIncrement = 1;
-				//ClockIncrement = 0xF;
-				//ClockIncrement = ClockIncrement * 4;
+				ClockIncrement = 0x19;//ignore original calc since it's too slow. This value is choosen since dosbox debugger shows this value when breaking on motion code often (with some variation)
+				//Setting value too low prevents some motion in certain directions from working.
 			}
 
 			if (ClockIncrement != 0)
