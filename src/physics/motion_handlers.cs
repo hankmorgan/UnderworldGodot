@@ -22,7 +22,7 @@ namespace Underworld
 
         public byte[] handlerdata;
 
-        public delegate bool MotionHandlerCallback(uwObject obj, MotionHandler handler, UWMotionParamArray motionparams);
+        public delegate bool MotionHandlerCallback(uwObject obj, ref int arg0, UWMotionParamArray motionparams);
 
         public MotionHandlerCallback HandlerFunction;
 
@@ -41,19 +41,19 @@ namespace Underworld
             HandlerFunction = _motionhandlerfunction;
         }
 
-        static bool FlierCallBackFunction(uwObject obj, MotionHandler handler, UWMotionParamArray motionparams)
+        static bool FlierCallBackFunction(uwObject obj, ref int arg0, UWMotionParamArray motionparams)
         {
             return true;
         }
 
-        static bool SwimmerCallBackFunction(uwObject obj, MotionHandler handler, UWMotionParamArray motionparams)
+        static bool SwimmerCallBackFunction(uwObject obj, ref int arg0, UWMotionParamArray motionparams)
         {
             return true;
         }
 
-        static bool PlayerCallBackFunction(uwObject obj, MotionHandler handler, UWMotionParamArray motionparams)
+        static bool PlayerCallBackFunction(uwObject obj, ref int arg0, UWMotionParamArray motionparams)
         {
-            if ((handler.table01 & 0x1000)== 0)
+            if ((arg0 & 0x1000)== 0)
             {
                 return false;
             }
@@ -74,19 +74,19 @@ namespace Underworld
             return true;
         }
 
-        static bool ObjectCallBackFunction(uwObject obj, MotionHandler handler, UWMotionParamArray motionparams)
+        static bool ObjectCallBackFunction(uwObject obj, ref int arg0, UWMotionParamArray motionparams)
         {
             return false;
         }
 
-        static bool LandBasedCallBackFunction(uwObject obj, MotionHandler handler, UWMotionParamArray motionparams)
+        static bool LandBasedCallBackFunction(uwObject obj, ref int arg0, UWMotionParamArray motionparams)
         {
-            if ((handler.table01 & 0x1000) == 0)
+            if ((arg0 & 0x1000) == 0)
             {
                 //seg006_1413_AFB:  
-                if ((handler.table01 & 0x10) != 0)
+                if ((arg0 & 0x10) != 0)
                 {
-                    if ((handler.table01 & 0xF8) != 0x10)
+                    if ((arg0 & 0xF8) != 0x10)
                     {
                         //seg006_1413_B86:
                         if (obj.UnkBit_0X15_Bit7 == 0)
@@ -115,7 +115,7 @@ namespace Underworld
                 }
                 //seg006_1413_BAC
                 if (
-                    ((handler.table01 & 0x800) != 0)
+                    ((arg0 & 0x800) != 0)
                     &&
                     ((UWMotionParamArray.LikelyNPCTileStates_222C & 0x800) == 0)
                 )
@@ -137,7 +137,7 @@ namespace Underworld
                 else
                 {
                     if (
-                     ((handler.table01 & 0x20) != 0)
+                     ((arg0 & 0x20) != 0)
                      &&
                       ((UWMotionParamArray.LikelyNPCTileStates_222C & 0x20) == 0)
                     )
@@ -156,9 +156,9 @@ namespace Underworld
                     }
                     else
                     {
-                        if ((handler.table01 & 0x300) == 0)
+                        if ((arg0 & 0x300) == 0)
                         {
-                            if ((handler.table01 & 0x400) != 0)
+                            if ((arg0 & 0x400) != 0)
                             {
                                 var DoorCollision = motion.FindClosedDoorCollision(ref UWMotionParamArray.DoorX_222E, ref UWMotionParamArray.DoorY_222F);
                                 if (DoorCollision == null)

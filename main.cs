@@ -280,6 +280,7 @@ public partial class main : Node3D
 
 	static void GameObjectLoop(byte ClockIncrement, byte AnimationFrameDelta, bool EasyMove)
 	{
+		playerdat.play_hp = 20;
 		motion.CameraBobZAdjust_dseg_67d6_33CE = 0;
 		motion.RelatedToClockIncrement_67d6_742 += ClockIncrement;
 		motion.CameraIsBobbing_dseg_67d6_33c6 = false;

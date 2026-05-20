@@ -762,7 +762,7 @@ namespace Underworld
                         //Debug.Print($"Call motion code at {UWMotionParamArray.dseg_67d6_26c2_LikeMagicProjectile8} with param {var2}");
                         //TODO. other functions are called here as delegates. I need to add support for Seg008_104D (a stop motion function on the player that may be related to the bridge multiple collison bug)
                         //result = NPCMotionCollision_seg006_1413_ABF(critter: projectile, arg0: var2, motionparams: MotionParams);
-                        result = SpecialMotionHandler.HandlerFunction(obj: projectile, handler: SpecialMotionHandler, motionparams: MotionParams);
+                        result = SpecialMotionHandler.HandlerFunction(obj: projectile, arg0: ref var2, motionparams: MotionParams);
                         if (result)
                         {
                             //seg031_2CFA_1818:
