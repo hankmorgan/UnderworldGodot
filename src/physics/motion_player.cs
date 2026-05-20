@@ -97,7 +97,7 @@ namespace Underworld
         public static void PlayerMotion(short ClockIncrement)
         {
             UWMotionParamArray.instance = motion.playerMotionParams;//in case we step on a jump trap...
-
+            
             //These values are used in camera bobbing/shaking
             CameraRollModifier_dseg_67d6_33D4 = 0;
             CameraPitchModifier_dseg_67d6_33D2 = 0;
@@ -397,7 +397,7 @@ namespace Underworld
             }//end uw2 specific code.
 
             //Seg008_a61
-            playerMotionParams.speed_12 = (byte)ClockIncrement;//too low a value breaks some motion. too high a value makes turning too fast.
+            playerMotionParams.speed_12 = (sbyte)ClockIncrement;//too low a value breaks some motion. too high a value makes turning too fast.
 
             if (_RES != GAME_UW2)
             {

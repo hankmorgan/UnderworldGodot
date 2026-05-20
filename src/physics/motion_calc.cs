@@ -15,7 +15,7 @@ namespace Underworld
         public static bool CalculateMotion_TopLevel(uwObject projectile, UWMotionParamArray MotionParams, MotionHandler SpecialMotionHandler)
         {
             //seg006_1413_D6A            
-            MotionParams.speed_12 = (byte)(projectile.Projectile_Speed << 4);
+            MotionParams.speed_12 = (sbyte)(projectile.Projectile_Speed << 4);
             CalculateMotion(
                 projectile: projectile,
                 MotionParams: MotionParams,

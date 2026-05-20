@@ -30,7 +30,7 @@ namespace Underworld
                 var2 = var2 * UWMotionParamArray.dseg_67d6_412;
 
                 var2 = (var2 << 4) / (UWMotionParamArray.Gravity_Related_dseg_67d6_41F / 4);
-                MotionParams.speed_12 -= (byte)var2;
+                MotionParams.speed_12 -= (sbyte)var2;
             }
 
             //seg031_2CFA_D9A:
@@ -1071,7 +1071,7 @@ namespace Underworld
 
         static void seg031_2CFA_78A(UWMotionParamArray MotionParams, int arg0)
         {
-            MotionParams.speed_12 -= (byte)(UWMotionParamArray.GravityCollisionRelated_dseg_67d6_414 * UWMotionParamArray.dseg_67d6_412);
+            MotionParams.speed_12 -= (sbyte)(UWMotionParamArray.GravityCollisionRelated_dseg_67d6_414 * UWMotionParamArray.dseg_67d6_412);
             if (MotionParams.speed_12 > 0)
             {
                 if (InitialMotionCalc_seg031_2CFA_412(MotionParams, false, arg0))

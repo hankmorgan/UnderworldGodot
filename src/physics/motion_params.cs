@@ -414,11 +414,11 @@ namespace Underworld
                 DataLoader.setAt(data, 0x10, 16, value);
             }
         }
-        public byte speed_12
+        public sbyte speed_12
         {
             get
             {
-                return (byte)DataLoader.getAt(data, 0x12, 8);
+                return (sbyte)DataLoader.getAt(data, 0x12, 8);
             }
             set
             {
@@ -682,10 +682,6 @@ namespace Underworld
             }
             set
             {
-                if (value <=5)
-                {
-                    Debug.Print("here");
-                }
                 DataLoader.setAt(PtrToMotionCalc, 2, 16, value);
             }
         }
