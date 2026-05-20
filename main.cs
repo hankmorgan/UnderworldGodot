@@ -470,21 +470,16 @@ public partial class main : Node3D
 							//This is an NPC on the map	
 							var n = (npc)obj.instance;
 							bool result;
-							// if ((obj.item_id==124) && (UWClass._RES == UWClass.GAME_UW1) )
-							// {
-							// 	result = false;//currently the slasher is bugging out.
-							// }
-							// else
-							// {
-							result = npc.NPCInitialProcess(obj);
-							//}
+
+							result = npc.NPCInitialProcess(critter: obj);
+
 
 							if (n != null)
 							{
 								if (obj.instance != null)
 								{
 									var CalcedFacing = npc.CalculateFacingAngleToNPC(obj);
-									n.SetAnimSprite(obj.npc_animation, obj.AnimationFrame, CalcedFacing);
+									n.SetAnimSprite(animationNo: obj.npc_animation, frameNo: obj.AnimationFrame, relativeHeading: CalcedFacing);
 								}
 							}
 							if (result == false)
@@ -499,14 +494,11 @@ public partial class main : Node3D
 					}
 					else
 					{
-						//if (motion.MotionSingleStepEnabled)
-						//{
 						//This is a projectile
-						if (motion.MotionProcessing(obj) == false)
+						if (motion.MotionProcessing(projectile: obj, SpecialMotionHandler: MotionHandler.ObjectMotionHandler) == false)
 						{
 							break;
 						}
-						//}
 					}
 					if (initialnextframe == obj.NextFrame_0XA_Bit0123)
 					{

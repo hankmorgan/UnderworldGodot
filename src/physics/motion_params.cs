@@ -12,48 +12,12 @@ namespace Underworld
         public static byte[] data_3FC = new byte[40];//globals at 0x3FC
         public static byte[] dseg_26b8 = new byte[16];//confirm size
 
-
-        //These likey need to be references to delegate functions... In dosvalue at array +8 is a function call that triggers during collisions
-        public static byte[] DSEG_27B2_SpecialMotionHandling = new byte[8];
-        public static byte[] DSEG_26BA_LandNPCMotionHandler = new byte[] { 0x0, 0x0, 0x30, 0x1F, 0x10, 0x10, 0x20, 0x0 };
-        public static byte[] DSEG_26DE_SwimmingNPCMotionHandler = new byte[] { 0x10, 0, 0x28, 0x17, 0x10, 0x10, 0x20, 0 };
-        public static byte[] DSEG_26C6_FlyingNPCMotionHandler = new byte[] { 0x0, 0x10, 0x0, 0x7, 0x80, 0x0, 0x0, 0x0 };
-        public static byte[] PlayerMotionHandler_dseg_67d6_26AA = new byte[] { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 };
         public static short LikelyNPCTileStates_222C;
 
-        public static byte[] PtrTo26D2_DSEG_26B8_MotionHandler = new byte[8];
-
-        public static short PtrTo267D2_dseg_67d6_26B8_table0
-        {
-            get
-            {
-                return (short)DataLoader.getAt(UWMotionParamArray.PtrTo26D2_DSEG_26B8_MotionHandler, 0, 16);
-            }
-            set
-            {
-                DataLoader.setAt(UWMotionParamArray.PtrTo26D2_DSEG_26B8_MotionHandler, 0, 16, value);
-            }
-        }
-
-        public static short dseg_67d6_26BA_MotionHandler2
-        {
-            get
-            {
-                return (short)DataLoader.getAt(UWMotionParamArray.PtrTo26D2_DSEG_26B8_MotionHandler, 2, 16);
-            }
-        }
+        public static MotionHandler PtrTo26D2_DSEG_26B8_MotionHandler;// = new byte[8];
 
 
-        /// <summary>
-        /// Magic projectile + 4
-        /// </summary>
-        public static short dseg_67d6_26BC_table4
-        {
-            get
-            {
-                return (short)DataLoader.getAt(UWMotionParamArray.PtrTo26D2_DSEG_26B8_MotionHandler, 4, 16);
-            }
-        }
+
 
 
         //globals        

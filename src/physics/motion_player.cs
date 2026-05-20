@@ -113,7 +113,7 @@ namespace Underworld
             CalculateMotion(
                 projectile: playerdat.playerObject,
                 MotionParams: playerMotionParams,
-                SpecialMotionHandler: UWMotionParamArray.PlayerMotionHandler_dseg_67d6_26AA);
+                SpecialMotionHandler: MotionHandler.PlayerMotionHandler);
 
             ApplyPlayerMotion(playerdat.playerObject);
             // if (initial != PlayerMotionYaw_dseg_67d6_8296)
@@ -446,13 +446,13 @@ namespace Underworld
 
             //seg008_1B09_AAA:
             playerMotionParams.heading_1E = PlayerMotionYaw_dseg_67d6_8296;
-            setAt(UWMotionParamArray.PlayerMotionHandler_dseg_67d6_26AA, 0, 16, 0x0);
+            setAt(MotionHandler.PlayerMotionHandler.handlerdata, 0, 16, 0x0);  //setAt(UWMotionParamArray.PlayerMotionHandler_dseg_67d6_26AA, 0, 16, 0x0);
 
             if ((playerdat.MagicalMotionAbilities & 0x14) != 0)
             {
                 //seg008_1B09_ABD:
                 //player is flying or levitating
-                setAt(UWMotionParamArray.PlayerMotionHandler_dseg_67d6_26AA, 0, 16, 0x1000);
+                setAt(MotionHandler.PlayerMotionHandler.handlerdata, 0, 16, 0x1000); //UWMotionParamArray.PlayerMotionHandler_dseg_67d6_26AA
                 playerMotionParams.unk_17 = 0x80;
             }
 

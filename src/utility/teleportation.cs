@@ -183,7 +183,7 @@ namespace Underworld
                 playerdat.PlacePlayerInTile(-1, -1, -1, -1);
             }
 
-            Loader.setAt(UWMotionParamArray.PlayerMotionHandler_dseg_67d6_26AA, 0, 16, 0);
+            Loader.setAt(MotionHandler.PlayerMotionHandler.handlerdata, 0, 16, 0);//Loader.setAt(UWMotionParamArray.PlayerMotionHandler_dseg_67d6_26AA, 0, 16, 0);
             motion.playerMotionParams.momentum_14 = 0;
             motion.playerMotionParams.gravity_10_Z = 0;
             motion.playerMotionParams.unk_e_Y = 0;

@@ -17,7 +17,13 @@ namespace Underworld
                 collisionTable[i] = new CollisionRecord(i);
             }
         }
-        public static bool MotionProcessing(uwObject projectile)
+
+        /// <summary>
+        /// Calculate motion for a projectile.
+        /// </summary>
+        /// <param name="projectile"></param>
+        /// <returns></returns>
+        public static bool MotionProcessing(uwObject projectile, MotionHandler SpecialMotionHandler)
         {
             ObjectHasHalted = false;
             if (!UWTileMap.ValidTile(projectile.tileX, projectile.tileY))
@@ -43,11 +49,13 @@ namespace Underworld
 
             if (commonObjDat.maybeMagicObjectFlag(projectile.item_id))
             {
-                UWMotionParamArray.PtrTo267D2_dseg_67d6_26B8_table0 = 0x1000;  //MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2 = 0x1000;
+                //UWMotionParamArray.PtrTo267D2_dseg_67d6_26B8_table0 = 0x1000;  //MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2 = 0x1000;
+                SpecialMotionHandler.table01 = 0x100;
             }
             else
             {
-                UWMotionParamArray.PtrTo267D2_dseg_67d6_26B8_table0 = 0;//MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2 = 0;
+                //UWMotionParamArray.PtrTo267D2_dseg_67d6_26B8_table0 = 0;//MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2 = 0;
+                SpecialMotionHandler.table01 = 0;
             }
 
             UWMotionParamArray MotionParams = new();
@@ -57,9 +65,9 @@ namespace Underworld
             //     Debug.Print($"Initial {projectile.a_name} Tile ({projectile.tileX},{projectile.tileY}), Position({projectile.xpos},{projectile.ypos},{projectile.zpos}) NPC_HP:{projectile.npc_hp} ProjectileHeading:{projectile.ProjectileHeading} UNKA_0123:{projectile.NextFrame_0XA_Bit0123} UNK_456:{projectile.TileState_0XA_Bit456} Coords ({projectile.CoordinateX},{projectile.CoordinateY},{projectile.CoordinateZ}) UNK13_0_6:{projectile.UnkBit_0X13_Bit0to6} UNK13_7:{projectile.UnkBit_0X13_Bit7} ProjectileSpeed:{projectile.Projectile_Speed}, ProjectilePitch:{projectile.Projectile_Pitch}");
             // }
 
-            InitMotionParams(projectile, MotionParams);
+            InitMotionParams(projectile: projectile, MotionParams: MotionParams);
 
-            CalculateMotion_TopLevel(projectile, MotionParams, UWMotionParamArray.DSEG_27B2_SpecialMotionHandling);
+            CalculateMotion_TopLevel(projectile: projectile, MotionParams: MotionParams, SpecialMotionHandler: MotionHandler.ObjectMotionHandler);
 
             //store current x/y homes in globals                        
             var result = ApplyProjectileMotion(projectile, MotionParams);

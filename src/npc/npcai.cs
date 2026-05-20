@@ -166,7 +166,7 @@ namespace Underworld
             }
         }
 
-        public static byte[] SpecialMotionHandler;
+        public static MotionHandler SpecialMotionHandler;
 
         public static int MaxAnimFrame;
         public static bool RelatedToMotionCollision_dseg_67d6_224E;//needs to be set in 1413:ABF
@@ -234,19 +234,19 @@ namespace Underworld
                 if (critterObjectDat.isFlier(critter.item_id))
                 {
                     //special setup for flying ai    
-                    SpecialMotionHandler = UWMotionParamArray.DSEG_26C6_FlyingNPCMotionHandler;
+                    SpecialMotionHandler = MotionHandler.FlierNPCMotionHandler; //UWMotionParamArray.DSEG_26C6_FlyingNPCMotionHandler;
                 }
                 else
                 {
                     if (critterObjectDat.isSwimmer(critter.item_id))
                     {
                         //special setup for swimming ai
-                        SpecialMotionHandler = UWMotionParamArray.DSEG_26DE_SwimmingNPCMotionHandler;
+                        SpecialMotionHandler = MotionHandler.SwimmerNPCMotionHandler; //UWMotionParamArray.DSEG_26DE_SwimmingNPCMotionHandler;
                     }
                     else
                     {
                         //default ai (26ba in uw2,  285C in uw1 ) //seg007_17A2_2207
-                        SpecialMotionHandler = UWMotionParamArray.DSEG_26BA_LandNPCMotionHandler;
+                        SpecialMotionHandler = MotionHandler.LandNPCMotionHandler; //UWMotionParamArray.DSEG_26BA_LandNPCMotionHandler;
                     }
                 }
 
@@ -254,17 +254,17 @@ namespace Underworld
                 {
                     //Set values in motion arrays (defined in previous section. ). This protects fire resistant creatures from being damaged by lava.
                     //seg007_17A2_222B
-                    var tmp = Loader.getAt(SpecialMotionHandler, 2, 16);
+                    var tmp = Loader.getAt(SpecialMotionHandler.handlerdata, 2, 16);
                     tmp = tmp & 0xFFDF;
-                    Loader.setAt(SpecialMotionHandler, 2, 16, (int)tmp);
+                    Loader.setAt(SpecialMotionHandler.handlerdata, 2, 16, (int)tmp);
 
-                    tmp = Loader.getAt(SpecialMotionHandler, 6, 16);
+                    tmp = Loader.getAt(SpecialMotionHandler.handlerdata, 6, 16);
                     tmp = tmp & 0xFFDF;
-                    Loader.setAt(SpecialMotionHandler, 6, 16, (int)tmp);
+                    Loader.setAt(SpecialMotionHandler.handlerdata, 6, 16, (int)tmp);
 
-                    tmp = Loader.getAt(SpecialMotionHandler, 0, 16);
+                    tmp = Loader.getAt(SpecialMotionHandler.handlerdata, 0, 16);
                     tmp = tmp | 0x20;
-                    Loader.setAt(SpecialMotionHandler, 0, 16, (int)tmp);
+                    Loader.setAt(SpecialMotionHandler.handlerdata, 0, 16, (int)tmp);
 
                 }
 
@@ -319,17 +319,17 @@ namespace Underworld
                 if ((commonObjDat.scaleresistances(critter.item_id) & 8) != 0)
                 {
                     //Restore original bits in Special Motion Handler. These were preivously changed for fire resistant critters.
-                    var tmp = Loader.getAt(SpecialMotionHandler, 2, 16);
+                    var tmp = Loader.getAt(SpecialMotionHandler.handlerdata, 2, 16);
                     tmp = tmp | 0x20;
-                    Loader.setAt(SpecialMotionHandler, 2, 16, (int)tmp);
+                    Loader.setAt(SpecialMotionHandler.handlerdata, 2, 16, (int)tmp);
 
-                    tmp = Loader.getAt(SpecialMotionHandler, 6, 16);
+                    tmp = Loader.getAt(SpecialMotionHandler.handlerdata, 6, 16);
                     tmp = tmp = tmp | 0x20;
-                    Loader.setAt(SpecialMotionHandler, 6, 16, (int)tmp);
+                    Loader.setAt(SpecialMotionHandler.handlerdata, 6, 16, (int)tmp);
 
-                    tmp = Loader.getAt(SpecialMotionHandler, 0, 16);
+                    tmp = Loader.getAt(SpecialMotionHandler.handlerdata, 0, 16);
                     tmp = tmp & 0xFFDF;
-                    Loader.setAt(SpecialMotionHandler, 0, 16, (int)tmp);
+                    Loader.setAt(SpecialMotionHandler.handlerdata, 0, 16, (int)tmp);
                 }
                 //seg007_17A2_2392:
                 //To update globals after motion has taken place
