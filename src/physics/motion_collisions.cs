@@ -601,7 +601,7 @@ namespace Underworld
         /// <param name="isNPCArgA"></param>
         static void CreateCollisonRecord_Seg028_2941_A78(uwObject CollidingObject, long ListHead, int xArg6, int yArg8, bool isNPCArgA)
         {
-            Debug.Print($"adding collison record {CollidingObject.a_name}");
+            //Debug.Print($"adding collison record {CollidingObject.a_name}");
             if (MotionCalcArray.Unk14_collisoncount <= 8)
             {
                 int XCoordVar1;

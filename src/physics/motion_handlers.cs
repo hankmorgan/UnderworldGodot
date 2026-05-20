@@ -28,7 +28,7 @@ namespace Underworld
 
         static MotionHandler()
         {
-            PlayerMotionHandler = new(_handlerdata: new byte[] { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 }, _motionhandlerfunction: PlayerCallBackFunction);
+            PlayerMotionHandler = new(_handlerdata: new byte[] { 0x0, 0x0, 0x0, 0x11, 0x0, 0x0, 0x0, 0x0 }, _motionhandlerfunction: PlayerCallBackFunction);
             LandNPCMotionHandler = new(_handlerdata: new byte[] { 0x0, 0x0, 0x30, 0x1F, 0x10, 0x10, 0x20, 0x0 }, _motionhandlerfunction: LandBasedCallBackFunction);
             FlierNPCMotionHandler = new(_handlerdata: new byte[] { 0x0, 0x10, 0x0, 0x7, 0x80, 0x0, 0x0, 0x0 }, _motionhandlerfunction: FlierCallBackFunction);
             SwimmerNPCMotionHandler = new(_handlerdata: new byte[] { 0x10, 0, 0x28, 0x17, 0x10, 0x10, 0x20, 0 }, _motionhandlerfunction: SwimmerCallBackFunction);
@@ -53,6 +53,24 @@ namespace Underworld
 
         static bool PlayerCallBackFunction(uwObject obj, MotionHandler handler, UWMotionParamArray motionparams)
         {
+            if ((handler.table01 & 0x1000)== 0)
+            {
+                return false;
+            }
+            if (motion.playerMotionParams.unk_a_pitch != 0)
+            {
+                return false;
+            } 
+            if ((motion.playerMotionParams.momentum_14 * 0xA) >= (motion.PlayerActualForwardSpeed_1_dseg_67d6_22A6 * 3))
+            {
+                return false;
+            }
+            if ((motion.PreviousTileState_dseg_67d6_22B4 & 0xA) !=0)
+            {
+                return false;
+            }
+            motion.playerMotionParams.unk_8_y = 0;
+            motion.playerMotionParams.unk_6_x = 0;
             return true;
         }
 
