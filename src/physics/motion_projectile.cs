@@ -78,6 +78,10 @@ namespace Underworld
         /// <returns></returns>
         public static uwObject PrepareProjectileObject(uwObject Launcher)
         {
+            if (Launcher.IsStatic)
+            {
+                Debug.Print($"Static launcher of a projectile spell! Implement me ! {Launcher.a_name}");
+            }
             var slot = ObjectCreator.PrepareNewObject(RangedAmmoItemID, ObjectFreeLists.ObjectListType.MobileList);
             if (slot != -1)
             {
@@ -110,6 +114,7 @@ namespace Underworld
                     if (Launcher == playerdat.playerObject)
                     {
                         //todo handle swimming player height adjustment
+                        Debug.Print($"Swimminglauncher. Projectile needs to be adjusted! {Launcher.a_name}");
                     }
                 }
 

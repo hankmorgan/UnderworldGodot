@@ -1206,11 +1206,11 @@ namespace Underworld
                                 var collision = collisionTable[UWMotionParamArray.ACollisionIndex_dseg_67d6_416]; 
                                 if (Math.Abs(MotionCalcArray.z4_base - collision.height) > MotionParams.unk_24)
                                 {
-                                    var3 = true;
+                                    var3 = false;
                                 }
                                 else
                                 {
-                                    var3 = false;
+                                    var3 = true;
                                 }
                                 if (var3)
                                 {
