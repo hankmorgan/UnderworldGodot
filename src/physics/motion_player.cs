@@ -1289,5 +1289,35 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// Runs all player motions until globals come to zero, Used by a sleep update that occurs due to drunkeness
+        /// </summary>
+        public static void RunPlayerMotions()
+        {
+            motion.MotionInputPressed = 0;
+            while (true)
+            {
+                if (motion.playerMotionParams.momentum_14 == 0)
+                {
+                    if (motion.playerMotionParams.unk_a_pitch == 0)
+                    {
+                        if (motion.playerMotionParams.gravity_10_Z == 0)
+                        {
+                            if (motion.playerMotionParams.unk_e_Y == 0)
+                            {
+                                if (motion.playerMotionParams.unk_c_X == 0)
+                                {
+                                    if (motion.PlayerMotionUpdateRequired_dseg_D3 == false)
+                                    {
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                motion.PlayerMotion(0x40);
+            }
+        }
     }//end class
 }//end namespace
