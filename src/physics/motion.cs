@@ -50,7 +50,7 @@ namespace Underworld
             if (commonObjDat.maybeMagicObjectFlag(projectile.item_id))
             {
                 //UWMotionParamArray.PtrTo267D2_dseg_67d6_26B8_table0 = 0x1000;  //MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2 = 0x1000;
-                SpecialMotionHandler.table01 = 0x100;
+                SpecialMotionHandler.table01 = 0x1000;
             }
             else
             {
