@@ -651,7 +651,8 @@ namespace Underworld
             critter.npc_yhome = 32;
             critter.quality = 32;
             critter.owner = 32;
-            critter.npc_hp = (byte)((0x10 + Rng.r.Next(0, 0x18)) / 0x20);
+            critter.npc_hp = (byte)(((0x10 + Rng.r.Next(0x18)) * critterObjectDat.avghit(critter.item_id)) / 0x20);
+            //critter.npc_hp = (byte)((0x10 + Rng.r.Next(0, 0x18)) / 0x20);
             critter.ProjectileHeading = (ushort)(critter.heading << 5);
             critter.npc_goal = 8;
             critter.npc_gtarg = 0;
@@ -661,7 +662,7 @@ namespace Underworld
             critter.UnkBit_0XD_Bit9 = 0;
             critter.IsPowerful = 0;
             critter.UnkBit_0XD_Bit11 = 0;
-            critter.UnkBit_0XD_Bit8 = 0;
+            critter.SpawnedCritter_0XD_Bit8 = 0;
             critter.UnkBit_0x18_5 = 0;//possbily used to indicate npc is at their target
             critter.SwingChargeIndex = 0;
             critter.NextFrame_0XA_Bit0123 = 0;

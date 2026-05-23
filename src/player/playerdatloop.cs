@@ -194,7 +194,7 @@ namespace Underworld
 
                                 if ((Rng.r.Next(0, 0xffff) & 0x3) == 0)
                                 {
-                                    Debug.Print("Find and trigger create object traps that are on map!");
+                                    a_create_object_trap.FindAndRunCreateObjectTraps();
                                 }
 
                                 Debug.Print("Do something with Npc hunger");

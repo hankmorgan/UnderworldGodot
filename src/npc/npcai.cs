@@ -2669,7 +2669,7 @@ namespace Underworld
             {
                 if ((critter.npc_attitude == 0) && (critter.npc_goal != 4))
                 {
-                    SetGoalAndGtarg(critter, 4, 1);
+                    SetGoalAndGtarg(critter: critter, goal: 4, target: 1);
                 }
                 else
                 {

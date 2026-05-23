@@ -62,7 +62,7 @@ namespace Underworld
                 obj.IsPowerful = 0;
             }
 
-            obj.UnkBit_0XD_Bit8 = 1;
+            obj.SpawnedCritter_0XD_Bit8 = 1;
             obj.npc_attitude = 0;
             obj.npc_goal = 5;
             obj.npc_gtarg = 1;

@@ -894,9 +894,9 @@ namespace Underworld
         /// <param name="isPlayer"></param>
         /// <param name="range"></param>
         /// <returns></returns>
-        public static bool CheckIfOutsideRange(int targetX, int targetY, int isPlayer, int range = 8)
+        public static bool CheckIfOutsideRange(int targetX, int targetY, bool isPlayer, int range = 8)
         {
-            if (isPlayer != 0)
+            if (isPlayer)
             {
                 return (
                     (System.Math.Abs(playerdat.playerObject.tileX - targetX) >= range)

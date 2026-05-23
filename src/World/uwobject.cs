@@ -627,7 +627,10 @@ namespace Underworld
             }
         }
 
-        public short UnkBit_0XD_Bit8
+        /// <summary>
+        /// Used in relation to Pit fighters and creatures spawned by create object traps
+        /// </summary>
+        public short SpawnedCritter_0XD_Bit8
         {
             get
             {
