@@ -458,8 +458,8 @@ namespace Underworld
             MissileFlagA = false;
             if (projectile!=null)
             {
-                //TODO make a launch sound
-                //MakeASound();
+                //make a launch sound
+                UWsoundeffects.PlaySoundEffectAtObject(effectNo: 0xA, obj: projectile, volDelta: 0x14);
             }        
         }
     }//end class
