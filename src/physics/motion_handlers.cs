@@ -43,9 +43,42 @@ namespace Underworld
             HandlerFunction = _motionhandlerfunction;
         }
 
+        /// <summary>
+        /// Flier call back function.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="arg0"></param>
+        /// <param name="motionparams"></param>
+        /// <returns></returns>
         static bool FlierCallBackFunction(uwObject obj, ref int arg0, UWMotionParamArray motionparams)
         {
-            return true;
+            npc.IsNPCActive_dseg_67d6_2234 = true; //?
+            if ((arg0 & 0x200) == 0)
+            {
+                if ((arg0 & 0x100)!=0)
+                {
+                    npc.dseg_2636 = 0x80;
+                }
+                if ((arg0 & 0x400) != 0)
+                {
+                    npc.RelatedToMotionCollision_dseg_67d6_224E = true;
+                    npc.dseg_67d6_2269 = true;
+                    npc.collisionObject = motion.FindCollisionObject();
+                }
+                if (npc.RelatedToMotionCollision_dseg_67d6_224E)
+                {
+                    if (npc.IsNPCActive_dseg_67d6_2234)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            else
+            {
+                npc.RelatedToMotionCollision_dseg_67d6_224E = true;
+                return false;
+            }
         }
 
         static bool SwimmerCallBackFunction(uwObject obj, ref int arg0, UWMotionParamArray motionparams)
@@ -84,6 +117,13 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// Players collision callback. Stop some motion.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="arg0"></param>
+        /// <param name="motionparams"></param>
+        /// <returns></returns>
         static bool PlayerCallBackFunction(uwObject obj, ref int arg0, UWMotionParamArray motionparams)
         {
             if ((arg0 & 0x1000)== 0)

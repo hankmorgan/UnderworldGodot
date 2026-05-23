@@ -169,12 +169,12 @@ namespace Underworld
         public static MotionHandler SpecialMotionHandler;
 
         public static int MaxAnimFrame;
-        public static bool RelatedToMotionCollision_dseg_67d6_224E;//needs to be set in 1413:ABF
+        public static bool RelatedToMotionCollision_dseg_67d6_224E;//needs to be set in 1413:ABF, likely flags the npc has collided during motion.
         
         //Used by collision handlers. unknown impact, 
         public static bool dseg_2682;
         public static bool dseg_2684;
-
+        public static short dseg_2636;
 
         public static bool IsNPCActive_dseg_67d6_2234;
         static bool dseg_67d6_225E;
