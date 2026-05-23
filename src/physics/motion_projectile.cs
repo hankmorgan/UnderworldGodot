@@ -112,6 +112,10 @@ namespace Underworld
                     {
                         //todo handle swimming player height adjustment
                         Debug.Print($"Swimminglauncher. Projectile needs to be adjusted! {Launcher.a_name}");
+                        if (playerdat.SwimCounter > 0x50)
+                        {
+                            projectile.zpos = (short)(((MissilePitch<<1) + playerdat.playerObject.zpos + ( commonObjDat.height(playerdat.playerObject.item_id) - (playerdat.SwimCounter >> 3) )) & 0x7F);
+                        }
                     }
                 }
 
@@ -161,7 +165,7 @@ namespace Underworld
                     }
                     else
                     {
-                        if (_RES!=GAME_UW2)
+                        if (_RES != GAME_UW2)
                         {
                             UWsoundeffects.PlaySoundEffectAtObject(0xA, projectile, 0);//throw sounds.
                         }
@@ -412,7 +416,7 @@ namespace Underworld
                         {
                             if (MotionCalcArray.z4 - argC_distance <= UWMotionParamArray.Z_dseg_67d6_2582)
                             {
-                                result = true;                                
+                                result = true;
                             }
                             else
                             {
@@ -456,11 +460,11 @@ namespace Underworld
             MissileLauncherHeadingBase = 1;
             var projectile = PrepareProjectileObject(critter);
             MissileFlagA = false;
-            if (projectile!=null)
+            if (projectile != null)
             {
                 //make a launch sound
                 UWsoundeffects.PlaySoundEffectAtObject(effectNo: 0xA, obj: projectile, volDelta: 0x14);
-            }        
+            }
         }
     }//end class
 }//end namespace
