@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Xml.Serialization;
 
 namespace Underworld
 {
@@ -8,6 +7,8 @@ namespace Underworld
     /// </summary>
     public class sleep : UWClass
     {
+
+        static bool NearbyHostileAwareOfAvatar = false;
 
         /// <summary>
         /// Handles the player going to sleep
@@ -268,10 +269,47 @@ namespace Underworld
             uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x19));
         }
 
+        /// <summary>
+        /// Checks a range of tiles around the player and tries to see if there are hostile npcs who are aware of the player.
+        /// </summary>
+        /// <returns></returns>
         static bool TestForNearByEnemies()
         {
+
+            NearbyHostileAwareOfAvatar = false;
+            CallBacks.RunCodeOnTargetsAroundObject(
+                methodToCall: TestForHostileNPCAwareOfPlayer, 
+                CentreObject: 1, 
+                rngProbablity: 0x7F, 
+                targetType: 0, 
+                distanceFromObject: 0, 
+                tileRadius: 2);
+            
+            return NearbyHostileAwareOfAvatar;
+        }
+
+        public static bool TestForHostileNPCAwareOfPlayer(int x, int y, uwObject obj, TileInfo tile, int srcIndex)
+        {
+            if (obj!= playerdat.playerObject)
+            {
+                if (obj.npc_goal != 5)
+                {
+                    if (obj.npc_goal != 4)
+                    {
+                        if (obj.npc_goal != 9)
+                        {
+                            return false;
+                        }
+                    }
+                }
+                if (obj.UnkBit_0x19_0_likelyincombat != 0)
+                {
+                    NearbyHostileAwareOfAvatar = true;
+                }
+            }
             return false;
         }
+
 
         static void SleepOnDamagingSurface()
         {
