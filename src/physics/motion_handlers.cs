@@ -1,3 +1,5 @@
+using System;
+
 namespace Underworld
 {
 
@@ -48,7 +50,38 @@ namespace Underworld
 
         static bool SwimmerCallBackFunction(uwObject obj, ref int arg0, UWMotionParamArray motionparams)
         {
-            return true;
+            if ((arg0 & 0x300) == 0)
+            {
+                if ((arg0 & 0x400) !=0)
+                {
+                    npc.dseg_2682 = false;
+                    npc.dseg_2684 = false;
+                    npc.RelatedToMotionCollision_dseg_67d6_224E = true;
+                    npc.dseg_67d6_2269 = true;
+                    npc.collisionObject = motion.FindCollisionObject();
+                }
+                if ((arg0 & 0x8) != 0)
+                {
+                    npc.dseg_2682 = false;
+                    npc.dseg_2684 = false;
+                    npc.RelatedToMotionCollision_dseg_67d6_224E = true;
+                }
+                if (npc.RelatedToMotionCollision_dseg_67d6_224E)
+                {
+                    if (npc.IsNPCActive_dseg_67d6_2234)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            else
+            {
+                npc.dseg_2682 = false;
+                npc.dseg_2684 = false;
+                npc.RelatedToMotionCollision_dseg_67d6_224E = true;
+                return false;
+            }
         }
 
         static bool PlayerCallBackFunction(uwObject obj, ref int arg0, UWMotionParamArray motionparams)
@@ -74,11 +107,26 @@ namespace Underworld
             return true;
         }
 
+        /// <summary>
+        /// This callback handler for regular objects will just return false.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="arg0"></param>
+        /// <param name="motionparams"></param>
+        /// <returns></returns>
         static bool ObjectCallBackFunction(uwObject obj, ref int arg0, UWMotionParamArray motionparams)
         {
             return false;
         }
 
+
+        /// <summary>
+        /// This will run when land npcs collide.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="arg0"></param>
+        /// <param name="motionparams"></param>
+        /// <returns></returns>
         static bool LandBasedCallBackFunction(uwObject obj, ref int arg0, UWMotionParamArray motionparams)
         {
             if ((arg0 & 0x1000) == 0)

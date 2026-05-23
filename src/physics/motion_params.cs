@@ -17,9 +17,6 @@ namespace Underworld
         public static MotionHandler PtrTo26D2_DSEG_26B8_MotionHandler;// = new byte[8];
 
 
-
-
-
         //globals        
 
 

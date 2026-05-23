@@ -170,6 +170,12 @@ namespace Underworld
 
         public static int MaxAnimFrame;
         public static bool RelatedToMotionCollision_dseg_67d6_224E;//needs to be set in 1413:ABF
+        
+        //Used by collision handlers. unknown impact, 
+        public static bool dseg_2682;
+        public static bool dseg_2684;
+
+
         public static bool IsNPCActive_dseg_67d6_2234;
         static bool dseg_67d6_225E;
         static bool HasCurrobjHeadingChanged_dseg_67d6_2242;
