@@ -7,7 +7,7 @@ namespace Underworld
     {
         int texture;
         Node3D tmapnode;
-        float tmapOffset = 0;// 0.1f;//how far out the tmap extrudes from it's origin
+        float tmapOffset = 0.1f;//how far out the tmap extrudes from it's origin
 
         public tmap(uwObject _uwobject)
         {
