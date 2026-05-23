@@ -17,7 +17,13 @@ namespace Underworld
                 collisionTable[i] = new CollisionRecord(i);
             }
         }
-        public static bool MotionProcessing(uwObject projectile)
+
+        /// <summary>
+        /// Calculate motion for a projectile.
+        /// </summary>
+        /// <param name="projectile"></param>
+        /// <returns></returns>
+        public static bool MotionProcessing(uwObject projectile, MotionHandler SpecialMotionHandler)
         {
             ObjectHasHalted = false;
             if (!UWTileMap.ValidTile(projectile.tileX, projectile.tileY))
@@ -43,11 +49,13 @@ namespace Underworld
 
             if (commonObjDat.maybeMagicObjectFlag(projectile.item_id))
             {
-                UWMotionParamArray.PtrTo267D2_dseg_67d6_26B8_table0 = 0x1000;  //MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2 = 0x1000;
+                //UWMotionParamArray.PtrTo267D2_dseg_67d6_26B8_table0 = 0x1000;  //MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2 = 0x1000;
+                SpecialMotionHandler.table01 = 0x1000;
             }
             else
             {
-                UWMotionParamArray.PtrTo267D2_dseg_67d6_26B8_table0 = 0;//MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2 = 0;
+                //UWMotionParamArray.PtrTo267D2_dseg_67d6_26B8_table0 = 0;//MaybeSpecialMotionObjectDatFlag_dseg_67d6_26D2 = 0;
+                SpecialMotionHandler.table01 = 0;
             }
 
             UWMotionParamArray MotionParams = new();
@@ -57,9 +65,9 @@ namespace Underworld
             //     Debug.Print($"Initial {projectile.a_name} Tile ({projectile.tileX},{projectile.tileY}), Position({projectile.xpos},{projectile.ypos},{projectile.zpos}) NPC_HP:{projectile.npc_hp} ProjectileHeading:{projectile.ProjectileHeading} UNKA_0123:{projectile.NextFrame_0XA_Bit0123} UNK_456:{projectile.TileState_0XA_Bit456} Coords ({projectile.CoordinateX},{projectile.CoordinateY},{projectile.CoordinateZ}) UNK13_0_6:{projectile.UnkBit_0X13_Bit0to6} UNK13_7:{projectile.UnkBit_0X13_Bit7} ProjectileSpeed:{projectile.Projectile_Speed}, ProjectilePitch:{projectile.Projectile_Pitch}");
             // }
 
-            InitMotionParams(projectile, MotionParams);
+            InitMotionParams(projectile: projectile, MotionParams: MotionParams);
 
-            CalculateMotion_TopLevel(projectile, MotionParams, UWMotionParamArray.DSEG_27B2_SpecialMotionHandling);
+            CalculateMotion_TopLevel(projectile: projectile, MotionParams: MotionParams, SpecialMotionHandler: MotionHandler.ObjectMotionHandler);
 
             //store current x/y homes in globals                        
             var result = ApplyProjectileMotion(projectile, MotionParams);
@@ -256,7 +264,10 @@ namespace Underworld
                         }
 
                         //seg030_2BB7_99F:
-                        projectile = PlacedObjectCollision_seg030_2BB7_10BC(projectile, projectile.tileX, projectile.tileY, 0);
+                        projectile = PlacedObjectCollision_seg030_2BB7_10BC(
+                            projectile: projectile, 
+                            tileX: projectile.tileX, tileY: projectile.tileY, 
+                            arg8: 0);
                         if (projectile == null)
                         {
                             return false;
@@ -357,8 +368,49 @@ namespace Underworld
 
         static uwObject MoveObjectToMobileObjectList_seg030_2BB7_B0C(uwObject toMove)
         {
-            Debug.Print("move from static to mobile");
-            return toMove;
+            //Debug.Print($"move {toMove.a_name} {toMove.index} from static to mobile");
+            var tile = UWTileMap.current_tilemap.Tiles[toMove.tileX, toMove.tileY];
+
+            var next = tile.indexObjectList;
+
+            var slot = ObjectFreeLists.GetAvailableObjectSlot(ObjectFreeLists.ObjectListType.MobileList);
+            if (slot != 0)
+            {
+                var newObj = UWTileMap.current_tilemap.LevelObjects[slot];    
+                for (int i = 0; i<8; i++)
+                {
+                    //copy props
+                    newObj.DataBuffer[newObj.PTR+i] = toMove.DataBuffer[toMove.PTR + i];
+                }
+                ObjectCreator.InitMobileObject(newObj, toMove.tileX, toMove.tileY);
+                newObj.npc_hp = (byte)toMove.quality;
+                if (toMove.majorclass != 5)
+                {
+                    if (commonObjDat.rendertype(toMove.item_id) != 2)
+                    {
+                        newObj.npc_whoami = toMove.heading; //to backup object identification status
+                    }
+                }
+                if (newObj.majorclass == 7)
+                {
+                    Debug.Print("moving an animation overaly. Change it's links");
+                }
+                ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(toMove.tileX, toMove.tileY, toMove.index, true);
+
+                //insert object to tile.
+                newObj.next = tile.indexObjectList;
+                tile.indexObjectList = newObj.index;
+                ObjectCreator.RenderObject(newObj, UWTileMap.current_tilemap);
+                newObj.tileX = tile.tileX; newObj.tileY = tile.tileY;
+                Debug.Print($"returning {newObj.index}");
+                return newObj;
+            }
+            else
+            {
+                Debug.Print("unable to move object to mobile list. Returning object itself on the static list.");
+                return toMove;    
+            }            
+            
         }
 
         static uwObject ObjectHitsFloorTile_seg030_2BB7_DDF(uwObject projectile)

@@ -713,7 +713,7 @@ namespace Underworld
             }
             obj.npc_xhome = (short)xhome;
             obj.npc_yhome = (short)yhome;
-            obj.NextFrame_0XA_Bit0123 = 0;//this may be a next frame to update setting.
+            obj.NextFrame_0XA_Bit0123 = (short)(main.ThisFrameDelta + 1);//next frame where the object will move/process updates.
             obj.Projectile_Speed = 2;
             obj.UnkBit_0X13_Bit0to6 = 0;
             obj.invis = 0;

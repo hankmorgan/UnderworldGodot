@@ -57,8 +57,9 @@ namespace Underworld
             }
 
             MissileHeading = 1 + (((X1 - uimanager.Window3DHeadingAdjust) * 5) / 13);
-            //note missile pitch is initialised with a value from DSEG_33D6 but that value always appears to be 0.
-            MissilePitch = (Y1 - uimanager.Window3DPitchAdjust) / 6;
+
+            MissilePitch = PlayerCameraPitch_dseg_67d6_33D6 / 0x300;//initialise from camera pitch
+            MissilePitch += (Y1 - uimanager.Window3DPitchAdjust) / 6;
 
             Debug.Print($"Pitch {MissilePitch} Heading {MissileHeading} at mousepos {X1},{Y1} ({(uimanager.ViewPortMouseXPos / 4)},{(uimanager.ViewPortMouseYPos / 4)})");
             if (Y1 < uimanager.Window3DDropThreshold)
@@ -88,7 +89,7 @@ namespace Underworld
 
                 if (MissileLauncherHeadingBase != 0)
                 {
-                    MissileLauncherHeadingBase = Launcher.npc_heading;//todo account for the scenario where the launcher is a static
+                    MissileLauncherHeadingBase = Launcher.npc_heading;
                 }
                 MissileLauncherHeadingBase = MissileLauncherHeadingBase + (Launcher.heading << 5);
                 MissileLauncherHeadingBase = (MissileHeading + MissileLauncherHeadingBase + 0x100) & 0xFF;
@@ -110,6 +111,11 @@ namespace Underworld
                     if (Launcher == playerdat.playerObject)
                     {
                         //todo handle swimming player height adjustment
+                        Debug.Print($"Swimminglauncher. Projectile needs to be adjusted! {Launcher.a_name}");
+                        if (playerdat.SwimCounter > 0x50)
+                        {
+                            projectile.zpos = (short)(((MissilePitch<<1) + playerdat.playerObject.zpos + ( commonObjDat.height(playerdat.playerObject.item_id) - (playerdat.SwimCounter >> 3) )) & 0x7F);
+                        }
                     }
                 }
 
@@ -153,9 +159,16 @@ namespace Underworld
                     projectile.next = tile.indexObjectList;
                     tile.indexObjectList = projectile.index;
 
-                    if (MissileFlagB && MissileFlagA)
+                    if ((_RES == GAME_UW2) && (!MissileFlagB && !MissileFlagA))
                     {
-                        //TODO some logic around sound effects.
+                        UWsoundeffects.PlaySoundEffectAtObject(0x1C, projectile, 0);//throw sounds
+                    }
+                    else
+                    {
+                        if (_RES != GAME_UW2)
+                        {
+                            UWsoundeffects.PlaySoundEffectAtObject(0xA, projectile, 0);//throw sounds.
+                        }
                     }
 
                     return projectile;
@@ -403,7 +416,7 @@ namespace Underworld
                         {
                             if (MotionCalcArray.z4 - argC_distance <= UWMotionParamArray.Z_dseg_67d6_2582)
                             {
-                                result = true;                                
+                                result = true;
                             }
                             else
                             {
@@ -447,11 +460,11 @@ namespace Underworld
             MissileLauncherHeadingBase = 1;
             var projectile = PrepareProjectileObject(critter);
             MissileFlagA = false;
-            if (projectile!=null)
+            if (projectile != null)
             {
-                //TODO make a launch sound
-                //MakeASound();
-            }        
+                //make a launch sound
+                UWsoundeffects.PlaySoundEffectAtObject(effectNo: 0xA, obj: projectile, volDelta: 0x14);
+            }
         }
     }//end class
 }//end namespace

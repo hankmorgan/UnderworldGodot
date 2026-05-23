@@ -245,7 +245,7 @@ namespace Underworld
                     tile1_X_arg0: 0, tile1_Y_arg2: 0,
                     tile2_X_arg4: currTileX_arg0, tile2_Y_arg6: currTileY_arg2,
                     tile3_X_arg8: NeighbourTileX, tile3_Y_argA: NeighbourTileY,
-                    argC: (int)Loader.getAt(npc.SpecialMotionHandler, 4, 16), argE: (int)Loader.getAt(npc.SpecialMotionHandler, 6, 16),
+                    argC: (int)Loader.getAt(npc.SpecialMotionHandler.handlerdata, 4, 16), argE: (int)Loader.getAt(npc.SpecialMotionHandler.handlerdata, 6, 16),
                     ProbablyHeight_arg10: CurrFloorHeight_arg4,
                     arg12: ref tmp,
                     PathDistanceResult_arg16: ref ProbablyPathDistance_var1E);
@@ -330,7 +330,7 @@ namespace Underworld
                                     tile1_X_arg0: TileRecord_var1C.X0, tile1_Y_arg2: TileRecord_var1C.Y1,
                                     tile2_X_arg4: Tile2X_var1, tile2_Y_arg6: Tile2Y_var2,
                                     tile3_X_arg8: NeighbourTileX, tile3_Y_argA: NeighbourTileY,
-                                    argC: (int)Loader.getAt(npc.SpecialMotionHandler, 4, 16), argE: (int)Loader.getAt(npc.SpecialMotionHandler, 6, 16),
+                                    argC: (int)Loader.getAt(npc.SpecialMotionHandler.handlerdata, 4, 16), argE: (int)Loader.getAt(npc.SpecialMotionHandler.handlerdata, 6, 16),
                                     ProbablyHeight_arg10: TileRecord_var1C.Z2,
                                     arg12: ref Height_var1F,
                                     PathDistanceResult_arg16: ref ProbablyPathDistance_var1E);
@@ -393,7 +393,7 @@ namespace Underworld
                                                 tile1_X_arg0: Tile2X_var1, tile1_Y_arg2: Tile2Y_var2,
                                                 tile2_X_arg4: NeighbourTileX, tile2_Y_arg6: NeighbourTileY,
                                                 tile3_X_arg8: 0, tile3_Y_argA: 0,
-                                                argC: (int)Loader.getAt(npc.SpecialMotionHandler, 4, 16), argE: (int)Loader.getAt(npc.SpecialMotionHandler, 6, 16),
+                                                argC: (int)Loader.getAt(npc.SpecialMotionHandler.handlerdata, 4, 16), argE: (int)Loader.getAt(npc.SpecialMotionHandler.handlerdata, 6, 16),
                                                 ProbablyHeight_arg10: NeighbourPathTile.Z2,
                                                 arg12: ref tmp, PathDistanceResult_arg16: ref ProbablyPathDistance_var1E);
                                             NeighbourPathTile.Z2 = tmp;
@@ -1344,7 +1344,7 @@ namespace Underworld
                     tile1_X_arg0: Step3.X0, tile1_Y_arg2: Step3.Y1,
                     tile2_X_arg4: Step2.X0, tile2_Y_arg6: Step2.Y1,
                     tile3_X_arg8: 0, tile3_Y_argA: 0,
-                    argC: (int)Loader.getAt(npc.SpecialMotionHandler, 4, 16), argE: (int)Loader.getAt(npc.SpecialMotionHandler, 6, 16),
+                    argC: (int)Loader.getAt(npc.SpecialMotionHandler.handlerdata, 4, 16), argE: (int)Loader.getAt(npc.SpecialMotionHandler.handlerdata, 6, 16),
                     ProbablyHeight_arg10: Step3.Z2,
                     arg12: ref xVar3,
                     PathDistanceResult_arg16: ref varE);
@@ -1389,7 +1389,7 @@ namespace Underworld
                         tile1_X_arg0: 0, tile1_Y_arg2: 0,
                         tile2_X_arg4: FinalPath56.finalpath[0].X0, tile2_Y_arg6: FinalPath56.finalpath[0].Y1,
                         tile3_X_arg8: FinalPath56.finalpath[1].X0, tile3_Y_argA: FinalPath56.finalpath[1].Y1,
-                        argC: (int)Loader.getAt(npc.SpecialMotionHandler, 4, 16), argE: (int)Loader.getAt(npc.SpecialMotionHandler, 6, 16),
+                        argC: (int)Loader.getAt(npc.SpecialMotionHandler.handlerdata, 4, 16), argE: (int)Loader.getAt(npc.SpecialMotionHandler.handlerdata, 6, 16),
                         ProbablyHeight_arg10: FinalPath56.finalpath[0].Z2, arg12: ref height1,
                         PathDistanceResult_arg16: ref var2);
                     FinalPath56.finalpath[1].Z2 = height1;
@@ -1418,7 +1418,7 @@ namespace Underworld
                         tile1_X_arg0: Prev3.X0, tile1_Y_arg2: Prev3.Y1,
                         tile2_X_arg4: Prev2.X0, tile2_Y_arg6: Prev2.Y1,
                         tile3_X_arg8: Prev1.X0, tile3_Y_argA: Prev1.Y1,
-                        argC: (int)Loader.getAt(npc.SpecialMotionHandler, 4, 16), argE: (int)Loader.getAt(npc.SpecialMotionHandler, 6, 16),
+                        argC: (int)Loader.getAt(npc.SpecialMotionHandler.handlerdata, 4, 16), argE: (int)Loader.getAt(npc.SpecialMotionHandler.handlerdata, 6, 16),
                         ProbablyHeight_arg10: Prev3.Z2, arg12: ref height,
                         PathDistanceResult_arg16: ref var2);
                     Prev2.Z2 = height;

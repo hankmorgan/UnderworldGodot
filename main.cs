@@ -201,23 +201,10 @@ public partial class main : Node3D
 			{
 				//Debug.Print($"{PitTimer - LastPitTimer}");
 				EasyMoveFrameIncrement += (byte)((GlobalPITTimer >> 4) - (LastPitTimer >> 4));  //every 16 pits?
-				AnimationFrameDeltaIncrement = (byte)((GlobalPITTimer >> 6) - (LastPitTimer >> 6));//every 63 pits?
-																								   // ClockIncrement = 0x5;//i've added this to temporarily control motion frame rate.
-																								   // if ((playerdat.MagicalMotionAbilities & 0x4) !=0)
-																								   // {
-																								   // 	//Hack for levitate
-				ClockIncrement = 0x19;//ignore original calc
-									  // }
+				AnimationFrameDeltaIncrement = (byte)((GlobalPITTimer >> 6) - (LastPitTimer >> 6));//every 63 pits? This controls how often NPCs and mobile objects move. It could stand to be faster.
 
-				//HACK the above appears to be what should be happening in vanilla code but is very slow to process, but the below gives the appearance of normal movement but may cause frame rate issues. 
-				//Issues caused by this hacking.
-				//-Levitation does not work going north ->a higher increment fixes the motionparams.y0 but makes other motion really fast.
-				//-A clock increment of 1 will cause strafing to fail when moving to the east!
-				//This whole section will need to be fixed in the future.				
-				// EasyMoveFrameIncrement = 1;
-				// AnimationFrameDeltaIncrement = 1;
-				//ClockIncrement = 0xF;
-				//ClockIncrement = ClockIncrement * 4;
+				ClockIncrement = 0x19;//ignore original calc since it's too slow. This value is choosen since dosbox debugger shows this value when breaking on motion code often (with some variation)
+				//Setting value too low prevents some motion in certain directions from working.
 			}
 
 			if (ClockIncrement != 0)
@@ -293,6 +280,7 @@ public partial class main : Node3D
 
 	static void GameObjectLoop(byte ClockIncrement, byte AnimationFrameDelta, bool EasyMove)
 	{
+		//playerdat.play_hp = playerdat.max_hp;
 		motion.CameraBobZAdjust_dseg_67d6_33CE = 0;
 		motion.RelatedToClockIncrement_67d6_742 += ClockIncrement;
 		motion.CameraIsBobbing_dseg_67d6_33c6 = false;
@@ -483,21 +471,16 @@ public partial class main : Node3D
 							//This is an NPC on the map	
 							var n = (npc)obj.instance;
 							bool result;
-							// if ((obj.item_id==124) && (UWClass._RES == UWClass.GAME_UW1) )
-							// {
-							// 	result = false;//currently the slasher is bugging out.
-							// }
-							// else
-							// {
-							result = npc.NPCInitialProcess(obj);
-							//}
+
+							result = npc.NPCInitialProcess(critter: obj);
+
 
 							if (n != null)
 							{
 								if (obj.instance != null)
 								{
 									var CalcedFacing = npc.CalculateFacingAngleToNPC(obj);
-									n.SetAnimSprite(obj.npc_animation, obj.AnimationFrame, CalcedFacing);
+									n.SetAnimSprite(animationNo: obj.npc_animation, frameNo: obj.AnimationFrame, relativeHeading: CalcedFacing);
 								}
 							}
 							if (result == false)
@@ -512,14 +495,11 @@ public partial class main : Node3D
 					}
 					else
 					{
-						//if (motion.MotionSingleStepEnabled)
-						//{
 						//This is a projectile
-						if (motion.MotionProcessing(obj) == false)
+						if (motion.MotionProcessing(projectile: obj, SpecialMotionHandler: MotionHandler.ObjectMotionHandler) == false)
 						{
 							break;
 						}
-						//}
 					}
 					if (initialnextframe == obj.NextFrame_0XA_Bit0123)
 					{
