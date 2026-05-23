@@ -159,9 +159,16 @@ namespace Underworld
                     projectile.next = tile.indexObjectList;
                     tile.indexObjectList = projectile.index;
 
-                    if (MissileFlagB && MissileFlagA)
+                    if ((_RES == GAME_UW2) && (!MissileFlagB && !MissileFlagA))
                     {
-                        //TODO some logic around sound effects.
+                        UWsoundeffects.PlaySoundEffectAtObject(0x1C, projectile, 0);//throw sounds
+                    }
+                    else
+                    {
+                        if (_RES!=GAME_UW2)
+                        {
+                            UWsoundeffects.PlaySoundEffectAtObject(0xA, projectile, 0);//throw sounds.
+                        }
                     }
 
                     return projectile;
