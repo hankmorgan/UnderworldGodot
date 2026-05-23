@@ -519,6 +519,10 @@ namespace Underworld
         /// <param name="critter"></param>
         private static void DropRemainsAndLoot(uwObject critter)
         {
+            if (!UWTileMap.ValidTile(critter.tileX, critter.tileY))
+            {
+                return;//cannot drop an offmap npc
+            }
             var tile = UWTileMap.current_tilemap.Tiles[critter.tileX, critter.tileY];
             //Drop npc loot (spawn if missing)
             if (critter.LootSpawnedFlag == 0)

@@ -1183,7 +1183,7 @@ namespace Underworld
                     CameraYawModifier_dseg_67d6_33D0 = (short)(var1 * ((Rng.r.Next(0x7FFF) & 0xFF) - 128));
                     CameraPitchModifier_dseg_67d6_33D2 = (short)(var1 * ((Rng.r.Next(0x7FFF) & 0x7F) - 64));
                     CameraRollModifier_dseg_67d6_33D4 = (short)(var1 * ((Rng.r.Next(0x7FFF) & 0x1FF) - 256));
-                    Debug.Print($"Screenshake by {CameraYawModifier_dseg_67d6_33D0},{CameraPitchModifier_dseg_67d6_33D2},{CameraRollModifier_dseg_67d6_33D4}");
+                    //Debug.Print($"Screenshake by {CameraYawModifier_dseg_67d6_33D0},{CameraPitchModifier_dseg_67d6_33D2},{CameraRollModifier_dseg_67d6_33D4}");
                 }
             }
             else

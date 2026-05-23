@@ -148,7 +148,26 @@ namespace Underworld
                             {
                                 if (GetQuest(50) == 1)
                                 {//the keep is crashing
-                                    KillornKeepEvent();
+                                    if (GetQuest(54) == 0)//player has not returned after the crash.
+                                    {
+                                        special_effects.SpecialEffect(effecttype: 4, effectparam: 0x2C);
+                                        if (!FreezeTimeEnchantment)
+                                        {
+                                            SetQuest(questno: 134, newValue: GetQuest(134)-1);
+                                            if (GetQuest(134) - 1 == 0)
+                                            {
+                                                killorn.KilornIsCrashing(false);
+                                                //Apply raw damage to player in order to kill them for spending too much time in kilorn before it crashed
+                                                damage.DamageObject(
+                                                    objToDamage: playerObject, 
+                                                    basedamage: 0xFF, 
+                                                    damagetype: 0, 
+                                                    objList: UWTileMap.current_tilemap.LevelObjects, 
+                                                    WorldObject: true, 
+                                                    damagesource: 0);
+                                            }
+                                        }
+                                    }
                                 }
                             }
 
@@ -285,15 +304,15 @@ namespace Underworld
 
 
 
-        /// <summary>
-        /// Screenshakes and damage when killorn is crashing
-        /// </summary>
-        public static void KillornKeepEvent()
-        {
-            //ovr135_250
-            Debug.Print("Killorn is crashing!!");
-            special_effects.SpecialEffect(effecttype: 4, effectparam: 0x2C);
-        }
+        // /// <summary>
+        // /// Screenshakes and damage when killorn is crashing
+        // /// </summary>
+        // public static void KillornKeepEvent()
+        // {
+        //     //ovr135_250
+        //     //Debug.Print("Killorn is crashing!!");
+        //     special_effects.SpecialEffect(effecttype: 4, effectparam: 0x2C);
+        // }
 
         /// <summary>
         /// Does a skill check every 20s when in water to see if damage is taken while swimming

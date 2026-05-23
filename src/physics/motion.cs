@@ -402,7 +402,7 @@ namespace Underworld
                 tile.indexObjectList = newObj.index;
                 ObjectCreator.RenderObject(newObj, UWTileMap.current_tilemap);
                 newObj.tileX = tile.tileX; newObj.tileY = tile.tileY;
-                Debug.Print($"returning {newObj.index}");
+                //Debug.Print($"returning {newObj.index}");
                 return newObj;
             }
             else
