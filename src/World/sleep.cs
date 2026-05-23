@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Xml.Serialization;
 
 namespace Underworld
 {
@@ -82,9 +83,11 @@ namespace Underworld
                 uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x10));//you go to sleep           
             }
 
-            FindAndCloseDoors(0);
+            //find and close doors while sleeping
+            scd.FindAndCloseDoors(0);
 
             //TODO Cull objects.
+            Debug.Print("TODO cull objects while sleeping");
 
             var si_hourstosleep = 2 + Rng.r.Next(5);
 
@@ -269,12 +272,6 @@ namespace Underworld
         {
             return false;
         }
-
-        static void FindAndCloseDoors(int arg1)
-        {
-            Debug.Print("Find and close doors. move me to somewhere better once I start implementing SCD.ARK!");
-        }
-
 
         static void SleepOnDamagingSurface()
         {

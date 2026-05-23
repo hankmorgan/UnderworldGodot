@@ -6,10 +6,10 @@ namespace Underworld
     {
         public static void FindAndCloseDoors(byte[] currentblock, int eventOffset)
         {
-            FindAndClose(currentblock[eventOffset+6]);
+            FindAndCloseDoors(currentblock[eventOffset+6]);
         }
 
-        static void FindAndClose(int arg0)
+        public static void FindAndCloseDoors(int arg0)
         {
             door.SkipDoorSound = true;
             int x=0; int y=0;
@@ -39,7 +39,7 @@ namespace Underworld
                                 {//50:50 chance
                                     if (TileInfo.CheckIfOutsideRange(foundX, foundY, arg0, 8))
                                     {
-                                    Debug.Print($"SCD Closing Door at {foundX} {foundY}");
+                                        Debug.Print($"SCD Closing Door at {foundX} {foundY}");
                                         door.CloseDoor(d);
                                     }
                                 }
