@@ -1133,7 +1133,8 @@ namespace Underworld
             //seg031_2CFA_1473: After while loop
 
             if (MotionCalcArray.z4_base == UWMotionParamArray.CollisionZposHeightRelated_dseg_67d6_419)
-            {//seg031_2CFA_166F
+            {
+                //seg031_2CFA_166F
                 if (UWMotionParamArray.ACollisionIndex_dseg_67d6_416 != -1)
                 {
                     //seg031_2CFA_1676:
@@ -1149,7 +1150,8 @@ namespace Underworld
                 }
             }
             else
-            {//seg031_2CFA_1483:
+            {
+                //seg031_2CFA_1483:
                 if (var5 != 0 && UWMotionParamArray.ACollisionIndex_dseg_67d6_416 == -1)
                 {
                     //seg031_2CFA_1493:

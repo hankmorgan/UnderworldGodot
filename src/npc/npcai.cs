@@ -527,35 +527,56 @@ namespace Underworld
                             {
                                 if (critter.AnimationFrame == 1)
                                 {
-                                    soundeffect = 0x5A;//uw2 value?
+                                    if (_RES==GAME_UW2)
+                                    {
+                                        soundeffect = 0x5A;//uw2 value?
+                                    }
+                                    else
+                                    {
+                                        soundeffect = 1;
+                                    }
                                 }
                                 else if (critter.AnimationFrame == 3)
                                 {
-                                    soundeffect = 0x5B;//uw2 value?
+                                    if (_RES==GAME_UW2)
+                                    {
+                                        soundeffect = 0x5B;//uw2 value?    
+                                    }
+                                    else
+                                    {
+                                        soundeffect = 2;
+                                    }                                    
                                 }
                                 break;
                             }
                         case 2://fliers
                             {
-                                soundeffect = 0x17;//uw2 value?
+                                soundeffect = 0x17;//uw1 and uw2 value
                                 break;
                             }
                         case 3://swimmers
                             {
-                                soundeffect = 0x27;//uw2 value?
+                                if (_RES==GAME_UW2)
+                                {
+                                    soundeffect = 0x27;//uw2 value?    
+                                }
+                                else
+                                {
+                                    soundeffect = 5;
+                                }                                
                                 break;
                             }
                         case 4://creepycrawlies
                             {
-                                soundeffect = 0xE;//uw2 value?
+                                soundeffect = 0xE;//uw1 and uw2 value
                                 break;
                             }
                         case 5://
                             {
-                                soundeffect = 0xD;//uw2 value?
+                                soundeffect = 0xD;//uw1 and uw2 value
                                 break;
                             }
-                        case 6://
+                        case 6://uw2 only
                             {
                                 if (critter.AnimationFrame == 1)
                                 {
