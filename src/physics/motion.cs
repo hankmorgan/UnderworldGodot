@@ -264,7 +264,10 @@ namespace Underworld
                         }
 
                         //seg030_2BB7_99F:
-                        projectile = PlacedObjectCollision_seg030_2BB7_10BC(projectile, projectile.tileX, projectile.tileY, 0);
+                        projectile = PlacedObjectCollision_seg030_2BB7_10BC(
+                            projectile: projectile, 
+                            tileX: projectile.tileX, tileY: projectile.tileY, 
+                            arg8: 0);
                         if (projectile == null)
                         {
                             return false;
@@ -365,8 +368,49 @@ namespace Underworld
 
         static uwObject MoveObjectToMobileObjectList_seg030_2BB7_B0C(uwObject toMove)
         {
-            Debug.Print("move from static to mobile");
-            return toMove;
+            //Debug.Print($"move {toMove.a_name} {toMove.index} from static to mobile");
+            var tile = UWTileMap.current_tilemap.Tiles[toMove.tileX, toMove.tileY];
+
+            var next = tile.indexObjectList;
+
+            var slot = ObjectFreeLists.GetAvailableObjectSlot(ObjectFreeLists.ObjectListType.MobileList);
+            if (slot != 0)
+            {
+                var newObj = UWTileMap.current_tilemap.LevelObjects[slot];    
+                for (int i = 0; i<8; i++)
+                {
+                    //copy props
+                    newObj.DataBuffer[newObj.PTR+i] = toMove.DataBuffer[toMove.PTR + i];
+                }
+                ObjectCreator.InitMobileObject(newObj, toMove.tileX, toMove.tileY);
+                newObj.npc_hp = (byte)toMove.quality;
+                if (toMove.majorclass != 5)
+                {
+                    if (commonObjDat.rendertype(toMove.item_id) != 2)
+                    {
+                        newObj.npc_whoami = toMove.heading; //to backup object identification status
+                    }
+                }
+                if (newObj.majorclass == 7)
+                {
+                    Debug.Print("moving an animation overaly. Change it's links");
+                }
+                ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(toMove.tileX, toMove.tileY, toMove.index, true);
+
+                //insert object to tile.
+                newObj.next = tile.indexObjectList;
+                tile.indexObjectList = newObj.index;
+                ObjectCreator.RenderObject(newObj, UWTileMap.current_tilemap);
+                newObj.tileX = tile.tileX; newObj.tileY = tile.tileY;
+                Debug.Print($"returning {newObj.index}");
+                return newObj;
+            }
+            else
+            {
+                Debug.Print("unable to move object to mobile list. Returning object itself on the static list.");
+                return toMove;    
+            }            
+            
         }
 
         static uwObject ObjectHitsFloorTile_seg030_2BB7_DDF(uwObject projectile)

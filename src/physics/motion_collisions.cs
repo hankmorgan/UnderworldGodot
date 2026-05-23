@@ -1449,12 +1449,16 @@ namespace Underworld
             var var3 = 0;
             UWMotionParamArray.dseg_67d6_25C1 = 0;
             UWMotionParamArray.dseg_67d6_25C2 = 0;
-
+            bool first = false;
             //seg030_2BB7_10DB:
             while (true)
-            {
-
-                MotionCalcArray.PtrToMotionCalc = new byte[0x20];
+            {                
+                if (first)
+                {
+                    //I only need to set up the array ptr on the first loop
+                    MotionCalcArray.PtrToMotionCalc = new byte[0x20];    
+                    first = true;
+                }
                 MotionCalcArray.MotionArrayObjectIndexA = projectile.index;
 
                 if (commonObjDat.maybeMagicObjectFlag(projectile.item_id))
@@ -1596,13 +1600,29 @@ namespace Underworld
                                             //seg030_2BB7_1351:
                                             if (var3 != 0)
                                             {
+                                                //seg030_1357
                                                 var2 = 1;
                                                 //loop back to seg030_2BB7_10DB 
                                             }
                                             else
                                             {
+                                                //Seg030_135E
                                                 //make object mobile.
-                                                Debug.Print($"TODO Make {projectile.a_name} mobile");
+                                                projectile = MoveObjectToMobileObjectList_seg030_2BB7_B0C(projectile);
+                                                if (UWMotionParamArray.dseg_67d6_25C1 == 0)
+                                                {
+                                                    if (arg8 != 0)
+                                                    {
+                                                        //Seg030_13CE
+                                                        projectile.UnkBit_0X13_Bit0to6 = (short)(1 + Rng.r.Next(3));
+                                                        projectile.Projectile_Pitch = (short)(0xE + Rng.r.Next(3));
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    projectile.UnkBit_0X13_Bit0to6 = 3;
+                                                    projectile.ProjectileHeading = (ushort)(0xC0 + (Rng.r.Next(9)<<4));
+                                                }
                                                 break;//to seg030_2BB7_140A:
                                             }
                                         }
