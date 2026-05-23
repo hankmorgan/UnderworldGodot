@@ -57,8 +57,9 @@ namespace Underworld
             }
 
             MissileHeading = 1 + (((X1 - uimanager.Window3DHeadingAdjust) * 5) / 13);
-            //note missile pitch is initialised with a value from DSEG_33D6 (camera pitch) TODO add that value in.
-            MissilePitch = (Y1 - uimanager.Window3DPitchAdjust) / 6;
+
+            MissilePitch = PlayerCameraPitch_dseg_67d6_33D6 / 0x300;//initialise from camera pitch
+            MissilePitch += (Y1 - uimanager.Window3DPitchAdjust) / 6;
 
             Debug.Print($"Pitch {MissilePitch} Heading {MissileHeading} at mousepos {X1},{Y1} ({(uimanager.ViewPortMouseXPos / 4)},{(uimanager.ViewPortMouseYPos / 4)})");
             if (Y1 < uimanager.Window3DDropThreshold)
