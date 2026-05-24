@@ -6,7 +6,7 @@
   - [Before you begin.](#before-you-begin)
   - [Current features](#current-features)
   - [Whats missing](#whats-missing)
-  - [Known Issues](#known-issues)
+  - [Some known Issues](#some-known-issues)
   - [Getting Started](#getting-started)
   - [UWsettings.json](#uwsettingsjson)
   - [Controls](#controls)
@@ -67,7 +67,7 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * Compass status message
 * 3D Models
 * Food consumption
-* Spell casting. Most spells implemented with original logic.
+* Spell casting. Almost entirely all known spells implemented with original logic.
 * Usable wands, scrolls and potions.
 * Small window cutscenes (partial)
 * Game variables and quest variables (partial support, not all scenarios may work)
@@ -100,30 +100,35 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * Partial Weight and encumberance mechanics
 * Splash screens and game credits
 * Adding and deleting automap notes
+* Stealth mechanics
+* Death and resurrection mechanics with cutscenes.
 
 ## Whats missing
 * Sprite transparencies (e.g. creature shadows)
 * Those weird ethereal void monsters
 * Getting lost mechanics (UW2)
-* Stealth mechanics
-* Full implementation of death and resurrection with cutscenes.
 * Dragging of items on UI
-* Minor unimplemented physics features. Eg support for static objects that now need to move due to changes in situation.
-* Message scroll edges
+* Message scroll edges and other ui polish
+* Updating of SCD.ARK files once events process.
 * Health and mana flask animation effects.
-and much more!
 
-## Known Issues
-* Some NPC sprites are incorrectly cropped.
-* UW1 NPCs are not as tall as they should be.
-* Co-ordinates precision needs to be more granular.
-* NPCs and mobile objects move at a slow rate of refresh (timing configuration)
-* Player strafing is unreliable
-* Some cutscenes are missing frames or have visual distortions
-* NPCs like to walk on top of furniture
-* Enter/Exit/Pressure triggers currently not working
-* Music stops playing because game cannot detect when a playing music track is finished.
-* Sprite billboarding is always "UP" even when the player camera is being rolled.
+## Some known Issues
+- Some NPC sprites are incorrectly cropped or hover off the ground.
+- NPCs and mobile objects move at a slow rate of refresh (this is timing configuration, but a slower speed allows me to check their behaviours during testing..)
+- Some cutscenes are missing frames or have visual distortions
+- Enter/Exit/Pressure triggers currently not implemented
+- Music stops playing because game cannot detect when a playing music track is finished.
+- Sprite billboarding is always "UP" even when the player camera is being rolled.
+- Cursor pivots are at centre of art for the automap ui elements such as the quill.
+- Stats display is misaligned
+- Interaction mode changes as you use the paperdoll. 
+- player footsteps and swimming sound while in water does not play
+- camera will eventually bob underneath the surface when swimming.
+- some objects will appear to clip underneath slopes (this might be a rendering diff vs vanilla)
+- A damage animos first frame is a blood spatter.
+- spell icons appear above conversation ui
+- runes stones appear above the dragon ui element
+- Some saving bugs. Don't expect a fully reliable save-load system yet.
 
 ## Getting Started
 

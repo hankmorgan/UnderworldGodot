@@ -33,7 +33,7 @@ namespace Underworld
             PlayerMotionHandler = new(_handlerdata: new byte[] { 0x0, 0x0, 0x0, 0x11, 0x0, 0x0, 0x0, 0x0 }, _motionhandlerfunction: PlayerCallBackFunction);
             LandNPCMotionHandler = new(_handlerdata: new byte[] { 0x0, 0x0, 0x30, 0x1F, 0x10, 0x10, 0x20, 0x0 }, _motionhandlerfunction: LandBasedCallBackFunction);
             FlierNPCMotionHandler = new(_handlerdata: new byte[] { 0x0, 0x10, 0x0, 0x7, 0x80, 0x0, 0x0, 0x0 }, _motionhandlerfunction: FlierCallBackFunction);
-            SwimmerNPCMotionHandler = new(_handlerdata: new byte[] { 0x10, 0, 0x28, 0x17, 0x10, 0x10, 0x20, 0 }, _motionhandlerfunction: SwimmerCallBackFunction);
+            SwimmerNPCMotionHandler = new(_handlerdata: new byte[] { 0x10, 0x0, 0x28, 0x17, 0xA8, 0x10, 0x0, 0x0}, _motionhandlerfunction: SwimmerCallBackFunction);
             ObjectMotionHandler = new(new byte[] { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 }, _motionhandlerfunction: ObjectCallBackFunction);
         }
 

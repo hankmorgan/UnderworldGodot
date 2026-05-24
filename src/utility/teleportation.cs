@@ -90,6 +90,9 @@ namespace Underworld
                 {
                     playerdat.playerObject.DataBuffer[playerdat.playerObject.PTR + i] = playerdat.pdat[playerdat.PlayerObjectStoragePTR + i];
                 }
+                
+                //Reset the camera reference as the old reference belonged to a previous map
+                playerdat.CameraReference = playerdat.playerObject;
 
                 if ((TeleportTileX != -1) && (TeleportTileY != -1))
                 {
@@ -245,7 +248,7 @@ namespace Underworld
             motion.PlayerMotionUpdateRequired_dseg_D3 = true;
 
             playerdat.PlacePlayerInTile(newTileX: tileX, newTileY: tileY, previousTileX: -1, previousTileY: -1);
-
+            
 
 
             // playerdat.playerObject.zpos = (short)(tile.floorHeight << 3);

@@ -5,7 +5,6 @@ namespace Underworld
     {
         public static void CastClass0123_Spells(uwObject caster, int majorclass, int minorclass)
         {
-            //TODO add special handling for ironflesh (plot handling for xclock3) and leviation/fly spells (stop falling)
             if ((majorclass == 1) && (((minorclass & 0x3F) == 3) || ((minorclass & 0x3F) == 5)))
             {
                 if (caster.index == 1)

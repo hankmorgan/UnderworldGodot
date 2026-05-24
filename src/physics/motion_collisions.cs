@@ -1197,14 +1197,14 @@ namespace Underworld
                         if (var3)
                         {
                             //seg031_2CFA_1511:
-                            if (UWMotionParamArray.ACollisionIndex_dseg_67d6_416 < 0)
-                            {
+                            // if (UWMotionParamArray.ACollisionIndex_dseg_67d6_416 < 0)
+                            // {
                                 //temp fix. getting a collisionindex of -1  when I bump into the lurker at 14,25 in UW1 level 1.
-                                Debug.Print("Warning collision index of -1.");
-                                var3= false;//?
-                            }
-                            else
-                            {
+                                // Debug.Print("Warning collision index of -1.");
+                                // var3= false;//?
+                           // }
+                           // else
+                           //{
                                 var collision = collisionTable[UWMotionParamArray.ACollisionIndex_dseg_67d6_416]; 
                                 if (Math.Abs(MotionCalcArray.z4_base - collision.height) > MotionParams.unk_24)
                                 {
@@ -1218,7 +1218,7 @@ namespace Underworld
                                 {
                                     si_result |= 0x80;
                                 }
-                            }
+                            //}
                         }
                     }
                 }

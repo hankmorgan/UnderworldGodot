@@ -10,7 +10,10 @@ namespace Underworld
             {
                 if (ToggleLight(obj))
                 {
-                    UWsoundeffects.PlaySoundEffectAtAvatar(UWsoundeffects.SoundEffectLight,0x40,0);
+                    if (_RES == GAME_UW2)
+                    {
+                        UWsoundeffects.PlaySoundEffectAtAvatar(UWsoundeffects.SoundEffectLight,0x40,0);
+                    }                    
                 }
             }
             else
