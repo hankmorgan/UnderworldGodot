@@ -12,9 +12,21 @@ namespace Underworld
         [Export]
         public TextureRect weaponanimuw2;
 
-        static int CurrentWeaponFrame;
-        static int PreviousWeaponAnimation;
-        static double WeaponAnimTimer;
+        public static int CurrentWeaponFrame;
+        public static int CurrentWeaponAnim;
+        //static int PreviousWeaponAnimation;
+        //static double WeaponAnimTimer;
+
+        public enum CombatAnimationStages
+        {
+            PutAway = 0,
+            DrawingWeapon = 1,
+            WeaponReady = 2, //unused
+            ChargingWeapon = 3,
+            StrikingWeapon = 4,
+            ResetingWeapon = 5
+        }
+        public static CombatAnimationStages CombatAnimationStage = CombatAnimationStages.PutAway;
 
         static TextureRect WeaponAnim
         {
@@ -94,11 +106,10 @@ namespace Underworld
         public const int Fist_Stab_Left_Execute = 54;
         public const int Fist_Ready_Left = 55;
 
-        public static int currentWeaponAnim;
+        
 
         public static void InitWeaponAnimation()
         {
-            //instance.weaponanimuw1.Texture = grWeapon.LoadImageAt(6);
             if (UWClass._RES == UWClass.GAME_UW2)
             {
                 WeaponAnimationweaponframesUW2();
@@ -109,38 +120,55 @@ namespace Underworld
             }
         }
 
-        private void _ProcessWeaponAnims(double delta)
+        public static void ClearWeaponAnimation()
         {
-            if (InGame)
+            WeaponAnim.Texture = null;
+        }
+
+        public static void DrawWeaponAnimation(int animation, int frame)
+        {
+            CurrentWeaponAnim = animation;
+            CurrentWeaponFrame = frame;
+            var toDraw = weaponframes[CurrentWeaponAnim, CurrentWeaponFrame];
+            if (toDraw != -1)
             {
-                if (!uimanager.blockmouseinput)
-                {
-                    WeaponAnimTimer += delta;
-                    if (WeaponAnimTimer > 0.2f)
-                    {
-                        if (currentWeaponAnim != PreviousWeaponAnimation)
-                        {
-                            CurrentWeaponFrame = 0;
-                        }
-                        WeaponAnimTimer = 0;
-                        if ((playerdat.play_drawn == 1) && (combat.isWeapon(playerdat.PrimaryHandObject) != 2))
-                        {//weapon is drawn and is a melee weapon or fist                    
-                            var frame = weaponframes[currentWeaponAnim, CurrentWeaponFrame];
-                            if (frame != -1)
-                            {
-                                WeaponAnim.Texture = grWeapon.LoadImageAt(frame);
-                            }
-                            CurrentWeaponFrame = Math.Min(CurrentWeaponFrame + 1, 5);
-                        }
-                        else
-                        {//weapon is put away or is a ranged weapon
-                            WeaponAnim.Texture = null;
-                        }
-                        PreviousWeaponAnimation = currentWeaponAnim;
-                    }
-                }
+                WeaponAnim.Texture = grWeapon.LoadImageAt(toDraw);
             }
         }
+
+        // private void _ProcessWeaponAnims(double delta)
+        // {
+        //     if (InGame)
+        //     {
+        //         if (!uimanager.blockmouseinput)
+        //         {
+        //             WeaponAnimTimer += delta;
+        //             if (WeaponAnimTimer > 0.2f)
+        //             {
+        //                 if (currentWeaponAnim != PreviousWeaponAnimation)
+        //                 {
+        //                     CurrentWeaponFrame = 0;
+        //                 }
+        //                 WeaponAnimTimer = 0;
+        //                 if ((playerdat.play_drawn == 1) && (combat.isWeapon(playerdat.PrimaryHandObject) != 2))
+        //                 {//weapon is drawn and is a melee weapon or fist                    
+        //                     var frame = weaponframes[currentWeaponAnim, CurrentWeaponFrame];
+        //                     if (frame != -1)
+        //                     {
+        //                         WeaponAnim.Texture = grWeapon.LoadImageAt(frame);
+        //                     }
+        //                     CurrentWeaponFrame = Math.Min(CurrentWeaponFrame + 1, 5);
+        //                 }
+        //                 else
+        //                 {//weapon is put away or is a ranged weapon
+        //                     WeaponAnim.Texture = null;
+        //                 }
+        //                 PreviousWeaponAnimation = currentWeaponAnim;
+        //             }
+        //         }
+        //     }
+        // }
+
 
 
 

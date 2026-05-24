@@ -143,7 +143,7 @@ namespace Underworld
 		public override void _Process(double delta)
 		{
 			_ProcessPanels(delta);
-			_ProcessWeaponAnims(delta);
+			//_ProcessWeaponAnims(delta);
 			_ProcessEyeAnims(delta);
 		}
 

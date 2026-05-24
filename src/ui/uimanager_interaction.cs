@@ -247,7 +247,8 @@ namespace Underworld
 
         public static void ToggleWeaponAnimationState(bool drawWeapon, bool updateThemes = true)
         {
-            PreviousWeaponAnimation = -1; //force redraw.
+            //PreviousWeaponAnimation = -1; //force redraw.
+            //combat.stage = combat.CombatStages.OutOfCombat;
             if (drawWeapon)     //(playerdat.play_drawn != 1)
             {
                 playerdat.play_drawn = 1;//draw the weapon 

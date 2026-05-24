@@ -687,7 +687,7 @@ namespace Underworld
         {
             get
             {
-                switch (WeaponSwingTypePlayer) //random for now
+                switch (WeaponSwingTypePlayer) 
                 {
                     case 1:
                         return 2; //bash

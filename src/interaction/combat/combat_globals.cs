@@ -7,11 +7,12 @@ namespace Underworld
         public static int CombatHitTileY;
         public enum CombatStages
         {
+            OutOfCombat = -1,
             Ready = 0,
             Charging = 1,
-            Release = 2,
-            Swinging = 3,
-            Striking = 4,
+            ReleaseSwing = 2,
+            SwingingAtTarget = 3,
+            StrikingTarget = 4,
             Resetting = 5
         }
         public static uwObject currentweapon;  //if null then using fist
@@ -55,7 +56,7 @@ namespace Underworld
             }
         }
 
-        public static CombatStages stage = 0;
+        public static CombatStages stage = CombatStages.OutOfCombat;
         public static double combatanimationtimer = 0.0;
         public static uint PreviousCombatPITTimer = 0;
         public static uint CombatTimerDifference = 0;
