@@ -135,6 +135,7 @@ namespace Underworld
                 {
                     //roaming sight
                     DoCameraZ = 0x458;
+                    DoCameraPitch = -1024;
                 }
             }
             else
