@@ -382,6 +382,15 @@ public partial class main : Node3D
 			motion.PlayerMotionHeading_77E = 0;
 			motion.MotionInputPressed = 0xA;
 		}
+
+		//Addition. put roaming sight input here and override other inputs.
+		if (playerdat.RoamingSightEnchantment)
+		{
+			
+			return;
+		}
+
+
 		if (Input.IsKeyPressed(Key.J))//jump.
 		{
 			if (playerdat.TileState != 1)//ensure we are not swimming
@@ -423,6 +432,8 @@ public partial class main : Node3D
 			}
 		}
 
+
+
 		//Addition. capture look up and down
 		if (Input.IsKeyPressed(Key.Key1))
 		{
@@ -447,8 +458,19 @@ public partial class main : Node3D
 			motion.PlayerCameraPitch_dseg_67d6_33D6 = 0;
 			//Debug.Print($"{motion.PlayerCameraPitch_dseg_67d6_33D6}");
 		}
+	}
 
-
+	static void ProcessRoamingSight(int inputpressed)
+	{
+		if (inputpressed == 0)
+		{
+			//ovr143_B67
+		}
+		else
+		{
+			
+		}
+		
 	}
 
 	static void ProcessMobileObjects(byte AnimationFrameDelta)

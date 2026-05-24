@@ -6,14 +6,14 @@ namespace Underworld
     {
         public static bool CreateDoTrap(Node3D parent, uwObject trapObj, string name)
         {
-            switch (trapObj.quality)
-            {
-                case 2://camera
-                    {
-                        return a_do_trap_camera.CreateDoTrapCamera(parent, trapObj, name);
-                    }
-            }
-            return true;//unimplemented
+            // switch (trapObj.quality)
+            // {
+            //     case 2://camera
+            //         {
+            //             return a_do_trap_camera.CreateDoTrapCamera(parent, trapObj, name);
+            //         }
+            // }
+            return true;
         }
 
         public static bool ActivateHackTrap(uwObject trapObj, uwObject ObjectUsed, int triggerX, int triggerY, uwObject[] objList, int character, ref short triggerNextIndex)

@@ -193,6 +193,14 @@ namespace Underworld
         private static void RoamingSight(int stability)
         {
             //Needs extra logic for UW2 (eg check if in void)
+            if (_RES== GAME_UW2)
+            {
+                if (playerdat.CurrentWorld == 8)
+                {
+                    uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x142));//spell has no noticable effect.
+                    return;
+                }
+            }
             PlayerActiveStatusEffectSpells(0xB, 1, stability);//Note the change in mapping here.
             playerdat.PlayerStatusUpdate();
         }

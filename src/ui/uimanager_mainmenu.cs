@@ -356,6 +356,8 @@ namespace Underworld
                 PreviousInteractionMode = InteractionModes.ModeUse;
             }
             uimanager.UpdateCompass();
+            //set camera to player
+            playerdat.CameraReference = playerdat.playerObject;
 
             uimanager.EnableDisable(uimanager.instance.uwviewport,true); //turn on camera, this might be turned off due to player death
         }
