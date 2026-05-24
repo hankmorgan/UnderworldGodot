@@ -7,6 +7,7 @@ namespace Underworld
         public static int CombatHitTileY;
         public enum CombatStages
         {
+            OutOfCombat = -1,
             Ready = 0,
             Charging = 1,
             Release = 2,
@@ -55,7 +56,7 @@ namespace Underworld
             }
         }
 
-        public static CombatStages stage = 0;
+        public static CombatStages stage = CombatStages.OutOfCombat;
         public static double combatanimationtimer = 0.0;
         public static uint PreviousCombatPITTimer = 0;
         public static uint CombatTimerDifference = 0;
