@@ -10,9 +10,9 @@ namespace Underworld
             OutOfCombat = -1,
             Ready = 0,
             Charging = 1,
-            Release = 2,
-            Swinging = 3,
-            Striking = 4,
+            ReleaseSwing = 2,
+            SwingingAtTarget = 3,
+            StrikingTarget = 4,
             Resetting = 5
         }
         public static uwObject currentweapon;  //if null then using fist

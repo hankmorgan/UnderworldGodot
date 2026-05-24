@@ -21,8 +21,8 @@ namespace Underworld
         {
             PutAway = 0,
             DrawingWeapon = 1,
-            WeaponReady = 2,
-            SwingingWeapon = 3,
+            WeaponReady = 2, //unused
+            ChargingWeapon = 3,
             StrikingWeapon = 4,
             ResetingWeapon = 5
         }

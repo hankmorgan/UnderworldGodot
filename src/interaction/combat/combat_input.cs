@@ -9,6 +9,8 @@ namespace Underworld
     /// </summary>
     public partial class combat : UWClass
     {
+
+        static bool DoAttack = false;
         /// <summary>
         /// Get how fast the charge builds up for the weapon
         /// </summary>
@@ -105,10 +107,12 @@ namespace Underworld
             if (playerdat.play_drawn == 1)
             {
                 stage = CombatStages.Ready;
+                uimanager.DrawWeaponAnimation(WeaponAnimGroup + WeaponAnimHandednessOffset + 6, 0);
             }
             else
             {
                 stage = CombatStages.OutOfCombat;
+                uimanager.ClearWeaponAnimation();
             }
 
             uimanager.ResetPower();
@@ -148,7 +152,8 @@ namespace Underworld
                                 combatanimationtimer += delta;
                                 if (combatanimationtimer > 0.2f)
                                 {
-                                    uimanager.CurrentWeaponFrame++;
+                                    combatanimationtimer = 0f;
+                                    uimanager.CurrentWeaponFrame = Math.Min(uimanager.CurrentWeaponFrame + 1, 5);
                                     uimanager.DrawWeaponAnimation(WeaponAnimGroup + WeaponAnimHandednessOffset + 6, uimanager.CurrentWeaponFrame);
                                 }
                                 if (uimanager.CurrentWeaponFrame == 5)
@@ -157,7 +162,6 @@ namespace Underworld
                                     stage = CombatStages.Ready;
                                 }
                             }
-
                         }
                         else
                         {
@@ -175,9 +179,7 @@ namespace Underworld
                         if (isWeapon(playerdat.PrimaryHandObject) == 2)
                         {
                             //ranged combat targeting (if player has ammo)
-                            //check for ammo
-                            //if no ammo cancel
-                            //uimanager.instance.mousecursor.SetCursorToCursor(9);
+                            //check for ammo, if no ammo cancel
                             var ammoType = rangedObjectDat.RangedWeaponType(playerdat.PrimaryHandObject.item_id);
                             var foundammo = objectsearch.FindMatchInFullObjectList(0, 1, ammoType, playerdat.InventoryObjects);
                             if (foundammo == null)
@@ -188,51 +190,10 @@ namespace Underworld
                         }
                         else
                         {
-                            //Non vanilla behaviour. work out the attack type now based on where the mouse is in the view port.
-                            int X1 = (int)((uimanager.ViewPortMouseXPos / 4) - uimanager.Window3DLeftBorder);//offset from the left side border
-                            int Y1 = (int)((200f - uimanager.ViewPortMouseYPos / 4) - 54f);
-
-                            if (X1 > uimanager.Window3DMaxX)
-                            {
-                                X1 = uimanager.Window3DMaxX;
-                            }
-                            else
-                            {
-                                if (X1 < 0)
-                                {
-                                    X1 = 0;
-                                }
-                            }
-
-                            if (Y1 > uimanager.Window3DMaxY)
-                            {
-                                Y1 = uimanager.Window3DMaxY;
-                            }
-                            else
-                            {
-                                if (Y1 < 0)
-                                {
-                                    Y1 = 0;
-                                }
-                            }
-                            //int segmentY = -1;
-                            if (Y1 <= uimanager.Window3DMaxY / 3)
-                            {
-                                WeaponSwingTypePlayer = 2;
-                            }
-                            else
-                            {
-                                if (Y1 <= 2 * uimanager.Window3DMaxY / 3)
-                                {
-                                    WeaponSwingTypePlayer = 0;
-                                }
-                                else
-                                {
-                                    WeaponSwingTypePlayer = 1;
-                                }
-                            }
+                            GetSwingTypeFromMousePos();
                         }
-                        Debug.Print($"Swing type {WeaponSwingTypePlayer}");
+
+                        //Debug.Print($"Swing type {WeaponSwingTypePlayer}");
 
                         OnHitSpell = 0;
                         JeweledDagger = false;
@@ -243,14 +204,19 @@ namespace Underworld
 
                         Debug.Print("PlacehholderInitialising PlayerWeaponSound to 1");
                         PlayerWeaponSound = 1;
+
+                        //can start swing animation
+                        uimanager.DrawWeaponAnimation(WeaponAnimGroup + WeaponAnimStrikeOffset + WeaponAnimHandednessOffset, 0);
+                        combatanimationtimer = 0f;
+                        uimanager.CombatAnimationStage = uimanager.CombatAnimationStages.ChargingWeapon;
                         stage = CombatStages.Charging;
                     }
                     else
                     {
-                        //return to normal
+                        // //mouse is up, do nothing unless play_draw changes
                         if (playerdat.play_drawn == 1)
                         {
-                            uimanager.CurrentWeaponAnim = WeaponAnimGroup + WeaponAnimHandednessOffset + 6;
+                            //uimanager.CurrentWeaponAnim = WeaponAnimGroup + WeaponAnimHandednessOffset + 6;
                         }
                         else
                         {
@@ -263,13 +229,21 @@ namespace Underworld
                     {
                         if (MouseHeldDown)
                         {
+                            combatanimationtimer += delta;
                             playerdat.PlayerQuietness = 0xA;
                             CombatChargingLoop();
                             switch (isWeapon(playerdat.PrimaryHandObject))
                             {
                                 case 1:
                                     //melee or fist
-                                    uimanager.CurrentWeaponAnim = WeaponAnimGroup + WeaponAnimStrikeOffset + WeaponAnimHandednessOffset;
+                                    if (combatanimationtimer > 0.2f)
+                                    {
+                                        //advance animation frame.
+                                        combatanimationtimer = 0f;
+                                        uimanager.CurrentWeaponFrame = Math.Min(5, uimanager.CurrentWeaponFrame + 1);
+                                        uimanager.DrawWeaponAnimation(WeaponAnimGroup + WeaponAnimStrikeOffset + WeaponAnimHandednessOffset, uimanager.CurrentWeaponFrame);
+                                    }
+                                    //uimanager.CurrentWeaponAnim = WeaponAnimGroup + WeaponAnimStrikeOffset + WeaponAnimHandednessOffset;
                                     break;
                                 case 2://ranged
                                     if (PlayerAttackCharge >= mincharge)
@@ -282,18 +256,17 @@ namespace Underworld
                         }
                         else
                         {
-                            stage = CombatStages.Release;
+                            stage = CombatStages.ReleaseSwing;
                         }
                         break;
                     }
-                case CombatStages.Release:
+                case CombatStages.ReleaseSwing:
                     {
                         combatanimationtimer = 0;
                         if (uimanager.IsMouseInViewPort())
                         {
                             if (PlayerAttackCharge >= mincharge)
-                            {
-                                //start return swing   swing                            
+                            {                                                         
                                 Debug.Print($"Releasing attack at charge {PlayerAttackCharge}");
                                 if (isWeapon(playerdat.PrimaryHandObject) == 2)
                                 {
@@ -317,12 +290,18 @@ namespace Underworld
                                 else
                                 {
                                     //melee
-                                    uimanager.CurrentWeaponAnim = WeaponAnimGroup + WeaponAnimStrikeOffset + WeaponAnimHandednessOffset + 1;
-                                    stage = CombatStages.Swinging;
+                                    //start release
+                                    //start strike animation.
+                                    uimanager.DrawWeaponAnimation(WeaponAnimGroup + WeaponAnimStrikeOffset + WeaponAnimHandednessOffset + 1, 0);
+                                    combatanimationtimer = 0f;
+                                    uimanager.CombatAnimationStage = uimanager.CombatAnimationStages.StrikingWeapon;
+                                    //uimanager.CurrentWeaponAnim = WeaponAnimGroup + WeaponAnimStrikeOffset + WeaponAnimHandednessOffset + 1;
+                                    stage = CombatStages.SwingingAtTarget;
                                 }
                             }
                             else
-                            {//cancel. not enough charge built up
+                            {
+                                //cancel. not enough charge built up
                                 stage = CombatStages.Resetting;
                             }
                         }
@@ -333,53 +312,63 @@ namespace Underworld
                         }
                         break;
                     }
-                case CombatStages.Swinging:
+                case CombatStages.SwingingAtTarget:
                     {
                         //repeat until swing anim sequence is completed. then go to strike
                         combatanimationtimer += delta;
-                        if (combatanimationtimer >= 0.15f)
+                        if (combatanimationtimer >= 0.2f)
                         {
-                            Debug.Print("Swing completed");
-                            stage = CombatStages.Striking;
+                            //advance frame
+                            combatanimationtimer = 0f;
+                            uimanager.CurrentWeaponFrame = Math.Min(5, uimanager.CurrentWeaponFrame + 1);
+                            uimanager.DrawWeaponAnimation(WeaponAnimGroup + WeaponAnimStrikeOffset + WeaponAnimHandednessOffset + 1, uimanager.CurrentWeaponFrame);
+
+                            if (uimanager.CurrentWeaponFrame == 3)
+                            {
+                                Debug.Print("Swing completed. striking target");
+                                stage = CombatStages.StrikingTarget;
+                                DoAttack = true;
+                            }
                         }
                         break;
                     }
-                case CombatStages.Striking:
+                case CombatStages.StrikingTarget:
                     {
-                        //weapon has struck do combat calcs  (if melee) 
-                        uimanager.ResetPower();
-                        playerdat.PlayerQuietness = 0xF;
-                        var ChargeAdjust = maxcharge - mincharge;
-                        ChargeAdjust = (ChargeAdjust * PlayerAttackCharge) / 100;
-                        PlayerAttackCharge = mincharge + ChargeAdjust;
-                        CalculatePlayerAttackScores();
-
-                        ExecuteAttack(playerdat.playerObject);
-                        if (_RES == GAME_UW2)
+                        if (DoAttack)
                         {
-                            if (OnHitSpell > 0)
-                            {
-                                if (AttackWasACrit || OnHitSpell == 6)
-                                {
-                                    CastOnWeaponHitSpells();
-                                }
-                            }
+                            AttackTarget();
+                            DoAttack = false;
                         }
 
-                        //when done start reset
-                        stage = CombatStages.Resetting;
-                        combatanimationtimer = 0;
+                        combatanimationtimer += delta;
+                        if (combatanimationtimer >= 0.2f)
+                        {
+                            //continue strike animation
+                            combatanimationtimer = 0f;
+                            uimanager.CurrentWeaponFrame = Math.Min(5, uimanager.CurrentWeaponFrame + 1);
+                            uimanager.DrawWeaponAnimation(WeaponAnimGroup + WeaponAnimStrikeOffset + WeaponAnimHandednessOffset, uimanager.CurrentWeaponFrame);
+                        }
+                        if (uimanager.CurrentWeaponFrame == 5)
+                        {
+                            //when done start reset
+                            stage = CombatStages.Resetting;
+                            combatanimationtimer = 0;
+                            uimanager.CombatAnimationStage = uimanager.CombatAnimationStages.ResetingWeapon;
+                        }
                         break;
                     }
                 case CombatStages.Resetting:
                     {
                         //do weapon put away anim until time   
-                        combatanimationtimer += delta;
-                        if (combatanimationtimer >= 0.2f)
-                        {
-                            uimanager.CurrentWeaponAnim = WeaponAnimGroup + WeaponAnimHandednessOffset + 6;
-                            EndCombatLoop();//resetting. when done return to ready    
-                        }
+                        //combatanimationtimer += delta;
+                        // if (combatanimationtimer >= 0.2f)
+                        // {
+                        //     combatanimationtimer = 0f;
+                        //     uimanager.CurrentWeaponFrame = Math.Min(5, uimanager.CurrentWeaponFrame + 6);
+                        //     uimanager.DrawWeaponAnimation(WeaponAnimGroup + WeaponAnimStrikeOffset + WeaponAnimHandednessOffset, uimanager.CurrentWeaponFrame);
+                            //uimanager.CurrentWeaponAnim = WeaponAnimGroup + WeaponAnimHandednessOffset + 6;
+                        EndCombatLoop();//resetting. when done return to ready    
+                        //}
                         break;
                     }
             }
@@ -392,6 +381,79 @@ namespace Underworld
             //     }
             // }
         }
+
+        private static void AttackTarget()
+        {
+            //weapon has struck do combat calcs  (if melee)                         
+            uimanager.ResetPower();
+            playerdat.PlayerQuietness = 0xF;
+            var ChargeAdjust = maxcharge - mincharge;
+            ChargeAdjust = (ChargeAdjust * PlayerAttackCharge) / 100;
+            PlayerAttackCharge = mincharge + ChargeAdjust;
+            CalculatePlayerAttackScores();
+
+            ExecuteAttack(playerdat.playerObject);
+            if (_RES == GAME_UW2)
+            {
+                if (OnHitSpell > 0)
+                {
+                    if (AttackWasACrit || OnHitSpell == 6)
+                    {
+                        CastOnWeaponHitSpells();
+                    }
+                }
+            }
+        }
+
+
+        private static void GetSwingTypeFromMousePos()
+        {
+
+            //Non vanilla behaviour. work out the attack type now based on where the mouse is in the view port.
+            int X1 = (int)((uimanager.ViewPortMouseXPos / 4) - uimanager.Window3DLeftBorder);//offset from the left side border
+            int Y1 = (int)((200f - uimanager.ViewPortMouseYPos / 4) - 54f);
+
+            if (X1 > uimanager.Window3DMaxX)
+            {
+                X1 = uimanager.Window3DMaxX;
+            }
+            else
+            {
+                if (X1 < 0)
+                {
+                    X1 = 0;
+                }
+            }
+
+            if (Y1 > uimanager.Window3DMaxY)
+            {
+                Y1 = uimanager.Window3DMaxY;
+            }
+            else
+            {
+                if (Y1 < 0)
+                {
+                    Y1 = 0;
+                }
+            }
+            //int segmentY = -1;
+            if (Y1 <= uimanager.Window3DMaxY / 3)
+            {
+                WeaponSwingTypePlayer = 2;
+            }
+            else
+            {
+                if (Y1 <= 2 * uimanager.Window3DMaxY / 3)
+                {
+                    WeaponSwingTypePlayer = 0;
+                }
+                else
+                {
+                    WeaponSwingTypePlayer = 1;
+                }
+            }
+        }
+
 
         static void MissileRelease(int RangedWeaponSubclass, uwObject foundAmmo)
         {
