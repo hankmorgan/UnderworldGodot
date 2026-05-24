@@ -430,7 +430,7 @@ public partial class main : Node3D
 			if (motion.PlayerCameraPitch_dseg_67d6_33D6 >= -4096)
 			{
 				motion.PlayerCameraPitch_dseg_67d6_33D6 = (short)Math.Max(-4096, motion.PlayerCameraPitch_dseg_67d6_33D6 - 0x400);
-				Debug.Print($"{motion.PlayerCameraPitch_dseg_67d6_33D6}");
+				//Debug.Print($"{motion.PlayerCameraPitch_dseg_67d6_33D6}");
 			}
 		}
 		else if (Input.IsKeyPressed(Key.Key3))

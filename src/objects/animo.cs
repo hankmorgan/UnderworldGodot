@@ -222,7 +222,7 @@ namespace Underworld
         /// <returns></returns>
         public static bool SpawnAnimoAtTarget(uwObject target, int subclassindex, int si_zpos, int tileX, int tileY)
         {
-            var animoObject = SpawnAnimoInTile(subclassindex, 3, 3, 0, tileX, tileY);
+            var animoObject = SpawnAnimoInTile(subclassindex: subclassindex, xpos: 3, ypos: 3, zpos: 0, tileX: tileX, tileY: tileY);
             if (animoObject != null)
             {
                 if (target != null)

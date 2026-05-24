@@ -609,10 +609,10 @@ namespace Underworld
                             //seg024_24E9_C49:
                             if (critterObjectDat.bleed(DefendingCharacter.item_id) != 0)
                             {
-                                animo.SpawnAnimoAtTarget(DefendingCharacter, 0, BodyHitZ[BodyPartHit], CombatHitTileX, CombatHitTileY);
+                                animo.SpawnAnimoAtTarget(target: DefendingCharacter, subclassindex: 0, si_zpos: BodyHitZ[BodyPartHit], tileX: CombatHitTileX, tileY: CombatHitTileY);
                                 if (AttackWasACrit && (attacker == 1))
                                 {
-                                    animo.SpawnAnimoAtTarget(DefendingCharacter, 0, BodyHitZ[BodyPartHit] - 2, CombatHitTileX, CombatHitTileY);
+                                    animo.SpawnAnimoAtTarget(target: DefendingCharacter, subclassindex: 0, si_zpos: BodyHitZ[BodyPartHit] - 2, tileX: CombatHitTileX, tileY: CombatHitTileY);
                                 }
                                 return;
                             }
@@ -634,7 +634,7 @@ namespace Underworld
                                 AttackHitZ_dseg_67d6_24CE = DefendingCharacter.zpos + 2;
                             }
                         }
-                        animo.SpawnAnimoAtTarget(DefendingCharacter, 1, -AttackHitZ_dseg_67d6_24CE, CombatHitTileX, CombatHitTileY);//a flash
+                        animo.SpawnAnimoAtTarget(target: DefendingCharacter, subclassindex: 0xB, si_zpos: -AttackHitZ_dseg_67d6_24CE, tileX: CombatHitTileX, tileY: CombatHitTileY);//a flash
                     }
                     else
                     {
