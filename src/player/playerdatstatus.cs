@@ -232,6 +232,16 @@ namespace Underworld
 
           public static void CancelEffect(int index)
           {
+               var effectclass = GetEffectClass(index);
+               var major = effectclass & 0xF;
+               var minor = effectclass >> 4;
+               if ((major == 11) && (minor == 1))
+               {
+                    //roaming sight special case
+                    SetCameraViewValues(1);
+                    CameraReference = playerObject;
+               }
+
                SetAt16(0x3f + index * 2, 0);//clear data.
                while (index < 2)
                {//if not the third effect ID then shift down remain effect data to occupy the first 2 slots.

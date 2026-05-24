@@ -204,7 +204,7 @@ public partial class main : Node3D
 				AnimationFrameDeltaIncrement = (byte)((GlobalPITTimer >> 6) - (LastPitTimer >> 6));//every 63 pits? This controls how often NPCs and mobile objects move. It could stand to be faster.
 
 				ClockIncrement = 0x19;//ignore original calc since it's too slow. This value is choosen since dosbox debugger shows this value when breaking on motion code often (with some variation)
-				//Setting value too low prevents some motion in certain directions from working.
+									  //Setting value too low prevents some motion in certain directions from working.
 			}
 
 			if (ClockIncrement != 0)
@@ -237,15 +237,15 @@ public partial class main : Node3D
 					AnimationFrameDelta: AnimationFrameDeltaIncrement,
 					EasyMove: false);
 
-				
+
 
 			}
 		}
-		
+
 		if (uimanager.InGame)
 		{
 			combat.CombatInputHandler(delta);//may need to be moved outside this block
-			playerdat.PlayerTimedLoop(delta);				
+			playerdat.PlayerTimedLoop(delta);
 			RefreshWorldState();//handles teleports, tile redraws	
 		}
 
@@ -285,13 +285,6 @@ public partial class main : Node3D
 		motion.RelatedToClockIncrement_67d6_742 += ClockIncrement;
 		motion.CameraIsBobbing_dseg_67d6_33c6 = false;
 
-		if (motion.MotionInputPressed == 0)
-		{
-			if (playerdat.RoamingSightEnchantment == false)
-			{
-				//ProcessMotionInputs for roaming sight.
-			}
-		}
 		if (
 			(motion.MotionInputPressed != 0)
 			||
@@ -308,7 +301,7 @@ public partial class main : Node3D
 			(motion.PlayerMotionUpdateRequired_dseg_D3 != false)
 		)
 		{
-			if (EasyMove == false)
+			if ((EasyMove == false) && (!playerdat.RoamingSightEnchantment))
 			{
 				//when any forced movement or player input is not 0
 				motion.PlayerMotion(ClockIncrement); //todo confirm increments
@@ -386,7 +379,68 @@ public partial class main : Node3D
 		//Addition. put roaming sight input here and override other inputs.
 		if (playerdat.RoamingSightEnchantment)
 		{
-			
+			var si = 0;
+			var di = 0;
+			bool movecamera = false;
+			switch (motion.MotionInputPressed)
+			{
+				case 1://turning/walking
+					{
+
+						switch (motion.PlayerMotionHeading_77E)
+						{
+							case > 0:
+								di = 2;
+								break;
+							case 0:
+								di = 1;
+								break;
+							case < 0:
+								di = 0;
+								break;
+						}
+
+						if (motion.PlayerMotionWalk_77C > 0)
+						{
+							si = 2;
+						}
+						else
+						{
+							si = 1;
+						}
+						movecamera = true;
+					}
+					break;
+				case 8://walk backwards
+					{
+						di = 1; si = 0;
+						movecamera = true;
+						break;
+					}
+				default://cancel input
+					{
+						motion.PlayerMotionWalk_77C = 0;
+						motion.PlayerMotionHeading_77E = 0;
+						motion.MotionInputPressed = 0;
+						break;
+					}
+			}
+
+			//apply changes to camera
+			if (movecamera)
+			{
+				di--;
+				playerdat.DoCameraH += (short)(di << 0xA);
+				if (si != 1)
+				{
+					short x = 0; short y = 0;
+					motion.SomethingProjectileHeading_seg021_22FD_EAE((ushort)playerdat.DoCameraH, ref x, ref y);
+					playerdat.DoCameraX += (short)((x >> 8) * (si - 1));
+					playerdat.DoCameraY += (short)((y >> 8) * (si - 1));
+					playerdat.DoCameraX = (short)Math.Max((short)Math.Min((short)playerdat.DoCameraX, (short)0x3D80), (short)0x180);
+					playerdat.DoCameraY = (short)Math.Max((short)Math.Min((short)playerdat.DoCameraY, (short)0x3D80), (short)0x180);
+				}
+			}
 			return;
 		}
 
@@ -458,19 +512,6 @@ public partial class main : Node3D
 			motion.PlayerCameraPitch_dseg_67d6_33D6 = 0;
 			//Debug.Print($"{motion.PlayerCameraPitch_dseg_67d6_33D6}");
 		}
-	}
-
-	static void ProcessRoamingSight(int inputpressed)
-	{
-		if (inputpressed == 0)
-		{
-			//ovr143_B67
-		}
-		else
-		{
-			
-		}
-		
 	}
 
 	static void ProcessMobileObjects(byte AnimationFrameDelta)

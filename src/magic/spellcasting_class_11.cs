@@ -203,6 +203,8 @@ namespace Underworld
             }
             PlayerActiveStatusEffectSpells(0xB, 1, stability);//Note the change in mapping here.
             playerdat.PlayerStatusUpdate();
+            playerdat.CameraReference = null;//point away from player so that the camera position changes
+            playerdat.SetCameraViewValues(0);
         }
 
 

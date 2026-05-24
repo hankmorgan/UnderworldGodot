@@ -230,7 +230,7 @@ namespace Underworld
             return true;
         }
 
-        static void SomethingProjectileHeading_seg021_22FD_EAE(ushort heading, ref short Result_arg2, ref short Result_arg4)
+        public static void SomethingProjectileHeading_seg021_22FD_EAE(ushort heading, ref short Result_arg2, ref short Result_arg4)
         {
             HeadingLookupCalc(heading, out short ax, out short bx);
             Result_arg2 = ax;
