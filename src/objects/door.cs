@@ -290,7 +290,7 @@ namespace Underworld
         /// <returns>true if the door can be animated</returns>
         public static bool TurnIntoMovingDoor(uwObject doorObj)
         {
-            if (animo.CreateAnimoLink(doorObj, NoOfFrames(doorObj)))
+            if (animo.CreateAnimoLink(obj: doorObj, Duration: NoOfFrames(doorObj),DrawSprite:false))
             {
                 //change object props
                 doorObj.owner = (short)doorObj.classindex;

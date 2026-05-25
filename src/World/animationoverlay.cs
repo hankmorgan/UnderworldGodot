@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Godot;
 
 namespace Underworld
@@ -89,7 +90,7 @@ namespace Underworld
         public int Duration //starts at -1.
         {
             get
-            {
+            {                
                 switch (_RES)
                 {
                     case GAME_UW2: // data is at the end of the tilemap
@@ -167,8 +168,6 @@ namespace Underworld
                 }
             }
         }
-
-
 
         /// <summary>
         /// Process the current animation overlays and advance them
@@ -317,7 +316,7 @@ namespace Underworld
                     }
                     //UWTileMap.current_tilemap.Overlays[NoOfAnimationOverlays-1] = null;
                     NoOfAnimationOverlays--;
-                    return;
+                    //return;//do for all overlays to ensure duplicate entries are removed.
                 }
             }
         }

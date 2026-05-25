@@ -82,7 +82,7 @@ namespace Underworld
 
         public void ApplyAnimoSprite()
         {
-            sprite.Mesh.SurfaceSetMaterial(0, grAnimo.GetMaterial(uwobject.owner));
+            sprite.Mesh.SurfaceSetMaterial(surfIdx: 0, material: grAnimo.GetMaterial(uwobject.owner));
             // if (material == null)
             // {//create the initial material
             //     var newmaterial = new ShaderMaterial();
@@ -163,7 +163,7 @@ namespace Underworld
         /// <param name="obj"></param>
         /// <param name="Duration"></param>
         /// <returns></returns>
-        public static bool CreateAnimoLink(uwObject obj, int Duration)
+        public static bool CreateAnimoLink(uwObject obj, int Duration, bool DrawSprite = true)
         {
             //Add animation overlay entry
             var animoindex = GetFreeAnimoSlot();
@@ -175,6 +175,10 @@ namespace Underworld
                 anim.tileX = obj.tileX;
                 anim.tileY = obj.tileY;
                 anim.Duration = Duration;
+                if (DrawSprite)
+                {
+                    RefreshAnimo((animo)obj.instance);
+                }                
                 return true;
             }
             else
@@ -281,7 +285,7 @@ namespace Underworld
                 if (newObject != null)
                 {
                     var duration = animationObjectDat.endFrame(itemid) - animationObjectDat.startFrame(itemid);
-                    CreateAnimoLink(newObject, duration);
+                    CreateAnimoLink(newObject, duration);              
                 }
                 return newObject;
             }
