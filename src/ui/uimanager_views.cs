@@ -331,21 +331,21 @@ namespace Underworld
         /// <param name="pos"></param>
         /// <param name="tileX"></param>
         /// <param name="tileY"></param>
-        private static void DropToTileAtPosition_OLD(Vector3 pos, int tileX, int tileY)
-        {
-            Debug.Print("To Remove DropToTileAtPosition_OLD()");
-            if (
-                pickup.Drop_old(
-                index: playerdat.ObjectInHand,
-                objList: UWTileMap.current_tilemap.LevelObjects,
-                dropPosition: pos,
-                tileX: tileX, tileY: tileY)
-            )
-            {
-                playerdat.ObjectInHand = -1;
-                instance.mousecursor.SetCursorToCursor();
-            }
-        }
+        // private static void DropToTileAtPosition_OLD(Vector3 pos, int tileX, int tileY)
+        // {
+        //     Debug.Print("To Remove DropToTileAtPosition_OLD()");
+        //     if (
+        //         pickup.Drop_old(
+        //         index: playerdat.ObjectInHand,
+        //         objList: UWTileMap.current_tilemap.LevelObjects,
+        //         dropPosition: pos,
+        //         tileX: tileX, tileY: tileY)
+        //     )
+        //     {
+        //         playerdat.ObjectInHand = -1;
+        //         instance.mousecursor.SetCursorToCursor();
+        //     }
+        // }
 
 
         /// <summary>

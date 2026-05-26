@@ -378,7 +378,7 @@ namespace Underworld
                         //var dropcoordinate = uwObject.XYZToVector3(x: (newxpos << 5) + (playerdat.playerObject.tileX << 8), y: tile.floorHeight << 3, z: (newypos << 5) + (playerdat.playerObject.tileY << 8));//uwObject.GetCoordinate_OBSOLETE(playerdat.playerObject.tileX, playerdat.playerObject.tileY, newxpos, newypos, newzpos);
                         //move object to tile
                         tradedobject.tileX = desttile.tileX; tradedobject.tileY= desttile.tileY;
-                        tradedobject.xpos = 3; tradedobject.ypos = 3; tradedobject.zpos = (short)(desttile.floorHeight<<3);//this needs to account for sloped tiles... There is motion code that does this but not compatible with the data i have here.
+                        tradedobject.xpos = (short)newxpos; tradedobject.ypos = (short)newypos; tradedobject.zpos = (short)newzpos;
                         //link to tile
                         tradedobject.next = desttile.indexObjectList;
                         desttile.indexObjectList = tradedobject.index;
