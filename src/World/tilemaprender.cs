@@ -10,6 +10,10 @@ namespace Underworld
     /// </summary>
     public class tileMapRender : UWClass
     {
+        /// <summary>
+        /// Vector representing how big the godot game world is (64x64 tiles of 1.2f width and a 32 steps of floor up of 0.15f height)
+        /// </summary>
+        public static Vector3 godotscale = new(x: 76.8f, y: 4.8f, z: 76.8f);
 
         public static Node3D worldnode;
         const int TILE_SOLID = 0;

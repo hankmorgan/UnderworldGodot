@@ -120,7 +120,7 @@ namespace Underworld
                 var desttile = UWTileMap.current_tilemap.Tiles[31, 29];
                 var foundwand = playerdat.InventoryObjects[FoundAcademyWand];
                 var newIndex = uimanager.DoPickup(foundwand, ChangeHand: false);
-                var dropcoordinate = uwObject.GetCoordinate_OBSOLETE(desttile.tileX, desttile.tileY, 3, 3, (short)desttile.floorHeight<<3);
+                var dropcoordinate = uwObject.XYZToVector3(x: 96 + (desttile.tileX << 8), y: desttile.floorHeight << 3, z: 96 + (desttile.tileY << 8)); //uwObject.GetCoordinate_OBSOLETE(desttile.tileX, desttile.tileY, 3, 3, (short)desttile.floorHeight<<3);
                 pickup.Drop_old(
                     index: newIndex,
                     objList: UWTileMap.current_tilemap.LevelObjects,
@@ -142,7 +142,7 @@ namespace Underworld
                             wand.next = desttile.indexObjectList;
                             desttile.indexObjectList = wand.index;
                             wand.tileX = desttile.tileX; wand.tileY = desttile.tileY;
-                            wand.xpos = 3; wand.ypos = 0; wand.zpos = (short)((short)desttile.floorHeight<<3);
+                            wand.xpos = 3; wand.ypos = 0; wand.zpos = (short)((short)desttile.floorHeight << 3);
                             objectInstance.Reposition(wand);//moot but do it anyway.
                         }
                     }

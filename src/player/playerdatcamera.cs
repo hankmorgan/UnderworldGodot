@@ -85,7 +85,7 @@ namespace Underworld
             Vector3 underworldVector = new(x: -(float)x / 16384f, y: (float)z / 1024f, z: (float)y / 16384f);
 
             //then transform it into godot positioning using a vector based on the size we are rendering the gameworld in.
-            main.cameraYawGimbal.Position = underworldVector * UWTileMap.godotscale;
+            main.cameraYawGimbal.Position = underworldVector * tileMapRender.godotscale;
 
             if (motion.CameraIsBobbing_dseg_67d6_33c6)
             {

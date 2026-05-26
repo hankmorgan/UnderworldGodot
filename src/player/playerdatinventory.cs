@@ -87,7 +87,7 @@ namespace Underworld
                         Debug.Print("Dropping object that was already in hand before taking new object.");
                         var tile = UWTileMap.current_tilemap.Tiles[playerObject.tileX, playerObject.tileY];
                         UWTileMap.GetRandomXYZForTile(tile, out int newxpos, out int newypos, out int newzpos);
-                        var dropcoordinate = uwObject.GetCoordinate_OBSOLETE(playerObject.tileX, playerObject.tileY, newxpos, newypos, newzpos);
+                        var dropcoordinate = uwObject.XYZToVector3(x: (newxpos << 5) + (playerdat.playerObject.tileX << 8), y: tile.floorHeight << 3, z: (newypos << 5) + (playerdat.playerObject.tileY << 8));// uwObject.GetCoordinate_OBSOLETE(playerObject.tileX, playerObject.tileY, newxpos, newypos, newzpos);
 
                         //already holding something. Drop that item to the ground first so it does not get lost
                         pickup.Drop_old(

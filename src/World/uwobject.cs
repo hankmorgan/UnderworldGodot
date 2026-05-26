@@ -1396,29 +1396,37 @@ namespace Underworld
             if ((IsStatic) || (majorclass == 1))  //static objects and npcs.
             {
                 //(xhome<< 8) + (xpos <<5) note this may need to be offset in the future.
-                var x = (xpos<<5) + (tileX<<8);
-                var y = (ypos<<5) + (tileY<<8);
-                var z = zpos<<3;
+                var x = (xpos << 5) + (tileX << 8);
+                var y = (ypos << 5) + (tileY << 8);
+                var z = zpos << 3;
 
-                //Get a vector for the object that is relative to the bounds of an underworld level map.
-                Vector3 underworldVector = new(x: -(float)x / 16384f, y: (float)z / 1024f, z: (float)y / 16384f);
-           
-                //then transform it into godot positioning using a vector based on the size we are rendering the gameworld in.
-                return underworldVector * UWTileMap.godotscale;
-            } 
+                return XYZToVector3(x, y, z);
+            }
+
             else
             {
                 var x = CoordinateX;
                 var y = CoordinateY;
                 var z = CoordinateZ;
 
-                //Get a vector for the object that is relative to the bounds of an underworld level map.
-                Vector3 underworldVector = new(x: -(float)x / 16384f, y: (float)z / 1024f, z: (float)y / 16384f);
+                return XYZToVector3(x, y, z);
+
+                // //Get a vector for the object that is relative to the bounds of an underworld level map.
+                // Vector3 underworldVector = new(x: -(float)x / 16384f, y: (float)z / 1024f, z: (float)y / 16384f);
            
-                //then transform it into godot positioning using a vector based on the size we are rendering the gameworld in.
-                return underworldVector * UWTileMap.godotscale;
+                // //then transform it into godot positioning using a vector based on the size we are rendering the gameworld in.
+                // return underworldVector * tileMapRender.godotscale;
             }
           
+        }
+
+        public static Vector3 XYZToVector3(int x, int y, int z)
+        {
+            //Get a vector for the object that is relative to the bounds of an underworld level map.
+            Vector3 underworldVector = new(x: -(float)x / 16384f, y: (float)z / 1024f, z: (float)y / 16384f);
+
+            //then transform it into godot positioning using a vector based on the size we are rendering the gameworld in.
+            return underworldVector * tileMapRender.godotscale;
         }
 
         /// <summary>
@@ -1434,7 +1442,7 @@ namespace Underworld
         //     return new Godot.Vector3(-offX, offZ, offY);  
         // }
 
-        
+
         // static float GetXYCoordinate_full(int fullcoordinate, bool CentreInGrid)
         // {           
         //     float adjust = 0f;
@@ -1447,14 +1455,14 @@ namespace Underworld
         //         + ((float)(fullcoordinate & 0xF) * 0.01f);   //this number is unconfirmed. Based on assumption that bits 0-3 of coordinate are a single xypos step in 1/15th increments.      
         // }
 
-        public static Vector3 GetCoordinate_OBSOLETE(int tileX, int tileY, int _xpos, int _ypos, int _zpos, bool CentreInGrid = true)
-        {
-            Debug.Print("|Obsolete Usage of GetCoordinate");
-            float offX = GetXYCoordinate(tileX, _xpos,CentreInGrid);
-            float offY = GetXYCoordinate(tileY, _ypos,CentreInGrid);
-            float offZ = GetZCoordinate(_zpos);
-            return new Godot.Vector3(-offX, offZ, offY);  //x is neg. probably technical debt from a bug in the unity version
-        }
+        // public static Vector3 GetCoordinate_OBSOLETE(int tileX, int tileY, int _xpos, int _ypos, int _zpos, bool CentreInGrid = true)
+        // {
+        //     Debug.Print("|Obsolete Usage of GetCoordinate");
+        //     float offX = GetXYCoordinate(tileX, _xpos,CentreInGrid);
+        //     float offY = GetXYCoordinate(tileY, _ypos,CentreInGrid);
+        //     float offZ = GetZCoordinate(_zpos);
+        //     return new Godot.Vector3(-offX, offZ, offY);  //x is neg. probably technical debt from a bug in the unity version
+        // }
 
 
         /// <summary>
@@ -1472,16 +1480,17 @@ namespace Underworld
         // }
 
 
-        public static float GetXYCoordinate(int tilexy, int xypos, bool CentreInGrid)
-        {
-            //TODO: The coordinates probably need to have more "resolution"
-            float adjust = 0f;
-            if (CentreInGrid)
-            {//adjusts for the object to be in the center of a tile grid segment.
-                adjust = 0.075f;
-            }
-            return adjust + (tilexy * 1.2f)  + (float)(xypos) *  0.15f; //TODO: this 0.15f gives a range of 0-7 steps in x/y pos. More resolution is needed to smooth mobile objects and adjust screenshake?
-        }
+
+        // public static float GetXYCoordinate(int tilexy, int xypos, bool CentreInGrid)
+        // {
+        //     //TODO: The coordinates probably need to have more "resolution"
+        //     float adjust = 0f;
+        //     if (CentreInGrid)
+        //     {//adjusts for the object to be in the center of a tile grid segment.
+        //         adjust = 0.075f;
+        //     }
+        //     return adjust + (tilexy * 1.2f)  + (float)(xypos) *  0.15f; //TODO: this 0.15f gives a range of 0-7 steps in x/y pos. More resolution is needed to smooth mobile objects and adjust screenshake?
+        // }
 
         /// <summary>
         /// Converts an world co-ordinate into a xpos or ypos value. (ignores tileXY)
@@ -1517,11 +1526,11 @@ namespace Underworld
         /// </summary>
         /// <param name="_zpos"></param>
         /// <returns></returns>
-        public static float GetZCoordinate(int _zpos)
-        {
-            float offZ = (_zpos / _ResolutionZ) * _ceil * _BrushZ;
-            return offZ / 100.0f;
-        }
+        // public static float GetZCoordinate(int _zpos)
+        // {
+        //     float offZ = (_zpos / _ResolutionZ) * _ceil * _BrushZ;
+        //     return offZ / 100.0f;
+        // }
 
 
         /// <summary>
