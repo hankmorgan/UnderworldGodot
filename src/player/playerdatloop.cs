@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.Runtime.InteropServices.Marshalling;
 using Godot;
 
 namespace Underworld
@@ -16,6 +15,13 @@ namespace Underworld
 
         //static int PreviousClockValue;
         static int secondcounter = 0;
+
+        static byte FootSteps_77A = 0xFF;
+        static uint FootStepTimer_19E5;
+        static uint WaterSoundPanIndex_dseg_79B=0;
+        static uint dseg_79C=0;//used in footsteps
+
+        static byte[] WaterSoundPanning = new byte[]{0x38, 0x48};
 
         public static int NoOfTilesDiscovered = 0;
         public static void PlayerTimedLoop(double delta)
@@ -153,17 +159,17 @@ namespace Underworld
                                         special_effects.SpecialEffect(effecttype: 4, effectparam: 0x2C);
                                         if (!FreezeTimeEnchantment)
                                         {
-                                            SetQuest(questno: 134, newValue: GetQuest(134)-1);
+                                            SetQuest(questno: 134, newValue: GetQuest(134) - 1);
                                             if (GetQuest(134) - 1 == 0)
                                             {
                                                 killorn.KilornIsCrashing(false);
                                                 //Apply raw damage to player in order to kill them for spending too much time in kilorn before it crashed
                                                 damage.DamageObject(
-                                                    objToDamage: playerObject, 
-                                                    basedamage: 0xFF, 
-                                                    damagetype: 0, 
-                                                    objList: UWTileMap.current_tilemap.LevelObjects, 
-                                                    WorldObject: true, 
+                                                    objToDamage: playerObject,
+                                                    basedamage: 0xFF,
+                                                    damagetype: 0,
+                                                    objList: UWTileMap.current_tilemap.LevelObjects,
+                                                    WorldObject: true,
                                                     damagesource: 0);
                                             }
                                         }
@@ -672,7 +678,7 @@ namespace Underworld
                 {//bit is set
                     switch (i)
                     {
-                        case 1: 
+                        case 1:
                             if (StealthCalculationScoreQuietness <= 0x10)
                             {
                                 StealthCalculationScoreQuietness = 0;
@@ -907,7 +913,51 @@ namespace Underworld
 
             SneakSoundCooldown_79D = (SneakSoundCooldown_79D + 1) % 8;
             playerdat.PlayerVisibility = playerdat.StealthCalculationScoreVisibility;
-           //Debug.Print($"Stealth sound {PlayerQuietness} visibility {PlayerVisibility}");
+            //Debug.Print($"Stealth sound {PlayerQuietness} visibility {PlayerVisibility}");
+        }
+
+        public static void FootSteps()
+        {
+            if ((TileState & 0x1) != 0)
+            {
+                //lava
+                //seg35_74E
+                if (FootSteps_77A != 0xFF)
+                {
+                    if (FootStepTimer_19E5 + 0x1800 <= main.GlobalPITTimer) //the globalpittimer is probably a bit slow leading to gaps in the sound.
+                    {
+                        //do something in seg016_1FFD(FootStepGlobal77A)
+                        FootSteps_77A = 0xFF;
+                    }
+                }
+                //seg35_784
+                if (FootSteps_77A == 0xFF)
+                {
+                    FootStepTimer_19E5 = main.GlobalPITTimer;
+                    Debug.Print("playing Water edge sound");
+                    UWsoundeffects.PlaySoundEffectAtAvatar(
+                        effectno: 0, 
+                        pan: 0x40, 
+                        velocityOffset: 0);//plays the water edge sound
+                    FootSteps_77A = 0;//always appears to be zero/;//unknown value Set from LoadBasicSound or Seg016_1FFD
+                }
+                //seg035_7AE
+                dseg_79C = (dseg_79C+1) % 0xF;
+                if(dseg_79C == 0)
+                {
+                    WaterSoundPanIndex_dseg_79B = (uint)motion.SBB((int)WaterSoundPanIndex_dseg_79B);
+                    if (motion.playerMotionParams.momentum_14 != 0)
+                    {
+                        if (main.GlobalPITTimer>FootStepTimer_19E5)
+                        {
+                            UWsoundeffects.PlaySoundEffectAtAvatar(
+                                effectno: 0x1A, 
+                                pan: WaterSoundPanning[WaterSoundPanIndex_dseg_79B], 
+                                velocityOffset: 0);
+                        }
+                    }
+                }
+            }
         }
 
     }//end class

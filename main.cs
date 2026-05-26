@@ -322,7 +322,7 @@ public partial class main : Node3D
 
 		playerdat.ApplyPlayerSneakScore(EasyMove);
 
-		//Footsteps();
+		playerdat.FootSteps();
 
 		//Position player object now after all possible calcs have been completed
 		playerdat.PositionPlayerCamera();
