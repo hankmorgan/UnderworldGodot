@@ -341,9 +341,4 @@ public partial class MusicStreamPlayer : Node
             _synth.PlayMsg(message);
         }
     }
-					var fullPath = Path.Combine(root, "runtimes", runtime, "native", filename);
-					return File.Exists(fullPath) ? NativeLibrary.Load(fullPath) : IntPtr.Zero;
-				});
-		}
-	}
 }
