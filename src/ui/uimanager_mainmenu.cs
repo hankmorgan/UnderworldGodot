@@ -358,6 +358,8 @@ namespace Underworld
             uimanager.UpdateCompass();
             //set camera to player
             playerdat.CameraReference = playerdat.playerObject;
+            //reset camera pitch which is not serialised
+            motion.PlayerCameraPitch_dseg_67d6_33D6 = 0;
 
             uimanager.EnableDisable(uimanager.instance.uwviewport,true); //turn on camera, this might be turned off due to player death
         }
