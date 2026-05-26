@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Net;
 using Godot;
 
 namespace Underworld
@@ -17,11 +18,14 @@ namespace Underworld
         static int secondcounter = 0;
 
         static byte FootSteps_77A = 0xFF;
-        static uint FootStepTimer_19E5;
-        static uint WaterSoundPanIndex_dseg_79B=0;
-        static uint dseg_79C=0;//used in footsteps
+        static uint FootStepTimerA_19DF;
+        static uint FootStepTimerB_19E5;
+        static uint FootstepSoundIndex_dseg_79B = 0;
+        static uint WaterSoundPanIndex_dseg_79B = 0;
+        static uint dseg_79C = 0;//used in footsteps
 
-        static byte[] WaterSoundPanning = new byte[]{0x38, 0x48};
+        static byte[] FootstepSoundPanning = new byte[] { 0x38, 0x48 };
+        static byte[] FootStepSoundEffectsUW2 = new byte[] { 0x1, 0x2, 0x2F, 0x30, 0x1D, 0x1D };
 
         public static int NoOfTilesDiscovered = 0;
         public static void PlayerTimedLoop(double delta)
@@ -916,7 +920,7 @@ namespace Underworld
             //Debug.Print($"Stealth sound {PlayerQuietness} visibility {PlayerVisibility}");
         }
 
-        public static void FootSteps()
+        public static void FootSteps(bool EasyMove = false)
         {
             if ((TileState & 0x1) != 0)
             {
@@ -924,7 +928,7 @@ namespace Underworld
                 //seg35_74E
                 if (FootSteps_77A != 0xFF)
                 {
-                    if (FootStepTimer_19E5 + 0x1800 <= main.GlobalPITTimer) //the globalpittimer is probably a bit slow leading to gaps in the sound.
+                    if (FootStepTimerB_19E5 + 0x1800 <= main.GlobalPITTimer) //the globalpittimer is probably a bit slow leading to gaps in the sound.
                     {
                         //do something in seg016_1FFD(FootStepGlobal77A)
                         FootSteps_77A = 0xFF;
@@ -933,27 +937,116 @@ namespace Underworld
                 //seg35_784
                 if (FootSteps_77A == 0xFF)
                 {
-                    FootStepTimer_19E5 = main.GlobalPITTimer;
-                    Debug.Print("playing Water edge sound");
+                    FootStepTimerB_19E5 = main.GlobalPITTimer;
+                    Debug.Print("playing Watersound");
                     UWsoundeffects.PlaySoundEffectAtAvatar(
-                        effectno: 0, 
-                        pan: 0x40, 
+                        effectno: 0,
+                        pan: 0x40,
                         velocityOffset: 0);//plays the water edge sound
                     FootSteps_77A = 0;//always appears to be zero/;//unknown value Set from LoadBasicSound or Seg016_1FFD
                 }
-                //seg035_7AE
-                dseg_79C = (dseg_79C+1) % 0xF;
-                if(dseg_79C == 0)
+
+                if (_RES == GAME_UW2)
                 {
-                    WaterSoundPanIndex_dseg_79B = (uint)motion.SBB((int)WaterSoundPanIndex_dseg_79B);
-                    if (motion.playerMotionParams.momentum_14 != 0)
+                    //the following sound is uw2 only. water splashes
+                    //seg035_7AE
+                    dseg_79C = (dseg_79C + 1) % 0xF;
+                    if (dseg_79C == 0)
                     {
-                        if (main.GlobalPITTimer>FootStepTimer_19E5)
+                        WaterSoundPanIndex_dseg_79B = (uint)motion.SBB((int)WaterSoundPanIndex_dseg_79B);
+                        if (motion.playerMotionParams.momentum_14 != 0)
                         {
-                            UWsoundeffects.PlaySoundEffectAtAvatar(
-                                effectno: 0x1A, 
-                                pan: WaterSoundPanning[WaterSoundPanIndex_dseg_79B], 
-                                velocityOffset: 0);
+                            if (main.GlobalPITTimer > FootStepTimerA_19DF)//note change of timer from B to A. This is in the original code..
+                            {
+                                UWsoundeffects.PlaySoundEffectAtAvatar(
+                                    effectno: 0x1A,
+                                    pan: FootstepSoundPanning[WaterSoundPanIndex_dseg_79B],
+                                    velocityOffset: 0);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                //tilestate&1 == 0 (not in water)
+                if (FootSteps_77A != 0xFF)
+                {
+                    //do something with seg016_1FFD
+                    FootSteps_77A = 0xFF;
+                }
+                if ((TileState & 0x8) == 0)
+                {
+                    int OnSnowOrIce = 0;
+                    if (_RES == GAME_UW2)
+                    {
+                        if ((TileState & 0x4) == 0)
+                        {
+                            OnSnowOrIce = 0;
+                        }
+                        else
+                        {
+                            if (motion.ICYFloor_dseg_229E)
+                            {
+                                OnSnowOrIce = 2;
+                            }
+                            else
+                            {
+                                OnSnowOrIce = 1;
+                            }
+                        }
+                    }
+
+                    if ((motion.playerMotionParams.tilestate25 & 0x10) == 0)
+                    {
+                        if (EasyMove == false)
+                        {
+                            if (motion.playerMotionParams.momentum_14 > 0x2F)
+                            {
+                                if (main.GlobalPITTimer > FootStepTimerA_19DF)
+                                {
+                                    //seg035_8F0
+                                    if (_RES == GAME_UW2)
+                                    {
+                                        UWsoundeffects.PlaySoundEffectAtAvatar(
+                                            effectno: FootStepSoundEffectsUW2[FootstepSoundIndex_dseg_79B + (OnSnowOrIce << 1)],
+                                            pan: FootstepSoundPanning[FootstepSoundIndex_dseg_79B],
+                                            velocityOffset: (byte)(0xF + (motion.playerMotionParams.momentum_14 >> 5)));
+                                    }
+                                    else
+                                    {
+                                        //UW1 uses a toggle
+                                        if (FootstepSoundIndex_dseg_79B == 0)
+                                        {
+                                            UWsoundeffects.PlaySoundEffectAtAvatar(
+                                                effectno: 2,
+                                                pan: 0x38,
+                                                velocityOffset: (byte)(0xF + (motion.playerMotionParams.momentum_14 >> 5)));
+                                        }
+                                        else
+                                        {
+                                            UWsoundeffects.PlaySoundEffectAtAvatar(
+                                                effectno: 1,
+                                                pan: 0x48,
+                                                velocityOffset: (byte)(0xF + (motion.playerMotionParams.momentum_14 >> 5)));
+                                        }
+                                    }
+                                    //toggle to other foot
+                                    FootstepSoundIndex_dseg_79B = (uint)motion.SBB((int)FootstepSoundIndex_dseg_79B);
+                                    //set the time for the next footsteps.
+                                    var nextinterval = 0x40 + (0x1770 / (1 + (motion.playerMotionParams.momentum_14 >> 2)));
+                                    if (nextinterval > 0xC8)
+                                    {
+                                        nextinterval = 0xC8;
+                                    }
+                                    FootStepTimerA_19DF = (uint)(main.GlobalPITTimer + nextinterval);
+                                }
+
+                            }
+                        }
+                        else
+                        {
+                            Debug.Print("unimplemented easymove footstep sounds.");
                         }
                     }
                 }
