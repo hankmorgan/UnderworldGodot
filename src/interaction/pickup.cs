@@ -387,7 +387,7 @@ namespace Underworld
 
             if (obj.instance != null)
             {
-                obj.instance.uwnode.Position = obj.GetCoordinate(obj.tileX, obj.tileY);
+                obj.instance.uwnode.Position = obj.GetCoordinate();
             }
             else
             {

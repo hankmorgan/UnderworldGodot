@@ -193,8 +193,18 @@ namespace Underworld
         private static void RoamingSight(int stability)
         {
             //Needs extra logic for UW2 (eg check if in void)
+            if (_RES== GAME_UW2)
+            {
+                if (playerdat.CurrentWorld == 8)
+                {
+                    uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x142));//spell has no noticable effect.
+                    return;
+                }
+            }
             PlayerActiveStatusEffectSpells(0xB, 1, stability);//Note the change in mapping here.
             playerdat.PlayerStatusUpdate();
+            playerdat.CameraReference = null;//point away from player so that the camera position changes
+            playerdat.SetCameraViewValues(0);
         }
 
 
@@ -263,7 +273,6 @@ namespace Underworld
             if (playerdat.ParalyseTimer > 0)
             {
                 playerdat.ParalyseTimer = 0;
-                main.gamecam.Set("MOVE", true);
             }
             playerdat.intoxication = 0;
             playerdat.play_hp = playerdat.max_hp;
@@ -318,7 +327,7 @@ namespace Underworld
                     character: 0,
                     tileX: 32, tileY: 32,
                     newLevel: playerdat.GetMoonstone(0),
-                    heading: 0);
+                    HeadingHeightFlag: 0);
             }
             ;
         }

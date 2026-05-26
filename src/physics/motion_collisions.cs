@@ -13,7 +13,7 @@ namespace Underworld
         /// <summary>
         /// Does/calls applicable collisions
         /// </summary>
-        public static void DoCollision_seg031_2CFA_D1F(UWMotionParamArray MotionParams)
+        public static void DoCollision_seg031_2CFA_D1F(UWMotionParamArray MotionParams, MotionHandler SpecialMotionHandler)
         {
             UWMotionParamArray.dseg_67d6_26A4 = 0;
             var projectile = UWTileMap.current_tilemap.LevelObjects[MotionCalcArray.MotionArrayObjectIndexA_base];
@@ -30,7 +30,7 @@ namespace Underworld
                 var2 = var2 * UWMotionParamArray.dseg_67d6_412;
 
                 var2 = (var2 << 4) / (UWMotionParamArray.Gravity_Related_dseg_67d6_41F / 4);
-                MotionParams.speed_12 -= (byte)var2;
+                MotionParams.speed_12 -= (sbyte)var2;
             }
 
             //seg031_2CFA_D9A:
@@ -50,7 +50,7 @@ namespace Underworld
             {//seg031_2CFA_DDE: 
                 ZeroiseMotionValues_seg031_2CFA_7BF(MotionParams);
                 MotionParams.tilestate25 = 2;
-                if (_RES == GAME_UW2)
+                if (_RES != GAME_UW2)
                 {
                     soundeffect = 5;
                 }
@@ -104,12 +104,12 @@ namespace Underworld
                         //seg031_2CFA_10FB: 
                         if (UWMotionParamArray.ACollisionIndex_dseg_67d6_416 != -1)
                         {
-                            var Dst = UWMotionParamArray.ACollisionIndex_dseg_67d6_416;
-                            MotionCalcArray.Unk14_collisoncount_base--;
+                            var Dst = UWMotionParamArray.ACollisionIndex_dseg_67d6_416;                            
                             for (int i = 0; i < 6; i++)
                             {
                                 CollisionRecord.Collisions_dseg_2520[(Dst * 6) + i] = CollisionRecord.Collisions_dseg_2520[(MotionCalcArray.Unk14_collisoncount_base * 6) + i];
                             }
+                            MotionCalcArray.Unk14_collisoncount_base--;
                         }
                     }
                     else
@@ -125,7 +125,7 @@ namespace Underworld
                             var3 = 1;
                         }
 
-                        var6 = MotionParams.unk_14;
+                        var6 = MotionParams.momentum_14;
 
                         if (
                             (MotionParams.index_20 == 1) && ((playerdat.MagicalMotionAbilities & 0x20) == 0x20)
@@ -146,11 +146,11 @@ namespace Underworld
 
                             if (MotionParams.unk_16_relatedtoPitch == 0)
                             {
-                                MotionParams.unk_14 = 0;
+                                MotionParams.momentum_14 = 0;
                             }
                             else
                             {
-                                MotionParams.unk_14 -= (short)(MotionParams.unk_14 * (0xF - MotionParams.unk_16_relatedtoPitch) / 0x1E);
+                                MotionParams.momentum_14 -= (short)(MotionParams.momentum_14 * (0xF - MotionParams.unk_16_relatedtoPitch) / 0x1E);
                             }
                         }
 
@@ -158,7 +158,7 @@ namespace Underworld
                         if (
                             (MotionParams.index_20 != 1)
                             &&
-                            ((UWMotionParamArray.PtrTo267D2_dseg_67d6_26B8_table0 & 0x1000) == 0x1000)
+                            ((SpecialMotionHandler.table01 & 0x1000) == 0x1000)
                         )
                         {
                             //seg031_2CFA_F7B:
@@ -176,7 +176,7 @@ namespace Underworld
                                 if (MotionParams.unk_a_pitch < 0x8D)
                                 {
                                     MotionParams.unk_a_pitch = 0;
-                                    MotionParams.unk_10_Z = 0;
+                                    MotionParams.gravity_10_Z = 0;
                                     if (UWMotionParamArray.ACollisionIndex_dseg_67d6_416 == -1)
                                     {
                                         //seg031_2CFA_102A
@@ -268,7 +268,7 @@ namespace Underworld
                             (((MotionCalcArray.UnkC_terrain_base & 3) != 3) && ((MotionCalcArray.UnkE_base & 0x40) != 0) && ((MotionCalcArray.UnkE_base & 0x800) == 0x800))
                             )
                         {
-                            MotionParams.unk_14 = (short)var6;
+                            MotionParams.momentum_14 = (short)var6;
                         }
                     }
 
@@ -290,6 +290,7 @@ namespace Underworld
             UWMotionParamArray.ACollisionIndex_dseg_67d6_416 = -1;
             UWMotionParamArray.dseg_67d6_41D = 0x7f;
 
+            //seg031_2CFA_131
             if (MotionParams.unk_a_pitch > 0)
             {
                 //seg031_2CFA_136:
@@ -324,8 +325,8 @@ namespace Underworld
             {
                 //seg031_2CFA_133
                 if (MotionParams.unk_a_pitch == 0)
-                {//seg031_2CFA_1E0
-
+                {
+                    //seg031_2CFA_1E0
                     UWMotionParamArray.CollisionZposHeightRelated_dseg_67d6_419 = MotionCalcArray.Unk10_base;
 
                     //Jump when z4+param[24]<Calc11
@@ -341,24 +342,44 @@ namespace Underworld
                     }
 
                     //seg031_2CFA_20C:
-
-                    //when calc15 == 0
-                    //AND calc16>0
-                    //AND calc16<=calc14
-                    if (
-                        (MotionCalcArray.Unk15_base == 0)
-                        &&
-                        (MotionCalcArray.Unk16_collisionindex_base > 0)
-                        &&
-                        (MotionCalcArray.Unk16_collisionindex_base <= MotionCalcArray.Unk14_collisoncount_base)
-                    )
-                    {
-                        var1 = 1;
-                    }
-                    else
+                    if (MotionCalcArray.Unk15_base != 0)
                     {
                         var1 = 0;
                     }
+                    else
+                    {
+                        if (MotionCalcArray.Unk16_collisionindex_base <= 0)
+                        {
+                            var1 = 0;
+                        }
+                        else
+                        {
+                            if (MotionCalcArray.Unk16_collisionindex_base > MotionCalcArray.Unk14_collisoncount_base)
+                            {
+                                var1 = 0;
+                            }
+                            else
+                            {
+                                var1 = 1;
+                            }
+                        }   
+                    }
+
+
+                    // if (
+                    //     (MotionCalcArray.Unk15_base == 0)
+                    //     &&
+                    //     (MotionCalcArray.Unk16_collisionindex_base > 0)
+                    //     &&
+                    //     (MotionCalcArray.Unk16_collisionindex_base <= MotionCalcArray.Unk14_collisoncount_base)
+                    // )
+                    // {
+                    //     var1 = 1;
+                    // }
+                    // else
+                    // {
+                    //     var1 = 0;
+                    // }
 
                     var CollisionIndex_var_4 = 0;
                     while (MotionCalcArray.Unk14_collisoncount_base > CollisionIndex_var_4)//seg031_2CFA_38A
@@ -381,7 +402,7 @@ namespace Underworld
                                     //seg031_2CFA_2C0:
                                     if (collision_Var4.height > UWMotionParamArray.CollisionZposHeightRelated_dseg_67d6_419)
                                     {
-                                        //collisionrecordheight<(0x80-paramheight)
+                                        //seg031_2cf_2D9
                                         if (collision_Var4.height < (0x80 - MotionParams.height_23))
                                         {
                                             UWMotionParamArray.ACollisionIndex_dseg_67d6_416 = (sbyte)CollisionIndex_var_4;
@@ -423,9 +444,9 @@ namespace Underworld
                                 }
                             }
                         }
-
+                        //Seg031_387
                         CollisionIndex_var_4++;
-                    }
+                    }//end while
 
 
                 }
@@ -580,6 +601,7 @@ namespace Underworld
         /// <param name="isNPCArgA"></param>
         static void CreateCollisonRecord_Seg028_2941_A78(uwObject CollidingObject, long ListHead, int xArg6, int yArg8, bool isNPCArgA)
         {
+            //Debug.Print($"adding collison record {CollidingObject.a_name}");
             if (MotionCalcArray.Unk14_collisoncount <= 8)
             {
                 int XCoordVar1;
@@ -734,42 +756,49 @@ namespace Underworld
                     {
                         var obj = UWTileMap.current_tilemap.LevelObjects[next];
                         if (next != MotionCalcArray.MotionArrayObjectIndexA)
-                        {//maybe check for colliding.
-                            if (
-                                (!isNPC_var14)
-                                ||
-                                (isNPC_var14 && (commonObjDat.UnknownFlag3_2(obj.item_id) == false))
-                            )
+                        {
+                            if (isNPC_var14)
                             {
-                                //seg028_2941_DA1
-                                if (
-                                    (commonObjDat.height(obj.item_id) != 0)
-                                    ||
-                                    (commonObjDat.height(obj.item_id) == 0) && (!obj.IsStatic)
-                                )
+                                if (commonObjDat.UnknownFlag3_2(obj.item_id))
                                 {
-                                    //seg028_2941_DB7:
-                                    if (
-                                        (obj.IsStatic)
-                                        ||
-                                        ((!obj.IsStatic) && (obj.majorclass != 1))
-                                        ||
-                                        ((!obj.IsStatic) && (obj.majorclass == 1) && (obj.UnkBit_0X15_Bit7 == 0))
-                                        )
+                                    goto GetNextObject;
+                                }
+                            }
+
+                            //seg28_DA1
+                            if (commonObjDat.height(obj.item_id) == 0)
+                            {
+                                if (obj.IsStatic)
+                                {
+                                    goto GetNextObject;
+                                }
+                            }
+
+                            //seg28_Db7
+                            if (!obj.IsStatic)
+                            {
+                                if (obj.majorclass != 1)
+                                {
+                                    if (obj.UnkBit_0X15_Bit7 != 0)
                                     {
-                                        if (
-                                            (arg2 == 0)
-                                            ||
-                                            ((arg2 != 0) && commonObjDat.Unk6_0_maybecancollide(obj.item_id))
-                                            )
-                                        {
-                                            CreateCollisonRecord_Seg028_2941_A78(obj, obj.index, var11_maybeX, var12_maybeY, isNPC_var14);
-                                        }
+                                        goto GetNextObject;
                                     }
                                 }
                             }
+
+                            //seg28_DE1
+                            if (arg2 != 0)
+                            {
+                                if (commonObjDat.Unk6_0_maybecancollide(obj.item_id) == false)
+                                {
+                                    goto GetNextObject;
+                                }
+                            }
+
+                            CreateCollisonRecord_Seg028_2941_A78(obj, obj.index, var11_maybeX, var12_maybeY, isNPC_var14);
                         }
-                        //indexByte = obj.index;//seg028_2941_E1E
+
+                    GetNextObject:
                         next = obj.next;
                         si++;
                     }
@@ -803,6 +832,8 @@ namespace Underworld
             uwObject CollidedObject_VarA;
             bool varB;
             int var2_collideditemid;
+            int objectusage24f8_X;
+            int objectusage25c0_Y;
             if (si_CollisionIndex_Arg0 != -1)
             {
                 //seg030_2BB7_1E0:
@@ -844,30 +875,72 @@ namespace Underworld
                 var2_collideditemid = CollidedObject_VarA.item_id;
                 varB = commonObjDat.Unk6_0_maybecancollide(var2_collideditemid);
 
-                if (!CollidedObject_VarA.IsStatic)
+                //Seg030_2bb7_307
+                if (CollidedObject_VarA.index < 256)
                 {
-                    //the object collided with is a mobile
-                    if (!MotionObject.IsStatic)
-                    {//the projectile is mobile
-                        //seg030_2BB7_30C:
-                        if (
-                            (MotionObject.majorclass != 1)
-                            && (MotionObject.UnkBit_0X15_Bit7 != 0)
-                            && (diMotionObject_itemid != 0x1D)
-                            && (diMotionObject_itemid != 0x13F))
+                    //seg030_2bb7_30C
+                    if (MotionObject.index < 256)
+                    {
+                        //seg030_2bb7_313
+                        if (MotionObject.majorclass != 1)
                         {
-                            return 2;
+
+                            if (_RES == GAME_UW2)
+                            {
+                                //seg030_22b7_31D
+                                if (MotionObject.UnkBit_0X15_Bit7 == 0)
+                                {
+                                    //seg030_2bb7_33E
+                                    goto seg030_2bb7_33E;
+                                }
+                                else
+                                {
+                                    if ((MotionObject.item_id == 0x1D) || (MotionObject.item_id == 0x13F))  //firewall or resilient sphere.
+                                    {
+                                        //seg030_2bb7_33E
+                                        goto seg030_2bb7_33E;
+                                    }
+                                    else
+                                    {
+                                        return 2;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                //UW1 does not check for fireball or resilient sphere
+                                if (MotionObject.UnkBit_0X15_Bit7 == 0)
+                                {
+                                    //seg030_2bb7_33E
+                                    goto seg030_2bb7_33E;
+                                }
+                                else
+                                {
+                                    return 2;
+                                }
+                            }
                         }
                         else
                         {
-                            //an npc, or bit is zero, or  a fireball or a npc
-                            //seg030_2BB7_33E:
+                            //seg030_2bb7_33E
+                            goto seg030_2bb7_33E;
+                        }
+
+                    seg030_2bb7_33E:
+                        if (_RES == GAME_UW2)
+                        {
                             if (MotionObject.majorclass != 1)
                             {
-                                //seg030_2BB7_348:
+                                //seg030_2bb7_348
                                 MotionObject.UnkBit_0X15_Bit7 = 1;
                             }
                         }
+                        else
+                        {
+                            //uw1 variation does not check for major class
+                            MotionObject.UnkBit_0X15_Bit7 = 1;
+                        }
+
                     }
                 }
             }
@@ -878,13 +951,15 @@ namespace Underworld
                 if (commonObjDat.ActivatedByCollision(var2_collideditemid))
                 {
                     //seg030_2BB7_374
-                    Debug.Print("Use activated by collision!");
+                    //Debug.Print($"Use activated by collision! {CollidedObject_VarA.a_name} by {MotionObject.a_name}");
+                    objectusage24f8_X = UWMotionParamArray.UnknownX_dseg_67d6_25BD;
+                    objectusage25c0_Y = UWMotionParamArray.UnknownY_dseg_67d6_25BE;
                     UWMotionParamArray.dseg_67d6_25BC = 0;
                     use.Use(
                         ObjectUsed: CollidedObject_VarA,
                         UsingObjectOrCharacter: MotionObject,
                         objList: UWTileMap.current_tilemap.LevelObjects,
-                        WorldObject: true);//this line will probably break a lot until I make use a more vanilla compliant Use() function.
+                        WorldObject: true, UsedFromCollision: true);//this line will probably break a lot until I make use a more vanilla compliant Use() function.
                 }
                 else
                 {
@@ -903,20 +978,24 @@ namespace Underworld
                 return 2;
             }
             else
-            {//seg030_2bb7_d39
+            {//seg030_2bb7_3d9
                 if (commonObjDat.ActivatedByCollision(diMotionObject_itemid))
-                {//seg030_2bb7_3F7
+                {
+                    //seg030_2bb7_3F7
+                    objectusage24f8_X = UWMotionParamArray.dseg_67d6_25BF_X;
+                    objectusage25c0_Y = UWMotionParamArray.dseg_67d6_25C0_Y;
+
                     UWMotionParamArray.dseg_67d6_25BC = 1;
                     use.Use(
-                        ObjectUsed: MotionObject,
-                        UsingObjectOrCharacter: CollidedObject_VarA,
+                        ObjectUsed: CollidedObject_VarA,
+                        UsingObjectOrCharacter: MotionObject,
                         objList: UWTileMap.current_tilemap.LevelObjects,
-                        WorldObject: true);//this line will probably break a lot until I make use a more vanilla compliant Use() function.
-                                           //if (UWTileMap.ValidTile(CollidedObject_VarA.tileX, CollidedObject_VarA.tileY))
+                        WorldObject: true, UsedFromCollision: true);//this line will probably break a lot until I make use a more vanilla compliant Use() function.
+                                                                    //if (UWTileMap.ValidTile(CollidedObject_VarA.tileX, CollidedObject_VarA.tileY))
 
-                    if ((MotionCalcArray.x0_base >> 3) >= 0)  //this needs to be changed to another global
-                    {//Seg031_2bb7_421
-                        Debug.Print("FIXME seg030_2bb7_3F7");
+                    //if ((MotionCalcArray.x0_base >> 3) >= 0)  //this needs to be changed to another global
+                    if (objectusage24f8_X >= 0)  // in original code this is dseg_24f8(object usage X which I don't track.)
+                    {
                         return BounceOtherObject_seg030_2BB7_8(MotionParams, CollidedObject_VarA);
                     }
                     else
@@ -952,7 +1031,7 @@ namespace Underworld
                         di_mass = 0x80;
                     }
                     newMotionParams.heading_1E = MotionParams.heading_1E;
-                    newMotionParams.unk_14 = 0xEB;
+                    newMotionParams.momentum_14 = 0xEB;
                     newMotionParams.unk_a_pitch = (short)((MotionParams.unk_a_pitch * di_mass) / 0x40);
 
                     //vanilla behaviour here is to restore currobj details
@@ -962,9 +1041,9 @@ namespace Underworld
                 }
                 else
                 {
-                    if (newMotionParams.unk_14 != 0)
+                    if (newMotionParams.momentum_14 != 0)
                     {
-                        newMotionParams.unk_14 = 0;
+                        newMotionParams.momentum_14 = 0;
                     }
                 }
             }
@@ -976,10 +1055,10 @@ namespace Underworld
         static void MaybeReflection_seg031_2CFA_CC6(UWMotionParamArray MotionParams)
         {
             MotionParams.unk_a_pitch = 0x8C;
-            MotionParams.unk_10_Z = -4;
-            if (MotionParams.unk_14 <= 0xEB)
+            MotionParams.gravity_10_Z = -4;
+            if (MotionParams.momentum_14 <= 0xEB)
             {
-                MotionParams.unk_14 = 0xEB;
+                MotionParams.momentum_14 = 0xEB;
             }
             MotionParams.tilestate25 = 0x10;
             if ((Rng.r.Next(0x7fff) & 0x3) != 0)
@@ -992,7 +1071,7 @@ namespace Underworld
 
         static void seg031_2CFA_78A(UWMotionParamArray MotionParams, int arg0)
         {
-            MotionParams.speed_12 -= (byte)(UWMotionParamArray.GravityCollisionRelated_dseg_67d6_414 * UWMotionParamArray.dseg_67d6_412);
+            MotionParams.speed_12 -= (sbyte)(UWMotionParamArray.GravityCollisionRelated_dseg_67d6_414 * UWMotionParamArray.dseg_67d6_412);
             if (MotionParams.speed_12 > 0)
             {
                 if (InitialMotionCalc_seg031_2CFA_412(MotionParams, false, arg0))
@@ -1008,11 +1087,11 @@ namespace Underworld
         /// </summary>
         /// <param name="MotionParams"></param>
         /// <returns></returns>
-        static int GetCollisionHeightState_seg031_2CFA_13B2(UWMotionParamArray MotionParams)
+        static int GetCollisionHeightState_seg031_2CFA_13B2(UWMotionParamArray MotionParams, MotionHandler SpecialMotionHandler)
         {//function returns wrong result.
             var var2 = 0;
             var var3 = false;
-            var var4 = SBB(UWMotionParamArray.dseg_67d6_26BC_table4 & 0x80);
+            var var4 = SBB( SpecialMotionHandler.table45 & 0x80);
             var var6 = 0;
             UWMotionParamArray.dseg_67d6_26A5 = 0;
 
@@ -1020,7 +1099,7 @@ namespace Underworld
             ScanForCollisions(0, 0);
             SetCollisionTarget_seg031_2CFA_10E(MotionParams, 0);
             var si_result = MotionCalcArray.UnkC_terrain_base | MotionCalcArray.UnkE_base;
-            var var5 = SBB(si_result & UWMotionParamArray.dseg_67d6_26BC_table4);
+            var var5 = SBB(si_result & SpecialMotionHandler.table45);
 
             if (MotionCalcArray.Unk14_collisoncount_base > 0)
             {
@@ -1054,7 +1133,8 @@ namespace Underworld
             //seg031_2CFA_1473: After while loop
 
             if (MotionCalcArray.z4_base == UWMotionParamArray.CollisionZposHeightRelated_dseg_67d6_419)
-            {//seg031_2CFA_166F
+            {
+                //seg031_2CFA_166F
                 if (UWMotionParamArray.ACollisionIndex_dseg_67d6_416 != -1)
                 {
                     //seg031_2CFA_1676:
@@ -1070,7 +1150,8 @@ namespace Underworld
                 }
             }
             else
-            {//seg031_2CFA_1483:
+            {
+                //seg031_2CFA_1483:
                 if (var5 != 0 && UWMotionParamArray.ACollisionIndex_dseg_67d6_416 == -1)
                 {
                     //seg031_2CFA_1493:
@@ -1116,19 +1197,28 @@ namespace Underworld
                         if (var3)
                         {
                             //seg031_2CFA_1511:
-                            var collision = collisionTable[UWMotionParamArray.ACollisionIndex_dseg_67d6_416];
-                            if (Math.Abs(MotionCalcArray.z4_base - collision.height) > MotionParams.unk_24)
-                            {
-                                var3 = true;
-                            }
-                            else
-                            {
-                                var3 = false;
-                            }
-                            if (var3)
-                            {
-                                si_result |= 0x80;
-                            }
+                            // if (UWMotionParamArray.ACollisionIndex_dseg_67d6_416 < 0)
+                            // {
+                                //temp fix. getting a collisionindex of -1  when I bump into the lurker at 14,25 in UW1 level 1.
+                                // Debug.Print("Warning collision index of -1.");
+                                // var3= false;//?
+                           // }
+                           // else
+                           //{
+                                var collision = collisionTable[UWMotionParamArray.ACollisionIndex_dseg_67d6_416]; 
+                                if (Math.Abs(MotionCalcArray.z4_base - collision.height) > MotionParams.unk_24)
+                                {
+                                    var3 = false;
+                                }
+                                else
+                                {
+                                    var3 = true;
+                                }
+                                if (var3)
+                                {
+                                    si_result |= 0x80;
+                                }
+                            //}
                         }
                     }
                 }
@@ -1299,134 +1389,13 @@ namespace Underworld
                 }
             }
             return si_result;
-        }
-
-
-        static bool NPCMotionCollision_seg006_1413_ABF(uwObject critter, int arg0, UWMotionParamArray motionparams)
-        {
-            if ((arg0 & 0x1000) == 0)
-            {
-                //seg006_1413_AFB:  
-                if ((arg0 & 0x10) != 0)
-                {
-                    if ((arg0 & 0xF8) != 0x10)
-                    {
-                        //seg006_1413_B86:
-                        if (critter.UnkBit_0X15_Bit7 == 0)
-                        {
-                            npc.RelatedToMotionCollision_dseg_67d6_224E = true;
-                            UWMotionParamArray.dseg_67d6_260C = false;
-                            UWMotionParamArray.dseg_67d6_260A = false;
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        //seg006_1413_B0E: 
-                        //likely land based NPC has landed in water.
-                        npc.RelatedToMotionCollision_dseg_67d6_224E = true;
-                        npc.IsNPCActive_dseg_67d6_2234 = false;
-                        var tile = UWTileMap.current_tilemap.Tiles[motionparams.x_0 >> 8, motionparams.y_2 >> 8];
-                        //spawn a splash
-                        animo.SpawnAnimoInTile(subclassindex: 6, xpos: 3, ypos: 3, zpos: (short)(tile.floorHeight << 3), tileX: tile.tileX, tileY: tile.tileY);
-                        critter.npc_animation = npc.ANIMATION_DEATH;
-                        npc.GetCritterAnimationGlobalsForCurrObj(critter);
-                        critter.AnimationFrame = (byte)npc.MaxAnimFrame;
-                        critter.Projectile_Speed = 1;
-                        return true;
-                    }
-                }
-                //seg006_1413_BAC
-                if (
-                    ((arg0 & 0x800) != 0)
-                    &&
-                    ((UWMotionParamArray.LikelyNPCTileStates_222C & 0x800) == 0)
-                )
-                {
-                    //seg006_1413:0BBA
-                    if (critter.UnkBit_0X15_Bit7 == 0)
-                    {
-                        //seg006_1413_BD3
-                        npc.RelatedToMotionCollision_dseg_67d6_224E = true;
-                        UWMotionParamArray.dseg_67d6_260C = false;
-                        UWMotionParamArray.dseg_67d6_260A = false;
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    if (
-                     ((arg0 & 0x20) != 0)
-                     &&
-                      ((UWMotionParamArray.LikelyNPCTileStates_222C & 0x20) == 0)
-                    )
-                    {
-                        if (critter.UnkBit_0X15_Bit7 == 0)
-                        {
-                            npc.RelatedToMotionCollision_dseg_67d6_224E = true;
-                            UWMotionParamArray.dseg_67d6_260C = false;
-                            UWMotionParamArray.dseg_67d6_260A = false;
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        if ((arg0 & 0x300) == 0)
-                        {
-                            if ((arg0 & 0x400) != 0)
-                            {
-                                var DoorCollision = FindClosedDoorCollision(ref UWMotionParamArray.DoorX_222E, ref UWMotionParamArray.DoorY_222F);
-                                if (DoorCollision == null)
-                                {
-                                    npc.RelatedToMotionCollision_dseg_67d6_224E = true;
-                                    npc.dseg_67d6_2269 = true;
-                                    npc.collisionObject = FindCollisionObject();
-                                }
-                                else
-                                {
-                                    npc.collisionObject = DoorCollision;
-                                    npc.RelatedToColliding_dseg_67d6_226F = true;
-                                    npc.RelatedToMotionCollision_dseg_67d6_224E = true;
-                                    npc.dseg_67d6_2269 = true;
-                                }
-                            }
-                            //seg006_1413_C7E
-                            return (npc.IsNPCActive_dseg_67d6_2234 && npc.RelatedToMotionCollision_dseg_67d6_224E);
-                        }
-                        else
-                        {
-                            npc.RelatedToMotionCollision_dseg_67d6_224E = true;
-                            return false;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                if (UWMotionParamArray.dseg_67d6_2614 == 0)
-                {
-                    UWMotionParamArray.dseg_67d6_2614 = -4;
-                }
-                critter.Projectile_Speed = 1;
-                npc.RelatedToMotionCollision_dseg_67d6_224E = true;
-                npc.IsNPCActive_dseg_67d6_2234 = false;
-                return false;
-            }
-        }
+        }        
 
         /// <summary>
         /// Returns the first object in the collision table.
         /// </summary>
         /// <returns></returns>
-        static uwObject FindCollisionObject()
+        public static uwObject FindCollisionObject()
         {
             if (MotionCalcArray.Unk15_base != 0)
             {
@@ -1445,7 +1414,7 @@ namespace Underworld
         /// <param name="DoorX"></param>
         /// <param name="DoorY"></param>
         /// <returns></returns>
-        static uwObject FindClosedDoorCollision(ref int DoorX, ref int DoorY)
+        public static uwObject FindClosedDoorCollision(ref int DoorX, ref int DoorY)
         {
             var si = 0;
             while (MotionCalcArray.Unk15_base > si)
@@ -1482,12 +1451,16 @@ namespace Underworld
             var var3 = 0;
             UWMotionParamArray.dseg_67d6_25C1 = 0;
             UWMotionParamArray.dseg_67d6_25C2 = 0;
-
+            bool first = false;
             //seg030_2BB7_10DB:
             while (true)
-            {
-
-                MotionCalcArray.PtrToMotionCalc = new byte[0x20];
+            {                
+                if (first)
+                {
+                    //I only need to set up the array ptr on the first loop
+                    MotionCalcArray.PtrToMotionCalc = new byte[0x20];    
+                    first = true;
+                }
                 MotionCalcArray.MotionArrayObjectIndexA = projectile.index;
 
                 if (commonObjDat.maybeMagicObjectFlag(projectile.item_id))
@@ -1629,13 +1602,29 @@ namespace Underworld
                                             //seg030_2BB7_1351:
                                             if (var3 != 0)
                                             {
+                                                //seg030_1357
                                                 var2 = 1;
                                                 //loop back to seg030_2BB7_10DB 
                                             }
                                             else
                                             {
+                                                //Seg030_135E
                                                 //make object mobile.
-                                                Debug.Print($"TODO Make {projectile.a_name} mobile");
+                                                projectile = MoveObjectToMobileObjectList_seg030_2BB7_B0C(projectile);
+                                                if (UWMotionParamArray.dseg_67d6_25C1 == 0)
+                                                {
+                                                    if (arg8 != 0)
+                                                    {
+                                                        //Seg030_13CE
+                                                        projectile.UnkBit_0X13_Bit0to6 = (short)(1 + Rng.r.Next(3));
+                                                        projectile.Projectile_Pitch = (short)(0xE + Rng.r.Next(3));
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    projectile.UnkBit_0X13_Bit0to6 = 3;
+                                                    projectile.ProjectileHeading = (ushort)(0xC0 + (Rng.r.Next(9)<<4));
+                                                }
                                                 break;//to seg030_2BB7_140A:
                                             }
                                         }

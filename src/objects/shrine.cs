@@ -126,7 +126,6 @@ namespace Underworld
         /// <returns></returns>
         public static bool Use(uwObject obj)
         {//node.Set("variable_name", value);
-            main.gamecam.Set("MOVE", false);
             MessageDisplay.WaitingForTypedInput = true;
             uimanager.instance.TypedInput.Text = "";
             uimanager.instance.scroll.Clear();
@@ -319,7 +318,7 @@ namespace Underworld
             var targetDungeon = 3;
 
             var cupstring = GameStrings.GetString(1, 35);//the cup of wonder is
-            string direction = GameStrings.GetString(1, 36 + GetDirectionHeadingToCup());
+            string direction = GameStrings.GetString(1, 36 + GameStrings.GetDirectionStringToTile(sourceObject: playerdat.playerObject, targetX: 24, targetY: 45));
             string Level;
             if (playerdat.dungeon_level==targetDungeon)
             {
@@ -331,70 +330,7 @@ namespace Underworld
             }
 
             uimanager.AddToMessageScroll($"{cupstring}{direction} and {Level}");
-        }
-
-        /// <summary>
-        /// Gets the direction string no to the targetx/y from the player
-        /// </summary>
-        /// <param name="targetX"></param>
-        /// <param name="targetY"></param>
-        /// <returns></returns>
-        private static int GetDirectionHeadingToCup(int targetX = 24, int targetY = 45)
-        {
-            var x = targetX - playerdat.playerObject.tileX;
-            var y = targetY - playerdat.playerObject.tileY;
-
-            if (Math.Abs(x)/2 > Math.Abs(y))
-            {
-                if (x<=0)
-                {
-                    return 6;
-                }
-                else
-                {
-                    return 2;
-                }
-            }
-            else
-            {
-                if (Math.Abs(y)/2 <= Math.Abs(x))
-                {
-                    if (x>=0)
-                    {
-                        if (y>=0)
-                        {
-                            return 0;
-                        }
-                        else
-                        {
-                            return 2;
-                        }
-                    }
-                    else
-                    {
-                        if (y<=0)
-                        {
-                            return 5;
-                        }
-                        else
-                        {
-                            return 7;
-                        }
-                    }
-                }
-                else
-                {
-                    if (y<=0)
-                    {
-                        return 4;
-                    }
-                    else
-                    {
-                        return 0;
-                    }
-                }
-            }
-        }
+        }        
 
         /// <summary>
         /// Spawns the key of truth.

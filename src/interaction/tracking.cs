@@ -34,7 +34,7 @@ namespace Underworld
                             if ((Math.Abs(xVector) <= range) && (Math.Abs(yVector) <= range))
                             {
                                 int headingindex = 0;
-                                var skillcheckresult = playerdat.SkillCheck(skillvalue, 0xF - critterObjectDat.maybestealth(critter.item_id));
+                                var skillcheckresult = playerdat.SkillCheck(skillvalue, 0xF - critterObjectDat.StealthQuietness(critter.item_id));
                                 if (skillcheckresult >= playerdat.SkillCheckResult.Success)
                                 {
                                     headingindex = Pathfind.ConvertVectorToHeading(xVector, yVector);
@@ -76,9 +76,10 @@ namespace Underworld
                     {
                         //Detect creature string
                         DetectCreatureString(index_var15, detectioncounter[index_var15]);
-                        if (Candidates[index_var15] == 0)
+                        if (Candidates[index_var15] != 0)
                         {
                             //Do some more strings incl directions
+                            Debug.Print("TODO OVR157_13D6");
                         }
                         maxNoOfDetections_var16 = var17;
                         var17 = index_var15;

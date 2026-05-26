@@ -2,7 +2,8 @@ using Godot;
 using System;
 using System.Diagnostics;
 using Underworld;
-
+using Peaky.Coroutines;
+using System.Collections;
 
 /// <summary>
 /// Node to initialise the game
@@ -14,34 +15,16 @@ public partial class main : Node3D
 	/// <summary>
 	/// Blocks input for certain modes
 	/// </summary>
-	public static bool blockmouseinput
-	{
-		get
-		{
-			return
-			 ConversationVM.InConversation
-			 ||
-			 uimanager.InAutomap
-			 ||
-			 MessageDisplay.WaitingForTypedInput
-			 ||
-			 MessageDisplay.WaitingForMore
-			 ||
-			 MessageDisplay.WaitingForYesOrNo
-			 ||
-			 musicalinstrument.PlayingInstrument
-			 ||
-			 uimanager.InteractionMode == uimanager.InteractionModes.ModeOptions
-			 ;
 
-			; //TODO and other menu modes that will stop input
-		}
-	}
 	public static main instance;
 
 	// Called when the node enters the scene tree for the first time.
 	[Export] public Camera3D cam;
-	public static Camera3D gamecam; //static ref to the above camera
+	[Export] public Node3D GimbalYaw;
+	[Export] public Node3D GimbalRoll;
+	public static Camera3D cameraPitchGimbal; //pitch
+	public static Node3D cameraRollGimbal; // up/down
+	public static Node3D cameraYawGimbal; // yaw
 	[Export] public AudioStreamPlayer DigitalAudioPlayer;
 	[Export] public RichTextLabel lblPositionDebug;
 	//[Export] public uimanager uwUI;
@@ -49,6 +32,7 @@ public partial class main : Node3D
 	[Export] public SubViewport secondarycameras;
 
 	double gameRefreshTimer = 0f;
+	static double testclock = 0;
 
 	double cycletime = 0;
 
@@ -59,8 +43,8 @@ public partial class main : Node3D
 
 	//DOS INT8 (PIT) timer interupt. updates 18.2 times a second.
 	public static double Pit = 0f;
-	public static double GlobalPITTimer = 0f;
-	static uint PitTimer = 0;
+	public static uint GlobalPITTimer = 0;
+	//static uint PitTimer = 0;
 	static uint LastPitTimer = 0;
 	static byte EasyMoveFrameIncrement = 0;
 
@@ -70,7 +54,9 @@ public partial class main : Node3D
 	public override void _Ready()
 	{
 		instance = this;
-		gamecam = cam;
+		cameraPitchGimbal = cam;
+		cameraRollGimbal = GimbalRoll;
+		cameraYawGimbal = GimbalYaw;
 
 		//uimanager.instance = uwUI;	
 		if (uwsettings.instance != null)
@@ -78,26 +64,37 @@ public partial class main : Node3D
 			GetTree().DebugCollisionsHint = uwsettings.instance.showcolliders;
 		}
 
-		// var exe = System.IO.File.ReadAllBytes("C:\\Games\\UW2\\uw2.exe");
-		// int addr_ptr = 0x63FC2;
-		// for (long x = 0; x <= 320; x++)
-		// {
-		// 	Debug.Print($"{x}={(short)Loader.getAt(exe, addr_ptr, 16)}");
-		// 	addr_ptr += 2;
-		// }
+
+		_ = Peaky.Coroutines.Coroutine.Run(PITTIMER(), main.instance);
+
 	}
+
+	/// <summary>
+	/// Experiment Emulation of an old skol PIT Timer
+	/// </summary>
+	/// <returns></returns>
+	static IEnumerator PITTIMER()
+	{
+		while (true)
+		{
+			yield return new WaitForSeconds(0.00391f);  //0.054945f
+			GlobalPITTimer++;
+		}
+		yield return null;
+	}
+
 
 	public static void StartGame()
 	{
-		if (gamecam == null)
+		if (cameraPitchGimbal == null)
 		{
 			if (instance.cam == null)
 			{
 				Debug.Print("Main Cam instance is null. trying to find it's node");
 				instance.cam = (Camera3D)instance.GetNode("/root/Underworld/WorldViewContainer/SubViewport/Camera3D");
 			}
-			gamecam = instance.cam;
-			if (gamecam == null)
+			cameraPitchGimbal = instance.cam;
+			if (cameraPitchGimbal == null)
 			{
 				Debug.Print("Gamecam is still null!");
 			}
@@ -112,21 +109,21 @@ public partial class main : Node3D
 				Debug.Print("UIManager is still null!!");
 			}
 		}
-		gamecam.Fov = Math.Max(50, uwsettings.instance.FOV);
+		cameraPitchGimbal.Fov = Math.Max(50, uwsettings.instance.FOV);
 		uimanager.EnableDisable(instance.lblPositionDebug, EnablePositionDebug);
 		ObjectCreator.grObjects = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
 		ObjectCreator.grObjects.UseRedChannel = true;
 		ObjectCreator.grObjects.UseCropping = true;
 		Palette.CurrentPalette = 0;
 		uimanager.instance.InitUI();
-		uimanager.EnableDisable(uimanager.instance.uw1UI,false);
-		uimanager.EnableDisable(uimanager.instance.uw2UI,false);
-		uimanager.EnableDisable(uimanager.instance.PanelInventory,false);
-		uimanager.EnableDisable(uimanager.instance.ManaFlaskPanel,false);
-		uimanager.EnableDisable(uimanager.instance.HealthFlaskPanel,false);
+		uimanager.EnableDisable(uimanager.instance.uw1UI, false);
+		uimanager.EnableDisable(uimanager.instance.uw2UI, false);
+		uimanager.EnableDisable(uimanager.instance.PanelInventory, false);
+		uimanager.EnableDisable(uimanager.instance.ManaFlaskPanel, false);
+		uimanager.EnableDisable(uimanager.instance.HealthFlaskPanel, false);
 		cutsplayer.PlayCutscene(9, uimanager.ReturnToMainMenu);
 		//Play intro theme after cutscene coroutine is queued, so music and graphics start together
-		XMIMusic.LoadXMI(XMIMusic.IntroTheme);	
+		XMIMusic.LoadXMI(XMIMusic.IntroTheme);
 		uimanager.AddToMessageScroll(GameStrings.GetString(1, 13));//welcome message
 	}
 
@@ -152,14 +149,15 @@ public partial class main : Node3D
 			a_sprite.Mesh.Set("size", NewSize);
 			Node3D worldobjects = instance.GetNode<Node3D>("/root/Underworld/worldobjects");
 			worldobjects.AddChild(a_sprite);
-			a_sprite.Position = gamecam.Position;
+			a_sprite.Position = cameraPitchGimbal.Position;
 		}
 	}
+
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _PhysicsProcess(double delta)
 	{
-		if ((uimanager.InGame) || (uimanager.AtMainMenu))
+		if ((uimanager.InGame) || (uimanager.AtMainMenu) || (uimanager.CurrentGameMode == uimanager.GameModes.CUTSCENE))
 		{
 			cycletime += delta;
 			if (cycletime > 0.2)
@@ -169,15 +167,6 @@ public partial class main : Node3D
 			}
 		}
 
-		//DOS interupt 8
-		Pit += (delta*5);  //seem smoother		
-		GlobalPITTimer += delta;
-		if (Pit >= 0.054945) // DOS PIT Timer interupt 8 is 18.2 times a second
-		{
-			PitTimer +=  (uint)(Pit / 0.054945);//This is probably all wrong. needs revisiting.
-			Pit = 0;
-			//Debug.Print($"{Pit}, {PitTimer}, {delta}");
-		}
 
 		if (musicalinstrument.PlayingNote>0)
 		{
@@ -187,14 +176,31 @@ public partial class main : Node3D
                 musicalinstrument.StopMusicalNote();
             }
         }
+		// //DOS interupt 8
+		// Pit += (delta*5);  //seem smoother		
+		//GlobalPITTimer += delta;
+		// if (Pit >= 0.054945) // DOS PIT Timer interupt 8 is 18.2 times a second
+		// {
+		// 	PitTimer++;   // (uint)(Pit / 0.054945);//This is probably all wrong. needs revisiting.
+		// 	Pit = 0;
+		// }
 
-		if ((uimanager.InGame) && (!blockmouseinput))
+		//DOSBox seesm to indicate there is a 255hz timer that is incrementing GlobalPit. This would tally with the updating i've seen with that global. 
+		// This would indicate that for a typical clock increment of ~ 0x19 (based on breakpoints in dosbox) the game is updating motion about every 0.097659 seconds.
+
+		//Dosbox  PIT:PIT 0 Timer at 255.9927 Hz mode 3 
+
+
+		//UGH
+
+		testclock += delta;
+
+		if ((uimanager.InGame) && (!uimanager.blockmouseinput) && (testclock >= 0.097659))
 		{
-			
-
+			testclock = 0;
 			byte AnimationFrameDeltaIncrement = 0;
 
-			var ClockIncrement = PitTimer - LastPitTimer;
+			var ClockIncrement = GlobalPITTimer - LastPitTimer;
 			if ((ClockIncrement < 0) || (ClockIncrement > 0x40))
 			{
 				ClockIncrement = 0x40;
@@ -204,36 +210,28 @@ public partial class main : Node3D
 			else
 			{
 				//Debug.Print($"{PitTimer - LastPitTimer}");
-				EasyMoveFrameIncrement += (byte)((PitTimer >> 4) - (LastPitTimer >> 4));  //every 16 pits?
-				AnimationFrameDeltaIncrement = (byte)((PitTimer >> 6) - (LastPitTimer >> 6));//every 63 pits?
+				EasyMoveFrameIncrement += (byte)((GlobalPITTimer >> 4) - (LastPitTimer >> 4));  //every 16 pits?
+				AnimationFrameDeltaIncrement = (byte)((GlobalPITTimer >> 6) - (LastPitTimer >> 6));//every 63 pits? This controls how often NPCs and mobile objects move. It could stand to be faster.
 
-
-				//HACK the above appears to be what should be happening in vanilla code but is very slow to process, but the below gives the appearance of normal movement but may cause frame rate issues. 
-				//Issues caused by this hacking.
-				//-Levitation does not work going north ->a higher increment fixes the motionparams.y0 but makes other motion really fast.
-				//-A clock increment of 1 will cause strafing to fail when moving to the east!
-				//This whole section will need to be fixed in the future.				
-				// EasyMoveFrameIncrement = 1;
-				// AnimationFrameDeltaIncrement = 1;
-				//ClockIncrement = 0xF;
-				//ClockIncrement = ClockIncrement * 4;
+				ClockIncrement = 0x19;//ignore original calc since it's too slow. This value is choosen since dosbox debugger shows this value when breaking on motion code often (with some variation)
+									  //Setting value too low prevents some motion in certain directions from working.
 			}
 
 			if (ClockIncrement != 0)
 			{
-				ClockIncrement = Math.Max(ClockIncrement, 2);//TODO: This low value breaks some motion. See above.
+				//ClockIncrement = Math.Max(ClockIncrement, 2);//TODO: This low value breaks some motion. See above.
 				ProcessMotionInputs();
 				if (AnimationFrameDeltaIncrement != 0)
 				{
 					//if animations enabled
-					if ((uimanager.InGame) && (!blockmouseinput))
+					if ((uimanager.InGame) && (!uimanager.blockmouseinput))
 					{
 						AnimationOverlay.UpdateAnimationOverlays();
 						timers.RunTimerTriggers(AnimationFrameDeltaIncrement);
 					}
 				}
 				playerdat.ClockValue += (int)ClockIncrement;
-				LastPitTimer = PitTimer;
+				LastPitTimer = GlobalPITTimer;
 				AnimationFrameDeltaIncrement = EasyMoveFrameIncrement;
 				if (playerdat.SpeedEnchantment)
 				{
@@ -244,250 +242,38 @@ public partial class main : Node3D
 					EasyMoveFrameIncrement = 0;
 				}
 
-				GameObjectLoop((byte)ClockIncrement, AnimationFrameDeltaIncrement, false);
-			}
+				GameObjectLoop(
+					ClockIncrement: (byte)ClockIncrement,
+					AnimationFrameDelta: AnimationFrameDeltaIncrement,
+					EasyMove: false);
 
+
+
+			}
 		}
 
+		if (uimanager.InGame)
+		{
+			combat.CombatInputHandler(delta);//may need to be moved outside this block
+			playerdat.PlayerTimedLoop(delta);
+			RefreshWorldState();//handles teleports, tile redraws	
+		}
 
 		//Other updates
 		if (uimanager.InGame)
 		{
-			RefreshWorldState();//handles teleports, tile redraws			
-			combat.CombatInputHandler(delta);
-			playerdat.PlayerTimedLoop(delta);
 
-			int tileX = -(int)(cam.Position.X / 1.2f);
-			int tileY = (int)(cam.Position.Z / 1.2f);
-			tileX = Math.Max(Math.Min(tileX, 63), 0);
-			tileY = Math.Max(Math.Min(tileY, 63), 0);
-			int xposvecto = -(int)(((cam.Position.X % 1.2f) / 1.2f) * 8);
-			int yposvecto = (int)(((cam.Position.Z % 1.2f) / 1.2f) * 8);
-			int newzpos = (int)(((((cam.Position.Y) * 100) / 32f) / 15f) * 128f) - commonObjDat.height(127);
 			if (EnablePositionDebug)
 			{
+				int tileX = -(int)(cam.Position.X / 1.2f);
+				int tileY = (int)(cam.Position.Z / 1.2f);
+				tileX = Math.Max(Math.Min(tileX, 63), 0);
+				tileY = Math.Max(Math.Min(tileY, 63), 0);
+				int xposvecto = -(int)(((cam.Position.X % 1.2f) / 1.2f) * 8);
+				int yposvecto = (int)(((cam.Position.Z % 1.2f) / 1.2f) * 8);
+				int newzpos = (int)(((((cam.Position.Y) * 100) / 32f) / 15f) * 128f) - commonObjDat.height(127);
 				var fps = Engine.GetFramesPerSecond();
 				lblPositionDebug.Text = $"FPS:{fps} Time:{playerdat.game_time}\nL:{playerdat.dungeon_level} X:{tileX} Y:{tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}\n {motion.playerMotionParams.x_0} {motion.playerMotionParams.y_2} {motion.playerMotionParams.z_4}";
-			}
-
-			if ((MessageDisplay.WaitingForTypedInput) || (MessageDisplay.WaitingForYesOrNo))
-			{
-				if (!uimanager.instance.TypedInput.HasFocus())
-				{
-					uimanager.instance.TypedInput.GrabFocus();
-				}
-				uimanager.instance.scroll.UpdateMessageDisplay();
-			}
-		}
-
-
-
-		return;
-
-		if (uimanager.InGame)
-		{
-			RefreshWorldState();//handles teleports, tile redraws
-
-			int tileX = -(int)(cam.Position.X / 1.2f);
-			int tileY = (int)(cam.Position.Z / 1.2f);
-			tileX = Math.Max(Math.Min(tileX, 63), 0);
-			tileY = Math.Max(Math.Min(tileY, 63), 0);
-			int xposvecto = -(int)(((cam.Position.X % 1.2f) / 1.2f) * 8);
-			int yposvecto = (int)(((cam.Position.Z % 1.2f) / 1.2f) * 8);
-			int newzpos = (int)(((((cam.Position.Y) * 100) / 32f) / 15f) * 128f) - commonObjDat.height(127);
-
-			// newzpos = Math.Max(Math.Min(newzpos, 127), 0);
-			// var tmp = cam.Rotation;
-			// tmp.Y = (float)(tmp.Y - Math.PI);
-			// playerdat.heading_major = (int)Math.Round(-(tmp.Y * 127) / Math.PI);//placeholder track these values for projectile calcs.
-			// playerdat.playerObject.heading = (short)((playerdat.headingMinor >> 0xD) & 0x7);
-			// playerdat.playerObject.npc_heading = (short)((playerdat.headingMinor>>8) & 0x1F);
-			uimanager.UpdateCompass();
-			combat.CombatInputHandler(delta);
-			playerdat.PlayerTimedLoop(delta);
-			if (EnablePositionDebug)
-			{
-				var fps = Engine.GetFramesPerSecond();
-				lblPositionDebug.Text = $"FPS:{fps} Time:{playerdat.game_time}\nL:{playerdat.dungeon_level} X:{tileX} Y:{tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}\n{cam.Rotation} {playerdat.heading_major} {(playerdat.heading_major >> 4) % 4} {xposvecto} {yposvecto} {newzpos}";
-			}
-
-
-			// if (UWTileMap.ValidTile(tileX, tileY))//((tileX < 64) && (tileX >= 0) && (tileY < 64) && (tileY >= 0))
-			// {
-			// 	if ((playerdat.tileX != tileX) || (playerdat.tileY != tileY))
-			// 	{
-
-			// 		var tileExited = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY];
-			// 		if (UWClass._RES == UWClass.GAME_UW2)
-			// 		{
-			// 			//find exit triggers.
-			// 			if (tileExited.indexObjectList != 0)
-			// 			{
-			// 				var next = tileExited.indexObjectList;
-			// 				while (next != 0)
-			// 				{
-			// 					var nextObj = UWTileMap.current_tilemap.LevelObjects[next];
-			// 					trigger.RunTrigger(character: 1,
-			// 							ObjectUsed: nextObj,
-			// 							TriggerObject: nextObj,
-			// 							triggerType: (int)triggerObjectDat.triggertypes.EXIT,
-			// 							objList: UWTileMap.current_tilemap.LevelObjects);
-			// 					next = nextObj.next;
-			// 				}
-			// 			}
-			// 		}
-			// 		//player has changed tiles. move them to their new tile
-			// 		var oldTileX = playerdat.tileX; var oldTileY = playerdat.tileY;
-
-			// 		playerdat.tileX = Math.Min(Math.Max(tileX, 0), 63);
-			// 		playerdat.tileY = Math.Min(Math.Max(tileY, 0), 63);
-			// 		playerdat.PlacePlayerInTile(playerdat.tileX, playerdat.tileY, oldTileX, oldTileY);
-			// 		playerdat.xpos = Math.Min(Math.Max(0, xposvecto), 8);
-			// 		playerdat.ypos = Math.Min(Math.Max(0, yposvecto), 8);
-			// 		playerdat.zpos = newzpos;
-			// 		// if( UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY].tileType != 0)
-			// 		// {//TMP put player Zpos at tile height
-			// 		// 	playerdat.zpos = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY].floorHeight<<3;
-			// 		// }
-
-
-			// 		//tmp update the player object to keep in sync with other values
-			// 		playerdat.playerObject.item_id = 127;
-			// 		playerdat.playerObject.xpos = (short)playerdat.xpos;
-			// 		playerdat.playerObject.ypos = (short)playerdat.ypos;
-			// 		playerdat.playerObject.zpos = (short)playerdat.zpos;
-			// 		playerdat.playerObject.tileX = playerdat.tileX;
-			// 		playerdat.playerObject.npc_xhome = (short)tileX;
-			// 		playerdat.playerObject.tileY = playerdat.tileY;
-			// 		playerdat.playerObject.npc_yhome = (short)tileY;
-			// 		var tileEntered = UWTileMap.current_tilemap.Tiles[playerdat.tileX, playerdat.tileY];
-			// 		playerdat.PlayerStatusUpdate();
-			// 		if (UWClass._RES == UWClass.GAME_UW2)
-			// 		{
-			// 			//find enter triggers.
-			// 			//find exit triggers.
-			// 			if (tileEntered.indexObjectList != 0)
-			// 			{
-			// 				var next = tileEntered.indexObjectList;
-			// 				while (next != 0)
-			// 				{
-			// 					var nextObj = UWTileMap.current_tilemap.LevelObjects[next];
-			// 					trigger.RunTrigger(character: 1,
-			// 							ObjectUsed: nextObj,
-			// 							TriggerObject: nextObj,
-			// 							triggerType: (int)triggerObjectDat.triggertypes.ENTER,
-			// 							objList: UWTileMap.current_tilemap.LevelObjects);
-
-			// 					next = nextObj.next; //risk of infinite loop where while player motion is being reworked
-
-			// 				}
-			// 			}
-			// 			//Debug.Print($"{playerdat.zpos} vs {(tileEntered.floorHeight << 3)}");
-			// 			// If grounded try and find pressure triggers. for the moment ground is just zpos less than floorheight.
-			// 			if (playerdat.zpos <= (tileEntered.floorHeight << 3))//Janky temp implementation. player must be on/below the height before changing tiles.
-			// 			{
-			// 				if (tileEntered.indexObjectList != 0)
-			// 				{
-			// 					var next = tileEntered.indexObjectList;
-			// 					while (next != 0)
-			// 					{
-			// 						var nextObj = UWTileMap.current_tilemap.LevelObjects[next];
-			// 						trigger.RunTrigger(character: 1,
-			// 								ObjectUsed: nextObj,
-			// 								TriggerObject: nextObj,
-			// 								triggerType: (int)triggerObjectDat.triggertypes.PRESSURE,
-			// 								objList: UWTileMap.current_tilemap.LevelObjects);
-			// 						next = nextObj.next;
-			// 					}
-			// 				}
-			// 			}
-			// 		}
-			// 	}
-			// }
-			// if (playerdat.playerObject != null)
-			// {//temp crash fix
-			// 	if (
-			// 		(playerdat.playerObject.tileX != playerdat.tileX)
-			// 		||
-			// 		(playerdat.playerObject.tileY != playerdat.tileY)
-			// 	)
-			// 	{
-			// 		playerdat.playerObject.tileX = playerdat.tileX;
-			// 		playerdat.playerObject.tileY = playerdat.tileY;
-			// 	}
-			// }
-
-			gameRefreshTimer += delta;
-			if (gameRefreshTimer >= 0.1)
-			{
-				gameRefreshTimer = 0;
-				if (!blockmouseinput)
-				{
-					//Player motion.
-					if (
-						(motion.MotionInputPressed != 0)
-						||
-						(motion.playerMotionParams.unk_14 != 0)
-						||
-						(motion.playerMotionParams.unk_a_pitch != 0)
-						||
-						(motion.playerMotionParams.unk_10_Z != 0)
-						||
-						(motion.playerMotionParams.unk_e_Y != 0)
-						||
-						(motion.playerMotionParams.unk_c_X != 0)
-						||
-						(motion.Examine_dseg_D3 != 0)
-					)
-					{
-						//when any forced movement or player input is not 0
-						motion.PlayerMotion(0xF); //todo confirm increments
-					}
-
-
-					for (int i = 0; i < UWTileMap.current_tilemap.NoOfActiveMobiles; i++)
-					{
-						var index = UWTileMap.current_tilemap.GetActiveMobileAtIndex(i);
-						if ((index > 1) && (index < 256))
-						{
-							var obj = UWTileMap.current_tilemap.LevelObjects[index];
-							if (obj.majorclass == 1)
-							{
-								if (UWTileMap.ValidTile(obj.tileX, obj.tileY))
-								{
-									//This is an NPC on the map	
-									var n = (npc)obj.instance;
-
-									npc.NPCInitialProcess(obj);
-									if (n != null)
-									{
-										if (obj.instance != null)
-										{
-											var CalcedFacing = npc.CalculateFacingAngleToNPC(obj);
-											n.SetAnimSprite(obj.npc_animation, obj.AnimationFrame, CalcedFacing);
-										}
-									}
-								}
-								else
-								{
-									Debug.Print($"{obj.a_name} {obj.index} is off map");
-								}
-							}
-							else
-							{
-								if (motion.MotionSingleStepEnabled)
-								{
-									//This is a projectile
-									motion.MotionProcessing(obj);
-								}
-							}
-						}
-					}
-					//motion.MotionSingleStepEnabled = false;
-
-					AnimationOverlay.UpdateAnimationOverlays();
-					timers.RunTimerTriggers(1);
-				}
 			}
 
 			if ((MessageDisplay.WaitingForTypedInput) || (MessageDisplay.WaitingForYesOrNo))
@@ -503,34 +289,28 @@ public partial class main : Node3D
 
     static void GameObjectLoop(byte ClockIncrement, byte AnimationFrameDelta, bool EasyMove)
 	{
+		//playerdat.play_hp = playerdat.max_hp;
 		motion.CameraBobZAdjust_dseg_67d6_33CE = 0;
 		motion.RelatedToClockIncrement_67d6_742 += ClockIncrement;
 		motion.CameraIsBobbing_dseg_67d6_33c6 = false;
 
-		if (motion.MotionInputPressed == 0)
-		{
-			if (playerdat.RoamingSightEnchantment == false)
-			{
-				//ProcessMotionInputs
-			}
-		}
 		if (
 			(motion.MotionInputPressed != 0)
 			||
-			(motion.playerMotionParams.unk_14 != 0)
+			(motion.playerMotionParams.momentum_14 != 0)
 			||
 			(motion.playerMotionParams.unk_a_pitch != 0)
 			||
-			(motion.playerMotionParams.unk_10_Z != 0)
+			(motion.playerMotionParams.gravity_10_Z != 0)
 			||
 			(motion.playerMotionParams.unk_e_Y != 0)
 			||
 			(motion.playerMotionParams.unk_c_X != 0)
 			||
-			(motion.Examine_dseg_D3 != 0)
+			(motion.PlayerMotionUpdateRequired_dseg_D3 != false)
 		)
 		{
-			if (EasyMove == false)
+			if ((EasyMove == false) && (!playerdat.RoamingSightEnchantment))
 			{
 				//when any forced movement or player input is not 0
 				motion.PlayerMotion(ClockIncrement); //todo confirm increments
@@ -548,12 +328,13 @@ public partial class main : Node3D
 		{
 			motion.WalkOnSurfaceType();
 		}
-		//playerdat.ApplyPlayerSneakScore(EasyMove);
 
-		//Footsteps();
+		playerdat.ApplyPlayerSneakScore(EasyMove);
+
+		playerdat.FootSteps();
 
 		//Position player object now after all possible calcs have been completed
-		playerdat.PositionPlayerObject();
+		playerdat.PositionPlayerCamera();
 	}
 
 	static void ProcessMotionInputs()
@@ -603,19 +384,93 @@ public partial class main : Node3D
 			motion.PlayerMotionHeading_77E = 0;
 			motion.MotionInputPressed = 0xA;
 		}
+
+		//Addition. put roaming sight input here and override other inputs.
+		if (playerdat.RoamingSightEnchantment)
+		{
+			var si = 0;
+			var di = 0;
+			bool movecamera = false;
+			switch (motion.MotionInputPressed)
+			{
+				case 1://turning/walking
+					{
+
+						switch (motion.PlayerMotionHeading_77E)
+						{
+							case > 0:
+								di = 2;
+								break;
+							case 0:
+								di = 1;
+								break;
+							case < 0:
+								di = 0;
+								break;
+						}
+
+						if (motion.PlayerMotionWalk_77C > 0)
+						{
+							si = 2;
+						}
+						else
+						{
+							si = 1;
+						}
+						movecamera = true;
+					}
+					break;
+				case 8://walk backwards
+					{
+						di = 1; si = 0;
+						movecamera = true;
+						break;
+					}
+				default://cancel input
+					{
+						motion.PlayerMotionWalk_77C = 0;
+						motion.PlayerMotionHeading_77E = 0;
+						motion.MotionInputPressed = 0;
+						break;
+					}
+			}
+
+			//apply changes to camera
+			if (movecamera)
+			{
+				di--;
+				playerdat.DoCameraH += (short)(di << 0xA);
+				if (si != 1)
+				{
+					short x = 0; short y = 0;
+					motion.SomethingProjectileHeading_seg021_22FD_EAE((ushort)playerdat.DoCameraH, ref x, ref y);
+					playerdat.DoCameraX += (short)((x >> 8) * (si - 1));
+					playerdat.DoCameraY += (short)((y >> 8) * (si - 1));
+					playerdat.DoCameraX = (short)Math.Max((short)Math.Min((short)playerdat.DoCameraX, (short)0x3D80), (short)0x180);
+					playerdat.DoCameraY = (short)Math.Max((short)Math.Min((short)playerdat.DoCameraY, (short)0x3D80), (short)0x180);
+				}
+			}
+			return;
+		}
+
+
 		if (Input.IsKeyPressed(Key.J))//jump.
 		{
-			if (Input.IsKeyPressed(Key.Shift))
+			if (playerdat.TileState != 1)//ensure we are not swimming
 			{
-				//long jump
-				motion.MotionInputPressed = 6;
+				if (Input.IsKeyPressed(Key.Shift))
+				{
+					//long jump
+					motion.MotionInputPressed = 6;
+				}
+				else
+				{
+					//jump
+					//todo: Do a test that the player is grounded.
+					motion.MotionInputPressed = 7;
+				}
 			}
-			else
-			{
-				//jump
-				//todo: Do a test that the player is grounded.
-				motion.MotionInputPressed = 7;
-			}
+
 		}
 		if (Input.IsKeyPressed(Key.R))//fly up
 		{
@@ -639,6 +494,33 @@ public partial class main : Node3D
 				motion.MotionInputPressed = 0;
 			}
 		}
+
+
+
+		//Addition. capture look up and down
+		if (Input.IsKeyPressed(Key.Key1))
+		{
+			//lookdown
+			if (motion.PlayerCameraPitch_dseg_67d6_33D6 >= -4096)
+			{
+				motion.PlayerCameraPitch_dseg_67d6_33D6 = (short)Math.Max(-4096, motion.PlayerCameraPitch_dseg_67d6_33D6 - 0x400);
+				//Debug.Print($"{motion.PlayerCameraPitch_dseg_67d6_33D6}");
+			}
+		}
+		else if (Input.IsKeyPressed(Key.Key3))
+		{
+			//lookup
+			if (motion.PlayerCameraPitch_dseg_67d6_33D6 <= 4096)
+			{
+				motion.PlayerCameraPitch_dseg_67d6_33D6 = (short)Math.Min(4096, motion.PlayerCameraPitch_dseg_67d6_33D6 + 0x400);
+				//Debug.Print($"{motion.PlayerCameraPitch_dseg_67d6_33D6}");
+			}
+		}
+		else if (Input.IsKeyPressed(Key.Key2))
+		{
+			motion.PlayerCameraPitch_dseg_67d6_33D6 = 0;
+			//Debug.Print($"{motion.PlayerCameraPitch_dseg_67d6_33D6}");
+		}
 	}
 
 	static void ProcessMobileObjects(byte AnimationFrameDelta)
@@ -661,21 +543,16 @@ public partial class main : Node3D
 							//This is an NPC on the map	
 							var n = (npc)obj.instance;
 							bool result;
-							// if ((obj.item_id==124) && (UWClass._RES == UWClass.GAME_UW1) )
-							// {
-							// 	result = false;//currently the slasher is bugging out.
-							// }
-							// else
-							// {
-								result = npc.NPCInitialProcess(obj);
-							//}
-	
+
+							result = npc.NPCInitialProcess(critter: obj);
+
+
 							if (n != null)
 							{
 								if (obj.instance != null)
 								{
 									var CalcedFacing = npc.CalculateFacingAngleToNPC(obj);
-									n.SetAnimSprite(obj.npc_animation, obj.AnimationFrame, CalcedFacing);
+									n.SetAnimSprite(animationNo: obj.npc_animation, frameNo: obj.AnimationFrame, relativeHeading: CalcedFacing);
 								}
 							}
 							if (result == false)
@@ -690,19 +567,16 @@ public partial class main : Node3D
 					}
 					else
 					{
-						//if (motion.MotionSingleStepEnabled)
-						//{
 						//This is a projectile
-						if (motion.MotionProcessing(obj) == false)
+						if (motion.MotionProcessing(projectile: obj, SpecialMotionHandler: MotionHandler.ObjectMotionHandler) == false)
 						{
 							break;
 						}
-						//}
 					}
 					if (initialnextframe == obj.NextFrame_0XA_Bit0123)
 					{
 						obj.NextFrame_0XA_Bit0123 += 4; //hack. this will prevent an infinite loop occurring.
-						//Debug.Print($"{obj.a_name} {obj.index} has bugged out in ProcessMobileObjects(), probably needs to be made static.");
+														//Debug.Print($"{obj.a_name} {obj.index} has bugged out in ProcessMobileObjects(), probably needs to be made static.");
 					}
 
 				}
@@ -760,7 +634,7 @@ public partial class main : Node3D
 					MessageDisplay.WaitingForMore = false;
 					return; //don't process any more clicks here.
 				}
-				if (!blockmouseinput)
+				if (!uimanager.blockmouseinput)
 				{
 					if (uimanager.IsMouseInViewPort())
 					{
@@ -772,7 +646,7 @@ public partial class main : Node3D
 		}
 
 
-		if ((!blockmouseinput) && (uimanager.InGame))
+		if ((!uimanager.blockmouseinput) && (uimanager.InGame))
 		{
 			if (@event is InputEventKey keyinput)
 			{
@@ -855,18 +729,18 @@ public partial class main : Node3D
 						// 		}
 						// 		break;
 						// 	}
-						case Key.T:
-							var mouselook = (bool)gamecam.Get("MOUSELOOK");
-							if (mouselook)
-							{//toggle to free curso
-								Input.MouseMode = Input.MouseModeEnum.Hidden;
-							}
-							else
-							{//toogle to mouselook
-								Input.MouseMode = Input.MouseModeEnum.Captured;
-							}
-							gamecam.Set("MOUSELOOK", !mouselook);
-							break;
+						//case Key.T:
+						// var mouselook = (bool)cameraPitchGimbal.Get("MOUSELOOK");
+						// if (mouselook)
+						// {//toggle to free curso
+						// 	Input.MouseMode = Input.MouseModeEnum.Hidden;
+						// }
+						// else
+						// {//toogle to mouselook
+						// 	Input.MouseMode = Input.MouseModeEnum.Captured;
+						// }
+						// cameraPitchGimbal.Set("MOUSELOOK", !mouselook);
+						//break;
 						// case Key.R: //fly up (not vanilla)
 						// 	if ((playerdat.MagicalMotionAbilities & 0x14) != 0)
 						// 	{
@@ -1041,10 +915,6 @@ public partial class main : Node3D
 					{//end typed input
 						uimanager.instance.scroll.Clear();
 						MessageDisplay.WaitingForTypedInput = false;
-						if (ConversationVM.InConversation == false)
-						{
-							gamecam.Set("MOVE", true);//re-enable movement
-						}
 					}
 				}
 			}
@@ -1102,6 +972,48 @@ public partial class main : Node3D
 			}
 		}
 
+		if (uimanager.CurrentAutomapAction == uimanager.automapactions.WRITING)
+		{
+			if (@event is InputEventKey keyinput)
+			{
+				if (keyinput.Pressed)
+				{
+					switch (keyinput.Keycode)
+					{
+						case Key.Enter:
+							uimanager.StopWritingAutomapNote(false);
+							break;
+						case Key.Escape:
+							uimanager.StopWritingAutomapNote(true);
+							break;
+						case Key.Backspace:
+							{
+								var text = uimanager.currentmapnote.notetext;
+								if (text.Length > 0)
+								{
+									text = text.Remove(text.Length - 1);
+									uimanager.currentmapnote.notetext = text;
+									uimanager.currentmapnote.textlabel.Text = $"[color=#331C13]{text}[/color]";
+								}
+								break;
+							}
+
+						default://TODO: Default is too broad. must exclude special chars
+							{
+								var text = uimanager.currentmapnote.notetext;
+								if (text.Length < 0x30)//allowing space for \0 ending.
+								{
+									text += ((char)keyinput.Unicode).ToString();
+									uimanager.currentmapnote.notetext = text;
+									uimanager.currentmapnote.textlabel.Text = $"[color=#331C13]{text}[/color]";
+								}
+								break;
+							}
+					}
+				}
+			}
+		}
+
 		if (musicalinstrument.PlayingInstrument)
 		{
 			if (@event is InputEventKey keyinput)
@@ -1147,7 +1059,7 @@ public partial class main : Node3D
 					{//end typed input
 						uimanager.instance.scroll.Clear();
 						MessageDisplay.WaitingForYesOrNo = false;
-						gamecam.Set("MOVE", true);//re-enable movement
+						cameraPitchGimbal.Set("MOVE", true);//re-enable movement
 					}
 				}
 			}
@@ -1176,6 +1088,13 @@ public partial class main : Node3D
 					tileMapRender.RenderTile(tileMapRender.worldnode, t.tileX, t.tileY, t);
 					t.Redraw = false;
 				}
+			}
+		}
+		if (UWClass._RES == UWClass.GAME_UW2)
+		{
+			if (playerdat.dungeon_level == 5)
+			{
+				largeblackrockgem.CycleGemColours();
 			}
 		}
 

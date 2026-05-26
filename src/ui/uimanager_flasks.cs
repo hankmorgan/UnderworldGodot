@@ -91,7 +91,7 @@ namespace Underworld
                         */
 
                     var poisonlevel = (playerdat.play_poison - 1) % 5;
-                    if (ConversationVM.InConversation)
+                    if (uimanager.InConversation)
                     {
                         AddToMessageScroll(
                             stringToAdd: $"{GameStrings.GetString(1, GameStrings.str_you_are_)}{GameStrings.GetString(1, GameStrings.str_barely + poisonlevel)}{GameStrings.GetString(1, GameStrings.str__poisoned_)}\n{GameStrings.GetString(1, GameStrings.str_your_current_vitality_is_)}{playerdat.play_hp} out of {playerdat.max_hp}"
@@ -106,7 +106,7 @@ namespace Underworld
                 }
                 else
                 {
-                    if (ConversationVM.InConversation)
+                    if (uimanager.InConversation)
                     {
                         AddToMessageScroll(
                             stringToAdd: $"{GameStrings.GetString(1, GameStrings.str_your_current_vitality_is_)}{playerdat.play_hp} out of {playerdat.max_hp}", 
@@ -126,7 +126,7 @@ namespace Underworld
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
-                if (ConversationVM.InConversation)
+                if (uimanager.InConversation)
                 {
                     AddToMessageScroll(
                         stringToAdd: $"{GameStrings.GetString(1, GameStrings.str_your_current_mana_points_are_)}{playerdat.play_mana} out of {playerdat.max_mana}",

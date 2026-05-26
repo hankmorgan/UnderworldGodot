@@ -1,5 +1,6 @@
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Reflection.Emit;
+using Godot;
 
 namespace Underworld
 {
@@ -12,6 +13,20 @@ namespace Underworld
         /// </summary>
         public static automapnote[] automapsnotes;
 
+        public int NoOfNotes
+        {
+            get
+            {
+                if (notes==null)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return notes.Count;
+                }
+            }
+        }
 
         //The raw data for this set of automap notes.
         public byte[] buffer;
@@ -29,13 +44,13 @@ namespace Underworld
                 return (int)getAt(buffer, (blockno * 4) + 2, 32);
             }
         }
-        public automapnote(int LevelNo, int gameNo)
+        public automapnote(int LevelNo)
         {
             int blockno;
             int noOfPossibleBlocks;
             int thisAddress;
             int startblock;
-            if (gameNo == GAME_UW2)
+            if (_RES == GAME_UW2)
             {
                 blockno = 240 + LevelNo;
                 noOfPossibleBlocks = 80;
@@ -143,13 +158,14 @@ namespace Underworld
             public string notetext;
             public int posX; 
             public int posY;
+            public RichTextLabelMapNote textlabel;//reference to the label created by this note.
 
             public mapnotetext(string _notetext, int _posX, int _posY)
             {
                 notetext = _notetext;
                 posX = _posX;
                 posY = _posY;
-                Debug.Print($"{posX},{posY} {notetext}");
+                //Debug.Print($"{posX},{posY} {notetext}");
             }
         }
     }//end class

@@ -1,4 +1,5 @@
 using System;
+using System.Xml.Linq;
 
 namespace Underworld
 {
@@ -120,12 +121,19 @@ namespace Underworld
         }
 
 
+
+        /// <summary>
+        /// If you have motion going in the wrong direction this function is a likely candidate.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
         public static short MaybeGetTangent_seg021_22FD_EFB(short x, short y)
         {
             if ((x <= 23170) && (x >= -23042))
             {
                 //seg021_22FD_BDE
-                var cx = seg021_22FD_B78_maybetangent(x);
+                var cx = seg021_22FD_B78_maybetangent(x);  //wrong value returned for x = -27336  (0x9538), ax = 0xB894
                 if (y < 0)
                 {
                     cx = (short)(cx - 0x8000);
@@ -145,6 +153,12 @@ namespace Underworld
             }
         }
 
+
+        /// <summary>
+        /// If you have motion going in the wrong direction this function is a likely candidate.
+        /// </summary>
+        /// <param name="bx"></param>
+        /// <returns></returns>
         static short seg021_22FD_BA2_MaybeTangent(short bx)
         {
             var ax = bx;
@@ -186,41 +200,92 @@ namespace Underworld
 
         static short seg021_22FD_B78_maybetangent(short ax)
         {
-            //ax = (short)Math.Abs(ax);
-            short dx_initial = 0;
-            if (ax < 0)
+            //cwd
+            short dx;
+            if (ax>=0)
             {
-                dx_initial = -1;
-                ax = (short)(ax ^ dx_initial);
-                ax -= dx_initial;
+                dx = 0;
             }
-            var cx = (short)(ax & 0xFF);
-            var bx = (short)(ax >> 8);
+            else
+            {
+                dx = -1;
+            }
 
+            ax = (short)(ax ^ dx);
+            ax = (short)(ax - dx);
+            
+            //push dx
+            var pushed = dx;
+            var bl = ax >> 8;
+            var bh = 0;
+            var bx = (bh << 8) | bl;
+            var cx = (short)(ax & 0x00FF);
+            
             var bp = TangentTable_seg62_832[bx];
             ax = TangentTable_seg62_832[bx + 1];
 
             ax = (short)(ax - bp);
-            ax = (short)(ax * cx);
-            var dl = (short)((int)ax) >> 16;
-            ax = (short)(ax >> 8);
-            if (dl < 0)
+            ax = (short)(ax * cx);   //signed multiply, changes bx
+            if (ax >=0)
             {
-                ax = (short)-Math.Abs(ax);
+                dx = 0;
             }
             else
             {
-                ax = Math.Abs(ax);
+                dx = -1;
             }
 
-            cx = (short)(ax + bp);
+            //mov al, ah
+            //mov ah, dl
+            ax = (short)(((dx & 0xFF)<<8) | (ax >> 8));
 
-            cx = (short)(cx ^ dx_initial);
-            cx = (short)(cx - dx_initial);
-            dx_initial = (short)(dx_initial & 0x8000);
-            cx = (short)(cx + dx_initial);
+            ax = (short)(ax + bp);
 
-            return cx;
+            cx = ax;
+
+            dx = pushed; //pop
+
+            cx = (short)(cx ^ dx);
+
+            cx = (short)(cx - dx);
+            
+            return cx;  
+            // //ax = (short)Math.Abs(ax);
+            // short dx_initial = 0;
+            // if (ax < 0)
+            // {
+            //     dx_initial = -1;
+            //     ax = (short)(ax ^ dx_initial);//why didn't I use abs here?
+            //     ax -= dx_initial;
+            // }
+            // var cx = (short)(ax & 0xFF);
+            // var bx = (short)(ax >> 8);
+
+            // var bp = TangentTable_seg62_832[bx];
+            // ax = TangentTable_seg62_832[bx + 1];
+
+
+            // ax = (short)(ax - bp);
+            // ax = (short)(ax * cx);
+            // var dl = (short)((int)ax) >> 16;            //this goes wrong
+            // ax = (short)(ax >> 8);
+            // if (dl < 0)
+            // {
+            //     ax = (short)-Math.Abs(ax);
+            // }
+            // else
+            // {
+            //     ax = Math.Abs(ax);
+            // }
+
+            // cx = (short)(ax + bp);
+
+            // cx = (short)(cx ^ dx_initial);
+            // cx = (short)(cx - dx_initial);
+            // dx_initial = (short)(dx_initial & 0x8000);
+            // cx = (short)(cx + dx_initial);
+
+            // return cx;
         }
 
         static short GetDefelectionMaybe(short srcHeading, short dstHeading, short Magnitude)

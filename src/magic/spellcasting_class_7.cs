@@ -674,7 +674,7 @@ namespace Underworld
                                                 if (foundMoonstone != null)
                                                 {
                                                     //Found a different moonstone. go to it.
-                                                    Teleportation.Teleport(character: 0, tileX: x, tileY: y, newLevel: 0, heading: 0);
+                                                    Teleportation.Teleport(character: 0, tileX: x, tileY: y, newLevel: 0, HeadingHeightFlag: 0);
                                                     return;
                                                 }
                                             }
@@ -682,7 +682,7 @@ namespace Underworld
                                     }
                                 }
                                 //No other moonstone has been found. Likely the two moonstones are on the same tile.
-                                Teleportation.Teleport(character: 0, tileX: targetX, tileY: targetY, newLevel: 0, heading: 0);
+                                Teleportation.Teleport(character: 0, tileX: targetX, tileY: targetY, newLevel: 0, HeadingHeightFlag: 0);
                             }
                             else
                             {
@@ -698,7 +698,7 @@ namespace Underworld
                                 character: 0,
                                 tileX: 32, tileY: 32,
                                 newLevel: playerdat.GetMoonstone(si),
-                                heading: 0);
+                                HeadingHeightFlag: 0);
                         }
                     }
                 }

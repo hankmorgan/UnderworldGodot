@@ -12,46 +12,9 @@ namespace Underworld
         public static byte[] data_3FC = new byte[40];//globals at 0x3FC
         public static byte[] dseg_26b8 = new byte[16];//confirm size
 
-        public static byte[] DSEG_27B2_SpecialMotionHandling = new byte[8];
-        public static byte[] DSEG_26BA_LandNPCMotionHandler = new byte[] { 0x0, 0x0, 0x30, 0x1F, 0x10, 0x10, 0x20, 0x0 };
-        public static byte[] DSEG_26DE_SwimmingNPCMotionHandler = new byte[] { 0x10, 0, 0x28, 0x17, 0x10, 0x10, 0x20, 0 };
-        public static byte[] DSEG_26C6_FlyingNPCMotionHandler = new byte[] { 0x0, 0x10, 0x0, 0x7, 0x80, 0x0, 0x0, 0x0 };
-        public static byte[] PlayerMotionHandler_dseg_67d6_26AA = new byte[] { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 };
         public static short LikelyNPCTileStates_222C;
 
-        public static byte[] PtrTo26D2_DSEG_26B8_MotionHandler = new byte[8];
-
-        public static short PtrTo267D2_dseg_67d6_26B8_table0
-        {
-            get
-            {
-                return (short)DataLoader.getAt(UWMotionParamArray.PtrTo26D2_DSEG_26B8_MotionHandler, 0, 16);
-            }
-            set
-            {
-                DataLoader.setAt(UWMotionParamArray.PtrTo26D2_DSEG_26B8_MotionHandler, 0, 16, value);
-            }
-        }
-
-        public static short dseg_67d6_26BA_MotionHandler2
-        {
-            get
-            {
-                return (short)DataLoader.getAt(UWMotionParamArray.PtrTo26D2_DSEG_26B8_MotionHandler, 2, 16);
-            }
-        }
-
-
-        /// <summary>
-        /// Magic projectile + 4
-        /// </summary>
-        public static short dseg_67d6_26BC_table4
-        {
-            get
-            {
-                return (short)DataLoader.getAt(UWMotionParamArray.PtrTo26D2_DSEG_26B8_MotionHandler, 4, 16);
-            }
-        }
+        public static MotionHandler PtrTo26D2_DSEG_26B8_MotionHandler;// = new byte[8];
 
 
         //globals        
@@ -212,7 +175,7 @@ namespace Underworld
         }
 
 
-        public static int dseg_67d6_41D//height related in collision
+        public static int dseg_67d6_41D//height related in collision.likely upper height of collision
         {//0x21
             get
             {
@@ -313,6 +276,10 @@ namespace Underworld
         }
 
         //The class properties
+
+        /// <summary>
+        /// Value can be 0-0x4000 (assumed)
+        /// </summary>
         public short x_0
         {
             get
@@ -335,6 +302,10 @@ namespace Underworld
                 DataLoader.setAt(data, 2, 16, value);
             }
         }
+
+        /// <summary>
+        /// Value can be 0 to 0x3E8
+        /// </summary>
         public short z_4
         {
             get
@@ -347,6 +318,9 @@ namespace Underworld
             }
         }
 
+        /// <summary>
+        /// Probably a delta X
+        /// </summary>
         public short unk_6_x
         {
             get
@@ -384,6 +358,10 @@ namespace Underworld
                 DataLoader.setAt(data, 0xA, 16, value);
             }
         }
+
+        /// <summary>
+        /// related to delta X
+        /// </summary>
         public short unk_c_X
         {
             get
@@ -422,7 +400,7 @@ namespace Underworld
         /// <summary>
         /// Possibly a Z speedvalue
         /// </summary>
-        public short unk_10_Z
+        public short gravity_10_Z
         {
             get
             {
@@ -433,29 +411,22 @@ namespace Underworld
                 DataLoader.setAt(data, 0x10, 16, value);
             }
         }
-        public byte speed_12
+        public sbyte speed_12
         {
             get
             {
-                return (byte)DataLoader.getAt(data, 0x12, 8);
+                return (sbyte)DataLoader.getAt(data, 0x12, 8);
             }
             set
             {
                 DataLoader.setAt(data, 0x12, 8, value);
             }
         }
-        // public sbyte unk_13_falldamage
-        // {
-        //     get
-        //     {
-        //         return (sbyte)DataLoader.getAt(data, 0x13, 8);
-        //     }
-        //     set
-        //     {
-        //         DataLoader.setAt(data, 0x13, 8, value);
-        //     }
-        // }
-        public short unk_14
+
+        /// <summary>
+        /// Controls the acceleration of the player
+        /// </summary>
+        public short momentum_14
         {
             get
             {
@@ -708,10 +679,6 @@ namespace Underworld
             }
             set
             {
-                if (value <=5)
-                {
-                    Debug.Print("here");
-                }
                 DataLoader.setAt(PtrToMotionCalc, 2, 16, value);
             }
         }
@@ -1212,25 +1179,25 @@ namespace Underworld
         {
             get
             {//to confirm is this a byte or a word?
-                return (int)DataLoader.getAt(dseg_2562, 0xF, 16);
+                return (int)DataLoader.getAt(dseg_2562, 0xF, 8);
             }
             set
             {
-                DataLoader.setAt(dseg_2562, 0xF, 16, value);
+                DataLoader.setAt(dseg_2562, 0xF, 8, value);
             }
         }
 
-        // public int Unk10
-        // {
-        //     get
-        //     {
-        //         return (int)DataLoader.getAt(dseg_2562, 0x10, 8);
-        //     }
-        //     set
-        //     {
-        //         DataLoader.setAt(dseg_2562, 0x10, 8, value);
-        //     }
-        // }
+        public int Unk10
+        {
+            get
+            {
+                return (int)DataLoader.getAt(dseg_2562, 0x10, 8);
+            }
+            set
+            {
+                DataLoader.setAt(dseg_2562, 0x10, 8, value);
+            }
+        }
 
         public int Unk11_offset
         {

@@ -7,7 +7,7 @@ namespace Underworld
     {
         int texture;
         Node3D tmapnode;
-        float tmapOffset = 0;// 0.1f;//how far out the tmap extrudes from it's origin
+        float tmapOffset = 0.1f;//how far out the tmap extrudes from it's origin
 
         public tmap(uwObject _uwobject)
         {
@@ -73,7 +73,7 @@ namespace Underworld
             uimanager.AddToMessageScroll(GameStrings.TextureDescription(textureindex));
             if ((textureindex == 142) && ((_RES != GAME_UW2)))
             {//This is a window into the abyss.
-                uimanager.DisplayCutsImage(cutsfile: "cs400.n01", imageNo: playerdat.dungeon_level, targetControl: uimanager.CutsSmall);
+                uimanager.DisplayCutsImage(cutsfile: "cs400.n01", imageNo: playerdat.dungeon_level - 1, targetControl: uimanager.CutsSmall);
             }
             return true; //prevents the default you cannot use message
         }

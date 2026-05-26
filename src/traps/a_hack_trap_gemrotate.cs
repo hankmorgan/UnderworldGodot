@@ -1,3 +1,6 @@
+using System.Diagnostics;
+using Godot;
+
 namespace Underworld
 {
     /// <summary>
@@ -19,10 +22,12 @@ namespace Underworld
                 case >= 8 and < 0xD:
                     si = 6; break;
             }
-            si=8;
+            //si = 8;
             int rngresult;
             var ax = Rng.r.Next(0x7FFF);
-        
+
+            var quest130 = playerdat.GetQuest(130);
+
         ovr110_3f90: //loop until a valid value is found that is not the existing value in gamevar6 and is a valid value from quest 130.
             rngresult = ax % si;
 
@@ -33,7 +38,7 @@ namespace Underworld
                     (
                         (rngresult != gamevar6)
                              &&
-                        (((1 << rngresult) & playerdat.GetQuest(130)) != 0)
+                        (((1 << rngresult) & quest130) != 0)
                     )
                 )
                  )
@@ -51,8 +56,13 @@ namespace Underworld
                 rngresult = 8;
             }
             playerdat.SetGameVariable(6, rngresult);
+            //update colours
+
+
+            largeblackrockgem.CycleGemColours();
+
             return;
 
-        }
+        }        
     }//end class
 }//end namespace

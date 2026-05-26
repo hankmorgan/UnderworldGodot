@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Net;
 using Godot;
 
 namespace Underworld
@@ -16,10 +17,20 @@ namespace Underworld
         //static int PreviousClockValue;
         static int secondcounter = 0;
 
+        static byte FootSteps_77A = 0xFF;
+        static uint FootStepTimerA_19DF;
+        static uint FootStepTimerB_19E5;
+        static uint FootstepSoundIndex_dseg_79B = 0;
+        static uint WaterSoundPanIndex_dseg_79B = 0;
+        static uint dseg_79C = 0;//used in footsteps
+
+        static byte[] FootstepSoundPanning = new byte[] { 0x38, 0x48 };
+        static byte[] FootStepSoundEffectsUW2 = new byte[] { 0x1, 0x2, 0x2F, 0x30, 0x1D, 0x1D };
+
         public static int NoOfTilesDiscovered = 0;
         public static void PlayerTimedLoop(double delta)
         {
-            if ((!main.blockmouseinput) && (uimanager.InGame))
+            if ((!uimanager.blockmouseinput) && (uimanager.InGame))
             {
                 playertimer += delta;
 
@@ -73,10 +84,6 @@ namespace Underworld
                     {
                         ParalyseTimer--;
                         Debug.Print($"Paralyse timer: {ParalyseTimer}");
-                        if (ParalyseTimer == 0)
-                        {
-                            main.gamecam.Set("MOVE", true);//re-enable player motion.
-                        }
                     }
 
                     var secondelasped = (int)(playertimer / 1);
@@ -141,13 +148,36 @@ namespace Underworld
                                 HPRegenerationChange(1);
                             }
 
-                            SwimmingSkillCheck();
+                            if (playerdat.SwimCounter > 0x50)
+                            {
+                                SwimmingSkillCheck();
+                            }
+
 
                             if (_RES == GAME_UW2)
                             {
                                 if (GetQuest(50) == 1)
                                 {//the keep is crashing
-                                    KillornKeepEvent();
+                                    if (GetQuest(54) == 0)//player has not returned after the crash.
+                                    {
+                                        special_effects.SpecialEffect(effecttype: 4, effectparam: 0x2C);
+                                        if (!FreezeTimeEnchantment)
+                                        {
+                                            SetQuest(questno: 134, newValue: GetQuest(134) - 1);
+                                            if (GetQuest(134) - 1 == 0)
+                                            {
+                                                killorn.KilornIsCrashing(false);
+                                                //Apply raw damage to player in order to kill them for spending too much time in kilorn before it crashed
+                                                damage.DamageObject(
+                                                    objToDamage: playerObject,
+                                                    basedamage: 0xFF,
+                                                    damagetype: 0,
+                                                    objList: UWTileMap.current_tilemap.LevelObjects,
+                                                    WorldObject: true,
+                                                    damagesource: 0);
+                                            }
+                                        }
+                                    }
                                 }
                             }
 
@@ -193,7 +223,7 @@ namespace Underworld
 
                                 if ((Rng.r.Next(0, 0xffff) & 0x3) == 0)
                                 {
-                                    Debug.Print("Find and trigger create object traps that are on map!");
+                                    a_create_object_trap.FindAndRunCreateObjectTraps();
                                 }
 
                                 Debug.Print("Do something with Npc hunger");
@@ -284,22 +314,51 @@ namespace Underworld
 
 
 
-        /// <summary>
-        /// Screenshakes and damage when killorn is crashing
-        /// </summary>
-        public static void KillornKeepEvent()
-        {
-            //ovr135_250
-            Debug.Print("Killorn is crashing!!");
-            special_effects.SpecialEffect(effecttype: 4, effectparam: 0x2C);
-        }
+        // /// <summary>
+        // /// Screenshakes and damage when killorn is crashing
+        // /// </summary>
+        // public static void KillornKeepEvent()
+        // {
+        //     //ovr135_250
+        //     //Debug.Print("Killorn is crashing!!");
+        //     special_effects.SpecialEffect(effecttype: 4, effectparam: 0x2C);
+        // }
 
         /// <summary>
         /// Does a skill check every 20s when in water to see if damage is taken while swimming
         /// </summary>
         public static void SwimmingSkillCheck()
         {
-            //TODO
+            var checkvalue = 0;
+            if (playerdat.WeightMax != 0)
+            {
+                checkvalue = (playerdat.WeightCarried << 5) / playerdat.WeightMax;
+            }
+            var result = SkillCheck(skillValue: playerdat.Swimming, targetValue: checkvalue, debug: true);
+            if (result <= 0)
+            {
+                //fail or crit fail, dice roll and increase the swim counter.
+                var roll = Rng.DiceRoll(NoOfLoops: (int)(3 - result), diceRange: 4);
+                playerdat.SwimCounter += (byte)roll;  //this is what the vanilla code does but what will stop it from overflowing and stop applying damage.
+            }
+            if (playerdat.SwimCounter > 0x78)
+            {
+                result = SkillCheck(skillValue: playerdat.Swimming, targetValue: checkvalue, debug: true);
+                if (result != SkillCheckResult.CritSucess)
+                {
+                    //apply damage
+                    var damagerange = 2 - result;
+                    if (_RES == GAME_UW2)
+                    {
+                        uimanager.FlashColour(colour: 0x50, targetControl: uimanager.CutsSmall);
+                    }
+                    else
+                    {
+                        uimanager.FlashColour(colour: 0xC6, targetControl: uimanager.CutsSmall);
+                    }
+                    damage.DamageObject(objToDamage: playerdat.playerObject, basedamage: Rng.DiceRoll(2, (int)(2 + damagerange)), damagetype: 0, objList: UWTileMap.current_tilemap.LevelObjects, WorldObject: true, damagesource: 0);
+                }
+            }
         }
 
         public static void UpdateLightStability(int updatecounter)
@@ -344,8 +403,8 @@ namespace Underworld
                 LocationalArmourValues[i] = 0;
                 LocationalProtectionValues[i] = 0;
             }
-            StealthScore1 = 13 - (Sneak / 3);
-            StealthScore2 = 15 - (Sneak / 5);
+            StealthCalculationScoreQuietness = 13 - (Sneak / 3);
+            StealthCalculationScoreVisibility = 15 - (Sneak / 5);
 
             PlayerDamageTypeScale = 0;
             ValourBonus = 0;
@@ -413,9 +472,9 @@ namespace Underworld
                 UpdateAutomap();//update the visited status of nearby tiles
             }
 
-            motion.RefreshPlayerTileState();
+            //motion.RefreshPlayerTileState();
 
-            motion.UpdateMotionStateAndSwimming(-1);
+            //motion.UpdateMotionStateAndSwimming(-1);
         }
 
 
@@ -535,7 +594,7 @@ namespace Underworld
                             }
                         }
 
-                        if ((slot==4) && (_RES!=GAME_UW2))
+                        if ((slot == 4) && (_RES != GAME_UW2))
                         {
                             if (obj.item_id == 0x2F)//dragon skin boots
                             {
@@ -616,19 +675,45 @@ namespace Underworld
         /// <param name="StealthBonus"></param>
         public static void ApplyStealthBonus(int StealthBonus)
         {
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 4; i++)
             {
                 var bit = (StealthBonus >> i) & 1;
                 if (bit == 1)
                 {//bit is set
                     switch (i)
                     {
-                        case 0:
-                            StealthScore1 = Math.Max(StealthScore1 - 0x10, 0); break;
                         case 1:
-                            StealthScore2 = Math.Max(StealthScore2 - 5, 0); break;
+                            if (StealthCalculationScoreQuietness <= 0x10)
+                            {
+                                StealthCalculationScoreQuietness = 0;
+                            }
+                            else
+                            {
+                                StealthCalculationScoreQuietness = StealthCalculationScoreQuietness - 0x10;
+                            }
+                            break;
                         case 2:
-                            StealthScore2 = Math.Max(StealthScore2 - 0x10, 0); break;
+                            if (StealthCalculationScoreVisibility <= 5)
+                            {
+                                StealthCalculationScoreVisibility = 0;
+                            }
+                            else
+                            {
+                                StealthCalculationScoreVisibility = StealthCalculationScoreVisibility - 5;
+                            }
+                            break;
+                        case 3:
+                            {
+                                if (StealthCalculationScoreVisibility <= 0x10)
+                                {
+                                    StealthCalculationScoreVisibility = 0;
+                                }
+                                else
+                                {
+                                    StealthCalculationScoreVisibility = StealthCalculationScoreVisibility - 0x10;
+                                }
+                                break;
+                            }
                     }
                 }
             }
@@ -726,7 +811,7 @@ namespace Underworld
                 {
                     gain = (NoOfTilesDiscovered * dungeon_level) / 0xA;
                 }
-                if (gain!=0)
+                if (gain != 0)
                 {
                     ChangeExperience(gain);
                 }
@@ -773,6 +858,197 @@ namespace Underworld
                 if (DreamingInVoid)
                 {
                     MagicalMotionAbilities |= 0x10;   //Set bit 4 for flying
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Calculates and sets the values used in CritterObject.Dat to represent how visible and quiet the player is.
+        /// </summary>
+        /// <param name="EasyMove"></param>
+        public static void ApplyPlayerSneakScore(bool EasyMove = false)
+        {
+            var cl = playerdat.StealthCalculationScoreQuietness;
+            if (EasyMove)
+            {
+                cl += 4;
+            }
+            else
+            {
+                if (motion.playerMotionParams.momentum_14 != 0)
+                {
+                    cl += ((motion.playerMotionParams.momentum_14 / 0xA) / motion.PlayerActualForwardSpeed_1_dseg_67d6_22A6) - 5;  //could this work out to be negative?
+                }
+                else
+                {
+                    cl = 0; //standing still?
+                }
+            }
+
+            if (playerdat.TileState != 0)
+            {
+                cl += 4;
+            }
+
+            if (cl >= 0)
+            {
+                if (cl > 0xF)
+                {
+                    cl = 0xF;
+                }
+            }
+            else
+            {
+                cl = 0;
+            }
+
+            if (critterObjectDat.StealthQuietness(127) <= cl)
+            {
+                playerdat.PlayerQuietness = cl;
+            }
+            else
+            {
+                if (SneakSoundCooldown_79D == 0)
+                {
+                    playerdat.PlayerQuietness--;
+                }
+            }
+
+            SneakSoundCooldown_79D = (SneakSoundCooldown_79D + 1) % 8;
+            playerdat.PlayerVisibility = playerdat.StealthCalculationScoreVisibility;
+            //Debug.Print($"Stealth sound {PlayerQuietness} visibility {PlayerVisibility}");
+        }
+
+        public static void FootSteps(bool EasyMove = false)
+        {
+            if ((TileState & 0x1) != 0)
+            {
+                //lava
+                //seg35_74E
+                if (FootSteps_77A != 0xFF)
+                {
+                    if (FootStepTimerB_19E5 + 0x1800 <= main.GlobalPITTimer) //the globalpittimer is probably a bit slow leading to gaps in the sound.
+                    {
+                        //do something in seg016_1FFD(FootStepGlobal77A)
+                        FootSteps_77A = 0xFF;
+                    }
+                }
+                //seg35_784
+                if (FootSteps_77A == 0xFF)
+                {
+                    FootStepTimerB_19E5 = main.GlobalPITTimer;
+                    Debug.Print("playing Watersound");
+                    UWsoundeffects.PlaySoundEffectAtAvatar(
+                        effectno: 0,
+                        pan: 0x40,
+                        velocityOffset: 0);//plays the water edge sound
+                    FootSteps_77A = 0;//always appears to be zero/;//unknown value Set from LoadBasicSound or Seg016_1FFD
+                }
+
+                if (_RES == GAME_UW2)
+                {
+                    //the following sound is uw2 only. water splashes
+                    //seg035_7AE
+                    dseg_79C = (dseg_79C + 1) % 0xF;
+                    if (dseg_79C == 0)
+                    {
+                        WaterSoundPanIndex_dseg_79B = (uint)motion.SBB((int)WaterSoundPanIndex_dseg_79B);
+                        if (motion.playerMotionParams.momentum_14 != 0)
+                        {
+                            if (main.GlobalPITTimer > FootStepTimerA_19DF)//note change of timer from B to A. This is in the original code..
+                            {
+                                UWsoundeffects.PlaySoundEffectAtAvatar(
+                                    effectno: 0x1A,
+                                    pan: FootstepSoundPanning[WaterSoundPanIndex_dseg_79B],
+                                    velocityOffset: 0);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                //tilestate&1 == 0 (not in water)
+                if (FootSteps_77A != 0xFF)
+                {
+                    //do something with seg016_1FFD
+                    FootSteps_77A = 0xFF;
+                }
+                if ((TileState & 0x8) == 0)
+                {
+                    int OnSnowOrIce = 0;
+                    if (_RES == GAME_UW2)
+                    {
+                        if ((TileState & 0x4) == 0)
+                        {
+                            OnSnowOrIce = 0;
+                        }
+                        else
+                        {
+                            if (motion.ICYFloor_dseg_229E)
+                            {
+                                OnSnowOrIce = 2;
+                            }
+                            else
+                            {
+                                OnSnowOrIce = 1;
+                            }
+                        }
+                    }
+
+                    if ((motion.playerMotionParams.tilestate25 & 0x10) == 0)
+                    {
+                        if (EasyMove == false)
+                        {
+                            if (motion.playerMotionParams.momentum_14 > 0x2F)
+                            {
+                                if (main.GlobalPITTimer > FootStepTimerA_19DF)
+                                {
+                                    //seg035_8F0
+                                    if (_RES == GAME_UW2)
+                                    {
+                                        UWsoundeffects.PlaySoundEffectAtAvatar(
+                                            effectno: FootStepSoundEffectsUW2[FootstepSoundIndex_dseg_79B + (OnSnowOrIce << 1)],
+                                            pan: FootstepSoundPanning[FootstepSoundIndex_dseg_79B],
+                                            velocityOffset: (byte)(0xF + (motion.playerMotionParams.momentum_14 >> 5)));
+                                    }
+                                    else
+                                    {
+                                        //UW1 uses a toggle
+                                        if (FootstepSoundIndex_dseg_79B == 0)
+                                        {
+                                            UWsoundeffects.PlaySoundEffectAtAvatar(
+                                                effectno: 2,
+                                                pan: 0x38,
+                                                velocityOffset: (byte)(0xF + (motion.playerMotionParams.momentum_14 >> 5)));
+                                        }
+                                        else
+                                        {
+                                            UWsoundeffects.PlaySoundEffectAtAvatar(
+                                                effectno: 1,
+                                                pan: 0x48,
+                                                velocityOffset: (byte)(0xF + (motion.playerMotionParams.momentum_14 >> 5)));
+                                        }
+                                    }
+                                    //toggle to other foot
+                                    FootstepSoundIndex_dseg_79B = (uint)motion.SBB((int)FootstepSoundIndex_dseg_79B);
+                                    //set the time for the next footsteps.
+                                    var nextinterval = 0x40 + (0x1770 / (1 + (motion.playerMotionParams.momentum_14 >> 2)));
+                                    if (nextinterval > 0xC8)
+                                    {
+                                        nextinterval = 0xC8;
+                                    }
+                                    FootStepTimerA_19DF = (uint)(main.GlobalPITTimer + nextinterval);
+                                }
+
+                            }
+                        }
+                        else
+                        {
+                            Debug.Print("unimplemented easymove footstep sounds.");
+                        }
+                    }
                 }
             }
         }

@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using System.Net.Http.Headers;
+using Godot;
 
 
 namespace Underworld
@@ -8,7 +10,6 @@ namespace Underworld
     /// </summary>
     public partial class combat : UWClass
     {
-
 
         public static int CurrentWeaponBaseDamage(int attacktype)
         {
@@ -91,146 +92,6 @@ namespace Underworld
         }
 
 
-
-
-        /// <summary>
-        /// checks for target hit and apply combat calcs
-        /// </summary>
-        /// <returns></returns>
-        // static bool ProcessAttackHit_DEPRECIATED()
-        // {
-        //     Debug.Print("DEPRECIATED");
-        //     var position = mouseCursor.CursorPosition;
-        //     if (!uimanager.IsMouseInViewPort())
-        //     {
-        //         position = mouseCursor.CursorPositionSub;//use mouselook position
-        //     }
-        //     var result = uimanager.DoRayCast(position, 2f, out Vector3 rayorigin);
-        //     if (result != null)
-        //     {
-        //         if (result.ContainsKey("collider") && result.ContainsKey("normal") && result.ContainsKey("position"))
-        //         {
-        //             var obj = (StaticBody3D)result["collider"];
-        //             var normal = (Vector3)result["normal"];
-        //             var hitCoordinateEnd = (Vector3)result["position"];
-        //             var hitCoordinate = rayorigin.Lerp(hitCoordinateEnd, 0.9f);
-
-        //             Debug.Print(obj.Name);
-        //             string[] vals = obj.Name.ToString().Split("_");
-        //             switch (vals[0].ToUpper())
-        //             {
-        //                 case "TILE":
-        //                 case "WALL":
-        //                 case "CEILING"://hit a wall/surface
-        //                     Debug.Print("hit a wall. do selfdamage to the weapon");
-        //                     short xpos, ypos, zpos;
-        //                     int tileX, tileY;
-        //                     animo.PointToXYZ(point: hitCoordinate, xpos: out xpos, ypos: out ypos, zpos: out zpos, tileX: out tileX, tileY: out tileY);
-        //                     animo.SpawnAnimoInTile(subclassindex: 0xB, xpos: xpos, ypos: ypos, zpos: (short)(zpos - 3), tileX: tileX, tileY: tileY);
-        //                     return false;
-        //                 default:
-        //                     if (int.TryParse(vals[0], out int index))
-        //                     {
-        //                         var hitobject = UWTileMap.current_tilemap.LevelObjects[index];
-        //                         if (hitobject != null)
-        //                         {
-        //                             Debug.Print($"{hitobject.a_name}");
-        //                             return false;
-        //                            // return PlayerHitsUWObject_DEPRECIATED(hitobject);
-        //                         }
-        //                     }
-        //                     break;
-        //             }
-        //         }
-        //     }
-        //     return false; //miss attack
-        // }
-
-
-        /// <summary>
-        /// Do the attack calcs for the player hitting an object
-        /// </summary>
-        /// <param name="defender"></param>
-        /// <returns></returns>
-        // static bool PlayerHitsUWObject_DEPRECIATED(uwObject defender)
-        // {
-        //     Debug.Print("DEPRECIATED");
-        //     //calc final attack charge based on the % of charge built up in the weapon
-        //     FinalAttackCharge = mincharge + ((maxcharge - mincharge) * WeaponCharge) / 100; //this is kept later for damage calcs.
-
-        //     //do attack calcs
-        //     CalcPlayerAttackScores();
-
-        //     //execute attack
-        //     if (ExecuteAttack(attacker: playerdat.playerObject))
-        //     {
-        //         if (_RES == GAME_UW2)
-        //         {
-        //             int currWeaponType = 0;
-        //             if (currentweapon != null)
-        //             {
-        //                 currWeaponType = isWeapon(currentweapon);
-        //             }
-        //             //post apply spell effect if applicable
-        //             switch (OnHitSpell)
-        //             {
-        //                 case 1:
-        //                     {
-        //                         //Debug.Print("Lifestealer");
-        //                         if (currWeaponType > 0)
-        //                         {
-        //                             playerdat.HPRegenerationChange(-AttackDamage);
-        //                         }
-        //                         break;
-        //                     }
-        //                 case 2:
-        //                     {//Debug.Print("Undeadbane"); 
-        //                         if (currWeaponType > 0)
-        //                         {
-        //                             SpellCasting.SmiteUndead(defender.index, UWTileMap.current_tilemap.LevelObjects, playerdat.playerObject);
-        //                         }                                
-        //                         break;
-        //                     }
-        //                 case 3: 
-        //                     {
-        //                         //Debug.Print("Firedoom"); 
-        //                         //explosion
-        //                         var tile = UWTileMap.current_tilemap.Tiles[defender.tileX,defender.tileY];
-        //                         var height = tile.floorHeight<<3;
-        //                         if ( height< 0x80)
-        //                         {
-        //                             height = height + Rng.r.Next(0x80 - height);
-        //                         }
-        //                         animo.SpawnAnimoInTile(subclassindex: 2, xpos: 3, ypos: 3, zpos: (short)height, tileX: defender.tileX, tileY: defender.tileY);
-        //                         //Do damage in area of tile.
-        //                         damage.DamageObjectsInTile(defender.tileX, defender.tileY, 0, 1);                                
-        //                         break;
-        //                     }
-        //                 case 4:
-        //                     {
-        //                         //Debug.Print("stonestrike"); 
-        //                         SpellCasting.Paralyse(defender.index, UWTileMap.current_tilemap.LevelObjects, playerdat.playerObject);
-        //                         break;
-        //                     }
-        //                 case 5:
-        //                 case 6: 
-        //                     {
-        //                         if (defender.OneF0Class == 0x14)
-        //                         {
-        //                             //is door
-        //                             SpellCasting.Unlock(defender.index, UWTileMap.current_tilemap.LevelObjects);
-        //                         }
-        //                     }
-        //                 Debug.Print("Entry"); break;
-        //                 //case 7: Debug.Print("unknownspecial 7"); break;
-        //                 //case 8: Debug.Print("unknownspecial 8"); break;
-        //             }
-        //         }
-        //     }
-
-        //     return true;
-        // }
-
         /// <summary>
         /// Calculates the player attack accuracy and base damage scores
         /// </summary>
@@ -262,7 +123,7 @@ namespace Underworld
             else
             {
                 //Adjust damage by player str and swing type damage.
-                AttackDamage = (playerdat.STR / 9) + CurrentWeaponBaseDamage(CurrentAttackSwingType);
+                AttackDamage = (playerdat.STR / 9) + CurrentWeaponBaseDamage(WeaponSwingTypePlayer);
             }
 
             //Then get weapon enchantments
@@ -337,9 +198,8 @@ namespace Underworld
         /// <returns></returns>
         public static bool NPCExecuteAttack(uwObject attacker, int swingtype, int attackcharge, int attacktype, int poisondamage)
         {
-            CurrentAttackSwingType = swingtype;
             NPCFinalAttackCharge = attackcharge;
-            CurrentWeaponRadius = 2;//always this for NPCS.
+            CurrentWeaponRadius = 2;//always this for NPCS, is this a vanilla bug that overwrites player weapon radius.
             AttackingCharacter = attacker;
             AttackDamage = critterObjectDat.attackdamage(attacker.item_id, attacktype) + (critterObjectDat.strength(attacker.item_id) / 5);
             AttackScore = critterObjectDat.chancetohit(attacker.item_id, attacktype) + (critterObjectDat.EquipmentDamageOrBaseHitChance(attacker.item_id) >> 1);
@@ -386,7 +246,9 @@ namespace Underworld
                 }
 
                 AttackScoreFlankingBonus = CalcFlankingBonus();
-                if (CalcAttackResults() == 0)
+                var attackresult = CalcAttackResults();
+                CombatMissImpactSound(attackresult);
+                if (attackresult == 0)
                 {
                     //A hit
                     AttackerAppliesFinalDamage(damageType: 4, attacker: AttackingCharacter.index, MissileAttack: false);
@@ -402,14 +264,111 @@ namespace Underworld
                         objList: UWTileMap.current_tilemap.LevelObjects,
                         WorldObject: true,
                         damagesource: AttackingCharacter.index);
-                    Debug.Print("Todo CombatMissImpactSound();");
                     return false;
                 }
             }
             else
             {
                 Debug.Print("CheckAttackHit = MISS");
+                CombatMissImpactSound(0);
                 return false;//swing and a miss
+            }
+        }
+
+        static void CombatMissImpactSound(int attackresult)
+        {
+            if (attackresult != 0)//a hit
+            {
+                int var6 = 0;
+                int var7 = 0;
+                if (AttackingCharacter.index == 1)
+                {
+                    var6 = PlayerWeaponSound;
+                }
+                else
+                {
+                    if (AttackingCharacter.index < 0x100)
+                    {
+                        var6 = critterObjectDat.combatimpactsound_7_3(AttackingCharacter.item_id);
+                    }
+                    else
+                    {
+                        var6 = 1;
+                    }
+                }
+                //seg024_DB9
+                if (DefendingCharacter.index == 1)
+                {
+                    //sound is based on body part/armour piece hit
+                    var var5slot = BodyPartHit + 1;
+                    var ObjectInSlot = playerdat.GetInventorySlotObject(var5slot);
+                    if (ObjectInSlot != null)
+                    {
+                        //uw2 values. need to dbl check for uw1
+                        switch (ObjectInSlot.item_id)
+                        {
+                            case 0x20:
+                            case 0x23:
+                            case 0x26:
+                            case 0x29:
+                            case 0x2C://leather objects
+                                var7 = 0;
+                                break;
+                            default:
+                                var7 = 1;
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        var7 = 1;
+                    }
+                }
+                else
+                {
+                    //defender is not player
+                    if (DefendingCharacter.index < 0x100)
+                    {
+                        var7 = critterObjectDat.combatimpactsound_4_3(DefendingCharacter.item_id);
+                    }
+                    else
+                    {
+                        var7 = 0;
+                    }
+                }
+
+                //TODO: UW1 may have different values.
+                var effectVar8 = 0;
+                //Seg24_E37
+                if (var6 != 1)
+                {
+                    if (var6 == 2)
+                    {
+                        if (var7 == 1)
+                        {
+                            effectVar8 = 7;
+                        }
+                        else
+                        {
+                            effectVar8 = 8;
+                        }
+                    }
+                    else
+                    {
+                        effectVar8 = 8;
+                    }
+                }
+                else
+                {
+                    effectVar8 = 7;
+                }
+                UWsoundeffects.PlaySoundEffectAtObject((byte)effectVar8, DefendingCharacter, 0);
+            }
+            else
+            {
+                //a miss
+                //TODO check a global variable that is related to missile impacts. if set do not play sound.
+                UWsoundeffects.PlaySoundEffectAtObject(effectNo: 0xA, obj: AttackingCharacter, volDelta: 0);
             }
         }
 
@@ -532,7 +491,7 @@ namespace Underworld
 
             if (damagequotient != 0)
             {
-                AttackDamage = Rng.DiceRoll(damagequotient, 6);
+                AttackDamage = Rng.DiceRoll(NoOfLoops: damagequotient, diceRange: 6);
             }
             if (damageremainder != 0)
             {
@@ -550,7 +509,7 @@ namespace Underworld
             //var finaldamage = (AttackDamage * NPCFinalAttackCharge) >> 7;
             finaldamage += AttackScoreFlankingBonus;
 
-            //TODO figure out correct sounds
+            //Play hit sounds
             if (DefendingCharacter.index == 1)
             {
                 //seg024_24E9_A25:
@@ -561,33 +520,23 @@ namespace Underworld
                 //seg024_24E9_A33:
                 if (!MissileAttack)
                 {
-                    Debug.Print("TODO this sound is based on the weapon selected.");                    
+                    var SoundEffectVarC = 04;
+                    if (_RES == GAME_UW2)
+                    {
+                        switch (PlayerWeaponSound)
+                        {
+                            case 2:
+                                SoundEffectVarC = 0x1B; break;
+                            case 0:
+                            case 1:
+                            default:
+                                SoundEffectVarC = 4; break;
+                        }
+                    }
+
+                    UWsoundeffects.PlaySoundEffectAtCoordinate((byte)SoundEffectVarC, CombatHitTileX, CombatHitTileY, finaldamage << 2);
                 }
             }
-
-
-            // //THIS SECTION HAS TO MOVE?
-            // if (DefendingCharacter.majorclass == 1)
-            // {
-            //     if (critterObjectDat.bleed(DefendingCharacter.item_id) != 0)
-            //     {
-            //         Debug.Print("TODO. place animo at hit body part");
-            //         animo.SpawnAnimoAtTarget(target: DefendingCharacter, subclassindex: 0, si_zpos: 5, tileX: DefendingCharacter.tileX, tileY: DefendingCharacter.tileY); //blood
-            //         if (AttackWasACrit)
-            //         {
-            //             animo.SpawnAnimoAtTarget(target: DefendingCharacter, subclassindex: 0, si_zpos: 3, tileX: DefendingCharacter.tileX, tileY: DefendingCharacter.tileY); //blood
-            //         }
-            //     }
-            //     else
-            //     {//npc does not bleed
-            //         animo.SpawnAnimoAtTarget(target: DefendingCharacter, subclassindex: 0xB, si_zpos: 3, tileX: DefendingCharacter.tileX, tileY: DefendingCharacter.tileY); // a flash damage
-            //     }
-            // }
-            // else
-            // {
-            //     //hit a non-npc object
-            //     animo.SpawnAnimoAtTarget(target: DefendingCharacter, subclassindex: 0xB, si_zpos: 3, tileX: DefendingCharacter.tileX, tileY: DefendingCharacter.tileY); // a flash damage
-            // }
 
 
             //seg024_24E9_A9B:
@@ -641,7 +590,7 @@ namespace Underworld
             //Resume here.
             if (finaldamage != 0)
             {
-                if (!MissileAttack)//should be attackingcharacter != -1
+                if (attacker != -1)//should be attackingcharacter != -1
                 {
                     if (BodyPartHit >= 4)
                     {
@@ -652,7 +601,7 @@ namespace Underworld
                         //seg024_24E9_BD5:
                         if (DefendingCharacter.majorclass == 1)
                         {
-                            if (AttackingCharacter.index == 1)
+                            if (attacker == 1)
                             {
                                 //seg024_24E9_BEB
                                 uimanager.SetEyeLevel(DefendingCharacter.npc_hp, critterObjectDat.avghit(DefendingCharacter.item_id));
@@ -660,10 +609,10 @@ namespace Underworld
                             //seg024_24E9_C49:
                             if (critterObjectDat.bleed(DefendingCharacter.item_id) != 0)
                             {
-                                animo.SpawnAnimoAtTarget(DefendingCharacter, 0, BodyHitZ[BodyPartHit], CombatHitTileX, CombatHitTileY);
-                                if (AttackWasACrit && (AttackingCharacter.index == 1))
+                                animo.SpawnAnimoAtTarget(target: DefendingCharacter, subclassindex: 0, si_zpos: BodyHitZ[BodyPartHit], tileX: CombatHitTileX, tileY: CombatHitTileY);
+                                if (AttackWasACrit && (attacker == 1))
                                 {
-                                    animo.SpawnAnimoAtTarget(DefendingCharacter, 0, BodyHitZ[BodyPartHit] - 2, CombatHitTileX, CombatHitTileY);
+                                    animo.SpawnAnimoAtTarget(target: DefendingCharacter, subclassindex: 0, si_zpos: BodyHitZ[BodyPartHit] - 2, tileX: CombatHitTileX, tileY: CombatHitTileY);
                                 }
                                 return;
                             }
@@ -685,13 +634,13 @@ namespace Underworld
                                 AttackHitZ_dseg_67d6_24CE = DefendingCharacter.zpos + 2;
                             }
                         }
-                        animo.SpawnAnimoAtTarget(DefendingCharacter, 1, -AttackHitZ_dseg_67d6_24CE, CombatHitTileX, CombatHitTileY);//a flash
+                        animo.SpawnAnimoAtTarget(target: DefendingCharacter, subclassindex: 0xB, si_zpos: -AttackHitZ_dseg_67d6_24CE, tileX: CombatHitTileX, tileY: CombatHitTileY);//a flash
                     }
                     else
                     {
                         //Seg24_BC0
                         //player was the defender.
-                        motion.SetScreenShake(TypeOfShake: 0x20, duration: (byte)(di_damage_level * 5)) ;
+                        motion.SetScreenShake(TypeOfShake: 0x20, duration: (byte)(di_damage_level * 5));
                     }
                 }
             }
@@ -738,7 +687,7 @@ namespace Underworld
         {
             get
             {
-                switch (CurrentAttackSwingType) //random for now
+                switch (WeaponSwingTypePlayer) 
                 {
                     case 1:
                         return 2; //bash
@@ -763,18 +712,18 @@ namespace Underworld
             //var radius = (byte)commonObjDat.radius(currentWeaponItemID);
             MotionCalcArray.Radius8 = (byte)(CurrentWeaponRadius + 1);
             MotionCalcArray.Height9 = (byte)(((CurrentWeaponRadius << 1) + 1) << 2);
-            MotionCalcArray.z4 = (ushort)(AttackingCharacter.zpos + (commonObjDat.height(AttackingCharacter.item_id) * (CurrentAttackSwingType / 3) / 3));
-            
+            MotionCalcArray.z4 = (ushort)(AttackingCharacter.zpos + (commonObjDat.height(AttackingCharacter.item_id) * (AttackSwingHeightAdjust / 3) / 3)); //note when on zpos=0 and using a stab attack the calculated z4 will be out of bounds. this is vanilla behaviour.
+
             if (AttackingCharacter.index == 1)
             {
-                MotionCalcArray.z4 += (ushort)(motion.PlayerHeadingRelated_dseg_67d6_33D6 / 0x200);//this value is set in player motion. Assume 0 for now.
+                MotionCalcArray.z4 += (ushort)(motion.PlayerCameraPitch_dseg_67d6_33D6 / 0x200);
             }
 
             AttackHitZ_dseg_67d6_24CE = (commonObjDat.height(AttackingCharacter.item_id) / 6) + MotionCalcArray.z4;
             MotionCalcArray.x0 = (ushort)(AttackingCharacter.xpos + (AttackingCharacter.tileX << 3));
             MotionCalcArray.y2 = (ushort)(AttackingCharacter.ypos + (AttackingCharacter.tileY << 3));
             var di_heading = (AttackingCharacter.heading << 5) + AttackingCharacter.npc_heading;
-            
+
             int x0 = MotionCalcArray.x0; int y2 = MotionCalcArray.y2;
             motion.GetCoordinateInDirection(di_heading, CurrentWeaponRadius + 3, ref x0, ref y2);
             MotionCalcArray.x0 = (ushort)x0; MotionCalcArray.y2 = (ushort)y2;

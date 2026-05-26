@@ -28,24 +28,26 @@ namespace Underworld
         /// </summary>
         public delegate void CutsceneCallBack();
 
+        public static uwObject CodeCenterObject;
+
         public static void RunCodeOnTargetsAroundObject(AreaEffectCallBack methodToCall, int CentreObject, int rngProbablity, int targetType, int distanceFromObject, int tileRadius)
         {
             int heading;
             int tileX; int tileY;
 
-                var obj = UWTileMap.current_tilemap.LevelObjects[CentreObject];
-                
-                if (obj.IsStatic)
+                CodeCenterObject = UWTileMap.current_tilemap.LevelObjects[CentreObject];
+                 
+                if (CodeCenterObject.IsStatic)
                 {
                     //static object
-                    heading = obj.heading << 5;
-                    tileX = obj.tileX; tileY = obj.tileY;
+                    heading = CodeCenterObject.heading << 5;
+                    tileX = CodeCenterObject.tileX; tileY = CodeCenterObject.tileY;
                 }
                 else
                 {
                     //mobile object
-                    heading = (obj.heading << 5) + obj.npc_heading;
-                    tileX = obj.npc_xhome; tileY = obj.npc_yhome;
+                    heading = (CodeCenterObject.heading << 5) + CodeCenterObject.npc_heading;
+                    tileX = CodeCenterObject.npc_xhome; tileY = CodeCenterObject.npc_yhome;
                 }
 
                 motion.GetCoordinateInDirection(heading, distanceFromObject, ref tileX, ref tileY);

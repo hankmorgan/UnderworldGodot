@@ -40,7 +40,7 @@ namespace Underworld
                 else
                 { //a conversation can be had (TODO take hostility into account. Some special NPCs can be talked to in combat. eg rodric and patterson)
                     currentConversation = conversations[conversationNo];
-                    InConversation = true;
+                    uimanager.CurrentGameMode = uimanager.GameModes.CONVERSATION;
                     DoTeleport = false;
                     TeleportToLevel = -1;
                     TeleportTileX = - 1;
@@ -64,9 +64,6 @@ namespace Underworld
 
                     ImportVariables(talker);
                     
-                    //stop player motion
-                    main.gamecam.Set("MOVE", false);
-
                     //Launch conversation VM co-routine 
                     _ = Peaky.Coroutines.Coroutine.Run(
                         RunConversationVM(talker),
@@ -144,7 +141,7 @@ namespace Underworld
 
             //turn off mouselook to allow clicking around the screen.
             Input.MouseMode = Input.MouseModeEnum.Hidden;
-            main.gamecam.Set("MOUSELOOK", false);
+            main.cameraPitchGimbal.Set("MOUSELOOK", false);
             
 
             //npc name and portrait

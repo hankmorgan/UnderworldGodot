@@ -480,6 +480,9 @@ namespace Underworld
         }
 
 
+        /// <summary>
+        /// Redraws the inventory and paperdoll
+        /// </summary>
         public static void UpdateInventoryDisplay()
         {
             SetHelm(playerdat.isFemale, wearable.GetSpriteIndex(playerdat.HelmObject));
@@ -508,6 +511,7 @@ namespace Underworld
                     SetBackPackArt(i, -1);
                 }
             }
+            RefreshWeightDisplay();
         }
 
 

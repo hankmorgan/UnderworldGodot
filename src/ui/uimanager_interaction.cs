@@ -1,5 +1,4 @@
 using Godot;
-using Munt.NET;
 
 namespace Underworld
 {
@@ -167,7 +166,6 @@ namespace Underworld
 
         public static void InteractionModeToggle(InteractionModes index)
         {
-
             PreviousInteractionMode = InteractionMode;
             ToggleInteractionButtonDisplay(index);
 
@@ -184,12 +182,9 @@ namespace Underworld
                         {
                             InteractionModeShowHide(false);//hide the interaction buttons.  
                         }
-                        //turn off mouselook
+                        //turn off mouselook (obsolete?)
                         Input.MouseMode = Input.MouseModeEnum.Hidden;
-                        main.gamecam.Set("MOUSELOOK", false);
-
                         ReturnToTopOptionsMenu();
-                        main.gamecam.Set("MOVE", false);
                         break;
                     }
                 case InteractionModes.ModeAttack:
@@ -198,9 +193,14 @@ namespace Underworld
                         break;
                     }
                 default:
-                    playerdat.play_drawn = 0; //ensure weapon is not drawn.
+                    //ensure weapon is not drawn.
+                    if (playerdat.play_drawn == 1)
+                    {
+                        ToggleWeaponAnimationState(false);
+                    }
+                     
                     //XMIMusic.PickLevelThemeMusic(); //in future this needs to take into account combat state.
-                    XMIMusic.PickLevelThemeMusic(0);
+                    //
                     break;
 
             }
@@ -247,7 +247,8 @@ namespace Underworld
 
         public static void ToggleWeaponAnimationState(bool drawWeapon, bool updateThemes = true)
         {
-            PreviousWeaponAnimation = -1; //force redraw.
+            //PreviousWeaponAnimation = -1; //force redraw.
+            //combat.stage = combat.CombatStages.OutOfCombat;
             if (drawWeapon)     //(playerdat.play_drawn != 1)
             {
                 playerdat.play_drawn = 1;//draw the weapon 
@@ -308,7 +309,7 @@ namespace Underworld
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
-                if (!main.blockmouseinput)
+                if (!uimanager.blockmouseinput)
                 {
                     if (playerdat.ObjectInHand != -1)
                     {

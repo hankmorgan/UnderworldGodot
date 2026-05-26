@@ -31,8 +31,8 @@ namespace Underworld
             if (projectile.IsStatic)
             {//Not sure when a static projectile will hit this but including for completedness. (possibly collisions?)
                 MotionParams.unk_a_pitch = 0;
-                MotionParams.unk_10_Z = 0;
-                MotionParams.unk_14 = 0;
+                MotionParams.gravity_10_Z = 0;
+                MotionParams.momentum_14 = 0;
                 MotionParams.hp_1b = (byte)projectile.quality;
                 MotionParams.x_0 += (short)(projectile.tileX << 3);
                 MotionParams.y_2 += (short)(projectile.tileY << 3);
@@ -44,7 +44,7 @@ namespace Underworld
                 MotionParams.heading_1E = (short)(projectile.ProjectileHeading << 8);
                 MotionParams.tilestate25 = (byte)(1 << projectile.TileState_0XA_Bit456);
                 MotionParams.unk_a_pitch = (short)((projectile.Projectile_Pitch - 16) << 6);
-                MotionParams.unk_10_Z = (short)(projectile.UnkBit_0X13_Bit7 * -4);
+                MotionParams.gravity_10_Z = (short)(projectile.UnkBit_0X13_Bit7 * -4);
                 MotionParams.hp_1b = projectile.npc_hp;
 
                 if (projectile.majorclass != 1)
@@ -54,7 +54,7 @@ namespace Underworld
                     MotionParams.y_2 = (short)projectile.CoordinateY;
                     MotionParams.z_4 = (short)projectile.CoordinateZ;
                 }
-                MotionParams.unk_14 = projectile.UnkBit_0X13_Bit0to6;
+                MotionParams.momentum_14 = projectile.UnkBit_0X13_Bit0to6;
             }
 
 
@@ -63,17 +63,17 @@ namespace Underworld
                 &&
                 (commonObjDat.maybeMagicObjectFlag(itemid) == false)
                 &&
-                ((MotionParams.unk_a_pitch | MotionParams.unk_10_Z) == 0)
+                ((MotionParams.unk_a_pitch | MotionParams.gravity_10_Z) == 0)
             )
             {
                 //seg030_2BB7_5CE:
-                if (2 + (MotionParams.unk_1a << 1) >= MotionParams.unk_14)
+                if (2 + (MotionParams.unk_1a << 1) >= MotionParams.momentum_14)
                 {//seg030_2BB7_5DA: 
-                    MotionParams.unk_14 = 0;
+                    MotionParams.momentum_14 = 0;
                 }
                 else
                 {
-                    MotionParams.unk_14 = (short)(projectile.UnkBit_0X13_Bit0to6 * (0x29 + (MotionParams.unk_1a << 2)));
+                    MotionParams.momentum_14 = (short)(projectile.UnkBit_0X13_Bit0to6 * (0x29 + (MotionParams.unk_1a << 2)));
                     if (projectile.majorclass == 1)
                     {
                         MotionParams.unk_24 = 8;
@@ -82,7 +82,7 @@ namespace Underworld
             }
             else
             {//seg030_2BB7_5F8
-                MotionParams.unk_14 = (short)(MotionParams.unk_14 * 0x2F);
+                MotionParams.momentum_14 = (short)(MotionParams.momentum_14 * 0x2F);
                 if (projectile.majorclass == 1)
                 {
                     MotionParams.unk_24 = 8;

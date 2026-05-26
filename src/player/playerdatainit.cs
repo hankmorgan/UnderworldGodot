@@ -16,7 +16,7 @@ namespace Underworld
             if (datafolder.ToUpper() != "DATA")
             {
                 //load player dat from a save file
-                Load(datafolder);     
+                Load(datafolder);
 
                 //Motion params
                 motion.playerMotionParams.x_0 = (short)playerdat.XCoordinate;
@@ -28,12 +28,12 @@ namespace Underworld
 
                 motion.playerMotionParams.tilestate25 = (byte)(playerdat.RelatedToMotionState >> 3);
 
-                motion.PlayerHeadingMinor_dseg_8294 = (short)playerdat.heading_full;
+                motion.PlayerCameraYaw_dseg_8294 = (short)playerdat.heading_full;
 
                 motion.UpdateMotionStateAndSwimming(playerdat.RelatedToMotionState & 0x7);
 
 
-                PositionPlayerObject();
+                PositionPlayerCamera();
 
                 for (int i = 0; i < 8; i++)
                 {//Init the backpack indices
@@ -117,69 +117,7 @@ namespace Underworld
 
             //TODO process detail and music/sound options
 
-        }
-
-        /// <summary>
-        /// Positions the player game camera based on x/y/z pos and current tileX/Y
-        /// </summary>
-        public static void PositionPlayerObject()
-        {
-            var x_adj = 0f;
-            var y_adj = 0f;
-            var z_adj = 0f;
-            if ((motion.playerMotionParams.x_0 & 0x1F) != 0)
-            {
-                x_adj = 0.0046875f * ((float)(motion.playerMotionParams.x_0 & 0x1F));
-            }
-            if ((motion.playerMotionParams.y_2 & 0x1F) != 0)
-            {
-                y_adj = 0.0046875f * ((float)(motion.playerMotionParams.y_2 & 0x1F));
-            }
-            if ((motion.playerMotionParams.z_4 & 0x7) != 0)
-            {
-                //Debug.Print($"z high precision is {motion.playerMotionParams.z_4 & 0x7}");
-                z_adj = (float)(0.001875f * (float)(motion.playerMotionParams.z_4 & 0x7));
-            }
-            Vector3 adjust = new Vector3(
-                x: -x_adj,
-                z: y_adj,
-                y: z_adj); //y-up
-            //Debug.Print($"High precision adjustment {adjust}");
-
-            main.gamecam.Position = adjust + uwObject.GetCoordinate(
-                tileX: motion.playerMotionParams.x_0 >> 8,
-                tileY: motion.playerMotionParams.y_2 >> 8,
-                _xpos: (motion.playerMotionParams.x_0 >> 5) & 0x7,
-                _ypos: (motion.playerMotionParams.y_2 >> 5) & 0x7,
-                _zpos: (motion.playerMotionParams.z_4 >> 3) + commonObjDat.height(127));  //+ playerObject.zpos + commonObjDat.height(127)
-
-            if (motion.CameraIsBobbing_dseg_67d6_33c6)
-            {
-                //Hacky placeholder calculate
-                var tmpz =  uwObject.GetCoordinate(
-                    tileX: 0,
-                    tileY: 0,
-                    _xpos: 0,
-                    _ypos: 0,
-                    _zpos: motion.CameraBobZAdjust_dseg_67d6_33CE >> 3);
-
-                //todo allow for zpos going out of bounds.
-                main.gamecam.Position += new Vector3(0, tmpz.Y, 0);
-            }
-
-
-//Commonobjdat.height in zpos adjustment is wrong. Based on disassebly the camera Z is adjusted by a value of 165. The Z is based on playermotion.Z4
-//This needs to be fixed when the coordinate/object rendering is given more resolution.
-
-            //this is causing visual glitching when sliding?              
-            main.gamecam.Rotation = Vector3.Zero;
-            main.gamecam.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
-                                                              //main.gamecam.Rotate(Vector3.Up, (float)(-heading_major / 127f * Math.PI));
-            float fullheading = (float)((playerObject.heading << 5) + playerObject.npc_heading);
-            main.gamecam.Rotate(Vector3.Up, (float)(-fullheading / 127f * Math.PI));
-
-            //TODO this camera angle should be based on global values Dseg8294,Dseg33D6,Dseg33D8. The should be (not in order) pitch, yaw and roll?
-        }
+        }      
 
 
 

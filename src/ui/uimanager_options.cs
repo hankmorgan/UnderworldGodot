@@ -645,6 +645,7 @@ namespace Underworld
 
         public static void ReturnToGameFromOptions()
         {
+            uimanager.CurrentGameMode = GameModes.GAME;
             if (UWClass._RES == UWClass.GAME_UW2)
             {
                 EnableDisable(instance.PanelInventory, true);
@@ -652,7 +653,24 @@ namespace Underworld
             }
             if (PreviousInteractionMode != InteractionMode)
             {
-               InteractionModeToggle(PreviousInteractionMode); 
+                if (PreviousInteractionMode != InteractionModes.ModeAttack)
+                {
+                    InteractionModeToggle(PreviousInteractionMode);      
+                }
+                else
+                {
+                    InteractionMode = InteractionModes.ModeAttack;
+                    //Turn on attack interaction button.
+                    if (UWClass._RES == UWClass.GAME_UW2)
+                    {
+                        instance.InteractionButtonsUW2[(int)(InteractionModes.ModeAttack)].Texture = instance.UW2InteractionBtnsOff[(int)(InteractionModes.ModeAttack)];
+                    }
+                    else
+                    {
+                        instance.InteractionButtonsUW1[(int)(InteractionModes.ModeAttack)].Texture = grLfti.LoadImageAt((int)(InteractionModes.ModeAttack) * 2, false);
+                    }
+                }
+               
             } 
             else
             {
@@ -669,12 +687,13 @@ namespace Underworld
                                                 -1,
                                                 -1,
                                                 -1});
-            main.gamecam.Set("MOVE", true);
+
         }
 
 
         private static void ReturnToTopOptionsMenu()
         {
+            uimanager.CurrentGameMode = GameModes.OPTIONS;
             if (UWClass._RES == UWClass.GAME_UW2)
             {
                 EnableDisable(instance.PanelInventory, false);

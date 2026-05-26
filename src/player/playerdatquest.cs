@@ -192,6 +192,20 @@ namespace Underworld
             }
         }
 
+        public static byte IncenseCounter
+        {
+            get
+            {
+                return (byte)(GetAt(0x62) & 0x3);
+            }
+            set
+            {
+                byte tmp = (byte)(GetAt(0x62) & 0xFC);               
+                tmp |= (byte)(value & 0x3);
+                SetAt(0x62, tmp);
+            }
+        }
+
         public static byte WorldsVisited
         {
             get
@@ -199,6 +213,7 @@ namespace Underworld
                 return GetAt(0xF4);
             }
         }
+        
         /// <summary>
         /// Checks  if worlds has already been visited by the player
         /// </summary>

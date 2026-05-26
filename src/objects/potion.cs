@@ -51,7 +51,7 @@ namespace Underworld
                         if (dmgtrap!=null)
                         {
                             use.UseTriggerHasBeenActivated = true;//stop later infinite loop
-                            a_damage_trap.ApplyDamageTrap(dmgtrap.owner>0, dmgtrap.quality);
+                            a_damage_trap.ApplyDamageTrap(triggeringCharacter: playerdat.playerObject, Poison: dmgtrap.owner>0, basedamage: dmgtrap.quality);
                         }
                     }
                 }

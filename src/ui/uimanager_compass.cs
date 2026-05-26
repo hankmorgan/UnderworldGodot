@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Godot;
 
 namespace Underworld
@@ -46,8 +47,12 @@ namespace Underworld
 
         public static void UpdateCompass()
         {
-            var heading = (playerdat.heading_major >> 4);//get full heading into a range of 0-f
-            PointCompassInDirection(heading);
+            //TODO playerdat.heading_major is no longer updated.This should be based on CameraYaw or equivilant value from playerObject.
+ 
+            var heading = (playerdat.playerObject.heading<< 5) + playerdat.playerObject.npc_heading;//get full heading into a range of 0-f
+            heading += 8;
+            heading = (heading & 0xFF);
+            PointCompassInDirection((heading>>4));
         }
 
         public static void PointCompassInDirection(int heading)
@@ -80,7 +85,7 @@ namespace Underworld
         private void _on_compass_click(InputEvent @event)
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed)
-            {  XMIMusic.DEBUG_MUSIC_HASSTOPPED = !XMIMusic.DEBUG_MUSIC_HASSTOPPED;//toggle for debugging
+            { 
                 scroll.Clear();
                 AddToMessageScroll("\n");
                 if (UWClass._RES == UWClass.GAME_UW2)

@@ -9,8 +9,11 @@ namespace Underworld
 	/// </summary>
 	public partial class ConversationVM : UWClass
 	{
-		public static bool InConversation = false;
+		//public static bool InConversation = false;
 
+		/// <summary>
+		/// Used for the talking door and the wisp in uw2. Game spawns a temporary npc for these conversations.
+		/// </summary>
 		public static bool TemporaryTalker = false;
 
 		/// <summary>
@@ -610,18 +613,24 @@ namespace Underworld
 				{
 					var tile = UWTileMap.current_tilemap.Tiles[playerdat.playerObject.tileX, playerdat.playerObject.tileY];
 					UWTileMap.GetRandomXYZForTile(tile, out int newxpos, out int newypos, out int newzpos);
-					var dropcoordinate = uwObject.GetCoordinate(playerdat.playerObject.tileX, playerdat.playerObject.tileY, newxpos, newypos, newzpos);
+					var tradeObject = UWTileMap.current_tilemap.LevelObjects[objindex];
+					tradeObject.tileX = tile.tileX; tradeObject.tileY= tile.tileY;
+					tradeObject.xpos = (short)newxpos; tradeObject.ypos = (short)newypos; tradeObject.zpos = (short)newzpos;
+					tradeObject.next = tile.indexObjectList;
+					tile.indexObjectList = tradeObject.index;
+					objectInstance.RedrawFull(tradeObject);
+					// var dropcoordinate = uwObject.XYZToVector3(x: (newxpos << 5) + (playerdat.playerObject.tileX << 8), y: tile.floorHeight << 3, z: (newypos << 5) + (playerdat.playerObject.tileY << 8)); //uwObject.GetCoordinate_OBSOLETE(playerdat.playerObject.tileX, playerdat.playerObject.tileY, newxpos, newypos, newzpos);
 
-					pickup.Drop_old(
-						index: objindex,
-						objList: UWTileMap.current_tilemap.LevelObjects,
-						dropPosition: dropcoordinate,
-						tileX: playerdat.playerObject.tileX,
-						tileY: playerdat.playerObject.tileY);
+					// pickup.Drop_old(
+					// 	index: objindex,
+					// 	objList: UWTileMap.current_tilemap.LevelObjects,
+					// 	dropPosition: dropcoordinate,
+					// 	tileX: playerdat.playerObject.tileX,
+					// 	tileY: playerdat.playerObject.tileY);
 				}
 			}
 			uimanager.instance.convo.Clear();
-			InConversation = false;
+			uimanager.CurrentGameMode = uimanager.GameModes.GAME;
 
 			if (_RES == GAME_UW2)
 			{
@@ -644,8 +653,6 @@ namespace Underworld
 				scd.ProcessSCDArk(mode: 1);
 			}
 
-
-			main.gamecam.Set("MOVE", true);
 			if (DoTeleport)
 			{
 				if (UWTileMap.ValidTile(TeleportTileX, TeleportTileY))

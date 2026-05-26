@@ -6,7 +6,7 @@
   - [Before you begin.](#before-you-begin)
   - [Current features](#current-features)
   - [Whats missing](#whats-missing)
-  - [Known Issues](#known-issues)
+  - [Some known Issues](#some-known-issues)
   - [Getting Started](#getting-started)
   - [UWsettings.json](#uwsettingsjson)
   - [Controls](#controls)
@@ -14,6 +14,8 @@
     - [Modes](#modes)
     - [Cheats](#cheats)
   - [Music](#music)
+    - [ROM files (cm32l / mt32 only)](#rom-files-cm32l--mt32-only)
+    - [Design inspiration](#design-inspiration)
   - [Code Contributions](#code-contributions)
     - [Referenced code projects](#referenced-code-projects)
   - [AI Policy](#ai-policy)
@@ -51,27 +53,26 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * Animated doors and sprites
 * Looping NPC animations
 * Full Conversations with NPCs
-* Almost all game triggers and traps.
+* Almost all game triggers and traps. Incl some that are not used in the original game.
 * Barter logic
 * Lighting effects (Palette based except for correct transparencies)
 * Inventory management including runebag (excluding drag and drop)
 * Picking up and dropping of items (without checking pickup rules)
 * Usable switches
-* Reading signs
-* Game strings
-* Palette cycling and shading
+* Readables and all Game strings
+* Palette cycling and shading effect
 * Save file loading
 * Player stats display
 * HP and Mana Displays
 * Compass status message
 * 3D Models
 * Food consumption
-* Spell casting. Most spells implemented.
+* Spell casting. Almost entirely all known spells implemented with original logic.
 * Usable wands, scrolls and potions.
 * Small window cutscenes (partial)
 * Game variables and quest variables (partial support, not all scenarios may work)
-* Level transitions
-* Partial options menu. In game loading of saves
+* Level transitions and persistance.
+* Options menu incl sound, music and low quality detail levels (try it out if you still use a 486!)
 * Many Object interactions
 * Combat attack charge buildup and combat accuracy calcuations for player
 * Missile combat
@@ -86,31 +87,48 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * Mostly complete Object physics
 * Most NPC AI, movement and pathfinding
 * NPC Combat Actions
-* Player movement and collision (with a lot of jank attached incl framerate/speed issues)
+* Player movement and collision (with a small amount of jank)
+* Swimming
 * Speech from VOC files
 * Real-time music synthesis from XMI via four selectable synth engines (CM-32L/MT-32 via mt32emu, SoundFont via MeltySynth, or AdLib/OPL via AdlMidi).
 * Sound effects.
+* In camera special effects, screenshaking and colour flashing
 * Saving (partial support)
+* Loading (full support)
 * Endgame screens
 * Animated Dragon UI Elements
 * Partial Weight and encumberance mechanics
 * Splash screens and game credits
+* Adding and deleting automap notes
+* Stealth mechanics
+* Death and resurrection mechanics with cutscenes.
 
 ## Whats missing
-* Sprite transparencies 
+* Sprite transparencies (e.g. creature shadows)
 * Those weird ethereal void monsters
-* Editing of automap notes
-* Swimming
-* Getting lost mechanics
-* Stealth mechanics (partial)
-and much more!
+* Getting lost mechanics (UW2)
+* Dragging of items on UI
+* Message scroll edges and other ui polish
+* Updating of SCD.ARK files once events process.
+* Health and mana flask animation effects.
 
-## Known Issues
-* Some NPC sprites are incorrectly cropped.
-* NPCs and mobile objects move at a slow rate of refresh (timing configuration)
-* Player motion is sluggish (timing need tuning), player strafing is unreliable
-* Some cutscenes are missing frames or have visual distortions
-* Enter/Exit/Pressure triggers currently not working
+## Some known Issues
+- Some NPC sprites are incorrectly cropped or hover off the ground.
+- NPCs and mobile objects move at a slow rate of refresh (this is timing configuration, but a slower speed allows me to check their behaviours during testing..)
+- Some cutscenes are missing frames or have visual distortions
+- Enter/Exit/Pressure triggers currently not implemented
+- Music stops playing because game cannot detect when a playing music track is finished.
+- Sprite billboarding is always "UP" even when the player camera is being rolled.
+- Cursor pivots are at centre of art for the automap ui elements such as the quill.
+- Stats display is misaligned
+- Interaction mode changes as you use the paperdoll. 
+- player footsteps and swimming sound while in water does not play
+- camera will eventually bob underneath the surface when swimming.
+- some objects will appear to clip underneath slopes (this might be a rendering diff vs vanilla)
+- A damage animos first frame is a blood spatter.
+- spell icons appear above conversation ui
+- runes stones appear above the dragon ui element
+- Some saving bugs. Don't expect a fully reliable save-load system yet.
 
 ## Getting Started
 
@@ -160,16 +178,19 @@ To select maps to load.
 
 
 ## Controls
-Note controls are sluggish due to ongoing implementation and debugging of player motion.
 
 ### Movement
 W run forward
 Shift+W walk forward
 S walk backwards
-AD strafe left and right
-QE turn left and right
+A,D strafe left and right
+J Jump
+Q, E turn left and right
 T to toggle freemouse
-RF fly up and down when a magic fly/levitate spell is active
+R,F fly up and down when a magic fly/levitate spell is active
+1 Look down
+2 Look straight ahead
+3 Look up
 
 ### Modes
 F1-F6 Change interaction modes

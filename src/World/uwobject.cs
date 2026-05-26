@@ -342,17 +342,6 @@ namespace Underworld
             }
             set
             {
-                if (index == 1015)
-                {
-                    Debug.Print("Here");
-                }
-                if (index > 256)
-                    {
-                        if (value != ypos)
-                        {
-                            Debug.Print("Changing ypos for static object " + index);
-                        }
-                    }
                 int existingValue = GetAt16(PTR + 2);
                 existingValue &= 0xE3FF; //Mask out current val
                 SetAt16(PTR + 2, existingValue | ((value & 0x7) << 10));
@@ -369,13 +358,6 @@ namespace Underworld
             }
             set
             {
-                if (index > 256)
-                {
-                    if (value != xpos)
-                    {
-                        Debug.Print("Changing xpos for static object  " + index);
-                    }
-                }
                 int existingValue = GetAt16(PTR + 2);
                 existingValue &= 0x1FFF; //Mask out current val
                 SetAt16(PTR + 2, existingValue | ((value & 0x7) << 13));
@@ -645,7 +627,10 @@ namespace Underworld
             }
         }
 
-        public short UnkBit_0XD_Bit8
+        /// <summary>
+        /// Used in relation to Pit fighters and creatures spawned by create object traps
+        /// </summary>
+        public short SpawnedCritter_0XD_Bit8
         {
             get
             {
@@ -1401,17 +1386,47 @@ namespace Underworld
 
 
 
-        public Godot.Vector3 GetCoordinate(int tileX, int tileY)
-        {//godot is y-up     
-            if ((IsStatic) || (majorclass == 1))
+        /// <summary>
+        /// Obtains the godot vector3 that the object will be at based on it's tileXY and xypos and it's zpos
+        /// </summary>
+        /// <returns></returns>
+        public Godot.Vector3 GetCoordinate()
+        {//godot is y-up    
+
+            if ((IsStatic) || (majorclass == 1))  //static objects and npcs.
             {
-                return GetCoordinate(tileX, tileY, this.xpos, this.ypos, this.zpos);
+                //(xhome<< 8) + (xpos <<5) note this may need to be offset in the future.
+                var x = (xpos << 5) + (tileX << 8);
+                var y = (ypos << 5) + (tileY << 8);
+                var z = zpos << 3;
+
+                return XYZToVector3(x, y, z);
             }
+
             else
             {
-                
-               return GetFullCoordinate(this); 
-            }            
+                var x = CoordinateX;
+                var y = CoordinateY;
+                var z = CoordinateZ;
+
+                return XYZToVector3(x, y, z);
+
+                // //Get a vector for the object that is relative to the bounds of an underworld level map.
+                // Vector3 underworldVector = new(x: -(float)x / 16384f, y: (float)z / 1024f, z: (float)y / 16384f);
+           
+                // //then transform it into godot positioning using a vector based on the size we are rendering the gameworld in.
+                // return underworldVector * tileMapRender.godotscale;
+            }
+          
+        }
+
+        public static Vector3 XYZToVector3(int x, int y, int z)
+        {
+            //Get a vector for the object that is relative to the bounds of an underworld level map.
+            Vector3 underworldVector = new(x: -(float)x / 16384f, y: (float)z / 1024f, z: (float)y / 16384f);
+
+            //then transform it into godot positioning using a vector based on the size we are rendering the gameworld in.
+            return underworldVector * tileMapRender.godotscale;
         }
 
         /// <summary>
@@ -1419,34 +1434,35 @@ namespace Underworld
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        static Vector3 GetFullCoordinate(uwObject obj, bool CentreInGrid = true)
-        {  
-            float offX = GetXYCoordinate_full(obj.CoordinateX, CentreInGrid);
-            float offY = GetXYCoordinate_full(obj.CoordinateY, CentreInGrid);
-            float offZ = GetZCoordinate(obj.zpos);
-            return new Godot.Vector3(-offX, offZ, offY);  
-        }
+        // static Vector3 GetFullCoordinate(uwObject obj, bool CentreInGrid = true)
+        // {  
+        //     float offX = GetXYCoordinate_full(obj.CoordinateX, CentreInGrid);
+        //     float offY = GetXYCoordinate_full(obj.CoordinateY, CentreInGrid);
+        //     float offZ = GetZCoordinate(obj.zpos);
+        //     return new Godot.Vector3(-offX, offZ, offY);  
+        // }
 
-        
-        static float GetXYCoordinate_full(int fullcoordinate, bool CentreInGrid)
-        {           
-            float adjust = 0f;
-            if (CentreInGrid)
-            {
-                adjust = 0.075f;
-            }
-            return adjust + ((float)(fullcoordinate>>8) * 1.2f)
-                + ((float)((fullcoordinate>>5) & 0x7) * 0.15f)
-                + ((float)(fullcoordinate & 0xF) * 0.01f);   //this number is unconfirmed. Based on assumption that bits 0-3 of coordinate are a single xypos step in 1/15th increments.      
-        }
 
-        public static Vector3 GetCoordinate(int tileX, int tileY, int _xpos, int _ypos, int _zpos, bool CentreInGrid = true)
-        {
-            float offX = GetXYCoordinate(tileX, _xpos,CentreInGrid);
-            float offY = GetXYCoordinate(tileY, _ypos,CentreInGrid);
-            float offZ = GetZCoordinate(_zpos);
-            return new Godot.Vector3(-offX, offZ, offY);  //x is neg. probably technical debt from a bug in the unity version
-        }
+        // static float GetXYCoordinate_full(int fullcoordinate, bool CentreInGrid)
+        // {           
+        //     float adjust = 0f;
+        //     if (CentreInGrid)
+        //     {
+        //         adjust = 0.075f;
+        //     }
+        //     return adjust + ((float)(fullcoordinate>>8) * 1.2f)
+        //         + ((float)((fullcoordinate>>5) & 0x7) * 0.15f)
+        //         + ((float)(fullcoordinate & 0xF) * 0.01f);   //this number is unconfirmed. Based on assumption that bits 0-3 of coordinate are a single xypos step in 1/15th increments.      
+        // }
+
+        // public static Vector3 GetCoordinate_OBSOLETE(int tileX, int tileY, int _xpos, int _ypos, int _zpos, bool CentreInGrid = true)
+        // {
+        //     Debug.Print("|Obsolete Usage of GetCoordinate");
+        //     float offX = GetXYCoordinate(tileX, _xpos,CentreInGrid);
+        //     float offY = GetXYCoordinate(tileY, _ypos,CentreInGrid);
+        //     float offZ = GetZCoordinate(_zpos);
+        //     return new Godot.Vector3(-offX, offZ, offY);  //x is neg. probably technical debt from a bug in the unity version
+        // }
 
 
         /// <summary>
@@ -1464,16 +1480,17 @@ namespace Underworld
         // }
 
 
-        public static float GetXYCoordinate(int tilexy, int xypos, bool CentreInGrid)
-        {
-            //TODO: The coordinates probably need to have more "resolution"
-            float adjust = 0f;
-            if (CentreInGrid)
-            {//adjusts for the object to be in the center of a tile grid segment.
-                adjust = 0.075f;
-            }
-            return adjust + (tilexy * 1.2f)  + (float)(xypos) *  0.15f; //TODO: this 0.15f gives a range of 0-7 steps in x/y pos. More resolution is needed to smooth mobile objects and adjust screenshake?
-        }
+
+        // public static float GetXYCoordinate(int tilexy, int xypos, bool CentreInGrid)
+        // {
+        //     //TODO: The coordinates probably need to have more "resolution"
+        //     float adjust = 0f;
+        //     if (CentreInGrid)
+        //     {//adjusts for the object to be in the center of a tile grid segment.
+        //         adjust = 0.075f;
+        //     }
+        //     return adjust + (tilexy * 1.2f)  + (float)(xypos) *  0.15f; //TODO: this 0.15f gives a range of 0-7 steps in x/y pos. More resolution is needed to smooth mobile objects and adjust screenshake?
+        // }
 
         /// <summary>
         /// Converts an world co-ordinate into a xpos or ypos value. (ignores tileXY)
@@ -1509,11 +1526,11 @@ namespace Underworld
         /// </summary>
         /// <param name="_zpos"></param>
         /// <returns></returns>
-        public static float GetZCoordinate(int _zpos)
-        {
-            float offZ = (_zpos / _ResolutionZ) * _ceil * _BrushZ;
-            return offZ / 100.0f;
-        }
+        // public static float GetZCoordinate(int _zpos)
+        // {
+        //     float offZ = (_zpos / _ResolutionZ) * _ceil * _BrushZ;
+        //     return offZ / 100.0f;
+        // }
 
 
         /// <summary>

@@ -24,9 +24,9 @@ namespace Underworld
 
         static void BouncePlayer(int intensity)
         {
-            if (motion.playerMotionParams.unk_10_Z != -4)
+            if (motion.playerMotionParams.gravity_10_Z != -4)
             {
-                motion.playerMotionParams.unk_10_Z = -2;
+                motion.playerMotionParams.gravity_10_Z = -2;
             }
             motion.playerMotionParams.unk_a_pitch = (short)((intensity * 0x2F) / 4);
             motion.playerMotionParams.unk_6_x = (short)(motion.playerMotionParams.unk_6_x / 2);

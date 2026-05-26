@@ -76,12 +76,12 @@ namespace Underworld
         /// <param name="cutsfile"></param>
         /// <param name="imageNo"></param>
         /// <param name="targetControl"></param>
-        public static void DisplayCutsImage(string cutsfile, int imageNo, TextureRect targetControl, bool DisableCamera = true)
+        public static void DisplayCutsImage(string cutsfile, int imageNo, TextureRect targetControl, bool DisableCamera = true, bool useSingleRedChannel = true)
         {
             var cuts = new CutsLoader(cutsfile);
             if (!csCuts.ContainsKey(cutsfile))
             {
-                csCuts.Add(cutsfile, new CutsLoader(cutsfile));
+                csCuts.Add(cutsfile, new CutsLoader(File: cutsfile, useSingleRedChannel: true));
             }
             _ = Coroutine.Run(
                     DisplayCutsImageWithWait(cuts: csCuts[cutsfile], imageNo: imageNo, targetControl: targetControl, DisableCamera: DisableCamera),
@@ -171,7 +171,7 @@ namespace Underworld
         /// vpOffsetY parameter: scene height = 200 - vpOffsetY.
         /// </summary>
         public static void DisplayCutsImage(CutsLoader cuts, int imageNo, TextureRect targetControl,
-            int cropHeight = 200)
+            int cropHeight = 200, bool useSingleRedChannel = false)
         {
             var srcTex = cuts.LoadImageAt(imageNo);
             if (cropHeight < 200 && srcTex != null)
@@ -189,6 +189,12 @@ namespace Underworld
             else
             {
                 targetControl.Texture = srcTex;
+                if (useSingleRedChannel)
+                {
+                    //Use a material if the source image is a singlered channel. This applies when the image is windows cutscene. eg repair animation.
+                    targetControl.Material = cuts.GetMaterial(imageNo);    
+                }
+                
             }
         }
 

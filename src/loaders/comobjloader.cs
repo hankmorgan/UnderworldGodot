@@ -55,10 +55,15 @@ namespace Underworld
         {//bit 1 at +3
             return ((buffer[PTR(item_id) + 3] >>1) & 0x1)==1;
         }
-
+        
+        /// <summary>
+        /// //bit 2 at +3 Used in collision code. Possibly noclipping object
+        /// </summary>
+        /// <param name="item_id"></param>
+        /// <returns></returns>
         public static bool UnknownFlag3_2(int item_id)
-        {//bit 2 at +3
-            return ((buffer[PTR(item_id) + 3] >>2) & 0x1)==1;
+        {
+            return ((buffer[PTR(item_id) + 3] >> 2) & 0x1)==1;
         }
 
         public static bool maybeMagicObjectFlag(int item_id)

@@ -324,12 +324,46 @@ namespace Underworld
                         }
                         else
                         {
-                            if (!ConversationVM.InConversation)
+                            if (!uimanager.InConversation)
                             {
                                 if (isLeftClick)
                                 {
                                     //try and pickup
-                                    PickupObjectFromSlot(objAtSlot);
+                                    switch (slotname)
+                                    {
+                                        case "RightShoulder":
+                                        case "LeftShoulder": 
+                                        case "RightHand": 
+                                        case "LeftHand": 
+                                            if (objAtSlot.index != OpenedContainerIndex)
+                                            {
+                                                if ((OpenedContainerIndex == -1))
+                                                {
+                                                    PickupObjectFromSlot(objAtSlot);
+                                                }
+                                                else
+                                                {
+                                                    //check if the opened container is not in the object chain of the object list
+                                                    var match = objectsearch.FindMatchInObjectChain(objAtSlot.index, OpenedContainerIndex,playerdat.InventoryObjects);
+                                                    if (match == null)
+                                                    {
+                                                        PickupObjectFromSlot(objAtSlot);
+                                                    }
+                                                    else
+                                                    {
+                                                        Debug.Print("attempt to pickup container while it or sub-object is opened");
+                                                    }
+                                                }
+                                            }
+                                            break;
+                                        default:
+                                            if (objAtSlot.index != OpenedContainerIndex)
+                                            {
+                                                PickupObjectFromSlot(objAtSlot);
+                                            }
+                                            break;
+                                    }
+
                                 }
                                 else
                                 {
@@ -392,6 +426,8 @@ namespace Underworld
                         }
                     }
                     break;
+                case InteractionModes.ModeOptions:
+                    break;//donothing.
                 default:
                     Debug.Print("Unimplemented inventory use verb-object combination"); break;
             }
@@ -730,7 +766,7 @@ namespace Underworld
                 }
             }
             UpdateInventoryDisplay();
-            if (ConversationVM.InConversation)
+            if (uimanager.InConversation)
             {
                 //restore lines.
                 for (int i = 0; i <= linesToRestore.GetUpperBound(0); i++)

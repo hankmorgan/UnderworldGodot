@@ -82,14 +82,8 @@ namespace Underworld
                     tileX: arriveX[si_world],
                     tileY: arriveY[si_world],
                     newLevel: dungeonNos[si_world],
-                    heading: heading[si_world]);
-                // Teleportation.TeleportRotation = heading[si_world];                
-                // Teleportation.TeleportLevel = dungeonNos[si_world];
-                // Teleportation.TeleportTileX = arriveX[si_world];
-                // Teleportation.TeleportTileY = arriveY[si_world];
-                // Teleportation.JustTeleported = true;
+                    HeadingHeightFlag: heading[si_world]);
                 return 2;
-
             }
         }
     }//end class

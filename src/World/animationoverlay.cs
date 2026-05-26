@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Godot;
 
 namespace Underworld
@@ -89,7 +90,7 @@ namespace Underworld
         public int Duration //starts at -1.
         {
             get
-            {
+            {                
                 switch (_RES)
                 {
                     case GAME_UW2: // data is at the end of the tilemap
@@ -168,8 +169,6 @@ namespace Underworld
             }
         }
 
-
-
         /// <summary>
         /// Process the current animation overlays and advance them
         /// </summary>
@@ -207,12 +206,16 @@ namespace Underworld
                                             {
                                                 var linktoremove = ovl.link;
                                                 var x = ovl.tileX; var y = ovl.tileY;
-                                                RemoveAnimationOverlay(ovl.link);
-                                                ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(
-                                                    tileX: x,
-                                                    tileY: y,
-                                                    indexToDelete: (short)linktoremove);
-                                                //EndOverlay_DEPRECIATED(ovl);
+                                                var objToRemove = UWTileMap.current_tilemap.LevelObjects[ovl.link];
+                                                if (objToRemove!=null)
+                                                {
+                                                    ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(
+                                                        tileX: objToRemove.tileX,
+                                                        tileY: objToRemove.tileY,
+                                                        indexToDelete: (short)linktoremove);
+                                                }
+                                                RemoveAnimationOverlay(ovl.link);                                                
+
                                             }
                                         }
                                     }
@@ -283,16 +286,37 @@ namespace Underworld
                     if (lastOverlay.index != i)
                     {
                         //copy the last overlay over the overlay to remove if it is a different overlay.
-                        Buffer.BlockCopy(src: UWTileMap.current_tilemap.lev_ark_block.Data, srcOffset: lastOverlay.PTR, dst: UWTileMap.current_tilemap.lev_ark_block.Data, dstOffset: toRemove.PTR, count: 6);
+                        if (_RES==GAME_UW2)
+                        {
+                            Buffer.BlockCopy(
+                                src: UWTileMap.current_tilemap.lev_ark_block.Data, srcOffset: lastOverlay.PTR, 
+                                dst: UWTileMap.current_tilemap.lev_ark_block.Data, dstOffset: toRemove.PTR, 
+                                count: 6);
+                        }
+                        else
+                        {
+                            Buffer.BlockCopy(
+                                src: UWTileMap.current_tilemap.ovl_ark_block.Data, srcOffset: lastOverlay.PTR, 
+                                dst: UWTileMap.current_tilemap.ovl_ark_block.Data, dstOffset: toRemove.PTR, 
+                                count: 6);    
+                        }
+                        
                     }
                     //clear the data of the last overlay.                    
                     for (int b = 0; b < 6; b++)
                     {
-                        UWTileMap.current_tilemap.lev_ark_block.Data[lastOverlay.PTR + b] = 0;
+                        if (_RES==GAME_UW2)
+                        {
+                            UWTileMap.current_tilemap.lev_ark_block.Data[lastOverlay.PTR + b] = 0;
+                        }
+                        else
+                        {
+                            UWTileMap.current_tilemap.ovl_ark_block.Data[lastOverlay.PTR + b] = 0;
+                        }                        
                     }
-                    UWTileMap.current_tilemap.Overlays[NoOfAnimationOverlays-1] = null;
+                    //UWTileMap.current_tilemap.Overlays[NoOfAnimationOverlays-1] = null;
                     NoOfAnimationOverlays--;
-                    return;
+                    //return;//do for all overlays to ensure duplicate entries are removed.
                 }
             }
         }

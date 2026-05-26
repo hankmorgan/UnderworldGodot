@@ -519,13 +519,17 @@ namespace Underworld
         /// <param name="critter"></param>
         private static void DropRemainsAndLoot(uwObject critter)
         {
+            if (!UWTileMap.ValidTile(critter.tileX, critter.tileY))
+            {
+                return;//cannot drop an offmap npc
+            }
             var tile = UWTileMap.current_tilemap.Tiles[critter.tileX, critter.tileY];
             //Drop npc loot (spawn if missing)
             if (critter.LootSpawnedFlag == 0)
             {
                 spawnloot(critter);
             }
-            container.SpillWorldContainer(critter);
+            container.SpillWorldContainer(critter); //spill the items added in spawnloot or that are already heald
 
             var fluids = critterObjectDat.fluids(critter.item_id);
             if (fluids != 0)

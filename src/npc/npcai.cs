@@ -165,10 +165,16 @@ namespace Underworld
             }
         }
 
-        public static byte[] SpecialMotionHandler;
+        public static MotionHandler SpecialMotionHandler;
 
         public static int MaxAnimFrame;
-        public static bool RelatedToMotionCollision_dseg_67d6_224E;//needs to be set in 1413:ABF
+        public static bool RelatedToMotionCollision_dseg_67d6_224E;//needs to be set in 1413:ABF, likely flags the npc has collided during motion.
+        
+        //Used by collision handlers. unknown impact, 
+        public static bool dseg_2682;
+        public static bool dseg_2684;
+        public static short dseg_2636;
+
         public static bool IsNPCActive_dseg_67d6_2234;
         static bool dseg_67d6_225E;
         static bool HasCurrobjHeadingChanged_dseg_67d6_2242;
@@ -233,19 +239,19 @@ namespace Underworld
                 if (critterObjectDat.isFlier(critter.item_id))
                 {
                     //special setup for flying ai    
-                    SpecialMotionHandler = UWMotionParamArray.DSEG_26C6_FlyingNPCMotionHandler;
+                    SpecialMotionHandler = MotionHandler.FlierNPCMotionHandler; //UWMotionParamArray.DSEG_26C6_FlyingNPCMotionHandler;
                 }
                 else
                 {
                     if (critterObjectDat.isSwimmer(critter.item_id))
                     {
                         //special setup for swimming ai
-                        SpecialMotionHandler = UWMotionParamArray.DSEG_26DE_SwimmingNPCMotionHandler;
+                        SpecialMotionHandler = MotionHandler.SwimmerNPCMotionHandler; //UWMotionParamArray.DSEG_26DE_SwimmingNPCMotionHandler;
                     }
                     else
                     {
                         //default ai (26ba in uw2,  285C in uw1 ) //seg007_17A2_2207
-                        SpecialMotionHandler = UWMotionParamArray.DSEG_26BA_LandNPCMotionHandler;
+                        SpecialMotionHandler = MotionHandler.LandNPCMotionHandler; //UWMotionParamArray.DSEG_26BA_LandNPCMotionHandler;
                     }
                 }
 
@@ -253,17 +259,17 @@ namespace Underworld
                 {
                     //Set values in motion arrays (defined in previous section. ). This protects fire resistant creatures from being damaged by lava.
                     //seg007_17A2_222B
-                    var tmp = Loader.getAt(SpecialMotionHandler, 2, 16);
+                    var tmp = Loader.getAt(SpecialMotionHandler.handlerdata, 2, 16);
                     tmp = tmp & 0xFFDF;
-                    Loader.setAt(SpecialMotionHandler, 2, 16, (int)tmp);
+                    Loader.setAt(SpecialMotionHandler.handlerdata, 2, 16, (int)tmp);
 
-                    tmp = Loader.getAt(SpecialMotionHandler, 6, 16);
+                    tmp = Loader.getAt(SpecialMotionHandler.handlerdata, 6, 16);
                     tmp = tmp & 0xFFDF;
-                    Loader.setAt(SpecialMotionHandler, 6, 16, (int)tmp);
+                    Loader.setAt(SpecialMotionHandler.handlerdata, 6, 16, (int)tmp);
 
-                    tmp = Loader.getAt(SpecialMotionHandler, 0, 16);
+                    tmp = Loader.getAt(SpecialMotionHandler.handlerdata, 0, 16);
                     tmp = tmp | 0x20;
-                    Loader.setAt(SpecialMotionHandler, 0, 16, (int)tmp);
+                    Loader.setAt(SpecialMotionHandler.handlerdata, 0, 16, (int)tmp);
 
                 }
 
@@ -318,17 +324,17 @@ namespace Underworld
                 if ((commonObjDat.scaleresistances(critter.item_id) & 8) != 0)
                 {
                     //Restore original bits in Special Motion Handler. These were preivously changed for fire resistant critters.
-                    var tmp = Loader.getAt(SpecialMotionHandler, 2, 16);
+                    var tmp = Loader.getAt(SpecialMotionHandler.handlerdata, 2, 16);
                     tmp = tmp | 0x20;
-                    Loader.setAt(SpecialMotionHandler, 2, 16, (int)tmp);
+                    Loader.setAt(SpecialMotionHandler.handlerdata, 2, 16, (int)tmp);
 
-                    tmp = Loader.getAt(SpecialMotionHandler, 6, 16);
+                    tmp = Loader.getAt(SpecialMotionHandler.handlerdata, 6, 16);
                     tmp = tmp = tmp | 0x20;
-                    Loader.setAt(SpecialMotionHandler, 6, 16, (int)tmp);
+                    Loader.setAt(SpecialMotionHandler.handlerdata, 6, 16, (int)tmp);
 
-                    tmp = Loader.getAt(SpecialMotionHandler, 0, 16);
+                    tmp = Loader.getAt(SpecialMotionHandler.handlerdata, 0, 16);
                     tmp = tmp & 0xFFDF;
-                    Loader.setAt(SpecialMotionHandler, 0, 16, (int)tmp);
+                    Loader.setAt(SpecialMotionHandler.handlerdata, 0, 16, (int)tmp);
                 }
                 //seg007_17A2_2392:
                 //To update globals after motion has taken place
@@ -363,7 +369,7 @@ namespace Underworld
                             SpecialDeathCases(critter, 1); //mode 1
                             DropRemainsAndLoot(critter);
                             //remove from tile and free object
-                            ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(critter.tileX, critter.tileY, critter.index, true);
+                            ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(tileX: critter.tileX, tileY: critter.tileY, indexToDelete: critter.index, RemoveFromWorld: true);
                             return false;
                         }
                         else
@@ -391,17 +397,17 @@ namespace Underworld
                                     //todo set combat music timer
                                     if (_RES == GAME_UW2)
                                     {
-                                        if (XMIMusic.CurrentlyPlayingThemeNo<=2 || XMIMusic.CurrentlyPlayingThemeNo >4)
+                                        if (XMIMusic.CurrentlyPlayingThemeNo <= 2 || XMIMusic.CurrentlyPlayingThemeNo > 4)
                                         {
                                             XMIMusic.ChangeThemeMusic(3);
-                                        }                                        
+                                        }
                                     }
                                     else
                                     {
-                                        if (XMIMusic.CurrentlyPlayingThemeNo<=5 || XMIMusic.CurrentlyPlayingThemeNo >7)
+                                        if (XMIMusic.CurrentlyPlayingThemeNo <= 5 || XMIMusic.CurrentlyPlayingThemeNo > 7)
                                         {
                                             XMIMusic.ChangeThemeMusic(6);
-                                        }   
+                                        }
                                     }
                                     XMIMusic.CombatMusicTimer = main.GlobalPITTimer;
                                 }
@@ -410,7 +416,7 @@ namespace Underworld
                             if (
                                 (critter.AnimationFrame == COMBAT_HITFRAME)
                                 ||
-                                ((MaxAnimFrame<COMBAT_HITFRAME) && (critter.AnimationFrame == MaxAnimFrame))
+                                ((MaxAnimFrame < COMBAT_HITFRAME) && (critter.AnimationFrame == MaxAnimFrame))
                             )
                             {
                                 //apply attack
@@ -520,35 +526,56 @@ namespace Underworld
                             {
                                 if (critter.AnimationFrame == 1)
                                 {
-                                    soundeffect = 0x5A;//uw2 value?
+                                    if (_RES==GAME_UW2)
+                                    {
+                                        soundeffect = 0x5A;//uw2 value?
+                                    }
+                                    else
+                                    {
+                                        soundeffect = 1;
+                                    }
                                 }
                                 else if (critter.AnimationFrame == 3)
                                 {
-                                    soundeffect = 0x5B;//uw2 value?
+                                    if (_RES==GAME_UW2)
+                                    {
+                                        soundeffect = 0x5B;//uw2 value?    
+                                    }
+                                    else
+                                    {
+                                        soundeffect = 2;
+                                    }                                    
                                 }
                                 break;
                             }
                         case 2://fliers
                             {
-                                soundeffect = 0x17;//uw2 value?
+                                soundeffect = 0x17;//uw1 and uw2 value
                                 break;
                             }
                         case 3://swimmers
                             {
-                                soundeffect = 0x27;//uw2 value?
+                                if (_RES==GAME_UW2)
+                                {
+                                    soundeffect = 0x27;//uw2 value?    
+                                }
+                                else
+                                {
+                                    soundeffect = 5;
+                                }                                
                                 break;
                             }
                         case 4://creepycrawlies
                             {
-                                soundeffect = 0xE;//uw2 value?
+                                soundeffect = 0xE;//uw1 and uw2 value
                                 break;
                             }
                         case 5://
                             {
-                                soundeffect = 0xD;//uw2 value?
+                                soundeffect = 0xD;//uw1 and uw2 value
                                 break;
                             }
-                        case 6://
+                        case 6://uw2 only
                             {
                                 if (critter.AnimationFrame == 1)
                                 {
@@ -572,52 +599,67 @@ namespace Underworld
                     if (soundeffect != 0xFF)
                     {
                         //play sound effect at critter x,y coordinate
-                        UWsoundeffects.PlaySoundEffectAtCoordinate(soundeffect, currObjXCoordinate, currObjYCoordinate,0);
+                        UWsoundeffects.PlaySoundEffectAtCoordinate(soundeffect, currObjXCoordinate, currObjYCoordinate, 0);
                     }
                 }//end sound block
                 //seg007_17A2_29A5:  passive test?
                 if (critterObjectDat.unkPassivenessProperty(critter.item_id) == false)
                 {
                     //seg007_17A2_29B8:
-                    if (
-                        (
-                            (critter.IsAlly == 0)
-                            &&
-                            (critter.index == playerdat.LastDamagedNPCIndex)
-                            &&
-                            (critterObjectDat.generaltype(critter.item_id) == playerdat.LastDamagedNPCType)
-                            &&
-                            (critter.UnkBit_0XA_Bit7 == 0)
-                        )
-                        ||
-                        (
-                            critter.IsAlly == 1
-                        )
-                    )
+                    if (critter.IsAlly != 0)
                     {
-                        if (playerdat.LastDamagedNPCTime + 512 >= playerdat.ClockValue)
-                        {
-                            //seg007_17A2_2A0D:
-                            //do detection
-                            var dist = System.Math.Abs(critter.tileX - playerdat.LastDamagedNPCTileX) + System.Math.Abs(critter.tileY - playerdat.LastDamagedNPCTileY);
-                            if (dist < critterObjectDat.combatdetectionrange(critter.item_id))
-                            {//npc has detected hostility to themselves or to an ally
-                                critter.npc_attitude = 0;
-                                critter.UnkBit_0x19_0_likelyincombat = 1;
-                                if ((critter.npc_goal != 9) && (critter.npc_goal != 6))
-                                {
-                                    var gtarg = 1;
-                                    if (critter.IsAlly == 1)
-                                    {//critter is allied with the player? set them to attack the players target
-                                        gtarg = playerdat.LastDamagedNPCIndex;
-                                    }
-                                    SetGoalAndGtarg(critter, 5, gtarg);
-                                    SetNPCTargetDestination(critter, playerdat.LastDamagedNPCTileX, playerdat.LastDamagedNPCTileY, playerdat.LastDamagedNPCZpos);
+                        goto seg007_17A2_2AEA;
+                    }
+                    if (critter.index == playerdat.LastDamagedNPCIndex)
+                    {
+                        goto Seg007_17A2_29F6;
+                    }
+                    if (critterObjectDat.generaltype(critter.item_id) != playerdat.LastDamagedNPCType)
+                    {
+                        goto Seg007_17A2_29F6;
+                    }
+                    if (critter.UnkBit_0XA_Bit7 == 0)
+                    {
+                        goto Seg007_17A2_2A0D;
+                    }
+
+
+
+                Seg007_17A2_29F6:
+                    if (critter.IsAlly == 1)
+                    {
+                        goto Seg007_17A2_2A0D;
+                    }
+                    else
+                    {
+                        goto seg007_17A2_2AEA;
+                    }
+
+                Seg007_17A2_2A0D:
+
+                    if (playerdat.LastDamagedNPCTime + 512 >= playerdat.ClockValue)
+                    {
+                        //seg007_17A2_2A0D:
+                        //do detection
+                        var dist = System.Math.Abs(critter.tileX - playerdat.LastDamagedNPCTileX) + System.Math.Abs(critter.tileY - playerdat.LastDamagedNPCTileY);
+                        if (dist < critterObjectDat.noisedetectionrange(critter.item_id))
+                        {//npc has detected hostility to themselves or to an ally
+                            critter.npc_attitude = 0;
+                            critter.UnkBit_0x19_0_likelyincombat = 1;
+                            if ((critter.npc_goal != 9) && (critter.npc_goal != 6))
+                            {
+                                var gtarg = 1;
+                                if (critter.IsAlly == 1)
+                                {//critter is allied with the player? set them to attack the players target
+                                    gtarg = playerdat.LastDamagedNPCIndex;
                                 }
+                                SetGoalAndGtarg(critter: critter, 5, gtarg);
+                                SetNPCTargetDestination(critter: critter, newTargetX: playerdat.LastDamagedNPCTileX, newTargetY: playerdat.LastDamagedNPCTileY, newHeight: playerdat.LastDamagedNPCZpos);
                             }
                         }
                     }
-                    //seg007_17A2_2AEA:
+
+                seg007_17A2_2AEA:
                     if (critter.ProjectileSourceID > 0)
                     {
                         //HasLastHitNPC_seg007_17A2_2AF8:                        
@@ -1179,11 +1221,11 @@ namespace Underworld
             var yvector = currentGTargYHome - currObj_YHome;
 
             var si_dist = (int)Math.Pow(xvector, 2) + Math.Pow(yvector, 2);
-            var score = (int)Math.Pow((critterObjectDat.combatdetectionrange(critter.item_id) * critterObjectDat.maybestealth(gtargObject.item_id)) / 16, 2);
+            var score = (int)Math.Pow((critterObjectDat.noisedetectionrange(critter.item_id) * critterObjectDat.StealthQuietness(gtargObject.item_id)) / 16, 2);
 
             if (score / 4 < si_dist)
             {
-                var var8 = (int)Math.Pow((critterObjectDat.theftdetectionrange(critter.item_id) * critterObjectDat.StealthScore2(gtargObject.item_id)) / 16, 2);
+                var var8 = (int)Math.Pow((critterObjectDat.sightdetectionrange(critter.item_id) * critterObjectDat.StealthVisibility(gtargObject.item_id)) / 16, 2);
 
                 if (si_dist < var8)
                 {
@@ -2647,7 +2689,7 @@ namespace Underworld
             {
                 if ((critter.npc_attitude == 0) && (critter.npc_goal != 4))
                 {
-                    SetGoalAndGtarg(critter, 4, 1);
+                    SetGoalAndGtarg(critter: critter, goal: 4, target: 1);
                 }
                 else
                 {

@@ -1,6 +1,4 @@
 using System.Diagnostics;
-using Munt.NET;
-
 
 namespace Underworld
 {
@@ -9,6 +7,8 @@ namespace Underworld
     /// </summary>
     public class sleep : UWClass
     {
+
+        static bool NearbyHostileAwareOfAvatar = false;
 
         /// <summary>
         /// Handles the player going to sleep
@@ -48,7 +48,7 @@ namespace Underworld
                                 else
                                 {
                                     uimanager.AddToMessageScroll(GameStrings.GetString(1, sleepmethod + 0x15));//various strings relating to how you go to sleep
-                                }                                
+                                }
                             }
                             else
                             {
@@ -84,9 +84,11 @@ namespace Underworld
                 uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x10));//you go to sleep           
             }
 
-            FindAndCloseDoors(0);
+            //find and close doors while sleeping
+            scd.FindAndCloseDoors(arg0_isPlayer: false);
 
-            //Cull objects.
+            //TODO Cull objects.
+            Debug.Print("TODO cull objects while sleeping");
 
             var si_hourstosleep = 2 + Rng.r.Next(5);
 
@@ -212,7 +214,7 @@ namespace Underworld
                     }
                 }
 
-                
+
                 playerdat.PlayerStatusUpdate();
                 //Cancel all motion.
 
@@ -259,28 +261,97 @@ namespace Underworld
             playerdat.DreamPlantCounter = 0;
 
             Teleportation.Teleport(
-                character: 0, tileX: 
-                playerdat.DreamTileX, tileY: playerdat.DreamTileY, 
-                newLevel: playerdat.DreamDungeon, 
-                heading: playerdat.DreamHeading);
+                character: 0, tileX:
+                playerdat.DreamTileX, tileY: playerdat.DreamTileY,
+                newLevel: playerdat.DreamDungeon,
+                HeadingHeightFlag: playerdat.DreamHeading);
 
             uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x19));
         }
 
+        /// <summary>
+        /// Checks a range of tiles around the player and tries to see if there are hostile npcs who are aware of the player.
+        /// </summary>
+        /// <returns></returns>
         static bool TestForNearByEnemies()
         {
-            return false;
+
+            NearbyHostileAwareOfAvatar = false;
+            CallBacks.RunCodeOnTargetsAroundObject(
+                methodToCall: TestForHostileNPCAwareOfPlayer, 
+                CentreObject: 1, 
+                rngProbablity: 0x7F, 
+                targetType: 0, 
+                distanceFromObject: 0, 
+                tileRadius: 2);
+            
+            return NearbyHostileAwareOfAvatar;
         }
 
-        static void FindAndCloseDoors(int arg1)
+        public static bool TestForHostileNPCAwareOfPlayer(int x, int y, uwObject obj, TileInfo tile, int srcIndex)
         {
-            Debug.Print("Find and close doors. move me to somewhere better once I start implementing SCD.ARK!");
+            if (obj!= playerdat.playerObject)
+            {
+                if (obj.npc_goal != 5)
+                {
+                    if (obj.npc_goal != 4)
+                    {
+                        if (obj.npc_goal != 9)
+                        {
+                            return false;
+                        }
+                    }
+                }
+                if (obj.UnkBit_0x19_0_likelyincombat != 0)
+                {
+                    NearbyHostileAwareOfAvatar = true;
+                }
+            }
+            return false;
         }
 
 
         static void SleepOnDamagingSurface()
         {
-            Debug.Print("Test to see if Dumbass Avatar fell asleep drunk on some lava and if so Apply damage");
+            Debug.Print("Test to see if Dumbass Avatar fell asleep drunk in a dangerous situation and if so Apply damage");
+            if ((playerdat.TileState & 0x3) != 0)
+            {//player is drowning
+                damage.DamageObject(
+                    objToDamage: playerdat.playerObject, 
+                    basedamage: 0xFF, 
+                    damagetype: 0, 
+                    objList: UWTileMap.current_tilemap.LevelObjects, 
+                    WorldObject: true, 
+                    damagesource: 0);
+            }
+            playerdat.PlayerStatusUpdate();
+            motion.RunPlayerMotions();
+            if ((playerdat.TileState & 0x8) != 0)
+            {//in the air
+                if ((playerdat.MagicalMotionAbilities & 0x16) == 0)
+                {
+                    //when not subject to slowfall, levitate or flying
+                    damage.DamageObject(
+                        objToDamage: playerdat.playerObject, 
+                        basedamage: 0xC + (Rng.r.Next(6)* 0xA), 
+                        damagetype: 0x10, 
+                        objList: UWTileMap.current_tilemap.LevelObjects, 
+                        WorldObject: true, 
+                        damagesource: 0);
+                }
+            }
+
+            if ((playerdat.TileState & 0x3) !=0)
+            {
+                //lava
+                    damage.DamageObject(
+                        objToDamage: playerdat.playerObject, 
+                        basedamage: 0xFF, 
+                        damagetype: 0x0, 
+                        objList: UWTileMap.current_tilemap.LevelObjects, 
+                        WorldObject: true, 
+                        damagesource: 0);
+            }
         }
 
         static bool UpdateNPCMovements()
@@ -317,8 +388,8 @@ namespace Underworld
             if ((si_quest & 1) == 1)
             {
                 if (
-                    (playerdat.dungeon_level > 1) 
-                    && ((si_quest & 2) !=2)
+                    (playerdat.dungeon_level > 1)
+                    && ((si_quest & 2) != 2)
                     )
                 {
                     FoundStageVar2 = 1;
@@ -331,7 +402,7 @@ namespace Underworld
                     }
                     else
                     {
-                        if ((si_quest & 8)== 8)
+                        if ((si_quest & 8) == 8)
                         {
                             FoundStageVar2 = 3;
                         }
@@ -345,28 +416,28 @@ namespace Underworld
 
             if (FoundStageVar2 == 0)
             {
-                if (Rng.r.Next(4+(sleepfactor<<2)) == 0)
+                if (Rng.r.Next(4 + (sleepfactor << 2)) == 0)
                 {
                     FoundStageVar2 = 4 + Rng.r.Next(6);
-                    if (((1<<FoundStageVar2) & si_quest) !=0)
+                    if (((1 << FoundStageVar2) & si_quest) != 0)
                     {
                         FoundStageVar2 = -1;
                     }
                 }
             }
 
-            if ((FoundStageVar2>=0) && !playerdat.IsGaramonBuried)
+            if ((FoundStageVar2 >= 0) && !playerdat.IsGaramonBuried)
             {
-                Debug.Print($"play cutscene {0x18+FoundStageVar2}");
-                cutsplayer.PlayCutscene(0x18+FoundStageVar2, null);
-                playerdat.SetQuest(37, playerdat.GetQuest(37) ^ (1<<FoundStageVar2));
-                uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x13-sleepfactor));
+                Debug.Print($"play cutscene {0x18 + FoundStageVar2}");
+                cutsplayer.PlayCutscene(0x18 + FoundStageVar2, null);
+                playerdat.SetQuest(37, playerdat.GetQuest(37) ^ (1 << FoundStageVar2));
+                uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x13 - sleepfactor));
                 return true;
             }
             else
             {//no more dreams.
                 uimanager.FlashColour(1, uimanager.Cuts3DWin, 2f);
-                uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x13-sleepfactor));
+                uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x13 - sleepfactor));
                 return false;
             }
 
@@ -385,8 +456,8 @@ namespace Underworld
             {
                 uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x18));// your dreams are vivid
                 playerdat.SetQuest(48, 1);
-                Debug.Print("Do a void Dream");       
-                DreamOfTheVoid();         
+                Debug.Print("Do a void Dream");
+                DreamOfTheVoid();
                 return false;
             }
             else
@@ -396,40 +467,40 @@ namespace Underworld
                 var FoundStageVar2 = -1;
                 for (int counter_var4 = 0; counter_var4 < 4; counter_var4++)
                 {
-                    if (xclock>=DreamXClocks[counter_var4])
+                    if (xclock >= DreamXClocks[counter_var4])
                     {
-                        if ((si_dreamflags & (1<<counter_var4)) == (1<<counter_var4))
+                        if ((si_dreamflags & (1 << counter_var4)) == (1 << counter_var4))
                         {
                             //found a dreamstage that has not yet happened
                             FoundStageVar2 = counter_var4;
                         }
                     }
                 }
-                if (FoundStageVar2<0)
+                if (FoundStageVar2 < 0)
                 {
                     if (playerdat.DreamPlantCounter == 0)
                     {//should always be the case.
                         FoundStageVar2 = 4 + Rng.r.Next(3); //try and pic a random dream.
-                        if (((1<<FoundStageVar2) & si_dreamflags) !=0)
+                        if (((1 << FoundStageVar2) & si_dreamflags) != 0)
                         {
                             FoundStageVar2 = -1;
                         }
                     }
                 }
 
-                if (FoundStageVar2<0)
+                if (FoundStageVar2 < 0)
                 {
                     //wait in sleep
                     uimanager.FlashColour(1, uimanager.Cuts3DWin, 2f);
-                    uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x13-sleepfactor));//rested or uneasy message
+                    uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x13 - sleepfactor));//rested or uneasy message
                     return false;
                 }
                 else
                 {
                     //Debug.Print($"play cutscene {0x18+FoundStageVar2}");
-                    cutsplayer.PlayCutscene(0x18+FoundStageVar2, null);
-                    playerdat.SetQuest(145, playerdat.GetQuest(145) ^ (1<<FoundStageVar2));  //XOR the new value in.
-                    uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x13-sleepfactor));//rested or uneasy message
+                    cutsplayer.PlayCutscene(0x18 + FoundStageVar2, null);
+                    playerdat.SetQuest(145, playerdat.GetQuest(145) ^ (1 << FoundStageVar2));  //XOR the new value in.
+                    uimanager.AddToMessageScroll(GameStrings.GetString(1, 0x13 - sleepfactor));//rested or uneasy message
                     return true;
                 }
             }
@@ -459,18 +530,18 @@ namespace Underworld
             }
             var dreamX = DestX[si];
             var dreamY = DestY[si];
-            if (si ==0)
+            if (si == 0)
             {
                 dreamX = dreamX + Rng.r.Next(2);
             }
 
             Teleportation.Teleport(
-                character: 0, 
-                tileX: dreamX, 
-                tileY: dreamY, 
-                newLevel: 0x45, 
-                heading: 0);
-            
+                character: 0,
+                tileX: dreamX,
+                tileY: dreamY,
+                newLevel: 0x45,
+                HeadingHeightFlag: 0);
+
         }
 
     }//end class

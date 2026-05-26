@@ -1,10 +1,9 @@
-[gd_scene load_steps=27 format=3 uid="uid://xjvqmrbs28xs"]
+[gd_scene load_steps=25 format=3 uid="uid://xjvqmrbs28xs"]
 
 [ext_resource type="Script" path="res://src/ui/uimanager.cs" id="1_lw0yg"]
 [ext_resource type="FontFile" uid="uid://pdy3t627nfxw" path="res://resources/fonts/FONT5X6I.ttf" id="3_safdl"]
 [ext_resource type="Script" path="res://src/ui/mouseCursor.cs" id="4_gnu1s"]
 [ext_resource type="FontFile" uid="uid://bas6pohxbpgah" path="res://resources/fonts/FONT5X6P.ttf" id="4_pfbet"]
-[ext_resource type="Script" path="res://assetlib/simple-free-look-camera-78109db3bcae477c2a28ef9fe144faa2435f0acb/camera.gd" id="5_2to2n"]
 [ext_resource type="FontFile" uid="uid://dcth0yn5km8si" path="res://resources/fonts/FONT4X5P.ttf" id="5_8iiwt"]
 [ext_resource type="FontFile" uid="uid://dhrg5v5fecw5b" path="res://resources/fonts/FONTBIG.ttf" id="5_kj12g"]
 [ext_resource type="Script" path="res://main.cs" id="6_3y8oy"]
@@ -23,8 +22,6 @@
 [ext_resource type="Script" path="res://src/audio/MusicStreamPlayer.cs" id="N_music_stream"]
 [ext_resource type="Script" path="res://src/audio/sfx/godot/SfxStreamPlayer.cs" id="N_sfx_stream"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1c8r5"]
-
 [sub_resource type="AudioStreamWAV" id="AudioStreamWAV_tkk82"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_7v506"]
@@ -41,9 +38,11 @@ script = ExtResource("N_music_stream")
 [node name="SfxStreamPlayer" type="Node" parent="."]
 script = ExtResource("N_sfx_stream")
 
-[node name="main" type="Node3D" parent="." node_paths=PackedStringArray("cam", "DigitalAudioPlayer", "lblPositionDebug", "secondarycameras")]
+[node name="main" type="Node3D" parent="." node_paths=PackedStringArray("cam", "GimbalYaw", "GimbalRoll", "DigitalAudioPlayer", "lblPositionDebug", "secondarycameras")]
 script = ExtResource("6_3y8oy")
-cam = NodePath("../WorldViewContainer/SubViewport/Camera3D")
+cam = NodePath("../WorldViewContainer/SubViewport/GimbalYaw/GimbalRoll/GimbalPitchCamera")
+GimbalYaw = NodePath("../WorldViewContainer/SubViewport/GimbalYaw")
+GimbalRoll = NodePath("../WorldViewContainer/SubViewport/GimbalYaw/GimbalRoll")
 DigitalAudioPlayer = NodePath("../UI/DigitalAudioPlayer")
 lblPositionDebug = NodePath("../UI/Common/PositionLabel")
 secondarycameras = NodePath("../WorldViewContainer/SubViewport")
@@ -58,15 +57,12 @@ offset_bottom = 528.0
 handle_input_locally = false
 render_target_update_mode = 4
 
-[node name="Camera3D" type="Camera3D" parent="WorldViewContainer/SubViewport"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.119, 2.137, 12.228)
+[node name="GimbalYaw" type="Node3D" parent="WorldViewContainer/SubViewport"]
+
+[node name="GimbalRoll" type="Node3D" parent="WorldViewContainer/SubViewport/GimbalYaw"]
+
+[node name="GimbalPitchCamera" type="Camera3D" parent="WorldViewContainer/SubViewport/GimbalYaw/GimbalRoll"]
 current = true
-script = ExtResource("5_2to2n")
-
-[node name="Gronk" type="CharacterBody3D" parent="WorldViewContainer/SubViewport/Camera3D"]
-
-[node name="CronkCollision" type="CollisionShape3D" parent="WorldViewContainer/SubViewport/Camera3D/Gronk"]
-shape = SubResource("CapsuleShape3D_1c8r5")
 
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
@@ -2366,6 +2362,14 @@ offset_top = 604.0
 offset_right = 1240.0
 offset_bottom = 704.0
 
+[node name="Eraser" type="TextureRect" parent="UI/Common/Automap"]
+layout_mode = 0
+offset_left = 1072.0
+offset_top = 480.0
+offset_right = 1252.0
+offset_bottom = 580.0
+scale = Vector2(0.839995, 1)
+
 [node name="MapNo" type="RichTextLabel" parent="UI/Common/Automap"]
 clip_contents = false
 layout_mode = 0
@@ -2762,12 +2766,19 @@ visible_characters = 17
 
 [node name="mouse" type="CanvasLayer" parent="UI"]
 
-[node name="mouseCursor" type="TextureRect" parent="UI/mouse"]
+[node name="mouseCursor" type="TextureRect" parent="UI/mouse" node_paths=PackedStringArray("cross")]
 offset_right = 40.0
 offset_bottom = 40.0
 mouse_filter = 2
 texture = ExtResource("18_tfr7p")
 script = ExtResource("4_gnu1s")
+cross = NodePath("../Cross")
+
+[node name="Cross" type="TextureRect" parent="UI/mouse"]
+offset_right = 5.0
+offset_bottom = 5.0
+mouse_filter = 2
+texture = ExtResource("18_tfr7p")
 
 [node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("PanelChargen", "ChargenBG", "ChargenQuestion", "ChargenSkills", "ChargenSkills_values", "ChargenStats", "ChargenStats_values", "ChargenGender", "ChargenClass", "ChargenName", "ChargenNameBG", "ChargenNameInput", "ChargenNameQuestion", "ChargenBody", "CompassBgUW1", "CompassBgUW2", "CompassPointsUW1", "CompassPointsUW2", "CompassPanelUW2", "ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLabelFrameUW1", "NPCNameLabelFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "CutsFull", "CutsSmallUW1", "CutsSmallUW2", "Cuts3DWinUW1", "Cuts3DWinUW2", "CutsSubtitle", "DragonHeads", "DragonTails", "DragonTorsos", "PanelEndGame", "EndGameBackground", "EndGameStats", "Eyes", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "InteractionButtonsUW1", "InteractionButtonsUW2", "PanelMainMenu", "MainMenuBG", "MainMenuButtons", "LoadingLabel", "SaveGamesNames", "AutomapPanel", "AutomapBG", "AutomapImage", "NotesPanel", "AutomapNumberLabel", "AutomapWorldGem", "messageScrollUW1", "messageScrollUW2", "TypedInput", "GameOptionButtonsUW1", "GameOptionButtonsUW2", "GameOptionsBackgroundUW1", "GameOptionsBackgroundUW2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Chains", "BackpackBG", "WeightCapacity", "RuneTiles", "SelectedRunes", "ActiveSpellIcons", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSelectedUW1", "NPCTradeSelectedUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "PlayerTradeSelectedUW2", "NPCTradeSelectedUW2", "cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "weaponanimuw1", "weaponanimuw2", "placeholderuw1", "placeholderuw2", "PowerGemUW1", "PowerGemUW2")]
 script = ExtResource("1_lw0yg")
@@ -2913,7 +2924,7 @@ PlayerTradeSlotUW2 = [NodePath("../UW2/ConversationUW2/PlayerTradeUW2_0"), NodeP
 NPCTradeSlotUW2 = [NodePath("../UW2/ConversationUW2/NPCTradeUW2_0"), NodePath("../UW2/ConversationUW2/NPCTradeUW2_1"), NodePath("../UW2/ConversationUW2/NPCTradeUW2_2"), NodePath("../UW2/ConversationUW2/NPCTradeUW2_3"), NodePath("../UW2/ConversationUW2/NPCTradeUW2_4"), NodePath("../UW2/ConversationUW2/NPCTradeUW2_5")]
 PlayerTradeSelectedUW2 = [NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_0"), NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_1"), NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_2"), NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_3"), NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_4"), NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_5")]
 NPCTradeSelectedUW2 = [NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_0"), NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_1"), NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_2"), NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_3"), NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_4"), NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_5")]
-cam = NodePath("../../WorldViewContainer/SubViewport/Camera3D")
+cam = NodePath("../../WorldViewContainer/SubViewport/GimbalYaw/GimbalRoll/GimbalPitchCamera")
 uwviewport = NodePath("../../WorldViewContainer")
 uwsubviewport = NodePath("../../WorldViewContainer/SubViewport")
 mousecursor = NodePath("../mouse/mouseCursor")
@@ -3063,7 +3074,10 @@ PowerGemUW2 = NodePath("../UW2/PowerGemUW2")
 [connection signal="gui_input" from="UI/Common/OtherControls/SpellIcon2" to="UI/uiManager" method="_on_spell_icon_gui_input" binds= [2]]
 [connection signal="gui_input" from="UI/Common/HealthFlask/FlaskBorder" to="UI/uiManager" method="_on_healthflask_gui_input"]
 [connection signal="gui_input" from="UI/Common/ManaFlask/FlaskBorder" to="UI/uiManager" method="_on_manaflask_gui_input"]
+[connection signal="gui_input" from="UI/Common/Automap/MapBackground" to="UI/uiManager" method="_on_map_background_gui_input"]
+[connection signal="gui_input" from="UI/Common/Automap/MapImage" to="UI/uiManager" method="_on_map_background_gui_input"]
 [connection signal="gui_input" from="UI/Common/Automap/Close" to="UI/uiManager" method="CloseAutomap"]
+[connection signal="gui_input" from="UI/Common/Automap/Eraser" to="UI/uiManager" method="EraseMapNote"]
 [connection signal="gui_input" from="UI/Common/Automap/MapUp" to="UI/uiManager" method="_on_map_up_gui_input"]
 [connection signal="gui_input" from="UI/Common/Automap/MapDown" to="UI/uiManager" method="_on_map_down_gui_input"]
 [connection signal="gui_input" from="UI/Common/Automap/Gem/World0" to="UI/uiManager" method="_on_world_gui_input" binds= [0]]

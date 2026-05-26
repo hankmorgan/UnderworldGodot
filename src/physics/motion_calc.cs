@@ -12,10 +12,10 @@ namespace Underworld
         /// <param name="MotionParams"></param>
         /// <param name="MaybeMagicObjectFlag"></param>
         /// <returns></returns>
-        public static bool CalculateMotion_TopLevel(uwObject projectile, UWMotionParamArray MotionParams, byte[] SpecialMotionHandler)
+        public static bool CalculateMotion_TopLevel(uwObject projectile, UWMotionParamArray MotionParams, MotionHandler SpecialMotionHandler)
         {
             //seg006_1413_D6A            
-            MotionParams.speed_12 = (byte)(projectile.Projectile_Speed << 4);
+            MotionParams.speed_12 = (sbyte)(projectile.Projectile_Speed << 4);
             CalculateMotion(
                 projectile: projectile,
                 MotionParams: MotionParams,
@@ -29,7 +29,7 @@ namespace Underworld
         /// </summary>
         /// <param name="projectile"></param>
         /// <param name="MotionParams"></param>        
-        static void CalculateMotion(uwObject projectile, UWMotionParamArray MotionParams, byte[] SpecialMotionHandler)
+        static void CalculateMotion(uwObject projectile, UWMotionParamArray MotionParams, MotionHandler SpecialMotionHandler)
         {
             int collisionCounter = 0;
             UWMotionParamArray.PtrTo26D2_DSEG_26B8_MotionHandler = SpecialMotionHandler;
@@ -48,25 +48,25 @@ namespace Underworld
                     if (UWMotionParamArray.CalculateMotionGlobal_dseg_67d6_26B6 == 0x10)//note the increment
                     {
                         //seg031_2CFA_7A:
-                        MotionParams.unk_10_Z = 0;
+                        MotionParams.gravity_10_Z = 0;
                         MotionParams.unk_a_pitch = 0;
-                        MotionParams.unk_14 = 0;
+                        MotionParams.momentum_14 = 0;
                         return;
                     }
                     else
                     {
 
                         //seg031_2CFA_59:
-                        if (ProcessCollisions_seg031_2CFA_12B8(MotionParams, 1) != 0)
+                        if (ProcessCollisions_seg031_2CFA_12B8(MotionParams: MotionParams, arg0: 1, SpecialMotionHandler: SpecialMotionHandler) != 0)
                         {
                             //seg031_2CFA_64
-                            DoTileCollisionMaybe_seg031_2CFA_179C(projectile, MotionParams);
+                            DoTileCollisionMaybe_seg031_2CFA_179C(projectile: projectile, SpecialMotionHandler: SpecialMotionHandler, MotionParams: MotionParams);
                         }
                         collisionCounter++;
                     }
                 }
                 //seg031_2CFA_73:  
-                StoreNewXYZH_seg031_2CFA_800(MotionParams);
+                StoreNewXYZH_seg031_2CFA_800(MotionParams: MotionParams, SpecialMotionHandler: SpecialMotionHandler);
                 return;
             }
         }
@@ -77,17 +77,17 @@ namespace Underworld
             short var8 = 0;
             SomethingProjectileHeading_seg021_22FD_EAE((ushort)MotionParams.heading_1E, ref var2_xvector, ref var4_yvector);
             //seg031_2CFA_457:
-            MotionParams.unk_6_x = (short)((var2_xvector * MotionParams.unk_14) >> 0xF);
+            MotionParams.unk_6_x = (short)((var2_xvector * MotionParams.momentum_14) >> 0xF);
             //seg031_2CFA_47F:
-            MotionParams.unk_8_y = (short)((var4_yvector * MotionParams.unk_14) >> 0xF);
+            MotionParams.unk_8_y = (short)((var4_yvector * MotionParams.momentum_14) >> 0xF);
 
-            //possibly the following are translation vectors  
+            //possibly the following are translation vectors (momentum?) 
             //seg031_2CFA_494:          
             MotionParams.unk_6_x = (short)(MotionParams.unk_6_x + (MotionParams.unk_c_X * MotionParams.speed_12));
             //seg031_2CFA_4AB:
             MotionParams.unk_8_y = (short)(MotionParams.unk_8_y + (MotionParams.unk_e_Y * MotionParams.speed_12));
             //seg031_2CFA_4B2:
-            MotionParams.unk_a_pitch = (short)(MotionParams.unk_a_pitch + (MotionParams.unk_10_Z * MotionParams.speed_12));
+            MotionParams.unk_a_pitch = (short)(MotionParams.unk_a_pitch + (MotionParams.gravity_10_Z * MotionParams.speed_12));
 
             if (((int)MotionParams.unk_6_x | (int)MotionParams.unk_8_y | (int)MotionParams.unk_a_pitch) == 0)
             {
@@ -230,7 +230,7 @@ namespace Underworld
             return true;
         }
 
-        static void SomethingProjectileHeading_seg021_22FD_EAE(ushort heading, ref short Result_arg2, ref short Result_arg4)
+        public static void SomethingProjectileHeading_seg021_22FD_EAE(ushort heading, ref short Result_arg2, ref short Result_arg4)
         {
             HeadingLookupCalc(heading, out short ax, out short bx);
             Result_arg2 = ax;
@@ -313,13 +313,11 @@ namespace Underworld
 
             MotionCalcArray.x0 = (ushort)(MotionParams.x_0 >> 5);
             MotionCalcArray.y2 = (ushort)(MotionParams.y_2 >> 5);
-            MotionCalcArray.z4_base = (ushort)(MotionParams.z_4 >> 3);
+            MotionCalcArray.z4 = (ushort)(MotionParams.z_4 >> 3);
 
             UWMotionParamArray.RelatedToMotionX_dseg_67d6_3FE = (short)((MotionParams.x_0 & 0x1F) << 8);
             UWMotionParamArray.RelatedToMotionY_dseg_67d6_400 = (short)((MotionParams.y_2 & 0x1F) << 8);
             UWMotionParamArray.RelatedToMotionZ_dseg_67d6_402 = (short)((MotionParams.z_4 & 7) << 8);
-
-            //DumpMotionMemory(MotionParams, "AfterCopyingMotionArray");
         }
 
 
@@ -354,11 +352,11 @@ namespace Underworld
                 //int terrain = TerrainDatLoader.GetTerrainTypeNo(tile);
                 UWMotionParamArray.TileAttributesArray[4] = (short)((int)(tile.tileType) | (int)(tile.floorHeight << 4) | (int)(TerrainDatLoader.GetTerrainTypeNo(tile) << 8));
             }
-
+            //SEG_028_2941_423
             seg028_2941_2CF_terrainrelated(distance_arg0);
 
             MotionCalcArray.UnkE = MotionCalcArray.UnkC_terrain;
-            MotionCalcArray.Unk11 = MotionCalcArray.Unk10_relatedtotileheight;
+            MotionCalcArray.Unk11 = MotionCalcArray.Unk10_relatedtotileheight; //set in previous function
 
             //seg028_2941_449
             if (MotionCalcArray.Radius8 != 0)
@@ -679,7 +677,7 @@ namespace Underworld
         /// Updates x,y,z positions and heading
         /// </summary>
         /// <param name="MotionParams"></param>
-        static void StoreNewXYZH_seg031_2CFA_800(UWMotionParamArray MotionParams)
+        static void StoreNewXYZH_seg031_2CFA_800(UWMotionParamArray MotionParams, MotionHandler SpecialMotionHandler)
         {
             MotionParams.x_0 = (short)((MotionCalcArray.x0 << 5) + (UWMotionParamArray.RelatedToMotionX_dseg_67d6_3FE >> 8));
             MotionParams.y_2 = (short)((MotionCalcArray.y2 << 5) + (UWMotionParamArray.RelatedToMotionY_dseg_67d6_400 >> 8));
@@ -701,7 +699,7 @@ namespace Underworld
             MotionParams.heading_1E = MotionCalcArray.Heading6_base;
         }
 
-        static int ProcessCollisions_seg031_2CFA_12B8(UWMotionParamArray MotionParams, int arg0)
+        static int ProcessCollisions_seg031_2CFA_12B8(UWMotionParamArray MotionParams, int arg0, MotionHandler SpecialMotionHandler)
         {
             var var1 = 0;
             var var2 = 0;
@@ -726,16 +724,16 @@ namespace Underworld
 
             if (MotionParams.unk_a_pitch == 0)
             {
-                var2 = LikelyTranslateXY_seg031_2CFA_8A6(MotionParams, 0, arg0);
+                var2 = LikelyTranslateXY_seg031_2CFA_8A6(MotionParams: MotionParams, arg0: 0, si_arg2: arg0);
             }
             else
             {
-                var2 = MAYBEGRAVITYZ_seg031_2CFA_1138(MotionParams, 0, arg0);
+                var2 = MAYBEGRAVITYZ_seg031_2CFA_1138(MotionParams: MotionParams, arg0: 0, arg2: arg0, SpecialMotionHandler: SpecialMotionHandler);
             }
 
             if (var1 != 0)
             {
-                var si = GetCollisionHeightState_seg031_2CFA_13B2(MotionParams);
+                var si = GetCollisionHeightState_seg031_2CFA_13B2(MotionParams: MotionParams, SpecialMotionHandler: SpecialMotionHandler);
                 UWMotionParamArray.MotionParam0x25_dseg_67d6_26A9 = MotionParams.tilestate25;
                 MotionParams.tilestate25 = GetTileState(si);
             }
@@ -745,28 +743,30 @@ namespace Underworld
 
 
 
-        static void DoTileCollisionMaybe_seg031_2CFA_179C(uwObject projectile, UWMotionParamArray MotionParams)
+        static void DoTileCollisionMaybe_seg031_2CFA_179C(uwObject projectile, MotionHandler SpecialMotionHandler, UWMotionParamArray MotionParams)
         {
             var var3 = 0;
-            var var2 = GetCollisionHeightState_seg031_2CFA_13B2(MotionParams);
+            var var2 = GetCollisionHeightState_seg031_2CFA_13B2(MotionParams: MotionParams, SpecialMotionHandler: SpecialMotionHandler);
             UWMotionParamArray.MotionParam0x25_dseg_67d6_26A9 = MotionParams.tilestate25;
             MotionParams.tilestate25 = GetTileState(var2);
             if ((var2 & 0xC000) == 0)//var2 getting screwed up here?
             {//seg031_2CFA_17ED:
-                var tmp = UWMotionParamArray.PtrTo267D2_dseg_67d6_26B8_table0;
+                var tmp = SpecialMotionHandler.table01;
                 var2 = var2 & ~tmp;
                 var result = false;
                 if (var2 != 0)
                 {
-                    if ((UWMotionParamArray.dseg_67d6_26BA_MotionHandler2 & var2) != 0)
+                    if ((SpecialMotionHandler.table23 & var2) != 0)
                     {
                         //seg031_2CFA_180F:
                         //Debug.Print($"Call motion code at {UWMotionParamArray.dseg_67d6_26c2_LikeMagicProjectile8} with param {var2}");
-                        result = NPCMotionCollision_seg006_1413_ABF(critter: projectile, arg0: var2, motionparams: MotionParams);
+                        //TODO. other functions are called here as delegates. I need to add support for Seg008_104D (a stop motion function on the player that may be related to the bridge multiple collison bug)
+                        //result = NPCMotionCollision_seg006_1413_ABF(critter: projectile, arg0: var2, motionparams: MotionParams);
+                        result = SpecialMotionHandler.HandlerFunction(obj: projectile, arg0: ref var2, motionparams: MotionParams);
                         if (result)
                         {
                             //seg031_2CFA_1818:
-                            ProcessCollisions_seg031_2CFA_12B8(MotionParams, -1);
+                            ProcessCollisions_seg031_2CFA_12B8(MotionParams, -1, SpecialMotionHandler);
                             UWMotionParamArray.GravityCollisionRelated_dseg_67d6_414 = (short)(UWMotionParamArray.MAYBEcollisionOrGravity_dseg_67d6_40E + 1);
                             return;
                         }
@@ -775,16 +775,16 @@ namespace Underworld
                     if ((var2 & 0x700) != 0)
                     {//when var2>0 then 0, when var2==0 then 1,
                         //seg031_2CFA_1830: 
-                        seg031_2CFA_C5C(MotionParams, SBB(var2 & 0x400));
+                        seg031_2CFA_C5C(MotionParams: MotionParams, arg0: SBB(var2 & 0x400), SpecialMotionHandler: SpecialMotionHandler);
 
                         var3 = 1;
                         if (
                             ((var2 & 0x1000) != 0)
                             &&
-                            (MotionParams.unk_10_Z == 0)
+                            (MotionParams.gravity_10_Z == 0)
                             )
                         {
-                            MotionParams.unk_10_Z = -4;
+                            MotionParams.gravity_10_Z = -4;
                             seg031_2CFA_78A(MotionParams, var3);
                         }
 
@@ -793,7 +793,7 @@ namespace Underworld
             }
             else
             {//seg031_2CFA_17CE:
-                ProcessCollisions_seg031_2CFA_12B8(MotionParams, -1);
+                ProcessCollisions_seg031_2CFA_12B8(MotionParams: MotionParams, arg0: -1, SpecialMotionHandler: SpecialMotionHandler);
                 if ((var2 & 0x4000) == 0)
                 {
                     //seg031_2CFA_17E4:           
@@ -949,7 +949,7 @@ namespace Underworld
             }
         }
 
-        static int MAYBEGRAVITYZ_seg031_2CFA_1138(UWMotionParamArray MotionParams, int arg0, int arg2)
+        static int MAYBEGRAVITYZ_seg031_2CFA_1138(UWMotionParamArray MotionParams, int arg0, int arg2, MotionHandler SpecialMotionHandler)
         {
             // Debug.Print($"Step {iteration} Gravity");
             var di = arg2;
@@ -1032,7 +1032,7 @@ namespace Underworld
                         else
                         {
                             //seg031_2CFA_12A1:
-                            DoCollision_seg031_2CFA_D1F(MotionParams);
+                            DoCollision_seg031_2CFA_D1F(MotionParams, SpecialMotionHandler);
                             return 0;
                         }
                     }
@@ -1046,7 +1046,7 @@ namespace Underworld
                     MotionParams.tilestate25 = 0x10;
                     if (MotionCalcArray.z4_base + si > UWMotionParamArray.CollisionZposHeightRelated_dseg_67d6_419)
                     {
-                        DoCollision_seg031_2CFA_D1F(MotionParams);
+                        DoCollision_seg031_2CFA_D1F(MotionParams, SpecialMotionHandler);
                         return 0;
                     }
                     else
@@ -1112,7 +1112,7 @@ namespace Underworld
             }
             else
             {
-                return 0x10;//bit 12, is jumping
+                return 0x10;//bit 12, is jumping (also up on a bridge)
             }
         }
 
@@ -1128,13 +1128,13 @@ namespace Underworld
             MotionParams.unk_6_x = 0;
             MotionParams.unk_c_X = 0;
             MotionParams.unk_a_pitch = 0;
-            MotionParams.unk_10_Z = 0;
-            MotionParams.unk_14 = 0;
+            MotionParams.gravity_10_Z = 0;
+            MotionParams.momentum_14 = 0;
             UWMotionParamArray.MAYBEcollisionOrGravity_dseg_67d6_40E++;//Stops loop in Calculate Motion.
             UWMotionParamArray.GravityCollisionRelated_dseg_67d6_414 = 0;
         }
 
-        static void seg031_2CFA_C5C(UWMotionParamArray MotionParams, int arg0)
+        static void seg031_2CFA_C5C(UWMotionParamArray MotionParams, int arg0, MotionHandler SpecialMotionHandler)
         {
             //Debug.Print("seg031_2CFA_C5C");
             if (MotionCalcArray.Unk17_base <= 0)
@@ -1158,7 +1158,7 @@ namespace Underworld
                     si = UWMotionParamArray.MotionGlobal_dseg_67d6_40A_indexer << 1;
                 }
                 //seg031_2CFA_C92:
-                ProcessCollisions_seg031_2CFA_12B8(MotionParams, -1);
+                ProcessCollisions_seg031_2CFA_12B8(MotionParams, -1, SpecialMotionHandler);
 
                 var result = HeadingRelated_seg031_2CFA_A49(MotionParams, (short)dseg_67d6_421[si]);
 
@@ -1177,7 +1177,7 @@ namespace Underworld
             else
             {
                 //seg031_2CFA_C69:
-                ProcessCollisions_seg031_2CFA_12B8(MotionParams, -1);
+                ProcessCollisions_seg031_2CFA_12B8(MotionParams: MotionParams, arg0: -1, SpecialMotionHandler: SpecialMotionHandler);
                 UWMotionParamArray.GravityCollisionRelated_dseg_67d6_414 = (short)(UWMotionParamArray.MAYBEcollisionOrGravity_dseg_67d6_40E + 1);
             }
         }
@@ -1347,7 +1347,7 @@ namespace Underworld
                     //seg031_2CFA_AB9
                     if ((Math.Abs(si) > 0x3000) && (Math.Abs(si) < 0x5000))
                     {
-                        MotionParams.unk_26_falldamage += MotionParams.unk_14;
+                        MotionParams.unk_26_falldamage += MotionParams.momentum_14;
                         return 0;
                     }
                     else
@@ -1465,8 +1465,8 @@ namespace Underworld
                 //seg031_2CFA_C0B:
                 if ((MotionParams.unk_17 & 0x80) == 0)
                 {
-                    MotionParams.unk_26_falldamage += (short)((MotionParams.unk_14 * (0xf - MotionParams.unk_16_relatedtoPitch)) / 0xF);
-                    MotionParams.unk_14 = (short)((MotionParams.unk_14 * MotionParams.unk_16_relatedtoPitch) / 0xF);
+                    MotionParams.unk_26_falldamage += (short)((MotionParams.momentum_14 * (0xf - MotionParams.unk_16_relatedtoPitch)) / 0xF);
+                    MotionParams.momentum_14 = (short)((MotionParams.momentum_14 * MotionParams.unk_16_relatedtoPitch) / 0xF);
                 }
                 //seg031_2CFA_C4C:
                 MotionParams.heading_1E = MotionCalcArray.Heading6_base;

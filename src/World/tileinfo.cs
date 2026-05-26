@@ -427,7 +427,7 @@ namespace Underworld
         /// <param name="index"></param>
         /// <param name="floor"></param>
         /// <returns></returns>
-        static string TextureName(int index, bool floor = true)
+        public static string TextureName(int index, bool floor = true)
         {
             int offset = 0;
             if ((_RES != GAME_UW2) && (floor)) { offset = 48; }
@@ -745,7 +745,7 @@ namespace Underworld
                     {
                         motion.ProcessPlayerTileState(0x10, 1);
                     }
-                    playerdat.PositionPlayerObject();
+                    playerdat.PositionPlayerCamera();
                 }
                 else
                 {
@@ -802,7 +802,7 @@ namespace Underworld
                     {
                         //object is the player.
                         motion.playerMotionParams.z_4 = (short)(NewTileHeight << 6);
-                        playerdat.PositionPlayerObject();
+                        playerdat.PositionPlayerCamera();
                     }
                     else
                     {
@@ -894,9 +894,9 @@ namespace Underworld
         /// <param name="isPlayer"></param>
         /// <param name="range"></param>
         /// <returns></returns>
-        public static bool CheckIfOutsideRange(int targetX, int targetY, int isPlayer, int range = 8)
+        public static bool CheckIfOutsideRange(int targetX, int targetY, bool isPlayer, int range = 8)
         {
-            if (isPlayer != 0)
+            if (isPlayer)
             {
                 return (
                     (System.Math.Abs(playerdat.playerObject.tileX - targetX) >= range)

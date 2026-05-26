@@ -25,8 +25,8 @@ namespace Underworld
                     int obj_a = (int)getAt(buffer, add_ptr, 16);
                     int obj_b = (int)getAt(buffer, add_ptr + 2, 16);
                     int output = (int)getAt(buffer, add_ptr + 4, 16);
-                    if (!(((obj_a & 0x7fff)  == (obj_b & 0x7fff)) && ((obj_a & 0x7fff) == (output & 0x7fff))))   // only add if the 3 objects are different.
-                        {
+                    if (!(((obj_a & 0x7fff) == (obj_b & 0x7fff)) && ((obj_a & 0x7fff) == (output & 0x7fff))))   // only add if the 3 objects are different.
+                    {
                         ObjectCombinations.Add(
                             new objectCombination
                                 (
@@ -84,14 +84,39 @@ namespace Underworld
         /// <param name="ItemInHand">object in hand</param>
         public static bool TryObjectCombination(uwObject ItemInInventory, uwObject ItemInHand)
         {
+            if (_RES != GAME_UW2)
+            {
+                //special case for uw1, incense and torch, in game data the torch is configured to be destroyed. In game however both are preserved.
+                if (
+                    ((ItemInInventory.item_id == 278) && (ItemInHand.item_id == 149))
+                    ||
+                    ((ItemInInventory.item_id == 149) && (ItemInHand.item_id == 278))
+                )
+                {
+                    //using incence and a lit torch   
+                    if (ItemInInventory.item_id == 278)
+                    {
+                        //incense is in inventory
+                        ItemInInventory.item_id = 277;
+                        uimanager.UpdateInventoryDisplay();
+                        return true;
+                    }
+                    if (ItemInHand.item_id == 278)
+                    {
+                        ItemInHand.item_id = 277;
+                        uimanager.instance.mousecursor.SetCursorToObject(ItemInHand.item_id);
+                        return true;
+                    }
+                }
+            }
             var combo = GetCombination(ItemInHand.item_id, ItemInInventory.item_id);
             if (combo != null)
             {
-                if (combo.DestroyA==combo.DestroyB)
+                if (combo.DestroyA == combo.DestroyB)
                 {//make sure destroy is always mutually exclusive
                     combo.DestroyA = !combo.DestroyA;
                 }
-                            
+
                 if (combo.DestroyA)
                 {//change B to out
                     if (ItemInInventory.item_id == combo.Obj_A)//item in inventory is the one to destroy;
@@ -109,7 +134,7 @@ namespace Underworld
                             uimanager.UpdateInventoryDisplay();
                         }
                     }
-                    
+
                     if (ItemInHand.item_id == combo.Obj_A) //item in hand is the one to destroy
                     {
                         playerdat.ObjectInHand = -1;
@@ -123,8 +148,8 @@ namespace Underworld
                             //object in hand changes
                             ItemInHand.item_id = combo.Obj_Out;
                             uimanager.instance.mousecursor.SetCursorToObject(ItemInHand.item_id);
-                        }    
-                    }                
+                        }
+                    }
                 }
 
 
@@ -145,7 +170,7 @@ namespace Underworld
                             uimanager.UpdateInventoryDisplay();
                         }
                     }
-                    
+
                     if (ItemInHand.item_id == combo.Obj_B) //item in hand is the one to destroy
                     {
                         playerdat.ObjectInHand = -1;
@@ -159,10 +184,10 @@ namespace Underworld
                             //object in hand changes
                             ItemInHand.item_id = combo.Obj_Out;
                             uimanager.instance.mousecursor.SetCursorToObject(ItemInHand.item_id);
-                        }    
-                    }                
+                        }
+                    }
                 }
-                             
+
                 return true;//combo has worked
             }
             return false;

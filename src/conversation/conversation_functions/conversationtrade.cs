@@ -305,7 +305,7 @@ namespace Underworld
                 if (x != -1)
                 {
                     var obj = UWTileMap.current_tilemap.LevelObjects[x];
-                    if (obj.index==itemindex)
+                    if (obj.index == itemindex)
                     {
                         //insert to talkers object list
                         obj.next = talker.link;
@@ -347,13 +347,13 @@ namespace Underworld
                     container.Close(uimanager.OpenedContainerIndex, playerdat.InventoryObjects);
                 }
             }
-            
+
             for (int i = 0; i < uimanager.NoOfTradeSlots; i++)
             {//remove from the NPCs chain first
                 var objindex = uimanager.GetNPCTradeSlot(i);
                 if (objindex != -1)
                 {
-                    ObjectRemover_OLD.RemoveObjectFromLinkedList(talker.link, objindex, UWTileMap.current_tilemap.LevelObjects, talker.PTR+6);
+                    ObjectRemover_OLD.RemoveObjectFromLinkedList(talker.link, objindex, UWTileMap.current_tilemap.LevelObjects, talker.PTR + 6);
                 }
             }
 
@@ -373,17 +373,23 @@ namespace Underworld
                     }
                     else
                     {
-                        var tile = UWTileMap.current_tilemap.Tiles[playerdat.playerObject.tileX,playerdat.playerObject.tileY];
-					    UWTileMap.GetRandomXYZForTile(tile, out int newxpos, out int newypos, out int newzpos);
-					    var dropcoordinate = uwObject.GetCoordinate(playerdat.playerObject.tileX, playerdat.playerObject.tileY, newxpos, newypos, newzpos);
-
+                        var desttile = UWTileMap.current_tilemap.Tiles[playerdat.playerObject.tileX, playerdat.playerObject.tileY];
+                        UWTileMap.GetRandomXYZForTile(desttile, out int newxpos, out int newypos, out int newzpos);
+                        //var dropcoordinate = uwObject.XYZToVector3(x: (newxpos << 5) + (playerdat.playerObject.tileX << 8), y: tile.floorHeight << 3, z: (newypos << 5) + (playerdat.playerObject.tileY << 8));//uwObject.GetCoordinate_OBSOLETE(playerdat.playerObject.tileX, playerdat.playerObject.tileY, newxpos, newypos, newzpos);
+                        //move object to tile
+                        tradedobject.tileX = desttile.tileX; tradedobject.tileY= desttile.tileY;
+                        tradedobject.xpos = (short)newxpos; tradedobject.ypos = (short)newypos; tradedobject.zpos = (short)newzpos;
+                        //link to tile
+                        tradedobject.next = desttile.indexObjectList;
+                        desttile.indexObjectList = tradedobject.index;
+                        objectInstance.RedrawFull(tradedobject);
                         //drop at players location
-                        pickup.Drop_old(
-                            index: objindex,
-                            objList: UWTileMap.current_tilemap.LevelObjects,
-                            dropPosition: dropcoordinate,
-                            tileX: playerdat.playerObject.tileX,
-                            tileY: playerdat.playerObject.tileY);
+                        // pickup.Drop_old(
+                        //     index: objindex,
+                        //     objList: UWTileMap.current_tilemap.LevelObjects,
+                        //     dropPosition: dropcoordinate,
+                        //     tileX: playerdat.playerObject.tileX,
+                        //     tileY: playerdat.playerObject.tileY);
                     }
                     uimanager.SetNPCTradeSlot(i, -1, false);
                 }

@@ -10,8 +10,12 @@ namespace Underworld
 
           //Stealth scores. One of these is probably noise detection range, the other visual detection range.
           //Not known yet which is which
-          public static int StealthScore1;
-          public static int StealthScore2;
+          public static int StealthCalculationScoreQuietness;//used in calculations
+          public static int StealthCalculationScoreVisibility;
+
+          public static int PlayerQuietness = 0; // represents value at critterobject.dat[127] + 0x1D lower nibble.
+          public static int PlayerVisibility = 0; // represents value at critterobject.dat[127] + 0x1D upper nibble.
+          public static int SneakSoundCooldown_79D = 0; //possible counter for reestablishing stealth 
 
           //Various class B enchantments
           public static bool FreezeTimeEnchantment;
@@ -228,6 +232,16 @@ namespace Underworld
 
           public static void CancelEffect(int index)
           {
+               var effectclass = GetEffectClass(index);
+               var major = effectclass & 0xF;
+               var minor = effectclass >> 4;
+               if ((major == 11) && (minor == 1))
+               {
+                    //roaming sight special case
+                    SetCameraViewValues(1);
+                    CameraReference = playerObject;
+               }
+
                SetAt16(0x3f + index * 2, 0);//clear data.
                while (index < 2)
                {//if not the third effect ID then shift down remain effect data to occupy the first 2 slots.
@@ -239,6 +253,7 @@ namespace Underworld
                     SetAt16(0x3f + toMoveFromIndex * 2, 0);//clear data.
                }
                ActiveSpellEffectCount--;
+               motion.PlayerMotionUpdateRequired_dseg_D3 = true;
           }
 
 
@@ -611,7 +626,7 @@ namespace Underworld
 
 
           /// <summary>
-          /// Either how long the player has been swimming or a counter for swimming damage to apply
+          /// Either how long the player has been swimming or a counter for swimming damage to apply. Or possibly this is a set of flags indicating their swimming state.
           /// </summary>
           public static byte SwimCounter
           {

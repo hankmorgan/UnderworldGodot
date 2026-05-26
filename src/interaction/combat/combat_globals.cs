@@ -7,19 +7,39 @@ namespace Underworld
         public static int CombatHitTileY;
         public enum CombatStages
         {
+            OutOfCombat = -1,
             Ready = 0,
             Charging = 1,
-            Release = 2,
-            Swinging = 3,
-            Striking = 4,
+            ReleaseSwing = 2,
+            SwingingAtTarget = 3,
+            StrikingTarget = 4,
             Resetting = 5
         }
         public static uwObject currentweapon;  //if null then using fist
         public static int CurrentWeaponRadius = 0;
 
+        public static int PlayerWeaponSound = 1;
         public static int OnHitSpell = 0;
 
-        public static int CurrentAttackSwingType = 0;
+        public static int WeaponSwingTypePlayer = 0;
+
+        public static int AttackSwingHeightAdjust
+        {
+            get
+            {
+                switch (WeaponSwingTypePlayer)
+                {
+                    case 0: //stab
+                        return 2;
+                    case 2: //bash
+                        return 8;
+                    case 1:
+                    default:
+                        return 5; //slash
+
+                }
+            }
+        }
 
         public static int currentWeaponItemID
         {
@@ -36,8 +56,10 @@ namespace Underworld
             }
         }
 
-        public static CombatStages stage = 0;
-        public static double combattimer = 0.0;
+        public static CombatStages stage = CombatStages.OutOfCombat;
+        public static double combatanimationtimer = 0.0;
+        public static uint PreviousCombatPITTimer = 0;
+        public static uint CombatTimerDifference = 0;
 
         /// <summary>
         /// tracks if a jewelled dagger is being used in order to ensure the listener in the sewers can be killed with it

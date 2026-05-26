@@ -15,29 +15,23 @@ namespace Underworld
                 return 0;
             }
 
-            // if (trapObj.zpos == 0)
-            // {
-            //     // Teleportation.TeleportLevel = -1;
-            //     // Teleportation.TeleportTileX = trapObj.quality;
-            //     // Teleportation.TeleportTileY = trapObj.owner;   
-
+            int NewHeadingHeightTeleportFlag = 0;
+            if (_RES == GAME_UW2)
+            {
+                NewHeadingHeightTeleportFlag = trapObj.xpos & 0x1;
+                if (((trapObj.xpos & 0x2)>>1) == 1)
+                {
+                    NewHeadingHeightTeleportFlag = NewHeadingHeightTeleportFlag | ((trapObj.heading + 8)<<2);
+                }
+            }
                 Teleportation.Teleport(
                     character: 0, 
                     tileX: trapObj.quality, 
                     tileY: trapObj.owner, 
                     newLevel: trapObj.zpos, 
-                    heading: 0);            
-            // }
-            // else
-            // {
-            //     Teleportation.TeleportLevel = trapObj.zpos;
-            //     Teleportation.TeleportTileX = trapObj.quality;
-            //     Teleportation.TeleportTileY = trapObj.owner;
-            // }
-            //TODO: include heading after teleport
-            //TODO: use proper teleport function.
+                    HeadingHeightFlag: NewHeadingHeightTeleportFlag);            
+
             uimanager.FlashColour(1, uimanager.Cuts3DWin, 0.1f);
-            //Teleportation.gamecam.Position = uwObject.GetCoordinate(tileX, tileY, xpos, ypos, camerazpos);
             return trapObj.link;
         }
 

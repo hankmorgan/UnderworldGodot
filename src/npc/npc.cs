@@ -24,7 +24,10 @@ namespace Underworld
         /// </summary>
         public ShaderMaterial material;
 
-
+        /// <summary>
+        /// Used to pick the sprite at a particular angle.
+        /// </summary>
+        static byte[] NPCAnimationHeadingTable = { 0x0, 0x0, 0x0, 0x1, 0x1, 0x1, 0x2, 0x2, 0x2, 0x2, 0x2, 0x3, 0x3, 0x3, 0x4, 0x4, 0x4, 0x4, 0x4, 0x5, 0x5, 0x5, 0x6, 0x6, 0x6, 0x6, 0x6, 0x7, 0x7, 0x7, 0x0, 0x0 };
 
         /// <summary>
         /// Possible AI goals
@@ -55,7 +58,7 @@ namespace Underworld
             uwobject = _uwobject;
             try
             {
-                SetAnimSprite(uwobject.npc_animation, uwobject.AnimationFrame, uwobject.heading);//TODO this value has to be relative to the player heading
+                SetAnimSprite(uwobject.npc_animation, uwobject.AnimationFrame, CalculateFacingAngleToNPC(uwobject));                
             }
             catch (Exception ex)
             {
@@ -72,6 +75,7 @@ namespace Underworld
         public static npc CreateInstance(Node3D parent, uwObject obj, string name)
         {
             var n = new npc(obj);
+            
             var a_sprite = new uwMeshInstance3D(); //new Sprite3D();
             a_sprite.Name = name;
             a_sprite.Mesh = new QuadMesh();
@@ -82,23 +86,15 @@ namespace Underworld
             a_sprite.Position = new Vector3(0, n.FrameSize.Y / 2 + 0.12f, 0);
             a_sprite.CreateConvexCollision();
             string animname;
-            // if(_RES==GAME_UW2)
-            // {
-            //     animname = CritterArt.GetUW2AnimName(obj.npc_animation, obj.AnimationFrame);
-            // }
-            // else
-            // {
-            //     animname = CritterArt.GetUW1AnimName(obj.npc_animation);
-            // }
-            animname = CritterArt.GetAnimName(obj.npc_animation, obj.heading);
+            animname = CritterArt.GetAnimName(obj.npc_animation, CalculateFacingAngleToNPC(obj));
             if (ObjectCreator.printlabels)
             {
                 Label3D obj_lbl = new();
-                obj_lbl.Text = $"{name} {obj.item_id & 0x3F} \nAnim={obj.npc_animation} Frame={obj.AnimationFrame} {animname}\n Goal {obj.npc_goal} Gtarg{obj.npc_gtarg}";
+                obj_lbl.Text = $"{name} {obj.item_id & 0x3F} \nAnim={obj.npc_animation} Frame={obj.AnimationFrame} {animname}\n Goal {obj.npc_goal} Gtarg{obj.npc_gtarg}\nHP:{obj.npc_hp}/{critterObjectDat.avghit(obj.item_id)}";
                 obj_lbl.Font = uimanager.instance.Font4X5P;
                 obj_lbl.FontSize = 16;
                 obj_lbl.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
-                obj_lbl.Position = new Vector3(0f, 0.8f, 0f);
+                obj_lbl.Position = new Vector3(0f, 0.6f, 0f);
                 parent.AddChild(obj_lbl);
                 n.myLabel = obj_lbl;
             }
@@ -134,15 +130,15 @@ namespace Underworld
                 {
                     uwobject.npc_animation = 0; //default animation to zero;
                     Debug.Print($"{animname} ({animationNo}) was not found for {this.uwobject.a_name}");
-                }               
-                
+                }
+
                 uwobject.AnimationFrame = (byte)ApplyCritterAnimation(animationNo, frameNo, CritterArt.GetAnimName(0, 0), crit);
             }
             if (ObjectCreator.printlabels)
             {
-                if (myLabel!=null)
+                if (myLabel != null)
                 {
-                    myLabel.Text = $"{uwobject.a_name} {uwobject.item_id & 0x3F} \nAnim={uwobject.npc_animation} Frame={uwobject.AnimationFrame} {animname}\n Goal {uwobject.npc_goal} Gtarg{uwobject.npc_gtarg}";
+                    myLabel.Text = $"{uwobject.a_name} {uwobject.item_id & 0x3F} \nAnim={uwobject.npc_animation} Frame={uwobject.AnimationFrame} {animname}\n Goal {uwobject.npc_goal} Gtarg{uwobject.npc_gtarg}\nHP:{uwobject.npc_hp}/{critterObjectDat.avghit(uwobject.item_id)}";
                 }
             }
         }
@@ -154,7 +150,7 @@ namespace Underworld
             {//create the initial material
                 var newmaterial = new ShaderMaterial();
                 newmaterial.Shader = textureshader;
-                //newmaterial.SetShaderParameter("texture_albedo", (Texture)LoadImageAt(textureno,true));
+
                 newmaterial.SetShaderParameter("albedo", new Color(1, 1, 1, 1));
                 newmaterial.SetShaderParameter("uv1_scale", new Vector3(1, 1, 1));
                 newmaterial.SetShaderParameter("uv2_scale", new Vector3(1, 1, 1));
@@ -162,7 +158,6 @@ namespace Underworld
                 material = newmaterial;
             }
             //assign the params to the shader
-            //critAnim.animSprites[critAnim.animIndices[AnimationIndex, AnimationPos++]] 
             if (frameNo >= 8) { frameNo = 0; }
             if (anim.animIndices[frameNo] == -1)
             {
@@ -178,18 +173,17 @@ namespace Underworld
                     ArtLoader.NPCSpriteScale * texture.GetHeight()
                     );
                 material.SetShaderParameter("texture_albedo", (Texture)texture);
-                if (sprite!=null)
+                if (sprite != null)
                 {
-                    if (_RES==GAME_UW2)
-                    {
-                        sprite.Mesh.Set("size", FrameSize * 1.5f);
-                    }
-                    else
-                    {
-                        sprite.Mesh.Set("size", FrameSize * 1.8f);//make uw1 npcs a bit bigger
-                    }                    
-                }                
-                //sprite.Mesh.Set("size",FrameSize*1.5f);//TODO fix so this does not call a null crash and sprite mesh keeps size
+                    // if (_RES==GAME_UW2)
+                    // {
+                    sprite.Mesh.Set("size", FrameSize);// * 1.5f);
+                    // }
+                    // else
+                    // {
+                    //     sprite.Mesh.Set("size", FrameSize * 2f);//make uw1 npcs a bit bigger
+                    // }                    
+                }
                 return frameNo;
             }
             else
@@ -204,40 +198,24 @@ namespace Underworld
         {
             short CalcedFacing = CalculateFacingAngleToNPC(n);
             var np = (npc)(n.instance);
-            if (np!=null)
+            if (np != null)
             {
-                np.SetAnimSprite(n.npc_animation,n.AnimationFrame, CalcedFacing);
-            }            
+                np.SetAnimSprite(n.npc_animation, n.AnimationFrame, CalcedFacing);
+            }
         }
-
+        
+        /// <summary>
+        /// Works out which animation angle to use based on player camera and npc heading.
+        /// </summary>
+        /// <param name="n"></param>
+        /// <returns></returns>
         public static short CalculateFacingAngleToNPC(uwObject n)
         {
-            if (n.instance == null)
-            {
-                return 0;
-            }
-            var direction = -main.gamecam.Position + n.instance.uwnode.Position;
-            var angle = Mathf.RadToDeg(Mathf.Atan2(direction.X, direction.Z));
-            var facingIndex = facing(angle);
-            var CalcedFacing = (short)(facingIndex + n.heading);
-            if (CalcedFacing >= 8)//Make sure it wraps around correcly between 0 and 7 ->The compass headings.
-            {
-                CalcedFacing = (short)(CalcedFacing - 8);
-            }
-            if (CalcedFacing <= -8)
-            {
-                CalcedFacing = (short)(CalcedFacing + 8);
-            }
-            if (CalcedFacing < 0)
-            {
-                CalcedFacing = (short)(8 + CalcedFacing);
-            }
-            else if (CalcedFacing > 7)
-            {
-                CalcedFacing = (short)(8 - CalcedFacing);
-            }
-
-            return CalcedFacing;
+            var ax = (motion.CameraPointer2C + motion.PlayerCardinalHeadingLookupTable[motion.CameraYawHeadingRelated_2B52]) >> 0xB;
+            ax = ((0x20 + (n.heading << 2)) - ax) & 0x1F; //index to lookup an animation table.
+            var result = NPCAnimationHeadingTable[ax];
+            //Debug.Print($"npc {n.a_name} {n.heading} -> {result}");
+            return result;
         }
 
         public static bool LookAt(uwObject critter)
@@ -317,7 +295,7 @@ namespace Underworld
             {
                 uimanager.AddToMessageScroll($"You see {article} {mood} {npcrace}");
             }
-        }  
+        }
 
         /// <summary>
         /// Gets a list of spells and properties the npc has.

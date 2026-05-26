@@ -1,6 +1,4 @@
 using Godot;
-using System.Diagnostics;
-
 
 namespace Underworld
 {
@@ -8,7 +6,92 @@ namespace Underworld
 	{
 		public static uimanager instance;
 
-		public static bool InGame = false;
+
+		public enum GameModes
+		{ 
+			MAIN,
+			JOURNEY,
+			CHARGEN,
+			GAME,
+			OPTIONS,
+			AUTOMAP,
+			CONVERSATION,
+			CUTSCENE,
+			DEATH,
+			ENDGAME
+		}
+
+		public static GameModes CurrentGameMode = GameModes.CUTSCENE;
+
+
+		/// <summary>
+		/// Game activity will only current during this mode.
+		/// </summary>
+		public static bool InGame
+		{
+			get
+			{
+				return (uimanager.CurrentGameMode == uimanager.GameModes.GAME);
+			}
+		}
+
+		public static bool AtMainMenu
+		{
+			get 
+			{
+				return 
+					(uimanager.CurrentGameMode == uimanager.GameModes.JOURNEY)
+					||
+					(uimanager.CurrentGameMode == uimanager.GameModes.CHARGEN)
+					||
+					(uimanager.CurrentGameMode == uimanager.GameModes.MAIN);
+			}
+		}
+
+		public static bool InConversation
+		{
+			get
+			{
+				return (uimanager.CurrentGameMode == uimanager.GameModes.CONVERSATION);
+			}
+		}
+
+		public static bool InAutomap
+		{
+			get
+			{
+				return (uimanager.CurrentGameMode == uimanager.GameModes.AUTOMAP);
+			}			
+		}
+
+		
+
+	public static bool blockmouseinput
+	{
+		get
+		{
+			return
+			 uimanager.InConversation
+			 ||
+			 uimanager.InAutomap
+			 ||
+			 MessageDisplay.WaitingForTypedInput
+			 ||
+			 MessageDisplay.WaitingForMore
+			 ||
+			 MessageDisplay.WaitingForYesOrNo
+			 ||
+			 musicalinstrument.PlayingInstrument
+			 ||
+			 uimanager.CurrentGameMode == GameModes.OPTIONS
+			 ;
+
+			; //TODO and other menu modes that will stop input
+		}
+	}
+
+		
+		
 		[ExportGroup("Placeholders")]
 		[Export] public TextureRect placeholderuw1;
 		[Export] public TextureRect placeholderuw2;
@@ -60,7 +143,7 @@ namespace Underworld
 		public override void _Process(double delta)
 		{
 			_ProcessPanels(delta);
-			_ProcessWeaponAnims(delta);
+			//_ProcessWeaponAnims(delta);
 			_ProcessEyeAnims(delta);
 		}
 

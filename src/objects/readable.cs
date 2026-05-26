@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace Underworld
 {
     public class Readable : objectInstance
@@ -20,7 +22,7 @@ namespace Underworld
                 objList = playerdat.InventoryObjects;
             }
             if (_RES == GAME_UW2)
-            {//TODO implement the UW2 logic.
+            {
                 var magicenchantment = MagicEnchantment.GetSpellEnchantment(ObjectUsed, objList);
                 if ((magicenchantment != null) && (!WorldObject))
                 {
@@ -53,7 +55,9 @@ namespace Underworld
                     else
                     {
                         var cutsno = (ObjectUsed.link & 0x1ff) + 0x100;
-                        uimanager.AddToMessageScroll($"Display Cutscene {cutsno}", colour: 2);
+                        //uimanager.AddToMessageScroll($"Display Cutscene {cutsno}", colour: 2);
+                        uimanager.EnableDisable(uimanager.instance.uwviewport,false); 
+                        cutsplayer.PlayCutscene(CutsceneNo: 0x100 + (ObjectUsed.link & 0x1FF), callBackMethod: cutsplayer.RestoreViewPort, useSingleRedChannel: true);
                         return true;
                     }
                 }
@@ -96,15 +100,75 @@ namespace Underworld
                     {
                         objList = playerdat.InventoryObjects;
                     }
-                    look.PrintLookDescription(obj: ObjectUsed, objList: objList, lorecheckresult: look.LoreCheck(ObjectUsed));
+
                     var magicenchantment = MagicEnchantment.GetSpellEnchantment(ObjectUsed, objList);
                     if (magicenchantment == null)
-                    {//check if enchanted. If not then read it
-                        uimanager.AddToMessageScroll(GameStrings.GetString(3, ObjectUsed.link - 0x200));
+                    {
+                        if (_RES != GAME_UW2)
+                        {
+                            //check if has special flags. If not then read it
+                            ReadObject(ObjectUsed);
+                        }
+                        else
+                        {
+                            if (ObjectUsed.item_id == 0x139)//map piece
+                            {
+                                //TODO
+                                Debug.Print("MAP PIECE LOOKAT");
+                            }
+                            else
+                            {
+                                if ((ObjectUsed.enchantment == 1) && (ObjectUsed.majorclass == 5))
+                                {
+                                    return false;
+                                }
+                                else
+                                {
+                                    if ((ObjectUsed.link & 0x1FF) == 6)
+                                    {
+                                        playerdat.SetQuest(106,1);//You have looked at Mors Gothris spellbook.
+                                    }
+                                    ReadObject(ObjectUsed);
+                                }
+                            }
+                        }                        
+                    }
+                    else
+                    {
+                        look.PrintLookDescription(obj: ObjectUsed, objList: objList, lorecheckresult: look.LoreCheck(ObjectUsed));
                     }
                 }
                 return true;
             }
         }
+
+
+        /// <summary>
+        /// Look at the flags on the object and read it's contents as appropiate.
+        /// </summary>
+        /// <param name="ObjectUsed"></param>
+        private static void ReadObject(uwObject ObjectUsed)
+        {
+            if (ObjectUsed.flags1 == 0)
+            {
+                if (ObjectUsed.link > 512)
+                {
+                    //just display the text
+                    uimanager.AddToMessageScroll(GameStrings.GetString(3, ObjectUsed.link & 0x1FF));
+                }
+                else
+                {
+                    //display the text with the prefix You read the item name
+                    uimanager.AddToMessageScroll($"You read the {GameStrings.GetSimpleObjectNameUW(ObjectUsed.item_id)}");
+                    uimanager.AddToMessageScroll(GameStrings.GetString(3, ObjectUsed.link & 0x1FF));
+                }
+            }
+            else
+            {
+                uimanager.EnableDisable(uimanager.instance.uwviewport,false); 
+                cutsplayer.PlayCutscene(CutsceneNo: 0x100 + (ObjectUsed.link & 0x1FF), callBackMethod: cutsplayer.RestoreViewPort, useSingleRedChannel: true);
+            }
+        }
+
     }//end class
 }//end namespace

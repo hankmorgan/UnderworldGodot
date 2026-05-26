@@ -65,53 +65,78 @@ namespace Underworld
                                     }
                                 }
                             }
-                            //run trap.
-                            if (TriggerObject.link != 0)
-                            {
-                                var trapObj = objList[TriggerObject.link];
-                                if (trapObj != null)
-                                {
-                                    int triggerX = TriggerObject.quality;
-                                    int triggerY = TriggerObject.owner;
-                                    RunTrap(
-                                        character: character,
-                                        ObjectUsed: ObjectUsed,
-                                        trapObject: trapObj,
-                                        triggerX: triggerX,
-                                        triggerY: triggerY,
-                                        objList: objList);
-
-                                    
-                                    //Test for trap repeat.
-                                    if (TriggerObject.flags1 == 0)
-                                    {           
-                                        var tile = UWTileMap.current_tilemap.Tiles[triggerX, triggerY];                             
-                                        //Debug.Print($"Test me. remove trap {trapObj.index} {trapObj.a_name} from object list here");
-                                        ObjectRemover_OLD.RemoveTrapChain(
-                                            trapObj: trapObj,
-                                            ptrListHead: tile.Ptr + 2);
-                                    }
-                                    //if uw2 test for pressure triggers
-                                    if (_RES == GAME_UW2)
-                                    {
-                                        if ((triggerType & 0xF07) == 7)
-                                        {
-                                            var tile = UWTileMap.current_tilemap.Tiles[TriggerObject.tileX, TriggerObject.tileY];
-                                            ChangePressureTriggerTexture(tile, TriggerObject);
-                                        }
-                                    }
-                                }
-                            }
+                            RunTrapFromTrigger(character: character, ObjectUsed: ObjectUsed, TriggerObject: TriggerObject, triggerType: triggerType, objList: objList);
                         }
                     }
                     else
                     {
-                        Debug.Print("To implement NPC activation of triggers");
+                        //NPC activation of triggers. This
+                        var CharacterObj = objList[character];
+                        if (CharacterObj.majorclass == 1)
+                        {
+                            if (TriggerObject.enchantment == 0)
+                            {
+                                return 2;
+                            }
+                        }
+                        //Ovr166_173
+                        if (CharacterObj.majorclass != 1)
+                        {
+                            if (CharacterObj.flags0 == 0)
+                            {
+                                return 2;
+                            }
+                        }
+                        //NPC can run the trap
+                        Debug.Print($"{CharacterObj.a_name} is activating trigger {TriggerObject.a_name} -> {TriggerObject.link}");
+                        RunTrapFromTrigger(character: character, ObjectUsed: ObjectUsed, TriggerObject: TriggerObject, triggerType: triggerType, objList: objList);
                     }
                 }
             }
             return 2;
         }
+
+        private static void RunTrapFromTrigger(int character, uwObject ObjectUsed, uwObject TriggerObject, int triggerType, uwObject[] objList)
+        {
+            //run trap.
+            if (TriggerObject.link != 0)
+            {
+                var trapObj = objList[TriggerObject.link];
+                if (trapObj != null)
+                {
+                    int triggerX = TriggerObject.quality;
+                    int triggerY = TriggerObject.owner;
+                    RunTrap(
+                        character: character,
+                        ObjectUsed: ObjectUsed,
+                        trapObject: trapObj,
+                        triggerX: triggerX,
+                        triggerY: triggerY,
+                        objList: objList);
+
+
+                    //Test for trap repeat.
+                    if (TriggerObject.flags1 == 0)
+                    {
+                        var tile = UWTileMap.current_tilemap.Tiles[triggerX, triggerY];
+                        //Debug.Print($"Test me. remove trap {trapObj.index} {trapObj.a_name} from object list here");
+                        ObjectRemover_OLD.RemoveTrapChain(
+                            trapObj: trapObj,
+                            ptrListHead: tile.Ptr + 2);
+                    }
+                    //if uw2 test for pressure triggers
+                    if (_RES == GAME_UW2)
+                    {
+                        if ((triggerType & 0xF07) == 7)
+                        {
+                            var tile = UWTileMap.current_tilemap.Tiles[TriggerObject.tileX, TriggerObject.tileY];
+                            ChangePressureTriggerTexture(tile, TriggerObject);
+                        }
+                    }
+                }
+            }
+        }
+
 
         public static void RunTrap(int character, uwObject ObjectUsed, uwObject trapObject, int triggerX, int triggerY, uwObject[] objList)
         {//directly triggers a trap

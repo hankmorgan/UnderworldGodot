@@ -93,30 +93,7 @@ namespace Underworld
         };
 
 
-        public CutsLoader(string File)
-        {
-            filePath = Path.Combine(BasePath, "CUTS", File.ToUpper());
-            _alpha = UseAlpha(File);
-            if (LoadImageFile())
-            {
-                var filename = Path.GetFileName(File);
-                ReadCutsFile(
-                    cutsFile: ref ImageFileData,
-                    Alpha: _alpha,
-                    ErrorHandling: UseErrorHandling(filename),
-                    file: File);
-            }
-            textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uisprite.gdshader");
-        }
-
-        /// <summary>
-        /// Load an LPF file in sprite mode for panorama overlay.
-        /// Resets the pixel buffer to basePixels before each keyframe (record_size > 4)
-        /// so that RLE skip areas contain LBACK content and writes contain animated
-        /// sprite pixels. Generates WriteMasks to track which pixels were written.
-        /// See "Cutscene Engine RE Notes.md" — Sprite Overlay Approach.
-        /// </summary>
-        public CutsLoader(string File, byte[] basePixels)
+        public CutsLoader(string File, bool useSingleRedChannel = false)
         {
             filePath = Path.Combine(BasePath, "CUTS", File.ToUpper());
             _alpha = UseAlpha(File);
@@ -128,14 +105,39 @@ namespace Underworld
                     Alpha: _alpha,
                     ErrorHandling: UseErrorHandling(filename),
                     file: File,
-                    spriteBasePixels: basePixels);
+                    useSingleRedChannel: useSingleRedChannel);
+            }
+            textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uisprite.gdshader");
+        }
+
+        /// <summary>
+        /// Load an LPF file in sprite mode for panorama overlay.
+        /// Resets the pixel buffer to basePixels before each keyframe (record_size > 4)
+        /// so that RLE skip areas contain LBACK content and writes contain animated
+        /// sprite pixels. Generates WriteMasks to track which pixels were written.
+        /// See "Cutscene Engine RE Notes.md" — Sprite Overlay Approach.
+        /// </summary>
+        public CutsLoader(string File, byte[] basePixels, bool useSingleRedChannel = false)
+        {
+            filePath = Path.Combine(BasePath, "CUTS", File.ToUpper());
+            _alpha = UseAlpha(File);
+            if (LoadImageFile())
+            {
+                var filename = Path.GetFileName(File);
+                ReadCutsFile(
+                    cutsFile: ref ImageFileData,
+                    Alpha: _alpha,
+                    ErrorHandling: UseErrorHandling(filename),
+                    file: File,
+                    spriteBasePixels: basePixels,
+                    useSingleRedChannel: useSingleRedChannel);
             }
             textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uisprite.gdshader");
         }
 
         static bool UseAlpha(string File)
         {
-            switch (File.ToLower())
+            switch (Path.GetFileName(File).ToLower())
             {
                 //case "cs400.n01"://  Look graphics for volcano
                 case "cs401.n01"://   grave stones
@@ -166,7 +168,7 @@ namespace Underworld
         /// </summary>
         /// <param name="cutsFile">Cuts file.</param>
         public void ReadCutsFile(ref byte[] cutsFile, bool Alpha, bool ErrorHandling, string file,
-            byte[] spriteBasePixels = null)
+            byte[] spriteBasePixels = null, bool useSingleRedChannel = false)
         {
             long addptr = 0;
             int imagecount = 0;
@@ -358,6 +360,20 @@ namespace Underworld
 
                     // Store raw indexed pixel data for palette interpolation
                     RawPixelData[imagecount] = (byte[])dstImage.Clone();
+                    if (_RES != GAME_UW2)
+                    {
+                        if (System.IO.Path.GetFileName(file).ToLower() == "cs410.n01")
+                        {
+                            //special case. This image loads with a gray background rather than a transparency.
+                            for (int pixel = 0; pixel<= dstImage.GetUpperBound(0);pixel++)
+                            {
+                                if (dstImage[pixel] == 255)
+                                {
+                                    dstImage[pixel] = 0;
+                                }
+                            }
+                        }
+                    }
 
                     ImageCache[imagecount++] = Image(
                         databuffer: dstImage,
@@ -365,7 +381,7 @@ namespace Underworld
                         width: lpH.width, height: lpH.height,
                         palette: pal,
                         useAlphaChannel: Alpha,
-                        useSingleRedChannel: false,
+                        useSingleRedChannel: useSingleRedChannel,
                         crop: UseCropping);
                 }
 

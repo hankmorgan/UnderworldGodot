@@ -167,13 +167,19 @@ namespace Underworld
         public static void ClickOnViewPort(InputEventMouseButton eventMouseButton)
         {
             if (!InGame) { return; }
-            bool LeftClick = (eventMouseButton.ButtonIndex == MouseButton.Left);
-            Debug.Print($"{eventMouseButton.Position.X},{eventMouseButton.Position.Y}");
-            Dictionary result = DoRayCast(eventMouseButton.Position, RayDistance, out Vector3 rayOrigin);
-
             //store these values for use in throw and spell casting events
             ViewPortMouseXPos = eventMouseButton.Position.X;
             ViewPortMouseYPos = eventMouseButton.Position.Y;
+            if (uimanager.InteractionMode == InteractionModes.ModeAttack)
+            {
+                return;//no more needs to be done.
+            }
+            
+            bool LeftClick = (eventMouseButton.ButtonIndex == MouseButton.Left);
+            //Debug.Print($"{eventMouseButton.Position.X},{eventMouseButton.Position.Y}");
+            Dictionary result = DoRayCast(eventMouseButton.Position, RayDistance, out Vector3 rayOrigin);
+
+
 
             if (result != null)
             {
@@ -325,21 +331,21 @@ namespace Underworld
         /// <param name="pos"></param>
         /// <param name="tileX"></param>
         /// <param name="tileY"></param>
-        private static void DropToTileAtPosition_OLD(Vector3 pos, int tileX, int tileY)
-        {
-            Debug.Print("To Remove DropToTileAtPosition_OLD()");
-            if (
-                pickup.Drop_old(
-                index: playerdat.ObjectInHand,
-                objList: UWTileMap.current_tilemap.LevelObjects,
-                dropPosition: pos,
-                tileX: tileX, tileY: tileY)
-            )
-            {
-                playerdat.ObjectInHand = -1;
-                instance.mousecursor.SetCursorToCursor();
-            }
-        }
+        // private static void DropToTileAtPosition_OLD(Vector3 pos, int tileX, int tileY)
+        // {
+        //     Debug.Print("To Remove DropToTileAtPosition_OLD()");
+        //     if (
+        //         pickup.Drop_old(
+        //         index: playerdat.ObjectInHand,
+        //         objList: UWTileMap.current_tilemap.LevelObjects,
+        //         dropPosition: pos,
+        //         tileX: tileX, tileY: tileY)
+        //     )
+        //     {
+        //         playerdat.ObjectInHand = -1;
+        //         instance.mousecursor.SetCursorToCursor();
+        //     }
+        // }
 
 
         /// <summary>

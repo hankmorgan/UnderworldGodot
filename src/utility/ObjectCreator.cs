@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Diagnostics;
 using Godot;
 
@@ -34,8 +35,8 @@ namespace Underworld
         {
             if (WhichList == ObjectFreeLists.ObjectListType.MobileList)
             {
-               Debug.Print("WARNING Spawn Object in Tile used to spawn object in mobile list. Object projectile properties may be invalid");
-            }            
+                Debug.Print("WARNING Spawn Object in Tile used to spawn object in mobile list. Object projectile properties may be invalid");
+            }
             var slot = PrepareNewObject(itemid, WhichList);
             if (slot != 0)
             {
@@ -51,6 +52,7 @@ namespace Underworld
                 {
                     RenderObject(obj, UWTileMap.current_tilemap);
                 }
+                Debug.Print($"Spawning {obj.a_name} at index:{obj.index} with next:{obj.next}");
                 return obj;
             }
             else
@@ -183,7 +185,7 @@ namespace Underworld
             var name = $"{obj.index}_{GameStrings.GetObjectNounUW(obj.item_id)}";
             var newNode = new Node3D();
             newNode.Name = name;
-            newNode.Position = obj.GetCoordinate(obj.tileX, obj.tileY);
+            newNode.Position = obj.GetCoordinate();
             worldobjects.AddChild(newNode);
 
             switch (obj.majorclass)
@@ -293,25 +295,25 @@ namespace Underworld
 
         private static bool MajorClass4(uwObject obj, Node3D parent, GRLoader grObjects, string name)
         {
-            switch (obj.minorclass)
-            {
-                case 2:
-                    {
-                        switch (obj.classindex)
-                        {
-                            case 9:
-                                {
-                                    if (_RES != GAME_UW2)
-                                    {
-                                        glowing_rock.CreateGlowingRock(grObjects, obj, parent, name);
-                                        return false;
-                                    }
-                                    break;
-                                }
-                        }
-                        break;
-                    }
-            }
+            // switch (obj.minorclass)
+            // {
+            //     case 2:
+            //         {
+            //             switch (obj.classindex)
+            //             {
+            //                 case 9:
+            //                     {
+            //                         if (_RES != GAME_UW2)
+            //                         {
+            //                             //glowing_rock.CreateGlowingRock(grObjects, obj, parent, name);
+            //                             return true;
+            //                         }
+            //                         break;
+            //                     }
+            //             }
+            //             break;
+            //         }
+            // }
             return true;
         }
 
@@ -482,19 +484,19 @@ namespace Underworld
                     }
                 case 1:
                     {
-                        switch (obj.classindex)
-                        {
-                            case 0xE://flam rune
-                            case 0xF://tym rune
-                                {
-                                    if (_RES == GAME_UW2)
-                                    {
-                                        return runetrap.CreateRuneTrap(obj, parent);
-                                    }
-                                    break;
-                                }
+                        // switch (obj.classindex)
+                        // {
+                        //     case 0xE://flam rune
+                        //     case 0xF://tym rune
+                        //         {
+                        //             if (_RES == GAME_UW2)
+                        //             {
+                        //                 return runetrap.CreateRuneTrap(obj, parent);
+                        //             }
+                        //             break;
+                        //         }
 
-                        }
+                        // }
                         break;
                     }
                 case 2:
@@ -608,7 +610,7 @@ namespace Underworld
                 {
                     //remove the weight of a single instance of the object
                     playerdat.WeightCarried -= commonObjDat.mass(obj.item_id);
-                    Debug.Print ($"Removing weight of {obj.a_name} {commonObjDat.mass(obj.item_id)}");
+                    Debug.Print($"Removing weight of {obj.a_name} {commonObjDat.mass(obj.item_id)}");
                     uimanager.RefreshWeightDisplay();
                     uimanager.UpdateInventoryDisplay();
                 }
@@ -649,7 +651,8 @@ namespace Underworld
             critter.npc_yhome = 32;
             critter.quality = 32;
             critter.owner = 32;
-            critter.npc_hp = (byte)((0x10 + Rng.r.Next(0, 0x18)) / 0x20);
+            critter.npc_hp = (byte)(((0x10 + Rng.r.Next(0x18)) * critterObjectDat.avghit(critter.item_id)) / 0x20);
+            //critter.npc_hp = (byte)((0x10 + Rng.r.Next(0, 0x18)) / 0x20);
             critter.ProjectileHeading = (ushort)(critter.heading << 5);
             critter.npc_goal = 8;
             critter.npc_gtarg = 0;
@@ -659,7 +662,7 @@ namespace Underworld
             critter.UnkBit_0XD_Bit9 = 0;
             critter.IsPowerful = 0;
             critter.UnkBit_0XD_Bit11 = 0;
-            critter.UnkBit_0XD_Bit8 = 0;
+            critter.SpawnedCritter_0XD_Bit8 = 0;
             critter.UnkBit_0x18_5 = 0;//possbily used to indicate npc is at their target
             critter.SwingChargeIndex = 0;
             critter.NextFrame_0XA_Bit0123 = 0;
@@ -711,7 +714,7 @@ namespace Underworld
             }
             obj.npc_xhome = (short)xhome;
             obj.npc_yhome = (short)yhome;
-            obj.NextFrame_0XA_Bit0123 = 0;//this may be a next frame to update setting.
+            obj.NextFrame_0XA_Bit0123 = (short)(main.ThisFrameDelta + 1);//next frame where the object will move/process updates.
             obj.Projectile_Speed = 2;
             obj.UnkBit_0X13_Bit0to6 = 0;
             obj.invis = 0;
@@ -760,5 +763,35 @@ namespace Underworld
         //     }
         //     return false;//no unlinking
         // }
+
+        public static void PrintChainInTile(int tileX, int tileY, string source)
+        {
+            var tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];
+            if (tile.indexObjectList == 0)
+            {
+                Debug.Print($"No objects in Tile {tileX} {tileY}");
+            }
+            List<int> tested = new();
+            var next = tile.indexObjectList;
+            var output = $"Objects in Tile {tileX} {tileY} after {source} ";
+            while (next != 0)
+            {
+                output += $"{next} => ";
+                var obj = UWTileMap.current_tilemap.LevelObjects[next];
+                if (tested.Contains(next))
+                {
+                    Debug.Print($"Infinite loop in Tile {tileX}, {tileY} on next {next}");
+                    break;
+                }
+                tested.Add(next);
+                next = obj.next;
+                if (next == 0)
+                {
+                    output += "0";
+                }
+            }
+
+            Debug.Print(output);
+        }
     } //end class
 } //end namesace

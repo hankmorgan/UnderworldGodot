@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using System.Diagnostics;
 
 namespace Underworld
@@ -12,16 +14,32 @@ namespace Underworld
         /// </summary>
         public static bool SpellHasBeenCast = false;
         public static bool UseTriggerHasBeenActivated = false;
-        public static bool Use(uwObject ObjectUsed, uwObject UsingObjectOrCharacter, uwObject[] objList, bool WorldObject = true)
-        {            
+        public static bool Use(uwObject ObjectUsed, uwObject UsingObjectOrCharacter, uwObject[] objList, bool WorldObject = true, bool UsedFromCollision = false)
+        {
             SpellHasBeenCast = false;
             UseTriggerHasBeenActivated = false;
-
-            //if (index == -1) { return false; }
-            trap.ObjectThatStartedChain = ObjectUsed.index;
             bool result = false;
             if (ObjectUsed != null)
             {
+                if ((ObjectUsed.index == 1) && (WorldObject))
+                {
+                    if (WorldObject)
+                    {
+                        if (UsingObjectOrCharacter != null)
+                        {
+                            if ((UsingObjectOrCharacter.majorclass == 0) && (UsingObjectOrCharacter.minorclass == 1))
+                            {
+                                //projectile has hit the player.
+                                combat.MissileImpact(projectile: UsingObjectOrCharacter, objectHit: ObjectUsed);
+                                return true;
+                            }
+                        }
+                    }
+
+                    Debug.Print("using yourself");
+                    return true;//You can't use yourself
+                }
+                trap.ObjectThatStartedChain = ObjectUsed.index;
                 //var obj = objList[index];
                 Debug.Print($"Object {ObjectUsed.majorclass}-{ObjectUsed.minorclass}-{ObjectUsed.classindex} {ObjectUsed.a_name}");
                 switch (ObjectUsed.majorclass)
@@ -33,8 +51,15 @@ namespace Underworld
                         }
                     case 1://npcs
                         {
-                            talk.Talk(ObjectUsed, WorldObject);
-                            return true;
+                            if (UsingObjectOrCharacter != null)
+                            {
+                                if (UsingObjectOrCharacter.index == 1)//Ensure only the player can initiate conversations.
+                                {
+                                    talk.Talk(ObjectUsed, WorldObject);
+                                    return true;
+                                }
+                            }
+                            break;
                         }
                     case 2:
                         {
@@ -48,12 +73,17 @@ namespace Underworld
                         }
                     case 4:
                         {
-                            result = UseMajorClass4(ObjectUsed, WorldObject);
+                            result = UseMajorClass4(ObjectUsed, UsingObjectOrCharacter, WorldObject);
                             break;
                         }
                     case 5:
                         {
                             result = UseMajorClass5(ObjectUsed, WorldObject);
+                            break;
+                        }
+                    case 6:
+                        {
+                            result = UseMajorClass6(ObjectUsed, UsingObjectOrCharacter, WorldObject);
                             break;
                         }
                     case 7:
@@ -74,6 +104,18 @@ namespace Underworld
                         triggerY: ObjectUsed.tileY,
                         objList: objList
                     );
+                }
+
+                if (result == false)
+                {
+                    if (UsingObjectOrCharacter != null)
+                    {
+                        if ((UsingObjectOrCharacter.majorclass == 0) && (UsingObjectOrCharacter.minorclass == 1))//a missile projectile
+                        {
+                            combat.MissileImpact(projectile: UsingObjectOrCharacter, objectHit: ObjectUsed);
+                            result = true;
+                        }
+                    }
                 }
                 //check for a spell
                 if (!SpellHasBeenCast)
@@ -96,16 +138,16 @@ namespace Underworld
                                         {
                                             //do not normally cast spells from containers. Check if directly contains a spell. Eg the Cornucopia.
                                             var linkedspell = objectsearch.FindMatchInObjectChain(
-                                                ListHeadIndex: ObjectUsed.link, 
-                                                majorclass: 4, minorclass: 2, classindex: 0, 
-                                                objList: objList, 
-                                                SkipNext: false, 
-                                                SkipLinks: true );
+                                                ListHeadIndex: ObjectUsed.link,
+                                                majorclass: 4, minorclass: 2, classindex: 0,
+                                                objList: objList,
+                                                SkipNext: false,
+                                                SkipLinks: true);
                                             if (linkedspell != null)
                                             {
-                                                result = UseItemCastSpell(objList: objList, WorldObject: WorldObject, result: result, obj: ObjectUsed) | result; 
+                                                result = UseItemCastSpell(objList: objList, WorldObject: WorldObject, result: result, obj: ObjectUsed) | result;
                                             }
-                                        
+
                                         }
                                         else
                                         {
@@ -118,7 +160,11 @@ namespace Underworld
                     }
                 }
             }
-            if (!result)
+            else
+            {
+                result = true;//supress messaging.
+            }
+            if ((!result) && (!UsedFromCollision))
             {
                 uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_cannot_use_that_));
             }
@@ -169,12 +215,11 @@ namespace Underworld
                     if (ObjectUsed.minorclass == 1)
                     {
                         //projectile has hit the UsingObjectOrCharacter.
-                        if (UsingObjectOrCharacter!=null)
+                        if (UsingObjectOrCharacter != null)
                         {
                             combat.MissileImpact(ObjectUsed, UsingObjectOrCharacter);
-                        }                        
+                        }
                         return true;
-
                     }
                 }
             }
@@ -313,7 +358,7 @@ namespace Underworld
             return false;
         }
 
-        public static bool UseMajorClass4(uwObject ObjectUsed, bool WorldObject)
+        public static bool UseMajorClass4(uwObject ObjectUsed, uwObject UsingObjectOrCharacter, bool WorldObject)
         {
             switch (ObjectUsed.minorclass)
             {
@@ -348,10 +393,12 @@ namespace Underworld
                     {
                         if (_RES != GAME_UW2)
                         {
-                            switch(ObjectUsed.classindex)
+                            switch (ObjectUsed.classindex)
                             {
                                 case 4://exploding book
                                     return explodingbook.Use(ObjectUsed, WorldObject);
+                                case 5://burning incense.
+                                    return incense.Use(ObjectUsed, WorldObject);
                                 case 0xB:
                                     return rotwormstew.Use(ObjectUsed, WorldObject);
 
@@ -399,6 +446,14 @@ namespace Underworld
                                     return spike.Use(ObjectUsed, WorldObject);
                                 }
                                 break;
+                            case 9:
+                                {
+                                    if (_RES != GAME_UW2)
+                                    {
+                                        return glowing_rock.Use(ObjectUsed, UsingObjectOrCharacter, WorldObject);
+                                    }
+                                    break;
+                                }
                             case 0xB://Fishing pole
                                 return fishingpole.use(ObjectUsed, WorldObject);
                             case 0xD://oilflask
@@ -426,7 +481,7 @@ namespace Underworld
                             switch (ObjectUsed.classindex)
                             {
                                 case 0x9://a_bit of a map 
-                                    return false;
+                                    return a_bit_of_a_map.Use(ObjectUsed, WorldObject);
                                 case 0xA://a_map 
                                     return map.Use(ObjectUsed, WorldObject);
                                 case 0xB://a_dead plant 
@@ -463,7 +518,7 @@ namespace Underworld
                         {
                             case 7://a_shrine
                                 {
-                                    return shrine.Use(ObjectUsed);                                
+                                    return shrine.Use(ObjectUsed);
                                 }
                             case 0xB://barrel
                             case 0xD://chest
@@ -498,6 +553,27 @@ namespace Underworld
                 case 3: //buttons
                     {
                         return button.Use(ObjectUsed);
+                    }
+            }
+            return false;
+        }
+
+        public static bool UseMajorClass6(uwObject ObjectUsed, uwObject UsingObjectOrCharacter, bool WorldObject)
+        {
+            switch (ObjectUsed.minorclass)
+            {
+                case 1://rune traps
+                    {
+                        if (_RES == GAME_UW2)
+                        {
+                            switch (ObjectUsed.classindex)
+                            {
+                                case 0xE:
+                                case 0xF:
+                                    return runetrap.Use(ObjectUsed, UsingObjectOrCharacter);
+                            }
+                        }
+                        return false;
                     }
             }
             return false;

@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Diagnostics;
 
 namespace Underworld
@@ -36,9 +37,7 @@ namespace Underworld
                                 case 0://damage traps
                                     {
                                         implemented = true;
-                                        a_damage_trap.Activate(
-                                                trapObj: trapObj,
-                                                objList: objList);
+                                        a_damage_trap.Activate(triggeringCharacter:objList[character], trapObj: trapObj);
                                         break;
                                     }
                                 case 1: // a teleport trap
@@ -123,6 +122,29 @@ namespace Underworld
                                             objList: objList);
                                         break;
                                     }
+                                case 0x9: //6-0-9
+                                    {
+                                        implemented = true;
+                                        triggerNextIndex = a_ward_trap.Activate(trapObj, objList[character], triggerNextIndex);
+                                        break;
+                                    }
+                                case 0xA://6-0-A, skill trap uw2, tell trap uw1
+                                    {
+                                        if (_RES == GAME_UW2)
+                                        {
+                                            implemented = true;
+                                            triggerNextIndex = a_skill_trap.Activate(trapObj);
+                                        }
+                                        else
+                                        {
+                                            //Tell Trap, Works the same as a Ward Trap");
+                                            implemented = true;
+                                            triggerNextIndex = a_ward_trap.Activate(trapObj, objList[character], triggerNextIndex);
+                                            break;
+                                        }
+                                        break;
+                                    }
+
                                 case 0xB: //6-0-B, delete object
                                     {
                                         implemented = true;

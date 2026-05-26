@@ -26,7 +26,7 @@ namespace Underworld
             var MissileDamage = rangedObjectDat.damage(projectile.item_id);
             if (projectile.ProjectileSourceID == 1)
             {
-                //player hds launched the projectile
+                //player has launched the projectile
                 if (rangedObjectDat.RangedWeaponType(projectile.item_id) == 0xC0)
                 {
                     diDamageMultipler = (playerdat.Missile<<3) + 0xC0;
@@ -100,7 +100,15 @@ namespace Underworld
                 attackerTop: commonObjDat.height(Projectile.item_id));
 
             AttackDamage = damage;
-            NPCFinalAttackCharge = 0x80;
+            if (projectileSource == 1)
+            {
+                PlayerAttackCharge = 0x80;
+            }
+            else
+            {
+                NPCFinalAttackCharge = 0x80;                
+            }
+
 
             if (objectHit == playerdat.playerObject)
             {

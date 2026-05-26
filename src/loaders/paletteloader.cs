@@ -144,8 +144,7 @@ namespace Underworld
             RenderingServer.GlobalShaderParameterAdd(
                 name: "smoothpalette",
                 type: RenderingServer.GlobalShaderParameterType.Sampler2D,
-                defaultValue: (Texture)Palettes[Palette.CurrentPalette].cycledGamePalette[Palette.ColourTone, 0, 0]);
-
+                defaultValue: (Texture)Palettes[Palette.CurrentPalette].cycledGamePalette[Palette.ColourTone, 0, 0]);            
         }
 
         public static int[] LoadAuxilaryPalIndices(string auxPalPath, int auxPalIndex)

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.IO;
 
@@ -860,5 +861,70 @@ namespace Underworld
             var stringno = fullstringno & 0x1FF;
             return GetString(BlockNo, stringno);
         }
+
+        /// <summary>
+        /// Gets the direction string offset no to the targetx/y from the player
+        /// </summary>
+        /// <param name="targetX"></param>
+        /// <param name="targetY"></param>
+        /// <returns></returns>
+        public static int GetDirectionStringToTile(uwObject sourceObject, int targetX, int targetY)
+        {
+            var x = targetX - sourceObject.tileX;
+            var y = targetY - sourceObject.tileY;
+
+            if (Math.Abs(x)/2 > Math.Abs(y))
+            {
+                if (x<=0)
+                {
+                    return 6;
+                }
+                else
+                {
+                    return 2;
+                }
+            }
+            else
+            {
+                if (Math.Abs(y)/2 <= Math.Abs(x))
+                {
+                    if (x>=0)
+                    {
+                        if (y>=0)
+                        {
+                            return 0;
+                        }
+                        else
+                        {
+                            return 2;
+                        }
+                    }
+                    else
+                    {
+                        if (y<=0)
+                        {
+                            return 5;
+                        }
+                        else
+                        {
+                            return 7;
+                        }
+                    }
+                }
+                else
+                {
+                    if (y<=0)
+                    {
+                        return 4;
+                    }
+                    else
+                    {
+                        return 0;
+                    }
+                }
+            }
+        }
+
+
     } //end class
 } //end namespace

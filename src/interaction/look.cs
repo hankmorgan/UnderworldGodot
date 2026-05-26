@@ -189,6 +189,8 @@ namespace Underworld
                     {
                         switch (obj.classindex)
                         {
+                            case 4:
+                                return bridge.LookAt(obj);
                             case 5:
                                 return gravestone.Use(obj);
                             case 6: // a readable sign.

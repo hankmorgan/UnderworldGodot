@@ -304,7 +304,7 @@ namespace Underworld
 
 
         /// <summary>
-        /// heading minor and heading major. this is getting confusing...
+        /// Full camera Yaw
         /// </summary>
         public static int heading_full
         {
@@ -319,21 +319,21 @@ namespace Underworld
         }
 
 
-        public static int heading_minor
-        {
-            get
-            {
-                return GetAt(0x5B);
-            }
-            set
-            {
-                SetAt(0x5B, (byte)value);
-            }
-        }
+        // public static int heading_minor_camerayaw
+        // {
+        //     get
+        //     {
+        //         return GetAt(0x5B);
+        //     }
+        //     set
+        //     {
+        //         SetAt(0x5B, (byte)value);
+        //     }
+        // }
 
 
         /// <summary>
-        /// Note this is not the full heading value! 
+        /// Note this is not the full heading value but the upper nibble of the camera yaw.
         /// </summary>
         public static int heading_major
         {
@@ -583,6 +583,10 @@ namespace Underworld
         {
             get
             {
+                if (pdat == null)
+                {
+                    return true;
+                }
                 if (_RES == GAME_UW2)
                 {
                     return (GetAt(0x303) & 0x1) == 1;
@@ -680,7 +684,7 @@ namespace Underworld
             {
                 play_level = newLevel;
                 SkillPoints += newLevel;
-                if (!ConversationVM.InConversation)
+                if (!uimanager.InConversation)
                 {
                     uimanager.AddToMessageScroll($"{GameStrings.GetString(1, GameStrings.str_you_have_attained_experience_level_)}{newLevel}");
                 }

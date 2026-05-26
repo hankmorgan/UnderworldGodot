@@ -9,6 +9,7 @@ namespace Underworld
     /// </summary>
     public class UWTileMap : Loader
     {
+
         //Raw Data
         public static UWTileMap current_tilemap;
 
@@ -320,12 +321,12 @@ namespace Underworld
 
             if (automap.automaps[newLevelNo] == null)
             {
-                automap.automaps[newLevelNo] = new automap(newLevelNo, (int)_RES);
+                automap.automaps[newLevelNo] = new automap(newLevelNo);
             }
 
             if (automapnote.automapsnotes[newLevelNo] == null)
             {
-                automapnote.automapsnotes[newLevelNo] = new automapnote(newLevelNo, (int)_RES);
+                automapnote.automapsnotes[newLevelNo] = new automapnote(newLevelNo);
             }
 
 
@@ -335,8 +336,8 @@ namespace Underworld
 
             Debug.Print($"{current_tilemap.uw}");
 
-            uimanager.InGame = true;
-            uimanager.AtMainMenu = false;
+            //uimanager.InGame = true;
+
             Palette.CurrentPalette = 0;
         }
 
