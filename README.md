@@ -205,6 +205,8 @@ F7 Toggle Panel
 Alt+F7 Print Game Version
 F8 Cast Spell
 Alt+F8 Print Player Dungeon and Location
+F11 Toggles a position label
+Alt+F12 Screenshot
 
 ### Modes
 F1-F6 Change interaction modes

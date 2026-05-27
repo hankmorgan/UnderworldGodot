@@ -4,6 +4,7 @@ using System.Diagnostics;
 using Underworld;
 using Peaky.Coroutines;
 using System.Collections;
+using System.IO;
 
 /// <summary>
 /// Node to initialise the game
@@ -271,15 +272,8 @@ public partial class main : Node3D
 
 			if (EnablePositionDebug)
 			{
-				int tileX = -(int)(cam.Position.X / 1.2f);
-				int tileY = (int)(cam.Position.Z / 1.2f);
-				tileX = Math.Max(Math.Min(tileX, 63), 0);
-				tileY = Math.Max(Math.Min(tileY, 63), 0);
-				int xposvecto = -(int)(((cam.Position.X % 1.2f) / 1.2f) * 8);
-				int yposvecto = (int)(((cam.Position.Z % 1.2f) / 1.2f) * 8);
-				int newzpos = (int)(((((cam.Position.Y) * 100) / 32f) / 15f) * 128f) - commonObjDat.height(127);
 				var fps = Engine.GetFramesPerSecond();
-				lblPositionDebug.Text = $"FPS:{fps} Time:{playerdat.game_time}\nL:{playerdat.dungeon_level} X:{tileX} Y:{tileY}\n{uimanager.instance.uwsubviewport.GetMousePosition()}\n {motion.playerMotionParams.x_0} {motion.playerMotionParams.y_2} {motion.playerMotionParams.z_4}";
+				lblPositionDebug.Text = $"FPS:{fps} Time:{playerdat.game_time} PIT:{GlobalPITTimer}\nL:{playerdat.dungeon_level} X:{playerdat.playerObject.npc_xhome} Y:{playerdat.playerObject.npc_yhome}\nMouseposition:{uimanager.instance.uwsubviewport.GetMousePosition()}\nPlayer Coordinates {motion.playerMotionParams.x_0} {motion.playerMotionParams.y_2} {motion.playerMotionParams.z_4}";
 			}
 
 			if ((MessageDisplay.WaitingForTypedInput) || (MessageDisplay.WaitingForYesOrNo))
@@ -659,7 +653,7 @@ public partial class main : Node3D
 				if (keyinput.Pressed)
 				{
 					switch (keyinput.Keycode)
-					{						
+					{	
 						case Key.F1: //open options menu
 							uimanager.InteractionModeToggle(0); break;
 						case Key.F2: //talk
@@ -695,8 +689,7 @@ public partial class main : Node3D
 						case Key.F9://track skill
 							tracking.DetectMonsters(8, playerdat.Track); break;
 						case Key.F10: // make camp
-							{
-								Debug.Print("Make camp");
+							{								
 								//Try and find a bedroll in player inventory.
 								var bedroll = objectsearch.FindMatchInFullObjectList(
 									majorclass: 4, minorclass: 2, classindex: 1,
@@ -712,22 +705,18 @@ public partial class main : Node3D
 								break;
 							}
 
-
 						case Key.F11://toggle position label
 							{
 								EnablePositionDebug = !EnablePositionDebug;
 								uimanager.EnableDisable(lblPositionDebug, EnablePositionDebug);
 								break;
 							}
-						case Key.F12://debug
+						case Key.F12://screenshot
 							{
-								//cutsplayer.PlayCutscene(0);//test  
-								//trigger.RunTimerTriggers();
-								if (UWClass._RES == UWClass.GAME_UW2)
+								if (keyinput.AltPressed)
 								{
-									scd.ProcessSCDArk(1);
+									SaveScreenshot();
 								}
-								//trigger.RunNextScheduledTrigger();
 								break;
 							}
 						case Key.Pagedown:
@@ -1031,6 +1020,21 @@ public partial class main : Node3D
 	static void printPlayerLocation()
 	{
 		uimanager.AddToMessageScroll($"{playerdat.dungeon_level.ToString("D2")}{playerdat.playerObject.npc_xhome.ToString("D2")}{playerdat.playerObject.npc_yhome.ToString("D2")}");
+	}
+
+	/// <summary>
+	/// In vanilla uw pressing Alt+Q will save a screenshot. To avoid conflicts with movemnt this is changed to Alt+F12
+	/// </summary>
+	static void SaveScreenshot()
+	{
+		var basefolder = ProjectSettings.GlobalizePath("user://");
+		var screenshotfolder = Path.Combine(basefolder, "screenshots");
+		if (!Path.Exists(screenshotfolder))
+		{
+			System.IO.Directory.CreateDirectory(screenshotfolder);
+		}
+		var filename = Path.Combine(screenshotfolder,$"{DateTime.UtcNow.ToString("yyyyMMdd_hhmmss")}.png");
+		uimanager.instance.GetViewport().GetTexture().GetImage().SavePng(filename);
 	}
 
 }//end class
