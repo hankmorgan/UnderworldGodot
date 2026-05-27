@@ -114,7 +114,7 @@ offset_bottom = 40.0
 
 [node name="MessageScrollBackgroundUW1" type="TextureRect" parent="UI/UW1/MessageScrollPanelUW1"]
 layout_mode = 0
-offset_left = 64.0
+offset_left = 60.0
 offset_top = 676.0
 offset_right = 1224.0
 offset_bottom = 796.0
@@ -124,9 +124,9 @@ texture = ExtResource("7_qiq8a")
 texture_filter = 1
 layout_mode = 0
 offset_left = 64.0
-offset_top = 651.0
+offset_top = 656.0
 offset_right = 1224.0
-offset_bottom = 791.0
+offset_bottom = 796.0
 mouse_filter = 1
 theme_override_colors/default_color = Color(0.2, 0.109804, 0.0745098, 1)
 theme_override_constants/line_separation = -24
@@ -142,6 +142,20 @@ Yours forever,
 "
 scroll_active = false
 autowrap_mode = 0
+
+[node name="MessageScrollEdgeLeftUW1" type="TextureRect" parent="UI/UW1/MessageScrollPanelUW1"]
+layout_mode = 0
+offset_left = 44.0
+offset_top = 676.0
+offset_right = 60.0
+offset_bottom = 792.0
+
+[node name="MessageScrollEdgeRightUW1" type="TextureRect" parent="UI/UW1/MessageScrollPanelUW1"]
+layout_mode = 0
+offset_left = 1224.0
+offset_top = 676.0
+offset_right = 1240.0
+offset_bottom = 792.0
 
 [node name="CompassUW1" type="Panel" parent="UI/UW1"]
 self_modulate = Color(1, 1, 1, 0)
@@ -724,7 +738,7 @@ self_modulate = Color(1, 1, 1, 0)
 layout_mode = 0
 offset_left = 64.0
 offset_top = 676.0
-offset_right = 904.0
+offset_right = 896.0
 offset_bottom = 792.0
 texture = ExtResource("22_vajvs")
 
@@ -748,6 +762,20 @@ line 4
 aaaaaaaaaaaaaaaaaaa"
 scroll_active = false
 autowrap_mode = 0
+
+[node name="MessageScrollEdgeLeftUW2" type="TextureRect" parent="UI/UW2/MessageScrollPanelUW2"]
+layout_mode = 0
+offset_left = 48.0
+offset_top = 676.0
+offset_right = 64.0
+offset_bottom = 792.0
+
+[node name="MessageScrollEdgeRightUW2" type="TextureRect" parent="UI/UW2/MessageScrollPanelUW2"]
+layout_mode = 0
+offset_left = 896.0
+offset_top = 676.0
+offset_right = 912.0
+offset_bottom = 792.0
 
 [node name="OptionsButtonUW2" type="TextureRect" parent="UI/UW2"]
 offset_left = 1179.0
@@ -2780,7 +2808,7 @@ offset_bottom = 5.0
 mouse_filter = 2
 texture = ExtResource("18_tfr7p")
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("PanelChargen", "ChargenBG", "ChargenQuestion", "ChargenSkills", "ChargenSkills_values", "ChargenStats", "ChargenStats_values", "ChargenGender", "ChargenClass", "ChargenName", "ChargenNameBG", "ChargenNameInput", "ChargenNameQuestion", "ChargenBody", "CompassBgUW1", "CompassBgUW2", "CompassPointsUW1", "CompassPointsUW2", "CompassPanelUW2", "ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLabelFrameUW1", "NPCNameLabelFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "CutsFull", "CutsSmallUW1", "CutsSmallUW2", "Cuts3DWinUW1", "Cuts3DWinUW2", "CutsSubtitle", "DragonHeads", "DragonTails", "DragonTorsos", "PanelEndGame", "EndGameBackground", "EndGameStats", "Eyes", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "InteractionButtonsUW1", "InteractionButtonsUW2", "PanelMainMenu", "MainMenuBG", "MainMenuButtons", "LoadingLabel", "SaveGamesNames", "AutomapPanel", "AutomapBG", "AutomapImage", "NotesPanel", "AutomapNumberLabel", "AutomapWorldGem", "messageScrollUW1", "messageScrollUW2", "TypedInput", "GameOptionButtonsUW1", "GameOptionButtonsUW2", "GameOptionsBackgroundUW1", "GameOptionsBackgroundUW2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Chains", "BackpackBG", "WeightCapacity", "RuneTiles", "SelectedRunes", "ActiveSpellIcons", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSelectedUW1", "NPCTradeSelectedUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "PlayerTradeSelectedUW2", "NPCTradeSelectedUW2", "cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "weaponanimuw1", "weaponanimuw2", "placeholderuw1", "placeholderuw2", "PowerGemUW1", "PowerGemUW2")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("PanelChargen", "ChargenBG", "ChargenQuestion", "ChargenSkills", "ChargenSkills_values", "ChargenStats", "ChargenStats_values", "ChargenGender", "ChargenClass", "ChargenName", "ChargenNameBG", "ChargenNameInput", "ChargenNameQuestion", "ChargenBody", "CompassBgUW1", "CompassBgUW2", "CompassPointsUW1", "CompassPointsUW2", "CompassPanelUW2", "ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLabelFrameUW1", "NPCNameLabelFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "CutsFull", "CutsSmallUW1", "CutsSmallUW2", "Cuts3DWinUW1", "Cuts3DWinUW2", "CutsSubtitle", "DragonHeads", "DragonTails", "DragonTorsos", "PanelEndGame", "EndGameBackground", "EndGameStats", "Eyes", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "InteractionButtonsUW1", "InteractionButtonsUW2", "PanelMainMenu", "MainMenuBG", "MainMenuButtons", "LoadingLabel", "SaveGamesNames", "AutomapPanel", "AutomapBG", "AutomapImage", "NotesPanel", "AutomapNumberLabel", "AutomapWorldGem", "messageScrollUW1", "messageScrollUW2", "scrollEdgeUW1Left", "scrollEdgeUW1Right", "scrollEdgeUW2Left", "scrollEdgeUW2Right", "TypedInput", "GameOptionButtonsUW1", "GameOptionButtonsUW2", "GameOptionsBackgroundUW1", "GameOptionsBackgroundUW2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Chains", "BackpackBG", "WeightCapacity", "RuneTiles", "SelectedRunes", "ActiveSpellIcons", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSelectedUW1", "NPCTradeSelectedUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "PlayerTradeSelectedUW2", "NPCTradeSelectedUW2", "cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "weaponanimuw1", "weaponanimuw2", "placeholderuw1", "placeholderuw2", "PowerGemUW1", "PowerGemUW2")]
 script = ExtResource("1_lw0yg")
 PanelChargen = NodePath("../Chargen")
 ChargenBG = NodePath("../Chargen/ChargenBG")
@@ -2859,6 +2887,10 @@ AutomapNumberLabel = NodePath("../Common/Automap/MapNo")
 AutomapWorldGem = [NodePath("../Common/Automap/Gem/World0"), NodePath("../Common/Automap/Gem/World1"), NodePath("../Common/Automap/Gem/World2"), NodePath("../Common/Automap/Gem/World3"), NodePath("../Common/Automap/Gem/World4"), NodePath("../Common/Automap/Gem/World5"), NodePath("../Common/Automap/Gem/World6"), NodePath("../Common/Automap/Gem/World7"), NodePath("../Common/Automap/Gem/World8")]
 messageScrollUW1 = NodePath("../UW1/MessageScrollPanelUW1/MessageScrollUW1")
 messageScrollUW2 = NodePath("../UW2/MessageScrollPanelUW2/messageScrollUW2")
+scrollEdgeUW1Left = NodePath("../UW1/MessageScrollPanelUW1/MessageScrollEdgeLeftUW1")
+scrollEdgeUW1Right = NodePath("../UW1/MessageScrollPanelUW1/MessageScrollEdgeRightUW1")
+scrollEdgeUW2Left = NodePath("../UW2/MessageScrollPanelUW2/MessageScrollEdgeLeftUW2")
+scrollEdgeUW2Right = NodePath("../UW2/MessageScrollPanelUW2/MessageScrollEdgeRightUW2")
 TypedInput = NodePath("../Common/TypedInput")
 GameOptionButtonsUW1 = [NodePath("../UW1/GameOptionsUW1_0"), NodePath("../UW1/GameOptionsUW1_1"), NodePath("../UW1/GameOptionsUW1_2"), NodePath("../UW1/GameOptionsUW1_3"), NodePath("../UW1/GameOptionsUW1_4"), NodePath("../UW1/GameOptionsUW1_5"), NodePath("../UW1/GameOptionsUW1_6")]
 GameOptionButtonsUW2 = [NodePath("../UW2/GameOptionsUW2_0"), NodePath("../UW2/GameOptionsUW2_1"), NodePath("../UW2/GameOptionsUW2_2"), NodePath("../UW2/GameOptionsUW2_3"), NodePath("../UW2/GameOptionsUW2_4"), NodePath("../UW2/GameOptionsUW2_5"), NodePath("../UW2/GameOptionsUW2_6")]

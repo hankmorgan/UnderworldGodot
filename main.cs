@@ -170,7 +170,7 @@ public partial class main : Node3D
 				//simulation of the dos pit timer.
 				GlobalPITTimer += (uint)(PitTimer /0.00391);
 				PitTimer = 0;
-            }
+			}
 		}
 
 
@@ -178,10 +178,10 @@ public partial class main : Node3D
 		{
 			playingnotetimer +=delta;
 			if (playingnotetimer >= 0.2f)
-            {
-                musicalinstrument.StopMusicalNote();
-            }
-        }
+			{
+				musicalinstrument.StopMusicalNote();
+			}
+		}
 		// //DOS interupt 8
 		// Pit += (delta*5);  //seem smoother		
 		//GlobalPITTimer += delta;
@@ -293,7 +293,7 @@ public partial class main : Node3D
 		}
 	}
 
-    static void GameObjectLoop(byte ClockIncrement, byte AnimationFrameDelta, bool EasyMove)
+	static void GameObjectLoop(byte ClockIncrement, byte AnimationFrameDelta, bool EasyMove)
 	{
 		//playerdat.play_hp = playerdat.max_hp;
 		motion.CameraBobZAdjust_dseg_67d6_33CE = 0;
@@ -937,11 +937,11 @@ public partial class main : Node3D
 				{
 					switch (keyinput.Keycode)
 					{
-                        case >= Key.Key0 and <= Key.Key9:
-                        case >= Key.Kp0 and <= Key.Kp9:
-                            musicalinstrument.PlayMusicalNote(keyinput);
-                            break;
-                        case Key.Escape:
+						case >= Key.Key0 and <= Key.Key9:
+						case >= Key.Kp0 and <= Key.Kp9:
+							musicalinstrument.PlayMusicalNote(keyinput);
+							break;
+						case Key.Escape:
 							musicalinstrument.StopPlaying();
 							break;
 					}
@@ -981,10 +981,10 @@ public partial class main : Node3D
 		}
 	}
 
-    /// <summary>
-    /// Handles the end of chain events.
-    /// </summary>
-    public static void RefreshWorldState()
+	/// <summary>
+	/// Handles the end of chain events.
+	/// </summary>
+	public static void RefreshWorldState()
 	{
 		if (DoRedraw)
 		{

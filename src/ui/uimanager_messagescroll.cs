@@ -8,6 +8,44 @@ namespace Underworld
 		[Export] public RichTextLabel messageScrollUW1;
 		[Export] public RichTextLabel messageScrollUW2;
 
+		[Export] public TextureRect scrollEdgeUW1Left;
+		[Export] public TextureRect scrollEdgeUW1Right;
+
+		[Export] public TextureRect scrollEdgeUW2Left;
+		[Export] public TextureRect scrollEdgeUW2Right;
+
+		static int MessageScrollEdgeIndex = 0;
+		
+		public TextureRect scrollEdgeLeft
+		{
+			get
+			{
+				if (UWClass._RES == UWClass.GAME_UW2)
+				{
+					return scrollEdgeUW2Left;
+				}
+				else
+				{
+					return scrollEdgeUW1Left;
+				}
+			}
+		}
+
+		public TextureRect scrollEdgeRight
+		{
+			get
+			{
+				if (UWClass._RES == UWClass.GAME_UW2)
+				{
+					return scrollEdgeUW2Right;
+				}
+				else
+				{
+					return scrollEdgeUW1Right;
+				}
+			}
+		}
+
 		/// <summary>
 		/// Any typed content, eg "other text" in conversations, quantities to be picked up.
 		/// Will auto replace the special text {TYPEDINPUT} in the scrolls.
@@ -57,6 +95,10 @@ namespace Underworld
 				instance.convo.Lines[i] = new();
 			}
 			instance.convo.OutputControl = new RichTextLabel[] { ConversationText };
+
+			//scrolledges
+			instance.scrollEdgeLeft.Texture = grScrlEdge.LoadImageAt(0);
+			instance.scrollEdgeRight.Texture = grScrlEdge.LoadImageAt(5);
 		}
 
 		public static RichTextLabel MessageScroll
@@ -86,17 +128,18 @@ namespace Underworld
 				return;
 			}
 
-			if (NextOutputPrependedString!="")
+			if (NextOutputPrependedString != "")
 			{//forces messages to include text like "the sign says"
 				stringToAdd = NextOutputPrependedString + stringToAdd;
 				NextOutputPrependedString = "";
 			}
 
+			MessageScrollEdgeIndex = (MessageScrollEdgeIndex+1) % 5;
+			instance.scrollEdgeLeft.Texture = grScrlEdge.LoadImageAt(MessageScrollEdgeIndex);
+			instance.scrollEdgeRight.Texture = grScrlEdge.LoadImageAt(MessageScrollEdgeIndex + 5);
+
 			switch (mode)
 			{
-				// case MessageDisplay.MessageDisplayMode.TypedInput:
-				//     //TODO.
-				//     break;
 				case MessageDisplay.MessageDisplayMode.TemporaryMessage:
 					{
 						//back up lines
@@ -125,9 +168,9 @@ namespace Underworld
 						break;
 					}
 			}
-			if (UWClass._RES!=UWClass.GAME_UW2)
+			if (UWClass._RES != UWClass.GAME_UW2)
 			{
-				if (instance.scroll.LinePtr>=5)
+				if (instance.scroll.LinePtr >= 5)
 				{
 					//in Uw1 after 5 lines of text are filled the dragons can start animating the message bar
 					uimanager.StartDragonAnimation(1);
@@ -159,7 +202,7 @@ namespace Underworld
 				main.instance
 				);
 		}
-		
+
 		/// <summary>
 		/// Sets CursorOverMessageScroll to true when cursor enters the message scroll panel
 		/// </summary>
@@ -168,7 +211,7 @@ namespace Underworld
 			//GD.Print("Cursor on scroll");
 			CursorOverMessageScroll = true;
 		}
-		
+
 		/// <summary>
 		/// Sets CursorOverMessageScroll to false when cursor exits the message scroll panel
 		/// </summary>
@@ -186,10 +229,10 @@ namespace Underworld
 		{
 			//Calculate the height of a line in the rich text box
 			int lineHeight = (int)MessageScroll.Size.Y / MessageScroll.GetLineCount();
-			
+
 			//Get the clicked position within the message scroll panel
 			Vector2 localClickPosition = mouseButton.Position - MessageScroll.Position;
-			
+
 			//Calculate the clicked line
 			int clickedLine = (int)(localClickPosition.Y / lineHeight);
 
@@ -206,7 +249,7 @@ namespace Underworld
 				return -1;
 			}
 		}
-		
+
 	} //end class
 
 }//end namespace

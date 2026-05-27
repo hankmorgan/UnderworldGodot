@@ -24,6 +24,7 @@ namespace Underworld
         public static WeaponsLoader grWeapon;   
         public static GRLoader grInv; 
         public static GRLoader grEyes; 
+        public static GRLoader grScrlEdge;
 
         public static Dictionary<string, CutsLoader> csCuts;
 
@@ -54,6 +55,7 @@ namespace Underworld
                 grGempt.PaletteNo = 3;
             }
             grWeapon = new WeaponsLoader(0);
+            grScrlEdge = new GRLoader(GRLoader.SCRLEDGE_GR, GRLoader.GRShaderMode.UIShader);
   
 		}
     }//end class
