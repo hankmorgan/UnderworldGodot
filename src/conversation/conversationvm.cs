@@ -599,6 +599,11 @@ namespace Underworld
 				uimanager.EnableDisable(uimanager.instance.PowerGemUW2, true);
 				uimanager.instance.messageScrollUW2.Size = new Godot.Vector2(840, 140);
 				uimanager.instance.scroll.Columns = 44;
+				//restore positions of scroll edges
+                uimanager.instance.scrollEdgeLeft.Position = OriginalUW2ScrlEdgeLeft;
+                uimanager.instance.scrollEdgeRight.Position = OriginalUW2ScrlEdgeRight;
+
+
 			}
 			if (TemporaryTalker)
 			{

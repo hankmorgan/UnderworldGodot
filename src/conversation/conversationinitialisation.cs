@@ -5,6 +5,9 @@ namespace Underworld
     public partial class ConversationVM : UWClass
     {
         public static uwObject currentTalker;
+
+        static Vector2 OriginalUW2ScrlEdgeLeft;
+        static Vector2 OriginalUW2ScrlEdgeRight;
         public static void StartConversation(uwObject talker)
         {
             currentTalker=talker;
@@ -63,6 +66,7 @@ namespace Underworld
                     InitialiseConversationMemory();
 
                     ImportVariables(talker);
+
                     
                     //Launch conversation VM co-routine 
                     _ = Peaky.Coroutines.Coroutine.Run(
@@ -91,6 +95,12 @@ namespace Underworld
                 uimanager.instance.messageScrollUW2.SetSize(new Godot.Vector2(1160,140));
                 uimanager.EnableDisable(uimanager.instance.CompassPanelUW2,false);
                 uimanager.EnableDisable(uimanager.instance.PowerGemUW2,false);
+
+                OriginalUW2ScrlEdgeLeft = uimanager.instance.scrollEdgeLeft.Position;
+                OriginalUW2ScrlEdgeRight = uimanager.instance.scrollEdgeRight.Position;
+                //move positions
+                uimanager.instance.scrollEdgeLeft.Position = new Vector2(20,676);
+                uimanager.instance.scrollEdgeRight.Position = new Vector2(1248,676);
             }
             else
             {

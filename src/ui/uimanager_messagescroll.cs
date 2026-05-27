@@ -14,8 +14,14 @@ namespace Underworld
 		[Export] public TextureRect scrollEdgeUW2Left;
 		[Export] public TextureRect scrollEdgeUW2Right;
 
+		[Export] public TextureRect[] ConvoscrollEdgeUW1Left = new TextureRect[3];
+		[Export] public TextureRect[] ConvoscrollEdgeUW1Right = new TextureRect[3];
+		[Export] public TextureRect[] ConvoscrollEdgeUW2Left = new TextureRect[3];
+		[Export] public TextureRect[] ConvoscrollEdgeUW2Right = new TextureRect[3];
+
 		static int MessageScrollEdgeIndex = 0;
-		
+		static int ConvoScrollEdgeIndex = 0;
+
 		public TextureRect scrollEdgeLeft
 		{
 			get
@@ -43,6 +49,30 @@ namespace Underworld
 				{
 					return scrollEdgeUW1Right;
 				}
+			}
+		}
+
+		public TextureRect ConvoscrollEdgeLeft(int index)
+		{
+			if (UWClass._RES == UWClass.GAME_UW2)
+			{
+				return ConvoscrollEdgeUW2Left[index];
+			}
+			else
+			{
+				return ConvoscrollEdgeUW1Left[index];
+			}
+		}
+
+		public TextureRect ConvoscrollEdgeRight(int index)
+		{
+			if (UWClass._RES == UWClass.GAME_UW2)
+			{
+				return ConvoscrollEdgeUW2Right[index];
+			}
+			else
+			{
+				return ConvoscrollEdgeUW1Right[index];
 			}
 		}
 
@@ -99,6 +129,11 @@ namespace Underworld
 			//scrolledges
 			instance.scrollEdgeLeft.Texture = grScrlEdge.LoadImageAt(0);
 			instance.scrollEdgeRight.Texture = grScrlEdge.LoadImageAt(5);
+			for (int i = 0; i < 3; i++)
+			{
+				instance.ConvoscrollEdgeLeft(i).Texture = grScrlEdge.LoadImageAt(10);
+				instance.ConvoscrollEdgeLeft(i).Texture = grScrlEdge.LoadImageAt(16);
+			}
 		}
 
 		public static RichTextLabel MessageScroll
@@ -134,7 +169,7 @@ namespace Underworld
 				NextOutputPrependedString = "";
 			}
 
-			MessageScrollEdgeIndex = (MessageScrollEdgeIndex+1) % 5;
+			MessageScrollEdgeIndex = (MessageScrollEdgeIndex + 1) % 5;
 			instance.scrollEdgeLeft.Texture = grScrlEdge.LoadImageAt(MessageScrollEdgeIndex);
 			instance.scrollEdgeRight.Texture = grScrlEdge.LoadImageAt(MessageScrollEdgeIndex + 5);
 
@@ -196,6 +231,13 @@ namespace Underworld
 		/// <param name="colour"></param>
 		public static void AddToConvoScroll(string stringToAdd, int colour = 0)
 		{
+			ConvoScrollEdgeIndex = (ConvoScrollEdgeIndex + 1) % 6;
+			for (int i = 0; i < 3; i++)
+			{
+				instance.ConvoscrollEdgeLeft(i).Texture = grScrlEdge.LoadImageAt(10 + ((ConvoScrollEdgeIndex + i) % 6));
+				instance.ConvoscrollEdgeRight(i).Texture = grScrlEdge.LoadImageAt(16 + ((ConvoScrollEdgeIndex + i) % 6));
+			}
+
 			//MessageScroll.Text = stringToAdd;
 			_ = Peaky.Coroutines.Coroutine.Run(
 				instance.convo.AddText(newText: stringToAdd, colour: colour),

@@ -407,9 +407,9 @@ offset_bottom = 548.0
 
 [node name="ConversationBackgroundUW1" type="TextureRect" parent="UI/UW1/ConversationUW1"]
 layout_mode = 0
-offset_left = 217.0
+offset_left = 220.0
 offset_top = 200.0
-offset_right = 889.0
+offset_right = 888.0
 offset_bottom = 532.0
 texture = ExtResource("7_qiq8a")
 
@@ -553,6 +553,48 @@ offset_left = 512.0
 offset_top = 136.0
 offset_right = 532.0
 offset_bottom = 156.0
+
+[node name="ConversationScrollEdgeLeftUW1_1" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 204.0
+offset_top = 204.0
+offset_right = 220.0
+offset_bottom = 312.0
+
+[node name="ConversationScrollEdgeLeftUW1_2" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 204.0
+offset_top = 312.0
+offset_right = 220.0
+offset_bottom = 420.0
+
+[node name="ConversationScrollEdgeLeftUW1_3" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 204.0
+offset_top = 420.0
+offset_right = 220.0
+offset_bottom = 528.0
+
+[node name="ConversationScrollEdgeRightUW1_1" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 888.0
+offset_top = 204.0
+offset_right = 904.0
+offset_bottom = 312.0
+
+[node name="ConversationScrollEdgeRightUW1_2" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 888.0
+offset_top = 312.0
+offset_right = 904.0
+offset_bottom = 420.0
+
+[node name="ConversationScrollEdgeRightUW1_3" type="TextureRect" parent="UI/UW1/ConversationUW1"]
+layout_mode = 0
+offset_left = 888.0
+offset_top = 420.0
+offset_right = 904.0
+offset_bottom = 528.0
 
 [node name="CutsceneSmallUW1" type="TextureRect" parent="UI/UW1"]
 visible = false
@@ -1054,7 +1096,6 @@ offset_right = 508.0
 offset_bottom = 624.0
 
 [node name="ConversationUW2" type="Panel" parent="UI/UW2"]
-visible = false
 self_modulate = Color(1, 1, 1, 0)
 offset_right = 40.0
 offset_bottom = 40.0
@@ -1098,9 +1139,9 @@ text = "Character Name"
 [node name="ConversationTextUW2" type="RichTextLabel" parent="UI/UW2/ConversationUW2"]
 texture_filter = 1
 layout_mode = 0
-offset_left = 92.0
+offset_left = 96.0
 offset_top = 320.0
-offset_right = 864.0
+offset_right = 880.0
 offset_bottom = 652.0
 theme_override_colors/default_color = Color(0.647059, 0.164706, 0.164706, 1)
 theme_override_constants/line_separation = -24
@@ -1279,6 +1320,42 @@ offset_left = 444.0
 offset_top = 216.0
 offset_right = 464.0
 offset_bottom = 240.0
+
+[node name="ConversationScrollEdgeLeftUW2_1" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+offset_left = 68.0
+offset_top = 320.0
+offset_right = 84.0
+offset_bottom = 428.0
+
+[node name="ConversationScrollEdgeLeftUW2_2" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+offset_left = 68.0
+offset_top = 428.0
+offset_right = 84.0
+offset_bottom = 536.0
+
+[node name="ConversationScrollEdgeLeftUW2_3" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+offset_left = 68.0
+offset_top = 536.0
+offset_right = 84.0
+offset_bottom = 644.0
+
+[node name="ConversationScrollEdgeRightUW2_1" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+offset_left = 876.0
+offset_top = 320.0
+offset_right = 892.0
+offset_bottom = 428.0
+
+[node name="ConversationScrollEdgeRightUW2_2" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+offset_left = 876.0
+offset_top = 428.0
+offset_right = 892.0
+offset_bottom = 536.0
+
+[node name="ConversationScrollEdgeRightUW2_3" type="TextureRect" parent="UI/UW2/ConversationUW2"]
+offset_left = 876.0
+offset_top = 536.0
+offset_right = 892.0
+offset_bottom = 644.0
 
 [node name="Common" type="CanvasLayer" parent="UI"]
 
@@ -2808,7 +2885,7 @@ offset_bottom = 5.0
 mouse_filter = 2
 texture = ExtResource("18_tfr7p")
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("PanelChargen", "ChargenBG", "ChargenQuestion", "ChargenSkills", "ChargenSkills_values", "ChargenStats", "ChargenStats_values", "ChargenGender", "ChargenClass", "ChargenName", "ChargenNameBG", "ChargenNameInput", "ChargenNameQuestion", "ChargenBody", "CompassBgUW1", "CompassBgUW2", "CompassPointsUW1", "CompassPointsUW2", "CompassPanelUW2", "ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLabelFrameUW1", "NPCNameLabelFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "CutsFull", "CutsSmallUW1", "CutsSmallUW2", "Cuts3DWinUW1", "Cuts3DWinUW2", "CutsSubtitle", "DragonHeads", "DragonTails", "DragonTorsos", "PanelEndGame", "EndGameBackground", "EndGameStats", "Eyes", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "InteractionButtonsUW1", "InteractionButtonsUW2", "PanelMainMenu", "MainMenuBG", "MainMenuButtons", "LoadingLabel", "SaveGamesNames", "AutomapPanel", "AutomapBG", "AutomapImage", "NotesPanel", "AutomapNumberLabel", "AutomapWorldGem", "messageScrollUW1", "messageScrollUW2", "scrollEdgeUW1Left", "scrollEdgeUW1Right", "scrollEdgeUW2Left", "scrollEdgeUW2Right", "TypedInput", "GameOptionButtonsUW1", "GameOptionButtonsUW2", "GameOptionsBackgroundUW1", "GameOptionsBackgroundUW2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Chains", "BackpackBG", "WeightCapacity", "RuneTiles", "SelectedRunes", "ActiveSpellIcons", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSelectedUW1", "NPCTradeSelectedUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "PlayerTradeSelectedUW2", "NPCTradeSelectedUW2", "cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "weaponanimuw1", "weaponanimuw2", "placeholderuw1", "placeholderuw2", "PowerGemUW1", "PowerGemUW2")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("PanelChargen", "ChargenBG", "ChargenQuestion", "ChargenSkills", "ChargenSkills_values", "ChargenStats", "ChargenStats_values", "ChargenGender", "ChargenClass", "ChargenName", "ChargenNameBG", "ChargenNameInput", "ChargenNameQuestion", "ChargenBody", "CompassBgUW1", "CompassBgUW2", "CompassPointsUW1", "CompassPointsUW2", "CompassPanelUW2", "ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLabelFrameUW1", "NPCNameLabelFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "CutsFull", "CutsSmallUW1", "CutsSmallUW2", "Cuts3DWinUW1", "Cuts3DWinUW2", "CutsSubtitle", "DragonHeads", "DragonTails", "DragonTorsos", "PanelEndGame", "EndGameBackground", "EndGameStats", "Eyes", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "InteractionButtonsUW1", "InteractionButtonsUW2", "PanelMainMenu", "MainMenuBG", "MainMenuButtons", "LoadingLabel", "SaveGamesNames", "AutomapPanel", "AutomapBG", "AutomapImage", "NotesPanel", "AutomapNumberLabel", "AutomapWorldGem", "messageScrollUW1", "messageScrollUW2", "scrollEdgeUW1Left", "scrollEdgeUW1Right", "scrollEdgeUW2Left", "scrollEdgeUW2Right", "ConvoscrollEdgeUW1Left", "ConvoscrollEdgeUW1Right", "ConvoscrollEdgeUW2Left", "ConvoscrollEdgeUW2Right", "TypedInput", "GameOptionButtonsUW1", "GameOptionButtonsUW2", "GameOptionsBackgroundUW1", "GameOptionsBackgroundUW2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Chains", "BackpackBG", "WeightCapacity", "RuneTiles", "SelectedRunes", "ActiveSpellIcons", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSelectedUW1", "NPCTradeSelectedUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "PlayerTradeSelectedUW2", "NPCTradeSelectedUW2", "cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "weaponanimuw1", "weaponanimuw2", "placeholderuw1", "placeholderuw2", "PowerGemUW1", "PowerGemUW2")]
 script = ExtResource("1_lw0yg")
 PanelChargen = NodePath("../Chargen")
 ChargenBG = NodePath("../Chargen/ChargenBG")
@@ -2891,6 +2968,10 @@ scrollEdgeUW1Left = NodePath("../UW1/MessageScrollPanelUW1/MessageScrollEdgeLeft
 scrollEdgeUW1Right = NodePath("../UW1/MessageScrollPanelUW1/MessageScrollEdgeRightUW1")
 scrollEdgeUW2Left = NodePath("../UW2/MessageScrollPanelUW2/MessageScrollEdgeLeftUW2")
 scrollEdgeUW2Right = NodePath("../UW2/MessageScrollPanelUW2/MessageScrollEdgeRightUW2")
+ConvoscrollEdgeUW1Left = [NodePath("../UW1/ConversationUW1/ConversationScrollEdgeLeftUW1_1"), NodePath("../UW1/ConversationUW1/ConversationScrollEdgeLeftUW1_2"), NodePath("../UW1/ConversationUW1/ConversationScrollEdgeLeftUW1_3"), NodePath("../UW1/ConversationUW1/ConversationScrollEdgeLeftUW1_1")]
+ConvoscrollEdgeUW1Right = [NodePath("../UW1/ConversationUW1/ConversationScrollEdgeRightUW1_1"), NodePath("../UW1/ConversationUW1/ConversationScrollEdgeRightUW1_2"), NodePath("../UW1/ConversationUW1/ConversationScrollEdgeRightUW1_3")]
+ConvoscrollEdgeUW2Left = [NodePath("../UW2/ConversationUW2/ConversationScrollEdgeLeftUW2_1"), NodePath("../UW2/ConversationUW2/ConversationScrollEdgeLeftUW2_2"), NodePath("../UW2/ConversationUW2/ConversationScrollEdgeLeftUW2_3")]
+ConvoscrollEdgeUW2Right = [NodePath("../UW2/ConversationUW2/ConversationScrollEdgeRightUW2_1"), NodePath("../UW2/ConversationUW2/ConversationScrollEdgeRightUW2_2"), NodePath("../UW2/ConversationUW2/ConversationScrollEdgeRightUW2_3")]
 TypedInput = NodePath("../Common/TypedInput")
 GameOptionButtonsUW1 = [NodePath("../UW1/GameOptionsUW1_0"), NodePath("../UW1/GameOptionsUW1_1"), NodePath("../UW1/GameOptionsUW1_2"), NodePath("../UW1/GameOptionsUW1_3"), NodePath("../UW1/GameOptionsUW1_4"), NodePath("../UW1/GameOptionsUW1_5"), NodePath("../UW1/GameOptionsUW1_6")]
 GameOptionButtonsUW2 = [NodePath("../UW2/GameOptionsUW2_0"), NodePath("../UW2/GameOptionsUW2_1"), NodePath("../UW2/GameOptionsUW2_2"), NodePath("../UW2/GameOptionsUW2_3"), NodePath("../UW2/GameOptionsUW2_4"), NodePath("../UW2/GameOptionsUW2_5"), NodePath("../UW2/GameOptionsUW2_6")]
