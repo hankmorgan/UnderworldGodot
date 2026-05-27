@@ -10,7 +10,6 @@
   - [Getting Started](#getting-started)
   - [UWsettings.json](#uwsettingsjson)
   - [Controls](#controls)
-    - [Movement](#movement)
     - [Modes](#modes)
     - [Cheats](#cheats)
   - [Music](#music)
@@ -179,18 +178,33 @@ To select maps to load.
 
 ## Controls
 
-### Movement
+These controls are mainly based on the original game controls.
+
 W run forward
 Shift+W walk forward
 S walk backwards
 A,D strafe left and right
-J Jump
 Q, E turn left and right
-T to toggle freemouse
+
+J Jump
+Shift+J Standing Forward Jump
+
 R,F fly up and down when a magic fly/levitate spell is active
+
 1 Look down
 2 Look straight ahead
 3 Look up
+
+F1 Options Options Menu (UW1)
+F2 Talk Mode
+F3 Pickup Mode
+F4 Look
+F5 Attack
+F6 Use
+F7 Toggle Panel
+Alt+F7 Print Game Version
+F8 Cast Spell
+Alt+F8 Print Player Dungeon and Location
 
 ### Modes
 F1-F6 Change interaction modes

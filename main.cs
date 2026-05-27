@@ -659,114 +659,7 @@ public partial class main : Node3D
 				if (keyinput.Pressed)
 				{
 					switch (keyinput.Keycode)
-					{
-						// case Key.W:
-						// 	{
-						// 		// if (Input.IsKeyPressed(Key.Shift))
-						// 		// {
-						// 		// 	//walk forwards
-						// 		// 	motion.PlayerMotionWalk_77C = 0x32;
-						// 		// 	motion.PlayerMotionHeading_77E = 0;
-						// 		// }
-						// 		// else
-						// 		// {
-						// 		// 	//run forwards
-						// 		// 	motion.PlayerMotionWalk_77C = 0x70;
-						// 		// 	motion.PlayerMotionHeading_77E = 0;
-						// 		// }
-						// 		// motion.MotionInputPressed = 1;
-
-						// 		break;
-						// 	}
-						// case Key.Q: //not vanilla key
-						// 	{
-						// 		// motion.PlayerMotionWalk_77C = 0;
-						// 		// //turn left
-						// 		// motion.PlayerMotionHeading_77E = -90;
-						// 		// motion.MotionInputPressed = 1;
-						// 		break;
-						// 	}
-						// case Key.E: //not vanilla key
-						// 	{
-						// 		//motion.PlayerMotionWalk_77C = 0;
-						// 		//turn right
-						// 		// motion.PlayerMotionHeading_77E = +90;
-						// 		// motion.MotionInputPressed = 1;
-						// 		break;
-						// 	}
-						// case Key.S: //not vanilla key
-						// 	{
-						// 		//move backwards
-						// 		// motion.PlayerMotionWalk_77C = 0;
-						// 		// motion.PlayerMotionHeading_77E = 0;
-						// 		// motion.MotionInputPressed = 8;
-						// 		break;
-						// 	}
-						// case Key.A: //not vanilla key
-						// 	{
-						// 		//slide left
-						// 		motion.PlayerMotionWalk_77C = 0;
-						// 		motion.PlayerMotionHeading_77E = 0;
-						// 		motion.MotionInputPressed = 9;
-						// 		break;
-						// 	}
-						// case Key.D: //not vanilla key
-						// 	{
-						// 		//slide right
-						// 		motion.PlayerMotionWalk_77C = 0;
-						// 		motion.PlayerMotionHeading_77E = 0;
-						// 		motion.MotionInputPressed = 0xA;
-						// 		break;
-						// 	}
-						// case Key.J://jumps
-						// 	{
-						// 		motion.PlayerMotionHeading_77E = 0;//cancel turn movement when jumping
-						// 		if (Input.IsKeyPressed(Key.Shift))
-						// 		{
-						// 			//long jump
-						// 			motion.MotionInputPressed = 6;
-
-						// 		}
-						// 		else
-						// 		{
-						// 			//jump
-						// 			//todo: Do a test that the player is grounded.
-						// 			motion.MotionInputPressed = 7;
-						// 		}
-						// 		break;
-						// 	}
-						//case Key.T:
-						// var mouselook = (bool)cameraPitchGimbal.Get("MOUSELOOK");
-						// if (mouselook)
-						// {//toggle to free curso
-						// 	Input.MouseMode = Input.MouseModeEnum.Hidden;
-						// }
-						// else
-						// {//toogle to mouselook
-						// 	Input.MouseMode = Input.MouseModeEnum.Captured;
-						// }
-						// cameraPitchGimbal.Set("MOUSELOOK", !mouselook);
-						//break;
-						// case Key.R: //fly up (not vanilla)
-						// 	if ((playerdat.MagicalMotionAbilities & 0x14) != 0)
-						// 	{
-						// 		motion.MotionInputPressed = 0xC;
-						// 	}
-						// 	else
-						// 	{
-						// 		motion.MotionInputPressed = 0;
-						// 	}
-						// 	break;
-						// case Key.F: //fly down (not vanilla)
-						// 	if ((playerdat.MagicalMotionAbilities & 0x14) != 0)
-						// 	{
-						// 		motion.MotionInputPressed = 0xD;
-						// 	}
-						// 	else
-						// 	{
-						// 		motion.MotionInputPressed = 0;
-						// 	}
-						// 	break;
+					{						
 						case Key.F1: //open options menu
 							uimanager.InteractionModeToggle(0); break;
 						case Key.F2: //talk
@@ -780,9 +673,25 @@ public partial class main : Node3D
 						case Key.F6://use
 							uimanager.InteractionModeToggle((uimanager.InteractionModes)5); break;
 						case Key.F7://toggle panel
-							uimanager.ChangePanels(); break;
+							if (keyinput.AltPressed)
+							{
+								printVersion();
+							}
+							else
+							{
+								uimanager.ChangePanels();	
+							}
+							break;
 						case Key.F8: //cast spell
-							RunicMagic.CastRunicSpell(); break;
+							if (keyinput.AltPressed)
+							{
+								printPlayerLocation();	
+							}
+							else
+							{
+								RunicMagic.CastRunicSpell();	
+							}
+							break;
 						case Key.F9://track skill
 							tracking.DetectMonsters(8, playerdat.Track); break;
 						case Key.F10: // make camp
@@ -1108,6 +1017,20 @@ public partial class main : Node3D
 		Teleportation.HandleTeleportation();
 	}
 
+	/// <summary>
+	/// game version.
+	/// </summary>
+	static void printVersion()
+	{
+		uimanager.AddToMessageScroll($"{GameStrings.GetString(1, GameStrings.GameName)}x.xx");
+	}
 
+	/// <summary>
+	///  In vanilla UW pressing Alt+F8 will print the players dungeon,tileX and tileY as a string.
+	/// </summary>
+	static void printPlayerLocation()
+	{
+		uimanager.AddToMessageScroll($"{playerdat.dungeon_level.ToString("D2")}{playerdat.playerObject.npc_xhome.ToString("D2")}{playerdat.playerObject.npc_yhome.ToString("D2")}");
+	}
 
 }//end class

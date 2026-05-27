@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.ComponentModel;
 using System.IO;
 
 namespace Underworld
@@ -11,6 +12,20 @@ namespace Underworld
     /// </summary>
     public class GameStrings : UWClass
     {
+        public static int GameName
+        {
+            get
+            {
+                if (_RES == GAME_UW2)
+                {
+                    return 0x123;//ultima underworld II the labyrinth of worlds
+                }
+                else
+                {
+                    return 0x113; // ultima underworld the stygian abyss
+                }
+            }
+        }
         //These are common strings that are different in UW1 and UW2
         public static int str_it_looks_to_be_that_of_ = 22;
         public static int str_they_look_to_be_those_of_ = 23;
