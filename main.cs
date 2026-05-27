@@ -39,11 +39,10 @@ public partial class main : Node3D
 	public static bool DoRedraw = false;
 
 
-	//DOS INT8 (PIT) timer interupt. updates 18.2 times a second.
-	public static double Pit = 0f;
+	public static double PitTimer = 0f;
 	public static uint GlobalPITTimer = 0;
 	//static uint PitTimer = 0;
-	static uint LastPitTimer = 0;
+	static uint LastGlobalPitTimer = 0;
 	static byte EasyMoveFrameIncrement = 0;
 
 	public static byte ThisFrameDelta = 0;
@@ -63,7 +62,7 @@ public partial class main : Node3D
 		}
 
 
-		_ = Peaky.Coroutines.Coroutine.Run(PITTIMER(), main.instance);
+		//_ = Peaky.Coroutines.Coroutine.Run(PITTIMER(), main.instance);
 
 	}
 
@@ -71,15 +70,15 @@ public partial class main : Node3D
 	/// Experiment Emulation of an old skol PIT Timer
 	/// </summary>
 	/// <returns></returns>
-	static IEnumerator PITTIMER()
-	{
-		while (true)
-		{
-			yield return new WaitForSeconds(0.00391f);  //0.054945f
-			GlobalPITTimer++;
-		}
-		yield return null;
-	}
+	// static IEnumerator PITTIMER()
+	// {
+	// 	while (true)
+	// 	{
+	// 		yield return new WaitForSeconds(0.00391f);  //0.054945f
+	// 		GlobalPITTimer++;
+	// 	}
+	// 	yield return null;
+	// }
 
 
 	public static void StartGame()
@@ -157,12 +156,19 @@ public partial class main : Node3D
 	{
 		if ((uimanager.InGame) || (uimanager.AtMainMenu) || (uimanager.CurrentGameMode == uimanager.GameModes.CUTSCENE))
 		{
+			PitTimer += delta;
 			cycletime += delta;
 			if (cycletime > 0.2)
 			{
 				cycletime = 0;
 				PaletteLoader.UpdatePaletteCycles();
 			}
+			if (PitTimer>=0.00391)
+			{
+				//simulation of the dos pit timer.
+				GlobalPITTimer += (uint)(PitTimer /0.00391);
+				PitTimer = 0;
+            }
 		}
 
 
@@ -190,7 +196,7 @@ public partial class main : Node3D
 			testclock = 0;
 			byte AnimationFrameDeltaIncrement = 0;
 
-			var ClockIncrement = GlobalPITTimer - LastPitTimer;
+			var ClockIncrement = GlobalPITTimer - LastGlobalPitTimer;
 			if ((ClockIncrement < 0) || (ClockIncrement > 0x40))
 			{
 				ClockIncrement = 0x40;
@@ -200,8 +206,8 @@ public partial class main : Node3D
 			else
 			{
 				//Debug.Print($"{PitTimer - LastPitTimer}");
-				EasyMoveFrameIncrement += (byte)((GlobalPITTimer >> 4) - (LastPitTimer >> 4));  //every 16 pits?
-				AnimationFrameDeltaIncrement = (byte)((GlobalPITTimer >> 6) - (LastPitTimer >> 6));//every 63 pits? This controls how often NPCs and mobile objects move. It could stand to be faster.
+				EasyMoveFrameIncrement += (byte)((GlobalPITTimer >> 4) - (LastGlobalPitTimer >> 4));  //every 16 pits?
+				AnimationFrameDeltaIncrement = (byte)((GlobalPITTimer >> 6) - (LastGlobalPitTimer >> 6));//every 63 pits? This controls how often NPCs and mobile objects move. It could stand to be faster.
 
 				ClockIncrement = 0x19;//ignore original calc since it's too slow. This value is choosen since dosbox debugger shows this value when breaking on motion code often (with some variation)
 									  //Setting value too low prevents some motion in certain directions from working.
@@ -221,7 +227,7 @@ public partial class main : Node3D
 					}
 				}
 				playerdat.ClockValue += (int)ClockIncrement;
-				LastPitTimer = GlobalPITTimer;
+				LastGlobalPitTimer = GlobalPITTimer;
 				AnimationFrameDeltaIncrement = EasyMoveFrameIncrement;
 				if (playerdat.SpeedEnchantment)
 				{
