@@ -68,11 +68,11 @@ namespace Underworld
             {
                 return false;
             }
-
+            //Problem here. The projectile cannot be come an animo!
             projectile.item_id = newItemID;
+            objectInstance.RedrawFull(projectile);
             if(animo.CreateAnimoLink(projectile, animationObjectDat.noOfFrames(newItemID)))
-            {
-                objectInstance.RedrawFull(projectile);
+            {                
                 if (EffectIndex != 1)
                 {
                     //fireballs
@@ -85,6 +85,7 @@ namespace Underworld
             else
             {
                 //vanilla behaviour is the projectile will not damage anything if the animo cannot be created. The animo will be deleted by the calling function.
+                ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(tileX: projectile.tileX, tileY: projectile.tileY, indexToDelete: projectile.index, RemoveFromWorld: true);
                 return false;
             }
             

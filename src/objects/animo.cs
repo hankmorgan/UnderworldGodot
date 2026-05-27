@@ -175,6 +175,7 @@ namespace Underworld
                 anim.tileX = obj.tileX;
                 anim.tileY = obj.tileY;
                 anim.Duration = Duration;
+                //AnimationOverlay.NoOfAnimationOverlays++;
                 if (DrawSprite)
                 {
                     RefreshAnimo((animo)obj.instance);

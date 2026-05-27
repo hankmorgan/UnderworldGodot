@@ -576,7 +576,7 @@ namespace Underworld
             }
 
             //if (OverlayAddress!=0)
-            AnimationOverlay.NoOfAnimationOverlays = 0;
+            //AnimationOverlay.NoOfAnimationOverlays = 0;
             switch (_RES)
             {
                 case GAME_UW1:
@@ -587,7 +587,7 @@ namespace Underworld
                             for (int overlayIndex = 0; overlayIndex < 64; overlayIndex++)
                             {
                                 Overlays[overlayIndex] = new AnimationOverlay(overlayIndex);
-                                AnimationOverlay.NoOfAnimationOverlays++;
+                                //AnimationOverlay.NoOfAnimationOverlays++;
                             }
                         }
                         break;
@@ -597,7 +597,7 @@ namespace Underworld
                         for (int overlayIndex = 0; overlayIndex < 64; overlayIndex++)
                         {
                             Overlays[overlayIndex] = new AnimationOverlay(overlayIndex);
-                            AnimationOverlay.NoOfAnimationOverlays++;
+                            //AnimationOverlay.NoOfAnimationOverlays++;
                         }
                         break;
                     }

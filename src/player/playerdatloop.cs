@@ -460,11 +460,14 @@ namespace Underworld
 
             if ((!AutomapEnabled) && (_RES == GAME_UW2))
             {
-                //Do a test here to see if the player has entered a previously visible tile. If so renable automap, not sure where in the game the getting lost mechanic occurs but possibly caused by some teleportation effects.                  
-                if (automap.automaps[dungeon_level - 1].tiles[playerObject.tileX, playerObject.tileY].visited)
+                //Do a test here to see if the player has entered a previously visible tile. If so renable automap, not sure where in the game the getting lost mechanic occurs but possibly caused by some teleportation effects.             
+                if (UWTileMap.ValidTile(playerdat.playerObject.tileX, playerdat.playerObject.tileY))
                 {
-                    Debug.Print("Visiting a previously discovered tile. You remember where you are and automap is reenabled");
-                    AutomapEnabled = true;
+                    if (automap.automaps[dungeon_level - 1].tiles[playerObject.tileX, playerObject.tileY].visited)
+                    {
+                        Debug.Print("Visiting a previously discovered tile. You remember where you are and automap is reenabled");
+                        AutomapEnabled = true;
+                    }
                 }
             }
             if (automap.CanMap(dungeon_level) && (AutomapEnabled))

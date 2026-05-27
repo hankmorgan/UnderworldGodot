@@ -7,7 +7,7 @@ namespace Underworld
     public class AnimationOverlay : UWClass
     {
 
-        public static int NoOfAnimationOverlays;
+        //public static int NoOfAnimationOverlays;
         public int PTR; //PTR to where the data is located in the file data.
 
         public int index;
@@ -174,7 +174,7 @@ namespace Underworld
         /// </summary>
         public static void UpdateAnimationOverlays()
         {
-            for (int i = 0; i < NoOfAnimationOverlays; i++)
+            for (int i = 0; i <= UWTileMap.current_tilemap.Overlays.GetUpperBound(0); i++)
             //{
             //foreach (var ovl in UWTileMap.current_tilemap.Overlays)
             {
@@ -275,14 +275,14 @@ namespace Underworld
         /// <param name="overlaylink"></param>
         public static void RemoveAnimationOverlay(int overlaylink)
         {
-            for (int i = 0; i < NoOfAnimationOverlays; i++)
+            for (int i = 0; i <= UWTileMap.current_tilemap.Overlays.GetUpperBound(0); i++)
             {
                 if (UWTileMap.current_tilemap.Overlays[i].link == overlaylink)
                 {
                     var toRemove = UWTileMap.current_tilemap.Overlays[i];
 
                     //copy the raw data of the last overlay over the current overlay
-                    var lastOverlay = UWTileMap.current_tilemap.Overlays[NoOfAnimationOverlays-1];
+                    var lastOverlay = UWTileMap.current_tilemap.Overlays[63];
                     if (lastOverlay.index != i)
                     {
                         //copy the last overlay over the overlay to remove if it is a different overlay.
@@ -315,7 +315,7 @@ namespace Underworld
                         }                        
                     }
                     //UWTileMap.current_tilemap.Overlays[NoOfAnimationOverlays-1] = null;
-                    NoOfAnimationOverlays--;
+                    //NoOfAnimationOverlays--;
                     //return;//do for all overlays to ensure duplicate entries are removed.
                 }
             }
