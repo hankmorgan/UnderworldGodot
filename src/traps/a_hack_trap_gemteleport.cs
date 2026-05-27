@@ -11,7 +11,7 @@ namespace Underworld
 
         static int[] dungeonNos = new int[8] { 9, 17, 25, 33, 41, 57, 49, 69 };
         static int[] arriveX = new int[8] { 33, 27, 18, 31, 4, 59, 32, 32 };
-        static int[] arriveY = new int[8] { 32, 34, 39, 31, 38, 20, 32, 32 };
+        static int[] arriveY = new int[8] { 32, 34, 39, 31, 38, 20, 32, 22 };
         static int[] heading = new int[8] { 56, 32, 48, 1, 48, 32, 48, 35 };
 
         public static int Activate()
