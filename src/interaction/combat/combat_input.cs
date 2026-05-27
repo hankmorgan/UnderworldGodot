@@ -135,6 +135,8 @@ namespace Underworld
                 return;
             }
             bool MouseHeldDown = Input.IsMouseButtonPressed(MouseButton.Right);
+            //check bash, slash and stab inputs.
+            bool KeyboardAttackHeldDown =  Input.IsKeyPressed(Key.P) || Input.IsKeyPressed(Key.Semicolon) || Input.IsKeyPressed(Key.Period);
             switch (stage)
             {
                 case CombatStages.OutOfCombat:
@@ -171,7 +173,7 @@ namespace Underworld
                         break;
                     }
                 case CombatStages.Ready:
-                    if (MouseHeldDown)
+                    if ((MouseHeldDown) || (KeyboardAttackHeldDown))
                     {
                         PreviousCombatPITTimer = main.GlobalPITTimer;
                         CombatTimerDifference = 0;
@@ -190,7 +192,39 @@ namespace Underworld
                         }
                         else
                         {
-                            GetSwingTypeFromMousePos();
+                            if (MouseHeldDown)
+                            {
+                                GetSwingTypeFromMousePos();    
+                            }
+                            else
+                            {
+                                if(KeyboardAttackHeldDown)
+                                {
+                                   //  (Input.IsKeyPressed(Key.P)) || (Input.IsKeyPressed(Key.Semicolon) || (Input.IsKeyPressed(Key.Period)
+                                    if (Input.IsKeyPressed(Key.P))
+                                    {
+                                        WeaponSwingTypePlayer = 1; //bash
+                                    }
+                                    else
+                                    {
+                                        if (Input.IsKeyPressed(Key.Semicolon))
+                                        {
+                                            WeaponSwingTypePlayer = 0;//slash
+                                        }
+                                        else
+                                        {
+                                            if (Input.IsKeyPressed(Key.Period))
+                                            {
+                                                WeaponSwingTypePlayer = 2;//stab
+                                            }
+                                            else
+                                            {
+                                                WeaponSwingTypePlayer = 0;//unlikely
+                                            }
+                                        }
+                                    }
+                                }
+                            }                            
                         }
 
                         //Debug.Print($"Swing type {WeaponSwingTypePlayer}");
@@ -227,7 +261,7 @@ namespace Underworld
                     break;
                 case CombatStages.Charging:
                     {
-                        if (MouseHeldDown)
+                        if ((MouseHeldDown)||(KeyboardAttackHeldDown))
                         {
                             combatanimationtimer += delta;
                             playerdat.PlayerQuietness = 0xA;

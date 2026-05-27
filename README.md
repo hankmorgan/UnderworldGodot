@@ -195,6 +195,11 @@ R,F fly up and down when a magic fly/levitate spell is active
 2 Look straight ahead
 3 Look up
 
+P Bash attack
+; Slash attack
+. Stab attack
+Holding down the mouse in the 3d window will also execute attacks
+
 F1 Options Options Menu (UW1)
 F2 Talk Mode
 F3 Pickup Mode
@@ -205,6 +210,8 @@ F7 Toggle Panel
 Alt+F7 Print Game Version
 F8 Cast Spell
 Alt+F8 Print Player Dungeon and Location
+F9 Track Skill
+F10 Make Camp
 F11 Toggles a position label
 Alt+F12 Screenshot
 
