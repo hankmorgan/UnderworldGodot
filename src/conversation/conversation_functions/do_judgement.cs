@@ -1,4 +1,5 @@
 using System.Collections;
+using Peaky.Coroutines;
 
 namespace Underworld
 {
@@ -73,7 +74,15 @@ namespace Underworld
                 GameStrings.GetString(7, 8 + final_evaluation);
 
             //Debug.Print(output);
-            uimanager.AddToMessageScroll(stringToAdd: output, option: PRINT_SAY, mode: MessageDisplay.MessageDisplayMode.TemporaryMessage);           
+            uimanager.AddToMessageScroll(
+                stringToAdd: output, 
+                option: PRINT_SAY, 
+                mode: MessageDisplay.MessageDisplayMode.TemporaryMessage);   
+
+            while (uimanager.MessageScrollIsTemporary)
+            {//ugh
+                yield return new WaitForSeconds(0.1f);
+            }        
             yield return 0;
         } 
     }//end class
