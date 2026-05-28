@@ -309,6 +309,12 @@ namespace Underworld
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
             {
+                if (playerdat.play_hp == 0)
+                {
+                    //prevent player from entering menu or changing modes when dead...
+                    return;
+                }
+
                 if (!uimanager.blockmouseinput)
                 {
                     if (playerdat.ObjectInHand != -1)

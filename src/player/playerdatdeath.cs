@@ -16,6 +16,7 @@ namespace Underworld
             //     return;
             // }
             // PlayerInDeathMode = true;
+            playerdat.play_drawn = 0;
 
             if (_RES == GAME_UW2)
             {

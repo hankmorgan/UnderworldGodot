@@ -120,7 +120,7 @@ public partial class main : Node3D
 		uimanager.EnableDisable(uimanager.instance.uw2UI, false);
 		uimanager.EnableDisable(uimanager.instance.PanelInventory, false);
 		uimanager.EnableDisable(uimanager.instance.ManaFlaskPanel, false);
-		uimanager.EnableDisable(uimanager.instance.HealthFlaskPanel, false);
+		uimanager.EnableDisable(uimanager.instance.HealthFlaskPanel, false);		
 		cutsplayer.PlayCutscene(9, uimanager.ReturnToMainMenu);
 		//Play intro theme after cutscene coroutine is queued, so music and graphics start together
 		XMIMusic.LoadXMI(XMIMusic.IntroTheme);
