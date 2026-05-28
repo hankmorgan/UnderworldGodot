@@ -355,19 +355,9 @@ namespace Underworld
 
 					case cnv_PUSHI_EFF:
 						{
-							// int offset = conv.instuctions[instrp + 1];
-							// if (offset >= 0)
-							// {
-							//     Push(basep + offset);
-							// }
-							// else
-							// {
-							//     offset--; //to skip over base ptr;  //TODO figure out if this is correct behaviour
-							//     Push(basep + offset);
-							// }
 							if (testing) { Debug.Print($"{instrp}:PUSHI_EFF {basep + currentConversation.instuctions[instrp + 1]}"); }
-							Push(basep + currentConversation.instuctions[instrp + 1]);
-							instrp++;
+							Push(currentConversation.NoOfMemorySlots + basep + currentConversation.instuctions[instrp + 1]);
+							instrp++;							
 							break;
 						}
 
