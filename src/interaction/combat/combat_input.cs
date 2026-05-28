@@ -134,7 +134,7 @@ namespace Underworld
             {
                 return;
             }
-            bool MouseHeldDown = Input.IsMouseButtonPressed(MouseButton.Right);
+            bool MouseHeldDown = (Input.IsMouseButtonPressed(MouseButton.Right) && uimanager.IsMouseInViewPort());
             //check bash, slash and stab inputs.
             bool KeyboardAttackHeldDown =  Input.IsKeyPressed(Key.P) || Input.IsKeyPressed(Key.Semicolon) || Input.IsKeyPressed(Key.Period);
             switch (stage)
@@ -297,8 +297,8 @@ namespace Underworld
                 case CombatStages.ReleaseSwing:
                     {
                         combatanimationtimer = 0;
-                        if (uimanager.IsMouseInViewPort())
-                        {
+                        //if (uimanager.IsMouseInViewPort())
+                        //{
                             if (PlayerAttackCharge >= mincharge)
                             {                                                         
                                 Debug.Print($"Releasing attack at charge {PlayerAttackCharge}");
@@ -338,12 +338,12 @@ namespace Underworld
                                 //cancel. not enough charge built up
                                 stage = CombatStages.Resetting;
                             }
-                        }
-                        else
-                        {
-                            Debug.Print("Swing outside the window. Cancelling");
-                            EndCombatLoop();//don't swing when outside the window
-                        }
+                        // }
+                        // else
+                        // {
+                        //     Debug.Print("Swing outside the window. Cancelling");
+                        //     EndCombatLoop();//don't swing when outside the window
+                        // }
                         break;
                     }
                 case CombatStages.SwingingAtTarget:
