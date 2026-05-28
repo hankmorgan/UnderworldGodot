@@ -582,20 +582,26 @@ namespace Underworld
                         }
 
 
-                        if (uimanager.DominantHandSlot == slot)
-                        {//Check for weapon in dominant hand.
-                            if (
-                                !
-                            (
-                                ((obj.majorclass == 0) && (obj.minorclass == 0))
-                                ||
-                                ((obj.majorclass == 0 && obj.minorclass == 1) && (obj.classindex >= 8 && obj.classindex <= 10))
-                            )
-                            )
-                            {
-                                isValid = false;
-                            }
+                        if ((slot >= 5) && (slot <= 8))
+                        {
+                            //shoulders and arms. do not cast effects from here.
+                            // if (uimanager.DominantHandSlot == slot)
+                            // {//Check for weapon in dominant hand. 
+                            //     if (
+                            //         !
+                            //     (
+                            //         ((obj.majorclass == 0) && (obj.minorclass == 0))
+                            //         ||
+                            //         ((obj.majorclass == 0 && obj.minorclass == 1) && (obj.classindex >= 8 && obj.classindex <= 10))
+                            //     )
+                            //     )
+                            //     {
+                            isValid = false;
+                            //     }
+                            // }
                         }
+
+
 
                         if ((slot == 4) && (_RES != GAME_UW2))
                         {
@@ -604,6 +610,9 @@ namespace Underworld
                                 playerdat.DragonSkinBoots = true;
                             }
                         }
+
+
+
 
                         if (isValid)
                         {
