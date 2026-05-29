@@ -2695,7 +2695,7 @@ namespace Underworld
                 {
                     var xDiff = Math.Pow(currObjQualityX - currObj_XHome, 2);
                     var yDiff = Math.Pow(currObjOwnerY - currObj_YHome, 2);
-                    if (xDiff + yDiff <= critterObjectDat.maybeNPCTravelRange(critter.item_id) * critterObjectDat.maybeNPCTravelRange(critter.item_id))
+                    if (xDiff + yDiff <= critterObjectDat.TravelRange(critter.item_id) * critterObjectDat.TravelRange(critter.item_id))
                     {
                         NPCWanderUpdate(critter);
                     }

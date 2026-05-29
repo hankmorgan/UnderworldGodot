@@ -984,7 +984,7 @@ namespace Underworld
                 //tilestate&1 == 0 (not in water)
                 if (FootSteps_77A != 0xFF)
                 {
-                    //do something with seg016_1FFD
+                    //do something with seg016_1FFD // If I had to guess there probably needs to be handling to turn off the running sound effect of water?
                     FootSteps_77A = 0xFF;
                 }
                 if ((TileState & 0x8) == 0)

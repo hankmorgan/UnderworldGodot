@@ -1,4 +1,7 @@
 using System.Diagnostics;
+using System.IO;
+using System.Runtime.Serialization.Formatters;
+using System.Security.AccessControl;
 
 namespace Underworld
 {
@@ -9,6 +12,7 @@ namespace Underworld
     {
 
         static bool NearbyHostileAwareOfAvatar = false;
+        static bool NearbyHostileFindsAvatar = false; //
 
         /// <summary>
         /// Handles the player going to sleep
@@ -140,7 +144,7 @@ namespace Underworld
             }
             else
             {
-                if (UpdateNPCMovements())
+                if (NPCsHuntForSleepingPlayer())
                 {//sleep has been interrupted
                     SleepInterupted();
                 }
@@ -354,11 +358,94 @@ namespace Underworld
             }
         }
 
-        static bool UpdateNPCMovements()
+        /// <summary>
+        /// Update/Simulate movement of NPCs while asleep and test if any of them have detected the player to initiate an ambush
+        /// </summary>
+        /// <returns></returns>
+        static bool NPCsHuntForSleepingPlayer()
         {
-            Debug.Print("Update/Simulate movement of NPCs while asleep and test if any of them have detected the player to initiate an ambush");
+            NearbyHostileFindsAvatar = false;
+            CallBacks.RunCodeOnTargetsAroundObject(
+                methodToCall: NpcHuntsSleepingPlayer, 
+                CentreObject: 1, 
+                rngProbablity: 0, 
+                targetType: 0, 
+                distanceFromObject: 0, 
+                tileRadius: 8 );
+            return NearbyHostileFindsAvatar;
+        }
+
+        /// <summary>
+        /// Checks if NPC is in movement range of player, and if hostile move to attack.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="obj"></param>
+        /// <param name="tile"></param>
+        /// <param name="srcIndex"></param>
+        /// <returns></returns>
+        public static bool NpcHuntsSleepingPlayer(int x, int y, uwObject obj, TileInfo tile, int srcIndex)
+        {
+            if (obj.index != 1)
+            {
+                if (obj.npc_attitude == 0)
+                {
+                    if (Rng.r.Next(2) == 1)
+                    {
+                        //50:50 chance
+                        var distance = ((obj.tileX - playerdat.playerObject.tileX) * (obj.tileX - playerdat.playerObject.tileX)) + ((obj.tileY - playerdat.playerObject.tileY) * (obj.tileY - playerdat.playerObject.tileY));
+                        if ((critterObjectDat.TravelRange(obj.item_id) * critterObjectDat.TravelRange(obj.item_id)) * 3 >= distance)
+                        {
+                            if (Pathfind.PathFindBetweenTiles(critter: obj, currTileX_arg0: obj.tileX, currTileY_arg2: obj.tileY, CurrFloorHeight_arg4: obj.zpos, TargetTileX_arg6: playerdat.playerObject.tileX, TargetTileY_arg8: playerdat.playerObject.tileY, TargetFloorHeight_argA: playerdat.playerObject.zpos, LikelyRangeArgC: 0))
+                            {
+                                if (Pathfind.MaybePathIndexOrLength_dseg_67d6_225A >= 2)
+                                {
+                                    var varb = 0;
+                                    //ovr107_9D4
+                                    while (varb < Pathfind.MaybePathIndexOrLength_dseg_67d6_225A)
+                                    {
+                                        //ovr107_8B0
+                                        var path = FinalPath56.finalpath[varb];
+                                        var pathtile = UWTileMap.current_tilemap.Tiles[path.X0,path.Y1];
+
+                                        //search along the path for any ward traps. (this is vanilla behaviour but it does not check for traps like the flam rune?)
+                                        var next = pathtile.indexObjectList;
+                                        while (next !=0)
+                                        {
+                                            var nextobj = UWTileMap.current_tilemap.LevelObjects[next];
+                                            next = nextobj.next; //get next now in case it triggers.
+                                            
+                                            if ((nextobj.IsTrigger) && (nextobj.link!=0))
+                                            {
+                                                var linked = UWTileMap.current_tilemap.LevelObjects[nextobj.link];
+                                                if (linked.item_id == 0x189) //ward trap
+                                                {
+                                                    trap.ActivateTrap(character: obj.index, trapObj: linked, ObjectUsed: null, triggerX: path.X0, triggerY: path.Y1, objList: UWTileMap.current_tilemap.LevelObjects);
+                                                }
+                                            }  
+                                        }
+                                        varb++;
+                                    }
+                                    //ovr107_9E0
+                                    //get the path of the 2nd last tile
+                                    var lastpath = FinalPath56.finalpath[Pathfind.MaybePathIndexOrLength_dseg_67d6_225A-1];
+                                    //var lasttile = UWTileMap.current_tilemap.Tiles[lastpath.X0, lastpath.Y1];
+
+                                    if(npc.moveNPCToTile(obj, lastpath.X0, lastpath.Y1))
+                                    {
+                                        npc.SetNPCTargetDestination(obj, playerdat.playerObject.tileX, playerdat.playerObject.tileY, playerdat.playerObject.zpos);
+                                        NearbyHostileFindsAvatar = true;
+                                        return true;
+                                    }
+                                }   
+                            }
+                        }
+                    }
+                }
+            }
             return false;
         }
+
 
         static bool Dreams(int sleepfactor)
         {

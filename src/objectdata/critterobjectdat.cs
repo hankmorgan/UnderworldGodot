@@ -412,7 +412,7 @@ namespace Underworld
         /// </summary>
         /// <param name="item_id"></param>
         /// <returns></returns>
-        public static int maybeNPCTravelRange(int item_id)
+        public static int TravelRange(int item_id)
         {
             return (buffer[CritterOffset(item_id) + 0x1c] >> 4) & 0xF;
         }
