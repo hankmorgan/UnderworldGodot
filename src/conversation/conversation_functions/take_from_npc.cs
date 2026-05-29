@@ -55,7 +55,7 @@ namespace Underworld
                         obj.next = 0;
                     }
 
-                    //TODO add a weight check. if passed it goes to hand, if not add to trade slots
+                    //Do a weight check. if passed it goes to hand, if not add to trade slots
                     if (playerdat.CanCarryWeight(obj))
                     {
                         playerdat.ObjectInHand = obj.index;

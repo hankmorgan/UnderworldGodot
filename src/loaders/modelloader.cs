@@ -450,7 +450,7 @@ namespace Underworld
                             int vertno = ua_mdl_read_vertno(buffer, addressptr); addressptr += 2;
 
                             Vector3 refvect = mod.verts[refvert];
-                            // refvect.z = 32.0f; // todo: ceiling value
+                            // refvect.z = 32.0f; // ceiling value
                             //refvect  = new Vector3(refvect.x,refvect.y,32f);
                             //Vector3 adj = new Vector3(0f, 0f, 32f);
 

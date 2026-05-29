@@ -233,7 +233,6 @@ namespace Underworld
 
 		public static void ExportVariables(uwObject npc)
 		{
-			//TODO Export the values to bglobals and back to the npc and player
 			for (int c = 0; c <= bglobal.bGlobals.GetUpperBound(0); c++)
 			{
 				if (npc.npc_whoami == bglobal.bGlobals[c].ConversationNo)

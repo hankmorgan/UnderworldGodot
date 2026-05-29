@@ -1,6 +1,4 @@
 using System;
-using System.Diagnostics;
-using Godot;
 
 namespace Underworld
 {
@@ -65,27 +63,8 @@ namespace Underworld
             }
         }
 
-
-
-        // /// <summary>
-        // /// Calling this owner to be consistant with game object naming.
-        // /// </summary>
-        // public int owner
-        // {
-        //     get
-        //     {
-        //         switch (_RES)
-        //         {                    
-        //             case GAME_UW2: // data is at the end of the tilemap
-        //                 return (int)(Loader.getAt(TileMap.current_tilemap.lev_ark_block.Data,PTR,16) & 0x3f);
-        //             default://but UW1 stores the data in it's own block
-        //                 return (int)(Loader.getAt(TileMap.current_tilemap.ovl_ark_block.Data,PTR,16) & 0x3f);                  
-        //         }
-        //     }
-        // }
-
         /// <summary>
-        /// No of frames left to play. -1 means it goes forever. TODO: This info is enough to play the animo?
+        /// No of frames left to play. -1 means it goes forever.
         /// </summary>
         public int Duration //starts at -1.
         {

@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 namespace Underworld
 {
     public partial class motion : Loader
@@ -418,7 +417,7 @@ namespace Underworld
 
                 //2941:543
                 var searchPTR = (int)UWMotionParamArray.TileRelatedToMotion_dseg_67d6_257E.Ptr + (TileOffsetArray[UWMotionParamArray.SubArray.Unk2_offset] * 4);
-                var Tile_Var6 = UWTileMap.GetTileByPTR(searchPTR);//this can be unsafe and finds tiles out of bound when ran at the screen edge. TODO when failing to find a valid tile overwrite the data wiht 0x1111
+                var Tile_Var6 = UWTileMap.GetTileByPTR(searchPTR);//this can be unsafe and finds tiles out of bound when ran at the screen edge. TODO when failing to find a valid tile overwrite the data with 0x1111
                 if (UWMotionParamArray.TileAttributesArray[UWMotionParamArray.SubArray.Unk2_offset] == 0x1111)
                 {//seg028_2941_572:
                     UWMotionParamArray.TileAttributesArray[UWMotionParamArray.SubArray.Unk2_offset] = (short)((int)(Tile_Var6.tileType) | ((int)Tile_Var6.floorHeight << 4) | (TerrainDatLoader.GetTerrainTypeNo(Tile_Var6) << 8));
@@ -654,22 +653,6 @@ namespace Underworld
                 MotionCalcArray.Unk11 = var2;
             }
             return SBB(var1);
-            // if (var1 < 0)//TODO SBB(var1)
-            // {
-            //     return 0;
-            // }
-            // else
-            // {
-            //     if (var1 > 0)
-            //     {
-            //         return 0;
-            //     }
-            //     else
-            //     {
-            //         return 1;
-            //     }
-            // }
-
         }
 
 
@@ -759,9 +742,7 @@ namespace Underworld
                     if ((SpecialMotionHandler.table23 & var2) != 0)
                     {
                         //seg031_2CFA_180F:
-                        //Debug.Print($"Call motion code at {UWMotionParamArray.dseg_67d6_26c2_LikeMagicProjectile8} with param {var2}");
-                        //TODO. other functions are called here as delegates. I need to add support for Seg008_104D (a stop motion function on the player that may be related to the bridge multiple collison bug)
-                        //result = NPCMotionCollision_seg006_1413_ABF(critter: projectile, arg0: var2, motionparams: MotionParams);
+                        //other functions are called here as delegates which are specifci to a type of Npc/player colliding
                         result = SpecialMotionHandler.HandlerFunction(obj: projectile, arg0: ref var2, motionparams: MotionParams);
                         if (result)
                         {

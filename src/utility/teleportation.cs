@@ -1,7 +1,6 @@
 using Peaky.Coroutines;
 using System.Collections;
 using System.Diagnostics;
-using System.Runtime.Serialization.Formatters;
 
 namespace Underworld
 {
@@ -329,7 +328,6 @@ namespace Underworld
                 }
 
             ProcessTeleport:
-                //todo
                 if (newLevel != playerdat.dungeon_level)
                 {
                     if (character != 0)

@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.Net;
 using Godot;
 
 namespace Underworld
@@ -182,8 +181,9 @@ namespace Underworld
                             }
 
                             if (DreamingInVoid)
-                            {//TODO check if dreaming in void and count down
-                                Debug.Print("Dreaming in void. count down dream plant value");
+                            {
+                                //check if dreaming in void and count down
+                                //Debug.Print("Dreaming in void. count down dream plant value");
                                 if (DreamPlantCounter > 0)
                                 {
                                     DreamPlantCounter--;
@@ -242,7 +242,7 @@ namespace Underworld
                             if ((playerUpdateCounter % 60) == 0)//every 20 mins
                             {
                                 Debug.Print("TODO Update 'day' value");
-                                Debug.Print("Do something with scd.ark");
+                                Debug.Print("TODO something with scd.ark");
                                 playerUpdateCounter = 0;
                             }//end every 20 mins update
 

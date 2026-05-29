@@ -5,7 +5,6 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using Godot;
 using Munt.NET;
-using Underworld.Sfx;
 
 namespace Underworld;
 

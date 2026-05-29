@@ -2,8 +2,6 @@ using Godot;
 using System;
 using System.Diagnostics;
 using Underworld;
-using Peaky.Coroutines;
-using System.Collections;
 using System.IO;
 
 /// <summary>
@@ -226,7 +224,6 @@ public partial class main : Node3D
 
 			if (ClockIncrement != 0)
 			{
-				//ClockIncrement = Math.Max(ClockIncrement, 2);//TODO: This low value breaks some motion. See above.
 				ProcessMotionInputs();
 				if (AnimationFrameDeltaIncrement != 0)
 				{
@@ -355,7 +352,7 @@ public partial class main : Node3D
 			}
 			motion.MotionInputPressed = 1;
 		}
-		//TODO: using this method probably leads to a lot of jank with requiring input on the correct frame?
+
 		if (Input.IsKeyPressed(Key.Q))//turn left
 		{
 			motion.PlayerMotionHeading_77E = -90;//should this be scaled?

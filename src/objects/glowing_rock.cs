@@ -1,4 +1,3 @@
-using Godot;
 namespace Underworld
 {
     public class glowing_rock : objectInstance

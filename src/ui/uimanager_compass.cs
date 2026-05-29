@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Godot;
 
 namespace Underworld
@@ -46,9 +45,7 @@ namespace Underworld
         }
 
         public static void UpdateCompass()
-        {
-            //TODO playerdat.heading_major is no longer updated.This should be based on CameraYaw or equivilant value from playerObject.
- 
+        {    
             var heading = (playerdat.playerObject.heading<< 5) + playerdat.playerObject.npc_heading;//get full heading into a range of 0-f
             heading += 8;
             heading = (heading & 0xFF);

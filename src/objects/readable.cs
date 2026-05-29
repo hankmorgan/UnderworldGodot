@@ -114,7 +114,7 @@ namespace Underworld
                             if (ObjectUsed.item_id == 0x139)//map piece
                             {
                                 //TODO
-                                Debug.Print("MAP PIECE LOOKAT");
+                                Debug.Print("MAP PIECE LOOKAT");//I think this is already done?
                             }
                             else
                             {

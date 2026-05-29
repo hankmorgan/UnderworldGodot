@@ -559,7 +559,7 @@ namespace Underworld
                             //TODO some terrain changes happen here too.
                         }
 
-                        //TODO wall textures
+                        //wall textures
                         if (newWallTexture < 0x3F)
                         {
                             tileToChange.wallTexture = (short)newWallTexture;
@@ -577,8 +577,6 @@ namespace Underworld
                         }
 
 
-
-
                         var tileObjectMoveXMin = Math.Max(currentX - 1, 0);
                         var tileObjectMoveYMin = Math.Max(currentY - 1, 0);
                         var tileObjectMoveXMax = Math.Max(currentX + 1, 63);
@@ -587,7 +585,6 @@ namespace Underworld
                         {
                             tileToChange.floorHeight = (short)newHeight; //UW seems to set this again here?
                             bool HasRaised = tileToChange.floorHeight >= initialheight;
-                            //TODO move objects in the affected tiles
                             //move objects in tile up or down
                             for (int xObjectMove = tileObjectMoveXMin; xObjectMove <= tileObjectMoveXMax; xObjectMove++)
                             {
@@ -728,9 +725,18 @@ namespace Underworld
             }
         }
 
+
+        /// <summary>
+        /// MNves the object in a movingtile and returns the relevant NEXT index to assess as the object may be destroyed by this action
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="NewTileHeight"></param>
+        /// <param name="InitialTileHeight"></param>
+        /// <param name="TileIsSolid"></param>
+        /// <param name="HeightAdjustFlag"></param>
+        /// <returns></returns>
         static int LowerObjectInChangingTile(uwObject obj, int NewTileHeight, int InitialTileHeight, bool TileIsSolid, int HeightAdjustFlag)
         {
-            //todo, moves the object in a moving and returns the relevant NEXT index to assess as the object may be destroyed by this action
             var nextObj = obj.next;
             if (obj.zpos == InitialTileHeight << 3)
             {

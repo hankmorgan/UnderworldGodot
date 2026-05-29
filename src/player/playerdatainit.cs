@@ -1,6 +1,5 @@
 using Godot;
 using System;
-using System.Diagnostics;
 namespace Underworld
 {
     public partial class playerdat : Loader
@@ -32,7 +31,6 @@ namespace Underworld
 
                 motion.UpdateMotionStateAndSwimming(playerdat.RelatedToMotionState & 0x7);
 
-
                 PositionPlayerCamera();
 
                 for (int i = 0; i < 8; i++)
@@ -44,10 +42,6 @@ namespace Underworld
             else
             {
                 //starting a new player
-
-                // tileX = -(int)(main.gamecam.Position.X / 1.2f);
-                // tileY = (int)(main.gamecam.Position.Z / 1.2f);
-
                 AutomapEnabled = true;
                 uimanager.SetHelm(isFemale, -1);
                 uimanager.SetArmour(isFemale, -1);
@@ -114,9 +108,6 @@ namespace Underworld
             {
                 scd.scd_data = null;
             }
-
-            //TODO process detail and music/sound options
-
         }      
 
 

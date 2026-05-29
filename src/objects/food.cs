@@ -30,7 +30,7 @@ namespace Underworld
                     case 0xC: //a_bottle of water&bottles of water
                     case 0xD: //a_bottle of wine&bottles of wine
                         DrinkLiquid(obj, !WorldObject); break;
-                    case 9: //a_mushroom  //this needs to do a shrooms skill check on it
+                    case 9: //a_mushroom 
                         TakeShrooms(obj, !WorldObject);
                         break;
                 }

@@ -150,7 +150,7 @@ namespace Underworld
                 if (_RES == GAME_UW2)
                 {
                     //seg030_2BB7_796:      
-                    //Debug.Print("TODO Run enter trigger for projectile");
+                    //Run enter trigger for projectile");
                     trigger.RunPressureEnterExitTriggersInTile(
                         triggeringObject: projectile,
                         tile: tileVar6,

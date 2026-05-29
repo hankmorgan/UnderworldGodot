@@ -407,30 +407,11 @@ namespace Underworld
         /// <param name="heading"></param>
         static void DoTeleport(int teleportX, int teleportY, int newLevel, int heading)
         {
-            // if (Teleportation.JustTeleported)
-            // {
-            //     Teleportation.JustTeleported = false;
-            //     return;
-            // }
-            // if (newLevel != playerdat.dungeon_level)
-            // {
-            //     Teleportation.TeleportLevel = newLevel;
-            // }
-            // else
-            // {
-            //     Teleportation.TeleportLevel = -1;
-            // }
-            // Debug.Print($"{teleportX},{teleportY},{newLevel}");
-            // Teleportation.TeleportTileX = teleportX;
-            // Teleportation.TeleportTileY = teleportY;
-
             Teleportation.Teleport(character: 0, 
                 tileX: teleportX, 
                 tileY: teleportY, 
                 newLevel: newLevel, 
                 HeadingHeightFlag: heading);
-
-            //TODO: include heading after teleport
         }
     } //end class
 }//end namespace

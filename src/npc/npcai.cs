@@ -393,8 +393,6 @@ namespace Underworld
                             {
                                 if (critter.npc_gtarg == 1)
                                 {
-                                    //TODO set music if not playing any combat theme
-                                    //todo set combat music timer
                                     if (_RES == GAME_UW2)
                                     {
                                         if (XMIMusic.CurrentlyPlayingThemeNo <= 2 || XMIMusic.CurrentlyPlayingThemeNo > 4)
@@ -2996,7 +2994,7 @@ namespace Underworld
         }
 
         /// <summary>
-        /// Tries to do a special? magic attack
+        /// NPC attempts a magic attack
         /// </summary>
         /// <param name="critter"></param>
         /// <returns></returns>
@@ -3121,7 +3119,7 @@ namespace Underworld
                         if (Rng.r.Next(0xc0) <= critterObjectDat.dexterity(critter.item_id))
                         {
                             critter.UnkBit_0X13_Bit0to6 = 0;
-                            critter.npc_animation = ANIMATION_RANGEDATTACK;//todo update animation value for UW1
+                            critter.npc_animation = ANIMATION_RANGEDATTACK;
                             critter.AnimationFrame = 0;
                         }
                         return true;

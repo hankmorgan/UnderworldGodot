@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 namespace Underworld
 {
     public partial class playerdat : Loader
@@ -50,8 +48,7 @@ namespace Underworld
         /// <param name="newTileX"></param>
         /// <param name="newTileY"></param>
         public static void PlacePlayerInTile(int newTileX, int newTileY, int previousTileX = -1, int previousTileY = -1)
-        {//todo move this object into the tilemap objects per vanilla behaviour.            
-            
+        {   
             if (UWTileMap.ValidTile(previousTileX, previousTileY))
             {
                 //take the player object out of the previous tile

@@ -1,6 +1,4 @@
 using System.Diagnostics;
-using System.Net.Http.Headers;
-using Godot;
 
 
 namespace Underworld
@@ -728,7 +726,7 @@ namespace Underworld
             motion.GetCoordinateInDirection(di_heading, CurrentWeaponRadius + 3, ref x0, ref y2);
             MotionCalcArray.x0 = (ushort)x0; MotionCalcArray.y2 = (ushort)y2;
             Debug.Print($"Calculating attack hit at point {MotionCalcArray.x0},{MotionCalcArray.y2},{MotionCalcArray.z4}");
-            motion.ScanForCollisions(0, 1); //TODO. this check is failing to scan for some NPCs. 
+            motion.ScanForCollisions(0, 1);
             if (MotionCalcArray.Unk14_collisoncount != 0)
             {
                 motion.SortCollisions();

@@ -110,8 +110,8 @@ namespace Underworld
                     projectile.zpos = (short)((((height * 5) & 0xFF) / 6) + projectile.zpos + (MissilePitch << 1));
                     if (Launcher == playerdat.playerObject)
                     {
-                        //todo handle swimming player height adjustment
-                        Debug.Print($"Swimminglauncher. Projectile needs to be adjusted! {Launcher.a_name}");
+                        //handle swimming player height adjustment
+                        //Debug.Print($"Swimminglauncher. Projectile needs to be adjusted! {Launcher.a_name}");
                         if (playerdat.SwimCounter > 0x50)
                         {
                             projectile.zpos = (short)(((MissilePitch<<1) + playerdat.playerObject.zpos + ( commonObjDat.height(playerdat.playerObject.item_id) - (playerdat.SwimCounter >> 3) )) & 0x7F);

@@ -1,15 +1,9 @@
 using Godot;
-using Godot.NativeInterop;
 
 namespace Underworld
 {
     public class ArtLoader : Loader
     {
-        /// <summary>
-        /// Load an approximation of xfer.dat transparency
-        /// </summary>
-        //public bool xfer;  //TODO this should mean that the file uses a shader that has xfer transparency applied
-
         public const byte BitMapHeaderSize = 28;
 
         /// <summary>

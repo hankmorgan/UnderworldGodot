@@ -359,8 +359,6 @@ namespace Underworld
                             useAlphaChannel: true, 
                             useSingleRedChannel: true,
                             crop: UseCropping);
-                        
-                        CropImageData(ref imgData, pal);
 
                         this.animSprites[spriteIndex + i] = imgData;
                         spriteCounter++;
@@ -411,7 +409,6 @@ namespace Underworld
         /// <returns></returns>
         public static string angleToString(int angle)
         {
-            //TODO: these angles may be incorrect.
             switch (angle)
             {
                 case 0: return "left";
@@ -754,57 +751,9 @@ namespace Underworld
             }
             //Debug.Log(fileCrit + " returning  "  + spriteIndex);
             return spriteIndex;
-
-
         }
 
-
-        /// <summary>
-        /// Crops the image data to remove all alpha space from beneath the npcs feet
-        /// </summary>
-        /// <param name="imgData">Image data.</param>
-        /// <param name="PalUsed">Pal used.</param>
-        static void CropImageData(ref ImageTexture imgData, Palette PalUsed)
-        {
-            return;// turn this off for the moment.
-                   //     Color alphacolor = PalUsed.ColorAtPixel(0, true);
-                   //     int InvalidRows = 0;//imgData.height;
-                   //     for (int x = 0; x < imgData.GetHeight(); x++)
-                   //     {
-                   //         bool rowIsAllAlpha = true;
-                   //         for (int y = 0; y <= imgData.GetWidth(); y++)
-                   //         {
-                   //             if (imgData.GetPixel(y, x) != alphacolor)
-                   //             {
-                   //                 rowIsAllAlpha = false;
-                   //                 break;
-                   //             }
-                   //         }
-                   //         if (rowIsAllAlpha)
-                   //         {
-                   //             InvalidRows++;
-                   //             for (int z = 0; z <= imgData.GetWidth(); z++)
-                   //             {
-                   //                 imgData.SetPixel(z, x, Color.Color8(0,0,0,0)) ;// .white);
-                   //             }
-                   //         }
-                   //         else
-                   //         {
-                   //             break;
-                   //         }
-                   //     }
-                   //     if ((InvalidRows < imgData.GetHeight()))
-                   //     {
-                   //         //TODO rebuild this section
-                   //         // Godot.Image newImg = new Godot.Image(imgData.GetWidth(), imgData.GetHeight() - InvalidRows, false);
-                   //         // newImg.SetPixels(imgData.GetPixels(0, InvalidRows, imgData.width, imgData.height - InvalidRows));
-                   //         // newImg.filterMode = FilterMode.Point;
-                   //         // newImg.Apply();
-                   //         // imgData = newImg;
-
-            //         //imgData.Apply();
-            //     }
-        }
+        
          /// <summary>
         /// For decoding RLE encoded critter animations.
         /// </summary>

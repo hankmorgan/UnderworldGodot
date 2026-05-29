@@ -3,7 +3,6 @@ using System.IO;
 using System.Threading;
 using ADLMidi.NET;
 using Godot;
-using Underworld;
 
 namespace Underworld.Sfx;
 

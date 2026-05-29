@@ -736,7 +736,7 @@ namespace Underworld
         /// Cleans up the tilemap. Splits up the tiles into strips of tiles along the x or y axis and sets tile face visibility as required
         /// </summary>
         /// <param name="game">Game.</param>
-        /// Although the tile map renderer supports tiles of size X*Y I'm only smart enought to optimise the tilemap into strips of X*1 or Y*1 !!
+        /// Although the tile map renderer supports tiles of size X*m and Y*n I'm only smart enought to optimise the tilemap into strips of X*n or Y*m exclusively !!
         public void CleanUp()
         {
             int x; int y;
@@ -1121,52 +1121,7 @@ namespace Underworld
                 Tiles[x, 0].VisibleFaces[vNORTH] = true;
                 Tiles[x, TileMapSizeY].VisibleFaces[vSOUTH] = true;
             }
-        }
-
-
-        /// <summary>
-        /// Check if two tiles are alike
-        /// </summary>
-        /// <param name="t1"></param>
-        /// <param name="t2"></param>
-        /// <returns></returns>
-        bool DoTilesMatch(TileInfo t1, TileInfo t2)
-        {//TODO:Tiles have a lot more properties now.
-            // if (_RES == GAME_SHOCK)
-            // { return false; }
-            //if ((t1.tileType >1) || (t1.hasElevator==1) || (t1.TerrainChange ==1) ||  (t2.hasElevator==1) || (t2.TerrainChange ==1) || (t1.isWater ==1) || (t2.isWater ==1)){	//autofail no none solid/open/special.
-            if ((t1.tileType > 1) || (t1.TerrainChange == true) || (t2.TerrainChange == true))
-            {   //autofail no none solid/open/special.
-                return false;
-            }
-            else
-            {
-                if ((t1.tileType == 0) && (t2.tileType == 0))   //solid
-                {
-                    return ((t1.wallTexture == t2.wallTexture)
-                        && (t1.West == t2.West)
-                        && (t1.South == t2.South)
-                        && (t1.East == t2.East)
-                        && (t1.North == t2.North));
-                }
-                else
-                {
-                    return (t1.North == t2.North)
-                            && (t1.South == t2.South)
-                            && (t1.East == t2.East)
-                            && (t1.West == t2.West)
-                            && (t1.floorTexture == t2.floorTexture)
-                            && (t1.floorHeight == t2.floorHeight)
-                            && (t1.ceilingHeight == t2.ceilingHeight)
-                            && (t1.DimX == t2.DimX) && (t1.DimY == t2.DimY)
-                            && (t1.wallTexture == t2.wallTexture)
-                            && (t1.tileType == t2.tileType)
-                            && (t1.HasDoor == false) && (t2.HasDoor == false);//
-                }
-            }
-        }
-
-
+        }      
 
         public static bool isTerrainWater(int terraintype)
         {

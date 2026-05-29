@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using Munt.NET;
 namespace Underworld
 {
     /// <summary>
@@ -33,7 +32,6 @@ namespace Underworld
         /// <param name="damagesource"></param>
         public static int DamageObject(uwObject objToDamage, int basedamage, int damagetype, uwObject[] objList, bool WorldObject, int damagesource)
         {
-            //TODO: The order of params here is different to that in disassembly. There is a risk that basedamage/damage type is wrongly assigned. Review usage.
             basedamage = ScaleDamage(objToDamage.item_id, ref basedamage, damagetype);
             if (basedamage != 0)
             {
@@ -161,8 +159,8 @@ namespace Underworld
             if ((critter.npc_hp == 0) & (critter.index != 1))
             {
                 if (critter.npc_animation != npc.ANIMATION_DEATH)
-                { //if not already in the death animation
-                    //TODO death has some extra behaviours that needs to be supported in a seperate Eg death rattles. Move the below into a seperate func
+                { 
+                    //if not already in the death animation
                     if (npc.SpecialDeathCases(critter))
                     {
                         playerdat.AwardXPKill(critter);

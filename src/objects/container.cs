@@ -417,7 +417,7 @@ namespace Underworld
                     mode: printmode);
             }
 
-            //TODO test total weight.
+            //Test total weight.
             if (ContainerCanHold)
             {
                 var containerMass = GetTotalMass(containerobject, playerdat.InventoryObjects, true);

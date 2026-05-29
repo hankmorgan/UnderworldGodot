@@ -85,10 +85,11 @@ namespace Underworld
             parent.AddChild(a_sprite);
             a_sprite.Position = new Vector3(0, n.FrameSize.Y / 2 + 0.12f, 0);
             a_sprite.CreateConvexCollision();
-            string animname;
-            animname = CritterArt.GetAnimName(obj.npc_animation, CalculateFacingAngleToNPC(obj));
+
             if (ObjectCreator.printlabels)
             {
+                string animname;
+                animname = CritterArt.GetAnimName(obj.npc_animation, CalculateFacingAngleToNPC(obj));
                 Label3D obj_lbl = new();
                 obj_lbl.Text = $"{name} {obj.item_id & 0x3F} \nAnim={obj.npc_animation} Frame={obj.AnimationFrame} {animname}\n Goal {obj.npc_goal} Gtarg{obj.npc_gtarg}\nHP:{obj.npc_hp}/{critterObjectDat.avghit(obj.item_id)}";
                 obj_lbl.Font = uimanager.instance.Font4X5P;

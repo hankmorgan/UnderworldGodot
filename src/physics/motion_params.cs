@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 namespace Underworld
 {
     /// <summary>
@@ -345,7 +343,7 @@ namespace Underworld
         }
 
         /// <summary>
-        /// Possibly related to mass or force? TODO this value incorrectly set may possibly be the cause of the slash of veils collision bug
+        /// Likely the pitch
         /// </summary>
         public short unk_a_pitch
         {

@@ -20,17 +20,6 @@ namespace Underworld
                 ObjectCreator.RenderObject(arrow,UWTileMap.current_tilemap);
                 //make a sound                
             }
-
-
-            // ObjectCreator.spawnObjectInTile(
-            //     itemid: itemid, 
-            //     tileX: triggerX, 
-            //     tileY: triggerY, 
-            //     xpos: (short)trapObj.tileX, 
-            //     ypos: (short)trapObj.tileY, 
-            //     zpos: trapObj.zpos, 
-            //     WhichList: ObjectFreeLists.ObjectListType.StaticList);
-            // Debug.Print("TODO: spawn this arrow trap object as a projectile");
         }
     }//end class
         

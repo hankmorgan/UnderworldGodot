@@ -673,7 +673,6 @@ namespace Underworld
         static void CalculateMotionFromCommand_seg008_1B09_108E(short inputcmd, int ClockIncrement, out short arg4)
         {
             arg4 = 0;
-            //todo
             if (playerdat.ParalyseTimer != 0)
             {
                 arg4 = 0;
@@ -909,7 +908,6 @@ namespace Underworld
 
         public static void UpdateMotionStateAndSwimming(int arg0)
         {
-            //todo, uw1 version of this function has some major differences.
             short[] tilestatetable_var8;
             if (_RES == GAME_UW2)
             {
@@ -949,15 +947,17 @@ namespace Underworld
                 //swimming speed adjustment (UW2 only)
                 si = 4 + (playerdat.Swimming / 2);
             }
-            //seg008_1B09_12F0: 
+            //seg008_1B09_12F0:             
             if (_RES == GAME_UW2)
             {
+                //slow down player when swimming
                 motion.PlayerActualForwardSpeed_1_dseg_67d6_22A6 = (short)((motion.BaseForwardSpeed_1_dseg_67d6_CE * si) / 0x14);
                 motion.PlayerActualSlideSpeed_2_dseg_67d6_22A8 = (short)((motion.BaseSlideSpeed_2_dseg_67d6_CC * si) / 0x14);
                 motion.PlayerActualBackwardsSpeed_3_dseg_67d6_22AA = (short)((motion.BaseBackwardsSpeed_3_dseg_67d6_CA * si) / 0x14);
             }
             else
             {
+                //TODO: confirm for certain there is no speed penalty when the player is swimming.
                 si = tilestatetable_var8[arg0];
                 motion.PlayerActualForwardSpeed_1_dseg_67d6_22A6 = (short)((motion.BaseForwardSpeed_1_dseg_67d6_CE * si) / 0xA);
                 motion.PlayerActualSlideSpeed_2_dseg_67d6_22A8 = (short)((motion.BaseSlideSpeed_2_dseg_67d6_CC * si) / 0xA);
@@ -1041,7 +1041,6 @@ namespace Underworld
         public static void WalkOnSurfaceType()
         {
             //Seg35_A0C
-            //Debug.Print("Walkonspecialterrain todo");
             var var1 = 1;
             var var2_incrementrelated = 1;
             if (playerdat.TileState != 0)

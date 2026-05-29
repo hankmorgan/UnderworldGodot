@@ -16,8 +16,6 @@ namespace Underworld
         {
             if (_RES == GAME_UW2)
             {
-                //TODO: Check if same or new logic applies in UW2
-
                 var si = ((trapObj.xpos & 0x3) << 7) | (int)trapObj.zpos;
                 var var_18 = trapObj.heading + si;
                 var var_1A = (trapObj.quality << 5) | (int)trapObj.owner;

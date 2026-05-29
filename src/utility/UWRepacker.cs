@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics;
 
 namespace Underworld
@@ -17,8 +16,7 @@ namespace Underworld
         /// </summary>
         /// <param name="blockNoToCompress"></param>
         public static void TestRepack(int blockNoToCompress)
-        {
-            
+        {            
             //load raw data
             LevArkLoader.LoadLevArkFileData();
             bool Pass = true;
@@ -26,51 +24,8 @@ namespace Underworld
             UWBlock lev_ark_block;
             //load a level map
             DataLoader.LoadUWBlock(arkData: LevArkLoader.lev_ark_file_data, blockNo: 0, targetDataLen: -1, uwb: out lev_ark_block);
-
-        //     if (((lev_ark_block.CompressionFlag >> 1) & 0x01) == 1)
-        //     {
-            byte[] repacked; //= new byte[1];//todo replace with compress output.
+            byte[] repacked; 
             Pass = CompressData(lev_ark_block, out repacked);
-        //         if (Pass)
-        //         {
-        //             for (int i = 0; i <= lev_ark_block.Data.GetUpperBound(0); i++)
-        //             {
-        //                 if (i <= repacked.GetUpperBound(0))
-        //                 {
-        //                     if (repacked[i] != LevArkLoader.lev_ark_file_data[lev_ark_block.Address + i + 4])  //first 4 bytes are ignored?
-        //                     {
-        //                         Debug.Print($"Data mismatch at offset {i}");
-        //                         Pass = false;
-        //                         break;
-        //                     }
-        //                 }
-        //                 else
-        //                 {
-        //                     Debug.Print("Out of bounds error on repacked block.");
-        //                     Pass = false;
-        //                     break;
-        //                 }
-        //             }
-        //         }
-        //         else
-        //         {
-        //             Debug.Print("Result of compression is false");
-        //             Pass = false;
-        //         }
-        //     }
-        //     else
-        //     {
-        //         Debug.Print("Test file is not a compressed Ark file");
-        //         Pass = false;
-        //     }
-        //     if (Pass)
-        //     {
-        //         Debug.Print("Repack has suceeded. What a day!");
-        //     }
-        //     else
-        //     {
-        //         Debug.Print("Repack has failed. Try try agin.!");
-        //     }
         }
 
         public static void DumpCompressionMemory()

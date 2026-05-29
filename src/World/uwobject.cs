@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Godot;
 
 namespace Underworld
@@ -8,10 +7,7 @@ namespace Underworld
     /// </summary>
     public class uwObject : UWClass
     {
-        const float _ResolutionZ = 128.0f; //UW has 0-127 posible z positions for an object in tile.
-        const float _ceil = 32;// tileMap.CEILING_HEIGHT;
-        const float _BrushZ = 15f;
-        public objectInstance instance;//TODO: this needs to be linked in all the object creation code.
+        public objectInstance instance;//this needs to be linked in all the object creation code.
         public short index;
 
         public string a_name
@@ -1410,16 +1406,19 @@ namespace Underworld
                 var z = CoordinateZ;
 
                 return XYZToVector3(x, y, z);
-
-                // //Get a vector for the object that is relative to the bounds of an underworld level map.
-                // Vector3 underworldVector = new(x: -(float)x / 16384f, y: (float)z / 1024f, z: (float)y / 16384f);
-           
-                // //then transform it into godot positioning using a vector based on the size we are rendering the gameworld in.
-                // return underworldVector * tileMapRender.godotscale;
-            }
-          
+            }          
         }
 
+        /// <summary>
+        /// Get a vector for the object that is relative to the bounds of an underworld level map.
+        /// Vector3 underworldVector = new(x: -(float)x / 16384f, y: (float)z / 1024f, z: (float)y / 16384f);          
+        /// then transform it into godot positioning using a vector based on the size we are rendering the gameworld in.
+        /// return underworldVector * tileMapRender.godotscale;
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        /// <returns></returns>
         public static Vector3 XYZToVector3(int x, int y, int z)
         {
             //Get a vector for the object that is relative to the bounds of an underworld level map.
@@ -1428,69 +1427,6 @@ namespace Underworld
             //then transform it into godot positioning using a vector based on the size we are rendering the gameworld in.
             return underworldVector * tileMapRender.godotscale;
         }
-
-        /// <summary>
-        /// Gets the object positon unsign the coordinate x/y values. Use only with mobile objects.
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        // static Vector3 GetFullCoordinate(uwObject obj, bool CentreInGrid = true)
-        // {  
-        //     float offX = GetXYCoordinate_full(obj.CoordinateX, CentreInGrid);
-        //     float offY = GetXYCoordinate_full(obj.CoordinateY, CentreInGrid);
-        //     float offZ = GetZCoordinate(obj.zpos);
-        //     return new Godot.Vector3(-offX, offZ, offY);  
-        // }
-
-
-        // static float GetXYCoordinate_full(int fullcoordinate, bool CentreInGrid)
-        // {           
-        //     float adjust = 0f;
-        //     if (CentreInGrid)
-        //     {
-        //         adjust = 0.075f;
-        //     }
-        //     return adjust + ((float)(fullcoordinate>>8) * 1.2f)
-        //         + ((float)((fullcoordinate>>5) & 0x7) * 0.15f)
-        //         + ((float)(fullcoordinate & 0xF) * 0.01f);   //this number is unconfirmed. Based on assumption that bits 0-3 of coordinate are a single xypos step in 1/15th increments.      
-        // }
-
-        // public static Vector3 GetCoordinate_OBSOLETE(int tileX, int tileY, int _xpos, int _ypos, int _zpos, bool CentreInGrid = true)
-        // {
-        //     Debug.Print("|Obsolete Usage of GetCoordinate");
-        //     float offX = GetXYCoordinate(tileX, _xpos,CentreInGrid);
-        //     float offY = GetXYCoordinate(tileY, _ypos,CentreInGrid);
-        //     float offZ = GetZCoordinate(_zpos);
-        //     return new Godot.Vector3(-offX, offZ, offY);  //x is neg. probably technical debt from a bug in the unity version
-        // }
-
-
-        /// <summary>
-        /// Gets the world x or y coordinate for a given x or y value
-        /// </summary>
-        /// <param name="xypos"></param>
-        // /// <returns></returns>
-        // public static float GetXYCoordinate_oldmethod(int tilexy, int xypos)
-        // {
-        //     xypos = (xypos * 3) + 1;
-        //     float ResolutionXY = 23f;  // A tile has a 8x8 grid for object positioning? This is probably all wrong since there is a noticable "bump" in movement when crossing tiles. What was I thinking?
-        //     float BrushXY = 120f; //game world size of a tile.
-        //     float offXY = (tilexy * BrushXY) + xypos * (BrushXY / ResolutionXY);
-        //     return offXY / 100f;
-        // }
-
-
-
-        // public static float GetXYCoordinate(int tilexy, int xypos, bool CentreInGrid)
-        // {
-        //     //TODO: The coordinates probably need to have more "resolution"
-        //     float adjust = 0f;
-        //     if (CentreInGrid)
-        //     {//adjusts for the object to be in the center of a tile grid segment.
-        //         adjust = 0.075f;
-        //     }
-        //     return adjust + (tilexy * 1.2f)  + (float)(xypos) *  0.15f; //TODO: this 0.15f gives a range of 0-7 steps in x/y pos. More resolution is needed to smooth mobile objects and adjust screenshake?
-        // }
 
         /// <summary>
         /// Converts an world co-ordinate into a xpos or ypos value. (ignores tileXY)

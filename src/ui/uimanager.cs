@@ -85,8 +85,6 @@ namespace Underworld
 			 ||
 			 uimanager.CurrentGameMode == GameModes.OPTIONS
 			 ;
-
-			; //TODO and other menu modes that will stop input
 		}
 	}
 

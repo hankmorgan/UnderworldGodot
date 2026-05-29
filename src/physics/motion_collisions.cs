@@ -1512,7 +1512,7 @@ namespace Underworld
                             else
                             {
                                 //seg030_2BB7_11ED
-                                var collision = collisionTable[MotionCalcArray.Unk16_collisionindex]; //TODO. this causes an outofrange exception when I throw a backpack at Bragit!
+                                var collision = collisionTable[MotionCalcArray.Unk16_collisionindex];
                                 if (collision.height != MotionCalcArray.z4)
                                 {
                                     break;//to 2bb7:127D
