@@ -475,9 +475,9 @@ namespace Underworld
                 UpdateAutomap();//update the visited status of nearby tiles
             }
 
-            //motion.RefreshPlayerTileState();
+            motion.RefreshPlayerTileState();
 
-            //motion.UpdateMotionStateAndSwimming(-1);
+            motion.UpdateMotionStateAndSwimming(-1);
         }
 
 
