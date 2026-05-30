@@ -58,7 +58,7 @@ namespace Underworld
             uwobject = _uwobject;
             try
             {
-                SetAnimSprite(uwobject.npc_animation, uwobject.AnimationFrame, CalculateFacingAngleToNPC(uwobject));                
+                SetAnimSprite(uwobject.npc_animation, uwobject.AnimationFrame, CalculateFacingAngleToNPC(uwobject));
             }
             catch (Exception ex)
             {
@@ -75,7 +75,7 @@ namespace Underworld
         public static npc CreateInstance(Node3D parent, uwObject obj, string name)
         {
             var n = new npc(obj);
-            
+
             var a_sprite = new uwMeshInstance3D(); //new Sprite3D();
             a_sprite.Name = name;
             a_sprite.Mesh = new QuadMesh();
@@ -204,7 +204,7 @@ namespace Underworld
                 np.SetAnimSprite(n.npc_animation, n.AnimationFrame, CalcedFacing);
             }
         }
-        
+
         /// <summary>
         /// Works out which animation angle to use based on player camera and npc heading.
         /// </summary>
@@ -486,6 +486,68 @@ namespace Underworld
                         }
                     }
                 }
+            }
+        }
+
+
+        /// <summary>
+        /// When sleeping or other circumstances certain npcs will be returned to their home tiles.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="generaltypes"></param>
+        public static void ReturnNPCToHomeTile(uwObject obj, ref int[] generaltypes)
+        {
+            if (!UWTileMap.ValidTile(obj.tileX, obj.tileY))
+            {
+                return;
+            }
+            if (obj.SpawnedCritter_0XD_Bit8 == 0)
+            {
+                obj.UnkBit_0x19_7 = 0;
+                obj.IsAlly = 0;
+                obj.UnkBit_0x19_4 = 0;
+                obj.UnkBit_0x19_5 = 0;
+                obj.UnkBit_0x19_0_likelyincombat = 0;
+                if (obj.npc_goal != (byte)npc.npc_goals.npc_goal_want_to_talk)
+                {
+                    obj.heading = (short)(Rng.r.Next(8) & 7);
+                }
+                var avghit = critterObjectDat.avghit(obj.item_id);
+                if (obj.npc_hp < avghit)
+                {
+                    if (obj.UnkBit_0XD_Bit9 == 0)
+                    {
+                        obj.npc_hp += (byte)(avghit / 2);
+                    }
+                }
+                if (obj.UnkBit_0XA_Bit7 == 0)
+                {
+                    var generaltype = critterObjectDat.generaltype(obj.item_id);
+                    switch (obj.npc_attitude)
+                    {
+                        case 0:
+                            generaltypes[generaltype]++;
+                            break;
+                        case 3:
+                            generaltypes[generaltype]--;
+                            break;
+                    }
+                }
+
+                if ((obj.quality != obj.npc_xhome) || (obj.owner != obj.npc_yhome))
+                {
+                    var tile = UWTileMap.current_tilemap.Tiles[obj.npc_xhome, obj.npc_yhome];
+                    if (tile.tileType != UWTileMap.TILE_SOLID)
+                    {
+                        npc.moveNPCToTile(obj, tile.tileX, tile.tileY);
+                    }
+                }
+
+            }
+            else
+            {
+                //remove temporary spawned npcs
+                ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(tileX: obj.tileX, tileY: obj.tileY, indexToDelete: obj.index);
             }
         }
 

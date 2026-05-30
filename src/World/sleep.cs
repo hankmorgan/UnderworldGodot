@@ -148,6 +148,7 @@ namespace Underworld
                 else
                 {
                     Debug.Print("Add calm function here");
+                    uwObject.ResetMobileObjects();
                     a_create_object_trap.FindAndRunCreateObjectTraps();
 
                     si_hourstosleep = 7 + Rng.r.Next(4) - si_hourstosleep;
@@ -627,6 +628,5 @@ namespace Underworld
                 HeadingHeightFlag: 0);
 
         }
-
     }//end class
 }//end namespace

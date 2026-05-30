@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Net.Http.Headers;
 using Godot;
 
 namespace Underworld
@@ -19,10 +22,10 @@ namespace Underworld
                     if (npc_whoami != 0)
                     {
                         var name = GameStrings.GetString(7, npc_whoami + 16);
-                        if (name!="")
+                        if (name != "")
                         {//check for 0 length whoami. eg the gazer in the mines has no name
                             return name;
-                        }                       
+                        }
                     }
                 }
                 return GameStrings.GetObjectNounUW(item_id);
@@ -185,14 +188,14 @@ namespace Underworld
         /// </summary>
         public short flags0
         {
-            get 
+            get
             {
                 return (short)(flags_full & 0x1);
             }
             set
-            {                
-                short bit = (short)(value & 0x1);         
-                var tmp = (short)(flags_full & 0xE);                
+            {
+                short bit = (short)(value & 0x1);
+                var tmp = (short)(flags_full & 0xE);
                 tmp = (short)(tmp | bit);
                 flags_full = tmp;
             }
@@ -203,14 +206,14 @@ namespace Underworld
         /// </summary>
         public short flags1
         {
-            get 
+            get
             {
-                return (short)((flags_full>>1) & 0x1);
+                return (short)((flags_full >> 1) & 0x1);
             }
             set
-            {                
-                short bit = (short)((value & 0x1)<<1);         
-                var tmp = (short)(flags_full & 0xD);                
+            {
+                short bit = (short)((value & 0x1) << 1);
+                var tmp = (short)(flags_full & 0xD);
                 tmp = (short)(tmp | bit);
                 flags_full = tmp;
             }
@@ -221,9 +224,9 @@ namespace Underworld
         /// </summary>
         public short flags2
         {
-            get 
+            get
             {
-                return (short)((flags_full>>2) & 0x1);
+                return (short)((flags_full >> 2) & 0x1);
             }
         }
 
@@ -504,7 +507,7 @@ namespace Underworld
                     SetAt(PTR + 0xA, (byte)(existingValue | ((value & 0x7) << 4)));
                 }
             }
-        }        
+        }
 
         /// <summary>
         /// Used by create object traps. Possibly flags if npc is "live". For projectiles set to 1 when it has hit an NPC
@@ -960,7 +963,7 @@ namespace Underworld
             }
             set
             {
-               Projectile_Pitch = value;
+                Projectile_Pitch = value;
             }
         }
 
@@ -1193,7 +1196,7 @@ namespace Underworld
         /// </summary>
         public short UnkBit_0x19_0_likelyincombat
         {
-             get
+            get
             {
                 if (IsStatic) { return 0; }
                 int val = GetAt(PTR + 0x19);
@@ -1209,7 +1212,7 @@ namespace Underworld
 
         public short UnkBit_0x19_1
         {
-             get
+            get
             {
                 if (IsStatic) { return 0; }
                 int val = GetAt(PTR + 0x19);
@@ -1243,10 +1246,10 @@ namespace Underworld
         }
 
 
-        
+
         public short UnkBit_0x19_4
         {
-             get
+            get
             {
                 if (IsStatic) { return 0; }
                 int val = GetAt(PTR + 0x19);
@@ -1262,7 +1265,7 @@ namespace Underworld
 
         public short UnkBit_0x19_5
         {
-             get
+            get
             {
                 if (IsStatic) { return 0; }
                 int val = GetAt(PTR + 0x19);
@@ -1406,7 +1409,7 @@ namespace Underworld
                 var z = CoordinateZ;
 
                 return XYZToVector3(x, y, z);
-            }          
+            }
         }
 
         /// <summary>
@@ -1439,11 +1442,11 @@ namespace Underworld
             float ResolutionXY = 23f;
             int tilexy = (int)(offXY / 1.2f);
 
-            offXY = offXY * 100f;            
+            offXY = offXY * 100f;
             short xypos = (short)((offXY - (tilexy * BrushXY)) / (BrushXY / ResolutionXY));
 
             // xypos = (xypos * 3) + 1;
-            xypos = (short)((xypos-1)/3);
+            xypos = (short)((xypos - 1) / 3);
 
             if (xypos > 8)//what was I thinking here???
             {
@@ -1474,15 +1477,15 @@ namespace Underworld
         /// </summary>
         /// <param name="offZ"></param>
         /// <returns></returns>
-         public static short FloatZToZPos(float offZ)
-         {
+        public static short FloatZToZPos(float offZ)
+        {
             float ResolutionZ = 128.0f; //UW has 127 posible z positions for an object in tile.
             float ceil = 32;// tileMap.CEILING_HEIGHT;
             float BrushZ = 15f;
             offZ = offZ * 100f;
             //float offZ = (_zpos / ResolutionZ) * ceil * BrushZ;
             return (short)((offZ / (ceil * BrushZ)) * ResolutionZ);
-         }
+        }
 
 
         public static int GetObjectSprite(uwObject obj)
@@ -1526,16 +1529,16 @@ namespace Underworld
             {
                 return obj.ObjectQuantity;
             }
-        }               
+        }
 
 
-        public int Durability     
-        {  
+        public int Durability
+        {
             get
             {
-                if (majorclass==0)
+                if (majorclass == 0)
                 {
-                    switch((item_id & 0x30)>>4)
+                    switch ((item_id & 0x30) >> 4)
                     {
                         case 0://melee weapons
                             return weaponObjectDat.durability(item_id);
@@ -1544,9 +1547,9 @@ namespace Underworld
                             return armourObjectDat.durability(item_id);
                     }
                 }
-                return -1; 
+                return -1;
             }
-                       
+
         }
 
 
@@ -1590,29 +1593,29 @@ namespace Underworld
 
         public static bool CheckIfObjectInValidSlot(uwObject obj, int slot)
         {
-            if ((slot>=0) && (slot<4))
+            if ((slot >= 0) && (slot < 4))
             {
                 return true;
             }
-            if ((slot== 10) || (slot==9))
+            if ((slot == 10) || (slot == 9))
             {
                 return true;
             }
             if (
-                (playerdat.isLefty && slot==8)
+                (playerdat.isLefty && slot == 8)
                 ||
-                (!playerdat.isLefty && slot==7)
+                (!playerdat.isLefty && slot == 7)
                 )
             {
                 if (obj.majorclass == 0)
                 {
-                    if (obj.minorclass>=2)
+                    if (obj.minorclass >= 2)
                     {
-                        if (obj.classindex<11)
+                        if (obj.classindex < 11)
                         {
                             return false;
                         }
-                        if (obj.classindex<=15)
+                        if (obj.classindex <= 15)
                         {
                             return true;
                         }
@@ -1636,6 +1639,65 @@ namespace Underworld
                 return false;
             }
         }
+
+
+        /// <summary>
+        /// "Calms" the npcs and objects on the map when the player leaves the map (or other events);
+        /// </summary>
+        public static void ResetMobileObjects()
+        {
+            var GeneralTypeArray = new int[64];
+            var activeMobiles = new List<int>();
+            for (var o = 0; o < UWTileMap.current_tilemap.NoOfActiveMobiles; o++)
+            {//construct a list of the mobiles first before processing as this code may cause the NoOfActiveMobiles to change.
+                activeMobiles.Add(o);
+            }
+            foreach (var o in activeMobiles)
+            {
+                var obj = UWTileMap.current_tilemap.LevelObjects[o];
+                if (obj.majorclass == 1)
+                {
+                    //npc
+                    npc.ReturnNPCToHomeTile(obj, ref GeneralTypeArray);
+                }
+                else
+                {
+                    //mobile
+                    StopMobileObject(obj);
+                }
+            }
+
+            //On resumption. Loop again and check what the generaltype code does
+        }
+
+        static bool StopMobileObject(uwObject obj)
+        {
+            if(_RES == GAME_UW2)
+            {
+                if ((obj.item_id == 0x1D) || (obj.item_id == 0x13F))
+                {
+                    return false;
+                }
+            }
+
+            if (!UWTileMap.ValidTile(obj.tileX, obj.tileY))
+            {
+                return false;
+            }
+            var tile = UWTileMap.current_tilemap.Tiles[obj.tileX,obj.tileY];
+            var result = ObjectRemover_OLD.RemoveObject(tile.indexObjectList, obj, false);
+            if (result != null)
+            {
+                result = motion.ObjectHitsFloorTile_seg030_2BB7_DDF(result);
+                if (result!=null)
+                {
+                    //unlink from tile and add to the tile. 
+                    Debug.Print("Does this code StopMobileObject need to be implemented?"); // is the linking to the tile handled by ObjectHitsFloorTile.
+                }
+            }
+            return true;
+        }
+
 
     } //end class
 }//end namespace

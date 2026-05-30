@@ -541,7 +541,7 @@ namespace Underworld
 
         /// <summary>
         /// Vanilla remove object behaviour. Remove object will obey object culling rules and clean linked lists/object overlays if needed.
-        /// This function needs to be completed fully and 
+        /// This function needs to be completed fully to remove from object lists.
         /// </summary>
         /// <param name="ListHeadValue"></param>
         /// <param name="objToRemove"></param>

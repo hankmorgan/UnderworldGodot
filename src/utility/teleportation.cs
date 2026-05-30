@@ -499,7 +499,8 @@ namespace Underworld
                     if (mode == ExitLevelMode)
                     {
                         //Calm NPCs?
-                        Debug.Print("Todo 'Calm NPCS'");
+                        //Debug.Print("'Calm NPCS'");
+                        uwObject.ResetMobileObjects();
                     }
                 }
 
@@ -588,7 +589,8 @@ namespace Underworld
                     if (mode == ExitLevelMode)
                     {
                         //Calm NPCs?
-                        Debug.Print("Todo 'Calm NPCS'");
+                        //Debug.Print("'Calm NPCS'");
+                        uwObject.ResetMobileObjects();
                     }
                 }
                 switch ((worlds.UW1_Dungeons)dungeon)

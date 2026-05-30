@@ -413,7 +413,7 @@ namespace Underworld
             
         }
 
-        static uwObject ObjectHitsFloorTile_seg030_2BB7_DDF(uwObject projectile)
+        public static uwObject ObjectHitsFloorTile_seg030_2BB7_DDF(uwObject projectile)
         {
             bool haltobject = true;
             uwObject haltedObject;

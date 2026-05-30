@@ -198,6 +198,7 @@ namespace Underworld
             XMIMusic.ChangeThemeMusic(0xA);//play depressed theme
             
             //make humans friendly, set quests, run a trap, advance the clock and move LB to the prison to release you.
+            uwObject.ResetMobileObjects();
             
             var newtime = (ClockValue / 0x3C00) % 20;
             newtime = Math.Abs(0x28 - newtime);
