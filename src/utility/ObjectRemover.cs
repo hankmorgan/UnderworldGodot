@@ -1,8 +1,339 @@
 using System.Collections.Generic;
 using System.Diagnostics;
+using Godot;
 
 namespace Underworld
 {
+
+    public class ObjectRemover : UWClass
+    {
+
+        static int RemoveTrapFlags = 0;
+
+        /// <summary>
+        /// Vanilla remove object behaviour. Remove object will obey object culling rules and clean linked lists/object overlays if needed.
+        /// The problem I keep running into with this is that in vanilla code I'm dealing with direct ptrs to memory where as in c# I can only really reference the arrays. 
+        /// At a few points in the process. I need to be able to change variable values outside of the arrays. I have writers block on this object removal code....
+        /// </summary>
+        /// <param name="ListHeadPTR"></param>
+        /// <param name="objToRemove"></param>
+        /// <param name="ForceCull"></param>
+        /// <returns></returns>
+        public static uwObject RemoveObject_experimental(uwObject[] objectlist, byte[]buffer, int ListHeadPTR, uwObject objToRemove, bool ForceCull)
+        {
+            if (!ForceCull)
+            {
+                if (!ObjectRemover_OLD.ObjectCullingTest(objToRemove, 0xA))
+                {
+                    return objToRemove;
+                }
+            }
+
+            if (objToRemove.majorclass == 7)
+            {
+                //remove the animation overlay
+                AnimationOverlay.RemoveAnimationOverlay(objToRemove.index);
+            }
+            if (ListHeadPTR == 0)
+            {
+                //construct a temporary buffer to use with ClearLinkedList
+                byte[] tmp = new byte[2];
+                Loader.setAt16(tmp, 0, objToRemove.index << 6);
+
+                Debug.Print("unimplemented/untested object removal scenario. ListHeadPtr is 0");
+                ClearLinkedList(
+                    objectlist: objectlist,
+                    objectdata: objToRemove.DataBuffer,
+                    listheaddata: tmp,
+                    ptrListHead: 0);
+            }
+            else
+            {
+                //ObjectRemover_OLD.RemoveObjectAndChainFromLists(objToRemove, ListHeadPTR);
+                //RemoveObjectAndChainFromLists(ListHeadValue, ObjtoRemove)//to implement
+                RemoveObjectAndChainFromLists(
+                    objectlist: objectlist, 
+                    objectdata: buffer, 
+                    listheaddata: buffer, 
+                    ptrListHead: ListHeadPTR, 
+                    toDelete: objToRemove);
+            }
+            return null;
+        }
+
+
+        static void RemoveObjectAndChainFromLists(uwObject[]objectlist, byte[]objectdata, byte[]listheaddata, long ptrListHead, uwObject toDelete)
+        {
+            if (toDelete.is_quant == 0)
+            {
+                if (toDelete.link>0)
+                {
+                    ClearLinkedList(
+                        objectlist: objectlist, 
+                        objectdata: objectdata, 
+                        listheaddata: listheaddata, 
+                        ptrListHead: toDelete.PTR+6);
+                }
+            }
+            
+            if (UnlinkObjectFromLinkedList(
+                objectlist: objectlist, 
+                listheaddata: listheaddata, 
+                objectdata: objectdata, 
+                ptrListHead: ptrListHead, 
+                toUnlink: toDelete))
+            {
+                ObjectFreeLists.ReleaseFreeObject(toDelete);
+            }
+        }
+
+        static void ClearLinkedList(uwObject[] objectlist, byte[] objectdata, byte[] listheaddata, long ptrListHead)
+        {
+            var ListHeadObject = GetLinkNextObject(
+                objectList: objectlist,
+                buffer: listheaddata,
+                ptr: ptrListHead);
+
+            if (ListHeadObject != null)
+            {
+                if (ListHeadObject.next != 0)
+                {
+                    ClearLinkedList(
+                        objectlist: objectlist, 
+                        objectdata: ListHeadObject.DataBuffer, 
+                        listheaddata: ListHeadObject.DataBuffer, 
+                        ptrListHead: ListHeadObject.PTR + 4); //clear the list of the objects next
+                }
+                if (ListHeadObject.majorclass == 6)
+                {
+                    //trap/trigger
+                    //Debug.Print("REMOVE TRAP TRIGGER CHAIN");
+                    RemoveTrapTriggerChain(
+                        objectlist: objectlist, 
+                        listheaddata: listheaddata, 
+                        objectdata: objectdata, 
+                        ptrListHead: ptrListHead, 
+                        toUnlink: ListHeadObject );
+                }
+                else
+                {
+                    if (ListHeadObject.is_quant == 0)
+                    {
+                        if (ListHeadObject.link != 0)
+                        {
+                            //clear the link chain
+                            ClearLinkedList(objectlist, ListHeadObject.DataBuffer, ListHeadObject.DataBuffer, ListHeadObject.PTR + 6);
+                        }
+                    }
+                    //unlink from this chain
+                    if (UnlinkObjectFromLinkedList(
+                        objectlist: objectlist,
+                        listheaddata: listheaddata,
+                        objectdata: ListHeadObject.DataBuffer,
+                        ptrListHead: ptrListHead,
+                        toUnlink: ListHeadObject))
+                    {
+                        ObjectFreeLists.ReleaseFreeObject(ListHeadObject);
+                    }
+                }
+            }
+
+        }
+
+        static void RemoveTrapTriggerChain(uwObject[] objectlist, byte[] listheaddata, byte[] objectdata, long ptrListHead, uwObject toUnlink)
+        {
+            if (toUnlink.minorclass > 1)//triggers
+            {
+                RemoveTriggerChain(
+                    objectlist: objectlist,
+                    listheaddata: listheaddata,
+                    objectdata: objectdata,
+                    ptrListHead: ptrListHead,
+                    toUnlink: toUnlink);
+            }
+            else
+            {
+                //traps
+                RemoveTrapChain(
+                    objectlist: objectlist,
+                    listheaddata: listheaddata,
+                    objectdata: objectdata,
+                    ptrListHead: ptrListHead,
+                    toUnlink: toUnlink);
+            }
+        }
+
+        static void RemoveTriggerChain(uwObject[] objectlist, byte[] listheaddata, byte[] objectdata, long ptrListHead, uwObject toUnlink)
+        {
+            var linkedObject = GetLinkNextObject(objectlist, objectdata, toUnlink.PTR + 6);
+            if (linkedObject != null)
+            {
+                if (linkedObject.flags == 1)
+                {
+                    if (UnlinkObjectFromLinkedList(objectlist, listheaddata, objectdata, ptrListHead, toUnlink))
+                    {
+                        linkedObject.flags--;
+                        ObjectFreeLists.ReleaseFreeObject(toUnlink);
+                    }
+                }
+                else
+                {
+                    var tile = UWTileMap.current_tilemap.Tiles[toUnlink.owner, toUnlink.quality];
+                    RemoveTrapChain(
+                        objectlist: objectlist,
+                        listheaddata: toUnlink.DataBuffer,
+                        objectdata: toUnlink.DataBuffer,
+                        ptrListHead: tile.Ptr + 2,
+                        toUnlink: linkedObject);
+                }
+
+                if (_RES == GAME_UW2)
+                {
+                    if (triggerObjectDat.triggertype(toUnlink.item_id) == (int)triggerObjectDat.triggertypes.TIMER)
+                    {
+                        Debug.Print("handle removal of timer trigger!");//the timer trigger has to be moved in the list of timers. Unknown when in game this would happen/?
+                    }
+                }
+            }
+        }
+
+        static void RemoveTrapChain(uwObject[] objectlist, byte[] listheaddata, byte[] objectdata, long ptrListHead, uwObject toUnlink)
+        {
+            RemoveTrapFlags = toUnlink.flags;
+            if (RemoveTrapFlags != 0)
+            {
+                foreach (var tile in UWTileMap.current_tilemap.Tiles)
+                {
+                    if (RemoveTrapFlags == 0)
+                    {
+
+                    }
+                    else
+                    {
+                        if (tile.indexObjectList > 0)
+                        {
+                            RemoveTriggersPointAtTrap(objectlist, listheaddata, objectdata, tile.Ptr + 2, toUnlink);
+                        }
+                    }
+                }
+            }
+        }
+
+        static void RemoveTriggersPointAtTrap(uwObject[] objectlist, byte[] listheaddata, byte[] objectdata, long ptrListHead, uwObject toRemove)
+        {
+            var HeadObject = GetLinkNextObject(
+                objectList: objectlist,
+                buffer: listheaddata,
+                ptr: ptrListHead);
+            while (HeadObject != null)
+            {
+                var NextObject = GetLinkNextObject(objectlist, objectdata, HeadObject.PTR + 4); //get next now.
+
+                if (HeadObject.majorclass == 6)
+                {
+                    if (HeadObject.minorclass > 2)
+                    {
+                        //object is a trigger
+                        if (HeadObject.link == toRemove.index)
+                        {
+                            if (_RES == GAME_UW2)
+                            {
+                                if (triggerObjectDat.triggertype(HeadObject.item_id) == (int)triggerObjectDat.triggertypes.TIMER)
+                                {
+                                    Debug.Print("Handle removal of timer trigger!");
+                                }
+                            }
+                            if (UnlinkObjectFromLinkedList(
+                                objectlist: objectlist,
+                                listheaddata: HeadObject.DataBuffer,
+                                objectdata: objectdata,
+                                ptrListHead: HeadObject.PTR + 6,
+                                toUnlink: toRemove))
+                            {
+                                ObjectFreeLists.ReleaseFreeObject(HeadObject);
+                                RemoveTrapFlags--;
+                            }
+                        }
+                    }
+                }
+
+                //check the link again
+                if (HeadObject.is_quant == 0)
+                {
+                    if (HeadObject.link > 0)
+                    {
+                        RemoveTriggersPointAtTrap(
+                            objectlist: objectlist,
+                            listheaddata: objectdata,
+                            objectdata: objectdata,
+                            ptrListHead: HeadObject.PTR + 6,
+                            toRemove: toRemove);
+                    }
+                }
+                HeadObject = NextObject;
+            }
+        }
+
+        static bool UnlinkObjectFromLinkedList(uwObject[] objectlist, byte[] listheaddata, byte[] objectdata, long ptrListHead, uwObject toUnlink)
+        {
+            if (toUnlink != null)
+            {
+                var nextObject = GetLinkNextObject(objectList: objectlist, buffer: listheaddata, ptr: ptrListHead);
+                if (nextObject == toUnlink)
+                {
+                    //initial case where the head object is to one to remove.
+                    //Set the listhead "next" to the objects next and clear the objects next
+                    var tmp = (int)DataLoader.getAt16(listheaddata, ptrListHead) & 0x3F;
+                    tmp = (tmp | (toUnlink.next << 6));
+                    DataLoader.setAt16(listheaddata, (int)ptrListHead, tmp);
+                    toUnlink.next = 0;
+                    return true;
+                }
+
+                while (nextObject != null)
+                {
+                    if (nextObject == toUnlink)
+                    {
+                        var tmp = (int)DataLoader.getAt16(objectdata, ptrListHead) & 0x3F;
+                        tmp = (tmp | (toUnlink.next << 6));
+                        DataLoader.setAt16(objectdata, (int)ptrListHead, tmp);
+                        toUnlink.next = 0;
+                        return true;
+                    }
+                    ptrListHead = nextObject.PTR + 4;
+                    nextObject = GetLinkNextObject(objectList: objectlist, buffer: objectdata, ptr: ptrListHead); //get the next object.
+                }
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+
+        static uwObject GetLinkNextObject(uwObject[] objectList, byte[] buffer, long ptr)
+        {
+            var index = GetLinkNext(buffer, ptr);
+            if (index != 0)
+            {
+                return objectList[index];
+            }
+            else
+            {
+                return null;
+            }
+
+        }
+
+        static int GetLinkNext(byte[] buffer, long ptr)
+        {
+            return (int)((Loader.getAt(buffer, ptr, 16) >> 6) & 0x3FF);
+        }
+
+    }//end class
+
+
     /// <summary>
     /// Class for removing instances of objects from object index chains
     /// </summary>
@@ -477,11 +808,11 @@ namespace Underworld
                 CullingRange += Rng.r.Next(3);
             }
             GlobalCullingRange = CullingRange;
-            if (CheckDoNotCull(obj) == false)
+            if (ObjectCullingRngTest(obj) == false)
             {
                 if ((obj.is_quant == 0) && (obj.link != 0))
                 {//object is a container that needs it's contents to be tested 
-                    if (CallBacks.RunCodeOnObjectsInChain(CheckDoNotCull, obj, UWTileMap.current_tilemap.LevelObjects))
+                    if (CallBacks.RunCodeOnObjectsInChain(ObjectCullingRngTest, obj, UWTileMap.current_tilemap.LevelObjects))
                     {
                         return false;
                     }
@@ -507,7 +838,7 @@ namespace Underworld
         /// </summary>
         /// <param name="obj"></param>
         /// <returns>True if the object is to be preserved, false to cull</returns>
-        static bool CheckDoNotCull(uwObject obj)
+        static bool ObjectCullingRngTest(uwObject obj)
         {
             if (obj.doordir == 1)
             {
@@ -528,7 +859,7 @@ namespace Underworld
                     }
                     else
                     {
-                        si = obj.link -1;
+                        si = obj.link - 1;
                     }
                 }
 
@@ -542,49 +873,5 @@ namespace Underworld
                 }
             }
         }
-
-        //****************************************************** UPDATED FUNCS ********************************************//
-
-
-        /// <summary>
-        /// Vanilla remove object behaviour. Remove object will obey object culling rules and clean linked lists/object overlays if needed.
-        /// The problem I keep running into with this is that in vanilla code I'm dealing with direct ptrs to memory where as in c# I can only really reference the arrays. 
-        /// At a few points in the process. I need to be able to change variable values outside of the arrays. I have writers block on this object removal code....
-        /// </summary>
-        /// <param name="ListHeadPTR"></param>
-        /// <param name="objToRemove"></param>
-        /// <param name="ForceCull"></param>
-        /// <returns></returns>
-        public static uwObject RemoveObject_experimental(int ListHeadPTR, uwObject objToRemove, bool ForceCull)
-        {
-            if (!ForceCull)
-            {
-                if (!ObjectCullingTest(objToRemove, 0xA))
-                {
-                    return objToRemove;
-                }
-            }
-
-            //construct a link/next byte
-            var LinkNext = objToRemove.index << 6;
-
-            if (objToRemove.majorclass == 7)
-            {
-                //remove the animation overlay
-                AnimationOverlay.RemoveAnimationOverlay(objToRemove.index);
-            }
-            if (ListHeadPTR == 0)
-            {
-                //ClearLinkedList(LinkNext)//to implement.
-                Debug.Print("unimplement object removal scenario. ListHeadPtr is 0");
-            }
-            else
-            {
-                ObjectRemover_OLD.RemoveObjectAndChainFromLists(objToRemove, ListHeadPTR);
-                //RemoveObjectAndChainFromLists(ListHeadValue, ObjtoRemove)//to implement
-            }
-            return null;
-        }
-
     }//end class
 }//end namespace

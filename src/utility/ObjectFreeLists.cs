@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace Underworld
 {
     /// <summary>
@@ -58,7 +60,7 @@ namespace Underworld
             {//mobile
                 UWTileMap.current_tilemap.MobileFreeListObject = obj.index;
                 UWTileMap.current_tilemap.MobileFreeListPtr++;
-                //Debug.Print($"Freeing Mobile {obj.index} Pointer incremented to {UWTileMap.current_tilemap.MobileFreeListPtr}");
+                Debug.Print($"Freeing Mobile {obj.index} Pointer incremented to {UWTileMap.current_tilemap.MobileFreeListPtr}");
                 for (int i = 0; i < UWTileMap.current_tilemap.NoOfActiveMobiles; i++)
                 {
                     var atSlot = UWTileMap.current_tilemap.GetActiveMobileAtIndex(i);
@@ -79,7 +81,7 @@ namespace Underworld
             {//static
                 UWTileMap.current_tilemap.StaticFreeListObject = obj.index;
                 UWTileMap.current_tilemap.StaticFreeListPtr++;
-                //Debug.Print($"Freeing Static {obj.index} {obj.a_name} Pointer incremented to {UWTileMap.current_tilemap.StaticFreeListPtr}");
+                Debug.Print($"Freeing Static {obj.index} {obj.a_name} Pointer incremented to {UWTileMap.current_tilemap.StaticFreeListPtr}");
             }
 
             if (obj.instance != null)

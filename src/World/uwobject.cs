@@ -1717,7 +1717,7 @@ namespace Underworld
         /// <returns></returns>
         static bool StopMobileObject(uwObject obj)
         {
-            return false;  //disabled for now due to bugs with the objects not landing on the ground/culling check deleting objects.
+            //return false;  //disabled for now due to bugs with the objects not landing on the ground/culling check deleting objects.
             if (_RES == GAME_UW2)
             {
                 if ((obj.item_id == 0x1D) || (obj.item_id == 0x13F))
@@ -1731,9 +1731,14 @@ namespace Underworld
                 return false;
             }
             var tile = UWTileMap.current_tilemap.Tiles[obj.tileX, obj.tileY];
-            //var result = ObjectRemover_OLD.RemoveObject_experimental(tile.indexObjectList, obj, false);
-            //if (!ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(tile.tileX, tile.tileY, obj.index)) //still using the depreciated object remover...
-            var result = ObjectRemover_OLD.RemoveObject_experimental((int)(tile.Ptr + 2), obj, false);
+
+            var result = ObjectRemover.RemoveObject_experimental(
+                objectlist: UWTileMap.current_tilemap.LevelObjects, 
+                buffer: UWTileMap.current_tilemap.lev_ark_block.Data,
+                ListHeadPTR: (int)(tile.Ptr + 2), 
+                objToRemove: obj, 
+                ForceCull: false);
+                
             if (result != null)
             {
                 //when unable to delete. try hitting the floor.
@@ -1741,9 +1746,16 @@ namespace Underworld
                 if (result != null)
                 {
                     //unlink from tile and add to the tile. 
-                    Debug.Print("Does this code StopMobileObject need to be implemented? It does. mobiles stay floating otherwise."); // is the linking to the tile handled by ObjectHitsFloorTile.
-                    //need to update code to place object on top of tile.
-                    
+                    if (tile.tileType != UWTileMap.TILE_OPEN)
+                    {
+                        Debug.Print("StopMobileObject. Need to adjust for floor height. Not moving object due to risk it may be lost underneath tile."); 
+                    }   
+                    else
+                    {                                           
+                        obj.zpos = (short)(tile.floorHeight<<3); //this needs to account for slopes.
+                        objectInstance.Reposition(obj);
+                    }                
+
                 }
             }
             return true;
