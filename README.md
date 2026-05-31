@@ -115,7 +115,6 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 - Some NPC sprites are incorrectly cropped or hover off the ground.
 - NPCs and mobile objects move at a slow rate of refresh (this is timing configuration, but a slower speed allows me to check their behaviours during testing..)
 - Some cutscenes are missing frames or have visual distortions
-- Enter/Exit/Pressure triggers currently not implemented
 - Music stops playing because game cannot detect when a playing music track is finished.
 - Sprite billboarding is always "UP" even when the player camera is being rolled.
 - Cursor pivots are at centre of art for the automap ui elements such as the quill.

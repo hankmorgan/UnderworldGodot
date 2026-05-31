@@ -365,7 +365,7 @@ namespace Underworld
                     var NextObject = UWTileMap.current_tilemap.LevelObjects[next];
                     if ((NextObject.OneF0Class & 0x1E) == 0x1A)
                     {
-                        Debug.Print($"{NextObject.index} {NextObject.a_name} is a trigger to test");
+                        //Debug.Print($"{NextObject.index} {NextObject.a_name} is a trigger to test");
                         //NextObject is a trigger.
                         if (triggerObjectDat.triggertype(NextObject.item_id) == triggerType)
                         {

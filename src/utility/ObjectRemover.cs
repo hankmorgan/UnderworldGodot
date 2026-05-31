@@ -49,8 +49,6 @@ namespace Underworld
             }
             else
             {
-                //ObjectRemover_OLD.RemoveObjectAndChainFromLists(objToRemove, ListHeadPTR);
-                //RemoveObjectAndChainFromLists(ListHeadValue, ObjtoRemove)//to implement
                 RemoveObjectAndChainFromLists(
                     objectlist: objectlist, 
                     objectdata: buffer, 

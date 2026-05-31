@@ -187,7 +187,10 @@ namespace Underworld
 
             if (File.Exists(fullPath))
             {
-                Debug.Print($"Playing sound {vocName} vol={vol:X2} pan={pan:X2}");
+                if (effectno>2)
+                {
+                    Debug.Print($"Playing sound {vocName} vol={vol:X2} pan={pan:X2}");
+                }                
                 AudioSample sound = vocLoader.Load(vocName);
                 if (sound != null && sound.AudioBuffer != null)
                 {

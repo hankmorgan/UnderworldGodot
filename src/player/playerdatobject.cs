@@ -89,7 +89,7 @@ namespace Underworld
                 }
             }
 
-            //TODO update lighting, pressure triggers
+            //TODO update lighting
 
         }
     }//end class

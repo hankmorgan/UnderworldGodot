@@ -16,7 +16,7 @@ namespace Underworld
         /// </summary>
         public static uwObject CameraReference;
 
-
+        public static bool MoongateSucking = false;
         /// <summary>
         /// Camera positions for do trap camera and roaming sight.
         /// </summary>
@@ -36,41 +36,59 @@ namespace Underworld
         /// </summary>
         public static void PositionPlayerCamera()
         {
-
             if (CameraReference != null)
             {
-                if (CameraReference == playerObject)
+                if (!MoongateSucking)
                 {
-                    // var x = motion.playerMotionParams.x_0;
-                    // var y = motion.playerMotionParams.y_2;
-                    // var z = motion.playerMotionParams.z_4 + 0xA4;//offset for player head. This is lower than player height.
-                    //set up yaw, pitch and other motion values.
-                    // var yaw = (float)motion.PlayerCameraYaw_dseg_8294;
-                    // var roll = (float)motion.PlayerCameraRoll_dseg_67d6_33D8;
-                    // var pitch = (float)motion.PlayerCameraPitch_dseg_67d6_33D6;
-                    //bool applyBob = motion.CameraIsBobbing_dseg_67d6_33c6;
-                    PositionCamera(
-                        x: motion.playerMotionParams.x_0, 
-                        y: motion.playerMotionParams.y_2, 
-                        z: motion.playerMotionParams.z_4 + 0xA4, 
-                        yaw: (float)motion.PlayerCameraYaw_dseg_8294, 
-                        roll: (float)motion.PlayerCameraRoll_dseg_67d6_33D8, 
-                        pitch: (float)motion.PlayerCameraPitch_dseg_67d6_33D6, 
-                        applyBob: motion.CameraIsBobbing_dseg_67d6_33c6);
+                    if (CameraReference == playerObject)
+                    {
+                        // var x = motion.playerMotionParams.x_0;
+                        // var y = motion.playerMotionParams.y_2;
+                        // var z = motion.playerMotionParams.z_4 + 0xA4;//offset for player head. This is lower than player height.
+                        //set up yaw, pitch and other motion values.
+                        // var yaw = (float)motion.PlayerCameraYaw_dseg_8294;
+                        // var roll = (float)motion.PlayerCameraRoll_dseg_67d6_33D8;
+                        // var pitch = (float)motion.PlayerCameraPitch_dseg_67d6_33D6;
+                        //bool applyBob = motion.CameraIsBobbing_dseg_67d6_33c6;
+                        PositionCamera(
+                            x: motion.playerMotionParams.x_0,
+                            y: motion.playerMotionParams.y_2,
+                            z: motion.playerMotionParams.z_4 + 0xA4,
+                            yaw: (float)motion.PlayerCameraYaw_dseg_8294,
+                            roll: (float)motion.PlayerCameraRoll_dseg_67d6_33D8,
+                            pitch: (float)motion.PlayerCameraPitch_dseg_67d6_33D6,
+                            applyBob: motion.CameraIsBobbing_dseg_67d6_33c6);
 
+                    }
+                    else
+                    {
+                        //Debug.Print("attach a camera to a non-player mobile object.");
+                        var x = (CameraReference.npc_xhome<<8) + (CameraReference.xpos<<5);
+                        var y = (CameraReference.npc_yhome<<8) + (CameraReference.ypos<<5);
+                        var z = (CameraReference.zpos << 3) + 0xB0;
+                        var yaw = (CameraReference.npc_heading<<8) + (CameraReference.heading<<0xD);
+                        PositionCamera(
+                            x: (short)x,
+                            y: (short)y,
+                            z: z,
+                            yaw: yaw,
+                            roll: 0,
+                            pitch: 0,
+                            applyBob: false);
+                    }                
                 }
                 else
                 {
-                    Debug.Print("TODO attach a camera to a non-player mobile object.");
+                    Debug.Print("Rotate the camera until player is sucked in to the moongate at UW1 endgame.");
                 }
             }
             else
             {
                 //no camera object is define. Used the values in doTrapCameraX/Y/Z/heading to render the camera.
-                    PositionCamera(
-                        x: DoCameraX, y: DoCameraY, z: DoCameraZ, 
-                        yaw: DoCameraH, roll: DoCameraRoll, pitch: DoCameraPitch, 
-                        applyBob: false);
+                PositionCamera(
+                    x: DoCameraX, y: DoCameraY, z: DoCameraZ,
+                    yaw: DoCameraH, roll: DoCameraRoll, pitch: DoCameraPitch,
+                    applyBob: false);
             }
         }
 
