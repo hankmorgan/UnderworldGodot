@@ -1650,7 +1650,8 @@ namespace Underworld
             var activeMobiles = new List<int>();
             for (var o = 0; o < UWTileMap.current_tilemap.NoOfActiveMobiles; o++)
             {//construct a list of the mobiles first before processing as this code may cause the NoOfActiveMobiles to change.
-                activeMobiles.Add(o);
+                var mobileIndex = UWTileMap.current_tilemap.GetActiveMobileAtIndex(o);
+                activeMobiles.Add(mobileIndex);
             }
             foreach (var o in activeMobiles)
             {
@@ -1663,16 +1664,61 @@ namespace Underworld
                 else
                 {
                     //mobile
-                    StopMobileObject(obj);
+                    StopMobileObject(obj); 
                 }
             }
 
-            //On resumption. Loop again and check what the generaltype code does
+            //rebuild the list in case any entries have changed.
+            activeMobiles = new List<int>();
+            for (var o = 0; o < UWTileMap.current_tilemap.NoOfActiveMobiles; o++)
+            {//construct a list of the mobiles first before processing as this code may cause the NoOfActiveMobiles to change.
+                var mobileIndex = UWTileMap.current_tilemap.GetActiveMobileAtIndex(o);
+                activeMobiles.Add(mobileIndex);
+            }
+
+            // Loop again and proces the general type array. 
+            // Reviews how many npcs npcs of a given category are friend/hostile to the player and adjusts the attitude of the npc 
+            // to reflect the general view point on the player for the generaltype
+            foreach (var o in activeMobiles)
+            {
+                var obj = UWTileMap.current_tilemap.LevelObjects[o];
+                if (obj.majorclass == 1)
+                {
+                    short cl_newattitude = 0;
+                    if (obj.UnkBit_0XA_Bit7 == 0)
+                    {
+                        var var9 = GeneralTypeArray[critterObjectDat.generaltype(obj.item_id)];
+                        if (var9 != 0)
+                        {
+                            cl_newattitude = (short)(obj.npc_attitude + var9);
+                            if (cl_newattitude< 0)
+                            {
+                                cl_newattitude = 0;
+                            }
+                            if (cl_newattitude >3)
+                            {
+                                cl_newattitude = 3;
+                            }
+                            if (cl_newattitude != obj.npc_attitude)
+                            {
+                                Debug.Print($"Setting attitude of {obj.a_name} to {cl_newattitude}");                                
+                            }
+                            obj.npc_attitude = cl_newattitude;
+                        }
+                    }
+                }
+            }
         }
 
+        /// <summary>
+        /// Stops motion of mobile objects when leaving the level (an some other circumstances)
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         static bool StopMobileObject(uwObject obj)
         {
-            if(_RES == GAME_UW2)
+            return false;  //disabled for now due to bugs with the objects not landing on the ground/culling check deleting objects.
+            if (_RES == GAME_UW2)
             {
                 if ((obj.item_id == 0x1D) || (obj.item_id == 0x13F))
                 {
@@ -1684,15 +1730,20 @@ namespace Underworld
             {
                 return false;
             }
-            var tile = UWTileMap.current_tilemap.Tiles[obj.tileX,obj.tileY];
-            var result = ObjectRemover_OLD.RemoveObject(tile.indexObjectList, obj, false);
+            var tile = UWTileMap.current_tilemap.Tiles[obj.tileX, obj.tileY];
+            //var result = ObjectRemover_OLD.RemoveObject_experimental(tile.indexObjectList, obj, false);
+            //if (!ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(tile.tileX, tile.tileY, obj.index)) //still using the depreciated object remover...
+            var result = ObjectRemover_OLD.RemoveObject_experimental((int)(tile.Ptr + 2), obj, false);
             if (result != null)
             {
+                //when unable to delete. try hitting the floor.
                 result = motion.ObjectHitsFloorTile_seg030_2BB7_DDF(result);
-                if (result!=null)
+                if (result != null)
                 {
                     //unlink from tile and add to the tile. 
-                    Debug.Print("Does this code StopMobileObject need to be implemented?"); // is the linking to the tile handled by ObjectHitsFloorTile.
+                    Debug.Print("Does this code StopMobileObject need to be implemented? It does. mobiles stay floating otherwise."); // is the linking to the tile handled by ObjectHitsFloorTile.
+                    //need to update code to place object on top of tile.
+                    
                 }
             }
             return true;

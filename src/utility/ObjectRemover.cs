@@ -477,7 +477,7 @@ namespace Underworld
                 CullingRange += Rng.r.Next(3);
             }
             GlobalCullingRange = CullingRange;
-            if (!CheckDoNotCull(obj))
+            if (CheckDoNotCull(obj) == false)
             {
                 if ((obj.is_quant == 0) && (obj.link != 0))
                 {//object is a container that needs it's contents to be tested 
@@ -516,13 +516,20 @@ namespace Underworld
             else
             {
                 int si;
-                if ((obj.is_quant == 1) && ((obj.link & 0x200) == 0))
+                if (obj.is_quant == 0)
                 {
-                    si = obj.link - 1;
+                    si = 0;
                 }
                 else
                 {
-                    si = 0;
+                    if ((obj.link & 0x200) != 0)
+                    {
+                        si = 0;
+                    }
+                    else
+                    {
+                        si = obj.link -1;
+                    }
                 }
 
                 if ((commonObjDat.cullingpriority(obj.item_id) + (si / 2)) <= GlobalCullingRange)
@@ -541,13 +548,14 @@ namespace Underworld
 
         /// <summary>
         /// Vanilla remove object behaviour. Remove object will obey object culling rules and clean linked lists/object overlays if needed.
-        /// This function needs to be completed fully to remove from object lists.
+        /// The problem I keep running into with this is that in vanilla code I'm dealing with direct ptrs to memory where as in c# I can only really reference the arrays. 
+        /// At a few points in the process. I need to be able to change variable values outside of the arrays. I have writers block on this object removal code....
         /// </summary>
-        /// <param name="ListHeadValue"></param>
+        /// <param name="ListHeadPTR"></param>
         /// <param name="objToRemove"></param>
         /// <param name="ForceCull"></param>
         /// <returns></returns>
-        public static uwObject RemoveObject(int ListHeadValue, uwObject objToRemove, bool ForceCull)
+        public static uwObject RemoveObject_experimental(int ListHeadPTR, uwObject objToRemove, bool ForceCull)
         {
             if (!ForceCull)
             {
@@ -565,12 +573,14 @@ namespace Underworld
                 //remove the animation overlay
                 AnimationOverlay.RemoveAnimationOverlay(objToRemove.index);
             }
-            if (ListHeadValue == 0)
+            if (ListHeadPTR == 0)
             {
                 //ClearLinkedList(LinkNext)//to implement.
+                Debug.Print("unimplement object removal scenario. ListHeadPtr is 0");
             }
             else
             {
+                ObjectRemover_OLD.RemoveObjectAndChainFromLists(objToRemove, ListHeadPTR);
                 //RemoveObjectAndChainFromLists(ListHeadValue, ObjtoRemove)//to implement
             }
             return null;

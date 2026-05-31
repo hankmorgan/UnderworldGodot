@@ -492,6 +492,7 @@ namespace Underworld
 
         /// <summary>
         /// When sleeping or other circumstances certain npcs will be returned to their home tiles.
+        /// Will take a count of how many npcs of the given general type are hostile or friendly.
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="generaltypes"></param>
@@ -526,10 +527,10 @@ namespace Underworld
                     switch (obj.npc_attitude)
                     {
                         case 0:
-                            generaltypes[generaltype]++;
+                            generaltypes[generaltype]--;
                             break;
                         case 3:
-                            generaltypes[generaltype]--;
+                            generaltypes[generaltype]++;
                             break;
                     }
                 }

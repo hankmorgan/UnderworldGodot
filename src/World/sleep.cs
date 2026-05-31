@@ -100,13 +100,16 @@ namespace Underworld
 
             if (_RES == GAME_UW2)
             {
-                if ((playerdat.GetQuest(50) == 1) && (playerdat.GetQuest(54) != 0))//keep is crashing and has not yet crashed.
+                if (playerdat.CurrentWorld == 2) //killorn
                 {
-                    killorn.KilornIsCrashing(false);
-                    damage.DamagePlayer(
-                        basedamage: 0xFF,
-                        damagetype: 0,
-                        damagesource: 0);//kill the player for being dumb enough to fall asleep in a crashing keep.
+                    if ((playerdat.GetQuest(50) == 1) && (playerdat.GetQuest(54) != 0))//keep is crashing and has not yet crashed.
+                    {
+                        killorn.KilornIsCrashing(false);
+                        damage.DamagePlayer(
+                            basedamage: 0xFF,
+                            damagetype: 0,
+                            damagesource: 0);//kill the player for being dumb enough to fall asleep in a crashing keep.
+                    }
                 }
             }
 
@@ -280,19 +283,19 @@ namespace Underworld
 
             NearbyHostileAwareOfAvatar = false;
             CallBacks.RunCodeOnTargetsAroundObject(
-                methodToCall: TestForHostileNPCAwareOfPlayer, 
-                CentreObject: 1, 
-                rngProbablity: 0x7F, 
-                targetType: 0, 
-                distanceFromObject: 0, 
+                methodToCall: TestForHostileNPCAwareOfPlayer,
+                CentreObject: 1,
+                rngProbablity: 0x7F,
+                targetType: 0,
+                distanceFromObject: 0,
                 tileRadius: 2);
-            
+
             return NearbyHostileAwareOfAvatar;
         }
 
         public static bool TestForHostileNPCAwareOfPlayer(int x, int y, uwObject obj, TileInfo tile, int srcIndex)
         {
-            if (obj!= playerdat.playerObject)
+            if (obj != playerdat.playerObject)
             {
                 if (obj.npc_goal != 5)
                 {
@@ -319,11 +322,11 @@ namespace Underworld
             if ((playerdat.TileState & 0x3) != 0)
             {//player is drowning
                 damage.DamageObject(
-                    objToDamage: playerdat.playerObject, 
-                    basedamage: 0xFF, 
-                    damagetype: 0, 
-                    objList: UWTileMap.current_tilemap.LevelObjects, 
-                    WorldObject: true, 
+                    objToDamage: playerdat.playerObject,
+                    basedamage: 0xFF,
+                    damagetype: 0,
+                    objList: UWTileMap.current_tilemap.LevelObjects,
+                    WorldObject: true,
                     damagesource: 0);
             }
             playerdat.PlayerStatusUpdate();
@@ -334,25 +337,25 @@ namespace Underworld
                 {
                     //when not subject to slowfall, levitate or flying
                     damage.DamageObject(
-                        objToDamage: playerdat.playerObject, 
-                        basedamage: 0xC + (Rng.r.Next(6)* 0xA), 
-                        damagetype: 0x10, 
-                        objList: UWTileMap.current_tilemap.LevelObjects, 
-                        WorldObject: true, 
+                        objToDamage: playerdat.playerObject,
+                        basedamage: 0xC + (Rng.r.Next(6) * 0xA),
+                        damagetype: 0x10,
+                        objList: UWTileMap.current_tilemap.LevelObjects,
+                        WorldObject: true,
                         damagesource: 0);
                 }
             }
 
-            if ((playerdat.TileState & 0x3) !=0)
+            if ((playerdat.TileState & 0x3) != 0)
             {
                 //lava
-                    damage.DamageObject(
-                        objToDamage: playerdat.playerObject, 
-                        basedamage: 0xFF, 
-                        damagetype: 0x0, 
-                        objList: UWTileMap.current_tilemap.LevelObjects, 
-                        WorldObject: true, 
-                        damagesource: 0);
+                damage.DamageObject(
+                    objToDamage: playerdat.playerObject,
+                    basedamage: 0xFF,
+                    damagetype: 0x0,
+                    objList: UWTileMap.current_tilemap.LevelObjects,
+                    WorldObject: true,
+                    damagesource: 0);
             }
         }
 
@@ -364,12 +367,12 @@ namespace Underworld
         {
             NearbyHostileFindsAvatar = false;
             CallBacks.RunCodeOnTargetsAroundObject(
-                methodToCall: NpcHuntsSleepingPlayer, 
-                CentreObject: 1, 
-                rngProbablity: 0, 
-                targetType: 0, 
-                distanceFromObject: 0, 
-                tileRadius: 8 );
+                methodToCall: NpcHuntsSleepingPlayer,
+                CentreObject: 1,
+                rngProbablity: 0,
+                targetType: 0,
+                distanceFromObject: 0,
+                tileRadius: 8);
             return NearbyHostileFindsAvatar;
         }
 
@@ -404,38 +407,38 @@ namespace Underworld
                                     {
                                         //ovr107_8B0
                                         var path = FinalPath56.finalpath[varb];
-                                        var pathtile = UWTileMap.current_tilemap.Tiles[path.X0,path.Y1];
+                                        var pathtile = UWTileMap.current_tilemap.Tiles[path.X0, path.Y1];
 
                                         //search along the path for any ward traps. (this is vanilla behaviour but it does not check for traps like the flam rune?)
                                         var next = pathtile.indexObjectList;
-                                        while (next !=0)
+                                        while (next != 0)
                                         {
                                             var nextobj = UWTileMap.current_tilemap.LevelObjects[next];
                                             next = nextobj.next; //get next now in case it triggers.
-                                            
-                                            if ((nextobj.IsTrigger) && (nextobj.link!=0))
+
+                                            if ((nextobj.IsTrigger) && (nextobj.link != 0))
                                             {
                                                 var linked = UWTileMap.current_tilemap.LevelObjects[nextobj.link];
                                                 if (linked.item_id == 0x189) //ward trap
                                                 {
                                                     trap.ActivateTrap(character: obj.index, trapObj: linked, ObjectUsed: null, triggerX: path.X0, triggerY: path.Y1, objList: UWTileMap.current_tilemap.LevelObjects);
                                                 }
-                                            }  
+                                            }
                                         }
                                         varb++;
                                     }
                                     //ovr107_9E0
                                     //get the path of the 2nd last tile
-                                    var lastpath = FinalPath56.finalpath[Pathfind.MaybePathIndexOrLength_dseg_67d6_225A-1];
+                                    var lastpath = FinalPath56.finalpath[Pathfind.MaybePathIndexOrLength_dseg_67d6_225A - 1];
                                     //var lasttile = UWTileMap.current_tilemap.Tiles[lastpath.X0, lastpath.Y1];
 
-                                    if(npc.moveNPCToTile(obj, lastpath.X0, lastpath.Y1))
+                                    if (npc.moveNPCToTile(obj, lastpath.X0, lastpath.Y1))
                                     {
                                         npc.SetNPCTargetDestination(obj, playerdat.playerObject.tileX, playerdat.playerObject.tileY, playerdat.playerObject.zpos);
                                         NearbyHostileFindsAvatar = true;
                                         return true;
                                     }
-                                }   
+                                }
                             }
                         }
                     }
