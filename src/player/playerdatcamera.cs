@@ -17,6 +17,12 @@ namespace Underworld
         public static uwObject CameraReference;
 
         public static bool MoongateSucking = false;
+        public static ushort MoonGateCameraYaw = 0;
+        public static byte StepsTakenToMoongate = 0;
+        public static byte MoongateSuckX = 0x20;
+        public static byte MoongateSuckY = 0x20;
+        public static short MoongateDist = 0;
+
         /// <summary>
         /// Camera positions for do trap camera and roaming sight.
         /// </summary>
@@ -63,10 +69,10 @@ namespace Underworld
                     else
                     {
                         //Debug.Print("attach a camera to a non-player mobile object.");
-                        var x = (CameraReference.npc_xhome<<8) + (CameraReference.xpos<<5);
-                        var y = (CameraReference.npc_yhome<<8) + (CameraReference.ypos<<5);
+                        var x = (CameraReference.npc_xhome << 8) + (CameraReference.xpos << 5);
+                        var y = (CameraReference.npc_yhome << 8) + (CameraReference.ypos << 5);
                         var z = (CameraReference.zpos << 3) + 0xB0;
-                        var yaw = (CameraReference.npc_heading<<8) + (CameraReference.heading<<0xD);
+                        var yaw = (CameraReference.npc_heading << 8) + (CameraReference.heading << 0xD);
                         PositionCamera(
                             x: (short)x,
                             y: (short)y,
@@ -75,11 +81,30 @@ namespace Underworld
                             roll: 0,
                             pitch: 0,
                             applyBob: false);
-                    }                
+                    }
                 }
                 else
                 {
-                    Debug.Print("Rotate the camera until player is sucked in to the moongate at UW1 endgame.");
+                    //Rotate and move the camera towards the XY location until player is sucked in to the moongate at UW1 endgame.
+                    short x = 0; short y = 0;
+                    motion.SomethingProjectileHeading_seg021_22FD_EAE(MoonGateCameraYaw, ref x, ref y);
+                    x = (short)(x / 0x100);
+                    y = (short)(y / 0x100);
+                    var stepsremaining = 0x40 - StepsTakenToMoongate;
+
+                    x = (short)((x * stepsremaining) / 0x40);
+                    y = (short)((y * stepsremaining) / 0x40);
+
+                    var moonX = (short)(((x * MoongateDist) / 2) + (MoongateSuckX << 8) + 0x80);
+                    var moonY = (short)(((y * MoongateDist) / 2) + (MoongateSuckY << 8) + 0x80);
+                    var moonZ = (motion.playerMotionParams.z_4 + 0xA4) - (StepsTakenToMoongate << 1);
+                    var yaw = MoonGateCameraYaw + 0x7FFF;
+                    var roll = StepsTakenToMoongate << 0xB;
+
+                    PositionCamera(
+                        x: (short)moonX, y: (short)moonY, z: moonZ,
+                        yaw: yaw, roll: roll, pitch: 0,
+                        applyBob: false);
                 }
             }
             else
