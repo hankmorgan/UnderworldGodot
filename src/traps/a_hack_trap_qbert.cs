@@ -56,8 +56,12 @@ namespace Underworld
                     ax = ax * dx;
                     ax = ax / 2;
                     var Y = 0x1D - ax;
-                    //TODO spawn a camera hack trap in player object tile
-                    Debug.Print($"Point a camera at {0x20},{Y}");
+                    //Vanilla behaviour is to spawn a hack trap and activate it. 
+                    // This implementation only needs to call the hack trap camera code without the need to spawn the trap.
+                    a_do_trap_camera.do_trap_camera(
+                     tileX: 0x20, tileY: Y,
+                     xpos: 4, ypos: 4, zpos: 116,
+                     heading: 0);
                     return;
                 }
                 si++;
@@ -156,9 +160,9 @@ namespace Underworld
                             si = 0;
                         }
                         TileInfo.ChangeTile(
-                            StartTileX: currentTile.tileX, StartTileY: currentTile.tileY, 
-                            newFloorTexture:(playerdat.GetGameVariable(100 + si) & 0xF));
-                       // currentTile.floorTexture = (short)(playerdat.GetGameVariable(100 + si) & 0xF); Teleportation.DoRedraw = true; currentTile.Redraw = true;
+                            StartTileX: currentTile.tileX, StartTileY: currentTile.tileY,
+                            newFloorTexture: (playerdat.GetGameVariable(100 + si) & 0xF));
+                        // currentTile.floorTexture = (short)(playerdat.GetGameVariable(100 + si) & 0xF); Teleportation.DoRedraw = true; currentTile.Redraw = true;
                         di = 0;
 
                     ovr110_41D6:
@@ -196,7 +200,7 @@ namespace Underworld
                                 goto ovr110_41D6;
                             }
                         }
-                        ovr110_41DB:
+                    ovr110_41DB:
                         ShowMoongate = (var6 == var8);
 
                         if (ShowMoongate)
@@ -210,7 +214,7 @@ namespace Underworld
                                 {
                                     var anotheroddtile = UWTileMap.current_tilemap.Tiles[49 + si, 51 + di];
                                     TileInfo.ChangeTile(
-                                        StartTileX: anotheroddtile.tileX, StartTileY: anotheroddtile.tileY, 
+                                        StartTileX: anotheroddtile.tileX, StartTileY: anotheroddtile.tileY,
                                         newWallTexture: var6);
                                     //anotheroddtile.wallTexture = (short)var6; Teleportation.DoRedraw = true; anotheroddtile.Redraw = true;
                                     si--;
@@ -224,28 +228,28 @@ namespace Underworld
 
                             //do handling of showing moongates.
                             var obj_teleport_973 = UWTileMap.current_tilemap.LevelObjects[973];
-                            
-                            
+
+
                             var obj_movetrigger_633 = UWTileMap.current_tilemap.LevelObjects[633];
                             var obj_movetrigger_972 = UWTileMap.current_tilemap.LevelObjects[972];
-                            
+
                             var obj_666_moongate = UWTileMap.current_tilemap.LevelObjects[666];
                             var obj_974_moongate = UWTileMap.current_tilemap.LevelObjects[974];
-                            
-                            
+
+
                             obj_movetrigger_972.zpos = 96;
-                            objectInstance.Reposition(obj_movetrigger_972);                            
+                            objectInstance.Reposition(obj_movetrigger_972);
 
                             if (var6 != 5)
                             {
                                 obj_teleport_973.quality = 4;
-                                obj_teleport_973.owner = (short)(4 + (var6*6));
+                                obj_teleport_973.owner = (short)(4 + (var6 * 6));
 
                                 if (var6 == playerdat.GetGameVariable(108))
                                 {
                                     obj_666_moongate.invis = 0;
-                                    objectInstance.RedrawFull(obj_666_moongate);                                
-                                    
+                                    objectInstance.RedrawFull(obj_666_moongate);
+
                                     obj_movetrigger_633.zpos = obj_666_moongate.zpos;
                                     objectInstance.Reposition(obj_movetrigger_633);
                                 }
@@ -256,12 +260,12 @@ namespace Underworld
                                 obj_teleport_973.owner = 25;
                                 obj_teleport_973.heading = 0;
                             }
-                            
+
                             var newlink = qbertmoongatelinks[var6] | 0x200;
                             obj_974_moongate.link = (short)newlink;
                             obj_974_moongate.invis = 0;
                             objectInstance.RedrawFull(obj_974_moongate);
-                            
+
                             if (var4_puzzleactive == 0)
                             {
                                 HideMoonGateAndTrigger();
@@ -282,7 +286,7 @@ namespace Underworld
                         if (playerdat.GetGameVariable(100) > 0 && playerdat.GetGameVariable(100) < 10)
                         {//sets floor to default colour
                             TileInfo.ChangeTile(
-                                StartTileX: currentTile.tileX, StartTileY: currentTile.tileY, 
+                                StartTileX: currentTile.tileX, StartTileY: currentTile.tileY,
                                 newFloorTexture: (playerdat.GetGameVariable(100) & 0xF));
                             //currentTile.floorTexture = (short)(playerdat.GetGameVariable(100) & 0xF); Teleportation.DoRedraw = true; currentTile.Redraw = true;
                         }
@@ -407,10 +411,10 @@ namespace Underworld
         /// <param name="heading"></param>
         static void DoTeleport(int teleportX, int teleportY, int newLevel, int heading)
         {
-            Teleportation.Teleport(character: 0, 
-                tileX: teleportX, 
-                tileY: teleportY, 
-                newLevel: newLevel, 
+            Teleportation.Teleport(character: 0,
+                tileX: teleportX,
+                tileY: teleportY,
+                newLevel: newLevel,
                 HeadingHeightFlag: heading);
         }
     } //end class

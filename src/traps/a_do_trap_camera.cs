@@ -6,29 +6,7 @@ namespace Underworld
 
     public class a_do_trap_camera : objectInstance
     {
-        //public static List<Camera3D> secondarycameras = new();
-        //public Camera3D do_camera;
-
-        // public a_do_trap_camera(Camera3D do_camera, uwObject _uwobject)
-        // {
-        //     //this.do_camera = do_camera;
-        //     uwobject = _uwobject;
-        // }
-
-        // public static bool CreateDoTrapCamera(Node3D parent, uwObject trapObj, string name)
-        // {//maybe consider creating this camera only when needed or just using it's value to override the player camera position set in PositionPlayerCamera()
-        //     Camera3D newcam = new();
-        //     newcam.Fov = main.cameraPitchGimbal.Fov;      
-        //     main.instance.secondarycameras.AddChild(newcam);
-        //     newcam.Current=false;
-        //     newcam.Position = trapObj.GetCoordinate();
-        //     model3D.SetObjectRotation(newcam, trapObj);
-        //     trapObj.instance = new a_do_trap_camera(newcam, trapObj);
-        //     secondarycameras.Add(newcam);// to track cameras so that when loading is implemented I can destroy old cameras
-        //     return false;//implemented
-        // }            
-
-
+       
         /// <summary>
         /// Waits until further input before clearing the cam.
         /// </summary>
@@ -47,7 +25,6 @@ namespace Underworld
             playerdat.AutomapEnabled = automap;
             playerdat.CameraReference = playerdat.playerObject;
             playerdat.PositionPlayerCamera();
-            //main.cameraPitchGimbal.MakeCurrent();
         }
 
 
@@ -60,11 +37,15 @@ namespace Underworld
         public static void Activate(uwObject trapObj, uwObject[] objList)
         {
             //switch camera            
-            //var d = (a_do_trap_camera)(trapObj.instance);
-            playerdat.DoCameraX = (short)((trapObj.tileX << 8) + (trapObj.xpos << 5));
-            playerdat.DoCameraY = (short)((trapObj.tileY << 8) + (trapObj.ypos << 5));
-            playerdat.DoCameraZ = (short)(trapObj.zpos << 3);
-            playerdat.DoCameraH = (short)(trapObj.heading<<0xD);
+            do_trap_camera(trapObj.tileX, trapObj.tileY, trapObj.xpos, trapObj.ypos, trapObj.zpos, trapObj.heading);
+        }
+
+        public static void do_trap_camera(int tileX, int tileY, int xpos, int ypos, int zpos, int heading)
+        {
+            playerdat.DoCameraX = (short)((tileX << 8) + (xpos << 5));
+            playerdat.DoCameraY = (short)((tileY << 8) + (ypos << 5));
+            playerdat.DoCameraZ = (short)(zpos << 3);
+            playerdat.DoCameraH = (short)(heading << 0xD);
             playerdat.DoCameraPitch = 0;
             playerdat.DoCameraRoll = 0;
 
@@ -73,6 +54,5 @@ namespace Underworld
                     main.instance
                );
         }
-
     }//end class
 }//end namespace

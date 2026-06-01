@@ -112,7 +112,7 @@ namespace Underworld
             }
             else
             {
-                //no camera object is define. Used the values in doTrapCameraX/Y/Z/heading to render the camera.
+                //no camera object is defined. Used the values in doTrapCameraX/Y/Z/heading to render the camera.
                 PositionCamera(
                     x: DoCameraX, y: DoCameraY, z: DoCameraZ,
                     yaw: DoCameraH, roll: DoCameraRoll, pitch: DoCameraPitch,
@@ -133,7 +133,7 @@ namespace Underworld
             //then transform it into godot positioning using a vector based on the size we are rendering the gameworld in.
             main.cameraYawGimbal.Position = underworldVector * tileMapRender.godotscale;
 
-            if (motion.CameraIsBobbing_dseg_67d6_33c6)
+            if ((motion.CameraIsBobbing_dseg_67d6_33c6)&&(applyBob))
             {
                 yaw += motion.CameraYawModifier_dseg_67d6_33D0;
                 roll += motion.CameraRollModifier_dseg_67d6_33D4;
