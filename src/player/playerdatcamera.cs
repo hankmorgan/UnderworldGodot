@@ -30,8 +30,11 @@ namespace Underworld
         public static short DoCameraY = 0;
         public static short DoCameraZ = 0;
         public static short DoCameraH = 0;
-        public static int DoCameraPitch = 0;
-        public static int DoCameraRoll = 0;
+        public static short DoCameraPitch = 0;
+        public static short DoCameraRoll = 0;
+
+        public static int CameraTileX;
+        public static int CameraTileY;
 
         /// <summary>
         /// Positions the player game camera based on x/y/z pos and current tileX/Y. 
@@ -59,10 +62,10 @@ namespace Underworld
                         PositionCamera(
                             x: motion.playerMotionParams.x_0,
                             y: motion.playerMotionParams.y_2,
-                            z: motion.playerMotionParams.z_4 + 0xA4,
-                            yaw: (float)motion.PlayerCameraYaw_dseg_8294,
-                            roll: (float)motion.PlayerCameraRoll_dseg_67d6_33D8,
-                            pitch: (float)motion.PlayerCameraPitch_dseg_67d6_33D6,
+                            z: (short)(motion.playerMotionParams.z_4 + 0xA4),
+                            yaw: motion.PlayerCameraYaw_dseg_8294,
+                            roll: motion.PlayerCameraRoll_dseg_67d6_33D8,
+                            pitch: motion.PlayerCameraPitch_dseg_67d6_33D6,
                             applyBob: motion.CameraIsBobbing_dseg_67d6_33c6);
 
                     }
@@ -76,8 +79,8 @@ namespace Underworld
                         PositionCamera(
                             x: (short)x,
                             y: (short)y,
-                            z: z,
-                            yaw: yaw,
+                            z: (short)z,
+                            yaw: (short)yaw,
                             roll: 0,
                             pitch: 0,
                             applyBob: false);
@@ -97,12 +100,12 @@ namespace Underworld
 
                     var moonX = (short)(((x * MoongateDist) / 2) + (MoongateSuckX << 8) + 0x80);
                     var moonY = (short)(((y * MoongateDist) / 2) + (MoongateSuckY << 8) + 0x80);
-                    var moonZ = (motion.playerMotionParams.z_4 + 0xA4) - (StepsTakenToMoongate << 1);
-                    var yaw = MoonGateCameraYaw + 0x7FFF;
-                    var roll = StepsTakenToMoongate << 0xB;
+                    var moonZ = (short)((motion.playerMotionParams.z_4 + 0xA4) - (StepsTakenToMoongate << 1));
+                    var yaw = (short)(MoonGateCameraYaw + 0x7FFF);
+                    var roll = (short)(StepsTakenToMoongate << 0xB);
 
                     PositionCamera(
-                        x: (short)moonX, y: (short)moonY, z: moonZ,
+                        x: moonX, y: moonY, z: moonZ,
                         yaw: yaw, roll: roll, pitch: 0,
                         applyBob: false);
                 }
@@ -117,7 +120,7 @@ namespace Underworld
             }
         }
 
-        private static void PositionCamera(short x, short y, int z, float yaw, float roll, float pitch, bool applyBob)
+        private static void PositionCamera(short x, short y, short z, short yaw, short roll, short pitch, bool applyBob)
         {
             if (applyBob)
             {
@@ -132,27 +135,30 @@ namespace Underworld
 
             if (motion.CameraIsBobbing_dseg_67d6_33c6)
             {
-                yaw += (float)motion.CameraYawModifier_dseg_67d6_33D0;
-                roll += (float)motion.CameraRollModifier_dseg_67d6_33D4;
-                pitch += (float)motion.CameraPitchModifier_dseg_67d6_33D2;
+                yaw += motion.CameraYawModifier_dseg_67d6_33D0;
+                roll += motion.CameraRollModifier_dseg_67d6_33D4;
+                pitch += motion.CameraPitchModifier_dseg_67d6_33D2;
             }
+
+            CameraTileX = x >> 8;
+            CameraTileY = y >> 8;
 
             //Set up the Yaw gimbal             
             main.cameraYawGimbal.Rotation = Vector3.Zero;
             main.cameraYawGimbal.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
-            main.cameraYawGimbal.Rotate(Vector3.Up, (float)(-(yaw / 32767f) * Math.PI));
+            main.cameraYawGimbal.Rotate(Vector3.Up, (float)(-((float)yaw / 32767f) * Math.PI));
 
             //Set up the Roll Gimbal
             main.cameraRollGimbal.Rotation = Vector3.Zero;
-            main.cameraRollGimbal.Rotate(Vector3.Forward, (float)(-(roll / 32767f) * Math.PI));
+            main.cameraRollGimbal.Rotate(Vector3.Forward, (float)(-((float)roll / 32767f) * Math.PI));
 
             //Set up the pitch gimbal.
             main.cameraPitchGimbal.Rotation = Vector3.Zero;
-            main.cameraPitchGimbal.Rotate(Vector3.Right, (float)(+(pitch / 32767f) * Math.PI));
+            main.cameraPitchGimbal.Rotate(Vector3.Right, (float)(+((float)pitch / 32767f) * Math.PI));
 
             //Set this value to calculate npc angles
-            motion.CameraYawHeadingRelated_2B52 = (short)(((1 + (motion.PlayerCameraYaw_dseg_8294 >> 0xD)) & 0x7) >> 1);
-            motion.CameraPointer2C = (short)(motion.PlayerCameraYaw_dseg_8294 - motion.PlayerCardinalHeadingLookupTable[motion.CameraYawHeadingRelated_2B52]);
+            motion.CameraYawHeadingRelated_2B52 = (short)(((1 + (yaw >> 0xD)) & 0x7) >> 1);
+            motion.CameraPointer2C = (short)(yaw - motion.PlayerCardinalHeadingLookupTable[motion.CameraYawHeadingRelated_2B52]);
         }
 
 

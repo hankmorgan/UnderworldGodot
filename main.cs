@@ -200,7 +200,7 @@ public partial class main : Node3D
 
 		testclock += delta;
 
-		if ((uimanager.InGame) && (!uimanager.blockmouseinput) && (testclock >= 0.097659))
+		if ((uimanager.InGame) && (testclock >= 0.097659))
 		{
 			testclock = 0;
 			byte AnimationFrameDeltaIncrement = 0;
