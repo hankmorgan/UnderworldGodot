@@ -652,16 +652,6 @@ namespace Underworld
                }
           }
 
-
-          public static int ZVelocity
-          {
-               get
-               {
-                    return 0;//todo
-               }
-          }
-
-
           /// <summary>
           /// Changes hunger levels and if necessary applies a health bonus for eating
           /// </summary>

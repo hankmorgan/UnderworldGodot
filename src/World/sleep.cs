@@ -22,7 +22,7 @@ namespace Underworld
 
             if (sleepmethod >= 0)
             {
-                if (((playerdat.TileState & 0x1B) == 0) && (playerdat.ZVelocity == 0))
+                if (((playerdat.TileState & 0x1B) == 0) && (motion.playerMotionParams.gravity_10_Z == 0))
                 {
                     if ((_RES == GAME_UW2) && (playerdat.CurrentWorld == 8) && (playerdat.DreamingInVoid))
                     {//player has tried to sleep while sleeping in a void vision. end the void vision.
