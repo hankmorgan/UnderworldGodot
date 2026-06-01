@@ -80,7 +80,7 @@ namespace Underworld
             a_sprite.Name = name;
             a_sprite.Mesh = new QuadMesh();
             a_sprite.Mesh.SurfaceSetMaterial(0, n.material);
-            a_sprite.Mesh.Set("size", n.FrameSize * 1.5f);
+            a_sprite.Mesh.Set("size", n.FrameSize);
             n.sprite = a_sprite;
             parent.AddChild(a_sprite);
             a_sprite.Position = new Vector3(0, n.FrameSize.Y / 2 + 0.12f, 0);
