@@ -85,12 +85,20 @@ namespace Underworld
 
 					case cnv_OPDIV:
 						{
-							int arg1 = Pop();
-							int arg2 = Pop();
-							//if (arg1==0)
-							//	throw ua_ex_div_by_zero;
-							if (testing) { Debug.Print($"{instrp}:Div {arg2},{arg1}"); }
-							Push(arg2 / arg1);
+							if (at(stackptr) == 0)
+							{
+								Debug.Print($"Divide by Zero Error at OPDIV {instrp}");
+								Push(0x7FFF);
+							}
+							else
+							{
+								int arg1 = Pop();
+								int arg2 = Pop();
+								//if (arg1==0)
+								//	throw ua_ex_div_by_zero;
+								if (testing) { Debug.Print($"{instrp}:Div {arg2},{arg1}"); }
+								Push(arg2 / arg1);
+							}
 							break;
 						}
 
@@ -357,7 +365,7 @@ namespace Underworld
 						{
 							if (testing) { Debug.Print($"{instrp}:PUSHI_EFF {basep + currentConversation.instuctions[instrp + 1]}"); }
 							Push(currentConversation.NoOfMemorySlots + basep + currentConversation.instuctions[instrp + 1]);
-							instrp++;							
+							instrp++;
 							break;
 						}
 
@@ -590,8 +598,8 @@ namespace Underworld
 				uimanager.instance.messageScrollUW2.Size = new Godot.Vector2(840, 140);
 				uimanager.instance.scroll.Columns = 44;
 				//restore positions of scroll edges
-                uimanager.instance.scrollEdgeLeft.Position = OriginalUW2ScrlEdgeLeft;
-                uimanager.instance.scrollEdgeRight.Position = OriginalUW2ScrlEdgeRight;
+				uimanager.instance.scrollEdgeLeft.Position = OriginalUW2ScrlEdgeLeft;
+				uimanager.instance.scrollEdgeRight.Position = OriginalUW2ScrlEdgeRight;
 
 
 			}
@@ -609,7 +617,7 @@ namespace Underworld
 					var tile = UWTileMap.current_tilemap.Tiles[playerdat.playerObject.tileX, playerdat.playerObject.tileY];
 					UWTileMap.GetRandomXYZForTile(tile, out int newxpos, out int newypos, out int newzpos);
 					var tradeObject = UWTileMap.current_tilemap.LevelObjects[objindex];
-					tradeObject.tileX = tile.tileX; tradeObject.tileY= tile.tileY;
+					tradeObject.tileX = tile.tileX; tradeObject.tileY = tile.tileY;
 					tradeObject.xpos = (short)newxpos; tradeObject.ypos = (short)newypos; tradeObject.zpos = (short)newzpos;
 					tradeObject.next = tile.indexObjectList;
 					tile.indexObjectList = tradeObject.index;
@@ -631,16 +639,16 @@ namespace Underworld
 			{
 				if (playerdat.GetQuest(143) != 0) //if this quest variable has a value then a cutscene will play at the end of the conversation
 				{
-					if ((playerdat.GetQuest(143)-1) == 2)
+					if ((playerdat.GetQuest(143) - 1) == 2)
 					{
 						//play the victory cutscene.
-						cutsplayer.PlayCutscene(playerdat.GetQuest(143)-1 , uimanager.VictoryScreen);						
+						cutsplayer.PlayCutscene(playerdat.GetQuest(143) - 1, uimanager.VictoryScreen);
 					}
 					else
 					{
-						Debug.Print($"Play cutscene no {playerdat.GetQuest(143)-1} at end of conversation");
-						cutsplayer.PlayCutscene(playerdat.GetQuest(143)-1, null);
-					}					
+						Debug.Print($"Play cutscene no {playerdat.GetQuest(143) - 1} at end of conversation");
+						cutsplayer.PlayCutscene(playerdat.GetQuest(143) - 1, null);
+					}
 					playerdat.SetQuest(143, 0);
 				}
 
