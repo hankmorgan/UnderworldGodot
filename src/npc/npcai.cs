@@ -836,7 +836,7 @@ namespace Underworld
                         critter.Projectile_Pitch = 0x10;
                     }
                     critter.Projectile_Speed = 7;
-                    if (critter.npc_gtarg <= 0)
+                    if (critter.npc_gtarg > 0)
                     {
                         critter.npc_gtarg--;
                     }
@@ -2762,7 +2762,9 @@ namespace Underworld
         {
             short CalcedFacing = CalculateFacingAngleToNPC(critter);
             string animname = CritterArt.GetAnimName(critter.npc_animation, CalcedFacing);
-            var crit = CritterArt.GetCritter(critter.item_id & 0x3F);
+            var crit = CritterArt.GetCritter(
+                critter.item_id & 0x3F, 
+                GetStoneArt: (_RES == GAME_UW2) && (critter.npc_goal== (byte)npc.npc_goals.npc_goal_petrified));
             if (crit.Animations.ContainsKey(animname))
             {
                 var anim = crit.Animations[animname];

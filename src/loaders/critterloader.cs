@@ -10,6 +10,7 @@ namespace Underworld
     public class CritterArt : ArtLoader
     {
         public static CritterArt[] critterArt = new CritterArt[64];
+        public static CritterArt[] critterArtStone = new CritterArt[64];
 
         public Palette pal; //the game pal.
                             //private Palette auxpal;
@@ -101,13 +102,25 @@ namespace Underworld
             }
         }
 
-        public static CritterArt GetCritter(int CritterToLoad)
+        public static CritterArt GetCritter(int CritterToLoad, bool GetStoneArt = false)
         {
-            if (critterArt[CritterToLoad] == null)
+            if (GetStoneArt)
             {
-                LoadCritter(CritterToLoad);
+                if (critterArtStone[CritterToLoad] == null)
+                {
+                    LoadCritter(CritterToLoad);
+                }
+                return critterArtStone[CritterToLoad];
             }
-            return critterArt[CritterToLoad];
+            else
+            {
+                if (critterArt[CritterToLoad] == null)
+                {
+                    LoadCritter(CritterToLoad);
+                }
+                return critterArt[CritterToLoad];
+            }
+
         }
 
 
@@ -168,6 +181,7 @@ namespace Underworld
                         if (ass == CritterToLoad)
                         {
                             critterArt[CritterToLoad] = new CritterArt(critter_id: FileID, paletteToUse: PaletteLoader.Palettes[0], palno: auxPal, PGMP: pgmp, cran: cran);
+                            critterArtStone[CritterToLoad] = new CritterArt(critter_id: FileID, paletteToUse: PaletteLoader.Palettes[0], palno: 3, PGMP: pgmp, cran: cran);
                         }
                     }
                 }
@@ -178,13 +192,13 @@ namespace Underworld
         private int ReadPageFileUW1(byte[] PageFile, int XX, int YY, int spriteIndex, int AuxPalNo)
         {
             int addptr = 0;
-            int slotbase = (int)getAt(PageFile, addptr++, 8);            
+            int slotbase = (int)getAt(PageFile, addptr++, 8);
             int NoOfSlots = (int)getAt(PageFile, addptr++, 8);
             int[] SlotIndices = new int[NoOfSlots];
             int spriteCounter = 0;
             int slotCounter = 0;
-             string XXo = DecimalToOct(XX.ToString());
-             string YYo = DecimalToOct(YY.ToString());
+            string XXo = DecimalToOct(XX.ToString());
+            string YYo = DecimalToOct(YY.ToString());
             //Debug.Print($"{XXo} {YYo} has {slotbase} + {NoOfSlots}");
             for (int i = 0; i < NoOfSlots; i++)
             {//check if the slot is enabled
@@ -216,7 +230,7 @@ namespace Underworld
                 if (!Animations.ContainsKey(AnimName))
                 {
                     Animations.Add(AnimName, newanim);
-                }                
+                }
             }
 
             //Read in the palette
@@ -352,11 +366,11 @@ namespace Underworld
                         //****************************
 
                         ImageTexture imgData = Image(
-                            databuffer: outputImg, 
-                            dataOffSet: 0, 
+                            databuffer: outputImg,
+                            dataOffSet: 0,
                             width: BitMapWidth, height: BitMapHeight,
-                            palette: pal, 
-                            useAlphaChannel: true, 
+                            palette: pal,
+                            useAlphaChannel: true,
                             useSingleRedChannel: true,
                             crop: UseCropping);
 
@@ -369,11 +383,11 @@ namespace Underworld
             return spriteCounter;
         }
 
-        public static string GetAnimName (int animation, int angle)
+        public static string GetAnimName(int animation, int angle)
         {
-            if(_RES==GAME_UW2)
+            if (_RES == GAME_UW2)
             {
-                return GetUW2AnimName(animation,angle);
+                return GetUW2AnimName(animation, angle);
             }
             else
             {
@@ -385,16 +399,16 @@ namespace Underworld
                         return $"{AppendAngleToAnimationName(angle, "walking_")}";
                 }
 
-                if ((animation>=0x20) && (animation<=0x27))
+                if ((animation >= 0x20) && (animation <= 0x27))
                 {
                     return $"idle_{angleToString(angle)}";
                 }
-                if ((animation>=0x80) && (animation<=0x87))
+                if ((animation >= 0x80) && (animation <= 0x87))
                 {
                     return $"walking_{angleToString(angle)}";
                 }
 
-                if ((animation>=0x80) && (animation<=0x87))
+                if ((animation >= 0x80) && (animation <= 0x87))
                 {
                     return $"walking_{angleToString(angle)}";
                 }
@@ -418,7 +432,7 @@ namespace Underworld
                 case 4: return "right";
                 case 5: return "front_right";
                 case 6: return "front";
-                case 7: return "front_left";         
+                case 7: return "front_left";
             }
             return "front";
         }
@@ -734,11 +748,11 @@ namespace Underworld
                                 BitMapHeight = MaxHeight;
 
                                 ImageTexture imgData = Image(
-                                    databuffer: outputImg, 
-                                    dataOffSet: 0, 
-                                    width: BitMapWidth, height: BitMapHeight, 
-                                    palette: pal, 
-                                    useAlphaChannel: true, 
+                                    databuffer: outputImg,
+                                    dataOffSet: 0,
+                                    width: BitMapWidth, height: BitMapHeight,
+                                    palette: pal,
+                                    useAlphaChannel: true,
                                     useSingleRedChannel: true,
                                     crop: true);
                                 //CropImageData(ref imgData, pal);
@@ -753,8 +767,8 @@ namespace Underworld
             return spriteIndex;
         }
 
-        
-         /// <summary>
+
+        /// <summary>
         /// For decoding RLE encoded critter animations.
         /// </summary>
         /// <param name="FileIn">File in.</param>
@@ -959,11 +973,11 @@ namespace Underworld
         {
             animName = _animName;
             animIndices = _indices;
-            for (int i=7;i>=0;i--)
+            for (int i = 7; i >= 0; i--)
             {
                 if (_indices[i] != -1)
                 {
-                    maxNoOfFrames=i;
+                    maxNoOfFrames = i;
                     break;
                 }
             }

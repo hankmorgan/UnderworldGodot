@@ -116,7 +116,9 @@ namespace Underworld
                 uwobject.AnimationFrame = 0;
             }
             string animname = CritterArt.GetAnimName(animationNo, relativeHeading); // "idle_front";
-            var crit = CritterArt.GetCritter(this.uwobject.item_id & 0x3F);
+            var crit = CritterArt.GetCritter(
+                CritterToLoad: this.uwobject.item_id & 0x3F, 
+                GetStoneArt: (_RES == GAME_UW2) && (this.uwobject.npc_goal== (byte)npc.npc_goals.npc_goal_petrified));
             if (crit.Animations.ContainsKey(animname))
             {
                 uwobject.AnimationFrame = (byte)ApplyCritterAnimation(animationNo: animationNo, frameNo: frameNo, animname: animname, crit: crit);

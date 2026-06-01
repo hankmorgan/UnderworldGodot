@@ -51,7 +51,7 @@ namespace Underworld
                     }
                 case 4:
                     {
-                        //Debug.Print("stonestrike"); 
+                        //stonestrike 
                         SpellCasting.Paralyse(DefendingCharacter.index, UWTileMap.current_tilemap.LevelObjects, playerdat.playerObject);
                         break;
                     }
