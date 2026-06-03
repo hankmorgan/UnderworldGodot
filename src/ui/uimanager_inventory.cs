@@ -344,7 +344,7 @@ namespace Underworld
                                                 else
                                                 {
                                                     //check if the opened container is not in the object chain of the object list
-                                                    var match = objectsearch.FindMatchInObjectChain(objAtSlot.index, OpenedContainerIndex,playerdat.InventoryObjects);
+                                                    var match = objectsearch.FindMatchInObjectChain(ListHeadIndex: objAtSlot.index, itemIndex: OpenedContainerIndex, objList: playerdat.InventoryObjects, SkipNext :true);
                                                     if (match == null)
                                                     {
                                                         PickupObjectFromSlot(objAtSlot);
