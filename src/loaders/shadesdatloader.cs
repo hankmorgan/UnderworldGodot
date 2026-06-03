@@ -17,11 +17,14 @@ namespace Underworld
 
         public static shade[] shadesdata;
 
+        public short[] ShadingArray_26EF = new short[17*66];//This array appears to be used in LOS/visibility range calculations.
+
         ImageTexture cachedimage;
 
         public static float GetViewingDistance(int index)
         {
-            return 4.8f * 7; //(float)shadesdata[index].ViewingDistance;
+            return 4.8f * 7; 
+            //return (float)shadesdata[index].ViewingDistance * 1.2f * 4;
         }
 
         /// <summary>
@@ -33,7 +36,7 @@ namespace Underworld
         /// <returns></returns>
         public static Godot.ImageTexture GetFullShadingImage(Palette pal, lightmap[] maps, int index, string filename)
         {
-            int BandSize = Math.Max(uwsettings.instance.shaderbandsize,1);
+            int BandSize = Math.Max(uwsettings.instance.shaderbandsize, 1);
             var img = Godot.Image.CreateEmpty(256, BandSize * 15, false, Godot.Image.Format.Rgba8);
             var arr = shadesdata[index].ExtractShadeArray();
             //int y = 0;
@@ -78,9 +81,9 @@ namespace Underworld
                                         colour = colour.Lerp(nextcolour, (float)(arr[i] / 15f));
                                         break;
                                     }
-                                    
-                                default:                                    
-                                    colour = pal.ColorAtIndex((byte)pixel, true, false);                                   
+
+                                default:
+                                    colour = pal.ColorAtIndex((byte)pixel, true, false);
                                     break;
                             }
                             img.SetPixel(x, y + i * BandSize, colour);
@@ -211,27 +214,27 @@ namespace Underworld
         /// Extract the full shades array as a image
         /// </summary>
         /// <returns></returns>
-        public Godot.ImageTexture FullShadingImage()
-        {
-            var pal = PaletteLoader.GreyScaleIndexPalette;
-            var shadearray = ExtractShadeArray();
-            var AllShades = ExtractShadingTable(shadearray);
-            var width = AllShades.GetUpperBound(0);
-            var height = AllShades.GetUpperBound(1);
-            var img = Godot.Image.CreateEmpty(width, height, false, Godot.Image.Format.R8);
+        // public Godot.ImageTexture FullShadingImage()
+        // {
+        //     var pal = PaletteLoader.GreyScaleIndexPalette;
+        //     var shadearray = ExtractShadeArray();
+        //     var AllShades = ExtractShadingTable(shadearray);
+        //     var width = AllShades.GetUpperBound(0);
+        //     var height = AllShades.GetUpperBound(1);
+        //     var img = Godot.Image.CreateEmpty(width, height, false, Godot.Image.Format.R8);
 
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    var pixel = (byte)(AllShades[x, y] * 16);
-                    img.SetPixel(x, y, pal.ColorAtIndex(pixel, false, true));
-                }
-            }
-            var tex = new Godot.ImageTexture();
-            tex.SetImage(img);
-            return tex;
-        }
+        //     for (int x = 0; x < width; x++)
+        //     {
+        //         for (int y = 0; y < height; y++)
+        //         {
+        //             var pixel = (byte)(AllShades[x, y] * 16);
+        //             img.SetPixel(x, y, pal.ColorAtIndex(pixel, false, true));
+        //         }
+        //     }
+        //     var tex = new Godot.ImageTexture();
+        //     tex.SetImage(img);
+        //     return tex;
+        // }
 
 
 
@@ -251,75 +254,75 @@ namespace Underworld
         /// </summary>
         /// <param name="shadesArray"></param>
         /// <returns></returns>
-        public int[,] ExtractShadingTable(int[] shadesArray)
-        {
-            int[,] largeShadeArray = new int[17, 33]; //new int[33*17*2];
-            for (int di = 0; di < 17; di++)
-            {
-                for (int si = 0; si < 33; si++)
-                {
-                    int ax = 16;
-                    ax = ax - si;
-                    ax = ax * ax;
+        //public int[,] ExtractShadingTable(int[] shadesArray)
+        // {
+        //     int[,] largeShadeArray = new int[17, 33]; //new int[33*17*2];
+        //     for (int di = 0; di < 17; di++)
+        //     {
+        //         for (int si = 0; si < 33; si++)
+        //         {
+        //             int ax = 16;
+        //             ax = ax - si;
+        //             ax = ax * ax;
 
-                    ax = ax + (di * di);
-                    ax = (int)Math.Sqrt(ax);
-                    int var2 = ax;
-                    ax = di * 66;
-                    //ax = ax + (si << 1);
-                    //ax = ax + (si);
-                    if (var2 > ViewingDistance)
-                    {
-                        largeShadeArray[di, si] = 0xF; //darkness?
-                    }
-                    else
-                    {
-                        largeShadeArray[di, si] = shadesArray[var2];
-                    }
-                }
-            } //loop di
-            // string result = "";
-            // for (int x = 0; x < 17; x++)
-            // {
-            //     for (int y = 0; y < 33; y++)
-            //     {
-            //         result += largeShadeArray[x, y].ToString("#0");
-            //     }
-            //     result += "\n";
-            // }
-            //Debug.Print(result);
-            return largeShadeArray;
-        }
+        //             ax = ax + (di * di);
+        //             ax = (int)Math.Sqrt(ax);
+        //             int var2 = ax;
+        //             ax = di * 66;
+        //             //ax = ax + (si << 1);
+        //             //ax = ax + (si);
+        //             if (var2 > ViewingDistance)
+        //             {
+        //                 largeShadeArray[di, si] = 0xF; //darkness?
+        //             }
+        //             else
+        //             {
+        //                 largeShadeArray[di, si] = shadesArray[var2];
+        //             }
+        //         }
+        //     } //loop di
+        //     // string result = "";
+        //     // for (int x = 0; x < 17; x++)
+        //     // {
+        //     //     for (int y = 0; y < 33; y++)
+        //     //     {
+        //     //         result += largeShadeArray[x, y].ToString("#0");
+        //     //     }
+        //     //     result += "\n";
+        //     // }
+        //     //Debug.Print(result);
+        //     return largeShadeArray;
+        // }
 
         /// <summary>
-        /// Returns an array of the light maps to be used in this shade.
+        /// Returns an array of the light maps to be used in this shade. Likely I am not returning the correct shading values but the current effect looks okay enough.
         /// </summary>
         /// <param name="shadesArray"></param>
-        public int[] ExtractShadeArray()
+        public short[] ExtractShadeArray()
         {
-            int[] shadesArray = new int[16];
+            short[] shadesArray = new short[16];
             if (ViewingDistance >= 16)
             {   //return all zeros.
                 return shadesArray;
             }
-            for (int si = 0; si < 16; si++)
+            for (short si = 0; si < 16; si++)
             {
                 if (si < ViewingDistance)
                 {
-                    int ax = si;
-                    ax = (int)Math.Pow(ax * 8, 2);
+                    short ax = si;
+                    ax = (short)Math.Pow(ax * 8, 2);
                     //int var6 = ax;
-                    ax = ax << 1;
+                    ax = (short)(ax << 1);
                     //int var4 = ax;
-                    ax = (int)Math.Sqrt(ax);
-                    int var6 = ax;
-                    int var4 = (int)(var6 * Shading / 64);
+                    ax = (short)Math.Sqrt(ax);
+                    short var6 = ax;
+                    int var4 = (short)(var6 * Shading / 64);
                     var4 += StartOfShadingDistance;
                     if (var4 < 0)
                     {
                         var4 = 0;
                     }
-                    var6 = var4 + StartingLightLevel;
+                    var6 = (short)(var4 + StartingLightLevel);
                     if (var6 > 14)
                     {
                         var6 = 14;
@@ -331,6 +334,31 @@ namespace Underworld
                     shadesArray[si] = 0xF; //darkness
                 }
             } //loop si 1
+
+            var di = 0;
+            while (di < 0x11)
+            {
+                var si = 0;
+                while (si < 0x21)
+                {
+                    //seg32_54C
+                    var var2 = (int)Math.Sqrt((0x10 - si) * (0x10 - si) + di * di);
+                    if (var2 <= ViewingDistance)
+                    {
+                        //seg32_58B
+                        ShadingArray_26EF[di*66 + si] = shadesArray[var2];
+                    }
+                    else
+                    {
+                        //Seg32_577
+                        ShadingArray_26EF[di*66 + si] = 0xF;
+                    }
+                    si++;
+                }
+                di++;
+            }
+
+
             return shadesArray;
         }
 
