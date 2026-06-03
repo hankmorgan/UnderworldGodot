@@ -36,6 +36,14 @@ namespace Underworld
         public static int CameraTileX;
         public static int CameraTileY;
 
+        //Range of Vision Variables
+        static short FovYawX1 = 0;
+        static short FovYawX2 = 0;
+        static short FovYawY1 = 0;
+        static short FovYawY2 = 0;
+
+        static short RelatedToFov_2C60 = 0;
+
         /// <summary>
         /// Positions the player game camera based on x/y/z pos and current tileX/Y. 
         /// 
@@ -133,7 +141,7 @@ namespace Underworld
             //then transform it into godot positioning using a vector based on the size we are rendering the gameworld in.
             main.cameraYawGimbal.Position = underworldVector * tileMapRender.godotscale;
 
-            if ((motion.CameraIsBobbing_dseg_67d6_33c6)&&(applyBob))
+            if ((motion.CameraIsBobbing_dseg_67d6_33c6) && (applyBob))
             {
                 yaw += motion.CameraYawModifier_dseg_67d6_33D0;
                 roll += motion.CameraRollModifier_dseg_67d6_33D4;
@@ -159,6 +167,11 @@ namespace Underworld
             //Set this value to calculate npc angles
             motion.CameraYawHeadingRelated_2B52 = (short)(((1 + (yaw >> 0xD)) & 0x7) >> 1);
             motion.CameraPointer2C = (short)(yaw - motion.PlayerCardinalHeadingLookupTable[motion.CameraYawHeadingRelated_2B52]);
+
+            SetRangeOfVision(
+                camerax: x, 
+                cameray: y, 
+                camerayaw: yaw);
         }
 
 
@@ -192,5 +205,38 @@ namespace Underworld
                 Debug.Print("set camera view values for other objects.");
             }
         }
+
+        /// <summary>
+        /// Port of a vanilla function which is used to calcuate what objects are inview. Implemented here to help support vanilla implementation of automapping
+        /// </summary>
+        public static void SetRangeOfVision(short camerax, short cameray, short camerayaw)
+        {
+            var tileX = camerax >> 8; var tileY = cameray >> 8;
+            if (!UWTileMap.ValidTile(tileX, tileY))
+            {
+                return;
+            }
+            var tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];
+            if (tile.tileType == 0)
+            {
+                RelatedToFov_2C60 = 0xF;
+            }
+            else
+            {
+                RelatedToFov_2C60 = 0;
+                // dseg_2B5E = 0x81;
+                // dseg_2B73 = 0;
+                // dseg_2B65 = 0;
+                motion.SomethingProjectileHeading_seg021_22FD_EAE(heading: (ushort)(camerayaw + 0x2040), Result_arg2: ref FovYawX1, Result_arg4: ref FovYawY1);
+                motion.SomethingProjectileHeading_seg021_22FD_EAE(heading: (ushort)(camerayaw - 0x2040), Result_arg2: ref FovYawX2, Result_arg4: ref FovYawY2);
+
+                FovYawX1 = (short)(FovYawX1 >> 4);
+                FovYawX2 = (short)(FovYawX2 >> 4);
+                FovYawY1 = (short)(FovYawY1 >> 4);
+                FovYawY2 = (short)(FovYawY2 >> 4);
+            }
+
+        }
+
     }
 }

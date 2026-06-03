@@ -364,6 +364,7 @@ namespace Underworld
             playerdat.MoongateSucking = false;
 
             uimanager.EnableDisable(uimanager.instance.uwviewport,true); //turn on camera, this might be turned off due to player death
+            playerdat.PositionPlayerCamera();
         }
 
         private void _on_create_character_gui_input(InputEvent @event)

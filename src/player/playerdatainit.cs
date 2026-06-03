@@ -29,9 +29,7 @@ namespace Underworld
 
                 motion.PlayerCameraYaw_dseg_8294 = (short)playerdat.heading_full;
 
-                motion.UpdateMotionStateAndSwimming(playerdat.RelatedToMotionState & 0x7);
-
-                PositionPlayerCamera();
+                motion.UpdateMotionStateAndSwimming(playerdat.RelatedToMotionState & 0x7);                
 
                 for (int i = 0; i < 8; i++)
                 {//Init the backpack indices
