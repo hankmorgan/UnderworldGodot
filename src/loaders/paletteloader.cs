@@ -189,26 +189,26 @@ namespace Underworld
         /// </summary>
         /// <param name="maps"></param>
         /// <returns></returns>
-        public static ImageTexture AllLightMaps(lightmap[] maps)
-        {
-            byte[] imgdata = new byte[maps.GetUpperBound(0) * 256];
-            for (int l = 0; l < maps.GetUpperBound(0); l++)
-            {
-                for (int b = 0; b < 256; b++)
-                {
-                    imgdata[(l * 256) + b] = maps[l].red[b];
-                }
-            }
-            var output = Image(
-                databuffer: imgdata,
-                dataOffSet: 0,
-                width: 256, height: maps.GetUpperBound(0),
-                palette: GreyScaleIndexPalette,
-                useAlphaChannel: true,
-                useSingleRedChannel: true,
-                crop: false);
-            return output;
-        }
+        // public static ImageTexture AllLightMaps(lightmap[] maps)
+        // {
+        //     byte[] imgdata = new byte[maps.GetUpperBound(0) * 256];
+        //     for (int l = 0; l < maps.GetUpperBound(0); l++)
+        //     {
+        //         for (int b = 0; b < 256; b++)
+        //         {
+        //             imgdata[(l * 256) + b] = maps[l].red[b];
+        //         }
+        //     }
+        //     var output = Image(
+        //         databuffer: imgdata,
+        //         dataOffSet: 0,
+        //         width: 256, height: maps.GetUpperBound(0),
+        //         palette: GreyScaleIndexPalette,
+        //         useAlphaChannel: true,
+        //         useSingleRedChannel: true,
+        //         crop: false);
+        //     return output;
+        // }
 
 
         /// <summary>

@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 using Godot;
 
 namespace Underworld
@@ -17,9 +18,9 @@ namespace Underworld
 
         public static shade[] shadesdata;
 
-        public short[] ShadingArray_26EF = new short[17*66];//This array appears to be used in LOS/visibility range calculations.
+        public byte[] ShadingArray_26EF = new byte[17*66];//This array is probably the light map that should be used for the shading but the existing effect looks right enough. possible structure is byte0 - is point visible, byte1 shading value to use at that point?
 
-        ImageTexture cachedimage;
+        //ImageTexture cachedimage;
 
         public static float GetViewingDistance(int index)
         {
@@ -134,43 +135,43 @@ namespace Underworld
             return tex;
         }
 
-        public ImageTexture GetImage()
-        {
-            if (cachedimage == null)
-            {
-                cachedimage = ToImage();
-            }
-            return cachedimage;
-        }
+        // public ImageTexture GetImage()
+        // {
+        //     if (cachedimage == null)
+        //     {
+        //         cachedimage = ToImage();
+        //     }
+        //     return cachedimage;
+        // }
 
         /// <summary>
         /// Returns the shade map as a single channel image for use in shaders.
         /// </summary>
         /// <returns></returns>
-        private Godot.ImageTexture ToImage()
-        {
-            var bandwidth = 1;
-            var shadearray = ExtractShadeArray();
-            //var AllShades = ExtractShadingTable(shadearray);
-            byte[] imgdata = new byte[16 * bandwidth];
-            for (int l = 0; l < 16; l++)
-            {
-                for (int i = 0; i < bandwidth; i++)
-                {
-                    imgdata[l * bandwidth + i] = (byte)(shadearray[l] * 16); //mult by 16 to get a full range
-                }
+        // private Godot.ImageTexture ToImage()
+        // {
+        //     var bandwidth = 1;
+        //     var shadearray = ExtractShadeArray();
+        //     //var AllShades = ExtractShadingTable(shadearray);
+        //     byte[] imgdata = new byte[16 * bandwidth];
+        //     for (int l = 0; l < 16; l++)
+        //     {
+        //         for (int i = 0; i < bandwidth; i++)
+        //         {
+        //             imgdata[l * bandwidth + i] = (byte)(shadearray[l] * 16); //mult by 16 to get a full range
+        //         }
 
-            }
-            var output = Image(
-                databuffer: imgdata,
-                dataOffSet: 0,
-                width: 16 * bandwidth, height: 1,
-                palette: PaletteLoader.GreyScaleIndexPalette,
-                useAlphaChannel: true,
-                useSingleRedChannel: true,
-                crop: false);
-            return output;
-        }
+        //     }
+        //     var output = Image(
+        //         databuffer: imgdata,
+        //         dataOffSet: 0,
+        //         width: 16 * bandwidth, height: 1,
+        //         palette: PaletteLoader.GreyScaleIndexPalette,
+        //         useAlphaChannel: true,
+        //         useSingleRedChannel: true,
+        //         crop: false);
+        //     return output;
+        // }
 
 
         /// <summary>
@@ -178,37 +179,37 @@ namespace Underworld
         /// This variant shifts the pixels to the right to allow for smooth shading
         /// </summary>
         /// <returns></returns>
-        public Godot.ImageTexture ToShiftedImage()
-        {
-            var bandwidth = 1;
-            var tmparray = ExtractShadeArray();
-            var shadearray = new int[tmparray.Length];
-            shadearray[0] = tmparray[0];
-            for (int i = 1; i <= tmparray.GetUpperBound(0); i++)
-            {
-                shadearray[i] = tmparray[i - 1];
-            }
+        // public Godot.ImageTexture ToShiftedImage()
+        // {
+        //     var bandwidth = 1;
+        //     var tmparray = ExtractShadeArray();
+        //     var shadearray = new int[tmparray.Length];
+        //     shadearray[0] = tmparray[0];
+        //     for (int i = 1; i <= tmparray.GetUpperBound(0); i++)
+        //     {
+        //         shadearray[i] = tmparray[i - 1];
+        //     }
 
 
-            byte[] imgdata = new byte[16 * bandwidth];
-            for (int l = 0; l < 16; l++)
-            {
-                for (int i = 0; i < bandwidth; i++)
-                {
-                    imgdata[l * bandwidth + i] = (byte)(shadearray[l] * 16); //mult by 16 to get a full range
-                }
+        //     byte[] imgdata = new byte[16 * bandwidth];
+        //     for (int l = 0; l < 16; l++)
+        //     {
+        //         for (int i = 0; i < bandwidth; i++)
+        //         {
+        //             imgdata[l * bandwidth + i] = (byte)(shadearray[l] * 16); //mult by 16 to get a full range
+        //         }
 
-            }
-            var output = Image(
-                databuffer: imgdata,
-                dataOffSet: 0,
-                width: 16 * bandwidth, height: 1,
-                palette: PaletteLoader.GreyScaleIndexPalette,
-                useAlphaChannel: true,
-                useSingleRedChannel: true,
-                crop: false);
-            return output;
-        }
+        //     }
+        //     var output = Image(
+        //         databuffer: imgdata,
+        //         dataOffSet: 0,
+        //         width: 16 * bandwidth, height: 1,
+        //         palette: PaletteLoader.GreyScaleIndexPalette,
+        //         useAlphaChannel: true,
+        //         useSingleRedChannel: true,
+        //         crop: false);
+        //     return output;
+        // }
 
         /// <summary>
         /// Extract the full shades array as a image
@@ -346,7 +347,7 @@ namespace Underworld
                     if (var2 <= ViewingDistance)
                     {
                         //seg32_58B
-                        ShadingArray_26EF[di*66 + si] = shadesArray[var2];
+                        ShadingArray_26EF[di*66 + si] = (byte)shadesArray[var2];//33 used to be 66 
                     }
                     else
                     {
@@ -358,7 +359,7 @@ namespace Underworld
                 di++;
             }
 
-
+           // File.WriteAllBytes($"c:\\temp\\shade_{mapindex}.dat", ShadingArray_26EF);
             return shadesArray;
         }
 

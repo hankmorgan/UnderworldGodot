@@ -33,16 +33,7 @@ namespace Underworld
         public static short DoCameraPitch = 0;
         public static short DoCameraRoll = 0;
 
-        public static int CameraTileX;
-        public static int CameraTileY;
-
-        //Range of Vision Variables
-        static short FovYawX1 = 0;
-        static short FovYawX2 = 0;
-        static short FovYawY1 = 0;
-        static short FovYawY2 = 0;
-
-        static short RelatedToFov_2C60 = 0;
+        public static short CameraTileX; public static short CameraTileY;
 
         /// <summary>
         /// Positions the player game camera based on x/y/z pos and current tileX/Y. 
@@ -148,8 +139,8 @@ namespace Underworld
                 pitch += motion.CameraPitchModifier_dseg_67d6_33D2;
             }
 
-            CameraTileX = x >> 8;
-            CameraTileY = y >> 8;
+            CameraTileX = (short)(x >> 8);
+            CameraTileY = (short)(y >> 8);
 
             //Set up the Yaw gimbal             
             main.cameraYawGimbal.Rotation = Vector3.Zero;
@@ -167,11 +158,18 @@ namespace Underworld
             //Set this value to calculate npc angles
             motion.CameraYawHeadingRelated_2B52 = (short)(((1 + (yaw >> 0xD)) & 0x7) >> 1);
             motion.CameraPointer2C = (short)(yaw - motion.PlayerCardinalHeadingLookupTable[motion.CameraYawHeadingRelated_2B52]);
+            if (false)
+            {
+                //dont't run yet due to infinite looping
+                //Following functions are used to determine what is in sight and to update automap accordingly.
+                VisionParams.SetRangeOfVisionParams(
+                    camerax: x,
+                    cameray: y,
+                    camerayaw: yaw);
 
-            SetRangeOfVision(
-                camerax: x, 
-                cameray: y, 
-                camerayaw: yaw);
+                VisionParams.LikelyGetViewDistance();
+            }
+
         }
 
 
@@ -206,10 +204,47 @@ namespace Underworld
             }
         }
 
+    }//end class
+
+    /// <summary>
+    /// Range of Vision Variables
+    /// </summary>
+    public class VisionParams
+    {
+        static short RelatedToFov_2C60 = 0;
+        static short LikelyDistanceToWallOrDarkness = -1;
+
+        //array of data starting at dseg:2b5e
+        public static short dseg_2B5E;
+        public static short FovYawXLEFT = 0; //2B5F
+        public static short FovYawYLEFT = 0; //2B61
+        public static byte dseg_2B63;
+        public static byte CameraX_2b64;//2B64
+
+        public static short dseg_2B65;
+        public static byte CameraY_2b66;//2B66
+
+        public static TileInfo playerTileCopy_2B67; //2B67
+
+        public static short dseg_2B6B;
+        public static short dseg_2B6D;
+        public static short dseg_2B6F;
+        public static short FovYawXRIGHT = 0;//2b70        
+        public static short FovYawYRIGHT = 0;//2b72
+
+        public static short dseg_2B74;
+        public static byte CameraX_2B75;
+        public static byte dseg_2B76;
+        public static byte CameraY_2B77;
+
+        public static TileInfo playerTileCopy_2B78;
+        public static byte dseg_2B7C;
+
+
         /// <summary>
         /// Port of a vanilla function which is used to calcuate what objects are inview. Implemented here to help support vanilla implementation of automapping
         /// </summary>
-        public static void SetRangeOfVision(short camerax, short cameray, short camerayaw)
+        public static void SetRangeOfVisionParams(short camerax, short cameray, short camerayaw)
         {
             var tileX = camerax >> 8; var tileY = cameray >> 8;
             if (!UWTileMap.ValidTile(tileX, tileY))
@@ -224,19 +259,94 @@ namespace Underworld
             else
             {
                 RelatedToFov_2C60 = 0;
-                // dseg_2B5E = 0x81;
-                // dseg_2B73 = 0;
-                // dseg_2B65 = 0;
-                motion.SomethingProjectileHeading_seg021_22FD_EAE(heading: (ushort)(camerayaw + 0x2040), Result_arg2: ref FovYawX1, Result_arg4: ref FovYawY1);
-                motion.SomethingProjectileHeading_seg021_22FD_EAE(heading: (ushort)(camerayaw - 0x2040), Result_arg2: ref FovYawX2, Result_arg4: ref FovYawY2);
 
-                FovYawX1 = (short)(FovYawX1 >> 4);
-                FovYawX2 = (short)(FovYawX2 >> 4);
-                FovYawY1 = (short)(FovYawY1 >> 4);
-                FovYawY2 = (short)(FovYawY2 >> 4);
+                dseg_2B5E = 0x81;
+                dseg_2B63 = 0;
+                dseg_2B65 = 0;
+
+                CameraX_2b64 = (byte)camerax;
+                CameraY_2b66 = (byte)cameray;
+
+                playerTileCopy_2B67 = UWTileMap.current_tilemap.Tiles[tileX, tileY];
+                //dseg_2B6B = reference to an array;
+                dseg_2B6F = 0;
+                dseg_2B74 = 0;
+                dseg_2B76 = 0;
+
+                CameraX_2B75 = (byte)camerax;
+                CameraY_2B77 = (byte)cameray;
+                playerTileCopy_2B78 = UWTileMap.current_tilemap.Tiles[tileX, tileY];
+                //dseg_2B7C =reference to an array that is set up in Seg032_6CF
+
+                motion.SomethingProjectileHeading_seg021_22FD_EAE(heading: (ushort)(camerayaw + 0x2040), Result_arg2: ref FovYawXRIGHT, Result_arg4: ref FovYawYRIGHT);
+                motion.SomethingProjectileHeading_seg021_22FD_EAE(heading: (ushort)(camerayaw - 0x2040), Result_arg2: ref FovYawXLEFT, Result_arg4: ref FovYawYLEFT);
+
+                FovYawXRIGHT = (short)(FovYawXRIGHT >> 4);
+                FovYawXLEFT = (short)(FovYawXLEFT >> 4);
+                FovYawYRIGHT = (short)(FovYawYRIGHT >> 4);
+                FovYawYLEFT = (short)(FovYawYLEFT >> 4);
+            }
+        }
+
+        public static void LikelyGetViewDistance()
+        {
+            var di = 0;
+            LikelyDistanceToWallOrDarkness = -1;
+            var currentshade = shade.shadesdata[playerdat.lightlevel].ShadingArray_26EF;
+            var var2currentshadePtr = 0;
+
+        seg032_1175:
+            LikelyDistanceToWallOrDarkness++;
+            //var var4 = RelatedToFov_2C60; //var4 appears to be a pointer to this value
+        seg032_119D:
+
+            if ((RelatedToFov_2C60 & 0xF) == 0xF)
+            {
+                //seg032_11B0
+                di = currentshade[66 + var2currentshadePtr];
+
+                //loop seg32_11ED
+                if ((RelatedToFov_2C60 & 0xF) == 0xF)
+                {
+                seg032_120B:
+                    if (currentshade[var2currentshadePtr] < di)
+                    {
+                        //seg032_11FD
+                        currentshade[var2currentshadePtr] = 0;
+                        var2currentshadePtr += 2;
+
+                        //Loop back to 120B
+                        goto seg032_120B;
+                    }
+                    else
+                    {
+                        //seg032_1210
+                        if (RelatedToFov_2C60 == 0xF)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            goto seg032_1175;
+                        }
+                    }
+                }
+                else
+                {
+                    //SEG32_11C8
+                }
+            }
+            else
+            {
+                //seg032_1180
+                //lookup a dseg and call 
+                //seg032_C9D(visionparams)
+
+                goto seg032_119D;
             }
 
         }
 
+
     }
-}
+}//end namespace
