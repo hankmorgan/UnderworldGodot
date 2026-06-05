@@ -209,36 +209,145 @@ namespace Underworld
     /// <summary>
     /// Range of Vision Variables
     /// </summary>
-    public class VisionParams
+    public class VisionParams : Loader
     {
+        public static VisionParams[] visionparams = new VisionParams[0xF];
+        static byte[] visiondata = new byte[0xF * 0x11];
         static short RelatedToFov_2C60 = 0;
-        static short LikelyDistanceToWallOrDarkness = -1;
+        public static short LikelyDistanceToWallOrDarkness = -1;
 
         //array of data starting at dseg:2b5e
-        public static short dseg_2B5E;
-        public static short FovYawXLEFT = 0; //2B5F
-        public static short FovYawYLEFT = 0; //2B61
-        public static byte dseg_2B63;
-        public static byte CameraX_2b64;//2B64
+        public byte dseg_2B5E
+        {
+            get
+            {
+                return (byte)getAt8(visiondata, ptr + 0);
+            }
+            set
+            {
+                setAt8(visiondata, ptr + 0, value);
+            }
+        }
+        public short FovYawX //= 0 //2B5F
+        {
+            get
+            {
+                return (short)getAt16(visiondata, ptr + 1);
+            }
+            set
+            {
+                setAt16(visiondata, ptr + 1, value);
+            }
+        }
+        public short FovYawY// = 0; //2B61
+        {
+            get
+            {
+                return (short)getAt16(visiondata, ptr + 3);
+            }
+            set
+            {
+                setAt16(visiondata, ptr + 3, value);
+            }
+        }
 
-        public static short dseg_2B65;
-        public static byte CameraY_2b66;//2B66
+        public short[] UNKARRAY_dseg_2B6B;
 
-        public static TileInfo playerTileCopy_2B67; //2B67
+        public byte dseg_2B63//;
+        {
+            get
+            {
+                return (byte)getAt8(visiondata, ptr + 5);
+            }
+            set
+            {
+                setAt8(visiondata, ptr + 5, value);
+            }
+        }
+        public byte CameraX_2b64//;//2B64
+        {
+            get
+            {
+                return (byte)getAt8(visiondata, ptr + 6);
+            }
+            set
+            {
+                setAt8(visiondata, ptr + 6, value);
+            }
+        }
 
-        public static short dseg_2B6B;
-        public static short dseg_2B6D;
-        public static short dseg_2B6F;
-        public static short FovYawXRIGHT = 0;//2b70        
-        public static short FovYawYRIGHT = 0;//2b72
+        public short dseg_2B65
+        {
+            get
+            {
+                return (short)getAt16(visiondata, ptr + 7);
+            }
+            set
+            {
+                setAt16(visiondata, ptr + 7, value);
+            }
+        }
+        public byte CameraY_2b66//;//2B66
+        {
+            get
+            {
+                return (byte)getAt8(visiondata, ptr + 8);
+            }
+            set
+            {
+                setAt8(visiondata, ptr + 8, value);
+            }
+        }
 
-        public static short dseg_2B74;
-        public static byte CameraX_2B75;
-        public static byte dseg_2B76;
-        public static byte CameraY_2B77;
+        public TileInfo playerTileCopy_2B67; //2B67
 
-        public static TileInfo playerTileCopy_2B78;
-        public static byte dseg_2B7C;
+        public short dseg_2B6B
+        {
+            get
+            {
+                return (short)getAt16(visiondata, ptr + 0XD);
+            }
+            set
+            {
+                setAt16(visiondata, ptr + 0xD, value);
+            }
+        }
+        public short dseg_2B6D
+        {
+            get
+            {
+                return (short)getAt16(visiondata, ptr + 0XF);
+            }
+            set
+            {
+                setAt16(visiondata, ptr + 0xF, value);
+            }
+        }
+        // public static short dseg_2B6F;
+        // public static short FovYawXRIGHT = 0;//2b70        
+        // public static short FovYawYRIGHT = 0;//2b72
+
+        // public static short dseg_2B74;
+        // public static byte CameraX_2B75;
+        // public static byte dseg_2B76;
+        // public static byte CameraY_2B77;
+
+        // public static TileInfo playerTileCopy_2B78;
+        // public static byte dseg_2B7C;
+
+        int ptr;
+        static VisionParams()
+        {
+            for (int i = 0; i <= visionparams.GetUpperBound(0); i++)
+            {
+                visionparams[i] = new VisionParams(i);
+            }
+        }
+
+        VisionParams(int index)
+        {
+            ptr = index * 0x11;
+        }
 
 
         /// <summary>
@@ -260,31 +369,34 @@ namespace Underworld
             {
                 RelatedToFov_2C60 = 0;
 
-                dseg_2B5E = 0x81;
-                dseg_2B63 = 0;
-                dseg_2B65 = 0;
+                visionparams[0].dseg_2B5E = 0x81;
+                visionparams[0].dseg_2B63 = 0;
+                visionparams[0].dseg_2B65 = 0;
 
-                CameraX_2b64 = (byte)camerax;
-                CameraY_2b66 = (byte)cameray;
+                visionparams[0].CameraX_2b64 = (byte)camerax;
+                visionparams[0].CameraY_2b66 = (byte)cameray;
 
-                playerTileCopy_2B67 = UWTileMap.current_tilemap.Tiles[tileX, tileY];
+                visionparams[0].playerTileCopy_2B67 = UWTileMap.current_tilemap.Tiles[tileX, tileY];
                 //dseg_2B6B = reference to an array;
-                dseg_2B6F = 0;
-                dseg_2B74 = 0;
-                dseg_2B76 = 0;
+                visionparams[1].dseg_2B5E = 0;//.dseg_2B6F = 0;
+                visionparams[1].dseg_2B63 = 0;//dseg_2B74 = 0;
+                visionparams[1].dseg_2B65 = 0;  //dseg_2B76 = 0;
 
-                CameraX_2B75 = (byte)camerax;
-                CameraY_2B77 = (byte)cameray;
-                playerTileCopy_2B78 = UWTileMap.current_tilemap.Tiles[tileX, tileY];
+
+                visionparams[1].CameraX_2b64 = (byte)camerax; //CameraX_2B75 = (byte)camerax;
+                visionparams[1].CameraY_2b66 = (byte)cameray;//CameraY_2B77 = (byte)cameray;
+                visionparams[1].playerTileCopy_2B67 = UWTileMap.current_tilemap.Tiles[tileX, tileY];////playerTileCopy_2B78 = UWTileMap.current_tilemap.Tiles[tileX, tileY];
                 //dseg_2B7C =reference to an array that is set up in Seg032_6CF
-
-                motion.SomethingProjectileHeading_seg021_22FD_EAE(heading: (ushort)(camerayaw + 0x2040), Result_arg2: ref FovYawXRIGHT, Result_arg4: ref FovYawYRIGHT);
-                motion.SomethingProjectileHeading_seg021_22FD_EAE(heading: (ushort)(camerayaw - 0x2040), Result_arg2: ref FovYawXLEFT, Result_arg4: ref FovYawYLEFT);
-
-                FovYawXRIGHT = (short)(FovYawXRIGHT >> 4);
-                FovYawXLEFT = (short)(FovYawXLEFT >> 4);
-                FovYawYRIGHT = (short)(FovYawYRIGHT >> 4);
-                FovYawYLEFT = (short)(FovYawYLEFT >> 4);
+                short x= 0; short y = 0;
+                motion.SomethingProjectileHeading_seg021_22FD_EAE(heading: (ushort)(camerayaw + 0x2040), Result_arg2: ref x, Result_arg4: ref y);
+                visionparams[1].FovYawX = x;  visionparams[1].FovYawY = y;
+                motion.SomethingProjectileHeading_seg021_22FD_EAE(heading: (ushort)(camerayaw - 0x2040), Result_arg2: ref x, Result_arg4: ref y);
+                visionparams[0].FovYawX = x;  visionparams[0].FovYawY = y;
+                
+                visionparams[1].FovYawX = (short)(visionparams[1].FovYawX>>4);  
+                visionparams[1].FovYawY = (short)(visionparams[1].FovYawY>>4);
+                visionparams[0].FovYawX = (short)(visionparams[0].FovYawX>>4);  
+                visionparams[0].FovYawY = (short)(visionparams[0].FovYawY>>4);
             }
         }
 
