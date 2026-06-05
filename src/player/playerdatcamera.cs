@@ -212,7 +212,7 @@ namespace Underworld
     public class VisionParams : Loader
     {
         public static VisionParams[] visionparams = new VisionParams[0xF];
-        static byte[] visiondata = new byte[0xF * 0x11];
+        static byte[] _rawvisiondata = new byte[0xF * 0x11];
         static short RelatedToFov_2C60 = 0;
         public static short LikelyDistanceToWallOrDarkness = -1;
 
@@ -221,33 +221,33 @@ namespace Underworld
         {
             get
             {
-                return (byte)getAt8(visiondata, ptr + 0);
+                return (byte)getAt8(_rawvisiondata, ptr + 0);
             }
             set
             {
-                setAt8(visiondata, ptr + 0, value);
+                setAt8(_rawvisiondata, ptr + 0, value);
             }
         }
         public short FovYawX //= 0 //2B5F
         {
             get
             {
-                return (short)getAt16(visiondata, ptr + 1);
+                return (short)getAt16(_rawvisiondata, ptr + 1);
             }
             set
             {
-                setAt16(visiondata, ptr + 1, value);
+                setAt16(_rawvisiondata, ptr + 1, value);
             }
         }
         public short FovYawY// = 0; //2B61
         {
             get
             {
-                return (short)getAt16(visiondata, ptr + 3);
+                return (short)getAt16(_rawvisiondata, ptr + 3);
             }
             set
             {
-                setAt16(visiondata, ptr + 3, value);
+                setAt16(_rawvisiondata, ptr + 3, value);
             }
         }
 
@@ -257,22 +257,22 @@ namespace Underworld
         {
             get
             {
-                return (byte)getAt8(visiondata, ptr + 5);
+                return (byte)getAt8(_rawvisiondata, ptr + 5);
             }
             set
             {
-                setAt8(visiondata, ptr + 5, value);
+                setAt8(_rawvisiondata, ptr + 5, value);
             }
         }
         public byte CameraX_2b64//;//2B64
         {
             get
             {
-                return (byte)getAt8(visiondata, ptr + 6);
+                return (byte)getAt8(_rawvisiondata, ptr + 6);
             }
             set
             {
-                setAt8(visiondata, ptr + 6, value);
+                setAt8(_rawvisiondata, ptr + 6, value);
             }
         }
 
@@ -280,22 +280,22 @@ namespace Underworld
         {
             get
             {
-                return (short)getAt16(visiondata, ptr + 7);
+                return (short)getAt16(_rawvisiondata, ptr + 7);
             }
             set
             {
-                setAt16(visiondata, ptr + 7, value);
+                setAt16(_rawvisiondata, ptr + 7, value);
             }
         }
         public byte CameraY_2b66//;//2B66
         {
             get
             {
-                return (byte)getAt8(visiondata, ptr + 8);
+                return (byte)getAt8(_rawvisiondata, ptr + 8);
             }
             set
             {
-                setAt8(visiondata, ptr + 8, value);
+                setAt8(_rawvisiondata, ptr + 8, value);
             }
         }
 
@@ -305,22 +305,22 @@ namespace Underworld
         {
             get
             {
-                return (short)getAt16(visiondata, ptr + 0XD);
+                return (short)getAt16(_rawvisiondata, ptr + 0XD);
             }
             set
             {
-                setAt16(visiondata, ptr + 0xD, value);
+                setAt16(_rawvisiondata, ptr + 0xD, value);
             }
         }
         public short dseg_2B6D
         {
             get
             {
-                return (short)getAt16(visiondata, ptr + 0XF);
+                return (short)getAt16(_rawvisiondata, ptr + 0XF);
             }
             set
             {
-                setAt16(visiondata, ptr + 0xF, value);
+                setAt16(_rawvisiondata, ptr + 0xF, value);
             }
         }
         // public static short dseg_2B6F;
@@ -417,7 +417,8 @@ namespace Underworld
                 //seg032_11B0
                 di = currentshade[66 + var2currentshadePtr];
 
-                //loop seg32_11ED
+                //loop
+                seg032_11ED:
                 if ((RelatedToFov_2C60 & 0xF) == 0xF)
                 {
                 seg032_120B:
@@ -445,20 +446,42 @@ namespace Underworld
                 }
                 else
                 {
-                    //SEG32_11C8
+                    seg032_11C8:
+                    if (visionparams[RelatedToFov_2C60].dseg_2B6D > currentshade[var2currentshadePtr])
+                    {
+                        //seg32_11BA
+                        currentshade[var2currentshadePtr] = 0;
+                        var2currentshadePtr +=2;
+                        goto seg032_11C8;
+                    }
+                    else
+                    {
+                        //seg32_11DE
+                        seg32_1014(ref RelatedToFov_2C60, currentshade, var2currentshadePtr);
+                        goto seg032_11ED;
+                    }
                 }
             }
             else
             {
                 //seg032_1180
                 //lookup a dseg and call 
-                //seg032_C9D(visionparams)
+                seg032_C9D(visionparams[0]);
 
                 goto seg032_119D;
             }
 
         }
 
+        static bool seg032_C9D(VisionParams vision)
+        {
+            return false;
+        }
 
-    }
+        static void seg32_1014(ref short ptrdseg_2c60, byte[] currentshade, int currentshade_ptr)
+        {
+            
+        }
+
+    }//end class
 }//end namespace
