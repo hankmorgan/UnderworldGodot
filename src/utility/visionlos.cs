@@ -12,6 +12,8 @@ namespace Underworld
         static short[] dseg_52F = new short[] { -1, 1 };//i think the indexer for this can only be 0 or 1.
         static byte[] dseg_452 = new byte[] { 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0x0, 0x0, 0x0, 0x0, 0x0 };
 
+        static byte[] dseg_493 = new byte[] { 00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xB8, 0x98, 0xB0, 0x98, 0xB0, 0x98, 0xB0, 0xE4, 0xC4, 0xE4, 0xC4, 0xE0, 0xC4, 0xE4, 0xCD, 0xCD, 0xC5, 0xC9, 0xC5, 0xCD, 0xC5, 0xD6, 0xD2, 0x00, 0xD6, 0x00, 0xD6, 0x00, 0xD7, 0x00, 0xD3, 0x00, 0xD7, 0x00, 0xD7, 0xBC, 0x9C, 0xB4, 0x9C, 0xB4, 0x9C, 0xB4, 0xBD, 0x9D, 0xB5, 0x9D, 0xB5, 0x9D, 0xB5, 0xBE, 0x9E, 0xB6, 0x9E, 0xB6, 0x9E, 0xB6, 0xBF, 0x9F, 0xB7, 0x9F, 0xB7, 0x9F, 0xB7 };
+
         static byte[] dseg_432 = new byte[] { 01, 0x00, 0x40, 0x00, 0xFF, 0xFF, 0xC0, 0xFF, 0x01, 0x00, 0x40, 0x00, 0xFF, 0xFF, 0xC0, 0xFF, 0x01, 0x00, 0x40, 0x00, 0xFF, 0xFF, 0xC0, 0xFF };
         public static VisionParams[] visionparams = new VisionParams[0xF];
         static byte[] _rawvisiondata = new byte[0xF * 0x11];
@@ -481,9 +483,62 @@ namespace Underworld
 
         }
 
-        static void seg032_6CF(VisionParams vision, short arg2, short arg4)
+        static bool seg032_6CF(VisionParams vision, short arg2, short arg4)
         {
+            var var4 = vision.FovYawX;
+            short var6;
 
+            var di = dseg_452[vision.playerTileCopy_2B67.tileType + (motion.CameraYawHeadingRelated_2B52 << 4)];
+            if (vision.dseg_2B63 != 0)
+            {
+                //seg032_712
+                if (vision.dseg_2B63 > 0)
+                {
+                    var6 = 2;
+                }
+                else
+                {
+                    var6 = 1;
+                }
+                //seg032_71F
+                if (Math.Abs(vision.dseg_2B63) > Math.Abs(vision.dseg_2B65))
+                {
+                    var6 += 2;
+                }
+                if (Math.Abs(vision.dseg_2B63) == Math.Abs(vision.dseg_2B65))
+                {
+                    var6 += 4;
+                }
+
+            }
+            else
+            {
+                var6 = 0;
+            }
+            //seg032_75B
+
+            var var2 = dseg_493[var6 + di * 7];
+            if (var2 == 0)
+            {
+                vision.dseg_2B6B = 0;
+                return false;
+            }
+            else
+            {
+                //seg032_77D
+                if ((var2 & 0x10) != 0)
+                {
+                    
+                }
+
+
+                //rejoin at seg032_85C
+            }
+
+
+
+
+            return false;
         }
 
         /// <summary>
