@@ -8,6 +8,7 @@ namespace Underworld
     public class VisionParams : Loader
     {
         static byte[] dseg_527 = new byte[] { 0x2, 0x4 };
+        static short[] dseg_52B = new short[]{02, 00, 03, 00};//, FF FF 01 00 00 04 00 07 00 01 00 01}
         static short[] dseg_52F = new short[] { -1, 1 };//i think the indexer for this can only be 0 or 1.
         static byte[] dseg_452 = new byte[] { 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0x0, 0x0, 0x0, 0x0, 0x0 };
 
@@ -372,7 +373,7 @@ namespace Underworld
                         vision.CameraX_2b64 = (byte)(0xFF * ((di + 1) % 2));
 
                         var2 = 0x100;
-                        if ((vision.dseg_2B5E & 0x80) != (di<<7))
+                        if ((vision.dseg_2B5E & 0x80) != (di << 7))
                         {
                             //seg032_E50
                             seg032_6CF(vision: vision, arg2: 0, arg4: 0);
@@ -389,15 +390,55 @@ namespace Underworld
                             seg032_683(vision);
                         }
                         //seg032_E6D
-                        if ((vision.dseg_2B6C != 0xF) || (Math.Abs(vision.dseg_2B63)>0x10))
+                        if ((vision.dseg_2B6C != 0xF) || (Math.Abs(vision.dseg_2B63) > 0x10))
                         {
                             //seg032_E90
+                            if (dseg_52F[(di + 1) % 2] != 1)
+                            {
+                                //seg032_EAB
+                                seg032_6A9(vision);
+                            }
+                            else
+                            {
+                                //seg032_EA6
+                                seg032_683(vision);
+                            }
+                            //seg032_EB0
+                            vision.CameraX_2b64 = (byte)(0xFF * di);
+                            vision.CameraY_2b66 = 0xFF;
+                            if ((vision.dseg_2B5E * 0x80) == (di<<7))
+                            {
+                                return;
+                            }
+                            else
+                            {
+                                //seg032_Ed4->seg032_100A
+                                vision.dseg_2B6D = vision.dseg_2B6B;
+                                return;
+                            }
                         }
                         else
                         {
                             //seg032_F3E
+                            if (vision.FovYawY == 0)
+                            {
+                                var4 = 1;
+                                goto seg032_F9D;
+                            }
+                            else
+                            {
+                                if ( (0x100-vision.CameraY_2b66) * (dseg_52F[di]) <= (var2*vision.FovYawY) )
+                                {
+                                    var4 = 0;
+                                }
+                                else
+                                {
+                                    var4 = 1;
+                                }
+                                goto seg032_F9D;
+                            }
+                            //loopback to Seg032_F9D
                         }
-
                     }
                     // else
                     // {
@@ -405,7 +446,30 @@ namespace Underworld
                     // }
                 }
                 //Seg032_ED7
-
+                vision.CameraY_2b66 = 0xFF;
+                if ((Pathfind.tilewallflags[var3] & dseg_527[di]) != dseg_527[di])
+                {
+                    //Seg032_F1D
+                    vision.CameraX_2b64 = (byte)(di * 0xFF);
+                }
+                else
+                {
+                    //seg032_EFB
+                    if (dseg_52B[di] != var3)
+                    {
+                        vision.CameraX_2b64 = (byte)(di * 0xFF);
+                    }
+                    else
+                    {
+                        vision.CameraX_2b64 = (byte)(((di+1)%2) * 0xFF);
+                    }
+                }
+                //seg032_F24
+                if ((vision.dseg_2B5E & 0x80) != (di<<7))
+                {
+                    //Seg032_F3B -> seg032_100A
+                    vision.dseg_2B6D = vision.dseg_2B6B;
+                }
             }
 
             return;
@@ -418,17 +482,17 @@ namespace Underworld
 
         static void seg032_6CF(VisionParams vision, short arg2, short arg4)
         {
-            
+
         }
 
         static void seg032_683(VisionParams vision)
         {
-            
+
         }
 
         static void seg032_6A9(VisionParams vision)
         {
-            
+
         }
 
     }//end class
