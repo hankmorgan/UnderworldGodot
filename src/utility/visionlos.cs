@@ -8,10 +8,11 @@ namespace Underworld
     public class VisionParams : Loader
     {
         static byte[] dseg_527 = new byte[] { 0x2, 0x4 };
-        static short[] dseg_52B = new short[]{02, 00, 03, 00};//, FF FF 01 00 00 04 00 07 00 01 00 01}
+        static short[] dseg_52B = new short[] { 02, 00, 03, 00 };//, FF FF 01 00 00 04 00 07 00 01 00 01}
         static short[] dseg_52F = new short[] { -1, 1 };//i think the indexer for this can only be 0 or 1.
         static byte[] dseg_452 = new byte[] { 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0x0, 0x0, 0x0, 0x0, 0x0 };
 
+        static byte[] dseg_432 = new byte[] { 01, 0x00, 0x40, 0x00, 0xFF, 0xFF, 0xC0, 0xFF, 0x01, 0x00, 0x40, 0x00, 0xFF, 0xFF, 0xC0, 0xFF, 0x01, 0x00, 0x40, 0x00, 0xFF, 0xFF, 0xC0, 0xFF };
         public static VisionParams[] visionparams = new VisionParams[0xF];
         static byte[] _rawvisiondata = new byte[0xF * 0x11];
         static short RelatedToFov_2C60 = 0;
@@ -382,12 +383,12 @@ namespace Underworld
                         if (dseg_52F[di] != 1)
                         {
                             //seg032_E68
-                            seg032_6A9(vision);
+                            GetNextVisionTileNegative_seg032_6A9(vision);
                         }
                         else
                         {
                             //seg032_E62
-                            seg032_683(vision);
+                            GetNextVisionTilePositive_seg032_683(vision);
                         }
                         //seg032_E6D
                         if ((vision.dseg_2B6C != 0xF) || (Math.Abs(vision.dseg_2B63) > 0x10))
@@ -396,17 +397,17 @@ namespace Underworld
                             if (dseg_52F[(di + 1) % 2] != 1)
                             {
                                 //seg032_EAB
-                                seg032_6A9(vision);
+                                GetNextVisionTileNegative_seg032_6A9(vision);
                             }
                             else
                             {
                                 //seg032_EA6
-                                seg032_683(vision);
+                                GetNextVisionTilePositive_seg032_683(vision);
                             }
                             //seg032_EB0
                             vision.CameraX_2b64 = (byte)(0xFF * di);
                             vision.CameraY_2b66 = 0xFF;
-                            if ((vision.dseg_2B5E * 0x80) == (di<<7))
+                            if ((vision.dseg_2B5E * 0x80) == (di << 7))
                             {
                                 return;
                             }
@@ -427,7 +428,7 @@ namespace Underworld
                             }
                             else
                             {
-                                if ( (0x100-vision.CameraY_2b66) * (dseg_52F[di]) <= (var2*vision.FovYawY) )
+                                if ((0x100 - vision.CameraY_2b66) * (dseg_52F[di]) <= (var2 * vision.FovYawY))
                                 {
                                     var4 = 0;
                                 }
@@ -461,11 +462,11 @@ namespace Underworld
                     }
                     else
                     {
-                        vision.CameraX_2b64 = (byte)(((di+1)%2) * 0xFF);
+                        vision.CameraX_2b64 = (byte)(((di + 1) % 2) * 0xFF);
                     }
                 }
                 //seg032_F24
-                if ((vision.dseg_2B5E & 0x80) != (di<<7))
+                if ((vision.dseg_2B5E & 0x80) != (di << 7))
                 {
                     //Seg032_F3B -> seg032_100A
                     vision.dseg_2B6D = vision.dseg_2B6B;
@@ -485,14 +486,22 @@ namespace Underworld
 
         }
 
-        static void seg032_683(VisionParams vision)
+        /// <summary>
+        /// Updates some values on the array and gets a new tile PTR
+        /// </summary>
+        /// <param name="vision"></param>
+        static void GetNextVisionTilePositive_seg032_683(VisionParams vision)
         {
-
+            vision.dseg_2B63++;
+            vision.playerTileCopy_2B67 = UWTileMap.GetTileByPTR((int)(vision.playerTileCopy_2B67.Ptr + (dseg_432[dseg_432[motion.CameraYawHeadingRelated_2B52 * 6]] << 2)));
+            vision.dseg_2B6B += 2;
         }
 
-        static void seg032_6A9(VisionParams vision)
+        static void GetNextVisionTileNegative_seg032_6A9(VisionParams vision)
         {
-
+            vision.dseg_2B63--;
+            vision.playerTileCopy_2B67 = UWTileMap.GetTileByPTR((int)(vision.playerTileCopy_2B67.Ptr - (dseg_432[dseg_432[motion.CameraYawHeadingRelated_2B52 * 6]] << 2)));
+            vision.dseg_2B6B -= 2;
         }
 
     }//end class
