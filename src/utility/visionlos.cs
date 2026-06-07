@@ -1,5 +1,6 @@
 using System;
 
+
 namespace Underworld
 {
     /// <summary>
@@ -7,6 +8,7 @@ namespace Underworld
     /// </summary>
     public class VisionParams : Loader
     {
+        static byte[] dseg_523 = new byte[] { 10, 0x00, 0x00, 0x00, 0x02, 0x00, 0x04, 0x00, 0x02, 0x00, 0x03, 0x00, 0xFF, 0xFF, 0x01, 0x00 };
         static byte[] dseg_527 = new byte[] { 0x2, 0x4 };
         static short[] dseg_52B = new short[] { 02, 00, 03, 00 };//, FF FF 01 00 00 04 00 07 00 01 00 01}
         static short[] dseg_52F = new short[] { -1, 1 };//i think the indexer for this can only be 0 or 1.
@@ -15,6 +17,7 @@ namespace Underworld
         static byte[] dseg_493 = new byte[] { 00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xB8, 0x98, 0xB0, 0x98, 0xB0, 0x98, 0xB0, 0xE4, 0xC4, 0xE4, 0xC4, 0xE0, 0xC4, 0xE4, 0xCD, 0xCD, 0xC5, 0xC9, 0xC5, 0xCD, 0xC5, 0xD6, 0xD2, 0x00, 0xD6, 0x00, 0xD6, 0x00, 0xD7, 0x00, 0xD3, 0x00, 0xD7, 0x00, 0xD7, 0xBC, 0x9C, 0xB4, 0x9C, 0xB4, 0x9C, 0xB4, 0xBD, 0x9D, 0xB5, 0x9D, 0xB5, 0x9D, 0xB5, 0xBE, 0x9E, 0xB6, 0x9E, 0xB6, 0x9E, 0xB6, 0xBF, 0x9F, 0xB7, 0x9F, 0xB7, 0x9F, 0xB7 };
 
         static byte[] dseg_432 = new byte[] { 01, 0x00, 0x40, 0x00, 0xFF, 0xFF, 0xC0, 0xFF, 0x01, 0x00, 0x40, 0x00, 0xFF, 0xFF, 0xC0, 0xFF, 0x01, 0x00, 0x40, 0x00, 0xFF, 0xFF, 0xC0, 0xFF };
+
         public static VisionParams[] visionparams = new VisionParams[0xF];
         static byte[] _rawvisiondata = new byte[0xF * 0x11];
         static short RelatedToFov_2C60 = 0;
@@ -105,22 +108,26 @@ namespace Underworld
 
         public TileInfo playerTileCopy_2B67; //2B67
 
-        public short dseg_2B6B
+        public byte dseg_2B6B
         {
             get
             {
-                return (short)getAt16(_rawvisiondata, ptr + 0XD);
+                return (byte)getAt8(_rawvisiondata, ptr + 0XD);
             }
             set
             {
-                setAt16(_rawvisiondata, ptr + 0xD, value);
+                setAt8(_rawvisiondata, ptr + 0xD, value);
             }
         }
         public byte dseg_2B6C
         {
             get
             {
-                return (byte)getAt8(_rawvisiondata, ptr + 0xE);
+                return (byte)getAt8(_rawvisiondata, ptr + 0XE);
+            }
+            set
+            {
+                setAt8(_rawvisiondata, ptr + 0xE, value);
             }
         }
         public short dseg_2B6D
@@ -379,7 +386,7 @@ namespace Underworld
                         if ((vision.dseg_2B5E & 0x80) != (di << 7))
                         {
                             //seg032_E50
-                            seg032_6CF(vision: vision, arg2: 0, arg4: 0);
+                            MaybeTestVisibilityNextTile_seg032_6CF(vision: vision, arg2: 0, arg4: 0);
                         }
                         //seg032_E56
                         if (dseg_52F[di] != 1)
@@ -483,10 +490,14 @@ namespace Underworld
 
         }
 
-        static bool seg032_6CF(VisionParams vision, short arg2, short arg4)
+        static bool MaybeTestVisibilityNextTile_seg032_6CF(VisionParams vision, short arg2, short arg4)
         {
-            var var4 = vision.FovYawX;
+            var var4 = vision.dseg_2B6C;
+            TileInfo AnotherTile;
+            short PlayerFloorheightoffset;
+            short OtherFloorheightoffset;
             short var6;
+            short var8;
 
             var di = dseg_452[vision.playerTileCopy_2B67.tileType + (motion.CameraYawHeadingRelated_2B52 << 4)];
             if (vision.dseg_2B63 != 0)
@@ -509,7 +520,6 @@ namespace Underworld
                 {
                     var6 += 4;
                 }
-
             }
             else
             {
@@ -528,17 +538,203 @@ namespace Underworld
                 //seg032_77D
                 if ((var2 & 0x10) != 0)
                 {
-                    
+                    AnotherTile = UWTileMap.GetTileByPTR((int)(vision.playerTileCopy_2B67.Ptr + dseg_432[2 + motion.CameraYawHeadingRelated_2B52 * 6])); //array referenced is at dseg434
+                    PlayerFloorheightoffset = vision.playerTileCopy_2B67.floorHeight;
+                    var8 = dseg_452[(motion.CameraYawHeadingRelated_2B52 << 4) + AnotherTile.tileType];
+
+                    if ((Pathfind.tilewallflags[var8] & 0x8) == 0)
+                    {
+                        //seg032_7CA
+                        OtherFloorheightoffset = AnotherTile.floorHeight;
+                        if ((Pathfind.tilewallflags[var8] & 0x20) == 0x20)
+                        {
+                            OtherFloorheightoffset++;
+                        }
+                        //seg032_818
+                        if (var8 == 6)
+                        {
+                            OtherFloorheightoffset--;
+                        }
+                        if (di == 6)
+                        {
+                            PlayerFloorheightoffset++;
+                        }
+                        //seg032_835
+                        if ((di == var8) && (di != 1))
+                        {
+                            OtherFloorheightoffset++;
+                        }
+                        //seg032_84A
+                        if (OtherFloorheightoffset > PlayerFloorheightoffset)
+                        {
+                            var4 += 0x20;
+                        }
+                        else
+                        {
+                            var2 -= 0x10;
+                        }
+                    }
                 }
 
-
                 //rejoin at seg032_85C
+
+                if ((var2 & 0x20) != 0)
+                {
+                    //Seg032_8A9
+                    AnotherTile = UWTileMap.GetTileByPTR((int)(vision.playerTileCopy_2B67.Ptr + dseg_432[motion.CameraYawHeadingRelated_2B52 * 6]));
+
+                    var8 = dseg_452[AnotherTile.tileType + (motion.CameraYawHeadingRelated_2B52 << 4)];
+
+                    if ((Pathfind.tilewallflags[var8] & 0x2) == 0)
+                    {
+                        //seg032_8A9
+                        OtherFloorheightoffset = AnotherTile.floorHeight;
+                        PlayerFloorheightoffset = vision.playerTileCopy_2B67.floorHeight;
+
+                        if ((Pathfind.tilewallflags[var8] & 0x20) == 0x20)
+                        {
+                            OtherFloorheightoffset++;
+                        }
+                        //seg032_8E6
+                        if (var8 == 8)
+                        {
+                            OtherFloorheightoffset--;
+                        }
+                        //seg032_8F7
+                        if (di == 8)
+                        {
+                            PlayerFloorheightoffset++;
+                        }
+                        //seg32_918
+                        if ((var8 == di) && (di != 1))
+                        {
+                            PlayerFloorheightoffset++;
+                        }
+                        if (OtherFloorheightoffset > PlayerFloorheightoffset)
+                        {
+                            var4 += 0x20;
+                        }
+                        else
+                        {
+                            var2 -= 0x10;
+                        }
+                    }
+                }
+
+                //rejoin at Seg032_93B
+                if ((var2 & 0x8) != 0)
+                {
+                    //seg032_945
+                    AnotherTile = UWTileMap.GetTileByPTR((int)(vision.playerTileCopy_2B67.Ptr + dseg_432[motion.CameraYawHeadingRelated_2B52 * 6]));
+                    var8 = dseg_452[AnotherTile.tileType + (motion.CameraYawHeadingRelated_2B52 << 4)];
+                    if ((Pathfind.tilewallflags[var8] & 4) == 0)
+                    {
+                        //seg032_988
+                        OtherFloorheightoffset = AnotherTile.floorHeight;
+                        PlayerFloorheightoffset = vision.playerTileCopy_2B67.floorHeight;
+
+                        if ((Pathfind.tilewallflags[var8] & 0x20) == 0x20)
+                        {
+                            OtherFloorheightoffset++;
+                        }
+                        //seg032_9C5
+                        if (var8 == 9)
+                        {
+                            OtherFloorheightoffset--;
+                        }
+                        //seg032_9D9
+                        if (di == 9)
+                        {
+                            PlayerFloorheightoffset++;
+                        }
+
+                        //seg032_9F6
+                        if ((var8 == di) && (di != 1))
+                        {
+                            PlayerFloorheightoffset++;
+                        }
+
+                        if (OtherFloorheightoffset > PlayerFloorheightoffset)
+                        {
+                            //seg032_A16
+                            var4 += 0x10;
+                        }
+                        else
+                        {
+                            var2 -= 8;
+                        }
+                    }
+                }
+
+                //rejoin at seg032_A1A
+                vision.dseg_2B6B = var2;
+                vision.dseg_2B6C = var4;
+
+                if (arg2 == 0)
+                {
+                    return false;
+                }
+                else
+                {
+                    //possibly looking behind player?
+                    //seg032_A34
+                    AnotherTile = UWTileMap.GetTileByPTR((int)(vision.playerTileCopy_2B67.Ptr + dseg_432[2 + motion.CameraYawHeadingRelated_2B52 * 6]));   //array was dseg_434
+                    var tmp = dseg_452[AnotherTile.tileType + (motion.CameraYawHeadingRelated_2B52 << 4)];
+
+                    if ((Pathfind.tilewallflags[tmp] & 0x8) == arg4)
+                    {
+                        short ax;
+                        if (arg4 == 8)
+                        {
+                            ax = 1;
+                        }
+                        else
+                        {
+                            ax = 0;
+                        }
+
+                        if (dseg_523[ax << 1] != (Pathfind.tilewallflags[di] & 0x10))
+                        {
+                            goto seg032_ACD;
+                        }
+                    }
+                    //seg032_A9E
+                    if ((Pathfind.tilewallflags[di] & 1) == 1)
+                    {
+                        var ax = 0;
+                        if (arg4 != 0)
+                        {
+                            ax = 0;
+                        }
+                        else
+                        {
+                            ax = 1;
+                        }
+
+                        if ( dseg_523[ax<<1]  != (Pathfind.tilewallflags[di] & 0x10))
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        return false;
+                    }
+
+
+                seg032_ACD:
+                    if (arg2 != 1)
+                    {
+                        GetNextVisionTileNegative_seg032_6A9(vision);
+                    }
+                    else
+                    {
+                        GetNextVisionTilePositive_seg032_683(vision);
+                    }
+                    return true;
+                }
             }
 
-
-
-
-            return false;
         }
 
         /// <summary>
