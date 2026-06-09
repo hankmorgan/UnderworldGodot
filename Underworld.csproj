@@ -11,7 +11,7 @@
     <None Remove="tools/**/*" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Munt.NET" Version="0.2.1" />
+    <PackageReference Include="Munt.NET" Version="0.2.2" />
     <PackageReference Include="ADLMidi.NET" Version="1.2.0" />
     <PackageReference Include="MeltySynth" Version="2.4.1" />
   </ItemGroup>
