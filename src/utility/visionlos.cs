@@ -19,7 +19,8 @@ namespace Underworld
         static byte[] dseg_432 = new byte[] { 01, 0x00, 0x40, 0x00, 0xFF, 0xFF, 0xC0, 0xFF, 0x01, 0x00, 0x40, 0x00, 0xFF, 0xFF, 0xC0, 0xFF, 0x01, 0x00, 0x40, 0x00, 0xFF, 0xFF, 0xC0, 0xFF };
 
         public static VisionParams[] visionparams = new VisionParams[0xF];
-        static byte[] _rawvisiondata = new byte[0xF * 0x11];
+        byte[] _rawvisiondata; //= new byte[0xF * 0x11];
+        static byte[] _defaultrawdata = new byte[0xF * 0x11];
         static short RelatedToFov_2C60 = 0;
         public static short LikelyDistanceToWallOrDarkness = -1;
 
@@ -108,7 +109,7 @@ namespace Underworld
 
         public TileInfo playerTileCopy_2B67; //2B67
 
-        public byte dseg_2B6B
+        public byte dseg_2B6B//This might actually be a ptr to data and not a value??
         {
             get
             {
@@ -158,13 +159,14 @@ namespace Underworld
         {
             for (int i = 0; i <= visionparams.GetUpperBound(0); i++)
             {
-                visionparams[i] = new VisionParams(i);
+                visionparams[i] = new VisionParams(index: i, rawdata: _defaultrawdata);
             }
         }
 
-        VisionParams(int index)
+        VisionParams(int index, byte[] rawdata)
         {
             ptr = index * 0x11;
+            _rawvisiondata = rawdata;
         }
 
 
