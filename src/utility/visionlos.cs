@@ -1,6 +1,4 @@
 using System;
-using Godot;
-
 
 namespace Underworld
 {
@@ -561,26 +559,26 @@ namespace Underworld
                 Seg032_1156:
                     if (si_vision.dseg_2B63_5 > tmpVision.dseg_2B63_5)
                     {
-                        Seg032_110A:
+                    Seg032_110A:
                         if (MaybeTestVisibilityNextTile_seg032_6CF(tmpVision, 1, 0))
                         {
-                            if (si_vision.dseg_2B63_5> tmpVision.dseg_2B63_5)
+                            if (si_vision.dseg_2B63_5 > tmpVision.dseg_2B63_5)
                             {
                                 goto Seg032_110A;
                             }
                         }
                         //seg032_111D
-                        if (si_vision.dseg_2B63_5<= tmpVision.dseg_2B63_5)
+                        if (si_vision.dseg_2B63_5 <= tmpVision.dseg_2B63_5)
                         {
                             goto Seg032_1156;
                         }
                         //seg032_1125
                         GetNextVisionTilePositive_seg032_683(tmpVision);
-                        Seg032_1139:
+                    Seg032_1139:
                         if (MaybeTestVisibilityNextTile_seg032_6CF(tmpVision, 1, 8))
                         {
                             //seg032_1131
-                            if (si_vision.dseg_2B63_5> tmpVision.dseg_2B63_5)
+                            if (si_vision.dseg_2B63_5 > tmpVision.dseg_2B63_5)
                             {
                                 goto Seg032_1139;
                             }
@@ -874,9 +872,84 @@ namespace Underworld
             vision.dseg_2B6B_d -= 2;
         }
 
-        static bool MaybeTestVisionIntoShading_seg032_AF5(VisionParams vision_arg0, VisionParams vision_arg2)
+        static bool MaybeTestVisionIntoShading_seg032_AF5(VisionParams si_vision, VisionParams di_vision)
         {
-            return false;
+            var shading = shade.shadesdata[playerdat.lightlevel].ShadingArray_26EF;
+            //shade.shadesdata[playerdat.lightlevel].ShadingArray_26EF;
+            if (si_vision.dseg_2B65_7 > 0x10)
+            {
+                return false;
+            }
+            else
+            {
+                seg032_B35:
+                if (shading[si_vision.dseg_2B6B_d + 0x43] == 0xF)
+                {
+                    //seg032_B11
+                    GetNextVisionTilePositive_seg032_683(si_vision);
+                    si_vision.CameraX_2b64_6 = 0;
+                    MaybeTestVisibilityNextTile_seg032_6CF(si_vision, 0 , 0 );
+                    if (si_vision.dseg_2B63_5<= di_vision.dseg_2B63_5)
+                    {
+                        goto seg032_B35;
+                    }
+                    return false;
+                }
+                else
+                {
+                    if (
+                        (si_vision.dseg_2B65_7 <= 1)
+                        ||
+                        ((Math.Abs(si_vision.CameraY_2b66_8 - playerdat.CAM_x) + Math.Abs(si_vision.CameraX_2b64_6 - playerdat.CAM_y)) <= 0x10)
+                        )
+                    {
+                        //seg032_B76
+                        si_vision.FovYawX_1 = (short)((si_vision.dseg_2B63_5 << 8) - playerdat.CAM_x);
+                        si_vision.FovYawX_1 -= (short)(2 + Math.Abs(si_vision.FovYawX_1) / 0x32);
+                        si_vision.FovYawY_3 = (short)((si_vision.dseg_2B65_7 << 8) - playerdat.CAM_y);
+                    }
+                    //seg032_BB4
+                    si_vision.playerTileCopy_2B67_9 = UWTileMap.GetTileByPTR((int)(si_vision.playerTileCopy_2B67_9.Ptr + dseg_432[2 + motion.CameraYawHeadingRelated_2B52 * 6]));
+                    si_vision.dseg_2B6B_d += 0x42;
+                    si_vision.CameraY_2b66_8 = 0;
+                    di_vision.dseg_2B65_7++;
+                seg032_BFA:
+                    if ((shading[si_vision.dseg_2B6B_d + 0x43] & 0xF) == 0xF)
+                    {
+                        GetNextVisionTileNegative_seg032_6A9(di_vision);
+                        di_vision.CameraX_2b64_6 = 0xFF;
+                        MaybeTestVisibilityNextTile_seg032_6CF(di_vision, 0, 0);
+                        if (si_vision.dseg_2B63_5 <= di_vision.dseg_2B63_5)
+                        {
+                            goto seg032_BFA;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        if (di_vision.dseg_2B65_7 <= 1)
+                        {
+                            //seg032_c19
+                            if (Math.Abs(di_vision.CameraX_2b64_6 - playerdat.CAM_x) + Math.Abs(di_vision.CameraY_2b66_8 - playerdat.CAM_y) <= 0x10)
+                            {
+                                goto Seg032_C7A;
+                            }
+                        }
+                        //Seg032_C3B 
+                        di_vision.FovYawX_1 = (short)(((di_vision.dseg_2B63_5 << 8) + di_vision.CameraX_2b64_6) - playerdat.CAM_x);
+                        di_vision.FovYawX_1 -= (short)(2 + Math.Abs(di_vision.FovYawX_1) /0x32);
+                        di_vision.FovYawY_3 = (short)(((di_vision.dseg_2B65_7<<8) - playerdat.CAM_y) -1);
+                    Seg032_C7A:
+                        di_vision.CameraY_2b66_8 = 0;
+                        di_vision.dseg_2B6B_d += 0x42;
+                        di_vision.playerTileCopy_2B67_9 = UWTileMap.GetTileByPTR(di_vision.ptr + dseg_432[2 + motion.PlayerCameraYaw_dseg_8294*6]);
+                        return true;
+                    }
+                }
+            }
         }
 
     }//end class

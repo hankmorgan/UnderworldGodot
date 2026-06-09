@@ -1,5 +1,4 @@
 using System;
-using System.Data.Common;
 using System.Diagnostics;
 using Godot;
 
@@ -35,6 +34,9 @@ namespace Underworld
         public static short DoCameraRoll = 0;
 
         public static short CameraTileX; public static short CameraTileY;
+
+        public static short CAM_x;
+        public static short CAM_y;
 
         /// <summary>
         /// Positions the player game camera based on x/y/z pos and current tileX/Y. 
@@ -142,6 +144,10 @@ namespace Underworld
 
             CameraTileX = (short)(x >> 8);
             CameraTileY = (short)(y >> 8);
+
+            //Set values needed for visibility checks
+            CAM_x = x;
+            CAM_y = y;
 
             //Set up the Yaw gimbal             
             main.cameraYawGimbal.Rotation = Vector3.Zero;
