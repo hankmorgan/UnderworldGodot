@@ -175,6 +175,7 @@ namespace Underworld
                     camerayaw: yaw);
 
                 VisionParams.LikelyGetViewDistance();
+                VisionParams.FakeRender();
             }
 
         }

@@ -29,6 +29,8 @@ namespace Underworld
         public const int TILE_SLOPE_E = 8;
         public const int TILE_SLOPE_W = 9;
 
+        public static byte[] UndiscoveredTiles = new byte[]{0xA,0xB,0xC,0xD,0xE,0xF,0xB,0xB,0xB,0xB,0xA,0xB,0xC,0xD,0xE,0xF};
+
         /// <summary>
         /// Location of data in the buffer
         /// </summary>

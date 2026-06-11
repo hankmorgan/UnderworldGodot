@@ -1,4 +1,5 @@
 using System;
+using Godot;
 
 namespace Underworld
 {
@@ -7,6 +8,7 @@ namespace Underworld
     /// </summary>
     public class VisionParams : Loader
     {
+        public static short TilesDiscoveredForExpGain;
         static byte[] dseg_523 = new byte[] { 10, 0x00, 0x00, 0x00, 0x02, 0x00, 0x04, 0x00, 0x02, 0x00, 0x03, 0x00, 0xFF, 0xFF, 0x01, 0x00 };
         static byte[] dseg_527 = new byte[] { 0x2, 0x4 };
         static short[] dseg_52B = new short[] { 02, 00, 03, 00 };//, FF FF 01 00 00 04 00 07 00 01 00 01}
@@ -17,11 +19,22 @@ namespace Underworld
 
         static byte[] dseg_432 = new byte[] { 01, 0x00, 0x40, 0x00, 0xFF, 0xFF, 0xC0, 0xFF, 0x01, 0x00, 0x40, 0x00, 0xFF, 0xFF, 0xC0, 0xFF, 0x01, 0x00, 0x40, 0x00, 0xFF, 0xFF, 0xC0, 0xFF };
 
+        static sbyte ArgumentForFunction_34_CB_dseg_30F4;
+
+        static byte[] dseg_30F6 = new byte[0x252];
+        static byte[] dseg_2F9C = new byte[0x12];
+        static byte[] dseg_2FAE = new byte[0x12];
+
         public static VisionParams[] visionparams = new VisionParams[0xF];
         byte[] _rawvisiondata; //= new byte[0xF * 0x11];
         static byte[] _defaultrawdata = new byte[0xF * 0x11];
         static short RelatedToFov_2C60 = 0;
         public static short LikelyDistanceToWallOrDarkness = -1;
+        public static short LikelyDist;
+
+        static short RenderingCounter = 0;
+        static short ShadeRef_2C74;
+        static TileInfo RenderingTile_2F7C;
 
         //array of data starting at dseg:2b5e
         public byte dseg_2B5E_0
@@ -217,6 +230,182 @@ namespace Underworld
                 visionparams[0].FovYawX_1 = (short)(visionparams[0].FovYawX_1 >> 4);
                 visionparams[0].FovYawY_3 = (short)(visionparams[0].FovYawY_3 >> 4);
             }
+        }
+
+        /// <summary>
+        /// Within the rendering functions the final steps of getting LOS on tiles is done. 
+        /// This function only implements the elements relating to automap updates and experience gain on undiscovered tiles
+        /// </summary>
+        public static void FakeRender()
+        {
+            TilesDiscoveredForExpGain = 0;
+            GetTilesToRender();
+            if ((playerdat.play_level >= 0) && (playerdat.play_level < 16))
+            {
+                var finalgain = playerdat.CurrentWorld * TilesDiscoveredForExpGain;
+                if (finalgain > 0)
+                {
+                    playerdat.ChangeExperience(finalgain);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Again only automap and exp related elements are currently implemented.
+        /// </summary>
+        static void GetTilesToRender()
+        {
+            var automapdata = automap.automaps[playerdat.dungeon_level - 1].buffer;
+            short si_offsettilemap;
+            var playerTile = UWTileMap.current_tilemap.Tiles[playerdat.playerObject.tileX, playerdat.playerObject.tileY];
+            var shading = shade.shadesdata[playerdat.lightlevel].ShadingArray_26EF;
+            var di_dseg432 = dseg_432[((motion.CameraYawHeadingRelated_2B52 & 0x8) << 2) + 0x568];
+            var varC_tileoffset = dseg_432[2 + (motion.CameraYawHeadingRelated_2B52 * 6)];
+            var var2_maybeshadeatdistance = shading[LikelyDistanceToWallOrDarkness * 0x42];
+            var var4_tile = UWTileMap.GetTileByPTR((int)(playerTile.Ptr + varC_tileoffset));
+            var4_tile = UWTileMap.GetTileByPTR((int)(var4_tile.Ptr + di_dseg432));
+            var tile00 = UWTileMap.current_tilemap.Tiles[0, 0];
+            var tile63 = UWTileMap.current_tilemap.Tiles[63, 63];
+            ushort var8_tileindex = (ushort)((var4_tile.Ptr - tile00.Ptr) / 4);
+            if (var8_tileindex < 0x2000)
+            {
+                //Seg019_62E
+                var8_tileindex += 0xC000;
+            }
+            //Seg019_634
+            //InitSomeArrays(-10);
+            LikelyDist = LikelyDistanceToWallOrDarkness;
+
+            //seg0139_771
+            while (LikelyDist >= 0)
+            {
+                //seg019_646
+                //InitSomeArrays(2);
+                RenderingCounter = 0;
+                ShadeRef_2C74 = (short)(var2_maybeshadeatdistance + (RenderingCounter * 2));
+                RenderingTile_2F7C = UWTileMap.GetTileByPTR((int)(var4_tile.Ptr + ((RenderingCounter * di_dseg432) << 2)));
+
+                si_offsettilemap = (short)(var8_tileindex + (RenderingCounter * di_dseg432));
+
+                //seg019_6B4
+                while (RenderingCounter < 0x10)
+                {
+                    //seg19_68D
+                    if ((si_offsettilemap & 0xF000) == 0)
+                    {
+                        StartUpdatingAutomapTile(automapdata, si_offsettilemap);
+                    }
+                    //Seg019_6A0
+                    RenderingCounter++;
+                    ShadeRef_2C74 += 2;
+                    RenderingTile_2F7C = UWTileMap.GetTileByPTR((int)(RenderingTile_2F7C.Ptr + (di_dseg432 >> 2)));
+                    si_offsettilemap += di_dseg432;
+                }
+                //seg019:6BB
+                //InitSomeArrays(1);
+                RenderingCounter = 0x20;
+                ShadeRef_2C74 = (short)(var2_maybeshadeatdistance + (RenderingCounter << 1));
+                RenderingTile_2F7C = UWTileMap.GetTileByPTR((int)(var4_tile.Ptr + ((RenderingCounter * di_dseg432) << 2)));
+                si_offsettilemap = (short)(var8_tileindex + (RenderingCounter * di_dseg432));
+
+                //seg019_729
+                while (RenderingCounter > 0x10)
+                {
+                    //seg019_702
+                    if ((si_offsettilemap & 0xF000) == 0)
+                    {
+                        StartUpdatingAutomapTile(automapdata, si_offsettilemap);
+                    }
+                    //seg019_715
+                    RenderingCounter--;
+                    ShadeRef_2C74-=2;
+                    RenderingTile_2F7C = UWTileMap.GetTileByPTR((int)(RenderingTile_2F7C.Ptr - (di_dseg432<<2)));
+                    si_offsettilemap -= di_dseg432;
+                }
+                //seg019_732
+                //InitSomeArrays(0);
+                if ((si_offsettilemap & 0xF000) == 0)
+                {
+                    StartUpdatingAutomapTile(automapdata, si_offsettilemap);
+                }
+                //seg019_84C
+                //init some object rendering data
+                var2_maybeshadeatdistance -= 0x42;
+                var4_tile = UWTileMap.GetTileByPTR((int)(var4_tile.Ptr - (varC_tileoffset<<2)));
+                var8_tileindex -= varC_tileoffset;
+                LikelyDist--;
+            }
+
+            //Seg019_77B
+            RenderingTile_2F7C = var4_tile;
+            RenderingCounter = 0;
+            si_offsettilemap = (short)var8_tileindex;
+            var varA_AutoMapPtr = var8_tileindex;
+
+            while (RenderingCounter<0x21)
+            {
+                if ((si_offsettilemap & 0xF000) == 0)
+                {
+                    //Seg019_7A2
+                    if (automapdata[varA_AutoMapPtr] == 0)
+                    {
+                        //automap tile has been unvisited and is an undiscovered tile
+                        automapdata[varA_AutoMapPtr] = automaptileinfo.UndiscoveredTiles[RenderingTile_2F7C.tileType];
+                    }
+                }
+                //seg019_7BE
+                RenderingCounter++;
+                RenderingTile_2F7C = UWTileMap.GetTileByPTR((int)(RenderingTile_2F7C.Ptr + (di_dseg432<<2)));
+                si_offsettilemap += di_dseg432;
+                varA_AutoMapPtr+= di_dseg432;
+            }
+        }
+
+        // /// <summary>
+        // /// This is probably not needed...
+        // /// </summary>
+        // /// <param name="mode_arg0"></param>
+        // static void InitSomeArrays(sbyte mode_arg0)
+        // {
+        //     switch (mode_arg0 + 10)
+        //     {
+        //         case 0:
+        //             {
+        //                 dseg_30F6 = new byte[0x252];
+        //                 dseg_2F9C = new byte[0x12];
+        //                 dseg_2FAE = new byte[0x12];
+        //                 break;
+        //             }
+        //         case 0xA:
+        //             {
+        //                 if (dseg_2F9C[0] != 0)
+        //                 {
+        //                     if (dseg_2F9C[0] >= dseg_2FAE[0])
+        //                     {
+        //                         dseg_2F9C[0]  = (byte)(9 - dseg_2FAE[0] - 1);
+        //                     }
+        //                 }
+        //                 break;
+        //             }
+        //         case 0xB:
+        //             {
+        //                 Buffer.BlockCopy(src: dseg_2F9C, srcOffset: 0, dst: dseg_2FAE, dstOffset: 0, count: 0x12);
+        //                 dseg_2FAE[0] = 0;
+        //                 break;
+        //             }
+        //         case 0xC:
+        //             {
+        //                 dseg_2F9C = new byte[0x12];
+        //                 dseg_2FAE = new byte[0x12];
+        //                 break;
+        //             }
+        //     }
+        //     ArgumentForFunction_34_CB_dseg_30F4 = mode_arg0;
+        // }
+
+        static void StartUpdatingAutomapTile(byte[] automapbuffer, short tileindex)
+        {
+
         }
 
         public static void LikelyGetViewDistance()
@@ -882,14 +1071,14 @@ namespace Underworld
             }
             else
             {
-                seg032_B35:
+            seg032_B35:
                 if (shading[si_vision.dseg_2B6B_d + 0x43] == 0xF)
                 {
                     //seg032_B11
                     GetNextVisionTilePositive_seg032_683(si_vision);
                     si_vision.CameraX_2b64_6 = 0;
-                    MaybeTestVisibilityNextTile_seg032_6CF(si_vision, 0 , 0 );
-                    if (si_vision.dseg_2B63_5<= di_vision.dseg_2B63_5)
+                    MaybeTestVisibilityNextTile_seg032_6CF(si_vision, 0, 0);
+                    if (si_vision.dseg_2B63_5 <= di_vision.dseg_2B63_5)
                     {
                         goto seg032_B35;
                     }
@@ -940,12 +1129,12 @@ namespace Underworld
                         }
                         //Seg032_C3B 
                         di_vision.FovYawX_1 = (short)(((di_vision.dseg_2B63_5 << 8) + di_vision.CameraX_2b64_6) - playerdat.CAM_x);
-                        di_vision.FovYawX_1 -= (short)(2 + Math.Abs(di_vision.FovYawX_1) /0x32);
-                        di_vision.FovYawY_3 = (short)(((di_vision.dseg_2B65_7<<8) - playerdat.CAM_y) -1);
+                        di_vision.FovYawX_1 -= (short)(2 + Math.Abs(di_vision.FovYawX_1) / 0x32);
+                        di_vision.FovYawY_3 = (short)(((di_vision.dseg_2B65_7 << 8) - playerdat.CAM_y) - 1);
                     Seg032_C7A:
                         di_vision.CameraY_2b66_8 = 0;
                         di_vision.dseg_2B6B_d += 0x42;
-                        di_vision.playerTileCopy_2B67_9 = UWTileMap.GetTileByPTR(di_vision.ptr + dseg_432[2 + motion.PlayerCameraYaw_dseg_8294*6]);
+                        di_vision.playerTileCopy_2B67_9 = UWTileMap.GetTileByPTR(di_vision.ptr + dseg_432[2 + motion.PlayerCameraYaw_dseg_8294 * 6]);
                         return true;
                     }
                 }
