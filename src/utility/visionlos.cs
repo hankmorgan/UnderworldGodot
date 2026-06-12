@@ -212,7 +212,7 @@ namespace Underworld
 
                 visionparams[0].playerTileCopy_2B67_9 = UWTileMap.current_tilemap.Tiles[tileX, tileY];
                 //dseg_2B6B = reference to an array;
-                visionparams[1].dseg_2B5E_0 = 0;//.dseg_2B6F = 0;
+                visionparams[1].dseg_2B5E_0 = 0xF;//.dseg_2B6F = 0;
                 visionparams[1].dseg_2B63_5 = 0;//dseg_2B74 = 0;
                 visionparams[1].dseg_2B65_7 = 0;  //dseg_2B76 = 0;
 
@@ -261,7 +261,7 @@ namespace Underworld
             short si_offsettilemap;
             var playerTile = UWTileMap.current_tilemap.Tiles[playerdat.playerObject.tileX, playerdat.playerObject.tileY];
             var shading = shade.shadesdata[playerdat.lightlevel].ShadingArray_26EF;
-            var di_dseg432 = dseg_432[((motion.CameraYawHeadingRelated_2B52 & 0x8) << 2) + 0x568];
+            var di_dseg432 = dseg_432[motion.CameraYawHeadingRelated_2B52 * 6];
             var varC_tileoffset = dseg_432[2 + (motion.CameraYawHeadingRelated_2B52 * 6)];
             var var2_maybeshadeatdistance = shading[LikelyDistanceToWallOrDarkness * 0x42];
             var var4_tile = UWTileMap.GetTileByPTR((int)(playerTile.Ptr + varC_tileoffset));
@@ -496,7 +496,7 @@ namespace Underworld
             }
         }
 
-        public static void LikelyGetViewDistance()
+        public static void GetViewDistance()
         {
             var di = 0;
             LikelyDistanceToWallOrDarkness = -1;
@@ -505,17 +505,17 @@ namespace Underworld
 
         seg032_1175:
             LikelyDistanceToWallOrDarkness++;
-            //var var4 = RelatedToFov_2C60; //var4 appears to be a pointer to this value
+            var var4 = RelatedToFov_2C60; //var4 appears to be a pointer to this value
         seg032_119D:
 
-            if ((RelatedToFov_2C60 & 0xF) == 0xF)
+            if ((var4 & 0xF) == 0xF)
             {
                 //seg032_11B0
                 di = currentshade[66 + var2currentshadePtr];
 
                 //loop
             seg032_11ED:
-                if ((RelatedToFov_2C60 & 0xF) == 0xF)
+                if ((var4 & 0xF) == 0xF)
                 {
                 seg032_120B:
                     if (currentshade[var2currentshadePtr] < di)
@@ -530,7 +530,7 @@ namespace Underworld
                     else
                     {
                         //seg032_1210
-                        if (RelatedToFov_2C60 == 0xF)
+                        if (var4 == 0xF)
                         {
                             return;
                         }
@@ -543,7 +543,7 @@ namespace Underworld
                 else
                 {
                 seg032_11C8:
-                    if (visionparams[RelatedToFov_2C60].dseg_2B6D_F > currentshade[var2currentshadePtr])
+                    if (visionparams[var4].dseg_2B6D_F > currentshade[var2currentshadePtr])
                     {
                         //seg32_11BA
                         currentshade[var2currentshadePtr] = 0;
@@ -553,7 +553,7 @@ namespace Underworld
                     else
                     {
                         //seg32_11DE
-                        TestVisionAndShade_seg32_1014(ref RelatedToFov_2C60, currentshade, var2currentshadePtr);
+                        TestVisionAndShade_seg32_1014(ref var4, currentshade, var2currentshadePtr);
                         goto seg032_11ED;
                     }
                 }
@@ -562,14 +562,15 @@ namespace Underworld
             {
                 //seg032_1180
                 //lookup a dseg and call 
-                seg032_C9D(visionparams[0]);
-
+                var toProcess = visionparams[var4 & 0xF];
+                MaybeProcessLOSArc_seg032_C9D(toProcess);
+                var4 = toProcess.dseg_2B5E_0;
                 goto seg032_119D;
             }
 
         }
 
-        static void seg032_C9D(VisionParams vision)
+        static void MaybeProcessLOSArc_seg032_C9D(VisionParams vision)
         {
             var di = 0;
             short var2;

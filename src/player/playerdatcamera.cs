@@ -165,7 +165,7 @@ namespace Underworld
             //Set this value to calculate npc angles
             motion.CameraYawHeadingRelated_2B52 = (short)(((1 + (yaw >> 0xD)) & 0x7) >> 1);
             motion.CameraPointer2C = (short)(yaw - motion.PlayerCardinalHeadingLookupTable[motion.CameraYawHeadingRelated_2B52]);
-            if (false)
+            if (true)
             {
                 //dont't run yet due to infinite looping
                 //Following functions are used to determine what is in sight and to update automap accordingly.
@@ -174,7 +174,7 @@ namespace Underworld
                     cameray: y,
                     camerayaw: yaw);
 
-                VisionParams.LikelyGetViewDistance();
+                VisionParams.GetViewDistance();
                 VisionParams.FakeRender();
             }
 
