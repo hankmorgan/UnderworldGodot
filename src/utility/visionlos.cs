@@ -36,6 +36,8 @@ namespace Underworld
         static short ShadeRef_2C74;
         static TileInfo RenderingTile_2F7C;
 
+        static short MaybeTileShadeLevel_2F7A;
+
         //array of data starting at dseg:2b5e
         public byte dseg_2B5E_0
         {
@@ -318,8 +320,8 @@ namespace Underworld
                     }
                     //seg019_715
                     RenderingCounter--;
-                    ShadeRef_2C74-=2;
-                    RenderingTile_2F7C = UWTileMap.GetTileByPTR((int)(RenderingTile_2F7C.Ptr - (di_dseg432<<2)));
+                    ShadeRef_2C74 -= 2;
+                    RenderingTile_2F7C = UWTileMap.GetTileByPTR((int)(RenderingTile_2F7C.Ptr - (di_dseg432 << 2)));
                     si_offsettilemap -= di_dseg432;
                 }
                 //seg019_732
@@ -331,7 +333,7 @@ namespace Underworld
                 //seg019_84C
                 //init some object rendering data
                 var2_maybeshadeatdistance -= 0x42;
-                var4_tile = UWTileMap.GetTileByPTR((int)(var4_tile.Ptr - (varC_tileoffset<<2)));
+                var4_tile = UWTileMap.GetTileByPTR((int)(var4_tile.Ptr - (varC_tileoffset << 2)));
                 var8_tileindex -= varC_tileoffset;
                 LikelyDist--;
             }
@@ -342,7 +344,7 @@ namespace Underworld
             si_offsettilemap = (short)var8_tileindex;
             var varA_AutoMapPtr = var8_tileindex;
 
-            while (RenderingCounter<0x21)
+            while (RenderingCounter < 0x21)
             {
                 if ((si_offsettilemap & 0xF000) == 0)
                 {
@@ -355,9 +357,9 @@ namespace Underworld
                 }
                 //seg019_7BE
                 RenderingCounter++;
-                RenderingTile_2F7C = UWTileMap.GetTileByPTR((int)(RenderingTile_2F7C.Ptr + (di_dseg432<<2)));
+                RenderingTile_2F7C = UWTileMap.GetTileByPTR((int)(RenderingTile_2F7C.Ptr + (di_dseg432 << 2)));
                 si_offsettilemap += di_dseg432;
-                varA_AutoMapPtr+= di_dseg432;
+                varA_AutoMapPtr += di_dseg432;
             }
         }
 
@@ -405,7 +407,93 @@ namespace Underworld
 
         static void StartUpdatingAutomapTile(byte[] automapbuffer, short tileindex)
         {
+            var var8 = shade.shadesdata[playerdat.lightlevel].ShadingArray_26EF[ShadeRef_2C74];
 
+            if ((var8 & 0x80) != 0)
+            {
+                //seg019_2F7C
+                byte var19AutoMapValueToSet = 0;
+                MaybeTileShadeLevel_2F7A = shade.shadesdata[playerdat.lightlevel].ShadingArray_26EF[ShadeRef_2C74 + 1];
+                if (MaybeTileShadeLevel_2F7A >= 8)
+                {
+                    //seg019_DEF
+                    if (automapbuffer[tileindex] == 0)
+                    {
+                        //seg019_DDD
+                        var19AutoMapValueToSet = automaptileinfo.UndiscoveredTiles[RenderingTile_2F7C.tileType];
+                    }
+                }
+                else
+                {
+                    //Seg019_DA7
+                    var19AutoMapValueToSet = (byte)(RenderingTile_2F7C.tileType | TerrainDatLoader.GetTerrainDataBit345(RenderingTile_2F7C));
+                }
+
+                //from here on there is a lot of code relating to rendering. 
+                // skipping ahead to Seg019_1383 where things like bridge and stairs down tmaps are set
+                if (playerdat.AutomapEnabled)
+                {
+                    if ((RenderingTile_2F7C.indexObjectList != 0) && (MaybeTileShadeLevel_2F7A < 8))
+                    {
+                        var bridge = objectsearch.FindMatchInTile(tileX: RenderingTile_2F7C.tileX, tileY: RenderingTile_2F7C.tileY, majorclass: 5, minorclass: 2, classindex: 4);
+                        if (bridge != null)
+                        {
+                            if (bridge.invis == 0)
+                            {
+                                var19AutoMapValueToSet |= (byte)(automaptileinfo.bridgedisplaytype << 4);
+                            }
+                        }
+                        else
+                        {
+                            //check for tmap
+                            var tmap = objectsearch.FindMatchInTile(tileX: RenderingTile_2F7C.tileX, tileY: RenderingTile_2F7C.tileY, majorclass: 5, minorclass: 2, classindex: 0xE);
+                            if (tmap == null)
+                            {
+                                tmap = objectsearch.FindMatchInTile(tileX: RenderingTile_2F7C.tileX, tileY: RenderingTile_2F7C.tileY, majorclass: 5, minorclass: 2, classindex: 0xF);
+                            }
+                            if (tmap == null)
+                            {
+                                var terrain = TerrainDatLoader.GetTerrainDataBit012(tmap.owner);
+                                if ((terrain == automaptileinfo.stairdisplaytype))
+                                {
+                                    //placeholder I need to match the texture flag value with something that tells me it is a stairs down
+                                    var19AutoMapValueToSet |= (byte)(automaptileinfo.stairdisplaytype << 4);
+                                }
+                            }
+                            else
+                            {
+                                //check for door
+                                var door = objectsearch.FindMatchInTile(tileX: RenderingTile_2F7C.tileX, tileY: RenderingTile_2F7C.tileY, majorclass: 5, minorclass: 0, classindex: -1);
+                                if (door != null)
+                                {
+                                    if (door.classindex != 7) //don't show secret door
+                                    {
+                                        var19AutoMapValueToSet |= (byte)(automaptileinfo.doordisplaytype << 4);
+                                    }
+                                }
+                                else
+                                {
+                                    //check for moving door
+                                    door = objectsearch.FindMatchInTile(tileX: RenderingTile_2F7C.tileX, tileY: RenderingTile_2F7C.tileY, majorclass: 7, minorclass: 0, classindex: 0xF);
+                                    if (door != null)
+                                    {
+                                        var19AutoMapValueToSet |= (byte)(automaptileinfo.doordisplaytype << 4);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    automapbuffer[tileindex] = var19AutoMapValueToSet;
+                }
+            }
+            else
+            {
+                if (automapbuffer[tileindex] == 0)
+                {
+                    automapbuffer[tileindex] = automaptileinfo.UndiscoveredTiles[RenderingTile_2F7C.tileType];
+                    TilesDiscoveredForExpGain++;
+                }
+            }
         }
 
         public static void LikelyGetViewDistance()
