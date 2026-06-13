@@ -91,7 +91,7 @@ namespace Underworld
         }
 
         /// <summary>
-        /// The experience points in 0.1 points of the player
+        /// The experience points in units of 0.1 points for the player
         /// </summary>
         public static int Exp
         {

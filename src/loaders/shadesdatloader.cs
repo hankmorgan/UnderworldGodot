@@ -18,7 +18,7 @@ namespace Underworld
 
         public static shade[] shadesdata;
 
-        public byte[] ShadingArray_26EF = new byte[17*66];//This array is probably the light map that should be used for the shading but the existing effect looks right enough. possible structure is byte0 - is point visible, byte1 shading value to use at that point?
+        public byte[] ShadingArray_26EE = new byte[17*66];//This array is probably the light map that should be used for the shading but the existing effect looks right enough. possible structure is byte0 - is point visible, byte1 shading value to use at that point?
 
         //ImageTexture cachedimage;
 
@@ -347,12 +347,12 @@ namespace Underworld
                     if (var2 <= ViewingDistance)
                     {
                         //seg32_58B
-                        ShadingArray_26EF[di*66 + (si<<1) + 1] = (byte)shadesArray[var2];//33 used to be 66 
+                        ShadingArray_26EE[di*66 + (si<<1) + 1] = (byte)shadesArray[var2];//33 used to be 66 
                     }
                     else
                     {
                         //Seg32_577
-                        ShadingArray_26EF[di*66 + (si<<1) + 1] = 0xF;
+                        ShadingArray_26EE[di*66 + (si<<1) + 1] = 0xF;
                     }
                     si++;
                 }
