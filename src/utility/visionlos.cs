@@ -264,7 +264,7 @@ namespace Underworld
             var shading = shade.shadesdata[playerdat.lightlevel].ShadingArray_26EE;
             var di_dseg432 = dseg_432[motion.CameraYawHeadingRelated_2B52 * 6];
             var varC_tileoffset = dseg_432[2 + (motion.CameraYawHeadingRelated_2B52 * 6)];
-            var var2_maybeshadeatdistance = shading[LikelyDistanceToWallOrDarkness * 0x42];
+            var var2_offsetshadeatdistance = LikelyDistanceToWallOrDarkness * 0x42;
 
 
             var var4_tile = UWTileMap.GetTileByPTR((int)(playerTile.Ptr + ((varC_tileoffset * LikelyDistanceToWallOrDarkness) << 2)));
@@ -289,7 +289,7 @@ namespace Underworld
                 //seg019_646
                 //InitSomeArrays(2);
                 RenderingCounter = 0;
-                ShadeRef_2C74 = (short)(var2_maybeshadeatdistance + (RenderingCounter * 2));
+                ShadeRef_2C74 = (short)(var2_offsetshadeatdistance + (RenderingCounter * 2));
                 RenderingTile_2F7C = UWTileMap.GetTileByPTR((int)(var4_tile.Ptr + ((RenderingCounter * di_dseg432) << 2)));
 
                 si_offsettilemap = (short)(var8_tileindex + (RenderingCounter * di_dseg432));
@@ -311,7 +311,7 @@ namespace Underworld
                 //seg019:6BB
                 //InitSomeArrays(1);
                 RenderingCounter = 0x20;
-                ShadeRef_2C74 = (short)(var2_maybeshadeatdistance + (RenderingCounter << 1));
+                ShadeRef_2C74 = (short)(var2_offsetshadeatdistance + (RenderingCounter << 1));
                 RenderingTile_2F7C = UWTileMap.GetTileByPTR((int)(var4_tile.Ptr + ((RenderingCounter * di_dseg432) << 2)));
                 si_offsettilemap = (short)(var8_tileindex + (RenderingCounter * di_dseg432));
 
@@ -337,7 +337,7 @@ namespace Underworld
                 }
                 //seg019_84C
                 //init some object rendering data
-                var2_maybeshadeatdistance -= 0x42;
+                var2_offsetshadeatdistance -= 0x42;
                 var4_tile = UWTileMap.GetTileByPTR((int)(var4_tile.Ptr - (varC_tileoffset << 2)));
                 var8_tileindex -= (short)varC_tileoffset;
                 LikelyDist--;
@@ -766,7 +766,7 @@ namespace Underworld
                 if ((vision.dseg_2B5E_0 & 0x80) != (di << 7))
                 {
                     //Seg032_F3B -> seg032_100A
-                    vision.dseg_2B6D_F = vision.dseg_2B6B_d;
+                    shading[vision.dseg_2B6D_F] = shading[vision.dseg_2B6B_d];
                 }
             }
 
