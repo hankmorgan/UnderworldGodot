@@ -146,8 +146,8 @@ namespace Underworld
             CameraTileY = (short)(y >> 8);
 
             //Set values needed for visibility checks
-            CAM_x = x;
-            CAM_y = y;
+            CAM_x = (short)(x & 0xFF);
+            CAM_y = (short)(y & 0xFF);
 
             //Set up the Yaw gimbal             
             main.cameraYawGimbal.Rotation = Vector3.Zero;

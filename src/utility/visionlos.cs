@@ -24,11 +24,12 @@ namespace Underworld
         // static byte[] dseg_30F6 = new byte[0x252];
         // static byte[] dseg_2F9C = new byte[0x12];
         // static byte[] dseg_2FAE = new byte[0x12];
+        public short index;
 
         public static VisionParams[] visionparams = new VisionParams[0xF];
         byte[] _rawvisiondata; //= new byte[0xF * 0x11];
         static byte[] _defaultrawdata = new byte[0xF * 0x11];
-        static short RelatedToFov_2C60 = 0;
+        static short RelatedToVisionIndex_2C60 = 0;
         public static short LikelyDistanceToWallOrDarkness = -1;
         public static short LikelyDist;
 
@@ -123,15 +124,15 @@ namespace Underworld
 
         public TileInfo playerTileCopy_2B67_9; //2B67
 
-        public byte dseg_2B6B_d//This might actually be a ptr to data and not a value?.. its a pointer to the shading data. this needs to be fixed.
+        public short dseg_2B6B_d//This might actually be a ptr to data and not a value?.. its a pointer to the shading data. this needs to be fixed.
         {
             get
             {
-                return (byte)getAt8(_rawvisiondata, ptr + 0XD);
+                return (byte)getAt16(_rawvisiondata, ptr + 0XD);
             }
             set
             {
-                setAt8(_rawvisiondata, ptr + 0xD, value);
+                setAt16(_rawvisiondata, ptr + 0xD, value);
             }
         }
         // public byte dseg_2B6C_E
@@ -171,15 +172,16 @@ namespace Underworld
         int ptr;
         static VisionParams()
         {
-            for (int i = 0; i <= visionparams.GetUpperBound(0); i++)
+            for (short i = 0; i <= visionparams.GetUpperBound(0); i++)
             {
-                visionparams[i] = new VisionParams(index: i, rawdata: _defaultrawdata);
+                visionparams[i] = new VisionParams(_index: i, rawdata: _defaultrawdata);
             }
         }
 
-        VisionParams(int index, byte[] rawdata)
+        VisionParams(short _index, byte[] rawdata)
         {
-            ptr = index * 0x11;
+            index = _index;
+            ptr = _index * 0x11;
             _rawvisiondata = rawdata;
         }
 
@@ -197,11 +199,12 @@ namespace Underworld
             var tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];
             if (tile.tileType == 0)
             {
-                RelatedToFov_2C60 = 0xF;
+                RelatedToVisionIndex_2C60 = 0xF;
             }
             else
             {
-                RelatedToFov_2C60 = 0;
+                var4pointsto2C60 = true;
+                RelatedToVisionIndex_2C60 = 0;
 
                 visionparams[0].dseg_2B5E_0 = 0x81;
                 visionparams[0].dseg_2B63_5 = 0;
@@ -459,7 +462,34 @@ namespace Underworld
                 }
             }
         }
+        static bool var4pointsto2C60 = true;
 
+        static short var4_visionindex
+        {
+            get
+            {
+                if (var4pointsto2C60)
+                {
+                    return RelatedToVisionIndex_2C60;
+                }
+                else
+                {
+                    return _var4;
+                }
+            }
+            set
+            {
+                if (var4pointsto2C60)
+                {
+                    RelatedToVisionIndex_2C60 = value;
+                }
+                else
+                {
+                    _var4 = value;
+                }
+            }
+        }
+        private static short _var4 = 0;
         public static void GetViewDistance()
         {
             var di = 0;
@@ -469,18 +499,21 @@ namespace Underworld
 
         seg032_1175:
             LikelyDistanceToWallOrDarkness++;
-            var var4 = RelatedToFov_2C60; 
+            //var var4_visionindex = RelatedToVisionIndex_2C60; 
+            var4pointsto2C60 = true;
+
         seg032_119D:
 
-            if ((var4 & 0xF) == 0xF)
+            if ((var4_visionindex & 0xF) == 0xF)
             {
-                //seg032_11B0
-                var4 = RelatedToFov_2C60;
+                //seg032_11AB
+                var4pointsto2C60 = true;
+                //var4_visionindex = RelatedToVisionIndex_2C60;
                 di = 0x42 + var2currentshadePtr;
 
                 //loop
             seg032_11ED:
-                if ((var4 & 0xF) == 0xF)
+                if ((var4_visionindex & 0xF) == 0xF)
                 {
                 seg032_120B:
                     if (var2currentshadePtr < di)
@@ -495,7 +528,7 @@ namespace Underworld
                     else
                     {
                         //seg032_1210
-                        if (var4 == 0xF)
+                        if (RelatedToVisionIndex_2C60 == 0xF)
                         {
                             return;
                         }
@@ -508,7 +541,7 @@ namespace Underworld
                 else
                 {
                 seg032_11C8:
-                    if (visionparams[var4].dseg_2B6D_F > var2currentshadePtr)
+                    if (visionparams[var4_visionindex].dseg_2B6D_F > var2currentshadePtr)
                     {
                         //seg32_11BA
                         currentshade[var2currentshadePtr] = 0; //reset the data.
@@ -518,7 +551,7 @@ namespace Underworld
                     else
                     {
                         //seg32_11DE
-                        TestVisionAndShade_seg32_1014(ref var4, currentshade, ref var2currentshadePtr);
+                        TestVisionAndShade_seg32_1014(currentshade, ref var2currentshadePtr);
                         goto seg032_11ED;
                     }
                 }
@@ -527,9 +560,10 @@ namespace Underworld
             {
                 //seg032_1180
                 //lookup a dseg and call 
-                var toProcess = visionparams[var4 & 0xF];
+                var toProcess = visionparams[var4_visionindex & 0xF];
                 MaybeProcessLOSArc_seg032_C9D(toProcess);
-                var4 = toProcess.dseg_2B5E_0;
+                var4pointsto2C60 = false;
+                var4_visionindex = toProcess.dseg_2B5E_0;
                 goto seg032_119D;
             }
 
@@ -598,7 +632,7 @@ namespace Underworld
             if (var4 == 0)
             {
                 //seg032_FA6
-                vision.CameraX_2b64_6 = (byte)(vision.CameraX_2b64_6 + (((0xFF - vision.CameraY_2b66_8) * (vision.FovYawY_3 * dseg_52F[di])) / vision.FovYawY_3) * dseg_52F[di]);
+                vision.CameraX_2b64_6 = (byte)(vision.CameraX_2b64_6 + (((0xFF - vision.CameraY_2b66_8) * (vision.FovYawX_1 * dseg_52F[di])) / vision.FovYawY_3) * dseg_52F[di]);
                 vision.CameraY_2b66_8 = 0xFF;
                 if ((vision.dseg_2B5E_0 & 0x80) != (di << 7))
                 {
@@ -732,9 +766,9 @@ namespace Underworld
             return;
         }
 
-        static void TestVisionAndShade_seg32_1014(ref short ptrdseg_2c60, byte[] currentshade, ref int currentshade_ptr)
+        static void TestVisionAndShade_seg32_1014(byte[] currentshade, ref int currentshade_ptr)
         {
-            var di_vision = VisionParams.visionparams[ptrdseg_2c60 & 0xF];
+            var di_vision = VisionParams.visionparams[var4_visionindex & 0xF];
             var si_vision = VisionParams.visionparams[di_vision.dseg_2B5E_0 & 0xF];
             currentshade_ptr = (byte)(si_vision.dseg_2B6D_F + 2);
 
@@ -754,7 +788,7 @@ namespace Underworld
                 }
             }
             else
-            {
+            {//seg032_10A0
                 if (di_vision.dseg_2B63_5 < si_vision.dseg_2B63_5)
                 {
                     goto Seg032_10A8;
@@ -766,7 +800,7 @@ namespace Underworld
             }
 
         Seg032_1070:
-            ptrdseg_2c60 = (short)((ptrdseg_2c60 & 0xF0) + (si_vision.dseg_2B5E_0 & 0xF));//this may be an issue 2C60 may be incorrectly set up
+            var4_visionindex = (short)((var4_visionindex & 0xF0) + (si_vision.dseg_2B5E_0 & 0xF));//this may be an issue 2C60 may be incorrectly set up
             di_vision.dseg_2B5E_0 = 0;
             si_vision.dseg_2B5E_0 = 0;
             return;
@@ -788,11 +822,13 @@ namespace Underworld
             {
                 tmpVisionArray_var12[z] = di_vision._rawvisiondata[di_vision.ptr + z];
             }
-            var tmpVision = new VisionParams(index: 0, rawdata: tmpVisionArray_var12);
+            var tmpVision = new VisionParams(_index: 0, rawdata: tmpVisionArray_var12);
             tmpVision.playerTileCopy_2B67_9 = di_vision.playerTileCopy_2B67_9;
             if (MaybeTestVisionIntoShading_seg032_AF5(di_vision, si_vision))
             {
                 //seg032_10F3
+                var4pointsto2C60 = false;
+                var4_visionindex = si_vision.dseg_2B5E_0;
                 if (di_vision.dseg_2B63_5 == si_vision.dseg_2B63_5)
                 {
                     return;
@@ -847,7 +883,7 @@ namespace Underworld
             }
             else
             {
-                ptrdseg_2c60 = (short)((ptrdseg_2c60 & 0xF0) + (si_vision.dseg_2B5E_0 & 0xF));//this may be an issue 2C60 may be incorrectly set up
+                var4_visionindex = (short)((var4_visionindex & 0xF0) + (si_vision.dseg_2B5E_0 & 0xF));//this may be an issue 2C60 may be incorrectly set up
                 di_vision.dseg_2B5E_0 = 0;
                 si_vision.dseg_2B5E_0 = 0;
                 return;
@@ -881,7 +917,7 @@ namespace Underworld
                 {
                     var6 += 2;
                 }
-                if (Math.Abs(vision.dseg_2B63_5) == Math.Abs(vision.dseg_2B65_7))
+                if (Math.Abs(vision.dseg_2B63_5) == Math.Abs(vision.dseg_2B65_7))                //Seg032_73F
                 {
                     var6 += 4;
                 }
@@ -1059,7 +1095,7 @@ namespace Underworld
                             ax = 0;
                         }
 
-                        if (dseg_523[ax << 1] != (Pathfind.tilewallflags[di] & 0x10))
+                        if (dseg_523[ax << 1] == (Pathfind.tilewallflags[di] & 0x10))
                         {
                             goto seg032_ACD;
                         }
@@ -1092,10 +1128,12 @@ namespace Underworld
                     if (arg2 != 1)
                     {
                         GetNextVisionTileNegative_seg032_6A9(vision);
+                        vision.CameraX_2b64_6 = 0xFF;
                     }
                     else
                     {
                         GetNextVisionTilePositive_seg032_683(vision);
+                        vision.CameraX_2b64_6 = 0;
                     }
                     return true;
                 }
@@ -1124,6 +1162,7 @@ namespace Underworld
         static bool MaybeTestVisionIntoShading_seg032_AF5(VisionParams si_vision, VisionParams di_vision)
         {
             var shading = shade.shadesdata[playerdat.lightlevel].ShadingArray_26EE;
+            si_vision.dseg_2B65_7++;
             //shade.shadesdata[playerdat.lightlevel].ShadingArray_26EF;
             if (si_vision.dseg_2B65_7 > 0x10)
             {
@@ -1149,7 +1188,7 @@ namespace Underworld
                     if (
                         (si_vision.dseg_2B65_7 <= 1)
                         ||
-                        ((Math.Abs(si_vision.CameraY_2b66_8 - playerdat.CAM_x) + Math.Abs(si_vision.CameraX_2b64_6 - playerdat.CAM_y)) <= 0x10)
+                        ((Math.Abs(si_vision.CameraX_2b64_6 - playerdat.CAM_x) + Math.Abs(si_vision.CameraY_2b66_8 - playerdat.CAM_y)) <= 0x10)
                         )
                     {
                         //seg032_B76
@@ -1163,7 +1202,7 @@ namespace Underworld
                     si_vision.CameraY_2b66_8 = 0;
                     di_vision.dseg_2B65_7++;
                 seg032_BFA:
-                    if ((shading[si_vision.dseg_2B6B_d + 0x43] & 0xF) == 0xF)
+                    if ((shading[di_vision.dseg_2B6B_d + 0x43] & 0xF) == 0xF)
                     {
                         GetNextVisionTileNegative_seg032_6A9(di_vision);
                         di_vision.CameraX_2b64_6 = 0xFF;
@@ -1178,10 +1217,10 @@ namespace Underworld
                         }
                     }
                     else
-                    {
+                    {//seg032_C0A
                         if (di_vision.dseg_2B65_7 <= 1)
                         {
-                            //seg032_c19
+                            //seg032_c10
                             if (Math.Abs(di_vision.CameraX_2b64_6 - playerdat.CAM_x) + Math.Abs(di_vision.CameraY_2b66_8 - playerdat.CAM_y) <= 0x10)
                             {
                                 goto Seg032_C7A;
@@ -1189,7 +1228,7 @@ namespace Underworld
                         }
                         //Seg032_C3B 
                         di_vision.FovYawX_1 = (short)(((di_vision.dseg_2B63_5 << 8) + di_vision.CameraX_2b64_6) - playerdat.CAM_x);
-                        di_vision.FovYawX_1 -= (short)(2 + Math.Abs(di_vision.FovYawX_1) / 0x32);
+                        di_vision.FovYawX_1 += (short)(2 + Math.Abs(di_vision.FovYawX_1) / 0x32);
                         di_vision.FovYawY_3 = (short)(((di_vision.dseg_2B65_7 << 8) - playerdat.CAM_y) - 1);
                     Seg032_C7A:
                         di_vision.CameraY_2b66_8 = 0;
