@@ -9,7 +9,7 @@ namespace Underworld
     public class VisionParams : Loader
     {
         public static short TilesDiscoveredForExpGain;
-        static byte[] dseg_523 = new byte[] { 10, 0x00, 0x00, 0x00, 0x02, 0x00, 0x04, 0x00, 0x02, 0x00, 0x03, 0x00, 0xFF, 0xFF, 0x01, 0x00 };
+        static byte[] dseg_523 = new byte[] { 0x10, 0x00, 0x00, 0x00, 0x02, 0x00, 0x04, 0x00, 0x02, 0x00, 0x03, 0x00, 0xFF, 0xFF, 0x01, 0x00 };
         static byte[] dseg_527 = new byte[] { 0x2, 0x4 };
         static short[] dseg_52B = new short[] { 02, 00, 03, 00 };//, FF FF 01 00 00 04 00 07 00 01 00 01}
         static short[] dseg_52F = new short[] { -1, 1 };//i think the indexer for this can only be 0 or 1.
