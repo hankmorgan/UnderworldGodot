@@ -571,8 +571,7 @@ namespace Underworld
                     }
                     else
                     {
-                        //seg32_11DE
-                        Debug.Print($"test vision {TestCounter++}");
+                        //seg32_11DE                        
                         TestVisionAndShade_seg32_1014(currentshade, ref var2currentshadePtr);
                         goto seg032_11ED;
                     }
@@ -591,7 +590,7 @@ namespace Underworld
 
         }
 
-        static int TestCounter = 0;
+        static int TestCounter = 1;
 
         static void MaybeProcessLOSArc_seg032_C9D(VisionParams vision)
         {
@@ -848,6 +847,7 @@ namespace Underworld
             }
             var tmpVision = new VisionParams(_index: 0, rawdata: tmpVisionArray_var12);
             tmpVision.currentTile_2B67_9 = di_vision.currentTile_2B67_9;
+            Debug.Print($"test vision {TestCounter++}");
             if (MaybeTestVisionIntoDarkness_seg032_AF5(di_vision, si_vision))
             {
                 //seg032_10F3

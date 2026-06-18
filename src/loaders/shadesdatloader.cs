@@ -18,13 +18,13 @@ namespace Underworld
 
         public static shade[] shadesdata;
 
-        public byte[] ShadingArray_26EE = new byte[17*66];//This array is probably the light map that should be used for the shading but the existing effect looks right enough. possible structure is byte0 - is point visible, byte1 shading value to use at that point?
+        public byte[] ShadingArray_26EE = new byte[17 * 66];//This array is probably the light map that should be used for the shading but the existing effect looks right enough. possible structure is byte0 - is point visible, byte1 shading value to use at that point?
 
         //ImageTexture cachedimage;
 
         public static float GetViewingDistance(int index)
         {
-            return 4.8f * 7; 
+            return 4.8f * 7;
             //return (float)shadesdata[index].ViewingDistance * 1.2f * 4;
         }
 
@@ -308,7 +308,7 @@ namespace Underworld
             }
             for (short si = 0; si < 16; si++)
             {
-                if (si < ViewingDistance)
+                if (si <= ViewingDistance)
                 {
                     short ax = si;
                     ax = (short)Math.Pow(ax * 8, 2);
@@ -343,23 +343,23 @@ namespace Underworld
                 while (si < 0x21)
                 {
                     //seg32_54C
-                    var var2 = (int)Math.Sqrt((0x10 - si) * (0x10 - si) + di * di);
+                    var var2 = (int)Math.Round(Math.Sqrt((0x10 - si) * (0x10 - si) + di * di), 0); // this is rounded because casting to int will round down. eg when di = 0xE and si = 0x2 the (int)sqrt() will return 2 but vanilla game will return 3
                     if (var2 <= ViewingDistance)
                     {
                         //seg32_58B
-                        ShadingArray_26EE[di*66 + (si<<1) + 1] = (byte)shadesArray[var2];//33 used to be 66 
+                        ShadingArray_26EE[di * 66 + (si << 1) + 1] = (byte)shadesArray[var2];//33 used to be 66 
                     }
                     else
                     {
                         //Seg32_577
-                        ShadingArray_26EE[di*66 + (si<<1) + 1] = 0xF;
+                        ShadingArray_26EE[di * 66 + (si << 1) + 1] = 0xF;
                     }
                     si++;
                 }
                 di++;
             }
 
-           // File.WriteAllBytes($"c:\\temp\\shade_{mapindex}.dat", ShadingArray_26EF);
+            // File.WriteAllBytes($"c:\\temp\\shade_{mapindex}.dat", ShadingArray_26EF);
             return shadesArray;
         }
 
@@ -423,5 +423,40 @@ namespace Underworld
                  );
             }
         }
+
+        /// <summary>
+        /// Groan. an implementation of vanilla square root code to handle edge cases inshade calcs...
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        static ushort sqrt_vanilla(ushort value)
+        {
+            var cx = value;
+            var bx = value;
+
+
+
+            return 0;//di;
+        }
+
+
+        //https://stackoverflow.com/questions/73961951/bit-right-rotate-through-carry-implementation-c
+        static ushort RotateRightThroughCarry(ushort value, ushort count, ref ushort carry)
+        {
+            for (ushort i = 0; i < count; i++)
+            {
+                value = RotateRightOneBitThroughCarry(value, ref carry);
+            }                
+            return value;
+        }
+
+        static ushort RotateRightOneBitThroughCarry(ushort value, ref ushort carry)
+        {
+            ushort newCarry = (ushort)(value & 1);
+            ushort newValue = (ushort)((value >> 1) | (carry << 31));
+            carry = newCarry;
+            return newValue;
+        }
+
     }//end class
 }//end namespace
