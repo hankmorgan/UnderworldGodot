@@ -185,10 +185,6 @@ namespace Underworld
                 var si = 0;
                 while (si < 0x21)
                 {
-                    if (si == 0xE)
-                    {
-                        Debug.Print("H");
-                    }
                     //seg32_54C
                     //var var2 = (int)Math.Round(Math.Sqrt((0x10 - si) * (0x10 - si) + di * di), 0); // 
                     //vanilla underworld sqrt is used here because it slightly different values are returned compared to .NET sqrt. 
@@ -223,6 +219,10 @@ namespace Underworld
             StartOfShadingDistance = _StartOfShadingDistance;
             ViewingDistance = _ViewingDistance & 0xF;
             //Debug.Print($"{_index} {_nearDist} {_nearMap} {_farDist} {_ShadeCutoff}");
+            if (_index == 4)
+            {
+                Debug.Print("4");
+            }
             shadingbasedata = ExtractShadeArray();
         }
 

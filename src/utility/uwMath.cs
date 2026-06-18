@@ -213,7 +213,8 @@ namespace Underworld
                             dx = 0;
                             div(cx);
                             cx += ax;
-                            RotateRightThroughCarry(cx, 1, ref cf);
+                            cx = (ushort)(cx >> 1);
+                            //RotateRightThroughCarry(cx, 1, ref cf);
                         }
                         di = cx;
                         return di;
@@ -229,7 +230,8 @@ namespace Underworld
                         ax = bx;
                         div(di);
                         di += ax;
-                        RotateRightThroughCarry(di, 1, ref cf);
+                        di = (ushort)(di >> 1);
+                        //RotateRightThroughCarry(di, 1, ref cf);
                     }
                     return di;
                 }
@@ -250,7 +252,7 @@ namespace Underworld
                     ax = (ushort)(ax / di);
                     div(di);
                     di += ax;
-                    RotateRightThroughCarry(di, 1, ref cf);
+                    di = (ushort)(di >> 1);//RotateRightThroughCarry(di, 1, ref cf);
                 }
                 return di;
             }
