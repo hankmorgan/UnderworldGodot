@@ -37,7 +37,7 @@ namespace Underworld
         public static int NextPaletteCycle_UI  = -1;
 
         static PaletteLoader()
-        {
+        {            
             var path_pals = System.IO.Path.Combine(BasePath, "DATA", "PALS.DAT");
             var path_light = System.IO.Path.Combine(BasePath, "DATA", "LIGHT.DAT");
             var path_mono = System.IO.Path.Combine(BasePath, "DATA", "MONO.DAT");
@@ -244,8 +244,8 @@ namespace Underworld
                             Palette.cyclePaletteReverse(tmpPalette, 16, 7);//Reverse direction.
                             break;
                     }
-                    NewCycledPalette[0, l, c] = shade.GetFullShadingImage(pal: tmpPalette, light, l, $"light_{l}_{c}");   // tmpPalette.toImage();
-                    NewCycledPalette[1, l, c] = shade.GetFullShadingImage(pal: tmpPalette, mono, l, $"mono_{l}_{c}");
+                    NewCycledPalette[0, l, c] = shade.GetFullShadingImage(pal: tmpPalette, light, l, shade.shadesdata[l].shadingbasedata);//$"light_{l}_{c}");   // tmpPalette.toImage();
+                    NewCycledPalette[1, l, c] = shade.GetFullShadingImage(pal: tmpPalette, mono, l, shade.shadesdata[l].shadingbasedata);//$"mono_{l}_{c}");
                 }
             }
 

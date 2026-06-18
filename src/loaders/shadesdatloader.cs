@@ -18,6 +18,8 @@ namespace Underworld
 
         public static shade[] shadesdata;
 
+        public short[] shadingbasedata;
+
         public byte[] ShadingArray_26EE = new byte[17 * 66];//This array is probably the light map that should be used for the shading but the existing effect looks right enough. possible structure is byte0 - is point visible, byte1 shading value to use at that point?
 
         //ImageTexture cachedimage;
@@ -35,25 +37,25 @@ namespace Underworld
         /// <param name="maps"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        public static Godot.ImageTexture GetFullShadingImage(Palette pal, lightmap[] maps, int index, string filename)
+        public static Godot.ImageTexture GetFullShadingImage(Palette pal, lightmap[] maps, int index, short[] shadingdata)
         {
             int BandSize = Math.Max(uwsettings.instance.shaderbandsize, 1);
             var img = Godot.Image.CreateEmpty(256, BandSize * 15, false, Godot.Image.Format.Rgba8);
-            var arr = shadesdata[index].ExtractShadeArray();
+            //var arr = shadesdata[index].ExtractShadeArray();
             //int y = 0;
             lightmap basemap = maps[0];
             lightmap nextmap = maps[1];
-            for (int i = 0; i < arr.GetUpperBound(0); i++)
+            for (int i = 0; i < shadingdata.GetUpperBound(0); i++)
             {
                 for (int y = 0; y < BandSize; y++)
                 {
                     if (y % BandSize == 0)
                     {//At a band that contains colours specified by the light map.
                         //Apply primary colour band
-                        basemap = maps[arr[i]];
+                        basemap = maps[shadingdata[i]];
                         if (i + 1 < maps.GetUpperBound(0))
                         {
-                            nextmap = maps[arr[i + 1]];
+                            nextmap = maps[shadingdata[i + 1]];
                         }
                         else
                         {
@@ -79,7 +81,7 @@ namespace Underworld
                                         colour = pal.ColorAtIndex((byte)x, true, false);
                                         colour.A8 = 180;
                                         var nextcolour = new Color(0, 0, 0, 0);
-                                        colour = colour.Lerp(nextcolour, (float)(arr[i] / 15f));
+                                        colour = colour.Lerp(nextcolour, (float)(shadingdata[i] / 15f));
                                         break;
                                     }
 
@@ -113,7 +115,7 @@ namespace Underworld
                                         basecolour = pal.ColorAtIndex((byte)x, true, false);
                                         basecolour.A8 = 180;
                                         nextcolour = new Color(0, 0, 0, 0); //Should this final colour be different depending on the index?
-                                        lerpedcolour = basecolour.Lerp(nextcolour, (float)(arr[i] / 15f));
+                                        lerpedcolour = basecolour.Lerp(nextcolour, (float)(shadingdata[i] / 15f));
                                         break;
                                     }
                                 default:
@@ -135,165 +137,6 @@ namespace Underworld
             return tex;
         }
 
-        // public ImageTexture GetImage()
-        // {
-        //     if (cachedimage == null)
-        //     {
-        //         cachedimage = ToImage();
-        //     }
-        //     return cachedimage;
-        // }
-
-        /// <summary>
-        /// Returns the shade map as a single channel image for use in shaders.
-        /// </summary>
-        /// <returns></returns>
-        // private Godot.ImageTexture ToImage()
-        // {
-        //     var bandwidth = 1;
-        //     var shadearray = ExtractShadeArray();
-        //     //var AllShades = ExtractShadingTable(shadearray);
-        //     byte[] imgdata = new byte[16 * bandwidth];
-        //     for (int l = 0; l < 16; l++)
-        //     {
-        //         for (int i = 0; i < bandwidth; i++)
-        //         {
-        //             imgdata[l * bandwidth + i] = (byte)(shadearray[l] * 16); //mult by 16 to get a full range
-        //         }
-
-        //     }
-        //     var output = Image(
-        //         databuffer: imgdata,
-        //         dataOffSet: 0,
-        //         width: 16 * bandwidth, height: 1,
-        //         palette: PaletteLoader.GreyScaleIndexPalette,
-        //         useAlphaChannel: true,
-        //         useSingleRedChannel: true,
-        //         crop: false);
-        //     return output;
-        // }
-
-
-        /// <summary>
-        /// Returns the shade map as a single channel image for use in shaders.
-        /// This variant shifts the pixels to the right to allow for smooth shading
-        /// </summary>
-        /// <returns></returns>
-        // public Godot.ImageTexture ToShiftedImage()
-        // {
-        //     var bandwidth = 1;
-        //     var tmparray = ExtractShadeArray();
-        //     var shadearray = new int[tmparray.Length];
-        //     shadearray[0] = tmparray[0];
-        //     for (int i = 1; i <= tmparray.GetUpperBound(0); i++)
-        //     {
-        //         shadearray[i] = tmparray[i - 1];
-        //     }
-
-
-        //     byte[] imgdata = new byte[16 * bandwidth];
-        //     for (int l = 0; l < 16; l++)
-        //     {
-        //         for (int i = 0; i < bandwidth; i++)
-        //         {
-        //             imgdata[l * bandwidth + i] = (byte)(shadearray[l] * 16); //mult by 16 to get a full range
-        //         }
-
-        //     }
-        //     var output = Image(
-        //         databuffer: imgdata,
-        //         dataOffSet: 0,
-        //         width: 16 * bandwidth, height: 1,
-        //         palette: PaletteLoader.GreyScaleIndexPalette,
-        //         useAlphaChannel: true,
-        //         useSingleRedChannel: true,
-        //         crop: false);
-        //     return output;
-        // }
-
-        /// <summary>
-        /// Extract the full shades array as a image
-        /// </summary>
-        /// <returns></returns>
-        // public Godot.ImageTexture FullShadingImage()
-        // {
-        //     var pal = PaletteLoader.GreyScaleIndexPalette;
-        //     var shadearray = ExtractShadeArray();
-        //     var AllShades = ExtractShadingTable(shadearray);
-        //     var width = AllShades.GetUpperBound(0);
-        //     var height = AllShades.GetUpperBound(1);
-        //     var img = Godot.Image.CreateEmpty(width, height, false, Godot.Image.Format.R8);
-
-        //     for (int x = 0; x < width; x++)
-        //     {
-        //         for (int y = 0; y < height; y++)
-        //         {
-        //             var pixel = (byte)(AllShades[x, y] * 16);
-        //             img.SetPixel(x, y, pal.ColorAtIndex(pixel, false, true));
-        //         }
-        //     }
-        //     var tex = new Godot.ImageTexture();
-        //     tex.SetImage(img);
-        //     return tex;
-        // }
-
-
-
-        // public int[] CalculateShades()
-        // {
-        //     if (shadeCutOff<16)
-        //     {
-        //         int[] shadesArray = ExtractShadeArray();
-        //         ExtractShadingTable(shadesArray);
-        //     }
-        //     return new int[33*17*2];
-        // }
-
-        /// <summary>
-        /// I think this returns a v large look up table for matching raycasts for shading.
-        /// I'm goint to ignore in favour of the shadearray
-        /// </summary>
-        /// <param name="shadesArray"></param>
-        /// <returns></returns>
-        //public int[,] ExtractShadingTable(int[] shadesArray)
-        // {
-        //     int[,] largeShadeArray = new int[17, 33]; //new int[33*17*2];
-        //     for (int di = 0; di < 17; di++)
-        //     {
-        //         for (int si = 0; si < 33; si++)
-        //         {
-        //             int ax = 16;
-        //             ax = ax - si;
-        //             ax = ax * ax;
-
-        //             ax = ax + (di * di);
-        //             ax = (int)Math.Sqrt(ax);
-        //             int var2 = ax;
-        //             ax = di * 66;
-        //             //ax = ax + (si << 1);
-        //             //ax = ax + (si);
-        //             if (var2 > ViewingDistance)
-        //             {
-        //                 largeShadeArray[di, si] = 0xF; //darkness?
-        //             }
-        //             else
-        //             {
-        //                 largeShadeArray[di, si] = shadesArray[var2];
-        //             }
-        //         }
-        //     } //loop di
-        //     // string result = "";
-        //     // for (int x = 0; x < 17; x++)
-        //     // {
-        //     //     for (int y = 0; y < 33; y++)
-        //     //     {
-        //     //         result += largeShadeArray[x, y].ToString("#0");
-        //     //     }
-        //     //     result += "\n";
-        //     // }
-        //     //Debug.Print(result);
-        //     return largeShadeArray;
-        // }
 
         /// <summary>
         /// Returns an array of the light maps to be used in this shade. Likely I am not returning the correct shading values but the current effect looks okay enough.
@@ -342,6 +185,10 @@ namespace Underworld
                 var si = 0;
                 while (si < 0x21)
                 {
+                    if (si == 0xE)
+                    {
+                        Debug.Print("H");
+                    }
                     //seg32_54C
                     //var var2 = (int)Math.Round(Math.Sqrt((0x10 - si) * (0x10 - si) + di * di), 0); // 
                     //vanilla underworld sqrt is used here because it slightly different values are returned compared to .NET sqrt. 
@@ -376,6 +223,7 @@ namespace Underworld
             StartOfShadingDistance = _StartOfShadingDistance;
             ViewingDistance = _ViewingDistance & 0xF;
             //Debug.Print($"{_index} {_nearDist} {_nearMap} {_farDist} {_ShadeCutoff}");
+            shadingbasedata = ExtractShadeArray();
         }
 
         static shade()
