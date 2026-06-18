@@ -315,7 +315,7 @@ namespace Underworld
                     //int var6 = ax;
                     ax = (short)(ax << 1);
                     //int var4 = ax;
-                    ax = (short)Math.Sqrt(ax);
+                    ax = (short)UnderWorldSqrt.sqrt_vanilla((ushort)ax);  //(short)Math.Sqrt(ax);
                     short var6 = ax;
                     int var4 = (short)(var6 * Shading / 64);
                     var4 += StartOfShadingDistance;
@@ -343,7 +343,12 @@ namespace Underworld
                 while (si < 0x21)
                 {
                     //seg32_54C
-                    var var2 = (int)Math.Round(Math.Sqrt((0x10 - si) * (0x10 - si) + di * di), 0); // this is rounded because casting to int will round down. eg when di = 0xE and si = 0x2 the (int)sqrt() will return 2 but vanilla game will return 3
+                    //var var2 = (int)Math.Round(Math.Sqrt((0x10 - si) * (0x10 - si) + di * di), 0); // 
+                    //vanilla underworld sqrt is used here because it slightly different values are returned compared to .NET sqrt. 
+                    // This has later impacts on tile visibility calcs for the automap
+                    // .eg when di = 0x2 and si = 0xE the (int)sqrt() will return 2 but vanilla game will return 3
+                    var var2 = (short)UnderWorldSqrt.sqrt_vanilla((ushort)((0x10 - si) * (0x10 - si) + (di * di)));
+                    
                     if (var2 <= ViewingDistance)
                     {
                         //seg32_58B
@@ -423,40 +428,5 @@ namespace Underworld
                  );
             }
         }
-
-        /// <summary>
-        /// Groan. an implementation of vanilla square root code to handle edge cases inshade calcs...
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        static ushort sqrt_vanilla(ushort value)
-        {
-            var cx = value;
-            var bx = value;
-
-
-
-            return 0;//di;
-        }
-
-
-        //https://stackoverflow.com/questions/73961951/bit-right-rotate-through-carry-implementation-c
-        static ushort RotateRightThroughCarry(ushort value, ushort count, ref ushort carry)
-        {
-            for (ushort i = 0; i < count; i++)
-            {
-                value = RotateRightOneBitThroughCarry(value, ref carry);
-            }                
-            return value;
-        }
-
-        static ushort RotateRightOneBitThroughCarry(ushort value, ref ushort carry)
-        {
-            ushort newCarry = (ushort)(value & 1);
-            ushort newValue = (ushort)((value >> 1) | (carry << 31));
-            carry = newCarry;
-            return newValue;
-        }
-
-    }//end class
+    }//end class    
 }//end namespace
