@@ -132,7 +132,7 @@ namespace Underworld
             {
                 _currenttile = value;
                 setAt16(_rawvisiondata, ptr + 9, (int)value.dosptr); //temp just to make debugging easier
-                setAt16(_rawvisiondata, ptr+ 0xB, 0x7CFD);
+                setAt16(_rawvisiondata, ptr + 0xB, 0x7CFD);
             }
         }
 
@@ -267,10 +267,19 @@ namespace Underworld
             GetTilesToRender();
             if ((playerdat.play_level >= 0) && (playerdat.play_level < 16))
             {
-                var finalgain = playerdat.CurrentWorld * TilesDiscoveredForExpGain;
+                int finalgain = 0;
+                if (_RES == GAME_UW2)
+                {
+                    finalgain = ((1 + (playerdat.dungeon_level / 8)) * TilesDiscoveredForExpGain) / 0xA;
+                }
+                else
+                {
+                    finalgain = (playerdat.dungeon_level * TilesDiscoveredForExpGain) / 0xA;
+                }
+                //var finalgain = (1 + playerdat.CurrentWorld) * TilesDiscoveredForExpGain;
                 if (finalgain > 0)
                 {
-                    //playerdat.ChangeExperience(finalgain);
+                    playerdat.ChangeExperience(finalgain);
                 }
             }
         }
@@ -400,6 +409,7 @@ namespace Underworld
                 MaybeTileShadeLevel_2F7A = (short)(shade.shadesdata[playerdat.lightlevel].ShadingArray_26EE[ShadeRef_2C74 + 1] & 0xF);
                 if (MaybeTileShadeLevel_2F7A >= 8)
                 {
+                    var19AutoMapValueToSet = automapbuffer[tileindex];
                     //seg019_DEF
                     if (automapbuffer[tileindex] == 0)
                     {
