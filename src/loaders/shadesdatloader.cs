@@ -219,10 +219,6 @@ namespace Underworld
             StartOfShadingDistance = _StartOfShadingDistance;
             ViewingDistance = _ViewingDistance & 0xF;
             //Debug.Print($"{_index} {_nearDist} {_nearMap} {_farDist} {_ShadeCutoff}");
-            if (_index == 4)
-            {
-                Debug.Print("4");
-            }
             shadingbasedata = ExtractShadeArray();
         }
 

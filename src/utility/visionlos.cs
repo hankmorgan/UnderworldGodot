@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using Godot;
 
 namespace Underworld
 {
@@ -297,7 +296,7 @@ namespace Underworld
             var tile00 = UWTileMap.current_tilemap.Tiles[0, 0];
             var tile63 = UWTileMap.current_tilemap.Tiles[63, 63];
             short var8_tileindex = (short)((var4_tile.Ptr - tile00.Ptr) / 4);
-            // if (var8_tileindex < 0x2000)
+            // if (var8_tileindex > 0x2000)
             // {//not sure if this is needed.
             //     //Seg019_62E
             //     var8_tileindex += 0xC000;
@@ -394,12 +393,11 @@ namespace Underworld
         static void StartUpdatingAutomapTile(byte[] automapbuffer, short tileindex)
         {
             var var8 = shade.shadesdata[playerdat.lightlevel].ShadingArray_26EE[ShadeRef_2C74];
-
             if ((var8 & 0x80) != 0)
             {
                 //seg019_2F7C
                 byte var19AutoMapValueToSet = 0;
-                MaybeTileShadeLevel_2F7A = shade.shadesdata[playerdat.lightlevel].ShadingArray_26EE[ShadeRef_2C74 + 1];
+                MaybeTileShadeLevel_2F7A = (short)(shade.shadesdata[playerdat.lightlevel].ShadingArray_26EE[ShadeRef_2C74 + 1] & 0xF);
                 if (MaybeTileShadeLevel_2F7A >= 8)
                 {
                     //seg019_DEF
@@ -469,7 +467,7 @@ namespace Underworld
                             }
                         }
                     }
-                    Debug.Print($"Marking tile {RenderingTile_2F7C.tileX} {RenderingTile_2F7C.tileY} as {var19AutoMapValueToSet}");
+                    //Debug.Print($"Marking tile {RenderingTile_2F7C.tileX} {RenderingTile_2F7C.tileY} as {var19AutoMapValueToSet}");
                     automapbuffer[tileindex] = var19AutoMapValueToSet;
                 }
             }
@@ -477,7 +475,7 @@ namespace Underworld
             {
                 if (automapbuffer[tileindex] == 0)
                 {
-                    Debug.Print($"Marking tile {RenderingTile_2F7C.tileX} {RenderingTile_2F7C.tileY} as {automaptileinfo.UndiscoveredTiles[RenderingTile_2F7C.tileType]}");
+                    //Debug.Print($"Marking tile {RenderingTile_2F7C.tileX} {RenderingTile_2F7C.tileY} as {automaptileinfo.UndiscoveredTiles[RenderingTile_2F7C.tileType]}");
                     automapbuffer[tileindex] = automaptileinfo.UndiscoveredTiles[RenderingTile_2F7C.tileType];
                     TilesDiscoveredForExpGain++;
                 }
@@ -589,8 +587,6 @@ namespace Underworld
             }
 
         }
-
-        static int TestCounter = 1;
 
         static void MaybeProcessLOSArc_seg032_C9D(VisionParams vision)
         {
@@ -793,7 +789,7 @@ namespace Underworld
         {
             var di_vision = VisionParams.visionparams[var4_visionindex & 0xF];
             var si_vision = VisionParams.visionparams[di_vision.dseg_2B5E_0 & 0xF];
-            currentshade_ptr = (byte)(si_vision.dseg_2B6D_F + 2);
+            currentshade_ptr = si_vision.dseg_2B6D_F + 2;
 
 
             //Loop 
@@ -847,7 +843,6 @@ namespace Underworld
             }
             var tmpVision = new VisionParams(_index: 0, rawdata: tmpVisionArray_var12);
             tmpVision.currentTile_2B67_9 = di_vision.currentTile_2B67_9;
-            Debug.Print($"test vision {TestCounter++}");
             if (MaybeTestVisionIntoDarkness_seg032_AF5(di_vision, si_vision))
             {
                 //seg032_10F3
@@ -952,7 +947,7 @@ namespace Underworld
             }
             //seg032_75B
 
-            var var2 = dseg_493[var6 + di * 7];
+            var var2 = dseg_493[var6 + (di * 7)];
             if (var2 == 0)
             {
                 shading[vision.dseg_2B6B_d] = 0;
