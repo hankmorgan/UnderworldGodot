@@ -35,7 +35,7 @@ namespace Underworld
 
         static short RenderingCounter_2C6A = 0;
         static short ShadeRef_2C74;
-        static TileInfo RenderingTile_2F7C;
+        //static TileInfo RenderingTile_2F7C;
 
         static short MaybeTileShadeLevel_2F7A;
 
@@ -289,6 +289,7 @@ namespace Underworld
         /// </summary>
         static void GetTilesToRender()
         {
+            int RenderingTile_2F7C_ptr = 0;
             var automapdata = automap.automaps[playerdat.dungeon_level - 1].buffer;
             short si_offsettilemap;
             var playerTile = UWTileMap.current_tilemap.Tiles[playerdat.playerObject.tileX, playerdat.playerObject.tileY];
@@ -298,13 +299,13 @@ namespace Underworld
             var var2_offsetshadeatdistance = LikelyDistanceToWallOrDarkness * 0x42;
 
 
-            var var4_tile = UWTileMap.GetTileByPTR((int)(playerTile.Ptr + ((varC_tileoffset * LikelyDistanceToWallOrDarkness) << 2)));
-            var4_tile = UWTileMap.GetTileByPTR((int)(var4_tile.Ptr - (di_dseg432 << 6)));
+            var var4_tile_ptr = (int)(playerTile.Ptr + ((varC_tileoffset * LikelyDistanceToWallOrDarkness) << 2));
+            var4_tile_ptr = var4_tile_ptr - (di_dseg432 << 6);
 
 
             var tile00 = UWTileMap.current_tilemap.Tiles[0, 0];
             var tile63 = UWTileMap.current_tilemap.Tiles[63, 63];
-            short var8_tileindex = (short)((var4_tile.Ptr - tile00.Ptr) / 4);
+            short var8_tileindex = (short)((var4_tile_ptr - tile00.Ptr) / 4);
             // if (var8_tileindex > 0x2000)
             // {//not sure if this is needed.
             //     //Seg019_62E
@@ -321,7 +322,7 @@ namespace Underworld
                 //InitSomeArrays(2);
                 RenderingCounter_2C6A = 0;
                 ShadeRef_2C74 = (short)(var2_offsetshadeatdistance + (RenderingCounter_2C6A << 1));
-                RenderingTile_2F7C = UWTileMap.GetTileByPTR((int)(var4_tile.Ptr + ((RenderingCounter_2C6A * di_dseg432) << 2)));
+                RenderingTile_2F7C_ptr = (int)(var4_tile_ptr + ((RenderingCounter_2C6A * di_dseg432) << 2));
 
                 si_offsettilemap = (short)(var8_tileindex + (RenderingCounter_2C6A * di_dseg432));
 
@@ -331,19 +332,19 @@ namespace Underworld
                     //seg19_68D
                     if ((si_offsettilemap & 0xF000) == 0)
                     {
-                        StartUpdatingAutomapTile(automapdata, si_offsettilemap);
+                        StartUpdatingAutomapTile(automapdata, si_offsettilemap, UWTileMap.GetTileByPTR(RenderingTile_2F7C_ptr));
                     }
                     //Seg019_6A0
                     RenderingCounter_2C6A++;
                     ShadeRef_2C74 += 2;
-                    RenderingTile_2F7C = UWTileMap.GetTileByPTR((int)(RenderingTile_2F7C.Ptr + (di_dseg432 << 2)));
+                    RenderingTile_2F7C_ptr = RenderingTile_2F7C_ptr + (di_dseg432 << 2);
                     si_offsettilemap += di_dseg432;
                 }
                 //seg019:6BB
                 //InitSomeArrays(1);
                 RenderingCounter_2C6A = 0x20;
                 ShadeRef_2C74 = (short)(var2_offsetshadeatdistance + (RenderingCounter_2C6A << 1));
-                RenderingTile_2F7C = UWTileMap.GetTileByPTR((int)(var4_tile.Ptr + ((RenderingCounter_2C6A * di_dseg432) << 2)));
+                RenderingTile_2F7C_ptr = var4_tile_ptr + ((RenderingCounter_2C6A * di_dseg432) << 2);
                 si_offsettilemap = (short)(var8_tileindex + (RenderingCounter_2C6A * di_dseg432));
 
                 //seg019_729
@@ -352,30 +353,30 @@ namespace Underworld
                     //seg019_702
                     if ((si_offsettilemap & 0xF000) == 0)
                     {
-                        StartUpdatingAutomapTile(automapdata, si_offsettilemap);
+                        StartUpdatingAutomapTile(automapdata, si_offsettilemap, UWTileMap.GetTileByPTR(RenderingTile_2F7C_ptr));
                     }
                     //seg019_715
                     RenderingCounter_2C6A--;
                     ShadeRef_2C74 -= 2;
-                    RenderingTile_2F7C = UWTileMap.GetTileByPTR((int)(RenderingTile_2F7C.Ptr - (di_dseg432 << 2)));
+                    RenderingTile_2F7C_ptr = RenderingTile_2F7C_ptr - (di_dseg432 << 2);
                     si_offsettilemap -= di_dseg432;
                 }
                 //seg019_732
                 //InitSomeArrays(0);
                 if ((si_offsettilemap & 0xF000) == 0)
                 {
-                    StartUpdatingAutomapTile(automapdata, si_offsettilemap);
+                    StartUpdatingAutomapTile(automapdata, si_offsettilemap, UWTileMap.GetTileByPTR(RenderingTile_2F7C_ptr));
                 }
                 //seg019_84C
                 //init some object rendering data
                 var2_offsetshadeatdistance -= 0x42;
-                var4_tile = UWTileMap.GetTileByPTR((int)(var4_tile.Ptr - (varC_tileoffset << 2)));
+                var4_tile_ptr = (int)(var4_tile_ptr - (varC_tileoffset << 2));
                 var8_tileindex -= (short)varC_tileoffset;
                 LikelyDist_2C6C--;
             }
 
             //Seg019_77B
-            RenderingTile_2F7C = var4_tile;
+            RenderingTile_2F7C_ptr = var4_tile_ptr;
             RenderingCounter_2C6A = 0;
             si_offsettilemap = (short)var8_tileindex;
             var varA_AutoMapPtr = var8_tileindex;
@@ -388,18 +389,18 @@ namespace Underworld
                     if (automapdata[varA_AutoMapPtr] == 0)
                     {
                         //automap tile has been unvisited and is an undiscovered tile
-                        automapdata[varA_AutoMapPtr] = automaptileinfo.UndiscoveredTiles[RenderingTile_2F7C.tileType];
+                        automapdata[varA_AutoMapPtr] = automaptileinfo.UndiscoveredTiles[UWTileMap.GetTileByPTR(RenderingTile_2F7C_ptr).tileType];
                     }
                 }
                 //seg019_7BE
                 RenderingCounter_2C6A++;
-                RenderingTile_2F7C = UWTileMap.GetTileByPTR((int)(RenderingTile_2F7C.Ptr + (di_dseg432 << 2)));
+                RenderingTile_2F7C_ptr = RenderingTile_2F7C_ptr + (di_dseg432 << 2);
                 si_offsettilemap += di_dseg432;
                 varA_AutoMapPtr += di_dseg432;
             }
         }
 
-        static void StartUpdatingAutomapTile(byte[] automapbuffer, short tileindex)
+        static void StartUpdatingAutomapTile(byte[] automapbuffer, short tileindex, TileInfo RenderingTile_2F7C)
         {
             var var8 = shade.shadesdata[playerdat.lightlevel].ShadingArray_26EE[ShadeRef_2C74];
             if ((var8 & 0x80) != 0)
