@@ -226,7 +226,7 @@ namespace Underworld
         /// </summary>
         /// <param name="tile"></param>
         /// <returns></returns>
-        public static short GetTerrainDataBit67(TileInfo tile)
+        public static short GetTerrainDataBit67_unshifted(TileInfo tile)
         {
             if (_RES == GAME_UW2)
             {//TOTEST

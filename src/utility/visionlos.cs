@@ -422,7 +422,7 @@ namespace Underworld
                 else
                 {
                     //Seg019_DA7
-                    var19AutoMapValueToSet = (byte)(RenderingTile_2F7C.tileType | TerrainDatLoader.GetTerrainDataBit345(RenderingTile_2F7C));
+                    var19AutoMapValueToSet = (byte)(RenderingTile_2F7C.tileType | TerrainDatLoader.GetTerrainDataBit67_unshifted(RenderingTile_2F7C));
                 }
 
                 //from here on there is a lot of code relating to rendering. 
