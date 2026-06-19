@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 
 namespace Underworld
 {
@@ -8,6 +7,7 @@ namespace Underworld
     /// </summary>
     public class VisionParams : Loader
     {
+        public static short[] cardinallookup_44A = new short[]{0, 16384, - 32768, -16384 };
         public static short TilesDiscoveredForExpGain;
         static byte[] dseg_523 = new byte[] { 0x10, 0x00, 0x00, 0x00, 0x02, 0x00, 0x04, 0x00, 0x02, 0x00, 0x03, 0x00, 0xFF, 0xFF, 0x01, 0x00 };
         static byte[] dseg_527 = new byte[] { 0x2, 0x4 };
@@ -209,7 +209,8 @@ namespace Underworld
         /// </summary>
         public static void SetRangeOfVisionParams(short camerax, short cameray, short camerayaw)
         {
-            var tileX = camerax >> 8; var tileY = cameray >> 8;
+            var tileX = playerdat.playerObject.tileX;//camerax >> 8; var tileY = cameray >> 8;
+            var tileY = playerdat.playerObject.tileY;
             if (!UWTileMap.ValidTile(tileX, tileY))
             {
                 return;

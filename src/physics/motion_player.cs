@@ -27,7 +27,7 @@ namespace Underworld
         public static bool PlayerMotionUpdateRequired_dseg_D3 = false;
 
 
-        //Camera Globals
+        //Camera Globals -> these should move over the the camera classes.
         public static short PlayerCameraYaw_dseg_8294;
         public static short PlayerCameraPitch_dseg_67d6_33D6 = 0; //unimplemented
         public static short PlayerCameraRoll_dseg_67d6_33D8 = 0; //unimplemented

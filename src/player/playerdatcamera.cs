@@ -165,18 +165,44 @@ namespace Underworld
             //Set this value to calculate npc angles
             motion.CameraYawHeadingRelated_2B52 = (short)(((1 + (yaw >> 0xD)) & 0x7) >> 1);
             motion.CameraPointer2C = (short)(yaw - motion.PlayerCardinalHeadingLookupTable[motion.CameraYawHeadingRelated_2B52]);
-            if (true)
-            {
-                //dont't run yet due to infinite looping
-                //Following functions are used to determine what is in sight and to update automap accordingly.
-                VisionParams.SetRangeOfVisionParams(
-                    camerax: x,
-                    cameray: y,
-                    camerayaw: yaw);
 
-                VisionParams.GetViewDistance();
-                VisionParams.FakeRender();
+            //The following code is used to draw the automap.
+            //first the camera values must be updated depending on the player direction.
+            x = (short)(x & 0xFF);
+            y = (short)(y & 0xFF);
+            switch (motion.CameraYawHeadingRelated_2B52)
+            {
+                case 1:
+                    {
+                        var si = x;
+                        x = (short)(0xFF - y);
+                        y = si;
+                        break;
+                    }
+                case 2:
+                    {
+                        x = (short)(0xFF - x);
+                        y = (short)(0xFF - y);
+                        break;
+                    }
+                case 3:
+                    {
+                        var si = x;
+                        x = y;
+                        y = (short)(0xFF - si);
+                        break;
+                    }
             }
+
+            yaw = (short)(yaw - VisionParams.cardinallookup_44A[motion.CameraYawHeadingRelated_2B52]);
+
+            VisionParams.SetRangeOfVisionParams(
+                camerax: x,
+                cameray: y,
+                camerayaw: yaw);
+
+            VisionParams.GetViewDistance();
+            VisionParams.FakeRender();
 
         }
 
