@@ -214,7 +214,7 @@ namespace Underworld
         /// <returns></returns>
         public static short CalculateFacingAngleToNPC(uwObject n)
         {
-            var ax = (motion.CameraPointer2C + motion.PlayerCardinalHeadingLookupTable[motion.CameraYawHeadingRelated_2B52]) >> 0xB;
+            var ax = (playerdat.CameraPointer2C + motion.PlayerCardinalHeadingLookupTable[playerdat.CameraYawHeadingRelated_2B52]) >> 0xB;
             ax = ((0x20 + (n.heading << 2)) - ax) & 0x1F; //index to lookup an animation table.
             var result = NPCAnimationHeadingTable[ax];
             //Debug.Print($"npc {n.a_name} {n.heading} -> {result}");

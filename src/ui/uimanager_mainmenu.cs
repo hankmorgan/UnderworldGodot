@@ -359,7 +359,7 @@ namespace Underworld
             //set camera to player
             playerdat.CameraReference = playerdat.playerObject;
             //reset camera pitch which is not serialised
-            motion.PlayerCameraPitch_dseg_67d6_33D6 = 0;
+            playerdat.PlayerCameraPitch_dseg_67d6_33D6 = 0;
             //turn off moongate sucking effect (uw1 endgame)
             playerdat.MoongateSucking = false;
 

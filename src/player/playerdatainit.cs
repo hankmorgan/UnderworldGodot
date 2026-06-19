@@ -27,7 +27,7 @@ namespace Underworld
 
                 motion.playerMotionParams.tilestate25 = (byte)(playerdat.RelatedToMotionState >> 3);
 
-                motion.PlayerCameraYaw_dseg_8294 = (short)playerdat.heading_full;
+                playerdat.PlayerCameraYaw_dseg_8294 = (short)playerdat.heading_full;
 
                 motion.UpdateMotionStateAndSwimming(playerdat.RelatedToMotionState & 0x7);                
 

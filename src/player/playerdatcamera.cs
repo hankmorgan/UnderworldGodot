@@ -16,6 +16,29 @@ namespace Underworld
         /// </summary>
         public static uwObject CameraReference;
 
+        //Camera Globals
+        public static short PlayerCameraYaw_dseg_8294;
+        public static short PlayerCameraPitch_dseg_67d6_33D6 = 0; //unimplemented
+        public static short PlayerCameraRoll_dseg_67d6_33D8 = 0; //unimplemented
+
+
+        //Camera bob adjustments, 
+        public static bool CameraIsBobbing_dseg_67d6_33c6;
+        public static short CameraBobZAdjust_dseg_67d6_33CE = 0;
+        public static short CameraYawModifier_dseg_67d6_33D0;//changes the camera angle that is set by PlayerHeadingMinor8294
+        public static short CameraPitchModifier_dseg_67d6_33D2;//changes the camera angle that is set by PlayerHeadingRelated33D6        
+        public static short CameraRollModifier_dseg_67d6_33D4;//changes the camera angle that is set by PlayerHeadingRelated33D8, 
+
+        //These are used in shaking and are used to calculate the camera modifiers
+        public static byte Shake20_Duration_73F;
+        public static byte Shake40_Duration_740;
+        public static byte Shake80_Duration_741; //not used in UW1
+
+        //Used to calulate the angle for npc sprites
+        public static short CameraYawHeadingRelated_2B52=0;
+        public static short CameraPointer2C=0;
+
+        
         public static bool MoongateSucking = false;
         public static ushort MoonGateCameraYaw = 0;
         public static byte StepsTakenToMoongate = 0;
@@ -57,18 +80,18 @@ namespace Underworld
                         // var y = motion.playerMotionParams.y_2;
                         // var z = motion.playerMotionParams.z_4 + 0xA4;//offset for player head. This is lower than player height.
                         //set up yaw, pitch and other motion values.
-                        // var yaw = (float)motion.PlayerCameraYaw_dseg_8294;
+                        // var yaw = (float)playerdat.PlayerCameraYaw_dseg_8294;
                         // var roll = (float)motion.PlayerCameraRoll_dseg_67d6_33D8;
-                        // var pitch = (float)motion.PlayerCameraPitch_dseg_67d6_33D6;
+                        // var pitch = (float)playerdat.PlayerCameraPitch_dseg_67d6_33D6;
                         //bool applyBob = motion.CameraIsBobbing_dseg_67d6_33c6;
                         PositionCamera(
                             x: motion.playerMotionParams.x_0,
                             y: motion.playerMotionParams.y_2,
                             z: (short)(motion.playerMotionParams.z_4 + 0xA4),
-                            yaw: motion.PlayerCameraYaw_dseg_8294,
-                            roll: motion.PlayerCameraRoll_dseg_67d6_33D8,
-                            pitch: motion.PlayerCameraPitch_dseg_67d6_33D6,
-                            applyBob: motion.CameraIsBobbing_dseg_67d6_33c6);
+                            yaw: PlayerCameraYaw_dseg_8294,
+                            roll: PlayerCameraRoll_dseg_67d6_33D8,
+                            pitch: PlayerCameraPitch_dseg_67d6_33D6,
+                            applyBob: CameraIsBobbing_dseg_67d6_33c6);
 
                     }
                     else
@@ -126,7 +149,7 @@ namespace Underworld
         {
             if (applyBob)
             {
-                z += motion.CameraBobZAdjust_dseg_67d6_33CE; //note that over time when in water the camera will go beneath the water level due to the swimmingcounter getting larger
+                z += CameraBobZAdjust_dseg_67d6_33CE; //note that over time when in water the camera will go beneath the water level due to the swimmingcounter getting larger
             }
 
             //Get a vector for the camera that is relative to the bounds of an underworld level map.
@@ -135,11 +158,11 @@ namespace Underworld
             //then transform it into godot positioning using a vector based on the size we are rendering the gameworld in.
             main.cameraYawGimbal.Position = underworldVector * tileMapRender.godotscale;
 
-            if ((motion.CameraIsBobbing_dseg_67d6_33c6) && (applyBob))
+            if ((CameraIsBobbing_dseg_67d6_33c6) && (applyBob))
             {
-                yaw += motion.CameraYawModifier_dseg_67d6_33D0;
-                roll += motion.CameraRollModifier_dseg_67d6_33D4;
-                pitch += motion.CameraPitchModifier_dseg_67d6_33D2;
+                yaw += CameraYawModifier_dseg_67d6_33D0;
+                roll += CameraRollModifier_dseg_67d6_33D4;
+                pitch += CameraPitchModifier_dseg_67d6_33D2;
             }
 
             CameraTileX = (short)(x >> 8);
@@ -159,14 +182,14 @@ namespace Underworld
             main.cameraPitchGimbal.Rotate(Vector3.Right, (float)(+((float)pitch / 32767f) * Math.PI));
 
             //Set this value to calculate npc angles
-            motion.CameraYawHeadingRelated_2B52 = (short)(((1 + (yaw >> 0xD)) & 0x7) >> 1);
-            motion.CameraPointer2C = (short)(yaw - motion.PlayerCardinalHeadingLookupTable[motion.CameraYawHeadingRelated_2B52]);
+            playerdat.CameraYawHeadingRelated_2B52 = (short)(((1 + (yaw >> 0xD)) & 0x7) >> 1);
+            playerdat.CameraPointer2C = (short)(yaw - motion.PlayerCardinalHeadingLookupTable[playerdat.CameraYawHeadingRelated_2B52]);
 
             //The following code is used to draw the automap.
             //first the camera values must be updated depending on the player direction.
             x = (short)(x & 0xFF);
             y = (short)(y & 0xFF);
-            switch (motion.CameraYawHeadingRelated_2B52)
+            switch (playerdat.CameraYawHeadingRelated_2B52)
             {
                 case 1:
                     {
@@ -190,7 +213,7 @@ namespace Underworld
                     }
             }
 
-            yaw = (short)(yaw - VisionParams.cardinallookup_44A[motion.CameraYawHeadingRelated_2B52]);
+            yaw = (short)(yaw - VisionParams.cardinallookup_44A[playerdat.CameraYawHeadingRelated_2B52]);
            
             //Set global values needed for visibility checks
             LOS_x = (short)(x & 0xFF);
@@ -220,7 +243,7 @@ namespace Underworld
             {
                 DoCameraX = motion.playerMotionParams.x_0;
                 DoCameraY = motion.playerMotionParams.y_2;
-                DoCameraH = motion.PlayerCameraYaw_dseg_8294;
+                DoCameraH = PlayerCameraYaw_dseg_8294;
                 if (index == 1)
                 {
                     DoCameraZ = (short)(motion.playerMotionParams.z_4 + 0xA4);
