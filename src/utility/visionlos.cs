@@ -1220,13 +1220,13 @@ namespace Underworld
                     if (
                         (si_vision.dseg_2B65_7 > 1)
                         ||
-                        ((Math.Abs(si_vision.CameraX_2b64_6 - playerdat.CAM_x) + Math.Abs(si_vision.CameraY_2b66_8 - playerdat.CAM_y)) > 0x10)
+                        ((Math.Abs(si_vision.CameraX_2b64_6 - playerdat.LOS_x) + Math.Abs(si_vision.CameraY_2b66_8 - playerdat.LOS_y)) > 0x10)
                         )
                     {
                         //seg032_B76
-                        si_vision.FovYawX_1 = (short)((si_vision.dseg_2B63_5 << 8) + si_vision.CameraX_2b64_6 - playerdat.CAM_x);
+                        si_vision.FovYawX_1 = (short)((si_vision.dseg_2B63_5 << 8) + si_vision.CameraX_2b64_6 - playerdat.LOS_x);
                         si_vision.FovYawX_1 -= (short)(2 + Math.Abs(si_vision.FovYawX_1) / 0x32);
-                        si_vision.FovYawY_3 = (short)((si_vision.dseg_2B65_7 << 8) - playerdat.CAM_y);
+                        si_vision.FovYawY_3 = (short)((si_vision.dseg_2B65_7 << 8) - playerdat.LOS_y);
                     }
                     //seg032_BB4
                     si_vision.currentTile_2B67_9 = UWTileMap.GetTileByPTR((int)(si_vision.currentTile_2B67_9.Ptr + (dseg_432[2 + motion.CameraYawHeadingRelated_2B52 * 6] << 2)));
@@ -1253,15 +1253,15 @@ namespace Underworld
                         if (di_vision.dseg_2B65_7 <= 1)
                         {
                             //seg032_c10
-                            if (Math.Abs(di_vision.CameraX_2b64_6 - playerdat.CAM_x) + Math.Abs(di_vision.CameraY_2b66_8 - playerdat.CAM_y) <= 0x10)
+                            if (Math.Abs(di_vision.CameraX_2b64_6 - playerdat.LOS_x) + Math.Abs(di_vision.CameraY_2b66_8 - playerdat.LOS_y) <= 0x10)
                             {
                                 goto Seg032_C7A;
                             }
                         }
                         //Seg032_C3B 
-                        di_vision.FovYawX_1 = (short)(((di_vision.dseg_2B63_5 << 8) + di_vision.CameraX_2b64_6) - playerdat.CAM_x);
+                        di_vision.FovYawX_1 = (short)(((di_vision.dseg_2B63_5 << 8) + di_vision.CameraX_2b64_6) - playerdat.LOS_x);
                         di_vision.FovYawX_1 += (short)(2 + Math.Abs(di_vision.FovYawX_1) / 0x32);
-                        di_vision.FovYawY_3 = (short)(((di_vision.dseg_2B65_7 << 8) - playerdat.CAM_y) - 1);
+                        di_vision.FovYawY_3 = (short)(((di_vision.dseg_2B65_7 << 8) - playerdat.LOS_y) - 1);
                     Seg032_C7A:
                         di_vision.CameraY_2b66_8 = 0;
                         di_vision.dseg_2B6B_d += 0x42;

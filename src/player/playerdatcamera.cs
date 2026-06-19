@@ -35,8 +35,8 @@ namespace Underworld
 
         public static short CameraTileX; public static short CameraTileY;
 
-        public static short CAM_x;
-        public static short CAM_y;
+        public static short LOS_x;
+        public static short LOS_y;
 
         /// <summary>
         /// Positions the player game camera based on x/y/z pos and current tileX/Y. 
@@ -145,10 +145,6 @@ namespace Underworld
             CameraTileX = (short)(x >> 8);
             CameraTileY = (short)(y >> 8);
 
-            //Set values needed for visibility checks
-            CAM_x = (short)(x & 0xFF);
-            CAM_y = (short)(y & 0xFF);
-
             //Set up the Yaw gimbal             
             main.cameraYawGimbal.Rotation = Vector3.Zero;
             main.cameraYawGimbal.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
@@ -195,6 +191,10 @@ namespace Underworld
             }
 
             yaw = (short)(yaw - VisionParams.cardinallookup_44A[motion.CameraYawHeadingRelated_2B52]);
+           
+            //Set global values needed for visibility checks
+            LOS_x = (short)(x & 0xFF);
+            LOS_y = (short)(y & 0xFF);
 
             VisionParams.SetRangeOfVisionParams(
                 camerax: x,
