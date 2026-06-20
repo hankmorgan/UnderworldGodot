@@ -4,7 +4,7 @@ namespace Underworld
 {
     public class automapnote : Loader
     {
-       // public static automapnotes currentautomapnotes;
+        // public static automapnotes currentautomapnotes;
 
         /// <summary>
         /// Array of all cached automaps
@@ -15,7 +15,7 @@ namespace Underworld
         {
             get
             {
-                if (notes==null)
+                if (notes == null)
                 {
                     return 0;
                 }
@@ -29,11 +29,11 @@ namespace Underworld
         //The raw data for this set of automap notes.
         public byte[] buffer;
 
-        public List<mapnotetext> notes=new();
+        public List<mapnotetext> notes = new();
 
         static int GetBlockAddress(int blockno, byte[] buffer)
         {
-            if (_RES==GAME_UW2)
+            if (_RES == GAME_UW2)
             {
                 return (int)getAt(buffer, 6 + (blockno * 4), 32);
             }
@@ -44,71 +44,78 @@ namespace Underworld
         }
         public automapnote(int LevelNo)
         {
-            int blockno;
-            int noOfPossibleBlocks;
-            int thisAddress;
-            int startblock;
-            if (_RES == GAME_UW2)
+            if (_RES == GAME_UWDEMO)
             {
-                blockno = 240 + LevelNo;
-                noOfPossibleBlocks = 80;
-                startblock =240;
+                buffer = new byte[0];
             }
             else
             {
-                blockno = LevelNo + 36;
-                noOfPossibleBlocks = 9;
-                startblock = 36;
-            }
-            thisAddress = GetBlockAddress(blockno, LevArkLoader.lev_ark_file_data);
-            if (thisAddress==0)
-            {
-                //no data
-                return;
-            }
-            var EOF = LevArkLoader.lev_ark_file_data.GetUpperBound(0)+1;//end of file is the max length.
-            for (int i = 0; i<noOfPossibleBlocks; i++)
-            {
-                if (i != LevelNo)
+                int blockno;
+                int noOfPossibleBlocks;
+                int thisAddress;
+                int startblock;
+                if (_RES == GAME_UW2)
                 {
-                    var addressToCheck = GetBlockAddress(startblock+i, LevArkLoader.lev_ark_file_data);
-                    if (addressToCheck>thisAddress)
-                    {//block is after the current one.
-                        if (addressToCheck < EOF)
-                        {
-                            EOF = addressToCheck; //try and get the nearest next address to the current block
+                    blockno = 240 + LevelNo;
+                    noOfPossibleBlocks = 80;
+                    startblock = 240;
+                }
+                else
+                {
+                    blockno = LevelNo + 36;
+                    noOfPossibleBlocks = 9;
+                    startblock = 36;
+                }
+                thisAddress = GetBlockAddress(blockno, LevArkLoader.lev_ark_file_data);
+                if (thisAddress == 0)
+                {
+                    //no data
+                    return;
+                }
+                var EOF = LevArkLoader.lev_ark_file_data.GetUpperBound(0) + 1;//end of file is the max length.
+                for (int i = 0; i < noOfPossibleBlocks; i++)
+                {
+                    if (i != LevelNo)
+                    {
+                        var addressToCheck = GetBlockAddress(startblock + i, LevArkLoader.lev_ark_file_data);
+                        if (addressToCheck > thisAddress)
+                        {//block is after the current one.
+                            if (addressToCheck < EOF)
+                            {
+                                EOF = addressToCheck; //try and get the nearest next address to the current block
+                            }
                         }
                     }
                 }
-            }
 
 
 
-            if (DataLoader.LoadUWBlock(LevArkLoader.lev_ark_file_data, blockno, EOF-thisAddress, out UWBlock block))
-            {
-                var addptr = 0;
-                int counter =0;
-                var NoOfNotes = block.Data.Length / 54;
-                while ((addptr<= block.Data.GetUpperBound(0)) && (counter<NoOfNotes))
+                if (DataLoader.LoadUWBlock(LevArkLoader.lev_ark_file_data, blockno, EOF - thisAddress, out UWBlock block))
                 {
-                    //construct note
-                    if (block.Data[addptr]!='\0')//if not null
+                    var addptr = 0;
+                    int counter = 0;
+                    var NoOfNotes = block.Data.Length / 54;
+                    while ((addptr <= block.Data.GetUpperBound(0)) && (counter < NoOfNotes))
                     {
-                        var charptr =0;
-                        var nextchar = (char)block.Data[addptr];
-                        var fullstring = "";
-                        while ((charptr<0x31) && (nextchar!='\0'))
+                        //construct note
+                        if (block.Data[addptr] != '\0')//if not null
                         {
-                            fullstring+=(char)block.Data[addptr+charptr];
-                            charptr++;
-                            nextchar= (char)block.Data[addptr+charptr];
+                            var charptr = 0;
+                            var nextchar = (char)block.Data[addptr];
+                            var fullstring = "";
+                            while ((charptr < 0x31) && (nextchar != '\0'))
+                            {
+                                fullstring += (char)block.Data[addptr + charptr];
+                                charptr++;
+                                nextchar = (char)block.Data[addptr + charptr];
+                            }
+                            var _posX = (int)getAt(block.Data, addptr + 0x32, 16);
+                            var _posY = (int)getAt(block.Data, addptr + 0x34, 16);
+                            notes.Add(new mapnotetext(fullstring, _posX, _posY));
                         }
-                        var _posX = (int)getAt(block.Data,addptr+0x32,16);
-                        var _posY = (int)getAt(block.Data,addptr+0x34,16);
-                        notes.Add (new mapnotetext(fullstring,_posX,_posY));
+                        addptr += 54;
+                        counter++;
                     }
-                    addptr+=54;
-                    counter++;
                 }
             }
         }
@@ -149,12 +156,12 @@ namespace Underworld
                 output[recordStart + 0x35] = (byte)((n.posY >> 8) & 0xFF);
             }
             return output;
-        }    
+        }
 
-        public class mapnotetext:UWClass
+        public class mapnotetext : UWClass
         {
             public string notetext;
-            public int posX; 
+            public int posX;
             public int posY;
             public RichTextLabelMapNote textlabel;//reference to the label created by this note.
 

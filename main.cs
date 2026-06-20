@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using Underworld;
 using System.IO;
+using System.Linq;
 
 /// <summary>
 /// Node to initialise the game
@@ -35,7 +36,7 @@ public partial class main : Node3D
 
 	double cycletime = 0;
 
-	public static double playingnotetimer =0;
+	public static double playingnotetimer = 0;
 
 	public static bool DoRedraw = false;
 
@@ -114,22 +115,55 @@ public partial class main : Node3D
 		ObjectCreator.grObjects.UseCropping = true;
 		Palette.CurrentPalette = 0;
 		uimanager.instance.InitUI();
-		uimanager.EnableDisable(uimanager.instance.uw1UI, false);
-		uimanager.EnableDisable(uimanager.instance.uw2UI, false);
-		uimanager.EnableDisable(uimanager.instance.PanelInventory, false);
-		uimanager.EnableDisable(uimanager.instance.ManaFlaskPanel, false);
-		uimanager.EnableDisable(uimanager.instance.HealthFlaskPanel, false);		
-		cutsplayer.PlayCutscene(9, uimanager.ReturnToMainMenu);
-		//Play intro theme after cutscene coroutine is queued, so music and graphics start together
-		XMIMusic.LoadXMI(XMIMusic.IntroTheme);
-		uimanager.AddToMessageScroll(GameStrings.GetString(1, 13));//welcome message
-	}
+		if (UWClass._RES != UWClass.GAME_UWDEMO)
+		{
+			uimanager.EnableDisable(uimanager.instance.uw1UI, false);
+			uimanager.EnableDisable(uimanager.instance.uw2UI, false);
+			uimanager.EnableDisable(uimanager.instance.PanelInventory, false);
+			uimanager.EnableDisable(uimanager.instance.ManaFlaskPanel, false);
+			uimanager.EnableDisable(uimanager.instance.HealthFlaskPanel, false);
+			cutsplayer.PlayCutscene(9, uimanager.ReturnToMainMenu);
+			//Play intro theme after cutscene coroutine is queued, so music and graphics start together
+			XMIMusic.LoadXMI(XMIMusic.IntroTheme);
+			uimanager.AddToMessageScroll(GameStrings.GetString(1, 13));//welcome message
+		}
+		else
+        {
+			cutsplayer.PlayCutscene(9, LaunchUWDemo);
+        }
+    }
 
-	/// <summary>
-	/// Draws a debug marker sprite on game load to show where the character is positioned
-	/// </summary>
-	/// <param name="gr"></param>
-	public static void DrawPlayerPositionSprite(GRLoader gr)
+    private static void LaunchUWDemo()
+    {
+        playerdat.InitEmptyPlayer();
+        //get demo player files
+        var filelist = Directory.GetFiles(Path.Combine(UWClass.BasePath, "DATA"), "DPLAYER.*");
+        if (filelist.Length > 0)
+        {
+            var demopdat = filelist[Rng.r.Next(filelist.Length)];
+            var pdata = File.ReadAllBytes(demopdat);
+            playerdat.pdat = playerdat.EncryptDecryptUW1(pdata, pdata[0]);
+            Array.Resize(ref playerdat.pdat, playerdat.InventoryPtr + 512 * 8);
+        }
+        else
+        {
+            playerdat.CharName = "DEMO";
+            playerdat.max_hp = 30;
+            playerdat.play_hp = 30;
+            playerdat.STR = 20;
+            playerdat.INT = 20;
+            playerdat.DEX = 20;
+        }
+
+        uimanager.instance.JourneyOnwards("DATA");
+        uimanager.AddToMessageScroll(GameStrings.GetString(1, 13));//welcome message
+    }
+
+    /// <summary>
+    /// Draws a debug marker sprite on game load to show where the character is positioned
+    /// </summary>
+    /// <param name="gr"></param>
+    public static void DrawPlayerPositionSprite(GRLoader gr)
 	{
 		int spriteNo = 127;
 		var a_sprite = new MeshInstance3D(); //new Sprite3D();
@@ -164,18 +198,18 @@ public partial class main : Node3D
 				cycletime = 0;
 				PaletteLoader.UpdatePaletteCycles();
 			}
-			if (PitTimer>=0.00391)
+			if (PitTimer >= 0.00391)
 			{
 				//simulation of the dos pit timer.
-				GlobalPITTimer += (uint)(PitTimer /0.00391);
+				GlobalPITTimer += (uint)(PitTimer / 0.00391);
 				PitTimer = 0;
 			}
 		}
 
 
-		if (musicalinstrument.PlayingNote>0)
+		if (musicalinstrument.PlayingNote > 0)
 		{
-			playingnotetimer +=delta;
+			playingnotetimer += delta;
 			if (playingnotetimer >= 0.2f)
 			{
 				musicalinstrument.StopMusicalNote();
@@ -650,7 +684,7 @@ public partial class main : Node3D
 				if (keyinput.Pressed)
 				{
 					switch (keyinput.Keycode)
-					{	
+					{
 						case Key.F1: //open options menu
 							uimanager.InteractionModeToggle(0); break;
 						case Key.F2: //talk
@@ -670,23 +704,23 @@ public partial class main : Node3D
 							}
 							else
 							{
-								uimanager.ChangePanels();	
+								uimanager.ChangePanels();
 							}
 							break;
 						case Key.F8: //cast spell
 							if (keyinput.AltPressed)
 							{
-								printPlayerLocation();	
+								printPlayerLocation();
 							}
 							else
 							{
-								RunicMagic.CastRunicSpell();	
+								RunicMagic.CastRunicSpell();
 							}
 							break;
 						case Key.F9://track skill
 							tracking.DetectMonsters(8, playerdat.Track); break;
 						case Key.F10: // make camp
-							{								
+							{
 								//Try and find a bedroll in player inventory.
 								var bedroll = objectsearch.FindMatchInFullObjectList(
 									majorclass: 4, minorclass: 2, classindex: 1,
@@ -1030,7 +1064,7 @@ public partial class main : Node3D
 		{
 			System.IO.Directory.CreateDirectory(screenshotfolder);
 		}
-		var filename = Path.Combine(screenshotfolder,$"{DateTime.UtcNow.ToString("yyyyMMdd_hhmmss")}.png");
+		var filename = Path.Combine(screenshotfolder, $"{DateTime.UtcNow.ToString("yyyyMMdd_hhmmss")}.png");
 		uimanager.instance.GetViewport().GetTexture().GetImage().SavePng(filename);
 	}
 

@@ -40,8 +40,11 @@ namespace Underworld
             grArmour_F = new GRLoader(GRLoader.ARMOR_F_GR, GRLoader.GRShaderMode.UIShader);
             grArmour_M = new GRLoader(GRLoader.ARMOR_M_GR, GRLoader.GRShaderMode.UIShader);
 			grConverse = new GRLoader(GRLoader.CONVERSE_GR, GRLoader.GRShaderMode.UIShader);
-            grOptbtn = new  GRLoader(GRLoader.OPBTN_GR, GRLoader.GRShaderMode.UIShader);            
-            grOptbtn.PaletteNo = 6;
+            if (UWClass._RES != UWClass.GAME_UWDEMO)
+            {
+                grOptbtn = new  GRLoader(GRLoader.OPBTN_GR, GRLoader.GRShaderMode.UIShader);            
+                grOptbtn.PaletteNo = 6;    
+            }            
             grSpells = new  GRLoader(GRLoader.SPELLS_GR, GRLoader.GRShaderMode.UIShader);
             grSpells.UseRedChannel = true;
 			bitmaps = new BytLoader();

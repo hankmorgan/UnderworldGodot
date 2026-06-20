@@ -980,15 +980,18 @@ namespace Underworld
                 if (cancelRequested) goto cleanup;
                 yield return new WaitForSeconds(2.0f);
                 if (cancelRequested) goto cleanup;
-                cutscontrol.Texture = null;
-                yield return new WaitForSeconds(0.5f);
-                if (cancelRequested) goto cleanup;
-                cutscontrol.Texture = uimanager.bitmaps.LoadImageAt(6); // Blue sky logo
-                yield return new WaitForSeconds(2.0f);
-                if (cancelRequested) goto cleanup;
-                cutscontrol.Texture = null;
-                yield return new WaitForSeconds(0.5f);
-                if (cancelRequested) goto cleanup;
+                if (_RES != GAME_UWDEMO)
+                {
+                    cutscontrol.Texture = null;
+                    yield return new WaitForSeconds(0.5f);
+                    if (cancelRequested) goto cleanup;
+                    cutscontrol.Texture = uimanager.bitmaps.LoadImageAt(6); // Blue sky logo
+                    yield return new WaitForSeconds(2.0f);
+                    if (cancelRequested) goto cleanup;
+                    cutscontrol.Texture = null;
+                    yield return new WaitForSeconds(0.5f);
+                    if (cancelRequested) goto cleanup;
+                }
             }
             palInterpActive = false;
 
@@ -1001,20 +1004,20 @@ namespace Underworld
                 if (commands[0].functionNo == 8)
                 {
                     if (commands[0].functionParams[0] == 996)
+                    {
+                        if (_RES == GAME_UW2)
                         {
-                            if (_RES == GAME_UW2)
-                            {
-                                Debug.Print("opening random guardian background.");
-                                //when file no is 996 then a random file is opened from index 0x1C onwards (guardian taunts.
-                                var randomfile = 0x1C + Rng.r.Next(4);
-                                firstFile = System.IO.Path.Combine(
-                                    BasePath, "CUTS", GetsCutsceneFileName(randomfile, 1));
-                            }
-                            else
-                            {
-                                Debug.Print("use of 996 open-file in uw1. fixme.");
-                            }
+                            Debug.Print("opening random guardian background.");
+                            //when file no is 996 then a random file is opened from index 0x1C onwards (guardian taunts.
+                            var randomfile = 0x1C + Rng.r.Next(4);
+                            firstFile = System.IO.Path.Combine(
+                                BasePath, "CUTS", GetsCutsceneFileName(randomfile, 1));
                         }
+                        else
+                        {
+                            Debug.Print("use of 996 open-file in uw1. fixme.");
+                        }
+                    }
                 }
             }
             if (System.IO.File.Exists(firstFile))

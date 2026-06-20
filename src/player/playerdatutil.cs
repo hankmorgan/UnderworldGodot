@@ -64,15 +64,9 @@ namespace Underworld
                 var origUbound = pdat.GetUpperBound(0);
                 Array.Resize(ref pdat, InventoryPtr + 512 * 8);
                 int oIndex = 1; //starts at one since there is no object zero
-                //InventoryBuffer = new byte[512*8];
-                //LastItemIndex=0;
 
                 while (CurrentInventoryPtr < origUbound)
                 {
-                    // for (int i =0; i<8; i++)
-                    // {//Copy bytes into storage
-                    //     InventoryBuffer[i + oIndex * 8 ] = pdat[InventoryPtr + i];
-                    // }
                     //Create new objects for the object list
                     var uwobj = new uwObject
                     {

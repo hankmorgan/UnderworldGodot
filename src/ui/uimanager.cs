@@ -105,7 +105,10 @@ namespace Underworld
 		public void InitUI()
 		{
 			InitArt();
-			InitMainMenu();
+			if (UWClass._RES != UWClass.GAME_UWDEMO)
+			{
+				InitMainMenu();	
+			}			
 			InitFlasks();
 			InitCoversation();
 			InitPanels();
@@ -132,8 +135,8 @@ namespace Underworld
 			EnableDisable(placeholderuw1, false);
 			EnableDisable(placeholderuw2, false);
 
-			EnableDisable(uw1UI, UWClass._RES == UWClass.GAME_UW1);
-			EnableDisable(uw2UI, UWClass._RES != UWClass.GAME_UW1);  
+			EnableDisable(uw1UI, UWClass._RES != UWClass.GAME_UW2);
+			EnableDisable(uw2UI, UWClass._RES == UWClass.GAME_UW2);  
 			EnableDisable(PanelMainMenu,true);          
 		}
 		

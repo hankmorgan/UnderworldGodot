@@ -128,8 +128,9 @@ namespace Underworld
                         uwviewport.Position = new Vector2(62f, 62f);
                         uwsubviewport.Size = new Vector2I(840, 512);
                     }
-                    break;
+                    break;                
                 default:
+                    
                     mainwindowUW1.Texture = bitmaps.LoadImageAt(BytLoader.MAIN_BYT, true);
                     if (!Fullscreen)
                     {

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using Godot;
 
 namespace Underworld;
@@ -92,6 +93,7 @@ public partial class LaunchMenu : Control {
 				GameFilesSelector.CurrentDir = PathUW1.Text;
 				GameFilesSelector.Filters = [
 					"uw.exe;Stygian Abyss",
+					"uwdemo.exe;Demo"
 				];
 				break;
 			case UWClass.GAME_UW2:
@@ -127,7 +129,7 @@ public partial class LaunchMenu : Control {
 		switch (UWClass._RES)
 		{
 			case UWClass.GAME_UWDEMO:
-			case UWClass.GAME_UW1:
+			case UWClass.GAME_UW1:	
 				PathUW1.Text = selectedDir;
 				_uwSettings.pathuw1 = selectedDir;
 				_uwSettings.Save();
@@ -170,8 +172,17 @@ public partial class LaunchMenu : Control {
 		{
 			case UWClass.GAME_UWDEMO:
 			case UWClass.GAME_UW1:
-				UWClass.BasePath = _uwSettings.pathuw1;
-				_uwSettings.gametoload = "UW1";
+				if (File.Exists(System.IO.Path.Combine(_uwSettings.pathuw1,"UWDEMO.EXE")))
+				{
+					Debug.Print("UWDemo has been selected.");
+					_uwSettings.gametoload = "UWDEMO";
+					UWClass._RES = UWClass.GAME_UWDEMO;
+				}
+				else
+				{
+					_uwSettings.gametoload = "UW1";					
+				}
+				UWClass.BasePath = _uwSettings.pathuw1;				
 				break;
 			case UWClass.GAME_UW2:
 				UWClass.BasePath = _uwSettings.pathuw2;

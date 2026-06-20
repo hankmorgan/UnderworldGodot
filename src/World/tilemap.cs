@@ -324,7 +324,7 @@ namespace Underworld
                 automap.automaps[newLevelNo] = new automap(newLevelNo);
             }
 
-            if (automapnote.automapsnotes[newLevelNo] == null)
+            if ((automapnote.automapsnotes[newLevelNo] == null) && (_RES != GAME_UWDEMO))
             {
                 automapnote.automapsnotes[newLevelNo] = new automapnote(newLevelNo);
             }

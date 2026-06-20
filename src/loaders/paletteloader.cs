@@ -34,10 +34,10 @@ namespace Underworld
         public static lightmap[] mono = null;
 
         public static int NextPaletteCycle_GAME = -1;
-        public static int NextPaletteCycle_UI  = -1;
+        public static int NextPaletteCycle_UI = -1;
 
         static PaletteLoader()
-        {            
+        {
             var path_pals = System.IO.Path.Combine(BasePath, "DATA", "PALS.DAT");
             var path_light = System.IO.Path.Combine(BasePath, "DATA", "LIGHT.DAT");
             var path_mono = System.IO.Path.Combine(BasePath, "DATA", "MONO.DAT");
@@ -94,21 +94,28 @@ namespace Underworld
 
 
                         mono = new lightmap[16];
-                        if (ReadStreamFile(path_mono, out byte[] mono_dat))
+                        if (_RES == GAME_UWDEMO)
                         {
-                            for (int palNo = 0; palNo <= mono.GetUpperBound(0); palNo++)
+                            //UW Demo does not support the mono palette. Use the light palette instead
+                            mono = light;
+                        }
+                        else
+                        {
+                            if (ReadStreamFile(path_mono, out byte[] mono_dat))
                             {
-                                mono[palNo] = new lightmap();
-                                for (int pixel = 0; pixel < 256; pixel++)
-                                { //just store the index values.
-                                    mono[palNo].red[pixel] = (byte)getAt(mono_dat, palNo * 256 + pixel + 0, 8);
-                                    mono[palNo].blue[pixel] = (byte)getAt(mono_dat, palNo * 256 + pixel + 0, 8);
-                                    mono[palNo].green[pixel] = (byte)getAt(mono_dat, palNo * 256 + pixel + 0, 8);
-                                    mono[palNo].alpha[pixel] = 255;
+                                for (int palNo = 0; palNo <= mono.GetUpperBound(0); palNo++)
+                                {
+                                    mono[palNo] = new lightmap();
+                                    for (int pixel = 0; pixel < 256; pixel++)
+                                    { //just store the index values.
+                                        mono[palNo].red[pixel] = (byte)getAt(mono_dat, palNo * 256 + pixel + 0, 8);
+                                        mono[palNo].blue[pixel] = (byte)getAt(mono_dat, palNo * 256 + pixel + 0, 8);
+                                        mono[palNo].green[pixel] = (byte)getAt(mono_dat, palNo * 256 + pixel + 0, 8);
+                                        mono[palNo].alpha[pixel] = 255;
+                                    }
                                 }
                             }
                         }
-
                     }
                     break;
             }
@@ -119,7 +126,7 @@ namespace Underworld
                 {
                     uwsettings.instance.shaderbandsize = 1;
                 }
-                if ((i==6) && (_RES!=GAME_UW2))
+                if ((i == 6) && (_RES != GAME_UW2))
                 {
                     Palettes[i].cycledGamePalette = CreateShadedPaletteCycles(Palettes[i]);
                     Palettes[i].cycledUIPalette = MainMenuPaletteCycle(Palettes[i]);//main menu flames effect                    
@@ -128,9 +135,9 @@ namespace Underworld
                 {
                     Palettes[i].cycledGamePalette = CreateShadedPaletteCycles(Palettes[i]);//init the first palette as cycled
                     Palettes[i].cycledUIPalette = CreateUnshadedPaletteCycles(Palettes[i]); //set up a simple palette cycle for fullbright ui sprites
-                }                
+                }
             }
-            uwsettings.instance.shaderbandsize = band;            
+            uwsettings.instance.shaderbandsize = band;
 
             //Init palette shader params
             RenderingServer.GlobalShaderParameterAdd(
@@ -144,7 +151,7 @@ namespace Underworld
             RenderingServer.GlobalShaderParameterAdd(
                 name: "smoothpalette",
                 type: RenderingServer.GlobalShaderParameterType.Sampler2D,
-                defaultValue: (Texture)Palettes[Palette.CurrentPalette].cycledGamePalette[Palette.ColourTone, 0, 0]);            
+                defaultValue: (Texture)Palettes[Palette.CurrentPalette].cycledGamePalette[Palette.ColourTone, 0, 0]);
         }
 
         public static int[] LoadAuxilaryPalIndices(string auxPalPath, int auxPalIndex)
@@ -245,7 +252,16 @@ namespace Underworld
                             break;
                     }
                     NewCycledPalette[0, l, c] = shade.GetFullShadingImage(pal: tmpPalette, light, l, shade.shadesdata[l].shadingbasedata);//$"light_{l}_{c}");   // tmpPalette.toImage();
-                    NewCycledPalette[1, l, c] = shade.GetFullShadingImage(pal: tmpPalette, mono, l, shade.shadesdata[l].shadingbasedata);//$"mono_{l}_{c}");
+                    if (_RES == GAME_UWDEMO)
+                    {
+                        //UWDEMO does not have a mono palette. To maintain compatability the colour palette is copied.
+                        NewCycledPalette[1, l, c] = NewCycledPalette[0, l, c];//shade.GetFullShadingImage(pal: tmpPalette, light, l, shade.shadesdata[l].shadingbasedata);//$"mono_{l}_{c}");
+                    }
+                    else
+                    {
+                        NewCycledPalette[1, l, c] = shade.GetFullShadingImage(pal: tmpPalette, mono, l, shade.shadesdata[l].shadingbasedata);//$"mono_{l}_{c}");
+                    }
+
                 }
             }
 
@@ -322,11 +338,11 @@ namespace Underworld
 
         public static void UpdatePaletteCycles()
         {
-            if (NextPaletteCycle_GAME+1 > Palettes[Palette.CurrentPalette].cycledGamePalette.GetUpperBound(2))
+            if (NextPaletteCycle_GAME + 1 > Palettes[Palette.CurrentPalette].cycledGamePalette.GetUpperBound(2))
             {
                 NextPaletteCycle_GAME = -1;
             }
-            if (NextPaletteCycle_UI+1 > Palettes[Palette.CurrentPalette].cycledUIPalette.GetUpperBound(0))
+            if (NextPaletteCycle_UI + 1 > Palettes[Palette.CurrentPalette].cycledUIPalette.GetUpperBound(0))
             {
                 NextPaletteCycle_UI = -1;
             }
@@ -341,14 +357,14 @@ namespace Underworld
 
         public static void UpdateShaderParams()
         {
-            if (NextPaletteCycle_GAME!=-1)
+            if (NextPaletteCycle_GAME != -1)
             {
                 RenderingServer.GlobalShaderParameterSet(
                     name: "smoothpalette",
                     value: (Texture)Palettes[Palette.CurrentPalette].cycledGamePalette[Palette.ColourTone, playerdat.lightlevel, NextPaletteCycle_GAME]);
             }
-            
-            if (NextPaletteCycle_UI!=-1)
+
+            if (NextPaletteCycle_UI != -1)
             {
                 RenderingServer.GlobalShaderParameterSet(
                     name: "uipalette",
@@ -359,7 +375,7 @@ namespace Underworld
         //Provides a bbcode string for the specified palette colour
         public static string ToBBCode(int palette, byte colourindex)
         {
-            var col = PaletteLoader.Palettes[palette].ColorAtIndex(colourindex,false,false);
+            var col = PaletteLoader.Palettes[palette].ColorAtIndex(colourindex, false, false);
             return $"#{col.R8.ToString("X2")}{col.G8.ToString("X2")}{col.B8.ToString("X2")}";
         }
     }//end class

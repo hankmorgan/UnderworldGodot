@@ -87,14 +87,14 @@ namespace Underworld
         public Shader textureshader;
 
         public bool UseRedChannel;
-        
 
-         public ShaderMaterial[] materials = new ShaderMaterial[10];
+
+        public ShaderMaterial[] materials = new ShaderMaterial[10];
 
 
         public ShaderMaterial GetMaterial(int textureno)
-        {            
-            if (textureshader==null)
+        {
+            if (textureshader == null)
             {
                 textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uisprite.gdshader");
             }
@@ -104,14 +104,14 @@ namespace Underworld
                 //create this material and add it to the list
                 var newmaterial = new ShaderMaterial();
                 newmaterial.Shader = textureshader;
-                newmaterial.SetShaderParameter("texture_albedo", (Texture)LoadImageAt(textureno,true));
+                newmaterial.SetShaderParameter("texture_albedo", (Texture)LoadImageAt(textureno, true));
                 newmaterial.SetShaderParameter("albedo", new Color(1, 1, 1, 1));
                 newmaterial.SetShaderParameter("uv1_scale", new Vector3(1, 1, 1));
                 newmaterial.SetShaderParameter("uv2_scale", new Vector3(1, 1, 1));
                 newmaterial.SetShaderParameter("UseAlpha", true);
                 materials[textureno] = newmaterial;
             }
-            return materials[textureno];    
+            return materials[textureno];
         }
 
 
@@ -138,6 +138,18 @@ namespace Underworld
                 default:
                     {
                         var toLoad = Path.Combine(BasePath, "DATA", FilePaths[index]);
+                        if (_RES == GAME_UWDEMO)
+                        {
+                            if (FilePaths[index] == "MAIN.BYT")
+                            {
+                                toLoad = Path.Combine(BasePath, "DATA", "DMAIN.BYT");
+                            }
+                            if (FilePaths[index] == "PRES1.BYT")
+                            {
+                                toLoad = Path.Combine(BasePath, "DATA", "PRESD.BYT");
+                            }
+                        }
+                        //var toLoad = Path.Combine(BasePath, "DATA", FilePaths[index]);
                         if (currentIndex != index)
                         {//Only load from disk if the image to bring back has changed.
                             DataLoaded = false;
@@ -145,12 +157,12 @@ namespace Underworld
                             LoadImageFile();
                         }
                         return Image(
-                            databuffer: ImageFileData, 
-                            dataOffSet: 0, 
-                            width: 320, 
-                            height: 200, 
-                            palette: PaletteLoader.Palettes[PaletteIndices[index]], 
-                            useAlphaChannel: UseAlphaChannel, 
+                            databuffer: ImageFileData,
+                            dataOffSet: 0,
+                            width: 320,
+                            height: 200,
+                            palette: PaletteLoader.Palettes[PaletteIndices[index]],
+                            useAlphaChannel: UseAlphaChannel,
                             useSingleRedChannel: UseRedChannel,
                             crop: UseCropping);
                     }
@@ -158,47 +170,47 @@ namespace Underworld
         }
 
 
-    public ImageTexture extractUW2Bitmap(string toLoad, int index, bool UseAlphaChannel)
-    {
-        long NoOfTextures;
-
-        if (!ReadStreamFile(toLoad, out byte[] textureFile))
-        { return null; }
-
-        NoOfTextures = getAt(textureFile, 0, 8);
-        int textureOffset = (int)getAt(textureFile, (index * 4) + 6, 32);
-        if (textureOffset != 0)
+        public ImageTexture extractUW2Bitmap(string toLoad, int index, bool UseAlphaChannel)
         {
-            int compressionFlag = (int)getAt(textureFile, ((index * 4) + 6) + (NoOfTextures * 4), 32);
-            int isCompressed = (compressionFlag >> 1) & 0x01;
-            if (isCompressed == 1)
+            long NoOfTextures;
+
+            if (!ReadStreamFile(toLoad, out byte[] textureFile))
+            { return null; }
+
+            NoOfTextures = getAt(textureFile, 0, 8);
+            int textureOffset = (int)getAt(textureFile, (index * 4) + 6, 32);
+            if (textureOffset != 0)
             {
-                int datalen = 0;
-                return Image(
-                    databuffer: DataLoader.unpackUW2(tmpBuffer: textureFile, address_pointer: textureOffset, datalen: ref datalen), 
-                    dataOffSet: 0, 
-                    width: 320, 
-                    height: 200, 
-                    palette: PaletteLoader.Palettes[PaletteIndicesUW2[index]], 
-                    useAlphaChannel: UseAlphaChannel, 
-                    useSingleRedChannel: UseRedChannel,
-                    crop: UseCropping);
+                int compressionFlag = (int)getAt(textureFile, ((index * 4) + 6) + (NoOfTextures * 4), 32);
+                int isCompressed = (compressionFlag >> 1) & 0x01;
+                if (isCompressed == 1)
+                {
+                    int datalen = 0;
+                    return Image(
+                        databuffer: DataLoader.unpackUW2(tmpBuffer: textureFile, address_pointer: textureOffset, datalen: ref datalen),
+                        dataOffSet: 0,
+                        width: 320,
+                        height: 200,
+                        palette: PaletteLoader.Palettes[PaletteIndicesUW2[index]],
+                        useAlphaChannel: UseAlphaChannel,
+                        useSingleRedChannel: UseRedChannel,
+                        crop: UseCropping);
+                }
+                else
+                {
+                    return Image(
+                        databuffer: textureFile,
+                        dataOffSet: textureOffset,
+                        width: 320,
+                        height: 200,
+                        palette: PaletteLoader.Palettes[PaletteIndicesUW2[index]],
+                        useAlphaChannel: UseAlphaChannel,
+                        useSingleRedChannel: UseRedChannel,
+                        crop: UseCropping);
+                }
             }
-            else
-            {
-                return Image(
-                    databuffer: textureFile, 
-                    dataOffSet: textureOffset, 
-                    width: 320, 
-                    height: 200, 
-                    palette: PaletteLoader.Palettes[PaletteIndicesUW2[index]], 
-                    useAlphaChannel: UseAlphaChannel, 
-                    useSingleRedChannel: UseRedChannel,
-                    crop: UseCropping);
-            }
+            return null;
         }
-        return null;
-    }
 
 
     } //end class

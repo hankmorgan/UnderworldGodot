@@ -131,7 +131,14 @@ namespace Underworld
             var toDraw = weaponframes[CurrentWeaponAnim, CurrentWeaponFrame];
             if (toDraw != -1)
             {
-                WeaponAnim.Texture = grWeapon.LoadImageAt(toDraw);
+                if (UWClass._RES!= UWClass.GAME_UWDEMO)
+                {
+                    WeaponAnim.Texture = grWeapon.LoadImageAt(toDraw);    
+                }
+                else
+                {
+                    //weapon anims are currently not loaded in uwdemo
+                }                
             }
         }
 
