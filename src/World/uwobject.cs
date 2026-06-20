@@ -1664,7 +1664,7 @@ namespace Underworld
                 else
                 {
                     //mobile
-                    StopMobileObject(obj); 
+                    StopMobileObject(obj);
                 }
             }
 
@@ -1691,17 +1691,17 @@ namespace Underworld
                         if (var9 != 0)
                         {
                             cl_newattitude = (short)(obj.npc_attitude + var9);
-                            if (cl_newattitude< 0)
+                            if (cl_newattitude < 0)
                             {
                                 cl_newattitude = 0;
                             }
-                            if (cl_newattitude >3)
+                            if (cl_newattitude > 3)
                             {
                                 cl_newattitude = 3;
                             }
                             if (cl_newattitude != obj.npc_attitude)
                             {
-                                Debug.Print($"Setting attitude of {obj.a_name} to {cl_newattitude}");                                
+                                Debug.Print($"Setting attitude of {obj.a_name} to {cl_newattitude}");
                             }
                             obj.npc_attitude = cl_newattitude;
                         }
@@ -1733,12 +1733,12 @@ namespace Underworld
             var tile = UWTileMap.current_tilemap.Tiles[obj.tileX, obj.tileY];
 
             var result = ObjectRemover.RemoveObject_experimental(
-                objectlist: UWTileMap.current_tilemap.LevelObjects, 
+                objectlist: UWTileMap.current_tilemap.LevelObjects,
                 buffer: UWTileMap.current_tilemap.lev_ark_block.Data,
-                ListHeadPTR: (int)(tile.Ptr + 2), 
-                objToRemove: obj, 
+                ListHeadPTR: (int)(tile.Ptr + 2),
+                objToRemove: obj,
                 ForceCull: false);
-                
+
             if (result != null)
             {
                 //when unable to delete. try hitting the floor.
@@ -1748,17 +1748,61 @@ namespace Underworld
                     //unlink from tile and add to the tile. 
                     if (tile.tileType != UWTileMap.TILE_OPEN)
                     {
-                        Debug.Print("StopMobileObject. Need to adjust for floor height. Not moving object due to risk it may be lost underneath tile."); 
-                    }   
+                        Debug.Print("StopMobileObject. Need to adjust for floor height. Not moving object due to risk it may be lost underneath tile.");
+                    }
                     else
-                    {                                           
-                        obj.zpos = (short)(tile.floorHeight<<3); //this needs to account for slopes.
+                    {
+                        obj.zpos = (short)(tile.floorHeight << 3); //this needs to account for slopes.
                         objectInstance.Reposition(obj);
-                    }                
+                    }
 
                 }
             }
             return true;
+        }
+
+        /// <summary>
+        /// Clears heading bit 2 on all objects.
+        /// </summary>
+        public static void ResetAllObjectIdentification()
+        {
+            for (int x = 0; x <= 63; x++)
+            {
+                for (int y = 0; y <= 63; y++)
+                {
+                    var tile = UWTileMap.current_tilemap.Tiles[x,y];
+                    if (tile.indexObjectList !=0)
+                    {
+                        CallBacks.RunCodeOnObjectsInChain(
+                            methodToCall: ResetIdentification, 
+                            obj: UWTileMap.current_tilemap.LevelObjects[tile.indexObjectList], 
+                            objList: UWTileMap.current_tilemap.LevelObjects);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Updates object identification on objects after leveling up the lore skill
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static bool ResetIdentification(uwObject obj)
+        {
+            if (obj.IsStatic)
+            {
+                if (obj.majorclass != 5)
+                {
+                    if (obj.majorclass != 6)
+                    {
+                        if (commonObjDat.rendertype(obj.item_id) !=2)
+                        {
+                            obj.heading = (short)(obj.heading & 0x3);
+                        }
+                    }                
+                }
+            }
+            return false;
         }
 
 
