@@ -287,9 +287,9 @@ public partial class main : Node3D
 	static void GameObjectLoop(byte ClockIncrement, byte AnimationFrameDelta, bool EasyMove)
 	{
 		//playerdat.play_hp = playerdat.max_hp;
-		motion.CameraBobZAdjust_dseg_67d6_33CE = 0;
+		playerdat.CameraBobZAdjust_dseg_67d6_33CE = 0;
 		motion.RelatedToClockIncrement_67d6_742 += ClockIncrement;
-		motion.CameraIsBobbing_dseg_67d6_33c6 = false;
+		playerdat.CameraIsBobbing_dseg_67d6_33c6 = false;
 
 		if (
 			(motion.MotionInputPressed != 0)
@@ -498,25 +498,25 @@ public partial class main : Node3D
 		if (Input.IsKeyPressed(Key.Key1))
 		{
 			//lookdown
-			if (motion.PlayerCameraPitch_dseg_67d6_33D6 >= -4096)
+			if (playerdat.PlayerCameraPitch_dseg_67d6_33D6 >= -4096)
 			{
-				motion.PlayerCameraPitch_dseg_67d6_33D6 = (short)Math.Max(-4096, motion.PlayerCameraPitch_dseg_67d6_33D6 - 0x400);
-				//Debug.Print($"{motion.PlayerCameraPitch_dseg_67d6_33D6}");
+				playerdat.PlayerCameraPitch_dseg_67d6_33D6 = (short)Math.Max(-4096, playerdat.PlayerCameraPitch_dseg_67d6_33D6 - 0x400);
+				//Debug.Print($"{playerdat.PlayerCameraPitch_dseg_67d6_33D6}");
 			}
 		}
 		else if (Input.IsKeyPressed(Key.Key3))
 		{
 			//lookup
-			if (motion.PlayerCameraPitch_dseg_67d6_33D6 <= 4096)
+			if (playerdat.PlayerCameraPitch_dseg_67d6_33D6 <= 4096)
 			{
-				motion.PlayerCameraPitch_dseg_67d6_33D6 = (short)Math.Min(4096, motion.PlayerCameraPitch_dseg_67d6_33D6 + 0x400);
-				//Debug.Print($"{motion.PlayerCameraPitch_dseg_67d6_33D6}");
+				playerdat.PlayerCameraPitch_dseg_67d6_33D6 = (short)Math.Min(4096, playerdat.PlayerCameraPitch_dseg_67d6_33D6 + 0x400);
+				//Debug.Print($"{playerdat.PlayerCameraPitch_dseg_67d6_33D6}");
 			}
 		}
 		else if (Input.IsKeyPressed(Key.Key2))
 		{
-			motion.PlayerCameraPitch_dseg_67d6_33D6 = 0;
-			//Debug.Print($"{motion.PlayerCameraPitch_dseg_67d6_33D6}");
+			playerdat.PlayerCameraPitch_dseg_67d6_33D6 = 0;
+			//Debug.Print($"{playerdat.PlayerCameraPitch_dseg_67d6_33D6}");
 		}
 	}
 

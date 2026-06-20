@@ -37,7 +37,7 @@ namespace Underworld
         public static int NextPaletteCycle_UI  = -1;
 
         static PaletteLoader()
-        {
+        {            
             var path_pals = System.IO.Path.Combine(BasePath, "DATA", "PALS.DAT");
             var path_light = System.IO.Path.Combine(BasePath, "DATA", "LIGHT.DAT");
             var path_mono = System.IO.Path.Combine(BasePath, "DATA", "MONO.DAT");
@@ -189,26 +189,26 @@ namespace Underworld
         /// </summary>
         /// <param name="maps"></param>
         /// <returns></returns>
-        public static ImageTexture AllLightMaps(lightmap[] maps)
-        {
-            byte[] imgdata = new byte[maps.GetUpperBound(0) * 256];
-            for (int l = 0; l < maps.GetUpperBound(0); l++)
-            {
-                for (int b = 0; b < 256; b++)
-                {
-                    imgdata[(l * 256) + b] = maps[l].red[b];
-                }
-            }
-            var output = Image(
-                databuffer: imgdata,
-                dataOffSet: 0,
-                width: 256, height: maps.GetUpperBound(0),
-                palette: GreyScaleIndexPalette,
-                useAlphaChannel: true,
-                useSingleRedChannel: true,
-                crop: false);
-            return output;
-        }
+        // public static ImageTexture AllLightMaps(lightmap[] maps)
+        // {
+        //     byte[] imgdata = new byte[maps.GetUpperBound(0) * 256];
+        //     for (int l = 0; l < maps.GetUpperBound(0); l++)
+        //     {
+        //         for (int b = 0; b < 256; b++)
+        //         {
+        //             imgdata[(l * 256) + b] = maps[l].red[b];
+        //         }
+        //     }
+        //     var output = Image(
+        //         databuffer: imgdata,
+        //         dataOffSet: 0,
+        //         width: 256, height: maps.GetUpperBound(0),
+        //         palette: GreyScaleIndexPalette,
+        //         useAlphaChannel: true,
+        //         useSingleRedChannel: true,
+        //         crop: false);
+        //     return output;
+        // }
 
 
         /// <summary>
@@ -244,8 +244,8 @@ namespace Underworld
                             Palette.cyclePaletteReverse(tmpPalette, 16, 7);//Reverse direction.
                             break;
                     }
-                    NewCycledPalette[0, l, c] = shade.GetFullShadingImage(pal: tmpPalette, light, l, $"light_{l}_{c}");   // tmpPalette.toImage();
-                    NewCycledPalette[1, l, c] = shade.GetFullShadingImage(pal: tmpPalette, mono, l, $"mono_{l}_{c}");
+                    NewCycledPalette[0, l, c] = shade.GetFullShadingImage(pal: tmpPalette, light, l, shade.shadesdata[l].shadingbasedata);//$"light_{l}_{c}");   // tmpPalette.toImage();
+                    NewCycledPalette[1, l, c] = shade.GetFullShadingImage(pal: tmpPalette, mono, l, shade.shadesdata[l].shadingbasedata);//$"mono_{l}_{c}");
                 }
             }
 
