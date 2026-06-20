@@ -103,7 +103,7 @@ namespace Underworld
                         {
                             HeadingHeightTeleportFlag &= 0xFFDC;
                             playerdat.playerObject.heading = (short)((HeadingHeightTeleportFlag >> 2) & 0x7);
-                            motion.PlayerCameraYaw_dseg_8294 = (short)(HeadingHeightTeleportFlag << 0xB);
+                            playerdat.PlayerCameraYaw_dseg_8294 = (short)(HeadingHeightTeleportFlag << 0xB);
                             motion.PlayerMotionYaw_dseg_67d6_8296 = (short)(HeadingHeightTeleportFlag << 0xB);
                         }
                     }
@@ -136,7 +136,7 @@ namespace Underworld
                         {
                             HeadingHeightTeleportFlag &= 0xFFDC;
                             playerdat.playerObject.heading = (short)((HeadingHeightTeleportFlag >> 2) & 0x7);
-                            motion.PlayerCameraYaw_dseg_8294 = (short)(HeadingHeightTeleportFlag << 0xB);
+                            playerdat.PlayerCameraYaw_dseg_8294 = (short)(HeadingHeightTeleportFlag << 0xB);
                             motion.PlayerMotionYaw_dseg_67d6_8296 = (short)(HeadingHeightTeleportFlag << 0xB);
                         }
                     }

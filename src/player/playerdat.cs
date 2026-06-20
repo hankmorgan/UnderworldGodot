@@ -620,7 +620,8 @@ namespace Underworld
 
 
         /// <summary>
-        /// Changes the player EXP using the vanilla logic for EXP gains
+        /// Changes the player EXP using the vanilla logic for EXP gains. 
+        /// Note there is a likely bug with the extraction of the correct exp value which is currently leading to extra exp being gained.
         /// </summary>
         /// <param name="newEXP"></param>
         public static void ChangeExperience(int newEXP)
@@ -636,7 +637,7 @@ namespace Underworld
             {
                 if (_RES == GAME_UW2)
                 {
-                    var world = worlds.GetWorldNo(dungeon_level);
+                    var world = (dungeon_level - 1) / 8;
                     world = world << 1;
                     world += 2;
                     if (world < play_level)

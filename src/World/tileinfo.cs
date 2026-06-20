@@ -13,11 +13,22 @@ namespace Underworld
         /// <summary>
         /// PTR to the file data in the UW Block for this tile.
         /// </summary>
-        public long Ptr
+        public long Ptr//this does not need to be a longint.
         {
             get
             {
                 return tileX * 4 + tileY * 256;
+            }
+        }
+
+        /// <summary>
+        /// what location in UW2 dos memory does this tile reside at.
+        /// </summary>
+        public uint dosptr
+        {
+            get
+            {
+                return (uint)(0x4 + Ptr);
             }
         }
 

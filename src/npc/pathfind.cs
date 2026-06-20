@@ -15,7 +15,7 @@ namespace Underworld
         static bool TraverseRelated_dseg_67d6_224B;
 
 
-        static int[] tilewallflags = new int[] { 30, 0, 19, 21, 11, 13, 32, 32, 32, 32 };
+        public static int[] tilewallflags = new int[] { 30, 0, 19, 21, 11, 13, 32, 32, 32, 32 };
 
         static int[] TilePathingFlags = new int[] { 0xFF, 3, 0xFF, 2, 0xFF, 0, 0xFF, 1, 0xFF };
 

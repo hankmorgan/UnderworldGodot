@@ -209,7 +209,7 @@ namespace Underworld
             playerdat.XCoordinate = motion.playerMotionParams.x_0;
             playerdat.YCoordinate = motion.playerMotionParams.y_2;
             playerdat.Z = motion.playerMotionParams.z_4;
-            playerdat.SetAt16(0x5B, motion.PlayerCameraYaw_dseg_8294);
+            playerdat.SetAt16(0x5B, playerdat.PlayerCameraYaw_dseg_8294);
 
             // RelatedToMotionState: high 5 bits = tilestate25, low 3 bits = swim state.
             // Swim state is already written to pdat by motion updates; refresh tilestate only.

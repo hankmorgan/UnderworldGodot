@@ -29,6 +29,8 @@ namespace Underworld
         public const int TILE_SLOPE_E = 8;
         public const int TILE_SLOPE_W = 9;
 
+        public static byte[] UndiscoveredTiles = new byte[] { 0xA, 0xB, 0xC, 0xD, 0xE, 0xF, 0xB, 0xB, 0xB, 0xB, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF };
+
         /// <summary>
         /// Location of data in the buffer
         /// </summary>
@@ -104,6 +106,20 @@ namespace Underworld
             }
         }
 
+        public static byte bridgedisplaytype
+        {
+            get
+            {
+                switch (_RES)
+                {
+                    case GAME_UW2:
+                        return DisplayTypeBridgeUW2;
+                    default:
+                        return DisplayTypeBridge1UW1;
+                }
+            }
+        }
+
         public bool IsWater
         {
             get
@@ -136,6 +152,20 @@ namespace Underworld
                         return DisplayType == DisplayTypeStairUW2;
                     default:
                         return DisplayType == DisplayTypeStairUW1;
+                }
+            }
+        }
+
+        public static byte stairdisplaytype
+        {
+            get
+            {
+                switch (_RES)
+                {
+                    case GAME_UW2:
+                        return DisplayTypeStairUW2;
+                    default:
+                        return DisplayTypeStairUW1;
                 }
             }
         }
@@ -180,6 +210,20 @@ namespace Underworld
                         return DisplayType == DisplayTypeDoorUW2;
                     default:
                         return DisplayType == DisplayTypeDoorUW1;
+                }
+            }
+        }
+
+        public static byte doordisplaytype
+        {
+            get
+            {
+                switch (_RES)
+                {
+                    case GAME_UW2:
+                        return DisplayTypeDoorUW2;
+                    default:
+                        return DisplayTypeDoorUW1;
                 }
             }
         }

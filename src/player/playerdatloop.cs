@@ -800,6 +800,7 @@ namespace Underworld
         /// </summary>
         public static void UpdateAutomap()
         {
+            return;
             //depending on light level. need to confirm if below math is okay
             NoOfTilesDiscovered = 0;
             var range = 1 + (lightlevel / 2);
