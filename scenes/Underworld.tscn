@@ -987,9 +987,9 @@ offset_bottom = 608.0
 [node name="CompassClickArea" type="TextureRect" parent="UI/UW2/CompassUW2"]
 layout_mode = 0
 offset_left = 380.0
-offset_top = 599.0
+offset_top = 588.0
 offset_right = 580.0
-offset_bottom = 639.0
+offset_bottom = 648.0
 
 [node name="CutsceneSmallUW2" type="TextureRect" parent="UI/UW2"]
 offset_left = -384.0
