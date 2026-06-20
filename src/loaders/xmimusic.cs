@@ -8,7 +8,7 @@ namespace Underworld
     /// </summary>
     public class XMIMusic : UWClass
     {
-        public static bool DEBUG_MUSIC_HASSTOPPED = false;//for simulating stopping of music themes, until a reliable way of detecting that the music player is not playing music is set up to toggle value click on the compass ui.
+        //public static bool DEBUG_MUSIC_HASSTOPPED = false;//for simulating stopping of music themes, until a reliable way of detecting that the music player is not playing music is set up to toggle value click on the compass ui.
         public static byte CurrentlyPlayingThemeNo;
         public static byte NewThemeToPlay;
         static readonly byte[] UW2WorldThemes = [0xA, 0xC, 0xE, 0x9, 0xA, 0xF, 0xB, 0xD, 0xA, 0xC, 0xD, 0x9, 0x8, 0xB, 0xE, 0xD, 0x8, 0xF, 0xE, 0x9, 0x8, 0xF, 0xB, 0xA, 0x8, 0xC, 0x9];
@@ -36,9 +36,8 @@ namespace Underworld
             {
                 if (CurrentlyPlayingThemeNo == Fanfare)//fanfare
                 {
-                    if (MusicStreamPlayer.Instance.IsPlaying && !DEBUG_MUSIC_HASSTOPPED)//this is a guess.
+                    if (MusicStreamPlayer.Instance.IsPlaying)//this is a guess.
                     {
-                        DEBUG_MUSIC_HASSTOPPED = false;
                         return; //Do not interupt the fanfare until finished.
                     }
                 }
@@ -72,11 +71,23 @@ namespace Underworld
                     // /there is ambiguity as to what the call to SEG16_2DB8 is doing.  
                     // current assumption based on usage above with fanfare is it is a test to see if a track is playing
                     // if that case the usage here must be a check to see if the music is not playing. 
-                    if (!MusicStreamPlayer.Instance.IsPlaying | DEBUG_MUSIC_HASSTOPPED)
+                    if (!MusicStreamPlayer.Instance.IsPlaying)
                     {
                         //DEBUG_MUSIC_HASSTOPPED = false;
                         switch (CurrentlyPlayingThemeNo)
                         {
+                            case 1: //intro theme.
+                                {
+                                    if (uimanager.InGame)
+                                    {
+                                        PickLevelThemeMusic(-1);
+                                    }
+                                    else
+                                    {
+                                        NewThemeToPlay = 1; //repeat them at menu?
+                                    }
+                                    break;
+                                }
                             case >= 8 and <= 0xF://map themes.
                                 {
                                     if (uimanager.InGame)
@@ -171,9 +182,8 @@ namespace Underworld
                 if (CurrentlyPlayingThemeNo == Fanfare || CurrentlyPlayingThemeNo == 0xB)
                 {
                     //fanfare or death theme
-                    if (MusicStreamPlayer.Instance.IsPlaying && !DEBUG_MUSIC_HASSTOPPED)//this is a guess.
+                    if (MusicStreamPlayer.Instance.IsPlaying)//this is a guess.
                     {
-                        DEBUG_MUSIC_HASSTOPPED = false;
                         return; //Do not interupt the fanfare until finished.
                     }
                 }
@@ -201,11 +211,11 @@ namespace Underworld
                     ((NewThemeToPlay != 0) && (NewThemeToPlay == CurrentlyPlayingThemeNo))
                     )
                 {
-                    if (!MusicStreamPlayer.Instance.IsPlaying | DEBUG_MUSIC_HASSTOPPED)
+                    if (!MusicStreamPlayer.Instance.IsPlaying)
                     {
-                        DEBUG_MUSIC_HASSTOPPED = false;
                         switch (CurrentlyPlayingThemeNo)
                         {
+                            case 1: // intro theme
                             case >= 2 and <= 4://map themes.
                                 {
                                     if (uimanager.InGame)
