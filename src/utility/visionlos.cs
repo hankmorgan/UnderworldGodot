@@ -422,7 +422,15 @@ namespace Underworld
                 else
                 {
                     //Seg019_DA7
-                    var19AutoMapValueToSet = (byte)(RenderingTile_2F7C.tileType | TerrainDatLoader.GetTerrainDataBit67_unshifted(RenderingTile_2F7C));
+                    if  (_RES == GAME_UW2)
+                    {
+                        var19AutoMapValueToSet = (byte)(RenderingTile_2F7C.tileType | TerrainDatLoader.GetTerrainDataBit67_unshifted(RenderingTile_2F7C));    
+                    }
+                    else
+                    {
+                        var19AutoMapValueToSet = (byte)(RenderingTile_2F7C.tileType | (short)TerrainDatLoader.getTerrain(RenderingTile_2F7C.terrain));// GetTerrainDataBit67_unshifted(RenderingTile_2F7C));
+                    }
+                    
                 }
 
                 //from here on there is a lot of code relating to rendering. 
