@@ -41,6 +41,7 @@ namespace Underworld
 		};
 
         [ExportGroup("Dragons")]
+        [Export] public Panel DragonPanel;
         [Export] public TextureRect[] DragonHeads = new TextureRect[2];
         [Export] public TextureRect[] DragonTails = new TextureRect[2];
         [Export] public TextureRect[] DragonTorsos = new TextureRect[2];
@@ -166,7 +167,8 @@ namespace Underworld
         }
 
         private void InitDragons()
-        {
+        {      
+            EnableDisable(instance.DragonPanel,false);                  
             if (UWClass._RES != UWClass.GAME_UW2)
             {
                 //prepare the images by taking the images from dragons.gr and inserting them into a set of blank frames.
@@ -245,7 +247,5 @@ namespace Underworld
                 instance.DragonTails[1].Texture = dragonsGr.LoadImageAt(32);
             }
         }
-
-
     }//end class
 }//end namespace

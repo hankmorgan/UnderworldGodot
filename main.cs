@@ -128,42 +128,42 @@ public partial class main : Node3D
 			uimanager.AddToMessageScroll(GameStrings.GetString(1, 13));//welcome message
 		}
 		else
-        {
+		{
 			cutsplayer.PlayCutscene(9, LaunchUWDemo);
-        }
-    }
+		}
+	}
 
-    private static void LaunchUWDemo()
-    {
-        playerdat.InitEmptyPlayer();
-        //get demo player files
-        var filelist = Directory.GetFiles(Path.Combine(UWClass.BasePath, "DATA"), "DPLAYER.*");
-        if (filelist.Length > 0)
-        {
-            var demopdat = filelist[Rng.r.Next(filelist.Length)];
-            var pdata = File.ReadAllBytes(demopdat);
-            playerdat.pdat = playerdat.EncryptDecryptUW1(pdata, pdata[0]);
-            Array.Resize(ref playerdat.pdat, playerdat.InventoryPtr + 512 * 8);
-        }
-        else
-        {
-            playerdat.CharName = "DEMO";
-            playerdat.max_hp = 30;
-            playerdat.play_hp = 30;
-            playerdat.STR = 20;
-            playerdat.INT = 20;
-            playerdat.DEX = 20;
-        }
+	private static void LaunchUWDemo()
+	{
+		playerdat.InitEmptyPlayer();
+		//get demo player files
+		var filelist = Directory.GetFiles(Path.Combine(UWClass.BasePath, "DATA"), "DPLAYER.*");
+		if (filelist.Length > 0)
+		{
+			var demopdat = filelist[Rng.r.Next(filelist.Length)];
+			var pdata = File.ReadAllBytes(demopdat);
+			playerdat.pdat = playerdat.EncryptDecryptUW1(pdata, pdata[0]);
+			Array.Resize(ref playerdat.pdat, playerdat.InventoryPtr + 512 * 8);
+		}
+		else
+		{
+			playerdat.CharName = "DEMO";
+			playerdat.max_hp = 30;
+			playerdat.play_hp = 30;
+			playerdat.STR = 20;
+			playerdat.INT = 20;
+			playerdat.DEX = 20;
+		}
 
-        uimanager.instance.JourneyOnwards("DATA");
-        uimanager.AddToMessageScroll(GameStrings.GetString(1, 13));//welcome message
-    }
+		uimanager.instance.JourneyOnwards("DATA");
+		uimanager.AddToMessageScroll(GameStrings.GetString(1, 13));//welcome message
+	}
 
-    /// <summary>
-    /// Draws a debug marker sprite on game load to show where the character is positioned
-    /// </summary>
-    /// <param name="gr"></param>
-    public static void DrawPlayerPositionSprite(GRLoader gr)
+	/// <summary>
+	/// Draws a debug marker sprite on game load to show where the character is positioned
+	/// </summary>
+	/// <param name="gr"></param>
+	public static void DrawPlayerPositionSprite(GRLoader gr)
 	{
 		int spriteNo = 127;
 		var a_sprite = new MeshInstance3D(); //new Sprite3D();

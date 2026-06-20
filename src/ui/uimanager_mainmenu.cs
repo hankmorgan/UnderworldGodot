@@ -327,6 +327,7 @@ namespace Underworld
             uimanager.BackPackStart = 0;
             uimanager.EnableDisable(uimanager.instance.ArrowUp, false);
             uimanager.EnableDisable(uimanager.instance.ArrowDown, false);
+            EnableDisable(DragonPanel,UWClass._RES != UWClass.GAME_UW2);
 
             if (!playerdat.MusicEnabled)
             {
@@ -538,7 +539,8 @@ namespace Underworld
             }
             EnableDisable(instance.PanelMainMenu, true);
             instance.ToggleMainMenuButtons(true);
-            instance.ToggleSaves(false);            
+            instance.ToggleSaves(false); 
+            EnableDisable(instance.DragonPanel,false);           
             //InGame = false;
             Node3D the_tiles = main.instance.GetNode<Node3D>("/root/Underworld/tilemap");
             if (the_tiles != null)
