@@ -22,7 +22,6 @@ namespace Underworld
                     EnableDisable(instance.ActiveSpellIcons[i], false);
                 }
             }
-
         }
 
 

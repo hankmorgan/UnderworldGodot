@@ -664,6 +664,8 @@ namespace Underworld
 				}
 			}
 			currentTalker = null;
+			//do a status update 
+			playerdat.PlayerStatusUpdate();
 		}
 
 		private static void InitialiseConversationMemory()

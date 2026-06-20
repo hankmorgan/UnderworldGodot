@@ -90,6 +90,10 @@ namespace Underworld
                 {//disable interaction buttons
                     uimanager.EnableDisable(uimanager.instance.InteractionButtonsUW2[i],false);
                 }
+                for (int i = 0; i<3; i++)
+                {//hide active spells
+                    uimanager.EnableDisable(uimanager.instance.ActiveSpellIcons[i], false);
+                }
 
                 uimanager.instance.scroll.Columns = 100;
                 uimanager.instance.messageScrollUW2.SetSize(new Godot.Vector2(1160,140));
