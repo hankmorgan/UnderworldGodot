@@ -651,7 +651,7 @@ namespace Underworld
                     SkillPoints = SkillPoints + (newTotalSkillPoints - SkillPointsTotal);// calculate new level of skill points available to spend.
                     SkillPointsTotal = newTotalSkillPoints; //store total earned.
                 }
-                Exp = Math.Min(Exp + newEXP, 0x17700);//96000 (exp points are in units of 0.1)
+                Exp = Exp + newEXP;
 
                 //Check if player can level up
                 if (play_level < 0x10)
