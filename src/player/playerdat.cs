@@ -645,22 +645,25 @@ namespace Underworld
                         newEXP = 1 + (newEXP / 2);
                     }
                 }
-                var newTotalSkillPoints = (Exp + newEXP) / 1500; //how many skill points the player will have gained at their total exp level
+                var newTotalSkillPoints = (Exp + newEXP) / 1500; //how many skill points the player will have gained at their new exp level
                 if (SkillPointsTotal < newTotalSkillPoints)
                 {
                     SkillPoints = SkillPoints + (newTotalSkillPoints - SkillPointsTotal);// calculate new level of skill points available to spend.
                     SkillPointsTotal = newTotalSkillPoints; //store total earned.
                 }
-                Exp = Exp + newEXP;
-
-                //Check if player can level up
-                if (play_level < 0x10)
+                //there is possibly a cap of 524272 
+                Exp = Math.Min(Exp + newEXP, 0x7FFF0);//experience cap
+                if (Exp <= 0x17700) //level up cap
                 {
-                    var PointsToCheck = Exp / 500;
-                    var pointsNeeded = LevelUpAt[play_level];
-                    if (pointsNeeded <= PointsToCheck)
-                    {//player can level up
-                        LevelUp(play_level + 1);
+                    //Check if player can level up
+                    if (play_level < 0x10)
+                    {
+                        var PointsToCheck = Exp / 500;
+                        var pointsNeeded = LevelUpAt[play_level];
+                        if (pointsNeeded <= PointsToCheck)
+                        {//player can level up
+                            LevelUp(play_level + 1);
+                        }
                     }
                 }
 
