@@ -782,6 +782,16 @@ namespace Underworld
         public static bool ValidObjectForSlot(int slot, uwObject obj)
         {//TODO: this should respect objects.dat settings
             //test game specific special objects
+            //Ensure that "storage" slots are always valud
+            switch (slot)
+            {                
+                case 5: //shoulders and hands
+                case 6:
+                case 7:
+                case 8:
+                case >=11: //backpacks
+                    return true;
+            }
             switch (UWClass._RES)
             {
                 case UWClass.GAME_UW2:
