@@ -8,6 +8,52 @@ namespace Underworld
     /// </summary>
     public class tracking : UWClass
     {
+        //String offsets
+        static int DirectionOffset
+        {
+            get
+            {
+                if (_RES == GAME_UW2)
+                {
+                    return 0x28;
+                }
+                else
+                {
+                    return 0x24;
+                }
+            }
+        }
+
+        static int Heightoffset
+        {
+            get
+            {
+                if (_RES == GAME_UW2)
+                {
+                    return 0x37;
+                }
+                else
+                {
+                    return 0x33;
+                }
+            }
+        }
+
+        static int DetectionsOffset
+        {
+            get
+            {
+                if (_RES == GAME_UW2)
+                {
+                    return 0x3F;
+                }
+                else
+                {
+                    return 0x3B;
+                }
+            }
+        }
+
         /// <summary>
         /// Detects monsters within a range.
         /// </summary>
@@ -42,7 +88,7 @@ namespace Underworld
                                 }
                                 if (skillcheckresult == playerdat.SkillCheckResult.CritSucess)
                                 {
-                                    Candidates[headingindex] = critter.classindex;
+                                    Candidates[headingindex] = critter.item_id & 0x3F;
                                 }
                             }
                         }
@@ -76,10 +122,12 @@ namespace Underworld
                     {
                         //Detect creature string
                         DetectCreatureString(index_var15, detectioncounter[index_var15]);
-                        if (Candidates[index_var15] != 0)
+                        if ((Candidates[index_var15] != 0) && (_RES == GAME_UW2))
                         {
-                            //Do some more strings incl directions
-                            Debug.Print("TODO OVR157_13D6");
+                            //Print a specific creature detection. [UW2 only mechanic] 
+                            //EG you detect a {creature class name} to the {direction}
+                            var toPrint = $"{GameStrings.GetString(1, 0x145)}a {GameStrings.GetObjectNounUW(0x40 + Candidates[index_var15])} {GameStrings.GetString(1, DirectionOffset + (index_var15 & 0x7))} ";
+                            uimanager.AddToMessageScroll(toPrint);
                         }
                         maxNoOfDetections_var16 = var17;
                         var17 = index_var15;
@@ -114,7 +162,7 @@ namespace Underworld
         /// <param name="noOfDetections"></param>
         public static void DetectCreatureString(int heading, int noOfDetections)
         {
-            Debug.Print($"{noOfDetections} at {heading}");
+            //Debug.Print($"{noOfDetections} at {heading}");
             //var al = -(heading + 1);
             int detections_stringNo;
             if (noOfDetections > 1)
@@ -129,18 +177,14 @@ namespace Underworld
             {
                 detections_stringNo++;
             }
-            if (_RES == GAME_UW2)
-            {
-                detections_stringNo += 0x3F;
-            }
-            else
-            {
-                detections_stringNo += 0x3B;
-            }
+            detections_stringNo += DetectionsOffset;
+
 
             var detections = GameStrings.GetString(1, detections_stringNo);//you detect a/few/many
             PrintDetectCreatureDirections(detections, 0, 0, 0, 0, 0, 0, -(heading + 1));
         }
+
+
 
         /// <summary>
         /// Prints the string that tells you where critters are in relation to your position.;
@@ -156,18 +200,9 @@ namespace Underworld
         static void PrintDetectCreatureDirections(string detectionsprefix, int playerXHome, int playerYHome, int RelativeDistance_arg8, int ObjectX, int ObjectY, int argE, int maybe_heading_arg10)
         {
             string Output = "";
-            int DirectionOffset;
-            int Heightoffset;
-            if (_RES == GAME_UW2)
-            {
-                DirectionOffset = 0x28;
-                Heightoffset = 0x37;
-            }
-            else
-            {
-                DirectionOffset = 0x24;
-                Heightoffset = 0x33;
-            }
+            //int DirectionOffset;
+            //int Heightoffset;
+
             int var1 = 0;
             //uimanager.AddToMessageScroll(detectionsprefix);
             Output += detectionsprefix;
