@@ -43,10 +43,13 @@ namespace Underworld
             var img = Godot.Image.CreateEmpty(256, BandSize * 15, false, Godot.Image.Format.Rgba8);
             //var arr = shadesdata[index].ExtractShadeArray();
             //int y = 0;
+
             lightmap basemap = maps[0];
             lightmap nextmap = maps[1];
+
             for (int i = 0; i < shadingdata.GetUpperBound(0); i++)
             {
+                bool doLerp = shadingdata[i] != shadingdata[i + 1];//Only lerp the shader bands when the shading is different
                 for (int y = 0; y < BandSize; y++)
                 {
                     if (y % BandSize == 0)
@@ -69,21 +72,21 @@ namespace Underworld
 
                             switch (x)
                             {
-                                //Special handling for transparencies
-                                case 0xf9:
-                                case 0xf0://red
-                                case 0xf4://blue
-                                case 0xf8://green
-                                case 0xfb://used by shadow beast?
-                                case 0xfc://white
-                                case 0xfd://black???
-                                    {
-                                        colour = pal.ColorAtIndex((byte)x, true, false);
-                                        colour.A8 = 180;
-                                        var nextcolour = new Color(0, 0, 0, 0);
-                                        colour = colour.Lerp(nextcolour, (float)(shadingdata[i] / 15f));
-                                        break;
-                                    }
+                                // //Special handling for transparencies
+                                // case 0xf9:
+                                // case 0xf0://red
+                                // case 0xf4://blue
+                                // case 0xf8://green
+                                // case 0xfb://used by shadow beast?
+                                // case 0xfc://white
+                                // case 0xfd://black???
+                                //     {
+                                //         colour = pal.ColorAtIndex((byte)x, true, false);
+                                //         colour.A8 = 180;
+                                //         var nextcolour = new Color(0, 0, 0, 0);
+                                //         colour = colour.Lerp(nextcolour, (float)(shadingdata[i] / 15f));
+                                //         break;
+                                //     }
 
                                 default:
                                     colour = pal.ColorAtIndex((byte)pixel, true, false);
@@ -97,40 +100,51 @@ namespace Underworld
                     {//in betweeen lightmap bands. Lerp from the first band to this.
                         for (int x = 0; x < 256; x++)
                         { //apply a lerped colour band from the last to the next
-                            var basepixel = basemap.red[x];
-                            var nextpixel = nextmap.red[x];
-                            var basecolour = pal.ColorAtIndex((byte)basepixel, true, false);
-                            var nextcolour = pal.ColorAtIndex((byte)nextpixel, true, false);
-                            Color lerpedcolour;
+                            //var basepixel = basemap.red[x];
+                            //var nextpixel = nextmap.red[x];
+                            var basecolour = pal.ColorAtIndex((byte)basemap.red[x], true, false);
+
                             switch (x)
                             {//An attempt at simulating xfer transparencies
-                                case 0xf9:
-                                case 0xf0://red
-                                case 0xf4://blue
-                                case 0xf8://green
-                                case 0xfb://used by shadow beast?
-                                case 0xfc://white
-                                case 0xfd://black???
-                                    {
-                                        basecolour = pal.ColorAtIndex((byte)x, true, false);
-                                        basecolour.A8 = 180;
-                                        nextcolour = new Color(0, 0, 0, 0); //Should this final colour be different depending on the index?
-                                        lerpedcolour = basecolour.Lerp(nextcolour, (float)(shadingdata[i] / 15f));
-                                        break;
-                                    }
+                                // case 0xf9:
+                                // case 0xf0://red
+                                // case 0xf4://blue
+                                // case 0xf8://green
+                                // case 0xfb://used by shadow beast?
+                                // case 0xfc://white
+                                // case 0xfd://black???
+                                //     {
+                                //         basecolour = pal.ColorAtIndex((byte)x, true, false);
+                                //         basecolour.A8 = 180;
+                                //         nextcolour = new Color(0, 0, 0, 0); //Should this final colour be different depending on the index?
+                                //         lerpedcolour = basecolour.Lerp(nextcolour, (float)(shadingdata[i] / 15f));
+                                //         break;
+                                //     }
                                 default:
                                     {
-                                        lerpedcolour = basecolour.Lerp(nextcolour, (float)(y % BandSize) / (float)BandSize);
+                                        if (doLerp)
+                                        {
+                                            //Color lerpedcolour;
+                                            var nextcolour = pal.ColorAtIndex((byte)nextmap.red[x], true, false);
+                                            //lerpedcolour = basecolour.Lerp(nextcolour, (float)(y % BandSize) / (float)BandSize);
+                                            img.SetPixel(x, y + i * BandSize, basecolour.Lerp(nextcolour, (float)(y % BandSize) / (float)BandSize));
+                                        }
+                                        else
+                                        {
+                                            //skip lerp if the shading has not changed.
+                                            //lerpedcolour = basecolour;
+                                            img.SetPixel(x, y + i * BandSize, basecolour);
+                                        }
+
                                         break;
                                     }
                             }
-
-                            img.SetPixel(x, y + i * BandSize, lerpedcolour);
+                            //img.SetPixel(x, y + i * BandSize, lerpedcolour);
                         }
                     }
                 }
             }
-            //img.SavePng($"c:\\temp\\{filename}.png");
+            //img.SavePng($"c:\\temp\\colourmap {index}.png");
 
             var tex = new ImageTexture();
             tex.SetImage(img);
@@ -191,7 +205,7 @@ namespace Underworld
                     // This has later impacts on tile visibility calcs for the automap
                     // .eg when di = 0x2 and si = 0xE the (int)sqrt() will return 2 but vanilla game will return 3
                     var var2 = (short)UnderWorldSqrt.sqrt_vanilla((ushort)((0x10 - si) * (0x10 - si) + (di * di)));
-                    
+
                     if (var2 <= ViewingDistance)
                     {
                         //seg32_58B
