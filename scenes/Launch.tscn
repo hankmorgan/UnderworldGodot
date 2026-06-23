@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://cxu7fxiybk3ee" path="res://resources/splash/uw2_poster.jpg" id="23_f4jqj"]
 [ext_resource type="Texture2D" uid="uid://dlhf0nj7vj1o2" path="res://resources/placeholder_art/PanelBlack.jpg" id="29_aiei8"]
 
-[node name="LaunchMenu" type="Control" node_paths=PackedStringArray("SelectUW1", "PathUW1", "SelectUW2", "PathUW2", "GameFilesSelector")]
+[node name="LaunchMenu" type="Control" node_paths=PackedStringArray("SelectUW1", "PathUW1", "SelectUW2", "PathUW2", "GameFilesSelector", "SoundOptionSelector", "SynthPath")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -19,6 +19,8 @@ PathUW1 = NodePath("MenuMargins/Selections/Stygian/StygianPath")
 SelectUW2 = NodePath("MenuMargins/Selections/LabyrinthItems/LabyrinthPadding/LabyrinthPoster")
 PathUW2 = NodePath("MenuMargins/Selections/LabyrinthItems/LabyrinthPath")
 GameFilesSelector = NodePath("MenuMargins/GameFilesSelector")
+SoundOptionSelector = NodePath("MenuMargins/Selections/Options/Sound/SoundOptions")
+SynthPath = NodePath("MenuMargins/Selections/Options/SoundPath/SynthPath")
 
 [node name="LaunchBackground" type="TextureRect" parent="."]
 layout_mode = 2
@@ -127,6 +129,51 @@ virtual_keyboard_enabled = false
 middle_mouse_paste_enabled = false
 autowrap_mode = 0
 
+[node name="Options" type="VBoxContainer" parent="MenuMargins/Selections"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+
+[node name="Sound" type="HBoxContainer" parent="MenuMargins/Selections/Options"]
+layout_mode = 2
+
+[node name="SoundLabel" type="RichTextLabel" parent="MenuMargins/Selections/Options/Sound"]
+custom_minimum_size = Vector2(128, 64)
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_fonts/normal_font = ExtResource("4_pfbet")
+theme_override_font_sizes/normal_font_size = 32
+text = "Sound Options
+pick OPL only
+Enter path to Synths below"
+fit_content = true
+scroll_active = false
+
+[node name="SoundOptions" type="OptionButton" parent="MenuMargins/Selections/Options/Sound"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_fonts/font = ExtResource("4_pfbet")
+theme_override_font_sizes/font_size = 32
+item_count = 4
+popup/item_0/text = "soundfont"
+popup/item_1/text = "opl"
+popup/item_1/id = 1
+popup/item_2/text = "cm32l"
+popup/item_2/id = 2
+popup/item_3/text = "mt32"
+popup/item_3/id = 3
+
+[node name="SoundPath" type="HBoxContainer" parent="MenuMargins/Selections/Options"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="SynthPath" type="TextEdit" parent="MenuMargins/Selections/Options/SoundPath"]
+custom_minimum_size = Vector2(256, 64)
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_fonts/font = ExtResource("4_pfbet")
+theme_override_font_sizes/font_size = 32
+text = "c:\\path\\to\\synth"
+
 [node name="GameFilesSelector" type="FileDialog" parent="MenuMargins"]
 mode = 3
 title = "Open a File"
@@ -141,4 +188,6 @@ filters = PackedStringArray("uw*.exe")
 [connection signal="gui_input" from="MenuMargins/Selections/Stygian/StygianPath" to="." method="OnPathInput" binds= [1]]
 [connection signal="gui_input" from="MenuMargins/Selections/LabyrinthItems/LabyrinthPadding/LabyrinthPoster" to="." method="OnLaunchInput" binds= [2]]
 [connection signal="gui_input" from="MenuMargins/Selections/LabyrinthItems/LabyrinthPath" to="." method="OnPathInput" binds= [2]]
+[connection signal="item_selected" from="MenuMargins/Selections/Options/Sound/SoundOptions" to="." method="_on_sound_options_item_selected"]
+[connection signal="gui_input" from="MenuMargins/Selections/Options/SoundPath/SynthPath" to="." method="_on_synth_path_gui_input"]
 [connection signal="file_selected" from="MenuMargins/GameFilesSelector" to="." method="OnGameFilesSelectorSubmitted"]

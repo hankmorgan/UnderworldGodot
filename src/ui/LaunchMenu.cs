@@ -10,7 +10,8 @@ namespace Underworld;
 // This script node backs-up the initial launch scene for the game, allowing
 // the user to configure paths and pick between UW 1 & 2.
 // </summary>
-public partial class LaunchMenu : Control {
+public partial class LaunchMenu : Control
+{
 
 	private const string NextScene = "res://scenes/Underworld.tscn";
 
@@ -29,6 +30,14 @@ public partial class LaunchMenu : Control {
 	[Export]
 	public FileDialog GameFilesSelector;
 
+	[Export]
+	public OptionButton SoundOptionSelector;
+
+	[Export]
+	public TextEdit SynthPath;
+
+	static bool LoadingSynthPath = false;
+
 	// Allows easy storage and retrieval of mouse mode overrides.
 	private readonly Stack<Input.MouseModeEnum> _mouseModeHistory = new();
 
@@ -37,11 +46,21 @@ public partial class LaunchMenu : Control {
 
 	public override void _Ready()
 	{
-		Debug.Print($"_Ready fired");
+		//Debug.Print($"_Ready fired");
 
 		// Load initial paths from settings.
 		PathUW1.Text = _uwSettings.pathuw1;
 		PathUW2.Text = _uwSettings.pathuw2;
+
+		SynthPath.Text = _uwSettings.synthpath;
+		for (int i = 0; i < SoundOptionSelector.ItemCount; i++)
+		{
+			if (SoundOptionSelector.GetItemText(i) == _uwSettings.synth)
+			{
+				SoundOptionSelector.Selected = i;
+				break;
+			}
+		}
 
 		// Set the initial focus selection.
 		switch (UWClass._RES)
@@ -65,6 +84,33 @@ public partial class LaunchMenu : Control {
 
 	}
 
+	public void _on_synth_path_gui_input(InputEvent @event)
+	{
+		switch (@event)
+		{
+			case InputEventMouseButton mouseButtonEvent:
+				if (mouseButtonEvent.Pressed)
+					break;
+				return;
+			default:
+				return;
+		}
+		LoadingSynthPath = true;
+		GameFilesSelector.CurrentPath = SynthPath.Text;
+		GameFilesSelector.CurrentDir = SynthPath.Text;
+		GameFilesSelector.Filters = [
+			"*.*;Rom Files"
+		];
+
+		// Switch to the regular cursor, saving the previous state so we
+		// can revert to it later.
+		_mouseModeHistory.Push(Input.MouseMode);
+		Input.MouseMode = Input.MouseModeEnum.Visible;
+
+		// Finally display the selector
+		GameFilesSelector.Show();
+	}
+
 	public void OnPathInput(InputEvent @event, int selection)
 	{
 		// Seems dumb at the moment, but this lets us process multiple
@@ -81,8 +127,8 @@ public partial class LaunchMenu : Control {
 				return;
 		}
 
-		Debug.Print($"OnPathInput: {@event}");
-
+		//Debug.Print($"OnPathInput: {@event}");
+		LoadingSynthPath = false;
 		// Select which path we're going to edit.
 		UWClass._RES = (byte)selection;
 		switch (UWClass._RES)
@@ -121,29 +167,40 @@ public partial class LaunchMenu : Control {
 
 	public void OnGameFilesSelectorSubmitted(string path)
 	{
-		Debug.Print($"GameFilesSelector submitted {path}");
-
-		// Save the selected directory back, and clear the selection for
-		// no good reason in particular.
-		var selectedDir = System.IO.Path.GetDirectoryName(path);
-		switch (UWClass._RES)
+		//Debug.Print($"GameFilesSelector submitted {path}");
+		if (LoadingSynthPath)
 		{
-			case UWClass.GAME_UWDEMO:
-			case UWClass.GAME_UW1:	
-				PathUW1.Text = selectedDir;
-				_uwSettings.pathuw1 = selectedDir;
+			if (System.IO.Path.Exists(path))
+			{
+				_uwSettings.synthpath = System.IO.Path.GetDirectoryName(path);
 				_uwSettings.Save();
-				break;
-			case UWClass.GAME_UW2:
-				PathUW2.Text = selectedDir;
-				_uwSettings.pathuw2 = selectedDir;
-				_uwSettings.Save();
-				break;
-			default:
-				// Non-blocking at this point. Just notify and do no more.
-				GD.PushError("Invalid game selection: ", UWClass._RES);
-				break;
+			}			
 		}
+		else
+		{
+			// Save the selected directory back, and clear the selection for
+			// no good reason in particular.
+			var selectedDir = System.IO.Path.GetDirectoryName(path);
+			switch (UWClass._RES)
+			{
+				case UWClass.GAME_UWDEMO:
+				case UWClass.GAME_UW1:
+					PathUW1.Text = selectedDir;
+					_uwSettings.pathuw1 = selectedDir;
+					_uwSettings.Save();
+					break;
+				case UWClass.GAME_UW2:
+					PathUW2.Text = selectedDir;
+					_uwSettings.pathuw2 = selectedDir;
+					_uwSettings.Save();
+					break;
+				default:
+					// Non-blocking at this point. Just notify and do no more.
+					GD.PushError("Invalid game selection: ", UWClass._RES);
+					break;
+			}
+		}
+
 
 		// Revert the cursor. Yes I'm not checking that it's there first.
 		Input.MouseMode = _mouseModeHistory.Pop();
@@ -164,7 +221,7 @@ public partial class LaunchMenu : Control {
 				return;
 		}
 
-		Debug.Print($"OnPathInput: {@event}");
+		//Debug.Print($"OnPathInput: {@event}");
 
 		// Update settings and the current state.
 		UWClass._RES = (byte)selection;
@@ -172,7 +229,7 @@ public partial class LaunchMenu : Control {
 		{
 			case UWClass.GAME_UWDEMO:
 			case UWClass.GAME_UW1:
-				if (File.Exists(System.IO.Path.Combine(_uwSettings.pathuw1,"UWDEMO.EXE")))
+				if (File.Exists(System.IO.Path.Combine(_uwSettings.pathuw1, "UWDEMO.EXE")))
 				{
 					Debug.Print("UWDemo has been selected.");
 					_uwSettings.gametoload = "UWDEMO";
@@ -180,9 +237,9 @@ public partial class LaunchMenu : Control {
 				}
 				else
 				{
-					_uwSettings.gametoload = "UW1";					
+					_uwSettings.gametoload = "UW1";
 				}
-				UWClass.BasePath = _uwSettings.pathuw1;				
+				UWClass.BasePath = _uwSettings.pathuw1;
 				break;
 			case UWClass.GAME_UW2:
 				UWClass.BasePath = _uwSettings.pathuw2;
@@ -201,6 +258,12 @@ public partial class LaunchMenu : Control {
 		var scene = (PackedScene)ResourceLoader.LoadThreadedGet(NextScene);
 		GetTree().ChangeSceneToPacked(scene);
 
+	}
+
+	public void _on_sound_options_item_selected(int index)
+	{
+		_uwSettings.synth = SoundOptionSelector.GetItemText(index);
+		_uwSettings.Save();
 	}
 
 }
