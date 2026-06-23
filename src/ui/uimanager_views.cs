@@ -128,9 +128,9 @@ namespace Underworld
                         uwviewport.Position = new Vector2(62f, 62f);
                         uwsubviewport.Size = new Vector2I(840, 512);
                     }
-                    break;                
+                    break;
                 default:
-                    
+
                     mainwindowUW1.Texture = bitmaps.LoadImageAt(BytLoader.MAIN_BYT, true);
                     if (!Fullscreen)
                     {
@@ -175,7 +175,7 @@ namespace Underworld
             {
                 return;//no more needs to be done.
             }
-            
+
             bool LeftClick = (eventMouseButton.ButtonIndex == MouseButton.Left);
             //Debug.Print($"{eventMouseButton.Position.X},{eventMouseButton.Position.Y}");
             Dictionary result = DoRayCast(eventMouseButton.Position, RayDistance, out Vector3 rayOrigin);
@@ -289,9 +289,20 @@ namespace Underworld
                     }
                     else
                     {
-                        //no match on the raycast. if holding an object in pickup mode this should try and throw the object
+                        //no match on the raycast. 
+                        //nothing found.
+                        switch (InteractionMode)
+                        {
+                            case InteractionModes.ModeLook:
+                                uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_see_nothing_));
+                                break;
+                        }
                     }
                 }
+            }
+            else
+            {
+
             }
 
 

@@ -30,7 +30,7 @@ namespace Underworld
         byte[] _rawvisiondata; //= new byte[0xF * 0x11];
         static byte[] _defaultrawdata = new byte[0xF * 0x11];
         static short RelatedToVisionIndex_2C60 = 0;
-        public static short LikelyDistanceToWallOrDarkness = -1;
+        public static short DistanceToWallOrDarkness = -1;
         public static short LikelyDist_2C6C;
 
         static short RenderingCounter_2C6A = 0;
@@ -297,10 +297,10 @@ namespace Underworld
             var shading = shade.shadesdata[playerdat.lightlevel].ShadingArray_26EE;//System.IO.File.WriteAllBytes("c:\\temp\\shading.dat", shading);
             var di_dseg432 = dseg_432[playerdat.CameraYawHeadingRelated_2B52 * 6];
             var varC_tileoffset = dseg_432[2 + (playerdat.CameraYawHeadingRelated_2B52 * 6)];
-            var var2_offsetshadeatdistance = LikelyDistanceToWallOrDarkness * 0x42;
+            var var2_offsetshadeatdistance = DistanceToWallOrDarkness * 0x42;
 
 
-            var var4_tile_ptr = (int)(playerTile.Ptr + ((varC_tileoffset * LikelyDistanceToWallOrDarkness) << 2));
+            var var4_tile_ptr = (int)(playerTile.Ptr + ((varC_tileoffset * DistanceToWallOrDarkness) << 2));
             var4_tile_ptr = var4_tile_ptr - (di_dseg432 << 6);
 
 
@@ -314,7 +314,7 @@ namespace Underworld
             // }
             //Seg019_634
             //InitSomeArrays(-10);
-            LikelyDist_2C6C = LikelyDistanceToWallOrDarkness;
+            LikelyDist_2C6C = DistanceToWallOrDarkness;
 
             //seg0139_771
             while (LikelyDist_2C6C >= 0)
@@ -532,12 +532,12 @@ namespace Underworld
         public static void GetViewDistance()
         {
             var di = 0;
-            LikelyDistanceToWallOrDarkness = -1;
+            DistanceToWallOrDarkness = -1;
             var currentshade = shade.shadesdata[playerdat.lightlevel].ShadingArray_26EE;
             var var2currentshadePtr = 0;
 
         seg032_1175:
-            LikelyDistanceToWallOrDarkness++;
+            DistanceToWallOrDarkness++;
             //var var4_visionindex = RelatedToVisionIndex_2C60; 
             var4pointsto2C60 = true;
 

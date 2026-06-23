@@ -23,23 +23,23 @@ namespace Underworld
                 switch (InteractionMode)
                 {
                     case InteractionModes.ModeLook:
-                        return 16f;
+                        return 1.2f * (VisionParams.DistanceToWallOrDarkness + 1);
                     case InteractionModes.ModeTalk:
                         return 8f;
                     case InteractionModes.ModePickup:
                         if (playerdat.TelekenesisEnchantment)
-                            {
-                                return 10f;
-                            }
-                            else
-                            {
-                                return 3f;
-                            }    
+                        {
+                            return 10f;
+                        }
+                        else
+                        {
+                            return 3f;
+                        }
                     case InteractionModes.ModeUse:
                         if (playerdat.usingpole)
                         {
                             return 6f;
-                        }   
+                        }
                         else
                         {
                             if (playerdat.TelekenesisEnchantment)
@@ -49,8 +49,8 @@ namespace Underworld
                             else
                             {
                                 return 3f;
-                            }                            
-                        } 
+                            }
+                        }
                     case InteractionModes.ModeAttack:
                         return 1f;
                 }
@@ -65,9 +65,9 @@ namespace Underworld
         /// <param name="RayLength"></param>
         /// <returns></returns>
         public static Dictionary DoRayCast(Vector2 eventMousePosition, float RayLength, out Vector3 RayOrigin)   //InputEventMouseButton eventMouseButton, float RayLength)
-        {            
-            var MainPos =  eventMousePosition; //eventMouseButton.Position;
-            var mousepos  = instance.uwsubviewport.GetMousePosition();
+        {
+            var MainPos = eventMousePosition; //eventMouseButton.Position;
+            var mousepos = instance.uwsubviewport.GetMousePosition();
 
             // var mouselook = (bool)main.cameraPitchGimbal.Get("MOUSELOOK");
             // if (mouselook)
