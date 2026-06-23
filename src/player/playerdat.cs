@@ -360,8 +360,8 @@ namespace Underworld
                     value = max_hp;
                 }
                 SetAt(0x36, (byte)value);
-                uimanager.RefreshHealthFlask();
-                uimanager.RefreshStatsDisplay();
+                // uimanager.RefreshHealthFlask();
+                // uimanager.RefreshStatsDisplay();
                 playerObject.npc_hp = (byte)value;
             }
         }
@@ -376,7 +376,7 @@ namespace Underworld
             set
             {
                 SetAt(0x37, (byte)value);
-                uimanager.RefreshHealthFlask();
+                //uimanager.RefreshHealthFlask();
                 uimanager.RefreshStatsDisplay();
             }
         }
@@ -396,7 +396,7 @@ namespace Underworld
                     value = max_mana;
                 }
                 SetAt(0x38, (byte)value);
-                uimanager.RefreshManaFlask();
+                //uimanager.RefreshManaFlask();
                 uimanager.RefreshStatsDisplay();
             }
         }
@@ -411,7 +411,7 @@ namespace Underworld
             set
             {
                 SetAt(0x39, (byte)value);
-                uimanager.RefreshManaFlask();
+                //uimanager.RefreshManaFlask();
                 uimanager.RefreshStatsDisplay();
             }
         }
@@ -736,8 +736,8 @@ namespace Underworld
             {
                 play_mana = max_mana;
             }
-            uimanager.RefreshManaFlask();
-            uimanager.RefreshHealthFlask();
+            // uimanager.RefreshManaFlask();
+            // uimanager.RefreshHealthFlask();
             WeightMax = (short)(300 + (STR * 13));
         }
     } //end class

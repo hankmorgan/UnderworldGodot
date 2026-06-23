@@ -347,9 +347,8 @@ namespace Underworld
                                    break;
                               }
                     }
-                    uimanager.RefreshHealthFlask();
+                    //uimanager.RefreshHealthFlask();
                }
-
           }
 
           /// <summary>

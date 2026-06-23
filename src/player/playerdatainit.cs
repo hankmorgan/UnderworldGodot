@@ -63,8 +63,13 @@ namespace Underworld
             //Draw UI
             uimanager.SetBody(Body, isFemale);
             uimanager.RedrawSelectedRuneSlots();
-            uimanager.RefreshHealthFlask();
-            uimanager.RefreshManaFlask();
+            uimanager.CurrentHealthFlaskLevel = uimanager.TargetHealthFlaskLevel;
+            uimanager.CurrentManaFlaskLevel = uimanager.TargetManaFlaskLevel;
+            uimanager.RedrawHealthFlask();
+            uimanager.RedrawManaFlask();
+
+            // uimanager.RefreshHealthFlask();
+            // uimanager.RefreshManaFlask();
             //set paperdoll
             uimanager.UpdateInventoryDisplay();
             uimanager.ConversationText.Text = "";

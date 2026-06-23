@@ -14,6 +14,24 @@ namespace Underworld
         [Export] public TextureRect[] ManaFlask = new TextureRect[13];
         [Export] public TextureRect ManaFlaskBG;
 
+        public static int CurrentHealthFlaskLevel;
+        public static int CurrentManaFlaskLevel;
+
+        public static int TargetHealthFlaskLevel
+        {
+            get
+            {
+               return (int)((float)((float)playerdat.play_hp / (float)playerdat.max_hp) * 12f);
+            }
+        }
+        public static int TargetManaFlaskLevel
+        {
+            get
+            {
+                return (int)((float)((float)playerdat.play_mana / (float)playerdat.max_mana) * 12f);
+            }
+        }
+
 
         private void InitFlasks()
         {
@@ -22,22 +40,60 @@ namespace Underworld
             ManaFlaskBG.Texture = grFlasks.LoadImageAt(75);
 
             if (UWClass._RES == UWClass.GAME_UW2)
-                {
+            {
                 var offset = new Vector2(0, 24);
                 HealthFlaskPanel.Position += offset;
                 offset = new Vector2(16, 24);
                 ManaFlaskPanel.Position += offset;
-                }
-            
-            
+            }
+
+
             EnableDisable(HealthFlaskPanel, true);
             EnableDisable(ManaFlaskPanel, true);
         }
 
-        public static void RefreshHealthFlask()
+
+        /// <summary>
+        /// Updates the hp/mana flask animations.
+        /// </summary>
+        public static void AnimateFlasks(bool doBubbling = false)
+        {
+            if (TargetHealthFlaskLevel > CurrentHealthFlaskLevel)
+            {
+                CurrentHealthFlaskLevel++;
+                RedrawHealthFlask();
+            }
+            else if (TargetHealthFlaskLevel < CurrentHealthFlaskLevel)
+            {
+                CurrentHealthFlaskLevel--;
+                RedrawHealthFlask();
+            }
+            else
+            {
+                //flask is at right level. consider doing the bubbling animation..
+            }
+
+            if (TargetManaFlaskLevel > CurrentManaFlaskLevel)
+            {
+                CurrentManaFlaskLevel++;
+                RedrawManaFlask();
+            }
+            else if (TargetManaFlaskLevel < CurrentManaFlaskLevel)
+            {
+                CurrentManaFlaskLevel--;
+                RedrawManaFlask();
+            }
+            else
+            {
+                //flask is at right level. consider doing the bubbling animation..
+            }
+
+        }
+
+        public static void RedrawHealthFlask()
         {
             if (instance == null) return; // reachable from InitEmptyPlayer in tests, before the Godot scene wires up the singleton
-            int level = (int)((float)((float)playerdat.play_hp / (float)playerdat.max_hp) * 12f);
+            //int level = (int)((float)((float)playerdat.play_hp / (float)playerdat.max_hp) * 12f);
             int startOffset = 0;
             if (playerdat.play_poison > 0)
             {
@@ -45,7 +101,7 @@ namespace Underworld
             }
             for (int i = 0; i < 13; i++)
             {
-                if (i <= level)
+                if (i <= CurrentHealthFlaskLevel)
                 {
                     instance.HealthFlask[i].Texture = grFlasks.LoadImageAt(startOffset + i);
                 }
@@ -56,14 +112,14 @@ namespace Underworld
             }
         }
 
-        public static void RefreshManaFlask()
+        public static void RedrawManaFlask()
         {
             if (instance == null) return; // see RefreshHealthFlask
-            int level = (int)((float)((float)playerdat.play_mana / (float)playerdat.max_mana) * 12f);
+           // int level = (int)((float)((float)playerdat.play_mana / (float)playerdat.max_mana) * 12f);
             int startOffset = 25;
             for (int i = 0; i < 13; i++)
             {
-                if (i <= level)
+                if (i <= CurrentManaFlaskLevel)
                 {
                     instance.ManaFlask[i].Texture = grFlasks.LoadImageAt(startOffset + i);
                 }
@@ -73,7 +129,6 @@ namespace Underworld
                 }
             }
         }
-
 
         private void _on_healthflask_gui_input(InputEvent @event)
         {
@@ -95,28 +150,28 @@ namespace Underworld
                     {
                         AddToMessageScroll(
                             stringToAdd: $"{GameStrings.GetString(1, GameStrings.str_you_are_)}{GameStrings.GetString(1, GameStrings.str_barely + poisonlevel)}{GameStrings.GetString(1, GameStrings.str__poisoned_)}\n{GameStrings.GetString(1, GameStrings.str_your_current_vitality_is_)}{playerdat.play_hp} out of {playerdat.max_hp}"
-                            ,mode: MessageDisplay.MessageDisplayMode.TemporaryMessage);
+                            , mode: MessageDisplay.MessageDisplayMode.TemporaryMessage);
                     }
                     else
                     {
                         AddToMessageScroll(
                             stringToAdd: $"{GameStrings.GetString(1, GameStrings.str_you_are_)}{GameStrings.GetString(1, GameStrings.str_barely + poisonlevel)}{GameStrings.GetString(1, GameStrings.str__poisoned_)}\n{GameStrings.GetString(1, GameStrings.str_your_current_vitality_is_)}{playerdat.play_hp} out of {playerdat.max_hp}");
                     }
-                    
+
                 }
                 else
                 {
                     if (uimanager.InConversation)
                     {
                         AddToMessageScroll(
-                            stringToAdd: $"{GameStrings.GetString(1, GameStrings.str_your_current_vitality_is_)}{playerdat.play_hp} out of {playerdat.max_hp}", 
+                            stringToAdd: $"{GameStrings.GetString(1, GameStrings.str_your_current_vitality_is_)}{playerdat.play_hp} out of {playerdat.max_hp}",
                             mode: MessageDisplay.MessageDisplayMode.TemporaryMessage);
                     }
                     else
                     {
                         AddToMessageScroll($"{GameStrings.GetString(1, GameStrings.str_your_current_vitality_is_)}{playerdat.play_hp} out of {playerdat.max_hp}");
                     }
-                    
+
                 }
             }
         }
@@ -138,7 +193,7 @@ namespace Underworld
                     AddToMessageScroll(
                         stringToAdd: $"{GameStrings.GetString(1, GameStrings.str_your_current_mana_points_are_)}{playerdat.play_mana} out of {playerdat.max_mana}"
                         );
-                }                
+                }
             }
         }
     }//end class

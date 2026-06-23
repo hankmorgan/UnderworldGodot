@@ -83,7 +83,7 @@ namespace Underworld
                     {
                         ParalyseTimer--;
                         Debug.Print($"Paralyse timer: {ParalyseTimer}");
-                    }
+                    }                   
 
                     var secondelasped = (int)(playertimer / 1);
                     playertimer = 0f;
