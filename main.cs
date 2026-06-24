@@ -203,13 +203,13 @@ public partial class main : Node3D
 				//simulation of the dos pit timer.
 				GlobalPITTimer += (uint)(PitTimer / 0.00391);
 				PitTimer = 0;
-				if ((GlobalPITTimer % 32) == 0)
-				{
+				// if ((GlobalPITTimer % 32) == 0)
+				// {
 					if (uimanager.InGame)
 					{
 						uimanager.AnimateFlasks();	
 					}					
-				}
+				//}
 			}
 		}
 

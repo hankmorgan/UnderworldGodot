@@ -16,12 +16,13 @@ namespace Underworld
 
         public static int CurrentHealthFlaskLevel;
         public static int CurrentManaFlaskLevel;
+        static int HealthBubbleCounter = 0;
 
         public static int TargetHealthFlaskLevel
         {
             get
             {
-               return (int)((float)((float)playerdat.play_hp / (float)playerdat.max_hp) * 12f);
+                return (int)((float)((float)playerdat.play_hp / (float)playerdat.max_hp) * 12f);
             }
         }
         public static int TargetManaFlaskLevel
@@ -56,21 +57,45 @@ namespace Underworld
         /// <summary>
         /// Updates the hp/mana flask animations.
         /// </summary>
-        public static void AnimateFlasks(bool doBubbling = false)
+        public static void AnimateFlasks()
         {
-            if (TargetHealthFlaskLevel > CurrentHealthFlaskLevel)
+            if ((TargetHealthFlaskLevel > CurrentHealthFlaskLevel) && (main.GlobalPITTimer % 32 == 0))
             {
                 CurrentHealthFlaskLevel++;
                 RedrawHealthFlask();
             }
-            else if (TargetHealthFlaskLevel < CurrentHealthFlaskLevel)
+            else if ((TargetHealthFlaskLevel < CurrentHealthFlaskLevel) && (main.GlobalPITTimer % 32 == 0))
             {
                 CurrentHealthFlaskLevel--;
                 RedrawHealthFlask();
             }
             else
             {
-                //flask is at right level. consider doing the bubbling animation..
+                bool doBubbling = false;
+                if (main.GlobalPITTimer % 32 == 0)
+                {
+                    if (HealthBubbleCounter == 0)
+                    {
+                        doBubbling = Rng.r.Next(8) == 0;
+                    }
+                    else
+                    {
+                        doBubbling = true;
+                    }
+                }
+                doBubbling = false;// the bubbling happens at multiple flask levels but uses a specific graphic of size 24x4  that I need to overlay at the 1/4, 1/2 and 3/4 levels.
+                if ((CurrentHealthFlaskLevel == 3) && (main.GlobalPITTimer % 32 == 0)) 
+                {
+                    RedrawHealthFlask(doBubbling, HealthBubbleCounter++); //false for now.
+                    if (HealthBubbleCounter > 6)
+                    {
+                        HealthBubbleCounter = 0;
+                    }
+                }
+                else if (CurrentHealthFlaskLevel != 3)
+                {
+                    HealthBubbleCounter = 0;
+                }
             }
 
             if (TargetManaFlaskLevel > CurrentManaFlaskLevel)
@@ -90,7 +115,7 @@ namespace Underworld
 
         }
 
-        public static void RedrawHealthFlask()
+        public static void RedrawHealthFlask(bool doBubbling = false, int bubblingOffset = 0)
         {
             if (instance == null) return; // reachable from InitEmptyPlayer in tests, before the Godot scene wires up the singleton
             //int level = (int)((float)((float)playerdat.play_hp / (float)playerdat.max_hp) * 12f);
@@ -103,7 +128,14 @@ namespace Underworld
             {
                 if (i <= CurrentHealthFlaskLevel)
                 {
-                    instance.HealthFlask[i].Texture = grFlasks.LoadImageAt(startOffset + i);
+                    if (doBubbling && (i == 3))
+                    {
+                        instance.HealthFlask[i].Texture = grFlasks.LoadImageAt(startOffset + i + 10 + bubblingOffset);
+                    }
+                    else
+                    {
+                        instance.HealthFlask[i].Texture = grFlasks.LoadImageAt(startOffset + i);
+                    }
                 }
                 else
                 {
@@ -115,7 +147,7 @@ namespace Underworld
         public static void RedrawManaFlask()
         {
             if (instance == null) return; // see RefreshHealthFlask
-           // int level = (int)((float)((float)playerdat.play_mana / (float)playerdat.max_mana) * 12f);
+                                          // int level = (int)((float)((float)playerdat.play_mana / (float)playerdat.max_mana) * 12f);
             int startOffset = 25;
             for (int i = 0; i < 13; i++)
             {
