@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 
 namespace Underworld
 {
@@ -269,6 +270,7 @@ namespace Underworld
             if ((playerdat.play_level >= 0) && (playerdat.play_level < 16))
             {
                 int finalgain = 0;
+               
                 if (_RES == GAME_UW2)
                 {
                     finalgain = ((1 + (playerdat.dungeon_level / 8)) * TilesDiscoveredForExpGain) / 0xA;
@@ -278,6 +280,7 @@ namespace Underworld
                     finalgain = (playerdat.dungeon_level * TilesDiscoveredForExpGain) / 0xA;
                 }
                 //var finalgain = (1 + playerdat.CurrentWorld) * TilesDiscoveredForExpGain;
+                //Debug.Print($"Newly discovered {TilesDiscoveredForExpGain}. Final gain is {finalgain}");
                 if (finalgain > 0)
                 {
                     playerdat.ChangeExperience(finalgain);

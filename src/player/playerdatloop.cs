@@ -307,7 +307,7 @@ namespace Underworld
             }
             else
             {
-                var increase = 1 + ((max_mana * (regeneration + Rng.r.Next(0, 4))) >> 4);
+                var increase = 1 + ((max_mana * (regeneration + Rng.r.Next(0, 4))) >> 4); //This formula may be wrong and is restoring too much mana.
                 play_mana = Math.Min(play_mana + increase, max_mana);
             }
         }

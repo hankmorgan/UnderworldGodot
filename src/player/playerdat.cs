@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 
 namespace Underworld
 {
@@ -621,12 +622,21 @@ namespace Underworld
 
         /// <summary>
         /// Changes the player EXP using the vanilla logic for EXP gains. 
-        /// Note there is a likely bug with the extraction of the correct exp value which is currently leading to extra exp being gained.
         /// </summary>
         /// <param name="newEXP"></param>
         public static void ChangeExperience(int newEXP)
         {
+            //Debug.Print($"New EXP Gain of {newEXP}");
             //value * 500 is the exp needed for next level up
+            int skillpointfactor;
+            if (_RES == GAME_UW2)
+            {
+                skillpointfactor = 1500;
+            }
+            else
+            {
+                skillpointfactor = 3000;
+            }
             int[] LevelUpAt = new int[] { 0, 1, 2, 3, 4, 6, 8, 0xC, 0x10, 0x18, 0x20, 0x30, 0x40, 0x60, 0x80, 0xC0 };
             if (newEXP > 0)
             {
@@ -645,7 +655,15 @@ namespace Underworld
                         newEXP = 1 + (newEXP / 2);
                     }
                 }
-                var newTotalSkillPoints = (Exp + newEXP) / 1500; //how many skill points the player will have gained at their new exp level
+                else
+                {
+                    if ((dungeon_level<<1) + 2 < play_level)
+                    {
+                        //lower exp gain if on a lower dungeon level than the player level.
+                        newEXP = 1 + (newEXP / 2);
+                    }
+                }
+                var newTotalSkillPoints = (Exp + newEXP) / skillpointfactor; //how many skill points the player will have gained at their new exp level
                 if (SkillPointsTotal < newTotalSkillPoints)
                 {
                     SkillPoints = SkillPoints + (newTotalSkillPoints - SkillPointsTotal);// calculate new level of skill points available to spend.
@@ -655,20 +673,41 @@ namespace Underworld
                 Exp = Math.Min(Exp + newEXP, 0x7FFF0);//experience cap
                 if (Exp <= 0x17700) //level up cap
                 {
-                    //Check if player can level up
-                    if (play_level < 0x10)
+                    var si_newlevelincrease = 0;
+                    var newlevelpoints = Exp / 500;
+                    while (true)
                     {
-                        var PointsToCheck = Exp / 500;
-                        var pointsNeeded = LevelUpAt[play_level];
-                        if (pointsNeeded <= PointsToCheck)
-                        {//player can level up
-                            LevelUp(play_level + 1);
+                        if (
+                            (LevelUpAt[play_level + si_newlevelincrease] <= newlevelpoints)
+                            &&
+                            (play_level + si_newlevelincrease < 0x10)
+                        )
+                        {
+                            si_newlevelincrease++;
+                        }
+                        else
+                        {
+                            if (si_newlevelincrease != 0)
+                            {
+                                LevelUp(si_newlevelincrease);
+                            }
+                            break;
                         }
                     }
-                }
 
-                UpdateAttributes(false);
-                uimanager.RefreshStatsDisplay();
+                    UpdateAttributes(false);
+                    uimanager.RefreshStatsDisplay();
+                    //Check if player can level up
+                    // if (play_level < 0x10)
+                    // {
+                    //     var PointsToCheck = Exp / 500;
+                    //     var pointsNeeded = LevelUpAt[play_level];
+                    //     if (pointsNeeded <= PointsToCheck)
+                    //     {//player can level up
+                    //         LevelUp(play_level + 1);
+                    //     }
+                    // }
+                }
             }
             else
             {
@@ -680,16 +719,16 @@ namespace Underworld
         /// <summary>
         /// Levels up the character.
         /// </summary>
-        /// <param name="newLevel"></param>
-        static void LevelUp(int newLevel)
+        /// <param name="increaseLevelBy"></param>
+        static void LevelUp(int increaseLevelBy)
         {
-            if (newLevel <= 0x10)
+            if (increaseLevelBy <= 0x10)
             {
-                play_level = newLevel;
-                SkillPoints += newLevel;
+                play_level += increaseLevelBy;
+                SkillPoints += increaseLevelBy;
                 if (!uimanager.InConversation)
                 {
-                    uimanager.AddToMessageScroll($"{GameStrings.GetString(1, GameStrings.str_you_have_attained_experience_level_)}{newLevel}");
+                    uimanager.AddToMessageScroll($"{GameStrings.GetString(1, GameStrings.str_you_have_attained_experience_level_)}{increaseLevelBy}");
                 }
                 RecalculateHPManaMaxWeight(false);
                 uimanager.RefreshStatsDisplay();

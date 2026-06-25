@@ -103,6 +103,10 @@ namespace Underworld
             }
             set
             {
+                // if (Exp != value)
+                // {
+                //     Debug.Print($"Setting EXP from {Exp} -> {value}");
+                // }
                 SetAt32(0x4F, value);
             }
         }
@@ -541,14 +545,14 @@ namespace Underworld
                 //object  identification bits on every sprite object in the level.
                 //but oddly enough not on objects the player has in inventory?!?
                 SetLevelLore(dungeon_level - 1, Lore);
-                
+
                 //Update heading bits on all objects
-                uwObject.ResetAllObjectIdentification();                
+                uwObject.ResetAllObjectIdentification();
             }
             return 1;
         }
 
-        
+
 
         /// <summary>
         /// general skill function for trainers in UW2. Increases a single skill or a random skill within a category of skills;
