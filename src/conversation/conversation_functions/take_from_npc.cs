@@ -71,7 +71,7 @@ namespace Underworld
                             if (uimanager.GetPlayerTradeSlot(i,false) ==-1)
                             {
                                 //add to that slot
-                                uimanager.SetPlayerTradeSlot(i, obj.index, false);
+                                uimanager.SetPlayerTradeSlot(slotno: i, item_index: obj.index, selected: false);
                                 result_register = 1;
                                 return;
                             }

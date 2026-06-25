@@ -814,7 +814,7 @@ namespace Underworld
         /// <returns></returns>
         public static bool CanCarryWeight(uwObject obj)
         {
-            if (playerdat.WeightCapacity > playerdat.WeightCarried + (commonObjDat.mass(obj.item_id) * obj.ObjectQuantity))
+            if (playerdat.WeightMax >= playerdat.WeightCarried + (commonObjDat.mass(obj.item_id) * obj.ObjectQuantity))
             {
                 return true; //playerdat can carry weight.
             }
