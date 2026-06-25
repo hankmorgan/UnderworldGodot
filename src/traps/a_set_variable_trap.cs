@@ -78,19 +78,19 @@ namespace Underworld
                         {
                             var tmp = playerdat.GetGameVariable(LeftOperator);
                             tmp += RightOperator;
-                            playerdat.SetGameVariable(LeftOperator, tmp);
+                            playerdat.SetGameVariable(LeftOperator, tmp & 0x3F);
                             break;
                         }
                     case 1:
                         {   //SUB
                             var tmp = playerdat.GetGameVariable(LeftOperator);
                             tmp -= RightOperator;
-                            playerdat.SetGameVariable(LeftOperator, tmp);
+                            playerdat.SetGameVariable(LeftOperator, tmp & 0x3F);
                             break;
                         }
                     case 2:
                         { //SET                            
-                            playerdat.SetGameVariable(LeftOperator, RightOperator);
+                            playerdat.SetGameVariable(LeftOperator, RightOperator & 0x3F);
                             break;
                         }
                     case 3:
@@ -98,7 +98,7 @@ namespace Underworld
                             //AND
                             var tmp = playerdat.GetGameVariable(LeftOperator);
                             tmp &= RightOperator;
-                            playerdat.SetGameVariable(LeftOperator, tmp);
+                            playerdat.SetGameVariable(LeftOperator, tmp & 0x3F);
                             break;
                         }
                     case 4:
@@ -106,21 +106,21 @@ namespace Underworld
                             //OR
                             var tmp = playerdat.GetGameVariable(LeftOperator);
                             tmp |= RightOperator;
-                            playerdat.SetGameVariable(LeftOperator, tmp);
+                            playerdat.SetGameVariable(LeftOperator, tmp & 0x3F);
                             break;
                         }
                     case 5:
                         {//XOR
                             var tmp = playerdat.GetGameVariable(LeftOperator);
                             tmp ^= RightOperator;
-                            playerdat.SetGameVariable(LeftOperator, tmp);
+                            playerdat.SetGameVariable(LeftOperator, tmp & 0x3F);
                             break;
                         }
                     case 6:
                         {  //LSHIFT
                             var tmp = playerdat.GetGameVariable(LeftOperator);
                             tmp <<= RightOperator;
-                            playerdat.SetGameVariable(LeftOperator, tmp);
+                            playerdat.SetGameVariable(LeftOperator, tmp & 0x3F);
                             break;
                         }
                     default:

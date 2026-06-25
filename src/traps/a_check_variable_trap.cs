@@ -75,7 +75,7 @@ namespace Underworld
                 }
 
                 //check results
-                Debug.Print($"Comparing {di} to {var_1A}");
+                Debug.Print($"Comparing Gamevar {si}. Value {di} to Target {var_1A}");
                 if (di == var_1A)
                 {
                     return trapObj.link; //trigger the true condition chain.
