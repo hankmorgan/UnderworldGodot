@@ -104,7 +104,7 @@ namespace Underworld
                         //seg031_2CFA_10FB: 
                         if (UWMotionParamArray.ACollisionIndex_dseg_67d6_416 != -1)
                         {
-                            var Dst = UWMotionParamArray.ACollisionIndex_dseg_67d6_416;                            
+                            var Dst = UWMotionParamArray.ACollisionIndex_dseg_67d6_416;
                             for (int i = 0; i < 6; i++)
                             {
                                 CollisionRecord.Collisions_dseg_2520[(Dst * 6) + i] = CollisionRecord.Collisions_dseg_2520[(MotionCalcArray.Unk14_collisoncount_base * 6) + i];
@@ -362,7 +362,7 @@ namespace Underworld
                             {
                                 var1 = 1;
                             }
-                        }   
+                        }
                     }
 
 
@@ -1091,7 +1091,7 @@ namespace Underworld
         {//function returns wrong result.
             var var2 = 0;
             var var3 = false;
-            var var4 = SBB( SpecialMotionHandler.table45 & 0x80);
+            var var4 = SBB(SpecialMotionHandler.table45 & 0x80);
             var var6 = 0;
             UWMotionParamArray.dseg_67d6_26A5 = 0;
 
@@ -1199,25 +1199,25 @@ namespace Underworld
                             //seg031_2CFA_1511:
                             // if (UWMotionParamArray.ACollisionIndex_dseg_67d6_416 < 0)
                             // {
-                                //temp fix. getting a collisionindex of -1  when I bump into the lurker at 14,25 in UW1 level 1.
-                                // Debug.Print("Warning collision index of -1.");
-                                // var3= false;//?
-                           // }
-                           // else
-                           //{
-                                var collision = collisionTable[UWMotionParamArray.ACollisionIndex_dseg_67d6_416]; 
-                                if (Math.Abs(MotionCalcArray.z4_base - collision.height) > MotionParams.unk_24)
-                                {
-                                    var3 = false;
-                                }
-                                else
-                                {
-                                    var3 = true;
-                                }
-                                if (var3)
-                                {
-                                    si_result |= 0x80;
-                                }
+                            //temp fix. getting a collisionindex of -1  when I bump into the lurker at 14,25 in UW1 level 1.
+                            // Debug.Print("Warning collision index of -1.");
+                            // var3= false;//?
+                            // }
+                            // else
+                            //{
+                            var collision = collisionTable[UWMotionParamArray.ACollisionIndex_dseg_67d6_416];
+                            if (Math.Abs(MotionCalcArray.z4_base - collision.height) > MotionParams.unk_24)
+                            {
+                                var3 = false;
+                            }
+                            else
+                            {
+                                var3 = true;
+                            }
+                            if (var3)
+                            {
+                                si_result |= 0x80;
+                            }
                             //}
                         }
                     }
@@ -1389,7 +1389,7 @@ namespace Underworld
                 }
             }
             return si_result;
-        }        
+        }
 
         /// <summary>
         /// Returns the first object in the collision table.
@@ -1454,11 +1454,11 @@ namespace Underworld
             bool first = false;
             //seg030_2BB7_10DB:
             while (true)
-            {                
+            {
                 if (first)
                 {
                     //I only need to set up the array ptr on the first loop
-                    MotionCalcArray.PtrToMotionCalc = new byte[0x20];    
+                    MotionCalcArray.PtrToMotionCalc = new byte[0x20];
                     first = true;
                 }
                 MotionCalcArray.MotionArrayObjectIndexA = projectile.index;
@@ -1563,9 +1563,9 @@ namespace Underworld
                             if (_RES == GAME_UW2)
                             {
                                 OilOnMud(projectile);
-                                var1_destroyobject = true;
-                                break;//to seg030_2BB7_140A:
                             }
+                            var1_destroyobject = true;
+                            break;//to seg030_2BB7_140A:
                         }
                         else
                         {
@@ -1623,7 +1623,7 @@ namespace Underworld
                                                 else
                                                 {
                                                     projectile.UnkBit_0X13_Bit0to6 = 3;
-                                                    projectile.ProjectileHeading = (ushort)(0xC0 + (Rng.r.Next(9)<<4));
+                                                    projectile.ProjectileHeading = (ushort)(0xC0 + (Rng.r.Next(9) << 4));
                                                 }
                                                 break;//to seg030_2BB7_140A:
                                             }
