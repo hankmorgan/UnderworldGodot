@@ -400,8 +400,8 @@ namespace Underworld
                 //insert object to tile.
                 newObj.next = tile.indexObjectList;
                 tile.indexObjectList = newObj.index;
-                ObjectCreator.RenderObject(newObj, UWTileMap.current_tilemap);
                 newObj.tileX = tile.tileX; newObj.tileY = tile.tileY;
+                ObjectCreator.RenderObject(newObj, UWTileMap.current_tilemap);                
                 //Debug.Print($"returning {newObj.index}");
                 return newObj;
             }
