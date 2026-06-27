@@ -15,10 +15,12 @@ namespace Underworld
         [Export] public TextureRect ManaFlaskBG;
 
         [Export] public TextureRect HealthBubbles;
+        [Export] public TextureRect ManaBubbles;
 
         public static int CurrentHealthFlaskLevel;
         public static int CurrentManaFlaskLevel;
         static int HealthBubbleCounter = 0;
+        static int ManaBubbleCounter = 0;
 
         public static int TargetHealthFlaskLevel
         {
@@ -86,7 +88,7 @@ namespace Underworld
                         doBubbling = true;
                     }
                 }
-                //doBubbling = false;// the bubbling happens at multiple flask levels but uses a specific graphic of size 24x4  that I need to overlay at the 1/4, 1/2 and 3/4 levels.
+
                 if ((doBubbling) && (((CurrentHealthFlaskLevel >= 3) && (CurrentHealthFlaskLevel <= 9)) && (TargetHealthFlaskLevel == CurrentHealthFlaskLevel) && (main.GlobalPITTimer % 32 == 0)))
                 {
                     RedrawHealthFlask(doBubbling, HealthBubbleCounter++); //false for now.
@@ -100,27 +102,60 @@ namespace Underworld
                     if (!(((CurrentHealthFlaskLevel >= 3) && (CurrentHealthFlaskLevel <= 9)) && (TargetHealthFlaskLevel == CurrentHealthFlaskLevel)))
                     {
                         HealthBubbleCounter = 0;
-                    } 
+                    }
                     if (main.GlobalPITTimer % 32 == 0)
                     {
-                        RedrawHealthFlask(false,0);
+                        RedrawHealthFlask(false, 0);
                     }
                 }
             }
 
-            if (TargetManaFlaskLevel > CurrentManaFlaskLevel)
+            ////////////////////////MANA Animations//////////////////////////////////
+
+            if ((TargetManaFlaskLevel > CurrentManaFlaskLevel) && (main.GlobalPITTimer % 32 == 0))
             {
                 CurrentManaFlaskLevel++;
                 RedrawManaFlask();
             }
-            else if (TargetManaFlaskLevel < CurrentManaFlaskLevel)
+            else if ((TargetManaFlaskLevel < CurrentManaFlaskLevel) && (main.GlobalPITTimer % 32 == 0))
             {
                 CurrentManaFlaskLevel--;
                 RedrawManaFlask();
             }
             else
             {
-                //flask is at right level. consider doing the bubbling animation..
+                bool doBubbling = false;
+                if (main.GlobalPITTimer % 32 == 0)
+                {
+                    if (ManaBubbleCounter == 0)
+                    {
+                        doBubbling = Rng.r.Next(32) == 0;
+                    }
+                    else
+                    {
+                        doBubbling = true;
+                    }
+                }
+
+                if ((doBubbling) && (((CurrentManaFlaskLevel >= 3) && (CurrentManaFlaskLevel <= 9)) && (TargetManaFlaskLevel == CurrentManaFlaskLevel) && (main.GlobalPITTimer % 32 == 0)))
+                {
+                    RedrawManaFlask(doBubbling, ManaBubbleCounter++); //false for now.
+                    if (ManaBubbleCounter > 11)
+                    {
+                        ManaBubbleCounter = 0;
+                    }
+                }
+                else
+                {
+                    if (!(((CurrentManaFlaskLevel >= 3) && (CurrentManaFlaskLevel <= 9)) && (TargetManaFlaskLevel == CurrentManaFlaskLevel)))
+                    {
+                        ManaBubbleCounter = 0;
+                    }
+                    if (main.GlobalPITTimer % 32 == 0)
+                    {
+                        RedrawManaFlask(false, 0);
+                    }
+                }
             }
 
         }
@@ -164,16 +199,32 @@ namespace Underworld
             }
         }
 
-        public static void RedrawManaFlask()
+        public static void RedrawManaFlask(bool doBubbling = false, int bubblingOffset = 0)
         {
-            if (instance == null) return; // see RefreshHealthFlask
-                                          // int level = (int)((float)((float)playerdat.play_mana / (float)playerdat.max_mana) * 12f);
+            if (instance == null) return; // reachable from InitEmptyPlayer in tests, before the Godot scene wires up the singleton
             int startOffset = 25;
+            if ((doBubbling) && (TargetManaFlaskLevel == CurrentManaFlaskLevel) && ((CurrentManaFlaskLevel >= 3) && (CurrentManaFlaskLevel <= 9)))
+            {
+                instance.ManaBubbles.Texture = grFlasks.LoadImageAt(startOffset + 13 + bubblingOffset);
+            }
+            else
+            {
+                instance.ManaBubbles.Texture = null;
+            }
             for (int i = 0; i < 13; i++)
             {
                 if (i <= CurrentManaFlaskLevel)
                 {
-                    instance.ManaFlask[i].Texture = grFlasks.LoadImageAt(startOffset + i);
+                    if (doBubbling && ((i >= 3) || (i <= 9)) && (i == TargetManaFlaskLevel))
+                    {
+                        instance.ManaFlask[i].Texture = grFlasks.LoadImageAt(startOffset + i);
+                        //move the bubbles to the level.
+                        instance.ManaBubbles.Position = new Vector2(instance.ManaFlask[i].Position.X, instance.ManaFlask[i].Position.Y);
+                    }
+                    else
+                    {
+                        instance.ManaFlask[i].Texture = grFlasks.LoadImageAt(startOffset + i);
+                    }
                 }
                 else
                 {

@@ -2306,13 +2306,6 @@ offset_left = 144.0
 offset_right = 184.0
 offset_bottom = 40.0
 
-[node name="FlaskBorder" type="TextureRect" parent="UI/Common/ManaFlask"]
-layout_mode = 0
-offset_left = 992.0
-offset_top = 500.0
-offset_right = 1088.0
-offset_bottom = 632.0
-
 [node name="FlaskLevel0" type="TextureRect" parent="UI/Common/ManaFlask"]
 layout_mode = 0
 offset_left = 992.0
@@ -2416,6 +2409,20 @@ offset_top = 516.0
 offset_right = 1088.0
 offset_bottom = 532.0
 mouse_filter = 2
+
+[node name="FlaskManaBubble" type="TextureRect" parent="UI/Common/ManaFlask"]
+offset_left = 992.0
+offset_top = 592.0
+offset_right = 1088.0
+offset_bottom = 608.0
+mouse_filter = 2
+
+[node name="FlaskBorder" type="TextureRect" parent="UI/Common/ManaFlask"]
+layout_mode = 0
+offset_left = 992.0
+offset_top = 500.0
+offset_right = 1088.0
+offset_bottom = 632.0
 
 [node name="Dragons" type="Panel" parent="UI/Common"]
 self_modulate = Color(0, 0, 0, 0)
@@ -2909,7 +2916,7 @@ offset_bottom = 5.0
 mouse_filter = 2
 texture = ExtResource("18_tfr7p")
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("PanelChargen", "ChargenBG", "ChargenQuestion", "ChargenSkills", "ChargenSkills_values", "ChargenStats", "ChargenStats_values", "ChargenGender", "ChargenClass", "ChargenName", "ChargenNameBG", "ChargenNameInput", "ChargenNameQuestion", "ChargenBody", "CompassBgUW1", "CompassBgUW2", "CompassPointsUW1", "CompassPointsUW2", "CompassPanelUW2", "ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLabelFrameUW1", "NPCNameLabelFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "CutsFull", "CutsSmallUW1", "CutsSmallUW2", "Cuts3DWinUW1", "Cuts3DWinUW2", "CutsSubtitle", "DragonPanel", "DragonHeads", "DragonTails", "DragonTorsos", "PanelEndGame", "EndGameBackground", "EndGameStats", "Eyes", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "HealthBubbles", "InteractionButtonsUW1", "InteractionButtonsUW2", "PanelMainMenu", "MainMenuBG", "MainMenuButtons", "LoadingLabel", "SaveGamesNames", "AutomapPanel", "AutomapBG", "AutomapImage", "NotesPanel", "AutomapNumberLabel", "AutomapWorldGem", "messageScrollUW1", "messageScrollUW2", "scrollEdgeUW1Left", "scrollEdgeUW1Right", "scrollEdgeUW2Left", "scrollEdgeUW2Right", "ConvoscrollEdgeUW1Left", "ConvoscrollEdgeUW1Right", "ConvoscrollEdgeUW2Left", "ConvoscrollEdgeUW2Right", "TypedInput", "GameOptionButtonsUW1", "GameOptionButtonsUW2", "GameOptionsBackgroundUW1", "GameOptionsBackgroundUW2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Chains", "BackpackBG", "WeightCapacity", "RuneTiles", "SelectedRunes", "ActiveSpellIcons", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSelectedUW1", "NPCTradeSelectedUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "PlayerTradeSelectedUW2", "NPCTradeSelectedUW2", "cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "weaponanimuw1", "weaponanimuw2", "placeholderuw1", "placeholderuw2", "PowerGemUW1", "PowerGemUW2")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("PanelChargen", "ChargenBG", "ChargenQuestion", "ChargenSkills", "ChargenSkills_values", "ChargenStats", "ChargenStats_values", "ChargenGender", "ChargenClass", "ChargenName", "ChargenNameBG", "ChargenNameInput", "ChargenNameQuestion", "ChargenBody", "CompassBgUW1", "CompassBgUW2", "CompassPointsUW1", "CompassPointsUW2", "CompassPanelUW2", "ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLabelFrameUW1", "NPCNameLabelFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "CutsFull", "CutsSmallUW1", "CutsSmallUW2", "Cuts3DWinUW1", "Cuts3DWinUW2", "CutsSubtitle", "DragonPanel", "DragonHeads", "DragonTails", "DragonTorsos", "PanelEndGame", "EndGameBackground", "EndGameStats", "Eyes", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "HealthBubbles", "ManaBubbles", "InteractionButtonsUW1", "InteractionButtonsUW2", "PanelMainMenu", "MainMenuBG", "MainMenuButtons", "LoadingLabel", "SaveGamesNames", "AutomapPanel", "AutomapBG", "AutomapImage", "NotesPanel", "AutomapNumberLabel", "AutomapWorldGem", "messageScrollUW1", "messageScrollUW2", "scrollEdgeUW1Left", "scrollEdgeUW1Right", "scrollEdgeUW2Left", "scrollEdgeUW2Right", "ConvoscrollEdgeUW1Left", "ConvoscrollEdgeUW1Right", "ConvoscrollEdgeUW2Left", "ConvoscrollEdgeUW2Right", "TypedInput", "GameOptionButtonsUW1", "GameOptionButtonsUW2", "GameOptionsBackgroundUW1", "GameOptionsBackgroundUW2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Chains", "BackpackBG", "WeightCapacity", "RuneTiles", "SelectedRunes", "ActiveSpellIcons", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSelectedUW1", "NPCTradeSelectedUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "PlayerTradeSelectedUW2", "NPCTradeSelectedUW2", "cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "weaponanimuw1", "weaponanimuw2", "placeholderuw1", "placeholderuw2", "PowerGemUW1", "PowerGemUW2")]
 script = ExtResource("1_lw0yg")
 PanelChargen = NodePath("../Chargen")
 ChargenBG = NodePath("../Chargen/ChargenBG")
@@ -2971,6 +2978,7 @@ ManaFlaskPanel = NodePath("../Common/ManaFlask")
 ManaFlask = [NodePath("../Common/ManaFlask/FlaskLevel0"), NodePath("../Common/ManaFlask/FlaskLevel1"), NodePath("../Common/ManaFlask/FlaskLevel2"), NodePath("../Common/ManaFlask/FlaskLevel3"), NodePath("../Common/ManaFlask/FlaskLevel4"), NodePath("../Common/ManaFlask/FlaskLevel5"), NodePath("../Common/ManaFlask/FlaskLevel6"), NodePath("../Common/ManaFlask/FlaskLevel7"), NodePath("../Common/ManaFlask/FlaskLevel8"), NodePath("../Common/ManaFlask/FlaskLevel9"), NodePath("../Common/ManaFlask/FlaskLevel10"), NodePath("../Common/ManaFlask/FlaskLevel11"), NodePath("../Common/ManaFlask/FlaskLevel12")]
 ManaFlaskBG = NodePath("../Common/ManaFlask/FlaskBorder")
 HealthBubbles = NodePath("../Common/HealthFlask/FlaskHealthBubble")
+ManaBubbles = NodePath("../Common/ManaFlask/FlaskManaBubble")
 Font4X5P = ExtResource("5_8iiwt")
 Font5X6I = ExtResource("3_safdl")
 Font5X6P = ExtResource("4_pfbet")
