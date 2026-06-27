@@ -16,25 +16,9 @@ uniform vec3 uv2_scale;
 uniform vec3 uv2_offset;
 
 //Shader Params
-//Shader Params
-//global uniform sampler2D uwnpc: source_color,filter_nearest;
 uniform sampler2D texture_albedo : source_color,filter_nearest,repeat_enable;
-
-//global uniform sampler2D uwlightmap : source_color,filter_nearest,repeat_enable;
-//global uniform sampler2D shades : source_color,filter_nearest,repeat_enable;
-uniform bool UseAlpha = false;
 global uniform float cutoffdistance;
 global uniform sampler2D smoothpalette: source_color,filter_nearest;
-
-// Camera
-//uniform vec3 centerPos;// = vec3(0.0, 0.0, 0.0);  // anything further from this pos from the camera will be discarded, needs to be updated by script each frame
-//global uniform vec3 cameraPos;// = vec3(34.160301, 136.675003, 127.48799);  // position of the camera, needs to be updated by script each frame, this is the default start pos
-
-varying float distanceToCam; // distance from cam to center
-varying vec4 world_pos;  // of current vertex
-varying float vertexToCam; // distance from current vertex to the camera
-
-
 
 void vertex() {
 	UV=UV*uv1_scale.xy+uv1_offset.xy;
@@ -67,18 +51,11 @@ void fragment() {
 	{
 		//Get the uv offset within the shades.dat image
 		float maptouse = dist/cutoffdistance;
-		//lookup shades.dat using the uv
-		//vec4 shade = texture(shades, vec2(maptouse,0));
-		//Apply the shade returned from shades.dat for the lightmap
-		//vec4 lightval = texture(uwlightmap, vec2(rgba.r, shade.r));	
-		//lookup the palette colour from the lightmap
-		//vec4 finalcolour = texture(uwnpc, vec2(lightval.r ,0));
+
 		//apply
 		vec4 finalcolour = texture(smoothpalette, vec2(rgba.r, maptouse));
+		
 		ALBEDO = finalcolour.rgb;
-		//if (UseAlpha)
-		//{
-			ALPHA = finalcolour.a;
-		//}		
+		ALPHA = finalcolour.a;
 	}
 }

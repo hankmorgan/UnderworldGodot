@@ -16,12 +16,8 @@ uniform vec3 uv2_scale;
 uniform vec3 uv2_offset;
 
 //Shader Params
-//global uniform sampler2D uwpalette: source_color,filter_nearest;
+
 uniform sampler2D texture_albedo : source_color,filter_nearest,repeat_enable;
-
-//global uniform sampler2D uwlightmap : source_color,filter_nearest,repeat_enable;
-//global uniform sampler2D shades : source_color,filter_nearest,repeat_enable;
-
 global uniform sampler2D smoothpalette: source_color,filter_nearest;
 
 global uniform float cutoffdistance;
@@ -38,27 +34,19 @@ void fragment() {
 	vec4 a = INV_VIEW_MATRIX * vec4(VERTEX, 1.0);
     float dist = (distance(a.xyz, world_camera));
 
-	//read in greyscale texture to get color index
-		
-
 	if (dist > cutoffdistance)
 	{		
 		discard;
 	}
 	else
 	{
+		//Get the red channel orignal data.
 		vec4 rgba = texture(texture_albedo, UV);
-		//Get the uv offset within the shades.dat image
+		
+		//Get the uv distance offset within the shades.dat image
 		float maptouse = dist/cutoffdistance;
 		
-		
-		//lookup shades.dat using the uv
-		//vec4 shade = texture(shades, vec2(maptouse,0));
-		//Apply the shade returned from shades.dat for the lightmap
-		//vec4 lightval = texture(uwlightmap, vec2(rgba.r, shade.r));	
-		//lookup the palette colour from the lightmap
-		//vec4 finalcolour = texture(uwpalette, vec2(lightval.r ,0));  //TODO add an extra dimension to the uwpalette to allow for simulation of the xfer transparencies using y to look them up
-		
+		//lookup shades.dat data which is stored in smoothpalette using the uv	
 		vec4 finalcolour = texture(smoothpalette, vec2(rgba.r, maptouse));
 		
 		//apply		
