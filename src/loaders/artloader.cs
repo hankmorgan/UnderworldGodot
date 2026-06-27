@@ -100,7 +100,7 @@ namespace Underworld
             Palette palette,
             bool useAlphaChannel,
             bool useSingleRedChannel,
-            bool crop,
+            bool crop = false,
             bool OutputInLowDetail = false)
         {
             Godot.Image.Format imgformat;

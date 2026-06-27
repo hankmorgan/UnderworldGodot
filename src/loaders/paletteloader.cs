@@ -152,6 +152,10 @@ namespace Underworld
                 name: "smoothpalette",
                 type: RenderingServer.GlobalShaderParameterType.Sampler2D,
                 defaultValue: (Texture)Palettes[Palette.CurrentPalette].cycledGamePalette[Palette.ColourTone, 0, 0]);
+            RenderingServer.GlobalShaderParameterAdd(
+                name: "xfer",
+                type: RenderingServer.GlobalShaderParameterType.Sampler2D,
+                defaultValue: (Texture)XferLoader.GetXFERImageData());
         }
 
         public static int[] LoadAuxilaryPalIndices(string auxPalPath, int auxPalIndex)

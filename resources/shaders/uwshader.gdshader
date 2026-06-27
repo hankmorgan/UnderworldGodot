@@ -15,12 +15,12 @@ uniform vec3 uv1_offset;
 uniform vec3 uv2_scale;
 uniform vec3 uv2_offset;
 
-//Shader Params
+//UW Shader Params
 
-uniform sampler2D texture_albedo : source_color,filter_nearest,repeat_enable;
-global uniform sampler2D smoothpalette: source_color,filter_nearest;
-
-global uniform float cutoffdistance;
+uniform sampler2D texture_albedo : source_color,filter_nearest,repeat_enable;// the source image
+global uniform sampler2D smoothpalette: source_color,filter_nearest; // pals.dat mapped into shades
+global uniform sampler2D xfer: source_color,filter_nearest; //xfer.dat transparency
+global uniform float cutoffdistance; // how far away the scene will render
 
 
 void vertex() {

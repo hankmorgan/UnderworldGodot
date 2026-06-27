@@ -16,24 +16,19 @@ uniform vec3 uv2_scale;
 uniform vec3 uv2_offset;
 
 //Shader Params
-//Shader Params
-//global uniform sampler2D uwnpc: source_color,filter_nearest;
-uniform sampler2D texture_albedo : source_color,filter_nearest,repeat_enable;
 
-//global uniform sampler2D uwlightmap : source_color,filter_nearest,repeat_enable;
-//global uniform sampler2D shades : source_color,filter_nearest,repeat_enable;
-uniform bool UseAlpha = false;
-global uniform float cutoffdistance;
+//UW Shader Params
 
-global uniform sampler2D smoothpalette: source_color,filter_nearest;
+uniform sampler2D texture_albedo : source_color,filter_nearest,repeat_enable;// the source image
+global uniform sampler2D smoothpalette: source_color,filter_nearest; // pals.dat mapped into shades
+global uniform sampler2D xfer: source_color,filter_nearest; //xfer.dat transparency
+global uniform float cutoffdistance; // how far away the scene will render
 
-// Camera
-//uniform vec3 centerPos;// = vec3(0.0, 0.0, 0.0);  // anything further from this pos from the camera will be discarded, needs to be updated by script each frame
-//global uniform vec3 cameraPos;// = vec3(34.160301, 136.675003, 127.48799);  // position of the camera, needs to be updated by script each frame, this is the default start pos
 
-varying float distanceToCam; // distance from cam to center
-varying vec4 world_pos;  // of current vertex
-varying float vertexToCam; // distance from current vertex to the camera
+
+//varying float distanceToCam; // distance from cam to center
+//varying vec4 world_pos;  // of current vertex
+//varying float vertexToCam; // distance from current vertex to the camera
 
 uniform float camera_offset = 0.0;
 
