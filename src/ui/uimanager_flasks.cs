@@ -14,6 +14,8 @@ namespace Underworld
         [Export] public TextureRect[] ManaFlask = new TextureRect[13];
         [Export] public TextureRect ManaFlaskBG;
 
+        [Export] public TextureRect HealthBubbles;
+
         public static int CurrentHealthFlaskLevel;
         public static int CurrentManaFlaskLevel;
         static int HealthBubbleCounter = 0;
@@ -37,8 +39,9 @@ namespace Underworld
         private void InitFlasks()
         {
             grFlasks = new GRLoader(GRLoader.FLASKS_GR, GRLoader.GRShaderMode.UIShader);
-            HealthFlaskBG.Texture = grFlasks.LoadImageAt(75);
-            ManaFlaskBG.Texture = grFlasks.LoadImageAt(75);
+
+            HealthFlaskBG.Texture = grFlasks.LoadImageAt(76);
+            ManaFlaskBG.Texture = grFlasks.LoadImageAt(76);
 
             if (UWClass._RES == UWClass.GAME_UW2)
             {
@@ -76,25 +79,32 @@ namespace Underworld
                 {
                     if (HealthBubbleCounter == 0)
                     {
-                        doBubbling = Rng.r.Next(8) == 0;
+                        doBubbling = Rng.r.Next(32) == 0;
                     }
                     else
                     {
                         doBubbling = true;
                     }
                 }
-                doBubbling = false;// the bubbling happens at multiple flask levels but uses a specific graphic of size 24x4  that I need to overlay at the 1/4, 1/2 and 3/4 levels.
-                if ((CurrentHealthFlaskLevel == 3) && (main.GlobalPITTimer % 32 == 0)) 
+                //doBubbling = false;// the bubbling happens at multiple flask levels but uses a specific graphic of size 24x4  that I need to overlay at the 1/4, 1/2 and 3/4 levels.
+                if ((doBubbling) && (((CurrentHealthFlaskLevel >= 3) && (CurrentHealthFlaskLevel <= 9)) && (TargetHealthFlaskLevel == CurrentHealthFlaskLevel) && (main.GlobalPITTimer % 32 == 0)))
                 {
                     RedrawHealthFlask(doBubbling, HealthBubbleCounter++); //false for now.
-                    if (HealthBubbleCounter > 6)
+                    if (HealthBubbleCounter > 11)
                     {
                         HealthBubbleCounter = 0;
                     }
                 }
-                else if (CurrentHealthFlaskLevel != 3)
+                else
                 {
-                    HealthBubbleCounter = 0;
+                    if (!(((CurrentHealthFlaskLevel >= 3) && (CurrentHealthFlaskLevel <= 9)) && (TargetHealthFlaskLevel == CurrentHealthFlaskLevel)))
+                    {
+                        HealthBubbleCounter = 0;
+                    } 
+                    if (main.GlobalPITTimer % 32 == 0)
+                    {
+                        RedrawHealthFlask(false,0);
+                    }
                 }
             }
 
@@ -124,13 +134,23 @@ namespace Underworld
             {
                 startOffset = 50;
             }
+            if ((doBubbling) && (TargetHealthFlaskLevel == CurrentHealthFlaskLevel) && ((CurrentHealthFlaskLevel >= 3) && (CurrentHealthFlaskLevel <= 9)))
+            {
+                instance.HealthBubbles.Texture = grFlasks.LoadImageAt(startOffset + 13 + bubblingOffset);
+            }
+            else
+            {
+                instance.HealthBubbles.Texture = null;
+            }
             for (int i = 0; i < 13; i++)
             {
                 if (i <= CurrentHealthFlaskLevel)
                 {
-                    if (doBubbling && (i == 3))
+                    if (doBubbling && ((i >= 3) || (i <= 9)) && (i == TargetHealthFlaskLevel))
                     {
-                        instance.HealthFlask[i].Texture = grFlasks.LoadImageAt(startOffset + i + 10 + bubblingOffset);
+                        instance.HealthFlask[i].Texture = grFlasks.LoadImageAt(startOffset + i);//null;//grFlasks.LoadImageAt(startOffset + i + 10 + bubblingOffset);
+                        //move the bubbles to the level.
+                        instance.HealthBubbles.Position = new Vector2(instance.HealthFlask[i].Position.X, instance.HealthFlask[i].Position.Y);
                     }
                     else
                     {
