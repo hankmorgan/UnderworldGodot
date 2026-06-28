@@ -1196,7 +1196,6 @@ namespace Underworld
             int offset = 0;
             for (int i = 0; i < textureMapSize; i++)//256
             {
-                //TODO: Only use this for texture lookups.
                 switch (_RES)
                 {
                     case GAME_UWDEMO:

@@ -1,0 +1,130 @@
+# Backlog
+- [Backlog](#backlog)
+- [Backlog](#backlog-1)
+- [Blocked. Things I've hit a roadblock on.](#blocked-things-ive-hit-a-roadblock-on)
+
+Here is the stuff I have identifed needs to be done
+
+
+# Backlog
+
+Lists of features/bugs/TODOs and fun stuff I care about to implement (no order of priority).
+
+- [ ] Pole reach and vanilla use distance -> requires code to assess if object is in range outside of ray-casting.
+- [ ]  Sleep cull objects - adjust height on tiles. Verify culling is working as expected.
+- [ ] Palette on death cutscene is breaking when exiting to main menu
+- [ ] checkforPoisonableWeapon() is unimplemented
+- [ ] clickable movement buttons in uw1 located above the compass.
+- [ ] mouse based movement using 3d window.
+- [ ] Spells can be cast without wait interval
+- [ ] Saving game while holding Alfred's letter/with items with non-object links
+- [ ] water sound. stop sounding after leaving water.
+- [ ] throwing objects at npc heads causes object to float/jitter (this happens with tables as well)
+- [ ] QBERT. Handle teleporting on top of moongates that are already there. -> Possibly placed object collision
+- [ ] QBERT. return to the pyramid via moongate and unable to return back through the same gate
+- [ ] Slide the UW2 panels rather than rotate them.
+- [ ] Cursor pivots are at centre of art rather than bottom left corner on map for quills
+- [ ] Picking up and other interaction mode changes. -> Solution is likely to track Action separate from interaction mode.
+- [ ] camera will eventually bob underneath the surface when swimming. (more a problem that the world underneath is rendered, rather than showing blackness.
+- [ ] some objects will appear underneath slopes (this might be a rendering diff vs vanilla)
+- [ ] drag&drop paperdoll switching of interaction modes.
+- [ ] uw1 vampire bat dropped a runestone!
+- [ ] ProcessMotionInputs Check that player is grounded when jumping
+- [ ] Input sanitation when in main._input
+- [ ] player moves when typing. (waiting for input bug?)
+- [ ] Handle effect 90-91 in PlaySoundEffectAtAvatar
+- [ ] allow conversation with hostile npcs eg rodric and Patterson
+- [ ] conversationtrade GetTrueItemValue()
+- [ ] trade dooffer (Trade items)
+- [ ] DamagePlayer what else is needed there.
+- [ ] Destroying open doors in object destruction
+- [ ] Object destruction handle culling of containers
+- [ ] Clear chain in object destruction
+- [ ] LookAt checking for traps.
+- [ ] LookAt lockpick Lookmajor4
+- [ ] DoPickupQTY what else needs to be copied to new object. In world and in inventory
+- [ ] Thief clear owner in container contents
+- [ ] CombatMissImpactSound, UW1 differences and missile sound.
+- [ ] SpawnImpactAnimo() in checkAttackHit(). Possibly tile impact?
+- [ ] Review colour mappings identified in mapcolour in modelLoader
+- [ ] Terraindatloader. Any other types of tile
+- [ ] Sound logic in Magic projectile spell
+- [ ] Apply the nomagicbit in CastSpell.
+- [ ] NPC Description. A worried spectre named warren
+- [ ] NPC Goto. Check if logic is UW2 only.
+- [ ] NPC Wander Check animation_idle. Seg007_193
+- [ ] alktoDyingNPC clears talkedto flag.
+- [ ] Double check attack probability
+- [ ] Handling of invisible bridges.
+- [ ] Check model. Ensure the colour is not palette cycled
+- [ ] UW2. Handle automap music theme/combat theme transitions
+- [ ] LookAT MapPiece, Handle Looking at item_id 0x138
+- [ ] process motion tile heights. Handle potentially unsafe UWTileMap.GetTileByPTR
+- [ ] GetTileState(). check if no changes are needed for UW1
+- [ ] DoCollisionD1F. Check if bouncing has differences for UW1.
+- [ ] Applyplayermotion. Player goal changes with clock
+- [ ] applyplayermotion. check if player is no longer lost
+- [ ] UpdateMotionStateAndSwimming. Check if UW1 slows down player when swimming
+- [ ] Applyprojectilemotion. check what the reasoning is behind projectile.next todo
+- [ ] Objecthitsfloor. Handle Halted Animo
+- [ ] Determine correct timings on UW1 endgame special effects. PlayerTimedLoop
+- [ ] Playertimedloop. Check how play_poison is applied
+- [ ] PlayerTimedLoop. Update Day Value.
+- [ ] PlayerTimedLoop. see what needs to be done with SCD.ARK
+- [ ] ManaRegenChange. Implement logic around tybals lair
+- [ ] PlacePlayerInTile lighting and Pressure Triggers.
+- [ ] SetSkillValue Update related values
+- [ ] UpdateAttributes. Update carry weight etc.
+- [ ] PlayPoison. Check values correct offsets are being used
+- [ ] SCD.RemoveObject. Check animationoverlay logic
+- [ ] Castleschedule - add check that npc location/destination is not in front of Player before transporting NPC
+- [ ] Teleportation. Depreciate JustTeleported and Coroutine.
+- [ ] TriggerObjectLink. RemoveTriggerChain
+- [ ] ConvoMessageDisplay. Click on convo option (attach delegate to text box and link up with the line?
+- [ ] ValidObjectForSlot. Needs to respect objects.dat
+- [ ] Automap note writing. Ensure nulls at end of string.
+- [ ] Panel switching. rune panel rotation in SetPanelMode (?)
+- [ ] Remove Triggers pointing at trap. Handle timers that need to be removed. (not sure if this happens anywhere?)
+- [ ] String loader. Check texture naming is right 
+- [ ] Teleportation. Handle the scintillus wand/review implementation
+- [ ] Teleportation. Cowardice check in the arena
+- [ ] LevelChangeEventsUW2 Refresh themes
+- [ ] Level Change Events. Close the damn doors
+- [ ] LevelChangeEvents. "Calm" Npcs on exit level.
+- [ ] UW2 Repacker figure out how to handle var10?
+- [ ] UW2 Repacker outofspace update write pointers
+- [ ] ChangeTile supports terrain changes?
+- [ ] Kill all Loths undead when changing level 
+- [ ] Check vanilla behaviour of scd.movenpc_inrange
+- [ ] integrate repacker with UW2 saving.
+- [ ] Look at SCD.ARK structure and updating
+- [ ] Healing fountain restores too much health in uw1
+- [ ] equipment damage in combat
+- [ ] Implement removeobject with culling check
+- [ ] Divide by Zero OPDIV when talked to by the first guard in Killorn
+- [ ] UI to quick launch save games at initial launch screen.
+- [ ] Pillar Size & Positioning
+- [ ] TMAP positioning closer to walls.
+- [ ] LB does not release you from jail if you had attacked him (is he getting stuck somewhere?)
+- [ ] Different mouse cursors for interaction modes
+- [ ] NPC poison damage
+- [ ] Study Food degradation mechanic (does this actually exist?)
+- [ ] In game console commands - spawnitems, teleport, quest flags, god/mage/onehitkill modes, stats edit, pause
+- [ ] UW2 Combat swing speed
+- [ ] Telefrag/crushing damage
+- [ ] PlacedObjectCollision/PositioningObjects in tiles (especially for trade)
+- [ ] waterfall tmap in uw1 swamp. is it showing on both sides?
+- [ ] Tybal's lair mana drain 
+- [ ] World number calcs in UW2 may be incorrect.
+- [ ] prison tower dungeon 15 switch on diagonal wall is missing. (offset from wall?, needs to be tested on all diagonal walls)
+- [ ] ordinal is cut off when player level >10 eg 11th is 11t (UW2 confirmed bug)
+- [ ] forcefields in prison tower do not extend to the ground
+- [ ] [uw2] troll in combat tries to throw a snowball (animation bug)
+- [ ] Fade to black on teleport
+- [ ] Items given to player that are not moved from trade area vanish
+- [ ] Mana recovers way too quickly.
+- [ ] Doors open to 90degree angles
+- [ ] Proper rendering of the "escher" room in Talorus. Ensure the walls of the slopes do not appear/are transparent.
+
+# Blocked. Things I've hit a roadblock on.
+- [ ] Figure out xfer transparencies (UGH) - I just need to underlying pixel index so I can map. easier said then done.
