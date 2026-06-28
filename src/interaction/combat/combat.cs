@@ -214,7 +214,17 @@ namespace Underworld
                 {
                     if (playerdat.play_poison < poisondamage)
                     {
-                        Debug.Print("apply poison to player");
+                        Debug.Print("apply poison to player, needs body part hit to apply");
+                        var rng = Rng.r.Next(6 + poisondamage);
+                        if (rng > critterObjectDat.toughness(playerdat.playerObject.item_id, BodyPartHit))
+                        {
+                            var testdam = 1;
+                            var test = damage.ScaleDamage(playerdat.playerObject.item_id, ref testdam, 0x10);
+                            if (test != 0)
+                            {
+                                playerdat.play_poison = (byte)poisondamage;
+                            }
+                        }
                     }
                 }
             }
@@ -685,7 +695,7 @@ namespace Underworld
         {
             get
             {
-                switch (WeaponSwingTypePlayer) 
+                switch (WeaponSwingTypePlayer)
                 {
                     case 1:
                         return 2; //bash

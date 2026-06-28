@@ -1,7 +1,7 @@
 # Backlog
 - [Backlog](#backlog)
 - [Backlog](#backlog-1)
-- [Blocked. Things I've hit a roadblock on.](#blocked-things-ive-hit-a-roadblock-on)
+- [Blocked](#blocked)
 
 Here is the stuff I have identifed needs to be done
 
@@ -25,9 +25,9 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Slide the UW2 panels rather than rotate them.
 - [ ] Cursor pivots are at centre of art rather than bottom left corner on map for quills
 - [ ] Picking up and other interaction mode changes. -> Solution is likely to track Action separate from interaction mode.
+- [ ] drag&drop objects on paperdoll.
 - [ ] camera will eventually bob underneath the surface when swimming. (more a problem that the world underneath is rendered, rather than showing blackness.
 - [ ] some objects will appear underneath slopes (this might be a rendering diff vs vanilla)
-- [ ] drag&drop paperdoll switching of interaction modes.
 - [ ] uw1 vampire bat dropped a runestone!
 - [ ] ProcessMotionInputs Check that player is grounded when jumping
 - [ ] Input sanitation when in main._input
@@ -53,10 +53,10 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] NPC Description. A worried spectre named warren
 - [ ] NPC Goto. Check if logic is UW2 only.
 - [ ] NPC Wander Check animation_idle. Seg007_193
-- [ ] alktoDyingNPC clears talkedto flag.
+- [ ] TalktoDyingNPC clears talkedto flag.
 - [ ] Double check attack probability
 - [ ] Handling of invisible bridges.
-- [ ] Check model. Ensure the colour is not palette cycled
+- [ ] Check some 3d model. Ensure the colour is not palette cycled
 - [ ] UW2. Handle automap music theme/combat theme transitions
 - [ ] LookAT MapPiece, Handle Looking at item_id 0x138
 - [ ] process motion tile heights. Handle potentially unsafe UWTileMap.GetTileByPTR
@@ -107,7 +107,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] TMAP positioning closer to walls.
 - [ ] LB does not release you from jail if you had attacked him (is he getting stuck somewhere?)
 - [ ] Different mouse cursors for interaction modes
-- [ ] NPC poison damage
 - [ ] Study Food degradation mechanic (does this actually exist?)
 - [ ] In game console commands - spawnitems, teleport, quest flags, god/mage/onehitkill modes, stats edit, pause
 - [ ] UW2 Combat swing speed
@@ -125,6 +124,8 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Mana recovers way too quickly.
 - [ ] Doors open to 90degree angles
 - [ ] Proper rendering of the "escher" room in Talorus. Ensure the walls of the slopes do not appear/are transparent.
+- [ ] Check that critterObjectDat.level is used properly
 
-# Blocked. Things I've hit a roadblock on.
+# Blocked
+Things I've hit a roadblock on.
 - [ ] Figure out xfer transparencies (UGH) - I just need to underlying pixel index so I can map. easier said then done.
