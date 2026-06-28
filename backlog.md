@@ -70,7 +70,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] PlayerTimedLoop. see what needs to be done with SCD.ARK
 - [ ] Tybal's lair mana drain including handling of mana regen, AI logic impact on tybal.
 - [ ] PlacePlayerInTile lighting and Pressure Triggers.
-- [ ] SetSkillValue Update related values
 - [ ] UpdateAttributes. Update carry weight etc.
 - [ ] SCD.RemoveObject. Check animationoverlay logic
 - [ ] Castleschedule - add check that npc location/destination is not in front of Player before transporting NPC

@@ -770,7 +770,7 @@ namespace Underworld
         public static void RecalculateHPManaMaxWeight(bool RestoreMana)
         {
             max_hp = 0x1E + ((STR * play_level) / 5);
-            max_mana = ((ManaSkill + 1) * INT) >> 3;
+            max_mana = ((ManaSkill + 1) * INT) >> 3; //TODO: This needs to account for tybals Orb.
             if (RestoreMana)
             {
                 play_mana = max_mana;
