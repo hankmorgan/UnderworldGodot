@@ -197,11 +197,15 @@ namespace Underworld
                             if ((playerUpdateCounter % 3) == 0)
                             {//every 60 seconds
                                 if (play_poison > 0)
-                                {
-                                    Debug.Print("TODO apply poison damage");
-                                    var dam = play_poison >> 1;
-                                    play_poison = (byte)Math.Max(play_poison - 1, 0);
-                                    play_hp = Math.Max(play_hp - dam, 0);
+                                {  
+                                    //apply poison damage and reduce by 1;
+                                    damage.DamageObject(
+                                        objToDamage: playerdat.playerObject, 
+                                        basedamage: play_poison--, 
+                                        damagetype: 0x10, 
+                                        objList: UWTileMap.current_tilemap.LevelObjects, 
+                                        WorldObject: true, 
+                                        damagesource: 0);
                                 }
 
                                 var manaskillcheck = (int)SkillCheck(ManaSkill, 10);

@@ -66,7 +66,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Applyprojectilemotion. check what the reasoning is behind projectile.next todo
 - [ ] Objecthitsfloor. Handle Halted Animo
 - [ ] Determine correct timings on UW1 endgame special effects. PlayerTimedLoop
-- [ ] Playertimedloop. Check how play_poison is applied
 - [ ] PlayerTimedLoop. Update Day Value.
 - [ ] PlayerTimedLoop. see what needs to be done with SCD.ARK
 - [ ] Tybal's lair mana drain including handling of mana regen, AI logic impact on tybal.
@@ -86,7 +85,7 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Teleportation. Handle the scintillus wand/review implementation
 - [ ] Teleportation. Cowardice check in the arena
 - [ ] LevelChangeEventsUW2 Refresh themes
-- [ ] Level Change Events. Close the damn doors special case.
+- [ ] LevelChange Events. Close the damn doors special case.
 - [ ] LevelChangeEvents. "Calm" Npcs on exit level.
 - [ ] UW2 Repacker figure out how to handle var10?
 - [ ] UW2 Repacker outofspace update write pointers
@@ -119,7 +118,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Items given to player that are not moved from trade area vanish
 - [ ] Doors open to 90degree angles
 - [ ] Proper rendering of the "escher" room in Talorus. Ensure the walls of the slopes do not appear/are transparent.
-- [ ] Check that critterObjectDat.level is used properly
 - [ ] Picking up a Wisp starts conversation in UW2? Need to confirm if this is vanilla behaviour.
 
 ## Blocked
