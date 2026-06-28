@@ -11,14 +11,14 @@ Here is the stuff I have identifed needs to be done
 Lists of features/bugs/TODOs and fun stuff I care about to implement (no order of priority).
 
 - [ ] Pole reach and vanilla use distance -> requires code to assess if object is in range outside of ray-casting.
-- [ ]  Sleep cull objects - adjust height on tiles. Verify culling is working as expected.
+- [ ] Sleep cull objects - adjust height on tiles. Verify culling is working as expected.
 - [ ] Palette on death cutscene is breaking when exiting to main menu
 - [ ] clickable movement buttons in uw1 located above the compass.
 - [ ] mouse based movement using 3d window.
 - [ ] Spells can be cast without wait interval
 - [ ] Saving game while holding Alfred's letter/with items with non-object links
 - [ ] water sound. stop sounding after leaving water.
-- [ ] throwing objects at npc heads causes object to float/jitter (this happens with tables as well)
+- [ ] throwing objects at npc heads causes object to float/jitter (this happens with tables as well, ideal test case is throw at table in empty room) issue can be replicated from a dos save game loaded in the port.
 - [ ] QBERT. Handle teleporting on top of moongates that are already there. -> Possibly placed object collision
 - [ ] QBERT. return to the pyramid via moongate and unable to return back through the same gate
 - [ ] Slide the UW2 panels rather than rotate them.
@@ -69,7 +69,7 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Playertimedloop. Check how play_poison is applied
 - [ ] PlayerTimedLoop. Update Day Value.
 - [ ] PlayerTimedLoop. see what needs to be done with SCD.ARK
-- [ ] Tybal's lair mana drain including handling on mana regen.
+- [ ] Tybal's lair mana drain including handling of mana regen, AI logic impact on tybal.
 - [ ] PlacePlayerInTile lighting and Pressure Triggers.
 - [ ] SetSkillValue Update related values
 - [ ] UpdateAttributes. Update carry weight etc.
@@ -86,7 +86,7 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Teleportation. Handle the scintillus wand/review implementation
 - [ ] Teleportation. Cowardice check in the arena
 - [ ] LevelChangeEventsUW2 Refresh themes
-- [ ] Level Change Events. Close the damn doors
+- [ ] Level Change Events. Close the damn doors special case.
 - [ ] LevelChangeEvents. "Calm" Npcs on exit level.
 - [ ] UW2 Repacker figure out how to handle var10?
 - [ ] UW2 Repacker outofspace update write pointers
@@ -105,7 +105,7 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] LB does not release you from jail if you had attacked him (is he getting stuck somewhere?)
 - [ ] Different mouse cursors for interaction modes
 - [ ] Study Food degradation mechanic (does this actually exist?)
-- [ ] In game console commands - spawnitems, teleport, quest flags, god/mage/onehitkill modes, stats edit, pause
+- [ ] In game console commands - spawnitems, teleport, quest flags, god/mage/onehitkill modes, stats edit, pause npcs/objects in motion.
 - [ ] UW2 Combat swing speed
 - [ ] Telefrag/crushing damage
 - [ ] PlacedObjectCollision/PositioningObjects in tiles (especially for trade)
@@ -121,6 +121,7 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Proper rendering of the "escher" room in Talorus. Ensure the walls of the slopes do not appear/are transparent.
 - [ ] Check that critterObjectDat.level is used properly
 - [ ] Picking up a Wisp starts conversation in UW2? Need to confirm if this is vanilla behaviour.
+- [ ] Bridges used to simulate lower simulations are appearing incorrectly as walkable briges on automap
 
 ## Blocked
 Things I've hit a roadblock on.

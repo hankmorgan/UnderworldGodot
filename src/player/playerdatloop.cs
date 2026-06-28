@@ -298,8 +298,6 @@ namespace Underworld
                     }
                 }
             }
-            //TODO: see about similar logic for UW1 tybals lair
-
             
             if (regeneration < 0)
             {//boost mana by a fixed amount, mana regen on a schedule.

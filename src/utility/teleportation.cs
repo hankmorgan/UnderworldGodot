@@ -15,12 +15,6 @@ namespace Underworld
         /// Function to call when teleporting.
         /// </summary>
         public delegate void TeleportCallBack();
-
-
-        /// <summary>
-        /// To prevent teleporting again when the teleport destination in inside a teleport trap
-        /// </summary>
-        public static bool JustTeleported;
         static int TeleportLevel = -1;//make these private.
         static int TeleportTileX = -1;
         static int TeleportTileY = -1;
@@ -148,14 +142,6 @@ namespace Underworld
             }
 
 
-            if ((TeleportTileX != -1) || (TeleportTileY != -1) || (TeleportLevel != -1))
-            {
-                JustTeleported = true;
-                _ = Coroutine.Run(
-                PauseTeleport(),
-                main.instance
-                );
-            }
             TeleportLevel = -1;
             TeleportTileX = -1;
             TeleportTileY = -1;
@@ -416,20 +402,6 @@ namespace Underworld
             TeleportTileY = tileY;
             return 2;
         }
-
-
-        /// <summary>
-        /// Puts a block on sucessive level transitions due to teleport placing player in a new move trigger
-        /// </summary>
-        /// <returns></returns>
-        public static IEnumerator PauseTeleport()
-        {
-            JustTeleported = true;
-            yield return new WaitForSeconds(1);
-            JustTeleported = false;
-            yield return 0;
-        }
-
 
         /// <summary>
         /// Moves the player to the position of the moonstone after teleportation using the Gate Travel Spell

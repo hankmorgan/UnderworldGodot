@@ -9,12 +9,6 @@ namespace Underworld
 
         public static int Activate(uwObject trapObj, uwObject[] objList)
         {
-            if (Teleportation.JustTeleported)
-            {
-                Teleportation.JustTeleported = false;
-                return 0;
-            }
-
             int NewHeadingHeightTeleportFlag = 0;
             if (_RES == GAME_UW2)
             {
