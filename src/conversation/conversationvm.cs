@@ -603,6 +603,10 @@ namespace Underworld
 
 
 			}
+			if (SpecialCaseDyingNPC)
+			{
+				talker.npc_talkedto = 0;
+			}
 			if (TemporaryTalker)
 			{
 				//a talking door or a wisp. remove the temporary NPC

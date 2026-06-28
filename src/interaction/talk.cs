@@ -5,7 +5,7 @@ namespace Underworld
     /// </summary>
     public class talk : UWClass
     {
-        public static bool Talk(uwObject ObjectUsed, bool WorldObject = true)
+        public static bool Talk(uwObject ObjectUsed, bool WorldObject = true, bool dyingNPC = false)
         {
             if (ObjectUsed != null)
             {

@@ -52,7 +52,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] NPC Description. A worried spectre named warren
 - [ ] NPC Goto. Check if logic is UW2 only.
 - [ ] NPC Wander Check animation_idle. Seg007_193
-- [ ] TalktoDyingNPC clears talkedto flag.
 - [ ] Double check attack probability
 - [ ] Handling of invisible bridges.
 - [ ] Check some 3d model. Ensure the colour is not palette cycled
@@ -123,6 +122,7 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Doors open to 90degree angles
 - [ ] Proper rendering of the "escher" room in Talorus. Ensure the walls of the slopes do not appear/are transparent.
 - [ ] Check that critterObjectDat.level is used properly
+- [ ] Picking up a Wisp starts conversation in UW2? Need to confirm if this is vanilla behaviour.
 
 ## Blocked
 Things I've hit a roadblock on.

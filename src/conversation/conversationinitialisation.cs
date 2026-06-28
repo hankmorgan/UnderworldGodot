@@ -8,9 +8,12 @@ namespace Underworld
 
         static Vector2 OriginalUW2ScrlEdgeLeft;
         static Vector2 OriginalUW2ScrlEdgeRight;
-        public static void StartConversation(uwObject talker)
+
+        static bool SpecialCaseDyingNPC = false;
+        public static void StartConversation(uwObject talker, bool dyingNPC = false)
         {
             currentTalker=talker;
+            SpecialCaseDyingNPC = dyingNPC;
             //talker.npc_whoami = 46; jerry the rat
             //Try and load the conversation from the ark files.
             if (!cnvArkLoader.Loaded)
