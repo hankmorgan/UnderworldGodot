@@ -1,19 +1,18 @@
-# Backlog
-- [Backlog](#backlog)
-- [Backlog](#backlog-1)
-- [Blocked](#blocked)
+# Backlog Work
+- [Backlog Work](#backlog-work)
+  - [Backlog](#backlog)
+  - [Blocked](#blocked)
 
 Here is the stuff I have identifed needs to be done
 
 
-# Backlog
+## Backlog
 
 Lists of features/bugs/TODOs and fun stuff I care about to implement (no order of priority).
 
 - [ ] Pole reach and vanilla use distance -> requires code to assess if object is in range outside of ray-casting.
 - [ ]  Sleep cull objects - adjust height on tiles. Verify culling is working as expected.
 - [ ] Palette on death cutscene is breaking when exiting to main menu
-- [ ] checkforPoisonableWeapon() is unimplemented
 - [ ] clickable movement buttons in uw1 located above the compass.
 - [ ] mouse based movement using 3d window.
 - [ ] Spells can be cast without wait interval
@@ -75,7 +74,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] PlacePlayerInTile lighting and Pressure Triggers.
 - [ ] SetSkillValue Update related values
 - [ ] UpdateAttributes. Update carry weight etc.
-- [ ] PlayPoison. Check values correct offsets are being used
 - [ ] SCD.RemoveObject. Check animationoverlay logic
 - [ ] Castleschedule - add check that npc location/destination is not in front of Player before transporting NPC
 - [ ] Teleportation. Depreciate JustTeleported and Coroutine.
@@ -126,6 +124,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Proper rendering of the "escher" room in Talorus. Ensure the walls of the slopes do not appear/are transparent.
 - [ ] Check that critterObjectDat.level is used properly
 
-# Blocked
+## Blocked
 Things I've hit a roadblock on.
 - [ ] Figure out xfer transparencies (UGH) - I just need to underlying pixel index so I can map. easier said then done.

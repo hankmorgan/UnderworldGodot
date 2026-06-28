@@ -321,7 +321,7 @@ namespace Underworld
                get
                {
                     switch (_RES)
-                    {//TODO double check this is right
+                    {
                          case GAME_UW2:
                               return (byte)((GetAt(0x61) >> 1) & 0xf);
                          default:
@@ -331,7 +331,7 @@ namespace Underworld
                set
                {
                     switch (_RES)
-                    {//TODO double check this is right
+                    {
                          case GAME_UW2:
                               {
                                    var tmp = (byte)(GetAt(0x61) & 0xE1);
