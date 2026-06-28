@@ -69,7 +69,7 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Playertimedloop. Check how play_poison is applied
 - [ ] PlayerTimedLoop. Update Day Value.
 - [ ] PlayerTimedLoop. see what needs to be done with SCD.ARK
-- [ ] ManaRegenChange. Implement logic around tybals lair
+- [ ] Tybal's lair mana drain including handling on mana regen.
 - [ ] PlacePlayerInTile lighting and Pressure Triggers.
 - [ ] SetSkillValue Update related values
 - [ ] UpdateAttributes. Update carry weight etc.
@@ -110,7 +110,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Telefrag/crushing damage
 - [ ] PlacedObjectCollision/PositioningObjects in tiles (especially for trade)
 - [ ] waterfall tmap in uw1 swamp. is it showing on both sides?
-- [ ] Tybal's lair mana drain 
 - [ ] World number calcs in UW2 may be incorrect.
 - [ ] prison tower dungeon 15 switch on diagonal wall is missing. (offset from wall?, needs to be tested on all diagonal walls)
 - [ ] ordinal is cut off when player level >10 eg 11th is 11t (UW2 confirmed bug)
@@ -118,7 +117,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] [uw2] troll in combat tries to throw a snowball (animation bug)
 - [ ] Fade to black on teleport
 - [ ] Items given to player that are not moved from trade area vanish
-- [ ] Mana recovers way too quickly.
 - [ ] Doors open to 90degree angles
 - [ ] Proper rendering of the "escher" room in Talorus. Ensure the walls of the slopes do not appear/are transparent.
 - [ ] Check that critterObjectDat.level is used properly

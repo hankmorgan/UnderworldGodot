@@ -139,12 +139,12 @@ namespace Underworld
                             if (ManaRegenEnchantment)
                             {
                                 //play_mana = Math.Min(play_mana + 1, max_mana);
-                                ManaRegenChange(1);
+                                ManaRegenChange(-1);
                             }
                             if (HealthRegenEnchantment)
                             {
                                 //play_hp = Math.Min(play_hp + 1, max_hp);
-                                HPRegenerationChange(1);
+                                HPRegenerationChange(-1);
                             }
 
                             if (playerdat.SwimCounter > 0x50)
@@ -208,7 +208,7 @@ namespace Underworld
                                 if (manaskillcheck > 0)
                                 {
                                     //play_mana = Math.Min(play_mana + manaskillcheck, max_mana);
-                                    ManaRegenChange(play_mana + manaskillcheck);
+                                    ManaRegenChange(-manaskillcheck);
                                 }
                             }//end every 60 seconds update
                             if ((playerUpdateCounter % 30) == 0)
@@ -300,13 +300,13 @@ namespace Underworld
             }
             //TODO: see about similar logic for UW1 tybals lair
 
-            //Apply mana boost
+            
             if (regeneration < 0)
-            {//boost mana by minus minus minor class. Not clear when this could happen...
+            {//boost mana by a fixed amount, mana regen on a schedule.
                 play_mana = Math.Min(play_mana - regeneration, max_mana);
             }
             else
-            {
+            {//Apply mana boost from a spell/
                 var increase = 1 + ((max_mana * (regeneration + Rng.r.Next(0, 4))) >> 4); //This formula may be wrong and is restoring too much mana.
                 play_mana = Math.Min(play_mana + increase, max_mana);
             }
