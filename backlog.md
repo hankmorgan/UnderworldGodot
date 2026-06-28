@@ -121,7 +121,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Proper rendering of the "escher" room in Talorus. Ensure the walls of the slopes do not appear/are transparent.
 - [ ] Check that critterObjectDat.level is used properly
 - [ ] Picking up a Wisp starts conversation in UW2? Need to confirm if this is vanilla behaviour.
-- [ ] Bridges used to simulate lower simulations are appearing incorrectly as walkable briges on automap
 
 ## Blocked
 Things I've hit a roadblock on.

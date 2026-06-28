@@ -447,7 +447,11 @@ namespace Underworld
                         {
                             if (bridge.invis == 0)
                             {
-                                var19AutoMapValueToSet |= (byte)(automaptileinfo.bridgedisplaytype << 4);
+                                var textureindex = (bridge.enchantment<<3) | (int)bridge.flags;
+                                if (textureindex<=2)
+                                {
+                                    var19AutoMapValueToSet |= (byte)(automaptileinfo.bridgedisplaytype << 4);
+                                }                                
                             }
                         }
                         else
