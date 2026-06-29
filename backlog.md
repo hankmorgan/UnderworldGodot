@@ -83,7 +83,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] LevelChangeEvents. "Calm" Npcs on exit level.
 - [ ] UW2 Repacker figure out how to handle var10?
 - [ ] UW2 Repacker outofspace update write pointers
-- [ ] ChangeTile supports terrain changes?
 - [ ] Kill all Loths undead when changing level 
 - [ ] Check vanilla behaviour of scd.movenpc_inrange
 - [ ] integrate repacker with UW2 saving.

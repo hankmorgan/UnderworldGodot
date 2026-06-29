@@ -563,12 +563,32 @@ namespace Underworld
                         {
                             tileToChange.floorHeight = 0xF;
                         }
-
-                        if ((newFloorTexture < 0xF) && (_RES == GAME_UW2) || ((newFloorTexture < 0xB) && (_RES != GAME_UW2)))
+                        bool NewTileIsSolid = false;
+                        if ((newFloorTexture < 0xF) && (_RES == GAME_UW2))
                         {
                             tileToChange.floorTexture = (short)newFloorTexture;
-                            //TODO some terrain changes happen here too.
+                            var terrain67 = TerrainDatLoader.GetTerrainDataBit67_unshifted(tileToChange) >> 6;
+                            if (terrain67 == 2)
+                            {
+                                NewTileIsSolid = (Rng.r.Next(0x7FFF) & 0x1) == 1;
+                            }
+                            else
+                            {
+                                if (terrain67 == 1)
+                                {
+                                    NewTileIsSolid = true; //this only occurs in uw2. Likely removes the object when in a water tile or a lava tile (50:50)
+                                }
+                            }
                         }
+                        if ((newFloorTexture < 0xB) && (_RES != GAME_UW2))
+                        {
+                            tileToChange.floorTexture = (short)newFloorTexture;
+                        }
+                        // if ((newFloorTexture < 0xF) && (_RES == GAME_UW2) || ((newFloorTexture < 0xB) && (_RES != GAME_UW2)))
+                        // {
+                        //     tileToChange.floorTexture = (short)newFloorTexture;
+                        //     //TODO some terrain changes happen here too.
+                        // }
 
                         //wall textures
                         if (newWallTexture < 0x3F)
@@ -577,7 +597,7 @@ namespace Underworld
                             //Update NSEW of neighbours
                         }
 
-                        bool NewTileIsSolid = false;
+                        
                         if (newType < 0xA)
                         {
                             tileToChange.tileType = (short)newType;
