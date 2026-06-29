@@ -130,7 +130,7 @@ namespace Underworld
             if ((playerdat.ObjectInHand != -1)
             || (useon.CurrentItemBeingUsed != null)
             || (SpellCasting.currentSpell != null)
-            || (uimanager.blockmouseinput))
+            || (uimanager.blockinput))
             {
                 return;
             }

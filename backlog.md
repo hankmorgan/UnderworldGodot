@@ -30,7 +30,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] uw1 vampire bat dropped a runestone!
 - [ ] ProcessMotionInputs Check that player is grounded when jumping
 - [ ] Input sanitation when in main._input
-- [ ] player moves (also looks up and down) when typing. (waiting for input bug?)
 - [ ] Handle effect 90-91 in PlaySoundEffectAtAvatar
 - [ ] allow conversation with hostile npcs eg rodric and Patterson
 - [ ] conversationtrade GetTrueItemValue()

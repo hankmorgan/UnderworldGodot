@@ -315,7 +315,7 @@ namespace Underworld
                     return;
                 }
 
-                if (!uimanager.blockmouseinput)
+                if (!uimanager.blockinput)
                 {
                     if (playerdat.ObjectInHand != -1)
                     {

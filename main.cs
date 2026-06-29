@@ -241,7 +241,7 @@ public partial class main : Node3D
 
 		testclock += delta;
 
-		if ((uimanager.InGame) && (testclock >= 0.097659))
+		if ((uimanager.InGame) && (testclock >= 0.097659) && (!uimanager.blockinput))
 		{
 			testclock = 0;
 			byte AnimationFrameDeltaIncrement = 0;
@@ -263,17 +263,13 @@ public partial class main : Node3D
 									  //Setting value too low prevents some motion in certain directions from working.
 			}
 
-			if (ClockIncrement != 0)
+			if ((ClockIncrement != 0) && (!uimanager.blockinput))
 			{
-				ProcessMotionInputs();
+				ProcessMotionInputs();			
 				if (AnimationFrameDeltaIncrement != 0)
 				{
-					//if animations enabled
-					if ((uimanager.InGame) && (!uimanager.blockmouseinput))
-					{
-						AnimationOverlay.UpdateAnimationOverlays();
-						timers.RunTimerTriggers(AnimationFrameDeltaIncrement);
-					}
+					AnimationOverlay.UpdateAnimationOverlays();
+					timers.RunTimerTriggers(AnimationFrameDeltaIncrement);
 				}
 				playerdat.ClockValue += (int)ClockIncrement;
 				LastGlobalPitTimer = GlobalPITTimer;
@@ -292,12 +288,10 @@ public partial class main : Node3D
 					AnimationFrameDelta: AnimationFrameDeltaIncrement,
 					EasyMove: false);
 
-
-
 			}
 		}
 
-		if (uimanager.InGame)
+		if ((uimanager.InGame) && (!uimanager.blockinput))
 		{
 			combat.CombatInputHandler(delta);//may need to be moved outside this block
 			playerdat.PlayerTimedLoop(delta);
@@ -307,7 +301,6 @@ public partial class main : Node3D
 		//Other updates
 		if (uimanager.InGame)
 		{
-
 			if (EnablePositionDebug)
 			{
 				var fps = Engine.GetFramesPerSecond();
@@ -672,7 +665,7 @@ public partial class main : Node3D
 					MessageDisplay.WaitingForMore = false;
 					return; //don't process any more clicks here.
 				}
-				if (!uimanager.blockmouseinput)
+				if (!uimanager.blockinput)
 				{
 					if (uimanager.IsMouseInViewPort())
 					{
@@ -684,7 +677,7 @@ public partial class main : Node3D
 		}
 
 
-		if ((!uimanager.blockmouseinput) && (uimanager.InGame))
+		if ((!uimanager.blockinput) && (uimanager.InGame))
 		{
 			if (@event is InputEventKey keyinput)
 			{

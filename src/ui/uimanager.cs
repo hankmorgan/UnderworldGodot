@@ -66,7 +66,7 @@ namespace Underworld
 
 		
 
-	public static bool blockmouseinput
+	public static bool blockinput
 	{
 		get
 		{

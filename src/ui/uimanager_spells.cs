@@ -77,7 +77,7 @@ namespace Underworld
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed)
             {
-                if (uimanager.blockmouseinput)
+                if (uimanager.blockinput)
                 {
                     return;
                 }
