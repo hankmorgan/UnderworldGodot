@@ -124,10 +124,15 @@ namespace Underworld
         {
             switch (obj.minorclass)
             {
-                case 0: //keys up to 0xE
+                case 0: 
                     {
-                        if (obj.classindex <= 0xE)
-                        {//TODO LOCKPICK is in the middle of all these
+                        //keys 2 up to 0xE, and also 0 in UW1
+                        if (
+                        ((_RES != GAME_UW2) && (obj.classindex == 0))
+                        ||
+                        ((obj.classindex >= 2) && (obj.classindex <= 0xE))
+                        )
+                        {
                             return doorkey.LookAt(obj, WorldObject);
                         }
                         break;
@@ -350,14 +355,14 @@ namespace Underworld
             {//a container
                 //Try and check if the container directly contains a spell.
                 var linkedspell = objectsearch.FindMatchInObjectChain(
-                    ListHeadIndex: obj.link, 
-                    majorclass: 4, minorclass: 2, classindex: 0, 
-                    objList: objList, 
-                    SkipNext: false, 
-                    SkipLinks: true );
+                    ListHeadIndex: obj.link,
+                    majorclass: 4, minorclass: 2, classindex: 0,
+                    objList: objList,
+                    SkipNext: false,
+                    SkipLinks: true);
 
                 if (linkedspell != null)
-                {                   
+                {
                     if (linkedspell.item_id == 288)//container is linked directly to a spell.
                     {
                         BuildEnchantmentStrings(obj, objList, lorecheckresult, ref enchantmenttext, ref magical, ref cursed);

@@ -39,7 +39,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Object destruction handle culling of containers
 - [ ] Clear chain in object destruction
 - [ ] LookAt checking for traps.
-- [ ] LookAt lockpick Lookmajor4
 - [ ] CombatMissImpactSound, UW1 differences and missile sound.
 - [ ] SpawnImpactAnimo() in checkAttackHit(). Possibly tile impact?
 - [ ] Review colour mappings identified in mapcolour in modelLoader
