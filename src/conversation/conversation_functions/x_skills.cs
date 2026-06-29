@@ -37,7 +37,7 @@ namespace Underworld
                     if (playerdat.SkillPoints > 0)
                     {
                         var result = playerdat.IncreaseSkillGroup(SkillNo);
-                        playerdat.UpdateAttributes(true);
+                        playerdat.UpdateHPManaMax(true);
                         if (result==1)
                         {
                             playerdat.SkillPoints--;
@@ -56,7 +56,7 @@ namespace Underworld
                         if ((NewValue>=0) && (NewValue<=30))
                         {
                             playerdat.SetSkillValue(SkillNo, NewValue);
-                            playerdat.UpdateAttributes(true);
+                            playerdat.UpdateHPManaMax(true);
                         }
                     }
                     else
@@ -64,7 +64,7 @@ namespace Underworld
                         //General skill increase function based on governing stats. 
                         //Uses UW1 implementation from shrines
                         playerdat.IncreaseSkill(SkillNo);
-                        playerdat.UpdateAttributes(true);
+                        playerdat.UpdateHPManaMax(true);
                     }
                     result_register = playerdat.GetSkillValue(SkillNo);
                 }

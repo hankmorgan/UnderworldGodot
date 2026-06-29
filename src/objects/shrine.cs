@@ -169,7 +169,7 @@ namespace Underworld
                     if (playerdat.SkillPoints > 0)
                     {                        
                         AdvanceGreatly(mantra);
-                        playerdat.UpdateAttributes(true);
+                        playerdat.UpdateHPManaMax(true);
                     }
                     else
                     {
@@ -269,7 +269,7 @@ namespace Underworld
                             }
                             playerdat.SkillPoints--; //decrement points
                             uimanager.AddToMessageScroll(msg);
-                            playerdat.UpdateAttributes(true);
+                            playerdat.UpdateHPManaMax(true);
                         }
                         else
                         {

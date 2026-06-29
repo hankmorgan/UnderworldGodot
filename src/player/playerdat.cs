@@ -695,7 +695,7 @@ namespace Underworld
                         }
                     }
 
-                    UpdateAttributes(false);
+                    UpdateHPManaMax(false);
                     uimanager.RefreshStatsDisplay();
                     //Check if player can level up
                     // if (play_level < 0x10)

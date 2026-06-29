@@ -195,15 +195,18 @@ namespace Underworld
             SetAt(0x22 + skillNo, (byte)value);
         }
 
-        public static void UpdateAttributes(bool IncreasePlayMana = true)
+        /// <summary>
+        /// Refreshes the max hp and mana values when either mana or play_level has changed
+        /// </summary>
+        /// <param name="IncreasePlayMana"></param>
+        public static void UpdateHPManaMax(bool IncreasePlayMana = true)
         {
             max_mana = ((ManaSkill + 1) * INT) >> 3;
             max_hp = (30 + (STR * play_level) / 5);
             if (IncreasePlayMana)
             {
                 play_mana = max_mana;
-            }
-            //TODO carry weight and others      
+            }     
         }
 
         public static void SetLevelLore(int levelno, int newLore)
