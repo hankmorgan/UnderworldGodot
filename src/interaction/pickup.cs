@@ -285,7 +285,7 @@ namespace Underworld
                 if (result > 0)
                 {
                     if (obj.ObjectQuantity <= result)
-                    {//at least all of the stack is seleced
+                    {//at least all of the stack is selected
                         DoPickup(index, objList, obj);
                     }
                     else
@@ -293,11 +293,13 @@ namespace Underworld
                         //if <quantity selected, split objects, pickup object of that quantity.
                         var newObjIndex = ObjectCreator.SpawnObjectInHand(obj.item_id); //spawning in hand is very handy here
                         var newObj = UWTileMap.current_tilemap.LevelObjects[newObjIndex];
-                        newObj.link = (short)result;
-                        newObj.quality = obj.quality;
-                        newObj.owner = obj.owner;
-                        //TODO. see if other object properties need copying.                    
-                        obj.link = (short)(obj.link - result);//reduce the other object.
+                        //copy the bytes
+                        for (int i =0; i<8; i++)
+                        {
+                            newObj.DataBuffer[newObj.PTR+i] = obj.DataBuffer[newObj.PTR+i];
+                        }
+                        newObj.link = (short)result;//set the qty of the new object. assumes any isquant flags are set in the copybuffer operations.                  
+                        obj.link = (short)(obj.link - result);//reduce the qty of the other object.
                     }
                     yield return true;
                 }

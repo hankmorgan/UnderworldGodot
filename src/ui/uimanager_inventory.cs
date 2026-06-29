@@ -332,9 +332,9 @@ namespace Underworld
                                     switch (slotname)
                                     {
                                         case "RightShoulder":
-                                        case "LeftShoulder": 
-                                        case "RightHand": 
-                                        case "LeftHand": 
+                                        case "LeftShoulder":
+                                        case "RightHand":
+                                        case "LeftHand":
                                             if (objAtSlot.index != OpenedContainerIndex)
                                             {
                                                 if ((OpenedContainerIndex == -1))
@@ -344,7 +344,7 @@ namespace Underworld
                                                 else
                                                 {
                                                     //check if the opened container is not in the object chain of the object list
-                                                    var match = objectsearch.FindMatchInObjectChain(ListHeadIndex: objAtSlot.index, itemIndex: OpenedContainerIndex, objList: playerdat.InventoryObjects, SkipNext :true);
+                                                    var match = objectsearch.FindMatchInObjectChain(ListHeadIndex: objAtSlot.index, itemIndex: OpenedContainerIndex, objList: playerdat.InventoryObjects, SkipNext: true);
                                                     if (match == null)
                                                     {
                                                         PickupObjectFromSlot(objAtSlot);
@@ -757,10 +757,11 @@ namespace Underworld
                         //if <quantity selected, split objects, pickup object of that quantity.
                         var newObjIndex = ObjectCreator.SpawnObjectInHand(itemid: objAtSlot.item_id, weightmultiplier: NoOfItemsPickedUp); //spawning in hand is very handy here
                         var newObj = UWTileMap.current_tilemap.LevelObjects[newObjIndex];
+                        for (int i = 0; i < 8; i++)
+                        {
+                            newObj.DataBuffer[newObj.PTR + i] = objAtSlot.DataBuffer[objAtSlot.PTR + i];
+                        }
                         newObj.link = (short)NoOfItemsPickedUp;
-                        newObj.quality = objAtSlot.quality;
-                        newObj.owner = objAtSlot.owner;
-                        //TODO. see if other object properties need copying.                    
                         objAtSlot.link = (short)(objAtSlot.link - NoOfItemsPickedUp);//reduce the other object.
                     }
                 }
@@ -784,12 +785,12 @@ namespace Underworld
             //test game specific special objects
             //Ensure that "storage" slots are always valud
             switch (slot)
-            {                
+            {
                 case 5: //shoulders and hands
                 case 6:
                 case 7:
                 case 8:
-                case >=11: //backpacks
+                case >= 11: //backpacks
                     return true;
             }
             switch (UWClass._RES)

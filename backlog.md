@@ -30,7 +30,7 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] uw1 vampire bat dropped a runestone!
 - [ ] ProcessMotionInputs Check that player is grounded when jumping
 - [ ] Input sanitation when in main._input
-- [ ] player moves when typing. (waiting for input bug?)
+- [ ] player moves (also looks up and down) when typing. (waiting for input bug?)
 - [ ] Handle effect 90-91 in PlaySoundEffectAtAvatar
 - [ ] allow conversation with hostile npcs eg rodric and Patterson
 - [ ] conversationtrade GetTrueItemValue()
@@ -41,7 +41,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Clear chain in object destruction
 - [ ] LookAt checking for traps.
 - [ ] LookAt lockpick Lookmajor4
-- [ ] DoPickupQTY what else needs to be copied to new object. In world and in inventory
 - [ ] CombatMissImpactSound, UW1 differences and missile sound.
 - [ ] SpawnImpactAnimo() in checkAttackHit(). Possibly tile impact?
 - [ ] Review colour mappings identified in mapcolour in modelLoader
@@ -117,6 +116,7 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Doors open to 90degree angles
 - [ ] Proper rendering of the "escher" room in Talorus. Ensure the walls of the slopes do not appear/are transparent.
 - [ ] Picking up a Wisp starts conversation in UW2? Need to confirm if this is vanilla behaviour.
+- [ ] Typed input is fiddly when using backspace
 
 ## Blocked
 Things I've hit a roadblock on.
