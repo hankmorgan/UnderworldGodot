@@ -42,7 +42,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] LookAt checking for traps.
 - [ ] LookAt lockpick Lookmajor4
 - [ ] DoPickupQTY what else needs to be copied to new object. In world and in inventory
-- [ ] Thief clear owner in container contents
 - [ ] CombatMissImpactSound, UW1 differences and missile sound.
 - [ ] SpawnImpactAnimo() in checkAttackHit(). Possibly tile impact?
 - [ ] Review colour mappings identified in mapcolour in modelLoader
