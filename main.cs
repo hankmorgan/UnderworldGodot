@@ -26,7 +26,7 @@ public partial class main : Node3D
 	public static Node3D cameraRollGimbal_world; // up/down
 	public static Node3D cameraYawGimbal_world; // yaw
 
-	
+
 	[Export] public Camera3D cam_sprites;
 	[Export] public Node3D GimbalYaw_sprites;
 	[Export] public Node3D GimbalRoll_sprites;
@@ -207,6 +207,19 @@ public partial class main : Node3D
 	{
 		if ((uimanager.InGame) || (uimanager.AtMainMenu) || (uimanager.CurrentGameMode == uimanager.GameModes.CUTSCENE))
 		{
+
+			var mat = (ShaderMaterial)uimanager.instance.combinedview.Material;
+			mat.SetShaderParameter("viewport_1", (Texture)uimanager.instance.uwsubviewport_world.GetTexture());
+			mat.SetShaderParameter("viewport_2", (Texture)uimanager.instance.uwsubviewport_sprites.GetTexture());
+			// RenderingServer.GlobalShaderParameterSet(
+			// 					name: "viewport_1",
+			// 					value: (Texture)uimanager.instance.uwsubviewport_world.GetTexture());
+			// RenderingServer.GlobalShaderParameterSet(
+			// 					name: "viewport_2",
+			// 					value: (Texture)uimanager.instance.uwsubviewport_sprites.GetTexture());
+
+
+
 			PitTimer += delta;
 			cycletime += delta;
 			if (cycletime > 0.2)
@@ -221,10 +234,10 @@ public partial class main : Node3D
 				PitTimer = 0;
 				// if ((GlobalPITTimer % 32) == 0)
 				// {
-					if (uimanager.InGame)
-					{
-						uimanager.AnimateFlasks();	
-					}					
+				if (uimanager.InGame)
+				{
+					uimanager.AnimateFlasks();
+				}
 				//}
 			}
 		}
@@ -281,7 +294,7 @@ public partial class main : Node3D
 
 			if ((ClockIncrement != 0) && (!uimanager.blockinput))
 			{
-				ProcessMotionInputs();			
+				ProcessMotionInputs();
 				if (AnimationFrameDeltaIncrement != 0)
 				{
 					AnimationOverlay.UpdateAnimationOverlays();
@@ -1003,12 +1016,12 @@ public partial class main : Node3D
 							MessageDisplay.YesNoOption = "No";
 							break;
 						case Key.Y:
-							uimanager.instance.TypedInput.Text = "Yes"; 
+							uimanager.instance.TypedInput.Text = "Yes";
 							MessageDisplay.YesNoOption = "Yes";
 							break;
 						default:
-							uimanager.instance.TypedInput.Text = "No"; 
-							MessageDisplay.YesNoOption = "No";							
+							uimanager.instance.TypedInput.Text = "No";
+							MessageDisplay.YesNoOption = "No";
 							break;
 					}
 					if (stop)

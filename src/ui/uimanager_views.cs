@@ -13,6 +13,11 @@ namespace Underworld
         [Export] public TextureRect uwviewport;
         [Export] public SubViewport uwsubviewport;
 
+        [Export] public SubViewport uwsubviewport_world;
+        [Export] public SubViewport uwsubviewport_sprites;
+
+        [Export] public TextureRect combinedview;
+
         [Export] public mouseCursor mousecursor;
         [Export] public CanvasLayer uw1UI;
         [Export] public CanvasLayer uw2UI;

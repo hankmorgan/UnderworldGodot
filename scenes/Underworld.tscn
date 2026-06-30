@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://xjvqmrbs28xs"]
+[gd_scene load_steps=30 format=3 uid="uid://xjvqmrbs28xs"]
 
 [ext_resource type="Script" path="res://src/ui/uimanager.cs" id="1_lw0yg"]
 [ext_resource type="FontFile" uid="uid://pdy3t627nfxw" path="res://resources/fonts/FONT5X6I.ttf" id="3_safdl"]
@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://plikcry1ow6q" path="res://resources/placeholder_art/textbox_fill.jpg" id="7_qiq8a"]
 [ext_resource type="Texture2D" uid="uid://ug231pvqaq1v" path="res://resources/placeholder_art/panels/panelsBlack.png" id="8_mis7n"]
 [ext_resource type="Texture2D" uid="uid://cf536ckyprfbf" path="res://resources/placeholder_art/uw1placeholdermain.png" id="9_emry3"]
+[ext_resource type="Shader" path="res://resources/shaders/viewport_combination.gdshader" id="13_rsqj8"]
 [ext_resource type="Texture2D" uid="uid://b1y5rs02fgv6d" path="res://resources/cross.png" id="18_tfr7p"]
 [ext_resource type="Texture2D" uid="uid://b4hn75lfpnecd" path="res://resources/placeholder_art/grave.png" id="20_n8sfi"]
 [ext_resource type="Texture2D" uid="uid://b5mwiifn8jtb6" path="res://resources/placeholder_art/uw2placeholdermain.png" id="21_3ww2u"]
@@ -29,12 +30,18 @@ render_priority = 0
 shader = ExtResource("6_x6exc")
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_j0mn4"]
-viewport_path = NodePath("SubViewport")
+viewport_path = NodePath("SubViewportWorld")
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_wyrrx"]
-viewport_path = NodePath("SubViewport2")
+viewport_path = NodePath("SubViewportSprites")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_j67en"]
+shader = ExtResource("13_rsqj8")
 
 [sub_resource type="Theme" id="Theme_i11v8"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_pkxpy"]
+shader = ExtResource("13_rsqj8")
 
 [node name="Underworld" type="Node3D"]
 
@@ -46,35 +53,35 @@ script = ExtResource("N_sfx_stream")
 
 [node name="main" type="Node3D" parent="." node_paths=PackedStringArray("cam_world", "GimbalYaw_world", "GimbalRoll_world", "cam_sprites", "GimbalYaw_sprites", "GimbalRoll_sprites", "DigitalAudioPlayer", "lblPositionDebug", "secondarycameras")]
 script = ExtResource("6_3y8oy")
-cam_world = NodePath("../SubViewport/GimbalYaw/GimbalRoll/GimbalPitchCamera_world")
-GimbalYaw_world = NodePath("../SubViewport/GimbalYaw")
-GimbalRoll_world = NodePath("../SubViewport/GimbalYaw/GimbalRoll")
-cam_sprites = NodePath("../SubViewport2/GimbalYaw/GimbalRoll/GimbalPitchCamera_sprites")
-GimbalYaw_sprites = NodePath("../SubViewport2/GimbalYaw")
-GimbalRoll_sprites = NodePath("../SubViewport2/GimbalYaw/GimbalRoll")
+cam_world = NodePath("../SubViewportWorld/GimbalYaw/GimbalRoll/GimbalPitchCamera_world")
+GimbalYaw_world = NodePath("../SubViewportWorld/GimbalYaw")
+GimbalRoll_world = NodePath("../SubViewportWorld/GimbalYaw/GimbalRoll")
+cam_sprites = NodePath("../SubViewportSprites/GimbalYaw/GimbalRoll/GimbalPitchCamera_sprites")
+GimbalYaw_sprites = NodePath("../SubViewportSprites/GimbalYaw")
+GimbalRoll_sprites = NodePath("../SubViewportSprites/GimbalYaw/GimbalRoll")
 DigitalAudioPlayer = NodePath("../UI/DigitalAudioPlayer")
 lblPositionDebug = NodePath("../UI/Common/PositionLabel")
-secondarycameras = NodePath("../SubViewport")
+secondarycameras = NodePath("../SubViewportWorld")
 
-[node name="SubViewport2" type="SubViewport" parent="."]
+[node name="SubViewportSprites" type="SubViewport" parent="."]
 
-[node name="GimbalYaw" type="Node3D" parent="SubViewport2"]
+[node name="GimbalYaw" type="Node3D" parent="SubViewportSprites"]
 
-[node name="GimbalRoll" type="Node3D" parent="SubViewport2/GimbalYaw"]
+[node name="GimbalRoll" type="Node3D" parent="SubViewportSprites/GimbalYaw"]
 
-[node name="GimbalPitchCamera_sprites" type="Camera3D" parent="SubViewport2/GimbalYaw/GimbalRoll"]
+[node name="GimbalPitchCamera_sprites" type="Camera3D" parent="SubViewportSprites/GimbalYaw/GimbalRoll"]
 cull_mask = 1048548
 current = true
 
-[node name="SubViewport" type="SubViewport" parent="."]
+[node name="SubViewportWorld" type="SubViewport" parent="."]
 handle_input_locally = false
 render_target_update_mode = 4
 
-[node name="GimbalYaw" type="Node3D" parent="SubViewport"]
+[node name="GimbalYaw" type="Node3D" parent="SubViewportWorld"]
 
-[node name="GimbalRoll" type="Node3D" parent="SubViewport/GimbalYaw"]
+[node name="GimbalRoll" type="Node3D" parent="SubViewportWorld/GimbalYaw"]
 
-[node name="GimbalPitchCamera_world" type="Camera3D" parent="SubViewport/GimbalYaw/GimbalRoll"]
+[node name="GimbalPitchCamera_world" type="Camera3D" parent="SubViewportWorld/GimbalYaw/GimbalRoll"]
 cull_mask = 1048570
 current = true
 
@@ -1349,19 +1356,27 @@ offset_bottom = 644.0
 
 [node name="Common" type="CanvasLayer" parent="UI"]
 
-[node name="OutputTexture1" type="TextureRect" parent="UI/Common"]
+[node name="OutputTextureWorld" type="TextureRect" parent="UI/Common"]
 offset_left = 200.0
 offset_top = 72.0
 offset_right = 900.0
 offset_bottom = 584.0
 texture = SubResource("ViewportTexture_j0mn4")
 
-[node name="OutputTexture2" type="TextureRect" parent="UI/Common"]
-offset_left = 13.0
-offset_top = 468.0
-offset_right = 333.0
-offset_bottom = 788.0
+[node name="OutputTextureSprites" type="TextureRect" parent="UI/Common"]
+offset_left = 5.0
+offset_top = 6.0
+offset_right = 517.0
+offset_bottom = 518.0
 texture = SubResource("ViewportTexture_wyrrx")
+
+[node name="OutputTextureCombined" type="TextureRect" parent="UI/Common"]
+material = SubResource("ShaderMaterial_j67en")
+offset_left = 362.0
+offset_top = 407.0
+offset_right = 762.0
+offset_bottom = 807.0
+texture = ExtResource("18_tfr7p")
 
 [node name="PaperDoll" type="Panel" parent="UI/Common"]
 self_modulate = Color(1, 1, 1, 0)
@@ -2953,7 +2968,8 @@ offset_bottom = 5.0
 mouse_filter = 2
 texture = ExtResource("18_tfr7p")
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("PanelChargen", "ChargenBG", "ChargenQuestion", "ChargenSkills", "ChargenSkills_values", "ChargenStats", "ChargenStats_values", "ChargenGender", "ChargenClass", "ChargenName", "ChargenNameBG", "ChargenNameInput", "ChargenNameQuestion", "ChargenBody", "CompassBgUW1", "CompassBgUW2", "CompassPointsUW1", "CompassPointsUW2", "CompassPanelUW2", "ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLabelFrameUW1", "NPCNameLabelFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "CutsFull", "CutsSmallUW1", "CutsSmallUW2", "Cuts3DWinUW1", "Cuts3DWinUW2", "CutsSubtitle", "DragonPanel", "DragonHeads", "DragonTails", "DragonTorsos", "PanelEndGame", "EndGameBackground", "EndGameStats", "Eyes", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "HealthBubbles", "ManaBubbles", "InteractionButtonsUW1", "InteractionButtonsUW2", "PanelMainMenu", "MainMenuBG", "MainMenuButtons", "LoadingLabel", "SaveGamesNames", "AutomapPanel", "AutomapBG", "AutomapImage", "NotesPanel", "AutomapNumberLabel", "AutomapWorldGem", "messageScrollUW1", "messageScrollUW2", "scrollEdgeUW1Left", "scrollEdgeUW1Right", "scrollEdgeUW2Left", "scrollEdgeUW2Right", "ConvoscrollEdgeUW1Left", "ConvoscrollEdgeUW1Right", "ConvoscrollEdgeUW2Left", "ConvoscrollEdgeUW2Right", "TypedInput", "GameOptionButtonsUW1", "GameOptionButtonsUW2", "GameOptionsBackgroundUW1", "GameOptionsBackgroundUW2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Chains", "BackpackBG", "WeightCapacity", "RuneTiles", "SelectedRunes", "ActiveSpellIcons", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSelectedUW1", "NPCTradeSelectedUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "PlayerTradeSelectedUW2", "NPCTradeSelectedUW2", "cam", "uwviewport", "uwsubviewport", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "weaponanimuw1", "weaponanimuw2", "placeholderuw1", "placeholderuw2", "PowerGemUW1", "PowerGemUW2")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("PanelChargen", "ChargenBG", "ChargenQuestion", "ChargenSkills", "ChargenSkills_values", "ChargenStats", "ChargenStats_values", "ChargenGender", "ChargenClass", "ChargenName", "ChargenNameBG", "ChargenNameInput", "ChargenNameQuestion", "ChargenBody", "CompassBgUW1", "CompassBgUW2", "CompassPointsUW1", "CompassPointsUW2", "CompassPanelUW2", "ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLabelFrameUW1", "NPCNameLabelFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "CutsFull", "CutsSmallUW1", "CutsSmallUW2", "Cuts3DWinUW1", "Cuts3DWinUW2", "CutsSubtitle", "DragonPanel", "DragonHeads", "DragonTails", "DragonTorsos", "PanelEndGame", "EndGameBackground", "EndGameStats", "Eyes", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "HealthBubbles", "ManaBubbles", "InteractionButtonsUW1", "InteractionButtonsUW2", "PanelMainMenu", "MainMenuBG", "MainMenuButtons", "LoadingLabel", "SaveGamesNames", "AutomapPanel", "AutomapBG", "AutomapImage", "NotesPanel", "AutomapNumberLabel", "AutomapWorldGem", "messageScrollUW1", "messageScrollUW2", "scrollEdgeUW1Left", "scrollEdgeUW1Right", "scrollEdgeUW2Left", "scrollEdgeUW2Right", "ConvoscrollEdgeUW1Left", "ConvoscrollEdgeUW1Right", "ConvoscrollEdgeUW2Left", "ConvoscrollEdgeUW2Right", "TypedInput", "GameOptionButtonsUW1", "GameOptionButtonsUW2", "GameOptionsBackgroundUW1", "GameOptionsBackgroundUW2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Chains", "BackpackBG", "WeightCapacity", "RuneTiles", "SelectedRunes", "ActiveSpellIcons", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSelectedUW1", "NPCTradeSelectedUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "PlayerTradeSelectedUW2", "NPCTradeSelectedUW2", "cam", "uwviewport", "uwsubviewport", "uwsubviewport_world", "uwsubviewport_sprites", "combinedview", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "weaponanimuw1", "weaponanimuw2", "placeholderuw1", "placeholderuw2", "PowerGemUW1", "PowerGemUW2")]
+material = SubResource("ShaderMaterial_pkxpy")
 script = ExtResource("1_lw0yg")
 PanelChargen = NodePath("../Chargen")
 ChargenBG = NodePath("../Chargen/ChargenBG")
@@ -3108,9 +3124,12 @@ PlayerTradeSlotUW2 = [NodePath("../UW2/ConversationUW2/PlayerTradeUW2_0"), NodeP
 NPCTradeSlotUW2 = [NodePath("../UW2/ConversationUW2/NPCTradeUW2_0"), NodePath("../UW2/ConversationUW2/NPCTradeUW2_1"), NodePath("../UW2/ConversationUW2/NPCTradeUW2_2"), NodePath("../UW2/ConversationUW2/NPCTradeUW2_3"), NodePath("../UW2/ConversationUW2/NPCTradeUW2_4"), NodePath("../UW2/ConversationUW2/NPCTradeUW2_5")]
 PlayerTradeSelectedUW2 = [NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_0"), NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_1"), NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_2"), NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_3"), NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_4"), NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_5")]
 NPCTradeSelectedUW2 = [NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_0"), NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_1"), NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_2"), NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_3"), NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_4"), NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_5")]
-cam = NodePath("../../SubViewport/GimbalYaw/GimbalRoll/GimbalPitchCamera_world")
-uwviewport = NodePath("../Common/OutputTexture1")
-uwsubviewport = NodePath("../../SubViewport")
+cam = NodePath("../../SubViewportWorld/GimbalYaw/GimbalRoll/GimbalPitchCamera_world")
+uwviewport = NodePath("../Common/OutputTextureWorld")
+uwsubviewport = NodePath("../../SubViewportWorld")
+uwsubviewport_world = NodePath("../../SubViewportWorld")
+uwsubviewport_sprites = NodePath("../../SubViewportSprites")
+combinedview = NodePath("../Common/OutputTextureCombined")
 mousecursor = NodePath("../mouse/mouseCursor")
 uw1UI = NodePath("../UW1")
 uw2UI = NodePath("../UW2")

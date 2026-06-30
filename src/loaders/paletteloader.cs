@@ -156,6 +156,16 @@ namespace Underworld
                 name: "xfer",
                 type: RenderingServer.GlobalShaderParameterType.Sampler2D,
                 defaultValue: (Texture)XferLoader.GetXFERImageData());
+
+            // RenderingServer.GlobalShaderParameterAdd(
+            //     name: "viewport_1",
+            //     type: RenderingServer.GlobalShaderParameterType.Sampler2D,
+            //     defaultValue: (Texture)uimanager.instance.uwsubviewport_world.GetTexture());
+            
+            // RenderingServer.GlobalShaderParameterAdd(
+            //     name: "viewport_2",
+            //     type: RenderingServer.GlobalShaderParameterType.Sampler2D,
+            //     defaultValue:  (Texture)uimanager.instance.uwsubviewport_sprites.GetTexture());
         }
 
         public static int[] LoadAuxilaryPalIndices(string auxPalPath, int auxPalIndex)

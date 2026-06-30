@@ -60,6 +60,7 @@ namespace Underworld
                 ArtLoader.SpriteScale * img.GetHeight()
             );
             a_sprite.Mesh.Set("size", NewSize);
+            a_sprite.Layers = main.LayerSprite;
             a.sprite = a_sprite;
             parent.AddChild(a_sprite);
             a_sprite.Position = new Vector3(0, NewSize.Y / 2 + 0f, 0);
