@@ -1,6 +1,7 @@
 using Godot;
 using Peaky.Coroutines;
 using System.Collections;
+using System.Runtime.Serialization;
 
 namespace Underworld
 {
@@ -38,9 +39,10 @@ namespace Underworld
         /// <summary>
         /// Player has to type an input string
         /// </summary>
-        public static bool WaitingForTypedInput = false;
+        public static bool WaitingForTypedInput = false;       
 
         public static bool WaitingForYesOrNo = false;
+         public static string YesNoOption = "Yes";
 
         public RichTextLabel[] OutputControl;
 
@@ -160,7 +162,11 @@ namespace Underworld
                 output += Lines[i].LineText;
             }
             //Replace special characters
-            output = output.Replace("{TYPEDINPUT}", uimanager.instance.TypedInput.Text);
+            if (MessageDisplay.WaitingForYesOrNo)
+            {                
+                uimanager.instance.TypedInput.Text = MessageDisplay.YesNoOption;
+            }
+            output = output.Replace("{TYPEDINPUT}", MessageDisplay.YesNoOption);            
             OutputControl[0].Text = output;
         }
 

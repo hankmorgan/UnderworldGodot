@@ -984,11 +984,16 @@ public partial class main : Node3D
 						case Key.Escape:
 							stop = true;
 							uimanager.instance.TypedInput.Text = "No";
+							MessageDisplay.YesNoOption = "No";
 							break;
 						case Key.Y:
-							uimanager.instance.TypedInput.Text = "Yes"; break;
+							uimanager.instance.TypedInput.Text = "Yes"; 
+							MessageDisplay.YesNoOption = "Yes";
+							break;
 						default:
-							uimanager.instance.TypedInput.Text = "No"; break;
+							uimanager.instance.TypedInput.Text = "No"; 
+							MessageDisplay.YesNoOption = "No";							
+							break;
 					}
 					if (stop)
 					{//end typed input

@@ -1,3 +1,4 @@
+using Peaky.Coroutines;
 namespace Underworld
 {
     /// <summary>
@@ -76,16 +77,27 @@ namespace Underworld
                         }
                 }
 
-                //TODO: Add checking for traps here and prompting for disarming. May require turning this function into a co-routine.
-
-                trigger.TriggerObjectLink(
-                    character: 1,
-                    ObjectUsed: obj,
-                    triggerType: (int)triggerObjectDat.triggertypes.LOOK,
-                    triggerX: obj.tileX,
-                    triggerY: obj.tileY,
-                    objList: UWTileMap.current_tilemap.LevelObjects);
-
+                //Checking for traps here and prompting for disarming.
+                if (trapdisarming.DetectTrapTrigger(index, objList, playerdat.Search)> 0)
+                {
+                    //you've found a trap.                    
+                    _ = Coroutine.Run(
+                        trapdisarming.DisarmAttemptQuestion(index, objList),
+                        main.instance
+                        );
+                    uimanager.NextOutputPrependedString = "";
+                    return false;
+                }
+                else
+                {
+                    trigger.TriggerObjectLink(
+                        character: 1,
+                        ObjectUsed: obj,
+                        triggerType: (int)triggerObjectDat.triggertypes.LOOK,
+                        triggerX: obj.tileX,
+                        triggerY: obj.tileY,
+                        objList: UWTileMap.current_tilemap.LevelObjects);
+                }
                 uimanager.NextOutputPrependedString = "";//turn off any "writing reads" messages
 
                 // if ((obj.is_quant == 0) && (obj.link != 0))

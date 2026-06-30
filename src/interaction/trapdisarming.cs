@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using System.Collections;
+using Peaky.Coroutines;
 
 namespace Underworld
 {
@@ -27,7 +29,7 @@ namespace Underworld
                     {
                         if (_RES == GAME_UW2)
                         {
-                            if (foundtrigger.minorclass == 3)
+                            if ((foundtrigger.minorclass == 3) && (foundtrigger.link != 0))//added link check because currently I don't delete traps properly.
                             {//found a (movement/action) based trigger
                                 //do skill check and return;
                                 return DoTrapSkillCheck(searchSkill);
@@ -40,7 +42,7 @@ namespace Underworld
                         }
                         else
                         {//UW1 logic
-                            if (foundtrigger.link!=0)
+                            if (foundtrigger.link != 0)
                             {
                                 if (foundtrigger.minorclass >= 2)
                                 {//found a trigger, getting it's trap
@@ -112,7 +114,7 @@ namespace Underworld
                         {
                             if (foundtrigger.minorclass == 3)
                             {//found a (movement/action) based trigger
-                                if (foundtrigger.link!=0)
+                                if (foundtrigger.link != 0)
                                 {
                                     var foundtrap = objList[foundtrigger.link];
                                     return DoTrapDisarm(objList: objList, trapsSkill: trapsSkill, objToCheck: objToCheck, foundtrigger: foundtrigger, foundtrap: foundtrap);
@@ -123,7 +125,7 @@ namespace Underworld
                         }
                         else
                         {//UW1 logic   
-                            var foundtrap = foundtrigger;                         
+                            var foundtrap = foundtrigger;
                             if (foundtrigger.minorclass >= 2)
                             {//found a trigger, getting it's trap
                                 foundtrap = objList[foundtrigger.link];
@@ -251,6 +253,44 @@ namespace Underworld
             }
         }
 
+
+        /// <summary>
+        /// Disarming of a trap detected by LOOKing at an object. 
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="objList"></param>
+        /// <returns></returns>
+        public static IEnumerator DisarmAttemptQuestion(int index, uwObject[] objList)
+        {
+            var disarmstring = GameStrings.GetString(1, GameStrings.str_you_found_a_trap__do_you_wish_to_try_to_disarm_it_1);
+            uimanager.instance.TypedInput.Text = "Yes";
+            MessageDisplay.YesNoOption = "Yes";
+            MessageDisplay.WaitingForYesOrNo = true;
+            uimanager.instance.scroll.Clear();
+            uimanager.AddToMessageScroll($"{disarmstring}{{TYPEDINPUT}}", mode: MessageDisplay.MessageDisplayMode.TypedInput);
+
+            while (MessageDisplay.WaitingForYesOrNo)
+            {
+                yield return new WaitOneFrame();
+            }
+            var response = uimanager.instance.TypedInput;
+            if (response.Text.ToUpper() == "YES")
+            {
+                //attempt disarm
+                trapdisarming.DisarmTrap(index, objList, playerdat.Traps);
+            }
+
+            //regardless of the result of the disarming. Any look trigger linked to the object has to be fired.
+            trigger.TriggerObjectLink(
+                character: 1,
+                ObjectUsed: objList[index],
+                triggerType: (int)triggerObjectDat.triggertypes.LOOK,
+                triggerX: objList[index].tileX,
+                triggerY: objList[index].tileY,
+                objList: UWTileMap.current_tilemap.LevelObjects);
+
+            yield return 0;
+        }
 
     }//end class
 }//end namespace

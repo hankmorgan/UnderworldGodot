@@ -68,7 +68,8 @@ namespace Underworld
                 //Ask y/n to repair
                 uimanager.instance.TypedInput.Text="Yes";
                 MessageDisplay.WaitingForYesOrNo = true;
-                uimanager.instance.scroll.Clear();
+                MessageDisplay.YesNoOption = "Yes";
+                uimanager.instance.scroll.Clear();                
                 uimanager.AddToMessageScroll($"{repairstring}{{TYPEDINPUT}}", mode: MessageDisplay.MessageDisplayMode.TypedInput);
 
                 while (MessageDisplay.WaitingForYesOrNo)

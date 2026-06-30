@@ -52,7 +52,7 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Handling of invisible bridges.
 - [ ] Check some 3d model. Ensure the colour is not palette cycled
 - [ ] UW2. Handle automap music theme/combat theme transitions
-- [ ] LookAT MapPiece, Handle Looking at item_id 0x138
+- [ ] LookAT MapPiece, Handle Looking at item_id 0x138 so that the map is loaded(?)
 - [ ] process motion tile heights. Handle potentially unsafe UWTileMap.GetTileByPTR
 - [ ] GetTileState(). check if no changes are needed for UW1
 - [ ] DoCollisionD1F. Check if bouncing has differences for UW1.
@@ -112,7 +112,8 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Proper rendering of the "escher" room in Talorus. Ensure the walls of the slopes do not appear/are transparent.
 - [ ] Picking up a Wisp starts conversation in UW2? Need to confirm if this is vanilla behaviour.
 - [ ] Typed input is fiddly when using backspace
+- [ ] Arrows launched by an arrow trap are rendered as sprites not a 3d model
 
 ## Blocked
 Things I've hit a roadblock on.
-- [ ] Figure out xfer transparencies (UGH) - I just need to underlying pixel index so I can map. easier said then done.
+- [ ] Figure out xfer transparencies (UGH) - I just need to find underlying pixel index (of the object/wall behind the transparance) so I can map the new index for xfer.dat. Easier said then done.
