@@ -158,7 +158,7 @@ namespace Underworld
 
             //turn off mouselook to allow clicking around the screen.
             Input.MouseMode = Input.MouseModeEnum.Hidden;
-            main.cameraPitchGimbal.Set("MOUSELOOK", false);
+            main.cameraPitchGimbal_world.Set("MOUSELOOK", false);
             
 
             //npc name and portrait

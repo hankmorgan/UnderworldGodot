@@ -156,7 +156,7 @@ namespace Underworld
             Vector3 underworldVector = new(x: -(float)x / 16384f, y: (float)z / 1024f, z: (float)y / 16384f);
 
             //then transform it into godot positioning using a vector based on the size we are rendering the gameworld in.
-            main.cameraYawGimbal.Position = underworldVector * tileMapRender.godotscale;
+            main.cameraYawGimbal_world.Position = underworldVector * tileMapRender.godotscale;
 
             if ((CameraIsBobbing_dseg_67d6_33c6) && (applyBob))
             {
@@ -169,17 +169,25 @@ namespace Underworld
             CameraTileY = (short)(y >> 8);
 
             //Set up the Yaw gimbal             
-            main.cameraYawGimbal.Rotation = Vector3.Zero;
-            main.cameraYawGimbal.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
-            main.cameraYawGimbal.Rotate(Vector3.Up, (float)(-((float)yaw / 32767f) * Math.PI));
+            main.cameraYawGimbal_world.Rotation = Vector3.Zero;
+            main.cameraYawGimbal_world.Rotate(Vector3.Up, (float)(Math.PI));//align to the north.
+            main.cameraYawGimbal_world.Rotate(Vector3.Up, (float)(-((float)yaw / 32767f) * Math.PI));
 
             //Set up the Roll Gimbal
-            main.cameraRollGimbal.Rotation = Vector3.Zero;
-            main.cameraRollGimbal.Rotate(Vector3.Forward, (float)(-((float)roll / 32767f) * Math.PI));
+            main.cameraRollGimbal_world.Rotation = Vector3.Zero;
+            main.cameraRollGimbal_world.Rotate(Vector3.Forward, (float)(-((float)roll / 32767f) * Math.PI));
 
             //Set up the pitch gimbal.
-            main.cameraPitchGimbal.Rotation = Vector3.Zero;
-            main.cameraPitchGimbal.Rotate(Vector3.Right, (float)(+((float)pitch / 32767f) * Math.PI));
+            main.cameraPitchGimbal_world.Rotation = Vector3.Zero;
+            main.cameraPitchGimbal_world.Rotate(Vector3.Right, (float)(+((float)pitch / 32767f) * Math.PI));
+
+            //match the position on the gimbals
+            main.cameraPitchGimbal_sprites.Position = main.cameraPitchGimbal_world.Position;
+            main.cameraPitchGimbal_sprites.Rotation = main.cameraPitchGimbal_world.Rotation;
+            main.cameraYawGimbal_sprites.Position = main.cameraYawGimbal_world.Position;
+            main.cameraYawGimbal_sprites.Rotation = main.cameraYawGimbal_world.Rotation;
+            main.cameraRollGimbal_sprites.Position = main.cameraRollGimbal_world.Position;
+            main.cameraRollGimbal_sprites.Rotation = main.cameraRollGimbal_world.Rotation;
 
             //Set this value to calculate npc angles
             playerdat.CameraYawHeadingRelated_2B52 = (short)(((1 + (yaw >> 0xD)) & 0x7) >> 1);

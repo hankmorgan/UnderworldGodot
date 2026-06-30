@@ -19,17 +19,27 @@ public partial class main : Node3D
 	public static main instance;
 
 	// Called when the node enters the scene tree for the first time.
-	[Export] public Camera3D cam;
-	[Export] public Node3D GimbalYaw;
-	[Export] public Node3D GimbalRoll;
-	public static Camera3D cameraPitchGimbal; //pitch
-	public static Node3D cameraRollGimbal; // up/down
-	public static Node3D cameraYawGimbal; // yaw
+	[Export] public Camera3D cam_world;
+	[Export] public Node3D GimbalYaw_world;
+	[Export] public Node3D GimbalRoll_world;
+	public static Camera3D cameraPitchGimbal_world; //pitch
+	public static Node3D cameraRollGimbal_world; // up/down
+	public static Node3D cameraYawGimbal_world; // yaw
+
+	
+	[Export] public Camera3D cam_sprites;
+	[Export] public Node3D GimbalYaw_sprites;
+	[Export] public Node3D GimbalRoll_sprites;
+	public static Camera3D cameraPitchGimbal_sprites; //pitch
+	public static Node3D cameraRollGimbal_sprites; // up/down
+	public static Node3D cameraYawGimbal_sprites; // yaw
+
+
+
 	[Export] public AudioStreamPlayer DigitalAudioPlayer;
 	[Export] public RichTextLabel lblPositionDebug;
-	//[Export] public uimanager uwUI;
 
-	[Export] public SubViewport secondarycameras;
+	[Export] public SubViewport secondarycameras; //remove?
 
 	double gameRefreshTimer = 0f;
 	static double testclock = 0;
@@ -53,9 +63,13 @@ public partial class main : Node3D
 	public override void _Ready()
 	{
 		instance = this;
-		cameraPitchGimbal = cam;
-		cameraRollGimbal = GimbalRoll;
-		cameraYawGimbal = GimbalYaw;
+		cameraPitchGimbal_world = cam_world;
+		cameraRollGimbal_world = GimbalRoll_world;
+		cameraYawGimbal_world = GimbalYaw_world;
+
+		cameraPitchGimbal_sprites = cam_sprites;
+		cameraRollGimbal_sprites = GimbalRoll_sprites;
+		cameraYawGimbal_sprites = GimbalYaw_sprites;
 
 		//uimanager.instance = uwUI;	
 		if (uwsettings.instance != null)
@@ -85,15 +99,15 @@ public partial class main : Node3D
 
 	public static void StartGame()
 	{
-		if (cameraPitchGimbal == null)
+		if (cameraPitchGimbal_world == null)
 		{
-			if (instance.cam == null)
+			if (instance.cam_world == null)
 			{
 				Debug.Print("Main Cam instance is null. trying to find it's node");
-				instance.cam = (Camera3D)instance.GetNode("/root/Underworld/WorldViewContainer/SubViewport/Camera3D");
+				instance.cam_world = (Camera3D)instance.GetNode("/root/Underworld/WorldViewContainer/SubViewport/Camera3D");
 			}
-			cameraPitchGimbal = instance.cam;
-			if (cameraPitchGimbal == null)
+			cameraPitchGimbal_world = instance.cam_world;
+			if (cameraPitchGimbal_world == null)
 			{
 				Debug.Print("Gamecam is still null!");
 			}
@@ -108,7 +122,7 @@ public partial class main : Node3D
 				Debug.Print("UIManager is still null!!");
 			}
 		}
-		cameraPitchGimbal.Fov = Math.Max(50, uwsettings.instance.FOV);
+		cameraPitchGimbal_world.Fov = Math.Max(50, uwsettings.instance.FOV);
 		uimanager.EnableDisable(instance.lblPositionDebug, EnablePositionDebug);
 		ObjectCreator.grObjects = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
 		ObjectCreator.grObjects.UseRedChannel = true;
@@ -181,7 +195,7 @@ public partial class main : Node3D
 			a_sprite.Mesh.Set("size", NewSize);
 			Node3D worldobjects = instance.GetNode<Node3D>("/root/Underworld/worldobjects");
 			worldobjects.AddChild(a_sprite);
-			a_sprite.Position = cameraPitchGimbal.Position;
+			a_sprite.Position = cameraPitchGimbal_world.Position;
 		}
 	}
 
@@ -999,7 +1013,7 @@ public partial class main : Node3D
 					{//end typed input
 						uimanager.instance.scroll.Clear();
 						MessageDisplay.WaitingForYesOrNo = false;
-						cameraPitchGimbal.Set("MOVE", true);//re-enable movement
+						cameraPitchGimbal_world.Set("MOVE", true);//re-enable movement
 					}
 				}
 			}
