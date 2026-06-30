@@ -121,7 +121,7 @@ namespace Underworld
                     break;
                 case GRShaderMode.TextureShader:
                 case GRShaderMode.SpriteShader:
-                    textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwshader.gdshader");
+                    textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwshader_allred.gdshader");
                     break;
                 case GRShaderMode.BillboardSpriteShader:
                     textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwsprite.gdshader");

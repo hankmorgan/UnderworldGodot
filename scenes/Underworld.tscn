@@ -2287,6 +2287,7 @@ offset_bottom = 532.0
 mouse_filter = 2
 
 [node name="FlaskHealthBubble" type="TextureRect" parent="UI/Common/HealthFlask"]
+layout_mode = 0
 offset_left = 992.0
 offset_top = 592.0
 offset_right = 1088.0
@@ -2411,6 +2412,7 @@ offset_bottom = 532.0
 mouse_filter = 2
 
 [node name="FlaskManaBubble" type="TextureRect" parent="UI/Common/ManaFlask"]
+layout_mode = 0
 offset_left = 992.0
 offset_top = 592.0
 offset_right = 1088.0
