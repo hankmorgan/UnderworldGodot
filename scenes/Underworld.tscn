@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://xjvqmrbs28xs"]
+[gd_scene load_steps=26 format=3 uid="uid://xjvqmrbs28xs"]
 
 [ext_resource type="Script" path="res://src/ui/uimanager.cs" id="1_lw0yg"]
 [ext_resource type="FontFile" uid="uid://pdy3t627nfxw" path="res://resources/fonts/FONT5X6I.ttf" id="3_safdl"]
@@ -28,6 +28,9 @@
 render_priority = 0
 shader = ExtResource("6_x6exc")
 
+[sub_resource type="ViewportTexture" id="ViewportTexture_j0mn4"]
+viewport_path = NodePath("SubViewport")
+
 [sub_resource type="Theme" id="Theme_i11v8"]
 
 [node name="Underworld" type="Node3D"]
@@ -40,29 +43,30 @@ script = ExtResource("N_sfx_stream")
 
 [node name="main" type="Node3D" parent="." node_paths=PackedStringArray("cam", "GimbalYaw", "GimbalRoll", "DigitalAudioPlayer", "lblPositionDebug", "secondarycameras")]
 script = ExtResource("6_3y8oy")
-cam = NodePath("../WorldViewContainer/SubViewport/GimbalYaw/GimbalRoll/GimbalPitchCamera")
-GimbalYaw = NodePath("../WorldViewContainer/SubViewport/GimbalYaw")
-GimbalRoll = NodePath("../WorldViewContainer/SubViewport/GimbalYaw/GimbalRoll")
+cam = NodePath("../SubViewport/GimbalYaw/GimbalRoll/GimbalPitchCamera")
+GimbalYaw = NodePath("../SubViewport/GimbalYaw")
+GimbalRoll = NodePath("../SubViewport/GimbalYaw/GimbalRoll")
 DigitalAudioPlayer = NodePath("../UI/DigitalAudioPlayer")
 lblPositionDebug = NodePath("../UI/Common/PositionLabel")
-secondarycameras = NodePath("../WorldViewContainer/SubViewport")
+secondarycameras = NodePath("../SubViewport")
+
+[node name="SubViewport" type="SubViewport" parent="."]
+handle_input_locally = false
+render_target_update_mode = 4
+
+[node name="GimbalYaw" type="Node3D" parent="SubViewport"]
+
+[node name="GimbalRoll" type="Node3D" parent="SubViewport/GimbalYaw"]
+
+[node name="GimbalPitchCamera" type="Camera3D" parent="SubViewport/GimbalYaw/GimbalRoll"]
+current = true
 
 [node name="WorldViewContainer" type="SubViewportContainer" parent="."]
+visible = false
 offset_left = 200.0
 offset_top = 72.0
 offset_right = 900.0
 offset_bottom = 528.0
-
-[node name="SubViewport" type="SubViewport" parent="WorldViewContainer"]
-handle_input_locally = false
-render_target_update_mode = 4
-
-[node name="GimbalYaw" type="Node3D" parent="WorldViewContainer/SubViewport"]
-
-[node name="GimbalRoll" type="Node3D" parent="WorldViewContainer/SubViewport/GimbalYaw"]
-
-[node name="GimbalPitchCamera" type="Camera3D" parent="WorldViewContainer/SubViewport/GimbalYaw/GimbalRoll"]
-current = true
 
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
@@ -1327,6 +1331,13 @@ offset_right = 892.0
 offset_bottom = 644.0
 
 [node name="Common" type="CanvasLayer" parent="UI"]
+
+[node name="OutputTexture" type="TextureRect" parent="UI/Common"]
+offset_left = 200.0
+offset_top = 72.0
+offset_right = 900.0
+offset_bottom = 584.0
+texture = SubResource("ViewportTexture_j0mn4")
 
 [node name="PaperDoll" type="Panel" parent="UI/Common"]
 self_modulate = Color(1, 1, 1, 0)
@@ -3073,9 +3084,9 @@ PlayerTradeSlotUW2 = [NodePath("../UW2/ConversationUW2/PlayerTradeUW2_0"), NodeP
 NPCTradeSlotUW2 = [NodePath("../UW2/ConversationUW2/NPCTradeUW2_0"), NodePath("../UW2/ConversationUW2/NPCTradeUW2_1"), NodePath("../UW2/ConversationUW2/NPCTradeUW2_2"), NodePath("../UW2/ConversationUW2/NPCTradeUW2_3"), NodePath("../UW2/ConversationUW2/NPCTradeUW2_4"), NodePath("../UW2/ConversationUW2/NPCTradeUW2_5")]
 PlayerTradeSelectedUW2 = [NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_0"), NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_1"), NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_2"), NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_3"), NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_4"), NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_5")]
 NPCTradeSelectedUW2 = [NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_0"), NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_1"), NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_2"), NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_3"), NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_4"), NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_5")]
-cam = NodePath("../../WorldViewContainer/SubViewport/GimbalYaw/GimbalRoll/GimbalPitchCamera")
-uwviewport = NodePath("../../WorldViewContainer")
-uwsubviewport = NodePath("../../WorldViewContainer/SubViewport")
+cam = NodePath("../../SubViewport/GimbalYaw/GimbalRoll/GimbalPitchCamera")
+uwviewport = NodePath("../Common/OutputTexture")
+uwsubviewport = NodePath("../../SubViewport")
 mousecursor = NodePath("../mouse/mouseCursor")
 uw1UI = NodePath("../UW1")
 uw2UI = NodePath("../UW2")

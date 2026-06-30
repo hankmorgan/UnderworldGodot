@@ -10,7 +10,7 @@ namespace Underworld
         [Export] public Camera3D cam;
         //[Export] public Node3D freelook;
 
-        [Export] public SubViewportContainer uwviewport;
+        [Export] public TextureRect uwviewport;
         [Export] public SubViewport uwsubviewport;
 
         [Export] public mouseCursor mousecursor;
