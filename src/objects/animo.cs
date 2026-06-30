@@ -69,7 +69,7 @@ namespace Underworld
 
         static animo()
         {
-            textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwsprite.gdshader");
+            textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwsprite_allred.gdshader");
             grAnimo = new GRLoader(GRLoader.ANIMO_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
             grAnimo.UseRedChannel = true;
         }
