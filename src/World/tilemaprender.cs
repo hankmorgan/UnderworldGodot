@@ -301,6 +301,7 @@ namespace Underworld
             final_mesh.Position = new Vector3(x * -1.2f, 0.0f, y * 1.2f);
             final_mesh.Name = TileName + "_" + guid;
             final_mesh.Mesh = a_mesh;
+            final_mesh.Layers = main.LayerGeo;
             if (EnableCollision)
             {
                 //final_mesh.CreateConvexCollision(clean: false);

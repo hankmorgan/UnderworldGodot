@@ -60,6 +60,8 @@ public partial class main : Node3D
 	public static byte ThisFrameDelta = 0;
 	static byte PreviousFrameDelta = 0;
 
+	public const int LayerGeo = 2;
+	public const int LayerSprite = 4;
 	public override void _Ready()
 	{
 		instance = this;

@@ -63,6 +63,7 @@ secondarycameras = NodePath("../SubViewport")
 [node name="GimbalRoll" type="Node3D" parent="SubViewport2/GimbalYaw"]
 
 [node name="GimbalPitchCamera_sprites" type="Camera3D" parent="SubViewport2/GimbalYaw/GimbalRoll"]
+cull_mask = 1048548
 current = true
 
 [node name="SubViewport" type="SubViewport" parent="."]
@@ -74,6 +75,7 @@ render_target_update_mode = 4
 [node name="GimbalRoll" type="Node3D" parent="SubViewport/GimbalYaw"]
 
 [node name="GimbalPitchCamera_world" type="Camera3D" parent="SubViewport/GimbalYaw/GimbalRoll"]
+cull_mask = 1048570
 current = true
 
 [node name="WorldViewContainer" type="SubViewportContainer" parent="."]

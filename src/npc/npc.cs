@@ -181,6 +181,7 @@ namespace Underworld
                     // if (_RES==GAME_UW2)
                     // {
                     sprite.Mesh.Set("size", FrameSize);// * 1.5f);
+                    sprite.Layers = main.LayerSprite;
                     // }
                     // else
                     // {
