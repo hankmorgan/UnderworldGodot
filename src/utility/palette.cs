@@ -54,7 +54,7 @@ namespace Underworld
                     {
                         if (index != 0xFC)
                         {
-                            index = 255;//force to black
+                            index = 0;//force to black
                         }
                         break;
                     }
@@ -62,7 +62,7 @@ namespace Underworld
                     {
                         if (index == 0xFC)
                         {
-                            index = 255;//force to black
+                            index = 0;//force to black
                         }
                         break;
                     }

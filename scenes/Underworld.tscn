@@ -64,6 +64,7 @@ lblPositionDebug = NodePath("../UI/Common/PositionLabel")
 secondarycameras = NodePath("../SubViewportWorld")
 
 [node name="SubViewportSprites" type="SubViewport" parent="."]
+use_hdr_2d = true
 
 [node name="GimbalYaw" type="Node3D" parent="SubViewportSprites"]
 
@@ -75,6 +76,7 @@ current = true
 
 [node name="SubViewportWorld" type="SubViewport" parent="."]
 handle_input_locally = false
+use_hdr_2d = true
 render_target_update_mode = 4
 
 [node name="GimbalYaw" type="Node3D" parent="SubViewportWorld"]
