@@ -60,8 +60,8 @@ public partial class main : Node3D
 	public static byte ThisFrameDelta = 0;
 	static byte PreviousFrameDelta = 0;
 
-	public const int LayerGeo = 2;
-	public const int LayerSprite = 4;
+	public const uint LayerGeo = 2;
+	public const uint LayerXFER = 4;
 	public override void _Ready()
 	{
 		instance = this;
@@ -128,7 +128,15 @@ public partial class main : Node3D
 		uimanager.EnableDisable(instance.lblPositionDebug, EnablePositionDebug);
 		ObjectCreator.grObjects = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
 		ObjectCreator.grObjects.UseRedChannel = true;
-		ObjectCreator.grObjects.UseCropping = true;
+		ObjectCreator.grObjects.UseCropping = false;
+		ObjectCreator.grObjects.XFER = ArtLoader.XferChannnelMode.NonXFer;
+
+		ObjectCreator.grObjectsXfer = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
+		ObjectCreator.grObjectsXfer.UseRedChannel = true;
+		ObjectCreator.grObjectsXfer.UseCropping = false;
+		ObjectCreator.grObjectsXfer.XFER = ArtLoader.XferChannnelMode.XFEROnly;
+
+
 		Palette.CurrentPalette = 0;
 		uimanager.instance.InitUI();
 		if (UWClass._RES != UWClass.GAME_UWDEMO)

@@ -18,6 +18,7 @@ namespace Underworld
         /// object art
         /// </summary>
         public static GRLoader grObjects;
+        public static GRLoader grObjectsXfer;
 
         /// <summary>
         /// The node objects will be attached to
@@ -237,7 +238,7 @@ namespace Underworld
             if (unimplemented)
             {
                 //just render a sprite.
-                obj.instance = CreateSpriteInstance(grObjects, obj, newNode, $"{name}");
+                obj.instance = CreateSpriteInstance(obj, newNode, $"{name}");
             }
             if (printlabels)
             {
@@ -550,30 +551,19 @@ namespace Underworld
             }
         }
 
-        public static genericsprite CreateSpriteInstance(GRLoader grObjects, uwObject obj, Node3D parent, string name)
+        public static genericsprite CreateSpriteInstance(uwObject obj, Node3D parent, string name)
         {
             var inst = new genericsprite(obj);
             if (obj.invis == 0)
             {
-                CreateSprite(grObjects, obj.item_id, parent, name);
+                CreateSprite(grObjects, obj.item_id, parent, name,EnableCollision: true);
+                CreateSprite(grObjectsXfer, obj.item_id, parent, name,EnableCollision: false);
             }
             return inst;
         }
 
         public static void CreateSprite(GRLoader gr, int spriteNo, Node3D parent, string name, bool EnableCollision = true)
         {
-            // var a_sprite = new Sprite3D();
-            // a_sprite.Name = name;
-            // var img = gr.LoadImageAt(spriteNo);
-            // var NewSize = new Vector2(
-            //             ArtLoader.SpriteScale * img.GetWidth(),
-            //             ArtLoader.SpriteScale * img.GetHeight()
-            //             );
-            // a_sprite.Texture = gr.LoadImageAt(spriteNo);
-            // a_sprite.MaterialOverride =  gr.GetMaterial(spriteNo);
-            // parent.AddChild(a_sprite);
-            // a_sprite.Position = new Vector3(0, NewSize.Y / 2, 0);            
-            //res://src/utility/uwmeshinstance3d.gd
             var a_sprite = new uwMeshInstance3D(); //MeshInstance3D(); //new Sprite3D();
             a_sprite.Name = name;
             a_sprite.Mesh = new QuadMesh();
@@ -587,7 +577,7 @@ namespace Underworld
                         ArtLoader.SpriteScale * img.GetHeight()
                         );
                 a_sprite.Mesh.Set("size", NewSize);
-                a_sprite.Layers = main.LayerSprite;
+                a_sprite.Layers = main.LayerGeo;
                 parent.AddChild(a_sprite);
                 a_sprite.Position = new Vector3(0, NewSize.Y / 2f, 0);
                 if (EnableCollision)

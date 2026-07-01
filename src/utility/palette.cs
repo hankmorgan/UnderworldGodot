@@ -19,7 +19,7 @@ namespace Underworld
                 if (update)
                 {
                     PaletteLoader.UpdateShaderParams();
-                }                
+                }
             }
         }
 
@@ -46,8 +46,34 @@ namespace Underworld
         /// <returns>The at pixel.</returns>
         /// <param name="index">Pixel.</param>
         /// <param name="useAlphaChannel">If set to <c>true</c> alpha.</param>
-        public Color ColorAtIndex(byte index, bool useAlphaChannel, bool useSingleRedChannel)
+        public Color ColorAtIndex(byte index, bool useAlphaChannel, bool useSingleRedChannel, ArtLoader.XferChannnelMode xfermode = ArtLoader.XferChannnelMode.AllColours)
         {
+            switch (xfermode)
+            {
+                case ArtLoader.XferChannnelMode.XFEROnly:
+                    {
+                        if (index != 0xFC)
+                        {
+                            index = 255;//force to black
+                        }
+                        break;
+                    }
+                case ArtLoader.XferChannnelMode.NonXFer:
+                    {
+                        if (index == 0xFC)
+                        {
+                            index = 255;//force to black
+                        }
+                        break;
+                    }
+                case ArtLoader.XferChannnelMode.AllColours:
+                default:
+                    {
+                        break;// just return the index
+                    }
+            }
+
+
             byte alphabyte;
             if (useAlphaChannel == true)
             {
@@ -64,6 +90,7 @@ namespace Underworld
             {
                 alphabyte = 255; //no alpha
             }
+
 
             if (useSingleRedChannel)
             { //This means the shader will contain the colour information in a palette parameter
@@ -93,17 +120,17 @@ namespace Underworld
         //Returns a 2x2 texture representing the pixel index for use in rendering a single colour on a model.
         public static ImageTexture IndexToImage(byte index)
         {
-            var img = Image.CreateEmpty(2,2,false,Image.Format.R8);
+            var img = Image.CreateEmpty(2, 2, false, Image.Format.R8);
             var c = new Color(
                     g: 0,
                     r: index / 255f,
                     b: 0,
                     a: 0
                 );
-            img.SetPixel(0,0,c);
-            img.SetPixel(0,1,c);
-            img.SetPixel(1,0,c);
-            img.SetPixel(1,1,c);
+            img.SetPixel(0, 0, c);
+            img.SetPixel(0, 1, c);
+            img.SetPixel(1, 0, c);
+            img.SetPixel(1, 1, c);
             var tex = new Godot.ImageTexture();
             tex.SetImage(img);
             return tex;
@@ -116,12 +143,12 @@ namespace Underworld
             byte[] imgData;
             BuildPaletteImgData(ColourBandSize, out ImageHeight, out NoOfColours, out imgData);
             var output = ArtLoader.Image(
-                    databuffer: imgData, 
-                    dataOffSet: 0, 
-                    width: NoOfColours * ColourBandSize, 
-                    height: ImageHeight, 
-                    palette: this, 
-                    useAlphaChannel: true, 
+                    databuffer: imgData,
+                    dataOffSet: 0,
+                    width: NoOfColours * ColourBandSize,
+                    height: ImageHeight,
+                    palette: this,
+                    useAlphaChannel: true,
                     useSingleRedChannel: false,
                     crop: false);
             return output;
