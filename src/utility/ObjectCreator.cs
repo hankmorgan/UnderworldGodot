@@ -557,7 +557,7 @@ namespace Underworld
             if (obj.invis == 0)
             {
                 CreateSprite(grObjects, obj.item_id, parent, name,EnableCollision: true);
-                CreateSprite(grObjectsXfer, obj.item_id, parent, name,EnableCollision: false);
+                //CreateSprite(grObjectsXfer, obj.item_id, parent, name,EnableCollision: false);
             }
             return inst;
         }
