@@ -66,8 +66,9 @@ void fragment() {
 		//Get the uv offset within the shades.dat image
 		//float maptouse = dist/cutoffdistance;
 		//vec4 finalcolour = texture(smoothpalette, vec2(rgba.r, maptouse));
-
+		vec4 alphacolour = texture(smoothpalette, vec2(rgba.r, 0));
 		ALBEDO = rgba.rgb; //finalcolour.rgb;
-		ALPHA = rgba.a;//finalcolour.a;	
+
+		ALPHA = alphacolour.a;//finalcolour.a;	
 	}
 }
