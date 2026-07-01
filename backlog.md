@@ -38,7 +38,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Destroying open doors in object destruction
 - [ ] Object destruction handle culling of containers
 - [ ] Clear chain in object destruction
-- [ ] LookAt checking for traps.
 - [ ] CombatMissImpactSound, UW1 differences and missile sound.
 - [ ] SpawnImpactAnimo() in checkAttackHit(). Possibly tile impact?
 - [ ] Review colour mappings identified in mapcolour in modelLoader
@@ -113,6 +112,7 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Picking up a Wisp starts conversation in UW2? Need to confirm if this is vanilla behaviour.
 - [ ] Typed input is fiddly when using backspace
 - [ ] Arrows launched by an arrow trap are rendered as sprites not a 3d model
+- [ ] CollisionIndex = -1 bug on line 1208 of motion_collison. (seems to only happen in UW1, possibly related to SpecialMotionHandler.table45) 
 
 ## Blocked
 Things I've hit a roadblock on.
