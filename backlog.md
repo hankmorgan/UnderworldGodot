@@ -10,6 +10,7 @@ Here is the stuff I have identifed needs to be done
 
 Lists of features/bugs/TODOs and fun stuff I care about to implement (no order of priority).
 
+- [ ] Figure out xfer transparencies (UGH) - I just need to find underlying pixel index (of the object/wall behind the transparance) so I can map the new index for xfer.dat. Easier said then done.
 - [ ] Pole reach and vanilla use distance -> requires code to assess if object is in range outside of ray-casting.
 - [ ] Sleep cull objects - adjust height on tiles. Verify culling is working as expected.
 - [ ] Palette on death cutscene is breaking when exiting to main menu
@@ -112,8 +113,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Picking up a Wisp starts conversation in UW2? Need to confirm if this is vanilla behaviour.
 - [ ] Typed input is fiddly when using backspace
 - [ ] Arrows launched by an arrow trap are rendered as sprites not a 3d model
-- [ ] CollisionIndex = -1 bug on line 1208 of motion_collison. (seems to only happen in UW1, possibly related to SpecialMotionHandler.table45) 
 
 ## Blocked
 Things I've hit a roadblock on.
-- [ ] Figure out xfer transparencies (UGH) - I just need to find underlying pixel index (of the object/wall behind the transparance) so I can map the new index for xfer.dat. Easier said then done.
