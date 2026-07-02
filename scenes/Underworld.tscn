@@ -1359,6 +1359,7 @@ offset_bottom = 644.0
 [node name="Common" type="CanvasLayer" parent="UI"]
 
 [node name="OutputTextureWorld" type="TextureRect" parent="UI/Common"]
+visible = false
 offset_left = 200.0
 offset_top = 72.0
 offset_right = 900.0
@@ -1366,6 +1367,7 @@ offset_bottom = 584.0
 texture = SubResource("ViewportTexture_j0mn4")
 
 [node name="OutputTextureSprites" type="TextureRect" parent="UI/Common"]
+visible = false
 offset_left = 5.0
 offset_top = 6.0
 offset_right = 517.0
@@ -1374,10 +1376,10 @@ texture = SubResource("ViewportTexture_wyrrx")
 
 [node name="OutputTextureCombined" type="TextureRect" parent="UI/Common"]
 material = SubResource("ShaderMaterial_j67en")
-offset_left = 362.0
-offset_top = 407.0
-offset_right = 762.0
-offset_bottom = 807.0
+offset_left = 473.0
+offset_top = 108.0
+offset_right = 873.0
+offset_bottom = 508.0
 texture = ExtResource("18_tfr7p")
 
 [node name="PaperDoll" type="Panel" parent="UI/Common"]
@@ -3127,7 +3129,7 @@ NPCTradeSlotUW2 = [NodePath("../UW2/ConversationUW2/NPCTradeUW2_0"), NodePath(".
 PlayerTradeSelectedUW2 = [NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_0"), NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_1"), NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_2"), NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_3"), NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_4"), NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_5")]
 NPCTradeSelectedUW2 = [NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_0"), NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_1"), NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_2"), NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_3"), NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_4"), NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_5")]
 cam = NodePath("../../SubViewportWorld/GimbalYaw/GimbalRoll/GimbalPitchCamera_world")
-uwviewport = NodePath("../Common/OutputTextureWorld")
+uwviewport = NodePath("../Common/OutputTextureCombined")
 uwsubviewport = NodePath("../../SubViewportWorld")
 uwsubviewport_world = NodePath("../../SubViewportWorld")
 uwsubviewport_sprites = NodePath("../../SubViewportSprites")
