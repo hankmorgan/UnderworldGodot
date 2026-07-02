@@ -54,11 +54,11 @@ namespace Underworld
 
             uwMeshInstance3D a_sprite;
             Vector2 NewSize;
-            // a_sprite = CreateAnimoSprite(obj, name, out NewSize, grAnimo, main.LayerGeo);
-            // _animo.sprite = a_sprite;
-            // parent.AddChild(a_sprite);
-            // a_sprite.Position = new Vector3(0, NewSize.Y / 2 + 0f, 0);
-            // a_sprite.CreateConvexCollision();
+            a_sprite = CreateAnimoSprite(obj, name, out NewSize, grAnimo, main.LayerGeo);
+            _animo.sprite = a_sprite;
+            parent.AddChild(a_sprite);
+            a_sprite.Position = new Vector3(0, NewSize.Y / 2 + 0f, 0);
+            a_sprite.CreateConvexCollision();
 
             a_sprite = CreateAnimoSprite(obj, name, out NewSize, grAnimoxfer, main.LayerXFER);
             _animo.spritexfer = a_sprite;

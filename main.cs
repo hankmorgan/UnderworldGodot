@@ -4,6 +4,7 @@ using System.Diagnostics;
 using Underworld;
 using System.IO;
 using System.Linq;
+using System.ComponentModel;
 
 /// <summary>
 /// Node to initialise the game
@@ -209,25 +210,22 @@ public partial class main : Node3D
 		}
 	}
 
+	public override void _Process(double delta)
+	{
+		base._Process(delta);
+		if (uimanager.InGame)
+		{
+			var mat = (ShaderMaterial)uimanager.instance.combinedview.Material;
+			mat.SetShaderParameter("viewport_1", (Texture)uimanager.instance.uwsubviewport_world.GetTexture());
+			mat.SetShaderParameter("viewport_2", (Texture)uimanager.instance.uwsubviewport_sprites.GetTexture());
+		}
+	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _PhysicsProcess(double delta)
 	{
 		if ((uimanager.InGame) || (uimanager.AtMainMenu) || (uimanager.CurrentGameMode == uimanager.GameModes.CUTSCENE))
 		{
-
-			var mat = (ShaderMaterial)uimanager.instance.combinedview.Material;
-			mat.SetShaderParameter("viewport_1", (Texture)uimanager.instance.uwsubviewport_world.GetTexture());
-			mat.SetShaderParameter("viewport_2", (Texture)uimanager.instance.uwsubviewport_sprites.GetTexture());
-			// RenderingServer.GlobalShaderParameterSet(
-			// 					name: "viewport_1",
-			// 					value: (Texture)uimanager.instance.uwsubviewport_world.GetTexture());
-			// RenderingServer.GlobalShaderParameterSet(
-			// 					name: "viewport_2",
-			// 					value: (Texture)uimanager.instance.uwsubviewport_sprites.GetTexture());
-
-
-
 			PitTimer += delta;
 			cycletime += delta;
 			if (cycletime > 0.2)
