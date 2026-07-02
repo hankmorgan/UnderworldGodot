@@ -17,6 +17,7 @@ namespace Underworld
 
         public Dictionary<string, CritterAnimation> Animations = new Dictionary<string, CritterAnimation>();
         public ImageTexture[] animSprites = new ImageTexture[256];
+        public ImageTexture[] animSpritesxfer = new ImageTexture[256];
 
         /// <summary>
         /// Critter animations for UW1
@@ -372,9 +373,24 @@ namespace Underworld
                             palette: pal,
                             useAlphaChannel: true,
                             useSingleRedChannel: true,
-                            crop: UseCropping);
+                            crop: false, 
+                            xfermode:XferChannnelMode.NonXFer);
 
                         this.animSprites[spriteIndex + i] = imgData;
+
+                       imgData = Image(
+                            databuffer: outputImg,
+                            dataOffSet: 0,
+                            width: BitMapWidth, height: BitMapHeight,
+                            palette: pal,
+                            useAlphaChannel: true,
+                            useSingleRedChannel: true,
+                            crop: false,
+                            xfermode:XferChannnelMode.XFEROnly);
+
+                        this.animSpritesxfer[spriteIndex + i] = imgData;
+
+
                         spriteCounter++;
                     }
 

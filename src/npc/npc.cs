@@ -18,11 +18,13 @@ namespace Underworld
         /// Mesh this sprite is drawn on
         /// </summary>
         public uwMeshInstance3D sprite;
+        public uwMeshInstance3D sprite_xfer;
 
         /// <summary>
         /// The material for rendering this unique npc
         /// </summary>
         public ShaderMaterial material;
+        public ShaderMaterial material_xfer;
 
         /// <summary>
         /// Used to pick the sprite at a particular angle.
@@ -85,6 +87,16 @@ namespace Underworld
             parent.AddChild(a_sprite);
             a_sprite.Position = new Vector3(0, n.FrameSize.Y / 2 + 0.12f, 0);
             a_sprite.CreateConvexCollision();
+
+            //add xfersprite
+            var x_sprite = new uwMeshInstance3D(); //new Sprite3D();
+            x_sprite.Name = name;
+            x_sprite.Mesh = new QuadMesh();
+            x_sprite.Mesh.SurfaceSetMaterial(0, n.material_xfer);
+            x_sprite.Mesh.Set("size", n.FrameSize);
+            n.sprite_xfer = x_sprite;
+            parent.AddChild(x_sprite);
+            x_sprite.Position = new Vector3(0, n.FrameSize.Y / 2 + 0.12f, 0);
 
             if (ObjectCreator.printlabels)
             {
@@ -160,6 +172,19 @@ namespace Underworld
                 newmaterial.SetShaderParameter("UseAlpha", true);
                 material = newmaterial;
             }
+            if (material_xfer == null)
+            {//create the initial material
+                var newmaterial = new ShaderMaterial();
+                newmaterial.Shader = textureshader;
+
+                newmaterial.SetShaderParameter("albedo", new Color(1, 1, 1, 1));
+                newmaterial.SetShaderParameter("uv1_scale", new Vector3(1, 1, 1));
+                newmaterial.SetShaderParameter("uv2_scale", new Vector3(1, 1, 1));
+                newmaterial.SetShaderParameter("UseAlpha", true);
+                material_xfer = newmaterial;
+            }
+
+
             //assign the params to the shader
             if (frameNo >= 8) { frameNo = 0; }
             if (anim.animIndices[frameNo] == -1)
@@ -169,6 +194,7 @@ namespace Underworld
 
             if (anim.animIndices[frameNo] != -1)
             {
+                //Render nonxfer bits
                 var texture = crit.animSprites[anim.animIndices[frameNo]];
                 FrameSize = new Vector2(
                     ArtLoader.NPCSpriteScale * texture.GetWidth(),
@@ -178,16 +204,24 @@ namespace Underworld
                 material.SetShaderParameter("texture_albedo", (Texture)texture);
                 if (sprite != null)
                 {
-                    // if (_RES==GAME_UW2)
-                    // {
                     sprite.Mesh.Set("size", FrameSize);// * 1.5f);
-                    sprite.Layers = main.LayerGeo;
-                    // }
-                    // else
-                    // {
-                    //     sprite.Mesh.Set("size", FrameSize * 2f);//make uw1 npcs a bit bigger
-                    // }                    
+                    sprite.Layers = main.LayerGeo;                 
                 }
+
+                //render xfer bits
+                texture = crit.animSpritesxfer[anim.animIndices[frameNo]];
+                FrameSize = new Vector2(
+                    ArtLoader.NPCSpriteScale * texture.GetWidth(),
+
+                    ArtLoader.NPCSpriteScale * texture.GetHeight()
+                    );
+                material_xfer.SetShaderParameter("texture_albedo", (Texture)texture);
+                if (sprite_xfer != null)
+                {
+                    sprite_xfer.Mesh.Set("size", FrameSize);// * 1.5f);
+                    sprite_xfer.Layers = main.LayerXFER;                 
+                }
+
                 return frameNo;
             }
             else

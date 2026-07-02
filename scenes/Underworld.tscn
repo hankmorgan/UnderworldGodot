@@ -1359,27 +1359,25 @@ offset_bottom = 644.0
 [node name="Common" type="CanvasLayer" parent="UI"]
 
 [node name="OutputTextureWorld" type="TextureRect" parent="UI/Common"]
-visible = false
-offset_left = 200.0
-offset_top = 72.0
-offset_right = 900.0
-offset_bottom = 584.0
+offset_left = 793.0
+offset_top = 393.0
+offset_right = 1305.0
+offset_bottom = 905.0
 texture = SubResource("ViewportTexture_j0mn4")
 
 [node name="OutputTextureSprites" type="TextureRect" parent="UI/Common"]
-visible = false
-offset_left = 5.0
-offset_top = 6.0
-offset_right = 517.0
-offset_bottom = 518.0
+offset_left = -10.0
+offset_top = 384.0
+offset_right = 502.0
+offset_bottom = 896.0
 texture = SubResource("ViewportTexture_wyrrx")
 
 [node name="OutputTextureCombined" type="TextureRect" parent="UI/Common"]
 material = SubResource("ShaderMaterial_j67en")
-offset_left = 473.0
-offset_top = 108.0
-offset_right = 873.0
-offset_bottom = 508.0
+offset_left = 209.0
+offset_top = 79.0
+offset_right = 609.0
+offset_bottom = 479.0
 texture = ExtResource("18_tfr7p")
 
 [node name="PaperDoll" type="Panel" parent="UI/Common"]
