@@ -71,7 +71,7 @@ use_hdr_2d = true
 [node name="GimbalRoll" type="Node3D" parent="SubViewportSprites/GimbalYaw"]
 
 [node name="GimbalPitchCamera_sprites" type="Camera3D" parent="SubViewportSprites/GimbalYaw/GimbalRoll"]
-cull_mask = 1048548
+cull_mask = 1048550
 current = true
 
 [node name="SubViewportWorld" type="SubViewport" parent="."]
