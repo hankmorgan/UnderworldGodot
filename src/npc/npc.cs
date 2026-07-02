@@ -105,7 +105,7 @@ namespace Underworld
 
         static npc()
         {
-            textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwnpc.gdshader");
+            textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwnpc_allred.gdshader");
         }
 
         public void SetAnimSprite(int animationNo, short frameNo, int relativeHeading)
@@ -181,7 +181,7 @@ namespace Underworld
                     // if (_RES==GAME_UW2)
                     // {
                     sprite.Mesh.Set("size", FrameSize);// * 1.5f);
-                    sprite.Layers = main.LayerXFER;
+                    sprite.Layers = main.LayerGeo;
                     // }
                     // else
                     // {

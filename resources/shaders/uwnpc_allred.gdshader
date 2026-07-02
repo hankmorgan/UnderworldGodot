@@ -15,8 +15,6 @@ uniform vec3 uv1_offset;
 uniform vec3 uv2_scale;
 uniform vec3 uv2_offset;
 
-//Shader Params
-
 //UW Shader Params
 
 uniform sampler2D texture_albedo : source_color,filter_nearest,repeat_enable;// the source image
@@ -24,13 +22,6 @@ global uniform sampler2D smoothpalette: source_color,filter_nearest; // pals.dat
 global uniform sampler2D xfer: source_color,filter_nearest; //xfer.dat transparency
 global uniform float cutoffdistance; // how far away the scene will render
 
-
-
-//varying float distanceToCam; // distance from cam to center
-//varying vec4 world_pos;  // of current vertex
-//varying float vertexToCam; // distance from current vertex to the camera
-
-uniform float camera_offset = 0.0;
 
 void vertex() {
 	UV=UV*uv1_scale.xy+uv1_offset.xy;
@@ -43,8 +34,6 @@ void vertex() {
         MODEL_MATRIX[3]
     );
     MODELVIEW_MATRIX = modified_model_view;
-	VERTEX += camera_offset * normalize((MODELVIEW_MATRIX * vec4(0.0, 0.0, 1.0, 0.0)).xyz);
-	//VERTEX.y = VERTEX.y - 0.1;
 }
 
 
@@ -54,7 +43,8 @@ void fragment() {
 	vec4 a = INV_VIEW_MATRIX * vec4(VERTEX, 1.0);
     float dist = (distance(a.xz, world_camera));
 
-	//read in greyscale texture to get color index		
+	//read in greyscale texture to get color index
+	vec4 rgba = texture(texture_albedo, UV);	
 
 	if (dist > cutoffdistance)
 	{		
