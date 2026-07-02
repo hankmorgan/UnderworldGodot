@@ -14,6 +14,9 @@ void fragment() {
     ivec3 indexfer = ivec3(round(texXfer.rgb * 255.0));
     ivec3 indexworld = ivec3(round(texWorld.rgb * 255.0));
 
+    //Get the uv distance offset within the shades.dat image
+    float maptouse = texWorld.g; //0.0;// dist/cutoffdistance;
+
     if (indexfer.r == 252)
     {
         //vec2(x, y) * TEXTURE_PIXEL_SIZE
@@ -23,10 +26,8 @@ void fragment() {
     else
     {
         finalcolor = texWorld;
-    }
-		
-    //Get the uv distance offset within the shades.dat image
-    float maptouse = 0.0;// dist/cutoffdistance;
+    }	
+
     
     //lookup shades.dat data which is stored in smoothpalette using the uv	
     vec4 outputcolor = texture(smoothpalette, vec2(finalcolor.r, maptouse));
