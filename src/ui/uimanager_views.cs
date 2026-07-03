@@ -154,11 +154,11 @@ namespace Underworld
 		/// <returns></returns>
 		public static bool IsMouseInViewPort()
         {
-            var viewportmouspos = instance.uwsubviewport.GetMousePosition();
+            var viewportmouspos = instance.combinedview.GetLocalMousePosition();
             if (
                 (viewportmouspos.X >= 0) && (viewportmouspos.Y >= 0)
                 &&
-                (viewportmouspos.X <= instance.uwsubviewport.Size.X) && (viewportmouspos.Y <= instance.uwsubviewport.Size.Y)
+                (viewportmouspos.X <= instance.combinedview.Size.X) && (viewportmouspos.Y <= instance.combinedview.Size.Y)
                 )
             {
                 return true;
