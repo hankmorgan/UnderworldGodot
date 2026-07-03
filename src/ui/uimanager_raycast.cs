@@ -68,7 +68,7 @@ namespace Underworld
         {
             var MainPos = eventMousePosition; //eventMouseButton.Position;
             //var mousepos = instance.uwsubviewport.GetMousePosition();
-            var mousepos = instance.combinedview.GetLocalMousePosition();
+            var mousepos = instance.uwviewport.GetLocalMousePosition();
 
             // var mouselook = (bool)main.cameraPitchGimbal.Get("MOUSELOOK");
             // if (mouselook)

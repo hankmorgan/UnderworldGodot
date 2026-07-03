@@ -1,6 +1,7 @@
 using System.IO;
 using Godot;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Underworld
 {
@@ -770,11 +771,27 @@ namespace Underworld
                                     palette: pal,
                                     useAlphaChannel: true,
                                     useSingleRedChannel: true,
-                                    crop: true);
-                                //CropImageData(ref imgData, pal);
-                                this.animSprites[spriteIndex++] = imgData; //Sprite.Create(imgData, new Rect(0f, 0f, imgData.width, imgData.height), new Vector2(0.5f, 0.0f));
+                                    crop: false, 
+                                    xfermode:XferChannnelMode.NonXFer);
+                                this.animSprites[spriteIndex] = imgData; 
+
+                                imgData = Image(
+                                    databuffer: outputImg,
+                                    dataOffSet: 0,
+                                    width: BitMapWidth, height: BitMapHeight,
+                                    palette: pal,
+                                    useAlphaChannel: true,
+                                    useSingleRedChannel: true,
+                                    crop: false,
+                                    xfermode:XferChannnelMode.XFEROnly);
+                                this.animSpritesxfer[spriteIndex] = imgData;
+                                if (this.animSpritesxfer[spriteIndex].GetWidth() !=this.animSprites[spriteIndex].GetWidth())
+                                {
+                                    Debug.Print("widths of sprites differ");
+                                }
+                                spriteIndex++;
                             }
-                        }//end extrac frameoffset
+                        }//end extract frameoffset
                     }//End for loop extract
                 }//End extract images
 

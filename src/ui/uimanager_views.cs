@@ -16,7 +16,7 @@ namespace Underworld
         [Export] public SubViewport uwsubviewport_world;
         [Export] public SubViewport uwsubviewport_sprites;
 
-        [Export] public TextureRect combinedview;
+        //[Export] public TextureRect combinedview;
 
         [Export] public mouseCursor mousecursor;
         [Export] public CanvasLayer uw1UI;
@@ -131,7 +131,7 @@ namespace Underworld
                     {
                         uwviewport.SetSize(new Vector2(840f, 512f));
                         uwviewport.Position = new Vector2(62f, 62f);
-                        uwsubviewport.Size = new Vector2I(840, 512);
+                        //uwsubviewport.Size = new Vector2I(840, 512);
                     }
                     break;
                 default:
@@ -141,7 +141,8 @@ namespace Underworld
                     {
                         uwviewport.SetSize(new Vector2(700f, 456f));
                         uwviewport.Position = new Vector2(200f, 72f);
-                        uwsubviewport.Size = new Vector2I(700, 456);
+                         //.SetSize(new Vector2(700f, 456f));
+                        //uwsubviewport.Size = new Vector2I(700, 456);
                     }
                     break;
             }
@@ -154,11 +155,11 @@ namespace Underworld
 		/// <returns></returns>
 		public static bool IsMouseInViewPort()
         {
-            var viewportmouspos = instance.combinedview.GetLocalMousePosition();
+            var viewportmouspos = instance.uwviewport.GetLocalMousePosition();
             if (
                 (viewportmouspos.X >= 0) && (viewportmouspos.Y >= 0)
                 &&
-                (viewportmouspos.X <= instance.combinedview.Size.X) && (viewportmouspos.Y <= instance.combinedview.Size.Y)
+                (viewportmouspos.X <= instance.uwviewport.Size.X) && (viewportmouspos.Y <= instance.uwviewport.Size.Y)
                 )
             {
                 return true;

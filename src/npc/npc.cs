@@ -76,6 +76,7 @@ namespace Underworld
         /// <returns></returns>
         public static npc CreateInstance(Node3D parent, uwObject obj, string name)
         {
+            obj.item_id = 97;
             var n = new npc(obj);
 
             var a_sprite = new uwMeshInstance3D(); //new Sprite3D();
@@ -96,8 +97,8 @@ namespace Underworld
             x_sprite.Mesh.Set("size", n.FrameSize);
             n.sprite_xfer = x_sprite;
             parent.AddChild(x_sprite);
-            x_sprite.Position = new Vector3(0, n.FrameSize.Y / 2 + 0.12f, 0);
-
+            x_sprite.Position = a_sprite.Position; //new Vector3(0, n.FrameSize.Y / 2 + 0.12f, 0);
+            x_sprite.Rotation = a_sprite.Rotation;
             if (ObjectCreator.printlabels)
             {
                 string animname;
@@ -122,7 +123,6 @@ namespace Underworld
 
         public void SetAnimSprite(int animationNo, short frameNo, int relativeHeading)
         {
-            //if (this.uwobject.item_id >= 127) { return; }
             if (uwobject.AnimationFrame >= 8)
             {
                 uwobject.AnimationFrame = 0;
@@ -198,13 +198,12 @@ namespace Underworld
                 var texture = crit.animSprites[anim.animIndices[frameNo]];
                 FrameSize = new Vector2(
                     ArtLoader.NPCSpriteScale * texture.GetWidth(),
-
                     ArtLoader.NPCSpriteScale * texture.GetHeight()
                     );
                 material.SetShaderParameter("texture_albedo", (Texture)texture);
                 if (sprite != null)
                 {
-                    sprite.Mesh.Set("size", FrameSize);// * 1.5f);
+                    sprite.Mesh.Set("size", FrameSize);
                     sprite.Layers = main.LayerGeo;                 
                 }
 
@@ -218,10 +217,11 @@ namespace Underworld
                 material_xfer.SetShaderParameter("texture_albedo", (Texture)texture);
                 if (sprite_xfer != null)
                 {
-                    sprite_xfer.Mesh.Set("size", FrameSize);// * 1.5f);
+                    sprite_xfer.Position = sprite.Position;
+                    sprite_xfer.Rotation = sprite.Rotation;
+                    sprite_xfer.Mesh.Set("size", FrameSize);
                     sprite_xfer.Layers = main.LayerXFER;                 
                 }
-
                 return frameNo;
             }
             else

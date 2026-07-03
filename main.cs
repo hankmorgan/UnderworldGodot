@@ -126,6 +126,7 @@ public partial class main : Node3D
 			}
 		}
 		cameraPitchGimbal_world.Fov = Math.Max(50, uwsettings.instance.FOV);
+		cameraPitchGimbal_sprites.Fov = cameraPitchGimbal_world.Fov;
 		uimanager.EnableDisable(instance.lblPositionDebug, EnablePositionDebug);
 		ObjectCreator.grObjects = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
 		ObjectCreator.grObjects.UseRedChannel = true;
@@ -215,7 +216,7 @@ public partial class main : Node3D
 		base._Process(delta);
 		if (uimanager.InGame)
 		{
-			var mat = (ShaderMaterial)uimanager.instance.combinedview.Material;
+			var mat = (ShaderMaterial)uimanager.instance.uwviewport.Material;
 			mat.SetShaderParameter("viewport_1", (Texture)uimanager.instance.uwsubviewport_world.GetTexture());
 			mat.SetShaderParameter("viewport_2", (Texture)uimanager.instance.uwsubviewport_sprites.GetTexture());
 		}
@@ -339,7 +340,7 @@ public partial class main : Node3D
 			if (EnablePositionDebug)
 			{
 				var fps = Engine.GetFramesPerSecond();
-				lblPositionDebug.Text = $"FPS:{fps} Time:{playerdat.game_time} PIT:{GlobalPITTimer}\nL:{playerdat.dungeon_level} X:{playerdat.playerObject.npc_xhome} Y:{playerdat.playerObject.npc_yhome}\nMouseposition:{uimanager.instance.combinedview.GetLocalMousePosition()}\nPlayer Coordinates {motion.playerMotionParams.x_0} {motion.playerMotionParams.y_2} {motion.playerMotionParams.z_4}";
+				lblPositionDebug.Text = $"FPS:{fps} Time:{playerdat.game_time} PIT:{GlobalPITTimer}\nL:{playerdat.dungeon_level} X:{playerdat.playerObject.npc_xhome} Y:{playerdat.playerObject.npc_yhome}\nMouseposition:{uimanager.instance.uwviewport.GetLocalMousePosition()}\nPlayer Coordinates {motion.playerMotionParams.x_0} {motion.playerMotionParams.y_2} {motion.playerMotionParams.z_4}";
 			}
 
 			if ((MessageDisplay.WaitingForTypedInput) || (MessageDisplay.WaitingForYesOrNo))
