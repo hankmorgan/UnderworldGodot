@@ -4,6 +4,7 @@ uniform sampler2D viewport_1: source_color,filter_nearest; //: filter_linear_mip
 uniform sampler2D viewport_2: source_color,filter_nearest; //: filter_linear_mipmap;// source_color,filter_nearest;   //filter_linear_mipmap;
 global uniform sampler2D xfer: source_color,filter_nearest; //xfer.dat transparency
 global uniform sampler2D smoothpalette: source_color,filter_nearest; // pals.dat mapped into shades
+uniform int uwgame;
 
 void fragment() {
     // Sample the color from both viewports
@@ -16,11 +17,50 @@ void fragment() {
 
     //Get the uv distance offset within the shades.dat image
     float maptouse = texWorld.g; //0.0;// dist/cutoffdistance;
+    
+    float row = 0.0; //the row inthe 5x256 xfer image
+    //rows map as follows
+    //uw1 0 = ?, 1= ?, 2 = white(252)
+    //uw2 0 = red, 1 =red, 2 = green, 3 = blue, 4 = white(252)
 
-    if (indexfer.r == 252)
+    if ((indexfer.r>=252) && (indexfer.r<=252))
     {
-        //vec2(x, y) * TEXTURE_PIXEL_SIZE
-        vec4 shade = texture(xfer, vec2(float(indexworld.r) / 255.0, 2.0/5.0));
+        switch(uwgame)
+        {
+            case 2:
+                {
+                    switch (indexfer.r)
+                    {
+                        case 252:
+                            {
+                                row = 4.0;
+                                break;
+                            }                            
+                    }
+                    break;
+                }
+            case 1: //uw1
+            default:
+                {
+                    switch (indexfer.r)
+                    {
+                        case 252:
+                            {
+                                row = 2.0;
+                                break;
+                            }
+                            
+                    }
+                    break;
+                }
+        }
+    }
+
+
+
+    if ((indexfer.r>=252) && (indexfer.r<=252))
+    {
+        vec4 shade = texture(xfer, vec2(float(indexworld.r) / 255.0, row/5.0));
         finalcolor.r = shade.r;     
     }
     else

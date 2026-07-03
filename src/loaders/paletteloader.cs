@@ -139,7 +139,6 @@ namespace Underworld
             }
             uwsettings.instance.shaderbandsize = band;
 
-            //Init palette shader params
             RenderingServer.GlobalShaderParameterAdd(
                 name: "uipalette",
                 type: RenderingServer.GlobalShaderParameterType.Sampler2D,

@@ -219,6 +219,14 @@ public partial class main : Node3D
 			var mat = (ShaderMaterial)uimanager.instance.uwviewport.Material;
 			mat.SetShaderParameter("viewport_1", (Texture)uimanager.instance.uwsubviewport_world.GetTexture());
 			mat.SetShaderParameter("viewport_2", (Texture)uimanager.instance.uwsubviewport_sprites.GetTexture());
+			if (UWClass._RES == UWClass.GAME_UW2)
+			{
+				mat.SetShaderParameter("uwgame", (int)2);
+			}
+			else
+			{
+				mat.SetShaderParameter("uwgame", (int)1);				
+			}			
 		}
 	}
 

@@ -59,7 +59,6 @@ namespace Underworld
             parent.AddChild(a_sprite);
             a_sprite.Position = new Vector3(0, NewSize.Y / 2 + 0f, 0);
             a_sprite.CreateConvexCollision();
-
             a_sprite = CreateAnimoSprite(obj, name, out NewSize, grAnimoxfer, main.LayerXFER);
             _animo.spritexfer = a_sprite;
             parent.AddChild(a_sprite);
