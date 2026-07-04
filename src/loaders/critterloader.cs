@@ -2,6 +2,7 @@ using System.IO;
 using Godot;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.Serialization.Formatters;
 
 namespace Underworld
 {
@@ -785,10 +786,26 @@ namespace Underworld
                                     crop: false,
                                     xfermode:XferChannnelMode.XFEROnly);
                                 this.animSpritesxfer[spriteIndex] = imgData;
-                                if (this.animSpritesxfer[spriteIndex].GetWidth() !=this.animSprites[spriteIndex].GetWidth())
-                                {
-                                    Debug.Print("widths of sprites differ");
-                                }
+
+
+                                // var crname = System.IO.Path.GetFileName(critterFilePath);
+                                // var filename = $"c:\\temp\\uw2npcs\\{npc.TESTITEM_ID}\\{crname}_{AuxPalNo}_{spriteIndex}.png";
+                                // if (!System.IO.Path.Exists($"c:\\temp\\uw2npcs\\{npc.TESTITEM_ID}"))
+                                // {
+                                //     System.IO.Directory.CreateDirectory($"c:\\temp\\uw2npcs\\{npc.TESTITEM_ID}");
+                                // }
+                                // imgData = Image(
+                                //     databuffer: outputImg,
+                                //     dataOffSet: 0,
+                                //     width: BitMapWidth, height: BitMapHeight,
+                                //     palette: pal,
+                                //     useAlphaChannel: true,
+                                //     useSingleRedChannel: true,
+                                //     crop: false,
+                                //     xfermode:XferChannnelMode.AllColours);
+
+                                // imgData.GetImage().SavePng(filename);
+                            
                                 spriteIndex++;
                             }
                         }//end extract frameoffset

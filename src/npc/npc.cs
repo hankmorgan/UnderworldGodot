@@ -7,6 +7,7 @@ namespace Underworld
 {
     public partial class npc : objectInstance
     {
+        //public static int TESTITEM_ID = 124;
         Label3D myLabel;
 
         /// <summary>
@@ -76,7 +77,7 @@ namespace Underworld
         /// <returns></returns>
         public static npc CreateInstance(Node3D parent, uwObject obj, string name)
         {
-            obj.item_id = 97;
+            //obj.item_id = TESTITEM_ID;
             var n = new npc(obj);
 
             var a_sprite = new uwMeshInstance3D(); //new Sprite3D();

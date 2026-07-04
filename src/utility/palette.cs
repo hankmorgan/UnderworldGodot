@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Godot;
 
 namespace Underworld
@@ -39,7 +41,7 @@ namespace Underworld
         /// </summary>
         public ImageTexture[,,] cycledGamePalette;   //[mono|shaded, ]
         public ImageTexture[] cycledUIPalette;
-
+        int[] xferindices = new int[]{0xF9, 0xFA, 0xFB, 0xFC, 0xFD};
         /// <summary>
         /// Returns the color for the specified palette index. 
         /// </summary>
@@ -52,7 +54,7 @@ namespace Underworld
             {
                 case ArtLoader.XferChannnelMode.XFEROnly:
                     {
-                        if (index != 0xFC)
+                        if (!xferindices.Contains(index))
                         {
                             index = 0;//force to black
                         }
@@ -60,7 +62,7 @@ namespace Underworld
                     }
                 case ArtLoader.XferChannnelMode.NonXFer:
                     {
-                        if (index == 0xFC)
+                        if (xferindices.Contains(index))
                         {
                             index = 0;//force to black
                         }

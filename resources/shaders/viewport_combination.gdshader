@@ -21,9 +21,9 @@ void fragment() {
     float row = 0.0; //the row inthe 5x256 xfer image
     //rows map as follows
     //uw1 0 = ?, 1= ?, 2 = white(252)
-    //uw2 0 = red, 1 =red, 2 = green, 3 = blue, 4 = white(252)
+    //uw2 0 = red, 1 =red(249), 2 = green, 3 = blue(251), 4 = white(252) 5 = shadows(253).
 
-    if ((indexfer.r>=252) && (indexfer.r<=252))
+    if ((indexfer.r>=249) && (indexfer.r<=253))
     {
         switch(uwgame)
         {
@@ -31,11 +31,35 @@ void fragment() {
                 {
                     switch (indexfer.r)
                     {
+                        case 248:
+                            {
+                                break;//not observed yet. Not included in conditions yet...
+                            }
+                        case 249:
+                            {
+                                row = 1.0;//done
+                                break;
+                            }
+                        case 250:
+                            {
+                                row = 2.0;//not observed yet but assuming this does apply.
+                                break;
+                            }
+                        case 251:
+                            {
+                                row = 3.0;//done
+                                break;
+                            }
                         case 252:
                             {
-                                row = 4.0;
+                                row = 4.0;//done
                                 break;
                             }                            
+                        case 253:
+                            {
+                                row = 5.0;//done
+                                break;                                
+                            }
                     }
                     break;
                 }
@@ -58,7 +82,7 @@ void fragment() {
 
 
 
-    if ((indexfer.r>=252) && (indexfer.r<=252))
+    if ((indexfer.r>=249) && (indexfer.r<=253))
     {
         vec4 shade = texture(xfer, vec2(float(indexworld.r) / 255.0, row/5.0));
         finalcolor.r = shade.r;     
