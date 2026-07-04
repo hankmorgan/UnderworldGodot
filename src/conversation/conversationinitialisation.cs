@@ -155,11 +155,7 @@ namespace Underworld
             {
                 uimanager.SetPanelMode(0);//make sure inventory paperdoll is displayed
             }
-
-            //turn off mouselook to allow clicking around the screen.
-            Input.MouseMode = Input.MouseModeEnum.Hidden;
-            main.cameraPitchGimbal.Set("MOUSELOOK", false);
-            
+          
 
             //npc name and portrait
             uimanager.instance.NPCNameLabel.Text = $"[color={uimanager.CharNameColour}]{talker.a_name}[/color]";

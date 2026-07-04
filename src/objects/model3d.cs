@@ -131,6 +131,7 @@ namespace Underworld
             final_mesh.Position = Vector3.Zero; // new Vector3(x * -1.2f, 0.0f, y * 1.2f);
             final_mesh.Name = ModelName;
             final_mesh.Mesh = a_mesh;
+            final_mesh.Layers = main.LayerGeo;
             if (EnableCollision)
             {
                 final_mesh.CreateTrimeshCollision();
@@ -175,7 +176,7 @@ namespace Underworld
         {
             if (textureshader == null)
             {
-                textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwshader.gdshader");
+                textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwshader_allred.gdshader");
             }
             var newmaterial = new ShaderMaterial();
             newmaterial.Shader = textureshader;

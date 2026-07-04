@@ -12,6 +12,7 @@ namespace Underworld
     public class GRLoader : ArtLoader
     {
         public bool UseRedChannel = false;
+
         const int repeat_record_start = 0;
         const int repeat_record = 1;
         const int run_record = 2;
@@ -121,10 +122,10 @@ namespace Underworld
                     break;
                 case GRShaderMode.TextureShader:
                 case GRShaderMode.SpriteShader:
-                    textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwshader.gdshader");
+                    textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwshader_allred.gdshader");
                     break;
                 case GRShaderMode.BillboardSpriteShader:
-                    textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwsprite.gdshader");
+                    textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwsprite_allred.gdshader");
                     break;  
                 case GRShaderMode.UIShader:
                     textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uisprite.gdshader");
@@ -224,7 +225,8 @@ namespace Underworld
                             useAlphaChannel: UseAlphaChannel, 
                             useSingleRedChannel: UseRedChannel,
                             crop: UseCropping, 
-                            OutputInLowDetail: UseLowDetail);
+                            OutputInLowDetail: UseLowDetail, 
+                            xfermode: XFER);
                         return ImageCache[index];
                     }
                 case 0x8://4 bit run-length
@@ -252,7 +254,8 @@ namespace Underworld
                             useAlphaChannel: UseAlphaChannel, 
                             useSingleRedChannel: UseRedChannel, 
                             crop: UseCropping, 
-                            OutputInLowDetail: UseLowDetail);
+                            OutputInLowDetail: UseLowDetail, 
+                            xfermode: XFER);
                         return ImageCache[index];
                     }
                 case 0xA://4 bit uncompressed//Same as above???
@@ -278,7 +281,8 @@ namespace Underworld
                             useAlphaChannel: UseAlphaChannel , 
                             useSingleRedChannel: UseRedChannel,
                             crop: UseCropping, 
-                            OutputInLowDetail: UseLowDetail);
+                            OutputInLowDetail: UseLowDetail,  
+                            xfermode: XFER);
                         return ImageCache[index];
                     }
                 //break;
@@ -302,7 +306,8 @@ namespace Underworld
                             useAlphaChannel: UseAlphaChannel, 
                             useSingleRedChannel: UseRedChannel,
                             crop: UseCropping, 
-                            OutputInLowDetail: UseLowDetail);
+                            OutputInLowDetail: UseLowDetail,
+                            xfermode: XFER);
                         return ImageCache[index];
                     }
                     break;

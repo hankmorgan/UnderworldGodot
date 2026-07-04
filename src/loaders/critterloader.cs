@@ -1,6 +1,8 @@
 using System.IO;
 using Godot;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Runtime.Serialization.Formatters;
 
 namespace Underworld
 {
@@ -17,6 +19,7 @@ namespace Underworld
 
         public Dictionary<string, CritterAnimation> Animations = new Dictionary<string, CritterAnimation>();
         public ImageTexture[] animSprites = new ImageTexture[256];
+        public ImageTexture[] animSpritesxfer = new ImageTexture[256];
 
         /// <summary>
         /// Critter animations for UW1
@@ -372,9 +375,43 @@ namespace Underworld
                             palette: pal,
                             useAlphaChannel: true,
                             useSingleRedChannel: true,
-                            crop: UseCropping);
+                            crop: false, 
+                            xfermode:XferChannnelMode.NonXFer);
 
                         this.animSprites[spriteIndex + i] = imgData;
+
+                       imgData = Image(
+                            databuffer: outputImg,
+                            dataOffSet: 0,
+                            width: BitMapWidth, height: BitMapHeight,
+                            palette: pal,
+                            useAlphaChannel: true,
+                            useSingleRedChannel: true,
+                            crop: false,
+                            xfermode:XferChannnelMode.XFEROnly);
+
+                        this.animSpritesxfer[spriteIndex + i] = imgData;
+
+                                // var crname = $"{XX},{YY}";
+                                // string AnimName = GetUW1AnimName(slotbase + SlotIndices[i]);
+                                // var filename = $"c:\\temp\\uw1npcs\\{npc.TESTITEM_ID}\\{AnimName}_{crname}_{AuxPalNo}_{spriteIndex}.png";
+                                // if (!System.IO.Path.Exists($"c:\\temp\\uw1npcs\\{npc.TESTITEM_ID}"))
+                                // {
+                                //     System.IO.Directory.CreateDirectory($"c:\\temp\\uw1npcs\\{npc.TESTITEM_ID}");
+                                // }
+                                // imgData = Image(
+                                //     databuffer: outputImg,
+                                //     dataOffSet: 0,
+                                //     width: BitMapWidth, height: BitMapHeight,
+                                //     palette: pal,
+                                //     useAlphaChannel: true,
+                                //     useSingleRedChannel: true,
+                                //     crop: false,
+                                //     xfermode:XferChannnelMode.AllColours);
+
+                                // imgData.GetImage().SavePng(filename);
+
+
                         spriteCounter++;
                     }
 
@@ -754,11 +791,43 @@ namespace Underworld
                                     palette: pal,
                                     useAlphaChannel: true,
                                     useSingleRedChannel: true,
-                                    crop: true);
-                                //CropImageData(ref imgData, pal);
-                                this.animSprites[spriteIndex++] = imgData; //Sprite.Create(imgData, new Rect(0f, 0f, imgData.width, imgData.height), new Vector2(0.5f, 0.0f));
+                                    crop: false, 
+                                    xfermode:XferChannnelMode.NonXFer);
+                                this.animSprites[spriteIndex] = imgData; 
+
+                                imgData = Image(
+                                    databuffer: outputImg,
+                                    dataOffSet: 0,
+                                    width: BitMapWidth, height: BitMapHeight,
+                                    palette: pal,
+                                    useAlphaChannel: true,
+                                    useSingleRedChannel: true,
+                                    crop: false,
+                                    xfermode:XferChannnelMode.XFEROnly);
+                                this.animSpritesxfer[spriteIndex] = imgData;
+
+
+                                // var crname = System.IO.Path.GetFileName(critterFilePath);
+                                // var filename = $"c:\\temp\\uw1npcs\\{npc.TESTITEM_ID}\\{crname}_{AuxPalNo}_{spriteIndex}.png";
+                                // if (!System.IO.Path.Exists($"c:\\temp\\uw2npcs\\{npc.TESTITEM_ID}"))
+                                // {
+                                //     System.IO.Directory.CreateDirectory($"c:\\temp\\uw2npcs\\{npc.TESTITEM_ID}");
+                                // }
+                                // imgData = Image(
+                                //     databuffer: outputImg,
+                                //     dataOffSet: 0,
+                                //     width: BitMapWidth, height: BitMapHeight,
+                                //     palette: pal,
+                                //     useAlphaChannel: true,
+                                //     useSingleRedChannel: true,
+                                //     crop: false,
+                                //     xfermode:XferChannnelMode.AllColours);
+
+                                // imgData.GetImage().SavePng(filename);
+                            
+                                spriteIndex++;
                             }
-                        }//end extrac frameoffset
+                        }//end extract frameoffset
                     }//End for loop extract
                 }//End extract images
 

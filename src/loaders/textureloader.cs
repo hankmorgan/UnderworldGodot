@@ -35,7 +35,7 @@ namespace Underworld
         public TextureLoader(bool _usehighdetail)
         {  
             UseLowDetail = !_usehighdetail;//sets the texture load to just return the colour define by the first pixel(top left of the texture loader)
-            textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwshader.gdshader");            
+            textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwshader_allred.gdshader");            
         }  
 
         public override ImageTexture LoadImageAt(int index)

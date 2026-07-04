@@ -150,7 +150,9 @@ namespace Underworld
             EnableDisable(targetControl, true);
             if (DisableCamera)
             {
-                instance.uwsubviewport.Disable3D = true;
+                instance.uwsubviewport_sprites.Disable3D = true;
+                instance.uwsubviewport_world.Disable3D = true;
+                //instance.uwsubviewport.Disable3D = true;
             }
             MessageDisplay.WaitingForMore = true;
             while (MessageDisplay.WaitingForMore)
@@ -158,7 +160,9 @@ namespace Underworld
                 yield return new WaitOneFrame();
             }
             EnableDisable(targetControl, false);
-            instance.uwsubviewport.Disable3D = false;
+            //instance.uwsubviewport.Disable3D = false;
+            instance.uwsubviewport_sprites.Disable3D = false;
+            instance.uwsubviewport_world.Disable3D = false;
             yield return 0;
         }
 

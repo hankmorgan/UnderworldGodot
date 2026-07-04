@@ -67,7 +67,8 @@ namespace Underworld
         public static Dictionary DoRayCast(Vector2 eventMousePosition, float RayLength, out Vector3 RayOrigin)   //InputEventMouseButton eventMouseButton, float RayLength)
         {
             var MainPos = eventMousePosition; //eventMouseButton.Position;
-            var mousepos = instance.uwsubviewport.GetMousePosition();
+            //var mousepos = instance.uwsubviewport.GetMousePosition();
+            var mousepos = instance.uwviewport.GetLocalMousePosition();
 
             // var mouselook = (bool)main.cameraPitchGimbal.Get("MOUSELOOK");
             // if (mouselook)
@@ -76,9 +77,9 @@ namespace Underworld
             //     mousepos = mouseCursor.CursorPositionSub;
             // }
 
-            var from = main.cameraPitchGimbal.ProjectRayOrigin(MainPos);
+            var from = main.cameraPitchGimbal_world.ProjectRayOrigin(MainPos);
             RayOrigin = from;
-            var to = from + main.cameraPitchGimbal.ProjectRayNormal(mousepos) * RayLength;
+            var to = from + main.cameraPitchGimbal_world.ProjectRayNormal(mousepos) * RayLength;
             var query = PhysicsRayQueryParameters3D.Create(from, to);
             var spaceState = main.instance.GetWorld3D().DirectSpaceState;
             var result = spaceState.IntersectRay(query);

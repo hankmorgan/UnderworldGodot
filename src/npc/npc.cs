@@ -7,6 +7,7 @@ namespace Underworld
 {
     public partial class npc : objectInstance
     {
+       //public static int TESTITEM_ID = 113;
         Label3D myLabel;
 
         /// <summary>
@@ -18,11 +19,13 @@ namespace Underworld
         /// Mesh this sprite is drawn on
         /// </summary>
         public uwMeshInstance3D sprite;
+        public uwMeshInstance3D sprite_xfer;
 
         /// <summary>
         /// The material for rendering this unique npc
         /// </summary>
         public ShaderMaterial material;
+        public ShaderMaterial material_xfer;
 
         /// <summary>
         /// Used to pick the sprite at a particular angle.
@@ -74,6 +77,7 @@ namespace Underworld
         /// <returns></returns>
         public static npc CreateInstance(Node3D parent, uwObject obj, string name)
         {
+            //obj.item_id = TESTITEM_ID;
             var n = new npc(obj);
 
             var a_sprite = new uwMeshInstance3D(); //new Sprite3D();
@@ -86,6 +90,16 @@ namespace Underworld
             a_sprite.Position = new Vector3(0, n.FrameSize.Y / 2 + 0.12f, 0);
             a_sprite.CreateConvexCollision();
 
+            //add xfersprite
+            var x_sprite = new uwMeshInstance3D(); //new Sprite3D();
+            x_sprite.Name = name;
+            x_sprite.Mesh = new QuadMesh();
+            x_sprite.Mesh.SurfaceSetMaterial(0, n.material_xfer);
+            x_sprite.Mesh.Set("size", n.FrameSize);
+            n.sprite_xfer = x_sprite;
+            parent.AddChild(x_sprite);
+            x_sprite.Position = a_sprite.Position; //new Vector3(0, n.FrameSize.Y / 2 + 0.12f, 0);
+            x_sprite.Rotation = a_sprite.Rotation;
             if (ObjectCreator.printlabels)
             {
                 string animname;
@@ -105,12 +119,11 @@ namespace Underworld
 
         static npc()
         {
-            textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwnpc.gdshader");
+            textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwnpc_allred.gdshader");
         }
 
         public void SetAnimSprite(int animationNo, short frameNo, int relativeHeading)
         {
-            //if (this.uwobject.item_id >= 127) { return; }
             if (uwobject.AnimationFrame >= 8)
             {
                 uwobject.AnimationFrame = 0;
@@ -160,6 +173,19 @@ namespace Underworld
                 newmaterial.SetShaderParameter("UseAlpha", true);
                 material = newmaterial;
             }
+            if (material_xfer == null)
+            {//create the initial material
+                var newmaterial = new ShaderMaterial();
+                newmaterial.Shader = textureshader;
+
+                newmaterial.SetShaderParameter("albedo", new Color(1, 1, 1, 1));
+                newmaterial.SetShaderParameter("uv1_scale", new Vector3(1, 1, 1));
+                newmaterial.SetShaderParameter("uv2_scale", new Vector3(1, 1, 1));
+                newmaterial.SetShaderParameter("UseAlpha", true);
+                material_xfer = newmaterial;
+            }
+
+
             //assign the params to the shader
             if (frameNo >= 8) { frameNo = 0; }
             if (anim.animIndices[frameNo] == -1)
@@ -169,23 +195,33 @@ namespace Underworld
 
             if (anim.animIndices[frameNo] != -1)
             {
+                //Render nonxfer bits
                 var texture = crit.animSprites[anim.animIndices[frameNo]];
                 FrameSize = new Vector2(
                     ArtLoader.NPCSpriteScale * texture.GetWidth(),
-
                     ArtLoader.NPCSpriteScale * texture.GetHeight()
                     );
                 material.SetShaderParameter("texture_albedo", (Texture)texture);
                 if (sprite != null)
                 {
-                    // if (_RES==GAME_UW2)
-                    // {
-                    sprite.Mesh.Set("size", FrameSize);// * 1.5f);
-                    // }
-                    // else
-                    // {
-                    //     sprite.Mesh.Set("size", FrameSize * 2f);//make uw1 npcs a bit bigger
-                    // }                    
+                    sprite.Mesh.Set("size", FrameSize);
+                    sprite.Layers = main.LayerGeo;                 
+                }
+
+                //render xfer bits
+                texture = crit.animSpritesxfer[anim.animIndices[frameNo]];
+                FrameSize = new Vector2(
+                    ArtLoader.NPCSpriteScale * texture.GetWidth(),
+
+                    ArtLoader.NPCSpriteScale * texture.GetHeight()
+                    );
+                material_xfer.SetShaderParameter("texture_albedo", (Texture)texture);
+                if (sprite_xfer != null)
+                {
+                    sprite_xfer.Position = sprite.Position;
+                    sprite_xfer.Rotation = sprite.Rotation;
+                    sprite_xfer.Mesh.Set("size", FrameSize);
+                    sprite_xfer.Layers = main.LayerXFER;                 
                 }
                 return frameNo;
             }
