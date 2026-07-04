@@ -23,6 +23,8 @@
 [ext_resource type="Script" path="res://src/audio/MusicStreamPlayer.cs" id="N_music_stream"]
 [ext_resource type="Script" path="res://src/audio/sfx/godot/SfxStreamPlayer.cs" id="N_sfx_stream"]
 
+[sub_resource type="AudioStreamWAV" id="AudioStreamWAV_tkk82"]
+
 [sub_resource type="ViewportTexture" id="ViewportTexture_j0mn4"]
 viewport_path = NodePath("SubViewportWorld")
 
@@ -31,8 +33,6 @@ viewport_path = NodePath("SubViewportSprites")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_j67en"]
 shader = ExtResource("13_rsqj8")
-
-[sub_resource type="AudioStreamWAV" id="AudioStreamWAV_tkk82"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_7v506"]
 render_priority = 0
@@ -94,7 +94,15 @@ offset_top = 72.0
 offset_right = 900.0
 offset_bottom = 528.0
 
-[node name="OutputTextureWorld" type="TextureRect" parent="."]
+[node name="UI" type="CanvasLayer" parent="."]
+follow_viewport_enabled = true
+
+[node name="DigitalAudioPlayer" type="AudioStreamPlayer" parent="UI"]
+stream = SubResource("AudioStreamWAV_tkk82")
+
+[node name="3DWin" type="CanvasLayer" parent="UI"]
+
+[node name="OutputTextureWorld" type="TextureRect" parent="UI/3DWin"]
 visible = false
 offset_left = 793.0
 offset_top = 393.0
@@ -102,7 +110,7 @@ offset_right = 1305.0
 offset_bottom = 905.0
 texture = SubResource("ViewportTexture_j0mn4")
 
-[node name="OutputTextureSprites" type="TextureRect" parent="."]
+[node name="OutputTextureSprites" type="TextureRect" parent="UI/3DWin"]
 visible = false
 offset_left = -10.0
 offset_top = 384.0
@@ -110,19 +118,14 @@ offset_right = 502.0
 offset_bottom = 896.0
 texture = SubResource("ViewportTexture_wyrrx")
 
-[node name="OutputTextureCombined" type="TextureRect" parent="."]
+[node name="OutputTextureCombined" type="TextureRect" parent="UI/3DWin"]
+visible = false
 material = SubResource("ShaderMaterial_j67en")
 offset_left = 209.0
 offset_top = 79.0
 offset_right = 609.0
 offset_bottom = 479.0
 texture = ExtResource("18_tfr7p")
-
-[node name="UI" type="CanvasLayer" parent="."]
-follow_viewport_enabled = true
-
-[node name="DigitalAudioPlayer" type="AudioStreamPlayer" parent="UI"]
-stream = SubResource("AudioStreamWAV_tkk82")
 
 [node name="UW1" type="CanvasLayer" parent="UI"]
 
@@ -2972,7 +2975,7 @@ offset_bottom = 5.0
 mouse_filter = 2
 texture = ExtResource("18_tfr7p")
 
-[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("PanelChargen", "ChargenBG", "ChargenQuestion", "ChargenSkills", "ChargenSkills_values", "ChargenStats", "ChargenStats_values", "ChargenGender", "ChargenClass", "ChargenName", "ChargenNameBG", "ChargenNameInput", "ChargenNameQuestion", "ChargenBody", "CompassBgUW1", "CompassBgUW2", "CompassPointsUW1", "CompassPointsUW2", "CompassPanelUW2", "ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLabelFrameUW1", "NPCNameLabelFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "CutsFull", "CutsSmallUW1", "CutsSmallUW2", "Cuts3DWinUW1", "Cuts3DWinUW2", "CutsSubtitle", "DragonPanel", "DragonHeads", "DragonTails", "DragonTorsos", "PanelEndGame", "EndGameBackground", "EndGameStats", "Eyes", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "HealthBubbles", "ManaBubbles", "InteractionButtonsUW1", "InteractionButtonsUW2", "PanelMainMenu", "MainMenuBG", "MainMenuButtons", "LoadingLabel", "SaveGamesNames", "AutomapPanel", "AutomapBG", "AutomapImage", "NotesPanel", "AutomapNumberLabel", "AutomapWorldGem", "messageScrollUW1", "messageScrollUW2", "scrollEdgeUW1Left", "scrollEdgeUW1Right", "scrollEdgeUW2Left", "scrollEdgeUW2Right", "ConvoscrollEdgeUW1Left", "ConvoscrollEdgeUW1Right", "ConvoscrollEdgeUW2Left", "ConvoscrollEdgeUW2Right", "TypedInput", "GameOptionButtonsUW1", "GameOptionButtonsUW2", "GameOptionsBackgroundUW1", "GameOptionsBackgroundUW2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Chains", "BackpackBG", "WeightCapacity", "RuneTiles", "SelectedRunes", "ActiveSpellIcons", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSelectedUW1", "NPCTradeSelectedUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "PlayerTradeSelectedUW2", "NPCTradeSelectedUW2", "cam", "uwviewport", "uwsubviewport", "uwsubviewport_world", "uwsubviewport_sprites", "combinedview", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "weaponanimuw1", "weaponanimuw2", "placeholderuw1", "placeholderuw2", "PowerGemUW1", "PowerGemUW2")]
+[node name="uiManager" type="Node2D" parent="UI" node_paths=PackedStringArray("PanelChargen", "ChargenBG", "ChargenQuestion", "ChargenSkills", "ChargenSkills_values", "ChargenStats", "ChargenStats_values", "ChargenGender", "ChargenClass", "ChargenName", "ChargenNameBG", "ChargenNameInput", "ChargenNameQuestion", "ChargenBody", "CompassBgUW1", "CompassBgUW2", "CompassPointsUW1", "CompassPointsUW2", "CompassPanelUW2", "ConversationPanelUW1", "PlayerPortraitUW1", "NPCPortraitUW1", "PlayerNameLabelUW1", "NPCNameLabelUW1", "PlayerPortraitFrameUW1", "NPCPortraitFrameUW1", "PlayerNameLabelFrameUW1", "NPCNameLabelFrameUW1", "PlayerTradeAreaUW1", "NPCTradeAreaUW1", "ConversationScrollTopUW1", "ConversationScrollBottomUW1", "ConversationTextUW1", "ConversationPanelUW2", "PlayerPortraitUW2", "NPCPortraitUW2", "PlayerNameLabelUW2", "NPCNameLabelUW2", "ConversationTextUW2", "CutsFull", "CutsSmallUW1", "CutsSmallUW2", "Cuts3DWinUW1", "Cuts3DWinUW2", "CutsSubtitle", "DragonPanel", "DragonHeads", "DragonTails", "DragonTorsos", "PanelEndGame", "EndGameBackground", "EndGameStats", "Eyes", "HealthFlaskPanel", "HealthFlask", "HealthFlaskBG", "ManaFlaskPanel", "ManaFlask", "ManaFlaskBG", "HealthBubbles", "ManaBubbles", "InteractionButtonsUW1", "InteractionButtonsUW2", "PanelMainMenu", "MainMenuBG", "MainMenuButtons", "LoadingLabel", "SaveGamesNames", "AutomapPanel", "AutomapBG", "AutomapImage", "NotesPanel", "AutomapNumberLabel", "AutomapWorldGem", "messageScrollUW1", "messageScrollUW2", "scrollEdgeUW1Left", "scrollEdgeUW1Right", "scrollEdgeUW2Left", "scrollEdgeUW2Right", "ConvoscrollEdgeUW1Left", "ConvoscrollEdgeUW1Right", "ConvoscrollEdgeUW2Left", "ConvoscrollEdgeUW2Right", "TypedInput", "GameOptionButtonsUW1", "GameOptionButtonsUW2", "GameOptionsBackgroundUW1", "GameOptionsBackgroundUW2", "PanelInventory", "PanelInventoryArt", "PanelRuneBag", "PanelRuneBagArt", "PanelStats", "PanelStatsArt", "Body", "Helm", "Armour", "ArmourInput", "Leggings", "LeggingsInput", "Boots", "Gloves", "GlovesInput1", "GlovesInput2", "RightShoulder", "RightShoulderQTY", "LeftShoulder", "LeftShoulderQTY", "RightHand", "RightHandQTY", "LeftHand", "LeftHandQTY", "RightRing", "RightRingInput", "LeftRing", "LeftRingInput", "Backpack", "BackpackQTY", "ArrowUp", "ArrowDown", "OpenedContainer", "Chains", "BackpackBG", "WeightCapacity", "RuneTiles", "SelectedRunes", "ActiveSpellIcons", "Charname", "CharLevel", "CharClass", "STR", "DEX", "INT", "VIT", "MANA", "EXP", "StatsName", "StatsValue", "PlayerTradeSlotUW1", "NPCTradeSlotUW1", "PlayerTradeSelectedUW1", "NPCTradeSelectedUW1", "PlayerTradeSlotUW2", "NPCTradeSlotUW2", "PlayerTradeSelectedUW2", "NPCTradeSelectedUW2", "cam", "uwviewport", "uwsubviewport", "uwsubviewport_world", "uwsubviewport_sprites", "mousecursor", "uw1UI", "uw2UI", "mainwindowUW1", "mainwindowUW2", "weaponanimuw1", "weaponanimuw2", "placeholderuw1", "placeholderuw2", "PowerGemUW1", "PowerGemUW2")]
 material = SubResource("ShaderMaterial_pkxpy")
 script = ExtResource("1_lw0yg")
 PanelChargen = NodePath("../Chargen")
@@ -3129,11 +3132,10 @@ NPCTradeSlotUW2 = [NodePath("../UW2/ConversationUW2/NPCTradeUW2_0"), NodePath(".
 PlayerTradeSelectedUW2 = [NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_0"), NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_1"), NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_2"), NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_3"), NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_4"), NodePath("../UW2/ConversationUW2/PlayerTradeSelectedUW2_5")]
 NPCTradeSelectedUW2 = [NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_0"), NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_1"), NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_2"), NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_3"), NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_4"), NodePath("../UW2/ConversationUW2/NPCTradeSelectedUW2_5")]
 cam = NodePath("../../SubViewportWorld/GimbalYaw/GimbalRoll/GimbalPitchCamera_world")
-uwviewport = NodePath("../../OutputTextureCombined")
+uwviewport = NodePath("../3DWin/OutputTextureCombined")
 uwsubviewport = NodePath("../../SubViewportWorld")
 uwsubviewport_world = NodePath("../../SubViewportWorld")
 uwsubviewport_sprites = NodePath("../../SubViewportSprites")
-combinedview = NodePath("../../OutputTextureCombined")
 mousecursor = NodePath("../mouse/mouseCursor")
 uw1UI = NodePath("../UW1")
 uw2UI = NodePath("../UW2")

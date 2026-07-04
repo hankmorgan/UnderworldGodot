@@ -7,7 +7,7 @@ namespace Underworld
 {
     public partial class npc : objectInstance
     {
-        //public static int TESTITEM_ID = 124;
+       //public static int TESTITEM_ID = 113;
         Label3D myLabel;
 
         /// <summary>

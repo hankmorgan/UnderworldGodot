@@ -20,7 +20,7 @@ void fragment() {
     
     float row = 0.0; //the row inthe 5x256 xfer image
     //rows map as follows
-    //uw1 0 = ?, 1= ?, 2 = white(252)
+    //uw1 0 = shadows(251), 1= ?, 2 = white(252), 3 =? , 4 = green(?), 5 = blue(?)
     //uw2 0 = red, 1 =red(249), 2 = green, 3 = blue(251), 4 = white(252) 5 = shadows(253).
 
     if ((indexfer.r>=249) && (indexfer.r<=253))
@@ -68,9 +68,15 @@ void fragment() {
                 {
                     switch (indexfer.r)
                     {
+                        //other cases are so far not seen in the wild..
+                        case 251:
+                            {
+                                row = 1.0;//confirmed
+                                break;
+                            }
                         case 252:
                             {
-                                row = 2.0;
+                                row = 2.0;//confirmed.
                                 break;
                             }
                             
@@ -82,7 +88,7 @@ void fragment() {
 
 
 
-    if ((indexfer.r>=249) && (indexfer.r<=253))
+    if ( ((indexfer.r>=249) && (indexfer.r<=253) && (uwgame == 2)) || ((indexfer.r>=251) && (indexfer.r<=252) && (uwgame == 1)))
     {
         vec4 shade = texture(xfer, vec2(float(indexworld.r) / 255.0, row/5.0));
         finalcolor.r = shade.r;     

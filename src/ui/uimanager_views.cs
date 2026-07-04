@@ -132,6 +132,8 @@ namespace Underworld
                         uwviewport.SetSize(new Vector2(840f, 512f));
                         uwviewport.Position = new Vector2(62f, 62f);
                         //uwsubviewport.Size = new Vector2I(840, 512);
+                        uimanager.instance.uwsubviewport_world.Size = new Vector2I(840, 512);
+			            uimanager.instance.uwsubviewport_sprites.Size = new Vector2I(840, 512);
                     }
                     break;
                 default:
@@ -143,6 +145,8 @@ namespace Underworld
                         uwviewport.Position = new Vector2(200f, 72f);
                          //.SetSize(new Vector2(700f, 456f));
                         //uwsubviewport.Size = new Vector2I(700, 456);
+                        uimanager.instance.uwsubviewport_world.Size = new Vector2I(700, 456);
+			            uimanager.instance.uwsubviewport_sprites.Size = new Vector2I(700, 456);
                     }
                     break;
             }
