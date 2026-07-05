@@ -10,11 +10,11 @@ namespace Underworld
         public static void x_obj_pos()
         {
             Debug.Print("Untested x_obj_pos");
-            var X_var4 = at(stackptr - 3);
-            var Y_var8 = at(stackptr - 2);
-            var Z_var10 = at(stackptr - 1);
-            var objindex = at(at(stackptr - 5));
-            var mode = at(at(stackptr - 4));
+            var X_var4 = at(stack + stackptr - 3);
+            var Y_var8 = at(stack + stackptr - 2);
+            var Z_var10 = at(stack + stackptr - 1);
+            var objindex = at(at(stack + stackptr - 5));
+            var mode = at(at(stack + stackptr - 4));
 
             var obj = UWTileMap.current_tilemap.LevelObjects[objindex];
 

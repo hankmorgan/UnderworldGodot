@@ -6,7 +6,7 @@ namespace Underworld
     {
         public static void x_exp()
         {
-            var newEXP = at(at(stackptr-1));
+            var newEXP = at(at(stack + stackptr-1));
             Debug.Print($"Untested x_exp({newEXP})");
             playerdat.ChangeExperience(newEXP);
             result_register = playerdat.Exp>>4;

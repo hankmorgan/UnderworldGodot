@@ -6,8 +6,8 @@ namespace Underworld
     {
         public static void give_ptr_npc(uwObject talker)
         {
-            var qty = at(at(stackptr-1));
-            var ObjectIndex = at(at(stackptr-2));
+            var qty = at(at(stack + stackptr-1));
+            var ObjectIndex = at(at(stack + stackptr-2));
             Debug.Print($"{qty} of {ObjectIndex}");
             //try and find in trade area first.
             var itemcount = GetPlayerSelectedTradeItems(out int[] itemIds, out int[] itemIndices);

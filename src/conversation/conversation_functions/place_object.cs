@@ -4,9 +4,9 @@ namespace Underworld
     {
         public static void place_object(uwObject talker)
         {
-            var index = at(at(stackptr - 3));
-            var tilex = at(at(stackptr - 2));
-            var tiley = at(at(stackptr - 1));
+            var index = at(at(stack + stackptr - 3));
+            var tilex = at(at(stack + stackptr - 2));
+            var tiley = at(at(stack + stackptr - 1));
             var tile = UWTileMap.current_tilemap.Tiles[tilex, tiley];
 
             //remove from the npcs inventory

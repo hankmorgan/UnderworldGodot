@@ -4,8 +4,8 @@ namespace Underworld
     {
         public static void give_to_npc(uwObject talker)
         {
-            var CountItems_arg1 = GetConvoStackValueAtPtr(stackptr - 2);//how many items to get
-            var ItemIndicesToGive_Array = at(stackptr - 1); // array of item ids to get.  GetConvoStackValueAtPtr(stackptr-1);
+            var CountItems_arg1 = GetConvoStackValueAtPtr(stack + stackptr - 2);//how many items to get
+            var ItemIndicesToGive_Array = at(stack + stackptr - 1); // array of item ids to get.  GetConvoStackValueAtPtr(stack + stackptr-1);
 
             //Get the player inventory
             var itemcount = GetPlayerSelectedTradeItems(out int[] itemIds, out int[] itemIndices);

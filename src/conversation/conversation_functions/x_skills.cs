@@ -8,8 +8,8 @@ namespace Underworld
         {
             if (_RES!=GAME_UW2)
             {
-                var NewValue = at(at(stackptr-1));
-                var SkillNo = at(at(stackptr-2));
+                var NewValue = at(at(stack + stackptr-1));
+                var SkillNo = at(at(stack + stackptr-2));
                 Debug.Print($"x_skills {NewValue} {SkillNo}");
                 if (NewValue==10000)
                 {
@@ -29,8 +29,8 @@ namespace Underworld
             {
                 //uw2 version differs as it takes into account skillpoints
                 Debug.Print("UW2 Version of X_Skills");
-                var NewValue = at(at(stackptr-1));
-                var SkillNo = at(at(stackptr-2));
+                var NewValue = at(at(stack + stackptr-1));
+                var SkillNo = at(at(stack + stackptr-2));
                 Debug.Print($"x_skills {NewValue} {SkillNo}");
                 if (NewValue > 10000)
                 {

@@ -27,8 +27,8 @@ namespace Underworld
         /// <returns></returns>
         static IEnumerator do_demandUW1(uwObject talker)
         {
-            var ifYouInsist = GetConvoStackValueAtPtr(stackptr - 2); //npc gives in
-            var noYouWont = GetConvoStackValueAtPtr(stackptr - 1); //refuses
+            var ifYouInsist = GetConvoStackValueAtPtr(stack + stackptr - 2); //npc gives in
+            var noYouWont = GetConvoStackValueAtPtr(stack + stackptr - 1); //refuses
             var attitudeOffset = FindVariableAddress("npc_attitude");
             var attitude = at(attitudeOffset);
 
@@ -65,9 +65,9 @@ namespace Underworld
         /// <returns></returns>
         static IEnumerator do_demandUW2(uwObject talker)
         {
-            var ifYouInsist = GetConvoStackValueAtPtr(stackptr - 2); //npc gives in
-            var noYouWont = GetConvoStackValueAtPtr(stackptr - 1); //refuses
-            var whatItems = GetConvoStackValueAtPtr(stackptr - 3); //there are no items selected
+            var ifYouInsist = GetConvoStackValueAtPtr(stack + stackptr - 2); //npc gives in
+            var noYouWont = GetConvoStackValueAtPtr(stack + stackptr - 1); //refuses
+            var whatItems = GetConvoStackValueAtPtr(stack + stackptr - 3); //there are no items selected
 
             var attitudeOffset = FindVariableAddress("npc_attitude");
             var attitude = at(attitudeOffset);

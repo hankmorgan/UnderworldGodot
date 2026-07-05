@@ -6,8 +6,8 @@ namespace Underworld
     {
         public static void find_inv(uwObject talker)
         {
-            var Character_arg0 = at(at(stackptr - 1));
-            var ItemID_arg1 = at(at(stackptr - 2));
+            var Character_arg0 = at(at(stack + stackptr - 1));
+            var ItemID_arg1 = at(at(stack + stackptr - 2));
             Debug.Print($"Find_Inv({Character_arg0},{ItemID_arg1});");
 
             //arg0 when 0 search npc, else search player

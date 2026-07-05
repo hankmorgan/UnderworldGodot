@@ -4,7 +4,7 @@ namespace Underworld
     {
         public static void length()
         {
-            var stringaddress =  GetConvoStackValueAtPtr(stackptr - 1);           
+            var stringaddress =  GetConvoStackValueAtPtr(stack + stackptr - 1);           
             result_register = getString(stringaddress).Length;
         }
     }//end class

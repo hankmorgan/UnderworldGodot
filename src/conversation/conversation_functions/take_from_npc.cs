@@ -6,7 +6,7 @@ namespace Underworld
     {
         public static void take_from_npc(uwObject talker)
         {
-            var arg1 = GetConvoStackValueAtPtr(stackptr-1);
+            var arg1 = GetConvoStackValueAtPtr(stack + stackptr-1);
             Debug.Print($"take_from_npc({arg1})");
 
 

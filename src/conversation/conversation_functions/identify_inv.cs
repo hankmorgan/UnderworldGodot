@@ -7,8 +7,8 @@ namespace Underworld
         /// </summary>
         public static void identify_inv()
         {
-            var index = at(at(stackptr-4));
-            var lorecheck = at(at(stackptr-1));
+            var index = at(at(stack + stackptr-4));
+            var lorecheck = at(at(stack + stackptr-1));
             var value = GetTrueItemValue(
                     ApplyLikeDislike: true, 
                     appraise_accuracy: NPCAppraisalAccuracy, 
@@ -22,7 +22,7 @@ namespace Underworld
                 IncludeYouSee: false);
             var stringIDNo = GameStrings.AddString(currentConversation.StringBlock, idString);
 
-            Set(at(stackptr-2), stringIDNo );
+            Set(at(stack + stackptr-2), stringIDNo );
             result_register = value;
         }
     }

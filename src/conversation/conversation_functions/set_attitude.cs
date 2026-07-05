@@ -8,8 +8,8 @@ namespace Underworld
         /// </summary>
         public static void set_attitude()
         {
-            var newAttitude_di = GetConvoStackValueAtPtr(stackptr - 1);
-            var whoami = GetConvoStackValueAtPtr(stackptr - 2);
+            var newAttitude_di = GetConvoStackValueAtPtr(stack + stackptr - 1);
+            var whoami = GetConvoStackValueAtPtr(stack + stackptr - 2);
             CallBacks.RunCodeOnNPCS_WhoAmI(npc.set_attitude_by_array, whoami, new int[] { newAttitude_di }, false);
 
             //Note there is buggy usage of this function in vanilla UW2 on the Prison Tower level 2. Goblin Guard conversation. 

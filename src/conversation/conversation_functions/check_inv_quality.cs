@@ -4,7 +4,7 @@ namespace Underworld
     {
         static void check_inv_quality()
         {
-            var index= at(at(stackptr-1));
+            var index= at(at(stack + stackptr-1));
             if (index!=0)
             {
                 var obj = UWTileMap.current_tilemap.LevelObjects[index];

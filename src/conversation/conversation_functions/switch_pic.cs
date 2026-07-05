@@ -4,7 +4,7 @@ namespace Underworld
     {
         public static void switch_pic()
         {
-            var WhoAmI = at(at(stackptr - 1));
+            var WhoAmI = at(at(stack + stackptr - 1));
             uimanager.instance.NPCPortrait.Texture = NPCPortrait(WhoAmI, 0);
             var newname =GameStrings.GetString(7, WhoAmI + 16);
             if (newname!="")

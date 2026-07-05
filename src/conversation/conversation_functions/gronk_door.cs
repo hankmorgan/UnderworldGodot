@@ -9,9 +9,9 @@ namespace Underworld
         /// </summary>
         public static void gronk_door()
         {
-            var tileX = GetConvoStackValueAtPtr(stackptr - 3);
-            var tileY = GetConvoStackValueAtPtr(stackptr - 2);
-            var mode = GetConvoStackValueAtPtr(stackptr - 1);
+            var tileX = GetConvoStackValueAtPtr(stack + stackptr - 3);
+            var tileY = GetConvoStackValueAtPtr(stack + stackptr - 2);
+            var mode = GetConvoStackValueAtPtr(stack + stackptr - 1);
 
             Debug.Print($"Gronkdoor {tileX}, {tileY}, {mode}");
             var tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];

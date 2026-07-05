@@ -6,10 +6,10 @@ namespace Underworld
     {
         public static void x_traps()
         {
-            Debug.Print($"X_traps {GetConvoStackValueAtPtr(stackptr-1)},{GetConvoStackValueAtPtr(stackptr-2)}");
+            Debug.Print($"X_traps {GetConvoStackValueAtPtr(stack + stackptr-1)},{GetConvoStackValueAtPtr(stack + stackptr-2)}");
 
-            var di_arg1 = GetConvoStackValueAtPtr(stackptr-2);
-            var si_arg0 = GetConvoStackValueAtPtr(stackptr-1);
+            var di_arg1 = GetConvoStackValueAtPtr(stack + stackptr-2);
+            var si_arg0 = GetConvoStackValueAtPtr(stack + stackptr-1);
 
             if ((si_arg0 >=0) && (di_arg1<0x3FF))
             {

@@ -7,7 +7,7 @@ namespace Underworld
         /// </summary>
         public static void take_from_npc_inv(uwObject talker)
         {
-            var di = GetConvoStackValueAtPtr(stackptr - 1);
+            var di = GetConvoStackValueAtPtr(stack + stackptr - 1);
             var si = 0;
             var next = talker.link;
             while (si<di)

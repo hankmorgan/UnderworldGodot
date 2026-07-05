@@ -11,7 +11,7 @@ namespace Underworld
         {
             uimanager.instance.scroll.Clear();
             int[] args = new int[1];
-            args[0] = at(stackptr - 1);//ptr to value
+            args[0] = at(stack + stackptr - 1);//ptr to value
 
             int Start = args[0];
             yield return new WaitForSeconds(0.2f);

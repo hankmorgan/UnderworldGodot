@@ -10,10 +10,10 @@ namespace Underworld
         /// </summary>
         public static void find_barter_total()
         {
-            var item_id = at(at(stackptr - 4));
-            var PtrNoOfMatches = at(stackptr - 3);
-            var PtrResultArray = at(stackptr - 2);
-            var PtrTotalQty = at(stackptr - 1);
+            var item_id = at(at(stack + stackptr - 4));
+            var PtrNoOfMatches = at(stack + stackptr - 3);
+            var PtrResultArray = at(stack + stackptr - 2);
+            var PtrTotalQty = at(stack + stackptr - 1);
 
             Debug.Print($"find_barter_total({item_id})");
             var itemcount = GetPlayerSelectedTradeItems(out int[] itemIds, out int[] itemIndices);
