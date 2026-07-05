@@ -19,6 +19,7 @@ namespace Underworld
         /// </summary>
         public static GRLoader grObjects;
         public static GRLoader grObjectsXfer;
+        public static GRLoader grObjectsInfo;
 
         /// <summary>
         /// The node objects will be attached to
@@ -556,8 +557,9 @@ namespace Underworld
             var inst = new genericsprite(obj);
             if (obj.invis == 0)
             {
-                CreateSprite(grObjects, obj.item_id, parent, name,EnableCollision: true);
-                CreateSprite(grObjectsXfer, obj.item_id, parent, name,EnableCollision: false);
+                CreateSprite(grObjects, obj.item_id, parent, name, EnableCollision: true);
+                CreateSprite(grObjectsXfer, obj.item_id, parent, name, EnableCollision: false);
+                CreateObjectInfoLayer(grObjectsInfo, obj.item_id, obj, parent, name);
             }
             return inst;
         }
@@ -584,6 +586,33 @@ namespace Underworld
                 {
                     a_sprite.CreateConvexCollision();
                 }
+            }
+        }
+
+        public static void CreateObjectInfoLayer(GRLoader gr, int spriteNo, uwObject obj, Node3D parent, string name)
+        {
+            var a_sprite = new uwMeshInstance3D(); //MeshInstance3D(); //new Sprite3D();
+            a_sprite.Name = name;
+            a_sprite.Mesh = new QuadMesh();
+            Vector2 NewSize;
+            var img = gr.LoadImageAt(spriteNo);
+            if (img != null)
+            {
+                //uniform int objectindex_lowerbytes;
+                //uniform int objectindex_upperbytes;
+                //("albedo", new Color(1, 1, 1, 1));
+                var mat = gr.GetMaterial(spriteNo);
+                mat.SetShaderParameter("objectindex_lowerbytes", obj.item_id & 0xFF);
+                mat.SetShaderParameter("objectindex_upperbytes", (obj.item_id>>8) & 0xFF);
+                a_sprite.Mesh.SurfaceSetMaterial(0, mat);                
+                NewSize = new Vector2(
+                        ArtLoader.SpriteScale * img.GetWidth(),
+                        ArtLoader.SpriteScale * img.GetHeight()
+                        );
+                a_sprite.Mesh.Set("size", NewSize);
+                a_sprite.Layers = main.LayerObjectInfo;
+                parent.AddChild(a_sprite);
+                a_sprite.Position = new Vector3(0, NewSize.Y / 2f, 0);
             }
         }
 

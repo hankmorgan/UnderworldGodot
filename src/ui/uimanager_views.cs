@@ -15,6 +15,8 @@ namespace Underworld
 
         [Export] public SubViewport uwsubviewport_world;
         [Export] public SubViewport uwsubviewport_sprites;
+        [Export] public SubViewport uwsubviewport_objectinfo;
+         [Export] public TextureRect textureobjectinfo;
 
         //[Export] public TextureRect combinedview;
 
@@ -134,6 +136,7 @@ namespace Underworld
                         //uwsubviewport.Size = new Vector2I(840, 512);
                         uimanager.instance.uwsubviewport_world.Size = new Vector2I(840, 512);
 			            uimanager.instance.uwsubviewport_sprites.Size = new Vector2I(840, 512);
+                        uimanager.instance.uwsubviewport_objectinfo.Size = new Vector2I(840, 512);
                     }
                     break;
                 default:
@@ -147,6 +150,7 @@ namespace Underworld
                         //uwsubviewport.Size = new Vector2I(700, 456);
                         uimanager.instance.uwsubviewport_world.Size = new Vector2I(700, 456);
 			            uimanager.instance.uwsubviewport_sprites.Size = new Vector2I(700, 456);
+                        uimanager.instance.uwsubviewport_objectinfo.Size = new Vector2I(700, 456);                                                
                     }
                     break;
             }
@@ -189,8 +193,14 @@ namespace Underworld
             bool LeftClick = (eventMouseButton.ButtonIndex == MouseButton.Left);
             //Debug.Print($"{eventMouseButton.Position.X},{eventMouseButton.Position.Y}");
             Dictionary result = DoRayCast(eventMouseButton.Position, RayDistance, out Vector3 rayOrigin);
-
-
+            var text = (Texture2D)uimanager.instance.uwsubviewport_objectinfo.GetTexture();
+            //text.GetImage().SavePng("c:\\temp\\testobjectinfo.png");
+            //var vi = new Vector2I((int)(ViewPortMouseXPos / text.GetWidth()), (int)(ViewPortMouseYPos / text.GetHeight()));
+            var mouse = uimanager.instance.uwviewport.GetLocalMousePosition();
+            var pixel = text.GetImage().GetPixel((int)mouse.X, (int)mouse.Y);//text.GetImage().SavePng("C:\\temp\\testobjectinfo.png");
+            var pitemid = (pixel.B8<<8) | pixel.G8;
+            var itemname = GameStrings.GetSimpleObjectNameUW(pitemid);
+            Debug.Print($"{pixel} , {pitemid}, {itemname}");
 
             if (result != null)
             {

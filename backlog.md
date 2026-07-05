@@ -112,7 +112,7 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Picking up a Wisp starts conversation in UW2? Need to confirm if this is vanilla behaviour.
 - [ ] Typed input is fiddly when using backspace
 - [ ] Arrows launched by an arrow trap are rendered as sprites not a 3d model
-- [ ] Wrong cutscene no is set in conversations -> eg quest 143 is being set incorrectly when first meeting LB
+- [ ] Wrong cutscene no is set in conversations -> eg quest 143 is being set incorrectly when first meeting LB. ->See branch ConversationSystemFixes
 - [ ] Consider using texture rects to mask out data so that pixel perfect raycasts are possible.
 
 ## Blocked

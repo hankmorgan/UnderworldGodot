@@ -108,12 +108,14 @@ namespace Underworld
             SpriteShader = 1,  //Spritesthat will not be billboarded.
             BillboardSpriteShader = 2, //Sprites that will be billboarded
             TextureShader= 3,  //World textures
-            UIShader = 4  //For ui elements that need palette cycling
-
+            UIShader = 4,  //For ui elements that need palette cycling
+            BillboardInfoSpriteShader = 5, //Sprites that will be billboarded
         };
+        public GRShaderMode SHADERMODE;
 
         public GRLoader(int File, GRShaderMode shadermode, bool _usehighdetail = true)
         {      
+            SHADERMODE = shadermode;
             UseLowDetail = !_usehighdetail;//sets the texture load to just return the colour define by the first pixel(top left of the texture loader)
             switch (shadermode)
             {
@@ -129,6 +131,9 @@ namespace Underworld
                     break;  
                 case GRShaderMode.UIShader:
                     textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uisprite.gdshader");
+                    break;
+                case GRShaderMode.BillboardInfoSpriteShader:
+                    textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwsprite_data.gdshader");
                     break;
             }     
 
@@ -151,7 +156,6 @@ namespace Underworld
                 newmaterial.SetShaderParameter("albedo", new Color(1, 1, 1, 1));
                 newmaterial.SetShaderParameter("uv1_scale", new Vector3(1, 1, 1));
                 newmaterial.SetShaderParameter("uv2_scale", new Vector3(1, 1, 1));
-                newmaterial.SetShaderParameter("UseAlpha", true);
                 materials[textureno] = newmaterial;
             }
             return materials[textureno];    

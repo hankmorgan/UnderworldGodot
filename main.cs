@@ -36,6 +36,14 @@ public partial class main : Node3D
 	public static Node3D cameraYawGimbal_sprites; // yaw
 
 
+	[Export] public Camera3D cam_objectinfo;
+	[Export] public Node3D GimbalYaw_objectinfo;
+	[Export] public Node3D GimbalRoll_objectinfo;
+	public static Camera3D cameraPitchGimbal_objectinfo; //pitch
+	public static Node3D cameraRollGimbal_objectinfo; // up/down
+	public static Node3D cameraYawGimbal_objectinfo; // yaw
+
+
 
 	[Export] public AudioStreamPlayer DigitalAudioPlayer;
 	[Export] public RichTextLabel lblPositionDebug;
@@ -63,6 +71,7 @@ public partial class main : Node3D
 
 	public const uint LayerGeo = 2;
 	public const uint LayerXFER = 4;
+	public const uint LayerObjectInfo = 8;
 	public override void _Ready()
 	{
 		instance = this;
@@ -73,6 +82,11 @@ public partial class main : Node3D
 		cameraPitchGimbal_sprites = cam_sprites;
 		cameraRollGimbal_sprites = GimbalRoll_sprites;
 		cameraYawGimbal_sprites = GimbalYaw_sprites;
+
+
+		cameraPitchGimbal_objectinfo = cam_objectinfo;
+		cameraRollGimbal_objectinfo = GimbalRoll_objectinfo;
+		cameraYawGimbal_objectinfo = GimbalYaw_objectinfo;
 
 		//uimanager.instance = uwUI;	
 		if (uwsettings.instance != null)
@@ -138,6 +152,10 @@ public partial class main : Node3D
 		ObjectCreator.grObjectsXfer.UseCropping = false;
 		ObjectCreator.grObjectsXfer.XFER = ArtLoader.XferChannnelMode.XFEROnly;
 
+		ObjectCreator.grObjectsInfo = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardInfoSpriteShader);
+		ObjectCreator.grObjectsInfo.UseRedChannel = true;
+		ObjectCreator.grObjectsInfo.UseCropping = false;
+		ObjectCreator.grObjectsInfo.XFER = ArtLoader.XferChannnelMode.AllColours;
 
 		Palette.CurrentPalette = 0;
 		uimanager.instance.InitUI();
