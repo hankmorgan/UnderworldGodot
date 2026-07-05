@@ -57,10 +57,10 @@ namespace Underworld
 
 			while (!finished)
 			{
-				if (testing && ((instrp == 1768) || (instrp==1493)))
-				{
-					Debug.Print("HREE");
-				}
+				// if (testing && ((instrp == 1768) || (instrp==1493)))
+				// {
+				// 	Debug.Print("Uncomment here to test specific instructions.");
+				// }
 				switch (currentConversation.instuctions[instrp])
 				{
 					case cnv_NOP:
