@@ -55,8 +55,6 @@ void fragment() {
 	vec4 a = INV_VIEW_MATRIX * vec4(VERTEX, 1.0);
     float dist = (distance(a.xz, world_camera));
 	
-
-	
 	if (dist > cutoffdistance)
 	{		
 		discard;
