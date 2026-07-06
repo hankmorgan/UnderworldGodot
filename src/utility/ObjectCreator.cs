@@ -557,9 +557,9 @@ namespace Underworld
             var inst = new genericsprite(obj);
             if (obj.invis == 0)
             {
-                CreateSprite(grObjects, obj.item_id, parent, name, EnableCollision: true);
-                CreateSprite(grObjectsXfer, obj.item_id, parent, name, EnableCollision: false);
-                CreateObjectInfoLayer(grObjectsInfo, obj.item_id, obj, parent, name);
+                CreateSprite(gr: grObjects, spriteNo: obj.item_id, parent: parent, name: name, EnableCollision: true);
+                CreateSprite(gr: grObjectsXfer, spriteNo: obj.item_id, parent: parent, name: name, EnableCollision: false);
+                CreateObjectInfoLayer(gr: grObjectsInfo, spriteNo: obj.item_id, obj: obj, parent: parent, name: name);
             }
             return inst;
         }

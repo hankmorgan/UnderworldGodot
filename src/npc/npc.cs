@@ -14,18 +14,21 @@ namespace Underworld
         /// global shader for npcs.
         /// </summary>
         public static Shader textureshader;
+        public static Shader textureshaderdata;
 
         /// <summary>
         /// Mesh this sprite is drawn on
         /// </summary>
         public uwMeshInstance3D sprite;
         public uwMeshInstance3D sprite_xfer;
+        public uwMeshInstance3D sprite_objectinfo;
 
         /// <summary>
         /// The material for rendering this unique npc
         /// </summary>
         public ShaderMaterial material;
         public ShaderMaterial material_xfer;
+        public ShaderMaterial material_objectinfo;
 
         /// <summary>
         /// Used to pick the sprite at a particular angle.
@@ -100,6 +103,18 @@ namespace Underworld
             parent.AddChild(x_sprite);
             x_sprite.Position = a_sprite.Position; //new Vector3(0, n.FrameSize.Y / 2 + 0.12f, 0);
             x_sprite.Rotation = a_sprite.Rotation;
+
+            //add infosprite
+            var i_sprite = new uwMeshInstance3D(); //new Sprite3D();
+            i_sprite.Name = name;
+            i_sprite.Mesh = new QuadMesh();
+            i_sprite.Mesh.SurfaceSetMaterial(0, n.material_objectinfo);
+            i_sprite.Mesh.Set("size", n.FrameSize);
+            n.sprite_objectinfo = i_sprite;
+            parent.AddChild(i_sprite);
+            i_sprite.Position = a_sprite.Position; //new Vector3(0, n.FrameSize.Y / 2 + 0.12f, 0);
+            i_sprite.Rotation = a_sprite.Rotation;
+
             if (ObjectCreator.printlabels)
             {
                 string animname;
@@ -134,7 +149,7 @@ namespace Underworld
                 GetStoneArt: (_RES == GAME_UW2) && (this.uwobject.npc_goal== (byte)npc.npc_goals.npc_goal_petrified));
             if (crit.Animations.ContainsKey(animname))
             {
-                uwobject.AnimationFrame = (byte)ApplyCritterAnimation(animationNo: animationNo, frameNo: frameNo, animname: animname, crit: crit);
+                uwobject.AnimationFrame = (byte)ApplyCritterAnimation(obj: uwobject, animationNo: animationNo, frameNo: frameNo, animname: animname, crit: crit);
             }
             else
             {
@@ -148,7 +163,7 @@ namespace Underworld
                     Debug.Print($"{animname} ({animationNo}) was not found for {this.uwobject.a_name}");
                 }
 
-                uwobject.AnimationFrame = (byte)ApplyCritterAnimation(animationNo, frameNo, CritterArt.GetAnimName(0, 0), crit);
+                uwobject.AnimationFrame = (byte)ApplyCritterAnimation(obj: uwobject, animationNo: animationNo, frameNo: frameNo, animname: CritterArt.GetAnimName(0, 0), crit: crit);
             }
             if (ObjectCreator.printlabels)
             {
@@ -159,7 +174,7 @@ namespace Underworld
             }
         }
 
-        private short ApplyCritterAnimation(int animationNo, short frameNo, string animname, CritterArt crit)
+        private short ApplyCritterAnimation(uwObject obj, int animationNo, short frameNo, string animname, CritterArt crit)
         {
             var anim = crit.Animations[animname];
             if (material == null)
@@ -177,12 +192,24 @@ namespace Underworld
             {//create the initial material
                 var newmaterial = new ShaderMaterial();
                 newmaterial.Shader = textureshader;
-
                 newmaterial.SetShaderParameter("albedo", new Color(1, 1, 1, 1));
                 newmaterial.SetShaderParameter("uv1_scale", new Vector3(1, 1, 1));
                 newmaterial.SetShaderParameter("uv2_scale", new Vector3(1, 1, 1));
                 newmaterial.SetShaderParameter("UseAlpha", true);
                 material_xfer = newmaterial;
+            }
+
+            if (material_objectinfo == null)
+            {//create the initial material
+                var newmaterial = new ShaderMaterial();
+                newmaterial.Shader = textureshader;
+                newmaterial.SetShaderParameter("albedo", new Color(1, 1, 1, 1));
+                newmaterial.SetShaderParameter("uv1_scale", new Vector3(1, 1, 1));
+                newmaterial.SetShaderParameter("uv2_scale", new Vector3(1, 1, 1));
+                newmaterial.SetShaderParameter("UseAlpha", true);
+                newmaterial.SetShaderParameter("objectindex_lowerbytes", obj.index & 0xFF);
+                newmaterial.SetShaderParameter("objectindex_upperbytes", (obj.index>>8) & 0xFF);
+                material_objectinfo = newmaterial;
             }
 
 
@@ -223,6 +250,23 @@ namespace Underworld
                     sprite_xfer.Mesh.Set("size", FrameSize);
                     sprite_xfer.Layers = main.LayerXFER;                 
                 }
+
+                //render objectinfo
+                texture = crit.animSpritesinfo[anim.animIndices[frameNo]];
+                FrameSize = new Vector2(
+                    ArtLoader.NPCSpriteScale * texture.GetWidth(),
+                    ArtLoader.NPCSpriteScale * texture.GetHeight()
+                    );
+                material_objectinfo.SetShaderParameter("texture_albedo", (Texture)texture);
+                
+                if (sprite_objectinfo != null)
+                {
+                    sprite_objectinfo.Position = sprite.Position;
+                    sprite_objectinfo.Rotation = sprite.Rotation;
+                    sprite_objectinfo.Mesh.Set("size", FrameSize);
+                    sprite_objectinfo.Layers = main.LayerObjectInfo;                 
+                }
+
                 return frameNo;
             }
             else
