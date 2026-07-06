@@ -121,18 +121,18 @@ stream = SubResource("AudioStreamWAV_tkk82")
 
 [node name="OutputTextureWorld" type="TextureRect" parent="UI/3DWin"]
 visible = false
-offset_left = 793.0
-offset_top = 393.0
-offset_right = 1305.0
-offset_bottom = 905.0
+offset_left = 272.0
+offset_top = 53.0
+offset_right = 784.0
+offset_bottom = 565.0
 texture = SubResource("ViewportTexture_j0mn4")
 
 [node name="OutputTextureSprites" type="TextureRect" parent="UI/3DWin"]
 visible = false
-offset_left = -10.0
-offset_top = 384.0
-offset_right = 502.0
-offset_bottom = 896.0
+offset_left = 279.0
+offset_top = 78.0
+offset_right = 791.0
+offset_bottom = 590.0
 texture = SubResource("ViewportTexture_wyrrx")
 
 [node name="OutputObjectInfo" type="TextureRect" parent="UI/3DWin"]

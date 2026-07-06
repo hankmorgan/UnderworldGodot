@@ -18,8 +18,8 @@ namespace Underworld
         /// object art
         /// </summary>
         public static GRLoader grObjects;
-        public static GRLoader grObjectsXfer;
-        public static GRLoader grObjectsInfo;
+        //public static GRLoader grObjectsXfer;
+        //public static GRLoader grObjectsInfo;
 
         /// <summary>
         /// The node objects will be attached to
@@ -557,14 +557,14 @@ namespace Underworld
             var inst = new genericsprite(obj);
             if (obj.invis == 0)
             {
-                CreateSprite(grObjects, obj.item_id, parent, name, EnableCollision: true);
-                CreateSprite(grObjectsXfer, obj.item_id, parent, name, EnableCollision: false);
-                CreateObjectInfoLayer(grObjectsInfo, obj.item_id, obj, parent, name);
+                CreateSprite(grObjects,obj, obj.item_id, parent, name, EnableCollision: true);
+                // CreateSprite(grObjectsXfer, obj.item_id, parent, name, EnableCollision: false);
+                // CreateObjectInfoLayer(grObjectsInfo, obj.item_id, obj, parent, name);
             }
             return inst;
         }
 
-        public static void CreateSprite(GRLoader gr, int spriteNo, Node3D parent, string name, bool EnableCollision = true)
+        public static void CreateSprite(GRLoader gr,uwObject obj, int spriteNo, Node3D parent, string name, bool EnableCollision = true)
         {
             var a_sprite = new uwMeshInstance3D(); //MeshInstance3D(); //new Sprite3D();
             a_sprite.Name = name;
@@ -573,13 +573,16 @@ namespace Underworld
             var img = gr.LoadImageAt(spriteNo);
             if (img != null)
             {
-                a_sprite.Mesh.SurfaceSetMaterial(0, gr.GetMaterial(spriteNo));
+                var mat = gr.GetMaterial(spriteNo);
+                mat.SetShaderParameter("objectindex_lowerbytes", obj.index & 0xFF);
+                mat.SetShaderParameter("objectindex_upperbytes", (obj.index>>8) & 0xFF);
+                a_sprite.Mesh.SurfaceSetMaterial(0, mat);    
                 NewSize = new Vector2(
                         ArtLoader.SpriteScale * img.GetWidth(),
                         ArtLoader.SpriteScale * img.GetHeight()
                         );
                 a_sprite.Mesh.Set("size", NewSize);
-                a_sprite.Layers = main.LayerGeo;
+                a_sprite.Layers = main.LayerGeo | main.LayerObjectInfo;
                 parent.AddChild(a_sprite);
                 a_sprite.Position = new Vector3(0, NewSize.Y / 2f, 0);
                 if (EnableCollision)

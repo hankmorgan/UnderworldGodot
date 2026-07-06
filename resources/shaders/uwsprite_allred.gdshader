@@ -24,7 +24,8 @@ global uniform sampler2D smoothpalette: source_color,filter_nearest; // pals.dat
 global uniform sampler2D xfer: source_color,filter_nearest; //xfer.dat transparency
 global uniform float cutoffdistance; // how far away the scene will render
 
-
+uniform int objectindex_lowerbytes;
+uniform int objectindex_upperbytes;
 
 //varying float distanceToCam; // distance from cam to center
 //varying vec4 world_pos;  // of current vertex
@@ -53,22 +54,44 @@ void fragment() {
 	vec2 world_camera = (INV_VIEW_MATRIX * vec4(vec3(0.0), 1.0)).xz;
 	vec4 a = INV_VIEW_MATRIX * vec4(VERTEX, 1.0);
     float dist = (distance(a.xz, world_camera));
+	
 
-	//read in greyscale texture to get color index		
-
+	
 	if (dist > cutoffdistance)
 	{		
 		discard;
 	}
 	else
 	{
+		uint camera_layers = CAMERA_VISIBLE_LAYERS;
+		//read in greyscale texture to get color index		
 		vec4 rgba = texture(texture_albedo, UV);
-		//Get the uv offset within the shades.dat image
-		float maptouse = dist/cutoffdistance;
-		rgba.g = maptouse;
-		//vec4 finalcolour = texture(smoothpalette, vec2(rgba.r, maptouse));
 		vec4 alphacolour = texture(smoothpalette, vec2(rgba.r, 0));
-		ALBEDO = rgba.rgb; //finalcolour.rgb;
+		if ((camera_layers & 6u) != 0u)   //render on cameras 2 and 3
+		{
+			//render normally
+
+			//Get the uv offset within the shades.dat image
+			float maptouse = dist/cutoffdistance;
+			rgba.g = maptouse;		
+			ALBEDO = rgba.rgb; 
+		}
+		else
+		{
+			//Render object info on camera 4
+			if ((camera_layers & 8u) != 0u)  
+			{
+				ALBEDO.r = 0.0;
+				ALBEDO.g = float(objectindex_lowerbytes)/255.0; 
+				ALBEDO.b = float(objectindex_upperbytes)/255.0;
+			}
+			else
+			{
+				ALBEDO.r = 0.5;
+				ALBEDO.g = 0.5;
+				ALBEDO.b = 0.5;
+			}
+		}
 
 		ALPHA = alphacolour.a;//finalcolour.a;	
 	}
