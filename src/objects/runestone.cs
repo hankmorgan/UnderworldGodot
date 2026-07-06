@@ -16,7 +16,7 @@ namespace Underworld
             // }
             // else
             // {//Use default rune sprite when displayed in world
-            ObjectCreator.CreateSprite(gr: grObjects, obj: obj, spriteNo: 224, parent: parent, name: name);
+            ObjectCreator.CreateSprite(grObjects, 224, parent, name);
             //}
             return r;
         }

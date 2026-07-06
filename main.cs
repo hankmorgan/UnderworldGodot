@@ -145,17 +145,17 @@ public partial class main : Node3D
 		ObjectCreator.grObjects = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
 		ObjectCreator.grObjects.UseRedChannel = true;
 		ObjectCreator.grObjects.UseCropping = false;
-		ObjectCreator.grObjects.XFER = ArtLoader.XferChannnelMode.AllColours;
+		ObjectCreator.grObjects.XFER = ArtLoader.XferChannnelMode.NonXFer;
 
-		// ObjectCreator.grObjectsXfer = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
-		// ObjectCreator.grObjectsXfer.UseRedChannel = true;
-		// ObjectCreator.grObjectsXfer.UseCropping = false;
-		// ObjectCreator.grObjectsXfer.XFER = ArtLoader.XferChannnelMode.XFEROnly;
+		ObjectCreator.grObjectsXfer = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
+		ObjectCreator.grObjectsXfer.UseRedChannel = true;
+		ObjectCreator.grObjectsXfer.UseCropping = false;
+		ObjectCreator.grObjectsXfer.XFER = ArtLoader.XferChannnelMode.XFEROnly;
 
-		// ObjectCreator.grObjectsInfo = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardInfoSpriteShader);
-		// ObjectCreator.grObjectsInfo.UseRedChannel = true;
-		// ObjectCreator.grObjectsInfo.UseCropping = false;
-		// ObjectCreator.grObjectsInfo.XFER = ArtLoader.XferChannnelMode.AllColours;
+		ObjectCreator.grObjectsInfo = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardInfoSpriteShader);
+		ObjectCreator.grObjectsInfo.UseRedChannel = true;
+		ObjectCreator.grObjectsInfo.UseCropping = false;
+		ObjectCreator.grObjectsInfo.XFER = ArtLoader.XferChannnelMode.AllColours;
 
 		Palette.CurrentPalette = 0;
 		uimanager.instance.InitUI();
