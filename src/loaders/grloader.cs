@@ -146,8 +146,8 @@ namespace Underworld
 
         public ShaderMaterial GetMaterial(int textureno)
         {            
-            if (materials[textureno] == null)
-            {
+           // if (materials[textureno] == null)
+            //{
                 //materials[textureno] = new surfacematerial(textureno);
                 //create this material and add it to the list
                 var newmaterial = new ShaderMaterial();
@@ -156,9 +156,10 @@ namespace Underworld
                 newmaterial.SetShaderParameter("albedo", new Color(1, 1, 1, 1));
                 newmaterial.SetShaderParameter("uv1_scale", new Vector3(1, 1, 1));
                 newmaterial.SetShaderParameter("uv2_scale", new Vector3(1, 1, 1));
-                materials[textureno] = newmaterial;
-            }
-            return materials[textureno];    
+                return newmaterial;
+               // materials[textureno] = newmaterial;
+           // }
+           // return materials[textureno];    
         }
 
         public override bool LoadImageFile()
