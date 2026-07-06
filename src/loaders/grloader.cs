@@ -109,7 +109,7 @@ namespace Underworld
             BillboardSpriteShader = 2, //Sprites that will be billboarded
             TextureShader= 3,  //World textures
             UIShader = 4,  //For ui elements that need palette cycling
-            BillboardInfoSpriteShader = 5, //Sprites that will be billboarded
+            //BillboardInfoSpriteShader = 5, //Sprites that will be billboarded
         };
         public GRShaderMode SHADERMODE;
 
@@ -132,9 +132,9 @@ namespace Underworld
                 case GRShaderMode.UIShader:
                     textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uisprite.gdshader");
                     break;
-                case GRShaderMode.BillboardInfoSpriteShader:
-                    textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwsprite_data.gdshader");
-                    break;
+                // case GRShaderMode.BillboardInfoSpriteShader:
+                //     textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwsprite_data.gdshader");
+                //     break;
             }     
 
             useOverrideAuxPalIndex = false;

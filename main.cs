@@ -152,7 +152,7 @@ public partial class main : Node3D
 		ObjectCreator.grObjectsXfer.UseCropping = false;
 		ObjectCreator.grObjectsXfer.XFER = ArtLoader.XferChannnelMode.XFEROnly;
 
-		ObjectCreator.grObjectsInfo = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardInfoSpriteShader);
+		ObjectCreator.grObjectsInfo = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
 		ObjectCreator.grObjectsInfo.UseRedChannel = true;
 		ObjectCreator.grObjectsInfo.UseCropping = false;
 		ObjectCreator.grObjectsInfo.XFER = ArtLoader.XferChannnelMode.AllColours;
