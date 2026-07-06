@@ -91,7 +91,7 @@ namespace Underworld
             n.sprite = a_sprite;
             parent.AddChild(a_sprite);
             a_sprite.Position = new Vector3(0, n.FrameSize.Y / 2 + 0.12f, 0);
-            a_sprite.CreateConvexCollision();
+            //a_sprite.CreateConvexCollision();
 
             //add xfersprite
             var x_sprite = new uwMeshInstance3D(); //new Sprite3D();

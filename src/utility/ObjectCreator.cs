@@ -557,14 +557,14 @@ namespace Underworld
             var inst = new genericsprite(obj);
             if (obj.invis == 0)
             {
-                CreateSprite(gr: grObjects, spriteNo: obj.item_id, parent: parent, name: name, EnableCollision: true);
+                CreateSprite(gr: grObjects, spriteNo: obj.item_id, parent: parent, name: name, EnableCollision: false);
                 CreateSprite(gr: grObjectsXfer, spriteNo: obj.item_id, parent: parent, name: name, EnableCollision: false);
                 CreateObjectInfoLayer(gr: grObjectsInfo, spriteNo: obj.item_id, obj: obj, parent: parent, name: name);
             }
             return inst;
         }
 
-        public static void CreateSprite(GRLoader gr, int spriteNo, Node3D parent, string name, bool EnableCollision = true)
+        public static void CreateSprite(GRLoader gr, int spriteNo, Node3D parent, string name, bool EnableCollision = false)
         {
             var a_sprite = new uwMeshInstance3D(); //MeshInstance3D(); //new Sprite3D();
             a_sprite.Name = name;
