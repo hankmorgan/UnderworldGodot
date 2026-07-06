@@ -602,8 +602,8 @@ namespace Underworld
                 //uniform int objectindex_upperbytes;
                 //("albedo", new Color(1, 1, 1, 1));
                 var mat = gr.GetMaterial(spriteNo);
-                mat.SetShaderParameter("objectindex_lowerbytes", obj.item_id & 0xFF);
-                mat.SetShaderParameter("objectindex_upperbytes", (obj.item_id>>8) & 0xFF);
+                mat.SetShaderParameter("objectindex_lowerbytes", obj.index & 0xFF);
+                mat.SetShaderParameter("objectindex_upperbytes", (obj.index>>8) & 0xFF);
                 a_sprite.Mesh.SurfaceSetMaterial(0, mat);                
                 NewSize = new Vector2(
                         ArtLoader.SpriteScale * img.GetWidth(),

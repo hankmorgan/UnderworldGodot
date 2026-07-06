@@ -197,10 +197,12 @@ namespace Underworld
             //text.GetImage().SavePng("c:\\temp\\testobjectinfo.png");
             //var vi = new Vector2I((int)(ViewPortMouseXPos / text.GetWidth()), (int)(ViewPortMouseYPos / text.GetHeight()));
             var mouse = uimanager.instance.uwviewport.GetLocalMousePosition();
-            var pixel = text.GetImage().GetPixel((int)mouse.X, (int)mouse.Y);//text.GetImage().SavePng("C:\\temp\\testobjectinfo.png");
-            var pitemid = (pixel.B8<<8) | pixel.G8;
-            var itemname = GameStrings.GetSimpleObjectNameUW(pitemid);
-            Debug.Print($"{pixel} , {pitemid}, {itemname}");
+            var pixel = text.GetImage().GetPixel((int)mouse.X, (int)mouse.Y);//
+            
+            text.GetImage().SavePng("C:\\temp\\testobjectinfo.png");
+            var pitemindex = (pixel.B8<<8) | pixel.G8;
+            var itemname = GameStrings.GetSimpleObjectNameUW(UWTileMap.current_tilemap.LevelObjects[pitemindex].item_id);
+            Debug.Print($"{pixel} , {pitemindex}, {itemname}");
 
             if (result != null)
             {
