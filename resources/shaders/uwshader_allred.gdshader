@@ -40,16 +40,29 @@ void fragment() {
 	}
 	else
 	{
-		//Get the red channel orignal data.
-		vec4 rgba = texture(texture_albedo, UV);
-		
-		//Get the uv distance offset within the shades.dat image
-		float maptouse = dist/cutoffdistance;
-		
-		//lookup shades.dat data which is stored in smoothpalette using the uv	
-		//vec4 finalcolour = texture(smoothpalette, vec2(rgba.r, maptouse));
-		rgba.g = maptouse;
-		//apply		
-		ALBEDO = rgba.rgb; //finalcolour.rgb;
+		if ((CAMERA_VISIBLE_LAYERS & 8u) != 0u)
+		{
+			//object info layer. render all black for now. In the future this may contain tile information. (eg x,y and surface)
+			vec4 finalcolour;
+			finalcolour.r = 0.0;
+			finalcolour.g = 0.0;
+			finalcolour.b = 0.0;
+			ALBEDO = finalcolour.rgb;
+		}
+		else
+		{
+			//Get the red channel original data.
+			vec4 rgba = texture(texture_albedo, UV);
+			
+			//Get the uv distance offset within the shades.dat image
+			float maptouse = dist/cutoffdistance;
+			
+			//lookup shades.dat data which is stored in smoothpalette using the uv	
+			//vec4 finalcolour = texture(smoothpalette, vec2(rgba.r, maptouse));
+			rgba.g = maptouse;
+			//apply		
+			ALBEDO = rgba.rgb; //finalcolour.rgb;
+		}
+
 	}
 }
