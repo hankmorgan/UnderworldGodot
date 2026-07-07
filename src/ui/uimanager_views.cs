@@ -199,11 +199,28 @@ namespace Underworld
             var mouse = uimanager.instance.uwviewport.GetLocalMousePosition();
             var pixel = text.GetImage().GetPixel((int)mouse.X, (int)mouse.Y);//
             
-            text.GetImage().SavePng("C:\\temp\\testobjectinfo.png");
-            var pitemindex = (pixel.B8<<8) | pixel.G8;
-            var itemname = GameStrings.GetSimpleObjectNameUW(UWTileMap.current_tilemap.LevelObjects[pitemindex].item_id);
-            Debug.Print($"{pixel} , {pitemindex}, {itemname}");
+            //text.GetImage().SavePng("C:\\temp\\testobjectinfo.png");
+            
+            if (pixel.R8==0)
+            {
+                var pitemindex = (pixel.B8<<8) | pixel.G8;
+                if ((pitemindex > 0) && (pitemindex <= 1024))
+                {
+                    //clicked on a game object
+                    var obj = UWTileMap.current_tilemap.LevelObjects[pitemindex];
+                    var itemname = GameStrings.GetSimpleObjectNameUW(UWTileMap.current_tilemap.LevelObjects[pitemindex].item_id);
+                    Debug.Print($"{pixel} , {pitemindex}, {itemname}");
+                    //temp message
+                    uimanager.AddToMessageScroll($"You see {GameStrings.GetSimpleObjectNameUW(obj.item_id)}");
+                }
+            }
+            else
+            {
+                //clicked on a tile. Data is(will be) (surface + 1, tilex, tiley);
+                Debug.Print("clicked on surface probably");
+            }
 
+            return;
             if (result != null)
             {
                 if (result.ContainsKey("collider") && result.ContainsKey("normal") && result.ContainsKey("position"))

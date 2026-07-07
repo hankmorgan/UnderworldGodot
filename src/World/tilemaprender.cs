@@ -62,7 +62,7 @@ namespace Underworld
         public const int Heading7 = 315; // 5PI/4
 
 
-        public static bool EnableCollision = true;
+        public static bool EnableCollision = false;
         public static bool SkipRender = false;
 
         //static int UW_CEILING_HEIGHT;
