@@ -112,9 +112,9 @@ namespace Underworld
             switch (surface)
             {
                 case 0://headstone
-                    return GetTmObj.GetMaterial(uwobject.flags + 28);
+                    return GetTmObj.GetMaterialForObject(uwobject.flags + 28, uwobject);
                 case 1://Trim
-                    return GetTmObj.GetMaterial(0);
+                    return GetTmObj.GetMaterialForObject(0, uwobject);
             }
             return base.GetMaterial(textureno,surface);
         }

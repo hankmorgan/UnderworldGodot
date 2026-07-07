@@ -106,7 +106,7 @@ namespace Underworld
             switch(surface)
             {
                 case 0:
-                    return GetTmObj.GetMaterial((byte)ModelColour(surface));
+                    return GetTmObj.GetMaterialForObject((byte)ModelColour(surface), uwobject);
             }
             return base.GetMaterial(textureno, surface);
         }

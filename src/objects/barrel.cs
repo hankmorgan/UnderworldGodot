@@ -410,7 +410,7 @@ namespace Underworld
                 case 9:
                     return base.GetMaterial(0, 6);
                 default: //ribs
-                    return GetTmObj.GetMaterial((byte)ModelColour(surface));
+                    return GetTmObj.GetMaterialForObject((byte)ModelColour(surface), uwobject);
             }
         }
     } // end class

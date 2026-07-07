@@ -5,10 +5,10 @@ using System.Diagnostics;
 namespace Underworld
 {
 
-/// <summary>
-/// Loads data from various GR Files.
-/// One instance per file type
-/// </summary>
+    /// <summary>
+    /// Loads data from various GR Files.
+    /// One instance per file type
+    /// </summary>
     public class GRLoader : ArtLoader
     {
         public bool UseRedChannel = false;
@@ -104,17 +104,17 @@ namespace Underworld
 
         public enum GRShaderMode
         {
-            None = 0, 
+            None = 0,
             SpriteShader = 1,  //Spritesthat will not be billboarded.
             BillboardSpriteShader = 2, //Sprites that will be billboarded
-            TextureShader= 3,  //World textures
+            TextureShader = 3,  //World textures
             UIShader = 4,  //For ui elements that need palette cycling
             //BillboardInfoSpriteShader = 5, //Sprites that will be billboarded
         };
         public GRShaderMode SHADERMODE;
 
         public GRLoader(int File, GRShaderMode shadermode, bool _usehighdetail = true)
-        {      
+        {
             SHADERMODE = shadermode;
             UseLowDetail = !_usehighdetail;//sets the texture load to just return the colour define by the first pixel(top left of the texture loader)
             switch (shadermode)
@@ -128,38 +128,51 @@ namespace Underworld
                     break;
                 case GRShaderMode.BillboardSpriteShader:
                     textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwsprite_allred.gdshader");
-                    break;  
+                    break;
                 case GRShaderMode.UIShader:
                     textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uisprite.gdshader");
                     break;
-                // case GRShaderMode.BillboardInfoSpriteShader:
-                //     textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwsprite_data.gdshader");
-                //     break;
-            }     
+                    // case GRShaderMode.BillboardInfoSpriteShader:
+                    //     textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwsprite_data.gdshader");
+                    //     break;
+            }
 
             useOverrideAuxPalIndex = false;
             OverrideAuxPalIndex = 0;
             FileToLoad = File;
             PaletteNo = 0;
             LoadImageFile();
-        }       
+        }
 
         public ShaderMaterial GetMaterial(int textureno)
-        {            
-           // if (materials[textureno] == null)
+        {
+            // if (materials[textureno] == null)
             //{
-                //materials[textureno] = new surfacematerial(textureno);
-                //create this material and add it to the list
-                var newmaterial = new ShaderMaterial();
-                newmaterial.Shader = textureshader;
-                newmaterial.SetShaderParameter("texture_albedo", (Texture)LoadImageAt(textureno,true));
-                newmaterial.SetShaderParameter("albedo", new Color(1, 1, 1, 1));
-                newmaterial.SetShaderParameter("uv1_scale", new Vector3(1, 1, 1));
-                newmaterial.SetShaderParameter("uv2_scale", new Vector3(1, 1, 1));
-                return newmaterial;
-               // materials[textureno] = newmaterial;
-           // }
-           // return materials[textureno];    
+            //materials[textureno] = new surfacematerial(textureno);
+            //create this material and add it to the list
+            var newmaterial = new ShaderMaterial();
+            newmaterial.Shader = textureshader;
+            newmaterial.SetShaderParameter("texture_albedo", (Texture)LoadImageAt(textureno, true));
+            newmaterial.SetShaderParameter("albedo", new Color(1, 1, 1, 1));
+            newmaterial.SetShaderParameter("uv1_scale", new Vector3(1, 1, 1));
+            newmaterial.SetShaderParameter("uv2_scale", new Vector3(1, 1, 1));
+            return newmaterial;
+            // materials[textureno] = newmaterial;
+            // }
+            // return materials[textureno];    
+        }
+
+        public ShaderMaterial GetMaterialForObject(int textureno, uwObject obj)
+        {
+            var newmaterial = new ShaderMaterial();
+            newmaterial.Shader = textureshader;
+            newmaterial.SetShaderParameter("texture_albedo", (Texture)LoadImageAt(textureno, true));
+            newmaterial.SetShaderParameter("albedo", new Color(1, 1, 1, 1));
+            newmaterial.SetShaderParameter("uv1_scale", new Vector3(1, 1, 1));
+            newmaterial.SetShaderParameter("uv2_scale", new Vector3(1, 1, 1));
+            newmaterial.SetShaderParameter("objectindex_lowerbytes", obj.index & 0xFF);
+            newmaterial.SetShaderParameter("objectindex_upperbytes", (obj.index>>8) & 0xFF);
+            return newmaterial;
         }
 
         public override bool LoadImageFile()
@@ -223,14 +236,14 @@ namespace Underworld
                     {
                         imageOffset += 5;
                         ImageCache[index] = Image(
-                            databuffer: ImageFileData, 
-                            dataOffSet: imageOffset, 
-                            width: BitMapWidth, height: BitMapHeight, 
-                            palette: PaletteLoader.Palettes[PaletteNo], 
-                            useAlphaChannel: UseAlphaChannel, 
+                            databuffer: ImageFileData,
+                            dataOffSet: imageOffset,
+                            width: BitMapWidth, height: BitMapHeight,
+                            palette: PaletteLoader.Palettes[PaletteNo],
+                            useAlphaChannel: UseAlphaChannel,
                             useSingleRedChannel: UseRedChannel,
-                            crop: UseCropping, 
-                            OutputInLowDetail: UseLowDetail, 
+                            crop: UseCropping,
+                            OutputInLowDetail: UseLowDetail,
                             xfermode: XFER);
                         return ImageCache[index];
                     }
@@ -252,14 +265,14 @@ namespace Underworld
                         int[] aux = PaletteLoader.LoadAuxilaryPalIndices(Path.Combine(BasePath, "DATA", AuxPalPath), auxPalIndex);
                         outputImg = DecodeRLEBitmap(imgNibbles, datalen, BitMapWidth, BitMapHeight, 4, aux);
                         ImageCache[index] = Image(
-                            databuffer: outputImg, 
-                            dataOffSet: 0, 
-                            width: BitMapWidth, height: BitMapHeight, 
-                            palette: PaletteLoader.Palettes[PaletteNo], 
-                            useAlphaChannel: UseAlphaChannel, 
-                            useSingleRedChannel: UseRedChannel, 
-                            crop: UseCropping, 
-                            OutputInLowDetail: UseLowDetail, 
+                            databuffer: outputImg,
+                            dataOffSet: 0,
+                            width: BitMapWidth, height: BitMapHeight,
+                            palette: PaletteLoader.Palettes[PaletteNo],
+                            useAlphaChannel: UseAlphaChannel,
+                            useSingleRedChannel: UseRedChannel,
+                            crop: UseCropping,
+                            OutputInLowDetail: UseLowDetail,
                             xfermode: XFER);
                         return ImageCache[index];
                     }
@@ -279,14 +292,14 @@ namespace Underworld
                         copyNibbles(ImageFileData, ref imgNibbles, datalen, imageOffset);
                         auxpal = PaletteLoader.LoadAuxilaryPal(Path.Combine(BasePath, "DATA", AuxPalPath), PaletteLoader.Palettes[PaletteNo], auxPalIndex);
                         ImageCache[index] = Image(
-                            databuffer: imgNibbles, 
-                            dataOffSet: 0, 
-                            width: BitMapWidth, height: BitMapHeight, 
-                            palette: auxpal, 
-                            useAlphaChannel: UseAlphaChannel , 
+                            databuffer: imgNibbles,
+                            dataOffSet: 0,
+                            width: BitMapWidth, height: BitMapHeight,
+                            palette: auxpal,
+                            useAlphaChannel: UseAlphaChannel,
                             useSingleRedChannel: UseRedChannel,
-                            crop: UseCropping, 
-                            OutputInLowDetail: UseLowDetail,  
+                            crop: UseCropping,
+                            OutputInLowDetail: UseLowDetail,
                             xfermode: XFER);
                         return ImageCache[index];
                     }
@@ -304,13 +317,13 @@ namespace Underworld
                         }
                         imageOffset = getAt(ImageFileData, (index * 4) + 3, 32);
                         ImageCache[index] = Image(
-                            databuffer: ImageFileData, 
-                            dataOffSet: imageOffset, 
-                            width: BitMapWidth, height: BitMapHeight, 
-                            palette: PaletteLoader.Palettes[PaletteNo], 
-                            useAlphaChannel: UseAlphaChannel, 
+                            databuffer: ImageFileData,
+                            dataOffSet: imageOffset,
+                            width: BitMapWidth, height: BitMapHeight,
+                            palette: PaletteLoader.Palettes[PaletteNo],
+                            useAlphaChannel: UseAlphaChannel,
                             useSingleRedChannel: UseRedChannel,
-                            crop: UseCropping, 
+                            crop: UseCropping,
                             OutputInLowDetail: UseLowDetail,
                             xfermode: XFER);
                         return ImageCache[index];
@@ -486,14 +499,14 @@ namespace Underworld
             byte n1 = nibbles[addr_ptr];
             addr_ptr++;
             return n1;
-        }   
+        }
 
         public void ExportImages(string exportpath)
         {
-            for (int i =0; i<NoOfImages;i++)
+            for (int i = 0; i < NoOfImages; i++)
             {
                 var img = LoadImageAt(i);
-                img.GetImage().SavePng(Path.Combine(exportpath,$"{i.ToString("000")}.png"));
+                img.GetImage().SavePng(Path.Combine(exportpath, $"{i.ToString("000")}.png"));
             }
         }
     }//end class
