@@ -13,22 +13,22 @@ namespace Underworld
         public static Shader textureshader;
 
         public static GRLoader grAnimo;
-        public static GRLoader grAnimoxfer;
-        public static GRLoader grAnimoinfo;
+        // public static GRLoader grAnimoxfer;
+        // public static GRLoader grAnimoinfo;
 
         /// <summary>
         /// Mesh this sprite is drawn on
         /// </summary>
         public uwMeshInstance3D sprite;
-        public uwMeshInstance3D spritexfer;
-        public uwMeshInstance3D spriteinfo;
+        // public uwMeshInstance3D spritexfer;
+        // public uwMeshInstance3D spriteinfo;
 
         /// <summary>
         /// The material for rendering this unique npc
         /// </summary>
         public ShaderMaterial material;
-        public ShaderMaterial materialxfer;
-        public ShaderMaterial materialinfo;
+        // public ShaderMaterial materialxfer;
+        // public ShaderMaterial materialinfo;
 
         public int startFrame
         {
@@ -58,31 +58,33 @@ namespace Underworld
             uwMeshInstance3D a_sprite;
             Vector2 NewSize;
             _animo.material = grAnimo.GetMaterial(obj.owner);
-            a_sprite = CreateAnimoSprite(obj: obj, name: name, NewSize: out NewSize, gr: grAnimo, Layer: main.LayerGeo, material: _animo.material);            
+            a_sprite = CreateAnimoSprite(obj: obj, name: name, NewSize: out NewSize, gr: grAnimo, material: _animo.material);            
             _animo.sprite = a_sprite;
             parent.AddChild(a_sprite);
             a_sprite.Position = new Vector3(0, NewSize.Y / 2 + 0f, 0);
-            //a_sprite.CreateConvexCollision();
+            _animo.material.SetShaderParameter("objectindex_lowerbytes", obj.index & 0xFF);
+            _animo.material.SetShaderParameter("objectindex_upperbytes", (obj.index>>8) & 0xFF);
+            // //a_sprite.CreateConvexCollision();
 
-            _animo.materialxfer = grAnimoxfer.GetMaterial(obj.owner);
-            a_sprite = CreateAnimoSprite(obj: obj, name: name, NewSize: out NewSize, gr: grAnimoxfer, Layer: main.LayerXFER, material: _animo.materialxfer);
-            _animo.spritexfer = a_sprite;
-            parent.AddChild(a_sprite);
-            a_sprite.Position = new Vector3(0, NewSize.Y / 2 + 0f, 0);
-            //a_sprite.CreateConvexCollision(); no collision on xfer la
+            // _animo.materialxfer = grAnimoxfer.GetMaterial(obj.owner);
+            // a_sprite = CreateAnimoSprite(obj: obj, name: name, NewSize: out NewSize, gr: grAnimoxfer, Layer: main.LayerXFER, material: _animo.materialxfer);
+            // _animo.spritexfer = a_sprite;
+            // parent.AddChild(a_sprite);
+            // a_sprite.Position = new Vector3(0, NewSize.Y / 2 + 0f, 0);
+            // //a_sprite.CreateConvexCollision(); no collision on xfer la
 
-            _animo.materialinfo = grAnimoinfo.GetMaterial(obj.owner);
-            a_sprite = CreateAnimoSprite(obj: obj, name: name, NewSize: out NewSize, gr: grAnimoxfer, Layer: main.LayerObjectInfo, material: _animo.materialinfo);
-            _animo.spriteinfo = a_sprite;
-            parent.AddChild(a_sprite);
-            a_sprite.Position = new Vector3(0, NewSize.Y / 2 + 0f, 0);
-            _animo.materialinfo.SetShaderParameter("objectindex_lowerbytes", obj.index & 0xFF);
-            _animo.materialinfo.SetShaderParameter("objectindex_upperbytes", (obj.index>>8) & 0xFF);
+            // _animo.materialinfo = grAnimoinfo.GetMaterial(obj.owner);
+            // a_sprite = CreateAnimoSprite(obj: obj, name: name, NewSize: out NewSize, gr: grAnimoxfer, Layer: main.LayerObjectInfo, material: _animo.materialinfo);
+            // _animo.spriteinfo = a_sprite;
+            // parent.AddChild(a_sprite);
+            // a_sprite.Position = new Vector3(0, NewSize.Y / 2 + 0f, 0);
+            // _animo.materialinfo.SetShaderParameter("objectindex_lowerbytes", obj.index & 0xFF);
+            // _animo.materialinfo.SetShaderParameter("objectindex_upperbytes", (obj.index>>8) & 0xFF);
 
             return _animo;
         }
 
-        private static uwMeshInstance3D CreateAnimoSprite(uwObject obj, string name, out Vector2 NewSize, GRLoader gr, uint Layer, ShaderMaterial material)
+        private static uwMeshInstance3D CreateAnimoSprite(uwObject obj, string name, out Vector2 NewSize, GRLoader gr, ShaderMaterial material)
         {
             var img = gr.LoadImageAt(obj.owner);
             var a_sprite = new uwMeshInstance3D();
@@ -94,7 +96,7 @@ namespace Underworld
                 ArtLoader.SpriteScale * img.GetHeight()
             );
             a_sprite.Mesh.Set("size", NewSize);
-            a_sprite.Layers = Layer;
+            a_sprite.Layers = main.LayerGeo | main.LayerObjectInfo | main.LayerXFER;
             return a_sprite;
         }
 
@@ -104,15 +106,15 @@ namespace Underworld
             textureshader = (Shader)ResourceLoader.Load("res://resources/shaders/uwsprite_allred.gdshader");
             grAnimo = new GRLoader(GRLoader.ANIMO_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
             grAnimo.UseRedChannel = true;
-            grAnimo.XFER = ArtLoader.XferChannnelMode.NonXFer;
+            grAnimo.XFER = ArtLoader.XferChannnelMode.AllColours;
             
-            grAnimoxfer = new GRLoader(GRLoader.ANIMO_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
-            grAnimoxfer.UseRedChannel = true;
-            grAnimoxfer.XFER = ArtLoader.XferChannnelMode.XFEROnly;
+            // grAnimoxfer = new GRLoader(GRLoader.ANIMO_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
+            // grAnimoxfer.UseRedChannel = true;
+            // grAnimoxfer.XFER = ArtLoader.XferChannnelMode.XFEROnly;
 
-            grAnimoinfo = new GRLoader(GRLoader.ANIMO_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
-            grAnimoinfo.UseRedChannel = true;
-            grAnimoinfo.XFER = ArtLoader.XferChannnelMode.AllColours;
+            // grAnimoinfo = new GRLoader(GRLoader.ANIMO_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
+            // grAnimoinfo.UseRedChannel = true;
+            // grAnimoinfo.XFER = ArtLoader.XferChannnelMode.AllColours;
         }
 
         public animo(uwObject _uwobject)
@@ -124,8 +126,8 @@ namespace Underworld
         public void ApplyAnimoSprite()
         {
             material.SetShaderParameter("texture_albedo", (Texture)grAnimo.LoadImageAt(uwobject.owner));
-            materialxfer.SetShaderParameter("texture_albedo", (Texture)grAnimoxfer.LoadImageAt(uwobject.owner));
-            materialinfo.SetShaderParameter("texture_albedo", (Texture)grAnimoinfo.LoadImageAt(uwobject.owner));
+            // materialxfer.SetShaderParameter("texture_albedo", (Texture)grAnimoxfer.LoadImageAt(uwobject.owner));
+            // materialinfo.SetShaderParameter("texture_albedo", (Texture)grAnimoinfo.LoadImageAt(uwobject.owner));
             //sprite.Mesh.SurfaceSetMaterial(surfIdx: 0, material: grAnimo.GetMaterial(uwobject.owner));
             //spritexfer.Mesh.SurfaceSetMaterial(surfIdx: 0, material: grAnimoxfer.GetMaterial(uwobject.owner));
             //spritexfer.Mesh.SurfaceSetMaterial(surfIdx: 0, material: grAnimoinfo.GetMaterial(uwobject.owner));
