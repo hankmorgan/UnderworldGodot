@@ -18,8 +18,8 @@ namespace Underworld
         /// object art
         /// </summary>
         public static GRLoader grObjects;
-        public static GRLoader grObjectsXfer;
-        public static GRLoader grObjectsInfo;
+        // public static GRLoader grObjectsXfer;
+        // public static GRLoader grObjectsInfo;
 
         /// <summary>
         /// The node objects will be attached to
@@ -557,14 +557,14 @@ namespace Underworld
             var inst = new genericsprite(obj);
             if (obj.invis == 0)
             {
-                CreateSprite(gr: grObjects, spriteNo: obj.item_id, parent: parent, name: name, EnableCollision: false);
-                CreateSprite(gr: grObjectsXfer, spriteNo: obj.item_id, parent: parent, name: name, EnableCollision: false);
-                CreateObjectInfoLayer(gr: grObjectsInfo, spriteNo: obj.item_id, obj: obj, parent: parent, name: name);
+                CreateSprite(gr: grObjects, obj:obj, spriteNo: obj.item_id, parent: parent, name: name, EnableCollision: false);
+                // CreateSprite(gr: grObjectsXfer, spriteNo: obj.item_id, parent: parent, name: name, EnableCollision: false);
+                // CreateObjectInfoLayer(gr: grObjectsInfo, spriteNo: obj.item_id, obj: obj, parent: parent, name: name);
             }
             return inst;
         }
 
-        public static void CreateSprite(GRLoader gr, int spriteNo, Node3D parent, string name, bool EnableCollision = false)
+        public static void CreateSprite(GRLoader gr, uwObject obj, int spriteNo, Node3D parent, string name, bool EnableCollision = false)
         {
             var a_sprite = new uwMeshInstance3D(); //MeshInstance3D(); //new Sprite3D();
             a_sprite.Name = name;
@@ -573,13 +573,16 @@ namespace Underworld
             var img = gr.LoadImageAt(spriteNo);
             if (img != null)
             {
-                a_sprite.Mesh.SurfaceSetMaterial(0, gr.GetMaterial(spriteNo));
+                var mat = gr.GetMaterial(spriteNo);
+                mat.SetShaderParameter("objectindex_lowerbytes", obj.index & 0xFF);
+                mat.SetShaderParameter("objectindex_upperbytes", (obj.index>>8) & 0xFF);
+                a_sprite.Mesh.SurfaceSetMaterial(0, mat);  
                 NewSize = new Vector2(
                         ArtLoader.SpriteScale * img.GetWidth(),
                         ArtLoader.SpriteScale * img.GetHeight()
                         );
                 a_sprite.Mesh.Set("size", NewSize);
-                a_sprite.Layers = main.LayerGeo;
+                a_sprite.Layers = main.LayerGeo | main.LayerObjectInfo | main.LayerXFER;
                 parent.AddChild(a_sprite);
                 a_sprite.Position = new Vector3(0, NewSize.Y / 2f, 0);
                 if (EnableCollision)
@@ -589,32 +592,32 @@ namespace Underworld
             }
         }
 
-        public static void CreateObjectInfoLayer(GRLoader gr, int spriteNo, uwObject obj, Node3D parent, string name)
-        {
-            var a_sprite = new uwMeshInstance3D(); //MeshInstance3D(); //new Sprite3D();
-            a_sprite.Name = name;
-            a_sprite.Mesh = new QuadMesh();
-            Vector2 NewSize;
-            var img = gr.LoadImageAt(spriteNo);
-            if (img != null)
-            {
-                //uniform int objectindex_lowerbytes;
-                //uniform int objectindex_upperbytes;
-                //("albedo", new Color(1, 1, 1, 1));
-                var mat = gr.GetMaterial(spriteNo);
-                mat.SetShaderParameter("objectindex_lowerbytes", obj.index & 0xFF);
-                mat.SetShaderParameter("objectindex_upperbytes", (obj.index>>8) & 0xFF);
-                a_sprite.Mesh.SurfaceSetMaterial(0, mat);                
-                NewSize = new Vector2(
-                        ArtLoader.SpriteScale * img.GetWidth(),
-                        ArtLoader.SpriteScale * img.GetHeight()
-                        );
-                a_sprite.Mesh.Set("size", NewSize);
-                a_sprite.Layers = main.LayerObjectInfo;
-                parent.AddChild(a_sprite);
-                a_sprite.Position = new Vector3(0, NewSize.Y / 2f, 0);
-            }
-        }
+        // public static void CreateObjectInfoLayer(GRLoader gr, int spriteNo, uwObject obj, Node3D parent, string name)
+        // {
+        //     var a_sprite = new uwMeshInstance3D(); //MeshInstance3D(); //new Sprite3D();
+        //     a_sprite.Name = name;
+        //     a_sprite.Mesh = new QuadMesh();
+        //     Vector2 NewSize;
+        //     var img = gr.LoadImageAt(spriteNo);
+        //     if (img != null)
+        //     {
+        //         //uniform int objectindex_lowerbytes;
+        //         //uniform int objectindex_upperbytes;
+        //         //("albedo", new Color(1, 1, 1, 1));
+        //         var mat = gr.GetMaterial(spriteNo);
+        //         mat.SetShaderParameter("objectindex_lowerbytes", obj.index & 0xFF);
+        //         mat.SetShaderParameter("objectindex_upperbytes", (obj.index>>8) & 0xFF);
+        //         a_sprite.Mesh.SurfaceSetMaterial(0, mat);                
+        //         NewSize = new Vector2(
+        //                 ArtLoader.SpriteScale * img.GetWidth(),
+        //                 ArtLoader.SpriteScale * img.GetHeight()
+        //                 );
+        //         a_sprite.Mesh.Set("size", NewSize);
+        //         a_sprite.Layers = main.LayerObjectInfo;
+        //         parent.AddChild(a_sprite);
+        //         a_sprite.Position = new Vector3(0, NewSize.Y / 2f, 0);
+        //     }
+        // }
 
         /// <summary>
         /// Removes or reduces the qty of the object

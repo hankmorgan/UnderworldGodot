@@ -142,20 +142,21 @@ public partial class main : Node3D
 		cameraPitchGimbal_world.Fov = Math.Max(50, uwsettings.instance.FOV);
 		cameraPitchGimbal_sprites.Fov = cameraPitchGimbal_world.Fov;
 		uimanager.EnableDisable(instance.lblPositionDebug, EnablePositionDebug);
+		
 		ObjectCreator.grObjects = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
 		ObjectCreator.grObjects.UseRedChannel = true;
 		ObjectCreator.grObjects.UseCropping = false;
-		ObjectCreator.grObjects.XFER = ArtLoader.XferChannnelMode.NonXFer;
+		ObjectCreator.grObjects.XFER = ArtLoader.XferChannnelMode.AllColours;
 
-		ObjectCreator.grObjectsXfer = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
-		ObjectCreator.grObjectsXfer.UseRedChannel = true;
-		ObjectCreator.grObjectsXfer.UseCropping = false;
-		ObjectCreator.grObjectsXfer.XFER = ArtLoader.XferChannnelMode.XFEROnly;
+		// ObjectCreator.grObjectsXfer = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
+		// ObjectCreator.grObjectsXfer.UseRedChannel = true;
+		// ObjectCreator.grObjectsXfer.UseCropping = false;
+		// ObjectCreator.grObjectsXfer.XFER = ArtLoader.XferChannnelMode.XFEROnly;
 
-		ObjectCreator.grObjectsInfo = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
-		ObjectCreator.grObjectsInfo.UseRedChannel = true;
-		ObjectCreator.grObjectsInfo.UseCropping = false;
-		ObjectCreator.grObjectsInfo.XFER = ArtLoader.XferChannnelMode.AllColours;
+		// ObjectCreator.grObjectsInfo = new GRLoader(GRLoader.OBJECTS_GR, GRLoader.GRShaderMode.BillboardSpriteShader);
+		// ObjectCreator.grObjectsInfo.UseRedChannel = true;
+		// ObjectCreator.grObjectsInfo.UseCropping = false;
+		// ObjectCreator.grObjectsInfo.XFER = ArtLoader.XferChannnelMode.AllColours;
 
 		Palette.CurrentPalette = 0;
 		uimanager.instance.InitUI();
