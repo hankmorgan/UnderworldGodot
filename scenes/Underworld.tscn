@@ -77,7 +77,8 @@ use_hdr_2d = true
 [node name="GimbalRoll" type="Node3D" parent="SubViewportSprites/GimbalYaw"]
 
 [node name="GimbalPitchCamera_sprites" type="Camera3D" parent="SubViewportSprites/GimbalYaw/GimbalRoll"]
-cull_mask = 1048550
+editor_description = "Render world with xferdata"
+cull_mask = 6
 current = true
 
 [node name="SubViewportWorld" type="SubViewport" parent="."]
@@ -90,7 +91,8 @@ render_target_update_mode = 4
 [node name="GimbalRoll" type="Node3D" parent="SubViewportWorld/GimbalYaw"]
 
 [node name="GimbalPitchCamera_world" type="Camera3D" parent="SubViewportWorld/GimbalYaw/GimbalRoll"]
-cull_mask = 1048562
+editor_description = "Renders world without xfer data. (xfer transparent)"
+cull_mask = 2
 current = true
 
 [node name="SubViewportObjectInfo" type="SubViewport" parent="."]
@@ -101,7 +103,7 @@ use_hdr_2d = true
 [node name="GimbalRoll" type="Node3D" parent="SubViewportObjectInfo/GimbalYaw"]
 
 [node name="GimbalPitchCamera_objectinfo" type="Camera3D" parent="SubViewportObjectInfo/GimbalYaw/GimbalRoll"]
-cull_mask = 1048552
+cull_mask = 8
 current = true
 
 [node name="WorldViewContainer" type="SubViewportContainer" parent="."]

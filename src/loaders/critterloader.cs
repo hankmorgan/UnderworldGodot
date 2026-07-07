@@ -19,8 +19,8 @@ namespace Underworld
 
         public Dictionary<string, CritterAnimation> Animations = new Dictionary<string, CritterAnimation>();
         public ImageTexture[] animSprites = new ImageTexture[256];
-        public ImageTexture[] animSpritesxfer = new ImageTexture[256];
-        public ImageTexture[] animSpritesinfo = new ImageTexture[256];
+        // public ImageTexture[] animSpritesxfer = new ImageTexture[256];
+        // public ImageTexture[] animSpritesinfo = new ImageTexture[256];
 
         /// <summary>
         /// Critter animations for UW1
@@ -377,34 +377,34 @@ namespace Underworld
                             useAlphaChannel: true,
                             useSingleRedChannel: true,
                             crop: false,
-                            xfermode: XferChannnelMode.NonXFer);
+                            xfermode: XferChannnelMode.AllColours);
 
                         this.animSprites[spriteIndex + i] = imgData;
 
-                        imgData = Image(
-                             databuffer: outputImg,
-                             dataOffSet: 0,
-                             width: BitMapWidth, height: BitMapHeight,
-                             palette: pal,
-                             useAlphaChannel: true,
-                             useSingleRedChannel: true,
-                             crop: false,
-                             xfermode: XferChannnelMode.XFEROnly);
+                        // imgData = Image(
+                        //      databuffer: outputImg,
+                        //      dataOffSet: 0,
+                        //      width: BitMapWidth, height: BitMapHeight,
+                        //      palette: pal,
+                        //      useAlphaChannel: true,
+                        //      useSingleRedChannel: true,
+                        //      crop: false,
+                        //      xfermode: XferChannnelMode.XFEROnly);
 
-                        this.animSpritesxfer[spriteIndex + i] = imgData;
+                        // this.animSpritesxfer[spriteIndex + i] = imgData;
 
 
-                        imgData = Image(
-                            databuffer: outputImg,
-                            dataOffSet: 0,
-                            width: BitMapWidth, height: BitMapHeight,
-                            palette: pal,
-                            useAlphaChannel: true,
-                            useSingleRedChannel: true,
-                            crop: false,
-                            xfermode: XferChannnelMode.AllColours);
+                        // imgData = Image(
+                        //     databuffer: outputImg,
+                        //     dataOffSet: 0,
+                        //     width: BitMapWidth, height: BitMapHeight,
+                        //     palette: pal,
+                        //     useAlphaChannel: true,
+                        //     useSingleRedChannel: true,
+                        //     crop: false,
+                        //     xfermode: XferChannnelMode.AllColours);
 
-                        this.animSpritesinfo[spriteIndex + i] = imgData;
+                        // this.animSpritesinfo[spriteIndex + i] = imgData;
 
                         // var crname = $"{XX},{YY}";
                         // string AnimName = GetUW1AnimName(slotbase + SlotIndices[i]);
@@ -806,30 +806,30 @@ namespace Underworld
                                     useAlphaChannel: true,
                                     useSingleRedChannel: true,
                                     crop: false,
-                                    xfermode: XferChannnelMode.NonXFer);
+                                    xfermode: XferChannnelMode.AllColours);
                                 this.animSprites[spriteIndex] = imgData;
 
-                                imgData = Image(
-                                    databuffer: outputImg,
-                                    dataOffSet: 0,
-                                    width: BitMapWidth, height: BitMapHeight,
-                                    palette: pal,
-                                    useAlphaChannel: true,
-                                    useSingleRedChannel: true,
-                                    crop: false,
-                                    xfermode: XferChannnelMode.XFEROnly);
-                                this.animSpritesxfer[spriteIndex] = imgData;
+                                // imgData = Image(
+                                //     databuffer: outputImg,
+                                //     dataOffSet: 0,
+                                //     width: BitMapWidth, height: BitMapHeight,
+                                //     palette: pal,
+                                //     useAlphaChannel: true,
+                                //     useSingleRedChannel: true,
+                                //     crop: false,
+                                //     xfermode: XferChannnelMode.XFEROnly);
+                                // this.animSpritesxfer[spriteIndex] = imgData;
 
-                                imgData = Image(
-                                    databuffer: outputImg,
-                                    dataOffSet: 0,
-                                    width: BitMapWidth, height: BitMapHeight,
-                                    palette: pal,
-                                    useAlphaChannel: true,
-                                    useSingleRedChannel: true,
-                                    crop: false,
-                                    xfermode: XferChannnelMode.AllColours);
-                                this.animSpritesinfo[spriteIndex] = imgData;
+                                // imgData = Image(
+                                //     databuffer: outputImg,
+                                //     dataOffSet: 0,
+                                //     width: BitMapWidth, height: BitMapHeight,
+                                //     palette: pal,
+                                //     useAlphaChannel: true,
+                                //     useSingleRedChannel: true,
+                                //     crop: false,
+                                //     xfermode: XferChannnelMode.AllColours);
+                                // this.animSpritesinfo[spriteIndex] = imgData;
 
 
                                 // var crname = System.IO.Path.GetFileName(critterFilePath);
