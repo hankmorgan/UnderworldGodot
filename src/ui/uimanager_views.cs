@@ -137,6 +137,8 @@ namespace Underworld
                         uimanager.instance.uwsubviewport_world.Size = new Vector2I(840, 512);
 			            uimanager.instance.uwsubviewport_sprites.Size = new Vector2I(840, 512);
                         uimanager.instance.uwsubviewport_objectinfo.Size = new Vector2I(840, 512);
+                        uimanager.instance.textureobjectinfo.Position = uwviewport.Position;
+                        uimanager.instance.textureobjectinfo.Size = uwviewport.Size;
                     }
                     break;
                 default:
@@ -150,7 +152,9 @@ namespace Underworld
                         //uwsubviewport.Size = new Vector2I(700, 456);
                         uimanager.instance.uwsubviewport_world.Size = new Vector2I(700, 456);
 			            uimanager.instance.uwsubviewport_sprites.Size = new Vector2I(700, 456);
-                        uimanager.instance.uwsubviewport_objectinfo.Size = new Vector2I(700, 456);                                                
+                        uimanager.instance.uwsubviewport_objectinfo.Size = new Vector2I(700, 456); 
+                        uimanager.instance.textureobjectinfo.Position = uwviewport.Position;
+                        uimanager.instance.textureobjectinfo.Size = uwviewport.Size;                                               
                     }
                     break;
             }
