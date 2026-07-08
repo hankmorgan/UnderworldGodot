@@ -23,7 +23,7 @@ global uniform sampler2D xfer: source_color,filter_nearest; //xfer.dat transpare
 global uniform float cutoffdistance; // how far away the scene will render
 
 
-uniform int tileflags_lowerbytes;
+uniform int tileflags;
 uniform int objectindex_lowerbytes;
 uniform int objectindex_upperbytes;
 
@@ -48,7 +48,7 @@ void fragment() {
 		{
 			//object info layer. render all black for now. In the future this may contain tile information. (eg x,y and surface) or object index in the case of 3d models.
 			//vec4 finalcolour;
-			ALBEDO.r = 0.0;//this will eventually be tileflags indicating if this is a floor, NSEW facing wall, diagonal or ceiling.
+			ALBEDO.r = float(tileflags)/255.0;//this will eventually be tileflags indicating if this is a floor, NSEW facing wall, diagonal or ceiling.
 			ALBEDO.g = float(objectindex_lowerbytes)/255.0;   // or tileX
 			ALBEDO.b = float(objectindex_upperbytes)/255.0;   // or tileY
 			//ALBEDO = finalcolour.rgb;

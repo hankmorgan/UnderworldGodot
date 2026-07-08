@@ -16,7 +16,7 @@ namespace Underworld
         [Export] public SubViewport uwsubviewport_world;
         [Export] public SubViewport uwsubviewport_sprites;
         [Export] public SubViewport uwsubviewport_objectinfo;
-         [Export] public TextureRect textureobjectinfo;
+        [Export] public TextureRect textureobjectinfo;
 
         //[Export] public TextureRect combinedview;
 
@@ -135,7 +135,7 @@ namespace Underworld
                         uwviewport.Position = new Vector2(62f, 62f);
                         //uwsubviewport.Size = new Vector2I(840, 512);
                         uimanager.instance.uwsubviewport_world.Size = new Vector2I(840, 512);
-			            uimanager.instance.uwsubviewport_sprites.Size = new Vector2I(840, 512);
+                        uimanager.instance.uwsubviewport_sprites.Size = new Vector2I(840, 512);
                         uimanager.instance.uwsubviewport_objectinfo.Size = new Vector2I(840, 512);
                         uimanager.instance.textureobjectinfo.Position = uwviewport.Position;
                         uimanager.instance.textureobjectinfo.Size = uwviewport.Size;
@@ -148,13 +148,13 @@ namespace Underworld
                     {
                         uwviewport.SetSize(new Vector2(700f, 456f));
                         uwviewport.Position = new Vector2(200f, 72f);
-                         //.SetSize(new Vector2(700f, 456f));
+                        //.SetSize(new Vector2(700f, 456f));
                         //uwsubviewport.Size = new Vector2I(700, 456);
                         uimanager.instance.uwsubviewport_world.Size = new Vector2I(700, 456);
-			            uimanager.instance.uwsubviewport_sprites.Size = new Vector2I(700, 456);
-                        uimanager.instance.uwsubviewport_objectinfo.Size = new Vector2I(700, 456); 
+                        uimanager.instance.uwsubviewport_sprites.Size = new Vector2I(700, 456);
+                        uimanager.instance.uwsubviewport_objectinfo.Size = new Vector2I(700, 456);
                         uimanager.instance.textureobjectinfo.Position = uwviewport.Position;
-                        uimanager.instance.textureobjectinfo.Size = uwviewport.Size;                                               
+                        uimanager.instance.textureobjectinfo.Size = uwviewport.Size;
                     }
                     break;
             }
@@ -202,12 +202,12 @@ namespace Underworld
             //var vi = new Vector2I((int)(ViewPortMouseXPos / text.GetWidth()), (int)(ViewPortMouseYPos / text.GetHeight()));
             var mouse = uimanager.instance.uwviewport.GetLocalMousePosition();
             var pixel = text.GetImage().GetPixel((int)mouse.X, (int)mouse.Y);//
-            
+
             //text.GetImage().SavePng("C:\\temp\\testobjectinfo.png");
-            
-            if (pixel.R8==0)
+
+            if (pixel.R8 == 0)
             {
-                var pitemindex = (pixel.B8<<8) | pixel.G8;
+                var pitemindex = (pixel.B8 << 8) | pixel.G8;
                 if ((pitemindex > 0) && (pitemindex <= 1024))
                 {
                     //clicked on a game object
@@ -221,7 +221,42 @@ namespace Underworld
             else
             {
                 //clicked on a tile. Data is(will be) (surface + 1, tilex, tiley);
-                Debug.Print("clicked on surface probably");
+                //Debug.Print("clicked on surface probably");
+                var tileX = pixel.G8;
+                var tileY = pixel.B8;
+                if (UWTileMap.ValidTile(tileX, tileY))
+                {
+                    var tile = UWTileMap.current_tilemap.Tiles[tileX,tileY];
+                    switch (pixel.R8)
+                    {
+                        case tileMapRender.fSELF:
+                            uimanager.AddToMessageScroll(tile.DescriptionWall);
+                            break;
+                        case tileMapRender.fCEIL:
+                            LookAtCeiling();
+                            break;
+                        case tileMapRender.fNORTH:
+                            uimanager.AddToMessageScroll(tile.DescriptionNorth);
+                            break;
+                        case tileMapRender.fSOUTH:
+                            uimanager.AddToMessageScroll(tile.DescriptionSouth);
+                            break;                        
+                        case tileMapRender.fEAST:
+                            uimanager.AddToMessageScroll(tile.DescriptionEast);
+                            break;                        
+                        case tileMapRender.fWEST:
+                            uimanager.AddToMessageScroll(tile.DescriptionWest);
+                            break;                        
+                        case tileMapRender.fFLOOR:
+                            uimanager.AddToMessageScroll(tile.DescriptionFloor);
+                            break;                        
+                        case tileMapRender.fBOTTOM:
+                            Debug.Print("BOTTOM!");
+                            break;
+                    }
+
+                }
+
             }
 
             return;

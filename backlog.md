@@ -111,9 +111,11 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Proper rendering of the "escher" room in Talorus. Ensure the walls of the slopes do not appear/are transparent.
 - [ ] Picking up a Wisp starts conversation in UW2? Need to confirm if this is vanilla behaviour.
 - [ ] Typed input is fiddly when using backspace
+- [ ] Entering a qty prompts for a Yes/No
 - [ ] Arrows launched by an arrow trap are rendered as sprites not a 3d model
-- [ ] Wrong cutscene no is set in conversations -> eg quest 143 is being set incorrectly when first meeting LB. ->See branch ConversationSystemFixes
-- [ ] Consider using texture rects to mask out data so that pixel perfect raycasts are possible.
+- [X] Wrong cutscene no is set in conversations -> eg quest 143 is being set incorrectly when first meeting LB. ->See branch ConversationSystemFixes
+- [X] Consider using texture rects to mask out data so that pixel perfect raycasts are possible.
+- [ ] Use the uwshadershader to switch to low detail modes using the tile flag data to identify surface and rendering pixel at uv(0,0) only
 
 ## Blocked
 Things I've hit a roadblock on.

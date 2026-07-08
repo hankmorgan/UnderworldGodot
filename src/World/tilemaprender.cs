@@ -40,13 +40,16 @@ namespace Underworld
         const int vSOUTH = 5;
 
 
-        //BrushFaces
-        const int fSELF = 128;
-        const int fCEIL = 64;
-        const int fNORTH = 32;
-        const int fSOUTH = 16;
-        const int fEAST = 8;
-        const int fWEST = 4;
+        //BrushFaces         
+        public const int fSELF = 128;
+        public const int fCEIL = 64;
+        public const int fNORTH = 32;
+        public const int fSOUTH = 16;
+        public const int fEAST = 8;
+        public const int fWEST = 4;
+        public const int fFLOOR = 2;        
+        public const int fBOTTOM = 1;
+
 
 
         //headings in UW go clockwise from 9 o'clock.
@@ -270,8 +273,7 @@ namespace Underworld
             }
 
             //Apply the uvs and create my tris
-            // mesh.vertices = verts;
-            // mesh.uv = uvs;
+
             FaceCounter = 0;
             int[] indices = new int[6];
             indices[0] = 0 + (4 * FaceCounter);
@@ -289,7 +291,9 @@ namespace Underworld
                 FaceCounter: 0,
                 a_mesh: a_mesh,
                 normals: normals,
-                indices: indices);
+                indices: indices,
+                tileflags: fCEIL,
+                tilex: 0, tiley: 0);
 
             return CreateMeshInstance(parent, x, y, TileName, a_mesh);
         }
@@ -441,6 +445,7 @@ namespace Underworld
             float dimY = t.DimY;
 
             int[] MatsToUse = new int[NumberOfVisibleFaces];    //was material
+            int[] Faces = new int[NumberOfVisibleFaces];
             //Now allocate the visible faces to triangles.
             int FaceCounter = 0;//Tracks which number face we are now on.
             float PolySize = Top - Bottom;
@@ -456,7 +461,7 @@ namespace Underworld
                             {
                                 //Set the verts	
                                 MatsToUse[FaceCounter] = FloorTexture_MapIndex(t);
-
+                                Faces[FaceCounter] = fFLOOR;
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0.0f, floorHeight, 0.0f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0.0f, floorHeight, 1.2f * dimY);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 1.2f * dimY);
@@ -475,6 +480,7 @@ namespace Underworld
                             {
                                 //north wall vertices                                
                                 MatsToUse[FaceCounter] = WallTexture(fNORTH, t);
+                                Faces[FaceCounter] = fNORTH;
                                 verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 1.2f * dimY);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 1.2f * dimY);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 1.2f * dimY);
@@ -493,6 +499,7 @@ namespace Underworld
                             {
                                 //west wall vertices
                                 MatsToUse[FaceCounter] = WallTexture(fWEST, t);
+                                Faces[FaceCounter] = fWEST;
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 1.2f * dimY);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 1.2f * dimY);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 0f);
@@ -509,6 +516,7 @@ namespace Underworld
                             {
                                 //east wall vertices                                
                                 MatsToUse[FaceCounter] = WallTexture(fEAST, t);
+                                Faces[FaceCounter] = fEAST;
                                 verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 0f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 0f);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 1.2f * dimY);
@@ -524,6 +532,7 @@ namespace Underworld
                         case vSOUTH:
                             {
                                 MatsToUse[FaceCounter] = WallTexture(fSOUTH, t);
+                                Faces[FaceCounter] = fSOUTH;
                                 //south wall vertices
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 0f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 0f);
@@ -540,6 +549,7 @@ namespace Underworld
                             {
                                 //bottom wall vertices
                                 MatsToUse[FaceCounter] = FloorTexture_MapIndex(t);
+                                Faces[FaceCounter] = fBOTTOM; //not sure if this will occur
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 1.2f * dimY);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 0f);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 0f);
@@ -602,7 +612,10 @@ namespace Underworld
                         FaceCounter: FaceCounter,
                         a_mesh: a_mesh,
                         normals: normals,
-                        indices: indices);
+                        indices: indices,
+                        tileflags: Faces[FaceCounter], 
+                        tilex: x, 
+                        tiley: y);
                     FaceCounter++;
                 }
             }
@@ -835,6 +848,7 @@ namespace Underworld
             }
             //Allocate enough verticea and UVs for the faces
             int[] MatsToUse = new int[NumberOfVisibleFaces];
+            int[] Faces = new int[NumberOfVisibleFaces];
             Vector3[] verts = new Vector3[NumberOfVisibleFaces * 4];
             Vector2[] uvs = new Vector2[NumberOfVisibleFaces * 4];
 
@@ -851,6 +865,7 @@ namespace Underworld
             float uv1 = -(PolySize / 8.0f) + (uv0);
             //Set the diagonal face first
             MatsToUse[FaceCounter] = WallTexture(fSELF, t);
+            Faces[FaceCounter] = fSELF;
             verts[0] = new Vector3(-1.2f, baseHeight, 0f);
             verts[1] = new Vector3(-1.2f, floorHeight, 0f);
             verts[2] = new Vector3(0f, floorHeight, 1.2f);
@@ -873,6 +888,7 @@ namespace Underworld
                             {
                                 //south wall vertices
                                 MatsToUse[FaceCounter] = WallTexture(fSOUTH, t);
+                                Faces[FaceCounter] = fSOUTH;
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 0f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 0f);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 0f);
@@ -888,6 +904,7 @@ namespace Underworld
                             {
                                 //west wall vertices
                                 MatsToUse[FaceCounter] = WallTexture(fWEST, t);
+                                Faces[FaceCounter] = fWEST;
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 1.2f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 1.2f);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 0f);
@@ -919,7 +936,7 @@ namespace Underworld
             indices[3] = 0;
             indices[4] = 2;
             indices[5] = 3;
-            // mesh.SetTriangles(indices, 0);
+
             AddSurfaceToMesh(
                 mapTextures: mapTexturesFloors,
                 verts: verts,
@@ -928,7 +945,10 @@ namespace Underworld
                 FaceCounter: FaceCounter,
                 a_mesh: a_mesh,
                 normals: normals,
-                indices: indices);
+                indices: indices, 
+                tileflags: Faces[FaceCounter], 
+                tilex: t.tileX,
+                tiley: t.tileY);
 
             FaceCounter = 1;
 
@@ -944,7 +964,7 @@ namespace Underworld
                         indices[3] = 0 + (4 * FaceCounter);
                         indices[4] = 2 + (4 * FaceCounter);
                         indices[5] = 3 + (4 * FaceCounter);
-                        //mesh.SetTriangles(indices, FaceCounter);
+
                         AddSurfaceToMesh(
                             mapTextures: mapTexturesWalls,
                             verts: verts,
@@ -953,7 +973,10 @@ namespace Underworld
                             FaceCounter: FaceCounter,
                             a_mesh: a_mesh,
                             normals: normals,
-                            indices: indices);
+                            indices: indices,
+                            tileflags: Faces[FaceCounter], 
+                            tilex: t.tileX, 
+                            tiley: t.tileY);
                         FaceCounter++;
                     }
                 }
@@ -990,6 +1013,7 @@ namespace Underworld
             }
             //Allocate enough vertice and UVs for the faces
             int[] MatsToUse = new int[NumberOfVisibleFaces];
+            int[] Faces = new int[NumberOfVisibleFaces];
             Vector3[] verts = new Vector3[NumberOfVisibleFaces * 4];
             Vector2[] uvs = new Vector2[NumberOfVisibleFaces * 4];
             float floorHeight = (float)(Top * 0.15f);
@@ -1000,6 +1024,7 @@ namespace Underworld
             //Now allocate the visible faces to triangles.
             int FaceCounter = 0;//Tracks which number face we are now on.
             MatsToUse[FaceCounter] = WallTexture(fSELF, t);
+            Faces[FaceCounter] = fSELF;
             float PolySize = Top - Bottom;
             float uv0 = (float)(Bottom * 0.125f);
             float uv1 = -(PolySize / 8.0f) + (uv0);
@@ -1026,6 +1051,7 @@ namespace Underworld
                             {
                                 //north wall vertices
                                 MatsToUse[FaceCounter] = WallTexture(fNORTH, t);
+                                Faces[FaceCounter] = fNORTH;
                                 verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f, baseHeight, 1.2f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f, floorHeight, 1.2f);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 1.2f);
@@ -1042,6 +1068,7 @@ namespace Underworld
                             {
                                 //west wall vertices
                                 MatsToUse[FaceCounter] = WallTexture(fWEST, t);
+                                Faces[FaceCounter] = fWEST;
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 1.2f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 1.2f);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 0f);
@@ -1066,18 +1093,14 @@ namespace Underworld
                 normals.Add(vert.Normalized());
             }
 
-            //Apply the uvs and create my tris
-            //    mesh.vertices = verts;
-            //    mesh.uv = uvs;
             int[] indices = new int[6];
-            //Tris for diagonal.
-
             indices[0] = 0;
             indices[1] = 1;
             indices[2] = 2;
             indices[3] = 0;
             indices[4] = 2;
             indices[5] = 3;
+
             AddSurfaceToMesh(
                 mapTextures: mapTexturesFloors,
                 verts: verts,
@@ -1086,9 +1109,11 @@ namespace Underworld
                 FaceCounter: FaceCounter,
                 a_mesh: a_mesh,
                 normals: normals,
-                indices: indices);
+                indices: indices, 
+                tileflags:Faces[FaceCounter], 
+                tilex: t.tileX, 
+                tiley: t.tileY);
 
-            // mesh.SetTriangles(indices, 0);
             FaceCounter = 1;
 
             for (int i = 0; i < 6; i++)
@@ -1112,7 +1137,11 @@ namespace Underworld
                             FaceCounter: FaceCounter,
                             a_mesh: a_mesh,
                             normals: normals,
-                            indices: indices);
+                            indices: indices,
+                            tileflags: Faces[FaceCounter],
+                            tilex: t.tileX,
+                            tiley: t.tileY
+                            );
                         FaceCounter++;
                     }
                 }
@@ -1178,35 +1207,19 @@ namespace Underworld
             }
             //Allocate enough verticea and UVs for the faces
             int[] MatsToUse = new int[NumberOfVisibleFaces];
+            int[] Faces =  new int[NumberOfVisibleFaces];
             Vector3[] verts = new Vector3[NumberOfVisibleFaces * 4];
             Vector2[] uvs = new Vector2[NumberOfVisibleFaces * 4];
             float floorHeight = (float)(Top * 0.15f);
             float baseHeight = (float)(Bottom * 0.15f);
             float dimX = t.DimX;
             float dimY = t.DimY;
-            //Now create the mesh
-            // GameObject Tile = new GameObject(TileName)
-            // {
-            //     layer = LayerMask.NameToLayer("MapMesh")
-            // };
-            // Tile.transform.parent = parent.transform;
-            // Tile.transform.position = new Vector3(t.tileX * 1.2f, 0.0f, t.tileY * 1.2f);
-
-            // Tile.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
-            // MeshFilter mf = Tile.AddComponent<MeshFilter>();
-            // MeshRenderer mr = Tile.AddComponent<MeshRenderer>();
-            //MeshCollider mc = Tile.AddComponent<MeshCollider>();
-            //mc.sharedMesh=null;
-
-            // Mesh mesh = new Mesh
-            // {
-            //     subMeshCount = NumberOfVisibleFaces//Should be no of visible faces
-            // };
 
             //Now allocate the visible faces to triangles.
             int FaceCounter = 0;//Tracks which number face we are now on.
 
             MatsToUse[FaceCounter] = WallTexture(fSELF, t);
+            Faces[FaceCounter] = fSELF;
 
             float PolySize = Top - Bottom;
             float uv0 = (float)(Bottom * 0.125f);
@@ -1233,6 +1246,7 @@ namespace Underworld
                             {
                                 //north wall vertices
                                 MatsToUse[FaceCounter] = WallTexture(fNORTH, t);
+                                Faces[FaceCounter] = fNORTH;
                                 verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f, baseHeight, 1.2f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f, floorHeight, 1.2f);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 1.2f);
@@ -1242,7 +1256,6 @@ namespace Underworld
                                 uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1);
                                 uvs[2 + (4 * FaceCounter)] = new Vector2(1, uv1);
                                 uvs[3 + (4 * FaceCounter)] = new Vector2(1, uv0);
-
                                 break;
                             }
 
@@ -1250,6 +1263,7 @@ namespace Underworld
                             {
                                 //east wall vertices
                                 MatsToUse[FaceCounter] = WallTexture(fEAST, t);
+                                Faces[FaceCounter] = fEAST;
                                 verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 0f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 0f);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 1.2f * dimY);
@@ -1258,7 +1272,6 @@ namespace Underworld
                                 uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1);
                                 uvs[2 + (4 * FaceCounter)] = new Vector2(dimY, uv1);
                                 uvs[3 + (4 * FaceCounter)] = new Vector2(dimY, uv0);
-
                                 break;
                             }
                     }
@@ -1275,10 +1288,10 @@ namespace Underworld
             }
 
             //Apply the uvs and create my tris
-            // mesh.vertices = verts;
-            // mesh.uv = uvs;
+
             int[] indices = new int[6];
             //Tris for diagonal.
+            
             FaceCounter = 0;
             indices[0] = 0;
             indices[1] = 1;
@@ -1295,7 +1308,10 @@ namespace Underworld
                 FaceCounter: FaceCounter,
                 a_mesh: a_mesh,
                 normals: normals,
-                indices: indices);
+                indices: indices, 
+                tileflags: Faces[FaceCounter], 
+                tilex: t.tileX, 
+                tiley: t.tileY);
 
             FaceCounter = 1;
 
@@ -1320,7 +1336,10 @@ namespace Underworld
                             FaceCounter: FaceCounter,
                             a_mesh: a_mesh,
                             normals: normals,
-                            indices: indices);
+                            indices: indices, 
+                            tileflags: Faces[FaceCounter], 
+                            tilex: t.tileX, 
+                            tiley: t.tileY);
                         FaceCounter++;
                     }
                 }
@@ -1338,10 +1357,8 @@ namespace Underworld
         /// <param name="TileName">Tile name.</param>
         static Node3D RenderDiagNWPortion(Node3D parent, int Bottom, int Top, TileInfo t, string TileName)
         {
-            //Does a thing.
-            //Does a thing.
-            //Draws 3 meshes. Outward diagonal wall. Back and side if visible.
 
+            //Draws 3 meshes. Outward diagonal wall. Back and side if visible.
 
             int NumberOfVisibleFaces = 1;//Will always have the diag.
                                          //Get the number of faces
@@ -1357,6 +1374,7 @@ namespace Underworld
             }
             //Allocate enough vertice and UVs for the faces
             int[] MatsToUse = new int[NumberOfVisibleFaces];
+            int[] Faces = new int[NumberOfVisibleFaces];
             Vector3[] verts = new Vector3[NumberOfVisibleFaces * 4];
             Vector2[] uvs = new Vector2[NumberOfVisibleFaces * 4];
             float floorHeight = (float)(Top * 0.15f);
@@ -1373,6 +1391,7 @@ namespace Underworld
             float uv1 = -(PolySize / 8.0f) + (uv0);
             //Set the diagonal face first
             MatsToUse[FaceCounter] = WallTexture(fSELF, t);
+            Faces[FaceCounter] = fSELF;
 
             verts[0] = new Vector3(-1.2f, baseHeight, 1.2f);
             verts[1] = new Vector3(-1.2f, floorHeight, 1.2f);
@@ -1395,6 +1414,7 @@ namespace Underworld
                             {
                                 //east wall vertices                                
                                 MatsToUse[FaceCounter] = WallTexture(fEAST, t);
+                                Faces[FaceCounter] = fEAST;
                                 verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 0f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 0f);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 1.2f * dimY);
@@ -1410,6 +1430,7 @@ namespace Underworld
                             {
                                 //south wall vertices
                                 MatsToUse[FaceCounter] = WallTexture(fSOUTH, t);
+                                Faces[FaceCounter] = fSOUTH;
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 0f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 0f);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 0f);
@@ -1452,7 +1473,9 @@ namespace Underworld
                 FaceCounter: FaceCounter,
                 a_mesh: a_mesh,
                 normals: normals,
-                indices: indices);
+                indices: indices, tileflags: Faces[FaceCounter], 
+                tilex: t.tileX, 
+                tiley: t.tileY);
 
             FaceCounter = 1;
 
@@ -1468,7 +1491,7 @@ namespace Underworld
                         indices[3] = 0 + (4 * FaceCounter);
                         indices[4] = 2 + (4 * FaceCounter);
                         indices[5] = 3 + (4 * FaceCounter);
-                        // mesh.SetTriangles(indices, FaceCounter);
+
                         AddSurfaceToMesh(
                             mapTextures: mapTexturesFloors,
                             verts: verts,
@@ -1477,16 +1500,16 @@ namespace Underworld
                             FaceCounter: FaceCounter,
                             a_mesh: a_mesh,
                             normals: normals,
-                            indices: indices);
+                            indices: indices, 
+                            tileflags: Faces[FaceCounter], 
+                            tilex: t.tileX, 
+                            tiley: t.tileY);
                         FaceCounter++;
                     }
                 }
             }
             return CreateMeshInstance(parent, t.tileX, t.tileY, TileName, a_mesh);
         }
-
-
-
 
         /// <summary>
         /// Renders a cuboid with sloped tops
@@ -1549,6 +1572,7 @@ namespace Underworld
             }
             //Allocate enough vertices and UVs for the faces
             int[] MatsToUse = new int[NumberOfVisibleFaces + NumberOfSlopedFaces];
+            int[] Faces = new int[NumberOfVisibleFaces + NumberOfSlopedFaces];
             Vector3[] verts = new Vector3[NumberOfVisibleFaces * 4 + +NumberOfSlopedFaces * 3];
             Vector2[] uvs = new Vector2[NumberOfVisibleFaces * 4 + NumberOfSlopedFaces * 3];
             float floorHeight = (float)(Top * 0.15f);
@@ -1582,6 +1606,7 @@ namespace Underworld
 
                                 //Set the verts	
                                 MatsToUse[FaceCounter] = FloorTexture_MapIndex(t);
+                                Faces[FaceCounter] = fFLOOR;
 
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0.0f, floorHeight + AdjustUpperWest + AdjustUpperSouth, 0.0f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0.0f, floorHeight + AdjustUpperWest + AdjustUpperNorth, 1.2f * dimY);
@@ -1600,6 +1625,7 @@ namespace Underworld
                             {
                                 //north wall vertices
                                 MatsToUse[FaceCounter] = WallTexture(fNORTH, t);
+                                Faces[FaceCounter] = fNORTH;
                                 switch (SlopeDir)
                                 {
                                     case TILE_SLOPE_N:
@@ -1614,7 +1640,6 @@ namespace Underworld
                                         break;
 
                                     default:
-
                                         verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 1.2f * dimY); //bottom right (1,1)
                                         verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 1.2f * dimY); //top left (0,0)
                                         verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 1.2f * dimY);//top right (1,0)
@@ -1626,10 +1651,12 @@ namespace Underworld
                                         break;
                                 }
                                 if ((SlopeDir == TILE_SLOPE_E) || (SlopeDir == TILE_SLOPE_W))
-                                {//Insert my verts for this slope														
+                                {
+                                    //Insert my verts for this slope														
                                     int index = uvs.GetUpperBound(0) - ((NumberOfSlopedFaces - SlopesAdded) * 3) + 1;
                                     MatsToUse[MatsToUse.GetUpperBound(0) - NumberOfSlopedFaces + SlopesAdded + 1] = MatsToUse[FaceCounter];
-
+                                    Faces[MatsToUse.GetUpperBound(0) - NumberOfSlopedFaces + SlopesAdded + 1] = Faces[FaceCounter];
+  
                                     switch (SlopeDir)
                                     {
                                         case TILE_SLOPE_E:
@@ -1639,9 +1666,7 @@ namespace Underworld
                                                 verts[index + 2] = new Vector3(0f, slopeHeight + AdjustUpperNorth + AdjustUpperWest, 1.2f * dimY);
                                                 float uv0edge;
                                                 float uv1edge;
-                                                //float uvToUse;
                                                 CalcUVForSlopedCuboid(Top + Steepness, Top, out uv0edge, out uv1edge);
-                                                // if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
                                                 uvs[index + 0] = new Vector2(0, -uv0edge);//0, vertical alignment
                                                 uvs[index + 1] = new Vector2(0, -(uv0edge + Steepness * 0.125f)); //vertical + scale
                                                 uvs[index + 2] = new Vector2(1, -uv0edge);   //1, vertical alignment	
@@ -1655,11 +1680,8 @@ namespace Underworld
                                                 verts[index + 1] = new Vector3(0f, slopeHeight + AdjustUpperNorth + AdjustUpperWest, 1.2f * dimY);
                                                 verts[index + 2] = new Vector3(0f, slopeHeight, 1.2f * dimY);
                                                 float uv0edge = 0;
-                                                //float uvToUse;
-                                                //if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
                                                 float uv1edge;
                                                 CalcUVForSlopedCuboid(Top + Steepness, Top, out uv0edge, out uv1edge);
-                                                //if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
                                                 uvs[index + 0] = new Vector2(0, -uv0edge);//0, vertical alignment
                                                 uvs[index + 1] = new Vector2(1, -(uv0edge + Steepness * 0.125f)); //vertical + scale
                                                 uvs[index + 2] = new Vector2(1, -uv0edge);   //1, vertical alignment	
@@ -1676,6 +1698,7 @@ namespace Underworld
                             {
                                 //south wall vertices
                                 MatsToUse[FaceCounter] = WallTexture(fSOUTH, t);
+                                Faces[FaceCounter] = fSOUTH;
                                 switch (SlopeDir)
                                 {
                                     case TILE_SLOPE_S:
@@ -1704,6 +1727,7 @@ namespace Underworld
                                 {//Insert my verts for this slope
                                     int index = uvs.GetUpperBound(0) - ((NumberOfSlopedFaces - SlopesAdded) * 3) + 1;
                                     MatsToUse[MatsToUse.GetUpperBound(0) - NumberOfSlopedFaces + SlopesAdded + 1] = MatsToUse[FaceCounter];
+                                    Faces[MatsToUse.GetUpperBound(0) - NumberOfSlopedFaces + SlopesAdded + 1] = Faces[FaceCounter];
                                     switch (SlopeDir)
                                     {
                                         case TILE_SLOPE_W:
@@ -1713,10 +1737,9 @@ namespace Underworld
                                                 verts[index + 1] = new Vector3(0f, slopeHeight + AdjustUpperSouth + AdjustUpperWest, 0f);
                                                 verts[index + 2] = new Vector3(-1.2f * dimX, slopeHeight + AdjustUpperSouth + AdjustUpperEast, 0f);
                                                 float uv0edge;
-                                                float uv1edge;
-                                                // float uvToUse;
+                                                float uv1edge;                                                
                                                 CalcUVForSlopedCuboid(Top + Steepness, Top, out uv0edge, out uv1edge);
-                                                //if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
+
                                                 uvs[index + 0] = new Vector2(0, -uv0edge);//0, vertical alignment
                                                 uvs[index + 1] = new Vector2(0, -(uv0edge + Steepness * 0.125f)); //vertical + scale
                                                 uvs[index + 2] = new Vector2(1, -uv0edge);   //1, vertical alignment	
@@ -1731,9 +1754,8 @@ namespace Underworld
                                                 verts[index + 2] = new Vector3(-1.2f * dimX, slopeHeight, 0f);
                                                 float uv0edge;
                                                 float uv1edge;
-                                                //float uvToUse;
+
                                                 CalcUVForSlopedCuboid(Top + Steepness, Top, out uv0edge, out uv1edge);
-                                                //if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
                                                 uvs[index + 0] = new Vector2(0, -uv0edge);//0, vertical alignment
                                                 uvs[index + 1] = new Vector2(1, -(uv0edge + Steepness * 0.125f)); //vertical + scale
                                                 uvs[index + 2] = new Vector2(1, -uv0edge);   //1, vertical alignment	
@@ -1748,6 +1770,7 @@ namespace Underworld
                         case vWEST:
                             {
                                 MatsToUse[FaceCounter] = WallTexture(fWEST, t);
+                                Faces[FaceCounter] = fWEST;
 
                                 switch (SlopeDir)
                                 {
@@ -1775,8 +1798,10 @@ namespace Underworld
                                 }
 
                                 if ((SlopeDir == TILE_SLOPE_N) || (SlopeDir == TILE_SLOPE_S))
-                                {//Insert my verts for this slope
+                                {
+                                    //Insert my verts for this slope
                                     MatsToUse[MatsToUse.GetUpperBound(0) - NumberOfSlopedFaces + SlopesAdded + 1] = MatsToUse[FaceCounter];
+                                    Faces[MatsToUse.GetUpperBound(0) - NumberOfSlopedFaces + SlopesAdded + 1] = Faces[FaceCounter];
                                     int index = uvs.GetUpperBound(0) - ((NumberOfSlopedFaces - SlopesAdded) * 3) + 1;
                                     switch (SlopeDir)
                                     {
@@ -1788,7 +1813,6 @@ namespace Underworld
                                                 verts[index + 2] = new Vector3(0f, slopeHeight + AdjustUpperWest + AdjustUpperSouth, 0f);
                                                 float uv0edge;
                                                 float uv1edge;
-                                                //float uvToUse;
                                                 CalcUVForSlopedCuboid(Top + Steepness, Top, out uv0edge, out uv1edge);
                                                 //if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
                                                 uvs[index + 0] = new Vector2(0, -uv0edge);//0, vertical alignment
@@ -1805,9 +1829,7 @@ namespace Underworld
                                                 verts[index + 2] = new Vector3(0f, slopeHeight, 0f);
                                                 float uv0edge;
                                                 float uv1edge;
-                                                //float uvToUse;
                                                 CalcUVForSlopedCuboid(Top + Steepness, Top, out uv0edge, out uv1edge);
-                                                // if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
                                                 uvs[index + 0] = new Vector2(0, -uv0edge);//0, vertical alignment
                                                 uvs[index + 1] = new Vector2(1, -(uv0edge + Steepness * 0.125f)); //vertical + scale
                                                 uvs[index + 2] = new Vector2(1, -uv0edge);   //1, vertical alignment	
@@ -1824,6 +1846,7 @@ namespace Underworld
                             {
                                 //east wall vertices                               
                                 MatsToUse[FaceCounter] = WallTexture(fEAST, t);
+                                Faces[FaceCounter] = fEAST;
                                 switch (SlopeDir)
                                 {
                                     case TILE_SLOPE_E:
@@ -1848,9 +1871,10 @@ namespace Underworld
                                         break;
                                 }
                                 if ((SlopeDir == TILE_SLOPE_N) || (SlopeDir == TILE_SLOPE_S))
-                                {//Insert my verts for this slope
-
+                                {
+                                    //Insert my verts for this slope
                                     MatsToUse[MatsToUse.GetUpperBound(0) - NumberOfSlopedFaces + SlopesAdded + 1] = MatsToUse[FaceCounter];
+                                    Faces[MatsToUse.GetUpperBound(0) - NumberOfSlopedFaces + SlopesAdded + 1] = Faces[FaceCounter];
                                     int index = uvs.GetUpperBound(0) - ((NumberOfSlopedFaces - SlopesAdded) * 3) + 1;
                                     switch (SlopeDir)
                                     {
@@ -1862,9 +1886,9 @@ namespace Underworld
                                                 verts[index + 2] = new Vector3(-1.2f * dimX, slopeHeight + AdjustUpperEast + AdjustUpperNorth, 1.2f * dimY);
                                                 float uv0edge;
                                                 float uv1edge;
-                                                //float uvToUse;
+    
                                                 CalcUVForSlopedCuboid(Top + Steepness, Top, out uv0edge, out uv1edge);
-                                                //if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
+
                                                 uvs[index + 0] = new Vector2(0, -uv0edge);//0, vertical alignment
                                                 uvs[index + 1] = new Vector2(0, -(uv0edge + Steepness * 0.125f)); //vertical + scale
                                                 uvs[index + 2] = new Vector2(1, -uv0edge);   //1, vertical alignment	
@@ -1879,12 +1903,8 @@ namespace Underworld
                                                 verts[index + 2] = new Vector3(-1.2f * dimX, slopeHeight, 1.2f * dimY);
                                                 float uv0edge;
                                                 float uv1edge;
-                                                //float uvToUse;
-                                                //if (t.shockEastOffset==0){uvToUse=+uv1edge;}else{uvToUse=-uv0edge;}
-                                                //uvToUse=uv0edge;
                                                 //fixed
                                                 CalcUVForSlopedCuboid(Top + Steepness, Top, out uv0edge, out uv1edge);
-                                                //if (offset == 0) { uvToUse = +uv0edge; } else { uvToUse = uv0edge - offset; }
                                                 uvs[index + 0] = new Vector2(0, -uv0edge);//0, vertical alignment  0,1
                                                 uvs[index + 1] = new Vector2(1, -(uv0edge + Steepness * 0.125f)); //vertical + scale  1,1
                                                 uvs[index + 2] = new Vector2(1, -uv0edge);   //1, vertical alignment	  1,0
@@ -1902,7 +1922,7 @@ namespace Underworld
                             {
                                 //bottom wall vertices.
                                 MatsToUse[FaceCounter] = FloorTexture_MapIndex(t);
-
+                                Faces[FaceCounter] = fBOTTOM;
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 1.2f * dimY);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 0f);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 0f);
@@ -1960,7 +1980,10 @@ namespace Underworld
                         FaceCounter: FaceCounter,
                         a_mesh: a_mesh,
                         normals: normals,
-                        indices: indices);
+                        indices: indices, 
+                        tileflags: Faces[FaceCounter], 
+                        tilex: x, 
+                        tiley: y);
                     FaceCounter++;
                 }
             }
@@ -2000,7 +2023,10 @@ namespace Underworld
                             FaceCounter: FaceCounter + SlopesAdded, 
                             a_mesh: a_mesh, 
                             normals: normals, 
-                            indices: indices);
+                            indices: indices, 
+                            tileflags: Faces[FaceCounter + SlopesAdded], 
+                            tilex: x, 
+                            tiley: y);
                         SlopesAdded++;
                     }
                 }
@@ -2049,6 +2075,7 @@ namespace Underworld
 
 
             int[] MatsToUse = new int[NumberOfVisibleFaces];
+            int[] Faces = new int[NumberOfVisibleFaces];
             //Now allocate the visible faces to triangles.
             int FaceCounter = 0;//Tracks which number face we are now on.
             float PolySize = Top - Bottom;
@@ -2065,6 +2092,7 @@ namespace Underworld
                             {
                                 //Set the verts	
                                 MatsToUse[FaceCounter] = FloorTexture_MapIndex(t);
+                                Faces[FaceCounter] = fFLOOR;
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0.0f, floorHeight, 0.0f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0.0f, floorHeight, 1.2f * dimY);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 1.2f * dimY);
@@ -2081,6 +2109,7 @@ namespace Underworld
                             {
                                 //north wall vertices                               
                                 MatsToUse[FaceCounter] = WallTexture(fNORTH, t);
+                                Faces[FaceCounter] = fNORTH;
                                 verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 1.2f * dimY);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 1.2f * dimY);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 1.2f * dimY);
@@ -2097,6 +2126,7 @@ namespace Underworld
                             {
                                 //west wall vertices                                
                                 MatsToUse[FaceCounter] = WallTexture(fWEST, t);
+                                Faces[FaceCounter] = fWEST;
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 1.2f * dimY);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 1.2f * dimY);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 0f);
@@ -2112,6 +2142,7 @@ namespace Underworld
                             {
                                 //east wall vertices                                
                                 MatsToUse[FaceCounter] = WallTexture(fEAST, t);
+                                Faces[FaceCounter] = fEAST;
                                 verts[0 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 0f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 0f);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, floorHeight, 1.2f * dimY);
@@ -2127,6 +2158,7 @@ namespace Underworld
                         case vSOUTH:
                             {
                                 MatsToUse[FaceCounter] = WallTexture(fSOUTH, t);
+                                Faces[FaceCounter] = fSOUTH;
                                 //south wall vertices
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 0f);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0f, floorHeight, 0f);
@@ -2136,13 +2168,13 @@ namespace Underworld
                                 uvs[1 + (4 * FaceCounter)] = new Vector2(0.0f, uv1);
                                 uvs[2 + (4 * FaceCounter)] = new Vector2(dimX, uv1);
                                 uvs[3 + (4 * FaceCounter)] = new Vector2(dimX, uv0);
-
                                 break;
                             }
                         case vBOTTOM:
                             {
                                 //bottom wall vertices
                                 MatsToUse[FaceCounter] = FloorTexture_MapIndex(t);
+                                Faces[FaceCounter] = fBOTTOM;
                                 verts[0 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 1.2f * dimY);
                                 verts[1 + (4 * FaceCounter)] = new Vector3(0f, baseHeight, 0f);
                                 verts[2 + (4 * FaceCounter)] = new Vector3(-1.2f * dimX, baseHeight, 0f);
@@ -2223,7 +2255,10 @@ namespace Underworld
                             FaceCounter: FaceCounter, 
                             a_mesh: a_mesh, 
                             normals: normals, 
-                            indices: indices);
+                            indices: indices, 
+                            tileflags: Faces[FaceCounter], 
+                            tilex: x, 
+                            tiley: y);
                     }
                     else
                     {
@@ -2233,7 +2268,7 @@ namespace Underworld
                         indices[3] = 0 + (4 * FaceCounter);
                         indices[4] = 2 + (4 * FaceCounter);
                         indices[5] = 3 + (4 * FaceCounter);
-                        // mesh.SetTriangles(indices, FaceCounter);
+
                         AddSurfaceToMesh(
                             mapTextures: mapTexturesWalls, 
                             verts: verts, 
@@ -2242,7 +2277,10 @@ namespace Underworld
                             FaceCounter: FaceCounter, 
                             a_mesh: a_mesh, 
                             normals: normals, 
-                            indices: indices);
+                            indices: indices, 
+                            tileflags: Faces[FaceCounter], 
+                            tilex: x, 
+                            tiley: y );
                     }
                     FaceCounter++;
                     curFace++;
@@ -2263,22 +2301,26 @@ namespace Underworld
         /// <param name="a_mesh"></param>
         /// <param name="normals"></param>
         /// <param name="indices"></param>
-        private static void AddSurfaceToMesh(TextureLoader mapTextures, Vector3[] verts, Vector2[] uvs, int[] MatsToUse, int FaceCounter, ArrayMesh a_mesh, List<Vector3> normals, int[] indices, int faceCounterAdj = 0)
+        private static void AddSurfaceToMesh(TextureLoader mapTextures, Vector3[] verts, Vector2[] uvs, int[] MatsToUse, int FaceCounter, ArrayMesh a_mesh, List<Vector3> normals, int[] indices, int tileflags, int tilex, int tiley, int faceCounterAdj = 0)
         {
             var surfaceArray = new Godot.Collections.Array();
             surfaceArray.Resize((int)Mesh.ArrayType.Max);
 
-            surfaceArray[(int)Mesh.ArrayType.Vertex] = verts; //.ToArray();
-            surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs; //.ToArray();
+            surfaceArray[(int)Mesh.ArrayType.Vertex] = verts; 
+            surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs;
             surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
             surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
 
+            var mat =  mapTextures.GetMaterial(MatsToUse[FaceCounter], UWTileMap.current_tilemap.texture_map);
+            mat.SetShaderParameter("tileflags", tileflags & 0xFF); //tileflags
+            mat.SetShaderParameter("objectindex_lowerbytes", tilex & 0xFF); //tilex
+            mat.SetShaderParameter("objectindex_upperbytes", tiley & 0xFF); // tiley
             //Add the new surface to the mesh
             a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
             a_mesh.SurfaceSetMaterial(
                 surfIdx: FaceCounter + faceCounterAdj,
-                material: mapTextures.GetMaterial(MatsToUse[FaceCounter], UWTileMap.current_tilemap.texture_map)
-                ); //  surfacematerial.Get(MatsToUse[FaceCounter]));
+                material: mat
+                ); 
         }
 
 
