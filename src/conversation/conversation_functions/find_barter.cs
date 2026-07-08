@@ -4,7 +4,7 @@ namespace Underworld
     {
         public static void find_barter()
         {
-            var toFind = at(at(stackptr - 1));
+            var toFind = at(at(stack + stackptr - 1));
             var itemcount = GetPlayerSelectedTradeItems(out int[] itemIds, out int[] itemIndices);
             if (toFind < 1000)
             {//find exact match

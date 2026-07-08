@@ -9,13 +9,13 @@ namespace Underworld
         /// </summary>
         public static void set_race_attitude(uwObject talker)
         {
-            var range = at(at(stackptr-1));
+            var range = at(at(stack + stackptr-1));
             if (range<=0)
             {
                 range = 1;
             }
-            var newAttitute = at(at(stackptr-2));
-            var race = at(at(stackptr-3));
+            var newAttitute = at(at(stack + stackptr-2));
+            var race = at(at(stack + stackptr-3));
             Debug.Print($"set_race_attitude to {newAttitute} in range {range} for race {race}");
             for (var tileX = talker.tileX - range; tileX <= talker.tileX + range; tileX++)
             {

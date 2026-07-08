@@ -18,8 +18,8 @@ namespace Underworld
             uimanager.instance.scroll.Clear();
             yield return new WaitForSeconds(0.2f);
             
-            int Start = at(stackptr - 1);
-            int flagIndex = at(stackptr - 2);
+            int Start = at(stack + stackptr - 1);
+            int flagIndex = at(stack + stackptr - 2);
             usingBablF = true;
             ClearConversationOptions();
             string finaltext = "";

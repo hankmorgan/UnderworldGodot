@@ -4,8 +4,8 @@ namespace Underworld
     {
         public static void show_inv()
         {
-            var ResultIndices = at(stackptr - 1);
-            var ResultItemIds = at(stackptr - 2);            
+            var ResultIndices = at(stack + stackptr - 1);
+            var ResultItemIds = at(stack + stackptr - 2);            
             var itemcount = GetPlayerSelectedTradeItems(out int[] itemIds, out int[] itemIndices);
             for (int s = 0; s<uimanager.NoOfTradeSlots; s++)
             {

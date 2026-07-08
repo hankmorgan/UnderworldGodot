@@ -9,7 +9,7 @@ namespace Underworld
         /// </summary>
         public static void set_likes_dislikes()
         {
-            Likes = at(stackptr-2);         
+            Likes = at(stack + stackptr-2);         
 
             var arrayindex = Likes;
             var entry = at(arrayindex);
@@ -28,7 +28,7 @@ namespace Underworld
             }
 
 
-            Dislikes = at(stackptr-1);
+            Dislikes = at(stack + stackptr-1);
 
             arrayindex = Dislikes;
             entry = at(arrayindex);

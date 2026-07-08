@@ -13,9 +13,15 @@ namespace Underworld
         public static short[] StackValues;
 
         /// <summary>
-        /// The stack pointer
+        /// The stack pointer, relative to the stack index
         /// </summary>
         public static int stackptr = 0;
+
+
+        /// <summary>
+        /// The stack, reletive to the conversationmemory + no of memory slots
+        /// </summary>
+        public static int stack = 0;
 
         /// <summary>
         /// The top value in the stack.
@@ -38,7 +44,7 @@ namespace Underworld
         /// </summary>
         public static short Pop()
         {  
-            var popvalue = StackValues[stackptr];
+            var popvalue = StackValues[stack + stackptr];
             //Debug.Print($"Pop {popvalue} from {stackptr}");
             stackptr--;            
             return popvalue;
@@ -52,7 +58,7 @@ namespace Underworld
         public static void Push(short newValue)
         {
             stackptr++;
-            StackValues[stackptr] = newValue;
+            StackValues[stack + stackptr] = newValue;
             //Debug.Print($"Push {newValue} to {stackptr}");
         }
 

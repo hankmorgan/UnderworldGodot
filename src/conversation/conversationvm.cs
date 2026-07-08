@@ -29,8 +29,19 @@ namespace Underworld
 		/// <summary>
 		/// The base pointer
 		/// </summary>
-		public static int basep = 0;
+		public static int basep
+		{
+			get
+			{
+				return _bp;
+			}
+			set
+			{
+				_bp = value;
+			}
+		}
 
+		static int _bp=0;
 
 		//To handle teleportation requests for the player
 		static bool DoTeleport = false;
@@ -40,11 +51,16 @@ namespace Underworld
 
 		public static IEnumerator RunConversationVM(uwObject talker)
 		{
-			bool testing = false;
+			bool testing = true;
 			bool finished = false;
+			stackptr = 0;
 
 			while (!finished)
 			{
+				// if (testing && ((instrp == 1768) || (instrp==1493)))
+				// {
+				// 	Debug.Print("Uncomment here to test specific instructions.");
+				// }
 				switch (currentConversation.instuctions[instrp])
 				{
 					case cnv_NOP:
@@ -85,7 +101,7 @@ namespace Underworld
 
 					case cnv_OPDIV:
 						{
-							if (at(stackptr) == 0)
+							if (at(stack + stackptr) == 0)
 							{
 								Debug.Print($"Divide by Zero Error at OPDIV {instrp}");
 								Push(0x7FFF);
@@ -363,7 +379,7 @@ namespace Underworld
 
 					case cnv_PUSHI_EFF:
 						{
-							if (testing) { Debug.Print($"{instrp}:PUSHI_EFF {basep + currentConversation.instuctions[instrp + 1]}"); }
+							if (testing) { Debug.Print($"{instrp}:PUSHI_EFF {currentConversation.NoOfMemorySlots + basep + currentConversation.instuctions[instrp + 1]}"); }
 							Push(currentConversation.NoOfMemorySlots + basep + currentConversation.instuctions[instrp + 1]);
 							instrp++;
 							break;
@@ -391,25 +407,26 @@ namespace Underworld
 						{
 							//Debug.Print("Instruction:" + instrp +" Pushing Base Ptr :" + basep + " => " + stackptr);	
 							if (testing) { Debug.Print($"{instrp}:PUSHBP {basep}"); }
-							Push(basep);
+							stackptr++;
+							Set(stack + stackptr, basep);
 							break;
 						}
 
 
 					case cnv_POPBP:
 						{
-							if (stackptr < 0)
-							{
-								Debug.Print($"{instrp} StackPtr is {stackptr}. Possible UW1 bug in some conversations. Exiting conversation!");
-								finished = true;
-							}
-							else
-							{
+							// if (stackptr < 0)
+							// {
+							// 	Debug.Print($"{instrp} StackPtr is {stackptr}. Possible UW1 bug in some conversations. Exiting conversation!");
+							// 	finished = true;
+							// }
+							// else
+							// {
 								//Debug.Print("Instruction:" + instrp +" Popping Base Ptr :" + basep + " => " + stackptr);	
 								int arg1 = Pop();
 								if (testing) { Debug.Print($"{instrp}:POPBP {arg1}"); }
 								basep = arg1;
-							}
+							//}
 							break;
 						}
 
@@ -426,21 +443,22 @@ namespace Underworld
 						{
 							//Debug.Print("Instruction:" + instrp +" Setting Stack Ptr to BaseP :" + basep + " => " + stackptr);
 							if (testing) { Debug.Print($"{instrp}:BPTOSP {basep}"); }
-							set_stackp(basep);
+							stackptr = basep;
+							//set_stackp(basep);
 							break;
 						}
 
 
 					case cnv_ADDSP:
 						{
-							int arg1 = at(stackptr);
+							int arg1 = at(stack + stackptr);
 
 							if (testing) { Debug.Print($"{instrp}:ADDSP {arg1}"); }
 							/// fill reserved stack space with dummy values
 							//for (int i = 0; i <= arg1; i++)
 							//	Push(0);
 
-							set_stackp(stackptr + arg1 - 1);
+							stackptr = stackptr + arg1 - 1;
 
 							break;
 						}
@@ -448,26 +466,34 @@ namespace Underworld
 
 					case cnv_FETCHM:
 						{
-							var address = Pop();
-							var arg1 = at(address);
-							// var varname = GetVariableNameAtAddress(address);
-							// if (varname!="")
-							// {
-							// 	Debug.Print ($"Fetching {varname} with value {arg1}");
-							// }
-							if (testing) { Debug.Print($"{instrp}:FETCHM {arg1}"); }
-							Push(arg1);
+							var address = at(stack + stackptr);
+							var value = at(address);
+							if (testing) { Debug.Print($"{instrp}:FETCHM {address} with value {value}"); }
+							Set(stack + stackptr, value);
+							// var address = Pop();
+							// var arg1 = at(address);
+							// // var varname = GetVariableNameAtAddress(address);
+							// // if (varname!="")
+							// // {
+							// // 	Debug.Print ($"Fetching {varname} with value {arg1}");
+							// // }
+							// if (testing) { Debug.Print($"{instrp}:FETCHM {arg1}"); }
+							// Push(arg1);
 							break;
 						}
 
 
 					case cnv_STO:
 						{
-							int value = Pop();
-							int index = Pop();
-							if (testing) { Debug.Print($"{instrp}:STO {index} {value}"); }
-							Set(index, value);
-
+							var value = at(stack + stackptr);
+							var address = at(stack + stackptr - 1);
+							Set(address, value);
+							if (testing) { Debug.Print($"{instrp}:STO {value} at {address}"); }
+							stackptr -= 2;
+							// int value = Pop();
+							// int index = Pop();
+							// if (testing) { Debug.Print($"{instrp}:STO {index} {value}"); }
+							// Set(index, value);
 							break;
 						}
 
@@ -475,12 +501,12 @@ namespace Underworld
 					case cnv_OFFSET:
 						{
 							//int arg1 = Pop();
-							int arg1 = at(stackptr);
-							int arg2 = at(stackptr - 1);//Pop();
+							int arg1 = at(stack + stackptr);
+							int arg2 = at(stack + stackptr - 1);//Pop();
 							stackptr--;
 							if (testing) { Debug.Print($"{instrp}:Offset {arg1} {arg2}"); }
 							arg1 += arg2 - 1;  //why -1
-							Set(stackptr, arg1);
+							Set(stack + stackptr, arg1);
 							//Push(arg1);
 							break;
 						}
@@ -675,7 +701,7 @@ namespace Underworld
 		private static void InitialiseConversationMemory()
 		{
 			StackValues = new short[4096];
-			stackptr = 200;  //vanilla behaviour this should be at offset NoOfImportedVariables of the conversation memory
+			stackptr = 0;  //vanilla behaviour this should be at offset NoOfImportedVariables of the conversation memory
 			result_register = 0;
 			instrp = 0;
 			call_level = 1;

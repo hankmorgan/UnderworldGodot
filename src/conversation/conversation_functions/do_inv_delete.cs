@@ -6,7 +6,7 @@ namespace Underworld
     {   
         public static void do_inv_delete(uwObject talker)
         {
-            var arg0 = at(at(stackptr-1));
+            var arg0 = at(at(stack + stackptr-1));
             Debug.Print($"do_inv_delete {arg0}");
             
             var next = talker.link;

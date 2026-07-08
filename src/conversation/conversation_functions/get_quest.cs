@@ -5,7 +5,7 @@ namespace Underworld
     {
         public static void get_quest()
         {        
-            var questno = GetConvoStackValueAtPtr(stackptr - 1); 
+            var questno = GetConvoStackValueAtPtr(stack + stackptr - 1); 
             result_register = GetQuest(questno);
             Debug.Print($"Getting quest {questno} which is {result_register}");
             return;

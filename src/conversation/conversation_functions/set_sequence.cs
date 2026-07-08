@@ -7,9 +7,9 @@ namespace Underworld
         /// </summary>
         public static void set_sequence()
         {
-            var var2 = GetConvoStackValueAtPtr(stackptr-1);
-            var di = GetConvoStackValueAtPtr(stackptr-2);
-            var whoami = GetConvoStackValueAtPtr(stackptr-3);
+            var var2 = GetConvoStackValueAtPtr(stack + stackptr-1);
+            var di = GetConvoStackValueAtPtr(stack + stackptr-2);
+            var whoami = GetConvoStackValueAtPtr(stack + stackptr-3);
             var functionparam = (di<<3) | (var2 & 0x7);
 
             CallBacks.RunCodeOnNPCS_WhoAmI(set_sequence, whoami, new int[]{functionparam},false);

@@ -4,7 +4,7 @@ namespace Underworld
     {   
         public static void do_inv_create(uwObject talker)
         {
-            var arg0 = at(at(stackptr-1));
+            var arg0 = at(at(stack + stackptr-1));
             var slot = ObjectCreator.PrepareNewObject(arg0);
             if (slot!=0)
             {

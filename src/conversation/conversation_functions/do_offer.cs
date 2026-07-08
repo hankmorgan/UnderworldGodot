@@ -6,12 +6,12 @@ namespace Underworld
         public static IEnumerator do_offer()
         {
             //Get strings ids from the stack
-            var YeahWeTrade = GetConvoStackValueAtPtr(stackptr - 5);//Guess            
-            var INoLike = GetConvoStackValueAtPtr(stackptr - 4);//Trade is not enough
-            var YouThinkMeStupid = GetConvoStackValueAtPtr(stackptr - 3);//really bad offer made
-            var ImTiredOfThis = GetConvoStackValueAtPtr(stackptr - 2); //trade patience ran out
+            var YeahWeTrade = GetConvoStackValueAtPtr(stack + stackptr - 5);//Guess            
+            var INoLike = GetConvoStackValueAtPtr(stack + stackptr - 4);//Trade is not enough
+            var YouThinkMeStupid = GetConvoStackValueAtPtr(stack + stackptr - 3);//really bad offer made
+            var ImTiredOfThis = GetConvoStackValueAtPtr(stack + stackptr - 2); //trade patience ran out
 
-            var YouMakeNoSense = GetConvoStackValueAtPtr(stackptr - 1);//no items offered
+            var YouMakeNoSense = GetConvoStackValueAtPtr(stack + stackptr - 1);//no items offered
 
 
             if (TradePatience < 0)

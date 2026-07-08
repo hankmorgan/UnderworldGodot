@@ -281,8 +281,8 @@ namespace Underworld
                     }
             }
             //set the value at the stackptr to the result
-            Debug.Print($"Set result {result_register} at {stackptr}");
-            Set(stackptr, result_register);
+            Debug.Print($"Set result {result_register} at {stack + stackptr}");
+            Set(stack + stackptr, result_register);
 
             if (TradeResult == 1)
             {

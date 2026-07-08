@@ -7,7 +7,7 @@ namespace Underworld
     {
         public static void babl_hack(uwObject talker)
         {
-            var mode = at(at(stackptr - 1));
+            var mode = at(at(stack + stackptr - 1));
             
             Debug.Print($"babl hack mode {mode}");
             switch (mode)
@@ -64,9 +64,9 @@ namespace Underworld
         /// </summary>
         static void SetUpArenaFight()
         {
-            var IsPowerFullprobability_var4 = GetConvoStackValueAtPtr(stackptr-4);
-            var Arena_var6 = GetConvoStackValueAtPtr(stackptr-3);
-            var di_noOfFighters =GetConvoStackValueAtPtr(stackptr-2);
+            var IsPowerFullprobability_var4 = GetConvoStackValueAtPtr(stack + stackptr-4);
+            var Arena_var6 = GetConvoStackValueAtPtr(stack + stackptr-3);
+            var di_noOfFighters =GetConvoStackValueAtPtr(stack + stackptr-2);
             var xOffset_var8 = 1;
             var yOffset_varA = 1;
             var var10 = 0;

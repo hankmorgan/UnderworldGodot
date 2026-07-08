@@ -7,9 +7,9 @@ namespace Underworld
         public static void teleport_player()
         {
             DoTeleport = true;
-            TeleportToLevel = GetConvoStackValueAtPtr(stackptr-1);
-            TeleportTileY = GetConvoStackValueAtPtr(stackptr-2);
-            TeleportTileX = GetConvoStackValueAtPtr(stackptr-3);
+            TeleportToLevel = GetConvoStackValueAtPtr(stack + stackptr-1);
+            TeleportTileY = GetConvoStackValueAtPtr(stack + stackptr-2);
+            TeleportTileX = GetConvoStackValueAtPtr(stack + stackptr-3);
             Debug.Print($"Teleport Player to {TeleportToLevel},{TeleportTileX},{TeleportTileY}");          
         }
     }//end class

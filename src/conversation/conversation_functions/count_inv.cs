@@ -5,7 +5,7 @@ namespace Underworld
     {   
         public static void count_inv()
         {
-            var itemindex = at(at(stackptr-1));
+            var itemindex = at(at(stack + stackptr-1));
 
             var obj = UWTileMap.current_tilemap.LevelObjects[itemindex];
             if (obj!=null)

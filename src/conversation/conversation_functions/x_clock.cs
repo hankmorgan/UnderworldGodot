@@ -6,8 +6,8 @@ namespace Underworld
     {
         public static void x_clock()
         {
-            var xvalue = at(at(stackptr-1));
-            var xnumber = at(at(stackptr-2));            
+            var xvalue = at(at(stack + stackptr-1));
+            var xnumber = at(at(stack + stackptr-2));            
            
             if (xvalue>0x100)
             {                

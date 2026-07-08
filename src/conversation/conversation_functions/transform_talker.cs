@@ -7,10 +7,10 @@ namespace Underworld
         public static void transform_talker(uwObject talker)
         {
             Debug.Print("transform talker");
-            var ArgA = GetConvoStackValueAtPtr(stackptr - 1);
-            var newIsPowerful = GetConvoStackValueAtPtr(stackptr - 2);
-            var newWhoAMI = GetConvoStackValueAtPtr(stackptr - 3);
-            var newItemID = GetConvoStackValueAtPtr(stackptr - 4);
+            var ArgA = GetConvoStackValueAtPtr(stack + stackptr - 1);
+            var newIsPowerful = GetConvoStackValueAtPtr(stack + stackptr - 2);
+            var newWhoAMI = GetConvoStackValueAtPtr(stack + stackptr - 3);
+            var newItemID = GetConvoStackValueAtPtr(stack + stackptr - 4);
 
             var tile = UWTileMap.current_tilemap.Tiles[talker.npc_xhome, talker.npc_yhome];
 

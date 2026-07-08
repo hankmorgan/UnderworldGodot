@@ -7,8 +7,8 @@ namespace Underworld
         public static void contains()
         {
             int[] args = new int[2];
-            args[0] = at(stackptr - 1);
-            args[1] = at(stackptr - 2);
+            args[0] = at(stack + stackptr - 1);
+            args[1] = at(stack + stackptr - 2);
 
             var string1 = getString(at(args[0]));
             var string2 = getString(at(args[1]));

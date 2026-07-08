@@ -6,7 +6,7 @@ namespace Underworld
     {
         public static void take_id_from_npc(uwObject talker)
         {
-            var id = GetConvoStackValueAtPtr(stackptr-1);
+            var id = GetConvoStackValueAtPtr(stack + stackptr-1);
             Debug.Print($"Take ID {id}");
             var ObjectToGive = UWTileMap.current_tilemap.LevelObjects[id];
             if (playerdat.ObjectInHand  == -1)

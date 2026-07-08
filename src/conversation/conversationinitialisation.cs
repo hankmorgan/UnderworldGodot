@@ -67,6 +67,7 @@ namespace Underworld
                     }
 
                     InitialiseConversationMemory();
+                    stack = currentConversation.NoOfMemorySlots;
 
                     ImportVariables(talker);
 

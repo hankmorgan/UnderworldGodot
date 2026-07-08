@@ -24,14 +24,14 @@ namespace Underworld
             }
             else
             {
-                if (stringno>=512)
+                if (stringno >= 512)
                 {//get string by direct full reference
                     return GameStrings.GetString(stringno);
                 }
                 else
                 {
                     return GameStrings.GetString(currentConversation.StringBlock, stringno);
-                }                
+                }
             }
         }
 
@@ -53,9 +53,9 @@ namespace Underworld
             //I: value is an integer value
             //<num>: decimal value
             //<extension>: format: C<number>: use array index <number-1> offset from the initial source value.
-            
+
             //Remove \\1 and \\0 which wraps the reprinting of player typed input in conversations.
-            input=input.Replace("\\1","").Replace("\\0","");
+            input = input.Replace("\\1", "").Replace("\\0", "");
 
             if (!input.Contains("@"))
             {
@@ -65,7 +65,7 @@ namespace Underworld
 
             Debug.Print($"Doing string replacement on line {input}");
             MatchCollection matches = Regex.Matches(input, RegExForFindingReplacements);
-            
+
             for (int sm = 0; sm < matches.Count; sm++)
             {
                 string ReplacementString = matches[sm].Value;
@@ -108,13 +108,13 @@ namespace Underworld
                                         {
                                             if (SIOffset)
                                             {
-                                                OffsetValue = at(basep+ val) -1;
+                                                OffsetValue = at(stack + basep + val) - 1;
                                             }
                                             else
                                             {
                                                 OffsetValue = val;
                                             }
-                                            
+
                                         }
                                         else
                                         {
@@ -142,7 +142,7 @@ namespace Underworld
                         case "@GS": //Global string.
                             {
                                 //FoundString = GameStrings.GetString(0x125, at(ReplacementValue)); //getString(at(ReplacementValue));
-                                FoundString = getString(at(ReplacementValue+OffsetValue));
+                                FoundString = getString(at(ReplacementValue + OffsetValue));
                                 break;
                             }
                         case "@GI": //Global integer
@@ -155,35 +155,35 @@ namespace Underworld
                             {
                                 if (OffsetValue != 0)
                                 {
-                                    int actualptr = at(basep + OffsetValue);
+                                    int actualptr = at(stack + basep + OffsetValue);
                                     FoundString = getString(at(basep + actualptr));
                                 }
                                 else
                                 {
-                                    FoundString = getString(at(basep + ReplacementValue));
+                                    FoundString = getString(at(stack + basep + ReplacementValue));
                                 }
                                 break;
                             }
                         case "@SI": //Stack integer
                             {
-                                FoundString = at(basep + ReplacementValue + ArrayOffset).ToString();
+                                FoundString = at(stack + basep + ReplacementValue + ArrayOffset).ToString();
                                 break;
                             }
 
                         case "@PS": //Pointer string
                             {
-                                FoundString = getString(at(at(basep + ReplacementValue)));
+                                FoundString = getString(at(at(stack + basep + ReplacementValue)));
                                 break;
                             }
                         case "@PI": //Pointer integer
                             {
                                 if (ReplacementValue < 0)
                                 {
-                                    FoundString = at(at(basep + ReplacementValue)).ToString();//was basp+replacement-1. If I have to change again this may need deeper investigation of ConvoVM memory management
+                                    FoundString = at(at(stack + basep + ReplacementValue)).ToString();//was basp+replacement-1. If I have to change again this may need deeper investigation of ConvoVM memory management
                                 }
                                 else
                                 {
-                                    FoundString = at(at(basep + ReplacementValue)).ToString();
+                                    FoundString = at(at(stack + basep + ReplacementValue)).ToString();
                                 }
                                 break;
                             }

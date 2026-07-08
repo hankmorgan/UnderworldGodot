@@ -6,8 +6,8 @@ namespace Underworld
     {
         public static void teleport_talker(uwObject talker)
         {
-            TeleportTileY = GetConvoStackValueAtPtr(stackptr-1);
-            TeleportTileX = GetConvoStackValueAtPtr(stackptr-2);
+            TeleportTileY = GetConvoStackValueAtPtr(stack + stackptr-1);
+            TeleportTileX = GetConvoStackValueAtPtr(stack + stackptr-2);
             Debug.Print($"Teleport Talker to {TeleportTileX},{TeleportTileY}");          
             npc.moveNPCToTile(talker, TeleportTileX, TeleportTileY);
         }
