@@ -188,6 +188,12 @@ namespace Underworld
             main.cameraYawGimbal_sprites.Rotation = main.cameraYawGimbal_world.Rotation;
             main.cameraRollGimbal_sprites.Position = main.cameraRollGimbal_world.Position;
             main.cameraRollGimbal_sprites.Rotation = main.cameraRollGimbal_world.Rotation;
+            main.cameraPitchGimbal_objectinfo.Position = main.cameraPitchGimbal_world.Position;
+            main.cameraPitchGimbal_objectinfo.Rotation = main.cameraPitchGimbal_world.Rotation;
+            main.cameraYawGimbal_objectinfo.Position = main.cameraYawGimbal_world.Position;
+            main.cameraYawGimbal_objectinfo.Rotation = main.cameraYawGimbal_world.Rotation;
+            main.cameraRollGimbal_objectinfo.Position = main.cameraRollGimbal_world.Position;
+            main.cameraRollGimbal_objectinfo.Rotation = main.cameraRollGimbal_world.Rotation;
 
             //Set this value to calculate npc angles
             playerdat.CameraYawHeadingRelated_2B52 = (short)(((1 + (yaw >> 0xD)) & 0x7) >> 1);

@@ -926,11 +926,14 @@ namespace Underworld
                     case 1:
                         if (!isSecretDoor(this.uwobject))
                         {
-                            return tmDoor.GetMaterial(textureno);
+                            return tmDoor.GetMaterialForObject(textureno, uwobject);
                         }
                         else
                         {
-                            return tileMapRender.mapTexturesWalls.GetMaterial(textureno, UWTileMap.current_tilemap.texture_map);
+                            return tileMapRender.mapTexturesWalls.GetMaterialForObject(
+                                textureno: textureno, 
+                                texturemap: UWTileMap.current_tilemap.texture_map, 
+                                obj: uwobject);
                         }
                 }
             }
@@ -1221,7 +1224,10 @@ namespace Underworld
         {//Get the material texture from tmobj   
             if (surface != 6)
             {
-                return tileMapRender.mapTexturesWalls.GetMaterial(texture, UWTileMap.current_tilemap.texture_map);
+                return tileMapRender.mapTexturesWalls.GetMaterialForObject(
+                    textureno: texture, 
+                    texturemap: UWTileMap.current_tilemap.texture_map, 
+                    obj: uwobject);
             }
             else
             {

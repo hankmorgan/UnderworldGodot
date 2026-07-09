@@ -117,7 +117,7 @@ namespace Underworld
         {
             if (obj.instance != null)
             {
-                var newmaterial = GetTmFlat.GetMaterial(obj.item_id - 368);
+                var newmaterial = GetTmFlat.GetMaterialForObject(obj.item_id - 368, obj);
                 var _button = (button)obj.instance;
                 var mdl = (MeshInstance3D)(_button.modelNode);
                 mdl.Mesh.SurfaceSetMaterial(0, newmaterial);
@@ -178,7 +178,7 @@ namespace Underworld
 
         public override ShaderMaterial GetMaterial(int textureno, int surface)
         {
-            return GetTmFlat.GetMaterial(uwobject.item_id - 368);
+            return GetTmFlat.GetMaterialForObject(uwobject.item_id - 368, uwobject);
         }
     }
 }

@@ -23,6 +23,10 @@ global uniform sampler2D xfer: source_color,filter_nearest; //xfer.dat transpare
 global uniform float cutoffdistance; // how far away the scene will render
 
 
+uniform int tileflags;
+uniform int objectindex_lowerbytes;
+uniform int objectindex_upperbytes;
+
 void vertex() {
 	UV=UV*uv1_scale.xy+uv1_offset.xy;
 }
@@ -40,16 +44,29 @@ void fragment() {
 	}
 	else
 	{
-		//Get the red channel orignal data.
-		vec4 rgba = texture(texture_albedo, UV);
-		
-		//Get the uv distance offset within the shades.dat image
-		float maptouse = dist/cutoffdistance;
-		
-		//lookup shades.dat data which is stored in smoothpalette using the uv	
-		//vec4 finalcolour = texture(smoothpalette, vec2(rgba.r, maptouse));
-		rgba.g = maptouse;
-		//apply		
-		ALBEDO = rgba.rgb; //finalcolour.rgb;
+		if ((CAMERA_VISIBLE_LAYERS & 8u) != 0u)
+		{
+			//object info layer. render all black for now. In the future this may contain tile information. (eg x,y and surface) or object index in the case of 3d models.
+			//vec4 finalcolour;
+			ALBEDO.r = float(tileflags)/255.0;//this will eventually be tileflags indicating if this is a floor, NSEW facing wall, diagonal or ceiling.
+			ALBEDO.g = float(objectindex_lowerbytes)/255.0;   // or tileX
+			ALBEDO.b = float(objectindex_upperbytes)/255.0;   // or tileY
+			//ALBEDO = finalcolour.rgb;
+		}
+		else
+		{
+			//Get the red channel original data.
+			vec4 rgba = texture(texture_albedo, UV);
+			
+			//Get the uv distance offset within the shades.dat image
+			float maptouse = dist/cutoffdistance;
+			
+			//lookup shades.dat data which is stored in smoothpalette using the uv	
+			//vec4 finalcolour = texture(smoothpalette, vec2(rgba.r, maptouse));
+			rgba.g = maptouse;
+			//apply		
+			ALBEDO = rgba.rgb; //finalcolour.rgb;
+		}
+
 	}
 }

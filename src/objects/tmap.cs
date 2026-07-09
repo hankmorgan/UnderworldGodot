@@ -117,7 +117,10 @@ namespace Underworld
         {//Get the material texture from tmobj   
             if (surface != 6)
             {
-                return tileMapRender.mapTexturesWalls.GetMaterial(texture, UWTileMap.current_tilemap.texture_map);
+                return tileMapRender.mapTexturesWalls.GetMaterialForObject(
+                    textureno: texture, 
+                    texturemap: UWTileMap.current_tilemap.texture_map, 
+                    obj: uwobject);
             }
             else
             {

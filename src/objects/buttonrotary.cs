@@ -44,7 +44,7 @@ namespace Underworld
             if (obj.instance !=null)
             {
                 int startIndex = obj.item_id-353;
-                var newmaterial = tmObjForButtons.GetMaterial(4  + (startIndex * 8) + obj.flags);
+                var newmaterial = tmObjForButtons.GetMaterialForObject(4  + (startIndex * 8) + obj.flags, obj);
                 var _button = (buttonrotary)obj.instance;
                 var mdl = (MeshInstance3D)(_button.modelNode);
                 mdl.Mesh.SurfaceSetMaterial(0,newmaterial);         
@@ -92,7 +92,7 @@ namespace Underworld
         public override ShaderMaterial GetMaterial(int textureno, int surface)
         {
             int startIndex = uwobject.item_id-353; //item id is either 353 or 354, and has 8 sprites for each in tm flat. flags is the individual sprite index.
-            return tmObjForButtons.GetMaterial(4  + (startIndex * 8) + uwobject.flags);
+            return tmObjForButtons.GetMaterialForObject(4  + (startIndex * 8) + uwobject.flags, uwobject);
         }
 
     }//end class

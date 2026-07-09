@@ -91,7 +91,7 @@ namespace Underworld
             switch (surface)
             {
                 default:
-                    return GetTmObj.GetMaterial((byte)ModelColour(surface));
+                    return GetTmObj.GetMaterialForObject((byte)ModelColour(surface), uwobject);
             }
         }
 

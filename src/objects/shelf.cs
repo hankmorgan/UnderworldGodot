@@ -168,7 +168,7 @@ namespace Underworld
                     return base.GetMaterial(0, 6);
                 case 0: //shelf
                 default:
-                    return GetTmObj.GetMaterial((byte)ModelColour(surface));
+                    return GetTmObj.GetMaterialForObject((byte)ModelColour(surface), uwobject);
             }
         }
     } //end class

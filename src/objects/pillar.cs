@@ -111,7 +111,7 @@ namespace Underworld
 
         public override ShaderMaterial GetMaterial(int textureno, int surface)
         {//Get the material texture from tmobj            
-            return GetTmObj.GetMaterial((byte)textureno);
+            return GetTmObj.GetMaterialForObject((byte)textureno,uwobject);
         }
 
 

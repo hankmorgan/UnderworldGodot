@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Godot;
 namespace Underworld
 {
@@ -70,6 +71,7 @@ namespace Underworld
 
         public static void RefreshSprite(uwObject objToRefresh)
         {//assumes sprite to sprite refresh
+            Debug.Print("TODO update all the sprites in REFRESH SPRITE!");
             if (objToRefresh.instance != null)
             {
                 if (objToRefresh.instance.uwnode != null)

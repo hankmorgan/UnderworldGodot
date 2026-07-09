@@ -194,11 +194,13 @@ namespace Underworld
                         {
                             textureindex = textureindex-2+48; //tilemap.texture_map[textureindex-2+48];
                         }
-                        return tileMapRender.mapTexturesFloors.GetMaterial(textureindex, UWTileMap.current_tilemap.texture_map);
+                        return tileMapRender.mapTexturesFloors.GetMaterialForObject(
+                            textureno: textureindex, 
+                            texturemap: UWTileMap.current_tilemap.texture_map, obj: uwobject);
                     }
                     else
                     {
-                        return GetTmObj.GetMaterial(30 + textureindex);
+                        return GetTmObj.GetMaterialForObject(30 + textureindex, uwobject);
                     }
                 }
             }

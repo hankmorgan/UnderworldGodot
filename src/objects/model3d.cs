@@ -71,7 +71,15 @@ namespace Underworld
 
             for (int i = 0; i < MeshCount; i++)
             {
-                AddSurfaceToMesh(this, verts, uvs, mats, i, a_mesh, normals, ModelTriangles(i));
+                AddSurfaceToMesh(
+                    instance: this, 
+                    verts: verts, 
+                    uvs: uvs, 
+                    MatsToUse: mats, 
+                    FaceCounter: i, 
+                    a_mesh: a_mesh, 
+                    normals: normals, 
+                    indices: ModelTriangles(i));
             }
 
             return CreateMeshInstance(parent, name, a_mesh);
@@ -124,14 +132,14 @@ namespace Underworld
             return 1f;
         }
 
-        protected static Node3D CreateMeshInstance(Node3D parent, string ModelName, ArrayMesh a_mesh, bool EnableCollision = true)
+        protected static Node3D CreateMeshInstance(Node3D parent, string ModelName, ArrayMesh a_mesh, bool EnableCollision = false)
         {
             var final_mesh = new MeshInstance3D();
             parent.AddChild(final_mesh);
             final_mesh.Position = Vector3.Zero; // new Vector3(x * -1.2f, 0.0f, y * 1.2f);
             final_mesh.Name = ModelName;
             final_mesh.Mesh = a_mesh;
-            final_mesh.Layers = main.LayerGeo;
+            final_mesh.Layers = main.LayerGeo | main.LayerObjectInfo | main.LayerXFER;
             if (EnableCollision)
             {
                 final_mesh.CreateTrimeshCollision();
@@ -161,7 +169,11 @@ namespace Underworld
             surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
             //Add the new surface to the mesh
             a_mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
-            a_mesh.SurfaceSetMaterial(FaceCounter + faceCounterAdj, instance.GetMaterial(MatsToUse[FaceCounter], FaceCounter)); //  surfacematerial.Get(MatsToUse[FaceCounter]));
+            a_mesh.SurfaceSetMaterial(
+                surfIdx: FaceCounter + faceCounterAdj, 
+                material: instance.GetMaterial(
+                    textureno: MatsToUse[FaceCounter], 
+                    surface: FaceCounter));
 
         }
 
@@ -185,6 +197,8 @@ namespace Underworld
             newmaterial.SetShaderParameter("uv1_scale", new Vector3(1, 1, 1));
             newmaterial.SetShaderParameter("uv2_scale", new Vector3(1, 1, 1));
             newmaterial.SetShaderParameter("UseAlpha", false);
+            newmaterial.SetShaderParameter("objectindex_lowerbytes", uwobject.index & 0xFF);
+            newmaterial.SetShaderParameter("objectindex_upperbytes", (uwobject.index>>8) & 0xFF);
             return newmaterial;
         }
 
