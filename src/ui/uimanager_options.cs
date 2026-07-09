@@ -587,9 +587,7 @@ namespace Underworld
                                 case 5://vhigh
                                     if (playerdat.DetailLevel != (byte)(extra_arg_0 - 2))
                                     {
-                                        playerdat.DetailLevel = (byte)(extra_arg_0 - 2); 
-                                        //detail level has changed->redraw tile map
-                                        UWTileMap.RedrawCurrentTileMap();  
+                                        playerdat.DetailLevel = (byte)(extra_arg_0 - 2);                                         
                                         SetupDetailMenu();  
                                     }     
                                     break;

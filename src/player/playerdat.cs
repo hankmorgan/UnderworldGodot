@@ -552,6 +552,11 @@ namespace Underworld
                     tmp |= (value & 0x3) << 4;
                     SetAt(0xB6, (byte)tmp);
                 }
+
+                //Update rendering
+                Godot.RenderingServer.GlobalShaderParameterSet("renderceilings", playerdat.RenderCeilings);
+                Godot.RenderingServer.GlobalShaderParameterSet("renderwalls", playerdat.RenderWalls);
+                Godot.RenderingServer.GlobalShaderParameterSet("renderfloors", playerdat.RenderFloors);
             }
         }
 

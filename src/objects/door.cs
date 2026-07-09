@@ -96,7 +96,7 @@ namespace Underworld
 
         static door()
         {
-            tmDoor = new GRLoader(GRLoader.DOORS_GR, GRLoader.GRShaderMode.TextureShader, playerdat.DetailLevel > 0);
+            tmDoor = new GRLoader(GRLoader.DOORS_GR, GRLoader.GRShaderMode.TextureShader);
             tmDoor.UseRedChannel = true;
         }
 

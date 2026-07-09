@@ -179,6 +179,11 @@ namespace Underworld
             // Hank's 9969989 added the UW2 offset to the accessor so this
             // single call covers both games.
             DetailLevel = 3;
+
+            RenderingServer.GlobalShaderParameterSet("renderceilings", playerdat.RenderCeilings);
+            RenderingServer.GlobalShaderParameterSet("renderwalls", playerdat.RenderWalls);
+            RenderingServer.GlobalShaderParameterSet("renderfloors", playerdat.RenderFloors);
+
             if (_RES != GAME_UW2)
             {
                 // pdat[0xD3] = ShadeCutOff (shade-table index, per @hankmorgan

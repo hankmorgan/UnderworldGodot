@@ -156,6 +156,19 @@ namespace Underworld
                 type: RenderingServer.GlobalShaderParameterType.Sampler2D,
                 defaultValue: (Texture)XferLoader.GetXFERImageData());
 
+            RenderingServer.GlobalShaderParameterAdd(
+                name: "renderceilings", 
+                type: RenderingServer.GlobalShaderParameterType.Bool, 
+                defaultValue: true);
+            RenderingServer.GlobalShaderParameterAdd(
+                name: "renderwalls", 
+                type: RenderingServer.GlobalShaderParameterType.Bool, 
+                defaultValue: true);
+            RenderingServer.GlobalShaderParameterAdd(
+                name: "renderfloors",
+                type: RenderingServer.GlobalShaderParameterType.Bool, 
+                defaultValue: true);
+
             // RenderingServer.GlobalShaderParameterAdd(
             //     name: "viewport_1",
             //     type: RenderingServer.GlobalShaderParameterType.Sampler2D,

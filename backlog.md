@@ -99,7 +99,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] UW2 Combat swing speed
 - [ ] Telefrag/crushing damage
 - [ ] PlacedObjectCollision/PositioningObjects in tiles (especially for trade)
-- [ ] waterfall tmap in uw1 swamp. is it showing on both sides?
 - [ ] World number calcs in UW2 may be incorrect.
 - [ ] prison tower dungeon 15 switch on diagonal wall is missing. (offset from wall?, needs to be tested on all diagonal walls)
 - [ ] ordinal is cut off when player level >10 eg 11th is 11t (UW2 confirmed bug)
@@ -113,9 +112,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Typed input is fiddly when using backspace
 - [ ] Entering a qty prompts for a Yes/No
 - [ ] Arrows launched by an arrow trap are rendered as sprites not a 3d model
-- [X] Wrong cutscene no is set in conversations -> eg quest 143 is being set incorrectly when first meeting LB. ->See branch ConversationSystemFixes
-- [X] Consider using texture rects to mask out data so that pixel perfect raycasts are possible.
-- [ ] Use the uwshadershader to switch to low detail modes using the tile flag data to identify surface and rendering pixel at uv(0,0) only
 
 ## Blocked
 Things I've hit a roadblock on.

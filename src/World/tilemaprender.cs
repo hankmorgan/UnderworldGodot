@@ -41,8 +41,9 @@ namespace Underworld
 
 
         //BrushFaces         
-        public const int fSELF = 128;
-        public const int fCEIL = 64;
+        
+        public const int fCEIL = 128;
+        public const int fSELF = 64;
         public const int fNORTH = 32;
         public const int fSOUTH = 16;
         public const int fEAST = 8;

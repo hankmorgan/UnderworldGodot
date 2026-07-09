@@ -326,7 +326,7 @@ namespace Underworld
         {
             if (tmObj == null)
             {
-                tmObj = new GRLoader(GRLoader.TMOBJ_GR, GRLoader.GRShaderMode.TextureShader, playerdat.DetailLevel > 1);
+                tmObj = new GRLoader(GRLoader.TMOBJ_GR, GRLoader.GRShaderMode.TextureShader);
                 tmObj.UseRedChannel = true;
             }
         }

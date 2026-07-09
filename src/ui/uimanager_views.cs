@@ -255,8 +255,7 @@ namespace Underworld
             }
             else
             {
-                //clicked on a tile. Data is(will be) (surface + 1, tilex, tiley);
-                //Debug.Print("clicked on surface probably");
+                //clicked on a tile. r8 = tileface, g8 = tilex, b8 = tiley
                 var tileX = pixel.G8;
                 var tileY = pixel.B8;
                 if (UWTileMap.ValidTile(tileX, tileY))

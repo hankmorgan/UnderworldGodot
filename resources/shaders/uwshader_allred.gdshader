@@ -21,7 +21,9 @@ uniform sampler2D texture_albedo : source_color,filter_nearest,repeat_enable;// 
 global uniform sampler2D smoothpalette: source_color,filter_nearest; // pals.dat mapped into shades
 global uniform sampler2D xfer: source_color,filter_nearest; //xfer.dat transparency
 global uniform float cutoffdistance; // how far away the scene will render
-
+global uniform bool renderwalls;
+global uniform bool renderfloors;
+global uniform bool renderceilings;
 
 uniform int tileflags;
 uniform int objectindex_lowerbytes;
@@ -37,6 +39,7 @@ void fragment() {
 	vec3 world_camera = (INV_VIEW_MATRIX * vec4(vec3(0.0), 1.0)).xyz;
 	vec4 a = INV_VIEW_MATRIX * vec4(VERTEX, 1.0);
     float dist = (distance(a.xyz, world_camera));
+	
 
 	if (dist > cutoffdistance)
 	{		
@@ -55,8 +58,33 @@ void fragment() {
 		}
 		else
 		{
+			vec4 lowdetail = texture(texture_albedo, vec2(0.0, 0.0)); //get pixel at 0,0 which is the lowdetail colour to use
 			//Get the red channel original data.
-			vec4 rgba = texture(texture_albedo, UV);
+			vec4 rgba;// = texture(texture_albedo, UV);
+
+			if ((!renderwalls) && (((tileflags >= 4) && (tileflags<=64)) || (tileflags == 0)))
+			{
+				rgba = lowdetail;
+			}
+			else
+			{
+				if ((!renderceilings) && (tileflags == 128))
+				{
+					rgba = lowdetail;
+				}
+				else
+				{
+					if ((!renderfloors) && ((tileflags >= 1) && (tileflags<=2)))
+					{
+						rgba = lowdetail;
+					}
+				else
+					{
+						rgba = texture(texture_albedo, UV);
+					}
+				}
+				
+			}
 			
 			//Get the uv distance offset within the shades.dat image
 			float maptouse = dist/cutoffdistance;
