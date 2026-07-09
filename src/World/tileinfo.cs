@@ -467,41 +467,37 @@ namespace Underworld
             }
         }
 
-        public static string GetTileSurfaceDescription(Vector3 normal, int tileX, int tileY)
+        public static string GetTileSurfaceDescription(int face, int tileX, int tileY)
         {
-            var t = UWTileMap.current_tilemap.Tiles[tileX, tileY];
-            if (t == null)
+            var tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];
+            if (tile == null)
             {
                 return "";
             }
             //look at tile
             //uimanager.AddToMessageScroll($"{tileX},{tileY}");
             //parse the normal into a tile surface.
-            if (normal.Y > 0)
+            switch (face)
             {
-                //this is a floor
-                return t.DescriptionFloor;
+                case tileMapRender.fSELF:
+                    return tile.DescriptionWall;
+                case tileMapRender.fCEIL:
+                    return GameStrings.GetString(10, 511);
+                case tileMapRender.fNORTH:
+                    return tile.DescriptionNorth;
+                case tileMapRender.fSOUTH:
+                    return tile.DescriptionSouth;
+                case tileMapRender.fEAST:
+                    return tile.DescriptionEast;
+                case tileMapRender.fWEST:
+                    return tile.DescriptionWest;
+                case tileMapRender.fFLOOR:
+                    return tile.DescriptionFloor;
+                case tileMapRender.fBOTTOM:
+                    Debug.Print("BOTTOM!");
+                    break;
             }
-            else
-            {
-                if (normal == Vector3.Forward)
-                {
-                    return t.DescriptionSouth;
-                }
-                if (normal == Vector3.Back)
-                {
-                    return t.DescriptionNorth;
-                }
-                if (normal == Vector3.Left)
-                {
-                    return t.DescriptionEast;
-                }
-                if (normal == Vector3.Right)
-                {
-                    return t.DescriptionWest;
-                }
-            }
-            return t.DescriptionWall; //default self wall
+            return tile.DescriptionWall; //default self wall
         }
 
         /// <summary>
@@ -597,7 +593,7 @@ namespace Underworld
                             //Update NSEW of neighbours
                         }
 
-                        
+
                         if (newType < 0xA)
                         {
                             tileToChange.tileType = (short)newType;
@@ -635,7 +631,7 @@ namespace Underworld
                                             }
                                             else
                                             {
-                                                next = (short)LowerObjectInChangingTile(obj: obj, InitialTileHeight: initialheight,  NewTileHeight: newHeight, TileIsSolid: NewTileIsSolid, HeightAdjustFlag: HeightAdjustFlag);                                                
+                                                next = (short)LowerObjectInChangingTile(obj: obj, InitialTileHeight: initialheight, NewTileHeight: newHeight, TileIsSolid: NewTileIsSolid, HeightAdjustFlag: HeightAdjustFlag);
                                             }
                                         }
                                         else
@@ -832,7 +828,7 @@ namespace Underworld
             {
                 //object is located below new tileheight.
                 obj.zpos = (short)(NewTileHeight << 3);
-                
+
                 if ((obj.IsStatic) || (obj.majorclass == 1))  //static or npc
                 {
                     if (obj == playerdat.playerObject)

@@ -203,19 +203,54 @@ namespace Underworld
             var mouse = uimanager.instance.uwviewport.GetLocalMousePosition();
             var pixel = text.GetImage().GetPixel((int)mouse.X, (int)mouse.Y);//
 
-            //text.GetImage().SavePng("C:\\temp\\testobjectinfo.png");
+
+            //do projectiles first.
+            if (SpellCasting.currentSpell != null)
+            {
+                //try can cast the current spell if class 5
+                if (SpellCasting.currentSpell.SpellMajorClass == 5)
+                {
+                    SpellCasting.CastMagicProjectile(playerdat.playerObject, SpellCasting.currentSpell.SpellMinorClass);
+                    return;
+                }
+            }
+
+            //then try and drop/throw
+            if (playerdat.ObjectInHand != -1)
+            {
+                //something is held. try and drop or throw it
+                var objToThrow = UWTileMap.current_tilemap.LevelObjects[playerdat.ObjectInHand];
+                var itemid = objToThrow.item_id;
+                if (pickup.DropObjectByPlayer(objToThrow, true))
+                {
+                    playerdat.ObjectInHand = -1;
+                    instance.mousecursor.SetCursorToCursor();
+                    pickup.DropSpecialCases(itemid);//primarily handle moonstones                    
+                }
+                return;
+            }
 
             if (pixel.R8 == 0)
             {
                 var pitemindex = (pixel.B8 << 8) | pixel.G8;
                 if ((pitemindex > 0) && (pitemindex <= 1024))
-                {
+                {                    
                     //clicked on a game object
                     var obj = UWTileMap.current_tilemap.LevelObjects[pitemindex];
                     var itemname = GameStrings.GetSimpleObjectNameUW(UWTileMap.current_tilemap.LevelObjects[pitemindex].item_id);
                     Debug.Print($"{pixel} , {pitemindex}, {itemname}");
-                    //temp message
-                    uimanager.AddToMessageScroll($"You see {GameStrings.GetSimpleObjectNameUW(obj.item_id)}");
+                    //TODO: The object info layer sees a long distance away. A check for distance is needed for the spell casting and use interactions is needed.
+                    if (SpellCasting.currentSpell == null)
+                    {
+                        InteractWithObjectCollider(index: obj.index, LeftClick: LeftClick);
+                    }
+                    else
+                    {
+                        SpellCasting.CastCurrentSpellOnRayCastTarget(
+                                            index: pitemindex,
+                                            objList: UWTileMap.current_tilemap.LevelObjects,
+                                            WorldObject: true);
+                    }
                 }
             }
             else
@@ -226,186 +261,165 @@ namespace Underworld
                 var tileY = pixel.B8;
                 if (UWTileMap.ValidTile(tileX, tileY))
                 {
-                    var tile = UWTileMap.current_tilemap.Tiles[tileX,tileY];
-                    switch (pixel.R8)
+                    var tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];
+                    if (InteractionMode == InteractionModes.ModeLook)
                     {
-                        case tileMapRender.fSELF:
-                            uimanager.AddToMessageScroll(tile.DescriptionWall);
-                            break;
-                        case tileMapRender.fCEIL:
-                            LookAtCeiling();
-                            break;
-                        case tileMapRender.fNORTH:
-                            uimanager.AddToMessageScroll(tile.DescriptionNorth);
-                            break;
-                        case tileMapRender.fSOUTH:
-                            uimanager.AddToMessageScroll(tile.DescriptionSouth);
-                            break;                        
-                        case tileMapRender.fEAST:
-                            uimanager.AddToMessageScroll(tile.DescriptionEast);
-                            break;                        
-                        case tileMapRender.fWEST:
-                            uimanager.AddToMessageScroll(tile.DescriptionWest);
-                            break;                        
-                        case tileMapRender.fFLOOR:
-                            uimanager.AddToMessageScroll(tile.DescriptionFloor);
-                            break;                        
-                        case tileMapRender.fBOTTOM:
-                            Debug.Print("BOTTOM!");
-                            break;
-                    }
-
-                }
-
-            }
-
-            return;
-            if (result != null)
-            {
-                if (result.ContainsKey("collider") && result.ContainsKey("normal") && result.ContainsKey("position"))
-                {
-                    var obj = (StaticBody3D)result["collider"];
-                    var normal = (Vector3)result["normal"];
-                    var hitCoordinateEnd = (Vector3)result["position"];
-                    var hitCoordinate = rayOrigin.Lerp(hitCoordinateEnd, 0.9f);
-                    Debug.Print(obj.Name);
-                    string[] vals = obj.Name.ToString().Split("_");
-
-                    switch (vals[0].ToUpper())
-                    {
-                        case "TILE":
-                        case "WALL":
-                            {
-                                if (SpellCasting.currentSpell != null)
-                                {
-                                    if (SpellCasting.currentSpell.SpellMajorClass == 5)
-                                    {
-                                        SpellCasting.CastCurrentSpellOnRayCastTarget(
-                                            index: 0,
-                                            objList: null,
-                                            WorldObject: true);//not enough room to cast
-                                        return;
-                                    }
-                                }
-                                switch (InteractionMode)
-                                {
-                                    case InteractionModes.ModePickup:
-                                        {
-                                            //interaction removed from here to support new drop/throw methods.
-                                            break;
-                                        }
-                                    case InteractionModes.ModeLook:
-                                        {//Look at tile
-                                            int tileX = int.Parse(vals[1]); int tileY = int.Parse(vals[2]);
-                                            LookAtTile(normal, tileX, tileY);
-                                            break;
-                                        }
-                                }
-                                break;
-                            }
-                        case "CEILING":
-                            {
-                                if (SpellCasting.currentSpell != null)
-                                {
-                                    if (SpellCasting.currentSpell.SpellMajorClass == 5)
-                                    {
-                                        SpellCasting.CastCurrentSpellOnRayCastTarget(
-                                            index: 0,
-                                            objList: null,
-                                            WorldObject: true);//not enough room to cast
-                                        return;
-                                    }
-                                }
-                                switch (InteractionMode)
-                                {
-                                    case InteractionModes.ModeLook:
-                                        {
-                                            LookAtCeiling();
-                                            break;
-                                        }
-                                }
-                                break;
-                            }
-
-                        default: //check for regular collider with an obj.
-                            {
-                                if (int.TryParse(vals[0], out int index))
-                                {
-                                    if (SpellCasting.currentSpell == null)
-                                    {
-                                        if (!(InteractionMode == InteractionModes.ModePickup && playerdat.ObjectInHand != -1))//temp to allow drop/throw below to work
-                                        {
-                                            InteractWithObjectCollider(
-                                                index: index, LeftClick: LeftClick);
-                                            return;
-                                        }
-
-                                    }
-                                    else
-                                    {
-                                        SpellCasting.CastCurrentSpellOnRayCastTarget(
-                                            index: index,
-                                            objList: UWTileMap.current_tilemap.LevelObjects,
-                                            WorldObject: true);
-                                    }
-                                }
-                            }
-                            break;
-                    }
-                }
-                else
-                {
-                    //along the ray
-                    if (SpellCasting.currentSpell != null)
-                    {
-                        //try can cast the current spell if class 5
-                        if (SpellCasting.currentSpell.SpellMajorClass == 5)
-                        {
-                            SpellCasting.CastMagicProjectile(playerdat.playerObject, SpellCasting.currentSpell.SpellMinorClass);
-                            return;
-                        }
+                        LookAtTile(pixel.R8, tileX, tileY);//there needs to be a distance check to see if the player sees something or nothing. I think it should be based on the shading.
                     }
                     else
                     {
-                        //no match on the raycast. 
-                        //nothing found.
-                        switch (InteractionMode)
-                        {
-                            case InteractionModes.ModeLook:
-                                uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_see_nothing_));
-                                break;
-                        }
+                        //do nothing.
                     }
                 }
             }
-            else
-            {
 
-            }
+            // return;
+            // if (result != null)
+            // {
+            //     if (result.ContainsKey("collider") && result.ContainsKey("normal") && result.ContainsKey("position"))
+            //     {
+            //         var obj = (StaticBody3D)result["collider"];
+            //         var normal = (Vector3)result["normal"];
+            //         var hitCoordinateEnd = (Vector3)result["position"];
+            //         var hitCoordinate = rayOrigin.Lerp(hitCoordinateEnd, 0.9f);
+            //         Debug.Print(obj.Name);
+            //         string[] vals = obj.Name.ToString().Split("_");
+
+            //         switch (vals[0].ToUpper())
+            //         {
+            //             case "TILE":
+            //             case "WALL":
+            //                 {
+            //                     if (SpellCasting.currentSpell != null)
+            //                     {
+            //                         if (SpellCasting.currentSpell.SpellMajorClass == 5)
+            //                         {
+            //                             SpellCasting.CastCurrentSpellOnRayCastTarget(
+            //                                 index: 0,
+            //                                 objList: null,
+            //                                 WorldObject: true);//not enough room to cast
+            //                             return;
+            //                         }
+            //                     }
+            //                     switch (InteractionMode)
+            //                     {
+            //                         case InteractionModes.ModePickup:
+            //                             {
+            //                                 //interaction removed from here to support new drop/throw methods.
+            //                                 break;
+            //                             }
+            //                         case InteractionModes.ModeLook:
+            //                             {//Look at tile
+            //                                 //int tileX = int.Parse(vals[1]); int tileY = int.Parse(vals[2]);
+            //                                 //LookAtTile(normal, tileX, tileY);
+            //                                 break;
+            //                             }
+            //                     }
+            //                     break;
+            //                 }
+            //             case "CEILING":
+            //                 {
+            //                     if (SpellCasting.currentSpell != null)
+            //                     {
+            //                         if (SpellCasting.currentSpell.SpellMajorClass == 5)
+            //                         {
+            //                             SpellCasting.CastCurrentSpellOnRayCastTarget(
+            //                                 index: 0,
+            //                                 objList: null,
+            //                                 WorldObject: true);//not enough room to cast
+            //                             return;
+            //                         }
+            //                     }
+            //                     switch (InteractionMode)
+            //                     {
+            //                         case InteractionModes.ModeLook:
+            //                             {
+            //                                 LookAtCeiling();
+            //                                 break;
+            //                             }
+            //                     }
+            //                     break;
+            //                 }
+
+            //             default: //check for regular collider with an obj.
+            //                 {
+            //                     if (int.TryParse(vals[0], out int index))
+            //                     {
+            //                         if (SpellCasting.currentSpell == null)
+            //                         {
+            //                             if (!(InteractionMode == InteractionModes.ModePickup && playerdat.ObjectInHand != -1))//temp to allow drop/throw below to work
+            //                             {
+            //                                 InteractWithObjectCollider(
+            //                                     index: index, LeftClick: LeftClick);
+            //                                 return;
+            //                             }
+
+            //                         }
+            //                         else
+            //                         {
+            //                             SpellCasting.CastCurrentSpellOnRayCastTarget(
+            //                                 index: index,
+            //                                 objList: UWTileMap.current_tilemap.LevelObjects,
+            //                                 WorldObject: true);
+            //                         }
+            //                     }
+            //                 }
+            //                 break;
+            //         }
+            //     }
+            //     else
+            //     {
+            //         //along the ray
+            //         if (SpellCasting.currentSpell != null)
+            //         {
+            //             //try can cast the current spell if class 5
+            //             if (SpellCasting.currentSpell.SpellMajorClass == 5)
+            //             {
+            //                 SpellCasting.CastMagicProjectile(playerdat.playerObject, SpellCasting.currentSpell.SpellMinorClass);
+            //                 return;
+            //             }
+            //         }
+            //         else
+            //         {
+            //             //no match on the raycast. 
+            //             //nothing found.
+            //             switch (InteractionMode)
+            //             {
+            //                 case InteractionModes.ModeLook:
+            //                     uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_see_nothing_));
+            //                     break;
+            //             }
+            //         }
+            //     }
+            // }
+            // else
+            // {
+
+            // }
 
 
-            //New methods that ignore the raycast
-            switch (InteractionMode)
-            {
-                case InteractionModes.ModePickup:
-                    {
-                        if (playerdat.ObjectInHand != -1)
-                        {
-                            //something is held. try and drop or throw it
-                            var objToThrow = UWTileMap.current_tilemap.LevelObjects[playerdat.ObjectInHand];
-                            var itemid = objToThrow.item_id;
-                            //Remove weight from player
-                            var ObjectMass = container.GetTotalMass(objToThrow, UWTileMap.current_tilemap.LevelObjects, false);
-                            if (pickup.DropObjectByPlayer(objToThrow, true))
-                            {
-                                playerdat.ObjectInHand = -1;
-                                instance.mousecursor.SetCursorToCursor();
-                                pickup.DropSpecialCases(itemid);//primarily handle moonstones
-                            }
-                        }
-                        break;
-                    }
-            }
+            // //New methods that ignore the raycast
+            // switch (InteractionMode)
+            // {
+            //     case InteractionModes.ModePickup:
+            //         {
+            //             if (playerdat.ObjectInHand != -1)
+            //             {
+            //                 //something is held. try and drop or throw it
+            //                 var objToThrow = UWTileMap.current_tilemap.LevelObjects[playerdat.ObjectInHand];
+            //                 var itemid = objToThrow.item_id;
+            //                 //Remove weight from player
+            //                 var ObjectMass = container.GetTotalMass(objToThrow, UWTileMap.current_tilemap.LevelObjects, false);
+            //                 if (pickup.DropObjectByPlayer(objToThrow, true))
+            //                 {
+            //                     playerdat.ObjectInHand = -1;
+            //                     instance.mousecursor.SetCursorToCursor();
+            //                     pickup.DropSpecialCases(itemid);//primarily handle moonstones
+            //                 }
+            //             }
+            //             break;
+            //         }
+            // }
         }
 
         public static void RefreshWeightDisplay()
@@ -457,12 +471,12 @@ namespace Underworld
         /// <param name="normal"></param>
         /// <param name="tileX"></param>
         /// <param name="tileY"></param>
-        private static void LookAtTile(Vector3 normal, int tileX, int tileY)
+        private static void LookAtTile(int face, int tileX, int tileY)
         {
             AddToMessageScroll(
                 GameStrings.GetString(1, GameStrings.str_you_see_)
                 +
-                TileInfo.GetTileSurfaceDescription(normal, tileX, tileY));
+                TileInfo.GetTileSurfaceDescription(face, tileX, tileY));
         }
 
     }//end class
