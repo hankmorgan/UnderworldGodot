@@ -7,21 +7,21 @@ namespace Underworld
     {
         //UWTileMap tilemap;
 
-        public static bool LookAt (uwObject obj)
+        public static bool LookAt(uwObject obj)
         {
 
             string desc;
-            if (obj.flags_full>=2)
+            if (obj.flags_full >= 2)
             {
                 //a world texture -2
-                desc = $"{TileInfo.TextureName(obj.flags_full-2)}";
+                desc = $"{TileInfo.TextureName(obj.flags_full - 2)}";
             }
             else
             {
                 //a bridge 
-                desc = "a " + GameStrings.GetObjectNounUW(obj.item_id);            
+                desc = "a " + GameStrings.GetObjectNounUW(obj.item_id);
             }
-            uimanager.AddToMessageScroll($"{GameStrings.GetString(1,GameStrings.str_you_see_)}{desc}");
+            uimanager.AddToMessageScroll($"{GameStrings.GetString(1, GameStrings.str_you_see_)}{desc}");
 
             return true;
         }
@@ -29,26 +29,29 @@ namespace Underworld
         public static bridge CreateInstance(Node3D parent, uwObject obj, string name, UWTileMap a_tilemap)
         {
             var b = new bridge(obj);
-            //TODO: some bridges can be invisible. instead of a model with texture do a 3d collider with no texture
-            var modelNode = b.Generate3DModel(parent, name);
-            modelNode.Rotate(Vector3.Up, (float)Math.PI/2);
-            SetModelRotation(parent, b);
-            centreInTile(parent, b);
-            //DisplayModelPoints(b,modelNode);
-            //mark bridge on automap
-            if (UWTileMap.ValidTile(obj.tileX, obj.tileY))
+            if (obj.invis == 0)
             {
-                var textureindex = (obj.enchantment<<3) | (int)obj.flags;
-                if (textureindex<=2)
+                var modelNode = b.Generate3DModel(parent, name);
+                modelNode.Rotate(Vector3.Up, (float)Math.PI / 2);
+                SetModelRotation(parent, b);
+                centreInTile(parent, b);
+                //DisplayModelPoints(b,modelNode);
+                //mark bridge on automap
+                if (UWTileMap.ValidTile(obj.tileX, obj.tileY))
                 {
-                    UWTileMap.current_tilemap.Tiles[obj.tileX, obj.tileY].hasBridge = true;
-                }                
-            }            
+                    var textureindex = (obj.enchantment << 3) | (int)obj.flags;
+                    if (textureindex <= 2)
+                    {
+                        UWTileMap.current_tilemap.Tiles[obj.tileX, obj.tileY].hasBridge = true;
+                    }
+                }
+            }
+
             return b;
         }
 
         public bridge(uwObject _uwobject)
-        {            
+        {
             uwobject = _uwobject;
             //tilemap = _tilemap;
         }
@@ -61,16 +64,16 @@ namespace Underworld
         public override Vector3[] ModelVertices()
         {
             Vector3[] Verts = new Vector3[8];
-         
+
             float x0 = -0.6f;
             float x1 = 0.6f;
-            
-            float z0 = -0.075f; 
+
+            float z0 = -0.075f;
             float z1 = 0.075f;
-            
+
             float y0 = -0.6f;
-            float y1 =  0.6f;
-           
+            float y1 = 0.6f;
+
             //x1
             Verts[0] = new Vector3(x0, z0, y0);
             Verts[1] = new Vector3(x0, z0, y1);
@@ -87,17 +90,17 @@ namespace Underworld
 
         public override Vector2[] ModelUVs(Vector3[] verts)
         {
-            var uvs= base.ModelUVs(verts);
+            var uvs = base.ModelUVs(verts);
 
-            uvs[6] = new Vector2(0f,0f);  //top
-            uvs[7] = new Vector2(1f,0f);
-            uvs[2] = new Vector2(0f,1f);
-            uvs[3] = new Vector2(1f,1f);
+            uvs[6] = new Vector2(0f, 0f);  //top
+            uvs[7] = new Vector2(1f, 0f);
+            uvs[2] = new Vector2(0f, 1f);
+            uvs[3] = new Vector2(1f, 1f);
 
-            uvs[0] = new Vector2(0f,0f);
-            uvs[1] = new Vector2(1f,0f);
-            uvs[4] = new Vector2(0f,1f);
-            uvs[5] = new Vector2(1f,1f);
+            uvs[0] = new Vector2(0f, 0f);
+            uvs[1] = new Vector2(1f, 0f);
+            uvs[4] = new Vector2(0f, 1f);
+            uvs[5] = new Vector2(1f, 1f);
             return uvs;
         }
 
@@ -106,57 +109,57 @@ namespace Underworld
             switch (meshNo)
             {
                 case 0:
-                {
-                    int[] tris = new int[12];// top and bottom surface
-                    tris[0] = 2;
-                    tris[1] = 6;
-                    tris[2] = 7;
-                    tris[3] = 7;
-                    tris[4] = 3;
-                    tris[5] = 2;
+                    {
+                        int[] tris = new int[12];// top and bottom surface
+                        tris[0] = 2;
+                        tris[1] = 6;
+                        tris[2] = 7;
+                        tris[3] = 7;
+                        tris[4] = 3;
+                        tris[5] = 2;
 
-                    tris[6] = 4;
-                    tris[7] = 0;
-                    tris[8] = 1;
-                    tris[9] = 1;
-                    tris[10] = 5;
-                    tris[11] = 4;
+                        tris[6] = 4;
+                        tris[7] = 0;
+                        tris[8] = 1;
+                        tris[9] = 1;
+                        tris[10] = 5;
+                        tris[11] = 4;
 
-                    return tris;
-                }
+                        return tris;
+                    }
                 case 1: // trim
-                {
-                    int[] tris = new int[24];
-                    tris[0] = 0;
-                    tris[1] = 4;
-                    tris[2] = 6;
-                    tris[3] = 6;
-                    tris[4] = 2;
-                    tris[5] = 0;
+                    {
+                        int[] tris = new int[24];
+                        tris[0] = 0;
+                        tris[1] = 4;
+                        tris[2] = 6;
+                        tris[3] = 6;
+                        tris[4] = 2;
+                        tris[5] = 0;
 
-                    tris[6] = 4;
-                    tris[7] = 5;
-                    tris[8] = 7;
-                    tris[9] = 7;
-                    tris[10] = 6;
-                    tris[11] = 4;
+                        tris[6] = 4;
+                        tris[7] = 5;
+                        tris[8] = 7;
+                        tris[9] = 7;
+                        tris[10] = 6;
+                        tris[11] = 4;
 
-                    tris[12] = 5;
-                    tris[13] = 1;
-                    tris[14] = 3;
-                    tris[15] = 3;
-                    tris[16] = 7;
-                    tris[17] = 5;
+                        tris[12] = 5;
+                        tris[13] = 1;
+                        tris[14] = 3;
+                        tris[15] = 3;
+                        tris[16] = 7;
+                        tris[17] = 5;
 
-                    tris[18] = 1;
-                    tris[19] = 0;
-                    tris[20] = 2;
-                    tris[21] = 2;
-                    tris[22] = 3;
-                    tris[23] = 1;
-                    return tris;
-                }
-               
+                        tris[18] = 1;
+                        tris[19] = 0;
+                        tris[20] = 2;
+                        tris[21] = 2;
+                        tris[22] = 3;
+                        tris[23] = 1;
+                        return tris;
+                    }
+
             }
             return base.ModelTriangles(meshNo);
         }
@@ -164,47 +167,47 @@ namespace Underworld
         public override int ModelColour(int meshNo)
         {
             switch (meshNo)
-                {
-                    case 0:
-                        return 0;// this will be set later.
-                    case 1:
-                        return 126;
-                }
+            {
+                case 0:
+                    return 0;// this will be set later.
+                case 1:
+                    return 126;
+            }
             return base.ModelColour(meshNo);
         }
 
         public override ShaderMaterial GetMaterial(int textureno, int surface)
         {//Get the material texture from tmobj
-        if (uwobject.invis==1)
-        {
-            return GetMaterial_alphacolour(0, surface);
-        }
-        switch (surface)
+            if (uwobject.invis == 1)
+            {
+                return GetMaterial_alphacolour(0, surface);
+            }
+            switch (surface)
             {
                 case 0:
-                {
-                    int textureindex = uwobject.flags_full;  //(uwobject.enchantment<<3) | (int)uwobject.flags;
-                    if (textureindex >= 2)
                     {
-                        if (_RES==GAME_UW2)
+                        int textureindex = uwobject.flags_full;  //(uwobject.enchantment<<3) | (int)uwobject.flags;
+                        if (textureindex >= 2)
                         {
-                            textureindex = textureindex-2; //tilemap.texture_map[textureindex-2];
+                            if (_RES == GAME_UW2)
+                            {
+                                textureindex = textureindex - 2; //tilemap.texture_map[textureindex-2];
+                            }
+                            else
+                            {
+                                textureindex = textureindex - 2 + 48; //tilemap.texture_map[textureindex-2+48];
+                            }
+                            return tileMapRender.mapTexturesFloors.GetMaterialForObject(
+                                textureno: textureindex,
+                                texturemap: UWTileMap.current_tilemap.texture_map, obj: uwobject);
                         }
                         else
                         {
-                            textureindex = textureindex-2+48; //tilemap.texture_map[textureindex-2+48];
+                            return GetTmObj.GetMaterialForObject(30 + textureindex, uwobject);
                         }
-                        return tileMapRender.mapTexturesFloors.GetMaterialForObject(
-                            textureno: textureindex, 
-                            texturemap: UWTileMap.current_tilemap.texture_map, obj: uwobject);
                     }
-                    else
-                    {
-                        return GetTmObj.GetMaterialForObject(30 + textureindex, uwobject);
-                    }
-                }
             }
-            return base.GetMaterial(textureno,surface);
+            return base.GetMaterial(textureno, surface);
         }
     }//end class
 }// end namespace

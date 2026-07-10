@@ -46,7 +46,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] NPC Goto. Check if logic is UW2 only.
 - [ ] NPC Wander Check animation_idle. Seg007_193
 - [ ] Double check attack probability
-- [ ] Handling of invisible bridges.
 - [ ] Check some 3d model. Ensure the colour is not palette cycled
 - [ ] UW2. Handle automap music theme/combat theme transitions
 - [ ] LookAT MapPiece, Handle Looking at item_id 0x138 so that the map is loaded(?)
