@@ -252,6 +252,10 @@ namespace Underworld
                                             WorldObject: true);
                     }
                 }
+                else
+                {
+                    uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_see_nothing_));
+                }
             }
             else
             {

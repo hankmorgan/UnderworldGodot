@@ -365,9 +365,12 @@ namespace Underworld
 			playerdat.MoongateSucking = false;
 
 			//set up rendering detail.
-            RenderingServer.GlobalShaderParameterSet("renderceilings", playerdat.RenderCeilings);
-            RenderingServer.GlobalShaderParameterSet("renderwalls", playerdat.RenderWalls);
-            RenderingServer.GlobalShaderParameterSet("renderfloors", playerdat.RenderFloors);
+			RenderingServer.GlobalShaderParameterSet("renderceilings", playerdat.RenderCeilings);
+			RenderingServer.GlobalShaderParameterSet("renderwalls", playerdat.RenderWalls);
+			RenderingServer.GlobalShaderParameterSet("renderfloors", playerdat.RenderFloors);
+			
+			//And simple shade for object info layer.
+			RenderingServer.GlobalShaderParameterSet("simpleshade", (Texture)shade.shadesdata[playerdat.lightlevel].simpleshade);
 
 			uimanager.EnableDisable(uimanager.instance.uwviewport,true); //turn on camera, this might be turned off due to player death
 			playerdat.PositionPlayerCamera();

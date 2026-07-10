@@ -148,6 +148,10 @@ namespace Underworld
                 type: RenderingServer.GlobalShaderParameterType.Float,
                 defaultValue: shade.GetViewingDistance(playerdat.lightlevel));
             RenderingServer.GlobalShaderParameterAdd(
+                name: "simpleshade",
+                type: RenderingServer.GlobalShaderParameterType.Sampler2D,
+                defaultValue: (Texture)shade.shadesdata[playerdat.lightlevel].simpleshade);
+            RenderingServer.GlobalShaderParameterAdd(
                 name: "smoothpalette",
                 type: RenderingServer.GlobalShaderParameterType.Sampler2D,
                 defaultValue: (Texture)Palettes[Palette.CurrentPalette].cycledGamePalette[Palette.ColourTone, 0, 0]);
@@ -377,11 +381,11 @@ namespace Underworld
             NextPaletteCycle_UI++;
 
             //Cycle the palette		
-            UpdateShaderParams();
+            UpdateShaderCycleParams();
 
         }
 
-        public static void UpdateShaderParams()
+        public static void UpdateShaderCycleParams()
         {
             if (NextPaletteCycle_GAME != -1)
             {

@@ -10,7 +10,7 @@ Here is the stuff I have identifed needs to be done
 
 Lists of features/bugs/TODOs and fun stuff I care about to implement (no order of priority).
 
-- [ ] Pole reach and vanilla use distance -> requires code to assess if object is in range outside of ray-casting.
+**- [ ] Pole reach and vanilla use distance -> requires code to assess if object is in range outside of ray-casting.**
 - [ ] Sleep cull objects - adjust height on tiles. Verify culling is working as expected.
 - [ ] Palette on death cutscene is breaking when exiting to main menu
 - [ ] clickable movement buttons in uw1 located above the compass.

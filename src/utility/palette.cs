@@ -19,7 +19,7 @@ namespace Underworld
                 _currentpalette = value;
                 if (update)
                 {
-                    PaletteLoader.UpdateShaderParams();
+                    PaletteLoader.UpdateShaderCycleParams();
                 }
             }
         }

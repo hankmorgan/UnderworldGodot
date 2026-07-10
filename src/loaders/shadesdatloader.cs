@@ -1,4 +1,5 @@
 using System;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using Godot;
@@ -22,7 +23,10 @@ namespace Underworld
 
         public byte[] ShadingArray_26EE = new byte[17 * 66];//This array is probably the light map that should be used for the shading but the existing effect looks right enough. possible structure is byte0 - is point visible, byte1 shading value to use at that point?
 
-        //ImageTexture cachedimage;
+        /// <summary>
+        /// A simplified image of the shading data. Used in the shader with the object info layer to determine what is in darkness.
+        /// </summary>
+        public ImageTexture simpleshade;
 
         public static float GetViewingDistance(int index)
         {
@@ -41,8 +45,6 @@ namespace Underworld
         {
             int BandSize = Math.Max(uwsettings.instance.shaderbandsize, 1);
             var img = Godot.Image.CreateEmpty(256, BandSize * 15, false, Godot.Image.Format.Rgba8);
-            //var arr = shadesdata[index].ExtractShadeArray();
-            //int y = 0;
 
             lightmap basemap = maps[0];
             lightmap nextmap = maps[1];
@@ -53,7 +55,8 @@ namespace Underworld
                 for (int y = 0; y < BandSize; y++)
                 {
                     if (y % BandSize == 0)
-                    {//At a band that contains colours specified by the light map.
+                    {
+                        //At a band that contains colours specified by the light map.
                         //Apply primary colour band
                         basemap = maps[shadingdata[i]];
                         if (i + 1 < maps.GetUpperBound(0))
@@ -69,31 +72,8 @@ namespace Underworld
                         {
                             Color colour;
                             int pixel = basemap.red[x];
-
-                            switch (x)
-                            {
-                                // //Special handling for transparencies
-                                // case 0xf9:
-                                // case 0xf0://red
-                                // case 0xf4://blue
-                                // case 0xf8://green
-                                // case 0xfb://used by shadow beast?
-                                // case 0xfc://white
-                                // case 0xfd://black???
-                                //     {
-                                //         colour = pal.ColorAtIndex((byte)x, true, false);
-                                //         colour.A8 = 180;
-                                //         var nextcolour = new Color(0, 0, 0, 0);
-                                //         colour = colour.Lerp(nextcolour, (float)(shadingdata[i] / 15f));
-                                //         break;
-                                //     }
-
-                                default:
-                                    colour = pal.ColorAtIndex((byte)pixel, true, false);
-                                    break;
-                            }
+                            colour = pal.ColorAtIndex((byte)pixel, true, false);
                             img.SetPixel(x, y + i * BandSize, colour);
-
                         }
                     }
                     else
@@ -104,42 +84,19 @@ namespace Underworld
                             //var nextpixel = nextmap.red[x];
                             var basecolour = pal.ColorAtIndex((byte)basemap.red[x], true, false);
 
-                            switch (x)
-                            {//An attempt at simulating xfer transparencies
-                                // case 0xf9:
-                                // case 0xf0://red
-                                // case 0xf4://blue
-                                // case 0xf8://green
-                                // case 0xfb://used by shadow beast?
-                                // case 0xfc://white
-                                // case 0xfd://black???
-                                //     {
-                                //         basecolour = pal.ColorAtIndex((byte)x, true, false);
-                                //         basecolour.A8 = 180;
-                                //         nextcolour = new Color(0, 0, 0, 0); //Should this final colour be different depending on the index?
-                                //         lerpedcolour = basecolour.Lerp(nextcolour, (float)(shadingdata[i] / 15f));
-                                //         break;
-                                //     }
-                                default:
-                                    {
-                                        if (doLerp)
-                                        {
-                                            //Color lerpedcolour;
-                                            var nextcolour = pal.ColorAtIndex((byte)nextmap.red[x], true, false);
-                                            //lerpedcolour = basecolour.Lerp(nextcolour, (float)(y % BandSize) / (float)BandSize);
-                                            img.SetPixel(x, y + i * BandSize, basecolour.Lerp(nextcolour, (float)(y % BandSize) / (float)BandSize));
-                                        }
-                                        else
-                                        {
-                                            //skip lerp if the shading has not changed.
-                                            //lerpedcolour = basecolour;
-                                            img.SetPixel(x, y + i * BandSize, basecolour);
-                                        }
-
-                                        break;
-                                    }
+                            if (doLerp)
+                            {
+                                //Color lerpedcolour;
+                                var nextcolour = pal.ColorAtIndex((byte)nextmap.red[x], true, false);
+                                //lerpedcolour = basecolour.Lerp(nextcolour, (float)(y % BandSize) / (float)BandSize);
+                                img.SetPixel(x, y + i * BandSize, basecolour.Lerp(nextcolour, (float)(y % BandSize) / (float)BandSize));
                             }
-                            //img.SetPixel(x, y + i * BandSize, lerpedcolour);
+                            else
+                            {
+                                //skip lerp if the shading has not changed.
+                                //lerpedcolour = basecolour;
+                                img.SetPixel(x, y + i * BandSize, basecolour);
+                            }   
                         }
                     }
                 }
@@ -232,8 +189,8 @@ namespace Underworld
             StartingLightLevel = _StartingLightLevel & 0xF;
             StartOfShadingDistance = _StartOfShadingDistance;
             ViewingDistance = _ViewingDistance & 0xF;
-            //Debug.Print($"{_index} {_nearDist} {_nearMap} {_farDist} {_ShadeCutoff}");
             shadingbasedata = ExtractShadeArray();
+            simpleshade = CreateSimpleShade(shadingbasedata);
         }
 
         static shade()
@@ -285,6 +242,22 @@ namespace Underworld
                     _ViewingDistance: 20
                  );
             }
+        }
+    
+        public static ImageTexture CreateSimpleShade(short[] data)
+        {
+            var img = Godot.Image.CreateEmpty(data.GetUpperBound(0), 1, false, Godot.Image.Format.R8);
+            var color = new Color();
+            for (var x = 0; x< data.GetUpperBound(0);x++)
+            {
+                var colorindex = Math.Min((int)data[x], 0xF);                
+                color.R8 = colorindex * 8;
+                img.SetPixel(x, 0, color);
+            }
+            var tex = new ImageTexture();
+            tex.SetImage(img);
+            //img.SavePng($"c:\\temp\\simple.png");
+            return tex;
         }
     }//end class    
 }//end namespace

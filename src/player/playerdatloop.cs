@@ -472,10 +472,10 @@ namespace Underworld
                     }
                 }
             }
-            if (automap.CanMap(dungeon_level) && (AutomapEnabled))
-            {
-                UpdateAutomap();//update the visited status of nearby tiles
-            }
+            // if (automap.CanMap(dungeon_level) && (AutomapEnabled))
+            // {
+            //     UpdateAutomap();//update the visited status of nearby tiles
+            // }
 
             motion.RefreshPlayerTileState();
 
@@ -736,11 +736,7 @@ namespace Underworld
         public static void RefreshLighting()
         {
             RenderingServer.GlobalShaderParameterSet("cutoffdistance", shade.GetViewingDistance(lightlevel));
-            if (previousLightLevel != lightlevel)
-            {
-                UpdateAutomap();//refresh automap visibility
-            }
-            // Godot.RenderingServer.GlobalShaderParameterSet("shades", shade.shadesdata[playerdat.lightlevel].GetImage());
+            RenderingServer.GlobalShaderParameterSet("simpleshade", (Texture)shade.shadesdata[playerdat.lightlevel].simpleshade);
         }
 
         /// <summary>
@@ -800,38 +796,38 @@ namespace Underworld
         /// <summary>
         /// Updates a range of tiles in the automap around the player
         /// </summary>
-        public static void UpdateAutomap()
-        {
-            return;
-            //depending on light level. need to confirm if below math is okay
-            NoOfTilesDiscovered = 0;
-            var range = 1 + (lightlevel / 2);
-            automap.MarkRangeOfTilesVisited(
-                range: range,
-                cX: playerObject.tileX,
-                cY: playerObject.tileY,
-                dungeon_level: dungeon_level
-                );
+        // public static void UpdateAutomap()
+        // {
+        //     return;
+        //     //depending on light level. need to confirm if below math is okay
+        //     NoOfTilesDiscovered = 0;
+        //     var range = 1 + (lightlevel / 2);
+        //     automap.MarkRangeOfTilesVisited(
+        //         range: range,
+        //         cX: playerObject.tileX,
+        //         cY: playerObject.tileY,
+        //         dungeon_level: dungeon_level
+        //         );
 
-            //This should cause an exp gain but the effect is limited because the automap is currently not doing the same map revealing as vanilla.
-            if (NoOfTilesDiscovered > 0)
-            {
-                int gain = 0;
-                if (_RES == GAME_UW2)
-                {
-                    var world = 1 + (dungeon_level / 8);
-                    gain = (NoOfTilesDiscovered * world) / 0xA;
-                }
-                else
-                {
-                    gain = (NoOfTilesDiscovered * dungeon_level) / 0xA;
-                }
-                if (gain != 0)
-                {
-                    ChangeExperience(gain);
-                }
-            }
-        }
+        //     //This should cause an exp gain but the effect is limited because the automap is currently not doing the same map revealing as vanilla.
+        //     if (NoOfTilesDiscovered > 0)
+        //     {
+        //         int gain = 0;
+        //         if (_RES == GAME_UW2)
+        //         {
+        //             var world = 1 + (dungeon_level / 8);
+        //             gain = (NoOfTilesDiscovered * world) / 0xA;
+        //         }
+        //         else
+        //         {
+        //             gain = (NoOfTilesDiscovered * dungeon_level) / 0xA;
+        //         }
+        //         if (gain != 0)
+        //         {
+        //             ChangeExperience(gain);
+        //         }
+        //     }
+        // }
 
         /// <summary>
         /// Changes the colour of the maze tiles in Tybals Lair in UW1 when the maze navigation crown is work

@@ -20,6 +20,8 @@ uniform vec3 uv2_offset;
 uniform sampler2D texture_albedo : source_color,filter_nearest,repeat_enable;// the source image
 global uniform sampler2D smoothpalette: source_color,filter_nearest; // pals.dat mapped into shades
 global uniform sampler2D xfer: source_color,filter_nearest; //xfer.dat transparency
+global uniform sampler2D simpleshade: source_color,filter_nearest;//shading data for objectinfo layer. used to find darkness
+
 global uniform float cutoffdistance; // how far away the scene will render
 global uniform bool renderwalls;
 global uniform bool renderfloors;
@@ -49,12 +51,21 @@ void fragment() {
 	{
 		if ((CAMERA_VISIBLE_LAYERS & 8u) != 0u)
 		{
-			//object info layer. render all black for now. In the future this may contain tile information. (eg x,y and surface) or object index in the case of 3d models.
-			//vec4 finalcolour;
-			ALBEDO.r = float(tileflags)/255.0;//this will eventually be tileflags indicating if this is a floor, NSEW facing wall, diagonal or ceiling.
-			ALBEDO.g = float(objectindex_lowerbytes)/255.0;   // or tileX
-			ALBEDO.b = float(objectindex_upperbytes)/255.0;   // or tileY
-			//ALBEDO = finalcolour.rgb;
+			//object info layer. 
+			//contains tile information. (eg x,y and surface) or object index in the case of 3d models.
+			
+			vec4 simple = texture(simpleshade, vec2(dist/cutoffdistance, 0.0));
+			int shadelevel = ivec3(round(simple.rgb * 255.0)).r;
+			if (shadelevel >= 112 )
+			{
+				discard;
+			}
+			else
+			{
+				ALBEDO.r = float(tileflags)/255.0;//this will eventually be tileflags indicating if this is a floor, NSEW facing wall, diagonal or ceiling.
+				ALBEDO.g = float(objectindex_lowerbytes)/255.0;   // or tileX
+				ALBEDO.b = float(objectindex_upperbytes)/255.0;   // or tileY
+			}
 		}
 		else
 		{

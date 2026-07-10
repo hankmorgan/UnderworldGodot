@@ -21,6 +21,7 @@ uniform sampler2D texture_albedo : source_color,filter_nearest,repeat_enable;// 
 global uniform sampler2D smoothpalette: source_color,filter_nearest; // pals.dat mapped into shades
 global uniform sampler2D xfer: source_color,filter_nearest; //xfer.dat transparency
 global uniform float cutoffdistance; // how far away the scene will render
+global uniform sampler2D simpleshade: source_color,filter_nearest;//shading data for objectinfo layer. used to find darkness
 
 uniform int objectindex_lowerbytes;
 uniform int objectindex_upperbytes;
@@ -97,11 +98,20 @@ void fragment() {
 			case 8u: //objectinfo
 			{
 				//Render object info on camera 4
-				ALBEDO.r = 0.0;
-				ALBEDO.g = float(objectindex_lowerbytes)/255.0; 
-				ALBEDO.b = float(objectindex_upperbytes)/255.0;
-				ALPHA = alphacolour.a;
-				break;
+				vec4 simple = texture(simpleshade, vec2(dist/cutoffdistance, 0.0));
+				int shadelevel = ivec3(round(simple.rgb * 255.0)).r;
+				if (shadelevel >= 112 )
+				{
+					discard;
+				}
+				else
+				{				
+					ALBEDO.r = 0.0;
+					ALBEDO.g = float(objectindex_lowerbytes)/255.0; 
+					ALBEDO.b = float(objectindex_upperbytes)/255.0;
+					ALPHA = alphacolour.a;
+					break;
+				}	
 			}
 			default:
 			{

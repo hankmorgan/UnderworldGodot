@@ -204,7 +204,7 @@ namespace Underworld
             {
                 UWsoundeffects.PlaySoundEffectAtCoordinate(UWsoundeffects.SoundEffectDoor, (doorObj.tileX << 3) + doorObj.xpos, (doorObj.tileY << 3) + doorObj.ypos, 0);
             }
-            playerdat.UpdateAutomap();//trigger an update of visibility
+            //playerdat.UpdateAutomap();//trigger an update of visibility
             trigger.TriggerObjectLink(character: 1,
                     ObjectUsed: doorObj,
                     triggerType: (int)triggerObjectDat.OPEN_TRIGGER_TYPE,
