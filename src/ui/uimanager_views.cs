@@ -196,7 +196,7 @@ namespace Underworld
 
             bool LeftClick = (eventMouseButton.ButtonIndex == MouseButton.Left);
             //Debug.Print($"{eventMouseButton.Position.X},{eventMouseButton.Position.Y}");
-            Dictionary result = DoRayCast(eventMouseButton.Position, RayDistance, out Vector3 rayOrigin);
+            //Dictionary result = DoRayCast(eventMouseButton.Position, RayDistance, out Vector3 rayOrigin);
             var text = (Texture2D)uimanager.instance.uwsubviewport_objectinfo.GetTexture();
             //text.GetImage().SavePng("c:\\temp\\testobjectinfo.png");
             //var vi = new Vector2I((int)(ViewPortMouseXPos / text.GetWidth()), (int)(ViewPortMouseYPos / text.GetHeight()));
@@ -239,7 +239,6 @@ namespace Underworld
                     var obj = UWTileMap.current_tilemap.LevelObjects[pitemindex];
                     var itemname = GameStrings.GetSimpleObjectNameUW(UWTileMap.current_tilemap.LevelObjects[pitemindex].item_id);
                     Debug.Print($"{pixel} , {pitemindex}, {itemname}");
-                    //TODO: The object info layer sees a long distance away. A check for distance is needed for the spell casting and use interactions is needed.
                     if (SpellCasting.currentSpell == null)
                     {
                         InteractWithObjectCollider(index: obj.index, LeftClick: LeftClick);

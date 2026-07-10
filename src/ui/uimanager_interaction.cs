@@ -1,3 +1,7 @@
+using System;
+using System.Diagnostics;
+using System.IO.Compression;
+using System.Security;
 using Godot;
 
 namespace Underworld
@@ -114,7 +118,7 @@ namespace Underworld
         /// <param name="index"></param>
         public static void InteractWithObjectCollider(int index, bool LeftClick)
         {
-            if (playerdat.ParalyseTimer>0)
+            if (playerdat.ParalyseTimer > 0)
             {
                 return;//stop interaction while player is paralysed
             }
@@ -134,12 +138,14 @@ namespace Underworld
                     break;
                 case InteractionModes.ModeUse:
                     //do a use interaction with the object.
-                    if (useon.CurrentItemBeingUsed != null)
-                        {         
+                    if (CanReach(UWTileMap.current_tilemap.LevelObjects[index], playerdat.UseDistance))
+                    {
+                        if (useon.CurrentItemBeingUsed != null)
+                        {
                             //handle using an object on another.       
                             useon.UseOn(
-                                ObjectUsed: UWTileMap.current_tilemap.LevelObjects[index], 
-                                srcObject: useon.CurrentItemBeingUsed, 
+                                ObjectUsed: UWTileMap.current_tilemap.LevelObjects[index],
+                                srcObject: useon.CurrentItemBeingUsed,
                                 WorldObject: true);
                         }
                         else
@@ -150,6 +156,11 @@ namespace Underworld
                                 objList: UWTileMap.current_tilemap.LevelObjects,
                                 WorldObject: true);
                         }
+                    }
+                    else
+                    {
+                        uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_cannot_reach_that_));
+                    }
                     break;
                 case InteractionModes.ModePickup:
                     if (playerdat.ObjectInHand == -1)//don't do pickup if holding something already.
@@ -162,6 +173,52 @@ namespace Underworld
                     }
                     break;
             }
+        }
+
+        static bool CanReach(uwObject obj, int UseDistance)
+        {
+            if (UseDistance == 0)
+            {
+                return true;
+            }
+            else
+            {
+                var xCoord = Math.Abs((obj.tileX << 3) + obj.xpos) - ((playerdat.playerObject.tileX << 3) + playerdat.playerObject.xpos);
+                var yCoord = Math.Abs((obj.tileY << 3) + obj.ypos) - ((playerdat.playerObject.tileY << 3) + playerdat.playerObject.ypos);
+
+                if ((yCoord * yCoord) + (xCoord * xCoord) > UseDistance)
+                {
+                    return false;
+                }
+                else
+                {
+                    var zDiff = playerdat.playerObject.zpos - obj.zpos;
+                    if (playerdat.SwimCounter > 0x50)
+                    {
+                        zDiff -= (playerdat.SwimCounter >> 3);
+                    }
+                    int pole = 0;
+                    if (playerdat.usingpole)
+                    {
+                        pole = 1;
+                    }
+                    pole++;
+
+                    if ((pole * 0xC) >= zDiff)
+                    {
+                        if ((pole * -24) <= zDiff)
+                        {
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+
+            }
+            return false;
         }
 
         public static void InteractionModeToggle(InteractionModes index)
@@ -198,7 +255,7 @@ namespace Underworld
                     {
                         ToggleWeaponAnimationState(false);
                     }
-                     
+
                     //XMIMusic.PickLevelThemeMusic(); //in future this needs to take into account combat state.
                     //
                     break;
@@ -254,15 +311,15 @@ namespace Underworld
                 playerdat.play_drawn = 1;//draw the weapon 
                 if (updateThemes)
                 {
-                    XMIMusic.ChangeThemeMusic(XMIMusic.Armed);    
-                }                 
+                    XMIMusic.ChangeThemeMusic(XMIMusic.Armed);
+                }
             }
             else
             {
                 playerdat.play_drawn = 0; //ensure weapon is not drawn.
                 if (updateThemes)
                 {
-                   XMIMusic.PickLevelThemeMusic(0); 
+                    XMIMusic.PickLevelThemeMusic(0);
                 }
                 if (UWClass._RES == UWClass.GAME_UW2)
                 {

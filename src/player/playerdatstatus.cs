@@ -688,5 +688,24 @@ namespace Underworld
                     return false;
                }
           }
-     }//enclass
+
+          public static short UseDistance
+          {
+               get
+               {
+                    if (usingpole)
+                    {
+                         return 0x190;
+                    }
+                    else
+                    {
+                         if (TelekenesisEnchantment)
+                         {
+                              return 0; //?
+                         }
+                    }
+                    return 0x90;
+               }
+          }
+     }//end class
 }//end namespace
