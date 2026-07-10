@@ -159,17 +159,24 @@ namespace Underworld
                     }
                     else
                     {
-                        uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_cannot_reach_that_));
+                        uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_are_unable_to_use_that_from_here_));
                     }
                     break;
                 case InteractionModes.ModePickup:
                     if (playerdat.ObjectInHand == -1)//don't do pickup if holding something already.
                     {
-                        //get weight of object being picked
-                        pickup.PickUp(
-                            index: index,
-                            objList: UWTileMap.current_tilemap.LevelObjects,
-                            WorldObject: true);
+                        if (CanReach(UWTileMap.current_tilemap.LevelObjects[index], playerdat.PickupDistance))
+                        {
+                            //get weight of object being picked
+                            pickup.PickUp(
+                                index: index,
+                                objList: UWTileMap.current_tilemap.LevelObjects,
+                                WorldObject: true);
+                        }
+                        else
+                        {
+                            uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_cannot_reach_that_));
+                        }
                     }
                     break;
             }

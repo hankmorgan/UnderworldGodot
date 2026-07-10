@@ -43,7 +43,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Terraindatloader. Any other types of tile
 - [ ] Sound logic in Magic projectile spell
 - [ ] Apply the nomagicbit in CastSpell.
-- [ ] NPC Description. A worried spectre named warren
 - [ ] NPC Goto. Check if logic is UW2 only.
 - [ ] NPC Wander Check animation_idle. Seg007_193
 - [ ] Double check attack probability

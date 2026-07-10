@@ -347,7 +347,6 @@ namespace Underworld
         /// <param name="critter"></param>
         private static void RegularNPCDescription(uwObject critter)
         {
-            //TODO: A worried spectre named Warren.
             var name = critter.a_name;
             var lowercasename = char.IsLower(name.First<char>());//check if name is lower case. if so do not print it
             string npcrace = GameStrings.GetObjectNounUW(critter.item_id);

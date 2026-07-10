@@ -689,6 +689,21 @@ namespace Underworld
                }
           }
 
+          public static short PickupDistance
+          {
+               get
+               {
+                    if (TelekenesisEnchantment)
+                    {
+                         return 0; //?
+                    }
+                    else
+                    {
+                         return 0x90;
+                    }
+               }
+          }
+
           public static short UseDistance
           {
                get
