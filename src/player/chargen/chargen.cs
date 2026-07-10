@@ -99,6 +99,7 @@ namespace Underworld
                     uimanager.clearchargenbuttons();
                     uimanager.EnableDisable(uimanager.instance.ChargenQuestion,false);
                     MessageDisplay.WaitingForTypedInput = true;
+                    uimanager.instance.TypedInput.CaretColumn =uimanager.instance.TypedInput.Text.Length;
                     ChargenWaitForInput = true;
                     uimanager.instance.ChargenNameInput.Text = "";
                     uimanager.EnableDisable(uimanager.instance.ChargenNameBG,true);                    

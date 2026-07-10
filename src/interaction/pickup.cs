@@ -269,8 +269,8 @@ namespace Underworld
         public static IEnumerator DoPickupQty(int index, uwObject[] objList, uwObject obj)
         {
             MessageDisplay.WaitingForTypedInput = true;
-
             uimanager.instance.TypedInput.Text = obj.ObjectQuantity.ToString();
+            uimanager.instance.TypedInput.CaretColumn =uimanager.instance.TypedInput.Text.Length;
             uimanager.instance.scroll.Clear();
             uimanager.AddToMessageScroll("Move how many? {TYPEDINPUT}|");
 

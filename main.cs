@@ -1062,6 +1062,7 @@ public partial class main : Node3D
 					{//end typed input
 						uimanager.instance.scroll.Clear();
 						MessageDisplay.WaitingForYesOrNo = false;
+						MessageDisplay.YesNoOption = "";
 						cameraPitchGimbal_world.Set("MOVE", true);//re-enable movement
 					}
 				}

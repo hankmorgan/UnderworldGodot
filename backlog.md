@@ -106,8 +106,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Doors open to 90degree angles
 - [ ] Proper rendering of the "escher" room in Talorus. Ensure the walls of the slopes do not appear/are transparent.
 - [ ] Picking up a Wisp starts conversation in UW2? Need to confirm if this is vanilla behaviour.
-- [ ] Typed input is fiddly when using backspace
-- [ ] Entering a qty prompts for a Yes/No
 - [ ] Arrows launched by an arrow trap are rendered as sprites not a 3d model
 - [ ] Wands can be used while not held.
 

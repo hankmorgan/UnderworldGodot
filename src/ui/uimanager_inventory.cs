@@ -733,6 +733,7 @@ namespace Underworld
             MessageDisplay.WaitingForTypedInput = true;
 
             instance.TypedInput.Text = objAtSlot.ObjectQuantity.ToString();
+            uimanager.instance.TypedInput.CaretColumn = uimanager.instance.TypedInput.Text.Length;
             instance.scroll.Clear();
             AddToMessageScroll("Move how many? {TYPEDINPUT}|", mode: MessageDisplay.MessageDisplayMode.TypedInput);
 
