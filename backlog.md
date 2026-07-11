@@ -105,9 +105,9 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Doors open to 90degree angles
 - [ ] Proper rendering of the "escher" room in Talorus. Ensure the walls of the slopes do not appear/are transparent.
 - [ ] Arrows launched by an arrow trap are rendered as sprites not a 3d model
-- [ ] Wands can be used while not held this is because the object link is triggered after the use interaction.
 - [ ] Handle extraction/opening of gog.com game.gog files.
 - [ ] Objects embedded within tiles are not visible (eg some objects in the ice caverns that are within the bounds of a solid tile.)
+- [ ] AutomapText sometimes reads junk data.
 
 ## Blocked
 Things I've hit a roadblock on.

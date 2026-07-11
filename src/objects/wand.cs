@@ -5,6 +5,7 @@ namespace Underworld
 
         public static bool Use(uwObject obj, bool WorldObject)
         {
+            use.SpellHasBeenCast = true;//stop later triggering of spells.
             if (!WorldObject)
             {
                  var spell = MagicEnchantment.GetSpellEnchantment(obj, playerdat.InventoryObjects);
@@ -25,10 +26,13 @@ namespace Underworld
                             uimanager.UpdateInventoryDisplay();
                         }
                     }
-                    return true;
                 }
             }
-            return false;
+            else
+            {
+                uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_cannot_use_that_));
+            }
+            return true;
         }
     }//end class
 }//end namespace
