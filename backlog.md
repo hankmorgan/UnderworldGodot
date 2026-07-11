@@ -26,7 +26,7 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] drag&drop objects on paperdoll.
 - [ ] camera will eventually bob underneath the surface when swimming. (more a problem that the world underneath is rendered, rather than showing blackness.
 - [ ] some objects will appear underneath slopes (this might be a rendering diff vs vanilla)
-- [ ] uw1 vampire bat dropped a runestone!
+- [ ] uw1 vampire bat dropped a runestone! A lurker dropped debris. Likely a bug in UW1 lootdrop code.
 - [ ] ProcessMotionInputs Check that player is grounded when jumping
 - [ ] Input sanitation when in main._input
 - [ ] Handle effect 90-91 in PlaySoundEffectAtAvatar
@@ -70,7 +70,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Automap note writing. Ensure nulls at end of string.
 - [ ] Panel switching. rune panel rotation in SetPanelMode (?)
 - [ ] Remove Triggers pointing at trap. Handle timers that need to be removed. (not sure if this happens anywhere?)
-- [ ] String loader. Check texture naming is right 
 - [ ] Teleportation. Handle the scintillus wand/review implementation
 - [ ] Teleportation. Cowardice check in the arena
 - [ ] LevelChangeEventsUW2 Refresh themes
@@ -88,7 +87,7 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Divide by Zero OPDIV when talked to by the first guard in Killorn
 - [ ] UI to quick launch save games at initial launch screen.
 - [ ] Pillar Size & Positioning
-- [ ] TMAP positioning closer to walls.
+- [ ] TFLATs (buttons and signs) positioning closer to walls and not extrude over corners
 - [ ] LB does not release you from jail if you had attacked him (is he getting stuck somewhere?)
 - [ ] Different mouse cursors for interaction modes
 - [ ] Study Food degradation mechanic (does this actually exist?)
@@ -105,9 +104,11 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Items given to player that are not moved from trade area vanish
 - [ ] Doors open to 90degree angles
 - [ ] Proper rendering of the "escher" room in Talorus. Ensure the walls of the slopes do not appear/are transparent.
-- [ ] Picking up a Wisp starts conversation in UW2? Need to confirm if this is vanilla behaviour.
 - [ ] Arrows launched by an arrow trap are rendered as sprites not a 3d model
 - [ ] Wands can be used while not held.
+- [ ] Handle extraction/opening of gog.com game.gog files.
+- [ ] Looking at the waterfall tmaps in uw1 dungeon3 causes a trap disarming to take place.
+- [ ] Objects embedded within tiles are not visible (eg some objects in the ice caverns that are within the bounds of a solid tile.)
 
 ## Blocked
 Things I've hit a roadblock on.

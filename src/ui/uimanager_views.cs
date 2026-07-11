@@ -238,7 +238,7 @@ namespace Underworld
                     //clicked on a game object
                     var obj = UWTileMap.current_tilemap.LevelObjects[pitemindex];
                     var itemname = GameStrings.GetSimpleObjectNameUW(UWTileMap.current_tilemap.LevelObjects[pitemindex].item_id);
-                    Debug.Print($"{pixel} , {pitemindex}, {itemname}");
+                    Debug.Print($"{pixel} , {pitemindex}, {itemname} Object position is x:{obj.xpos}, y:{obj.ypos}, z:{obj.zpos}, h:{obj.heading}");
                     if (SpellCasting.currentSpell == null)
                     {
                         InteractWithObjectCollider(index: obj.index, LeftClick: LeftClick);

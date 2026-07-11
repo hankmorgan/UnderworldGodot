@@ -1,13 +1,69 @@
-using System.Diagnostics;
 using Godot;
 
 namespace Underworld
 {
     public class tmap:model3D
     {
-        int texture;
+        //int texture;
         Node3D tmapnode;
-        float tmapOffset = 0.1f;//how far out the tmap extrudes from it's origin
+        float tmapOffset
+        {
+            get
+            {
+                //check if tmap shares space with a door, this deals with a tmap that is over a door in level 4 of UW1
+                if (UWTileMap.ValidTile(uwobject.tileX, uwobject.tileY))
+                {
+                    var tile = UWTileMap.current_tilemap.Tiles[uwobject.tileX, uwobject.tileY];
+
+                    var door = objectsearch.FindMatchInObjectChain(tile.indexObjectList, 5, 0, -1, UWTileMap.current_tilemap.LevelObjects);
+                    if (door!=null)
+                    {
+                        if ((door.xpos == uwobject.xpos) && (door.ypos == uwobject.ypos))
+                        {
+                            //Debug.Print($"Tmap {obj.index} shares space with door {door.index}");
+                            return 0.1f;
+                        }
+                    }
+                }
+
+                switch (uwobject.heading)
+                {
+                    case 0:
+                        {
+                            if (uwobject.ypos == 7)
+                            {
+                                return -0.13f;
+                            }
+                            break;
+                        }
+                    case 2:
+                        {
+                            if (uwobject.xpos == 7)
+                            {
+                                return -0.13f;
+                            }
+                            break;
+                        }
+                    case 4:
+                        {
+                            if (uwobject.ypos == 0)
+                            {
+                                return +0.13f;
+                            }
+                            break;
+                        }
+                    case 6:
+                        {
+                            if (uwobject.xpos == 0)
+                            {
+                                return +0.13f;
+                            }
+                            break;
+                        }
+                }
+                return 0.07f; //= 0.07f;//how far out the tmap extrudes from it's origin
+            }
+        }
 
         public tmap(uwObject _uwobject)
         {
@@ -16,50 +72,32 @@ namespace Underworld
 
         public static tmap CreateInstance(Node3D parent, uwObject obj, UWTileMap a_tilemap, string name)
         {
-            int tileX = obj.tileX;
-            int tileY = obj.tileY;
             var t = new tmap(obj);
-
-            //check if tmap shares space with a door, this deals with a tmap that is over a door in level 4 of UW1
-            if (UWTileMap.ValidTile(obj.tileX, obj.tileY))
-            {
-                var tile = UWTileMap.current_tilemap.Tiles[obj.tileX, obj.tileY];
-
-                var door = objectsearch.FindMatchInObjectChain(tile.indexObjectList, 5, 0, -1, UWTileMap.current_tilemap.LevelObjects);
-                if (door!=null)
-                {
-                    if ((door.xpos == obj.xpos) && (door.ypos == obj.ypos))
-                    {
-                        Debug.Print($"Tmap {obj.index} shares space with door {door.index}");
-                        t.tmapOffset = 0.1f;
-                    }
-                }
-            }
             
-            t.texture = obj.owner; //a_tilemap.texture_map[obj.owner];    
+            //t.texture = obj.owner; //a_tilemap.texture_map[obj.owner];    
             t.tmapnode = t.Generate3DModel(parent, name);
            
             SetModelRotation(parent,t);
             centreAlongAxis(parent, t);
             
 
-            //adjust to be closer to walls
-            if (obj.xpos == 0)
-            {
-                parent.Position += new Vector3(+0.05f, 0f, 0f);
-            }
-            if (obj.ypos == 0)
-            {
-                parent.Position += new Vector3(0f, 0f, -0.05f);
-            }
-            if (obj.xpos == 7)
-            {
-                parent.Position += new Vector3(-0.05f, 0f, 0f);
-            }
-            if (obj.ypos == 7)
-            {
-                parent.Position += new Vector3(0f, 0f, +0.05f);
-            }
+            // //adjust to be closer to walls
+            // if (obj.xpos == 0)
+            // {
+            //     parent.Position += new Vector3(+0.05f, 0f, 0f);
+            // }
+            // if (obj.ypos == 0)
+            // {
+            //     parent.Position += new Vector3(0f, 0f, -0.05f);
+            // }
+            // if (obj.xpos == 7)
+            // {
+            //     parent.Position += new Vector3(-0.05f, 0f, 0f);
+            // }
+            // if (obj.ypos == 7)
+            // {
+            //     parent.Position += new Vector3(0f, 0f, +0.05f);
+            // }
 
 
 
@@ -81,11 +119,12 @@ namespace Underworld
 
         public override Vector3[] ModelVertices()
         {
+            var offset = tmapOffset;
             Vector3[] v = new Vector3[4];
-            v[0] = new Vector3(-0.6f, 0f, tmapOffset);//0.0625f);
-            v[1] = new Vector3(0.6f, 0f, tmapOffset);//0.0625f);
-            v[2] = new Vector3(0.6f, 1.2f, tmapOffset);//0.0625f);
-            v[3] = new Vector3(-0.6f, 1.2f, tmapOffset);//..0.0625f);
+            v[0] = new Vector3(-0.6f, 0f, offset);//0.0625f);
+            v[1] = new Vector3(0.6f, 0f, offset);//0.0625f);
+            v[2] = new Vector3(0.6f, 1.2f, offset);//0.0625f);
+            v[3] = new Vector3(-0.6f, 1.2f, offset);//..0.0625f);
             return v;
         }
 
@@ -118,7 +157,7 @@ namespace Underworld
             if (surface != 6)
             {
                 return tileMapRender.mapTexturesWalls.GetMaterialForObject(
-                    textureno: texture, 
+                    textureno: uwobject.owner, 
                     texturemap: UWTileMap.current_tilemap.texture_map, 
                     obj: uwobject);
             }
