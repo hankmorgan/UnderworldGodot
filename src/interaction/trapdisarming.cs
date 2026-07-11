@@ -48,7 +48,7 @@ namespace Underworld
                                 {//found a trigger, getting it's trap
                                     foundtrigger = objList[foundtrigger.link];
                                 }
-                                if (foundtrigger.minorclass < 2)
+                                if ((foundtrigger.minorclass < 2) && (foundtrigger.majorclass == 6))
                                 {//has found a trap
                                     return DoTrapSkillCheck(searchSkill);
                                 }
