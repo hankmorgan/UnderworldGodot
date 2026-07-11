@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Underworld
 {
@@ -109,9 +110,13 @@ namespace Underworld
                                 charptr++;
                                 nextchar = (char)block.Data[addptr + charptr];
                             }
-                            var _posX = (int)getAt(block.Data, addptr + 0x32, 16);
-                            var _posY = (int)getAt(block.Data, addptr + 0x34, 16);
-                            notes.Add(new mapnotetext(fullstring, _posX, _posY));
+                            if (nextchar == '\0')
+                            {
+                                var _posX = (int)getAt(block.Data, addptr + 0x32, 16);
+                                var _posY = (int)getAt(block.Data, addptr + 0x34, 16);
+                                notes.Add(new mapnotetext(fullstring, _posX, _posY));
+                            }
+                            //Debug.Print(fullstring);
                         }
                         addptr += 54;
                         counter++;
