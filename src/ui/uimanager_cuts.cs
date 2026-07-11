@@ -19,6 +19,7 @@ namespace Underworld
 
         [Export] public RichTextLabel CutsSubtitle;
 
+        public static bool WaitingForFade = false;
 
         public static void InitCuts()
         {
@@ -96,7 +97,7 @@ namespace Underworld
         /// <param name="targetControl"></param>
         /// <param name="duration"></param>
         /// <param name="IgnoreDelay"></param>
-        public static void FlashColour(byte colour, TextureRect targetControl, float duration = 0.2f, bool IgnoreDelay = false)
+        public static void FlashColour(byte colour, TextureRect targetControl, float duration = 0.2f, bool IgnoreDelay = false, bool HaltGame = false)
         {
             var palette = PaletteLoader.Palettes[0];
             var width = 2; var height = 2;
@@ -110,20 +111,38 @@ namespace Underworld
                     iCol++;
                 }
             }
+            var gamemode = uimanager.CurrentGameMode;//(uimanager.CurrentGameMode == uimanager.GameModes.CUTSCENE)
+            if (HaltGame)
+            {
+                uimanager.CurrentGameMode = uimanager.GameModes.CUTSCENE;
+            }
 
             var tex = new ImageTexture();
             tex.SetImage(img);
             if (!IgnoreDelay)
             {
-                _ = Coroutine.Run(
+                if (HaltGame)
+                {
+                    _ = Coroutine.Run(
+                        FlashColourUntilFlag(colorimg: tex, targetControl: targetControl),
+                        main.instance);
+                }
+                else
+                {
+                    _ = Coroutine.Run(
                         FlashColourWithDelay(colorimg: tex, targetControl: targetControl, duration: duration),
-                        main.instance
-                );
+                        main.instance);
+                }
+
             }
             else
             {
                 EnableDisable(targetControl, true);
                 targetControl.Texture = tex;
+            }
+            if (HaltGame)
+            {
+                uimanager.CurrentGameMode = gamemode;
             }
         }
 
@@ -132,6 +151,19 @@ namespace Underworld
             EnableDisable(targetControl, true);
             targetControl.Texture = colorimg;
             yield return new WaitForSeconds(duration);
+            EnableDisable(targetControl, false);
+            yield return 0;
+        }
+
+        private static IEnumerator FlashColourUntilFlag(ImageTexture colorimg, TextureRect targetControl)
+        {
+            EnableDisable(targetControl, true);
+            targetControl.Texture = colorimg;
+            while (WaitingForFade)
+            {
+                yield return new WaitForSeconds(0.1f);
+            }
+
             EnableDisable(targetControl, false);
             yield return 0;
         }
@@ -167,7 +199,7 @@ namespace Underworld
         }
 
 
-        
+
         /// <summary>
         /// Display a cutscene frame, optionally cropping to a scene height.
         /// When cropHeight &lt; 200, the frame is cropped to that height with black
@@ -196,9 +228,9 @@ namespace Underworld
                 if (useSingleRedChannel)
                 {
                     //Use a material if the source image is a singlered channel. This applies when the image is windows cutscene. eg repair animation.
-                    targetControl.Material = cuts.GetMaterial(imageNo);    
+                    targetControl.Material = cuts.GetMaterial(imageNo);
                 }
-                
+
             }
         }
 

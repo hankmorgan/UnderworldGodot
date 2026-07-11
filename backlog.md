@@ -100,7 +100,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] ordinal is cut off when player level >10 eg 11th is 11t (UW2 confirmed bug)
 - [ ] forcefields in prison tower do not extend to the ground
 - [ ] [uw2] troll in combat tries to throw a snowball (animation bug)
-- [ ] Fade to black on teleport
 - [ ] Items given to player that are not moved from trade area vanish
 - [ ] Doors open to 90degree angles
 - [ ] Proper rendering of the "escher" room in Talorus. Ensure the walls of the slopes do not appear/are transparent.

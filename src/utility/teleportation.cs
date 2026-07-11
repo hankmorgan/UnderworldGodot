@@ -34,7 +34,8 @@ namespace Underworld
         {
             if (TeleportLevel != -1)
             {
-
+                uimanager.WaitingForFade = true;
+                uimanager.FlashColour(1, uimanager.CutsSmall, HaltGame:true);
                 if (playerdat.ObjectInHand != -1)
                 {
                     //handle moving an object in hand through levels. 
@@ -122,6 +123,8 @@ namespace Underworld
                 //teleport within a map
                 if ((TeleportTileX != -1) && (TeleportTileY != -1))
                 {
+                    uimanager.WaitingForFade = true;
+                    uimanager.FlashColour(1, uimanager.CutsSmall, HaltGame:true);
                     //move to new tile
                     if (_RES == GAME_UW2)
                     {
@@ -151,6 +154,7 @@ namespace Underworld
                 CodeToRunOnTeleport();
                 CodeToRunOnTeleport = null;//although this should be handled by the method itself
             }
+            uimanager.WaitingForFade = false;
         }
 
 
