@@ -225,7 +225,7 @@ namespace Underworld
         /// <returns></returns>
         public static int corpse(int item_id)
         {
-            return (buffer[CritterOffset(item_id) + 0xA] >> 2) & 0x3F;
+            return (buffer[CritterOffset(item_id) + 0xA] >> 2) & 0x7;
         }
 
         /// <summary>

@@ -26,7 +26,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] drag&drop objects on paperdoll.
 - [ ] camera will eventually bob underneath the surface when swimming. (more a problem that the world underneath is rendered, rather than showing blackness.
 - [ ] some objects will appear underneath slopes (this might be a rendering diff vs vanilla)
-- [ ] uw1 vampire bat dropped a runestone! A lurker dropped debris. Likely a bug in UW1 lootdrop code.
 - [ ] ProcessMotionInputs Check that player is grounded when jumping
 - [ ] Input sanitation when in main._input
 - [ ] Handle effect 90-91 in PlaySoundEffectAtAvatar
@@ -106,6 +105,8 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Arrows launched by an arrow trap are rendered as sprites not a 3d model
 - [ ] Handle extraction/opening of gog.com game.gog files.
 - [ ] Objects embedded within tiles are not visible (eg some objects in the ice caverns that are within the bounds of a solid tile.)
+- [ ] Respect the no-magic bit
+- [ ] The vampire bat on UW1 level 1 is not ambushing at the south western door.
 
 ## Blocked
 Things I've hit a roadblock on.

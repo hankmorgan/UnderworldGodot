@@ -5,9 +5,8 @@
   - [Credits](#credits)
   - [Before you begin.](#before-you-begin)
   - [Current features](#current-features)
-  - [Whats missing](#whats-missing)
-  - [Some known Issues](#some-known-issues)
   - [Getting Started](#getting-started)
+    - [Getting Started Development Environment](#getting-started-development-environment)
   - [UWsettings.json](#uwsettingsjson)
   - [Controls](#controls)
     - [Modes](#modes)
@@ -101,36 +100,15 @@ Requires game files for either UW1 or UW2. GOG versions need to be extracted usi
 * Adding and deleting automap notes
 * Stealth mechanics
 * Death and resurrection mechanics with cutscenes.
+* Sprite transparencies (e.g. creature shadows) 
 
-## Whats missing
-* Sprite transparencies (e.g. creature shadows)
-* Those weird ethereal void monsters
-* Getting lost mechanics (UW2)
-* Dragging of items on UI
-* Message scroll edges and other ui polish
-* Updating of SCD.ARK files once events process.
-* Health and mana flask animation effects.
-
-## Some known Issues
-- Some NPC sprites are incorrectly cropped or hover off the ground.
-- NPCs and mobile objects move at a slow rate of refresh (this is timing configuration, but a slower speed allows me to check their behaviours during testing..)
-- Some cutscenes are missing frames or have visual distortions
-- Music stops playing because game cannot detect when a playing music track is finished.
-- Sprite billboarding is always "UP" even when the player camera is being rolled.
-- Cursor pivots are at centre of art for the automap ui elements such as the quill.
-- Stats display is misaligned
-- Interaction mode changes as you use the paperdoll. 
-- player footsteps and swimming sound while in water does not play
-- camera will eventually bob underneath the surface when swimming.
-- some objects will appear to clip underneath slopes (this might be a rendering diff vs vanilla)
-- A damage animos first frame is a blood spatter.
-- spell icons appear above conversation ui
-- runes stones appear above the dragon ui element
-- Some saving bugs. Don't expect a fully reliable save-load system yet.
 
 ## Getting Started
 
-No exe builds yet. This is just a glorified map viewer at this point that you will need to build in Godot yourself.
+See [https://github.com/hankmorgan/UnderworldGodot/releases]() for latest builds. 
+
+
+### Getting Started Development Environment
 
 See [https://godotengine.org/](https://godotengine.org/) for engine runtime downloads.
 
@@ -164,8 +142,8 @@ To select maps to load.
 
 ```json
 {
-    "pathuw1": "C:\\Games\\UW1\\game\\UW",
-    "pathuw2": "C:\\Games\\UW2IDA\\UW2",
+    "pathuw1": "C:\\Games\\UW1",
+    "pathuw2": "C:\\Games\\UW2",
     "gametoload": "UW2",
     "level": 0,
     "lightlevel" : 7,

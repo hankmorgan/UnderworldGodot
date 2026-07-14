@@ -7,7 +7,7 @@ namespace Underworld
 {
     public partial class npc : objectInstance
     {
-       // public static int TESTITEM_ID = 97;
+        //public static int TESTITEM_ID = 74;
         Label3D myLabel;
 
         /// <summary>
@@ -80,6 +80,7 @@ namespace Underworld
         public static npc CreateInstance(Node3D parent, uwObject obj, string name)
         {
             //obj.item_id = TESTITEM_ID;
+            obj.npc_hp = 1;
             var n = new npc(obj);
 
             var a_sprite = new uwMeshInstance3D(); //new Sprite3D();
@@ -91,28 +92,6 @@ namespace Underworld
             parent.AddChild(a_sprite);
             a_sprite.Position = new Vector3(0, n.FrameSize.Y / 2 + 0.12f, 0);
             //a_sprite.CreateConvexCollision();
-
-            // //add xfersprite
-            // var x_sprite = new uwMeshInstance3D(); //new Sprite3D();
-            // x_sprite.Name = name;
-            // x_sprite.Mesh = new QuadMesh();
-            // x_sprite.Mesh.SurfaceSetMaterial(0, n.material_xfer);
-            // x_sprite.Mesh.Set("size", n.FrameSize);
-            // n.sprite_xfer = x_sprite;
-            // parent.AddChild(x_sprite);
-            // x_sprite.Position = a_sprite.Position; //new Vector3(0, n.FrameSize.Y / 2 + 0.12f, 0);
-            // x_sprite.Rotation = a_sprite.Rotation;
-
-            // //add infosprite
-            // var i_sprite = new uwMeshInstance3D(); //new Sprite3D();
-            // i_sprite.Name = name;
-            // i_sprite.Mesh = new QuadMesh();
-            // i_sprite.Mesh.SurfaceSetMaterial(0, n.material_objectinfo);
-            // i_sprite.Mesh.Set("size", n.FrameSize);
-            // n.sprite_objectinfo = i_sprite;
-            // parent.AddChild(i_sprite);
-            // i_sprite.Position = a_sprite.Position; //new Vector3(0, n.FrameSize.Y / 2 + 0.12f, 0);
-            // i_sprite.Rotation = a_sprite.Rotation;
 
             if (ObjectCreator.printlabels)
             {
