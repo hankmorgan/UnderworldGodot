@@ -17,10 +17,10 @@ namespace Underworld
             var appraise_accuracy = 50 - ((playerdat.Appraise * 45) / 30); //the variant range +/- that will be used to assess item values.
 
             //Get total value of player offering
-            var playervalue = GetPCValue(false, appraise_accuracy);
+            var playervalue = GetPCTradeValue(ApplyLikeDislike: false, appraise_accuracy: appraise_accuracy, applyAccuracy: true);
 
             //Get total value of npc offering without applying likes dislikes.
-            var npcvalue = GetNPCValue(false, appraise_accuracy);
+            var npcvalue = GetNPCTradeValue(ApplyLikeDislike: false, appraise_accuracy: appraise_accuracy, applyAccuracy: true);
             if (npcvalue == 0)
             {
                 evaluation = 100;

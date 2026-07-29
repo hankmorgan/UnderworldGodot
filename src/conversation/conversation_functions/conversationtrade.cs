@@ -47,18 +47,22 @@ namespace Underworld
         /// <param name="ApplyLikeDislike"></param>
         /// <param name="appraise_accuracy"></param>
         /// <returns></returns>
-        static int GetNPCValue(bool ApplyLikeDislike = false, int appraise_accuracy = 0, bool applyAccuracy = false)
+        static int GetNPCTradeValue(bool ApplyLikeDislike = false, int appraise_accuracy = 0, bool applyAccuracy = false)
         {
             var result = 0;
             for (int i = 0; i < uimanager.NoOfTradeSlots; i++)
             {
                 //if slot select get monetary value, possibly adjusted for likes dislike and player appraisal score
                 var index = uimanager.GetNPCTradeSlot(i);
-                result += GetTrueItemValue(
-                    ApplyLikeDislike: ApplyLikeDislike,
-                    appraise_accuracy: appraise_accuracy,
-                    applyAccuracy: applyAccuracy,
-                    index: index);
+                if (index != -1)
+                {
+                    var obj = UWTileMap.current_tilemap.LevelObjects[index];
+                    result += GetTradeValueOfItem(
+                        ApplyLikeDislike: ApplyLikeDislike,
+                        appraise_accuracy: appraise_accuracy,
+                        applyAccuracy: applyAccuracy,
+                        obj: obj);
+                }
             }
             return result;
         }
@@ -71,69 +75,75 @@ namespace Underworld
         /// <param name="appraise_accuracy"></param>
         /// <param name="applyAccuracy"></param>
         /// <returns></returns>
-        static int GetPCValue(bool ApplyLikeDislike = false, int appraise_accuracy = 0, bool applyAccuracy = false)
+        static int GetPCTradeValue(bool ApplyLikeDislike = false, int appraise_accuracy = 0, bool applyAccuracy = false)
         {
             var result = 0;
             for (int i = 0; i < uimanager.NoOfTradeSlots; i++)
             {
                 //if slot select get monetary value, possibly adjusted for likes dislike and player appraisal score
                 var index = uimanager.GetPlayerTradeSlot(i);
-                result += GetTrueItemValue(
-                    ApplyLikeDislike: ApplyLikeDislike,
-                    appraise_accuracy: appraise_accuracy,
-                    applyAccuracy: applyAccuracy,
-                    index: index);
+                if (index != -1)
+                {
+                    var obj = UWTileMap.current_tilemap.LevelObjects[index];
+                    result += GetTradeValueOfItem(
+                        ApplyLikeDislike: ApplyLikeDislike,
+                        appraise_accuracy: appraise_accuracy,
+                        applyAccuracy: applyAccuracy,
+                        obj: obj);
+                }
             }
             return result;
         }
 
-        private static int GetTrueItemValue(bool ApplyLikeDislike, int appraise_accuracy, bool applyAccuracy, int index)
-        {
-            if (index != -1)
-            {
-                var obj = UWTileMap.current_tilemap.LevelObjects[index];
-                if (obj != null)
-                {
-                    //obj.ObjectQuantity;
-                    var itemvalue = commonObjDat.monetaryvalue(obj.item_id);
-                    if (ApplyLikeDislike)
-                    {//todo
-                        itemvalue = itemvalue * 1;
-                    }
-                    itemvalue = itemvalue * obj.ObjectQuantity;
-                    var quality = obj.quality;
-                    //if coin quality = 0x40
-                    if (
-                        (obj.item_id == 160)
-                        ||
-                        ((_RES != GAME_UW2) && (obj.item_id == 161))
-                        )
-                    {
-                        quality = 0x3F;
-                    }
+        // private static int GetTrueItemValue(bool ApplyLikeDislike, int appraise_accuracy, bool applyAccuracy, int index)
+        // {
+        //     if (index != -1)
+        //     {
+        //         var obj = UWTileMap.current_tilemap.LevelObjects[index];
+        //         if (obj != null)
+        //         {
+        //             //obj.ObjectQuantity;
+        //             var itemvalue = commonObjDat.monetaryvalue(obj.item_id);
+        //             if (ApplyLikeDislike)
+        //             {//todo
+        //                 itemvalue = itemvalue * 1;
+        //             }
+        //             itemvalue = itemvalue * obj.ObjectQuantity;
+        //             var quality = obj.quality;
+        //             //if coin quality = 0x40
+        //             if (
+        //                 (obj.item_id == 160)
+        //                 ||
+        //                 ((_RES != GAME_UW2) && (obj.item_id == 161))
+        //                 )
+        //             {
+        //                 quality = 0x3F;
+        //             }
 
-                    itemvalue = (itemvalue * quality) >> 6;
-                    if (applyAccuracy)
-                    {
-                        //Rng.r = new System.Random(obj.item_id);//RNG is always re-seeded with item_id before getting offset here
-                        Rng.Seed = (uint)obj.item_id;
-                        itemvalue = Rng.RandomOffset(itemvalue, -appraise_accuracy, +appraise_accuracy);
-                    }
-                    return itemvalue;
-                }
-            }
+        //             itemvalue = (itemvalue * quality) >> 6;
+        //             if (applyAccuracy)
+        //             {
+        //                 //Rng.r = new System.Random(obj.item_id);//RNG is always re-seeded with item_id before getting offset here
+        //                 Rng.Seed = (uint)obj.item_id;
+        //                 itemvalue = Rng.RandomOffset(itemvalue, -appraise_accuracy, +appraise_accuracy);
+        //             }
+        //             return itemvalue;
+        //         }
+        //     }
 
-            return 0;
-        }
+        //     return 0;
+        // }
+
 
         /// <summary>
-        /// Gets the value 
+        /// Gets the value of the item trading, account for likes/dislikes and appraisal accuracy
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="ApplyLikeDislike"></param>
         /// <param name="appraise_accuracy"></param>
+        /// <param name="applyAccuracy"></param>
         /// <returns></returns>
-        static int GetValueOfItemToNPC(uwObject obj, bool ApplyLikeDislike, int appraise_accuracy)
+        static int GetTradeValueOfItem(uwObject obj, bool ApplyLikeDislike = false, int appraise_accuracy = 0, bool applyAccuracy = false)
         {
             float multiplier = 1f;
             int itemvalue = 0;
@@ -377,7 +387,7 @@ namespace Underworld
                         UWTileMap.GetRandomXYZForTile(desttile, out int newxpos, out int newypos, out int newzpos);
                         //var dropcoordinate = uwObject.XYZToVector3(x: (newxpos << 5) + (playerdat.playerObject.tileX << 8), y: tile.floorHeight << 3, z: (newypos << 5) + (playerdat.playerObject.tileY << 8));//uwObject.GetCoordinate_OBSOLETE(playerdat.playerObject.tileX, playerdat.playerObject.tileY, newxpos, newypos, newzpos);
                         //move object to tile
-                        tradedobject.tileX = desttile.tileX; tradedobject.tileY= desttile.tileY;
+                        tradedobject.tileX = desttile.tileX; tradedobject.tileY = desttile.tileY;
                         tradedobject.xpos = (short)newxpos; tradedobject.ypos = (short)newypos; tradedobject.zpos = (short)newzpos;
                         //link to tile
                         tradedobject.next = desttile.indexObjectList;

@@ -30,7 +30,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Input sanitation when in main._input
 - [ ] Handle effect 90-91 in PlaySoundEffectAtAvatar
 - [ ] allow conversation with hostile npcs eg rodric and Patterson
-- [ ] conversationtrade GetTrueItemValue()
 - [ ] trade dooffer (Trade items)
 - [ ] DamagePlayer what else is needed there.
 - [ ] Destroying open doors in object destruction
@@ -107,6 +106,7 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Objects embedded within tiles are not visible (eg some objects in the ice caverns that are within the bounds of a solid tile.)
 - [ ] Respect the no-magic bit
 - [ ] The vampire bat on UW1 level 1 is not ambushing at the south western door.
+- [ ] BablHack trade bonus
 
 ## Blocked
 Things I've hit a roadblock on.

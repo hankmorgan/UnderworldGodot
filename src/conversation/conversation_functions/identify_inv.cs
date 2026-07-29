@@ -9,12 +9,13 @@ namespace Underworld
         {
             var index = at(at(stack + stackptr-4));
             var lorecheck = at(at(stack + stackptr-1));
-            var value = GetTrueItemValue(
+            var obj = UWTileMap.current_tilemap.LevelObjects[index];
+            var value = GetTradeValueOfItem(
                     ApplyLikeDislike: true, 
                     appraise_accuracy: NPCAppraisalAccuracy, 
                     applyAccuracy: true, 
-                    index: index);
-            var obj = UWTileMap.current_tilemap.LevelObjects[index];
+                    obj: obj);
+            
             var idString = look.GetDescriptionString(
                 obj: obj, 
                 objList: UWTileMap.current_tilemap.LevelObjects, 

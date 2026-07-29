@@ -26,11 +26,11 @@ namespace Underworld
                 {
                     var evaluation = 0;
                     //get the npc to evaluate the deal using their accuracy and applying their likes dislikes
-                    var playervalue = GetPCValue(
+                    var playervalue = GetPCTradeValue(
                            ApplyLikeDislike: true,
                            appraise_accuracy: NPCAppraisalAccuracy,
                            applyAccuracy: true);
-                    var npcvalue = GetNPCValue(
+                    var npcvalue = GetNPCTradeValue(
                        ApplyLikeDislike: true,
                        appraise_accuracy: NPCAppraisalAccuracy,
                        applyAccuracy: true);

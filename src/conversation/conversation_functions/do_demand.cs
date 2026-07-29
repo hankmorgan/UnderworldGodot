@@ -119,7 +119,7 @@ namespace Underworld
         {
             var npcdemandscore = 1;
             //get value of items selected on npc area
-            var npcvalue = GetNPCValue(
+            var npcvalue = GetNPCTradeValue(
                 ApplyLikeDislike: true,
                 appraise_accuracy: NPCAppraisalAccuracy,
                 applyAccuracy: true);
