@@ -44,6 +44,17 @@ namespace Underworld
                         playerdat.SetQuest(133,0);
                         break;
                     }
+                case 5:
+                    {
+                        Debug.Print("untested set bit on npcwhoami");
+                        var who = at(at(stack + stackptr - 2));
+                        CallBacks.RunCodeOnNPCS_WhoAmI(
+                            methodToCall: npc.set_unkABit7, 
+                            whoami: who, 
+                            paramsArray: new int[]{1}, 
+                            loopAll: false );
+                        break;
+                    }
                 case 4: //check if fighting in the pits
                     {
                         Debug.Print("untested checkifinpitsfight");
