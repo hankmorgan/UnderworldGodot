@@ -42,6 +42,12 @@ namespace Underworld
         public static int TradeResult = 0;
 
         /// <summary>
+        /// This is a bonus applied by a bablhack in uw2. 
+        /// However it is bugged in vanilla since it makes the npc items more valuable and only applies on do_judgement and does not actually help the player make better trades!
+        /// </summary>
+        public static int BablTradeBonus = 0;
+
+        /// <summary>
         /// Get the total value of the players trade area (selected items)
         /// </summary>
         /// <param name="ApplyLikeDislike"></param>

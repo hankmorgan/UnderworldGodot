@@ -21,6 +21,7 @@ namespace Underworld
 
             //Get total value of npc offering without applying likes dislikes.
             var npcvalue = GetNPCTradeValue(ApplyLikeDislike: false, appraise_accuracy: appraise_accuracy, applyAccuracy: true);
+            npcvalue += BablTradeBonus; 
             if (npcvalue == 0)
             {
                 evaluation = 100;

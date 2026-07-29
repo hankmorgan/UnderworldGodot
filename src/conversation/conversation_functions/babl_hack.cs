@@ -37,10 +37,15 @@ namespace Underworld
                         SetUpArenaFight();
                         break;
                     }
-                case 3:
-                    {//gets and clears jospurs debt.
+                case 3://gets and clears jospurs debt.
+                    {
                         result_register = playerdat.GetQuest(133);
                         playerdat.SetQuest(133,0);
+                        break;
+                    }
+                case 9: //trade bonus
+                    {
+                        BablTradeBonus = at(at(stack + stackptr - 2));
                         break;
                     }
                 default:                

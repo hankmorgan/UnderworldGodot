@@ -165,6 +165,7 @@ namespace Underworld
             //Init conversation trade globals
             //Rng.r = new System.Random(talker.item_id);//rng is always set to npcs item id
             Rng.Seed = (uint)talker.item_id;
+            BablTradeBonus = 0;
             TradeThreshold = Rng.RandomOffset(critterObjectDat.TradeThreshold(talker.item_id), -25, +25);
             TradePatience = Rng.RandomOffset(critterObjectDat.TradePatience(talker.item_id), -20, +100); 
             NPCAppraisalAccuracy = Rng.RandomOffset( (16 - critterObjectDat.TradeAppraisal(talker.item_id)) * 6 , -25,+50); 
