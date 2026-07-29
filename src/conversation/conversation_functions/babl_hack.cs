@@ -1,5 +1,6 @@
 
 using System.Diagnostics;
+using System.Runtime.Serialization.Formatters;
 
 namespace Underworld
 {
@@ -36,20 +37,35 @@ namespace Underworld
                     {
                         SetUpArenaFight();
                         break;
-                    }
+                    }                    
                 case 3://gets and clears jospurs debt.
                     {
                         result_register = playerdat.GetQuest(133);
                         playerdat.SetQuest(133,0);
                         break;
                     }
+                case 4: //check if fighting in the pits
+                    {
+                        Debug.Print("untested checkifinpitsfight");
+                        if (playerdat.IsFightingInPit)
+                        {
+                            result_register = 1;
+                        }
+                        else
+                        {
+                            result_register = 0;
+                        }
+                        break;
+                    }
                 case 9: //trade bonus
                     {
+                        Debug.Print("untested babltradebonus");
                         BablTradeBonus = at(at(stack + stackptr - 2));
                         break;
                     }
                 default:                
                     Debug.Print($"unimplemented babl hack mode {mode}");
+                    result_register = 0;
                     break;
             }
         }
