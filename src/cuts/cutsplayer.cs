@@ -561,7 +561,7 @@ namespace Underworld
         {
             if (cancelRequested)
             {
-                yield return null;
+                yield return new WaitOneFrame();
             }
             string paramlist = "";
             for (int p = 0; p < cmd.NoOfParams; p++)
@@ -663,6 +663,17 @@ namespace Underworld
                         //   bottom margin = 2px (inc dx; inc dx at ovr108_15CE, lines 441401-441403)
                         //   word wrap at 320px, no inter-character spacing
                         // NOTE: game uses underscore-as-dot convention: "_." should render as " ."
+                        var audioPlayer = main.instance?.DigitalAudioPlayer;
+                        while (audioPlayer != null && audioPlayer.Playing)
+                        {
+                            if (cancelRequested)
+                            {
+                                yield break;
+                            }
+
+                            yield return new WaitForSeconds(0.05f);
+                        }
+
                         if ((short)cmd.functionParams[1] >= 0)
                         {
                             uimanager.instance.CutsSubtitle.Text = $"[center]{GameStrings.GetString(StringBlock, cmd.functionParams[1])}[/center]";
@@ -881,9 +892,24 @@ namespace Underworld
                     XMIMusic.LoadXMI((byte)cmd.functionParams[0]);
                     break;
 
-                case 27: // audio-wait
-                    Debug.Print($"  Audio wait: timeout={cmd.functionParams[0]}");
-                    break;
+                case 27: // audio-wait — wait for audio playback completion or timeout
+                    {
+                        var audioPlayer = main.instance?.DigitalAudioPlayer;
+                        var timeoutSec = cmd.functionParams[0] > 0 ? cmd.functionParams[0] / 2.0f : 60f;
+                        var elapsed = 0f;
+                        while (audioPlayer != null && audioPlayer.Playing && elapsed < timeoutSec)
+                        {
+                            if (cancelRequested)
+                            {
+                                break;
+                            }
+
+                            yield return new WaitForSeconds(0.05f);
+                            elapsed += 0.05f;
+                        }
+
+                        break;
+                    }
 
                 case 3: // pause — wait arg[0] / 2 seconds (from disassembly)
                     if (cmd.functionParams[0] > 0)
@@ -933,6 +959,7 @@ namespace Underworld
         {
             var OrigGameMode = uimanager.CurrentGameMode;
             uimanager.CurrentGameMode = uimanager.GameModes.CUTSCENE;
+            MessageDisplay.WaitingForMore = false;
             Debug.Print($"Running cutscene {CutsceneNo}");
             IsPlaying = true;
             TextureRect cutscontrol;
@@ -1144,6 +1171,7 @@ namespace Underworld
                         {
                             goto cleanup;
                         }
+
                         // Fire commands scheduled for this frame
                         foreach (var cmd in scheduledCmds)
                         {
@@ -1557,7 +1585,7 @@ namespace Underworld
                 callBackMethod = null;
             }
 
-            yield return null;
+            yield return new WaitOneFrame();
         }
 
         /// <summary>
