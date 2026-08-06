@@ -7,6 +7,8 @@ namespace Underworld
     {
         public static bool Use(uwObject obj, bool WorldObject)
         {
+            if (WorldObject)
+                return true;
             Debug.Print($"a wood weighs {commonObjDat.mass(0xCC)} a torch weighs {commonObjDat.mass(0x91)}");
             if (_RES == GAME_UW2)
             {

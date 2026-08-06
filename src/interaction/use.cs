@@ -162,7 +162,11 @@ namespace Underworld
             {
                 result = true;//supress messaging.
             }
-            if (!result && !WorldObject
+            if (!result && WorldObject && Food.IsFood(ObjectUsed))
+            {
+                result = true;
+            }
+            else if (!result && !WorldObject
                 && Food.IsFood(ObjectUsed)
                 && (ObjectUsed.majorclass != 2 || ObjectUsed.minorclass != 3)
                 && Food.SpecialFoodCases(ObjectUsed, true))
@@ -287,7 +291,7 @@ namespace Underworld
                                 case 0xE://plant (0xCE)
                                 case 0xF://plant (0xCF)
                                     if (WorldObject)
-                                        return false;
+                                        return true;
                                     return Food.SpecialFoodCases(ObjectUsed, true);
                             }
                         }
@@ -298,7 +302,7 @@ namespace Underworld
                                 case 0xE://thorny flower (0xCE)
                                 case 0xF://plant (0xCF)
                                     if (WorldObject)
-                                        return false;
+                                        return true;
                                     return Food.SpecialFoodCases(ObjectUsed, true);
                                 case > 0 and <= 7://a range of potions.
                                     return potion.Use(ObjectUsed, WorldObject);
@@ -425,7 +429,7 @@ namespace Underworld
                             {
                                 case 4://dream plant
                                     if (WorldObject)
-                                        return false;
+                                        return true;
                                     return Food.SpecialFoodCases(ObjectUsed, true);
                                 case >= 8 and <= 0xF:
                                     return smallblackrockgem.Use(ObjectUsed, WorldObject);
