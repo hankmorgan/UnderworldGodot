@@ -162,9 +162,10 @@ namespace Underworld
             {
                 result = true;//supress messaging.
             }
-            if (!result && Food.IsFood(ObjectUsed)
+            if (!result && !WorldObject
+                && Food.IsFood(ObjectUsed)
                 && (ObjectUsed.majorclass != 2 || ObjectUsed.minorclass != 3)
-                && Food.SpecialFoodCases(ObjectUsed, !WorldObject))
+                && Food.SpecialFoodCases(ObjectUsed, true))
             {
                 result = true;
             }
@@ -285,7 +286,9 @@ namespace Underworld
                                     return key_of_infinity.Use(ObjectUsed, WorldObject);
                                 case 0xE://plant (0xCE)
                                 case 0xF://plant (0xCF)
-                                    return Food.SpecialFoodCases(ObjectUsed, !WorldObject);
+                                    if (WorldObject)
+                                        return false;
+                                    return Food.SpecialFoodCases(ObjectUsed, true);
                             }
                         }
                         else
@@ -294,7 +297,9 @@ namespace Underworld
                             {
                                 case 0xE://thorny flower (0xCE)
                                 case 0xF://plant (0xCF)
-                                    return Food.SpecialFoodCases(ObjectUsed, !WorldObject);
+                                    if (WorldObject)
+                                        return false;
+                                    return Food.SpecialFoodCases(ObjectUsed, true);
                                 case > 0 and <= 7://a range of potions.
                                     return potion.Use(ObjectUsed, WorldObject);
                             }
@@ -419,7 +424,9 @@ namespace Underworld
                             switch (ObjectUsed.classindex)
                             {
                                 case 4://dream plant
-                                    return Food.SpecialFoodCases(ObjectUsed, !WorldObject);
+                                    if (WorldObject)
+                                        return false;
+                                    return Food.SpecialFoodCases(ObjectUsed, true);
                                 case >= 8 and <= 0xF:
                                     return smallblackrockgem.Use(ObjectUsed, WorldObject);
                             }
