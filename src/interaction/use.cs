@@ -162,6 +162,13 @@ namespace Underworld
             {
                 result = true;//supress messaging.
             }
+            if (!result && !WorldObject
+                && Food.IsFood(ObjectUsed)
+                && (ObjectUsed.majorclass != 2 || ObjectUsed.minorclass != 3)
+                && Food.SpecialFoodCases(ObjectUsed, true))
+            {
+                result = true;
+            }
             if ((!result) && (!UsedFromCollision))
             {
                 uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_cannot_use_that_));
@@ -407,7 +414,7 @@ namespace Underworld
                             switch (ObjectUsed.classindex)
                             {
                                 case 4://dream plant
-                                    return Food.SpecialFoodCases(ObjectUsed, WorldObject);
+                                    return Food.SpecialFoodCases(ObjectUsed, !WorldObject);
                                 case >= 8 and <= 0xF:
                                     return smallblackrockgem.Use(ObjectUsed, WorldObject);
                             }
