@@ -162,10 +162,9 @@ namespace Underworld
             {
                 result = true;//supress messaging.
             }
-            if (!result && !WorldObject
-                && Food.IsFood(ObjectUsed)
+            if (!result && Food.IsFood(ObjectUsed)
                 && (ObjectUsed.majorclass != 2 || ObjectUsed.minorclass != 3)
-                && Food.SpecialFoodCases(ObjectUsed, true))
+                && Food.SpecialFoodCases(ObjectUsed, !WorldObject))
             {
                 result = true;
             }
@@ -284,12 +283,18 @@ namespace Underworld
                             {
                                 case 7://key of infinity
                                     return key_of_infinity.Use(ObjectUsed, WorldObject);
+                                case 0xE://plant (0xCE)
+                                case 0xF://plant (0xCF)
+                                    return Food.SpecialFoodCases(ObjectUsed, !WorldObject);
                             }
                         }
                         else
                         {
                             switch (ObjectUsed.classindex)
                             {
+                                case 0xE://thorny flower (0xCE)
+                                case 0xF://plant (0xCF)
+                                    return Food.SpecialFoodCases(ObjectUsed, !WorldObject);
                                 case > 0 and <= 7://a range of potions.
                                     return potion.Use(ObjectUsed, WorldObject);
                             }
