@@ -29,7 +29,15 @@ namespace Underworld
                     return; //no casting in the ethereal void.
                 }
             }
-            //TODO if no magic allow bit return
+            //if no magic allow bit return
+            if (UWTileMap.ValidTile(tileX, tileY))
+            {
+                var tile = UWTileMap.current_tilemap.Tiles[tileX, tileY];
+                if (tile.noMagic == 1)
+                {
+                    return;
+                }
+            }
 
             switch (majorclass)
             {
