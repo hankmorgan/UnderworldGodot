@@ -103,6 +103,31 @@ namespace Underworld
                         result_register = BablTradeBonus;
                         break;
                     }
+                case 0xA://check for guardian signet ring
+                    {
+                        Debug.Print("Untested guardian signet ring check");
+                        if(playerdat.LeftRingObject !=null)
+                        {
+                            if (playerdat.LeftRingObject.item_id == 0x35)
+                            {
+                                result_register = 1;
+                                break;
+                            }
+                            else
+                            {
+                                if (playerdat.RightRingObject !=null)
+                                {
+                                    if (playerdat.RightRingObject.item_id == 0x35)
+                                    {
+                                        result_register = 1;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        result_register = 0; //player not wearing a signet ring.
+                        break;
+                    }
                 default:
                     Debug.Print($"unimplemented babl hack mode {mode}");
                     result_register = 0;
