@@ -105,7 +105,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Handle extraction/opening of gog.com game.gog files.
 - [ ] Objects embedded within tiles are not visible (eg some objects in the ice caverns that are within the bounds of a solid tile.)
 - [ ] Respect the no-magic bit
-- [ ] The vampire bat on UW1 level 1 is not ambushing at the south western door.
 - [ ] Missing BablHack special cases
 
 ## Blocked

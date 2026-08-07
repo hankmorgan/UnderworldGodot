@@ -1,5 +1,6 @@
 
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Formatters;
 
 namespace Underworld
@@ -9,11 +10,11 @@ namespace Underworld
         public static void babl_hack(uwObject talker)
         {
             var mode = at(at(stack + stackptr - 1));
-            
+
             Debug.Print($"babl hack mode {mode}");
             switch (mode)
             {
-                case 0:
+                case 0: //challenge a fighter in the pits
                     {
                         Teleportation.CodeToRunOnTeleport = SetFightingInPit_Callback;
                         playerdat.SetPitFighter(0, (byte)talker.index);
@@ -33,26 +34,15 @@ namespace Underworld
                         }
                         break;
                     }
-                case 2:
+                case 2: //set up a pit fight via Jospur
                     {
                         SetUpArenaFight();
                         break;
-                    }                    
+                    }
                 case 3://gets and clears jospurs debt.
                     {
                         result_register = playerdat.GetQuest(133);
-                        playerdat.SetQuest(133,0);
-                        break;
-                    }
-                case 5:
-                    {
-                        Debug.Print("untested set bit on npcwhoami");
-                        var who = at(at(stack + stackptr - 2));
-                        CallBacks.RunCodeOnNPCS_WhoAmI(
-                            methodToCall: npc.set_unkABit7, 
-                            whoami: who, 
-                            paramsArray: new int[]{1}, 
-                            loopAll: false );
+                        playerdat.SetQuest(133, 0);
                         break;
                     }
                 case 4: //check if fighting in the pits
@@ -68,13 +58,35 @@ namespace Underworld
                         }
                         break;
                     }
+                case 5://set bit 7 at offset 0xA on an npc whoami
+                    {
+                        Debug.Print("untested set bit on npcwhoami");
+                        var who = at(at(stack + stackptr - 2));
+                        CallBacks.RunCodeOnNPCS_WhoAmI(
+                            methodToCall: npc.set_unkABit7,
+                            whoami: who,
+                            paramsArray: new int[] { 1 },
+                            loopAll: false);
+                        break;
+                    }
+                //case 7://Wand recharge.
+                //  {
+                //  break;
+                //  }
+                case 8: //modify trade evaluation threshold
+                    {
+                        Debug.Print("untested change trade evaluation threshold");
+                        var multiplier = at(at(stack + stackptr - 2));
+                        TradePatience = multiplier * TradePatience;
+                        break;
+                    }
                 case 9: //trade bonus
                     {
                         Debug.Print("untested babltradebonus");
                         BablTradeBonus = at(at(stack + stackptr - 2));
                         break;
                     }
-                default:                
+                default:
                     Debug.Print($"unimplemented babl hack mode {mode}");
                     result_register = 0;
                     break;
@@ -96,28 +108,28 @@ namespace Underworld
         /// </summary>
         static void SetUpArenaFight()
         {
-            var IsPowerFullprobability_var4 = GetConvoStackValueAtPtr(stack + stackptr-4);
-            var Arena_var6 = GetConvoStackValueAtPtr(stack + stackptr-3);
-            var di_noOfFighters =GetConvoStackValueAtPtr(stack + stackptr-2);
+            var IsPowerFullprobability_var4 = GetConvoStackValueAtPtr(stack + stackptr - 4);
+            var Arena_var6 = GetConvoStackValueAtPtr(stack + stackptr - 3);
+            var di_noOfFighters = GetConvoStackValueAtPtr(stack + stackptr - 2);
             var xOffset_var8 = 1;
             var yOffset_varA = 1;
             var var10 = 0;
 
-            
+
             //RNG is reinitialised here
 
             if (Arena_var6 == 1 || Arena_var6 == 2)
             {
                 xOffset_var8 = -1;
             }
-            if (Arena_var6>1)
+            if (Arena_var6 > 1)
             {
                 yOffset_varA = -1;
             }
 
             if (di_noOfFighters == 5)
             {
-                var newFighter = pitsofcarnage.CreateRandomPitFighter((xOffset_var8 * 6) + 0x1F , (yOffset_varA<<2)+0x1F, 99);
+                var newFighter = pitsofcarnage.CreateRandomPitFighter((xOffset_var8 * 6) + 0x1F, (yOffset_varA << 2) + 0x1F, 99);
                 if (newFighter != null)
                 {
                     var10++;
@@ -128,26 +140,26 @@ namespace Underworld
 
             var varC = 0;
 
-            while (varC<3)
+            while (varC < 3)
             {
                 var si = 0;
-                while ((si<=varC))
+                while ((si <= varC))
                 {
-                    var Y = 0x1F + ((varC - si + 4) * yOffset_varA) ;
-                    var X = 0x1F + ((si+4) * xOffset_var8);
+                    var Y = 0x1F + ((varC - si + 4) * yOffset_varA);
+                    var X = 0x1F + ((si + 4) * xOffset_var8);
                     var NewFighter = pitsofcarnage.CreateRandomPitFighter(X, Y, IsPowerFullprobability_var4);
-                    if (NewFighter!=null)
+                    if (NewFighter != null)
                     {
                         var10++;
                         di_noOfFighters--;
-                        playerdat.SetPitFighter(di_noOfFighters, (byte)NewFighter.index);     
+                        playerdat.SetPitFighter(di_noOfFighters, (byte)NewFighter.index);
                         if (di_noOfFighters == 0)
                         {//last fighter
                             CalculateJospurDebt(var10);
                             Teleportation.CodeToRunOnTeleport = SetFightingInPit_Callback;
                             result_register = var10;
                             return;
-                        }                   
+                        }
                     }
                     si++;
                 }
@@ -155,26 +167,26 @@ namespace Underworld
             }
         }
 
-    /// <summary>
-    /// Sets how much jospur will pay out on victory in the pits
-    /// </summary>
-    /// <param name="NoOfFighters"></param>
-    static void CalculateJospurDebt(int NoOfFighters)
-    {
-        switch(NoOfFighters)
+        /// <summary>
+        /// Sets how much jospur will pay out on victory in the pits
+        /// </summary>
+        /// <param name="NoOfFighters"></param>
+        static void CalculateJospurDebt(int NoOfFighters)
         {
-            case 2:
-                playerdat.SetQuest(133,8);break;
-            case 3:
-                playerdat.SetQuest(133,0xC);break;
-            case 4:
-                playerdat.SetQuest(133,0x14);break;
-            case 5:
-                playerdat.SetQuest(133,0x28);break;
-            default:
-                playerdat.SetQuest(133,0); break;
+            switch (NoOfFighters)
+            {
+                case 2:
+                    playerdat.SetQuest(133, 8); break;
+                case 3:
+                    playerdat.SetQuest(133, 0xC); break;
+                case 4:
+                    playerdat.SetQuest(133, 0x14); break;
+                case 5:
+                    playerdat.SetQuest(133, 0x28); break;
+                default:
+                    playerdat.SetQuest(133, 0); break;
+            }
         }
-    }
 
     }//end class
 }//end namespace
