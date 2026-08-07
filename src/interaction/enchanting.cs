@@ -321,7 +321,7 @@ namespace Underworld
         /// <param name="WorldObject"></param>
         /// <param name="ChargeChangeFactor"></param>
         /// <returns>the final charge applied</returns>
-        static int MagicObjectChargeUpdate(uwObject obj, uwObject[] objList, bool WorldObject, int ChargeChangeFactor)
+        public static int MagicObjectChargeUpdate(uwObject obj, uwObject[] objList, bool WorldObject, int ChargeChangeFactor)
         {
             if ((obj.is_quant == 0) && (obj.link != 0))
             {

@@ -36,13 +36,13 @@ namespace Underworld
                     }
                 case 2: //set up a pit fight via Jospur
                     {
-                        SetUpArenaFight();
+                        result_register = SetUpArenaFight();
                         break;
                     }
                 case 3://gets and clears jospurs debt.
                     {
                         result_register = playerdat.GetQuest(133);
-                        playerdat.SetQuest(133, 0);
+                        playerdat.SetQuest(133, 0);                        
                         break;
                     }
                 case 4: //check if fighting in the pits
@@ -69,21 +69,32 @@ namespace Underworld
                             loopAll: false);
                         break;
                     }
-                //case 7://Wand recharge.
-                //  {
-                //  break;
-                //  }
+                case 7://Wand recharge.  (untested but I believe this is one of the merchants in the Keep)
+                    {
+                        Debug.Print("untested recharge wand");
+                        var newCharge = at(at(stack + stackptr - 3));
+                        var objI = at(at(stack + stackptr - 2));
+                        var obj = UWTileMap.current_tilemap.LevelObjects[objI];
+                        result_register = enchanting.MagicObjectChargeUpdate(
+                            obj: obj,
+                            objList: UWTileMap.current_tilemap.LevelObjects,
+                            WorldObject: true,
+                            ChargeChangeFactor: newCharge);
+                        break;
+                    }
                 case 8: //modify trade evaluation threshold
                     {
                         Debug.Print("untested change trade evaluation threshold");
                         var multiplier = at(at(stack + stackptr - 2));
                         TradePatience = multiplier * TradePatience;
+                        result_register = TradePatience;
                         break;
                     }
                 case 9: //trade bonus
                     {
                         Debug.Print("untested babltradebonus");
                         BablTradeBonus = at(at(stack + stackptr - 2));
+                        result_register = BablTradeBonus;
                         break;
                     }
                 default:
@@ -106,7 +117,7 @@ namespace Underworld
         /// <summary>
         /// Creates an arena fight via conversation with Jospur
         /// </summary>
-        static void SetUpArenaFight()
+        static int SetUpArenaFight()
         {
             var IsPowerFullprobability_var4 = GetConvoStackValueAtPtr(stack + stackptr - 4);
             var Arena_var6 = GetConvoStackValueAtPtr(stack + stackptr - 3);
@@ -157,14 +168,14 @@ namespace Underworld
                         {//last fighter
                             CalculateJospurDebt(var10);
                             Teleportation.CodeToRunOnTeleport = SetFightingInPit_Callback;
-                            result_register = var10;
-                            return;
+                            return var10;
                         }
                     }
                     si++;
                 }
                 varC++;
             }
+            return var10;
         }
 
         /// <summary>
