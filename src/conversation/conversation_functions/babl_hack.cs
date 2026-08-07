@@ -69,6 +69,12 @@ namespace Underworld
                             loopAll: false);
                         break;
                     }
+                case 6://gets a sound flag
+                    {
+                        Debug.Print ("GetSoundRelatedFlagValue in BablHack()");
+                        result_register = 0;
+                        break;
+                    }
                 case 7://Wand recharge.  (untested but I believe this is one of the merchants in the Keep)
                     {
                         Debug.Print("untested recharge wand");
