@@ -104,6 +104,7 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Arrows launched by an arrow trap are rendered as sprites not a 3d model
 - [ ] Handle extraction/opening of gog.com game.gog files.
 - [ ] Objects embedded within tiles are not visible (eg some objects in the ice caverns that are within the bounds of a solid tile.)
+- [ ] UW2 First guardian cutscene is missing text.
 
 ## Blocked
 Things I've hit a roadblock on.
