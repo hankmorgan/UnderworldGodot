@@ -40,7 +40,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Review colour mappings identified in mapcolour in modelLoader
 - [ ] Terraindatloader. Any other types of tile
 - [ ] Sound logic in Magic projectile spell
-- [ ] Apply the nomagicbit in CastSpell.
 - [ ] NPC Goto. Check if logic is UW2 only.
 - [ ] NPC Wander Check animation_idle. Seg007_193
 - [ ] Double check attack probability
@@ -91,13 +90,14 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Study Food degradation mechanic (does this actually exist?)
 - [ ] In game console commands - spawnitems, teleport, quest flags, god/mage/onehitkill modes, stats edit, pause npcs/objects in motion.
 - [ ] UW2 Combat swing speed
-- [ ] Telefrag/crushing damage
+- [ ] Telefrag - Apparently this can happen when player is teleported into same position as another object. Never seen in the wild.
+- [ ] crushing damage when player pushed against wall. (this happens in the guardians trap)
 - [ ] PlacedObjectCollision/PositioningObjects in tiles (especially for trade)
 - [ ] World number calcs in UW2 may be incorrect.
 - [ ] prison tower dungeon 15 switch on diagonal wall is missing. (offset from wall?, needs to be tested on all diagonal walls)
 - [ ] ordinal is cut off when player level >10 eg 11th is 11t (UW2 confirmed bug)
 - [ ] forcefields in prison tower do not extend to the ground
-- [ ] [uw2] troll in combat tries to throw a snowball (animation bug)
+- [ ] [uw2] troll in combat tries to throw a snowball (possible animation bug)
 - [ ] Items given to player that are not moved from trade area vanish
 - [ ] Doors open to 90degree angles
 - [ ] Proper rendering of the "escher" room in Talorus. Ensure the walls of the slopes do not appear/are transparent.
