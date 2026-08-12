@@ -24,6 +24,9 @@ namespace Underworld
                             return 0.1f;
                         }
                     }
+
+                    if (IsDiagonalTile(tile.tileType))
+                        return 0.03f;
                 }
 
                 switch (uwobject.heading)
@@ -65,6 +68,29 @@ namespace Underworld
             }
         }
 
+        static bool IsDiagonalTile(short tileType) =>
+            tileType is UWTileMap.TILE_DIAG_SE or UWTileMap.TILE_DIAG_SW
+                or UWTileMap.TILE_DIAG_NE or UWTileMap.TILE_DIAG_NW;
+
+        static void PlaceOnDiagonalWall(Node3D parent, uwObject obj, float extrude, short tileType)
+        {
+            parent.Position = obj.GetCoordinate();
+            const float s = 0.707106781f;
+            var inward = new Vector3(
+                tileType is UWTileMap.TILE_DIAG_SE or UWTileMap.TILE_DIAG_NE ? -s : s,
+                0f,
+                tileType is UWTileMap.TILE_DIAG_SE or UWTileMap.TILE_DIAG_SW ? -s : s).Normalized();
+            var tileCenter = new Vector3(-(obj.tileX * 1.2f + 0.6f), parent.Position.Y, obj.tileY * 1.2f + 0.6f);
+            float minDepth = float.MaxValue;
+            foreach (var local in new Vector3[]
+            {
+                new(-0.6f, 0f, extrude), new(0.6f, 0f, extrude),
+                new(0.6f, 1.2f, extrude), new(-0.6f, 1.2f, extrude),
+            })
+                minDepth = Mathf.Min(minDepth, (parent.GlobalTransform * local - tileCenter).Dot(inward));
+            parent.Position += inward * Mathf.Clamp(0.025f - minDepth, -0.12f, 0.12f);
+        }
+
         public tmap(uwObject _uwobject)
         {
             uwobject = _uwobject;
@@ -78,8 +104,12 @@ namespace Underworld
             t.tmapnode = t.Generate3DModel(parent, name);
            
             SetModelRotation(parent,t);
-            centreAlongAxis(parent, t);
-            
+            var tileType = UWTileMap.ValidTile(obj.tileX, obj.tileY)
+                ? a_tilemap.Tiles[obj.tileX, obj.tileY].tileType : (short)-1;
+            if (IsDiagonalTile(tileType))
+                PlaceOnDiagonalWall(parent, obj, t.tmapOffset, tileType);
+            else
+                centreAlongAxis(parent, t);
 
             // //adjust to be closer to walls
             // if (obj.xpos == 0)
