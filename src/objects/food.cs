@@ -7,7 +7,15 @@ namespace Underworld
     {
         public static bool Use(uwObject obj, bool WorldObject)
         {
-            Debug.Print($"a wood weighs {commonObjDat.mass(0xCC)} a torch weighs {commonObjDat.mass(0x91)}");
+            //Ordinarily food cannot be used from the world except when dropped on the player head.
+            //when dropping food on the player head the object will be a WorldObject. 
+            //This checks that the object being used is the object in the player hand. 
+            // Fixes issue where dropping food was not working because original check was for world object only
+            if ((WorldObject) && (obj.index != playerdat.ObjectInHand))  
+            {
+                return true; // suppress any do not use message.
+            }
+
             if (_RES == GAME_UW2)
             {
                 switch (obj.classindex)
