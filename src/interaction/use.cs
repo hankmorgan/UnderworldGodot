@@ -162,17 +162,17 @@ namespace Underworld
             {
                 result = true;//supress messaging.
             }
-            if (!result && WorldObject && Food.IsFood(ObjectUsed))
-            {
-                result = true;
-            }
-            else if (!result && !WorldObject
-                && Food.IsFood(ObjectUsed)
-                && (ObjectUsed.majorclass != 2 || ObjectUsed.minorclass != 3)
-                && Food.SpecialFoodCases(ObjectUsed, true))
-            {
-                result = true;
-            }
+            // if (!result && WorldObject && Food.IsFood(ObjectUsed))
+            // {
+            //     result = true;
+            // }
+            // else if (!result && !WorldObject
+            //     && Food.IsFood(ObjectUsed)
+            //     && (ObjectUsed.majorclass != 2 || ObjectUsed.minorclass != 3)
+            //     && Food.SpecialFoodCases(ObjectUsed, true))
+            // {
+            //     result = true;
+            // }
             if ((!result) && (!UsedFromCollision))
             {
                 uimanager.AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_you_cannot_use_that_));
