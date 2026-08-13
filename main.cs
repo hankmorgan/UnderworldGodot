@@ -751,15 +751,15 @@ public partial class main : Node3D
 						case Key.F1: //open options menu
 							uimanager.InteractionModeToggle(0); break;
 						case Key.F2: //talk
-							uimanager.InteractionModeToggle((uimanager.InteractionModes)1); break;
+							uimanager.InteractionModeButtonPressed((uimanager.InteractionModes)1); break;
 						case Key.F3://pickup
-							uimanager.InteractionModeToggle((uimanager.InteractionModes)2); break;
+							uimanager.InteractionModeButtonPressed((uimanager.InteractionModes)2); break;
 						case Key.F4://look
-							uimanager.InteractionModeToggle((uimanager.InteractionModes)3); break;
+							uimanager.InteractionModeButtonPressed((uimanager.InteractionModes)3); break;
 						case Key.F5://attack
-							uimanager.InteractionModeToggle((uimanager.InteractionModes)4); break;
+							uimanager.InteractionModeButtonPressed((uimanager.InteractionModes)4); break;
 						case Key.F6://use
-							uimanager.InteractionModeToggle((uimanager.InteractionModes)5); break;
+							uimanager.InteractionModeButtonPressed((uimanager.InteractionModes)5); break;
 						case Key.F7://toggle panel
 							if (keyinput.AltPressed)
 							{

@@ -33,6 +33,7 @@ namespace Underworld
 
         public enum InteractionModes
         {
+            ModeNone = -1,
             ModeOptions = 0,
             ModeTalk = 1,
             ModePickup = 2,
@@ -271,11 +272,49 @@ namespace Underworld
         }
 
         /// <summary>
+        /// DOS "no mode": no interaction button selected. Inventory uses L=Use, R=Look.
+        /// </summary>
+        public static void EnterInteractionModeNone()
+        {
+            PreviousInteractionMode = InteractionMode;
+            InteractionMode = InteractionModes.ModeNone;
+            SetAllInteractionButtonsOff();
+            if (playerdat.play_drawn == 1)
+            {
+                ToggleWeaponAnimationState(false);
+            }
+        }
+
+        static void SetAllInteractionButtonsOff()
+        {
+            if (UWClass._RES == UWClass.GAME_UW2)
+            {
+                for (int i = 0; i <= instance.InteractionButtonsUW2.GetUpperBound(0); i++)
+                {
+                    instance.InteractionButtonsUW2[i].Texture = instance.UW2InteractionBtnsOff[i];
+                }
+            }
+            else
+            {
+                for (int i = 0; i <= instance.InteractionButtonsUW1.GetUpperBound(0); i++)
+                {
+                    instance.InteractionButtonsUW1[i].Texture = grLfti.LoadImageAt(i * 2, false);
+                }
+            }
+        }
+
+        /// <summary>
         /// Sets the on button for the interaction buttons to the specified index.
         /// </summary>
         /// <param name="index"></param>
         private static void ToggleInteractionButtonDisplay(InteractionModes index)
         {
+            if (index == InteractionModes.ModeNone)
+            {
+                EnterInteractionModeNone();
+                return;
+            }
+
             if (UWClass._RES == UWClass.GAME_UW2)
             {
                 for (int i = 0; i <= instance.InteractionButtonsUW2.GetUpperBound(0); i++)
@@ -369,6 +408,26 @@ namespace Underworld
         }
 
 
+        /// <summary>
+        /// User clicked a mode button / pressed F2-F6. Re-clicking the active mode
+        /// (except Options) enters no-mode. Attack also sheaths if drawn.
+        /// </summary>
+        public static void InteractionModeButtonPressed(InteractionModes index)
+        {
+            if (index == InteractionMode
+                && index != InteractionModes.ModeOptions
+                && index != InteractionModes.ModeNone)
+            {
+                if (index == InteractionModes.ModeAttack && playerdat.play_drawn == 1)
+                {
+                    ToggleWeaponAnimationState(false);
+                }
+                EnterInteractionModeNone();
+                return;
+            }
+            InteractionModeToggle(index);
+        }
+
         private void _on_interactionoptions_button(InputEvent @event, long extra_arg_0)
         {
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
@@ -389,7 +448,7 @@ namespace Underworld
                     {
                         return;
                     }
-                    InteractionModeToggle((InteractionModes)extra_arg_0);
+                    InteractionModeButtonPressed((InteractionModes)extra_arg_0);
                 }
             }
         }

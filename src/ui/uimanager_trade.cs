@@ -219,24 +219,112 @@ namespace Underworld
         }
         private void _on_player_trade_selected(InputEvent @event, long extra_arg_0)
         {
-            if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
-            {                
-                //toggle selected
-                if (PlayerItemSelected[extra_arg_0])
+            HandleTradeSlotClick(@event, extra_arg_0, isPlayerSide: true);
+        }
+
+        private void _on_npc_trade_selected(InputEvent @event, long extra_arg_0)
+        {
+            HandleTradeSlotClick(@event, extra_arg_0, isPlayerSide: false);
+        }
+
+        private void _on_player_trade_input(InputEvent @event, long extra_arg_0)
+        {
+            HandleTradeSlotClick(@event, extra_arg_0, isPlayerSide: true);
+        }
+
+        private void _on_npc_trade_input(InputEvent @event, long extra_arg_0)
+        {
+            HandleTradeSlotClick(@event, extra_arg_0, isPlayerSide: false);
+        }
+
+        /// <summary>
+        /// Trade slots: left release = select (or place held item on player side),
+        /// right release = look.
+        /// </summary>
+        void HandleTradeSlotClick(InputEvent @event, long slotNo, bool isPlayerSide)
+        {
+            if (@event is not InputEventMouseButton eventMouseButton
+                || eventMouseButton.Pressed
+                || ((eventMouseButton.ButtonIndex != MouseButton.Left)
+                    && (eventMouseButton.ButtonIndex != MouseButton.Right)))
+            {
+                return;
+            }
+
+            int[] itemIds = isPlayerSide ? PlayerItemIDs : NPCItemIDs;
+            if (eventMouseButton.ButtonIndex == MouseButton.Right)
+            {
+                LookAtTradeSlot(itemIds, slotNo, useLoreCheck: isPlayerSide);
+                return;
+            }
+
+            // Left release
+            if (isPlayerSide && playerdat.ObjectInHand != -1)
+            {
+                // Place / swap held item into the player trade slot.
+                if (itemIds[slotNo] == -1)
                 {
-                    PlayerTradeOff(extra_arg_0);
+                    SetPlayerTradeSlot((int)slotNo, playerdat.ObjectInHand, true);
+                    playerdat.ObjectInHand = -1;
+                    mousecursor.SetCursorToCursor();
                 }
                 else
                 {
-                    if (PlayerItemIDs[extra_arg_0]!=-1)
-                    {//check if occupied.
-                        PlayerTradeOn(extra_arg_0);
-                    }
-                    else
-                    {
-                        PlayerTradeOff(extra_arg_0);
-                    }
+                    var swap = playerdat.ObjectInHand;
+                    playerdat.ObjectInHand = itemIds[slotNo];
+                    var obj = UWTileMap.current_tilemap.LevelObjects[playerdat.ObjectInHand];
+                    mousecursor.SetCursorToObject(obj.item_id);
+                    SetPlayerTradeSlot((int)slotNo, swap, true);
                 }
+                return;
+            }
+
+            ToggleTradeSlotSelection(slotNo, isPlayerSide);
+        }
+
+        static void LookAtTradeSlot(int[] itemIds, long slotNo, bool useLoreCheck)
+        {
+            if (itemIds[slotNo] == -1)
+            {
+                return;
+            }
+            var obj = UWTileMap.current_tilemap.LevelObjects[itemIds[slotNo]];
+            if (obj == null)
+            {
+                return;
+            }
+            look.PrintLookDescription(
+                obj: obj,
+                objList: UWTileMap.current_tilemap.LevelObjects,
+                OutputConvo: true,
+                lorecheckresult: useLoreCheck ? look.LoreCheck(obj) : 0);
+        }
+
+        void ToggleTradeSlotSelection(long slotNo, bool isPlayerSide)
+        {
+            if (isPlayerSide)
+            {
+                if (PlayerItemIDs[slotNo] == -1)
+                {
+                    PlayerTradeOff(slotNo);
+                    return;
+                }
+                if (PlayerItemSelected[slotNo])
+                    PlayerTradeOff(slotNo);
+                else
+                    PlayerTradeOn(slotNo);
+            }
+            else
+            {
+                if (NPCItemIDs[slotNo] == -1)
+                {
+                    NpcTradeOff(slotNo);
+                    return;
+                }
+                if (NPCItemSelected[slotNo])
+                    NpcTradeOff(slotNo);
+                else
+                    NPCTradeOn(slotNo);
             }
         }
 
@@ -253,30 +341,6 @@ namespace Underworld
             PlayerItemSelected[slotNo] = false;
         }
 
-
-        private void _on_npc_trade_selected(InputEvent @event, long extra_arg_0)
-        {
-            if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
-            {                
-                //toggle selected
-                if (NPCItemSelected[extra_arg_0])
-                {
-                    NpcTradeOff(extra_arg_0);
-                }
-                else
-                {
-                    if (NPCItemIDs[extra_arg_0]!=-1)
-                    {//check if occupied.
-                        NPCTradeOn(extra_arg_0);
-                    }
-                    else
-                    {
-                        NpcTradeOff(extra_arg_0);
-                    }
-                }
-            }
-        }
-
         public static void NpcTradeOff(long slotNo)
         {
             npcTradeSelected[slotNo].Texture = null;
@@ -288,80 +352,6 @@ namespace Underworld
         {
             npcTradeSelected[slotNo].Texture = SelectionCross;
             NPCItemSelected[slotNo] = true;
-        }
-
-        private void _on_player_trade_input(InputEvent @event, long extra_arg_0)
-        {
-            if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed)
-            {  
-                if (eventMouseButton.ButtonIndex == MouseButton.Left)
-                {//left click item manipulation
-                    if (PlayerItemIDs[extra_arg_0]== -1)
-                    {//no item currently in slot.
-                        if (playerdat.ObjectInHand!=-1)
-                        {//drop available item in slot
-                            SetPlayerTradeSlot((int)extra_arg_0,playerdat.ObjectInHand,true);
-                            playerdat.ObjectInHand = -1;
-                            mousecursor.SetCursorToCursor();
-                        }
-                    }
-                    else
-                    {
-                        if (playerdat.ObjectInHand == -1)
-                        {//take item from slot into a free hand
-                            playerdat.ObjectInHand = PlayerItemIDs[extra_arg_0];
-                            var obj = UWTileMap.current_tilemap.LevelObjects[playerdat.ObjectInHand];
-                            mousecursor.SetCursorToObject(obj.item_id);
-                            SetPlayerTradeSlot((int)extra_arg_0, -1, false);                            
-                        }
-                        else
-                        {
-                            //swap objects
-                            var swap = playerdat.ObjectInHand;
-                            playerdat.ObjectInHand = PlayerItemIDs[extra_arg_0];
-                            var obj = UWTileMap.current_tilemap.LevelObjects[playerdat.ObjectInHand];
-                            mousecursor.SetCursorToObject(obj.item_id);
-                            SetPlayerTradeSlot((int)extra_arg_0, swap, true);
-                        }
-                    }
-                }
-                else
-                {//right click look at
-                    if (PlayerItemIDs[extra_arg_0]!=-1)
-                    {
-                        var obj = UWTileMap.current_tilemap.LevelObjects[PlayerItemIDs[extra_arg_0]];
-                        if (obj!=null)
-                        {
-                            look.PrintLookDescription(
-                                obj: obj,
-                                objList:UWTileMap.current_tilemap.LevelObjects,
-                                OutputConvo: true,
-                                lorecheckresult: look.LoreCheck(obj));
-                        }  
-                    }
-                }                
-            }
-        }
-
-
-        private void _on_npc_trade_input(InputEvent @event, long extra_arg_0)
-        {
-            if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed && eventMouseButton.ButtonIndex == MouseButton.Left)
-            {  
-                //AddToMessageScroll($"NPC {extra_arg_0}");
-                if (NPCItemIDs[extra_arg_0]!=-1)
-                {
-                    var obj = UWTileMap.current_tilemap.LevelObjects[NPCItemIDs[extra_arg_0]];
-                    if (obj!=null)
-                    {
-                        look.PrintLookDescription(
-                            obj: obj, 
-                            objList: UWTileMap.current_tilemap.LevelObjects,
-                            OutputConvo: true,
-                            lorecheckresult: 0);
-                    }                    
-                }
-            }
         }
     }//end class
 }//end namespace
