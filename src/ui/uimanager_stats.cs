@@ -76,7 +76,11 @@ namespace Underworld
 		/// </summary>
 		public static void RefreshStatsDisplay()
 		{
-			instance.Charname.Text = $"[center][color={AttributesFontColor}]{playerdat.CharName.ToUpper()}[/color][/center]";
+			// playerdat setters (max_hp, max_mana, play_level) call this, so it
+			// runs from pure game-state paths that have no scene tree, eg the
+			// headless save-game unit tests. instance is only assigned in _Ready.
+			if (instance == null) { return; }
+			instance.Charname.Text =$"[center][color={AttributesFontColor}]{playerdat.CharName.ToUpper()}[/color][/center]";
 			instance.CharClass.Text = $"[color={AttributesFontColor}]{playerdat.CharClassName.ToUpper()}[/color]";
 			instance.CharLevel.Text = $"[right][color={AttributesFontColor}]{playerdat.play_level}{GameStrings.GetOrdinal(playerdat.play_level).ToUpper()}[/color][/right]";
 			instance.STR.Text = $"[right][color={AttributesFontColor}]{playerdat.STR}[/color][/right]";

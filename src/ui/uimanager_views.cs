@@ -426,6 +426,8 @@ namespace Underworld
 
         public static void RefreshWeightDisplay()
         {
+            // Called from playerdat inventory paths that also run headlessly.
+            if (uimanager.instance == null) { return; }
             uimanager.instance.WeightCapacity.Text = (playerdat.WeightCapacity / 0xA).ToString();
             Debug.Print($"player weight capacity is now {playerdat.WeightCapacity}");
         }

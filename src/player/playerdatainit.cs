@@ -181,9 +181,16 @@ namespace Underworld
             // single call covers both games.
             DetailLevel = 3;
 
-            RenderingServer.GlobalShaderParameterSet("renderceilings", playerdat.RenderCeilings);
-            RenderingServer.GlobalShaderParameterSet("renderwalls", playerdat.RenderWalls);
-            RenderingServer.GlobalShaderParameterSet("renderfloors", playerdat.RenderFloors);
+            // InitEmptyPlayer is pure chargen state and is exercised headlessly by
+            // the save-game tests. Touching any Godot singleton with no engine
+            // running segfaults the process rather than throwing, so gate the
+            // shader globals on the scene root existing.
+            if (main.instance != null)
+            {
+                RenderingServer.GlobalShaderParameterSet("renderceilings", playerdat.RenderCeilings);
+                RenderingServer.GlobalShaderParameterSet("renderwalls", playerdat.RenderWalls);
+                RenderingServer.GlobalShaderParameterSet("renderfloors", playerdat.RenderFloors);
+            }
 
             if (_RES != GAME_UW2)
             {

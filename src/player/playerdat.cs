@@ -554,9 +554,15 @@ namespace Underworld
                 }
 
                 //Update rendering
-                Godot.RenderingServer.GlobalShaderParameterSet("renderceilings", playerdat.RenderCeilings);
-                Godot.RenderingServer.GlobalShaderParameterSet("renderwalls", playerdat.RenderWalls);
-                Godot.RenderingServer.GlobalShaderParameterSet("renderfloors", playerdat.RenderFloors);
+                // Chargen sets DetailLevel headlessly (InitEmptyPlayer), and touching
+                // a Godot singleton with no engine running segfaults the process
+                // instead of throwing, so gate on the scene root existing.
+                if (main.instance != null)
+                {
+                    Godot.RenderingServer.GlobalShaderParameterSet("renderceilings", playerdat.RenderCeilings);
+                    Godot.RenderingServer.GlobalShaderParameterSet("renderwalls", playerdat.RenderWalls);
+                    Godot.RenderingServer.GlobalShaderParameterSet("renderfloors", playerdat.RenderFloors);
+                }
             }
         }
 
