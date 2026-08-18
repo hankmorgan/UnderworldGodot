@@ -358,4 +358,144 @@ public class LevArkRoundTripTests : IDisposable
         Assert.True(otherDiffs == 0,
             $"PlacePlayerInTile leaked byte changes outside slot 1 and target tile ({StartX},{StartY}): {otherDiffs} diffs, first at 0x{firstOtherDiff:X4}");
     }
+
+    // Regression guard for hankmorgan/UnderworldGodot#43.
+    //
+    // UW1 keeps animation overlays in their own ARK blocks (9..17), separate from
+    // the tilemap blocks (0..8). A moving door writes its object record into the
+    // tilemap and its overlay record into the overlay block, so serialising only
+    // the tilemap produces a save whose two halves disagree: a moving-door object
+    // with no matching overlay. The writer used to pass blocks 9..17 straight
+    // through from the source ARK, so any live overlay state was silently lost.
+    [Fact]
+    public void Uw1_LiveOverlayBlock_SurvivesFullSerializeAndReextract()
+    {
+        Underworld.UWClass.BasePath = Path.Combine(TestData.UW2GogRoot, "UW1");
+        Underworld.UWClass._RES = Underworld.UWClass.GAME_UW1;
+
+        Assert.True(LevArkLoader.LoadLevArkFileData(folder: "DATA"));
+
+        // Dispose() restores BasePath, _RES, lev_ark_file_data and dungeons, but not
+        // current_tilemap, so this test has to put that one back itself or it leaks
+        // into the rest of the serialised [Collection("UWClassState")] group. The try
+        // must start here, before any mutation: a throw from the constructor, the
+        // assertions or Serialize would otherwise skip the finally entirely.
+        UWTileMap origCurrent = UWTileMap.current_tilemap;
+        byte[] originalFile = LevArkLoader.lev_ark_file_data;
+        try
+        {
+            // The UWTileMap constructor loads the overlay block, as on level load.
+            UWTileMap.dungeons = new UWTileMap[UWTileMap.NO_OF_LEVELS];
+            UWTileMap.dungeons[0] = new UWTileMap(0);
+            UWTileMap.current_tilemap = UWTileMap.dungeons[0];
+
+            UWBlock liveOverlay = UWTileMap.dungeons[0].ovl_ark_block;
+            Assert.NotNull(liveOverlay);
+            Assert.NotNull(liveOverlay.Data);
+
+            // Keep the pristine tilemap bytes so we can prove below that writing the
+            // overlay block left the neighbouring level block untouched.
+            UWBlock tileBefore = LevArkLoader.LoadLevArkBlock(0);
+            Assert.NotNull(tileBefore?.Data);
+            byte[] tileExpected = (byte[])tileBefore.Data.Clone();
+
+            // Write a recognisable 6-byte overlay record into slot 0, standing in for
+            // the record animo.CreateAnimoLink writes when a door starts moving.
+            var expected = new byte[] { 0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xA5 };
+            for (int i = 0; i < expected.Length; i++) liveOverlay.Data[i] = expected[i];
+
+            byte[] rewritten = LevArkWriter.Serialize();
+            Assert.NotNull(rewritten);
+
+            LevArkLoader.lev_ark_file_data = rewritten;
+
+            UWBlock reloaded = LevArkLoader.LoadOverlayBlock(0);
+            Assert.NotNull(reloaded);
+            Assert.NotNull(reloaded.Data);
+            for (int i = 0; i < expected.Length; i++)
+            {
+                Assert.True(expected[i] == reloaded.Data[i],
+                    $"Overlay byte {i} lost: expected 0x{expected[i]:X2}, got 0x{reloaded.Data[i]:X2}");
+            }
+
+            // The tilemap must still round-trip byte for byte. Checking only its
+            // length would pass even if the contents had shifted or been corrupted.
+            UWBlock tileAfter = LevArkLoader.LoadLevArkBlock(0);
+            Assert.NotNull(tileAfter?.Data);
+            int compareLen = Math.Min(tileExpected.Length, tileAfter.Data.Length);
+            Assert.True(compareLen >= UWTileMap.TileMapDataSize,
+                $"tilemap block 0 truncated to {tileAfter.Data.Length}");
+            for (int i = 0; i < compareLen; i++)
+            {
+                Assert.True(tileExpected[i] == tileAfter.Data[i],
+                    $"tilemap byte 0x{i:X4} changed: expected 0x{tileExpected[i]:X2}, got 0x{tileAfter.Data[i]:X2}");
+            }
+        }
+        finally
+        {
+            LevArkLoader.lev_ark_file_data = originalFile;
+            UWTileMap.current_tilemap = origCurrent;
+        }
+    }
+
+    // The overlay block is a fixed 384 bytes (64 slots x 6). Writing any other
+    // length would move every following block in the container.
+    [Fact]
+    public void Uw1_SerializeOverlayBlock_IsExactly384Bytes()
+    {
+        Underworld.UWClass._RES = Underworld.UWClass.GAME_UW1;
+
+        Assert.Equal(384, LevArkWriter.SerializeOverlayBlock(null).Length);
+
+        var oversized = new UWBlock { Data = new byte[1000] };
+        Assert.Equal(384, LevArkWriter.SerializeOverlayBlock(oversized).Length);
+
+        var undersized = new UWBlock { Data = new byte[10] };
+        byte[] padded = LevArkWriter.SerializeOverlayBlock(undersized);
+        Assert.Equal(384, padded.Length);
+    }
+
+    // Ties the 384 constant to the real archive rather than to itself. Asserting
+    // the helper returns its own hard-coded size would keep passing even if the
+    // format assumption were wrong, so read the container's own offset table and
+    // confirm every UW1 overlay block really is that long.
+    [Fact]
+    public void Uw1_OverlayBlocksInRealArk_AreEach384Bytes()
+    {
+        string ark = Path.Combine(TestData.UW2GogRoot, "UW1", "DATA", "LEV.ARK");
+        Assert.True(File.Exists(ark), $"missing UW1 fixture: {ark}");
+        byte[] raw = File.ReadAllBytes(ark);
+
+        int blockCount = (int)Underworld.Loader.getAt(raw, 0, 16);
+        Assert.Equal(135, blockCount);
+
+        int OffsetOf(int i) => (int)Underworld.Loader.getAt(raw, 2 + i * 4, 32);
+
+        // Length is the gap to the next block that starts later in the file.
+        int LengthOf(int i)
+        {
+            int start = OffsetOf(i);
+            Assert.True(start > 0, $"block {i} unexpectedly absent");
+            int next = raw.Length;
+            for (int j = 0; j < blockCount; j++)
+            {
+                int o = OffsetOf(j);
+                if (o > start && o < next) next = o;
+            }
+            return next - start;
+        }
+
+        for (int lvl = 0; lvl < 9; lvl++)
+        {
+            Assert.True(384 == LengthOf(9 + lvl),
+                $"overlay block {9 + lvl} is {LengthOf(9 + lvl)} bytes, not 384");
+        }
+
+        // Sanity-check the sibling assumption too, so a layout change is loud.
+        for (int lvl = 0; lvl < 9; lvl++)
+        {
+            Assert.True(UWTileMap.TileMapDataSize == LengthOf(lvl),
+                $"tilemap block {lvl} is {LengthOf(lvl)} bytes, not {UWTileMap.TileMapDataSize}");
+        }
+    }
 }

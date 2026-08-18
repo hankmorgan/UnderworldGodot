@@ -37,6 +37,9 @@ namespace Underworld
         private const int UW2BlockSize = 0x8000;
         // UW1 per-level block size
         private const int UW1BlockSize = UWTileMap.TileMapDataSize; // 0x7C08
+        // UW1 per-level animation-overlay block size. 64 slots × 6 bytes, matching
+        // the targetDataLen LevArkLoader.LoadOverlayBlock asks for.
+        private const int UW1OverlayBlockSize = 64 * 6;
 
         /// <summary>
         /// Serialize one level block (UWBlock) to the raw bytes that should be
@@ -50,6 +53,38 @@ namespace Underworld
             if (block?.Data != null)
             {
                 int copyLen = Math.Min(block.Data.Length, targetSize);
+                Buffer.BlockCopy(block.Data, 0, result, 0, copyLen);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Serialize one UW1 animation-overlay block to the fixed 384 bytes the
+        /// container stores. UW1 only: UW2 keeps overlays inside the level block
+        /// itself, and the demo keeps them in LEVEL13.ANX rather than in the ARK.
+        /// </summary>
+        public static byte[] SerializeOverlayBlock(UWBlock block)
+        {
+            byte[] result = new byte[UW1OverlayBlockSize];
+            if (block?.Data != null)
+            {
+                // A short buffer just means the remaining overlay slots are absent, so
+                // zero-padding is correct. An over-long one cannot be represented in 64
+                // six-byte slots and means something upstream grew the buffer, so say so
+                // rather than truncating in silence. Writing a well-formed block still
+                // beats throwing: LEV.ARK is written after DESC, PLAYER.DAT and
+                // BGLOBALS.DAT, so aborting here would leave a half-updated save slot.
+                // Console.Error, not GD.PushWarning: this runs in the headless save
+                // tests, and touching Godot with no engine segfaults rather than
+                // throwing. Not Debug.Print or Trace.WriteLine either, since those
+                // compile out without DEBUG/TRACE and the warning would vanish from
+                // release builds, which is where a silent truncation matters most.
+                if (block.Data.Length > UW1OverlayBlockSize)
+                {
+                    Console.Error.WriteLine(
+                        $"LevArkWriter: UW1 overlay block is {block.Data.Length} bytes, expected {UW1OverlayBlockSize}; truncating.");
+                }
+                int copyLen = Math.Min(block.Data.Length, UW1OverlayBlockSize);
                 Buffer.BlockCopy(block.Data, 0, result, 0, copyLen);
             }
             return result;
@@ -259,7 +294,10 @@ namespace Underworld
             // Replace visited tilemap blocks with live dungeon data.
             if (UWTileMap.dungeons != null)
             {
-                for (int lvl = 0; lvl < UWTileMap.NO_OF_LEVELS; lvl++)
+                // Same bound as the overlay loop below: dungeons is a public static
+                // array, so do not assume its length agrees with NO_OF_LEVELS.
+                int tileLevels = Math.Min(UWTileMap.NO_OF_LEVELS, UWTileMap.dungeons.Length);
+                for (int lvl = 0; lvl < tileLevels; lvl++)
                 {
                     if (UWTileMap.dungeons[lvl] != null)
                     {
@@ -268,6 +306,35 @@ namespace Underworld
                         {
                             blockData[lvl] = SerializeLevelBlock(live);
                         }
+                    }
+                }
+            }
+
+            // Replace overlay blocks (9..17) with the live animation-overlay data
+            // for any visited level.
+            //
+            // Without this the two halves of an in-flight animation disagree. A
+            // moving door writes its object record into the tilemap block (door.cs
+            // sets item 0x1CF) and its overlay record into ovl_ark_block (animo.cs
+            // stores the object link, tile and duration). Serialising only the
+            // tilemap leaves a moving-door object with no matching overlay, which
+            // is an internally inconsistent LEV.ARK and is what a save taken
+            // mid-animation produced. See hankmorgan/UnderworldGodot#43.
+            //
+            // UW1 proper only. UW2 has no separate overlay block, and the demo
+            // reads overlays from LEVEL13.ANX rather than from the ARK, so in
+            // neither case does block 9+lvl hold overlay data to replace.
+            if (UWClass._RES == UWClass.GAME_UW1 && UWTileMap.dungeons != null)
+            {
+                // dungeons is a public static array, so bound by its actual length as
+                // well as by NO_OF_LEVELS rather than trusting the two to agree.
+                int overlayLevels = Math.Min(UWTileMap.NO_OF_LEVELS, UWTileMap.dungeons.Length);
+                for (int lvl = 0; lvl < overlayLevels; lvl++)
+                {
+                    UWBlock liveOverlay = UWTileMap.dungeons[lvl]?.ovl_ark_block;
+                    if (liveOverlay?.Data != null)
+                    {
+                        blockData[9 + lvl] = SerializeOverlayBlock(liveOverlay);
                     }
                 }
             }
