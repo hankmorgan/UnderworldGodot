@@ -362,10 +362,9 @@ namespace Underworld
                 }
                 SetAt(0x36, (byte)value);
                 // uimanager.RefreshHealthFlask();
-                if (uimanager.instance != null)
-                {
-                    uimanager.RefreshStatsDisplay();
-                }
+
+                uimanager.RefreshStatsDisplay();
+
                 // 
                 playerObject.npc_hp = (byte)value;
             }
