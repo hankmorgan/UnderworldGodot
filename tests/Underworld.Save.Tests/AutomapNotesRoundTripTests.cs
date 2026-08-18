@@ -89,7 +89,7 @@ public class AutomapNotesRoundTripTests : System.IDisposable
         Underworld.LevArkLoader.lev_ark_file_data = rewritten;
         try
         {
-            var reloaded = new Underworld.automapnote(0, Underworld.UWClass.GAME_UW1);
+            var reloaded = new Underworld.automapnote(0);
             Assert.Single(reloaded.notes);
             Assert.Equal("INTEGRATION TEST NOTE", reloaded.notes[0].notetext);
             Assert.Equal(10, reloaded.notes[0].posX);

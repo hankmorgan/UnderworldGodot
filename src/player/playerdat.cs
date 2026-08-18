@@ -362,7 +362,11 @@ namespace Underworld
                 }
                 SetAt(0x36, (byte)value);
                 // uimanager.RefreshHealthFlask();
-                // uimanager.RefreshStatsDisplay();
+                if (uimanager.instance != null)
+                {
+                    uimanager.RefreshStatsDisplay();
+                }
+                // 
                 playerObject.npc_hp = (byte)value;
             }
         }
@@ -554,9 +558,15 @@ namespace Underworld
                 }
 
                 //Update rendering
-                Godot.RenderingServer.GlobalShaderParameterSet("renderceilings", playerdat.RenderCeilings);
-                Godot.RenderingServer.GlobalShaderParameterSet("renderwalls", playerdat.RenderWalls);
-                Godot.RenderingServer.GlobalShaderParameterSet("renderfloors", playerdat.RenderFloors);
+                // Chargen sets DetailLevel headlessly (InitEmptyPlayer), and touching
+                // a Godot singleton with no engine running segfaults the process
+                // instead of throwing, so gate on the scene root existing.
+                if (main.instance != null)
+                {
+                    Godot.RenderingServer.GlobalShaderParameterSet("renderceilings", playerdat.RenderCeilings);
+                    Godot.RenderingServer.GlobalShaderParameterSet("renderwalls", playerdat.RenderWalls);
+                    Godot.RenderingServer.GlobalShaderParameterSet("renderfloors", playerdat.RenderFloors);
+                }
             }
         }
 
@@ -662,7 +672,7 @@ namespace Underworld
                 }
                 else
                 {
-                    if ((dungeon_level<<1) + 2 < play_level)
+                    if ((dungeon_level << 1) + 2 < play_level)
                     {
                         //lower exp gain if on a lower dungeon level than the player level.
                         newEXP = 1 + (newEXP / 2);
