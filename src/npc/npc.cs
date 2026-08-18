@@ -80,7 +80,7 @@ namespace Underworld
         public static npc CreateInstance(Node3D parent, uwObject obj, string name)
         {
             //obj.item_id = TESTITEM_ID;
-            obj.npc_hp = 1;
+            //obj.npc_hp = 1;
             var n = new npc(obj);
 
             var a_sprite = new uwMeshInstance3D(); //new Sprite3D();
