@@ -362,7 +362,11 @@ namespace Underworld
                 }
                 SetAt(0x36, (byte)value);
                 // uimanager.RefreshHealthFlask();
-                // uimanager.RefreshStatsDisplay();
+                if (uimanager.instance != null)
+                {
+                    uimanager.RefreshStatsDisplay();
+                }
+                // 
                 playerObject.npc_hp = (byte)value;
             }
         }
@@ -668,7 +672,7 @@ namespace Underworld
                 }
                 else
                 {
-                    if ((dungeon_level<<1) + 2 < play_level)
+                    if ((dungeon_level << 1) + 2 < play_level)
                     {
                         //lower exp gain if on a lower dungeon level than the player level.
                         newEXP = 1 + (newEXP / 2);
