@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Godot;
 
 namespace Underworld
@@ -111,6 +112,10 @@ namespace Underworld
             }
 
             ////////////////////////MANA Animations//////////////////////////////////
+            if (TargetManaFlaskLevel == 0)
+            {
+                Debug.Print("no mana");
+            }
 
             if ((TargetManaFlaskLevel > CurrentManaFlaskLevel) && (main.GlobalPITTimer % 32 == 0))
             {
@@ -189,7 +194,14 @@ namespace Underworld
                     }
                     else
                     {
-                        instance.HealthFlask[i].Texture = grFlasks.LoadImageAt(startOffset + i);
+                        if (CurrentHealthFlaskLevel == 0)
+                        {
+                            instance.HealthFlask[i].Texture = null;        
+                        }
+                        else
+                        {
+                            instance.HealthFlask[i].Texture = grFlasks.LoadImageAt(startOffset + i);    
+                        }                        
                     }
                 }
                 else
@@ -223,7 +235,14 @@ namespace Underworld
                     }
                     else
                     {
-                        instance.ManaFlask[i].Texture = grFlasks.LoadImageAt(startOffset + i);
+                        if (CurrentManaFlaskLevel == 0)
+                        {
+                            instance.ManaFlask[i].Texture = null;
+                        }
+                        else
+                        {
+                            instance.ManaFlask[i].Texture = grFlasks.LoadImageAt(startOffset + i);
+                        }                        
                     }
                 }
                 else
