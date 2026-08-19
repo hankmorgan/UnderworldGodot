@@ -251,38 +251,41 @@ the field, and `InitEmptyPlayer` sets `DetailLevel = 3` for UW1.
 UW2 storage offset is TBD; the accessor short-circuits to 3 for
 UW2 to avoid touching unknown bytes.
 
-### 5. pdat[0xD3] = ShadeCutOff (shade-table index)
+### 5. pdat[0xD3] is the inventory record count, not ShadeCutOff
 
-DOS UW.EXE chargen writes a non-zero value at `pdat[0xD3]` and the
-Journey-Onward path validates it. Port chargen left this byte at `0`;
-on DOS load, that 0 sent UW.EXE into a non-returning loop in the
-load sequence (player UI never appeared, game hung after the "You
-enter the Abyss" splash).
+DOS UW.EXE chargen writes a non-zero value at `pdat[0xD3]`. Port chargen left it at
+`0`, and on DOS load that sent UW.EXE into a non-returning loop after the "You reenter
+the Abyss" splash. The port then wrote a constant `3`, which stopped that particular
+hang.
 
-**Semantics** (per @hankmorgan, PR #33 review, confirmed by
-disassembly): the byte is the **shade-table index** — the global
-named `ShadeCutOff_dseg_67d6_8622` in the UW2 disassembly, written
-by `ovr142_0` (`OpenAndApplyShadesDat_ovr142_0` in UW2; same
-function in UW1 at `UW1_asm.asm:385926-386218`). Indexes into
-`shades.dat`: `0=Darkness, 1=Burning Match, 2=Candlelight,
-3=Light, 4=Magic Lantern, 5=Night Vision, 6=Daylight, 7=Sunlight`.
-SHADES.DAT is exactly 96 bytes (8 entries × 12 bytes); valid
-range is `0..7`. UW2 stores it at `pdat[0x37F]`. Both format-doc
-projects had it labelled incorrectly as "no of items+1".
+**Earlier reading, now believed wrong.** This section used to identify the byte as
+`ShadeCutOff`, a shade-table index, per @hankmorgan on the PR #33 review. DOS reads the
+shade index from somewhere else: the high nibble of player data `+0x63`.
 
-The function does NOT bound-check the input — passing `8` reads
-12 bytes off EOF; DOS tolerates because subsequent gameplay
-overwrites the shading params before they're rendered. An
-earlier diagnostic write of `0x08` therefore "worked" by
-accident. The correct chargen value is `3` (Light); see
-`InitEmptyPlayer`.
+```
+mov  bx, PlayerDataPTR_dseg_5c99_7270
+mov  al, [bx+63h]
+mov  ah, 0
+and  ax, 0F0h
+sar  ax, 4
+push ax
+call j_OpenAndApplyShadesDat_ovr142_0
+```
 
-The port already tracks an analogous `playerdat.lightlevel`
-accessor at `pdat[0x64]` bits 4-7 (different storage). Long-term:
-keep these in sync at light-source change events. Short-term:
-`InitEmptyPlayer` (UW1) writes `pdat[0xD3] = 0x03` (Light) at
-chargen; replacing the literal with a derived-from-lightlevel
-expression is a follow-up.
+**Current reading.** `0xD3..0xD4` is a 16-bit count of inventory records, stored as
+records plus one. Three DOS-created saves with empty inventories all hold `1` there and
+are 312 bytes, ending at `InventoryPtr`. Varying only that byte in a port save holding
+six records, loaded in real DOS: `3` hangs, `6` gives `Error code A003`, `7` loads with
+the inventory intact.
+
+This is inference from behaviour and from sample files. The instruction that reads
+`0xD3` has not been found in the disassembly, and the format notes in
+`Guide to the Ultima Underworlds.md` hedge the field width as "int16 (I think)". The
+high byte is zero in every sample available, so the width is not established by the
+samples either.
+
+`PlayerDatWriter` derives the value on save, so the chargen constant no longer reaches
+the file.
 
 ### 6. Avatar self-link `pdat[0xDB-0xDC] = 0x0040` (link = 1)
 

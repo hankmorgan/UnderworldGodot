@@ -174,9 +174,26 @@ namespace Underworld
         {
             int linkOff = playerdat.PlayerObjectStoragePTR + 6;
             if (linkOff + 1 >= serialised.Length) return serialised;
-            // Set link bits 6-15 = 1, preserve owner bits 0-5 of byte 6.
-            serialised[linkOff]     = (byte)((serialised[linkOff] & 0x3F) | 0x40);
-            serialised[linkOff + 1] = 0;
+
+            // UW1 only. The head must be 0 when no inventory records were emitted;
+            // writing 1 unconditionally told DOS to walk a chain into a file that ends
+            // at InventoryPtr, which hung it at "You reenter the Abyss...". DOS itself
+            // writes 0 for an empty inventory. See issue #43.
+            //
+            // UW2 keeps the previous unconditional 1. Its writer still takes the legacy
+            // straight-copy path, PlayerDatWriter.Serialize says so, and its DOS
+            // invariants are unverified, so deriving a head from a record count computed
+            // against a different InventoryPtr would change a format we cannot test.
+            int head = 1;
+            if (UWClass._RES != UWClass.GAME_UW2)
+            {
+                int records = (serialised.Length - playerdat.InventoryPtr) / 8;
+                head = records > 0 ? 1 : 0;
+            }
+
+            // link occupies bits 6-15 of the little-endian word; owner is bits 0-5.
+            serialised[linkOff]     = (byte)((serialised[linkOff] & 0x3F) | ((head << 6) & 0xC0));
+            serialised[linkOff + 1] = (byte)((head >> 2) & 0xFF);
             return serialised;
         }
 

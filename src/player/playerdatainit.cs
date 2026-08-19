@@ -194,21 +194,12 @@ namespace Underworld
 
             if (_RES != GAME_UW2)
             {
-                // pdat[0xD3] = ShadeCutOff (shade-table index, per @hankmorgan
-                // on PR #33: the global is named ShadeCutOff_dseg_67d6_8622
-                // in the UW2 disasm, set by OpenAndApplyShadesDat_ovr142_0;
-                // the UW1 equivalent is ovr142_0 at UW1_asm.asm:385926-386218).
-                // Indexes shades.dat: 0=Darkness, 1=Burning Match,
-                // 2=Candlelight, 3=Light, 4=Magic Lantern, 5=Night Vision,
-                // 6=Daylight, 7=Sunlight. SHADES.DAT is exactly 96 bytes
-                // (8 entries × 12 bytes); valid range 0..7. DOS chargen
-                // default is 3 (Light). The function does NOT bound-check
-                // the input — passing 8 reads off EOF; DOS tolerates
-                // because subsequent gameplay overwrites the shading params
-                // before they're rendered. Without ANY value here (port
-                // default 0 = Darkness; functions but DOS Journey-Onward
-                // hangs in some load paths) DOS won't load. 3 is the
-                // semantically correct chargen value.
+                // 0xD3..0xD4 is the inventory record count, records plus one, which
+                // PlayerDatWriter derives on save. This chargen value therefore no
+                // longer reaches the file; it is left as 3 so in-memory behaviour is
+                // unchanged. It was previously identified as ShadeCutOff, but DOS reads
+                // the shade index from the high nibble of player data +0x63. See
+                // docs/save-architecture.md section 5.
                 SetAt(0xD3, 0x03);
             }
 
