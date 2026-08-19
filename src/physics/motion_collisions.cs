@@ -987,8 +987,8 @@ namespace Underworld
 
                     UWMotionParamArray.dseg_67d6_25BC = 1;
                     use.Use(
-                        ObjectUsed: CollidedObject_VarA,
-                        UsingObjectOrCharacter: MotionObject,
+                        ObjectUsed: MotionObject,
+                        UsingObjectOrCharacter: CollidedObject_VarA,
                         objList: UWTileMap.current_tilemap.LevelObjects,
                         WorldObject: true, UsedFromCollision: true);//this line will probably break a lot until I make use a more vanilla compliant Use() function.
                                                                     //if (UWTileMap.ValidTile(CollidedObject_VarA.tileX, CollidedObject_VarA.tileY))

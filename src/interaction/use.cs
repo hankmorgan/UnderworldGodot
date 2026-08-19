@@ -226,7 +226,7 @@ namespace Underworld
                         //projectile has hit the UsingObjectOrCharacter.
                         if (UsingObjectOrCharacter != null)
                         {
-                            combat.MissileImpact(ObjectUsed, UsingObjectOrCharacter);
+                            combat.MissileImpact(projectile: ObjectUsed, objectHit: UsingObjectOrCharacter);
                         }
                         return true;
                     }

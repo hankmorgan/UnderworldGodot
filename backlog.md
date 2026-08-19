@@ -107,7 +107,7 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] UW2 First guardian cutscene is missing text.
 - [ ] Likely bug in loading of game palettes (PaletteLoader) where palettes are loaded in blocks of 256 bytes rather than 768. This leads to byte shifted and excessive number of palettes being generated at runtime, Palette indices > 0 likely to be wrong as a result.
 - [ ] Stats display sometimes cuts off hp numbers. Eg 56/78 hp renders as 56/7
-- [ ] Magic missile opens a door in scenarios when it should just damage the door. (likely object use by collision is being triggered instead of the projectile detonation)
+- [ ] Missile impact flash may appear in wrong tile. combathitx and combathity are not being set correctly by MissileImpact()
 
 
 ## Blocked
