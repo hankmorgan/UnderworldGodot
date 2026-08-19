@@ -226,6 +226,32 @@ public class SaveGameOrchestratorTests : IDisposable
     // UW2 tests — use real SAVE0 fixture
     // -------------------------------------------------------------------------
 
+    /// <summary>
+    /// UW2 must keep the head it had before the UW1 inventory fix. Its writer still
+    /// uses the legacy straight-copy path and its DOS invariants are unverified, so the
+    /// records-derived rule is deliberately UW1-only. Without this, the UW1 fix silently
+    /// rewrote UW2's avatar link, because InventoryPtr differs between the formats
+    /// (0x3E3 versus 0x138) and the derived record count would be computed against the
+    /// wrong base.
+    /// </summary>
+    [Fact]
+    public void Save_Uw2_PlayerObjectLinkUnchangedByUw1InventoryRule()
+    {
+        SetupUw2State();
+        UWClass.BasePath = _tempRoot;
+
+        SaveGame.Save(1, "uw2 head");
+
+        byte[] raw = File.ReadAllBytes(Path.Combine(_tempRoot, "SAVE1", "PLAYER.DAT"));
+        int linkOff = playerdat.PlayerObjectStoragePTR + 6;
+        Assert.True(linkOff + 1 < raw.Length, "UW2 PLAYER.DAT too short to hold the link");
+
+        // UW2 pdat is encrypted differently, so read the raw bytes: the rule under test
+        // writes them directly either way.
+        int head = (raw[linkOff] | (raw[linkOff + 1] << 8)) >> 6;
+        Assert.Equal(1, head);
+    }
+
     [Fact]
     public void Save_Uw2_WritesAllFiveFiles()
     {
