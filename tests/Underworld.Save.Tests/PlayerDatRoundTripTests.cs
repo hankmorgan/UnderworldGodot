@@ -140,6 +140,41 @@ public class PlayerDatRoundTripTests : IDisposable
     //   - out-of-range slot reference throwing IndexOutOfRange
     // -------------------------------------------------------------------------
 
+    [Fact]
+    public void Uw1Serialize_NestedContainers_CountCoversEveryEmittedRecord()
+    {
+        // The count DOS reads must cover records emitted recursively, not just the
+        // top-level chain, or DOS reads too few and follows a link into memory it
+        // never read. A container inside a container inside the backpack.
+        SetupUw1WithPdat();
+        WriteSlot(slot: 1, item_id: 128, is_quant: false, link: 2, next: 0); // sack
+        WriteSlot(slot: 2, item_id: 128, is_quant: false, link: 3, next: 0); // sack inside it
+        WriteSlot(slot: 3, item_id: 143, is_quant: false, link: 0, next: 0); // item inside that
+        SetBp0(1);
+
+        byte[] encrypted = Underworld.PlayerDatWriter.Serialize();
+        byte[] plain = Underworld.playerdat.EncryptDecryptUW1(encrypted, encrypted[0]);
+
+        int records = (encrypted.Length - Underworld.playerdat.InventoryPtr) / 8;
+        Assert.Equal(3, records);
+        Assert.Equal(records + 1, plain[0xD3] | (plain[0xD4] << 8));
+
+        // And the emitted chain must be walkable within the count: every next/link
+        // that is non-zero has to name a slot the file actually contains.
+        for (int slot = 1; slot <= records; slot++)
+        {
+            int o = Underworld.playerdat.InventoryPtr + (slot - 1) * 8;
+            int next = ((plain[o + 4] | (plain[o + 5] << 8)) >> 6) & 0x3FF;
+            int link = ((plain[o + 6] | (plain[o + 7] << 8)) >> 6) & 0x3FF;
+            bool isQuant = ((plain[o] | (plain[o + 1] << 8)) & 0x8000) != 0;
+            Assert.True(next <= records, $"slot {slot} next={next} beyond {records} records");
+            if (!isQuant)
+            {
+                Assert.True(link <= records, $"slot {slot} link={link} beyond {records} records");
+            }
+        }
+    }
+
     private static void SetupUw1WithPdat()
     {
         Underworld.UWClass.BasePath = Path.Combine(TestData.UW2GogRoot, "UW1");
