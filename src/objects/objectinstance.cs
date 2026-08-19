@@ -69,21 +69,21 @@ namespace Underworld
             }
         }
 
-        public static void RefreshSprite(uwObject objToRefresh)
-        {//assumes sprite to sprite refresh
-            Debug.Print("TODO update all the sprites in REFRESH SPRITE!");
-            if (objToRefresh.instance != null)
-            {
-                if (objToRefresh.instance.uwnode != null)
-                {
-                    var nd = (uwMeshInstance3D)objToRefresh.instance.uwnode.GetChild(0);
-                    if (nd != null)
-                    {
-                        nd.Mesh.SurfaceSetMaterial(0, ObjectCreator.grObjects.GetMaterial(objToRefresh.item_id));
-                    }
-                }
-            }
-        }
+        // public static void RefreshSprite(uwObject objToRefresh)
+        // {//assumes sprite to sprite refresh
+        //     Debug.Print("TODO update all the sprites in REFRESH SPRITE!");
+        //     if (objToRefresh.instance != null)
+        //     {
+        //         if (objToRefresh.instance.uwnode != null)
+        //         {
+        //             var nd = (uwMeshInstance3D)objToRefresh.instance.uwnode.GetChild(0);
+        //             if (nd != null)
+        //             {
+        //                 nd.Mesh.SurfaceSetMaterial(0, ObjectCreator.grObjects.GetMaterial(objToRefresh.item_id));
+        //             }
+        //         }
+        //     }
+        // }
 
         public static void PlaceObjectInTile(int tileX, int tileY, uwObject toPlace)
         {
