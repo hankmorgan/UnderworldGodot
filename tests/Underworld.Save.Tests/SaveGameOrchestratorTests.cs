@@ -129,6 +129,37 @@ public class SaveGameOrchestratorTests : IDisposable
     // UW1 tests
     // -------------------------------------------------------------------------
 
+    /// <summary>
+    /// The two fields DOS derives from the inventory, checked on the file the
+    /// orchestrator actually writes. Serialize() alone is not enough: the head is
+    /// patched afterwards in SaveGame, so a test that only calls the writer passes
+    /// whatever was already in memory and never exercises the patch.
+    /// </summary>
+    [Fact]
+    public void Save_Uw1_EmptyInventory_WritesCountOneAndHeadZero()
+    {
+        SetupUw1State();
+        UWClass.BasePath = _tempRoot;
+
+        SaveGame.Save(1, "inventory fields");
+
+        byte[] raw = File.ReadAllBytes(Path.Combine(_tempRoot, "SAVE1", "PLAYER.DAT"));
+        byte[] plain = playerdat.EncryptDecryptUW1(raw, raw[0]);
+
+        // No records emitted, so the file ends at InventoryPtr, exactly as DOS writes it.
+        Assert.Equal(playerdat.InventoryPtr, raw.Length);
+
+        // DOS reads this as the number of records to read: records + 1.
+        Assert.Equal(1, plain[0xD3] | (plain[0xD4] << 8));
+
+        // Head lives in bits 6..15 of the word at PlayerObjectStoragePTR+6. It must be
+        // 0 with no records; writing 1 sent DOS chasing a chain into a file that ends
+        // immediately, which is the hang in issue #43.
+        int linkOff = playerdat.PlayerObjectStoragePTR + 6;
+        int head = (plain[linkOff] | (plain[linkOff + 1] << 8)) >> 6;
+        Assert.Equal(0, head);
+    }
+
     [Fact]
     public void Save_Uw1_WritesExpectedFilesExceptScdArk()
     {

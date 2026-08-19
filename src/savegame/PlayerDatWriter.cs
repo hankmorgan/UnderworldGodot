@@ -39,6 +39,12 @@ namespace Underworld
         private const int Uw1BpOffsetBase = 0x10E;
         private const int Uw1BpCount = 8;
 
+        // DOS reads the number of inventory records from this 16-bit field, as
+        // "records + 1". Every DOS-created UW1 save carries N+1 here; the port
+        // wrote a constant 3, which is what made DOS walk a chain longer than it
+        // had read. See issue #44.
+        private const int Uw1InventoryCountOffset = 0xD3;
+
         public static byte[] Serialize()
         {
             if (Loader._RES == Loader.GAME_UW2)
@@ -94,16 +100,14 @@ namespace Underworld
             }
 
             int newLast = order.Count;
-            // DOS UW.EXE hangs at "You reenter the Abyss..." when PLAYER.DAT
-            // ends exactly at InventoryPtr (0x138) with no inventory slots
-            // emitted. Padding to at least one zero slot (file >= 0x140) is
-            // sufficient to unstick the load path — verified empirically
-            // against UW.EXE under js-dos. A fresh port chargen with all
-            // BP0..BP7 + paperdoll pointers = 0 (no items) used to produce a
-            // 312-byte file; bumping the floor to (InventoryPtr + 8) makes it
-            // 320 bytes and DOS loads cleanly.
-            int slotsToEmit = Math.Max(newLast, 1);
-            int fileLen = playerdat.InventoryPtr + slotsToEmit * 8;
+            // No padding floor. The old one emitted a spare zero record whenever
+            // the inventory was empty, to stop DOS hanging at "You reenter the
+            // Abyss...". That hang was really the head at PlayerObjectStoragePTR+6
+            // being written as 1 with nothing to point at, and the spare record
+            // only gave the bad head somewhere harmless to land. With the head
+            // written correctly a genuinely empty inventory is 312 bytes, which is
+            // byte for byte what DOS itself writes. See issue #44.
+            int fileLen = playerdat.InventoryPtr + newLast * 8;
             byte[] plain = new byte[fileLen];
             Array.Copy(playerdat.pdat, plain, playerdat.InventoryPtr);
 
@@ -203,8 +207,23 @@ namespace Underworld
                 SetSlotPtr(plain, off, newSlot);
             }
 
+            // Derived fields last, so nothing above can overwrite them.
+            SetInventoryCount(plain, newLast + 1);
+
             byte seed = plain[0];
             return playerdat.EncryptDecryptUW1(plain, seed);
+        }
+
+        /// <summary>
+        /// Writes DOS's inventory record count, which is the number of emitted
+        /// records plus one. Sixteen-bit little-endian at 0xD3, in the plaintext
+        /// region, so it is unaffected by the XOR pass over bytes 1..0xD2.
+        /// </summary>
+        private static void SetInventoryCount(byte[] plain, int count)
+        {
+            if (Uw1InventoryCountOffset + 1 >= plain.Length) return;
+            plain[Uw1InventoryCountOffset]     = (byte)(count & 0xFF);
+            plain[Uw1InventoryCountOffset + 1] = (byte)((count >> 8) & 0xFF);
         }
 
         // Hard cap on emitted slots — defends against a pathological source

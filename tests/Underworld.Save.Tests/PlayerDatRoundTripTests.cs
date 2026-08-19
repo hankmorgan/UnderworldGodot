@@ -37,19 +37,25 @@ public class PlayerDatRoundTripTests : IDisposable
         byte[] decrypted = Underworld.playerdat.EncryptDecryptUW1(encrypted, encrypted[0]);
 
         // File length mirrors the load loop in playerdatutil.cs:Load: slot i lives at
-        // PTR = InventoryPtr + (i-1)*8, so N populated slots occupy N*8 bytes past InventoryPtr.
-        // Floor of one zero slot is enforced by SerializeUw1Canonical to avoid the
-        // DOS UW.EXE Journey-Onward hang when PLAYER.DAT ends exactly at InventoryPtr.
-        int slotsExpected = Math.Max(Underworld.PlayerDatWriter.LastPopulatedInventorySlot(), 1);
+        // PTR = InventoryPtr + (i-1)*8, so N emitted slots occupy N*8 bytes past
+        // InventoryPtr. No padding floor: an empty inventory is exactly InventoryPtr
+        // bytes, which is what DOS itself writes.
+        int slotsExpected = Underworld.PlayerDatWriter.LastPopulatedInventorySlot();
         int expectedLen = Underworld.playerdat.InventoryPtr + slotsExpected * 8;
         Assert.Equal(expectedLen, decrypted.Length);
-        // Compare only the populated header region; padded trailing slot is
-        // zeros and is not present in the in-memory pdat at the same offset.
+
+        // The header is copied verbatim EXCEPT the inventory count at 0xD3..0xD4,
+        // which is derived from the number of emitted records rather than carried
+        // over from memory. Skipping it here rather than loosening the comparison,
+        // so any other header drift still fails.
+        const int countOffset = 0xD3;
         for (int i = 0; i < Underworld.playerdat.InventoryPtr; i++)
         {
+            if (i == countOffset || i == countOffset + 1) continue;
             Assert.True(originalPdat[i] == decrypted[i],
                 $"Byte mismatch at 0x{i:X4}: expected 0x{originalPdat[i]:X2}, got 0x{decrypted[i]:X2}");
         }
+        Assert.Equal(slotsExpected + 1, decrypted[countOffset] | (decrypted[countOffset + 1] << 8));
     }
 
     [Fact]
@@ -265,22 +271,30 @@ public class PlayerDatRoundTripTests : IDisposable
     }
 
     [Fact]
-    public void Uw1Serialize_EmptyInventory_PadsToAtLeastOneSlot()
+    public void Uw1Serialize_EmptyInventory_IsExactlyInventoryPtrBytes()
     {
-        // DOS UW.EXE hangs at "You reenter the Abyss..." when PLAYER.DAT
-        // ends exactly at InventoryPtr (0x138) with zero inventory slots.
-        // A fresh port chargen with no items in BP0..BP7 + paperdoll used
-        // to produce a 312-byte file. Verified empirically against UW.EXE
-        // under js-dos that one zero slot (file >= 0x140 = 320 bytes) is
-        // sufficient to unstick the load path.
+        // An empty inventory is InventoryPtr bytes, 312, which is byte for byte what
+        // DOS writes. This used to be padded to 320 to stop DOS hanging at
+        // "You reenter the Abyss...", but the hang was really the head at
+        // PlayerObjectStoragePTR+6 being written as 1 with nothing to point at; the
+        // spare record only gave that bad head somewhere harmless to land. Verified
+        // in real UW.EXE under js-dos while investigating issue #44.
         SetupUw1WithPdat();
         // Leave BP0..BP7 + paperdoll all zero — no items anywhere.
 
         byte[] encrypted = Underworld.PlayerDatWriter.Serialize();
         Assert.NotNull(encrypted);
-        Assert.True(
-            encrypted.Length >= Underworld.playerdat.InventoryPtr + 8,
-            $"empty-inventory PLAYER.DAT must be at least {Underworld.playerdat.InventoryPtr + 8} bytes " +
-            $"to unstick DOS UW.EXE Journey-Onward; got {encrypted.Length}");
+        Assert.Equal(Underworld.playerdat.InventoryPtr, encrypted.Length);
+
+        byte[] plain = Underworld.playerdat.EncryptDecryptUW1(encrypted, encrypted[0]);
+
+        // Count is records + 1, so 1 for an empty inventory. DOS uses it as the number
+        // of records to read; too small and it walks a chain into memory it never read.
+        Assert.Equal(1, plain[0xD3] | (plain[0xD4] << 8));
+
+        // Head must be 0 with no records. 0xDB..0xDC is the word holding it in bits
+        // 6..15; the low six bits are the owner field and are not asserted here.
+        int head = (plain[0xDB] | (plain[0xDC] << 8)) >> 6;
+        Assert.Equal(0, head);
     }
 }
