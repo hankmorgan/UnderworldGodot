@@ -105,15 +105,17 @@ public class PlayerDatRoundTripTests : IDisposable
     }
 
     [Fact]
-    public void Uw1InitEmptyPlayer_PdatD3IsShadesDatLightIndex()
+    public void Uw1InitEmptyPlayer_WritesThreeAtD3()
     {
         Underworld.UWClass.BasePath = Path.Combine(TestData.UW2GogRoot, "UW1");
         Underworld.UWClass._RES = Underworld.UWClass.GAME_UW1;
         Underworld.playerdat.InitEmptyPlayer("TestGronk");
 
-        // pdat[0xD3] = ShadeCutOff (per Hank/RE on PR #33). Valid range
-        // 0..7 indexes shades.dat (96 bytes / 12 bytes per entry).
-        // Chargen default is 3 = Light. See docs/save-architecture.md §5.
+        // Records what chargen puts at 0xD3, not what the byte means. It was named
+        // ShadeCutOff and given the value 3, but DOS reads the shade index from the high
+        // nibble of player data +0x63, and every DOS-created save inspected so far holds
+        // the inventory record count plus one at 0xD3. PlayerDatWriter now derives that
+        // value on save, so this in-memory 3 no longer reaches the file.
         Assert.Equal(0x03, Underworld.playerdat.pdat[0xD3]);
     }
 
