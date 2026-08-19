@@ -491,6 +491,12 @@ namespace Underworld
 
 		public override void _Input(InputEvent @event)
 		{
+			// Continue inventory drag detection when the cursor leaves the pressed slot control.
+			if (inventoryPointerDown && @event is InputEventMouseMotion mouseMotion)
+			{
+				TryStartInventoryDrag(mouseMotion.GlobalPosition);
+			}
+
 			if (@event is InputEventKey keyinput)
 			{
 				if (keyinput.Pressed)
@@ -526,6 +532,32 @@ namespace Underworld
 									break;
 								}
 						}
+					}
+				}
+			}
+		}
+
+		public override void _UnhandledInput(InputEvent @event)
+		{
+			// Release outside inventory slot controls (e.g. over the 3D view).
+			if (inventoryPointerDown
+				&& @event is InputEventMouseButton mouseButton
+				&& !mouseButton.Pressed
+				&& mouseButton.ButtonIndex == inventoryPointerButton)
+			{
+				TryStartInventoryDrag(mouseButton.GlobalPosition);
+				ClearInventoryPointerState();
+
+				if (playerdat.ObjectInHand != -1)
+				{
+					var destSlot = FindInventorySlotUnderMouse();
+					if (destSlot != null)
+					{
+						PlaceHeldItemAtSlot(destSlot);
+					}
+					else if (IsMouseInViewPort())
+					{
+						DropHeldItemIntoWorld();
 					}
 				}
 			}

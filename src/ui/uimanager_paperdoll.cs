@@ -522,68 +522,118 @@ namespace Underworld
 		/// <param name="extra_arg_0"></param>
 		private void _paperdoll_gui_input(InputEvent @event, string extra_arg_0)
         {
-            if (@event is InputEventMouseButton eventMouseButton 
-                && eventMouseButton.Pressed 
-                &&  (((eventMouseButton.ButtonIndex == MouseButton.Left) || (eventMouseButton.ButtonIndex == MouseButton.Right)))
-            )
+            if (playerdat.ParalyseTimer > 0 || playerdat.DreamingInVoid || MessageScrollIsTemporary)
             {
-                if (playerdat.ParalyseTimer>0)
-                {
-                    return; //block input while paralysed
-                }
-                if (playerdat.DreamingInVoid)
-                {
-                    return;// to prevent inventory use while in the void.
-                }
-                bool isLeftClick = (eventMouseButton.ButtonIndex == MouseButton.Left);
-                if (MessageScrollIsTemporary)
-                {//avoids bug involved in clicking on an object while a temp message is displayed
-                    return;
-                }
-                //LEFT CLICK ACTIONS
-                Debug.Print($"->{extra_arg_0}");
-                var objIndexAtSlot = GetObjAtSlot(extra_arg_0);
+                return;
+            }
 
-                //Do action appropiate to the interaction mode verb. use 
+            if (@event is InputEventMouseMotion mouseMotion)
+            {
+                if (inventoryPointerDown)
+                {
+                    TryStartInventoryDrag(mouseMotion.GlobalPosition);
+                }
+                return;
+            }
+
+            if (@event is not InputEventMouseButton eventMouseButton)
+            {
+                return;
+            }
+            if ((eventMouseButton.ButtonIndex != MouseButton.Left)
+                && (eventMouseButton.ButtonIndex != MouseButton.Right))
+            {
+                return;
+            }
+
+            bool isLeftClick = eventMouseButton.ButtonIndex == MouseButton.Left;
+            Debug.Print($"->{extra_arg_0}");
+
+            if (eventMouseButton.Pressed)
+            {
+                // Drag/click tracking. Use-on / spell modes act on release only.
+                if (UsageMode == 0)
+                {
+                    BeginInventoryPointerDown(extra_arg_0, eventMouseButton.ButtonIndex, eventMouseButton.GlobalPosition);
+                }
+                return;
+            }
+
+            // Mouse release
+            if (UsageMode != 0)
+            {
+                var objIndexAtSlot = GetObjAtSlot(extra_arg_0);
                 if (objIndexAtSlot > 0)
-                { //there is an object in that slot.
-                    uwObject obj = playerdat.InventoryObjects[objIndexAtSlot];
-                    switch(UsageMode)
+                {
+                    switch (UsageMode)
                     {
-                        case 0: //default
-                            InteractWithObjectInSlot(
-                                slotname: extra_arg_0,
-                                objAtSlot: obj,
-                                isLeftClick: isLeftClick);
-                            break;
                         case 1://object select to use on another. eg doorkey
                             useon.UseOn(
-                                ObjectUsed: playerdat.InventoryObjects[objIndexAtSlot], 
-                                srcObject: useon.CurrentItemBeingUsed, 
+                                ObjectUsed: playerdat.InventoryObjects[objIndexAtSlot],
+                                srcObject: useon.CurrentItemBeingUsed,
                                 WorldObject: false);
                             break;
                         case 2://spell casting
                             if (SpellCasting.currentSpell.SpellMajorClass != 5)
-                                {//as long as it's not a project(?) try and cast on the object
-                                    SpellCasting.CastCurrentSpellOnRayCastTarget(
-                                        index: objIndexAtSlot, 
-                                        objList: playerdat.InventoryObjects, 
-                                        WorldObject:false);
-                                }
+                            {
+                                SpellCasting.CastCurrentSpellOnRayCastTarget(
+                                    index: objIndexAtSlot,
+                                    objList: playerdat.InventoryObjects,
+                                    WorldObject: false);
+                            }
                             break;
                     }
                 }
-                else
-                {
-                    switch(UsageMode)
-                    {
-                        case 0:
-                            InteractWithEmptySlot(); break;
-                    }
-                 
-                }
                 CurrentSlot = -1;
+                ClearInventoryPointerState();
+                return;
             }
+
+            // Only complete the gesture for the button that started it.
+            if (inventoryPointerDown && eventMouseButton.ButtonIndex != inventoryPointerButton)
+            {
+                return;
+            }
+
+            bool wasDrag = inventoryDragActive;
+            // Start drag on release if movement already exceeded threshold but
+            // motion events were sparse (e.g. fast flick).
+            if (inventoryPointerDown && !wasDrag)
+            {
+                TryStartInventoryDrag(eventMouseButton.GlobalPosition);
+                wasDrag = inventoryDragActive;
+            }
+            ClearInventoryPointerState();
+
+            if (playerdat.ObjectInHand != -1)
+            {
+                // Place at the slot under the cursor (not the press control bind).
+                var destSlot = FindInventorySlotUnderMouse();
+                if (destSlot != null)
+                {
+                    PlaceHeldItemAtSlot(destSlot);
+                }
+                else if (IsMouseInViewPort())
+                {
+                    DropHeldItemIntoWorld();
+                }
+                // else leave item in hand
+            }
+            else if (!wasDrag)
+            {
+                // Click without drag: mode-dependent Use/Look on this control.
+                var objIndexAtSlot = GetObjAtSlot(extra_arg_0);
+                if (objIndexAtSlot > 0)
+                {
+                    InteractWithObjectInSlot(
+                        slotname: extra_arg_0,
+                        objAtSlot: playerdat.InventoryObjects[objIndexAtSlot],
+                        isLeftClick: isLeftClick);
+                }
+            }
+
+            CurrentSlot = -1;
+            GetViewport().SetInputAsHandled();
         }
 
         /// <summary>
