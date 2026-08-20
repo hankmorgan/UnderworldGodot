@@ -167,13 +167,14 @@ namespace Underworld
 
 
         /// <summary>
-        /// Pointer to the next slot in the static freelist
+        /// Index of the top entry in the static free list. Entries 0 to Ptr are free.
+        /// An empty list is -1, stored as 0xFFFF, so the value is read as signed.
         /// </summary>
         public int StaticFreeListPtr
         {
             get
             {
-                return (int)getAt(lev_ark_block.Data, 0x7C04, 16);
+                return (short)getAt(lev_ark_block.Data, 0x7C04, 16);
             }
             set
             {
@@ -182,7 +183,8 @@ namespace Underworld
         }
 
         /// <summary>
-        /// Remember to move pointer before changing!
+        /// The free list entry at the current pointer. Allocation reads this and then
+        /// moves the pointer down. Release moves the pointer up and then writes.
         /// </summary>
         public int StaticFreeListObject
         {
@@ -197,13 +199,14 @@ namespace Underworld
         }
 
         /// <summary>
-        /// Pointer to the next slot in the mobile freelist
+        /// Index of the top entry in the mobile free list. Entries 0 to Ptr are free.
+        /// An empty list is -1, stored as 0xFFFF, so the value is read as signed.
         /// </summary>
         public int MobileFreeListPtr
         {
             get
             {
-                return (int)getAt(lev_ark_block.Data, 0x7C02, 16);
+                return (short)getAt(lev_ark_block.Data, 0x7C02, 16);
             }
             set
             {
@@ -246,7 +249,8 @@ namespace Underworld
         }
 
         /// <summary>
-        /// Remember to move pointer before changing!
+        /// The free list entry at the current pointer. Allocation reads this and then
+        /// moves the pointer down. Release moves the pointer up and then writes.
         /// </summary>
         public int MobileFreeListObject
         {
@@ -1422,8 +1426,9 @@ namespace Underworld
             }
 
             //reset free lists. Assumes each object can now be freed up.
-            current_tilemap.StaticFreeListPtr = 0;
-            current_tilemap.MobileFreeListPtr = 0;
+            //-1 is an empty list, so the releases below fill it from entry 0 upwards.
+            current_tilemap.StaticFreeListPtr = -1;
+            current_tilemap.MobileFreeListPtr = -1;
 
             for (int o = 2; o < 1024; o++)
             {
