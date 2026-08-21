@@ -709,11 +709,31 @@ namespace Underworld
 
         public static bool SaveDescriptionPromptActive => SaveDescription_Prompt.Active;
 
-        /// <summary>What the scroll shows in place of {TYPEDINPUT} while the prompt is open.</summary>
-        public static string SaveDescriptionText =>
-            SaveDescriptionField != null && GodotObject.IsInstanceValid(SaveDescriptionField)
-                ? SaveDescriptionField.Text
-                : SaveDescription_Prompt.Buffer;
+        /// <summary>
+        /// What the scroll shows in place of {TYPEDINPUT} while the prompt is open: the
+        /// text with a block cursor sitting on the character at the caret, which is what
+        /// DOS draws. A bare "|" cannot show which character the caret is on, and it never
+        /// moved because arrow keys change the caret without changing the text.
+        /// </summary>
+        public static string SaveDescriptionText
+        {
+            get
+            {
+                if (SaveDescriptionField == null || !GodotObject.IsInstanceValid(SaveDescriptionField))
+                {
+                    return SaveDescription_Prompt.Buffer;
+                }
+
+                string text = SaveDescriptionField.Text;
+                int caret = System.Math.Clamp(SaveDescriptionField.CaretColumn, 0, text.Length);
+
+                string before = text.Substring(0, caret);
+                string under = caret < text.Length ? text.Substring(caret, 1) : " ";
+                string after = caret < text.Length ? text.Substring(caret + 1) : "";
+
+                return $"{before}[bgcolor=#883E14]{under}[/bgcolor]{after}";
+            }
+        }
 
         /// <summary>
         /// Forgets any prompt belonging to a previous scene. Called as the UI comes up.
@@ -746,9 +766,9 @@ namespace Underworld
 
             instance.scroll.Clear();
             AddToMessageScroll(
-                GameStringFormat.StripDisplayCodes(GameStrings.GetString(1, GameStrings.str_please_enter_a_save_file_description_))
-                + " {TYPEDINPUT}|",
-                mode: MessageDisplay.MessageDisplayMode.TypedInput);
+                GameStringFormat.StripDisplayCodes(
+                    GameStrings.GetString(1, GameStrings.str_please_enter_a_save_file_description_)));
+            listsaves(editingSlot: slot);
 
             // Focus and selection are deferred together and carry the generation they were
             // queued with, so an Escape or a keystroke in between cannot leave them acting
@@ -807,6 +827,11 @@ namespace Underworld
             return SaveDescriptionField;
         }
 
+        private static void RefreshSaveDescriptionLine()
+        {
+            if (SaveDescription_Prompt.Active) instance.scroll.UpdateMessageDisplay();
+        }
+
         private static bool RestoringSaveDescriptionText = false;
 
         private static void OnSaveDescriptionTextChanged(string newText)
@@ -852,6 +877,11 @@ namespace Underworld
             }
 
             if (actionable) SaveDescription_Prompt.NoteInteraction();
+
+            // Arrow keys and Delete move the caret without changing the text, so TextChanged
+            // never fires and the cursor would sit still. Deferred because the LineEdit acts
+            // on the event after this returns.
+            if (@event is InputEventKey) Callable.From(RefreshSaveDescriptionLine).CallDeferred();
         }
 
         private static void OnSaveDescriptionSubmitted(string text)
@@ -903,12 +933,20 @@ namespace Underworld
             EnableDisable(SaveDescriptionField, false);
         }
 
-        static void listsaves()
+        static void listsaves(int editingSlot = 0)
         {
             string[] romannumerals = new string[] { "I", "II", "III", "IV" };
-            instance.scroll.Clear();
+            if (editingSlot == 0) instance.scroll.Clear();
             for (int i = 1; i <= 4; i++)
             {
+                if (i == editingSlot)
+                {
+                    // The slot being named is edited in place, as it is in DOS, rather than
+                    // shown as a separate prompt with the text tacked on the end.
+                    AddToMessageScroll($"{romannumerals[i - 1]}- {{TYPEDINPUT}}", colour: 2,
+                                       mode: MessageDisplay.MessageDisplayMode.TypedInput);
+                    continue;
+                }
                 var path = System.IO.Path.Combine(UWClass.BasePath, $"SAVE{i}", "DESC");
                 if (SaveDescription.TryReadSlot(path, out string savename))
                 {
