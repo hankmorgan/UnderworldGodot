@@ -341,4 +341,35 @@ public class AutomapNotesRoundTripTests : System.IDisposable
         Assert.NotEqual(0, result[0]);
         Assert.Equal("ALOHA", System.Text.Encoding.ASCII.GetString(result, 0, 5));
     }
+    // ---- new notes: what the port declines to create ---------------------------------
+
+    [Theory]
+    [InlineData("ALPHA", true)]
+    [InlineData("a", true)]
+    [InlineData(" A ", true)]      // real text with spaces around it is fine
+    [InlineData("", false)]
+    [InlineData(null, false)]
+    [InlineData("   ", false)]     // DOS would keep this one; we decline it
+    [InlineData("\t", false)]      // normalises away to nothing
+    [InlineData("\0", false)]
+    public void IsKeepableNewNote_DeclinesNotesAPlayerCouldNotSeeOrErase(string text, bool keep)
+    {
+        Assert.Equal(keep, Underworld.automapnote.IsKeepableNewNote(text));
+    }
+
+    [Fact]
+    public void Serialize_SpacesOnlyNoteFromASave_IsWrittenBackUnchanged()
+    {
+        // The port will not create one, but DOS does, and dropping it on save would lose
+        // data from someone else's file. Four spaces is what real DOS writes.
+        var note = new Underworld.automapnote();
+        note.notes.Add(new Underworld.automapnote.mapnotetext("    ", 129, 46));
+
+        byte[] result = note.Serialize();
+
+        Assert.Equal(54, result.Length);
+        Assert.Equal(new byte[] { 0x20, 0x20, 0x20, 0x20, 0x00 }, result[0..5]);
+        Assert.Equal(129, result[0x32] | (result[0x33] << 8));
+        Assert.Equal(46, result[0x34] | (result[0x35] << 8));
+    }
 }
