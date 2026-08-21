@@ -982,7 +982,11 @@ public partial class main : Node3D
 							uimanager.StopWritingAutomapNote(false);
 							break;
 						case Key.Escape:
-							uimanager.StopWritingAutomapNote(true);
+							// DOS commits on Escape exactly as on Enter: both jump to the
+							// same routine, which copies the typed string into the note
+							// (UW1_asm.asm:310176-310185, target ovr092_BA1 at :310359).
+							// Nothing in the original cancels a note part way through.
+							uimanager.StopWritingAutomapNote(false);
 							break;
 						case Key.Backspace:
 							{
