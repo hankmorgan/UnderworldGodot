@@ -285,6 +285,11 @@ namespace Underworld
 
         private void _on_game_options_input(InputEvent @event, long extra_arg_0)
         {
+            // These buttons get gui_input straight from the scene, so the usual input block
+            // does not reach them. Without this you can click another slot, or Cancel, while
+            // still typing a description.
+            if (SaveDescriptionPromptActive) return;
+
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed)
             {
                 switch (CurrentGameOptionMenu)
@@ -417,42 +422,25 @@ namespace Underworld
                                 case 3:
                                 case 4://save to chosen slot
                                     {
-                                        // Description uses existing slot name if present, otherwise a default.
-                                        var descPath = System.IO.Path.Combine(UWClass.BasePath, $"SAVE{extra_arg_0}", "DESC");
-                                        string description = System.IO.File.Exists(descPath)
-                                            ? System.IO.File.ReadAllText(descPath)
-                                            : $"Save {extra_arg_0}";
-                                        int stringId;
                                         if (UWClass._RES != UWClass.GAME_UW1)
                                         {
                                             // UW2 save is unsupported pending an upstream UW2 lev.ark compressor.
                                             // Writing uncompressed UW2 blocks would fail DOS load (>80 uncompressed
                                             // blocks crash vanilla UW2.EXE). Until the compressor is ported, refuse.
+                                            //
+                                            // Refused before the prompt opens: asking for a name and then failing
+                                            // on purpose would be worse than failing straight away.
                                             GD.PrintErr("UW2 save pending upstream compressor — not yet supported");
-                                            stringId = GameStrings.str_save_game_failed_;
+                                            listsaves();
+                                            instance.scroll.Clear();
+                                            AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_save_game_failed_));
+                                            ReturnToGameFromOptions();
+                                            break;
                                         }
-                                        else
-                                        {
-                                            try
-                                            {
-                                                SaveGame.Save((int)extra_arg_0, description);
-                                                stringId = GameStrings.str_save_game_succeeded_;
-                                            }
-                                            catch (System.IO.IOException ex)
-                                            {
-                                                GD.PrintErr($"SaveGame.Save failed: {ex}");
-                                                stringId = GameStrings.str_save_game_failed_;
-                                            }
-                                            catch (System.UnauthorizedAccessException ex)
-                                            {
-                                                GD.PrintErr($"SaveGame.Save failed: {ex}");
-                                                stringId = GameStrings.str_save_game_failed_;
-                                            }
-                                        }
-                                        listsaves();
-                                        instance.scroll.Clear();
-                                        AddToMessageScroll(GameStrings.GetString(1, stringId));
-                                        ReturnToGameFromOptions();
+
+                                        // Ask for the description first. Saving happens on Enter, in
+                                        // OnSaveDescriptionSubmitted; Escape abandons it entirely.
+                                        BeginSaveDescription((int)extra_arg_0);
                                         break;
                                     }
                                 case 5://cancel and return to top
@@ -711,6 +699,173 @@ namespace Underworld
                     (int)OptionButtonIndices.QuitGameOff});
         }
 
+        // ---- save description prompt ------------------------------------------------
+
+        private static readonly SaveDescriptionPrompt SaveDescription_Prompt = new();
+        private static LineEdit SaveDescriptionField;
+
+        public static bool SaveDescriptionPromptActive => SaveDescription_Prompt.Active;
+
+        /// <summary>
+        /// Asks for the description before saving, the way DOS does. Nothing is written
+        /// until the player presses Enter, because SaveGame.Save mutates live state and
+        /// creates the slot directory as soon as it is called.
+        /// </summary>
+        private static void BeginSaveDescription(int slot)
+        {
+            string existing = "";
+            var descPath = System.IO.Path.Combine(UWClass.BasePath, $"SAVE{slot}", "DESC");
+            SaveDescription.TryReadSlot(descPath, out existing);
+
+            SaveDescription_Prompt.Open(slot, existing);
+
+            var field = EnsureSaveDescriptionField();
+            field.MaxLength = SaveDescription.MaxLength;
+            field.Text = SaveDescription_Prompt.Buffer;
+            EnableDisable(field, true);
+
+            instance.scroll.Clear();
+            AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_please_enter_a_save_file_description_));
+
+            // Focus and selection are deferred together and carry the generation they were
+            // queued with, so an Escape or a keystroke in between cannot leave them acting
+            // on a prompt that has gone.
+            int generation = SaveDescription_Prompt.Generation;
+            instance.CallDeferred(nameof(FocusSaveDescriptionField), generation);
+        }
+
+        private void FocusSaveDescriptionField(int generation)
+        {
+            if (!SaveDescription_Prompt.MayRunDeferred(generation)) return;
+            if (SaveDescriptionField == null) return;
+
+            SaveDescriptionField.GrabFocus();
+            SaveDescriptionField.SelectAll();
+        }
+
+        private static LineEdit EnsureSaveDescriptionField()
+        {
+            if (SaveDescriptionField != null) return SaveDescriptionField;
+
+            // Built here rather than in the scene: the shared TypedInput has
+            // selecting_enabled off, and borrowing it would mean lending conversations and
+            // chargen a 30 character limit.
+            SaveDescriptionField = new LineEdit
+            {
+                Name = "SaveDescriptionInput",
+                MaxLength = SaveDescription.MaxLength,
+                ContextMenuEnabled = false,
+                ShortcutKeysEnabled = false,
+                MiddleMousePasteEnabled = false,
+                SelectingEnabled = true,
+                Theme = instance.TypedInput?.Theme,
+            };
+            SaveDescriptionField.TextChanged += OnSaveDescriptionTextChanged;
+            SaveDescriptionField.TextSubmitted += OnSaveDescriptionSubmitted;
+            SaveDescriptionField.GuiInput += OnSaveDescriptionGuiInput;
+
+            var parent = instance.TypedInput?.GetParent() ?? (Node)instance;
+            parent.AddChild(SaveDescriptionField);
+            SaveDescriptionField.Position = instance.TypedInput?.Position ?? Vector2.Zero;
+            SaveDescriptionField.Size = new Vector2(600, 31);
+            return SaveDescriptionField;
+        }
+
+        private static bool RestoringSaveDescriptionText = false;
+
+        private static void OnSaveDescriptionTextChanged(string newText)
+        {
+            if (RestoringSaveDescriptionText) return;
+
+            // Godot has already applied the text, so anything unusable is undone rather than
+            // prevented. MaxLength has trimmed an over-long paste before we get here.
+            if (SaveDescription_Prompt.TryAccept(newText))
+            {
+                RestoringSaveDescriptionText = true;
+                SaveDescriptionField.Text = SaveDescription_Prompt.Buffer;
+                SaveDescriptionField.CaretColumn = SaveDescription_Prompt.Buffer.Length;
+                SaveDescriptionField.Deselect();
+                RestoringSaveDescriptionText = false;
+            }
+        }
+
+        private static void OnSaveDescriptionGuiInput(InputEvent @event)
+        {
+            if (!SaveDescription_Prompt.Active) return;
+
+            // Only something the player did on purpose ends the initial selection. Pointer
+            // motion and key releases arrive here too and must not count, or moving the
+            // mouse across the field would cancel the select-all.
+            bool actionable =
+                (@event is InputEventKey k && k.Pressed) ||
+                (@event is InputEventMouseButton m && m.Pressed) ||
+                @event is InputEventScreenTouch;
+
+            if (@event is InputEventKey key && key.Pressed && key.Keycode == Key.Backspace)
+            {
+                // DOS treats Backspace on a freshly opened slot as editing the existing name
+                // rather than replacing it. Drop the selection and let the same event through
+                // so it deletes one character, not the lot.
+                if (SaveDescription_Prompt.BeginEditingPrefill())
+                {
+                    SaveDescriptionField.Deselect();
+                    SaveDescriptionField.CaretColumn = SaveDescriptionField.Text.Length;
+                }
+                return;
+            }
+
+            if (actionable) SaveDescription_Prompt.NoteInteraction();
+        }
+
+        private static void OnSaveDescriptionSubmitted(string text)
+        {
+            if (!SaveDescription_Prompt.Active) return;
+
+            int slot = SaveDescription_Prompt.Slot;
+            string description = SaveDescription_Prompt.Commit();
+            CloseSaveDescriptionField();
+
+            int stringId;
+            try
+            {
+                SaveGame.Save(slot, description);
+                stringId = GameStrings.str_save_game_succeeded_;
+            }
+            catch (System.Exception ex)
+            {
+                GD.PrintErr($"SaveGame.Save failed: {ex}");
+                stringId = GameStrings.str_save_game_failed_;
+            }
+
+            listsaves();
+            instance.scroll.Clear();
+            AddToMessageScroll(GameStrings.GetString(1, stringId));
+            ReturnToGameFromOptions();
+        }
+
+        /// <summary>Escape. DOS abandons the whole save and reports failure.</summary>
+        public static void CancelSaveDescription()
+        {
+            if (!SaveDescription_Prompt.Active) return;
+
+            SaveDescription_Prompt.Cancel();
+            CloseSaveDescriptionField();
+
+            listsaves();
+            instance.scroll.Clear();
+            AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_save_game_failed_));
+            ReturnToGameFromOptions();
+        }
+
+        private static void CloseSaveDescriptionField()
+        {
+            if (SaveDescriptionField == null) return;
+            SaveDescriptionField.ReleaseFocus();
+            SaveDescriptionField.Deselect();
+            SaveDescriptionField.Text = "";
+            EnableDisable(SaveDescriptionField, false);
+        }
+
         static void listsaves()
         {
             string[] romannumerals = new string[] { "I", "II", "III", "IV" };
@@ -718,9 +873,8 @@ namespace Underworld
             for (int i = 1; i <= 4; i++)
             {
                 var path = System.IO.Path.Combine(UWClass.BasePath, $"SAVE{i}", "DESC");
-                if (System.IO.File.Exists(path))
+                if (SaveDescription.TryReadSlot(path, out string savename))
                 {
-                    var savename = System.IO.File.ReadAllText(path);
                     AddToMessageScroll($"{romannumerals[i - 1]}- {savename}", colour: 2);
                 }
                 else
