@@ -982,7 +982,11 @@ public partial class main : Node3D
 							uimanager.StopWritingAutomapNote(false);
 							break;
 						case Key.Escape:
-							uimanager.StopWritingAutomapNote(true);
+							// DOS commits on Escape exactly as on Enter: both jump to the
+							// same routine, which copies the typed string into the note
+							// (UW1_asm.asm:310176-310185, target ovr092_BA1 at :310359).
+							// Nothing in the original cancels a note part way through.
+							uimanager.StopWritingAutomapNote(false);
 							break;
 						case Key.Backspace:
 							{
@@ -996,12 +1000,19 @@ public partial class main : Node3D
 								break;
 							}
 
-						default://TODO: Default is too broad. must exclude special chars
+						default:
 							{
+								// DOS accepts 0x20 to 0x7A only and upper-cases as it goes.
+								// Appending the raw key let a note keep lower-case text, which
+								// hangs UW1 when the automap is opened, and let a non-text key
+								// append a NUL that reads back as an empty note.
+								var c = automapnote.NormaliseNoteText(((char)keyinput.Unicode).ToString());
+								if (c.Length == 0) break;
+
 								var text = uimanager.currentmapnote.notetext;
-								if (text.Length < 0x30)//allowing space for \0 ending.
+								if (text.Length < automapnote.MaxNoteLength)
 								{
-									text += ((char)keyinput.Unicode).ToString();
+									text += c;
 									uimanager.currentmapnote.notetext = text;
 									uimanager.currentmapnote.textlabel.Text = $"[color=#331C13]{text}[/color]";
 								}

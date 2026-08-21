@@ -140,12 +140,17 @@ namespace Underworld
                 }
             }
 
-            // Replace automap-note blocks (240..319) with the in-memory notes when non-empty.
+            // Replace automap-note blocks (240..319) with the in-memory notes.
+            // A level whose notes were all deleted serialises to an empty array, which the
+            // layout step below turns into an absent block. Skipping the replacement instead
+            // would write the source ARK's notes back out and they would reappear on reload.
+            // automapsnotes[lvl] is only non-null for a level that has been loaded, and the
+            // constructor reads the source block, so an empty list means no notes.
             if (automapnote.automapsnotes != null)
             {
                 for (int lvl = 0; lvl < 80; lvl++)
                 {
-                    if (automapnote.automapsnotes[lvl] != null && automapnote.automapsnotes[lvl].notes.Count > 0)
+                    if (automapnote.automapsnotes[lvl] != null)
                     {
                         blockData[240 + lvl] = automapnote.automapsnotes[lvl].Serialize();
                     }
@@ -192,9 +197,12 @@ namespace Underworld
                 }
                 else
                 {
+                    // An absent block carries no allocation. Every absent block in the
+                    // shipped UW2 archive has offset, length and reserved all zero.
                     offsets[i] = 0;
                     flags[i] = 0;
                     lengths[i] = 0;
+                    reserved[i] = 0;
                 }
             }
 
@@ -358,14 +366,17 @@ namespace Underworld
                 }
             }
 
-            // Replace automap-note blocks (36..44) with the in-memory notes when non-empty.
+            // Replace automap-note blocks (36..44) with the in-memory notes.
             // Without this, newly-created notes are silently lost on save because
-            // ExtractSourceBlock returns the pre-play bytes from the source ARK.
+            // ExtractSourceBlock returns the pre-play bytes from the source ARK. The same
+            // applies in reverse to deletion: a level whose notes were all deleted
+            // serialises to an empty array, which the layout step turns into an absent
+            // block, matching how the shipped archive represents a level with no notes.
             if (automapnote.automapsnotes != null)
             {
                 for (int lvl = 0; lvl < 9; lvl++)
                 {
-                    if (automapnote.automapsnotes[lvl] != null && automapnote.automapsnotes[lvl].notes.Count > 0)
+                    if (automapnote.automapsnotes[lvl] != null)
                     {
                         blockData[36 + lvl] = automapnote.automapsnotes[lvl].Serialize();
                     }
