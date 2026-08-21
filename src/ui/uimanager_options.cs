@@ -433,7 +433,7 @@ namespace Underworld
                                             GD.PrintErr("UW2 save pending upstream compressor — not yet supported");
                                             listsaves();
                                             instance.scroll.Clear();
-                                            AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_save_game_failed_));
+                                            AddToMessageScroll(GameStringFormat.StripDisplayCodes(GameStrings.GetString(1, GameStrings.str_save_game_failed_)));
                                             ReturnToGameFromOptions();
                                             break;
                                         }
@@ -701,10 +701,19 @@ namespace Underworld
 
         // ---- save description prompt ------------------------------------------------
 
+        /// <summary>What an empty slot shows, and what its prompt starts with.</summary>
+        public const string UnusedSlotPlaceholder = "<not used yet>";
+
         private static readonly SaveDescriptionPrompt SaveDescription_Prompt = new();
         private static LineEdit SaveDescriptionField;
 
         public static bool SaveDescriptionPromptActive => SaveDescription_Prompt.Active;
+
+        /// <summary>What the scroll shows in place of {TYPEDINPUT} while the prompt is open.</summary>
+        public static string SaveDescriptionText =>
+            SaveDescriptionField != null && GodotObject.IsInstanceValid(SaveDescriptionField)
+                ? SaveDescriptionField.Text
+                : SaveDescription_Prompt.Buffer;
 
         /// <summary>
         /// Forgets any prompt belonging to a previous scene. Called as the UI comes up.
@@ -723,9 +732,10 @@ namespace Underworld
         /// </summary>
         private static void BeginSaveDescription(int slot)
         {
-            string existing = "";
             var descPath = System.IO.Path.Combine(UWClass.BasePath, $"SAVE{slot}", "DESC");
-            SaveDescription.TryReadSlot(descPath, out existing);
+            string existing = SaveDescription.TryReadSlot(descPath, out string stored)
+                ? stored
+                : UnusedSlotPlaceholder;
 
             SaveDescription_Prompt.Open(slot, existing);
 
@@ -735,16 +745,19 @@ namespace Underworld
             EnableDisable(field, true);
 
             instance.scroll.Clear();
-            AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_please_enter_a_save_file_description_));
+            AddToMessageScroll(
+                GameStringFormat.StripDisplayCodes(GameStrings.GetString(1, GameStrings.str_please_enter_a_save_file_description_))
+                + " {TYPEDINPUT}|",
+                mode: MessageDisplay.MessageDisplayMode.TypedInput);
 
             // Focus and selection are deferred together and carry the generation they were
             // queued with, so an Escape or a keystroke in between cannot leave them acting
             // on a prompt that has gone.
             int generation = SaveDescription_Prompt.Generation;
-            instance.CallDeferred(nameof(FocusSaveDescriptionField), generation);
+            Callable.From(() => FocusSaveDescriptionField(generation)).CallDeferred();
         }
 
-        private void FocusSaveDescriptionField(int generation)
+        private static void FocusSaveDescriptionField(int generation)
         {
             if (!SaveDescription_Prompt.MayRunDeferred(generation)) return;
             if (SaveDescriptionField == null || !GodotObject.IsInstanceValid(SaveDescriptionField)) return;
@@ -781,10 +794,16 @@ namespace Underworld
             SaveDescriptionField.TextSubmitted += OnSaveDescriptionSubmitted;
             SaveDescriptionField.GuiInput += OnSaveDescriptionGuiInput;
 
+            // Sits where the existing typed-input proxy sits and is the same size. What the
+            // player reads is the {TYPEDINPUT} substitution in the message scroll, exactly as
+            // for the quantity and conversation prompts; the field only collects the keys.
             var parent = instance.TypedInput?.GetParent() ?? (Node)instance;
             parent.AddChild(SaveDescriptionField);
-            SaveDescriptionField.Position = instance.TypedInput?.Position ?? Vector2.Zero;
-            SaveDescriptionField.Size = new Vector2(600, 31);
+            if (instance.TypedInput != null)
+            {
+                SaveDescriptionField.Position = instance.TypedInput.Position;
+                SaveDescriptionField.Size = instance.TypedInput.Size;
+            }
             return SaveDescriptionField;
         }
 
@@ -804,6 +823,7 @@ namespace Underworld
                 SaveDescriptionField.Deselect();
                 RestoringSaveDescriptionText = false;
             }
+            instance.scroll.UpdateMessageDisplay();
         }
 
         private static void OnSaveDescriptionGuiInput(InputEvent @event)
@@ -856,7 +876,7 @@ namespace Underworld
 
             listsaves();
             instance.scroll.Clear();
-            AddToMessageScroll(GameStrings.GetString(1, stringId));
+            AddToMessageScroll(GameStringFormat.StripDisplayCodes(GameStrings.GetString(1, stringId)));
             ReturnToGameFromOptions();
         }
 
@@ -870,7 +890,7 @@ namespace Underworld
 
             listsaves();
             instance.scroll.Clear();
-            AddToMessageScroll(GameStrings.GetString(1, GameStrings.str_save_game_failed_));
+            AddToMessageScroll(GameStringFormat.StripDisplayCodes(GameStrings.GetString(1, GameStrings.str_save_game_failed_)));
             ReturnToGameFromOptions();
         }
 
@@ -896,7 +916,7 @@ namespace Underworld
                 }
                 else
                 {
-                    AddToMessageScroll($"{romannumerals[i - 1]}- <not used yet>", colour: 2);
+                    AddToMessageScroll($"{romannumerals[i - 1]}- {UnusedSlotPlaceholder}", colour: 2);
                 }
             }
         }

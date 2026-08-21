@@ -171,3 +171,37 @@ public class SaveDescriptionSlotReadTests : IDisposable
         Assert.Equal("S", name);
     }
 }
+
+/// <summary>
+/// Game strings carry display codes as a backslash and a digit. Nothing in the message
+/// scroll strips them, so they reached the screen verbatim: the save prompt appeared as
+/// "\6 Please enter a save file description" and the failure message as "\4Save game
+/// failed" with a stray "\0" on the next line.
+/// </summary>
+public class GameStringsDisplayCodeTests
+{
+    [Theory]
+    [InlineData("\\6 Please enter a save file description:", "Please enter a save file description:")]
+    [InlineData("\\4Save game failed.\\0", "Save game failed.")]
+    [InlineData("\\0", "")]
+    [InlineData("No codes here", "No codes here")]
+    [InlineData("", "")]
+    [InlineData(null, "")]
+    public void StripDisplayCodes_RemovesBackslashDigitPairs(string input, string expected)
+    {
+        Assert.Equal(expected, GameStringFormat.StripDisplayCodes(input));
+    }
+
+    [Fact]
+    public void StripDisplayCodes_LeavesABackslashThatIsNotACode()
+    {
+        // A path or a stray backslash is not a display code and must survive.
+        Assert.Equal(@"a\b", GameStringFormat.StripDisplayCodes(@"a\b"));
+    }
+
+    [Fact]
+    public void StripDisplayCodes_HandlesATrailingBackslash()
+    {
+        Assert.Equal(@"end\", GameStringFormat.StripDisplayCodes(@"end\"));
+    }
+}
