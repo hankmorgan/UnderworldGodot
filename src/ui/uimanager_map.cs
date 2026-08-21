@@ -301,8 +301,9 @@ namespace Underworld
                         break;
 
                     case automapactions.WRITING:
-                        //stop writing
-                        //StopWritingAutomapNote();
+                        // Clicking finishes the note in DOS. A further click then starts
+                        // the next one, because the action is NONE again by that point.
+                        StopWritingAutomapNote(false);
                         break;
 
                     case automapactions.DELETING: //to be implemented.
@@ -319,7 +320,13 @@ namespace Underworld
             CurrentAutomapAction = automapactions.NONE;
             instance.mousecursor.SetCursorToCursor(14);
 
-            if (!cancelled)
+            // DOS tests the first byte of the typed buffer and skips the whole commit
+            // when it is zero, so a note with nothing typed is discarded and the note
+            // count is not incremented (UW1_asm.asm:310364-310382). It only tests the
+            // first byte, so a note of nothing but spaces is kept.
+            bool empty = string.IsNullOrEmpty(currentmapnote?.notetext);
+
+            if (!cancelled && !empty)
             {
                 //Add note to memory
                 var level = automap.currentautomap;
@@ -329,12 +336,10 @@ namespace Underworld
                     automapnote.automapsnotes[blockno] = new automapnote(blockno);
                 }
                 automapnote.automapsnotes[blockno].notes.Add(currentmapnote);
-
-                //TODO fill out remainer of string with nulls.
             }
             else
             {
-                currentmapnote.textlabel.QueueFree();
+                currentmapnote?.textlabel?.QueueFree();
                 currentmapnote = null;
             }
         }
