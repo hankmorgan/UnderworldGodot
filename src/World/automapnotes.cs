@@ -164,6 +164,19 @@ namespace Underworld
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Whether a newly typed note is worth keeping.
+        ///
+        /// DOS keeps a note of nothing but spaces, because it only tests the first byte of
+        /// the buffer. Such a note draws as nothing, so a player cannot see it to erase it.
+        /// The port declines to create one. Notes already present in a save still load and
+        /// are written back unchanged, so a DOS save carrying one is not altered.
+        /// </summary>
+        public static bool IsKeepableNewNote(string text)
+        {
+            return !string.IsNullOrWhiteSpace(NormaliseNoteText(text));
+        }
+
         public byte[] Serialize()
         {
             if (notes == null || notes.Count == 0) return System.Array.Empty<byte>();

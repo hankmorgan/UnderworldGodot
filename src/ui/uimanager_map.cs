@@ -322,11 +322,16 @@ namespace Underworld
 
             // DOS tests the first byte of the typed buffer and skips the whole commit
             // when it is zero, so a note with nothing typed is discarded and the note
-            // count is not incremented (UW1_asm.asm:310364-310382). It only tests the
-            // first byte, so a note of nothing but spaces is kept.
-            bool empty = string.IsNullOrEmpty(currentmapnote?.notetext);
+            // count is not incremented (UW1_asm.asm:310364-310382).
+            //
+            // DOS also keeps a note of nothing but spaces, because it only tests that
+            // first byte. We deliberately do not: it draws as nothing, so a player cannot
+            // find it to erase it. Loading and saving leave such a note alone, so a DOS
+            // save that already has one keeps it.
+            bool keep = currentmapnote != null
+                        && automapnote.IsKeepableNewNote(currentmapnote.notetext);
 
-            if (!cancelled && !empty)
+            if (!cancelled && keep)
             {
                 //Add note to memory
                 var level = automap.currentautomap;
