@@ -707,6 +707,16 @@ namespace Underworld
         public static bool SaveDescriptionPromptActive => SaveDescription_Prompt.Active;
 
         /// <summary>
+        /// Forgets any prompt belonging to a previous scene. Called as the UI comes up.
+        /// </summary>
+        public static void ResetSaveDescriptionPrompt()
+        {
+            if (SaveDescription_Prompt.Active) SaveDescription_Prompt.Cancel();
+            SaveDescriptionField = null;
+            RestoringSaveDescriptionText = false;
+        }
+
+        /// <summary>
         /// Asks for the description before saving, the way DOS does. Nothing is written
         /// until the player presses Enter, because SaveGame.Save mutates live state and
         /// creates the slot directory as soon as it is called.
@@ -737,7 +747,7 @@ namespace Underworld
         private void FocusSaveDescriptionField(int generation)
         {
             if (!SaveDescription_Prompt.MayRunDeferred(generation)) return;
-            if (SaveDescriptionField == null) return;
+            if (SaveDescriptionField == null || !GodotObject.IsInstanceValid(SaveDescriptionField)) return;
 
             SaveDescriptionField.GrabFocus();
             SaveDescriptionField.SelectAll();
@@ -745,6 +755,12 @@ namespace Underworld
 
         private static LineEdit EnsureSaveDescriptionField()
         {
+            // The scene can be loaded more than once, from the launcher, so a field built
+            // for a previous one is a freed node by now. Rebuild rather than touch it.
+            if (SaveDescriptionField != null && !GodotObject.IsInstanceValid(SaveDescriptionField))
+            {
+                SaveDescriptionField = null;
+            }
             if (SaveDescriptionField != null) return SaveDescriptionField;
 
             // Built here rather than in the scene: the shared TypedInput has
@@ -759,6 +775,7 @@ namespace Underworld
                 MiddleMousePasteEnabled = false,
                 SelectingEnabled = true,
                 Theme = instance.TypedInput?.Theme,
+                Visible = false,
             };
             SaveDescriptionField.TextChanged += OnSaveDescriptionTextChanged;
             SaveDescriptionField.TextSubmitted += OnSaveDescriptionSubmitted;
@@ -859,7 +876,7 @@ namespace Underworld
 
         private static void CloseSaveDescriptionField()
         {
-            if (SaveDescriptionField == null) return;
+            if (SaveDescriptionField == null || !GodotObject.IsInstanceValid(SaveDescriptionField)) return;
             SaveDescriptionField.ReleaseFocus();
             SaveDescriptionField.Deselect();
             SaveDescriptionField.Text = "";

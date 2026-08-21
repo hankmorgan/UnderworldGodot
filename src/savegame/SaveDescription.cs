@@ -96,22 +96,29 @@ namespace Underworld
             catch (NotSupportedException) { return false; }
             catch (ArgumentException) { return false; }
 
-            string text;
+            byte[] raw;
             try
             {
-                text = Encoding.ASCII.GetString(File.ReadAllBytes(descPath));
+                raw = File.ReadAllBytes(descPath);
             }
             catch (IOException) { return true; }
             catch (UnauthorizedAccessException) { return true; }
 
-            if (text.Length > MaxLength || !IsSupported(text))
+            // The bytes are checked before they become a string. Encoding.ASCII turns
+            // anything above 0x7F into '?', so decoding first would invent a name that
+            // passes inspection and would show two different damaged files as the same.
+            if (raw.Length > MaxLength)
             {
                 // Written by something else, or damaged. The slot is real, the name is not
                 // something we can show.
                 return true;
             }
+            foreach (byte b in raw)
+            {
+                if (b < 0x20 || b > 0x7E) return true;
+            }
 
-            description = text;
+            description = Encoding.ASCII.GetString(raw);
             return true;
         }
     }

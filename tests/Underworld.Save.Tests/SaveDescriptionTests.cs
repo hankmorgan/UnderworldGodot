@@ -150,6 +150,19 @@ public class SaveDescriptionSlotReadTests : IDisposable
         Assert.Equal("", name);
     }
 
+    [Theory]
+    [InlineData(new byte[] { 0x80 })]
+    [InlineData(new byte[] { 0xFF })]
+    [InlineData(new byte[] { 0x41, 0x80, 0x42 })]
+    public void FileHoldingHighBytes_IsOccupiedButHasNoDisplayableName(byte[] raw)
+    {
+        // Encoding.ASCII turns anything above 0x7F into '?', so decoding first and checking
+        // afterwards would accept a fabricated name and show two different corrupt files as
+        // the same thing. The bytes are checked before they become a string.
+        Assert.True(SaveDescription.TryReadSlot(Write(raw), out string name));
+        Assert.Equal("", name);
+    }
+
     [Fact]
     public void SingleByteFileFromAnEarlierPortBuild_StillReadsAsThatCharacter()
     {
