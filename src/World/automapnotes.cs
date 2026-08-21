@@ -138,6 +138,32 @@ namespace Underworld
         /// Int16 posX at offset 0x32, Int16 posY at offset 0x34.
         /// Returns an empty byte array when there are no notes.
         /// </summary>
+        /// <summary>
+        /// The longest note DOS will accept. Its entry loop stops inserting once the
+        /// index passes 0x2D, so 46 characters is the maximum.
+        /// </summary>
+        public const int MaxNoteLength = 46;
+
+        /// <summary>
+        /// Reduces a note to what DOS can store and draw. Both games accept only
+        /// 0x20 to 0x7A on entry and upper-case as they go, so a note holding anything
+        /// else was never reachable in the original. A lower-case note hangs UW1 when
+        /// the automap is opened.
+        /// </summary>
+        public static string NormaliseNoteText(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return "";
+
+            var sb = new System.Text.StringBuilder(text.Length);
+            foreach (char c in text)
+            {
+                if (c < 0x20 || c > 0x7A) continue;
+                sb.Append(c >= 'a' && c <= 'z' ? (char)(c - 0x20) : c);
+                if (sb.Length == MaxNoteLength) break;
+            }
+            return sb.ToString();
+        }
+
         public byte[] Serialize()
         {
             if (notes == null || notes.Count == 0) return System.Array.Empty<byte>();
@@ -147,7 +173,7 @@ namespace Underworld
             {
                 int recordStart = i * 54;
                 var n = notes[i];
-                string text = n.notetext ?? "";
+                string text = NormaliseNoteText(n.notetext);
 
                 int copyLen = System.Math.Min(text.Length, 0x31);
                 for (int c = 0; c < copyLen; c++)

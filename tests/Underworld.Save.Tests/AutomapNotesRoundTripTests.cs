@@ -36,12 +36,14 @@ public class AutomapNotesRoundTripTests : System.IDisposable
         note.notes.Add(new Underworld.automapnote.mapnotetext("hello", 42, 7));
         byte[] result = note.Serialize();
 
+        // Upper-cased on the way out. This test previously asserted "hello" byte for byte,
+        // which is a note DOS cannot draw: opening the automap on such a save hangs UW1.
         Assert.Equal(54, result.Length);
-        Assert.Equal((byte)'h', result[0]);
-        Assert.Equal((byte)'e', result[1]);
-        Assert.Equal((byte)'l', result[2]);
-        Assert.Equal((byte)'l', result[3]);
-        Assert.Equal((byte)'o', result[4]);
+        Assert.Equal((byte)'H', result[0]);
+        Assert.Equal((byte)'E', result[1]);
+        Assert.Equal((byte)'L', result[2]);
+        Assert.Equal((byte)'L', result[3]);
+        Assert.Equal((byte)'O', result[4]);
         Assert.Equal((byte)0, result[5]);
         Assert.Equal((byte)42, result[0x32]);
         Assert.Equal((byte)0, result[0x33]);
@@ -279,5 +281,64 @@ public class AutomapNotesRoundTripTests : System.IDisposable
             Underworld.LevArkLoader.lev_ark_file_data = originalFile;
             Underworld.automapnote.automapsnotes = null;
         }
+    }
+    // ---- note text must match what DOS can store and draw ---------------------------
+
+    [Theory]
+    [InlineData("alpha", "ALPHA")]                 // lower-case hangs UW1's automap
+    [InlineData("Mixed Case 12", "MIXED CASE 12")]
+    [InlineData("ALREADY UPPER", "ALREADY UPPER")]
+    [InlineData("", "")]
+    [InlineData(null, "")]
+    public void NormaliseNoteText_UpperCasesAndLeavesValidCharacters(string input, string expected)
+    {
+        Assert.Equal(expected, Underworld.automapnote.NormaliseNoteText(input));
+    }
+
+    [Fact]
+    public void NormaliseNoteText_DropsCharactersDosNeverAccepts()
+    {
+        // DOS's entry loop takes 0x20..0x7A only. A NUL from a non-text key event is how
+        // the port produced notes that read back as empty.
+        Assert.Equal("AB", Underworld.automapnote.NormaliseNoteText("A\0B"));
+        Assert.Equal("AB", Underworld.automapnote.NormaliseNoteText("A\u007fB"));
+        Assert.Equal("AB", Underworld.automapnote.NormaliseNoteText("A\u00e9B"));
+        Assert.Equal("", Underworld.automapnote.NormaliseNoteText("\0"));
+    }
+
+    [Fact]
+    public void NormaliseNoteText_TruncatesToTheDosMaximum()
+    {
+        var text = Underworld.automapnote.NormaliseNoteText(new string('A', 100));
+        Assert.Equal(Underworld.automapnote.MaxNoteLength, text.Length);
+        Assert.Equal(46, Underworld.automapnote.MaxNoteLength);
+    }
+
+    [Fact]
+    public void Serialize_LowerCaseNote_IsWrittenUpperCase()
+    {
+        var note = new Underworld.automapnote();
+        note.notes.Add(new Underworld.automapnote.mapnotetext("alpha", 159, 179));
+
+        byte[] result = note.Serialize();
+
+        Assert.Equal(54, result.Length);
+        Assert.Equal("ALPHA", System.Text.Encoding.ASCII.GetString(result, 0, 5));
+        Assert.Equal(0, result[5]);
+        // coordinates are untouched: they were proved harmless in DOS
+        Assert.Equal(159, result[0x32] | (result[0x33] << 8));
+        Assert.Equal(179, result[0x34] | (result[0x35] << 8));
+    }
+
+    [Fact]
+    public void Serialize_NoteStartingWithNul_NoLongerReadsBackAsEmpty()
+    {
+        var note = new Underworld.automapnote();
+        note.notes.Add(new Underworld.automapnote.mapnotetext("\0ALOHA", 47, 47));
+
+        byte[] result = note.Serialize();
+
+        Assert.NotEqual(0, result[0]);
+        Assert.Equal("ALOHA", System.Text.Encoding.ASCII.GetString(result, 0, 5));
     }
 }
