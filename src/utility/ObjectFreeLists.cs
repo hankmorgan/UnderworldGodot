@@ -24,23 +24,24 @@ namespace Underworld
             switch (WhichList)
             {
                 case ObjectListType.StaticList:
-                    //Move PTR down, get object at that point.
-                    if (UWTileMap.current_tilemap.StaticFreeListPtr<=0)
+                    //Take the object at the top of the list, then move PTR down.
+                    if (UWTileMap.current_tilemap.StaticFreeListPtr < 0)
                     {
                         return 0;
                     }
+                    var staticslot = UWTileMap.current_tilemap.StaticFreeListObject;
                     UWTileMap.current_tilemap.StaticFreeListPtr--;
-                    //Debug.Print($"Allocating Static {UWTileMap.current_tilemap.StaticFreeListObject} Pointer decremented to {UWTileMap.current_tilemap.StaticFreeListPtr}");
-                    return UWTileMap.current_tilemap.StaticFreeListObject;
+                    //Debug.Print($"Allocating Static {staticslot} Pointer decremented to {UWTileMap.current_tilemap.StaticFreeListPtr}");
+                    return staticslot;
                 case ObjectListType.MobileList:
-                    if (UWTileMap.current_tilemap.MobileFreeListPtr<=0)
+                    if (UWTileMap.current_tilemap.MobileFreeListPtr < 0)
                     {
                         return 0;
                     }
-                    UWTileMap.current_tilemap.MobileFreeListPtr--;
-                    //Debug.Print($"Allocating Mobile {UWTileMap.current_tilemap.MobileFreeListObject} Pointer decremented to {UWTileMap.current_tilemap.MobileFreeListPtr}");
-                    //add to the active mobiles list                    
                     var newslot = UWTileMap.current_tilemap.MobileFreeListObject;
+                    UWTileMap.current_tilemap.MobileFreeListPtr--;
+                    //Debug.Print($"Allocating Mobile {newslot} Pointer decremented to {UWTileMap.current_tilemap.MobileFreeListPtr}");
+                    //add to the active mobiles list
                     UWTileMap.current_tilemap.SetActiveMobileAtIndex(UWTileMap.current_tilemap.NoOfActiveMobiles, newslot);
                     UWTileMap.current_tilemap.NoOfActiveMobiles++;
                     return newslot;
@@ -58,8 +59,8 @@ namespace Underworld
             //remove from world
             if (obj.index < 256)
             {//mobile
-                UWTileMap.current_tilemap.MobileFreeListObject = obj.index;
                 UWTileMap.current_tilemap.MobileFreeListPtr++;
+                UWTileMap.current_tilemap.MobileFreeListObject = obj.index;
                 Debug.Print($"Freeing Mobile {obj.index} Pointer incremented to {UWTileMap.current_tilemap.MobileFreeListPtr}");
                 for (int i = 0; i < UWTileMap.current_tilemap.NoOfActiveMobiles; i++)
                 {
@@ -79,8 +80,8 @@ namespace Underworld
             }
             else
             {//static
-                UWTileMap.current_tilemap.StaticFreeListObject = obj.index;
                 UWTileMap.current_tilemap.StaticFreeListPtr++;
+                UWTileMap.current_tilemap.StaticFreeListObject = obj.index;
                 Debug.Print($"Freeing Static {obj.index} {obj.a_name} Pointer incremented to {UWTileMap.current_tilemap.StaticFreeListPtr}");
             }
 
