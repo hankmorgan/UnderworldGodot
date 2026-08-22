@@ -852,6 +852,7 @@ namespace Underworld
             SaveDescriptionField.TextChanged += OnSaveDescriptionTextChanged;
             SaveDescriptionField.TextSubmitted += OnSaveDescriptionSubmitted;
             SaveDescriptionField.GuiInput += OnSaveDescriptionGuiInput;
+            SaveDescriptionField.FocusExited += OnSaveDescriptionFocusExited;
 
             // Sits where the existing typed-input proxy sits and is the same size. What the
             // player reads is the {TYPEDINPUT} substitution in the message scroll, exactly as
@@ -906,12 +907,14 @@ namespace Underworld
             // Only something the player did on purpose ends the initial selection. Pointer
             // motion and key releases arrive here too and must not count, or moving the
             // mouse across the field would cancel the select-all.
+            bool keyPress = @event is InputEventKey k && k.Pressed;
             bool actionable =
-                (@event is InputEventKey k && k.Pressed) ||
+                keyPress ||
                 (@event is InputEventMouseButton m && m.Pressed) ||
                 @event is InputEventScreenTouch;
 
-            if (@event is InputEventKey key && key.Pressed && IsEditingKey(key.Keycode))
+            if (keyPress && IsEditingKey(((InputEventKey)@event).Keycode)
+                && SaveDescription_Prompt.BeginEditingPrefill())
             {
                 // A key that edits or moves rather than types means the player wants the
                 // existing name, not a replacement. Collapse the selection to the END and
@@ -920,20 +923,43 @@ namespace Underworld
                 //
                 // This has to be done here: Godot collapses a selection to its START, so
                 // Left would otherwise jump the caret to position 0 rather than move it.
-                if (SaveDescription_Prompt.BeginEditingPrefill())
-                {
-                    SaveDescriptionField.Deselect();
-                    SaveDescriptionField.CaretColumn = SaveDescriptionField.Text.Length;
-                }
-                return;
+                SaveDescriptionField.Deselect();
+                SaveDescriptionField.CaretColumn = SaveDescriptionField.Text.Length;
+            }
+            else if (actionable)
+            {
+                SaveDescription_Prompt.NoteInteraction();
             }
 
-            if (actionable) SaveDescription_Prompt.NoteInteraction();
+            // Redraw after the LineEdit has acted on the event. Arrows, Home, End and a
+            // mouse click move the caret without changing the text, so TextChanged never
+            // fires and the drawn cursor would sit still. This must not sit behind an early
+            // return: doing so left exactly those keys unable to move the cursor.
+            if (@event is InputEventKey || @event is InputEventMouseButton)
+            {
+                Callable.From(RefreshSaveDescriptionLine).CallDeferred();
+            }
+        }
 
-            // Arrow keys and Delete move the caret without changing the text, so TextChanged
-            // never fires and the cursor would sit still. Deferred because the LineEdit acts
-            // on the event after this returns.
-            if (@event is InputEventKey) Callable.From(RefreshSaveDescriptionLine).CallDeferred();
+        /// <summary>
+        /// The prompt is modal, so the field keeps focus until it closes. Without this,
+        /// anything that steals focus (Tab, a click elsewhere) leaves the player unable to
+        /// type while the option buttons are still blocked, with only Escape to get out.
+        /// </summary>
+        private static void OnSaveDescriptionFocusExited()
+        {
+            if (!SaveDescription_Prompt.Active) return;
+            if (SaveDescriptionField == null || !GodotObject.IsInstanceValid(SaveDescriptionField)) return;
+            Callable.From(() =>
+            {
+                if (SaveDescription_Prompt.Active
+                    && SaveDescriptionField != null
+                    && GodotObject.IsInstanceValid(SaveDescriptionField)
+                    && !SaveDescriptionField.HasFocus())
+                {
+                    SaveDescriptionField.GrabFocus();
+                }
+            }).CallDeferred();
         }
 
         private static void OnSaveDescriptionSubmitted(string text)
