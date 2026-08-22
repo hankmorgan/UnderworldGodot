@@ -890,6 +890,15 @@ namespace Underworld
             instance.scroll.UpdateMessageDisplay();
         }
 
+        /// <summary>
+        /// Keys that edit or move within the text rather than adding to it. While the
+        /// prefilled name is still selected these end the selection instead of replacing it.
+        /// </summary>
+        private static bool IsEditingKey(Key code) =>
+            code == Key.Backspace || code == Key.Delete ||
+            code == Key.Left || code == Key.Right ||
+            code == Key.Home || code == Key.End;
+
         private static void OnSaveDescriptionGuiInput(InputEvent @event)
         {
             if (!SaveDescription_Prompt.Active) return;
@@ -902,11 +911,15 @@ namespace Underworld
                 (@event is InputEventMouseButton m && m.Pressed) ||
                 @event is InputEventScreenTouch;
 
-            if (@event is InputEventKey key && key.Pressed && key.Keycode == Key.Backspace)
+            if (@event is InputEventKey key && key.Pressed && IsEditingKey(key.Keycode))
             {
-                // DOS treats Backspace on a freshly opened slot as editing the existing name
-                // rather than replacing it. Drop the selection and let the same event through
-                // so it deletes one character, not the lot.
+                // A key that edits or moves rather than types means the player wants the
+                // existing name, not a replacement. Collapse the selection to the END and
+                // let the same event through, so Backspace deletes the last character and
+                // Left steps back from the end.
+                //
+                // This has to be done here: Godot collapses a selection to its START, so
+                // Left would otherwise jump the caret to position 0 rather than move it.
                 if (SaveDescription_Prompt.BeginEditingPrefill())
                 {
                     SaveDescriptionField.Deselect();

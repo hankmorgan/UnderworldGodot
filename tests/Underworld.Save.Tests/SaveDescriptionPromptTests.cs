@@ -162,6 +162,20 @@ public class SaveDescriptionPromptTests
     }
 
     [Fact]
+    public void BeginEditingPrefill_IsWhatEveryEditingKeyGoesThrough()
+    {
+        // Backspace, Delete and the arrows all take this path. Godot collapses a selection
+        // to its start, so without it Left jumped the caret to position 0 instead of
+        // stepping back from the end of the prefilled name.
+        var p = Opened("Original Name");
+        Assert.True(p.SelectionPending);
+
+        Assert.True(p.BeginEditingPrefill());   // whichever key it was
+        Assert.False(p.SelectionPending);
+        Assert.Equal("Original Name", p.Buffer);   // the name is kept, not replaced
+    }
+
+    [Fact]
     public void BeginEditingPrefill_DoesNothingWhenClosed() =>
         Assert.False(new SaveDescriptionPrompt().BeginEditingPrefill());
 
