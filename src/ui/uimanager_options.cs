@@ -761,8 +761,12 @@ namespace Underworld
                     ? text.Length
                     : System.Math.Clamp(SaveDescriptionField.CaretColumn, 0, text.Length);
 
-                string before = text.Substring(0, caret);
-                string after = caret < text.Length ? text.Substring(caret + 1) : "";
+                // Escape each side separately and add the cursor markup afterwards, so a
+                // bracket in the description cannot start a tag and moving the caret cannot
+                // split one.
+                string before = GameStringFormat.EscapeBbcode(text.Substring(0, caret));
+                string after = GameStringFormat.EscapeBbcode(
+                    caret < text.Length ? text.Substring(caret + 1) : "");
 
                 // The character it covers is dropped rather than drawn under the block,
                 // matching DOS, and the block's fixed size keeps the text from shifting as
@@ -1023,7 +1027,8 @@ namespace Underworld
                 var path = System.IO.Path.Combine(UWClass.BasePath, $"SAVE{i}", "DESC");
                 if (SaveDescription.TryReadSlot(path, out string savename))
                 {
-                    AddToMessageScroll($"{romannumerals[i - 1]}- {savename}", colour: 2);
+                    AddToMessageScroll(
+                        $"{romannumerals[i - 1]}- {GameStringFormat.EscapeBbcode(savename)}", colour: 2);
                 }
                 else
                 {

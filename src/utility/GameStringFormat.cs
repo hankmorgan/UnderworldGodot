@@ -30,5 +30,17 @@ namespace Underworld
             }
             return sb.ToString().Trim();
         }
+
+        /// <summary>
+        /// Makes text safe to put inside a message scroll line. The scroll is a
+        /// RichTextLabel with BBCode on, so a '[' starts a tag. Save descriptions may
+        /// legitimately contain brackets, since DOS accepts every printable character, and
+        /// without this a description like "[b]my save" would be read as markup instead of
+        /// shown.
+        /// </summary>
+        public static string EscapeBbcode(string text)
+        {
+            return string.IsNullOrEmpty(text) ? "" : text.Replace("[", "[lb]");
+        }
     }
 }

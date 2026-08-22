@@ -192,6 +192,30 @@ public class GameStringsDisplayCodeTests
         Assert.Equal(expected, GameStringFormat.StripDisplayCodes(input));
     }
 
+    [Theory]
+    [InlineData("plain name", "plain name")]
+    [InlineData("[b]my save", "[lb]b]my save")]
+    [InlineData("[color=red]x[/color]", "[lb]color=red]x[lb]/color]")]
+    [InlineData("brackets ] alone", "brackets ] alone")]
+    [InlineData("", "")]
+    [InlineData(null, "")]
+    public void EscapeBbcode_StopsADescriptionBeingReadAsMarkup(string input, string expected)
+    {
+        // The message scroll is a RichTextLabel with BBCode on, and '[' and ']' are
+        // characters DOS accepts in a description, so they arrive in real save names.
+        Assert.Equal(expected, GameStringFormat.EscapeBbcode(input));
+    }
+
+    [Fact]
+    public void EscapeBbcode_LeavesEveryOtherPrintableCharacterAlone()
+    {
+        for (char c = (char)0x20; c <= (char)0x7E; c++)
+        {
+            if (c == '[') continue;
+            Assert.Equal(c.ToString(), GameStringFormat.EscapeBbcode(c.ToString()));
+        }
+    }
+
     [Fact]
     public void StripDisplayCodes_LeavesABackslashThatIsNotACode()
     {
