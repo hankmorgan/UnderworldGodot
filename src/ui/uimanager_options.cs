@@ -714,9 +714,14 @@ namespace Underworld
         /// bgcolor was tried first and cannot work: the scroll sets line_separation to -24
         /// against a 64 font, so the box reaches up into the line above at any size.
         /// </summary>
+        /// <summary>
+        /// The image carries transparent padding above the block, because an inline image
+        /// has no vertical alignment control and sat 14 too high measured against DOS. The
+        /// drawn size therefore includes that padding.
+        /// </summary>
         private const string CursorImage = "res://resources/textcursor.png";
         private const int CursorWidth = 5 * 4;
-        private const int CursorHeight = 6 * 4;
+        private const int CursorHeight = 6 * 4 + 14;
 
         /// <summary>
         /// What an empty slot shows in the list, and what its prompt starts with.
@@ -748,7 +753,13 @@ namespace Underworld
                 }
 
                 string text = SaveDescriptionField.Text;
-                int caret = System.Math.Clamp(SaveDescriptionField.CaretColumn, 0, text.Length);
+
+                // While the prefill is still selected DOS parks the cursor at the end of it,
+                // not over its first character. The selection is what makes typing replace
+                // the name, so it stays; only where the cursor is drawn changes.
+                int caret = SaveDescription_Prompt.SelectionPending
+                    ? text.Length
+                    : System.Math.Clamp(SaveDescriptionField.CaretColumn, 0, text.Length);
 
                 string before = text.Substring(0, caret);
                 string after = caret < text.Length ? text.Substring(caret + 1) : "";
