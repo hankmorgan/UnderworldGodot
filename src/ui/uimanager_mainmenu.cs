@@ -223,9 +223,8 @@ namespace Underworld
 				for (int i = 1; i <= 4; i++)
 				{
 					var path = Path.Combine(UWClass.BasePath, $"SAVE{i}", "DESC");
-					if (File.Exists(path))
+					if (SaveDescription.TryReadSlot(path, out string savename))
 					{
-						var savename = File.ReadAllText(path);
 						EnableDisable(SaveGamesNames[i - 1], true);
 						SaveGamesNames[i - 1].Text = savename;
 					}

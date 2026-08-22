@@ -15,6 +15,11 @@ namespace Underworld
             if (slot < 1 || slot > 4)
                 throw new ArgumentOutOfRangeException(nameof(slot), slot, "slot must be 1..4");
 
+            // Encode the description before anything else. Everything below this either
+            // creates the slot directory or mutates live game state, so a description we
+            // cannot store has to fail while that is all still untouched.
+            byte[] descriptionBytes = SaveDescription.Encode(description);
+
             string saveDir = Path.Combine(UWClass.BasePath, $"SAVE{slot}");
             Directory.CreateDirectory(saveDir);
 
@@ -38,7 +43,7 @@ namespace Underworld
             // missing).
             try
             {
-                WriteAllSaveFiles(saveDir, description);
+                WriteAllSaveFiles(saveDir, descriptionBytes);
             }
             finally
             {
@@ -53,24 +58,18 @@ namespace Underworld
             }
         }
 
-        private static void WriteAllSaveFiles(string saveDir, string description)
+        private static void WriteAllSaveFiles(string saveDir, byte[] descriptionBytes)
         {
-            // DESC in UW1 DOS saves is a single byte — seemingly an in-use/slot
-            // indicator rather than a textual description. Writing a multi-byte
-            // ASCII description leaves trailing junk that DOS interprets
-            // inconsistently when enumerating save slots.
+            // DESC holds the description the player typed, as raw ASCII with no terminator
+            // and no padding, exactly as long as the text. Measured from saves written by
+            // real DOS in both games. An empty description is a zero length file, which is
+            // still an occupied slot.
             //
-            // We pack the first character of `description` into the single
-            // byte when possible; the UI doesn't actually surface the string
-            // in the DOS load picker anyway (it shows "Save 1", "Save 2" etc.
-            // based on slot number).
-            byte descByte = 0x01;
-            if (!string.IsNullOrEmpty(description))
-            {
-                byte firstChar = Encoding.ASCII.GetBytes(description.Substring(0, 1))[0];
-                if (firstChar != 0) descByte = firstChar;
-            }
-            File.WriteAllBytes(Path.Combine(saveDir, "DESC"), new[] { descByte });
+            // This previously wrote a single byte, justified by a comment claiming DOS used
+            // DESC as an in-use marker and never showed the string. Both halves were wrong:
+            // a DOS save carries the typed name, and the port's own save and load lists
+            // display it, so every used slot showed one character.
+            File.WriteAllBytes(Path.Combine(saveDir, "DESC"), descriptionBytes);
             File.WriteAllBytes(Path.Combine(saveDir, "PLAYER.DAT"), PatchPlayerLinkInSerialised(PlayerDatWriter.Serialize()));
             File.WriteAllBytes(Path.Combine(saveDir, "BGLOBALS.DAT"), BGlobalWriter.Serialize(bglobal.bGlobals));
             File.WriteAllBytes(Path.Combine(saveDir, "LEV.ARK"), LevArkWriter.Serialize());

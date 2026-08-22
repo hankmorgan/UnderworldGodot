@@ -285,6 +285,11 @@ namespace Underworld
 
         private void _on_game_options_input(InputEvent @event, long extra_arg_0)
         {
+            // These buttons get gui_input straight from the scene, so the usual input block
+            // does not reach them. Without this you can click another slot, or Cancel, while
+            // still typing a description.
+            if (SaveDescriptionPromptActive) return;
+
             if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed)
             {
                 switch (CurrentGameOptionMenu)
@@ -417,42 +422,25 @@ namespace Underworld
                                 case 3:
                                 case 4://save to chosen slot
                                     {
-                                        // Description uses existing slot name if present, otherwise a default.
-                                        var descPath = System.IO.Path.Combine(UWClass.BasePath, $"SAVE{extra_arg_0}", "DESC");
-                                        string description = System.IO.File.Exists(descPath)
-                                            ? System.IO.File.ReadAllText(descPath)
-                                            : $"Save {extra_arg_0}";
-                                        int stringId;
                                         if (UWClass._RES != UWClass.GAME_UW1)
                                         {
                                             // UW2 save is unsupported pending an upstream UW2 lev.ark compressor.
                                             // Writing uncompressed UW2 blocks would fail DOS load (>80 uncompressed
                                             // blocks crash vanilla UW2.EXE). Until the compressor is ported, refuse.
+                                            //
+                                            // Refused before the prompt opens: asking for a name and then failing
+                                            // on purpose would be worse than failing straight away.
                                             GD.PrintErr("UW2 save pending upstream compressor — not yet supported");
-                                            stringId = GameStrings.str_save_game_failed_;
+                                            listsaves();
+                                            instance.scroll.Clear();
+                                            AddToMessageScroll(GameStringFormat.StripDisplayCodes(GameStrings.GetString(1, GameStrings.str_save_game_failed_)));
+                                            ReturnToGameFromOptions();
+                                            break;
                                         }
-                                        else
-                                        {
-                                            try
-                                            {
-                                                SaveGame.Save((int)extra_arg_0, description);
-                                                stringId = GameStrings.str_save_game_succeeded_;
-                                            }
-                                            catch (System.IO.IOException ex)
-                                            {
-                                                GD.PrintErr($"SaveGame.Save failed: {ex}");
-                                                stringId = GameStrings.str_save_game_failed_;
-                                            }
-                                            catch (System.UnauthorizedAccessException ex)
-                                            {
-                                                GD.PrintErr($"SaveGame.Save failed: {ex}");
-                                                stringId = GameStrings.str_save_game_failed_;
-                                            }
-                                        }
-                                        listsaves();
-                                        instance.scroll.Clear();
-                                        AddToMessageScroll(GameStrings.GetString(1, stringId));
-                                        ReturnToGameFromOptions();
+
+                                        // Ask for the description first. Saving happens on Enter, in
+                                        // OnSaveDescriptionSubmitted; Escape abandons it entirely.
+                                        BeginSaveDescription((int)extra_arg_0);
                                         break;
                                     }
                                 case 5://cancel and return to top
@@ -711,6 +699,325 @@ namespace Underworld
                     (int)OptionButtonIndices.QuitGameOff});
         }
 
+        // ---- save description prompt ------------------------------------------------
+
+        /// <summary>
+        /// The cursor is an image because DOS does not draw it from the font either. Its
+        /// input routine fills a rectangle straight into video memory
+        /// (UW1_asm.asm:139815-139838, calling the fill at seg003_54EB), which is why no UW
+        /// font carries a block glyph: FONT5X6P holds ASCII 0x20 to 0x7E and nothing else.
+        ///
+        /// Measured off a DOS screenshot: 5 by 6 pixels, exactly one character cell. The
+        /// converted font has 1024 units per em with an advance of 64 per original pixel,
+        /// so at the scroll's font size of 64 one original pixel is four here.
+        ///
+        /// bgcolor was tried first and cannot work: the scroll sets line_separation to -24
+        /// against a 64 font, so the box reaches up into the line above at any size.
+        /// </summary>
+        /// <summary>
+        /// The image carries transparent padding above the block, because an inline image
+        /// has no vertical alignment control and sat 14 too high measured against DOS. The
+        /// drawn size therefore includes that padding.
+        /// </summary>
+        private const string CursorImage = "res://resources/textcursor.png";
+        private const int CursorWidth = 5 * 4;
+        private const int CursorHeight = 6 * 4 + 14;
+
+        /// <summary>
+        /// What an empty slot shows in the list, and what its prompt starts with.
+        ///
+        /// DOS keeps it as a real name if the player just presses Enter: a slot saved that
+        /// way holds the 14 bytes "&lt;not used yet&gt;". Odd, but checked, so it is left alone
+        /// rather than treated as an empty description.
+        /// </summary>
+        public const string UnusedSlotPlaceholder = "<not used yet>";
+
+        private static readonly SaveDescriptionPrompt SaveDescription_Prompt = new();
+        private static LineEdit SaveDescriptionField;
+
+        public static bool SaveDescriptionPromptActive => SaveDescription_Prompt.Active;
+
+        /// <summary>
+        /// What the scroll shows in place of {TYPEDINPUT} while the prompt is open: the
+        /// text with a block cursor sitting on the character at the caret, which is what
+        /// DOS draws. A bare "|" cannot show which character the caret is on, and it never
+        /// moved because arrow keys change the caret without changing the text.
+        /// </summary>
+        public static string SaveDescriptionText
+        {
+            get
+            {
+                if (SaveDescriptionField == null || !GodotObject.IsInstanceValid(SaveDescriptionField))
+                {
+                    return SaveDescription_Prompt.Buffer;
+                }
+
+                string text = SaveDescriptionField.Text;
+
+                // While the prefill is still selected DOS parks the cursor at the end of it,
+                // not over its first character. The selection is what makes typing replace
+                // the name, so it stays; only where the cursor is drawn changes.
+                int caret = SaveDescription_Prompt.SelectionPending
+                    ? text.Length
+                    : System.Math.Clamp(SaveDescriptionField.CaretColumn, 0, text.Length);
+
+                // Escape each side separately and add the cursor markup afterwards, so a
+                // bracket in the description cannot start a tag and moving the caret cannot
+                // split one.
+                string before = GameStringFormat.EscapeBbcode(text.Substring(0, caret));
+                string after = GameStringFormat.EscapeBbcode(
+                    caret < text.Length ? text.Substring(caret + 1) : "");
+
+                // The character it covers is dropped rather than drawn under the block,
+                // matching DOS, and the block's fixed size keeps the text from shifting as
+                // the caret crosses letters of different widths.
+                return $"{before}[img={CursorWidth}x{CursorHeight}]{CursorImage}[/img]{after}";
+            }
+        }
+
+        /// <summary>
+        /// Forgets any prompt belonging to a previous scene. Called as the UI comes up.
+        /// </summary>
+        public static void ResetSaveDescriptionPrompt()
+        {
+            if (SaveDescription_Prompt.Active) SaveDescription_Prompt.Cancel();
+            SaveDescriptionField = null;
+            RestoringSaveDescriptionText = false;
+        }
+
+        /// <summary>
+        /// Asks for the description before saving, the way DOS does. Nothing is written
+        /// until the player presses Enter, because SaveGame.Save mutates live state and
+        /// creates the slot directory as soon as it is called.
+        /// </summary>
+        private static void BeginSaveDescription(int slot)
+        {
+            var descPath = System.IO.Path.Combine(UWClass.BasePath, $"SAVE{slot}", "DESC");
+            string existing = SaveDescription.TryReadSlot(descPath, out string stored)
+                ? stored
+                : UnusedSlotPlaceholder;
+
+            SaveDescription_Prompt.Open(slot, existing);
+
+            var field = EnsureSaveDescriptionField();
+            field.MaxLength = SaveDescription.MaxLength;
+            field.Text = SaveDescription_Prompt.Buffer;
+            EnableDisable(field, true);
+
+            instance.scroll.Clear();
+            AddToMessageScroll(
+                GameStringFormat.StripDisplayCodes(
+                    GameStrings.GetString(1, GameStrings.str_please_enter_a_save_file_description_)));
+            // Only the slot being named. The whole list is what the menu showed a moment
+            // ago; repeating it here just buries the line being edited.
+            AddToMessageScroll(">{TYPEDINPUT}", colour: 2,
+                               mode: MessageDisplay.MessageDisplayMode.TypedInput);
+
+            // Focus and selection are deferred together and carry the generation they were
+            // queued with, so an Escape or a keystroke in between cannot leave them acting
+            // on a prompt that has gone.
+            int generation = SaveDescription_Prompt.Generation;
+            Callable.From(() => FocusSaveDescriptionField(generation)).CallDeferred();
+        }
+
+        private static void FocusSaveDescriptionField(int generation)
+        {
+            if (!SaveDescription_Prompt.MayRunDeferred(generation)) return;
+            if (SaveDescriptionField == null || !GodotObject.IsInstanceValid(SaveDescriptionField)) return;
+
+            SaveDescriptionField.GrabFocus();
+            SaveDescriptionField.SelectAll();
+        }
+
+        private static LineEdit EnsureSaveDescriptionField()
+        {
+            // The scene can be loaded more than once, from the launcher, so a field built
+            // for a previous one is a freed node by now. Rebuild rather than touch it.
+            if (SaveDescriptionField != null && !GodotObject.IsInstanceValid(SaveDescriptionField))
+            {
+                SaveDescriptionField = null;
+            }
+            if (SaveDescriptionField != null) return SaveDescriptionField;
+
+            // Built here rather than in the scene: the shared TypedInput has
+            // selecting_enabled off, and borrowing it would mean lending conversations and
+            // chargen a 30 character limit.
+            SaveDescriptionField = new LineEdit
+            {
+                Name = "SaveDescriptionInput",
+                MaxLength = SaveDescription.MaxLength,
+                ContextMenuEnabled = false,
+                ShortcutKeysEnabled = false,
+                MiddleMousePasteEnabled = false,
+                SelectingEnabled = true,
+                Theme = instance.TypedInput?.Theme,
+                Visible = false,
+            };
+            SaveDescriptionField.TextChanged += OnSaveDescriptionTextChanged;
+            SaveDescriptionField.TextSubmitted += OnSaveDescriptionSubmitted;
+            SaveDescriptionField.GuiInput += OnSaveDescriptionGuiInput;
+            SaveDescriptionField.FocusExited += OnSaveDescriptionFocusExited;
+
+            // Sits where the existing typed-input proxy sits and is the same size. What the
+            // player reads is the {TYPEDINPUT} substitution in the message scroll, exactly as
+            // for the quantity and conversation prompts; the field only collects the keys.
+            var parent = instance.TypedInput?.GetParent() ?? (Node)instance;
+            parent.AddChild(SaveDescriptionField);
+            if (instance.TypedInput != null)
+            {
+                SaveDescriptionField.Position = instance.TypedInput.Position;
+                SaveDescriptionField.Size = instance.TypedInput.Size;
+            }
+            return SaveDescriptionField;
+        }
+
+        private static void RefreshSaveDescriptionLine()
+        {
+            if (SaveDescription_Prompt.Active) instance.scroll.UpdateMessageDisplay();
+        }
+
+        private static bool RestoringSaveDescriptionText = false;
+
+        private static void OnSaveDescriptionTextChanged(string newText)
+        {
+            if (RestoringSaveDescriptionText) return;
+
+            // Godot has already applied the text, so anything unusable is undone rather than
+            // prevented. MaxLength has trimmed an over-long paste before we get here.
+            if (SaveDescription_Prompt.TryAccept(newText))
+            {
+                RestoringSaveDescriptionText = true;
+                SaveDescriptionField.Text = SaveDescription_Prompt.Buffer;
+                SaveDescriptionField.CaretColumn = SaveDescription_Prompt.Buffer.Length;
+                SaveDescriptionField.Deselect();
+                RestoringSaveDescriptionText = false;
+            }
+            instance.scroll.UpdateMessageDisplay();
+        }
+
+        /// <summary>
+        /// Keys that edit or move within the text rather than adding to it. While the
+        /// prefilled name is still selected these end the selection instead of replacing it.
+        /// </summary>
+        private static bool IsEditingKey(Key code) =>
+            code == Key.Backspace || code == Key.Delete ||
+            code == Key.Left || code == Key.Right ||
+            code == Key.Home || code == Key.End;
+
+        private static void OnSaveDescriptionGuiInput(InputEvent @event)
+        {
+            if (!SaveDescription_Prompt.Active) return;
+
+            // Only something the player did on purpose ends the initial selection. Pointer
+            // motion and key releases arrive here too and must not count, or moving the
+            // mouse across the field would cancel the select-all.
+            bool keyPress = @event is InputEventKey k && k.Pressed;
+            bool actionable =
+                keyPress ||
+                (@event is InputEventMouseButton m && m.Pressed) ||
+                @event is InputEventScreenTouch;
+
+            if (keyPress && IsEditingKey(((InputEventKey)@event).Keycode)
+                && SaveDescription_Prompt.BeginEditingPrefill())
+            {
+                // A key that edits or moves rather than types means the player wants the
+                // existing name, not a replacement. Collapse the selection to the END and
+                // let the same event through, so Backspace deletes the last character and
+                // Left steps back from the end.
+                //
+                // This has to be done here: Godot collapses a selection to its START, so
+                // Left would otherwise jump the caret to position 0 rather than move it.
+                SaveDescriptionField.Deselect();
+                SaveDescriptionField.CaretColumn = SaveDescriptionField.Text.Length;
+            }
+            else if (actionable)
+            {
+                SaveDescription_Prompt.NoteInteraction();
+            }
+
+            // Redraw after the LineEdit has acted on the event. Arrows, Home, End and a
+            // mouse click move the caret without changing the text, so TextChanged never
+            // fires and the drawn cursor would sit still. This must not sit behind an early
+            // return: doing so left exactly those keys unable to move the cursor.
+            if (@event is InputEventKey || @event is InputEventMouseButton)
+            {
+                Callable.From(RefreshSaveDescriptionLine).CallDeferred();
+            }
+        }
+
+        /// <summary>
+        /// The prompt is modal, so the field keeps focus until it closes. Without this,
+        /// anything that steals focus (Tab, a click elsewhere) leaves the player unable to
+        /// type while the option buttons are still blocked, with only Escape to get out.
+        /// </summary>
+        private static void OnSaveDescriptionFocusExited()
+        {
+            if (!SaveDescription_Prompt.Active) return;
+            if (SaveDescriptionField == null || !GodotObject.IsInstanceValid(SaveDescriptionField)) return;
+            Callable.From(() =>
+            {
+                if (SaveDescription_Prompt.Active
+                    && SaveDescriptionField != null
+                    && GodotObject.IsInstanceValid(SaveDescriptionField)
+                    && !SaveDescriptionField.HasFocus())
+                {
+                    SaveDescriptionField.GrabFocus();
+                }
+            }).CallDeferred();
+        }
+
+        private static void OnSaveDescriptionSubmitted(string text)
+        {
+            if (!SaveDescription_Prompt.Active) return;
+
+            int slot = SaveDescription_Prompt.Slot;
+            string description = SaveDescription_Prompt.Commit();
+            CloseSaveDescriptionField();
+
+            int stringId;
+            try
+            {
+                SaveGame.Save(slot, description);
+                stringId = GameStrings.str_save_game_succeeded_;
+            }
+            catch (System.Exception ex)
+            {
+                GD.PrintErr($"SaveGame.Save failed: {ex}");
+                stringId = GameStrings.str_save_game_failed_;
+            }
+
+            listsaves();
+            instance.scroll.Clear();
+            AddToMessageScroll(GameStringFormat.StripDisplayCodes(GameStrings.GetString(1, stringId)));
+            ReturnToGameFromOptions();
+        }
+
+        /// <summary>
+        /// Escape. DOS abandons the whole save, reports failure, and returns to the game
+        /// rather than staying on the save menu. Checked in UW1.
+        /// </summary>
+        public static void CancelSaveDescription()
+        {
+            if (!SaveDescription_Prompt.Active) return;
+
+            SaveDescription_Prompt.Cancel();
+            CloseSaveDescriptionField();
+
+            listsaves();
+            instance.scroll.Clear();
+            AddToMessageScroll(GameStringFormat.StripDisplayCodes(GameStrings.GetString(1, GameStrings.str_save_game_failed_)));
+            ReturnToGameFromOptions();
+        }
+
+        private static void CloseSaveDescriptionField()
+        {
+            if (SaveDescriptionField == null || !GodotObject.IsInstanceValid(SaveDescriptionField)) return;
+            SaveDescriptionField.ReleaseFocus();
+            SaveDescriptionField.Deselect();
+            SaveDescriptionField.Text = "";
+            EnableDisable(SaveDescriptionField, false);
+        }
+
         static void listsaves()
         {
             string[] romannumerals = new string[] { "I", "II", "III", "IV" };
@@ -718,14 +1025,14 @@ namespace Underworld
             for (int i = 1; i <= 4; i++)
             {
                 var path = System.IO.Path.Combine(UWClass.BasePath, $"SAVE{i}", "DESC");
-                if (System.IO.File.Exists(path))
+                if (SaveDescription.TryReadSlot(path, out string savename))
                 {
-                    var savename = System.IO.File.ReadAllText(path);
-                    AddToMessageScroll($"{romannumerals[i - 1]}- {savename}", colour: 2);
+                    AddToMessageScroll(
+                        $"{romannumerals[i - 1]}- {GameStringFormat.EscapeBbcode(savename)}", colour: 2);
                 }
                 else
                 {
-                    AddToMessageScroll($"{romannumerals[i - 1]}- <not used yet>", colour: 2);
+                    AddToMessageScroll($"{romannumerals[i - 1]}- {UnusedSlotPlaceholder}", colour: 2);
                 }
             }
         }

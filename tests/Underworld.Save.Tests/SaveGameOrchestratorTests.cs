@@ -195,31 +195,63 @@ public class SaveGameOrchestratorTests : IDisposable
     // -------------------------------------------------------------------------
 
     [Fact]
-    public void Save_DescIsExactlyOneByte()
+    public void Save_DescHoldsTheWholeDescription()
     {
-        // DOS UW.EXE writes a single-byte DESC file (an in-use flag, not a
-        // user-visible description). Writing more than one byte causes the
-        // DOS load picker to read trailing junk.
+        // These two tests previously asserted a single byte, justified by a comment saying
+        // DOS used DESC as an in-use flag and never showed the string. A save written by
+        // real DOS carries the typed name, and the port's own save and load lists display
+        // it, so every used slot showed one character.
         SetupUw1State();
         UWClass.BasePath = _tempRoot;
 
         SaveGame.Save(3, "test desc");
 
         byte[] raw = File.ReadAllBytes(Path.Combine(_tempRoot, "SAVE3", "DESC"));
-        Assert.Equal(1, raw.Length);
+        Assert.Equal(Encoding.ASCII.GetBytes("test desc"), raw);
     }
 
     [Fact]
-    public void Save_DescEncodesFirstCharacter()
+    public void Save_DescPreservesCaseAndHasNoTerminator()
     {
         SetupUw1State();
         UWClass.BasePath = _tempRoot;
 
-        SaveGame.Save(4, "hello");
+        SaveGame.Save(4, "Testing123");
 
         byte[] raw = File.ReadAllBytes(Path.Combine(_tempRoot, "SAVE4", "DESC"));
-        Assert.Single(raw);
-        Assert.Equal((byte)'h', raw[0]);
+        Assert.Equal(Encoding.ASCII.GetBytes("Testing123"), raw);
+        Assert.DoesNotContain((byte)0, raw);
+    }
+
+    [Fact]
+    public void Save_EmptyDescription_WritesAZeroLengthDescRatherThanNoFile()
+    {
+        // DOS accepts an empty description and leaves the file behind at zero length. The
+        // slot is still occupied, which is what stops the menu offering it as free.
+        SetupUw1State();
+        UWClass.BasePath = _tempRoot;
+
+        SaveGame.Save(2, "");
+
+        string descPath = Path.Combine(_tempRoot, "SAVE2", "DESC");
+        Assert.True(File.Exists(descPath), "DESC missing");
+        Assert.Empty(File.ReadAllBytes(descPath));
+    }
+
+    [Fact]
+    public void Save_DescriptionThatCannotBeStored_FailsBeforeTouchingTheSlot()
+    {
+        // Everything after the encode either creates the directory or mutates live game
+        // state, so an impossible description has to be refused while that is all untouched.
+        SetupUw1State();
+        UWClass.BasePath = _tempRoot;
+        string saveDir = Path.Combine(_tempRoot, "SAVE1");
+
+        Assert.Throws<ArgumentException>(() => SaveGame.Save(1, new string('A', 31)));
+        Assert.False(Directory.Exists(saveDir), "the slot directory was created anyway");
+
+        Assert.Throws<ArgumentException>(() => SaveGame.Save(1, "caf\u00e9"));
+        Assert.False(Directory.Exists(saveDir), "the slot directory was created anyway");
     }
 
     // -------------------------------------------------------------------------
@@ -286,19 +318,18 @@ public class SaveGameOrchestratorTests : IDisposable
     [Fact]
     public void Save_Uw2_OverwritesExistingFiles()
     {
-        // DESC is a single byte (DOS format) — the first character encodes
-        // something close to a slot-in-use flag. Overwrite must still replace
-        // the byte, not append.
+        // UW2 writes the same file set as UW1, DESC included, so it takes the same rule.
+        // A shorter description must replace the longer one rather than leave its tail.
         SetupUw2State();
         UWClass.BasePath = _tempRoot;
-        SaveGame.Save(3, "first");
+        SaveGame.Save(3, "a longer first name");
 
         string descPath = Path.Combine(_tempRoot, "SAVE3", "DESC");
-        Assert.Equal(new byte[] { (byte)'f' }, File.ReadAllBytes(descPath));
+        Assert.Equal(Encoding.ASCII.GetBytes("a longer first name"), File.ReadAllBytes(descPath));
 
         SetupUw2State();
         UWClass.BasePath = _tempRoot;
         SaveGame.Save(3, "second");
-        Assert.Equal(new byte[] { (byte)'s' }, File.ReadAllBytes(descPath));
+        Assert.Equal(Encoding.ASCII.GetBytes("second"), File.ReadAllBytes(descPath));
     }
 }
