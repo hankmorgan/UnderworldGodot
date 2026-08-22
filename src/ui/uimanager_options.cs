@@ -701,7 +701,30 @@ namespace Underworld
 
         // ---- save description prompt ------------------------------------------------
 
-        /// <summary>What an empty slot shows, and what its prompt starts with.</summary>
+        /// <summary>
+        /// The cursor is an image because DOS does not draw it from the font either. Its
+        /// input routine fills a rectangle straight into video memory
+        /// (UW1_asm.asm:139815-139838, calling the fill at seg003_54EB), which is why no UW
+        /// font carries a block glyph: FONT5X6P holds ASCII 0x20 to 0x7E and nothing else.
+        ///
+        /// Measured off a DOS screenshot: 5 by 6 pixels, exactly one character cell. The
+        /// converted font has 1024 units per em with an advance of 64 per original pixel,
+        /// so at the scroll's font size of 64 one original pixel is four here.
+        ///
+        /// bgcolor was tried first and cannot work: the scroll sets line_separation to -24
+        /// against a 64 font, so the box reaches up into the line above at any size.
+        /// </summary>
+        private const string CursorImage = "res://resources/textcursor.png";
+        private const int CursorWidth = 5 * 4;
+        private const int CursorHeight = 6 * 4;
+
+        /// <summary>
+        /// What an empty slot shows in the list, and what its prompt starts with.
+        ///
+        /// DOS keeps it as a real name if the player just presses Enter: a slot saved that
+        /// way holds the 14 bytes "&lt;not used yet&gt;". Odd, but checked, so it is left alone
+        /// rather than treated as an empty description.
+        /// </summary>
         public const string UnusedSlotPlaceholder = "<not used yet>";
 
         private static readonly SaveDescriptionPrompt SaveDescription_Prompt = new();
@@ -728,10 +751,12 @@ namespace Underworld
                 int caret = System.Math.Clamp(SaveDescriptionField.CaretColumn, 0, text.Length);
 
                 string before = text.Substring(0, caret);
-                string under = caret < text.Length ? text.Substring(caret, 1) : " ";
                 string after = caret < text.Length ? text.Substring(caret + 1) : "";
 
-                return $"{before}[bgcolor=#883E14]{under}[/bgcolor]{after}";
+                // The character it covers is dropped rather than drawn under the block,
+                // matching DOS, and the block's fixed size keeps the text from shifting as
+                // the caret crosses letters of different widths.
+                return $"{before}[img={CursorWidth}x{CursorHeight}]{CursorImage}[/img]{after}";
             }
         }
 
@@ -768,7 +793,10 @@ namespace Underworld
             AddToMessageScroll(
                 GameStringFormat.StripDisplayCodes(
                     GameStrings.GetString(1, GameStrings.str_please_enter_a_save_file_description_)));
-            listsaves(editingSlot: slot);
+            // Only the slot being named. The whole list is what the menu showed a moment
+            // ago; repeating it here just buries the line being edited.
+            AddToMessageScroll(">{TYPEDINPUT}", colour: 2,
+                               mode: MessageDisplay.MessageDisplayMode.TypedInput);
 
             // Focus and selection are deferred together and carry the generation they were
             // queued with, so an Escape or a keystroke in between cannot leave them acting
@@ -910,7 +938,10 @@ namespace Underworld
             ReturnToGameFromOptions();
         }
 
-        /// <summary>Escape. DOS abandons the whole save and reports failure.</summary>
+        /// <summary>
+        /// Escape. DOS abandons the whole save, reports failure, and returns to the game
+        /// rather than staying on the save menu. Checked in UW1.
+        /// </summary>
         public static void CancelSaveDescription()
         {
             if (!SaveDescription_Prompt.Active) return;
@@ -933,20 +964,12 @@ namespace Underworld
             EnableDisable(SaveDescriptionField, false);
         }
 
-        static void listsaves(int editingSlot = 0)
+        static void listsaves()
         {
             string[] romannumerals = new string[] { "I", "II", "III", "IV" };
-            if (editingSlot == 0) instance.scroll.Clear();
+            instance.scroll.Clear();
             for (int i = 1; i <= 4; i++)
             {
-                if (i == editingSlot)
-                {
-                    // The slot being named is edited in place, as it is in DOS, rather than
-                    // shown as a separate prompt with the text tacked on the end.
-                    AddToMessageScroll($"{romannumerals[i - 1]}- {{TYPEDINPUT}}", colour: 2,
-                                       mode: MessageDisplay.MessageDisplayMode.TypedInput);
-                    continue;
-                }
                 var path = System.IO.Path.Combine(UWClass.BasePath, $"SAVE{i}", "DESC");
                 if (SaveDescription.TryReadSlot(path, out string savename))
                 {
