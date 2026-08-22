@@ -99,6 +99,10 @@ namespace Underworld
 		{
 			//Debug.Print("Uimanager about to set instance to this");
 			instance = this;
+			// The prompt's state and its field are static but the scene can be built more
+			// than once, from the launcher. Anything left over belongs to a UI that no
+			// longer exists, and would otherwise send Escape to a freed node.
+			ResetSaveDescriptionPrompt();
 			main.StartGame();
 		}
 

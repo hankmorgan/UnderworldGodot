@@ -173,6 +173,13 @@ namespace Underworld
                 {
                     output = output.Replace("{TYPEDINPUT}", uimanager.instance.TypedInput.Text);
                 }
+                else if (uimanager.SaveDescriptionPromptActive)
+                {
+                    // The save description prompt keeps its own state rather than the shared
+                    // WaitingForTypedInput, because it has to tell an empty commit from a
+                    // cancel and the two mean opposite things.
+                    output = output.Replace("{TYPEDINPUT}", uimanager.SaveDescriptionText);
+                }
             }
 
             OutputControl[0].Text = output;

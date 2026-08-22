@@ -716,6 +716,20 @@ public partial class main : Node3D
 
 	public override void _Input(InputEvent @event)
 	{
+		// The save description prompt takes Escape before anything else. SetInputAsHandled
+		// keeps it away from the LineEdit, and the return keeps it away from the rest of
+		// this method, which would otherwise treat it as closing a conversation or a scroll.
+		if (uimanager.SaveDescriptionPromptActive
+			&& @event is InputEventKey escKey
+			&& escKey.Pressed
+			&& !escKey.Echo
+			&& escKey.Keycode == Key.Escape)
+		{
+			uimanager.CancelSaveDescription();
+			GetViewport().SetInputAsHandled();
+			return;
+		}
+
 		if ((@event is InputEventMouseButton eventMouseButton)
 			&&
 			((eventMouseButton.ButtonIndex == MouseButton.Left) || (eventMouseButton.ButtonIndex == MouseButton.Right)))
