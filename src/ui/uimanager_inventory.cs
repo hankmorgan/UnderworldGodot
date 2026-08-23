@@ -850,7 +850,7 @@ namespace Underworld
                         &&
                         obj.minorclass == 2
                         &&
-                        (obj.classindex >= 7 && obj.classindex <= 8);
+                        (obj.classindex >= 6 && obj.classindex <= 8);
                 case 3://leggings
                     return
                         obj.majorclass == 0
