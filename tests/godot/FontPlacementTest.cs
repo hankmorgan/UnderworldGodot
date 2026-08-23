@@ -62,9 +62,7 @@ public partial class FontPlacementTest : Node2D
                 GetTree().Quit(0); return;
             }
             var sys = SysFont.Parse(File.ReadAllBytes(path));
-            // This commit does not yet have the provider, so the metrics live here. They
-            // are measured from the converted TTFs and explained where they land.
-            (float a, float d) = name == "FONTBIG" ? (11f, 4f) : (11f, 1f);
+            var (a, d) = SysFontProvider.LegacyMetricsFor(name);
             _pen = SysFontBuilder.Build(sys, a, d);
             _ch = ch;
             QueueRedraw();

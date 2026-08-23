@@ -127,9 +127,9 @@ public partial class FontRenderTest : Control
         // The four UI fonts build with their layout contract. The committed fixture has no
         // such contract, so it gets the values its own height implies; this test only checks
         // pixels, not line boxes.
-        (float ascent, float descent) = label == "fixture"
+        var (ascent, descent) = label == "fixture"
             ? (parsed.Height - 1f, 1f)
-            : (label == "FONTBIG" ? (11f, 4f) : (11f, 1f));
+            : SysFontProvider.LegacyMetricsFor(label);
         _font = SysFontBuilder.Build(parsed, ascent, descent);
         int scale = RenderSize / SysFontBuilder.DesignSize;
 
