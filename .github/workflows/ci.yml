@@ -73,6 +73,14 @@ jobs:
       # SKIP is expected here and is not a failure: three of these need the shipped .SYS
       # fonts, which CI has no licence to carry. They report SKIP and start protecting the
       # branch the moment game data is available.
+      # A fresh checkout has no .godot directory, and Godot cannot run a scene until it
+      # has imported the project once. Without this every scene dies before it prints
+      # anything, which reads as "produced no verdict".
+      - name: Import the project
+        run: |
+          chmod +x "$GODOT"
+          xvfb-run -a "$GODOT" --headless --path . --import || true
+
       - name: Godot tests
         run: |
           chmod +x "$GODOT"
