@@ -36,6 +36,14 @@ public partial class LaunchMenu : Control
 	[Export]
 	public TextEdit SynthPath;
 
+	/// <summary>
+	/// Shows why an installation was rejected. Carries no font override on purpose: the
+	/// game's fonts are built from the player's own data, so the one moment this label is
+	/// needed is the moment those fonts could not be loaded.
+	/// </summary>
+	[Export]
+	public Label LaunchError;
+
 	static bool LoadingSynthPath = false;
 
 	// Allows easy storage and retrieval of mouse mode overrides.
@@ -251,7 +259,19 @@ public partial class LaunchMenu : Control
 				return;
 		}
 
-		// Save any changes to our settings.
+		// Check the selected installation here rather than after the transition, because
+		// the game scene cannot display a legible message about fonts that failed to load.
+		// TryValidate also refuses demo mode, so no separate demo branch is needed.
+		if (!InstallationValidator.TryValidate(UWClass._RES, UWClass.BasePath, out string reason))
+		{
+			GD.PushError("Cannot start: " + reason);
+			if (LaunchError != null) LaunchError.Text = reason;
+			return;
+		}
+		if (LaunchError != null) LaunchError.Text = "";
+
+		// Save only once the selection is known to work. Saving first would persist a
+		// configuration that was rejected a line later.
 		_uwSettings.Save();
 
 		// Switch scenes to start the game.

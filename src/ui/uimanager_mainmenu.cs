@@ -549,7 +549,7 @@ namespace Underworld
 			instance.ToggleSaves(false); 
 			EnableDisable(instance.DragonPanel,false);           
 			//InGame = false;
-			Node3D the_tiles = main.instance.GetNode<Node3D>("/root/Underworld/tilemap");
+			Node3D the_tiles = main.instance.GetNode<Node3D>("../tilemap");
 			if (the_tiles != null)
 			{
 				UWTileMap.DestroyTileMapAndContents(the_tiles);

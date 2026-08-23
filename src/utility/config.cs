@@ -60,6 +60,7 @@ public class uwsettings
             case "UWDEMO":
             case "0":
                 UWClass._RES = UWClass.GAME_UWDEMO;
+                UWClass.BasePath = instance.pathuw1;
                 break;
             default:
                 throw new InvalidOperationException("Invalid Game Selected");
