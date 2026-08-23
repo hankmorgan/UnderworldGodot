@@ -56,7 +56,11 @@ jobs:
             10.0.x
 
       - name: Install xvfb
-        run: sudo apt-get update && sudo apt-get install -y xvfb
+        run: |
+          # Mesa too: xvfb supplies an X display but no GPU, so the software GL driver
+          # is what actually rasterises the render test.
+          sudo apt-get update
+          sudo apt-get install -y xvfb libgl1-mesa-dri libglx-mesa0
 
       # The mono build, because the render test is C# and calls SysFontBuilder.
       - name: Fetch Godot 4.3 mono
@@ -94,7 +98,8 @@ jobs:
           rc=0
           for scene in font_render_test font_placement_test; do
             out="/tmp/$scene.log"
-            timeout 180 xvfb-run -a "$GODOT" --path . "res://tests/godot/$scene.tscn" > "$out" 2>&1 || true
+            timeout 180 xvfb-run -a "$GODOT" --rendering-driver opengl3 \
+              --path . "res://tests/godot/$scene.tscn" > "$out" 2>&1 || true
             verdict=$(grep -m1 '^GODOT-TEST-VERDICT ' "$out" || true)
             if [ -z "$verdict" ]; then
               # Print the START of the log, not the end. Godot's real error happens during
