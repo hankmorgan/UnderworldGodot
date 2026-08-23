@@ -15,7 +15,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] clickable movement buttons in uw1 located above the compass.
 - [ ] mouse based movement using 3d window.
 - [ ] Spells can be cast without wait interval
-- [ ] Saving game while holding Alfred's letter/with items with non-object links
 - [ ] water sound. stop sounding after leaving water.
 - [ ] throwing objects at npc heads causes object to float/jitter (this happens with tables as well, ideal test case is throw at table in empty room) issue can be replicated from a dos save game loaded in the port.
 - [ ] QBERT. Handle teleporting on top of moongates that are already there. -> Possibly placed object collision
@@ -91,7 +90,7 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] In game console commands - spawnitems, teleport, quest flags, god/mage/onehitkill modes, stats edit, pause npcs/objects in motion.
 - [ ] UW2 Combat swing speed
 - [ ] Telefrag - Apparently this can happen when player is teleported into same position as another object. Never seen in the wild.
-- [ ] crushing damage when player pushed against wall. (this happens in the guardians trap)
+- [ ] crushing damage when player pushed against ceiling. (this happens in the guardians trap)
 - [ ] PlacedObjectCollision/PositioningObjects in tiles (especially for trade)
 - [ ] World number calcs in UW2 may be incorrect.
 - [ ] prison tower dungeon 15 switch on diagonal wall is missing. (offset from wall?, needs to be tested on all diagonal walls)
@@ -108,6 +107,7 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Likely bug in loading of game palettes (PaletteLoader) where palettes are loaded in blocks of 256 bytes rather than 768. This leads to byte shifted and excessive number of palettes being generated at runtime, Palette indices > 0 likely to be wrong as a result.
 - [ ] Stats display sometimes cuts off hp numbers. Eg 56/78 hp renders as 56/7
 - [ ] Missile impact flash may appear in wrong tile. combathitx and combathity are not being set correctly by MissileImpact()
+- [ ] UW2 character portraits are wrong in some cases. Some instances are fixed via hard coding but other examples remain. Eg futurian. Seems to be an issue with how the art files are loaded as some portrait slots are empty.
 
 
 ## Blocked
