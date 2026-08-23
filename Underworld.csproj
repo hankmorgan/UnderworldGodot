@@ -9,6 +9,8 @@
     <None Remove="tests/**/*" />
     <Compile Remove="tools/**/*.cs" />
     <None Remove="tools/**/*" />
+    <Compile Include="tests/godot/FontRenderTest.cs" Condition="'$(Configuration)' == 'Debug'" />
+    <Compile Include="tests/godot/FontPlacementTest.cs" Condition="'$(Configuration)' == 'Debug'" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Munt.NET" Version="0.2.2" />
