@@ -284,8 +284,8 @@ namespace Underworld
 
             LoadTextures();
 
-            ObjectCreator.worldobjects = main.instance.GetNode<Node3D>("/root/Underworld/worldobjects");
-            Node3D the_tiles = main.instance.GetNode<Node3D>("/root/Underworld/tilemap");
+            ObjectCreator.worldobjects = main.instance.GetNode<Node3D>("../worldobjects");
+            Node3D the_tiles = main.instance.GetNode<Node3D>("../tilemap");
             if (newGameSession)
             {
                 dungeons = new UWTileMap[NO_OF_LEVELS];
@@ -352,8 +352,8 @@ namespace Underworld
         /// </summary>
         public static void RedrawCurrentTileMap()
         {
-            Node3D the_tiles = main.instance.GetNode<Node3D>("/root/Underworld/tilemap");
-            
+            Node3D the_tiles = main.instance.GetNode<Node3D>("../tilemap");
+
             DestroyTileMapAndContents(the_tiles);
 
             LoadTextures();
@@ -1397,7 +1397,7 @@ namespace Underworld
 
         private static void RemoveTileInstance(string TileName)
         {
-            Node3D existingTile = tileMapRender.worldnode.GetNode<Node3D>($"/root/Underworld/tilemap/{TileName}");
+            Node3D existingTile = tileMapRender.worldnode.GetNode<Node3D>($"{TileName}");
             if (existingTile != null)
             {
                 existingTile.Name = $"{TileName}_todestroy";
