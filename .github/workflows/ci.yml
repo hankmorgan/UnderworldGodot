@@ -46,7 +46,14 @@ jobs:
       - name: Set up .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '10.0.x'
+          # Underworld.csproj targets net9.0, so its runtimeconfig asks for
+          # Microsoft.NETCore.App 9.0.0 with LatestMinor roll-forward, which does not cross
+          # to 10. A 10 SDK builds it happily but Godot cannot host it, and the failure is
+          # silent: CoreCLR never starts, so no test writes a line and the log holds only
+          # shutdown noise. Both are needed here.
+          dotnet-version: |
+            9.0.x
+            10.0.x
 
       - name: Install xvfb
         run: sudo apt-get update && sudo apt-get install -y xvfb
@@ -62,6 +69,14 @@ jobs:
       - name: Build
         run: dotnet build Underworld.csproj
 
+      # A fresh checkout has no .godot directory, and Godot cannot run a scene until it
+      # has imported the project once. Without this every scene dies before it prints
+      # anything, which reads as "produced no verdict".
+      - name: Import the project
+        run: |
+          chmod +x "$GODOT"
+          xvfb-run -a "$GODOT" --headless --path . --import || true
+
       # A real driver under xvfb, never --headless: the render test compares pixels, and
       # headless returns dummy values from the RenderingServer.
       #
@@ -73,14 +88,6 @@ jobs:
       # SKIP is expected here and is not a failure: three of these need the shipped .SYS
       # fonts, which CI has no licence to carry. They report SKIP and start protecting the
       # branch the moment game data is available.
-      # A fresh checkout has no .godot directory, and Godot cannot run a scene until it
-      # has imported the project once. Without this every scene dies before it prints
-      # anything, which reads as "produced no verdict".
-      - name: Import the project
-        run: |
-          chmod +x "$GODOT"
-          xvfb-run -a "$GODOT" --headless --path . --import || true
-
       - name: Godot tests
         run: |
           chmod +x "$GODOT"
@@ -90,8 +97,13 @@ jobs:
             timeout 180 xvfb-run -a "$GODOT" --path . "res://tests/godot/$scene.tscn" > "$out" 2>&1 || true
             verdict=$(grep -m1 '^GODOT-TEST-VERDICT ' "$out" || true)
             if [ -z "$verdict" ]; then
+              # Print the START of the log, not the end. Godot's real error happens during
+              # startup, while the tail is filled with allocator and static-string
+              # diagnostics it emits on every shutdown. Tailing hid a missing runtime.
               echo "::error::$scene produced no verdict"
-              tail -30 "$out"
+              head -40 "$out"
+              echo "  ... matching lines ..."
+              grep -iE 'hostfxr|coreclr|dotnet|assembly|runtime' "$out" | head -10 || true
               rc=1
             else
               echo "$scene: $verdict"
