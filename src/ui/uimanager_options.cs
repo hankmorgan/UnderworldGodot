@@ -711,8 +711,9 @@ namespace Underworld
         /// converted font has 1024 units per em with an advance of 64 per original pixel,
         /// so at the scroll's font size of 64 one original pixel is four here.
         ///
-        /// bgcolor was tried first and cannot work: the scroll sets line_separation to -24
-        /// against a 64 font, so the box reaches up into the line above at any size.
+        /// bgcolor was tried first and cannot work: the scroll sets a negative
+        /// line_separation against a 64 font, so the box reaches up into the line above at
+        /// any size.
         /// </summary>
         /// <summary>
         /// The image carries transparent padding above the block, because an inline image
@@ -721,7 +722,16 @@ namespace Underworld
         /// </summary>
         private const string CursorImage = "res://resources/textcursor.png";
         private const int CursorWidth = 5 * 4;
-        private const int CursorHeight = 6 * 4 + 14;
+        // This must equal the PNG's real height, so [img] renders it 1:1. It is not a knob:
+        // [img=WxH] SCALES the whole image, padding included, so changing this number alone
+        // stretches the block instead of moving it. To shift the block, add a transparent
+        // row to the image and match this to it.
+        //
+        // The padding was 14 rows when the fonts were the converted TTFs. Those declared an
+        // ascent of 43 at font size 64 where the runtime fonts declare 44, so the text
+        // baseline now sits one pixel lower inside the same line box while an inline image
+        // does not move with it. The image carries 15 rows to match.
+        private const int CursorHeight = 6 * 4 + 19;
 
         /// <summary>
         /// What an empty slot shows in the list, and what its prompt starts with.
