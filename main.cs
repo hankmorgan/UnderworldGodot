@@ -114,8 +114,25 @@ public partial class main : Node3D
 	// }
 
 
+	/// <summary>
+	/// Test seam. Invoked as the first statement of StartGame so a headless test can prove
+	/// the game did not start. Nothing in the game assigns it, and it is internal because
+	/// the Godot tests compile into this same assembly.
+	///
+	/// It exists because suppression is otherwise unobservable: every other signal belongs
+	/// to the scene root and stays correct whether or not StartGame ran. Checking a
+	/// downstream side effect such as ObjectCreator.grObjects is not sound either, because
+	/// StartGame can throw partway through and leave it null while still having been called.
+	/// </summary>
+#if DEBUG
+	internal static System.Action StartGameObserver;
+#endif
+
 	public static void StartGame()
 	{
+#if DEBUG
+		StartGameObserver?.Invoke();
+#endif
 		if (cameraPitchGimbal_world == null)
 		{
 			if (instance.cam_world == null)

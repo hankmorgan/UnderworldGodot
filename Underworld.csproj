@@ -11,6 +11,7 @@
     <Compile Include="tests/godot/FontRenderTest.cs" Condition="'$(Configuration)' == 'Debug'" />
     <Compile Include="tests/godot/FontBootTest.cs" Condition="'$(Configuration)' == 'Debug'" />
     <Compile Include="tests/godot/FontPlacementTest.cs" Condition="'$(Configuration)' == 'Debug'" />
+    <Compile Include="tests/godot/FontFailureTest.cs" Condition="'$(Configuration)' == 'Debug'" />
     <None Remove="tests/**/*" />
     <Compile Remove="tools/**/*.cs" />
     <None Remove="tools/**/*" />
