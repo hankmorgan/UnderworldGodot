@@ -91,7 +91,7 @@ public class uwsettings
     public void Save()
     {
         Debug.Print($"Saving settings to {FilePath}");
-        using var stream = File.OpenWrite(FilePath);
+        using var stream = File.Create(FilePath);
         JsonSerializer.Serialize(stream, this, JsonOpts);
     }
 
