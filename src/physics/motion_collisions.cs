@@ -1466,7 +1466,7 @@ namespace Underworld
             //seg030_2BB7_10DB:
             while (true)
             {
-                if (first)
+                if (!first)
                 {
                     //I only need to set up the array ptr on the first loop
                     MotionCalcArray.PtrToMotionCalc = new byte[0x20];
@@ -1537,7 +1537,7 @@ namespace Underworld
                                     if (commonObjDat.UnknownFlag3_1(obj.item_id))
                                     {
                                         //seg030_2BB7_124A:
-                                        if ((collision.quality & 0x10) == 0)
+                                        if ((collision.quality & 0x10) == 0)  //quality is wrong here.
                                         {//seg030_2BB7_1264:
                                             UWMotionParamArray.dseg_67d6_25C1 = 1;
                                         }
@@ -1632,7 +1632,7 @@ namespace Underworld
                                                     }
                                                 }
                                                 else
-                                                {
+                                                {//seg30_139a
                                                     projectile.UnkBit_0X13_Bit0to6 = 3;
                                                     projectile.ProjectileHeading = (ushort)(0xC0 + (Rng.r.Next(9) << 4));
                                                 }
@@ -1669,7 +1669,7 @@ namespace Underworld
                 }
                 else
                 {
-                    Debug.Print($"Destroying {projectile.a_name}");
+                    Debug.Print($"Destroying {projectile.a_name} due to failed culling test."); //In some cases throwing an object at the head of an NPC causes the object to vanish. This happens in the dos version too.
                     //seg030_2BB7_1410
                     if (ObjectRemover_OLD.DeleteObjectFromTile_DEPRECIATED(projectile.tileX, projectile.tileY, projectile.index))
                     {

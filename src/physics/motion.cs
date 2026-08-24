@@ -518,7 +518,7 @@ namespace Underworld
                     }
                 }
                 //seg030_2BB7_F43:
-                projectile.quality = projectile.npc_hp;
+                haltedObject.quality = projectile.npc_hp;
 
                 if ((projectile.majorclass != 5) && (projectile.majorclass != 6))
                 {   //not a 3d model or not a trap/trigger
@@ -578,16 +578,15 @@ namespace Underworld
 
         static void seg030_2BB7_107A(UWMotionParamArray MotionParams)
         {
-            if (UWMotionParamArray.dseg_67d6_25C1 == 0)
+            if (UWMotionParamArray.dseg_67d6_25C1 != 0)
             {
                 MotionParams.heading_1E = (short)((Rng.r.Next(0x7FFF) & 0x3FFF) + MotionParams.heading_1E + 0xE000);
                 MotionParams.momentum_14 = 0xBC;
-
             }
             else
             {
-                MotionParams.momentum_14 = (short)(0x2F * ((Rng.r.Next(0x7FFF) + 1) & 0x3));
-                MotionParams.gravity_10_Z = -4;
+                 MotionParams.momentum_14 = (short)(0x2F * ((Rng.r.Next(0x7FFF) + 1) & 0x3));
+                 MotionParams.gravity_10_Z = -4;
             }
         }
 
