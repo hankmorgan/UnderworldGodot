@@ -43,7 +43,7 @@ namespace Underworld
             if (UWClass._RES != UWClass.GAME_UWDEMO)
             {
                 grOptbtn = new  GRLoader(GRLoader.OPBTN_GR, GRLoader.GRShaderMode.UIShader);            
-                grOptbtn.PaletteNo = 6;    
+                grOptbtn.PaletteNo = 2;    
             }            
             grSpells = new  GRLoader(GRLoader.SPELLS_GR, GRLoader.GRShaderMode.UIShader);
             grSpells.UseRedChannel = true;
@@ -55,7 +55,7 @@ namespace Underworld
             if (UWClass._RES==UWClass.GAME_UW2)
             {
                 grGempt = new GRLoader(GRLoader.GEMPT_GR, GRLoader.GRShaderMode.UIShader);
-                grGempt.PaletteNo = 3;
+                grGempt.PaletteNo = 1;
             }
             grWeapon = new WeaponsLoader(0);
             grScrlEdge = new GRLoader(GRLoader.SCRLEDGE_GR, GRLoader.GRShaderMode.UIShader);

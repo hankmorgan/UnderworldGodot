@@ -57,7 +57,7 @@ namespace Underworld
             EnableDisable(instance.PanelMainMenu, false);
             instance.ChargenBG.Texture = bitmaps.LoadImageAt(BytLoader.CHARGEN_BYT);
             grCHRBTNS = new GRLoader(GRLoader.CHRBTNS_GR, GRLoader.GRShaderMode.None);
-            grCHRBTNS.PaletteNo = 9;
+            grCHRBTNS.PaletteNo = 3;
             instance.ChargenNameBG.Texture = grCHRBTNS.LoadImageAt(6);
             ClearChargenTextAndBody();
             chargen.PresentChargenOptions(0);//ask for gender

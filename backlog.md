@@ -16,7 +16,6 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] mouse based movement using 3d window.
 - [ ] Spells can be cast without wait interval
 - [ ] water sound. stop sounding after leaving water.
-- [ ] throwing objects at npc heads causes object to float/jitter (this happens with tables as well, ideal test case is throw at table in empty room) issue can be replicated from a dos save game loaded in the port.
 - [ ] QBERT. Handle teleporting on top of moongates that are already there. -> Possibly placed object collision
 - [ ] QBERT. return to the pyramid via moongate and unable to return back through the same gate
 - [ ] Slide the UW2 panels rather than rotate them.
@@ -104,10 +103,12 @@ Lists of features/bugs/TODOs and fun stuff I care about to implement (no order o
 - [ ] Handle extraction/opening of gog.com game.gog files.
 - [ ] Objects embedded within tiles are not visible (eg some objects in the ice caverns that are within the bounds of a solid tile.)
 - [ ] UW2 First guardian cutscene is missing text.
-- [ ] Likely bug in loading of game palettes (PaletteLoader) where palettes are loaded in blocks of 256 bytes rather than 768. This leads to byte shifted and excessive number of palettes being generated at runtime, Palette indices > 0 likely to be wrong as a result.
 - [ ] Stats display sometimes cuts off hp numbers. Eg 56/78 hp renders as 56/7
 - [ ] Missile impact flash may appear in wrong tile. combathitx and combathity are not being set correctly by MissileImpact()
 - [ ] UW2 character portraits are wrong in some cases. Some instances are fixed via hard coding but other examples remain. Eg futurian. Seems to be an issue with how the art files are loaded as some portrait slots are empty.
+- [ ] Check if Summon Monster spell (cast from scroll found in Nidges quarters in the Seers area of UW1) works. Spell 8-4.
+- [ ] NPCs pop into existance a few frames after the game loads
+- [ ] The hallucination effect is not vanilla underworld.
 
 
 ## Blocked

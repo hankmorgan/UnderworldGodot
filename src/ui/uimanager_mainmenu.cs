@@ -78,7 +78,7 @@ namespace Underworld
 				MainMenuBG.Texture = bitmaps.LoadImageAt(BytLoader.OPSCR_BYT);
 				MainMenuBG.Material = bitmaps.GetMaterial(BytLoader.OPSCR_BYT);
 				var img = bitmaps.LoadImageAt(BytLoader.OPSCR_BYT);
-				Palette.CurrentPalette = 6;
+				Palette.CurrentPalette = 2;
 				bitmaps.UseRedChannel = false;
 			}
 
@@ -537,7 +537,7 @@ namespace Underworld
 		public static void ReturnToMainMenu()
 		{
 			//playerdat.PlayerInDeathMode = false;
-			Palette.CurrentPalette = 6; //ensure no graphical glitching
+			Palette.CurrentPalette = 2; //supposed to ensure no graphical glitching when returning from skulls animaiton, but does not suceed
 			uimanager.CurrentGameMode = uimanager.GameModes.MAIN;
 			//Still some weirdness with enabling the main menu again. eg palette switch in UW1
 			if (MusicStreamPlayer.Instance?.IsPlaying != true || XMIMusic.CurrentlyPlayingThemeNo != 1)

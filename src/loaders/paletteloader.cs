@@ -12,9 +12,9 @@ namespace Underworld
         /// <summary>
         /// Palettes in pals.dat
         /// </summary>
-        public static Palette[] Palettes = new Palette[22];
+        public static Palette[] Palettes = new Palette[8];
 
-        public static int NoOfPals = 22;
+        public static int NoOfPals = 8;
 
         /// <summary>
         /// A crappy greyscale palette
@@ -61,9 +61,9 @@ namespace Underworld
                                 Palettes[palNo] = new Palette();
                                 for (int pixel = 0; pixel < 256; pixel++)
                                 {
-                                    Palettes[palNo].red[pixel] = (byte)(getAt(pals_dat, palNo * 256 + (pixel * 3) + 0, 8) << 2);
-                                    Palettes[palNo].green[pixel] = (byte)(getAt(pals_dat, palNo * 256 + (pixel * 3) + 1, 8) << 2);
-                                    Palettes[palNo].blue[pixel] = (byte)(getAt(pals_dat, palNo * 256 + (pixel * 3) + 2, 8) << 2);
+                                    Palettes[palNo].red[pixel] = (byte)(getAt(pals_dat, palNo * 768 + (pixel * 3) + 0, 8) << 2);
+                                    Palettes[palNo].green[pixel] = (byte)(getAt(pals_dat, palNo * 768 + (pixel * 3) + 1, 8) << 2);
+                                    Palettes[palNo].blue[pixel] = (byte)(getAt(pals_dat, palNo * 768 + (pixel * 3) + 2, 8) << 2);
 
                                     switch (pixel)
                                     {
@@ -122,14 +122,14 @@ namespace Underworld
             int band = uwsettings.instance.shaderbandsize;
             for (int i = 0; i < 8; i++)
             {
-                if (i > 3)
+                if (i > 3) // this allows for the first 0-3 palettes to be used to simulate hallucination effects. Not vanilla behaviour
                 {
                     uwsettings.instance.shaderbandsize = 1;
                 }
-                if ((i == 6) && (_RES != GAME_UW2))
+                if ((i == 2) && (_RES != GAME_UW2))
                 {
                     Palettes[i].cycledGamePalette = CreateShadedPaletteCycles(Palettes[i]);
-                    Palettes[i].cycledUIPalette = MainMenuPaletteCycle(Palettes[i]);//main menu flames effect                    
+                    Palettes[i].cycledUIPalette = MainMenuPaletteCycle(Palettes[i]);//main menu flames effect in uw1                 
                 }
                 else
                 {

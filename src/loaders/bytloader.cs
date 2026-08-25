@@ -38,17 +38,20 @@ namespace Underworld
                 "PRESD.BYT"
             };
 
+        /// <summary>
+        /// The palette numbers for bitmaps. Defaulted to UW1
+        /// </summary>
         private readonly int[] PaletteIndices =
         {
+                1,
                 3,
-                9,
                 0,
                 0,
-                6,
-                15,
-                15,
-                21,
-                21,
+                2,
+                5,
+                5,
+                7,
+                7,
                 0
             };
 
@@ -71,14 +74,14 @@ namespace Underworld
         // in specific contexts where the palette is set before the bitmap loads.
         private readonly int[] PaletteIndicesUW2 =
         {
-                3,
+                1,
                 0,
                 0,
                 0,
                 0,
                 0,
-                15,
-                15,
+                5,
+                5,
                 0,
                 0,
                 0

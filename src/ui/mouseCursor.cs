@@ -100,7 +100,7 @@ namespace Underworld
 			if (((index == 14) || (index == 12) || (index==13)) && (UWClass._RES == UWClass.GAME_UW2))
 			{
 				//Special case for the quill and other map cursors
-				uimanager.grCursors.PaletteNo = 2;
+				uimanager.grCursors.PaletteNo = 1;
 			}
 			else
 			{
