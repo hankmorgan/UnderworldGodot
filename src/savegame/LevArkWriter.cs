@@ -253,13 +253,12 @@ namespace Underworld
             byte[][] blockData = new byte[noOfBlocks][];
 
             // For UW1, LoadUWBlock (default case) requires the caller to supply targetDataLen
-            // because the format has no per-block length metadata — only an offset table.
-            // We compute each block's length as offset[i+1] - offset[i] (or fileLen - offset[i]
-            // for the last present block).  This handles all block types (tilemap, overlay,
-            // texmap, automap, notes) correctly without hard-coding per-type sizes.
+            // because the format has no per-block length metadata, only an offset table.
+            // UW1BlockLength measures each block from the offsets, which handles all block
+            // types (tilemap, overlay, texmap, automap, notes) without hard-coding per-type
+            // sizes.
             byte[] uw1Src = LevArkLoader.lev_ark_file_data;
             int uw1HeaderBlocks = (uw1Src != null) ? (int)Loader.getAt(uw1Src, 0, 16) : noOfBlocks;
-            int uw1HeaderSize = 2 + uw1HeaderBlocks * 4;
 
             for (int i = 0; i < noOfBlocks; i++)
             {
@@ -274,26 +273,7 @@ namespace Underworld
                 }
                 else
                 {
-                    // Read this block's offset and find the next non-zero offset to compute length.
-                    int thisOff = (int)Loader.getAt(uw1Src, 2 + i * 4, 32);
-                    if (thisOff == 0)
-                    {
-                        tLen = 0; // absent block
-                    }
-                    else
-                    {
-                        int nextOff = uw1Src.Length; // default: run to end of file
-                        for (int j = i + 1; j < uw1HeaderBlocks; j++)
-                        {
-                            int candidate = (int)Loader.getAt(uw1Src, 2 + j * 4, 32);
-                            if (candidate > thisOff)
-                            {
-                                nextOff = candidate;
-                                break;
-                            }
-                        }
-                        tLen = nextOff - thisOff;
-                    }
+                    tLen = LevArkLoader.UW1BlockLength(uw1Src, i, uw1HeaderBlocks);
                 }
                 UWBlock src = ExtractSourceBlock(i, targetLen: tLen);
                 blockData[i] = src?.Data;

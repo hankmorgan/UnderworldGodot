@@ -52,20 +52,18 @@ namespace Underworld
             else
             {
                 int blockno;
-                int noOfPossibleBlocks;
                 int thisAddress;
-                int startblock;
+                // Only UW2 measures by scanning its own note blocks, so only UW2 needs to know
+                // where they start and how many there are.
+                const int uw2NoteBlocks = 80;
+                const int uw2FirstNoteBlock = 240;
                 if (_RES == GAME_UW2)
                 {
-                    blockno = 240 + LevelNo;
-                    noOfPossibleBlocks = 80;
-                    startblock = 240;
+                    blockno = uw2FirstNoteBlock + LevelNo;
                 }
                 else
                 {
                     blockno = LevelNo + 36;
-                    noOfPossibleBlocks = 9;
-                    startblock = 36;
                 }
                 thisAddress = GetBlockAddress(blockno, LevArkLoader.lev_ark_file_data);
                 if (thisAddress == 0)
@@ -73,25 +71,41 @@ namespace Underworld
                     //no data
                     return;
                 }
-                var EOF = LevArkLoader.lev_ark_file_data.GetUpperBound(0) + 1;//end of file is the max length.
-                for (int i = 0; i < noOfPossibleBlocks; i++)
+
+                int blockLen;
+                if (_RES == GAME_UW2)
                 {
-                    if (i != LevelNo)
+                    var EOF = LevArkLoader.lev_ark_file_data.GetUpperBound(0) + 1;//end of file is the max length.
+                    for (int i = 0; i < uw2NoteBlocks; i++)
                     {
-                        var addressToCheck = GetBlockAddress(startblock + i, LevArkLoader.lev_ark_file_data);
-                        if (addressToCheck > thisAddress)
-                        {//block is after the current one.
-                            if (addressToCheck < EOF)
-                            {
-                                EOF = addressToCheck; //try and get the nearest next address to the current block
+                        if (i != LevelNo)
+                        {
+                            var addressToCheck = GetBlockAddress(uw2FirstNoteBlock + i, LevArkLoader.lev_ark_file_data);
+                            if (addressToCheck > thisAddress)
+                            {//block is after the current one.
+                                if (addressToCheck < EOF)
+                                {
+                                    EOF = addressToCheck; //try and get the nearest next address to the current block
+                                }
                             }
                         }
                     }
+                    blockLen = EOF - thisAddress;
+                }
+                else
+                {
+                    // Measure against every block, not just the nine note blocks. The block that
+                    // physically follows this one is often of another type, and stopping at the
+                    // nearest note block runs straight through it. In the save reported on pull
+                    // request #71, block 36 is followed by automap block 29, so this used to read
+                    // 9056 bytes and offer 167 note slots where the block holds 864 bytes and 16
+                    // notes. Whatever those blocks contain is then drawn as text on the map.
+                    blockLen = LevArkLoader.UW1BlockLength(
+                        LevArkLoader.lev_ark_file_data, blockno,
+                        (int)getAt(LevArkLoader.lev_ark_file_data, 0, 16));
                 }
 
-
-
-                if (DataLoader.LoadUWBlock(LevArkLoader.lev_ark_file_data, blockno, EOF - thisAddress, out UWBlock block))
+                if (DataLoader.LoadUWBlock(LevArkLoader.lev_ark_file_data, blockno, blockLen, out UWBlock block))
                 {
                     var addptr = 0;
                     int counter = 0;

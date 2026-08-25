@@ -87,10 +87,16 @@ data at the recorded offsets. Loader reads the per-block compression flag
 and dispatches — flag `0 == UW2_NOCOMPRESSION` is valid.
 
 **`lev.ark` container (UW1).** Simpler: `[Int16 count][offsets×N]` then block
-data. No per-block metadata; the caller supplies `targetDataLen`. The writer
-computes each block's length as `offset[i+1] - offset[i]` (or `fileLen -
-offset[i]` for the last present block) so non-tilemap blocks (overlay,
-texmap, automap, notes) round-trip correctly.
+data. No per-block metadata; the caller supplies `targetDataLen`.
+`LevArkLoader.UW1BlockLength` measures a block from the offset table so
+non-tilemap blocks (overlay, texmap, automap, notes) round-trip correctly.
+
+A block runs to the *smallest* offset larger than its own, whichever block
+that belongs to. It is not `offset[i+1] - offset[i]`: DOS writes blocks in
+whatever order it likes, so the block that follows one in the file often has
+a lower index. Assuming index order is what caused the corruption reported on PR #71, where a note
+block was measured as 15312 bytes instead of 864 and the blocks after it were
+drawn on the automap as text.
 
 **`scd.ark`.** UW2-only. 16-block UW2-format ARK container. Because the
 port's SCD loader is lazy and null-sets blocks after processing, there is no
