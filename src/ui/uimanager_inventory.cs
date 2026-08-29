@@ -105,6 +105,16 @@ namespace Underworld
             {
                 return;
             }
+            if (InConversation && obj.majorclass == 2 && obj.minorclass == 0 && obj.classindex != 0xF)
+            {
+                AddToMessageScroll(
+                    stringToAdd: GameStrings.GetString(
+                        1,
+                        GameStrings.str_you_cannot_barter_a_container__instead_remove_the_contents_you_want_to_trade_),
+                    option: 2,
+                    mode: MessageDisplay.MessageDisplayMode.TemporaryMessage);
+                return;
+            }
             switch (inventoryPressSlotName)
             {
                 case "RightShoulder":
@@ -423,12 +433,6 @@ namespace Underworld
                 container.Close(
                     index: objAtSlot.index,
                     objList: playerdat.InventoryObjects);
-                return;
-            }
-
-            if (InConversation)
-            {
-                InteractWithObjectInSlotConversation(objAtSlot, isLeftClick);
                 return;
             }
 

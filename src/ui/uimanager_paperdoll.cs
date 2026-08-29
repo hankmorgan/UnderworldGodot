@@ -613,7 +613,7 @@ namespace Underworld
                 {
                     PlaceHeldItemAtSlot(destSlot);
                 }
-                else if (IsMouseInViewPort())
+                else if (!InConversation && IsMouseInViewPort())
                 {
                     DropHeldItemIntoWorld();
                 }
@@ -633,6 +633,10 @@ namespace Underworld
             }
 
             CurrentSlot = -1;
+            if (TradeDragActive)
+            {
+                ClearTradeDragState();
+            }
             GetViewport().SetInputAsHandled();
         }
 

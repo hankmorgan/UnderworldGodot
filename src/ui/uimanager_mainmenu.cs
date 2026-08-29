@@ -491,10 +491,59 @@ namespace Underworld
 
 		public override void _Input(InputEvent @event)
 		{
+			if (InConversation
+				&& @event is InputEventMouseButton temporaryMessageClick
+				&& (temporaryMessageClick.ButtonIndex == MouseButton.Left
+					|| temporaryMessageClick.ButtonIndex == MouseButton.Right)
+				&& HandleTemporaryMessageClick(temporaryMessageClick))
+			{
+				GetViewport().SetInputAsHandled();
+				return;
+			}
+
 			// Continue inventory drag detection when the cursor leaves the pressed slot control.
 			if (inventoryPointerDown && @event is InputEventMouseMotion mouseMotion)
 			{
 				TryStartInventoryDrag(mouseMotion.GlobalPosition);
+			}
+			if (tradePointerDown && @event is InputEventMouseMotion tradeMotion)
+			{
+				TryStartTradeDrag(tradeMotion.GlobalPosition);
+			}
+
+			if (@event is InputEventMouseButton mouseButton
+				&& !mouseButton.Pressed)
+			{
+				if (inventoryPointerDown
+					&& mouseButton.ButtonIndex == inventoryPointerButton)
+				{
+					TryStartInventoryDrag(mouseButton.GlobalPosition);
+					if (inventoryDragActive
+						&& playerdat.ObjectInHand != -1
+						&& TryPlaceHeldItemInTradeSlot(mouseButton.GlobalPosition))
+					{
+						ClearInventoryPointerState();
+						GetViewport().SetInputAsHandled();
+						return;
+					}
+				}
+
+				if (tradePointerDown
+					&& mouseButton.ButtonIndex == tradePointerButton)
+				{
+					TryStartTradeDrag(mouseButton.GlobalPosition);
+					if (tradeDragActive && playerdat.ObjectInHand != -1)
+					{
+						var destSlot = FindInventorySlotUnderMouse();
+						if (destSlot != null)
+						{
+							ClearTradeDragState();
+							PlaceHeldItemAtSlot(destSlot);
+							GetViewport().SetInputAsHandled();
+							return;
+						}
+					}
+				}
 			}
 
 			if (@event is InputEventKey keyinput)
@@ -555,10 +604,25 @@ namespace Underworld
 					{
 						PlaceHeldItemAtSlot(destSlot);
 					}
-					else if (IsMouseInViewPort())
+					else if (!InConversation && IsMouseInViewPort())
 					{
 						DropHeldItemIntoWorld();
 					}
+				}
+			}
+
+			if (tradePointerDown
+				&& @event is InputEventMouseButton tradeMouseButton
+				&& !tradeMouseButton.Pressed
+				&& tradeMouseButton.ButtonIndex == tradePointerButton)
+			{
+				TryStartTradeDrag(tradeMouseButton.GlobalPosition);
+				var wasTradeDrag = tradeDragActive;
+				ClearTradeDragState();
+				if (wasTradeDrag && playerdat.ObjectInHand != -1
+					&& !InConversation && IsMouseInViewPort())
+				{
+					DropHeldItemIntoWorld();
 				}
 			}
 		}
