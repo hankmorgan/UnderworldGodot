@@ -102,7 +102,28 @@ namespace Underworld
 			// The prompt's state and its field are static but the scene can be built more
 			// than once, from the launcher. Anything left over belongs to a UI that no
 			// longer exists, and would otherwise send Escape to a freed node.
+			//
+			// This runs BEFORE the font guard below, on purpose. The guard can return
+			// early, and stale prompt state from a previous scene has to be cleared on
+			// that path too, or a retry after a font failure inherits it.
 			ResetSaveDescriptionPrompt();
+
+			// Fonts are published by the scene root in _EnterTree. Without them there is
+			// nothing to render with, so the game must not start.
+			//
+			// Fails closed on purpose: if the root cannot be found, that is a broken
+			// assumption about the scene, not permission to carry on. Ancestor walk rather
+			// than CurrentScene, which is not this root when the scene is instantiated as
+			// another node's child, as the tests do.
+			var root = UnderworldRoot.Find(this);
+			if (root == null || !root.FontsReady)
+			{
+				GD.PrintErr(root == null
+					? "Not starting the game: no UnderworldRoot above this node."
+					: "Not starting the game: fonts were not loaded.");
+				return;
+			}
+
 			main.StartGame();
 		}
 

@@ -96,7 +96,8 @@ jobs:
         run: |
           chmod +x "$GODOT"
           rc=0
-          for scene in font_render_test font_placement_test; do
+          for scene in font_render_test font_placement_test cursor_placement_test font_boot_test font_failure_test \
+                       font_resize_test font_demo_boot_test launcher_validation_test; do
             out="/tmp/$scene.log"
             timeout 180 xvfb-run -a "$GODOT" --rendering-driver opengl3 \
               --path . "res://tests/godot/$scene.tscn" > "$out" 2>&1 || true

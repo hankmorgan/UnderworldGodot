@@ -1,11 +1,11 @@
 [gd_scene load_steps=31 format=3 uid="uid://xjvqmrbs28xs"]
 
 [ext_resource type="Script" path="res://src/ui/uimanager.cs" id="1_lw0yg"]
-[ext_resource type="FontFile" uid="uid://pdy3t627nfxw" path="res://resources/fonts/FONT5X6I.ttf" id="3_safdl"]
+[ext_resource type="FontFile" path="res://resources/fonts/FONT5X6I.tres" id="3_safdl"]
 [ext_resource type="Script" path="res://src/ui/mouseCursor.cs" id="4_gnu1s"]
-[ext_resource type="FontFile" uid="uid://bas6pohxbpgah" path="res://resources/fonts/FONT5X6P.ttf" id="4_pfbet"]
-[ext_resource type="FontFile" uid="uid://dcth0yn5km8si" path="res://resources/fonts/FONT4X5P.ttf" id="5_8iiwt"]
-[ext_resource type="FontFile" uid="uid://dhrg5v5fecw5b" path="res://resources/fonts/FONTBIG.ttf" id="5_kj12g"]
+[ext_resource type="FontFile" path="res://resources/fonts/FONT5X6P.tres" id="4_pfbet"]
+[ext_resource type="FontFile" path="res://resources/fonts/FONT4X5P.tres" id="5_8iiwt"]
+[ext_resource type="FontFile" path="res://resources/fonts/FONTBIG.tres" id="5_kj12g"]
 [ext_resource type="Script" path="res://main.cs" id="6_3y8oy"]
 [ext_resource type="Shader" path="res://node_3d.gdshader" id="6_x6exc"]
 [ext_resource type="Texture2D" uid="uid://plikcry1ow6q" path="res://resources/placeholder_art/textbox_fill.jpg" id="7_qiq8a"]
@@ -22,6 +22,7 @@
 [ext_resource type="Texture2D" uid="uid://dlhf0nj7vj1o2" path="res://resources/placeholder_art/PanelBlack.jpg" id="29_aiei8"]
 [ext_resource type="Script" path="res://src/audio/MusicStreamPlayer.cs" id="N_music_stream"]
 [ext_resource type="Script" path="res://src/audio/sfx/godot/SfxStreamPlayer.cs" id="N_sfx_stream"]
+[ext_resource type="Script" path="res://src/ui/UnderworldRoot.cs" id="root_script"]
 
 [sub_resource type="AudioStreamWAV" id="AudioStreamWAV_tkk82"]
 
@@ -47,6 +48,7 @@ shader = ExtResource("6_x6exc")
 shader = ExtResource("13_rsqj8")
 
 [node name="Underworld" type="Node3D"]
+script = ExtResource("root_script")
 
 [node name="MusicStreamPlayer" type="Node" parent="."]
 script = ExtResource("N_music_stream")
@@ -216,7 +218,7 @@ offset_right = 1224.0
 offset_bottom = 796.0
 mouse_filter = 1
 theme_override_colors/default_color = Color(0.2, 0.109804, 0.0745098, 1)
-theme_override_constants/line_separation = -24
+theme_override_constants/line_separation = -25
 theme_override_fonts/normal_font = ExtResource("4_pfbet")
 theme_override_font_sizes/normal_font_size = 64
 bbcode_enabled = true
@@ -508,7 +510,7 @@ offset_top = 187.0
 offset_right = 892.0
 offset_bottom = 519.0
 theme_override_colors/default_color = Color(0.2, 0.109804, 0.0745098, 1)
-theme_override_constants/line_separation = -24
+theme_override_constants/line_separation = -25
 theme_override_fonts/normal_font = ExtResource("4_pfbet")
 theme_override_font_sizes/normal_font_size = 64
 bbcode_enabled = true
@@ -844,7 +846,7 @@ offset_right = 913.0
 offset_bottom = 796.0
 mouse_filter = 1
 theme_override_colors/default_color = Color(0, 0, 0, 1)
-theme_override_constants/line_separation = -24
+theme_override_constants/line_separation = -25
 theme_override_fonts/normal_font = ExtResource("4_pfbet")
 theme_override_font_sizes/normal_font_size = 64
 bbcode_enabled = true
@@ -1195,7 +1197,7 @@ offset_top = 320.0
 offset_right = 880.0
 offset_bottom = 652.0
 theme_override_colors/default_color = Color(0.647059, 0.164706, 0.164706, 1)
-theme_override_constants/line_separation = -24
+theme_override_constants/line_separation = -25
 theme_override_fonts/normal_font = ExtResource("4_pfbet")
 theme_override_font_sizes/normal_font_size = 64
 bbcode_enabled = true
@@ -1819,13 +1821,15 @@ offset_bottom = 320.0
 [node name="WeightCapacity" type="Label" parent="UI/Common/PaperDoll"]
 texture_filter = 1
 layout_mode = 0
-offset_left = 91.0
+offset_left = 86.0
 offset_top = 213.0
-offset_right = 139.0
+offset_right = 134.0
 offset_bottom = 260.0
 theme = SubResource("Theme_i11v8")
 theme_override_fonts/font = ExtResource("4_pfbet")
 theme_override_font_sizes/font_size = 64
+horizontal_alignment = 1
+vertical_alignment = 1
 text = "255"
 max_lines_visible = 1
 visible_characters = 3
@@ -2149,7 +2153,7 @@ offset_left = -137.0
 offset_top = 272.0
 offset_right = 63.0
 offset_bottom = 452.0
-theme_override_constants/line_separation = -20
+theme_override_constants/line_separation = -21
 theme_override_fonts/normal_font = ExtResource("3_safdl")
 theme_override_font_sizes/normal_font_size = 64
 bbcode_enabled = true
@@ -2167,7 +2171,7 @@ offset_left = 52.0
 offset_top = 272.0
 offset_right = 132.0
 offset_bottom = 452.0
-theme_override_constants/line_separation = -20
+theme_override_constants/line_separation = -21
 theme_override_fonts/normal_font = ExtResource("3_safdl")
 theme_override_font_sizes/normal_font_size = 64
 bbcode_enabled = true
@@ -2838,7 +2842,7 @@ offset_right = 628.0
 offset_bottom = 151.0
 mouse_filter = 2
 theme_override_fonts/normal_font = ExtResource("5_8iiwt")
-theme_override_font_sizes/normal_font_size = 47
+theme_override_font_sizes/normal_font_size = 48
 text = "The Label is here. Can you see it
 Line 2
 line 3
